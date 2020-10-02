@@ -6,14 +6,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gitlab.com/zarb-chain/zarb-go/account"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/genesis"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/store"
-	"gitlab.com/zarb-chain/zarb-go/utils"
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 func testState(t *testing.T) *State {
@@ -23,10 +24,13 @@ func testState(t *testing.T) *State {
 	val := validator.NewValidator(pb, 1)
 	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
 	conf := config.DefaultConfig()
-	conf.Store.Path = utils.TempPath()
+	conf.Store.Path = utils.TempDirName()
+	conf.Network.NodeKey = utils.TempFilename()
 	store, err := store.NewStore(conf)
 	logger.InitLogger(conf)
-	st, err := LoadStateOrNewState(conf, gen, store, nil)
+	net, err := network.NewNetwork(conf)
+	require.NoError(t, err)
+	st, err := LoadStateOrNewState(conf, gen, net, store, nil)
 	require.NoError(t, err)
 	return st
 }

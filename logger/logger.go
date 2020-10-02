@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/sirupsen/logrus"
-	"gitlab.com/zarb-chain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/config"
 )
 
 type fingerprintable interface {

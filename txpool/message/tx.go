@@ -1,8 +1,8 @@
 package message
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 type TxPayload struct {

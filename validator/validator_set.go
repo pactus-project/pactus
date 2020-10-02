@@ -2,7 +2,7 @@ package validator
 
 import (
 	"github.com/sasha-s/go-deadlock"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type ValidatorSet struct {

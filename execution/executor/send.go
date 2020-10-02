@@ -1,9 +1,9 @@
 package executor
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/account"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 type SendExecutor struct {

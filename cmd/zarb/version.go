@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	cli "github.com/jawher/mow.cli"
-	"gitlab.com/zarb-chain/zarb-go/cmd"
-	"gitlab.com/zarb-chain/zarb-go/version"
+	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/version"
 )
 
 //Version prints the version of the Zarb node

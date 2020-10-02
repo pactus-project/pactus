@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"sort"
 
-	"gitlab.com/zarb-chain/zarb-go/block"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 type blockVotes struct {

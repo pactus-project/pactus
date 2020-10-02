@@ -5,17 +5,17 @@ import (
 	"os"
 	"path/filepath"
 
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/validator"
 
 	cli "github.com/jawher/mow.cli"
-	"gitlab.com/zarb-chain/zarb-go/cmd"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/genesis"
-	"gitlab.com/zarb-chain/zarb-go/keystore/key"
-	"gitlab.com/zarb-chain/zarb-go/node"
-	"gitlab.com/zarb-chain/zarb-go/utils"
-	"gitlab.com/zarb-chain/zarb-go/version"
+	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/node"
+	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/version"
 )
 
 //Start starts the zarb node

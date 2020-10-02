@@ -8,9 +8,9 @@ You need to make sure you have install [Go](https://golang.org/) and [rust](http
 Follow these steps to compile and build Zarb blockchain:
 
 ```bash
-mkdir -p $GOPATH/src/gitlab.com/zarb-chain/zarb-go
-cd $GOPATH/src/gitlab.com/zarb-chain/zarb-go
-git clone https://gitlab.com/zarb-chain/zarb-go.git .
+mkdir -p $GOPATH/src/github.com/zarbchain/zarb-go
+cd $GOPATH/src/github.com/zarbchain/zarb-go
+git clone https://github.com/zarbchain/zarb-go.git .
 make
 ```
 

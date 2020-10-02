@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	cli "github.com/jawher/mow.cli"
-	"gitlab.com/zarb-chain/zarb-go/cmd"
-	"gitlab.com/zarb-chain/zarb-go/keystore/key"
-	"gitlab.com/zarb-chain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/utils"
 )
 
 // Generate creates a new account and stores the keyfile in the disk

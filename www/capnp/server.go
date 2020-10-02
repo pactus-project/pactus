@@ -4,10 +4,10 @@ import (
 	"context"
 	"net"
 
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/store"
-	"gitlab.com/zarb-chain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/txpool"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 

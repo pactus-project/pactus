@@ -15,10 +15,10 @@ import (
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	libp2pps "github.com/libp2p/go-libp2p-pubsub"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/utils"
 )
 
 // DiscoveryInterval is how often we re-publish our mDNS records.

@@ -1,10 +1,10 @@
 package state
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/block"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/execution"
-	"gitlab.com/zarb-chain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/execution"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 func (st *State) executeBlock(block *block.Block, exe *execution.Executor) ([]*tx.Receipt, error) {

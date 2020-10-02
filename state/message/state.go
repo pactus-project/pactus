@@ -3,8 +3,8 @@ package message
 import (
 	"fmt"
 
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 type StateInfoPayload struct {

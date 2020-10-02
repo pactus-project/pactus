@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/fxamacker/cbor/v2"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	simpleMerkle "gitlab.com/zarb-chain/zarb-go/libs/merkle"
+	"github.com/zarbchain/zarb-go/crypto"
+	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
 type Txs struct {

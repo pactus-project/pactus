@@ -3,8 +3,8 @@ package http
 import (
 	"time"
 
-	"gitlab.com/zarb-chain/zarb-go/block"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto"
 	capnp "zombiezen.com/go/capnproto2"
 )
 

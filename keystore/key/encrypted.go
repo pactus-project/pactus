@@ -12,8 +12,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"gitlab.com/zarb-chain/zarb-go/utils"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/crypto"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/scrypt"
 )

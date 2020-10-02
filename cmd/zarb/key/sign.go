@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 
 	cli "github.com/jawher/mow.cli"
-	"gitlab.com/zarb-chain/zarb-go/cmd"
-	"gitlab.com/zarb-chain/zarb-go/keystore/key"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 // Sign the message with the private key and returns the signature hash
