@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type VoteSetPayload struct {

@@ -3,20 +3,20 @@ package node
 import (
 	"time"
 
-	"gitlab.com/zarb-chain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/network"
 
 	"github.com/pkg/errors"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/consensus"
-	"gitlab.com/zarb-chain/zarb-go/genesis"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/state"
-	"gitlab.com/zarb-chain/zarb-go/store"
-	"gitlab.com/zarb-chain/zarb-go/txpool"
-	"gitlab.com/zarb-chain/zarb-go/utils"
-	"gitlab.com/zarb-chain/zarb-go/validator"
-	"gitlab.com/zarb-chain/zarb-go/www/capnp"
-	"gitlab.com/zarb-chain/zarb-go/www/http"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/consensus"
+	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/zarbchain/zarb-go/www/http"
 )
 
 type Node struct {

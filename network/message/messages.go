@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
-	"gitlab.com/zarb-chain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 type PayloadType int

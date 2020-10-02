@@ -4,11 +4,11 @@ import (
 	"bytes"
 
 	"github.com/sasha-s/go-deadlock"
-	"gitlab.com/zarb-chain/zarb-go/account"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/libs/orderedmap"
-	"gitlab.com/zarb-chain/zarb-go/store"
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/libs/orderedmap"
+	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 type Cache struct {

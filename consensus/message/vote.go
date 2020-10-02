@@ -1,8 +1,8 @@
 package message
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/vote"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
 type VotePayload struct {

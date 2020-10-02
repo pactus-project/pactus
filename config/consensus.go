@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	"gitlab.com/zarb-chain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 type ConsensusConfig struct {

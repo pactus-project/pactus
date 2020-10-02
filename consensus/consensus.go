@@ -5,17 +5,17 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
-	"gitlab.com/zarb-chain/zarb-go/block"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/consensus/hrs"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/network"
-	"gitlab.com/zarb-chain/zarb-go/state"
-	"gitlab.com/zarb-chain/zarb-go/store"
-	"gitlab.com/zarb-chain/zarb-go/validator"
-	"gitlab.com/zarb-chain/zarb-go/vote"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
 //-----------------------------------------------------------------------------

@@ -53,10 +53,19 @@ func PathExists(path string) bool {
 	return err == nil
 }
 
-func TempPath() string {
+func TempDirName() string {
 	p, err := ioutil.TempDir("", "zarb*")
 	if err != nil {
 		panic(err)
 	}
 	return p
+}
+
+func TempFilename() string {
+	f, err := ioutil.TempFile("", "zarb*")
+	if err != nil {
+		panic(err)
+	}
+	os.Remove(f.Name())
+	return f.Name()
 }

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 type Header struct {

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func strToHash(str string) crypto.Hash {

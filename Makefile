@@ -5,7 +5,7 @@ GOTOOLS = \
 
 PACKAGES=$(shell go list ./... | grep -v '/vendor/')
 TAGS=-tags 'zarb'
-LDFLAGS= -ldflags "-X gitlab.com/zarb-chain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD`"
+LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD`"
 CAPNP_INC = -I$(GOPATH)/src/zombiezen.com/go/capnproto2/std
 BLS_PATH= $(shell pwd)/.bls
 
@@ -37,9 +37,6 @@ install:
 ### Testing
 test:
 	go test $(PACKAGES)
-
-test_release:
-	go test -tags release $(PACKAGES)
 
 
 ########################################

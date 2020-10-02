@@ -5,13 +5,13 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"gitlab.com/zarb-chain/zarb-go/block"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/network"
-	"gitlab.com/zarb-chain/zarb-go/state/message"
-	"gitlab.com/zarb-chain/zarb-go/store"
-	"gitlab.com/zarb-chain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/state/message"
+	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/utils"
 )
 
 type synchronizer struct {

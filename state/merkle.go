@@ -1,10 +1,10 @@
 package state
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/account"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	simpleMerkle "gitlab.com/zarb-chain/zarb-go/libs/merkle"
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/crypto"
+	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 func (state *State) accountsMerkleRootHash() *crypto.Hash {

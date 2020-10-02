@@ -6,13 +6,13 @@ import (
 	"time"
 
 	cli "github.com/jawher/mow.cli"
-	"gitlab.com/zarb-chain/zarb-go/account"
-	"gitlab.com/zarb-chain/zarb-go/cmd"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/genesis"
-	"gitlab.com/zarb-chain/zarb-go/keystore/key"
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 // Init initializes the zarb blockchain

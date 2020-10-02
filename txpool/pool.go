@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/network"
 
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 type TxPoolReader interface {

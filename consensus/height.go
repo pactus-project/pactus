@@ -1,8 +1,8 @@
 package consensus
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/consensus/hrs"
-	"gitlab.com/zarb-chain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/utils"
 )
 
 func (cs *Consensus) scheduleNewHeight() {

@@ -10,12 +10,12 @@ RUN apk add --no-cache bash libstdc++ gmp
 ENV GOPATH /go
 ENV PATH "$PATH:/go/bin"
 
-RUN mkdir -p /go/src/gitlab.com/zarb-chain/zarb-go
-ADD . /go/src/gitlab.com/zarb-chain/zarb-go
+RUN mkdir -p /go/src/github.com/zarbchain/zarb-go
+ADD . /go/src/github.com/zarbchain/zarb-go
 
 RUN apk add --no-cache curl git go gmp-dev build-base g++ openssl-dev && \
-    mkdir -p /go/src/gitlab.com/zarb-chain/zarb-go/ && \
-    cd /go/src/gitlab.com/zarb-chain/zarb-go/ && \
+    mkdir -p /go/src/github.com/zarbchain/zarb-go/ && \
+    cd /go/src/github.com/zarbchain/zarb-go/ && \
     make tools build && \
     cp ./build/zarb /usr/bin && \
     apk del curl git go gmp-dev build-base g++ openssl-dev && \

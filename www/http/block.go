@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"time"
 
-	"gitlab.com/zarb-chain/zarb-go/block"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto"
 
 	"github.com/gorilla/mux"
-	"gitlab.com/zarb-chain/zarb-go/www/capnp"
+	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
