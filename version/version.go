@@ -1,17 +1,18 @@
 package version
 
+import (
+	"fmt"
+)
+
 // Version components
 const (
-	Maj = "0"
-	Min = "7"
-	Fix = "0"
+	Maj = 0
+	Min = 7
+	Fix = 0
 )
 
 var (
-	// Version is the current version of Zarb in string
-	Version = "0.7.0"
-
-	// GitCommit is the current HEAD set using ldflags.
+	Version   = fmt.Sprintf("%d.%d.%d", Maj, Min, Fix)
 	GitCommit string
 )
 

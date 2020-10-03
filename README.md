@@ -1,4 +1,4 @@
-# Zarb
+# Zarb [![Build Status](https://travis-ci.org/zarbchain/zarb-go.svg?branch=main)](https://travis-ci.org/zarbchain/zarb-go)
 
 *Zarb blockchain*
 
