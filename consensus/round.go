@@ -1,7 +1,7 @@
 package consensus
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
 )
 
 func (cs *Consensus) enterNewRound(height int, round int) {

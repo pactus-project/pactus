@@ -4,7 +4,7 @@ import (
 	"os"
 
 	cli "github.com/jawher/mow.cli"
-	"gitlab.com/zarb-chain/zarb-go/cmd/zarb/key"
+	"github.com/zarbchain/zarb-go/cmd/zarb/key"
 )
 
 func zarb() *cli.Cli {

@@ -11,7 +11,7 @@ import (
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p-core/routing"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
-	"gitlab.com/zarb-chain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/logger"
 )
 
 type Bootstrapper struct {

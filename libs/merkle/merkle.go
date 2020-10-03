@@ -3,7 +3,7 @@ package simpleMerkle
 import (
 	"math"
 
-	"gitlab.com/zarb-chain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type SimpleMerkleTree struct {

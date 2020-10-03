@@ -3,8 +3,8 @@ package store
 import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/syndtr/goleveldb/leveldb"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 var (

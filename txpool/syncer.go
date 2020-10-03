@@ -7,12 +7,12 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/network"
-	"gitlab.com/zarb-chain/zarb-go/tx"
-	"gitlab.com/zarb-chain/zarb-go/txpool/message"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/txpool/message"
 )
 
 const (

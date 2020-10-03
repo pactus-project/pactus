@@ -1,7 +1,7 @@
 package config
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/utils"
 )
 
 type StoreConfig struct {

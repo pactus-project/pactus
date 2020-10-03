@@ -1,9 +1,9 @@
 package consensus
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/consensus/hrs"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/vote"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
 func (cs *Consensus) enterPrecommit(height int, round int) {

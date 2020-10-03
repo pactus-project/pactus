@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 
 	"github.com/jawher/mow.cli"
-	"gitlab.com/zarb-chain/zarb-go/cmd"
-	"gitlab.com/zarb-chain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/keystore/key"
 )
 
 //Inspect displays various information of the keyfile

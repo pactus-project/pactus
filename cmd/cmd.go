@@ -13,8 +13,8 @@ import (
 	"syscall"
 
 	"github.com/peterh/liner"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/keystore/key"
 )
 
 var ZARB = `

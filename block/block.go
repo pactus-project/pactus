@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/logger"
 )
 
 type Block struct {

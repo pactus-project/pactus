@@ -1,9 +1,9 @@
 package executor
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/account"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 type Sandbox interface {

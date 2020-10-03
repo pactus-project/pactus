@@ -1,8 +1,8 @@
 package message
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/block"
-	"gitlab.com/zarb-chain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 type BlocksPayload struct {

@@ -5,12 +5,12 @@ GOTOOLS = \
 
 PACKAGES=$(shell go list ./... | grep -v '/vendor/')
 TAGS=-tags 'zarb'
-LDFLAGS= -ldflags "-X gitlab.com/zarb-chain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD`"
+LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD`"
 CAPNP_INC = -I$(GOPATH)/src/zombiezen.com/go/capnproto2/std
 BLS_PATH= $(shell pwd)/.bls
 
 
-all: tools build install test test_release
+all: tools build install test
 
 ########################################
 ### Tools & dependencies
@@ -38,9 +38,6 @@ install:
 test:
 	go test $(PACKAGES)
 
-test_release:
-	go test -tags release $(PACKAGES)
-
 
 ########################################
 ### Docker
@@ -61,6 +58,6 @@ fmt:
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
-.PHONY: build install test test_release
+.PHONY: build install test
 .PHONY: tools deps bls
 .PHONY: fmt metalinter docker

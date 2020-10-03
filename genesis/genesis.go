@@ -8,10 +8,10 @@ import (
 	"sort"
 	"time"
 
-	"gitlab.com/zarb-chain/zarb-go/account"
-	"gitlab.com/zarb-chain/zarb-go/crypto"
-	"gitlab.com/zarb-chain/zarb-go/utils"
-	"gitlab.com/zarb-chain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 // How many bytes to take from the front of the Genesis hash to append

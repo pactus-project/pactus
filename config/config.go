@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/utils"
 )
 
 type Config struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/zarb-chain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
 )
 
 type timeout struct {

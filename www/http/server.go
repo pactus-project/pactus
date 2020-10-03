@@ -10,9 +10,9 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/www/capnp"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/www/capnp"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 

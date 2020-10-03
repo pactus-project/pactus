@@ -1,4 +1,4 @@
-module gitlab.com/zarb-chain/zarb-go
+module github.com/zarbchain/zarb-go
 
 go 1.15
 

@@ -1,11 +1,11 @@
 package execution
 
 import (
-	"gitlab.com/zarb-chain/zarb-go/config"
-	"gitlab.com/zarb-chain/zarb-go/errors"
-	"gitlab.com/zarb-chain/zarb-go/execution/executor"
-	"gitlab.com/zarb-chain/zarb-go/logger"
-	"gitlab.com/zarb-chain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/execution/executor"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 type Executor struct {
