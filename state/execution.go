@@ -12,7 +12,7 @@ func (st *State) executeBlock(block *block.Block, exe *execution.Executor) ([]*t
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "Block is empty")
 	}
 
-	hashes := block.Txs().TxHashes()
+	hashes := block.TxHashes().Hashes()
 	receipts := make([]*tx.Receipt, len(hashes))
 
 	for i := 0; i < len(hashes); i++ {
@@ -35,7 +35,6 @@ func (st *State) executeBlock(block *block.Block, exe *execution.Executor) ([]*t
 
 	// Now, check rewards + fee
 	//tx, _ := st.txPool.PendingTx(hashes[0])
-
 
 	return receipts, nil
 }

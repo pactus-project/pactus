@@ -122,7 +122,7 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			cmd.PrintInfoMsg("You are running a zarb block chain node version: %v. Welcome! ", version.Version)
+			cmd.PrintInfoMsg("You are running a zarb block chain node version: %v. Welcome! ", version.NodeVersion.String())
 
 			privVal := validator.NewPrivValidator(keyObj.PrivateKey())
 			node, err := node.NewNode(gen, conf, privVal)

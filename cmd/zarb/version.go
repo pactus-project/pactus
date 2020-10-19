@@ -14,7 +14,7 @@ func Version() func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			fmt.Println()
-			cmd.PrintInfoMsg("Zarb version: %v", version.Version)
+			cmd.PrintInfoMsg("Zarb version: %v", version.NodeVersion.String())
 		}
 	}
 }

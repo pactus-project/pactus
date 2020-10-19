@@ -33,8 +33,8 @@ func (f factory) BlockToBlockInfo(block *block.Block, height int, cbi *BlockInfo
 	ch.SetLastReceiptsHash(block.Header().LastReceiptsHash().RawBytes())
 	ch.SetProposerAddress(block.Header().ProposerAddress().RawBytes())
 	// Transactions
-	ctxHashes, _ := ctxs.NewHashes(int32(block.Txs().Count()))
-	for i, hash := range block.Txs().TxHashes() {
+	ctxHashes, _ := ctxs.NewHashes(int32(block.TxHashes().Count()))
+	for i, hash := range block.TxHashes().Hashes() {
 		ctxHashes.Set(i, hash.RawBytes())
 	}
 	// last commit

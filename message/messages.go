@@ -4,27 +4,46 @@ import (
 	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type PayloadType int
 
 const (
-	PayloadTypeProposal = PayloadType(1)
-	PayloadTypeBlock    = PayloadType(2)
-	PayloadTypeStep     = PayloadType(3)
-	PayloadTypeVote     = PayloadType(4)
-	PayloadTypeVoteSet  = PayloadType(5)
+	PayloadTypeStatusReq = PayloadType(1)
+	PayloadTypeStatusRes = PayloadType(2)
+	PayloadTypeBlocksReq = PayloadType(3)
+	PayloadTypeBlocksRes = PayloadType(4)
+	PayloadTypeTxReq     = PayloadType(5)
+	PayloadTypeTxRes     = PayloadType(6)
+	PayloadTypeProposal  = PayloadType(7)
+	PayloadTypeBlock     = PayloadType(8)
+	PayloadTypeHRS       = PayloadType(9)
+	PayloadTypeVote      = PayloadType(10)
+	PayloadTypeVoteSet   = PayloadType(11)
 )
 
 func (t PayloadType) String() string {
 	switch t {
+	case PayloadTypeStatusReq:
+		return "status-req"
+	case PayloadTypeStatusRes:
+		return "status-res"
+	case PayloadTypeBlocksReq:
+		return "blocks-req"
+	case PayloadTypeBlocksRes:
+		return "blocks-res"
+	case PayloadTypeTxReq:
+		return "tx-req"
+	case PayloadTypeTxRes:
+		return "tx-res"
 	case PayloadTypeProposal:
 		return "proposal"
 	case PayloadTypeBlock:
 		return "block"
-	case PayloadTypeStep:
-		return "round-step"
+	case PayloadTypeHRS:
+		return "hrs"
 	case PayloadTypeVote:
 		return "vote"
 	case PayloadTypeVoteSet:
@@ -34,15 +53,13 @@ func (t PayloadType) String() string {
 }
 
 type Message struct {
-	Height  int
-	Type    PayloadType
-	Payload Payload
+	Initiator crypto.Address
+	Target    crypto.Address
+	Type      PayloadType
+	Payload   Payload
 }
 
 func (m *Message) SanityCheck() error {
-	if m.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
-	}
 	if err := m.Payload.SanityCheck(); err != nil {
 		return err
 	}
@@ -53,7 +70,7 @@ func (m *Message) SanityCheck() error {
 }
 
 func (m *Message) Fingerprint() string {
-	return fmt.Sprintf("{%d %s %s}", m.Height, m.Type, m.Payload.Fingerprint())
+	return fmt.Sprintf("{%s %s}", m.Type, m.Payload.Fingerprint())
 }
 
 func (m *Message) PayloadType() PayloadType {
@@ -61,9 +78,10 @@ func (m *Message) PayloadType() PayloadType {
 }
 
 type _Message struct {
-	PayloadType PayloadType     `cbor:"1,keyasint,omitempty"`
-	Height      int             `cbor:"3,keyasint,omitempty"`
-	Payload     cbor.RawMessage `cbor:"10,keyasint,omitempty"`
+	Initiator   crypto.Address  `cbor:"1,keyasint,omitempty"`
+	Target      crypto.Address  `cbor:"2,keyasint,omitempty"`
+	PayloadType PayloadType     `cbor:"3,keyasint"`
+	Payload     cbor.RawMessage `cbor:"10,keyasint"`
 }
 
 func (m *Message) MarshalCBOR() ([]byte, error) {
@@ -73,8 +91,9 @@ func (m *Message) MarshalCBOR() ([]byte, error) {
 	}
 
 	msg := &_Message{
+		Initiator:   m.Initiator,
+		Target:      m.Target,
 		PayloadType: m.Type,
-		Height:      m.Height,
 		Payload:     bs,
 	}
 
@@ -90,12 +109,24 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 
 	var payload Payload
 	switch msg.PayloadType {
+	case PayloadTypeStatusReq:
+		payload = &StatusReqPayload{}
+	case PayloadTypeStatusRes:
+		payload = &StatusResPayload{}
+	case PayloadTypeBlocksReq:
+		payload = &BlocksReqPayload{}
+	case PayloadTypeBlocksRes:
+		payload = &BlocksResPayload{}
+	case PayloadTypeTxReq:
+		payload = &TxReqPayload{}
+	case PayloadTypeTxRes:
+		payload = &TxResPayload{}
 	case PayloadTypeProposal:
 		payload = &ProposalPayload{}
 	case PayloadTypeBlock:
 		payload = &BlockPayload{}
-	case PayloadTypeStep:
-		payload = &StepPayload{}
+	case PayloadTypeHRS:
+		payload = &HRSPayload{}
 	case PayloadTypeVote:
 		payload = &VotePayload{}
 	case PayloadTypeVoteSet:
@@ -106,8 +137,8 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 	}
 
 	m.Type = msg.PayloadType
-	m.Height = msg.Height
 	m.Payload = payload
+	cbor.Unmarshal(msg.Payload, payload)
 	return cbor.Unmarshal(msg.Payload, payload)
 }
 

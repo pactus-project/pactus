@@ -16,16 +16,16 @@ type Block struct {
 }
 
 type blockData struct {
-	Header     Header  `cbor:"1,keyasint"`
-	Txs        Txs     `cbor:"2,keyasint"`
-	LastCommit *Commit `cbor:"3,keyasint"`
+	Header     Header   `cbor:"1,keyasint"`
+	TxHashes   TxHashes `cbor:"2,keyasint"`
+	LastCommit *Commit  `cbor:"3,keyasint"`
 }
 
-func NewBlock(header Header, txs Txs, lastCommit *Commit) (*Block, error) {
+func NewBlock(header Header, txHashes TxHashes, lastCommit *Commit) (*Block, error) {
 	b := &Block{
 		data: blockData{
 			Header:     header,
-			Txs:        txs,
+			TxHashes:   txHashes,
 			LastCommit: lastCommit,
 		},
 	}
@@ -36,11 +36,11 @@ func NewBlock(header Header, txs Txs, lastCommit *Commit) (*Block, error) {
 	return b, nil
 }
 
-func MakeBlock(timestamp time.Time, txs Txs,
+func MakeBlock(timestamp time.Time, txHashes TxHashes,
 	lastBlockHash, nextValHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
 
-	txsHash := txs.Hash()
+	txsHash := txHashes.Hash()
 	LastCommitHash := lastCommit.Hash()
 	header := NewHeader(1, timestamp,
 		txsHash, lastBlockHash, nextValHash, stateHash, lastReceiptsHash, LastCommitHash, proposer)
@@ -48,7 +48,7 @@ func MakeBlock(timestamp time.Time, txs Txs,
 	b := Block{
 		data: blockData{
 			Header:     header,
-			Txs:        txs,
+			TxHashes:   txHashes,
 			LastCommit: lastCommit,
 		},
 	}
@@ -60,7 +60,7 @@ func MakeBlock(timestamp time.Time, txs Txs,
 }
 
 func (b *Block) Header() *Header     { return &b.data.Header }
-func (b *Block) Txs() *Txs           { return &b.data.Txs }
+func (b *Block) TxHashes() *TxHashes { return &b.data.TxHashes }
 func (b *Block) LastCommit() *Commit { return b.data.LastCommit }
 
 func (b Block) SanityCheck() error {
@@ -85,7 +85,7 @@ func (b Block) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid LastCommitHash")
 	}
 
-	if b.data.Header.TxsHash() != b.data.Txs.Hash() {
+	if b.data.Header.TxsHash() != b.data.TxHashes.Hash() {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Txs Hash")
 	}
 
@@ -104,7 +104,7 @@ func (b *Block) Fingerprint() string {
 	return fmt.Sprintf("{%v by:%v Tx:%d App:%v Vals:%v}",
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
-		b.data.Txs.Count(),
+		b.data.TxHashes.Count(),
 		b.data.Header.StateHash().Fingerprint(),
 		b.data.Header.NextValidatorsHash().Fingerprint(),
 	)
@@ -126,7 +126,6 @@ func (b Block) Encode() ([]byte, error) {
 func (b *Block) Decode(bs []byte) error {
 	return cbor.Unmarshal(bs, &b.data)
 }
-
 
 func (b *Block) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(b.data)

@@ -160,6 +160,6 @@ func (n *Network) Fingerprint() string {
 
 func (n *Network) JoinTopic(name string) (*pubsub.Topic, error) {
 	// TODO : add topic validator
-	topic := fmt.Sprintf("/zarb/%s/%s", name, n.networkName)
+	topic := fmt.Sprintf("/zarb/%s/%s", n.networkName, name)
 	return n.pubsub.Join(topic)
 }

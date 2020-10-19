@@ -147,7 +147,7 @@ func (tx *Tx) SanityCheck() error {
 
 func (tx *Tx) Hash() crypto.Hash {
 	if tx.memorizedHash == nil {
-		bz, _ := tx.Encode()
+		bz, _ := tx.MarshalCBOR()
 		hash := crypto.HashH(bz)
 		tx.memorizedHash = &hash
 	}
@@ -177,11 +177,11 @@ func (tx Tx) SignBytes() ([]byte, error) {
 	return cbor.Marshal(tx.data)
 }
 
-func (tx *Tx) Encode() ([]byte, error) {
+func (tx *Tx) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(tx.data)
 }
 
-func (tx *Tx) Decode(bs []byte) error {
+func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &tx.data)
 }
 

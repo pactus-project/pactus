@@ -3,12 +3,11 @@ package txpool
 import (
 	"container/list"
 	"fmt"
-	"time"
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/message"
 
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -23,31 +22,33 @@ type TxPool struct {
 	lk deadlock.RWMutex
 
 	config       *config.Config
-	syncer       *synchronizer
 	pendingsList *list.List
 	pendingsMap  map[crypto.Hash]*list.Element
+	broadcastCh  chan message.Message
 	logger       *logger.Logger
 }
 
-func NewTxPool(conf *config.Config, net *network.Network) (*TxPool, error) {
+func NewTxPool(
+	conf *config.Config,
+	broadcastCh chan message.Message) (*TxPool, error) {
 	pool := &TxPool{
 		config:       conf,
 		pendingsList: list.New(),
 		pendingsMap:  make(map[crypto.Hash]*list.Element),
+		broadcastCh:  broadcastCh,
 	}
 
 	pool.logger = logger.NewLogger("_pool", pool)
-	syncer, err := newSynchronizer(conf, pool, net, pool.logger)
-	if err != nil {
-		return nil, err
-	}
-
-	pool.syncer = syncer
 	return pool, nil
 }
 
-func (pool *TxPool) Start() error {
-	pool.syncer.Start()
+func (pool *TxPool) AppendTxs(txs []tx.Tx) error {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	for _, tx := range txs {
+		pool.appendTx(&tx)
+	}
 	return nil
 }
 
@@ -55,6 +56,10 @@ func (pool *TxPool) AppendTx(tx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
+	return pool.appendTx(tx)
+}
+
+func (pool *TxPool) appendTx(tx *tx.Tx) error {
 	if pool.pendingsList.Len() >= pool.config.TxPool.MaxSize {
 		return errors.Errorf(errors.ErrGeneric, "Tx pool is full (%d txs)", pool.pendingsList.Len())
 	}
@@ -69,7 +74,8 @@ func (pool *TxPool) AppendTx(tx *tx.Tx) error {
 	el := pool.pendingsList.PushFront(tx)
 	pool.pendingsMap[tx.Hash()] = el
 
-	go pool.syncer.BroadcastTx(tx)
+	// TODO:
+	//go pool.syncer.BroadcastTx(tx)
 
 	return nil
 }
@@ -93,20 +99,7 @@ func (pool *TxPool) PendingTx(hash crypto.Hash) (*tx.Tx, bool) {
 
 	el, found := pool.pendingsMap[hash]
 	if !found {
-		pool.lk.RUnlock()
-
-		// TODO: Add timer and channel here
-		go pool.syncer.BroadcastRequestTx(hash)
-
-		// TODO: remove this
-		time.Sleep(500 * time.Millisecond)
-
-		pool.lk.RLock()
-
-		el, found = pool.pendingsMap[hash]
-		if !found {
-			return nil, false
-		}
+		return nil, false
 	}
 
 	return el.Value.(*tx.Tx), true
