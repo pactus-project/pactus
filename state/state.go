@@ -14,7 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -44,26 +44,32 @@ type State struct {
 	cache              *Cache
 	executor           *execution.Executor
 	validatorSet       *validator.ValidatorSet
-	syncer             *synchronizer
 	lastBlockHeight    int
 	lastBlockHash      crypto.Hash
 	lastReceiptsHash   crypto.Hash
 	nextValidatorsHash crypto.Hash
 	lastBlockTime      time.Time
 	updateCh           chan int
+	broadcastCh        chan message.Message
 	logger             *logger.Logger
 }
 
-func LoadStateOrNewState(conf *config.Config, genDoc *genesis.Genesis, net *network.Network, store *store.Store, txPool *txpool.TxPool) (*State, error) {
+func LoadOrNewState(
+	conf *config.Config,
+	genDoc *genesis.Genesis,
+	store *store.Store,
+	txPool *txpool.TxPool,
+	broadcastCh chan message.Message) (*State, error) {
 	db, err := leveldb.OpenFile(conf.Store.StateStorePath(), nil)
 	if err != nil {
 		return nil, err
 	}
 	st := &State{
-		db:     db,
-		config: conf,
-		txPool: txPool,
-		store:  store,
+		db:          db,
+		config:      conf,
+		txPool:      txPool,
+		store:       store,
+		broadcastCh: broadcastCh,
 	}
 
 	st.cache = newCache(store)
@@ -83,25 +89,7 @@ func LoadStateOrNewState(conf *config.Config, genDoc *genesis.Genesis, net *netw
 
 	st.logger = logger.NewLogger("State", st)
 
-	syncer, err := newSynchronizer(conf, st, store, net, st.logger)
-	if err != nil {
-		return nil, err
-	}
-	st.syncer = syncer
-
 	return st, nil
-}
-
-func (st *State) Start() error {
-	if err := st.syncer.Start(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (st *State) Stop() {
-	st.syncer.Stop()
 }
 
 func (st *State) loadState() error {
@@ -170,7 +158,7 @@ func (st *State) LastBlockTime() time.Time {
 	return st.lastBlockTime
 }
 
-func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *block.Commit) block.Block {
+func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *block.Commit) (block.Block, []tx.Tx) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -181,15 +169,17 @@ func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *b
 	}
 
 	mintbaseTx := tx.NewMintbaseTx(st.lastBlockHash, proposer, 10, "Minbase transaction")
-
 	st.txPool.AppendTx(mintbaseTx)
 
-	txs := block.NewTxs()
-	txs.Append(mintbaseTx.Hash())
+	txs := make([]tx.Tx, 0)
+	txs = append(txs, *mintbaseTx)
+
+	txHashes := block.NewTxHashes()
+	txHashes.Append(mintbaseTx.Hash())
 	stateHash := st.stateHash()
 	block := block.MakeBlock(
 		timestamp,
-		txs,
+		txHashes,
 		st.lastBlockHash,
 		crypto.UndefHash,
 		stateHash,
@@ -197,7 +187,7 @@ func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *b
 		lastCommit,
 		proposer)
 
-	return block
+	return block, txs
 }
 
 func (st *State) SyncTxPool(block *block.Block) {

@@ -1,15 +1,6 @@
 {
     "launch": {},
-    "go.testEnvVars": {
-        "LD_LIBRARY_PATH": "${workspaceFolder}/.bls/mcl/lib",
-        "CGO_LDFLAGS": "-L${workspaceFolder}/.bls/bls/lib -L${workspaceFolder}/.bls/mcl/lib -lgmp -lmcl -O0 -g",
-        "CGO_CFLAGS": "-I${workspaceFolder}/.bls/bls/include -I${workspaceFolder}/.bls/mcl/include -O0 -g"
-    },
-    "go.toolsEnvVars": {
-        "LD_LIBRARY_PATH": "${workspaceFolder}/.bls/mcl/lib",
-        "CGO_LDFLAGS": "-L${workspaceFolder}/.bls/bls/lib -L${workspaceFolder}/.bls/mcl/lib -lgmp -lmcl -O0 -g",
-        "CGO_CFLAGS": "-I${workspaceFolder}/.bls/bls/include -I${workspaceFolder}/.bls/mcl/include -O0 -g"
-    },
+
     "go.lintTool": "gometalinter",
     "go.lintFlags": [
         "--exclude=\"\bexported \\w+ (\\S*['.]*)([a-zA-Z'.*]*) should have comment or be unexported\b\""

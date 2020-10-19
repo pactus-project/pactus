@@ -1,8 +1,6 @@
 package consensus
 
-import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
-)
+import "github.com/zarbchain/zarb-go/consensus/hrs"
 
 func (cs *Consensus) enterCommit(height int, round int) {
 	if cs.hrs.InvalidHeight(height) || cs.commitRound != -1 {

@@ -9,10 +9,9 @@ type VotePayload struct {
 	Vote *vote.Vote `cbor:"1,keyasint"`
 }
 
-func NewVoteMessage(vote *vote.Vote) *Message {
-	return &Message{
-		Type:   PayloadTypeVote,
-		Height: vote.Height(),
+func NewVoteMessage(vote *vote.Vote) Message {
+	return Message{
+		Type: PayloadTypeVote,
 		Payload: &VotePayload{
 			Vote: vote,
 		},

@@ -11,7 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/validator"
@@ -36,34 +36,28 @@ type Consensus struct {
 	commitRound   int
 	state         *state.State
 	store         *store.Store
-	syncer        *synchronizer
+	broadcastCh   chan message.Message
 	logger        *logger.Logger
 }
 
 func NewConsensus(
 	conf *config.Config,
 	state *state.State,
-	net *network.Network,
 	store *store.Store,
 	privValidator *validator.PrivValidator,
-) (*Consensus, error) {
+	broadcastCh chan message.Message) (*Consensus, error) {
 	cs := &Consensus{
 		config:        conf,
 		state:         state,
 		store:         store,
 		valset:        state.ValidatorSet(),
+		broadcastCh:   broadcastCh,
 		privValidator: privValidator,
 	}
 
 	// See enterNewHeight.
 	cs.hrs = hrs.NewHRS(state.LastBlockHeight(), 0, hrs.StepTypeNewHeight)
 	cs.logger = logger.NewLogger("consensus", cs)
-
-	syncer, err := newSynchronizer(conf, cs, net, cs.logger)
-	if err != nil {
-		return nil, err
-	}
-	cs.syncer = syncer
 
 	return cs, nil
 }
@@ -72,35 +66,30 @@ func (cs *Consensus) Start() error {
 	cs.scheduleNewHeight()
 	cs.stateListener()
 
-	if err := cs.syncer.Start(); err != nil {
-		return err
-	}
-
 	return nil
 }
 
 func (cs *Consensus) Stop() {
-	cs.syncer.Stop()
 }
 
 func (cs *Consensus) stateListener() {
 
-	ch := make(chan int, 10)
-	cs.state.SetNewHeightListener(ch)
-	for {
-		select {
-		case height := <-ch:
-			cs.logger.Info("New height", "h", height)
-		}
+	// ch := make(chan int, 10)
+	// cs.state.SetNewHeightListener(ch)
+	// for {
+	// 	select {
+	// 	case height := <-ch:
+	// 		cs.logger.Info("New height", "h", height)
+	// 	}
 
-	}
+	// }
 }
 func (cs *Consensus) Fingerprint() string {
 	return fmt.Sprintf("{%v}",
 		cs.hrs.Fingerprint())
 }
 
-func (cs *Consensus) HeightRoundStep() hrs.HRS {
+func (cs *Consensus) HRS() hrs.HRS {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -110,7 +99,8 @@ func (cs *Consensus) HeightRoundStep() hrs.HRS {
 func (cs *Consensus) updateRoundStep(round int, step hrs.StepType) {
 	cs.hrs.UpdateRoundStep(round, step)
 
-	go cs.syncer.BroadcastNewStep(cs.hrs)
+	msg := message.NewHRSMessage(cs.hrs)
+	cs.broadcastCh <- msg
 }
 
 func (cs *Consensus) updateHeight(height int) {
@@ -275,5 +265,6 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	cs.addVote(v)
 
 	// Broadcast our vote
-	go cs.syncer.BroadcastVote(v)
+	msg := message.NewVoteMessage(v)
+	cs.broadcastCh <- msg
 }

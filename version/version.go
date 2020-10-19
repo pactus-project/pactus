@@ -4,20 +4,26 @@ import (
 	"fmt"
 )
 
-// Version components
-const (
-	Maj = 0
-	Min = 7
-	Fix = 0
-)
-
 var (
-	Version   = fmt.Sprintf("%d.%d.%d", Maj, Min, Fix)
-	GitCommit string
+	NodeVersion Version
+	GitCommit   string
 )
 
 func init() {
-	if GitCommit != "" {
-		Version += "-" + GitCommit
+	NodeVersion = Version{
+		Major: 0,
+		Minor: 8,
+		Patch: 0,
 	}
+}
+
+type Version struct {
+	Major int
+	Minor int
+	Patch int
+}
+
+func (v Version) String() string {
+	return fmt.Sprintf("%d.%d.%d-%s",
+		v.Major, v.Minor, v.Patch, GitCommit)
 }

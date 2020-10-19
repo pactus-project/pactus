@@ -3,6 +3,7 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -86,7 +87,7 @@ func (cs *Consensus) createProposal(height int, round int) {
 	}
 
 	proposerAddr := cs.privValidator.Address()
-	block := cs.state.ProposeBlock(height, proposerAddr, cs.lastCommit)
+	block, txs := cs.state.ProposeBlock(height, proposerAddr, cs.lastCommit)
 
 	if err := cs.state.ValidateBlock(&block); err != nil {
 		cs.logger.Error("Our block is invalid. Why?")
@@ -100,6 +101,6 @@ func (cs *Consensus) createProposal(height int, round int) {
 	cs.logger.Info("Proposal signed and set", "proposal", proposal)
 
 	// Broadcast proposal
-	go cs.syncer.BroadcastProposal(proposal)
-
+	msg := message.NewProposalMessage(*proposal, txs)
+	cs.broadcastCh <- msg
 }

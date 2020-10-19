@@ -3,15 +3,16 @@ package node
 import (
 	"time"
 
-	"github.com/zarbchain/zarb-go/network"
-
 	"github.com/pkg/errors"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/utils"
 	"github.com/zarbchain/zarb-go/validator"
@@ -27,6 +28,7 @@ type Node struct {
 	txPool     *txpool.TxPool
 	consensus  *consensus.Consensus
 	network    *network.Network
+	sync       *sync.Synchronizer
 
 	capnp *capnp.Server
 	http  *http.Server
@@ -41,23 +43,29 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 	if err != nil {
 		return nil, err
 	}
+	broadcastCh := make(chan message.Message, 10)
 
 	store, err := store.NewStore(conf)
 	if err != nil {
 		return nil, err
 	}
 
-	txPool, err := txpool.NewTxPool(conf, network)
+	txPool, err := txpool.NewTxPool(conf, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	state, err := state.LoadStateOrNewState(conf, genDoc, network, store, txPool)
+	state, err := state.LoadOrNewState(conf, genDoc, store, txPool, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	consensus, err := consensus.NewConsensus(conf, state, network, store, privValidator)
+	consensus, err := consensus.NewConsensus(conf, state, store, privValidator, broadcastCh)
+	if err != nil {
+		return nil, err
+	}
+
+	sync, err := sync.NewSynchronizer(conf, state, store, consensus, txPool, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +88,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 		store:      store,
 		txPool:     txPool,
 		consensus:  consensus,
+		sync:       sync,
 		capnp:      capnp,
 		http:       http,
 	}
@@ -96,8 +105,8 @@ func (n *Node) Start() error {
 	}
 
 	n.consensus.Start()
-	n.txPool.Start()
 	n.network.Start()
+	n.sync.Start()
 
 	// Wait for network to started
 	time.Sleep(1 * time.Second)
@@ -120,4 +129,7 @@ func (n *Node) Stop() {
 
 	n.consensus.Stop()
 	n.network.Stop()
+	n.sync.Stop()
+	n.capnp.StopServer()
+	n.http.StopServer()
 }

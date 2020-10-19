@@ -18,11 +18,11 @@ import (
 )
 
 var ZARB = `
-XXXXXXX   XXXXX   XXXXXX   XXXXXX
-   XXX   XX   XX  XX   XX  XX   XX 
-  XXX    XXXXXXX  XXXXXX   XXXXXX 
- XXX     XX   XX  XX   XX  XX   XX 
-XXXXXXX  XX   XX  XX   XX  XXXXXX      
+ XXXXXXX   XXXXX   XXXXXX   XXXXXX
+    XXX   XX   XX  XX   XX  XX   XX
+   XXX    XXXXXXX  XXXXXX   XXXXXX
+  XXX     XX   XX  XX   XX  XX   XX
+ XXXXXXX  XX   XX  XX   XX  XXXXXX
 `
 
 type terminalPrompter struct {

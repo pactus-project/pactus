@@ -2,41 +2,14 @@ package state
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/genesis"
-	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/utils"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
-func testState(t *testing.T) *State {
-	pb, _ := crypto.GenerateRandomKey()
-	addr := pb.Address()
-	acc := account.NewAccount(addr)
-	val := validator.NewValidator(pb, 1)
-	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
-	conf := config.DefaultConfig()
-	conf.Store.Path = utils.TempDirName()
-	conf.Network.NodeKey = utils.TempFilename()
-	store, err := store.NewStore(conf)
-	logger.InitLogger(conf)
-	net, err := network.NewNetwork(conf)
-	require.NoError(t, err)
-	st, err := LoadStateOrNewState(conf, gen, net, store, nil)
-	require.NoError(t, err)
-	return st
-}
-
 func TestAccountChange(t *testing.T) {
-	st := testState(t)
+	st, _ := mockState(t)
 	cache := newCache(st.store)
 	pb1, _ := crypto.GenerateRandomKey()
 	pb2, _ := crypto.GenerateRandomKey()
