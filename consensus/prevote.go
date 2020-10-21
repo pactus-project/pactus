@@ -47,6 +47,6 @@ func (cs *Consensus) enterPrevoteWait(height int, round int) {
 		cs.logger.Error("PrevoteWait: Prevotes does not have any +2/3 votes")
 	}
 
-	cs.scheduleTimeout(cs.config.Consensus.Prevote(round), height, round, hrs.StepTypePrecommit)
+	cs.scheduleTimeout(cs.config.Prevote(round), height, round, hrs.StepTypePrecommit)
 	cs.logger.Info("Wait for some more prevotes") //then enter precommit
 }

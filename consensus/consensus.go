@@ -6,7 +6,6 @@ import (
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
@@ -27,7 +26,7 @@ var (
 type Consensus struct {
 	lk deadlock.RWMutex
 
-	config        *config.Config
+	config        *Config
 	hrs           hrs.HRS
 	votes         *HeightVoteSet
 	valset        *validator.ValidatorSet
@@ -41,7 +40,7 @@ type Consensus struct {
 }
 
 func NewConsensus(
-	conf *config.Config,
+	conf *Config,
 	state *state.State,
 	store *store.Store,
 	privValidator *validator.PrivValidator,
@@ -249,13 +248,13 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 
 func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	if cs.privValidator == nil {
-		cs.logger.Error("This node is not a validator")
+		cs.logger.Info("This node is not a validator")
 		return
 	}
 
 	address := cs.privValidator.Address()
 	if !cs.valset.Contains(address) {
-		cs.logger.Error("This node is not in validator set", "addr", address)
+		cs.logger.Info("This node is not in validator set", "addr", address)
 		return
 	}
 

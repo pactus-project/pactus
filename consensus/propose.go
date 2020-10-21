@@ -73,7 +73,7 @@ func (cs *Consensus) enterPropose(height int, round int) {
 		cs.logger.Debug("Not our turn to propose", "proposer", cs.proposer().Address())
 	}
 
-	cs.scheduleTimeout(cs.config.Consensus.Propose(round), height, round, hrs.StepTypePrevote)
+	cs.scheduleTimeout(cs.config.Propose(round), height, round, hrs.StepTypePrevote)
 }
 
 func (cs *Consensus) createProposal(height int, round int) {

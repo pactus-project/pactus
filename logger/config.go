@@ -1,11 +1,11 @@
-package config
+package logger
 
-type LoggerConfig struct {
+type Config struct {
 	Levels map[string]string
 }
 
-func DefaultLoggerConfig() *LoggerConfig {
-	def := &LoggerConfig{
+func DefaultConfig() *Config {
+	def := &Config{
 		Levels: make(map[string]string),
 	}
 
@@ -13,5 +13,6 @@ func DefaultLoggerConfig() *LoggerConfig {
 	def.Levels["network"] = "trace"
 	def.Levels["consensus"] = "trace"
 	def.Levels["state"] = "trace"
+	def.Levels["sync"] = "trace"
 	return def
 }

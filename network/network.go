@@ -15,7 +15,6 @@ import (
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	libp2pps "github.com/libp2p/go-libp2p-pubsub"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/utils"
@@ -29,6 +28,7 @@ const DiscoveryServiceTag = "pubsub-chat-example"
 
 type Network struct {
 	ctx         context.Context
+	config      *Config
 	networkName string
 	host        host.Host
 	router      routing.Routing // Router is a router from IPFS
@@ -71,7 +71,7 @@ func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(conf *config.Config) (*Network, error) {
+func NewNetwork(conf *Config) (*Network, error) {
 	ctx := context.Background()
 
 	var router routing.Routing
@@ -99,20 +99,21 @@ func NewNetwork(conf *config.Config) (*Network, error) {
 	}
 
 	n := &Network{
-		networkName: conf.Network.Name,
 		ctx:         ctx,
+		config:      conf,
+		networkName: conf.Name,
 		host:        host,
 		router:      router,
 		pubsub:      pubsub,
 	}
 
 	n.logger = logger.NewLogger("_Network", n)
-	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.Network.Address)
+	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.Address)
 
 	return n, nil
 }
 
-func buildHost(ctx context.Context, conf *config.Config, makeDHT func(host host.Host) (routing.Routing, error)) (host.Host, error) {
+func buildHost(ctx context.Context, conf *Config, makeDHT func(host host.Host) (routing.Routing, error)) (host.Host, error) {
 	// Node must build a host acting as a libp2p relay.  Additionally it
 	// runs the autoNAT service which allows other nodes to check for their
 	// own dialability by having this node attempt to dial them.
@@ -120,13 +121,13 @@ func buildHost(ctx context.Context, conf *config.Config, makeDHT func(host host.
 		return makeDHT(h)
 	}
 
-	nodeKey, err := loadOrCreateKey(conf.Network.NodeKey)
+	nodeKey, err := loadOrCreateKey(conf.NodeKey)
 	if err != nil {
 		return nil, err
 	}
 
 	libP2pOpts := []libp2p.Option{
-		libp2p.ListenAddrStrings(conf.Network.Address),
+		libp2p.ListenAddrStrings(conf.Address),
 		libp2p.Identity(nodeKey),
 	}
 

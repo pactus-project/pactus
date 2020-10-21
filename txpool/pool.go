@@ -9,7 +9,6 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -21,7 +20,7 @@ type TxPoolReader interface {
 type TxPool struct {
 	lk deadlock.RWMutex
 
-	config       *config.Config
+	config       *Config
 	pendingsList *list.List
 	pendingsMap  map[crypto.Hash]*list.Element
 	broadcastCh  chan message.Message
@@ -29,7 +28,7 @@ type TxPool struct {
 }
 
 func NewTxPool(
-	conf *config.Config,
+	conf *Config,
 	broadcastCh chan message.Message) (*TxPool, error) {
 	pool := &TxPool{
 		config:       conf,
@@ -60,7 +59,7 @@ func (pool *TxPool) AppendTx(tx *tx.Tx) error {
 }
 
 func (pool *TxPool) appendTx(tx *tx.Tx) error {
-	if pool.pendingsList.Len() >= pool.config.TxPool.MaxSize {
+	if pool.pendingsList.Len() >= pool.config.MaxSize {
 		return errors.Errorf(errors.ErrGeneric, "Tx pool is full (%d txs)", pool.pendingsList.Len())
 	}
 

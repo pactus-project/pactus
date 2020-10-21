@@ -6,7 +6,7 @@ import (
 )
 
 func (cs *Consensus) scheduleNewHeight() {
-	sleep := cs.state.LastBlockTime().Add(cs.config.BlockTime()).Sub(utils.Now())
+	sleep := cs.state.LastBlockTime().Add(cs.state.BlockTime()).Sub(utils.Now())
 	cs.logger.Debug("NewHeight is scheduled", "seconds", sleep.Seconds())
 	cs.scheduleTimeout(sleep, cs.hrs.Height(), cs.hrs.Round(), hrs.StepTypeNewHeight)
 }

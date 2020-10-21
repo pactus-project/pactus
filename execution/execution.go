@@ -1,7 +1,6 @@
 package execution
 
 import (
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution/executor"
 	"github.com/zarbchain/zarb-go/logger"
@@ -9,15 +8,13 @@ import (
 )
 
 type Executor struct {
-	config         *config.Config
 	sendExecutor   *executor.SendExecutor
 	accumulatedFee int64
 	logger         *logger.Logger
 }
 
-func NewExecutor(conf *config.Config, sandbox executor.Sandbox) (*Executor, error) {
+func NewExecutor(sandbox executor.Sandbox) (*Executor, error) {
 	exe := &Executor{
-		config:       conf,
 		sendExecutor: executor.NewSendExecutor(sandbox),
 	}
 	exe.logger = logger.NewLogger("executor", exe)

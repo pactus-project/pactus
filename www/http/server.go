@@ -10,7 +10,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"zombiezen.com/go/capnproto2/rpc"
@@ -18,14 +17,14 @@ import (
 
 type Server struct {
 	ctx      context.Context
+	config   *Config
 	router   *mux.Router
 	server   capnp.ZarbServer
 	listener net.Listener
-	config   *config.Config
 	logger   *logger.Logger
 }
 
-func NewServer(conf *config.Config) (*Server, error) {
+func NewServer(conf *Config) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
@@ -34,11 +33,11 @@ func NewServer(conf *config.Config) (*Server, error) {
 }
 
 func (s *Server) StartServer() error {
-	if !s.config.Http.Enable {
+	if !s.config.Enable {
 		return nil
 	}
 
-	c, err := net.Dial("tcp", s.config.Capnp.Address)
+	c, err := net.Dial("tcp", s.config.Address)
 	if err != nil {
 		return err
 	}
@@ -53,13 +52,13 @@ func (s *Server) StartServer() error {
 	s.router.HandleFunc("/account/number/{number}", s.AccountNumberHandler)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
-	l, err := net.Listen("tcp", s.config.Http.Address)
+	l, err := net.Listen("tcp", s.config.Address)
 	if err != nil {
 		return err
 	}
 
-	s.config.Http.Address = l.Addr().String()
-	s.logger.Info("Http started listening", "address", s.config.Http.Address)
+	s.config.Address = l.Addr().String()
+	s.logger.Info("Http started listening", "address", s.config.Address)
 	s.listener = l
 	go func() {
 		for {

@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/sirupsen/logrus"
-	"github.com/zarbchain/zarb-go/config"
 )
 
 type fingerprintable interface {
@@ -13,7 +12,7 @@ type fingerprintable interface {
 }
 
 type loggers struct {
-	config  *config.Config
+	config  *Config
 	loggers map[string]*Logger
 }
 
@@ -27,14 +26,14 @@ type Logger struct {
 	obj    interface{}
 }
 
-func InitLogger(conf *config.Config) {
+func InitLogger(conf *Config) {
 	if loggersInst == nil {
 		loggersInst = &loggers{
 			config:  conf,
 			loggers: make(map[string]*Logger),
 		}
 
-		lvl, err := logrus.ParseLevel(conf.Logger.Levels["default"])
+		lvl, err := logrus.ParseLevel(conf.Levels["default"])
 		if err != nil {
 			logrus.SetLevel(lvl)
 		}
@@ -49,9 +48,9 @@ func NewLogger(name string, obj interface{}) *Logger {
 	}
 	l.logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
 
-	lvl := loggersInst.config.Logger.Levels[name]
+	lvl := loggersInst.config.Levels[name]
 	if lvl == "" {
-		lvl = loggersInst.config.Logger.Levels["default"]
+		lvl = loggersInst.config.Levels["default"]
 	}
 
 	level, err := logrus.ParseLevel(lvl)
