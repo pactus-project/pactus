@@ -40,7 +40,7 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 		bytesToAddress(ch.ProposerAddress()),
 	)
 
-	txs := block.NewTxs()
+	txs := block.NewTxHashes()
 	hashesList, _ := ctxs.Hashes()
 	for i := 0; i < hashesList.Len(); i += 1 {
 		txs.Append(bytesToHash(hashesList.At(i)))

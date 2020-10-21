@@ -7,30 +7,30 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-type RequestPayload struct {
+type TxReqPayload struct {
 	Hash crypto.Hash `cbor:"1,keyasint"`
 }
 
-func NewRequestMessage(hash crypto.Hash) *Message {
-	return &Message{
-		Type: PayloadTypeRequest,
-		Payload: &RequestPayload{
+func NewTxReqMessage(hash crypto.Hash) Message {
+	return Message{
+		Type: PayloadTypeTxReq,
+		Payload: &TxReqPayload{
 			Hash: hash,
 		},
 	}
 }
 
-func (p *RequestPayload) SanityCheck() error {
+func (p *TxReqPayload) SanityCheck() error {
 	if err := p.Hash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid hash")
 	}
 	return nil
 }
 
-func (p *RequestPayload) Type() PayloadType {
-	return PayloadTypeRequest
+func (p *TxReqPayload) Type() PayloadType {
+	return PayloadTypeTxReq
 }
 
-func (p *RequestPayload) Fingerprint() string {
+func (p *TxReqPayload) Fingerprint() string {
 	return fmt.Sprintf(" %v", p.Hash.Fingerprint())
 }
