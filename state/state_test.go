@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
@@ -23,16 +22,17 @@ func mockState(t *testing.T) (*State, crypto.Address) {
 	acc.SetBalance(21000000000000)
 	val := validator.NewValidator(pb, 1)
 	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
-	conf := config.DefaultConfig()
-	conf.Logger.Levels["default"] = "error"
-	conf.Store.Path = utils.TempDirName()
-	conf.Network.NodeKey = utils.TempFilename()
-	logger.InitLogger(conf)
-	store, err := store.NewStore(conf)
+	loggerConfig := logger.DefaultConfig()
+	loggerConfig.Levels["default"] = "error"
+	logger.InitLogger(loggerConfig)
+	storeConfig := store.DefaultConfig()
+	storeConfig.Path = utils.TempDirName()
+	store, err := store.NewStore(storeConfig)
 	require.NoError(t, err)
-	txPool, err := txpool.NewTxPool(conf, nil)
+	txPoolConfig := txpool.DefaultConfig()
+	txPool, err := txpool.NewTxPool(txPoolConfig, nil)
 	require.NoError(t, err)
-	st, err := LoadOrNewState(conf, gen, store, txPool, nil)
+	st, err := LoadOrNewState(gen, store, txPool, nil)
 	require.NoError(t, err)
 	return st, addr
 }

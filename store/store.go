@@ -4,7 +4,6 @@ import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
@@ -19,32 +18,32 @@ type StoreReader interface {
 type Store struct {
 	lk deadlock.RWMutex
 
-	config         *config.Config
+	config         *Config
 	blockStore     *blockStore
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
 }
 
-func NewStore(config *config.Config) (*Store, error) {
-	blockStore, err := newBlockStore(config.Store.BlockStorePath())
+func NewStore(conf *Config) (*Store, error) {
+	blockStore, err := newBlockStore(conf.BlockStorePath())
 	if err != nil {
 		return nil, err
 	}
-	txStore, err := newTxStore(config.Store.TxStorePath())
+	txStore, err := newTxStore(conf.TxStorePath())
 	if err != nil {
 		return nil, err
 	}
-	accountStore, err := newAccountStore(config.Store.AccountStorePath())
+	accountStore, err := newAccountStore(conf.AccountStorePath())
 	if err != nil {
 		return nil, err
 	}
-	validatorStore, err := newValidatorStore(config.Store.ValidatorStorePath())
+	validatorStore, err := newValidatorStore(conf.ValidatorStorePath())
 	if err != nil {
 		return nil, err
 	}
 	return &Store{
-		config:         config,
+		config:         conf,
 		blockStore:     blockStore,
 		txStore:        txStore,
 		accountStore:   accountStore,

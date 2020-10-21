@@ -6,13 +6,13 @@ import (
 
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/sync/stats"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
@@ -21,11 +21,12 @@ import (
 
 type Synchronizer struct {
 	ctx            context.Context
-	config         *config.Config
+	config         *Config
 	store          *store.Store
 	state          *state.State
 	consensus      *consensus.Consensus
 	txPool         *txpool.TxPool
+	stats          *stats.Stats
 	self           peer.ID
 	blockPool      map[int]*block.Block
 	txkPool        map[crypto.Hash]*tx.Tx
@@ -40,7 +41,7 @@ type Synchronizer struct {
 }
 
 func NewSynchronizer(
-	conf *config.Config,
+	conf *Config,
 	state *state.State,
 	store *store.Store,
 	consensus *consensus.Consensus,
@@ -83,6 +84,7 @@ func NewSynchronizer(
 		return nil, err
 	}
 
+	logger := logger.NewLogger("_syncer", syncer)
 	syncer.self = net.ID()
 	syncer.txTopic = txTopic
 	syncer.txSub = txSub
@@ -90,7 +92,8 @@ func NewSynchronizer(
 	syncer.stateSub = stateSub
 	syncer.consensusTopic = consensusTopic
 	syncer.consensusSub = consensusSub
-	syncer.logger = logger.NewLogger("_syncer", syncer)
+	syncer.logger = logger
+	syncer.stats = stats.NewStats(logger)
 
 	return syncer, nil
 }
