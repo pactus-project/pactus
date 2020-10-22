@@ -91,7 +91,7 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	}
 	return nil
 }
-func (p *Proposal) ID() crypto.Hash {
+func (p *Proposal) Hash() crypto.Hash {
 	return crypto.HashH(p.SignBytes())
 }
 

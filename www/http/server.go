@@ -28,7 +28,7 @@ func NewServer(conf *Config) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
-		logger: logger.NewLogger("rest", nil),
+		logger: logger.NewLogger("_http", nil),
 	}, nil
 }
 
@@ -37,7 +37,7 @@ func (s *Server) StartServer() error {
 		return nil
 	}
 
-	c, err := net.Dial("tcp", s.config.Address)
+	c, err := net.Dial("tcp", s.config.CapnpServer)
 	if err != nil {
 		return err
 	}
@@ -57,8 +57,7 @@ func (s *Server) StartServer() error {
 		return err
 	}
 
-	s.config.Address = l.Addr().String()
-	s.logger.Info("Http started listening", "address", s.config.Address)
+	s.logger.Info("Http started listening", "address", l.Addr().String())
 	s.listener = l
 	go func() {
 		for {

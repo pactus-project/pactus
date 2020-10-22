@@ -24,7 +24,7 @@ func NewServer(conf *Config, store store.StoreReader) (*Server, error) {
 		ctx:    context.Background(),
 		store:  store,
 		config: conf,
-		logger: logger.NewLogger("capnp", nil),
+		logger: logger.NewLogger("_capnp", nil),
 	}, nil
 }
 
@@ -38,8 +38,7 @@ func (s *Server) StartServer() error {
 		return err
 	}
 
-	s.config.Address = l.Addr().String()
-	s.logger.Info("Capnp started listening", "address", s.config.Address)
+	s.logger.Info("Capnp started listening", "address", l.Addr())
 	s.listener = l
 	go func() {
 		for {

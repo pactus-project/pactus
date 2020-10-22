@@ -132,12 +132,6 @@ func (st *State) LastBlockHeight() int {
 	return st.lastBlockHeight
 }
 
-func (st *State) LastBlockInfo() (int, crypto.Hash) {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.lastBlockHeight, st.lastBlockHash
-}
 
 func (st *State) LastBlockTime() time.Time {
 	st.lk.RLock()

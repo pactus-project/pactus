@@ -29,7 +29,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	if cs.votes.lockedProposal == nil {
 		// For any reason, we are not locked, try to found the locked proposal
 		roundProposal := cs.votes.RoundProposal(round)
-		if roundProposal.IsForBlock(blockHash) {
+		if roundProposal != nil && roundProposal.IsForBlock(blockHash) {
 			cs.votes.lockedProposal = roundProposal
 		} else {
 			cs.logger.Error("We don't have commit proposal.")

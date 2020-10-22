@@ -11,7 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -26,7 +26,7 @@ func mockState(t *testing.T) (*State, crypto.Address) {
 	loggerConfig.Levels["default"] = "error"
 	logger.InitLogger(loggerConfig)
 	storeConfig := store.DefaultConfig()
-	storeConfig.Path = utils.TempDirName()
+	storeConfig.Path = util.TempDirName()
 	store, err := store.NewStore(storeConfig)
 	require.NoError(t, err)
 	txPoolConfig := txpool.DefaultConfig()
