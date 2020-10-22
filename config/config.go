@@ -14,7 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/http"
 )
@@ -102,7 +102,7 @@ func (conf *Config) SaveToFile(file string) error {
 	} else {
 		return errors.Errorf(errors.ErrInvalidConfig, "Invalid suffix for the config file")
 	}
-	if err := utils.WriteFile(file, dat); err != nil {
+	if err := util.WriteFile(file, dat); err != nil {
 		return err
 	}
 

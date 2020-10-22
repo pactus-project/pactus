@@ -3,34 +3,28 @@ package message
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/version"
 )
 
 type StatusResPayload struct {
-	Version         version.Version `cbor:"1,keyasint"`
-	LastBlockHeight int             `cbor:"2,keyasint"`
-	LastBlockHash   crypto.Hash     `cbor:"3,keyasint"`
+	Version version.Version `cbor:"1,keyasint"`
+	Height  int             `cbor:"2,keyasint"`
 }
 
-func NewStatusResMessage(height int, hash crypto.Hash) Message {
+func NewStatusResMessage(height int) Message {
 	return Message{
 		Type: PayloadTypeStatusRes,
 		Payload: &StatusResPayload{
-			Version:         version.NodeVersion,
-			LastBlockHeight: height,
-			LastBlockHash:   hash,
+			Version: version.NodeVersion,
+			Height:  height,
 		},
 	}
 
 }
 func (p *StatusResPayload) SanityCheck() error {
-	if p.LastBlockHeight < 0 {
+	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
-	}
-	if err := p.LastBlockHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid hash: %v", err)
 	}
 	return nil
 }
@@ -40,5 +34,5 @@ func (p *StatusResPayload) Type() PayloadType {
 }
 
 func (p *StatusResPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v}", p.LastBlockHeight)
+	return fmt.Sprintf("{%v}", p.Height)
 }

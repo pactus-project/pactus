@@ -55,8 +55,9 @@ func NewConsensus(
 	}
 
 	// See enterNewHeight.
+	cs.votes = NewHeightVoteSet(-1, cs.valset)
 	cs.hrs = hrs.NewHRS(state.LastBlockHeight(), 0, hrs.StepTypeNewHeight)
-	cs.logger = logger.NewLogger("consensus", cs)
+	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
 }
@@ -98,7 +99,8 @@ func (cs *Consensus) HRS() hrs.HRS {
 func (cs *Consensus) updateRoundStep(round int, step hrs.StepType) {
 	cs.hrs.UpdateRoundStep(round, step)
 
-	msg := message.NewHRSMessage(cs.hrs)
+	hasProposal := cs.votes.HasRoundProposal(cs.hrs.Round())
+	msg := message.NewHRSMessage(cs.hrs, hasProposal)
 	cs.broadcastCh <- msg
 }
 
@@ -106,11 +108,18 @@ func (cs *Consensus) updateHeight(height int) {
 	cs.hrs.UpdateHeight(height)
 }
 
-func (cs *Consensus) Proposal(round int) *vote.Proposal {
+func (cs *Consensus) HasProposal() bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.votes.RoundProposal(round)
+	return cs.votes.HasRoundProposal(cs.hrs.Round())
+}
+
+func (cs *Consensus) LastProposal() *vote.Proposal {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.votes.RoundProposal(cs.hrs.Round())
 }
 
 func (cs *Consensus) AllVotes() []*vote.Vote {
@@ -122,6 +131,20 @@ func (cs *Consensus) AllVotes() []*vote.Vote {
 	i := 0
 	for _, v := range votes {
 		slice[i] = v
+		i++
+	}
+	return slice
+}
+
+func (cs *Consensus) AllVotesHashes() []crypto.Hash {
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
+
+	votes := cs.votes.votes
+	slice := make([]crypto.Hash, len(votes))
+	i := 0
+	for _, v := range votes {
+		slice[i] = v.Hash()
 		i++
 	}
 	return slice
@@ -247,11 +270,6 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 }
 
 func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
-	if cs.privValidator == nil {
-		cs.logger.Info("This node is not a validator")
-		return
-	}
-
 	address := cs.privValidator.Address()
 	if !cs.valset.Contains(address) {
 		cs.logger.Info("This node is not in validator set", "addr", address)

@@ -112,6 +112,17 @@ func (pool *TxPool) HasTx(hash crypto.Hash) bool {
 	return found
 }
 
+func (pool *TxPool) GetTx(hash crypto.Hash) *tx.Tx {
+	pool.lk.RLock()
+	defer pool.lk.RUnlock()
+
+	el, found := pool.pendingsMap[hash]
+	if found {
+		return el.Value.(*tx.Tx)
+	}
+	return nil
+}
+
 func (pool *TxPool) Fingerprint() string {
 	return fmt.Sprintf("{%v}", pool.pendingsList.Len())
 }

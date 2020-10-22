@@ -17,7 +17,7 @@ import (
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // DiscoveryInterval is how often we re-publish our mDNS records.
@@ -40,8 +40,8 @@ type Network struct {
 }
 
 func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
-	if utils.PathExists(path) {
-		h, err := utils.ReadFile(path)
+	if util.PathExists(path) {
+		h, err := util.ReadFile(path)
 		if err != nil {
 			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 		}
@@ -64,7 +64,7 @@ func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 	h := hex.EncodeToString(bs)
-	err = utils.WriteFile(path, []byte(h))
+	err = util.WriteFile(path, []byte(h))
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
@@ -107,7 +107,7 @@ func NewNetwork(conf *Config) (*Network, error) {
 		pubsub:      pubsub,
 	}
 
-	n.logger = logger.NewLogger("_Network", n)
+	n.logger = logger.NewLogger("_network", n)
 	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.Address)
 
 	return n, nil

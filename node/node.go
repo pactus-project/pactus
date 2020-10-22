@@ -14,7 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/http"
@@ -65,7 +65,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 		return nil, err
 	}
 
-	sync, err := sync.NewSynchronizer(conf.Sync, state, store, consensus, txPool, network, broadcastCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, privValidator.Address(), state, store, consensus, txPool, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
@@ -97,14 +97,13 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 }
 
 func (n *Node) Start() error {
-	now := utils.Now()
+	now := util.Now()
 	genTime := n.genesisDoc.GenesisTime()
 	if genTime.After(now) {
 		logger.Info("Genesis time is in the future. Sleeping until then...", "genTime", genTime)
 		time.Sleep(genTime.Sub(now))
 	}
 
-	n.consensus.Start()
 	n.network.Start()
 	n.sync.Start()
 
@@ -120,6 +119,9 @@ func (n *Node) Start() error {
 	if err != nil {
 		return errors.Wrap(err, "could not start http server")
 	}
+
+	n.consensus.Start()
+
 
 	return nil
 }

@@ -7,7 +7,7 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/keystore/key"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // ChangeAuth changes the passphrase of the key file
@@ -50,7 +50,7 @@ func ChangeAuth() func(c *cli.Cmd) {
 				return
 			}
 			// Store the file to disk.
-			if err := utils.WriteFile(*keyFile, keyjson); err != nil {
+			if err := util.WriteFile(*keyFile, keyjson); err != nil {
 				cmd.PrintErrorMsg("Failed to write the key file: %v", err)
 				return
 			}

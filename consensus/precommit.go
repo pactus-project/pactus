@@ -22,19 +22,20 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 
 	blockHash := cs.votes.Prevotes(round).QuorumBlock()
 	if blockHash == nil || blockHash.IsUndef() {
-		cs.logger.Info("Precommit: Voted for nil")
+		cs.logger.Info("Precommit: Voted for nil, no quorum for prevote")
 		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
 		return
 	}
 
 	roundProposal := cs.votes.RoundProposal(round)
 	if roundProposal == nil {
-		cs.logger.Error("Precommit: We don't have proposal yet")
+		cs.logger.Error("Precommit: Voted for nil, no proposal.")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
+		return
 	}
 
 	if !roundProposal.IsForBlock(blockHash) {
-		cs.logger.Error("Precommit: We have unknown proposal")
+		cs.logger.Error("Precommit: Voted for nil, unknown proposal.")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 	}

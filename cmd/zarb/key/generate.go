@@ -6,7 +6,7 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/keystore/key"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // Generate creates a new account and stores the keyfile in the disk
@@ -25,7 +25,7 @@ func Generate() func(c *cli.Cmd) {
 			keyfilepath := cmd.ZarbKeystoreDir() + keyObj.Address().String() + ".json"
 
 			// Store the file to disk.
-			if err := utils.WriteFile(keyfilepath, keyjson); err != nil {
+			if err := util.WriteFile(keyfilepath, keyjson); err != nil {
 				cmd.PrintErrorMsg("Failed to write the key file: %v", err)
 				return
 			}

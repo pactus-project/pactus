@@ -14,7 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/node"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
 )
 
@@ -50,7 +50,7 @@ func Start() func(c *cli.Cmd) {
 			switch {
 			case *keyFile == "" && *privateKey == "":
 				f := path + "/validator_key.json"
-				if utils.PathExists(f) {
+				if util.PathExists(f) {
 					kj, err := key.DecryptKeyFile(f, "")
 					if err != nil {
 						cmd.PrintErrorMsg("Aborted! %v", err)

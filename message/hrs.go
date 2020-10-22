@@ -8,14 +8,16 @@ import (
 )
 
 type HRSPayload struct {
-	HRS hrs.HRS `cbor:"1,keyasint"`
+	HRS         hrs.HRS `cbor:"1,keyasint"`
+	HasProposal bool    `cbor:"2,keyasint"`
 }
 
-func NewHRSMessage(hrs hrs.HRS) Message {
+func NewHRSMessage(hrs hrs.HRS, hasProposal bool) Message {
 	return Message{
 		Type: PayloadTypeHRS,
 		Payload: &HRSPayload{
-			HRS: hrs,
+			HRS:         hrs,
+			HasProposal: hasProposal,
 		},
 	}
 }
@@ -24,6 +26,7 @@ func (p *HRSPayload) SanityCheck() error {
 	if !p.HRS.IsValid() {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid step")
 	}
+
 	return nil
 }
 

@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 var (
@@ -13,7 +13,7 @@ var (
 	blockHashPrefix = []byte{0x02}
 )
 
-func blockKey(height int) []byte           { return append(blockPrefix, utils.IntToSlice(height)...) }
+func blockKey(height int) []byte           { return append(blockPrefix, util.IntToSlice(height)...) }
 func blockHashKey(hash crypto.Hash) []byte { return append(blockHashPrefix, hash.RawBytes()...) }
 
 type blockStore struct {
@@ -45,7 +45,7 @@ func (bs *blockStore) SaveBlock(block block.Block, height int) error {
 	if err != nil {
 		return err
 	}
-	err = bs.db.Put(blockHashKey, utils.IntToSlice(height), nil)
+	err = bs.db.Put(blockHashKey, util.IntToSlice(height), nil)
 	if err != nil {
 		return err
 	}
@@ -72,6 +72,6 @@ func (bs *blockStore) RetrieveBlockHeight(hash crypto.Hash) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	return utils.SliceToInt(heightData), nil
+	return util.SliceToInt(heightData), nil
 
 }

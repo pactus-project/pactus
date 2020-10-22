@@ -8,6 +8,6 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Enable:  true,
-		Address: "0.0.0.0:0",
+		Address: "[::]:37621",
 	}
 }
