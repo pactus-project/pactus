@@ -15,10 +15,9 @@ import (
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	libp2pps "github.com/libp2p/go-libp2p-pubsub"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // DiscoveryInterval is how often we re-publish our mDNS records.
@@ -29,6 +28,7 @@ const DiscoveryServiceTag = "pubsub-chat-example"
 
 type Network struct {
 	ctx         context.Context
+	config      *Config
 	networkName string
 	host        host.Host
 	router      routing.Routing // Router is a router from IPFS
@@ -40,8 +40,8 @@ type Network struct {
 }
 
 func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
-	if utils.PathExists(path) {
-		h, err := utils.ReadFile(path)
+	if util.PathExists(path) {
+		h, err := util.ReadFile(path)
 		if err != nil {
 			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 		}
@@ -64,14 +64,14 @@ func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 	h := hex.EncodeToString(bs)
-	err = utils.WriteFile(path, []byte(h))
+	err = util.WriteFile(path, []byte(h))
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 	return key, nil
 }
 
-func NewNetwork(conf *config.Config) (*Network, error) {
+func NewNetwork(conf *Config) (*Network, error) {
 	ctx := context.Background()
 
 	var router routing.Routing
@@ -99,20 +99,21 @@ func NewNetwork(conf *config.Config) (*Network, error) {
 	}
 
 	n := &Network{
-		networkName: conf.Network.Name,
 		ctx:         ctx,
+		config:      conf,
+		networkName: conf.Name,
 		host:        host,
 		router:      router,
 		pubsub:      pubsub,
 	}
 
-	n.logger = logger.NewLogger("_Network", n)
-	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.Network.Address)
+	n.logger = logger.NewLogger("_network", n)
+	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.Address)
 
 	return n, nil
 }
 
-func buildHost(ctx context.Context, conf *config.Config, makeDHT func(host host.Host) (routing.Routing, error)) (host.Host, error) {
+func buildHost(ctx context.Context, conf *Config, makeDHT func(host host.Host) (routing.Routing, error)) (host.Host, error) {
 	// Node must build a host acting as a libp2p relay.  Additionally it
 	// runs the autoNAT service which allows other nodes to check for their
 	// own dialability by having this node attempt to dial them.
@@ -120,13 +121,13 @@ func buildHost(ctx context.Context, conf *config.Config, makeDHT func(host host.
 		return makeDHT(h)
 	}
 
-	nodeKey, err := loadOrCreateKey(conf.Network.NodeKey)
+	nodeKey, err := loadOrCreateKey(conf.NodeKey)
 	if err != nil {
 		return nil, err
 	}
 
 	libP2pOpts := []libp2p.Option{
-		libp2p.ListenAddrStrings(conf.Network.Address),
+		libp2p.ListenAddrStrings(conf.Address),
 		libp2p.Identity(nodeKey),
 	}
 

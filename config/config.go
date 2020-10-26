@@ -5,36 +5,42 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
-	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/sync"
+	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/zarbchain/zarb-go/www/http"
 )
 
 type Config struct {
-	Store     *StoreConfig
-	TxPool    *TxPoolConfig
-	Consensus *ConsensusConfig
-	Network   *NetworkConfig
-	Logger    *LoggerConfig
-	Capnp     *CapnpConfig
-	Http      *HttpConfig
-	// This are private and set by mint-account
-	blockchain *BlockchainConfig
+	Store     *store.Config
+	TxPool    *txpool.Config
+	Consensus *consensus.Config
+	Network   *network.Config
+	Logger    *logger.Config
+	Sync      *sync.Config
+	Capnp     *capnp.Config
+	Http      *http.Config
 }
 
 func DefaultConfig() *Config {
 
 	conf := &Config{
-		Store:      DefaultStoreConfig(),
-		TxPool:     DefaultTxPoolConfig(),
-		Consensus:  DefaultConsensusConfig(),
-		Network:    DefaultNetworkConfig(),
-		Logger:     DefaultLoggerConfig(),
-		Capnp:      DefaultCapnpConfig(),
-		Http:       DefaultHttpConfig(),
-		blockchain: DefaultBlockchainConfig(),
+		Store:     store.DefaultConfig(),
+		TxPool:    txpool.DefaultConfig(),
+		Consensus: consensus.DefaultConfig(),
+		Network:   network.DefaultConfig(),
+		Sync:      sync.DefaultConfig(),
+		Logger:    logger.DefaultConfig(),
+		Capnp:     capnp.DefaultConfig(),
+		Http:      http.DefaultConfig(),
 	}
 
 	return conf
@@ -96,7 +102,7 @@ func (conf *Config) SaveToFile(file string) error {
 	} else {
 		return errors.Errorf(errors.ErrInvalidConfig, "Invalid suffix for the config file")
 	}
-	if err := utils.WriteFile(file, dat); err != nil {
+	if err := util.WriteFile(file, dat); err != nil {
 		return err
 	}
 
@@ -105,8 +111,4 @@ func (conf *Config) SaveToFile(file string) error {
 
 func (conf *Config) Check() error {
 	return nil
-}
-
-func (conf *Config) BlockTime() time.Duration {
-	return conf.blockchain.BlockTime
 }

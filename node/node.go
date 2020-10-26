@@ -14,7 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/http"
@@ -37,45 +37,45 @@ type Node struct {
 func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *validator.PrivValidator) (*Node, error) {
 
 	// Init logger
-	logger.InitLogger(conf)
+	logger.InitLogger(conf.Logger)
 
-	network, err := network.NewNetwork(conf)
+	network, err := network.NewNetwork(conf.Network)
 	if err != nil {
 		return nil, err
 	}
 	broadcastCh := make(chan message.Message, 10)
 
-	store, err := store.NewStore(conf)
+	store, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
 
-	txPool, err := txpool.NewTxPool(conf, broadcastCh)
+	txPool, err := txpool.NewTxPool(conf.TxPool, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(conf, genDoc, store, txPool, broadcastCh)
+	state, err := state.LoadOrNewState(genDoc, store, txPool, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	consensus, err := consensus.NewConsensus(conf, state, store, privValidator, broadcastCh)
+	consensus, err := consensus.NewConsensus(conf.Consensus, state, store, privValidator, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	sync, err := sync.NewSynchronizer(conf, state, store, consensus, txPool, network, broadcastCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, privValidator.Address(), state, store, consensus, txPool, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	capnp, err := capnp.NewServer(store, conf)
+	capnp, err := capnp.NewServer(conf.Capnp, store)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create Capnproto server")
 	}
 
-	http, err := http.NewServer(conf)
+	http, err := http.NewServer(conf.Http)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create http server")
 	}
@@ -97,14 +97,13 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 }
 
 func (n *Node) Start() error {
-	now := utils.Now()
+	now := util.Now()
 	genTime := n.genesisDoc.GenesisTime()
 	if genTime.After(now) {
 		logger.Info("Genesis time is in the future. Sleeping until then...", "genTime", genTime)
 		time.Sleep(genTime.Sub(now))
 	}
 
-	n.consensus.Start()
 	n.network.Start()
 	n.sync.Start()
 
@@ -120,6 +119,9 @@ func (n *Node) Start() error {
 	if err != nil {
 		return errors.Wrap(err, "could not start http server")
 	}
+
+	n.consensus.Start()
+
 
 	return nil
 }

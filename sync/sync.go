@@ -2,45 +2,48 @@ package sync
 
 import (
 	"context"
-	"crypto"
-
-	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/txpool"
+	"fmt"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/consensus"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/sync/stats"
+	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/txpool"
 )
 
 type Synchronizer struct {
 	ctx            context.Context
-	config         *config.Config
+	config         *Config
 	store          *store.Store
 	state          *state.State
 	consensus      *consensus.Consensus
 	txPool         *txpool.TxPool
-	self           peer.ID
+	stats          *stats.Stats
+	selfID         peer.ID
+	selfAddress    crypto.Address
 	blockPool      map[int]*block.Block
 	txkPool        map[crypto.Hash]*tx.Tx
 	broadcastCh    <-chan message.Message
 	txTopic        *pubsub.Topic
-	txSub          *pubsub.Subscription
 	stateTopic     *pubsub.Topic
-	stateSub       *pubsub.Subscription
 	consensusTopic *pubsub.Topic
+	txSub          *pubsub.Subscription
+	stateSub       *pubsub.Subscription
 	consensusSub   *pubsub.Subscription
 	logger         *logger.Logger
 }
 
 func NewSynchronizer(
-	conf *config.Config,
+	conf *Config,
+	addr crypto.Address,
 	state *state.State,
 	store *store.Store,
 	consensus *consensus.Consensus,
@@ -54,6 +57,7 @@ func NewSynchronizer(
 		store:       store,
 		consensus:   consensus,
 		txPool:      txpool,
+		selfAddress: addr,
 		blockPool:   make(map[int]*block.Block),
 		txkPool:     make(map[crypto.Hash]*tx.Tx),
 		broadcastCh: broadcastCh,
@@ -83,14 +87,16 @@ func NewSynchronizer(
 		return nil, err
 	}
 
-	syncer.self = net.ID()
+	logger := logger.NewLogger("_syncer", syncer)
+	syncer.selfID = net.ID()
 	syncer.txTopic = txTopic
 	syncer.txSub = txSub
 	syncer.stateTopic = stateTopic
 	syncer.stateSub = stateSub
 	syncer.consensusTopic = consensusTopic
 	syncer.consensusSub = consensusSub
-	syncer.logger = logger.NewLogger("_syncer", syncer)
+	syncer.logger = logger
+	syncer.stats = stats.NewStats(logger)
 
 	return syncer, nil
 }
@@ -152,5 +158,5 @@ func (syncer *Synchronizer) consensusLoop() {
 }
 
 func (syncer *Synchronizer) Fingerprint() string {
-	return ""
+	return fmt.Sprintf("{peers: %d}", syncer.stats.PeersCount())
 }

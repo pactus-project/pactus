@@ -2,11 +2,11 @@ package consensus
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func (cs *Consensus) scheduleNewHeight() {
-	sleep := cs.state.LastBlockTime().Add(cs.config.BlockTime()).Sub(utils.Now())
+	sleep := cs.state.LastBlockTime().Add(cs.state.BlockTime()).Sub(util.Now())
 	cs.logger.Debug("NewHeight is scheduled", "seconds", sleep.Seconds())
 	cs.scheduleTimeout(sleep, cs.hrs.Height(), cs.hrs.Round(), hrs.StepTypeNewHeight)
 }
@@ -31,10 +31,10 @@ func (cs *Consensus) enterNewHeight(height int) {
 		}
 	}
 
+	cs.commitRound = -1
+	cs.votes.Reset(height)
 	cs.updateHeight(height)
 	cs.updateRoundStep(0, hrs.StepTypeNewHeight)
-	cs.votes = NewHeightVoteSet(height, cs.valset)
-	cs.commitRound = -1
 
 	cs.enterNewRound(height, 0)
 }

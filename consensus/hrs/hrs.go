@@ -72,6 +72,32 @@ func (hrs HRS) InvalidHeightRoundStep(height int, round int, step StepType) bool
 	return hrs.data.Height != height || hrs.data.Round != round || hrs.data.Step > step
 }
 
+func (hrs HRS) LessThan(r HRS) bool {
+	if hrs.Height() < r.Height() ||
+		(hrs.Height() == r.Height() && hrs.Round() < r.Round()) ||
+		(hrs.Height() == r.Height() && hrs.Round() == r.Round() && hrs.Step() < r.Step()) {
+		return true
+	}
+	return false
+}
+
+func (hrs HRS) EqualsTo(r HRS) bool {
+	if hrs.Height() == r.Height() && hrs.Round() == r.Round() && hrs.Step() == r.Step() {
+		return true
+	}
+	return false
+}
+
+func (hrs HRS) GreaterThan(r HRS) bool {
+	if hrs.LessThan(r) {
+		return false
+	}
+	if hrs.EqualsTo(r) {
+		return false
+	}
+	return true
+}
+
 func (hrs *HRS) Fingerprint() string {
 	return fmt.Sprintf("%v/%v/%s",
 		hrs.data.Height, hrs.data.Round, hrs.data.Step)

@@ -12,8 +12,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/zarbchain/zarb-go/utils"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/scrypt"
 )
@@ -153,7 +153,7 @@ func EncryptKeyFile(key *Key, filePath, auth, label string) error {
 	if err != nil {
 		return err
 	}
-	return utils.WriteFile(filePath, bs)
+	return util.WriteFile(filePath, bs)
 }
 
 // EncryptKey encrypts a key and returns the encrypted byte array

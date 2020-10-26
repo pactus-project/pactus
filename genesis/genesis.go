@@ -10,7 +10,7 @@ import (
 
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/utils"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -172,7 +172,7 @@ func (gen *Genesis) SaveToFile(file string) error {
 	}
 
 	// write  dataContent to file
-	if err := utils.WriteFile(file, json); err != nil {
+	if err := util.WriteFile(file, json); err != nil {
 		return err
 	}
 

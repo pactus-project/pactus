@@ -74,6 +74,14 @@ func (hvs *HeightVoteSet) Precommits(round int) *vote.VoteSet {
 	return hvs.voteSet(round, vote.VoteTypePrecommit)
 }
 
+func (hvs *HeightVoteSet) HasRoundProposal(round int) bool {
+	rvs, ok := hvs.roundVoteSets[round]
+	if !ok {
+		return false
+	}
+	return rvs.proposal != nil
+}
+
 func (hvs *HeightVoteSet) RoundProposal(round int) *vote.Proposal {
 	rvs, ok := hvs.roundVoteSets[round]
 	if !ok {
@@ -88,6 +96,13 @@ func (hvs *HeightVoteSet) SetRoundProposal(round int, proposal *vote.Proposal) {
 		rvs = hvs.addRound(round)
 	}
 	rvs.proposal = proposal
+}
+
+func (hvs *HeightVoteSet) Reset(height int) {
+	hvs.height = height
+	hvs.lockedProposal = nil
+	hvs.roundVoteSets = make(map[int]*RoundVoteSet)
+	hvs.votes = make(map[crypto.Hash]*vote.Vote)
 }
 
 func (hvs *HeightVoteSet) voteSet(round int, voteType vote.VoteType) *vote.VoteSet {

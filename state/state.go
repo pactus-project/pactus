@@ -5,9 +5,7 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
-	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
@@ -37,11 +35,10 @@ func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, a
 type State struct {
 	lk deadlock.RWMutex
 
-	db                 *leveldb.DB
-	config             *config.Config
 	store              *store.Store
 	txPool             *txpool.TxPool
 	cache              *Cache
+	params             *Params
 	executor           *execution.Executor
 	validatorSet       *validator.ValidatorSet
 	lastBlockHeight    int
@@ -55,34 +52,25 @@ type State struct {
 }
 
 func LoadOrNewState(
-	conf *config.Config,
 	genDoc *genesis.Genesis,
 	store *store.Store,
 	txPool *txpool.TxPool,
 	broadcastCh chan message.Message) (*State, error) {
-	db, err := leveldb.OpenFile(conf.Store.StateStorePath(), nil)
-	if err != nil {
-		return nil, err
-	}
+
 	st := &State{
-		db:          db,
-		config:      conf,
 		txPool:      txPool,
 		store:       store,
+		params:      NewParams(),
 		broadcastCh: broadcastCh,
 	}
 
-	st.cache = newCache(store)
-	st.executor, err = execution.NewExecutor(st.config, st.cache)
-	if err != nil {
-		return nil, err
-	}
-
-	err = st.loadState()
+	err := st.loadState()
 	if err != nil {
 		err = st.makeGenesisState(genDoc)
 	}
 
+	st.cache = newCache(store)
+	st.executor, err = execution.NewExecutor(st.cache)
 	if err != nil {
 		return nil, err
 	}
@@ -144,12 +132,6 @@ func (st *State) LastBlockHeight() int {
 	return st.lastBlockHeight
 }
 
-func (st *State) LastBlockInfo() (int, crypto.Hash) {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.lastBlockHeight, st.lastBlockHash
-}
 
 func (st *State) LastBlockTime() time.Time {
 	st.lk.RLock()
@@ -158,11 +140,18 @@ func (st *State) LastBlockTime() time.Time {
 	return st.lastBlockTime
 }
 
+func (st *State) BlockTime() time.Duration {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.params.BlockTime
+}
+
 func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *block.Commit) (block.Block, []tx.Tx) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	timestamp := st.lastBlockTime.Add(st.config.BlockTime())
+	timestamp := st.lastBlockTime.Add(st.params.BlockTime)
 	now := time.Now()
 	if now.After(timestamp) {
 		timestamp = now

@@ -4,7 +4,6 @@ import (
 	"context"
 	"net"
 
-	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -13,34 +12,33 @@ import (
 
 type Server struct {
 	ctx      context.Context
+	config   *Config
 	listener net.Listener
 	store    store.StoreReader
 	txPool   txpool.TxPoolReader
-	config   *config.Config
 	logger   *logger.Logger
 }
 
-func NewServer(store store.StoreReader, conf *config.Config) (*Server, error) {
+func NewServer(conf *Config, store store.StoreReader) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
 		store:  store,
 		config: conf,
-		logger: logger.NewLogger("capnp", nil),
+		logger: logger.NewLogger("_capnp", nil),
 	}, nil
 }
 
 func (s *Server) StartServer() error {
-	if !s.config.Capnp.Enable {
+	if !s.config.Enable {
 		return nil
 	}
 
-	l, err := net.Listen("tcp", s.config.Capnp.Address)
+	l, err := net.Listen("tcp", s.config.Address)
 	if err != nil {
 		return err
 	}
 
-	s.config.Capnp.Address = l.Addr().String()
-	s.logger.Info("Capnp started listening", "address", s.config.Capnp.Address)
+	s.logger.Info("Capnp started listening", "address", l.Addr())
 	s.listener = l
 	go func() {
 		for {

@@ -1,4 +1,4 @@
-package config
+package consensus
 
 import (
 	"time"
@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-type ConsensusConfig struct {
+type Config struct {
 	TimeoutPropose          time.Duration
 	TimeoutPrevote          time.Duration
 	TimeoutPrecommit        time.Duration
@@ -14,8 +14,8 @@ type ConsensusConfig struct {
 	PeerGossipSleepDuration time.Duration
 }
 
-func DefaultConsensusConfig() *ConsensusConfig {
-	return &ConsensusConfig{
+func DefaultConfig() *Config {
+	return &Config{
 		TimeoutPropose:          3 * time.Second,
 		TimeoutPrevote:          2 * time.Second,
 		TimeoutPrecommit:        2 * time.Second,
@@ -25,7 +25,7 @@ func DefaultConsensusConfig() *ConsensusConfig {
 	}
 }
 
-func (conf *ConsensusConfig) SanityCheck() error {
+func (conf *Config) SanityCheck() error {
 	if conf.TimeoutPropose < 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout_propose can't be negative")
 	}
@@ -45,19 +45,19 @@ func (conf *ConsensusConfig) SanityCheck() error {
 	return nil
 }
 
-func (conf *ConsensusConfig) Propose(round int) time.Duration {
+func (conf *Config) Propose(round int) time.Duration {
 	return time.Duration(
 		conf.TimeoutPropose.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
 }
 
-func (conf *ConsensusConfig) Prevote(round int) time.Duration {
+func (conf *Config) Prevote(round int) time.Duration {
 	return time.Duration(
 		conf.TimeoutPrevote.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
 }
 
-func (conf *ConsensusConfig) Precommit(round int) time.Duration {
+func (conf *Config) Precommit(round int) time.Duration {
 	return time.Duration(
 		conf.TimeoutPrecommit.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond

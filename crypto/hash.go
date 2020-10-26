@@ -138,9 +138,6 @@ func (h *Hash) UnmarshalAmino(bs []byte) error {
 /// METHODS
 
 func (h *Hash) SanityCheck() error {
-	if len(h.data.Hash) != HashSize {
-		return fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(h.data.Hash))
-	}
 	return nil
 }
 
