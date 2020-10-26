@@ -3,10 +3,10 @@ package sync
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -20,25 +20,28 @@ import (
 )
 
 type Synchronizer struct {
-	ctx            context.Context
-	config         *Config
-	store          *store.Store
-	state          *state.State
-	consensus      *consensus.Consensus
-	txPool         *txpool.TxPool
-	stats          *stats.Stats
-	selfID         peer.ID
-	selfAddress    crypto.Address
-	blockPool      map[int]*block.Block
-	txkPool        map[crypto.Hash]*tx.Tx
-	broadcastCh    <-chan message.Message
-	txTopic        *pubsub.Topic
-	stateTopic     *pubsub.Topic
-	consensusTopic *pubsub.Topic
-	txSub          *pubsub.Subscription
-	stateSub       *pubsub.Subscription
-	consensusSub   *pubsub.Subscription
-	logger         *logger.Logger
+	ctx             context.Context
+	config          *Config
+	store           *store.Store
+	state           *state.State
+	consensus       *consensus.Consensus
+	txPool          *txpool.TxPool
+	stats           *stats.Stats
+	selfID          peer.ID
+	selfAddress     crypto.Address
+	blockPool       *BlockPool
+	txkPool         map[crypto.Hash]*tx.Tx
+	broadcastCh     <-chan message.Message
+	generalTopic    *pubsub.Topic
+	txTopic         *pubsub.Topic
+	blockTopic      *pubsub.Topic
+	consensusTopic  *pubsub.Topic
+	generalSub      *pubsub.Subscription
+	txSub           *pubsub.Subscription
+	blockSub        *pubsub.Subscription
+	consensusSub    *pubsub.Subscription
+	heartBeatTicker *time.Ticker
+	logger          *logger.Logger
 }
 
 func NewSynchronizer(
@@ -58,9 +61,16 @@ func NewSynchronizer(
 		consensus:   consensus,
 		txPool:      txpool,
 		selfAddress: addr,
-		blockPool:   make(map[int]*block.Block),
 		txkPool:     make(map[crypto.Hash]*tx.Tx),
 		broadcastCh: broadcastCh,
+	}
+	generalTopic, err := net.JoinTopic("general")
+	if err != nil {
+		return nil, err
+	}
+	generalSub, err := generalTopic.Subscribe()
+	if err != nil {
+		return nil, err
 	}
 	txTopic, err := net.JoinTopic("tx")
 	if err != nil {
@@ -70,11 +80,11 @@ func NewSynchronizer(
 	if err != nil {
 		return nil, err
 	}
-	stateTopic, err := net.JoinTopic("state")
+	blockTopic, err := net.JoinTopic("block")
 	if err != nil {
 		return nil, err
 	}
-	stateSub, err := stateTopic.Subscribe()
+	blockSub, err := blockTopic.Subscribe()
 	if err != nil {
 		return nil, err
 	}
@@ -87,38 +97,67 @@ func NewSynchronizer(
 		return nil, err
 	}
 
-	logger := logger.NewLogger("_syncer", syncer)
+	logger := logger.NewLogger("_sync", syncer)
 	syncer.selfID = net.ID()
 	syncer.txTopic = txTopic
 	syncer.txSub = txSub
-	syncer.stateTopic = stateTopic
-	syncer.stateSub = stateSub
+	syncer.blockTopic = blockTopic
+	syncer.blockSub = blockSub
+	syncer.blockTopic = blockTopic
+	syncer.generalTopic = generalTopic
+	syncer.generalSub = generalSub
 	syncer.consensusTopic = consensusTopic
 	syncer.consensusSub = consensusSub
 	syncer.logger = logger
+	syncer.blockPool = NewBlockPool(logger)
 	syncer.stats = stats.NewStats(logger)
 
 	return syncer, nil
 }
 
 func (syncer *Synchronizer) Start() error {
+	syncer.heartBeatTicker = time.NewTicker(syncer.config.HeartBeatTimeout)
+
 	go syncer.txLoop()
-	go syncer.stateLoop()
+	go syncer.blockLoop()
+	go syncer.generalLoop()
 	go syncer.consensusLoop()
 	go syncer.broadcastLoop()
+	go syncer.heartBeatTickerLoop()
+
+	syncer.broadcastSalam()
+
+	timer := time.NewTimer(syncer.config.StartingTimeout)
+	go func() {
+		<-timer.C
+		syncer.maybeSyncing()
+	}()
 
 	return nil
 }
 
 func (syncer *Synchronizer) Stop() error {
+	syncer.heartBeatTicker.Stop()
+
 	syncer.ctx.Done()
 	syncer.txTopic.Close()
 	syncer.txSub.Cancel()
-	syncer.stateTopic.Close()
-	syncer.stateSub.Cancel()
+	syncer.blockTopic.Close()
+	syncer.blockSub.Cancel()
+	syncer.generalTopic.Close()
+	syncer.generalSub.Cancel()
 	syncer.consensusTopic.Close()
 	syncer.consensusSub.Cancel()
 	return nil
+}
+
+func (syncer *Synchronizer) maybeSyncing() {
+	lastHeight := syncer.state.LastBlockHeight()
+	networkHeight := syncer.stats.MaxHeight()
+
+	if lastHeight >= networkHeight-1 {
+		syncer.consensus.ScheduleNewHeight()
+	}
 }
 
 func (syncer *Synchronizer) txLoop() {
@@ -133,9 +172,21 @@ func (syncer *Synchronizer) txLoop() {
 	}
 }
 
-func (syncer *Synchronizer) stateLoop() {
+func (syncer *Synchronizer) blockLoop() {
 	for {
-		m, err := syncer.stateSub.Next(syncer.ctx)
+		m, err := syncer.blockSub.Next(syncer.ctx)
+		if err != nil {
+			syncer.logger.Error("readLoop error", "err", err)
+			return
+		}
+
+		syncer.parsMessage(m)
+	}
+}
+
+func (syncer *Synchronizer) generalLoop() {
+	for {
+		m, err := syncer.generalSub.Next(syncer.ctx)
 		if err != nil {
 			syncer.logger.Error("readLoop error", "err", err)
 			return
@@ -157,6 +208,17 @@ func (syncer *Synchronizer) consensusLoop() {
 	}
 }
 
+func (syncer *Synchronizer) heartBeatTickerLoop() {
+	for {
+		select {
+		case <-syncer.ctx.Done():
+			return
+		case <-syncer.heartBeatTicker.C:
+			syncer.broadcastHeartBeat()
+		}
+	}
+}
+
 func (syncer *Synchronizer) Fingerprint() string {
-	return fmt.Sprintf("{peers: %d}", syncer.stats.PeersCount())
+	return fmt.Sprintf("{☍ %d ⛲ %d}", syncer.stats.PeersCount(), syncer.blockPool.Size())
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
@@ -16,7 +17,7 @@ import (
 )
 
 func mockState(t *testing.T) (*State, crypto.Address) {
-	pb, _ := crypto.GenerateRandomKey()
+	_, pb, _ := crypto.GenerateTestKeyPair()
 	addr := pb.Address()
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
@@ -30,17 +31,16 @@ func mockState(t *testing.T) (*State, crypto.Address) {
 	store, err := store.NewStore(storeConfig)
 	require.NoError(t, err)
 	txPoolConfig := txpool.DefaultConfig()
-	txPool, err := txpool.NewTxPool(txPoolConfig, nil)
+	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan message.Message, 10))
 	require.NoError(t, err)
-	st, err := LoadOrNewState(gen, store, txPool, nil)
+	st, err := LoadOrNewState(gen, store, txPool)
 	require.NoError(t, err)
 	return st, addr
 }
 
 func TestBlockValidate(t *testing.T) {
 	st, addr := mockState(t)
-	block, _ := st.ProposeBlock(1, addr, nil)
-	err := st.ApplyBlock(&block, 0)
+	block := st.ProposeBlock(1, addr)
+	err := st.ValidateBlock(block)
 	require.NoError(t, err)
-
 }

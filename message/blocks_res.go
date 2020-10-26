@@ -17,10 +17,11 @@ type BlocksResPayload struct {
 	//LastCommit block.Commit  `cbor:"3,keyasint"`
 }
 
-func NewBlocksMessage(height int, blocks []block.Block, txs []tx.Tx) Message {
+func NewBlocksResMessage(from int, blocks []block.Block, txs []tx.Tx) Message {
 	return Message{
 		Type: PayloadTypeBlocksRes,
 		Payload: &BlocksResPayload{
+			From:   from,
 			Blocks: blocks,
 			Txs:    txs,
 		},

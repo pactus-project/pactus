@@ -11,25 +11,22 @@ import (
 type PayloadType int
 
 const (
-	PayloadTypeStatusReq = PayloadType(1)
-	PayloadTypeStatusRes = PayloadType(2)
-	PayloadTypeBlocksReq = PayloadType(3)
-	PayloadTypeBlocksRes = PayloadType(4)
-	PayloadTypeTxReq     = PayloadType(5)
-	PayloadTypeTxRes     = PayloadType(6)
-	PayloadTypeProposal  = PayloadType(7)
-	PayloadTypeBlock     = PayloadType(8)
-	PayloadTypeHRS       = PayloadType(9)
-	PayloadTypeVote      = PayloadType(10)
-	PayloadTypeVoteSet   = PayloadType(11)
+	PayloadTypeSalam     = PayloadType(1)
+	PayloadTypeBlocksReq = PayloadType(2)
+	PayloadTypeBlocksRes = PayloadType(3)
+	PayloadTypeTxReq     = PayloadType(4)
+	PayloadTypeTxRes     = PayloadType(5)
+	PayloadTypeProposal  = PayloadType(6)
+	PayloadTypeBlock     = PayloadType(7)
+	PayloadTypeHeartBeat = PayloadType(8)
+	PayloadTypeVote      = PayloadType(9)
+	PayloadTypeVoteSet   = PayloadType(10)
 )
 
 func (t PayloadType) String() string {
 	switch t {
-	case PayloadTypeStatusReq:
-		return "status-req"
-	case PayloadTypeStatusRes:
-		return "status-res"
+	case PayloadTypeSalam:
+		return "salam"
 	case PayloadTypeBlocksReq:
 		return "blocks-req"
 	case PayloadTypeBlocksRes:
@@ -42,14 +39,14 @@ func (t PayloadType) String() string {
 		return "proposal"
 	case PayloadTypeBlock:
 		return "block"
-	case PayloadTypeHRS:
-		return "hrs"
+	case PayloadTypeHeartBeat:
+		return "heart-beat"
 	case PayloadTypeVote:
 		return "vote"
 	case PayloadTypeVoteSet:
 		return "vote-set"
 	}
-	return "invalid message type"
+	return fmt.Sprintf("%d", t)
 }
 
 type Message struct {
@@ -109,10 +106,8 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 
 	var payload Payload
 	switch msg.PayloadType {
-	case PayloadTypeStatusReq:
-		payload = &StatusReqPayload{}
-	case PayloadTypeStatusRes:
-		payload = &StatusResPayload{}
+	case PayloadTypeSalam:
+		payload = &SalamPayload{}
 	case PayloadTypeBlocksReq:
 		payload = &BlocksReqPayload{}
 	case PayloadTypeBlocksRes:
@@ -125,8 +120,8 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		payload = &ProposalPayload{}
 	case PayloadTypeBlock:
 		payload = &BlockPayload{}
-	case PayloadTypeHRS:
-		payload = &HRSPayload{}
+	case PayloadTypeHeartBeat:
+		payload = &HeartBeatPayload{}
 	case PayloadTypeVote:
 		payload = &VotePayload{}
 	case PayloadTypeVoteSet:

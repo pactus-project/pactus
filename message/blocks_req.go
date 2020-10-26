@@ -22,10 +22,13 @@ func NewBlocksReqMessage(from, to int) Message {
 
 }
 func (p *BlocksReqPayload) SanityCheck() error {
-	if p.From < 0 {
+	if p.From <= 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
-	if p.To < 0 {
+	if p.To <= 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+	}
+	if p.To < p.From {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
 	return nil

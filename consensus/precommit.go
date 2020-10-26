@@ -12,7 +12,8 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 		return
 	}
 
-	if !cs.votes.Prevotes(round).HasQuorum() {
+	preVotes := cs.votes.Prevotes(round)
+	if !preVotes.HasQuorum() {
 		cs.logger.Error("Precommit: Entering precommit witout having quorom for prevote stage")
 		return
 	}
@@ -20,7 +21,7 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 	// Now, update state and vote!
 	cs.updateRoundStep(round, hrs.StepTypePrecommit)
 
-	blockHash := cs.votes.Prevotes(round).QuorumBlock()
+	blockHash := preVotes.QuorumBlock()
 	if blockHash == nil || blockHash.IsUndef() {
 		cs.logger.Info("Precommit: Voted for nil, no quorum for prevote")
 		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
@@ -41,7 +42,7 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 	}
 
 	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
-		cs.logger.Warn("Precommit: Voted for nil, invalid block", "Proposal", roundProposal, "err", err)
+		cs.logger.Warn("Precommit: Voted for nil, invalid block", "proposal", roundProposal, "err", err)
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 

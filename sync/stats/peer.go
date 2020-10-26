@@ -1,7 +1,7 @@
 package stats
 
 type Peer struct {
-	receivedMsg int
+	ReceivedMsg int
 }
 
 func NewPeer() *Peer {

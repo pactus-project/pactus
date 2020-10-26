@@ -7,22 +7,22 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-type HRSPayload struct {
+type HeartBeatPayload struct {
 	HRS         hrs.HRS `cbor:"1,keyasint"`
 	HasProposal bool    `cbor:"2,keyasint"`
 }
 
-func NewHRSMessage(hrs hrs.HRS, hasProposal bool) Message {
+func NewHeartBeatMessage(hrs hrs.HRS, hasProposal bool) Message {
 	return Message{
-		Type: PayloadTypeHRS,
-		Payload: &HRSPayload{
+		Type: PayloadTypeHeartBeat,
+		Payload: &HeartBeatPayload{
 			HRS:         hrs,
 			HasProposal: hasProposal,
 		},
 	}
 }
 
-func (p *HRSPayload) SanityCheck() error {
+func (p *HeartBeatPayload) SanityCheck() error {
 	if !p.HRS.IsValid() {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid step")
 	}
@@ -30,10 +30,10 @@ func (p *HRSPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *HRSPayload) Type() PayloadType {
-	return PayloadTypeHRS
+func (p *HeartBeatPayload) Type() PayloadType {
+	return PayloadTypeHeartBeat
 }
 
-func (p *HRSPayload) Fingerprint() string {
+func (p *HeartBeatPayload) Fingerprint() string {
 	return fmt.Sprintf("{%s}", p.HRS.Fingerprint())
 }

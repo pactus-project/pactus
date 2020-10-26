@@ -10,9 +10,12 @@ func DefaultConfig() *Config {
 	}
 
 	def.Levels["default"] = "trace"
-	def.Levels["network"] = "trace"
-	def.Levels["consensus"] = "trace"
-	def.Levels["state"] = "trace"
-	def.Levels["sync"] = "trace"
+	def.Levels["_network"] = "trace"
+	def.Levels["_consensus"] = "trace"
+	def.Levels["_state"] = "trace"
+	def.Levels["_sync"] = "trace"
+	def.Levels["_pool"] = "trace"
+	def.Levels["_capnp"] = "trace"
+	def.Levels["_http"] = "trace"
 	return def
 }

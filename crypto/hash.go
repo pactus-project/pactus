@@ -59,13 +59,6 @@ func HashH(data ...[]byte) Hash {
 	return h
 }
 
-func RandomHash() Hash {
-	p := make([]byte, 10)
-	random := rand.Reader
-	random.Read(p)
-	return HashH(p)
-}
-
 func (h Hash) String() string {
 	return hex.EncodeToString(h.data.Hash[:])
 }
@@ -143,4 +136,12 @@ func (h *Hash) SanityCheck() error {
 
 func (h Hash) EqualsTo(r Hash) bool {
 	return h.data.Hash == r.data.Hash
+}
+
+// ---
+func GenerateTestHash() Hash {
+	p := make([]byte, 10)
+	random := rand.Reader
+	random.Read(p)
+	return HashH(p)
 }

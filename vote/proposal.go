@@ -31,7 +31,7 @@ func NewProposal(height int, round int, block block.Block) *Proposal {
 }
 func (p *Proposal) Height() int                 { return p.data.Height }
 func (p *Proposal) Round() int                  { return p.data.Round }
-func (p *Proposal) Block() *block.Block         { return &p.data.Block }
+func (p *Proposal) Block() block.Block          { return p.data.Block }
 func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
 
 func (p *Proposal) SanityCheck() error {
@@ -57,11 +57,10 @@ func (p *Proposal) SignBytes() []byte {
 		Round     int         `cbor:"2,keyasint"`
 		BlockHash crypto.Hash `cbor:"3,keyasint"`
 	}
-	hash := p.Block().Hash()
 	bz, _ := cbor.Marshal(signProposal{
 		Height:    p.data.Height,
 		Round:     p.data.Round,
-		BlockHash: hash,
+		BlockHash: p.data.Block.Hash(),
 	})
 	return bz
 }
@@ -104,5 +103,5 @@ func (p *Proposal) IsForBlock(hash *crypto.Hash) bool {
 
 func (p Proposal) Fingerprint() string {
 	b := p.Block()
-	return fmt.Sprintf("{%v/%v B:%v}", p.data.Height, p.data.Round, b.Fingerprint())
+	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.Fingerprint())
 }

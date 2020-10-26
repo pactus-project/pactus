@@ -1,26 +1,32 @@
 package consensus
 
-import "github.com/zarbchain/zarb-go/consensus/hrs"
+import (
+	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/message"
+)
 
 func (cs *Consensus) enterCommit(height int, round int) {
-	if cs.hrs.InvalidHeight(height) || cs.commitRound != -1 {
-		cs.logger.Debug("Commit with invalid args or committed before", "height", height)
+	if cs.hrs.InvalidHeight(height) || cs.isCommitted {
+		cs.logger.Debug("Commit with invalid args or committed before", "height", height, "committed", cs.isCommitted)
 		return
 	}
 
-	if !cs.votes.Precommits(round).HasQuorum() {
+	preVotes := cs.votes.Prevotes(round)
+	preCommits := cs.votes.Precommits(round)
+
+	if !preCommits.HasQuorum() {
 		cs.logger.Error("Commit witout quorom for precommit stage")
 		return
 	}
 
-	blockHash := cs.votes.Precommits(round).QuorumBlock()
+	blockHash := preCommits.QuorumBlock()
 	if blockHash == nil || blockHash.IsUndef() {
 		cs.logger.Error("Commit is for invalid block")
 		return
 	}
 
 	// Additional check. blockHash should be same for both prevotes and precommits
-	prevoteBlockHash := cs.votes.Prevotes(round).QuorumBlock()
+	prevoteBlockHash := preVotes.QuorumBlock()
 	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
 		cs.logger.Error("Commit witout quorom for prevote stage")
 		return
@@ -56,19 +62,29 @@ func (cs *Consensus) enterCommit(height int, round int) {
 
 	// Block is invalid
 	// It is impossible, but good to keep this check
-	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
+	block := cs.votes.lockedProposal.Block()
+	if err := cs.state.ValidateBlock(block); err != nil {
 		cs.votes.lockedProposal = nil
-		cs.logger.Warn("Commit: invalid block", "Proposal", roundProposal, "err", err)
+		cs.logger.Error("Commit: invalid block", "block", block, "err", err)
 		return
 	}
 
-	block := cs.votes.lockedProposal.Block()
-	cs.state.ApplyBlock(block, round)
+	commit := preCommits.ToCommit()
+	if commit != nil {
+		if err := cs.state.ApplyBlock(block, *commit); err != nil {
+			cs.logger.Error("Commit: Applying block failed", "block", block, "err", err)
+			return
+		}
+
+		// Npw broadcast the committed block
+		msg := message.NewBlockMessage(height, block, *commit)
+		cs.broadcastCh <- msg
+	}
+
 	cs.updateRoundStep(round, hrs.StepTypeCommit)
-	cs.commitRound = round
+	cs.isCommitted = true
 
-	// Using `~` to show `block` after `consensus` in logger output
-	cs.logger.Info("Commit: Block stored", "~block", blockHash.Fingerprint())
-
+	cs.logger.Info("Commit: Block stored", "block", blockHash.Fingerprint())
 	cs.scheduleNewHeight()
+
 }

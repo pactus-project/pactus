@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/json"
+	"math/rand"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -28,13 +29,6 @@ func NewAccount(addr crypto.Address) *Account {
 			Address: addr,
 		},
 	}
-}
-
-/// For tests
-func NewRandomAccount(secret string) *Account {
-	pb, _ := crypto.GenerateRandomKey()
-	acc := NewAccount(pb.Address())
-	return acc
 }
 
 func (acc Account) Address() crypto.Address { return acc.data.Address }
@@ -96,4 +90,15 @@ func (acc *Account) UnmarshalJSON(bs []byte) error {
 func (acc Account) String() string {
 	b, _ := acc.MarshalJSON()
 	return string(b)
+}
+
+// ---
+
+/// For tests
+func GenerateTestAccount() *Account {
+	a, _, _ := crypto.GenerateTestKeyPair()
+	acc := NewAccount(a)
+	acc.data.Balance = rand.Int63n(100000)
+	acc.data.Sequence = rand.Intn(100)
+	return acc
 }

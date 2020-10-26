@@ -2,10 +2,10 @@ package consensus
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
@@ -31,8 +31,7 @@ type Consensus struct {
 	votes         *HeightVoteSet
 	valset        *validator.ValidatorSet
 	privValidator *validator.PrivValidator
-	lastCommit    *block.Commit
-	commitRound   int
+	isCommitted   bool
 	state         *state.State
 	store         *store.Store
 	broadcastCh   chan message.Message
@@ -55,35 +54,13 @@ func NewConsensus(
 	}
 
 	// See enterNewHeight.
-	cs.votes = NewHeightVoteSet(-1, cs.valset)
+	cs.votes = NewHeightVoteSet(0, cs.valset)
 	cs.hrs = hrs.NewHRS(state.LastBlockHeight(), 0, hrs.StepTypeNewHeight)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
 }
 
-func (cs *Consensus) Start() error {
-	cs.scheduleNewHeight()
-	cs.stateListener()
-
-	return nil
-}
-
-func (cs *Consensus) Stop() {
-}
-
-func (cs *Consensus) stateListener() {
-
-	// ch := make(chan int, 10)
-	// cs.state.SetNewHeightListener(ch)
-	// for {
-	// 	select {
-	// 	case height := <-ch:
-	// 		cs.logger.Info("New height", "h", height)
-	// 	}
-
-	// }
-}
 func (cs *Consensus) Fingerprint() string {
 	return fmt.Sprintf("{%v}",
 		cs.hrs.Fingerprint())
@@ -100,7 +77,7 @@ func (cs *Consensus) updateRoundStep(round int, step hrs.StepType) {
 	cs.hrs.UpdateRoundStep(round, step)
 
 	hasProposal := cs.votes.HasRoundProposal(cs.hrs.Round())
-	msg := message.NewHRSMessage(cs.hrs, hasProposal)
+	msg := message.NewHeartBeatMessage(cs.hrs, hasProposal)
 	cs.broadcastCh <- msg
 }
 
@@ -159,6 +136,10 @@ func (cs *Consensus) Vote(h crypto.Hash) *vote.Vote {
 
 func (cs *Consensus) scheduleTimeout(duration time.Duration, height int, round int, step hrs.StepType) {
 	to := timeout{duration, height, round, step}
+
+	if cs.config.FuzzTesting {
+		to.Duration = time.Duration(rand.Intn(8)) * time.Second
+	}
 	timer := time.NewTimer(duration)
 	go func() {
 		<-timer.C
@@ -187,8 +168,8 @@ func (cs *Consensus) handleTimeout(ti timeout) {
 
 	cs.logger.Debug("Handle timeout", "timeout", ti)
 
-	// timeouts must be for current height, round, step
-	if ti.Height != cs.hrs.Height() || ti.Round < cs.hrs.Round() {
+	// timeouts must be for current height
+	if ti.Height != cs.hrs.Height() {
 		cs.logger.Debug("Ignoring timeout", "timeout", ti)
 		return
 	}
@@ -227,7 +208,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 
 	height := v.Height()
 	round := v.Round()
-	switch v.Type() {
+	switch v.VoteType() {
 	case vote.VoteTypePrevote:
 		prevotes := cs.votes.Prevotes(round)
 		cs.logger.Debug("Vote added to prevote", "vote", v, "voteset", prevotes)
@@ -263,7 +244,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 		}
 
 	default:
-		cs.logger.Panic("Unexpected vote type %X", v.Type)
+		cs.logger.Panic("Unexpected vote type %X", v.VoteType)
 	}
 
 	return err
@@ -279,7 +260,10 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	// Sign the vote
 	v := vote.NewVote(msgType, cs.hrs.Height(), cs.hrs.Round(), hash, address)
 	cs.privValidator.SignMsg(v)
-	cs.addVote(v)
+	err := cs.addVote(v)
+	if err != nil {
+		cs.logger.Error("Error on adding our vote!", "error", err)
+	}
 
 	// Broadcast our vote
 	msg := message.NewVoteMessage(v)

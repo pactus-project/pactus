@@ -5,10 +5,25 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
+func (cs *Consensus) ScheduleNewHeight() {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	stateHeight := cs.state.LastBlockHeight()
+	if cs.hrs.Height() < stateHeight-1 {
+		cs.isCommitted = false
+		cs.votes.Reset(stateHeight)
+		cs.updateHeight(stateHeight)
+		cs.updateRoundStep(0, hrs.StepTypeNewHeight)
+	}
+
+	cs.scheduleNewHeight()
+}
+
 func (cs *Consensus) scheduleNewHeight() {
 	sleep := cs.state.LastBlockTime().Add(cs.state.BlockTime()).Sub(util.Now())
 	cs.logger.Debug("NewHeight is scheduled", "seconds", sleep.Seconds())
-	cs.scheduleTimeout(sleep, cs.hrs.Height(), cs.hrs.Round(), hrs.StepTypeNewHeight)
+	cs.scheduleTimeout(sleep, cs.hrs.Height(), 0, hrs.StepTypeNewHeight)
 }
 
 func (cs *Consensus) enterNewHeight(height int) {
@@ -21,17 +36,22 @@ func (cs *Consensus) enterNewHeight(height int) {
 		return
 	}
 
-	if height > 1 {
-		vs := cs.votes.Precommits(cs.commitRound)
+	// Apply last committed block
+	if cs.votes.lockedProposal != nil {
+		vs := cs.votes.Precommits(cs.hrs.Round())
 		if vs == nil {
 			cs.logger.Warn("Entering new height without having last commit")
 		} else {
-			// Update last commit here, consensus had enough time to populate votes
-			cs.lastCommit = vs.ToCommit()
+			// Update last commit here, consensus had enough time to populate more votes
+			block := cs.votes.lockedProposal.Block()
+			lastCommit := vs.ToCommit()
+			if lastCommit != nil {
+				cs.state.UpdateLastCommit(block.Hash(), *lastCommit)
+			}
 		}
 	}
 
-	cs.commitRound = -1
+	cs.isCommitted = false
 	cs.votes.Reset(height)
 	cs.updateHeight(height)
 	cs.updateRoundStep(0, hrs.StepTypeNewHeight)
