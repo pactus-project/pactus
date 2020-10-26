@@ -26,8 +26,8 @@ func TestMarshalingEmptyPublicKey(t *testing.T) {
 }
 
 func TestMarshalingPublicKey(t *testing.T) {
-	pb0, _ := GenerateRandomKey()
-	pb1, _ := GenerateRandomKey()
+	_, pb0, _ := GenerateTestKeyPair()
+	_, pb1, _ := GenerateTestKeyPair()
 	js, err := json.Marshal(&pb1)
 	assert.NoError(t, err)
 
@@ -35,7 +35,6 @@ func TestMarshalingPublicKey(t *testing.T) {
 	require.NoError(t, json.Unmarshal(js, &pb2))
 	require.False(t, pb1.EqualsTo(pb0))
 	require.True(t, pb1.EqualsTo(pb2))
-
 
 	bs, err := pb1.MarshalCBOR()
 	assert.NoError(t, err)

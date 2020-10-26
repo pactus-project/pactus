@@ -1,24 +1,25 @@
 package message
 
 import (
+	"fmt"
+
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/tx"
 )
 
 type BlockPayload struct {
-	Height int         `cbor:"1,keyasint"`
-	Block  block.Block `cbor:"2,keyasint"`
-	Txs    []tx.Tx     `cbor:"3,keyasint"`
+	Height int          `cbor:"1,keyasint"`
+	Block  block.Block  `cbor:"2,keyasint"`
+	Commit block.Commit `cbor:"3,keyasint"`
 }
 
-func NewBlockMessage(height int, block block.Block, txs []tx.Tx) Message {
+func NewBlockMessage(height int, block block.Block, commit block.Commit) Message {
 	return Message{
 		Type: PayloadTypeBlock,
 		Payload: &BlockPayload{
 			Height: height,
 			Block:  block,
-			Txs:    txs,
+			Commit: commit,
 		},
 	}
 
@@ -30,9 +31,8 @@ func (p *BlockPayload) SanityCheck() error {
 	if err := p.Block.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
 	}
-	// TODO: compare tx.hash() with tx_hashes insied block
-	if p.Block.TxHashes().Count() != len(p.Txs) {
-		return errors.Errorf(errors.ErrInvalidMessage, "Not enough transactions")
+	if err := p.Commit.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
 	}
 	return nil
 }
@@ -42,5 +42,5 @@ func (p *BlockPayload) Type() PayloadType {
 }
 
 func (p *BlockPayload) Fingerprint() string {
-	return ""
+	return fmt.Sprintf("{🗃 %v}", p.Block.Fingerprint())
 }

@@ -87,10 +87,10 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 
 	if (vote.data.Height != vs.height) ||
 		(vote.data.Round != vs.round) ||
-		(vote.data.Type != vs.voteType) {
+		(vote.data.VoteType != vs.voteType) {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%d, but got %d/%d/%d",
 			vs.height, vs.round, vs.voteType,
-			vote.Height(), vote.Round(), vote.Type())
+			vote.Height(), vote.Round(), vote.VoteType())
 	}
 
 	val := vs.valSet.Validator(signer)
@@ -112,7 +112,10 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	for id, v := range vs.votesByBlock {
 		if id != vote.data.BlockHash {
 			duplicated, ok := v.votes[signer]
-			if ok && duplicated.data.BlockHash != blockHash {
+			// Duplicated vote:
+			// 1- Previous blockhash is not undef
+			// 2- Block hashes are not sames
+			if ok && !duplicated.data.BlockHash.IsUndef() && duplicated.data.BlockHash != blockHash {
 				return false, errors.Error(errors.ErrDuplicateVote)
 			}
 		}

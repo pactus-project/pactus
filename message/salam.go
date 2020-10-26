@@ -7,32 +7,32 @@ import (
 	"github.com/zarbchain/zarb-go/version"
 )
 
-type StatusResPayload struct {
+type SalamPayload struct {
 	Version version.Version `cbor:"1,keyasint"`
 	Height  int             `cbor:"2,keyasint"`
 }
 
-func NewStatusResMessage(height int) Message {
+func NewSalamMessage(height int) Message {
 	return Message{
-		Type: PayloadTypeStatusRes,
-		Payload: &StatusResPayload{
+		Type: PayloadTypeSalam,
+		Payload: &SalamPayload{
 			Version: version.NodeVersion,
 			Height:  height,
 		},
 	}
 
 }
-func (p *StatusResPayload) SanityCheck() error {
+func (p *SalamPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
 	return nil
 }
 
-func (p *StatusResPayload) Type() PayloadType {
-	return PayloadTypeStatusRes
+func (p *SalamPayload) Type() PayloadType {
+	return PayloadTypeSalam
 }
 
-func (p *StatusResPayload) Fingerprint() string {
+func (p *SalamPayload) Fingerprint() string {
 	return fmt.Sprintf("{%v}", p.Height)
 }

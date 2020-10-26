@@ -28,6 +28,10 @@ func (s *Stats) PeersCount() int {
 	return len(s.peers)
 }
 
+func (s *Stats) MaxHeight() int {
+	return s.maxHeight
+}
+
 func (s *Stats) getPeer(peerID peer.ID) *Peer {
 	if peer, ok := s.peers[peerID]; ok {
 		return peer
@@ -50,13 +54,16 @@ func (s *Stats) ParsPeerMessage(peerID peer.ID, msg *message.Message) {
 	peer := s.getPeer(peerID)
 	node := s.getNode(msg.Initiator)
 
-	peer.receivedMsg = peer.receivedMsg + 1
+	peer.ReceivedMsg = peer.ReceivedMsg + 1
 
 	//ourHeight, _ := syncer.state.LastBlockInfo()
 	switch msg.PayloadType() {
-	case message.PayloadTypeStatusReq:
-		pld := msg.Payload.(*message.StatusReqPayload)
-		s.maxHeight = util.Max(s.maxHeight, pld.Height)
+	case message.PayloadTypeSalam:
+		pld := msg.Payload.(*message.SalamPayload)
+		node.Version = pld.Version
+		s.updateMaxHeight(pld.Height)
+
+	case message.PayloadTypeBlock:
 
 	case message.PayloadTypeBlocksReq:
 
@@ -66,23 +73,27 @@ func (s *Stats) ParsPeerMessage(peerID peer.ID, msg *message.Message) {
 	case message.PayloadTypeTxReq:
 		//pld := msg.Payload.(*message.TxReqPayload)
 
-	case message.PayloadTypeHRS:
-		pld := msg.Payload.(*message.HRSPayload)
-		node.hrs = pld.HRS
+	case message.PayloadTypeHeartBeat:
+		pld := msg.Payload.(*message.HeartBeatPayload)
+		node.HRS = pld.HRS
+		s.updateMaxHeight(pld.HRS.Height() - 1)
 
 	case message.PayloadTypeProposal:
-		//pld := msg.Payload.(*message.ProposalPayload)
-
-	case message.PayloadTypeBlock:
-		//pld := msg.Payload.(*message.BlockPayload)
+		pld := msg.Payload.(*message.ProposalPayload)
+		s.updateMaxHeight(pld.Proposal.Height() - 1)
 
 	case message.PayloadTypeVote:
-		//pld := msg.Payload.(*message.VotePayload)
+		pld := msg.Payload.(*message.VotePayload)
+		s.updateMaxHeight(pld.Vote.Height() - 1)
 
 	case message.PayloadTypeVoteSet:
 		//pld := msg.Payload.(*message.VoteSetPayload)
 
 	default:
-		s.logger.Error("Unknown message type", "msg", msg)
+		s.logger.Error("Unknown message type", "type", msg.PayloadType())
 	}
+}
+
+func (s *Stats) updateMaxHeight(height int) {
+	s.maxHeight = util.Max(s.maxHeight, height)
 }

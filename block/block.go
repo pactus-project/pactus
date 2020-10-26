@@ -3,12 +3,14 @@ package block
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 type Block struct {
@@ -59,9 +61,9 @@ func MakeBlock(timestamp time.Time, txHashes TxHashes,
 	return b
 }
 
-func (b *Block) Header() *Header     { return &b.data.Header }
-func (b *Block) TxHashes() *TxHashes { return &b.data.TxHashes }
-func (b *Block) LastCommit() *Commit { return b.data.LastCommit }
+func (b Block) Header() *Header     { return &b.data.Header }
+func (b Block) TxHashes() *TxHashes { return &b.data.TxHashes }
+func (b Block) LastCommit() *Commit { return b.data.LastCommit }
 
 func (b Block) SanityCheck() error {
 	if err := b.data.Header.SanityCheck(); err != nil {
@@ -101,7 +103,7 @@ func (b Block) HashesTo(hash crypto.Hash) bool {
 }
 
 func (b *Block) Fingerprint() string {
-	return fmt.Sprintf("{%v by:%v Tx:%d App:%v Vals:%v}",
+	return fmt.Sprintf("{⌘ %v 👤 %v 📨 %d 💻 %v 👥 %v}",
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.TxHashes.Count(),
@@ -141,4 +143,43 @@ func (b Block) MarshalJSON() ([]byte, error) {
 
 func (b *Block) UnmarshalJSON(bz []byte) error {
 	return json.Unmarshal(bz, &b.data)
+}
+
+// ----
+func GenerateTestBlock() (Block, []*tx.Tx, crypto.PrivateKey) {
+	proposer, _, pv := crypto.GenerateTestKeyPair()
+	txs := make([]*tx.Tx, 0)
+	txs = append(txs, tx.GenerateTestSendTx())
+	txs = append(txs, tx.GenerateTestSendTx())
+	txs = append(txs, tx.GenerateTestSendTx())
+	txs = append(txs, tx.GenerateTestSendTx())
+
+	txHashes := NewTxHashes()
+	for _, tx := range txs {
+		txHashes.Append(tx.Hash())
+	}
+
+	lastBlockHash := crypto.GenerateTestHash()
+	addr1, _, pv1 := crypto.GenerateTestKeyPair()
+	addr2, _, pv2 := crypto.GenerateTestKeyPair()
+	addr3, _, pv3 := crypto.GenerateTestKeyPair()
+	addr4, _, pv4 := crypto.GenerateTestKeyPair()
+	commit := NewCommit(rand.Intn(10),
+		[]crypto.Address{addr1, addr2, addr3, addr4},
+		[]crypto.Signature{
+			pv1.Sign(lastBlockHash.RawBytes()),
+			pv2.Sign(lastBlockHash.RawBytes()),
+			pv3.Sign(lastBlockHash.RawBytes()),
+			pv4.Sign(lastBlockHash.RawBytes()),
+		})
+
+	block := MakeBlock(time.Now(), txHashes,
+		lastBlockHash,
+		crypto.GenerateTestHash(),
+		crypto.GenerateTestHash(),
+		crypto.GenerateTestHash(),
+		commit,
+		proposer)
+
+	return block, txs, pv
 }

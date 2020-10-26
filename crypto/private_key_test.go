@@ -25,8 +25,8 @@ func TestMarshalingEmptyPrivateKey(t *testing.T) {
 }
 
 func TestMarshalingPrivateKey(t *testing.T) {
-	_, pv0 := GenerateRandomKey()
-	_, pv1 := GenerateRandomKey()
+	_, _, pv0 := GenerateTestKeyPair()
+	_, _, pv1 := GenerateTestKeyPair()
 	js, err := json.Marshal(pv1)
 	//fmt.Println(string(js))
 	assert.NoError(t, err)

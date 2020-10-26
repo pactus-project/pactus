@@ -55,7 +55,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(genDoc, store, txPool, broadcastCh)
+	state, err := state.LoadOrNewState(genDoc, store, txPool)
 	if err != nil {
 		return nil, err
 	}
@@ -105,10 +105,10 @@ func (n *Node) Start() error {
 	}
 
 	n.network.Start()
-	n.sync.Start()
-
 	// Wait for network to started
 	time.Sleep(1 * time.Second)
+
+	n.sync.Start()
 
 	err := n.capnp.StartServer()
 	if err != nil {
@@ -120,16 +120,12 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start http server")
 	}
 
-	n.consensus.Start()
-
-
 	return nil
 }
 
 func (n *Node) Stop() {
 	logger.Info("Stopping Node")
 
-	n.consensus.Stop()
 	n.network.Stop()
 	n.sync.Stop()
 	n.capnp.StopServer()

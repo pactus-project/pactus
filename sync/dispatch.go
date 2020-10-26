@@ -3,7 +3,6 @@ package sync
 import (
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/tx"
@@ -22,14 +21,19 @@ func (syncer *Synchronizer) broadcastLoop() {
 	}
 }
 
-func (syncer *Synchronizer) broadcastStatusReq() {
+func (syncer *Synchronizer) broadcastSalam() {
 	height := syncer.state.LastBlockHeight()
-	msg := message.NewStatusReqMessage(height)
+	msg := message.NewSalamMessage(height)
+	syncer.publishMessage(msg)
+}
+
+func (syncer *Synchronizer) broadcastBlocksReq(from, to int) {
+	msg := message.NewBlocksReqMessage(from, to)
 	syncer.publishMessage(msg)
 }
 
 func (syncer *Synchronizer) broadcastBlocksRes(from int, blocks []block.Block, txs []tx.Tx) {
-	msg := message.NewBlocksMessage(from, blocks, txs)
+	msg := message.NewBlocksResMessage(from, blocks, txs)
 	syncer.publishMessage(msg)
 }
 
@@ -43,13 +47,16 @@ func (syncer *Synchronizer) broadcastTxReq(hash crypto.Hash) {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastHRS(hrs hrs.HRS, hasProposal bool) {
-	msg := message.NewHRSMessage(hrs, hasProposal)
+func (syncer *Synchronizer) broadcastHeartBeat() {
+	hasProposal := syncer.consensus.HasProposal()
+	hrs := syncer.consensus.HRS()
+
+	msg := message.NewHeartBeatMessage(hrs, hasProposal)
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastProposal(proposal vote.Proposal, txs []tx.Tx) {
-	msg := message.NewProposalMessage(proposal, txs)
+func (syncer *Synchronizer) broadcastProposal(proposal vote.Proposal) {
+	msg := message.NewProposalMessage(proposal)
 	syncer.publishMessage(msg)
 }
 
@@ -75,23 +82,24 @@ func (syncer *Synchronizer) publishMessage(msg message.Message) {
 func (syncer *Synchronizer) topic(msg *message.Message) *pubsub.Topic {
 	switch msg.PayloadType() {
 
-	case message.PayloadTypeStatusReq,
-		message.PayloadTypeStatusRes,
-		message.PayloadTypeBlock,
+	case message.PayloadTypeSalam,
+		message.PayloadTypeHeartBeat:
+		return syncer.generalTopic
+
+	case message.PayloadTypeBlock,
 		message.PayloadTypeBlocksReq,
 		message.PayloadTypeBlocksRes:
-		return syncer.stateTopic
+		return syncer.blockTopic
 
 	case message.PayloadTypeTxReq,
 		message.PayloadTypeTxRes:
 		return syncer.txTopic
 
 	case message.PayloadTypeProposal,
-		message.PayloadTypeHRS,
 		message.PayloadTypeVote,
 		message.PayloadTypeVoteSet:
 		return syncer.consensusTopic
+	default:
+		panic("Invalid topic")
 	}
-
-	return nil
 }

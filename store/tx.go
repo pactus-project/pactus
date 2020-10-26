@@ -46,7 +46,7 @@ func (bs *txStore) SaveTx(tx tx.Tx, receipt tx.Receipt) error {
 	return nil
 }
 
-func (bs *txStore) RetrieveTx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
+func (bs *txStore) Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
 	txKey := txKey(hash)
 	data, err := bs.db.Get(txKey, nil)
 	if err != nil {

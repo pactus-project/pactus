@@ -12,7 +12,6 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -44,24 +43,22 @@ type State struct {
 	lastBlockHeight    int
 	lastBlockHash      crypto.Hash
 	lastReceiptsHash   crypto.Hash
+	lastCommit         *block.Commit
 	nextValidatorsHash crypto.Hash
 	lastBlockTime      time.Time
 	updateCh           chan int
-	broadcastCh        chan message.Message
 	logger             *logger.Logger
 }
 
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	store *store.Store,
-	txPool *txpool.TxPool,
-	broadcastCh chan message.Message) (*State, error) {
+	txPool *txpool.TxPool) (*State, error) {
 
 	st := &State{
-		txPool:      txPool,
-		store:       store,
-		params:      NewParams(),
-		broadcastCh: broadcastCh,
+		txPool: txPool,
+		store:  store,
+		params: NewParams(),
 	}
 
 	err := st.loadState()
@@ -75,7 +72,7 @@ func LoadOrNewState(
 		return nil, err
 	}
 
-	st.logger = logger.NewLogger("State", st)
+	st.logger = logger.NewLogger("_state", st)
 
 	return st, nil
 }
@@ -132,7 +129,6 @@ func (st *State) LastBlockHeight() int {
 	return st.lastBlockHeight
 }
 
-
 func (st *State) LastBlockTime() time.Time {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
@@ -147,7 +143,19 @@ func (st *State) BlockTime() time.Duration {
 	return st.params.BlockTime
 }
 
-func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *block.Commit) (block.Block, []tx.Tx) {
+func (st *State) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
+	if err := st.validateCommit(blockHash, commit); err != nil {
+		st.logger.Warn("Try to update last commit, but it's invalid", "error", err)
+		return
+	}
+
+	st.lastCommit = &commit
+}
+
+func (st *State) ProposeBlock(height int, proposer crypto.Address) block.Block {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -158,10 +166,7 @@ func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *b
 	}
 
 	mintbaseTx := tx.NewMintbaseTx(st.lastBlockHash, proposer, 10, "Minbase transaction")
-	st.txPool.AppendTx(mintbaseTx)
-
-	txs := make([]tx.Tx, 0)
-	txs = append(txs, *mintbaseTx)
+	st.txPool.AppendTxAndBroadcast(mintbaseTx)
 
 	txHashes := block.NewTxHashes()
 	txHashes.Append(mintbaseTx.Hash())
@@ -173,28 +178,15 @@ func (st *State) ProposeBlock(height int, proposer crypto.Address, lastCommit *b
 		crypto.UndefHash,
 		stateHash,
 		st.lastReceiptsHash,
-		lastCommit,
+		st.lastCommit,
 		proposer)
 
-	return block, txs
+	return block
 }
 
-func (st *State) SyncTxPool(block *block.Block) {
+func (st *State) ValidateBlock(block block.Block) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
-
-	if block == nil {
-		return
-	}
-}
-
-func (st *State) ValidateBlock(block *block.Block) error {
-	st.lk.Lock()
-	defer st.lk.Unlock()
-
-	if block == nil {
-		return errors.Error(errors.ErrInvalidBlock)
-	}
 
 	if err := st.validateBlock(block); err != nil {
 		return err
@@ -209,34 +201,51 @@ func (st *State) ValidateBlock(block *block.Block) error {
 	return nil
 }
 
-func (st *State) ApplyBlock(block *block.Block, round int) error {
+func (st *State) ApplyBlock(block block.Block, commit block.Commit) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
+	if !block.Header().LastBlockHash().EqualsTo(st.lastBlockHash) {
+		return errors.Errorf(errors.ErrInvalidBlock, "Previous block hash is not match")
+	}
+
+	round := commit.Round()
 	err := st.validateBlock(block)
 	if err != nil {
-		st.logger.Panic("Applying block failed", "err", err)
+		return errors.Errorf(errors.ErrInvalidBlock, "Valdating block failed: %v", err)
+	}
+
+	err = st.validateCommit(block.Hash(), commit)
+	if err != nil {
+		return errors.Errorf(errors.ErrInvalidBlock, "Valdating commit failed: %v", err)
 	}
 
 	st.cache.reset()
+	// Execute block
 	receipts, err := st.executeBlock(block, st.executor)
 	if err != nil {
-		st.logger.Panic("Applying block failed", "err", err)
+		return errors.Errorf(errors.ErrInvalidBlock, "Executing block failed: %v", err)
 	}
-	hashes := make([]crypto.Hash, len(receipts))
-	for i, r := range receipts {
-		hashes[i] = r.Hash()
-		st.txPool.RemoveTx(r.TxHash())
-	}
-	receiptsMerkle := merkle.NewTreeFromHashes(hashes)
-	receiptsHash := receiptsMerkle.Root()
-
 	// Commit the changes
 	st.cache.commit(nil)
 
-	if err := st.store.SaveBlock(*block, st.lastBlockHeight+1); err != nil {
-		return err
+	// Save block and txs
+	receiptsHashes := make([]crypto.Hash, len(receipts))
+	for i, r := range receipts {
+		receiptsHashes[i] = r.Hash()
+		trx := st.txPool.RemoveTx(r.TxHash())
+		if trx == nil {
+			return errors.Errorf(errors.ErrInvalidBlock, "Saving block failed: Transaction lost")
+		}
+		st.store.SaveTx(*trx, *r)
 	}
+
+	if err := st.store.SaveBlock(block, st.lastBlockHeight+1); err != nil {
+		return errors.Errorf(errors.ErrInvalidBlock, "Saving block failed: %v", err)
+	}
+
+	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)
+	receiptsHash := receiptsMerkle.Root()
 
 	// Move validator set
 	st.validatorSet.MoveProposer(round)
@@ -244,12 +253,13 @@ func (st *State) ApplyBlock(block *block.Block, round int) error {
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
 	st.lastReceiptsHash = *receiptsHash
+	st.lastCommit = &commit
 
 	return nil
 }
 
 func (st *State) Fingerprint() string {
-	return fmt.Sprintf("{#%v %v @%v}",
+	return fmt.Sprintf("{# %v ⌘ %v 🕣 %v}",
 		st.lastBlockHeight,
 		st.lastBlockHash.Fingerprint(),
 		st.lastBlockTime.Format("15.04.05"))

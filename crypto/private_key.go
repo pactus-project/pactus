@@ -49,14 +49,6 @@ func PrivateKeyFromRawBytes(data []byte) (PrivateKey, error) {
 	return pv, nil
 }
 
-func GenerateRandomKey() (PublicKey, PrivateKey) {
-	pv := new(PrivateKey)
-	pv.data.SecretKey = new(bls.SecretKey)
-	pv.data.SecretKey.SetByCSPRNG()
-
-	return pv.PublicKey(), *pv
-}
-
 /// -------
 /// CASTING
 func (pv PrivateKey) RawBytes() []byte {
@@ -159,4 +151,13 @@ func (pv PrivateKey) PublicKey() PublicKey {
 
 func (pv PrivateKey) EqualsTo(right PrivateKey) bool {
 	return pv.data.SecretKey.IsEqual(right.data.SecretKey)
+}
+
+// ---
+func GenerateTestKeyPair() (Address, PublicKey, PrivateKey) {
+	pv := new(PrivateKey)
+	pv.data.SecretKey = new(bls.SecretKey)
+	pv.data.SecretKey.SetByCSPRNG()
+
+	return pv.PublicKey().Address(), pv.PublicKey(), *pv
 }

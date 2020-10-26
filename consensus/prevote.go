@@ -26,7 +26,7 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 	}
 
 	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
-		cs.logger.Warn("Prevote: Voted for nil, invalid block", "Proposal", roundProposal, "err", err)
+		cs.logger.Warn("Prevote: Voted for nil, invalid block", "proposal", roundProposal, "err", err)
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 	}

@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/sasha-s/go-deadlock"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 
@@ -41,67 +40,80 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *TxPool) AppendTxs(txs []tx.Tx) error {
+func (pool *TxPool) AppendTxs(txs []tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
 	for _, tx := range txs {
-		pool.appendTx(&tx)
+		pool.appendTx(tx)
 	}
-	return nil
 }
 
-func (pool *TxPool) AppendTx(tx *tx.Tx) error {
+func (pool *TxPool) AppendTx(tx tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	return pool.appendTx(tx)
+	pool.appendTx(tx)
 }
 
-func (pool *TxPool) appendTx(tx *tx.Tx) error {
+func (pool *TxPool) AppendTxAndBroadcast(tx tx.Tx) {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	pool.appendTx(tx)
+
+	msg := message.NewTxResMessage(tx)
+	pool.broadcastCh <- msg
+}
+
+func (pool *TxPool) appendTx(tx tx.Tx) {
 	if pool.pendingsList.Len() >= pool.config.MaxSize {
-		return errors.Errorf(errors.ErrGeneric, "Tx pool is full (%d txs)", pool.pendingsList.Len())
+		pool.logger.Warn("Tx pool is full")
 	}
 
 	_, found := pool.pendingsMap[tx.Hash()]
 	if found {
-		return errors.Errorf(errors.ErrGeneric, "We already have this transaction in our pool")
+		pool.logger.Info("We already have this transaction", "hash", tx.Hash())
+		return
 	}
 	// TODO:
 	// validate transaction
 
-	el := pool.pendingsList.PushFront(tx)
+	el := pool.pendingsList.PushFront(&tx)
 	pool.pendingsMap[tx.Hash()] = el
-
-	// TODO:
-	//go pool.syncer.BroadcastTx(tx)
-
-	return nil
 }
 
-func (pool *TxPool) RemoveTx(hash crypto.Hash) {
+func (pool *TxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
 	el, found := pool.pendingsMap[hash]
 	if !found {
-		return
+		return nil
 	}
 
 	pool.pendingsList.Remove(el)
 	delete(pool.pendingsMap, hash)
+
+	return el.Value.(*tx.Tx)
+
 }
 
-func (pool *TxPool) PendingTx(hash crypto.Hash) (*tx.Tx, bool) {
+func (pool *TxPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
 	el, found := pool.pendingsMap[hash]
 	if !found {
-		return nil, false
+		pool.logger.Info("We don't have this transaction", "hash", hash)
+
+		msg := message.NewTxReqMessage(hash)
+		pool.broadcastCh <- msg
+
+		return nil
 	}
 
-	return el.Value.(*tx.Tx), true
+	return el.Value.(*tx.Tx)
 }
 
 func (pool *TxPool) HasTx(hash crypto.Hash) bool {
@@ -112,15 +124,11 @@ func (pool *TxPool) HasTx(hash crypto.Hash) bool {
 	return found
 }
 
-func (pool *TxPool) GetTx(hash crypto.Hash) *tx.Tx {
+func (pool *TxPool) Size(hash crypto.Hash) int {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
-	el, found := pool.pendingsMap[hash]
-	if found {
-		return el.Value.(*tx.Tx)
-	}
-	return nil
+	return pool.pendingsList.Len()
 }
 
 func (pool *TxPool) Fingerprint() string {
