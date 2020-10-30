@@ -64,7 +64,7 @@ func (st *State) validateCommit(blockHash crypto.Hash, commit block.Commit) erro
 		}
 
 		pub := val.PublicKey()
-		if !pub.Verify(signBytes, signatures[i]) {
+		if !pub.Verify(signBytes, &signatures[i]) {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"invalid signature for %v", c.Fingerprint())
 		}

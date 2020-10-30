@@ -142,11 +142,11 @@ func (pb *PublicKey) SanityCheck() error {
 	return nil
 }
 
-func (pb *PublicKey) Verify(msg []byte, sig Signature) bool {
+func (pb *PublicKey) Verify(msg []byte, sig *Signature) bool {
 	return sig.data.Signature.VerifyByte(pb.data.PublicKey, Hash256(msg))
 }
 
-func (pb PublicKey) EqualsTo(right PublicKey) bool {
+func (pb *PublicKey) EqualsTo(right PublicKey) bool {
 	return pb.data.PublicKey.IsEqual(right.data.PublicKey)
 }
 

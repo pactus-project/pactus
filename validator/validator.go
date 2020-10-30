@@ -2,6 +2,7 @@ package validator
 
 import (
 	"encoding/json"
+	"math/rand"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -38,14 +39,10 @@ func (val *Validator) Stake() int64                { return val.data.Stake }
 func (val *Validator) BondingHeight() int { return val.data.BondingHeight }
 
 func (val Validator) Power() int64 {
-	// Viva democracy, every person will be treated equally in our blockchain
+	// Viva democracy, everybody should be treated equally
 	return 1
 }
 
-func (val Validator) MinimumStakeToUnbond() int64 {
-	//TODO:Mostafa
-	return 0
-}
 func (val *Validator) SubtractFromStake(amt int64) error {
 	if amt > val.Stake() {
 		return errors.Errorf(errors.ErrInsufficientFunds, "Attempt to subtract %v from the balance of %s", amt, val.Address())
@@ -91,4 +88,14 @@ func (val *Validator) UnmarshalJSON(bs []byte) error {
 func (val Validator) String() string {
 	b, _ := val.MarshalJSON()
 	return string(b)
+}
+
+// ---------
+// For tests
+func GenerateTestValidator() (*Validator, crypto.PrivateKey) {
+	_, pb, pv := crypto.GenerateTestKeyPair()
+	val := NewValidator(pb, 0)
+	val.data.Stake = rand.Int63n(100000)
+	val.data.Sequence = rand.Intn(100)
+	return val, pv
 }

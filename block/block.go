@@ -145,7 +145,8 @@ func (b *Block) UnmarshalJSON(bz []byte) error {
 	return json.Unmarshal(bz, &b.data)
 }
 
-// ----
+// ---------
+// For tests
 func GenerateTestBlock() (Block, []*tx.Tx, crypto.PrivateKey) {
 	proposer, _, pv := crypto.GenerateTestKeyPair()
 	txs := make([]*tx.Tx, 0)
@@ -167,10 +168,10 @@ func GenerateTestBlock() (Block, []*tx.Tx, crypto.PrivateKey) {
 	commit := NewCommit(rand.Intn(10),
 		[]crypto.Address{addr1, addr2, addr3, addr4},
 		[]crypto.Signature{
-			pv1.Sign(lastBlockHash.RawBytes()),
-			pv2.Sign(lastBlockHash.RawBytes()),
-			pv3.Sign(lastBlockHash.RawBytes()),
-			pv4.Sign(lastBlockHash.RawBytes()),
+			*pv1.Sign(lastBlockHash.RawBytes()),
+			*pv2.Sign(lastBlockHash.RawBytes()),
+			*pv3.Sign(lastBlockHash.RawBytes()),
+			*pv4.Sign(lastBlockHash.RawBytes()),
 		})
 
 	block := MakeBlock(time.Now(), txHashes,

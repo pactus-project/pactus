@@ -60,26 +60,3 @@ func TestMarshalingAddress(t *testing.T) {
 		require.Equal(t, ac1, ac2)
 	}
 }
-
-/*
-func TestValidity(t *testing.T) {
-	var err error
-	_, err = AddressFromString("ac9E2cyNA5UfB8pUpqzEz4QCcBpp8sxnEaN")
-	assert.NoError(t, err)
-
-	_, err = AddressFromString("ac9e2cyNA5UfB8pUpqzEz4QCcBpp8sxnEaN")
-	assert.Error(t, err)
-
-	_, err = AddressFromString("AC9E2cyNA5UfB8pUpqzEz4QCcBpp8sxnEaN")
-	assert.Error(t, err)
-
-	_, err = AddressFromString("invalid_address")
-	assert.Error(t, err)
-
-	_, err = AddressFromRawBytes([]byte{0, 1, 2, 3, 4, 5, 6})
-	assert.Error(t, err)
-
-	_, err = AddressFromRawBytes([]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5})
-	assert.Error(t, err)
-}
-*/

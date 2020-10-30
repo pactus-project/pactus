@@ -17,7 +17,7 @@ type keyData struct {
 }
 
 func GenKey() *Key {
-	addr, pk, pv := crypto.GenerateTestKeyPair()
+	addr, pk, pv := crypto.RandomKeyPair()
 	return &Key{
 		data: keyData{
 			PrivateKey: pv,

@@ -14,7 +14,7 @@ import (
 )
 
 func TestRunningNode(t *testing.T) {
-	_, pb, pv := crypto.GenerateTestKeyPair()
+	_, pb, pv := crypto.RandomKeyPair()
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
 	val := validator.NewValidator(pb, 1)

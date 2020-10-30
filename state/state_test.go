@@ -17,7 +17,7 @@ import (
 )
 
 func mockState(t *testing.T) (*State, crypto.Address) {
-	_, pb, _ := crypto.GenerateTestKeyPair()
+	_, pb, _ := crypto.RandomKeyPair()
 	addr := pb.Address()
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)

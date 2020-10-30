@@ -6,7 +6,7 @@ import (
 
 type Signable interface {
 	SignBytes() []byte
-	SetSignature(sig crypto.Signature)
+	SetSignature(sig *crypto.Signature)
 }
 type PrivValidator struct {
 	address    crypto.Address

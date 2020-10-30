@@ -3,6 +3,7 @@ package vote
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/block"
@@ -14,10 +15,10 @@ type Proposal struct {
 	data proposalData
 }
 type proposalData struct {
-	Height    int              `cbor:"1,keyasint"`
-	Round     int              `cbor:"2,keyasint"`
-	Block     block.Block      `cbor:"3,keyasint"`
-	Signature crypto.Signature `cbor:"4,keyasint"`
+	Height    int               `cbor:"1,keyasint"`
+	Round     int               `cbor:"2,keyasint"`
+	Block     block.Block       `cbor:"3,keyasint"`
+	Signature *crypto.Signature `cbor:"4,keyasint"`
 }
 
 func NewProposal(height int, round int, block block.Block) *Proposal {
@@ -29,10 +30,10 @@ func NewProposal(height int, round int, block block.Block) *Proposal {
 		},
 	}
 }
-func (p *Proposal) Height() int                 { return p.data.Height }
-func (p *Proposal) Round() int                  { return p.data.Round }
-func (p *Proposal) Block() block.Block          { return p.data.Block }
-func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
+func (p *Proposal) Height() int                  { return p.data.Height }
+func (p *Proposal) Round() int                   { return p.data.Round }
+func (p *Proposal) Block() block.Block           { return p.data.Block }
+func (p *Proposal) Signature() *crypto.Signature { return p.data.Signature }
 
 func (p *Proposal) SanityCheck() error {
 	if err := p.data.Block.SanityCheck(); err != nil {
@@ -47,7 +48,7 @@ func (p *Proposal) SanityCheck() error {
 	return nil
 }
 
-func (p *Proposal) SetSignature(sig crypto.Signature) {
+func (p *Proposal) SetSignature(sig *crypto.Signature) {
 	p.data.Signature = sig
 }
 
@@ -82,6 +83,9 @@ func (p *Proposal) UnmarshalJSON(bs []byte) error {
 }
 
 func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
+	if p.data.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidProposal, "No signature")
+	}
 	if !pubKey.Address().EqualsTo(p.data.Block.Header().ProposerAddress()) {
 		return errors.Errorf(errors.ErrInvalidProposal, "Invalid proposer")
 	}
@@ -98,10 +102,20 @@ func (p *Proposal) IsForBlock(hash *crypto.Hash) bool {
 	if hash == nil {
 		return false
 	}
-	return p.Block().Hash().EqualsTo(*hash)
+	return p.Block().HashesTo(*hash)
 }
 
 func (p Proposal) Fingerprint() string {
 	b := p.Block()
 	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.Fingerprint())
+}
+
+// ---------
+// For tests
+func GenerateTestProposal() (*Proposal, crypto.PrivateKey) {
+	b, _, pv := block.GenerateTestBlock()
+	p := NewProposal(rand.Intn(100), rand.Intn(10), b)
+	sig := pv.Sign(p.SignBytes())
+	p.SetSignature(sig)
+	return p, pv
 }
