@@ -27,7 +27,7 @@ func TestMarshalingEmptySignature(t *testing.T) {
 }
 
 func TestMarshalingSignature(t *testing.T) {
-	_, _, privKey := GenerateTestKeyPair()
+	_, _, privKey := RandomKeyPair()
 	sig1 := privKey.Sign([]byte("Test message"))
 	sig11 := privKey.Sign([]byte("Test message"))
 	require.Equal(t, sig1, sig11)
@@ -52,8 +52,8 @@ func TestMarshalingSignature(t *testing.T) {
 func TestVerifyingSignature(t *testing.T) {
 	msg := []byte("message")
 
-	_, pb1, pv1 := GenerateTestKeyPair()
-	_, pb2, pv2 := GenerateTestKeyPair()
+	_, pb1, pv1 := RandomKeyPair()
+	_, pb2, pv2 := RandomKeyPair()
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 

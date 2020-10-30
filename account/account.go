@@ -92,9 +92,8 @@ func (acc Account) String() string {
 	return string(b)
 }
 
-// ---
-
-/// For tests
+// ---------
+// For tests
 func GenerateTestAccount() *Account {
 	a, _, _ := crypto.GenerateTestKeyPair()
 	acc := NewAccount(a)

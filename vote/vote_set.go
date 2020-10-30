@@ -27,7 +27,7 @@ func newBlockVotes() *blockVotes {
 func (vs *blockVotes) addVote(vote *Vote) bool {
 	signer := vote.Signer()
 	if existing, ok := vs.votes[signer]; ok {
-		if !existing.data.Signature.EqualsTo(vote.data.Signature) {
+		if !existing.data.Signature.EqualsTo(*vote.data.Signature) {
 			// Signature malleability?
 			logger.Panic("Invalid vote")
 		} else {
@@ -88,7 +88,7 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	if (vote.data.Height != vs.height) ||
 		(vote.data.Round != vs.round) ||
 		(vote.data.VoteType != vs.voteType) {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%d, but got %d/%d/%d",
+		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
 			vs.height, vs.round, vs.voteType,
 			vote.Height(), vote.Round(), vote.VoteType())
 	}
@@ -112,11 +112,20 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	for id, v := range vs.votesByBlock {
 		if id != vote.data.BlockHash {
 			duplicated, ok := v.votes[signer]
-			// Duplicated vote:
-			// 1- Previous blockhash is not undef
-			// 2- Block hashes are not sames
-			if ok && !duplicated.data.BlockHash.IsUndef() && duplicated.data.BlockHash != blockHash {
-				return false, errors.Error(errors.ErrDuplicateVote)
+
+			if ok {
+				if duplicated.data.BlockHash.IsUndef() {
+					// He might received proposal after pre-vote time
+					v.sum--
+					vs.sum--
+					delete(v.votes, signer)
+				} else if duplicated.data.BlockHash != blockHash {
+					// Duplicated vote:
+					// 1- Same signer
+					// 2- Previous blockhash is not undef
+					// 3- Block hashes are not sames
+					return false, errors.Error(errors.ErrDuplicateVote)
+				}
 			}
 		}
 	}
@@ -177,7 +186,7 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 			continue
 		}
 		commiters = append(commiters, v.Signer())
-		signatures = append(signatures, v.Signature())
+		signatures = append(signatures, *v.Signature())
 	}
 
 	return block.NewCommit(vs.round, commiters, signatures)

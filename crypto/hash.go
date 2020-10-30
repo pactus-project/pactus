@@ -138,7 +138,8 @@ func (h Hash) EqualsTo(r Hash) bool {
 	return h.data.Hash == r.data.Hash
 }
 
-// ---
+// ---------
+// For tests
 func GenerateTestHash() Hash {
 	p := make([]byte, 10)
 	random := rand.Reader

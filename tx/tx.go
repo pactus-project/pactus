@@ -46,6 +46,14 @@ func (tx *Tx) Memo() string             { return tx.data.Memo }
 func (tx *Tx) IsCallTx() bool           { return len(tx.data.Data) > 0 }
 func (tx *Tx) IsMintbaseTx() bool       { return tx.data.Sender.EqualsTo(crypto.MintbaseAddress) }
 
+func (tx *Tx) SetSignature(sig *crypto.Signature) {
+	tx.data.Signature = sig
+}
+
+func (tx *Tx) SetPublicKey(pub *crypto.PublicKey) {
+	tx.data.PublicKey = pub
+}
+
 func NewMintbaseTx(stamp crypto.Hash, receiver crypto.Address, amount int64, memo string) Tx {
 	return Tx{
 		data: txData{
@@ -137,7 +145,7 @@ func (tx *Tx) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid cryptographic public key")
 		}
 		bs := tx.SignBytes()
-		if tx.data.PublicKey.Verify(bs, *tx.data.Signature) {
+		if tx.data.PublicKey.Verify(bs, tx.data.Signature) {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid cryptographic signature")
 		}
 	}
@@ -194,13 +202,14 @@ func (tx *Tx) UnmarshalJSON(bs []byte) error {
 	return json.Unmarshal(bs, &tx.data)
 }
 
-// ---
+// ---------
+// For tests
 func GenerateTestSendTx() *Tx {
 	h := crypto.GenerateTestHash()
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	a2, _, _ := crypto.GenerateTestKeyPair()
 	tx := NewSendTx(h, a1, a2, 100, 10, "test tx", &pb1, nil)
 	sig := pv1.Sign(tx.SignBytes())
-	tx.data.Signature = &sig
+	tx.data.Signature = sig
 	return tx
 }

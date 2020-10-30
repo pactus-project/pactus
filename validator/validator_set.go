@@ -85,3 +85,16 @@ func (set *ValidatorSet) Proposer(round int) *Validator {
 	idx := (set.proposerIndex + round) % len(set.validators)
 	return set.validators[idx]
 }
+
+// ---------
+// For tests
+func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
+	val1, pv1 := GenerateTestValidator()
+	val2, pv2 := GenerateTestValidator()
+	val3, pv3 := GenerateTestValidator()
+	val4, pv4 := GenerateTestValidator()
+
+	keys := []crypto.PrivateKey{pv1, pv2, pv3, pv4}
+	vals := []*Validator{val1, val2, val3, val4}
+	return NewValidatorSet(vals, 4), keys
+}
