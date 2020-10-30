@@ -18,6 +18,13 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+type StoreReader interface {
+	BlockByHeight(height int) (*block.Block, error)
+	BlockByHash(hash crypto.Hash) (*block.Block, int, error)
+	BlockHeight(hash crypto.Hash) (int, error)
+	Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error)
+}
+
 // TODO
 // implement go-level db snapshot, and keep latest snap shots
 var (
@@ -51,17 +58,21 @@ type State struct {
 }
 
 func LoadOrNewState(
+	conf *Config,
 	genDoc *genesis.Genesis,
-	store *store.Store,
 	txPool *txpool.TxPool) (*State, error) {
 
+	store, err := store.NewStore(conf.Store)
+	if err != nil {
+		return nil, err
+	}
 	st := &State{
 		txPool: txPool,
 		store:  store,
 		params: NewParams(),
 	}
 
-	err := st.loadState()
+	err = st.loadState()
 	if err != nil {
 		err = st.makeGenesisState(genDoc)
 	}
@@ -113,6 +124,10 @@ func (st *State) stateHash() crypto.Hash {
 	}
 
 	return *rootHash
+}
+
+func (st *State) StoreReader() StoreReader {
+	return st.store
 }
 
 func (st *State) ValidatorSet() *validator.ValidatorSet {
