@@ -12,7 +12,6 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -33,7 +32,6 @@ type Consensus struct {
 	privValidator *validator.PrivValidator
 	isCommitted   bool
 	state         *state.State
-	store         *store.Store
 	broadcastCh   chan message.Message
 	logger        *logger.Logger
 }
@@ -41,13 +39,11 @@ type Consensus struct {
 func NewConsensus(
 	conf *Config,
 	state *state.State,
-	store *store.Store,
 	privValidator *validator.PrivValidator,
 	broadcastCh chan message.Message) (*Consensus, error) {
 	cs := &Consensus{
 		config:        conf,
 		state:         state,
-		store:         store,
 		valset:        state.ValidatorSet(),
 		broadcastCh:   broadcastCh,
 		privValidator: privValidator,

@@ -9,12 +9,6 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type StoreReader interface {
-	BlockByHeight(height int) (*block.Block, error)
-	BlockByHash(hash crypto.Hash) (*block.Block, int, error)
-	BlockHeight(hash crypto.Hash) (int, error)
-	Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error)
-}
 
 type Store struct {
 	lk deadlock.RWMutex

@@ -10,7 +10,6 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -26,14 +25,12 @@ func mockState(t *testing.T) (*State, crypto.Address) {
 	loggerConfig := logger.DefaultConfig()
 	loggerConfig.Levels["default"] = "error"
 	logger.InitLogger(loggerConfig)
-	storeConfig := store.DefaultConfig()
-	storeConfig.Path = util.TempDirName()
-	store, err := store.NewStore(storeConfig)
-	require.NoError(t, err)
+	stateConfig := DefaultConfig()
+	stateConfig.Store.Path = util.TempDirName()
 	txPoolConfig := txpool.DefaultConfig()
 	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan message.Message, 10))
 	require.NoError(t, err)
-	st, err := LoadOrNewState(gen, store, txPool)
+	st, err := LoadOrNewState(stateConfig, gen, txPool)
 	require.NoError(t, err)
 	return st, addr
 }

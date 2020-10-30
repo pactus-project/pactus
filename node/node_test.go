@@ -20,7 +20,7 @@ func TestRunningNode(t *testing.T) {
 	val := validator.NewValidator(pb, 1)
 	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
 	conf := config.DefaultConfig()
-	conf.Store.Path = util.TempDirName()
+	conf.State.Store.Path = util.TempDirName()
 	conf.Network.NodeKey = util.TempFilename()
 	privVal := validator.NewPrivValidator(pv)
 	n, err := NewNode(gen, conf, privVal)
