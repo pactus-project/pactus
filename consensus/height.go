@@ -32,7 +32,7 @@ func (cs *Consensus) enterNewHeight(height int) {
 		return
 	}
 	if cs.state.LastBlockHeight() != cs.hrs.Height() {
-		cs.logger.Debug("State is not in same height as consensus", "state", cs.state)
+		cs.logger.Debug("NewHeight: State is not in same height as consensus", "state", cs.state)
 		return
 	}
 
@@ -40,7 +40,7 @@ func (cs *Consensus) enterNewHeight(height int) {
 	if cs.votes.lockedProposal != nil {
 		vs := cs.votes.Precommits(cs.hrs.Round())
 		if vs == nil {
-			cs.logger.Warn("Entering new height without having last commit")
+			cs.logger.Warn("NewHeight: Entering new height without having last commit")
 		} else {
 			// Update last commit here, consensus had enough time to populate more votes
 			block := cs.votes.lockedProposal.Block()

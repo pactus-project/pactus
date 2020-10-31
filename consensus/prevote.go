@@ -27,6 +27,7 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 
 	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
 		cs.logger.Warn("Prevote: Voted for nil, invalid block", "proposal", roundProposal, "err", err)
+		cs.votes.SetRoundProposal(cs.hrs.Round(), nil)
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 	}
@@ -48,5 +49,5 @@ func (cs *Consensus) enterPrevoteWait(height int, round int) {
 	}
 
 	cs.scheduleTimeout(cs.config.Prevote(round), height, round, hrs.StepTypePrecommit)
-	cs.logger.Info("Wait for some more prevotes") //then enter precommit
+	cs.logger.Info("PrevoteWait: Wait for some more prevotes") //then enter precommit
 }

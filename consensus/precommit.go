@@ -62,9 +62,9 @@ func (cs *Consensus) enterPrecommitWait(height int, round int) {
 	cs.updateRoundStep(round, hrs.StepTypePrecommitWait)
 
 	if !cs.votes.Precommits(round).HasQuorum() {
-		cs.logger.Error("PrecommitWait, but Precommits does not have any +2/3 votes")
+		cs.logger.Error("PrecommitWait: Precommits does not have any +2/3 votes")
 	}
 
 	cs.scheduleTimeout(cs.config.Precommit(round), height, round, hrs.StepTypeNewRound)
-	cs.logger.Info("Wait for some more precommits") // ,then enter enterNewRound
+	cs.logger.Info("PrecommitWait: Wait for some more precommits") // ,then enter enterNewRound
 }
