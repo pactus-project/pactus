@@ -7,7 +7,7 @@ import (
 )
 
 func (cs *Consensus) enterPrevote(height int, round int) {
-	if cs.hrs.InvalidHeightRoundStep(height, round, hrs.StepTypePrevote) {
+	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevote) {
 		cs.logger.Debug("Prevote with invalid args", "height", height, "round", round)
 		return
 	}
@@ -36,7 +36,7 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 }
 
 func (cs *Consensus) enterPrevoteWait(height int, round int) {
-	if cs.hrs.InvalidHeightRoundStep(height, round, hrs.StepTypePrevoteWait) {
+	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevoteWait) {
 		cs.logger.Debug("PrevoteWait with invalid args", "height", height, "round", round)
 		return
 	}

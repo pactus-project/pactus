@@ -2,12 +2,12 @@ package account
 
 import (
 	"encoding/json"
-	"math/rand"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	e "github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // Account structure
@@ -97,7 +97,7 @@ func (acc Account) String() string {
 func GenerateTestAccount() *Account {
 	a, _, _ := crypto.GenerateTestKeyPair()
 	acc := NewAccount(a)
-	acc.data.Balance = rand.Int63n(100000)
-	acc.data.Sequence = rand.Intn(100)
+	acc.data.Balance = util.RandInt64(10000000)
+	acc.data.Sequence = util.RandInt(100)
 	return acc
 }

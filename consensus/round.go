@@ -5,7 +5,7 @@ import (
 )
 
 func (cs *Consensus) enterNewRound(height int, round int) {
-	if cs.hrs.InvalidHeight(height) {
+	if cs.invalidHeight(height) {
 		cs.logger.Debug("NewRound with invalid args", "height", height, "round", round)
 		return
 	}
