@@ -65,6 +65,7 @@ func NewVoteSet(height int, round int, voteType VoteType, valSet *validator.Vali
 func (vs *VoteSet) Type() VoteType { return vs.voteType }
 func (vs *VoteSet) Height() int    { return vs.height }
 func (vs *VoteSet) Round() int     { return vs.round }
+func (vs *VoteSet) Len() int       { return vs.sum }
 
 func (vs *VoteSet) AllVotes() []*Vote {
 	votes := make([]*Vote, 0)

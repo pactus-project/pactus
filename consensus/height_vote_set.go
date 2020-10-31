@@ -53,6 +53,9 @@ func (hvs *HeightVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	if err := vote.SanityCheck(); err != nil {
 		return false, errors.Errorf(errors.ErrInvalidVote, "%v", err)
 	}
+	if vote.Height() != hvs.height {
+		return false, errors.Errorf(errors.ErrInvalidVote, "Invalid height")
+	}
 	voteSet := hvs.voteSet(vote.Round(), vote.VoteType())
 	if voteSet == nil {
 		hvs.addRound(vote.Round())
@@ -61,7 +64,6 @@ func (hvs *HeightVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	added, err := voteSet.AddVote(vote)
 	if added {
 		hvs.votes[vote.Hash()] = vote
-
 	}
 	return added, err
 }

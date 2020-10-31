@@ -6,7 +6,7 @@ import (
 )
 
 func (cs *Consensus) enterCommit(height int, round int) {
-	if cs.hrs.InvalidHeight(height) || cs.isCommitted {
+	if cs.invalidHeight(height) || cs.isCommitted {
 		cs.logger.Debug("Commit with invalid args or committed before", "height", height, "committed", cs.isCommitted)
 		return
 	}
@@ -28,8 +28,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	// Additional check. blockHash should be same for both prevotes and precommits
 	prevoteBlockHash := preVotes.QuorumBlock()
 	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Error("Commit witout quorom for prevote stage")
-		return
+		cs.logger.Warn("Commit witout quorom for prevote stage")
 	}
 
 	if cs.votes.lockedProposal == nil {

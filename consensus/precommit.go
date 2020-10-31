@@ -7,7 +7,7 @@ import (
 )
 
 func (cs *Consensus) enterPrecommit(height int, round int) {
-	if cs.hrs.InvalidHeightRoundStep(height, round, hrs.StepTypePrecommit) {
+	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommit) {
 		cs.logger.Debug("Precommit with invalid args", "height", height, "round", round)
 		return
 	}
@@ -55,7 +55,7 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 }
 
 func (cs *Consensus) enterPrecommitWait(height int, round int) {
-	if cs.hrs.InvalidHeightRoundStep(height, round, hrs.StepTypePrecommitWait) {
+	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommitWait) {
 		cs.logger.Debug("PrecommitWait with invalid args", "height", height, "round", round)
 		return
 	}

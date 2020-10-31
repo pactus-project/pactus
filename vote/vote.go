@@ -2,7 +2,6 @@ package vote
 
 import (
 	"fmt"
-	"math/rand"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -124,6 +123,9 @@ func (vote *Vote) SanityCheck() error {
 	if vote.data.Signer.SanityCheck() != nil {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid signer")
 	}
+	if vote.data.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidVote, "No signature")
+	}
 	if vote.data.Signature.SanityCheck() != nil {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid signature")
 	}
@@ -143,11 +145,11 @@ func (vote Vote) Fingerprint() string {
 
 // ---------
 // For tests
-func GenerateTestPrecommitVote() (*Vote, crypto.PrivateKey) {
+func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.PrivateKey) {
 	addr, _, pv := crypto.GenerateTestKeyPair()
 	v := NewPrecommitVote(
-		rand.Intn(100),
-		rand.Intn(10),
+		height,
+		round,
 		crypto.GenerateTestHash(),
 		addr)
 	sig := pv.Sign(v.SignBytes())
@@ -156,11 +158,11 @@ func GenerateTestPrecommitVote() (*Vote, crypto.PrivateKey) {
 	return v, pv
 }
 
-func GenerateTestPrevoteVote() (*Vote, crypto.PrivateKey) {
+func GenerateTestPrevoteVote(height, round int) (*Vote, crypto.PrivateKey) {
 	addr, _, pv := crypto.GenerateTestKeyPair()
 	v := NewPrevoteVote(
-		rand.Intn(100),
-		rand.Intn(10),
+		height,
+		round,
 		crypto.GenerateTestHash(),
 		addr)
 	sig := pv.Sign(v.SignBytes())

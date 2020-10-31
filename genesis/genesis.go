@@ -1,11 +1,9 @@
 package genesis
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"sort"
 	"time"
 
 	"github.com/zarbchain/zarb-go/account"
@@ -120,14 +118,6 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 func MakeGenesis(chainName string, genesisTime time.Time,
 	accounts []*account.Account,
 	validators []*validator.Validator) *Genesis {
-
-	sort.SliceStable(accounts, func(i, j int) bool {
-		return bytes.Compare(accounts[i].Address().RawBytes(), accounts[j].Address().RawBytes()) < 0
-	})
-
-	sort.SliceStable(validators, func(i, j int) bool {
-		return bytes.Compare(validators[i].Address().RawBytes(), validators[j].Address().RawBytes()) < 0
-	})
 
 	genAccs := make([]genAccount, 0, len(accounts))
 	for _, acc := range accounts {

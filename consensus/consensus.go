@@ -2,7 +2,6 @@ package consensus
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
@@ -12,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -49,8 +49,8 @@ func NewConsensus(
 		privValidator: privValidator,
 	}
 
-	// See enterNewHeight.
-	cs.votes = NewHeightVoteSet(0, cs.valset)
+	// Update height later, See enterNewHeight.
+	cs.votes = NewHeightVoteSet(-1, cs.valset)
 	cs.hrs = hrs.NewHRS(state.LastBlockHeight(), 0, hrs.StepTypeNewHeight)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
@@ -134,7 +134,7 @@ func (cs *Consensus) scheduleTimeout(duration time.Duration, height int, round i
 	to := timeout{duration, height, round, step}
 
 	if cs.config.FuzzTesting {
-		to.Duration = time.Duration(rand.Intn(8)) * time.Second
+		to.Duration = time.Duration(util.RandInt(8)) * time.Second
 	}
 	timer := time.NewTimer(duration)
 	go func() {
@@ -142,6 +142,18 @@ func (cs *Consensus) scheduleTimeout(duration time.Duration, height int, round i
 		cs.handleTimeout(to)
 	}()
 	logger.Debug("Scheduled timeout", "dur", duration, "height", height, "round", round, "step", step)
+}
+
+func (cs *Consensus) invalidHeight(height int) bool {
+	return cs.hrs.Height() != height
+}
+
+func (cs *Consensus) invalidHeightRound(height int, round int) bool {
+	return cs.hrs.Height() != height || cs.hrs.Round() != round
+}
+
+func (cs *Consensus) invalidHeightRoundStep(height int, round int, step hrs.StepType) bool {
+	return cs.hrs.Height() != height || cs.hrs.Round() != round || cs.hrs.Step() > step
 }
 
 func (cs *Consensus) AddVote(v *vote.Vote) error {
@@ -189,7 +201,7 @@ func (cs *Consensus) handleTimeout(ti timeout) {
 
 func (cs *Consensus) addVote(v *vote.Vote) error {
 	// Height mismatch is ignored.
-	if cs.hrs.InvalidHeight(v.Height()) {
+	if cs.invalidHeight(v.Height()) {
 		return errors.Errorf(errors.ErrInvalidVote, "Vote ignored, height mismatch: %v", v.Height())
 	}
 
@@ -207,7 +219,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 	switch v.VoteType() {
 	case vote.VoteTypePrevote:
 		prevotes := cs.votes.Prevotes(round)
-		cs.logger.Debug("Vote added to prevote", "vote", v, "voteset", prevotes)
+			cs.logger.Debug("Vote added to prevote", "vote", v, "voteset", prevotes)
 		// current round
 		if cs.hrs.Round() == round {
 			if ok := prevotes.HasQuorum(); ok {

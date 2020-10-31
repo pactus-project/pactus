@@ -9,7 +9,7 @@ import (
 )
 
 func TestProposalMarshaling(t *testing.T) {
-	p1, _ := GenerateTestProposal()
+	p1, _ := GenerateTestProposal(10, 10)
 	bz1, err := p1.MarshalCBOR()
 	assert.NoError(t, err)
 	var p2 Proposal
@@ -24,7 +24,7 @@ func TestProposalMarshaling(t *testing.T) {
 func TestProposalSignature(t *testing.T) {
 	_, pb0, pv0 := crypto.GenerateTestKeyPair()
 
-	p, pv := GenerateTestProposal()
+	p, pv := GenerateTestProposal(5, 5)
 	pb := pv.PublicKey()
 	assert.NoError(t, p.Verify(pb))
 

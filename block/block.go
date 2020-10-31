@@ -3,7 +3,6 @@ package block
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
@@ -11,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type Block struct {
@@ -103,12 +103,12 @@ func (b Block) HashesTo(hash crypto.Hash) bool {
 }
 
 func (b *Block) Fingerprint() string {
-	return fmt.Sprintf("{⌘ %v 👤 %v 📨 %d 💻 %v 👥 %v}",
+	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 👥 %v 📨 %d}",
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
-		b.data.TxHashes.Count(),
 		b.data.Header.StateHash().Fingerprint(),
 		b.data.Header.NextValidatorsHash().Fingerprint(),
+		b.data.TxHashes.Count(),
 	)
 }
 
@@ -165,7 +165,7 @@ func GenerateTestBlock() (Block, []*tx.Tx, crypto.PrivateKey) {
 	addr2, _, pv2 := crypto.GenerateTestKeyPair()
 	addr3, _, pv3 := crypto.GenerateTestKeyPair()
 	addr4, _, pv4 := crypto.GenerateTestKeyPair()
-	commit := NewCommit(rand.Intn(10),
+	commit := NewCommit(util.RandInt(10),
 		[]crypto.Address{addr1, addr2, addr3, addr4},
 		[]crypto.Signature{
 			*pv1.Sign(lastBlockHash.RawBytes()),

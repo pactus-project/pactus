@@ -2,11 +2,11 @@ package validator
 
 import (
 	"encoding/json"
-	"math/rand"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type Validator struct {
@@ -95,7 +95,7 @@ func (val Validator) String() string {
 func GenerateTestValidator() (*Validator, crypto.PrivateKey) {
 	_, pb, pv := crypto.GenerateTestKeyPair()
 	val := NewValidator(pb, 0)
-	val.data.Stake = rand.Int63n(100000)
-	val.data.Sequence = rand.Intn(100)
+	val.data.Stake = util.RandInt64(10000000)
+	val.data.Sequence = util.RandInt(100)
 	return val, pv
 }

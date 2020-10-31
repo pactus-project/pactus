@@ -17,7 +17,7 @@ func (cs *Consensus) isProposer(address crypto.Address) bool {
 }
 
 func (cs *Consensus) setProposal(proposal *vote.Proposal) {
-	if cs.hrs.InvalidHeightRound(proposal.Height(), proposal.Round()) {
+	if cs.invalidHeightRound(proposal.Height(), proposal.Round()) {
 		cs.logger.Info("Proposal received from wrong height/round", "proposal", proposal)
 		return
 	}
@@ -29,7 +29,7 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 	}
 
 	if err := proposal.SanityCheck(); err != nil {
-		cs.logger.Error("Proposal is invalid", "proposal", proposal)
+		cs.logger.Error("Proposal is invalid", "proposal", proposal, "err", err)
 		return
 	}
 
@@ -45,7 +45,7 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 }
 
 func (cs *Consensus) enterPropose(height int, round int) {
-	if cs.hrs.InvalidHeightRoundStep(height, round, hrs.StepTypePropose) {
+	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePropose) {
 		cs.logger.Debug("Propose with invalid args", "height", height, "round", round)
 		return
 	}

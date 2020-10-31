@@ -3,7 +3,6 @@ package vote
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/block"
@@ -41,6 +40,9 @@ func (p *Proposal) SanityCheck() error {
 	}
 	if p.data.Round < 0 {
 		return errors.Errorf(errors.ErrInvalidProposal, "Invalid round")
+	}
+	if p.data.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidProposal, "No signature")
 	}
 	if p.data.Signature.SanityCheck() != nil {
 		return errors.Errorf(errors.ErrInvalidProposal, "Invalid signature")
@@ -112,9 +114,9 @@ func (p Proposal) Fingerprint() string {
 
 // ---------
 // For tests
-func GenerateTestProposal() (*Proposal, crypto.PrivateKey) {
+func GenerateTestProposal(height, round int) (*Proposal, crypto.PrivateKey) {
 	b, _, pv := block.GenerateTestBlock()
-	p := NewProposal(rand.Intn(100), rand.Intn(10), b)
+	p := NewProposal(height, round, b)
 	sig := pv.Sign(p.SignBytes())
 	p.SetSignature(sig)
 	return p, pv

@@ -8,7 +8,7 @@ import (
 )
 
 func TestVoteMarshaling(t *testing.T) {
-	v1, _ := GenerateTestPrecommitVote()
+	v1, _ := GenerateTestPrecommitVote(10, 10)
 
 	bz1, err := v1.MarshalCBOR()
 	assert.NoError(t, err)
