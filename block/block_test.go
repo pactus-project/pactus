@@ -7,12 +7,12 @@ import (
 )
 
 func TestRandomBlock(t *testing.T) {
-	b, _, _ := GenerateTestBlock()
+	b, _ := GenerateTestBlock(nil)
 	assert.NoError(t, b.SanityCheck())
 }
 
 func TestMarshaling(t *testing.T) {
-	b1, _, _ := GenerateTestBlock()
+	b1, _ := GenerateTestBlock(nil)
 
 	bz1, err := b1.MarshalCBOR()
 	assert.NoError(t, err)

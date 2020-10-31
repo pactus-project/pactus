@@ -256,7 +256,7 @@ func TestConsensusSpamming(t *testing.T) {
 	}
 }
 
-func TestConsensusISpammingProposal(t *testing.T) {
+func TestConsensusSpammingProposal(t *testing.T) {
 	cons, pvals = newTestConsensus(VAL_2)
 
 	cons.enterNewHeight(1)
@@ -271,13 +271,14 @@ func TestConsensusISpammingProposal(t *testing.T) {
 	assert.Nil(t, p)
 }
 
-func TestConsensusIProposal(t *testing.T) {
+func TestConsensusInvalidProposal(t *testing.T) {
 	cons, pvals = newTestConsensus(VAL_2)
 
 	cons.enterNewHeight(1)
 	assert.Nil(t, cons.LastProposal())
 
-	b, _, _ := block.GenerateTestBlock()
+	addr := pvals[VAL_1].Address()
+	b, _ := block.GenerateTestBlock(&addr)
 	p := vote.NewProposal(1, 0, b)
 
 	cons.SetProposal(p)

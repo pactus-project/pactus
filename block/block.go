@@ -147,8 +147,11 @@ func (b *Block) UnmarshalJSON(bz []byte) error {
 
 // ---------
 // For tests
-func GenerateTestBlock() (Block, []*tx.Tx, crypto.PrivateKey) {
-	proposer, _, pv := crypto.GenerateTestKeyPair()
+func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
+	if proposer == nil {
+		addr, _, _ := crypto.GenerateTestKeyPair()
+		proposer = &addr
+	}
 	txs := make([]*tx.Tx, 0)
 	txs = append(txs, tx.GenerateTestSendTx())
 	txs = append(txs, tx.GenerateTestSendTx())
@@ -180,7 +183,7 @@ func GenerateTestBlock() (Block, []*tx.Tx, crypto.PrivateKey) {
 		crypto.GenerateTestHash(),
 		crypto.GenerateTestHash(),
 		commit,
-		proposer)
+		*proposer)
 
-	return block, txs, pv
+	return block, txs
 }

@@ -37,7 +37,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 		if roundProposal != nil && roundProposal.IsForBlock(blockHash) {
 			cs.votes.lockedProposal = roundProposal
 		} else {
-			cs.logger.Error("We don't have commit proposal.")
+			cs.logger.Error("Commit: We don't have commit proposal.")
 			return
 		}
 	}
@@ -46,7 +46,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	// It is impossible, but good to keep this check
 	if !cs.votes.lockedProposal.IsForBlock(blockHash) {
 		cs.votes.lockedProposal = nil
-		cs.logger.Error("Commit proposal is invalid.", "proposal", cs.votes.lockedProposal)
+		cs.logger.Error("Commit: Proposal is invalid.", "proposal", cs.votes.lockedProposal)
 		return
 	}
 
@@ -64,7 +64,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	block := cs.votes.lockedProposal.Block()
 	if err := cs.state.ValidateBlock(block); err != nil {
 		cs.votes.lockedProposal = nil
-		cs.logger.Error("Commit: invalid block", "block", block, "err", err)
+		cs.logger.Error("Commit: Invalid block", "block", block, "err", err)
 		return
 	}
 
