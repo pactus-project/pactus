@@ -13,10 +13,9 @@ func (cs *Consensus) ScheduleNewHeight() {
 	if cs.hrs.Height() < stateHeight-1 {
 		cs.isCommitted = false
 		cs.votes.Reset(stateHeight)
-		cs.updateHeight(stateHeight)
-		cs.updateRoundStep(0, hrs.StepTypeNewHeight)
 	}
 
+	cs.updateHeight(stateHeight)
 	cs.scheduleNewHeight()
 }
 

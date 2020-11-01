@@ -13,14 +13,13 @@ type PayloadType int
 const (
 	PayloadTypeSalam     = PayloadType(1)
 	PayloadTypeBlocksReq = PayloadType(2)
-	PayloadTypeBlocksRes = PayloadType(3)
-	PayloadTypeTxReq     = PayloadType(4)
-	PayloadTypeTxRes     = PayloadType(5)
+	PayloadTypeBlocks    = PayloadType(3)
+	PayloadTypeTxsReq    = PayloadType(4)
+	PayloadTypeTxs       = PayloadType(5)
 	PayloadTypeProposal  = PayloadType(6)
-	PayloadTypeBlock     = PayloadType(7)
-	PayloadTypeHeartBeat = PayloadType(8)
-	PayloadTypeVote      = PayloadType(9)
-	PayloadTypeVoteSet   = PayloadType(10)
+	PayloadTypeHeartBeat = PayloadType(7)
+	PayloadTypeVote      = PayloadType(8)
+	PayloadTypeVoteSet   = PayloadType(9)
 )
 
 func (t PayloadType) String() string {
@@ -29,16 +28,15 @@ func (t PayloadType) String() string {
 		return "salam"
 	case PayloadTypeBlocksReq:
 		return "blocks-req"
-	case PayloadTypeBlocksRes:
-		return "blocks-res"
-	case PayloadTypeTxReq:
-		return "tx-req"
-	case PayloadTypeTxRes:
-		return "tx-res"
+	case PayloadTypeBlocks:
+		return "blocks"
+	case PayloadTypeTxsReq:
+		return "txs-req"
+	case PayloadTypeTxs:
+		return "txs"
 	case PayloadTypeProposal:
 		return "proposal"
-	case PayloadTypeBlock:
-		return "block"
+
 	case PayloadTypeHeartBeat:
 		return "heart-beat"
 	case PayloadTypeVote:
@@ -110,16 +108,14 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		payload = &SalamPayload{}
 	case PayloadTypeBlocksReq:
 		payload = &BlocksReqPayload{}
-	case PayloadTypeBlocksRes:
-		payload = &BlocksResPayload{}
-	case PayloadTypeTxReq:
-		payload = &TxReqPayload{}
-	case PayloadTypeTxRes:
-		payload = &TxResPayload{}
+	case PayloadTypeBlocks:
+		payload = &BlocksPayload{}
+	case PayloadTypeTxsReq:
+		payload = &TxsReqPayload{}
+	case PayloadTypeTxs:
+		payload = &TxsPayload{}
 	case PayloadTypeProposal:
 		payload = &ProposalPayload{}
-	case PayloadTypeBlock:
-		payload = &BlockPayload{}
 	case PayloadTypeHeartBeat:
 		payload = &HeartBeatPayload{}
 	case PayloadTypeVote:

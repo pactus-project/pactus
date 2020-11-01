@@ -10,7 +10,7 @@ type Config struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		StartingTimeout:  time.Second * 5,
+		StartingTimeout:  time.Second * 10,
 		HeartBeatTimeout: time.Second * 10,
 		BlockPerMessage:  10,
 	}

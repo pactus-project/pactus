@@ -82,8 +82,7 @@ func (cs *Consensus) createProposal(height int, round int) {
 		return
 	}
 
-	proposerAddr := cs.privValidator.Address()
-	block := cs.state.ProposeBlock(height, proposerAddr)
+	block := cs.state.ProposeBlock()
 	if err := cs.state.ValidateBlock(block); err != nil {
 		cs.logger.Error("Propose: Our block is invalid. Why?", "error", err)
 		return

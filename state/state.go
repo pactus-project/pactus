@@ -25,22 +25,29 @@ type StoreReader interface {
 	Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error)
 }
 
-// TODO
-// implement go-level db snapshot, and keep latest snap shots
-var (
-	lastBlockHeightKey = []byte{0x01}
-	accountPrefix      = []byte{0x02}
-	accountNumPrefix   = []byte{0x04}
-	validatorPrefix    = []byte{0x08}
-	validatorNumPrefix = []byte{0x10}
-)
+type StateReader interface {
+	StoreReader() StoreReader
+	ValidatorSet() *validator.ValidatorSet
+	LastBlockHeight() int
+	LastBlockHash() crypto.Hash
+	LastBlockTime() time.Time
+	BlockTime() time.Duration
+	UpdateLastCommit(blockHash crypto.Hash, commit block.Commit)
+	Fingerprint() string
+}
 
-func accountKey(addr crypto.Address) []byte   { return append(accountPrefix, addr.RawBytes()...) }
-func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.RawBytes()...) }
+type State interface {
+	StateReader
 
-type State struct {
+	ProposeBlock() block.Block
+	ValidateBlock(block block.Block) error
+	ApplyBlock(block block.Block, commit block.Commit) error
+}
+
+type state struct {
 	lk deadlock.RWMutex
 
+	proposer           crypto.Address
 	store              *store.Store
 	txPool             *txpool.TxPool
 	cache              *Cache
@@ -60,17 +67,20 @@ type State struct {
 func LoadOrNewState(
 	conf *Config,
 	genDoc *genesis.Genesis,
-	txPool *txpool.TxPool) (*State, error) {
+	proposer crypto.Address,
+	txPool *txpool.TxPool) (State, error) {
 
-	store, err := store.NewStore(conf.Store)
+	st := &state{
+		proposer: proposer,
+		txPool:   txPool,
+		params:   NewParams(),
+	}
+	st.logger = logger.NewLogger("_state", st)
+	store, err := store.NewStore(conf.Store, st.logger)
 	if err != nil {
 		return nil, err
 	}
-	st := &State{
-		txPool: txPool,
-		store:  store,
-		params: NewParams(),
-	}
+	st.store = store
 
 	err = st.loadState()
 	if err != nil {
@@ -83,18 +93,16 @@ func LoadOrNewState(
 		return nil, err
 	}
 
-	st.logger = logger.NewLogger("_state", st)
-
 	return st, nil
 }
 
-func (st *State) loadState() error {
+func (st *state) loadState() error {
 
 	return fmt.Errorf("temp error")
 	//return nil
 }
 
-func (st *State) makeGenesisState(genDoc *genesis.Genesis) error {
+func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	accs := genDoc.Accounts()
 	for _, acc := range accs {
 		st.store.UpdateAccount(acc)
@@ -110,11 +118,7 @@ func (st *State) makeGenesisState(genDoc *genesis.Genesis) error {
 	return nil
 }
 
-func (st *State) SetNewHeightListener(listener chan int) {
-	st.updateCh = listener
-}
-
-func (st *State) stateHash() crypto.Hash {
+func (st *state) stateHash() crypto.Hash {
 	accRootHash := st.accountsMerkleRootHash()
 	valRootHash := st.validatorsMerkleRootHash()
 
@@ -126,39 +130,46 @@ func (st *State) stateHash() crypto.Hash {
 	return *rootHash
 }
 
-func (st *State) StoreReader() StoreReader {
+func (st *state) StoreReader() StoreReader {
 	return st.store
 }
 
-func (st *State) ValidatorSet() *validator.ValidatorSet {
+func (st *state) ValidatorSet() *validator.ValidatorSet {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
 	return st.validatorSet
 }
 
-func (st *State) LastBlockHeight() int {
+func (st *state) LastBlockHeight() int {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
 	return st.lastBlockHeight
 }
 
-func (st *State) LastBlockTime() time.Time {
+func (st *state) LastBlockHash() crypto.Hash {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.lastBlockHash
+}
+
+func (st *state) LastBlockTime() time.Time {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
 	return st.lastBlockTime
 }
 
-func (st *State) BlockTime() time.Duration {
+func (st *state) BlockTime() time.Duration {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
 	return st.params.BlockTime
 }
 
-func (st *State) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
+func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -170,7 +181,7 @@ func (st *State) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lastCommit = &commit
 }
 
-func (st *State) ProposeBlock(height int, proposer crypto.Address) block.Block {
+func (st *state) ProposeBlock() block.Block {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -180,7 +191,7 @@ func (st *State) ProposeBlock(height int, proposer crypto.Address) block.Block {
 		timestamp = now
 	}
 
-	mintbaseTx := tx.NewMintbaseTx(st.lastBlockHash, proposer, 10, "Minbase transaction")
+	mintbaseTx := tx.NewMintbaseTx(st.lastBlockHash, st.proposer, 10, "Minbase transaction")
 	st.txPool.AppendTxAndBroadcast(mintbaseTx)
 
 	txHashes := block.NewTxHashes()
@@ -194,12 +205,12 @@ func (st *State) ProposeBlock(height int, proposer crypto.Address) block.Block {
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,
-		proposer)
+		st.proposer)
 
 	return block
 }
 
-func (st *State) ValidateBlock(block block.Block) error {
+func (st *state) ValidateBlock(block block.Block) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -216,7 +227,7 @@ func (st *State) ValidateBlock(block block.Block) error {
 	return nil
 }
 
-func (st *State) ApplyBlock(block block.Block, commit block.Commit) error {
+func (st *state) ApplyBlock(block block.Block, commit block.Commit) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -273,7 +284,7 @@ func (st *State) ApplyBlock(block block.Block, commit block.Commit) error {
 	return nil
 }
 
-func (st *State) Fingerprint() string {
+func (st *state) Fingerprint() string {
 	return fmt.Sprintf("{# %v ⌘ %v 🕣 %v}",
 		st.lastBlockHeight,
 		st.lastBlockHash.Fingerprint(),

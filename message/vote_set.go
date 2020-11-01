@@ -9,15 +9,15 @@ import (
 
 type VoteSetPayload struct {
 	Height int
-	Votes  []crypto.Hash `cbor:"1,keyasint"`
+	Hashes []crypto.Hash `cbor:"1,keyasint"`
 }
 
-func NewVoteSetMessage(height int, votes []crypto.Hash) Message {
+func NewVoteSetMessage(height int, Hashes []crypto.Hash) Message {
 	return Message{
 		Type: PayloadTypeVoteSet,
 		Payload: &VoteSetPayload{
 			Height: height,
-			Votes:  votes,
+			Hashes: Hashes,
 		},
 	}
 }
@@ -34,5 +34,5 @@ func (p *VoteSetPayload) Type() PayloadType {
 }
 
 func (p *VoteSetPayload) Fingerprint() string {
-	return fmt.Sprintf("{%d}", len(p.Votes))
+	return fmt.Sprintf("{%d}", len(p.Hashes))
 }

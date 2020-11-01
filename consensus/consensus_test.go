@@ -32,7 +32,7 @@ const (
 	VAL_4 = 3
 )
 
-func newTestConsensus(val_id int) (*Consensus, []*validator.PrivValidator) {
+func newTestConsensus(t *testing.T, val_id int) (*Consensus, []*validator.PrivValidator) {
 	_, keys := validator.GenerateTestValidatorSet()
 	consConf := DefaultConfig()
 	consConf.TimeoutPrevote = 1 * time.Millisecond
@@ -72,9 +72,11 @@ func newTestConsensus(val_id int) (*Consensus, []*validator.PrivValidator) {
 
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals)
 	txpool, _ := txpool.NewTxPool(txPoolConf, ch)
-	st, _ := state.LoadOrNewState(stateConf, genDoc, txpool)
+	st, _ := state.LoadOrNewState(stateConf, genDoc, pvals[val_id].Address(), txpool)
 
 	cons, _ := NewConsensus(consConf, st, pvals[val_id], ch)
+	assert.Equal(t, cons.votes.height, -1)
+	assert.Equal(t, hrs.NewHRS(-1, -1, hrs.StepTypeNewHeight), cons.hrs)
 	cons.ScheduleNewHeight()
 	return cons, pvals
 }
@@ -102,12 +104,12 @@ func testAddVote(t *testing.T,
 }
 
 func TestConsensusAddVotesNormal(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_1)
+	cons, pvals = newTestConsensus(t, VAL_1)
 
 	cons.enterNewHeight(1)
 
 	p := cons.LastProposal()
-	assert.NotNil(t, p)
+	require.NotNil(t, p)
 
 	testAddVote(t, vote.VoteTypePrevote, 1, 0, p.Block().Hash(), VAL_2, false)
 	checkHRS(t, 1, 0, hrs.StepTypePrevote)
@@ -126,7 +128,7 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	assert.Equal(t, cons.votes.Precommits(0).Len(), 3) // Votes from validator 1,2,3
 }
 func TestConsensusUpdateVote(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_1)
+	cons, pvals = newTestConsensus(t, VAL_1)
 
 	cons.enterNewHeight(1)
 
@@ -157,11 +159,11 @@ func TestConsensusUpdateVote(t *testing.T) {
 }
 
 func TestConsensusNoPrevotes(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_1)
+	cons, pvals = newTestConsensus(t, VAL_1)
 
 	cons.enterNewHeight(1)
 	p := cons.LastProposal()
-	assert.NotNil(t, p)
+	require.NotNil(t, p)
 
 	testAddVote(t, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL_2, false)
 	checkHRS(t, 1, 0, hrs.StepTypePrevote)
@@ -176,7 +178,7 @@ func TestConsensusNoPrevotes(t *testing.T) {
 }
 
 func TestConsensusGotoNextRound(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_2)
+	cons, pvals = newTestConsensus(t, VAL_2)
 
 	cons.enterNewHeight(1)
 
@@ -209,7 +211,7 @@ func TestConsensusGotoNextRound(t *testing.T) {
 }
 
 func TestConsensusGotoNextRound2(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_2)
+	cons, pvals = newTestConsensus(t, VAL_2)
 
 	cons.enterNewHeight(1)
 
@@ -246,7 +248,7 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 	assert.Equal(t, cons.isCommitted, true)
 }
 func TestConsensusSpamming(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_1)
+	cons, pvals = newTestConsensus(t, VAL_1)
 
 	cons.enterNewHeight(1)
 
@@ -257,7 +259,7 @@ func TestConsensusSpamming(t *testing.T) {
 }
 
 func TestConsensusSpammingProposal(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_2)
+	cons, pvals = newTestConsensus(t, VAL_2)
 
 	cons.enterNewHeight(1)
 	p := cons.LastProposal()
@@ -272,7 +274,7 @@ func TestConsensusSpammingProposal(t *testing.T) {
 }
 
 func TestConsensusInvalidProposal(t *testing.T) {
-	cons, pvals = newTestConsensus(VAL_2)
+	cons, pvals = newTestConsensus(t, VAL_2)
 
 	cons.enterNewHeight(1)
 	assert.Nil(t, cons.LastProposal())

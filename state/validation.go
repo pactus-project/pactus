@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (st *State) validateBlock(block block.Block) error {
+func (st *state) validateBlock(block block.Block) error {
 	if err := block.SanityCheck(); err != nil {
 		return err
 	}
@@ -43,13 +43,14 @@ func (st *State) validateBlock(block block.Block) error {
 	}
 
 	// TODO: Validate block Time
+	// Should be done in consensus???
 
 	// TODO: validate proposer is correct
 
 	return nil
 }
 
-func (st *State) validateCommit(blockHash crypto.Hash, commit block.Commit) error {
+func (st *state) validateCommit(blockHash crypto.Hash, commit block.Commit) error {
 	if err := commit.SanityCheck(); err != nil {
 		return err
 	}

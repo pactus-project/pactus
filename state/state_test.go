@@ -15,7 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func mockState(t *testing.T) (*State, crypto.Address) {
+func mockState(t *testing.T) (State, crypto.Address) {
 	_, pb, _ := crypto.RandomKeyPair()
 	addr := pb.Address()
 	acc := account.NewAccount(crypto.MintbaseAddress)
@@ -30,14 +30,14 @@ func mockState(t *testing.T) (*State, crypto.Address) {
 	txPoolConfig := txpool.DefaultConfig()
 	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan message.Message, 10))
 	require.NoError(t, err)
-	st, err := LoadOrNewState(stateConfig, gen, txPool)
+	st, err := LoadOrNewState(stateConfig, gen, val.Address(), txPool)
 	require.NoError(t, err)
 	return st, addr
 }
 
 func TestBlockValidate(t *testing.T) {
-	st, addr := mockState(t)
-	block := st.ProposeBlock(1, addr)
+	st, _ := mockState(t)
+	block := st.ProposeBlock()
 	err := st.ValidateBlock(block)
 	require.NoError(t, err)
 }
