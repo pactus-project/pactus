@@ -3,20 +3,23 @@ package message
 import (
 	"fmt"
 
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type BlocksReqPayload struct {
-	From int `cbor:"1,keyasint"`
-	To   int `cbor:"1,keyasint"`
+	From          int         `cbor:"1,keyasint"`
+	To            int         `cbor:"2,keyasint"`
+	LastBlockHash crypto.Hash `cbor:"3,keyasint"`
 }
 
-func NewBlocksReqMessage(from, to int) Message {
+func NewBlocksReqMessage(from, to int, lastBlockHash crypto.Hash) Message {
 	return Message{
 		Type: PayloadTypeBlocksReq,
 		Payload: &BlocksReqPayload{
-			From: from,
-			To:   to,
+			From:          from,
+			To:            to,
+			LastBlockHash: lastBlockHash,
 		},
 	}
 

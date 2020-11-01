@@ -4,15 +4,17 @@ import (
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type HeartBeatPayload struct {
-	HRS         hrs.HRS `cbor:"1,keyasint"`
-	HasProposal bool    `cbor:"2,keyasint"`
+	LastBlockHash crypto.Hash `cbor:"1,keyasint"`
+	HRS           hrs.HRS     `cbor:"2,keyasint"`
+	HasProposal   bool        `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatMessage(hrs hrs.HRS, hasProposal bool) Message {
+func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS, hasProposal bool) Message {
 	return Message{
 		Type: PayloadTypeHeartBeat,
 		Payload: &HeartBeatPayload{
@@ -26,7 +28,6 @@ func (p *HeartBeatPayload) SanityCheck() error {
 	if !p.HRS.IsValid() {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid step")
 	}
-
 	return nil
 }
 

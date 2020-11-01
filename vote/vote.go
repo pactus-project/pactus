@@ -23,11 +23,11 @@ type voteData struct {
 	Signature *crypto.Signature `cbor:"6,keyasint"`
 }
 
-func NewPrevoteVote(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+func NewPrevote(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return NewVote(VoteTypePrevote, height, round, blockHash, signer)
 }
 
-func NewPrecommitVote(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+func NewPrecommit(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return NewVote(VoteTypePrecommit, height, round, blockHash, signer)
 
 }
@@ -147,7 +147,7 @@ func (vote Vote) Fingerprint() string {
 // For tests
 func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.PrivateKey) {
 	addr, _, pv := crypto.GenerateTestKeyPair()
-	v := NewPrecommitVote(
+	v := NewPrecommit(
 		height,
 		round,
 		crypto.GenerateTestHash(),
@@ -160,7 +160,7 @@ func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.PrivateKey) {
 
 func GenerateTestPrevoteVote(height, round int) (*Vote, crypto.PrivateKey) {
 	addr, _, pv := crypto.GenerateTestKeyPair()
-	v := NewPrevoteVote(
+	v := NewPrevote(
 		height,
 		round,
 		crypto.GenerateTestHash(),

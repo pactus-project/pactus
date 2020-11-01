@@ -5,13 +5,15 @@ import (
 	"fmt"
 
 	"github.com/sasha-s/go-deadlock"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
-
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
+// TODO: We need to have LRU cache for mempool.
+// We need to prune stale transactions
+// A transaction might valid at heigh M, but invalid at height N (N > M)
 type TxPoolReader interface {
 	PendingTx(hash crypto.Hash) (*tx.Tx, bool)
 }
@@ -56,13 +58,13 @@ func (pool *TxPool) AppendTx(tx tx.Tx) {
 	pool.appendTx(tx)
 }
 
-func (pool *TxPool) AppendTxAndBroadcast(tx tx.Tx) {
+func (pool *TxPool) AppendTxAndBroadcast(trx tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	pool.appendTx(tx)
+	pool.appendTx(trx)
 
-	msg := message.NewTxResMessage(tx)
+	msg := message.NewTxsMessage([]tx.Tx{trx})
 	pool.broadcastCh <- msg
 }
 
@@ -107,7 +109,7 @@ func (pool *TxPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	if !found {
 		pool.logger.Info("We don't have this transaction", "hash", hash)
 
-		msg := message.NewTxReqMessage(hash)
+		msg := message.NewTxsReqMessage([]crypto.Hash{hash})
 		pool.broadcastCh <- msg
 
 		return nil

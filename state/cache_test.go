@@ -9,7 +9,7 @@ import (
 
 func TestAccountChange(t *testing.T) {
 	st, _ := mockState(t)
-	cache := newCache(st.store)
+	cache := newCache(st.(*state).store)
 	acc1 := account.GenerateTestAccount()
 
 	acc := cache.Account(acc1.Address())

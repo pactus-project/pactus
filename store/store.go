@@ -5,10 +5,10 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 )
-
 
 type Store struct {
 	lk deadlock.RWMutex
@@ -18,14 +18,15 @@ type Store struct {
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
+	logger         *logger.Logger
 }
 
-func NewStore(conf *Config) (*Store, error) {
-	blockStore, err := newBlockStore(conf.BlockStorePath())
+func NewStore(conf *Config, logger *logger.Logger) (*Store, error) {
+	blockStore, err := newBlockStore(conf.BlockStorePath(), logger)
 	if err != nil {
 		return nil, err
 	}
-	txStore, err := newTxStore(conf.TxStorePath())
+	txStore, err := newTxStore(conf.TxStorePath(), logger)
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +44,7 @@ func NewStore(conf *Config) (*Store, error) {
 		txStore:        txStore,
 		accountStore:   accountStore,
 		validatorStore: validatorStore,
+		logger:         logger,
 	}, nil
 }
 

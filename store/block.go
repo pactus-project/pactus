@@ -17,16 +17,18 @@ func blockKey(height int) []byte           { return append(blockPrefix, util.Int
 func blockHashKey(hash crypto.Hash) []byte { return append(blockHashPrefix, hash.RawBytes()...) }
 
 type blockStore struct {
-	db *leveldb.DB
+	db     *leveldb.DB
+	logger *logger.Logger
 }
 
-func newBlockStore(path string) (*blockStore, error) {
+func newBlockStore(path string, logger *logger.Logger) (*blockStore, error) {
 	db, err := leveldb.OpenFile(path, nil)
 	if err != nil {
 		return nil, err
 	}
 	return &blockStore{
-		db: db,
+		db:     db,
+		logger: logger,
 	}, nil
 }
 
@@ -39,7 +41,7 @@ func (bs *blockStore) SaveBlock(block block.Block, height int) error {
 	blockHashKey := blockHashKey(block.Hash())
 	has, err := bs.db.Has(blockKey, nil)
 	if has {
-		logger.Error("The blockkey exists in database, rewrite it.")
+		bs.logger.Error("The blockkey exists in database, rewrite it.")
 	}
 	err = bs.db.Put(blockKey, blockData, nil)
 	if err != nil {

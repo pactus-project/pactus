@@ -50,7 +50,12 @@ func (s *Stats) getNode(addr crypto.Address) *Node {
 	return n
 }
 
-func (s *Stats) ParsPeerMessage(peerID peer.ID, msg *message.Message) {
+func (s *Stats) IncreaseInvalidMessageCounter(peerID peer.ID) {
+	peer := s.getPeer(peerID)
+	peer.InvalidMsg = peer.InvalidMsg + 1
+}
+
+func (s *Stats) ProcessMessage(msg *message.Message, peerID peer.ID) {
 	peer := s.getPeer(peerID)
 	node := s.getNode(msg.Initiator)
 
@@ -62,16 +67,6 @@ func (s *Stats) ParsPeerMessage(peerID peer.ID, msg *message.Message) {
 		pld := msg.Payload.(*message.SalamPayload)
 		node.Version = pld.Version
 		s.updateMaxHeight(pld.Height)
-
-	case message.PayloadTypeBlock:
-
-	case message.PayloadTypeBlocksReq:
-
-	case message.PayloadTypeTxRes:
-		//pld := msg.Payload.(*message.TxResPayload)
-
-	case message.PayloadTypeTxReq:
-		//pld := msg.Payload.(*message.TxReqPayload)
 
 	case message.PayloadTypeHeartBeat:
 		pld := msg.Payload.(*message.HeartBeatPayload)
@@ -89,8 +84,6 @@ func (s *Stats) ParsPeerMessage(peerID peer.ID, msg *message.Message) {
 	case message.PayloadTypeVoteSet:
 		//pld := msg.Payload.(*message.VoteSetPayload)
 
-	default:
-		s.logger.Error("Unknown message type", "type", msg.PayloadType())
 	}
 }
 

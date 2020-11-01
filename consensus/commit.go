@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/message"
 )
@@ -59,24 +60,24 @@ func (cs *Consensus) enterCommit(height int, round int) {
 		return
 	}
 
-	// Block is invalid
-	// It is impossible, but good to keep this check
-	block := cs.votes.lockedProposal.Block()
-	if err := cs.state.ValidateBlock(block); err != nil {
+	// Block is invalid?
+	// It is impossible, but good to have this extra check here
+	commitBlock := cs.votes.lockedProposal.Block()
+	if err := cs.state.ValidateBlock(commitBlock); err != nil {
 		cs.votes.lockedProposal = nil
-		cs.logger.Error("Commit: Invalid block", "block", block, "err", err)
+		cs.logger.Error("Commit: Invalid block", "block", commitBlock, "err", err)
 		return
 	}
 
 	commit := preCommits.ToCommit()
 	if commit != nil {
-		if err := cs.state.ApplyBlock(block, *commit); err != nil {
-			cs.logger.Error("Commit: Applying block failed", "block", block, "err", err)
+		if err := cs.state.ApplyBlock(commitBlock, *commit); err != nil {
+			cs.logger.Error("Commit: Applying block failed", "block", commitBlock, "err", err)
 			return
 		}
 
 		// Npw broadcast the committed block
-		msg := message.NewBlockMessage(height, block, *commit)
+		msg := message.NewBlocksMessage(height, []block.Block{commitBlock}, commit)
 		cs.broadcastCh <- msg
 	}
 
@@ -85,5 +86,4 @@ func (cs *Consensus) enterCommit(height int, round int) {
 
 	cs.logger.Info("Commit: Block stored", "block", blockHash.Fingerprint())
 	cs.scheduleNewHeight()
-
 }

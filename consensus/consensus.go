@@ -31,14 +31,14 @@ type Consensus struct {
 	valset        *validator.ValidatorSet
 	privValidator *validator.PrivValidator
 	isCommitted   bool
-	state         *state.State
+	state         state.State
 	broadcastCh   chan message.Message
 	logger        *logger.Logger
 }
 
 func NewConsensus(
 	conf *Config,
-	state *state.State,
+	state state.State,
 	privValidator *validator.PrivValidator,
 	broadcastCh chan message.Message) (*Consensus, error) {
 	cs := &Consensus{
@@ -51,7 +51,7 @@ func NewConsensus(
 
 	// Update height later, See enterNewHeight.
 	cs.votes = NewHeightVoteSet(-1, cs.valset)
-	cs.hrs = hrs.NewHRS(state.LastBlockHeight(), 0, hrs.StepTypeNewHeight)
+	cs.hrs = hrs.NewHRS(-1, -1, hrs.StepTypeNewHeight)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
@@ -73,7 +73,7 @@ func (cs *Consensus) updateRoundStep(round int, step hrs.StepType) {
 	cs.hrs.UpdateRoundStep(round, step)
 
 	hasProposal := cs.votes.HasRoundProposal(cs.hrs.Round())
-	msg := message.NewHeartBeatMessage(cs.hrs, hasProposal)
+	msg := message.NewHeartBeatMessage(cs.state.LastBlockHash(), cs.hrs, hasProposal)
 	cs.broadcastCh <- msg
 }
 
@@ -219,7 +219,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 	switch v.VoteType() {
 	case vote.VoteTypePrevote:
 		prevotes := cs.votes.Prevotes(round)
-			cs.logger.Debug("Vote added to prevote", "vote", v, "voteset", prevotes)
+		cs.logger.Debug("Vote added to prevote", "vote", v, "voteset", prevotes)
 		// current round
 		if cs.hrs.Round() == round {
 			if ok := prevotes.HasQuorum(); ok {

@@ -15,12 +15,12 @@ type Server struct {
 	config   *Config
 	listener net.Listener
 	store    state.StoreReader
-	state    *state.State
+	state    state.StateReader
 	txPool   *txpool.TxPool
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state *state.State, txPool *txpool.TxPool) (*Server, error) {
+func NewServer(conf *Config, state state.StateReader, txPool *txpool.TxPool) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
 		store:  state.StoreReader(),

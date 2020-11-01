@@ -3,39 +3,55 @@ package sync
 import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 )
 
 type BlockPool struct {
 	lk deadlock.RWMutex
 
-	blocks map[int]*block.Block
-	logger *logger.Logger
+	blocks  map[int]*block.Block
+	commits map[crypto.Hash]*block.Commit
+	logger  *logger.Logger
 }
 
 func NewBlockPool(logger *logger.Logger) *BlockPool {
 	return &BlockPool{
-		blocks: make(map[int]*block.Block),
-		logger: logger,
+		blocks:  make(map[int]*block.Block),
+		commits: make(map[crypto.Hash]*block.Commit),
+		logger:  logger,
 	}
 }
 
-func (pool *BlockPool) AppendBlock(height int, block block.Block) error {
+func (pool *BlockPool) AppendCommit(blockHash crypto.Hash, commit *block.Commit) {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	if err := commit.SanityCheck(); err != nil {
+		pool.logger.Error("Invalid commit", "commit", commit, "error", err)
+		return
+	}
+	bc, has := pool.commits[blockHash]
+	if has {
+		if !bc.Hash().EqualsTo(commit.Hash()) {
+			pool.logger.Warn("Different commit for the same block, overwrite the previous one", "hash", blockHash)
+		}
+	}
+	pool.commits[blockHash] = commit
+}
+
+func (pool *BlockPool) AppendBlock(height int, block block.Block) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
 	bp, has := pool.blocks[height]
 	if has {
 		if !bp.Hash().EqualsTo(block.Hash()) {
-			pool.logger.Warn("Different blocks for same height", "height", height)
-			delete(pool.blocks, height)
-			return errors.Error(errors.ErrInvalidBlock)
+			pool.logger.Warn("Different block for the same height, overwrite the previous one", "height", height)
 		}
-	} else {
-		pool.blocks[height] = &block
 	}
-	return nil
+
+	pool.blocks[height] = &block
 }
 
 func (pool *BlockPool) Block(height int) *block.Block {
@@ -45,6 +61,20 @@ func (pool *BlockPool) Block(height int) *block.Block {
 	return pool.blocks[height]
 }
 
+func (pool *BlockPool) Commit(hash crypto.Hash) *block.Commit {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	return pool.commits[hash]
+}
+
+func (pool *BlockPool) RemoveCommit(hash crypto.Hash) {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	delete(pool.commits, hash)
+}
+
 func (pool *BlockPool) RemoveBlock(height int) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
@@ -52,9 +82,16 @@ func (pool *BlockPool) RemoveBlock(height int) {
 	delete(pool.blocks, height)
 }
 
-func (pool *BlockPool) Size() int {
+func (pool *BlockPool) BlockLen() int {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	return len(pool.blocks)
+	return len(pool.commits)
+}
+
+func (pool *BlockPool) CommitLen() int {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	return len(pool.commits)
 }

@@ -20,9 +20,9 @@ import (
 )
 
 type Node struct {
+	state      state.State
 	genesisDoc *genesis.Genesis
 	config     *config.Config
-	state      *state.State
 	txPool     *txpool.TxPool
 	consensus  *consensus.Consensus
 	network    *network.Network
@@ -47,7 +47,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(conf.State, genDoc, txPool)
+	state, err := state.LoadOrNewState(conf.State, genDoc, privValidator.Address(), txPool)
 	if err != nil {
 		return nil, err
 	}
