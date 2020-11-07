@@ -1,11 +1,15 @@
 package txpool
 
+import "time"
+
 type Config struct {
-	MaxSize int
+	WaitingTimeout time.Duration
+	MaxSize        int
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		MaxSize: 10000,
+		WaitingTimeout: 2 * time.Second,
+		MaxSize:        10000,
 	}
 }

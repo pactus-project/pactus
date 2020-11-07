@@ -39,19 +39,16 @@ type Bootstrapper struct {
 	ctx            context.Context
 	cancel         context.CancelFunc
 	dhtBootStarted bool
-
-	logger *logger.Logger
 }
 
 // NewBootstrapper returns a new Bootstrapper that will attempt to keep connected
 // to the filecoin network by connecting to the given bootstrap peers.
-func NewBootstrapper(bootstrapPeers []peer.AddrInfo, h host.Host, d inet.Dialer, r routing.Routing, minPeer int, period time.Duration, logger *logger.Logger) *Bootstrapper {
+func NewBootstrapper(bootstrapPeers []peer.AddrInfo, h host.Host, d inet.Dialer, r routing.Routing, minPeer int, period time.Duration) *Bootstrapper {
 	b := &Bootstrapper{
 		MinPeerThreshold:  minPeer,
 		bootstrapPeers:    bootstrapPeers,
 		Period:            period,
 		ConnectionTimeout: 20 * time.Second,
-		logger:            logger,
 
 		h: h,
 		d: d,
@@ -106,7 +103,7 @@ func (b *Bootstrapper) bootstrap(currentPeers []peer.ID) {
 			b.dhtBootStarted = true
 			err := b.bootstrapIpfsRouting()
 			if err != nil {
-				b.logger.Warn("got error trying to bootstrap Routing. Peer discovery may suffer.", "err", err)
+				logger.Warn("got error trying to bootstrap Routing. Peer discovery may suffer.", "err", err)
 			}
 		}
 		cancel()
@@ -123,7 +120,7 @@ func (b *Bootstrapper) bootstrap(currentPeers []peer.ID) {
 		wg.Add(1)
 		go func() {
 			if err := b.h.Connect(ctx, pinfo); err != nil {
-				b.logger.Error("got error trying to connect to bootstrap node ", "info", pinfo, "err", err.Error())
+				logger.Error("got error trying to connect to bootstrap node ", "info", pinfo, "err", err.Error())
 			}
 			wg.Done()
 		}()
@@ -132,7 +129,7 @@ func (b *Bootstrapper) bootstrap(currentPeers []peer.ID) {
 			return
 		}
 	}
-	b.logger.Warn("not enough bootstrap nodes to maintain connections", "threshold", b.MinPeerThreshold, "current", len(currentPeers))
+	logger.Warn("not enough bootstrap nodes to maintain connections", "threshold", b.MinPeerThreshold, "current", len(currentPeers))
 }
 
 func hasPID(pids []peer.ID, pid peer.ID) bool {

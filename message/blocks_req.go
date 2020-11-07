@@ -13,8 +13,8 @@ type BlocksReqPayload struct {
 	LastBlockHash crypto.Hash `cbor:"3,keyasint"`
 }
 
-func NewBlocksReqMessage(from, to int, lastBlockHash crypto.Hash) Message {
-	return Message{
+func NewBlocksReqMessage(from, to int, lastBlockHash crypto.Hash) *Message {
+	return &Message{
 		Type: PayloadTypeBlocksReq,
 		Payload: &BlocksReqPayload{
 			From:          from,

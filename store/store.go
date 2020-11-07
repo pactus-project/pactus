@@ -5,7 +5,6 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -18,15 +17,14 @@ type Store struct {
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
-	logger         *logger.Logger
 }
 
-func NewStore(conf *Config, logger *logger.Logger) (*Store, error) {
-	blockStore, err := newBlockStore(conf.BlockStorePath(), logger)
+func NewStore(conf *Config) (*Store, error) {
+	blockStore, err := newBlockStore(conf.BlockStorePath())
 	if err != nil {
 		return nil, err
 	}
-	txStore, err := newTxStore(conf.TxStorePath(), logger)
+	txStore, err := newTxStore(conf.TxStorePath())
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +42,6 @@ func NewStore(conf *Config, logger *logger.Logger) (*Store, error) {
 		txStore:        txStore,
 		accountStore:   accountStore,
 		validatorStore: validatorStore,
-		logger:         logger,
 	}, nil
 }
 

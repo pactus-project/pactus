@@ -14,8 +14,8 @@ type HeartBeatPayload struct {
 	HasProposal   bool        `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS, hasProposal bool) Message {
-	return Message{
+func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS, hasProposal bool) *Message {
+	return &Message{
 		Type: PayloadTypeHeartBeat,
 		Payload: &HeartBeatPayload{
 			HRS:         hrs,

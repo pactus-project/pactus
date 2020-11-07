@@ -12,14 +12,12 @@ type BlockPool struct {
 
 	blocks  map[int]*block.Block
 	commits map[crypto.Hash]*block.Commit
-	logger  *logger.Logger
 }
 
-func NewBlockPool(logger *logger.Logger) *BlockPool {
+func NewBlockPool() *BlockPool {
 	return &BlockPool{
 		blocks:  make(map[int]*block.Block),
 		commits: make(map[crypto.Hash]*block.Commit),
-		logger:  logger,
 	}
 }
 
@@ -27,14 +25,10 @@ func (pool *BlockPool) AppendCommit(blockHash crypto.Hash, commit *block.Commit)
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	if err := commit.SanityCheck(); err != nil {
-		pool.logger.Error("Invalid commit", "commit", commit, "error", err)
-		return
-	}
 	bc, has := pool.commits[blockHash]
 	if has {
 		if !bc.Hash().EqualsTo(commit.Hash()) {
-			pool.logger.Warn("Different commit for the same block, overwrite the previous one", "hash", blockHash)
+			logger.Warn("Different commit for the same block, overwrite the previous one", "hash", blockHash)
 		}
 	}
 	pool.commits[blockHash] = commit
@@ -47,7 +41,7 @@ func (pool *BlockPool) AppendBlock(height int, block block.Block) {
 	bp, has := pool.blocks[height]
 	if has {
 		if !bp.Hash().EqualsTo(block.Hash()) {
-			pool.logger.Warn("Different block for the same height, overwrite the previous one", "height", height)
+			logger.Warn("Different block for the same height, overwrite the previous one", "height", height)
 		}
 	}
 

@@ -11,8 +11,8 @@ type TxsReqPayload struct {
 	Hashes []crypto.Hash `cbor:"1,keyasint"`
 }
 
-func NewTxsReqMessage(hashes []crypto.Hash) Message {
-	return Message{
+func NewTxsReqMessage(hashes []crypto.Hash) *Message {
+	return &Message{
 		Type: PayloadTypeTxsReq,
 		Payload: &TxsReqPayload{
 			Hashes: hashes,
@@ -32,5 +32,9 @@ func (p *TxsReqPayload) Type() PayloadType {
 }
 
 func (p *TxsReqPayload) Fingerprint() string {
-	return fmt.Sprintf("%v", len(p.Hashes))
+	var s string
+	for _, h := range p.Hashes {
+		s += fmt.Sprintf("%v ", h.Fingerprint())
+	}
+	return fmt.Sprintf("%v", s)
 }

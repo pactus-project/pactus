@@ -32,7 +32,7 @@ type Consensus struct {
 	privValidator *validator.PrivValidator
 	isCommitted   bool
 	state         state.State
-	broadcastCh   chan message.Message
+	broadcastCh   chan *message.Message
 	logger        *logger.Logger
 }
 
@@ -40,7 +40,7 @@ func NewConsensus(
 	conf *Config,
 	state state.State,
 	privValidator *validator.PrivValidator,
-	broadcastCh chan message.Message) (*Consensus, error) {
+	broadcastCh chan *message.Message) (*Consensus, error) {
 	cs := &Consensus{
 		config:        conf,
 		state:         state,

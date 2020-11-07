@@ -60,7 +60,7 @@ func newTestConsensus(t *testing.T, val_id int) (*Consensus, []*validator.PrivVa
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
 
-	ch := make(chan message.Message, 10)
+	ch := make(chan *message.Message, 10)
 	go func() {
 		for {
 			select {

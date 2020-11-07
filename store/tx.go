@@ -4,7 +4,6 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -20,18 +19,16 @@ type txWithReceipt struct {
 }
 
 type txStore struct {
-	db     *leveldb.DB
-	logger *logger.Logger
+	db *leveldb.DB
 }
 
-func newTxStore(path string, logger *logger.Logger) (*txStore, error) {
+func newTxStore(path string) (*txStore, error) {
 	db, err := leveldb.OpenFile(path, nil)
 	if err != nil {
 		return nil, err
 	}
 	return &txStore{
-		db:     db,
-		logger: logger,
+		db: db,
 	}, nil
 }
 
