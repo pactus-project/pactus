@@ -3,21 +3,24 @@ package message
 import (
 	"fmt"
 
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/version"
 )
 
 type SalamPayload struct {
-	Version version.Version `cbor:"1,keyasint"`
-	Height  int             `cbor:"2,keyasint"`
+	Version     version.Version `cbor:"1,keyasint"`
+	GenesisHash crypto.Hash     `cbor:"2,keyasint"`
+	Height      int             `cbor:"3,keyasint"`
 }
 
-func NewSalamMessage(height int) Message {
-	return Message{
+func NewSalamMessage(genesisHash crypto.Hash, height int) *Message {
+	return &Message{
 		Type: PayloadTypeSalam,
 		Payload: &SalamPayload{
-			Version: version.NodeVersion,
-			Height:  height,
+			Version:     version.NodeVersion,
+			GenesisHash: genesisHash,
+			Height:      height,
 		},
 	}
 

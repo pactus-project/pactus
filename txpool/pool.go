@@ -3,6 +3,7 @@ package txpool
 import (
 	"container/list"
 	"fmt"
+	"time"
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -24,17 +25,19 @@ type TxPool struct {
 	config       *Config
 	pendingsList *list.List
 	pendingsMap  map[crypto.Hash]*list.Element
-	broadcastCh  chan message.Message
+	appendTxCh   chan *tx.Tx
+	broadcastCh  chan *message.Message
 	logger       *logger.Logger
 }
 
 func NewTxPool(
 	conf *Config,
-	broadcastCh chan message.Message) (*TxPool, error) {
+	broadcastCh chan *message.Message) (*TxPool, error) {
 	pool := &TxPool{
 		config:       conf,
 		pendingsList: list.New(),
 		pendingsMap:  make(map[crypto.Hash]*list.Element),
+		appendTxCh:   make(chan *tx.Tx, 5),
 		broadcastCh:  broadcastCh,
 	}
 
@@ -56,6 +59,8 @@ func (pool *TxPool) AppendTx(tx tx.Tx) {
 	defer pool.lk.Unlock()
 
 	pool.appendTx(tx)
+
+	pool.appendTxCh <- &tx
 }
 
 func (pool *TxPool) AppendTxAndBroadcast(trx tx.Tx) {
@@ -75,7 +80,7 @@ func (pool *TxPool) appendTx(tx tx.Tx) {
 
 	_, found := pool.pendingsMap[tx.Hash()]
 	if found {
-		pool.logger.Info("We already have this transaction", "hash", tx.Hash())
+		pool.logger.Debug("We already have this transaction", "hash", tx.Hash())
 		return
 	}
 	// TODO:
@@ -103,19 +108,34 @@ func (pool *TxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
 
 func (pool *TxPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	pool.lk.RLock()
-	defer pool.lk.RUnlock()
 
 	el, found := pool.pendingsMap[hash]
-	if !found {
-		pool.logger.Info("We don't have this transaction", "hash", hash)
-
-		msg := message.NewTxsReqMessage([]crypto.Hash{hash})
-		pool.broadcastCh <- msg
-
-		return nil
+	if found {
+		tx := el.Value.(*tx.Tx)
+		pool.lk.RUnlock()
+		return tx
 	}
 
-	return el.Value.(*tx.Tx)
+	pool.logger.Debug("Request transaction from peers", "hash", hash)
+	pool.lk.RUnlock()
+
+	msg := message.NewTxsReqMessage([]crypto.Hash{hash})
+	pool.broadcastCh <- msg
+
+	timeout := time.NewTimer(pool.config.WaitingTimeout)
+
+	for {
+		select {
+		case <-timeout.C:
+			pool.logger.Warn("Transaction not received", "hash", hash, "timeout", pool.config.WaitingTimeout)
+			return nil
+		case tx := <-pool.appendTxCh:
+			pool.logger.Debug("Transaction found", "hash", hash)
+			if tx.Hash().EqualsTo(hash) {
+				return tx
+			}
+		}
+	}
 }
 
 func (pool *TxPool) HasTx(hash crypto.Hash) bool {

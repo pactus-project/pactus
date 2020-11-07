@@ -28,7 +28,7 @@ func mockState(t *testing.T) (State, crypto.Address) {
 	stateConfig := DefaultConfig()
 	stateConfig.Store.Path = util.TempDirName()
 	txPoolConfig := txpool.DefaultConfig()
-	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan message.Message, 10))
+	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan *message.Message, 10))
 	require.NoError(t, err)
 	st, err := LoadOrNewState(stateConfig, gen, val.Address(), txPool)
 	require.NoError(t, err)

@@ -29,6 +29,7 @@ type StateReader interface {
 	StoreReader() StoreReader
 	ValidatorSet() *validator.ValidatorSet
 	LastBlockHeight() int
+	GenesisHash() crypto.Hash
 	LastBlockHash() crypto.Hash
 	LastBlockTime() time.Time
 	BlockTime() time.Duration
@@ -48,6 +49,7 @@ type state struct {
 	lk deadlock.RWMutex
 
 	proposer           crypto.Address
+	genDoc             *genesis.Genesis
 	store              *store.Store
 	txPool             *txpool.TxPool
 	cache              *Cache
@@ -71,12 +73,13 @@ func LoadOrNewState(
 	txPool *txpool.TxPool) (State, error) {
 
 	st := &state{
+		genDoc:   genDoc,
 		proposer: proposer,
 		txPool:   txPool,
 		params:   NewParams(),
 	}
 	st.logger = logger.NewLogger("_state", st)
-	store, err := store.NewStore(conf.Store, st.logger)
+	store, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +149,13 @@ func (st *state) LastBlockHeight() int {
 	defer st.lk.RUnlock()
 
 	return st.lastBlockHeight
+}
+
+func (st *state) GenesisHash() crypto.Hash {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.genDoc.Hash()
 }
 
 func (st *state) LastBlockHash() crypto.Hash {
@@ -232,25 +242,26 @@ func (st *state) ApplyBlock(block block.Block, commit block.Commit) error {
 	defer st.lk.Unlock()
 
 	if !block.Header().LastBlockHash().EqualsTo(st.lastBlockHash) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Previous block hash is not match")
+		return errors.Errorf(errors.ErrInvalidBlock, "Previous block hash does not match. Should be %v, but got %v",
+			st.lastBlockHash, block.Header().LastBlockHash())
 	}
 
 	round := commit.Round()
 	err := st.validateBlock(block)
 	if err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "Valdating block failed: %v", err)
+		return err
 	}
 
 	err = st.validateCommit(block.Hash(), commit)
 	if err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "Valdating commit failed: %v", err)
+		return err
 	}
 
 	st.cache.reset()
 	// Execute block
 	receipts, err := st.executeBlock(block, st.executor)
 	if err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "Executing block failed: %v", err)
+		return err
 	}
 	// Commit the changes
 	st.cache.commit(nil)

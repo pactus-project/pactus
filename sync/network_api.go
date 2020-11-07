@@ -14,7 +14,7 @@ import (
 type NetworkApi interface {
 	Start() error
 	Stop() error
-	PublishMessage(msg message.Message)
+	PublishMessage(msg *message.Message) error
 }
 
 type networkApi struct {
@@ -31,15 +31,13 @@ type networkApi struct {
 	blockSub       *pubsub.Subscription
 	consensusSub   *pubsub.Subscription
 	parsMessageFn  func(data []byte, from peer.ID)
-	logger         *logger.Logger
 }
 
 func newNetworkApi(
 	ctx context.Context,
 	selfAddress crypto.Address,
 	net *network.Network,
-	parsMessageFn func(data []byte, from peer.ID),
-	logger *logger.Logger) (*networkApi, error) {
+	parsMessageFn func(data []byte, from peer.ID)) (*networkApi, error) {
 	generalTopic, err := net.JoinTopic("general")
 	if err != nil {
 		return nil, err
@@ -85,7 +83,6 @@ func newNetworkApi(
 		consensusTopic: consensusTopic,
 		consensusSub:   consensusSub,
 		parsMessageFn:  parsMessageFn,
-		logger:         logger,
 	}, nil
 }
 
@@ -119,25 +116,18 @@ func (api *networkApi) parsMessage(m *pubsub.Message) {
 	api.parsMessageFn(m.Data, m.ReceivedFrom)
 }
 
-func (api *networkApi) PublishMessage(msg message.Message) {
+func (api *networkApi) PublishMessage(msg *message.Message) error {
 	msg.Initiator = api.selfAddress
-
-	topic := api.topic(&msg)
-	if topic != nil {
-		bs, _ := msg.MarshalCBOR()
-		if err := topic.Publish(api.ctx, bs); err != nil {
-			api.logger.Error("Error on publishing message", "message", msg.Fingerprint(), "err", err)
-		} else {
-			api.logger.Trace("Publishing new message", "message", msg.Fingerprint())
-		}
-	}
+	topic := api.topic(msg)
+	bs, _ := msg.MarshalCBOR()
+	return topic.Publish(api.ctx, bs)
 }
 
 func (api *networkApi) txLoop() {
 	for {
 		m, err := api.txSub.Next(api.ctx)
 		if err != nil {
-			api.logger.Error("readLoop error", "err", err)
+			logger.Error("readLoop error", "err", err)
 			return
 		}
 
@@ -149,7 +139,7 @@ func (api *networkApi) blockLoop() {
 	for {
 		m, err := api.blockSub.Next(api.ctx)
 		if err != nil {
-			api.logger.Error("readLoop error", "err", err)
+			logger.Error("readLoop error", "err", err)
 			return
 		}
 
@@ -161,7 +151,7 @@ func (api *networkApi) generalLoop() {
 	for {
 		m, err := api.generalSub.Next(api.ctx)
 		if err != nil {
-			api.logger.Error("readLoop error", "err", err)
+			logger.Error("readLoop error", "err", err)
 			return
 		}
 
@@ -173,7 +163,7 @@ func (api *networkApi) consensusLoop() {
 	for {
 		m, err := api.consensusSub.Next(api.ctx)
 		if err != nil {
-			api.logger.Error("readLoop error", "err", err)
+			logger.Error("readLoop error", "err", err)
 			return
 		}
 
@@ -203,4 +193,5 @@ func (api *networkApi) topic(msg *message.Message) *pubsub.Topic {
 	default:
 		panic("Invalid topic")
 	}
+	return nil
 }

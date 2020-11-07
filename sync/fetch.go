@@ -1,31 +1,16 @@
 package sync
 
 import (
-	"encoding/hex"
-
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
-	msg := new(message.Message)
-	err := msg.UnmarshalCBOR(data)
-	if err != nil {
-		syncer.logger.Error("Error decoding message", "from", from.ShortString(), "message", msg, "err", err)
+	msg := syncer.stats.ParsMessage(data, from)
+	if msg == nil {
 		return
 	}
-	syncer.logger.Trace("Received a message", "from", from.ShortString(), "message", msg)
-
-	if err = msg.SanityCheck(); err != nil {
-		syncer.stats.IncreaseInvalidMessageCounter(from)
-		syncer.logger.Error("Peer sent us invalid msg", "from", from.ShortString(), "data", hex.EncodeToString(data), "err", err)
-		return
-	}
-
-	syncer.stats.ProcessMessage(msg, from)
 
 	switch msg.PayloadType() {
 	case message.PayloadTypeSalam:
@@ -42,7 +27,7 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 
 	case message.PayloadTypeBlocks:
 		pld := msg.Payload.(*message.BlocksPayload)
-		syncer.processBlocksResPayload(pld)
+		syncer.processBlocksPayload(pld)
 
 	case message.PayloadTypeTxsReq:
 		pld := msg.Payload.(*message.TxsReqPayload)
@@ -95,11 +80,23 @@ func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayloa
 	}
 }
 
-func (syncer *Synchronizer) processBlocksResPayload(pld *message.BlocksPayload) {
+func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 	height := pld.From
 	ourHeight := syncer.state.LastBlockHeight()
 
+	if pld.LastCommit != nil {
+		if height+len(pld.Blocks) > ourHeight {
+			syncer.blockPool.AppendCommit(
+				pld.Blocks[len(pld.Blocks)-1].Header().Hash(),
+				pld.LastCommit)
+		}
+	}
+
 	for _, block := range pld.Blocks {
+
+		// For preventing any race condition situation
+		ourHeight := syncer.state.LastBlockHeight()
+
 		if height < ourHeight {
 			continue // We already have committed this block
 		}
@@ -111,24 +108,38 @@ func (syncer *Synchronizer) processBlocksResPayload(pld *message.BlocksPayload) 
 		}
 
 		syncer.blockPool.AppendBlock(height, block)
+		syncer.tryCommitBlocks()
 
-		commitBlock := syncer.blockPool.Block(ourHeight + 1)
-		commit := syncer.blockPool.Commit(commitBlock.Hash())
-
-		if commitBlock != nil && commit != nil {
-			syncer.logger.Info("Committing block", "height", ourHeight+1, "block", commitBlock)
-			if err := syncer.state.ApplyBlock(*commitBlock, *commit); err != nil {
-				syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err)
-				// Ask peers to send us this block again
-				syncer.broadcastBlocksReq(ourHeight+1, ourHeight+2)
-			} else {
-				syncer.consensus.ScheduleNewHeight()
-			}
-
-			syncer.blockPool.RemoveBlock(ourHeight + 1)
-			syncer.blockPool.RemoveCommit(commitBlock.Hash())
-		}
 		height = height + 1
+	}
+
+	newHeight := syncer.state.LastBlockHeight()
+	if height-2 > newHeight {
+		// Ask peers to send us the missed block
+		syncer.broadcastBlocksReq(newHeight+1, newHeight+2)
+	}
+}
+
+func (syncer *Synchronizer) tryCommitBlocks() {
+	for {
+		ourHeight := syncer.state.LastBlockHeight()
+		commitBlock := syncer.blockPool.Block(ourHeight + 1)
+
+		if commitBlock == nil {
+			break
+		}
+		commit := syncer.blockPool.Commit(commitBlock.Hash())
+		if commit == nil {
+			break
+		}
+		syncer.logger.Info("Committing block", "height", ourHeight+1, "block", commitBlock)
+		if err := syncer.state.ApplyBlock(*commitBlock, *commit); err != nil {
+			syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err)
+		}
+
+		syncer.consensus.ScheduleNewHeight()
+		syncer.blockPool.RemoveBlock(ourHeight + 1)
+		syncer.blockPool.RemoveCommit(commitBlock.Hash())
 	}
 }
 
@@ -198,35 +209,4 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 			// We are at the same step with this peer
 		}
 	}
-}
-
-func (syncer *Synchronizer) sendBlocks(from, to int) {
-	ourHeight := syncer.state.LastBlockHeight()
-
-	to = util.Min(to, ourHeight)
-	to = util.Min(to, to+syncer.config.BlockPerMessage)
-
-	// Help peer to catch up
-	txs := make([]tx.Tx, 0)
-	blocks := make([]block.Block, to-from+1)
-	for h := from; h <= to; h++ {
-		b, err := syncer.store.BlockByHeight(h)
-		if err != nil {
-			syncer.logger.Error("An error occurred while retriveng a block", "err", err, "height", h)
-			break
-		}
-		hashes := b.TxHashes().Hashes()
-		for _, hash := range hashes {
-			tx, _, _ := syncer.store.Tx(hash)
-			if tx != nil {
-				txs = append(txs, *tx)
-			} else {
-				syncer.logger.Warn("We don't have transation for the block", "hash", hash.Fingerprint())
-			}
-		}
-		blocks[h-from] = *b
-	}
-
-	syncer.broadcastTxs(txs)
-	syncer.broadcastBlocks(from, blocks, nil)
 }

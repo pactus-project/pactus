@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
@@ -24,6 +25,9 @@ func TestRunningNode(t *testing.T) {
 	conf.Network.NodeKey = util.TempFilename()
 	privVal := validator.NewPrivValidator(pv)
 	n, err := NewNode(gen, conf, privVal)
+
+	assert.Equal(t, n.state.LastBlockHash(), crypto.UndefHash)
+
 	require.NoError(t, err)
 	err = n.Start()
 	require.NoError(t, err)

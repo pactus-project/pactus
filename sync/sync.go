@@ -16,6 +16,8 @@ import (
 	"github.com/zarbchain/zarb-go/txpool"
 )
 
+// Not: Synchronizer should not have any lock to prevent daed lock situation.
+// Other modules like state or consesnus are thread safe
 type Synchronizer struct {
 	ctx             context.Context
 	config          *Config
@@ -26,7 +28,7 @@ type Synchronizer struct {
 	stats           *stats.Stats
 	blockPool       *BlockPool
 	txkPool         map[crypto.Hash]*tx.Tx
-	broadcastCh     <-chan message.Message
+	broadcastCh     <-chan *message.Message
 	networkApi      NetworkApi
 	heartBeatTicker *time.Ticker
 	logger          *logger.Logger
@@ -37,30 +39,30 @@ func NewSynchronizer(
 	addr crypto.Address,
 	state state.State,
 	consensus *consensus.Consensus,
-	txpool *txpool.TxPool,
+	txPool *txpool.TxPool,
 	net *network.Network,
-	broadcastCh <-chan message.Message) (*Synchronizer, error) {
+	broadcastCh <-chan *message.Message) (*Synchronizer, error) {
 	syncer := &Synchronizer{
 		ctx:         context.Background(),
 		config:      conf,
 		store:       state.StoreReader(),
 		state:       state,
 		consensus:   consensus,
-		txPool:      txpool,
+		txPool:      txPool,
 		txkPool:     make(map[crypto.Hash]*tx.Tx),
 		broadcastCh: broadcastCh,
 	}
 
 	logger := logger.NewLogger("_sync", syncer)
 
-	api, err := newNetworkApi(syncer.ctx, addr, net, syncer.ParsMessage, logger)
+	api, err := newNetworkApi(syncer.ctx, addr, net, syncer.ParsMessage)
 	if err != nil {
 		return nil, err
 	}
 
 	syncer.logger = logger
-	syncer.blockPool = NewBlockPool(logger)
-	syncer.stats = stats.NewStats(logger)
+	syncer.blockPool = NewBlockPool()
+	syncer.stats = stats.NewStats(state.GenesisHash())
 	syncer.networkApi = api
 
 	return syncer, nil
@@ -120,7 +122,7 @@ func (syncer *Synchronizer) broadcastLoop() {
 			return
 
 		case msg := <-syncer.broadcastCh:
-			syncer.networkApi.PublishMessage(msg)
+			syncer.publishMessage(msg)
 		}
 	}
 }

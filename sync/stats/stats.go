@@ -1,6 +1,8 @@
 package stats
 
 import (
+	"encoding/hex"
+
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -10,17 +12,17 @@ import (
 
 // Stats hold statistic data about peers' behaviors
 type Stats struct {
-	peers     map[peer.ID]*Peer
-	nodes     map[crypto.Address]*Node
-	maxHeight int
-	logger    *logger.Logger
+	peers       map[peer.ID]*Peer
+	nodes       map[crypto.Address]*Node
+	genesisHash crypto.Hash
+	maxHeight   int
 }
 
-func NewStats(logger *logger.Logger) *Stats {
+func NewStats(genesisHash crypto.Hash) *Stats {
 	return &Stats{
-		peers:  make(map[peer.ID]*Peer),
-		nodes:  make(map[crypto.Address]*Node),
-		logger: logger,
+		genesisHash: genesisHash,
+		peers:       make(map[peer.ID]*Peer),
+		nodes:       make(map[crypto.Address]*Node),
 	}
 }
 
@@ -55,17 +57,41 @@ func (s *Stats) IncreaseInvalidMessageCounter(peerID peer.ID) {
 	peer.InvalidMsg = peer.InvalidMsg + 1
 }
 
-func (s *Stats) ProcessMessage(msg *message.Message, peerID peer.ID) {
-	peer := s.getPeer(peerID)
+func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
+	peer := s.getPeer(from)
+	peer.ReceivedMsg = peer.ReceivedMsg + 1
+
+	msg := new(message.Message)
+	err := msg.UnmarshalCBOR(data)
+	if err != nil {
+		peer.InvalidMsg = peer.InvalidMsg + 1
+		logger.Error("Error decoding message", "from", from.ShortString(), "message", msg, "err", err)
+		return nil
+	}
+	logger.Trace("Received a message", "from", from.ShortString(), "message", msg)
+
+	if err = msg.SanityCheck(); err != nil {
+		peer.InvalidMsg = peer.InvalidMsg + 1
+		logger.Error("Peer sent us invalid msg", "from", from.ShortString(), "data", hex.EncodeToString(data), "err", err)
+		return nil
+	}
+
 	node := s.getNode(msg.Initiator)
 
-	peer.ReceivedMsg = peer.ReceivedMsg + 1
+	if s.badPeer(peer) {
+		return nil
+	}
+
+	if s.badNode(node) {
+		return nil
+	}
 
 	//ourHeight, _ := syncer.state.LastBlockInfo()
 	switch msg.PayloadType() {
 	case message.PayloadTypeSalam:
 		pld := msg.Payload.(*message.SalamPayload)
 		node.Version = pld.Version
+		node.GenesisHash = pld.GenesisHash
 		s.updateMaxHeight(pld.Height)
 
 	case message.PayloadTypeHeartBeat:
@@ -83,8 +109,20 @@ func (s *Stats) ProcessMessage(msg *message.Message, peerID peer.ID) {
 
 	case message.PayloadTypeVoteSet:
 		//pld := msg.Payload.(*message.VoteSetPayload)
-
 	}
+
+	return msg
+}
+
+func (s *Stats) badNode(node *Node) bool {
+
+	return false
+}
+
+func (s *Stats) badPeer(peer *Peer) bool {
+	ratio := (peer.InvalidMsg * 100) / peer.ReceivedMsg
+
+	return ratio > 10
 }
 
 func (s *Stats) updateMaxHeight(height int) {

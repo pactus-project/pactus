@@ -13,8 +13,8 @@ type BlocksPayload struct {
 	LastCommit *block.Commit `cbor:"3,keyasint, omitempty"`
 }
 
-func NewBlocksMessage(from int, blocks []block.Block, lastCommit *block.Commit) Message {
-	return Message{
+func NewBlocksMessage(from int, blocks []block.Block, lastCommit *block.Commit) *Message {
+	return &Message{
 		Type: PayloadTypeBlocks,
 		Payload: &BlocksPayload{
 			From:       from,
@@ -26,11 +26,19 @@ func NewBlocksMessage(from int, blocks []block.Block, lastCommit *block.Commit) 
 }
 func (p *BlocksPayload) SanityCheck() error {
 	if p.From < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
+	}
+	if len(p.Blocks) == 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "No block")
 	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
+		}
+	}
+	if p.LastCommit != nil {
+		if err := p.LastCommit.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
 		}
 	}
 	return nil

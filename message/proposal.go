@@ -9,8 +9,8 @@ type ProposalPayload struct {
 	Proposal vote.Proposal `cbor:"1,keyasint"`
 }
 
-func NewProposalMessage(proposal vote.Proposal) Message {
-	return Message{
+func NewProposalMessage(proposal vote.Proposal) *Message {
+	return &Message{
 		Type: PayloadTypeProposal,
 		Payload: &ProposalPayload{
 			Proposal: proposal,

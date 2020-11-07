@@ -40,7 +40,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 	if err != nil {
 		return nil, err
 	}
-	broadcastCh := make(chan message.Message, 10)
+	broadcastCh := make(chan *message.Message, 100)
 
 	txPool, err := txpool.NewTxPool(conf.TxPool, broadcastCh)
 	if err != nil {
