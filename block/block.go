@@ -102,7 +102,7 @@ func (b Block) HashesTo(hash crypto.Hash) bool {
 	return b.Hash().EqualsTo(hash)
 }
 
-func (b *Block) Fingerprint() string {
+func (b Block) Fingerprint() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 👥 %v 📨 %d}",
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),

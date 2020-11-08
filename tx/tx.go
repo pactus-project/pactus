@@ -2,6 +2,7 @@ package tx
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -163,9 +164,12 @@ func (tx *Tx) Hash() crypto.Hash {
 	return *tx.memorizedHash
 }
 
-func (tx *Tx) String() string {
-	bz, _ := json.Marshal(tx.data)
-	return string(bz)
+func (tx Tx) Fingerprint() string {
+	return fmt.Sprintf("{⌘ %v 🏵 %v %v->%v}",
+		tx.Hash().Fingerprint(),
+		tx.data.Stamp.Fingerprint(),
+		tx.data.Sender.Fingerprint(),
+		tx.data.Receiver.Fingerprint())
 }
 
 func (tx *Tx) GenerateReceipt(status int) *Receipt {

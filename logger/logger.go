@@ -82,11 +82,12 @@ func keyvalsToFields(keyvals ...interface{}) logrus.Fields {
 		key := keyvals[i].(string)
 		///
 		val := "nil"
-		if f, ok := keyvals[i+1].(fingerprintable); ok {
-			if !isNil(f) {
-				val = fmt.Sprintf("%v", f.Fingerprint())
+		switch v := keyvals[i+1].(type) {
+		case fingerprintable:
+			if !isNil(v) {
+				val = fmt.Sprintf("%v", v.Fingerprint())
 			}
-		} else {
+		default:
 			val = fmt.Sprintf("%v", keyvals[i+1])
 		}
 		fields[key] = val
