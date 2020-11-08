@@ -76,7 +76,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 			return
 		}
 
-		// Npw broadcast the committed block
+		// Now broadcast the committed block
 		msg := message.NewBlocksMessage(height, []block.Block{commitBlock}, commit)
 		cs.broadcastCh <- msg
 	}
@@ -84,6 +84,6 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	cs.updateRoundStep(round, hrs.StepTypeCommit)
 	cs.isCommitted = true
 
-	cs.logger.Info("Commit: Block stored", "block", blockHash.Fingerprint())
+	cs.logger.Info("Commit: Block committed", "block", blockHash.Fingerprint())
 	cs.scheduleNewHeight()
 }

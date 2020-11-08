@@ -12,6 +12,8 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 		return
 	}
 
+	syncer.logger.Trace("Received a message", "from", from.ShortString(), "message", msg)
+
 	switch msg.PayloadType() {
 	case message.PayloadTypeSalam:
 		pld := msg.Payload.(*message.SalamPayload)
@@ -150,7 +152,9 @@ func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
 		if trx == nil {
 			trx, _, _ = syncer.store.Tx(h)
 		}
-		txs = append(txs, *trx)
+		if trx != nil {
+			txs = append(txs, *trx)
+		}
 	}
 
 	syncer.broadcastTxs(txs)
@@ -188,14 +192,15 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
 }
 
 func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayload) {
-	if !pld.HasProposal {
-		p := syncer.consensus.LastProposal()
-		if p != nil {
-			syncer.broadcastProposal(*p)
-		}
-	}
 	hrs := syncer.consensus.HRS()
 	if pld.HRS.Height() == hrs.Height() {
+		if !pld.HasProposal {
+			p := syncer.consensus.LastProposal()
+			if p != nil {
+				syncer.broadcastProposal(*p)
+			}
+		}
+
 		if pld.HRS.GreaterThan(hrs) {
 			// We are behind of the peer.
 			// Let's ask for more votes
@@ -208,5 +213,10 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 		} else {
 			// We are at the same step with this peer
 		}
+	} else if pld.HRS.Height() > hrs.Height() {
+		// Ask for more blocks from this peer
+		syncer.broadcastBlocksReq(hrs.Height()+1, pld.HRS.Height())
+	} else {
+		// We are ahead of this peer
 	}
 }

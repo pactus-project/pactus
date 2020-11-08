@@ -22,6 +22,7 @@ import (
 
 var (
 	cons  *Consensus
+	st    state.State
 	pvals []*validator.PrivValidator
 )
 
@@ -72,12 +73,18 @@ func newTestConsensus(t *testing.T, val_id int) (*Consensus, []*validator.PrivVa
 
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals)
 	txpool, _ := txpool.NewTxPool(txPoolConf, ch)
-	st, _ := state.LoadOrNewState(stateConf, genDoc, pvals[val_id].Address(), txpool)
+	st, _ = state.LoadOrNewState(stateConf, genDoc, pvals[val_id].Address(), txpool)
 
 	cons, _ := NewConsensus(consConf, st, pvals[val_id], ch)
-	assert.Equal(t, cons.votes.height, -1)
-	assert.Equal(t, hrs.NewHRS(-1, -1, hrs.StepTypeNewHeight), cons.hrs)
+	assert.Equal(t, cons.votes.height, 0)
+	assert.Equal(t, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight), cons.hrs)
 	cons.ScheduleNewHeight()
+	assert.Equal(t, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight), cons.hrs)
+
+	// Calling ScheduleNewHeight for the second time
+	cons.ScheduleNewHeight()
+	assert.Equal(t, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight), cons.hrs)
+
 	return cons, pvals
 }
 
