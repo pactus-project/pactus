@@ -86,7 +86,7 @@ func (hrs HRS) GreaterThan(r HRS) bool {
 	return true
 }
 
-func (hrs *HRS) Fingerprint() string {
+func (hrs HRS) Fingerprint() string {
 	return fmt.Sprintf("%v/%v/%s",
 		hrs.data.Height, hrs.data.Round, hrs.data.Step)
 }
