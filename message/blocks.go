@@ -49,5 +49,9 @@ func (p *BlocksPayload) Type() PayloadType {
 }
 
 func (p *BlocksPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v-%v}", p.From, p.From+len(p.Blocks))
+	var s string
+	for _, b := range p.Blocks {
+		s += fmt.Sprintf("⌘ %v,", b.Hash().Fingerprint())
+	}
+	return fmt.Sprintf("{%v-%v [%v]}", p.From, p.From+len(p.Blocks)-1, s)
 }

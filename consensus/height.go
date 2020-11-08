@@ -16,6 +16,7 @@ func (cs *Consensus) ScheduleNewHeight() {
 	}
 
 	cs.updateHeight(stateHeight)
+	cs.updateRoundStep(0, hrs.StepTypeNewHeight)
 	cs.scheduleNewHeight()
 }
 
