@@ -32,6 +32,7 @@ type StateReader interface {
 	GenesisHash() crypto.Hash
 	LastBlockHash() crypto.Hash
 	LastBlockTime() time.Time
+	LastCommit() *block.Commit
 	BlockTime() time.Duration
 	UpdateLastCommit(blockHash crypto.Hash, commit block.Commit)
 	Fingerprint() string
@@ -170,6 +171,13 @@ func (st *state) LastBlockTime() time.Time {
 	defer st.lk.RUnlock()
 
 	return st.lastBlockTime
+}
+
+func (st *state) LastCommit() *block.Commit {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.lastCommit
 }
 
 func (st *state) BlockTime() time.Duration {

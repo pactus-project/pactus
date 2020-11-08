@@ -65,14 +65,13 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 	err := msg.UnmarshalCBOR(data)
 	if err != nil {
 		peer.InvalidMsg = peer.InvalidMsg + 1
-		logger.Error("Error decoding message", "from", from.ShortString(), "message", msg, "err", err)
+		logger.Error("Error decoding message", "from", from.ShortString(), "data", hex.EncodeToString(data), "err", err)
 		return nil
 	}
-	logger.Trace("Received a message", "from", from.ShortString(), "message", msg)
 
 	if err = msg.SanityCheck(); err != nil {
 		peer.InvalidMsg = peer.InvalidMsg + 1
-		logger.Error("Peer sent us invalid msg", "from", from.ShortString(), "data", hex.EncodeToString(data), "err", err)
+		logger.Error("Peer sent us invalid msg", "from", from.ShortString(), "msg", msg, "err", err)
 		return nil
 	}
 

@@ -10,13 +10,22 @@ func (cs *Consensus) ScheduleNewHeight() {
 	defer cs.lk.RUnlock()
 
 	stateHeight := cs.state.LastBlockHeight()
-	if cs.hrs.Height() < stateHeight-1 {
-		cs.isCommitted = false
-		cs.votes.Reset(stateHeight)
+	consHeight := cs.hrs.Height()
+
+	if consHeight > stateHeight+1 {
+		cs.logger.Panic("Consensus can't be further than state")
+		return
 	}
 
+	if stateHeight == 0 {
+		cs.updateRoundStep(0, hrs.StepTypeNewHeight)
+	} else {
+		cs.updateRoundStep(0, hrs.StepTypeCommit)
+	}
+
+	cs.isCommitted = true
 	cs.updateHeight(stateHeight)
-	cs.updateRoundStep(0, hrs.StepTypeNewHeight)
+
 	cs.scheduleNewHeight()
 }
 

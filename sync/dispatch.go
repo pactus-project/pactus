@@ -36,8 +36,13 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 		blocks[h-from] = *b
 	}
 
+	var lastCommit *block.Commit
+	if to == ourHeight {
+		lastCommit = syncer.state.LastCommit()
+	}
+
 	syncer.broadcastTxs(txs)
-	syncer.broadcastBlocks(from, blocks, nil)
+	syncer.broadcastBlocks(from, blocks, lastCommit)
 }
 
 func (syncer *Synchronizer) broadcastSalam() {
@@ -53,16 +58,25 @@ func (syncer *Synchronizer) broadcastBlocksReq(from, to int) {
 }
 
 func (syncer *Synchronizer) broadcastBlocks(from int, blocks []block.Block, lastCommit *block.Commit) {
+	if len(blocks) == 0 {
+		return
+	}
 	msg := message.NewBlocksMessage(from, blocks, lastCommit)
 	syncer.publishMessage(msg)
 }
 
 func (syncer *Synchronizer) broadcastTxs(txs []tx.Tx) {
+	if len(txs) == 0 {
+		return
+	}
 	msg := message.NewTxsMessage(txs)
 	syncer.publishMessage(msg)
 }
 
 func (syncer *Synchronizer) broadcastTxsReq(hashes []crypto.Hash) {
+	if len(hashes) == 0 {
+		return
+	}
 	msg := message.NewTxsReqMessage(hashes)
 	syncer.publishMessage(msg)
 }

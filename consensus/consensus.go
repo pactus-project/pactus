@@ -50,8 +50,8 @@ func NewConsensus(
 	}
 
 	// Update height later, See enterNewHeight.
-	cs.votes = NewHeightVoteSet(-1, cs.valset)
-	cs.hrs = hrs.NewHRS(-1, -1, hrs.StepTypeNewHeight)
+	cs.votes = NewHeightVoteSet(0, cs.valset)
+	cs.hrs = hrs.NewHRS(0, 0, hrs.StepTypeNewHeight)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
