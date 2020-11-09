@@ -6,15 +6,14 @@ import (
 	"fmt"
 	"time"
 
-	exchange "github.com/ipfs/go-ipfs-exchange-interface"
 	"github.com/libp2p/go-libp2p"
 	acrypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-core/routing"
-	dht "github.com/libp2p/go-libp2p-kad-dht"
+	libp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	libp2pps "github.com/libp2p/go-libp2p-pubsub"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	"github.com/libp2p/go-libp2p/p2p/discovery"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
@@ -27,46 +26,44 @@ const DiscoveryInterval = time.Hour
 const DiscoveryServiceTag = "pubsub-chat-example"
 
 type Network struct {
-	ctx         context.Context
-	config      *Config
-	networkName string
-	host        host.Host
-	router      routing.Routing // Router is a router from IPFS
-	pubsub      *libp2pps.PubSub
-	bitswap     exchange.Interface
-	logger      *logger.Logger
-
-	// Network *net.Network
+	ctx          context.Context
+	config       *Config
+	host         host.Host
+	pubsub       *libp2pps.PubSub
+	mdns         discovery.Service
+	kademlia     *libp2pdht.IpfsDHT
+	bootstrapper *Bootstrapper
+	logger       *logger.Logger
 }
 
 func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
 	if util.PathExists(path) {
 		h, err := util.ReadFile(path)
 		if err != nil {
-			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+			return nil, err
 		}
 		bs, err := hex.DecodeString(string(h))
 		if err != nil {
-			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+			return nil, err
 		}
 		key, err := acrypto.UnmarshalPrivateKey(bs)
 		if err != nil {
-			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+			return nil, err
 		}
 		return key, nil
 	}
 	key, _, err := acrypto.GenerateEd25519Key(nil)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, "failed to create peer key")
+		return nil, fmt.Errorf("failed to generate private key")
 	}
 	bs, err := acrypto.MarshalPrivateKey(key)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, err
 	}
 	h := hex.EncodeToString(bs)
 	err = util.WriteFile(path, []byte(h))
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, err
 	}
 	return key, nil
 }
@@ -74,80 +71,81 @@ func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
 func NewNetwork(conf *Config) (*Network, error) {
 	ctx := context.Background()
 
-	var router routing.Routing
-	makeDHT := func(h host.Host) (routing.Routing, error) {
-		r, err := dht.New(
-			ctx,
-			h,
-			// dhtopts.Protocols(protocol.ID(fmt.Sprintf("/zarb/kad/%s", network))),
-		)
-		if err != nil {
-			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
-		}
-		router = r
-		return r, err
-	}
-	host, err := buildHost(ctx, conf, makeDHT)
-	if err != nil {
-		return nil, err
-	}
-
-	libp2pps.GossipSubHeartbeatInterval = 100 * time.Millisecond
-	pubsub, err := libp2pps.NewGossipSub(ctx, host)
+	nodeKey, err := loadOrCreateKey(conf.NodeKeyFile)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	n := &Network{
-		ctx:         ctx,
-		config:      conf,
-		networkName: conf.Name,
-		host:        host,
-		router:      router,
-		pubsub:      pubsub,
+	host, err := libp2p.New(
+		ctx,
+		libp2p.ListenAddrStrings(conf.Address),
+		libp2p.Identity(nodeKey),
+		//libp2p.EnableAutoRelay(),
+	)
+	if err != nil {
+		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
+	pubsub, err := libp2pps.NewGossipSub(ctx, host)
+	if err != nil {
+		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+	}
+	addressess, err := PeerAddrsToAddrInfo(conf.Bootstrap.Addresses)
+	if err != nil {
+		return nil, errors.Errorf(errors.ErrNetwork, "couldn't parse bootstrap addresses: %s", conf.Bootstrap.Addresses)
+	}
+
+	n := &Network{
+		ctx:    ctx,
+		config: conf,
+		host:   host,
+		pubsub: pubsub,
+	}
 	n.logger = logger.NewLogger("_network", n)
 	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.Address)
+
+	if conf.EnableMDNS {
+		mdns, err := n.setupMNSDiscovery(n.ctx, n.host)
+		if err != nil {
+			n.logger.Error("Unable to setup mDNS discovery", "err", err)
+		}
+		n.mdns = mdns
+	}
+
+	if conf.EnableKademlia {
+		kademlia, err := n.setupKademlia(n.ctx, n.host)
+		if err != nil {
+			n.logger.Error("Unable to setup Kademlia DHT", "err", err)
+		}
+		n.kademlia = kademlia
+		n.bootstrapper = NewBootstrapper(addressess, host, host.Network(), kademlia, conf.Bootstrap.MinPeerThreshold, conf.Bootstrap.Period)
+	}
 
 	return n, nil
 }
 
-func buildHost(ctx context.Context, conf *Config, makeDHT func(host host.Host) (routing.Routing, error)) (host.Host, error) {
-	// Node must build a host acting as a libp2p relay.  Additionally it
-	// runs the autoNAT service which allows other nodes to check for their
-	// own dialability by having this node attempt to dial them.
-	makeDHTRightType := func(h host.Host) (routing.PeerRouting, error) {
-		return makeDHT(h)
-	}
-
-	nodeKey, err := loadOrCreateKey(conf.NodeKey)
-	if err != nil {
-		return nil, err
-	}
-
-	libP2pOpts := []libp2p.Option{
-		libp2p.ListenAddrStrings(conf.Address),
-		libp2p.Identity(nodeKey),
-	}
-
-	return libp2p.New(
-		ctx,
-		libp2p.EnableAutoRelay(),
-		libp2p.Routing(makeDHTRightType),
-		libp2p.ChainOptions(libP2pOpts...),
-	)
-}
-
 func (n *Network) Start() {
-	n.setupMNSDiscovery(n.ctx, n.host)
-	//NewBootstrapper()
-
+	if n.bootstrapper != nil {
+		n.bootstrapper.Start(n.ctx)
+	}
 }
 
 func (n *Network) Stop() {
+	if n.mdns != nil {
+		if err := n.mdns.Close(); err != nil {
+			n.logger.Error("Unable to close mDNS", "err", err)
+		}
+	}
+	if n.kademlia != nil {
+		if err := n.kademlia.Close(); err != nil {
+			n.logger.Error("Unable to close Kademlia", "err", err)
+		}
+	}
+	if n.bootstrapper != nil {
+		n.bootstrapper.Stop()
+	}
 	if err := n.host.Close(); err != nil {
-		n.logger.Panic("Unable to close the network", "err", err)
+		n.logger.Error("Unable to close the network", "err", err)
 	}
 }
 
@@ -161,6 +159,6 @@ func (n *Network) Fingerprint() string {
 
 func (n *Network) JoinTopic(name string) (*pubsub.Topic, error) {
 	// TODO : add topic validator
-	topic := fmt.Sprintf("/zarb/%s/%s", n.networkName, name)
+	topic := fmt.Sprintf("/zarb/%s/%s", n.config.Name, name)
 	return n.pubsub.Join(topic)
 }

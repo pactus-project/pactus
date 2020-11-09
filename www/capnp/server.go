@@ -75,7 +75,9 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) StopServer() error {
-	s.listener.Close()
+	if s.listener != nil {
+		s.listener.Close()
+	}
 
 	return nil
 }

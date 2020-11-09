@@ -19,7 +19,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync/stats"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -38,7 +37,7 @@ var (
 )
 
 func init() {
-	syncConf = DefaultConfig()
+	syncConf = TestConfig()
 	val, key := validator.GenerateTestValidator()
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
@@ -73,11 +72,10 @@ func init() {
 }
 
 func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkApi, state.State) {
-	consConf := consensus.DefaultConfig()
-	stateConf := state.DefaultConfig()
-	stateConf.Store.Path = util.TempDirName()
-	txPoolConf := txpool.DefaultConfig()
-	loggerConfig := logger.DefaultConfig()
+	consConf := consensus.TestConfig()
+	stateConf := state.TestConfig()
+	txPoolConf := txpool.TestConfig()
+	loggerConfig := logger.TestConfig()
 
 	logger.InitLogger(loggerConfig)
 

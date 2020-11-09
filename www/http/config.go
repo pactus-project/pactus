@@ -13,3 +13,9 @@ func DefaultConfig() *Config {
 		CapnpServer: "[::]:37621",
 	}
 }
+
+func TestConfig() *Config {
+	return &Config{
+		Enable: false,
+	}
+}

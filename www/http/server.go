@@ -78,7 +78,9 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) StopServer() error {
-	s.server.Client.Close()
+	if s.server.Client != nil {
+		s.server.Client.Close()
+	}
 
 	return nil
 }
