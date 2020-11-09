@@ -80,7 +80,6 @@ func NewNetwork(conf *Config) (*Network, error) {
 		ctx,
 		libp2p.ListenAddrStrings(conf.Address),
 		libp2p.Identity(nodeKey),
-		//libp2p.EnableAutoRelay(),
 	)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
@@ -118,7 +117,7 @@ func NewNetwork(conf *Config) (*Network, error) {
 			n.logger.Error("Unable to setup Kademlia DHT", "err", err)
 		}
 		n.kademlia = kademlia
-		n.bootstrapper = NewBootstrapper(addressess, host, host.Network(), kademlia, conf.Bootstrap.MinPeerThreshold, conf.Bootstrap.Period)
+		n.bootstrapper = NewBootstrapper(ctx, addressess, host, host.Network(), kademlia, conf.Bootstrap.MinPeerThreshold, conf.Bootstrap.Period)
 	}
 
 	return n, nil
@@ -126,7 +125,7 @@ func NewNetwork(conf *Config) (*Network, error) {
 
 func (n *Network) Start() {
 	if n.bootstrapper != nil {
-		n.bootstrapper.Start(n.ctx)
+		n.bootstrapper.Start()
 	}
 }
 

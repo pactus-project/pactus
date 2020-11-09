@@ -48,24 +48,28 @@ type Bootstrapper struct {
 
 // NewBootstrapper returns a new Bootstrapper that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
-func NewBootstrapper(bootstrapPeers []peer.AddrInfo, h host.Host, d inet.Dialer, r routing.Routing, minPeer int, period time.Duration) *Bootstrapper {
+func NewBootstrapper(ctx context.Context, bootstrapPeers []peer.AddrInfo, h host.Host, d inet.Dialer, r routing.Routing, minPeer int, period time.Duration) *Bootstrapper {
 	b := &Bootstrapper{
 		minPeerThreshold:  minPeer,
 		bootstrapPeers:    bootstrapPeers,
 		period:            period,
 		connectionTimeout: 20 * time.Second,
+		ctx:               ctx,
 
 		h: h,
 		d: d,
 		r: r,
 	}
 	b.Bootstrap = b.bootstrap
+
+	b.Bootstrap(b.d.Peers())
+
 	return b
 }
 
 // Start starts the Bootstrapper bootstrapping. Cancel `ctx` or call Stop() to stop it.
-func (b *Bootstrapper) Start(ctx context.Context) {
-	b.ctx, b.cancel = context.WithCancel(ctx)
+func (b *Bootstrapper) Start() {
+	b.ctx, b.cancel = context.WithCancel(b.ctx)
 	b.ticker = time.NewTicker(b.period)
 
 	go func() {
