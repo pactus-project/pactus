@@ -26,6 +26,17 @@ func DefaultConfig() *Config {
 	}
 }
 
+func TestConfig() *Config {
+	return &Config{
+		TimeoutPropose:          10 * time.Millisecond,
+		TimeoutPrevote:          10 * time.Millisecond,
+		TimeoutPrecommit:        10 * time.Millisecond,
+		NewRoundDeltaDuration:   0 * time.Millisecond,
+		PeerGossipSleepDuration: 100 * time.Millisecond,
+		FuzzTesting:             false,
+	}
+}
+
 func (conf *Config) SanityCheck() error {
 	if conf.TimeoutPropose < 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout_propose can't be negative")

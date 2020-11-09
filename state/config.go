@@ -13,3 +13,9 @@ func DefaultConfig() *Config {
 		Store: store.DefaultConfig(),
 	}
 }
+
+func TestConfig() *Config {
+	return &Config{
+		Store: store.TestConfig(),
+	}
+}

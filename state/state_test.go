@@ -11,7 +11,6 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -22,12 +21,10 @@ func mockState(t *testing.T) (State, crypto.Address) {
 	acc.SetBalance(21000000000000)
 	val := validator.NewValidator(pb, 1)
 	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
-	loggerConfig := logger.DefaultConfig()
-	loggerConfig.Levels["default"] = "error"
+	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
-	stateConfig := DefaultConfig()
-	stateConfig.Store.Path = util.TempDirName()
-	txPoolConfig := txpool.DefaultConfig()
+	stateConfig := TestConfig()
+	txPoolConfig := txpool.TestConfig()
 	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan *message.Message, 10))
 	require.NoError(t, err)
 	st, err := LoadOrNewState(stateConfig, gen, val.Address(), txPool)

@@ -15,3 +15,11 @@ func DefaultConfig() *Config {
 		BlockPerMessage:  10,
 	}
 }
+
+func TestConfig() *Config {
+	return &Config{
+		StartingTimeout:  time.Second * 1,
+		HeartBeatTimeout: time.Second * 5,
+		BlockPerMessage:  10,
+	}
+}

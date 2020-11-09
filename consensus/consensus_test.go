@@ -15,7 +15,6 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -35,17 +34,10 @@ const (
 
 func newTestConsensus(t *testing.T, val_id int) (*Consensus, []*validator.PrivValidator) {
 	_, keys := validator.GenerateTestValidatorSet()
-	consConf := DefaultConfig()
-	consConf.TimeoutPrevote = 1 * time.Millisecond
-	consConf.TimeoutPrecommit = 1 * time.Millisecond
-	consConf.TimeoutPropose = 1 * time.Millisecond
-	consConf.NewRoundDeltaDuration = 0
-	stateConf := state.DefaultConfig()
-	stateConf.Store.Path = util.TempDirName()
-	txPoolConf := txpool.DefaultConfig()
-
-	loggerConfig := logger.DefaultConfig()
-	loggerConfig.Levels["default"] = "error"
+	consConf := TestConfig()
+	stateConf := state.TestConfig()
+	txPoolConf := txpool.TestConfig()
+	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
 
 	vals := make([]*validator.Validator, 4)

@@ -14,6 +14,12 @@ func DefaultConfig() *Config {
 	}
 }
 
+func TestConfig() *Config {
+	return &Config{
+		Path: util.TempDirPath(),
+	}
+}
+
 func (conf *Config) BlockStorePath() string {
 	return util.MakeAbs(conf.Path + "/block.db")
 }

@@ -11,3 +11,9 @@ func DefaultConfig() *Config {
 		Address: "[::]:37621",
 	}
 }
+
+func TestConfig() *Config {
+	return &Config{
+		Enable: false,
+	}
+}

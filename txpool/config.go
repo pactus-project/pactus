@@ -13,3 +13,10 @@ func DefaultConfig() *Config {
 		MaxSize:        10000,
 	}
 }
+
+func TestConfig() *Config {
+	return &Config{
+		WaitingTimeout: 1 * time.Second,
+		MaxSize:        10000,
+	}
+}

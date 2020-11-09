@@ -14,17 +14,22 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 )
 
+// Bootstrapper attempts to keep the p2p host connected to the network
+// by keeping a minimum threshold of connections. If the threshold isn't met it
+// connects to a random subset of the bootstrap peers. It does not use peer routing
+// to discover new peers. To stop a Bootstrapper cancel the context passed in Start()
+// or call Stop().
 type Bootstrapper struct {
 	// Config
 	// MinPeerThreshold is the number of connections it attempts to maintain.
-	MinPeerThreshold int
+	minPeerThreshold int
 	// Peers to connect to if we fall below the threshold.
 	bootstrapPeers []peer.AddrInfo
 	// Period is the interval at which it periodically checks to see
 	// if the threshold is maintained.
-	Period time.Duration
+	period time.Duration
 	// ConnectionTimeout is how long to wait before timing out a connection attempt.
-	ConnectionTimeout time.Duration
+	connectionTimeout time.Duration
 
 	// Dependencies
 	h host.Host
@@ -42,13 +47,13 @@ type Bootstrapper struct {
 }
 
 // NewBootstrapper returns a new Bootstrapper that will attempt to keep connected
-// to the filecoin network by connecting to the given bootstrap peers.
+// to the network by connecting to the given bootstrap peers.
 func NewBootstrapper(bootstrapPeers []peer.AddrInfo, h host.Host, d inet.Dialer, r routing.Routing, minPeer int, period time.Duration) *Bootstrapper {
 	b := &Bootstrapper{
-		MinPeerThreshold:  minPeer,
+		minPeerThreshold:  minPeer,
 		bootstrapPeers:    bootstrapPeers,
-		Period:            period,
-		ConnectionTimeout: 20 * time.Second,
+		period:            period,
+		connectionTimeout: 20 * time.Second,
 
 		h: h,
 		d: d,
@@ -61,7 +66,7 @@ func NewBootstrapper(bootstrapPeers []peer.AddrInfo, h host.Host, d inet.Dialer,
 // Start starts the Bootstrapper bootstrapping. Cancel `ctx` or call Stop() to stop it.
 func (b *Bootstrapper) Start(ctx context.Context) {
 	b.ctx, b.cancel = context.WithCancel(ctx)
-	b.ticker = time.NewTicker(b.Period)
+	b.ticker = time.NewTicker(b.period)
 
 	go func() {
 		defer b.ticker.Stop()
@@ -88,12 +93,12 @@ func (b *Bootstrapper) Stop() {
 // has fallen below b.MinPeerThreshold it will attempt to connect to
 // a random subset of its bootstrap peers.
 func (b *Bootstrapper) bootstrap(currentPeers []peer.ID) {
-	peersNeeded := b.MinPeerThreshold - len(currentPeers)
+	peersNeeded := b.minPeerThreshold - len(currentPeers)
 	if peersNeeded < 1 {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(b.ctx, b.ConnectionTimeout)
+	ctx, cancel := context.WithTimeout(b.ctx, b.connectionTimeout)
 	var wg sync.WaitGroup
 	defer func() {
 		wg.Wait()
@@ -129,7 +134,7 @@ func (b *Bootstrapper) bootstrap(currentPeers []peer.ID) {
 			return
 		}
 	}
-	logger.Warn("not enough bootstrap nodes to maintain connections", "threshold", b.MinPeerThreshold, "current", len(currentPeers))
+	logger.Warn("not enough bootstrap nodes to maintain connections", "threshold", b.minPeerThreshold, "current", len(currentPeers))
 }
 
 func hasPID(pids []peer.ID, pid peer.ID) bool {

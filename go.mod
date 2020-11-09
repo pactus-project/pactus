@@ -8,18 +8,20 @@ require (
 	github.com/Masterminds/vcs v1.13.1 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
+	github.com/filecoin-project/go-filecoin v0.6.4
 	github.com/fxamacker/cbor/v2 v2.2.0
 	github.com/gin-gonic/gin v1.6.3 // indirect
 	github.com/golang/dep v0.5.4 // indirect
 	github.com/google/btree v1.0.0
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/gorilla/handlers v1.5.0
-	github.com/gorilla/mux v1.7.3
+	github.com/gorilla/mux v1.7.4
 	github.com/gtank/merlin v0.1.1 // indirect
 	github.com/herumi/bls-go-binary v1.0.1-0.20200729052526-ef6a150a928b
 	github.com/inconshreveable/log15 v0.0.0-20200109203555-b30bc20e4fd1 // indirect
 	github.com/ipfs/go-bitswap v0.2.20 // indirect
 	github.com/ipfs/go-ipfs-exchange-interface v0.0.1
+	github.com/ipfs/go-log/v2 v2.1.1
 	github.com/jawher/mow.cli v1.1.0
 	github.com/jmank88/nuts v0.4.0 // indirect
 	github.com/libp2p/go-buffer-pool v0.0.2 // indirect
@@ -29,6 +31,7 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.3.5
 	github.com/minio/highwayhash v1.0.0 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
+	github.com/multiformats/go-multiaddr v0.3.1
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/nightlyone/lockfile v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
