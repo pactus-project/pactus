@@ -1,6 +1,8 @@
 package stats
 
 import (
+	"encoding/hex"
+
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -10,22 +12,26 @@ import (
 
 // Stats hold statistic data about peers' behaviors
 type Stats struct {
-	peers     map[peer.ID]*Peer
-	nodes     map[crypto.Address]*Node
-	maxHeight int
-	logger    *logger.Logger
+	peers       map[peer.ID]*Peer
+	nodes       map[crypto.Address]*Node
+	genesisHash crypto.Hash
+	maxHeight   int
 }
 
-func NewStats(logger *logger.Logger) *Stats {
+func NewStats(genesisHash crypto.Hash) *Stats {
 	return &Stats{
-		peers:  make(map[peer.ID]*Peer),
-		nodes:  make(map[crypto.Address]*Node),
-		logger: logger,
+		genesisHash: genesisHash,
+		peers:       make(map[peer.ID]*Peer),
+		nodes:       make(map[crypto.Address]*Node),
 	}
 }
 
 func (s *Stats) PeersCount() int {
 	return len(s.peers)
+}
+
+func (s *Stats) MaxHeight() int {
+	return s.maxHeight
 }
 
 func (s *Stats) getPeer(peerID peer.ID) *Peer {
@@ -46,43 +52,78 @@ func (s *Stats) getNode(addr crypto.Address) *Node {
 	return n
 }
 
-func (s *Stats) ParsPeerMessage(peerID peer.ID, msg *message.Message) {
+func (s *Stats) IncreaseInvalidMessageCounter(peerID peer.ID) {
 	peer := s.getPeer(peerID)
+	peer.InvalidMsg = peer.InvalidMsg + 1
+}
+
+func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
+	peer := s.getPeer(from)
+	peer.ReceivedMsg = peer.ReceivedMsg + 1
+
+	msg := new(message.Message)
+	err := msg.UnmarshalCBOR(data)
+	if err != nil {
+		peer.InvalidMsg = peer.InvalidMsg + 1
+		logger.Error("Error decoding message", "from", from.ShortString(), "data", hex.EncodeToString(data), "err", err)
+		return nil
+	}
+
+	if err = msg.SanityCheck(); err != nil {
+		peer.InvalidMsg = peer.InvalidMsg + 1
+		logger.Error("Peer sent us invalid msg", "from", from.ShortString(), "msg", msg, "err", err)
+		return nil
+	}
+
 	node := s.getNode(msg.Initiator)
 
-	peer.receivedMsg = peer.receivedMsg + 1
+	if s.badPeer(peer) {
+		return nil
+	}
+
+	if s.badNode(node) {
+		return nil
+	}
 
 	//ourHeight, _ := syncer.state.LastBlockInfo()
 	switch msg.PayloadType() {
-	case message.PayloadTypeStatusReq:
-		pld := msg.Payload.(*message.StatusReqPayload)
-		s.maxHeight = util.Max(s.maxHeight, pld.Height)
+	case message.PayloadTypeSalam:
+		pld := msg.Payload.(*message.SalamPayload)
+		node.Version = pld.Version
+		node.GenesisHash = pld.GenesisHash
+		s.updateMaxHeight(pld.Height)
 
-	case message.PayloadTypeBlocksReq:
-
-	case message.PayloadTypeTxRes:
-		//pld := msg.Payload.(*message.TxResPayload)
-
-	case message.PayloadTypeTxReq:
-		//pld := msg.Payload.(*message.TxReqPayload)
-
-	case message.PayloadTypeHRS:
-		pld := msg.Payload.(*message.HRSPayload)
-		node.hrs = pld.HRS
+	case message.PayloadTypeHeartBeat:
+		pld := msg.Payload.(*message.HeartBeatPayload)
+		node.HRS = pld.HRS
+		s.updateMaxHeight(pld.HRS.Height() - 1)
 
 	case message.PayloadTypeProposal:
-		//pld := msg.Payload.(*message.ProposalPayload)
-
-	case message.PayloadTypeBlock:
-		//pld := msg.Payload.(*message.BlockPayload)
+		pld := msg.Payload.(*message.ProposalPayload)
+		s.updateMaxHeight(pld.Proposal.Height() - 1)
 
 	case message.PayloadTypeVote:
-		//pld := msg.Payload.(*message.VotePayload)
+		pld := msg.Payload.(*message.VotePayload)
+		s.updateMaxHeight(pld.Vote.Height() - 1)
 
 	case message.PayloadTypeVoteSet:
 		//pld := msg.Payload.(*message.VoteSetPayload)
-
-	default:
-		s.logger.Error("Unknown message type", "msg", msg)
 	}
+
+	return msg
+}
+
+func (s *Stats) badNode(node *Node) bool {
+
+	return false
+}
+
+func (s *Stats) badPeer(peer *Peer) bool {
+	ratio := (peer.InvalidMsg * 100) / peer.ReceivedMsg
+
+	return ratio > 10
+}
+
+func (s *Stats) updateMaxHeight(height int) {
+	s.maxHeight = util.Max(s.maxHeight, height)
 }

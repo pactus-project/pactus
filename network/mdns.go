@@ -21,13 +21,13 @@ func (n *Network) HandlePeerFound(pi peer.AddrInfo) {
 
 // setupDiscovery creates an mDNS discovery service and attaches it to the libp2p Host.
 // This lets us automatically discover peers on the same LAN and connect to them.
-func (n *Network) setupMNSDiscovery(ctx context.Context, h host.Host) error {
+func (n *Network) setupMNSDiscovery(ctx context.Context, h host.Host) (discovery.Service, error) {
 	// setup mDNS discovery to find local peers
-	disc, err := discovery.NewMdnsService(ctx, h, DiscoveryInterval, DiscoveryServiceTag)
+	service, err := discovery.NewMdnsService(ctx, h, DiscoveryInterval, DiscoveryServiceTag)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	disc.RegisterNotifee(n)
-	return nil
+	service.RegisterNotifee(n)
+	return service, nil
 }

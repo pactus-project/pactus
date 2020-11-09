@@ -11,45 +11,40 @@ import (
 type PayloadType int
 
 const (
-	PayloadTypeStatusReq = PayloadType(1)
-	PayloadTypeStatusRes = PayloadType(2)
-	PayloadTypeBlocksReq = PayloadType(3)
-	PayloadTypeBlocksRes = PayloadType(4)
-	PayloadTypeTxReq     = PayloadType(5)
-	PayloadTypeTxRes     = PayloadType(6)
-	PayloadTypeProposal  = PayloadType(7)
-	PayloadTypeBlock     = PayloadType(8)
-	PayloadTypeHRS       = PayloadType(9)
-	PayloadTypeVote      = PayloadType(10)
-	PayloadTypeVoteSet   = PayloadType(11)
+	PayloadTypeSalam     = PayloadType(1)
+	PayloadTypeBlocksReq = PayloadType(2)
+	PayloadTypeBlocks    = PayloadType(3)
+	PayloadTypeTxsReq    = PayloadType(4)
+	PayloadTypeTxs       = PayloadType(5)
+	PayloadTypeProposal  = PayloadType(6)
+	PayloadTypeHeartBeat = PayloadType(7)
+	PayloadTypeVote      = PayloadType(8)
+	PayloadTypeVoteSet   = PayloadType(9)
 )
 
 func (t PayloadType) String() string {
 	switch t {
-	case PayloadTypeStatusReq:
-		return "status-req"
-	case PayloadTypeStatusRes:
-		return "status-res"
+	case PayloadTypeSalam:
+		return "salam"
 	case PayloadTypeBlocksReq:
 		return "blocks-req"
-	case PayloadTypeBlocksRes:
-		return "blocks-res"
-	case PayloadTypeTxReq:
-		return "tx-req"
-	case PayloadTypeTxRes:
-		return "tx-res"
+	case PayloadTypeBlocks:
+		return "blocks"
+	case PayloadTypeTxsReq:
+		return "txs-req"
+	case PayloadTypeTxs:
+		return "txs"
 	case PayloadTypeProposal:
 		return "proposal"
-	case PayloadTypeBlock:
-		return "block"
-	case PayloadTypeHRS:
-		return "hrs"
+
+	case PayloadTypeHeartBeat:
+		return "heart-beat"
 	case PayloadTypeVote:
 		return "vote"
 	case PayloadTypeVoteSet:
 		return "vote-set"
 	}
-	return "invalid message type"
+	return fmt.Sprintf("%d", t)
 }
 
 type Message struct {
@@ -109,24 +104,20 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 
 	var payload Payload
 	switch msg.PayloadType {
-	case PayloadTypeStatusReq:
-		payload = &StatusReqPayload{}
-	case PayloadTypeStatusRes:
-		payload = &StatusResPayload{}
+	case PayloadTypeSalam:
+		payload = &SalamPayload{}
 	case PayloadTypeBlocksReq:
 		payload = &BlocksReqPayload{}
-	case PayloadTypeBlocksRes:
-		payload = &BlocksResPayload{}
-	case PayloadTypeTxReq:
-		payload = &TxReqPayload{}
-	case PayloadTypeTxRes:
-		payload = &TxResPayload{}
+	case PayloadTypeBlocks:
+		payload = &BlocksPayload{}
+	case PayloadTypeTxsReq:
+		payload = &TxsReqPayload{}
+	case PayloadTypeTxs:
+		payload = &TxsPayload{}
 	case PayloadTypeProposal:
 		payload = &ProposalPayload{}
-	case PayloadTypeBlock:
-		payload = &BlockPayload{}
-	case PayloadTypeHRS:
-		payload = &HRSPayload{}
+	case PayloadTypeHeartBeat:
+		payload = &HeartBeatPayload{}
 	case PayloadTypeVote:
 		payload = &VotePayload{}
 	case PayloadTypeVoteSet:

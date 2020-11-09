@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
+// TODO: try to memorize hash for better performance
 type Header struct {
 	data headerData
 }

@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/txpool"
 	"zombiezen.com/go/capnproto2/rpc"
 )
@@ -14,15 +14,18 @@ type Server struct {
 	ctx      context.Context
 	config   *Config
 	listener net.Listener
-	store    store.StoreReader
-	txPool   txpool.TxPoolReader
+	store    state.StoreReader
+	state    state.StateReader
+	txPool   *txpool.TxPool
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, store store.StoreReader) (*Server, error) {
+func NewServer(conf *Config, state state.StateReader, txPool *txpool.TxPool) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
-		store:  store,
+		store:  state.StoreReader(),
+		state:  state,
+		txPool: txPool,
 		config: conf,
 		logger: logger.NewLogger("_capnp", nil),
 	}, nil
@@ -72,7 +75,9 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) StopServer() error {
-	s.listener.Close()
+	if s.listener != nil {
+		s.listener.Close()
+	}
 
 	return nil
 }

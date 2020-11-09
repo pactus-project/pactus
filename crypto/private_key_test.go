@@ -25,8 +25,8 @@ func TestMarshalingEmptyPrivateKey(t *testing.T) {
 }
 
 func TestMarshalingPrivateKey(t *testing.T) {
-	_, pv0 := GenerateRandomKey()
-	_, pv1 := GenerateRandomKey()
+	_, _, pv0 := GenerateTestKeyPair()
+	_, _, pv1 := GenerateTestKeyPair()
 	js, err := json.Marshal(pv1)
 	//fmt.Println(string(js))
 	assert.NoError(t, err)
@@ -44,28 +44,5 @@ func TestMarshalingPrivateKey(t *testing.T) {
 	require.True(t, pv2.EqualsTo(pv3))
 	require.Equal(t, pv3, pv1)
 
-	defer func() { recover() }()
-
-	pv3.Sign([]byte{})
-	t.Errorf("did not panic")
+	require.Nil(t, pv3.Sign([]byte{}))
 }
-
-/*
-func TestPrivateKeyValidity(t *testing.T) {
-	var err error
-	_, err = PrivateKeyFromString("skZfztcE4vkJLYNQ3TcvAkgH24TV1hQfuojiwReVto9JknsoWNZPJVmd6agFiCyGx1px45HJjgRQvRNRrc4oeqZgaPXhQHM")
-	assert.NoError(t, err)
-
-	_, err = PrivateKeyFromString("skzfztcE4vkJLYNQ3TcvAkgH24TV1hQfuojiwReVto9JknsoWNZPJVmd6agFiCyGx1px45HJjgRQvRNRrc4oeqZgaPXhQHM")
-	assert.Error(t, err)
-
-	_, err = PrivateKeyFromString("SKZfztcE4vkJLYNQ3TcvAkgH24TV1hQfuojiwReVto9JknsoWNZPJVmd6agFiCyGx1px45HJjgRQvRNRrc4oeqZgaPXhQHM")
-	assert.Error(t, err)
-
-	_, err = PrivateKeyFromString("invalid_private_key")
-	assert.Error(t, err)
-
-	_, err = PrivateKeyFromRawBytes([]byte{0, 1, 2, 3, 4, 5, 6})
-	assert.Error(t, err)
-}
-*/

@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/zarbchain/zarb-go/logger"
+
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 )
@@ -47,14 +49,6 @@ func PrivateKeyFromRawBytes(data []byte) (PrivateKey, error) {
 		return PrivateKey{}, err
 	}
 	return pv, nil
-}
-
-func GenerateRandomKey() (PublicKey, PrivateKey) {
-	pv := new(PrivateKey)
-	pv.data.SecretKey = new(bls.SecretKey)
-	pv.data.SecretKey.SetByCSPRNG()
-
-	return pv.PublicKey(), *pv
 }
 
 /// -------
@@ -140,14 +134,15 @@ func (pv *PrivateKey) SanityCheck() error {
 	return nil
 }
 
-func (pv *PrivateKey) Sign(msg []byte) Signature {
+func (pv *PrivateKey) Sign(msg []byte) *Signature {
 	if len(msg) == 0 {
-		panic("Try to sign an empty message")
+		logger.Error("Try to sign an empty message")
+		return nil
 	}
 	sig := new(Signature)
 	sig.data.Signature = pv.data.SecretKey.SignByte(Hash256(msg))
 
-	return *sig
+	return sig
 }
 
 func (pv PrivateKey) PublicKey() PublicKey {
@@ -157,6 +152,20 @@ func (pv PrivateKey) PublicKey() PublicKey {
 	return *pb
 }
 
-func (pv PrivateKey) EqualsTo(right PrivateKey) bool {
+func (pv *PrivateKey) EqualsTo(right PrivateKey) bool {
 	return pv.data.SecretKey.IsEqual(right.data.SecretKey)
+}
+
+func RandomKeyPair() (Address, PublicKey, PrivateKey) {
+	pv := new(PrivateKey)
+	pv.data.SecretKey = new(bls.SecretKey)
+	pv.data.SecretKey.SetByCSPRNG()
+
+	return pv.PublicKey().Address(), pv.PublicKey(), *pv
+}
+
+// ---------
+// For tests
+func GenerateTestKeyPair() (Address, PublicKey, PrivateKey) {
+	return RandomKeyPair()
 }

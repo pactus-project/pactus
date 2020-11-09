@@ -1,7 +1,6 @@
 package vote
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
@@ -16,26 +15,27 @@ type Vote struct {
 }
 
 type voteData struct {
-	Type      VoteType         `cbor:"1,keyasint"`
-	Height    int              `cbor:"2,keyasint"`
-	Round     int              `cbor:"3,keyasint"`
-	BlockHash crypto.Hash      `cbor:"4,keyasint"`
-	Signer    crypto.Address   `cbor:"5,keyasint"`
-	Signature crypto.Signature `cbor:"6,keyasint"`
+	VoteType  VoteType          `cbor:"1,keyasint"`
+	Height    int               `cbor:"2,keyasint"`
+	Round     int               `cbor:"3,keyasint"`
+	BlockHash crypto.Hash       `cbor:"4,keyasint"`
+	Signer    crypto.Address    `cbor:"5,keyasint"`
+	Signature *crypto.Signature `cbor:"6,keyasint"`
 }
 
-func NewPrevoteVote(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+func NewPrevote(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return NewVote(VoteTypePrevote, height, round, blockHash, signer)
 }
 
-func NewPrecommitVote(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+func NewPrecommit(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return NewVote(VoteTypePrecommit, height, round, blockHash, signer)
 
 }
+
 func NewVote(voteType VoteType, height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return &Vote{
 		data: voteData{
-			Type:      voteType,
+			VoteType:  voteType,
 			Height:    height,
 			Round:     round,
 			BlockHash: blockHash,
@@ -44,30 +44,38 @@ func NewVote(voteType VoteType, height int, round int, blockHash crypto.Hash, si
 	}
 }
 
-func (vote *Vote) Type() VoteType              { return vote.data.Type }
-func (vote *Vote) Height() int                 { return vote.data.Height }
-func (vote *Vote) Round() int                  { return vote.data.Round }
-func (vote *Vote) BlockHash() crypto.Hash      { return vote.data.BlockHash }
-func (vote *Vote) Signer() crypto.Address      { return vote.data.Signer }
-func (vote *Vote) Signature() crypto.Signature { return vote.data.Signature }
+func (vote *Vote) VoteType() VoteType           { return vote.data.VoteType }
+func (vote *Vote) Height() int                  { return vote.data.Height }
+func (vote *Vote) Round() int                   { return vote.data.Round }
+func (vote *Vote) BlockHash() crypto.Hash       { return vote.data.BlockHash }
+func (vote *Vote) Signer() crypto.Address       { return vote.data.Signer }
+func (vote *Vote) Signature() *crypto.Signature { return vote.data.Signature }
 
-func (vote *Vote) SetSignature(signature crypto.Signature) { vote.data.Signature = signature }
+func (vote *Vote) SetSignature(signature *crypto.Signature) {
+	vote.data.Signature = signature
+}
+
+type signVote struct {
+	VoteType  VoteType    `cbor:"1,keyasint"`
+	BlockHash crypto.Hash `cbor:"2,keyasint"`
+	Round     int         `cbor:"3,keyasint"`
+}
+
+func CommitSignBytes(blockHash crypto.Hash, round int) []byte {
+	bz, _ := cbor.Marshal(signVote{
+		VoteType:  VoteTypePrecommit,
+		Round:     round,
+		BlockHash: blockHash,
+	})
+
+	return bz
+}
 
 func (vote Vote) SignBytes() []byte {
-	type signVote struct {
-		Type      VoteType       `cbor:"1,keyasint"`
-		Height    int            `cbor:"2,keyasint"`
-		Round     int            `cbor:"3,keyasint"`
-		BlockHash crypto.Hash    `cbor:"4,keyasint"`
-		Signer    crypto.Address `cbor:"5,keyasint"`
-	}
-
-	bz, _ := json.Marshal(signVote{
-		Type:      vote.data.Type,
-		Height:    vote.data.Height,
+	bz, _ := cbor.Marshal(signVote{
+		VoteType:  vote.data.VoteType,
 		Round:     vote.data.Round,
 		BlockHash: vote.data.BlockHash,
-		Signer:    vote.data.Signer,
 	})
 
 	return bz
@@ -82,10 +90,14 @@ func (vote *Vote) UnmarshalCBOR(bs []byte) error {
 }
 
 func (vote *Vote) Hash() crypto.Hash {
-	return crypto.HashH(vote.SignBytes())
+	bz, _ := cbor.Marshal(vote.data)
+	return crypto.HashH(bz)
 }
 
 func (vote *Vote) Verify(pubKey crypto.PublicKey) error {
+	if vote.data.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidVote, "No signature")
+	}
 	if !pubKey.Address().EqualsTo(vote.data.Signer) {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid signer")
 	}
@@ -96,8 +108,8 @@ func (vote *Vote) Verify(pubKey crypto.PublicKey) error {
 }
 
 func (vote *Vote) SanityCheck() error {
-	if !vote.data.Type.IsValid() {
-		return errors.Errorf(errors.ErrInvalidVote, "Invalid type")
+	if !vote.data.VoteType.IsValid() {
+		return errors.Errorf(errors.ErrInvalidVote, "Invalid vote type")
 	}
 	if vote.data.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid height")
@@ -111,6 +123,9 @@ func (vote *Vote) SanityCheck() error {
 	if vote.data.Signer.SanityCheck() != nil {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid signer")
 	}
+	if vote.data.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidVote, "No signature")
+	}
 	if vote.data.Signature.SanityCheck() != nil {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid signature")
 	}
@@ -118,11 +133,40 @@ func (vote *Vote) SanityCheck() error {
 }
 
 func (vote Vote) Fingerprint() string {
-	return fmt.Sprintf("{%v/%d/%s S:%s B:%s}",
+	return fmt.Sprintf("{%v/%d/%s ⌘ %v 👤 %s 🖊 %s}",
 		vote.data.Height,
 		vote.data.Round,
-		vote.data.Type,
-		vote.data.Signer.Fingerprint(),
+		vote.data.VoteType,
 		vote.data.BlockHash.Fingerprint(),
+		vote.data.Signer.Fingerprint(),
+		vote.data.Signature.Fingerprint(),
 	)
+}
+
+// ---------
+// For tests
+func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.PrivateKey) {
+	addr, _, pv := crypto.GenerateTestKeyPair()
+	v := NewPrecommit(
+		height,
+		round,
+		crypto.GenerateTestHash(),
+		addr)
+	sig := pv.Sign(v.SignBytes())
+	v.SetSignature(sig)
+
+	return v, pv
+}
+
+func GenerateTestPrevoteVote(height, round int) (*Vote, crypto.PrivateKey) {
+	addr, _, pv := crypto.GenerateTestKeyPair()
+	v := NewPrevote(
+		height,
+		round,
+		crypto.GenerateTestHash(),
+		addr)
+	sig := pv.Sign(v.SignBytes())
+	v.SetSignature(sig)
+
+	return v, pv
 }

@@ -7,18 +7,14 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (st *State) executeBlock(block *block.Block, exe *execution.Executor) ([]*tx.Receipt, error) {
-	if block == nil {
-		return nil, errors.Errorf(errors.ErrInvalidBlock, "Block is empty")
-	}
-
+func (st *state) executeBlock(block block.Block, exe *execution.Executor) ([]*tx.Receipt, error) {
 	hashes := block.TxHashes().Hashes()
 	receipts := make([]*tx.Receipt, len(hashes))
 
 	for i := 0; i < len(hashes); i++ {
-		trx, found := st.txPool.PendingTx(hashes[i])
-		if !found {
-			return nil, errors.Errorf(errors.ErrInvalidBlock, "We don't have transaction to validate the block")
+		trx := st.txPool.PendingTx(hashes[i])
+		if trx == nil {
+			return nil, errors.Errorf(errors.ErrInvalidBlock, "Not enough transaction")
 		}
 		if err := trx.SanityCheck(); err != nil {
 			return nil, errors.Errorf(errors.ErrInvalidBlock, "Invalid transaction %v", err)

@@ -9,7 +9,6 @@ import (
 	cbor "github.com/fxamacker/cbor/v2"
 )
 
-
 const AddressSize = 20
 
 type Address struct {

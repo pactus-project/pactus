@@ -12,6 +12,7 @@ type Config struct {
 	TimeoutPrecommit        time.Duration
 	NewRoundDeltaDuration   time.Duration
 	PeerGossipSleepDuration time.Duration
+	FuzzTesting             bool
 }
 
 func DefaultConfig() *Config {
@@ -21,7 +22,18 @@ func DefaultConfig() *Config {
 		TimeoutPrecommit:        2 * time.Second,
 		NewRoundDeltaDuration:   1 * time.Second,
 		PeerGossipSleepDuration: 100 * time.Millisecond,
-		// Consensus
+		FuzzTesting:             false,
+	}
+}
+
+func TestConfig() *Config {
+	return &Config{
+		TimeoutPropose:          10 * time.Millisecond,
+		TimeoutPrevote:          10 * time.Millisecond,
+		TimeoutPrecommit:        10 * time.Millisecond,
+		NewRoundDeltaDuration:   0 * time.Millisecond,
+		PeerGossipSleepDuration: 100 * time.Millisecond,
+		FuzzTesting:             false,
 	}
 }
 

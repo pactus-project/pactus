@@ -39,7 +39,7 @@ func (bs *blockStore) SaveBlock(block block.Block, height int) error {
 	blockHashKey := blockHashKey(block.Hash())
 	has, err := bs.db.Has(blockKey, nil)
 	if has {
-		logger.Error("The blockkey exists in database, rewrite it.")
+		logger.Error("The blockkey exists in database, rewrite it.", "hash", block.Hash())
 	}
 	err = bs.db.Put(blockKey, blockData, nil)
 	if err != nil {
@@ -66,7 +66,7 @@ func (bs *blockStore) RetrieveBlock(height int) (*block.Block, error) {
 	return block, nil
 }
 
-func (bs *blockStore) RetrieveBlockHeight(hash crypto.Hash) (int, error) {
+func (bs *blockStore) blockHeight(hash crypto.Hash) (int, error) {
 	blockHashKey := blockHashKey(hash)
 	heightData, err := bs.db.Get(blockHashKey, nil)
 	if err != nil {

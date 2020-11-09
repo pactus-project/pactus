@@ -1,29 +1,35 @@
 package consensus
 
-import "github.com/zarbchain/zarb-go/consensus/hrs"
+import (
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/message"
+)
 
 func (cs *Consensus) enterCommit(height int, round int) {
-	if cs.hrs.InvalidHeight(height) || cs.commitRound != -1 {
-		cs.logger.Debug("Commit with invalid args or committed before", "height", height)
+	if cs.invalidHeight(height) || cs.isCommitted {
+		cs.logger.Debug("Commit with invalid args or committed before", "height", height, "committed", cs.isCommitted)
 		return
 	}
 
-	if !cs.votes.Precommits(round).HasQuorum() {
+	preVotes := cs.votes.Prevotes(round)
+	preCommits := cs.votes.Precommits(round)
+
+	if !preCommits.HasQuorum() {
 		cs.logger.Error("Commit witout quorom for precommit stage")
 		return
 	}
 
-	blockHash := cs.votes.Precommits(round).QuorumBlock()
+	blockHash := preCommits.QuorumBlock()
 	if blockHash == nil || blockHash.IsUndef() {
 		cs.logger.Error("Commit is for invalid block")
 		return
 	}
 
 	// Additional check. blockHash should be same for both prevotes and precommits
-	prevoteBlockHash := cs.votes.Prevotes(round).QuorumBlock()
+	prevoteBlockHash := preVotes.QuorumBlock()
 	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Error("Commit witout quorom for prevote stage")
-		return
+		cs.logger.Warn("Commit witout quorom for prevote stage")
 	}
 
 	if cs.votes.lockedProposal == nil {
@@ -32,7 +38,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 		if roundProposal != nil && roundProposal.IsForBlock(blockHash) {
 			cs.votes.lockedProposal = roundProposal
 		} else {
-			cs.logger.Error("We don't have commit proposal.")
+			cs.logger.Error("Commit: We don't have commit proposal.")
 			return
 		}
 	}
@@ -41,7 +47,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	// It is impossible, but good to keep this check
 	if !cs.votes.lockedProposal.IsForBlock(blockHash) {
 		cs.votes.lockedProposal = nil
-		cs.logger.Error("Commit proposal is invalid.", "proposal", cs.votes.lockedProposal)
+		cs.logger.Error("Commit: Proposal is invalid.", "proposal", cs.votes.lockedProposal)
 		return
 	}
 
@@ -54,21 +60,30 @@ func (cs *Consensus) enterCommit(height int, round int) {
 		return
 	}
 
-	// Block is invalid
-	// It is impossible, but good to keep this check
-	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
+	// Block is invalid?
+	// It is impossible, but good to have this extra check here
+	commitBlock := cs.votes.lockedProposal.Block()
+	if err := cs.state.ValidateBlock(commitBlock); err != nil {
 		cs.votes.lockedProposal = nil
-		cs.logger.Warn("Commit: invalid block", "Proposal", roundProposal, "err", err)
+		cs.logger.Error("Commit: Invalid block", "block", commitBlock, "err", err)
 		return
 	}
 
-	block := cs.votes.lockedProposal.Block()
-	cs.state.ApplyBlock(block, round)
+	commit := preCommits.ToCommit()
+	if commit != nil {
+		if err := cs.state.ApplyBlock(commitBlock, *commit); err != nil {
+			cs.logger.Error("Commit: Applying block failed", "block", commitBlock, "err", err)
+			return
+		}
+
+		// Now broadcast the committed block
+		msg := message.NewBlocksMessage(height, []block.Block{commitBlock}, commit)
+		cs.broadcastCh <- msg
+	}
+
 	cs.updateRoundStep(round, hrs.StepTypeCommit)
-	cs.commitRound = round
+	cs.isCommitted = true
 
-	// Using `~` to show `block` after `consensus` in logger output
-	cs.logger.Info("Commit: Block stored", "~block", blockHash.Fingerprint())
-
+	cs.logger.Info("Commit: Block committed", "block", blockHash.Fingerprint())
 	cs.scheduleNewHeight()
 }

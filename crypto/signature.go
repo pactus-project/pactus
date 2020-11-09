@@ -146,6 +146,6 @@ func (sig *Signature) SanityCheck() error {
 	return nil
 }
 
-func (sig Signature) EqualsTo(right Signature) bool {
+func (sig *Signature) EqualsTo(right Signature) bool {
 	return sig.data.Signature.IsEqual(right.data.Signature)
 }

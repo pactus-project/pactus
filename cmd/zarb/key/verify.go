@@ -61,7 +61,7 @@ func Verify() func(c *cli.Cmd) {
 			}
 
 			fmt.Println()
-			verify := publickey.Verify(msg, sign)
+			verify := publickey.Verify(msg, &sign)
 			if verify {
 				cmd.PrintSuccessMsg("Signature is verified successfully!")
 			} else {

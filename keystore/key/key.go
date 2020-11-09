@@ -17,12 +17,12 @@ type keyData struct {
 }
 
 func GenKey() *Key {
-	pk, pv := crypto.GenerateRandomKey()
+	addr, pk, pv := crypto.RandomKeyPair()
 	return &Key{
 		data: keyData{
 			PrivateKey: pv,
 			PublicKey:  pk,
-			Address:    pk.Address(),
+			Address:    addr,
 		},
 	}
 }

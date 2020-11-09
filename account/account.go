@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	e "github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // Account structure
@@ -28,13 +29,6 @@ func NewAccount(addr crypto.Address) *Account {
 			Address: addr,
 		},
 	}
-}
-
-/// For tests
-func NewRandomAccount(secret string) *Account {
-	pb, _ := crypto.GenerateRandomKey()
-	acc := NewAccount(pb.Address())
-	return acc
 }
 
 func (acc Account) Address() crypto.Address { return acc.data.Address }
@@ -96,4 +90,14 @@ func (acc *Account) UnmarshalJSON(bs []byte) error {
 func (acc Account) String() string {
 	b, _ := acc.MarshalJSON()
 	return string(b)
+}
+
+// ---------
+// For tests
+func GenerateTestAccount() *Account {
+	a, _, _ := crypto.GenerateTestKeyPair()
+	acc := NewAccount(a)
+	acc.data.Balance = util.RandInt64(10000000)
+	acc.data.Sequence = util.RandInt(100)
+	return acc
 }

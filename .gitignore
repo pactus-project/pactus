@@ -4,3 +4,5 @@ build/
 vendor
 .DS_Store
 .bls
+.vscode
+todo

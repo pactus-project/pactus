@@ -6,8 +6,8 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/keystore/key"
 )
 
 // Sign the message with the private key and returns the signature hash
@@ -56,7 +56,7 @@ func Sign() func(c *cli.Cmd) {
 				return
 			}
 
-			var signature crypto.Signature
+			var signature *crypto.Signature
 			var pv crypto.PrivateKey
 			//Sign the message with the private key
 			if *privateKey != "" {

@@ -12,8 +12,7 @@ import (
 )
 
 func TestMarshaling(t *testing.T) {
-	pb, _ := crypto.GenerateRandomKey()
-	addr := pb.Address()
+	addr, pb, _ := crypto.RandomKeyPair()
 	acc := account.NewAccount(addr)
 	val := validator.NewValidator(pb, 1)
 	gen1 := MakeGenesis("test", time.Now().Truncate(0), []*account.Account{acc}, []*validator.Validator{val})
@@ -23,6 +22,5 @@ func TestMarshaling(t *testing.T) {
 	require.NoError(t, err)
 	err = json.Unmarshal(bz, gen2)
 	require.NoError(t, err)
-	require.Equal(t, gen1.Accounts(), gen2.Accounts())
-	require.True(t, gen1.Validators()[0].PublicKey().EqualsTo(gen2.Validators()[0].PublicKey()))
+	require.Equal(t, gen1.Hash(), gen2.Hash())
 }

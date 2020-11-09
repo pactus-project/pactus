@@ -45,7 +45,7 @@ var messages = map[int]string{
 	ErrInvalidVote:       "Invalid vote",
 	ErrInvalidMessage:    "Invalid message",
 	ErrInvalidConfig:     "Invalid config",
-	ErrDuplicateVote:     "Duplicate address",
+	ErrDuplicateVote:     "Duplicate vote",
 	ErrInsufficientFunds: "error insufficient funds",
 	ErrInsufficientGas:   "Insufficient Gas",
 }

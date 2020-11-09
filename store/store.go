@@ -9,12 +9,6 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type StoreReader interface {
-	BlockByHeight(height int) (*block.Block, error)
-	BlockByHash(hash crypto.Hash) (*block.Block, int, error)
-	BlockHeight(hash crypto.Hash) (int, error)
-}
-
 type Store struct {
 	lk deadlock.RWMutex
 
@@ -69,7 +63,7 @@ func (s *Store) BlockByHash(hash crypto.Hash) (*block.Block, int, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	height, err := s.blockStore.RetrieveBlockHeight(hash)
+	height, err := s.blockStore.blockHeight(hash)
 	if err != nil {
 		return nil, -1, err
 	}
@@ -84,7 +78,7 @@ func (s *Store) BlockHeight(hash crypto.Hash) (int, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.RetrieveBlockHeight(hash)
+	return s.blockStore.blockHeight(hash)
 }
 
 func (s *Store) SaveTx(tx tx.Tx, receipt tx.Receipt) error {
@@ -94,11 +88,11 @@ func (s *Store) SaveTx(tx tx.Tx, receipt tx.Receipt) error {
 	return s.txStore.SaveTx(tx, receipt)
 }
 
-func (s *Store) RetrieveTx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
+func (s *Store) Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.RetrieveTx(hash)
+	return s.txStore.Tx(hash)
 }
 
 func (s *Store) HasAccount(addr crypto.Address) bool {

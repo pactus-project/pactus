@@ -9,38 +9,32 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func mockState(t *testing.T) (*State, crypto.Address) {
-	pb, _ := crypto.GenerateRandomKey()
+func mockState(t *testing.T) (State, crypto.Address) {
+	_, pb, _ := crypto.RandomKeyPair()
 	addr := pb.Address()
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
 	val := validator.NewValidator(pb, 1)
 	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
-	loggerConfig := logger.DefaultConfig()
-	loggerConfig.Levels["default"] = "error"
+	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
-	storeConfig := store.DefaultConfig()
-	storeConfig.Path = util.TempDirName()
-	store, err := store.NewStore(storeConfig)
+	stateConfig := TestConfig()
+	txPoolConfig := txpool.TestConfig()
+	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan *message.Message, 10))
 	require.NoError(t, err)
-	txPoolConfig := txpool.DefaultConfig()
-	txPool, err := txpool.NewTxPool(txPoolConfig, nil)
-	require.NoError(t, err)
-	st, err := LoadOrNewState(gen, store, txPool, nil)
+	st, err := LoadOrNewState(stateConfig, gen, val.Address(), txPool)
 	require.NoError(t, err)
 	return st, addr
 }
 
 func TestBlockValidate(t *testing.T) {
-	st, addr := mockState(t)
-	block, _ := st.ProposeBlock(1, addr, nil)
-	err := st.ApplyBlock(&block, 0)
+	st, _ := mockState(t)
+	block := st.ProposeBlock()
+	err := st.ValidateBlock(block)
 	require.NoError(t, err)
-
 }

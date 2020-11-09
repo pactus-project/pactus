@@ -11,7 +11,6 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
@@ -21,17 +20,15 @@ import (
 )
 
 type Node struct {
+	state      state.State
 	genesisDoc *genesis.Genesis
 	config     *config.Config
-	state      *state.State
-	store      *store.Store
 	txPool     *txpool.TxPool
 	consensus  *consensus.Consensus
 	network    *network.Network
 	sync       *sync.Synchronizer
-
-	capnp *capnp.Server
-	http  *http.Server
+	capnp      *capnp.Server
+	http       *http.Server
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *validator.PrivValidator) (*Node, error) {
@@ -43,34 +40,29 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 	if err != nil {
 		return nil, err
 	}
-	broadcastCh := make(chan message.Message, 10)
-
-	store, err := store.NewStore(conf.Store)
-	if err != nil {
-		return nil, err
-	}
+	broadcastCh := make(chan *message.Message, 100)
 
 	txPool, err := txpool.NewTxPool(conf.TxPool, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(genDoc, store, txPool, broadcastCh)
+	state, err := state.LoadOrNewState(conf.State, genDoc, privValidator.Address(), txPool)
 	if err != nil {
 		return nil, err
 	}
 
-	consensus, err := consensus.NewConsensus(conf.Consensus, state, store, privValidator, broadcastCh)
+	consensus, err := consensus.NewConsensus(conf.Consensus, state, privValidator, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	sync, err := sync.NewSynchronizer(conf.Sync, privValidator.Address(), state, store, consensus, txPool, network, broadcastCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, privValidator.Address(), state, consensus, txPool, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	capnp, err := capnp.NewServer(conf.Capnp, store)
+	capnp, err := capnp.NewServer(conf.Capnp, state, txPool)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create Capnproto server")
 	}
@@ -85,7 +77,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 		genesisDoc: genDoc,
 		network:    network,
 		state:      state,
-		store:      store,
 		txPool:     txPool,
 		consensus:  consensus,
 		sync:       sync,
@@ -105,10 +96,10 @@ func (n *Node) Start() error {
 	}
 
 	n.network.Start()
-	n.sync.Start()
-
 	// Wait for network to started
 	time.Sleep(1 * time.Second)
+
+	n.sync.Start()
 
 	err := n.capnp.StartServer()
 	if err != nil {
@@ -120,16 +111,12 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start http server")
 	}
 
-	n.consensus.Start()
-
-
 	return nil
 }
 
 func (n *Node) Stop() {
 	logger.Info("Stopping Node")
 
-	n.consensus.Stop()
 	n.network.Stop()
 	n.sync.Stop()
 	n.capnp.StopServer()

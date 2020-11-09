@@ -27,7 +27,7 @@ func newBlockVotes() *blockVotes {
 func (vs *blockVotes) addVote(vote *Vote) bool {
 	signer := vote.Signer()
 	if existing, ok := vs.votes[signer]; ok {
-		if !existing.data.Signature.EqualsTo(vote.data.Signature) {
+		if !existing.data.Signature.EqualsTo(*vote.data.Signature) {
 			// Signature malleability?
 			logger.Panic("Invalid vote")
 		} else {
@@ -65,6 +65,7 @@ func NewVoteSet(height int, round int, voteType VoteType, valSet *validator.Vali
 func (vs *VoteSet) Type() VoteType { return vs.voteType }
 func (vs *VoteSet) Height() int    { return vs.height }
 func (vs *VoteSet) Round() int     { return vs.round }
+func (vs *VoteSet) Len() int       { return vs.sum }
 
 func (vs *VoteSet) AllVotes() []*Vote {
 	votes := make([]*Vote, 0)
@@ -87,10 +88,10 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 
 	if (vote.data.Height != vs.height) ||
 		(vote.data.Round != vs.round) ||
-		(vote.data.Type != vs.voteType) {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%d, but got %d/%d/%d",
+		(vote.data.VoteType != vs.voteType) {
+		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
 			vs.height, vs.round, vs.voteType,
-			vote.Height(), vote.Round(), vote.Type())
+			vote.Height(), vote.Round(), vote.VoteType())
 	}
 
 	val := vs.valSet.Validator(signer)
@@ -112,8 +113,20 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	for id, v := range vs.votesByBlock {
 		if id != vote.data.BlockHash {
 			duplicated, ok := v.votes[signer]
-			if ok && duplicated.data.BlockHash != blockHash {
-				return false, errors.Error(errors.ErrDuplicateVote)
+
+			if ok {
+				if duplicated.data.BlockHash.IsUndef() {
+					// He might received proposal after pre-vote time
+					v.sum--
+					vs.sum--
+					delete(v.votes, signer)
+				} else if duplicated.data.BlockHash != blockHash {
+					// Duplicated vote:
+					// 1- Same signer
+					// 2- Previous blockhash is not undef
+					// 3- Block hashes are not sames
+					return false, errors.Error(errors.ErrDuplicateVote)
+				}
 			}
 		}
 	}
@@ -174,7 +187,7 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 			continue
 		}
 		commiters = append(commiters, v.Signer())
-		signatures = append(signatures, v.Signature())
+		signatures = append(signatures, *v.Signature())
 	}
 
 	return block.NewCommit(vs.round, commiters, signatures)
