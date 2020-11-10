@@ -214,20 +214,20 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 
 	cons.enterNewHeight(1)
 
-	// Validator_1 is online, but proposal is not accepted
+	// Validator_1 is online, but the proposal is not accepted by other nodes
 	// Validator_4 is offline
 	testAddVote(t, vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), VAL_1, false)
 	testAddVote(t, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL_2, false)
 	testAddVote(t, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL_3, false)
 	checkHRS(t, 1, 0, hrs.StepTypePrevoteWait)
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 	checkHRS(t, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), VAL_1, false)
 	testAddVote(t, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL_2, false)
 	testAddVote(t, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL_3, false)
 	checkHRS(t, 1, 0, hrs.StepTypePrecommitWait)
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 	checkHRS(t, 1, 1, hrs.StepTypePrevote)
 
 	p := cons.LastProposal()
