@@ -1,10 +1,10 @@
-# Zarb [![Build Status](https://travis-ci.org/zarbchain/zarb-go.svg?branch=main)](https://travis-ci.org/zarbchain/zarb-go)
+# Zarb
 
 *Zarb blockchain*
 
 ## Compiling the code
 
-You need to make sure you have install [Go](https://golang.org/) and [rust](https://www.rust-lang.org). 
+You need to make sure you have install [Go](https://golang.org/) and [rust](https://www.rust-lang.org).
 Follow these steps to compile and build Zarb blockchain:
 
 ```bash
@@ -57,7 +57,7 @@ docker run -it --rm -v "/zarb:/zarb" -p 1337:1337 -p 50051:50051 -p 46656:46656 
 
 ## Contribution
 
- Any ideas are welcome. Feel free to submit any issues or pull requests. 
+ Any ideas are welcome. Feel free to submit any issues or pull requests.
 
 ## License
 
