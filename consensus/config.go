@@ -32,7 +32,7 @@ func TestConfig() *Config {
 		TimeoutPrevote:          10 * time.Millisecond,
 		TimeoutPrecommit:        10 * time.Millisecond,
 		NewRoundDeltaDuration:   0 * time.Millisecond,
-		PeerGossipSleepDuration: 100 * time.Millisecond,
+		PeerGossipSleepDuration: 10 * time.Millisecond,
 		FuzzTesting:             false,
 	}
 }
