@@ -137,6 +137,7 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	assert.Equal(t, cons.isCommitted, true)
 	assert.Equal(t, cons.votes.Precommits(0).Len(), 3) // Votes from validator 1,2,3
 }
+
 func TestConsensusUpdateVote(t *testing.T) {
 	cons, pvals = newTestConsensus(t, VAL1)
 
@@ -184,7 +185,14 @@ func TestConsensusNoPrevotes(t *testing.T) {
 	testAddVote(t, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL4, false)
 	checkHRS(t, 1, 0, hrs.StepTypeCommit)
 	assert.Equal(t, cons.isCommitted, true)
-	assert.Equal(t, cons.votes.Precommits(0).Len(), 3)
+	precommits := cons.votes.Precommits(0)
+	assert.Equal(t, precommits.Len(), 3)
+
+	// Commit block again
+	assert.NoError(t, cons.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
+
+	// Commit a block for wrong height
+	assert.Error(t, cons.state.ApplyBlock(5, p.Block(), *precommits.ToCommit()))
 }
 
 func TestConsensusGotoNextRound(t *testing.T) {

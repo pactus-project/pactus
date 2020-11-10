@@ -61,7 +61,7 @@ func init() {
 		sig := v.Signature()
 		lastCommit = block.NewCommit(0, []crypto.Address{privVal.Address()}, []crypto.Signature{*sig})
 
-		st.ApplyBlock(b, *lastCommit)
+		st.ApplyBlock(i+1, b, *lastCommit)
 	}
 	if st.LastBlockHeight() != blockCount {
 		panic("Unable to commit blocks for test")

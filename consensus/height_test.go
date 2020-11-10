@@ -30,7 +30,7 @@ func TestConsensusBehindState(t *testing.T) {
 		[]crypto.Signature{*v1.Signature(), *v2.Signature(), *v3.Signature()})
 
 	require.NotNil(t, c)
-	err := st.ApplyBlock(b, *c)
+	err := st.ApplyBlock(1, b, *c)
 	assert.NoError(t, err)
 	assert.Equal(t, cons.hrs, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight))
 	cons.ScheduleNewHeight()
@@ -65,7 +65,7 @@ func TestConsensusBehindState2(t *testing.T) {
 
 	require.NotNil(t, c)
 	assert.Equal(t, len(cons.votes.votes), 2)
-	err := st.ApplyBlock(b, *c)
+	err := st.ApplyBlock(1, b, *c)
 	assert.NoError(t, err)
 	assert.Equal(t, cons.hrs, hrs.NewHRS(1, 0, hrs.StepTypePrevote))
 	cons.ScheduleNewHeight()

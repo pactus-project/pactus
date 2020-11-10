@@ -60,7 +60,7 @@ func (cs *Consensus) enterPropose(height int, round int) {
 
 	address := cs.privValidator.Address()
 	if !cs.valset.Contains(address) {
-		cs.logger.Error("Propose: This node is not in validator set", "addr", address)
+		cs.logger.Info("Propose: This node is not in validator set", "addr", address)
 		return
 	}
 

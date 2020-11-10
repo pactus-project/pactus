@@ -207,6 +207,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 
 	added, err := cs.votes.AddVote(v)
 	if err != nil {
+		cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
 		return err
 	}
 	if !added {
@@ -261,7 +262,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	address := cs.privValidator.Address()
 	if !cs.valset.Contains(address) {
-		cs.logger.Info("This node is not in validator set", "addr", address)
+		cs.logger.Error("This node is not in validator set", "addr", address)
 		return
 	}
 
@@ -270,7 +271,7 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	cs.privValidator.SignMsg(v)
 	err := cs.addVote(v)
 	if err != nil {
-		cs.logger.Error("Error on adding our vote!", "error", err)
+		cs.logger.Error("Error on adding our vote!", "error", err, "vote", v)
 	}
 
 	// Broadcast our vote

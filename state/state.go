@@ -43,7 +43,7 @@ type State interface {
 
 	ProposeBlock() block.Block
 	ValidateBlock(block block.Block) error
-	ApplyBlock(block block.Block, commit block.Commit) error
+	ApplyBlock(height int, block block.Block, commit block.Commit) error
 }
 
 type state struct {
@@ -245,9 +245,28 @@ func (st *state) ValidateBlock(block block.Block) error {
 	return nil
 }
 
-func (st *state) ApplyBlock(block block.Block, commit block.Commit) error {
+func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
+
+	if height != st.lastBlockHeight && height != st.lastBlockHeight+1 {
+		return errors.Errorf(errors.ErrInvalidBlock, "We are not expecting a block for this height: %v", height)
+	}
+
+	/// There are two guys can commit a block: Consensus and Syncer.
+	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
+	/// In the other hand, Syncer module receive blocks from other peers and if we are behind them, he tries to commit them.
+	/// We should never have a fork in our blockchain. but if it happens here we can catch it.
+
+	if st.lastBlockHeight == height {
+		if block.Hash().EqualsTo(st.lastBlockHash) {
+			st.logger.Trace("We have committed this block before", "hash", block.Hash())
+			return nil
+		} else {
+			// Technically we should crash here
+			st.logger.Fatal("A possible fork is detected", "our hash", st.lastBlockHash, "block hash", block.Hash())
+		}
+	}
 
 	if !block.Header().LastBlockHash().EqualsTo(st.lastBlockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Previous block hash does not match. Should be %v, but got %v",
@@ -294,11 +313,13 @@ func (st *state) ApplyBlock(block block.Block, commit block.Commit) error {
 
 	// Move validator set
 	st.validatorSet.MoveProposer(round)
-	st.lastBlockHeight += 1
+	st.lastBlockHeight++
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
 	st.lastReceiptsHash = *receiptsHash
 	st.lastCommit = &commit
+
+	st.logger.Info("A new block is committed", "hash", block.Hash())
 
 	return nil
 }

@@ -135,8 +135,9 @@ func (syncer *Synchronizer) tryCommitBlocks() {
 			break
 		}
 		syncer.logger.Info("Committing block", "height", ourHeight+1, "block", commitBlock)
-		if err := syncer.state.ApplyBlock(*commitBlock, *commit); err != nil {
+		if err := syncer.state.ApplyBlock(ourHeight+1, *commitBlock, *commit); err != nil {
 			syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err)
+			// We will ask peers to send this block later ...
 		}
 
 		syncer.consensus.ScheduleNewHeight()

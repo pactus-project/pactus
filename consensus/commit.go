@@ -16,20 +16,20 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	preCommits := cs.votes.Precommits(round)
 
 	if !preCommits.HasQuorum() {
-		cs.logger.Error("Commit witout quorom for precommit stage")
+		cs.logger.Error("Commit: No quorom for precommit stage")
 		return
 	}
 
 	blockHash := preCommits.QuorumBlock()
 	if blockHash == nil || blockHash.IsUndef() {
-		cs.logger.Error("Commit is for invalid block")
+		cs.logger.Error("Commit: Block is invalid")
 		return
 	}
 
 	// Additional check. blockHash should be same for both prevotes and precommits
 	prevoteBlockHash := preVotes.QuorumBlock()
 	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Warn("Commit witout quorom for prevote stage")
+		cs.logger.Warn("Commit: Commit witout quorom for prevote stage")
 	}
 
 	if cs.votes.lockedProposal == nil {
@@ -70,20 +70,23 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	}
 
 	commit := preCommits.ToCommit()
-	if commit != nil {
-		if err := cs.state.ApplyBlock(commitBlock, *commit); err != nil {
-			cs.logger.Error("Commit: Applying block failed", "block", commitBlock, "err", err)
-			return
-		}
-
-		// Now broadcast the committed block
-		msg := message.NewBlocksMessage(height, []block.Block{commitBlock}, commit)
-		cs.broadcastCh <- msg
+	if commit == nil {
+		cs.logger.Error("Commit: Invalid precommits", "preCommits", preCommits)
+		return
 	}
+
+	if err := cs.state.ApplyBlock(height, commitBlock, *commit); err != nil {
+		cs.logger.Error("Commit: Applying block failed", "block", commitBlock, "err", err)
+		return
+	}
+
+	// Now broadcast the committed block
+	msg := message.NewBlocksMessage(height, []block.Block{commitBlock}, commit)
+	cs.broadcastCh <- msg
 
 	cs.updateRoundStep(round, hrs.StepTypeCommit)
 	cs.isCommitted = true
 
-	cs.logger.Info("Commit: Block committed", "block", blockHash.Fingerprint())
+	cs.logger.Debug("Commit: Block committed, Schedule for new height", "block", blockHash.Fingerprint())
 	cs.scheduleNewHeight()
 }
