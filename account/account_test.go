@@ -7,10 +7,9 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
-
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type acc struct {

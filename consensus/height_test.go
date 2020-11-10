@@ -3,13 +3,11 @@ package consensus
 import (
 	"testing"
 
-	"github.com/zarbchain/zarb-go/consensus/hrs"
-
-	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -73,7 +71,7 @@ func TestConsensusBehindState2(t *testing.T) {
 	cons.ScheduleNewHeight()
 	assert.Equal(t, len(cons.votes.votes), 2)
 	assert.Equal(t, cons.hrs, hrs.NewHRS(1, 0, hrs.StepTypeCommit))
-	
+
 	cons.ScheduleNewHeight()
 	assert.Equal(t, len(cons.votes.votes), 2)
 	assert.Equal(t, cons.hrs, hrs.NewHRS(1, 0, hrs.StepTypeCommit))
