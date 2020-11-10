@@ -12,7 +12,7 @@ import (
 )
 
 func TestConsensusBehindState(t *testing.T) {
-	cons, pvals = newTestConsensus(t, VAL_1)
+	cons, pvals = newTestConsensus(t, VAL1)
 
 	b := st.ProposeBlock()
 
@@ -42,7 +42,7 @@ func TestConsensusBehindState(t *testing.T) {
 }
 
 func TestConsensusBehindState2(t *testing.T) {
-	cons, pvals = newTestConsensus(t, VAL_1)
+	cons, pvals = newTestConsensus(t, VAL1)
 
 	cons.enterNewHeight(1)
 	p := cons.LastProposal()
