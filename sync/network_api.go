@@ -186,12 +186,12 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 		message.PayloadTypeTxs:
 		return api.txTopic
 
-	case message.PayloadTypeProposal,
+	case message.PayloadTypeProposalReq,
+		message.PayloadTypeProposal,
 		message.PayloadTypeVote,
 		message.PayloadTypeVoteSet:
 		return api.consensusTopic
 	default:
 		panic("Invalid topic")
 	}
-	return nil
 }
