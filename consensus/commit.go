@@ -7,8 +7,8 @@ import (
 )
 
 func (cs *Consensus) enterCommit(height int, round int) {
-	if cs.invalidHeight(height) || cs.isCommitted {
-		cs.logger.Debug("Commit with invalid args or committed before", "height", height, "committed", cs.isCommitted)
+	if cs.invalidHeight(height) {
+		cs.logger.Debug("Commit: Invalid height or committed before", "height", height, "committed", cs.isCommitted)
 		return
 	}
 
@@ -60,15 +60,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 		return
 	}
 
-	// Block is invalid?
-	// It is impossible, but good to have this extra check here
 	commitBlock := cs.votes.lockedProposal.Block()
-	if err := cs.state.ValidateBlock(commitBlock); err != nil {
-		cs.votes.lockedProposal = nil
-		cs.logger.Error("Commit: Invalid block", "block", commitBlock, "err", err)
-		return
-	}
-
 	commit := preCommits.ToCommit()
 	if commit == nil {
 		cs.logger.Error("Commit: Invalid precommits", "preCommits", preCommits)
@@ -87,6 +79,6 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	cs.updateRoundStep(round, hrs.StepTypeCommit)
 	cs.isCommitted = true
 
-	cs.logger.Debug("Commit: Block committed, Schedule for new height", "block", blockHash.Fingerprint())
+	cs.logger.Trace("Commit: Block committed, Schedule for new height", "block", blockHash.Fingerprint())
 	cs.scheduleNewHeight()
 }

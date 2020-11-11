@@ -15,8 +15,8 @@ func TestHeightVoteSetTest(t *testing.T) {
 	vset, keys := validator.GenerateTestValidatorSet()
 
 	hvs := NewHeightVoteSet(101, vset)
-	invalid_vote, _ := vote.GenerateTestPrecommitVote(55, 5)
-	ok, err := hvs.AddVote(invalid_vote) // invalid height
+	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
+	ok, err := hvs.AddVote(invalidVote) // invalid height
 	assert.False(t, ok)
 	assert.Error(t, err)
 
@@ -25,26 +25,33 @@ func TestHeightVoteSetTest(t *testing.T) {
 	assert.False(t, ok)
 	assert.Error(t, err)
 
-	v2 := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.UndefHash, keys[0].PublicKey().Address())
-	v2.SetSignature(keys[0].Sign(v2.SignBytes()))
-	ok, err = hvs.AddVote(v2)
+	undefVote := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.UndefHash, keys[0].PublicKey().Address())
+	undefVote.SetSignature(keys[0].Sign(undefVote.SignBytes()))
+
+	validVote := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
+	validVote.SetSignature(keys[0].Sign(validVote.SignBytes()))
+
+	duplicateVote := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
+	duplicateVote.SetSignature(keys[0].Sign(duplicateVote.SignBytes()))
+
+	ok, err = hvs.AddVote(undefVote)
 	assert.True(t, ok)
 	assert.NoError(t, err)
 
-	v3 := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
-	v3.SetSignature(keys[0].Sign(v3.SignBytes()))
-	ok, err = hvs.AddVote(v3)
+	ok, err = hvs.AddVote(validVote)
 	assert.True(t, ok)
 	assert.NoError(t, err)
 
-	v4 := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
-	v4.SetSignature(keys[0].Sign(v4.SignBytes()))
-	ok, err = hvs.AddVote(v4)
+	ok, err = hvs.AddVote(undefVote)
+	assert.False(t, ok)
+	assert.NoError(t, err)
+
+	ok, err = hvs.AddVote(duplicateVote)
 	assert.False(t, ok) // duplicated vote
 	assert.Error(t, err)
 
 	prevotes := hvs.Prevotes(1)
-	assert.Equal(t, prevotes.Len(), 1) // only v3
-	assert.Equal(t, len(hvs.votes), 2) // v2 + v3
+	assert.Equal(t, prevotes.Len(), 1) // validVote
+	assert.Equal(t, len(hvs.votes), 2) // validVote + duplicateVote
 
 }

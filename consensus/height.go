@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func (cs *Consensus) ScheduleNewHeight() {
+func (cs *Consensus) MoveToNewHeight() {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -13,7 +13,7 @@ func (cs *Consensus) ScheduleNewHeight() {
 	consHeight := cs.hrs.Height()
 
 	if consHeight > stateHeight+1 {
-		cs.logger.Panic("Consensus can't be further than state")
+		cs.logger.Panic("Consensus can't be further than state by more than one block")
 		return
 	}
 
@@ -61,7 +61,6 @@ func (cs *Consensus) enterNewHeight(height int) {
 	}
 
 	cs.isCommitted = false
-	cs.votes.Reset(height)
 	cs.updateHeight(height)
 	cs.updateRoundStep(0, hrs.StepTypeNewHeight)
 

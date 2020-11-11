@@ -7,7 +7,6 @@ import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/state"
@@ -71,21 +70,13 @@ func (cs *Consensus) HRS() hrs.HRS {
 
 func (cs *Consensus) updateRoundStep(round int, step hrs.StepType) {
 	cs.hrs.UpdateRoundStep(round, step)
-
-	hasProposal := cs.votes.HasRoundProposal(cs.hrs.Round())
-	msg := message.NewHeartBeatMessage(cs.state.LastBlockHash(), cs.hrs, hasProposal)
-	cs.broadcastCh <- msg
 }
 
 func (cs *Consensus) updateHeight(height int) {
-	cs.hrs.UpdateHeight(height)
-}
-
-func (cs *Consensus) HasProposal() bool {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	return cs.votes.HasRoundProposal(cs.hrs.Round())
+	if cs.hrs.Height() != height {
+		cs.votes.Reset(height)
+		cs.hrs.UpdateHeight(height)
+	}
 }
 
 func (cs *Consensus) LastProposal() *vote.Proposal {
@@ -145,14 +136,23 @@ func (cs *Consensus) scheduleTimeout(duration time.Duration, height int, round i
 }
 
 func (cs *Consensus) invalidHeight(height int) bool {
+	if cs.isCommitted {
+		return true
+	}
 	return cs.hrs.Height() != height
 }
 
 func (cs *Consensus) invalidHeightRound(height int, round int) bool {
+	if cs.isCommitted {
+		return true
+	}
 	return cs.hrs.Height() != height || cs.hrs.Round() != round
 }
 
 func (cs *Consensus) invalidHeightRoundStep(height int, round int, step hrs.StepType) bool {
+	if cs.isCommitted {
+		return true
+	}
 	return cs.hrs.Height() != height || cs.hrs.Round() != round || cs.hrs.Step() > step
 }
 
@@ -201,8 +201,8 @@ func (cs *Consensus) handleTimeout(ti timeout) {
 
 func (cs *Consensus) addVote(v *vote.Vote) error {
 	// Height mismatch is ignored.
-	if cs.invalidHeight(v.Height()) {
-		return errors.Errorf(errors.ErrInvalidVote, "Vote ignored, height mismatch: %v", v.Height())
+	if cs.hrs.Height() != v.Height() {
+		return nil
 	}
 
 	added, err := cs.votes.AddVote(v)
@@ -221,34 +221,30 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 	case vote.VoteTypePrevote:
 		prevotes := cs.votes.Prevotes(round)
 		cs.logger.Debug("Vote added to prevote", "vote", v, "voteset", prevotes)
-		// current round
-		if cs.hrs.Round() == round {
-			if ok := prevotes.HasQuorum(); ok {
-				blockHash := prevotes.QuorumBlock()
-				if blockHash == nil {
-					cs.enterPrevoteWait(height, round)
-				} else if blockHash.IsUndef() {
-					cs.enterPrecommit(height, round)
-				} else {
-					cs.enterPrecommit(height, round)
-				}
+
+		if ok := prevotes.HasQuorum(); ok {
+			blockHash := prevotes.QuorumBlock()
+			if blockHash == nil {
+				cs.enterPrevoteWait(height, round)
+			} else if blockHash.IsUndef() {
+				cs.enterPrecommit(height, round)
+			} else {
+				cs.enterPrecommit(height, round)
 			}
 		}
 
 	case vote.VoteTypePrecommit:
 		precommits := cs.votes.Precommits(round)
 		cs.logger.Debug("Vote added to precommit", "vote", v, "voteset", precommits)
-		// current round
-		if cs.hrs.Round() == round {
-			if ok := precommits.HasQuorum(); ok {
-				blockHash := precommits.QuorumBlock()
-				if blockHash == nil {
-					cs.enterPrecommitWait(height, round)
-				} else if blockHash.IsUndef() {
-					cs.enterNewRound(height, round+1)
-				} else {
-					cs.enterCommit(height, round)
-				}
+
+		if ok := precommits.HasQuorum(); ok {
+			blockHash := precommits.QuorumBlock()
+			if blockHash == nil {
+				cs.enterPrecommitWait(height, round)
+			} else if blockHash.IsUndef() {
+				cs.enterNewRound(height, round+1)
+			} else {
+				cs.enterCommit(height, round)
 			}
 		}
 
@@ -276,5 +272,10 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 
 	// Broadcast our vote
 	msg := message.NewVoteMessage(v)
+	cs.broadcastCh <- msg
+}
+
+func (cs *Consensus) requestForProposal() {
+	msg := message.NewProposalReqMessage(cs.hrs.Height(), cs.hrs.Round())
 	cs.broadcastCh <- msg
 }

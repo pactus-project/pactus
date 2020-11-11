@@ -8,7 +8,7 @@ import (
 
 func (cs *Consensus) enterPrecommit(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommit) {
-		cs.logger.Debug("Precommit with invalid args", "height", height, "round", round)
+		cs.logger.Debug("Precommit: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 
@@ -30,6 +30,8 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 
 	roundProposal := cs.votes.RoundProposal(round)
 	if roundProposal == nil {
+		cs.requestForProposal()
+
 		cs.logger.Error("Precommit: Voted for nil, no proposal.")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
@@ -56,7 +58,7 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 
 func (cs *Consensus) enterPrecommitWait(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommitWait) {
-		cs.logger.Debug("PrecommitWait with invalid args", "height", height, "round", round)
+		cs.logger.Debug("PrecommitWait: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 	cs.updateRoundStep(round, hrs.StepTypePrecommitWait)

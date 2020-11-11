@@ -39,9 +39,13 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 		pld := msg.Payload.(*message.TxsPayload)
 		syncer.processTxsPayload(pld)
 
+	case message.PayloadTypeProposalReq:
+		pld := msg.Payload.(*message.ProposalReqPayload)
+		syncer.processProposalReqPayload(pld)
+
 	case message.PayloadTypeProposal:
 		pld := msg.Payload.(*message.ProposalPayload)
-		syncer.consensus.SetProposal(&pld.Proposal)
+		syncer.processProposalPayload(pld)
 
 	case message.PayloadTypeVote:
 		pld := msg.Payload.(*message.VotePayload)
@@ -122,30 +126,6 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 	}
 }
 
-func (syncer *Synchronizer) tryCommitBlocks() {
-	for {
-		ourHeight := syncer.state.LastBlockHeight()
-		commitBlock := syncer.blockPool.Block(ourHeight + 1)
-
-		if commitBlock == nil {
-			break
-		}
-		commit := syncer.blockPool.Commit(commitBlock.Hash())
-		if commit == nil {
-			break
-		}
-		syncer.logger.Info("Committing block", "height", ourHeight+1, "block", commitBlock)
-		if err := syncer.state.ApplyBlock(ourHeight+1, *commitBlock, *commit); err != nil {
-			syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err)
-			// We will ask peers to send this block later ...
-		}
-
-		syncer.consensus.ScheduleNewHeight()
-		syncer.blockPool.RemoveBlock(ourHeight + 1)
-		syncer.blockPool.RemoveCommit(commitBlock.Hash())
-	}
-}
-
 func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
 	txs := make([]tx.Tx, 0, len(pld.Hashes))
 	for _, h := range pld.Hashes {
@@ -191,17 +171,23 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
 		}
 	}
 }
+func (syncer *Synchronizer) processProposalReqPayload(pld *message.ProposalReqPayload) {
+	hrs := syncer.consensus.HRS()
+	if pld.Height == hrs.Height() {
+		p := syncer.consensus.LastProposal()
+		if p != nil {
+			syncer.broadcastProposal(*p)
+		}
+	}
+}
+
+func (syncer *Synchronizer) processProposalPayload(pld *message.ProposalPayload) {
+	syncer.consensus.SetProposal(&pld.Proposal)
+}
 
 func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayload) {
 	hrs := syncer.consensus.HRS()
 	if pld.HRS.Height() == hrs.Height() {
-		if !pld.HasProposal {
-			p := syncer.consensus.LastProposal()
-			if p != nil {
-				syncer.broadcastProposal(*p)
-			}
-		}
-
 		if pld.HRS.GreaterThan(hrs) {
 			// We are behind of the peer.
 			// Let's ask for more votes
@@ -209,8 +195,6 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 			syncer.broadcastVoteSet(hrs.Height(), hashes)
 		} else if pld.HRS.LessThan(hrs) {
 			// We are ahead of the peer.
-			// Let's inform him know about our status
-			syncer.broadcastHeartBeat()
 		} else {
 			// We are at the same step with this peer
 		}
@@ -219,5 +203,29 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 		syncer.broadcastBlocksReq(hrs.Height()+1, pld.HRS.Height())
 	} else {
 		// We are ahead of this peer
+	}
+}
+
+func (syncer *Synchronizer) tryCommitBlocks() {
+	for {
+		ourHeight := syncer.state.LastBlockHeight()
+		commitBlock := syncer.blockPool.Block(ourHeight + 1)
+
+		if commitBlock == nil {
+			break
+		}
+		commit := syncer.blockPool.Commit(commitBlock.Hash())
+		if commit == nil {
+			break
+		}
+		syncer.logger.Trace("Committing block", "height", ourHeight+1, "block", commitBlock)
+		if err := syncer.state.ApplyBlock(ourHeight+1, *commitBlock, *commit); err != nil {
+			syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err)
+			// We will ask peers to send this block later ...
+		}
+
+		syncer.maybeSynced()
+		syncer.blockPool.RemoveBlock(ourHeight + 1)
+		syncer.blockPool.RemoveCommit(commitBlock.Hash())
 	}
 }

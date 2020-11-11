@@ -8,6 +8,6 @@ type Params struct {
 
 func NewParams() *Params {
 	return &Params{
-		BlockTime: 5 * time.Second,
+		BlockTime: 10 * time.Second,
 	}
 }

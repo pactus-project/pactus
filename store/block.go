@@ -4,7 +4,6 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -39,7 +38,8 @@ func (bs *blockStore) SaveBlock(block block.Block, height int) error {
 	blockHashKey := blockHashKey(block.Hash())
 	has, err := bs.db.Has(blockKey, nil)
 	if has {
-		logger.Error("The blockkey exists in database, rewrite it.", "hash", block.Hash())
+		// TODO: uncomment it later
+		//logger.Warn("The blockkey exists in database, rewrite it.", "hash", block.Hash())
 	}
 	err = bs.db.Put(blockKey, blockData, nil)
 	if err != nil {

@@ -11,27 +11,27 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 )
 
-type mockNetworkApi struct {
+type mockNetworkAPI struct {
 	ch chan *message.Message
 }
 
-func mockingNetworkApi() *mockNetworkApi {
-	return &mockNetworkApi{
+func mockingNetworkAPI() *mockNetworkAPI {
+	return &mockNetworkAPI{
 		ch: make(chan *message.Message, 10),
 	}
 }
-func (mock *mockNetworkApi) Start() error {
+func (mock *mockNetworkAPI) Start() error {
 	return nil
 }
-func (mock *mockNetworkApi) Stop() error {
+func (mock *mockNetworkAPI) Stop() error {
 	return nil
 }
-func (mock *mockNetworkApi) PublishMessage(msg *message.Message) error {
+func (mock *mockNetworkAPI) PublishMessage(msg *message.Message) error {
 	mock.ch <- msg
 	return nil
 }
 
-func (mock *mockNetworkApi) waitingForMessage(t *testing.T, msg *message.Message) {
+func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {

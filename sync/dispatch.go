@@ -82,10 +82,9 @@ func (syncer *Synchronizer) broadcastTxsReq(hashes []crypto.Hash) {
 }
 
 func (syncer *Synchronizer) broadcastHeartBeat() {
-	hasProposal := syncer.consensus.HasProposal()
 	hrs := syncer.consensus.HRS()
 
-	msg := message.NewHeartBeatMessage(syncer.state.LastBlockHash(), hrs, hasProposal)
+	msg := message.NewHeartBeatMessage(syncer.state.LastBlockHash(), hrs)
 	syncer.publishMessage(msg)
 }
 
@@ -106,7 +105,7 @@ func (syncer *Synchronizer) broadcastVoteSet(height int, hashes []crypto.Hash) {
 
 func (syncer *Synchronizer) publishMessage(msg *message.Message) {
 
-	if err := syncer.networkApi.PublishMessage(msg); err != nil {
+	if err := syncer.networkAPI.PublishMessage(msg); err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg.Fingerprint(), "err", err)
 	} else {
 		syncer.logger.Trace("Publishing new message", "message", msg.Fingerprint())

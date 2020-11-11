@@ -11,15 +11,13 @@ import (
 type HeartBeatPayload struct {
 	LastBlockHash crypto.Hash `cbor:"1,keyasint"`
 	HRS           hrs.HRS     `cbor:"2,keyasint"`
-	HasProposal   bool        `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS, hasProposal bool) *Message {
+func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
 	return &Message{
 		Type: PayloadTypeHeartBeat,
 		Payload: &HeartBeatPayload{
-			HRS:         hrs,
-			HasProposal: hasProposal,
+			HRS: hrs,
 		},
 	}
 }

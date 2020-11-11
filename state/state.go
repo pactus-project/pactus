@@ -263,17 +263,11 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 			st.logger.Trace("We have committed this block before", "hash", block.Hash())
 			return nil
 		} else {
-			// Technically we should crash here
-			st.logger.Fatal("A possible fork is detected", "our hash", st.lastBlockHash, "block hash", block.Hash())
+			st.logger.Error("A possible fork is detected", "our hash", st.lastBlockHash, "block hash", block.Hash())
+			return errors.Error(errors.ErrInvalidBlock)
 		}
 	}
 
-	if !block.Header().LastBlockHash().EqualsTo(st.lastBlockHash) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Previous block hash does not match. Should be %v, but got %v",
-			st.lastBlockHash, block.Header().LastBlockHash())
-	}
-
-	round := commit.Round()
 	err := st.validateBlock(block)
 	if err != nil {
 		return err
@@ -312,14 +306,14 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	receiptsHash := receiptsMerkle.Root()
 
 	// Move validator set
-	st.validatorSet.MoveProposer(round)
+	st.validatorSet.MoveProposer(commit.Round())
 	st.lastBlockHeight++
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
 	st.lastReceiptsHash = *receiptsHash
 	st.lastCommit = &commit
 
-	st.logger.Info("A new block is committed", "hash", block.Hash())
+	st.logger.Info("A new block is committed", "block", block, "round", commit.Round())
 
 	return nil
 }

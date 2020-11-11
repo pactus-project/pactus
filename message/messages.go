@@ -11,15 +11,16 @@ import (
 type PayloadType int
 
 const (
-	PayloadTypeSalam     = PayloadType(1)
-	PayloadTypeBlocksReq = PayloadType(2)
-	PayloadTypeBlocks    = PayloadType(3)
-	PayloadTypeTxsReq    = PayloadType(4)
-	PayloadTypeTxs       = PayloadType(5)
-	PayloadTypeProposal  = PayloadType(6)
-	PayloadTypeHeartBeat = PayloadType(7)
-	PayloadTypeVote      = PayloadType(8)
-	PayloadTypeVoteSet   = PayloadType(9)
+	PayloadTypeSalam       = PayloadType(1)
+	PayloadTypeBlocksReq   = PayloadType(2)
+	PayloadTypeBlocks      = PayloadType(3)
+	PayloadTypeTxsReq      = PayloadType(4)
+	PayloadTypeTxs         = PayloadType(5)
+	PayloadTypeProposalReq = PayloadType(6)
+	PayloadTypeProposal    = PayloadType(7)
+	PayloadTypeHeartBeat   = PayloadType(8)
+	PayloadTypeVote        = PayloadType(9)
+	PayloadTypeVoteSet     = PayloadType(10)
 )
 
 func (t PayloadType) String() string {
@@ -34,9 +35,10 @@ func (t PayloadType) String() string {
 		return "txs-req"
 	case PayloadTypeTxs:
 		return "txs"
+	case PayloadTypeProposalReq:
+		return "proposal-req"
 	case PayloadTypeProposal:
 		return "proposal"
-
 	case PayloadTypeHeartBeat:
 		return "heart-beat"
 	case PayloadTypeVote:
@@ -114,6 +116,8 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		payload = &TxsReqPayload{}
 	case PayloadTypeTxs:
 		payload = &TxsPayload{}
+	case PayloadTypeProposalReq:
+		payload = &ProposalReqPayload{}
 	case PayloadTypeProposal:
 		payload = &ProposalPayload{}
 	case PayloadTypeHeartBeat:

@@ -71,7 +71,7 @@ func init() {
 	peerID, _ = peer.IDFromString("12D3KooWDEWpKkZVxpc8hbLKQL1jvFfyBQDit9AR3ToU4k951Jyi")
 }
 
-func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkApi, state.State) {
+func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkAPI, state.State) {
 	consConf := consensus.TestConfig()
 	stateConf := state.TestConfig()
 	txPoolConf := txpool.TestConfig()
@@ -98,7 +98,7 @@ func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNet
 	txPool, _ = txpool.NewTxPool(txPoolConf, ch)
 	st, _ := state.LoadOrNewState(stateConf, genDoc, pVal.Address(), txPool)
 	cons, _ := consensus.NewConsensus(consConf, st, pVal, ch)
-	api := mockingNetworkApi()
+	api := mockingNetworkAPI()
 
 	syncer := &Synchronizer{
 		ctx:         context.Background(),
@@ -107,9 +107,8 @@ func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNet
 		state:       st,
 		consensus:   cons,
 		txPool:      txPool,
-		txkPool:     make(map[crypto.Hash]*tx.Tx),
 		broadcastCh: ch,
-		networkApi:  api,
+		networkAPI:  api,
 	}
 
 	logger := logger.NewLogger("_sync", syncer)
@@ -121,7 +120,7 @@ func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNet
 	return syncer, api, st
 }
 
-func startTestSynchronizer(t *testing.T, pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkApi, state.State) {
+func startTestSynchronizer(t *testing.T, pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkAPI, state.State) {
 	sync, api, st := newTestSynchronizer(pVal)
 
 	assert.NoError(t, sync.Start())

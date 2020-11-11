@@ -62,32 +62,42 @@ func TestDuplicateVote(t *testing.T) {
 	valSet, keys := validator.GenerateTestValidatorSet()
 	voteSet := NewVoteSet(1, 0, VoteTypePrevote, valSet)
 
-	v1 := NewVote(VoteTypePrevote, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
-	v2 := NewVote(VoteTypePrevote, 1, 0, h1, keys[0].PublicKey().Address())
-	v3 := NewVote(VoteTypePrevote, 1, 0, h2, keys[0].PublicKey().Address())
+	undefVote := NewVote(VoteTypePrevote, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
+	correctVote := NewVote(VoteTypePrevote, 1, 0, h1, keys[0].PublicKey().Address())
+	duplicatedVote := NewVote(VoteTypePrevote, 1, 0, h2, keys[0].PublicKey().Address())
 
-	sig := keys[0].Sign(v1.SignBytes())
-	v1.SetSignature(sig)
-	added, err := voteSet.AddVote(v1)
+	// sign the votes
+	sig := keys[0].Sign(undefVote.SignBytes())
+	undefVote.SetSignature(sig)
+
+	sig = keys[0].Sign(undefVote.SignBytes())
+	undefVote.SetSignature(sig)
+
+	sig = keys[0].Sign(correctVote.SignBytes())
+	correctVote.SetSignature(sig)
+
+	added, err := voteSet.AddVote(undefVote)
 	assert.True(t, added) // ok
 	assert.NoError(t, err)
 
-	sig = keys[0].Sign(v1.SignBytes())
-	v1.SetSignature(sig)
-	added, err = voteSet.AddVote(v1)
+	added, err = voteSet.AddVote(undefVote)
 	assert.False(t, added) // added before
 	assert.NoError(t, err)
 
-	sig = keys[0].Sign(v2.SignBytes())
-	v2.SetSignature(sig)
-	added, err = voteSet.AddVote(v2)
+	added, err = voteSet.AddVote(correctVote)
 	assert.True(t, added) // ok, replace UndefHash
 	assert.NoError(t, err)
 	assert.Equal(t, len(voteSet.AllVotes()), 1)
 
-	sig = keys[0].Sign(v3.SignBytes())
-	v3.SetSignature(sig)
-	added, err = voteSet.AddVote(v3)
+	// Again add undef vote
+	added, err = voteSet.AddVote(undefVote)
+	assert.False(t, added) // ok
+	assert.NoError(t, err)
+	assert.Equal(t, len(voteSet.AllVotes()), 1)
+
+	sig = keys[0].Sign(duplicatedVote.SignBytes())
+	duplicatedVote.SetSignature(sig)
+	added, err = voteSet.AddVote(duplicatedVote)
 	assert.False(t, added) // ok, replace UndefHash
 	assert.Error(t, err)
 	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))

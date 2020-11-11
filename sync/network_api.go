@@ -11,13 +11,13 @@ import (
 	"github.com/zarbchain/zarb-go/network"
 )
 
-type NetworkApi interface {
+type NetworkAPI interface {
 	Start() error
 	Stop() error
 	PublishMessage(msg *message.Message) error
 }
 
-type networkApi struct {
+type networkAPI struct {
 	ctx            context.Context
 	net            *network.Network
 	selfAddress    crypto.Address
@@ -33,11 +33,11 @@ type networkApi struct {
 	parsMessageFn  func(data []byte, from peer.ID)
 }
 
-func newNetworkApi(
+func newNetworkAPI(
 	ctx context.Context,
 	selfAddress crypto.Address,
 	net *network.Network,
-	parsMessageFn func(data []byte, from peer.ID)) (*networkApi, error) {
+	parsMessageFn func(data []byte, from peer.ID)) (*networkAPI, error) {
 	generalTopic, err := net.JoinTopic("general")
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func newNetworkApi(
 	if err != nil {
 		return nil, err
 	}
-	return &networkApi{
+	return &networkAPI{
 		ctx:            ctx,
 		selfID:         net.ID(),
 		selfAddress:    selfAddress,
@@ -86,7 +86,7 @@ func newNetworkApi(
 	}, nil
 }
 
-func (api *networkApi) Start() error {
+func (api *networkAPI) Start() error {
 	go api.txLoop()
 	go api.blockLoop()
 	go api.generalLoop()
@@ -95,7 +95,7 @@ func (api *networkApi) Start() error {
 	return nil
 }
 
-func (api *networkApi) Stop() error {
+func (api *networkAPI) Stop() error {
 	api.txTopic.Close()
 	api.txSub.Cancel()
 	api.blockTopic.Close()
@@ -107,7 +107,7 @@ func (api *networkApi) Stop() error {
 	return nil
 }
 
-func (api *networkApi) parsMessage(m *pubsub.Message) {
+func (api *networkAPI) parsMessage(m *pubsub.Message) {
 	// only forward messages delivered by others
 	if m.ReceivedFrom == api.selfID {
 		return
@@ -116,14 +116,14 @@ func (api *networkApi) parsMessage(m *pubsub.Message) {
 	api.parsMessageFn(m.Data, m.ReceivedFrom)
 }
 
-func (api *networkApi) PublishMessage(msg *message.Message) error {
+func (api *networkAPI) PublishMessage(msg *message.Message) error {
 	msg.Initiator = api.selfAddress
 	topic := api.topic(msg)
 	bs, _ := msg.MarshalCBOR()
 	return topic.Publish(api.ctx, bs)
 }
 
-func (api *networkApi) txLoop() {
+func (api *networkAPI) txLoop() {
 	for {
 		m, err := api.txSub.Next(api.ctx)
 		if err != nil {
@@ -135,7 +135,7 @@ func (api *networkApi) txLoop() {
 	}
 }
 
-func (api *networkApi) blockLoop() {
+func (api *networkAPI) blockLoop() {
 	for {
 		m, err := api.blockSub.Next(api.ctx)
 		if err != nil {
@@ -147,7 +147,7 @@ func (api *networkApi) blockLoop() {
 	}
 }
 
-func (api *networkApi) generalLoop() {
+func (api *networkAPI) generalLoop() {
 	for {
 		m, err := api.generalSub.Next(api.ctx)
 		if err != nil {
@@ -159,7 +159,7 @@ func (api *networkApi) generalLoop() {
 	}
 }
 
-func (api *networkApi) consensusLoop() {
+func (api *networkAPI) consensusLoop() {
 	for {
 		m, err := api.consensusSub.Next(api.ctx)
 		if err != nil {
@@ -171,7 +171,7 @@ func (api *networkApi) consensusLoop() {
 	}
 }
 
-func (api *networkApi) topic(msg *message.Message) *pubsub.Topic {
+func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 	switch msg.PayloadType() {
 
 	case message.PayloadTypeSalam,

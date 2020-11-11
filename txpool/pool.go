@@ -80,7 +80,7 @@ func (pool *TxPool) appendTx(tx tx.Tx) {
 
 	_, found := pool.pendingsMap[tx.Hash()]
 	if found {
-		pool.logger.Debug("We already have this transaction", "hash", tx.Hash())
+		pool.logger.Trace("We already have this transaction", "hash", tx.Hash())
 		return
 	}
 	// TODO:

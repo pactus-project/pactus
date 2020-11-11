@@ -28,10 +28,10 @@ func DefaultConfig() *Config {
 
 func TestConfig() *Config {
 	return &Config{
-		TimeoutPropose:          10 * time.Millisecond,
-		TimeoutPrevote:          10 * time.Millisecond,
-		TimeoutPrecommit:        10 * time.Millisecond,
-		NewRoundDeltaDuration:   0 * time.Millisecond,
+		TimeoutPropose:          300 * time.Millisecond,
+		TimeoutPrevote:          200 * time.Millisecond,
+		TimeoutPrecommit:        200 * time.Millisecond,
+		NewRoundDeltaDuration:   100 * time.Millisecond,
 		PeerGossipSleepDuration: 10 * time.Millisecond,
 		FuzzTesting:             false,
 	}

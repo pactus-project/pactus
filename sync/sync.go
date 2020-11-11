@@ -12,13 +12,13 @@ import (
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/stats"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 )
 
-// Not: Synchronizer should not have any lock to prevent daed lock situation.
-// Other modules like state or consesnus are thread safe
 type Synchronizer struct {
+	// Not: Synchronizer should not have any lock to prevent daed lock situation.
+	// Other modules like state or consesnus are thread safe
+
 	ctx             context.Context
 	config          *Config
 	store           state.StoreReader
@@ -27,9 +27,8 @@ type Synchronizer struct {
 	txPool          *txpool.TxPool
 	stats           *stats.Stats
 	blockPool       *BlockPool
-	txkPool         map[crypto.Hash]*tx.Tx
 	broadcastCh     <-chan *message.Message
-	networkApi      NetworkApi
+	networkAPI      NetworkAPI
 	heartBeatTicker *time.Ticker
 	logger          *logger.Logger
 }
@@ -49,13 +48,12 @@ func NewSynchronizer(
 		state:       state,
 		consensus:   consensus,
 		txPool:      txPool,
-		txkPool:     make(map[crypto.Hash]*tx.Tx),
 		broadcastCh: broadcastCh,
 	}
 
 	logger := logger.NewLogger("_sync", syncer)
 
-	api, err := newNetworkApi(syncer.ctx, addr, net, syncer.ParsMessage)
+	api, err := newNetworkAPI(syncer.ctx, addr, net, syncer.ParsMessage)
 	if err != nil {
 		return nil, err
 	}
@@ -63,13 +61,13 @@ func NewSynchronizer(
 	syncer.logger = logger
 	syncer.blockPool = NewBlockPool()
 	syncer.stats = stats.NewStats(state.GenesisHash())
-	syncer.networkApi = api
+	syncer.networkAPI = api
 
 	return syncer, nil
 }
 
 func (syncer *Synchronizer) Start() error {
-	syncer.networkApi.Start()
+	syncer.networkAPI.Start()
 
 	go syncer.broadcastLoop()
 
@@ -81,7 +79,7 @@ func (syncer *Synchronizer) Start() error {
 	timer := time.NewTimer(syncer.config.StartingTimeout)
 	go func() {
 		<-timer.C
-		syncer.maybeSyncing()
+		syncer.maybeSynced()
 	}()
 
 	return nil
@@ -89,18 +87,19 @@ func (syncer *Synchronizer) Start() error {
 
 func (syncer *Synchronizer) Stop() error {
 	syncer.ctx.Done()
-	syncer.networkApi.Stop()
+	syncer.networkAPI.Stop()
 	syncer.heartBeatTicker.Stop()
 
 	return nil
 }
 
-func (syncer *Synchronizer) maybeSyncing() {
+func (syncer *Synchronizer) maybeSynced() {
 	lastHeight := syncer.state.LastBlockHeight()
 	networkHeight := syncer.stats.MaxHeight()
 
-	if lastHeight >= networkHeight-1 {
-		syncer.consensus.ScheduleNewHeight()
+	if lastHeight >= networkHeight {
+		syncer.logger.Info("We are synced. Inform consensus.", "height", lastHeight)
+		syncer.consensus.MoveToNewHeight()
 	}
 }
 
@@ -127,5 +126,8 @@ func (syncer *Synchronizer) broadcastLoop() {
 	}
 }
 func (syncer *Synchronizer) Fingerprint() string {
-	return fmt.Sprintf("{☍ %d ⛲ %d }", syncer.stats.PeersCount(), syncer.blockPool.BlockLen())
+	return fmt.Sprintf("{☍ %d ⛲ %d height %d}",
+		syncer.stats.PeersCount(),
+		syncer.blockPool.BlockLen(),
+		syncer.stats.MaxHeight())
 }

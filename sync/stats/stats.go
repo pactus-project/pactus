@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
@@ -12,6 +13,8 @@ import (
 
 // Stats hold statistic data about peers' behaviors
 type Stats struct {
+	lk deadlock.RWMutex
+
 	peers       map[peer.ID]*Peer
 	nodes       map[crypto.Address]*Node
 	genesisHash crypto.Hash
@@ -27,10 +30,23 @@ func NewStats(genesisHash crypto.Hash) *Stats {
 }
 
 func (s *Stats) PeersCount() int {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
 	return len(s.peers)
 }
 
+func (s *Stats) NodesCount() int {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	return len(s.nodes)
+}
+
 func (s *Stats) MaxHeight() int {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
 	return s.maxHeight
 }
 
@@ -52,12 +68,10 @@ func (s *Stats) getNode(addr crypto.Address) *Node {
 	return n
 }
 
-func (s *Stats) IncreaseInvalidMessageCounter(peerID peer.ID) {
-	peer := s.getPeer(peerID)
-	peer.InvalidMsg = peer.InvalidMsg + 1
-}
-
 func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
 	peer := s.getPeer(from)
 	peer.ReceivedMsg = peer.ReceivedMsg + 1
 
@@ -125,5 +139,10 @@ func (s *Stats) badPeer(peer *Peer) bool {
 }
 
 func (s *Stats) updateMaxHeight(height int) {
+
+	// TODO: this has a potential risk.
+	// Imagine a bad peer reports that his height is 10000000
+	// Then we should wait until that height to start consensus.
+	//
 	s.maxHeight = util.Max(s.maxHeight, height)
 }

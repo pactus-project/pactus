@@ -8,7 +8,7 @@ import (
 
 func (cs *Consensus) enterPrevote(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevote) {
-		cs.logger.Debug("Prevote with invalid args", "height", height, "round", round)
+		cs.logger.Debug("Prevote:  Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 	cs.updateRoundStep(round, hrs.StepTypePrevote)
@@ -20,6 +20,8 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 
 	roundProposal := cs.votes.RoundProposal(round)
 	if roundProposal == nil {
+		cs.requestForProposal()
+
 		cs.logger.Warn("Prevote: Voted for nil, no proposal.")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
@@ -38,7 +40,7 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 
 func (cs *Consensus) enterPrevoteWait(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevoteWait) {
-		cs.logger.Debug("PrevoteWait with invalid args", "height", height, "round", round)
+		cs.logger.Debug("PrevoteWait:  Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 

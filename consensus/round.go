@@ -6,7 +6,7 @@ import (
 
 func (cs *Consensus) enterNewRound(height int, round int) {
 	if cs.invalidHeight(height) {
-		cs.logger.Debug("NewRound with invalid args", "height", height, "round", round)
+		cs.logger.Debug("NewRound: Invalid height or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 	switch cs.hrs.Step() {
@@ -14,7 +14,7 @@ func (cs *Consensus) enterNewRound(height int, round int) {
 	case hrs.StepTypeNewHeight:
 		{
 			if round != 0 || cs.hrs.Round() != 0 {
-				cs.logger.Debug("NewRound with invalid args", "height", height, "round", round)
+				cs.logger.Debug("NewRound: Invalid round", "height", height, "round", round)
 				return
 			}
 		}
@@ -22,12 +22,12 @@ func (cs *Consensus) enterNewRound(height int, round int) {
 	case hrs.StepTypePrecommitWait:
 		{
 			if round == 0 || cs.hrs.Round() != round-1 {
-				cs.logger.Debug("NewRound with invalid args", "height", height, "round", round)
+				cs.logger.Debug("NewRound: Invalid round", "height", height, "round", round)
 				return
 			}
 		}
 	default:
-		cs.logger.Debug("NewRound with invalid args", "height", height, "round", round)
+		cs.logger.Debug("NewRound: Invalid step", "height", height, "round", round)
 		return
 	}
 

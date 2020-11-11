@@ -9,21 +9,21 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *Consensus) proposer() *validator.Validator {
-	return cs.valset.Proposer(cs.hrs.Round())
+func (cs *Consensus) proposer(round int) *validator.Validator {
+	return cs.valset.Proposer(round)
 }
 
-func (cs *Consensus) isProposer(address crypto.Address) bool {
-	return cs.proposer().Address().EqualsTo(address)
+func (cs *Consensus) isProposer(address crypto.Address, round int) bool {
+	return cs.proposer(round).Address().EqualsTo(address)
 }
 
 func (cs *Consensus) setProposal(proposal *vote.Proposal) {
-	if cs.invalidHeightRound(proposal.Height(), proposal.Round()) {
-		cs.logger.Info("Proposal received from wrong height/round", "proposal", proposal)
+	if cs.invalidHeight(proposal.Height()) {
+		cs.logger.Debug("Propose: Invalid height or committed", "proposal", proposal, "committed", cs.isCommitted)
 		return
 	}
 
-	roundProposal := cs.votes.RoundProposal(cs.hrs.Round())
+	roundProposal := cs.votes.RoundProposal(proposal.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("propose: This round has proposal", "proposal", proposal)
 		return
@@ -34,13 +34,14 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 		return
 	}
 
-	if err := proposal.Verify(cs.proposer().PublicKey()); err != nil {
+	proposer := cs.proposer(proposal.Round())
+	if err := proposal.Verify(proposer.PublicKey()); err != nil {
 		cs.logger.Error("propose: Proposal has invalid signature", "proposal", proposal, "err", err)
 		return
 	}
 
 	cs.logger.Info("propose: Proposal set", "proposal", proposal)
-	cs.votes.SetRoundProposal(cs.hrs.Round(), proposal)
+	cs.votes.SetRoundProposal(proposal.Round(), proposal)
 	// Maybe received proposal after prevote, (maybe because of network latency?)
 	// Enter prevote
 	cs.enterPrevote(proposal.Height(), proposal.Round())
@@ -48,7 +49,7 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 
 func (cs *Consensus) enterPropose(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePropose) {
-		cs.logger.Debug("Propose with invalid args", "height", height, "round", round)
+		cs.logger.Debug("Propose: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 
@@ -66,11 +67,11 @@ func (cs *Consensus) enterPropose(height int, round int) {
 
 	cs.updateRoundStep(round, hrs.StepTypePropose)
 
-	if cs.isProposer(address) {
+	if cs.isProposer(address, round) {
 		cs.logger.Info("Propose: Our turn to propose", "proposer", address)
 		cs.createProposal(height, round)
 	} else {
-		cs.logger.Debug("Propose: Not our turn to propose", "proposer", cs.proposer().Address())
+		cs.logger.Debug("Propose: Not our turn to propose", "proposer", cs.proposer(round).Address())
 	}
 
 	cs.scheduleTimeout(cs.config.Propose(round), height, round, hrs.StepTypePrevote)

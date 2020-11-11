@@ -10,7 +10,7 @@ import (
 )
 
 func TestRemoveInvalidProposal(t *testing.T) {
-	cons, pvals = newTestConsensus(t, VAL2)
+	cons := newTestConsensus(t, VAL2)
 
 	cons.enterNewHeight(1)
 
