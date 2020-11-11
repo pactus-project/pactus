@@ -17,15 +17,13 @@ func (cs *Consensus) MoveToNewHeight() {
 		return
 	}
 
+	cs.isCommitted = true
 	if stateHeight == 0 {
 		cs.updateRoundStep(0, hrs.StepTypeNewHeight)
 	} else {
 		cs.updateRoundStep(0, hrs.StepTypeCommit)
 	}
-
-	cs.isCommitted = true
 	cs.updateHeight(stateHeight)
-
 	cs.scheduleNewHeight()
 }
 
@@ -37,7 +35,7 @@ func (cs *Consensus) scheduleNewHeight() {
 
 func (cs *Consensus) enterNewHeight(height int) {
 	if cs.hrs.Height() != height-1 || (cs.hrs.Step() != hrs.StepTypeNewHeight && cs.hrs.Step() != hrs.StepTypeCommit) {
-		cs.logger.Debug("NewHeight with invalid args", "height", height)
+		cs.logger.Debug("NewHeight: Invalid args", "height", height)
 		return
 	}
 	if cs.state.LastBlockHeight() != cs.hrs.Height() {
@@ -63,6 +61,7 @@ func (cs *Consensus) enterNewHeight(height int) {
 	cs.isCommitted = false
 	cs.updateHeight(height)
 	cs.updateRoundStep(0, hrs.StepTypeNewHeight)
+	cs.logger.Info("NewHeight: Entring new height", "height", height)
 
 	cs.enterNewRound(height, 0)
 }

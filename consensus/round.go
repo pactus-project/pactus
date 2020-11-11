@@ -52,10 +52,9 @@ func (cs *Consensus) enterNewRound(height int, round int) {
 		}
 	}
 
-	cs.updateRoundStep(round, hrs.StepTypeNewRound)
-
-	cs.logger.Debug("NewRound: Resetting Proposal info")
 	cs.votes.lockedProposal = nil
+	cs.updateRoundStep(round, hrs.StepTypeNewRound)
+	cs.logger.Debug("NewRound: Resetting Proposal info")
 
 	cs.enterPropose(height, round)
 }

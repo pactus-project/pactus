@@ -8,7 +8,7 @@ import (
 
 func (cs *Consensus) enterPrevote(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevote) {
-		cs.logger.Debug("Prevote:  Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
+		cs.logger.Debug("Prevote: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 	cs.updateRoundStep(round, hrs.StepTypePrevote)
@@ -22,13 +22,13 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 	if roundProposal == nil {
 		cs.requestForProposal()
 
-		cs.logger.Warn("Prevote: Voted for nil, no proposal.")
+		cs.logger.Warn("Prevote: No proposal")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 	}
 
 	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
-		cs.logger.Warn("Prevote: Voted for nil, invalid block", "proposal", roundProposal, "err", err)
+		cs.logger.Warn("Prevote: Invalid block", "proposal", roundProposal, "err", err)
 		cs.votes.SetRoundProposal(cs.hrs.Round(), nil)
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
@@ -40,7 +40,7 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 
 func (cs *Consensus) enterPrevoteWait(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevoteWait) {
-		cs.logger.Debug("PrevoteWait:  Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
+		cs.logger.Debug("PrevoteWait: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
 
@@ -50,6 +50,6 @@ func (cs *Consensus) enterPrevoteWait(height int, round int) {
 		cs.logger.Error("PrevoteWait: Prevotes does not have any +2/3 votes")
 	}
 
-	cs.scheduleTimeout(cs.config.Prevote(round), height, round, hrs.StepTypePrecommit)
 	cs.logger.Info("PrevoteWait: Wait for some more prevotes") //then enter precommit
+	cs.scheduleTimeout(cs.config.Prevote(round), height, round, hrs.StepTypePrecommit)
 }

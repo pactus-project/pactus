@@ -61,7 +61,7 @@ func (cs *Consensus) enterPropose(height int, round int) {
 
 	address := cs.privValidator.Address()
 	if !cs.valset.Contains(address) {
-		cs.logger.Info("Propose: This node is not in validator set", "addr", address)
+		cs.logger.Trace("Propose: This node is not in validator set", "addr", address)
 		return
 	}
 
@@ -99,7 +99,7 @@ func (cs *Consensus) createProposal(height int, round int) {
 	cs.privValidator.SignMsg(proposal)
 	cs.setProposal(proposal)
 
-	cs.logger.Info("Propose: Proposal signed and sent", "proposal", proposal)
+	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
 
 	// Broadcast proposal
 	msg := message.NewProposalMessage(*proposal)

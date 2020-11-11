@@ -98,7 +98,7 @@ func (syncer *Synchronizer) maybeSynced() {
 	networkHeight := syncer.stats.MaxHeight()
 
 	if lastHeight >= networkHeight {
-		syncer.logger.Info("We are synced. Inform consensus.", "height", lastHeight)
+		syncer.logger.Info("We are synced", "height", lastHeight)
 		syncer.consensus.MoveToNewHeight()
 	}
 }

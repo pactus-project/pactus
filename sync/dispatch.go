@@ -15,6 +15,11 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 	to = util.Min(to, ourHeight)
 	to = util.Min(to, to+syncer.config.BlockPerMessage)
 
+	// Invalid range
+	if from > to {
+		return
+	}
+
 	// Help peer to catch up
 	txs := make([]tx.Tx, 0)
 	blocks := make([]block.Block, to-from+1)

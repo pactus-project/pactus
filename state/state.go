@@ -313,7 +313,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.lastReceiptsHash = *receiptsHash
 	st.lastCommit = &commit
 
-	st.logger.Info("A new block is committed", "block", block, "round", commit.Round())
+	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
 
 	return nil
 }

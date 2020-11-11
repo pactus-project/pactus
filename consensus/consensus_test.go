@@ -84,11 +84,11 @@ func checkHRS(t *testing.T, cons *Consensus, height, round int, step hrs.StepTyp
 
 func checkHRSWait(t *testing.T, cons *Consensus, height, round int, step hrs.StepType) {
 	expected := hrs.NewHRS(height, round, step)
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 20; i++ {
 		if expected.EqualsTo(cons.hrs) {
 			return
 		}
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 	assert.Equal(t, expected, cons.hrs)
 }
@@ -240,18 +240,14 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 
 	cons.enterNewHeight(1)
 
-	// Validator_1 is online, but the proposal is not accepted by other nodes
-	// Validator_4 is offline
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), VAL1, false)
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL2, false)
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL3, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypePrevoteWait)
+	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrevoteWait)
 	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), VAL1, false)
-	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL2, false)
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL3, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypePrecommitWait)
+	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommitWait)
 	checkHRSWait(t, cons, 1, 1, hrs.StepTypePrevote)
 
 	p := cons.LastProposal()
