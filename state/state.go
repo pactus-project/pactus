@@ -319,7 +319,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 }
 
 func (st *state) Fingerprint() string {
-	return fmt.Sprintf("{# %v ⌘ %v 🕣 %v}",
+	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastBlockHeight,
 		st.lastBlockHash.Fingerprint(),
 		st.lastBlockTime.Format("15.04.05"))

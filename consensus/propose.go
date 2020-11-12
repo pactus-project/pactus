@@ -57,15 +57,13 @@ func (cs *Consensus) enterPropose(height int, round int) {
 		cs.logger.Debug("Propose: This node is not a validator")
 		return
 	}
-	cs.logger.Debug("Propose: This node is a validator")
+	cs.updateRoundStep(round, hrs.StepTypePropose)
 
 	address := cs.privValidator.Address()
 	if !cs.valset.Contains(address) {
 		cs.logger.Trace("Propose: This node is not in validator set", "addr", address)
 		return
 	}
-
-	cs.updateRoundStep(round, hrs.StepTypePropose)
 
 	if cs.isProposer(address, round) {
 		cs.logger.Info("Propose: Our turn to propose", "proposer", address)

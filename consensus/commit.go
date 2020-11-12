@@ -74,7 +74,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 
 	cs.isCommitted = true
 	cs.updateRoundStep(round, hrs.StepTypeCommit)
-	cs.logger.Trace("Commit: Block committed, Schedule for new height", "block", blockHash.Fingerprint())
+	cs.logger.Info("Commit: Block committed, Schedule new height", "block", blockHash.Fingerprint())
 
 	cs.scheduleNewHeight()
 

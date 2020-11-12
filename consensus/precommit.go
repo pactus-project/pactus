@@ -12,6 +12,11 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 		return
 	}
 
+	if cs.votes.lockedProposal != nil {
+		cs.logger.Debug("Precommit: we have locked before")
+		return
+	}
+
 	preVotes := cs.votes.Prevotes(round)
 	if !preVotes.HasQuorum() {
 		cs.logger.Error("Precommit: Entering precommit witout having quorom for prevote stage")
