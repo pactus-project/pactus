@@ -21,10 +21,10 @@ func NewExecutor(sandbox executor.Sandbox) (*Executor, error) {
 	return exe, nil
 }
 
-func (exe *Executor) Execute(trx *tx.Tx, isMintbaseTx bool) (*tx.Receipt, error) {
+func (exe *Executor) Execute(trx *tx.Tx, isMintbaseTx bool) error {
 	if !isMintbaseTx {
 		if trx.IsMintbaseTx() {
-			return nil, errors.Errorf(errors.ErrInvalidTx, "Duplicated mintbase transaction")
+			return errors.Errorf(errors.ErrInvalidTx, "Duplicated mintbase transaction")
 		}
 	}
 

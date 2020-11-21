@@ -173,11 +173,12 @@ func (tx Tx) Fingerprint() string {
 		tx.data.Receiver.Fingerprint())
 }
 
-func (tx *Tx) GenerateReceipt(status int) *Receipt {
+func (tx *Tx) GenerateReceipt(status int, blockHash crypto.Hash) *Receipt {
 	return &Receipt{
 		data: receiptData{
-			TxHash: tx.Hash(),
-			Status: status,
+			TxHash:    tx.Hash(),
+			BlockHash: blockHash,
+			Status:    status,
 		},
 	}
 }
