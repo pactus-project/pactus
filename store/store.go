@@ -49,14 +49,14 @@ func (s *Store) SaveBlock(block block.Block, height int) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.SaveBlock(block, height)
+	return s.blockStore.saveBlock(block, height)
 }
 
 func (s *Store) BlockByHeight(height int) (*block.Block, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.RetrieveBlock(height)
+	return s.blockStore.retrieveBlock(height)
 }
 
 func (s *Store) BlockByHash(hash crypto.Hash) (*block.Block, int, error) {
@@ -67,7 +67,7 @@ func (s *Store) BlockByHash(hash crypto.Hash) (*block.Block, int, error) {
 	if err != nil {
 		return nil, -1, err
 	}
-	block, err := s.blockStore.RetrieveBlock(height)
+	block, err := s.blockStore.retrieveBlock(height)
 	if err != nil {
 		return nil, -1, err
 	}
@@ -85,14 +85,14 @@ func (s *Store) SaveTx(tx tx.Tx, receipt tx.Receipt) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.SaveTx(tx, receipt)
+	return s.txStore.saveTx(tx, receipt)
 }
 
 func (s *Store) Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.Tx(hash)
+	return s.txStore.tx(hash)
 }
 
 func (s *Store) HasAccount(addr crypto.Address) bool {

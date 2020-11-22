@@ -4,12 +4,13 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 var (
 	blockPrefix     = []byte{0x01}
-	blockHashPrefix = []byte{0x02}
+	blockHashPrefix = []byte{0x03}
 )
 
 func blockKey(height int) []byte           { return append(blockPrefix, util.IntToSlice(height)...) }
@@ -29,7 +30,7 @@ func newBlockStore(path string) (*blockStore, error) {
 	}, nil
 }
 
-func (bs *blockStore) SaveBlock(block block.Block, height int) error {
+func (bs *blockStore) saveBlock(block block.Block, height int) error {
 	blockData, err := block.Encode()
 	if err != nil {
 		return err
@@ -38,8 +39,7 @@ func (bs *blockStore) SaveBlock(block block.Block, height int) error {
 	blockHashKey := blockHashKey(block.Hash())
 	has, err := bs.db.Has(blockKey, nil)
 	if has {
-		// TODO: uncomment it later
-		//logger.Warn("The blockkey exists in database, rewrite it.", "hash", block.Hash())
+		logger.Warn("The blockkey exists in database, rewrite it.", "hash", block.Hash())
 	}
 	err = bs.db.Put(blockKey, blockData, nil)
 	if err != nil {
@@ -52,7 +52,7 @@ func (bs *blockStore) SaveBlock(block block.Block, height int) error {
 	return nil
 }
 
-func (bs *blockStore) RetrieveBlock(height int) (*block.Block, error) {
+func (bs *blockStore) retrieveBlock(height int) (*block.Block, error) {
 	blockKey := blockKey(height)
 	blockData, err := bs.db.Get(blockKey, nil)
 	if err != nil {

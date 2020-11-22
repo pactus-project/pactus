@@ -32,7 +32,7 @@ func newTxStore(path string) (*txStore, error) {
 	}, nil
 }
 
-func (bs *txStore) SaveTx(tx tx.Tx, receipt tx.Receipt) error {
+func (bs *txStore) saveTx(tx tx.Tx, receipt tx.Receipt) error {
 	tnr := txWithReceipt{tx, receipt}
 	data, err := cbor.Marshal(tnr)
 	if err != nil {
@@ -46,7 +46,7 @@ func (bs *txStore) SaveTx(tx tx.Tx, receipt tx.Receipt) error {
 	return nil
 }
 
-func (bs *txStore) Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
+func (bs *txStore) tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
 	txKey := txKey(hash)
 	data, err := bs.db.Get(txKey, nil)
 	if err != nil {
