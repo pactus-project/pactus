@@ -30,9 +30,6 @@ func (exe *Executor) Execute(trx *tx.Tx, isMintbaseTx bool) error {
 
 	exe.accumulatedFee += trx.Fee()
 
-	if trx.IsCallTx() {
-		// Call executor
-	}
 
 	return exe.sendExecutor.Execute(trx)
 }

@@ -245,7 +245,7 @@ func (st *state) ProposeBlock() block.Block {
 	}
 
 	mintbaseTx := tx.NewMintbaseTx(st.lastBlockHash, st.proposer, 10, "Minbase transaction")
-	st.txPool.AppendTxAndBroadcast(mintbaseTx)
+	st.txPool.AppendTxAndBroadcast(*mintbaseTx)
 
 	txHashes := block.NewTxHashes()
 	txHashes.Append(mintbaseTx.Hash())

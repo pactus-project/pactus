@@ -133,7 +133,6 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 
 	m.Type = msg.PayloadType
 	m.Payload = payload
-	cbor.Unmarshal(msg.Payload, payload)
 	return cbor.Unmarshal(msg.Payload, payload)
 }
 
