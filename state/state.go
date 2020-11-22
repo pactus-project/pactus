@@ -49,6 +49,7 @@ type State interface {
 type state struct {
 	lk deadlock.RWMutex
 
+	config             *Config
 	proposer           crypto.Address
 	genDoc             *genesis.Genesis
 	store              *store.Store
@@ -74,6 +75,7 @@ func LoadOrNewState(
 	txPool *txpool.TxPool) (State, error) {
 
 	st := &state{
+		config:   conf,
 		genDoc:   genDoc,
 		proposer: proposer,
 		txPool:   txPool,
@@ -86,9 +88,22 @@ func LoadOrNewState(
 	}
 	st.store = store
 
-	err = st.loadState()
+	height, commit, err := st.loadLastInfo()
 	if err != nil {
-		err = st.makeGenesisState(genDoc)
+		return nil, err
+	}
+
+	if height == 0 {
+		err := st.makeGenesisState(genDoc)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// replay the last block
+		err := st.replayLastBlock(height, commit)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	st.cache = newCache(store)
@@ -100,10 +115,24 @@ func LoadOrNewState(
 	return st, nil
 }
 
-func (st *state) loadState() error {
+func (st *state) replayLastBlock(height int, commit *block.Commit) error {
+	b, err := st.store.BlockByHeight(height)
+	if err != nil {
+		return err
+	}
+	st.lastBlockHeight = height - 1
+	st.lastBlockHash = b.Header().LastBlockHash()
+	st.lastReceiptsHash = b.Header().LastReceiptsHash()
 
-	return fmt.Errorf("temp error")
-	//return nil
+	err = st.ApplyBlock(height, *b, *commit)
+	if err != nil {
+		return err
+	}
+
+	return nil
+	///b.LastCommit()
+
+	//st.validatorSet = validator.NewValidatorSet(vals, len(vals))
 }
 
 func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
@@ -314,6 +343,8 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.lastCommit = &commit
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
+
+	st.saveLastInfo(st.lastBlockHeight, st.lastCommit)
 
 	return nil
 }

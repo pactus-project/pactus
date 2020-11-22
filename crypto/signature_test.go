@@ -50,7 +50,7 @@ func TestMarshalingSignature(t *testing.T) {
 }
 
 func TestVerifyingSignature(t *testing.T) {
-	msg := []byte("message")
+	msg := []byte("zaeb")
 
 	_, pb1, pv1 := RandomKeyPair()
 	_, pb2, pv2 := RandomKeyPair()

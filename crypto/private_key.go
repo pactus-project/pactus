@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/logger"
-
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
+	"github.com/zarbchain/zarb-go/logger"
 )
 
 const PrivateKeySize = 32
