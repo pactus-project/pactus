@@ -25,7 +25,7 @@ build:
 	go build $(LDFLAGS) $(TAGS) -o build/zarb ./cmd/zarb/
 
 install:
-	go install $(LDFLAGS) $(TAGS) ./cmd/zarb
+	go install $(LDFLAGS) -ldflags '-s' $(TAGS) ./cmd/zarb
 
 ########################################
 ### Testing
