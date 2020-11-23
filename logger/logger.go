@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"encoding/hex"
 	"fmt"
 	"reflect"
 
@@ -86,6 +87,10 @@ func keyvalsToFields(keyvals ...interface{}) logrus.Fields {
 		case fingerprintable:
 			if !isNil(v) {
 				val = fmt.Sprintf("%v", v.Fingerprint())
+			}
+		case []byte:
+			{
+				val = fmt.Sprintf("%v", hex.EncodeToString(v))
 			}
 		default:
 			val = fmt.Sprintf("%v", keyvals[i+1])

@@ -87,8 +87,10 @@ func LoadOrNewState(
 		return nil, err
 	}
 	st.store = store
+	st.cache = newCache(store)
+	st.executor, err = execution.NewExecutor(st.cache)
 
-	height, commit, err := st.loadLastInfo()
+	height, commit, receiptHash, err := st.loadLastInfo()
 	if err != nil {
 		return nil, err
 	}
@@ -100,14 +102,12 @@ func LoadOrNewState(
 		}
 	} else {
 		// replay the last block
-		err := st.replayLastBlock(height, commit)
+		err := st.replayLastBlock(height, commit, receiptHash)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	st.cache = newCache(store)
-	st.executor, err = execution.NewExecutor(st.cache)
 	if err != nil {
 		return nil, err
 	}
@@ -115,24 +115,29 @@ func LoadOrNewState(
 	return st, nil
 }
 
-func (st *state) replayLastBlock(height int, commit *block.Commit) error {
+func (st *state) replayLastBlock(height int, commit *block.Commit, receiptHash *crypto.Hash) error {
 	b, err := st.store.BlockByHeight(height)
 	if err != nil {
 		return err
 	}
-	st.lastBlockHeight = height - 1
-	st.lastBlockHash = b.Header().LastBlockHash()
-	st.lastReceiptsHash = b.Header().LastReceiptsHash()
+	st.lastBlockHeight = height
+	st.lastBlockHash = b.Header().Hash()
+	st.lastCommit = commit
+	st.lastBlockTime = b.Header().Time()
+	st.lastReceiptsHash = *receiptHash
+	st.NextCommitersHash = b.Header().NextCommitersHash()
 
-	err = st.ApplyBlock(height, *b, *commit)
-	if err != nil {
-		return err
+	vals := make([]*validator.Validator, len(commit.Commiters()))
+	for i, c := range commit.Commiters() {
+		val, err := st.store.Validator(c.Address)
+		if err != nil {
+			return fmt.Errorf("Last commit has unknown validator: %v", err)
+		}
+		vals[i] = val
 	}
+	st.validatorSet = validator.NewValidatorSet(vals, st.params.MaximumPower)
 
 	return nil
-	///b.LastCommit()
-
-	//st.validatorSet = validator.NewValidatorSet(vals, len(vals))
 }
 
 func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
@@ -146,7 +151,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		st.store.UpdateValidator(val)
 	}
 
-	st.validatorSet = validator.NewValidatorSet(vals, len(vals))
+	st.validatorSet = validator.NewValidatorSet(vals, st.params.MaximumPower)
 	st.lastBlockTime = genDoc.GenesisTime()
 	return nil
 }
@@ -345,7 +350,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
 
-	st.saveLastInfo(st.lastBlockHeight, st.lastCommit)
+	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
 
 	return nil
 }

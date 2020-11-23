@@ -5,11 +5,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func TestAccountChange(t *testing.T) {
-	st, _ := mockState(t)
-	cache := newCache(st.(*state).store)
+	_, pb, _ := crypto.RandomKeyPair()
+
+	st, _ := mockState(t, pb)
+	cache := newCache(st.store)
 	acc1 := account.GenerateTestAccount()
 
 	acc := cache.Account(acc1.Address())

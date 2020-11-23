@@ -27,38 +27,38 @@ func newValidatorStore(path string) (*validatorStore, error) {
 	}, nil
 }
 
-func (vs *validatorStore) HasValidator(addr crypto.Address) bool {
+func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
 	has, err := vs.db.Has(validatorKey(addr), nil)
 	if err != nil {
-		panic(err)
+		return false
 	}
 	return has
 }
 
-func (vs *validatorStore) RetrieveValidator(addr crypto.Address) *validator.Validator {
-	bs, _ := vs.db.Get(validatorKey(addr), nil)
-	if bs == nil {
-		return nil
+func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, error) {
+	data, err := tryGet(vs.db, validatorKey(addr))
+	if err != nil {
+		return nil, err
 	}
 
 	val := new(validator.Validator)
-	if err := val.Decode(bs); err != nil {
-		panic(err)
+	if err := val.Decode(data); err != nil {
+		return nil, err
 	}
 
-	return val
+	return val, nil
 }
 
-func (vs *validatorStore) ValidatorCount() int {
-	count := 0
-	vs.IterateValidators(func(validator *validator.Validator) (stop bool) {
-		count++
+func (vs *validatorStore) len() int {
+	len := 0
+	vs.iterateValidators(func(validator *validator.Validator) (stop bool) {
+		len++
 		return false
 	})
-	return count
+	return len
 }
 
-func (vs *validatorStore) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
+func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	r := util.BytesPrefix(validatorPrefix)
 	iter := vs.db.NewIterator(r, nil)
 	for iter.Next() {
@@ -79,11 +79,11 @@ func (vs *validatorStore) IterateValidators(consumer func(*validator.Validator) 
 	iter.Release()
 }
 
-func (vs *validatorStore) UpdateValidator(val *validator.Validator) {
-	bs, err := val.Encode()
+func (vs *validatorStore) updateValidator(val *validator.Validator) error {
+	data, err := val.Encode()
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	vs.db.Put(validatorKey(val.Address()), bs, nil)
+	return tryPut(vs.db, validatorKey(val.Address()), data)
 }

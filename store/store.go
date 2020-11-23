@@ -56,7 +56,7 @@ func (s *Store) BlockByHeight(height int) (*block.Block, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.retrieveBlock(height)
+	return s.blockStore.block(height)
 }
 
 func (s *Store) BlockByHash(hash crypto.Hash) (*block.Block, int, error) {
@@ -67,7 +67,7 @@ func (s *Store) BlockByHash(hash crypto.Hash) (*block.Block, int, error) {
 	if err != nil {
 		return nil, -1, err
 	}
-	block, err := s.blockStore.retrieveBlock(height)
+	block, err := s.blockStore.block(height)
 	if err != nil {
 		return nil, -1, err
 	}
@@ -99,68 +99,68 @@ func (s *Store) HasAccount(addr crypto.Address) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.accountStore.HasAccount(addr)
+	return s.accountStore.hasAccount(addr)
 }
 
-func (s *Store) RetrieveAccount(addr crypto.Address) *account.Account {
+func (s *Store) Account(addr crypto.Address) (*account.Account, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.accountStore.RetrieveAccount(addr)
+	return s.accountStore.account(addr)
 }
 
-func (s *Store) AccountCount() int {
+func (s *Store) AccountLen() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.accountStore.AccountCount()
+	return s.accountStore.len()
 }
 
 func (s *Store) IterateAccounts(consumer func(*account.Account) (stop bool)) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.accountStore.IterateAccounts(consumer)
+	s.accountStore.iterateAccounts(consumer)
 }
 
 func (s *Store) UpdateAccount(acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.accountStore.UpdateAccount(acc)
+	s.accountStore.updateAccount(acc)
 }
 
 func (s *Store) HasValidator(addr crypto.Address) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.validatorStore.HasValidator(addr)
+	return s.validatorStore.hasValidator(addr)
 }
 
-func (s *Store) RetrieveValidator(addr crypto.Address) *validator.Validator {
+func (s *Store) Validator(addr crypto.Address) (*validator.Validator, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.validatorStore.RetrieveValidator(addr)
+	return s.validatorStore.validator(addr)
 }
 
-func (s *Store) ValidatorCount() int {
+func (s *Store) ValidatorLen() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.validatorStore.ValidatorCount()
+	return s.validatorStore.len()
 }
 
 func (s *Store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.validatorStore.IterateValidators(consumer)
+	s.validatorStore.iterateValidators(consumer)
 }
 
 func (s *Store) UpdateValidator(acc *validator.Validator) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.validatorStore.UpdateValidator(acc)
+	s.validatorStore.updateValidator(acc)
 }

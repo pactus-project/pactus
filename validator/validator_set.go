@@ -41,6 +41,10 @@ func (set *ValidatorSet) MaximumPower() int {
 	return set.maximumPower
 }
 
+func (set *ValidatorSet) Power() int {
+	return len(set.validators)
+}
+
 func (set *ValidatorSet) Join(val *Validator) error {
 
 	panic("Not supported yet")

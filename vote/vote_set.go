@@ -148,7 +148,7 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	return added, nil
 }
 func (vs *VoteSet) hasQuorum(sum int) bool {
-	return sum > (vs.valSet.MaximumPower() * 2 / 3)
+	return sum > (vs.valSet.Power() * 2 / 3)
 }
 
 func (vs *VoteSet) HasQuorum() bool {

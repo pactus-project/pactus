@@ -25,8 +25,7 @@ type validatorInfo struct {
 }
 
 type accountInfo struct {
-	account  *account.Account
-	storages *orderedmap.OrderedMap
+	account *account.Account
 }
 
 type CacheOption func(*Cache)
@@ -60,15 +59,6 @@ func (c *Cache) commit(set *validator.ValidatorSet) error {
 		i := value.(*accountInfo)
 
 		c.store.UpdateAccount(i.account)
-
-		// if i.storages != nil {
-		// 	i.storages.Iter(func(k, v interface{}) (more bool) {
-		// 		if err := c.store.setStorage(i.account.Address(), k.(Word256), v.(Word256)); err != nil {
-		// 			panic(err)
-		// 		}
-		// 		return true
-		// 	})
-		// }
 
 		return true
 	})
@@ -107,7 +97,11 @@ func (c *Cache) Account(addr crypto.Address) *account.Account {
 		return i.(*accountInfo).account
 	}
 
-	return c.store.RetrieveAccount(addr)
+	acc, err := c.store.Account(addr)
+	if err != nil {
+		return nil
+	}
+	return acc
 }
 
 func (c *Cache) UpdateAccount(acc *account.Account) {
@@ -144,7 +138,11 @@ func (c *Cache) Validator(addr crypto.Address) *validator.Validator {
 		return i.(*validatorInfo).validator
 	}
 
-	return c.store.RetrieveValidator(addr)
+	val, err := c.store.Validator(addr)
+	if err != nil {
+		return nil
+	}
+	return val
 }
 
 func (c *Cache) UpdateValidator(val *validator.Validator) {
@@ -159,57 +157,3 @@ func (c *Cache) UpdateValidator(val *validator.Validator) {
 		c.valChanges.Set(addr, &validatorInfo{validator: val})
 	}
 }
-
-// func (c *Cache) AddToSet(val *validator.Validator) error {
-// 	c.lk.Lock()
-// 	defer c.lk.Unlock()
-
-// 	addr := val.Address()
-// 	_, ok := c.valChanges.GetOk(addr)
-// 	if ok {
-// 		return errValidatorChanged
-// 	}
-
-// 	c.valChanges.Set(addr, &validatorInfo{addToSet, val})
-// 	return nil
-// }
-
-// func (c *Cache) GetStorage(addr crypto.Address, key Word256) (Word256, error) {
-// 	c.lk.Lock()
-// 	defer c.lk.Unlock()
-
-// 	i, ok := c.accChanges.GetOk(addr)
-// 	if ok {
-// 		if i.(*accountInfo).storages != nil {
-// 			s, ok := i.(*accountInfo).storages.GetOk(key)
-// 			if ok {
-// 				return s.(Word256), nil
-// 			}
-// 		}
-// 	}
-
-// 	return c.store.GetStorage(addr, key)
-// }
-
-// func (c *Cache) SetStorage(addr crypto.Address, key, value Word256) error {
-// 	c.lk.Lock()
-// 	defer c.lk.Unlock()
-
-// 	i, ok := c.accChanges.GetOk(addr)
-// 	if !ok {
-// 		acc, _ := c.store.GetAccount(addr)
-// 		if acc == nil {
-// 			acc, _ = account.NewAccount(addr)
-// 		}
-
-// 		i = &accountInfo{account: acc}
-// 		c.accChanges.Set(addr, i)
-// 	}
-
-// 	if i.(*accountInfo).storages == nil {
-// 		i.(*accountInfo).storages = orderedmap.NewMap(lessFn2)
-// 	}
-
-// 	i.(*accountInfo).storages.Set(key, value)
-// 	return nil
-// }

@@ -4,7 +4,6 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -37,29 +36,25 @@ func (bs *blockStore) saveBlock(block block.Block, height int) error {
 	}
 	blockKey := blockKey(height)
 	blockHashKey := blockHashKey(block.Hash())
-	has, err := bs.db.Has(blockKey, nil)
-	if has {
-		logger.Warn("The blockkey exists in database, rewrite it.", "hash", block.Hash())
-	}
-	err = bs.db.Put(blockKey, blockData, nil)
+	err = tryPut(bs.db, blockKey, blockData)
 	if err != nil {
 		return err
 	}
-	err = bs.db.Put(blockHashKey, util.IntToSlice(height), nil)
+	err = tryPut(bs.db, blockHashKey, util.IntToSlice(height))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (bs *blockStore) retrieveBlock(height int) (*block.Block, error) {
+func (bs *blockStore) block(height int) (*block.Block, error) {
 	blockKey := blockKey(height)
-	blockData, err := bs.db.Get(blockKey, nil)
+	data, err := tryGet(bs.db, blockKey)
 	if err != nil {
 		return nil, err
 	}
 	block := new(block.Block)
-	err = block.Decode(blockData)
+	err = block.Decode(data)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +63,7 @@ func (bs *blockStore) retrieveBlock(height int) (*block.Block, error) {
 
 func (bs *blockStore) blockHeight(hash crypto.Hash) (int, error) {
 	blockHashKey := blockHashKey(hash)
-	heightData, err := bs.db.Get(blockHashKey, nil)
+	heightData, err := tryGet(bs.db, blockHashKey)
 	if err != nil {
 		return -1, err
 	}
