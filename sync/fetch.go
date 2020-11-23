@@ -66,13 +66,13 @@ func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
 	switch h := pld.Height; {
 	case h > ourHeight:
 		{
-			syncer.broadcastBlocksReq(ourHeight+1, pld.Height)
+			syncer.broadcastBlocksReq(pld.Height)
 		}
 	case h < ourHeight:
 		{
 			// Reply salam
 			syncer.broadcastSalam()
-			syncer.sendBlocks(h+1, ourHeight)
+			syncer.sendBlocks(ourHeight)
 		}
 	}
 }
@@ -81,7 +81,13 @@ func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayloa
 	b, err := syncer.store.BlockByHeight(pld.From)
 	if err == nil {
 		if b.Header().LastBlockHash().EqualsTo(pld.LastBlockHash) {
-			syncer.sendBlocks(pld.From, pld.To)
+			syncer.sendBlocks(pld.To)
+		} else {
+			syncer.logger.Warn("Peer has a block which we have no knowledge about it",
+				"height", pld.From-1,
+				"ourHash", b.Header().LastBlockHash(),
+				"peerHash", pld.LastBlockHash,
+			)
 		}
 	}
 }
@@ -122,7 +128,7 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 	newHeight := syncer.state.LastBlockHeight()
 	if height-2 > newHeight {
 		// Ask peers to send us the missed block
-		syncer.broadcastBlocksReq(newHeight+1, newHeight+2)
+		syncer.broadcastBlocksReq(newHeight + 2)
 	}
 }
 
@@ -200,7 +206,7 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 		}
 	} else if pld.HRS.Height() > hrs.Height() {
 		// Ask for more blocks from this peer
-		syncer.broadcastBlocksReq(hrs.Height()+1, pld.HRS.Height())
+		syncer.broadcastBlocksReq(pld.HRS.Height())
 	} else {
 		// We are ahead of this peer
 	}

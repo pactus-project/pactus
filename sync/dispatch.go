@@ -9,11 +9,9 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (syncer *Synchronizer) sendBlocks(from, to int) {
+func (syncer *Synchronizer) sendBlocks(from int) {
 	ourHeight := syncer.state.LastBlockHeight()
-
-	to = util.Min(to, ourHeight)
-	to = util.Min(to, to+syncer.config.BlockPerMessage)
+	to := util.Min(ourHeight, from+syncer.config.BlockPerMessage)
 
 	// Invalid range
 	if from > to {
@@ -57,8 +55,10 @@ func (syncer *Synchronizer) broadcastSalam() {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastBlocksReq(from, to int) {
-	msg := message.NewBlocksReqMessage(from, to, syncer.state.LastBlockHash())
+func (syncer *Synchronizer) broadcastBlocksReq(to int) {
+	from := syncer.state.LastBlockHeight()+1
+	hash := syncer.state.LastBlockHash()
+	msg := message.NewBlocksReqMessage(from, to, hash)
 	syncer.publishMessage(msg)
 }
 
