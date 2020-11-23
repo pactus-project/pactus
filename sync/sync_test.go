@@ -54,12 +54,15 @@ func init() {
 		b := st.ProposeBlock()
 		txHash := b.TxHashes().Hashes()[0]
 		trx := txPool.PendingTx(txHash)
-		validBlocks = append(validBlocks, b)
 		validTxs = append(validTxs, *trx)
+
+		validBlocks = append(validBlocks, b)
 		v := vote.NewPrecommit(i+1, 0, b.Hash(), privVal.Address())
 		privVal.SignMsg(v)
 		sig := v.Signature()
-		lastCommit = block.NewCommit(0, []crypto.Address{privVal.Address()}, []crypto.Signature{*sig})
+		lastCommit = block.NewCommit(0, []block.Commiter{
+			block.Commiter{Signed: true, Address: privVal.Address()}},
+			*sig)
 
 		st.ApplyBlock(i+1, b, *lastCommit)
 	}

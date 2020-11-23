@@ -16,13 +16,7 @@ all: tools build install test
 ### Tools & dependencies
 tools:
 	@echo "Installing tools"
-	go get $(GOTOOLS)
-
-bls:
-	@echo "Compiling herumi/bls"
-	rm -rf .bls && rm -rf .bls
-	git clone git://github.com/herumi/mcl.git .bls/mcl && cd .bls/mcl && make -j4
-	git clone git://github.com/herumi/bls.git .bls/bls && cd .bls/bls && make lib/libbls384_256.a
+	GO111MODULE=off go get $(GOTOOLS)
 
 
 ########################################
@@ -47,7 +41,7 @@ docker:
 
 ########################################
 ### capnp
-capnp:
+capnp: tools
 	capnp compile $(CAPNP_INC) -ogo ./www/capnp/zarb.capnp
 
 ########################################

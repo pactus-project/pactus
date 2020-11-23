@@ -93,11 +93,15 @@ func NewTreeFromHashes(hashes []crypto.Hash) *SimpleMerkleTree {
 	return &SimpleMerkleTree{merkles: merkles}
 }
 
-func (tree *SimpleMerkleTree) Root() *crypto.Hash {
+func (tree *SimpleMerkleTree) Root() crypto.Hash {
 	if tree == nil {
-		return &crypto.UndefHash
+		return crypto.UndefHash
 	}
-	return tree.merkles[len(tree.merkles)-1]
+	h := tree.merkles[len(tree.merkles)-1]
+	if h != nil {
+		return *h
+	}
+	return crypto.UndefHash
 }
 
 func (tree *SimpleMerkleTree) Depth() int {

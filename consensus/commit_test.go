@@ -24,9 +24,15 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 	votes[2] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), pvals[2].Address())
 	pvals[2].SignMsg(votes[2])
 
+	sig := crypto.Aggregate([]crypto.Signature{*votes[0].Signature(), *votes[1].Signature(), *votes[2].Signature()})
 	c := block.NewCommit(0,
-		[]crypto.Address{pvals[0].Address(), pvals[1].Address(), pvals[2].Address()},
-		[]crypto.Signature{*votes[0].Signature(), *votes[1].Signature(), *votes[2].Signature()})
+		[]block.Commiter{
+			block.Commiter{Signed: true, Address: pvals[0].Address()},
+			block.Commiter{Signed: true, Address: pvals[1].Address()},
+			block.Commiter{Signed: true, Address: pvals[2].Address()},
+			block.Commiter{Signed: false, Address: pvals[3].Address()},
+		},
+		sig)
 
 	require.NotNil(t, c)
 	err := st.ApplyBlock(1, b, *c)

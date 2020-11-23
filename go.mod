@@ -48,9 +48,8 @@ require (
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc
 	github.com/tommy351/gin-cors v0.0.0-20150617141853-dc91dec6313a // indirect
 	golang.org/x/crypto v0.0.0-20200707235045-ab33eee955e0
-	golang.org/x/net v0.0.0-20200822124328-c89045814202
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
-	golang.org/x/sys v0.0.0-20200620081246-981b61492c35 // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
 	gopkg.in/tylerb/graceful.v1 v1.2.15 // indirect
 	zombiezen.com/go/capnproto2 v2.18.0+incompatible

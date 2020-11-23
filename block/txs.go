@@ -29,9 +29,7 @@ func (txs *TxHashes) Append(hash crypto.Hash) {
 
 func (txs TxHashes) Hash() crypto.Hash {
 	merkle := simpleMerkle.NewTreeFromHashes(txs.data.Hashes)
-	root := merkle.Root()
-
-	return *root
+	return merkle.Root()
 }
 
 func (txs TxHashes) Hashes() []crypto.Hash {

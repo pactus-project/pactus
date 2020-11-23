@@ -28,39 +28,39 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 	bi.Height = int(cbi.Height())
 	bi.Data = hex.EncodeToString(d)
 
+	var lastCommit *block.Commit
+	if bi.Height == 1 {
+		lastCommit = nil
+	} else {
+		commitersList, _ := clc.Commiters()
+		commiters := make([]block.Commiter, commitersList.Len())
+		for i := 0; i < commitersList.Len(); i++ {
+			c := commitersList.At(i)
+			commiters[i].Address = bytesToAddress(c.Address())
+			commiters[i].Signed = c.Signed()
+		}
+		sig := bytesToSignature(clc.Signature())
+		lastCommit = block.NewCommit(int(clc.Round()), commiters, sig)
+	}
+
 	header := block.NewHeader(
 		uint(ch.Version()),
 		time.Unix(ch.Time(), 0),
 		bytesToHash(ch.TxsHash()),
 		bytesToHash(ch.LastBlockHash()),
-		bytesToHash(ch.NextValidatorsHash()),
+		bytesToHash(ch.NextCommitersHash()),
 		bytesToHash(ch.StateHash()),
 		bytesToHash(ch.LastReceiptsHash()),
-		bytesToHash(ch.LastCommitHash()),
 		bytesToAddress(ch.ProposerAddress()),
-	)
+		lastCommit)
 
 	txs := block.NewTxHashes()
 	hashesList, _ := ctxs.Hashes()
-	for i := 0; i < hashesList.Len(); i += 1 {
+	for i := 0; i < hashesList.Len(); i++ {
 		txs.Append(bytesToHash(hashesList.At(i)))
 	}
 
-	commitersList, _ := clc.Commiters()
-	commiters := make([]crypto.Address, commitersList.Len())
-	for i := 0; i < commitersList.Len(); i += 1 {
-		commiters[i] = bytesToAddress(commitersList.At(i))
-	}
-	signaturesList, _ := clc.Signatures()
-	signatures := make([]crypto.Signature, signaturesList.Len())
-	for i := 0; i < signaturesList.Len(); i += 1 {
-		signatures[i] = bytesToSignature(signaturesList.At(i))
-	}
-	lastCommit := block.NewCommit(int(clc.Round()), commiters, signatures)
-	if bi.Height == 1 {
-		lastCommit = nil
-	}
-	block, err := block.NewBlock(header, txs, lastCommit)
+	block, err := block.NewBlock(header, txs)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return

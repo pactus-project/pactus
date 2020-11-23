@@ -22,9 +22,9 @@ func (st *state) validateBlock(block block.Block) error {
 			"lastReceiptsHash. Expected %v, got %v", st.lastReceiptsHash, block.Header().LastReceiptsHash())
 	}
 
-	if !block.Header().NextValidatorsHash().EqualsTo(st.nextValidatorsHash) {
+	if !block.Header().NextCommitersHash().EqualsTo(st.NextCommitersHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"NextValidatorsHash. Expected %v, got %v", st.nextValidatorsHash, block.Header().NextValidatorsHash())
+			"NextCommitersHash. Expected %v, got %v", st.NextCommitersHash, block.Header().NextCommitersHash())
 	}
 
 	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
@@ -32,20 +32,23 @@ func (st *state) validateBlock(block block.Block) error {
 			"StateHash. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
 	}
 
-	if block.Header().LastBlockHash().IsUndef() {
-		if block.LastCommit() != nil {
+	if !block.Header().LastBlockHash().IsUndef() {
+		commit := block.Header().LastCommit()
+		if !commit.CommitersHash().EqualsTo(st.lastCommit.CommitersHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"block at height 1 can't have Commit signatures")
+				"Commiters are not same as we expected. Expected %v, got %v", st.lastCommit.CommitersHash(), commit.CommitersHash())
 		}
-	} else {
-		// TODO
-		// Verify commit signers
+
+		if commit.Round() != st.lastCommit.Round() {
+			return errors.Errorf(errors.ErrInvalidBlock,
+				"Commiters round is not same as we expected. Expected %v, got %v", st.lastCommit.Round(), commit.Round())
+		}
+
+		if err := st.validateCommit(st.lastBlockHash, *commit); err != nil {
+			return errors.Errorf(errors.ErrInvalidBlock,
+				"Commiters is not valid. %v", err)
+		}
 	}
-
-	// TODO: Validate block Time
-	// Should be done in consensus???
-
-	// TODO: validate proposer is correct
 
 	return nil
 }
@@ -55,20 +58,22 @@ func (st *state) validateCommit(blockHash crypto.Hash, commit block.Commit) erro
 		return err
 	}
 
-	signatures := commit.Signatures()
 	signBytes := vote.CommitSignBytes(blockHash, commit.Round())
-	for i, c := range commit.Commiters() {
-		val := st.validatorSet.Validator(c)
-		if val == nil {
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"invalid commiter: %v", c.Fingerprint())
+	pubs := make([]crypto.PublicKey, 0)
+	for _, c := range commit.Commiters() {
+		if c.Signed {
+			val := st.validatorSet.Validator(c.Address)
+			if val == nil {
+				return errors.Errorf(errors.ErrInvalidBlock,
+					"invalid commiter: %x", c.Address)
+			}
+			pubs = append(pubs, val.PublicKey())
 		}
+	}
 
-		pub := val.PublicKey()
-		if !pub.Verify(signBytes, &signatures[i]) {
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"invalid signature for %v", c.Fingerprint())
-		}
+	if !crypto.VerifyAggregated(commit.Signature(), pubs, signBytes) {
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"invalid commit signature: %x", commit.Signature())
 	}
 
 	return nil

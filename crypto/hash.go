@@ -131,6 +131,10 @@ func (h *Hash) UnmarshalAmino(bs []byte) error {
 /// METHODS
 
 func (h *Hash) SanityCheck() error {
+	if h.EqualsTo(UndefHash) {
+		return fmt.Errorf("Hash is not defined")
+	}
+
 	return nil
 }
 

@@ -63,6 +63,13 @@ func (set *ValidatorSet) MoveProposer(round int) {
 
 }
 
+func (set *ValidatorSet) Validators() []crypto.Address {
+	vals := make([]crypto.Address, len(set.validators))
+	for i, v := range set.validators {
+		vals[i] = v.Address()
+	}
+	return vals
+}
 func (set *ValidatorSet) Contains(addr crypto.Address) bool {
 	for _, v := range set.validators {
 		if v.Address().EqualsTo(addr) {

@@ -110,7 +110,7 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 		if height > ourHeight+1 {
 			syncer.blockPool.AppendCommit(
 				block.Header().LastBlockHash(),
-				block.LastCommit())
+				block.Header().LastCommit())
 		}
 
 		syncer.blockPool.AppendBlock(height, block)

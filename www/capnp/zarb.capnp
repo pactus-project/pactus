@@ -9,21 +9,26 @@ struct Header {
   time                @1 :Int64;
   txsHash             @2 :Data;
   stateHash           @3 :Data;
-  nextValidatorsHash  @4 :Data;
-  lastBlockHash       @5 :Data;
-  lastCommitHash      @6 :Data;
-  lastReceiptsHash    @7 :Data;
-  proposerAddress     @8 :Data;
+  lastBlockHash       @4 :Data;
+  lastReceiptsHash    @5 :Data;
+  nextCommitersHash   @6 :Data;
+  proposerAddress     @7 :Data;
+  lastCommit          @8 :Commit;
 }
 
 struct Txs {
   hashes             @0 :List(Data);
 }
 
+struct Commiter {
+  address             @0 :Data;
+	signed              @1 :Bool;
+}
+
 struct Commit {
   round               @0 :UInt32;
-	commiters           @1 :List(Data);
-	signatures          @2 :List(Data);
+	signature           @1 :Data;
+	commiters           @2 :List(Commiter);
 }
 
 struct Block {

@@ -79,74 +79,85 @@ func (s Header) SetStateHash(v []byte) error {
 	return s.Struct.SetData(1, v)
 }
 
-func (s Header) NextValidatorsHash() ([]byte, error) {
-	p, err := s.Struct.Ptr(2)
-	return []byte(p.Data()), err
-}
-
-func (s Header) HasNextValidatorsHash() bool {
-	p, err := s.Struct.Ptr(2)
-	return p.IsValid() || err != nil
-}
-
-func (s Header) SetNextValidatorsHash(v []byte) error {
-	return s.Struct.SetData(2, v)
-}
-
 func (s Header) LastBlockHash() ([]byte, error) {
-	p, err := s.Struct.Ptr(3)
+	p, err := s.Struct.Ptr(2)
 	return []byte(p.Data()), err
 }
 
 func (s Header) HasLastBlockHash() bool {
-	p, err := s.Struct.Ptr(3)
+	p, err := s.Struct.Ptr(2)
 	return p.IsValid() || err != nil
 }
 
 func (s Header) SetLastBlockHash(v []byte) error {
-	return s.Struct.SetData(3, v)
-}
-
-func (s Header) LastCommitHash() ([]byte, error) {
-	p, err := s.Struct.Ptr(4)
-	return []byte(p.Data()), err
-}
-
-func (s Header) HasLastCommitHash() bool {
-	p, err := s.Struct.Ptr(4)
-	return p.IsValid() || err != nil
-}
-
-func (s Header) SetLastCommitHash(v []byte) error {
-	return s.Struct.SetData(4, v)
+	return s.Struct.SetData(2, v)
 }
 
 func (s Header) LastReceiptsHash() ([]byte, error) {
-	p, err := s.Struct.Ptr(5)
+	p, err := s.Struct.Ptr(3)
 	return []byte(p.Data()), err
 }
 
 func (s Header) HasLastReceiptsHash() bool {
-	p, err := s.Struct.Ptr(5)
+	p, err := s.Struct.Ptr(3)
 	return p.IsValid() || err != nil
 }
 
 func (s Header) SetLastReceiptsHash(v []byte) error {
-	return s.Struct.SetData(5, v)
+	return s.Struct.SetData(3, v)
+}
+
+func (s Header) NextCommitersHash() ([]byte, error) {
+	p, err := s.Struct.Ptr(4)
+	return []byte(p.Data()), err
+}
+
+func (s Header) HasNextCommitersHash() bool {
+	p, err := s.Struct.Ptr(4)
+	return p.IsValid() || err != nil
+}
+
+func (s Header) SetNextCommitersHash(v []byte) error {
+	return s.Struct.SetData(4, v)
 }
 
 func (s Header) ProposerAddress() ([]byte, error) {
-	p, err := s.Struct.Ptr(6)
+	p, err := s.Struct.Ptr(5)
 	return []byte(p.Data()), err
 }
 
 func (s Header) HasProposerAddress() bool {
-	p, err := s.Struct.Ptr(6)
+	p, err := s.Struct.Ptr(5)
 	return p.IsValid() || err != nil
 }
 
 func (s Header) SetProposerAddress(v []byte) error {
-	return s.Struct.SetData(6, v)
+	return s.Struct.SetData(5, v)
+}
+
+func (s Header) LastCommit() (Commit, error) {
+	p, err := s.Struct.Ptr(6)
+	return Commit{Struct: p.Struct()}, err
+}
+
+func (s Header) HasLastCommit() bool {
+	p, err := s.Struct.Ptr(6)
+	return p.IsValid() || err != nil
+}
+
+func (s Header) SetLastCommit(v Commit) error {
+	return s.Struct.SetPtr(6, v.Struct.ToPtr())
+}
+
+// NewLastCommit sets the lastCommit field to a newly
+// allocated Commit struct, preferring placement in s's segment.
+func (s Header) NewLastCommit() (Commit, error) {
+	ss, err := NewCommit(s.Struct.Segment())
+	if err != nil {
+		return Commit{}, err
+	}
+	err = s.Struct.SetPtr(6, ss.Struct.ToPtr())
+	return ss, err
 }
 
 // Header_List is a list of Header.
@@ -173,6 +184,10 @@ type Header_Promise struct{ *capnp.Pipeline }
 func (p Header_Promise) Struct() (Header, error) {
 	s, err := p.Pipeline.Struct()
 	return Header{s}, err
+}
+
+func (p Header_Promise) LastCommit() Commit_Promise {
+	return Commit_Promise{Pipeline: p.Pipeline.GetPipeline(6)}
 }
 
 type Txs struct{ capnp.Struct }
@@ -251,6 +266,79 @@ func (p Txs_Promise) Struct() (Txs, error) {
 	return Txs{s}, err
 }
 
+type Commiter struct{ capnp.Struct }
+
+// Commiter_TypeID is the unique identifier for the type Commiter.
+const Commiter_TypeID = 0x96a4d92c028ddf36
+
+func NewCommiter(s *capnp.Segment) (Commiter, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
+	return Commiter{st}, err
+}
+
+func NewRootCommiter(s *capnp.Segment) (Commiter, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
+	return Commiter{st}, err
+}
+
+func ReadRootCommiter(msg *capnp.Message) (Commiter, error) {
+	root, err := msg.RootPtr()
+	return Commiter{root.Struct()}, err
+}
+
+func (s Commiter) String() string {
+	str, _ := text.Marshal(0x96a4d92c028ddf36, s.Struct)
+	return str
+}
+
+func (s Commiter) Address() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return []byte(p.Data()), err
+}
+
+func (s Commiter) HasAddress() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s Commiter) SetAddress(v []byte) error {
+	return s.Struct.SetData(0, v)
+}
+
+func (s Commiter) Signed() bool {
+	return s.Struct.Bit(0)
+}
+
+func (s Commiter) SetSigned(v bool) {
+	s.Struct.SetBit(0, v)
+}
+
+// Commiter_List is a list of Commiter.
+type Commiter_List struct{ capnp.List }
+
+// NewCommiter creates a new list of Commiter.
+func NewCommiter_List(s *capnp.Segment, sz int32) (Commiter_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
+	return Commiter_List{l}, err
+}
+
+func (s Commiter_List) At(i int) Commiter { return Commiter{s.List.Struct(i)} }
+
+func (s Commiter_List) Set(i int, v Commiter) error { return s.List.SetStruct(i, v.Struct) }
+
+func (s Commiter_List) String() string {
+	str, _ := text.MarshalList(0x96a4d92c028ddf36, s.List)
+	return str
+}
+
+// Commiter_Promise is a wrapper for a Commiter promised by a client call.
+type Commiter_Promise struct{ *capnp.Pipeline }
+
+func (p Commiter_Promise) Struct() (Commiter, error) {
+	s, err := p.Pipeline.Struct()
+	return Commiter{s}, err
+}
+
 type Commit struct{ capnp.Struct }
 
 // Commit_TypeID is the unique identifier for the type Commit.
@@ -284,51 +372,40 @@ func (s Commit) SetRound(v uint32) {
 	s.Struct.SetUint32(0, v)
 }
 
-func (s Commit) Commiters() (capnp.DataList, error) {
+func (s Commit) Signature() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
-	return capnp.DataList{List: p.List()}, err
+	return []byte(p.Data()), err
+}
+
+func (s Commit) HasSignature() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s Commit) SetSignature(v []byte) error {
+	return s.Struct.SetData(0, v)
+}
+
+func (s Commit) Commiters() (Commiter_List, error) {
+	p, err := s.Struct.Ptr(1)
+	return Commiter_List{List: p.List()}, err
 }
 
 func (s Commit) HasCommiters() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
-}
-
-func (s Commit) SetCommiters(v capnp.DataList) error {
-	return s.Struct.SetPtr(0, v.List.ToPtr())
-}
-
-// NewCommiters sets the commiters field to a newly
-// allocated capnp.DataList, preferring placement in s's segment.
-func (s Commit) NewCommiters(n int32) (capnp.DataList, error) {
-	l, err := capnp.NewDataList(s.Struct.Segment(), n)
-	if err != nil {
-		return capnp.DataList{}, err
-	}
-	err = s.Struct.SetPtr(0, l.List.ToPtr())
-	return l, err
-}
-
-func (s Commit) Signatures() (capnp.DataList, error) {
-	p, err := s.Struct.Ptr(1)
-	return capnp.DataList{List: p.List()}, err
-}
-
-func (s Commit) HasSignatures() bool {
 	p, err := s.Struct.Ptr(1)
 	return p.IsValid() || err != nil
 }
 
-func (s Commit) SetSignatures(v capnp.DataList) error {
+func (s Commit) SetCommiters(v Commiter_List) error {
 	return s.Struct.SetPtr(1, v.List.ToPtr())
 }
 
-// NewSignatures sets the signatures field to a newly
-// allocated capnp.DataList, preferring placement in s's segment.
-func (s Commit) NewSignatures(n int32) (capnp.DataList, error) {
-	l, err := capnp.NewDataList(s.Struct.Segment(), n)
+// NewCommiters sets the commiters field to a newly
+// allocated Commiter_List, preferring placement in s's segment.
+func (s Commit) NewCommiters(n int32) (Commiter_List, error) {
+	l, err := NewCommiter_List(s.Struct.Segment(), n)
 	if err != nil {
-		return capnp.DataList{}, err
+		return Commiter_List{}, err
 	}
 	err = s.Struct.SetPtr(1, l.List.ToPtr())
 	return l, err
@@ -1478,87 +1555,92 @@ func (p ZarbServer_tx_Results_Promise) TxInfo() BlockInfo_Promise {
 	return BlockInfo_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-const schema_84b56bd0975dfd33 = "x\xda\xac\x96mh\x1c\xd5\x1a\xc7\x9f\xff93;\x9b" +
-	"\x904;\xcc\x86[J\xdb\xe4^R\xb8\xed\xbd\xb6\xda" +
-	"\x08j\xbf$M[H\xa4BNVDR+N\xb3" +
-	"\xd3f\xcd\xce\xcevf\xd2\x84`\x09\x16\xfd`A\x8b" +
-	"/\xe0;XADk\xd5\x82\x01\x0b-\xb4\xd6\xd2\x17" +
-	"Z\xe8\x8b\xa2\x14\xad\x10\x0a\xf6\x83\xd2\x06\x0d\xb4j]" +
-	"y&\xc9\xeef\xd3\xd8T\xfdvx\xce3\xbf\xf3\x9c" +
-	"\xff\xf9\x9f3\xcf\x9d\x1bd\xab\xb8K\xffJ#R\xf7" +
-	"\xea\xb1\xc2\xb9\xae#\x87\x17\xffo\xc9\xd3d6\x82H" +
-	"\x87A\xd4\xac\xc4\xe3 X\x1bE\x0b\xe1\xf7\x93\xe7\xae" +
-	"-=6\xf6\xacj\x04\x884\x9e\xde.\x86x\xfa\x19" +
-	"\x9e.\\}\xff\x95\xe1\x91o.>G\xaa\x1e\xa2\xd0" +
-	"|c\xe3\xcbg\xfaF\x9e\"\xdd0\x88\xac\xf7\xc4\xa8" +
-	"5\"\xf8\x9b}\xa2\x00B!n}\xf0\xe8\xd6\x86\xbe" +
-	"\x97\xcaW;\xab\xf9\x8c\xfbVc\\}\xd7\xbe\xa1-" +
-	"c_\xee\xae\xc4\xe9\x8c\x83\xfe\x99U\xc5\xa3f]\xdf" +
-	"\xc5\xb8\x0d\x03{\xaed\xb1\xef\xedr\xdc\xf3\xb1n\xc6" +
-	"\xbd\x19c\xdc\xda\x9aa\xef\xc6\x8b?}Jf=\xca" +
-	"h\x92i\x07c\x17\xac\x131\x1e\x1d\x8d}D(," +
-	"\x1d_ve\xefh\xe3\xe1\x8a\\\x86Z\xb6q\xd2r" +
-	"\xa3-e\x0c\xe6\xee\xef~a\x89\xbd\xf3\xbb\xf3\xe5\x0b" +
-	"\xbfjt\xf1\xc2\xefD\x09\xaf_\x1c\xea8\xb2\xe2\xe0" +
-	"%\xde\xc7\x8c\x95\x8f\x1a\xbfXg#\xdai\xe3{B" +
-	"\xe1\x9e=\xc9E\xbb\xdacc\x95\xc9\xac\x9c\xb5;>" +
-	"j\xed\x8dGj\xc6\xb9\xccc\xff\xbaP\xf5\xeb\x99\xb7" +
-	"\xc6oJ\xceT\x8dZ\xfdU<\xdaZ\xc5\xe4\x85\x8b" +
-	"\xdf\xdd\xf1F\xe7\xe5\xf1\xf2:\xd7U\xef\xe0:U5" +
-	"\xd7yi\xf8|\xed\x87\xa3\xb1\xebd\xd6\xcb\x12\x8c\xd0" +
-	"\xdc_-`=Y\xcd\xa8\xed\xd5\xc7\xacq\x1e\x15\x06" +
-	"\x06\x06V\xf4\xd8\xf9\x9c\x96_1d\xfb\x9b\x96\xf38" +
-	"\xbf\xaa\xdb\xf67\xa5\x1c\x7f\x9b\xe3/\xdf\x94\xf5z\xfa" +
-	"\x9a:\xed:\xdfv\x03\xa5I\x8dH\x03\x91Y\xbb\x8c" +
-	"H\xc5%TR\xa0\xae\xd7\x0ezQK\x02\xb5\x849" +
-	"\"W\x87M-\x9dv%tU\x09\xda\xd2\xebd\xb6" +
-	"\xf4\x86\x88\x93@\xbc\x0c+\xa6a\xdb\x1d\xdbH;~" +
-	"'\xa0\x9a\x8a\x98\x1f\xdb\x88\xd4e\x09\xf5\xb3\x80\x09$" +
-	"\xd9\xe7\xe6\x18\x17\xfc\x83\x84\xba&\x00\x91\x84 2\xc7" +
-	"9\xf1\xaa\x84\xfaM\xc0\x94HB\x12\x99\xd7\xbb\x88\xd4" +
-	"5\x89\x94\x06\x01S\x13Ih\xecT\xbcF\x94\xd2 " +
-	"\x91Jp\\\x97I\xe8DV-|\xa2T\x0d\xc7\xe7" +
-	"s<\xa6%\x11#\xb2\xea1D\x94Jr\xbc\x91\xe3" +
-	"\x86\x9e\x8c|\xb7\x08;\x89R\x8d\x1c\xff?\xc7\xe3\xb1" +
-	"$\xe2D\xd6R\xec J\xfd\x97\xe3wC`x\x9b" +
-	"\xe3\x07\x19/\x07\x8d\x044B]\x98q\x1d\xe8$\xa0" +
-	"\x13\x86\xc3\xc1\xa0\xbd\\\xf2 \xb4C\xa7\xdd\x0e\x08\xa5" +
-	"X\xce\x19\x0c\x1f\xb2\xb3\x19\xa4\xed\xd0\xf3\x83v[\x96" +
-	"}\x90\xb5\x83\xb0-\xeb\xf5PC\xdf4\x10\xc7\xd7x" +
-	"\xaeK-\x99p\xc6D\x97\xd3\xe3 \x93\x0f\xa3\xb5\x89" +
-	"\x8asy\xdf\xcb{\x81\xe3cu:\xed;A@\xb7" +
-	"i\x85\xa6.\xa7!\xe8\xcf\x86\xd3\x9c\xc0\x87P#\xa1" +
-	"\xe6\x0b\x14\xa2\xac\x8e\xdcf\x82\x87D\xe9\"\x12\x90\x98" +
-	"\xd5\x18\x0f\x0e\x12\x9bba\x918\xb2\x92H},\xa1" +
-	"\x0e\x94\x99b?\x1b\xee\x13\x09uH\xc0\x14\x93\xae8" +
-	"x?\x91: \xa1\x8e\x0b@N\x98\xe2('\x1e\x92" +
-	"P\xa7\xd8\x13\x88<a\x9e\xf8\x0f\x91\xfa\\B\x9d)" +
-	"\x19\xc2<\xcd>;.\xa1\xbe(\xb9\xc1<\xcb\xc1S" +
-	"\x12\xeak\x81\x86 \xb4\xdd\xfc\x94F-\x81\x93K;" +
-	"~Q2\xdf\xe9q2\xdb\x1c\x9fJ\x02\xb7\xd8\xae\xd7" +
-	"\x9f\x0bQE\x02U\x04c\xb3\xe3L\x8d\xeb\xd2vh" +
-	"O\xe5\xd5\xb9\x8e\xeb\xa1\x86\x04j\xe6\xa2}8\xd8\xd4" +
-	"\xe5\x04\xfdY\x19\xcez\x05\xc3\xc1\x8e\xdc\xe6\xb9k\xde" +
-	"\x96\xf5dO\x1f\xcb^S\xe4\xadc^\xab\x84Z_" +
-	"&{\x07\x0b\xb7VBu\x96\xc9\xfe@7\x91Z/" +
-	"\xa1\x1e\x8e.\xbf\xcd\xaa$J\x7f\xa3\x89\x95\x8dp0" +
-	"@\xa2\xf4\xb2O\xd6S\xf4\xad\xcc\x84H\x94\x9e\xdf[" +
-	"X$\xa0\xc8$7\xd9}\x13\xd7`\x07\xbdN\x80y" +
-	"\x84N\x89H\xe4ys\xd45z\xd8p{\xcf\xe5\x0c" +
-	")[\"\xcf{\\`\xa2\xc8\xb1\x99\xf3\x88\x84\xea\x15" +
-	"\x98R\xd3\xe1\xa2\x1f\x93PYV\x13\x13jf81" +
-	"-\xa1\xf2\xfc\xb4\x89\x09\x17\xbb|\x07z%TXQ" +
-	"E\xc5c;\xcdV\x0d\xd1\xf5C\xa2\xf4\xeb\xfdSU" +
-	"\xd7x\xae\xe1f\xc2\x0a\x17\xac,\xb9\xa0h\x02\xbe\xe2" +
-	"\xed\x12*]V\xb6\xdd=\xb9\x97'\x04\x1a|\xaf?" +
-	"\x97.\xfe\x00z<\xd7\xcd\x84\x8eO\x98q&Af" +
-	"K\xce\x0e\xfb}\x92\xb3\x9fW\xe5\xd9w\x18\xff\xb4\xb8" +
-	"\x0b\xfe\x82\xb82\x1cD\xa2\xd4#U(\xab\xdf\xea\x17" +
-	"\x1a]\xe00\xa0\xbf\xf7r\xcaY\x96\xa1\x89C\xd4\x89" +
-	"\xa6z\xc6\xb2\xf6C\xb5\x910\xd7\x19@\xb1\xe1\xc4T" +
-	"/h\xde\xb7\x92\x84y\x87\x01Ql\xab0\xd5\xd8\x99" +
-	"\xff^@\xc2\xac7\x86'\xb7\xd0:\xe9\xafV\x96\xa2" +
-	"\x15\x9d\xc0\x1f\x01\x00\x00\xff\xff\xbb\xc0\x9f\x9c"
+const schema_84b56bd0975dfd33 = "x\xda\xacV}hTW\x16?\xbf{\xe7\xe5\xcdd" +
+	"\x133\x8f7aE\\\x13\x97\x11\x8ck\x8c\x1a\xddE" +
+	"\xd9%1*$\x8b\xc2\xdc\x89\xc2nv]\xf6\x99y" +
+	"\x9a\xd9\xcc\xd7\xbe\xf7bB`\x09\xc8\xeeB\x05+\xb5" +
+	"\xdf\xb4\x7f\xb4\xa5PZ\xfb%4PAAkE+" +
+	"\x16\xfc\xa8\xd0J\xab4\x08\xb5\xd0\xa2i\x1b\xd0\xb6\xe9" +
+	"\x94\xf3\x92\xcc\x9bL\x15\xd3\x8f\xff.\xe7\x9d\xf7\xfb\x9d" +
+	"\xfb;\xbfs\xef]\xf9\x7f\xd9.Vi-\x1a\x91\xfa" +
+	"\xa3VU\xbc\x98<yb\xd1\xef\x96\xfc\x8f\x8cF\x10" +
+	"i\xd0\x89Z\xff#\xfe\x05\x82\xf9\x80h#|w\xf6" +
+	"\xe2\xed\xa6\xd3\xe3\xfbU#@\x14\xe2\xcf/\x8aa\xfe" +
+	"<\xca\x9f\x8b\xb7^zbd\xf4\xc3\xab\x0f\x92\xaa\x87" +
+	"(\xb6N\xeex\xfc|\xff\xe8\x7fI\xd3u\"\xf3\xb2" +
+	"\x183?\x16\xfc\xcfG\xa2\x08B1l\xbe\xfc\x8f\x7f" +
+	"7\xf4?R\xce6\x19r\x18.\xa21\xdc\xef\xaf\xed" +
+	"\x17\xcb?x\xfe1\x86C\x19\x1cg\x9a\xcd\xda\x17\xe6" +
+	":\x8dWk\xb5AB\xb1>yxx\xf7\xf8\xe5g" +
+	"+\xb9\xfd\x94\x87\xb4\xb7\xcc'y\xd5\xfa\xa8v\x80\xb9" +
+	"\xff6x\xe8f\x06\x87\x9f+\xe7^\xac\xf70w\xb3" +
+	"\xce\xdc\x9bjF\xf2\x93\x0f\x7f\xf9&\x19\xf5\xe5\xd4\x92" +
+	"\xd1\xb6\xeaW\xcc\xbf\xfa{\xda\xae\xbfF(6M," +
+	"\xbb\xf9\xcaX\xe3\x89\x8a\\\xbf\xccq\xfd\xac9\xe9\xe7" +
+	"\xde\xf1q\x8f\xf4\x1c\\b\xed\xbbv\xa9\x9c\xb8)\x9c" +
+	"d\xe2\xb5aNx\xea\xeap\xd7\xc9\x96c\xd7+7" +
+	"\xed3o\x0f\x7fmZa^\xed\x08\x7fB(\xfe\xe1" +
+	"P\xec7\x07:\xab\xc6+\x93YfsUd\xcc\xfc" +
+	"S\x84W\xeb\"\\\xe6\xe9__\x89|s\xfe\x99\x89" +
+	"\xbb\"\x7f\x1a\x193'\xfc\xe4\xf1\x08#/\\\xf4\xc2" +
+	"\xde\xa7\x137&\xca\xeb<U\xbd\x97\xeb\xbcP\xcdu" +
+	"^\x1f\xb9T\xfb\xeaX\xd5\x1d2\xeae\x00Fh\x9d" +
+	"\xa8\x160\xf1+\x86\x9a\xac>m\x0e\xf0\xaa888" +
+	"\xd8\xd2k\x15r\xa1B\xcb\xb0\xe5\xec\\\xc1\xeb\xc2\xfa" +
+	"\x1e\xcb\xd9\xd9m;{lg\xc5\xceL\xbe\xb7?\x9e" +
+	"\xb0\xea\x1c+\xeb\xaa\x90\x0c\x11\x85@d\xd4.#R" +
+	"a\x09\x15\x13\xa8\xeb\xb3\xdc>\xd4\x92@-a\x8e\x90" +
+	"\x1b\xbcx[\xc2\xaa\x04]\x1f\x80\xb6\xf5\xd9\xe9\xdd}" +
+	"\x1e\xc2$\x10.\x83\x15\xb3`;mKO\xd9N\x02" +
+	"P\xf1\x12\xcc\xe7\x1dD\xea\x86\x84\xfaJ\xc0\x00b<" +
+	"\x14\xc68\x17\xfc\x99\x84\xba-\x00\x11\x83 2&8" +
+	"\xf1\x96\x84\xfaV\xc0\x90\x88A\x12\x19w\x92D\xea\xb6" +
+	"Dw\x08\x02FH\xc4\x10\"2\x01\x87(\x09\x89\xee" +
+	"\x1a\x0ek2\x06\x8d\xc8\x8c`\x1fQw\x0d\xc7\xe7s" +
+	"\xbc*\x14C\x15\x91Y\x8f\x83D\xdd\xf39\x1e\xe7\xb8" +
+	"\xae\xc5|\xdb-\xc6^\xa2\xeeF\x8e/\xe7x\xb8*" +
+	"\x860\x91\xd9\x84\x1e\xa2\xee\xa5\x1c_\x03\x81\x91=\xb6" +
+	"\xe3\xa6\xf39\x84H D\xa8\xf3\xd2Y\x1b\x1a\x09h" +
+	"\x84\x11o\xc8\xed,W\xdc\xf5,\xcf\xee\xb4\\B\x10" +
+	"\xcbX\xae\xd7\x91\xc9\xf7RC\xff\xac\\\x8e'\xed^" +
+	"\x1b\xe9\x82\xe7\xa3\x10\x95\xbe\xe5\xec!oc>\x9bE" +
+	"\xda\xb3\x1d\xfeX\x86Wp\xf2\x85\xbck;\xd8\x90J" +
+	"9\xb6\xeb\xd2,D\xfe\x8bd\xdaC4\xb0>\x01\xd1" +
+	"9\xdb!\x9e\xb4\x1b\xdc\x81\x8c7\xcb\x0d\xdc\x88\x1a\x09" +
+	"5_\xa0\xe8gu\xe5v\x11\xf2\x88\x06\xc3XA2" +
+	"\xdb\x1c\x1b\xf3\xd9\x86,\xef\x85\xed\x11.\xe16q\xd7" +
+	"\xe3\x12j\xa5\xc0\x8c;\x9a\xd9yK%\xd4\x1a\x81\x11" +
+	"kj\x8b3;ls\xd3\xbbsv\x0a \x01\xdc\x93" +
+	"l\xdb\x101\xcd\xc2\x12\xcd\xe8j\"\xf5\xba\x84:Z" +
+	"\xe6\xc2#\xcc\xf3\x86\x84:.`\x88i\x1b\x1e\xfb3" +
+	"\x91:*\xa1\xce\x08@N\xb9\xf0\x14'\x1e\x97P\xe7" +
+	"\xd8\x84\xf0Mh\xbc\xf3[\"\xf5\xb6\x84:\x1fX\xd0" +
+	"x\x97\x8d}FB\xbd\x17\xf8\xcf\xb8\xc0\xc1s\x12\xea" +
+	"}\x81\x06\xd7\xb3\xb2\x85`7v.e;\xa5\xf69" +
+	"v\xaf\x9d\xdec;\x14\x18\xa1\xcd\xca\xe6\x07r\x1e\"" +
+	"$\x10!\xe8\xbbl{f]\x97\xb2<k&\xaf." +
+	"kg\xf3\xa8!\x81\x9a\xb94\xda\x1b\x8a'mw " +
+	"#\xbd{\xce\xbc7\xd4\x95\xdb5\xf7\x06wd\xf2\xb2" +
+	"\xb7\x9fe\xaf)\xe1mf\xbcv\x09\xb5\xa5L\xf6." +
+	"\x16n\x93\x84J\x94\xc9\xbe\xb5\x87Hm\x91P\x7f\xf1" +
+	"O\x1b\x8bU\x89\x06w\xe5\x14\xb3\xee\x0d\xb9\x88\x06W" +
+	"\xc9t=s4}\xa5E\\\xf2Mr\x97\xdd\xc7\xb9" +
+	"\x06\xcb\xed\xb3]\xcc#$$|\x91\xe7\xcdQW\xff" +
+	"$\xc5\x8f;\x9f\x7f e\x9b?`y.0Z\xc2" +
+	"\xb1\x18\xe7\xef\x12\xaa/\x18\x16\x9b\x8b\xfe\xa7\x84\xca\xb0" +
+	"\x9a\x98R3\xcd\x89)\x09U\xe0\xb3TL\xb98\xcb" +
+	"3\xd0'\xa1\xbc\x8a**N\xf7Y\xb6j\xf0g\x1d" +
+	"\xd1\xe0\xae\xbf\xdf\x94\xeb\xd9\xb4W\xe1\x82\xd5\x81\x0bJ" +
+	"&\xe0\xf3\xa4SBm++[q01\xb5\x97\x06" +
+	"'?\x90K\x95n\x1c\x1e{\xcb\x1bp\x08vI\xbc" +
+	"\xde|\xd6?Q\x08\xa5>E\x83\xf7\x10aV\xc7*" +
+	"\xbb\xdf\xa5\xff\xd2\xf2.\xf8\x09\xf2Jo\x08\xd1\xe0Y" +
+	"V\xa1\xadv\xbf[\xdb\x1fa\xcf\xa5\x9fwP\xcb{" +
+	"\xd0\xd0T\x1b5\xa2\x997m\xd9\x8bGu\x9006" +
+	"\xeb@\xe9A\x8c\x99\xb7\xaa\xb1n5\x09\xa3Y\x87(" +
+	"\xbd\xe40\xf3\x964\x16/ a\xd4\xeb#\xd3[h" +
+	"\x9fvX;K\xd1\x8e\x04\xf0}\x00\x00\x00\xff\xff\x14" +
+	"\xe3\xc8\xef"
 
 func init() {
 	schemas.Register(schema_84b56bd0975dfd33,
@@ -1566,6 +1648,7 @@ func init() {
 		0x8df1c729f8d2ca00,
 		0x8ededcb57f98aaf0,
 		0x946b1f715eac1308,
+		0x96a4d92c028ddf36,
 		0xa1d5f1677ab15215,
 		0xa2b1016cefab775b,
 		0xb8f393fd6f7f0c44,

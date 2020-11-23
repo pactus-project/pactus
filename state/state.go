@@ -49,23 +49,23 @@ type State interface {
 type state struct {
 	lk deadlock.RWMutex
 
-	config             *Config
-	proposer           crypto.Address
-	genDoc             *genesis.Genesis
-	store              *store.Store
-	txPool             *txpool.TxPool
-	cache              *Cache
-	params             *Params
-	executor           *execution.Executor
-	validatorSet       *validator.ValidatorSet
-	lastBlockHeight    int
-	lastBlockHash      crypto.Hash
-	lastReceiptsHash   crypto.Hash
-	lastCommit         *block.Commit
-	nextValidatorsHash crypto.Hash
-	lastBlockTime      time.Time
-	updateCh           chan int
-	logger             *logger.Logger
+	config            *Config
+	proposer          crypto.Address
+	genDoc            *genesis.Genesis
+	store             *store.Store
+	txPool            *txpool.TxPool
+	cache             *Cache
+	params            *Params
+	executor          *execution.Executor
+	validatorSet      *validator.ValidatorSet
+	lastBlockHeight   int
+	lastBlockHash     crypto.Hash
+	lastReceiptsHash  crypto.Hash
+	lastCommit        *block.Commit
+	NextCommitersHash crypto.Hash
+	lastBlockTime     time.Time
+	updateCh          chan int
+	logger            *logger.Logger
 }
 
 func LoadOrNewState(
@@ -155,7 +155,7 @@ func (st *state) stateHash() crypto.Hash {
 	accRootHash := st.accountsMerkleRootHash()
 	valRootHash := st.validatorsMerkleRootHash()
 
-	rootHash := merkle.HashMerkleBranches(accRootHash, valRootHash)
+	rootHash := merkle.HashMerkleBranches(&accRootHash, &valRootHash)
 	if rootHash == nil {
 		logger.Panic("State hash can't be nil")
 	}
@@ -339,7 +339,8 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.lastBlockHeight++
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
-	st.lastReceiptsHash = *receiptsHash
+	st.lastReceiptsHash = receiptsHash
+	st.NextCommitersHash = block.Header().NextCommitersHash()
 	st.lastCommit = &commit
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
