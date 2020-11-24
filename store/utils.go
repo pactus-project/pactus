@@ -1,8 +1,6 @@
 package store
 
 import (
-	"fmt"
-
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/logger"
 )
@@ -10,11 +8,8 @@ import (
 func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	data, err := db.Get(key, nil)
 	if err != nil {
-		logger.Error("DB error", "err", err, "key", key)
+		//logger.Trace("DB error", "err", err, "key", key)
 		return nil, err
-	}
-	if data == nil {
-		return nil, fmt.Errorf("No value is associated with this key : %x", key)
 	}
 	return data, nil
 }

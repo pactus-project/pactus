@@ -51,7 +51,7 @@ func TestReplayBlock(t *testing.T) {
 	st1, _ := mockState(t, pb)
 	st2, _ := mockState(t, pb)
 
-	// first block
+	// apply first block
 	b1 := st1.ProposeBlock()
 	v := vote.NewPrecommit(1, 0, b1.Hash(), a)
 	sig1 := pv.Sign(v.SignBytes())
@@ -59,24 +59,14 @@ func TestReplayBlock(t *testing.T) {
 
 	h := b1.TxHashes().Hashes()[0]
 	st2.txPool.AppendTx(*st1.txPool.PendingTx(h))
-	err := st1.ApplyBlock(1, b1, *c1)
-	require.NoError(t, err)
+	st1.ApplyBlock(1, b1, *c1)
+	st2.ApplyBlock(1, b1, *c1)
 
-	err = st2.ApplyBlock(1, b1, *c1)
-	require.NoError(t, err)
-
-	// second block
+	// Propose second block
 	b2 := st1.ProposeBlock()
-	v = vote.NewPrecommit(2, 0, b2.Hash(), a)
-	sig2 := pv.Sign(v.SignBytes())
-	c1 = block.NewCommit(0, []block.Commiter{block.Commiter{Signed: true, Address: a}}, *sig2)
 
-	err = st1.ApplyBlock(2, b2, *c1)
-	require.NoError(t, err)
-
-	height, commit, receiptHash, err := st2.loadLastInfo()
-	assert.NoError(t, err)
-	st2.replayLastBlock(height, commit, receiptHash)
+	// Load state and propose second block
+	st2.tryLoadLastInfo()
 	b22 := st2.ProposeBlock()
 
 	assert.Equal(t, b2.Hash(), b22.Hash())

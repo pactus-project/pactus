@@ -26,8 +26,8 @@ func (st *state) saveLastInfo(height int, commit *block.Commit, lastReceiptHash 
 	if err != nil {
 		return err
 	}
-	util.WriteFile(path, bs)
-	return nil
+
+	return util.WriteFile(path, bs)
 }
 
 func (st *state) loadLastInfo() (int, *block.Commit, *crypto.Hash, error) {

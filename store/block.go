@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/syndtr/goleveldb/leveldb"
+	dbutil "github.com/syndtr/goleveldb/leveldb/util"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
@@ -68,5 +69,15 @@ func (bs *blockStore) blockHeight(hash crypto.Hash) (int, error) {
 		return -1, err
 	}
 	return util.SliceToInt(heightData), nil
+}
 
+func (bs *blockStore) lastHeight() int {
+
+	iter := bs.db.NewIterator(dbutil.BytesPrefix(blockHashPrefix), nil)
+	if ok := iter.Last(); ok {
+		return util.SliceToInt(iter.Value())
+
+	}
+	iter.Release()
+	return 0
 }

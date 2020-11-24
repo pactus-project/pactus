@@ -164,3 +164,10 @@ func (s *Store) UpdateValidator(acc *validator.Validator) {
 
 	s.validatorStore.updateValidator(acc)
 }
+
+func (s *Store) LastBlockHeight() int {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	return s.blockStore.lastHeight()
+}

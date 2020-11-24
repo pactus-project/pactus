@@ -1,6 +1,8 @@
 package validator
 
 import (
+	"fmt"
+
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 )
@@ -14,15 +16,26 @@ type ValidatorSet struct {
 	joined        int
 }
 
-func NewValidatorSet(validators []*Validator, maximumPower int) *ValidatorSet {
+func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.Address) (*ValidatorSet, error) {
+
+	index := -1
+	for i, v := range validators {
+		if v.Address().EqualsTo(proposer) {
+			index = i
+			break
+		}
+	}
+
+	if index == -1 {
+		return nil, fmt.Errorf("Proposer is not in the list")
+	}
 	validators2 := make([]*Validator, len(validators))
 	copy(validators2, validators)
-	set := &ValidatorSet{
+	return &ValidatorSet{
 		maximumPower:  maximumPower,
 		validators:    validators2,
-		proposerIndex: 0,
-	}
-	return set
+		proposerIndex: index,
+	}, nil
 }
 
 // TotalPower equals to the number of validator in the set
@@ -62,9 +75,8 @@ func (set *ValidatorSet) ForceLeave(val *Validator) error {
 	return nil
 }
 
-func (set *ValidatorSet) MoveProposer(round int) {
-	set.proposerIndex = (set.proposerIndex + round + 1) % len(set.validators)
-
+func (set *ValidatorSet) MoveProposerIndex(count int) {
+	set.proposerIndex = (set.proposerIndex + count + 1) % len(set.validators)
 }
 
 func (set *ValidatorSet) Validators() []crypto.Address {
@@ -107,5 +119,6 @@ func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
 
 	keys := []crypto.PrivateKey{pv1, pv2, pv3, pv4}
 	vals := []*Validator{val1, val2, val3, val4}
-	return NewValidatorSet(vals, 4), keys
+	valset, _ := NewValidatorSet(vals, 4, val1.Address())
+	return valset, keys
 }

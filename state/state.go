@@ -90,10 +90,7 @@ func LoadOrNewState(
 	st.cache = newCache(store)
 	st.executor, err = execution.NewExecutor(st.cache)
 
-	height, commit, receiptHash, err := st.loadLastInfo()
-	if err != nil {
-		return nil, err
-	}
+	height := store.LastBlockHeight()
 
 	if height == 0 {
 		err := st.makeGenesisState(genDoc)
@@ -101,8 +98,8 @@ func LoadOrNewState(
 			return nil, err
 		}
 	} else {
-		// replay the last block
-		err := st.replayLastBlock(height, commit, receiptHash)
+		st.logger.Info("Try to load that last state info", "height", height)
+		err := st.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
@@ -115,7 +112,12 @@ func LoadOrNewState(
 	return st, nil
 }
 
-func (st *state) replayLastBlock(height int, commit *block.Commit, receiptHash *crypto.Hash) error {
+func (st *state) tryLoadLastInfo() error {
+	height, commit, receiptHash, err := st.loadLastInfo()
+	if err != nil {
+		return err
+	}
+
 	b, err := st.store.BlockByHeight(height)
 	if err != nil {
 		return err
@@ -135,8 +137,12 @@ func (st *state) replayLastBlock(height int, commit *block.Commit, receiptHash *
 		}
 		vals[i] = val
 	}
-	st.validatorSet = validator.NewValidatorSet(vals, st.params.MaximumPower)
-
+	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.MaximumPower, b.Header().ProposerAddress())
+	if err != nil {
+		return err
+	}
+	// We have moved propose before
+	st.validatorSet.MoveProposerIndex(0)
 	return nil
 }
 
@@ -151,7 +157,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		st.store.UpdateValidator(val)
 	}
 
-	st.validatorSet = validator.NewValidatorSet(vals, st.params.MaximumPower)
+	valSet, err := validator.NewValidatorSet(vals, st.params.MaximumPower, vals[0].Address())
+	if err != nil {
+		return err
+	}
+	st.validatorSet = valSet
 	st.lastBlockTime = genDoc.GenesisTime()
 	return nil
 }
@@ -339,8 +349,8 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)
 	receiptsHash := receiptsMerkle.Root()
 
-	// Move validator set
-	st.validatorSet.MoveProposer(commit.Round())
+	// Move psoposer index
+	st.validatorSet.MoveProposerIndex(commit.Round())
 	st.lastBlockHeight++
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
