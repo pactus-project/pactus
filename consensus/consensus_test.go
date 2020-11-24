@@ -20,7 +20,8 @@ import (
 )
 
 var (
-	pvals []*validator.PrivValidator
+	pvals      []*validator.PrivValidator
+	mockTxPool *txpool.MockTxPool
 )
 
 const (
@@ -32,6 +33,7 @@ const (
 
 func init() {
 	_, keys := validator.GenerateTestValidatorSet()
+	mockTxPool = txpool.NewMockTxPool()
 
 	pvals = make([]*validator.PrivValidator, 4)
 	for i, k := range keys {
@@ -43,7 +45,6 @@ func init() {
 func newTestConsensus(t *testing.T, valID int) *Consensus {
 	consConf := TestConfig()
 	stateConf := state.TestConfig()
-	txPoolConf := txpool.TestConfig()
 	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
 
@@ -68,8 +69,7 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	}()
 
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals)
-	txpool, _ := txpool.NewTxPool(txPoolConf, ch)
-	st, _ := state.LoadOrNewState(stateConf, genDoc, pvals[valID].Address(), txpool)
+	st, _ := state.LoadOrNewState(stateConf, genDoc, pvals[valID].Address(), mockTxPool)
 
 	cons, _ := NewConsensus(consConf, st, pvals[valID], ch)
 	assert.Equal(t, cons.votes.height, 0)
@@ -100,7 +100,7 @@ func testAddVote(t *testing.T,
 	round int,
 	blockHash crypto.Hash,
 	pvalID int,
-	expectError bool) {
+	expectError bool) *vote.Vote {
 
 	v := vote.NewVote(voteType, height, round, blockHash, pvals[pvalID].Address())
 	pvals[pvalID].SignMsg(v)
@@ -110,6 +110,7 @@ func testAddVote(t *testing.T,
 	} else {
 		assert.NoError(t, cons.AddVote(v))
 	}
+	return v
 }
 
 func TestConsensusAddVotesNormal(t *testing.T) {

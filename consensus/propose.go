@@ -40,11 +40,17 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 		return
 	}
 
+	if err := cs.state.ValidateBlock(proposal.Block()); err != nil {
+		cs.logger.Warn("propose: Invalid block", "proposal", proposal, "err", err)
+		return
+	}
+
 	cs.logger.Info("propose: Proposal set", "proposal", proposal)
 	cs.votes.SetRoundProposal(proposal.Round(), proposal)
-	// Maybe received proposal after prevote, (maybe because of network latency?)
+	// Proposal migh be received after prevote or precommit, (maybe because of network latency?)
 	// Enter prevote
 	cs.enterPrevote(proposal.Height(), proposal.Round())
+	cs.enterPrecommit(proposal.Height(), proposal.Round())
 }
 
 func (cs *Consensus) enterPropose(height int, round int) {

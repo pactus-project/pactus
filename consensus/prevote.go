@@ -7,7 +7,7 @@ import (
 )
 
 func (cs *Consensus) enterPrevote(height int, round int) {
-	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevote) {
+	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevoteWait) {
 		cs.logger.Debug("Prevote: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
@@ -23,13 +23,6 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 		cs.requestForProposal()
 
 		cs.logger.Warn("Prevote: No proposal")
-		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
-		return
-	}
-
-	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
-		cs.logger.Warn("Prevote: Invalid block", "proposal", roundProposal, "err", err)
-		cs.votes.SetRoundProposal(cs.hrs.Round(), nil)
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 	}

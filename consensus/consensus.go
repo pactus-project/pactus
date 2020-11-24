@@ -265,12 +265,13 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	// Sign the vote
 	v := vote.NewVote(msgType, cs.hrs.Height(), cs.hrs.Round(), hash, address)
 	cs.privValidator.SignMsg(v)
+	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
+
 	err := cs.addVote(v)
 	if err != nil {
 		cs.logger.Error("Error on adding our vote!", "error", err, "vote", v)
 	}
 
-	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
 
 	// Broadcast our vote
 	msg := message.NewVoteMessage(v)

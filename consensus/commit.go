@@ -16,7 +16,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	preCommits := cs.votes.Precommits(round)
 
 	if !preCommits.HasQuorum() {
-		cs.logger.Error("Commit: No quorom for precommit stage")
+		cs.logger.Debug("Commit: No quorom for precommit stage")
 		return
 	}
 
@@ -35,10 +35,15 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	if cs.votes.lockedProposal == nil {
 		// For any reason, we are not locked, try to found the locked proposal
 		roundProposal := cs.votes.RoundProposal(round)
-		if roundProposal != nil && roundProposal.IsForBlock(blockHash) {
+		if roundProposal == nil {
+			cs.requestForProposal()
+
+			cs.logger.Debug("Commit: No proposal, send proposal request.")
+			return
+		} else if roundProposal.IsForBlock(blockHash) {
 			cs.votes.lockedProposal = roundProposal
 		} else {
-			cs.logger.Error("Commit: We don't have commit proposal.")
+			cs.logger.Error("Commit: Invalid proposal.", "proposal", roundProposal)
 			return
 		}
 	}

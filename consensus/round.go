@@ -31,7 +31,7 @@ func (cs *Consensus) enterNewRound(height int, round int) {
 		return
 	}
 
-	// make sure we have quorom nil votes for previous round
+	// make sure we have quorom votes for previous round
 	if round > 0 {
 		if !cs.votes.Prevotes(round - 1).HasQuorum() {
 			cs.logger.Error("NewRound: No prevote quorom for previous round")
