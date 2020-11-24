@@ -49,23 +49,22 @@ type State interface {
 type state struct {
 	lk deadlock.RWMutex
 
-	config            *Config
-	proposer          crypto.Address
-	genDoc            *genesis.Genesis
-	store             *store.Store
-	txPool            *txpool.TxPool
-	cache             *Cache
-	params            *Params
-	executor          *execution.Executor
-	validatorSet      *validator.ValidatorSet
-	lastBlockHeight   int
-	lastBlockHash     crypto.Hash
-	lastReceiptsHash  crypto.Hash
-	lastCommit        *block.Commit
-	NextCommitersHash crypto.Hash
-	lastBlockTime     time.Time
-	updateCh          chan int
-	logger            *logger.Logger
+	config           *Config
+	proposer         crypto.Address
+	genDoc           *genesis.Genesis
+	store            *store.Store
+	txPool           *txpool.TxPool
+	cache            *Cache
+	params           *Params
+	executor         *execution.Executor
+	validatorSet     *validator.ValidatorSet
+	lastBlockHeight  int
+	lastBlockHash    crypto.Hash
+	lastReceiptsHash crypto.Hash
+	lastCommit       *block.Commit
+	lastBlockTime    time.Time
+	updateCh         chan int
+	logger           *logger.Logger
 }
 
 func LoadOrNewState(
@@ -127,7 +126,6 @@ func (st *state) tryLoadLastInfo() error {
 	st.lastCommit = commit
 	st.lastBlockTime = b.Header().Time()
 	st.lastReceiptsHash = *receiptHash
-	st.NextCommitersHash = b.Header().NextCommitersHash()
 
 	vals := make([]*validator.Validator, len(commit.Commiters()))
 	for i, c := range commit.Commiters() {
@@ -235,7 +233,7 @@ func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateCommit(blockHash, commit); err != nil {
+	if err := st.validateCommit(commit, blockHash); err != nil {
 		st.logger.Warn("Try to update last commit, but it's invalid", "error", err)
 		return
 	}
@@ -259,11 +257,12 @@ func (st *state) ProposeBlock() block.Block {
 	txHashes := block.NewTxHashes()
 	txHashes.Append(mintbaseTx.Hash())
 	stateHash := st.stateHash()
+	commitersHash := st.validatorSet.CommitersHash()
 	block := block.MakeBlock(
 		timestamp,
 		txHashes,
 		st.lastBlockHash,
-		crypto.UndefHash,
+		commitersHash,
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,
@@ -317,7 +316,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	err = st.validateCommit(block.Hash(), commit)
+	err = st.validateCommit(commit, block.Hash())
 	if err != nil {
 		return err
 	}
@@ -355,7 +354,6 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
 	st.lastReceiptsHash = receiptsHash
-	st.NextCommitersHash = block.Header().NextCommitersHash()
 	st.lastCommit = &commit
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())

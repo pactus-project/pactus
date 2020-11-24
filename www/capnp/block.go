@@ -38,7 +38,7 @@ func (f factory) BlockToBlockInfo(block *block.Block, height int, cbi *BlockInfo
 	ch.SetTime(block.Header().Time().Unix())
 	ch.SetTxsHash(block.Header().TxsHash().RawBytes())
 	ch.SetStateHash(block.Header().StateHash().RawBytes())
-	ch.SetNextCommitersHash(block.Header().NextCommitersHash().RawBytes())
+	ch.SetCommitersHash(block.Header().CommitersHash().RawBytes())
 	ch.SetLastBlockHash(block.Header().LastBlockHash().RawBytes())
 	ch.SetLastReceiptsHash(block.Header().LastReceiptsHash().RawBytes())
 	ch.SetProposerAddress(block.Header().ProposerAddress().RawBytes())

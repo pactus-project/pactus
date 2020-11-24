@@ -37,12 +37,12 @@ func NewBlock(header Header, txHashes TxHashes) (*Block, error) {
 }
 
 func MakeBlock(timestamp time.Time, txHashes TxHashes,
-	lastBlockHash, NextCommitersHash, stateHash, lastReceiptsHash crypto.Hash,
+	lastBlockHash, CommitersHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
 
 	txsHash := txHashes.Hash()
 	header := NewHeader(1, timestamp,
-		txsHash, lastBlockHash, NextCommitersHash, stateHash, lastReceiptsHash, proposer, lastCommit)
+		txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash, proposer, lastCommit)
 
 	b := Block{
 		data: blockData{
@@ -84,7 +84,7 @@ func (b Block) Fingerprint() string {
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.Header.StateHash().Fingerprint(),
-		b.data.Header.NextCommitersHash().Fingerprint(),
+		b.data.Header.CommitersHash().Fingerprint(),
 		b.data.TxHashes.Count(),
 	)
 }

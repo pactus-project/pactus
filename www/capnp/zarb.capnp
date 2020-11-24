@@ -11,7 +11,7 @@ struct Header {
   stateHash           @3 :Data;
   lastBlockHash       @4 :Data;
   lastReceiptsHash    @5 :Data;
-  nextCommitersHash   @6 :Data;
+  CommitersHash       @6 :Data;
   proposerAddress     @7 :Data;
   lastCommit          @8 :Commit;
 }

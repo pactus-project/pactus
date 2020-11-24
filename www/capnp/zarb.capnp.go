@@ -107,17 +107,17 @@ func (s Header) SetLastReceiptsHash(v []byte) error {
 	return s.Struct.SetData(3, v)
 }
 
-func (s Header) NextCommitersHash() ([]byte, error) {
+func (s Header) CommitersHash() ([]byte, error) {
 	p, err := s.Struct.Ptr(4)
 	return []byte(p.Data()), err
 }
 
-func (s Header) HasNextCommitersHash() bool {
+func (s Header) HasCommitersHash() bool {
 	p, err := s.Struct.Ptr(4)
 	return p.IsValid() || err != nil
 }
 
-func (s Header) SetNextCommitersHash(v []byte) error {
+func (s Header) SetCommitersHash(v []byte) error {
 	return s.Struct.SetData(4, v)
 }
 

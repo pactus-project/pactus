@@ -5,6 +5,7 @@ import (
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
+	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
 type ValidatorSet struct {
@@ -107,6 +108,18 @@ func (set *ValidatorSet) Validator(addr crypto.Address) *Validator {
 func (set *ValidatorSet) Proposer(round int) *Validator {
 	idx := (set.proposerIndex + round) % len(set.validators)
 	return set.validators[idx]
+}
+
+func (set *ValidatorSet) CommitersHash() crypto.Hash {
+	data := make([][]byte, len(set.validators))
+
+	for i, v := range set.validators {
+		data[i] = make([]byte, 20)
+		copy(data[i], v.Address().RawBytes())
+	}
+	merkle := simpleMerkle.NewTreeFromSlices(data)
+
+	return merkle.Root()
 }
 
 // ---------

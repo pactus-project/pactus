@@ -48,7 +48,7 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 		time.Unix(ch.Time(), 0),
 		bytesToHash(ch.TxsHash()),
 		bytesToHash(ch.LastBlockHash()),
-		bytesToHash(ch.NextCommitersHash()),
+		bytesToHash(ch.CommitersHash()),
 		bytesToHash(ch.StateHash()),
 		bytesToHash(ch.LastReceiptsHash()),
 		bytesToAddress(ch.ProposerAddress()),

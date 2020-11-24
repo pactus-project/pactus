@@ -14,15 +14,15 @@ type Header struct {
 	data headerData
 }
 type headerData struct {
-	Version           uint           `cbor:"1,keyasint"`
-	UnixTime          int64          `cbor:"2,keyasint"`
-	TxsHash           crypto.Hash    `cbor:"3,keyasint"`
-	StateHash         crypto.Hash    `cbor:"4,keyasint"`
-	LastBlockHash     crypto.Hash    `cbor:"5,keyasint"`
-	LastReceiptsHash  crypto.Hash    `cbor:"6,keyasint"`
-	NextCommitersHash crypto.Hash    `cbor:"7,keyasint"`
-	ProposerAddress   crypto.Address `cbor:"8,keyasint"`
-	LastCommit        *Commit        `cbor:"9,keyasint"`
+	Version          uint           `cbor:"1,keyasint"`
+	UnixTime         int64          `cbor:"2,keyasint"`
+	LastBlockHash    crypto.Hash    `cbor:"3,keyasint"`
+	StateHash        crypto.Hash    `cbor:"4,keyasint"`
+	TxsHash          crypto.Hash    `cbor:"5,keyasint"`
+	LastReceiptsHash crypto.Hash    `cbor:"6,keyasint"`
+	CommitersHash    crypto.Hash    `cbor:"7,keyasint"`
+	ProposerAddress  crypto.Address `cbor:"8,keyasint"`
+	LastCommit       *Commit        `cbor:"9,keyasint"`
 }
 
 func (h *Header) Version() uint                   { return h.data.Version }
@@ -31,27 +31,27 @@ func (h *Header) TxsHash() crypto.Hash            { return h.data.TxsHash }
 func (h *Header) StateHash() crypto.Hash          { return h.data.StateHash }
 func (h *Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
 func (h *Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
-func (h *Header) NextCommitersHash() crypto.Hash  { return h.data.NextCommitersHash }
+func (h *Header) CommitersHash() crypto.Hash      { return h.data.CommitersHash }
 func (h *Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
 func (h *Header) LastCommit() *Commit             { return h.data.LastCommit }
 
 func NewHeader(version uint,
 	time time.Time,
-	txsHash, lastBlockHash, NextCommitersHash, stateHash, lastReceiptsHash crypto.Hash,
+	txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash crypto.Hash,
 	proposerAddress crypto.Address,
 	lastCommit *Commit) Header {
 
 	return Header{
 		data: headerData{
-			Version:           version,
-			UnixTime:          time.Unix(),
-			TxsHash:           txsHash,
-			LastBlockHash:     lastBlockHash,
-			NextCommitersHash: NextCommitersHash,
-			StateHash:         stateHash,
-			LastReceiptsHash:  lastReceiptsHash,
-			ProposerAddress:   proposerAddress,
-			LastCommit:        lastCommit,
+			Version:          version,
+			UnixTime:         time.Unix(),
+			TxsHash:          txsHash,
+			LastBlockHash:    lastBlockHash,
+			CommitersHash:    CommitersHash,
+			StateHash:        stateHash,
+			LastReceiptsHash: lastReceiptsHash,
+			ProposerAddress:  proposerAddress,
+			LastCommit:       lastCommit,
 		},
 	}
 }
@@ -64,7 +64,7 @@ func (h *Header) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 	// TODO: fix ma later
-	// if err := h.data.NextCommitersHash.SanityCheck(); err != nil {
+	// if err := h.data.CommitersHash.SanityCheck(); err != nil {
 	// 	return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	// }
 
