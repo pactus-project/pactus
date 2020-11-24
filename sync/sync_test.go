@@ -27,7 +27,7 @@ var (
 	privVal     *validator.PrivValidator
 	genDoc      *genesis.Genesis
 	ctx         context.Context
-	txPool      *txpool.TxPool
+	txPool      *txpool.MockTxPool
 	validTxs    []tx.Tx
 	validBlocks []block.Block
 	totalBlocks int
@@ -77,7 +77,6 @@ func init() {
 func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkAPI, state.State) {
 	consConf := consensus.TestConfig()
 	stateConf := state.TestConfig()
-	txPoolConf := txpool.TestConfig()
 	loggerConfig := logger.TestConfig()
 
 	logger.InitLogger(loggerConfig)
@@ -97,8 +96,7 @@ func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNet
 		pVal = validator.NewPrivValidator(key)
 	}
 
-	txPoolConf.WaitingTimeout = 100 * time.Millisecond
-	txPool, _ = txpool.NewTxPool(txPoolConf, ch)
+	txPool = txpool.NewMockTxPool()
 	st, _ := state.LoadOrNewState(stateConf, genDoc, pVal.Address(), txPool)
 	cons, _ := consensus.NewConsensus(consConf, st, pVal, ch)
 	api := mockingNetworkAPI()
@@ -141,7 +139,7 @@ func startTestSynchronizer(t *testing.T, pVal *validator.PrivValidator) (*Synchr
 	return sync, api, st
 }
 
-func TestValidBlock(t *testing.T) {
+func TestValidBlocks(t *testing.T) {
 	sync, _, st := startTestSynchronizer(t, nil)
 
 	blocks := make([]block.Block, totalBlocks)
@@ -152,7 +150,7 @@ func TestValidBlock(t *testing.T) {
 	data, _ := cbor.Marshal(msg)
 	sync.ParsMessage(data, peerID)
 
-	// Send blocks, but one block is invalid
+	// Send blocks, all are valid
 	msg = message.NewBlocksMessage(1, blocks[:totalBlocks], lastCommit)
 	data, _ = cbor.Marshal(msg)
 	sync.ParsMessage(data, peerID)
@@ -171,7 +169,7 @@ func TestValidBlockNoCommit(t *testing.T) {
 	data, _ := cbor.Marshal(msg)
 	sync.ParsMessage(data, peerID)
 
-	// Send blocks, but one block is invalid
+	// Send blocks, all are valid
 	msg = message.NewBlocksMessage(1, blocks[:totalBlocks], nil)
 	data, _ = cbor.Marshal(msg)
 	sync.ParsMessage(data, peerID)

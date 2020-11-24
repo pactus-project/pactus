@@ -4,11 +4,11 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
 )
 
 type factory struct {
-	store  state.StoreReader
+	store  store.StoreReader
 	logger *logger.Logger
 }
 

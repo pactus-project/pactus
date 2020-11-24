@@ -15,11 +15,8 @@ import (
 // TODO: We need to have LRU cache for mempool.
 // We need to prune stale transactions
 // A transaction might valid at heigh M, but invalid at height N (N > M)
-type TxPoolReader interface {
-	PendingTx(hash crypto.Hash) (*tx.Tx, bool)
-}
 
-type TxPool struct {
+type txPool struct {
 	lk deadlock.RWMutex
 
 	config       *Config
@@ -32,8 +29,8 @@ type TxPool struct {
 
 func NewTxPool(
 	conf *Config,
-	broadcastCh chan *message.Message) (*TxPool, error) {
-	pool := &TxPool{
+	broadcastCh chan *message.Message) (TxPool, error) {
+	pool := &txPool{
 		config:       conf,
 		pendingsList: list.New(),
 		pendingsMap:  make(map[crypto.Hash]*list.Element),
@@ -45,7 +42,7 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *TxPool) AppendTxs(txs []tx.Tx) {
+func (pool *txPool) AppendTxs(txs []tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
@@ -54,7 +51,7 @@ func (pool *TxPool) AppendTxs(txs []tx.Tx) {
 	}
 }
 
-func (pool *TxPool) AppendTx(tx tx.Tx) {
+func (pool *txPool) AppendTx(tx tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
@@ -63,7 +60,7 @@ func (pool *TxPool) AppendTx(tx tx.Tx) {
 	pool.appendTxCh <- &tx
 }
 
-func (pool *TxPool) AppendTxAndBroadcast(trx tx.Tx) {
+func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
@@ -73,7 +70,7 @@ func (pool *TxPool) AppendTxAndBroadcast(trx tx.Tx) {
 	pool.broadcastCh <- msg
 }
 
-func (pool *TxPool) appendTx(tx tx.Tx) {
+func (pool *txPool) appendTx(tx tx.Tx) {
 	if pool.pendingsList.Len() >= pool.config.MaxSize {
 		pool.logger.Warn("Tx pool is full")
 	}
@@ -90,7 +87,7 @@ func (pool *TxPool) appendTx(tx tx.Tx) {
 	pool.pendingsMap[tx.Hash()] = el
 }
 
-func (pool *TxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
+func (pool *txPool) RemoveTx(hash crypto.Hash) *tx.Tx {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
@@ -106,7 +103,7 @@ func (pool *TxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
 
 }
 
-func (pool *TxPool) PendingTx(hash crypto.Hash) *tx.Tx {
+func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	pool.lk.RLock()
 
 	el, found := pool.pendingsMap[hash]
@@ -138,7 +135,7 @@ func (pool *TxPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	}
 }
 
-func (pool *TxPool) HasTx(hash crypto.Hash) bool {
+func (pool *txPool) HasTx(hash crypto.Hash) bool {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
@@ -146,13 +143,13 @@ func (pool *TxPool) HasTx(hash crypto.Hash) bool {
 	return found
 }
 
-func (pool *TxPool) Size(hash crypto.Hash) int {
+func (pool *txPool) Size() int {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
 	return pool.pendingsList.Len()
 }
 
-func (pool *TxPool) Fingerprint() string {
+func (pool *txPool) Fingerprint() string {
 	return fmt.Sprintf("{%v}", pool.pendingsList.Len())
 }

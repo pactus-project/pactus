@@ -12,11 +12,16 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
+
+var mockTxPool *txpool.MockTxPool
+
+func init() {
+	mockTxPool = txpool.NewMockTxPool()
+}
 
 func mockState(t *testing.T, pb crypto.PublicKey) (*state, crypto.Address) {
 	addr := pb.Address()
@@ -27,10 +32,7 @@ func mockState(t *testing.T, pb crypto.PublicKey) (*state, crypto.Address) {
 	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
 	stateConfig := TestConfig()
-	txPoolConfig := txpool.TestConfig()
-	txPool, err := txpool.NewTxPool(txPoolConfig, make(chan *message.Message, 10))
-	require.NoError(t, err)
-	st, err := LoadOrNewState(stateConfig, gen, val.Address(), txPool)
+	st, err := LoadOrNewState(stateConfig, gen, val.Address(), mockTxPool)
 	require.NoError(t, err)
 	s, _ := st.(*state)
 	return s, addr
@@ -57,8 +59,6 @@ func TestReplayBlock(t *testing.T) {
 	sig1 := pv.Sign(v.SignBytes())
 	c1 := block.NewCommit(0, []block.Commiter{block.Commiter{Signed: true, Address: a}}, *sig1)
 
-	h := b1.TxHashes().Hashes()[0]
-	st2.txPool.AppendTx(*st1.txPool.PendingTx(h))
 	st1.ApplyBlock(1, b1, *c1)
 	st2.ApplyBlock(1, b1, *c1)
 

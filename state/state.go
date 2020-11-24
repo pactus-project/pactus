@@ -18,15 +18,8 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type StoreReader interface {
-	BlockByHeight(height int) (*block.Block, error)
-	BlockByHash(hash crypto.Hash) (*block.Block, int, error)
-	BlockHeight(hash crypto.Hash) (int, error)
-	Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error)
-}
-
 type StateReader interface {
-	StoreReader() StoreReader
+	StoreReader() store.StoreReader
 	ValidatorSet() *validator.ValidatorSet
 	LastBlockHeight() int
 	GenesisHash() crypto.Hash
@@ -53,7 +46,7 @@ type state struct {
 	proposer         crypto.Address
 	genDoc           *genesis.Genesis
 	store            *store.Store
-	txPool           *txpool.TxPool
+	txPool           txpool.TxPool
 	cache            *Cache
 	params           *Params
 	executor         *execution.Executor
@@ -71,7 +64,7 @@ func LoadOrNewState(
 	conf *Config,
 	genDoc *genesis.Genesis,
 	proposer crypto.Address,
-	txPool *txpool.TxPool) (State, error) {
+	txPool txpool.TxPool) (State, error) {
 
 	st := &state{
 		config:   conf,
@@ -176,7 +169,7 @@ func (st *state) stateHash() crypto.Hash {
 	return *rootHash
 }
 
-func (st *state) StoreReader() StoreReader {
+func (st *state) StoreReader() store.StoreReader {
 	return st.store
 }
 
