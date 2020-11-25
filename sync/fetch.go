@@ -72,7 +72,7 @@ func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
 		{
 			// Reply salam
 			syncer.broadcastSalam()
-			syncer.sendBlocks(ourHeight)
+			syncer.sendBlocks(pld.Height + 1)
 		}
 	}
 }
@@ -81,9 +81,9 @@ func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayloa
 	b, err := syncer.store.BlockByHeight(pld.From)
 	if err == nil {
 		if b.Header().LastBlockHash().EqualsTo(pld.LastBlockHash) {
-			syncer.sendBlocks(pld.To)
+			syncer.sendBlocks(pld.From)
 		} else {
-			syncer.logger.Warn("Peer has a block which we have no knowledge about it",
+			syncer.logger.Debug("Peer has a block which we have no knowledge about it",
 				"height", pld.From-1,
 				"ourHash", b.Header().LastBlockHash(),
 				"peerHash", pld.LastBlockHash,
@@ -93,6 +93,7 @@ func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayloa
 }
 
 func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
+	syncer.logger.Debug("Process Blocks Payload", "pld", pld)
 	height := pld.From
 	ourHeight := syncer.state.LastBlockHeight()
 

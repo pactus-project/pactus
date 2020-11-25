@@ -24,16 +24,16 @@ import (
 )
 
 var (
-	privVal     *validator.PrivValidator
-	genDoc      *genesis.Genesis
-	ctx         context.Context
-	txPool      *txpool.MockTxPool
-	validTxs    []tx.Tx
-	validBlocks []block.Block
-	totalBlocks int
-	lastCommit  *block.Commit
-	syncConf    *Config
-	peerID      peer.ID
+	privVal      *validator.PrivValidator
+	genDoc       *genesis.Genesis
+	ctx          context.Context
+	txPool       *txpool.MockTxPool
+	validTxs     []tx.Tx
+	validBlocks  []block.Block
+	validCommits []block.Commit
+	totalBlocks  int
+	syncConf     *Config
+	peerID       peer.ID
 )
 
 func init() {
@@ -44,6 +44,7 @@ func init() {
 	privVal = validator.NewPrivValidator(key)
 	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
 	ctx = context.Background()
+	txPool = txpool.NewMockTxPool()
 
 	_, _, st := newTestSynchronizer(privVal)
 
@@ -56,15 +57,17 @@ func init() {
 		trx := txPool.PendingTx(txHash)
 		validTxs = append(validTxs, *trx)
 
-		validBlocks = append(validBlocks, b)
 		v := vote.NewPrecommit(i+1, 0, b.Hash(), privVal.Address())
 		privVal.SignMsg(v)
 		sig := v.Signature()
-		lastCommit = block.NewCommit(0, []block.Commiter{
+		c := block.NewCommit(0, []block.Commiter{
 			block.Commiter{Signed: true, Address: privVal.Address()}},
 			*sig)
 
-		st.ApplyBlock(i+1, b, *lastCommit)
+		st.ApplyBlock(i+1, b, *c)
+
+		validBlocks = append(validBlocks, b)
+		validCommits = append(validCommits, *c)
 	}
 	if st.LastBlockHeight() != blockCount {
 		panic("Unable to commit blocks for test")
@@ -96,7 +99,6 @@ func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNet
 		pVal = validator.NewPrivValidator(key)
 	}
 
-	txPool = txpool.NewMockTxPool()
 	st, _ := state.LoadOrNewState(stateConf, genDoc, pVal.Address(), txPool)
 	cons, _ := consensus.NewConsensus(consConf, st, pVal, ch)
 	api := mockingNetworkAPI()
@@ -151,7 +153,7 @@ func TestValidBlocks(t *testing.T) {
 	sync.ParsMessage(data, peerID)
 
 	// Send blocks, all are valid
-	msg = message.NewBlocksMessage(1, blocks[:totalBlocks], lastCommit)
+	msg = message.NewBlocksMessage(1, blocks[:totalBlocks], &validCommits[totalBlocks-1])
 	data, _ = cbor.Marshal(msg)
 	sync.ParsMessage(data, peerID)
 

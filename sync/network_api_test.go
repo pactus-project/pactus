@@ -41,7 +41,10 @@ func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message
 			return
 		case apiMsg := <-mock.ch:
 			logger.Info("comparing messages", "apiMsg", apiMsg, "msg", msg)
-			if reflect.DeepEqual(msg, apiMsg) {
+			b1, _ := msg.MarshalCBOR()
+			b2, _ := apiMsg.MarshalCBOR()
+
+			if reflect.DeepEqual(b1, b2) {
 				return
 			}
 		}
