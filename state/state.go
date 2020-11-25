@@ -18,6 +18,9 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+// baseSubsidy, one tenth of Bitcoin network
+const baseSubsidy = 5 * 1e8
+
 type StateReader interface {
 	StoreReader() store.StoreReader
 	ValidatorSet() *validator.ValidatorSet
@@ -234,10 +237,11 @@ func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lastCommit = &commit
 }
 
-func (st *state) makeRewardTx() *tx.Tx {
+func (st *state) craeteMintbaseTx() *tx.Tx {
+	acc, _ := st.store.Account(crypto.MintbaseAddress)
 	stamp := st.lastBlockHash
-	seq := st.lastBlockHeight + 1
-	amt := int64(10)
+	seq := acc.Sequence() + 1
+	amt := calcBlockSubsidy(st.lastBlockHeight+1, st.params.SubsidyReductionInterval)
 	tx := tx.NewMintbaseTx(stamp, seq, st.proposer, amt, "")
 	return tx
 }
@@ -252,7 +256,7 @@ func (st *state) ProposeBlock() block.Block {
 		timestamp = now
 	}
 
-	rewardTx := st.makeRewardTx()
+	rewardTx := st.craeteMintbaseTx()
 	st.txPool.AppendTxAndBroadcast(*rewardTx)
 
 	txHashes := block.NewTxHashes()
@@ -362,6 +366,15 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
 
 	return nil
+}
+
+func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
+	if subsidyReductionInterval == 0 {
+		return baseSubsidy
+	}
+
+	// Equivalent to: baseSubsidy / 2^(height/subsidyHalvingInterval)
+	return baseSubsidy >> uint(height/subsidyReductionInterval)
 }
 
 func (st *state) Fingerprint() string {
