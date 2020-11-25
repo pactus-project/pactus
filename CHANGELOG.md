@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.0
+- Refactoring block structure
+- Refactoring Commit structure
+- Aggregating validators' signatures
+- Validating Commit and committers
+- Merklizing committers
+- Repost UndefHash as a sanity error
+- Try to load last state info upon starting the node
+- Saving the last state info when a new block is committed
+- Updating store interface
+- Adding more tests for consensus, state and txPool
+
 ## 0.8.0
 - Adding syncer package for syncing blockchain
 - Adding message package that includes network messages
