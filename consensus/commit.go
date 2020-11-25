@@ -29,7 +29,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	// Additional check. blockHash should be same for both prevotes and precommits
 	prevoteBlockHash := preVotes.QuorumBlock()
 	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Warn("Commit: Commit witout quorom for prevote stage")
+		cs.logger.Debug("Commit: Commit witout quorom for prevote stage")
 	}
 
 	if cs.votes.lockedProposal == nil {
