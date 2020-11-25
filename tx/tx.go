@@ -19,9 +19,10 @@ type Tx struct {
 type txData struct {
 	Version   int
 	Stamp     crypto.Hash
+	Sequence  int
+	Fee       int64
 	Type      payload.PayloadType
 	Payload   payload.Payload
-	Fee       int64
 	Memo      string
 	PublicKey *crypto.PublicKey
 	Signature *crypto.Signature
@@ -29,6 +30,7 @@ type txData struct {
 
 func (tx *Tx) Version() int                     { return tx.data.Version }
 func (tx *Tx) Stamp() crypto.Hash               { return tx.data.Stamp }
+func (tx *Tx) Sequence() int                    { return tx.data.Sequence }
 func (tx *Tx) PayloadType() payload.PayloadType { return tx.data.Type }
 func (tx *Tx) Payload() payload.Payload         { return tx.data.Payload }
 func (tx *Tx) Fee() int64                       { return tx.data.Fee }
@@ -48,6 +50,9 @@ func (tx *Tx) SanityCheck() error {
 	if tx.data.Version != 1 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid version")
 	}
+	if tx.data.Sequence < 0 {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
+	}
 	if len(tx.data.Memo) > 256 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid memo")
 	}
@@ -64,10 +69,10 @@ func (tx *Tx) SanityCheck() error {
 		}
 	} else {
 		if tx.data.PublicKey == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Transaction should not have public key")
+			return errors.Errorf(errors.ErrInvalidTx, "No public key")
 		}
 		if tx.data.Signature == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Transaction should not have signature")
+			return errors.Errorf(errors.ErrInvalidTx, "No signature")
 		}
 		if tx.data.Fee <= 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid fee")
@@ -78,12 +83,12 @@ func (tx *Tx) SanityCheck() error {
 		if err := tx.data.Signature.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
 		}
-		if tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid cryptographic public key")
+		if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
 		}
 		bs := tx.SignBytes()
-		if tx.data.PublicKey.Verify(bs, tx.data.Signature) {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid cryptographic signature")
+		if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
 		}
 	}
 
@@ -93,10 +98,11 @@ func (tx *Tx) SanityCheck() error {
 type _txData struct {
 	Version   int                 `cbor:"1,keyasint"`
 	Stamp     crypto.Hash         `cbor:"2,keyasint"`
-	Type      payload.PayloadType `cbor:"3,keyasint"`
-	Payload   cbor.RawMessage     `cbor:"4,keyasint"`
-	Fee       int64               `cbor:"5,keyasint"`
-	Memo      string              `cbor:"6,keyasint"`
+	Sequence  int                 `cbor:"3,keyasint"`
+	Fee       int64               `cbor:"4,keyasint"`
+	Type      payload.PayloadType `cbor:"5,keyasint"`
+	Payload   cbor.RawMessage     `cbor:"6,keyasint"`
+	Memo      string              `cbor:"7,keyasint,omitempty"`
 	PublicKey *crypto.PublicKey   `cbor:"20,keyasint,omitempty"`
 	Signature *crypto.Signature   `cbor:"21,keyasint,omitempty"`
 }
@@ -110,6 +116,7 @@ func (tx *Tx) MarshalCBOR() ([]byte, error) {
 	_data := &_txData{
 		Version:   tx.data.Version,
 		Stamp:     tx.data.Stamp,
+		Sequence:  tx.data.Sequence,
 		Type:      tx.data.Type,
 		Payload:   bs,
 		Fee:       tx.data.Fee,
@@ -141,6 +148,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 
 	tx.data.Version = _data.Version
 	tx.data.Stamp = _data.Stamp
+	tx.data.Sequence = _data.Sequence
 	tx.data.Type = _data.Type
 	tx.data.Payload = p
 	tx.data.Fee = _data.Fee
@@ -181,7 +189,7 @@ func (tx Tx) SignBytes() []byte {
 	tx2.data.PublicKey = nil
 	tx2.data.Signature = nil
 
-	bz, _ := cbor.Marshal(tx.data)
+	bz, _ := tx2.MarshalCBOR()
 	return bz
 }
 
@@ -202,12 +210,12 @@ func (tx *Tx) IsMintbaseTx() bool {
 
 // ---------
 // For tests
-func GenerateTestSendTx() *Tx {
+func GenerateTestSendTx() (*Tx, crypto.PrivateKey) {
 	h := crypto.GenerateTestHash()
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	a2, _, _ := crypto.GenerateTestKeyPair()
-	tx := NewSendTx(h, a1, a2, 100, 10, "test tx", &pb1, nil)
+	tx := NewSendTx(h, 110, a1, a2, 100, 10, "test tx", &pb1, nil)
 	sig := pv1.Sign(tx.SignBytes())
 	tx.data.Signature = sig
-	return tx
+	return tx, pv1
 }

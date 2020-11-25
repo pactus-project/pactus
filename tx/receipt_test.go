@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-func TestEncoding(t *testing.T) {
+func TestEncodingReceipt(t *testing.T) {
 	r1 := Receipt{
 		data: receiptData{
 			TxHash:    crypto.GenerateTestHash(),

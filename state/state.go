@@ -234,6 +234,14 @@ func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lastCommit = &commit
 }
 
+func (st *state) makeRewardTx() *tx.Tx {
+	stamp := st.lastBlockHash
+	seq := st.lastBlockHeight + 1
+	amt := int64(10)
+	tx := tx.NewMintbaseTx(stamp, seq, st.proposer, amt, "")
+	return tx
+}
+
 func (st *state) ProposeBlock() block.Block {
 	st.lk.Lock()
 	defer st.lk.Unlock()
@@ -244,11 +252,11 @@ func (st *state) ProposeBlock() block.Block {
 		timestamp = now
 	}
 
-	mintbaseTx := tx.NewMintbaseTx(st.lastBlockHash, st.proposer, 10, "Minbase transaction")
-	st.txPool.AppendTxAndBroadcast(*mintbaseTx)
+	rewardTx := st.makeRewardTx()
+	st.txPool.AppendTxAndBroadcast(*rewardTx)
 
 	txHashes := block.NewTxHashes()
-	txHashes.Append(mintbaseTx.Hash())
+	txHashes.Append(rewardTx.Hash())
 	stateHash := st.stateHash()
 	commitersHash := st.validatorSet.CommitersHash()
 	block := block.MakeBlock(

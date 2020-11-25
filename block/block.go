@@ -130,10 +130,15 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 		proposer = &addr
 	}
 	txs := make([]*tx.Tx, 0)
-	txs = append(txs, tx.GenerateTestSendTx())
-	txs = append(txs, tx.GenerateTestSendTx())
-	txs = append(txs, tx.GenerateTestSendTx())
-	txs = append(txs, tx.GenerateTestSendTx())
+	tx1, _ := tx.GenerateTestSendTx()
+	tx2, _ := tx.GenerateTestSendTx()
+	tx3, _ := tx.GenerateTestSendTx()
+	tx4, _ := tx.GenerateTestSendTx()
+
+	txs = append(txs, tx1)
+	txs = append(txs, tx2)
+	txs = append(txs, tx3)
+	txs = append(txs, tx4)
 
 	txHashes := NewTxHashes()
 	for _, tx := range txs {

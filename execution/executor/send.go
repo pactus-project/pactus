@@ -18,13 +18,13 @@ func NewSendExecutor(sandbox Sandbox) *SendExecutor {
 func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	pld := trx.Payload().(*payload.SendPayload)
 
-	senderAcc := e.sandbox.Account(pld.Sender)
+	senderAcc := e.sandbox.Account(pld.SenderAddr)
 	if senderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve sender account")
 	}
-	receiverAcc := e.sandbox.Account(pld.Receiver)
+	receiverAcc := e.sandbox.Account(pld.ReceiverAddr)
 	if receiverAcc == nil {
-		receiverAcc = account.NewAccount(pld.Receiver)
+		receiverAcc = account.NewAccount(pld.ReceiverAddr)
 	}
 	if senderAcc.Balance() < pld.Amount+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
