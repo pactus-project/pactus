@@ -79,7 +79,7 @@ func LoadOrNewState(
 		return nil, err
 	}
 	st.store = store
-	st.cache = newCache(store)
+	st.cache = newCache(store, st)
 	st.executor, err = execution.NewExecutor(st.cache)
 
 	height := store.LastBlockHeight()

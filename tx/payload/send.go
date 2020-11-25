@@ -8,23 +8,23 @@ import (
 )
 
 type SendPayload struct {
-	SenderAddr   crypto.Address `cbor:"1,keyasint"`
-	ReceiverAddr crypto.Address `cbor:"2,keyasint"`
-	Amount       int64          `cbor:"3,keyasint"`
+	Sender   crypto.Address `cbor:"1,keyasint"`
+	Receiver crypto.Address `cbor:"2,keyasint"`
+	Amount   int64          `cbor:"3,keyasint"`
 }
 
 func (p *SendPayload) Signer() crypto.Address {
-	return p.SenderAddr
+	return p.Sender
 }
 
 func (p *SendPayload) SanityCheck() error {
 	if p.Amount < 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid amount")
 	}
-	if err := p.SenderAddr.SanityCheck(); err != nil {
+	if err := p.Sender.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sender address")
 	}
-	if err := p.ReceiverAddr.SanityCheck(); err != nil {
+	if err := p.Receiver.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid receiver address")
 	}
 
@@ -37,7 +37,7 @@ func (p *SendPayload) Type() PayloadType {
 
 func (p *SendPayload) Fingerprint() string {
 	return fmt.Sprintf("{Send: %v->%v 🪙 %v",
-		p.SenderAddr.Fingerprint(),
-		p.ReceiverAddr.Fingerprint(),
+		p.Sender.Fingerprint(),
+		p.Receiver.Fingerprint(),
 		p.Amount)
 }

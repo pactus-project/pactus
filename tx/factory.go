@@ -30,9 +30,34 @@ func NewSendTx(stamp crypto.Hash,
 			Version:  1,
 			Type:     payload.PayloadTypeSend,
 			Payload: &payload.SendPayload{
-				SenderAddr:   sender,
-				ReceiverAddr: receiver,
-				Amount:       amount,
+				Sender:   sender,
+				Receiver: receiver,
+				Amount:   amount,
+			},
+			Fee:       fee,
+			Memo:      memo,
+			PublicKey: publicKey,
+			Signature: signature,
+		},
+	}
+}
+
+func NewBondTx(stamp crypto.Hash,
+	sequence int,
+	bonder crypto.Address,
+	val crypto.PublicKey,
+	stake, fee int64, memo string,
+	publicKey *crypto.PublicKey, signature *crypto.Signature) *Tx {
+	return &Tx{
+		data: txData{
+			Stamp:    stamp,
+			Sequence: sequence,
+			Version:  1,
+			Type:     payload.PayloadTypeBond,
+			Payload: &payload.BondPayload{
+				Bonder:    bonder,
+				Validator: val,
+				Stake:     stake,
 			},
 			Fee:       fee,
 			Memo:      memo,

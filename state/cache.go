@@ -15,6 +15,7 @@ type Cache struct {
 	lk deadlock.Mutex
 
 	name       string
+	state      StateReader
 	store      *store.Store
 	valChanges *orderedmap.OrderedMap
 	accChanges *orderedmap.OrderedMap
@@ -34,8 +35,9 @@ func lessFn(l, r interface{}) bool {
 	return bytes.Compare(l.(crypto.Address).RawBytes(), r.(crypto.Address).RawBytes()) < 0
 }
 
-func newCache(store *store.Store) *Cache {
+func newCache(store *store.Store, state StateReader) *Cache {
 	ch := &Cache{
+		state:      state,
 		store:      store,
 		valChanges: orderedmap.NewMap(lessFn),
 		accChanges: orderedmap.NewMap(lessFn),
@@ -156,4 +158,11 @@ func (c *Cache) UpdateValidator(val *validator.Validator) {
 	} else {
 		c.valChanges.Set(addr, &validatorInfo{validator: val})
 	}
+}
+
+func (c *Cache) CurrentHeight() int {
+	c.lk.Lock()
+	defer c.lk.Unlock()
+
+	return c.state.LastBlockHeight() + 1
 }

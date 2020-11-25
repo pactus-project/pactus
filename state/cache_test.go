@@ -12,7 +12,7 @@ func TestAccountChange(t *testing.T) {
 	_, pb, _ := crypto.RandomKeyPair()
 
 	st, _ := mockState(t, pb)
-	cache := newCache(st.store)
+	cache := newCache(st.store, st)
 	acc1 := account.GenerateTestAccount()
 
 	acc := cache.Account(acc1.Address())

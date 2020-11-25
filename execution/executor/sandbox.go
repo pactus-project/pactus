@@ -14,4 +14,6 @@ type Sandbox interface {
 	HasValidator(addr crypto.Address) bool
 	Validator(addr crypto.Address) *validator.Validator
 	UpdateValidator(val *validator.Validator)
+
+	CurrentHeight() int
 }
