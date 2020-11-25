@@ -85,7 +85,7 @@ func checkHRS(t *testing.T, cons *Consensus, height, round int, step hrs.StepTyp
 func checkHRSWait(t *testing.T, cons *Consensus, height, round int, step hrs.StepType) {
 	expected := hrs.NewHRS(height, round, step)
 	for i := 0; i < 20; i++ {
-		if expected.EqualsTo(cons.hrs) {
+		if expected.EqualsTo(cons.HRS()) {
 			return
 		}
 		time.Sleep(100 * time.Millisecond)
@@ -243,12 +243,10 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), VAL1, false)
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL3, false)
-	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrevoteWait)
 	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), VAL1, false)
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL3, false)
-	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommitWait)
 	checkHRSWait(t, cons, 1, 1, hrs.StepTypePrevote)
 
 	p := cons.LastProposal()
