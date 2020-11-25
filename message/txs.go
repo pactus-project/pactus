@@ -3,7 +3,6 @@ package message
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -22,7 +21,7 @@ func NewTxsMessage(txs []tx.Tx) *Message {
 func (p *TxsPayload) SanityCheck() error {
 	for _, tx := range p.Txs {
 		if err := tx.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, "invalid transaction")
+			return err
 		}
 	}
 

@@ -113,6 +113,6 @@ func (syncer *Synchronizer) publishMessage(msg *message.Message) {
 	if err := syncer.networkAPI.PublishMessage(msg); err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg.Fingerprint(), "err", err)
 	} else {
-		syncer.logger.Trace("Publishing new message", "message", msg.Fingerprint())
+		syncer.logger.Debug("Publishing new message", "message", msg.Fingerprint())
 	}
 }

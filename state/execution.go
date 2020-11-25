@@ -17,12 +17,12 @@ func (st *state) executeBlock(block block.Block, exe *execution.Executor) ([]*tx
 			return nil, errors.Errorf(errors.ErrInvalidBlock, "Not enough transaction")
 		}
 		if err := trx.SanityCheck(); err != nil {
-			return nil, errors.Errorf(errors.ErrInvalidBlock, "Invalid transaction %v", err)
+			return nil, err
 		}
 		// Only first transaction is mintbase transaction
 		receipt, err := exe.Execute(trx, (i == 0))
 		if err != nil {
-			return nil, errors.Errorf(errors.ErrInvalidBlock, "Invalid transaction inside the block: %v", err)
+			return nil, err
 		}
 
 		receipt.SetBlockHash(block.Hash())

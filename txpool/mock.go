@@ -18,7 +18,10 @@ func NewMockTxPool() *MockTxPool {
 }
 
 func (m *MockTxPool) PendingTx(hash crypto.Hash) *tx.Tx {
-	tx := m.txs[hash]
+	tx, ok := m.txs[hash]
+	if !ok {
+		return nil
+	}
 	return &tx
 }
 
