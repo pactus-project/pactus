@@ -36,7 +36,7 @@ func (p *SendPayload) Type() PayloadType {
 }
 
 func (p *SendPayload) Fingerprint() string {
-	return fmt.Sprint("{%v->%v 🪙 %v",
+	return fmt.Sprintf("{%v->%v 🪙 %v",
 		p.Sender.Fingerprint(),
 		p.Receiver.Fingerprint(),
 		p.Amount)

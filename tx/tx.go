@@ -48,17 +48,8 @@ func (tx *Tx) SanityCheck() error {
 	if tx.data.Version != 1 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid version")
 	}
-
 	if len(tx.data.Memo) > 256 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid memo")
-	}
-	// Todo: Fix me later (Genesis mintbase transaction?)
-	// if err := tx.data.Stamp.SanityCheck(); err != nil {
-	// 	return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
-	// }
-
-	if err := tx.data.Stamp.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
 	}
 
 	if tx.IsMintbaseTx() {

@@ -17,10 +17,10 @@ func TestEncoding(t *testing.T) {
 		},
 	}
 
-	bz, err := r1.Encode()
+	bz, err := r1.MarshalCBOR()
 	require.NoError(t, err)
 	var r2 Receipt
-	err = r2.Decode(bz)
+	err = r2.UnmarshalCBOR(bz)
 	fmt.Printf("%x\n", bz)
 
 	require.NoError(t, err)
