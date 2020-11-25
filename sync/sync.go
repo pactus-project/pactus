@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync/stats"
 	"github.com/zarbchain/zarb-go/txpool"
 )
@@ -21,10 +22,10 @@ type Synchronizer struct {
 
 	ctx             context.Context
 	config          *Config
-	store           state.StoreReader
+	store           store.StoreReader
 	state           state.State
+	txPool          txpool.TxPool
 	consensus       *consensus.Consensus
-	txPool          *txpool.TxPool
 	stats           *stats.Stats
 	blockPool       *BlockPool
 	broadcastCh     <-chan *message.Message
@@ -38,7 +39,7 @@ func NewSynchronizer(
 	addr crypto.Address,
 	state state.State,
 	consensus *consensus.Consensus,
-	txPool *txpool.TxPool,
+	txPool txpool.TxPool,
 	net *network.Network,
 	broadcastCh <-chan *message.Message) (*Synchronizer, error) {
 	syncer := &Synchronizer{

@@ -6,6 +6,7 @@ import (
 
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/txpool"
 	"zombiezen.com/go/capnproto2/rpc"
 )
@@ -14,13 +15,13 @@ type Server struct {
 	ctx      context.Context
 	config   *Config
 	listener net.Listener
-	store    state.StoreReader
+	store    store.StoreReader
 	state    state.StateReader
-	txPool   *txpool.TxPool
+	txPool   txpool.TxPoolReader
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.StateReader, txPool *txpool.TxPool) (*Server, error) {
+func NewServer(conf *Config, state state.StateReader, txPool txpool.TxPoolReader) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
 		store:  state.StoreReader(),

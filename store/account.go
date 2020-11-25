@@ -27,38 +27,38 @@ func newAccountStore(path string) (*accountStore, error) {
 	}, nil
 }
 
-func (as *accountStore) HasAccount(addr crypto.Address) bool {
+func (as *accountStore) hasAccount(addr crypto.Address) bool {
 	has, err := as.db.Has(accountKey(addr), nil)
 	if err != nil {
-		panic(err)
+		return false
 	}
 	return has
 }
 
-func (as *accountStore) RetrieveAccount(addr crypto.Address) *account.Account {
-	bs, _ := as.db.Get(accountKey(addr), nil)
-	if bs == nil {
-		return nil
+func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
+	bs, err := tryGet(as.db, accountKey(addr))
+	if err != nil {
+		return nil, err
 	}
 
 	acc := new(account.Account)
 	if err := acc.Decode(bs); err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return acc
+	return acc, nil
 }
 
-func (as *accountStore) AccountCount() int {
-	count := 0
-	as.IterateAccounts(func(acc *account.Account) (stop bool) {
-		count++
+func (as *accountStore) len() int {
+	len := 0
+	as.iterateAccounts(func(acc *account.Account) (stop bool) {
+		len++
 		return false
 	})
-	return count
+	return len
 }
 
-func (as *accountStore) IterateAccounts(consumer func(*account.Account) (stop bool)) {
+func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bool)) {
 	r := util.BytesPrefix(accountPrefix)
 	iter := as.db.NewIterator(r, nil)
 	for iter.Next() {
@@ -79,11 +79,11 @@ func (as *accountStore) IterateAccounts(consumer func(*account.Account) (stop bo
 	iter.Release()
 }
 
-func (as *accountStore) UpdateAccount(acc *account.Account) {
-	bs, err := acc.Encode()
+func (as *accountStore) updateAccount(acc *account.Account) error {
+	data, err := acc.Encode()
 	if err != nil {
 		panic(err)
 	}
 
-	as.db.Put(accountKey(acc.Address()), bs, nil)
+	return tryPut(as.db, accountKey(acc.Address()), data)
 }

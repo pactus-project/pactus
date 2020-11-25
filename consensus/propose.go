@@ -40,11 +40,17 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 		return
 	}
 
+	if err := cs.state.ValidateBlock(proposal.Block()); err != nil {
+		cs.logger.Warn("propose: Invalid block", "proposal", proposal, "err", err)
+		return
+	}
+
 	cs.logger.Info("propose: Proposal set", "proposal", proposal)
 	cs.votes.SetRoundProposal(proposal.Round(), proposal)
-	// Maybe received proposal after prevote, (maybe because of network latency?)
+	// Proposal migh be received after prevote or precommit, (maybe because of network latency?)
 	// Enter prevote
 	cs.enterPrevote(proposal.Height(), proposal.Round())
+	cs.enterPrecommit(proposal.Height(), proposal.Round())
 }
 
 func (cs *Consensus) enterPropose(height int, round int) {
@@ -57,15 +63,13 @@ func (cs *Consensus) enterPropose(height int, round int) {
 		cs.logger.Debug("Propose: This node is not a validator")
 		return
 	}
-	cs.logger.Debug("Propose: This node is a validator")
+	cs.updateRoundStep(round, hrs.StepTypePropose)
 
 	address := cs.privValidator.Address()
 	if !cs.valset.Contains(address) {
 		cs.logger.Trace("Propose: This node is not in validator set", "addr", address)
 		return
 	}
-
-	cs.updateRoundStep(round, hrs.StepTypePropose)
 
 	if cs.isProposer(address, round) {
 		cs.logger.Info("Propose: Our turn to propose", "proposer", address)

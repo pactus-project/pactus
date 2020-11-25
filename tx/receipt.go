@@ -46,15 +46,15 @@ func (r *Receipt) Hash() crypto.Hash {
 	// Consensus receipt has no blockhash
 	r2 := r
 	r2.data.BlockHash = nil
-	bz, _ := r2.Encode()
+	bz, _ := r2.MarshalCBOR()
 	return crypto.HashH(bz)
 }
 
-func (r *Receipt) Encode() ([]byte, error) {
+func (r *Receipt) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(r.data)
 }
 
-func (r *Receipt) Decode(bs []byte) error {
+func (r *Receipt) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &r.data)
 }
 

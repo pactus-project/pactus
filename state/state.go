@@ -18,15 +18,8 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type StoreReader interface {
-	BlockByHeight(height int) (*block.Block, error)
-	BlockByHash(hash crypto.Hash) (*block.Block, int, error)
-	BlockHeight(hash crypto.Hash) (int, error)
-	Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error)
-}
-
 type StateReader interface {
-	StoreReader() StoreReader
+	StoreReader() store.StoreReader
 	ValidatorSet() *validator.ValidatorSet
 	LastBlockHeight() int
 	GenesisHash() crypto.Hash
@@ -49,31 +42,32 @@ type State interface {
 type state struct {
 	lk deadlock.RWMutex
 
-	proposer           crypto.Address
-	genDoc             *genesis.Genesis
-	store              *store.Store
-	txPool             *txpool.TxPool
-	cache              *Cache
-	params             *Params
-	executor           *execution.Executor
-	validatorSet       *validator.ValidatorSet
-	lastBlockHeight    int
-	lastBlockHash      crypto.Hash
-	lastReceiptsHash   crypto.Hash
-	lastCommit         *block.Commit
-	nextValidatorsHash crypto.Hash
-	lastBlockTime      time.Time
-	updateCh           chan int
-	logger             *logger.Logger
+	config           *Config
+	proposer         crypto.Address
+	genDoc           *genesis.Genesis
+	store            *store.Store
+	txPool           txpool.TxPool
+	cache            *Cache
+	params           *Params
+	executor         *execution.Executor
+	validatorSet     *validator.ValidatorSet
+	lastBlockHeight  int
+	lastBlockHash    crypto.Hash
+	lastReceiptsHash crypto.Hash
+	lastCommit       *block.Commit
+	lastBlockTime    time.Time
+	updateCh         chan int
+	logger           *logger.Logger
 }
 
 func LoadOrNewState(
 	conf *Config,
 	genDoc *genesis.Genesis,
 	proposer crypto.Address,
-	txPool *txpool.TxPool) (State, error) {
+	txPool txpool.TxPool) (State, error) {
 
 	st := &state{
+		config:   conf,
 		genDoc:   genDoc,
 		proposer: proposer,
 		txPool:   txPool,
@@ -85,14 +79,24 @@ func LoadOrNewState(
 		return nil, err
 	}
 	st.store = store
-
-	err = st.loadState()
-	if err != nil {
-		err = st.makeGenesisState(genDoc)
-	}
-
 	st.cache = newCache(store)
 	st.executor, err = execution.NewExecutor(st.cache)
+
+	height := store.LastBlockHeight()
+
+	if height == 0 {
+		err := st.makeGenesisState(genDoc)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		st.logger.Info("Try to load that last state info", "height", height)
+		err := st.tryLoadLastInfo()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -100,10 +104,37 @@ func LoadOrNewState(
 	return st, nil
 }
 
-func (st *state) loadState() error {
+func (st *state) tryLoadLastInfo() error {
+	height, commit, receiptHash, err := st.loadLastInfo()
+	if err != nil {
+		return err
+	}
 
-	return fmt.Errorf("temp error")
-	//return nil
+	b, err := st.store.BlockByHeight(height)
+	if err != nil {
+		return err
+	}
+	st.lastBlockHeight = height
+	st.lastBlockHash = b.Header().Hash()
+	st.lastCommit = commit
+	st.lastBlockTime = b.Header().Time()
+	st.lastReceiptsHash = *receiptHash
+
+	vals := make([]*validator.Validator, len(commit.Commiters()))
+	for i, c := range commit.Commiters() {
+		val, err := st.store.Validator(c.Address)
+		if err != nil {
+			return fmt.Errorf("Last commit has unknown validator: %v", err)
+		}
+		vals[i] = val
+	}
+	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.MaximumPower, b.Header().ProposerAddress())
+	if err != nil {
+		return err
+	}
+	// We have moved propose before
+	st.validatorSet.MoveProposerIndex(0)
+	return nil
 }
 
 func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
@@ -117,7 +148,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		st.store.UpdateValidator(val)
 	}
 
-	st.validatorSet = validator.NewValidatorSet(vals, len(vals))
+	valSet, err := validator.NewValidatorSet(vals, st.params.MaximumPower, vals[0].Address())
+	if err != nil {
+		return err
+	}
+	st.validatorSet = valSet
 	st.lastBlockTime = genDoc.GenesisTime()
 	return nil
 }
@@ -126,7 +161,7 @@ func (st *state) stateHash() crypto.Hash {
 	accRootHash := st.accountsMerkleRootHash()
 	valRootHash := st.validatorsMerkleRootHash()
 
-	rootHash := merkle.HashMerkleBranches(accRootHash, valRootHash)
+	rootHash := merkle.HashMerkleBranches(&accRootHash, &valRootHash)
 	if rootHash == nil {
 		logger.Panic("State hash can't be nil")
 	}
@@ -134,7 +169,7 @@ func (st *state) stateHash() crypto.Hash {
 	return *rootHash
 }
 
-func (st *state) StoreReader() StoreReader {
+func (st *state) StoreReader() store.StoreReader {
 	return st.store
 }
 
@@ -191,7 +226,7 @@ func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateCommit(blockHash, commit); err != nil {
+	if err := st.validateCommit(commit, blockHash); err != nil {
 		st.logger.Warn("Try to update last commit, but it's invalid", "error", err)
 		return
 	}
@@ -215,11 +250,12 @@ func (st *state) ProposeBlock() block.Block {
 	txHashes := block.NewTxHashes()
 	txHashes.Append(mintbaseTx.Hash())
 	stateHash := st.stateHash()
+	commitersHash := st.validatorSet.CommitersHash()
 	block := block.MakeBlock(
 		timestamp,
 		txHashes,
 		st.lastBlockHash,
-		crypto.UndefHash,
+		commitersHash,
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,
@@ -273,7 +309,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	err = st.validateCommit(block.Hash(), commit)
+	err = st.validateCommit(commit, block.Hash())
 	if err != nil {
 		return err
 	}
@@ -305,21 +341,23 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)
 	receiptsHash := receiptsMerkle.Root()
 
-	// Move validator set
-	st.validatorSet.MoveProposer(commit.Round())
+	// Move psoposer index
+	st.validatorSet.MoveProposerIndex(commit.Round())
 	st.lastBlockHeight++
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
-	st.lastReceiptsHash = *receiptsHash
+	st.lastReceiptsHash = receiptsHash
 	st.lastCommit = &commit
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
+
+	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
 
 	return nil
 }
 
 func (st *state) Fingerprint() string {
-	return fmt.Sprintf("{# %v ⌘ %v 🕣 %v}",
+	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastBlockHeight,
 		st.lastBlockHash.Fingerprint(),
 		st.lastBlockTime.Format("15.04.05"))

@@ -16,7 +16,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	preCommits := cs.votes.Precommits(round)
 
 	if !preCommits.HasQuorum() {
-		cs.logger.Error("Commit: No quorom for precommit stage")
+		cs.logger.Debug("Commit: No quorom for precommit stage")
 		return
 	}
 
@@ -29,16 +29,21 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	// Additional check. blockHash should be same for both prevotes and precommits
 	prevoteBlockHash := preVotes.QuorumBlock()
 	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Warn("Commit: Commit witout quorom for prevote stage")
+		cs.logger.Debug("Commit: Commit witout quorom for prevote stage")
 	}
 
 	if cs.votes.lockedProposal == nil {
 		// For any reason, we are not locked, try to found the locked proposal
 		roundProposal := cs.votes.RoundProposal(round)
-		if roundProposal != nil && roundProposal.IsForBlock(blockHash) {
+		if roundProposal == nil {
+			cs.requestForProposal()
+
+			cs.logger.Debug("Commit: No proposal, send proposal request.")
+			return
+		} else if roundProposal.IsForBlock(blockHash) {
 			cs.votes.lockedProposal = roundProposal
 		} else {
-			cs.logger.Error("Commit: We don't have commit proposal.")
+			cs.logger.Error("Commit: Invalid proposal.", "proposal", roundProposal)
 			return
 		}
 	}
@@ -74,7 +79,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 
 	cs.isCommitted = true
 	cs.updateRoundStep(round, hrs.StepTypeCommit)
-	cs.logger.Trace("Commit: Block committed, Schedule for new height", "block", blockHash.Fingerprint())
+	cs.logger.Info("Commit: Block committed, Schedule new height", "block", blockHash.Fingerprint())
 
 	cs.scheduleNewHeight()
 

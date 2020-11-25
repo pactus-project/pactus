@@ -20,10 +20,10 @@ import (
 )
 
 type Node struct {
-	state      state.State
 	genesisDoc *genesis.Genesis
 	config     *config.Config
-	txPool     *txpool.TxPool
+	state      state.State
+	txPool     txpool.TxPool
 	consensus  *consensus.Consensus
 	network    *network.Network
 	sync       *sync.Synchronizer

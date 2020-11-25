@@ -7,14 +7,19 @@ import (
 )
 
 func (cs *Consensus) enterPrecommit(height int, round int) {
-	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommit) {
+	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommitWait) {
 		cs.logger.Debug("Precommit: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
+		return
+	}
+
+	if cs.votes.lockedProposal != nil {
+		cs.logger.Debug("Precommit: we have locked before")
 		return
 	}
 
 	preVotes := cs.votes.Prevotes(round)
 	if !preVotes.HasQuorum() {
-		cs.logger.Error("Precommit: Entering precommit witout having quorom for prevote stage")
+		cs.logger.Debug("Precommit: Entering precommit witout having quorom for prevote stage")
 		return
 	}
 
@@ -22,8 +27,14 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 	cs.updateRoundStep(round, hrs.StepTypePrecommit)
 
 	blockHash := preVotes.QuorumBlock()
-	if blockHash == nil || blockHash.IsUndef() {
+	if blockHash == nil {
 		cs.logger.Info("Precommit: No quorum for prevote")
+		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
+		return
+	}
+
+	if blockHash.IsUndef() {
+		cs.logger.Info("Precommit: Undef quorum for prevote")
 		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
 		return
 	}
@@ -32,13 +43,13 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 	if roundProposal == nil {
 		cs.requestForProposal()
 
-		cs.logger.Error("Precommit: No proposal")
+		cs.logger.Debug("Precommit: No proposal, send proposal request.")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 	}
 
 	if !roundProposal.IsForBlock(blockHash) {
-		cs.logger.Error("Precommit: Unknown proposal")
+		cs.logger.Error("Precommit: Invalid proposal")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 	}

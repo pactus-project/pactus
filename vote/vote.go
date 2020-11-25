@@ -117,9 +117,6 @@ func (vote *Vote) SanityCheck() error {
 	if vote.data.Round < 0 {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid round")
 	}
-	if err := vote.data.BlockHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidVote, err.Error())
-	}
 	if vote.data.Signer.SanityCheck() != nil {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid signer")
 	}

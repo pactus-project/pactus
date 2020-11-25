@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func (st *state) accountsMerkleRootHash() *crypto.Hash {
+func (st *state) accountsMerkleRootHash() crypto.Hash {
 	accs := make([]*account.Account, 0)
 	st.store.IterateAccounts(func(acc *account.Account) (stop bool) {
 		accs = append(accs, acc)
@@ -23,7 +23,7 @@ func (st *state) accountsMerkleRootHash() *crypto.Hash {
 	return tree.Root()
 }
 
-func (st *state) validatorsMerkleRootHash() *crypto.Hash {
+func (st *state) validatorsMerkleRootHash() crypto.Hash {
 	vals := make([]*validator.Validator, 0)
 	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
 		vals = append(vals, val)

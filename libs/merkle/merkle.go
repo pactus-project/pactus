@@ -6,6 +6,12 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
+var hasher func(...[]byte) crypto.Hash
+
+func init() {
+	hasher = crypto.HashH
+}
+
 type SimpleMerkleTree struct {
 	merkles []*crypto.Hash
 }
@@ -33,14 +39,14 @@ func HashMerkleBranches(left *crypto.Hash, right *crypto.Hash) *crypto.Hash {
 	copy(hash[:crypto.HashSize], left.RawBytes())
 	copy(hash[crypto.HashSize:], right.RawBytes())
 
-	newHash := crypto.HashH(hash[:])
+	newHash := hasher(hash[:])
 	return &newHash
 }
 
 func NewTreeFromSlices(slices [][]byte) *SimpleMerkleTree {
 	hashes := make([]crypto.Hash, len(slices))
 	for i, b := range slices {
-		hashes[i] = crypto.HashH(b)
+		hashes[i] = hasher(b)
 	}
 
 	return NewTreeFromHashes(hashes)
@@ -87,11 +93,15 @@ func NewTreeFromHashes(hashes []crypto.Hash) *SimpleMerkleTree {
 	return &SimpleMerkleTree{merkles: merkles}
 }
 
-func (tree *SimpleMerkleTree) Root() *crypto.Hash {
+func (tree *SimpleMerkleTree) Root() crypto.Hash {
 	if tree == nil {
-		return &crypto.UndefHash
+		return crypto.UndefHash
 	}
-	return tree.merkles[len(tree.merkles)-1]
+	h := tree.merkles[len(tree.merkles)-1]
+	if h != nil {
+		return *h
+	}
+	return crypto.UndefHash
 }
 
 func (tree *SimpleMerkleTree) Depth() int {

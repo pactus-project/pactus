@@ -14,15 +14,15 @@ type Header struct {
 	data headerData
 }
 type headerData struct {
-	Version            uint           `cbor:"1,keyasint"`
-	UnixTime           int64          `cbor:"2,keyasint"`
-	TxsHash            crypto.Hash    `cbor:"3,keyasint"`
-	StateHash          crypto.Hash    `cbor:"4,keyasint"`
-	LastBlockHash      crypto.Hash    `cbor:"5,keyasint"`
-	LastCommitHash     crypto.Hash    `cbor:"6,keyasint"`
-	LastReceiptsHash   crypto.Hash    `cbor:"7,keyasint"`
-	NextValidatorsHash crypto.Hash    `cbor:"8,keyasint"`
-	ProposerAddress    crypto.Address `cbor:"9,keyasint"`
+	Version          uint           `cbor:"1,keyasint"`
+	UnixTime         int64          `cbor:"2,keyasint"`
+	LastBlockHash    crypto.Hash    `cbor:"3,keyasint"`
+	StateHash        crypto.Hash    `cbor:"4,keyasint"`
+	TxsHash          crypto.Hash    `cbor:"5,keyasint"`
+	LastReceiptsHash crypto.Hash    `cbor:"6,keyasint"`
+	CommitersHash    crypto.Hash    `cbor:"7,keyasint"`
+	ProposerAddress  crypto.Address `cbor:"8,keyasint"`
+	LastCommit       *Commit        `cbor:"9,keyasint"`
 }
 
 func (h *Header) Version() uint                   { return h.data.Version }
@@ -30,49 +30,60 @@ func (h *Header) Time() time.Time                 { return time.Unix(h.data.Unix
 func (h *Header) TxsHash() crypto.Hash            { return h.data.TxsHash }
 func (h *Header) StateHash() crypto.Hash          { return h.data.StateHash }
 func (h *Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
-func (h *Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash }
 func (h *Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
-func (h *Header) NextValidatorsHash() crypto.Hash { return h.data.NextValidatorsHash }
+func (h *Header) CommitersHash() crypto.Hash      { return h.data.CommitersHash }
 func (h *Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
+func (h *Header) LastCommit() *Commit             { return h.data.LastCommit }
 
 func NewHeader(version uint,
 	time time.Time,
-	txsHash, lastBlockHash, nextValHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
-	proposerAddress crypto.Address) Header {
+	txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash crypto.Hash,
+	proposerAddress crypto.Address,
+	lastCommit *Commit) Header {
 
 	return Header{
 		data: headerData{
-			Version:            version,
-			UnixTime:           time.Unix(),
-			TxsHash:            txsHash,
-			LastBlockHash:      lastBlockHash,
-			LastCommitHash:     lastCommitHash,
-			NextValidatorsHash: nextValHash,
-			StateHash:          stateHash,
-			LastReceiptsHash:   lastReceiptsHash,
-			ProposerAddress:    proposerAddress,
+			Version:          version,
+			UnixTime:         time.Unix(),
+			TxsHash:          txsHash,
+			LastBlockHash:    lastBlockHash,
+			CommitersHash:    CommitersHash,
+			StateHash:        stateHash,
+			LastReceiptsHash: lastReceiptsHash,
+			ProposerAddress:  proposerAddress,
+			LastCommit:       lastCommit,
 		},
 	}
 }
 
 func (h *Header) SanityCheck() error {
-	if err := h.data.LastBlockHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
-	}
-	if err := h.data.LastCommitHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
-	}
 	if err := h.data.TxsHash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 	if err := h.data.ProposerAddress.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	if err := h.data.NextValidatorsHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
-	}
-	if err := h.data.LastReceiptsHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+	// TODO: fix ma later
+	// if err := h.data.CommitersHash.SanityCheck(); err != nil {
+	// 	return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+	// }
+
+	if h.data.LastCommit != nil {
+		if err := h.data.LastBlockHash.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+		}
+		if err := h.data.LastReceiptsHash.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+		}
+		if err := h.data.LastCommit.SanityCheck(); err != nil {
+			return err
+		}
+	} else {
+		// Check for genesis block
+		if !h.data.LastBlockHash.IsUndef() ||
+			!h.data.LastReceiptsHash.IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Genesis block")
+		}
 	}
 
 	return nil

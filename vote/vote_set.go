@@ -1,9 +1,7 @@
 package vote
 
 import (
-	"bytes"
 	"fmt"
-	"sort"
 
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -150,7 +148,7 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	return added, nil
 }
 func (vs *VoteSet) hasQuorum(sum int) bool {
-	return sum > (vs.valSet.MaximumPower() * 2 / 3)
+	return sum > (vs.valSet.Power() * 2 / 3)
 }
 
 func (vs *VoteSet) HasQuorum() bool {
@@ -184,21 +182,30 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 	for _, v := range votesMap {
 		votes = append(votes, v)
 	}
-	// sort by signer
-	sort.SliceStable(votes, func(i, j int) bool {
-		return bytes.Compare(votes[i].Signer().RawBytes(), votes[j].Signer().RawBytes()) > 0
-	})
-	commiters := make([]crypto.Address, 0)
-	signatures := make([]crypto.Signature, 0)
-	for _, v := range votes {
-		if v.BlockHash().IsUndef() {
-			continue
+	vals := vs.valSet.Validators()
+	commiters := make([]block.Commiter, len(vals))
+	sigs := make([]crypto.Signature, 0)
+
+	for i, addr := range vals {
+		signed := false
+		v := votesMap[addr]
+
+		if v != nil {
+			if v.BlockHash().IsUndef() {
+				panic("Should never come here!!! delete me later")
+				continue
+			}
+			sigs = append(sigs, *v.Signature())
+			signed = true
 		}
-		commiters = append(commiters, v.Signer())
-		signatures = append(signatures, *v.Signature())
+
+		commiters[i].Address = addr
+		commiters[i].Signed = signed
 	}
 
-	return block.NewCommit(vs.round, commiters, signatures)
+	sig := crypto.Aggregate(sigs)
+
+	return block.NewCommit(vs.round, commiters, sig)
 }
 
 func (vs *VoteSet) Fingerprint() string {

@@ -1,8 +1,11 @@
 package validator
 
 import (
+	"fmt"
+
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
+	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
 type ValidatorSet struct {
@@ -14,15 +17,26 @@ type ValidatorSet struct {
 	joined        int
 }
 
-func NewValidatorSet(validators []*Validator, maximumPower int) *ValidatorSet {
+func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.Address) (*ValidatorSet, error) {
+
+	index := -1
+	for i, v := range validators {
+		if v.Address().EqualsTo(proposer) {
+			index = i
+			break
+		}
+	}
+
+	if index == -1 {
+		return nil, fmt.Errorf("Proposer is not in the list")
+	}
 	validators2 := make([]*Validator, len(validators))
 	copy(validators2, validators)
-	set := &ValidatorSet{
+	return &ValidatorSet{
 		maximumPower:  maximumPower,
 		validators:    validators2,
-		proposerIndex: 0,
-	}
-	return set
+		proposerIndex: index,
+	}, nil
 }
 
 // TotalPower equals to the number of validator in the set
@@ -39,6 +53,10 @@ func (set *ValidatorSet) UpdateMaximumPower(maximumPower int) {
 
 func (set *ValidatorSet) MaximumPower() int {
 	return set.maximumPower
+}
+
+func (set *ValidatorSet) Power() int {
+	return len(set.validators)
 }
 
 func (set *ValidatorSet) Join(val *Validator) error {
@@ -58,11 +76,17 @@ func (set *ValidatorSet) ForceLeave(val *Validator) error {
 	return nil
 }
 
-func (set *ValidatorSet) MoveProposer(round int) {
-	set.proposerIndex = (set.proposerIndex + round + 1) % len(set.validators)
-
+func (set *ValidatorSet) MoveProposerIndex(count int) {
+	set.proposerIndex = (set.proposerIndex + count + 1) % len(set.validators)
 }
 
+func (set *ValidatorSet) Validators() []crypto.Address {
+	vals := make([]crypto.Address, len(set.validators))
+	for i, v := range set.validators {
+		vals[i] = v.Address()
+	}
+	return vals
+}
 func (set *ValidatorSet) Contains(addr crypto.Address) bool {
 	for _, v := range set.validators {
 		if v.Address().EqualsTo(addr) {
@@ -86,6 +110,18 @@ func (set *ValidatorSet) Proposer(round int) *Validator {
 	return set.validators[idx]
 }
 
+func (set *ValidatorSet) CommitersHash() crypto.Hash {
+	data := make([][]byte, len(set.validators))
+
+	for i, v := range set.validators {
+		data[i] = make([]byte, 20)
+		copy(data[i], v.Address().RawBytes())
+	}
+	merkle := simpleMerkle.NewTreeFromSlices(data)
+
+	return merkle.Root()
+}
+
 // ---------
 // For tests
 func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
@@ -96,5 +132,6 @@ func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
 
 	keys := []crypto.PrivateKey{pv1, pv2, pv3, pv4}
 	vals := []*Validator{val1, val2, val3, val4}
-	return NewValidatorSet(vals, 4), keys
+	valset, _ := NewValidatorSet(vals, 4, val1.Address())
+	return valset, keys
 }

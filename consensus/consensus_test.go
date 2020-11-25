@@ -20,7 +20,8 @@ import (
 )
 
 var (
-	pvals []*validator.PrivValidator
+	pvals      []*validator.PrivValidator
+	mockTxPool *txpool.MockTxPool
 )
 
 const (
@@ -32,6 +33,7 @@ const (
 
 func init() {
 	_, keys := validator.GenerateTestValidatorSet()
+	mockTxPool = txpool.NewMockTxPool()
 
 	pvals = make([]*validator.PrivValidator, 4)
 	for i, k := range keys {
@@ -43,7 +45,6 @@ func init() {
 func newTestConsensus(t *testing.T, valID int) *Consensus {
 	consConf := TestConfig()
 	stateConf := state.TestConfig()
-	txPoolConf := txpool.TestConfig()
 	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
 
@@ -68,8 +69,7 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	}()
 
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals)
-	txpool, _ := txpool.NewTxPool(txPoolConf, ch)
-	st, _ := state.LoadOrNewState(stateConf, genDoc, pvals[valID].Address(), txpool)
+	st, _ := state.LoadOrNewState(stateConf, genDoc, pvals[valID].Address(), mockTxPool)
 
 	cons, _ := NewConsensus(consConf, st, pvals[valID], ch)
 	assert.Equal(t, cons.votes.height, 0)
@@ -85,7 +85,7 @@ func checkHRS(t *testing.T, cons *Consensus, height, round int, step hrs.StepTyp
 func checkHRSWait(t *testing.T, cons *Consensus, height, round int, step hrs.StepType) {
 	expected := hrs.NewHRS(height, round, step)
 	for i := 0; i < 20; i++ {
-		if expected.EqualsTo(cons.hrs) {
+		if expected.EqualsTo(cons.HRS()) {
 			return
 		}
 		time.Sleep(100 * time.Millisecond)
@@ -100,7 +100,7 @@ func testAddVote(t *testing.T,
 	round int,
 	blockHash crypto.Hash,
 	pvalID int,
-	expectError bool) {
+	expectError bool) *vote.Vote {
 
 	v := vote.NewVote(voteType, height, round, blockHash, pvals[pvalID].Address())
 	pvals[pvalID].SignMsg(v)
@@ -110,6 +110,7 @@ func testAddVote(t *testing.T,
 	} else {
 		assert.NoError(t, cons.AddVote(v))
 	}
+	return v
 }
 
 func TestConsensusAddVotesNormal(t *testing.T) {
@@ -242,12 +243,10 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), VAL1, false)
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL3, false)
-	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrevoteWait)
 	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), VAL1, false)
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL3, false)
-	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommitWait)
 	checkHRSWait(t, cons, 1, 1, hrs.StepTypePrevote)
 
 	p := cons.LastProposal()

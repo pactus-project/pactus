@@ -56,6 +56,7 @@ func (sig Signature) RawBytes() []byte {
 	if sig.data.Signature == nil {
 		return nil
 	}
+
 	return sig.data.Signature.Serialize()
 }
 

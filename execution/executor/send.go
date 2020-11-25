@@ -29,6 +29,9 @@ func (e *SendExecutor) Execute(trx *tx.Tx) (*tx.Receipt, error) {
 	senderAcc.SubtractFromBalance(trx.Amount() + trx.Fee())
 	receiverAcc.AddToBalance(trx.Amount())
 
+	e.sandbox.UpdateAccount(senderAcc)
+	e.sandbox.UpdateAccount(receiverAcc)
+
 	receipt := trx.GenerateReceipt(tx.Ok)
 	return receipt, nil
 }
