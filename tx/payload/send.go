@@ -17,6 +17,10 @@ func (p *SendPayload) Signer() crypto.Address {
 	return p.Sender
 }
 
+func (p *SendPayload) Value() int64 {
+	return p.Amount
+}
+
 func (p *SendPayload) SanityCheck() error {
 	if p.Amount < 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid amount")

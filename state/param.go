@@ -7,6 +7,8 @@ type Params struct {
 	MaximumPower             int
 	SubsidyReductionInterval int
 	MaximumMemoLength        int
+	FeeFraction              float64
+	MinimumFee               int64
 }
 
 func NewParams() *Params {
@@ -15,5 +17,7 @@ func NewParams() *Params {
 		MaximumPower:             5,
 		SubsidyReductionInterval: 210000,
 		MaximumMemoLength:        1024,
+		FeeFraction:              0.001,
+		MinimumFee:               1000,
 	}
 }

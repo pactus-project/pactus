@@ -104,6 +104,10 @@ func LoadOrNewState(
 		return nil, err
 	}
 
+	txPool.UpdateMaxMemoLenght(st.params.MaximumMemoLength)
+	txPool.UpdateFeeFraction(st.params.FeeFraction)
+	txPool.UpdateMinFee(st.params.MinimumFee)
+
 	return st, nil
 }
 

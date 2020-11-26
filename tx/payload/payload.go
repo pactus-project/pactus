@@ -25,6 +25,7 @@ func (t PayloadType) String() string {
 
 type Payload interface {
 	Signer() crypto.Address
+	Value() int64
 	SanityCheck() error
 	Type() PayloadType
 	Fingerprint() string

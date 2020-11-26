@@ -17,6 +17,10 @@ func NewMockTxPool() *MockTxPool {
 	}
 }
 
+func (m *MockTxPool) UpdateMaxMemoLenght(maxMemoLenght int) {}
+func (m *MockTxPool) UpdateFeeFraction(feeFraction float64) {}
+func (m *MockTxPool) UpdateMinFee(minFee int64)             {}
+
 func (m *MockTxPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	tx, ok := m.txs[hash]
 	if !ok {
@@ -44,12 +48,13 @@ func (m *MockTxPool) AppendTxs(txs []tx.Tx) {
 	}
 }
 
-func (m *MockTxPool) AppendTx(tx tx.Tx) {
+func (m *MockTxPool) AppendTx(tx tx.Tx) error {
 	m.txs[tx.Hash()] = tx
-
+	return nil
 }
-func (m *MockTxPool) AppendTxAndBroadcast(trx tx.Tx) {
+func (m *MockTxPool) AppendTxAndBroadcast(trx tx.Tx) error {
 	m.txs[trx.Hash()] = trx
+	return nil
 }
 
 func (m *MockTxPool) RemoveTx(hash crypto.Hash) *tx.Tx {

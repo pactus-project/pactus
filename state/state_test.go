@@ -73,7 +73,7 @@ func TestReplayBlock(t *testing.T) {
 }
 
 func TestBlockSubsidy(t *testing.T) {
-	interval := int32(210000)
+	interval := 210000
 	assert.Equal(t, int64(5*1e8), calcBlockSubsidy(1, 210000))
 	assert.Equal(t, int64(5*1e8), calcBlockSubsidy((1*interval)-1, 210000))
 	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((1*interval), 210000))

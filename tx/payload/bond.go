@@ -17,6 +17,10 @@ func (p *BondPayload) Signer() crypto.Address {
 	return p.Bonder
 }
 
+func (p *BondPayload) Value() int64 {
+	return p.Stake
+}
+
 func (p *BondPayload) SanityCheck() error {
 	if p.Stake < 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid amount")

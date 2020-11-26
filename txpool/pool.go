@@ -7,6 +7,7 @@ import (
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/tx"
@@ -19,12 +20,15 @@ import (
 type txPool struct {
 	lk deadlock.RWMutex
 
-	config       *Config
-	pendingsList *list.List
-	pendingsMap  map[crypto.Hash]*list.Element
-	appendTxCh   chan *tx.Tx
-	broadcastCh  chan *message.Message
-	logger       *logger.Logger
+	config        *Config
+	pendingsList  *list.List
+	pendingsMap   map[crypto.Hash]*list.Element
+	appendTxCh    chan *tx.Tx
+	broadcastCh   chan *message.Message
+	maxMemoLenght int
+	feeFraction   float64
+	minFee        int64
+	logger        *logger.Logger
 }
 
 func NewTxPool(
@@ -42,49 +46,72 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *txPool) AppendTxs(txs []tx.Tx) {
+func (pool *txPool) UpdateMaxMemoLenght(maxMemoLenght int) {
+	pool.maxMemoLenght = maxMemoLenght
+}
+
+func (pool *txPool) UpdateFeeFraction(feeFraction float64) {
+	pool.feeFraction = feeFraction
+}
+
+func (pool *txPool) UpdateMinFee(minFee int64) {
+	pool.minFee = minFee
+}
+
+func (pool *txPool) AppendTxs(trxs []tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	for _, tx := range txs {
-		pool.appendTx(tx)
+	for _, trx := range trxs {
+		pool.appendTx(trx)
 	}
 }
 
-func (pool *txPool) AppendTx(tx tx.Tx) {
+func (pool *txPool) AppendTx(trx tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	pool.appendTx(tx)
+	if err := pool.appendTx(trx); err != nil {
+		return err
+	}
 
-	pool.appendTxCh <- &tx
+	pool.appendTxCh <- &trx
+
+	return nil
 }
 
-func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) {
+func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	pool.appendTx(trx)
+	if err := pool.appendTx(trx); err != nil {
+		return err
+	}
 
 	msg := message.NewTxsMessage([]tx.Tx{trx})
 	pool.broadcastCh <- msg
+
+	return nil
 }
 
-func (pool *txPool) appendTx(tx tx.Tx) {
+func (pool *txPool) appendTx(trx tx.Tx) error {
 	if pool.pendingsList.Len() >= pool.config.MaxSize {
-		pool.logger.Warn("Tx pool is full")
+		return errors.Errorf(errors.ErrInvalidTx, "Transaction pool is full. Size %v", pool.pendingsList.Len())
 	}
 
-	_, found := pool.pendingsMap[tx.Hash()]
+	_, found := pool.pendingsMap[trx.Hash()]
 	if found {
-		pool.logger.Trace("We already have this transaction", "hash", tx.Hash())
-		return
+		return errors.Errorf(errors.ErrInvalidTx, "Transaction is alreasy in pool. hash: %v", trx.Hash())
 	}
-	// TODO:
-	// validate transaction
 
-	el := pool.pendingsList.PushFront(&tx)
-	pool.pendingsMap[tx.Hash()] = el
+	if err := pool.validateTx(&trx); err != nil {
+		return err
+	}
+
+	el := pool.pendingsList.PushFront(&trx)
+	pool.pendingsMap[trx.Hash()] = el
+
+	return nil
 }
 
 func (pool *txPool) RemoveTx(hash crypto.Hash) *tx.Tx {
@@ -108,9 +135,9 @@ func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
 
 	el, found := pool.pendingsMap[hash]
 	if found {
-		tx := el.Value.(*tx.Tx)
+		trx := el.Value.(*tx.Tx)
 		pool.lk.RUnlock()
-		return tx
+		return trx
 	}
 
 	pool.logger.Debug("Request transaction from peers", "hash", hash)
@@ -126,10 +153,10 @@ func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
 		case <-timeout.C:
 			pool.logger.Warn("Transaction not received", "hash", hash, "timeout", pool.config.WaitingTimeout)
 			return nil
-		case tx := <-pool.appendTxCh:
+		case trx := <-pool.appendTxCh:
 			pool.logger.Debug("Transaction found", "hash", hash)
-			if tx.Hash().EqualsTo(hash) {
-				return tx
+			if trx.Hash().EqualsTo(hash) {
+				return trx
 			}
 		}
 	}

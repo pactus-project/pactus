@@ -53,10 +53,6 @@ func (tx *Tx) SanityCheck() error {
 	if tx.data.Sequence < 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
 	}
-	// TODO: Get it from state->params
-	if len(tx.data.Memo) > 1024 {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid memo")
-	}
 
 	if tx.IsMintbaseTx() {
 		if tx.data.PublicKey != nil {
