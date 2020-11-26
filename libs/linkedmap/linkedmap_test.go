@@ -42,4 +42,10 @@ func TestLinkedMap(t *testing.T) {
 	value, found = lm.Get(1)
 	assert.Equal(t, found, false)
 	assert.Equal(t, value, nil)
+
+	lm.SetCapacity(2)
+
+	value, found = lm.Get(4)
+	assert.Equal(t, found, false)
+	assert.Equal(t, value, nil)
 }
