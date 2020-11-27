@@ -9,33 +9,16 @@ func (cs *Consensus) enterNewRound(height int, round int) {
 		cs.logger.Debug("NewRound: Invalid height or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
 	}
-	switch cs.hrs.Step() {
-	case hrs.StepTypeCommit:
-	case hrs.StepTypeNewHeight:
-		{
-			if round != 0 || cs.hrs.Round() != 0 {
-				cs.logger.Debug("NewRound: Invalid round", "height", height, "round", round)
-				return
-			}
-		}
-	case hrs.StepTypePrecommit:
-	case hrs.StepTypePrecommitWait:
-		{
-			if round == 0 || cs.hrs.Round() != round-1 {
-				cs.logger.Debug("NewRound: Invalid round", "height", height, "round", round)
-				return
-			}
-		}
-	default:
-		cs.logger.Debug("NewRound: Invalid step", "height", height, "round", round)
+
+	if round < cs.hrs.Round() {
+		cs.logger.Debug("NewRound: Try to enter prior round", "height", height, "round", round)
 		return
 	}
 
 	// make sure we have quorom votes for previous round
 	if round > 0 {
 		if !cs.votes.Prevotes(round - 1).HasQuorum() {
-			cs.logger.Error("NewRound: No prevote quorom for previous round")
-			return
+			cs.logger.Debug("NewRound: No prevote quorom for previous round")
 		}
 		if !cs.votes.Precommits(round - 1).HasQuorum() {
 			cs.logger.Error("NewRound: No precommit quorom for previous round")

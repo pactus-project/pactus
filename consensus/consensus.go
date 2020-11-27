@@ -207,7 +207,11 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 
 	added, err := cs.votes.AddVote(v)
 	if err != nil {
-		cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
+		if v.Signer().EqualsTo(cs.privValidator.Address()) {
+			cs.logger.Error("Detecting a duplicated vote from ourself. Did you restart the node?")
+		} else {
+			cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
+		}
 		return err
 	}
 	if !added {
@@ -270,8 +274,8 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	err := cs.addVote(v)
 	if err != nil {
 		cs.logger.Error("Error on adding our vote!", "error", err, "vote", v)
+		return
 	}
-
 
 	// Broadcast our vote
 	msg := message.NewVoteMessage(v)
