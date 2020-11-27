@@ -80,7 +80,7 @@ func (pool *BlockPool) BlockLen() int {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	return len(pool.commits)
+	return len(pool.blocks)
 }
 
 func (pool *BlockPool) CommitLen() int {

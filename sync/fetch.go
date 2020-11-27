@@ -63,6 +63,10 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
 	ourHeight := syncer.state.LastBlockHeight()
 
+	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
+		syncer.logger.Info("Received a message from different chain", "Genesis hash", pld.GenesisHash)
+		return
+	}
 	switch h := pld.Height; {
 	case h > ourHeight:
 		{
@@ -227,7 +231,7 @@ func (syncer *Synchronizer) tryCommitBlocks() {
 		}
 		syncer.logger.Trace("Committing block", "height", ourHeight+1, "block", commitBlock)
 		if err := syncer.state.ApplyBlock(ourHeight+1, *commitBlock, *commit); err != nil {
-			syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err)
+			syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...
 		}
 

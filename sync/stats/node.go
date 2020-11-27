@@ -15,3 +15,10 @@ type Node struct {
 func NewNode() *Node {
 	return &Node{}
 }
+
+func (n *Node) BelongsToSameNetwork(genesisHash crypto.Hash) bool {
+	if n.GenesisHash.IsUndef() {
+		return true
+	}
+	return n.GenesisHash.EqualsTo(genesisHash)
+}

@@ -99,6 +99,11 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 		return nil
 	}
 
+	// Not from the same chain
+	if !node.BelongsToSameNetwork(s.genesisHash) {
+		return nil
+	}
+
 	//ourHeight, _ := syncer.state.LastBlockInfo()
 	switch msg.PayloadType() {
 	case message.PayloadTypeSalam:
