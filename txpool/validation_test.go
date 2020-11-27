@@ -16,14 +16,17 @@ func TestValidity(t *testing.T) {
 	conf := DefaultConfig()
 	pool, _ := NewTxPool(conf, nil)
 
+	pool.UpdateStampsCount(2)
 	pool.UpdateMaxMemoLenght(1024)
 	pool.UpdateFeeFraction(0.001)
 	pool.UpdateMinFee(1000)
 
-	stamp := crypto.Hash{}
+	stamp := crypto.GenerateTestHash()
 	senderAddr, _, _ := crypto.GenerateTestKeyPair()
 	receiverAddr, _, _ := crypto.GenerateTestKeyPair()
 	bigMemo := strings.Repeat("a", 1025)
+
+	pool.AppendStamp(100, stamp)
 
 	trx1 := tx.NewSendTx(stamp, 1, senderAddr, receiverAddr, 1000, 1000, bigMemo, nil, nil)
 	assert.Error(t, pool.(*txPool).validateTx(trx1))
@@ -51,4 +54,11 @@ func TestValidity(t *testing.T) {
 
 	trx9 := tx.NewSendTx(stamp, 1, senderAddr, receiverAddr, 10000000, 10000, "ok", nil, nil)
 	assert.NoError(t, pool.(*txPool).validateTx(trx9))
+
+	// Test stamp validity
+	pool.AppendStamp(101, crypto.GenerateTestHash())
+	assert.NoError(t, pool.(*txPool).validateTx(trx9))
+	pool.AppendStamp(102, crypto.GenerateTestHash())
+	assert.Error(t, pool.(*txPool).validateTx(trx9))
+
 }

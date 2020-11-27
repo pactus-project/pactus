@@ -16,11 +16,14 @@ func NewMockTxPool() *MockTxPool {
 		txs: make(map[crypto.Hash]tx.Tx),
 	}
 }
-
+func (m *MockTxPool) UpdateStampsCount(stampsCount int)     {}
 func (m *MockTxPool) UpdateMaxMemoLenght(maxMemoLenght int) {}
 func (m *MockTxPool) UpdateFeeFraction(feeFraction float64) {}
 func (m *MockTxPool) UpdateMinFee(minFee int64)             {}
 
+func (m *MockTxPool) AppendStamp(height int, stamp crypto.Hash) {
+
+}
 func (m *MockTxPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	tx, ok := m.txs[hash]
 	if !ok {

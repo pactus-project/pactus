@@ -9,6 +9,7 @@ type Params struct {
 	MaximumMemoLength        int
 	FeeFraction              float64
 	MinimumFee               int64
+	StampsCount              int
 }
 
 func NewParams() *Params {
@@ -19,5 +20,6 @@ func NewParams() *Params {
 		MaximumMemoLength:        1024,
 		FeeFraction:              0.001,
 		MinimumFee:               1000,
+		StampsCount:              500,
 	}
 }

@@ -16,9 +16,11 @@ type TxPoolReader interface {
 type TxPool interface {
 	TxPoolReader
 
+	UpdateStampsCount(stampsCount int)
 	UpdateMaxMemoLenght(maxMemoLenght int)
 	UpdateFeeFraction(feeFraction float64)
 	UpdateMinFee(minFee int64)
+	AppendStamp(height int, stamp crypto.Hash)
 	AppendTxs(txs []tx.Tx)
 	AppendTx(tx tx.Tx) error
 	AppendTxAndBroadcast(trx tx.Tx) error

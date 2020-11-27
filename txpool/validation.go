@@ -7,10 +7,12 @@ import (
 )
 
 func (pool *txPool) validateTx(trx *tx.Tx) error {
+	if !pool.stamps.Has(trx.Stamp()) {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
+	}
 	if len(trx.Memo()) > pool.maxMemoLenght {
 		return errors.Errorf(errors.ErrInvalidTx, "Memo length exceeded")
 	}
-
 	if !trx.IsMintbaseTx() {
 		fee := int64(float64(trx.Payload().Value()) * pool.feeFraction)
 		fee = util.Max64(fee, pool.minFee)

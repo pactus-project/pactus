@@ -104,9 +104,12 @@ func LoadOrNewState(
 		return nil, err
 	}
 
+	txPool.UpdateStampsCount(st.params.StampsCount)
 	txPool.UpdateMaxMemoLenght(st.params.MaximumMemoLength)
 	txPool.UpdateFeeFraction(st.params.FeeFraction)
 	txPool.UpdateMinFee(st.params.MinimumFee)
+
+	txPool.AppendStamp(st.lastBlockHeight, st.lastBlockHash)
 
 	return st, nil
 }
@@ -368,6 +371,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
 
 	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
+	st.txPool.AppendStamp(st.lastBlockHeight, st.lastBlockHash)
 
 	return nil
 }

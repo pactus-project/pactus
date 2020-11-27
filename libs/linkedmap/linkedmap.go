@@ -54,12 +54,15 @@ func (lm *LinkedMap) Get(key interface{}) (interface{}, bool) {
 	return nil, false
 }
 
-func (lm *LinkedMap) Remove(key interface{}) {
+func (lm *LinkedMap) Remove(key interface{}) interface{} {
 	el, found := lm.hashmap[key]
 	if found {
 		lm.list.Remove(el)
 		delete(lm.hashmap, el.Value.(pair).key)
+		return el.Value.(pair).value
 	}
+
+	return nil
 }
 
 func (lm *LinkedMap) Empty() bool {
