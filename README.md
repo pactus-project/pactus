@@ -4,7 +4,7 @@
 
 ## Compiling the code
 
-You need to make sure you have install [Go](https://golang.org/) and [rust](https://www.rust-lang.org).
+You need to make sure you have install [Go](https://golang.org/).
 Follow these steps to compile and build Zarb blockchain:
 
 ```bash
@@ -18,25 +18,27 @@ Run `zarb version` to make sure Zarb is properly compiled and installed in your 
 
 ## Running Zarb
 
-### Initialize
+
+### Testnet
+
+To join test nest, run this command:
+
+```bash
+zarb start --wizard
+```
+
+And follow the instruction.
+
+### Local net
 
 Initialize the working directory by running:
 
  ```bash
  zarb init -w=<workspace_directory>
+ zarb start -w=<workspace_directory>
  ```
 
  This command will create config.toml, genesis.json and private key for the validator.
-
-### Run
-
-For running a Zarb node, use:
-
-```bash
-zarb start -w=<workspace_directory>
-```
-
-The Zarb blockchain starts immediately.
 
 ## Usage of Docker
 
