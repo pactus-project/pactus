@@ -11,7 +11,7 @@ import (
 func zarb() *cli.Cli {
 	app := cli.App("zarb", "Zarb blockchain node")
 
-	app.Command("init", "Initialize the zarb blockchain", Init())
+	app.Command("init", "Initialize local blockchain (for testing)", Init())
 	app.Command("start", "Start the zarb blockchain", Start())
 	app.Command("key", "Create zarb key file for signing messages", func(k *cli.Cmd) {
 		k.Command("generate", "Generate a new key", key.Generate())

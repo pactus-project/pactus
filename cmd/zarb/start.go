@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/zarbchain/zarb-go/validator"
-
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
@@ -15,6 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/version"
 )
 
@@ -22,87 +21,148 @@ import (
 func Start() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 
-		workingDir := c.String(cli.StringOpt{
+		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
 			Desc:  "Working directory of the configuration and genesis files",
 			Value: ".",
 		})
-		privateKey := c.String(cli.StringOpt{
-			Name: "p privatekey",
-			Desc: "Private key of the node's validator",
+		privateKeyOpt := c.String(cli.StringOpt{
+			Name: "p private-key",
+			Desc: "Validator's private key",
 		})
-		keyFile := c.String(cli.StringOpt{
-			Name: "k keyfile",
+		keyFileOpt := c.String(cli.StringOpt{
+			Name: "k key-file",
 			Desc: "Path to the encrypted key file contains validator's private key",
 		})
-		keyFileAuth := c.String(cli.StringOpt{
+		authOpt := c.String(cli.StringOpt{
 			Name: "a auth",
-			Desc: "Key file's passphrase",
+			Desc: "Passphrase of the key file",
+		})
+		wizardOpt := c.Bool(cli.BoolOpt{
+			Name:  "wizard",
+			Desc:  "Start new node in wizard mode",
+			Value: false,
 		})
 
-		c.Spec = "[-w=<working directory>] [-p=<validator's private key>] | [-k=<path to the key file>] [-a=<key file's password>]"
+		c.Spec = "[-w=<path>] [-p=<private_key>] | ([-k=<path>] [-a=<passphrase>]) | [--wizard]"
 		c.LongDesc = "Starting the node"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 
-			path, _ := filepath.Abs(*workingDir)
+			configFile := "./config.toml"
+			genesisFile := "./genesis.json"
+			var err error
 			var keyObj *key.Key
-			switch {
-			case *keyFile == "" && *privateKey == "":
-				f := path + "/validator_key.json"
-				if util.PathExists(f) {
-					kj, err := key.DecryptKeyFile(f, "")
+			var workspace string
+
+			if *wizardOpt {
+				defaultWorkspace := os.Getenv("HOME") + "/.zarb"
+
+				workspace = cmd.PromptInput(fmt.Sprintf("Enter the workspace path (%v): ", defaultWorkspace))
+				if workspace == "" {
+					workspace = defaultWorkspace
+				}
+
+				workspace, err = filepath.Abs(workspace)
+				if err != nil {
+					cmd.PrintErrorMsg("Aborted! %v", err)
+					return
+				}
+				gen := genesis.TestNet()
+				conf := makeConfigfile()
+
+				conf.Network.Name = "zarb-testnet"
+				conf.Network.Bootstrap.Addresses = []string{"/ip4/47.254.199.97/tcp/35470/ipfs/12D3KooWJy3oZ1mZh4TbLZKLBzAGJnGwyrbo2mn8oyb4zu121uQD"}
+				conf.Network.Bootstrap.MinPeerThreshold = 1
+
+				// save genesis file to file system
+				genFile := workspace + "/genesis.json"
+				if err := gen.SaveToFile(genFile); err != nil {
+					cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
+					return
+				}
+
+				// save config file to file system
+				confFile := workspace + "/config.toml"
+				if err := conf.SaveToFile(confFile); err != nil {
+					cmd.PrintErrorMsg("Failed to write config file: %v", err)
+					return
+				}
+
+				keyObj = key.GenKey()
+				key.EncryptKeyFile(keyObj, workspace+"/validator_key.json", "", "")
+
+			} else {
+
+				workspace = *workingDirOpt
+				if workspace == "." {
+					if !util.PathExists(genesisFile) {
+						c.PrintHelp()
+						return
+					}
+				}
+
+				workspace, err = filepath.Abs(workspace)
+				if err != nil {
+					cmd.PrintErrorMsg("Aborted! %v", err)
+					return
+				}
+				switch {
+				case *keyFileOpt == "" && *privateKeyOpt == "":
+					f := workspace + "/validator_key.json"
+					if util.PathExists(f) {
+						kj, err := key.DecryptKeyFile(f, "")
+						if err != nil {
+							cmd.PrintErrorMsg("Aborted! %v", err)
+							return
+						}
+						keyObj = kj
+					} else {
+						// Creating KeyObject from Private Key
+						kj, err := cmd.PromptPrivateKey("Please enter the privateKey for the validator: ")
+						if err != nil {
+							cmd.PrintErrorMsg("Aborted! %v", err)
+							return
+						}
+						keyObj = kj
+					}
+				case *keyFileOpt != "" && *authOpt != "":
+					//Creating KeyObject from keystore
+					passphrase := *authOpt
+					kj, err := key.DecryptKeyFile(*keyFileOpt, passphrase)
 					if err != nil {
 						cmd.PrintErrorMsg("Aborted! %v", err)
 						return
 					}
 					keyObj = kj
-				} else {
+				case *keyFileOpt != "" && *authOpt == "":
+					//Creating KeyObject from keystore
+					passphrase := cmd.PromptPassphrase("Passphrase: ", false)
+					kj, err := key.DecryptKeyFile(*keyFileOpt, passphrase)
+					if err != nil {
+						cmd.PrintErrorMsg("Aborted! %v", err)
+						return
+					}
+					keyObj = kj
+				case *privateKeyOpt != "":
 					// Creating KeyObject from Private Key
-					kj, err := cmd.PromptPrivateKey("Please enter the privateKey for the validator: ")
+					pv, err := crypto.PrivateKeyFromString(*privateKeyOpt)
 					if err != nil {
 						cmd.PrintErrorMsg("Aborted! %v", err)
 						return
 					}
-					keyObj = kj
+					keyObj, _ = key.NewKey(pv.PublicKey().Address(), pv)
 				}
-			case *keyFile != "" && *keyFileAuth != "":
-				//Creating KeyObject from keystore
-				passphrase := *keyFileAuth
-				kj, err := key.DecryptKeyFile(*keyFile, passphrase)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
-				keyObj = kj
-			case *keyFile != "" && *keyFileAuth == "":
-				//Creating KeyObject from keystore
-				passphrase := cmd.PromptPassphrase("Passphrase: ", false)
-				kj, err := key.DecryptKeyFile(*keyFile, passphrase)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
-				keyObj = kj
-			case *privateKey != "":
-				// Creating KeyObject from Private Key
-				pv, err := crypto.PrivateKeyFromString(*privateKey)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
-				keyObj, _ = key.NewKey(pv.PublicKey().Address(), pv)
+
+				cmd.PrintInfoMsg("Validator address: %v", keyObj.Address())
+
 			}
 
-			cmd.PrintInfoMsg("Validator address: %v", keyObj.Address())
-
 			// change working directory
-			if err := os.Chdir(path); err != nil {
+			if err := os.Chdir(workspace); err != nil {
 				cmd.PrintErrorMsg("Unable to changes working directory. %v", err)
 				return
 			}
-			configFile := "./config.toml"
-			genesisFile := "./genesis.json"
 
 			gen, err := genesis.LoadFromFile(genesisFile)
 			if err != nil {

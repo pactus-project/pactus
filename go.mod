@@ -22,7 +22,7 @@ require (
 	github.com/ipfs/go-bitswap v0.2.20 // indirect
 	github.com/ipfs/go-ipfs-exchange-interface v0.0.1
 	github.com/ipfs/go-log/v2 v2.1.1
-	github.com/jawher/mow.cli v1.1.0
+	github.com/jawher/mow.cli v1.2.0
 	github.com/jmank88/nuts v0.4.0 // indirect
 	github.com/libp2p/go-buffer-pool v0.0.2 // indirect
 	github.com/libp2p/go-libp2p v0.11.0

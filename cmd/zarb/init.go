@@ -18,28 +18,30 @@ import (
 // Init initializes the zarb blockchain
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		workingDir := c.String(cli.StringOpt{
+		c.Hidden = true
+
+		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
 			Desc:  "Working directory to save configuration and genesis files.",
 			Value: cmd.ZarbHomeDir(),
 		})
-		chainName := c.String(cli.StringOpt{
+		chainNameOpt := c.String(cli.StringOpt{
 			Name: "n chain-name",
 			Desc: "A name for the blockchain",
 		})
 
-		c.Spec = "[-w=<Working directory>] [-n=<a name for the blockchain>]"
+		c.Spec = "[-w=<path>] [-n=<name>]"
 		c.LongDesc = "Initializing the working directory"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 
 			// Check chain-name for genesis
-			if *chainName == "" {
-				*chainName = fmt.Sprintf("test-chain-%v", cmd.RandomHex(2))
+			if *chainNameOpt == "" {
+				*chainNameOpt = fmt.Sprintf("local-chain-%v", cmd.RandomHex(2))
 			}
 
-			path, _ := filepath.Abs(*workingDir)
-			gen := makeGenesis(*workingDir, *chainName)
+			path, _ := filepath.Abs(*workingDirOpt)
+			gen := makeGenesis(*workingDirOpt, *chainNameOpt)
 			conf := makeConfigfile()
 
 			// save genesis file to file system
