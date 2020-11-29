@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -68,4 +69,29 @@ func TempFilePath() string {
 	}
 	os.Remove(f.Name())
 	return f.Name()
+}
+
+func IsDirEmpty(name string) bool {
+	f, err := os.Open(name)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	// read in ONLY one file
+	_, err = f.Readdir(1)
+
+	// and if the file is EOF... well, the dir is empty.
+	if err == io.EOF {
+		return true
+	}
+	return false
+}
+
+func IsDirNotExistsOrEmpty(name string) bool {
+	if !PathExists(name) {
+		return true
+	}
+
+	return IsDirEmpty(name)
 }

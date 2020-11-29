@@ -68,6 +68,12 @@ func Start() func(c *cli.Cmd) {
 					cmd.PrintErrorMsg("Aborted! %v", err)
 					return
 				}
+
+				if !util.IsDirNotExistsOrEmpty(workspace) {
+					cmd.PrintErrorMsg("Workspace is not empty. %v", workspace)
+					return
+				}
+
 				gen := genesis.TestNet()
 				conf := makeConfigfile()
 
