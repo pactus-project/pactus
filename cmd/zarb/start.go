@@ -13,7 +13,6 @@ import (
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/version"
 )
 

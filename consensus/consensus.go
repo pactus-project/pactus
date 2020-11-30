@@ -207,7 +207,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 
 	added, err := cs.votes.AddVote(v)
 	if err != nil {
-		if v.Signer().EqualsTo(cs.privValidator.Address()) {
+		if v.Signer().EqualsTo(cs.signer.Address()) {
 			cs.logger.Error("Detecting a duplicated vote from ourself. Did you restart the node?")
 		} else {
 			cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
