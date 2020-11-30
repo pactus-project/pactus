@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
+	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -43,10 +44,21 @@ func Start() func(c *cli.Cmd) {
 			Value: false,
 		})
 
-		c.Spec = "[-w=<path>] [-p=<private_key>] | ([-k=<path>] [-a=<passphrase>]) | [--wizard]"
+		deadlockdOpt := c.Bool(cli.BoolOpt{
+			Name:  "deadlock",
+			Desc:  "Enable deadlock detection mode",
+			Value: false,
+		})
+
+		c.Spec = "[-w=<path>] [-p=<private_key>] | ([-k=<path>] [-a=<passphrase>]) | [--wizard] | [--deadlock] "
 		c.LongDesc = "Starting the node"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
+
+			if !*deadlockdOpt {
+				// Disable dead-lock detection, Should we define a flag for this?
+				deadlock.Opts.Disable = false
+			}
 
 			configFile := "./config.toml"
 			genesisFile := "./genesis.json"

@@ -4,7 +4,6 @@ import (
 	"os"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/cmd/zarb/key"
 )
 
@@ -25,8 +24,5 @@ func zarb() *cli.Cli {
 }
 
 func main() {
-
-	// Disable dead-lock detection, Should we define a flag for this?
-	deadlock.Opts.Disable = true
 	zarb().Run(os.Args)
 }
