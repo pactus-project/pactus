@@ -1,4 +1,4 @@
-package executor
+package sandbox
 
 import (
 	"github.com/zarbchain/zarb-go/account"
@@ -16,4 +16,9 @@ type Sandbox interface {
 	UpdateValidator(val *validator.Validator)
 
 	CurrentHeight() int
+	RecentBlockHeight(crypto.Hash) int
+	TransactionToLiveInterval() int
+	MaxMemoLenght() int
+	FeeFraction() float64
+	MinFee() int64
 }

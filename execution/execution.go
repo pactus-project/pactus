@@ -4,6 +4,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution/executor"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -13,7 +14,7 @@ type Executor struct {
 	logger         *logger.Logger
 }
 
-func NewExecutor(sandbox executor.Sandbox) (*Executor, error) {
+func NewExecutor(sandbox sandbox.Sandbox) (*Executor, error) {
 	exe := &Executor{
 		sendExecutor: executor.NewSendExecutor(sandbox),
 	}
@@ -29,7 +30,6 @@ func (exe *Executor) Execute(trx *tx.Tx, isMintbaseTx bool) error {
 	}
 
 	exe.accumulatedFee += trx.Fee()
-
 
 	return exe.sendExecutor.Execute(trx)
 }

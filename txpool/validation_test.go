@@ -4,10 +4,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zarbchain/zarb-go/logger"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -15,18 +15,16 @@ func TestValidity(t *testing.T) {
 	logger.InitLogger(logger.DefaultConfig())
 	conf := DefaultConfig()
 	pool, _ := NewTxPool(conf, nil)
-
-	pool.UpdateStampsCount(2)
-	pool.UpdateMaxMemoLenght(1024)
-	pool.UpdateFeeFraction(0.001)
-	pool.UpdateMinFee(1000)
+	sb := sandbox.NewMockSandbox()
+	pool.SetSandbox(sb)
 
 	stamp := crypto.GenerateTestHash()
 	senderAddr, _, _ := crypto.GenerateTestKeyPair()
 	receiverAddr, _, _ := crypto.GenerateTestKeyPair()
 	bigMemo := strings.Repeat("a", 1025)
 
-	pool.AppendStamp(100, stamp)
+	sb.TTLInterval = 2
+	sb.AppendStampAndUpdateHeight(100, stamp)
 
 	trx1 := tx.NewSendTx(stamp, 1, senderAddr, receiverAddr, 1000, 1000, bigMemo, nil, nil)
 	assert.Error(t, pool.(*txPool).validateTx(trx1))
@@ -56,9 +54,9 @@ func TestValidity(t *testing.T) {
 	assert.NoError(t, pool.(*txPool).validateTx(trx9))
 
 	// Test stamp validity
-	pool.AppendStamp(101, crypto.GenerateTestHash())
+	sb.AppendStampAndUpdateHeight(101, crypto.GenerateTestHash())
 	assert.NoError(t, pool.(*txPool).validateTx(trx9))
-	pool.AppendStamp(102, crypto.GenerateTestHash())
+	sb.AppendStampAndUpdateHeight(102, crypto.GenerateTestHash())
 	assert.Error(t, pool.(*txPool).validateTx(trx9))
 
 }

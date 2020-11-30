@@ -66,3 +66,24 @@ func NewBondTx(stamp crypto.Hash,
 		},
 	}
 }
+
+func NewSortitionTx(stamp crypto.Hash,
+	sequence int,
+	bonder crypto.Address,
+	val crypto.PublicKey,
+	fee int64, memo string,
+	publicKey *crypto.PublicKey, signature *crypto.Signature) *Tx {
+	return &Tx{
+		data: txData{
+			Stamp:     stamp,
+			Sequence:  sequence,
+			Version:   1,
+			Type:      payload.PayloadTypeSortition,
+			Payload:   &payload.BondPayload{},
+			Fee:       fee,
+			Memo:      memo,
+			PublicKey: publicKey,
+			Signature: signature,
+		},
+	}
+}

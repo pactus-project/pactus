@@ -190,8 +190,8 @@ func Start() func(c *cli.Cmd) {
 
 			cmd.PrintInfoMsg("You are running a zarb block chain node version: %v. Welcome! ", version.NodeVersion.String())
 
-			privVal := validator.NewPrivValidator(keyObj.PrivateKey())
-			node, err := node.NewNode(gen, conf, privVal)
+			signer := keyObj.ToSigner()
+			node, err := node.NewNode(gen, conf, signer)
 			if err != nil {
 				cmd.PrintErrorMsg("Could not create node. %v", err)
 				return

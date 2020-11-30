@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/zarbchain/zarb-go/sandbox"
+
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
@@ -20,15 +22,12 @@ import (
 type txPool struct {
 	lk deadlock.RWMutex
 
-	config        *Config
-	stamps        *linkedmap.LinkedMap
-	pendings      *linkedmap.LinkedMap
-	appendTxCh    chan *tx.Tx
-	broadcastCh   chan *message.Message
-	maxMemoLenght int
-	feeFraction   float64
-	minFee        int64
-	logger        *logger.Logger
+	config      *Config
+	sandbox     sandbox.Sandbox
+	pendings    *linkedmap.LinkedMap
+	appendTxCh  chan *tx.Tx
+	broadcastCh chan *message.Message
+	logger      *logger.Logger
 }
 
 func NewTxPool(
@@ -36,7 +35,6 @@ func NewTxPool(
 	broadcastCh chan *message.Message) (TxPool, error) {
 	pool := &txPool{
 		config:      conf,
-		stamps:      linkedmap.NewLinkedMap(0),
 		pendings:    linkedmap.NewLinkedMap(conf.MaxSize),
 		appendTxCh:  make(chan *tx.Tx, 5),
 		broadcastCh: broadcastCh,
@@ -46,24 +44,8 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *txPool) UpdateStampsCount(stampsCount int) {
-	pool.stamps.SetCapacity(stampsCount)
-}
-
-func (pool *txPool) UpdateMaxMemoLenght(maxMemoLenght int) {
-	pool.maxMemoLenght = maxMemoLenght
-}
-
-func (pool *txPool) UpdateFeeFraction(feeFraction float64) {
-	pool.feeFraction = feeFraction
-}
-
-func (pool *txPool) UpdateMinFee(minFee int64) {
-	pool.minFee = minFee
-}
-
-func (pool *txPool) AppendStamp(height int, stamp crypto.Hash) {
-	pool.stamps.PushBack(stamp, height)
+func (pool *txPool) SetSandbox(sandbox sandbox.Sandbox) {
+	pool.sandbox = sandbox
 }
 
 func (pool *txPool) AppendTxs(trxs []tx.Tx) {

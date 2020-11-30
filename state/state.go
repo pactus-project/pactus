@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/store"
@@ -45,36 +46,40 @@ type State interface {
 type state struct {
 	lk deadlock.RWMutex
 
-	config           *Config
-	proposer         crypto.Address
-	genDoc           *genesis.Genesis
-	store            *store.Store
-	txPool           txpool.TxPool
-	cache            *Cache
-	params           *Params
-	executor         *execution.Executor
-	validatorSet     *validator.ValidatorSet
-	lastBlockHeight  int
-	lastBlockHash    crypto.Hash
-	lastReceiptsHash crypto.Hash
-	lastCommit       *block.Commit
-	lastBlockTime    time.Time
-	updateCh         chan int
-	logger           *logger.Logger
+	config            *Config
+	proposer          crypto.Address
+	genDoc            *genesis.Genesis
+	store             *store.Store
+	params            *Params
+	txPool            txpool.TxPool
+	txPoolSandbox     *sandbox
+	executor          *execution.Executor
+	executorSandbox   *sandbox
+	validatorSet      *validator.ValidatorSet
+	sortition         *Sortition
+	recentBlockHashes *linkedmap.LinkedMap
+	lastBlockHeight   int
+	lastBlockHash     crypto.Hash
+	lastReceiptsHash  crypto.Hash
+	lastCommit        *block.Commit
+	lastBlockTime     time.Time
+	updateCh          chan int
+	logger            *logger.Logger
 }
 
 func LoadOrNewState(
 	conf *Config,
 	genDoc *genesis.Genesis,
-	proposer crypto.Address,
+	signer crypto.Signer,
 	txPool txpool.TxPool) (State, error) {
 
 	st := &state{
-		config:   conf,
-		genDoc:   genDoc,
-		proposer: proposer,
-		txPool:   txPool,
-		params:   NewParams(),
+		config:    conf,
+		genDoc:    genDoc,
+		txPool:    txPool,
+		params:    NewParams(),
+		proposer:  signer.Address(),
+		sortition: NewSortition(signer),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	store, err := store.NewStore(conf.Store)
@@ -82,8 +87,10 @@ func LoadOrNewState(
 		return nil, err
 	}
 	st.store = store
-	st.cache = newCache(store, st)
-	st.executor, err = execution.NewExecutor(st.cache)
+	st.txPoolSandbox = newSandbox(store, st)
+	st.txPool.SetSandbox(st.txPoolSandbox)
+	st.executorSandbox = newSandbox(store, st)
+	st.executor, err = execution.NewExecutor(st.executorSandbox)
 
 	height := store.LastBlockHeight()
 
@@ -104,12 +111,9 @@ func LoadOrNewState(
 		return nil, err
 	}
 
-	txPool.UpdateStampsCount(st.params.StampsCount)
-	txPool.UpdateMaxMemoLenght(st.params.MaximumMemoLength)
-	txPool.UpdateFeeFraction(st.params.FeeFraction)
-	txPool.UpdateMinFee(st.params.MinimumFee)
-
-	txPool.AppendStamp(st.lastBlockHeight, st.lastBlockHash)
+	st.recentBlockHashes = linkedmap.NewLinkedMap(st.params.TransactionToLiveInterval)
+	st.recentBlockHashes.SetCapacity(st.params.TransactionToLiveInterval)
+	st.recentBlockHashes.PushBack(st.lastBlockHeight, st.lastBlockHash)
 
 	return st, nil
 }
@@ -291,7 +295,7 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	st.cache.reset()
+	st.executorSandbox.reset()
 	_, err := st.executeBlock(block, st.executor)
 	if err != nil {
 		return err
@@ -333,14 +337,15 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	st.cache.reset()
+	st.txPoolSandbox.reset()
+	st.executorSandbox.reset()
 	// Execute block
 	receipts, err := st.executeBlock(block, st.executor)
 	if err != nil {
 		return err
 	}
 	// Commit the changes
-	st.cache.commit(nil)
+	st.executorSandbox.commit(nil)
 
 	// Save block and txs
 	receiptsHashes := make([]crypto.Hash, len(receipts))
@@ -370,12 +375,41 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
 
+	st.recentBlockHashes.PushBack(st.lastBlockHeight, st.lastBlockHash)
 	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
-	st.txPool.AppendStamp(st.lastBlockHeight, st.lastBlockHash)
+	st.EvaluateSortition()
 
 	return nil
 }
 
+func (st *state) EvaluateSortition() {
+	if st.validatorSet.Contains(st.proposer) {
+		// We are in the validator set right now
+		return
+	}
+
+	val, _ := st.store.Validator(st.proposer)
+	if val == nil {
+		// We are not a validator
+		return
+	}
+
+	// TODO: send sortiton if val_set is not full
+
+	// TODO: fix me
+	// totalStake := 0
+
+	// index, proof := st.sortition.Evaluate(st.lastBlockHash)
+
+	// if index < val.Stake() {
+	// 	st.logger.Info("This validator is chosen to be in set", "height", st.lastBlockHeight, "address", st.proposer, "stake", val.Stake())
+
+	// }
+}
+
+func (st *state) VerifySortition() {
+
+}
 func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
 	if subsidyReductionInterval == 0 {
 		return baseSubsidy

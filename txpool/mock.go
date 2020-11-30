@@ -2,11 +2,11 @@ package txpool
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-// For testing purpose
-
+// MockTxPool is a testing mock
 type MockTxPool struct {
 	txs map[crypto.Hash]tx.Tx
 }
@@ -16,12 +16,7 @@ func NewMockTxPool() *MockTxPool {
 		txs: make(map[crypto.Hash]tx.Tx),
 	}
 }
-func (m *MockTxPool) UpdateStampsCount(stampsCount int)     {}
-func (m *MockTxPool) UpdateMaxMemoLenght(maxMemoLenght int) {}
-func (m *MockTxPool) UpdateFeeFraction(feeFraction float64) {}
-func (m *MockTxPool) UpdateMinFee(minFee int64)             {}
-
-func (m *MockTxPool) AppendStamp(height int, stamp crypto.Hash) {
+func (m *MockTxPool) SetSandbox(sandbox sandbox.Sandbox) {
 
 }
 func (m *MockTxPool) PendingTx(hash crypto.Hash) *tx.Tx {

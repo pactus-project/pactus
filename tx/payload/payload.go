@@ -9,8 +9,9 @@ import (
 type PayloadType int
 
 const (
-	PayloadTypeSend = PayloadType(1)
-	PayloadTypeBond = PayloadType(2)
+	PayloadTypeSend      = PayloadType(1)
+	PayloadTypeBond      = PayloadType(2)
+	PayloadTypeSortition = PayloadType(3)
 )
 
 func (t PayloadType) String() string {
@@ -19,6 +20,8 @@ func (t PayloadType) String() string {
 		return "send"
 	case PayloadTypeBond:
 		return "bond"
+	case PayloadTypeSortition:
+		return "sortition"
 	}
 	return fmt.Sprintf("%d", t)
 }

@@ -53,3 +53,7 @@ func (k *Key) PublicKey() crypto.PublicKey {
 func (k *Key) PrivateKey() crypto.PrivateKey {
 	return k.data.PrivateKey
 }
+
+func (k *Key) ToSigner() crypto.Signer {
+	return crypto.NewSigner(k.data.PrivateKey)
+}

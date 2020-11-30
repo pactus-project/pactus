@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const MaxUint64 = ^uint64(0)
+const MinUint64 = 0
+const MaxInt64 = int64(MaxUint64 >> 1)
+const MinInt64 = -MaxInt64 - 1
+
 func Min(a, b int) int {
 	if a < b {
 		return a

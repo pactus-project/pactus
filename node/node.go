@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/consensus"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
@@ -14,7 +15,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/http"
 )
@@ -31,7 +31,7 @@ type Node struct {
 	http       *http.Server
 }
 
-func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *validator.PrivValidator) (*Node, error) {
+func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer) (*Node, error) {
 
 	// Init logger
 	logger.InitLogger(conf.Logger)
@@ -47,17 +47,17 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, privValidator *valida
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(conf.State, genDoc, privValidator.Address(), txPool)
+	state, err := state.LoadOrNewState(conf.State, genDoc, signer, txPool)
 	if err != nil {
 		return nil, err
 	}
 
-	consensus, err := consensus.NewConsensus(conf.Consensus, state, privValidator, broadcastCh)
+	consensus, err := consensus.NewConsensus(conf.Consensus, state, signer, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	sync, err := sync.NewSynchronizer(conf.Sync, privValidator.Address(), state, consensus, txPool, network, broadcastCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, signer.Address(), state, consensus, txPool, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}

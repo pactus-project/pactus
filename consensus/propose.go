@@ -59,13 +59,9 @@ func (cs *Consensus) enterPropose(height int, round int) {
 		return
 	}
 
-	if cs.privValidator == nil {
-		cs.logger.Debug("Propose: This node is not a validator")
-		return
-	}
 	cs.updateRoundStep(round, hrs.StepTypePropose)
 
-	address := cs.privValidator.Address()
+	address := cs.signer.Address()
 	if !cs.valset.Contains(address) {
 		cs.logger.Trace("Propose: This node is not in validator set", "addr", address)
 		return
@@ -82,11 +78,6 @@ func (cs *Consensus) enterPropose(height int, round int) {
 }
 
 func (cs *Consensus) createProposal(height int, round int) {
-	if cs.privValidator == nil {
-		cs.logger.Error("Propose: privValidator is nil")
-		return
-	}
-
 	block := cs.state.ProposeBlock()
 	if err := cs.state.ValidateBlock(block); err != nil {
 		cs.logger.Error("Propose: Our block is invalid. Why?", "error", err)
@@ -100,7 +91,7 @@ func (cs *Consensus) createProposal(height int, round int) {
 			proposal, _ = vote.GenerateTestProposal(cs.hrs.Height(), cs.hrs.Round())
 		}
 	}
-	cs.privValidator.SignMsg(proposal)
+	cs.signer.SignMsg(proposal)
 	cs.setProposal(proposal)
 
 	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)

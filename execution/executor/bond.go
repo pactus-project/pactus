@@ -2,16 +2,17 @@ package executor
 
 import (
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
 type BondExecutor struct {
-	sandbox Sandbox
+	sandbox sandbox.Sandbox
 }
 
-func NewBondExecutor(sandbox Sandbox) *BondExecutor {
+func NewBondExecutor(sandbox sandbox.Sandbox) *BondExecutor {
 	return &BondExecutor{sandbox}
 }
 

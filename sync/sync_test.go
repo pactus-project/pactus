@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	privVal      *validator.PrivValidator
+	signer       crypto.Signer
 	genDoc       *genesis.Genesis
 	ctx          context.Context
 	txPool       *txpool.MockTxPool
@@ -41,12 +41,12 @@ func init() {
 	val, key := validator.GenerateTestValidator()
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
-	privVal = validator.NewPrivValidator(key)
+	signer = crypto.NewSigner(key)
 	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
 	ctx = context.Background()
 	txPool = txpool.NewMockTxPool()
 
-	_, _, st := newTestSynchronizer(privVal)
+	_, _, st := newTestSynchronizer(&signer)
 
 	blockCount := 12
 	validBlocks = make([]block.Block, 0, blockCount)
@@ -57,11 +57,11 @@ func init() {
 		trx := txPool.PendingTx(txHash)
 		validTxs = append(validTxs, *trx)
 
-		v := vote.NewPrecommit(i+1, 0, b.Hash(), privVal.Address())
-		privVal.SignMsg(v)
+		v := vote.NewPrecommit(i+1, 0, b.Hash(), signer.Address())
+		signer.SignMsg(v)
 		sig := v.Signature()
 		c := block.NewCommit(0, []block.Commiter{
-			block.Commiter{Signed: true, Address: privVal.Address()}},
+			block.Commiter{Signed: true, Address: signer.Address()}},
 			*sig)
 
 		st.ApplyBlock(i+1, b, *c)
@@ -77,7 +77,7 @@ func init() {
 	peerID, _ = peer.IDFromString("12D3KooWDEWpKkZVxpc8hbLKQL1jvFfyBQDit9AR3ToU4k951Jyi")
 }
 
-func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkAPI, state.State) {
+func newTestSynchronizer(signer *crypto.Signer) (*Synchronizer, *mockNetworkAPI, state.State) {
 	consConf := consensus.TestConfig()
 	stateConf := state.TestConfig()
 	loggerConfig := logger.TestConfig()
@@ -94,13 +94,14 @@ func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNet
 		}
 	}()
 
-	if pVal == nil {
+	if signer == nil {
 		_, _, key := crypto.GenerateTestKeyPair()
-		pVal = validator.NewPrivValidator(key)
+		s := crypto.NewSigner(key)
+		signer = &s
 	}
 
-	st, _ := state.LoadOrNewState(stateConf, genDoc, pVal.Address(), txPool)
-	cons, _ := consensus.NewConsensus(consConf, st, pVal, ch)
+	st, _ := state.LoadOrNewState(stateConf, genDoc, *signer, txPool)
+	cons, _ := consensus.NewConsensus(consConf, st, *signer, ch)
 	api := mockingNetworkAPI()
 
 	syncer := &Synchronizer{
@@ -123,8 +124,8 @@ func newTestSynchronizer(pVal *validator.PrivValidator) (*Synchronizer, *mockNet
 	return syncer, api, st
 }
 
-func startTestSynchronizer(t *testing.T, pVal *validator.PrivValidator) (*Synchronizer, *mockNetworkAPI, state.State) {
-	sync, api, st := newTestSynchronizer(pVal)
+func startTestSynchronizer(t *testing.T, signer *crypto.Signer) (*Synchronizer, *mockNetworkAPI, state.State) {
+	sync, api, st := newTestSynchronizer(signer)
 
 	assert.NoError(t, sync.Start())
 

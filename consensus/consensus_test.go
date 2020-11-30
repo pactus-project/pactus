@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	pvals      []*validator.PrivValidator
+	signers    []crypto.Signer
 	mockTxPool *txpool.MockTxPool
 )
 
@@ -35,10 +35,9 @@ func init() {
 	_, keys := validator.GenerateTestValidatorSet()
 	mockTxPool = txpool.NewMockTxPool()
 
-	pvals = make([]*validator.PrivValidator, 4)
+	signers = make([]crypto.Signer, 4)
 	for i, k := range keys {
-		pval := validator.NewPrivValidator(k)
-		pvals[i] = pval
+		signers[i] = crypto.NewSigner(k)
 	}
 }
 
@@ -49,7 +48,7 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	logger.InitLogger(loggerConfig)
 
 	vals := make([]*validator.Validator, 4)
-	for i, pval := range pvals {
+	for i, pval := range signers {
 		val := validator.NewValidator(pval.PublicKey(), 0)
 		val.AddToStake(100)
 		vals[i] = val
@@ -69,9 +68,9 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	}()
 
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals)
-	st, _ := state.LoadOrNewState(stateConf, genDoc, pvals[valID].Address(), mockTxPool)
+	st, _ := state.LoadOrNewState(stateConf, genDoc, signers[valID], mockTxPool)
 
-	cons, _ := NewConsensus(consConf, st, pvals[valID], ch)
+	cons, _ := NewConsensus(consConf, st, signers[valID], ch)
 	assert.Equal(t, cons.votes.height, 0)
 	assert.Equal(t, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight), cons.hrs)
 
@@ -102,8 +101,8 @@ func testAddVote(t *testing.T,
 	pvalID int,
 	expectError bool) *vote.Vote {
 
-	v := vote.NewVote(voteType, height, round, blockHash, pvals[pvalID].Address())
-	pvals[pvalID].SignMsg(v)
+	v := vote.NewVote(voteType, height, round, blockHash, signers[pvalID].Address())
+	signers[pvalID].SignMsg(v)
 
 	if expectError {
 		assert.Error(t, cons.AddVote(v))
@@ -297,14 +296,14 @@ func TestConsensusInvalidProposal(t *testing.T) {
 	cons.enterNewHeight(1)
 	assert.Nil(t, cons.LastProposal())
 
-	addr := pvals[VAL1].Address()
+	addr := signers[VAL1].Address()
 	b, _ := block.GenerateTestBlock(&addr)
 	p := vote.NewProposal(1, 0, b)
 
 	cons.SetProposal(p)
 	assert.Nil(t, cons.LastProposal())
 
-	pvals[VAL2].SignMsg(p)
+	signers[VAL2].SignMsg(p)
 	cons.SetProposal(p)
 	assert.Nil(t, cons.LastProposal())
 
