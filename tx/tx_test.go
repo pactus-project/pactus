@@ -50,8 +50,8 @@ func TestEncodingTxNoMemo(t *testing.T) {
 
 func TestEncodingTxNoSig(t *testing.T) {
 	tx, _ := GenerateTestSendTx()
-	tx.data.PublicKey = nil
-	tx.data.Signature = nil
+	tx.SetPublicKey(nil)
+	tx.SetSignature(nil)
 
 	bz, err := tx.MarshalCBOR()
 	require.NoError(t, err)
@@ -74,15 +74,15 @@ func TestInvalidSignature(t *testing.T) {
 
 	fmt.Printf("%x\n", tx.SignBytes())
 
-	tx.data.PublicKey = nil
+	tx.SetPublicKey(nil)
 	assert.Error(t, tx.SanityCheck())
 
 	_, pbInv, pvInv := crypto.GenerateTestKeyPair()
-	tx.data.PublicKey = &pbInv
+	tx.SetPublicKey(&pbInv)
 	assert.Error(t, tx.SanityCheck())
 
 	sig := pvInv.Sign(tx.SignBytes())
-	tx.data.Signature = sig
+	tx.SetSignature(sig)
 	assert.Error(t, tx.SanityCheck())
 
 	// Invalid sign Bytes
@@ -91,7 +91,7 @@ func TestInvalidSignature(t *testing.T) {
 	tx2.data.Memo = "Hack me"
 	sig = pv.Sign(tx2.SignBytes())
 	pb := pv.PublicKey()
-	tx.data.PublicKey = &pb
-	tx.data.Signature = sig
+	tx.SetPublicKey(&pb)
+	tx.SetSignature(sig)
 	assert.Error(t, tx.SanityCheck())
 }

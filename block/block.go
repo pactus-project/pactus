@@ -15,6 +15,8 @@ import (
 
 type Block struct {
 	data blockData
+
+	memorizedHash *crypto.Hash
 }
 
 type blockData struct {
@@ -72,7 +74,12 @@ func (b Block) SanityCheck() error {
 }
 
 func (b Block) Hash() crypto.Hash {
-	return b.data.Header.Hash()
+	if b.memorizedHash == nil {
+		h := b.data.Header.Hash()
+		b.memorizedHash = &h
+	}
+
+	return *b.memorizedHash
 }
 
 func (b Block) HashesTo(hash crypto.Hash) bool {

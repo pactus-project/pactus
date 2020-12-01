@@ -53,8 +53,9 @@ type state struct {
 	params            *Params
 	txPool            txpool.TxPool
 	txPoolSandbox     *sandbox
-	executor          *execution.Executor
-	executorSandbox   *sandbox
+	validationSandbox *sandbox
+	execution         *execution.Execution
+	executionSandbox  *sandbox
 	validatorSet      *validator.ValidatorSet
 	sortition         *Sortition
 	recentBlockHashes *linkedmap.LinkedMap
@@ -88,9 +89,10 @@ func LoadOrNewState(
 	}
 	st.store = store
 	st.txPoolSandbox = newSandbox(store, st)
+	st.validationSandbox = newSandbox(store, st)
+	st.executionSandbox = newSandbox(store, st)
 	st.txPool.SetSandbox(st.txPoolSandbox)
-	st.executorSandbox = newSandbox(store, st)
-	st.executor, err = execution.NewExecutor(st.executorSandbox)
+	st.execution = execution.NewExecution(st.executionSandbox)
 
 	height := store.LastBlockHeight()
 
@@ -295,8 +297,8 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	st.executorSandbox.reset()
-	_, err := st.executeBlock(block, st.executor)
+	st.executionSandbox.reset()
+	_, err := st.executeBlock(block, st.execution)
 	if err != nil {
 		return err
 	}
@@ -338,14 +340,14 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	}
 
 	st.txPoolSandbox.reset()
-	st.executorSandbox.reset()
+	st.executionSandbox.reset()
 	// Execute block
-	receipts, err := st.executeBlock(block, st.executor)
+	receipts, err := st.executeBlock(block, st.execution)
 	if err != nil {
 		return err
 	}
 	// Commit the changes
-	st.executorSandbox.commit(nil)
+	st.executionSandbox.commit(nil)
 
 	// Save block and txs
 	receiptsHashes := make([]crypto.Hash, len(receipts))

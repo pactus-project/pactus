@@ -1,4 +1,4 @@
-package payload
+package tx
 
 import (
 	"fmt"
@@ -30,6 +30,5 @@ type Payload interface {
 	Signer() crypto.Address
 	Value() int64
 	SanityCheck() error
-	Type() PayloadType
 	Fingerprint() string
 }

@@ -35,10 +35,6 @@ func (p *BondPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *BondPayload) Type() PayloadType {
-	return PayloadTypeBond
-}
-
 func (p *BondPayload) Fingerprint() string {
 	return fmt.Sprintf("{Bond: %v->%v 🪙 %v",
 		p.Bonder.Fingerprint(),

@@ -5,37 +5,23 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-type ValidatorInfo struct {
-	Validator
-
-	BoundingHeight int
-	ProposedBlocks int
-	SignedBlocks   int
-	MissedBlocks   int
-}
-
 type ValidatorPool struct {
 	lk deadlock.RWMutex
 
-	validators map[crypto.Address]*ValidatorInfo
+	validators map[crypto.Address]*Validator
 }
 
 func NewValidatorPool() *ValidatorPool {
 	return &ValidatorPool{
-		validators: make(map[crypto.Address]*ValidatorInfo),
+		validators: make(map[crypto.Address]*Validator),
 	}
 }
 
 func (vp *ValidatorPool) AddValidator(val *Validator, height int) {
-	vi := &ValidatorInfo{
-		Validator:      *val,
-		BoundingHeight: height,
-	}
-
-	vp.validators[val.Address()] = vi
+	vp.validators[val.Address()] = val
 }
 
-func (vp *ValidatorPool) ValidatorInfo(addr crypto.Address) *ValidatorInfo {
+func (vp *ValidatorPool) ValidatorInfo(addr crypto.Address) *Validator {
 	return vp.validators[addr]
 }
 

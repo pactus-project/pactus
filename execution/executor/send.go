@@ -6,14 +6,16 @@ import (
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type SendExecutor struct {
 	sandbox sandbox.Sandbox
+	fee     int64
 }
 
 func NewSendExecutor(sandbox sandbox.Sandbox) *SendExecutor {
-	return &SendExecutor{sandbox}
+	return &SendExecutor{sandbox: sandbox}
 }
 
 func (e *SendExecutor) Execute(trx *tx.Tx) error {
@@ -33,6 +35,14 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	if senderAcc.Balance() < pld.Amount+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
 	}
+	if !trx.IsMintbaseTx() {
+		fee := int64(float64(trx.Payload().Value()) * e.sandbox.FeeFraction())
+		fee = util.Max64(fee, e.sandbox.MinFee())
+		if trx.Fee() != fee {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: %v, got: %v", fee, trx.Fee())
+		}
+	}
+
 	senderAcc.IncSequence()
 	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
 	receiverAcc.AddToBalance(pld.Amount)
@@ -40,5 +50,11 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	e.sandbox.UpdateAccount(senderAcc)
 	e.sandbox.UpdateAccount(receiverAcc)
 
+	e.fee = trx.Fee()
+
 	return nil
+}
+
+func (e *SendExecutor) Fee() int64 {
+	return e.fee
 }

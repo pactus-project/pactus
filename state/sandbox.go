@@ -203,3 +203,17 @@ func (sb *sandbox) RecentBlockHeight(hash crypto.Hash) int {
 
 	return h.(int)
 }
+
+func (sb *sandbox) LastBlockHeight() int {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.state.lastBlockHeight
+}
+
+func (sb *sandbox) LastBlockHash() crypto.Hash {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.state.lastBlockHash
+}

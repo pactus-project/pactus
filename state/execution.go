@@ -7,14 +7,14 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (st *state) executeBlock(block block.Block, exe *execution.Executor) ([]*tx.Receipt, error) {
+func (st *state) executeBlock(block block.Block, exe *execution.Execution) ([]*tx.Receipt, error) {
 	hashes := block.TxHashes().Hashes()
 	receipts := make([]*tx.Receipt, len(hashes))
 
 	for i := 0; i < len(hashes); i++ {
 		trx := st.txPool.PendingTx(hashes[i])
 		if trx == nil {
-			return nil, errors.Errorf(errors.ErrInvalidBlock, "Not enough transaction")
+			return nil, errors.Errorf(errors.ErrInvalidBlock, "Transaction not found")
 		}
 		if err := trx.SanityCheck(); err != nil {
 			return nil, err

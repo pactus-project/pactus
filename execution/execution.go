@@ -3,33 +3,51 @@ package execution
 import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution/executor"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-type Executor struct {
-	sendExecutor   *executor.SendExecutor
+type Executor interface {
+	Execute(trx *tx.Tx) error
+	Fee() int64
+}
+type Execution struct {
+	executors      map[tx.PayloadType]Executor
 	accumulatedFee int64
-	logger         *logger.Logger
 }
 
-func NewExecutor(sandbox sandbox.Sandbox) (*Executor, error) {
-	exe := &Executor{
-		sendExecutor: executor.NewSendExecutor(sandbox),
+func NewExecution(sb sandbox.Sandbox) *Execution {
+	execs := make(map[tx.PayloadType]Executor)
+	execs[tx.PayloadTypeSend] = executor.NewSendExecutor(sb)
+	execs[tx.PayloadTypeBond] = executor.NewBondExecutor(sb)
+	execs[tx.PayloadTypeSortition] = executor.NewSendExecutor(sb)
+
+	return &Execution{
+		executors: execs,
 	}
-	exe.logger = logger.NewLogger("executor", exe)
-	return exe, nil
 }
 
-func (exe *Executor) Execute(trx *tx.Tx, isMintbaseTx bool) error {
-	if !isMintbaseTx {
+func (exe *Execution) Execute(trx *tx.Tx, isMintbaseTx bool) error {
+	if isMintbaseTx {
+		if !trx.IsMintbaseTx() {
+			return errors.Errorf(errors.ErrInvalidTx, "Not a mintbase transaction")
+		}
+	} else {
 		if trx.IsMintbaseTx() {
 			return errors.Errorf(errors.ErrInvalidTx, "Duplicated mintbase transaction")
 		}
 	}
 
-	exe.accumulatedFee += trx.Fee()
+	e, ok := exe.executors[trx.PayloadType()]
+	if !ok {
+		return errors.Errorf(errors.ErrInvalidTx, "unknown transaction type: %v", trx.PayloadType())
+	}
 
-	return exe.sendExecutor.Execute(trx)
+	if err := e.Execute(trx); err != nil {
+		return err
+	}
+
+	exe.accumulatedFee += e.Fee()
+
+	return nil
 }

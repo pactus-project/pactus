@@ -42,3 +42,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 
 	return nil
 }
+
+func (e *BondExecutor) Fee() int64 {
+	return 0
+}

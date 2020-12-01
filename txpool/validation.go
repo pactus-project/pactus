@@ -7,6 +7,10 @@ import (
 )
 
 func (pool *txPool) validateTx(trx *tx.Tx) error {
+	if err := trx.SanityCheck(); err != nil {
+		return err
+	}
+
 	curHeight := pool.sandbox.CurrentHeight()
 	height := pool.sandbox.RecentBlockHeight(trx.Stamp())
 	interval := pool.sandbox.TransactionToLiveInterval()
@@ -23,6 +27,8 @@ func (pool *txPool) validateTx(trx *tx.Tx) error {
 		if trx.Fee() != fee {
 			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: %v, got: %v", fee, trx.Fee())
 		}
+	} else {
+		
 	}
 
 	// TODO:

@@ -32,10 +32,6 @@ func (p *SortitionPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *SortitionPayload) Type() PayloadType {
-	return PayloadTypeSortition
-}
-
 func (p *SortitionPayload) Fingerprint() string {
 	return fmt.Sprintf("{Sortiton: %v",
 		p.Address.Fingerprint())

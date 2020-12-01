@@ -35,10 +35,6 @@ func (p *SendPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *SendPayload) Type() PayloadType {
-	return PayloadTypeSend
-}
-
 func (p *SendPayload) Fingerprint() string {
 	return fmt.Sprintf("{Send: %v->%v 🪙 %v",
 		p.Sender.Fingerprint(),
