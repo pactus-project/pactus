@@ -51,10 +51,8 @@ make docker
 Then you can execute the Zarb blockchain, using the docker:
 
 ```bash
-# Initializing the working directory
-docker run -it --rm -v "/zarb:/zarb" zarb init
-# Starting the blockchain
-docker run -it --rm -v "/zarb:/zarb" -p 1337:1337 -p 50051:50051 -p 46656:46656 zarb start
+docker pull zarb/zarb
+docker run -it zarb/zarb start --wizard
 ```
 
 ## Contribution
