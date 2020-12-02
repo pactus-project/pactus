@@ -297,7 +297,7 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	st.executionSandbox.reset()
+	st.executionSandbox.Reset()
 	_, err := st.executeBlock(block, st.execution)
 	if err != nil {
 		return err
@@ -339,8 +339,8 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	st.txPoolSandbox.reset()
-	st.executionSandbox.reset()
+	st.txPoolSandbox.Reset()
+	st.executionSandbox.Reset()
 	// Execute block
 	receipts, err := st.executeBlock(block, st.execution)
 	if err != nil {

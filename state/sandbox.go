@@ -1,12 +1,9 @@
 package state
 
 import (
-	"bytes"
-
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/libs/orderedmap"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -16,84 +13,64 @@ type sandbox struct {
 
 	state      *state
 	store      *store.Store
-	valChanges *orderedmap.OrderedMap
-	accChanges *orderedmap.OrderedMap
+	accounts   map[crypto.Address]accountStatus
+	validators map[crypto.Address]validatorStatus
 }
 
-type validatorInfo struct {
-	validator *validator.Validator
+type validatorStatus struct {
+	validator  *validator.Validator
+	updated    bool
+	addedToSet bool
 }
 
-type accountInfo struct {
+type accountStatus struct {
 	account *account.Account
-}
-
-func lessFn(l, r interface{}) bool {
-	return bytes.Compare(l.(crypto.Address).RawBytes(), r.(crypto.Address).RawBytes()) < 0
+	updated bool
 }
 
 func newSandbox(store *store.Store, state *state) *sandbox {
 	sb := &sandbox{
 		state:      state,
 		store:      store,
-		valChanges: orderedmap.NewMap(lessFn),
-		accChanges: orderedmap.NewMap(lessFn),
+		accounts:   make(map[crypto.Address]accountStatus),
+		validators: make(map[crypto.Address]validatorStatus),
 	}
 	return sb
 }
 
-func (sb *sandbox) reset() {
+func (sb *sandbox) Reset() {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	sb.accChanges = orderedmap.NewMap(lessFn)
-	sb.valChanges = orderedmap.NewMap(lessFn)
+	sb.reset()
+}
+
+func (sb *sandbox) reset() {
+	sb.accounts = make(map[crypto.Address]accountStatus)
+	sb.validators = make(map[crypto.Address]validatorStatus)
 }
 
 func (sb *sandbox) commit(set *validator.ValidatorSet) error {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	sb.accChanges.Iter(func(key, value interface{}) (more bool) {
-		i := value.(*accountInfo)
-
-		sb.store.UpdateAccount(i.account)
-
-		return true
-	})
-
-	sb.valChanges.Iter(func(key, value interface{}) (more bool) {
-		i := value.(*validatorInfo)
-		sb.store.UpdateValidator(i.validator)
-		return true
-	})
-
-	/// reset sandbox
-	sb.accChanges = orderedmap.NewMap(lessFn)
-	sb.valChanges = orderedmap.NewMap(lessFn)
-
-	return nil
-}
-
-func (sb *sandbox) HasAccount(addr crypto.Address) bool {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	_, ok := sb.accChanges.GetOk(addr)
-	if ok {
-		return true
+	for _, acc := range sb.accounts {
+		sb.store.UpdateAccount(acc.account)
 	}
 
-	return sb.store.HasAccount(addr)
+	for _, val := range sb.validators {
+		sb.store.UpdateValidator(val.validator)
+	}
+
+	sb.reset()
+
+	return nil
 }
 
 func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	i, ok := sb.accChanges.GetOk(addr)
+	s, ok := sb.accounts[addr]
 	if ok {
-		return i.(*accountInfo).account
+		return s.account
 	}
 
 	acc, err := sb.store.Account(addr)
@@ -108,33 +85,25 @@ func (sb *sandbox) UpdateAccount(acc *account.Account) {
 	defer sb.lk.Unlock()
 
 	addr := acc.Address()
-	i, ok := sb.accChanges.GetOk(addr)
+	s, ok := sb.accounts[addr]
 	if ok {
-		i.(*accountInfo).account = acc
+		s.account = acc
+		s.updated = true
 	} else {
-		sb.accChanges.Set(addr, &accountInfo{account: acc})
+		sb.accounts[addr] = accountStatus{
+			account: acc,
+			updated: true,
+		}
 	}
-}
-
-func (sb *sandbox) HasValidator(addr crypto.Address) bool {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	_, ok := sb.valChanges.GetOk(addr)
-	if ok {
-		return true
-	}
-
-	return sb.store.HasValidator(addr)
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	i, ok := sb.valChanges.GetOk(addr)
+	s, ok := sb.validators[addr]
 	if ok {
-		return i.(*validatorInfo).validator
+		return s.validator
 	}
 
 	val, err := sb.store.Validator(addr)
@@ -149,39 +118,57 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	defer sb.lk.Unlock()
 
 	addr := val.Address()
-	i, ok := sb.valChanges.GetOk(addr)
+	s, ok := sb.validators[addr]
 	if ok {
-		i.(*validatorInfo).validator = val
+		s.validator = val
+		s.updated = true
 	} else {
-		sb.valChanges.Set(addr, &validatorInfo{validator: val})
+		sb.validators[addr] = validatorStatus{
+			validator: val,
+			updated:   true,
+		}
+	}
+}
+
+func (sb *sandbox) AddToSet(val *validator.Validator) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	addr := val.Address()
+	s, ok := sb.validators[addr]
+	if ok {
+		s.validator = val
+		s.addedToSet = true
+	} else {
+		sb.validators[addr] = validatorStatus{
+			validator:  val,
+			addedToSet: true,
+		}
 	}
 }
 
 func (sb *sandbox) CurrentHeight() int {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
-	return sb.state.LastBlockHeight() + 1
+	return sb.state.lastBlockHeight + 1
 }
 
 func (sb *sandbox) MaxMemoLenght() int {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	return sb.state.params.MaximumMemoLength
 }
 
 func (sb *sandbox) FeeFraction() float64 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	return sb.state.params.FeeFraction
 }
 
 func (sb *sandbox) MinFee() int64 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
 	return sb.state.params.MinimumFee
 }
 

@@ -51,3 +51,7 @@ func (exe *Execution) Execute(trx *tx.Tx, isMintbaseTx bool) error {
 
 	return nil
 }
+
+func (exe *Execution) AccumulatedFee() int64 {
+	return exe.accumulatedFee
+}

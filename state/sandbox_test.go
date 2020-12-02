@@ -27,6 +27,6 @@ func TestAccountChange(t *testing.T) {
 	assert.Equal(t, acc2, acc22)
 
 	sb.reset()
-	assert.Equal(t, sb.accChanges.Len(), 0)
-	assert.Equal(t, sb.valChanges.Len(), 0)
+	assert.Equal(t, len(sb.accounts), 0)
+	assert.Equal(t, len(sb.validators), 0)
 }

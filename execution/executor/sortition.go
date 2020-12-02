@@ -18,10 +18,15 @@ func NewSortitionExecutor(sandbox sandbox.Sandbox) *SortitionExecutor {
 func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	pld := trx.Payload().(*payload.SortitionPayload)
 
-	validator := e.sandbox.Validator(pld.Address)
-	if validator == nil {
+	val := e.sandbox.Validator(pld.Address)
+	if val == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
 	}
+	if trx.Fee() != 0 {
+		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+	}
+
+	e.sandbox.AddToSet(val)
 
 	return nil
 }

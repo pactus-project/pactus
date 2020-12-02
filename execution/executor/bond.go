@@ -33,6 +33,9 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 	if bonderAcc.Balance() < pld.Stake+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
 	}
+	if trx.Fee() != 0 {
+		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+	}
 	bonderAcc.IncSequence()
 	bonderAcc.SubtractFromBalance(pld.Stake + trx.Fee())
 	bondVal.AddToStake(pld.Stake)

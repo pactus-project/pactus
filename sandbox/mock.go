@@ -25,20 +25,15 @@ func NewMockSandbox() *MockSandbox {
 		MinFee_:        1000,
 	}
 }
-func (m *MockSandbox) HasAccount(addr crypto.Address) bool {
-	return false
-}
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	return nil
 }
 func (m *MockSandbox) UpdateAccount(acc *account.Account) {}
-func (m *MockSandbox) HasValidator(addr crypto.Address) bool {
-	return false
-}
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	return nil
 }
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {}
+func (m *MockSandbox) AddToSet(val *validator.Validator)        {}
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurrentHeight_
 }
