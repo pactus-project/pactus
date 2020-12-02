@@ -60,3 +60,5 @@ func (m *MockTxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
 	//	delete(m.txs, hash)
 	return &tx
 }
+
+func (m *MockTxPool) SetIsSyncing(bool) {}
