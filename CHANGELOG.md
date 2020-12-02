@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+- Adding wizard argument to start command
+- Ensure messages belongs to same network
+
 ## 0.9.0
 - Refactoring block structure
 - Refactoring Commit structure
