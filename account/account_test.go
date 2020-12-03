@@ -6,40 +6,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
 )
-
-type acc struct {
-	Test crypto.Hash
-}
-type acb struct {
-	Test *crypto.Hash
-}
-
-func TestMarshaling23(t *testing.T) {
-	h := crypto.HashH([]byte("a"))
-	a1 := acc{}
-	a2 := acc{Test: crypto.HashH([]byte("a"))}
-	a3 := acb{}
-	a4 := acb{Test: nil}
-	a5 := acb{Test: &h}
-
-	bz1, _ := cbor.Marshal(&a1)
-	bz2, _ := cbor.Marshal(&a2)
-	bz3, _ := cbor.Marshal(&a3)
-	bz4, _ := cbor.Marshal(&a4)
-	bz5, _ := cbor.Marshal(&a5)
-
-	fmt.Printf("%x\n", bz1)
-	fmt.Printf("%x\n", bz2)
-	fmt.Printf("%x\n", bz3)
-	fmt.Printf("%x\n", bz4)
-	fmt.Printf("%x\n", bz5)
-
-}
 
 func TestMarshaling(t *testing.T) {
 	acc1, _ := GenerateTestAccount()
@@ -76,9 +46,31 @@ func TestMarshaling(t *testing.T) {
 }
 
 func TestMarshaling2(t *testing.T) {
-	bs, _ := hex.DecodeString("a401581a12ec0b329db4db42793200be69c1cd1eb4ad575b94e206aa335b020103060443020304")
+	bs, _ := hex.DecodeString("A3015427E1E8F8BBB9B5EB067EC71FBA278310173E3356021822031A0091398A")
 	acc := new(Account)
 	err := acc.Decode(bs)
 	require.NoError(t, err)
 	fmt.Println(acc)
+	bs2, _ := acc.Encode()
+	assert.Equal(t, bs, bs2)
+	assert.Equal(t, acc.Hash(), crypto.HashH(bs))
+}
+
+func TestAddToBalance(t *testing.T) {
+	acc, _ := GenerateTestAccount()
+	amt := acc.Balance()
+
+	assert.Error(t, acc.AddToBalance(-1))
+	assert.NoError(t, acc.AddToBalance(1))
+	assert.Error(t, acc.SubtractFromBalance(-2))
+	assert.NoError(t, acc.SubtractFromBalance(2))
+	assert.Error(t, acc.SubtractFromBalance(amt))
+	assert.Equal(t, acc.Balance(), amt-1)
+}
+
+func TestIncSequence(t *testing.T) {
+	acc, _ := GenerateTestAccount()
+	seq := acc.Sequence()
+	acc.IncSequence()
+	assert.Equal(t, acc.Sequence(), seq+1)
 }

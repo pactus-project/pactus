@@ -2,11 +2,11 @@ package account
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	e "github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -40,14 +40,20 @@ func (acc *Account) SetBalance(bal int64) error {
 }
 
 func (acc *Account) SubtractFromBalance(amt int64) error {
+	if amt < 0 {
+		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
+	}
 	if amt > acc.Balance() {
-		return errors.Errorf(e.ErrInsufficientFunds, "Attempt to subtract %v from the balance of %s", amt, acc.Address())
+		return errors.Errorf(errors.ErrInsufficientFunds, "Attempt to subtract %v from the balance of %s", amt, acc.Address())
 	}
 	acc.data.Balance -= amt
 	return nil
 }
 
 func (acc *Account) AddToBalance(amt int64) error {
+	if amt < 0 {
+		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
+	}
 	acc.data.Balance += amt
 	return nil
 }
@@ -80,9 +86,10 @@ func (acc *Account) UnmarshalJSON(bs []byte) error {
 	return json.Unmarshal(bs, &acc.data)
 }
 
-func (acc Account) String() string {
-	b, _ := acc.MarshalJSON()
-	return string(b)
+func (acc Account) Fingerprint() string {
+	return fmt.Sprintf("{ %s %v}",
+		acc.Address().Fingerprint(),
+		acc.Balance())
 }
 
 // ---------

@@ -2,6 +2,7 @@ package validator
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -34,9 +35,7 @@ func (val *Validator) PublicKey() crypto.PublicKey { return val.data.PublicKey }
 func (val *Validator) Address() crypto.Address     { return val.data.PublicKey.Address() }
 func (val *Validator) Sequence() int               { return val.data.Sequence }
 func (val *Validator) Stake() int64                { return val.data.Stake }
-
-// TODO: We don't need it
-func (val *Validator) BondingHeight() int { return val.data.BondingHeight }
+func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
 
 func (val Validator) Power() int64 {
 	// Viva democracy, everybody should be treated equally
@@ -44,6 +43,10 @@ func (val Validator) Power() int64 {
 }
 
 func (val *Validator) SubtractFromStake(amt int64) error {
+	if amt < 0 {
+		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
+	}
+
 	if amt > val.Stake() {
 		return errors.Errorf(errors.ErrInsufficientFunds, "Attempt to subtract %v from the balance of %s", amt, val.Address())
 	}
@@ -52,6 +55,9 @@ func (val *Validator) SubtractFromStake(amt int64) error {
 }
 
 func (val *Validator) AddToStake(amt int64) error {
+	if amt < 0 {
+		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
+	}
 	val.data.Stake += amt
 	return nil
 }
@@ -85,17 +91,19 @@ func (val *Validator) UnmarshalJSON(bs []byte) error {
 	return json.Unmarshal(bs, &val.data)
 }
 
-func (val Validator) String() string {
-	b, _ := val.MarshalJSON()
-	return string(b)
+func (val Validator) Fingerprint() string {
+	return fmt.Sprintf("{%s %v}",
+		val.Address().Fingerprint(),
+		val.Stake())
 }
 
 // ---------
 // For tests
 func GenerateTestValidator() (*Validator, crypto.PrivateKey) {
-	_, pb, pv := crypto.GenerateTestKeyPair()
-	val := NewValidator(pb, 0)
-	val.data.Stake = util.RandInt64(10000000)
-	val.data.Sequence = util.RandInt(100)
-	return val, pv
+	_, pub, priv := crypto.GenerateTestKeyPair()
+	val := NewValidator(pub, 0)
+	val.data.Stake = util.RandInt64(1000000000)
+	val.data.Sequence = util.RandInt(1000)
+	val.data.BondingHeight = util.RandInt(10000)
+	return val, priv
 }
