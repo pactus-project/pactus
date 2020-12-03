@@ -19,7 +19,6 @@ type accountData struct {
 	Address  crypto.Address `cbor:"1,keyasint"`
 	Sequence int            `cbor:"2,keyasint"`
 	Balance  int64          `cbor:"3,keyasint"`
-	Code     []byte         `cbor:"4,keyasint"`
 }
 
 ///---- Constructors
@@ -34,7 +33,6 @@ func NewAccount(addr crypto.Address) *Account {
 func (acc Account) Address() crypto.Address { return acc.data.Address }
 func (acc Account) Sequence() int           { return acc.data.Sequence }
 func (acc Account) Balance() int64          { return acc.data.Balance }
-func (acc Account) Code() []byte            { return acc.data.Code }
 
 func (acc *Account) SetBalance(bal int64) error {
 	acc.data.Balance = bal
@@ -51,11 +49,6 @@ func (acc *Account) SubtractFromBalance(amt int64) error {
 
 func (acc *Account) AddToBalance(amt int64) error {
 	acc.data.Balance += amt
-	return nil
-}
-
-func (acc *Account) SetCode(code []byte) error {
-	acc.data.Code = code
 	return nil
 }
 
@@ -94,10 +87,10 @@ func (acc Account) String() string {
 
 // ---------
 // For tests
-func GenerateTestAccount() *Account {
-	a, _, _ := crypto.GenerateTestKeyPair()
+func GenerateTestAccount() (*Account, crypto.PrivateKey) {
+	a, _, priv := crypto.GenerateTestKeyPair()
 	acc := NewAccount(a)
 	acc.data.Balance = util.RandInt64(10000000)
 	acc.data.Sequence = util.RandInt(100)
-	return acc
+	return acc, priv
 }

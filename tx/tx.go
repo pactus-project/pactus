@@ -78,7 +78,7 @@ func (tx *Tx) SanityCheck() error {
 		if tx.data.Signature == nil {
 			return errors.Errorf(errors.ErrInvalidTx, "No signature")
 		}
-		if tx.data.Fee <= 0 {
+		if tx.data.Fee < 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid fee")
 		}
 		if err := tx.data.PublicKey.SanityCheck(); err != nil {
@@ -96,7 +96,7 @@ func (tx *Tx) SanityCheck() error {
 		}
 	}
 
-	if err:=tx.data.Payload.SanityCheck(); err != nil {
+	if err := tx.data.Payload.SanityCheck(); err != nil {
 		return err
 	}
 

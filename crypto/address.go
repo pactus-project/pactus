@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	cbor "github.com/fxamacker/cbor/v2"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 const AddressSize = 20
@@ -116,6 +117,9 @@ func (addr *Address) UnmarshalAmino(bs []byte) error {
 /// METHODS
 
 func (addr *Address) SanityCheck() error {
+	if addr.EqualsTo(MintbaseAddress) {
+		return errors.Errorf(errors.ErrInvalidAddress, "")
+	}
 	return nil
 }
 

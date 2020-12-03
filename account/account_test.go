@@ -42,10 +42,9 @@ func TestMarshaling23(t *testing.T) {
 }
 
 func TestMarshaling(t *testing.T) {
-	acc1 := Account{}
+	acc1, _ := GenerateTestAccount()
 	acc1.AddToBalance(1)
 	acc1.IncSequence()
-	acc1.SetCode([]byte{2, 3, 4, 5, 6})
 
 	bs, err := acc1.Encode()
 	fmt.Printf("%X\n", bs)
@@ -54,7 +53,7 @@ func TestMarshaling(t *testing.T) {
 	acc2 := new(Account)
 	err = acc2.Decode(bs)
 	require.NoError(t, err)
-	assert.Equal(t, acc1, *acc2)
+	assert.Equal(t, acc1, acc2)
 
 	acc3 := new(Account)
 	err = acc3.Decode(bs)

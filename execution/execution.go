@@ -28,6 +28,10 @@ func NewExecution(sb sandbox.Sandbox) *Execution {
 }
 
 func (exe *Execution) Execute(trx *tx.Tx, isMintbaseTx bool) error {
+	if err := trx.SanityCheck(); err != nil {
+		return err
+	}
+
 	if isMintbaseTx {
 		if !trx.IsMintbaseTx() {
 			return errors.Errorf(errors.ErrInvalidTx, "Not a mintbase transaction")

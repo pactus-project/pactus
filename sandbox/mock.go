@@ -8,6 +8,8 @@ import (
 
 // MockSandbox is a testing mock
 type MockSandbox struct {
+	Accounts       map[crypto.Address]*account.Account
+	Validators     map[crypto.Address]*validator.Validator
 	Stamps         map[crypto.Hash]int
 	CurrentHeight_ int
 	TTLInterval    int
@@ -18,6 +20,8 @@ type MockSandbox struct {
 
 func NewMockSandbox() *MockSandbox {
 	return &MockSandbox{
+		Accounts:       make(map[crypto.Address]*account.Account),
+		Validators:     make(map[crypto.Address]*validator.Validator),
 		Stamps:         make(map[crypto.Hash]int),
 		TTLInterval:    500,
 		MaxMemoLenght_: 1024,
@@ -26,14 +30,19 @@ func NewMockSandbox() *MockSandbox {
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
-	return nil
+	return m.Accounts[addr]
 }
-func (m *MockSandbox) UpdateAccount(acc *account.Account) {}
+func (m *MockSandbox) UpdateAccount(acc *account.Account) {
+	m.Accounts[acc.Address()] = acc
+}
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
-	return nil
+	return m.Validators[addr]
 }
-func (m *MockSandbox) UpdateValidator(val *validator.Validator) {}
-func (m *MockSandbox) AddToSet(val *validator.Validator)        {}
+func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
+	m.Validators[val.Address()] = val
+
+}
+func (m *MockSandbox) AddToSet(val *validator.Validator) {}
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurrentHeight_
 }
