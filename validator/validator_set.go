@@ -15,8 +15,8 @@ type ValidatorSet struct {
 
 	maximumPower  int
 	validators    []*Validator
+	joined        []*Validator
 	proposerIndex int
-	joined        int
 }
 
 func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.Address) (*ValidatorSet, error) {
@@ -37,6 +37,7 @@ func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.
 	return &ValidatorSet{
 		maximumPower:  maximumPower,
 		validators:    validators2,
+		joined:        make([]*Validator, 0),
 		proposerIndex: index,
 	}, nil
 }
@@ -70,28 +71,27 @@ func (set *ValidatorSet) Join(val *Validator) error {
 	defer set.lk.Unlock()
 
 	if set.contains(val.Address()) {
-		return errors.Errorf(errors.ErrInvalidAddress, "Validator already is in the set")
+		return errors.Errorf(errors.ErrGeneric, "Validator already is in the set")
 	}
-	set.validators = append(set.validators, val)
+	if len(set.joined) >= (set.Power() / 3) {
+		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
+	}
+	set.joined = append(set.joined, val)
 
 	return nil
 }
 
-func (set *ValidatorSet) ForceLeave(val *Validator) error {
+func (set *ValidatorSet) MoveToNewHeight(lastRound int) {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	// Slashing validators should be supported
-	panic("Not supported yet")
-
-	return nil
-}
-
-func (set *ValidatorSet) MoveProposerIndex(count int) {
-	set.lk.Lock()
-	defer set.lk.Unlock()
-
-	set.proposerIndex = (set.proposerIndex + count + 1) % len(set.validators)
+	set.validators = append(set.validators, set.joined...)
+	if set.Power() > set.MaximumPower() {
+		shouldLeave := set.Power() - set.MaximumPower()
+		set.validators = set.validators[shouldLeave:]
+	}
+	set.proposerIndex = (set.proposerIndex + lastRound - len(set.joined) + 1) % len(set.validators)
+	set.joined = set.joined[:0]
 }
 
 func (set *ValidatorSet) Validators() []crypto.Address {

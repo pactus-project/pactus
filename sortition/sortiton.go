@@ -7,39 +7,38 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-type VRF struct {
-	signer crypto.PrivateKey
+type Sortition struct {
+	signer crypto.Signer
 	max    int64
 }
 
-func NewVRF(signer crypto.PrivateKey) VRF {
-	return VRF{
+func NewSortition(signer crypto.Signer) *Sortition {
+	return &Sortition{
 		signer: signer,
 	}
 }
 
-func (vrf *VRF) SetMax(max int64) {
-	vrf.max = max
+func (s *Sortition) SetMax(max int64) {
+	s.max = max
 }
 
 // Evaluate returns a random number between 0 and max with the proof
-func (vrf *VRF) Evaluate(m []byte) (index int64, proof []byte) {
-	// sign the hashed block height
-	sig := vrf.signer.Sign(m)
+func (s *Sortition) Evaluate(hash crypto.Hash) (index int64, proof []byte) {
+	sig := s.signer.Sign(hash.RawBytes())
 
 	proof = make([]byte, 0)
-	addrBytes := vrf.signer.PublicKey().Address().RawBytes()
+	addrBytes := s.signer.PublicKey().Address().RawBytes()
 	sigBytes := sig.RawBytes()
 	proof = append(proof, addrBytes...)
 	proof = append(proof, sigBytes...)
 
-	index = vrf.getIndex(sigBytes)
+	index = s.getIndex(sigBytes)
 
 	return index, proof
 }
 
 // Verify ensure the proof is valid
-func (vrf *VRF) Verify(msg []byte, publicKey crypto.PublicKey, proof []byte) (index int64, result bool) {
+func (s *Sortition) Verify(hash crypto.Hash, publicKey crypto.PublicKey, proof []byte) (index int64, result bool) {
 	address, err := crypto.AddressFromRawBytes(proof[0:crypto.AddressSize])
 	if err != nil {
 		return 0, false
@@ -56,16 +55,16 @@ func (vrf *VRF) Verify(msg []byte, publicKey crypto.PublicKey, proof []byte) (in
 	}
 
 	// Verify signature (proof)
-	if !publicKey.Verify(msg, &sig) {
+	if !publicKey.Verify(hash.RawBytes(), &sig) {
 		return 0, false
 	}
 
-	index = vrf.getIndex(sig.RawBytes())
+	index = s.getIndex(sig.RawBytes())
 
 	return index, true
 }
 
-func (vrf *VRF) getIndex(sig []byte) int64 {
+func (s *Sortition) getIndex(sig []byte) int64 {
 	h := crypto.HashH(sig)
 
 	rnd64 := util.SliceToInt64(h.RawBytes())
@@ -75,7 +74,7 @@ func (vrf *VRF) getIndex(sig []byte) int64 {
 	index := big.NewInt(0)
 	numerator := big.NewInt(0)
 	rnd := big.NewInt(rnd64)
-	max := big.NewInt(vrf.max)
+	max := big.NewInt(s.max)
 	denominator := big.NewInt(util.MaxInt64)
 
 	numerator = numerator.Mul(rnd, max)

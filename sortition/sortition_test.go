@@ -8,21 +8,21 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-func TestVRF(t *testing.T) {
+func TestSortition(t *testing.T) {
 	_, pk, pv := crypto.GenerateTestKeyPair()
+	signer := crypto.NewSigner(pv)
 	for i := 0; i < 100; i++ {
-		m := []byte{byte(i)}
-
-		vrf := NewVRF(pv)
+		h := crypto.GenerateTestHash()
+		vrf := NewSortition(signer)
 
 		max := int64(i + 1*1000)
 		vrf.SetMax(max)
-		index, proof := vrf.Evaluate(m)
-		fmt.Printf("index is : %v \n", index)
+		index, proof := vrf.Evaluate(h)
+		//fmt.Printf("index is : %v \n", index)
 
 		assert.Equal(t, index <= max, true)
 
-		index2, result := vrf.Verify(m, pk, proof)
+		index2, result := vrf.Verify(h, pk, proof)
 
 		assert.Equal(t, result, true)
 		assert.Equal(t, index, index2)
@@ -31,15 +31,17 @@ func TestVRF(t *testing.T) {
 
 func TestEntropy(t *testing.T) {
 	_, _, pv := crypto.GenerateTestKeyPair()
+	signer := crypto.NewSigner(pv)
+
 	entropy := make([]bool, 100)
 	for i := 0; i < 100; i++ {
-		m := []byte{byte(i)}
+		h := crypto.GenerateTestHash()
 
-		vrf := NewVRF(pv)
+		vrf := NewSortition(signer)
 
 		max := int64(100)
 		vrf.SetMax(max)
-		index, _ := vrf.Evaluate(m)
+		index, _ := vrf.Evaluate(h)
 
 		entropy[index] = true
 	}

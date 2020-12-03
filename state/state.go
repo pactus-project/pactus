@@ -13,6 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -57,7 +58,7 @@ type state struct {
 	execution         *execution.Execution
 	executionSandbox  *sandbox
 	validatorSet      *validator.ValidatorSet
-	sortition         *Sortition
+	sortition         *sortition.Sortition
 	recentBlockHashes *linkedmap.LinkedMap
 	lastBlockHeight   int
 	lastBlockHash     crypto.Hash
@@ -80,7 +81,7 @@ func LoadOrNewState(
 		txPool:    txPool,
 		params:    NewParams(),
 		proposer:  signer.Address(),
-		sortition: NewSortition(signer),
+		sortition: sortition.NewSortition(signer),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	store, err := store.NewStore(conf.Store)
@@ -149,7 +150,7 @@ func (st *state) tryLoadLastInfo() error {
 		return err
 	}
 	// We have moved propose before
-	st.validatorSet.MoveProposerIndex(0)
+	st.validatorSet.MoveToNewHeight(0)
 	return nil
 }
 
@@ -368,7 +369,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	receiptsHash := receiptsMerkle.Root()
 
 	// Move psoposer index
-	st.validatorSet.MoveProposerIndex(commit.Round())
+	st.validatorSet.MoveToNewHeight(commit.Round())
 	st.lastBlockHeight++
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()

@@ -18,9 +18,9 @@ type sandbox struct {
 }
 
 type validatorStatus struct {
-	validator  *validator.Validator
-	updated    bool
-	addedToSet bool
+	validator *validator.Validator
+	updated   bool
+	addToSet  bool
 }
 
 type accountStatus struct {
@@ -52,11 +52,19 @@ func (sb *sandbox) reset() {
 
 func (sb *sandbox) commit(set *validator.ValidatorSet) error {
 	for _, acc := range sb.accounts {
-		sb.store.UpdateAccount(acc.account)
+		if acc.updated {
+			sb.store.UpdateAccount(acc.account)
+		}
 	}
 
 	for _, val := range sb.validators {
-		sb.store.UpdateValidator(val.validator)
+		if val.updated {
+			sb.store.UpdateValidator(val.validator)
+		}
+
+		if val.addToSet {
+
+		}
 	}
 
 	sb.reset()
@@ -138,11 +146,11 @@ func (sb *sandbox) AddToSet(val *validator.Validator) {
 	s, ok := sb.validators[addr]
 	if ok {
 		s.validator = val
-		s.addedToSet = true
+		s.addToSet = true
 	} else {
 		sb.validators[addr] = validatorStatus{
-			validator:  val,
-			addedToSet: true,
+			validator: val,
+			addToSet:  true,
 		}
 	}
 }

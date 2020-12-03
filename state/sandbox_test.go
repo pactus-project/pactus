@@ -93,7 +93,11 @@ func TestAddValidatorToSet(t *testing.T) {
 	sb := newSandbox(st.store, st)
 
 	sb.AddToSet(val2)
+	// Still is not in set
 	assert.Nil(t, st.validatorSet.Validator(val2.Address()))
 
 	sb.commit(st.validatorSet)
+	// Still is not in set
+	assert.Nil(t, st.validatorSet.Validator(val2.Address()))
+
 }
