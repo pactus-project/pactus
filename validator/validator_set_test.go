@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/zarbchain/zarb-go/crypto"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,7 +39,7 @@ func TestInvalidProposerJoinAndLeave(t *testing.T) {
 	assert.Nil(t, vs)
 }
 
-func TestProposerJoinAndLeave(t *testing.T) {
+func TestProposerMove(t *testing.T) {
 	val1, _ := GenerateTestValidator()
 	val2, _ := GenerateTestValidator()
 	val3, _ := GenerateTestValidator()
@@ -49,151 +48,230 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	val6, _ := GenerateTestValidator()
 	val7, _ := GenerateTestValidator()
 
-	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val1.Address())
+	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
+	assert.NoError(t, err)
+
+	//
+	// +=+-+-+-+-+-+-+       +-+=+-+-+-+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |1|2|3|4|5|6|7|
+	// +=+-+-+-+-+-+-+       +-+=+-+-+-+-+-+
+	//
+	vs.proposerIndex = 0
+	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
+	vs.MoveToNewHeight(0)
+	assert.Equal(t, vs.proposerIndex, 1)
+	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
+	assert.Equal(t, vs.Proposer(1).Address(), val3.Address())
+
+	//
+	// +-+-+-+=+-+-+-+       +-+-+-+-+=+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |1|2|3|4|5|6|7|
+	// +-+-+-+=+-+-+-+       +-+-+-+-+=+-+-+
+	//
+	vs.proposerIndex = 3
+	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
+	vs.MoveToNewHeight(0)
+	assert.Equal(t, vs.proposerIndex, 4)
+	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
+
+	//
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |1|2|3|4|5|6|7|
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
+	//
+	vs.proposerIndex = 6
+	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
+	vs.MoveToNewHeight(0)
+	assert.Equal(t, vs.proposerIndex, 0)
+	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
+}
+
+func TestProposerMoveMoreRounds(t *testing.T) {
+	val1, _ := GenerateTestValidator()
+	val2, _ := GenerateTestValidator()
+	val3, _ := GenerateTestValidator()
+	val4, _ := GenerateTestValidator()
+	val5, _ := GenerateTestValidator()
+	val6, _ := GenerateTestValidator()
+	val7, _ := GenerateTestValidator()
+
+	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
+	assert.NoError(t, err)
+
+	//
+	// +=+-+-+-+-+-+-+       +-+-+-+=+-+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |1|2|3|4|5|6|7|
+	// +=+-+-+-+-+-+-+       +-+-+-+=+-+-+-+
+	//
+	vs.proposerIndex = 0
+	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
+	vs.MoveToNewHeight(2)
+	assert.Equal(t, vs.proposerIndex, 3)
+	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
+	assert.Equal(t, vs.Proposer(1).Address(), val5.Address())
+
+	//
+	// +-+-+-+=+-+-+-+       +=+-+-+-+-+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |1|2|3|4|5|6|7|
+	// +-+-+-+=+-+-+-+       +=+-+-+-+-+-+-+
+	//
+	vs.proposerIndex = 3
+	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
+	vs.MoveToNewHeight(3)
+	assert.Equal(t, vs.proposerIndex, 0)
+	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
+
+	//
+	// +-+-+-+-+-+-+=+       +-+=+-+-+-+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |1|2|3|4|5|6|7|
+	// +-+-+-+-+-+-+=+       +-+=+-+-+-+-+-+
+	//
+	vs.proposerIndex = 6
+	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
+	vs.MoveToNewHeight(1)
+	assert.Equal(t, vs.proposerIndex, 1)
+	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
+}
+
+func TestProposerJoinAndLeave(t *testing.T) {
+	val1, _ := GenerateTestValidator()
+	val2, _ := GenerateTestValidator()
+	val3, _ := GenerateTestValidator()
+	val4, _ := GenerateTestValidator()
+	val5, _ := GenerateTestValidator()
+	val6, _ := GenerateTestValidator()
+	val7, _ := GenerateTestValidator()
+	val8, _ := GenerateTestValidator()
+	val9, _ := GenerateTestValidator()
+	valA, _ := GenerateTestValidator()
+	valB, _ := GenerateTestValidator()
+	valC, _ := GenerateTestValidator()
+	valD, _ := GenerateTestValidator()
+
+	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
 
 	// Val1 is already in set
 	err = vs.Join(val1)
 	assert.Error(t, err)
 
-	// -------------------
-	// Validator 1 is first proposer
-	assert.Equal(t, vs.validators[0].Address(), val1.Address())
-	assert.Equal(t, vs.validators[1].Address(), val2.Address())
-	assert.Equal(t, vs.validators[2].Address(), val3.Address())
-	assert.Equal(t, vs.validators[3].Address(), val4.Address())
-
-	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
+	//
+	// +=+-+-+-+-+-+-+       +=+-+-+-+-+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |2|3|4|5|6|7|8|
+	// +=+-+-+-+-+-+-+       +=+-+-+-+-+-+-+
+	//
+	vs.proposerIndex = 0
+	assert.NoError(t, vs.Join(val8))
 	vs.MoveToNewHeight(0)
-
-	// -------------------
-	// Validator 2 is offline, proposer will be validator 3 for the second round
-	assert.Equal(t, vs.validators[0].Address(), val1.Address())
-	assert.Equal(t, vs.validators[1].Address(), val2.Address())
-	assert.Equal(t, vs.validators[2].Address(), val3.Address())
-	assert.Equal(t, vs.validators[3].Address(), val4.Address())
-
+	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
 	assert.Equal(t, vs.Proposer(1).Address(), val3.Address())
-	vs.MoveToNewHeight(1)
 
-	// -------------------
-	// Next psoposer is validator 4
-	// In this height, validator 5 joins the set and validator 1 should leave the set
-	assert.Equal(t, vs.validators[0].Address(), val1.Address())
-	assert.Equal(t, vs.validators[1].Address(), val2.Address())
-	assert.Equal(t, vs.validators[2].Address(), val3.Address())
-	assert.Equal(t, vs.validators[3].Address(), val4.Address())
+	//
+	// +-+-+=+-+-+-+-+       +-+=+-+-+-+-+-+
+	// |2|3|4|5|6|7|8|  ==>  |4|5|6|7|8|9|A|
+	// +-+-+=+-+-+-+-+       +-+=+-+-+-+-+-+
+	//
+	//
+	vs.proposerIndex = 2
+	assert.NoError(t, vs.Join(val9))
+	assert.NoError(t, vs.Join(valA))
+	vs.MoveToNewHeight(0)
+	assert.Equal(t, vs.proposerIndex, 1)
+	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
 
-	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
-	err = vs.Join(val5)
+	//
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
+	// |4|5|6|7|8|9|A|  ==>  |5|6|7|8|9|A|B|
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
+	//
+	vs.proposerIndex = 6
+	assert.NoError(t, vs.Join(valB))
+	vs.MoveToNewHeight(0)
+	assert.Equal(t, vs.proposerIndex, 0)
+	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
+
+	//
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
+	// |5|6|7|8|9|A|B|  ==>  |7|8|9|A|B|C|D|
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
+	//
+	vs.proposerIndex = 6
+	assert.NoError(t, vs.Join(valC))
+	assert.NoError(t, vs.Join(valD))
+	vs.MoveToNewHeight(0)
+	assert.Equal(t, vs.proposerIndex, 0)
+	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
+}
+
+func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
+	val1, _ := GenerateTestValidator()
+	val2, _ := GenerateTestValidator()
+	val3, _ := GenerateTestValidator()
+	val4, _ := GenerateTestValidator()
+	val5, _ := GenerateTestValidator()
+	val6, _ := GenerateTestValidator()
+	val7, _ := GenerateTestValidator()
+	val8, _ := GenerateTestValidator()
+	val9, _ := GenerateTestValidator()
+	valA, _ := GenerateTestValidator()
+	valB, _ := GenerateTestValidator()
+	valC, _ := GenerateTestValidator()
+	valD, _ := GenerateTestValidator()
+
+	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
 
-	// Can't enter for second time
-	err = vs.Join(val6)
+	// Val1 is already in set
+	err = vs.Join(val1)
 	assert.Error(t, err)
 
-	vs.MoveToNewHeight(0)
-
-	// -------------------------
-	// Now validator 1 has left the set and validator 5 is proposer
-	assert.Equal(t, vs.validators[0].Address(), val2.Address())
-	assert.Equal(t, vs.validators[1].Address(), val3.Address())
-	assert.Equal(t, vs.validators[2].Address(), val4.Address())
-	assert.Equal(t, vs.validators[3].Address(), val5.Address())
-
-	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
-	assert.False(t, vs.Contains(val1.Address()))
-	vs.MoveToNewHeight(0)
-
-	// -------------------------
-	// Now validator 2 is the proposer but he is offline
-	// At this time validator 6 also joins the set
-	assert.Equal(t, vs.validators[0].Address(), val2.Address())
-	assert.Equal(t, vs.validators[1].Address(), val3.Address())
-	assert.Equal(t, vs.validators[2].Address(), val4.Address())
-	assert.Equal(t, vs.validators[3].Address(), val5.Address())
-
-	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
-	assert.Equal(t, vs.Proposer(1).Address(), val3.Address())
-	vs.Join(val6)
-	vs.MoveToNewHeight(1)
-
-	// -------------------------
-	// Now validator 4 is proposer now
-	assert.Equal(t, vs.validators[0].Address(), val3.Address())
-	assert.Equal(t, vs.validators[1].Address(), val4.Address())
-	assert.Equal(t, vs.validators[2].Address(), val5.Address())
-	assert.Equal(t, vs.validators[3].Address(), val6.Address())
-
+	//
+	// +=+-+-+-+-+-+-+       +-+-+=+-+-+-+-+
+	// |1|2|3|4|5|6|7|  ==>  |2|3|4|5|6|7|8|
+	// +=+-+-+-+-+-+-+       +-+-+=+-+-+-+-+
+	//
+	vs.proposerIndex = 0
+	assert.NoError(t, vs.Join(val8))
+	vs.MoveToNewHeight(2)
+	assert.Equal(t, vs.proposerIndex, 2)
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
-	vs.MoveToNewHeight(0)
+	assert.Equal(t, vs.Proposer(1).Address(), val5.Address())
 
-	// -------------------------
-	// Now validator 5 is proposer now
-	// Validator 7 joins the set and validator 3 should leave
-	assert.Equal(t, vs.validators[0].Address(), val3.Address())
-	assert.Equal(t, vs.validators[1].Address(), val4.Address())
-	assert.Equal(t, vs.validators[2].Address(), val5.Address())
-	assert.Equal(t, vs.validators[3].Address(), val6.Address())
+	//
+	// +-+-+=+-+-+-+-+       +-+-+-+-+=+-+-+
+	// |2|3|4|5|6|7|8|  ==>  |4|5|6|7|8|9|A|
+	// +-+-+=+-+-+-+-+       +-+-+-+-+=+-+-+
+	//
+	//
+	vs.proposerIndex = 2
+	assert.NoError(t, vs.Join(val9))
+	assert.NoError(t, vs.Join(valA))
+	vs.MoveToNewHeight(3)
+	assert.Equal(t, vs.proposerIndex, 4)
+	assert.Equal(t, vs.Proposer(0).Address(), val8.Address())
 
-	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
-	vs.Join(val7)
-	vs.MoveToNewHeight(0)
-
-	// -------------------------
-	// Now validator 3 has left the set and validator 6 is proposer
-	assert.Equal(t, vs.validators[0].Address(), val4.Address())
-	assert.Equal(t, vs.validators[1].Address(), val5.Address())
-	assert.Equal(t, vs.validators[2].Address(), val6.Address())
-	assert.Equal(t, vs.validators[3].Address(), val7.Address())
-
+	//
+	// +-+-+-+-+-+-+=+       +-+=+-+-+-+-+-+
+	// |4|5|6|7|8|9|A|  ==>  |5|6|7|8|9|A|B|
+	// +-+-+-+-+-+-+=+       +-+=+-+-+-+-+-+
+	//
+	// 5 is offline
+	vs.proposerIndex = 6
+	assert.NoError(t, vs.Join(valB))
+	vs.MoveToNewHeight(2)
+	assert.Equal(t, vs.proposerIndex, 1)
 	assert.Equal(t, vs.Proposer(0).Address(), val6.Address())
-	assert.False(t, vs.Contains(val3.Address()))
-	vs.MoveToNewHeight(0)
 
-	// -------------------------
-	// Validator 7 is proposer (validators in set : 4,5,6,7)
-	assert.Equal(t, vs.validators[0].Address(), val4.Address())
-	assert.Equal(t, vs.validators[1].Address(), val5.Address())
-	assert.Equal(t, vs.validators[2].Address(), val6.Address())
-	assert.Equal(t, vs.validators[3].Address(), val7.Address())
-
+	//
+	// +-+-+-+-+-+-+=+       +-+-+-+-+-+-+-+
+	// |5|6|7|8|9|A|B|  ==>  |7|8|9|A|B|C|D|
+	// +-+-+-+-+-+-+=+       +-+-+-+-+-+-+-+
+	//
+	vs.proposerIndex = 5
+	assert.NoError(t, vs.Join(valC))
+	assert.NoError(t, vs.Join(valD))
+	vs.MoveToNewHeight(2)
+	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
-
-	vs.MoveToNewHeight(0)
-
-	// -------------------------
-	// Validator 4 is proposer
-	// Validator 1 joins again
-	assert.Equal(t, vs.validators[0].Address(), val4.Address())
-	assert.Equal(t, vs.validators[1].Address(), val5.Address())
-	assert.Equal(t, vs.validators[2].Address(), val6.Address())
-	assert.Equal(t, vs.validators[3].Address(), val7.Address())
-
-	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
-
-	vs.Join(val1)
-	vs.MoveToNewHeight(0)
-
-	// -------------------------
-	// validator 1 joined, and 4 left
-	assert.Equal(t, vs.validators[0].Address(), val5.Address())
-	assert.Equal(t, vs.validators[1].Address(), val6.Address())
-	assert.Equal(t, vs.validators[2].Address(), val7.Address())
-	assert.Equal(t, vs.validators[3].Address(), val1.Address())
-
-	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
-
-	vs.Join(val3)
-	vs.MoveToNewHeight(0)
-
-	// -------------------------
-	// Validator 3 joins again
-	assert.Equal(t, vs.validators[0].Address(), val6.Address())
-	assert.Equal(t, vs.validators[1].Address(), val7.Address())
-	assert.Equal(t, vs.validators[2].Address(), val1.Address())
-	assert.Equal(t, vs.validators[3].Address(), val3.Address())
-
-	assert.Equal(t, vs.Proposer(0).Address(), val6.Address())
 }
