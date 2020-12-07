@@ -60,3 +60,19 @@ func (me *OrderedMap) Unset(key interface{}) {
 func (me *OrderedMap) Len() int {
 	return me.bt.Len()
 }
+
+func (me *OrderedMap) MinKey() (interface{}, bool) {
+	min := me.bt.Min()
+	if min == nil {
+		return nil, false
+	}
+	return min.(*item).key, true
+}
+
+func (me *OrderedMap) MaxKey() (interface{}, bool) {
+	max := me.bt.Max()
+	if max == nil {
+		return nil, false
+	}
+	return max.(*item).key, true
+}

@@ -52,6 +52,7 @@ func (t PayloadType) String() string {
 type Message struct {
 	Initiator crypto.Address
 	Target    crypto.Address
+	Flags     int
 	Type      PayloadType
 	Payload   Payload
 }
@@ -62,6 +63,9 @@ func (m *Message) SanityCheck() error {
 	}
 	if m.Type != m.Payload.Type() {
 		errors.Errorf(errors.ErrInvalidMessage, "invalid message type")
+	}
+	if m.Flags != 0 {
+		errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
 	}
 	return nil
 }
@@ -77,7 +81,8 @@ func (m *Message) PayloadType() PayloadType {
 type _Message struct {
 	Initiator   crypto.Address  `cbor:"1,keyasint,omitempty"`
 	Target      crypto.Address  `cbor:"2,keyasint,omitempty"`
-	PayloadType PayloadType     `cbor:"3,keyasint"`
+	Flags       int             `cbor:"3,keyasint,omitempty"`
+	PayloadType PayloadType     `cbor:"4,keyasint"`
 	Payload     cbor.RawMessage `cbor:"10,keyasint"`
 }
 
@@ -90,6 +95,7 @@ func (m *Message) MarshalCBOR() ([]byte, error) {
 	msg := &_Message{
 		Initiator:   m.Initiator,
 		Target:      m.Target,
+		Flags:       m.Flags,
 		PayloadType: m.Type,
 		Payload:     bs,
 	}

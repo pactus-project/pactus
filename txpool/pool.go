@@ -27,7 +27,6 @@ type txPool struct {
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
 	broadcastCh chan *message.Message
-	isSyncing   bool
 	logger      *logger.Logger
 }
 
@@ -38,7 +37,6 @@ func NewTxPool(
 		config:      conf,
 		pendings:    linkedmap.NewLinkedMap(conf.MaxSize),
 		appendTxCh:  make(chan *tx.Tx, 5),
-		isSyncing:   true,
 		broadcastCh: broadcastCh,
 	}
 
@@ -91,22 +89,14 @@ func (pool *txPool) appendTx(trx tx.Tx) error {
 		return errors.Errorf(errors.ErrInvalidTx, "Transaction is alreasy in pool. hash: %v", trx.Hash())
 	}
 
-	// When we are syncing we should ignore validating transaction
-	// Some transactions might belong to blocks which we don't have them yet
-	if !pool.isSyncing {
-		if err := pool.validateTx(&trx); err != nil {
-			pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
-			return err
-		}
+	if err := pool.validateTx(&trx); err != nil {
+		pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
+		return err
 	}
 
 	pool.pendings.PushBack(trx.Hash(), &trx)
 
 	return nil
-}
-
-func (pool *txPool) SetIsSyncing(syncing bool) {
-	pool.isSyncing = syncing
 }
 
 func (pool *txPool) RemoveTx(hash crypto.Hash) *tx.Tx {
