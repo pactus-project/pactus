@@ -25,3 +25,13 @@ func SliceToInt(bs []byte) int {
 	n := binary.LittleEndian.Uint32(bs)
 	return int(n)
 }
+
+func SliceToUInt64(bs []byte) uint64 {
+	n := binary.LittleEndian.Uint64(bs)
+	return n
+}
+
+func SliceToInt64(bs []byte) int64 {
+	n := binary.LittleEndian.Uint64(bs)
+	return int64(n)
+}

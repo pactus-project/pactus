@@ -2,9 +2,9 @@ package txpool
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
-
 
 type TxPoolReader interface {
 	PendingTx(hash crypto.Hash) *tx.Tx
@@ -17,8 +17,10 @@ type TxPoolReader interface {
 type TxPool interface {
 	TxPoolReader
 
+	SetSandbox(sandbox sandbox.Sandbox)
 	AppendTxs(txs []tx.Tx)
-	AppendTx(tx tx.Tx)
-	AppendTxAndBroadcast(trx tx.Tx)
+	AppendTx(tx tx.Tx) error
+	AppendTxAndBroadcast(trx tx.Tx) error
 	RemoveTx(hash crypto.Hash) *tx.Tx
+	SetIsSyncing(syncing bool)
 }

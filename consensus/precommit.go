@@ -54,8 +54,9 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 		return
 	}
 
+	// TODO: Add more tests before removing this extra check.
 	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
-		cs.logger.Warn("Precommit: Invalid block", "proposal", roundProposal, "err", err)
+		cs.logger.Debug("Precommit: Invalid block", "proposal", roundProposal, "err", err)
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
 

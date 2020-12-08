@@ -2,11 +2,11 @@ package txpool
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-// For testing purpose
-
+// MockTxPool is a testing mock
 type MockTxPool struct {
 	txs map[crypto.Hash]tx.Tx
 }
@@ -16,7 +16,9 @@ func NewMockTxPool() *MockTxPool {
 		txs: make(map[crypto.Hash]tx.Tx),
 	}
 }
+func (m *MockTxPool) SetSandbox(sandbox sandbox.Sandbox) {
 
+}
 func (m *MockTxPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	tx, ok := m.txs[hash]
 	if !ok {
@@ -44,12 +46,13 @@ func (m *MockTxPool) AppendTxs(txs []tx.Tx) {
 	}
 }
 
-func (m *MockTxPool) AppendTx(tx tx.Tx) {
+func (m *MockTxPool) AppendTx(tx tx.Tx) error {
 	m.txs[tx.Hash()] = tx
-
+	return nil
 }
-func (m *MockTxPool) AppendTxAndBroadcast(trx tx.Tx) {
+func (m *MockTxPool) AppendTxAndBroadcast(trx tx.Tx) error {
 	m.txs[trx.Hash()] = trx
+	return nil
 }
 
 func (m *MockTxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
@@ -57,3 +60,5 @@ func (m *MockTxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
 	//	delete(m.txs, hash)
 	return &tx
 }
+
+func (m *MockTxPool) SetIsSyncing(bool) {}

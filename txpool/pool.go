@@ -1,12 +1,15 @@
 package txpool
 
 import (
-	"container/list"
 	"fmt"
 	"time"
 
+	"github.com/zarbchain/zarb-go/sandbox"
+
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/tx"
@@ -19,98 +22,113 @@ import (
 type txPool struct {
 	lk deadlock.RWMutex
 
-	config       *Config
-	pendingsList *list.List
-	pendingsMap  map[crypto.Hash]*list.Element
-	appendTxCh   chan *tx.Tx
-	broadcastCh  chan *message.Message
-	logger       *logger.Logger
+	config      *Config
+	sandbox     sandbox.Sandbox
+	pendings    *linkedmap.LinkedMap
+	appendTxCh  chan *tx.Tx
+	broadcastCh chan *message.Message
+	isSyncing   bool
+	logger      *logger.Logger
 }
 
 func NewTxPool(
 	conf *Config,
 	broadcastCh chan *message.Message) (TxPool, error) {
 	pool := &txPool{
-		config:       conf,
-		pendingsList: list.New(),
-		pendingsMap:  make(map[crypto.Hash]*list.Element),
-		appendTxCh:   make(chan *tx.Tx, 5),
-		broadcastCh:  broadcastCh,
+		config:      conf,
+		pendings:    linkedmap.NewLinkedMap(conf.MaxSize),
+		appendTxCh:  make(chan *tx.Tx, 5),
+		isSyncing:   true,
+		broadcastCh: broadcastCh,
 	}
 
 	pool.logger = logger.NewLogger("_pool", pool)
 	return pool, nil
 }
 
-func (pool *txPool) AppendTxs(txs []tx.Tx) {
+func (pool *txPool) SetSandbox(sandbox sandbox.Sandbox) {
+	pool.sandbox = sandbox
+}
+
+func (pool *txPool) AppendTxs(trxs []tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	for _, tx := range txs {
-		pool.appendTx(tx)
+	for _, trx := range trxs {
+		pool.appendTx(trx)
 	}
 }
 
-func (pool *txPool) AppendTx(tx tx.Tx) {
+func (pool *txPool) AppendTx(trx tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	pool.appendTx(tx)
+	if err := pool.appendTx(trx); err != nil {
+		return err
+	}
 
-	pool.appendTxCh <- &tx
+	pool.appendTxCh <- &trx
+
+	return nil
 }
 
-func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) {
+func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	pool.appendTx(trx)
+	if err := pool.appendTx(trx); err != nil {
+		return err
+	}
 
 	msg := message.NewTxsMessage([]tx.Tx{trx})
 	pool.broadcastCh <- msg
+
+	return nil
 }
 
-func (pool *txPool) appendTx(tx tx.Tx) {
-	if pool.pendingsList.Len() >= pool.config.MaxSize {
-		pool.logger.Warn("Tx pool is full")
+func (pool *txPool) appendTx(trx tx.Tx) error {
+	if pool.pendings.Has(trx.Hash()) {
+		return errors.Errorf(errors.ErrInvalidTx, "Transaction is alreasy in pool. hash: %v", trx.Hash())
 	}
 
-	_, found := pool.pendingsMap[tx.Hash()]
-	if found {
-		pool.logger.Trace("We already have this transaction", "hash", tx.Hash())
-		return
+	// When we are syncing we should ignore validating transaction
+	// Some transactions might belong to blocks which we don't have them yet
+	if !pool.isSyncing {
+		if err := pool.validateTx(&trx); err != nil {
+			pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
+			return err
+		}
 	}
-	// TODO:
-	// validate transaction
 
-	el := pool.pendingsList.PushFront(&tx)
-	pool.pendingsMap[tx.Hash()] = el
+	pool.pendings.PushBack(trx.Hash(), &trx)
+
+	return nil
+}
+
+func (pool *txPool) SetIsSyncing(syncing bool) {
+	pool.isSyncing = syncing
 }
 
 func (pool *txPool) RemoveTx(hash crypto.Hash) *tx.Tx {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	el, found := pool.pendingsMap[hash]
-	if !found {
-		return nil
+	val := pool.pendings.Remove(hash)
+	if val != nil {
+		return val.(*tx.Tx)
 	}
 
-	pool.pendingsList.Remove(el)
-	delete(pool.pendingsMap, hash)
-
-	return el.Value.(*tx.Tx)
-
+	return nil
 }
 
 func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	pool.lk.RLock()
 
-	el, found := pool.pendingsMap[hash]
+	val, found := pool.pendings.Get(hash)
 	if found {
-		tx := el.Value.(*tx.Tx)
+		trx := val.(*tx.Tx)
 		pool.lk.RUnlock()
-		return tx
+		return trx
 	}
 
 	pool.logger.Debug("Request transaction from peers", "hash", hash)
@@ -126,10 +144,10 @@ func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
 		case <-timeout.C:
 			pool.logger.Warn("Transaction not received", "hash", hash, "timeout", pool.config.WaitingTimeout)
 			return nil
-		case tx := <-pool.appendTxCh:
+		case trx := <-pool.appendTxCh:
 			pool.logger.Debug("Transaction found", "hash", hash)
-			if tx.Hash().EqualsTo(hash) {
-				return tx
+			if trx.Hash().EqualsTo(hash) {
+				return trx
 			}
 		}
 	}
@@ -139,17 +157,16 @@ func (pool *txPool) HasTx(hash crypto.Hash) bool {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
-	_, found := pool.pendingsMap[hash]
-	return found
+	return pool.pendings.Has(hash)
 }
 
 func (pool *txPool) Size() int {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
-	return pool.pendingsList.Len()
+	return pool.pendings.Size()
 }
 
 func (pool *txPool) Fingerprint() string {
-	return fmt.Sprintf("{%v}", pool.pendingsList.Len())
+	return fmt.Sprintf("{%v}", pool.pendings.Size())
 }

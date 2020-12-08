@@ -1,0 +1,23 @@
+package sandbox
+
+import (
+	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/validator"
+)
+
+type Sandbox interface {
+	Account(crypto.Address) *account.Account
+	UpdateAccount(*account.Account)
+
+	Validator(crypto.Address) *validator.Validator
+	UpdateValidator(*validator.Validator)
+	AddToSet(*validator.Validator)
+
+	CurrentHeight() int
+	RecentBlockHeight(crypto.Hash) int
+	TransactionToLiveInterval() int
+	MaxMemoLenght() int
+	FeeFraction() float64
+	MinFee() int64
+}

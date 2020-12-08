@@ -8,6 +8,14 @@ var MintbaseAddress = Address{data: addressData{Address: [AddressSize]byte{0}}}
 
 func init() {
 	bls.Init(bls.BLS12_381)
+
+	if err := bls.Init(bls.BLS12_381); err != nil {
+		panic(err)
+	}
+
+	// Check subgroup order for pubkeys and signatures.
+	bls.VerifyPublicKeyOrder(true)
+	bls.VerifySignatureOrder(true)
 }
 
 func Aggregate(sigs []Signature) Signature {

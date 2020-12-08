@@ -101,6 +101,7 @@ func (syncer *Synchronizer) maybeSynced() {
 	if lastHeight >= networkHeight {
 		syncer.logger.Info("We are synced", "height", lastHeight)
 		syncer.consensus.MoveToNewHeight()
+		syncer.txPool.SetIsSyncing(false)
 	}
 }
 

@@ -7,7 +7,6 @@ import (
 const (
 	ErrNone = iota
 	ErrGeneric
-	ErrTimeOut
 	ErrNetwork
 	ErrInvalidBlock
 	ErrInvalidAddress
@@ -23,7 +22,6 @@ const (
 	ErrInvalidConfig
 	ErrDuplicateVote
 	ErrInsufficientFunds
-	ErrInsufficientGas
 
 	ErrCount
 )
@@ -32,22 +30,20 @@ var messages = map[int]string{
 	ErrNone:              "No error",
 	ErrGeneric:           "Generic error",
 	ErrNetwork:           "Network error",
-	ErrTimeOut:           "Timeout error",
 	ErrInvalidBlock:      "Invalid block",
 	ErrInvalidAddress:    "Invalid address",
 	ErrInvalidPublicKey:  "Invalid public key",
 	ErrInvalidPrivateKey: "Invalid private key",
 	ErrInvalidSignature:  "Invalid signature",
-	ErrInvalidAmount:     "error invalid amount",
-	ErrInvalidSequence:   "Error invalid sequence",
+	ErrInvalidAmount:     "Invalid amount",
+	ErrInvalidSequence:   "Invalid sequence",
 	ErrInvalidTx:         "Invalid transaction",
 	ErrInvalidProposal:   "Invalid proposal",
 	ErrInvalidVote:       "Invalid vote",
 	ErrInvalidMessage:    "Invalid message",
 	ErrInvalidConfig:     "Invalid config",
 	ErrDuplicateVote:     "Duplicate vote",
-	ErrInsufficientFunds: "error insufficient funds",
-	ErrInsufficientGas:   "Insufficient Gas",
+	ErrInsufficientFunds: "Insufficient funds",
 }
 
 type withCode struct {

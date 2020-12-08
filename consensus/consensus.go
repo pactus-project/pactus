@@ -24,28 +24,28 @@ var (
 type Consensus struct {
 	lk deadlock.RWMutex
 
-	config        *Config
-	hrs           hrs.HRS
-	votes         *HeightVoteSet
-	valset        *validator.ValidatorSet
-	privValidator *validator.PrivValidator
-	isCommitted   bool
-	state         state.State
-	broadcastCh   chan *message.Message
-	logger        *logger.Logger
+	config      *Config
+	hrs         hrs.HRS
+	votes       *HeightVoteSet
+	valset      *validator.ValidatorSet
+	signer      crypto.Signer
+	isCommitted bool
+	state       state.State
+	broadcastCh chan *message.Message
+	logger      *logger.Logger
 }
 
 func NewConsensus(
 	conf *Config,
 	state state.State,
-	privValidator *validator.PrivValidator,
+	signer crypto.Signer,
 	broadcastCh chan *message.Message) (*Consensus, error) {
 	cs := &Consensus{
-		config:        conf,
-		state:         state,
-		valset:        state.ValidatorSet(),
-		broadcastCh:   broadcastCh,
-		privValidator: privValidator,
+		config:      conf,
+		state:       state,
+		valset:      state.ValidatorSet(),
+		broadcastCh: broadcastCh,
+		signer:      signer,
 	}
 
 	// Update height later, See enterNewHeight.
@@ -207,7 +207,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 
 	added, err := cs.votes.AddVote(v)
 	if err != nil {
-		if v.Signer().EqualsTo(cs.privValidator.Address()) {
+		if v.Signer().EqualsTo(cs.signer.Address()) {
 			cs.logger.Error("Detecting a duplicated vote from ourself. Did you restart the node?")
 		} else {
 			cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
@@ -260,7 +260,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 }
 
 func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
-	address := cs.privValidator.Address()
+	address := cs.signer.Address()
 	if !cs.valset.Contains(address) {
 		cs.logger.Trace("This node is not in validator set", "addr", address)
 		return
@@ -268,7 +268,7 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 
 	// Sign the vote
 	v := vote.NewVote(msgType, cs.hrs.Height(), cs.hrs.Round(), hash, address)
-	cs.privValidator.SignMsg(v)
+	cs.signer.SignMsg(v)
 	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
 
 	err := cs.addVote(v)

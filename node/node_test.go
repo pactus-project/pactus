@@ -20,8 +20,8 @@ func TestRunningNode(t *testing.T) {
 	val := validator.NewValidator(pb, 1)
 	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
 	conf := config.TestConfig()
-	privVal := validator.NewPrivValidator(pv)
-	n, err := NewNode(gen, conf, privVal)
+	signer := crypto.NewSigner(pv)
+	n, err := NewNode(gen, conf, signer)
 
 	assert.Equal(t, n.state.LastBlockHash(), crypto.UndefHash)
 

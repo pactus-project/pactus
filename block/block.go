@@ -15,6 +15,8 @@ import (
 
 type Block struct {
 	data blockData
+
+	memorizedHash *crypto.Hash
 }
 
 type blockData struct {
@@ -72,7 +74,12 @@ func (b Block) SanityCheck() error {
 }
 
 func (b Block) Hash() crypto.Hash {
-	return b.data.Header.Hash()
+	if b.memorizedHash == nil {
+		h := b.data.Header.Hash()
+		b.memorizedHash = &h
+	}
+
+	return *b.memorizedHash
 }
 
 func (b Block) HashesTo(hash crypto.Hash) bool {
@@ -130,10 +137,15 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 		proposer = &addr
 	}
 	txs := make([]*tx.Tx, 0)
-	txs = append(txs, tx.GenerateTestSendTx())
-	txs = append(txs, tx.GenerateTestSendTx())
-	txs = append(txs, tx.GenerateTestSendTx())
-	txs = append(txs, tx.GenerateTestSendTx())
+	tx1, _ := tx.GenerateTestSendTx()
+	tx2, _ := tx.GenerateTestSendTx()
+	tx3, _ := tx.GenerateTestSendTx()
+	tx4, _ := tx.GenerateTestSendTx()
+
+	txs = append(txs, tx1)
+	txs = append(txs, tx2)
+	txs = append(txs, tx3)
+	txs = append(txs, tx4)
 
 	txHashes := NewTxHashes()
 	for _, tx := range txs {

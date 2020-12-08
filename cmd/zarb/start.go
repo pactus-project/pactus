@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
+	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -13,7 +14,6 @@ import (
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/version"
 )
 
@@ -44,10 +44,21 @@ func Start() func(c *cli.Cmd) {
 			Value: false,
 		})
 
-		c.Spec = "[-w=<path>] [-p=<private_key>] | ([-k=<path>] [-a=<passphrase>]) | [--wizard]"
+		deadlockdOpt := c.Bool(cli.BoolOpt{
+			Name:  "deadlock",
+			Desc:  "Enable deadlock detection mode",
+			Value: false,
+		})
+
+		c.Spec = "[-w=<path>] [-p=<private_key>] | ([-k=<path>] [-a=<passphrase>]) | [--wizard] | [--deadlock] "
 		c.LongDesc = "Starting the node"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
+
+			if !*deadlockdOpt {
+				// Disable dead-lock detection, Should we define a flag for this?
+				deadlock.Opts.Disable = false
+			}
 
 			configFile := "./config.toml"
 			genesisFile := "./genesis.json"
@@ -190,8 +201,8 @@ func Start() func(c *cli.Cmd) {
 
 			cmd.PrintInfoMsg("You are running a zarb block chain node version: %v. Welcome! ", version.NodeVersion.String())
 
-			privVal := validator.NewPrivValidator(keyObj.PrivateKey())
-			node, err := node.NewNode(gen, conf, privVal)
+			signer := keyObj.ToSigner()
+			node, err := node.NewNode(gen, conf, signer)
 			if err != nil {
 				cmd.PrintErrorMsg("Could not create node. %v", err)
 				return
