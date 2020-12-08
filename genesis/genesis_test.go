@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -23,4 +24,16 @@ func TestMarshaling(t *testing.T) {
 	err = json.Unmarshal(bz, gen2)
 	require.NoError(t, err)
 	require.Equal(t, gen1.Hash(), gen2.Hash())
+}
+
+func TestForTest(t *testing.T) {
+	addr, pb, _ := crypto.RandomKeyPair()
+	acc := account.NewAccount(addr)
+	val := validator.NewValidator(pb, 1)
+	gen1 := MakeGenesis("test", time.Now().Truncate(0), []*account.Account{acc}, []*validator.Validator{val})
+	assert.True(t, gen1.IsForTest())
+	assert.True(t, Mainnet().IsForMainnet())
+	assert.False(t, Mainnet().IsForTestnet())
+	assert.False(t, Mainnet().IsForTest())
+	assert.True(t, Testnet().IsForTestnet())
 }

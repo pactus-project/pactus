@@ -26,3 +26,6 @@ func TestEncodingReceipt(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, r1, r2)
 }
+
+func TestSanityCheck(t *testing.T) {
+}

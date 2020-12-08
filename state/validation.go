@@ -32,7 +32,7 @@ func (st *state) validateBlock(block block.Block) error {
 			"State hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
 	}
 
-	if err := st.validateLastCommit(block.Header().LastCommit(), st.lastBlockHash); err != nil {
+	if err := st.validateLastCommit(block.LastCommit(), st.lastBlockHash); err != nil {
 		return err
 	}
 

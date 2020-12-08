@@ -13,6 +13,7 @@ type Executor interface {
 }
 type Execution struct {
 	executors      map[tx.PayloadType]Executor
+	sandbox        sandbox.Sandbox
 	accumulatedFee int64
 }
 
@@ -24,22 +25,24 @@ func NewExecution(sb sandbox.Sandbox) *Execution {
 
 	return &Execution{
 		executors: execs,
+		sandbox:   sb,
 	}
 }
 
-func (exe *Execution) Execute(trx *tx.Tx, isMintbaseTx bool) error {
+func (exe *Execution) Execute(trx *tx.Tx) error {
 	if err := trx.SanityCheck(); err != nil {
 		return err
 	}
 
-	if isMintbaseTx {
-		if !trx.IsMintbaseTx() {
-			return errors.Errorf(errors.ErrInvalidTx, "Not a mintbase transaction")
-		}
-	} else {
-		if trx.IsMintbaseTx() {
-			return errors.Errorf(errors.ErrInvalidTx, "Duplicated mintbase transaction")
-		}
+	curHeight := exe.sandbox.CurrentHeight()
+	height := exe.sandbox.RecentBlockHeight(trx.Stamp())
+	interval := exe.sandbox.TransactionToLiveInterval()
+
+	if height == -1 || curHeight-height > interval {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
+	}
+	if len(trx.Memo()) > exe.sandbox.MaxMemoLenght() {
+		return errors.Errorf(errors.ErrInvalidTx, "Memo length exceeded")
 	}
 
 	e, ok := exe.executors[trx.PayloadType()]

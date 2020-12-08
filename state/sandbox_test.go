@@ -14,7 +14,8 @@ func TestAccountChange(t *testing.T) {
 	acc2, _ := account.GenerateTestAccount()
 
 	st.store.UpdateAccount(acc1)
-	sb := newSandbox(st.store, st)
+	sb, err := newSandbox(st.store, st.params, 0)
+	assert.NoError(t, err)
 
 	acc1a := sb.Account(acc1.Address())
 	assert.Equal(t, acc1, acc1a)
@@ -27,7 +28,7 @@ func TestAccountChange(t *testing.T) {
 	acc2a := sb.Account(acc2.Address())
 	assert.Nil(t, acc2a)
 
-	sb.commit(st.validatorSet)
+	sb.CommitAndClear(st.validatorSet)
 
 	acc1b, err := sb.store.Account(acc1.Address())
 	assert.NoError(t, err)
@@ -38,7 +39,7 @@ func TestAccountChange(t *testing.T) {
 	acc22 := sb.Account(acc2.Address())
 	assert.Equal(t, acc2, acc22)
 
-	sb.reset()
+	sb.Clear()
 	assert.Equal(t, len(sb.accounts), 0)
 	assert.Equal(t, len(sb.validators), 0)
 
@@ -52,7 +53,7 @@ func TestValidatorChange(t *testing.T) {
 	val2, _ := validator.GenerateTestValidator()
 
 	st.store.UpdateValidator(val1)
-	sb := newSandbox(st.store, st)
+	sb, _ := newSandbox(st.store, st.params, 0)
 
 	val1a := sb.Validator(val1.Address())
 	assert.Equal(t, val1.Hash(), val1a.Hash())
@@ -65,7 +66,7 @@ func TestValidatorChange(t *testing.T) {
 	val2a := sb.Validator(val2.Address())
 	assert.Nil(t, val2a)
 
-	sb.commit(st.validatorSet)
+	sb.CommitAndClear(st.validatorSet)
 
 	val1b, err := sb.store.Validator(val1.Address())
 	assert.NoError(t, err)
@@ -76,7 +77,7 @@ func TestValidatorChange(t *testing.T) {
 	val22 := sb.Validator(val2.Address())
 	assert.Equal(t, val2, val22)
 
-	sb.reset()
+	sb.Clear()
 	assert.Equal(t, len(sb.validators), 0)
 	assert.Equal(t, len(sb.validators), 0)
 
@@ -90,13 +91,13 @@ func TestAddValidatorToSet(t *testing.T) {
 	val2, _ := validator.GenerateTestValidator()
 
 	st.validatorSet.Join(val1)
-	sb := newSandbox(st.store, st)
+	sb, _ := newSandbox(st.store, st.params, 0)
 
 	sb.AddToSet(val2)
 	// Still is not in set
 	assert.Nil(t, st.validatorSet.Validator(val2.Address()))
 
-	sb.commit(st.validatorSet)
+	sb.CommitAndClear(st.validatorSet)
 	// Still is not in set
 	assert.Nil(t, st.validatorSet.Validator(val2.Address()))
 

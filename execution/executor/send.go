@@ -30,12 +30,16 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 		receiverAcc = account.NewAccount(pld.Receiver)
 	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence, Expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
 	if senderAcc.Balance() < pld.Amount+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
 	}
-	if !trx.IsMintbaseTx() {
+	if trx.IsMintbaseTx() {
+		if trx.Fee() != 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+		}
+	} else {
 		fee := int64(float64(trx.Payload().Value()) * e.sandbox.FeeFraction())
 		fee = util.Max64(fee, e.sandbox.MinFee())
 		if trx.Fee() != fee {

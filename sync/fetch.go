@@ -76,7 +76,7 @@ func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
 		{
 			// Reply salam
 			syncer.broadcastSalam()
-			syncer.sendBlocks(pld.Height + 1)
+			syncer.sendBlocks(pld.Height+1, ourHeight)
 		}
 	}
 }
@@ -85,7 +85,7 @@ func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayloa
 	b, err := syncer.store.BlockByHeight(pld.From)
 	if err == nil {
 		if b.Header().LastBlockHash().EqualsTo(pld.LastBlockHash) {
-			syncer.sendBlocks(pld.From)
+			syncer.sendBlocks(pld.From, pld.To)
 		} else {
 			syncer.logger.Debug("Peer has a block which we have no knowledge about it",
 				"height", pld.From-1,
@@ -121,7 +121,7 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 		if height > ourHeight+1 {
 			syncer.blockPool.AppendCommit(
 				block.Header().LastBlockHash(),
-				block.Header().LastCommit())
+				block.LastCommit())
 		}
 
 		syncer.blockPool.AppendBlock(height, block)
@@ -142,7 +142,11 @@ func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
 	for _, h := range pld.Hashes {
 		trx := syncer.txPool.PendingTx(h)
 		if trx == nil {
-			trx, _, _ = syncer.store.Tx(h)
+			// Do we have this transaction in our store?
+			ctrx, _ := syncer.store.Transaction(h)
+			if ctrx != nil {
+				trx = ctrx.Tx
+			}
 		}
 		if trx != nil {
 			txs = append(txs, *trx)
@@ -198,20 +202,20 @@ func (syncer *Synchronizer) processProposalPayload(pld *message.ProposalPayload)
 
 func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayload) {
 	hrs := syncer.consensus.HRS()
-	if pld.HRS.Height() == hrs.Height() {
-		if pld.HRS.GreaterThan(hrs) {
+	if pld.Pulse.Height() == hrs.Height() {
+		if pld.Pulse.GreaterThan(hrs) {
 			// We are behind of the peer.
 			// Let's ask for more votes
 			hashes := syncer.consensus.AllVotesHashes()
 			syncer.broadcastVoteSet(hrs.Height(), hashes)
-		} else if pld.HRS.LessThan(hrs) {
+		} else if pld.Pulse.LessThan(hrs) {
 			// We are ahead of the peer.
 		} else {
 			// We are at the same step with this peer
 		}
-	} else if pld.HRS.Height() > hrs.Height() {
+	} else if pld.Pulse.Height() > hrs.Height() {
 		// Ask for more blocks from this peer
-		syncer.broadcastBlocksReq(pld.HRS.Height())
+		syncer.broadcastBlocksReq(pld.Pulse.Height())
 	} else {
 		// We are ahead of this peer
 	}

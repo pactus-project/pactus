@@ -3,13 +3,12 @@ package state
 import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (st *state) executeBlock(block block.Block, exe *execution.Execution) ([]*tx.Receipt, error) {
+func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 	hashes := block.TxHashes().Hashes()
-	receipts := make([]*tx.Receipt, len(hashes))
+	twrs := make([]tx.CommittedTx, len(hashes))
 
 	for i := 0; i < len(hashes); i++ {
 		trx := st.txPool.PendingTx(hashes[i])
@@ -19,17 +18,26 @@ func (st *state) executeBlock(block block.Block, exe *execution.Execution) ([]*t
 		if err := trx.SanityCheck(); err != nil {
 			return nil, err
 		}
-		// Only first transaction is mintbase transaction
-		err := exe.Execute(trx, (i == 0))
+		// Only first transaction should be mintbase transaction
+		isMintbaseTx := (i == 0)
+		if isMintbaseTx {
+			if !trx.IsMintbaseTx() {
+				return nil, errors.Errorf(errors.ErrInvalidTx, "Not a mintbase transaction")
+			}
+		} else {
+			if trx.IsMintbaseTx() {
+				return nil, errors.Errorf(errors.ErrInvalidTx, "Duplicated mintbase transaction")
+			}
+		}
+
+		err := st.execution.Execute(trx)
 		if err != nil {
 			return nil, err
 		}
 		receipt := trx.GenerateReceipt(tx.Ok, block.Hash())
-		receipts[i] = receipt
+		twrs[i].Tx = trx
+		twrs[i].Receipt = receipt
 	}
 
-	// Now, check rewards + fee
-	//tx, _ := st.txPool.PendingTx(hashes[0])
-
-	return receipts, nil
+	return twrs, nil
 }

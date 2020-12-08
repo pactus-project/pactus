@@ -81,14 +81,14 @@ func (s *Store) BlockHeight(hash crypto.Hash) (int, error) {
 	return s.blockStore.blockHeight(hash)
 }
 
-func (s *Store) SaveTx(tx tx.Tx, receipt tx.Receipt) error {
+func (s *Store) SaveTransaction(ctrx tx.CommittedTx) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.saveTx(tx, receipt)
+	return s.txStore.saveTx(ctrx)
 }
 
-func (s *Store) Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
+func (s *Store) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 

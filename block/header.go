@@ -20,9 +20,9 @@ type headerData struct {
 	StateHash        crypto.Hash    `cbor:"4,keyasint"`
 	TxsHash          crypto.Hash    `cbor:"5,keyasint"`
 	LastReceiptsHash crypto.Hash    `cbor:"6,keyasint"`
-	CommitersHash    crypto.Hash    `cbor:"7,keyasint"`
-	ProposerAddress  crypto.Address `cbor:"8,keyasint"`
-	LastCommit       *Commit        `cbor:"9,keyasint"`
+	LastCommitHash   crypto.Hash    `cbor:"7,keyasint"`
+	CommitersHash    crypto.Hash    `cbor:"8,keyasint"`
+	ProposerAddress  crypto.Address `cbor:"9,keyasint"`
 }
 
 func (h *Header) Version() uint                   { return h.data.Version }
@@ -31,15 +31,14 @@ func (h *Header) TxsHash() crypto.Hash            { return h.data.TxsHash }
 func (h *Header) StateHash() crypto.Hash          { return h.data.StateHash }
 func (h *Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
 func (h *Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
+func (h *Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash }
 func (h *Header) CommitersHash() crypto.Hash      { return h.data.CommitersHash }
 func (h *Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
-func (h *Header) LastCommit() *Commit             { return h.data.LastCommit }
 
 func NewHeader(version uint,
 	time time.Time,
-	txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash crypto.Hash,
-	proposerAddress crypto.Address,
-	lastCommit *Commit) Header {
+	txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
+	proposerAddress crypto.Address) Header {
 
 	return Header{
 		data: headerData{
@@ -50,8 +49,8 @@ func NewHeader(version uint,
 			CommitersHash:    CommitersHash,
 			StateHash:        stateHash,
 			LastReceiptsHash: lastReceiptsHash,
+			LastCommitHash:   lastCommitHash,
 			ProposerAddress:  proposerAddress,
-			LastCommit:       lastCommit,
 		},
 	}
 }
@@ -63,26 +62,22 @@ func (h *Header) SanityCheck() error {
 	if err := h.data.ProposerAddress.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	// TODO: fix ma later
-	// if err := h.data.CommitersHash.SanityCheck(); err != nil {
-	// 	return errors.Errorf(errors.ErrInvalidBlock, err.Error())
-	// }
+	if err := h.data.CommitersHash.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+	}
 
-	if h.data.LastCommit != nil {
+	if h.data.LastCommitHash.IsUndef() {
+		// Check for genesis block
+		if !h.data.LastBlockHash.IsUndef() ||
+			!h.data.LastReceiptsHash.IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid genesis block hash")
+		}
+	} else {
 		if err := h.data.LastBlockHash.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 		}
 		if err := h.data.LastReceiptsHash.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
-		}
-		if err := h.data.LastCommit.SanityCheck(); err != nil {
-			return err
-		}
-	} else {
-		// Check for genesis block
-		if !h.data.LastBlockHash.IsUndef() ||
-			!h.data.LastReceiptsHash.IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Genesis block")
 		}
 	}
 

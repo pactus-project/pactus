@@ -65,6 +65,17 @@ func (commit *Commit) Size() int {
 	return len(commit.data.Commiters)
 }
 
+func (commit *Commit) Hash() crypto.Hash {
+	if commit == nil {
+		return crypto.UndefHash
+	}
+	bs, err := commit.MarshalCBOR()
+	if err != nil {
+		return crypto.UndefHash
+	}
+	return crypto.HashH(bs)
+}
+
 func (commit *Commit) CommitersHash() crypto.Hash {
 	data := make([][]byte, len(commit.data.Commiters))
 

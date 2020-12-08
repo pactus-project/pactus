@@ -43,15 +43,27 @@ type genesisData struct {
 }
 
 func (gen *Genesis) Hash() crypto.Hash {
-	genesisDocBytes, err := gen.MarshalJSON()
+	bs, err := gen.MarshalJSON()
 	if err != nil {
 		panic(fmt.Errorf("could not create hash of Genesis: %v", err))
 	}
-	return crypto.HashH(genesisDocBytes)
+	return crypto.HashH(bs)
 }
 
 func (gen *Genesis) ChainName() string {
 	return gen.data.ChainName
+}
+
+func (gen *Genesis) IsForMainnet() bool {
+	return gen.data.ChainName == "zarb-mainnet"
+}
+
+func (gen *Genesis) IsForTestnet() bool {
+	return gen.data.ChainName == "zarb-testnet"
+}
+
+func (gen *Genesis) IsForTest() bool {
+	return !(gen.IsForMainnet() || gen.IsForTestnet())
 }
 
 func (gen *Genesis) GenesisTime() time.Time {
@@ -88,9 +100,6 @@ func (gen *Genesis) ValidatorsAddress() []crypto.Address {
 
 	return vals
 }
-
-//------------------------------------------------------------
-// Make genesis state from file
 
 func (gen Genesis) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&gen.data)

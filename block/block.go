@@ -8,7 +8,6 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -20,15 +19,17 @@ type Block struct {
 }
 
 type blockData struct {
-	Header   Header   `cbor:"1,keyasint"`
-	TxHashes TxHashes `cbor:"2,keyasint"`
+	Header     Header   `cbor:"1,keyasint"`
+	LastCommit *Commit  `cbor:"2,keyasint"`
+	TxHashes   TxHashes `cbor:"3,keyasint"`
 }
 
-func NewBlock(header Header, txHashes TxHashes) (*Block, error) {
+func NewBlock(header Header, lastCommit *Commit, txHashes TxHashes) (*Block, error) {
 	b := &Block{
 		data: blockData{
-			Header:   header,
-			TxHashes: txHashes,
+			Header:     header,
+			LastCommit: lastCommit,
+			TxHashes:   txHashes,
 		},
 	}
 
@@ -44,22 +45,24 @@ func MakeBlock(timestamp time.Time, txHashes TxHashes,
 
 	txsHash := txHashes.Hash()
 	header := NewHeader(1, timestamp,
-		txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash, proposer, lastCommit)
+		txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
 
 	b := Block{
 		data: blockData{
-			Header:   header,
-			TxHashes: txHashes,
+			Header:     header,
+			LastCommit: lastCommit,
+			TxHashes:   txHashes,
 		},
 	}
 
 	if err := b.SanityCheck(); err != nil {
-		logger.Panic("Invalid block information", "err", err)
+		panic(err)
 	}
 	return b
 }
 
 func (b Block) Header() *Header     { return &b.data.Header }
+func (b Block) LastCommit() *Commit { return b.data.LastCommit }
 func (b Block) TxHashes() *TxHashes { return &b.data.TxHashes }
 
 func (b Block) SanityCheck() error {
@@ -68,6 +71,19 @@ func (b Block) SanityCheck() error {
 	}
 	if !b.data.Header.TxsHash().EqualsTo(b.data.TxHashes.Hash()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Txs Hash")
+	}
+	if b.data.LastCommit != nil {
+		if err := b.data.LastCommit.SanityCheck(); err != nil {
+			return err
+		}
+		if !b.data.Header.LastCommitHash().EqualsTo(b.data.LastCommit.Hash()) {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Commit Hash")
+		}
+	} else {
+		// Check for genesis block
+		if !b.data.Header.LastCommitHash().IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid genesis block hash")
+		}
 	}
 
 	return nil

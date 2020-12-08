@@ -7,13 +7,13 @@ $Go.import("capnp");
 struct Header {
   version             @0 :Int32;
   time                @1 :Int64;
-  txsHash             @2 :Data;
+  lastBlockHash       @2 :Data;
   stateHash           @3 :Data;
-  lastBlockHash       @4 :Data;
+  txsHash             @4 :Data;
   lastReceiptsHash    @5 :Data;
-  CommitersHash       @6 :Data;
-  proposerAddress     @7 :Data;
-  lastCommit          @8 :Commit;
+  lastCommitHash      @6 :Data;
+  commitersHash       @7 :Data;
+  proposerAddress     @8 :Data;
 }
 
 struct Txs {
@@ -33,8 +33,8 @@ struct Commit {
 
 struct Block {
   header              @0 :Header;
-  txs                 @1 :Txs;
-  lastCommit          @2 :Commit;
+  lastCommit          @1 :Commit;
+  txs                 @2 :Txs;
 }
 
 struct BlockInfo {

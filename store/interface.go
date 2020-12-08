@@ -12,7 +12,7 @@ type StoreReader interface {
 	BlockByHeight(height int) (*block.Block, error)
 	BlockByHash(hash crypto.Hash) (*block.Block, int, error)
 	BlockHeight(hash crypto.Hash) (int, error)
-	Tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error)
+	Transaction(hash crypto.Hash) (*tx.CommittedTx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	HasValidator(crypto.Address) bool

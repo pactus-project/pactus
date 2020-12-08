@@ -4,6 +4,7 @@ import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -11,10 +12,11 @@ import (
 type sandbox struct {
 	lk deadlock.RWMutex
 
-	state      *state
-	store      *store.Store
-	accounts   map[crypto.Address]accountStatus
-	validators map[crypto.Address]validatorStatus
+	store        *store.Store
+	accounts     map[crypto.Address]accountStatus
+	validators   map[crypto.Address]validatorStatus
+	recentBlocks *linkedmap.LinkedMap
+	params       Params
 }
 
 type validatorStatus struct {
@@ -28,29 +30,52 @@ type accountStatus struct {
 	updated bool
 }
 
-func newSandbox(store *store.Store, state *state) *sandbox {
+func newSandbox(store *store.Store, params Params, lastBlockHeight int) (*sandbox, error) {
 	sb := &sandbox{
-		state:      state,
-		store:      store,
-		accounts:   make(map[crypto.Address]accountStatus),
-		validators: make(map[crypto.Address]validatorStatus),
+		store:        store,
+		params:       params,
+		recentBlocks: linkedmap.NewLinkedMap(params.TransactionToLiveInterval),
+		accounts:     make(map[crypto.Address]accountStatus),
+		validators:   make(map[crypto.Address]validatorStatus),
 	}
-	return sb
+
+	// First, let add genesis block (Block 0) hash
+	sb.recentBlocks.PushBack(crypto.UndefHash, 0)
+
+	// Now we try to fetch recent block hashes
+	// Block zero will be kicked out of the list if we have enough blocks
+	from := lastBlockHeight - params.TransactionToLiveInterval
+	if from < 0 {
+		from = 1
+	}
+	to := lastBlockHeight
+	for i := from; i <= to; i++ {
+		b, err := store.BlockByHeight(i)
+		if err != nil {
+			return nil, err
+		}
+		sb.recentBlocks.PushBack(b.Hash(), i)
+	}
+
+	return sb, nil
 }
 
-func (sb *sandbox) Reset() {
+func (sb *sandbox) Clear() {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	sb.reset()
+	sb.clear()
 }
 
-func (sb *sandbox) reset() {
+func (sb *sandbox) clear() {
 	sb.accounts = make(map[crypto.Address]accountStatus)
 	sb.validators = make(map[crypto.Address]validatorStatus)
 }
 
-func (sb *sandbox) commit(set *validator.ValidatorSet) error {
+func (sb *sandbox) CommitAndClear(set *validator.ValidatorSet) error {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
 	for _, acc := range sb.accounts {
 		if acc.updated {
 			sb.store.UpdateAccount(acc.account)
@@ -67,7 +92,7 @@ func (sb *sandbox) commit(set *validator.ValidatorSet) error {
 		}
 	}
 
-	sb.reset()
+	sb.clear()
 
 	return nil
 }
@@ -155,43 +180,36 @@ func (sb *sandbox) AddToSet(val *validator.Validator) {
 	}
 }
 
-func (sb *sandbox) CurrentHeight() int {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	return sb.state.lastBlockHeight + 1
-}
-
 func (sb *sandbox) MaxMemoLenght() int {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	return sb.state.params.MaximumMemoLength
+	return sb.params.MaximumMemoLength
 }
 
 func (sb *sandbox) FeeFraction() float64 {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	return sb.state.params.FeeFraction
+	return sb.params.FeeFraction
 }
 
 func (sb *sandbox) MinFee() int64 {
-	return sb.state.params.MinimumFee
+	return sb.params.MinimumFee
 }
 
 func (sb *sandbox) TransactionToLiveInterval() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.state.params.TransactionToLiveInterval
+	return sb.params.TransactionToLiveInterval
 }
 
 func (sb *sandbox) RecentBlockHeight(hash crypto.Hash) int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	h, has := sb.state.recentBlockHashes.Get(hash)
+	h, has := sb.recentBlocks.Get(hash)
 	if !has {
 		return -1
 	}
@@ -199,16 +217,33 @@ func (sb *sandbox) RecentBlockHeight(hash crypto.Hash) int {
 	return h.(int)
 }
 
+func (sb *sandbox) CurrentHeight() int {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	_, v := sb.recentBlocks.Last()
+	return v.(int) + 1
+}
+
 func (sb *sandbox) LastBlockHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.state.lastBlockHeight
+	_, v := sb.recentBlocks.Last()
+	return v.(int)
 }
 
 func (sb *sandbox) LastBlockHash() crypto.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.state.lastBlockHash
+	k, _ := sb.recentBlocks.Last()
+	return k.(crypto.Hash)
+}
+
+func (sb *sandbox) AppendNewBlock(hash crypto.Hash, height int) {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	sb.recentBlocks.PushBack(hash, height)
 }

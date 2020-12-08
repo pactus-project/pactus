@@ -23,7 +23,7 @@ func NewMockSandbox() *MockSandbox {
 		Accounts:       make(map[crypto.Address]*account.Account),
 		Validators:     make(map[crypto.Address]*validator.Validator),
 		Stamps:         make(map[crypto.Hash]int),
-		TTLInterval:    500,
+		TTLInterval:    4,
 		MaxMemoLenght_: 1024,
 		FeeFraction_:   0.001,
 		MinFee_:        1000,

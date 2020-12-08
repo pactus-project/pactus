@@ -114,8 +114,8 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 
 	case message.PayloadTypeHeartBeat:
 		pld := msg.Payload.(*message.HeartBeatPayload)
-		node.HRS = pld.HRS
-		s.updateMaxHeight(pld.HRS.Height() - 1)
+		node.HRS = pld.Pulse
+		s.updateMaxHeight(pld.Pulse.Height() - 1)
 
 	case message.PayloadTypeProposal:
 		pld := msg.Payload.(*message.ProposalPayload)

@@ -85,7 +85,7 @@ func Start() func(c *cli.Cmd) {
 					return
 				}
 
-				gen := genesis.TestNet()
+				gen := genesis.Testnet()
 				conf := makeConfigfile()
 
 				conf.Network.Name = "zarb-testnet"

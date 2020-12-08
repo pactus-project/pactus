@@ -21,6 +21,5 @@ type TxPool interface {
 	AppendTxs(txs []tx.Tx)
 	AppendTx(tx tx.Tx) error
 	AppendTxAndBroadcast(trx tx.Tx) error
-	RemoveTx(hash crypto.Hash) *tx.Tx
-	SetIsSyncing(syncing bool)
+	RemoveTx(hash crypto.Hash)
 }

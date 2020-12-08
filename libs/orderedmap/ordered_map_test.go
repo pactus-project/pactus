@@ -35,3 +35,25 @@ func TestIterEmpty(t *testing.T) {
 		panic("Iterating empty map.")
 	})
 }
+
+func TestGetMinMax(t *testing.T) {
+	om := NewMap(func(l, r interface{}) bool {
+		return l.(int) < r.(int)
+	})
+
+	_, ok := om.MinKey()
+	assert.False(t, ok)
+
+	om.Set(3, 'a')
+	om.Set(5, 'b')
+	om.Set(1, 'c')
+	om.Set(4, 'd')
+
+	min, ok := om.MinKey()
+	assert.True(t, ok)
+	assert.Equal(t, min, 1)
+
+	max, ok := om.MinKey()
+	assert.True(t, ok)
+	assert.Equal(t, max, 1)
+}

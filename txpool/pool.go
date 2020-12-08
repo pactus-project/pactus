@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/zarbchain/zarb-go/execution"
+
 	"github.com/zarbchain/zarb-go/sandbox"
 
 	"github.com/sasha-s/go-deadlock"
@@ -23,11 +25,11 @@ type txPool struct {
 	lk deadlock.RWMutex
 
 	config      *Config
+	checekr     *execution.Execution
 	sandbox     sandbox.Sandbox
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
 	broadcastCh chan *message.Message
-	isSyncing   bool
 	logger      *logger.Logger
 }
 
@@ -38,7 +40,6 @@ func NewTxPool(
 		config:      conf,
 		pendings:    linkedmap.NewLinkedMap(conf.MaxSize),
 		appendTxCh:  make(chan *tx.Tx, 5),
-		isSyncing:   true,
 		broadcastCh: broadcastCh,
 	}
 
@@ -46,8 +47,8 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *txPool) SetSandbox(sandbox sandbox.Sandbox) {
-	pool.sandbox = sandbox
+func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
+	pool.checekr = execution.NewExecution(sb)
 }
 
 func (pool *txPool) AppendTxs(trxs []tx.Tx) {
@@ -91,13 +92,9 @@ func (pool *txPool) appendTx(trx tx.Tx) error {
 		return errors.Errorf(errors.ErrInvalidTx, "Transaction is alreasy in pool. hash: %v", trx.Hash())
 	}
 
-	// When we are syncing we should ignore validating transaction
-	// Some transactions might belong to blocks which we don't have them yet
-	if !pool.isSyncing {
-		if err := pool.validateTx(&trx); err != nil {
-			pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
-			return err
-		}
+	if err := pool.checekr.Execute(&trx); err != nil {
+		pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
+		return err
 	}
 
 	pool.pendings.PushBack(trx.Hash(), &trx)
@@ -105,20 +102,11 @@ func (pool *txPool) appendTx(trx tx.Tx) error {
 	return nil
 }
 
-func (pool *txPool) SetIsSyncing(syncing bool) {
-	pool.isSyncing = syncing
-}
-
-func (pool *txPool) RemoveTx(hash crypto.Hash) *tx.Tx {
+func (pool *txPool) RemoveTx(hash crypto.Hash) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	val := pool.pendings.Remove(hash)
-	if val != nil {
-		return val.(*tx.Tx)
-	}
-
-	return nil
+	pool.pendings.Remove(hash)
 }
 
 func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
