@@ -121,7 +121,7 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 		if height > ourHeight+1 {
 			syncer.blockPool.AppendCommit(
 				block.Header().LastBlockHash(),
-				block.Header().LastCommit())
+				block.LastCommit())
 		}
 
 		syncer.blockPool.AppendBlock(height, block)
@@ -142,7 +142,11 @@ func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
 	for _, h := range pld.Hashes {
 		trx := syncer.txPool.PendingTx(h)
 		if trx == nil {
-			trx, _, _ = syncer.store.Tx(h)
+			// Do we have this transaction in our store?
+			ctrx, _ := syncer.store.Transaction(h)
+			if ctrx != nil {
+				trx = ctrx.Tx
+			}
 		}
 		if trx != nil {
 			txs = append(txs, *trx)

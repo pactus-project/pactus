@@ -51,8 +51,8 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 		bytesToHash(ch.CommitersHash()),
 		bytesToHash(ch.StateHash()),
 		bytesToHash(ch.LastReceiptsHash()),
-		bytesToAddress(ch.ProposerAddress()),
-		lastCommit)
+		bytesToHash(ch.LastCommitHash()),
+		bytesToAddress(ch.ProposerAddress()))
 
 	txs := block.NewTxHashes()
 	hashesList, _ := ctxs.Hashes()
@@ -60,7 +60,7 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 		txs.Append(bytesToHash(hashesList.At(i)))
 	}
 
-	block, err := block.NewBlock(header, txs)
+	block, err := block.NewBlock(header, lastCommit, txs)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return

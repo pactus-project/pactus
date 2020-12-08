@@ -28,13 +28,13 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 		bondVal = validator.NewValidator(pld.Validator, e.sandbox.CurrentHeight())
 	}
 	if bonderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", bonderAcc.Sequence()+1, trx.Sequence())
 	}
 	if bonderAcc.Balance() < pld.Stake+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
 	}
 	if trx.Fee() != 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. Expected: 0, got: %v", trx.Fee())
 	}
 	bonderAcc.IncSequence()
 	bonderAcc.SubtractFromBalance(pld.Stake + trx.Fee())

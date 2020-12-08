@@ -10,7 +10,6 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/genesis"
-	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -47,26 +46,24 @@ type State interface {
 type state struct {
 	lk deadlock.RWMutex
 
-	config            *Config
-	proposer          crypto.Address
-	genDoc            *genesis.Genesis
-	store             *store.Store
-	params            *Params
-	txPool            txpool.TxPool
-	txPoolSandbox     *sandbox
-	validationSandbox *sandbox
-	execution         *execution.Execution
-	executionSandbox  *sandbox
-	validatorSet      *validator.ValidatorSet
-	sortition         *sortition.Sortition
-	recentBlockHashes *linkedmap.LinkedMap
-	lastBlockHeight   int
-	lastBlockHash     crypto.Hash
-	lastReceiptsHash  crypto.Hash
-	lastCommit        *block.Commit
-	lastBlockTime     time.Time
-	updateCh          chan int
-	logger            *logger.Logger
+	config           *Config
+	proposer         crypto.Address
+	genDoc           *genesis.Genesis
+	store            *store.Store
+	params           Params
+	txPool           txpool.TxPool
+	txPoolSandbox    *sandbox
+	execution        *execution.Execution
+	executionSandbox *sandbox
+	validatorSet     *validator.ValidatorSet
+	sortition        *sortition.Sortition
+	lastBlockHeight  int
+	lastBlockHash    crypto.Hash
+	lastReceiptsHash crypto.Hash
+	lastCommit       *block.Commit
+	lastBlockTime    time.Time
+	updateCh         chan int
+	logger           *logger.Logger
 }
 
 func LoadOrNewState(
@@ -79,21 +76,24 @@ func LoadOrNewState(
 		config:    conf,
 		genDoc:    genDoc,
 		txPool:    txPool,
-		params:    NewParams(),
 		proposer:  signer.Address(),
 		sortition: sortition.NewSortition(signer),
 	}
 	st.logger = logger.NewLogger("_state", st)
+
+	if genDoc.IsForMainnet() {
+		st.params = MainnetParams()
+	} else if genDoc.IsForTestnet() {
+		st.params = TestnetParams()
+	} else {
+		st.params = TestParams()
+	}
+
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
 	st.store = store
-	st.txPoolSandbox = newSandbox(store, st)
-	st.validationSandbox = newSandbox(store, st)
-	st.executionSandbox = newSandbox(store, st)
-	st.txPool.SetSandbox(st.txPoolSandbox)
-	st.execution = execution.NewExecution(st.executionSandbox)
 
 	height := store.LastBlockHeight()
 
@@ -110,13 +110,16 @@ func LoadOrNewState(
 		}
 	}
 
+	st.txPoolSandbox, err = newSandbox(store, st.params, height)
 	if err != nil {
 		return nil, err
 	}
-
-	st.recentBlockHashes = linkedmap.NewLinkedMap(st.params.TransactionToLiveInterval)
-	st.recentBlockHashes.SetCapacity(st.params.TransactionToLiveInterval)
-	st.recentBlockHashes.PushBack(st.lastBlockHeight, st.lastBlockHash)
+	st.executionSandbox, err = newSandbox(store, st.params, height)
+	if err != nil {
+		return nil, err
+	}
+	st.txPool.SetSandbox(st.txPoolSandbox)
+	st.execution = execution.NewExecution(st.executionSandbox)
 
 	return st, nil
 }
@@ -298,8 +301,9 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	st.executionSandbox.Reset()
-	_, err := st.executeBlock(block, st.execution)
+	st.executionSandbox.Clear()
+
+	_, err := st.executeBlock(block)
 	if err != nil {
 		return err
 	}
@@ -340,25 +344,25 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	st.txPoolSandbox.Reset()
-	st.executionSandbox.Reset()
+	st.txPoolSandbox.Clear()
+	st.executionSandbox.Clear()
+
 	// Execute block
-	receipts, err := st.executeBlock(block, st.execution)
+	ctrxs, err := st.executeBlock(block)
 	if err != nil {
 		return err
 	}
-	// Commit the changes
-	st.executionSandbox.commit(nil)
 
-	// Save block and txs
-	receiptsHashes := make([]crypto.Hash, len(receipts))
-	for i, r := range receipts {
-		receiptsHashes[i] = r.Hash()
-		trx := st.txPool.RemoveTx(r.TxHash())
-		if trx == nil {
-			return errors.Errorf(errors.ErrInvalidBlock, "Saving block failed: Transaction lost")
-		}
-		st.store.SaveTx(*trx, *r)
+	// Commit the changes
+	st.executionSandbox.CommitAndClear(st.validatorSet)
+
+	// Save txs and reciepts
+	receiptsHashes := make([]crypto.Hash, len(ctrxs))
+	for i, ctrx := range ctrxs {
+		st.txPool.RemoveTx(ctrx.Tx.Hash())
+		st.store.SaveTransaction(ctrx)
+
+		receiptsHashes[i] = ctrx.Receipt.Hash()
 	}
 
 	if err := st.store.SaveBlock(block, st.lastBlockHeight+1); err != nil {
@@ -378,7 +382,8 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
 
-	st.recentBlockHashes.PushBack(st.lastBlockHeight, st.lastBlockHash)
+	st.executionSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
+	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
 	st.EvaluateSortition()
 

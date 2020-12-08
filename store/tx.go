@@ -13,11 +13,6 @@ var (
 
 func txKey(hash crypto.Hash) []byte { return append(txPrefix, hash.RawBytes()...) }
 
-type txWithReceipt struct {
-	Tx      tx.Tx      `cbor:"1,keyasint"`
-	Receipt tx.Receipt `cbor:"2,keyasint"`
-}
-
 type txStore struct {
 	db *leveldb.DB
 }
@@ -32,13 +27,15 @@ func newTxStore(path string) (*txStore, error) {
 	}, nil
 }
 
-func (bs *txStore) saveTx(tx tx.Tx, receipt tx.Receipt) error {
-	tnr := txWithReceipt{tx, receipt}
-	data, err := cbor.Marshal(tnr)
+func (bs *txStore) saveTx(ctrs tx.CommittedTx) error {
+	if err := ctrs.SanityCheck(); err != nil {
+		return err
+	}
+	data, err := cbor.Marshal(ctrs)
 	if err != nil {
 		return err
 	}
-	txKey := txKey(tx.Hash())
+	txKey := txKey(ctrs.Tx.Hash())
 	err = tryPut(bs.db, txKey, data)
 	if err != nil {
 		return err
@@ -46,16 +43,19 @@ func (bs *txStore) saveTx(tx tx.Tx, receipt tx.Receipt) error {
 	return nil
 }
 
-func (bs *txStore) tx(hash crypto.Hash) (*tx.Tx, *tx.Receipt, error) {
+func (bs *txStore) tx(hash crypto.Hash) (*tx.CommittedTx, error) {
 	txKey := txKey(hash)
 	data, err := tryGet(bs.db, txKey)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	tnr := new(txWithReceipt)
-	err = cbor.Unmarshal(data, &tnr)
+	ctrs := new(tx.CommittedTx)
+	err = cbor.Unmarshal(data, ctrs)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return &tnr.Tx, &tnr.Receipt, nil
+	if err := ctrs.SanityCheck(); err != nil {
+		return nil, err
+	}
+	return ctrs, nil
 }

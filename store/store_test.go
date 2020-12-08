@@ -23,7 +23,8 @@ func TestLastBlock(t *testing.T) {
 
 	for _, trx := range txs {
 		r := trx.GenerateReceipt(tx.Ok, b.Hash())
-		err = store.SaveTx(*trx, *r)
+		ctrx := tx.CommittedTx{Tx: trx, Receipt: r}
+		err = store.SaveTransaction(ctrx)
 		assert.NoError(t, err)
 	}
 
@@ -37,10 +38,10 @@ func TestLastBlock(t *testing.T) {
 
 	for _, trx := range txs {
 		r := trx.GenerateReceipt(tx.Ok, b.Hash())
-		trx2, r2, err := store.Tx(trx.Hash())
+		ctrx2, err := store.Transaction(trx.Hash())
 		assert.NoError(t, err)
 
-		assert.Equal(t, trx.Hash(), trx2.Hash())
-		assert.Equal(t, r, r2)
+		assert.Equal(t, trx.Hash(), ctrx2.Tx.Hash())
+		assert.Equal(t, r, ctrx2.Receipt)
 	}
 }

@@ -53,7 +53,6 @@ func (tx *Tx) SanityCheck() error {
 	if tx.sanityChecked {
 		return nil
 	}
-
 	if tx.data.Version != 1 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid version")
 	}

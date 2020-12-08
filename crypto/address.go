@@ -39,9 +39,6 @@ func AddressFromRawBytes(bs []byte) (Address, error) {
 
 	var addr Address
 	copy(addr.data.Address[:], bs[:])
-	if err := addr.SanityCheck(); err != nil {
-		return Address{}, err
-	}
 
 	return addr, nil
 }

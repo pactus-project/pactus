@@ -17,8 +17,10 @@ func TestMarshalingEmptyAddress(t *testing.T) {
 	assert.NoError(t, err)
 	var addr2 Address
 	err = json.Unmarshal(js, &addr2)
-	assert.Error(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, addr1, addr2)
+
+	assert.Error(t, addr2.SanityCheck())
 
 	bs, err := addr1.MarshalCBOR()
 	assert.NoError(t, err)

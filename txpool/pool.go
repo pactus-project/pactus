@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/zarbchain/zarb-go/execution"
+
 	"github.com/zarbchain/zarb-go/sandbox"
 
 	"github.com/sasha-s/go-deadlock"
@@ -23,6 +25,7 @@ type txPool struct {
 	lk deadlock.RWMutex
 
 	config      *Config
+	checekr     *execution.Execution
 	sandbox     sandbox.Sandbox
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
@@ -44,8 +47,8 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *txPool) SetSandbox(sandbox sandbox.Sandbox) {
-	pool.sandbox = sandbox
+func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
+	pool.checekr = execution.NewExecution(sb)
 }
 
 func (pool *txPool) AppendTxs(trxs []tx.Tx) {
@@ -89,7 +92,7 @@ func (pool *txPool) appendTx(trx tx.Tx) error {
 		return errors.Errorf(errors.ErrInvalidTx, "Transaction is alreasy in pool. hash: %v", trx.Hash())
 	}
 
-	if err := pool.validateTx(&trx); err != nil {
+	if err := pool.checekr.Execute(&trx); err != nil {
 		pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
 		return err
 	}
@@ -99,16 +102,11 @@ func (pool *txPool) appendTx(trx tx.Tx) error {
 	return nil
 }
 
-func (pool *txPool) RemoveTx(hash crypto.Hash) *tx.Tx {
+func (pool *txPool) RemoveTx(hash crypto.Hash) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	val := pool.pendings.Remove(hash)
-	if val != nil {
-		return val.(*tx.Tx)
-	}
-
-	return nil
+	pool.pendings.Remove(hash)
 }
 
 func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {

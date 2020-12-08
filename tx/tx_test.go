@@ -68,6 +68,15 @@ func TestEncodingTxNoSig(t *testing.T) {
 	require.Equal(t, tx.Hash(), tx2.Hash())
 }
 
+func TestTxSanityCheck(t *testing.T) {
+	tx, _ := GenerateTestSendTx()
+	tx.data.Version = 2
+	assert.Error(t, tx.SanityCheck())
+	tx.data.Version = 1
+	tx.data.Sequence = -1
+	assert.Error(t, tx.SanityCheck())
+}
+
 func TestInvalidSignature(t *testing.T) {
 	tx, pv := GenerateTestSendTx()
 	assert.NoError(t, tx.SanityCheck())

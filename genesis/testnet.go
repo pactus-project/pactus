@@ -33,7 +33,7 @@ const testnetJSON = `
 }
 `
 
-func TestNet() *Genesis {
+func Testnet() *Genesis {
 	var gen Genesis
 	if err := json.Unmarshal([]byte(testnetJSON), &gen); err != nil {
 		panic(err)

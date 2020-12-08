@@ -28,9 +28,9 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 		}
 		hashes := b.TxHashes().Hashes()
 		for _, hash := range hashes {
-			tx, _, _ := syncer.store.Tx(hash)
-			if tx != nil {
-				txs = append(txs, *tx)
+			ctrx, _ := syncer.store.Transaction(hash)
+			if ctrx != nil {
+				txs = append(txs, *ctrx.Tx)
 			} else {
 				syncer.logger.Warn("We don't have transation for the block", "hash", hash.Fingerprint())
 			}

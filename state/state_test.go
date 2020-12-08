@@ -49,28 +49,33 @@ func mockState(t *testing.T, signer *crypto.Signer) (*state, crypto.Address) {
 	return s, signer.Address()
 }
 
-func TestBlockValidate(t *testing.T) {
-
+func TestProposeBlockValidation(t *testing.T) {
 	st, _ := mockState(t, &valSigner)
 	block := st.ProposeBlock()
 	err := st.ValidateBlock(block)
 	require.NoError(t, err)
 }
 
-func TestReplayBlock(t *testing.T) {
-	a, _, priv := crypto.RandomKeyPair()
+func propsoeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
+	addr := valSigner.Address()
+	b := st.ProposeBlock()
+	v := vote.NewPrecommit(1, 0, b.Hash(), addr)
+	sig := valSigner.Sign(v.SignBytes())
+	c := block.NewCommit(0, []block.Commiter{block.Commiter{Signed: true, Address: addr}}, *sig)
 
+	return b, *c
+}
+
+func TestLoadState(t *testing.T) {
 	st1, _ := mockState(t, &valSigner)
 	st2, _ := mockState(t, &valSigner)
 
-	// apply first block
-	b1 := st1.ProposeBlock()
-	v := vote.NewPrecommit(1, 0, b1.Hash(), a)
-	sig1 := priv.Sign(v.SignBytes())
-	c1 := block.NewCommit(0, []block.Commiter{block.Commiter{Signed: true, Address: a}}, *sig1)
+	for i := 0; i < 10; i++ {
+		b, c := propsoeAndSignBlock(t, st1)
 
-	st1.ApplyBlock(1, b1, *c1)
-	st2.ApplyBlock(1, b1, *c1)
+		assert.NoError(t, st1.ApplyBlock(i+1, b, c))
+		assert.NoError(t, st2.ApplyBlock(i+1, b, c))
+	}
 
 	// Propose second block
 	b2 := st1.ProposeBlock()
@@ -89,4 +94,13 @@ func TestBlockSubsidy(t *testing.T) {
 	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((1*interval), 210000))
 	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((2*interval)-1, 210000))
 	assert.Equal(t, int64(1.25*1e8), calcBlockSubsidy((2*interval), 210000))
+}
+
+func TestApplyBlocks(t *testing.T) {
+	st, _ := mockState(t, &valSigner)
+	b1, c1 := propsoeAndSignBlock(t, st)
+	invBlock, _ := block.GenerateTestBlock(nil)
+	assert.Error(t, st.ApplyBlock(1, invBlock, c1))
+	assert.Error(t, st.ApplyBlock(2, b1, c1))
+
 }

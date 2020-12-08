@@ -55,8 +55,8 @@ func (m *MockTxPool) AppendTxAndBroadcast(trx tx.Tx) error {
 	return nil
 }
 
-func (m *MockTxPool) RemoveTx(hash crypto.Hash) *tx.Tx {
-	tx := m.txs[hash]
-	//	delete(m.txs, hash)
-	return &tx
+func (m *MockTxPool) RemoveTx(hash crypto.Hash) {
+	// This pools is shared between different instances
+	// Lets keep txs then
+	//delete(m.txs, hash)
 }
