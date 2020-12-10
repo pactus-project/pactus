@@ -7,6 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestUndefHash(t *testing.T) {
+	expected, _ := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000000")
+	assert.Equal(t, UndefHash.RawBytes(), expected)
+}
+
 func TestHash256(t *testing.T) {
 	var data = []byte("zarb")
 	h := Hash256(data)

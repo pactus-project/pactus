@@ -37,7 +37,7 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 		for i := 0; i < commitersList.Len(); i++ {
 			c := commitersList.At(i)
 			commiters[i].Address = bytesToAddress(c.Address())
-			commiters[i].Signed = c.Signed()
+			commiters[i].Status = int(c.Status())
 		}
 		sig := bytesToSignature(clc.Signature())
 		lastCommit = block.NewCommit(int(clc.Round()), commiters, sig)

@@ -182,10 +182,10 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 
 	commit := NewCommit(util.RandInt(10),
 		[]Commiter{
-			Commiter{Signed: true, Address: addr1},
-			Commiter{Signed: true, Address: addr2},
-			Commiter{Signed: true, Address: addr3},
-			Commiter{Signed: false, Address: addr4},
+			Commiter{Status: CommitSigned, Address: addr1},
+			Commiter{Status: CommitSigned, Address: addr2},
+			Commiter{Status: CommitSigned, Address: addr3},
+			Commiter{Status: CommitNotSigned, Address: addr4},
 		},
 		sig)
 

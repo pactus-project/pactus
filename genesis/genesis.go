@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"time"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
@@ -20,14 +21,21 @@ const shortHashSuffixBytes = 3
 // core types for a genesis definition
 
 type genAccount struct {
-	Address crypto.Address
-	Balance int64
+	Address crypto.Address `cbor:"1,keyasint"`
+	Balance int64          `cbor:"2,keyasint"`
 }
 
 type genValidator struct {
-	Address   crypto.Address
-	Stake     int64
-	PublicKey crypto.PublicKey
+	PublicKey crypto.PublicKey `cbor:"1,keyasint"`
+}
+
+type params struct {
+	BlockTimeInSecond int     `cbor:"1,keyasint"`
+	MaximumPower      int     `cbor:"2,keyasint"`
+	MaximumMemoLength int     `cbor:"3,keyasint"`
+	FeeFraction       float64 `cbor:"4,keyasint"`
+	MinimumFee        int64   `cbor:"5,keyasint"`
+	TTL               int     `cbor:"6,keyasint"`
 }
 
 // Genesis is stored in the state database
@@ -36,14 +44,15 @@ type Genesis struct {
 }
 
 type genesisData struct {
-	ChainName   string
-	GenesisTime time.Time
-	Accounts    []genAccount
-	Validators  []genValidator
+	ChainName   string         `cbor:"1,keyasint"`
+	GenesisTime time.Time      `cbor:"2,keyasint"`
+	Params      params         `cbor:"3,keyasint"`
+	Accounts    []genAccount   `cbor:"4,keyasint"`
+	Validators  []genValidator `cbor:"5,keyasint"`
 }
 
 func (gen *Genesis) Hash() crypto.Hash {
-	bs, err := gen.MarshalJSON()
+	bs, err := cbor.Marshal(gen.data)
 	if err != nil {
 		panic(fmt.Errorf("could not create hash of Genesis: %v", err))
 	}
@@ -54,20 +63,32 @@ func (gen *Genesis) ChainName() string {
 	return gen.data.ChainName
 }
 
-func (gen *Genesis) IsForMainnet() bool {
-	return gen.data.ChainName == "zarb-mainnet"
-}
-
-func (gen *Genesis) IsForTestnet() bool {
-	return gen.data.ChainName == "zarb-testnet"
-}
-
-func (gen *Genesis) IsForTest() bool {
-	return !(gen.IsForMainnet() || gen.IsForTestnet())
-}
-
 func (gen *Genesis) GenesisTime() time.Time {
 	return gen.data.GenesisTime
+}
+
+func (gen *Genesis) BlockTime() time.Duration {
+	return time.Duration(gen.data.Params.BlockTimeInSecond) * time.Second
+}
+
+func (gen *Genesis) MaximumPower() int {
+	return gen.data.Params.MaximumPower
+}
+
+func (gen *Genesis) MaximumMemoLength() int {
+	return gen.data.Params.MaximumMemoLength
+}
+
+func (gen *Genesis) FeeFraction() float64 {
+	return gen.data.Params.FeeFraction
+}
+
+func (gen *Genesis) MinimumFee() int64 {
+	return gen.data.Params.MinimumFee
+}
+
+func (gen *Genesis) TTL() int {
+	return gen.data.Params.TTL
 }
 
 func (gen *Genesis) Accounts() []*account.Account {
@@ -85,17 +106,7 @@ func (gen *Genesis) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, 0, len(gen.data.Validators))
 	for _, genVal := range gen.data.Validators {
 		val := validator.NewValidator(genVal.PublicKey, 0)
-		val.AddToStake(genVal.Stake)
 		vals = append(vals, val)
-	}
-
-	return vals
-}
-
-func (gen *Genesis) ValidatorsAddress() []crypto.Address {
-	var vals []crypto.Address
-	for _, genVal := range gen.data.Validators {
-		vals = append(vals, genVal.Address)
 	}
 
 	return vals
@@ -119,14 +130,12 @@ func makeGenesisAccount(acc *account.Account) genAccount {
 func makeGenesisValidator(val *validator.Validator) genValidator {
 	return genValidator{
 		PublicKey: val.PublicKey(),
-		Address:   val.Address(),
-		Stake:     val.Stake(),
 	}
 }
 
 func MakeGenesis(chainName string, genesisTime time.Time,
 	accounts []*account.Account,
-	validators []*validator.Validator) *Genesis {
+	validators []*validator.Validator, blockTime int) *Genesis {
 
 	genAccs := make([]genAccount, 0, len(accounts))
 	for _, acc := range accounts {
@@ -146,6 +155,14 @@ func MakeGenesis(chainName string, genesisTime time.Time,
 			GenesisTime: genesisTime,
 			Accounts:    genAccs,
 			Validators:  genVals,
+			Params: params{
+				BlockTimeInSecond: blockTime,
+				MaximumPower:      5,
+				MaximumMemoLength: 1024,
+				FeeFraction:       0.001,
+				MinimumFee:        1000,
+				TTL:               500,
+			},
 		},
 	}
 }

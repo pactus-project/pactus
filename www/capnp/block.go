@@ -30,7 +30,7 @@ func (f factory) BlockToBlockInfo(block *block.Block, height int, cbi *BlockInfo
 		for i, commiter := range block.LastCommit().Commiters() {
 			c := clcc.At(i)
 			c.SetAddress(commiter.Address.RawBytes())
-			c.SetSigned(commiter.Signed)
+			c.SetStatus(int32(commiter.Status))
 		}
 	}
 	// header

@@ -91,7 +91,7 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 	tm := time.Now().Truncate(0).UTC()
 
 	// create genesis
-	gen := genesis.MakeGenesis(chainName, tm, accs, vals)
+	gen := genesis.MakeGenesis(chainName, tm, accs, vals, 10)
 	return gen
 
 }

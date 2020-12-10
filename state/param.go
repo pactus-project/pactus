@@ -12,7 +12,7 @@ type Params struct {
 	TransactionToLiveInterval int
 }
 
-func MainnetParams() Params {
+func NewParams() Params {
 	return Params{
 		BlockTime:                 10 * time.Second,
 		MaximumPower:              21,
@@ -21,29 +21,5 @@ func MainnetParams() Params {
 		FeeFraction:               0.001,
 		MinimumFee:                1000,
 		TransactionToLiveInterval: 500,
-	}
-}
-
-func TestnetParams() Params {
-	return Params{
-		BlockTime:                 5 * time.Second,
-		MaximumPower:              5,
-		SubsidyReductionInterval:  210000,
-		MaximumMemoLength:         1024,
-		FeeFraction:               0.001,
-		MinimumFee:                1000,
-		TransactionToLiveInterval: 500,
-	}
-}
-
-func TestParams() Params {
-	return Params{
-		BlockTime:                 1 * time.Second,
-		MaximumPower:              5,
-		SubsidyReductionInterval:  210000,
-		MaximumMemoLength:         1024,
-		FeeFraction:               0.001,
-		MinimumFee:                1000,
-		TransactionToLiveInterval: 4,
 	}
 }

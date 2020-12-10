@@ -76,18 +76,18 @@ func LoadOrNewState(
 		config:    conf,
 		genDoc:    genDoc,
 		txPool:    txPool,
+		params:    NewParams(),
 		proposer:  signer.Address(),
 		sortition: sortition.NewSortition(signer),
 	}
 	st.logger = logger.NewLogger("_state", st)
 
-	if genDoc.IsForMainnet() {
-		st.params = MainnetParams()
-	} else if genDoc.IsForTestnet() {
-		st.params = TestnetParams()
-	} else {
-		st.params = TestParams()
-	}
+	st.params.BlockTime = genDoc.BlockTime()
+	st.params.MaximumPower = genDoc.MaximumPower()
+	st.params.MaximumMemoLength = genDoc.MaximumMemoLength()
+	st.params.FeeFraction = genDoc.FeeFraction()
+	st.params.MinimumFee = genDoc.MinimumFee()
+	st.params.TransactionToLiveInterval = genDoc.TTL()
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
@@ -246,7 +246,7 @@ func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateCommit(commit, blockHash); err != nil {
+	if err := st.validateCommitForCurrentHeight(commit, blockHash); err != nil {
 		st.logger.Warn("Try to update last commit, but it's invalid", "error", err)
 		return
 	}
@@ -339,7 +339,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	err = st.validateCommit(commit, block.Hash())
+	err = st.validateCommitForCurrentHeight(commit, block.Hash())
 	if err != nil {
 		return err
 	}
