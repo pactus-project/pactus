@@ -139,7 +139,6 @@ func TestNetworkLagging2(t *testing.T) {
 	assert.NotNil(t, cons1.votes.RoundProposal(0))
 	assert.Nil(t, cons2.votes.RoundProposal(0))
 
-	prevote1 := testAddVote(t, cons1, vote.VoteTypePrevote, 1, 0, b1.Hash(), VAL1, false)
 	prevote3 := testAddVote(t, cons1, vote.VoteTypePrevote, 1, 0, b1.Hash(), VAL3, false)
 	prevote4 := testAddVote(t, cons1, vote.VoteTypePrevote, 1, 0, b1.Hash(), VAL4, false)
 	precommit1 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL1, false)
@@ -152,15 +151,57 @@ func TestNetworkLagging2(t *testing.T) {
 	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
 	assert.Equal(t, len(cons2.votes.votes), 1) // UndefHash vote
 
+	// Networks lags and we don't receive pre-vote from val_1 and pre-commit from val_4
 	assert.NoError(t, cons2.AddVote(precommit1))
 	assert.NoError(t, cons2.AddVote(precommit3))
-	assert.NoError(t, cons2.AddVote(prevote1))
-	assert.NoError(t, cons2.AddVote(prevote3))
 	assert.NoError(t, cons2.AddVote(prevote4))
-	assert.Equal(t, len(cons2.votes.votes), 6)
+	assert.NoError(t, cons2.AddVote(prevote3))
+	assert.Equal(t, len(cons2.votes.votes), 5)
 	assert.Nil(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock())
 
 	// Proposal received now, set it
 	cons2.SetProposal(p1)
+
+	// Cons3 has enough votes to go to next height
+	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrevote)
+}
+
+func TestNetworkLagging3(t *testing.T) {
+	// Cons2 goes to next height without receiving any prevotes
+	cons1 := newTestConsensus(t, VAL1)
+	cons2 := newTestConsensus(t, VAL2)
+
+	cons1.enterNewHeight(1)
+	cons2.enterNewHeight(1)
+
+	b1 := cons1.state.ProposeBlock()
+	p1 := vote.NewProposal(1, 0, b1)
+	signers[0].SignMsg(p1)
+
+	cons1.SetProposal(p1)
+	// We don't set proposal for second validator here
+	// cons2.SetProposal(p1)
+
+	assert.NotNil(t, cons1.votes.RoundProposal(0))
+	assert.Nil(t, cons2.votes.RoundProposal(0))
+
+	precommit1 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL1, false)
+	precommit3 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL3, false)
+	precommit4 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL4, false)
+
+	// Networks lags and we don't receive pre-vote from val_1 and pre-commit from val_4
+	assert.NoError(t, cons2.AddVote(precommit1))
+	assert.NoError(t, cons2.AddVote(precommit3))
+	assert.NoError(t, cons2.AddVote(precommit4))
+	assert.Equal(t, len(cons2.votes.votes), 3)
 	assert.True(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock().EqualsTo(b1.Hash()))
+
+	// Here we have enough votes, but we don't have proposal yet.
+	// So we can't go to next height
+	
+	// Proposal received now, set it
+	cons2.SetProposal(p1)
+
+	// Cons3 has enough votes to go to next height
+	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrevote)
 }
