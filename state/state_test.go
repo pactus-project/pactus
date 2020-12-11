@@ -27,8 +27,8 @@ func init() {
 	_, pb, priv := crypto.GenerateTestKeyPair()
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
-	val := validator.NewValidator(pb, 1)
-	gen = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
+	val := validator.NewValidator(pb, 0)
+	gen = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	valSigner = crypto.NewSigner(priv)
 
 	loggerConfig := logger.TestConfig()
@@ -61,7 +61,7 @@ func propsoeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
 	b := st.ProposeBlock()
 	v := vote.NewPrecommit(1, 0, b.Hash(), addr)
 	sig := valSigner.Sign(v.SignBytes())
-	c := block.NewCommit(0, []block.Commiter{block.Commiter{Signed: true, Address: addr}}, *sig)
+	c := block.NewCommit(0, []block.Commiter{block.Commiter{Status: 1, Address: addr}}, *sig)
 
 	return b, *c
 }

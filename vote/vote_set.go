@@ -187,7 +187,7 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 	sigs := make([]crypto.Signature, 0)
 
 	for i, addr := range vals {
-		signed := false
+		status := block.CommitNotSigned
 		v := votesMap[addr]
 
 		if v != nil {
@@ -196,11 +196,11 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 				continue
 			}
 			sigs = append(sigs, *v.Signature())
-			signed = true
+			status = block.CommitSigned
 		}
 
 		commiters[i].Address = addr
-		commiters[i].Signed = signed
+		commiters[i].Status = status
 	}
 
 	sig := crypto.Aggregate(sigs)

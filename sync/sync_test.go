@@ -42,7 +42,7 @@ func init() {
 	acc := account.NewAccount(crypto.MintbaseAddress)
 	acc.SetBalance(21000000000000)
 	signer = crypto.NewSigner(key)
-	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val})
+	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	ctx = context.Background()
 	txPool = txpool.NewMockTxPool()
 
@@ -61,7 +61,7 @@ func init() {
 		signer.SignMsg(v)
 		sig := v.Signature()
 		c := block.NewCommit(0, []block.Commiter{
-			block.Commiter{Signed: true, Address: signer.Address()}},
+			block.Commiter{Status: 1, Address: signer.Address()}},
 			*sig)
 
 		st.ApplyBlock(i+1, b, *c)

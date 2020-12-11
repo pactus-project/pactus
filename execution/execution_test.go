@@ -73,28 +73,24 @@ func TestExecuteBondTx(t *testing.T) {
 	stamp := crypto.GenerateTestHash()
 	sb.AppendStampAndUpdateHeight(100, stamp)
 
-	trx1 := tx.NewBondTx(stamp, 1, valAddr, valPub, 1000, 0, "invalid boner", &valPub, nil)
+	trx1 := tx.NewBondTx(stamp, 1, valAddr, valPub, 1000, "invalid boner", &valPub, nil)
 	trx1.SetSignature(valPriv.Sign(trx1.SignBytes()))
 	assert.Error(t, exe.Execute(trx1))
 
-	trx2 := tx.NewBondTx(stamp, acc1.Sequence()+2, acc1.Address(), valPub, 1000, 0, "invalid sequence", &pub1, nil)
+	trx2 := tx.NewBondTx(stamp, acc1.Sequence()+2, acc1.Address(), valPub, 1000, "invalid sequence", &pub1, nil)
 	trx2.SetSignature(priv1.Sign(trx2.SignBytes()))
 	assert.Error(t, exe.Execute(trx2))
 
-	trx3 := tx.NewBondTx(stamp, acc1.Sequence()+1, acc1.Address(), valPub, 3001, 0, "insuficent balance", &pub1, nil)
+	trx3 := tx.NewBondTx(stamp, acc1.Sequence()+1, acc1.Address(), valPub, 3001, "insuficent balance", &pub1, nil)
 	trx3.SetSignature(priv1.Sign(trx3.SignBytes()))
 	assert.Error(t, exe.Execute(trx3))
 
-	trx4 := tx.NewBondTx(stamp, acc1.Sequence()+1, acc1.Address(), valPub, 1000, 1, "invalid fee", &pub1, nil)
+	trx4 := tx.NewBondTx(stamp, acc1.Sequence()+1, acc1.Address(), valPub, 1000, "ok", &pub1, nil)
 	trx4.SetSignature(priv1.Sign(trx4.SignBytes()))
-	assert.Error(t, exe.Execute(trx4))
-
-	trx5 := tx.NewBondTx(stamp, acc1.Sequence()+1, acc1.Address(), valPub, 1000, 0, "ok", &pub1, nil)
-	trx5.SetSignature(priv1.Sign(trx5.SignBytes()))
-	assert.NoError(t, exe.Execute(trx5))
+	assert.NoError(t, exe.Execute(trx4))
 
 	// Duplicated. Invalid sequence
-	assert.Error(t, exe.Execute(trx5))
+	assert.Error(t, exe.Execute(trx4))
 
 	assert.Equal(t, sb.Account(acc1.Address()).Balance(), int64(2000))
 	assert.Equal(t, sb.Validator(valAddr).Stake(), int64(1000))

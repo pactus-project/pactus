@@ -24,5 +24,4 @@ func TestMarshaling(t *testing.T) {
 
 	bz2, _ := b1.MarshalCBOR()
 	assert.Equal(t, bz1, bz2)
-
 }

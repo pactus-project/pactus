@@ -22,7 +22,7 @@ struct Txs {
 
 struct Commiter {
   address             @0 :Data;
-	signed              @1 :Bool;
+	status              @1 :Int32;
 }
 
 struct Commit {

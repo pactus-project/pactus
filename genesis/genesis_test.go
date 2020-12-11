@@ -15,25 +15,30 @@ import (
 func TestMarshaling(t *testing.T) {
 	addr, pb, _ := crypto.RandomKeyPair()
 	acc := account.NewAccount(addr)
-	val := validator.NewValidator(pb, 1)
-	gen1 := MakeGenesis("test", time.Now().Truncate(0), []*account.Account{acc}, []*validator.Validator{val})
+	acc.AddToBalance(100000)
+	val := validator.NewValidator(pb, 0)
+	gen1 := MakeGenesis("test", time.Now().Truncate(0), []*account.Account{acc}, []*validator.Validator{val}, 5)
 	gen2 := new(Genesis)
 
-	bz, err := json.Marshal(gen1)
+	bz, err := json.MarshalIndent(gen1, " ", " ")
 	require.NoError(t, err)
 	err = json.Unmarshal(bz, gen2)
 	require.NoError(t, err)
 	require.Equal(t, gen1.Hash(), gen2.Hash())
 }
 
-func TestForTest(t *testing.T) {
-	addr, pb, _ := crypto.RandomKeyPair()
-	acc := account.NewAccount(addr)
-	val := validator.NewValidator(pb, 1)
-	gen1 := MakeGenesis("test", time.Now().Truncate(0), []*account.Account{acc}, []*validator.Validator{val})
-	assert.True(t, gen1.IsForTest())
-	assert.True(t, Mainnet().IsForMainnet())
-	assert.False(t, Mainnet().IsForTestnet())
-	assert.False(t, Mainnet().IsForTest())
-	assert.True(t, Testnet().IsForTestnet())
+func TestGenesisTestNet(t *testing.T) {
+	g := Testnet()
+	assert.Equal(t, len(g.Validators()), 4)
+	assert.Equal(t, len(g.Accounts()), 1)
+
+	for _, v := range g.Validators() {
+		assert.Equal(t, v.Address(), v.PublicKey().Address())
+	}
+
+	assert.Equal(t, g.Accounts()[0].Address(), crypto.MintbaseAddress)
+	assert.Equal(t, g.Accounts()[0].Balance(), int64(0x4A9B6384488000))
+
+	expected, _ := crypto.HashFromString("804c372bd7c0327a7c84389983f159b43510c3596097f2bb36f8856136dd829a")
+	assert.Equal(t, g.Hash(), expected)
 }

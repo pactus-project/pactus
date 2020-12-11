@@ -9,9 +9,18 @@ import (
 	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
+const (
+	CommitNotSigned = 0
+	CommitSigned    = 1
+)
+
 type Commiter struct {
 	Address crypto.Address `cbor:"1,keyasint"`
-	Signed  bool           `cbor:"2,keyasint"`
+	Status  int            `cbor:"2,keyasint"`
+}
+
+func (commiter *Commiter) HasSigned() bool {
+	return commiter.Status == CommitSigned
 }
 
 type Commit struct {
@@ -46,7 +55,10 @@ func (commit *Commit) SanityCheck() error {
 	}
 	signed := 0
 	for _, c := range commit.data.Commiters {
-		if c.Signed {
+		if c.Status > 1 {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid commit status")
+		}
+		if c.Status == CommitSigned {
 			signed++
 		}
 	}

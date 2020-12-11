@@ -44,3 +44,12 @@ func TestMarshalingPublicKey(t *testing.T) {
 
 	require.True(t, pb3.EqualsTo(pb2))
 }
+
+func TestPublicKeyToAddress(t *testing.T) {
+	addr, err := AddressFromString("ea378dac42172c7836ed17753e105e66e024508a")
+	assert.NoError(t, err)
+	pub, err := PublicKeyFromString("ccd169a31a7bfa611480072137f77efd8c1cfb0f811957972d15bab4e8c8998ade29d99b03815d3873e57d21e67ce210480270ca0b77698de0623ab1e6a241bd05a00a2e3a5b319c99fa1b9ecb6f53564e4c53dbb8a2b6b46315bf258208f614")
+	assert.NoError(t, err)
+
+	assert.Equal(t, pub.Address(), addr)
+}

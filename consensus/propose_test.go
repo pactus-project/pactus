@@ -82,7 +82,10 @@ func TestNetworkLagging1(t *testing.T) {
 	cons1 := newTestConsensus(t, VAL1)
 	cons2 := newTestConsensus(t, VAL2)
 
-	cons1.enterNewHeight(1)
+	// In some slow containers, it goes to prevote stage before setting proposal here
+	// Let set the height manually ;)
+	//cons1.enterNewHeight(1)
+	cons1.updateHeight(1)
 	cons2.enterNewHeight(1)
 
 	b1 := cons1.state.ProposeBlock()

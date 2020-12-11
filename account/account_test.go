@@ -54,6 +54,8 @@ func TestMarshaling2(t *testing.T) {
 	bs2, _ := acc.Encode()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), crypto.HashH(bs))
+	expected,_:=crypto.HashFromString("aa30a77559ded177b4a18fcd207df177bec7b01e4f49af2d9e3243e6b565569e")
+	assert.Equal(t, acc.Hash(), expected)
 }
 
 func TestAddToBalance(t *testing.T) {

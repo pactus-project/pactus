@@ -54,6 +54,8 @@ func TestMarshaling2(t *testing.T) {
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, val.Hash(), crypto.HashH(bs))
+	expected,_:=crypto.HashFromString("113f6b87a935601398993d687143241e8547ea39ba991625273e8638b5a0373f")
+	assert.Equal(t, val.Hash(), expected)
 }
 
 func TestAddToStake(t *testing.T) {

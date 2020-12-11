@@ -50,7 +50,6 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	vals := make([]*validator.Validator, 4)
 	for i, pval := range signers {
 		val := validator.NewValidator(pval.PublicKey(), 0)
-		val.AddToStake(100)
 		vals[i] = val
 	}
 
@@ -67,7 +66,7 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 		}
 	}()
 
-	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals)
+	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals, 1)
 	st, _ := state.LoadOrNewState(stateConf, genDoc, signers[valID], mockTxPool)
 
 	cons, _ := NewConsensus(consConf, st, signers[valID], ch)
