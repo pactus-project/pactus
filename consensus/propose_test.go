@@ -196,6 +196,9 @@ func TestNetworkLagging3(t *testing.T) {
 	assert.Equal(t, len(cons2.votes.votes), 3)
 	assert.True(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock().EqualsTo(b1.Hash()))
 
+	// Here we have enough votes, but we don't have proposal yet.
+	// So we can't go to next height
+	
 	// Proposal received now, set it
 	cons2.SetProposal(p1)
 
