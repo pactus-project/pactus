@@ -51,6 +51,7 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 	// Enter prevote
 	cs.enterPrevote(proposal.Height(), proposal.Round())
 	cs.enterPrecommit(proposal.Height(), proposal.Round())
+	cs.enterCommit(proposal.Height(), proposal.Round())
 }
 
 func (cs *Consensus) enterPropose(height int, round int) {
