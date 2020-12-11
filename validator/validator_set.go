@@ -148,7 +148,7 @@ func (set *ValidatorSet) Proposer(round int) *Validator {
 	return set.validators[idx]
 }
 
-func (set *ValidatorSet) CommitersHash() crypto.Hash {
+func (set *ValidatorSet) CommittersHash() crypto.Hash {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 

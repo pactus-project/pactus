@@ -27,7 +27,7 @@ func (pool *BlockPool) AppendCommit(blockHash crypto.Hash, commit *block.Commit)
 
 	bc, has := pool.commits[blockHash]
 	if has {
-		if !bc.CommitersHash().EqualsTo(commit.CommitersHash()) {
+		if !bc.CommittersHash().EqualsTo(commit.CommittersHash()) {
 			logger.Debug("Different commit for the same block", "hash", blockHash)
 		}
 	}

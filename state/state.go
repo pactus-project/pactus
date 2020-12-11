@@ -140,8 +140,8 @@ func (st *state) tryLoadLastInfo() error {
 	st.lastBlockTime = b.Header().Time()
 	st.lastReceiptsHash = *receiptHash
 
-	vals := make([]*validator.Validator, len(commit.Commiters()))
-	for i, c := range commit.Commiters() {
+	vals := make([]*validator.Validator, len(commit.Committers()))
+	for i, c := range commit.Committers() {
 		val, err := st.store.Validator(c.Address)
 		if err != nil {
 			return fmt.Errorf("Last commit has unknown validator: %v", err)
@@ -279,12 +279,12 @@ func (st *state) ProposeBlock() block.Block {
 	txHashes := block.NewTxHashes()
 	txHashes.Append(rewardTx.Hash())
 	stateHash := st.stateHash()
-	commitersHash := st.validatorSet.CommitersHash()
+	committersHash := st.validatorSet.CommittersHash()
 	block := block.MakeBlock(
 		timestamp,
 		txHashes,
 		st.lastBlockHash,
-		commitersHash,
+		committersHash,
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,

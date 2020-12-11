@@ -183,7 +183,7 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 		votes = append(votes, v)
 	}
 	vals := vs.valSet.Validators()
-	commiters := make([]block.Commiter, len(vals))
+	committers := make([]block.Committer, len(vals))
 	sigs := make([]crypto.Signature, 0)
 
 	for i, addr := range vals {
@@ -199,13 +199,13 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 			status = block.CommitSigned
 		}
 
-		commiters[i].Address = addr
-		commiters[i].Status = status
+		committers[i].Address = addr
+		committers[i].Status = status
 	}
 
 	sig := crypto.Aggregate(sigs)
 
-	return block.NewCommit(vs.round, commiters, sig)
+	return block.NewCommit(vs.round, committers, sig)
 }
 
 func (vs *VoteSet) Fingerprint() string {

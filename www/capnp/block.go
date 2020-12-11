@@ -26,11 +26,11 @@ func (f factory) BlockToBlockInfo(block *block.Block, height int, cbi *BlockInfo
 	if block.LastCommit() != nil {
 		clc.SetRound(uint32(block.LastCommit().Round()))
 		clc.SetSignature(block.LastCommit().Signature().RawBytes())
-		clcc, _ := clc.NewCommiters(int32(len(block.LastCommit().Commiters())))
-		for i, commiter := range block.LastCommit().Commiters() {
+		clcc, _ := clc.NewCommitters(int32(len(block.LastCommit().Committers())))
+		for i, committer := range block.LastCommit().Committers() {
 			c := clcc.At(i)
-			c.SetAddress(commiter.Address.RawBytes())
-			c.SetStatus(int32(commiter.Status))
+			c.SetAddress(committer.Address.RawBytes())
+			c.SetStatus(int32(committer.Status))
 		}
 	}
 	// header
@@ -38,7 +38,7 @@ func (f factory) BlockToBlockInfo(block *block.Block, height int, cbi *BlockInfo
 	ch.SetTime(block.Header().Time().Unix())
 	ch.SetTxsHash(block.Header().TxsHash().RawBytes())
 	ch.SetStateHash(block.Header().StateHash().RawBytes())
-	ch.SetCommitersHash(block.Header().CommitersHash().RawBytes())
+	ch.SetCommittersHash(block.Header().CommittersHash().RawBytes())
 	ch.SetLastBlockHash(block.Header().LastBlockHash().RawBytes())
 	ch.SetLastReceiptsHash(block.Header().LastReceiptsHash().RawBytes())
 	ch.SetLastCommitHash(block.Header().LastCommitHash().RawBytes())
