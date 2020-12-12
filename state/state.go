@@ -185,18 +185,6 @@ func (st *state) Close() error {
 	return st.store.Close()
 }
 
-func (st *state) stateHash() crypto.Hash {
-	accRootHash := st.accountsMerkleRootHash()
-	valRootHash := st.validatorsMerkleRootHash()
-
-	rootHash := merkle.HashMerkleBranches(&accRootHash, &valRootHash)
-	if rootHash == nil {
-		logger.Panic("State hash can't be nil")
-	}
-
-	return *rootHash
-}
-
 func (st *state) StoreReader() store.StoreReader {
 	return st.store
 }
