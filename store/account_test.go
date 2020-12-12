@@ -11,7 +11,7 @@ import (
 func TestRetreiveAccount(t *testing.T) {
 	store, _ := newAccountStore(util.TempDirPath())
 
-	acc, _ := account.GenerateTestAccount()
+	acc, _ := account.GenerateTestAccount(util.RandInt(10000))
 
 	t.Run("Add account, should able to retrieve", func(t *testing.T) {
 		assert.False(t, store.hasAccount(acc.Address()))
@@ -35,7 +35,7 @@ func TestRetreiveAccount(t *testing.T) {
 func TestAccountCounter(t *testing.T) {
 	store, _ := newAccountStore(util.TempDirPath())
 
-	acc, _ := account.GenerateTestAccount()
+	acc, _ := account.GenerateTestAccount(0)
 
 	t.Run("Update count after adding new account", func(t *testing.T) {
 		assert.Equal(t, store.total, store.countAccounts())
@@ -63,7 +63,7 @@ func TestAccountBatchSaving(t *testing.T) {
 	t.Run("Add 100 accounts", func(t *testing.T) {
 
 		for i := 0; i < 100; i++ {
-			acc, _ := account.GenerateTestAccount()
+			acc, _ := account.GenerateTestAccount(i)
 			store.updateAccount(acc)
 		}
 

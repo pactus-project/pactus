@@ -11,7 +11,7 @@ import (
 func TestRetreiveValidator(t *testing.T) {
 	store, _ := newValidatorStore(util.TempDirPath())
 
-	val, _ := validator.GenerateTestValidator()
+	val, _ := validator.GenerateTestValidator(util.RandInt(1000))
 
 	t.Run("Add validator, should able to retrieve", func(t *testing.T) {
 		assert.False(t, store.hasValidator(val.Address()))
@@ -35,7 +35,7 @@ func TestRetreiveValidator(t *testing.T) {
 func TestValidatorCounter(t *testing.T) {
 	store, _ := newValidatorStore(util.TempDirPath())
 
-	val, _ := validator.GenerateTestValidator()
+	val, _ := validator.GenerateTestValidator(util.RandInt(1000))
 
 	t.Run("Update count after adding new validator", func(t *testing.T) {
 		assert.Equal(t, store.total, store.countValidators())
@@ -63,7 +63,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 	t.Run("Add 100 validators", func(t *testing.T) {
 
 		for i := 0; i < 100; i++ {
-			val, _ := validator.GenerateTestValidator()
+			val, _ := validator.GenerateTestValidator(util.RandInt(1000))
 			store.updateValidator(val)
 		}
 

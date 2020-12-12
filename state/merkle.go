@@ -15,6 +15,9 @@ func (st *state) accountsMerkleRootHash() crypto.Hash {
 		if acc.Number() >= total {
 			panic("Account number is out of range")
 		}
+		if !hashes[acc.Number()].IsUndef() {
+			panic("Duplicated account number")
+		}
 		hashes[acc.Number()] = acc.Hash()
 		return false
 	})
@@ -28,7 +31,10 @@ func (st *state) validatorsMerkleRootHash() crypto.Hash {
 	hashes := make([]crypto.Hash, total)
 	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
 		if val.Number() >= total {
-			panic("Account number is out of range")
+			panic("Validator number is out of range")
+		}
+		if !hashes[val.Number()].IsUndef() {
+			panic("Duplicated validator number")
 		}
 		hashes[val.Number()] = val.Hash()
 		return false

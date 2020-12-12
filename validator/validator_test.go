@@ -9,10 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestMarshaling(t *testing.T) {
-	val1, _ := GenerateTestValidator()
+	val1, _ := GenerateTestValidator(util.RandInt(1000))
 	val1.AddToStake(1)
 	val1.IncSequence()
 
@@ -59,7 +60,7 @@ func TestMarshalingRawData(t *testing.T) {
 }
 
 func TestAddToStake(t *testing.T) {
-	val, _ := GenerateTestValidator()
+	val, _ := GenerateTestValidator(util.RandInt(1000))
 	amt := val.Stake()
 
 	assert.Error(t, val.AddToStake(-1))
@@ -71,7 +72,7 @@ func TestAddToStake(t *testing.T) {
 }
 
 func TestIncSequence(t *testing.T) {
-	val, _ := GenerateTestValidator()
+	val, _ := GenerateTestValidator(util.RandInt(1000))
 	seq := val.Sequence()
 	val.IncSequence()
 	assert.Equal(t, val.Sequence(), seq+1)

@@ -163,13 +163,12 @@ func (set *ValidatorSet) CommittersHash() crypto.Hash {
 	return merkle.Root()
 }
 
-// ---------
-// For tests
+// GenerateTestValidatorSet generates a validator set for testing purpose
 func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
-	val1, pv1 := GenerateTestValidator()
-	val2, pv2 := GenerateTestValidator()
-	val3, pv3 := GenerateTestValidator()
-	val4, pv4 := GenerateTestValidator()
+	val1, pv1 := GenerateTestValidator(0)
+	val2, pv2 := GenerateTestValidator(1)
+	val3, pv3 := GenerateTestValidator(2)
+	val4, pv4 := GenerateTestValidator(3)
 
 	keys := []crypto.PrivateKey{pv1, pv2, pv3, pv4}
 	vals := []*Validator{val1, val2, val3, val4}

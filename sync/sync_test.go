@@ -38,7 +38,7 @@ var (
 
 func init() {
 	syncConf = TestConfig()
-	val, key := validator.GenerateTestValidator()
+	val, key := validator.GenerateTestValidator(0)
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.SetBalance(21000000000000)
 	signer = crypto.NewSigner(key)
