@@ -39,7 +39,7 @@ var (
 func init() {
 	syncConf = TestConfig()
 	val, key := validator.GenerateTestValidator()
-	acc := account.NewAccount(crypto.MintbaseAddress)
+	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.SetBalance(21000000000000)
 	signer = crypto.NewSigner(key)
 	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)

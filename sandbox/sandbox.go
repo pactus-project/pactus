@@ -8,9 +8,11 @@ import (
 
 type Sandbox interface {
 	Account(crypto.Address) *account.Account
+	MakeNewAccount(crypto.Address) *account.Account
 	UpdateAccount(*account.Account)
 
 	Validator(crypto.Address) *validator.Validator
+	MakeNewValidator(crypto.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
 	AddToSet(*validator.Validator)
 

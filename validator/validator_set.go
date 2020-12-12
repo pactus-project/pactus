@@ -85,7 +85,7 @@ func (set *ValidatorSet) MoveToNewHeight(lastRound int) {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	// Firts update proposer index
+	// First update proposer index
 	set.proposerIndex = (set.proposerIndex + lastRound + 1) % len(set.validators)
 
 	set.validators = append(set.validators, set.joined...)

@@ -32,7 +32,7 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 			if ctrx != nil {
 				txs = append(txs, *ctrx.Tx)
 			} else {
-				syncer.logger.Warn("We don't have transation for the block", "hash", hash.Fingerprint())
+				syncer.logger.Warn("We don't have transaction for the block", "hash", hash.Fingerprint())
 			}
 		}
 		blocks[h-from] = *b

@@ -17,7 +17,7 @@ import (
 )
 
 type Synchronizer struct {
-	// Not: Synchronizer should not have any lock to prevent daed lock situation.
+	// Not: Synchronizer should not have any lock to prevent dead lock situation.
 	// Other modules like state or consesnus are thread safe
 
 	ctx             context.Context

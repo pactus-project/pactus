@@ -23,10 +23,11 @@ type accountData struct {
 }
 
 ///---- Constructors
-func NewAccount(addr crypto.Address) *Account {
+func NewAccount(addr crypto.Address, number int) *Account {
 	return &Account{
 		data: accountData{
 			Address: addr,
+			Number:  number,
 		},
 	}
 }
@@ -98,8 +99,7 @@ func (acc Account) Fingerprint() string {
 // For tests
 func GenerateTestAccount() (*Account, crypto.PrivateKey) {
 	a, _, priv := crypto.GenerateTestKeyPair()
-	acc := NewAccount(a)
-	acc.data.Number = util.RandInt(10000)
+	acc := NewAccount(a, util.RandInt(10000))
 	acc.data.Balance = util.RandInt64(10000000)
 	acc.data.Sequence = util.RandInt(100)
 	return acc, priv

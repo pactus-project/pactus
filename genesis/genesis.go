@@ -93,8 +93,8 @@ func (gen *Genesis) TTL() int {
 
 func (gen *Genesis) Accounts() []*account.Account {
 	accs := make([]*account.Account, 0)
-	for _, genAcc := range gen.data.Accounts {
-		acc := account.NewAccount(genAcc.Address)
+	for i, genAcc := range gen.data.Accounts {
+		acc := account.NewAccount(genAcc.Address, i)
 		acc.AddToBalance(genAcc.Balance)
 		accs = append(accs, acc)
 	}
@@ -104,8 +104,8 @@ func (gen *Genesis) Accounts() []*account.Account {
 
 func (gen *Genesis) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, 0, len(gen.data.Validators))
-	for _, genVal := range gen.data.Validators {
-		val := validator.NewValidator(genVal.PublicKey, 0)
+	for i, genVal := range gen.data.Validators {
+		val := validator.NewValidator(genVal.PublicKey, i, 0)
 		vals = append(vals, val)
 	}
 

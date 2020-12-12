@@ -15,6 +15,8 @@ type StoreReader interface {
 	Transaction(hash crypto.Hash) (*tx.CommittedTx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
+	TotalAccounts() int
 	HasValidator(crypto.Address) bool
 	Validator(addr crypto.Address) (*validator.Validator, error)
+	TotalValidators() int
 }

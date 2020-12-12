@@ -22,10 +22,11 @@ type validatorData struct {
 	BondingHeight int              `cbor:"5,keyasint"`
 }
 
-func NewValidator(publicKey crypto.PublicKey, bondingHeight int) *Validator {
+func NewValidator(publicKey crypto.PublicKey, number, bondingHeight int) *Validator {
 	val := &Validator{
 		data: validatorData{
 			PublicKey:     publicKey,
+			Number:        number,
 			BondingHeight: bondingHeight,
 		},
 	}
@@ -103,10 +104,9 @@ func (val Validator) Fingerprint() string {
 // For tests
 func GenerateTestValidator() (*Validator, crypto.PrivateKey) {
 	_, pub, priv := crypto.GenerateTestKeyPair()
-	val := NewValidator(pub, 0)
+	val := NewValidator(pub, util.RandInt(100), util.RandInt(100))
 	val.data.Number = util.RandInt(100)
 	val.data.Stake = util.RandInt64(1000000000)
 	val.data.Sequence = util.RandInt(1000)
-	val.data.BondingHeight = util.RandInt(10000)
 	return val, priv
 }

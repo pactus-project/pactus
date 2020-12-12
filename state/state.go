@@ -38,6 +38,7 @@ type StateReader interface {
 type State interface {
 	StateReader
 
+	Close() error
 	ProposeBlock() block.Block
 	ValidateBlock(block block.Block) error
 	ApplyBlock(height int, block block.Block, commit block.Commit) error
@@ -175,6 +176,13 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	st.validatorSet = valSet
 	st.lastBlockTime = genDoc.GenesisTime()
 	return nil
+}
+
+func (st *state) Close() error {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.store.Close()
 }
 
 func (st *state) stateHash() crypto.Hash {
