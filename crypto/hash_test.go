@@ -13,7 +13,7 @@ func TestUndefHash(t *testing.T) {
 }
 
 func TestEmptyHash(t *testing.T) {
-	expected, _ := hex.DecodeString("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470PASS")
+	expected, _ := hex.DecodeString("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8")
 	var data = []byte{}
 	h := Hash256(data)
 	assert.Equal(t, h, expected)
@@ -22,7 +22,7 @@ func TestEmptyHash(t *testing.T) {
 func TestHash256(t *testing.T) {
 	var data = []byte("zarb")
 	h := Hash256(data)
-	expected, _ := hex.DecodeString("d68b7866ebb7412bb398517c7a990663b00d8cca4159ab7e5620a19f0fb2fb8e")
+	expected, _ := hex.DecodeString("12b38977f2d67f06f0c0cd54aaf7324cf4fee184398ea33d295e8d1543c2ee1a")
 	assert.Equal(t, h, expected)
 }
 

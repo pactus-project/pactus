@@ -55,7 +55,7 @@ func TestMarshalingRawData(t *testing.T) {
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, val.Hash(), crypto.HashH(bs))
-	expected, _ := crypto.HashFromString("74d2080fcd05f48956ef5035fff25d312463221649359655754e08f52fdb6c1c")
+	expected, _ := crypto.HashFromString("cc63e9d6d2f2e2df745b6cb0392cc2453af3a6c79c3e3b8d0884f3d365edb1d2")
 	assert.Equal(t, val.Hash(), expected)
 }
 

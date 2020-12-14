@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-var hasher func(...[]byte) crypto.Hash
+var hasher func([]byte) crypto.Hash
 
 func init() {
 	hasher = crypto.HashH

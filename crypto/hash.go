@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dchest/blake2b"
 	cbor "github.com/fxamacker/cbor/v2"
 	"golang.org/x/crypto/ripemd160"
-	"golang.org/x/crypto/sha3"
 )
 
 const HashSize = 32
@@ -23,12 +23,9 @@ type hashData struct {
 
 var UndefHash = Hash{data: hashData{Hash: [HashSize]byte{0}}}
 
-func Hash256(data ...[]byte) []byte {
-	d := sha3.NewLegacyKeccak256()
-	for _, b := range data {
-		d.Write(b)
-	}
-	return d.Sum(nil)
+func Hash256(data []byte) []byte {
+	h := blake2b.Sum256(data)
+	return h[:]
 }
 
 func Hash160(data []byte) []byte {
@@ -54,8 +51,8 @@ func HashFromRawBytes(data []byte) (Hash, error) {
 	return h, nil
 }
 
-func HashH(data ...[]byte) Hash {
-	h, _ := HashFromRawBytes(Hash256(data...))
+func HashH(data []byte) Hash {
+	h, _ := HashFromRawBytes(Hash256(data))
 	return h
 }
 

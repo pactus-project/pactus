@@ -8,6 +8,7 @@ require (
 	github.com/Masterminds/vcs v1.13.1 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
+	github.com/dchest/blake2b v1.0.0
 	github.com/filecoin-project/go-filecoin v0.6.4
 	github.com/fxamacker/cbor/v2 v2.2.0
 	github.com/gin-gonic/gin v1.6.3 // indirect

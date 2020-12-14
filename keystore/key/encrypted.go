@@ -104,7 +104,7 @@ func DecryptKey(bs []byte, auth string) (*Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	calculatedMAC := crypto.Hash256(derivedKey[16:32], cipherText)
+	calculatedMAC := crypto.Hash256(append(derivedKey[16:32], cipherText...))
 	if !bytes.Equal(calculatedMAC, mac) {
 		return nil, fmt.Errorf("Could not decrypt key with given passphrase")
 	}
@@ -185,7 +185,7 @@ func EncryptKey(key *Key, auth, label string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	mac := crypto.Hash256(derivedKey[16:32], cipherText)
+	mac := crypto.Hash256(append(derivedKey[16:32], cipherText...))
 
 	scryptParamsJSON := make(map[string]interface{}, 5)
 	scryptParamsJSON["n"] = scryptN
