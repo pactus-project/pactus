@@ -37,10 +37,6 @@ func (acc Account) Number() int             { return acc.data.Number }
 func (acc Account) Sequence() int           { return acc.data.Sequence }
 func (acc Account) Balance() int64          { return acc.data.Balance }
 
-func (acc *Account) SetBalance(bal int64) error {
-	acc.data.Balance = bal
-	return nil
-}
 
 func (acc *Account) SubtractFromBalance(amt int64) error {
 	if amt < 0 {

@@ -36,7 +36,7 @@ require (
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/nightlyone/lockfile v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
-	github.com/peterh/liner v1.2.0
+	github.com/peterh/liner v1.2.1
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.5.1 // indirect

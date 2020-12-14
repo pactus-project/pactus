@@ -99,7 +99,9 @@ func (n *Node) Start() error {
 	// Wait for network to started
 	time.Sleep(1 * time.Second)
 
-	n.sync.Start()
+	if err := n.sync.Start(); err != nil {
+		return err
+	}
 
 	err := n.capnp.StartServer()
 	if err != nil {

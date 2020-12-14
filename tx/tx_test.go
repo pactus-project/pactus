@@ -109,8 +109,7 @@ func TestInvalidSignature(t *testing.T) {
 	assert.Error(t, tx.SanityCheck())
 
 	// Invalid sign Bytes
-	var tx2 Tx
-	tx2 = *tx
+	var tx2 = new(Tx)
 	tx2.data.Memo = "Hack me"
 	sig = pv.Sign(tx2.SignBytes())
 	pb := pv.PublicKey()

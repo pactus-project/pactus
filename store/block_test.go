@@ -24,8 +24,7 @@ func TestRetreiveBlockAndTransactions(t *testing.T) {
 	for _, trx := range txs {
 		r := trx.GenerateReceipt(tx.Ok, b.Hash())
 		ctrx := tx.CommittedTx{Tx: trx, Receipt: r}
-		err = store.SaveTransaction(ctrx)
-		assert.NoError(t, err)
+		store.SaveTransaction(ctrx)
 	}
 
 	b2, h2, err := store.BlockByHash(b.Hash())

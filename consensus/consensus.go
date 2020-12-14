@@ -15,12 +15,6 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-//-----------------------------------------------------------------------------
-
-var (
-	msgQueueSize = 1000
-)
-
 type Consensus struct {
 	lk deadlock.RWMutex
 
@@ -156,11 +150,13 @@ func (cs *Consensus) invalidHeightRoundStep(height int, round int, step hrs.Step
 	return cs.hrs.Height() != height || cs.hrs.Round() != round || cs.hrs.Step() > step
 }
 
-func (cs *Consensus) AddVote(v *vote.Vote) error {
+func (cs *Consensus) AddVote(v *vote.Vote) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	return cs.addVote(v)
+	if err := cs.addVote(v); err != nil {
+		cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
+	}
 }
 
 func (cs *Consensus) SetProposal(proposal *vote.Proposal) {
@@ -209,9 +205,8 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 	if err != nil {
 		if v.Signer().EqualsTo(cs.signer.Address()) {
 			cs.logger.Error("Detecting a duplicated vote from ourself. Did you restart the node?")
-		} else {
-			cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
 		}
+
 		return err
 	}
 	if !added {

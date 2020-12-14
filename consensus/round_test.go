@@ -34,15 +34,15 @@ func TestNewRound(t *testing.T) {
 	voteRound2Val2 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 2, crypto.UndefHash, VAL2, false)
 	voteRound2Val3 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 2, crypto.UndefHash, VAL3, false)
 
-	assert.NoError(t, cons4.AddVote(voteRound2Val1))
-	assert.NoError(t, cons4.AddVote(voteRound2Val2))
-	assert.NoError(t, cons4.AddVote(voteRound2Val3))
+	assert.NoError(t, cons4.addVote(voteRound2Val1))
+	assert.NoError(t, cons4.addVote(voteRound2Val2))
+	assert.NoError(t, cons4.addVote(voteRound2Val3))
 
 	checkHRSWait(t, cons4, 1, 3, hrs.StepTypePrevote)
 
-	assert.NoError(t, cons4.AddVote(voteRound0Val1))
-	assert.NoError(t, cons4.AddVote(voteRound0Val2))
-	assert.NoError(t, cons4.AddVote(voteRound0Val3))
+	assert.NoError(t, cons4.addVote(voteRound0Val1))
+	assert.NoError(t, cons4.addVote(voteRound0Val2))
+	assert.NoError(t, cons4.addVote(voteRound0Val3))
 
 	checkHRS(t, cons4, 1, 3, hrs.StepTypePrevote)
 }

@@ -31,9 +31,6 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	if senderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence, Expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
-	if senderAcc.Balance() < pld.Amount+trx.Fee() {
-		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
-	}
 	if trx.IsMintbaseTx() {
 		if trx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
@@ -47,8 +44,12 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	}
 
 	senderAcc.IncSequence()
-	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
-	receiverAcc.AddToBalance(pld.Amount)
+	if err := senderAcc.SubtractFromBalance(pld.Amount + trx.Fee()); err != nil {
+		return err
+	}
+	if err := receiverAcc.AddToBalance(pld.Amount); err != nil {
+		return err
+	}
 
 	e.sandbox.UpdateAccount(senderAcc)
 	e.sandbox.UpdateAccount(receiverAcc)

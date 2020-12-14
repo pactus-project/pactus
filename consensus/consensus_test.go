@@ -54,15 +54,12 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	}
 
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
-	acc.SetBalance(21000000000000)
+	assert.NoError(t, acc.AddToBalance(21000000000000))
 
 	ch := make(chan *message.Message, 10)
 	go func() {
 		for {
-			select {
-			case <-ch:
-			default:
-			}
+			<-ch
 		}
 	}()
 
@@ -104,9 +101,9 @@ func testAddVote(t *testing.T,
 	signers[pvalID].SignMsg(v)
 
 	if expectError {
-		assert.Error(t, cons.AddVote(v))
+		assert.Error(t, cons.addVote(v))
 	} else {
-		assert.NoError(t, cons.AddVote(v))
+		assert.NoError(t, cons.addVote(v))
 	}
 	return v
 }
@@ -266,7 +263,7 @@ func TestConsensusSpamming(t *testing.T) {
 
 	for i := 0; i < 100; i++ {
 		v, _ := vote.GenerateTestPrecommitVote(1, 0)
-		assert.Error(t, cons.AddVote(v))
+		assert.Error(t, cons.addVote(v))
 	}
 }
 

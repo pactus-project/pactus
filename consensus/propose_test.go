@@ -109,8 +109,8 @@ func TestNetworkLagging1(t *testing.T) {
 	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
 	assert.Equal(t, len(cons2.votes.votes), 1) // UndefHash vote
 
-	assert.NoError(t, cons2.AddVote(v1))
-	assert.NoError(t, cons2.AddVote(v3))
+	assert.NoError(t, cons2.addVote(v1))
+	assert.NoError(t, cons2.addVote(v3))
 	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevoteWait)
 	assert.Equal(t, len(cons2.votes.votes), 3)
 	assert.Nil(t, cons2.votes.roundVoteSets[0].Prevotes.QuorumBlock())
@@ -152,10 +152,10 @@ func TestNetworkLagging2(t *testing.T) {
 	assert.Equal(t, len(cons2.votes.votes), 1) // UndefHash vote
 
 	// Networks lags and we don't receive pre-vote from val_1 and pre-commit from val_4
-	assert.NoError(t, cons2.AddVote(precommit1))
-	assert.NoError(t, cons2.AddVote(precommit3))
-	assert.NoError(t, cons2.AddVote(prevote4))
-	assert.NoError(t, cons2.AddVote(prevote3))
+	assert.NoError(t, cons2.addVote(precommit1))
+	assert.NoError(t, cons2.addVote(precommit3))
+	assert.NoError(t, cons2.addVote(prevote4))
+	assert.NoError(t, cons2.addVote(prevote3))
 	assert.Equal(t, len(cons2.votes.votes), 5)
 	assert.Nil(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock())
 
@@ -190,9 +190,9 @@ func TestNetworkLagging3(t *testing.T) {
 	precommit4 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL4, false)
 
 	// Networks lags and we don't receive pre-vote from val_1 and pre-commit from val_4
-	assert.NoError(t, cons2.AddVote(precommit1))
-	assert.NoError(t, cons2.AddVote(precommit3))
-	assert.NoError(t, cons2.AddVote(precommit4))
+	assert.NoError(t, cons2.addVote(precommit1))
+	assert.NoError(t, cons2.addVote(precommit3))
+	assert.NoError(t, cons2.addVote(precommit4))
 
 	assert.True(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock().EqualsTo(b1.Hash()))
 

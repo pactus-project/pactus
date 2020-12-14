@@ -46,11 +46,6 @@ func (s *Server) StartServer() error {
 	s.listener = l
 	go func() {
 		for {
-			defer func() {
-				if r := recover(); r != nil {
-					s.logger.Error("Recovered from a panic", r)
-				}
-			}()
 			// Wait for a connection.
 			conn, err := l.Accept()
 			if err != nil {
@@ -75,10 +70,8 @@ func (s *Server) StartServer() error {
 	return nil
 }
 
-func (s *Server) StopServer() error {
+func (s *Server) StopServer() {
 	if s.listener != nil {
 		s.listener.Close()
 	}
-
-	return nil
 }

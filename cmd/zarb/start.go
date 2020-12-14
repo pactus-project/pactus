@@ -107,7 +107,10 @@ func Start() func(c *cli.Cmd) {
 				}
 
 				keyObj = key.GenKey()
-				key.EncryptKeyFile(keyObj, workspace+"/validator_key.json", "", "")
+				if err := key.EncryptKeyFile(keyObj, workspace+"/validator_key.json", "", ""); err != nil {
+					cmd.PrintErrorMsg("Failed to write key file: %v", err)
+					return
+				}
 
 			} else {
 

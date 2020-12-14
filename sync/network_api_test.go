@@ -23,8 +23,7 @@ func mockingNetworkAPI() *mockNetworkAPI {
 func (mock *mockNetworkAPI) Start() error {
 	return nil
 }
-func (mock *mockNetworkAPI) Stop() error {
-	return nil
+func (mock *mockNetworkAPI) Stop() {
 }
 func (mock *mockNetworkAPI) PublishMessage(msg *message.Message) error {
 	mock.ch <- msg

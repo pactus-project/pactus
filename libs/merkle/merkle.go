@@ -62,7 +62,7 @@ func NewTreeFromHashes(hashes []crypto.Hash) *SimpleMerkleTree {
 	arraySize := nextPoT*2 - 1
 	merkles := make([]*crypto.Hash, arraySize)
 
-	for i, _ := range hashes {
+	for i := range hashes {
 		merkles[i] = &hashes[i]
 	}
 

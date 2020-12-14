@@ -13,13 +13,12 @@ import (
 
 type NetworkAPI interface {
 	Start() error
-	Stop() error
+	Stop()
 	PublishMessage(msg *message.Message) error
 }
 
 type networkAPI struct {
 	ctx            context.Context
-	net            *network.Network
 	selfAddress    crypto.Address
 	selfID         peer.ID
 	generalTopic   *pubsub.Topic
@@ -95,7 +94,7 @@ func (api *networkAPI) Start() error {
 	return nil
 }
 
-func (api *networkAPI) Stop() error {
+func (api *networkAPI) Stop() {
 	api.txTopic.Close()
 	api.txSub.Cancel()
 	api.blockTopic.Close()
@@ -104,7 +103,6 @@ func (api *networkAPI) Stop() error {
 	api.generalSub.Cancel()
 	api.consensusTopic.Close()
 	api.consensusSub.Cancel()
-	return nil
 }
 
 func (api *networkAPI) parsMessage(m *pubsub.Message) {

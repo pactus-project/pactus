@@ -24,5 +24,7 @@ func zarb() *cli.Cli {
 }
 
 func main() {
-	zarb().Run(os.Args)
+	if err := zarb().Run(os.Args); err != nil {
+		panic(err)
+	}
 }

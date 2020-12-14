@@ -13,13 +13,6 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-// How many bytes to take from the front of the Genesis hash to append
-// to the ChainName to form the ChainID. The idea is to avoid some classes
-// of replay attack between chains with the same name.
-const shortHashSuffixBytes = 3
-
-// core types for a genesis definition
-
 type genAccount struct {
 	Address crypto.Address `cbor:"1,keyasint"`
 	Balance int64          `cbor:"2,keyasint"`
@@ -95,7 +88,9 @@ func (gen *Genesis) Accounts() []*account.Account {
 	accs := make([]*account.Account, 0)
 	for i, genAcc := range gen.data.Accounts {
 		acc := account.NewAccount(genAcc.Address, i)
-		acc.AddToBalance(genAcc.Balance)
+		if err := acc.AddToBalance(genAcc.Balance); err != nil {
+			continue
+		}
 		accs = append(accs, acc)
 	}
 

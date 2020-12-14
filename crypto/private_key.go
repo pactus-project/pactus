@@ -96,7 +96,9 @@ func (pv PrivateKey) MarshalJSON() ([]byte, error) {
 
 func (pv *PrivateKey) UnmarshalJSON(bz []byte) error {
 	var text string
-	json.Unmarshal(bz, &text)
+	if err := json.Unmarshal(bz, &text); err != nil {
+		return err
+	}
 	return pv.UnmarshalText([]byte(text))
 }
 

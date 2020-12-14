@@ -62,7 +62,9 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 
 	block, err := block.NewBlock(header, lastCommit, txs)
 	if err != nil {
-		io.WriteString(w, err.Error())
+		if _, err := io.WriteString(w, err.Error()); err != nil {
+			s.logger.Error("Unable to write string", "err", err)
+		}
 		return
 	}
 	bi.Block = *block
@@ -71,15 +73,12 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 	j, _ := json.MarshalIndent(bi, "", "  ")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	io.WriteString(w, string(j))
+	if _, err := io.WriteString(w, string(j)); err != nil {
+		s.logger.Error("Unable to write string", "err", err)
+	}
 }
 
 func (s *Server) BlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if r := recover(); r != nil {
-			s.logger.Error("Recovered in capnp call", "r", r)
-		}
-	}()
 	b := s.server.BlockAt(s.ctx, func(p capnp.ZarbServer_blockAt_Params) error {
 		vars := mux.Vars(r)
 		height, err := strconv.Atoi(vars["height"])
@@ -92,7 +91,9 @@ func (s *Server) BlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
 
 	cbi, err := b.Struct()
 	if err != nil {
-		io.WriteString(w, err.Error())
+		if _, err = io.WriteString(w, err.Error()); err != nil {
+			s.logger.Error("Unable to write string", "err", err)
+		}
 		return
 	}
 
@@ -100,24 +101,23 @@ func (s *Server) BlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BlockByHashHandler(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if r := recover(); r != nil {
-			s.logger.Error("Recovered in capnp call", "r", r)
-		}
-	}()
 	b := s.server.Block(s.ctx, func(p capnp.ZarbServer_block_Params) error {
 		vars := mux.Vars(r)
 		hash, err := crypto.HashFromRawBytes([]byte(vars["hash"]))
 		if err != nil {
 			return err
 		}
-		p.SetHash(hash.RawBytes())
+		if err := p.SetHash(hash.RawBytes()); err != nil {
+			return err
+		}
 		return nil
 	}).BlockInfo()
 
 	cbi, err := b.Struct()
 	if err != nil {
-		io.WriteString(w, err.Error())
+		if _, err = io.WriteString(w, err.Error()); err != nil {
+			s.logger.Error("Unable to write string", "err", err)
+		}
 		return
 	}
 

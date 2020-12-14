@@ -101,7 +101,9 @@ func (sig Signature) MarshalJSON() ([]byte, error) {
 
 func (sig *Signature) UnmarshalJSON(bz []byte) error {
 	var text string
-	json.Unmarshal(bz, &text)
+	if err := json.Unmarshal(bz, &text); err != nil {
+		return err
+	}
 	return sig.UnmarshalText([]byte(text))
 }
 
@@ -125,14 +127,6 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 
 	*sig = s
 	return nil
-}
-
-func (sig Signature) MarshalAmino() ([]byte, error) {
-	return sig.MarshalCBOR()
-}
-
-func (sig *Signature) UnmarshalAmino(bs []byte) error {
-	return sig.UnmarshalCBOR(bs)
 }
 
 /// ----------

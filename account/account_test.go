@@ -14,7 +14,7 @@ import (
 
 func TestMarshaling(t *testing.T) {
 	acc1, _ := GenerateTestAccount(util.RandInt(10000))
-	acc1.AddToBalance(1)
+	assert.NoError(t, acc1.AddToBalance(1))
 	acc1.IncSequence()
 
 	bs, err := acc1.Encode()

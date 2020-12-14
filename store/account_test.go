@@ -15,7 +15,7 @@ func TestRetreiveAccount(t *testing.T) {
 
 	t.Run("Add account, should able to retrieve", func(t *testing.T) {
 		assert.False(t, store.hasAccount(acc.Address()))
-		store.updateAccount(acc)
+		assert.NoError(t, store.updateAccount(acc))
 		assert.True(t, store.hasAccount(acc.Address()))
 		acc2, err := store.account(acc.Address())
 		assert.NoError(t, err)
@@ -23,8 +23,8 @@ func TestRetreiveAccount(t *testing.T) {
 	})
 
 	t.Run("Update account, should update database", func(t *testing.T) {
-		acc.AddToBalance(1)
-		store.updateAccount(acc)
+		assert.NoError(t, acc.AddToBalance(1))
+		assert.NoError(t, store.updateAccount(acc))
 
 		acc2, err := store.account(acc.Address())
 		assert.NoError(t, err)
@@ -41,16 +41,15 @@ func TestAccountCounter(t *testing.T) {
 		assert.Equal(t, store.total, store.countAccounts())
 		assert.Equal(t, store.total, 0)
 
-		store.updateAccount(acc)
+		assert.NoError(t, store.updateAccount(acc))
 		assert.Equal(t, store.total, store.countAccounts())
 		assert.Equal(t, store.total, 1)
 	})
 
 	t.Run("Update account, should not increatse counter", func(t *testing.T) {
-		acc.AddToBalance(1)
-		store.updateAccount(acc)
+		assert.NoError(t, acc.AddToBalance(1))
+		assert.NoError(t, store.updateAccount(acc))
 
-		store.updateAccount(acc)
 		assert.Equal(t, store.total, store.countAccounts())
 		assert.Equal(t, store.total, 1)
 	})
@@ -64,7 +63,7 @@ func TestAccountBatchSaving(t *testing.T) {
 
 		for i := 0; i < 100; i++ {
 			acc, _ := account.GenerateTestAccount(i)
-			store.updateAccount(acc)
+			assert.NoError(t, store.updateAccount(acc))
 		}
 
 		assert.Equal(t, store.total, store.countAccounts())

@@ -78,14 +78,6 @@ func (syncer *Synchronizer) broadcastTxs(txs []tx.Tx) {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastTxsReq(hashes []crypto.Hash) {
-	if len(hashes) == 0 {
-		return
-	}
-	msg := message.NewTxsReqMessage(hashes)
-	syncer.publishMessage(msg)
-}
-
 func (syncer *Synchronizer) broadcastHeartBeat() {
 	hrs := syncer.consensus.HRS()
 

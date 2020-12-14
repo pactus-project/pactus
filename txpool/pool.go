@@ -26,7 +26,6 @@ type txPool struct {
 
 	config      *Config
 	checekr     *execution.Execution
-	sandbox     sandbox.Sandbox
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
 	broadcastCh chan *message.Message
@@ -56,7 +55,9 @@ func (pool *txPool) AppendTxs(trxs []tx.Tx) {
 	defer pool.lk.Unlock()
 
 	for _, trx := range trxs {
-		pool.appendTx(trx)
+		if err := pool.appendTx(trx); err != nil {
+			pool.logger.Info("Error on appending a transaction", "err", err)
+		}
 	}
 }
 

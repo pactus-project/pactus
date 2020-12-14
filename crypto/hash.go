@@ -30,7 +30,13 @@ func Hash256(data []byte) []byte {
 
 func Hash160(data []byte) []byte {
 	h := ripemd160.New()
-	h.Write(data)
+	n, err := h.Write(data)
+	if err != nil {
+		return nil
+	}
+	if n != len(data) {
+		return nil
+	}
 	return h.Sum(nil)
 }
 
@@ -104,7 +110,9 @@ func (h Hash) MarshalJSON() ([]byte, error) {
 
 func (h *Hash) UnmarshalJSON(bz []byte) error {
 	var text string
-	json.Unmarshal(bz, &text)
+	if err := json.Unmarshal(bz, &text); err != nil {
+		return err
+	}
 	return h.UnmarshalText([]byte(text))
 }
 
@@ -114,14 +122,6 @@ func (h Hash) MarshalCBOR() ([]byte, error) {
 
 func (h *Hash) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &h.data.Hash)
-}
-
-func (h Hash) MarshalAmino() ([]byte, error) {
-	return h.MarshalCBOR()
-}
-
-func (h *Hash) UnmarshalAmino(bs []byte) error {
-	return h.UnmarshalCBOR(bs)
 }
 
 /// -------
@@ -144,6 +144,9 @@ func (h Hash) EqualsTo(r Hash) bool {
 func GenerateTestHash() Hash {
 	p := make([]byte, 10)
 	random := rand.Reader
-	random.Read(p)
+	_, err := random.Read(p)
+	if err != nil {
+		return UndefHash
+	}
 	return HashH(p)
 }
