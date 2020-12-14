@@ -104,7 +104,7 @@ func LoadOrNewState(
 			return nil, err
 		}
 	} else {
-		logger.Info("Try to load that last state info", "height", height)
+		logger.Info("Try to load the last state info", "height", height)
 		err := st.tryLoadLastInfo()
 		if err != nil {
 			return nil, err

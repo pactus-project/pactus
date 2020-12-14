@@ -23,7 +23,7 @@ func TestMerkleTree(t *testing.T) {
 	}
 
 	tree1 := NewTreeFromHashes(hashes)
-	if tree1.Root().String() != "905b17edcf8b6fb1415b32cdbab3e02c2c93f80a345de80ea2bbf9feba9f5a55" {
+	if tree1.Root().String() != "e6061997a9011668bcf216020aaad9cc7f5f34d5b6f78f1e63ef6257c1aa1f37" {
 		t.Errorf("Invalid merkle root")
 	}
 
@@ -32,8 +32,8 @@ func TestMerkleTree(t *testing.T) {
 }
 
 func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
-	hasher = func(data ...[]byte) crypto.Hash {
-		first := sha256.Sum256(data[0])
+	hasher = func(data []byte) crypto.Hash {
+		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
 		h, _ := crypto.HashFromRawBytes(second[:])
 		return h
@@ -66,8 +66,8 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 
 func TestMerkleTree_Bitcoin_Block113345(t *testing.T) {
 
-	hasher = func(data ...[]byte) crypto.Hash {
-		first := sha256.Sum256(data[0])
+	hasher = func(data []byte) crypto.Hash {
+		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
 		h, _ := crypto.HashFromRawBytes(second[:])
 		return h

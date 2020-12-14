@@ -24,10 +24,10 @@ func TestCommitMarshaling(t *testing.T) {
 	d2, err := cbor.Marshal(c)
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
-	expected1, _ := crypto.HashFromString("bff193b1129bb1f15b73964d81916d71d4572f12fd413ca007e7370cf9bdfb00")
+	expected1, _ := crypto.HashFromString("52568b5383dd52e75bd8a956c49d80986b49802c15fc51f87a6f0650420a1bac")
 	assert.Equal(t, c.CommittersHash(), expected1)
 
-	expected2, _ := crypto.HashFromString("576b40382ae8cae729c64168aa91f159c75392ddb851ca48ae5b1e1a79ba62c5")
+	expected2, _ := crypto.HashFromString("e57cf7135136274b6db0165408dc2ff3ccfd22f2a13b85292e0984e79a310e17")
 	assert.Equal(t, c.Hash(), expected2)
 }
 

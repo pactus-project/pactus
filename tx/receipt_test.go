@@ -47,7 +47,7 @@ func TestSanityCheck(t *testing.T) {
 }
 func TestReceiptDecodingAndHash(t *testing.T) {
 	d, _ := hex.DecodeString("a30100025820fa62c80a6e5a929d89acc2d5b169c47e2f12dd79b8ee9ccb209f38abaacc510f035820b3f91e81559252054698b20e658c25b2dd7b4f6e4cb928641921e7cef19de346")
-	h, _ := crypto.HashFromString("00f6c3b495b4e85184d65cc08978e0ad26411f897c4e8781afbeb1a2f7cb5100")
+	h, _ := crypto.HashFromString("5aef9dfba6969624095dd4eb593cd0212a1500f82d48a82c77f622941de5692b")
 	var r Receipt
 	err := r.UnmarshalCBOR(d)
 	assert.NoError(t, err)
