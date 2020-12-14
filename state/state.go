@@ -95,26 +95,23 @@ func LoadOrNewState(
 	}
 	st.store = store
 
-	height := store.LastBlockHeight()
-
-	if height == 0 {
-		err := st.makeGenesisState(genDoc)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		logger.Info("Try to load the last state info", "height", height)
+	if store.HasAnyBlock() {
 		err := st.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		err := st.makeGenesisState(genDoc)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	st.txPoolSandbox, err = newSandbox(store, st.params, height)
+	st.txPoolSandbox, err = newSandbox(store, st.params, st.lastBlockHeight)
 	if err != nil {
 		return nil, err
 	}
-	st.executionSandbox, err = newSandbox(store, st.params, height)
+	st.executionSandbox, err = newSandbox(store, st.params, st.lastBlockHeight)
 	if err != nil {
 		return nil, err
 	}
@@ -129,6 +126,7 @@ func (st *state) tryLoadLastInfo() error {
 	if err != nil {
 		return err
 	}
+	logger.Info("Try to load the last state info", "height", height)
 
 	b, err := st.store.BlockByHeight(height)
 	if err != nil {

@@ -188,9 +188,9 @@ func (s *Store) UpdateValidator(acc *validator.Validator) {
 	}
 }
 
-func (s *Store) LastBlockHeight() int {
+func (s *Store) HasAnyBlock() bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.lastHeight()
+	return s.blockStore.hasAnyBlock()
 }

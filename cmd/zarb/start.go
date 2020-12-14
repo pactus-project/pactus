@@ -207,7 +207,7 @@ func Start() func(c *cli.Cmd) {
 			signer := keyObj.ToSigner()
 			node, err := node.NewNode(gen, conf, signer)
 			if err != nil {
-				cmd.PrintErrorMsg("Could not create node. %v", err)
+				cmd.PrintErrorMsg("Could not initialize node. %v", err)
 				return
 			}
 

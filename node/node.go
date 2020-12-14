@@ -121,7 +121,7 @@ func (n *Node) Stop() {
 
 	n.network.Stop()
 	n.sync.Stop()
-	n.capnp.StopServer()
-	n.http.StopServer()
 	n.state.Close()
+	n.http.StopServer()
+	n.capnp.StopServer()
 }

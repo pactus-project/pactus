@@ -2,6 +2,7 @@ package state
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -33,7 +34,7 @@ func (st *state) saveLastInfo(height int, commit *block.Commit, lastReceiptHash 
 func (st *state) loadLastInfo() (int, *block.Commit, *crypto.Hash, error) {
 	path := st.config.Store.Path + "/last_info.json"
 	if !util.PathExists(path) {
-		return 0, nil, nil, nil
+		return 0, nil, nil, fmt.Errorf("Unable to load %v", path)
 	}
 	bs, err := util.ReadFile(path)
 	if err != nil {
