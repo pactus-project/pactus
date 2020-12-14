@@ -28,7 +28,7 @@ jobs:
         file: ./coverage.txt
 
     - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.29
-          args: --exclude="SA1019"
+      uses: golangci/golangci-lint-action@v2
+      with:
+        version: v1.29
+        args: --exclude="SA1019"
