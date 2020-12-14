@@ -130,7 +130,7 @@ func TestTotalAccountCounter(t *testing.T) {
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
 		acc := sb.MakeNewAccount(addr)
-		assert.Equal(t, acc.Number(), 2)
+		assert.Equal(t, acc.Number(), 1)
 
 		sb.Clear()
 		assert.Equal(t, sb.totalAccounts, 1)
@@ -154,7 +154,7 @@ func TestTotalValidatorCounter(t *testing.T) {
 
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		val := sb.MakeNewValidator(pub)
-		assert.Equal(t, val.Number(), 2)
+		assert.Equal(t, val.Number(), 1)
 
 		sb.Clear()
 		assert.Equal(t, sb.totalValidators, 1)
