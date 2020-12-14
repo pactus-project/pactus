@@ -50,14 +50,6 @@ func (set *ValidatorSet) TotalPower() int {
 	return len(set.validators)
 }
 
-func (set *ValidatorSet) UpdateMaximumPower(maximumPower int) {
-	set.lk.Lock()
-	defer set.lk.Unlock()
-
-	panic("Not supported yet")
-	set.maximumPower = maximumPower
-}
-
 func (set *ValidatorSet) MaximumPower() int {
 	return set.maximumPower
 }
