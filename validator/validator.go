@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -45,24 +44,12 @@ func (val Validator) Power() int64 {
 	return 1
 }
 
-func (val *Validator) SubtractFromStake(amt int64) error {
-	if amt < 0 {
-		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
-	}
-
-	if amt > val.Stake() {
-		return errors.Errorf(errors.ErrInsufficientFunds, "Attempt to subtract %v from the balance of %s", amt, val.Address())
-	}
+func (val *Validator) SubtractFromStake(amt int64) {
 	val.data.Stake -= amt
-	return nil
 }
 
-func (val *Validator) AddToStake(amt int64) error {
-	if amt < 0 {
-		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
-	}
+func (val *Validator) AddToStake(amt int64) {
 	val.data.Stake += amt
-	return nil
 }
 
 func (val *Validator) IncSequence() {

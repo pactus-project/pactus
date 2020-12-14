@@ -40,7 +40,7 @@ func setup(t *testing.T) {
 	syncConf = TestConfig()
 	val, key := validator.GenerateTestValidator(0)
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
-	assert.NoError(t, acc.AddToBalance(21000000000000))
+	acc.AddToBalance(21000000000000)
 	signer = crypto.NewSigner(key)
 	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	ctx = context.Background()
@@ -61,7 +61,7 @@ func setup(t *testing.T) {
 		signer.SignMsg(v)
 		sig := v.Signature()
 		c := block.NewCommit(0, []block.Committer{
-			block.Committer{Status: 1, Address: signer.Address()}},
+			{Status: 1, Address: signer.Address()}},
 			*sig)
 
 		assert.NoError(t, st.ApplyBlock(i+1, b, *c))

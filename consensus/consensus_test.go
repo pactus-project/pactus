@@ -54,7 +54,7 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	}
 
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
-	assert.NoError(t, acc.AddToBalance(21000000000000))
+	acc.AddToBalance(21000000000000)
 
 	ch := make(chan *message.Message, 10)
 	go func() {

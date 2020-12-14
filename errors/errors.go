@@ -13,7 +13,6 @@ const (
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
-	ErrInvalidAmount
 	ErrInvalidSequence
 	ErrInvalidTx
 	ErrInvalidReceipt
@@ -36,7 +35,6 @@ var messages = map[int]string{
 	ErrInvalidPublicKey:  "Invalid public key",
 	ErrInvalidPrivateKey: "Invalid private key",
 	ErrInvalidSignature:  "Invalid signature",
-	ErrInvalidAmount:     "Invalid amount",
 	ErrInvalidSequence:   "Invalid sequence",
 	ErrInvalidTx:         "Invalid transaction",
 	ErrInvalidReceipt:    "Invalid receipt",
