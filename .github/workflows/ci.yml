@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Test
+name: CI
 jobs:
   test:
     strategy:
@@ -12,24 +12,26 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
-        
+
     - name: Checkout code
       uses: actions/checkout@v2
-    
+
     - name: Install dependencies
       run: |
         go version
         go get -u golang.org/x/lint/golint
-    
+
     - name: Build
       run: make build
-        
+       
     - name: Test With Coverage
       run: go test -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic ./...
-    
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
-        
+      with:
+        file: ./coverage.txt        
+
     - name: Run Vet & Lint
       run: |
         go vet ./...
