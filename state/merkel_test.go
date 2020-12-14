@@ -10,6 +10,8 @@ import (
 )
 
 func TestChangeAcc(t *testing.T) {
+	setup(t)
+
 	st1, _ := mockState(t, nil)
 	st2, _ := mockState(t, nil)
 

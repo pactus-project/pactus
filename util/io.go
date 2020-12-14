@@ -82,10 +82,7 @@ func IsDirEmpty(name string) bool {
 	_, err = f.Readdir(1)
 
 	// and if the file is EOF... well, the dir is empty.
-	if err == io.EOF {
-		return true
-	}
-	return false
+	return err == io.EOF
 }
 
 func IsDirNotExistsOrEmpty(name string) bool {

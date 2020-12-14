@@ -10,6 +10,8 @@ import (
 )
 
 func TestAccountChange(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, nil)
 	sb, err := newSandbox(st.store, st.params, 0)
 	assert.NoError(t, err)
@@ -27,7 +29,7 @@ func TestAccountChange(t *testing.T) {
 		assert.Equal(t, acc1, acc1a)
 
 		acc1a.IncSequence()
-		acc1a.SetBalance(acc1a.Balance() + 1)
+		assert.NoError(t, acc1a.AddToBalance(acc1a.Balance()+1))
 
 		sb.UpdateAccount(acc1a)
 
@@ -43,7 +45,7 @@ func TestAccountChange(t *testing.T) {
 		acc2 := sb.MakeNewAccount(addr)
 
 		acc2.IncSequence()
-		acc2.SetBalance(acc2.Balance() + 1)
+		assert.NoError(t, acc2.AddToBalance(acc2.Balance()+1))
 
 		sb.UpdateAccount(acc2)
 		acc22 := sb.Account(acc2.Address())
@@ -56,6 +58,8 @@ func TestAccountChange(t *testing.T) {
 }
 
 func TestValidatorChange(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, nil)
 	sb, err := newSandbox(st.store, st.params, 0)
 	assert.NoError(t, err)
@@ -73,7 +77,7 @@ func TestValidatorChange(t *testing.T) {
 		assert.Equal(t, val1.Hash(), val1a.Hash())
 
 		val1a.IncSequence()
-		val1a.AddToStake(val1a.Stake() + 1)
+		assert.NoError(t, val1a.AddToStake(val1a.Stake()+1))
 
 		sb.UpdateValidator(val1a)
 
@@ -89,7 +93,7 @@ func TestValidatorChange(t *testing.T) {
 		val2 := sb.MakeNewValidator(pub)
 
 		val2.IncSequence()
-		val2.AddToStake(val2.Stake() + 1)
+		assert.NoError(t, val2.AddToStake(val2.Stake()+1))
 
 		sb.UpdateValidator(val2)
 		val22 := sb.Validator(val2.Address())
@@ -102,6 +106,8 @@ func TestValidatorChange(t *testing.T) {
 }
 
 func TestAddValidatorToSet(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, nil)
 	_, pub1, _ := crypto.GenerateTestKeyPair()
 
@@ -124,6 +130,7 @@ func TestTotalAccountCounter(t *testing.T) {
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
 		acc := sb.MakeNewAccount(addr)
+		assert.Equal(t, acc.Number(), 1)
 
 		sb.Clear()
 		assert.Equal(t, sb.totalAccounts, 1)
@@ -147,6 +154,7 @@ func TestTotalValidatorCounter(t *testing.T) {
 
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		val := sb.MakeNewValidator(pub)
+		assert.Equal(t, val.Number(), 1)
 
 		sb.Clear()
 		assert.Equal(t, sb.totalValidators, 1)

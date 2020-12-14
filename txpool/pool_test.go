@@ -21,14 +21,14 @@ var acc1 *account.Account
 var acc1Pub crypto.PublicKey
 var acc1Priv crypto.PrivateKey
 
-func init() {
+func setup(t *testing.T) {
 	logger.InitLogger(logger.DefaultConfig())
 	conf := TestConfig()
 	p, _ := NewTxPool(conf, nil)
 	sb = sandbox.NewMockSandbox()
 	addr, pub, priv := crypto.GenerateTestKeyPair()
 	acc1 = account.NewAccount(addr, 0)
-	acc1.AddToBalance(10000000000)
+	assert.NoError(t, acc1.AddToBalance(10000000000))
 	sb.UpdateAccount(acc1)
 	acc1Priv = priv
 	acc1Pub = pub
@@ -37,6 +37,8 @@ func init() {
 }
 
 func TestAppendAndRemove(t *testing.T) {
+	setup(t)
+
 	stamp := crypto.GenerateTestHash()
 	sb.AppendStampAndUpdateHeight(100, stamp)
 
@@ -49,6 +51,8 @@ func TestAppendAndRemove(t *testing.T) {
 }
 
 func TestSendTxValidity(t *testing.T) {
+	setup(t)
+
 	stamp := crypto.GenerateTestHash()
 	senderAddr, senderPub, senderPriv := acc1Pub.Address(), acc1Pub, acc1Priv
 	receiverAddr, _, _ := crypto.GenerateTestKeyPair()
@@ -106,6 +110,7 @@ func TestSendTxValidity(t *testing.T) {
 }
 
 func TestStampValidity(t *testing.T) {
+	setup(t)
 
 	stamp1 := crypto.GenerateTestHash()
 	stamp2 := crypto.GenerateTestHash()

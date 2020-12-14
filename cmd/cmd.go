@@ -56,7 +56,7 @@ func newTerminalPrompter() *terminalPrompter {
 		p.normalMode = normalMode
 		p.rawMode = rawMode
 		// Switch back to normal mode while we're not prompting.
-		normalMode.ApplyMode()
+		applyMode(normalMode)
 	}
 	p.SetCtrlCAborts(true)
 	p.SetTabCompletionStyle(liner.TabPrints)
@@ -69,8 +69,8 @@ func newTerminalPrompter() *terminalPrompter {
 // The method returns the input provided by the user.
 func (p *terminalPrompter) PromptPassword(prompt string) (string, error) {
 	if p.supported {
-		p.rawMode.ApplyMode()
-		defer p.normalMode.ApplyMode()
+		applyMode(p.rawMode)
+		defer applyMode(p.normalMode)
 		return p.State.PasswordPrompt(prompt)
 	}
 	if !p.warned {
@@ -88,8 +88,8 @@ func (p *terminalPrompter) PromptPassword(prompt string) (string, error) {
 // data to be entered, returning the input of the user.
 func (p *terminalPrompter) PromptInput(prompt string) (string, error) {
 	if p.supported {
-		p.rawMode.ApplyMode()
-		defer p.normalMode.ApplyMode()
+		applyMode(p.rawMode)
+		defer applyMode(p.normalMode)
 	} else {
 		// liner tries to be smart about printing the prompt
 		// and doesn't print anything if input is redirected.
@@ -248,4 +248,10 @@ func TrapSignal(cleanupFunc func()) {
 		}
 		os.Exit(exitCode)
 	}()
+}
+
+func applyMode(m liner.ModeApplier) {
+	if err := m.ApplyMode(); err != nil {
+		panic(err)
+	}
 }

@@ -15,7 +15,7 @@ func TestRetreiveValidator(t *testing.T) {
 
 	t.Run("Add validator, should able to retrieve", func(t *testing.T) {
 		assert.False(t, store.hasValidator(val.Address()))
-		store.updateValidator(val)
+		assert.NoError(t, store.updateValidator(val))
 		assert.True(t, store.hasValidator(val.Address()))
 		val2, err := store.validator(val.Address())
 		assert.NoError(t, err)
@@ -23,8 +23,8 @@ func TestRetreiveValidator(t *testing.T) {
 	})
 
 	t.Run("Update validator, should update database", func(t *testing.T) {
-		val.AddToStake(1)
-		store.updateValidator(val)
+		assert.NoError(t, val.AddToStake(1))
+		assert.NoError(t, store.updateValidator(val))
 
 		val2, err := store.validator(val.Address())
 		assert.NoError(t, err)
@@ -41,16 +41,15 @@ func TestValidatorCounter(t *testing.T) {
 		assert.Equal(t, store.total, store.countValidators())
 		assert.Equal(t, store.total, 0)
 
-		store.updateValidator(val)
+		assert.NoError(t, store.updateValidator(val))
 		assert.Equal(t, store.total, store.countValidators())
 		assert.Equal(t, store.total, 1)
 	})
 
 	t.Run("Update validator, should not increatse counter", func(t *testing.T) {
-		val.AddToStake(1)
-		store.updateValidator(val)
+		assert.NoError(t, val.AddToStake(1))
 
-		store.updateValidator(val)
+		assert.NoError(t, store.updateValidator(val))
 		assert.Equal(t, store.total, store.countValidators())
 		assert.Equal(t, store.total, 1)
 	})
@@ -64,7 +63,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 
 		for i := 0; i < 100; i++ {
 			val, _ := validator.GenerateTestValidator(util.RandInt(1000))
-			store.updateValidator(val)
+			assert.NoError(t, store.updateValidator(val))
 		}
 
 		assert.Equal(t, store.total, store.countValidators())

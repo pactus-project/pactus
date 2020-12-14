@@ -36,11 +36,11 @@ var (
 	peerID       peer.ID
 )
 
-func init() {
+func setup(t *testing.T) {
 	syncConf = TestConfig()
 	val, key := validator.GenerateTestValidator(0)
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
-	acc.SetBalance(21000000000000)
+	assert.NoError(t, acc.AddToBalance(21000000000000))
 	signer = crypto.NewSigner(key)
 	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	ctx = context.Background()
@@ -64,7 +64,7 @@ func init() {
 			block.Committer{Status: 1, Address: signer.Address()}},
 			*sig)
 
-		st.ApplyBlock(i+1, b, *c)
+		assert.NoError(t, st.ApplyBlock(i+1, b, *c))
 
 		validBlocks = append(validBlocks, b)
 		validCommits = append(validCommits, *c)
@@ -87,10 +87,7 @@ func newTestSynchronizer(signer *crypto.Signer) (*Synchronizer, *mockNetworkAPI,
 	ch := make(chan *message.Message, 10)
 	go func() {
 		for {
-			select {
-			case <-ch:
-			default:
-			}
+			<-ch
 		}
 	}()
 
@@ -198,6 +195,7 @@ func TestDuplicateBlock(t *testing.T) {
 }
 
 func TestInvalidBlock(t *testing.T) {
+	setup(t)
 	sync, api, st := startTestSynchronizer(t, nil)
 
 	blocks := make([]block.Block, totalBlocks)

@@ -14,7 +14,7 @@ import (
 
 func TestMarshaling(t *testing.T) {
 	val1, _ := GenerateTestValidator(util.RandInt(1000))
-	val1.AddToStake(1)
+	assert.NoError(t, val1.AddToStake(1))
 	val1.IncSequence()
 
 	bs, err := val1.Encode()

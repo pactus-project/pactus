@@ -204,20 +204,20 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 	hrs := syncer.consensus.HRS()
 	if pld.Pulse.Height() == hrs.Height() {
 		if pld.Pulse.GreaterThan(hrs) {
-			// We are behind of the peer.
+			syncer.logger.Trace("Our consensus is behind of this peer.")
 			// Let's ask for more votes
 			hashes := syncer.consensus.AllVotesHashes()
 			syncer.broadcastVoteSet(hrs.Height(), hashes)
 		} else if pld.Pulse.LessThan(hrs) {
-			// We are ahead of the peer.
+			syncer.logger.Trace("Our consensus is ahead of this peer.")
 		} else {
-			// We are at the same step with this peer
+			syncer.logger.Trace("Our consensus is at the same step with this peer.")
 		}
 	} else if pld.Pulse.Height() > hrs.Height() {
 		// Ask for more blocks from this peer
 		syncer.broadcastBlocksReq(pld.Pulse.Height())
 	} else {
-		// We are ahead of this peer
+		syncer.logger.Trace("We are ahead of this peer.")
 	}
 }
 

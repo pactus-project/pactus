@@ -68,7 +68,9 @@ func NewSynchronizer(
 }
 
 func (syncer *Synchronizer) Start() error {
-	syncer.networkAPI.Start()
+	if err := syncer.networkAPI.Start(); err != nil {
+		return err
+	}
 
 	go syncer.broadcastLoop()
 
@@ -86,12 +88,10 @@ func (syncer *Synchronizer) Start() error {
 	return nil
 }
 
-func (syncer *Synchronizer) Stop() error {
+func (syncer *Synchronizer) Stop() {
 	syncer.ctx.Done()
 	syncer.networkAPI.Stop()
 	syncer.heartBeatTicker.Stop()
-
-	return nil
 }
 
 func (syncer *Synchronizer) maybeSynced() {

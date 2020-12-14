@@ -9,28 +9,27 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 var exe *Execution
 var sb *sandbox.MockSandbox
 var acc1 *account.Account
-var val1 *validator.Validator
 var priv1 crypto.PrivateKey
 var pub1 crypto.PublicKey
 
-func setup() {
+func setup(t *testing.T) {
 	sb = sandbox.NewMockSandbox()
 	exe = NewExecution(sb)
 
 	acc1, priv1 = account.GenerateTestAccount(1)
 	pub1 = priv1.PublicKey()
-	acc1.SetBalance(3000)
+	assert.NoError(t, acc1.SubtractFromBalance(acc1.Balance())) // make balance zero
+	assert.NoError(t, acc1.AddToBalance(3000))
 	sb.UpdateAccount(acc1)
 }
 
 func TestExecuteSendTx(t *testing.T) {
-	setup()
+	setup(t)
 
 	rcvAddr, recPub, rcvPriv := crypto.GenerateTestKeyPair()
 	stamp := crypto.GenerateTestHash()
@@ -67,7 +66,7 @@ func TestExecuteSendTx(t *testing.T) {
 }
 
 func TestExecuteBondTx(t *testing.T) {
-	setup()
+	setup(t)
 
 	valAddr, valPub, valPriv := crypto.GenerateTestKeyPair()
 	stamp := crypto.GenerateTestHash()

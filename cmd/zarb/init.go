@@ -15,7 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-// Init initializes the zarb blockchain
+// Init initializes a node for zarb blockchain
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		c.Hidden = true
@@ -64,27 +64,35 @@ func Init() func(c *cli.Cmd) {
 	}
 }
 
-//make genisis file while on initialize
+// makeGenesis makes genisis file while on initialize
 func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 
 	// create  accounts for genesis
 	accs := make([]*account.Account, 5)
 	// Mintbase account
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
-	acc.AddToBalance(21000000000000)
+	if err := acc.AddToBalance(21000000000000); err != nil {
+		return nil
+	}
 	accs[0] = acc
 
 	for i := 1; i < len(accs); i++ {
 		k := key.GenKey()
-		key.EncryptKeyFile(k, workingDir+"/keys/"+k.Address().String()+".json", "", "")
+		if err := key.EncryptKeyFile(k, workingDir+"/keys/"+k.Address().String()+".json", "", ""); err != nil {
+			return nil
+		}
 		acc := account.NewAccount(k.Address(), i+1)
-		acc.AddToBalance(1000000)
+		if err := acc.AddToBalance(1000000); err != nil {
+			return nil
+		}
 		accs[i] = acc
 	}
 
 	// create validator account for genesis
 	k := key.GenKey()
-	key.EncryptKeyFile(k, workingDir+"/validator_key.json", "", "")
+	if err := key.EncryptKeyFile(k, workingDir+"/validator_key.json", "", ""); err != nil {
+		return nil
+	}
 	val := validator.NewValidator(k.PublicKey(), 0, 0)
 	vals := []*validator.Validator{val}
 
@@ -96,7 +104,7 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 
 }
 
-//make configuration file
+// makeConfigfile makes configuration file
 func makeConfigfile() *config.Config {
 	conf := config.DefaultConfig()
 	return conf

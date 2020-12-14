@@ -62,10 +62,10 @@ func (m *Message) SanityCheck() error {
 		return err
 	}
 	if m.Type != m.Payload.Type() {
-		errors.Errorf(errors.ErrInvalidMessage, "invalid message type")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type")
 	}
 	if m.Flags != 0 {
-		errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
 	}
 	return nil
 }

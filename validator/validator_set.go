@@ -50,14 +50,6 @@ func (set *ValidatorSet) TotalPower() int {
 	return len(set.validators)
 }
 
-func (set *ValidatorSet) UpdateMaximumPower(maximumPower int) {
-	set.lk.Lock()
-	defer set.lk.Unlock()
-
-	panic("Not supported yet")
-	set.maximumPower = maximumPower
-}
-
 func (set *ValidatorSet) MaximumPower() int {
 	return set.maximumPower
 }
@@ -73,7 +65,7 @@ func (set *ValidatorSet) Join(val *Validator) error {
 	if set.contains(val.Address()) {
 		return errors.Errorf(errors.ErrGeneric, "Validator already is in the set")
 	}
-	if len(set.joined) >= (set.Power() / 3) {
+	if len(set.joined) >= (set.MaximumPower() / 3) {
 		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
 	}
 	set.joined = append(set.joined, val)

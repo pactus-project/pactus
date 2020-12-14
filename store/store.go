@@ -5,6 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -97,11 +98,13 @@ func (s *Store) BlockHeight(hash crypto.Hash) (int, error) {
 	return s.blockStore.blockHeight(hash)
 }
 
-func (s *Store) SaveTransaction(ctrx tx.CommittedTx) error {
+func (s *Store) SaveTransaction(ctrx tx.CommittedTx) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.saveTx(ctrx)
+	if err := s.txStore.saveTx(ctrx); err != nil {
+		logger.Panic("Error on saving atransaction: %v", err)
+	}
 }
 
 func (s *Store) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
@@ -143,7 +146,9 @@ func (s *Store) UpdateAccount(acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.accountStore.updateAccount(acc)
+	if err := s.accountStore.updateAccount(acc); err != nil {
+		logger.Panic("Error on updating an account: %v", err)
+	}
 }
 
 func (s *Store) HasValidator(addr crypto.Address) bool {
@@ -178,7 +183,9 @@ func (s *Store) UpdateValidator(acc *validator.Validator) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.validatorStore.updateValidator(acc)
+	if err := s.validatorStore.updateValidator(acc); err != nil {
+		logger.Panic("Error on updating a validator: %v", err)
+	}
 }
 
 func (s *Store) LastBlockHeight() int {

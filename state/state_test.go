@@ -21,12 +21,12 @@ var mockTxPool *txpool.MockTxPool
 var gen *genesis.Genesis
 var valSigner crypto.Signer
 
-func init() {
+func setup(t *testing.T) {
 	mockTxPool = txpool.NewMockTxPool()
 
 	_, pb, priv := crypto.GenerateTestKeyPair()
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
-	acc.SetBalance(21000000000000)
+	assert.NoError(t, acc.AddToBalance(21000000000000))
 	val := validator.NewValidator(pb, 0, 0)
 	gen = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	valSigner = crypto.NewSigner(priv)
@@ -50,6 +50,8 @@ func mockState(t *testing.T, signer *crypto.Signer) (*state, crypto.Address) {
 }
 
 func TestProposeBlockValidation(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, &valSigner)
 	block := st.ProposeBlock()
 	err := st.ValidateBlock(block)
@@ -67,6 +69,8 @@ func propsoeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
 }
 
 func TestLoadState(t *testing.T) {
+	setup(t)
+
 	st1, _ := mockState(t, &valSigner)
 	st2, _ := mockState(t, &valSigner)
 
@@ -81,13 +85,15 @@ func TestLoadState(t *testing.T) {
 	b2 := st1.ProposeBlock()
 
 	// Load state and propose second block
-	st2.tryLoadLastInfo()
+	assert.NoError(t, st2.tryLoadLastInfo())
 	b22 := st2.ProposeBlock()
 
 	assert.Equal(t, b2.Hash(), b22.Hash())
 }
 
 func TestBlockSubsidy(t *testing.T) {
+	setup(t)
+
 	interval := 210000
 	assert.Equal(t, int64(5*1e8), calcBlockSubsidy(1, 210000))
 	assert.Equal(t, int64(5*1e8), calcBlockSubsidy((1*interval)-1, 210000))
@@ -97,6 +103,8 @@ func TestBlockSubsidy(t *testing.T) {
 }
 
 func TestApplyBlocks(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, &valSigner)
 	b1, c1 := propsoeAndSignBlock(t, st)
 	invBlock, _ := block.GenerateTestBlock(nil)

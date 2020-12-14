@@ -90,7 +90,9 @@ func (addr Address) MarshalJSON() ([]byte, error) {
 
 func (addr *Address) UnmarshalJSON(bz []byte) error {
 	var text string
-	json.Unmarshal(bz, &text)
+	if err := json.Unmarshal(bz, &text); err != nil {
+		return err
+	}
 	return addr.UnmarshalText([]byte(text))
 }
 
@@ -100,14 +102,6 @@ func (addr Address) MarshalCBOR() ([]byte, error) {
 
 func (addr *Address) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &addr.data.Address)
-}
-
-func (addr Address) MarshalAmino() ([]byte, error) {
-	return addr.MarshalCBOR()
-}
-
-func (addr *Address) UnmarshalAmino(bs []byte) error {
-	return addr.UnmarshalCBOR(bs)
 }
 
 /// -------

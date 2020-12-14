@@ -102,7 +102,9 @@ func (sb *sandbox) CommitAndClear(set *validator.ValidatorSet) error {
 		}
 
 		if val.addToSet {
-
+			if err := set.Join(val.validator); err != nil {
+				panic("Let's panic for now, Fix me!")
+			}
 		}
 	}
 

@@ -61,12 +61,6 @@ func (s *Server) StartServer() error {
 	s.listener = l
 	go func() {
 		for {
-			defer func() {
-				if r := recover(); r != nil {
-					s.logger.Error("Recovered from a panic", r)
-				}
-			}()
-
 			err := http.Serve(l, nil)
 			if err != nil {
 				s.logger.Error("Error on a connection", "error", err)
@@ -77,19 +71,17 @@ func (s *Server) StartServer() error {
 	return nil
 }
 
-func (s *Server) StopServer() error {
+func (s *Server) StopServer() {
 	if s.server.Client != nil {
 		s.server.Client.Close()
 	}
-
-	return nil
 }
 
 func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	buf.WriteString("<html><body><br>")
 
-	s.router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+	err := s.router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		pathTemplate, err := route.GetPathTemplate()
 		if err == nil {
 			link := pathTemplate
@@ -103,9 +95,15 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 		return nil
 	})
 
+	if err != nil {
+		s.logger.Error("Unable to walk through methods", "err", err)
+		return
+	}
+
 	buf.WriteString("</body></html>")
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(200)
-	w.Write(buf.Bytes())
-
+	if _, err = w.Write(buf.Bytes()); err != nil {
+		s.logger.Error("Unable to write buffer", "err", err)
+	}
 }

@@ -9,6 +9,7 @@ import (
 )
 
 func TestSendBlocks(t *testing.T) {
+	setup(t)
 	sync, api, st := newTestSynchronizer(nil)
 
 	len := 12 //len(validBlocks)

@@ -37,7 +37,7 @@ func TestEncryptionData(t *testing.T) {
 	k1 := GenKey()
 	//Encrypts the key json blob
 	bs, err := EncryptKey(k1, auth, "")
-	fmt.Printf(string(bs))
+
 	assert.NoError(t, err)
 	//Decrypts Json Object
 	k2, err := DecryptKey(bs, auth)
@@ -57,7 +57,7 @@ func TestEncryptionData(t *testing.T) {
 func TestNonEncryptied(t *testing.T) {
 	k1 := GenKey()
 	bs, _ := EncryptKey(k1, "", "")
-	fmt.Printf(string(bs))
+	fmt.Println(string(bs))
 	k2, _ := DecryptKey(bs, "")
 	assert.Equal(t, k1, k2)
 }

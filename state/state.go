@@ -63,7 +63,6 @@ type state struct {
 	lastReceiptsHash crypto.Hash
 	lastCommit       *block.Commit
 	lastBlockTime    time.Time
-	updateCh         chan int
 	logger           *logger.Logger
 }
 
@@ -270,7 +269,9 @@ func (st *state) ProposeBlock() block.Block {
 	}
 
 	rewardTx := st.craeteMintbaseTx()
-	st.txPool.AppendTxAndBroadcast(*rewardTx)
+	if err := st.txPool.AppendTxAndBroadcast(*rewardTx); err != nil {
+		st.logger.Panic("Our mintbase transaction is invalid", "err", err)
+	}
 
 	txHashes := block.NewTxHashes()
 	txHashes.Append(rewardTx.Hash())
@@ -349,8 +350,11 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
+	// TODO: FIX ME
 	// Commit the changes
-	st.executionSandbox.CommitAndClear(st.validatorSet)
+	if err := st.executionSandbox.CommitAndClear(st.validatorSet); err != nil {
+		return err
+	}
 
 	// Save txs and reciepts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
@@ -361,6 +365,8 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		receiptsHashes[i] = ctrx.Receipt.Hash()
 	}
 
+	// TODO:
+	// Should panic?
 	if err := st.store.SaveBlock(block, st.lastBlockHeight+1); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "Saving block failed: %v", err)
 	}
@@ -380,7 +386,9 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 
 	st.executionSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
-	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
+	if err := st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash); err != nil {
+		st.logger.Error("Unable to write last state info", "err", err)
+	}
 	st.EvaluateSortition()
 
 	return nil

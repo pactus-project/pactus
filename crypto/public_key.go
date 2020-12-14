@@ -97,7 +97,9 @@ func (pb PublicKey) MarshalJSON() ([]byte, error) {
 
 func (pb *PublicKey) UnmarshalJSON(bz []byte) error {
 	var text string
-	json.Unmarshal(bz, &text)
+	if err := json.Unmarshal(bz, &text); err != nil {
+		return err
+	}
 	return pb.UnmarshalText([]byte(text))
 }
 
@@ -121,14 +123,6 @@ func (pb *PublicKey) UnmarshalCBOR(bs []byte) error {
 
 	*pb = p
 	return nil
-}
-
-func (pb PublicKey) MarshalAmino() ([]byte, error) {
-	return pb.MarshalCBOR()
-}
-
-func (pb *PublicKey) UnmarshalAmino(bs []byte) error {
-	return pb.UnmarshalCBOR(bs)
 }
 
 /// ----------
