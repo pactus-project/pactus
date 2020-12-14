@@ -40,12 +40,12 @@ func NewBlock(header Header, lastCommit *Commit, txHashes TxHashes) (*Block, err
 }
 
 func MakeBlock(timestamp time.Time, txHashes TxHashes,
-	lastBlockHash, CommitersHash, stateHash, lastReceiptsHash crypto.Hash,
+	lastBlockHash, CommittersHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
 
 	txsHash := txHashes.Hash()
 	header := NewHeader(1, timestamp,
-		txsHash, lastBlockHash, CommitersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
+		txsHash, lastBlockHash, CommittersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
 
 	b := Block{
 		data: blockData{
@@ -107,7 +107,7 @@ func (b Block) Fingerprint() string {
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.Header.StateHash().Fingerprint(),
-		b.data.Header.CommitersHash().Fingerprint(),
+		b.data.Header.CommittersHash().Fingerprint(),
 		b.data.TxHashes.Count(),
 	)
 }
@@ -181,11 +181,11 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 	sig := crypto.Aggregate(sigs)
 
 	commit := NewCommit(util.RandInt(10),
-		[]Commiter{
-			Commiter{Status: CommitSigned, Address: addr1},
-			Commiter{Status: CommitSigned, Address: addr2},
-			Commiter{Status: CommitSigned, Address: addr3},
-			Commiter{Status: CommitNotSigned, Address: addr4},
+		[]Committer{
+			Committer{Status: CommitSigned, Address: addr1},
+			Committer{Status: CommitSigned, Address: addr2},
+			Committer{Status: CommitSigned, Address: addr3},
+			Committer{Status: CommitNotSigned, Address: addr4},
 		},
 		sig)
 

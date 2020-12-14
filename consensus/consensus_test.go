@@ -49,11 +49,11 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 
 	vals := make([]*validator.Validator, 4)
 	for i, pval := range signers {
-		val := validator.NewValidator(pval.PublicKey(), 0)
+		val := validator.NewValidator(pval.PublicKey(), 0, i)
 		vals[i] = val
 	}
 
-	acc := account.NewAccount(crypto.MintbaseAddress)
+	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.SetBalance(21000000000000)
 
 	ch := make(chan *message.Message, 10)

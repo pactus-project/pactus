@@ -12,6 +12,13 @@ func TestUndefHash(t *testing.T) {
 	assert.Equal(t, UndefHash.RawBytes(), expected)
 }
 
+func TestEmptyHash(t *testing.T) {
+	expected, _ := hex.DecodeString("c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470PASS")
+	var data = []byte{}
+	h := Hash256(data)
+	assert.Equal(t, h, expected)
+}
+
 func TestHash256(t *testing.T) {
 	var data = []byte("zarb")
 	h := Hash256(data)

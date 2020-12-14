@@ -85,7 +85,7 @@ func (set *ValidatorSet) MoveToNewHeight(lastRound int) {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	// Firts update proposer index
+	// First update proposer index
 	set.proposerIndex = (set.proposerIndex + lastRound + 1) % len(set.validators)
 
 	set.validators = append(set.validators, set.joined...)
@@ -148,7 +148,7 @@ func (set *ValidatorSet) Proposer(round int) *Validator {
 	return set.validators[idx]
 }
 
-func (set *ValidatorSet) CommitersHash() crypto.Hash {
+func (set *ValidatorSet) CommittersHash() crypto.Hash {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
@@ -163,13 +163,12 @@ func (set *ValidatorSet) CommitersHash() crypto.Hash {
 	return merkle.Root()
 }
 
-// ---------
-// For tests
+// GenerateTestValidatorSet generates a validator set for testing purpose
 func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
-	val1, pv1 := GenerateTestValidator()
-	val2, pv2 := GenerateTestValidator()
-	val3, pv3 := GenerateTestValidator()
-	val4, pv4 := GenerateTestValidator()
+	val1, pv1 := GenerateTestValidator(0)
+	val2, pv2 := GenerateTestValidator(1)
+	val3, pv3 := GenerateTestValidator(2)
+	val4, pv4 := GenerateTestValidator(3)
 
 	keys := []crypto.PrivateKey{pv1, pv2, pv3, pv4}
 	vals := []*Validator{val1, val2, val3, val4}

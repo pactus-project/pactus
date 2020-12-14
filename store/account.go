@@ -8,7 +8,8 @@ import (
 )
 
 type accountStore struct {
-	db *leveldb.DB
+	db    *leveldb.DB
+	total int
 }
 
 var (
@@ -22,9 +23,16 @@ func newAccountStore(path string) (*accountStore, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &accountStore{
+	as := &accountStore{
 		db: db,
-	}, nil
+	}
+	as.total = as.countAccounts()
+
+	return as, nil
+}
+
+func (as *accountStore) close() error {
+	return as.db.Close()
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
@@ -47,15 +55,6 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 	}
 
 	return acc, nil
-}
-
-func (as *accountStore) len() int {
-	len := 0
-	as.iterateAccounts(func(acc *account.Account) (stop bool) {
-		len++
-		return false
-	})
-	return len
 }
 
 func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bool)) {
@@ -84,6 +83,18 @@ func (as *accountStore) updateAccount(acc *account.Account) error {
 	if err != nil {
 		panic(err)
 	}
+	if !as.hasAccount(acc.Address()) {
+		as.total++
+	}
 
 	return tryPut(as.db, accountKey(acc.Address()), data)
+}
+
+func (as *accountStore) countAccounts() int {
+	count := 0
+	as.iterateAccounts(func(acc *account.Account) bool {
+		count++
+		return false
+	})
+	return count
 }

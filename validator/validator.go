@@ -16,15 +16,17 @@ type Validator struct {
 
 type validatorData struct {
 	PublicKey     crypto.PublicKey `cbor:"1,keyasint"`
-	Sequence      int              `cbor:"2,keyasint"`
-	Stake         int64            `cbor:"3,keyasint"`
-	BondingHeight int              `cbor:"4,keyasint"`
+	Number        int              `cbor:"2,keyasint"`
+	Sequence      int              `cbor:"3,keyasint"`
+	Stake         int64            `cbor:"4,keyasint"`
+	BondingHeight int              `cbor:"5,keyasint"`
 }
 
-func NewValidator(publicKey crypto.PublicKey, bondingHeight int) *Validator {
+func NewValidator(publicKey crypto.PublicKey, number, bondingHeight int) *Validator {
 	val := &Validator{
 		data: validatorData{
 			PublicKey:     publicKey,
+			Number:        number,
 			BondingHeight: bondingHeight,
 		},
 	}
@@ -33,6 +35,7 @@ func NewValidator(publicKey crypto.PublicKey, bondingHeight int) *Validator {
 
 func (val *Validator) PublicKey() crypto.PublicKey { return val.data.PublicKey }
 func (val *Validator) Address() crypto.Address     { return val.data.PublicKey.Address() }
+func (val *Validator) Number() int                 { return val.data.Number }
 func (val *Validator) Sequence() int               { return val.data.Sequence }
 func (val *Validator) Stake() int64                { return val.data.Stake }
 func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
@@ -97,13 +100,11 @@ func (val Validator) Fingerprint() string {
 		val.Stake())
 }
 
-// ---------
-// For tests
-func GenerateTestValidator() (*Validator, crypto.PrivateKey) {
+// GenerateTestValidator generates a validator for testing purpose
+func GenerateTestValidator(number int) (*Validator, crypto.PrivateKey) {
 	_, pub, priv := crypto.GenerateTestKeyPair()
-	val := NewValidator(pub, 0)
+	val := NewValidator(pub, number, util.RandInt(100))
 	val.data.Stake = util.RandInt64(1000000000)
 	val.data.Sequence = util.RandInt(1000)
-	val.data.BondingHeight = util.RandInt(10000)
 	return val, priv
 }

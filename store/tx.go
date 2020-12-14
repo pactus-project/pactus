@@ -27,7 +27,11 @@ func newTxStore(path string) (*txStore, error) {
 	}, nil
 }
 
-func (bs *txStore) saveTx(ctrs tx.CommittedTx) error {
+func (ts *txStore) close() error {
+	return ts.db.Close()
+}
+
+func (ts *txStore) saveTx(ctrs tx.CommittedTx) error {
 	if err := ctrs.SanityCheck(); err != nil {
 		return err
 	}
@@ -36,16 +40,16 @@ func (bs *txStore) saveTx(ctrs tx.CommittedTx) error {
 		return err
 	}
 	txKey := txKey(ctrs.Tx.Hash())
-	err = tryPut(bs.db, txKey, data)
+	err = tryPut(ts.db, txKey, data)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (bs *txStore) tx(hash crypto.Hash) (*tx.CommittedTx, error) {
+func (ts *txStore) tx(hash crypto.Hash) (*tx.CommittedTx, error) {
 	txKey := txKey(hash)
-	data, err := tryGet(bs.db, txKey)
+	data, err := tryGet(ts.db, txKey)
 	if err != nil {
 		return nil, err
 	}

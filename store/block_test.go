@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLastBlock(t *testing.T) {
+func TestRetreiveBlockAndTransactions(t *testing.T) {
 	conf := TestConfig()
 	store, err := NewStore(conf)
 	assert.NoError(t, err)

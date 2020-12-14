@@ -5,7 +5,6 @@ import (
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 type BondExecutor struct {
@@ -25,7 +24,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 	}
 	bondVal := e.sandbox.Validator(pld.Validator.Address())
 	if bondVal == nil {
-		bondVal = validator.NewValidator(pld.Validator, e.sandbox.CurrentHeight())
+		bondVal = e.sandbox.MakeNewValidator(pld.Validator)
 	}
 	if bonderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", bonderAcc.Sequence()+1, trx.Sequence())

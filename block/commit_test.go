@@ -25,7 +25,7 @@ func TestCommitMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
 	expected1, _ := crypto.HashFromString("bff193b1129bb1f15b73964d81916d71d4572f12fd413ca007e7370cf9bdfb00")
-	assert.Equal(t, c.CommitersHash(), expected1)
+	assert.Equal(t, c.CommittersHash(), expected1)
 
 	expected2, _ := crypto.HashFromString("576b40382ae8cae729c64168aa91f159c75392ddb851ca48ae5b1e1a79ba62c5")
 	assert.Equal(t, c.Hash(), expected2)
@@ -34,25 +34,25 @@ func TestCommitMarshaling(t *testing.T) {
 func TestCommitMerkle(t *testing.T) {
 	b, _ := GenerateTestBlock(nil)
 
-	commiters := b.LastCommit().Commiters()
-	data := make([]crypto.Hash, len(commiters))
-	for i, c := range commiters {
+	committers := b.LastCommit().Committers()
+	data := make([]crypto.Hash, len(committers))
+	for i, c := range committers {
 		b := c.Address.RawBytes()
 		data[i] = crypto.HashH(b)
 	}
 	merkle := simpleMerkle.NewTreeFromHashes(data)
-	assert.Equal(t, merkle.Root(), b.LastCommit().CommitersHash())
+	assert.Equal(t, merkle.Root(), b.LastCommit().CommittersHash())
 }
 
 func TestCommitSanityCheck(t *testing.T) {
 	b, _ := GenerateTestBlock(nil)
 	c := b.LastCommit()
 	assert.NoError(t, c.SanityCheck())
-	c.data.Commiters[0].Status = 0 // not signed
+	c.data.Committers[0].Status = 0 // not signed
 	// Not enough signer
 	assert.Error(t, c.SanityCheck())
-	c.data.Commiters[3].Status = 1 // signed
+	c.data.Committers[3].Status = 1 // signed
 	assert.NoError(t, c.SanityCheck())
-	c.data.Commiters[3].Status = 2 // invalid status
+	c.data.Committers[3].Status = 2 // invalid status
 	assert.Error(t, c.SanityCheck())
 }

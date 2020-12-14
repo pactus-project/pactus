@@ -22,9 +22,9 @@ func (st *state) validateBlock(block block.Block) error {
 			"last receipts hash is not same as we expected. Expected %v, got %v", st.lastReceiptsHash, block.Header().LastReceiptsHash())
 	}
 
-	if !block.Header().CommitersHash().EqualsTo(st.validatorSet.CommitersHash()) {
+	if !block.Header().CommittersHash().EqualsTo(st.validatorSet.CommittersHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Commiters hash is not same as we expected. Expected %v, got %v", st.validatorSet.CommitersHash(), block.Header().CommitersHash())
+			"Committers hash is not same as we expected. Expected %v, got %v", st.validatorSet.CommittersHash(), block.Header().CommittersHash())
 	}
 
 	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
@@ -51,10 +51,10 @@ func (st *state) validateLastCommit(commit *block.Commit, blockHash crypto.Hash)
 		}
 
 		// TODO: add tests for this case
-		// Make sure the commiters are the cprrect one
-		if !commit.CommitersHash().EqualsTo(st.lastCommit.CommitersHash()) {
+		// Make sure the committers are the cprrect one
+		if !commit.CommittersHash().EqualsTo(st.lastCommit.CommittersHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last commiters are not same as we expected. Expected %v, got %v", st.lastCommit.CommitersHash(), commit.CommitersHash())
+				"Last committers are not same as we expected. Expected %v, got %v", st.lastCommit.CommittersHash(), commit.CommittersHash())
 		}
 
 		if commit.Round() != st.lastCommit.Round() {
@@ -70,12 +70,12 @@ func (st *state) validateLastCommit(commit *block.Commit, blockHash crypto.Hash)
 
 		signBytes := vote.CommitSignBytes(blockHash, commit.Round())
 		pubs := make([]crypto.PublicKey, 0)
-		for _, c := range commit.Commiters() {
+		for _, c := range commit.Committers() {
 			if c.HasSigned() {
 				val, _ := st.store.Validator(c.Address)
 				if val == nil {
 					return errors.Errorf(errors.ErrInvalidBlock,
-						"invalid commiter: %x", c.Address)
+						"invalid committer: %x", c.Address)
 				}
 				pubs = append(pubs, val.PublicKey())
 			}
@@ -96,20 +96,20 @@ func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash c
 		return err
 	}
 
-	if !commit.CommitersHash().EqualsTo(st.validatorSet.CommitersHash()) {
+	if !commit.CommittersHash().EqualsTo(st.validatorSet.CommittersHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last commiters are not same as we expected. Expected %v, got %v", st.validatorSet.CommitersHash(), commit.CommitersHash())
+			"Last committers are not same as we expected. Expected %v, got %v", st.validatorSet.CommittersHash(), commit.CommittersHash())
 	}
 
 	signBytes := vote.CommitSignBytes(blockHash, commit.Round())
 	pubs := make([]crypto.PublicKey, 0)
-	for _, c := range commit.Commiters() {
+	for _, c := range commit.Committers() {
 		if c.HasSigned() {
 			// Since this block belongs to current heght, we get validator info from validator set
 			val := st.validatorSet.Validator(c.Address)
 			if val == nil {
 				return errors.Errorf(errors.ErrInvalidBlock,
-					"invalid commiter: %x", c.Address)
+					"invalid committer: %x", c.Address)
 			}
 			pubs = append(pubs, val.PublicKey())
 		}

@@ -13,10 +13,9 @@ import (
 )
 
 func TestMarshaling(t *testing.T) {
-	addr, pb, _ := crypto.RandomKeyPair()
-	acc := account.NewAccount(addr)
+	acc, _ := account.GenerateTestAccount(0)
 	acc.AddToBalance(100000)
-	val := validator.NewValidator(pb, 0)
+	val, _ := validator.GenerateTestValidator(0)
 	gen1 := MakeGenesis("test", time.Now().Truncate(0), []*account.Account{acc}, []*validator.Validator{val}, 5)
 	gen2 := new(Genesis)
 

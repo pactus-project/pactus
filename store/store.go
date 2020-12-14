@@ -44,6 +44,22 @@ func NewStore(conf *Config) (*Store, error) {
 		validatorStore: validatorStore,
 	}, nil
 }
+func (s *Store) Close() error {
+	if err := s.blockStore.close(); err != nil {
+		return err
+	}
+	if err := s.txStore.close(); err != nil {
+		return err
+	}
+	if err := s.accountStore.close(); err != nil {
+		return err
+	}
+	if err := s.validatorStore.close(); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func (s *Store) SaveBlock(block block.Block, height int) error {
 	s.lk.Lock()
@@ -109,11 +125,11 @@ func (s *Store) Account(addr crypto.Address) (*account.Account, error) {
 	return s.accountStore.account(addr)
 }
 
-func (s *Store) AccountLen() int {
+func (s *Store) TotalAccounts() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.accountStore.len()
+	return s.accountStore.total
 }
 
 func (s *Store) IterateAccounts(consumer func(*account.Account) (stop bool)) {
@@ -144,11 +160,11 @@ func (s *Store) Validator(addr crypto.Address) (*validator.Validator, error) {
 	return s.validatorStore.validator(addr)
 }
 
-func (s *Store) ValidatorLen() int {
+func (s *Store) TotalValidators() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.validatorStore.len()
+	return s.validatorStore.total
 }
 
 func (s *Store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {

@@ -32,15 +32,15 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 	if bi.Height == 1 {
 		lastCommit = nil
 	} else {
-		commitersList, _ := clc.Commiters()
-		commiters := make([]block.Commiter, commitersList.Len())
-		for i := 0; i < commitersList.Len(); i++ {
-			c := commitersList.At(i)
-			commiters[i].Address = bytesToAddress(c.Address())
-			commiters[i].Status = int(c.Status())
+		list, _ := clc.Committers()
+		committers := make([]block.Committer, list.Len())
+		for i := 0; i < list.Len(); i++ {
+			c := list.At(i)
+			committers[i].Address = bytesToAddress(c.Address())
+			committers[i].Status = int(c.Status())
 		}
 		sig := bytesToSignature(clc.Signature())
-		lastCommit = block.NewCommit(int(clc.Round()), commiters, sig)
+		lastCommit = block.NewCommit(int(clc.Round()), committers, sig)
 	}
 
 	header := block.NewHeader(
@@ -48,7 +48,7 @@ func (s *Server) WriteBlock(cbi capnp.BlockInfo, w http.ResponseWriter) {
 		time.Unix(ch.Time(), 0),
 		bytesToHash(ch.TxsHash()),
 		bytesToHash(ch.LastBlockHash()),
-		bytesToHash(ch.CommitersHash()),
+		bytesToHash(ch.CommittersHash()),
 		bytesToHash(ch.StateHash()),
 		bytesToHash(ch.LastReceiptsHash()),
 		bytesToHash(ch.LastCommitHash()),

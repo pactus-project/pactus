@@ -38,8 +38,8 @@ var (
 
 func init() {
 	syncConf = TestConfig()
-	val, key := validator.GenerateTestValidator()
-	acc := account.NewAccount(crypto.MintbaseAddress)
+	val, key := validator.GenerateTestValidator(0)
+	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.SetBalance(21000000000000)
 	signer = crypto.NewSigner(key)
 	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
@@ -60,8 +60,8 @@ func init() {
 		v := vote.NewPrecommit(i+1, 0, b.Hash(), signer.Address())
 		signer.SignMsg(v)
 		sig := v.Signature()
-		c := block.NewCommit(0, []block.Commiter{
-			block.Commiter{Status: 1, Address: signer.Address()}},
+		c := block.NewCommit(0, []block.Committer{
+			block.Committer{Status: 1, Address: signer.Address()}},
 			*sig)
 
 		st.ApplyBlock(i+1, b, *c)

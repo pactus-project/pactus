@@ -8,7 +8,8 @@ import (
 )
 
 type validatorStore struct {
-	db *leveldb.DB
+	db    *leveldb.DB
+	total int
 }
 
 var (
@@ -22,9 +23,16 @@ func newValidatorStore(path string) (*validatorStore, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &validatorStore{
+	vs := &validatorStore{
 		db: db,
-	}, nil
+	}
+	vs.total = vs.countValidators()
+
+	return vs, nil
+}
+
+func (vs *validatorStore) close() error {
+	return vs.db.Close()
 }
 
 func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
@@ -47,15 +55,6 @@ func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, 
 	}
 
 	return val, nil
-}
-
-func (vs *validatorStore) len() int {
-	len := 0
-	vs.iterateValidators(func(validator *validator.Validator) (stop bool) {
-		len++
-		return false
-	})
-	return len
 }
 
 func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) (stop bool)) {
@@ -84,6 +83,18 @@ func (vs *validatorStore) updateValidator(val *validator.Validator) error {
 	if err != nil {
 		return err
 	}
+	if !vs.hasValidator(val.Address()) {
+		vs.total++
+	}
 
 	return tryPut(vs.db, validatorKey(val.Address()), data)
+}
+
+func (vs *validatorStore) countValidators() int {
+	count := 0
+	vs.iterateValidators(func(val *validator.Validator) bool {
+		count++
+		return false
+	})
+	return count
 }

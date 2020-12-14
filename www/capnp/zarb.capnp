@@ -12,7 +12,7 @@ struct Header {
   txsHash             @4 :Data;
   lastReceiptsHash    @5 :Data;
   lastCommitHash      @6 :Data;
-  commitersHash       @7 :Data;
+  committersHash      @7 :Data;
   proposerAddress     @8 :Data;
 }
 
@@ -20,7 +20,7 @@ struct Txs {
   hashes             @0 :List(Data);
 }
 
-struct Commiter {
+struct Committer {
   address             @0 :Data;
 	status              @1 :Int32;
 }
@@ -28,7 +28,7 @@ struct Commiter {
 struct Commit {
   round               @0 :UInt32;
 	signature           @1 :Data;
-	commiters           @2 :List(Commiter);
+	committers          @2 :List(Committer);
 }
 
 struct Block {

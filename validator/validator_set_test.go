@@ -3,8 +3,8 @@ package validator
 import (
 	"testing"
 
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func TestContains(t *testing.T) {
@@ -28,11 +28,11 @@ func TestProposerMoves(t *testing.T) {
 }
 
 func TestInvalidProposerJoinAndLeave(t *testing.T) {
-	val1, _ := GenerateTestValidator()
-	val2, _ := GenerateTestValidator()
-	val3, _ := GenerateTestValidator()
-	val4, _ := GenerateTestValidator()
-	val5, _ := GenerateTestValidator()
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
 
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val5.Address())
 	assert.Error(t, err)
@@ -40,13 +40,13 @@ func TestInvalidProposerJoinAndLeave(t *testing.T) {
 }
 
 func TestProposerMove(t *testing.T) {
-	val1, _ := GenerateTestValidator()
-	val2, _ := GenerateTestValidator()
-	val3, _ := GenerateTestValidator()
-	val4, _ := GenerateTestValidator()
-	val5, _ := GenerateTestValidator()
-	val6, _ := GenerateTestValidator()
-	val7, _ := GenerateTestValidator()
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
+	val6, _ := GenerateTestValidator(5)
+	val7, _ := GenerateTestValidator(6)
 
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
@@ -87,13 +87,13 @@ func TestProposerMove(t *testing.T) {
 }
 
 func TestProposerMoveMoreRounds(t *testing.T) {
-	val1, _ := GenerateTestValidator()
-	val2, _ := GenerateTestValidator()
-	val3, _ := GenerateTestValidator()
-	val4, _ := GenerateTestValidator()
-	val5, _ := GenerateTestValidator()
-	val6, _ := GenerateTestValidator()
-	val7, _ := GenerateTestValidator()
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
+	val6, _ := GenerateTestValidator(5)
+	val7, _ := GenerateTestValidator(6)
 
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
@@ -134,19 +134,19 @@ func TestProposerMoveMoreRounds(t *testing.T) {
 }
 
 func TestProposerJoinAndLeave(t *testing.T) {
-	val1, _ := GenerateTestValidator()
-	val2, _ := GenerateTestValidator()
-	val3, _ := GenerateTestValidator()
-	val4, _ := GenerateTestValidator()
-	val5, _ := GenerateTestValidator()
-	val6, _ := GenerateTestValidator()
-	val7, _ := GenerateTestValidator()
-	val8, _ := GenerateTestValidator()
-	val9, _ := GenerateTestValidator()
-	valA, _ := GenerateTestValidator()
-	valB, _ := GenerateTestValidator()
-	valC, _ := GenerateTestValidator()
-	valD, _ := GenerateTestValidator()
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
+	val6, _ := GenerateTestValidator(5)
+	val7, _ := GenerateTestValidator(6)
+	val8, _ := GenerateTestValidator(7)
+	val9, _ := GenerateTestValidator(8)
+	valA, _ := GenerateTestValidator(9)
+	valB, _ := GenerateTestValidator(10)
+	valC, _ := GenerateTestValidator(11)
+	valD, _ := GenerateTestValidator(12)
 
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
@@ -205,19 +205,19 @@ func TestProposerJoinAndLeave(t *testing.T) {
 }
 
 func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
-	val1, _ := GenerateTestValidator()
-	val2, _ := GenerateTestValidator()
-	val3, _ := GenerateTestValidator()
-	val4, _ := GenerateTestValidator()
-	val5, _ := GenerateTestValidator()
-	val6, _ := GenerateTestValidator()
-	val7, _ := GenerateTestValidator()
-	val8, _ := GenerateTestValidator()
-	val9, _ := GenerateTestValidator()
-	valA, _ := GenerateTestValidator()
-	valB, _ := GenerateTestValidator()
-	valC, _ := GenerateTestValidator()
-	valD, _ := GenerateTestValidator()
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
+	val6, _ := GenerateTestValidator(5)
+	val7, _ := GenerateTestValidator(6)
+	val8, _ := GenerateTestValidator(7)
+	val9, _ := GenerateTestValidator(8)
+	valA, _ := GenerateTestValidator(9)
+	valB, _ := GenerateTestValidator(10)
+	valC, _ := GenerateTestValidator(11)
+	valD, _ := GenerateTestValidator(12)
 
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)

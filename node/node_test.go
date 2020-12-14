@@ -15,9 +15,9 @@ import (
 
 func TestRunningNode(t *testing.T) {
 	_, pb, pv := crypto.RandomKeyPair()
-	acc := account.NewAccount(crypto.MintbaseAddress)
+	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.SetBalance(21000000000000)
-	val := validator.NewValidator(pb, 0)
+	val := validator.NewValidator(pb, 0, 0)
 	gen := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	conf := config.TestConfig()
 	signer := crypto.NewSigner(pv)

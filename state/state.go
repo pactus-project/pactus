@@ -38,6 +38,7 @@ type StateReader interface {
 type State interface {
 	StateReader
 
+	Close() error
 	ProposeBlock() block.Block
 	ValidateBlock(block block.Block) error
 	ApplyBlock(height int, block block.Block, commit block.Commit) error
@@ -140,8 +141,8 @@ func (st *state) tryLoadLastInfo() error {
 	st.lastBlockTime = b.Header().Time()
 	st.lastReceiptsHash = *receiptHash
 
-	vals := make([]*validator.Validator, len(commit.Commiters()))
-	for i, c := range commit.Commiters() {
+	vals := make([]*validator.Validator, len(commit.Committers()))
+	for i, c := range commit.Committers() {
 		val, err := st.store.Validator(c.Address)
 		if err != nil {
 			return fmt.Errorf("Last commit has unknown validator: %v", err)
@@ -177,16 +178,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	return nil
 }
 
-func (st *state) stateHash() crypto.Hash {
-	accRootHash := st.accountsMerkleRootHash()
-	valRootHash := st.validatorsMerkleRootHash()
+func (st *state) Close() error {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
 
-	rootHash := merkle.HashMerkleBranches(&accRootHash, &valRootHash)
-	if rootHash == nil {
-		logger.Panic("State hash can't be nil")
-	}
-
-	return *rootHash
+	return st.store.Close()
 }
 
 func (st *state) StoreReader() store.StoreReader {
@@ -279,12 +275,12 @@ func (st *state) ProposeBlock() block.Block {
 	txHashes := block.NewTxHashes()
 	txHashes.Append(rewardTx.Hash())
 	stateHash := st.stateHash()
-	commitersHash := st.validatorSet.CommitersHash()
+	committersHash := st.validatorSet.CommittersHash()
 	block := block.MakeBlock(
 		timestamp,
 		txHashes,
 		st.lastBlockHash,
-		commitersHash,
+		committersHash,
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,

@@ -4,6 +4,7 @@ import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/validator"
@@ -12,11 +13,13 @@ import (
 type sandbox struct {
 	lk deadlock.RWMutex
 
-	store        *store.Store
-	accounts     map[crypto.Address]accountStatus
-	validators   map[crypto.Address]validatorStatus
-	recentBlocks *linkedmap.LinkedMap
-	params       Params
+	store           *store.Store
+	accounts        map[crypto.Address]*accountStatus
+	validators      map[crypto.Address]*validatorStatus
+	recentBlocks    *linkedmap.LinkedMap
+	params          Params
+	totalAccounts   int
+	totalValidators int
 }
 
 type validatorStatus struct {
@@ -35,8 +38,8 @@ func newSandbox(store *store.Store, params Params, lastBlockHeight int) (*sandbo
 		store:        store,
 		params:       params,
 		recentBlocks: linkedmap.NewLinkedMap(params.TransactionToLiveInterval),
-		accounts:     make(map[crypto.Address]accountStatus),
-		validators:   make(map[crypto.Address]validatorStatus),
+		accounts:     make(map[crypto.Address]*accountStatus),
+		validators:   make(map[crypto.Address]*validatorStatus),
 	}
 
 	// First, let add genesis block (Block 0) hash
@@ -57,6 +60,9 @@ func newSandbox(store *store.Store, params Params, lastBlockHeight int) (*sandbo
 		sb.recentBlocks.PushBack(b.Hash(), i)
 	}
 
+	// To update total accounts and validator counters
+	sb.clear()
+
 	return sb, nil
 }
 
@@ -68,8 +74,10 @@ func (sb *sandbox) Clear() {
 }
 
 func (sb *sandbox) clear() {
-	sb.accounts = make(map[crypto.Address]accountStatus)
-	sb.validators = make(map[crypto.Address]validatorStatus)
+	sb.accounts = make(map[crypto.Address]*accountStatus)
+	sb.validators = make(map[crypto.Address]*validatorStatus)
+	sb.totalAccounts = sb.store.TotalAccounts()
+	sb.totalValidators = sb.store.TotalValidators()
 }
 
 func (sb *sandbox) CommitAndClear(set *validator.ValidatorSet) error {
@@ -77,12 +85,18 @@ func (sb *sandbox) CommitAndClear(set *validator.ValidatorSet) error {
 	defer sb.lk.Unlock()
 
 	for _, acc := range sb.accounts {
+		if acc.account.Number() >= sb.totalAccounts {
+			return errors.Errorf(errors.ErrGeneric, "Invalid account number")
+		}
 		if acc.updated {
 			sb.store.UpdateAccount(acc.account)
 		}
 	}
 
 	for _, val := range sb.validators {
+		if val.validator.Number() >= sb.totalValidators {
+			return errors.Errorf(errors.ErrGeneric, "Invalid account number")
+		}
 		if val.updated {
 			sb.store.UpdateValidator(val.validator)
 		}
@@ -110,6 +124,25 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 	if err != nil {
 		return nil
 	}
+	sb.accounts[addr] = &accountStatus{
+		account: acc,
+	}
+	return acc
+}
+func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	if sb.store.HasAccount(addr) {
+		panic("Try to create a duplicated account")
+	}
+
+	acc := account.NewAccount(addr, sb.totalAccounts)
+	sb.accounts[addr] = &accountStatus{
+		account: acc,
+		updated: true,
+	}
+	sb.totalAccounts++
 	return acc
 }
 
@@ -123,10 +156,10 @@ func (sb *sandbox) UpdateAccount(acc *account.Account) {
 		s.account = acc
 		s.updated = true
 	} else {
-		sb.accounts[addr] = accountStatus{
-			account: acc,
-			updated: true,
-		}
+		//
+		// An account should either be created inside the sandbox or fetched from database
+		//
+		panic("Try to update an account that we don't have in sandbox")
 	}
 }
 
@@ -143,6 +176,27 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 	if err != nil {
 		return nil
 	}
+	sb.validators[addr] = &validatorStatus{
+		validator: val,
+	}
+	return val
+}
+
+func (sb *sandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	addr := pub.Address()
+	if sb.store.HasValidator(addr) {
+		panic("Try to create a duplicated validator")
+	}
+
+	val := validator.NewValidator(pub, sb.totalAccounts, sb.lastHeight()+1)
+	sb.validators[addr] = &validatorStatus{
+		validator: val,
+		updated:   true,
+	}
+	sb.totalValidators++
 	return val
 }
 
@@ -156,10 +210,10 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 		s.validator = val
 		s.updated = true
 	} else {
-		sb.validators[addr] = validatorStatus{
-			validator: val,
-			updated:   true,
-		}
+		//
+		// A validator should either be created inside the sandbox or fetched from database
+		//
+		panic("Try to update a validator that we don't have in sandbox")
 	}
 }
 
@@ -173,10 +227,7 @@ func (sb *sandbox) AddToSet(val *validator.Validator) {
 		s.validator = val
 		s.addToSet = true
 	} else {
-		sb.validators[addr] = validatorStatus{
-			validator: val,
-			addToSet:  true,
-		}
+		panic("Try to add a validator to the set that we don't have in sandbox")
 	}
 }
 
@@ -217,20 +268,23 @@ func (sb *sandbox) RecentBlockHeight(hash crypto.Hash) int {
 	return h.(int)
 }
 
+func (sb *sandbox) lastHeight() int {
+	_, v := sb.recentBlocks.Last()
+	return v.(int) + 1
+}
+
 func (sb *sandbox) CurrentHeight() int {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	_, v := sb.recentBlocks.Last()
-	return v.(int) + 1
+	return sb.lastHeight() + 1
 }
 
 func (sb *sandbox) LastBlockHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	_, v := sb.recentBlocks.Last()
-	return v.(int)
+	return sb.lastHeight()
 }
 
 func (sb *sandbox) LastBlockHash() crypto.Hash {

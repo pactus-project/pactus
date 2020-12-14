@@ -14,36 +14,36 @@ const (
 	CommitSigned    = 1
 )
 
-type Commiter struct {
+type Committer struct {
 	Address crypto.Address `cbor:"1,keyasint"`
 	Status  int            `cbor:"2,keyasint"`
 }
 
-func (commiter *Commiter) HasSigned() bool {
-	return commiter.Status == CommitSigned
+func (committer *Committer) HasSigned() bool {
+	return committer.Status == CommitSigned
 }
 
 type Commit struct {
 	data commitData
 }
 type commitData struct {
-	Round     int              `cbor:"1,keyasint"`
-	Signature crypto.Signature `cbor:"2,keyasint"`
-	Commiters []Commiter       `cbor:"3,keyasint"`
+	Round      int              `cbor:"1,keyasint"`
+	Signature  crypto.Signature `cbor:"2,keyasint"`
+	Committers []Committer      `cbor:"3,keyasint"`
 }
 
-func NewCommit(round int, commiters []Commiter, signature crypto.Signature) *Commit {
+func NewCommit(round int, committers []Committer, signature crypto.Signature) *Commit {
 	return &Commit{
 		data: commitData{
-			Round:     round,
-			Commiters: commiters,
-			Signature: signature,
+			Round:      round,
+			Committers: committers,
+			Signature:  signature,
 		},
 	}
 }
 
 func (commit *Commit) Round() int                  { return commit.data.Round }
-func (commit *Commit) Commiters() []Commiter       { return commit.data.Commiters }
+func (commit *Commit) Committers() []Committer     { return commit.data.Committers }
 func (commit *Commit) Signature() crypto.Signature { return commit.data.Signature }
 
 func (commit *Commit) SanityCheck() error {
@@ -54,7 +54,7 @@ func (commit *Commit) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 	signed := 0
-	for _, c := range commit.data.Commiters {
+	for _, c := range commit.data.Committers {
 		if c.Status > 1 {
 			return errors.Errorf(errors.ErrInvalidBlock, "Invalid commit status")
 		}
@@ -63,8 +63,8 @@ func (commit *Commit) SanityCheck() error {
 		}
 	}
 
-	if signed <= (len(commit.data.Commiters) * 2 / 3) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Not enough commiters")
+	if signed <= (len(commit.data.Committers) * 2 / 3) {
+		return errors.Errorf(errors.ErrInvalidBlock, "Not enough committers")
 	}
 
 	return nil
@@ -74,7 +74,7 @@ func (commit *Commit) Size() int {
 	if commit == nil {
 		return 0
 	}
-	return len(commit.data.Commiters)
+	return len(commit.data.Committers)
 }
 
 func (commit *Commit) Hash() crypto.Hash {
@@ -88,10 +88,10 @@ func (commit *Commit) Hash() crypto.Hash {
 	return crypto.HashH(bs)
 }
 
-func (commit *Commit) CommitersHash() crypto.Hash {
-	data := make([][]byte, len(commit.data.Commiters))
+func (commit *Commit) CommittersHash() crypto.Hash {
+	data := make([][]byte, len(commit.data.Committers))
 
-	for i, c := range commit.data.Commiters {
+	for i, c := range commit.data.Committers {
 		data[i] = make([]byte, 20)
 		copy(data[i], c.Address.RawBytes())
 	}

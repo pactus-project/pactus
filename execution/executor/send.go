@@ -1,7 +1,6 @@
 package executor
 
 import (
-	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
@@ -27,7 +26,7 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	}
 	receiverAcc := e.sandbox.Account(pld.Receiver)
 	if receiverAcc == nil {
-		receiverAcc = account.NewAccount(pld.Receiver)
+		receiverAcc = e.sandbox.MakeNewAccount(pld.Receiver)
 	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence, Expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())

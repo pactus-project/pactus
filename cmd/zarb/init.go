@@ -70,14 +70,14 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 	// create  accounts for genesis
 	accs := make([]*account.Account, 5)
 	// Mintbase account
-	acc := account.NewAccount(crypto.MintbaseAddress)
+	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.AddToBalance(21000000000000)
 	accs[0] = acc
 
 	for i := 1; i < len(accs); i++ {
 		k := key.GenKey()
 		key.EncryptKeyFile(k, workingDir+"/keys/"+k.Address().String()+".json", "", "")
-		acc := account.NewAccount(k.Address())
+		acc := account.NewAccount(k.Address(), i+1)
 		acc.AddToBalance(1000000)
 		accs[i] = acc
 	}
@@ -85,7 +85,7 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 	// create validator account for genesis
 	k := key.GenKey()
 	key.EncryptKeyFile(k, workingDir+"/validator_key.json", "", "")
-	val := validator.NewValidator(k.PublicKey(), 0)
+	val := validator.NewValidator(k.PublicKey(), 0, 0)
 	vals := []*validator.Validator{val}
 
 	tm := time.Now().Truncate(0).UTC()

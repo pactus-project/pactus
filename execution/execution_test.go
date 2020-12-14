@@ -23,7 +23,7 @@ func setup() {
 	sb = sandbox.NewMockSandbox()
 	exe = NewExecution(sb)
 
-	acc1, priv1 = account.GenerateTestAccount()
+	acc1, priv1 = account.GenerateTestAccount(1)
 	pub1 = priv1.PublicKey()
 	acc1.SetBalance(3000)
 	sb.UpdateAccount(acc1)

@@ -25,9 +25,9 @@ func init() {
 	mockTxPool = txpool.NewMockTxPool()
 
 	_, pb, priv := crypto.GenerateTestKeyPair()
-	acc := account.NewAccount(crypto.MintbaseAddress)
+	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.SetBalance(21000000000000)
-	val := validator.NewValidator(pb, 0)
+	val := validator.NewValidator(pb, 0, 0)
 	gen = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	valSigner = crypto.NewSigner(priv)
 
@@ -61,7 +61,7 @@ func propsoeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
 	b := st.ProposeBlock()
 	v := vote.NewPrecommit(1, 0, b.Hash(), addr)
 	sig := valSigner.Sign(v.SignBytes())
-	c := block.NewCommit(0, []block.Commiter{block.Commiter{Status: 1, Address: addr}}, *sig)
+	c := block.NewCommit(0, []block.Committer{block.Committer{Status: 1, Address: addr}}, *sig)
 
 	return b, *c
 }

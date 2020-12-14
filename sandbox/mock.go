@@ -16,6 +16,8 @@ type MockSandbox struct {
 	MaxMemoLenght_ int
 	FeeFraction_   float64
 	MinFee_        int64
+	TotalAccount   int
+	TotalValidator int
 }
 
 func NewMockSandbox() *MockSandbox {
@@ -32,11 +34,21 @@ func NewMockSandbox() *MockSandbox {
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	return m.Accounts[addr]
 }
+func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
+	a := account.NewAccount(addr, m.TotalAccount)
+	m.TotalAccount++
+	return a
+}
 func (m *MockSandbox) UpdateAccount(acc *account.Account) {
 	m.Accounts[acc.Address()] = acc
 }
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	return m.Validators[addr]
+}
+func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
+	v := validator.NewValidator(pub, m.TotalAccount, m.CurrentHeight_+1)
+	m.TotalValidator++
+	return v
 }
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = val
