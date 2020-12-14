@@ -178,10 +178,6 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 	}
 
 	votesMap := vs.votesByBlock[*blockHash].votes
-	votes := []*Vote{}
-	for _, v := range votesMap {
-		votes = append(votes, v)
-	}
 	vals := vs.valSet.Validators()
 	commiters := make([]block.Commiter, len(vals))
 	sigs := make([]crypto.Signature, 0)
@@ -191,10 +187,6 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 		v := votesMap[addr]
 
 		if v != nil {
-			if v.BlockHash().IsUndef() {
-				panic("Should never come here!!! delete me later")
-				continue
-			}
 			sigs = append(sigs, *v.Signature())
 			status = block.CommitSigned
 		}
