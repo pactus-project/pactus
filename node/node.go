@@ -108,7 +108,7 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start Capnproto server")
 	}
 
-	err = n.http.StartServer()
+	err = n.http.StartServer(n.capnp.Address())
 	if err != nil {
 		return errors.Wrap(err, "could not start http server")
 	}

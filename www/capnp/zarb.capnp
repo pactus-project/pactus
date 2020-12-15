@@ -37,36 +37,45 @@ struct Block {
   txs                 @2 :Txs;
 }
 
-struct BlockInfo {
+struct BlockchainResult {
+
+}
+
+struct BlockResult {
   hash                @0 :Data;
-  height              @1 :UInt32;
-  data                @2 :Data;
-  block               @3 :Block;
+  data                @1 :Data;
+  block               @2 :Block;
 }
 
-
-struct Tx {
-  stamp               @0 :Data;
-	sender              @1 :Data;
-	receiver            @2 :Data;
-	amount              @3 :UInt64;
-	fee                 @4 :UInt64;
-	data                @5 :Data;
-	memo                @6 :Text;
-}
-
-struct TxInfo {
+struct Receipt {
   hash                @0 :Data;
-  height              @1 :UInt32;
-  data                @2 :Data;
-  tx                  @3 :Tx;
+  data                @1 :Data;
 }
+
+struct TransactionResult {
+  hash                @0 :Data;
+  data                @1 :Data;
+  transaction         @2 :Data; # TODO: define tx struct
+  receipt             @3 :Receipt;
+}
+
+struct AccountResult {
+  data                @0 :Data;
+}
+
+struct ValidatorResult {
+  data                @0 :Data;
+}
+
+
 
 
 interface ZarbServer {
-	blockAt @0 (height: UInt32) -> (blockInfo :BlockInfo);
-	block @1 (hash: Data) -> (blockInfo :BlockInfo);
-	tx @2 (hash: Data) -> (txInfo :BlockInfo);
-
+  getBlockchainInfo    @0 ()                                       -> (result: BlockchainResult);
+	getBlock             @1 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
+	getTransaction       @2 (hash: Data, verbosity: Int32)           -> (result :TransactionResult);
+	getBlockHeight       @3 (hash: Data)                             -> (result :UInt64);
+	getAccount           @4 (address: Data, verbosity: Int32)        -> (result :AccountResult);
+	getValidator         @5 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
 }
 

@@ -32,12 +32,12 @@ func NewServer(conf *Config) (*Server, error) {
 	}, nil
 }
 
-func (s *Server) StartServer() error {
+func (s *Server) StartServer(capnpServer string) error {
 	if !s.config.Enable {
 		return nil
 	}
 
-	c, err := net.Dial("tcp", s.config.CapnpServer)
+	c, err := net.Dial("tcp", capnpServer)
 	if err != nil {
 		return err
 	}
@@ -46,10 +46,11 @@ func (s *Server) StartServer() error {
 	s.server = capnp.ZarbServer{Client: conn.Bootstrap(s.ctx)}
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
-	s.router.HandleFunc("/block/height/{height}", s.BlockByHeightHandler)
-	s.router.HandleFunc("/block/hash/{hash}", s.BlockByHashHandler)
-	s.router.HandleFunc("/tx/hash/{hash}", s.TxHandler)
-	s.router.HandleFunc("/account/number/{number}", s.AccountNumberHandler)
+	s.router.HandleFunc("/block/height/{height}", s.GetBlockHandler)
+	s.router.HandleFunc("/block_height/hash/{hash}", s.GetBlockHeightHandler)
+	s.router.HandleFunc("/transaction/hash/{hash}", s.GetTransactionHandler)
+	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
+	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
 	l, err := net.Listen("tcp", s.config.Address)

@@ -6,13 +6,12 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
-// GetAccountHandler returns a handler to get account by address
-func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.server.GetAccount(s.ctx, func(p capnp.ZarbServer_getAccount_Params) error {
+func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
+	b := s.server.GetValidator(s.ctx, func(p capnp.ZarbServer_getValidator_Params) error {
 		vars := mux.Vars(r)
 		if err := p.SetAddress([]byte(vars["address"])); err != nil {
 			return err
@@ -30,14 +29,14 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, _ := a.Result()
 	d, _ := res.Data()
-	acc := new(account.Account)
-	err = acc.Decode(d)
+	val := new(validator.Validator)
+	err = val.Decode(d)
 	if err != nil {
 		s.logger.Error("Unable to decode account data", "err", err)
 		return
 	}
 
-	j, _ := json.MarshalIndent(acc, "", "  ")
+	j, _ := json.MarshalIndent(val, "", "  ")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if _, err := io.WriteString(w, string(j)); err != nil {

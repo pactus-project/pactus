@@ -25,7 +25,9 @@ func TestRetreiveBlockAndTransactions(t *testing.T) {
 		store.SaveTransaction(ctrx)
 	}
 
-	b2, h2, err := store.BlockByHash(b.Hash())
+	h2, err := store.BlockHeight(b.Hash())
+	assert.NoError(t, err)
+	b2, err := store.Block(h2)
 	assert.NoError(t, err)
 	assert.Equal(t, b.Hash(), b2.Hash())
 	bz1, _ := b.Encode()

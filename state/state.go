@@ -128,7 +128,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 	logger.Info("Try to load the last state info", "height", height)
 
-	b, err := st.store.BlockByHeight(height)
+	b, err := st.store.Block(height)
 	if err != nil {
 		return err
 	}

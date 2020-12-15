@@ -82,7 +82,7 @@ func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
 }
 
 func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayload) {
-	b, err := syncer.store.BlockByHeight(pld.From)
+	b, err := syncer.store.Block(pld.From)
 	if err == nil {
 		if b.Header().LastBlockHash().EqualsTo(pld.LastBlockHash) {
 			syncer.sendBlocks(pld.From, pld.To)

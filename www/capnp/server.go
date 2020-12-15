@@ -14,6 +14,7 @@ import (
 type Server struct {
 	ctx      context.Context
 	config   *Config
+	address  string
 	listener net.Listener
 	store    store.StoreReader
 	state    state.StateReader
@@ -31,6 +32,9 @@ func NewServer(conf *Config, state state.StateReader, txPool txpool.TxPoolReader
 		logger: logger.NewLogger("_capnp", nil),
 	}, nil
 }
+func (s *Server) Address() string {
+	return s.address
+}
 
 func (s *Server) StartServer() error {
 	if !s.config.Enable {
@@ -41,6 +45,8 @@ func (s *Server) StartServer() error {
 	if err != nil {
 		return err
 	}
+
+	s.address = l.Addr().String()
 
 	s.logger.Info("Capnp started listening", "address", l.Addr())
 	s.listener = l

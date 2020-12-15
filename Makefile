@@ -1,6 +1,7 @@
 UNAME := $(shell uname)
 GOTOOLS = \
-	zombiezen.com/go/capnproto2/...
+	zombiezen.com/go/capnproto2/... \
+	github.com/golangci/golangci-lint/cmd/golangci-lint@v1.33.0
 
 
 PACKAGES=$(shell go list ./... | grep -v '/vendor/')
@@ -16,7 +17,7 @@ all: tools build install test
 ### Tools & dependencies
 tools:
 	@echo "Installing tools"
-	GO111MODULE=off go get $(GOTOOLS)
+	go get $(GOTOOLS)
 
 
 ########################################
@@ -47,7 +48,9 @@ capnp: tools
 ########################################
 ### Formatting, linting, and vetting
 fmt:
+	@go vet ./...
 	@go fmt ./...
+	@golangci-lint run -e "SA1019"
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.

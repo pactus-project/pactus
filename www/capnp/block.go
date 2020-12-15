@@ -12,20 +12,52 @@ type factory struct {
 	logger *logger.Logger
 }
 
-func (f factory) BlockToBlockInfo(block *block.Block, height int, cbi *BlockInfo) error {
-	data, _ := block.Encode()
+func (f factory) GetBlockHeight(args ZarbServer_getBlockHeight) error {
+	s, _ := args.Params.Hash()
+	h, err := crypto.HashFromString(string(s))
+	if err != nil {
+		return err
+	}
+	num, err := f.store.BlockHeight(h)
+	if err != nil {
+		f.logger.Error("Error on retriving block number", "err", err)
+		return err
+	}
+	args.Results.SetResult(uint64(num))
+	return nil
+}
 
-	cb, _ := cbi.NewBlock()
+func (f factory) GetBlock(args ZarbServer_getBlock) error {
+	h := args.Params.Height()
+	v := args.Params.Verbosity()
+	b, err := f.store.Block(int(h))
+	if err != nil {
+		f.logger.Error("Error on retriving block", "height", h, "err", err)
+		return err
+	}
+
+	res, _ := args.Results.NewResult()
+	d, _ := b.Encode()
+	if err = res.SetData(d); err != nil {
+		return err
+	}
+	if err := res.SetHash(b.Hash().RawBytes()); err != nil {
+		return err
+	}
+	if v == 1 {
+		if err := f.ToVerbosBlock(b, &res); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (f factory) ToVerbosBlock(block *block.Block, res *BlockResult) error {
+	cb, _ := res.NewBlock()
 	ch, _ := cb.NewHeader()
 	ctxs, _ := cb.NewTxs()
 	clc, _ := cb.NewLastCommit()
-	if err := cbi.SetHash(block.Hash().RawBytes()); err != nil {
-		return err
-	}
-	cbi.SetHeight(uint32(height))
-	if err := cbi.SetData(data); err != nil {
-		return err
-	}
+
 	// last commit
 	if block.LastCommit() != nil {
 		clc.SetRound(uint32(block.LastCommit().Round()))
@@ -74,34 +106,4 @@ func (f factory) BlockToBlockInfo(block *block.Block, height int, cbi *BlockInfo
 	}
 
 	return nil
-}
-
-func (f factory) BlockAt(b ZarbServer_blockAt) error {
-	height := b.Params.Height()
-	block, err := f.store.BlockByHeight(int(height))
-	if err != nil {
-		f.logger.Error("Error on retriving block", "height", height, "err", err)
-		return err
-	}
-
-	bi, _ := b.Results.NewBlockInfo()
-
-	return f.BlockToBlockInfo(block, int(height), &bi)
-}
-
-func (f factory) Block(b ZarbServer_block) error {
-	h, _ := b.Params.Hash()
-	hash, err := crypto.HashFromRawBytes(h)
-	if err != nil {
-		f.logger.Error("Error on retriving block", "hash", h, "err", err)
-		return err
-	}
-	block, height, err := f.store.BlockByHash(hash)
-	if err != nil {
-		f.logger.Error("Error on retriving block", "hash", h, "err", err)
-		return err
-	}
-	bi, _ := b.Results.NewBlockInfo()
-
-	return f.BlockToBlockInfo(block, height, &bi)
 }

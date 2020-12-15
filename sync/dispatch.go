@@ -21,7 +21,7 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 	txs := make([]tx.Tx, 0)
 	blocks := make([]block.Block, to-from+1)
 	for h := from; h <= to; h++ {
-		b, err := syncer.store.BlockByHeight(h)
+		b, err := syncer.store.Block(h)
 		if err != nil {
 			syncer.logger.Error("An error occurred while retriveng a block", "err", err, "height", h)
 			break

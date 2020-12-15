@@ -69,26 +69,11 @@ func (s *Store) SaveBlock(block block.Block, height int) error {
 	return s.blockStore.saveBlock(block, height)
 }
 
-func (s *Store) BlockByHeight(height int) (*block.Block, error) {
+func (s *Store) Block(height int) (*block.Block, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.block(height)
-}
-
-func (s *Store) BlockByHash(hash crypto.Hash) (*block.Block, int, error) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
-
-	height, err := s.blockStore.blockHeight(hash)
-	if err != nil {
-		return nil, -1, err
-	}
-	block, err := s.blockStore.block(height)
-	if err != nil {
-		return nil, -1, err
-	}
-	return block, height, nil
 }
 
 func (s *Store) BlockHeight(hash crypto.Hash) (int, error) {
