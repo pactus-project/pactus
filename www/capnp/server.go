@@ -56,17 +56,18 @@ func (s *Server) StartServer() error {
 			conn, err := l.Accept()
 			if err != nil {
 				s.logger.Error("Error on accepting a connection", "error", err)
+			} else {
+				//
+				go func(c net.Conn) {
+					s2c := ZarbServer_ServerToClient(factory{s.store, s.logger})
+					conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
+					err := conn.Wait()
+					if err != nil {
+						s.logger.Error("Error on  a connection", "error", err)
+					}
+
+				}(conn)
 			}
-
-			go func(c net.Conn) {
-				s2c := ZarbServer_ServerToClient(factory{s.store, s.logger})
-				conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
-				err := conn.Wait()
-				if err != nil {
-					s.logger.Error("Error on  a connection", "error", err)
-				}
-
-			}(conn)
 
 			// TODO:
 			// handle close signal/channel
@@ -77,6 +78,8 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) StopServer() {
+	s.ctx.Done()
+
 	if s.listener != nil {
 		s.listener.Close()
 	}

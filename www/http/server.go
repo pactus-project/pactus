@@ -73,6 +73,8 @@ func (s *Server) StartServer(capnpServer string) error {
 }
 
 func (s *Server) StopServer() {
+	s.ctx.Done()
+
 	if s.server.Client != nil {
 		s.server.Client.Close()
 	}
