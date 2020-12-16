@@ -23,4 +23,13 @@ func TestTransaction(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
+	t.Run("Shal return a transaction", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		httpServer.GetTransactionHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
+		fmt.Println(w.Body)
+	})
+
 }

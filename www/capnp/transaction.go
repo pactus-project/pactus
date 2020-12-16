@@ -14,16 +14,16 @@ func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
 	}
 
 	res, _ := args.Results.NewResult()
-	d, _ := ctx.Tx.Encode()
-	if err := res.SetData(d); err != nil {
+	trxData, _ := ctx.Tx.Encode()
+	if err := res.SetData(trxData); err != nil {
 		return err
 	}
 	if err := res.SetHash(ctx.Tx.Hash().RawBytes()); err != nil {
 		return err
 	}
 	rec, _ := res.NewReceipt()
-	d, _ = ctx.Receipt.Encode()
-	if err := res.SetData(d); err != nil {
+	recData, _ := ctx.Receipt.Encode()
+	if err := rec.SetData(recData); err != nil {
 		return err
 	}
 	if err := rec.SetHash(ctx.Receipt.Hash().RawBytes()); err != nil {

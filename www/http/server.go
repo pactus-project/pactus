@@ -106,36 +106,37 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	buf.WriteString("</body></html>")
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(200)
-	if _, err = w.Write(buf.Bytes()); err != nil {
-		s.logger.Error("Unable to write buffer", "err", err)
-	}
+
+	s.writeHTML(w, buf.String())
 }
 
-func (s *Server) writeJSON(w http.ResponseWriter, val interface{}) {
+func (s *Server) writeJSON(w http.ResponseWriter, val interface{}) int {
 	j, _ := json.MarshalIndent(val, "", "  ")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if _, err := io.WriteString(w, string(j)); err != nil {
-		s.logger.Error("Unable to write string", "err", err)
-	}
+	n, _ := io.WriteString(w, string(j))
+	return n
 }
 
-func (s *Server) writePlainText(w http.ResponseWriter, val string) {
+func (s *Server) writePlainText(w http.ResponseWriter, val string) int {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	if _, err := io.WriteString(w, val); err != nil {
-		s.logger.Error("Unable to write string", "err", err)
-	}
+	n, _ := io.WriteString(w, val)
+	return n
 }
 
-func (s *Server) writeError(w http.ResponseWriter, err error) {
+func (s *Server) writeError(w http.ResponseWriter, err error) int {
 	s.logger.Error("An error occurred", "err", err)
 
 	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	if _, err := io.WriteString(w, err.Error()); err != nil {
-		s.logger.Error("Unable to write string", "err", err)
-	}
+	w.WriteHeader(http.StatusBadRequest)
+	n, _ := io.WriteString(w, err.Error())
+	return n
+}
+
+func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusBadRequest)
+	n, _ := io.WriteString(w, html)
+	return n
 }
