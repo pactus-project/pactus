@@ -53,7 +53,7 @@ func newSandbox(store *store.Store, params Params, lastBlockHeight int) (*sandbo
 	}
 	to := lastBlockHeight
 	for i := from; i <= to; i++ {
-		b, err := store.BlockByHeight(i)
+		b, err := store.Block(i)
 		if err != nil {
 			return nil, err
 		}

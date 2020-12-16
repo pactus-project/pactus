@@ -29,7 +29,7 @@ func TestAccountChange(t *testing.T) {
 		assert.Equal(t, acc1, acc1a)
 
 		acc1a.IncSequence()
-		assert.NoError(t, acc1a.AddToBalance(acc1a.Balance()+1))
+		acc1a.AddToBalance(acc1a.Balance() + 1)
 
 		sb.UpdateAccount(acc1a)
 
@@ -45,7 +45,7 @@ func TestAccountChange(t *testing.T) {
 		acc2 := sb.MakeNewAccount(addr)
 
 		acc2.IncSequence()
-		assert.NoError(t, acc2.AddToBalance(acc2.Balance()+1))
+		acc2.AddToBalance(acc2.Balance() + 1)
 
 		sb.UpdateAccount(acc2)
 		acc22 := sb.Account(acc2.Address())
@@ -77,7 +77,7 @@ func TestValidatorChange(t *testing.T) {
 		assert.Equal(t, val1.Hash(), val1a.Hash())
 
 		val1a.IncSequence()
-		assert.NoError(t, val1a.AddToStake(val1a.Stake()+1))
+		val1a.AddToStake(val1a.Stake() + 1)
 
 		sb.UpdateValidator(val1a)
 
@@ -93,7 +93,7 @@ func TestValidatorChange(t *testing.T) {
 		val2 := sb.MakeNewValidator(pub)
 
 		val2.IncSequence()
-		assert.NoError(t, val2.AddToStake(val2.Stake()+1))
+		val2.AddToStake(val2.Stake() + 1)
 
 		sb.UpdateValidator(val2)
 		val22 := sb.Validator(val2.Address())

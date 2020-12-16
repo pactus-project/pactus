@@ -71,9 +71,8 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 	accs := make([]*account.Account, 5)
 	// Mintbase account
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
-	if err := acc.AddToBalance(21000000000000); err != nil {
-		return nil
-	}
+	acc.AddToBalance(21000000000000)
+
 	accs[0] = acc
 
 	for i := 1; i < len(accs); i++ {
@@ -82,9 +81,8 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 			return nil
 		}
 		acc := account.NewAccount(k.Address(), i+1)
-		if err := acc.AddToBalance(1000000); err != nil {
-			return nil
-		}
+		acc.AddToBalance(1000000)
+
 		accs[i] = acc
 	}
 

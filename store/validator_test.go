@@ -23,7 +23,7 @@ func TestRetreiveValidator(t *testing.T) {
 	})
 
 	t.Run("Update validator, should update database", func(t *testing.T) {
-		assert.NoError(t, val.AddToStake(1))
+		val.AddToStake(1)
 		assert.NoError(t, store.updateValidator(val))
 
 		val2, err := store.validator(val.Address())
@@ -47,7 +47,7 @@ func TestValidatorCounter(t *testing.T) {
 	})
 
 	t.Run("Update validator, should not increatse counter", func(t *testing.T) {
-		assert.NoError(t, val.AddToStake(1))
+		val.AddToStake(1)
 
 		assert.NoError(t, store.updateValidator(val))
 		assert.Equal(t, store.total, store.countValidators())

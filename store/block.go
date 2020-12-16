@@ -75,13 +75,7 @@ func (bs *blockStore) blockHeight(hash crypto.Hash) (int, error) {
 	return util.SliceToInt(heightData), nil
 }
 
-func (bs *blockStore) lastHeight() int {
-
+func (bs *blockStore) hasAnyBlock() bool {
 	iter := bs.db.NewIterator(dbutil.BytesPrefix(blockHashPrefix), nil)
-	if ok := iter.Last(); ok {
-		return util.SliceToInt(iter.Value())
-
-	}
-	iter.Release()
-	return 0
+	return iter.First()
 }

@@ -14,6 +14,7 @@ func DefaultConfig() *Config {
 
 func TestConfig() *Config {
 	return &Config{
-		Enable: false,
+		Enable:  true,
+		Address: "[::]:0",
 	}
 }

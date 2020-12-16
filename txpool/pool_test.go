@@ -28,7 +28,7 @@ func setup(t *testing.T) {
 	sb = sandbox.NewMockSandbox()
 	addr, pub, priv := crypto.GenerateTestKeyPair()
 	acc1 = account.NewAccount(addr, 0)
-	assert.NoError(t, acc1.AddToBalance(10000000000))
+	acc1.AddToBalance(10000000000)
 	sb.UpdateAccount(acc1)
 	acc1Priv = priv
 	acc1Pub = pub

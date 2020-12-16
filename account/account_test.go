@@ -14,7 +14,7 @@ import (
 
 func TestMarshaling(t *testing.T) {
 	acc1, _ := GenerateTestAccount(util.RandInt(10000))
-	assert.NoError(t, acc1.AddToBalance(1))
+	acc1.AddToBalance(1)
 	acc1.IncSequence()
 
 	bs, err := acc1.Encode()
@@ -57,18 +57,6 @@ func TestMarshalingRawData(t *testing.T) {
 	assert.Equal(t, acc.Hash(), crypto.HashH(bs))
 	expected, _ := crypto.HashFromString("8a010969c3bf76f764bcf6cf230b1fbc55e5c07b954dbf5595e59b854e97ce7c")
 	assert.Equal(t, acc.Hash(), expected)
-}
-
-func TestAddToBalance(t *testing.T) {
-	acc, _ := GenerateTestAccount(0)
-	amt := acc.Balance()
-
-	assert.Error(t, acc.AddToBalance(-1))
-	assert.NoError(t, acc.AddToBalance(1))
-	assert.Error(t, acc.SubtractFromBalance(-2))
-	assert.NoError(t, acc.SubtractFromBalance(2))
-	assert.Error(t, acc.SubtractFromBalance(amt))
-	assert.Equal(t, acc.Balance(), amt-1)
 }
 
 func TestIncSequence(t *testing.T) {

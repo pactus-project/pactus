@@ -5,27 +5,24 @@ import (
 
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
-func bytesToHash(bs []byte, err error) crypto.Hash {
-	h, _ := crypto.HashFromRawBytes(bs)
-	return h
+type BlockResult struct {
+	Hash  crypto.Hash
+	Time  time.Time
+	Data  string
+	Block block.Block
 }
 
-func bytesToAddress(bs []byte, err error) crypto.Address {
-	a, _ := crypto.AddressFromRawBytes(bs)
-	return a
+type ReceiptResult struct {
+	Hash    crypto.Hash
+	Data    string
+	Receipt tx.Receipt
 }
-
-func bytesToSignature(bs []byte, err error) crypto.Signature {
-	sig, _ := crypto.SignatureFromRawBytes(bs)
-	return sig
-}
-
-type BlockInfo struct {
-	Hash   crypto.Hash
-	Height int
-	Data   string
-	Time   time.Time
-	Block  block.Block
+type TransactionResult struct {
+	Hash    crypto.Hash
+	Data    string
+	Tx      tx.Tx
+	Receipt ReceiptResult
 }

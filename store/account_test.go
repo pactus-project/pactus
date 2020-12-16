@@ -23,7 +23,7 @@ func TestRetreiveAccount(t *testing.T) {
 	})
 
 	t.Run("Update account, should update database", func(t *testing.T) {
-		assert.NoError(t, acc.AddToBalance(1))
+		acc.AddToBalance(1)
 		assert.NoError(t, store.updateAccount(acc))
 
 		acc2, err := store.account(acc.Address())
@@ -47,7 +47,7 @@ func TestAccountCounter(t *testing.T) {
 	})
 
 	t.Run("Update account, should not increatse counter", func(t *testing.T) {
-		assert.NoError(t, acc.AddToBalance(1))
+		acc.AddToBalance(1)
 		assert.NoError(t, store.updateAccount(acc))
 
 		assert.Equal(t, store.total, store.countAccounts())

@@ -88,9 +88,7 @@ func (gen *Genesis) Accounts() []*account.Account {
 	accs := make([]*account.Account, 0)
 	for i, genAcc := range gen.data.Accounts {
 		acc := account.NewAccount(genAcc.Address, i)
-		if err := acc.AddToBalance(genAcc.Balance); err != nil {
-			continue
-		}
+		acc.AddToBalance(genAcc.Balance)
 		accs = append(accs, acc)
 	}
 

@@ -3,7 +3,9 @@ package http
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"strings"
@@ -32,12 +34,12 @@ func NewServer(conf *Config) (*Server, error) {
 	}, nil
 }
 
-func (s *Server) StartServer() error {
+func (s *Server) StartServer(capnpServer string) error {
 	if !s.config.Enable {
 		return nil
 	}
 
-	c, err := net.Dial("tcp", s.config.CapnpServer)
+	c, err := net.Dial("tcp", capnpServer)
 	if err != nil {
 		return err
 	}
@@ -46,10 +48,11 @@ func (s *Server) StartServer() error {
 	s.server = capnp.ZarbServer{Client: conn.Bootstrap(s.ctx)}
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
-	s.router.HandleFunc("/block/height/{height}", s.BlockByHeightHandler)
-	s.router.HandleFunc("/block/hash/{hash}", s.BlockByHashHandler)
-	s.router.HandleFunc("/tx/hash/{hash}", s.TxHandler)
-	s.router.HandleFunc("/account/number/{number}", s.AccountNumberHandler)
+	s.router.HandleFunc("/block/height/{height}", s.GetBlockHandler)
+	s.router.HandleFunc("/block_height/hash/{hash}", s.GetBlockHeightHandler)
+	s.router.HandleFunc("/transaction/hash/{hash}", s.GetTransactionHandler)
+	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
+	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
 	l, err := net.Listen("tcp", s.config.Address)
@@ -72,6 +75,8 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) StopServer() {
+	s.ctx.Done()
+
 	if s.server.Client != nil {
 		s.server.Client.Close()
 	}
@@ -101,9 +106,37 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	buf.WriteString("</body></html>")
+
+	s.writeHTML(w, buf.String())
+}
+
+func (s *Server) writeJSON(w http.ResponseWriter, val interface{}) int {
+	j, _ := json.MarshalIndent(val, "", "  ")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	n, _ := io.WriteString(w, string(j))
+	return n
+}
+
+func (s *Server) writePlainText(w http.ResponseWriter, val string) int {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	n, _ := io.WriteString(w, val)
+	return n
+}
+
+func (s *Server) writeError(w http.ResponseWriter, err error) int {
+	s.logger.Error("An error occurred", "err", err)
+
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusBadRequest)
+	n, _ := io.WriteString(w, err.Error())
+	return n
+}
+
+func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(200)
-	if _, err = w.Write(buf.Bytes()); err != nil {
-		s.logger.Error("Unable to write buffer", "err", err)
-	}
+	w.WriteHeader(http.StatusBadRequest)
+	n, _ := io.WriteString(w, html)
+	return n
 }

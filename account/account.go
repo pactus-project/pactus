@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -37,24 +36,12 @@ func (acc Account) Number() int             { return acc.data.Number }
 func (acc Account) Sequence() int           { return acc.data.Sequence }
 func (acc Account) Balance() int64          { return acc.data.Balance }
 
-
-func (acc *Account) SubtractFromBalance(amt int64) error {
-	if amt < 0 {
-		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
-	}
-	if amt > acc.Balance() {
-		return errors.Errorf(errors.ErrInsufficientFunds, "Attempt to subtract %v from the balance of %s", amt, acc.Address())
-	}
+func (acc *Account) SubtractFromBalance(amt int64) {
 	acc.data.Balance -= amt
-	return nil
 }
 
-func (acc *Account) AddToBalance(amt int64) error {
-	if amt < 0 {
-		return errors.Errorf(errors.ErrInvalidAmount, "amount is negative: %v", amt)
-	}
+func (acc *Account) AddToBalance(amt int64) {
 	acc.data.Balance += amt
-	return nil
 }
 
 func (acc *Account) IncSequence() {

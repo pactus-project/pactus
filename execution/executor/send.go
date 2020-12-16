@@ -28,6 +28,9 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	if receiverAcc == nil {
 		receiverAcc = e.sandbox.MakeNewAccount(pld.Receiver)
 	}
+	if senderAcc.Balance() < pld.Amount+trx.Fee() {
+		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
+	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence, Expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
@@ -44,12 +47,8 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	}
 
 	senderAcc.IncSequence()
-	if err := senderAcc.SubtractFromBalance(pld.Amount + trx.Fee()); err != nil {
-		return err
-	}
-	if err := receiverAcc.AddToBalance(pld.Amount); err != nil {
-		return err
-	}
+	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
+	receiverAcc.AddToBalance(pld.Amount)
 
 	e.sandbox.UpdateAccount(senderAcc)
 	e.sandbox.UpdateAccount(receiverAcc)

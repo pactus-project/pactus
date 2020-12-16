@@ -23,8 +23,8 @@ func setup(t *testing.T) {
 
 	acc1, priv1 = account.GenerateTestAccount(1)
 	pub1 = priv1.PublicKey()
-	assert.NoError(t, acc1.SubtractFromBalance(acc1.Balance())) // make balance zero
-	assert.NoError(t, acc1.AddToBalance(3000))
+	acc1.SubtractFromBalance(acc1.Balance()) // make balance zero
+	acc1.AddToBalance(3000)
 	sb.UpdateAccount(acc1)
 }
 

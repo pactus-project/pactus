@@ -108,7 +108,7 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start Capnproto server")
 	}
 
-	err = n.http.StartServer()
+	err = n.http.StartServer(n.capnp.Address())
 	if err != nil {
 		return errors.Wrap(err, "could not start http server")
 	}
@@ -121,7 +121,7 @@ func (n *Node) Stop() {
 
 	n.network.Stop()
 	n.sync.Stop()
-	n.capnp.StopServer()
-	n.http.StopServer()
 	n.state.Close()
+	n.http.StopServer()
+	n.capnp.StopServer()
 }

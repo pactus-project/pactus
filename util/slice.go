@@ -5,25 +5,29 @@ import (
 )
 
 func UIntToSlice(n uint) []byte {
-	bs := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bs, uint32(n))
-	return bs
+	return UInt64ToSlice(uint64(n))
+}
+func IntToSlice(n int) []byte {
+	return Int64ToSlice(int64(n))
 }
 
 func SliceToUInt(bs []byte) uint {
-	n := binary.LittleEndian.Uint32(bs)
-	return uint(n)
-}
-
-func IntToSlice(n int) []byte {
-	bs := make([]byte, 4)
-	binary.LittleEndian.PutUint32(bs, uint32(n))
-	return bs
+	return uint(SliceToUInt64(bs))
 }
 
 func SliceToInt(bs []byte) int {
-	n := binary.LittleEndian.Uint32(bs)
-	return int(n)
+	return int(SliceToInt64(bs))
+}
+
+func UInt64ToSlice(n uint64) []byte {
+	bs := make([]byte, 8)
+	binary.LittleEndian.PutUint64(bs, uint64(n))
+	return bs
+}
+func Int64ToSlice(n int64) []byte {
+	bs := make([]byte, 8)
+	binary.LittleEndian.PutUint64(bs, uint64(n))
+	return bs
 }
 
 func SliceToUInt64(bs []byte) uint64 {

@@ -9,8 +9,7 @@ import (
 )
 
 type StoreReader interface {
-	BlockByHeight(height int) (*block.Block, error)
-	BlockByHash(hash crypto.Hash) (*block.Block, int, error)
+	Block(height int) (*block.Block, error)
 	BlockHeight(hash crypto.Hash) (int, error)
 	Transaction(hash crypto.Hash) (*tx.CommittedTx, error)
 	HasAccount(crypto.Address) bool
