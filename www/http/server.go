@@ -3,7 +3,9 @@ package http
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"strings"
@@ -108,5 +110,32 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	if _, err = w.Write(buf.Bytes()); err != nil {
 		s.logger.Error("Unable to write buffer", "err", err)
+	}
+}
+
+func (s *Server) writeJSON(w http.ResponseWriter, val interface{}) {
+	j, _ := json.MarshalIndent(val, "", "  ")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if _, err := io.WriteString(w, string(j)); err != nil {
+		s.logger.Error("Unable to write string", "err", err)
+	}
+}
+
+func (s *Server) writePlainText(w http.ResponseWriter, val string) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	if _, err := io.WriteString(w, val); err != nil {
+		s.logger.Error("Unable to write string", "err", err)
+	}
+}
+
+func (s *Server) writeError(w http.ResponseWriter, err error) {
+	s.logger.Error("An error occurred", "err", err)
+
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	if _, err := io.WriteString(w, err.Error()); err != nil {
+		s.logger.Error("Unable to write string", "err", err)
 	}
 }

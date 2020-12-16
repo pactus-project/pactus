@@ -1,8 +1,6 @@
 package http
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -22,9 +20,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 
 	a, err := b.Struct()
 	if err != nil {
-		if _, err = io.WriteString(w, err.Error()); err != nil {
-			s.logger.Error("Unable to write string", "err", err)
-		}
+		s.writeError(w, err)
 		return
 	}
 
@@ -33,14 +29,9 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	acc := new(account.Account)
 	err = acc.Decode(d)
 	if err != nil {
-		s.logger.Error("Unable to decode account data", "err", err)
+		s.writeError(w, err)
 		return
 	}
 
-	j, _ := json.MarshalIndent(acc, "", "  ")
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if _, err := io.WriteString(w, string(j)); err != nil {
-		s.logger.Error("Unable to write string", "err", err)
-	}
+	s.writeJSON(w, acc)
 }

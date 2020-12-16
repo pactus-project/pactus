@@ -2,8 +2,6 @@ package http
 
 import (
 	"encoding/hex"
-	"encoding/json"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -26,13 +24,13 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 
 	st, err := res.Struct()
 	if err != nil {
-		s.logger.Error("Unable to get result", "err", err)
+		s.writeError(w, err)
 		return
 	}
 	d, _ := st.Data()
 	b := new(block.Block)
 	if err = b.Decode(d); err != nil {
-		s.logger.Error("Unable to write string", "err", err)
+		s.writeError(w, err)
 		return
 	}
 
@@ -41,12 +39,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 	out.Data = hex.EncodeToString(d)
 	out.Time = b.Header().Time()
 
-	j, _ := json.MarshalIndent(out, "", "  ")
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if _, err := io.WriteString(w, string(j)); err != nil {
-		s.logger.Error("Unable to write string", "err", err)
-	}
+	s.writeJSON(w, out)
 }
 
 func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,14 +53,11 @@ func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
 
 	st, err := res.Struct()
 	if err != nil {
-		s.logger.Error("Unable to get result", "err", err)
+		s.writeError(w, err)
 		return
 	}
 
 	height := st.Result()
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	if _, err := io.WriteString(w, strconv.FormatUint(height, 10)); err != nil {
-		s.logger.Error("Unable to write string", "err", err)
-	}
+
+	s.writePlainText(w, strconv.FormatUint(height, 10))
 }

@@ -180,6 +180,14 @@ func (tx *Tx) UnmarshalJSON(bs []byte) error {
 	return json.Unmarshal(bs, &tx.data)
 }
 
+func (tx *Tx) Encode() ([]byte, error) {
+	return tx.MarshalCBOR()
+}
+
+func (tx *Tx) Decode(bs []byte) error {
+	return tx.UnmarshalCBOR(bs)
+}
+
 func (tx Tx) Fingerprint() string {
 	return fmt.Sprintf("{⌘ %v 🏵 %v %v}",
 		tx.Hash().Fingerprint(),

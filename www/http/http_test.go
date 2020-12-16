@@ -19,7 +19,10 @@ import (
 )
 
 type MockStore struct {
-	Blocks map[int]*block.Block
+	Blocks       map[int]*block.Block
+	Accounts     map[crypto.Address]*account.Account
+	Validators   map[crypto.Address]*validator.Validator
+	Transactions map[crypto.Hash]*tx.CommittedTx
 }
 
 type MockState struct {
@@ -68,44 +71,83 @@ func (m *MockStore) BlockHeight(hash crypto.Hash) (int, error) {
 	return 0, nil
 }
 func (m *MockStore) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
-	return nil, nil
+	b, ok := m.Transactions[hash]
+	if ok {
+		return b, nil
+	}
+	return nil, fmt.Errorf("Not found")
 }
-func (m *MockStore) HasAccount(crypto.Address) bool {
-	return false
+func (m *MockStore) HasAccount(addr crypto.Address) bool {
+	_, ok := m.Accounts[addr]
+	return ok
 }
 func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
-	return nil, nil
+	a, ok := m.Accounts[addr]
+	if ok {
+		return a, nil
+	}
+	return nil, fmt.Errorf("Not found")
 }
 func (m *MockStore) TotalAccounts() int {
-	return 0
+	return len(m.Accounts)
 }
-func (m *MockStore) HasValidator(crypto.Address) bool {
-	return false
+func (m *MockStore) HasValidator(addr crypto.Address) bool {
+	_, ok := m.Validators[addr]
+	return ok
 }
 func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error) {
-	return nil, nil
+	v, ok := m.Validators[addr]
+	if ok {
+		return v, nil
+	}
+	return nil, fmt.Errorf("Not found")
 }
 func (m *MockStore) TotalValidators() int {
-	return 0
+	return len(m.Validators)
 }
 
 var mockState *MockState
 var mockPool txpool.TxPoolReader
 var capnpServer *capnp.Server
 var httpServer *Server
+var accTestAddr crypto.Address
+var valTestAddr crypto.Address
+var txTestHash crypto.Hash
 
 func setup(t *testing.T) {
+	if httpServer != nil {
+		return
+	}
+
 	mockState = &MockState{
 		Store: &MockStore{
-			Blocks: make(map[int]*block.Block),
+			Blocks:       make(map[int]*block.Block),
+			Accounts:     make(map[crypto.Address]*account.Account),
+			Validators:   make(map[crypto.Address]*validator.Validator),
+			Transactions: make(map[crypto.Hash]*tx.CommittedTx),
 		},
 	}
 	mockPool = txpool.NewMockTxPool()
 
-	b1, _ := block.GenerateTestBlock(nil)
+	b1, txs := block.GenerateTestBlock(nil)
 	b2, _ := block.GenerateTestBlock(nil)
 	mockState.Store.Blocks[1] = &b1
 	mockState.Store.Blocks[2] = &b2
+
+	txTestHash = txs[0].Hash()
+
+	mockState.Store.Transactions[txTestHash] = &tx.CommittedTx{
+		Tx:      txs[0],
+		Receipt: txs[0].GenerateReceipt(0, b1.Hash()),
+	}
+
+	a, _ := account.GenerateTestAccount(88)
+	accTestAddr = a.Address()
+	mockState.Store.Accounts[accTestAddr] = a
+
+	v, _ := validator.GenerateTestValidator(88)
+	valTestAddr = v.Address()
+	mockState.Store.Validators[valTestAddr] = v
 
 	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)

@@ -68,8 +68,6 @@ struct ValidatorResult {
 }
 
 
-
-
 interface ZarbServer {
   getBlockchainInfo    @0 ()                                       -> (result: BlockchainResult);
 	getBlock             @1 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
