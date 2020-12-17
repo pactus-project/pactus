@@ -36,7 +36,7 @@ func setup(t *testing.T) {
 	tMockState.Store.Blocks[1] = &b1
 	tMockState.Store.Blocks[2] = &b2
 
-	tTxTestHash = txs[0].Hash()
+	tTxTestHash = txs[0].ID()
 
 	tMockState.Store.Transactions[tTxTestHash] = &tx.CommittedTx{
 		Tx:      txs[0],

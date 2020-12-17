@@ -35,7 +35,7 @@ func (p *TxsPayload) Type() PayloadType {
 func (p *TxsPayload) Fingerprint() string {
 	var s string
 	for _, tx := range p.Txs {
-		s += fmt.Sprintf("%v ", tx.Hash().Fingerprint())
+		s += fmt.Sprintf("%v ", tx.ID().Fingerprint())
 	}
 	return fmt.Sprintf("{%v: ⌘ [%v]}", len(p.Txs), s)
 }

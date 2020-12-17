@@ -18,7 +18,7 @@ type headerData struct {
 	UnixTime         int64          `cbor:"2,keyasint"`
 	LastBlockHash    crypto.Hash    `cbor:"3,keyasint"`
 	StateHash        crypto.Hash    `cbor:"4,keyasint"`
-	TxsHash          crypto.Hash    `cbor:"5,keyasint"`
+	TxIDsHash        crypto.Hash    `cbor:"5,keyasint"`
 	LastReceiptsHash crypto.Hash    `cbor:"6,keyasint"`
 	LastCommitHash   crypto.Hash    `cbor:"7,keyasint"`
 	CommittersHash   crypto.Hash    `cbor:"8,keyasint"`
@@ -27,7 +27,7 @@ type headerData struct {
 
 func (h *Header) Version() uint                   { return h.data.Version }
 func (h *Header) Time() time.Time                 { return time.Unix(h.data.UnixTime, 0) }
-func (h *Header) TxsHash() crypto.Hash            { return h.data.TxsHash }
+func (h *Header) TxIDsHash() crypto.Hash          { return h.data.TxIDsHash }
 func (h *Header) StateHash() crypto.Hash          { return h.data.StateHash }
 func (h *Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
 func (h *Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
@@ -37,14 +37,14 @@ func (h *Header) ProposerAddress() crypto.Address { return h.data.ProposerAddres
 
 func NewHeader(version uint,
 	time time.Time,
-	txsHash, lastBlockHash, CommittersHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
+	txIDsHash, lastBlockHash, CommittersHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
 	proposerAddress crypto.Address) Header {
 
 	return Header{
 		data: headerData{
 			Version:          version,
 			UnixTime:         time.Unix(),
-			TxsHash:          txsHash,
+			TxIDsHash:        txIDsHash,
 			LastBlockHash:    lastBlockHash,
 			CommittersHash:   CommittersHash,
 			StateHash:        stateHash,
@@ -56,7 +56,10 @@ func NewHeader(version uint,
 }
 
 func (h *Header) SanityCheck() error {
-	if err := h.data.TxsHash.SanityCheck(); err != nil {
+	if err := h.data.StateHash.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+	}
+	if err := h.data.TxIDsHash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 	if err := h.data.ProposerAddress.SanityCheck(); err != nil {

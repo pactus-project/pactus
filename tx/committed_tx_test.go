@@ -17,7 +17,7 @@ func TestSerialization(t *testing.T) {
 	ctrx2 := new(CommittedTx)
 	err = cbor.Unmarshal(d, ctrx2)
 	assert.NoError(t, err)
-	assert.Equal(t, tx.Hash(), ctrx2.Tx.Hash())
+	assert.Equal(t, tx.ID(), ctrx2.Tx.ID())
 	assert.Equal(t, r.Hash(), ctrx2.Receipt.Hash())
 	assert.Equal(t, r, ctrx2.Receipt)
 }
@@ -27,6 +27,6 @@ func TestCommittedTxSanityCheck(t *testing.T) {
 	r := tx.GenerateReceipt(Ok, crypto.GenerateTestHash())
 	ctrx := CommittedTx{tx, r}
 	assert.NoError(t, ctrx.SanityCheck())
-	ctrx.Receipt.data.TxHash = crypto.GenerateTestHash()
+	ctrx.Receipt.data.TxID = crypto.GenerateTestHash()
 	assert.Error(t, ctrx.SanityCheck())
 }

@@ -85,8 +85,8 @@ func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) error {
 }
 
 func (pool *txPool) appendTx(trx tx.Tx) error {
-	if pool.pendings.Has(trx.Hash()) {
-		return errors.Errorf(errors.ErrInvalidTx, "Transaction is already in pool. hash: %v", trx.Hash())
+	if pool.pendings.Has(trx.ID()) {
+		return errors.Errorf(errors.ErrInvalidTx, "Transaction is already in pool. id: %v", trx.ID())
 	}
 
 	if err := pool.checker.Execute(&trx); err != nil {
@@ -94,32 +94,32 @@ func (pool *txPool) appendTx(trx tx.Tx) error {
 		return err
 	}
 
-	pool.pendings.PushBack(trx.Hash(), &trx)
+	pool.pendings.PushBack(trx.ID(), &trx)
 
 	return nil
 }
 
-func (pool *txPool) RemoveTx(hash crypto.Hash) {
+func (pool *txPool) RemoveTx(id crypto.Hash) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	pool.pendings.Remove(hash)
+	pool.pendings.Remove(id)
 }
 
-func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
+func (pool *txPool) PendingTx(id crypto.Hash) *tx.Tx {
 	pool.lk.RLock()
 
-	val, found := pool.pendings.Get(hash)
+	val, found := pool.pendings.Get(id)
 	if found {
 		trx := val.(*tx.Tx)
 		pool.lk.RUnlock()
 		return trx
 	}
 
-	pool.logger.Debug("Request transaction from peers", "hash", hash)
+	pool.logger.Debug("Request transaction from peers", "id", id)
 	pool.lk.RUnlock()
 
-	msg := message.NewTxsReqMessage([]crypto.Hash{hash})
+	msg := message.NewTxsReqMessage([]crypto.Hash{id})
 	pool.broadcastCh <- msg
 
 	timeout := time.NewTimer(pool.config.WaitingTimeout)
@@ -127,22 +127,22 @@ func (pool *txPool) PendingTx(hash crypto.Hash) *tx.Tx {
 	for {
 		select {
 		case <-timeout.C:
-			pool.logger.Warn("Transaction not received", "hash", hash, "timeout", pool.config.WaitingTimeout)
+			pool.logger.Warn("Transaction not received", "id", id, "timeout", pool.config.WaitingTimeout)
 			return nil
 		case trx := <-pool.appendTxCh:
-			pool.logger.Debug("Transaction found", "hash", hash)
-			if trx.Hash().EqualsTo(hash) {
+			pool.logger.Debug("Transaction found", "id", id)
+			if trx.ID().EqualsTo(id) {
 				return trx
 			}
 		}
 	}
 }
 
-func (pool *txPool) HasTx(hash crypto.Hash) bool {
+func (pool *txPool) HasTx(id crypto.Hash) bool {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
-	return pool.pendings.Has(hash)
+	return pool.pendings.Has(id)
 }
 
 func (pool *txPool) Size() int {

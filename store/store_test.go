@@ -37,10 +37,10 @@ func TestRetreiveBlockAndTransactions(t *testing.T) {
 
 	for _, trx := range txs {
 		r := trx.GenerateReceipt(tx.Ok, b.Hash())
-		ctrx2, err := store.Transaction(trx.Hash())
+		ctrx2, err := store.Transaction(trx.ID())
 		assert.NoError(t, err)
 
-		assert.Equal(t, trx.Hash(), ctrx2.Tx.Hash())
+		assert.Equal(t, trx.ID(), ctrx2.Tx.ID())
 		assert.Equal(t, r, ctrx2.Receipt)
 	}
 }

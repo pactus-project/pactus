@@ -8,54 +8,54 @@ import (
 	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
-type TxHashes struct {
-	data hashesData
+type TxIDs struct {
+	data txIDsData
 }
 
-type hashesData struct {
-	Hashes []crypto.Hash `cbor:"1,keyasint"`
+type txIDsData struct {
+	IDs []crypto.Hash `cbor:"1,keyasint"`
 }
 
-func NewTxHashes() TxHashes {
-	return TxHashes{
-		data: hashesData{
-			Hashes: make([]crypto.Hash, 0),
+func NewTxIDs() TxIDs {
+	return TxIDs{
+		data: txIDsData{
+			IDs: make([]crypto.Hash, 0),
 		},
 	}
 }
-func (txs *TxHashes) Append(hash crypto.Hash) {
-	txs.data.Hashes = append(txs.data.Hashes, hash)
+func (txs *TxIDs) Append(hash crypto.Hash) {
+	txs.data.IDs = append(txs.data.IDs, hash)
 }
 
-func (txs TxHashes) Hash() crypto.Hash {
-	merkle := simpleMerkle.NewTreeFromHashes(txs.data.Hashes)
+func (txs TxIDs) Hash() crypto.Hash {
+	merkle := simpleMerkle.NewTreeFromHashes(txs.data.IDs)
 	return merkle.Root()
 }
 
-func (txs TxHashes) Hashes() []crypto.Hash {
-	return txs.data.Hashes
+func (txs TxIDs) IDs() []crypto.Hash {
+	return txs.data.IDs
 }
 
-func (txs TxHashes) IsEmpty() bool {
+func (txs TxIDs) IsEmpty() bool {
 	return txs.Count() == 0
 }
 
-func (txs TxHashes) Count() int {
-	return len(txs.data.Hashes)
+func (txs TxIDs) Count() int {
+	return len(txs.data.IDs)
 }
 
-func (txs *TxHashes) MarshalCBOR() ([]byte, error) {
+func (txs *TxIDs) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(txs.data)
 }
 
-func (txs *TxHashes) UnmarshalCBOR(bs []byte) error {
+func (txs *TxIDs) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &txs.data)
 }
 
-func (txs TxHashes) MarshalJSON() ([]byte, error) {
+func (txs TxIDs) MarshalJSON() ([]byte, error) {
 	return json.Marshal(txs.data)
 }
 
-func (txs *TxHashes) UnmarshalJSON(bz []byte) error {
+func (txs *TxIDs) UnmarshalJSON(bz []byte) error {
 	return json.Unmarshal(bz, &txs.data)
 }

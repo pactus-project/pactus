@@ -14,7 +14,7 @@ func (ctrx *CommittedTx) SanityCheck() error {
 	if err := ctrx.Receipt.SanityCheck(); err != nil {
 		return err
 	}
-	if !ctrx.Receipt.data.TxHash.EqualsTo(ctrx.Tx.Hash()) {
+	if !ctrx.Receipt.data.TxID.EqualsTo(ctrx.Tx.ID()) {
 		return errors.Errorf(errors.ErrInvalidReceipt, "Mismatched transaction hash")
 	}
 	return nil

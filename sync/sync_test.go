@@ -53,8 +53,8 @@ func setup(t *testing.T) {
 	validTxs = make([]tx.Tx, 0, blockCount)
 	for i := 0; i < blockCount; i++ {
 		b := st.ProposeBlock()
-		txHash := b.TxHashes().Hashes()[0]
-		trx := txPool.PendingTx(txHash)
+		id := b.TxIDs().IDs()[0]
+		trx := txPool.PendingTx(id)
 		validTxs = append(validTxs, *trx)
 
 		v := vote.NewPrecommit(i+1, 0, b.Hash(), signer.Address())

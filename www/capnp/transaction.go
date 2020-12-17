@@ -18,7 +18,7 @@ func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
 	if err := res.SetData(trxData); err != nil {
 		return err
 	}
-	if err := res.SetHash(ctx.Tx.Hash().RawBytes()); err != nil {
+	if err := res.SetHash(ctx.Tx.ID().RawBytes()); err != nil {
 		return err
 	}
 	rec, _ := res.NewReceipt()

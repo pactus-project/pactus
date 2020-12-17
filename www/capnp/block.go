@@ -45,14 +45,14 @@ func (f factory) GetBlock(args ZarbServer_getBlock) error {
 		return err
 	}
 	if v == 1 {
-		if err := f.ToVerbosBlock(b, &res); err != nil {
+		if err := f.ToVerboseBlock(b, &res); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (f factory) ToVerbosBlock(block *block.Block, res *BlockResult) error {
+func (f factory) ToVerboseBlock(block *block.Block, res *BlockResult) error {
 	cb, _ := res.NewBlock()
 	ch, _ := cb.NewHeader()
 	ctxs, _ := cb.NewTxs()
@@ -76,7 +76,7 @@ func (f factory) ToVerbosBlock(block *block.Block, res *BlockResult) error {
 	// header
 	ch.SetVersion(int32(block.Header().Version()))
 	ch.SetTime(block.Header().Time().Unix())
-	if err := ch.SetTxsHash(block.Header().TxsHash().RawBytes()); err != nil {
+	if err := ch.SetTxsHash(block.Header().TxIDsHash().RawBytes()); err != nil {
 		return err
 	}
 	if err := ch.SetStateHash(block.Header().StateHash().RawBytes()); err != nil {
@@ -98,9 +98,9 @@ func (f factory) ToVerbosBlock(block *block.Block, res *BlockResult) error {
 		return err
 	}
 	// Transactions
-	ctxHashes, _ := ctxs.NewHashes(int32(block.TxHashes().Count()))
-	for i, hash := range block.TxHashes().Hashes() {
-		if err := ctxHashes.Set(i, hash.RawBytes()); err != nil {
+	cTxIDs, _ := ctxs.NewHashes(int32(block.TxIDs().Count()))
+	for i, hash := range block.TxIDs().IDs() {
+		if err := cTxIDs.Set(i, hash.RawBytes()); err != nil {
 			return err
 		}
 	}

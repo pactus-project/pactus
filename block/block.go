@@ -19,17 +19,17 @@ type Block struct {
 }
 
 type blockData struct {
-	Header     Header   `cbor:"1,keyasint"`
-	LastCommit *Commit  `cbor:"2,keyasint"`
-	TxHashes   TxHashes `cbor:"3,keyasint"`
+	Header     Header  `cbor:"1,keyasint"`
+	LastCommit *Commit `cbor:"2,keyasint"`
+	TxIDs      TxIDs   `cbor:"3,keyasint"`
 }
 
-func NewBlock(header Header, lastCommit *Commit, txHashes TxHashes) (*Block, error) {
+func NewBlock(header Header, lastCommit *Commit, TxIDs TxIDs) (*Block, error) {
 	b := &Block{
 		data: blockData{
 			Header:     header,
 			LastCommit: lastCommit,
-			TxHashes:   txHashes,
+			TxIDs:      TxIDs,
 		},
 	}
 
@@ -39,19 +39,19 @@ func NewBlock(header Header, lastCommit *Commit, txHashes TxHashes) (*Block, err
 	return b, nil
 }
 
-func MakeBlock(timestamp time.Time, txHashes TxHashes,
+func MakeBlock(timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, CommittersHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
 
-	txsHash := txHashes.Hash()
+	txIDsHash := txIDs.Hash()
 	header := NewHeader(1, timestamp,
-		txsHash, lastBlockHash, CommittersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
+		txIDsHash, lastBlockHash, CommittersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
 
 	b := Block{
 		data: blockData{
 			Header:     header,
 			LastCommit: lastCommit,
-			TxHashes:   txHashes,
+			TxIDs:      txIDs,
 		},
 	}
 
@@ -63,13 +63,13 @@ func MakeBlock(timestamp time.Time, txHashes TxHashes,
 
 func (b Block) Header() *Header     { return &b.data.Header }
 func (b Block) LastCommit() *Commit { return b.data.LastCommit }
-func (b Block) TxHashes() *TxHashes { return &b.data.TxHashes }
+func (b Block) TxIDs() *TxIDs       { return &b.data.TxIDs }
 
 func (b Block) SanityCheck() error {
 	if err := b.data.Header.SanityCheck(); err != nil {
 		return err
 	}
-	if !b.data.Header.TxsHash().EqualsTo(b.data.TxHashes.Hash()) {
+	if !b.data.Header.TxIDsHash().EqualsTo(b.data.TxIDs.Hash()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Txs Hash")
 	}
 	if b.data.LastCommit != nil {
@@ -108,7 +108,7 @@ func (b Block) Fingerprint() string {
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.Header.StateHash().Fingerprint(),
 		b.data.Header.CommittersHash().Fingerprint(),
-		b.data.TxHashes.Count(),
+		b.data.TxIDs.Count(),
 	)
 }
 
@@ -163,9 +163,9 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 	txs = append(txs, tx3)
 	txs = append(txs, tx4)
 
-	txHashes := NewTxHashes()
+	ids := NewTxIDs()
 	for _, tx := range txs {
-		txHashes.Append(tx.Hash())
+		ids.Append(tx.ID())
 	}
 	lastBlockHash := crypto.GenerateTestHash()
 	addr1, _, pv1 := crypto.GenerateTestKeyPair()
@@ -189,7 +189,7 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 		},
 		sig)
 
-	block := MakeBlock(time.Now(), txHashes,
+	block := MakeBlock(time.Now(), ids,
 		lastBlockHash,
 		crypto.GenerateTestHash(),
 		crypto.GenerateTestHash(),

@@ -4,11 +4,36 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func TestRandomBlock(t *testing.T) {
 	b, _ := GenerateTestBlock(nil)
 	assert.NoError(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil)
+	b.data.Header.data.StateHash = crypto.UndefHash
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil)
+	b.data.Header.data.TxIDsHash = crypto.UndefHash
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil)
+	b.data.Header.data.CommittersHash = crypto.UndefHash
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil)
+	b.data.Header.data.LastReceiptsHash = crypto.UndefHash
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil)
+	b.data.Header.data.LastBlockHash = crypto.UndefHash
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil)
+	b.data.Header.data.LastCommitHash = crypto.UndefHash
+	assert.Error(t, b.SanityCheck())
 }
 
 func TestMarshaling(t *testing.T) {

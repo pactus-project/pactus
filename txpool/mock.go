@@ -42,16 +42,16 @@ func (m *MockTxPool) Fingerprint() string {
 
 func (m *MockTxPool) AppendTxs(txs []tx.Tx) {
 	for _, t := range txs {
-		m.txs[t.Hash()] = t
+		m.txs[t.ID()] = t
 	}
 }
 
 func (m *MockTxPool) AppendTx(tx tx.Tx) error {
-	m.txs[tx.Hash()] = tx
+	m.txs[tx.ID()] = tx
 	return nil
 }
 func (m *MockTxPool) AppendTxAndBroadcast(trx tx.Tx) error {
-	m.txs[trx.Hash()] = trx
+	m.txs[trx.ID()] = trx
 	return nil
 }
 
