@@ -47,12 +47,17 @@ func (s *Sortition) Evaluate(hash crypto.Hash, val *validator.Validator) *tx.Tx 
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	index, proof := s.vrf.Evaluate(hash)
-	if index >= val.Stake() {
+	if !val.Address().EqualsTo(s.signer.Address()) {
 		return nil
 	}
 
-	trx := tx.NewSortitionTx(hash, val.Sequence()+1, val.Address(), proof, "", nil, nil)
+	index, proof := s.vrf.Evaluate(hash)
+	if index > val.Stake() {
+		return nil
+	}
+
+	pub := s.signer.PublicKey()
+	trx := tx.NewSortitionTx(hash, val.Sequence()+1, val.Address(), proof, "", &pub, nil)
 	s.signer.SignMsg(trx)
 	return trx
 }
@@ -65,7 +70,7 @@ func (s *Sortition) VerifySortition(blockHash crypto.Hash, proof []byte, val *va
 	if !result {
 		return false
 	}
-	if index >= val.Stake() {
+	if index > val.Stake() {
 		return false
 	}
 

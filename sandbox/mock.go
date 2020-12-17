@@ -25,6 +25,7 @@ type MockSandbox struct {
 }
 
 func NewMockSandbox() *MockSandbox {
+	_, _, priv := crypto.GenerateTestKeyPair()
 	return &MockSandbox{
 		Accounts:       make(map[crypto.Address]*account.Account),
 		Validators:     make(map[crypto.Address]*validator.Validator),
@@ -33,7 +34,7 @@ func NewMockSandbox() *MockSandbox {
 		MaxMemoLength_: 1024,
 		FeeFraction_:   0.001,
 		MinFee_:        1000,
-		Sortition:      sortition.NewSortition(crypto.Signer{}),
+		Sortition:      sortition.NewSortition(crypto.NewSigner(priv)),
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
@@ -63,7 +64,7 @@ func (m *MockSandbox) AddToSet(crypto.Hash, crypto.Address) error {
 	return nil
 }
 func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
-	return false
+	return m.Sortition.VerifySortition(blockHash, proof, val)
 }
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurrentHeight_

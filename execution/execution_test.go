@@ -3,6 +3,8 @@ package execution
 import (
 	"testing"
 
+	"github.com/zarbchain/zarb-go/sortition"
+
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/validator"
 
@@ -16,6 +18,7 @@ import (
 
 var tExec *Execution
 var tAcc1 *account.Account
+var tVal1 *validator.Validator
 var tPriv1 crypto.PrivateKey
 var tPub1 crypto.PublicKey
 var tSandbox *sandbox.MockSandbox
@@ -31,6 +34,8 @@ func setup(t *testing.T) {
 	tAcc1.SubtractFromBalance(tAcc1.Balance()) // make balance zero
 	tAcc1.AddToBalance(3000)
 	tSandbox.UpdateAccount(tAcc1)
+	tVal1 = validator.NewValidator(tPub1, 0, 0)
+	tSandbox.UpdateValidator(tVal1)
 
 	tExec = NewExecution(tSandbox)
 }
@@ -120,5 +125,10 @@ func TestExecuteSortitionTx(t *testing.T) {
 	trx2 := tx.NewSortitionTx(stamp, 1, valAddr, proof[:], "invalid proof", &valPub, nil)
 	trx2.SetSignature(valPriv.Sign(trx2.SignBytes()))
 	assert.Error(t, tExec.Execute(trx2))
+
+	sortition := sortition.NewSortition(crypto.NewSigner(valPriv))
+	trx3 := sortition.Evaluate(stamp, val)
+	assert.NotNil(t, trx3)
+	assert.NoError(t, tExec.Execute(trx3))
 
 }
