@@ -13,7 +13,7 @@ func TestAccountChange(t *testing.T) {
 	setup(t)
 
 	st, _ := mockState(t, nil)
-	sb, err := newSandbox(st.store, st.params, 0)
+	sb, err := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
 	assert.NoError(t, err)
 
 	t.Run("Should returns nil for invalid address", func(t *testing.T) {
@@ -33,7 +33,7 @@ func TestAccountChange(t *testing.T) {
 
 		sb.UpdateAccount(acc1a)
 
-		assert.NoError(t, sb.CommitAndClear(st.validatorSet))
+		sb.CommitChanges(0)
 
 		acc1b, err := sb.store.Account(acc1.Address())
 		assert.NoError(t, err)
@@ -61,7 +61,7 @@ func TestValidatorChange(t *testing.T) {
 	setup(t)
 
 	st, _ := mockState(t, nil)
-	sb, err := newSandbox(st.store, st.params, 0)
+	sb, err := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
 	assert.NoError(t, err)
 
 	t.Run("Should returns nil for invalid address", func(t *testing.T) {
@@ -81,7 +81,7 @@ func TestValidatorChange(t *testing.T) {
 
 		sb.UpdateValidator(val1a)
 
-		assert.NoError(t, sb.CommitAndClear(st.validatorSet))
+		sb.CommitChanges(0)
 
 		val1b, err := sb.store.Validator(val1.Address())
 		assert.NoError(t, err)
@@ -106,24 +106,26 @@ func TestValidatorChange(t *testing.T) {
 }
 
 func TestAddValidatorToSet(t *testing.T) {
-	setup(t)
+	// setup(t)
 
-	st, _ := mockState(t, nil)
-	_, pub1, _ := crypto.GenerateTestKeyPair()
+	// st, _ := mockState(t, nil)
+	// _, pub1, _ := crypto.GenerateTestKeyPair()
 
-	sb, _ := newSandbox(st.store, st.params, 0)
+	// sb, _ := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
 
-	val1 := sb.MakeNewValidator(pub1)
+	// val1 := sb.MakeNewValidator(pub1)
 
-	sb.AddToSet(val1)
-	assert.Nil(t, st.validatorSet.Validator(val1.Address()), "Shouldn't be is not in set")
-	assert.NoError(t, sb.CommitAndClear(st.validatorSet))
-	assert.Nil(t, st.validatorSet.Validator(val1.Address()), "Should be is not in set")
+	// sb.AddToSet(val1)
+	// assert.Nil(t, st.validatorSet.Validator(val1.Address()), "Shouldn't be is not in set")
+	// sb.CommitChanges(0)
+	// assert.Nil(t, st.validatorSet.Validator(val1.Address()), "Should be is not in set")
 }
 
 func TestTotalAccountCounter(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, nil)
-	sb, _ := newSandbox(st.store, st.params, 0)
+	sb, _ := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
 
 	t.Run("Should update total account counter", func(t *testing.T) {
 		assert.Equal(t, st.store.TotalAccounts(), 1) // Sandbox has an account
@@ -139,15 +141,17 @@ func TestTotalAccountCounter(t *testing.T) {
 		acc = sb.MakeNewAccount(addr)
 		sb.UpdateAccount(acc)
 
-		assert.NoError(t, sb.CommitAndClear(st.validatorSet))
+		sb.CommitChanges(0)
 		assert.Equal(t, sb.totalAccounts, 2)
 		assert.Equal(t, st.store.TotalAccounts(), 2)
 	})
 }
 
 func TestTotalValidatorCounter(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, nil)
-	sb, _ := newSandbox(st.store, st.params, 0)
+	sb, _ := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
 
 	t.Run("Should update total validator counter", func(t *testing.T) {
 		assert.Equal(t, st.store.TotalValidators(), 1) // Sandbox has a validator
@@ -163,15 +167,17 @@ func TestTotalValidatorCounter(t *testing.T) {
 		val = sb.MakeNewValidator(pub)
 		sb.UpdateValidator(val)
 
-		assert.NoError(t, sb.CommitAndClear(st.validatorSet))
+		sb.CommitChanges(0)
 		assert.Equal(t, sb.totalValidators, 2)
 		assert.Equal(t, st.store.TotalValidators(), 2)
 	})
 }
 
-func TestCreateduplicated(t *testing.T) {
+func TestCreateDuplicated(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, nil)
-	sb, _ := newSandbox(st.store, st.params, 0)
+	sb, _ := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
 
 	t.Run("Try creating duplicated account, Should panic", func(t *testing.T) {
 		defer func() {
@@ -194,9 +200,11 @@ func TestCreateduplicated(t *testing.T) {
 	})
 }
 
-func TestUpdateFromOutsideThesandbox(t *testing.T) {
+func TestUpdateFromOutsideTheSandbox(t *testing.T) {
+	setup(t)
+
 	st, _ := mockState(t, nil)
-	sb, _ := newSandbox(st.store, st.params, 0)
+	sb, _ := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
 
 	t.Run("Try update an account from outside the sandbox, Should panic", func(t *testing.T) {
 		defer func() {
@@ -217,4 +225,70 @@ func TestUpdateFromOutsideThesandbox(t *testing.T) {
 		val, _ := validator.GenerateTestValidator(1)
 		sb.UpdateValidator(val)
 	})
+}
+
+func TestDeepCopy(t *testing.T) {
+	setup(t)
+
+	st, _ := mockState(t, nil)
+	sb, err := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
+	assert.NoError(t, err)
+
+	addr, pub, _ := crypto.GenerateTestKeyPair()
+	acc1 := sb.MakeNewAccount(addr)
+	val1 := sb.MakeNewValidator(pub)
+
+	acc2 := sb.Account(addr)
+	val2 := sb.Validator(pub.Address())
+
+	assert.Equal(t, acc1, acc2)
+	assert.Equal(t, val1.Hash(), val2.Hash())
+
+	acc1.IncSequence()
+	val1.IncSequence()
+
+	acc2.AddToBalance(1)
+	val2.AddToStake(1)
+
+	assert.NotEqual(t, acc1.Hash(), acc2.Hash())
+	assert.NotEqual(t, val1.Hash(), val2.Hash())
+
+	acc3 := sb.accounts[addr]
+	val3 := sb.validators[pub.Address()]
+
+	assert.NotEqual(t, acc1.Hash(), acc3.account.Hash())
+	assert.NotEqual(t, val1.Hash(), val3.validator.Hash())
+
+	assert.NotEqual(t, acc2.Hash(), acc3.account.Hash())
+	assert.NotEqual(t, val2.Hash(), val3.validator.Hash())
+}
+
+func TestChangeToStake(t *testing.T) {
+	setup(t)
+
+	st, _ := mockState(t, nil)
+	sb, err := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
+	assert.NoError(t, err)
+
+	_, pub1, _ := crypto.GenerateTestKeyPair()
+	_, pub2, _ := crypto.GenerateTestKeyPair()
+	val1 := sb.MakeNewValidator(pub1)
+	val2 := sb.MakeNewValidator(pub2)
+
+	val1.AddToStake(1000)
+	val2.AddToStake(2000)
+	sb.UpdateValidator(val1)
+
+	assert.Equal(t, sb.changeToStake, int64(1000))
+	val1.AddToStake(500)
+	assert.Equal(t, sb.changeToStake, int64(1000))
+
+	sb.UpdateValidator(val1)
+	sb.UpdateValidator(val2)
+	assert.Equal(t, sb.changeToStake, int64(3500))
+	val2.WithdrawStake()
+	assert.Equal(t, sb.changeToStake, int64(3500))
+
+	sb.UpdateValidator(val2)
+	assert.Equal(t, sb.changeToStake, int64(1500))
 }

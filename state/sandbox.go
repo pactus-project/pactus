@@ -6,6 +6,8 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -14,28 +16,33 @@ type sandbox struct {
 	lk deadlock.RWMutex
 
 	store           *store.Store
+	sortition       *sortition.Sortition
+	validatorSet    *validator.ValidatorSet
 	accounts        map[crypto.Address]*accountStatus
 	validators      map[crypto.Address]*validatorStatus
 	recentBlocks    *linkedmap.LinkedMap
 	params          Params
 	totalAccounts   int
 	totalValidators int
+	changeToStake   int64
 }
 
 type validatorStatus struct {
-	validator *validator.Validator
+	validator validator.Validator
 	updated   bool
 	addToSet  bool
 }
 
 type accountStatus struct {
-	account *account.Account
+	account account.Account
 	updated bool
 }
 
-func newSandbox(store *store.Store, params Params, lastBlockHeight int) (*sandbox, error) {
+func newSandbox(store *store.Store, params Params, lastBlockHeight int, sortition *sortition.Sortition, valset *validator.ValidatorSet) (*sandbox, error) {
 	sb := &sandbox{
 		store:        store,
+		sortition:    sortition,
+		validatorSet: valset,
 		params:       params,
 		recentBlocks: linkedmap.NewLinkedMap(params.TransactionToLiveInterval),
 		accounts:     make(map[crypto.Address]*accountStatus),
@@ -66,6 +73,25 @@ func newSandbox(store *store.Store, params Params, lastBlockHeight int) (*sandbo
 	return sb, nil
 }
 
+func (sb *sandbox) shouldPanicForDuplicatedAddress() {
+	//
+	// Why we should panic here?
+	//
+	// Try to make a new item which already exists in store.
+	//
+	logger.Panic("Duplicated address")
+}
+
+func (sb *sandbox) shouldPanicForUnknownAddress() {
+	//
+	// Why we should panic here?
+	//
+	// We only update accounts or validators which we have them inside the sandbox.
+	// We must either make a new one (i.e. `MakeNewAccount`) or get it from store (i.e. `Account`) in advance.
+	//
+	logger.Panic("Unknown address")
+}
+
 func (sb *sandbox) Clear() {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
@@ -80,37 +106,34 @@ func (sb *sandbox) clear() {
 	sb.totalValidators = sb.store.TotalValidators()
 }
 
-func (sb *sandbox) CommitAndClear(set *validator.ValidatorSet) error {
+func (sb *sandbox) CommitChanges(round int) {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	for _, acc := range sb.accounts {
-		if acc.account.Number() >= sb.totalAccounts {
-			return errors.Errorf(errors.ErrGeneric, "Invalid account number")
+	joined := make([]*validator.Validator, 0)
+	for _, val := range sb.validators {
+		if val.addToSet {
+			joined = append(joined, &val.validator)
 		}
+	}
+	if err := sb.validatorSet.MoveToNextHeight(0, joined); err != nil {
+		//
+		// We should panic here before modifying state store
+		//
+		logger.Panic("An error occurred", "err", err)
+	}
+
+	for _, acc := range sb.accounts {
 		if acc.updated {
-			sb.store.UpdateAccount(acc.account)
+			sb.store.UpdateAccount(&acc.account)
 		}
 	}
 
 	for _, val := range sb.validators {
-		if val.validator.Number() >= sb.totalValidators {
-			return errors.Errorf(errors.ErrGeneric, "Invalid account number")
-		}
 		if val.updated {
-			sb.store.UpdateValidator(val.validator)
-		}
-
-		if val.addToSet {
-			if err := set.Join(val.validator); err != nil {
-				panic("Let's panic for now, Fix me!")
-			}
+			sb.store.UpdateValidator(&val.validator)
 		}
 	}
-
-	sb.clear()
-
-	return nil
 }
 
 func (sb *sandbox) Account(addr crypto.Address) *account.Account {
@@ -119,7 +142,9 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 
 	s, ok := sb.accounts[addr]
 	if ok {
-		return s.account
+		copy := new(account.Account)
+		*copy = s.account
+		return copy
 	}
 
 	acc, err := sb.store.Account(addr)
@@ -127,7 +152,7 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 		return nil
 	}
 	sb.accounts[addr] = &accountStatus{
-		account: acc,
+		account: *acc,
 	}
 	return acc
 }
@@ -136,12 +161,12 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	defer sb.lk.RUnlock()
 
 	if sb.store.HasAccount(addr) {
-		panic("Try to create a duplicated account")
+		sb.shouldPanicForDuplicatedAddress()
 	}
 
 	acc := account.NewAccount(addr, sb.totalAccounts)
 	sb.accounts[addr] = &accountStatus{
-		account: acc,
+		account: *acc,
 		updated: true,
 	}
 	sb.totalAccounts++
@@ -154,15 +179,11 @@ func (sb *sandbox) UpdateAccount(acc *account.Account) {
 
 	addr := acc.Address()
 	s, ok := sb.accounts[addr]
-	if ok {
-		s.account = acc
-		s.updated = true
-	} else {
-		//
-		// An account should either be created inside the sandbox or fetched from database
-		//
-		panic("Try to update an account that we don't have in sandbox")
+	if !ok {
+		sb.shouldPanicForUnknownAddress()
 	}
+	s.account = *acc
+	s.updated = true
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
@@ -171,7 +192,9 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 
 	s, ok := sb.validators[addr]
 	if ok {
-		return s.validator
+		copy := new(validator.Validator)
+		*copy = s.validator
+		return copy
 	}
 
 	val, err := sb.store.Validator(addr)
@@ -179,7 +202,7 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 		return nil
 	}
 	sb.validators[addr] = &validatorStatus{
-		validator: val,
+		validator: *val,
 	}
 	return val
 }
@@ -190,12 +213,12 @@ func (sb *sandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
 
 	addr := pub.Address()
 	if sb.store.HasValidator(addr) {
-		panic("Try to create a duplicated validator")
+		sb.shouldPanicForDuplicatedAddress()
 	}
 
 	val := validator.NewValidator(pub, sb.totalAccounts, sb.lastHeight()+1)
 	sb.validators[addr] = &validatorStatus{
-		validator: val,
+		validator: *val,
 		updated:   true,
 	}
 	sb.totalValidators++
@@ -208,32 +231,54 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 
 	addr := val.Address()
 	s, ok := sb.validators[addr]
-	if ok {
-		s.validator = val
-		s.updated = true
-	} else {
-		//
-		// A validator should either be created inside the sandbox or fetched from database
-		//
-		panic("Try to update a validator that we don't have in sandbox")
+	if !ok {
+		sb.shouldPanicForUnknownAddress()
 	}
+
+	sb.changeToStake += val.Stake() - s.validator.Stake()
+	s.validator = *val
+	s.updated = true
 }
 
-func (sb *sandbox) AddToSet(val *validator.Validator) {
+func (sb *sandbox) AddToSet(blockHash crypto.Hash, addr crypto.Address) error {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	addr := val.Address()
 	s, ok := sb.validators[addr]
-	if ok {
-		s.validator = val
-		s.addToSet = true
-	} else {
-		panic("Try to add a validator to the set that we don't have in sandbox")
+	if !ok {
+		sb.shouldPanicForUnknownAddress()
 	}
+
+	if sb.validatorSet.Contains(addr) {
+		return errors.Errorf(errors.ErrGeneric, "This validator already is in the set")
+	}
+
+	joined := 0
+	for _, s := range sb.validators {
+		if s.addToSet {
+			joined++
+		}
+	}
+	if joined >= (sb.validatorSet.MaximumPower() / 3) {
+		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
+	}
+	h, _ := sb.store.BlockHeight(blockHash)
+	b, err := sb.store.Block(h + 1)
+	if err != nil {
+		return errors.Errorf(errors.ErrGeneric, "Invalid block hash")
+	}
+	commiters := b.LastCommit().Committers()
+	for _, c := range commiters {
+		if c.Address.EqualsTo(addr) {
+			return errors.Errorf(errors.ErrGeneric, "This validator was in the set in time of doing sortition")
+		}
+	}
+
+	s.addToSet = true
+	return nil
 }
 
-func (sb *sandbox) MaxMemoLenght() int {
+func (sb *sandbox) MaxMemoLength() int {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -302,4 +347,8 @@ func (sb *sandbox) AppendNewBlock(hash crypto.Hash, height int) {
 	defer sb.lk.RUnlock()
 
 	sb.recentBlocks.PushBack(hash, height)
+}
+
+func (sb *sandbox) VerifySortition(blockHash crypto.Hash, index int64, proof []byte, val *validator.Validator) bool {
+	return sb.sortition.VerifySortition(blockHash, index, proof, val)
 }

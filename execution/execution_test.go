@@ -43,7 +43,7 @@ func TestExecuteSendTx(t *testing.T) {
 	trx2.SetSignature(priv1.Sign(trx2.SignBytes()))
 	assert.Error(t, exe.Execute(trx2))
 
-	trx3 := tx.NewSendTx(stamp, acc1.Sequence()+1, acc1.Address(), rcvAddr, 2001, 1000, "insuficent balance", &pub1, nil)
+	trx3 := tx.NewSendTx(stamp, acc1.Sequence()+1, acc1.Address(), rcvAddr, 2001, 1000, "insufficient balance", &pub1, nil)
 	trx3.SetSignature(priv1.Sign(trx3.SignBytes()))
 	assert.Error(t, exe.Execute(trx3))
 
@@ -58,7 +58,7 @@ func TestExecuteSendTx(t *testing.T) {
 	// Duplicated. Invalid sequence
 	assert.Error(t, exe.Execute(trx5))
 
-	trx6 := tx.NewSendTx(stamp, acc1.Sequence()+1, acc1.Address(), rcvAddr, 1, 1000, "insuficent balance", &pub1, nil)
+	trx6 := tx.NewSendTx(stamp, acc1.Sequence()+1, acc1.Address(), rcvAddr, 1, 1000, "insufficient balance", &pub1, nil)
 	trx6.SetSignature(priv1.Sign(trx6.SignBytes()))
 	assert.Error(t, exe.Execute(trx6))
 	assert.Equal(t, sb.Account(acc1.Address()).Balance(), int64(1000))
@@ -80,7 +80,7 @@ func TestExecuteBondTx(t *testing.T) {
 	trx2.SetSignature(priv1.Sign(trx2.SignBytes()))
 	assert.Error(t, exe.Execute(trx2))
 
-	trx3 := tx.NewBondTx(stamp, acc1.Sequence()+1, acc1.Address(), valPub, 3001, "insuficent balance", &pub1, nil)
+	trx3 := tx.NewBondTx(stamp, acc1.Sequence()+1, acc1.Address(), valPub, 3001, "insufficient balance", &pub1, nil)
 	trx3.SetSignature(priv1.Sign(trx3.SignBytes()))
 	assert.Error(t, exe.Execute(trx3))
 

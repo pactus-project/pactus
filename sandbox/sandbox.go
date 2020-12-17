@@ -14,12 +14,14 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(crypto.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
-	AddToSet(*validator.Validator)
+
+	VerifySortition(blockHash crypto.Hash, index int64, proof []byte, val *validator.Validator) bool
+	AddToSet(crypto.Hash, crypto.Address) error
 
 	CurrentHeight() int
 	RecentBlockHeight(crypto.Hash) int
 	TransactionToLiveInterval() int
-	MaxMemoLenght() int
+	MaxMemoLength() int
 	FeeFraction() float64
 	MinFee() int64
 }

@@ -13,6 +13,10 @@ type SortitionPayload struct {
 	Proof   []byte         `cbor:"3,keyasint"`
 }
 
+func (p *SortitionPayload) Type() PayloadType {
+	return PayloadTypeSortition
+}
+
 func (p *SortitionPayload) Signer() crypto.Address {
 	return p.Address
 }
@@ -22,17 +26,21 @@ func (p *SortitionPayload) Value() int64 {
 }
 
 func (p *SortitionPayload) SanityCheck() error {
+	if err := p.Address.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid address")
+	}
 	if p.Index < 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid index")
 	}
-	if len(p.Proof) != 64 {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid prrof")
+	if len(p.Proof) != crypto.SignatureSize {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof")
 	}
 
 	return nil
 }
 
 func (p *SortitionPayload) Fingerprint() string {
-	return fmt.Sprintf("{Sortiton: %v",
-		p.Address.Fingerprint())
+	return fmt.Sprintf("{Sortition: %v %v",
+		p.Address.Fingerprint(),
+		p.Index)
 }

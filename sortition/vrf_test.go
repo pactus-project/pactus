@@ -8,12 +8,12 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-func TestSortition(t *testing.T) {
+func TestVRF(t *testing.T) {
 	_, pk, pv := crypto.GenerateTestKeyPair()
 	signer := crypto.NewSigner(pv)
 	for i := 0; i < 100; i++ {
 		h := crypto.GenerateTestHash()
-		vrf := NewSortition(signer)
+		vrf := NewVRF(signer)
 
 		max := int64(i + 1*1000)
 		vrf.SetMax(max)
@@ -37,7 +37,7 @@ func TestEntropy(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		h := crypto.GenerateTestHash()
 
-		vrf := NewSortition(signer)
+		vrf := NewVRF(signer)
 
 		max := int64(100)
 		vrf.SetMax(max)

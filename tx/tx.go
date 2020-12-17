@@ -22,22 +22,22 @@ type txData struct {
 	Stamp     crypto.Hash
 	Sequence  int
 	Fee       int64
-	Type      PayloadType
-	Payload   Payload
+	Type      payload.PayloadType
+	Payload   payload.Payload
 	Memo      string
 	PublicKey *crypto.PublicKey
 	Signature *crypto.Signature
 }
 
-func (tx *Tx) Version() int                 { return tx.data.Version }
-func (tx *Tx) Stamp() crypto.Hash           { return tx.data.Stamp }
-func (tx *Tx) Sequence() int                { return tx.data.Sequence }
-func (tx *Tx) PayloadType() PayloadType     { return tx.data.Type }
-func (tx *Tx) Payload() Payload             { return tx.data.Payload }
-func (tx *Tx) Fee() int64                   { return tx.data.Fee }
-func (tx *Tx) Memo() string                 { return tx.data.Memo }
-func (tx *Tx) PublicKey() *crypto.PublicKey { return tx.data.PublicKey }
-func (tx *Tx) Signature() *crypto.Signature { return tx.data.Signature }
+func (tx *Tx) Version() int                     { return tx.data.Version }
+func (tx *Tx) Stamp() crypto.Hash               { return tx.data.Stamp }
+func (tx *Tx) Sequence() int                    { return tx.data.Sequence }
+func (tx *Tx) PayloadType() payload.PayloadType { return tx.data.Type }
+func (tx *Tx) Payload() payload.Payload         { return tx.data.Payload }
+func (tx *Tx) Fee() int64                       { return tx.data.Fee }
+func (tx *Tx) Memo() string                     { return tx.data.Memo }
+func (tx *Tx) PublicKey() *crypto.PublicKey     { return tx.data.PublicKey }
+func (tx *Tx) Signature() *crypto.Signature     { return tx.data.Signature }
 
 func (tx *Tx) SetSignature(sig *crypto.Signature) {
 	tx.sanityChecked = false
@@ -95,7 +95,9 @@ func (tx *Tx) SanityCheck() error {
 		}
 	}
 
-	// TODO: sanity check for amount and fee (bond and sortition has zero fee)
+	if tx.data.Type != tx.data.Payload.Type() {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid payload type")
+	}
 
 	if err := tx.data.Payload.SanityCheck(); err != nil {
 		return err
@@ -107,15 +109,15 @@ func (tx *Tx) SanityCheck() error {
 }
 
 type _txData struct {
-	Version   int               `cbor:"1,keyasint"`
-	Stamp     crypto.Hash       `cbor:"2,keyasint"`
-	Sequence  int               `cbor:"3,keyasint"`
-	Fee       int64             `cbor:"4,keyasint"`
-	Type      PayloadType       `cbor:"5,keyasint"`
-	Payload   cbor.RawMessage   `cbor:"6,keyasint"`
-	Memo      string            `cbor:"7,keyasint,omitempty"`
-	PublicKey *crypto.PublicKey `cbor:"20,keyasint,omitempty"`
-	Signature *crypto.Signature `cbor:"21,keyasint,omitempty"`
+	Version   int                 `cbor:"1,keyasint"`
+	Stamp     crypto.Hash         `cbor:"2,keyasint"`
+	Sequence  int                 `cbor:"3,keyasint"`
+	Fee       int64               `cbor:"4,keyasint"`
+	Type      payload.PayloadType `cbor:"5,keyasint"`
+	Payload   cbor.RawMessage     `cbor:"6,keyasint"`
+	Memo      string              `cbor:"7,keyasint,omitempty"`
+	PublicKey *crypto.PublicKey   `cbor:"20,keyasint,omitempty"`
+	Signature *crypto.Signature   `cbor:"21,keyasint,omitempty"`
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
@@ -146,13 +148,13 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	var p Payload
+	var p payload.Payload
 	switch _data.Type {
-	case PayloadTypeSend:
+	case payload.PayloadTypeSend:
 		p = &payload.SendPayload{}
-	case PayloadTypeBond:
+	case payload.PayloadTypeBond:
 		p = &payload.BondPayload{}
-	case PayloadTypeSortition:
+	case payload.PayloadTypeSortition:
 		p = &payload.SortitionPayload{}
 
 	default:
@@ -225,7 +227,7 @@ func (tx *Tx) Hash() crypto.Hash {
 }
 
 func (tx *Tx) IsMintbaseTx() bool {
-	return tx.data.Type == PayloadTypeSend &&
+	return tx.data.Type == payload.PayloadTypeSend &&
 		tx.data.Payload.Signer().EqualsTo(crypto.MintbaseAddress)
 }
 

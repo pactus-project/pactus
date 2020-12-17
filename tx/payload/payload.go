@@ -1,4 +1,4 @@
-package tx
+package payload
 
 import (
 	"fmt"
@@ -11,7 +11,8 @@ type PayloadType int
 const (
 	PayloadTypeSend      = PayloadType(1)
 	PayloadTypeBond      = PayloadType(2)
-	PayloadTypeSortition = PayloadType(3)
+	PayloadTypeUnbond    = PayloadType(3)
+	PayloadTypeSortition = PayloadType(4)
 )
 
 func (t PayloadType) String() string {
@@ -20,6 +21,8 @@ func (t PayloadType) String() string {
 		return "send"
 	case PayloadTypeBond:
 		return "bond"
+	case PayloadTypeUnbond:
+		return "unbond"
 	case PayloadTypeSortition:
 		return "sortition"
 	}
@@ -29,6 +32,7 @@ func (t PayloadType) String() string {
 type Payload interface {
 	Signer() crypto.Address
 	Value() int64
+	Type() PayloadType
 	SanityCheck() error
 	Fingerprint() string
 }

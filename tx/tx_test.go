@@ -83,12 +83,45 @@ func TestEncodingTxNoSig(t *testing.T) {
 }
 
 func TestTxSanityCheck(t *testing.T) {
-	tx, _ := GenerateTestSendTx()
-	tx.data.Version = 2
-	assert.Error(t, tx.SanityCheck())
-	tx.data.Version = 1
-	tx.data.Sequence = -1
-	assert.Error(t, tx.SanityCheck())
+
+	t.Run("Invalid version", func(t *testing.T) {
+		tx, priv := GenerateTestSendTx()
+		tx.data.Version = 2
+		sig := priv.Sign(tx.SignBytes())
+		tx.data.Signature = sig
+		assert.Error(t, tx.SanityCheck())
+	})
+
+	t.Run("Invalid sequence", func(t *testing.T) {
+		tx, priv := GenerateTestSendTx()
+		tx.data.Sequence = -1
+		sig := priv.Sign(tx.SignBytes())
+		tx.data.Signature = sig
+		assert.Error(t, tx.SanityCheck())
+	})
+
+	t.Run("Invalid payload type", func(t *testing.T) {
+		tx, priv := GenerateTestSendTx()
+		tx.data.Type = 2
+		sig := priv.Sign(tx.SignBytes())
+		tx.data.Signature = sig
+		assert.Error(t, tx.SanityCheck())
+	})
+}
+
+func TestMintbaseTx(t *testing.T) {
+	a, pub, priv := crypto.GenerateTestKeyPair()
+	trx := NewMintbaseTx(crypto.GenerateTestHash(), 111, a, 1111, "mintbase")
+
+	trx.data.Fee = 1
+	assert.Error(t, trx.SanityCheck())
+
+	sig := priv.Sign(trx.SignBytes())
+	trx.SetSignature(sig)
+	assert.Error(t, trx.SanityCheck())
+
+	trx.SetPublicKey(&pub)
+	assert.Error(t, trx.SanityCheck())
 }
 
 func TestInvalidSignature(t *testing.T) {
@@ -96,6 +129,9 @@ func TestInvalidSignature(t *testing.T) {
 	assert.NoError(t, tx.SanityCheck())
 
 	fmt.Printf("%x\n", tx.SignBytes())
+
+	tx.SetSignature(nil)
+	assert.Error(t, tx.SanityCheck())
 
 	tx.SetPublicKey(nil)
 	assert.Error(t, tx.SanityCheck())

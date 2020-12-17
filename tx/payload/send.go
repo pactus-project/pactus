@@ -13,6 +13,10 @@ type SendPayload struct {
 	Amount   int64          `cbor:"3,keyasint"`
 }
 
+func (p *SendPayload) Type() PayloadType {
+	return PayloadTypeSend
+}
+
 func (p *SendPayload) Signer() crypto.Address {
 	return p.Sender
 }

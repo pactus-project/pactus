@@ -15,7 +15,7 @@ type lastInfo struct {
 	LastReceiptHash *crypto.Hash
 }
 
-func (st *state) saveLastInfo(height int, commit *block.Commit, lastReceiptHash *crypto.Hash) error {
+func (st *state) saveLastInfo(height int, commit *block.Commit, lastReceiptHash *crypto.Hash) {
 	path := st.config.Store.Path + "/last_info.json"
 	li := lastInfo{
 		LastHeight:      height,
@@ -23,12 +23,9 @@ func (st *state) saveLastInfo(height int, commit *block.Commit, lastReceiptHash 
 		LastReceiptHash: lastReceiptHash,
 	}
 
-	bs, err := json.Marshal(&li)
-	if err != nil {
-		return err
-	}
+	bs, _ := json.Marshal(&li)
 
-	return util.WriteFile(path, bs)
+	util.WriteFile(path, bs)
 }
 
 func (st *state) loadLastInfo() (int, *block.Commit, *crypto.Hash, error) {
