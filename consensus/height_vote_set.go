@@ -16,13 +16,13 @@ type RoundVoteSet struct {
 
 type HeightVoteSet struct {
 	height         int
-	valSet         *validator.ValidatorSet
+	valSet         validator.ValidatorSetReader
 	roundVoteSets  map[int]*RoundVoteSet
 	votes          map[crypto.Hash]*vote.Vote
 	lockedProposal *vote.Proposal
 }
 
-func NewHeightVoteSet(height int, valSet *validator.ValidatorSet) *HeightVoteSet {
+func NewHeightVoteSet(height int, valSet validator.ValidatorSetReader) *HeightVoteSet {
 	hvs := &HeightVoteSet{
 		height:        height,
 		valSet:        valSet,

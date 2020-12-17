@@ -3,19 +3,27 @@ package validator
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/errors"
-
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
+
+type ValidatorSetReader interface {
+	MaximumPower() int
+	Power() int
+	Validators() []crypto.Address
+	Validator(addr crypto.Address) *Validator
+	Contains(addr crypto.Address) bool
+	Proposer(round int) *Validator
+	CommittersHash() crypto.Hash
+}
 
 type ValidatorSet struct {
 	lk deadlock.RWMutex
 
 	maximumPower  int
 	validators    []*Validator
-	joined        []*Validator
 	proposerIndex int
 }
 
@@ -37,17 +45,8 @@ func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.
 	return &ValidatorSet{
 		maximumPower:  maximumPower,
 		validators:    validators2,
-		joined:        make([]*Validator, 0),
 		proposerIndex: index,
 	}, nil
-}
-
-// TotalPower equals to the number of validator in the set
-func (set *ValidatorSet) TotalPower() int {
-	set.lk.Lock()
-	defer set.lk.Unlock()
-
-	return len(set.validators)
 }
 
 func (set *ValidatorSet) MaximumPower() int {
@@ -58,39 +57,35 @@ func (set *ValidatorSet) Power() int {
 	return len(set.validators)
 }
 
-func (set *ValidatorSet) Join(val *Validator) error {
+func (set *ValidatorSet) MoveToNextHeight(lastRound int, joined []*Validator) error {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	if set.contains(val.Address()) {
-		return errors.Errorf(errors.ErrGeneric, "Validator already is in the set")
+	for _, v := range joined {
+		if set.contains(v.Address()) {
+			return errors.Errorf(errors.ErrGeneric, "Validator already is in the set")
+		}
 	}
-	if len(set.joined) >= (set.MaximumPower() / 3) {
+
+	if len(joined) > (set.MaximumPower() / 3) {
 		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
 	}
-	set.joined = append(set.joined, val)
-
-	return nil
-}
-
-func (set *ValidatorSet) MoveToNewHeight(lastRound int) {
-	set.lk.Lock()
-	defer set.lk.Unlock()
 
 	// First update proposer index
 	set.proposerIndex = (set.proposerIndex + lastRound + 1) % len(set.validators)
 
-	set.validators = append(set.validators, set.joined...)
+	set.validators = append(set.validators, joined...)
 	if set.Power() > set.MaximumPower() {
 		shouldLeave := set.Power() - set.MaximumPower()
 		set.validators = set.validators[shouldLeave:]
 	}
 	// Move proposer index after modifying the set
-	set.proposerIndex = set.proposerIndex - len(set.joined)
+	set.proposerIndex = set.proposerIndex - len(joined)
 	if set.proposerIndex < 0 {
 		set.proposerIndex = 0
 	}
-	set.joined = set.joined[:0]
+
+	return nil
 }
 
 func (set *ValidatorSet) Validators() []crypto.Address {

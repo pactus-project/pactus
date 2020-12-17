@@ -4,55 +4,71 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/tx/payload"
+
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/validator"
+
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-func TestSortition(t *testing.T) {
-	_, pk, pv := crypto.GenerateTestKeyPair()
-	signer := crypto.NewSigner(pv)
-	for i := 0; i < 100; i++ {
-		h := crypto.GenerateTestHash()
-		vrf := NewSortition(signer)
+func TestEvaluationTotalStakeZero(t *testing.T) {
+	_, pub, priv := crypto.GenerateTestKeyPair()
+	_, invPub, invPriv := crypto.GenerateTestKeyPair()
+	val := validator.NewValidator(pub, 0, 0)
+	invVal := validator.NewValidator(invPub, 0, 0)
 
-		max := int64(i + 1*1000)
-		vrf.SetMax(max)
-		index, proof := vrf.Evaluate(h)
-		//fmt.Printf("index is : %v \n", index)
+	s := NewSortition(crypto.NewSigner(priv))
+	h := crypto.GenerateTestHash()
+	invHash := crypto.GenerateTestHash()
 
-		assert.Equal(t, index <= max, true)
+	invSortition := NewSortition(crypto.NewSigner(invPriv))
+	trx := invSortition.EvaluateTransaction(h, val)
+	require.Nil(t, trx)
 
-		index2, result := vrf.Verify(h, pk, proof)
+	trx = s.EvaluateTransaction(h, val)
+	require.NotNil(t, trx)
+	proof := trx.Payload().(*payload.SortitionPayload).Proof
+	assert.True(t, s.VerifyProof(h, proof, val))
+	assert.False(t, s.VerifyProof(invHash, proof, val))
+	assert.False(t, s.VerifyProof(h, proof, invVal))
+	proof[0] = proof[0] + 1
+	assert.False(t, s.VerifyProof(h, proof, val))
 
-		assert.Equal(t, result, true)
-		assert.Equal(t, index, index2)
-	}
 }
 
-func TestEntropy(t *testing.T) {
-	_, _, pv := crypto.GenerateTestKeyPair()
-	signer := crypto.NewSigner(pv)
+func TestEvaluationTotalStakeNotZero(t *testing.T) {
+	_, pub, priv := crypto.GenerateTestKeyPair()
+	val := validator.NewValidator(pub, 0, 0)
+	val.AddToStake(100000000) // 1/10 of total stake
 
-	entropy := make([]bool, 100)
-	for i := 0; i < 100; i++ {
-		h := crypto.GenerateTestHash()
+	s := NewSortition(crypto.NewSigner(priv))
+	s.AddToTotalStake(1000000000)
 
-		vrf := NewSortition(signer)
+	total := 100
+	median := 0
+	for j := 0; j < total; j++ {
 
-		max := int64(100)
-		vrf.SetMax(max)
-		index, _ := vrf.Evaluate(h)
-
-		entropy[index] = true
-	}
-
-	hits := 0
-	for _, b := range entropy {
-		if b == true {
-			hits++
+		var h crypto.Hash
+		var trx *tx.Tx
+		i := 0
+		for ; ; i++ {
+			h = crypto.GenerateTestHash()
+			trx = s.EvaluateTransaction(h, val)
+			if trx != nil {
+				break
+			}
 		}
+		median += i
+		require.NotNil(t, trx)
+
+		proof := trx.Payload().(*payload.SortitionPayload).Proof
+		assert.True(t, s.VerifyProof(h, proof, val))
 	}
 
-	fmt.Printf("Entropy is : %v \n", hits)
-	assert.Greater(t, hits, 50)
+	median /= total
+	fmt.Printf("%v ", median)
+
 }

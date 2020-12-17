@@ -13,6 +13,10 @@ type BondPayload struct {
 	Stake     int64            `cbor:"3,keyasint"`
 }
 
+func (p *BondPayload) Type() PayloadType {
+	return PayloadTypeBond
+}
+
 func (p *BondPayload) Signer() crypto.Address {
 	return p.Bonder
 }

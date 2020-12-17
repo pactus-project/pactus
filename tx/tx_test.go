@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/zarbchain/zarb-go/tx/payload"
+
 	"github.com/zarbchain/zarb-go/crypto"
 
 	"github.com/stretchr/testify/assert"
@@ -83,12 +85,45 @@ func TestEncodingTxNoSig(t *testing.T) {
 }
 
 func TestTxSanityCheck(t *testing.T) {
-	tx, _ := GenerateTestSendTx()
-	tx.data.Version = 2
-	assert.Error(t, tx.SanityCheck())
-	tx.data.Version = 1
-	tx.data.Sequence = -1
-	assert.Error(t, tx.SanityCheck())
+
+	t.Run("Invalid version", func(t *testing.T) {
+		tx, priv := GenerateTestSendTx()
+		tx.data.Version = 2
+		sig := priv.Sign(tx.SignBytes())
+		tx.data.Signature = sig
+		assert.Error(t, tx.SanityCheck())
+	})
+
+	t.Run("Invalid sequence", func(t *testing.T) {
+		tx, priv := GenerateTestSendTx()
+		tx.data.Sequence = -1
+		sig := priv.Sign(tx.SignBytes())
+		tx.data.Signature = sig
+		assert.Error(t, tx.SanityCheck())
+	})
+
+	t.Run("Invalid payload type", func(t *testing.T) {
+		tx, priv := GenerateTestSendTx()
+		tx.data.Type = 2
+		sig := priv.Sign(tx.SignBytes())
+		tx.data.Signature = sig
+		assert.Error(t, tx.SanityCheck())
+	})
+}
+
+func TestMintbaseTx(t *testing.T) {
+	a, pub, priv := crypto.GenerateTestKeyPair()
+	trx := NewMintbaseTx(crypto.GenerateTestHash(), 111, a, 1111, "mintbase")
+
+	trx.data.Fee = 1
+	assert.Error(t, trx.SanityCheck())
+
+	sig := priv.Sign(trx.SignBytes())
+	trx.SetSignature(sig)
+	assert.Error(t, trx.SanityCheck())
+
+	trx.SetPublicKey(&pub)
+	assert.Error(t, trx.SanityCheck())
 }
 
 func TestInvalidSignature(t *testing.T) {
@@ -96,6 +131,9 @@ func TestInvalidSignature(t *testing.T) {
 	assert.NoError(t, tx.SanityCheck())
 
 	fmt.Printf("%x\n", tx.SignBytes())
+
+	tx.SetSignature(nil)
+	assert.Error(t, tx.SanityCheck())
 
 	tx.SetPublicKey(nil)
 	assert.Error(t, tx.SanityCheck())
@@ -116,6 +154,87 @@ func TestInvalidSignature(t *testing.T) {
 	tx.SetPublicKey(&pb)
 	tx.SetSignature(sig)
 	assert.Error(t, tx.SanityCheck())
+}
+
+func TestSendSanityCheck(t *testing.T) {
+	invAddr, _, _ := crypto.GenerateTestKeyPair()
+	t.Run("Ok", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		assert.NoError(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid amount", func(t *testing.T) {
+		trx, priv := GenerateTestSendTx()
+		pld := trx.data.Payload.(*payload.SendPayload)
+		pld.Amount = -1
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid sender", func(t *testing.T) {
+		trx, priv := GenerateTestSendTx()
+		pld := trx.data.Payload.(*payload.SendPayload)
+		pld.Sender = invAddr
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid receiver", func(t *testing.T) {
+		trx, priv := GenerateTestSendTx()
+		pld := trx.data.Payload.(*payload.SendPayload)
+		pld.Receiver = crypto.MintbaseAddress
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+}
+
+func TestBondSanityCheck(t *testing.T) {
+	invAddr, _, _ := crypto.GenerateTestKeyPair()
+	t.Run("Ok", func(t *testing.T) {
+		trx, _ := GenerateTestBondTx()
+		assert.NoError(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid stake", func(t *testing.T) {
+		trx, priv := GenerateTestBondTx()
+		pld := trx.data.Payload.(*payload.BondPayload)
+		pld.Stake = -1
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid bonder", func(t *testing.T) {
+		trx, priv := GenerateTestBondTx()
+		pld := trx.data.Payload.(*payload.BondPayload)
+		pld.Bonder = invAddr
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+}
+
+func TestSortitionSanityCheck(t *testing.T) {
+	invAddr, _, _ := crypto.GenerateTestKeyPair()
+	t.Run("Ok", func(t *testing.T) {
+		trx, _ := GenerateTestSortitionTx()
+		assert.NoError(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid address", func(t *testing.T) {
+		trx, priv := GenerateTestSortitionTx()
+		pld := trx.data.Payload.(*payload.SortitionPayload)
+		pld.Address = invAddr
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid proof", func(t *testing.T) {
+		trx, priv := GenerateTestSortitionTx()
+		pld := trx.data.Payload.(*payload.SortitionPayload)
+		pld.Proof = nil
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+
 }
 
 func TestSendDecodingAndHash(t *testing.T) {

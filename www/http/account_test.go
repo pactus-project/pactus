@@ -13,11 +13,11 @@ import (
 func TestAccount(t *testing.T) {
 	setup(t)
 
-	t.Run("Shal return an account", func(t *testing.T) {
+	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": accTestAddr.String()})
-		httpServer.GetAccountHandler(w, r)
+		r = mux.SetURLVars(r, map[string]string{"address": tAccTestAddr.String()})
+		tHTTPServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		fmt.Println(w.Body)

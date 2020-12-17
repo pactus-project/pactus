@@ -13,6 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -28,6 +29,7 @@ func setup(t *testing.T) {
 	acc := account.NewAccount(crypto.MintbaseAddress, 0)
 	acc.AddToBalance(21000000000000)
 	val := validator.NewValidator(pb, 0, 0)
+	val.AddToStake(util.RandInt64(10000000))
 	gen = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
 	valSigner = crypto.NewSigner(priv)
 
@@ -46,6 +48,7 @@ func mockState(t *testing.T, signer *crypto.Signer) (*state, crypto.Address) {
 	st, err := LoadOrNewState(stateConfig, gen, *signer, mockTxPool)
 	require.NoError(t, err)
 	s, _ := st.(*state)
+
 	return s, signer.Address()
 }
 
@@ -58,7 +61,7 @@ func TestProposeBlockValidation(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func propsoeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
+func proposeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
 	addr := valSigner.Address()
 	b := st.ProposeBlock()
 	v := vote.NewPrecommit(1, 0, b.Hash(), addr)
@@ -74,21 +77,39 @@ func TestLoadState(t *testing.T) {
 	st1, _ := mockState(t, &valSigner)
 	st2, _ := mockState(t, &valSigner)
 
-	for i := 0; i < 10; i++ {
-		b, c := propsoeAndSignBlock(t, st1)
+	// Add this dummy acc and val for testing purpose
+	dummyAcc, _ := account.GenerateTestAccount(1)
+	st1.store.UpdateAccount(dummyAcc)
+	st2.store.UpdateAccount(dummyAcc)
+	dummyVal, _ := validator.GenerateTestValidator(1)
+	st1.store.UpdateValidator(dummyVal)
+	st2.store.UpdateValidator(dummyVal)
+	st1.sortition.AddToTotalStake(dummyVal.Stake())
+	st2.sortition.AddToTotalStake(dummyVal.Stake())
+
+	i := 0
+	for ; i < 10; i++ {
+		b, c := proposeAndSignBlock(t, st1)
 
 		assert.NoError(t, st1.ApplyBlock(i+1, b, c))
 		assert.NoError(t, st2.ApplyBlock(i+1, b, c))
 	}
 
-	// Propose second block
-	b2 := st1.ProposeBlock()
+	assert.NoError(t, st2.Close())
 
-	// Load state and propose second block
-	assert.NoError(t, st2.tryLoadLastInfo())
-	b22 := st2.ProposeBlock()
+	// Load last state info
+	st3, err := LoadOrNewState(st2.config, gen, valSigner, mockTxPool)
+	require.NoError(t, err)
 
-	assert.Equal(t, b2.Hash(), b22.Hash())
+	b, c := proposeAndSignBlock(t, st1)
+	assert.Equal(t, b.Hash(), st3.ProposeBlock().Hash())
+	require.NoError(t, st1.ApplyBlock(i+1, b, c))
+	require.NoError(t, st3.ApplyBlock(i+1, b, c))
+	assert.Equal(t, st1.store.TotalAccounts(), st3.(*state).store.TotalAccounts())
+	assert.Equal(t, st1.store.TotalValidators(), st3.(*state).store.TotalValidators())
+	assert.Equal(t, st1.sortition.TotalStake(), st3.(*state).sortition.TotalStake())
+	assert.Equal(t, st1.executionSandbox.LastBlockHeight(), st3.(*state).executionSandbox.LastBlockHeight())
+	assert.Equal(t, st1.executionSandbox.LastBlockHash(), st3.(*state).executionSandbox.LastBlockHash())
 }
 
 func TestBlockSubsidy(t *testing.T) {
@@ -106,7 +127,7 @@ func TestApplyBlocks(t *testing.T) {
 	setup(t)
 
 	st, _ := mockState(t, &valSigner)
-	b1, c1 := propsoeAndSignBlock(t, st)
+	b1, c1 := proposeAndSignBlock(t, st)
 	invBlock, _ := block.GenerateTestBlock(nil)
 	assert.Error(t, st.ApplyBlock(1, invBlock, c1))
 	assert.Error(t, st.ApplyBlock(2, b1, c1))

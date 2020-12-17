@@ -21,7 +21,7 @@ type Consensus struct {
 	config      *Config
 	hrs         hrs.HRS
 	votes       *HeightVoteSet
-	valset      *validator.ValidatorSet
+	valset      validator.ValidatorSetReader
 	signer      crypto.Signer
 	isCommitted bool
 	state       state.State

@@ -3,32 +3,38 @@ package sandbox
 import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-// MockSandbox is a testing mock
+var _ Sandbox = &MockSandbox{}
+
+// MockSandbox is a testing mock for sandbox
 type MockSandbox struct {
 	Accounts       map[crypto.Address]*account.Account
 	Validators     map[crypto.Address]*validator.Validator
 	Stamps         map[crypto.Hash]int
 	CurrentHeight_ int
 	TTLInterval    int
-	MaxMemoLenght_ int
+	MaxMemoLength_ int
 	FeeFraction_   float64
 	MinFee_        int64
 	TotalAccount   int
 	TotalValidator int
+	Sortition      *sortition.Sortition
 }
 
 func NewMockSandbox() *MockSandbox {
+	_, _, priv := crypto.GenerateTestKeyPair()
 	return &MockSandbox{
 		Accounts:       make(map[crypto.Address]*account.Account),
 		Validators:     make(map[crypto.Address]*validator.Validator),
 		Stamps:         make(map[crypto.Hash]int),
 		TTLInterval:    4,
-		MaxMemoLenght_: 1024,
+		MaxMemoLength_: 1024,
 		FeeFraction_:   0.001,
 		MinFee_:        1000,
+		Sortition:      sortition.NewSortition(crypto.NewSigner(priv)),
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
@@ -54,7 +60,12 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = val
 
 }
-func (m *MockSandbox) AddToSet(val *validator.Validator) {}
+func (m *MockSandbox) AddToSet(crypto.Hash, crypto.Address) error {
+	return nil
+}
+func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
+	return m.Sortition.VerifyProof(blockHash, proof, val)
+}
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurrentHeight_
 }
@@ -68,8 +79,8 @@ func (m *MockSandbox) RecentBlockHeight(hash crypto.Hash) int {
 func (m *MockSandbox) TransactionToLiveInterval() int {
 	return m.TTLInterval
 }
-func (m *MockSandbox) MaxMemoLenght() int {
-	return m.MaxMemoLenght_
+func (m *MockSandbox) MaxMemoLength() int {
+	return m.MaxMemoLength_
 }
 func (m *MockSandbox) FeeFraction() float64 {
 	return m.FeeFraction_

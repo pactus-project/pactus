@@ -5,6 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/execution/executor"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
 type Executor interface {
@@ -12,16 +13,16 @@ type Executor interface {
 	Fee() int64
 }
 type Execution struct {
-	executors      map[tx.PayloadType]Executor
+	executors      map[payload.PayloadType]Executor
 	sandbox        sandbox.Sandbox
 	accumulatedFee int64
 }
 
 func NewExecution(sb sandbox.Sandbox) *Execution {
-	execs := make(map[tx.PayloadType]Executor)
-	execs[tx.PayloadTypeSend] = executor.NewSendExecutor(sb)
-	execs[tx.PayloadTypeBond] = executor.NewBondExecutor(sb)
-	execs[tx.PayloadTypeSortition] = executor.NewSendExecutor(sb)
+	execs := make(map[payload.PayloadType]Executor)
+	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(sb)
+	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(sb)
+	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(sb)
 
 	return &Execution{
 		executors: execs,
@@ -41,7 +42,7 @@ func (exe *Execution) Execute(trx *tx.Tx) error {
 	if height == -1 || curHeight-height > interval {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
 	}
-	if len(trx.Memo()) > exe.sandbox.MaxMemoLenght() {
+	if len(trx.Memo()) > exe.sandbox.MaxMemoLength() {
 		return errors.Errorf(errors.ErrInvalidTx, "Memo length exceeded")
 	}
 
