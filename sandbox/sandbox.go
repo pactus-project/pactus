@@ -322,7 +322,7 @@ func (sb *SandboxConcrete) AppendNewBlock(hash crypto.Hash, height int) {
 }
 
 func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
-	return sb.sortition.VerifySortition(blockHash, proof, val)
+	return sb.sortition.VerifyProof(blockHash, proof, val)
 }
 
 func (sb *SandboxConcrete) IterateAccounts(consumer func(*AccountStatus)) {

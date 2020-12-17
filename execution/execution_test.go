@@ -127,7 +127,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	assert.Error(t, tExec.Execute(trx2))
 
 	sortition := sortition.NewSortition(crypto.NewSigner(valPriv))
-	trx3 := sortition.Evaluate(stamp, val)
+	trx3 := sortition.EvaluateTransaction(stamp, val)
 	assert.NotNil(t, trx3)
 	assert.NoError(t, tExec.Execute(trx3))
 

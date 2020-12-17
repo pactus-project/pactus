@@ -43,7 +43,7 @@ func (s *Sortition) TotalStake() int64 {
 	return s.vrf.Max()
 }
 
-func (s *Sortition) Evaluate(hash crypto.Hash, val *validator.Validator) *tx.Tx {
+func (s *Sortition) EvaluateTransaction(hash crypto.Hash, val *validator.Validator) *tx.Tx {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -62,7 +62,7 @@ func (s *Sortition) Evaluate(hash crypto.Hash, val *validator.Validator) *tx.Tx 
 	return trx
 }
 
-func (s *Sortition) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
+func (s *Sortition) VerifyProof(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 

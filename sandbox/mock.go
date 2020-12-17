@@ -64,7 +64,7 @@ func (m *MockSandbox) AddToSet(crypto.Hash, crypto.Address) error {
 	return nil
 }
 func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
-	return m.Sortition.VerifySortition(blockHash, proof, val)
+	return m.Sortition.VerifyProof(blockHash, proof, val)
 }
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurrentHeight_

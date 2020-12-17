@@ -410,7 +410,7 @@ func (st *state) EvaluateSortition() {
 		return
 	}
 	//
-	trx := st.sortition.Evaluate(st.lastBlockHash, val)
+	trx := st.sortition.EvaluateTransaction(st.lastBlockHash, val)
 	if trx != nil {
 		st.logger.Info("👏 This validator is chosen to be in set", "address", st.proposer, "stake", val.Stake(), "tx", trx)
 		if err := st.txPool.AppendTxAndBroadcast(*trx); err != nil {
