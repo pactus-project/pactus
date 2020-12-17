@@ -26,13 +26,13 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 			syncer.logger.Error("An error occurred while retriveng a block", "err", err, "height", h)
 			break
 		}
-		hashes := b.TxHashes().Hashes()
-		for _, hash := range hashes {
-			ctrx, _ := syncer.store.Transaction(hash)
+		ids := b.TxIDs().IDs()
+		for _, id := range ids {
+			ctrx, _ := syncer.store.Transaction(id)
 			if ctrx != nil {
 				txs = append(txs, *ctrx.Tx)
 			} else {
-				syncer.logger.Warn("We don't have transaction for the block", "hash", hash.Fingerprint())
+				syncer.logger.Warn("We don't have transaction for the block", "id", id.Fingerprint())
 			}
 		}
 		blocks[h-from] = *b

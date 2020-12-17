@@ -36,21 +36,21 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rec, _ := res.Receipt()
-	recipetData, _ := rec.Data()
-	recipet := new(tx.Receipt)
-	err = recipet.Decode(recipetData)
+	receiptData, _ := rec.Data()
+	receipt := new(tx.Receipt)
+	err = receipt.Decode(receiptData)
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
 	out := new(TransactionResult)
-	out.Hash = trx.Hash()
+	out.Hash = trx.ID()
 	out.Tx = *trx
 	out.Data = hex.EncodeToString(trxData)
-	out.Receipt.Hash = recipet.Hash()
-	out.Receipt.Data = hex.EncodeToString(recipetData)
-	out.Receipt.Receipt = *recipet
+	out.Receipt.Hash = receipt.Hash()
+	out.Receipt.Data = hex.EncodeToString(receiptData)
+	out.Receipt.Receipt = *receipt
 
 	s.writeJSON(w, out)
 }

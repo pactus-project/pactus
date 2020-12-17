@@ -46,8 +46,8 @@ func TestAppendAndRemove(t *testing.T) {
 	trx1.SetSignature(acc1Priv.Sign(trx1.SignBytes()))
 	assert.NoError(t, pool.appendTx(*trx1))
 	assert.Error(t, pool.appendTx(*trx1))
-	pool.RemoveTx(trx1.Hash())
-	assert.False(t, pool.HasTx(trx1.Hash()))
+	pool.RemoveTx(trx1.ID())
+	assert.False(t, pool.HasTx(trx1.ID()))
 }
 
 func TestSendTxValidity(t *testing.T) {

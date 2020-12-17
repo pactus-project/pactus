@@ -20,12 +20,12 @@ type Receipt struct {
 }
 type receiptData struct {
 	Status    int         `cbor:"1,keyasint"`
-	TxHash    crypto.Hash `cbor:"2,keyasint"`
+	TxID      crypto.Hash `cbor:"2,keyasint"`
 	BlockHash crypto.Hash `cbor:"3,keyasint"`
 }
 
 func (r *Receipt) Status() int            { return r.data.Status }
-func (r *Receipt) TxHash() crypto.Hash    { return r.data.TxHash }
+func (r *Receipt) TxID() crypto.Hash      { return r.data.TxID }
 func (r *Receipt) BlockHash() crypto.Hash { return r.data.BlockHash }
 
 func (r *Receipt) Hash() crypto.Hash {
@@ -40,7 +40,7 @@ func (r *Receipt) SanityCheck() error {
 	if err := r.data.BlockHash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid block hash")
 	}
-	if err := r.data.TxHash.SanityCheck(); err != nil {
+	if err := r.data.TxID.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid block hash")
 	}
 	return nil

@@ -7,11 +7,11 @@ import (
 )
 
 func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
-	hashes := block.TxHashes().Hashes()
-	twrs := make([]tx.CommittedTx, len(hashes))
+	ids := block.TxIDs().IDs()
+	twrs := make([]tx.CommittedTx, len(ids))
 
-	for i := 0; i < len(hashes); i++ {
-		trx := st.txPool.PendingTx(hashes[i])
+	for i := 0; i < len(ids); i++ {
+		trx := st.txPool.PendingTx(ids[i])
 		if trx == nil {
 			return nil, errors.Errorf(errors.ErrInvalidBlock, "Transaction not found")
 		}

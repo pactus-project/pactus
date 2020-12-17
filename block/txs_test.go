@@ -14,8 +14,8 @@ func TestTxsMerkle(t *testing.T) {
 
 	data := make([]crypto.Hash, len(txs))
 	for i, tx := range txs {
-		data[i] = tx.Hash()
+		data[i] = tx.ID()
 	}
 	merkle := simpleMerkle.NewTreeFromHashes(data)
-	assert.Equal(t, b.Header().TxsHash(), merkle.Root())
+	assert.Equal(t, b.Header().TxIDsHash(), merkle.Root())
 }

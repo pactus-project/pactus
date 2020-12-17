@@ -192,7 +192,7 @@ func (tx *Tx) Decode(bs []byte) error {
 
 func (tx Tx) Fingerprint() string {
 	return fmt.Sprintf("{⌘ %v 🏵 %v %v}",
-		tx.Hash().Fingerprint(),
+		tx.ID().Fingerprint(),
 		tx.data.Stamp.Fingerprint(),
 		tx.data.Payload.Fingerprint())
 }
@@ -200,7 +200,7 @@ func (tx Tx) Fingerprint() string {
 func (tx *Tx) GenerateReceipt(status int, blockHash crypto.Hash) *Receipt {
 	return &Receipt{
 		data: receiptData{
-			TxHash:    tx.Hash(),
+			TxID:      tx.ID(),
 			BlockHash: blockHash,
 			Status:    status,
 		},
@@ -216,10 +216,9 @@ func (tx Tx) SignBytes() []byte {
 	return bz
 }
 
-func (tx *Tx) Hash() crypto.Hash {
+func (tx *Tx) ID() crypto.Hash {
 	if tx.memorizedHash == nil {
-		bz, _ := tx.MarshalCBOR()
-		hash := crypto.HashH(bz)
+		hash := crypto.HashH(tx.SignBytes())
 		tx.memorizedHash = &hash
 	}
 

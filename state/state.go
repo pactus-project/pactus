@@ -286,13 +286,13 @@ func (st *state) ProposeBlock() block.Block {
 		st.logger.Panic("Our mintbase transaction is invalid", "err", err)
 	}
 
-	txHashes := block.NewTxHashes()
-	txHashes.Append(rewardTx.Hash())
+	txIDs := block.NewTxIDs()
+	txIDs.Append(rewardTx.ID())
 	stateHash := st.stateHash()
 	committersHash := st.validatorSet.CommittersHash()
 	block := block.MakeBlock(
 		timestamp,
-		txHashes,
+		txIDs,
 		st.lastBlockHash,
 		committersHash,
 		stateHash,
@@ -370,7 +370,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	// Save txs and receipts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
 	for i, ctrx := range ctrxs {
-		st.txPool.RemoveTx(ctrx.Tx.Hash())
+		st.txPool.RemoveTx(ctrx.Tx.ID())
 		st.store.SaveTransaction(ctrx)
 
 		receiptsHashes[i] = ctrx.Receipt.Hash()

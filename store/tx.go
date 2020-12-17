@@ -39,7 +39,7 @@ func (ts *txStore) saveTx(ctrs tx.CommittedTx) error {
 	if err != nil {
 		return err
 	}
-	txKey := txKey(ctrs.Tx.Hash())
+	txKey := txKey(ctrs.Tx.ID())
 	err = tryPut(ts.db, txKey, data)
 	if err != nil {
 		return err
