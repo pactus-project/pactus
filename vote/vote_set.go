@@ -44,13 +44,13 @@ type VoteSet struct {
 	height       int
 	round        int
 	voteType     VoteType
-	valSet       *validator.ValidatorSet
+	valSet       validator.ValidatorSetReader
 	votesByBlock map[crypto.Hash]*blockVotes
 	sum          int
 	quorum       *crypto.Hash
 }
 
-func NewVoteSet(height int, round int, voteType VoteType, valSet *validator.ValidatorSet) *VoteSet {
+func NewVoteSet(height int, round int, voteType VoteType, valSet validator.ValidatorSetReader) *VoteSet {
 	return &VoteSet{
 		height:       height,
 		round:        round,

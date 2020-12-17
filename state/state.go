@@ -12,6 +12,8 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
@@ -24,7 +26,7 @@ const baseSubsidy = 5 * 1e8
 
 type StateReader interface {
 	StoreReader() store.StoreReader
-	ValidatorSet() *validator.ValidatorSet
+	ValidatorSet() validator.ValidatorSetReader
 	LastBlockHeight() int
 	GenesisHash() crypto.Hash
 	LastBlockHash() crypto.Hash
@@ -51,11 +53,11 @@ type state struct {
 	proposer         crypto.Address
 	genDoc           *genesis.Genesis
 	store            *store.Store
-	params           Params
+	params           param.Params
 	txPool           txpool.TxPool
-	txPoolSandbox    *sandbox
+	txPoolSandbox    *sandbox.SandboxConcrete
 	execution        *execution.Execution
-	executionSandbox *sandbox
+	executionSandbox *sandbox.SandboxConcrete
 	validatorSet     *validator.ValidatorSet
 	sortition        *sortition.Sortition
 	lastBlockHeight  int
@@ -76,7 +78,7 @@ func LoadOrNewState(
 		config:    conf,
 		genDoc:    genDoc,
 		txPool:    txPool,
-		params:    NewParams(),
+		params:    param.NewParams(),
 		proposer:  signer.Address(),
 		sortition: sortition.NewSortition(signer),
 	}
@@ -107,11 +109,11 @@ func LoadOrNewState(
 		}
 	}
 
-	st.txPoolSandbox, err = newSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.validatorSet)
+	st.txPoolSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.validatorSet)
 	if err != nil {
 		return nil, err
 	}
-	st.executionSandbox, err = newSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.validatorSet)
+	st.executionSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.validatorSet)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +201,7 @@ func (st *state) StoreReader() store.StoreReader {
 	return st.store
 }
 
-func (st *state) ValidatorSet() *validator.ValidatorSet {
+func (st *state) ValidatorSet() validator.ValidatorSetReader {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -375,7 +377,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	}
 
 	// Commit changes and move proposer index
-	st.executionSandbox.CommitChanges(commit.Round())
+	st.commitSandbox(commit.Round())
 
 	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)
 
@@ -431,4 +433,33 @@ func (st *state) Fingerprint() string {
 		st.lastBlockHeight,
 		st.lastBlockHash.Fingerprint(),
 		st.lastBlockTime.Format("15.04.05"))
+}
+
+// TODO: add tests for me
+func (st *state) commitSandbox(round int) {
+	joined := make([]*validator.Validator, 0)
+	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
+		if vs.AddToSet {
+			joined = append(joined, &vs.Validator)
+		}
+	})
+
+	if err := st.validatorSet.MoveToNextHeight(0, joined); err != nil {
+		//
+		// We should panic here before modifying state store
+		//
+		logger.Panic("An error occurred", "err", err)
+	}
+
+	st.executionSandbox.IterateAccounts(func(as *sandbox.AccountStatus) {
+		if as.Updated {
+			st.store.UpdateAccount(&as.Account)
+		}
+	})
+
+	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
+		if vs.Updated {
+			st.store.UpdateValidator(&vs.Validator)
+		}
+	})
 }

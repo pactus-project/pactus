@@ -105,13 +105,9 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, b.Hash(), st3.ProposeBlock().Hash())
 	require.NoError(t, st1.ApplyBlock(i+1, b, c))
 	require.NoError(t, st3.ApplyBlock(i+1, b, c))
-
-	t.Run("Check sandbox after loading blockchain", func(t *testing.T) {
-		assert.Equal(t, st1.executionSandbox.recentBlocks, st3.(*state).executionSandbox.recentBlocks)
-		assert.Equal(t, st1.executionSandbox.totalAccounts, st3.(*state).executionSandbox.totalAccounts)
-		assert.Equal(t, st1.executionSandbox.totalValidators, st3.(*state).executionSandbox.totalValidators)
-		assert.Equal(t, st1.sortition.TotalStake(), st3.(*state).sortition.TotalStake())
-	})
+	assert.Equal(t, st1.store.TotalAccounts(), st3.(*state).store.TotalAccounts())
+	assert.Equal(t, st1.store.TotalValidators(), st3.(*state).store.TotalValidators())
+	assert.Equal(t, st1.sortition.TotalStake(), st3.(*state).sortition.TotalStake())
 }
 
 func TestBlockSubsidy(t *testing.T) {

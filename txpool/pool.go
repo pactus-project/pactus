@@ -17,15 +17,11 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-// TODO: We need to have LRU cache for mempool.
-// We need to prune stale transactions
-// A transaction might valid at heigh M, but invalid at height N (N > M)
-
 type txPool struct {
 	lk deadlock.RWMutex
 
 	config      *Config
-	checekr     *execution.Execution
+	checker     *execution.Execution
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
 	broadcastCh chan *message.Message
@@ -47,7 +43,7 @@ func NewTxPool(
 }
 
 func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
-	pool.checekr = execution.NewExecution(sb)
+	pool.checker = execution.NewExecution(sb)
 }
 
 func (pool *txPool) AppendTxs(trxs []tx.Tx) {
@@ -90,10 +86,10 @@ func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) error {
 
 func (pool *txPool) appendTx(trx tx.Tx) error {
 	if pool.pendings.Has(trx.Hash()) {
-		return errors.Errorf(errors.ErrInvalidTx, "Transaction is alreasy in pool. hash: %v", trx.Hash())
+		return errors.Errorf(errors.ErrInvalidTx, "Transaction is already in pool. hash: %v", trx.Hash())
 	}
 
-	if err := pool.checekr.Execute(&trx); err != nil {
+	if err := pool.checker.Execute(&trx); err != nil {
 		pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
 		return err
 	}

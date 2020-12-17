@@ -13,20 +13,20 @@ import (
 func TestTransaction(t *testing.T) {
 	setup(t)
 
-	t.Run("Shal return a transaction", func(t *testing.T) {
+	t.Run("Shall return a transaction", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"hash": txTestHash.String()})
-		httpServer.GetTransactionHandler(w, r)
+		r = mux.SetURLVars(r, map[string]string{"hash": tTxTestHash.String()})
+		tHTTPServer.GetTransactionHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shal return a transaction", func(t *testing.T) {
+	t.Run("Shall return an error", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		httpServer.GetTransactionHandler(w, r)
+		tHTTPServer.GetTransactionHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)

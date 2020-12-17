@@ -9,6 +9,16 @@ import (
 	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
+type ValidatorSetReader interface {
+	MaximumPower() int
+	Power() int
+	Validators() []crypto.Address
+	Validator(addr crypto.Address) *Validator
+	Contains(addr crypto.Address) bool
+	Proposer(round int) *Validator
+	CommittersHash() crypto.Hash
+}
+
 type ValidatorSet struct {
 	lk deadlock.RWMutex
 
