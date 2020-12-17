@@ -88,7 +88,7 @@ func TestLoadState(t *testing.T) {
 	st2.sortition.AddToTotalStake(dummyVal.Stake())
 
 	i := 0
-	for ; i < st1.params.TransactionToLiveInterval+10; i++ {
+	for ; i < 10; i++ {
 		b, c := proposeAndSignBlock(t, st1)
 
 		assert.NoError(t, st1.ApplyBlock(i+1, b, c))
@@ -108,6 +108,8 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, st1.store.TotalAccounts(), st3.(*state).store.TotalAccounts())
 	assert.Equal(t, st1.store.TotalValidators(), st3.(*state).store.TotalValidators())
 	assert.Equal(t, st1.sortition.TotalStake(), st3.(*state).sortition.TotalStake())
+	assert.Equal(t, st1.executionSandbox.LastBlockHeight(), st3.(*state).executionSandbox.LastBlockHeight())
+	assert.Equal(t, st1.executionSandbox.LastBlockHash(), st3.(*state).executionSandbox.LastBlockHash())
 }
 
 func TestBlockSubsidy(t *testing.T) {
