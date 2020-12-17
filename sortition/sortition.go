@@ -52,12 +52,12 @@ func (s *Sortition) Evaluate(hash crypto.Hash, val *validator.Validator) *tx.Tx 
 		return nil
 	}
 
-	trx := tx.NewSortitionTx(hash, val.Sequence()+1, val.Address(), index, proof, "", nil, nil)
+	trx := tx.NewSortitionTx(hash, val.Sequence()+1, val.Address(), proof, "", nil, nil)
 	s.signer.SignMsg(trx)
 	return trx
 }
 
-func (s *Sortition) VerifySortition(blockHash crypto.Hash, index int64, proof []byte, val *validator.Validator) bool {
+func (s *Sortition) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 

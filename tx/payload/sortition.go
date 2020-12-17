@@ -9,8 +9,7 @@ import (
 
 type SortitionPayload struct {
 	Address crypto.Address `cbor:"1,keyasint"`
-	Index   int64          `cbor:"2,keyasint"`
-	Proof   []byte         `cbor:"3,keyasint"`
+	Proof   []byte         `cbor:"2,keyasint"`
 }
 
 func (p *SortitionPayload) Type() PayloadType {
@@ -29,9 +28,6 @@ func (p *SortitionPayload) SanityCheck() error {
 	if err := p.Address.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid address")
 	}
-	if p.Index < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid index")
-	}
 	if len(p.Proof) != crypto.SignatureSize {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof")
 	}
@@ -40,7 +36,6 @@ func (p *SortitionPayload) SanityCheck() error {
 }
 
 func (p *SortitionPayload) Fingerprint() string {
-	return fmt.Sprintf("{Sortition: %v %v",
-		p.Address.Fingerprint(),
-		p.Index)
+	return fmt.Sprintf("{Sortition: %v",
+		p.Address.Fingerprint())
 }

@@ -23,7 +23,7 @@ func TestProposerMoves(t *testing.T) {
 	assert.Equal(t, vs.Proposer(3).Address(), keys[3].PublicKey().Address())
 	assert.Equal(t, vs.Proposer(4).Address(), keys[0].PublicKey().Address())
 
-	vs.MoveToNextHeight(0, nil)
+	assert.NoError(t, vs.MoveToNextHeight(0, nil))
 	assert.Equal(t, vs.Proposer(0).Address(), keys[1].PublicKey().Address())
 }
 
@@ -58,7 +58,7 @@ func TestProposerMove(t *testing.T) {
 	//
 	vs.proposerIndex = 0
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
-	vs.MoveToNextHeight(0, nil)
+	assert.NoError(t, vs.MoveToNextHeight(0, nil))
 	assert.Equal(t, vs.proposerIndex, 1)
 	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
 	assert.Equal(t, vs.Proposer(1).Address(), val3.Address())
@@ -70,7 +70,7 @@ func TestProposerMove(t *testing.T) {
 	//
 	vs.proposerIndex = 3
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
-	vs.MoveToNextHeight(0, nil)
+	assert.NoError(t, vs.MoveToNextHeight(0, nil))
 	assert.Equal(t, vs.proposerIndex, 4)
 	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
 
@@ -81,7 +81,7 @@ func TestProposerMove(t *testing.T) {
 	//
 	vs.proposerIndex = 6
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
-	vs.MoveToNextHeight(0, nil)
+	assert.NoError(t, vs.MoveToNextHeight(0, nil))
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
 }
@@ -105,7 +105,7 @@ func TestProposerMoveMoreRounds(t *testing.T) {
 	//
 	vs.proposerIndex = 0
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
-	vs.MoveToNextHeight(2, nil)
+	assert.NoError(t, vs.MoveToNextHeight(2, nil))
 	assert.Equal(t, vs.proposerIndex, 3)
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
 	assert.Equal(t, vs.Proposer(1).Address(), val5.Address())
@@ -117,7 +117,7 @@ func TestProposerMoveMoreRounds(t *testing.T) {
 	//
 	vs.proposerIndex = 3
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
-	vs.MoveToNextHeight(3, nil)
+	assert.NoError(t, vs.MoveToNextHeight(3, nil))
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
 
@@ -128,7 +128,7 @@ func TestProposerMoveMoreRounds(t *testing.T) {
 	//
 	vs.proposerIndex = 6
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
-	vs.MoveToNextHeight(1, nil)
+	assert.NoError(t, vs.MoveToNextHeight(1, nil))
 	assert.Equal(t, vs.proposerIndex, 1)
 	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
 }

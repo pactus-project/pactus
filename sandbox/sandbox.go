@@ -15,7 +15,7 @@ type Sandbox interface {
 	MakeNewValidator(crypto.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
 
-	VerifySortition(blockHash crypto.Hash, index int64, proof []byte, val *validator.Validator) bool
+	VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool
 	AddToSet(crypto.Hash, crypto.Address) error
 
 	CurrentHeight() int

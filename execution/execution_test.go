@@ -3,6 +3,8 @@ package execution
 import (
 	"testing"
 
+	"github.com/zarbchain/zarb-go/validator"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/tx"
 
@@ -93,4 +95,25 @@ func TestExecuteBondTx(t *testing.T) {
 
 	assert.Equal(t, sb.Account(acc1.Address()).Balance(), int64(2000))
 	assert.Equal(t, sb.Validator(valAddr).Stake(), int64(1000))
+}
+
+func TestExecuteSortitionTx(t *testing.T) {
+	setup(t)
+
+	valAddr, valPub, valPriv := crypto.GenerateTestKeyPair()
+	stamp := crypto.GenerateTestHash()
+	sb.AppendStampAndUpdateHeight(100, stamp)
+	proof := [48]byte{}
+
+	trx1 := tx.NewSortitionTx(stamp, 1, valAddr, proof[:], "invalid validator", &valPub, nil)
+	trx1.SetSignature(valPriv.Sign(trx1.SignBytes()))
+	assert.Error(t, exe.Execute(trx1))
+
+	val := validator.NewValidator(valPub, 0, 0)
+	sb.UpdateValidator(val)
+
+	trx2 := tx.NewSortitionTx(stamp, 1, valAddr, proof[:], "invalid proof", &valPub, nil)
+	trx2.SetSignature(valPriv.Sign(trx2.SignBytes()))
+	assert.Error(t, exe.Execute(trx2))
+
 }

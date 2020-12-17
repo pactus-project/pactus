@@ -349,6 +349,6 @@ func (sb *sandbox) AppendNewBlock(hash crypto.Hash, height int) {
 	sb.recentBlocks.PushBack(hash, height)
 }
 
-func (sb *sandbox) VerifySortition(blockHash crypto.Hash, index int64, proof []byte, val *validator.Validator) bool {
-	return sb.sortition.VerifySortition(blockHash, index, proof, val)
+func (sb *sandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
+	return sb.sortition.VerifySortition(blockHash, proof, val)
 }

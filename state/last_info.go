@@ -25,7 +25,9 @@ func (st *state) saveLastInfo(height int, commit *block.Commit, lastReceiptHash 
 
 	bs, _ := json.Marshal(&li)
 
-	util.WriteFile(path, bs)
+	if err := util.WriteFile(path, bs); err != nil {
+		st.logger.Error("Unable to write last sate info", "err", err)
+	}
 }
 
 func (st *state) loadLastInfo() (int, *block.Commit, *crypto.Hash, error) {

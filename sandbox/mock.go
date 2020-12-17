@@ -3,12 +3,13 @@ package sandbox
 import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
 var _ Sandbox = &MockSandbox{}
 
-// MockSandbox is a testing mock
+// MockSandbox is a testing mock for sandbox
 type MockSandbox struct {
 	Accounts       map[crypto.Address]*account.Account
 	Validators     map[crypto.Address]*validator.Validator
@@ -20,6 +21,7 @@ type MockSandbox struct {
 	MinFee_        int64
 	TotalAccount   int
 	TotalValidator int
+	Sortition      *sortition.Sortition
 }
 
 func NewMockSandbox() *MockSandbox {
@@ -31,6 +33,7 @@ func NewMockSandbox() *MockSandbox {
 		MaxMemoLength_: 1024,
 		FeeFraction_:   0.001,
 		MinFee_:        1000,
+		Sortition:      sortition.NewSortition(crypto.Signer{}),
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
@@ -59,7 +62,7 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 func (m *MockSandbox) AddToSet(crypto.Hash, crypto.Address) error {
 	return nil
 }
-func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, index int64, proof []byte, val *validator.Validator) bool {
+func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
 	return false
 }
 func (m *MockSandbox) CurrentHeight() int {

@@ -22,7 +22,7 @@ func NewExecution(sb sandbox.Sandbox) *Execution {
 	execs := make(map[payload.PayloadType]Executor)
 	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(sb)
 	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(sb)
-	execs[payload.PayloadTypeSortition] = executor.NewSendExecutor(sb)
+	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(sb)
 
 	return &Execution{
 		executors: execs,

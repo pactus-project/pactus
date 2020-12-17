@@ -25,7 +25,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if trx.Fee() != 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
 	}
-	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Index, pld.Proof, val) {
+	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Proof, val) {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
 	}
 	if err := e.sandbox.AddToSet(trx.Stamp(), val.Address()); err != nil {

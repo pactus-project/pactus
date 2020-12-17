@@ -256,8 +256,8 @@ func GenerateTestBondTx() (*Tx, crypto.PrivateKey) {
 func GenerateTestSortitionTx() (*Tx, crypto.PrivateKey) {
 	h := crypto.GenerateTestHash()
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
-	_, pb2, _ := crypto.GenerateTestKeyPair()
-	tx := NewBondTx(h, 110, a1, pb2, 100, "test bond-tx", &pb1, nil)
+	proof := [48]byte{}
+	tx := NewSortitionTx(h, 110, a1, proof[:], "test sortition-tx", &pb1, nil)
 	sig := pv1.Sign(tx.SignBytes())
 	tx.data.Signature = sig
 	return tx, pv1
