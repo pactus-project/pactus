@@ -48,9 +48,7 @@ func (m *MockTxPool) Fingerprint() string {
 }
 
 func (m *MockTxPool) AppendTxs(txs []*tx.Tx) {
-	for _, t := range txs {
-		m.txs = append(m.txs, t)
-	}
+	m.txs = append(m.txs, txs...)
 }
 
 func (m *MockTxPool) AppendTx(t *tx.Tx) error {

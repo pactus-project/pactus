@@ -173,12 +173,12 @@ func TestProposeBlock(t *testing.T) {
 	trx2 := tx.NewBondTx(b1.Hash(), 2, tValSigner.Address(), pub, 1, "", &pub, nil)
 	tValSigner.SignMsg(trx2)
 
-	tTxPool.AppendTx(invSendTx)
-	tTxPool.AppendTx(invBondTx)
-	tTxPool.AppendTx(invSortitionTx)
-	tTxPool.AppendTx(invSubsidyTx)
-	tTxPool.AppendTx(trx1)
-	tTxPool.AppendTx(trx2)
+	assert.NoError(t, tTxPool.AppendTx(invSendTx))
+	assert.NoError(t, tTxPool.AppendTx(invBondTx))
+	assert.NoError(t, tTxPool.AppendTx(invSortitionTx))
+	assert.NoError(t, tTxPool.AppendTx(invSubsidyTx))
+	assert.NoError(t, tTxPool.AppendTx(trx1))
+	assert.NoError(t, tTxPool.AppendTx(trx2))
 
 	b2 := st1.ProposeBlock()
 	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())

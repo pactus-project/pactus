@@ -3,10 +3,9 @@ package tx
 import (
 	"encoding/json"
 
-	"github.com/zarbchain/zarb-go/errors"
-
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 const (
