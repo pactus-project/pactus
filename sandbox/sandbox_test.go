@@ -27,7 +27,7 @@ func setup(t *testing.T) {
 	tStore = store.NewMockStore()
 
 	_, pb, priv := crypto.GenerateTestKeyPair()
-	acc := account.NewAccount(crypto.MintbaseAddress, 0)
+	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21000000000000)
 	val := validator.NewValidator(pb, 0, 0)
 	tValSigner = crypto.NewSigner(priv)
@@ -54,7 +54,7 @@ func TestAccountChange(t *testing.T) {
 		assert.Nil(t, tSandbox.Account(invAddr))
 	})
 
-	t.Run("Retreive an account from store, modify it and commit it", func(t *testing.T) {
+	t.Run("Retrieve an account from store, modify it and commit it", func(t *testing.T) {
 		acc1, _ := account.GenerateTestAccount(0)
 		tStore.UpdateAccount(acc1)
 
@@ -94,7 +94,7 @@ func TestValidatorChange(t *testing.T) {
 		assert.Nil(t, tSandbox.Validator(invAddr))
 	})
 
-	t.Run("Retreive an validator from store, modify it and commit it", func(t *testing.T) {
+	t.Run("Retrieve an validator from store, modify it and commit it", func(t *testing.T) {
 		val1, _ := validator.GenerateTestValidator(0)
 		tStore.UpdateValidator(val1)
 
@@ -199,7 +199,7 @@ func TestCreateDuplicated(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		addr := crypto.MintbaseAddress
+		addr := crypto.TreasuryAddress
 		tSandbox.MakeNewAccount(addr)
 	})
 

@@ -6,30 +6,37 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
+var _ TxPool = &MockTxPool{}
+
 // MockTxPool is a testing mock
 type MockTxPool struct {
-	txs map[crypto.Hash]tx.Tx
+	txs []*tx.Tx
 }
 
 func NewMockTxPool() *MockTxPool {
 	return &MockTxPool{
-		txs: make(map[crypto.Hash]tx.Tx),
+		txs: make([]*tx.Tx, 0),
 	}
 }
 func (m *MockTxPool) SetSandbox(sandbox sandbox.Sandbox) {
 
 }
-func (m *MockTxPool) PendingTx(hash crypto.Hash) *tx.Tx {
-	tx, ok := m.txs[hash]
-	if !ok {
-		return nil
+func (m *MockTxPool) PendingTx(id crypto.Hash) *tx.Tx {
+	for _, t := range m.txs {
+		if t.ID().EqualsTo(id) {
+			return t
+		}
 	}
-	return &tx
+	return nil
 }
 
-func (m *MockTxPool) HasTx(hash crypto.Hash) bool {
-	_, has := m.txs[hash]
-	return has
+func (m *MockTxPool) HasTx(id crypto.Hash) bool {
+	for _, t := range m.txs {
+		if t.ID().EqualsTo(id) {
+			return true
+		}
+	}
+	return false
 }
 
 func (m *MockTxPool) Size() int {
@@ -40,18 +47,18 @@ func (m *MockTxPool) Fingerprint() string {
 	return ""
 }
 
-func (m *MockTxPool) AppendTxs(txs []tx.Tx) {
+func (m *MockTxPool) AppendTxs(txs []*tx.Tx) {
 	for _, t := range txs {
-		m.txs[t.ID()] = t
+		m.txs = append(m.txs, t)
 	}
 }
 
-func (m *MockTxPool) AppendTx(tx tx.Tx) error {
-	m.txs[tx.ID()] = tx
+func (m *MockTxPool) AppendTx(t *tx.Tx) error {
+	m.txs = append(m.txs, t)
 	return nil
 }
-func (m *MockTxPool) AppendTxAndBroadcast(trx tx.Tx) error {
-	m.txs[trx.ID()] = trx
+func (m *MockTxPool) AppendTxAndBroadcast(t *tx.Tx) error {
+	m.txs = append(m.txs, t)
 	return nil
 }
 
@@ -59,4 +66,8 @@ func (m *MockTxPool) RemoveTx(hash crypto.Hash) {
 	// This pools is shared between different instances
 	// Lets keep txs then
 	//delete(m.txs, hash)
+}
+
+func (m *MockTxPool) AllTransactions() []*tx.Tx {
+	return m.txs
 }

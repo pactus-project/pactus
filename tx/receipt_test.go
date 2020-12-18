@@ -13,7 +13,7 @@ import (
 func TestEncodingReceipt(t *testing.T) {
 	r1 := Receipt{
 		data: receiptData{
-			TxID:    crypto.GenerateTestHash(),
+			TxID:      crypto.GenerateTestHash(),
 			BlockHash: crypto.GenerateTestHash(),
 			Status:    Ok,
 		},
@@ -32,7 +32,7 @@ func TestEncodingReceipt(t *testing.T) {
 func TestSanityCheck(t *testing.T) {
 	r := Receipt{
 		data: receiptData{
-			TxID:    crypto.GenerateTestHash(),
+			TxID:      crypto.GenerateTestHash(),
 			BlockHash: crypto.GenerateTestHash(),
 			Status:    Ok,
 		},

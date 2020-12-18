@@ -28,7 +28,7 @@ var (
 	genDoc       *genesis.Genesis
 	ctx          context.Context
 	txPool       *txpool.MockTxPool
-	validTxs     []tx.Tx
+	validTxs     []*tx.Tx
 	validBlocks  []block.Block
 	validCommits []block.Commit
 	totalBlocks  int
@@ -39,7 +39,7 @@ var (
 func setup(t *testing.T) {
 	syncConf = TestConfig()
 	val, key := validator.GenerateTestValidator(0)
-	acc := account.NewAccount(crypto.MintbaseAddress, 0)
+	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21000000000000)
 	signer = crypto.NewSigner(key)
 	genDoc = genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, []*validator.Validator{val}, 1)
@@ -50,12 +50,12 @@ func setup(t *testing.T) {
 
 	blockCount := 12
 	validBlocks = make([]block.Block, 0, blockCount)
-	validTxs = make([]tx.Tx, 0, blockCount)
+	validTxs = make([]*tx.Tx, 0, blockCount)
 	for i := 0; i < blockCount; i++ {
 		b := st.ProposeBlock()
 		id := b.TxIDs().IDs()[0]
 		trx := txPool.PendingTx(id)
-		validTxs = append(validTxs, *trx)
+		validTxs = append(validTxs, trx)
 
 		v := vote.NewPrecommit(i+1, 0, b.Hash(), signer.Address())
 		signer.SignMsg(v)

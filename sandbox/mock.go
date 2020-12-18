@@ -11,8 +11,8 @@ var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox
 type MockSandbox struct {
-	Accounts       map[crypto.Address]*account.Account
-	Validators     map[crypto.Address]*validator.Validator
+	Accounts       map[crypto.Address]account.Account
+	Validators     map[crypto.Address]validator.Validator
 	Stamps         map[crypto.Hash]int
 	CurrentHeight_ int
 	TTLInterval    int
@@ -27,8 +27,8 @@ type MockSandbox struct {
 func NewMockSandbox() *MockSandbox {
 	_, _, priv := crypto.GenerateTestKeyPair()
 	return &MockSandbox{
-		Accounts:       make(map[crypto.Address]*account.Account),
-		Validators:     make(map[crypto.Address]*validator.Validator),
+		Accounts:       make(map[crypto.Address]account.Account),
+		Validators:     make(map[crypto.Address]validator.Validator),
 		Stamps:         make(map[crypto.Hash]int),
 		TTLInterval:    4,
 		MaxMemoLength_: 1024,
@@ -38,7 +38,11 @@ func NewMockSandbox() *MockSandbox {
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
-	return m.Accounts[addr]
+	acc, ok := m.Accounts[addr]
+	if !ok {
+		return nil
+	}
+	return &acc
 }
 func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	a := account.NewAccount(addr, m.TotalAccount)
@@ -46,10 +50,14 @@ func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	return a
 }
 func (m *MockSandbox) UpdateAccount(acc *account.Account) {
-	m.Accounts[acc.Address()] = acc
+	m.Accounts[acc.Address()] = *acc
 }
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
-	return m.Validators[addr]
+	val, ok := m.Validators[addr]
+	if !ok {
+		return nil
+	}
+	return &val
 }
 func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
 	v := validator.NewValidator(pub, m.TotalAccount, m.CurrentHeight_+1)
@@ -57,7 +65,7 @@ func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validato
 	return v
 }
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
-	m.Validators[val.Address()] = val
+	m.Validators[val.Address()] = *val
 
 }
 func (m *MockSandbox) AddToSet(crypto.Hash, crypto.Address) error {
@@ -92,4 +100,8 @@ func (m *MockSandbox) MinFee() int64 {
 func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) {
 	m.Stamps[stamp] = height
 	m.CurrentHeight_ = height + 1
+}
+
+func (m *MockSandbox) AccSeq(a crypto.Address) int {
+	return m.Accounts[a].Sequence()
 }

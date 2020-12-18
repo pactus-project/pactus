@@ -4,8 +4,8 @@ import (
 	"container/list"
 )
 
-type pair struct {
-	key, value interface{}
+type Pair struct {
+	First, Second interface{}
 }
 
 type LinkedMap struct {
@@ -33,24 +33,24 @@ func (lm *LinkedMap) Has(key interface{}) bool {
 	return found
 }
 
-func (lm *LinkedMap) PushBack(key interface{}, value interface{}) {
-	el, found := lm.hashmap[key]
+func (lm *LinkedMap) PushBack(first interface{}, second interface{}) {
+	el, found := lm.hashmap[first]
 	if found {
-		// update the value
-		el.Value.(*pair).value = value
+		// update the second
+		el.Value.(*Pair).Second = second
 		return
 	}
 
-	el = lm.list.PushBack(&pair{key, value})
-	lm.hashmap[key] = el
+	el = lm.list.PushBack(&Pair{first, second})
+	lm.hashmap[first] = el
 
 	lm.prune()
 }
 
-func (lm *LinkedMap) Get(key interface{}) (interface{}, bool) {
-	el, found := lm.hashmap[key]
+func (lm *LinkedMap) Get(first interface{}) (interface{}, bool) {
+	el, found := lm.hashmap[first]
 	if found {
-		return el.Value.(*pair).value, true
+		return el.Value.(*Pair).Second, true
 
 	}
 	return nil, false
@@ -61,8 +61,8 @@ func (lm *LinkedMap) Last() (interface{}, interface{}) {
 	if el == nil {
 		return nil, nil
 	}
-	p := el.Value.(*pair)
-	return p.key, p.value
+	p := el.Value.(*Pair)
+	return p.First, p.Second
 }
 
 func (lm *LinkedMap) First() (interface{}, interface{}) {
@@ -70,15 +70,23 @@ func (lm *LinkedMap) First() (interface{}, interface{}) {
 	if el == nil {
 		return nil, nil
 	}
-	p := el.Value.(*pair)
-	return p.key, p.value
+	p := el.Value.(*Pair)
+	return p.First, p.Second
 }
 
-func (lm *LinkedMap) Remove(key interface{}) {
-	el, found := lm.hashmap[key]
+func (lm *LinkedMap) LastElement() *list.Element {
+	return lm.list.Back()
+}
+
+func (lm *LinkedMap) FirstElement() *list.Element {
+	return lm.list.Front()
+}
+
+func (lm *LinkedMap) Remove(first interface{}) {
+	el, found := lm.hashmap[first]
 	if found {
 		lm.list.Remove(el)
-		delete(lm.hashmap, el.Value.(*pair).key)
+		delete(lm.hashmap, el.Value.(*Pair).First)
 	}
 }
 
@@ -102,7 +110,7 @@ func (lm *LinkedMap) Clear() {
 func (lm *LinkedMap) prune() {
 	for lm.list.Len() > lm.capacity {
 		front := lm.list.Front()
-		key := front.Value.(*pair).key
+		key := front.Value.(*Pair).First
 		lm.list.Remove(front)
 		delete(lm.hashmap, key)
 	}

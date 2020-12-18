@@ -19,3 +19,17 @@ func TestTxsMerkle(t *testing.T) {
 	merkle := simpleMerkle.NewTreeFromHashes(data)
 	assert.Equal(t, b.Header().TxIDsHash(), merkle.Root())
 }
+
+func TestAppendAndPrepend(t *testing.T) {
+	ids := NewTxIDs()
+	h1 := crypto.GenerateTestHash()
+	h2 := crypto.GenerateTestHash()
+	h3 := crypto.GenerateTestHash()
+	h4 := crypto.GenerateTestHash()
+	ids.Append(h2)
+	ids.Append(h3)
+	ids.Prepend(h1)
+	ids.Append(h4)
+
+	assert.Equal(t, ids.data.IDs, []crypto.Hash{h1, h2, h3, h4})
+}

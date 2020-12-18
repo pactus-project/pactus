@@ -138,8 +138,8 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 }
 
 func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
-	txs := make([]tx.Tx, 0, len(pld.Hashes))
-	for _, h := range pld.Hashes {
+	txs := make([]*tx.Tx, 0, len(pld.IDs))
+	for _, h := range pld.IDs {
 		trx := syncer.txPool.PendingTx(h)
 		if trx == nil {
 			// Do we have this transaction in our store?
@@ -149,7 +149,7 @@ func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
 			}
 		}
 		if trx != nil {
-			txs = append(txs, *trx)
+			txs = append(txs, trx)
 		}
 	}
 

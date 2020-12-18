@@ -173,9 +173,6 @@ func Start() func(c *cli.Cmd) {
 					}
 					keyObj, _ = key.NewKey(pv.PublicKey().Address(), pv)
 				}
-
-				cmd.PrintInfoMsg("Validator address: %v", keyObj.Address())
-
 			}
 
 			// change working directory
@@ -202,7 +199,15 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
+			validatorAddr := keyObj.Address()
+			mintbaseAddr := conf.State.MintbaseAddress
+			if mintbaseAddr == nil {
+				mintbaseAddr = &validatorAddr
+			}
 			cmd.PrintInfoMsg("You are running a zarb block chain node version: %v. Welcome! ", version.NodeVersion.String())
+			cmd.PrintInfoMsg("Validator address: %v", validatorAddr)
+			cmd.PrintInfoMsg("Mintbase address : %v", mintbaseAddr)
+			cmd.PrintInfoMsg("")
 
 			signer := keyObj.ToSigner()
 			node, err := node.NewNode(gen, conf, signer)

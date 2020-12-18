@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMintbaseAddress(t *testing.T) {
+func TestTreasuryAddress(t *testing.T) {
 	expected, _ := hex.DecodeString("0000000000000000000000000000000000000000")
-	assert.Equal(t, MintbaseAddress.RawBytes(), expected)
+	assert.Equal(t, TreasuryAddress.RawBytes(), expected)
 }
 func TestMarshalingEmptyAddress(t *testing.T) {
 	addr1 := Address{}

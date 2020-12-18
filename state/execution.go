@@ -18,15 +18,15 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 		if err := trx.SanityCheck(); err != nil {
 			return nil, err
 		}
-		// Only first transaction should be mintbase transaction
-		isMintbaseTx := (i == 0)
-		if isMintbaseTx {
-			if !trx.IsMintbaseTx() {
-				return nil, errors.Errorf(errors.ErrInvalidTx, "Not a mintbase transaction")
+		// Only first transaction should be subsidy transaction
+		isSubsidyTx := (i == 0)
+		if isSubsidyTx {
+			if !trx.IsSubsidyTx() {
+				return nil, errors.Errorf(errors.ErrInvalidTx, "Not a subsidy transaction")
 			}
 		} else {
-			if trx.IsMintbaseTx() {
-				return nil, errors.Errorf(errors.ErrInvalidTx, "Duplicated mintbase transaction")
+			if trx.IsSubsidyTx() {
+				return nil, errors.Errorf(errors.ErrInvalidTx, "Duplicated subsidy transaction")
 			}
 		}
 

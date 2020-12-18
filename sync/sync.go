@@ -127,7 +127,7 @@ func (syncer *Synchronizer) broadcastLoop() {
 	}
 }
 func (syncer *Synchronizer) Fingerprint() string {
-	return fmt.Sprintf("{☍ %d ⛲ %d height %d}",
+	return fmt.Sprintf("{☍ %d ⛲ %d ↥ %d}",
 		syncer.stats.PeersCount(),
 		syncer.blockPool.BlockLen(),
 		syncer.stats.MaxHeight())

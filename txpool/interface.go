@@ -18,8 +18,9 @@ type TxPool interface {
 	TxPoolReader
 
 	SetSandbox(sandbox sandbox.Sandbox)
-	AppendTxs(txs []tx.Tx)
-	AppendTx(tx tx.Tx) error
-	AppendTxAndBroadcast(trx tx.Tx) error
-	RemoveTx(hash crypto.Hash)
+	AppendTxs(txs []*tx.Tx)
+	AppendTx(tx *tx.Tx) error
+	AppendTxAndBroadcast(trx *tx.Tx) error
+	RemoveTx(id crypto.Hash)
+	AllTransactions() []*tx.Tx
 }

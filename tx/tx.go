@@ -60,51 +60,56 @@ func (tx *Tx) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
 	}
 
-	if tx.IsMintbaseTx() {
+	if tx.IsSubsidyTx() {
 		if tx.data.PublicKey != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Mintbase transaction should not have public key")
+			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have public key")
 		}
 		if tx.data.Signature != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Mintbase transaction should not have signature")
+			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have signature")
 		}
 		if tx.data.Fee != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee for Mintbase transaction should set to zero")
+			return errors.Errorf(errors.ErrInvalidTx, "Fee for Subsidy transaction should set to zero")
 		}
 	} else {
-		if tx.data.PublicKey == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "No public key")
-		}
-		if tx.data.Signature == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "No signature")
-		}
 		if tx.data.Fee < 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid fee")
 		}
-		if err := tx.data.PublicKey.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid pubic key")
-		}
-		if err := tx.data.Signature.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
-		}
-		if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
-		}
-		bs := tx.SignBytes()
-		if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+		if err := tx.CheckSignature(); err != nil {
+			return err
 		}
 	}
-
 	if tx.data.Type != tx.data.Payload.Type() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid payload type")
 	}
-
 	if err := tx.data.Payload.SanityCheck(); err != nil {
 		return err
 	}
 
 	tx.sanityChecked = true
 
+	return nil
+}
+
+func (tx *Tx) CheckSignature() error {
+	if tx.data.PublicKey == nil {
+		return errors.Errorf(errors.ErrInvalidTx, "No public key")
+	}
+	if tx.data.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidTx, "No signature")
+	}
+	if err := tx.data.PublicKey.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid pubic key")
+	}
+	if err := tx.data.Signature.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+	}
+	if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
+	}
+	bs := tx.SignBytes()
+	if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+	}
 	return nil
 }
 
@@ -225,9 +230,9 @@ func (tx *Tx) ID() crypto.Hash {
 	return *tx.memorizedHash
 }
 
-func (tx *Tx) IsMintbaseTx() bool {
+func (tx *Tx) IsSubsidyTx() bool {
 	return tx.data.Type == payload.PayloadTypeSend &&
-		tx.data.Payload.Signer().EqualsTo(crypto.MintbaseAddress)
+		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
 // ---------

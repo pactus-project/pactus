@@ -9,7 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestRetreiveBlockAndTransactions(t *testing.T) {
+func TestRetrieveBlockAndTransactions(t *testing.T) {
 	conf := TestConfig()
 	store, err := NewStore(conf)
 	assert.NoError(t, err)

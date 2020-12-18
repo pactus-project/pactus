@@ -7,10 +7,10 @@ import (
 )
 
 type TxsPayload struct {
-	Txs []tx.Tx `cbor:"2,keyasint"`
+	Txs []*tx.Tx `cbor:"2,keyasint"`
 }
 
-func NewTxsMessage(txs []tx.Tx) *Message {
+func NewTxsMessage(txs []*tx.Tx) *Message {
 	return &Message{
 		Type: PayloadTypeTxs,
 		Payload: &TxsPayload{

@@ -1,12 +1,14 @@
 package state
 
 import (
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/store"
 )
 
 // Config holds the configuration of the node
 type Config struct {
-	Store *store.Config
+	MintbaseAddress *crypto.Address
+	Store           *store.Config
 }
 
 // DefaultConfig instantiates the default configuration for the node

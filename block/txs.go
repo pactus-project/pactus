@@ -23,8 +23,15 @@ func NewTxIDs() TxIDs {
 		},
 	}
 }
-func (txs *TxIDs) Append(hash crypto.Hash) {
-	txs.data.IDs = append(txs.data.IDs, hash)
+func (txs *TxIDs) Append(id crypto.Hash) {
+	txs.data.IDs = append(txs.data.IDs, id)
+}
+
+func (txs *TxIDs) Prepend(id crypto.Hash) {
+	ids := make([]crypto.Hash, len(txs.data.IDs)+1)
+	ids[0] = id
+	copy(ids[1:], txs.data.IDs)
+	txs.data.IDs = ids
 }
 
 func (txs TxIDs) Hash() crypto.Hash {
@@ -37,10 +44,10 @@ func (txs TxIDs) IDs() []crypto.Hash {
 }
 
 func (txs TxIDs) IsEmpty() bool {
-	return txs.Count() == 0
+	return txs.Len() == 0
 }
 
-func (txs TxIDs) Count() int {
+func (txs TxIDs) Len() int {
 	return len(txs.data.IDs)
 }
 
