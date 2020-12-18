@@ -8,20 +8,20 @@ import (
 )
 
 type TxsReqPayload struct {
-	Hashes []crypto.Hash `cbor:"1,keyasint"`
+	IDs []crypto.Hash `cbor:"1,keyasint"`
 }
 
-func NewTxsReqMessage(hashes []crypto.Hash) *Message {
+func NewTxsReqMessage(ids []crypto.Hash) *Message {
 	return &Message{
 		Type: PayloadTypeTxsReq,
 		Payload: &TxsReqPayload{
-			Hashes: hashes,
+			IDs: ids,
 		},
 	}
 }
 
 func (p *TxsReqPayload) SanityCheck() error {
-	if len(p.Hashes) == 0 {
+	if len(p.IDs) == 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Empty list")
 	}
 	return nil
@@ -33,7 +33,7 @@ func (p *TxsReqPayload) Type() PayloadType {
 
 func (p *TxsReqPayload) Fingerprint() string {
 	var s string
-	for _, h := range p.Hashes {
+	for _, h := range p.IDs {
 		s += fmt.Sprintf("%v ", h.Fingerprint())
 	}
 	return fmt.Sprintf("%v", s)

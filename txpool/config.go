@@ -10,13 +10,13 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		WaitingTimeout: 2 * time.Second,
-		MaxSize:        10000,
+		MaxSize:        2000,
 	}
 }
 
 func TestConfig() *Config {
 	return &Config{
-		WaitingTimeout: 1 * time.Second,
-		MaxSize:        10000,
+		WaitingTimeout: 100 * time.Millisecond,
+		MaxSize:        10,
 	}
 }

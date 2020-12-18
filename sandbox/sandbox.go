@@ -289,6 +289,9 @@ func (sb *SandboxConcrete) RecentBlockHeight(hash crypto.Hash) int {
 
 func (sb *SandboxConcrete) lastHeight() int {
 	_, v := sb.recentBlocks.Last()
+	if v == nil {
+		return -1
+	}
 	return v.(int) + 1
 }
 

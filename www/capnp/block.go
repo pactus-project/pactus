@@ -98,7 +98,7 @@ func (f factory) ToVerboseBlock(block *block.Block, res *BlockResult) error {
 		return err
 	}
 	// Transactions
-	cTxIDs, _ := ctxs.NewHashes(int32(block.TxIDs().Count()))
+	cTxIDs, _ := ctxs.NewHashes(int32(block.TxIDs().Len()))
 	for i, hash := range block.TxIDs().IDs() {
 		if err := cTxIDs.Set(i, hash.RawBytes()); err != nil {
 			return err

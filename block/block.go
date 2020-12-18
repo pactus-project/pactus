@@ -108,7 +108,7 @@ func (b Block) Fingerprint() string {
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.Header.StateHash().Fingerprint(),
 		b.data.Header.CommittersHash().Fingerprint(),
-		b.data.TxIDs.Count(),
+		b.data.TxIDs.Len(),
 	)
 }
 

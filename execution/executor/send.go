@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
@@ -24,9 +25,14 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	if senderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve sender account")
 	}
-	receiverAcc := e.sandbox.Account(pld.Receiver)
-	if receiverAcc == nil {
-		receiverAcc = e.sandbox.MakeNewAccount(pld.Receiver)
+	var receiverAcc *account.Account
+	if pld.Receiver.EqualsTo(pld.Sender) {
+		receiverAcc = senderAcc
+	} else {
+		receiverAcc = e.sandbox.Account(pld.Receiver)
+		if receiverAcc == nil {
+			receiverAcc = e.sandbox.MakeNewAccount(pld.Receiver)
+		}
 	}
 	if senderAcc.Balance() < pld.Amount+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
@@ -34,7 +40,7 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	if senderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence, Expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
-	if trx.IsMintbaseTx() {
+	if trx.IsSubsidyTx() {
 		if trx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
 		}

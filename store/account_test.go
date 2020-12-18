@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestRetreiveAccount(t *testing.T) {
+func TestRetrieveAccount(t *testing.T) {
 	store, _ := newAccountStore(util.TempDirPath())
 
 	acc, _ := account.GenerateTestAccount(util.RandInt(10000))

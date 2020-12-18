@@ -70,13 +70,6 @@ func (commit *Commit) SanityCheck() error {
 	return nil
 }
 
-func (commit *Commit) Size() int {
-	if commit == nil {
-		return 0
-	}
-	return len(commit.data.Committers)
-}
-
 func (commit *Commit) Hash() crypto.Hash {
 	if commit == nil {
 		return crypto.UndefHash

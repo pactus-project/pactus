@@ -53,7 +53,7 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 		vals[i] = val
 	}
 
-	acc := account.NewAccount(crypto.MintbaseAddress, 0)
+	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21000000000000)
 
 	ch := make(chan *message.Message, 10)

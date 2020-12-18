@@ -46,7 +46,7 @@ func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
 	pool.checker = execution.NewExecution(sb)
 }
 
-func (pool *txPool) AppendTxs(trxs []tx.Tx) {
+func (pool *txPool) AppendTxs(trxs []*tx.Tx) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
@@ -57,7 +57,7 @@ func (pool *txPool) AppendTxs(trxs []tx.Tx) {
 	}
 }
 
-func (pool *txPool) AppendTx(trx tx.Tx) error {
+func (pool *txPool) AppendTx(trx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
@@ -65,12 +65,12 @@ func (pool *txPool) AppendTx(trx tx.Tx) error {
 		return err
 	}
 
-	pool.appendTxCh <- &trx
+	pool.appendTxCh <- trx
 
 	return nil
 }
 
-func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) error {
+func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
@@ -78,23 +78,23 @@ func (pool *txPool) AppendTxAndBroadcast(trx tx.Tx) error {
 		return err
 	}
 
-	msg := message.NewTxsMessage([]tx.Tx{trx})
+	msg := message.NewTxsMessage([]*tx.Tx{trx})
 	pool.broadcastCh <- msg
 
 	return nil
 }
 
-func (pool *txPool) appendTx(trx tx.Tx) error {
+func (pool *txPool) appendTx(trx *tx.Tx) error {
 	if pool.pendings.Has(trx.ID()) {
 		return errors.Errorf(errors.ErrInvalidTx, "Transaction is already in pool. id: %v", trx.ID())
 	}
 
-	if err := pool.checker.Execute(&trx); err != nil {
+	if err := pool.checker.Execute(trx); err != nil {
 		pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
 		return err
 	}
 
-	pool.pendings.PushBack(trx.ID(), &trx)
+	pool.pendings.PushBack(trx.ID(), trx)
 
 	return nil
 }
@@ -136,6 +136,19 @@ func (pool *txPool) PendingTx(id crypto.Hash) *tx.Tx {
 			}
 		}
 	}
+}
+
+func (pool *txPool) AllTransactions() []*tx.Tx {
+	pool.lk.RLock()
+	defer pool.lk.RUnlock()
+
+	trxs := make([]*tx.Tx, 0, pool.pendings.Size())
+	for e := pool.pendings.FirstElement(); e != nil; e = e.Next() {
+		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+		trxs = append(trxs, trx)
+	}
+
+	return trxs
 }
 
 func (pool *txPool) HasTx(id crypto.Hash) bool {

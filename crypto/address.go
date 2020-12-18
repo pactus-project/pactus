@@ -108,7 +108,7 @@ func (addr *Address) UnmarshalCBOR(bs []byte) error {
 /// METHODS
 
 func (addr *Address) SanityCheck() error {
-	if addr.EqualsTo(MintbaseAddress) {
+	if addr.EqualsTo(TreasuryAddress) {
 		return errors.Errorf(errors.ErrInvalidAddress, "")
 	}
 	return nil

@@ -5,11 +5,11 @@ import (
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
-func NewMintbaseTx(stamp crypto.Hash, sequence int, receiver crypto.Address, amount int64, memo string) *Tx {
+func NewSubsidyTx(stamp crypto.Hash, sequence int, receiver crypto.Address, amount int64, memo string) *Tx {
 	return NewSendTx(
 		stamp,
 		sequence,
-		crypto.MintbaseAddress,
+		crypto.TreasuryAddress,
 		receiver,
 		amount,
 		0,

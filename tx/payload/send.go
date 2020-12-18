@@ -37,7 +37,7 @@ func (p *SendPayload) SanityCheck() error {
 }
 
 func (p *SendPayload) Fingerprint() string {
-	return fmt.Sprintf("{Send: %v->%v 🪙 %v",
+	return fmt.Sprintf("{Send: %v->%v 💸 %v",
 		p.Sender.Fingerprint(),
 		p.Receiver.Fingerprint(),
 		p.Amount)

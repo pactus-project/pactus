@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func TestRetreiveValidator(t *testing.T) {
+func TestRetrieveValidator(t *testing.T) {
 	store, _ := newValidatorStore(util.TempDirPath())
 
 	val, _ := validator.GenerateTestValidator(util.RandInt(1000))

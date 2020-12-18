@@ -18,7 +18,7 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 	}
 
 	// Help peer to catch up
-	txs := make([]tx.Tx, 0)
+	txs := make([]*tx.Tx, 0)
 	blocks := make([]block.Block, to-from+1)
 	for h := from; h <= to; h++ {
 		b, err := syncer.store.Block(h)
@@ -30,7 +30,7 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 		for _, id := range ids {
 			ctrx, _ := syncer.store.Transaction(id)
 			if ctrx != nil {
-				txs = append(txs, *ctrx.Tx)
+				txs = append(txs, ctrx.Tx)
 			} else {
 				syncer.logger.Warn("We don't have transaction for the block", "id", id.Fingerprint())
 			}
@@ -70,7 +70,7 @@ func (syncer *Synchronizer) broadcastBlocks(from int, blocks []block.Block, last
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastTxs(txs []tx.Tx) {
+func (syncer *Synchronizer) broadcastTxs(txs []*tx.Tx) {
 	if len(txs) == 0 {
 		return
 	}

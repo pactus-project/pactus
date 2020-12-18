@@ -111,9 +111,9 @@ func TestTxSanityCheck(t *testing.T) {
 	})
 }
 
-func TestMintbaseTx(t *testing.T) {
+func TestSubsidyTx(t *testing.T) {
 	a, pub, priv := crypto.GenerateTestKeyPair()
-	trx := NewMintbaseTx(crypto.GenerateTestHash(), 111, a, 1111, "mintbase")
+	trx := NewSubsidyTx(crypto.GenerateTestHash(), 111, a, 1111, "subsidy")
 
 	trx.data.Fee = 1
 	assert.Error(t, trx.SanityCheck())
@@ -182,7 +182,7 @@ func TestSendSanityCheck(t *testing.T) {
 	t.Run("Invalid receiver", func(t *testing.T) {
 		trx, priv := GenerateTestSendTx()
 		pld := trx.data.Payload.(*payload.SendPayload)
-		pld.Receiver = crypto.MintbaseAddress
+		pld.Receiver = crypto.TreasuryAddress
 		trx.SetSignature(priv.Sign(trx.SignBytes()))
 		assert.Error(t, trx.SanityCheck())
 	})

@@ -262,12 +262,17 @@ func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
 	st.lastCommit = &commit
 }
 
-func (st *state) createMintbaseTx() *tx.Tx {
-	acc, _ := st.store.Account(crypto.MintbaseAddress)
+func (st *state) createSubsidyTx(fee int64) *tx.Tx {
+	acc, _ := st.store.Account(crypto.TreasuryAddress)
 	stamp := st.lastBlockHash
 	seq := acc.Sequence() + 1
 	amt := calcBlockSubsidy(st.lastBlockHeight+1, st.params.SubsidyReductionInterval)
-	tx := tx.NewMintbaseTx(stamp, seq, st.proposer, amt, "")
+
+	mintbaseAddr := st.config.MintbaseAddress
+	if mintbaseAddr == nil {
+		mintbaseAddr = &st.proposer
+	}
+	tx := tx.NewSubsidyTx(stamp, seq, *mintbaseAddr, amt+fee, "")
 	return tx
 }
 
@@ -277,17 +282,46 @@ func (st *state) ProposeBlock() block.Block {
 
 	timestamp := st.lastBlockTime.Add(st.params.BlockTime)
 	now := time.Now()
+
 	if now.After(timestamp) {
+		st.logger.Info("It looks the last commit had delay", "delay", now.Sub(timestamp))
 		timestamp = now
 	}
 
-	rewardTx := st.createMintbaseTx()
-	if err := st.txPool.AppendTxAndBroadcast(*rewardTx); err != nil {
-		st.logger.Panic("Our mintbase transaction is invalid", "err", err)
-	}
+	st.executionSandbox.Clear()
+	st.txPoolSandbox.Clear()
 
 	txIDs := block.NewTxIDs()
-	txIDs.Append(rewardTx.ID())
+
+	// Re-chaeck all transactions again, remove invalid ones
+	trxs := st.txPool.AllTransactions()
+	for _, trx := range trxs {
+		// All subsidy transactions (probably from invalid rounds)
+		// should be removed from the pool
+		if trx.IsSubsidyTx() {
+			st.logger.Debug("Found duplicated subsidy transaction", "tx", trx)
+			st.txPool.RemoveTx(trx.ID())
+			continue
+		}
+
+		if err := st.execution.Execute(trx); err != nil {
+			st.logger.Debug("Found invalid transaction", "tx", trx, "err", err)
+			st.txPool.RemoveTx(trx.ID())
+		} else {
+			txIDs.Append(trx.ID())
+
+			if txIDs.Len() >= st.params.MaximumTransactionPerBlock {
+				break
+			}
+		}
+	}
+
+	subsidyTx := st.createSubsidyTx(st.execution.AccumulatedFee())
+	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
+		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
+	}
+	txIDs.Prepend(subsidyTx.ID())
+
 	stateHash := st.stateHash()
 	committersHash := st.validatorSet.CommittersHash()
 	block := block.MakeBlock(
@@ -413,7 +447,7 @@ func (st *state) EvaluateSortition() {
 	trx := st.sortition.EvaluateTransaction(st.lastBlockHash, val)
 	if trx != nil {
 		st.logger.Info("👏 This validator is chosen to be in set", "address", st.proposer, "stake", val.Stake(), "tx", trx)
-		if err := st.txPool.AppendTxAndBroadcast(*trx); err != nil {
+		if err := st.txPool.AppendTxAndBroadcast(trx); err != nil {
 			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.proposer, "stake", val.Stake(), "tx", trx)
 		}
 	}
