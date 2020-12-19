@@ -126,7 +126,27 @@ func (syncer *Synchronizer) broadcastLoop() {
 
 		case msg := <-syncer.broadcastCh:
 
-			syncer.publishMessage(msg)
+			switch msg.PayloadType() {
+			case message.PayloadTypeTxsReq:
+				pld := msg.Payload.(*message.TxsReqPayload)
+				for i, id := range pld.IDs {
+					trx := syncer.cache.GetTransaction(id)
+					if trx != nil {
+						if err := syncer.txPool.AppendTx(trx); err == nil {
+							pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
+						}
+					}
+
+				}
+
+				if len(pld.IDs) > 0 {
+					syncer.publishMessage(msg)
+				}
+
+			default:
+				syncer.publishMessage(msg)
+
+			}
 		}
 	}
 }

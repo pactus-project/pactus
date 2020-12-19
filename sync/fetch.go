@@ -87,6 +87,11 @@ func (syncer *Synchronizer) processAleykPayload(pld *message.AleykPayload) {
 func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayload) {
 	syncer.logger.Trace("Process blocks request payload", "pld", pld)
 
+	ourHeight := syncer.state.LastBlockHeight()
+	if ourHeight < pld.From {
+		return
+	}
+
 	b := syncer.cache.GetBlock(pld.From)
 	if b != nil {
 		if !b.Header().LastBlockHash().EqualsTo(pld.LastBlockHash) {
@@ -148,15 +153,13 @@ func (syncer *Synchronizer) processTxsPayload(pld *message.TxsPayload) {
 	syncer.logger.Trace("Process txs payload", "pld", pld)
 
 	for _, trx := range pld.Txs {
-		syncer.cache.AddTransaction(trx.ID(), trx)
+		syncer.cache.AddTransaction(trx)
 	}
 }
 
 func (syncer *Synchronizer) processVotePayload(pld *message.VotePayload) {
 	syncer.logger.Trace("Process vote payload", "pld", pld)
 
-	// TODO: fix me
-	// syncer.cache.AddVote(pld.Vote.Hash(), pld.Vote)
 	syncer.consensus.AddVote(pld.Vote)
 }
 
@@ -167,8 +170,6 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
 	if pld.Height == hrs.Height() {
 		// Sending votes to peer
 
-		// TODO: improve the performance.
-		// We can check cache for votes we have
 		ourVotes := syncer.consensus.AllVotes()
 		peerVotes := pld.Hashes
 
@@ -194,7 +195,7 @@ func (syncer *Synchronizer) processProposalReqPayload(pld *message.ProposalReqPa
 	if pld.Height == hrs.Height() {
 		p := syncer.consensus.LastProposal()
 		if p != nil {
-			syncer.broadcastProposal(*p)
+			syncer.broadcastProposal(p)
 		}
 	}
 }
@@ -202,7 +203,7 @@ func (syncer *Synchronizer) processProposalReqPayload(pld *message.ProposalReqPa
 func (syncer *Synchronizer) processProposalPayload(pld *message.ProposalPayload) {
 	syncer.logger.Trace("Process proposal payload", "pld", pld)
 
-	syncer.consensus.SetProposal(&pld.Proposal)
+	syncer.consensus.SetProposal(pld.Proposal)
 }
 
 func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayload) {
@@ -243,6 +244,9 @@ func (syncer *Synchronizer) tryCommitBlocks() {
 		if err := syncer.state.ApplyBlock(ourHeight+1, *b, *c); err != nil {
 			syncer.logger.Error("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...
+
+			// TODO: add tests for me later
+			// TODO: Remove this invalid block and commit from the cache
 		}
 
 		syncer.maybeSynced()

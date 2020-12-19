@@ -43,7 +43,27 @@ func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message
 			b1, _ := msg.MarshalCBOR()
 			b2, _ := apiMsg.MarshalCBOR()
 
+			tSync.ParsMessage(b2, tOurID)
 			if reflect.DeepEqual(b1, b2) {
+				return
+			}
+		}
+	}
+}
+func (mock *mockNetworkAPI) shouldReceiveMessageWithThisType(t *testing.T, payloadType message.PayloadType) {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			assert.NoError(t, fmt.Errorf("Timeout"))
+			return
+		case apiMsg := <-mock.ch:
+			logger.Info("comparing messages", "apiMsg", apiMsg)
+			b, _ := apiMsg.MarshalCBOR()
+
+			tSync.ParsMessage(b, tOurID)
+			if apiMsg.PayloadType() == payloadType {
 				return
 			}
 		}
@@ -59,7 +79,9 @@ func (mock *mockNetworkAPI) shouldNotReceiveAnyMessageWithThisType(t *testing.T,
 			return
 		case apiMsg := <-mock.ch:
 			logger.Info("comparing messages", "apiMsg", apiMsg)
+			b, _ := apiMsg.MarshalCBOR()
 
+			tSync.ParsMessage(b, tOurID)
 			assert.NotEqual(t, apiMsg.PayloadType(), payloadType)
 		}
 	}

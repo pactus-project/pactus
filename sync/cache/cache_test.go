@@ -58,7 +58,7 @@ func TestCacheTx(t *testing.T) {
 	trx3, _ := tx.GenerateTestSendTx()
 
 	tStore.Transactions[trx1.ID()] = &tx.CommittedTx{Tx: trx1}
-	tCache.AddTransaction(trx2.ID(), trx2)
+	tCache.AddTransaction(trx2)
 
 	assert.Equal(t, tCache.GetTransaction(trx1.ID()).ID(), trx1.ID())
 	assert.Equal(t, tCache.GetTransaction(trx2.ID()).ID(), trx2.ID())

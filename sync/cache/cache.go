@@ -98,14 +98,10 @@ func (c *Cache) GetTransaction(id crypto.Hash) *tx.Tx {
 
 	return nil
 }
-func (c *Cache) AddTransaction(id crypto.Hash, trx *tx.Tx) {
-	c.cache.Add(txKey(id), trx)
+func (c *Cache) AddTransaction(trx *tx.Tx) {
+	c.cache.Add(txKey(trx.ID()), trx)
 }
 
-// TODO: fix me
-// func (c *Cache) AddVote(hash crypto.Hash, v *vote.Vote) {
-// 	c.cache.Add(voteKey(hash), v)
-// }
 func (c *Cache) Len() int {
 	return c.cache.Len()
 }

@@ -98,6 +98,6 @@ func (cs *consensus) createProposal(height int, round int) {
 	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
 
 	// Broadcast proposal
-	msg := message.NewProposalMessage(*proposal)
+	msg := message.NewProposalMessage(proposal)
 	cs.broadcastCh <- msg
 }

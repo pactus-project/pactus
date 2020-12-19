@@ -90,8 +90,8 @@ func (syncer *Synchronizer) broadcastHeartBeat() {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastProposal(proposal vote.Proposal) {
-	msg := message.NewProposalMessage(proposal)
+func (syncer *Synchronizer) broadcastProposal(p *vote.Proposal) {
+	msg := message.NewProposalMessage(p)
 	syncer.publishMessage(msg)
 }
 

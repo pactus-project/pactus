@@ -9,28 +9,37 @@ import (
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
+	Votes    []*vote.Vote
+	Proposal *vote.Proposal
+	HRS_     hrs.HRS
 }
 
 func NewMockConsensus() *MockConsensus {
 	return &MockConsensus{}
 }
 
-func (m *MockConsensus) MoveToNewHeight()     {}
-func (m *MockConsensus) AddVote(v *vote.Vote) {}
+func (m *MockConsensus) MoveToNewHeight() {}
+func (m *MockConsensus) AddVote(v *vote.Vote) {
+	m.Votes = append(m.Votes, v)
+}
 func (m *MockConsensus) AllVotes() []*vote.Vote {
-	return nil
+	return m.Votes
 }
 func (m *MockConsensus) AllVotesHashes() []crypto.Hash {
-	return nil
+	hs := make([]crypto.Hash, 0)
+	for _, v := range m.Votes {
+		hs = append(hs, v.Hash())
+	}
+	return hs
 }
-func (m *MockConsensus) SetProposal(proposal *vote.Proposal) {
-
+func (m *MockConsensus) SetProposal(p *vote.Proposal) {
+	m.Proposal = p
 }
 func (m *MockConsensus) LastProposal() *vote.Proposal {
-	return nil
+	return m.Proposal
 }
 func (m *MockConsensus) HRS() hrs.HRS {
-	return hrs.NewHRS(0, 0, 0)
+	return m.HRS_
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""
