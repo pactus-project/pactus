@@ -86,6 +86,11 @@ func (syncer *Synchronizer) broadcastTxs(txs []*tx.Tx) {
 func (syncer *Synchronizer) broadcastHeartBeat() {
 	hrs := syncer.consensus.HRS()
 
+	// Probable we are syncing
+	if !hrs.IsValid() {
+		return
+	}
+
 	msg := message.NewHeartBeatMessage(syncer.state.LastBlockHash(), hrs)
 	syncer.publishMessage(msg)
 }
@@ -106,7 +111,10 @@ func (syncer *Synchronizer) broadcastVoteSet(height int, hashes []crypto.Hash) {
 }
 
 func (syncer *Synchronizer) publishMessage(msg *message.Message) {
-
+	if err := msg.SanityCheck(); err != nil {
+		syncer.logger.Error("We have invalid message", "err", err, "message", msg)
+		return
+	}
 	if err := syncer.networkAPI.PublishMessage(msg); err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg.Fingerprint(), "err", err)
 	} else {

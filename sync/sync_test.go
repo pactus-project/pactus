@@ -33,6 +33,7 @@ var (
 )
 
 func setup(t *testing.T) {
+	syncConf := TestConfig()
 	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
 
@@ -43,7 +44,7 @@ func setup(t *testing.T) {
 	tState = state.NewMockStore()
 	tConsensus = consensus.NewMockConsensus()
 	tNetAPI = mockingNetworkAPI()
-	tCache, _ = cache.NewCache(10, tState.StoreReader())
+	tCache, _ = cache.NewCache(syncConf.CacheSize, tState.StoreReader())
 	tBroadcastCh = make(chan *message.Message, 100)
 
 	// State has some block
@@ -55,7 +56,7 @@ func setup(t *testing.T) {
 
 	tSync = &Synchronizer{
 		ctx:         context.Background(),
-		config:      TestConfig(),
+		config:      syncConf,
 		state:       tState,
 		consensus:   tConsensus,
 		cache:       tCache,

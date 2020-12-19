@@ -109,6 +109,18 @@ func TestTxSanityCheck(t *testing.T) {
 		tx.data.Signature = sig
 		assert.Error(t, tx.SanityCheck())
 	})
+
+	t.Run("Transaction ID should be same for signed and unsigned transactions", func(t *testing.T) {
+		tx, _ := GenerateTestSendTx()
+		id1 := tx.ID()
+		sb1 := tx.SignBytes()
+		tx.data.PublicKey = nil
+		tx.data.Signature = nil
+		id2 := tx.ID()
+		sb2 := tx.SignBytes()
+		assert.Equal(t, id1, id2)
+		assert.Equal(t, sb1, sb2)
+	})
 }
 
 func TestSubsidyTx(t *testing.T) {

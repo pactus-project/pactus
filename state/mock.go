@@ -1,6 +1,7 @@
 package state
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/zarbchain/zarb-go/block"
@@ -56,8 +57,13 @@ func (m *MockState) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit)
 func (m *MockState) Fingerprint() string {
 	return ""
 }
-func (m *MockState) ApplyBlock(height int, block block.Block, commit block.Commit) error {
-	return nil
+func (m *MockState) ApplyBlock(height int, b block.Block, c block.Commit) error {
+	if height == m.LastBlockHeight()+1 {
+		m.Store.Blocks[height] = &b
+		m.LastBlockCommit = &c
+		return nil
+	}
+	return fmt.Errorf("Not expected block")
 }
 
 func (m *MockState) Close() error {

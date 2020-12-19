@@ -42,5 +42,5 @@ func (p *BlocksReqPayload) Type() PayloadType {
 }
 
 func (p *BlocksReqPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v-%v}", p.From, p.To)
+	return fmt.Sprintf("{%v-%v ⌘ %v}", p.From, p.To, p.LastBlockHash.Fingerprint())
 }

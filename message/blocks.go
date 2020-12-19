@@ -48,6 +48,10 @@ func (p *BlocksPayload) Type() PayloadType {
 	return PayloadTypeBlocks
 }
 
+func (p *BlocksPayload) To() int {
+	return p.From + len(p.Blocks) - 1
+}
+
 func (p *BlocksPayload) Fingerprint() string {
 	var s string
 	for _, b := range p.Blocks {

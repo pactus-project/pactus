@@ -110,18 +110,18 @@ func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayloa
 func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 	syncer.logger.Trace("Process blocks payload", "pld", pld)
 
-	height := pld.From
 	ourHeight := syncer.state.LastBlockHeight()
-
-	if pld.LastCommit != nil {
-		if height+len(pld.Blocks) > ourHeight {
-
-			syncer.cache.AddCommit(
-				pld.Blocks[len(pld.Blocks)-1].Header().Hash(),
-				pld.LastCommit)
-		}
+	if ourHeight >= pld.To() {
+		return
 	}
 
+	if pld.LastCommit != nil {
+		syncer.cache.AddCommit(
+			pld.Blocks[len(pld.Blocks)-1].Header().Hash(),
+			pld.LastCommit)
+	}
+
+	height := pld.From
 	for _, block := range pld.Blocks {
 		syncer.cache.AddCommit(
 			block.Header().LastBlockHash(),
@@ -132,7 +132,27 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 		height = height + 1
 	}
 
+	probableNewHeight := height - 2
+	networkMaxHeight := syncer.stats.MaxHeight()
+
+	if networkMaxHeight > probableNewHeight {
+		// Request for more blocks
+		blockhash := pld.Blocks[len(pld.Blocks)-2].Hash()
+		syncer.broadcastBlocksReq(probableNewHeight, networkMaxHeight, blockhash)
+	}
+
 	syncer.tryCommitBlocks()
+
+	// Check if our high is not same as we expected
+	ourNewHeight := syncer.state.LastBlockHeight()
+
+	if ourNewHeight != probableNewHeight {
+		blockhash := syncer.state.LastBlockHash()
+		syncer.broadcastBlocksReq(ourNewHeight, networkMaxHeight, blockhash)
+	}
+
+	// When a peer send us the last commit, it probably is be in latest hight
+	syncer.maybeSynced(pld.LastCommit != nil)
 }
 
 func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
@@ -168,8 +188,8 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
 
 	hrs := syncer.consensus.HRS()
 	if pld.Height == hrs.Height() {
-		// Sending votes to peer
 
+		// Check peers vote and send the votes he doesn't have
 		ourVotes := syncer.consensus.AllVotes()
 		peerVotes := pld.Hashes
 
@@ -248,8 +268,6 @@ func (syncer *Synchronizer) tryCommitBlocks() {
 			// TODO: add tests for me later
 			// TODO: Remove this invalid block and commit from the cache
 		}
-
-		syncer.maybeSynced()
 	}
 }
 

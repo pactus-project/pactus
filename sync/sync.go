@@ -85,7 +85,7 @@ func (syncer *Synchronizer) Start() error {
 	timer := time.NewTimer(syncer.config.StartingTimeout)
 	go func() {
 		<-timer.C
-		syncer.maybeSynced()
+		syncer.maybeSynced(false)
 	}()
 
 	return nil
@@ -97,11 +97,11 @@ func (syncer *Synchronizer) Stop() {
 	syncer.heartBeatTicker.Stop()
 }
 
-func (syncer *Synchronizer) maybeSynced() {
+func (syncer *Synchronizer) maybeSynced(force bool) {
 	lastHeight := syncer.state.LastBlockHeight()
 	networkHeight := syncer.stats.MaxHeight()
 
-	if lastHeight >= networkHeight {
+	if force || lastHeight >= networkHeight {
 		syncer.logger.Info("We are synced", "height", lastHeight)
 		syncer.consensus.MoveToNewHeight()
 	}
