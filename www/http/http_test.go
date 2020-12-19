@@ -33,8 +33,8 @@ func setup(t *testing.T) {
 
 	b1, txs := block.GenerateTestBlock(nil)
 	b2, _ := block.GenerateTestBlock(nil)
-	tMockState.Store.Blocks[1] = &b1
-	tMockState.Store.Blocks[2] = &b2
+	tMockState.Store.Blocks[1] = b1
+	tMockState.Store.Blocks[2] = b2
 
 	tTxTestHash = txs[0].ID()
 

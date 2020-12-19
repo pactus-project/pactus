@@ -24,28 +24,6 @@ import (
 // baseSubsidy, one tenth of Bitcoin network
 const baseSubsidy = 5 * 1e8
 
-type StateReader interface {
-	StoreReader() store.StoreReader
-	ValidatorSet() validator.ValidatorSetReader
-	LastBlockHeight() int
-	GenesisHash() crypto.Hash
-	LastBlockHash() crypto.Hash
-	LastBlockTime() time.Time
-	LastCommit() *block.Commit
-	BlockTime() time.Duration
-	UpdateLastCommit(blockHash crypto.Hash, commit block.Commit)
-	Fingerprint() string
-}
-
-type State interface {
-	StateReader
-
-	Close() error
-	ProposeBlock() block.Block
-	ValidateBlock(block block.Block) error
-	ApplyBlock(height int, block block.Block, commit block.Commit) error
-}
-
 type state struct {
 	lk deadlock.RWMutex
 

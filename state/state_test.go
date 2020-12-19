@@ -148,7 +148,7 @@ func TestApplyBlocks(t *testing.T) {
 	st, _ := mockState(t, &tValSigner)
 	b1, c1 := proposeAndSignBlock(t, st)
 	invBlock, _ := block.GenerateTestBlock(nil)
-	assert.Error(t, st.ApplyBlock(1, invBlock, c1))
+	assert.Error(t, st.ApplyBlock(1, *invBlock, c1))
 	assert.Error(t, st.ApplyBlock(2, b1, c1))
 }
 

@@ -19,23 +19,23 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 
 	// Help peer to catch up
 	txs := make([]*tx.Tx, 0)
-	blocks := make([]block.Block, to-from+1)
+	blocks := make([]*block.Block, 0, to-from+1)
 	for h := from; h <= to; h++ {
-		b, err := syncer.store.Block(h)
-		if err != nil {
-			syncer.logger.Error("An error occurred while retriveng a block", "err", err, "height", h)
+		b := syncer.cache.GetBlock(h)
+		if b == nil {
+			syncer.logger.Warn("Block can't find", "height", h)
 			break
 		}
 		ids := b.TxIDs().IDs()
 		for _, id := range ids {
-			ctrx, _ := syncer.store.Transaction(id)
-			if ctrx != nil {
-				txs = append(txs, ctrx.Tx)
+			t := syncer.cache.GetTransaction(id)
+			if t != nil {
+				txs = append(txs, t)
 			} else {
-				syncer.logger.Warn("We don't have transaction for the block", "id", id.Fingerprint())
+				syncer.logger.Warn("Transaction can't find", "id", id.Fingerprint())
 			}
 		}
-		blocks[h-from] = *b
+		blocks = append(blocks, b)
 	}
 
 	var lastCommit *block.Commit
@@ -55,14 +55,19 @@ func (syncer *Synchronizer) broadcastSalam() {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastBlocksReq(to int) {
-	from := syncer.state.LastBlockHeight() + 1
-	hash := syncer.state.LastBlockHash()
+func (syncer *Synchronizer) broadcastAleyk() {
+	msg := message.NewAleykMessage(
+		syncer.state.GenesisHash(),
+		syncer.state.LastBlockHeight())
+	syncer.publishMessage(msg)
+}
+
+func (syncer *Synchronizer) broadcastBlocksReq(from, to int, hash crypto.Hash) {
 	msg := message.NewBlocksReqMessage(from, to, hash)
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastBlocks(from int, blocks []block.Block, lastCommit *block.Commit) {
+func (syncer *Synchronizer) broadcastBlocks(from int, blocks []*block.Block, lastCommit *block.Commit) {
 	if len(blocks) == 0 {
 		return
 	}

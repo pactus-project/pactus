@@ -10,6 +10,7 @@ require (
 	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/dchest/blake2b v1.0.0
 	github.com/filecoin-project/go-filecoin v0.6.4
+	github.com/fxamacker/cbor v1.5.0
 	github.com/fxamacker/cbor/v2 v2.2.0
 	github.com/gin-gonic/gin v1.6.3 // indirect
 	github.com/golang/dep v0.5.4 // indirect
@@ -19,6 +20,7 @@ require (
 	github.com/gorilla/handlers v1.5.0
 	github.com/gorilla/mux v1.7.4
 	github.com/gtank/merlin v0.1.1 // indirect
+	github.com/hashicorp/golang-lru v0.5.4
 	github.com/herumi/bls-go-binary v1.0.1-0.20200729052526-ef6a150a928b
 	github.com/inconshreveable/log15 v0.0.0-20200109203555-b30bc20e4fd1 // indirect
 	github.com/ipfs/go-bitswap v0.2.20 // indirect

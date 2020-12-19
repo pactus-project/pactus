@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *Consensus) enterPrevote(height int, round int) {
+func (cs *consensus) enterPrevote(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevoteWait) {
 		cs.logger.Debug("Prevote: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
@@ -31,7 +31,7 @@ func (cs *Consensus) enterPrevote(height int, round int) {
 	cs.signAddVote(vote.VoteTypePrevote, roundProposal.Block().Hash())
 }
 
-func (cs *Consensus) enterPrevoteWait(height int, round int) {
+func (cs *consensus) enterPrevoteWait(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrevoteWait) {
 		cs.logger.Debug("PrevoteWait: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return

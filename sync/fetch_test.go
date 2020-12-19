@@ -5,40 +5,55 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/message"
 )
 
-func TestSendBlocks(t *testing.T) {
+func TestRequestForBlocksInvalidLastBlocHash(t *testing.T) {
 	setup(t)
-	sync, api, st := newTestSynchronizer(nil)
 
-	len := 12 //len(validBlocks)
-	// Update state
-	for i := 0; i < len; i++ {
-		err := st.ApplyBlock(i+1, validBlocks[i], validCommits[i])
-		assert.NoError(t, err)
-	}
-
-	assert.NoError(t, sync.Start())
-
-	// Stopping HeartBeat ticker
-	sync.heartBeatTicker.Stop()
-
-	expectedMsg := message.NewSalamMessage(genDoc.Hash(), len)
-	api.waitingForMessage(t, expectedMsg)
-
-	msg := message.NewSalamMessage(genDoc.Hash(), 0)
-	data, _ := cbor.Marshal(msg)
-	sync.ParsMessage(data, peerID)
-
-	expectedMsg = message.NewBlocksMessage(1, validBlocks[0:11], nil)
-	api.waitingForMessage(t, expectedMsg)
+	invHash := crypto.GenerateTestHash()
 
 	// Send block request, but block hash is invalid, ignore it
-	msg = message.NewBlocksReqMessage(7, len, validBlocks[5].Hash())
-	data, _ = cbor.Marshal(msg)
-	sync.ParsMessage(data, peerID)
+	msg := message.NewBlocksReqMessage(7, 12, invHash)
+	data, _ := cbor.Marshal(msg)
+	tSync.ParsMessage(data, tOurID)
 
-	expectedMsg = message.NewBlocksMessage(7, validBlocks[6:12], &validCommits[11])
-	api.waitingForMessage(t, expectedMsg)
+	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, message.PayloadTypeBlocks)
+}
+
+func TestRequestForBlocks(t *testing.T) {
+	setup(t)
+
+	h := tState.Store.Blocks[7].Header().LastBlockHash()
+	msg := message.NewBlocksReqMessage(7, 11, h)
+	data, _ := cbor.Marshal(msg)
+	tSync.ParsMessage(data, tOurID)
+
+	blocks := make([]*block.Block, 0)
+	for i := 7; i <= 11; i++ {
+		blocks = append(blocks, tState.Store.Blocks[i])
+	}
+
+	expectedMsg := message.NewBlocksMessage(7, blocks, nil)
+	tNetAPI.waitingForMessage(t, expectedMsg)
+}
+
+func TestRequestForBlocksWithLastCommist(t *testing.T) {
+	setup(t)
+
+	h := tState.Store.Blocks[7].Header().LastBlockHash()
+	msg := message.NewBlocksReqMessage(7, tState.LastBlockHeight(), h)
+	data, _ := cbor.Marshal(msg)
+	tSync.ParsMessage(data, tOurID)
+
+	blocks := make([]*block.Block, 0)
+	for i := 7; i <= tState.LastBlockHeight(); i++ {
+		blocks = append(blocks, tState.Store.Blocks[i])
+	}
+
+	assert.NotNil(t, tState.LastBlockCommit)
+	expectedMsg := message.NewBlocksMessage(7, blocks, tState.LastBlockCommit)
+	tNetAPI.waitingForMessage(t, expectedMsg)
 }

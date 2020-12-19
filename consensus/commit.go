@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 )
 
-func (cs *Consensus) enterCommit(height int, round int) {
+func (cs *consensus) enterCommit(height int, round int) {
 	if cs.invalidHeight(height) {
 		cs.logger.Debug("Commit: Invalid height or committed before", "height", height, "committed", cs.isCommitted)
 		return
@@ -84,6 +84,6 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	cs.scheduleNewHeight()
 
 	// Now broadcast the committed block
-	msg := message.NewBlocksMessage(height, []block.Block{commitBlock}, commit)
+	msg := message.NewBlocksMessage(height, []*block.Block{&commitBlock}, commit)
 	cs.broadcastCh <- msg
 }

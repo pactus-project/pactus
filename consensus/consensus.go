@@ -15,7 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-type Consensus struct {
+type consensus struct {
 	lk deadlock.RWMutex
 
 	config      *Config
@@ -33,8 +33,8 @@ func NewConsensus(
 	conf *Config,
 	state state.State,
 	signer crypto.Signer,
-	broadcastCh chan *message.Message) (*Consensus, error) {
-	cs := &Consensus{
+	broadcastCh chan *message.Message) (Consensus, error) {
+	cs := &consensus{
 		config:      conf,
 		state:       state,
 		valset:      state.ValidatorSet(),
@@ -50,37 +50,37 @@ func NewConsensus(
 	return cs, nil
 }
 
-func (cs *Consensus) Fingerprint() string {
+func (cs *consensus) Fingerprint() string {
 	return fmt.Sprintf("{%v}",
 		cs.hrs.Fingerprint())
 }
 
-func (cs *Consensus) HRS() hrs.HRS {
+func (cs *consensus) HRS() hrs.HRS {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
 	return cs.hrs
 }
 
-func (cs *Consensus) updateRoundStep(round int, step hrs.StepType) {
+func (cs *consensus) updateRoundStep(round int, step hrs.StepType) {
 	cs.hrs.UpdateRoundStep(round, step)
 }
 
-func (cs *Consensus) updateHeight(height int) {
+func (cs *consensus) updateHeight(height int) {
 	if cs.hrs.Height() != height {
 		cs.votes.Reset(height)
 		cs.hrs.UpdateHeight(height)
 	}
 }
 
-func (cs *Consensus) LastProposal() *vote.Proposal {
+func (cs *consensus) LastProposal() *vote.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
 	return cs.votes.RoundProposal(cs.hrs.Round())
 }
 
-func (cs *Consensus) AllVotes() []*vote.Vote {
+func (cs *consensus) AllVotes() []*vote.Vote {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
@@ -94,7 +94,7 @@ func (cs *Consensus) AllVotes() []*vote.Vote {
 	return slice
 }
 
-func (cs *Consensus) AllVotesHashes() []crypto.Hash {
+func (cs *consensus) AllVotesHashes() []crypto.Hash {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
@@ -108,14 +108,14 @@ func (cs *Consensus) AllVotesHashes() []crypto.Hash {
 	return slice
 }
 
-func (cs *Consensus) Vote(h crypto.Hash) *vote.Vote {
+func (cs *consensus) Vote(h crypto.Hash) *vote.Vote {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
 	return cs.votes.votes[h]
 }
 
-func (cs *Consensus) scheduleTimeout(duration time.Duration, height int, round int, step hrs.StepType) {
+func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round int, step hrs.StepType) {
 	to := timeout{duration, height, round, step}
 
 	if cs.config.FuzzTesting {
@@ -129,28 +129,28 @@ func (cs *Consensus) scheduleTimeout(duration time.Duration, height int, round i
 	logger.Debug("Scheduled timeout", "dur", duration, "height", height, "round", round, "step", step)
 }
 
-func (cs *Consensus) invalidHeight(height int) bool {
+func (cs *consensus) invalidHeight(height int) bool {
 	if cs.isCommitted {
 		return true
 	}
 	return cs.hrs.Height() != height
 }
 
-func (cs *Consensus) invalidHeightRound(height int, round int) bool {
+func (cs *consensus) invalidHeightRound(height int, round int) bool {
 	if cs.isCommitted {
 		return true
 	}
 	return cs.hrs.Height() != height || cs.hrs.Round() != round
 }
 
-func (cs *Consensus) invalidHeightRoundStep(height int, round int, step hrs.StepType) bool {
+func (cs *consensus) invalidHeightRoundStep(height int, round int, step hrs.StepType) bool {
 	if cs.isCommitted {
 		return true
 	}
 	return cs.hrs.Height() != height || cs.hrs.Round() != round || cs.hrs.Step() > step
 }
 
-func (cs *Consensus) AddVote(v *vote.Vote) {
+func (cs *consensus) AddVote(v *vote.Vote) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
@@ -159,14 +159,14 @@ func (cs *Consensus) AddVote(v *vote.Vote) {
 	}
 }
 
-func (cs *Consensus) SetProposal(proposal *vote.Proposal) {
+func (cs *consensus) SetProposal(proposal *vote.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
 	cs.setProposal(proposal)
 }
 
-func (cs *Consensus) handleTimeout(ti timeout) {
+func (cs *consensus) handleTimeout(ti timeout) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
@@ -195,7 +195,7 @@ func (cs *Consensus) handleTimeout(ti timeout) {
 
 //-----------------------------------------------------------------------------
 
-func (cs *Consensus) addVote(v *vote.Vote) error {
+func (cs *consensus) addVote(v *vote.Vote) error {
 	// Height mismatch is ignored.
 	if cs.hrs.Height() != v.Height() {
 		return nil
@@ -254,7 +254,7 @@ func (cs *Consensus) addVote(v *vote.Vote) error {
 	return err
 }
 
-func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
+func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	address := cs.signer.Address()
 	if !cs.valset.Contains(address) {
 		cs.logger.Trace("This node is not in validator set", "addr", address)
@@ -277,7 +277,7 @@ func (cs *Consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	cs.broadcastCh <- msg
 }
 
-func (cs *Consensus) requestForProposal() {
+func (cs *consensus) requestForProposal() {
 	msg := message.NewProposalReqMessage(cs.hrs.Height(), cs.hrs.Round())
 	cs.broadcastCh <- msg
 }

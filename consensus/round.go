@@ -4,7 +4,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 )
 
-func (cs *Consensus) enterNewRound(height int, round int) {
+func (cs *consensus) enterNewRound(height int, round int) {
 	if cs.invalidHeight(height) {
 		cs.logger.Debug("NewRound: Invalid height or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return

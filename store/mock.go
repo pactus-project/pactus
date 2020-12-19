@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -75,4 +76,12 @@ func (m *MockStore) UpdateValidator(val *validator.Validator) {
 }
 func (m *MockStore) TotalValidators() int {
 	return len(m.Validators)
+}
+func (m *MockStore) LastBlockHeight() int {
+	max := 0
+	for h := range m.Blocks {
+		max = util.Max(max, h)
+	}
+
+	return max
 }

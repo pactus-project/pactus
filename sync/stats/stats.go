@@ -112,6 +112,12 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 		node.GenesisHash = pld.GenesisHash
 		s.updateMaxHeight(pld.Height)
 
+	case message.PayloadTypeAleyk:
+		pld := msg.Payload.(*message.AleykPayload)
+		node.Version = pld.Version
+		node.GenesisHash = pld.GenesisHash
+		s.updateMaxHeight(pld.Height)
+
 	case message.PayloadTypeHeartBeat:
 		pld := msg.Payload.(*message.HeartBeatPayload)
 		node.HRS = pld.Pulse

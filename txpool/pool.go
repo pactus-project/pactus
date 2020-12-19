@@ -46,17 +46,6 @@ func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
 	pool.checker = execution.NewExecution(sb)
 }
 
-func (pool *txPool) AppendTxs(trxs []*tx.Tx) {
-	pool.lk.Lock()
-	defer pool.lk.Unlock()
-
-	for _, trx := range trxs {
-		if err := pool.appendTx(trx); err != nil {
-			pool.logger.Info("Error on appending a transaction", "err", err)
-		}
-	}
-}
-
 func (pool *txPool) AppendTx(trx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()

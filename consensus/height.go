@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func (cs *Consensus) MoveToNewHeight() {
+func (cs *consensus) MoveToNewHeight() {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -27,13 +27,13 @@ func (cs *Consensus) MoveToNewHeight() {
 	cs.scheduleNewHeight()
 }
 
-func (cs *Consensus) scheduleNewHeight() {
+func (cs *consensus) scheduleNewHeight() {
 	sleep := cs.state.LastBlockTime().Add(cs.state.BlockTime()).Sub(util.Now())
 	cs.logger.Debug("NewHeight is scheduled", "seconds", sleep.Seconds())
 	cs.scheduleTimeout(sleep, cs.hrs.Height(), 0, hrs.StepTypeNewHeight)
 }
 
-func (cs *Consensus) enterNewHeight(height int) {
+func (cs *consensus) enterNewHeight(height int) {
 	if cs.hrs.Height() != height-1 || (cs.hrs.Step() != hrs.StepTypeNewHeight && cs.hrs.Step() != hrs.StepTypeCommit) {
 		cs.logger.Debug("NewHeight: Invalid args", "height", height)
 		return

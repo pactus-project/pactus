@@ -48,5 +48,19 @@ func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message
 			}
 		}
 	}
+}
 
+func (mock *mockNetworkAPI) shouldNotReceiveAnyMessageWithThisType(t *testing.T, payloadType message.PayloadType) {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			return
+		case apiMsg := <-mock.ch:
+			logger.Info("comparing messages", "apiMsg", apiMsg)
+
+			assert.NotEqual(t, apiMsg.PayloadType(), payloadType)
+		}
+	}
 }

@@ -7,8 +7,8 @@ import (
 )
 
 type TxPoolReader interface {
-	PendingTx(hash crypto.Hash) *tx.Tx
-	HasTx(hash crypto.Hash) bool
+	PendingTx(id crypto.Hash) *tx.Tx
+	HasTx(id crypto.Hash) bool
 	Size() int
 
 	Fingerprint() string
@@ -18,7 +18,6 @@ type TxPool interface {
 	TxPoolReader
 
 	SetSandbox(sandbox sandbox.Sandbox)
-	AppendTxs(txs []*tx.Tx)
 	AppendTx(tx *tx.Tx) error
 	AppendTxAndBroadcast(trx *tx.Tx) error
 	RemoveTx(id crypto.Hash)

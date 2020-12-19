@@ -8,12 +8,12 @@ import (
 )
 
 type BlocksPayload struct {
-	From       int           `cbor:"1,keyasint"`
-	Blocks     []block.Block `cbor:"2,keyasint"`
-	LastCommit *block.Commit `cbor:"3,keyasint, omitempty"`
+	From       int            `cbor:"1,keyasint"`
+	Blocks     []*block.Block `cbor:"2,keyasint"`
+	LastCommit *block.Commit  `cbor:"3,keyasint, omitempty"`
 }
 
-func NewBlocksMessage(from int, blocks []block.Block, lastCommit *block.Commit) *Message {
+func NewBlocksMessage(from int, blocks []*block.Block, lastCommit *block.Commit) *Message {
 	return &Message{
 		Type: PayloadTypeBlocks,
 		Payload: &BlocksPayload{

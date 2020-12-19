@@ -147,7 +147,7 @@ func (b *Block) UnmarshalJSON(bz []byte) error {
 
 // ---------
 // For tests
-func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
+func GenerateTestBlock(proposer *crypto.Address) (*Block, []*tx.Tx) {
 	if proposer == nil {
 		addr, _, _ := crypto.GenerateTestKeyPair()
 		proposer = &addr
@@ -168,26 +168,7 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 		ids.Append(tx.ID())
 	}
 	lastBlockHash := crypto.GenerateTestHash()
-	addr1, _, pv1 := crypto.GenerateTestKeyPair()
-	addr2, _, pv2 := crypto.GenerateTestKeyPair()
-	addr3, _, pv3 := crypto.GenerateTestKeyPair()
-	addr4, _, _ := crypto.GenerateTestKeyPair()
-
-	sigs := []crypto.Signature{
-		*pv1.Sign(lastBlockHash.RawBytes()),
-		*pv2.Sign(lastBlockHash.RawBytes()),
-		*pv3.Sign(lastBlockHash.RawBytes()),
-	}
-	sig := crypto.Aggregate(sigs)
-
-	commit := NewCommit(util.RandInt(10),
-		[]Committer{
-			{Status: CommitSigned, Address: addr1},
-			{Status: CommitSigned, Address: addr2},
-			{Status: CommitSigned, Address: addr3},
-			{Status: CommitNotSigned, Address: addr4},
-		},
-		sig)
+	commit := GenerateTestCommit(lastBlockHash)
 
 	block := MakeBlock(time.Now(), ids,
 		lastBlockHash,
@@ -197,5 +178,29 @@ func GenerateTestBlock(proposer *crypto.Address) (Block, []*tx.Tx) {
 		commit,
 		*proposer)
 
-	return block, txs
+	return &block, txs
+}
+
+func GenerateTestCommit(blockhash crypto.Hash) *Commit {
+
+	addr1, _, pv1 := crypto.GenerateTestKeyPair()
+	addr2, _, pv2 := crypto.GenerateTestKeyPair()
+	addr3, _, pv3 := crypto.GenerateTestKeyPair()
+	addr4, _, _ := crypto.GenerateTestKeyPair()
+
+	sigs := []crypto.Signature{
+		*pv1.Sign(blockhash.RawBytes()),
+		*pv2.Sign(blockhash.RawBytes()),
+		*pv3.Sign(blockhash.RawBytes()),
+	}
+	sig := crypto.Aggregate(sigs)
+
+	return NewCommit(util.RandInt(10),
+		[]Committer{
+			{Status: CommitSigned, Address: addr1},
+			{Status: CommitSigned, Address: addr2},
+			{Status: CommitSigned, Address: addr3},
+			{Status: CommitNotSigned, Address: addr4},
+		},
+		sig)
 }

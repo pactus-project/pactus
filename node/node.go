@@ -24,7 +24,7 @@ type Node struct {
 	config     *config.Config
 	state      state.State
 	txPool     txpool.TxPool
-	consensus  *consensus.Consensus
+	consensus  consensus.Consensus
 	network    *network.Network
 	sync       *sync.Synchronizer
 	capnp      *capnp.Server

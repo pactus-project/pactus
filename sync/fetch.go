@@ -19,6 +19,10 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 		pld := msg.Payload.(*message.SalamPayload)
 		syncer.processSalamPayload(pld)
 
+	case message.PayloadTypeAleyk:
+		pld := msg.Payload.(*message.AleykPayload)
+		syncer.processAleykPayload(pld)
+
 	case message.PayloadTypeHeartBeat:
 		pld := msg.Payload.(*message.HeartBeatPayload)
 		syncer.processHeartBeatPayload(pld)
@@ -61,93 +65,77 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 }
 
 func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
-	ourHeight := syncer.state.LastBlockHeight()
+	syncer.logger.Trace("Process salam payload", "pld", pld)
 
 	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
 		syncer.logger.Info("Received a message from different chain", "Genesis hash", pld.GenesisHash)
 		return
 	}
-	switch h := pld.Height; {
-	case h > ourHeight:
-		{
-			syncer.broadcastBlocksReq(pld.Height)
-		}
-	case h < ourHeight:
-		{
-			// Reply salam
-			syncer.broadcastSalam()
-			syncer.sendBlocks(pld.Height+1, ourHeight)
-		}
-	}
+
+	// Reply salam
+	syncer.broadcastAleyk()
+
+	syncer.sendBlocksReqIfWeAreBehind(pld.Height)
+}
+
+func (syncer *Synchronizer) processAleykPayload(pld *message.AleykPayload) {
+	syncer.logger.Trace("Process Aleyk payload", "pld", pld)
+
+	syncer.sendBlocksReqIfWeAreBehind(pld.Height)
 }
 
 func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayload) {
-	b, err := syncer.store.Block(pld.From)
-	if err == nil {
-		if b.Header().LastBlockHash().EqualsTo(pld.LastBlockHash) {
-			syncer.sendBlocks(pld.From, pld.To)
-		} else {
-			syncer.logger.Debug("Peer has a block which we have no knowledge about it",
+	syncer.logger.Trace("Process blocks request payload", "pld", pld)
+
+	b := syncer.cache.GetBlock(pld.From)
+	if b != nil {
+		if !b.Header().LastBlockHash().EqualsTo(pld.LastBlockHash) {
+			syncer.logger.Info("a peer has a block which we have no trace of it",
 				"height", pld.From-1,
 				"ourHash", b.Header().LastBlockHash(),
-				"peerHash", pld.LastBlockHash,
-			)
+				"peerHash", pld.LastBlockHash)
+
+			return
 		}
 	}
+
+	syncer.sendBlocks(pld.From, pld.To)
 }
 
 func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
-	syncer.logger.Debug("Process Blocks Payload", "pld", pld)
+	syncer.logger.Trace("Process blocks payload", "pld", pld)
+
 	height := pld.From
 	ourHeight := syncer.state.LastBlockHeight()
 
 	if pld.LastCommit != nil {
 		if height+len(pld.Blocks) > ourHeight {
-			syncer.blockPool.AppendCommit(
+
+			syncer.cache.AddCommit(
 				pld.Blocks[len(pld.Blocks)-1].Header().Hash(),
 				pld.LastCommit)
 		}
 	}
 
 	for _, block := range pld.Blocks {
+		syncer.cache.AddCommit(
+			block.Header().LastBlockHash(),
+			block.LastCommit())
 
-		// For preventing any race condition situation
-		ourHeight := syncer.state.LastBlockHeight()
-
-		if height < ourHeight {
-			continue // We already have committed this block
-		}
-
-		if height > ourHeight+1 {
-			syncer.blockPool.AppendCommit(
-				block.Header().LastBlockHash(),
-				block.LastCommit())
-		}
-
-		syncer.blockPool.AppendBlock(height, block)
-		syncer.tryCommitBlocks()
+		syncer.cache.AddBlock(height, block)
 
 		height = height + 1
 	}
 
-	newHeight := syncer.state.LastBlockHeight()
-	if height-2 > newHeight {
-		// Ask peers to send us the missed block
-		syncer.broadcastBlocksReq(newHeight + 2)
-	}
+	syncer.tryCommitBlocks()
 }
 
 func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
+	syncer.logger.Trace("Process txs request Payload", "pld", pld)
+
 	txs := make([]*tx.Tx, 0, len(pld.IDs))
 	for _, h := range pld.IDs {
-		trx := syncer.txPool.PendingTx(h)
-		if trx == nil {
-			// Do we have this transaction in our store?
-			ctrx, _ := syncer.store.Transaction(h)
-			if ctrx != nil {
-				trx = ctrx.Tx
-			}
-		}
+		trx := syncer.cache.GetTransaction(h)
 		if trx != nil {
 			txs = append(txs, trx)
 		}
@@ -157,17 +145,30 @@ func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
 }
 
 func (syncer *Synchronizer) processTxsPayload(pld *message.TxsPayload) {
-	syncer.txPool.AppendTxs(pld.Txs)
+	syncer.logger.Trace("Process txs payload", "pld", pld)
+
+	for _, trx := range pld.Txs {
+		syncer.cache.AddTransaction(trx.ID(), trx)
+	}
 }
 
 func (syncer *Synchronizer) processVotePayload(pld *message.VotePayload) {
+	syncer.logger.Trace("Process vote payload", "pld", pld)
+
+	// TODO: fix me
+	// syncer.cache.AddVote(pld.Vote.Hash(), pld.Vote)
 	syncer.consensus.AddVote(pld.Vote)
 }
 
 func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
+	syncer.logger.Trace("Process vote-set payload", "pld", pld)
+
 	hrs := syncer.consensus.HRS()
 	if pld.Height == hrs.Height() {
 		// Sending votes to peer
+
+		// TODO: improve the performance.
+		// We can check cache for votes we have
 		ourVotes := syncer.consensus.AllVotes()
 		peerVotes := pld.Hashes
 
@@ -187,6 +188,8 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
 	}
 }
 func (syncer *Synchronizer) processProposalReqPayload(pld *message.ProposalReqPayload) {
+	syncer.logger.Trace("Process proposal request payload", "pld", pld)
+
 	hrs := syncer.consensus.HRS()
 	if pld.Height == hrs.Height() {
 		p := syncer.consensus.LastProposal()
@@ -197,10 +200,14 @@ func (syncer *Synchronizer) processProposalReqPayload(pld *message.ProposalReqPa
 }
 
 func (syncer *Synchronizer) processProposalPayload(pld *message.ProposalPayload) {
+	syncer.logger.Trace("Process proposal payload", "pld", pld)
+
 	syncer.consensus.SetProposal(&pld.Proposal)
 }
 
 func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayload) {
+	syncer.logger.Trace("Process heartbeat payload", "pld", pld)
+
 	hrs := syncer.consensus.HRS()
 	if pld.Pulse.Height() == hrs.Height() {
 		if pld.Pulse.GreaterThan(hrs) {
@@ -215,7 +222,7 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 		}
 	} else if pld.Pulse.Height() > hrs.Height() {
 		// Ask for more blocks from this peer
-		syncer.broadcastBlocksReq(pld.Pulse.Height())
+		syncer.sendBlocksReqIfWeAreBehind(pld.Pulse.Height())
 	} else {
 		syncer.logger.Trace("We are ahead of this peer.")
 	}
@@ -224,23 +231,30 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayloa
 func (syncer *Synchronizer) tryCommitBlocks() {
 	for {
 		ourHeight := syncer.state.LastBlockHeight()
-		commitBlock := syncer.blockPool.Block(ourHeight + 1)
-
-		if commitBlock == nil {
+		b := syncer.cache.GetBlock(ourHeight + 1)
+		if b == nil {
 			break
 		}
-		commit := syncer.blockPool.Commit(commitBlock.Hash())
-		if commit == nil {
+		c := syncer.cache.GetCommit(b.Hash())
+		if c == nil {
 			break
 		}
-		syncer.logger.Trace("Committing block", "height", ourHeight+1, "block", commitBlock)
-		if err := syncer.state.ApplyBlock(ourHeight+1, *commitBlock, *commit); err != nil {
-			syncer.logger.Error("Committing block failed", "block", commitBlock, "err", err, "height", ourHeight+1)
+		syncer.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
+		if err := syncer.state.ApplyBlock(ourHeight+1, *b, *c); err != nil {
+			syncer.logger.Error("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...
 		}
 
 		syncer.maybeSynced()
-		syncer.blockPool.RemoveBlock(ourHeight + 1)
-		syncer.blockPool.RemoveCommit(commitBlock.Hash())
+	}
+}
+
+func (syncer *Synchronizer) sendBlocksReqIfWeAreBehind(peerHeight int) {
+
+	ourHeight := syncer.state.LastBlockHeight()
+	if peerHeight > ourHeight {
+		hash := syncer.state.LastBlockHash()
+
+		syncer.broadcastBlocksReq(ourHeight+1, peerHeight, hash)
 	}
 }
