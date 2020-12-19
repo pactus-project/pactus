@@ -4,8 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/zarbchain/zarb-go/tx"
-
 	"github.com/fxamacker/cbor/v2"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
@@ -17,6 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/stats"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 )
 
@@ -84,7 +83,6 @@ func TestSendSalamBadGenesisHash(t *testing.T) {
 	data, _ := cbor.Marshal(msg)
 	tSync.ParsMessage(data, tPeerID)
 	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, message.PayloadTypeAleyk)
-
 }
 
 func TestSendSalamPeerAhead(t *testing.T) {

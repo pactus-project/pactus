@@ -9,6 +9,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -22,15 +23,6 @@ type genValidator struct {
 	PublicKey crypto.PublicKey `cbor:"1,keyasint"`
 }
 
-type params struct {
-	BlockTimeInSecond int     `cbor:"1,keyasint"`
-	MaximumPower      int     `cbor:"2,keyasint"`
-	MaximumMemoLength int     `cbor:"3,keyasint"`
-	FeeFraction       float64 `cbor:"4,keyasint"`
-	MinimumFee        int64   `cbor:"5,keyasint"`
-	TTL               int     `cbor:"6,keyasint"`
-}
-
 // Genesis is stored in the state database
 type Genesis struct {
 	data genesisData
@@ -39,7 +31,7 @@ type Genesis struct {
 type genesisData struct {
 	ChainName   string         `cbor:"1,keyasint"`
 	GenesisTime time.Time      `cbor:"2,keyasint"`
-	Params      params         `cbor:"3,keyasint"`
+	Params      param.Params   `cbor:"3,keyasint"`
 	Accounts    []genAccount   `cbor:"4,keyasint"`
 	Validators  []genValidator `cbor:"5,keyasint"`
 }
@@ -60,28 +52,8 @@ func (gen *Genesis) GenesisTime() time.Time {
 	return gen.data.GenesisTime
 }
 
-func (gen *Genesis) BlockTime() time.Duration {
-	return time.Duration(gen.data.Params.BlockTimeInSecond) * time.Second
-}
-
-func (gen *Genesis) MaximumPower() int {
-	return gen.data.Params.MaximumPower
-}
-
-func (gen *Genesis) MaximumMemoLength() int {
-	return gen.data.Params.MaximumMemoLength
-}
-
-func (gen *Genesis) FeeFraction() float64 {
-	return gen.data.Params.FeeFraction
-}
-
-func (gen *Genesis) MinimumFee() int64 {
-	return gen.data.Params.MinimumFee
-}
-
-func (gen *Genesis) TTL() int {
-	return gen.data.Params.TTL
+func (gen *Genesis) Params() param.Params {
+	return gen.data.Params
 }
 
 func (gen *Genesis) Accounts() []*account.Account {
@@ -142,20 +114,16 @@ func MakeGenesis(chainName string, genesisTime time.Time,
 		genVals = append(genVals, genVal)
 	}
 
+	params := param.MainnetParams()
+	params.BlockTimeInSecond = blockTime
+
 	return &Genesis{
 		data: genesisData{
 			ChainName:   chainName,
 			GenesisTime: genesisTime,
 			Accounts:    genAccs,
 			Validators:  genVals,
-			Params: params{
-				BlockTimeInSecond: blockTime,
-				MaximumPower:      5,
-				MaximumMemoLength: 1024,
-				FeeFraction:       0.001,
-				MinimumFee:        1000,
-				TTL:               500,
-			},
+			Params:      params,
 		},
 	}
 }

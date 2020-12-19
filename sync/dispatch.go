@@ -68,17 +68,11 @@ func (syncer *Synchronizer) broadcastBlocksReq(from, to int, hash crypto.Hash) {
 }
 
 func (syncer *Synchronizer) broadcastBlocks(from int, blocks []*block.Block, lastCommit *block.Commit) {
-	if len(blocks) == 0 {
-		return
-	}
 	msg := message.NewBlocksMessage(from, blocks, lastCommit)
 	syncer.publishMessage(msg)
 }
 
 func (syncer *Synchronizer) broadcastTxs(txs []*tx.Tx) {
-	if len(txs) == 0 {
-		return
-	}
 	msg := message.NewTxsMessage(txs)
 	syncer.publishMessage(msg)
 }

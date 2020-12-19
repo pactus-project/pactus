@@ -40,8 +40,7 @@ func setup(t *testing.T) {
 	tValset, err = validator.NewValidatorSet([]*validator.Validator{val}, 4, tValSigner.Address())
 	assert.NoError(t, err)
 
-	tParams := param.NewParams()
-
+	tParams := param.MainnetParams()
 	tSandbox, err = NewSandbox(tStore, tParams, 0, tSortition, tValset)
 	assert.NoError(t, err)
 }

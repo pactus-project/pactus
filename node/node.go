@@ -91,8 +91,8 @@ func (n *Node) Start() error {
 	now := util.Now()
 	genTime := n.genesisDoc.GenesisTime()
 	if genTime.After(now) {
-		logger.Info("Genesis time is in the future. Sleeping until then...", "genTime", genTime)
-		time.Sleep(genTime.Sub(now))
+		logger.Info("💤 Genesis time is in the future. Sleeping until then...", "genTime", genTime)
+		time.Sleep(genTime.Sub(now) - 1*time.Second)
 	}
 
 	n.network.Start()
