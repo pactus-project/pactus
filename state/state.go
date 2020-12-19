@@ -18,6 +18,7 @@ import (
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -56,18 +57,11 @@ func LoadOrNewState(
 		config:    conf,
 		genDoc:    genDoc,
 		txPool:    txPool,
-		params:    param.NewParams(),
+		params:    genDoc.Params(),
 		proposer:  signer.Address(),
 		sortition: sortition.NewSortition(signer),
 	}
 	st.logger = logger.NewLogger("_state", st)
-
-	st.params.BlockTime = genDoc.BlockTime()
-	st.params.MaximumPower = genDoc.MaximumPower()
-	st.params.MaximumMemoLength = genDoc.MaximumMemoLength()
-	st.params.FeeFraction = genDoc.FeeFraction()
-	st.params.MinimumFee = genDoc.MinimumFee()
-	st.params.TransactionToLiveInterval = genDoc.TTL()
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
@@ -225,7 +219,7 @@ func (st *state) BlockTime() time.Duration {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.params.BlockTime
+	return st.params.BlockTime()
 }
 
 func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
@@ -258,10 +252,10 @@ func (st *state) ProposeBlock() block.Block {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	timestamp := st.lastBlockTime.Add(st.params.BlockTime)
-	now := time.Now()
+	timestamp := st.lastBlockTime.Add(st.params.BlockTime())
+	now := util.Now()
 
-	if now.After(timestamp) {
+	if now.After(timestamp.Add(1 * time.Second)) {
 		st.logger.Info("It looks the last commit had delay", "delay", now.Sub(timestamp))
 		timestamp = now
 	}
