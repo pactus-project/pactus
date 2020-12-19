@@ -47,7 +47,7 @@ func (cs *consensus) enterNewHeight(height int) {
 	if cs.votes.lockedProposal != nil {
 		vs := cs.votes.Precommits(cs.hrs.Round())
 		if vs == nil {
-			cs.logger.Warn("NewHeight: Entering new height without having last commit")
+			cs.logger.Warn("NewHeight: Entering new height without last commit")
 		} else {
 			// Update last commit here, consensus had enough time to populate more votes
 			block := cs.votes.lockedProposal.Block()
@@ -61,7 +61,7 @@ func (cs *consensus) enterNewHeight(height int) {
 	cs.isCommitted = false
 	cs.updateHeight(height)
 	cs.updateRoundStep(0, hrs.StepTypeNewHeight)
-	cs.logger.Info("NewHeight: Entring new height", "height", height)
+	cs.logger.Info("NewHeight: Entering new height", "height", height)
 
 	cs.enterNewRound(height, 0)
 }

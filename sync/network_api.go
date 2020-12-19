@@ -173,6 +173,7 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 	switch msg.PayloadType() {
 
 	case message.PayloadTypeSalam,
+		message.PayloadTypeAleyk,
 		message.PayloadTypeHeartBeat:
 		return api.generalTopic
 

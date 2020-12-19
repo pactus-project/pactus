@@ -15,13 +15,13 @@ func (cs *consensus) enterNewRound(height int, round int) {
 		return
 	}
 
-	// make sure we have quorom votes for previous round
+	// make sure we have quorum votes for previous round
 	if round > 0 {
 		if !cs.votes.Prevotes(round - 1).HasQuorum() {
-			cs.logger.Debug("NewRound: No prevote quorom for previous round")
+			cs.logger.Debug("NewRound: No prevote quorum for previous round")
 		}
 		if !cs.votes.Precommits(round - 1).HasQuorum() {
-			cs.logger.Error("NewRound: No precommit quorom for previous round")
+			cs.logger.Error("NewRound: No precommit quorum for previous round")
 			return
 		}
 		// Normally when there is no proposal for this round, every one should vote for UndefHash
@@ -37,7 +37,7 @@ func (cs *consensus) enterNewRound(height int, round int) {
 
 	cs.votes.lockedProposal = nil
 	cs.updateRoundStep(round, hrs.StepTypeNewRound)
-	cs.logger.Info("NewRound: Entring new round", "round", round)
+	cs.logger.Info("NewRound: Entering new round", "round", round)
 
 	cs.enterPropose(height, round)
 }

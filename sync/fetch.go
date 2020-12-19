@@ -135,7 +135,7 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 	probableNewHeight := height - 2
 	networkMaxHeight := syncer.stats.MaxHeight()
 
-	if networkMaxHeight > probableNewHeight {
+	if len(pld.Blocks) > 2 && networkMaxHeight > probableNewHeight {
 		// Request for more blocks
 		blockhash := pld.Blocks[len(pld.Blocks)-2].Hash()
 		syncer.broadcastBlocksReq(probableNewHeight, networkMaxHeight, blockhash)

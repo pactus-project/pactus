@@ -19,7 +19,7 @@ func (cs *consensus) enterPrecommit(height int, round int) {
 
 	preVotes := cs.votes.Prevotes(round)
 	if !preVotes.HasQuorum() {
-		cs.logger.Debug("Precommit: Entering precommit witout having quorom for prevote stage")
+		cs.logger.Debug("Precommit: Entering without prevote quorum")
 		return
 	}
 
