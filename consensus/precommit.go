@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *Consensus) enterPrecommit(height int, round int) {
+func (cs *consensus) enterPrecommit(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommitWait) {
 		cs.logger.Debug("Precommit: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
@@ -19,7 +19,7 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 
 	preVotes := cs.votes.Prevotes(round)
 	if !preVotes.HasQuorum() {
-		cs.logger.Debug("Precommit: Entering precommit witout having quorom for prevote stage")
+		cs.logger.Debug("Precommit: Entering without prevote quorum")
 		return
 	}
 
@@ -68,7 +68,7 @@ func (cs *Consensus) enterPrecommit(height int, round int) {
 	cs.signAddVote(vote.VoteTypePrecommit, *blockHash)
 }
 
-func (cs *Consensus) enterPrecommitWait(height int, round int) {
+func (cs *consensus) enterPrecommitWait(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrecommitWait) {
 		cs.logger.Debug("PrecommitWait: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return

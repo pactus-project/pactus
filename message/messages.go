@@ -11,22 +11,25 @@ import (
 type PayloadType int
 
 const (
-	PayloadTypeSalam       = PayloadType(1)
-	PayloadTypeBlocksReq   = PayloadType(2)
-	PayloadTypeBlocks      = PayloadType(3)
-	PayloadTypeTxsReq      = PayloadType(4)
-	PayloadTypeTxs         = PayloadType(5)
-	PayloadTypeProposalReq = PayloadType(6)
-	PayloadTypeProposal    = PayloadType(7)
-	PayloadTypeHeartBeat   = PayloadType(8)
-	PayloadTypeVote        = PayloadType(9)
-	PayloadTypeVoteSet     = PayloadType(10)
+	PayloadTypeSalam       = PayloadType(1) // Hello message
+	PayloadTypeAleyk       = PayloadType(2) // Hello Ack message
+	PayloadTypeBlocksReq   = PayloadType(3)
+	PayloadTypeBlocks      = PayloadType(4)
+	PayloadTypeTxsReq      = PayloadType(5)
+	PayloadTypeTxs         = PayloadType(6)
+	PayloadTypeProposalReq = PayloadType(7)
+	PayloadTypeProposal    = PayloadType(8)
+	PayloadTypeHeartBeat   = PayloadType(9)
+	PayloadTypeVote        = PayloadType(10)
+	PayloadTypeVoteSet     = PayloadType(11)
 )
 
 func (t PayloadType) String() string {
 	switch t {
 	case PayloadTypeSalam:
 		return "salam"
+	case PayloadTypeAleyk:
+		return "aleyk"
 	case PayloadTypeBlocksReq:
 		return "blocks-req"
 	case PayloadTypeBlocks:
@@ -114,6 +117,8 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 	switch msg.PayloadType {
 	case PayloadTypeSalam:
 		payload = &SalamPayload{}
+	case PayloadTypeAleyk:
+		payload = &AleykPayload{}
 	case PayloadTypeBlocksReq:
 		payload = &BlocksReqPayload{}
 	case PayloadTypeBlocks:

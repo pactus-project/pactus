@@ -47,10 +47,6 @@ func (m *MockTxPool) Fingerprint() string {
 	return ""
 }
 
-func (m *MockTxPool) AppendTxs(txs []*tx.Tx) {
-	m.txs = append(m.txs, txs...)
-}
-
 func (m *MockTxPool) AppendTx(t *tx.Tx) error {
 	m.txs = append(m.txs, t)
 	return nil

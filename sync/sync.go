@@ -11,7 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/stats"
 	"github.com/zarbchain/zarb-go/txpool"
 )
@@ -22,12 +22,11 @@ type Synchronizer struct {
 
 	ctx             context.Context
 	config          *Config
-	store           store.StoreReader
 	state           state.State
 	txPool          txpool.TxPool
-	consensus       *consensus.Consensus
+	consensus       consensus.Consensus
 	stats           *stats.Stats
-	blockPool       *BlockPool
+	cache           *cache.Cache
 	broadcastCh     <-chan *message.Message
 	networkAPI      NetworkAPI
 	heartBeatTicker *time.Ticker
@@ -38,14 +37,13 @@ func NewSynchronizer(
 	conf *Config,
 	addr crypto.Address,
 	state state.State,
-	consensus *consensus.Consensus,
+	consensus consensus.Consensus,
 	txPool txpool.TxPool,
 	net *network.Network,
 	broadcastCh <-chan *message.Message) (*Synchronizer, error) {
 	syncer := &Synchronizer{
 		ctx:         context.Background(),
 		config:      conf,
-		store:       state.StoreReader(),
 		state:       state,
 		consensus:   consensus,
 		txPool:      txPool,
@@ -59,8 +57,13 @@ func NewSynchronizer(
 		return nil, err
 	}
 
+	cache, err := cache.NewCache(conf.CacheSize, state.StoreReader())
+	if err != nil {
+		return nil, err
+	}
+
 	syncer.logger = logger
-	syncer.blockPool = NewBlockPool()
+	syncer.cache = cache
 	syncer.stats = stats.NewStats(state.GenesisHash())
 	syncer.networkAPI = api
 
@@ -82,7 +85,7 @@ func (syncer *Synchronizer) Start() error {
 	timer := time.NewTimer(syncer.config.StartingTimeout)
 	go func() {
 		<-timer.C
-		syncer.maybeSynced()
+		syncer.maybeSynced(false)
 	}()
 
 	return nil
@@ -94,11 +97,11 @@ func (syncer *Synchronizer) Stop() {
 	syncer.heartBeatTicker.Stop()
 }
 
-func (syncer *Synchronizer) maybeSynced() {
+func (syncer *Synchronizer) maybeSynced(force bool) {
 	lastHeight := syncer.state.LastBlockHeight()
 	networkHeight := syncer.stats.MaxHeight()
 
-	if lastHeight >= networkHeight {
+	if force || lastHeight >= networkHeight {
 		syncer.logger.Info("We are synced", "height", lastHeight)
 		syncer.consensus.MoveToNewHeight()
 	}
@@ -122,13 +125,34 @@ func (syncer *Synchronizer) broadcastLoop() {
 			return
 
 		case msg := <-syncer.broadcastCh:
-			syncer.publishMessage(msg)
+
+			switch msg.PayloadType() {
+			case message.PayloadTypeTxsReq:
+				pld := msg.Payload.(*message.TxsReqPayload)
+				for i, id := range pld.IDs {
+					trx := syncer.cache.GetTransaction(id)
+					if trx != nil {
+						if err := syncer.txPool.AppendTx(trx); err == nil {
+							pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
+						}
+					}
+
+				}
+
+				if len(pld.IDs) > 0 {
+					syncer.publishMessage(msg)
+				}
+
+			default:
+				syncer.publishMessage(msg)
+
+			}
 		}
 	}
 }
 func (syncer *Synchronizer) Fingerprint() string {
 	return fmt.Sprintf("{☍ %d ⛲ %d ↥ %d}",
 		syncer.stats.PeersCount(),
-		syncer.blockPool.BlockLen(),
+		syncer.cache.Len(),
 		syncer.stats.MaxHeight())
 }

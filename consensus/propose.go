@@ -9,15 +9,15 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *Consensus) proposer(round int) *validator.Validator {
+func (cs *consensus) proposer(round int) *validator.Validator {
 	return cs.valset.Proposer(round)
 }
 
-func (cs *Consensus) isProposer(address crypto.Address, round int) bool {
+func (cs *consensus) isProposer(address crypto.Address, round int) bool {
 	return cs.proposer(round).Address().EqualsTo(address)
 }
 
-func (cs *Consensus) setProposal(proposal *vote.Proposal) {
+func (cs *consensus) setProposal(proposal *vote.Proposal) {
 	if cs.invalidHeight(proposal.Height()) {
 		cs.logger.Debug("Propose: Invalid height or committed", "proposal", proposal, "committed", cs.isCommitted)
 		return
@@ -54,7 +54,7 @@ func (cs *Consensus) setProposal(proposal *vote.Proposal) {
 	cs.enterCommit(proposal.Height(), proposal.Round())
 }
 
-func (cs *Consensus) enterPropose(height int, round int) {
+func (cs *consensus) enterPropose(height int, round int) {
 	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePropose) {
 		cs.logger.Debug("Propose: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
 		return
@@ -78,7 +78,7 @@ func (cs *Consensus) enterPropose(height int, round int) {
 	cs.scheduleTimeout(cs.config.Propose(round), height, round, hrs.StepTypePrevote)
 }
 
-func (cs *Consensus) createProposal(height int, round int) {
+func (cs *consensus) createProposal(height int, round int) {
 	block := cs.state.ProposeBlock()
 	if err := cs.state.ValidateBlock(block); err != nil {
 		cs.logger.Error("Propose: Our block is invalid. Why?", "error", err)
@@ -98,6 +98,6 @@ func (cs *Consensus) createProposal(height int, round int) {
 	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
 
 	// Broadcast proposal
-	msg := message.NewProposalMessage(*proposal)
+	msg := message.NewProposalMessage(proposal)
 	cs.broadcastCh <- msg
 }

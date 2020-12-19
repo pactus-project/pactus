@@ -16,7 +16,7 @@ func TestLastBlockHeight(t *testing.T) {
 	assert.False(t, store.hasAnyBlock())
 
 	b1, _ := block.GenerateTestBlock(nil)
-	assert.NoError(t, store.saveBlock(b1, 1))
+	assert.NoError(t, store.saveBlock(*b1, 1))
 
 	assert.True(t, store.hasAnyBlock())
 }

@@ -88,7 +88,7 @@ func (s *Store) SaveTransaction(ctrx tx.CommittedTx) {
 	defer s.lk.Unlock()
 
 	if err := s.txStore.saveTx(ctrx); err != nil {
-		logger.Panic("Error on saving atransaction: %v", err)
+		logger.Panic("Error on saving a transaction: %v", err)
 	}
 }
 

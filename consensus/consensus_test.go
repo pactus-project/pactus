@@ -41,15 +41,15 @@ func init() {
 	}
 }
 
-func newTestConsensus(t *testing.T, valID int) *Consensus {
+func newTestConsensus(t *testing.T, valID int) *consensus {
 	consConf := TestConfig()
 	stateConf := state.TestConfig()
 	loggerConfig := logger.TestConfig()
 	logger.InitLogger(loggerConfig)
 
 	vals := make([]*validator.Validator, 4)
-	for i, pval := range signers {
-		val := validator.NewValidator(pval.PublicKey(), 0, i)
+	for i, s := range signers {
+		val := validator.NewValidator(s.PublicKey(), 0, i)
 		vals[i] = val
 	}
 
@@ -66,18 +66,20 @@ func newTestConsensus(t *testing.T, valID int) *Consensus {
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals, 1)
 	st, _ := state.LoadOrNewState(stateConf, genDoc, signers[valID], mockTxPool)
 
-	cons, _ := NewConsensus(consConf, st, signers[valID], ch)
+	// TODO: fix me
+	cons1, _ := NewConsensus(consConf, st, signers[valID], ch)
+	cons := cons1.(*consensus)
 	assert.Equal(t, cons.votes.height, 0)
 	assert.Equal(t, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight), cons.hrs)
 
 	return cons
 }
 
-func checkHRS(t *testing.T, cons *Consensus, height, round int, step hrs.StepType) {
+func checkHRS(t *testing.T, cons *consensus, height, round int, step hrs.StepType) {
 	assert.Equal(t, hrs.NewHRS(height, round, step), cons.hrs)
 }
 
-func checkHRSWait(t *testing.T, cons *Consensus, height, round int, step hrs.StepType) {
+func checkHRSWait(t *testing.T, cons *consensus, height, round int, step hrs.StepType) {
 	expected := hrs.NewHRS(height, round, step)
 	for i := 0; i < 20; i++ {
 		if expected.EqualsTo(cons.HRS()) {
@@ -89,7 +91,7 @@ func checkHRSWait(t *testing.T, cons *Consensus, height, round int, step hrs.Ste
 }
 
 func testAddVote(t *testing.T,
-	cons *Consensus,
+	cons *consensus,
 	voteType vote.VoteType,
 	height int,
 	round int,
@@ -290,7 +292,7 @@ func TestConsensusInvalidProposal(t *testing.T) {
 
 	addr := signers[VAL1].Address()
 	b, _ := block.GenerateTestBlock(&addr)
-	p := vote.NewProposal(1, 0, b)
+	p := vote.NewProposal(1, 0, *b)
 
 	cons.SetProposal(p)
 	assert.Nil(t, cons.LastProposal())

@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 )
 
-func (cs *Consensus) enterCommit(height int, round int) {
+func (cs *consensus) enterCommit(height int, round int) {
 	if cs.invalidHeight(height) {
 		cs.logger.Debug("Commit: Invalid height or committed before", "height", height, "committed", cs.isCommitted)
 		return
@@ -16,7 +16,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	preCommits := cs.votes.Precommits(round)
 
 	if !preCommits.HasQuorum() {
-		cs.logger.Debug("Commit: No quorom for precommit stage")
+		cs.logger.Debug("Commit: No quorum for precommit stage")
 		return
 	}
 
@@ -29,7 +29,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	// Additional check. blockHash should be same for both prevotes and precommits
 	prevoteBlockHash := preVotes.QuorumBlock()
 	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Debug("Commit: Commit witout quorom for prevote stage")
+		cs.logger.Debug("Commit: Commit without prevote quorum")
 	}
 
 	if cs.votes.lockedProposal == nil {
@@ -48,7 +48,7 @@ func (cs *Consensus) enterCommit(height int, round int) {
 		}
 	}
 
-	// Locked proposal is not for quorom block
+	// Locked proposal is not for quorum block
 	// It is impossible, but good to keep this check
 	if !cs.votes.lockedProposal.IsForBlock(blockHash) {
 		cs.votes.lockedProposal = nil
@@ -84,6 +84,6 @@ func (cs *Consensus) enterCommit(height int, round int) {
 	cs.scheduleNewHeight()
 
 	// Now broadcast the committed block
-	msg := message.NewBlocksMessage(height, []block.Block{commitBlock}, commit)
+	msg := message.NewBlocksMessage(height, []*block.Block{&commitBlock}, commit)
 	cs.broadcastCh <- msg
 }
