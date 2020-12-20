@@ -11,9 +11,9 @@ var (
 
 func init() {
 	NodeVersion = Version{
-		Major: 0,
-		Minor: 9,
-		Patch: 1,
+		Major: 1,
+		Minor: 0,
+		Patch: 0,
 	}
 }
 

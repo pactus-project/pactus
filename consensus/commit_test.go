@@ -24,7 +24,7 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 	votes[2] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), signers[2].Address())
 	signers[2].SignMsg(votes[2])
 
-	sig := crypto.Aggregate([]crypto.Signature{*votes[0].Signature(), *votes[1].Signature(), *votes[2].Signature()})
+	sig := crypto.Aggregate([]*crypto.Signature{votes[0].Signature(), votes[1].Signature(), votes[2].Signature()})
 	c := block.NewCommit(0,
 		[]block.Committer{
 			{Status: 1, Address: signers[0].Address()},

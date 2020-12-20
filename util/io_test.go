@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEmptyPaht(t *testing.T) {
+func TestEmptyPath(t *testing.T) {
 	p := TempDirPath()
 	assert.True(t, IsDirEmpty(p))
 
@@ -16,4 +16,40 @@ func TestEmptyPaht(t *testing.T) {
 	o, err := ReadFile(f)
 	assert.NoError(t, err)
 	assert.Equal(t, d, o)
+}
+
+func TestAbsPath(t *testing.T) {
+	abs := MakeAbs(".")
+	assert.True(t, IsAbsPath(abs))
+	assert.False(t, IsAbsPath("abs"))
+	assert.False(t, IsDirEmpty(abs))
+	assert.False(t, IsDirNotExistsOrEmpty(abs))
+}
+
+func TestTempDir(t *testing.T) {
+	tmpDir := TempDirPath()
+
+	assert.True(t, IsAbsPath(tmpDir))
+	assert.True(t, IsDirEmpty(tmpDir))
+	assert.True(t, PathExists(tmpDir))
+	assert.True(t, IsDirNotExistsOrEmpty(tmpDir))
+}
+
+func TestTempFile(t *testing.T) {
+	tmpFile := TempFilePath()
+
+	assert.True(t, IsAbsPath(tmpFile))
+	t.Run("Should panic because it doesn't exists", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("The code did not panic")
+			}
+		}()
+		IsDirEmpty(tmpFile)
+	})
+	assert.False(t, PathExists(tmpFile))
+	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
+	assert.NoError(t, Mkdir(tmpFile))
+	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
+	assert.True(t, IsDirEmpty(tmpFile)) // no panic now
 }

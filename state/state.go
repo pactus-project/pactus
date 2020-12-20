@@ -222,16 +222,17 @@ func (st *state) BlockTime() time.Duration {
 	return st.params.BlockTime()
 }
 
-func (st *state) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
+func (st *state) UpdateLastCommit(commit *block.Commit) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateCommitForCurrentHeight(commit, blockHash); err != nil {
+	if err := st.validateLastCommit(commit); err != nil {
 		st.logger.Warn("Try to update last commit, but it's invalid", "error", err)
-		return
+		return err
 	}
 
-	st.lastCommit = &commit
+	st.lastCommit = commit
+	return nil
 }
 
 func (st *state) createSubsidyTx(fee int64) *tx.Tx {
@@ -317,8 +318,6 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	st.executionSandbox.Clear()
-
 	_, err := st.executeBlock(block)
 	if err != nil {
 		return err
@@ -360,10 +359,6 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	st.txPoolSandbox.Clear()
-	st.executionSandbox.Clear()
-
-	// Execute block
 	ctrxs, err := st.executeBlock(block)
 	if err != nil {
 		return err
@@ -452,7 +447,7 @@ func (st *state) commitSandbox(round int) {
 
 	if err := st.validatorSet.MoveToNextHeight(0, joined); err != nil {
 		//
-		// We should panic here before modifying state store
+		// We should panic here before updating state
 		//
 		logger.Panic("An error occurred", "err", err)
 	}

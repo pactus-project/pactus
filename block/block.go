@@ -24,21 +24,6 @@ type blockData struct {
 	TxIDs      TxIDs   `cbor:"3,keyasint"`
 }
 
-func NewBlock(header Header, lastCommit *Commit, TxIDs TxIDs) (*Block, error) {
-	b := &Block{
-		data: blockData{
-			Header:     header,
-			LastCommit: lastCommit,
-			TxIDs:      TxIDs,
-		},
-	}
-
-	if err := b.SanityCheck(); err != nil {
-		return nil, errors.Error(errors.ErrInvalidBlock)
-	}
-	return b, nil
-}
-
 func MakeBlock(timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, CommittersHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
@@ -188,10 +173,10 @@ func GenerateTestCommit(blockhash crypto.Hash) *Commit {
 	addr3, _, pv3 := crypto.GenerateTestKeyPair()
 	addr4, _, _ := crypto.GenerateTestKeyPair()
 
-	sigs := []crypto.Signature{
-		*pv1.Sign(blockhash.RawBytes()),
-		*pv2.Sign(blockhash.RawBytes()),
-		*pv3.Sign(blockhash.RawBytes()),
+	sigs := []*crypto.Signature{
+		pv1.Sign(blockhash.RawBytes()),
+		pv2.Sign(blockhash.RawBytes()),
+		pv3.Sign(blockhash.RawBytes()),
 	}
 	sig := crypto.Aggregate(sigs)
 

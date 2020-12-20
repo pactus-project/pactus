@@ -4,36 +4,38 @@ import "encoding/json"
 
 const testnetJSON = `
 {
-    "chainName": "zarb-testnet",
-    "genesisTime": "2018-09-24T00:00:00.0+00:00",
-    "Params": {
-        "BlockTimeInSecond": 5,
-        "MaximumPower": 5,
-        "MaximumMemoLength": 1024,
-        "FeeFraction": 0.001,
-        "MinimumFee": 1000,
-        "TTL": 500
-    },
-    "accounts": [
-        {
-            "address": "0000000000000000000000000000000000000000",
-            "balance": 21000000000000000
-        }
-    ],
-    "validators": [
-        {
-            "publicKey": "740387D0B366995F8D8271F2359829433F3269BFB12514E0B1C6488FFAD88B52CA249A0442B2B32E24E3336F7410E90D15C1C54F03937A1EDE6BF736C13B25FC898C3318F42AD3A9DA6D52D1AC7C94440525DE102F7CC4F45FD318297FED2093"
-        },
-        {
-            "publicKey": "ADD00AFECD88D815C91B20E27BBE9F66B6297E0E073B21B3FBF51682B79AF84C772DC74456DFBE6EE66D4D7CA3C57B0B13ADE713F384FD86D42ACBA7D77262DFEF67FBA19917E83AF6A87B500A7B092E353C906640B4B4E1C91EEA65902F9C84"
-        },
-        {
-            "publicKey": "094BE7DC34986C0B3F8E0187BE80D4B2535A3D637ED4805122947EFF780C15131B98CAF2F58F775D46088B0C094C2713FFCA74148A97C985BE7B61D5757FB321D67F1470FBF5160864702BAF3122D43F6A3D9FAA517FECDB16C256192D91300C"
-        },
-        {
-            "publicKey": "D3C4A861BADF4A8D0F5AA498A790183BE9190466E72BA5E072509B7D2D04EB90C4100EB3F92F81DD976849776BDAE60EDFB080522ECC914A784BF8AB00879E82F26785442079F4DA74AE1017B11BF27248FCA3B1235D8C13CD46E51398B4C619"
-        }
-    ]
+   "ChainName":"zarb-testnet",
+   "GenesisTime":"2020-12-20T12:00:00.0+03:30",
+   "Params":{
+      "BlockTimeInSecond":10,
+      "MaximumTransactionPerBlock":1000,
+      "MaximumPower":5,
+      "SubsidyReductionInterval":2100000,
+      "MaximumMemoLength":1024,
+      "FeeFraction":0.001,
+      "MinimumFee":1000,
+      "TransactionToLiveInterval":500
+   },
+   "Accounts":[
+      {
+         "Address":"0000000000000000000000000000000000000000",
+         "Balance":2100000000000000
+      }
+   ],
+   "Validators":[
+      {
+         "PublicKey":"b8388bde49b17b62b63f7660435d1480904ea83cd2d4e8758d9ce487dd3d45b88884373f0c1c29afbb1bff3959216f15690bb5da1f1f0857a7dd64999f81c2be17917b468058126883fff3ba0a5cc789cce90134c79a372e5ed2a4d9fbd80b8c"
+      },
+      {
+         "PublicKey":"38b258b8f5be33ebb77bdb3126fd43db0bec88dfcfb6357d9c52a39220b218d744ccfe58926d738de881afe35af4a406fc181b104a17f4a4dba4474a6a450407162a8b6deb5c9282af777505ebc9ccbd1b3a107ef2e77b5d7558a43a8100ae18"
+      },
+      {
+         "PublicKey":"12fe7b4eafee633ec476380afbc87e48b40536a353cd00380bdd18a46b3aeefff5685b54908b9d617949eb6ee66c98178f114b7c747b422e0bc08903a23ba0e27ca2dfe6ed4dc4fa4ae0e8f44c3e1e9ebfadbf98e03a28c5334c5dc3dd26b683"
+      },
+      {
+         "PublicKey":"e2087bfaa5dd4681a2691fdb173f2a7dbe3c3beb9597288f3d5e9825a1d099b3e5322e5269f451ef40ecb8e7cfda0208027d90153deda6a474254ab9abf54066f4e0cb67ebf1dc2427bb21f8a1f08623a36024a37d3904c28fa1fd9e7c4a9b95"
+      }
+   ]
 }
 `
 

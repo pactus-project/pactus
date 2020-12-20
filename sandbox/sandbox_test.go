@@ -150,8 +150,12 @@ func TestTotalAccountCounter(t *testing.T) {
 		assert.Equal(t, tStore.TotalAccounts(), 1) // Sandbox has an account
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
+		addr2, _, _ := crypto.GenerateTestKeyPair()
 		acc := tSandbox.MakeNewAccount(addr)
 		assert.Equal(t, acc.Number(), 1)
+		acc2 := tSandbox.MakeNewAccount(addr2)
+		assert.Equal(t, acc2.Number(), 2)
+		assert.Equal(t, acc2.Balance(), int64(0))
 
 		tSandbox.Clear()
 		assert.Equal(t, tSandbox.totalAccounts, 1)
@@ -174,8 +178,14 @@ func TestTotalValidatorCounter(t *testing.T) {
 		assert.Equal(t, tStore.TotalValidators(), 1) // Sandbox has a validator
 
 		_, pub, _ := crypto.GenerateTestKeyPair()
+		_, pub2, _ := crypto.GenerateTestKeyPair()
 		val := tSandbox.MakeNewValidator(pub)
 		assert.Equal(t, val.Number(), 1)
+		assert.Equal(t, val.BondingHeight(), tSandbox.CurrentHeight())
+		val2 := tSandbox.MakeNewValidator(pub2)
+		assert.Equal(t, val2.Number(), 2)
+		assert.Equal(t, val2.BondingHeight(), tSandbox.CurrentHeight())
+		assert.Equal(t, val2.Stake(), int64(0))
 
 		tSandbox.Clear()
 		assert.Equal(t, tSandbox.totalValidators, 1)
@@ -183,6 +193,8 @@ func TestTotalValidatorCounter(t *testing.T) {
 
 		val = tSandbox.MakeNewValidator(pub)
 		tSandbox.UpdateValidator(val)
+		assert.Equal(t, val.Number(), 1)
+		assert.Equal(t, val.BondingHeight(), tSandbox.CurrentHeight())
 
 		assert.Equal(t, tSandbox.totalValidators, 2)
 		assert.Equal(t, tStore.TotalValidators(), 1)

@@ -20,11 +20,11 @@ func TestAggregation(t *testing.T) {
 	sig3 := pv3.Sign(msg1)
 	sig4 := pv4.Sign(msg1)
 
-	agg1 := Aggregate([]Signature{*sig1, *sig2, *sig3})
-	agg2 := Aggregate([]Signature{*sig1, *sig2, *sig4})
-	agg3 := Aggregate([]Signature{*sig11, *sig2, *sig3})
-	agg4 := Aggregate([]Signature{*sig1, *sig2})
-	agg5 := Aggregate([]Signature{*sig3, *sig2, *sig1})
+	agg1 := Aggregate([]*Signature{sig1, sig2, sig3})
+	agg2 := Aggregate([]*Signature{sig1, sig2, sig4})
+	agg3 := Aggregate([]*Signature{sig11, sig2, sig3})
+	agg4 := Aggregate([]*Signature{sig1, sig2})
+	agg5 := Aggregate([]*Signature{sig3, sig2, sig1})
 
 	pks1 := []PublicKey{pk1, pk2, pk3}
 	pks2 := []PublicKey{pk1, pk2, pk4}
@@ -43,5 +43,30 @@ func TestAggregation(t *testing.T) {
 	assert.False(t, VerifyAggregated(agg1, pks3, msg1))
 	assert.True(t, VerifyAggregated(agg5, pks1, msg1))
 	assert.True(t, VerifyAggregated(agg1, pks4, msg1))
+}
 
+func TestAggregationOnlyOneSignature(t *testing.T) {
+	_, _, pv1 := GenerateTestKeyPair()
+	msg1 := []byte("zarb")
+	sig1 := pv1.Sign(msg1)
+	agg1 := Aggregate([]*Signature{sig1})
+	assert.Equal(t, agg1.RawBytes(), sig1.RawBytes())
+}
+
+func TestAggregateTheAggregated(t *testing.T) {
+	_, _, pv1 := GenerateTestKeyPair()
+	_, _, pv2 := GenerateTestKeyPair()
+	_, _, pv3 := GenerateTestKeyPair()
+
+	msg1 := []byte("zarb")
+
+	sig1 := pv1.Sign(msg1)
+	sig2 := pv2.Sign(msg1)
+	sig3 := pv3.Sign(msg1)
+
+	agg1 := Aggregate([]*Signature{sig1, sig2, sig3})
+	agg2 := Aggregate([]*Signature{sig1, sig2})
+	agg3 := Aggregate([]*Signature{&agg2, sig3})
+
+	assert.Equal(t, agg1.RawBytes(), agg3.RawBytes())
 }

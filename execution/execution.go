@@ -60,6 +60,10 @@ func (exe *Execution) Execute(trx *tx.Tx) error {
 	return nil
 }
 
+func (exe *Execution) ResetFee() {
+	exe.accumulatedFee = 0
+}
+
 func (exe *Execution) AccumulatedFee() int64 {
 	return exe.accumulatedFee
 }
