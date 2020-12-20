@@ -26,7 +26,7 @@ func TestChangeAcc(t *testing.T) {
 	st1.store.UpdateAccount(acc4)
 	root1 := st1.accountsMerkleRootHash()
 
-	// Change an account state
+	// Change an account
 	acc3.IncSequence()
 
 	st2.store.UpdateAccount(acc2)
@@ -55,7 +55,7 @@ func TestChangeVal(t *testing.T) {
 	st1.store.UpdateValidator(val4)
 	root1 := st1.validatorsMerkleRootHash()
 
-	// Change an account state
+	// Change a validtor
 	val3.IncSequence()
 
 	st2.store.UpdateValidator(val2)

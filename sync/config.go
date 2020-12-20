@@ -13,7 +13,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		StartingTimeout:  time.Second * 10,
 		HeartBeatTimeout: time.Second * 10,
-		BlockPerMessage:  10,
+		BlockPerMessage:  500,
 		CacheSize:        10000,
 	}
 }

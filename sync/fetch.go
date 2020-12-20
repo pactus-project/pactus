@@ -132,27 +132,26 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 		height = height + 1
 	}
 
-	probableNewHeight := height - 2
+	probableNewHeight := height - 1
 	networkMaxHeight := syncer.stats.MaxHeight()
 
-	if len(pld.Blocks) > 2 && networkMaxHeight > probableNewHeight {
+	if networkMaxHeight > probableNewHeight {
 		// Request for more blocks
-		blockhash := pld.Blocks[len(pld.Blocks)-2].Hash()
-		syncer.broadcastBlocksReq(probableNewHeight, networkMaxHeight, blockhash)
+		blockhash := pld.Blocks[len(pld.Blocks)-1].Hash()
+		syncer.broadcastBlocksReq(probableNewHeight+1, networkMaxHeight, blockhash)
 	}
 
 	syncer.tryCommitBlocks()
 
 	// Check if our high is not same as we expected
 	ourNewHeight := syncer.state.LastBlockHeight()
-
-	if ourNewHeight != probableNewHeight {
+	if ourNewHeight < probableNewHeight {
 		blockhash := syncer.state.LastBlockHash()
-		syncer.broadcastBlocksReq(ourNewHeight, networkMaxHeight, blockhash)
+		syncer.broadcastBlocksReq(ourNewHeight+1, networkMaxHeight, blockhash)
+	} else {
+		// When a peer send us the last commit, we are probably synced with the network
+		syncer.maybeSynced(pld.LastCommit != nil)
 	}
-
-	// When a peer send us the last commit, it probably is be in latest hight
-	syncer.maybeSynced(pld.LastCommit != nil)
 }
 
 func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
@@ -264,9 +263,7 @@ func (syncer *Synchronizer) tryCommitBlocks() {
 		if err := syncer.state.ApplyBlock(ourHeight+1, *b, *c); err != nil {
 			syncer.logger.Error("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...
-
-			// TODO: add tests for me later
-			// TODO: Remove this invalid block and commit from the cache
+			break
 		}
 	}
 }

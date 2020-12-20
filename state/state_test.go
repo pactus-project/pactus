@@ -11,7 +11,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
@@ -84,14 +83,23 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func proposeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
-	addr := tValSigner1.Address()
+func proposeAndSignBlock(t *testing.T, st *state, signer crypto.Signer) (block.Block, block.Commit) {
 	b := st.ProposeBlock()
-	v := vote.NewPrecommit(1, 0, b.Hash(), addr)
-	sig := tValSigner1.Sign(v.SignBytes())
-	c := block.NewCommit(0, []block.Committer{{Status: 1, Address: addr}}, *sig)
+	c := makeCommitAndSign(t, b.Hash(), signer)
 
-	return b, *c
+	return b, c
+}
+
+func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, signers ...crypto.Signer) block.Commit {
+	committers := make([]block.Committer, len(signers))
+	sigs := make([]*crypto.Signature, len(signers))
+	for i, s := range signers {
+		v := vote.NewPrecommit(-1, 0, blockHash, s.Address())
+
+		committers[i] = block.Committer{Status: 1, Address: s.Address()}
+		sigs[i] = s.Sign(v.SignBytes())
+	}
+	return *block.NewCommit(0, committers, crypto.Aggregate(sigs))
 }
 
 func TestLoadState(t *testing.T) {
@@ -110,8 +118,8 @@ func TestLoadState(t *testing.T) {
 
 	i := 0
 	for ; i < 10; i++ {
-		b1, c1 := proposeAndSignBlock(t, st1)
-		b2, c2 := proposeAndSignBlock(t, st2)
+		b1, c1 := proposeAndSignBlock(t, st1, tValSigner1)
+		b2, c2 := proposeAndSignBlock(t, st2, tValSigner1)
 
 		assert.NoError(t, st1.ApplyBlock(i+1, b1, c1))
 		assert.NoError(t, st2.ApplyBlock(i+1, b2, c2))
@@ -125,7 +133,7 @@ func TestLoadState(t *testing.T) {
 	st3, err := LoadOrNewState(st2.config, st2.genDoc, tValSigner1, txpool.NewMockTxPool())
 	require.NoError(t, err)
 
-	b, c := proposeAndSignBlock(t, st1)
+	b, c := proposeAndSignBlock(t, st1, tValSigner1)
 	assert.Equal(t, b.Hash(), st3.ProposeBlock().Hash())
 	require.NoError(t, st1.ApplyBlock(i+1, b, c))
 	require.NoError(t, st3.ApplyBlock(i+1, b, c))
@@ -137,12 +145,12 @@ func TestLoadState(t *testing.T) {
 }
 
 func TestBlockSubsidy(t *testing.T) {
-	interval := 210000
-	assert.Equal(t, int64(5*1e8), calcBlockSubsidy(1, 210000))
-	assert.Equal(t, int64(5*1e8), calcBlockSubsidy((1*interval)-1, 210000))
-	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((1*interval), 210000))
-	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((2*interval)-1, 210000))
-	assert.Equal(t, int64(1.25*1e8), calcBlockSubsidy((2*interval), 210000))
+	interval := 2100000
+	assert.Equal(t, int64(5*1e8), calcBlockSubsidy(1, interval))
+	assert.Equal(t, int64(5*1e8), calcBlockSubsidy((1*interval)-1, interval))
+	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((1*interval), interval))
+	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((2*interval)-1, interval))
+	assert.Equal(t, int64(1.25*1e8), calcBlockSubsidy((2*interval), interval))
 }
 
 func TestBlockSubsidyTx(t *testing.T) {
@@ -162,39 +170,9 @@ func TestBlockSubsidyTx(t *testing.T) {
 func TestApplyBlocks(t *testing.T) {
 	st := setupStatewithOneValidator(t)
 
-	b1, c1 := proposeAndSignBlock(t, st)
+	b1, c1 := proposeAndSignBlock(t, st, tValSigner1)
 	invBlock, _ := block.GenerateTestBlock(nil)
 	assert.Error(t, st.ApplyBlock(1, *invBlock, c1))
 	assert.Error(t, st.ApplyBlock(2, b1, c1))
-}
-
-func TestProposeBlock(t *testing.T) {
-	st1 := setupStatewithOneValidator(t)
-
-	b1, c1 := proposeAndSignBlock(t, st1)
-	assert.NoError(t, st1.ApplyBlock(1, b1, c1))
-
-	subsidy := calcBlockSubsidy(st1.LastBlockHeight(), st1.params.SubsidyReductionInterval)
-	invSubsidyTx := tx.NewSubsidyTx(st1.LastBlockHash(), 1, tValSigner2.Address(), subsidy, "")
-	invSendTx, _ := tx.GenerateTestSendTx()
-	invBondTx, _ := tx.GenerateTestBondTx()
-	invSortitionTx, _ := tx.GenerateTestSortitionTx()
-
-	pub := tValSigner1.PublicKey()
-	trx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "", &pub, nil)
-	tValSigner1.SignMsg(trx1)
-
-	trx2 := tx.NewBondTx(b1.Hash(), 2, tValSigner1.Address(), pub, 1, "", &pub, nil)
-	tValSigner1.SignMsg(trx2)
-
-	assert.NoError(t, st1.txPool.AppendTx(invSendTx))
-	assert.NoError(t, st1.txPool.AppendTx(invBondTx))
-	assert.NoError(t, st1.txPool.AppendTx(invSortitionTx))
-	assert.NoError(t, st1.txPool.AppendTx(invSubsidyTx))
-	assert.NoError(t, st1.txPool.AppendTx(trx1))
-	assert.NoError(t, st1.txPool.AppendTx(trx2))
-
-	b2 := st1.ProposeBlock()
-	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
-	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
+	assert.NoError(t, st.ApplyBlock(1, b1, c1))
 }

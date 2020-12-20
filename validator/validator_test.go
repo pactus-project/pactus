@@ -16,6 +16,7 @@ func TestMarshaling(t *testing.T) {
 	val1, _ := GenerateTestValidator(util.RandInt(1000))
 	val1.AddToStake(1)
 	val1.IncSequence()
+	val1.data.UnbondingHeight = 100
 
 	bs, err := val1.Encode()
 	fmt.Printf("%X\n", bs)
@@ -47,7 +48,7 @@ func TestMarshaling(t *testing.T) {
 }
 
 func TestMarshalingRawData(t *testing.T) {
-	bs, _ := hex.DecodeString("A6015860741CCD3D7F9CD9FEE7C9A412EE73E248F4522018EF6EF7FCCF456E02A2DFB39EB3CEBAE083BDC2CF10203D3BDD52A90D4EA878FEBAB2D87AD7323A5F82BAFA32A4A158FE8C96EAE6B8C30440256D691B147D864313E77E181FAC6AAA2206DE980218A803190339041A2AD6EC630518570600")
+	bs, _ := hex.DecodeString("A6015860DFF46FBCE5AE1BA4837DE551206176C0A74DEB5DFCA803228F570F7C9BA093EA109700559B72FE1D385492F0D5A10F17A4CEC41EB2E552F51E1F7F48AB311D4E195B1563C1FCBA8EE201173E4E6362CABEDACCEE541F9EFC9C4140D9FB268102021901B4031902F7041A2AF78F210514061864")
 	val := new(Validator)
 	err := val.Decode(bs)
 	require.NoError(t, err)
@@ -55,7 +56,7 @@ func TestMarshalingRawData(t *testing.T) {
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, val.Hash(), crypto.HashH(bs))
-	expected, _ := crypto.HashFromString("be773d118bc63b3ca299aabae969c6d9964185df381a7b733c119c5c4c5defb0")
+	expected, _ := crypto.HashFromString("24118cc654fdc5333c222b40a932fccf0a058e3c0045a1e34d9298df4c128fba")
 	assert.Equal(t, val.Hash(), expected)
 }
 

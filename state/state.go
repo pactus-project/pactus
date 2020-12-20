@@ -318,8 +318,6 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	st.executionSandbox.Clear()
-
 	_, err := st.executeBlock(block)
 	if err != nil {
 		return err
@@ -361,10 +359,6 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		return err
 	}
 
-	st.txPoolSandbox.Clear()
-	st.executionSandbox.Clear()
-
-	// Execute block
 	ctrxs, err := st.executeBlock(block)
 	if err != nil {
 		return err

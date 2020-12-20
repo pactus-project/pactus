@@ -11,8 +11,8 @@ type PayloadType int
 const (
 	PayloadTypeSend      = PayloadType(1)
 	PayloadTypeBond      = PayloadType(2)
-	PayloadTypeUnbond    = PayloadType(3)
-	PayloadTypeSortition = PayloadType(4)
+	PayloadTypeSortition = PayloadType(3)
+	PayloadTypeUnbond    = PayloadType(4)
 )
 
 func (t PayloadType) String() string {

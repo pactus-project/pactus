@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -97,8 +98,43 @@ func TestMoveToConsensus(t *testing.T) {
 	tSync.broadcastBlocks(tState.LastBlockHeight()+1, blocks, commit)
 
 	// We send all blocks we have and set LastCommit to true
-	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(ourHeight+15-1, 100000000, blocks[13].Hash()))
-	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(ourHeight+15, 100000000, blocks[14].Hash()))
+	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(ourHeight+15+1, 100000000, blocks[14].Hash()))
 
 	assert.True(t, tConsensus.Moved)
+}
+
+func TestSendInvalidBlock(t *testing.T) {
+	setup(t)
+
+	fmt.Println(tState.LastBlockHeight())
+	networkHeight := tState.LastBlockHeight() + 15
+	msg := message.NewSalamMessage(tState.GenHash, networkHeight)
+	tSync.publishMessage(msg)
+	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeAleyk)
+	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeBlocksReq)
+
+	tSync.maybeSynced(false)
+	assert.False(t, tConsensus.Moved)
+
+	ourHeight := tState.LastBlockHeight()
+	// We send all blocks we have and set LastCommit to true
+	blocks := make([]*block.Block, 0)
+	var commit *block.Commit
+	for i := 0; i < 15; i++ {
+		b, _ := block.GenerateTestBlock(nil)
+		commit = block.GenerateTestCommit(b.Hash())
+		blocks = append(blocks, b)
+
+		// To make sure block will be committed
+		tCache.AddCommit(b.Hash(), commit)
+	}
+
+	tState.InvalidBlockHash = blocks[5].Hash()
+	assert.NotNil(t, tState.LastBlockCommit)
+	tSync.broadcastBlocks(tState.LastBlockHeight()+1, blocks, commit)
+
+	// We send all blocks we have and set LastCommit to true
+	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(ourHeight+6, networkHeight, blocks[4].Hash()))
+
+	assert.False(t, tConsensus.Moved)
 }

@@ -80,10 +80,6 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	signer := vote.Signer()
 	blockHash := vote.BlockHash()
 
-	if signer.SanityCheck() != nil {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Empty address")
-	}
-
 	if (vote.data.Height != vs.height) ||
 		(vote.data.Round != vs.round) ||
 		(vote.data.VoteType != vs.voteType) {

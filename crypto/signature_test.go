@@ -77,8 +77,11 @@ func TestSignature(t *testing.T) {
 	assert.NoError(t, err)
 	sig, err := SignatureFromString("76da6c523c4abac463aad1ead5b7a042f143e354c346f6921a4975cc16959559e9b738fa197ab4df123f580a553b1596")
 	assert.NoError(t, err)
+	addr, err := AddressFromString("f6edd7e1d53d730a3ae0d44e6b6ce5dc102c0b63")
+	assert.NoError(t, err)
 
 	sig1 := priv.Sign(msg)
 	assert.Equal(t, sig1.RawBytes(), sig.RawBytes())
 	assert.True(t, pub.Verify(msg, &sig))
+	assert.Equal(t, pub.Address(), addr)
 }

@@ -15,9 +15,10 @@ import (
 var _ State = &MockState{}
 
 type MockState struct {
-	LastBlockCommit *block.Commit
-	GenHash         crypto.Hash
-	Store           *store.MockStore
+	LastBlockCommit  *block.Commit
+	GenHash          crypto.Hash
+	Store            *store.MockStore
+	InvalidBlockHash crypto.Hash
 }
 
 func NewMockStore() *MockState {
@@ -59,6 +60,9 @@ func (m *MockState) Fingerprint() string {
 	return ""
 }
 func (m *MockState) ApplyBlock(height int, b block.Block, c block.Commit) error {
+	if b.Hash().EqualsTo(m.InvalidBlockHash) {
+		return fmt.Errorf("Invalid block")
+	}
 	if height == m.LastBlockHeight()+1 {
 		m.Store.Blocks[height] = &b
 		m.LastBlockCommit = &c

@@ -72,6 +72,8 @@ func CommitSignBytes(blockHash crypto.Hash, round int) []byte {
 }
 
 func (vote Vote) SignBytes() []byte {
+	// Note:
+	// We omit block height, because finally block height is not matter, block hash is matter
 	bz, _ := cbor.Marshal(signVote{
 		VoteType:  vote.data.VoteType,
 		Round:     vote.data.Round,
