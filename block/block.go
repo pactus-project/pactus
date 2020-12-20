@@ -188,10 +188,10 @@ func GenerateTestCommit(blockhash crypto.Hash) *Commit {
 	addr3, _, pv3 := crypto.GenerateTestKeyPair()
 	addr4, _, _ := crypto.GenerateTestKeyPair()
 
-	sigs := []crypto.Signature{
-		*pv1.Sign(blockhash.RawBytes()),
-		*pv2.Sign(blockhash.RawBytes()),
-		*pv3.Sign(blockhash.RawBytes()),
+	sigs := []*crypto.Signature{
+		pv1.Sign(blockhash.RawBytes()),
+		pv2.Sign(blockhash.RawBytes()),
+		pv3.Sign(blockhash.RawBytes()),
 	}
 	sig := crypto.Aggregate(sigs)
 

@@ -10,10 +10,8 @@ import (
 )
 
 func TestChangeAcc(t *testing.T) {
-	setup(t)
-
-	st1, _ := mockState(t, nil)
-	st2, _ := mockState(t, nil)
+	st1 := setupStatewithOneValidator(t)
+	st2 := setupStatewithOneValidator(t)
 
 	require.Equal(t, st1.store.TotalAccounts(), 1)
 
@@ -28,7 +26,7 @@ func TestChangeAcc(t *testing.T) {
 	st1.store.UpdateAccount(acc4)
 	root1 := st1.accountsMerkleRootHash()
 
-	// Change an acount state
+	// Change an account state
 	acc3.IncSequence()
 
 	st2.store.UpdateAccount(acc2)
@@ -41,8 +39,8 @@ func TestChangeAcc(t *testing.T) {
 }
 
 func TestChangeVal(t *testing.T) {
-	st1, _ := mockState(t, nil)
-	st2, _ := mockState(t, nil)
+	st1 := setupStatewithOneValidator(t)
+	st2 := setupStatewithOneValidator(t)
 
 	require.Equal(t, st1.store.TotalValidators(), 1)
 
@@ -57,7 +55,7 @@ func TestChangeVal(t *testing.T) {
 	st1.store.UpdateValidator(val4)
 	root1 := st1.validatorsMerkleRootHash()
 
-	// Change an acount state
+	// Change an account state
 	val3.IncSequence()
 
 	st2.store.UpdateValidator(val2)

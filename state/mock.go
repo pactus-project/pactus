@@ -51,8 +51,9 @@ func (m *MockState) LastCommit() *block.Commit {
 func (m *MockState) BlockTime() time.Duration {
 	return time.Second
 }
-func (m *MockState) UpdateLastCommit(blockHash crypto.Hash, commit block.Commit) {
-	m.LastBlockCommit = &commit
+func (m *MockState) UpdateLastCommit(commit *block.Commit) error {
+	m.LastBlockCommit = commit
+	return nil
 }
 func (m *MockState) Fingerprint() string {
 	return ""

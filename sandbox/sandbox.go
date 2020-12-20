@@ -188,7 +188,7 @@ func (sb *SandboxConcrete) MakeNewValidator(pub crypto.PublicKey) *validator.Val
 		sb.shouldPanicForDuplicatedAddress()
 	}
 
-	val := validator.NewValidator(pub, sb.totalAccounts, sb.lastHeight()+1)
+	val := validator.NewValidator(pub, sb.totalValidators, sb.lastHeight()+1)
 	sb.validators[addr] = &ValidatorStatus{
 		Validator: *val,
 		Updated:   true,

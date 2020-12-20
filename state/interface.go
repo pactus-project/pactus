@@ -18,7 +18,7 @@ type StateReader interface {
 	LastBlockTime() time.Time
 	LastCommit() *block.Commit
 	BlockTime() time.Duration
-	UpdateLastCommit(blockHash crypto.Hash, commit block.Commit)
+	UpdateLastCommit(lastCommit *block.Commit) error
 	Fingerprint() string
 }
 

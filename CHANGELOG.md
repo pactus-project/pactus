@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0
+- Using blake2b for hashing
+- Using ARC cache for syncing module
+- 
+
 ## 0.9.1
 - Adding wizard argument to start command
 - Ensure messages belongs to same network
@@ -10,7 +15,7 @@
 - Aggregating validators' signatures
 - Validating Commit and committers
 - Merklizing committers
-- Repost UndefHash as a sanity error
+- Report UndefHash as a sanity error
 - Try to load last state info upon starting the node
 - Saving the last state info when a new block is committed
 - Updating store interface

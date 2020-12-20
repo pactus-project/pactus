@@ -10,19 +10,19 @@ var _ TxPool = &MockTxPool{}
 
 // MockTxPool is a testing mock
 type MockTxPool struct {
-	txs []*tx.Tx
+	Txs []*tx.Tx
 }
 
 func NewMockTxPool() *MockTxPool {
 	return &MockTxPool{
-		txs: make([]*tx.Tx, 0),
+		Txs: make([]*tx.Tx, 0),
 	}
 }
 func (m *MockTxPool) SetSandbox(sandbox sandbox.Sandbox) {
 
 }
 func (m *MockTxPool) PendingTx(id crypto.Hash) *tx.Tx {
-	for _, t := range m.txs {
+	for _, t := range m.Txs {
 		if t.ID().EqualsTo(id) {
 			return t
 		}
@@ -31,7 +31,7 @@ func (m *MockTxPool) PendingTx(id crypto.Hash) *tx.Tx {
 }
 
 func (m *MockTxPool) HasTx(id crypto.Hash) bool {
-	for _, t := range m.txs {
+	for _, t := range m.Txs {
 		if t.ID().EqualsTo(id) {
 			return true
 		}
@@ -40,7 +40,7 @@ func (m *MockTxPool) HasTx(id crypto.Hash) bool {
 }
 
 func (m *MockTxPool) Size() int {
-	return len(m.txs)
+	return len(m.Txs)
 }
 
 func (m *MockTxPool) Fingerprint() string {
@@ -48,11 +48,11 @@ func (m *MockTxPool) Fingerprint() string {
 }
 
 func (m *MockTxPool) AppendTx(t *tx.Tx) error {
-	m.txs = append(m.txs, t)
+	m.Txs = append(m.Txs, t)
 	return nil
 }
 func (m *MockTxPool) AppendTxAndBroadcast(t *tx.Tx) error {
-	m.txs = append(m.txs, t)
+	m.Txs = append(m.Txs, t)
 	return nil
 }
 
@@ -63,5 +63,5 @@ func (m *MockTxPool) RemoveTx(hash crypto.Hash) {
 }
 
 func (m *MockTxPool) AllTransactions() []*tx.Tx {
-	return m.txs
+	return m.Txs
 }
