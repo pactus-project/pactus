@@ -14,7 +14,8 @@ const testnetJSON = `
       "MaximumMemoLength":1024,
       "FeeFraction":0.001,
       "MinimumFee":1000,
-      "TransactionToLiveInterval":500
+      "TransactionToLiveInterval":8640,
+      "WiredrawStakeInterval":181440
    },
    "Accounts":[
       {

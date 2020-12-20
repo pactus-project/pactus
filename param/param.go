@@ -11,6 +11,7 @@ type Params struct {
 	FeeFraction                float64 `cbor:"6,keyasint"`
 	MinimumFee                 int64   `cbor:"7,keyasint"`
 	TransactionToLiveInterval  int     `cbor:"8,keyasint"`
+	WiredrawStakeInterval      int     `cbor:"9,keyasint"`
 }
 
 func MainnetParams() Params {
@@ -22,7 +23,8 @@ func MainnetParams() Params {
 		MaximumMemoLength:          1024,
 		FeeFraction:                0.001,
 		MinimumFee:                 1000,
-		TransactionToLiveInterval:  500,
+		TransactionToLiveInterval:  8640,   // one days
+		WiredrawStakeInterval:      181440, // 21 days
 	}
 }
 
