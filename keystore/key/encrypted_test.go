@@ -38,6 +38,8 @@ func TestEncryptionData(t *testing.T) {
 	k1 := GenKey()
 	//Encrypts the key json blob
 	ek, err := EncryptKey(k1, auth, "")
+	f := util.TempFilePath()
+	assert.NoError(t, ek.Save(f))
 
 	assert.NoError(t, err)
 	//Decrypts Json Object
