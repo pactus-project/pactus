@@ -118,3 +118,33 @@ func NewVoteMessage(vote *vote.Vote) *Message {
 		},
 	}
 }
+
+func makePayload(t payload.PayloadType) payload.Payload {
+	switch t {
+	case payload.PayloadTypeSalam:
+		return &payload.SalamPayload{}
+	case payload.PayloadTypeAleyk:
+		return &payload.AleykPayload{}
+	case payload.PayloadTypeBlocksReq:
+		return &payload.BlocksReqPayload{}
+	case payload.PayloadTypeBlocks:
+		return &payload.BlocksPayload{}
+	case payload.PayloadTypeTxsReq:
+		return &payload.TxsReqPayload{}
+	case payload.PayloadTypeTxs:
+		return &payload.TxsPayload{}
+	case payload.PayloadTypeProposalReq:
+		return &payload.ProposalReqPayload{}
+	case payload.PayloadTypeProposal:
+		return &payload.ProposalPayload{}
+	case payload.PayloadTypeHeartBeat:
+		return &payload.HeartBeatPayload{}
+	case payload.PayloadTypeVote:
+		return &payload.VotePayload{}
+	case payload.PayloadTypeVoteSet:
+		return &payload.VoteSetPayload{}
+	}
+
+	//
+	return nil
+}

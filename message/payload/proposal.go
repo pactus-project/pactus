@@ -10,6 +10,9 @@ type ProposalPayload struct {
 }
 
 func (p *ProposalPayload) SanityCheck() error {
+	if p.Proposal == nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "No proposal")
+	}
 	if err := p.Proposal.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}

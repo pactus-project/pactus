@@ -71,32 +71,8 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	var pld payload.Payload
-	switch msg.PayloadType {
-	case payload.PayloadTypeSalam:
-		pld = &payload.SalamPayload{}
-	case payload.PayloadTypeAleyk:
-		pld = &payload.AleykPayload{}
-	case payload.PayloadTypeBlocksReq:
-		pld = &payload.BlocksReqPayload{}
-	case payload.PayloadTypeBlocks:
-		pld = &payload.BlocksPayload{}
-	case payload.PayloadTypeTxsReq:
-		pld = &payload.TxsReqPayload{}
-	case payload.PayloadTypeTxs:
-		pld = &payload.TxsPayload{}
-	case payload.PayloadTypeProposalReq:
-		pld = &payload.ProposalReqPayload{}
-	case payload.PayloadTypeProposal:
-		pld = &payload.ProposalPayload{}
-	case payload.PayloadTypeHeartBeat:
-		pld = &payload.HeartBeatPayload{}
-	case payload.PayloadTypeVote:
-		pld = &payload.VotePayload{}
-	case payload.PayloadTypeVoteSet:
-		pld = &payload.VoteSetPayload{}
-
-	default:
+	pld := makePayload(msg.PayloadType)
+	if pld == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload")
 	}
 
