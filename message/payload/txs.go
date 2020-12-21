@@ -1,8 +1,9 @@
-package message
+package payload
 
 import (
 	"fmt"
 
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -10,15 +11,10 @@ type TxsPayload struct {
 	Txs []*tx.Tx `cbor:"2,keyasint"`
 }
 
-func NewTxsMessage(txs []*tx.Tx) *Message {
-	return &Message{
-		Type: PayloadTypeTxs,
-		Payload: &TxsPayload{
-			Txs: txs,
-		},
-	}
-}
 func (p *TxsPayload) SanityCheck() error {
+	if len(p.Txs) == 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "No transaction")
+	}
 	for _, tx := range p.Txs {
 		if err := tx.SanityCheck(); err != nil {
 			return err

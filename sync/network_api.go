@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/network"
 )
 
@@ -171,24 +172,23 @@ func (api *networkAPI) consensusLoop() {
 
 func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 	switch msg.PayloadType() {
-
-	case message.PayloadTypeSalam,
-		message.PayloadTypeAleyk,
-		message.PayloadTypeHeartBeat:
+	case payload.PayloadTypeSalam,
+		payload.PayloadTypeAleyk,
+		payload.PayloadTypeHeartBeat:
 		return api.generalTopic
 
-	case message.PayloadTypeBlocksReq,
-		message.PayloadTypeBlocks:
+	case payload.PayloadTypeBlocksReq,
+		payload.PayloadTypeBlocks:
 		return api.blockTopic
 
-	case message.PayloadTypeTxsReq,
-		message.PayloadTypeTxs:
+	case payload.PayloadTypeTxsReq,
+		payload.PayloadTypeTxs:
 		return api.txTopic
 
-	case message.PayloadTypeProposalReq,
-		message.PayloadTypeProposal,
-		message.PayloadTypeVote,
-		message.PayloadTypeVoteSet:
+	case payload.PayloadTypeProposalReq,
+		payload.PayloadTypeProposal,
+		payload.PayloadTypeVote,
+		payload.PayloadTypeVoteSet:
 		return api.consensusTopic
 	default:
 		panic("Invalid topic")

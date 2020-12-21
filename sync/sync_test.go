@@ -12,6 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/stats"
@@ -82,7 +83,7 @@ func TestSendSalamBadGenesisHash(t *testing.T) {
 	msg := message.NewSalamMessage(invGenHash, 0)
 	data, _ := cbor.Marshal(msg)
 	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, message.PayloadTypeAleyk)
+	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeAleyk)
 }
 
 func TestSendSalamPeerAhead(t *testing.T) {
@@ -123,7 +124,7 @@ func TestCacheBlocksAndTransactions(t *testing.T) {
 
 	// Send blocks
 	tSync.broadcastBlocks(1001, []*block.Block{b}, nil)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeBlocks)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocks)
 
 	assert.NotNil(t, tCache.GetBlock(1001))
 	assert.NotNil(t, tCache.GetCommit(b.Header().LastBlockHash()))
@@ -138,12 +139,12 @@ func TestDuplicatingBlock(t *testing.T) {
 
 	// Send block 1
 	tSync.broadcastBlocks(1001, []*block.Block{b1}, nil)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeBlocks)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocks)
 	assert.Equal(t, tCache.GetBlock(1001).Hash(), b1.Hash())
 
 	// Send block 1 again, should overwrite the first one in cache
 	tSync.broadcastBlocks(1001, []*block.Block{b2}, nil)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeBlocks)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocks)
 	assert.Equal(t, tCache.GetBlock(1001).Hash(), b2.Hash())
 }
 
@@ -162,5 +163,5 @@ func TestCheckTxsInCache(t *testing.T) {
 	tCache.AddTransaction(trx3)
 	msg = message.NewTxsReqMessage([]crypto.Hash{trx3.ID()})
 	tBroadcastCh <- msg
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, message.PayloadTypeTxsReq)
+	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeTxsReq)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -106,33 +107,33 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 
 	//ourHeight, _ := syncer.state.LastBlockInfo()
 	switch msg.PayloadType() {
-	case message.PayloadTypeSalam:
-		pld := msg.Payload.(*message.SalamPayload)
+	case payload.PayloadTypeSalam:
+		pld := msg.Payload.(*payload.SalamPayload)
 		node.Version = pld.Version
 		node.GenesisHash = pld.GenesisHash
 		s.updateMaxHeight(pld.Height)
 
-	case message.PayloadTypeAleyk:
-		pld := msg.Payload.(*message.AleykPayload)
+	case payload.PayloadTypeAleyk:
+		pld := msg.Payload.(*payload.AleykPayload)
 		node.Version = pld.Version
 		node.GenesisHash = pld.GenesisHash
 		s.updateMaxHeight(pld.Height)
 
-	case message.PayloadTypeHeartBeat:
-		pld := msg.Payload.(*message.HeartBeatPayload)
+	case payload.PayloadTypeHeartBeat:
+		pld := msg.Payload.(*payload.HeartBeatPayload)
 		node.HRS = pld.Pulse
 		s.updateMaxHeight(pld.Pulse.Height() - 1)
 
-	case message.PayloadTypeProposal:
-		pld := msg.Payload.(*message.ProposalPayload)
+	case payload.PayloadTypeProposal:
+		pld := msg.Payload.(*payload.ProposalPayload)
 		s.updateMaxHeight(pld.Proposal.Height() - 1)
 
-	case message.PayloadTypeVote:
-		pld := msg.Payload.(*message.VotePayload)
+	case payload.PayloadTypeVote:
+		pld := msg.Payload.(*payload.VotePayload)
 		s.updateMaxHeight(pld.Vote.Height() - 1)
 
-	case message.PayloadTypeVoteSet:
-		//pld := msg.Payload.(*message.VoteSetPayload)
+	case payload.PayloadTypeVoteSet:
+		//pld := msg.Payload.(*payload.VoteSetPayload)
 	}
 
 	return msg

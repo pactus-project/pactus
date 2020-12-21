@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
@@ -127,8 +128,8 @@ func (syncer *Synchronizer) broadcastLoop() {
 		case msg := <-syncer.broadcastCh:
 
 			switch msg.PayloadType() {
-			case message.PayloadTypeTxsReq:
-				pld := msg.Payload.(*message.TxsReqPayload)
+			case payload.PayloadTypeTxsReq:
+				pld := msg.Payload.(*payload.TxsReqPayload)
 				for i, id := range pld.IDs {
 					trx := syncer.cache.GetTransaction(id)
 					if trx != nil {

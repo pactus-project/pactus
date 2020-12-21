@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -19,7 +20,7 @@ func TestRequestForBlocksInvalidLastBlocHash(t *testing.T) {
 	// Send block request, but block hash is invalid, ignore it
 	tSync.broadcastBlocksReq(7, tState.LastBlockHeight(), invHash)
 
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, message.PayloadTypeBlocks)
+	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeBlocks)
 }
 
 func TestRequestForBlocks(t *testing.T) {
@@ -60,10 +61,10 @@ func TestUpdateConsensus(t *testing.T) {
 	p, _ := vote.GenerateTestProposal(1, 1)
 
 	tSync.broadcastVote(v)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeVote)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeVote)
 
 	tSync.broadcastProposal(p)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeProposal)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeProposal)
 
 	assert.Equal(t, tConsensus.Votes[0].Hash(), v.Hash())
 	assert.Equal(t, tConsensus.Proposal.Hash(), p.Hash())
@@ -75,8 +76,8 @@ func TestMoveToConsensus(t *testing.T) {
 	// Bad peer send us invalid height
 	msg := message.NewSalamMessage(tState.GenHash, 100000000)
 	tSync.publishMessage(msg)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeAleyk)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeBlocksReq)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeAleyk)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocksReq)
 
 	tSync.maybeSynced(false)
 	assert.False(t, tConsensus.Moved)
@@ -110,8 +111,8 @@ func TestSendInvalidBlock(t *testing.T) {
 	networkHeight := tState.LastBlockHeight() + 15
 	msg := message.NewSalamMessage(tState.GenHash, networkHeight)
 	tSync.publishMessage(msg)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeAleyk)
-	tNetAPI.shouldReceiveMessageWithThisType(t, message.PayloadTypeBlocksReq)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeAleyk)
+	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocksReq)
 
 	tSync.maybeSynced(false)
 	assert.False(t, tConsensus.Moved)

@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -14,17 +14,6 @@ type SalamPayload struct {
 	Height      int             `cbor:"3,keyasint"`
 }
 
-func NewSalamMessage(genesisHash crypto.Hash, height int) *Message {
-	return &Message{
-		Type: PayloadTypeSalam,
-		Payload: &SalamPayload{
-			Version:     version.NodeVersion,
-			GenesisHash: genesisHash,
-			Height:      height,
-		},
-	}
-
-}
 func (p *SalamPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")

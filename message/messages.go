@@ -6,58 +6,15 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/message/payload"
 )
-
-type PayloadType int
-
-const (
-	PayloadTypeSalam       = PayloadType(1) // Hello message
-	PayloadTypeAleyk       = PayloadType(2) // Hello Ack message
-	PayloadTypeBlocksReq   = PayloadType(3)
-	PayloadTypeBlocks      = PayloadType(4)
-	PayloadTypeTxsReq      = PayloadType(5)
-	PayloadTypeTxs         = PayloadType(6)
-	PayloadTypeProposalReq = PayloadType(7)
-	PayloadTypeProposal    = PayloadType(8)
-	PayloadTypeHeartBeat   = PayloadType(9)
-	PayloadTypeVote        = PayloadType(10)
-	PayloadTypeVoteSet     = PayloadType(11)
-)
-
-func (t PayloadType) String() string {
-	switch t {
-	case PayloadTypeSalam:
-		return "salam"
-	case PayloadTypeAleyk:
-		return "aleyk"
-	case PayloadTypeBlocksReq:
-		return "blocks-req"
-	case PayloadTypeBlocks:
-		return "blocks"
-	case PayloadTypeTxsReq:
-		return "txs-req"
-	case PayloadTypeTxs:
-		return "txs"
-	case PayloadTypeProposalReq:
-		return "proposal-req"
-	case PayloadTypeProposal:
-		return "proposal"
-	case PayloadTypeHeartBeat:
-		return "heart-beat"
-	case PayloadTypeVote:
-		return "vote"
-	case PayloadTypeVoteSet:
-		return "vote-set"
-	}
-	return fmt.Sprintf("%d", t)
-}
 
 type Message struct {
 	Initiator crypto.Address
 	Target    crypto.Address
 	Flags     int
-	Type      PayloadType
-	Payload   Payload
+	Type      payload.PayloadType
+	Payload   payload.Payload
 }
 
 func (m *Message) SanityCheck() error {
@@ -77,16 +34,17 @@ func (m *Message) Fingerprint() string {
 	return fmt.Sprintf("{%s %s}", m.Type, m.Payload.Fingerprint())
 }
 
-func (m *Message) PayloadType() PayloadType {
+func (m *Message) PayloadType() payload.PayloadType {
 	return m.Type
 }
 
 type _Message struct {
-	Initiator   crypto.Address  `cbor:"1,keyasint,omitempty"`
-	Target      crypto.Address  `cbor:"2,keyasint,omitempty"`
-	Flags       int             `cbor:"3,keyasint,omitempty"`
-	PayloadType PayloadType     `cbor:"4,keyasint"`
-	Payload     cbor.RawMessage `cbor:"10,keyasint"`
+	Initiator   crypto.Address      `cbor:"1,keyasint,omitempty"`
+	Target      crypto.Address      `cbor:"2,keyasint,omitempty"`
+	Flags       int                 `cbor:"3,keyasint,omitempty"`
+	PayloadType payload.PayloadType `cbor:"4,keyasint"`
+	Payload     cbor.RawMessage     `cbor:"10,keyasint"`
+	Payload2    cbor.RawMessage     `cbor:"21,keyasint"`
 }
 
 func (m *Message) MarshalCBOR() ([]byte, error) {
@@ -100,7 +58,7 @@ func (m *Message) MarshalCBOR() ([]byte, error) {
 		Target:      m.Target,
 		Flags:       m.Flags,
 		PayloadType: m.Type,
-		Payload:     bs,
+		Payload2:    bs,
 	}
 
 	return cbor.Marshal(msg)
@@ -113,42 +71,12 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	var payload Payload
-	switch msg.PayloadType {
-	case PayloadTypeSalam:
-		payload = &SalamPayload{}
-	case PayloadTypeAleyk:
-		payload = &AleykPayload{}
-	case PayloadTypeBlocksReq:
-		payload = &BlocksReqPayload{}
-	case PayloadTypeBlocks:
-		payload = &BlocksPayload{}
-	case PayloadTypeTxsReq:
-		payload = &TxsReqPayload{}
-	case PayloadTypeTxs:
-		payload = &TxsPayload{}
-	case PayloadTypeProposalReq:
-		payload = &ProposalReqPayload{}
-	case PayloadTypeProposal:
-		payload = &ProposalPayload{}
-	case PayloadTypeHeartBeat:
-		payload = &HeartBeatPayload{}
-	case PayloadTypeVote:
-		payload = &VotePayload{}
-	case PayloadTypeVoteSet:
-		payload = &VoteSetPayload{}
-
-	default:
+	pld := makePayload(msg.PayloadType)
+	if pld == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload")
 	}
 
 	m.Type = msg.PayloadType
-	m.Payload = payload
-	return cbor.Unmarshal(msg.Payload, payload)
-}
-
-type Payload interface {
-	SanityCheck() error
-	Type() PayloadType
-	Fingerprint() string
+	m.Payload = pld
+	return cbor.Unmarshal(msg.Payload2, pld)
 }

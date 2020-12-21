@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -9,15 +9,6 @@ import (
 
 type TxsReqPayload struct {
 	IDs []crypto.Hash `cbor:"1,keyasint"`
-}
-
-func NewTxsReqMessage(ids []crypto.Hash) *Message {
-	return &Message{
-		Type: PayloadTypeTxsReq,
-		Payload: &TxsReqPayload{
-			IDs: ids,
-		},
-	}
 }
 
 func (p *TxsReqPayload) SanityCheck() error {
