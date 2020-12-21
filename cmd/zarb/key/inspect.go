@@ -2,9 +2,8 @@ package key
 
 import (
 	"fmt"
-	"io/ioutil"
 
-	"github.com/jawher/mow.cli"
+	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/keystore/key"
 )
@@ -24,21 +23,21 @@ func Inspect() func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 
-			// Read key from file.
-			keyjson, err := ioutil.ReadFile(*keyFile)
+			ek, err := key.NewEncryptedKey(*keyFile)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to read the key file: %v", err)
 				return
 			}
 			// Decrypt key with passphrase.
 			passphrase := cmd.PromptPassphrase("Passphrase: ", false)
-			keyObj, err := key.DecryptKey(keyjson, passphrase)
+			keyObj, err := ek.Decrypt(passphrase)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to decrypt: %v", err)
 				return
 			}
 
 			fmt.Println()
+			cmd.PrintInfoMsg("Label: %v", ek.Label)
 			cmd.PrintInfoMsg("Address: %v", keyObj.Address())
 			cmd.PrintInfoMsg("Public key: %v", keyObj.PublicKey())
 			if *showPrivate {

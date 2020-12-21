@@ -77,7 +77,7 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 
 	for i := 1; i < len(accs); i++ {
 		k := key.GenKey()
-		if err := key.EncryptKeyFile(k, workingDir+"/keys/"+k.Address().String()+".json", "", ""); err != nil {
+		if err := key.EncryptKeyToFile(k, workingDir+"/keys/"+k.Address().String()+".json", "", ""); err != nil {
 			return nil
 		}
 		acc := account.NewAccount(k.Address(), i+1)
@@ -88,7 +88,7 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 
 	// create validator account for genesis
 	k := key.GenKey()
-	if err := key.EncryptKeyFile(k, workingDir+"/validator_key.json", "", ""); err != nil {
+	if err := key.EncryptKeyToFile(k, workingDir+"/validator_key.json", "", ""); err != nil {
 		return nil
 	}
 	val := validator.NewValidator(k.PublicKey(), 0, 0)
