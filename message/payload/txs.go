@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -10,14 +10,6 @@ type TxsPayload struct {
 	Txs []*tx.Tx `cbor:"2,keyasint"`
 }
 
-func NewTxsMessage(txs []*tx.Tx) *Message {
-	return &Message{
-		Type: PayloadTypeTxs,
-		Payload: &TxsPayload{
-			Txs: txs,
-		},
-	}
-}
 func (p *TxsPayload) SanityCheck() error {
 	for _, tx := range p.Txs {
 		if err := tx.SanityCheck(); err != nil {

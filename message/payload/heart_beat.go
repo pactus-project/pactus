@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -11,15 +11,6 @@ import (
 type HeartBeatPayload struct {
 	Pulse         hrs.HRS     `cbor:"1,keyasint"`
 	LastBlockHash crypto.Hash `cbor:"2,keyasint"`
-}
-
-func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
-	return &Message{
-		Type: PayloadTypeHeartBeat,
-		Payload: &HeartBeatPayload{
-			Pulse: hrs,
-		},
-	}
 }
 
 func (p *HeartBeatPayload) SanityCheck() error {

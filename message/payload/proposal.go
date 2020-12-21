@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"github.com/zarbchain/zarb-go/errors"
@@ -7,15 +7,6 @@ import (
 
 type ProposalPayload struct {
 	Proposal *vote.Proposal `cbor:"1,keyasint"`
-}
-
-func NewProposalMessage(proposal *vote.Proposal) *Message {
-	return &Message{
-		Type: PayloadTypeProposal,
-		Payload: &ProposalPayload{
-			Proposal: proposal,
-		},
-	}
 }
 
 func (p *ProposalPayload) SanityCheck() error {

@@ -2,7 +2,7 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -15,48 +15,48 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 	syncer.logger.Trace("Received a message", "from", from.ShortString(), "message", msg)
 
 	switch msg.PayloadType() {
-	case message.PayloadTypeSalam:
-		pld := msg.Payload.(*message.SalamPayload)
+	case payload.PayloadTypeSalam:
+		pld := msg.Payload.(*payload.SalamPayload)
 		syncer.processSalamPayload(pld)
 
-	case message.PayloadTypeAleyk:
-		pld := msg.Payload.(*message.AleykPayload)
+	case payload.PayloadTypeAleyk:
+		pld := msg.Payload.(*payload.AleykPayload)
 		syncer.processAleykPayload(pld)
 
-	case message.PayloadTypeHeartBeat:
-		pld := msg.Payload.(*message.HeartBeatPayload)
+	case payload.PayloadTypeHeartBeat:
+		pld := msg.Payload.(*payload.HeartBeatPayload)
 		syncer.processHeartBeatPayload(pld)
 
-	case message.PayloadTypeBlocksReq:
-		pld := msg.Payload.(*message.BlocksReqPayload)
+	case payload.PayloadTypeBlocksReq:
+		pld := msg.Payload.(*payload.BlocksReqPayload)
 		syncer.processBlocksReqPayload(pld)
 
-	case message.PayloadTypeBlocks:
-		pld := msg.Payload.(*message.BlocksPayload)
+	case payload.PayloadTypeBlocks:
+		pld := msg.Payload.(*payload.BlocksPayload)
 		syncer.processBlocksPayload(pld)
 
-	case message.PayloadTypeTxsReq:
-		pld := msg.Payload.(*message.TxsReqPayload)
+	case payload.PayloadTypeTxsReq:
+		pld := msg.Payload.(*payload.TxsReqPayload)
 		syncer.processTxsReqPayload(pld)
 
-	case message.PayloadTypeTxs:
-		pld := msg.Payload.(*message.TxsPayload)
+	case payload.PayloadTypeTxs:
+		pld := msg.Payload.(*payload.TxsPayload)
 		syncer.processTxsPayload(pld)
 
-	case message.PayloadTypeProposalReq:
-		pld := msg.Payload.(*message.ProposalReqPayload)
+	case payload.PayloadTypeProposalReq:
+		pld := msg.Payload.(*payload.ProposalReqPayload)
 		syncer.processProposalReqPayload(pld)
 
-	case message.PayloadTypeProposal:
-		pld := msg.Payload.(*message.ProposalPayload)
+	case payload.PayloadTypeProposal:
+		pld := msg.Payload.(*payload.ProposalPayload)
 		syncer.processProposalPayload(pld)
 
-	case message.PayloadTypeVote:
-		pld := msg.Payload.(*message.VotePayload)
+	case payload.PayloadTypeVote:
+		pld := msg.Payload.(*payload.VotePayload)
 		syncer.processVotePayload(pld)
 
-	case message.PayloadTypeVoteSet:
-		pld := msg.Payload.(*message.VoteSetPayload)
+	case payload.PayloadTypeVoteSet:
+		pld := msg.Payload.(*payload.VoteSetPayload)
 		syncer.processVoteSetPayload(pld)
 
 	default:
@@ -64,7 +64,7 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 	}
 }
 
-func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
+func (syncer *Synchronizer) processSalamPayload(pld *payload.SalamPayload) {
 	syncer.logger.Trace("Process salam payload", "pld", pld)
 
 	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
@@ -78,13 +78,13 @@ func (syncer *Synchronizer) processSalamPayload(pld *message.SalamPayload) {
 	syncer.sendBlocksReqIfWeAreBehind(pld.Height)
 }
 
-func (syncer *Synchronizer) processAleykPayload(pld *message.AleykPayload) {
+func (syncer *Synchronizer) processAleykPayload(pld *payload.AleykPayload) {
 	syncer.logger.Trace("Process Aleyk payload", "pld", pld)
 
 	syncer.sendBlocksReqIfWeAreBehind(pld.Height)
 }
 
-func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayload) {
+func (syncer *Synchronizer) processBlocksReqPayload(pld *payload.BlocksReqPayload) {
 	syncer.logger.Trace("Process blocks request payload", "pld", pld)
 
 	ourHeight := syncer.state.LastBlockHeight()
@@ -107,7 +107,7 @@ func (syncer *Synchronizer) processBlocksReqPayload(pld *message.BlocksReqPayloa
 	syncer.sendBlocks(pld.From, pld.To)
 }
 
-func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
+func (syncer *Synchronizer) processBlocksPayload(pld *payload.BlocksPayload) {
 	syncer.logger.Trace("Process blocks payload", "pld", pld)
 
 	ourHeight := syncer.state.LastBlockHeight()
@@ -154,7 +154,7 @@ func (syncer *Synchronizer) processBlocksPayload(pld *message.BlocksPayload) {
 	}
 }
 
-func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
+func (syncer *Synchronizer) processTxsReqPayload(pld *payload.TxsReqPayload) {
 	syncer.logger.Trace("Process txs request Payload", "pld", pld)
 
 	txs := make([]*tx.Tx, 0, len(pld.IDs))
@@ -168,7 +168,7 @@ func (syncer *Synchronizer) processTxsReqPayload(pld *message.TxsReqPayload) {
 	syncer.broadcastTxs(txs)
 }
 
-func (syncer *Synchronizer) processTxsPayload(pld *message.TxsPayload) {
+func (syncer *Synchronizer) processTxsPayload(pld *payload.TxsPayload) {
 	syncer.logger.Trace("Process txs payload", "pld", pld)
 
 	for _, trx := range pld.Txs {
@@ -176,13 +176,13 @@ func (syncer *Synchronizer) processTxsPayload(pld *message.TxsPayload) {
 	}
 }
 
-func (syncer *Synchronizer) processVotePayload(pld *message.VotePayload) {
+func (syncer *Synchronizer) processVotePayload(pld *payload.VotePayload) {
 	syncer.logger.Trace("Process vote payload", "pld", pld)
 
 	syncer.consensus.AddVote(pld.Vote)
 }
 
-func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
+func (syncer *Synchronizer) processVoteSetPayload(pld *payload.VoteSetPayload) {
 	syncer.logger.Trace("Process vote-set payload", "pld", pld)
 
 	hrs := syncer.consensus.HRS()
@@ -207,7 +207,7 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *message.VoteSetPayload) {
 		}
 	}
 }
-func (syncer *Synchronizer) processProposalReqPayload(pld *message.ProposalReqPayload) {
+func (syncer *Synchronizer) processProposalReqPayload(pld *payload.ProposalReqPayload) {
 	syncer.logger.Trace("Process proposal request payload", "pld", pld)
 
 	hrs := syncer.consensus.HRS()
@@ -219,13 +219,13 @@ func (syncer *Synchronizer) processProposalReqPayload(pld *message.ProposalReqPa
 	}
 }
 
-func (syncer *Synchronizer) processProposalPayload(pld *message.ProposalPayload) {
+func (syncer *Synchronizer) processProposalPayload(pld *payload.ProposalPayload) {
 	syncer.logger.Trace("Process proposal payload", "pld", pld)
 
 	syncer.consensus.SetProposal(pld.Proposal)
 }
 
-func (syncer *Synchronizer) processHeartBeatPayload(pld *message.HeartBeatPayload) {
+func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayload) {
 	syncer.logger.Trace("Process heartbeat payload", "pld", pld)
 
 	hrs := syncer.consensus.HRS()

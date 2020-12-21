@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -13,17 +13,6 @@ type BlocksReqPayload struct {
 	LastBlockHash crypto.Hash `cbor:"3,keyasint"`
 }
 
-func NewBlocksReqMessage(from, to int, lastBlockHash crypto.Hash) *Message {
-	return &Message{
-		Type: PayloadTypeBlocksReq,
-		Payload: &BlocksReqPayload{
-			From:          from,
-			To:            to,
-			LastBlockHash: lastBlockHash,
-		},
-	}
-
-}
 func (p *BlocksReqPayload) SanityCheck() error {
 	if p.From <= 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")

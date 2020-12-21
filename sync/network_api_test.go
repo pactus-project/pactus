@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 )
 
 type mockNetworkAPI struct {
@@ -50,7 +51,7 @@ func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message
 		}
 	}
 }
-func (mock *mockNetworkAPI) shouldReceiveMessageWithThisType(t *testing.T, payloadType message.PayloadType) {
+func (mock *mockNetworkAPI) shouldReceiveMessageWithThisType(t *testing.T, pldType payload.PayloadType) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -59,18 +60,18 @@ func (mock *mockNetworkAPI) shouldReceiveMessageWithThisType(t *testing.T, paylo
 			assert.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case apiMsg := <-mock.ch:
-			logger.Info("comparing messages", "apiMsg", apiMsg)
+			logger.Info("comparing messages type", "apiMsg", apiMsg)
 			b, _ := apiMsg.MarshalCBOR()
 
 			tSync.ParsMessage(b, tOurID)
-			if apiMsg.PayloadType() == payloadType {
+			if apiMsg.PayloadType() == pldType {
 				return
 			}
 		}
 	}
 }
 
-func (mock *mockNetworkAPI) shouldNotReceiveAnyMessageWithThisType(t *testing.T, payloadType message.PayloadType) {
+func (mock *mockNetworkAPI) shouldNotReceiveAnyMessageWithThisType(t *testing.T, payloadType payload.PayloadType) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -78,7 +79,7 @@ func (mock *mockNetworkAPI) shouldNotReceiveAnyMessageWithThisType(t *testing.T,
 		case <-timeout.C:
 			return
 		case apiMsg := <-mock.ch:
-			logger.Info("comparing messages", "apiMsg", apiMsg)
+			logger.Info("comparing messages type", "apiMsg", apiMsg)
 			b, _ := apiMsg.MarshalCBOR()
 
 			tSync.ParsMessage(b, tOurID)

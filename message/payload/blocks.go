@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -13,17 +13,6 @@ type BlocksPayload struct {
 	LastCommit *block.Commit  `cbor:"3,keyasint, omitempty"`
 }
 
-func NewBlocksMessage(from int, blocks []*block.Block, lastCommit *block.Commit) *Message {
-	return &Message{
-		Type: PayloadTypeBlocks,
-		Payload: &BlocksPayload{
-			From:       from,
-			Blocks:     blocks,
-			LastCommit: lastCommit,
-		},
-	}
-
-}
 func (p *BlocksPayload) SanityCheck() error {
 	if p.From < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")

@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -14,17 +14,6 @@ type AleykPayload struct {
 	Height      int             `cbor:"3,keyasint"`
 }
 
-func NewAleykMessage(genesisHash crypto.Hash, height int) *Message {
-	return &Message{
-		Type: PayloadTypeAleyk,
-		Payload: &AleykPayload{
-			Version:     version.NodeVersion,
-			GenesisHash: genesisHash,
-			Height:      height,
-		},
-	}
-
-}
 func (p *AleykPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")

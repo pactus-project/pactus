@@ -1,4 +1,4 @@
-package message
+package payload
 
 import (
 	"fmt"
@@ -9,16 +9,6 @@ import (
 type ProposalReqPayload struct {
 	Height int `cbor:"1,keyasint"`
 	Round  int `cbor:"2,keyasint"`
-}
-
-func NewProposalReqMessage(height, round int) *Message {
-	return &Message{
-		Type: PayloadTypeProposalReq,
-		Payload: &ProposalReqPayload{
-			Height: height,
-			Round:  round,
-		},
-	}
 }
 
 func (p *ProposalReqPayload) SanityCheck() error {
