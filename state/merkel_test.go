@@ -66,3 +66,10 @@ func TestChangeVal(t *testing.T) {
 
 	assert.NotEqual(t, root1, root2)
 }
+
+func TestCalculatingGenesisState(t *testing.T) {
+	st := setupStatewithFourValidators(t, tValSigner1)
+
+	r := st.calculateGenesisStateHashFromGenesisDoc()
+	assert.Equal(t, st.stateHash(), r)
+}

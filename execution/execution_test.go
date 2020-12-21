@@ -21,10 +21,11 @@ var tPub1, tPub2 crypto.PublicKey
 var tSandbox *sandbox.MockSandbox
 var tTotalCoin int64
 
-func setup(t *testing.T) {
-	loggerConfig := logger.TestConfig()
-	logger.InitLogger(loggerConfig)
+func init() {
+	logger.InitLogger(logger.TestConfig())
+}
 
+func setup(t *testing.T) {
 	tSandbox = sandbox.NewMockSandbox()
 
 	acc1, priv1 := account.GenerateTestAccount(0)

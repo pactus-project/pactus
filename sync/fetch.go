@@ -12,7 +12,7 @@ func (syncer *Synchronizer) ParsMessage(data []byte, from peer.ID) {
 		return
 	}
 
-	syncer.logger.Trace("Received a message", "from", from.ShortString(), "message", msg)
+	syncer.logger.Debug("Received a message", "from", from.ShortString(), "message", msg)
 
 	switch msg.PayloadType() {
 	case payload.PayloadTypeSalam:

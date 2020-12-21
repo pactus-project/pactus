@@ -96,24 +96,37 @@ func LoadOrNewState(
 }
 
 func (st *state) tryLoadLastInfo() error {
-	height, commit, receiptHash, err := st.loadLastInfo()
+	li, err := st.loadLastInfo()
 	if err != nil {
 		return err
 	}
-	logger.Info("Try to load the last state info", "height", height)
+	// Make sure genesis hash is same
+	//
+	// This check is not important because genesis state is committed.
+	// But it is good to have it to make sure genesis doc hasn't changed
+	genHash := st.calculateGenesisStateHashFromGenesisDoc()
+	blockOne, err := st.store.Block(1)
+	if err != nil {
+		return err
+	}
+	if !genHash.EqualsTo(blockOne.Header().StateHash()) {
+		return fmt.Errorf("Invalid genesis doc")
+	}
 
-	b, err := st.store.Block(height)
+	logger.Info("Try to load the last state info", "height", li.LastHeight)
+
+	b, err := st.store.Block(li.LastHeight)
 	if err != nil {
 		return err
 	}
-	st.lastBlockHeight = height
+	st.lastBlockHeight = li.LastHeight
 	st.lastBlockHash = b.Header().Hash()
-	st.lastCommit = commit
+	st.lastCommit = &li.LastCommit
 	st.lastBlockTime = b.Header().Time()
-	st.lastReceiptsHash = *receiptHash
+	st.lastReceiptsHash = li.LastReceiptHash
 
-	vals := make([]*validator.Validator, len(commit.Committers()))
-	for i, c := range commit.Committers() {
+	vals := make([]*validator.Validator, len(st.lastCommit.Committers()))
+	for i, c := range st.lastCommit.Committers() {
 		val, err := st.store.Validator(c.Address)
 		if err != nil {
 			return fmt.Errorf("Last commit has unknown validator: %v", err)
@@ -392,7 +405,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 
 	st.executionSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
-	st.saveLastInfo(st.lastBlockHeight, st.lastCommit, &st.lastReceiptsHash)
+	st.saveLastInfo(st.lastBlockHeight, commit, st.lastReceiptsHash)
 
 	st.EvaluateSortition()
 

@@ -32,6 +32,8 @@ const (
 )
 
 func init() {
+	logger.InitLogger(logger.TestConfig())
+
 	_, keys := validator.GenerateTestValidatorSet()
 	mockTxPool = txpool.NewMockTxPool()
 
@@ -44,8 +46,6 @@ func init() {
 func newTestConsensus(t *testing.T, valID int) *consensus {
 	consConf := TestConfig()
 	stateConf := state.TestConfig()
-	loggerConfig := logger.TestConfig()
-	logger.InitLogger(loggerConfig)
 
 	vals := make([]*validator.Validator, 4)
 	for i, s := range signers {

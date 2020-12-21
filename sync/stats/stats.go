@@ -86,7 +86,7 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 
 	if err = msg.SanityCheck(); err != nil {
 		peer.InvalidMsg = peer.InvalidMsg + 1
-		logger.Debug("Peer sent us invalid msg", "from", from.ShortString(), "msg", msg, "err", err)
+		logger.Debug("Peer sent us invalid msg", "peer", from.ShortString(), "msg", msg, "err", err)
 		return nil
 	}
 
@@ -102,10 +102,10 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 
 	// Not from the same chain
 	if !node.BelongsToSameNetwork(s.genesisHash) {
+		logger.Debug("Node doesn't belong to our network", "node", msg.Initiator, "our_hash", s.genesisHash, "node_hash", node.GenesisHash)
 		return nil
 	}
 
-	//ourHeight, _ := syncer.state.LastBlockInfo()
 	switch msg.PayloadType() {
 	case payload.PayloadTypeSalam:
 		pld := msg.Payload.(*payload.SalamPayload)
