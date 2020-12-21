@@ -19,10 +19,11 @@ var tStore *store.MockStore
 var tSandbox *SandboxConcrete
 var tSortition *sortition.Sortition
 
-func setup(t *testing.T) {
-	loggerConfig := logger.TestConfig()
-	logger.InitLogger(loggerConfig)
+func init() {
+	logger.InitLogger(logger.TestConfig())
+}
 
+func setup(t *testing.T) {
 	var err error
 	tStore = store.NewMockStore()
 

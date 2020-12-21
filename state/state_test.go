@@ -26,6 +26,8 @@ var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
 func init() {
+	logger.InitLogger(logger.TestConfig())
+
 	_, _, priv1 := crypto.GenerateTestKeyPair()
 	_, _, priv2 := crypto.GenerateTestKeyPair()
 	_, _, priv3 := crypto.GenerateTestKeyPair()
@@ -37,10 +39,6 @@ func init() {
 	tValSigner4 = crypto.NewSigner(priv4)
 
 	tGenTime = util.Now()
-
-	loggerConfig := logger.TestConfig()
-	logger.InitLogger(loggerConfig)
-
 	tCommonTxPool = txpool.NewMockTxPool()
 }
 
@@ -100,48 +98,6 @@ func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, signers ...crypto.Si
 		sigs[i] = s.Sign(v.SignBytes())
 	}
 	return *block.NewCommit(0, committers, crypto.Aggregate(sigs))
-}
-
-func TestLoadState(t *testing.T) {
-	st1 := setupStatewithOneValidator(t)
-	st2 := setupStatewithOneValidator(t)
-
-	// Add this dummy acc and val for testing purpose
-	dummyAcc, _ := account.GenerateTestAccount(1)
-	st1.store.UpdateAccount(dummyAcc)
-	st2.store.UpdateAccount(dummyAcc)
-	dummyVal, _ := validator.GenerateTestValidator(1)
-	st1.store.UpdateValidator(dummyVal)
-	st2.store.UpdateValidator(dummyVal)
-	st1.sortition.AddToTotalStake(dummyVal.Stake())
-	st2.sortition.AddToTotalStake(dummyVal.Stake())
-
-	i := 0
-	for ; i < 10; i++ {
-		b1, c1 := proposeAndSignBlock(t, st1, tValSigner1)
-		b2, c2 := proposeAndSignBlock(t, st2, tValSigner1)
-
-		assert.NoError(t, st1.ApplyBlock(i+1, b1, c1))
-		assert.NoError(t, st2.ApplyBlock(i+1, b2, c2))
-	}
-
-	assert.Equal(t, st1.stateHash(), st2.stateHash())
-
-	assert.NoError(t, st2.Close())
-
-	// Load last state info
-	st3, err := LoadOrNewState(st2.config, st2.genDoc, tValSigner1, txpool.NewMockTxPool())
-	require.NoError(t, err)
-
-	b, c := proposeAndSignBlock(t, st1, tValSigner1)
-	assert.Equal(t, b.Hash(), st3.ProposeBlock().Hash())
-	require.NoError(t, st1.ApplyBlock(i+1, b, c))
-	require.NoError(t, st3.ApplyBlock(i+1, b, c))
-	assert.Equal(t, st1.store.TotalAccounts(), st3.(*state).store.TotalAccounts())
-	assert.Equal(t, st1.store.TotalValidators(), st3.(*state).store.TotalValidators())
-	assert.Equal(t, st1.sortition.TotalStake(), st3.(*state).sortition.TotalStake())
-	assert.Equal(t, st1.executionSandbox.LastBlockHeight(), st3.(*state).executionSandbox.LastBlockHeight())
-	assert.Equal(t, st1.executionSandbox.LastBlockHash(), st3.(*state).executionSandbox.LastBlockHash())
 }
 
 func TestBlockSubsidy(t *testing.T) {

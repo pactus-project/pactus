@@ -43,8 +43,7 @@ type _Message struct {
 	Target      crypto.Address      `cbor:"2,keyasint,omitempty"`
 	Flags       int                 `cbor:"3,keyasint,omitempty"`
 	PayloadType payload.PayloadType `cbor:"4,keyasint"`
-	Payload     cbor.RawMessage     `cbor:"10,keyasint"`
-	Payload2    cbor.RawMessage     `cbor:"21,keyasint"`
+	Payload     cbor.RawMessage     `cbor:"21,keyasint"`
 }
 
 func (m *Message) MarshalCBOR() ([]byte, error) {
@@ -58,7 +57,7 @@ func (m *Message) MarshalCBOR() ([]byte, error) {
 		Target:      m.Target,
 		Flags:       m.Flags,
 		PayloadType: m.Type,
-		Payload2:    bs,
+		Payload:     bs,
 	}
 
 	return cbor.Marshal(msg)
@@ -78,5 +77,5 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 
 	m.Type = msg.PayloadType
 	m.Payload = pld
-	return cbor.Unmarshal(msg.Payload2, pld)
+	return cbor.Unmarshal(msg.Payload, pld)
 }

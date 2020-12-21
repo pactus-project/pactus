@@ -41,3 +41,24 @@ func TestGenesisTestNet(t *testing.T) {
 	expected, _ := crypto.HashFromString("2dc57c69f70d74e0d1c5dba7b30dcf0903402c37e523efee3b910bdca73a2234")
 	assert.Equal(t, g.Hash(), expected)
 }
+
+func TestCheckGenesisAccountAndValidator(t *testing.T) {
+	accs := []*account.Account{}
+	vals := []*validator.Validator{}
+	for i := 0; i < 10; i++ {
+		a, pub, _ := crypto.GenerateTestKeyPair()
+		acc := account.NewAccount(a, i)
+		val := validator.NewValidator(pub, i, 0)
+
+		accs = append(accs, acc)
+		vals = append(vals, val)
+	}
+	gen := MakeGenesis("test", time.Now().Truncate(0), accs, vals, 5)
+
+	genAccs := gen.Accounts()
+	genVals := gen.Validators()
+	for i := 0; i < 10; i++ {
+		assert.Equal(t, genAccs[i], accs[i])
+		assert.Equal(t, genVals[i].Hash(), vals[i].Hash())
+	}
+}

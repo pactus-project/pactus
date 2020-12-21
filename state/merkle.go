@@ -4,7 +4,6 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -36,6 +35,7 @@ func (st *state) validatorsMerkleRootHash() crypto.Hash {
 		if !hashes[val.Number()].IsUndef() {
 			panic("Duplicated validator number")
 		}
+
 		hashes[val.Number()] = val.Hash()
 		return false
 	})
@@ -48,9 +48,26 @@ func (st *state) stateHash() crypto.Hash {
 	valRootHash := st.validatorsMerkleRootHash()
 
 	rootHash := simpleMerkle.HashMerkleBranches(&accRootHash, &valRootHash)
-	if rootHash == nil {
-		logger.Panic("State hash can't be nil")
+	return *rootHash
+}
+
+func (st *state) calculateGenesisStateHashFromGenesisDoc() crypto.Hash {
+	accs := st.genDoc.Accounts()
+	vals := st.genDoc.Validators()
+
+	accHashes := make([]crypto.Hash, len(accs))
+	valHashes := make([]crypto.Hash, len(vals))
+	for i, acc := range accs {
+		accHashes[i] = acc.Hash()
+	}
+	for i, val := range vals {
+		valHashes[i] = val.Hash()
 	}
 
-	return *rootHash
+	accTree := simpleMerkle.NewTreeFromHashes(accHashes)
+	valTree := simpleMerkle.NewTreeFromHashes(valHashes)
+	accRootHash := accTree.Root()
+	valRootHash := valTree.Root()
+
+	return *simpleMerkle.HashMerkleBranches(&accRootHash, &valRootHash)
 }

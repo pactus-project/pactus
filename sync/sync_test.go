@@ -32,10 +32,12 @@ var (
 	tPeerID      peer.ID
 )
 
+func init() {
+	logger.InitLogger(logger.TestConfig())
+}
+
 func setup(t *testing.T) {
 	syncConf := TestConfig()
-	loggerConfig := logger.TestConfig()
-	logger.InitLogger(loggerConfig)
 
 	tOurID, _ = peer.IDFromString("12D3KooWDEWpKkZVxpc8hbLKQL1jvFfyBQDit9AR3ToU4k951Jyi")
 	tPeerID, _ = peer.IDFromString("12D3KooWLQ8GKaLdKU8Ms6AkMYjDWCr5UTPvdewag3tcarxh7saC")

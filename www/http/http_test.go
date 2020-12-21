@@ -23,6 +23,10 @@ var tAccTestAddr crypto.Address
 var tValTestAddr crypto.Address
 var tTxTestHash crypto.Hash
 
+func init() {
+	logger.InitLogger(logger.TestConfig())
+}
+
 func setup(t *testing.T) {
 	if tHTTPServer != nil {
 		return
@@ -50,9 +54,6 @@ func setup(t *testing.T) {
 	v, _ := validator.GenerateTestValidator(88)
 	tValTestAddr = v.Address()
 	tMockState.Store.UpdateValidator(v)
-
-	loggerConfig := logger.TestConfig()
-	logger.InitLogger(loggerConfig)
 
 	var err error
 	tCapnpServer, err = capnp.NewServer(capnp.TestConfig(), tMockState, tMockPool)
