@@ -31,7 +31,7 @@ const (
 	version = 3
 )
 
-type encryptedKey struct {
+type EncryptedKey struct {
 	Address    crypto.Address     `json:"address"`
 	Crypto     *cryptoJSON        `json:"crypto,omitempty"`
 	PrivateKey *crypto.PrivateKey `json:"privatekey,omitempty"`
@@ -52,55 +52,59 @@ type cipherparamsJSON struct {
 	IV string `json:"iv"`
 }
 
-func VerifyFile(filePath string) (crypto.Address, bool) {
-	kj := new(encryptedKey)
-	bs, err := ioutil.ReadFile(filePath)
+// NewEncryptedKey reads the encrypted file and returns an instance of EncryptedKey
+func NewEncryptedKey(path string) (*EncryptedKey, error) {
+	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		return kj.Address, false
+		return nil, err
 	}
-
-	if err := json.Unmarshal(bs, kj); err != nil {
-		return kj.Address, false
+	ek := new(EncryptedKey)
+	if err := json.Unmarshal(data, ek); err != nil {
+		return nil, err
 	}
-
-	return kj.Address, true
+	return ek, nil
 }
 
 // DecryptKeyFile decrypts the file and returns Key
-func DecryptKeyFile(filePath, auth string) (*Key, error) {
-	data, err := ioutil.ReadFile(filePath)
+func DecryptKeyFile(path, auth string) (*Key, error) {
+	ek, err := NewEncryptedKey(path)
 	if err != nil {
 		return nil, err
 	}
-	return DecryptKey(data, auth)
+	return ek.Decrypt(auth)
 }
 
-// DecryptKey decrypts the Key from a json blob and returns the plaintext of the private key
-func DecryptKey(bs []byte, auth string) (*Key, error) {
-	kj := new(encryptedKey)
-	if err := json.Unmarshal(bs, kj); err != nil {
-		return nil, err
+// Save saves the encrypted key into file
+func (ek *EncryptedKey) Save(p string) error {
+	j, err := json.Marshal(ek)
+	if err != nil {
+		return err
 	}
+	return util.WriteFile(p, j)
+}
 
-	if kj.PrivateKey != nil {
-		return NewKey(kj.Address, *kj.PrivateKey)
+// Decrypt decrypts the Key from a json blob and returns the plaintext of the private key
+func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
+
+	if ek.PrivateKey != nil {
+		return NewKey(ek.Address, *ek.PrivateKey)
 	}
-	if kj.Crypto.Cipher != "aes-128-ctr" {
-		return nil, fmt.Errorf("Cipher not supported: %v", kj.Crypto.Cipher)
+	if ek.Crypto.Cipher != "aes-128-ctr" {
+		return nil, fmt.Errorf("Cipher not supported: %v", ek.Crypto.Cipher)
 	}
-	mac, err := hex.DecodeString(kj.Crypto.MAC)
+	mac, err := hex.DecodeString(ek.Crypto.MAC)
 	if err != nil {
 		return nil, err
 	}
-	iv, err := hex.DecodeString(kj.Crypto.CipherParams.IV)
+	iv, err := hex.DecodeString(ek.Crypto.CipherParams.IV)
 	if err != nil {
 		return nil, err
 	}
-	cipherText, err := hex.DecodeString(kj.Crypto.CipherText)
+	cipherText, err := hex.DecodeString(ek.Crypto.CipherText)
 	if err != nil {
 		return nil, err
 	}
-	derivedKey, err := getKDFKey(kj.Crypto, auth)
+	derivedKey, err := getKDFKey(ek.Crypto, auth)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +120,7 @@ func DecryptKey(bs []byte, auth string) (*Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewKey(kj.Address, pv)
+	return NewKey(ek.Address, pv)
 
 }
 
@@ -148,26 +152,25 @@ func getKDFKey(cryptoJSON *cryptoJSON, auth string) ([]byte, error) {
 	return nil, fmt.Errorf("Unsupported KDF: %s", cryptoJSON.KDF)
 }
 
-func EncryptKeyFile(key *Key, filePath, auth, label string) error {
-	bs, err := EncryptKey(key, auth, label)
+// EncryptKeyToFile encrypts the key and saves it to file
+func EncryptKeyToFile(key *Key, filePath, auth, label string) error {
+	ek, err := EncryptKey(key, auth, label)
 	if err != nil {
 		return err
 	}
-	return util.WriteFile(filePath, bs)
+	return ek.Save(filePath)
 }
 
 // EncryptKey encrypts a key and returns the encrypted byte array
-func EncryptKey(key *Key, auth, label string) ([]byte, error) {
+func EncryptKey(key *Key, auth, label string) (*EncryptedKey, error) {
 	if auth == "" {
 		pv := key.PrivateKey()
-		kj := encryptedKey{
+		return &EncryptedKey{
 			Address:    key.data.Address,
 			PrivateKey: &pv,
 			Label:      label,
 			Version:    version,
-		}
-
-		return json.Marshal(kj)
+		}, nil
 	}
 
 	authArray := []byte(auth)
@@ -206,14 +209,12 @@ func EncryptKey(key *Key, auth, label string) ([]byte, error) {
 		MAC:          hex.EncodeToString(mac),
 	}
 
-	kj := encryptedKey{
+	return &EncryptedKey{
 		Address: key.data.Address,
 		Crypto:  cryptoStruct,
 		Label:   label,
 		Version: version,
-	}
-
-	return json.Marshal(kj)
+	}, nil
 }
 
 func getEntropyCSPRNG(n int) []byte {

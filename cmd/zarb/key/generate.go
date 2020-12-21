@@ -6,7 +6,6 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/keystore/key"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 // Generate creates a new account and stores the keyfile in the disk
@@ -17,16 +16,10 @@ func Generate() func(c *cli.Cmd) {
 			keyObj := key.GenKey()
 			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
 			label := cmd.PromptInput("Label: ")
-			keyjson, err := key.EncryptKey(keyObj, passphrase, label)
+			keyfilepath := cmd.ZarbKeystoreDir() + keyObj.Address().String() + ".json"
+			err := key.EncryptKeyToFile(keyObj, keyfilepath, passphrase, label)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to encrypt: %v", err)
-				return
-			}
-			keyfilepath := cmd.ZarbKeystoreDir() + keyObj.Address().String() + ".json"
-
-			// Store the file to disk.
-			if err := util.WriteFile(keyfilepath, keyjson); err != nil {
-				cmd.PrintErrorMsg("Failed to write the key file: %v", err)
 				return
 			}
 
