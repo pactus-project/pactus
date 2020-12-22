@@ -1,6 +1,7 @@
 package message
 
 import (
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -10,13 +11,35 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func NewAleykMessage(genesisHash crypto.Hash, height int) *Message {
+func NewSalamMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, genesisHash crypto.Hash, height int) *Message {
 	return &Message{
-		Type: payload.PayloadTypeAleyk,
-		Payload: &payload.AleykPayload{
-			Version:     version.NodeVersion,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeSalam,
+		Payload: &payload.SalamPayload{
+			NodeVersion: version.NodeVersion,
+			Moniker:     moniker,
+			PublicKey:   publicKey,
+			PeerID:      peerID,
 			GenesisHash: genesisHash,
 			Height:      height,
+		},
+	}
+}
+func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, genesisHash crypto.Hash, height int, resStatus int, resMessage string) *Message {
+	return &Message{
+		Version: LastVersion,
+		Type:    payload.PayloadTypeAleyk,
+		Payload: &payload.AleykPayload{
+			NodeVersion: version.NodeVersion,
+			Moniker:     moniker,
+			PublicKey:   publicKey,
+			PeerID:      peerID,
+			GenesisHash: genesisHash,
+			Height:      height,
+			Response: payload.SalamResponse{
+				Status:  resStatus,
+				Message: resMessage,
+			},
 		},
 	}
 
@@ -24,7 +47,8 @@ func NewAleykMessage(genesisHash crypto.Hash, height int) *Message {
 
 func NewBlocksReqMessage(from, to int, lastBlockHash crypto.Hash) *Message {
 	return &Message{
-		Type: payload.PayloadTypeBlocksReq,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeBlocksReq,
 		Payload: &payload.BlocksReqPayload{
 			From:          from,
 			To:            to,
@@ -35,7 +59,8 @@ func NewBlocksReqMessage(from, to int, lastBlockHash crypto.Hash) *Message {
 
 func NewBlocksMessage(from int, blocks []*block.Block, lastCommit *block.Commit) *Message {
 	return &Message{
-		Type: payload.PayloadTypeBlocks,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeBlocks,
 		Payload: &payload.BlocksPayload{
 			From:       from,
 			Blocks:     blocks,
@@ -46,7 +71,8 @@ func NewBlocksMessage(from int, blocks []*block.Block, lastCommit *block.Commit)
 
 func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
 	return &Message{
-		Type: payload.PayloadTypeHeartBeat,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeHeartBeat,
 		Payload: &payload.HeartBeatPayload{
 			Pulse: hrs,
 		},
@@ -55,7 +81,8 @@ func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
 
 func NewProposalReqMessage(height, round int) *Message {
 	return &Message{
-		Type: payload.PayloadTypeProposalReq,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeProposalReq,
 		Payload: &payload.ProposalReqPayload{
 			Height: height,
 			Round:  round,
@@ -65,27 +92,18 @@ func NewProposalReqMessage(height, round int) *Message {
 
 func NewProposalMessage(proposal *vote.Proposal) *Message {
 	return &Message{
-		Type: payload.PayloadTypeProposal,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeProposal,
 		Payload: &payload.ProposalPayload{
 			Proposal: proposal,
 		},
 	}
 }
 
-func NewSalamMessage(genesisHash crypto.Hash, height int) *Message {
-	return &Message{
-		Type: payload.PayloadTypeSalam,
-		Payload: &payload.SalamPayload{
-			Version:     version.NodeVersion,
-			GenesisHash: genesisHash,
-			Height:      height,
-		},
-	}
-}
-
 func NewTxsReqMessage(ids []crypto.Hash) *Message {
 	return &Message{
-		Type: payload.PayloadTypeTxsReq,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeTxsReq,
 		Payload: &payload.TxsReqPayload{
 			IDs: ids,
 		},
@@ -94,7 +112,8 @@ func NewTxsReqMessage(ids []crypto.Hash) *Message {
 
 func NewTxsMessage(txs []*tx.Tx) *Message {
 	return &Message{
-		Type: payload.PayloadTypeTxs,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeTxs,
 		Payload: &payload.TxsPayload{
 			Txs: txs,
 		},
@@ -102,7 +121,8 @@ func NewTxsMessage(txs []*tx.Tx) *Message {
 }
 func NewVoteSetMessage(height int, Hashes []crypto.Hash) *Message {
 	return &Message{
-		Type: payload.PayloadTypeVoteSet,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeVoteSet,
 		Payload: &payload.VoteSetPayload{
 			Height: height,
 			Hashes: Hashes,
@@ -112,7 +132,8 @@ func NewVoteSetMessage(height int, Hashes []crypto.Hash) *Message {
 
 func NewVoteMessage(vote *vote.Vote) *Message {
 	return &Message{
-		Type: payload.PayloadTypeVote,
+		Version: LastVersion,
+		Type:    payload.PayloadTypeVote,
 		Payload: &payload.VotePayload{
 			Vote: vote,
 		},

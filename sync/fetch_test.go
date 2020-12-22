@@ -74,7 +74,7 @@ func TestMoveToConsensus(t *testing.T) {
 	setup(t)
 
 	// Bad peer send us invalid height
-	msg := message.NewSalamMessage(tState.GenHash, 100000000)
+	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 100000000)
 	tSync.publishMessage(msg)
 	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeAleyk)
 	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocksReq)
@@ -109,7 +109,7 @@ func TestSendInvalidBlock(t *testing.T) {
 
 	fmt.Println(tState.LastBlockHeight())
 	networkHeight := tState.LastBlockHeight() + 15
-	msg := message.NewSalamMessage(tState.GenHash, networkHeight)
+	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, networkHeight)
 	tSync.publishMessage(msg)
 	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeAleyk)
 	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocksReq)

@@ -9,12 +9,14 @@ import (
 	"github.com/zarbchain/zarb-go/message/payload"
 )
 
+const LastVersion = 1
+
 type Message struct {
-	Initiator crypto.Address
-	Target    crypto.Address
+	Version   int
 	Flags     int
 	Type      payload.PayloadType
 	Payload   payload.Payload
+	Signature *crypto.Signature
 }
 
 func (m *Message) SanityCheck() error {
@@ -39,11 +41,19 @@ func (m *Message) PayloadType() payload.PayloadType {
 }
 
 type _Message struct {
-	Initiator   crypto.Address      `cbor:"1,keyasint,omitempty"`
-	Target      crypto.Address      `cbor:"2,keyasint,omitempty"`
-	Flags       int                 `cbor:"3,keyasint,omitempty"`
-	PayloadType payload.PayloadType `cbor:"4,keyasint"`
-	Payload     cbor.RawMessage     `cbor:"21,keyasint"`
+	Version     int                 `cbor:"1,keyasint"`
+	Flags       int                 `cbor:"2,keyasint"`
+	PayloadType payload.PayloadType `cbor:"3,keyasint"`
+	Payload     cbor.RawMessage     `cbor:"4,keyasint"`
+	Signature   *crypto.Signature   `cbor:"21,keyasint,omitempty"`
+}
+
+func (m *Message) SignBytes() []byte {
+	ms := new(Message)
+	*ms = *m
+	ms.Signature = nil
+	sb, _ := ms.MarshalCBOR()
+	return sb
 }
 
 func (m *Message) MarshalCBOR() ([]byte, error) {
@@ -53,8 +63,7 @@ func (m *Message) MarshalCBOR() ([]byte, error) {
 	}
 
 	msg := &_Message{
-		Initiator:   m.Initiator,
-		Target:      m.Target,
+		Version:     m.Version,
 		Flags:       m.Flags,
 		PayloadType: m.Type,
 		Payload:     bs,
@@ -75,7 +84,10 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload")
 	}
 
+	m.Version = msg.Version
+	m.Flags = msg.Flags
 	m.Type = msg.PayloadType
+	m.Signature = msg.Signature
 	m.Payload = pld
 	return cbor.Unmarshal(msg.Payload, pld)
 }

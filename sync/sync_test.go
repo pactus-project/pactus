@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
@@ -18,6 +19,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/stats"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
 var (
@@ -28,8 +30,8 @@ var (
 	tSync        *Synchronizer
 	tCache       *cache.Cache
 	tBroadcastCh chan *message.Message
-	tOurID       peer.ID
 	tPeerID      peer.ID
+	tSelfID      peer.ID
 )
 
 func init() {
@@ -38,9 +40,11 @@ func init() {
 
 func setup(t *testing.T) {
 	syncConf := TestConfig()
+	_, _, priv := crypto.GenerateTestKeyPair()
+	signer := crypto.NewSigner(priv)
 
-	tOurID, _ = peer.IDFromString("12D3KooWDEWpKkZVxpc8hbLKQL1jvFfyBQDit9AR3ToU4k951Jyi")
-	tPeerID, _ = peer.IDFromString("12D3KooWLQ8GKaLdKU8Ms6AkMYjDWCr5UTPvdewag3tcarxh7saC")
+	tPeerID, _ = peer.IDB58Decode("12D3KooWLQ8GKaLdKU8Ms6AkMYjDWCr5UTPvdewag3tcarxh7saC")
+	tSelfID, _ = peer.IDB58Decode("12D3KooWHyepEGGdeSk3nPZrEamxLNba7tFZJKWbyEdZ654fHJdk")
 
 	tTxPool = txpool.NewMockTxPool()
 	tState = state.NewMockStore()
@@ -59,6 +63,7 @@ func setup(t *testing.T) {
 	tSync = &Synchronizer{
 		ctx:         context.Background(),
 		config:      syncConf,
+		signer:      signer,
 		state:       tState,
 		consensus:   tConsensus,
 		cache:       tCache,
@@ -74,46 +79,69 @@ func setup(t *testing.T) {
 
 	assert.NoError(t, tSync.Start())
 
-	tNetAPI.waitingForMessage(t, message.NewSalamMessage(tState.GenHash, tState.LastBlockHeight()))
-	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tState.GenHash, tState.LastBlockHeight()))
+	tNetAPI.waitingForMessage(t, message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight()))
+	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!"))
 }
 
 func TestSendSalamBadGenesisHash(t *testing.T) {
 	setup(t)
 
 	invGenHash := crypto.GenerateTestHash()
-	msg := message.NewSalamMessage(invGenHash, 0)
+	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), invGenHash, 0)
 	data, _ := cbor.Marshal(msg)
 	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeAleyk)
+	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 1, "Invalid genesis hash"))
 }
 
 func TestSendSalamPeerAhead(t *testing.T) {
 	setup(t)
 
-	msg := message.NewSalamMessage(tState.GenHash, 0)
+	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 1)
 	data, _ := cbor.Marshal(msg)
 	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tState.GenHash, tState.LastBlockHeight()))
+	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!"))
+	assert.Equal(t, tSync.stats.MaxHeight(), tState.LastBlockHeight())
 }
 
 func TestSendSalamPeerBehind(t *testing.T) {
 	setup(t)
 
-	msg := message.NewSalamMessage(tState.GenHash, 111)
+	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 111)
 	data, _ := cbor.Marshal(msg)
 	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tState.GenHash, tState.LastBlockHeight()))
+	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!"))
 	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(tState.LastBlockHeight()+1, 111, tState.LastBlockHash()))
+	assert.Equal(t, tSync.stats.MaxHeight(), 111)
+}
+func TestSendAleykPeerAhead(t *testing.T) {
+	setup(t)
+
+	msg := message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 1, 0, "Welcome!")
+	data, _ := cbor.Marshal(msg)
+	tSync.ParsMessage(data, tPeerID)
+	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeBlocksReq)
+	assert.Equal(t, tSync.stats.MaxHeight(), tState.LastBlockHeight())
 }
 
 func TestSendAleykPeerBehind(t *testing.T) {
 	setup(t)
 
-	msg := message.NewAleykMessage(tState.GenHash, 111)
+	msg := message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 111, 0, "Welcome!")
 	data, _ := cbor.Marshal(msg)
 	tSync.ParsMessage(data, tPeerID)
 	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(tState.LastBlockHeight()+1, 111, tState.LastBlockHash()))
+	assert.Equal(t, tSync.stats.MaxHeight(), 111)
+}
+
+func TestSendAleykPeerSameHeight(t *testing.T) {
+	setup(t)
+
+	msg := message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!")
+	data, _ := cbor.Marshal(msg)
+	tSync.ParsMessage(data, tPeerID)
+	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeBlocksReq)
+	assert.Equal(t, tSync.stats.MaxHeight(), tState.LastBlockHeight())
+
 }
 
 func TestCacheBlocksAndTransactions(t *testing.T) {
@@ -166,4 +194,32 @@ func TestCheckTxsInCache(t *testing.T) {
 	msg = message.NewTxsReqMessage([]crypto.Hash{trx3.ID()})
 	tBroadcastCh <- msg
 	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeTxsReq)
+}
+
+// TODO: test these situation in consensus
+func TestRequestForProposal(t *testing.T) {
+	setup(t)
+
+	hrs := hrs.NewHRS(100, 1, 6)
+	p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
+	tConsensus.SetProposal(p)
+	tConsensus.HRS_ = hrs
+	t.Run("Request proposal at same HRS", func(t *testing.T) {
+		msg := message.NewProposalReqMessage(hrs.Height(), hrs.Round())
+		tBroadcastCh <- msg
+		tNetAPI.waitingForMessage(t, message.NewProposalMessage(p))
+	})
+
+	t.Run("Request proposal at same height but lower HRS", func(t *testing.T) {
+		msg := message.NewProposalReqMessage(hrs.Height(), hrs.Round()-1)
+		tBroadcastCh <- msg
+		tNetAPI.waitingForMessage(t, message.NewProposalMessage(p))
+	})
+
+	t.Run("Request proposal at same height but higher HRS", func(t *testing.T) {
+		msg := message.NewProposalReqMessage(hrs.Height(), hrs.Round()+1)
+		tBroadcastCh <- msg
+		tNetAPI.waitingForMessage(t, message.NewProposalReqMessage(hrs.Height(), hrs.Round()+1))
+	})
+
 }

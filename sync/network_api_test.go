@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
@@ -30,6 +31,9 @@ func (mock *mockNetworkAPI) PublishMessage(msg *message.Message) error {
 	mock.ch <- msg
 	return nil
 }
+func (mock *mockNetworkAPI) SelfID() peer.ID {
+	return tSelfID
+}
 
 func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message) {
 	timeout := time.NewTimer(1 * time.Second)
@@ -44,7 +48,7 @@ func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message
 			b1, _ := msg.MarshalCBOR()
 			b2, _ := apiMsg.MarshalCBOR()
 
-			tSync.ParsMessage(b2, tOurID)
+			tSync.ParsMessage(b2, tPeerID)
 			if reflect.DeepEqual(b1, b2) {
 				return
 			}
@@ -63,7 +67,7 @@ func (mock *mockNetworkAPI) shouldReceiveMessageWithThisType(t *testing.T, pldTy
 			logger.Info("comparing messages type", "apiMsg", apiMsg)
 			b, _ := apiMsg.MarshalCBOR()
 
-			tSync.ParsMessage(b, tOurID)
+			tSync.ParsMessage(b, tPeerID)
 			if apiMsg.PayloadType() == pldType {
 				return
 			}
@@ -82,7 +86,7 @@ func (mock *mockNetworkAPI) shouldNotReceiveAnyMessageWithThisType(t *testing.T,
 			logger.Info("comparing messages type", "apiMsg", apiMsg)
 			b, _ := apiMsg.MarshalCBOR()
 
-			tSync.ParsMessage(b, tOurID)
+			tSync.ParsMessage(b, tPeerID)
 			assert.NotEqual(t, apiMsg.PayloadType(), payloadType)
 		}
 	}

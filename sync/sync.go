@@ -23,6 +23,7 @@ type Synchronizer struct {
 
 	ctx             context.Context
 	config          *Config
+	signer          crypto.Signer
 	state           state.State
 	txPool          txpool.TxPool
 	consensus       consensus.Consensus
@@ -36,7 +37,7 @@ type Synchronizer struct {
 
 func NewSynchronizer(
 	conf *Config,
-	addr crypto.Address,
+	signer crypto.Signer,
 	state state.State,
 	consensus consensus.Consensus,
 	txPool txpool.TxPool,
@@ -45,6 +46,7 @@ func NewSynchronizer(
 	syncer := &Synchronizer{
 		ctx:         context.Background(),
 		config:      conf,
+		signer:      signer,
 		state:       state,
 		consensus:   consensus,
 		txPool:      txPool,
@@ -53,7 +55,7 @@ func NewSynchronizer(
 
 	logger := logger.NewLogger("_sync", syncer)
 
-	api, err := newNetworkAPI(syncer.ctx, addr, net, syncer.ParsMessage)
+	api, err := newNetworkAPI(syncer.ctx, net, syncer.ParsMessage)
 	if err != nil {
 		return nil, err
 	}

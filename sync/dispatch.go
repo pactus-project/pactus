@@ -50,15 +50,23 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 
 func (syncer *Synchronizer) broadcastSalam() {
 	msg := message.NewSalamMessage(
+		syncer.config.Moniker,
+		syncer.signer.PublicKey(),
+		syncer.networkAPI.SelfID(),
 		syncer.state.GenesisHash(),
 		syncer.state.LastBlockHeight())
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastAleyk() {
+func (syncer *Synchronizer) broadcastAleyk(resStatus int, resMsg string) {
 	msg := message.NewAleykMessage(
+		syncer.config.Moniker,
+		syncer.signer.PublicKey(),
+		syncer.networkAPI.SelfID(),
 		syncer.state.GenesisHash(),
-		syncer.state.LastBlockHeight())
+		syncer.state.LastBlockHeight(),
+		resStatus,
+		resMsg)
 	syncer.publishMessage(msg)
 }
 

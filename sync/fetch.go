@@ -69,11 +69,13 @@ func (syncer *Synchronizer) processSalamPayload(pld *payload.SalamPayload) {
 
 	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
 		syncer.logger.Info("Received a message from different chain", "Genesis hash", pld.GenesisHash)
+		// Reply salam
+		syncer.broadcastAleyk(payload.SalamResponseCodeRejected, "Invalid genesis hash")
 		return
 	}
 
 	// Reply salam
-	syncer.broadcastAleyk()
+	syncer.broadcastAleyk(payload.SalamResponseCodeOK, "Welcome!")
 
 	syncer.sendBlocksReqIfWeAreBehind(pld.Height)
 }

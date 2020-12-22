@@ -18,9 +18,9 @@ func init() {
 }
 
 type Version struct {
-	Major int
-	Minor int
-	Patch int
+	Major int `cbor:"1,keyasint"`
+	Minor int `cbor:"2,keyasint"`
+	Patch int `cbor:"3,keyasint"`
 }
 
 func (v Version) String() string {
