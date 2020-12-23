@@ -14,7 +14,7 @@ func TestConsensusSetProposalAfterCommit(t *testing.T) {
 
 	b1 := cons.state.ProposeBlock()
 	p1 := vote.NewProposal(1, 0, b1)
-	signers[0].SignMsg(p1)
+	tSigners[0].SignMsg(p1)
 
 	// Proposal is valid here
 	assert.NoError(t, p1.Verify(cons.proposer(0).PublicKey()))
@@ -33,11 +33,11 @@ func TestInvalidProposer(t *testing.T) {
 
 	b1 := cons2.state.ProposeBlock()
 	invalidProposal := vote.NewProposal(1, 0, b1)
-	signers[0].SignMsg(invalidProposal)
+	tSigners[0].SignMsg(invalidProposal)
 
 	validProposal := vote.NewProposal(1, 1, b1)
 
-	signers[1].SignMsg(validProposal)
+	tSigners[1].SignMsg(validProposal)
 
 	cons3.SetProposal(invalidProposal)
 	cons3.SetProposal(validProposal)
@@ -54,11 +54,11 @@ func TestSecondProposalCommitted(t *testing.T) {
 
 	b1 := cons1.state.ProposeBlock()
 	p1 := vote.NewProposal(1, 0, b1)
-	signers[0].SignMsg(p1)
+	tSigners[0].SignMsg(p1)
 
 	b2 := cons2.state.ProposeBlock()
 	p2 := vote.NewProposal(1, 1, b2) // valid proposal for second round
-	signers[1].SignMsg(p2)
+	tSigners[1].SignMsg(p2)
 
 	cons1.SetProposal(p1)
 	cons1.SetProposal(p2)
@@ -90,7 +90,7 @@ func TestNetworkLagging1(t *testing.T) {
 
 	b1 := cons1.state.ProposeBlock()
 	p1 := vote.NewProposal(1, 0, b1)
-	signers[0].SignMsg(p1)
+	tSigners[0].SignMsg(p1)
 
 	cons1.SetProposal(p1)
 	// We don't set proposal for second validator here
@@ -130,7 +130,7 @@ func TestNetworkLagging2(t *testing.T) {
 
 	b1 := cons1.state.ProposeBlock()
 	p1 := vote.NewProposal(1, 0, b1)
-	signers[0].SignMsg(p1)
+	tSigners[0].SignMsg(p1)
 
 	cons1.SetProposal(p1)
 	// We don't set proposal for second validator here
@@ -176,7 +176,7 @@ func TestNetworkLagging3(t *testing.T) {
 
 	b1 := cons1.state.ProposeBlock()
 	p1 := vote.NewProposal(1, 0, b1)
-	signers[0].SignMsg(p1)
+	tSigners[0].SignMsg(p1)
 
 	cons1.SetProposal(p1)
 	// We don't set proposal for second validator here

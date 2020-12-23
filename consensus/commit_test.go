@@ -15,22 +15,22 @@ import (
 func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vote.Vote) {
 	b = st.ProposeBlock()
 
-	votes[0] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), signers[0].Address())
-	signers[0].SignMsg(votes[0])
+	votes[0] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), tSigners[0].Address())
+	tSigners[0].SignMsg(votes[0])
 
-	votes[1] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), signers[1].Address())
-	signers[1].SignMsg(votes[1])
+	votes[1] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), tSigners[1].Address())
+	tSigners[1].SignMsg(votes[1])
 
-	votes[2] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), signers[2].Address())
-	signers[2].SignMsg(votes[2])
+	votes[2] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), tSigners[2].Address())
+	tSigners[2].SignMsg(votes[2])
 
 	sig := crypto.Aggregate([]*crypto.Signature{votes[0].Signature(), votes[1].Signature(), votes[2].Signature()})
 	c := block.NewCommit(0,
 		[]block.Committer{
-			{Status: 1, Address: signers[0].Address()},
-			{Status: 1, Address: signers[1].Address()},
-			{Status: 1, Address: signers[2].Address()},
-			{Status: 0, Address: signers[3].Address()},
+			{Status: 1, Address: tSigners[0].Address()},
+			{Status: 1, Address: tSigners[1].Address()},
+			{Status: 1, Address: tSigners[2].Address()},
+			{Status: 0, Address: tSigners[3].Address()},
 		},
 		sig)
 

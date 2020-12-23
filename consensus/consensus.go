@@ -155,7 +155,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	defer cs.lk.Unlock()
 
 	if err := cs.addVote(v); err != nil {
-		cs.logger.Error("Error on adding a vote", "vote", v, "error", err)
+		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
 	}
 }
 
@@ -268,7 +268,7 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 
 	err := cs.addVote(v)
 	if err != nil {
-		cs.logger.Error("Error on adding our vote!", "error", err, "vote", v)
+		cs.logger.Error("Error on adding our vote!", "err", err, "vote", v)
 		return
 	}
 

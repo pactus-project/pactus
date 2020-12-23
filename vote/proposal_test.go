@@ -34,3 +34,8 @@ func TestProposalSignature(t *testing.T) {
 	p.SetSignature(sig0)
 	assert.Error(t, p.Verify(pb)) // invalid signature
 }
+
+func TestProposalFingerprint(t *testing.T) {
+	p, _ := GenerateTestProposal(1, 1)
+	assert.Contains(t, p.Fingerprint(), p.Block().Fingerprint())
+}

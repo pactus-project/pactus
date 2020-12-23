@@ -171,3 +171,8 @@ func TestHeartbeatMessage(t *testing.T) {
 	assert.Equal(t, m.Type, m.Payload.Type())
 	assert.Equal(t, m.Version, LastVersion)
 }
+
+func TestMessageFingerprint(t *testing.T) {
+	msg := NewProposalReqMessage(1, 1)
+	assert.Contains(t, msg.Fingerprint(), msg.Payload.Fingerprint())
+}

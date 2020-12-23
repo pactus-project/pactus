@@ -193,7 +193,7 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			err = conf.Check()
+			err = conf.SanityCheck()
 			if err != nil {
 				cmd.PrintErrorMsg("Config is invalid - %v", err)
 				return

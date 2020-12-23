@@ -132,13 +132,12 @@ func (vote *Vote) SanityCheck() error {
 }
 
 func (vote Vote) Fingerprint() string {
-	return fmt.Sprintf("{%v/%d/%s ⌘ %v 👤 %s 🖊 %s}",
+	return fmt.Sprintf("{%v/%d/%s ⌘ %v 👤 %s}",
 		vote.data.Height,
 		vote.data.Round,
 		vote.data.VoteType,
 		vote.data.BlockHash.Fingerprint(),
 		vote.data.Signer.Fingerprint(),
-		vote.data.Signature.Fingerprint(),
 	)
 }
 

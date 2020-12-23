@@ -123,6 +123,30 @@ func (conf *Config) SaveToFile(file string) error {
 	return nil
 }
 
-func (conf *Config) Check() error {
+func (conf *Config) SanityCheck() error {
+	if err := conf.State.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.TxPool.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Consensus.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Network.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Logger.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Sync.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Capnp.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Http.SanityCheck(); err != nil {
+		return err
+	}
 	return nil
 }

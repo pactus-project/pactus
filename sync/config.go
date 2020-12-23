@@ -28,3 +28,8 @@ func TestConfig() *Config {
 		CacheSize:        100,
 	}
 }
+
+// SanityCheck is a basic hecks for config
+func (conf *Config) SanityCheck() error {
+	return nil
+}

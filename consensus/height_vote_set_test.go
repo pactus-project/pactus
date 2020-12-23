@@ -12,9 +12,9 @@ import (
 )
 
 func TestHeightVoteSetTest(t *testing.T) {
-	vset, keys := validator.GenerateTestValidatorSet()
+	valSet, keys := validator.GenerateTestValidatorSet()
 
-	hvs := NewHeightVoteSet(101, vset)
+	hvs := NewHeightVoteSet(101, valSet)
 	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
 	ok, err := hvs.AddVote(invalidVote) // invalid height
 	assert.False(t, ok)

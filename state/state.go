@@ -240,7 +240,7 @@ func (st *state) UpdateLastCommit(commit *block.Commit) error {
 	defer st.lk.Unlock()
 
 	if err := st.validateLastCommit(commit); err != nil {
-		st.logger.Warn("Try to update last commit, but it's invalid", "error", err)
+		st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
 		return err
 	}
 

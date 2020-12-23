@@ -35,3 +35,8 @@ func TestConfig() *Config {
 	def.Levels["_http"] = "trace"
 	return def
 }
+
+// SanityCheck is a basic hecks for config
+func (conf *Config) SanityCheck() error {
+	return nil
+}

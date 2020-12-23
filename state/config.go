@@ -24,3 +24,8 @@ func TestConfig() *Config {
 		Store: store.TestConfig(),
 	}
 }
+
+// SanityCheck is a basic hecks for config
+func (conf *Config) SanityCheck() error {
+	return nil
+}

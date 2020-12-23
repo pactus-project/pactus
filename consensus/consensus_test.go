@@ -20,8 +20,8 @@ import (
 )
 
 var (
-	signers    []crypto.Signer
-	mockTxPool *txpool.MockTxPool
+	tSigners []crypto.Signer
+	tTxPool  *txpool.MockTxPool
 )
 
 const (
@@ -35,20 +35,17 @@ func init() {
 	logger.InitLogger(logger.TestConfig())
 
 	_, keys := validator.GenerateTestValidatorSet()
-	mockTxPool = txpool.NewMockTxPool()
+	tTxPool = txpool.NewMockTxPool()
 
-	signers = make([]crypto.Signer, 4)
+	tSigners = make([]crypto.Signer, 4)
 	for i, k := range keys {
-		signers[i] = crypto.NewSigner(k)
+		tSigners[i] = crypto.NewSigner(k)
 	}
 }
 
 func newTestConsensus(t *testing.T, valID int) *consensus {
-	consConf := TestConfig()
-	stateConf := state.TestConfig()
-
 	vals := make([]*validator.Validator, 4)
-	for i, s := range signers {
+	for i, s := range tSigners {
 		val := validator.NewValidator(s.PublicKey(), 0, i)
 		vals[i] = val
 	}
@@ -64,10 +61,10 @@ func newTestConsensus(t *testing.T, valID int) *consensus {
 	}()
 
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals, 1)
-	st, _ := state.LoadOrNewState(stateConf, genDoc, signers[valID], mockTxPool)
+	st, _ := state.LoadOrNewState(state.TestConfig(), genDoc, tSigners[valID], tTxPool)
 
-	// TODO: fix me
-	cons1, _ := NewConsensus(consConf, st, signers[valID], ch)
+	cons1, err := NewConsensus(TestConfig(), st, tSigners[valID], ch)
+	assert.NoError(t, err)
 	cons := cons1.(*consensus)
 	assert.Equal(t, cons.votes.height, 0)
 	assert.Equal(t, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight), cons.hrs)
@@ -96,11 +93,11 @@ func testAddVote(t *testing.T,
 	height int,
 	round int,
 	blockHash crypto.Hash,
-	pvalID int,
+	valID int,
 	expectError bool) *vote.Vote {
 
-	v := vote.NewVote(voteType, height, round, blockHash, signers[pvalID].Address())
-	signers[pvalID].SignMsg(v)
+	v := vote.NewVote(voteType, height, round, blockHash, tSigners[valID].Address())
+	tSigners[valID].SignMsg(v)
 
 	if expectError {
 		assert.Error(t, cons.addVote(v))
@@ -108,6 +105,32 @@ func testAddVote(t *testing.T,
 		assert.NoError(t, cons.addVote(v))
 	}
 	return v
+}
+
+
+func TestAllVoteHashes(t *testing.T) {
+	cons := newTestConsensus(t, VAL1)
+
+	cons.enterNewHeight(1)
+
+	v1 := vote.NewVote(vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), tSigners[VAL2].Address())
+	tSigners[VAL2].SignMsg(v1)
+	v2 := vote.NewVote(vote.VoteTypePrevote, 1, 1, crypto.GenerateTestHash(), tSigners[VAL3].Address())
+	tSigners[VAL3].SignMsg(v2)
+	v3 := vote.NewVote(vote.VoteTypePrevote, 2, 0, crypto.GenerateTestHash(), tSigners[VAL4].Address())
+	tSigners[VAL4].SignMsg(v3)
+	cons.AddVote(v1)
+	cons.AddVote(v2)
+	cons.AddVote(v3)
+
+	votes := cons.AllVotes()
+	hashes := []crypto.Hash{}
+	for _, v := range votes {
+		hashes = append(hashes, v.Hash())
+	}
+	assert.ElementsMatch(t, hashes, cons.AllVotesHashes())
+	assert.NotContains(t, hashes, v3.Hash())
+	assert.NotNil(t, cons.Vote(v2.Hash()))
 }
 
 func TestConsensusAddVotesNormal(t *testing.T) {
@@ -290,15 +313,20 @@ func TestConsensusInvalidProposal(t *testing.T) {
 	cons.enterNewHeight(1)
 	assert.Nil(t, cons.LastProposal())
 
-	addr := signers[VAL1].Address()
+	addr := tSigners[VAL1].Address()
 	b, _ := block.GenerateTestBlock(&addr, nil)
 	p := vote.NewProposal(1, 0, *b)
 
 	cons.SetProposal(p)
 	assert.Nil(t, cons.LastProposal())
 
-	signers[VAL2].SignMsg(p)
+	tSigners[VAL2].SignMsg(p)
 	cons.SetProposal(p)
 	assert.Nil(t, cons.LastProposal())
 
+}
+
+func TestConsensusFingerprint(t *testing.T) {
+	cons := newTestConsensus(t, VAL2)
+	assert.Contains(t, cons.Fingerprint(), cons.hrs.Fingerprint())
 }

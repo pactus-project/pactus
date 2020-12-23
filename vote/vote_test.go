@@ -43,3 +43,8 @@ func TestVoteSignature(t *testing.T) {
 	v2.SetSignature(sig3)
 	assert.Error(t, v2.Verify(pb2)) // invalid signature
 }
+
+func TestVoteFingerprint(t *testing.T) {
+	v, _ := GenerateTestPrecommitVote(1, 1)
+	assert.Contains(t, v.Fingerprint(), v.Signer().Fingerprint())
+}

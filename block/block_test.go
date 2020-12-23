@@ -56,3 +56,9 @@ func TestMarshaling(t *testing.T) {
 	bz2, _ := b1.MarshalCBOR()
 	assert.Equal(t, bz1, bz2)
 }
+
+func TestBlockFingerprint(t *testing.T) {
+	b, _ := GenerateTestBlock(nil, nil)
+	assert.Contains(t, b.Fingerprint(), b.Hash().Fingerprint())
+	assert.Contains(t, b.Fingerprint(), b.Header().CommittersHash().Fingerprint())
+}

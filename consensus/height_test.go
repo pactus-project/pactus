@@ -2,11 +2,34 @@ package consensus
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/vote"
 )
+
+func waitForNewHeight(t *testing.T, cons *consensus, expectedHeight int) {
+	for i := 0; i < 10; i++ {
+		if expectedHeight == cons.HRS().Height() {
+			return
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+	assert.Equal(t, expectedHeight, cons.hrs.Height())
+}
+
+func TestMoveToNewHeight(t *testing.T) {
+	cons := newTestConsensus(t, VAL1)
+
+	cons.MoveToNewHeight()
+	waitForNewHeight(t, cons, 1)
+
+	commitFirstBlock(t, cons.state)
+
+	cons.MoveToNewHeight()
+	waitForNewHeight(t, cons, 2)
+}
 
 func TestConsensusBehindState(t *testing.T) {
 	cons := newTestConsensus(t, VAL2)
