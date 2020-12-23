@@ -47,7 +47,7 @@ func (cs *consensus) setProposal(proposal *vote.Proposal) {
 
 	cs.logger.Info("propose: Proposal set", "proposal", proposal)
 	cs.votes.SetRoundProposal(proposal.Round(), proposal)
-	// Proposal migh be received after prevote or precommit, (maybe because of network latency?)
+	// Proposal might be received after prevote or precommit, (maybe because of network latency?)
 	// Enter prevote
 	cs.enterPrevote(proposal.Height(), proposal.Round())
 	cs.enterPrecommit(proposal.Height(), proposal.Round())

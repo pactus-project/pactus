@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/validator"
@@ -53,12 +55,7 @@ func newTestConsensus(t *testing.T, valID int) *consensus {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21000000000000)
 
-	ch := make(chan *message.Message, 10)
-	go func() {
-		for {
-			<-ch
-		}
-	}()
+	ch := make(chan *message.Message, 100)
 
 	genDoc := genesis.MakeGenesis("test", time.Now(), []*account.Account{acc}, vals, 1)
 	st, _ := state.LoadOrNewState(state.TestConfig(), genDoc, tSigners[valID], tTxPool)
@@ -70,6 +67,24 @@ func newTestConsensus(t *testing.T, valID int) *consensus {
 	assert.Equal(t, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight), cons.hrs)
 
 	return cons
+}
+
+func shouldPublishMessageWithThisType(t *testing.T, cons *consensus, payloadType payload.PayloadType) *message.Message {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("Timeout"))
+			return nil
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishMessageWithThisType", "msg", msg, "type", payloadType.String())
+
+			if msg.PayloadType() == payloadType {
+				return msg
+			}
+		}
+	}
 }
 
 func checkHRS(t *testing.T, cons *consensus, height, round int, step hrs.StepType) {
@@ -106,7 +121,6 @@ func testAddVote(t *testing.T,
 	}
 	return v
 }
-
 
 func TestAllVoteHashes(t *testing.T) {
 	cons := newTestConsensus(t, VAL1)
@@ -258,6 +272,7 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 	cons.enterNewHeight(1)
 
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), VAL1, false)
+	shouldPublishMessageWithThisType(t, cons, payload.PayloadTypeProposalReq)
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL3, false)
 	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommit)
 

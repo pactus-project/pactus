@@ -64,7 +64,6 @@ func (cs *consensus) enterCommit(height int, round int) {
 		cs.logger.Error("Commit: Proposal is not for this round.", "proposal", cs.votes.lockedProposal, "round-proposal", roundProposal)
 		return
 	}
-
 	commitBlock := cs.votes.lockedProposal.Block()
 	commit := preCommits.ToCommit()
 	if commit == nil {

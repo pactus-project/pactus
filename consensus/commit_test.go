@@ -2,12 +2,14 @@ package consensus
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -58,5 +60,61 @@ func TestInvalidStepAfterBlockCommit(t *testing.T) {
 	assert.False(t, cons.invalidHeight(2))
 	assert.False(t, cons.invalidHeightRound(2, 0))
 	assert.False(t, cons.invalidHeightRoundStep(2, 0, hrs.StepTypeCommit))
+}
 
+func TestEnterCommit(t *testing.T) {
+	cons1 := newTestConsensus(t, VAL1)
+	cons2 := newTestConsensus(t, VAL2)
+
+	cons1.MoveToNewHeight()
+	cons2.MoveToNewHeight()
+	checkHRSWait(t, cons1, 1, 0, hrs.StepTypePrevote)
+	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrevote)
+	p1 := cons1.LastProposal()
+
+	// Invalid height
+	cons2.enterCommit(2, 0)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+
+	// No quorum
+	cons2.enterCommit(1, 0)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+
+	testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL1, false)
+	testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL2, false)
+
+	v3 := vote.NewPrecommit(1, 0, crypto.UndefHash, tSigners[VAL3].Address())
+	tSigners[VAL3].SignMsg(v3)
+	ok, _ := cons2.votes.AddVote(v3)
+	assert.True(t, ok)
+
+	// Undef quorum
+	cons2.enterCommit(1, 0)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+
+	v4 := vote.NewPrecommit(1, 0, p1.Block().Hash(), tSigners[VAL4].Address())
+	tSigners[VAL4].SignMsg(v4)
+	ok, _ = cons2.votes.AddVote(v4)
+	assert.True(t, ok)
+
+	// No proposal
+	cons2.enterCommit(1, 0)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	shouldPublishMessageWithThisType(t, cons2, payload.PayloadTypeProposalReq)
+
+	time.Sleep(1 * time.Second) // This will change block timestamp
+	b2 := cons1.state.ProposeBlock()
+	p2 := vote.NewProposal(1, 0, b2)
+	tSigners[VAL1].SignMsg(p2)
+	cons2.votes.SetRoundProposal(p2.Round(), p2)
+
+	// Invalid proposal
+	cons2.enterCommit(1, 0)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+
+	cons2.votes.SetRoundProposal(p2.Round(), p1)
+
+	// Everything is good
+	cons2.enterCommit(1, 0)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypeCommit)
 }
