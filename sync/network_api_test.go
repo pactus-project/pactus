@@ -2,24 +2,27 @@ package sync
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 	"time"
 
 	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/message/payload"
 )
 
 type mockNetworkAPI struct {
-	ch chan *message.Message
+	ch       chan *message.Message
+	id       peer.ID
+	peerSync *Synchronizer
 }
 
-func mockingNetworkAPI() *mockNetworkAPI {
+func mockingNetworkAPI(id peer.ID) *mockNetworkAPI {
 	return &mockNetworkAPI{
-		ch: make(chan *message.Message, 10),
+		ch: make(chan *message.Message, 100),
+		id: id,
 	}
 }
 func (mock *mockNetworkAPI) Start() error {
@@ -32,62 +35,64 @@ func (mock *mockNetworkAPI) PublishMessage(msg *message.Message) error {
 	return nil
 }
 func (mock *mockNetworkAPI) SelfID() peer.ID {
-	return tSelfID
+	return mock.id
 }
 
-func (mock *mockNetworkAPI) waitingForMessage(t *testing.T, msg *message.Message) {
+func (mock *mockNetworkAPI) shouldPublishThisMessage(t *testing.T, expectedMsg *message.Message) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
 		select {
 		case <-timeout.C:
-			assert.NoError(t, fmt.Errorf("Timeout"))
-			return
-		case apiMsg := <-mock.ch:
-			logger.Info("comparing messages", "apiMsg", apiMsg, "msg", msg)
-			b1, _ := msg.MarshalCBOR()
-			b2, _ := apiMsg.MarshalCBOR()
+			require.NoError(t, fmt.Errorf("Timeout"))
+		case msg := <-mock.ch:
+			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg)
+			b, _ := msg.MarshalCBOR()
+			mock.peerSync.ParsMessage(b, mock.id)
 
-			tSync.ParsMessage(b2, tPeerID)
-			if reflect.DeepEqual(b1, b2) {
-				return
-			}
-		}
-	}
-}
-func (mock *mockNetworkAPI) shouldReceiveMessageWithThisType(t *testing.T, pldType payload.PayloadType) {
-	timeout := time.NewTimer(1 * time.Second)
-
-	for {
-		select {
-		case <-timeout.C:
-			assert.NoError(t, fmt.Errorf("Timeout"))
-			return
-		case apiMsg := <-mock.ch:
-			logger.Info("comparing messages type", "apiMsg", apiMsg)
-			b, _ := apiMsg.MarshalCBOR()
-
-			tSync.ParsMessage(b, tPeerID)
-			if apiMsg.PayloadType() == pldType {
+			if msg.PayloadType() == expectedMsg.PayloadType() {
+				logger.Info("Comparing two messages", "msg", msg, "expected", expectedMsg)
+				assert.Equal(t, msg.SignBytes(), expectedMsg.SignBytes())
 				return
 			}
 		}
 	}
 }
 
-func (mock *mockNetworkAPI) shouldNotReceiveAnyMessageWithThisType(t *testing.T, payloadType payload.PayloadType) {
+func (mock *mockNetworkAPI) shouldPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) *message.Message {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("Timeout"))
+			return nil
+		case msg := <-mock.ch:
+			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
+			b, _ := msg.MarshalCBOR()
+			mock.peerSync.ParsMessage(b, mock.id)
+
+			if msg.PayloadType() == payloadType {
+				return msg
+			}
+		}
+	}
+}
+
+func (mock *mockNetworkAPI) shouldNotPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
 		select {
 		case <-timeout.C:
 			return
-		case apiMsg := <-mock.ch:
-			logger.Info("comparing messages type", "apiMsg", apiMsg)
-			b, _ := apiMsg.MarshalCBOR()
+		case msg := <-mock.ch:
+			logger.Info("shouldNotPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
 
-			tSync.ParsMessage(b, tPeerID)
-			assert.NotEqual(t, apiMsg.PayloadType(), payloadType)
+			b, _ := msg.MarshalCBOR()
+			mock.peerSync.ParsMessage(b, mock.id)
+
+			assert.NotEqual(t, msg.PayloadType(), payloadType)
 		}
 	}
 }

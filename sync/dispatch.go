@@ -9,6 +9,16 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
+func (syncer *Synchronizer) sendBlocksReqIfWeAreBehind() {
+	ourHeight := syncer.state.LastBlockHeight()
+	claimedHeight := syncer.stats.LastClaimedHeight()
+	if claimedHeight > ourHeight {
+		syncer.logger.Debug("Ask for more blocks", "our_height", ourHeight, "claimed_height", claimedHeight)
+		hash := syncer.state.LastBlockHash()
+		syncer.broadcastBlocksReq(ourHeight+1, claimedHeight, hash)
+	}
+}
+
 func (syncer *Synchronizer) sendBlocks(from, to int) {
 	to = util.Min(to, from+syncer.config.BlockPerMessage)
 
@@ -18,7 +28,7 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 	}
 
 	// Help peer to catch up
-	txs := make([]*tx.Tx, 0)
+	ids := make([]crypto.Hash, 0)
 	blocks := make([]*block.Block, 0, to-from+1)
 	for h := from; h <= to; h++ {
 		b := syncer.cache.GetBlock(h)
@@ -26,15 +36,7 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 			syncer.logger.Warn("Block can't find", "height", h)
 			break
 		}
-		ids := b.TxIDs().IDs()
-		for _, id := range ids {
-			t := syncer.cache.GetTransaction(id)
-			if t != nil {
-				txs = append(txs, t)
-			} else {
-				syncer.logger.Warn("Transaction can't find", "id", id.Fingerprint())
-			}
-		}
+		ids = append(ids, b.TxIDs().IDs()...)
 		blocks = append(blocks, b)
 	}
 
@@ -44,8 +46,24 @@ func (syncer *Synchronizer) sendBlocks(from, to int) {
 		lastCommit = syncer.state.LastCommit()
 	}
 
-	syncer.broadcastTxs(txs)
+	syncer.sendTransactions(ids)
 	syncer.broadcastBlocks(from, blocks, lastCommit)
+}
+
+func (syncer *Synchronizer) sendTransactions(ids []crypto.Hash) {
+	trxs := make([]*tx.Tx, 0, len(ids))
+	for _, id := range ids {
+		trx := syncer.cache.GetTransaction(id)
+		if trx != nil {
+			trxs = append(trxs, trx)
+		} else {
+			syncer.logger.Debug("Transaction can't find", "id", id.Fingerprint())
+		}
+	}
+
+	if len(trxs) > 0 {
+		syncer.broadcastTxs(trxs)
+	}
 }
 
 func (syncer *Synchronizer) broadcastSalam() {

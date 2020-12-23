@@ -10,7 +10,7 @@ import (
 )
 
 func TestTxsMerkle(t *testing.T) {
-	b, txs := GenerateTestBlock(nil)
+	b, txs := GenerateTestBlock(nil, nil)
 
 	data := make([]crypto.Hash, len(txs))
 	for i, tx := range txs {

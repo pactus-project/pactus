@@ -23,16 +23,30 @@ import (
 )
 
 var (
-	tState       *state.MockState
-	tConsensus   *consensus.MockConsensus
-	tTxPool      *txpool.MockTxPool
-	tNetAPI      *mockNetworkAPI
-	tSync        *Synchronizer
-	tCache       *cache.Cache
-	tBroadcastCh chan *message.Message
-	tPeerID      peer.ID
-	tSelfID      peer.ID
+	tTxPool           *txpool.MockTxPool
+	tAliceState       *state.MockState
+	tBobState         *state.MockState
+	tAliceConsensus   *consensus.MockConsensus
+	tBobConsensus     *consensus.MockConsensus
+	tAliceNetAPI      *mockNetworkAPI
+	tBobNetAPI        *mockNetworkAPI
+	tAliceSync        *Synchronizer
+	tBobSync          *Synchronizer
+	tAliceBroadcastCh chan *message.Message
+	tBobBroadcastCh   chan *message.Message
+	tAlicePeerID      peer.ID
+	tBobPeerID        peer.ID
+	tAnotherPeerID    peer.ID
 )
+
+type OverrideFingerprint struct {
+	sync *Synchronizer
+	name string
+}
+
+func (o *OverrideFingerprint) Fingerprint() string {
+	return o.name + o.sync.Fingerprint()
+}
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
@@ -40,186 +54,242 @@ func init() {
 
 func setup(t *testing.T) {
 	syncConf := TestConfig()
-	_, _, priv := crypto.GenerateTestKeyPair()
-	signer := crypto.NewSigner(priv)
-
-	tPeerID, _ = peer.IDB58Decode("12D3KooWLQ8GKaLdKU8Ms6AkMYjDWCr5UTPvdewag3tcarxh7saC")
-	tSelfID, _ = peer.IDB58Decode("12D3KooWHyepEGGdeSk3nPZrEamxLNba7tFZJKWbyEdZ654fHJdk")
+	_, _, priv1 := crypto.GenerateTestKeyPair()
+	_, _, priv2 := crypto.GenerateTestKeyPair()
+	aliceSigner := crypto.NewSigner(priv1)
+	bobSigner := crypto.NewSigner(priv2)
 
 	tTxPool = txpool.NewMockTxPool()
-	tState = state.NewMockStore()
-	tConsensus = consensus.NewMockConsensus()
-	tNetAPI = mockingNetworkAPI()
-	tCache, _ = cache.NewCache(syncConf.CacheSize, tState.StoreReader())
-	tBroadcastCh = make(chan *message.Message, 100)
 
-	// State has some block
+	tAlicePeerID, _ = peer.IDB58Decode("12D3KooWLQ8GKaLdKU8Ms6AkMYjDWCr5UTPvdewag3tcarxh7saC")
+	tBobPeerID, _ = peer.IDB58Decode("12D3KooWHyepEGGdeSk3nPZrEamxLNba7tFZJKWbyEdZ654fHJdk")
+	tAnotherPeerID, _ = peer.IDB58Decode("12D3KooWM4dZKiZ8y21biCZXuAJYD5db8vSr1hfMpSgBSqpekY4Q")
+	tAliceState = state.NewMockState()
+	tBobState = state.NewMockState()
+	tAliceConsensus = consensus.NewMockConsensus()
+	tBobConsensus = consensus.NewMockConsensus()
+	tAliceBroadcastCh = make(chan *message.Message, 100)
+	tBobBroadcastCh = make(chan *message.Message, 100)
+	tAliceNetAPI = mockingNetworkAPI(tAlicePeerID)
+	tBobNetAPI = mockingNetworkAPI(tBobPeerID)
+	aliceCache, _ := cache.NewCache(syncConf.CacheSize, tAliceState.StoreReader())
+	bobCache, _ := cache.NewCache(syncConf.CacheSize, tBobState.StoreReader())
+
+	tBobState.GenHash = tAliceState.GenHash
+
+	// Alice has 12 and Bob has 6 blocks
+	lastBlockHash := crypto.Hash{}
 	for i := 0; i < 12; i++ {
-		b, trxs := block.GenerateTestBlock(nil)
-		tState.AddBlock(i+1, b, trxs)
-		tState.LastBlockCommit = block.GenerateTestCommit(b.Hash())
+		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
+		c := block.GenerateTestCommit(b.Hash())
+		lastBlockHash = b.Hash()
+		tAliceState.AddBlock(i+1, b, trxs)
+		tAliceState.LastBlockCommit = c
+
+		if i < 6 {
+			tBobState.AddBlock(i+1, b, trxs)
+			tBobState.LastBlockCommit = c
+		}
 	}
 
-	tSync = &Synchronizer{
+	tAliceSync = &Synchronizer{
 		ctx:         context.Background(),
 		config:      syncConf,
-		signer:      signer,
-		state:       tState,
-		consensus:   tConsensus,
-		cache:       tCache,
+		signer:      aliceSigner,
+		state:       tAliceState,
+		consensus:   tAliceConsensus,
+		cache:       aliceCache,
 		txPool:      tTxPool,
-		broadcastCh: tBroadcastCh,
-		networkAPI:  tNetAPI,
+		broadcastCh: tAliceBroadcastCh,
+		networkAPI:  tAliceNetAPI,
+		stats:       stats.NewStats(tAliceState.GenHash),
 	}
+	tAliceSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "alice: ", sync: tAliceSync})
 
-	logger := logger.NewLogger("_sync", tSync)
+	tBobSync = &Synchronizer{
+		ctx:         context.Background(),
+		config:      syncConf,
+		signer:      bobSigner,
+		state:       tBobState,
+		consensus:   tBobConsensus,
+		cache:       bobCache,
+		txPool:      tTxPool,
+		broadcastCh: tBobBroadcastCh,
+		networkAPI:  tBobNetAPI,
+		stats:       stats.NewStats(tBobState.GenHash),
+	}
+	tBobSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "bob: ", sync: tBobSync})
 
-	tSync.logger = logger
-	tSync.stats = stats.NewStats(tState.GenHash)
+	tAliceNetAPI.peerSync = tBobSync
+	tBobNetAPI.peerSync = tAliceSync
 
-	assert.NoError(t, tSync.Start())
+	assert.NoError(t, tAliceSync.Start())
+	assert.NoError(t, tBobSync.Start())
 
-	tNetAPI.waitingForMessage(t, message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight()))
-	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!"))
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeSalam)
+	tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeSalam)
+
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+	tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+
+	tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocks)
 }
 
 func TestSendSalamBadGenesisHash(t *testing.T) {
 	setup(t)
 
 	invGenHash := crypto.GenerateTestHash()
-	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), invGenHash, 0)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewSalamMessage("bad-genesis", pub, tAnotherPeerID, invGenHash, 0)
 	data, _ := cbor.Marshal(msg)
-	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 1, "Invalid genesis hash"))
+	tAliceSync.ParsMessage(data, tAnotherPeerID)
+	msg2 := tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+	pld := msg2.Payload.(*payload.AleykPayload)
+
+	assert.Equal(t, pld.Response.Status, payload.SalamResponseCodeRejected)
+}
+
+func TestSendSalamPeerBehind(t *testing.T) {
+	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 0)
+	data, _ := cbor.Marshal(msg)
+	tAliceSync.ParsMessage(data, tAnotherPeerID)
+	msg2 := tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+	pld := msg2.Payload.(*payload.AleykPayload)
+
+	assert.Equal(t, pld.Response.Status, payload.SalamResponseCodeOK)
+	assert.Equal(t, tBobSync.stats.MaxClaimedHeight(), tAliceState.LastBlockHeight())
 }
 
 func TestSendSalamPeerAhead(t *testing.T) {
 	setup(t)
 
-	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 1)
-	data, _ := cbor.Marshal(msg)
-	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!"))
-	assert.Equal(t, tSync.stats.MaxHeight(), tState.LastBlockHeight())
-}
+	_, pub, _ := crypto.GenerateTestKeyPair()
 
-func TestSendSalamPeerBehind(t *testing.T) {
-	setup(t)
-
-	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 111)
+	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 111)
 	data, _ := cbor.Marshal(msg)
-	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.waitingForMessage(t, message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!"))
-	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(tState.LastBlockHeight()+1, 111, tState.LastBlockHash()))
-	assert.Equal(t, tSync.stats.MaxHeight(), 111)
-}
-func TestSendAleykPeerAhead(t *testing.T) {
-	setup(t)
+	tAliceSync.ParsMessage(data, tAnotherPeerID)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+	tAliceNetAPI.shouldPublishThisMessage(t, message.NewBlocksReqMessage(tAliceState.LastBlockHeight()+1, 111, tAliceState.LastBlockHash()))
 
-	msg := message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 1, 0, "Welcome!")
-	data, _ := cbor.Marshal(msg)
-	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeBlocksReq)
-	assert.Equal(t, tSync.stats.MaxHeight(), tState.LastBlockHeight())
+	assert.Equal(t, tAliceSync.stats.MaxClaimedHeight(), 111)
 }
 
 func TestSendAleykPeerBehind(t *testing.T) {
 	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 111, 0, "Welcome!")
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 1, 0, "Welcome!")
 	data, _ := cbor.Marshal(msg)
-	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(tState.LastBlockHeight()+1, 111, tState.LastBlockHash()))
-	assert.Equal(t, tSync.stats.MaxHeight(), 111)
+	tAliceSync.ParsMessage(data, tAnotherPeerID)
+	tAliceNetAPI.shouldNotPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
+}
+
+func TestSendAleykPeerAhead(t *testing.T) {
+	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 111, 0, "Welcome!")
+	data, _ := cbor.Marshal(msg)
+	tAliceSync.ParsMessage(data, tAnotherPeerID)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
+	assert.Equal(t, tAliceSync.stats.MaxClaimedHeight(), 111)
 }
 
 func TestSendAleykPeerSameHeight(t *testing.T) {
 	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, tState.LastBlockHeight(), 0, "Welcome!")
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, tAliceState.LastBlockHeight(), 0, "Welcome!")
 	data, _ := cbor.Marshal(msg)
-	tSync.ParsMessage(data, tPeerID)
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeBlocksReq)
-	assert.Equal(t, tSync.stats.MaxHeight(), tState.LastBlockHeight())
-
+	tAliceSync.ParsMessage(data, tAnotherPeerID)
+	tAliceNetAPI.shouldNotPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
 }
 
-func TestCacheBlocksAndTransactions(t *testing.T) {
+func TestAddBlockToCache(t *testing.T) {
 	setup(t)
 
-	b, trxs := block.GenerateTestBlock(nil)
+	b1, _ := block.GenerateTestBlock(nil, nil)
 
-	// Send transactions
-	tSync.broadcastTxs(trxs)
-
-	// Send blocks
-	tSync.broadcastBlocks(1001, []*block.Block{b}, nil)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocks)
-
-	assert.NotNil(t, tCache.GetBlock(1001))
-	assert.NotNil(t, tCache.GetCommit(b.Header().LastBlockHash()))
-	assert.NotNil(t, tCache.GetTransaction(trxs[0].ID()))
+	// Alice send block to bob, bob should cache it
+	tAliceSync.broadcastBlocks(1001, []*block.Block{b1}, nil)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocks)
+	assert.Equal(t, tBobSync.cache.GetBlock(1001).Hash(), b1.Hash())
 }
 
-func TestDuplicatingBlock(t *testing.T) {
-	setup(t)
-
-	b1, _ := block.GenerateTestBlock(nil)
-	b2, _ := block.GenerateTestBlock(nil)
-
-	// Send block 1
-	tSync.broadcastBlocks(1001, []*block.Block{b1}, nil)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocks)
-	assert.Equal(t, tCache.GetBlock(1001).Hash(), b1.Hash())
-
-	// Send block 1 again, should overwrite the first one in cache
-	tSync.broadcastBlocks(1001, []*block.Block{b2}, nil)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocks)
-	assert.Equal(t, tCache.GetBlock(1001).Hash(), b2.Hash())
-}
-
-func TestCheckTxsInCache(t *testing.T) {
+func TestAddTxToCache(t *testing.T) {
 	setup(t)
 
 	trx1, _ := tx.GenerateTestBondTx()
-	trx2, _ := tx.GenerateTestSendTx()
-	trx3, _ := tx.GenerateTestSortitionTx()
 
-	tCache.AddTransaction(trx1)
-	msg := message.NewTxsReqMessage([]crypto.Hash{trx1.ID(), trx2.ID()})
-	tBroadcastCh <- msg
-	tNetAPI.waitingForMessage(t, message.NewTxsReqMessage([]crypto.Hash{trx2.ID()}))
-
-	tCache.AddTransaction(trx3)
-	msg = message.NewTxsReqMessage([]crypto.Hash{trx3.ID()})
-	tBroadcastCh <- msg
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeTxsReq)
+	// Alice send transaction to bob, bob should cache it
+	tAliceSync.broadcastTxs([]*tx.Tx{trx1})
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeTxs)
+	assert.NotNil(t, tBobSync.cache.GetTransaction(trx1.ID()))
 }
 
-// TODO: test these situation in consensus
 func TestRequestForProposal(t *testing.T) {
-	setup(t)
 
-	hrs := hrs.NewHRS(100, 1, 6)
-	p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
-	tConsensus.SetProposal(p)
-	tConsensus.HRS_ = hrs
-	t.Run("Request proposal at same HRS", func(t *testing.T) {
-		msg := message.NewProposalReqMessage(hrs.Height(), hrs.Round())
-		tBroadcastCh <- msg
-		tNetAPI.waitingForMessage(t, message.NewProposalMessage(p))
+	t.Run("Alice and bob are in same height. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
+		setup(t)
+
+		hrs := hrs.NewHRS(100, 1, 6)
+		p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
+		tAliceConsensus.SetProposal(p)
+		tAliceConsensus.HRS_ = hrs
+
+		tBobBroadcastCh <- message.NewProposalReqMessage(hrs.Height(), hrs.Round())
+		tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeProposalReq)
+		tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
+
+		assert.Equal(t, tBobConsensus.Proposal.Hash(), tBobConsensus.Proposal.Hash())
 	})
 
-	t.Run("Request proposal at same height but lower HRS", func(t *testing.T) {
-		msg := message.NewProposalReqMessage(hrs.Height(), hrs.Round()-1)
-		tBroadcastCh <- msg
-		tNetAPI.waitingForMessage(t, message.NewProposalMessage(p))
+	t.Run("Alice and bob are in same height. Alice doesn't have have proposal. Bob ask for the proposal", func(t *testing.T) {
+		setup(t)
+
+		hrs := hrs.NewHRS(101, 1, 6)
+		tAliceConsensus.HRS_ = hrs
+
+		tBobBroadcastCh <- message.NewProposalReqMessage(hrs.Height(), hrs.Round())
+		tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeProposalReq)
+
+		// Alice doesn't respond
+		tAliceNetAPI.shouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 	})
 
-	t.Run("Request proposal at same height but higher HRS", func(t *testing.T) {
-		msg := message.NewProposalReqMessage(hrs.Height(), hrs.Round()+1)
-		tBroadcastCh <- msg
-		tNetAPI.waitingForMessage(t, message.NewProposalReqMessage(hrs.Height(), hrs.Round()+1))
+	t.Run("Alice and bob are in same height. Alice is in next round. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
+		setup(t)
+
+		hrs := hrs.NewHRS(102, 1, 6)
+		p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
+		tAliceConsensus.SetProposal(p)
+		tAliceConsensus.HRS_ = hrs
+
+		tBobBroadcastCh <- message.NewProposalReqMessage(hrs.Height(), hrs.Round()-1)
+		tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeProposalReq)
+		tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
+
+		assert.Equal(t, tBobConsensus.Proposal.Hash(), tBobConsensus.Proposal.Hash())
+	})
+
+	t.Run("Alice and bob are in same height. Alice is in previous round. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
+		setup(t)
+
+		hrs := hrs.NewHRS(103, 1, 6)
+		p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
+		tAliceConsensus.SetProposal(p)
+		tAliceConsensus.HRS_ = hrs
+
+		tBobBroadcastCh <- message.NewProposalReqMessage(hrs.Height(), hrs.Round()+1)
+		tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeProposalReq)
+
+		// Alice doesn't respond
+		tAliceNetAPI.shouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 	})
 
 }

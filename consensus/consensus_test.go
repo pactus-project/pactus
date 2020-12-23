@@ -291,7 +291,7 @@ func TestConsensusInvalidProposal(t *testing.T) {
 	assert.Nil(t, cons.LastProposal())
 
 	addr := signers[VAL1].Address()
-	b, _ := block.GenerateTestBlock(&addr)
+	b, _ := block.GenerateTestBlock(&addr, nil)
 	p := vote.NewProposal(1, 0, *b)
 
 	cons.SetProposal(p)

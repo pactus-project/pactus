@@ -32,11 +32,11 @@ func setup(t *testing.T) {
 		return
 	}
 
-	tMockState = state.NewMockStore()
+	tMockState = state.NewMockState()
 	tMockPool = txpool.NewMockTxPool()
 
-	b1, txs := block.GenerateTestBlock(nil)
-	b2, _ := block.GenerateTestBlock(nil)
+	b1, txs := block.GenerateTestBlock(nil, nil)
+	b2, _ := block.GenerateTestBlock(nil, nil)
 	tMockState.Store.Blocks[1] = b1
 	tMockState.Store.Blocks[2] = b2
 

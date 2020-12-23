@@ -1,13 +1,11 @@
 package sync
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -17,41 +15,23 @@ func TestRequestForBlocksInvalidLastBlocHash(t *testing.T) {
 
 	invHash := crypto.GenerateTestHash()
 
-	// Send block request, but block hash is invalid, ignore it
-	tSync.broadcastBlocksReq(7, tState.LastBlockHeight(), invHash)
+	// Alice asks bob to send blocks but last block hash is invalid
+	tAliceSync.broadcastBlocksReq(4, 6, invHash)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
 
-	tNetAPI.shouldNotReceiveAnyMessageWithThisType(t, payload.PayloadTypeBlocks)
+	tBobNetAPI.shouldNotPublishMessageWithThisType(t, payload.PayloadTypeBlocks)
 }
 
-func TestRequestForBlocks(t *testing.T) {
+func TestSendLastCommit(t *testing.T) {
 	setup(t)
 
-	h := tState.Store.Blocks[7].Header().LastBlockHash()
-	tSync.broadcastBlocksReq(7, 11, h)
+	tAliceSync.broadcastBlocksReq(4, tBobState.LastBlockHeight(), tBobState.Store.Blocks[3].Hash())
 
-	blocks := make([]*block.Block, 0)
-	for i := 7; i <= 11; i++ {
-		blocks = append(blocks, tState.Store.Blocks[i])
-	}
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
+	msg := tBobNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocks)
+	pld := msg.Payload.(*payload.BlocksPayload)
 
-	expectedMsg := message.NewBlocksMessage(7, blocks, nil)
-	tNetAPI.waitingForMessage(t, expectedMsg)
-}
-
-func TestRequestForBlocksWithLastCommist(t *testing.T) {
-	setup(t)
-
-	h := tState.Store.Blocks[7].Header().LastBlockHash()
-	tSync.broadcastBlocksReq(7, tState.LastBlockHeight(), h)
-
-	blocks := make([]*block.Block, 0)
-	for i := 7; i <= tState.LastBlockHeight(); i++ {
-		blocks = append(blocks, tState.Store.Blocks[i])
-	}
-
-	assert.NotNil(t, tState.LastBlockCommit)
-	expectedMsg := message.NewBlocksMessage(7, blocks, tState.LastBlockCommit)
-	tNetAPI.waitingForMessage(t, expectedMsg)
+	assert.Equal(t, pld.LastCommit, tBobState.LastBlockCommit)
 }
 
 func TestUpdateConsensus(t *testing.T) {
@@ -60,82 +40,36 @@ func TestUpdateConsensus(t *testing.T) {
 	v, _ := vote.GenerateTestPrecommitVote(1, 1)
 	p, _ := vote.GenerateTestProposal(1, 1)
 
-	tSync.broadcastVote(v)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeVote)
+	tAliceSync.broadcastVote(v)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
 
-	tSync.broadcastProposal(p)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeProposal)
+	tAliceSync.broadcastProposal(p)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 
-	assert.Equal(t, tConsensus.Votes[0].Hash(), v.Hash())
-	assert.Equal(t, tConsensus.Proposal.Hash(), p.Hash())
+	assert.Equal(t, tBobConsensus.Votes[0].Hash(), v.Hash())
+	assert.Equal(t, tBobConsensus.Proposal.Hash(), p.Hash())
 }
 
 func TestMoveToConsensus(t *testing.T) {
 	setup(t)
 
-	// Bad peer send us invalid height
-	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, 100000000)
-	tSync.publishMessage(msg)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeAleyk)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocksReq)
-
-	tSync.maybeSynced(false)
-	assert.False(t, tConsensus.Moved)
-
-	ourHeight := tState.LastBlockHeight()
-	// We send all blocks we have and set LastCommit to true
+	aliceHeight := tAliceState.LastBlockHeight()
+	aliceLastHash := tAliceState.LastBlockHash()
+	// Another peers send all blocks he has and set the LastCommit
 	blocks := make([]*block.Block, 0)
 	var commit *block.Commit
-	for i := 0; i < 15; i++ {
-		b, _ := block.GenerateTestBlock(nil)
+	lastHash := aliceLastHash
+	for i := 0; i < 5; i++ {
+		b, _ := block.GenerateTestBlock(nil, &lastHash)
 		commit = block.GenerateTestCommit(b.Hash())
+		lastHash = b.Hash()
 		blocks = append(blocks, b)
-
-		// To make sure block will be committed
-		tCache.AddCommit(b.Hash(), commit)
 	}
 
-	assert.NotNil(t, tState.LastBlockCommit)
-	tSync.broadcastBlocks(tState.LastBlockHeight()+1, blocks, commit)
+	tBobConsensus.Started = false
 
-	// We send all blocks we have and set LastCommit to true
-	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(ourHeight+15+1, 100000000, blocks[14].Hash()))
+	tAliceSync.broadcastBlocks(aliceHeight+1, blocks, commit)
+	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocks)
 
-	assert.True(t, tConsensus.Moved)
-}
-
-func TestSendInvalidBlock(t *testing.T) {
-	setup(t)
-
-	fmt.Println(tState.LastBlockHeight())
-	networkHeight := tState.LastBlockHeight() + 15
-	msg := message.NewSalamMessage(tSync.config.Moniker, tSync.signer.PublicKey(), tNetAPI.SelfID(), tState.GenHash, networkHeight)
-	tSync.publishMessage(msg)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeAleyk)
-	tNetAPI.shouldReceiveMessageWithThisType(t, payload.PayloadTypeBlocksReq)
-
-	tSync.maybeSynced(false)
-	assert.False(t, tConsensus.Moved)
-
-	ourHeight := tState.LastBlockHeight()
-	// We send all blocks we have and set LastCommit to true
-	blocks := make([]*block.Block, 0)
-	var commit *block.Commit
-	for i := 0; i < 15; i++ {
-		b, _ := block.GenerateTestBlock(nil)
-		commit = block.GenerateTestCommit(b.Hash())
-		blocks = append(blocks, b)
-
-		// To make sure block will be committed
-		tCache.AddCommit(b.Hash(), commit)
-	}
-
-	tState.InvalidBlockHash = blocks[5].Hash()
-	assert.NotNil(t, tState.LastBlockCommit)
-	tSync.broadcastBlocks(tState.LastBlockHeight()+1, blocks, commit)
-
-	// We send all blocks we have and set LastCommit to true
-	tNetAPI.waitingForMessage(t, message.NewBlocksReqMessage(ourHeight+6, networkHeight, blocks[4].Hash()))
-
-	assert.False(t, tConsensus.Moved)
+	assert.True(t, tBobConsensus.Started)
 }

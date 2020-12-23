@@ -22,8 +22,8 @@ func setup(t *testing.T) {
 func TestCacheBlock(t *testing.T) {
 	setup(t)
 
-	b1, _ := block.GenerateTestBlock(nil)
-	b2, _ := block.GenerateTestBlock(nil)
+	b1, _ := block.GenerateTestBlock(nil, nil)
+	b2, _ := block.GenerateTestBlock(nil, nil)
 
 	tStore.Blocks[1] = b1
 	tCache.AddBlock(2, b2)
@@ -36,9 +36,9 @@ func TestCacheBlock(t *testing.T) {
 func TestCacheCommit(t *testing.T) {
 	setup(t)
 
-	b1, _ := block.GenerateTestBlock(nil)
-	b2, _ := block.GenerateTestBlock(nil)
-	b3, _ := block.GenerateTestBlock(nil)
+	b1, _ := block.GenerateTestBlock(nil, nil)
+	b2, _ := block.GenerateTestBlock(nil, nil)
+	b3, _ := block.GenerateTestBlock(nil, nil)
 
 	tStore.Blocks[1] = b1
 	tStore.Blocks[2] = b2

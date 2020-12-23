@@ -67,7 +67,7 @@ func TestBlockReqMessage(t *testing.T) {
 }
 
 func TestBlocksMessage(t *testing.T) {
-	b, _ := block.GenerateTestBlock(nil)
+	b, _ := block.GenerateTestBlock(nil, nil)
 	invMsg := NewBlocksMessage(4, nil, nil)
 	assert.Error(t, invMsg.SanityCheck())
 	m := NewBlocksMessage(4, []*block.Block{b}, nil)

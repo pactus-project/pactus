@@ -16,9 +16,10 @@ import (
 type Stats struct {
 	lk deadlock.RWMutex
 
-	peers       map[peer.ID]*Peer
-	genesisHash crypto.Hash
-	maxHeight   int
+	peers             map[peer.ID]*Peer
+	genesisHash       crypto.Hash
+	maxClaimedHeight  int
+	lastClaimedHeight int
 }
 
 func NewStats(genesisHash crypto.Hash) *Stats {
@@ -35,18 +36,30 @@ func (s *Stats) PeersCount() int {
 	return len(s.peers)
 }
 
-// MaxHeight returns the maximum height if the network that we know
+// MaxClaimedHeight returns the maximum calimed height
 //
-// Note: This value might bot be accurate
-// Imagine a bad peer reports that his height is 10000000
-// Then we should wait until that height to start consensus.
+// Note: This value might not be accurate
+// A bad peer can claim invalid height
 //
-func (s *Stats) MaxHeight() int {
+func (s *Stats) MaxClaimedHeight() int {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	return s.maxHeight
+	return s.maxClaimedHeight
 }
+
+func (s *Stats) LastClaimedHeight() int {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	return s.lastClaimedHeight
+}
+
+func (s *Stats) updateLastClaimedHeight(h int) {
+	s.lastClaimedHeight = h
+	s.maxClaimedHeight = util.Max(s.maxClaimedHeight, h)
+}
+
 func (s *Stats) getPeer(peerID peer.ID) *Peer {
 	if peer, ok := s.peers[peerID]; ok {
 		return peer
@@ -74,13 +87,13 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 	err := msg.UnmarshalCBOR(data)
 	if err != nil {
 		peer.InvalidMsg = peer.InvalidMsg + 1
-		logger.Debug("Error decoding message", "from", from.ShortString(), "data", hex.EncodeToString(data), "err", err)
+		logger.Debug("Error decoding message", "from", util.FingerprintPeerID(from), "data", hex.EncodeToString(data), "err", err)
 		return nil
 	}
 
 	if err = msg.SanityCheck(); err != nil {
 		peer.InvalidMsg = peer.InvalidMsg + 1
-		logger.Debug("Peer sent us invalid msg", "peer", from.ShortString(), "msg", msg, "err", err)
+		logger.Debug("Peer sent us invalid msg", "peer", util.FingerprintPeerID(from), "msg", msg, "err", err)
 		return nil
 	}
 
@@ -99,29 +112,30 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 		pld := msg.Payload.(*payload.SalamPayload)
 		peer.Version = pld.NodeVersion
 		peer.GenesisHash = pld.GenesisHash
-		s.updateMaxHeight(pld.Height)
+		s.updateLastClaimedHeight(pld.Height)
 
 	case payload.PayloadTypeAleyk:
 		pld := msg.Payload.(*payload.AleykPayload)
 		peer.Version = pld.NodeVersion
 		peer.GenesisHash = pld.GenesisHash
-		s.updateMaxHeight(pld.Height)
+		s.updateLastClaimedHeight(pld.Height)
 
 	case payload.PayloadTypeHeartBeat:
 		pld := msg.Payload.(*payload.HeartBeatPayload)
 		peer.Height = pld.Pulse.Height()
-		s.updateMaxHeight(pld.Pulse.Height() - 1)
+		s.updateLastClaimedHeight(pld.Pulse.Height() - 1)
 
 	case payload.PayloadTypeProposal:
 		pld := msg.Payload.(*payload.ProposalPayload)
-		s.updateMaxHeight(pld.Proposal.Height() - 1)
+		s.updateLastClaimedHeight(pld.Proposal.Height() - 1)
 
 	case payload.PayloadTypeVote:
 		pld := msg.Payload.(*payload.VotePayload)
-		s.updateMaxHeight(pld.Vote.Height() - 1)
+		s.updateLastClaimedHeight(pld.Vote.Height() - 1)
 
 	case payload.PayloadTypeVoteSet:
-		//pld := msg.Payload.(*payload.VoteSetPayload)
+		pld := msg.Payload.(*payload.VoteSetPayload)
+		s.updateLastClaimedHeight(pld.Height - 1)
 	}
 
 	return msg
@@ -131,9 +145,4 @@ func (s *Stats) badPeer(peer *Peer) bool {
 	ratio := (peer.InvalidMsg * 100) / peer.ReceivedMsg
 
 	return ratio > 10
-}
-
-func (s *Stats) updateMaxHeight(height int) {
-
-	s.maxHeight = util.Max(s.maxHeight, height)
 }

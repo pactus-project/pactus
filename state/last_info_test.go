@@ -16,7 +16,7 @@ import (
 
 func TestSaveLoadLastInfo(t *testing.T) {
 	st := setupStatewithOneValidator(t)
-	b, _ := block.GenerateTestBlock(nil)
+	b, _ := block.GenerateTestBlock(nil, nil)
 
 	st.saveLastInfo(125, *b.LastCommit(), b.Header().LastReceiptsHash())
 	li, err := st.loadLastInfo()

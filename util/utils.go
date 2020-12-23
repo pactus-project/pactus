@@ -1,8 +1,11 @@
 package util
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
+
+	peer "github.com/libp2p/go-libp2p-peer"
 )
 
 const MaxUint64 = ^uint64(0)
@@ -46,4 +49,9 @@ func RandInt(max int) int {
 func RandInt64(max int64) int64 {
 	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Int63n(max)
+}
+
+func FingerprintPeerID(id peer.ID) string {
+	pid := id.Pretty()
+	return fmt.Sprintf("%s*%s", pid[:2], pid[len(pid)-6:])
 }

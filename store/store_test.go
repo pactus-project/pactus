@@ -14,7 +14,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	store, err := NewStore(conf)
 	assert.NoError(t, err)
 
-	b, txs := block.GenerateTestBlock(nil)
+	b, txs := block.GenerateTestBlock(nil, nil)
 	h := util.RandInt(10000)
 	err = store.SaveBlock(*b, h)
 	assert.NoError(t, err)

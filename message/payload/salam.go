@@ -6,6 +6,7 @@ import (
 	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
 )
 
@@ -37,5 +38,5 @@ func (p *SalamPayload) Type() PayloadType {
 }
 
 func (p *SalamPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v %v}", p.PeerID.Pretty(), p.Height)
+	return fmt.Sprintf("{%v %v}", util.FingerprintPeerID(p.PeerID), p.Height)
 }

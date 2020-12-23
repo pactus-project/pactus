@@ -127,7 +127,7 @@ func TestApplyBlocks(t *testing.T) {
 	st := setupStatewithOneValidator(t)
 
 	b1, c1 := proposeAndSignBlock(t, st, tValSigner1)
-	invBlock, _ := block.GenerateTestBlock(nil)
+	invBlock, _ := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, st.ApplyBlock(1, *invBlock, c1))
 	assert.Error(t, st.ApplyBlock(2, b1, c1))
 	assert.NoError(t, st.ApplyBlock(1, b1, c1))
