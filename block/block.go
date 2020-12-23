@@ -132,7 +132,7 @@ func (b *Block) UnmarshalJSON(bz []byte) error {
 
 // ---------
 // For tests
-func GenerateTestBlock(proposer *crypto.Address) (*Block, []*tx.Tx) {
+func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*Block, []*tx.Tx) {
 	if proposer == nil {
 		addr, _, _ := crypto.GenerateTestKeyPair()
 		proposer = &addr
@@ -152,14 +152,22 @@ func GenerateTestBlock(proposer *crypto.Address) (*Block, []*tx.Tx) {
 	for _, tx := range txs {
 		ids.Append(tx.ID())
 	}
-	lastBlockHash := crypto.GenerateTestHash()
-	commit := GenerateTestCommit(lastBlockHash)
+	if lastBlockHash == nil {
+		h := crypto.GenerateTestHash()
+		lastBlockHash = &h
+	}
+	lastReceiptsHash := crypto.GenerateTestHash()
+	commit := GenerateTestCommit(*lastBlockHash)
+	if lastBlockHash.IsUndef() {
+		commit = nil
+		lastReceiptsHash = crypto.UndefHash
+	}
 
 	block := MakeBlock(time.Now(), ids,
-		lastBlockHash,
+		*lastBlockHash,
 		crypto.GenerateTestHash(),
 		crypto.GenerateTestHash(),
-		crypto.GenerateTestHash(),
+		lastReceiptsHash,
 		commit,
 		*proposer)
 

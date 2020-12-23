@@ -21,7 +21,7 @@ type MockState struct {
 	InvalidBlockHash crypto.Hash
 }
 
-func NewMockStore() *MockState {
+func NewMockState() *MockState {
 	return &MockState{
 		GenHash: crypto.GenerateTestHash(),
 		Store:   store.NewMockStore(),
@@ -41,7 +41,11 @@ func (m *MockState) GenesisHash() crypto.Hash {
 	return m.GenHash
 }
 func (m *MockState) LastBlockHash() crypto.Hash {
-	return m.Store.Blocks[m.Store.LastBlockHeight()].Hash()
+	h := m.Store.LastBlockHeight()
+	if h > 0 {
+		return m.Store.Blocks[m.Store.LastBlockHeight()].Hash()
+	}
+	return crypto.UndefHash
 }
 func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
@@ -75,7 +79,7 @@ func (m *MockState) Close() error {
 	return nil
 }
 func (m *MockState) ProposeBlock() block.Block {
-	b, _ := block.GenerateTestBlock(nil)
+	b, _ := block.GenerateTestBlock(nil, nil)
 	return *b
 }
 func (m *MockState) ValidateBlock(block block.Block) error {

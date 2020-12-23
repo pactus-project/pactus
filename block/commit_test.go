@@ -32,7 +32,7 @@ func TestCommitMarshaling(t *testing.T) {
 }
 
 func TestCommitMerkle(t *testing.T) {
-	b, _ := GenerateTestBlock(nil)
+	b, _ := GenerateTestBlock(nil, nil)
 
 	committers := b.LastCommit().Committers()
 	data := make([]crypto.Hash, len(committers))
@@ -45,7 +45,7 @@ func TestCommitMerkle(t *testing.T) {
 }
 
 func TestCommitSanityCheck(t *testing.T) {
-	b, _ := GenerateTestBlock(nil)
+	b, _ := GenerateTestBlock(nil, nil)
 	c := b.LastCommit()
 	assert.NoError(t, c.SanityCheck())
 	c.data.Committers[0].Status = 0 // not signed

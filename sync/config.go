@@ -3,6 +3,7 @@ package sync
 import "time"
 
 type Config struct {
+	Moniker          string
 	StartingTimeout  time.Duration
 	HeartBeatTimeout time.Duration
 	BlockPerMessage  int
@@ -20,6 +21,7 @@ func DefaultConfig() *Config {
 
 func TestConfig() *Config {
 	return &Config{
+		Moniker:          "kitty",
 		StartingTimeout:  time.Second * 1,
 		HeartBeatTimeout: time.Second * 5,
 		BlockPerMessage:  10,

@@ -5,7 +5,6 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/message/payload"
@@ -16,11 +15,11 @@ type NetworkAPI interface {
 	Start() error
 	Stop()
 	PublishMessage(msg *message.Message) error
+	SelfID() peer.ID
 }
 
 type networkAPI struct {
 	ctx            context.Context
-	selfAddress    crypto.Address
 	selfID         peer.ID
 	generalTopic   *pubsub.Topic
 	txTopic        *pubsub.Topic
@@ -35,7 +34,6 @@ type networkAPI struct {
 
 func newNetworkAPI(
 	ctx context.Context,
-	selfAddress crypto.Address,
 	net *network.Network,
 	parsMessageFn func(data []byte, from peer.ID)) (*networkAPI, error) {
 	generalTopic, err := net.JoinTopic("general")
@@ -73,7 +71,6 @@ func newNetworkAPI(
 	return &networkAPI{
 		ctx:            ctx,
 		selfID:         net.ID(),
-		selfAddress:    selfAddress,
 		txTopic:        txTopic,
 		txSub:          txSub,
 		blockSub:       blockSub,
@@ -116,7 +113,6 @@ func (api *networkAPI) parsMessage(m *pubsub.Message) {
 }
 
 func (api *networkAPI) PublishMessage(msg *message.Message) error {
-	msg.Initiator = api.selfAddress
 	topic := api.topic(msg)
 	bs, _ := msg.MarshalCBOR()
 	return topic.Publish(api.ctx, bs)
@@ -193,4 +189,8 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 	default:
 		panic("Invalid topic")
 	}
+}
+
+func (api *networkAPI) SelfID() peer.ID {
+	return api.selfID
 }

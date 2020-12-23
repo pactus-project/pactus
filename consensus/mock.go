@@ -12,7 +12,7 @@ type MockConsensus struct {
 	Votes    []*vote.Vote
 	Proposal *vote.Proposal
 	HRS_     hrs.HRS
-	Moved    bool
+	Started  bool
 }
 
 func NewMockConsensus() *MockConsensus {
@@ -20,7 +20,7 @@ func NewMockConsensus() *MockConsensus {
 }
 
 func (m *MockConsensus) MoveToNewHeight() {
-	m.Moved = true
+	m.Started = true
 }
 func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.Votes = append(m.Votes, v)

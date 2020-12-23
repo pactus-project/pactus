@@ -15,7 +15,7 @@ func TestRemoveInvalidProposal(t *testing.T) {
 	cons.enterNewHeight(1)
 
 	addr := signers[VAL1].Address()
-	b, _ := block.GenerateTestBlock(&addr)
+	b, _ := block.GenerateTestBlock(&addr, nil)
 	invalidProposal := vote.NewProposal(1, 0, *b)
 	signers[VAL1].SignMsg(invalidProposal)
 	cons.setProposal(invalidProposal)

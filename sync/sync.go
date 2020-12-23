@@ -23,6 +23,7 @@ type Synchronizer struct {
 
 	ctx             context.Context
 	config          *Config
+	signer          crypto.Signer
 	state           state.State
 	txPool          txpool.TxPool
 	consensus       consensus.Consensus
@@ -36,7 +37,7 @@ type Synchronizer struct {
 
 func NewSynchronizer(
 	conf *Config,
-	addr crypto.Address,
+	signer crypto.Signer,
 	state state.State,
 	consensus consensus.Consensus,
 	txPool txpool.TxPool,
@@ -45,6 +46,7 @@ func NewSynchronizer(
 	syncer := &Synchronizer{
 		ctx:         context.Background(),
 		config:      conf,
+		signer:      signer,
 		state:       state,
 		consensus:   consensus,
 		txPool:      txPool,
@@ -53,7 +55,7 @@ func NewSynchronizer(
 
 	logger := logger.NewLogger("_sync", syncer)
 
-	api, err := newNetworkAPI(syncer.ctx, addr, net, syncer.ParsMessage)
+	api, err := newNetworkAPI(syncer.ctx, net, syncer.ParsMessage)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +88,7 @@ func (syncer *Synchronizer) Start() error {
 	timer := time.NewTimer(syncer.config.StartingTimeout)
 	go func() {
 		<-timer.C
-		syncer.maybeSynced(false)
+		syncer.maybeSynced()
 	}()
 
 	return nil
@@ -98,14 +100,18 @@ func (syncer *Synchronizer) Stop() {
 	syncer.heartBeatTicker.Stop()
 }
 
-func (syncer *Synchronizer) maybeSynced(force bool) {
+func (syncer *Synchronizer) maybeSynced() {
 	lastHeight := syncer.state.LastBlockHeight()
-	networkHeight := syncer.stats.MaxHeight()
+	networkHeight := syncer.stats.MaxClaimedHeight()
 
-	if force || lastHeight >= networkHeight {
+	if lastHeight >= networkHeight {
 		syncer.logger.Info("We are synced", "height", lastHeight)
-		syncer.consensus.MoveToNewHeight()
+		syncer.informConsensusToMoveToNewHeight()
 	}
+}
+
+func (syncer *Synchronizer) informConsensusToMoveToNewHeight() {
+	syncer.consensus.MoveToNewHeight()
 }
 
 func (syncer *Synchronizer) heartBeatTickerLoop() {
@@ -155,5 +161,5 @@ func (syncer *Synchronizer) Fingerprint() string {
 	return fmt.Sprintf("{☍ %d ⛲ %d ↥ %d}",
 		syncer.stats.PeersCount(),
 		syncer.cache.Len(),
-		syncer.stats.MaxHeight())
+		syncer.stats.MaxClaimedHeight())
 }

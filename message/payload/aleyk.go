@@ -10,7 +10,15 @@ import (
 	"github.com/zarbchain/zarb-go/version"
 )
 
-type SalamPayload struct {
+const SalamResponseCodeOK = 0
+const SalamResponseCodeRejected = 1
+
+type SalamResponse struct {
+	Status  int    `cbor:"1,keyasint"`
+	Message string `cbor:"2,keyasint,omitempty"`
+}
+
+type AleykPayload struct {
 	NodeVersion version.Version  `cbor:"1,keyasint"`
 	Moniker     string           `cbor:"2,keyasint"`
 	PublicKey   crypto.PublicKey `cbor:"3,keyasint"`
@@ -18,9 +26,10 @@ type SalamPayload struct {
 	GenesisHash crypto.Hash      `cbor:"5,keyasint"`
 	Height      int              `cbor:"6,keyasint"`
 	Flags       int              `cbor:"7,keyasint"`
+	Response    SalamResponse    `cbor:"8,keyasint"`
 }
 
-func (p *SalamPayload) SanityCheck() error {
+func (p *AleykPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
@@ -33,10 +42,10 @@ func (p *SalamPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *SalamPayload) Type() PayloadType {
-	return PayloadTypeSalam
+func (p *AleykPayload) Type() PayloadType {
+	return PayloadTypeAleyk
 }
 
-func (p *SalamPayload) Fingerprint() string {
+func (p *AleykPayload) Fingerprint() string {
 	return fmt.Sprintf("{%v %v}", util.FingerprintPeerID(p.PeerID), p.Height)
 }

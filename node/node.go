@@ -57,7 +57,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	sync, err := sync.NewSynchronizer(conf.Sync, signer.Address(), state, consensus, txPool, network, broadcastCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, signer, state, consensus, txPool, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
