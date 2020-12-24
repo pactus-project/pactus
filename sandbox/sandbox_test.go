@@ -3,6 +3,8 @@ package sandbox
 import (
 	"testing"
 
+	"github.com/zarbchain/zarb-go/block"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -44,6 +46,34 @@ func setup(t *testing.T) {
 	tParams := param.MainnetParams()
 	tSandbox, err = NewSandbox(tStore, tParams, 0, tSortition, tValset)
 	assert.NoError(t, err)
+}
+
+func TestLoadRecentBlocks(t *testing.T) {
+	store := store.NewMockStore()
+
+	lastHeight := 21
+	for i := 0; i <= lastHeight; i++ {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		store.Blocks[i+1] = b
+	}
+
+	params := param.MainnetParams()
+	params.TransactionToLiveInterval = 10
+
+	sandbox, err := NewSandbox(store, params, lastHeight, nil, nil)
+	assert.NoError(t, err)
+
+	v, ok := sandbox.recentBlocks.Get(crypto.UndefHash)
+	assert.False(t, ok)
+
+	v, ok = sandbox.recentBlocks.Get(store.Blocks[21].Hash())
+	assert.Equal(t, v, 21)
+
+	_, ok = sandbox.recentBlocks.Get(store.Blocks[11].Hash())
+	assert.False(t, ok)
+
+	v, ok = sandbox.recentBlocks.Get(store.Blocks[12].Hash())
+	assert.Equal(t, v, 12)
 }
 
 func TestAccountChange(t *testing.T) {

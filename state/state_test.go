@@ -132,3 +132,72 @@ func TestApplyBlocks(t *testing.T) {
 	assert.Error(t, st.ApplyBlock(2, b1, c1))
 	assert.NoError(t, st.ApplyBlock(1, b1, c1))
 }
+
+func TestCommitSandbox(t *testing.T) {
+
+	t.Run("Commit new account", func(t *testing.T) {
+		st := setupStatewithFourValidators(t, tValSigner1)
+
+		addr, _, _ := crypto.GenerateTestKeyPair()
+		newAcc := st.executionSandbox.MakeNewAccount(addr)
+		newAcc.AddToBalance(1)
+		st.commitSandbox(0)
+
+		assert.True(t, st.store.HasAccount(addr))
+	})
+
+	t.Run("Commit new validator", func(t *testing.T) {
+		st := setupStatewithFourValidators(t, tValSigner1)
+
+		addr, pub, _ := crypto.GenerateTestKeyPair()
+		newVal := st.executionSandbox.MakeNewValidator(pub)
+		newVal.AddToStake(1)
+		st.commitSandbox(0)
+
+		assert.True(t, st.store.HasValidator(addr))
+	})
+
+	t.Run("Modify account", func(t *testing.T) {
+		st := setupStatewithFourValidators(t, tValSigner1)
+
+		acc := st.executionSandbox.Account(crypto.TreasuryAddress)
+		acc.SubtractFromBalance(1)
+		st.executionSandbox.UpdateAccount(acc)
+		st.commitSandbox(0)
+
+		acc1, _ := st.store.Account(crypto.TreasuryAddress)
+		assert.Equal(t, acc1.Balance(), acc.Balance())
+	})
+
+	t.Run("Modify validator", func(t *testing.T) {
+		st := setupStatewithFourValidators(t, tValSigner1)
+
+		val := st.executionSandbox.Validator(tValSigner2.Address())
+		val.AddToStake(1)
+		st.executionSandbox.UpdateValidator(val)
+		st.commitSandbox(0)
+
+		val1, _ := st.store.Validator(tValSigner2.Address())
+		assert.Equal(t, val1.Stake(), val.Stake())
+	})
+
+	t.Run("Move valset", func(t *testing.T) {
+		st := setupStatewithFourValidators(t, tValSigner1)
+
+		nextProposer := st.validatorSet.Proposer(1)
+
+		st.commitSandbox(0)
+
+		assert.Equal(t, st.validatorSet.Proposer(0).Address(), nextProposer.Address())
+	})
+
+	t.Run("Move valset next round", func(t *testing.T) {
+		st := setupStatewithFourValidators(t, tValSigner1)
+
+		nextNextProposer := st.validatorSet.Proposer(2)
+
+		st.commitSandbox(1)
+
+		assert.Equal(t, st.validatorSet.Proposer(0).Address(), nextNextProposer.Address())
+	})
+}

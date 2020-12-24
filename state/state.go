@@ -449,7 +449,6 @@ func (st *state) Fingerprint() string {
 		st.lastBlockTime.Format("15.04.05"))
 }
 
-// TODO: add tests for me
 func (st *state) commitSandbox(round int) {
 	joined := make([]*validator.Validator, 0)
 	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
@@ -458,7 +457,8 @@ func (st *state) commitSandbox(round int) {
 		}
 	})
 
-	if err := st.validatorSet.MoveToNextHeight(0, joined); err != nil {
+	// TODO: for joined vals write tests
+	if err := st.validatorSet.MoveToNextHeight(round, joined); err != nil {
 		//
 		// We should panic here before updating state
 		//
