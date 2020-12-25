@@ -43,3 +43,10 @@ func TestMarshaling(t *testing.T) {
 	assert.NoError(t, hrs2.UnmarshalCBOR(bs))
 	assert.Equal(t, hrs1, *hrs2)
 }
+
+func TestInvalidHRS(t *testing.T) {
+	assert.False(t, NewHRS(0, 1, 1).IsValid())
+	assert.False(t, NewHRS(1, -1, 1).IsValid())
+	assert.False(t, NewHRS(1, 1, 0).IsValid())
+
+}

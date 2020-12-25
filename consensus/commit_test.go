@@ -102,9 +102,7 @@ func TestEnterCommit(t *testing.T) {
 	shouldPublishProposalReqquest(t, cons2)
 
 	time.Sleep(1 * time.Second) // This will change block timestamp
-	b2 := cons1.state.ProposeBlock()
-	p2 := vote.NewProposal(1, 0, b2)
-	tSigners[VAL1].SignMsg(p2)
+	p2 := makeTestProposal(t, VAL1, 1, 0)
 	cons2.votes.SetRoundProposal(p2.Round(), p2)
 
 	// Invalid proposal

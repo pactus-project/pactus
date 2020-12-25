@@ -42,15 +42,14 @@ func (cs *consensus) enterPrecommit(height int, round int) {
 	roundProposal := cs.votes.RoundProposal(round)
 	if roundProposal == nil {
 		cs.requestForProposal()
-
 		cs.logger.Debug("Precommit: No proposal, send proposal request.")
-		cs.signAddVote(vote.VoteTypePrepare, crypto.UndefHash)
 		return
 	}
 
 	if !roundProposal.IsForBlock(blockHash) {
-		cs.logger.Warn("Precommit: Invalid proposal")
-		cs.signAddVote(vote.VoteTypePrepare, crypto.UndefHash)
+		cs.votes.SetRoundProposal(round, nil)
+		cs.requestForProposal()
+		cs.logger.Warn("Precommit: Invalid proposal, send proposal request.")
 		return
 	}
 

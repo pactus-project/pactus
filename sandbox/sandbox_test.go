@@ -63,16 +63,16 @@ func TestLoadRecentBlocks(t *testing.T) {
 	sandbox, err := NewSandbox(store, params, lastHeight, nil, nil)
 	assert.NoError(t, err)
 
-	v, ok := sandbox.recentBlocks.Get(crypto.UndefHash)
+	_, ok := sandbox.recentBlocks.Get(crypto.UndefHash)
 	assert.False(t, ok)
 
-	v, ok = sandbox.recentBlocks.Get(store.Blocks[21].Hash())
+	v, _ := sandbox.recentBlocks.Get(store.Blocks[21].Hash())
 	assert.Equal(t, v, 21)
 
 	_, ok = sandbox.recentBlocks.Get(store.Blocks[11].Hash())
 	assert.False(t, ok)
 
-	v, ok = sandbox.recentBlocks.Get(store.Blocks[12].Hash())
+	v, _ = sandbox.recentBlocks.Get(store.Blocks[12].Hash())
 	assert.Equal(t, v, 12)
 }
 

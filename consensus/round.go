@@ -34,6 +34,7 @@ func (cs *consensus) enterNewRound(height int, round int) {
 		}
 		if precommitBlockHash == nil || !precommitBlockHash.IsUndef() {
 			cs.logger.Warn("NewRound: Suspicious precommits", "blockHash", precommitBlockHash)
+			return
 		}
 	}
 

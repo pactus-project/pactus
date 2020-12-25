@@ -26,8 +26,8 @@ func NewHRS(height int, round int, step StepType) HRS {
 	}
 }
 
-func (hrs *HRS) IsValid() bool {
-	if hrs.data.Height < 0 || hrs.data.Round < 0 {
+func (hrs HRS) IsValid() bool {
+	if hrs.data.Height <= 0 || hrs.data.Round < 0 {
 		return false
 	}
 	return hrs.data.Step.IsValid()

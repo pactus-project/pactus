@@ -13,11 +13,6 @@ func (cs *consensus) enterPrepare(height int, round int) {
 	}
 	cs.updateRoundStep(round, hrs.StepTypePrepare)
 
-	if cs.votes.lockedProposal != nil {
-		cs.logger.Error("Prepare: A block is locked. Unlock it")
-		cs.votes.lockedProposal = nil
-	}
-
 	roundProposal := cs.votes.RoundProposal(round)
 	if roundProposal == nil {
 		cs.requestForProposal()

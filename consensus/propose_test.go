@@ -6,23 +6,21 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
 func TestConsensusSetProposalAfterCommit(t *testing.T) {
 	cons := newTestConsensus(t, VAL1)
-
-	b1 := cons.state.ProposeBlock()
-	p1 := vote.NewProposal(1, 0, b1)
-	tSigners[0].SignMsg(p1)
+	p := makeTestProposal(t, VAL1, 1, 0)
 
 	// Proposal is valid here
-	assert.NoError(t, p1.Verify(cons.proposer(0).PublicKey()))
+	assert.NoError(t, p.Verify(cons.proposer(0).PublicKey()))
 
 	commitFirstBlock(t, cons.state)
 
 	// Same proposal is invalid here. because proposer is moved to next validator,
-	assert.Error(t, p1.Verify(cons.proposer(0).PublicKey()))
+	assert.Error(t, p.Verify(cons.proposer(0).PublicKey()))
 }
 
 func TestInvalidProposer(t *testing.T) {
@@ -33,11 +31,9 @@ func TestInvalidProposer(t *testing.T) {
 
 	b1 := cons2.state.ProposeBlock()
 	invalidProposal := vote.NewProposal(1, 0, b1)
-	tSigners[0].SignMsg(invalidProposal)
+	tSigners[VAL1].SignMsg(invalidProposal)
 
-	validProposal := vote.NewProposal(1, 1, b1)
-
-	tSigners[1].SignMsg(validProposal)
+	validProposal := makeTestProposal(t, VAL2, 1, 1)
 
 	cons3.SetProposal(invalidProposal)
 	cons3.SetProposal(validProposal)
@@ -48,17 +44,11 @@ func TestInvalidProposer(t *testing.T) {
 
 func TestSecondProposalCommitted(t *testing.T) {
 	cons1 := newTestConsensus(t, VAL1)
-	cons2 := newTestConsensus(t, VAL2)
 
 	cons1.enterNewHeight(1)
 
-	b1 := cons1.state.ProposeBlock()
-	p1 := vote.NewProposal(1, 0, b1)
-	tSigners[0].SignMsg(p1)
-
-	b2 := cons2.state.ProposeBlock()
-	p2 := vote.NewProposal(1, 1, b2) // valid proposal for second round
-	tSigners[1].SignMsg(p2)
+	p1 := makeTestProposal(t, VAL1, 1, 0)
+	p2 := makeTestProposal(t, VAL2, 1, 1) // valid proposal for second round
 
 	cons1.SetProposal(p1)
 	cons1.SetProposal(p2)
@@ -66,9 +56,9 @@ func TestSecondProposalCommitted(t *testing.T) {
 	assert.NotNil(t, cons1.votes.RoundProposal(0))
 	assert.NotNil(t, cons1.votes.RoundProposal(1))
 
-	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, b2.Hash(), VAL2, false)
-	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, b2.Hash(), VAL3, false)
-	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, b2.Hash(), VAL4, false)
+	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, p2.Block().Hash(), VAL2, false)
+	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, p2.Block().Hash(), VAL3, false)
+	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, p2.Block().Hash(), VAL4, false)
 
 	precommits0 := cons1.votes.PrecommitVoteSet(0)
 	precommits1 := cons1.votes.PrecommitVoteSet(1)
@@ -79,129 +69,73 @@ func TestSecondProposalCommitted(t *testing.T) {
 }
 
 func TestNetworkLagging1(t *testing.T) {
-	cons1 := newTestConsensus(t, VAL1)
 	cons2 := newTestConsensus(t, VAL2)
 
-	// In some slow containers, it goes to prepare stage before setting proposal here
-	// Let set the height manually ;)
-	//cons1.enterNewHeight(1)
-	cons1.updateHeight(1)
 	cons2.enterNewHeight(1)
 
-	b1 := cons1.state.ProposeBlock()
-	p1 := vote.NewProposal(1, 0, b1)
-	tSigners[0].SignMsg(p1)
-
-	cons1.SetProposal(p1)
+	p1 := makeTestProposal(t, VAL1, 1, 0)
 	// We don't set proposal for second validator here
 	// cons2.SetProposal(p1)
 
-	assert.NotNil(t, cons1.votes.RoundProposal(0))
 	assert.Nil(t, cons2.votes.RoundProposal(0))
 
-	v1 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL1, false)
-	v3 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL3, false)
+	v1 := testAddVote(t, cons2, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), VAL1, false)
+	v3 := testAddVote(t, cons2, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), VAL3, false)
 
-	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrepare)
+	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePropose)
 	cons2.enterPrecommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePropose)
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
-	assert.Equal(t, len(cons2.votes.votes), 1) // UndefHash vote
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePropose)
 
 	assert.NoError(t, cons2.addVote(v1))
 	assert.NoError(t, cons2.addVote(v3))
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepareWait)
-	assert.Equal(t, len(cons2.votes.votes), 3)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePropose)
 	assert.Nil(t, cons2.votes.roundVoteSets[0].Prepares.QuorumBlock())
+
+	shouldPublishProposalReqquest(t, cons2)
+	shouldPublishVote(t, cons2, vote.VoteTypePrepare, crypto.UndefHash)
 
 	// Proposal received now, set it
 	cons2.SetProposal(p1)
 	checkHRS(t, cons2, 1, 0, hrs.StepTypePrecommit)
-	assert.True(t, cons2.votes.roundVoteSets[0].Prepares.QuorumBlock().EqualsTo(b1.Hash()))
+
+	shouldPublishVote(t, cons2, vote.VoteTypePrecommit, p1.Block().Hash())
+	shouldPublishVote(t, cons2, vote.VoteTypePrepare, p1.Block().Hash())
 }
 
 func TestNetworkLagging2(t *testing.T) {
-	cons1 := newTestConsensus(t, VAL1)
 	cons2 := newTestConsensus(t, VAL2)
 
-	cons1.enterNewHeight(1)
 	cons2.enterNewHeight(1)
 
-	b1 := cons1.state.ProposeBlock()
-	p1 := vote.NewProposal(1, 0, b1)
-	tSigners[0].SignMsg(p1)
+	p1 := makeTestProposal(t, VAL1, 1, 0)
 
-	cons1.SetProposal(p1)
 	// We don't set proposal for second validator here
 	// cons2.SetProposal(p1)
 
-	assert.NotNil(t, cons1.votes.RoundProposal(0))
 	assert.Nil(t, cons2.votes.RoundProposal(0))
 
-	prepare3 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL3, false)
-	prepare4 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL4, false)
-	precommit1 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL1, false)
-	precommit3 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL3, false)
+	precommit1 := testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL1, false)
+	precommit3 := testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL3, false)
 
-	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrepare)
+	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePropose)
 	cons2.enterPrecommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePropose)
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
-	assert.Equal(t, len(cons2.votes.votes), 1) // UndefHash vote
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePropose)
 
 	// Networks lags and we don't receive prepare from val_1 and pre-commit from val_4
 	assert.NoError(t, cons2.addVote(precommit1))
 	assert.NoError(t, cons2.addVote(precommit3))
-	assert.NoError(t, cons2.addVote(prepare4))
-	assert.NoError(t, cons2.addVote(prepare3))
-	assert.Equal(t, len(cons2.votes.votes), 5)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePropose)
 	assert.Nil(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock())
 
-	// Proposal received now, set it
-	cons2.SetProposal(p1)
-
-	// Cons3 has enough votes to go to next height
-	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrepare)
-}
-
-func TestNetworkLagging3(t *testing.T) {
-	// Cons2 goes to next height without receiving any prepares
-	cons1 := newTestConsensus(t, VAL1)
-	cons2 := newTestConsensus(t, VAL2)
-
-	cons1.enterNewHeight(1)
-	cons2.enterNewHeight(1)
-
-	b1 := cons1.state.ProposeBlock()
-	p1 := vote.NewProposal(1, 0, b1)
-	tSigners[0].SignMsg(p1)
-
-	cons1.SetProposal(p1)
-	// We don't set proposal for second validator here
-	// cons2.SetProposal(p1)
-
-	assert.NotNil(t, cons1.votes.RoundProposal(0))
-	assert.Nil(t, cons2.votes.RoundProposal(0))
-
-	precommit1 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL1, false)
-	precommit3 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL3, false)
-	precommit4 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL4, false)
-
-	// Networks lags and we don't receive prepare from val_1 and pre-commit from val_4
-	assert.NoError(t, cons2.addVote(precommit1))
-	assert.NoError(t, cons2.addVote(precommit3))
-	assert.NoError(t, cons2.addVote(precommit4))
-
-	assert.True(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock().EqualsTo(b1.Hash()))
-
-	// Here we have enough votes, but we don't have proposal yet.
-	// So we can't go to next height
+	shouldPublishProposalReqquest(t, cons2)
+	shouldPublishVote(t, cons2, vote.VoteTypePrepare, crypto.UndefHash)
 
 	// Proposal received now, set it
 	cons2.SetProposal(p1)
 
-	// Cons3 has enough votes to go to next height
-	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrepare)
+	shouldPublishVote(t, cons2, vote.VoteTypePrepare, p1.Block().Hash())
 }
