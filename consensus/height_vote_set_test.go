@@ -42,10 +42,13 @@ func TestHeightVoteSetTest(t *testing.T) {
 	assert.True(t, ok)
 	assert.NoError(t, err)
 
+	// Because of network lagging we might receive nil-vote after block-vote
+	// We don't add this vote and we don't report it as duplicated
 	ok, err = hvs.AddVote(undefVote)
 	assert.False(t, ok)
 	assert.NoError(t, err)
 
+	// Definitely it is a duplicated error
 	ok, err = hvs.AddVote(duplicateVote)
 	assert.False(t, ok) // duplicated vote
 	assert.Error(t, err)

@@ -49,17 +49,9 @@ func (cs *consensus) enterPrecommit(height int, round int) {
 	}
 
 	if !roundProposal.IsForBlock(blockHash) {
-		cs.logger.Error("Precommit: Invalid proposal")
+		cs.logger.Warn("Precommit: Invalid proposal")
 		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
 		return
-	}
-
-	// TODO: Add more tests before removing this extra check.
-	if err := cs.state.ValidateBlock(roundProposal.Block()); err != nil {
-		cs.logger.Debug("Precommit: Invalid block", "proposal", roundProposal, "err", err)
-		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
-		return
-
 	}
 
 	// Everything is good
@@ -74,10 +66,6 @@ func (cs *consensus) enterPrecommitWait(height int, round int) {
 		return
 	}
 	cs.updateRoundStep(round, hrs.StepTypePrecommitWait)
-
-	if !cs.votes.Precommits(round).HasQuorum() {
-		cs.logger.Error("PrecommitWait: Precommits does not have any +2/3 votes")
-	}
 
 	cs.logger.Info("PrecommitWait: Wait for some more precommits") // ,then enter enterNewRound
 	cs.scheduleTimeout(cs.config.Precommit(round), height, round, hrs.StepTypeNewRound)

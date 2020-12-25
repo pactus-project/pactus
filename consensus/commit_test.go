@@ -9,7 +9,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -100,7 +99,7 @@ func TestEnterCommit(t *testing.T) {
 	// No proposal
 	cons2.enterCommit(1, 0)
 	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
-	shouldPublishMessageWithThisType(t, cons2, payload.PayloadTypeProposalReq)
+	shouldPublishProposalReqquest(t, cons2)
 
 	time.Sleep(1 * time.Second) // This will change block timestamp
 	b2 := cons1.state.ProposeBlock()

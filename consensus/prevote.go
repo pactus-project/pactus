@@ -39,10 +39,6 @@ func (cs *consensus) enterPrevoteWait(height int, round int) {
 
 	cs.updateRoundStep(round, hrs.StepTypePrevoteWait)
 
-	if !cs.votes.Prevotes(round).HasQuorum() {
-		cs.logger.Error("PrevoteWait: Prevotes does not have any +2/3 votes")
-	}
-
 	cs.logger.Info("PrevoteWait: Wait for some more prevotes") //then enter precommit
 	cs.scheduleTimeout(cs.config.Prevote(round), height, round, hrs.StepTypePrecommit)
 }

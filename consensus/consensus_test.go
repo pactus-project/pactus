@@ -69,19 +69,38 @@ func newTestConsensus(t *testing.T, valID int) *consensus {
 	return cons
 }
 
-func shouldPublishMessageWithThisType(t *testing.T, cons *consensus, payloadType payload.PayloadType) *message.Message {
+func shouldPublishProposalReqquest(t *testing.T, cons *consensus) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
 		select {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
-			return nil
+			return
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishMessageWithThisType", "msg", msg, "type", payloadType.String())
+			logger.Info("shouldPublishProposalReqquest", "msg", msg)
 
-			if msg.PayloadType() == payloadType {
-				return msg
+			if msg.PayloadType() == payload.PayloadTypeProposalReq {
+				return
+			}
+		}
+	}
+}
+
+func shouldPublishUndefVote(t *testing.T, cons *consensus) {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("Timeout"))
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishUndefVote", "msg", msg)
+
+			if msg.PayloadType() == payload.PayloadTypeVote {
+				pld := msg.Payload.(*payload.VotePayload)
+				assert.Equal(t, pld.Vote.BlockHash(), crypto.UndefHash)
+				return
 			}
 		}
 	}
@@ -120,6 +139,18 @@ func testAddVote(t *testing.T,
 		assert.NoError(t, cons.addVote(v))
 	}
 	return v
+}
+
+func TestNotInValidatorSet(t *testing.T) {
+	cons1 := newTestConsensus(t, VAL1)
+
+	_, _, priv := crypto.GenerateTestKeyPair()
+	signer := crypto.NewSigner(priv)
+	cons2, err := NewConsensus(TestConfig(), cons1.state, signer, nil)
+	assert.NoError(t, err)
+
+	cons2.(*consensus).signAddVote(vote.VoteTypePrevote, crypto.GenerateTestHash())
+	assert.Empty(t, cons2.(*consensus).votes.votes)
 }
 
 func TestAllVoteHashes(t *testing.T) {
@@ -272,7 +303,7 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 	cons.enterNewHeight(1)
 
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), VAL1, false)
-	shouldPublishMessageWithThisType(t, cons, payload.PayloadTypeProposalReq)
+	shouldPublishProposalReqquest(t, cons)
 	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL3, false)
 	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommit)
 
