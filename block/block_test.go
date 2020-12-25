@@ -13,6 +13,10 @@ func TestRandomBlock(t *testing.T) {
 	assert.NoError(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
+	b.data.TxIDs = TxIDs{}
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
 	b.data.Header.data.StateHash = crypto.UndefHash
 	assert.Error(t, b.SanityCheck())
 

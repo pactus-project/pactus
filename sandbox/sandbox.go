@@ -217,7 +217,7 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 
 	s, ok := sb.validators[addr]
 	if !ok {
-		sb.shouldPanicForUnknownAddress()
+		return errors.Errorf(errors.ErrGeneric, "Unknown validator")
 	}
 
 	if sb.validatorSet.Contains(addr) {
