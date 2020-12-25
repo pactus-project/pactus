@@ -17,18 +17,20 @@ func (cs *consensus) enterNewRound(height int, round int) {
 
 	// make sure we have quorum votes for previous round
 	if round > 0 {
-		if !cs.votes.Prevotes(round - 1).HasQuorum() {
-			cs.logger.Debug("NewRound: No prevote quorum for previous round")
+		prepares := cs.votes.PrepareVoteSet(round - 1)
+		precommits := cs.votes.PrecommitVoteSet(round - 1)
+		if !prepares.HasQuorum() {
+			cs.logger.Debug("NewRound: No prepare quorum for previous round")
 		}
-		if !cs.votes.Precommits(round - 1).HasQuorum() {
+		if !precommits.HasQuorum() {
 			cs.logger.Error("NewRound: No precommit quorum for previous round")
 			return
 		}
-		// Normally when there is no proposal for this round, every one should vote for UndefHash
-		prevoteBlockHash := cs.votes.Prevotes(round - 1).QuorumBlock()
-		precommitBlockHash := cs.votes.Precommits(round - 1).QuorumBlock()
-		if prevoteBlockHash == nil || !prevoteBlockHash.IsUndef() {
-			cs.logger.Warn("NewRound: Suspicious prevotes", "blockHash", prevoteBlockHash)
+		// Normally when there is no proposal for this round, every one should vote for nil
+		prepareBlockHash := prepares.QuorumBlock()
+		precommitBlockHash := precommits.QuorumBlock()
+		if prepareBlockHash == nil || !prepareBlockHash.IsUndef() {
+			cs.logger.Warn("NewRound: Suspicious prepares", "blockHash", prepareBlockHash)
 		}
 		if precommitBlockHash == nil || !precommitBlockHash.IsUndef() {
 			cs.logger.Warn("NewRound: Suspicious precommits", "blockHash", precommitBlockHash)

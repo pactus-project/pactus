@@ -40,11 +40,11 @@ func TestSendVoteSet(t *testing.T) {
 
 	tAliceConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
 	tBobConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
-	v1, _ := vote.GenerateTestPrevoteVote(100, 0)
-	v2, _ := vote.GenerateTestPrevoteVote(100, 1)
-	v3, _ := vote.GenerateTestPrevoteVote(100, 1)
-	v4, _ := vote.GenerateTestPrevoteVote(100, 1)
-	v5, _ := vote.GenerateTestPrevoteVote(101, 1)
+	v1, _ := vote.GenerateTestPrepareVote(100, 0)
+	v2, _ := vote.GenerateTestPrepareVote(100, 1)
+	v3, _ := vote.GenerateTestPrepareVote(100, 1)
+	v4, _ := vote.GenerateTestPrepareVote(100, 1)
+	v5, _ := vote.GenerateTestPrepareVote(101, 1)
 
 	tAliceConsensus.Votes = []*vote.Vote{v1, v2, v3}
 	tBobBroadcastCh <- message.NewVoteSetMessage(100, []crypto.Hash{v1.Hash(), v4.Hash()})

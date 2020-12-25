@@ -17,9 +17,9 @@ func (cs *consensus) enterPrecommit(height int, round int) {
 		return
 	}
 
-	preVotes := cs.votes.Prevotes(round)
+	preVotes := cs.votes.PrepareVoteSet(round)
 	if !preVotes.HasQuorum() {
-		cs.logger.Debug("Precommit: Entering without prevote quorum")
+		cs.logger.Debug("Precommit: Entering without prepare quorum")
 		return
 	}
 
@@ -28,13 +28,13 @@ func (cs *consensus) enterPrecommit(height int, round int) {
 
 	blockHash := preVotes.QuorumBlock()
 	if blockHash == nil {
-		cs.logger.Info("Precommit: No quorum for prevote")
+		cs.logger.Info("Precommit: No quorum for prepare")
 		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
 		return
 	}
 
 	if blockHash.IsUndef() {
-		cs.logger.Info("Precommit: Undef quorum for prevote")
+		cs.logger.Info("Precommit: Undef quorum for prepare")
 		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
 		return
 	}
@@ -44,13 +44,13 @@ func (cs *consensus) enterPrecommit(height int, round int) {
 		cs.requestForProposal()
 
 		cs.logger.Debug("Precommit: No proposal, send proposal request.")
-		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
+		cs.signAddVote(vote.VoteTypePrepare, crypto.UndefHash)
 		return
 	}
 
 	if !roundProposal.IsForBlock(blockHash) {
 		cs.logger.Warn("Precommit: Invalid proposal")
-		cs.signAddVote(vote.VoteTypePrevote, crypto.UndefHash)
+		cs.signAddVote(vote.VoteTypePrepare, crypto.UndefHash)
 		return
 	}
 
@@ -68,5 +68,5 @@ func (cs *consensus) enterPrecommitWait(height int, round int) {
 	cs.updateRoundStep(round, hrs.StepTypePrecommitWait)
 
 	cs.logger.Info("PrecommitWait: Wait for some more precommits") // ,then enter enterNewRound
-	cs.scheduleTimeout(cs.config.Precommit(round), height, round, hrs.StepTypeNewRound)
+	cs.scheduleTimeout(cs.config.PrecommitTimeout(round), height, round, hrs.StepTypeNewRound)
 }

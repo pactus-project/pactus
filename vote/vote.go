@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-// Vote represents a prevote, precommit, or commit vote from validators for
+// Vote represents a prepare, precommit, or commit vote from validators for
 // consensus.
 type Vote struct {
 	data voteData
@@ -23,8 +23,8 @@ type voteData struct {
 	Signature *crypto.Signature `cbor:"6,keyasint"`
 }
 
-func NewPrevote(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
-	return NewVote(VoteTypePrevote, height, round, blockHash, signer)
+func NewPrepare(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+	return NewVote(VoteTypePrepare, height, round, blockHash, signer)
 }
 
 func NewPrecommit(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
@@ -156,9 +156,9 @@ func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.PrivateKey) {
 	return v, pv
 }
 
-func GenerateTestPrevoteVote(height, round int) (*Vote, crypto.PrivateKey) {
+func GenerateTestPrepareVote(height, round int) (*Vote, crypto.PrivateKey) {
 	addr, _, pv := crypto.GenerateTestKeyPair()
-	v := NewPrevote(
+	v := NewPrepare(
 		height,
 		round,
 		crypto.GenerateTestHash(),

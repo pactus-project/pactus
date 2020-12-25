@@ -12,9 +12,8 @@ func (cs *consensus) enterCommit(height int, round int) {
 		return
 	}
 
-	preVotes := cs.votes.Prevotes(round)
-	preCommits := cs.votes.Precommits(round)
-
+	preVotes := cs.votes.PrepareVoteSet(round)
+	preCommits := cs.votes.PrecommitVoteSet(round)
 	if !preCommits.HasQuorum() {
 		cs.logger.Debug("Commit: No quorum for precommit stage")
 		return
@@ -26,10 +25,10 @@ func (cs *consensus) enterCommit(height int, round int) {
 		return
 	}
 
-	// Additional check. blockHash should be same for both prevotes and precommits
-	prevoteBlockHash := preVotes.QuorumBlock()
-	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Debug("Commit: Commit without prevote quorum")
+	// Additional check. blockHash should be same for both prepares and precommits
+	hash := preVotes.QuorumBlock()
+	if hash == nil || !blockHash.EqualsTo(*hash) {
+		cs.logger.Debug("Commit: Commit without prepare quorum")
 	}
 
 	if cs.votes.lockedProposal == nil {

@@ -25,13 +25,13 @@ func TestHeightVoteSetTest(t *testing.T) {
 	assert.False(t, ok)
 	assert.Error(t, err)
 
-	undefVote := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.UndefHash, keys[0].PublicKey().Address())
+	undefVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.UndefHash, keys[0].PublicKey().Address())
 	undefVote.SetSignature(keys[0].Sign(undefVote.SignBytes()))
 
-	validVote := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
+	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
 	validVote.SetSignature(keys[0].Sign(validVote.SignBytes()))
 
-	duplicateVote := vote.NewVote(vote.VoteTypePrevote, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
+	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
 	duplicateVote.SetSignature(keys[0].Sign(duplicateVote.SignBytes()))
 
 	ok, err = hvs.AddVote(undefVote)
@@ -53,8 +53,8 @@ func TestHeightVoteSetTest(t *testing.T) {
 	assert.False(t, ok) // duplicated vote
 	assert.Error(t, err)
 
-	prevotes := hvs.Prevotes(1)
-	assert.Equal(t, prevotes.Len(), 1) // validVote
+	prepares := hvs.PrepareVoteSet(1)
+	assert.Equal(t, prepares.Len(), 1) // validVote
 	assert.Equal(t, len(hvs.votes), 2) // validVote + duplicateVote
 
 }

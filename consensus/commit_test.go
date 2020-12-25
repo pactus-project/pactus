@@ -67,17 +67,17 @@ func TestEnterCommit(t *testing.T) {
 
 	cons1.MoveToNewHeight()
 	cons2.MoveToNewHeight()
-	checkHRSWait(t, cons1, 1, 0, hrs.StepTypePrevote)
-	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRSWait(t, cons1, 1, 0, hrs.StepTypePrepare)
+	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrepare)
 	p1 := cons1.LastProposal()
 
 	// Invalid height
 	cons2.enterCommit(2, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 
 	// No quorum
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 
 	testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL1, false)
 	testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL2, false)
@@ -89,7 +89,7 @@ func TestEnterCommit(t *testing.T) {
 
 	// Undef quorum
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 
 	v4 := vote.NewPrecommit(1, 0, p1.Block().Hash(), tSigners[VAL4].Address())
 	tSigners[VAL4].SignMsg(v4)
@@ -98,7 +98,7 @@ func TestEnterCommit(t *testing.T) {
 
 	// No proposal
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 	shouldPublishProposalReqquest(t, cons2)
 
 	time.Sleep(1 * time.Second) // This will change block timestamp
@@ -109,7 +109,7 @@ func TestEnterCommit(t *testing.T) {
 
 	// Invalid proposal
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 
 	cons2.votes.SetRoundProposal(p2.Round(), p1)
 

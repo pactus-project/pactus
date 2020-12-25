@@ -76,7 +76,7 @@ func TestConsensusBehindState3(t *testing.T) {
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL4, false)
 	checkHRS(t, cons, 1, 0, hrs.StepTypeCommit)
-	precommits := cons.votes.Precommits(0)
+	precommits := cons.votes.PrecommitVoteSet(0)
 
 	assert.Error(t, cons.state.ValidateBlock(b))
 

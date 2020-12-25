@@ -9,7 +9,7 @@ import (
 )
 
 type RoundVoteSet struct {
-	Prevotes   *vote.VoteSet
+	Prepares   *vote.VoteSet
 	Precommits *vote.VoteSet
 	proposal   *vote.Proposal
 }
@@ -38,10 +38,10 @@ func (hvs *HeightVoteSet) addRound(round int) *RoundVoteSet {
 		logger.Error("addRound() for an existing round")
 		return rvs
 	}
-	prevotes := vote.NewVoteSet(hvs.height, round, vote.VoteTypePrevote, hvs.valSet)
+	prepares := vote.NewVoteSet(hvs.height, round, vote.VoteTypePrepare, hvs.valSet)
 	precommits := vote.NewVoteSet(hvs.height, round, vote.VoteTypePrecommit, hvs.valSet)
 	rvs := &RoundVoteSet{
-		Prevotes:   prevotes,
+		Prepares:   prepares,
 		Precommits: precommits,
 	}
 
@@ -68,11 +68,11 @@ func (hvs *HeightVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	return added, err
 }
 
-func (hvs *HeightVoteSet) Prevotes(round int) *vote.VoteSet {
-	return hvs.voteSet(round, vote.VoteTypePrevote)
+func (hvs *HeightVoteSet) PrepareVoteSet(round int) *vote.VoteSet {
+	return hvs.voteSet(round, vote.VoteTypePrepare)
 }
 
-func (hvs *HeightVoteSet) Precommits(round int) *vote.VoteSet {
+func (hvs *HeightVoteSet) PrecommitVoteSet(round int) *vote.VoteSet {
 	return hvs.voteSet(round, vote.VoteTypePrecommit)
 }
 
@@ -113,8 +113,8 @@ func (hvs *HeightVoteSet) voteSet(round int, voteType vote.VoteType) *vote.VoteS
 		return nil
 	}
 	switch voteType {
-	case vote.VoteTypePrevote:
-		return rvs.Prevotes
+	case vote.VoteTypePrepare:
+		return rvs.Prepares
 	case vote.VoteTypePrecommit:
 		return rvs.Precommits
 	}

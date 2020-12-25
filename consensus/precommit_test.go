@@ -15,9 +15,9 @@ func TestPrecommitWithNoProposal(t *testing.T) {
 	cons.enterNewHeight(1)
 
 	h := crypto.GenerateTestHash()
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, h, VAL1, false) // invalid votes
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, h, VAL2, false) // invalid votes
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, h, VAL4, false) // invalid votes
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, h, VAL1, false) // invalid votes
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, h, VAL2, false) // invalid votes
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, h, VAL4, false) // invalid votes
 	shouldPublishProposalReqquest(t, cons)
 	shouldPublishUndefVote(t, cons)
 

@@ -70,8 +70,8 @@ func TestSecondProposalCommitted(t *testing.T) {
 	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, b2.Hash(), VAL3, false)
 	testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 1, b2.Hash(), VAL4, false)
 
-	precommits0 := cons1.votes.Precommits(0)
-	precommits1 := cons1.votes.Precommits(1)
+	precommits0 := cons1.votes.PrecommitVoteSet(0)
+	precommits1 := cons1.votes.PrecommitVoteSet(1)
 	assert.Equal(t, precommits0.Len(), 0)
 	require.NotNil(t, precommits1)
 	assert.Equal(t, precommits1.Len(), 3)
@@ -82,7 +82,7 @@ func TestNetworkLagging1(t *testing.T) {
 	cons1 := newTestConsensus(t, VAL1)
 	cons2 := newTestConsensus(t, VAL2)
 
-	// In some slow containers, it goes to prevote stage before setting proposal here
+	// In some slow containers, it goes to prepare stage before setting proposal here
 	// Let set the height manually ;)
 	//cons1.enterNewHeight(1)
 	cons1.updateHeight(1)
@@ -99,26 +99,26 @@ func TestNetworkLagging1(t *testing.T) {
 	assert.NotNil(t, cons1.votes.RoundProposal(0))
 	assert.Nil(t, cons2.votes.RoundProposal(0))
 
-	v1 := testAddVote(t, cons1, vote.VoteTypePrevote, 1, 0, b1.Hash(), VAL1, false)
-	v3 := testAddVote(t, cons1, vote.VoteTypePrevote, 1, 0, b1.Hash(), VAL3, false)
+	v1 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL1, false)
+	v3 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL3, false)
 
-	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrepare)
 	cons2.enterPrecommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 	assert.Equal(t, len(cons2.votes.votes), 1) // UndefHash vote
 
 	assert.NoError(t, cons2.addVote(v1))
 	assert.NoError(t, cons2.addVote(v3))
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevoteWait)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepareWait)
 	assert.Equal(t, len(cons2.votes.votes), 3)
-	assert.Nil(t, cons2.votes.roundVoteSets[0].Prevotes.QuorumBlock())
+	assert.Nil(t, cons2.votes.roundVoteSets[0].Prepares.QuorumBlock())
 
 	// Proposal received now, set it
 	cons2.SetProposal(p1)
 	checkHRS(t, cons2, 1, 0, hrs.StepTypePrecommit)
-	assert.True(t, cons2.votes.roundVoteSets[0].Prevotes.QuorumBlock().EqualsTo(b1.Hash()))
+	assert.True(t, cons2.votes.roundVoteSets[0].Prepares.QuorumBlock().EqualsTo(b1.Hash()))
 }
 
 func TestNetworkLagging2(t *testing.T) {
@@ -139,23 +139,23 @@ func TestNetworkLagging2(t *testing.T) {
 	assert.NotNil(t, cons1.votes.RoundProposal(0))
 	assert.Nil(t, cons2.votes.RoundProposal(0))
 
-	prevote3 := testAddVote(t, cons1, vote.VoteTypePrevote, 1, 0, b1.Hash(), VAL3, false)
-	prevote4 := testAddVote(t, cons1, vote.VoteTypePrevote, 1, 0, b1.Hash(), VAL4, false)
+	prepare3 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL3, false)
+	prepare4 := testAddVote(t, cons1, vote.VoteTypePrepare, 1, 0, b1.Hash(), VAL4, false)
 	precommit1 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL1, false)
 	precommit3 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL3, false)
 
-	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrepare)
 	cons2.enterPrecommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
 	assert.Equal(t, len(cons2.votes.votes), 1) // UndefHash vote
 
-	// Networks lags and we don't receive pre-vote from val_1 and pre-commit from val_4
+	// Networks lags and we don't receive prepare from val_1 and pre-commit from val_4
 	assert.NoError(t, cons2.addVote(precommit1))
 	assert.NoError(t, cons2.addVote(precommit3))
-	assert.NoError(t, cons2.addVote(prevote4))
-	assert.NoError(t, cons2.addVote(prevote3))
+	assert.NoError(t, cons2.addVote(prepare4))
+	assert.NoError(t, cons2.addVote(prepare3))
 	assert.Equal(t, len(cons2.votes.votes), 5)
 	assert.Nil(t, cons2.votes.roundVoteSets[0].Precommits.QuorumBlock())
 
@@ -163,11 +163,11 @@ func TestNetworkLagging2(t *testing.T) {
 	cons2.SetProposal(p1)
 
 	// Cons3 has enough votes to go to next height
-	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrevote)
+	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrepare)
 }
 
 func TestNetworkLagging3(t *testing.T) {
-	// Cons2 goes to next height without receiving any prevotes
+	// Cons2 goes to next height without receiving any prepares
 	cons1 := newTestConsensus(t, VAL1)
 	cons2 := newTestConsensus(t, VAL2)
 
@@ -189,7 +189,7 @@ func TestNetworkLagging3(t *testing.T) {
 	precommit3 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL3, false)
 	precommit4 := testAddVote(t, cons1, vote.VoteTypePrecommit, 1, 0, b1.Hash(), VAL4, false)
 
-	// Networks lags and we don't receive pre-vote from val_1 and pre-commit from val_4
+	// Networks lags and we don't receive prepare from val_1 and pre-commit from val_4
 	assert.NoError(t, cons2.addVote(precommit1))
 	assert.NoError(t, cons2.addVote(precommit3))
 	assert.NoError(t, cons2.addVote(precommit4))
@@ -203,5 +203,5 @@ func TestNetworkLagging3(t *testing.T) {
 	cons2.SetProposal(p1)
 
 	// Cons3 has enough votes to go to next height
-	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrevote)
+	checkHRSWait(t, cons2, 2, 0, hrs.StepTypePrepare)
 }

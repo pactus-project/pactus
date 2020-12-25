@@ -183,8 +183,8 @@ func (cs *consensus) handleTimeout(ti timeout) {
 		cs.enterNewHeight(ti.Height + 1)
 	case hrs.StepTypeNewRound:
 		cs.enterNewRound(ti.Height, ti.Round+1)
-	case hrs.StepTypePrevote:
-		cs.enterPrevote(ti.Height, ti.Round)
+	case hrs.StepTypePrepare:
+		cs.enterPrepare(ti.Height, ti.Round)
 	case hrs.StepTypePrecommit:
 		cs.enterPrecommit(ti.Height, ti.Round)
 	default:
@@ -217,14 +217,14 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 	height := v.Height()
 	round := v.Round()
 	switch v.VoteType() {
-	case vote.VoteTypePrevote:
-		prevotes := cs.votes.Prevotes(round)
-		cs.logger.Debug("Vote added to prevote", "vote", v, "voteset", prevotes)
+	case vote.VoteTypePrepare:
+		prepares := cs.votes.PrepareVoteSet(round)
+		cs.logger.Debug("Vote added to prepare", "vote", v, "voteset", prepares)
 
-		if ok := prevotes.HasQuorum(); ok {
-			blockHash := prevotes.QuorumBlock()
+		if ok := prepares.HasQuorum(); ok {
+			blockHash := prepares.QuorumBlock()
 			if blockHash == nil {
-				cs.enterPrevoteWait(height, round)
+				cs.enterPrepareWait(height, round)
 			} else if blockHash.IsUndef() {
 				cs.enterPrecommit(height, round)
 			} else {
@@ -233,7 +233,7 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 		}
 
 	case vote.VoteTypePrecommit:
-		precommits := cs.votes.Precommits(round)
+		precommits := cs.votes.PrecommitVoteSet(round)
 		cs.logger.Debug("Vote added to precommit", "vote", v, "voteset", precommits)
 
 		if ok := precommits.HasQuorum(); ok {

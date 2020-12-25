@@ -149,7 +149,7 @@ func TestNotInValidatorSet(t *testing.T) {
 	cons2, err := NewConsensus(TestConfig(), cons1.state, signer, nil)
 	assert.NoError(t, err)
 
-	cons2.(*consensus).signAddVote(vote.VoteTypePrevote, crypto.GenerateTestHash())
+	cons2.(*consensus).signAddVote(vote.VoteTypePrepare, crypto.GenerateTestHash())
 	assert.Empty(t, cons2.(*consensus).votes.votes)
 }
 
@@ -158,11 +158,11 @@ func TestAllVoteHashes(t *testing.T) {
 
 	cons.enterNewHeight(1)
 
-	v1 := vote.NewVote(vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), tSigners[VAL2].Address())
+	v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tSigners[VAL2].Address())
 	tSigners[VAL2].SignMsg(v1)
-	v2 := vote.NewVote(vote.VoteTypePrevote, 1, 1, crypto.GenerateTestHash(), tSigners[VAL3].Address())
+	v2 := vote.NewVote(vote.VoteTypePrepare, 1, 1, crypto.GenerateTestHash(), tSigners[VAL3].Address())
 	tSigners[VAL3].SignMsg(v2)
-	v3 := vote.NewVote(vote.VoteTypePrevote, 2, 0, crypto.GenerateTestHash(), tSigners[VAL4].Address())
+	v3 := vote.NewVote(vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tSigners[VAL4].Address())
 	tSigners[VAL4].SignMsg(v3)
 	cons.AddVote(v1)
 	cons.AddVote(v2)
@@ -186,10 +186,10 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	p := cons.LastProposal()
 	require.NotNil(t, p)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, p.Block().Hash(), VAL2, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypePrevote)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), VAL2, false)
+	checkHRS(t, cons, 1, 0, hrs.StepTypePrepare)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, p.Block().Hash(), VAL3, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), VAL3, false)
 	checkHRS(t, cons, 1, 0, hrs.StepTypePrecommit)
 
 	assert.Equal(t, cons.isCommitted, false)
@@ -200,7 +200,7 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL3, false)
 	checkHRS(t, cons, 1, 0, hrs.StepTypeCommit)
 	assert.Equal(t, cons.isCommitted, true)
-	assert.Equal(t, cons.votes.Precommits(0).Len(), 3) // Votes from validator 1,2,3
+	assert.Equal(t, cons.votes.PrecommitVoteSet(0).Len(), 3) // Votes from validator 1,2,3
 }
 
 func TestConsensusUpdateVote(t *testing.T) {
@@ -211,20 +211,20 @@ func TestConsensusUpdateVote(t *testing.T) {
 	p := cons.LastProposal()
 	assert.NotNil(t, p)
 
-	assert.Equal(t, cons.votes.Prevotes(0).Len(), 1)
+	assert.Equal(t, cons.votes.PrepareVoteSet(0).Len(), 1)
 	// Ignore votes from invalid height
-	testAddVote(t, cons, vote.VoteTypePrevote, 2, 0, p.Block().Hash(), VAL2, false)
-	assert.Equal(t, cons.votes.Prevotes(0).Len(), 1)
+	testAddVote(t, cons, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), VAL2, false)
+	assert.Equal(t, cons.votes.PrepareVoteSet(0).Len(), 1)
 
 	// Validator_2 doesn't have proposal now vote for nil
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL2, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypePrevote)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, VAL2, false)
+	checkHRS(t, cons, 1, 0, hrs.StepTypePrepare)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, p.Block().Hash(), VAL3, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypePrevoteWait)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), VAL3, false)
+	checkHRS(t, cons, 1, 0, hrs.StepTypePrepareWait)
 
 	// Validator_2 have proposal now and vote for that
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, p.Block().Hash(), VAL2, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), VAL2, false)
 	checkHRS(t, cons, 1, 0, hrs.StepTypePrecommit)
 
 	assert.Equal(t, cons.isCommitted, false)
@@ -235,10 +235,10 @@ func TestConsensusUpdateVote(t *testing.T) {
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL3, false)
 	checkHRS(t, cons, 1, 0, hrs.StepTypeCommit)
 	assert.Equal(t, cons.isCommitted, true)
-	assert.Equal(t, cons.votes.Precommits(0).Len(), 3)
+	assert.Equal(t, cons.votes.PrecommitVoteSet(0).Len(), 3)
 }
 
-func TestConsensusNoPrevotes(t *testing.T) {
+func TestConsensusNoPrepares(t *testing.T) {
 	cons := newTestConsensus(t, VAL1)
 
 	cons.enterNewHeight(1)
@@ -246,15 +246,15 @@ func TestConsensusNoPrevotes(t *testing.T) {
 	require.NotNil(t, p)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL2, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons, 1, 0, hrs.StepTypePrepare)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL3, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypePrevote)
+	checkHRS(t, cons, 1, 0, hrs.StepTypePrepare)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL4, false)
 	checkHRS(t, cons, 1, 0, hrs.StepTypeCommit)
 	assert.Equal(t, cons.isCommitted, true)
-	precommits := cons.votes.Precommits(0)
+	precommits := cons.votes.PrecommitVoteSet(0)
 	assert.Equal(t, precommits.Len(), 3)
 
 	// Commit block again
@@ -270,23 +270,23 @@ func TestConsensusGotoNextRound(t *testing.T) {
 	cons.enterNewHeight(1)
 
 	// Validator_1 is offline
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL2, false)
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL3, false)
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL4, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, VAL2, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, VAL3, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, VAL4, false)
 	checkHRS(t, cons, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL2, false)
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL3, false)
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL4, false)
-	checkHRS(t, cons, 1, 1, hrs.StepTypePrevote)
+	checkHRS(t, cons, 1, 1, hrs.StepTypePrepare)
 
 	p := cons.LastProposal()
 	require.NotNil(t, p)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 1, p.Block().Hash(), VAL1, false)
-	checkHRS(t, cons, 1, 1, hrs.StepTypePrevote)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 1, p.Block().Hash(), VAL1, false)
+	checkHRS(t, cons, 1, 1, hrs.StepTypePrepare)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 1, p.Block().Hash(), VAL3, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 1, p.Block().Hash(), VAL3, false)
 	checkHRS(t, cons, 1, 1, hrs.StepTypePrecommit)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 1, p.Block().Hash(), VAL1, false)
@@ -302,22 +302,22 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 
 	cons.enterNewHeight(1)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.GenerateTestHash(), VAL1, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), VAL1, false)
 	shouldPublishProposalReqquest(t, cons)
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 0, crypto.UndefHash, VAL3, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, VAL3, false)
 	checkHRSWait(t, cons, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), VAL1, false)
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, VAL3, false)
-	checkHRSWait(t, cons, 1, 1, hrs.StepTypePrevote)
+	checkHRSWait(t, cons, 1, 1, hrs.StepTypePrepare)
 
 	p := cons.LastProposal()
 	require.NotNil(t, p)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 1, p.Block().Hash(), VAL1, false)
-	checkHRS(t, cons, 1, 1, hrs.StepTypePrevote)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 1, p.Block().Hash(), VAL1, false)
+	checkHRS(t, cons, 1, 1, hrs.StepTypePrepare)
 
-	testAddVote(t, cons, vote.VoteTypePrevote, 1, 1, p.Block().Hash(), VAL3, false)
+	testAddVote(t, cons, vote.VoteTypePrepare, 1, 1, p.Block().Hash(), VAL3, false)
 	checkHRS(t, cons, 1, 1, hrs.StepTypePrecommit)
 
 	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 1, p.Block().Hash(), VAL1, false)

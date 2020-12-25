@@ -7,8 +7,8 @@ const (
 	StepTypeNewHeight     = StepType(1)
 	StepTypeNewRound      = StepType(2)
 	StepTypePropose       = StepType(3)
-	StepTypePrevote       = StepType(4)
-	StepTypePrevoteWait   = StepType(5)
+	StepTypePrepare       = StepType(4)
+	StepTypePrepareWait   = StepType(5)
 	StepTypePrecommit     = StepType(6)
 	StepTypePrecommitWait = StepType(7)
 	StepTypeCommit        = StepType(8)
@@ -29,10 +29,10 @@ func (rs StepType) String() string {
 		return "NewRound"
 	case StepTypePropose:
 		return "Propose"
-	case StepTypePrevote:
-		return "Prevote"
-	case StepTypePrevoteWait:
-		return "PrevoteWait"
+	case StepTypePrepare:
+		return "Prepare"
+	case StepTypePrepareWait:
+		return "PrepareWait"
 	case StepTypePrecommit:
 		return "Precommit"
 	case StepTypePrecommitWait:

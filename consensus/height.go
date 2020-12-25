@@ -45,7 +45,7 @@ func (cs *consensus) enterNewHeight(height int) {
 
 	// Apply last committed block
 	if cs.votes.lockedProposal != nil {
-		vs := cs.votes.Precommits(cs.hrs.Round())
+		vs := cs.votes.PrecommitVoteSet(cs.hrs.Round())
 		if vs == nil {
 			cs.logger.Warn("NewHeight: Entering new height without last commit")
 		} else {

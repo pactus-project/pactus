@@ -38,11 +38,11 @@ func TestNewRound(t *testing.T) {
 	assert.NoError(t, cons4.addVote(voteRound2Val2))
 	assert.NoError(t, cons4.addVote(voteRound2Val3))
 
-	checkHRSWait(t, cons4, 1, 3, hrs.StepTypePrevote)
+	checkHRSWait(t, cons4, 1, 3, hrs.StepTypePrepare)
 
 	assert.NoError(t, cons4.addVote(voteRound0Val1))
 	assert.NoError(t, cons4.addVote(voteRound0Val2))
 	assert.NoError(t, cons4.addVote(voteRound0Val3))
 
-	checkHRS(t, cons4, 1, 3, hrs.StepTypePrevote)
+	checkHRS(t, cons4, 1, 3, hrs.StepTypePrepare)
 }

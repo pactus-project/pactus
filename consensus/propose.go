@@ -47,9 +47,8 @@ func (cs *consensus) setProposal(proposal *vote.Proposal) {
 
 	cs.logger.Info("propose: Proposal set", "proposal", proposal)
 	cs.votes.SetRoundProposal(proposal.Round(), proposal)
-	// Proposal might be received after prevote or precommit, (maybe because of network latency?)
-	// Enter prevote
-	cs.enterPrevote(proposal.Height(), proposal.Round())
+	// Proposal might be received after prepare or precommit, (maybe because of network latency?)
+	cs.enterPrepare(proposal.Height(), proposal.Round())
 	cs.enterPrecommit(proposal.Height(), proposal.Round())
 	cs.enterCommit(proposal.Height(), proposal.Round())
 }
@@ -75,7 +74,7 @@ func (cs *consensus) enterPropose(height int, round int) {
 		cs.logger.Debug("Propose: Not our turn to propose", "proposer", cs.proposer(round).Address())
 	}
 
-	cs.scheduleTimeout(cs.config.Propose(round), height, round, hrs.StepTypePrevote)
+	cs.scheduleTimeout(cs.config.ProposeTimeout(round), height, round, hrs.StepTypePrepare)
 }
 
 func (cs *consensus) createProposal(height int, round int) {

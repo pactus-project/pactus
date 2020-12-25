@@ -60,11 +60,11 @@ func TestDuplicateVote(t *testing.T) {
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
 	valSet, keys := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(1, 0, VoteTypePrevote, valSet)
+	voteSet := NewVoteSet(1, 0, VoteTypePrepare, valSet)
 
-	undefVote := NewVote(VoteTypePrevote, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
-	correctVote := NewVote(VoteTypePrevote, 1, 0, h1, keys[0].PublicKey().Address())
-	duplicatedVote := NewVote(VoteTypePrevote, 1, 0, h2, keys[0].PublicKey().Address())
+	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
+	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, keys[0].PublicKey().Address())
+	duplicatedVote := NewVote(VoteTypePrepare, 1, 0, h2, keys[0].PublicKey().Address())
 
 	// sign the votes
 	sig := keys[0].Sign(undefVote.SignBytes())

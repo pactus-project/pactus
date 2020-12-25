@@ -26,8 +26,8 @@ func TestVoteSignature(t *testing.T) {
 	addr1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	addr2, pb2, pv2 := crypto.GenerateTestKeyPair()
 
-	v1 := NewVote(VoteTypePrevote, 101, 5, h1, addr1)
-	v2 := NewVote(VoteTypePrevote, 101, 5, h1, addr2)
+	v1 := NewVote(VoteTypePrepare, 101, 5, h1, addr1)
+	v2 := NewVote(VoteTypePrepare, 101, 5, h1, addr2)
 
 	sig1 := pv1.Sign(v1.SignBytes())
 	assert.Error(t, v1.Verify(pb1)) // No signature

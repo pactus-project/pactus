@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	TimeoutPropose          time.Duration
-	TimeoutPrevote          time.Duration
+	TimeoutPrepare          time.Duration
 	TimeoutPrecommit        time.Duration
 	NewRoundDeltaDuration   time.Duration
 	PeerGossipSleepDuration time.Duration
@@ -18,7 +18,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		TimeoutPropose:          3 * time.Second,
-		TimeoutPrevote:          2 * time.Second,
+		TimeoutPrepare:          2 * time.Second,
 		TimeoutPrecommit:        2 * time.Second,
 		NewRoundDeltaDuration:   1 * time.Second,
 		PeerGossipSleepDuration: 100 * time.Millisecond,
@@ -29,7 +29,7 @@ func DefaultConfig() *Config {
 func TestConfig() *Config {
 	return &Config{
 		TimeoutPropose:          300 * time.Millisecond,
-		TimeoutPrevote:          200 * time.Millisecond,
+		TimeoutPrepare:          200 * time.Millisecond,
 		TimeoutPrecommit:        200 * time.Millisecond,
 		NewRoundDeltaDuration:   100 * time.Millisecond,
 		PeerGossipSleepDuration: 10 * time.Millisecond,
@@ -41,8 +41,8 @@ func (conf *Config) SanityCheck() error {
 	if conf.TimeoutPropose < 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout_propose can't be negative")
 	}
-	if conf.TimeoutPrevote < 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "timeout_prevote can't be negative")
+	if conf.TimeoutPrepare < 0 {
+		return errors.Errorf(errors.ErrInvalidConfig, "timeout_prepare can't be negative")
 	}
 	if conf.TimeoutPrecommit < 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout_precommit can't be negative")
@@ -57,19 +57,19 @@ func (conf *Config) SanityCheck() error {
 	return nil
 }
 
-func (conf *Config) Propose(round int) time.Duration {
+func (conf *Config) ProposeTimeout(round int) time.Duration {
 	return time.Duration(
 		conf.TimeoutPropose.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
 }
 
-func (conf *Config) Prevote(round int) time.Duration {
+func (conf *Config) PrepareTimeout(round int) time.Duration {
 	return time.Duration(
-		conf.TimeoutPrevote.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
+		conf.TimeoutPrepare.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
 }
 
-func (conf *Config) Precommit(round int) time.Duration {
+func (conf *Config) PrecommitTimeout(round int) time.Duration {
 	return time.Duration(
 		conf.TimeoutPrecommit.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
