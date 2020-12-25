@@ -2,9 +2,10 @@ package logger
 
 import (
 	"bytes"
-	"log"
+	"fmt"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,59 +49,55 @@ func TestNilFingerprint(t *testing.T) {
 }
 
 func TestObjLogger(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-		}
-	}()
+	loggersInst = nil
+	c := DefaultConfig()
+	c.Colorfull = false
+	InitLogger(c)
+
 	l := NewLogger("test", Foo{})
 	var buf bytes.Buffer
-	log.SetOutput(&buf)
+	l.logger.SetOutput(&buf)
 
 	l.Trace("a")
 	l.Debug("b")
 	l.Info("c")
 	l.Warn("d")
 	l.Error("e")
-	l.Fatal("f")
-	l.Panic("g")
 
 	out := buf.String()
 
 	assert.Contains(t, out, "foo")
-	assert.Contains(t, out, "Trace")
-	assert.Contains(t, out, "Debug")
-	assert.Contains(t, out, "Info")
-	assert.Contains(t, out, "Warn")
-	assert.Contains(t, out, "Error")
-	assert.Contains(t, out, "Fatal")
-	assert.Contains(t, out, "Panic")
+	assert.NotContains(t, out, "trace")
+	assert.NotContains(t, out, "debug")
+	assert.Contains(t, out, "info")
+	assert.Contains(t, out, "warn")
+	assert.Contains(t, out, "err")
 }
 
 func TestLogger(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-		}
-	}()
+	loggersInst = nil
+	c := TestConfig()
+	c.Colorfull = true
+	InitLogger(c)
 
 	var buf bytes.Buffer
-	log.SetOutput(&buf)
+	logrus.SetOutput(&buf)
 
 	Trace("a")
-	Debug("b")
-	Info("c")
-	Warn("d")
-	Error("e")
-	//Fatal("f")
-	Panic("g")
+	Debug("b", "a", nil)
+	Info("c", "b", []byte{1, 2, 3})
+	Warn("d", "x")
+	Error("e", "y", Foo{})
 
 	out := buf.String()
 
+	fmt.Println(out)
 	assert.Contains(t, out, "foo")
-	assert.Contains(t, out, "Trace")
-	assert.Contains(t, out, "Debug")
-	assert.Contains(t, out, "Info")
-	assert.Contains(t, out, "Warn")
-	assert.Contains(t, out, "Error")
-	assert.Contains(t, out, "Fatal")
-	assert.Contains(t, out, "Panic")
+	assert.Contains(t, out, "010203")
+	assert.Contains(t, out, "<MISSING VALUE>")
+	assert.NotContains(t, out, "TRACE")
+	assert.Contains(t, out, "DEBU")
+	assert.Contains(t, out, "INFO")
+	assert.Contains(t, out, "WARN")
+	assert.Contains(t, out, "ERR")
 }
