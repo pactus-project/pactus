@@ -3,17 +3,55 @@ package crypto
 import (
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestTreasuryAddress(t *testing.T) {
-	expected, _ := hex.DecodeString("0000000000000000000000000000000000000000")
-	assert.Equal(t, TreasuryAddress.RawBytes(), expected)
+func TestAddressMarshaling(t *testing.T) {
+	addr1, _, _ := GenerateTestKeyPair()
+	addr2 := new(Address)
+	addr3 := new(Address)
+	addr4 := new(Address)
+
+	js, err := json.Marshal(addr1)
+	assert.NoError(t, err)
+	require.NoError(t, json.Unmarshal(js, addr2))
+
+	bs, err := addr2.MarshalCBOR()
+	assert.NoError(t, err)
+	assert.NoError(t, addr3.UnmarshalCBOR(bs))
+
+	txt, err := addr2.MarshalText()
+	assert.NoError(t, err)
+	assert.NoError(t, addr4.UnmarshalText(txt))
+
+	require.True(t, addr1.EqualsTo(*addr4))
+	require.NoError(t, addr1.SanityCheck())
 }
+
+func TestAddressFromBytes(t *testing.T) {
+	addr1, _, _ := GenerateTestKeyPair()
+	addr2, err := AddressFromRawBytes(addr1.RawBytes())
+	assert.NoError(t, err)
+	require.True(t, addr1.EqualsTo(addr2))
+
+	inv, _ := hex.DecodeString("0102")
+	_, err = AddressFromRawBytes(inv)
+	assert.Error(t, err)
+}
+
+func TestAddressFromString(t *testing.T) {
+	addr1, _, _ := GenerateTestKeyPair()
+	addr2, err := AddressFromString(addr1.String())
+	assert.NoError(t, err)
+	require.True(t, addr1.EqualsTo(addr2))
+
+	_, err = AddressFromString("inv")
+	assert.Error(t, err)
+}
+
 func TestMarshalingEmptyAddress(t *testing.T) {
 	addr1 := Address{}
 
@@ -34,35 +72,8 @@ func TestMarshalingEmptyAddress(t *testing.T) {
 	assert.Equal(t, addr1, addr3)
 }
 
-func TestMarshalingAddress(t *testing.T) {
-	addrs := []string{
-		"0123456789ABCDEF0123456789ABCDEF01234567",
-		"7777777777777777777777777777777777777777",
-		"B03DD2C47852775208A56FA10A49875ABC507343",
-		"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
-	}
-
-	for _, addr := range addrs {
-		bs, _ := hex.DecodeString(addr)
-		ac1, err := AddressFromRawBytes(bs)
-		assert.NoError(t, err)
-		fmt.Println(ac1.String())
-
-		jac, err := json.Marshal(&ac1)
-		assert.NoError(t, err)
-		fmt.Println(string(jac))
-
-		var ac2 Address
-		assert.NoError(t, json.Unmarshal(jac, &ac2))
-		require.Equal(t, ac1, ac2)
-
-		bac, err := ac1.MarshalCBOR()
-		assert.NoError(t, err)
-		fmt.Println(string(jac))
-
-		var ac3 Address
-		assert.NoError(t, ac3.UnmarshalCBOR(bac))
-
-		require.Equal(t, ac1, ac2)
-	}
+func TestTreasuryAddress(t *testing.T) {
+	expected, err := AddressFromString("0000000000000000000000000000000000000000")
+	assert.NoError(t, err)
+	assert.Equal(t, TreasuryAddress.RawBytes(), expected.RawBytes())
 }

@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/zarbchain/zarb-go/util"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
@@ -24,6 +26,13 @@ func TestMarshaling(t *testing.T) {
 	err = json.Unmarshal(bz, gen2)
 	require.NoError(t, err)
 	require.Equal(t, gen1.Hash(), gen2.Hash())
+
+	// Test saving and loading
+	f := util.TempFilePath()
+	assert.NoError(t, gen1.SaveToFile(f))
+	gen3, err := LoadFromFile(f)
+	assert.NoError(t, err)
+	require.Equal(t, gen1.Hash(), gen3.Hash())
 }
 
 func TestGenesisTestNet(t *testing.T) {
