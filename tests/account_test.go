@@ -38,5 +38,5 @@ func TestTreasuryAccount(t *testing.T) {
 
 	res := getAccount(t, crypto.TreasuryAddress)
 	require.NotNil(t, res)
-	assert.Equal(t, tGenDoc.Accounts()[0].Balance(), res.Balance()+int64(res.Sequence()*5))
+	assert.Equal(t, tGenDoc.Accounts()[0].Balance(), res.Balance()+int64(res.Sequence()*500000000))
 }
