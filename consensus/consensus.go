@@ -136,10 +136,6 @@ func (cs *consensus) HasVote(hash crypto.Hash) bool {
 
 func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round int, step hrs.StepType) {
 	to := timeout{duration, height, round, step}
-
-	if cs.config.FuzzTesting {
-		to.Duration = time.Duration(util.RandInt(8)) * time.Second
-	}
 	timer := time.NewTimer(duration)
 	go func() {
 		<-timer.C
@@ -266,8 +262,17 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	}
 
 	// Broadcast our vote
-	msg := message.NewVoteMessage(v)
-	cs.broadcastCh <- msg
+	if cs.config.FuzzTesting {
+		rand := util.RandInt(3)
+		go func() {
+			time.Sleep(time.Duration(rand) * time.Second)
+			msg := message.NewVoteMessage(v)
+			cs.broadcastCh <- msg
+		}()
+	} else {
+		msg := message.NewVoteMessage(v)
+		cs.broadcastCh <- msg
+	}
 }
 
 func (cs *consensus) requestForProposal() {

@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"time"
+
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/message"
@@ -84,18 +86,21 @@ func (cs *consensus) createProposal(height int, round int) {
 	}
 
 	proposal := vote.NewProposal(height, round, block)
-	if cs.config.FuzzTesting {
-		if n := util.RandInt(5); n == 3 {
-			// Randomly send invalid proposal
-			proposal, _ = vote.GenerateTestProposal(cs.hrs.Height(), cs.hrs.Round())
-		}
-	}
 	cs.signer.SignMsg(proposal)
 	cs.setProposal(proposal)
 
 	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
 
 	// Broadcast proposal
-	msg := message.NewProposalMessage(proposal)
-	cs.broadcastCh <- msg
+	if cs.config.FuzzTesting {
+		rand := util.RandInt(3)
+		go func() {
+			time.Sleep(time.Duration(rand) * time.Second)
+			msg := message.NewProposalMessage(proposal)
+			cs.broadcastCh <- msg
+		}()
+	} else {
+		msg := message.NewProposalMessage(proposal)
+		cs.broadcastCh <- msg
+	}
 }

@@ -26,14 +26,19 @@ func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.Votes = append(m.Votes, v)
 }
 func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
-	return m.Votes
+	votes := make([]*vote.Vote, 0)
+	for _, v := range m.Votes {
+		if v.Round() == round {
+			votes = append(votes, v)
+		}
+	}
+	return votes
 }
 func (m *MockConsensus) RoundVotesHash(round int) []crypto.Hash {
 	hashes := make([]crypto.Hash, len(m.Votes))
-	for i, v := range m.Votes {
+	for i, v := range m.RoundVotes(round) {
 		hashes[i] = v.Hash()
 	}
-
 	return hashes
 }
 func (m *MockConsensus) SetProposal(p *vote.Proposal) {

@@ -43,6 +43,7 @@ func (cs *consensus) enterNewHeight() {
 	}
 
 	cs.updateHeight(sateHeight + 1)
+	cs.updateRound(0)
 	cs.updateStep(hrs.StepTypeNewHeight)
 	cs.logger.Info("NewHeight: Entering new height", "height", sateHeight+1)
 

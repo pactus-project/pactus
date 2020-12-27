@@ -182,7 +182,7 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *payload.VoteSetPayload) {
 		for _, v1 := range ourVotes {
 			hasVote := false
 			for _, v2 := range peerVotes {
-				if v1.Hash() == v2 {
+				if v1.Hash().EqualsTo(v2) {
 					hasVote = true
 					break
 				}

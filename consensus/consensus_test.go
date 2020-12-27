@@ -215,25 +215,31 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 func TestConsensusUpdateVote(t *testing.T) {
 	setup(t)
 
-	tConsY.MoveToNewHeight()
-	checkHRSWait(t, tConsY, 1, 0, hrs.StepTypePrepare)
+	tConsY.enterNewHeight()
 
 	h1 := crypto.GenerateTestHash()
-	h2 := crypto.GenerateTestHash()
 	assert.Nil(t, tConsY.LastProposal())
 
 	// Ignore votes from invalid height
 	testAddVote(t, tConsY, vote.VoteTypePrepare, 2, 0, h1, tIndexB, false)
 
-	v1 := testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexB, false)
-	assert.Equal(t, tConsY.pendingVotes.roundVotes[0].Prepares.Len(), 2)
+	v1 := testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX, false)
+	v2 := testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexP, false)
+	tConsY.enterNewRound(1)
+	v3 := testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 1, crypto.UndefHash, tIndexX, false)
+	tConsY.enterNewRound(2)
+	v4 := testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 2, crypto.UndefHash, tIndexX, false)
+
 	assert.Contains(t, tConsY.RoundVotesHash(0), v1.Hash())
-
-	v2 := testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, h1, tIndexB, false)
-	assert.Equal(t, tConsY.pendingVotes.roundVotes[0].Prepares.Len(), 2)
 	assert.Contains(t, tConsY.RoundVotesHash(0), v2.Hash())
+	assert.Contains(t, tConsY.RoundVotesHash(1), v3.Hash())
+	assert.Contains(t, tConsY.RoundVotesHash(2), v4.Hash())
+	assert.NotContains(t, tConsY.RoundVotesHash(2), v1.Hash())
 
-	testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, h2, tIndexB, true)
+	assert.Contains(t, tConsY.RoundVotes(0), v1)
+	assert.Contains(t, tConsY.RoundVotes(0), v2)
+	assert.Contains(t, tConsY.RoundVotes(1), v3)
+	assert.Contains(t, tConsY.RoundVotes(2), v4)
 }
 
 func TestConsensusNoPrepares(t *testing.T) {
@@ -280,16 +286,14 @@ func TestConsensusSpamming(t *testing.T) {
 func TestConsensusSpammingProposal(t *testing.T) {
 	setup(t)
 
-	tConsX.MoveToNewHeight()
-	p := tConsX.LastProposal()
-	assert.Nil(t, p)
+	tConsP.enterNewHeight()
+	assert.Nil(t, tConsP.LastProposal())
 
 	for i := 0; i < 100; i++ {
 		proposal, _ := vote.GenerateTestProposal(1, 0)
-		tConsX.SetProposal(proposal)
+		tConsP.SetProposal(proposal)
 	}
-	p = tConsX.LastProposal()
-	assert.Nil(t, p)
+	assert.Nil(t, tConsP.LastProposal())
 }
 
 func TestConsensusInvalidProposal(t *testing.T) {
