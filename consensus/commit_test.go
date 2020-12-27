@@ -102,7 +102,5 @@ func TestEnterCommit(t *testing.T) {
 
 	// Everything is good
 	tConsY.enterCommit(0)
-	assert.True(t, tConsY.isCommitted)
-
 	checkHRSWait(t, tConsY, 2, 0, hrs.StepTypePrepare)
 }
