@@ -53,17 +53,14 @@ func (commit *Commit) SanityCheck() error {
 	if err := commit.data.Signature.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	signed := 0
 	for _, c := range commit.data.Committers {
 		if c.Status > 1 {
 			return errors.Errorf(errors.ErrInvalidBlock, "Invalid commit status")
 		}
-		if c.Status == CommitSigned {
-			signed++
-		}
 	}
 
-	if signed <= (len(commit.data.Committers) * 2 / 3) {
+	signedBy := commit.SignedBy()
+	if signedBy <= (len(commit.data.Committers) * 2 / 3) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Not enough committers")
 	}
 
@@ -79,6 +76,16 @@ func (commit *Commit) Hash() crypto.Hash {
 		return crypto.UndefHash
 	}
 	return crypto.HashH(bs)
+}
+
+func (commit *Commit) SignedBy() int {
+	signed := 0
+	for _, c := range commit.data.Committers {
+		if c.Status == CommitSigned {
+			signed++
+		}
+	}
+	return signed
 }
 
 func (commit *Commit) CommittersHash() crypto.Hash {

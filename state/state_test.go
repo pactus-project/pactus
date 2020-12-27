@@ -73,31 +73,54 @@ func setupStatewithOneValidator(t *testing.T) *state {
 	return s
 }
 
+func proposeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
+	b := st.ProposeBlock()
+	committers := make([]block.Committer, 1)
+	sb := vote.CommitSignBytes(b.Hash(), 0)
+	committers[0] = block.Committer{Status: 1, Address: tValSigner1.Address()}
+	sig := tValSigner1.Sign(sb)
+
+	c := block.NewCommit(0, committers, *sig)
+	return b, *c
+}
+
+func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Commit {
+	committers := make([]block.Committer, 4)
+	sigs := make([]*crypto.Signature, len(signers))
+	sb := vote.CommitSignBytes(blockHash, round)
+	committers[0] = block.Committer{Status: 0, Address: tValSigner1.Address()}
+	committers[1] = block.Committer{Status: 0, Address: tValSigner2.Address()}
+	committers[2] = block.Committer{Status: 0, Address: tValSigner3.Address()}
+	committers[3] = block.Committer{Status: 0, Address: tValSigner4.Address()}
+
+	for i, s := range signers {
+		if s.Address().EqualsTo(tValSigner1.Address()) {
+			committers[0] = block.Committer{Status: 1, Address: s.Address()}
+		}
+
+		if s.Address().EqualsTo(tValSigner2.Address()) {
+			committers[1] = block.Committer{Status: 1, Address: s.Address()}
+		}
+
+		if s.Address().EqualsTo(tValSigner3.Address()) {
+			committers[2] = block.Committer{Status: 1, Address: s.Address()}
+		}
+
+		if s.Address().EqualsTo(tValSigner4.Address()) {
+			committers[3] = block.Committer{Status: 1, Address: s.Address()}
+		}
+
+		sigs[i] = s.Sign(sb)
+	}
+	return *block.NewCommit(round, committers, crypto.Aggregate(sigs))
+}
+
 func TestProposeBlockAndValidation(t *testing.T) {
 	st := setupStatewithOneValidator(t)
 
 	block := st.ProposeBlock()
 	err := st.ValidateBlock(block)
 	require.NoError(t, err)
-}
-
-func proposeAndSignBlock(t *testing.T, st *state, signer crypto.Signer) (block.Block, block.Commit) {
-	b := st.ProposeBlock()
-	c := makeCommitAndSign(t, b.Hash(), signer)
-
-	return b, c
-}
-
-func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, signers ...crypto.Signer) block.Commit {
-	committers := make([]block.Committer, len(signers))
-	sigs := make([]*crypto.Signature, len(signers))
-	for i, s := range signers {
-		v := vote.NewPrecommit(-1, 0, blockHash, s.Address())
-
-		committers[i] = block.Committer{Status: 1, Address: s.Address()}
-		sigs[i] = s.Sign(v.SignBytes())
-	}
-	return *block.NewCommit(0, committers, crypto.Aggregate(sigs))
 }
 
 func TestBlockSubsidy(t *testing.T) {
@@ -126,7 +149,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 func TestApplyBlocks(t *testing.T) {
 	st := setupStatewithOneValidator(t)
 
-	b1, c1 := proposeAndSignBlock(t, st, tValSigner1)
+	b1, c1 := proposeAndSignBlock(t, st)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, st.ApplyBlock(1, *invBlock, c1))
 	assert.Error(t, st.ApplyBlock(2, b1, c1))
@@ -200,4 +223,19 @@ func TestCommitSandbox(t *testing.T) {
 
 		assert.Equal(t, st.validatorSet.Proposer(0).Address(), nextNextProposer.Address())
 	})
+}
+
+func TestUpdateLastCommit(t *testing.T) {
+	st := setupStatewithFourValidators(t, tValSigner1)
+	b := st.ProposeBlock()
+	c1 := makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner3, tValSigner4)
+	c2 := makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+
+	st.lastCommit = &c1
+	st.lastBlockHash = b.Hash()
+	assert.NoError(t, st.UpdateLastCommit(&c1))
+	assert.Equal(t, st.lastCommit.Hash(), c1.Hash())
+	assert.NoError(t, st.UpdateLastCommit(&c2))
+	assert.NoError(t, st.UpdateLastCommit(&c1))
+	assert.Equal(t, st.lastCommit.Hash(), c2.Hash())
 }

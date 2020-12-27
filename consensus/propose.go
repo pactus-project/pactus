@@ -18,12 +18,12 @@ func (cs *consensus) isProposer(address crypto.Address, round int) bool {
 }
 
 func (cs *consensus) setProposal(proposal *vote.Proposal) {
-	if cs.invalidHeight(proposal.Height()) {
-		cs.logger.Debug("Propose: Invalid height or committed", "proposal", proposal, "committed", cs.isCommitted)
+	if proposal.Height() != cs.hrs.Height() {
+		cs.logger.Debug("Propose: Invalid height", "proposal", proposal)
 		return
 	}
 
-	roundProposal := cs.votes.RoundProposal(proposal.Round())
+	roundProposal := cs.pendingVotes.RoundProposal(proposal.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("propose: This round has proposal", "proposal", proposal)
 		return
@@ -46,20 +46,18 @@ func (cs *consensus) setProposal(proposal *vote.Proposal) {
 	}
 
 	cs.logger.Info("propose: Proposal set", "proposal", proposal)
-	cs.votes.SetRoundProposal(proposal.Round(), proposal)
+	cs.pendingVotes.SetRoundProposal(proposal.Round(), proposal)
 	// Proposal might be received after prepare or precommit, (maybe because of network latency?)
-	cs.enterPrepare(proposal.Height(), proposal.Round())
-	cs.enterPrecommit(proposal.Height(), proposal.Round())
-	cs.enterCommit(proposal.Height(), proposal.Round())
+	cs.enterPrepare(proposal.Round())
+	cs.enterPrecommit(proposal.Round())
 }
 
-func (cs *consensus) enterPropose(height int, round int) {
-	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePropose) {
-		cs.logger.Debug("Propose: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
+func (cs *consensus) enterPropose(round int) {
+	if cs.isProposed || round != cs.hrs.Round() {
+		cs.logger.Debug("Propose: Proposed before or invalid round", "round", round)
 		return
 	}
-
-	cs.updateRoundStep(round, hrs.StepTypePropose)
+	cs.updateStep(hrs.StepTypePropose)
 
 	address := cs.signer.Address()
 	if !cs.valset.Contains(address) {
@@ -69,12 +67,13 @@ func (cs *consensus) enterPropose(height int, round int) {
 
 	if cs.isProposer(address, round) {
 		cs.logger.Info("Propose: Our turn to propose", "proposer", address)
-		cs.createProposal(height, round)
+		cs.createProposal(cs.hrs.Height(), round)
 	} else {
 		cs.logger.Debug("Propose: Not our turn to propose", "proposer", cs.proposer(round).Address())
 	}
 
-	cs.scheduleTimeout(cs.config.ProposeTimeout(round), height, round, hrs.StepTypePrepare)
+	cs.isProposed = true
+	cs.scheduleTimeout(cs.config.ProposeTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrepare)
 }
 
 func (cs *consensus) createProposal(height int, round int) {

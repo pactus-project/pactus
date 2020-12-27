@@ -183,13 +183,11 @@ func GenerateTestCommit(blockhash crypto.Hash) *Commit {
 	addr1, _, pv1 := crypto.GenerateTestKeyPair()
 	addr2, _, pv2 := crypto.GenerateTestKeyPair()
 	addr3, _, pv3 := crypto.GenerateTestKeyPair()
-	addr4, _, pv4 := crypto.GenerateTestKeyPair()
 
 	sigs := []*crypto.Signature{
 		pv1.Sign(blockhash.RawBytes()),
 		pv2.Sign(blockhash.RawBytes()),
 		pv3.Sign(blockhash.RawBytes()),
-		pv4.Sign(blockhash.RawBytes()),
 	}
 	sig := crypto.Aggregate(sigs)
 
@@ -198,7 +196,6 @@ func GenerateTestCommit(blockhash crypto.Hash) *Commit {
 			{Status: CommitSigned, Address: addr1},
 			{Status: CommitSigned, Address: addr2},
 			{Status: CommitSigned, Address: addr3},
-			{Status: CommitSigned, Address: addr4},
 		},
 		sig)
 }

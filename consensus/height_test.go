@@ -2,84 +2,64 @@ package consensus
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func waitForNewHeight(t *testing.T, cons *consensus, expectedHeight int) {
-	for i := 0; i < 10; i++ {
-		if expectedHeight == cons.HRS().Height() {
-			return
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
-	assert.Equal(t, expectedHeight, cons.hrs.Height())
-}
-
 func TestMoveToNewHeight(t *testing.T) {
-	cons := newTestConsensus(t, VAL1)
+	setup(t)
 
-	cons.MoveToNewHeight()
-	waitForNewHeight(t, cons, 1)
+	tConsP.MoveToNewHeight()
 
-	commitFirstBlock(t, cons.state)
+	commitFirstBlock(t, tConsP.state)
 
-	cons.MoveToNewHeight()
-	waitForNewHeight(t, cons, 2)
-}
-
-func TestConsensusBehindState(t *testing.T) {
-	cons := newTestConsensus(t, VAL2)
-
-	commitFirstBlock(t, cons.state)
-	assert.Equal(t, cons.hrs, hrs.NewHRS(0, 0, hrs.StepTypeNewHeight))
-
-	cons.MoveToNewHeight()
-	assert.Equal(t, cons.hrs, hrs.NewHRS(1, 0, hrs.StepTypeCommit))
+	tConsP.MoveToNewHeight()
+	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
 
 	// Calling MoveToNewHeight for the second time
-	cons.MoveToNewHeight()
-	assert.Equal(t, cons.hrs, hrs.NewHRS(1, 0, hrs.StepTypeCommit))
+	tConsX.MoveToNewHeight()
+	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
 }
 
 func TestConsensusBehindState3(t *testing.T) {
-	cons := newTestConsensus(t, VAL1)
+	setup(t)
 
 	// Consensus starts here
-	cons.enterNewHeight(1)
-	p := cons.LastProposal()
+	tConsX.enterNewHeight()
+	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
+
+	p := tConsX.LastProposal()
 	b := p.Block()
-	assert.NoError(t, cons.state.ValidateBlock(b))
+	assert.NoError(t, tConsX.state.ValidateBlock(b))
 
 	// --------------------------------
 	// Syncer commit a block and trig consensus
-	commitFirstBlock(t, cons.state)
-	cons.MoveToNewHeight()
+	commitFirstBlock(t, tConsX.state)
+	tConsX.MoveToNewHeight()
 
-	assert.Equal(t, len(cons.votes.votes), 1)
-	assert.Equal(t, cons.hrs, hrs.NewHRS(1, 0, hrs.StepTypeCommit))
-
-	cons.MoveToNewHeight()
-	assert.Equal(t, len(cons.votes.votes), 1)
-	assert.Equal(t, cons.hrs, hrs.NewHRS(1, 0, hrs.StepTypeCommit))
+	assert.Equal(t, len(tConsX.RoundVotes(0)), 1)
+	assert.Equal(t, tConsX.hrs, hrs.NewHRS(1, 0, hrs.StepTypePrepare))
 	// --------------------------------
 
 	// Consensus tries to add more votes and commit the block which is committed by syncer before.
-	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL2, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypeCommit)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
+	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
-	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL3, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypeCommit)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexB, false)
+	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
-	testAddVote(t, cons, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), VAL4, false)
-	checkHRS(t, cons, 1, 0, hrs.StepTypeCommit)
-	precommits := cons.votes.PrecommitVoteSet(0)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
+	checkHRS(t, tConsX, 1, 0, hrs.StepTypeCommit)
 
-	assert.Error(t, cons.state.ValidateBlock(b))
+	precommits := tConsX.pendingVotes.PrecommitVoteSet(0)
+	require.NotNil(t, precommits)
+	require.NotNil(t, precommits.ToCommit())
 
-	assert.NoError(t, cons.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
-	// We don't get any error here, but the block is not committed again, Check the log
+	assert.Error(t, tConsX.state.ValidateBlock(b))
+
+	assert.NoError(t, tConsX.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
+	// We don't get any error here, but the block is not committed again. Check logs.
 }

@@ -16,16 +16,12 @@ import (
 func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vote.Vote) {
 	b = st.ProposeBlock()
 
-	votes[0] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), tSigners[0].Address())
-	tSigners[0].SignMsg(votes[0])
+	sb := vote.CommitSignBytes(b.Hash(), 0)
+	sig1 := tSigners[0].Sign(sb)
+	sig2 := tSigners[1].Sign(sb)
+	sig3 := tSigners[2].Sign(sb)
 
-	votes[1] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), tSigners[1].Address())
-	tSigners[1].SignMsg(votes[1])
-
-	votes[2] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), tSigners[2].Address())
-	tSigners[2].SignMsg(votes[2])
-
-	sig := crypto.Aggregate([]*crypto.Signature{votes[0].Signature(), votes[1].Signature(), votes[2].Signature()})
+	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3})
 	c := block.NewCommit(0,
 		[]block.Committer{
 			{Status: 1, Address: tSigners[0].Address()},
@@ -43,75 +39,70 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 }
 
 func TestInvalidStepAfterBlockCommit(t *testing.T) {
-	cons := newTestConsensus(t, VAL1)
+	setup(t)
 
-	commitFirstBlock(t, cons.state)
+	commitFirstBlock(t, tConsY.state)
 
-	cons.MoveToNewHeight()
+	tConsY.enterNewHeight()
 
-	assert.True(t, cons.invalidHeight(1))
-	assert.True(t, cons.invalidHeightRound(1, 0))
-	assert.True(t, cons.invalidHeightRoundStep(1, 0, hrs.StepTypeCommit))
-
-	// manually move to next height
-	cons.enterNewHeight(2)
-
-	assert.False(t, cons.invalidHeight(2))
-	assert.False(t, cons.invalidHeightRound(2, 0))
-	assert.False(t, cons.invalidHeightRoundStep(2, 0, hrs.StepTypeCommit))
+	assert.Equal(t, tConsY.hrs.Height(), 2)
+	assert.Equal(t, tConsY.hrs.Round(), 0)
+	assert.False(t, tConsX.isProposed)
+	assert.False(t, tConsX.isPrepared)
+	assert.False(t, tConsX.isPreCommitted)
+	assert.False(t, tConsX.isCommitted)
 }
 
 func TestEnterCommit(t *testing.T) {
-	cons1 := newTestConsensus(t, VAL1)
-	cons2 := newTestConsensus(t, VAL2)
+	setup(t)
 
-	cons1.MoveToNewHeight()
-	cons2.MoveToNewHeight()
-	checkHRSWait(t, cons1, 1, 0, hrs.StepTypePrepare)
-	checkHRSWait(t, cons2, 1, 0, hrs.StepTypePrepare)
-	p1 := cons1.LastProposal()
+	tConsX.enterNewHeight()
+	tConsY.enterNewHeight()
+	p1 := tConsX.LastProposal()
 
-	// Invalid height
-	cons2.enterCommit(2, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
+	// Invalid round
+	tConsY.enterCommit(1)
+	assert.False(t, tConsY.isCommitted)
 
 	// No quorum
-	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
 
-	testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL1, false)
-	testAddVote(t, cons2, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), VAL2, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexP, false)
 
-	v3 := vote.NewPrecommit(1, 0, crypto.UndefHash, tSigners[VAL3].Address())
-	tSigners[VAL3].SignMsg(v3)
-	ok, _ := cons2.votes.AddVote(v3)
+	v3 := vote.NewPrecommit(1, 0, crypto.UndefHash, tSigners[tIndexB].Address())
+	tSigners[tIndexB].SignMsg(v3)
+	ok, _ := tConsY.pendingVotes.AddVote(v3)
 	assert.True(t, ok)
 
 	// Undef quorum
-	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
 
-	v4 := vote.NewPrecommit(1, 0, p1.Block().Hash(), tSigners[VAL4].Address())
-	tSigners[VAL4].SignMsg(v4)
-	ok, _ = cons2.votes.AddVote(v4)
-	assert.True(t, ok)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexB, false)
 
 	// No proposal
-	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
-	shouldPublishProposalReqquest(t, cons2)
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
+	shouldPublishProposalReqquest(t, tConsY)
 
-	time.Sleep(1 * time.Second) // This will change block timestamp
-	p2 := makeTestProposal(t, VAL1, 1, 0)
-	cons2.votes.SetRoundProposal(p2.Round(), p2)
+	time.Sleep(2 * time.Second) // This will change block timestamp
+	b2 := tConsX.state.ProposeBlock()
+	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
+	p2 := vote.NewProposal(1, 0, b2)
+	tSigners[tIndexX].SignMsg(p2)
+	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
 
 	// Invalid proposal
-	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypePrepare)
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
 
-	cons2.votes.SetRoundProposal(p2.Round(), p1)
+	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p1)
 
 	// Everything is good
-	cons2.enterCommit(1, 0)
-	checkHRS(t, cons2, 1, 0, hrs.StepTypeCommit)
+	tConsY.enterCommit(0)
+	assert.True(t, tConsY.isCommitted)
+
+	checkHRSWait(t, tConsY, 2, 0, hrs.StepTypePrepare)
 }

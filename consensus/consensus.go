@@ -18,15 +18,18 @@ import (
 type consensus struct {
 	lk deadlock.RWMutex
 
-	config      *Config
-	hrs         hrs.HRS
-	votes       *HeightVoteSet
-	valset      validator.ValidatorSetReader
-	signer      crypto.Signer
-	isCommitted bool
-	state       state.State
-	broadcastCh chan *message.Message
-	logger      *logger.Logger
+	config         *Config
+	hrs            hrs.HRS
+	pendingVotes   *PendingVotes
+	valset         validator.ValidatorSetReader
+	signer         crypto.Signer
+	isProposed     bool
+	isPrepared     bool
+	isPreCommitted bool
+	isCommitted    bool
+	state          state.State
+	broadcastCh    chan *message.Message
+	logger         *logger.Logger
 }
 
 func NewConsensus(
@@ -43,16 +46,34 @@ func NewConsensus(
 	}
 
 	// Update height later, See enterNewHeight.
-	cs.votes = NewHeightVoteSet(0, cs.valset)
-	cs.hrs = hrs.NewHRS(0, 0, hrs.StepTypeNewHeight)
+	cs.pendingVotes = NewPendingVotes(0, cs.valset)
+	cs.hrs = hrs.NewHRS(0, 0, hrs.StepTypeUnknown)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
 }
 
 func (cs *consensus) Fingerprint() string {
-	return fmt.Sprintf("{%v}",
-		cs.hrs.Fingerprint())
+	isProposed := "-"
+	if cs.isProposed {
+		isProposed = "X"
+	}
+	isPrepared := "-"
+	if cs.isPrepared {
+		isPrepared = "X"
+	}
+	isPreCommitted := "-"
+	if cs.isPreCommitted {
+		isPreCommitted = "X"
+	}
+	isCommitted := "-"
+	if cs.isCommitted {
+		isCommitted = "X"
+	}
+	status := fmt.Sprintf("%s%s%s%s", isProposed, isPrepared, isPreCommitted, isCommitted)
+
+	return fmt.Sprintf("{%v %s}",
+		cs.hrs.String(), status)
 }
 
 func (cs *consensus) HRS() hrs.HRS {
@@ -62,13 +83,17 @@ func (cs *consensus) HRS() hrs.HRS {
 	return cs.hrs
 }
 
-func (cs *consensus) updateRoundStep(round int, step hrs.StepType) {
-	cs.hrs.UpdateRoundStep(round, step)
+func (cs *consensus) updateRound(round int) {
+	cs.hrs.UpdateRound(round)
+}
+
+func (cs *consensus) updateStep(step hrs.StepType) {
+	cs.hrs.UpdateStep(step)
 }
 
 func (cs *consensus) updateHeight(height int) {
 	if cs.hrs.Height() != height {
-		cs.votes.Reset(height)
+		cs.pendingVotes.Reset(height)
 		cs.hrs.UpdateHeight(height)
 	}
 }
@@ -77,42 +102,36 @@ func (cs *consensus) LastProposal() *vote.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.votes.RoundProposal(cs.hrs.Round())
+	return cs.pendingVotes.RoundProposal(cs.hrs.Round())
 }
 
-func (cs *consensus) AllVotes() []*vote.Vote {
+func (cs *consensus) RoundVotes(round int) []*vote.Vote {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	votes := cs.votes.votes
-	slice := make([]*vote.Vote, len(votes))
-	i := 0
-	for _, v := range votes {
-		slice[i] = v
-		i++
+	rv := cs.pendingVotes.MustGetRoundVotes(round)
+	return rv.votes
+}
+
+func (cs *consensus) RoundVotesHash(round int) []crypto.Hash {
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
+
+	rv := cs.pendingVotes.MustGetRoundVotes(round)
+	hashes := make([]crypto.Hash, len(rv.votes))
+
+	for i, v := range rv.votes {
+		hashes[i] = v.Hash()
 	}
-	return slice
+
+	return hashes
 }
 
-func (cs *consensus) AllVotesHashes() []crypto.Hash {
+func (cs *consensus) HasVote(hash crypto.Hash) bool {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	votes := cs.votes.votes
-	slice := make([]crypto.Hash, len(votes))
-	i := 0
-	for _, v := range votes {
-		slice[i] = v.Hash()
-		i++
-	}
-	return slice
-}
-
-func (cs *consensus) Vote(h crypto.Hash) *vote.Vote {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	return cs.votes.votes[h]
+	return cs.pendingVotes.HasVote(hash)
 }
 
 func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round int, step hrs.StepType) {
@@ -126,28 +145,7 @@ func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round i
 		<-timer.C
 		cs.handleTimeout(to)
 	}()
-	logger.Debug("Scheduled timeout", "dur", duration, "height", height, "round", round, "step", step)
-}
-
-func (cs *consensus) invalidHeight(height int) bool {
-	if cs.isCommitted {
-		return true
-	}
-	return cs.hrs.Height() != height
-}
-
-func (cs *consensus) invalidHeightRound(height int, round int) bool {
-	if cs.isCommitted {
-		return true
-	}
-	return cs.hrs.Height() != height || cs.hrs.Round() != round
-}
-
-func (cs *consensus) invalidHeightRoundStep(height int, round int, step hrs.StepType) bool {
-	if cs.isCommitted {
-		return true
-	}
-	return cs.hrs.Height() != height || cs.hrs.Round() != round || cs.hrs.Step() > step
+	logger.Debug("Scheduled timeout", "duration", duration, "height", height, "round", round, "step", step)
 }
 
 func (cs *consensus) AddVote(v *vote.Vote) {
@@ -180,13 +178,11 @@ func (cs *consensus) handleTimeout(ti timeout) {
 
 	switch ti.Step {
 	case hrs.StepTypeNewHeight:
-		cs.enterNewHeight(ti.Height + 1)
-	case hrs.StepTypeNewRound:
-		cs.enterNewRound(ti.Height, ti.Round+1)
+		cs.enterNewHeight()
 	case hrs.StepTypePrepare:
-		cs.enterPrepare(ti.Height, ti.Round)
+		cs.enterPrepare(ti.Round)
 	case hrs.StepTypePrecommit:
-		cs.enterPrecommit(ti.Height, ti.Round)
+		cs.enterPrecommit(ti.Round)
 	default:
 		panic(fmt.Sprintf("Invalid timeout step: %v", ti.Step))
 	}
@@ -201,7 +197,7 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 		return nil
 	}
 
-	added, err := cs.votes.AddVote(v)
+	added, err := cs.pendingVotes.AddVote(v)
 	if err != nil {
 		if v.Signer().EqualsTo(cs.signer.Address()) {
 			cs.logger.Error("Detecting a duplicated vote from ourself. Did you restart the node?")
@@ -214,36 +210,33 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 		return nil
 	}
 
-	height := v.Height()
 	round := v.Round()
 	switch v.VoteType() {
 	case vote.VoteTypePrepare:
-		prepares := cs.votes.PrepareVoteSet(round)
+		prepares := cs.pendingVotes.PrepareVoteSet(round)
 		cs.logger.Debug("Vote added to prepare", "vote", v, "voteset", prepares)
 
 		if ok := prepares.HasQuorum(); ok {
 			blockHash := prepares.QuorumBlock()
 			if blockHash == nil {
-				cs.enterPrepareWait(height, round)
-			} else if blockHash.IsUndef() {
-				cs.enterPrecommit(height, round)
+				cs.enterPrepareWait(round)
 			} else {
-				cs.enterPrecommit(height, round)
+				cs.enterPrecommit(round)
 			}
 		}
 
 	case vote.VoteTypePrecommit:
-		precommits := cs.votes.PrecommitVoteSet(round)
+		precommits := cs.pendingVotes.PrecommitVoteSet(round)
 		cs.logger.Debug("Vote added to precommit", "vote", v, "voteset", precommits)
 
 		if ok := precommits.HasQuorum(); ok {
 			blockHash := precommits.QuorumBlock()
-			if blockHash == nil {
-				cs.enterPrecommitWait(height, round)
-			} else if blockHash.IsUndef() {
-				cs.enterNewRound(height, round+1)
-			} else {
-				cs.enterCommit(height, round)
+			if blockHash != nil {
+				if blockHash.IsUndef() {
+					cs.enterNewRound(round + 1)
+				} else {
+					cs.enterCommit(round)
+				}
 			}
 		}
 

@@ -14,7 +14,7 @@ import (
 func TestProposeBlock(t *testing.T) {
 	st1 := setupStatewithOneValidator(t)
 
-	b1, c1 := proposeAndSignBlock(t, st1, tValSigner1)
+	b1, c1 := proposeAndSignBlock(t, st1)
 	assert.NoError(t, st1.ApplyBlock(1, b1, c1))
 
 	subsidy := calcBlockSubsidy(st1.LastBlockHeight(), st1.params.SubsidyReductionInterval)
@@ -37,8 +37,7 @@ func TestProposeBlock(t *testing.T) {
 	assert.NoError(t, st1.txPool.AppendTx(trx1))
 	assert.NoError(t, st1.txPool.AppendTx(trx2))
 
-	b2 := st1.ProposeBlock()
-	c2 := makeCommitAndSign(t, b2.Hash(), tValSigner1)
+	b2, c2 := proposeAndSignBlock(t, st1)
 	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
 	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
 	assert.NoError(t, st1.ApplyBlock(2, b2, c2))
@@ -47,7 +46,7 @@ func TestProposeBlock(t *testing.T) {
 func TestExecuteBlock(t *testing.T) {
 	st := setupStatewithOneValidator(t)
 
-	b1, c1 := proposeAndSignBlock(t, st, tValSigner1)
+	b1, c1 := proposeAndSignBlock(t, st)
 	assert.NoError(t, st.ApplyBlock(1, b1, c1))
 
 	invSubsidyTx := st.createSubsidyTx(1001)

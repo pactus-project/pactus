@@ -7,33 +7,30 @@ import (
 )
 
 type Config struct {
-	TimeoutPropose          time.Duration
-	TimeoutPrepare          time.Duration
-	TimeoutPrecommit        time.Duration
-	NewRoundDeltaDuration   time.Duration
-	PeerGossipSleepDuration time.Duration
-	FuzzTesting             bool
+	TimeoutPropose   time.Duration
+	TimeoutPrepare   time.Duration
+	TimeoutPrecommit time.Duration
+	DeltaDuration    time.Duration
+	FuzzTesting      bool
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		TimeoutPropose:          3 * time.Second,
-		TimeoutPrepare:          2 * time.Second,
-		TimeoutPrecommit:        2 * time.Second,
-		NewRoundDeltaDuration:   1 * time.Second,
-		PeerGossipSleepDuration: 100 * time.Millisecond,
-		FuzzTesting:             false,
+		TimeoutPropose:   3 * time.Second,
+		TimeoutPrepare:   2 * time.Second,
+		TimeoutPrecommit: 2 * time.Second,
+		DeltaDuration:    1 * time.Second,
+		FuzzTesting:      false,
 	}
 }
 
 func TestConfig() *Config {
 	return &Config{
-		TimeoutPropose:          300 * time.Millisecond,
-		TimeoutPrepare:          200 * time.Millisecond,
-		TimeoutPrecommit:        200 * time.Millisecond,
-		NewRoundDeltaDuration:   100 * time.Millisecond,
-		PeerGossipSleepDuration: 10 * time.Millisecond,
-		FuzzTesting:             false,
+		TimeoutPropose:   300 * time.Millisecond,
+		TimeoutPrepare:   200 * time.Millisecond,
+		TimeoutPrecommit: 200 * time.Millisecond,
+		DeltaDuration:    100 * time.Millisecond,
+		FuzzTesting:      false,
 	}
 }
 
@@ -47,11 +44,8 @@ func (conf *Config) SanityCheck() error {
 	if conf.TimeoutPrecommit < 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout_precommit can't be negative")
 	}
-	if conf.NewRoundDeltaDuration < 0 {
+	if conf.DeltaDuration < 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "new_round_delta_duration can't be negative")
-	}
-	if conf.PeerGossipSleepDuration < 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "peer_gossip_sleep_duration can't be negative")
 	}
 
 	return nil
@@ -59,18 +53,12 @@ func (conf *Config) SanityCheck() error {
 
 func (conf *Config) ProposeTimeout(round int) time.Duration {
 	return time.Duration(
-		conf.TimeoutPropose.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
+		conf.TimeoutPropose.Milliseconds()+conf.DeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
 }
 
 func (conf *Config) PrepareTimeout(round int) time.Duration {
 	return time.Duration(
-		conf.TimeoutPrepare.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
-	) * time.Millisecond
-}
-
-func (conf *Config) PrecommitTimeout(round int) time.Duration {
-	return time.Duration(
-		conf.TimeoutPrecommit.Milliseconds()+conf.NewRoundDeltaDuration.Milliseconds()*int64(round),
+		conf.TimeoutPrepare.Milliseconds()+conf.DeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
 }

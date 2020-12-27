@@ -113,7 +113,7 @@ func (vote *Vote) SanityCheck() error {
 	if !vote.data.VoteType.IsValid() {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid vote type")
 	}
-	if vote.data.Height < 0 {
+	if vote.data.Height <= 0 {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid height")
 	}
 	if vote.data.Round < 0 {

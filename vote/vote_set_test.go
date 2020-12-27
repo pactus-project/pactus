@@ -102,3 +102,36 @@ func TestDuplicateVote(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
 }
+
+func TestQuorum(t *testing.T) {
+	valSet, keys := validator.GenerateTestValidatorSet()
+	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet)
+	h1 := crypto.GenerateTestHash()
+	h2 := crypto.GenerateTestHash()
+	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[0].PublicKey().Address())
+	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[1].PublicKey().Address())
+	v3 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[2].PublicKey().Address())
+	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[3].PublicKey().Address())
+
+	v1.SetSignature(keys[0].Sign(v1.SignBytes()))
+	v2.SetSignature(keys[1].Sign(v2.SignBytes()))
+	v3.SetSignature(keys[2].Sign(v3.SignBytes()))
+	v4.SetSignature(keys[3].Sign(v4.SignBytes()))
+
+	ok, _ := voteSet.AddVote(v1)
+	assert.True(t, ok)
+	assert.False(t, voteSet.HasQuorum())
+	ok, _ = voteSet.AddVote(v2)
+	assert.True(t, ok)
+	assert.False(t, voteSet.HasQuorum())
+	ok, _ = voteSet.AddVote(v3)
+	assert.True(t, ok)
+	assert.True(t, voteSet.HasQuorum())
+	ok, _ = voteSet.AddVote(v4)
+	assert.True(t, ok)
+	assert.True(t, voteSet.HasQuorum())
+	assert.True(t, voteSet.HasQuorumBlock(h1))
+	assert.False(t, voteSet.HasQuorumBlock(h2))
+	assert.NotNil(t, voteSet.QuorumBlock())
+	assert.Equal(t, voteSet.QuorumBlock(), &h1)
+}

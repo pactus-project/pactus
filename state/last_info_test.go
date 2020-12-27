@@ -32,13 +32,13 @@ func TestLoadState(t *testing.T) {
 	i := 0
 	for ; i < 10; i++ {
 		b := st1.ProposeBlock()
-		c := makeCommitAndSign(t, b.Hash(), tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+		c := makeCommitAndSign(t, b.Hash(), 2, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
 		require.NoError(t, st1.ApplyBlock(i+1, b, c))
 	}
 
 	newBlock := st1.ProposeBlock()
-	newCommit := makeCommitAndSign(t, newBlock.Hash(), tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	newCommit := makeCommitAndSign(t, newBlock.Hash(), 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NoError(t, st1.Close())
 
 	// Load last state info
@@ -61,7 +61,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	// Let's commit some blocks
 	i := 0
 	for ; i < 10; i++ {
-		b1, c1 := proposeAndSignBlock(t, st1, tValSigner1)
+		b1, c1 := proposeAndSignBlock(t, st1)
 		assert.NoError(t, st1.ApplyBlock(i+1, b1, c1))
 	}
 

@@ -176,7 +176,7 @@ func (syncer *Synchronizer) processVoteSetPayload(pld *payload.VoteSetPayload) {
 	if pld.Height == hrs.Height() {
 
 		// Check peers vote and send the votes he doesn't have
-		ourVotes := syncer.consensus.AllVotes()
+		ourVotes := syncer.consensus.RoundVotes(pld.Round)
 		peerVotes := pld.Hashes
 
 		for _, v1 := range ourVotes {
@@ -222,8 +222,8 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 		if pld.Pulse.GreaterThan(hrs) {
 			syncer.logger.Trace("Our consensus is behind of this peer.")
 			// Let's ask for more votes
-			hashes := syncer.consensus.AllVotesHashes()
-			syncer.broadcastVoteSet(hrs.Height(), hashes)
+			hashes := syncer.consensus.RoundVotesHash(hrs.Round())
+			syncer.broadcastVoteSet(hrs.Height(), hrs.Round(), hashes)
 		} else if pld.Pulse.LessThan(hrs) {
 			syncer.logger.Trace("Our consensus is ahead of this peer.")
 		} else {

@@ -25,5 +25,5 @@ func (p *HeartBeatPayload) Type() PayloadType {
 }
 
 func (p *HeartBeatPayload) Fingerprint() string {
-	return fmt.Sprintf("{%s}", p.Pulse.Fingerprint())
+	return fmt.Sprintf("{%s}", p.Pulse.String())
 }

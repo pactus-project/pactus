@@ -51,8 +51,11 @@ func TestCommitSanityCheck(t *testing.T) {
 	c.data.Committers[0].Status = 0 // not signed
 	// Not enough signer
 	assert.Error(t, c.SanityCheck())
-	c.data.Committers[4].Status = 1 // signed
+	assert.Equal(t, c.SignedBy(), 2)
+	c.data.Committers[3].Status = 1 // signed
 	assert.NoError(t, c.SanityCheck())
-	c.data.Committers[3].Status = 2 // invalid status
+	assert.Equal(t, c.SignedBy(), 3)
+	c.data.Committers[2].Status = 2 // invalid status
 	assert.Error(t, c.SanityCheck())
+	assert.Equal(t, c.SignedBy(), 2)
 }

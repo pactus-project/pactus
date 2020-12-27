@@ -6,14 +6,14 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) enterPrepare(height int, round int) {
-	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrepareWait) {
-		cs.logger.Debug("Prepare: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
+func (cs *consensus) enterPrepare(round int) {
+	if cs.isPrepared || round != cs.hrs.Round() {
+		cs.logger.Debug("Prepare: Prepared before or invalid round", "round", round)
 		return
 	}
-	cs.updateRoundStep(round, hrs.StepTypePrepare)
+	cs.updateStep(hrs.StepTypePrepare)
 
-	roundProposal := cs.votes.RoundProposal(round)
+	roundProposal := cs.pendingVotes.RoundProposal(round)
 	if roundProposal == nil {
 		cs.requestForProposal()
 
@@ -22,18 +22,14 @@ func (cs *consensus) enterPrepare(height int, round int) {
 		return
 	}
 
+	// Everything is good
+	cs.isPrepared = true
 	cs.logger.Info("Prepare: Proposal is validated", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrepare, roundProposal.Block().Hash())
 }
 
-func (cs *consensus) enterPrepareWait(height int, round int) {
-	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePrepareWait) {
-		cs.logger.Debug("PrepareWait: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
-		return
-	}
-
-	cs.updateRoundStep(round, hrs.StepTypePrepareWait)
-
+func (cs *consensus) enterPrepareWait(round int) {
 	cs.logger.Info("PrepareWait: Wait for some more prepares") //then enter precommit
-	cs.scheduleTimeout(cs.config.PrepareTimeout(round), height, round, hrs.StepTypePrecommit)
+
+	cs.scheduleTimeout(cs.config.PrepareTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrecommit)
 }

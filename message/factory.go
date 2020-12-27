@@ -119,12 +119,13 @@ func NewTxsMessage(txs []*tx.Tx) *Message {
 		},
 	}
 }
-func NewVoteSetMessage(height int, Hashes []crypto.Hash) *Message {
+func NewVoteSetMessage(height, round int, Hashes []crypto.Hash) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeVoteSet,
 		Payload: &payload.VoteSetPayload{
 			Height: height,
+			Round:  round,
 			Hashes: Hashes,
 		},
 	}
