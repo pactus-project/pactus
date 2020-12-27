@@ -6,12 +6,12 @@ func (f factory) GetValidator(b ZarbServer_getValidator) error {
 	s, _ := b.Params.Address()
 	addr, err := crypto.AddressFromString(string(s))
 	if err != nil {
-		f.logger.Error("Error on retriving block", "err", err)
+		f.logger.Error("Error on retriving validator", "err", err)
 		return err
 	}
 	val, err := f.store.Validator(addr)
 	if err != nil {
-		f.logger.Error("Error on retriving block", "address", addr, "err", err)
+		f.logger.Error("Error on retriving validator", "address", addr, "err", err)
 		return err
 	}
 

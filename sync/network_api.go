@@ -122,7 +122,7 @@ func (api *networkAPI) txLoop() {
 	for {
 		m, err := api.txSub.Next(api.ctx)
 		if err != nil {
-			logger.Error("readLoop error", "err", err)
+			logger.Debug("readLoop error", "err", err)
 			return
 		}
 
@@ -134,7 +134,7 @@ func (api *networkAPI) blockLoop() {
 	for {
 		m, err := api.blockSub.Next(api.ctx)
 		if err != nil {
-			logger.Error("readLoop error", "err", err)
+			logger.Debug("readLoop error", "err", err)
 			return
 		}
 
@@ -146,7 +146,7 @@ func (api *networkAPI) generalLoop() {
 	for {
 		m, err := api.generalSub.Next(api.ctx)
 		if err != nil {
-			logger.Error("readLoop error", "err", err)
+			logger.Debug("readLoop error", "err", err)
 			return
 		}
 
@@ -158,7 +158,7 @@ func (api *networkAPI) consensusLoop() {
 	for {
 		m, err := api.consensusSub.Next(api.ctx)
 		if err != nil {
-			logger.Error("readLoop error", "err", err)
+			logger.Debug("readLoop error", "err", err)
 			return
 		}
 

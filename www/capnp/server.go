@@ -55,7 +55,7 @@ func (s *Server) StartServer() error {
 			// Wait for a connection.
 			conn, err := l.Accept()
 			if err != nil {
-				s.logger.Error("Error on accepting a connection", "err", err)
+				s.logger.Debug("Error on accepting a connection", "err", err)
 			} else {
 				//
 				go func(c net.Conn) {

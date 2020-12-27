@@ -6,12 +6,12 @@ func (f factory) GetAccount(args ZarbServer_getAccount) error {
 	s, _ := args.Params.Address()
 	addr, err := crypto.AddressFromString(string(s))
 	if err != nil {
-		f.logger.Error("Error on retriving block", "err", err)
+		f.logger.Error("Error on retriving account", "err", err)
 		return err
 	}
 	acc, err := f.store.Account(addr)
 	if err != nil {
-		f.logger.Error("Error on retriving block", "address", addr, "err", err)
+		f.logger.Error("Error on retriving account", "address", addr, "err", err)
 		return err
 	}
 
