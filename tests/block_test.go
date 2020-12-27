@@ -17,7 +17,8 @@ func getBlockAt(t *testing.T, height int) string {
 		if err == nil {
 			if res.StatusCode == 200 {
 				buf := new(bytes.Buffer)
-				buf.ReadFrom(res.Body)
+				_, err := buf.ReadFrom(res.Body)
+				assert.NoError(t, err)
 				return buf.String()
 			}
 		}

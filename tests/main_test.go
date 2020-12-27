@@ -66,28 +66,27 @@ func TestMain(m *testing.M) {
 	}
 	genDoc := genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, 1)
 
-	var err error
-	tNodes["node_1"], err = node.NewNode(genDoc, tConfigs["node_1"], tSigners["node_1"])
-	if err != nil {
-		panic(err)
-	}
-	tNodes["node_2"], err = node.NewNode(genDoc, tConfigs["node_2"], tSigners["node_2"])
-	if err != nil {
-		panic(err)
-	}
-	tNodes["node_3"], err = node.NewNode(genDoc, tConfigs["node_3"], tSigners["node_3"])
-	if err != nil {
-		panic(err)
-	}
-	tNodes["node_4"], err = node.NewNode(genDoc, tConfigs["node_4"], tSigners["node_4"])
-	if err != nil {
-		panic(err)
-	}
+	tNodes["node_1"], _ = node.NewNode(genDoc, tConfigs["node_1"], tSigners["node_1"])
+	tNodes["node_2"], _ = node.NewNode(genDoc, tConfigs["node_2"], tSigners["node_2"])
+	tNodes["node_3"], _ = node.NewNode(genDoc, tConfigs["node_3"], tSigners["node_3"])
+	tNodes["node_4"], _ = node.NewNode(genDoc, tConfigs["node_4"], tSigners["node_4"])
 
-	tNodes["node_1"].Start()
-	tNodes["node_2"].Start()
-	tNodes["node_3"].Start()
-	tNodes["node_4"].Start()
+	err := tNodes["node_1"].Start()
+	if err != nil {
+		panic(err)
+	}
+	err = tNodes["node_2"].Start()
+	if err != nil {
+		panic(err)
+	}
+	err = tNodes["node_3"].Start()
+	if err != nil {
+		panic(err)
+	}
+	err = tNodes["node_4"].Start()
+	if err != nil {
+		panic(err)
+	}
 
 	exitCode := m.Run()
 
