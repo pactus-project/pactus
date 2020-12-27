@@ -18,7 +18,7 @@ func NewSigner(pv PrivateKey) Signer {
 	}
 }
 
-func (s *Signer) Address() Address {
+func (s Signer) Address() Address {
 	return s.address
 }
 

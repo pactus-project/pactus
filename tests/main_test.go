@@ -17,6 +17,7 @@ var tSigners map[string]crypto.Signer
 var tConfigs map[string]*config.Config
 var tNodes map[string]*node.Node
 var tCurlAddress = "0.0.0.0:1337"
+var tGenDoc *genesis.Genesis
 
 func TestMain(m *testing.M) {
 	tSigners = make(map[string]crypto.Signer)
@@ -53,6 +54,14 @@ func TestMain(m *testing.M) {
 	tConfigs["node_4"].Network.NodeKeyFile = util.TempFilePath()
 
 	tConfigs["node_1"].Http.Address = tCurlAddress
+	tConfigs["node_2"].Http.Enable = false
+	tConfigs["node_3"].Http.Enable = false
+	tConfigs["node_4"].Http.Enable = false
+
+	tConfigs["node_1"].Capnp.Address = "0.0.0.0:0"
+	tConfigs["node_2"].Capnp.Enable = false
+	tConfigs["node_3"].Capnp.Enable = false
+	tConfigs["node_4"].Capnp.Enable = false
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21000000000000)
@@ -64,12 +73,12 @@ func TestMain(m *testing.M) {
 		vals[i] = val
 		i++
 	}
-	genDoc := genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, 1)
+	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, 1)
 
-	tNodes["node_1"], _ = node.NewNode(genDoc, tConfigs["node_1"], tSigners["node_1"])
-	tNodes["node_2"], _ = node.NewNode(genDoc, tConfigs["node_2"], tSigners["node_2"])
-	tNodes["node_3"], _ = node.NewNode(genDoc, tConfigs["node_3"], tSigners["node_3"])
-	tNodes["node_4"], _ = node.NewNode(genDoc, tConfigs["node_4"], tSigners["node_4"])
+	tNodes["node_1"], _ = node.NewNode(tGenDoc, tConfigs["node_1"], tSigners["node_1"])
+	tNodes["node_2"], _ = node.NewNode(tGenDoc, tConfigs["node_2"], tSigners["node_2"])
+	tNodes["node_3"], _ = node.NewNode(tGenDoc, tConfigs["node_3"], tSigners["node_3"])
+	tNodes["node_4"], _ = node.NewNode(tGenDoc, tConfigs["node_4"], tSigners["node_4"])
 
 	err := tNodes["node_1"].Start()
 	if err != nil {
