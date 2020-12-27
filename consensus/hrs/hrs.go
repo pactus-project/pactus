@@ -26,8 +26,8 @@ func NewHRS(height int, round int, step StepType) HRS {
 	}
 }
 
-func (hrs *HRS) IsValid() bool {
-	if hrs.data.Height < 0 || hrs.data.Round < 0 {
+func (hrs HRS) IsValid() bool {
+	if hrs.data.Height <= 0 || hrs.data.Round < 0 {
 		return false
 	}
 	return hrs.data.Step.IsValid()
@@ -49,14 +49,11 @@ func (hrs *HRS) UpdateHeight(height int) {
 	hrs.data.Height = height
 }
 
-func (hrs *HRS) UpdateRoundStep(round int, step StepType) {
+func (hrs *HRS) UpdateRound(round int) {
 	hrs.data.Round = round
-	hrs.data.Step = step
 }
 
-func (hrs *HRS) UpdateHeightRoundStep(height int, round int, step StepType) {
-	hrs.data.Height = height
-	hrs.data.Round = round
+func (hrs *HRS) UpdateStep(step StepType) {
 	hrs.data.Step = step
 }
 
@@ -86,7 +83,7 @@ func (hrs HRS) GreaterThan(r HRS) bool {
 	return true
 }
 
-func (hrs HRS) Fingerprint() string {
+func (hrs HRS) String() string {
 	return fmt.Sprintf("%v/%v/%s",
 		hrs.data.Height, hrs.data.Round, hrs.data.Step)
 }

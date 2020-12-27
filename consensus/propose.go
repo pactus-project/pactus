@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"time"
+
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/message"
@@ -18,12 +20,12 @@ func (cs *consensus) isProposer(address crypto.Address, round int) bool {
 }
 
 func (cs *consensus) setProposal(proposal *vote.Proposal) {
-	if cs.invalidHeight(proposal.Height()) {
-		cs.logger.Debug("Propose: Invalid height or committed", "proposal", proposal, "committed", cs.isCommitted)
+	if proposal.Height() != cs.hrs.Height() {
+		cs.logger.Debug("Propose: Invalid height", "proposal", proposal)
 		return
 	}
 
-	roundProposal := cs.votes.RoundProposal(proposal.Round())
+	roundProposal := cs.pendingVotes.RoundProposal(proposal.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("propose: This round has proposal", "proposal", proposal)
 		return
@@ -46,21 +48,18 @@ func (cs *consensus) setProposal(proposal *vote.Proposal) {
 	}
 
 	cs.logger.Info("propose: Proposal set", "proposal", proposal)
-	cs.votes.SetRoundProposal(proposal.Round(), proposal)
-	// Proposal migh be received after prevote or precommit, (maybe because of network latency?)
-	// Enter prevote
-	cs.enterPrevote(proposal.Height(), proposal.Round())
-	cs.enterPrecommit(proposal.Height(), proposal.Round())
-	cs.enterCommit(proposal.Height(), proposal.Round())
+	cs.pendingVotes.SetRoundProposal(proposal.Round(), proposal)
+	// Proposal might be received after prepare or precommit, (maybe because of network latency?)
+	cs.enterPrepare(proposal.Round())
+	cs.enterPrecommit(proposal.Round())
 }
 
-func (cs *consensus) enterPropose(height int, round int) {
-	if cs.invalidHeightRoundStep(height, round, hrs.StepTypePropose) {
-		cs.logger.Debug("Propose: Invalid height/round/step or committed before", "height", height, "round", round, "committed", cs.isCommitted)
+func (cs *consensus) enterPropose(round int) {
+	if cs.isProposed || round != cs.hrs.Round() {
+		cs.logger.Debug("Propose: Proposed before or invalid round", "round", round)
 		return
 	}
-
-	cs.updateRoundStep(round, hrs.StepTypePropose)
+	cs.updateStep(hrs.StepTypePropose)
 
 	address := cs.signer.Address()
 	if !cs.valset.Contains(address) {
@@ -70,34 +69,38 @@ func (cs *consensus) enterPropose(height int, round int) {
 
 	if cs.isProposer(address, round) {
 		cs.logger.Info("Propose: Our turn to propose", "proposer", address)
-		cs.createProposal(height, round)
+		cs.createProposal(cs.hrs.Height(), round)
 	} else {
 		cs.logger.Debug("Propose: Not our turn to propose", "proposer", cs.proposer(round).Address())
 	}
 
-	cs.scheduleTimeout(cs.config.Propose(round), height, round, hrs.StepTypePrevote)
+	cs.isProposed = true
+	cs.scheduleTimeout(cs.config.ProposeTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrepare)
 }
 
 func (cs *consensus) createProposal(height int, round int) {
 	block := cs.state.ProposeBlock()
 	if err := cs.state.ValidateBlock(block); err != nil {
-		cs.logger.Error("Propose: Our block is invalid. Why?", "error", err)
+		cs.logger.Error("Propose: Our block is invalid. Why?", "err", err)
 		return
 	}
 
 	proposal := vote.NewProposal(height, round, block)
-	if cs.config.FuzzTesting {
-		if n := util.RandInt(5); n == 3 {
-			// Randomly send invalid proposal
-			proposal, _ = vote.GenerateTestProposal(cs.hrs.Height(), cs.hrs.Round())
-		}
-	}
 	cs.signer.SignMsg(proposal)
 	cs.setProposal(proposal)
 
 	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
 
 	// Broadcast proposal
-	msg := message.NewProposalMessage(proposal)
-	cs.broadcastCh <- msg
+	if cs.config.FuzzTesting {
+		rand := util.RandInt(3)
+		go func() {
+			time.Sleep(time.Duration(rand) * time.Second)
+			msg := message.NewProposalMessage(proposal)
+			cs.broadcastCh <- msg
+		}()
+	} else {
+		msg := message.NewProposalMessage(proposal)
+		cs.broadcastCh <- msg
+	}
 }

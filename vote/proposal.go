@@ -38,6 +38,9 @@ func (p *Proposal) SanityCheck() error {
 	if err := p.data.Block.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidProposal, err.Error())
 	}
+	if p.data.Height <= 0 {
+		return errors.Errorf(errors.ErrInvalidProposal, "Invalid round")
+	}
 	if p.data.Round < 0 {
 		return errors.Errorf(errors.ErrInvalidProposal, "Invalid round")
 	}

@@ -18,7 +18,7 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 func tryPut(db *leveldb.DB, key, value []byte) error {
 	has, _ := db.Has(key, nil)
 	if has {
-		logger.Debug("The key exists in database, update it.", "key", key)
+		logger.Trace("The key exists in database, update it.", "key", key)
 	}
 	err := db.Put(key, value, nil)
 	if err != nil {

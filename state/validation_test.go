@@ -28,46 +28,26 @@ func TestCommitValidation(t *testing.T) {
 
 	b1 := st1.ProposeBlock()
 	{
-		v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, b1.Hash(), tValSigner1.Address())
-		v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, b1.Hash(), tValSigner2.Address())
-		v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, b1.Hash(), tValSigner3.Address())
-		tValSigner1.SignMsg(v1)
-		tValSigner2.SignMsg(v2)
-		tValSigner3.SignMsg(v3)
+		c := makeCommitAndSign(t, b1.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
-		validSig := crypto.Aggregate([]*crypto.Signature{v1.Signature(), v2.Signature(), v3.Signature()})
-
-		c := block.NewCommit(0, []block.Committer{
-			{Address: tValSigner1.Address(), Status: 1},
-			{Address: tValSigner2.Address(), Status: 1},
-			{Address: tValSigner3.Address(), Status: 1},
-			{Address: tValSigner4.Address(), Status: 0},
-		}, validSig)
-
-		assert.NoError(t, st1.ApplyBlock(1, b1, *c))
-		assert.NoError(t, st2.ApplyBlock(1, b1, *c))
+		assert.NoError(t, st1.ApplyBlock(1, b1, c))
+		assert.NoError(t, st2.ApplyBlock(1, b1, c))
 	}
 
 	b2 := st2.ProposeBlock()
 
 	invBlockHash := crypto.GenerateTestHash()
-	v1 := vote.NewVote(vote.VoteTypePrecommit, 2, 0, b2.Hash(), tValSigner1.Address())
-	v2 := vote.NewVote(vote.VoteTypePrecommit, 2, 0, b2.Hash(), tValSigner2.Address())
-	v3 := vote.NewVote(vote.VoteTypePrecommit, 2, 0, b2.Hash(), tValSigner3.Address())
-	v4 := vote.NewVote(vote.VoteTypePrecommit, 2, 0, b2.Hash(), tValSigner4.Address())
-	invVote1 := vote.NewVote(vote.VoteTypePrecommit, 2, 0, invBlockHash, tValSigner1.Address())
-	invVote2 := vote.NewVote(vote.VoteTypePrecommit, 2, 0, invBlockHash, tValSigner1.Address())
-	invVote3 := vote.NewVote(vote.VoteTypePrecommit, 2, 0, invBlockHash, tValSigner1.Address())
-	tValSigner1.SignMsg(v1)
-	tValSigner2.SignMsg(v2)
-	tValSigner3.SignMsg(v3)
-	tValSigner4.SignMsg(v4)
-	tValSigner1.SignMsg(invVote1)
-	tValSigner2.SignMsg(invVote2)
-	tValSigner3.SignMsg(invVote3)
+	round := 0
+	valSig1 := tValSigner1.Sign(vote.CommitSignBytes(b2.Hash(), round))
+	valSig2 := tValSigner2.Sign(vote.CommitSignBytes(b2.Hash(), round))
+	valSig3 := tValSigner3.Sign(vote.CommitSignBytes(b2.Hash(), round))
+	valSig4 := tValSigner4.Sign(vote.CommitSignBytes(b2.Hash(), round))
+	invSig1 := tValSigner1.Sign(vote.CommitSignBytes(invBlockHash, round))
+	invSig2 := tValSigner2.Sign(vote.CommitSignBytes(invBlockHash, round))
+	invSig3 := tValSigner3.Sign(vote.CommitSignBytes(invBlockHash, round))
 
-	validSig := crypto.Aggregate([]*crypto.Signature{v1.Signature(), v2.Signature(), v3.Signature()})
-	invalidSig := crypto.Aggregate([]*crypto.Signature{invVote1.Signature(), invVote2.Signature(), invVote3.Signature()})
+	validSig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3})
+	invalidSig := crypto.Aggregate([]*crypto.Signature{invSig1, invSig2, invSig3})
 
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
 		invSig := tValSigner1.Sign([]byte("abc"))
@@ -94,7 +74,7 @@ func TestCommitValidation(t *testing.T) {
 	})
 
 	t.Run("Unexpected signature", func(t *testing.T) {
-		validSig := crypto.Aggregate([]*crypto.Signature{v1.Signature(), v2.Signature(), v3.Signature(), v4.Signature()})
+		validSig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, valSig4})
 
 		c := block.NewCommit(0, []block.Committer{
 			{Address: tValSigner1.Address(), Status: 1},
@@ -155,7 +135,7 @@ func TestCommitValidation(t *testing.T) {
 
 	t.Run("Update last commit- Invalid signer", func(t *testing.T) {
 
-		sig := crypto.Aggregate([]*crypto.Signature{v1.Signature(), v2.Signature(), v3.Signature(), v4.Signature()})
+		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, valSig4})
 		invAddr, _, _ := crypto.GenerateTestKeyPair()
 
 		c := block.NewCommit(0, []block.Committer{
@@ -168,23 +148,9 @@ func TestCommitValidation(t *testing.T) {
 		assert.Error(t, st1.UpdateLastCommit(c))
 	})
 
-	t.Run("Update last commit- Invalid status", func(t *testing.T) {
-
-		sig := crypto.Aggregate([]*crypto.Signature{v1.Signature(), v2.Signature(), v4.Signature()})
-
-		c := block.NewCommit(0, []block.Committer{
-			{Address: tValSigner1.Address(), Status: 1},
-			{Address: tValSigner2.Address(), Status: 0},
-			{Address: tValSigner3.Address(), Status: 1},
-			{Address: tValSigner4.Address(), Status: 1},
-		}, sig)
-
-		assert.Error(t, st1.UpdateLastCommit(c))
-	})
-
 	t.Run("Update last commit- valid signature, should return no error", func(t *testing.T) {
 
-		sig := crypto.Aggregate([]*crypto.Signature{v1.Signature(), v2.Signature(), v4.Signature()})
+		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig4})
 
 		c := block.NewCommit(0, []block.Committer{
 			{Address: tValSigner1.Address(), Status: 1},
@@ -198,7 +164,7 @@ func TestCommitValidation(t *testing.T) {
 
 	t.Run("Update last commit- Valid signature, should return no error", func(t *testing.T) {
 
-		sig := crypto.Aggregate([]*crypto.Signature{v1.Signature(), v2.Signature(), v3.Signature(), v4.Signature()})
+		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, valSig4})
 
 		c := block.NewCommit(0, []block.Committer{
 			{Address: tValSigner1.Address(), Status: 1},

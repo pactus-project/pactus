@@ -66,7 +66,7 @@ func (s *Server) StartServer(capnpServer string) error {
 		for {
 			err := http.Serve(l, nil)
 			if err != nil {
-				s.logger.Error("Error on a connection", "error", err)
+				s.logger.Error("Error on a connection", "err", err)
 			}
 		}
 	}()

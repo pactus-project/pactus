@@ -6,15 +6,15 @@ import (
 	"github.com/zarbchain/zarb-go/message"
 )
 
-func (cs *consensus) enterCommit(height int, round int) {
-	if cs.invalidHeight(height) {
-		cs.logger.Debug("Commit: Invalid height or committed before", "height", height, "committed", cs.isCommitted)
+func (cs *consensus) enterCommit(round int) {
+	if cs.isCommitted || round != cs.hrs.Round() {
+		cs.logger.Debug("Precommit: Precommitted before or invalid round", "round", round)
 		return
 	}
+	cs.updateStep(hrs.StepTypeCommit)
 
-	preVotes := cs.votes.Prevotes(round)
-	preCommits := cs.votes.Precommits(round)
-
+	preVotes := cs.pendingVotes.PrepareVoteSet(round)
+	preCommits := cs.pendingVotes.PrecommitVoteSet(round)
 	if !preCommits.HasQuorum() {
 		cs.logger.Debug("Commit: No quorum for precommit stage")
 		return
@@ -26,47 +26,31 @@ func (cs *consensus) enterCommit(height int, round int) {
 		return
 	}
 
-	// Additional check. blockHash should be same for both prevotes and precommits
-	prevoteBlockHash := preVotes.QuorumBlock()
-	if prevoteBlockHash == nil || !blockHash.EqualsTo(*prevoteBlockHash) {
-		cs.logger.Debug("Commit: Commit without prevote quorum")
+	// Additional check. blockHash should be same for both prepares and precommits
+	hash := preVotes.QuorumBlock()
+	if hash == nil || !blockHash.EqualsTo(*hash) {
+		cs.logger.Debug("Commit: Commit without prepare quorum")
 	}
 
-	if cs.votes.lockedProposal == nil {
-		// For any reason, we are not locked, try to found the locked proposal
-		roundProposal := cs.votes.RoundProposal(round)
-		if roundProposal == nil {
-			cs.requestForProposal()
+	// For any reason, we are not locked, try to found the locked proposal
+	roundProposal := cs.pendingVotes.RoundProposal(round)
+	if roundProposal == nil {
+		cs.requestForProposal()
 
-			cs.logger.Debug("Commit: No proposal, send proposal request.")
-			return
-		} else if roundProposal.IsForBlock(blockHash) {
-			cs.votes.lockedProposal = roundProposal
-		} else {
-			cs.logger.Error("Commit: Invalid proposal.", "proposal", roundProposal)
-			return
-		}
+		cs.logger.Debug("Commit: No proposal, send proposal request.")
+		return
 	}
 
 	// Locked proposal is not for quorum block
 	// It is impossible, but good to keep this check
-	if !cs.votes.lockedProposal.IsForBlock(blockHash) {
-		cs.votes.lockedProposal = nil
-		cs.logger.Error("Commit: Proposal is invalid.", "proposal", cs.votes.lockedProposal)
+	if !roundProposal.IsForBlock(blockHash) {
+		cs.logger.Error("Commit: Proposal is invalid.", "proposal", roundProposal)
 		return
 	}
 
-	// Locked proposal should be same as round proposal
-	// It is impossible, but good to keep this check
-	roundProposal := cs.votes.RoundProposal(round)
-	if roundProposal != nil && !roundProposal.IsForBlock(blockHash) {
-		cs.votes.lockedProposal = nil
-		cs.logger.Error("Commit: Proposal is not for this round.", "proposal", cs.votes.lockedProposal, "round-proposal", roundProposal)
-		return
-	}
-
-	commitBlock := cs.votes.lockedProposal.Block()
+	commitBlock := roundProposal.Block()
 	commit := preCommits.ToCommit()
+	height := cs.hrs.Height()
 	if commit == nil {
 		cs.logger.Error("Commit: Invalid precommits", "preCommits", preCommits)
 		return
@@ -78,7 +62,6 @@ func (cs *consensus) enterCommit(height int, round int) {
 	}
 
 	cs.isCommitted = true
-	cs.updateRoundStep(round, hrs.StepTypeCommit)
 	cs.logger.Info("Commit: Block committed, Schedule new height", "block", blockHash.Fingerprint())
 
 	cs.scheduleNewHeight()

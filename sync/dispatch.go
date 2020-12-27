@@ -125,8 +125,8 @@ func (syncer *Synchronizer) broadcastVote(v *vote.Vote) {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) broadcastVoteSet(height int, hashes []crypto.Hash) {
-	msg := message.NewVoteSetMessage(height, hashes)
+func (syncer *Synchronizer) broadcastVoteSet(height, round int, hashes []crypto.Hash) {
+	msg := message.NewVoteSetMessage(height, round, hashes)
 	syncer.publishMessage(msg)
 }
 

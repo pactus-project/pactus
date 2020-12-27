@@ -50,14 +50,13 @@ func NewSandbox(store store.StoreReader, params param.Params, lastBlockHeight in
 		validators:   make(map[crypto.Address]*ValidatorStatus),
 	}
 
-	// TODO: add test for me!
 	// First, let add genesis block (Block 0) hash
 	sb.recentBlocks.PushBack(crypto.UndefHash, 0)
 
 	// Now we try to fetch recent block hashes
 	// Block zero will be kicked out of the list if we have enough blocks
 	from := lastBlockHeight - params.TransactionToLiveInterval
-	if from < 0 {
+	if from <= 0 {
 		from = 1
 	}
 	to := lastBlockHeight
@@ -218,7 +217,7 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 
 	s, ok := sb.validators[addr]
 	if !ok {
-		sb.shouldPanicForUnknownAddress()
+		return errors.Errorf(errors.ErrGeneric, "Unknown validator")
 	}
 
 	if sb.validatorSet.Contains(addr) {

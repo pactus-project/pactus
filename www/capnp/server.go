@@ -55,7 +55,7 @@ func (s *Server) StartServer() error {
 			// Wait for a connection.
 			conn, err := l.Accept()
 			if err != nil {
-				s.logger.Error("Error on accepting a connection", "error", err)
+				s.logger.Error("Error on accepting a connection", "err", err)
 			} else {
 				//
 				go func(c net.Conn) {
@@ -63,7 +63,7 @@ func (s *Server) StartServer() error {
 					conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {
-						s.logger.Error("Error on  a connection", "error", err)
+						s.logger.Error("Error on  a connection", "err", err)
 					}
 
 				}(conn)

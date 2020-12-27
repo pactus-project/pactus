@@ -22,22 +22,6 @@ type BootstrapConfig struct {
 	Period           time.Duration
 }
 
-func DefaultBootstrapConfig() *BootstrapConfig {
-	return &BootstrapConfig{
-		Addresses:        []string{},
-		MinPeerThreshold: 0,
-		Period:           1 * time.Minute,
-	}
-}
-
-func TestBootstrapConfig() *BootstrapConfig {
-	return &BootstrapConfig{
-		Addresses:        []string{},
-		MinPeerThreshold: 0,
-		Period:           1 * time.Minute,
-	}
-}
-
 func DefaultConfig() *Config {
 	return &Config{
 		Name:           "zarb-testnet",
@@ -45,7 +29,11 @@ func DefaultConfig() *Config {
 		NodeKeyFile:    "node_key",
 		EnableMDNS:     true,
 		EnableKademlia: true,
-		Bootstrap:      DefaultBootstrapConfig(),
+		Bootstrap: &BootstrapConfig{
+			Addresses:        []string{},
+			MinPeerThreshold: 0,
+			Period:           1 * time.Minute,
+		},
 	}
 }
 
@@ -56,6 +44,15 @@ func TestConfig() *Config {
 		NodeKeyFile:    util.TempFilePath(),
 		EnableMDNS:     false,
 		EnableKademlia: false,
-		Bootstrap:      TestBootstrapConfig(),
+		Bootstrap: &BootstrapConfig{
+			Addresses:        []string{},
+			MinPeerThreshold: 0,
+			Period:           1 * time.Minute,
+		},
 	}
+}
+
+// SanityCheck is a basic hecks for config
+func (conf *Config) SanityCheck() error {
+	return nil
 }

@@ -33,9 +33,14 @@ func InitLogger(conf *Config) {
 			config:  conf,
 			loggers: make(map[string]*Logger),
 		}
+		if conf.Colorfull {
+			logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
+		} else {
+			logrus.SetFormatter(&logrus.TextFormatter{DisableColors: true})
+		}
 
 		lvl, err := logrus.ParseLevel(conf.Levels["default"])
-		if err != nil {
+		if err == nil {
 			logrus.SetLevel(lvl)
 		}
 	}
@@ -47,7 +52,12 @@ func NewLogger(name string, obj interface{}) *Logger {
 		name:   name,
 		obj:    obj,
 	}
-	l.logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
+	if loggersInst.config.Colorfull {
+		l.logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
+
+	} else {
+		l.logger.SetFormatter(&logrus.TextFormatter{DisableColors: true})
+	}
 
 	lvl := loggersInst.config.Levels[name]
 	if lvl == "" {

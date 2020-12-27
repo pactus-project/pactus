@@ -9,8 +9,8 @@ import (
 type Consensus interface {
 	MoveToNewHeight()
 	AddVote(v *vote.Vote)
-	AllVotes() []*vote.Vote
-	AllVotesHashes() []crypto.Hash
+	RoundVotes(round int) []*vote.Vote
+	RoundVotesHash(round int) []crypto.Hash
 	SetProposal(proposal *vote.Proposal)
 	LastProposal() *vote.Proposal
 	HRS() hrs.HRS

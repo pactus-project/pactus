@@ -23,14 +23,17 @@ func TestOperator(t *testing.T) {
 	assert.True(t, hrs4.GreaterThan(hrs3))
 
 	hrs5.UpdateHeight(101)
-	hrs5.UpdateRoundStep(0, 0)
+	hrs5.UpdateRound(0)
+	hrs5.UpdateStep(0)
 
 	assert.True(t, hrs5.EqualsTo(hrs4))
 	assert.False(t, hrs5.EqualsTo(hrs1))
 	assert.False(t, hrs5.EqualsTo(hrs2))
 	assert.False(t, hrs5.EqualsTo(hrs3))
 
-	hrs6.UpdateHeightRoundStep(hrs5.Height(), hrs5.Round(), hrs5.Step())
+	hrs6.UpdateHeight(hrs5.Height())
+	hrs6.UpdateRound(hrs5.Round())
+	hrs6.UpdateStep(hrs5.Step())
 	assert.True(t, hrs6.EqualsTo(*hrs5))
 }
 
@@ -42,4 +45,11 @@ func TestMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, hrs2.UnmarshalCBOR(bs))
 	assert.Equal(t, hrs1, *hrs2)
+}
+
+func TestInvalidHRS(t *testing.T) {
+	assert.False(t, NewHRS(0, 1, 1).IsValid())
+	assert.False(t, NewHRS(1, -1, 1).IsValid())
+	assert.False(t, NewHRS(1, 1, 0).IsValid())
+
 }

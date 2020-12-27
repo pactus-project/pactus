@@ -1,12 +1,56 @@
 package crypto
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestPublicKeyMarshaling(t *testing.T) {
+	_, pub1, _ := GenerateTestKeyPair()
+	pub2 := new(PublicKey)
+	pub3 := new(PublicKey)
+	pub4 := new(PublicKey)
+
+	js, err := json.Marshal(pub1)
+	assert.NoError(t, err)
+	require.NoError(t, json.Unmarshal(js, pub2))
+
+	bs, err := pub2.MarshalCBOR()
+	assert.NoError(t, err)
+	assert.NoError(t, pub3.UnmarshalCBOR(bs))
+
+	txt, err := pub2.MarshalText()
+	assert.NoError(t, err)
+	assert.NoError(t, pub4.UnmarshalText(txt))
+
+	require.True(t, pub1.EqualsTo(*pub4))
+	require.NoError(t, pub1.SanityCheck())
+}
+
+func TestPublicKeyFromBytes(t *testing.T) {
+	_, pub1, _ := GenerateTestKeyPair()
+	pub2, err := PublicKeyFromRawBytes(pub1.RawBytes())
+	assert.NoError(t, err)
+	require.True(t, pub1.EqualsTo(pub2))
+
+	inv, _ := hex.DecodeString("0102")
+	_, err = PublicKeyFromRawBytes(inv)
+	assert.Error(t, err)
+}
+
+func TestPublicKeyFromString(t *testing.T) {
+	_, pub1, _ := GenerateTestKeyPair()
+	pub2, err := PublicKeyFromString(pub1.String())
+	assert.NoError(t, err)
+	require.True(t, pub1.EqualsTo(pub2))
+
+	_, err = PublicKeyFromString("inv")
+	assert.Error(t, err)
+}
 
 func TestMarshalingEmptyPublicKey(t *testing.T) {
 	pb1 := PublicKey{}
@@ -23,26 +67,6 @@ func TestMarshalingEmptyPublicKey(t *testing.T) {
 	var pb3 PublicKey
 	err = pb3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
-}
-
-func TestMarshalingPublicKey(t *testing.T) {
-	_, pb0, _ := RandomKeyPair()
-	_, pb1, _ := RandomKeyPair()
-	js, err := json.Marshal(&pb1)
-	assert.NoError(t, err)
-
-	var pb2 PublicKey
-	require.NoError(t, json.Unmarshal(js, &pb2))
-	require.False(t, pb1.EqualsTo(pb0))
-	require.True(t, pb1.EqualsTo(pb2))
-
-	bs, err := pb1.MarshalCBOR()
-	assert.NoError(t, err)
-
-	pb3 := new(PublicKey)
-	assert.NoError(t, pb3.UnmarshalCBOR(bs))
-
-	require.True(t, pb3.EqualsTo(pb2))
 }
 
 func TestPublicKeyToAddress(t *testing.T) {

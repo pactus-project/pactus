@@ -34,7 +34,12 @@ func (m *MockStore) Block(height int) (*block.Block, error) {
 	return nil, fmt.Errorf("Not found")
 }
 func (m *MockStore) BlockHeight(hash crypto.Hash) (int, error) {
-	return 0, nil
+	for i, b := range m.Blocks {
+		if b.Hash().EqualsTo(hash) {
+			return i, nil
+		}
+	}
+	return -1, nil
 }
 func (m *MockStore) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
 	b, ok := m.Transactions[hash]

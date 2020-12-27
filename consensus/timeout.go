@@ -14,6 +14,6 @@ type timeout struct {
 	Step     hrs.StepType
 }
 
-func (ti timeout) Fingerprint() string {
+func (ti timeout) String() string {
 	return fmt.Sprintf("%v@ %d/%d/%s", ti.Duration, ti.Height, ti.Round, ti.Step)
 }

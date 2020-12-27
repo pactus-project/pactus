@@ -1,13 +1,62 @@
 package crypto
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/util"
 )
+
+func TestSignatureMarshaling(t *testing.T) {
+	_, _, priv := RandomKeyPair()
+	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+
+	sig2 := new(Signature)
+	sig3 := new(Signature)
+	sig4 := new(Signature)
+
+	js, err := json.Marshal(sig1)
+	assert.NoError(t, err)
+	require.NoError(t, json.Unmarshal(js, sig2))
+
+	bs, err := sig2.MarshalCBOR()
+	assert.NoError(t, err)
+	assert.NoError(t, sig3.UnmarshalCBOR(bs))
+
+	txt, err := sig2.MarshalText()
+	assert.NoError(t, err)
+	assert.NoError(t, sig4.UnmarshalText(txt))
+
+	require.True(t, sig1.EqualsTo(*sig4))
+	require.NoError(t, sig1.SanityCheck())
+}
+
+func TestSignatureFromBytes(t *testing.T) {
+	_, _, priv := RandomKeyPair()
+	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+	sig2, err := SignatureFromRawBytes(sig1.RawBytes())
+	assert.NoError(t, err)
+	require.True(t, sig1.EqualsTo(sig2))
+
+	inv, _ := hex.DecodeString("0102")
+	_, err = SignatureFromRawBytes(inv)
+	assert.Error(t, err)
+}
+
+func TestSignatureFromString(t *testing.T) {
+	_, _, priv := RandomKeyPair()
+	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+	sig2, err := SignatureFromString(sig1.String())
+	assert.NoError(t, err)
+	require.True(t, sig1.EqualsTo(sig2))
+
+	_, err = SignatureFromString("inv")
+	assert.Error(t, err)
+}
 
 func TestMarshalingEmptySignature(t *testing.T) {
 	sig1 := Signature{}
@@ -24,29 +73,6 @@ func TestMarshalingEmptySignature(t *testing.T) {
 	sig3 := new(Signature)
 	err = sig3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
-}
-
-func TestMarshalingSignature(t *testing.T) {
-	_, _, privKey := RandomKeyPair()
-	sig1 := privKey.Sign([]byte("Test message"))
-	sig11 := privKey.Sign([]byte("Test message"))
-	require.Equal(t, sig1, sig11)
-
-	bs, err := sig1.MarshalText()
-	fmt.Println(string(bs))
-	require.NoError(t, err)
-
-	var sig2 Signature
-	err = sig2.UnmarshalText(bs)
-	require.NoError(t, err)
-	require.True(t, sig1.EqualsTo(sig2))
-
-	bs, err = sig2.MarshalCBOR()
-	assert.NoError(t, err)
-
-	var sig3 Signature
-	assert.NoError(t, sig3.UnmarshalCBOR(bs))
-	require.True(t, sig3.EqualsTo(sig2))
 }
 
 func TestVerifyingSignature(t *testing.T) {

@@ -1,37 +1,47 @@
 package logger
 
 type Config struct {
-	Levels map[string]string
+	Levels    map[string]string
+	Colorfull bool
 }
 
 func DefaultConfig() *Config {
-	def := &Config{
+	conf := &Config{
 		Levels: make(map[string]string),
 	}
 
-	def.Levels["default"] = "info"
-	def.Levels["_network"] = "error"
-	def.Levels["_consensus"] = "error"
-	def.Levels["_state"] = "info"
-	def.Levels["_sync"] = "error"
-	def.Levels["_pool"] = "error"
-	def.Levels["_capnp"] = "error"
-	def.Levels["_http"] = "error"
-	return def
+	conf.Levels["default"] = "info"
+	conf.Levels["_network"] = "error"
+	conf.Levels["_consensus"] = "error"
+	conf.Levels["_state"] = "info"
+	conf.Levels["_sync"] = "error"
+	conf.Levels["_pool"] = "error"
+	conf.Levels["_capnp"] = "error"
+	conf.Levels["_http"] = "error"
+	conf.Colorfull = true
+
+	return conf
 }
 
 func TestConfig() *Config {
-	def := &Config{
+	conf := &Config{
 		Levels: make(map[string]string),
 	}
 
-	def.Levels["default"] = "trace"
-	def.Levels["_network"] = "trace"
-	def.Levels["_consensus"] = "trace"
-	def.Levels["_state"] = "trace"
-	def.Levels["_sync"] = "trace"
-	def.Levels["_pool"] = "trace"
-	def.Levels["_capnp"] = "trace"
-	def.Levels["_http"] = "trace"
-	return def
+	conf.Levels["default"] = "debug"
+	conf.Levels["_network"] = "trace"
+	conf.Levels["_consensus"] = "trace"
+	conf.Levels["_state"] = "trace"
+	conf.Levels["_sync"] = "trace"
+	conf.Levels["_pool"] = "trace"
+	conf.Levels["_capnp"] = "trace"
+	conf.Levels["_http"] = "trace"
+	conf.Colorfull = true
+
+	return conf
+}
+
+// SanityCheck is a basic hecks for config
+func (conf *Config) SanityCheck() error {
+	return nil
 }

@@ -20,3 +20,8 @@ func TestConfig() *Config {
 		MaxSize:        10,
 	}
 }
+
+// SanityCheck is a basic hecks for config
+func (conf *Config) SanityCheck() error {
+	return nil
+}

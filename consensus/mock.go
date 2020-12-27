@@ -25,15 +25,21 @@ func (m *MockConsensus) MoveToNewHeight() {
 func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.Votes = append(m.Votes, v)
 }
-func (m *MockConsensus) AllVotes() []*vote.Vote {
-	return m.Votes
-}
-func (m *MockConsensus) AllVotesHashes() []crypto.Hash {
-	hs := make([]crypto.Hash, 0)
+func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
+	votes := make([]*vote.Vote, 0)
 	for _, v := range m.Votes {
-		hs = append(hs, v.Hash())
+		if v.Round() == round {
+			votes = append(votes, v)
+		}
 	}
-	return hs
+	return votes
+}
+func (m *MockConsensus) RoundVotesHash(round int) []crypto.Hash {
+	hashes := make([]crypto.Hash, len(m.Votes))
+	for i, v := range m.RoundVotes(round) {
+		hashes[i] = v.Hash()
+	}
+	return hashes
 }
 func (m *MockConsensus) SetProposal(p *vote.Proposal) {
 	m.Proposal = p

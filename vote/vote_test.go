@@ -8,7 +8,7 @@ import (
 )
 
 func TestVoteMarshaling(t *testing.T) {
-	v1, _ := GenerateTestPrecommitVote(10, 10)
+	v1, _ := GenerateTestPrepareVote(10, 10)
 
 	bz1, err := v1.MarshalCBOR()
 	assert.NoError(t, err)
@@ -26,8 +26,8 @@ func TestVoteSignature(t *testing.T) {
 	addr1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	addr2, pb2, pv2 := crypto.GenerateTestKeyPair()
 
-	v1 := NewVote(VoteTypePrevote, 101, 5, h1, addr1)
-	v2 := NewVote(VoteTypePrevote, 101, 5, h1, addr2)
+	v1 := NewVote(VoteTypePrepare, 101, 5, h1, addr1)
+	v2 := NewVote(VoteTypePrepare, 101, 5, h1, addr2)
 
 	sig1 := pv1.Sign(v1.SignBytes())
 	assert.Error(t, v1.Verify(pb1)) // No signature
@@ -42,4 +42,31 @@ func TestVoteSignature(t *testing.T) {
 	sig3 := pv1.Sign(v2.SignBytes())
 	v2.SetSignature(sig3)
 	assert.Error(t, v2.Verify(pb2)) // invalid signature
+}
+
+func TestVoteSanityCheck(t *testing.T) {
+	v, _ := GenerateTestPrepareVote(5, 5)
+	v.data.VoteType = 3
+	assert.Error(t, v.SanityCheck())
+	v.data.VoteType = VoteTypePrepare
+	v.data.Round = -1
+	assert.Error(t, v.SanityCheck())
+	v.data.Round = 0
+	v.data.Height = 0
+	assert.Error(t, v.SanityCheck())
+	v.data.Height = 1
+	v.data.Signature = nil
+	assert.Error(t, v.SanityCheck())
+}
+
+func TestCommitSignBytes(t *testing.T) {
+	v, _ := GenerateTestPrecommitVote(10, 1)
+	bz1 := v.SignBytes()
+	bz2 := CommitSignBytes(v.BlockHash(), 1)
+	assert.Equal(t, bz1, bz2)
+}
+
+func TestVoteFingerprint(t *testing.T) {
+	v, _ := GenerateTestPrecommitVote(1, 1)
+	assert.Contains(t, v.Fingerprint(), v.Signer().Fingerprint())
 }

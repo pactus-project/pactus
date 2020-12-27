@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
@@ -44,6 +45,34 @@ func setup(t *testing.T) {
 	tParams := param.MainnetParams()
 	tSandbox, err = NewSandbox(tStore, tParams, 0, tSortition, tValset)
 	assert.NoError(t, err)
+}
+
+func TestLoadRecentBlocks(t *testing.T) {
+	store := store.NewMockStore()
+
+	lastHeight := 21
+	for i := 0; i <= lastHeight; i++ {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		store.Blocks[i+1] = b
+	}
+
+	params := param.MainnetParams()
+	params.TransactionToLiveInterval = 10
+
+	sandbox, err := NewSandbox(store, params, lastHeight, nil, nil)
+	assert.NoError(t, err)
+
+	_, ok := sandbox.recentBlocks.Get(crypto.UndefHash)
+	assert.False(t, ok)
+
+	v, _ := sandbox.recentBlocks.Get(store.Blocks[21].Hash())
+	assert.Equal(t, v, 21)
+
+	_, ok = sandbox.recentBlocks.Get(store.Blocks[11].Hash())
+	assert.False(t, ok)
+
+	v, _ = sandbox.recentBlocks.Get(store.Blocks[12].Hash())
+	assert.Equal(t, v, 12)
 }
 
 func TestAccountChange(t *testing.T) {
@@ -129,19 +158,42 @@ func TestValidatorChange(t *testing.T) {
 }
 
 func TestAddValidatorToSet(t *testing.T) {
-	// setup(t)
+	setup(t)
 
-	// st, _ := mockState(t, nil)
-	// _, pub1, _ := crypto.GenerateTestKeyPair()
+	a, pub, _ := crypto.GenerateTestKeyPair()
+	block1, _ := block.GenerateTestBlock(nil, nil)
+	block2, _ := block.GenerateTestBlock(&a, nil)
+	block3, _ := block.GenerateTestBlock(&a, nil)
 
-	// sb, _ := newSandbox(st.store, st.params, 0, st.sortition, st.validatorSet)
+	tStore.Blocks[1] = block1
+	tStore.Blocks[2] = block2
+	tStore.Blocks[3] = block3
 
-	// val1 := tSandbox.MakeNewValidator(pub1)
+	t.Run("Add unknown validator to the set, Should panic", func(t *testing.T) {
+		val, _ := validator.GenerateTestValidator(1)
+		h := crypto.GenerateTestHash()
+		assert.Error(t, tSandbox.AddToSet(h, val.Address()))
+	})
 
-	// tSandbox.AddToSet(val1)
-	// assert.Nil(t, st.validatorSet.Validator(val1.Address()), "Shouldn't be is not in set")
-	// tSandbox.CommitChanges(0)
-	// assert.Nil(t, st.validatorSet.Validator(val1.Address()), "Should be is not in set")
+	t.Run("Add existing validator, Should returns error", func(t *testing.T) {
+		h := crypto.GenerateTestHash()
+		assert.Error(t, tSandbox.AddToSet(h, tValSigner.Address()))
+	})
+
+	t.Run("In set the time of doing sortition, Should returns error", func(t *testing.T) {
+		val := tSandbox.MakeNewValidator(pub)
+		assert.Error(t, tSandbox.AddToSet(block2.Hash(), val.Address()))
+	})
+
+	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
+		_, pub1, _ := crypto.GenerateTestKeyPair()
+		_, pub2, _ := crypto.GenerateTestKeyPair()
+		val1 := tSandbox.MakeNewValidator(pub1)
+		val2 := tSandbox.MakeNewValidator(pub2)
+		assert.NoError(t, tSandbox.AddToSet(block1.Hash(), val1.Address()))
+		assert.Error(t, tSandbox.AddToSet(block1.Hash(), val2.Address()))
+	})
+
 }
 
 func TestTotalAccountCounter(t *testing.T) {

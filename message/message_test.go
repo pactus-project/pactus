@@ -136,7 +136,7 @@ func TestProposalsMessage(t *testing.T) {
 }
 
 func TestVoteSetMessage(t *testing.T) {
-	m := NewVoteSetMessage(4, []crypto.Hash{})
+	m := NewVoteSetMessage(4, 1, []crypto.Hash{})
 	assert.NoError(t, m.SanityCheck())
 	bs, err := m.MarshalCBOR()
 	assert.NoError(t, err)
@@ -148,7 +148,7 @@ func TestVoteSetMessage(t *testing.T) {
 }
 
 func TestVoteMessage(t *testing.T) {
-	v, _ := vote.GenerateTestPrecommitVote(1, 1)
+	v, _ := vote.GenerateTestPrepareVote(1, 1)
 	m := NewVoteMessage(v)
 	assert.NoError(t, m.SanityCheck())
 	bs, err := m.MarshalCBOR()
@@ -170,4 +170,9 @@ func TestHeartbeatMessage(t *testing.T) {
 	assert.Equal(t, m.SignBytes(), m2.SignBytes())
 	assert.Equal(t, m.Type, m.Payload.Type())
 	assert.Equal(t, m.Version, LastVersion)
+}
+
+func TestMessageFingerprint(t *testing.T) {
+	msg := NewProposalReqMessage(1, 1)
+	assert.Contains(t, msg.Fingerprint(), msg.Payload.Fingerprint())
 }

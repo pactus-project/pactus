@@ -239,12 +239,16 @@ func (st *state) UpdateLastCommit(commit *block.Commit) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateLastCommit(commit); err != nil {
-		st.logger.Warn("Try to update last commit, but it's invalid", "error", err)
-		return err
-	}
+	// Check if commit has more signers ...
+	if st.lastCommit.SignedBy() < commit.SignedBy() {
 
-	st.lastCommit = commit
+		if err := st.validateLastCommit(commit); err != nil {
+			st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
+			return err
+		}
+
+		st.lastCommit = commit
+	}
 	return nil
 }
 
@@ -354,7 +358,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 
 	if st.lastBlockHeight == height {
 		if block.Hash().EqualsTo(st.lastBlockHash) {
-			st.logger.Trace("We have committed this block before", "hash", block.Hash())
+			st.logger.Debug("We have committed this block before", "hash", block.Hash())
 			return nil
 		}
 
@@ -449,7 +453,6 @@ func (st *state) Fingerprint() string {
 		st.lastBlockTime.Format("15.04.05"))
 }
 
-// TODO: add tests for me
 func (st *state) commitSandbox(round int) {
 	joined := make([]*validator.Validator, 0)
 	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
@@ -458,7 +461,8 @@ func (st *state) commitSandbox(round int) {
 		}
 	})
 
-	if err := st.validatorSet.MoveToNextHeight(0, joined); err != nil {
+	// TODO: for joined vals write tests
+	if err := st.validatorSet.MoveToNextHeight(round, joined); err != nil {
 		//
 		// We should panic here before updating state
 		//

@@ -1,43 +1,35 @@
 package consensus
 
-import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
-)
+import "github.com/zarbchain/zarb-go/consensus/hrs"
 
-func (cs *consensus) enterNewRound(height int, round int) {
-	if cs.invalidHeight(height) {
-		cs.logger.Debug("NewRound: Invalid height or committed before", "height", height, "round", round, "committed", cs.isCommitted)
-		return
-	}
-
+func (cs *consensus) enterNewRound(round int) {
 	if round < cs.hrs.Round() {
-		cs.logger.Debug("NewRound: Try to enter prior round", "height", height, "round", round)
+		cs.logger.Trace("NewRound: Try to enter prior round", "round", round)
 		return
 	}
 
 	// make sure we have quorum votes for previous round
 	if round > 0 {
-		if !cs.votes.Prevotes(round - 1).HasQuorum() {
-			cs.logger.Debug("NewRound: No prevote quorum for previous round")
-		}
-		if !cs.votes.Precommits(round - 1).HasQuorum() {
-			cs.logger.Error("NewRound: No precommit quorum for previous round")
-			return
-		}
-		// Normally when there is no proposal for this round, every one should vote for UndefHash
-		prevoteBlockHash := cs.votes.Prevotes(round - 1).QuorumBlock()
-		precommitBlockHash := cs.votes.Precommits(round - 1).QuorumBlock()
-		if prevoteBlockHash == nil || !prevoteBlockHash.IsUndef() {
-			cs.logger.Warn("NewRound: Suspicious prevotes", "blockHash", prevoteBlockHash)
+		prepares := cs.pendingVotes.PrepareVoteSet(round - 1)
+		precommits := cs.pendingVotes.PrecommitVoteSet(round - 1)
+		// Normally when there is no proposal for this round, every one should vote for nil
+		prepareBlockHash := prepares.QuorumBlock()
+		precommitBlockHash := precommits.QuorumBlock()
+		if prepareBlockHash == nil || !prepareBlockHash.IsUndef() {
+			cs.logger.Warn("NewRound: Suspicious prepares", "blockHash", prepareBlockHash)
 		}
 		if precommitBlockHash == nil || !precommitBlockHash.IsUndef() {
 			cs.logger.Warn("NewRound: Suspicious precommits", "blockHash", precommitBlockHash)
 		}
 	}
 
-	cs.votes.lockedProposal = nil
-	cs.updateRoundStep(round, hrs.StepTypeNewRound)
+	cs.isProposed = false
+	cs.isPrepared = false
+	cs.isPreCommitted = false
+	cs.isCommitted = false
+	cs.updateRound(round)
+	cs.updateStep(hrs.StepTypeNewRound)
 	cs.logger.Info("NewRound: Entering new round", "round", round)
 
-	cs.enterPropose(height, round)
+	cs.enterPropose(round)
 }

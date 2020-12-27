@@ -7,12 +7,17 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
+func TestSanityCheck(t *testing.T) {
+
+	conf := DefaultConfig()
+	assert.NoError(t, conf.SanityCheck())
+}
+
 func TestTOML(t *testing.T) {
 	f := util.TempFilePath()
 	f += ".toml"
 	conf1 := DefaultConfig()
 	assert.NoError(t, conf1.SaveToFile(f))
-	assert.NoError(t, conf1.Check())
 	conf2, err := LoadFromFile(f)
 	assert.NoError(t, err)
 	assert.Equal(t, conf1, conf2)

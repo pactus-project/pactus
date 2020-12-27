@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -15,22 +16,18 @@ import (
 func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vote.Vote) {
 	b = st.ProposeBlock()
 
-	votes[0] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), signers[0].Address())
-	signers[0].SignMsg(votes[0])
+	sb := vote.CommitSignBytes(b.Hash(), 0)
+	sig1 := tSigners[0].Sign(sb)
+	sig2 := tSigners[1].Sign(sb)
+	sig3 := tSigners[2].Sign(sb)
 
-	votes[1] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), signers[1].Address())
-	signers[1].SignMsg(votes[1])
-
-	votes[2] = vote.NewVote(vote.VoteTypePrecommit, 1, 0, b.Hash(), signers[2].Address())
-	signers[2].SignMsg(votes[2])
-
-	sig := crypto.Aggregate([]*crypto.Signature{votes[0].Signature(), votes[1].Signature(), votes[2].Signature()})
+	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3})
 	c := block.NewCommit(0,
 		[]block.Committer{
-			{Status: 1, Address: signers[0].Address()},
-			{Status: 1, Address: signers[1].Address()},
-			{Status: 1, Address: signers[2].Address()},
-			{Status: 0, Address: signers[3].Address()},
+			{Status: 1, Address: tSigners[0].Address()},
+			{Status: 1, Address: tSigners[1].Address()},
+			{Status: 1, Address: tSigners[2].Address()},
+			{Status: 0, Address: tSigners[3].Address()},
 		},
 		sig)
 
@@ -42,21 +39,68 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 }
 
 func TestInvalidStepAfterBlockCommit(t *testing.T) {
-	cons := newTestConsensus(t, VAL1)
+	setup(t)
 
-	commitFirstBlock(t, cons.state)
+	commitFirstBlock(t, tConsY.state)
 
-	cons.MoveToNewHeight()
+	tConsY.enterNewHeight()
 
-	assert.True(t, cons.invalidHeight(1))
-	assert.True(t, cons.invalidHeightRound(1, 0))
-	assert.True(t, cons.invalidHeightRoundStep(1, 0, hrs.StepTypeCommit))
+	assert.Equal(t, tConsY.hrs.Height(), 2)
+	assert.Equal(t, tConsY.hrs.Round(), 0)
+	assert.False(t, tConsX.isProposed)
+	assert.False(t, tConsX.isPrepared)
+	assert.False(t, tConsX.isPreCommitted)
+	assert.False(t, tConsX.isCommitted)
+}
 
-	// manually move to next height
-	cons.enterNewHeight(2)
+func TestEnterCommit(t *testing.T) {
+	setup(t)
 
-	assert.False(t, cons.invalidHeight(2))
-	assert.False(t, cons.invalidHeightRound(2, 0))
-	assert.False(t, cons.invalidHeightRoundStep(2, 0, hrs.StepTypeCommit))
+	tConsX.enterNewHeight()
+	tConsY.enterNewHeight()
+	p1 := tConsX.LastProposal()
 
+	// Invalid round
+	tConsY.enterCommit(1)
+	assert.False(t, tConsY.isCommitted)
+
+	// No quorum
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
+
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexP, false)
+
+	v3 := vote.NewPrecommit(1, 0, crypto.UndefHash, tSigners[tIndexB].Address())
+	tSigners[tIndexB].SignMsg(v3)
+	ok, _ := tConsY.pendingVotes.AddVote(v3)
+	assert.True(t, ok)
+
+	// Undef quorum
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
+
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexB, false)
+
+	// No proposal
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
+	shouldPublishProposalReqquest(t, tConsY)
+
+	time.Sleep(2 * time.Second) // This will change block timestamp
+	b2 := tConsX.state.ProposeBlock()
+	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
+	p2 := vote.NewProposal(1, 0, b2)
+	tSigners[tIndexX].SignMsg(p2)
+	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
+
+	// Invalid proposal
+	tConsY.enterCommit(0)
+	assert.False(t, tConsY.isCommitted)
+
+	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p1)
+
+	// Everything is good
+	tConsY.enterCommit(0)
+	checkHRSWait(t, tConsY, 2, 0, hrs.StepTypePrepare)
 }
