@@ -207,9 +207,7 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
-	checkHRS(t, tConsX, 1, 0, hrs.StepTypeCommit)
-
-	assert.Equal(t, tConsX.isCommitted, true)
+	checkHRSWait(t, tConsX, 2, 0, hrs.StepTypePropose)
 }
 
 func TestConsensusUpdateVote(t *testing.T) {
