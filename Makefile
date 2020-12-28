@@ -6,9 +6,11 @@ GOTOOLS = \
 
 PACKAGES=$(shell go list ./... | grep -v '/vendor/')
 TAGS=-tags 'zarb'
+HERUMI= $(shell pwd)/.herumi
+CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/mcl/lib -L$(HERUMI)/bls/lib -lmcl -lbls384_256 -lm -lstdc++"
 LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD`"
 CAPNP_INC = -I$(GOPATH)/src/zombiezen.com/go/capnproto2/std
-BLS_PATH= $(shell pwd)/.bls
+
 
 
 all: tools build install test
@@ -20,6 +22,13 @@ tools:
 	go get $(GOTOOLS)
 
 
+bls:
+	@echo "Compiling bls"
+	rm -rf $(HERUMI)
+	git clone git://github.com/herumi/mcl.git $(HERUMI)/mcl && cd $(HERUMI)/mcl && make lib/libmcl.a
+	git clone git://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static
+
+
 ########################################
 ### Build zarb
 build:
@@ -28,11 +37,16 @@ build:
 install:
 	go install $(LDFLAGS) $(TAGS) ./cmd/zarb
 
+build_with_bls:
+	$(CGO_LDFLAGS) go build $(LDFLAGS) $(TAGS) -o build/zarb ./cmd/zarb/
+
 ########################################
 ### Testing
 test:
 	go test $(PACKAGES)
 
+test_with_bls:
+	$(CGO_LDFLAGS) go test $(PACKAGES)
 
 ########################################
 ### Docker

@@ -1,4 +1,3 @@
 
 ignore:
   - "*/mock.go"
-  - "containers/*"

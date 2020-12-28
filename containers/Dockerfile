@@ -1,10 +1,10 @@
 
-FROM alpine:3.12
+FROM alpine:3.12 as builder
 
 ENV WORKING_DIR /zarb
 
 
-RUN apk add --no-cache bash libstdc++ gmp 
+RUN apk add --no-cache bash libstdc++ gmp
 
 
 ENV GOPATH /go
@@ -16,13 +16,14 @@ ADD . /go/src/github.com/zarbchain/zarb-go
 RUN apk add --no-cache curl git go gmp-dev build-base g++ openssl-dev && \
     mkdir -p /go/src/github.com/zarbchain/zarb-go/ && \
     cd /go/src/github.com/zarbchain/zarb-go/ && \
-    make tools build && \
+    make tools bls test_with_bls build_with_bls  && \
     cp ./build/zarb /usr/bin && \
     apk del curl git go gmp-dev build-base g++ openssl-dev && \
     rm -rf /go /root/.cache
-    
-EXPOSE 35470
-EXPOSE 37620
+
+FROM alpine:3.12
+
+COPY --from=builder /usr/bin/zarb /usr/bin
 
 VOLUME $WORKING_DIR
 WORKDIR $WORKING_DIR
