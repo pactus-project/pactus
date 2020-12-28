@@ -25,6 +25,9 @@ FROM alpine:3.12
 
 COPY --from=builder /usr/bin/zarb /usr/bin
 
+ENV WORKING_DIR "/zarb"
+
 VOLUME $WORKING_DIR
 WORKDIR $WORKING_DIR
+
 ENTRYPOINT ["zarb"]
