@@ -100,6 +100,9 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
+	t := testing.T{}
+	getBlockAt(&t, 1)
+
 	exitCode := m.Run()
 
 	tNodes["node_1"].Stop()

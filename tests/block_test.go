@@ -12,7 +12,7 @@ import (
 
 func getBlockAt(t *testing.T, height int) string {
 	url := fmt.Sprintf("http://%s/block/height/%d", tCurlAddress, height)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 50; i++ {
 		res, err := http.Get(url)
 		if err == nil {
 			if res.StatusCode == 200 {
@@ -22,7 +22,7 @@ func getBlockAt(t *testing.T, height int) string {
 				return buf.String()
 			}
 		}
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 	assert.NoError(t, fmt.Errorf("timeout"))
 	return ""
