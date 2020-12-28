@@ -36,10 +36,6 @@ func (conf *Config) ValidatorStorePath() string {
 	return util.MakeAbs(conf.Path + "/validator.db")
 }
 
-func (conf *Config) StateStorePath() string {
-	return util.MakeAbs(conf.Path + "/state.db")
-}
-
 // SanityCheck is a basic hecks for config
 func (conf *Config) SanityCheck() error {
 	return nil

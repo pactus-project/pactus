@@ -24,7 +24,7 @@ type BootstrapConfig struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Name:           "zarb-testnet",
+		Name:           "zarb",
 		Address:        "/ip4/0.0.0.0/tcp/0",
 		NodeKeyFile:    "node_key",
 		EnableMDNS:     true,
