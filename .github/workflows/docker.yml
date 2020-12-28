@@ -1,5 +1,5 @@
 on: [pull_request]
-name: Docker
+name: Build Docker
 jobs:
   build_docker:
     runs-on: ubuntu-latest
