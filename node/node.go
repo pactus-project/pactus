@@ -120,6 +120,7 @@ func (n *Node) Stop() {
 	logger.Info("Stopping Node")
 
 	n.network.Stop()
+	n.consensus.Stop()
 	n.sync.Stop()
 	n.state.Close()
 	n.http.StopServer()

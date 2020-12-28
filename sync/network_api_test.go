@@ -39,7 +39,7 @@ func (mock *mockNetworkAPI) SelfID() peer.ID {
 }
 
 func (mock *mockNetworkAPI) shouldPublishThisMessage(t *testing.T, expectedMsg *message.Message) {
-	timeout := time.NewTimer(1 * time.Second)
+	timeout := time.NewTimer(2 * time.Second)
 
 	for {
 		select {
@@ -60,7 +60,7 @@ func (mock *mockNetworkAPI) shouldPublishThisMessage(t *testing.T, expectedMsg *
 }
 
 func (mock *mockNetworkAPI) shouldPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) *message.Message {
-	timeout := time.NewTimer(1 * time.Second)
+	timeout := time.NewTimer(2 * time.Second)
 
 	for {
 		select {
