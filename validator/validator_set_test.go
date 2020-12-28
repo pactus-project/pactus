@@ -253,9 +253,9 @@ func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
 	assert.Equal(t, vs.Proposer(0).Address(), val6.Address())
 
 	//
-	// +-+-+-+-+-+-+=+       +-+-+-+-+-+-+-+
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
 	// |5|6|7|8|9|A|B|  ==>  |7|8|9|A|B|C|D|
-	// +-+-+-+-+-+-+=+       +-+-+-+-+-+-+-+
+	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
 	//
 	vs.proposerIndex = 5
 	assert.NoError(t, vs.MoveToNextHeight(2, []*Validator{valC, valD}))
