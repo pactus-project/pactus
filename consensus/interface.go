@@ -8,6 +8,7 @@ import (
 
 type Consensus interface {
 	MoveToNewHeight()
+	Stop()
 	AddVote(v *vote.Vote)
 	RoundVotes(round int) []*vote.Vote
 	RoundVotesHash(round int) []crypto.Hash

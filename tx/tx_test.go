@@ -2,16 +2,12 @@ package tx
 
 import (
 	"encoding/hex"
-	"fmt"
 	"testing"
 
-	"github.com/zarbchain/zarb-go/tx/payload"
-
-	"github.com/zarbchain/zarb-go/crypto"
-
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
 func TestSendEncodingTx(t *testing.T) {
@@ -23,8 +19,6 @@ func TestSendEncodingTx(t *testing.T) {
 	err = tx2.UnmarshalCBOR(bz)
 
 	bz2, _ := tx2.MarshalCBOR()
-
-	fmt.Printf("%x\n", bz)
 
 	require.NoError(t, err)
 	require.Equal(t, bz, bz2)
@@ -40,8 +34,6 @@ func TestBondEncodingTx(t *testing.T) {
 	err = tx2.UnmarshalCBOR(bz)
 
 	bz2, _ := tx2.MarshalCBOR()
-
-	fmt.Printf("%x\n", bz)
 
 	require.NoError(t, err)
 	require.Equal(t, bz, bz2)
@@ -75,9 +67,6 @@ func TestEncodingTxNoSig(t *testing.T) {
 	err = tx2.UnmarshalCBOR(bz)
 
 	bz2, _ := tx2.MarshalCBOR()
-
-	fmt.Printf("%x\n", bz)
-	fmt.Printf("%x\n", bz2)
 
 	require.NoError(t, err)
 	require.Equal(t, bz, bz2)
@@ -141,8 +130,6 @@ func TestSubsidyTx(t *testing.T) {
 func TestInvalidSignature(t *testing.T) {
 	tx, pv := GenerateTestSendTx()
 	assert.NoError(t, tx.SanityCheck())
-
-	fmt.Printf("%x\n", tx.SignBytes())
 
 	tx.SetSignature(nil)
 	assert.Error(t, tx.SanityCheck())
@@ -266,6 +253,19 @@ func TestBondDecodingAndHash(t *testing.T) {
 	d, _ := hex.DecodeString("a90101025820401a78337d2715db2a69916bbedbbb0a44336915fa1e5938b5b9cf350c340bb603186e0400050206a30154ebd6d0afdbe2ac5968224763f1c2dbb99fedda53025860c0ac961b453008e5cf521afab81fe303dc957de4b385bf472108e27b054f14e2da340f288928472b443a716eb795800cd8b885791827debda0a7909c741286cebd324db9546bab8af03830a9f91792389303b3746d76fc57148830184c3e0506031864076c7465737420626f6e642d74781458603b42c95589d73085882cf972c80b8c652de6e89ae4268a37a6c2d3206019bf9b706e048a7555e77f926895f6dccdb10f42efcaf0008006a0a15b8c58d704a9a0f277c66d7c6f6e8be1efb50b509c32b3b4364b2b7feb7eda106164c7ad18408a1558305a53c9e788896943587b594a2c2b930f2f9945abdf12e1c16fae8d235f74663a2f28d1b8fa442af0781f13f7de5a1c99")
 	s, _ := hex.DecodeString("a70101025820401a78337d2715db2a69916bbedbbb0a44336915fa1e5938b5b9cf350c340bb603186e0400050206a30154ebd6d0afdbe2ac5968224763f1c2dbb99fedda53025860c0ac961b453008e5cf521afab81fe303dc957de4b385bf472108e27b054f14e2da340f288928472b443a716eb795800cd8b885791827debda0a7909c741286cebd324db9546bab8af03830a9f91792389303b3746d76fc57148830184c3e0506031864076c7465737420626f6e642d7478")
 	h, _ := crypto.HashFromString("0beb43223b39e21e8c29afa70afa44bf7e6320c148e9c3cdd6feb4e00d6c460a")
+	var trx Tx
+	err := trx.UnmarshalCBOR(d)
+	assert.NoError(t, err)
+	d2, _ := trx.MarshalCBOR()
+	assert.Equal(t, d, d2)
+	assert.Equal(t, trx.SignBytes(), s)
+	assert.Equal(t, trx.ID(), h)
+}
+
+func TestSortitionDecodingAndHash(t *testing.T) {
+	d, _ := hex.DecodeString("a901010258205c89caaff437620b0f8c3b02db9e42cf2cd7668d1b9ea6f97cf0a8c15b4443f803186e0400050306a20154564404dd49c9f8ef137e33fde04b8733317c23c802583000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007717465737420736f72746974696f6e2d7478145860e0c7d9197d7e8dee6f8a279fe0b3c9a51069aa15ca513cca339fd92d4d2510145e70c604cfa263672001ba561e4a090816589b0bd35365399493f8180c0b06693f264fe892c26ccbc9c1d78de8a579d37122eb81c6f4792236ace58138666c1415583062a837ef943e068ba7c87b350e867b9200ceb821a72c122c59cf93f6e55cc74abb7110875de2e8b8bb4002923433448c")
+	s, _ := hex.DecodeString("a701010258205c89caaff437620b0f8c3b02db9e42cf2cd7668d1b9ea6f97cf0a8c15b4443f803186e0400050306a20154564404dd49c9f8ef137e33fde04b8733317c23c802583000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007717465737420736f72746974696f6e2d7478")
+	h, _ := crypto.HashFromString("656a4cb4ae6dc60e53196818e035147762b738500bc002a30a29820ac9d8f433")
 	var trx Tx
 	err := trx.UnmarshalCBOR(d)
 	assert.NoError(t, err)

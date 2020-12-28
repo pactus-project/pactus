@@ -318,3 +318,11 @@ func TestConsensusFingerprint(t *testing.T) {
 
 	assert.Contains(t, tConsX.Fingerprint(), tConsX.hrs.String())
 }
+
+func TestStop(t *testing.T) {
+	setup(t)
+
+	tConsX.Stop()
+	tConsX.handleTimeout(timeout{1 * time.Second, 1, 0, 0})
+	assert.Equal(t, tConsX.hrs.Height(), -1)
+}
