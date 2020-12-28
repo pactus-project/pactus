@@ -53,6 +53,10 @@ func NewConsensus(
 	return cs, nil
 }
 
+func (cs *consensus) Stop() {
+	cs.hrs.UpdateHeight(-1)
+}
+
 func (cs *consensus) Fingerprint() string {
 	isProposed := "-"
 	if cs.isProposed {

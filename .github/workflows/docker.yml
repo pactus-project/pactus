@@ -1,0 +1,10 @@
+on: [pull_request]
+name: Docker
+jobs:
+  build_docker:
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build docker
+      run: make docker

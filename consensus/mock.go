@@ -22,6 +22,8 @@ func NewMockConsensus() *MockConsensus {
 func (m *MockConsensus) MoveToNewHeight() {
 	m.Started = true
 }
+func (m *MockConsensus) Stop() {}
+
 func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.Votes = append(m.Votes, v)
 }
