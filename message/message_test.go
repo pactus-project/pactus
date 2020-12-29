@@ -191,3 +191,16 @@ func TestBlocksMessageCompress(t *testing.T) {
 	assert.NoError(t, m2.SanityCheck())
 	assert.Equal(t, m2.Flags, 0x1)
 }
+
+func TestDecodeVoteMessage(t *testing.T) {
+	d1, _ := hex.DecodeString("a401010200030a045875a101a6010102010301045820c16f004da39883f7082d39a959d9444f1cf5fb45ce5d7b0d03b6ab58f6ce5fae0554f04595cf4e14db1b179b31ae05c0656b0d835e7e065830f6510fbc1bfffa661d9562a987c5a9600004084609ded7a3d8ddbf8b09b8dc22cffcf7f19e518c90e13769ee3efe2a95")
+	// Compressed
+	d2, _ := hex.DecodeString("a401010201030a0458911f8b08000000000000ff0075008affa101a6010102010301045820c16f004da39883f7082d39a959d9444f1cf5fb45ce5d7b0d03b6ab58f6ce5fae0554f04595cf4e14db1b179b31ae05c0656b0d835e7e065830f6510fbc1bfffa661d9562a987c5a9600004084609ded7a3d8ddbf8b09b8dc22cffcf7f19e518c90e13769ee3efe2a95010000ffff0efa80b175000000")
+	m1 := new(Message)
+	m2 := new(Message)
+	assert.NoError(t, m1.UnmarshalCBOR(d1))
+	assert.NoError(t, m2.UnmarshalCBOR(d2))
+	assert.NoError(t, m2.SanityCheck())
+
+	assert.Equal(t, m1.SignBytes(), m2.SignBytes())
+}
