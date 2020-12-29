@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/message/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 const LastVersion = 1
@@ -26,7 +27,7 @@ func (m *Message) SanityCheck() error {
 	if m.Type != m.Payload.Type() {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type")
 	}
-	if m.Flags != 0 {
+	if m.Flags|0x1 != 0x1 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
 	}
 	return nil
@@ -44,7 +45,7 @@ type _Message struct {
 	Version     int                 `cbor:"1,keyasint"`
 	Flags       int                 `cbor:"2,keyasint"`
 	PayloadType payload.PayloadType `cbor:"3,keyasint"`
-	Payload     cbor.RawMessage     `cbor:"4,keyasint"`
+	Payload     []byte              `cbor:"4,keyasint"`
 	Signature   *crypto.Signature   `cbor:"21,keyasint,omitempty"`
 }
 
@@ -57,16 +58,25 @@ func (m *Message) SignBytes() []byte {
 }
 
 func (m *Message) MarshalCBOR() ([]byte, error) {
-	bs, err := cbor.Marshal(m.Payload)
+	pld, err := cbor.Marshal(m.Payload)
 	if err != nil {
 		return nil, err
 	}
 
+	flags := 0
+	if len(pld) > 1024 {
+		c, err := util.CompressSlice(pld)
+		if err == nil {
+			pld = c
+			flags |= 1
+		}
+	}
+
 	msg := &_Message{
 		Version:     m.Version,
-		Flags:       m.Flags,
+		Flags:       flags,
 		PayloadType: m.Type,
-		Payload:     bs,
+		Payload:     pld,
 	}
 
 	return cbor.Marshal(msg)
@@ -79,9 +89,18 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
+	data := msg.Payload
 	pld := makePayload(msg.PayloadType)
 	if pld == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload")
+	}
+
+	if msg.Flags&0x1 == 0x1 {
+		c, err := util.DecompressSlice(msg.Payload)
+		if err != nil {
+			return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+		}
+		data = c
 	}
 
 	m.Version = msg.Version
@@ -89,5 +108,5 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 	m.Type = msg.PayloadType
 	m.Signature = msg.Signature
 	m.Payload = pld
-	return cbor.Unmarshal(msg.Payload, pld)
+	return cbor.Unmarshal(data, pld)
 }
