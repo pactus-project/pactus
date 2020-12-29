@@ -63,10 +63,10 @@ func DecompressSlice(s []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	var resB bytes.Buffer
-	if _, err = resB.ReadFrom(r); err != nil {
+	var res bytes.Buffer
+	if _, err = res.ReadFrom(r); err != nil {
 		return nil, err
 	}
 
-	return resB.Bytes(), nil
+	return res.Bytes(), nil
 }
