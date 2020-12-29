@@ -176,3 +176,18 @@ func TestMessageFingerprint(t *testing.T) {
 	msg := NewProposalReqMessage(1, 1)
 	assert.Contains(t, msg.Fingerprint(), msg.Payload.Fingerprint())
 }
+
+func TestBlocksMessageCompress(t *testing.T) {
+	var blocks = []*block.Block{}
+	for i := 0; i < 100; i++ {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		blocks = append(blocks, b)
+	}
+	m := NewBlocksMessage(888, blocks, nil)
+	bs, err := m.MarshalCBOR()
+	assert.NoError(t, err)
+	m2 := new(Message)
+	assert.NoError(t, m2.UnmarshalCBOR(bs))
+	assert.NoError(t, m2.SanityCheck())
+	assert.Equal(t, m2.Flags, 0x1)
+}

@@ -229,10 +229,6 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 		} else {
 			syncer.logger.Trace("Our consensus is at the same step with this peer.")
 		}
-	} else if pld.Pulse.Height() > hrs.Height() {
-		syncer.logger.Trace("Our state is behind of this peer.")
-	} else {
-		syncer.logger.Trace("Our state is ahead of this peer.")
 	}
 }
 

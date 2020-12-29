@@ -1,7 +1,10 @@
 package util
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/binary"
+	"io"
 )
 
 func UIntToSlice(n uint) []byte {
@@ -38,4 +41,32 @@ func SliceToUInt64(bs []byte) uint64 {
 func SliceToInt64(bs []byte) int64 {
 	n := binary.LittleEndian.Uint64(bs)
 	return int64(n)
+}
+
+func CompressSlice(s []byte) ([]byte, error) {
+	var b bytes.Buffer
+	gz := gzip.NewWriter(&b)
+	if _, err := gz.Write(s); err != nil {
+		return nil, err
+	}
+	if err := gz.Close(); err != nil {
+		return nil, err
+	}
+	return b.Bytes(), nil
+}
+
+func DecompressSlice(s []byte) ([]byte, error) {
+	b := bytes.NewBuffer(s)
+	var r io.Reader
+	r, err := gzip.NewReader(b)
+	if err != nil {
+		return nil, err
+	}
+
+	var resB bytes.Buffer
+	if _, err = resB.ReadFrom(r); err != nil {
+		return nil, err
+	}
+
+	return resB.Bytes(),nil
 }
