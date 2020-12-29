@@ -5,10 +5,12 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/txpool"
 )
 
 type factory struct {
 	store  store.StoreReader
+	txPool txpool.TxPool
 	logger *logger.Logger
 }
 

@@ -67,6 +67,9 @@ struct ValidatorResult {
   data                @0 :Data;
 }
 
+struct RawTransactionResult {
+  data                @0 :Data;
+}
 
 interface ZarbServer {
   getBlockchainInfo    @0 ()                                       -> (result: BlockchainResult);
@@ -75,5 +78,6 @@ interface ZarbServer {
 	getBlockHeight       @3 (hash: Data)                             -> (result :UInt64);
 	getAccount           @4 (address: Data, verbosity: Int32)        -> (result :AccountResult);
 	getValidator         @5 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
+  sendRawTransaction   @6 (rawTx: Data)                             -> (result:RawTransactionResult);
 }
 

@@ -1,6 +1,9 @@
 package capnp
 
-import "github.com/zarbchain/zarb-go/crypto"
+import (
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/tx"
+)
 
 func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
 	s, _ := args.Params.Hash()
@@ -30,4 +33,22 @@ func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
 		return err
 	}
 	return nil
+}
+
+//Send the raw transaction
+func (f factory) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
+	rawTx, _ := args.Params.RawTx()
+
+	var tx tx.Tx
+
+	if err := tx.Decode(rawTx); err != nil {
+		return err
+	}
+
+	if err := tx.SanityCheck(); err != nil {
+		return err
+	}
+
+	return f.txPool.AppendTxAndBroadcast(&tx)
+
 }
