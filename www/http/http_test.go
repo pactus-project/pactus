@@ -16,7 +16,7 @@ import (
 )
 
 var tMockState *state.MockState
-var tMockPool txpool.TxPoolReader
+var tMockPool txpool.TxPool
 var tCapnpServer *capnp.Server
 var tHTTPServer *Server
 var tAccTestAddr crypto.Address
