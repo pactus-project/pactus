@@ -6,7 +6,7 @@ import (
 )
 
 func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
-	s, _ := args.Params.Hash()
+	s, _ := args.Params.Id()
 	h, err := crypto.HashFromString(string(s))
 	if err != nil {
 		return err
@@ -21,7 +21,7 @@ func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
 	if err := res.SetData(trxData); err != nil {
 		return err
 	}
-	if err := res.SetHash(ctx.Tx.ID().RawBytes()); err != nil {
+	if err := res.SetId(ctx.Tx.ID().RawBytes()); err != nil {
 		return err
 	}
 	rec, _ := res.NewReceipt()
@@ -49,6 +49,15 @@ func (f factory) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
 		return err
 	}
 
-	return f.txPool.AppendTxAndBroadcast(&tx)
+	if err := f.txPool.AppendTxAndBroadcast(&tx); err != nil {
+		return err
+	}
+
+	res, _ := args.Results.NewResult()
+	if err := res.SetId(tx.ID().RawBytes()); err != nil {
+		return err
+	}
+	res.SetStatus(0)
+	return nil
 
 }

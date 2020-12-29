@@ -68,5 +68,5 @@ func DecompressSlice(s []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	return resB.Bytes(),nil
+	return resB.Bytes(), nil
 }
