@@ -53,6 +53,7 @@ func (s *Server) StartServer(capnpServer string) error {
 	s.router.HandleFunc("/transaction/hash/{hash}", s.GetTransactionHandler)
 	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
+	s.router.HandleFunc("/send_raw_transaction/{data}", s.SendRawTransaction)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
 	l, err := net.Listen("tcp", s.config.Address)

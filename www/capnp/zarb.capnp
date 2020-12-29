@@ -53,7 +53,7 @@ struct Receipt {
 }
 
 struct TransactionResult {
-  hash                @0 :Data;
+  id                  @0 :Data;
   data                @1 :Data;
   transaction         @2 :Data; # TODO: define tx struct
   receipt             @3 :Receipt;
@@ -67,13 +67,18 @@ struct ValidatorResult {
   data                @0 :Data;
 }
 
+struct SendTransactionResult {
+  status                @0 :Int32;
+  id                    @1 :Data;
+}
 
 interface ZarbServer {
   getBlockchainInfo    @0 ()                                       -> (result: BlockchainResult);
 	getBlock             @1 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
-	getTransaction       @2 (hash: Data, verbosity: Int32)           -> (result :TransactionResult);
+	getTransaction       @2 (id: Data, verbosity: Int32)           -> (result :TransactionResult);
 	getBlockHeight       @3 (hash: Data)                             -> (result :UInt64);
 	getAccount           @4 (address: Data, verbosity: Int32)        -> (result :AccountResult);
 	getValidator         @5 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
+  sendRawTransaction   @6 (rawTx: Data)                             -> (result:SendTransactionResult);
 }
 

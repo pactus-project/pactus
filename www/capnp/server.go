@@ -18,11 +18,11 @@ type Server struct {
 	listener net.Listener
 	store    store.StoreReader
 	state    state.StateReader
-	txPool   txpool.TxPoolReader
+	txPool   txpool.TxPool
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.StateReader, txPool txpool.TxPoolReader) (*Server, error) {
+func NewServer(conf *Config, state state.StateReader, txPool txpool.TxPool) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
 		store:  state.StoreReader(),
@@ -59,7 +59,7 @@ func (s *Server) StartServer() error {
 			} else {
 				//
 				go func(c net.Conn) {
-					s2c := ZarbServer_ServerToClient(factory{s.store, s.logger})
+					s2c := ZarbServer_ServerToClient(factory{s.store, s.txPool, s.logger})
 					conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {

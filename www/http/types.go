@@ -21,8 +21,13 @@ type ReceiptResult struct {
 	Receipt tx.Receipt
 }
 type TransactionResult struct {
-	Hash    crypto.Hash
+	ID      crypto.Hash
 	Data    string
 	Tx      tx.Tx
 	Receipt ReceiptResult
+}
+
+type SendTranscationResult struct {
+	Status int
+	ID     crypto.Hash
 }

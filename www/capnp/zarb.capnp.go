@@ -825,17 +825,17 @@ func (s TransactionResult) String() string {
 	return str
 }
 
-func (s TransactionResult) Hash() ([]byte, error) {
+func (s TransactionResult) Id() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return []byte(p.Data()), err
 }
 
-func (s TransactionResult) HasHash() bool {
+func (s TransactionResult) HasId() bool {
 	p, err := s.Struct.Ptr(0)
 	return p.IsValid() || err != nil
 }
 
-func (s TransactionResult) SetHash(v []byte) error {
+func (s TransactionResult) SetId(v []byte) error {
 	return s.Struct.SetData(0, v)
 }
 
@@ -1058,6 +1058,83 @@ func (p ValidatorResult_Promise) Struct() (ValidatorResult, error) {
 	return ValidatorResult{s}, err
 }
 
+type SendTransactionResult struct{ capnp.Struct }
+
+// SendTransactionResult_TypeID is the unique identifier for the type SendTransactionResult.
+const SendTransactionResult_TypeID = 0xcfd704b9b2c62a4a
+
+func NewSendTransactionResult(s *capnp.Segment) (SendTransactionResult, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
+	return SendTransactionResult{st}, err
+}
+
+func NewRootSendTransactionResult(s *capnp.Segment) (SendTransactionResult, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
+	return SendTransactionResult{st}, err
+}
+
+func ReadRootSendTransactionResult(msg *capnp.Message) (SendTransactionResult, error) {
+	root, err := msg.RootPtr()
+	return SendTransactionResult{root.Struct()}, err
+}
+
+func (s SendTransactionResult) String() string {
+	str, _ := text.Marshal(0xcfd704b9b2c62a4a, s.Struct)
+	return str
+}
+
+func (s SendTransactionResult) Status() int32 {
+	return int32(s.Struct.Uint32(0))
+}
+
+func (s SendTransactionResult) SetStatus(v int32) {
+	s.Struct.SetUint32(0, uint32(v))
+}
+
+func (s SendTransactionResult) Id() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return []byte(p.Data()), err
+}
+
+func (s SendTransactionResult) HasId() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s SendTransactionResult) SetId(v []byte) error {
+	return s.Struct.SetData(0, v)
+}
+
+// SendTransactionResult_List is a list of SendTransactionResult.
+type SendTransactionResult_List struct{ capnp.List }
+
+// NewSendTransactionResult creates a new list of SendTransactionResult.
+func NewSendTransactionResult_List(s *capnp.Segment, sz int32) (SendTransactionResult_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
+	return SendTransactionResult_List{l}, err
+}
+
+func (s SendTransactionResult_List) At(i int) SendTransactionResult {
+	return SendTransactionResult{s.List.Struct(i)}
+}
+
+func (s SendTransactionResult_List) Set(i int, v SendTransactionResult) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s SendTransactionResult_List) String() string {
+	str, _ := text.MarshalList(0xcfd704b9b2c62a4a, s.List)
+	return str
+}
+
+// SendTransactionResult_Promise is a wrapper for a SendTransactionResult promised by a client call.
+type SendTransactionResult_Promise struct{ *capnp.Pipeline }
+
+func (p SendTransactionResult_Promise) Struct() (SendTransactionResult, error) {
+	s, err := p.Pipeline.Struct()
+	return SendTransactionResult{s}, err
+}
+
 type ZarbServer struct{ Client capnp.Client }
 
 // ZarbServer_TypeID is the unique identifier for the type ZarbServer.
@@ -1183,6 +1260,26 @@ func (c ZarbServer) GetValidator(ctx context.Context, params func(ZarbServer_get
 	}
 	return ZarbServer_getValidator_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
 }
+func (c ZarbServer) SendRawTransaction(ctx context.Context, params func(ZarbServer_sendRawTransaction_Params) error, opts ...capnp.CallOption) ZarbServer_sendRawTransaction_Results_Promise {
+	if c.Client == nil {
+		return ZarbServer_sendRawTransaction_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
+	}
+	call := &capnp.Call{
+		Ctx: ctx,
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      6,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "sendRawTransaction",
+		},
+		Options: capnp.NewCallOptions(opts),
+	}
+	if params != nil {
+		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
+		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_sendRawTransaction_Params{Struct: s}) }
+	}
+	return ZarbServer_sendRawTransaction_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+}
 
 type ZarbServer_Server interface {
 	GetBlockchainInfo(ZarbServer_getBlockchainInfo) error
@@ -1196,6 +1293,8 @@ type ZarbServer_Server interface {
 	GetAccount(ZarbServer_getAccount) error
 
 	GetValidator(ZarbServer_getValidator) error
+
+	SendRawTransaction(ZarbServer_sendRawTransaction) error
 }
 
 func ZarbServer_ServerToClient(s ZarbServer_Server) ZarbServer {
@@ -1205,7 +1304,7 @@ func ZarbServer_ServerToClient(s ZarbServer_Server) ZarbServer {
 
 func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.Method {
 	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 6)
+		methods = make([]server.Method, 0, 7)
 	}
 
 	methods = append(methods, server.Method{
@@ -1292,6 +1391,20 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
 	})
 
+	methods = append(methods, server.Method{
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      6,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "sendRawTransaction",
+		},
+		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
+			call := ZarbServer_sendRawTransaction{c, opts, ZarbServer_sendRawTransaction_Params{Struct: p}, ZarbServer_sendRawTransaction_Results{Struct: r}}
+			return s.SendRawTransaction(call)
+		},
+		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
+	})
+
 	return methods
 }
 
@@ -1341,6 +1454,14 @@ type ZarbServer_getValidator struct {
 	Options capnp.CallOptions
 	Params  ZarbServer_getValidator_Params
 	Results ZarbServer_getValidator_Results
+}
+
+// ZarbServer_sendRawTransaction holds the arguments for a server call to ZarbServer.sendRawTransaction.
+type ZarbServer_sendRawTransaction struct {
+	Ctx     context.Context
+	Options capnp.CallOptions
+	Params  ZarbServer_sendRawTransaction_Params
+	Results ZarbServer_sendRawTransaction_Results
 }
 
 type ZarbServer_getBlockchainInfo_Params struct{ capnp.Struct }
@@ -1662,17 +1783,17 @@ func (s ZarbServer_getTransaction_Params) String() string {
 	return str
 }
 
-func (s ZarbServer_getTransaction_Params) Hash() ([]byte, error) {
+func (s ZarbServer_getTransaction_Params) Id() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return []byte(p.Data()), err
 }
 
-func (s ZarbServer_getTransaction_Params) HasHash() bool {
+func (s ZarbServer_getTransaction_Params) HasId() bool {
 	p, err := s.Struct.Ptr(0)
 	return p.IsValid() || err != nil
 }
 
-func (s ZarbServer_getTransaction_Params) SetHash(v []byte) error {
+func (s ZarbServer_getTransaction_Params) SetId(v []byte) error {
 	return s.Struct.SetData(0, v)
 }
 
@@ -2252,118 +2373,282 @@ func (p ZarbServer_getValidator_Results_Promise) Result() ValidatorResult_Promis
 	return ValidatorResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-const schema_84b56bd0975dfd33 = "x\xda\xb4W_l\x1cg\x11\x9f\xd9o\xf7v\xef|" +
-	"g\xdf\xb2g\xd1\xa2\xb8\x8e\x90\x83\x12\x03m\x9aP\x15" +
-	"E*\x97\xb8\x89j\x83+\xdd\x9e#TL\x8b\xba\xbe" +
-	"[r\xd7\xfbg\xef\xae\xff$/\x96\x0cU!\xe0T" +
-	"\x0a\x94R\x04\x0fn\x85*Z\\\x14\xa0\xa8E\xeaC" +
-	"\x01\x09\x11\xa5R\x9b<\x81\x0a\x08\x0b\x15\xab*\x14C" +
-	"\xad&\x80\xbdh\xbe\xbd\xfdsg\xe7l?\xf4\xedn" +
-	"\xbe\xd9\x99\xf9f~\xf3\x9bo\x0e?+\x1e\x17\xee\x94" +
-	"\xeeS\x00\xf4\x87\xa5\x98\xbbz\xe3\x9b_\x88e3_" +
-	"\x01\xb5\x17\xdd\xa3\x1b\x0f=\xf9z\xe5\xc5\xaf\x82\xc4d" +
-	"\x80\xa3q1\x81\xda\xad\xa2\x0c\xa0\xf5\x8a?\x01t\xaf" +
-	"\xe6\x7f\xfd\xeam\x1f?\xf0(\xe8\xfbQ\x00\xa0\x93\xa3" +
-	"\xcb\xe2\x02\x02j/\x8b\xb3\x80\x9b\x97\xaf^?\xf4\xdb" +
-	"\xb5Eu?6Oo\x95.#\x88\xae\xa1>r\xc5" +
-	"\xf8\xce\x93\x17\xe8C\xff(%\xfd\x92>\xec\x93\xb2\x80" +
-	"\xee?\x9f\xfb\xee\xfc\x8bo\xfe\xe9\x02\xe8\xbd(D\xe2" +
-	"\x90\xc9\xf9=\xd2\x8a6\"\xd17\xa7$\x17\x01\xdd\xc3" +
-	"\xe3\x0f^\xfb\\\xdf\xcf\x1fo\x9a\x93\x90\xce\x0c\xf9i" +
-	"\xb27%\xcf\x02\xba\x8a\xf6\xe3/M\xf5W\xbe\x0d<" +
-	"\x14O\xe1\x0d\xf9<)\xfcE&\x87\xbf\xf9\xd0\xc7\x92" +
-	"3\x9b\x07\x97\xa2\x0a\xa8<G\x0a\xaaB\x0a_\x9c}" +
-	"\xfe\xdd*^z:\xaap\xa7\xc2C>\xc1\x15>\x9c" +
-	"K|\xe6\xcd\xfb_y\xa6-s^,\xcaGP\x9b" +
-	"R(\xf8\x1aW\xbe\xf2\xfe\xc9\xe2\xf5\xdfM\xbfD\xf7" +
-	"k\xd7\xd6\x16\x95\xffhOq\xe5'\x14\x0a\xfedr" +
-	"\xbe\xb1\xf1\xad\x7f\xbf\xb4MM\xb45\xe5\x0f\xda\x06\xd7" +
-	"\xbd\xa1PIJ\xbf\xd8\xcc\xec\xbb{\xf6\x956]\x9e" +
-	"\xe1'\xe2\xc7P\xfba\x9c\x94\x97\xe2\x7f\x03t\x7fT" +
-	"Y\xf8\xd9\xdb\xaf\x7f\xadM\x99\xeb\x9eM\x1cA\xed\xeb" +
-	"\x09\x19\x98{h}\xf0\xdd\xe5\x95\xfd\xafns1\xcd" +
-	"L\\\xd6\xa6\x12\xfc^\x89,\xe0\xe6\xc1\xe2c\xf7\xd9" +
-	"\xd5\xd7\"9\xfaA\xe2\xa7\x94\xa3e:v_\x1e\xbf" +
-	"x\xc08\xff\xe7k-\x85z\xcd\xd3\xf8c\x82\xee\xfa" +
-	"\xc0\xaf\xae\x08'\x16\xdfZms&\xf0\xbaw\xbd\xad" +
-	"\x8dt\xd1\xafS]\xa4\xfb\x8c\xfb\x8d\x17\x16\x17\xf6\xbd" +
-	"\xb3]\xc6\x97\xba\x06Q\xbb\xc4\x95\x97\xbb\xc8\xf5\x85\xbe" +
-	"\xb7*\xef\x8f\xfe\xfe\x1f\xad\xae\xbb.r\xd7\xdc\xdc\xdd" +
-	"\xcfg\xfa\x1e\x1f\x8e\xad\xb5\xd7\xc4\xf3\x9d\\\xd1F\x92" +
-	"\xdcw\x92\xf2\xbc\xef\xb6g\x17\xbe\x9f[]\x8f\xc2a" +
-	"=y\x95\xac\xc5S\xe4\xef\xaf\xf3\xd7R/\xac\xc4n" +
-	"\x80\xda\xcbBc\x80G\x0f\xa5\x04\xd4\xeeJq\xfc\xa4" +
-	"\x1eC\xed\x9en\x19\xc0\xed\x1d\x95+\xffzc\xe8\xbf" +
-	"Q{\x07\xba\xbfG\xf6\xee\xea&{\xb3\xb3\xb3w\x14" +
-	"\x8c\xc9:\x9b\xbc\xe3\x9caM\xdcN\xbf'\x8f\x0dU" +
-	"\x1b\x85J\xde\xb4\xa7\xab\x0e@\x0eQO2\x11@D" +
-	"\x00\xf5\xd4 \x80~\x9c\xa1>*\xa0\x8a\x98\xa1[\xab" +
-	"#$<\xc9P\xcf\x09\xa8\x0aB\x86\xdaV\xbd\xff\x08" +
-	"\x80>\xccP?-`O\xc9\xb0K\x98\x02\x01S\x80" +
-	"=E\xc31\xfc?\xfd\x13\xe4\x0b\xd3!\x1c\x011\x1d" +
-	"\x89Lj\x89l\xdc\xb0&\xc6Lk\xc6\xb4n?c" +
-	":<\xce\x81\x9ca\x195\x1bt%\x08\xf2\xd01\x00" +
-	"}\x80\xa1~\x98\x82\x14\xbc ?\x99\x07\xd0?\xc1P" +
-	"\xff\xb4\x80\xd9\x92Y>Sr0\x0e\x02\xc6\x01\xdd\x19" +
-	"\xd3\x9ah\xd8e\x07\xf0,\x8a \xa0\x18\x09 \xb6S" +
-	"\x00\x85\x92Q\xae\x8f\xd4\xbf\xdc\xf0#\x81\xdd\x07?\xcc" +
-	"\xe3\x18\xc8gy\xb2m]\x0c\xee\x90\xa2;(\x0c\xf5" +
-	"\x8c\x80Y\x8b\x1f\x07\xe1\xfa\xe6\x85\x16\xf3\xc3\xa6!\x17" +
-	"M\x8b\xea5\x10\x98\xf9\xfb\x10\x80\xbe\xcaP\x7f/R" +
-	"\xaf5\xaa\xd7;\x0c\xf5\xeb\x02b\xb3\\\xeb\x16\x80\xfe" +
-	"\x1e\xc3<\x0a\xa82\xcc \x03P7(g\xffc8" +
-	"\xa6\x90T\x142(\x02h\x12\x0e\x01\xe4\x91\xe1X\x92" +
-	"\xc4\x12\xcb\xa0\x04\xa0\xc5\xf1<\xc0X\x92\xe4\xb7\x90<" +
-	"&f0F\xac\x8e\xe7\x00\xc62$\xdfOrY\xca" +
-	"\xf0.\xef\xe3\xf2}$?Hr%\x96A\x05@;" +
-	"\x80\x0b\x00c\x03$?\x8c\x02\xce\xcf\x98\x96]n\xd4" +
-	"\xfd\xc2\xf48\xe5\x9a\x89\x12\x08(\x01\xbaU\xc3\xe6\x99" +
-	"\x84\xfe\xcap\x04c\xae\xed\x18\x8e9l\xd8\x80\x81l" +
-	"\xde\x99\xb3[t\xe8\xdb\xbcY0\xb1<\xe9\xf0\x13\x80" +
-	"\x96\xb3{\x1b\xb5\x1ad\xcbN\xcbG\x85F\xadVv" +
-	"\x1c\x13\xb2V\xab\xb5I\xab1\xd9\xb0M\x0bO\x14\x8b" +
-	"\x96i\xdb\xa1\xad\xdd\xa0\xe1\xf3F\xb5\\4\x9c\x86E" +
-	" \x92\x8d\x9a\x1d\x85\xf3P\x08g\xbf\x84Q4\xcf\x1b" +
-	"\x9e\xc7\xc0a'8\xef\xdcO^\xe3\xdb\x00;\xa01" +
-	"\x1d\x8e\xf5=\xf4lx\xd1\xbci\xf7\xec\x02\xf4\xe9\x90" +
-	"\x91\xf7\xe0\xe6\xb4e\xd4m\xa3\xe0\x94\x1b\xf5\xddvW" +
-	":\x1csm\x8eZ\xd9\xf1D\xa1\xd0\x98\xae;\x94&" +
-	"Vu\xa8\xdd\"v\x07C\xbb-<w\x93\x9e\xbd\xb7" +
-	"Q\xcbr8\xf1\xb6\xdd\xa1\xe4\x14\xf3A\x86\xfa\xa7\xb6" +
-	"\x96<Kx\x9f\xb6\xb7T[h\xe7uV\xa8\xb4\x11" +
-	"\xfa\xb1\xed\x08}<\xe4\xee\x80\xd0\xf5\x8f\x02\xe8\xa3\x0c" +
-	"\xf5\x078\x81\x1aE\xd3\xc2t\xf8\xa6j\xe6,h\x1c" +
-	"V\xa6\x94\x06\xe3\xcf;\x96\x9d9\x1b\xd3\xe1\xf0\xef\x98" +
-	"\xe8H\x0d\xb3\x1e()\xf4t\x10\xbaA\xc9~\x90\xa1" +
-	"^\x8a\x84n\x92\xf0a\x86z5\x12zy\x02@/" +
-	"1\xd4\x1d\"7\xe6\x91\xdb\x14\xe5\xb8\xcaP\x9f\xeb4" +
-	"\xa0\\\xa7\x19\x05\xc8DB>\x97Xf\xc1,O\xd2" +
-	"\x0d\x83\xb7E\xc7\xbb\x84\x93\"\xdf\xef_\xe5&U:" +
-	"=g{Sw\x1b\xb8\x0eP\xea\x0d\xbbd\xda\xd8\x0d" +
-	"\x98c\xc8\x03\xea\xdeK\x7f7GN\xae\x9f\x0f\xab\x9b" +
-	"a7\x9a\x8f=7\x9co;\x82\xe7\xc1\xce\x14\xd6\xea" +
-	"\xaf\x13\x7f\xb5\xe6*o\x16z\xa8\x0em\xdd3\x18\x9d" +
-	"\xff\xbe\xbb\xc1\xb0}:\x94{\xfb\xf2\x05\xac\x957{" +
-	"| \xee\xa5\xeb;e\xae\xc9'\xde\xeb\x01?0\xe2" +
-	"\xdfB<r\xad\xec\xb4q\xc1\x91\x90\x0b\x02*\xc8G" +
-	"\xa9\x00\x9bT@\xfc\x90\xf3\x9a\xac\xdfjL\xd7\x8b\xa8" +
-	"\x80\x80\x0a\x0d\xde\xf2\x99\xba\xe1L[\x80\xe6\xd6\x99\xc9" +
-	"\xac\x00\xb7\xe9p[\x01lA\xf0\x1e\x1e\\\x1e+\xe0" +
-	"\xce\xcc\x1e\xec$\x1d\x9b4\xf4\xc5\xfb\xef\x16&\x01\xf8" +
-	"\xdbf\xe4m~\xe9\"\x08\xea\xb2\x8c\xe1\xaa\x8a\xfe&" +
-	"\xa8.}\x16\x04\xf5)\x19\x85`+A\x7f\xc7S\x17" +
-	"\xcf\x81\xa0>*#\xf3\x17\x9apcU\xcf\xd2\xd9\x94" +
-	"\x8cb\xb0R\xa0\xffxW\xcdq\x10\xd4\x87d\x94\x82" +
-	"\x95\x14\xfd\xc5R\xd5\x1f\x01A\x1d\x91]?7\xe8'" +
-	"\x07\x1b\xc71\x90\x02\x80\xf7\x8fw)d\xbd>\x8d*" +
-	"d=Z\xf0D\x1c\x91\xc0\xea\xcd\xbf\x1c\xfc\xd0C\xf0" +
-	"?\x8eQ\xde\xda\x0d\xaay\x89\xd8.\x86o\xb0\xe9z" +
-	"%\xfa\x7f\x00\x00\x00\xff\xff\x17\xc2:\x05"
+type ZarbServer_sendRawTransaction_Params struct{ capnp.Struct }
+
+// ZarbServer_sendRawTransaction_Params_TypeID is the unique identifier for the type ZarbServer_sendRawTransaction_Params.
+const ZarbServer_sendRawTransaction_Params_TypeID = 0xe051a47070c97f9e
+
+func NewZarbServer_sendRawTransaction_Params(s *capnp.Segment) (ZarbServer_sendRawTransaction_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_sendRawTransaction_Params{st}, err
+}
+
+func NewRootZarbServer_sendRawTransaction_Params(s *capnp.Segment) (ZarbServer_sendRawTransaction_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_sendRawTransaction_Params{st}, err
+}
+
+func ReadRootZarbServer_sendRawTransaction_Params(msg *capnp.Message) (ZarbServer_sendRawTransaction_Params, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_sendRawTransaction_Params{root.Struct()}, err
+}
+
+func (s ZarbServer_sendRawTransaction_Params) String() string {
+	str, _ := text.Marshal(0xe051a47070c97f9e, s.Struct)
+	return str
+}
+
+func (s ZarbServer_sendRawTransaction_Params) RawTx() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return []byte(p.Data()), err
+}
+
+func (s ZarbServer_sendRawTransaction_Params) HasRawTx() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s ZarbServer_sendRawTransaction_Params) SetRawTx(v []byte) error {
+	return s.Struct.SetData(0, v)
+}
+
+// ZarbServer_sendRawTransaction_Params_List is a list of ZarbServer_sendRawTransaction_Params.
+type ZarbServer_sendRawTransaction_Params_List struct{ capnp.List }
+
+// NewZarbServer_sendRawTransaction_Params creates a new list of ZarbServer_sendRawTransaction_Params.
+func NewZarbServer_sendRawTransaction_Params_List(s *capnp.Segment, sz int32) (ZarbServer_sendRawTransaction_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return ZarbServer_sendRawTransaction_Params_List{l}, err
+}
+
+func (s ZarbServer_sendRawTransaction_Params_List) At(i int) ZarbServer_sendRawTransaction_Params {
+	return ZarbServer_sendRawTransaction_Params{s.List.Struct(i)}
+}
+
+func (s ZarbServer_sendRawTransaction_Params_List) Set(i int, v ZarbServer_sendRawTransaction_Params) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_sendRawTransaction_Params_List) String() string {
+	str, _ := text.MarshalList(0xe051a47070c97f9e, s.List)
+	return str
+}
+
+// ZarbServer_sendRawTransaction_Params_Promise is a wrapper for a ZarbServer_sendRawTransaction_Params promised by a client call.
+type ZarbServer_sendRawTransaction_Params_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_sendRawTransaction_Params_Promise) Struct() (ZarbServer_sendRawTransaction_Params, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_sendRawTransaction_Params{s}, err
+}
+
+type ZarbServer_sendRawTransaction_Results struct{ capnp.Struct }
+
+// ZarbServer_sendRawTransaction_Results_TypeID is the unique identifier for the type ZarbServer_sendRawTransaction_Results.
+const ZarbServer_sendRawTransaction_Results_TypeID = 0x8d7ad02d9eab8fb7
+
+func NewZarbServer_sendRawTransaction_Results(s *capnp.Segment) (ZarbServer_sendRawTransaction_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_sendRawTransaction_Results{st}, err
+}
+
+func NewRootZarbServer_sendRawTransaction_Results(s *capnp.Segment) (ZarbServer_sendRawTransaction_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_sendRawTransaction_Results{st}, err
+}
+
+func ReadRootZarbServer_sendRawTransaction_Results(msg *capnp.Message) (ZarbServer_sendRawTransaction_Results, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_sendRawTransaction_Results{root.Struct()}, err
+}
+
+func (s ZarbServer_sendRawTransaction_Results) String() string {
+	str, _ := text.Marshal(0x8d7ad02d9eab8fb7, s.Struct)
+	return str
+}
+
+func (s ZarbServer_sendRawTransaction_Results) Result() (SendTransactionResult, error) {
+	p, err := s.Struct.Ptr(0)
+	return SendTransactionResult{Struct: p.Struct()}, err
+}
+
+func (s ZarbServer_sendRawTransaction_Results) HasResult() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s ZarbServer_sendRawTransaction_Results) SetResult(v SendTransactionResult) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
+}
+
+// NewResult sets the result field to a newly
+// allocated SendTransactionResult struct, preferring placement in s's segment.
+func (s ZarbServer_sendRawTransaction_Results) NewResult() (SendTransactionResult, error) {
+	ss, err := NewSendTransactionResult(s.Struct.Segment())
+	if err != nil {
+		return SendTransactionResult{}, err
+	}
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
+}
+
+// ZarbServer_sendRawTransaction_Results_List is a list of ZarbServer_sendRawTransaction_Results.
+type ZarbServer_sendRawTransaction_Results_List struct{ capnp.List }
+
+// NewZarbServer_sendRawTransaction_Results creates a new list of ZarbServer_sendRawTransaction_Results.
+func NewZarbServer_sendRawTransaction_Results_List(s *capnp.Segment, sz int32) (ZarbServer_sendRawTransaction_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return ZarbServer_sendRawTransaction_Results_List{l}, err
+}
+
+func (s ZarbServer_sendRawTransaction_Results_List) At(i int) ZarbServer_sendRawTransaction_Results {
+	return ZarbServer_sendRawTransaction_Results{s.List.Struct(i)}
+}
+
+func (s ZarbServer_sendRawTransaction_Results_List) Set(i int, v ZarbServer_sendRawTransaction_Results) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_sendRawTransaction_Results_List) String() string {
+	str, _ := text.MarshalList(0x8d7ad02d9eab8fb7, s.List)
+	return str
+}
+
+// ZarbServer_sendRawTransaction_Results_Promise is a wrapper for a ZarbServer_sendRawTransaction_Results promised by a client call.
+type ZarbServer_sendRawTransaction_Results_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_sendRawTransaction_Results_Promise) Struct() (ZarbServer_sendRawTransaction_Results, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_sendRawTransaction_Results{s}, err
+}
+
+func (p ZarbServer_sendRawTransaction_Results_Promise) Result() SendTransactionResult_Promise {
+	return SendTransactionResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+}
+
+const schema_84b56bd0975dfd33 = "x\xda\xb4X{l\x1cg\x11\x9f\xf9\xbe\xdb\xdb;\xfb" +
+	"\xcew\xcb\x9e\x05DN\x1d!\x07\xc5\x86\xb6i\x0c*" +
+	"\x8a\x04\x97\xb8\xa9pK,\xbc\xe7\x80\x1a\xd3 \xd6w" +
+	"Kn\xeb{ew\x1d\x9bH\xc8\xc2\x10\x01\x01'\"" +
+	"<J*R)-\x08\xb5!E)\x04\x1a\xa4\xfc\x11" +
+	"\xa0T\x89R\x91\x87\x10\xa2\xaa\x00E\xa8\x84\xaaP\x02" +
+	"\x8d\x92\x00\xc9\xa2\xf9\xd6\xfb\xb8\x8b\x9f\x12\xfcw7;" +
+	";\xf3\x9b\xd7o\xbeo\xd7\xf7I\x9b\xd8}\xd2G\x93" +
+	"\x00ZE\x8a\xbbWn~u{<\x9f\xfb<(\x9d" +
+	"\xe8\xf6\xdf\xda\xf1\xf8\xf9\xf1\x13_\x00\x89\xcb\x00\xfd\xb3" +
+	"\xb16T\x0f\xc7d\x00\xf5P\xec\x87\x80\xee\xc5\xc2/" +
+	"N\xdf\xf5\x9e\xb5{A[\x83\x0c\x80\x9e\xf4\xdf'\xcd" +
+	" \xa0\xfaAi\x12\xd0\xfd\xe9\x81\xa3O\xde}~\xcf" +
+	",(k\x10@BR8,\xbdB\x0a\xc7\xa5<\xe0" +
+	"\xed\xb3\x17o\xf4\xbetuV<\x16\xaf_\x90\xce\"" +
+	"\xc4\\]y\xec\x9c\xfe\xad\xc7\xf7\x93e\xff\xd1\x8b\xd2" +
+	"\xcf\xe8\xc5\xdf\xd0\x8b\xee\xdf\x9f\xfd\xf6\xf4\x89W\x7f\xbf" +
+	"\x1f\xb4Nd\x11\xa02\xa1\xbb&]V1N\xef\xdc" +
+	"\x92\\\x04t\xd7\x8f>z\xe9#\xab\x7f|`\xce\x9c" +
+	"\x07\xe4\x9d\x89\xa7\xc8^o\x82\x90&\xd4\x1f|rW" +
+	"\xf7\xf87\xa2H\xbf\x9c\xd8G\x0a\x87\x12\xe4\xf0\x97o" +
+	"{wj\xf7\xeduG\xa2\x0a'\x13\xcf\x92\xc2\x19\xa1" +
+	"\xf0\x89\xc9\xa3oV\xf0\xf8SQ\x85\xbf$\x04\xe4\x9b" +
+	"B\xe1\xed\xc3m\x1fzu\xe8\xd4\xd3-\xa9\xf5\xb0$" +
+	"W\xa1\xda\x9b$\xf0k\x93\xa4|\xee\xfa\x96\xd2\x8d3" +
+	"\x13/P|\xad\xda\xea\x83\xc9\x7f\xa9\x9aP\x1eJ\x12" +
+	"\xf8-\xa9\xe9\xfa\xad\xaf\xff\xf3\x85y\x8a\xa6>\x93|" +
+	"E=!t\x8f'\xa9f\xe5\x9f\xdc\xceu\xdd?y" +
+	"\xaaEWdx\xa8m#\xaa;\xdaHy{\xdb\x9f" +
+	"\x01\xddg\xc6g~\xf4\xfa\xf9/\xb5({un\xdf" +
+	"\x80\xea\xe6v\x19\xb8\xdb{\xad\xef\xcdc\x97\xd7\x9c\x9e" +
+	"'0uu\xfbY\xb5\xb7]\xc4\xd5N\x05_W\xfa" +
+	"\xe2\x87\xed\xca\xcb\x91\x1c}\xac\xfdy\xca\x91A\x8f\xdd" +
+	"\x87\xfb~\xf5\xfc\xc9\xd8o\x7f=_\xd8\xfd{\xdbG" +
+	"Q=$\x8c}\xb3\x9d\xe2>9zp\xad\xbe\xef\x0f" +
+	"\x97\x9a\xcaz\xd5\xb3\x87)\xd2xr\xfaL\xa3\xf1]" +
+	"\xed\x8f\xd1\xa2\xe8\xa9\x8b\xa40\x91\"\x87\x8f\xfc\xfc\x1c" +
+	"\xdb<\xfb\xda\x95\x16\xecL8I\xbd\xae\x1eI\xd1\xaf" +
+	"\xc3\xc2\xd8\xd3\xeeW\x9e\x9b\x9d\xe9zc\xbe\x02\xdeL" +
+	"\xf5\xa1\x9aL\x93\xb2\x94&\xc3\xfbW\xbf6~}\xeb" +
+	"\xef\xfe\xd6\x84mm\xfa \xb9~\x7f\x9a\xcc\xdd\x7f4" +
+	"\xb7\xfa\xc0`\xfcjk\xac\x9e\xef\xf4e\xf5\x880w" +
+	"8Me\xeb\xba\xeb\xfb3\xdf\x19\xber-\x1a\xc8P" +
+	"\x87\x08D\xef \x7f\x7f\x9a\xbe\x94~\xeer\xfc&(" +
+	"\x9d<4\x06\xd8\xff\xb9\x0e\x86\xeal\x87h\xe8\x8e\x97" +
+	"P}1#\x03\xb8\x9d[\xe5\xf1\x7f\\\x18\xf8w\xd4" +
+	"\xde\xb1\xcc\x13d\xefT\x86\xecMNN\xde[\xd4\x1b" +
+	"5\xde\xb8w\x8fn\x8d\xddC\xbf\x1b\x1b\x07*\xf5\xe2" +
+	"x\xc1\xb0'*\x0e\xc00\xa2\x96\xe21\x80\x18\x02(" +
+	"\x0f\xf6\x01h\x9b8j[\x19*\x889\x8aZy\x88" +
+	"\x84[8j\xc3\x0c\x15\xc6rD\x13\xca\xd0\x06\x00m" +
+	"\x90\xa3\xb6\x8da\xa6\xac\xdbeL\x03\xc34`\xa6\xa4" +
+	";\xba\xff\xa7{\x8c|a6\xecn@\xccF\x90I" +
+	"M\xc8Fukl\xc4\xb0v\x1b\xd6=;\x0dG\xe0" +
+	"\xec\x19\xd6-\xbdj\x83\x96\x08@\xf6n\x04\xd0z8" +
+	"j\xeb\x09$\xf3@\xde]\x00\xd0\xde\xcbQ\xfb\x00\xc3" +
+	"|\xd90w\x96\x1dL\x02\xc3$\xa0\xbb\xdb\xb0\xc6\xea" +
+	"\xb6\xe9\x00~\x06c\xc00\x16\x01\x10_\x08\x80m\xd4" +
+	"J\x05}r\x9b\xa5\xd7l\xbd\xe8\x98\xf5Z\x8f\xc8\x19" +
+	"wl-\x16`I\x13\x96\x04G-\xc70o\x89\x9c" +
+	"b6\x9c\x80\x96h\xe3KE[,\xebf\xed\xa1\xda" +
+	"\xa7\xeb~\xd8\xb0\xfcL\x0d\x8a\xa0{\x0ay\x81b)" +
+	"\x90~n|\xf3\xac\xc9\xfc\xa0\xa1\xcb%\xc3\xa2\xe6\xe8" +
+	"\x09\xcc\xfcu\x00@\xbb\xc2Q{+\xd2\x1cW\xa99" +
+	"\xde\xe0\xa8\xdd`\x88s\xbdq\xcd\x02\xd0\xde\xe2X@" +
+	"\x86\x0a\xc7\x1cr\x00\xe5\x16\x15\xe8?\x1cG\x12$\x8d" +
+	"\xb1\x1c\xc6h\xcep\x00\xa0\x80\x1cGR$\x96x\x0e" +
+	"%\x005\x89\xfb\x00FR$\x7f\x07\xc9\xe3\xb1\x1c\xc6" +
+	"\x01\xd4N\xdc\x030\x92#\xf9\x1a\x92\xcbR\xcec(" +
+	"!\xef\"\xf9:\x92'\xe29L\x10_\xe1\x0c\xc0H" +
+	"\x0f\xc9\xd7#\xc3\xe9\xdd\x86e\x9b\xf5\x9a\xdf\x05\x19\xc7" +
+	"\xac\x1a(\x01C\x09\xd0\xad\xe8\xb6\xc8$t\x8f\x0fF" +
+	"\x1a\xda\xb5\x1d\xdd1\x06u\x1b0\x90M;Sv\x93" +
+	"\x0e\xbd[0\x8a\x06\x9a\x0dG<\x01hz\xf6@\xbd" +
+	"Z\x85\xbc\xe94\xbdT\xacW\xab\xa6\xe3\x18\x90\xb7\x9a" +
+	"\xad5\xacz\xa3n\x1b\x16n.\x95,\xc3\xb6C[" +
+	"\xcb\xe9\x86\x8f\xeb\x15\xb3\xa4;u\x8b\x9aH\xd6\xabv" +
+	"tv\x06\xc2\xd9\xf1K\x18\x1d\x9di\xdd\xf3\x188\\" +
+	"lv\x96\x1e^\x8fel\x80%G&8\xb3\xac\x80" +
+	" \xc2@\x0b\x86\x9dYF\xd3gC\xfa_\x81\x9b&" +
+	"\x0aX\xdete\xc3\x15\xdd\xe2\xa8\x99\x8a7\x17\x8b\xf5" +
+	"\x89\x9aCi\xe2\x15\x87\xc6-b\xb7/\xb4\xdbD\xaa" +
+	"\x0b\xcc\xec\x03\xf5j^\xb4\x93\x18\xdb%JN\x98\xd7" +
+	"q\xd4\xdewg\xc9\xf3\xd4\xef\x13\xf6\x1d\xd5f\xadK" +
+	"\x84\x17\xc7[\xb6\xc7\xc6\xf9\xb6\xc7h\xb8(\x82\xed\xa1" +
+	"\xbd\x0b@\xdb\xcaQ{D\xb0\xb5^2,\xcc\x86\xe7" +
+	"\xc1\xb9\x9c\x05\x83\xc3MJi\xb0k\xbd\xc7\xb23e" +
+	"c6<\xb8,\x9a\xe8H\x0d\xf3^S\x12\xf4l\x00" +
+	"]_\x05\xa0=\xcaQ+G\xa0\x1bT\x81Oq\xd4" +
+	"*\x11\xe8\xe6\x18\x80V\xe6\xa89Dn\xdc#\xb7]" +
+	"\x94\xe3\x0aGm\x8a!7K\xf3\xeeB\xd7\x99\xc3\x00" +
+	"2Q\x90\xcf$\x96Q4\xcc\x06\xc5\x17\x1cc\x16\x8d" +
+	"$\xdc\x13\x85n?\x90\x05j\xb4m\xca\xf6\x16\xfc<" +
+	"\xcd\xdaC\x89\xd7\xed\xb2ac\x07\xe00G\x01\xa8c" +
+	"%\xd3=\xb7p\x86\xbb\xc5\xaaZ\xa8s\xa3g\x83\xc0" +
+	"v\xac\xc9\xf6\x88Q+E\x0a\x14\x99\x86\xf9\x97~\xd0" +
+	"\xc5\xab\xc2.n\xe9\xdaH\x11V<\xe3~@\x11\xe7" +
+	"\xab\x16g\xcd\xa8\xb7\xff\xd5aC\x1c\x00\xb0)\xad\x1b" +
+	"\xc2\xb4v[\xfa\xe4\xb6\xa9%\x18\xa1`\x143\xd4[" +
+	"-\x99\xec\x8b\x1e\x9f\xfch\xfa\xc2T.|\x9c[\xa0" +
+	"%\x03\x1e.\x18\x19\x7f\xb4V\xc2c\x8b\x15f\x8e!" +
+	"\x83t\xfc\x9fV\xd9\x1dT*WM\xa7\x85\xdd6\x84" +
+	"\xec\x16\x90[!Jn8Gn\xc4x\xc3\x1emt" +
+	"[\xf5\x89Z\x09\x13\xc00AG\x09sgMw&" +
+	",@\xe3\xceS\x00\xb7\x82Y\xcc\x86wG\xc0\xa6\xa9" +
+	"\\\xc1\x11\xd2\xe39\\zW\x057\xc4E\x89'\xf4" +
+	"%8\xa5\x8bK\x00\xfe\xdd?r\xb5\xb9p\x10\x98\xf2" +
+	"\xb2\x8c\xe1\x97\x05\xf4\xef\xe5\xca\xe9\x87\x81)'ed" +
+	"\xc1\xad\x0f\xfd\x1b\xb7rl\x0f0\xe5{2r\xffz" +
+	"\x19~?P\x0e\xd1\xb3\xaf\xc9\x18\x0bnd\xe8\xdf}" +
+	"\x94\xbd\xa3\xc0\x94\xcf\xca(\x05\x1f\x08\xd0\xbf\xe6+\xbb" +
+	"\x1e\x03\xa6\x982\xc6\x83;$\xfa_3\x94\x1dO\x00" +
+	"S\xb6\xcb\xae\x9f7\xf4\x13\x87\xf5M\x18H\x01\xc0\xfb" +
+	"'F\x13\xf2\xdepF\x15\xf2\x1e\x0dz\"\xd1\xad\xc0" +
+	"ks\x7f\xc5`@\x86Fc\x13\xba\xfe\x90\xa3?\xe5" +
+	"\x9c,E\xe9{9\x83\xb0\xecKH\xf0\xa9\xc2\xab\xea" +
+	"\x7f\x03\x00\x00\xff\xffB(\xc4#"
 
 func init() {
 	schemas.Register(schema_84b56bd0975dfd33,
 		0x83143f06598cf9e8,
 		0x85252b1ec1c352d2,
+		0x8d7ad02d9eab8fb7,
 		0x8df1c729f8d2ca00,
 		0x8e979661cc6a1161,
 		0x8ededcb57f98aaf0,
@@ -2378,7 +2663,9 @@ func init() {
 		0xbd88d0eab3826ba9,
 		0xc120e2adef2af529,
 		0xcd6c734787642800,
+		0xcfd704b9b2c62a4a,
 		0xd3df8a6125925ab9,
+		0xe051a47070c97f9e,
 		0xe8e68d4102ccc258,
 		0xec1c828dae8bffa3,
 		0xeed94cf76be61d8e,
