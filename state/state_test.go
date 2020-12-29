@@ -42,7 +42,7 @@ func init() {
 	tCommonTxPool = txpool.NewMockTxPool()
 }
 
-func setupStatewithFourValidators(t *testing.T, signer crypto.Signer) *state {
+func setupStateWithFourValidators(t *testing.T, signer crypto.Signer) *state {
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	// 2,100,000,000,000,000
@@ -60,7 +60,7 @@ func setupStatewithFourValidators(t *testing.T, signer crypto.Signer) *state {
 	return s
 }
 
-func setupStatewithOneValidator(t *testing.T) *state {
+func setupStateWithOneValidator(t *testing.T) *state {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
@@ -116,7 +116,7 @@ func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers .
 }
 
 func TestProposeBlockAndValidation(t *testing.T) {
-	st := setupStatewithOneValidator(t)
+	st := setupStateWithOneValidator(t)
 
 	block := st.ProposeBlock()
 	err := st.ValidateBlock(block)
@@ -133,7 +133,7 @@ func TestBlockSubsidy(t *testing.T) {
 }
 
 func TestBlockSubsidyTx(t *testing.T) {
-	st := setupStatewithOneValidator(t)
+	st := setupStateWithOneValidator(t)
 
 	trx := st.createSubsidyTx(7)
 	assert.True(t, trx.IsSubsidyTx())
@@ -147,7 +147,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 }
 
 func TestApplyBlocks(t *testing.T) {
-	st := setupStatewithOneValidator(t)
+	st := setupStateWithOneValidator(t)
 
 	b1, c1 := proposeAndSignBlock(t, st)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
@@ -159,7 +159,7 @@ func TestApplyBlocks(t *testing.T) {
 func TestCommitSandbox(t *testing.T) {
 
 	t.Run("Commit new account", func(t *testing.T) {
-		st := setupStatewithFourValidators(t, tValSigner1)
+		st := setupStateWithFourValidators(t, tValSigner1)
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
 		newAcc := st.executionSandbox.MakeNewAccount(addr)
@@ -170,7 +170,7 @@ func TestCommitSandbox(t *testing.T) {
 	})
 
 	t.Run("Commit new validator", func(t *testing.T) {
-		st := setupStatewithFourValidators(t, tValSigner1)
+		st := setupStateWithFourValidators(t, tValSigner1)
 
 		addr, pub, _ := crypto.GenerateTestKeyPair()
 		newVal := st.executionSandbox.MakeNewValidator(pub)
@@ -181,7 +181,7 @@ func TestCommitSandbox(t *testing.T) {
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
-		st := setupStatewithFourValidators(t, tValSigner1)
+		st := setupStateWithFourValidators(t, tValSigner1)
 
 		acc := st.executionSandbox.Account(crypto.TreasuryAddress)
 		acc.SubtractFromBalance(1)
@@ -193,7 +193,7 @@ func TestCommitSandbox(t *testing.T) {
 	})
 
 	t.Run("Modify validator", func(t *testing.T) {
-		st := setupStatewithFourValidators(t, tValSigner1)
+		st := setupStateWithFourValidators(t, tValSigner1)
 
 		val := st.executionSandbox.Validator(tValSigner2.Address())
 		val.AddToStake(1)
@@ -205,7 +205,7 @@ func TestCommitSandbox(t *testing.T) {
 	})
 
 	t.Run("Move valset", func(t *testing.T) {
-		st := setupStatewithFourValidators(t, tValSigner1)
+		st := setupStateWithFourValidators(t, tValSigner1)
 
 		nextProposer := st.validatorSet.Proposer(1)
 
@@ -215,7 +215,7 @@ func TestCommitSandbox(t *testing.T) {
 	})
 
 	t.Run("Move valset next round", func(t *testing.T) {
-		st := setupStatewithFourValidators(t, tValSigner1)
+		st := setupStateWithFourValidators(t, tValSigner1)
 
 		nextNextProposer := st.validatorSet.Proposer(2)
 
@@ -226,7 +226,7 @@ func TestCommitSandbox(t *testing.T) {
 }
 
 func TestUpdateLastCommit(t *testing.T) {
-	st := setupStatewithFourValidators(t, tValSigner1)
+	st := setupStateWithFourValidators(t, tValSigner1)
 	b := st.ProposeBlock()
 	c1 := makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner3, tValSigner4)
 	c2 := makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)

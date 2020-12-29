@@ -10,8 +10,8 @@ import (
 )
 
 func TestChangeAcc(t *testing.T) {
-	st1 := setupStatewithOneValidator(t)
-	st2 := setupStatewithOneValidator(t)
+	st1 := setupStateWithOneValidator(t)
+	st2 := setupStateWithOneValidator(t)
 
 	require.Equal(t, st1.store.TotalAccounts(), 1)
 
@@ -39,8 +39,8 @@ func TestChangeAcc(t *testing.T) {
 }
 
 func TestChangeVal(t *testing.T) {
-	st1 := setupStatewithOneValidator(t)
-	st2 := setupStatewithOneValidator(t)
+	st1 := setupStateWithOneValidator(t)
+	st2 := setupStateWithOneValidator(t)
 
 	require.Equal(t, st1.store.TotalValidators(), 1)
 
@@ -68,7 +68,7 @@ func TestChangeVal(t *testing.T) {
 }
 
 func TestCalculatingGenesisState(t *testing.T) {
-	st := setupStatewithFourValidators(t, tValSigner1)
+	st := setupStateWithFourValidators(t, tValSigner1)
 
 	r := st.calculateGenesisStateHashFromGenesisDoc()
 	assert.Equal(t, st.stateHash(), r)

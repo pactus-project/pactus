@@ -12,7 +12,7 @@ import (
 )
 
 func TestProposeBlock(t *testing.T) {
-	st1 := setupStatewithOneValidator(t)
+	st1 := setupStateWithOneValidator(t)
 
 	b1, c1 := proposeAndSignBlock(t, st1)
 	assert.NoError(t, st1.ApplyBlock(1, b1, c1))
@@ -44,7 +44,7 @@ func TestProposeBlock(t *testing.T) {
 }
 
 func TestExecuteBlock(t *testing.T) {
-	st := setupStatewithOneValidator(t)
+	st := setupStateWithOneValidator(t)
 
 	b1, c1 := proposeAndSignBlock(t, st)
 	assert.NoError(t, st.ApplyBlock(1, b1, c1))

@@ -15,7 +15,7 @@ import (
 )
 
 func TestSaveLoadLastInfo(t *testing.T) {
-	st := setupStatewithOneValidator(t)
+	st := setupStateWithOneValidator(t)
 	b, _ := block.GenerateTestBlock(nil, nil)
 
 	st.saveLastInfo(125, *b.LastCommit(), b.Header().LastReceiptsHash())
@@ -27,7 +27,7 @@ func TestSaveLoadLastInfo(t *testing.T) {
 }
 
 func TestLoadState(t *testing.T) {
-	st1 := setupStatewithFourValidators(t, tValSigner1)
+	st1 := setupStateWithFourValidators(t, tValSigner1)
 
 	i := 0
 	for ; i < 10; i++ {
@@ -56,7 +56,7 @@ func TestLoadState(t *testing.T) {
 }
 
 func TestLoadStateAfterChangingGenesis(t *testing.T) {
-	st1 := setupStatewithOneValidator(t)
+	st1 := setupStateWithOneValidator(t)
 
 	// Let's commit some blocks
 	i := 0

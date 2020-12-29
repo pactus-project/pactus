@@ -2,17 +2,19 @@ package state
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
 func TestTransactionLost(t *testing.T) {
-	st1 := setupStatewithFourValidators(t, tValSigner1)
-	st2 := setupStatewithFourValidators(t, tValSigner2)
+	st1 := setupStateWithFourValidators(t, tValSigner1)
+	st2 := setupStateWithFourValidators(t, tValSigner2)
 
 	b1 := st1.ProposeBlock()
 	assert.NoError(t, st2.ValidateBlock(b1))
@@ -23,8 +25,8 @@ func TestTransactionLost(t *testing.T) {
 }
 
 func TestCommitValidation(t *testing.T) {
-	st1 := setupStatewithFourValidators(t, tValSigner1)
-	st2 := setupStatewithFourValidators(t, tValSigner2)
+	st1 := setupStateWithFourValidators(t, tValSigner1)
+	st2 := setupStateWithFourValidators(t, tValSigner2)
 
 	b1 := st1.ProposeBlock()
 	{
@@ -176,4 +178,14 @@ func TestCommitValidation(t *testing.T) {
 		assert.NoError(t, st1.UpdateLastCommit(c))
 	})
 
+}
+
+func TestUpdateBlockTime(t *testing.T) {
+	st := setupStateWithOneValidator(t)
+
+	// Maipulate last block time
+	last := st.lastBlockTime
+	st.lastBlockTime = util.Now().Add(-2 * time.Second)
+	b := st.ProposeBlock()
+	assert.True(t, b.Header().Time().After(last))
 }
