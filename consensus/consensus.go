@@ -54,6 +54,9 @@ func NewConsensus(
 }
 
 func (cs *consensus) Stop() {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
 	cs.hrs.UpdateHeight(-1)
 }
 
