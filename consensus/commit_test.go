@@ -6,15 +6,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vote.Vote) {
-	b = st.ProposeBlock()
+func commitFirstBlock(t *testing.T) (b block.Block, votes [3]*vote.Vote) {
+	pb, err := tConsX.state.ProposeBlock(0)
+	require.NoError(t, err)
+	b = *pb
 
 	sb := vote.CommitSignBytes(b.Hash(), 0)
 	sig1 := tSigners[0].Sign(sb)
@@ -32,7 +32,13 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 		sig)
 
 	require.NotNil(t, c)
-	err := st.ApplyBlock(1, b, *c)
+	err = tConsX.state.ApplyBlock(1, b, *c)
+	assert.NoError(t, err)
+	err = tConsY.state.ApplyBlock(1, b, *c)
+	assert.NoError(t, err)
+	err = tConsB.state.ApplyBlock(1, b, *c)
+	assert.NoError(t, err)
+	err = tConsP.state.ApplyBlock(1, b, *c)
 	assert.NoError(t, err)
 
 	return
@@ -41,7 +47,7 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 func TestInvalidStepAfterBlockCommit(t *testing.T) {
 	setup(t)
 
-	commitFirstBlock(t, tConsY.state)
+	commitFirstBlock(t)
 
 	tConsY.enterNewHeight()
 
@@ -56,8 +62,7 @@ func TestInvalidStepAfterBlockCommit(t *testing.T) {
 func TestEnterCommit(t *testing.T) {
 	setup(t)
 
-	commitFirstBlock(t, tConsY.state)
-	commitFirstBlock(t, tConsB.state)
+	commitFirstBlock(t)
 
 	tConsY.enterNewHeight()
 	tConsY.enterNewRound(1)
@@ -96,9 +101,10 @@ func TestEnterCommit(t *testing.T) {
 	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "", &pub, nil)
 	tSigners[tIndexX].SignMsg(trx)
 	tTxPool.AppendTx(trx) // This will change block
-	b2 := tConsX.state.ProposeBlock()
+	b2, err := tConsY.state.ProposeBlock(0)
+	require.NoError(t, err)
 	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
-	p2 := vote.NewProposal(2, 1, b2)
+	p2 := vote.NewProposal(2, 1, *b2)
 	tSigners[tIndexX].SignMsg(p2)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
 
@@ -110,5 +116,5 @@ func TestEnterCommit(t *testing.T) {
 
 	// Everything is good
 	tConsY.enterCommit(1)
-	checkHRSWait(t, tConsY, 3, 0, hrs.StepTypePrepare)
+	shouldPublishProposalBlock(t, tConsY)
 }

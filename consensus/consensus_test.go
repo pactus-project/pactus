@@ -81,6 +81,23 @@ func setup(t *testing.T) {
 	tConsP = consP.(*consensus)
 }
 
+func shouldPublishProposalBlock(t *testing.T, cons *consensus) {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("Timeout"))
+			return
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishProposalBlock", "msg", msg)
+
+			if msg.PayloadType() == payload.PayloadTypeBlocks {
+				return
+			}
+		}
+	}
+}
 func shouldPublishProposalReqquest(t *testing.T, cons *consensus) {
 	timeout := time.NewTimer(1 * time.Second)
 

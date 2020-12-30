@@ -79,13 +79,17 @@ func (cs *consensus) enterPropose(round int) {
 }
 
 func (cs *consensus) createProposal(height int, round int) {
-	block := cs.state.ProposeBlock()
-	if err := cs.state.ValidateBlock(block); err != nil {
+	block, err := cs.state.ProposeBlock(round)
+	if err != nil {
+		cs.logger.Error("Propose: We can't propose a block. Why?", "err", err)
+		return
+	}
+	if err := cs.state.ValidateBlock(*block); err != nil {
 		cs.logger.Error("Propose: Our block is invalid. Why?", "err", err)
 		return
 	}
 
-	proposal := vote.NewProposal(height, round, block)
+	proposal := vote.NewProposal(height, round, *block)
 	cs.signer.SignMsg(proposal)
 	cs.setProposal(proposal)
 
