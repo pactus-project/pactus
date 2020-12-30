@@ -18,6 +18,10 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
+var tState1 *state
+var tState2 *state
+var tState3 *state
+var tState4 *state
 var tValSigner1 crypto.Signer
 var tValSigner2 crypto.Signer
 var tValSigner3 crypto.Signer
@@ -25,7 +29,7 @@ var tValSigner4 crypto.Signer
 var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
-func init() {
+func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
 
 	_, _, priv1 := crypto.GenerateTestKeyPair()
@@ -40,9 +44,6 @@ func init() {
 
 	tGenTime = util.Now()
 	tCommonTxPool = txpool.NewMockTxPool()
-}
-
-func setupStateWithFourValidators(t *testing.T, signer crypto.Signer) *state {
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	// 2,100,000,000,000,000
@@ -53,35 +54,36 @@ func setupStateWithFourValidators(t *testing.T, signer crypto.Signer) *state {
 	val4 := validator.NewValidator(tValSigner4.PublicKey(), 3, 0)
 	gnDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, 1)
 
-	st, err := LoadOrNewState(TestConfig(), gnDoc, signer, tCommonTxPool)
+	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, tCommonTxPool)
 	require.NoError(t, err)
-	s, _ := st.(*state)
+	st2, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner2, tCommonTxPool)
+	require.NoError(t, err)
+	st3, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner3, tCommonTxPool)
+	require.NoError(t, err)
+	st4, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner4, tCommonTxPool)
+	require.NoError(t, err)
 
-	return s
+	tState1, _ = st1.(*state)
+	tState2, _ = st2.(*state)
+	tState3, _ = st3.(*state)
+	tState4, _ = st4.(*state)
 }
 
-func setupStateWithOneValidator(t *testing.T) *state {
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(21 * 1e14)
-	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
-	genDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val}, 1)
+func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (block.Block, block.Commit) {
+	next := tState1.lastBlockHeight + round
+	st := tState1
+	if next%4 == 1 {
+		st = tState2
+	} else if next%4 == 2 {
+		st = tState3
+	} else if next%4 == 3 {
+		st = tState4
+	}
 
-	st, err := LoadOrNewState(TestConfig(), genDoc, tValSigner1, txpool.NewMockTxPool())
-	require.NoError(t, err)
-	s, _ := st.(*state)
+	b, _ := st.ProposeBlock(round)
+	c := makeCommitAndSign(t, b.Hash(), round, signers...)
 
-	return s
-}
-
-func proposeAndSignBlock(t *testing.T, st *state) (block.Block, block.Commit) {
-	b := st.ProposeBlock()
-	committers := make([]block.Committer, 1)
-	sb := vote.CommitSignBytes(b.Hash(), 0)
-	committers[0] = block.Committer{Status: 1, Address: tValSigner1.Address()}
-	sig := tValSigner1.Sign(sb)
-
-	c := block.NewCommit(0, committers, *sig)
-	return b, *c
+	return *b, c
 }
 
 func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Commit {
@@ -115,11 +117,18 @@ func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers .
 	return *block.NewCommit(round, committers, crypto.Aggregate(sigs))
 }
 
+func applyBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {
+	assert.NoError(t, tState1.ApplyBlock(tState1.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState2.ApplyBlock(tState2.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState3.ApplyBlock(tState3.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState4.ApplyBlock(tState4.lastBlockHeight+1, b, c))
+}
 func TestProposeBlockAndValidation(t *testing.T) {
-	st := setupStateWithOneValidator(t)
+	setup(t)
 
-	block := st.ProposeBlock()
-	err := st.ValidateBlock(block)
+	b, _ := tState1.ProposeBlock(0)
+	assert.NotNil(t, b)
+	err := tState1.ValidateBlock(*b)
 	require.NoError(t, err)
 }
 
@@ -133,109 +142,115 @@ func TestBlockSubsidy(t *testing.T) {
 }
 
 func TestBlockSubsidyTx(t *testing.T) {
-	st := setupStateWithOneValidator(t)
+	setup(t)
 
-	trx := st.createSubsidyTx(7)
+	trx := tState1.createSubsidyTx(7)
 	assert.True(t, trx.IsSubsidyTx())
-	assert.Equal(t, trx.Payload().Value(), calcBlockSubsidy(1, st.params.SubsidyReductionInterval)+7)
+	assert.Equal(t, trx.Payload().Value(), calcBlockSubsidy(1, tState1.params.SubsidyReductionInterval)+7)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
 
 	addr, _, _ := crypto.GenerateTestKeyPair()
-	st.config.MintbaseAddress = &addr
-	trx = st.createSubsidyTx(0)
+	tState1.config.MintbaseAddress = &addr
+	trx = tState1.createSubsidyTx(0)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
 }
 
 func TestApplyBlocks(t *testing.T) {
-	st := setupStateWithOneValidator(t)
+	setup(t)
 
-	b1, c1 := proposeAndSignBlock(t, st)
+	b1, c1 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
-	assert.Error(t, st.ApplyBlock(1, *invBlock, c1))
-	assert.Error(t, st.ApplyBlock(2, b1, c1))
-	assert.NoError(t, st.ApplyBlock(1, b1, c1))
+	assert.Error(t, tState1.ApplyBlock(1, *invBlock, c1))
+	assert.Error(t, tState1.ApplyBlock(2, b1, c1))
+	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
 }
 
 func TestCommitSandbox(t *testing.T) {
 
 	t.Run("Commit new account", func(t *testing.T) {
-		st := setupStateWithFourValidators(t, tValSigner1)
+		setup(t)
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
-		newAcc := st.executionSandbox.MakeNewAccount(addr)
+		newAcc := tState1.executionSandbox.MakeNewAccount(addr)
 		newAcc.AddToBalance(1)
-		st.commitSandbox(0)
+		tState1.commitSandbox(0)
 
-		assert.True(t, st.store.HasAccount(addr))
+		assert.True(t, tState1.store.HasAccount(addr))
 	})
 
 	t.Run("Commit new validator", func(t *testing.T) {
-		st := setupStateWithFourValidators(t, tValSigner1)
+		setup(t)
 
 		addr, pub, _ := crypto.GenerateTestKeyPair()
-		newVal := st.executionSandbox.MakeNewValidator(pub)
+		newVal := tState1.executionSandbox.MakeNewValidator(pub)
 		newVal.AddToStake(1)
-		st.commitSandbox(0)
+		tState1.commitSandbox(0)
 
-		assert.True(t, st.store.HasValidator(addr))
+		assert.True(t, tState1.store.HasValidator(addr))
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
-		st := setupStateWithFourValidators(t, tValSigner1)
+		setup(t)
 
-		acc := st.executionSandbox.Account(crypto.TreasuryAddress)
+		acc := tState1.executionSandbox.Account(crypto.TreasuryAddress)
 		acc.SubtractFromBalance(1)
-		st.executionSandbox.UpdateAccount(acc)
-		st.commitSandbox(0)
+		tState1.executionSandbox.UpdateAccount(acc)
+		tState1.commitSandbox(0)
 
-		acc1, _ := st.store.Account(crypto.TreasuryAddress)
+		acc1, _ := tState1.store.Account(crypto.TreasuryAddress)
 		assert.Equal(t, acc1.Balance(), acc.Balance())
 	})
 
 	t.Run("Modify validator", func(t *testing.T) {
-		st := setupStateWithFourValidators(t, tValSigner1)
+		setup(t)
 
-		val := st.executionSandbox.Validator(tValSigner2.Address())
+		val := tState1.executionSandbox.Validator(tValSigner2.Address())
 		val.AddToStake(1)
-		st.executionSandbox.UpdateValidator(val)
-		st.commitSandbox(0)
+		tState1.executionSandbox.UpdateValidator(val)
+		tState1.commitSandbox(0)
 
-		val1, _ := st.store.Validator(tValSigner2.Address())
+		val1, _ := tState1.store.Validator(tValSigner2.Address())
 		assert.Equal(t, val1.Stake(), val.Stake())
 	})
 
 	t.Run("Move valset", func(t *testing.T) {
-		st := setupStateWithFourValidators(t, tValSigner1)
+		setup(t)
 
-		nextProposer := st.validatorSet.Proposer(1)
+		nextProposer := tState1.validatorSet.Proposer(1)
 
-		st.commitSandbox(0)
+		tState1.commitSandbox(0)
 
-		assert.Equal(t, st.validatorSet.Proposer(0).Address(), nextProposer.Address())
+		assert.Equal(t, tState1.validatorSet.Proposer(0).Address(), nextProposer.Address())
 	})
 
 	t.Run("Move valset next round", func(t *testing.T) {
-		st := setupStateWithFourValidators(t, tValSigner1)
+		setup(t)
 
-		nextNextProposer := st.validatorSet.Proposer(2)
+		nextNextProposer := tState1.validatorSet.Proposer(2)
 
-		st.commitSandbox(1)
+		tState1.commitSandbox(1)
 
-		assert.Equal(t, st.validatorSet.Proposer(0).Address(), nextNextProposer.Address())
+		assert.Equal(t, tState1.validatorSet.Proposer(0).Address(), nextNextProposer.Address())
 	})
 }
 
 func TestUpdateLastCommit(t *testing.T) {
-	st := setupStateWithFourValidators(t, tValSigner1)
-	b := st.ProposeBlock()
-	c1 := makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner3, tValSigner4)
-	c2 := makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	setup(t)
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner3, tValSigner4)
+	b11, c11 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
-	st.lastCommit = &c1
-	st.lastBlockHash = b.Hash()
-	assert.NoError(t, st.UpdateLastCommit(&c1))
-	assert.Equal(t, st.lastCommit.Hash(), c1.Hash())
-	assert.NoError(t, st.UpdateLastCommit(&c2))
-	assert.NoError(t, st.UpdateLastCommit(&c1))
-	assert.Equal(t, st.lastCommit.Hash(), c2.Hash())
+	assert.Equal(t, b1.Hash(), b11.Hash())
+
+	applyBlockAndCommitForAllStates(t, b1, c1)
+
+	b2, c2 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	assert.NotEqual(t, b1.Hash(), b2.Hash())
+
+	assert.Equal(t, tState1.lastCommit.Hash(), c1.Hash())
+	assert.Error(t, tState1.UpdateLastCommit(&c2))
+	assert.NoError(t, tState1.UpdateLastCommit(&c1))
+	assert.Equal(t, tState1.lastCommit.Hash(), c1.Hash())
+	assert.NoError(t, tState1.UpdateLastCommit(&c11))
+	assert.NoError(t, tState1.UpdateLastCommit(&c1))
+	assert.Equal(t, tState1.lastCommit.Hash(), c11.Hash())
 }

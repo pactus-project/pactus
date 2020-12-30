@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"path/filepath"
-	"time"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/account"
@@ -12,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -94,10 +94,8 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 	val := validator.NewValidator(k.PublicKey(), 0, 0)
 	vals := []*validator.Validator{val}
 
-	tm := time.Now().Truncate(0).UTC()
-
 	// create genesis
-	gen := genesis.MakeGenesis(chainName, tm, accs, vals, 10)
+	gen := genesis.MakeGenesis(chainName, util.RoundNow(60), accs, vals, 10)
 	return gen
 
 }

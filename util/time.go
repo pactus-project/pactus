@@ -5,9 +5,13 @@ import (
 )
 
 func Now() time.Time {
-	return Canonical(time.Now())
+	return RoundTime(time.Now(), 0)
 }
 
-func Canonical(t time.Time) time.Time {
-	return t.Round(0).UTC()
+func RoundNow(sec int) time.Time {
+	return RoundTime(time.Now(), sec)
+}
+
+func RoundTime(t time.Time, sec int) time.Time {
+	return t.Round(time.Duration(sec) * time.Second).UTC()
 }

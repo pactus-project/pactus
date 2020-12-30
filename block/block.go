@@ -167,7 +167,7 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 	} else {
 		commit.data.Committers = append(commit.data.Committers, Committer{Address: *proposer, Status: CommitNotSigned})
 	}
-	block := MakeBlock(time.Now(), ids,
+	block := MakeBlock(util.Now(), ids,
 		*lastBlockHash,
 		crypto.GenerateTestHash(),
 		crypto.GenerateTestHash(),

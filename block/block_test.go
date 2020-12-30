@@ -18,6 +18,10 @@ func TestRandomBlock(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
+	b.data.Header.data.Version = 2
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
 	b.data.Header.data.StateHash = crypto.UndefHash
 	assert.Error(t, b.SanityCheck())
 

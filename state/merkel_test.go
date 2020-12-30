@@ -10,66 +10,64 @@ import (
 )
 
 func TestChangeAcc(t *testing.T) {
-	st1 := setupStateWithOneValidator(t)
-	st2 := setupStateWithOneValidator(t)
+	setup(t)
 
-	require.Equal(t, st1.store.TotalAccounts(), 1)
+	require.Equal(t, tState1.store.TotalAccounts(), 1)
 
 	acc1, _ := account.GenerateTestAccount(1)
 	acc2, _ := account.GenerateTestAccount(2)
 	acc3, _ := account.GenerateTestAccount(3)
 	acc4, _ := account.GenerateTestAccount(4)
 
-	st1.store.UpdateAccount(acc1)
-	st1.store.UpdateAccount(acc2)
-	st1.store.UpdateAccount(acc3)
-	st1.store.UpdateAccount(acc4)
-	root1 := st1.accountsMerkleRootHash()
+	tState1.store.UpdateAccount(acc1)
+	tState1.store.UpdateAccount(acc2)
+	tState1.store.UpdateAccount(acc3)
+	tState1.store.UpdateAccount(acc4)
+	root1 := tState1.accountsMerkleRootHash()
 
 	// Change an account
 	acc3.IncSequence()
 
-	st2.store.UpdateAccount(acc2)
-	st2.store.UpdateAccount(acc3)
-	st2.store.UpdateAccount(acc1)
-	st2.store.UpdateAccount(acc4)
-	root2 := st2.accountsMerkleRootHash()
+	tState2.store.UpdateAccount(acc2)
+	tState2.store.UpdateAccount(acc3)
+	tState2.store.UpdateAccount(acc1)
+	tState2.store.UpdateAccount(acc4)
+	root2 := tState2.accountsMerkleRootHash()
 
 	assert.NotEqual(t, root1, root2)
 }
 
 func TestChangeVal(t *testing.T) {
-	st1 := setupStateWithOneValidator(t)
-	st2 := setupStateWithOneValidator(t)
+	setup(t)
 
-	require.Equal(t, st1.store.TotalValidators(), 1)
+	require.Equal(t, tState1.store.TotalValidators(), 4)
 
-	val1, _ := validator.GenerateTestValidator(1)
-	val2, _ := validator.GenerateTestValidator(2)
-	val3, _ := validator.GenerateTestValidator(3)
-	val4, _ := validator.GenerateTestValidator(4)
+	val1, _ := validator.GenerateTestValidator(4)
+	val2, _ := validator.GenerateTestValidator(5)
+	val3, _ := validator.GenerateTestValidator(6)
+	val4, _ := validator.GenerateTestValidator(7)
 
-	st1.store.UpdateValidator(val1)
-	st1.store.UpdateValidator(val2)
-	st1.store.UpdateValidator(val3)
-	st1.store.UpdateValidator(val4)
-	root1 := st1.validatorsMerkleRootHash()
+	tState1.store.UpdateValidator(val1)
+	tState1.store.UpdateValidator(val2)
+	tState1.store.UpdateValidator(val3)
+	tState1.store.UpdateValidator(val4)
+	root1 := tState1.validatorsMerkleRootHash()
 
 	// Change a validtor
 	val3.IncSequence()
 
-	st2.store.UpdateValidator(val2)
-	st2.store.UpdateValidator(val3)
-	st2.store.UpdateValidator(val1)
-	st2.store.UpdateValidator(val4)
-	root2 := st2.validatorsMerkleRootHash()
+	tState2.store.UpdateValidator(val2)
+	tState2.store.UpdateValidator(val3)
+	tState2.store.UpdateValidator(val1)
+	tState2.store.UpdateValidator(val4)
+	root2 := tState2.validatorsMerkleRootHash()
 
 	assert.NotEqual(t, root1, root2)
 }
 
 func TestCalculatingGenesisState(t *testing.T) {
-	st := setupStateWithFourValidators(t, tValSigner1)
+	setup(t)
 
-	r := st.calculateGenesisStateHashFromGenesisDoc()
-	assert.Equal(t, st.stateHash(), r)
+	r := tState1.calculateGenesisStateHashFromGenesisDoc()
+	assert.Equal(t, tState1.stateHash(), r)
 }

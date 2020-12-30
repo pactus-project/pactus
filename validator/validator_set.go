@@ -16,6 +16,7 @@ type ValidatorSetReader interface {
 	Validator(addr crypto.Address) *Validator
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *Validator
+	IsProposer(addr crypto.Address, round int) bool
 	CommittersHash() crypto.Hash
 }
 
@@ -127,6 +128,16 @@ func (set *ValidatorSet) Validator(addr crypto.Address) *Validator {
 	return nil
 }
 
+// IsProposer checks if the address is proposer for this height at the given round
+func (set *ValidatorSet) IsProposer(addr crypto.Address, round int) bool {
+	set.lk.Lock()
+	defer set.lk.Unlock()
+
+	idx := (set.proposerIndex + round) % len(set.validators)
+	return set.validators[idx].Address().EqualsTo(addr)
+}
+
+// Proposer returns proposer info for this height at the given round
 func (set *ValidatorSet) Proposer(round int) *Validator {
 	set.lk.Lock()
 	defer set.lk.Unlock()

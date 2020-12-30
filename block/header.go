@@ -56,6 +56,9 @@ func NewHeader(version uint,
 }
 
 func (h *Header) SanityCheck() error {
+	if h.data.Version != 1 {
+		return errors.Errorf(errors.ErrInvalidBlock, "Invalid version")
+	}
 	if err := h.data.StateHash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}

@@ -3,11 +3,10 @@ package state
 import (
 	"testing"
 
-	"github.com/zarbchain/zarb-go/block"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -15,11 +14,11 @@ import (
 )
 
 func TestSaveLoadLastInfo(t *testing.T) {
-	st := setupStateWithOneValidator(t)
+	setup(t)
 	b, _ := block.GenerateTestBlock(nil, nil)
 
-	st.saveLastInfo(125, *b.LastCommit(), b.Header().LastReceiptsHash())
-	li, err := st.loadLastInfo()
+	tState1.saveLastInfo(125, *b.LastCommit(), b.Header().LastReceiptsHash())
+	li, err := tState1.loadLastInfo()
 	assert.NoError(t, err)
 	assert.Equal(t, li.LastHeight, 125)
 	assert.Equal(t, li.LastCommit.Hash(), b.LastCommit().Hash())
@@ -27,47 +26,46 @@ func TestSaveLoadLastInfo(t *testing.T) {
 }
 
 func TestLoadState(t *testing.T) {
-	st1 := setupStateWithFourValidators(t, tValSigner1)
+	setup(t)
 
 	i := 0
-	for ; i < 10; i++ {
-		b := st1.ProposeBlock()
-		c := makeCommitAndSign(t, b.Hash(), 2, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-
-		require.NoError(t, st1.ApplyBlock(i+1, b, c))
+	for ; i < 8; i++ {
+		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
+		applyBlockAndCommitForAllStates(t, b, c)
 	}
 
-	newBlock := st1.ProposeBlock()
-	newCommit := makeCommitAndSign(t, newBlock.Hash(), 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	assert.NoError(t, st1.Close())
+	newBlock, newCommit := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	assert.NoError(t, tState1.Close())
 
 	// Load last state info
-	st2, err := LoadOrNewState(st1.config, st1.genDoc, tValSigner1, txpool.NewMockTxPool())
+	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.NewMockTxPool())
 	require.NoError(t, err)
 
-	assert.Equal(t, st1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
-	assert.Equal(t, st1.store.TotalValidators(), st2.(*state).store.TotalValidators())
-	assert.Equal(t, st1.sortition.TotalStake(), st2.(*state).sortition.TotalStake())
-	assert.Equal(t, st1.executionSandbox.LastBlockHeight(), st2.(*state).executionSandbox.LastBlockHeight())
-	assert.Equal(t, st1.executionSandbox.LastBlockHash(), st2.(*state).executionSandbox.LastBlockHash())
+	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
+	assert.Equal(t, tState1.store.TotalValidators(), st2.(*state).store.TotalValidators())
+	assert.Equal(t, tState1.sortition.TotalStake(), st2.(*state).sortition.TotalStake())
+	assert.Equal(t, tState1.executionSandbox.LastBlockHeight(), st2.(*state).executionSandbox.LastBlockHeight())
+	assert.Equal(t, tState1.executionSandbox.LastBlockHash(), st2.(*state).executionSandbox.LastBlockHash())
 
-	assert.Equal(t, newBlock.Hash(), st2.ProposeBlock().Hash())
+	b, err := st2.ProposeBlock(0)
+	assert.NoError(t, err)
+	assert.Equal(t, newBlock.Hash(), b.Hash())
 	require.NoError(t, st2.ApplyBlock(i+1, newBlock, newCommit))
 }
 
 func TestLoadStateAfterChangingGenesis(t *testing.T) {
-	st1 := setupStateWithOneValidator(t)
+	setup(t)
 
 	// Let's commit some blocks
 	i := 0
 	for ; i < 10; i++ {
-		b1, c1 := proposeAndSignBlock(t, st1)
-		assert.NoError(t, st1.ApplyBlock(i+1, b1, c1))
+		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
+		applyBlockAndCommitForAllStates(t, b, c)
 	}
 
-	assert.NoError(t, st1.Close())
+	assert.NoError(t, tState1.Close())
 
-	_, err := LoadOrNewState(st1.config, st1.genDoc, tValSigner1, txpool.NewMockTxPool())
+	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.NewMockTxPool())
 	require.NoError(t, err)
 
 	// Load last state info after modifying genesis
@@ -76,6 +74,6 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
 	genDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val}, 1)
 
-	_, err = LoadOrNewState(st1.config, genDoc, tValSigner1, txpool.NewMockTxPool())
+	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, txpool.NewMockTxPool())
 	require.Error(t, err)
 }

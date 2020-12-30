@@ -1,6 +1,10 @@
 package txpool
 
-import "time"
+import (
+	"time"
+
+	"github.com/zarbchain/zarb-go/errors"
+)
 
 type Config struct {
 	WaitingTimeout time.Duration
@@ -23,5 +27,11 @@ func TestConfig() *Config {
 
 // SanityCheck is a basic hecks for config
 func (conf *Config) SanityCheck() error {
+	if conf.WaitingTimeout < 0 {
+		return errors.Errorf(errors.ErrInvalidConfig, "WaitingTimeout can't be negative")
+	}
+	if conf.MaxSize == 0 {
+		return errors.Errorf(errors.ErrInvalidConfig, "MaxSize can't be negative or zero")
+	}
 	return nil
 }

@@ -26,7 +26,7 @@ type State interface {
 	StateReader
 
 	Close() error
-	ProposeBlock() block.Block
+	ProposeBlock(round int) (*block.Block, error)
 	ValidateBlock(block block.Block) error
 	ApplyBlock(height int, block block.Block, commit block.Commit) error
 }

@@ -36,16 +36,16 @@ func TestConfig() *Config {
 
 func (conf *Config) SanityCheck() error {
 	if conf.TimeoutPropose < 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "timeout_propose can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "TimeoutPropose can't be negative")
 	}
 	if conf.TimeoutPrepare < 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "timeout_prepare can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "TimeoutPrepare can't be negative")
 	}
 	if conf.TimeoutPrecommit < 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "timeout_precommit can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "TimeoutPrecommit can't be negative")
 	}
 	if conf.DeltaDuration < 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "new_round_delta_duration can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "DeltaDuration can't be negative")
 	}
 
 	return nil
