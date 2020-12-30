@@ -47,7 +47,7 @@ func (mock *mockNetworkAPI) shouldPublishThisMessage(t *testing.T, expectedMsg *
 			require.NoError(t, fmt.Errorf("Timeout"))
 		case msg := <-mock.ch:
 			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg)
-			b, _ := msg.MarshalCBOR()
+			b, _ := msg.Encode(false, nil)
 			mock.peerSync.ParsMessage(b, mock.id)
 
 			if msg.PayloadType() == expectedMsg.PayloadType() {
@@ -69,7 +69,7 @@ func (mock *mockNetworkAPI) shouldPublishMessageWithThisType(t *testing.T, paylo
 			return nil
 		case msg := <-mock.ch:
 			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
-			b, _ := msg.MarshalCBOR()
+			b, _ := msg.Encode(false, nil)
 			mock.peerSync.ParsMessage(b, mock.id)
 
 			if msg.PayloadType() == payloadType {
@@ -88,8 +88,7 @@ func (mock *mockNetworkAPI) shouldNotPublishMessageWithThisType(t *testing.T, pa
 			return
 		case msg := <-mock.ch:
 			logger.Info("shouldNotPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
-
-			b, _ := msg.MarshalCBOR()
+			b, _ := msg.Encode(false, nil)
 			mock.peerSync.ParsMessage(b, mock.id)
 
 			assert.NotEqual(t, msg.PayloadType(), payloadType)

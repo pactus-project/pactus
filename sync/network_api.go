@@ -114,7 +114,7 @@ func (api *networkAPI) parsMessage(m *pubsub.Message) {
 
 func (api *networkAPI) PublishMessage(msg *message.Message) error {
 	topic := api.topic(msg)
-	bs, _ := msg.MarshalCBOR()
+	bs, _ := msg.Encode(false, nil)
 	return topic.Publish(api.ctx, bs)
 }
 

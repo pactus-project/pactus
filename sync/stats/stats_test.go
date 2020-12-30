@@ -25,8 +25,8 @@ func TestParsSalamWithGoodGenesisHash(t *testing.T) {
 	setup(t)
 
 	_, pub, _ := crypto.GenerateTestKeyPair()
-	msg1 := message.NewSalamMessage("kitty", pub, tPeerID1, tGenHash, 123)
-	bs, _ := msg1.MarshalCBOR()
+	msg1 := message.NewSalamMessage("kitty", pub, tPeerID1, tGenHash, 123, 0)
+	bs, _ := msg1.Encode(false, nil)
 	assert.True(t, tStats.mustGetPeer(tPeerID1).BelongsToSameNetwork(tGenHash))
 	msg2 := tStats.ParsMessage(bs, tPeerID1)
 	assert.Equal(t, msg1.SignBytes(), msg2.SignBytes())
@@ -38,8 +38,8 @@ func TestParsSalamWithBadGenesisHash(t *testing.T) {
 
 	invHash := crypto.GenerateTestHash()
 	_, pub, _ := crypto.GenerateTestKeyPair()
-	msg1 := message.NewSalamMessage("kitty", pub, tPeerID1, invHash, 123)
-	bs, _ := msg1.MarshalCBOR()
+	msg1 := message.NewSalamMessage("kitty", pub, tPeerID1, invHash, 123, 0)
+	bs, _ := msg1.Encode(false, nil)
 	msg2 := tStats.ParsMessage(bs, tPeerID1)
 	assert.Equal(t, msg1.SignBytes(), msg2.SignBytes())
 	assert.False(t, tStats.getPeer(tPeerID1).BelongsToSameNetwork(tGenHash))

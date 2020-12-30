@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
@@ -142,8 +141,8 @@ func TestSendSalamBadGenesisHash(t *testing.T) {
 	invGenHash := crypto.GenerateTestHash()
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewSalamMessage("bad-genesis", pub, tAnotherPeerID, invGenHash, 0)
-	data, _ := cbor.Marshal(msg)
+	msg := message.NewSalamMessage("bad-genesis", pub, tAnotherPeerID, invGenHash, 0, 0)
+	data, _ := msg.Encode(false, nil)
 	tAliceSync.ParsMessage(data, tAnotherPeerID)
 	msg2 := tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
 	pld := msg2.Payload.(*payload.AleykPayload)
@@ -155,8 +154,9 @@ func TestSendSalamPeerBehind(t *testing.T) {
 	setup(t)
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 0)
-	data, _ := cbor.Marshal(msg)
+	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 0, 0)
+	data, err := msg.Encode(false, nil)
+	assert.NoError(t, err)
 	tAliceSync.ParsMessage(data, tAnotherPeerID)
 	msg2 := tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
 	pld := msg2.Payload.(*payload.AleykPayload)
@@ -170,8 +170,8 @@ func TestSendSalamPeerAhead(t *testing.T) {
 
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 111)
-	data, _ := cbor.Marshal(msg)
+	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 111, 0)
+	data, _ := msg.Encode(false, nil)
 	tAliceSync.ParsMessage(data, tAnotherPeerID)
 	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
 	tAliceNetAPI.shouldPublishThisMessage(t, message.NewBlocksReqMessage(tAliceState.LastBlockHeight()+1, 111, tAliceState.LastBlockHash()))
@@ -183,8 +183,8 @@ func TestSendAleykPeerBehind(t *testing.T) {
 	setup(t)
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 1, 0, "Welcome!")
-	data, _ := cbor.Marshal(msg)
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 1, 0, 0, "Welcome!")
+	data, _ := msg.Encode(false, nil)
 	tAliceSync.ParsMessage(data, tAnotherPeerID)
 	tAliceNetAPI.shouldNotPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
 }
@@ -193,8 +193,8 @@ func TestSendAleykPeerAhead(t *testing.T) {
 	setup(t)
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 111, 0, "Welcome!")
-	data, _ := cbor.Marshal(msg)
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 111, 0, 0, "Welcome!")
+	data, _ := msg.Encode(false, nil)
 	tAliceSync.ParsMessage(data, tAnotherPeerID)
 	tAliceNetAPI.shouldPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
 	assert.Equal(t, tAliceSync.stats.MaxClaimedHeight(), 111)
@@ -204,8 +204,8 @@ func TestSendAleykPeerSameHeight(t *testing.T) {
 	setup(t)
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, tAliceState.LastBlockHeight(), 0, "Welcome!")
-	data, _ := cbor.Marshal(msg)
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, tAliceState.LastBlockHeight(), 0, 0, "Welcome!")
+	data, _ := msg.Encode(false, nil)
 	tAliceSync.ParsMessage(data, tAnotherPeerID)
 	tAliceNetAPI.shouldNotPublishMessageWithThisType(t, payload.PayloadTypeBlocksReq)
 }

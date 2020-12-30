@@ -11,7 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func NewSalamMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, genesisHash crypto.Hash, height int) *Message {
+func NewSalamMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, genesisHash crypto.Hash, height int, flags int) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeSalam,
@@ -22,10 +22,11 @@ func NewSalamMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID,
 			PeerID:      peerID,
 			GenesisHash: genesisHash,
 			Height:      height,
+			Flags:       flags,
 		},
 	}
 }
-func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, genesisHash crypto.Hash, height int, resStatus int, resMessage string) *Message {
+func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, genesisHash crypto.Hash, height int, flags int, resStatus int, resMessage string) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeAleyk,
@@ -36,6 +37,7 @@ func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID,
 			PeerID:      peerID,
 			GenesisHash: genesisHash,
 			Height:      height,
+			Flags:       flags,
 			Response: payload.SalamResponse{
 				Status:  resStatus,
 				Message: resMessage,

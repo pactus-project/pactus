@@ -17,6 +17,9 @@ import (
 	"github.com/zarbchain/zarb-go/txpool"
 )
 
+const FlagInitialBlockDownload = 0x1
+
+
 type Synchronizer struct {
 	// Not: Synchronizer should not have any lock to prevent dead lock situation.
 	// Other modules like state or consesnus are thread safe

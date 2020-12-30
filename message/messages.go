@@ -11,6 +11,8 @@ import (
 )
 
 const LastVersion = 1
+const FlagCompressed = 0x1
+const FlagHasSignature = 0x2
 
 type Message struct {
 	Version   int
@@ -27,8 +29,11 @@ func (m *Message) SanityCheck() error {
 	if m.Type != m.Payload.Type() {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type")
 	}
-	if m.Flags|0x1 != 0x1 {
+	if m.Flags|0x3 != 0x3 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
+	}
+	if util.IsFlagSet(m.Flags, FlagHasSignature) && m.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "should have signature")
 	}
 	return nil
 }
@@ -53,23 +58,27 @@ func (m *Message) SignBytes() []byte {
 	ms := new(Message)
 	*ms = *m
 	ms.Signature = nil
-	sb, _ := ms.MarshalCBOR()
+	sb, _ := ms.Encode(false, nil)
 	return sb
 }
 
-func (m *Message) MarshalCBOR() ([]byte, error) {
+func (m *Message) Encode(gzip bool, signature *crypto.Signature) ([]byte, error) {
 	pld, err := cbor.Marshal(m.Payload)
 	if err != nil {
 		return nil, err
 	}
 
 	flags := 0
-	if len(pld) > 1024 {
+	if gzip {
 		c, err := util.CompressSlice(pld)
 		if err == nil {
 			pld = c
-			flags |= 1
+			flags = util.SetFlag(flags, FlagCompressed)
 		}
+	}
+
+	if signature != nil {
+		flags = util.SetFlag(flags, FlagHasSignature)
 	}
 
 	msg := &_Message{
@@ -77,12 +86,13 @@ func (m *Message) MarshalCBOR() ([]byte, error) {
 		Flags:       flags,
 		PayloadType: m.Type,
 		Payload:     pld,
+		Signature:   signature,
 	}
 
 	return cbor.Marshal(msg)
 }
 
-func (m *Message) UnmarshalCBOR(bs []byte) error {
+func (m *Message) Decode(bs []byte) error {
 	var msg _Message
 	err := cbor.Unmarshal(bs, &msg)
 	if err != nil {
@@ -95,7 +105,7 @@ func (m *Message) UnmarshalCBOR(bs []byte) error {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload")
 	}
 
-	if msg.Flags&0x1 == 0x1 {
+	if util.IsFlagSet(msg.Flags, FlagCompressed) {
 		c, err := util.DecompressSlice(msg.Payload)
 		if err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, err.Error())

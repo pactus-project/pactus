@@ -84,7 +84,7 @@ func (s *Stats) ParsMessage(data []byte, from peer.ID) *message.Message {
 	peer.ReceivedMsg = peer.ReceivedMsg + 1
 
 	msg := new(message.Message)
-	err := msg.UnmarshalCBOR(data)
+	err := msg.Decode(data)
 	if err != nil {
 		peer.InvalidMsg = peer.InvalidMsg + 1
 		logger.Debug("Error decoding message", "from", util.FingerprintPeerID(from), "data", hex.EncodeToString(data), "err", err)

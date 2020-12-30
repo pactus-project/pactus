@@ -67,22 +67,32 @@ func (syncer *Synchronizer) sendTransactions(ids []crypto.Hash) {
 }
 
 func (syncer *Synchronizer) broadcastSalam() {
+	flags := 0
+	if syncer.config.InitialBlockDownload {
+		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+	}
 	msg := message.NewSalamMessage(
 		syncer.config.Moniker,
 		syncer.signer.PublicKey(),
 		syncer.networkAPI.SelfID(),
 		syncer.state.GenesisHash(),
-		syncer.state.LastBlockHeight())
+		syncer.state.LastBlockHeight(),
+		flags)
 	syncer.publishMessage(msg)
 }
 
 func (syncer *Synchronizer) broadcastAleyk(resStatus int, resMsg string) {
+	flags := 0
+	if syncer.config.InitialBlockDownload {
+		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+	}
 	msg := message.NewAleykMessage(
 		syncer.config.Moniker,
 		syncer.signer.PublicKey(),
 		syncer.networkAPI.SelfID(),
 		syncer.state.GenesisHash(),
 		syncer.state.LastBlockHeight(),
+		flags,
 		resStatus,
 		resMsg)
 	syncer.publishMessage(msg)
