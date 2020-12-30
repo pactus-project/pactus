@@ -10,8 +10,6 @@ func TestDefaultConfigCheck(t *testing.T) {
 	c := DefaultConfig()
 	assert.NoError(t, c.SanityCheck())
 
-	c.Path = "/abc"
-	assert.Error(t, c.SanityCheck())
-	c.Path = "."
+	c.Path = "/tmp/zarb"
 	assert.NoError(t, c.SanityCheck())
 }

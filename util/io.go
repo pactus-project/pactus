@@ -99,12 +99,11 @@ func IsValidDirPath(fp string) bool {
 		if fi.IsDir() {
 			if err := ioutil.WriteFile(fp+"/test", []byte{}, 07644); err != nil {
 				return false
-			} else {
-				return true
 			}
-		} else {
-			return false
+			os.Remove(fp + "/test")
+			return true
 		}
+		return false
 	}
 
 	if err := Mkdir(fp); err != nil {
