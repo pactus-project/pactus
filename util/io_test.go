@@ -53,3 +53,11 @@ func TestTempFile(t *testing.T) {
 	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
 	assert.True(t, IsDirEmpty(tmpFile)) // no panic now
 }
+
+func TestIsValidPath(t *testing.T) {
+	assert.False(t, IsValidDirPath("/root"))
+	assert.False(t, IsValidDirPath("/test"))
+	assert.False(t, IsValidDirPath("./io_test.go"))
+	assert.True(t, IsValidDirPath("/tmp"))
+	assert.True(t, IsValidDirPath("/tmp/zarb"))
+}

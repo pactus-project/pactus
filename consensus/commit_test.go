@@ -100,7 +100,7 @@ func TestEnterCommit(t *testing.T) {
 	pub := tSigners[tIndexX].PublicKey()
 	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "", &pub, nil)
 	tSigners[tIndexX].SignMsg(trx)
-	tTxPool.AppendTx(trx) // This will change block
+	assert.NoError(t, tTxPool.AppendTx(trx)) // This will change block
 	b2, err := tConsY.state.ProposeBlock(0)
 	require.NoError(t, err)
 	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())

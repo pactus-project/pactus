@@ -254,3 +254,12 @@ func TestUpdateLastCommit(t *testing.T) {
 	assert.NoError(t, tState1.UpdateLastCommit(&c1))
 	assert.Equal(t, tState1.lastCommit.Hash(), c11.Hash())
 }
+
+func TestInvalidProposerProposeBlock(t *testing.T) {
+	setup(t)
+
+	_, err := tState2.ProposeBlock(0)
+	assert.Error(t, err)
+	_, err = tState2.ProposeBlock(1)
+	assert.NoError(t, err)
+}
