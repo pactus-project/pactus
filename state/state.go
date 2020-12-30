@@ -266,16 +266,20 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	return tx
 }
 
-func (st *state) ProposeBlock() block.Block {
+func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
+
+	if !st.validatorSet.IsProposer(st.proposer, round) {
+		return nil, errors.Errorf(errors.ErrInvalidAddress, "We are not propser for this round")
+	}
 
 	timestamp := st.lastBlockTime.Add(st.params.BlockTime())
 	now := util.Now()
 
 	if now.After(timestamp.Add(1 * time.Second)) {
 		st.logger.Info("It looks the last commit had delay", "delay", now.Sub(timestamp))
-		timestamp = now
+		timestamp = util.RoundNow(10)
 	}
 
 	st.executionSandbox.Clear()
@@ -309,6 +313,7 @@ func (st *state) ProposeBlock() block.Block {
 	subsidyTx := st.createSubsidyTx(st.execution.AccumulatedFee())
 	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
 		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
+		return nil, err
 	}
 	txIDs.Prepend(subsidyTx.ID())
 
@@ -324,7 +329,7 @@ func (st *state) ProposeBlock() block.Block {
 		st.lastCommit,
 		st.proposer)
 
-	return block
+	return &block, nil
 }
 
 func (st *state) ValidateBlock(block block.Block) error {
@@ -374,6 +379,12 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	err = st.validateCommitForCurrentHeight(commit, block.Hash())
 	if err != nil {
 		return err
+	}
+
+	// Verify proposer
+	proposer := st.validatorSet.Proposer(commit.Round())
+	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "Invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
 
 	ctrxs, err := st.executeBlock(block)

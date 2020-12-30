@@ -1,40 +1,36 @@
 package state
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
 func TestTransactionLost(t *testing.T) {
-	st1 := setupStatewithFourValidators(t, tValSigner1)
-	st2 := setupStatewithFourValidators(t, tValSigner2)
+	setup(t)
 
-	b1 := st1.ProposeBlock()
-	assert.NoError(t, st2.ValidateBlock(b1))
+	b1, _ := tState1.ProposeBlock(0)
+	assert.NoError(t, tState2.ValidateBlock(*b1))
 
-	b2 := st1.ProposeBlock()
+	b2, _ := tState1.ProposeBlock(0)
 	tCommonTxPool.Txs = make([]*tx.Tx, 0)
-	assert.Error(t, st2.ValidateBlock(b2))
+	assert.Error(t, tState2.ValidateBlock(*b2))
 }
 
 func TestCommitValidation(t *testing.T) {
-	st1 := setupStatewithFourValidators(t, tValSigner1)
-	st2 := setupStatewithFourValidators(t, tValSigner2)
+	setup(t)
 
-	b1 := st1.ProposeBlock()
-	{
-		c := makeCommitAndSign(t, b1.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	applyBlockAndCommitForAllStates(t, b1, c1)
 
-		assert.NoError(t, st1.ApplyBlock(1, b1, c))
-		assert.NoError(t, st2.ApplyBlock(1, b1, c))
-	}
-
-	b2 := st2.ProposeBlock()
+	b2, _ := tState2.ProposeBlock(0)
 
 	invBlockHash := crypto.GenerateTestHash()
 	round := 0
@@ -58,7 +54,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 0},
 		}, *invSig)
 
-		assert.Error(t, st1.ApplyBlock(2, b2, *c))
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Invalid signer, should return error", func(t *testing.T) {
@@ -70,7 +66,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: invAddr, Status: 0},
 		}, validSig)
 
-		assert.Error(t, st1.ApplyBlock(2, b2, *c))
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Unexpected signature", func(t *testing.T) {
@@ -83,7 +79,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 0},
 		}, validSig)
 
-		assert.Error(t, st1.ApplyBlock(2, b2, *c))
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Invalid signature status", func(t *testing.T) {
@@ -94,7 +90,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 1},
 		}, validSig)
 
-		assert.Error(t, st1.ApplyBlock(2, b2, *c))
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Invalid block hash", func(t *testing.T) {
@@ -106,7 +102,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 0},
 		}, invalidSig)
 
-		assert.Error(t, st1.ApplyBlock(2, b2, *c))
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
@@ -118,7 +114,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 0},
 		}, validSig)
 
-		assert.Error(t, st1.ApplyBlock(2, b2, *c))
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Valid signature, should return no error", func(t *testing.T) {
@@ -130,7 +126,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 0},
 		}, validSig)
 
-		assert.NoError(t, st1.ApplyBlock(2, b2, *c))
+		assert.NoError(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Update last commit- Invalid signer", func(t *testing.T) {
@@ -145,7 +141,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: invAddr, Status: 1},
 		}, sig)
 
-		assert.Error(t, st1.UpdateLastCommit(c))
+		assert.Error(t, tState1.UpdateLastCommit(c))
 	})
 
 	t.Run("Update last commit- valid signature, should return no error", func(t *testing.T) {
@@ -159,7 +155,7 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 1},
 		}, sig)
 
-		assert.NoError(t, st1.UpdateLastCommit(c))
+		assert.NoError(t, tState1.UpdateLastCommit(c))
 	})
 
 	t.Run("Update last commit- Valid signature, should return no error", func(t *testing.T) {
@@ -173,7 +169,67 @@ func TestCommitValidation(t *testing.T) {
 			{Address: tValSigner4.Address(), Status: 1},
 		}, sig)
 
-		assert.NoError(t, st1.UpdateLastCommit(c))
+		assert.NoError(t, tState1.UpdateLastCommit(c))
 	})
 
+}
+
+func TestUpdateBlockTime(t *testing.T) {
+	setup(t)
+
+	// Maipulate last block time
+	tState1.lastBlockTime = util.Now().Add(-6 * time.Second)
+	b, _ := tState1.ProposeBlock(0)
+	fmt.Println(b.Header().Time())
+	assert.True(t, b.Header().Time().After(tState1.lastBlockTime))
+	assert.Zero(t, b.Header().Time().Second()%10)
+}
+
+func TestBlockValidation(t *testing.T) {
+	setup(t)
+
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	applyBlockAndCommitForAllStates(t, b1, c1)
+	assert.False(t, tState1.lastBlockHash.EqualsTo(crypto.UndefHash))
+
+	//
+	// Version   			(SanityCheck)
+	// UnixTime				(?)
+	// LastBlockHash		(OK)
+	// StateHash			(OK)
+	// TxIDsHash			(?)
+	// LastReceiptsHash		(OK)
+	// LastCommitHash		(OK)
+	// CommittersHash		(OK)
+	// ProposerAddress		(OK) -> Check in ApplyBlock
+	//
+	invAdd, _, _ := crypto.GenerateTestKeyPair()
+	invHash := crypto.GenerateTestHash()
+	invCommit := block.GenerateTestCommit(tState1.lastBlockHash)
+	trx := tState1.createSubsidyTx(0)
+	ids := block.NewTxIDs()
+	ids.Append(trx.ID())
+
+	b := block.MakeBlock(util.Now(), ids, invHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	assert.Error(t, tState1.validateBlock(b))
+
+	b = block.MakeBlock(util.Now(), ids, tState1.lastBlockHash, invHash, tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	assert.Error(t, tState1.validateBlock(b))
+
+	b = block.MakeBlock(util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), invHash, tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	assert.Error(t, tState1.validateBlock(b))
+
+	b = block.MakeBlock(util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), invHash, tState1.lastCommit, tState1.proposer)
+	assert.Error(t, tState1.validateBlock(b))
+
+	b = block.MakeBlock(util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, invCommit, tState1.proposer)
+	assert.Error(t, tState1.validateBlock(b))
+
+	b = block.MakeBlock(util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, invAdd)
+	assert.NoError(t, tState1.validateBlock(b))
+	c := makeCommitAndSign(t, b.Hash(), 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	assert.Error(t, tState1.ApplyBlock(2, b, c))
+
+	b = block.MakeBlock(util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	assert.NoError(t, tState1.validateBlock(b))
 }

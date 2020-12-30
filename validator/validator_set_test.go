@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
 func TestContains(t *testing.T) {
@@ -262,4 +263,56 @@ func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
 
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
+}
+
+func TestJoinMoreThatOneThird(t *testing.T) {
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
+	val6, _ := GenerateTestValidator(6)
+
+	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val1.Address())
+	assert.NoError(t, err)
+
+	assert.Error(t, vs.MoveToNextHeight(0, []*Validator{val5, val6}))
+}
+
+func TestIsProposer(t *testing.T) {
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
+
+	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val1.Address())
+	assert.NoError(t, err)
+
+	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
+	assert.Equal(t, vs.Proposer(1).Address(), val2.Address())
+	assert.True(t, vs.IsProposer(val3.Address(), 2))
+	assert.False(t, vs.IsProposer(val4.Address(), 2))
+	assert.Equal(t, vs.Validators(), []crypto.Address{val1.Address(), val2.Address(), val3.Address(), val4.Address()})
+	assert.Equal(t, vs.Validator(val2.Address()).Hash(), val2.Hash())
+	assert.Nil(t, vs.Validator(val5.Address()))
+}
+
+func TestCommittersHash(t *testing.T) {
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+
+	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val1.Address())
+	assert.NoError(t, err)
+
+	h1 := vs.CommittersHash()
+	tree := simpleMerkle.NewTreeFromHashes([]crypto.Hash{
+		crypto.HashH(val1.Address().RawBytes()),
+		crypto.HashH(val2.Address().RawBytes()),
+		crypto.HashH(val3.Address().RawBytes()),
+		crypto.HashH(val4.Address().RawBytes())})
+
+	assert.Equal(t, h1, tree.Root())
 }

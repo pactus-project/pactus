@@ -1,6 +1,9 @@
 package util
 
 import (
+	"fmt"
+	"os/exec"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -52,4 +55,29 @@ func TestTempFile(t *testing.T) {
 	assert.NoError(t, Mkdir(tmpFile))
 	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
 	assert.True(t, IsDirEmpty(tmpFile)) // no panic now
+}
+
+func isRoot() bool {
+	cmd := exec.Command("id", "-u")
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// 0 = root, 501 = non-root user
+	i, err := strconv.Atoi(string(output[:len(output)-1]))
+	if err != nil {
+		fmt.Println(err)
+	}
+	return i == 0
+}
+func TestIsValidPath(t *testing.T) {
+	// To pass this tests inside docker
+	if !isRoot() {
+		assert.False(t, IsValidDirPath("/root"))
+		assert.False(t, IsValidDirPath("/test"))
+	}
+	assert.False(t, IsValidDirPath("./io_test.go"))
+	assert.True(t, IsValidDirPath("/tmp"))
+	assert.True(t, IsValidDirPath("/tmp/zarb"))
 }

@@ -3,6 +3,7 @@ package simpleMerkle
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -29,6 +30,27 @@ func TestMerkleTree(t *testing.T) {
 
 	tree2 := NewTreeFromSlices(slices)
 	assert.Equal(t, tree1.Root(), tree2.Root())
+
+	fmt.Println(tree2.ToString())
+}
+
+func TestMerkleTreeDepth2(t *testing.T) {
+	slices := [][]byte{[]byte("a"), []byte("b"), []byte("c")}
+	hashes := []crypto.Hash{
+		strToHash("a"),
+		strToHash("b"),
+		strToHash("c"),
+	}
+
+	tree1 := NewTreeFromHashes(hashes)
+	if tree1.Root().String() != "e6061997a9011668bcf216020aaad9cc7f5f34d5b6f78f1e63ef6257c1aa1f37" {
+		t.Errorf("Invalid merkle root")
+	}
+
+	tree2 := NewTreeFromSlices(slices)
+	assert.Equal(t, tree1.Root(), tree2.Root())
+
+	fmt.Println(tree2.ToString())
 }
 
 func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
@@ -62,41 +84,50 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 
 	tree := NewTreeFromHashes(hashes)
 	assert.True(t, tree.Root().EqualsTo(root))
+	assert.Equal(t, tree.Depth(), 2)
 }
 
-func TestMerkleTree_Bitcoin_Block113345(t *testing.T) {
+func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
 
 	hasher = func(data []byte) crypto.Hash {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
 		h, _ := crypto.HashFromRawBytes(second[:])
 		return h
-
 	}
 
-	// Block 113345 in bitcoin
-	wantMerkle, _ := hex.DecodeString("31E613DEC2B7D9E78F9FD6E08071B768C5E5FC5E14BE0CDDE728EA19F1EAE3F2")
-	id1, _ := hex.DecodeString("650E05E757D130F0778300724AF5734D9A57E25072780D2CD0F89D8EC1118FEF")
-	id2, _ := hex.DecodeString("7D21A7D8984607E94D4E1A298CCDD750331A397BF38623108D496D474206F373")
-	id3, _ := hex.DecodeString("AF9AF7364A893B67952D87EAB3172AA896287825734AEA96F797F3A0DF1BF1D8")
-	id4, _ := hex.DecodeString("F85ABB36FCF0BC9C08590273200E0DD63BCD079706973FAB3227565255920F32")
-	id5, _ := hex.DecodeString("F5BEA40AC2A3DACCF5B2A74B4CCC35EDAEE7203A7F2FF5A512EEEF638E197E32")
+	// Block 153342 in bitcoin
+	wantMerkle, _ := hex.DecodeString("dd8ee246e19ec5c77ddd46c1138e8af6a272da4dbb6500ea74a79c0bf89e2c07")
+	h1, _ := crypto.HashFromString("216404816ca6261f9206d471d0403ba49bda4264719d879819fbda9849781e62")
+	h2, _ := crypto.HashFromString("56f2602c15cb0b8e0b38e54b2961a2e541a7febbe852516cd425aa5fb72c5578")
+	h3, _ := crypto.HashFromString("0d065da59871386321c2c9b2e4b6482426bcce88600ab7f55f0d27b9916a9e0c")
+	h4, _ := crypto.HashFromString("1129038c38783f4c4241e54d9d702965b305b8d1e54c091fdd9f9df21240586e")
+	h5, _ := crypto.HashFromString("81461f9e0e093dad14d0c5fb3978431a321bf61de33512d6cc344edb86f359f3")
+	h6, _ := crypto.HashFromString("22140f4b15d76ff27d657a731fdc3040487c22ee3577c6522239d9cfbe0292ad")
+	h7, _ := crypto.HashFromString("0fa273bce5137a0dbffac068ebb6f1ebe64e6be2b00cdae5a967edeb0cd96b93")
+	h8, _ := crypto.HashFromString("cab481631e7f2f7d864a65d23c34bd357f46ecba60bb8117f55ed43232aa75e5")
+	h9, _ := crypto.HashFromString("dffea4c267fa6949111fed23b15977d5e2efa82fefd9cd5ac81e38518d2c2bef")
+	h10, _ := crypto.HashFromString("ed9f4ee5e07a47a7026725173de32efa7372243117be1aa7f60a650aef075475")
+	h11, _ := crypto.HashFromString("8822c80afa3eb84bc3603509b8b6deeee37cf771ca7b49d3dd73294e05f7b29f")
+	h12, _ := crypto.HashFromString("23ad44934167cc712b358f2a097b7316ca2b3c2f34472017273969e7c7e5cdb4")
+	h13, _ := crypto.HashFromString("c1dc3762c6a57757a9aa895b8229613d96f272f79d14c9854132b980eaa2a2c4")
 
 	root, _ := crypto.HashFromRawBytes(wantMerkle)
-	h1, _ := crypto.HashFromRawBytes(id1)
-	h2, _ := crypto.HashFromRawBytes(id2)
-	h3, _ := crypto.HashFromRawBytes(id3)
-	h4, _ := crypto.HashFromRawBytes(id4)
-	h5, _ := crypto.HashFromRawBytes(id5)
 
 	hashes := []crypto.Hash{
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
+		h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13,
 	}
 
 	tree := NewTreeFromHashes(hashes)
 	assert.True(t, tree.Root().EqualsTo(root))
+	assert.Equal(t, tree.Depth(), 4)
+	fmt.Println(tree.ToString())
+	assert.Contains(t, tree.ToString(), root.String())
+
+	right, _ := crypto.HashFromString("4a3ee07bb7baf6dfa265fa5c85a8955c8e79ddab0f70657a14df5744a103e24d")
+	left, _ := crypto.HashFromString("114799e25e6dc376d65fd5406516919e1e619b89316be91ea064a69400472d1e")
+
+	root2 := HashMerkleBranches(&left, &right)
+	assert.True(t, root.EqualsTo(*root2))
+
 }

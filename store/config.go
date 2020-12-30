@@ -1,6 +1,7 @@
 package store
 
 import (
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -38,5 +39,8 @@ func (conf *Config) ValidatorStorePath() string {
 
 // SanityCheck is a basic hecks for config
 func (conf *Config) SanityCheck() error {
+	if !util.IsValidDirPath(conf.Path) {
+		return errors.Errorf(errors.ErrInvalidConfig, "Path is not valid")
+	}
 	return nil
 }

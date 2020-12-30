@@ -2,19 +2,19 @@ package consensus
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vote.Vote) {
-	b = st.ProposeBlock()
+func commitFirstBlock(t *testing.T) (b block.Block, votes [3]*vote.Vote) {
+	pb, err := tConsX.state.ProposeBlock(0)
+	require.NoError(t, err)
+	b = *pb
 
 	sb := vote.CommitSignBytes(b.Hash(), 0)
 	sig1 := tSigners[0].Sign(sb)
@@ -32,7 +32,13 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 		sig)
 
 	require.NotNil(t, c)
-	err := st.ApplyBlock(1, b, *c)
+	err = tConsX.state.ApplyBlock(1, b, *c)
+	assert.NoError(t, err)
+	err = tConsY.state.ApplyBlock(1, b, *c)
+	assert.NoError(t, err)
+	err = tConsB.state.ApplyBlock(1, b, *c)
+	assert.NoError(t, err)
+	err = tConsP.state.ApplyBlock(1, b, *c)
 	assert.NoError(t, err)
 
 	return
@@ -41,7 +47,7 @@ func commitFirstBlock(t *testing.T, st state.State) (b block.Block, votes [3]*vo
 func TestInvalidStepAfterBlockCommit(t *testing.T) {
 	setup(t)
 
-	commitFirstBlock(t, tConsY.state)
+	commitFirstBlock(t)
 
 	tConsY.enterNewHeight()
 
@@ -56,51 +62,59 @@ func TestInvalidStepAfterBlockCommit(t *testing.T) {
 func TestEnterCommit(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
+	commitFirstBlock(t)
+
 	tConsY.enterNewHeight()
-	p1 := tConsX.LastProposal()
+	tConsY.enterNewRound(1)
+	tConsB.enterNewHeight()
+	tConsB.enterNewRound(1)
+	p1 := tConsB.LastProposal()
 
 	// Invalid round
-	tConsY.enterCommit(1)
-	assert.False(t, tConsY.isCommitted)
-
-	// No quorum
 	tConsY.enterCommit(0)
 	assert.False(t, tConsY.isCommitted)
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexP, false)
+	// No quorum
+	tConsY.enterCommit(1)
+	assert.False(t, tConsY.isCommitted)
 
-	v3 := vote.NewPrecommit(1, 0, crypto.UndefHash, tSigners[tIndexB].Address())
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 2, 1, p1.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 2, 1, p1.Block().Hash(), tIndexP, false)
+
+	v3 := vote.NewPrecommit(2, 1, crypto.UndefHash, tSigners[tIndexB].Address())
 	tSigners[tIndexB].SignMsg(v3)
 	ok, _ := tConsY.pendingVotes.AddVote(v3)
 	assert.True(t, ok)
 
 	// Undef quorum
-	tConsY.enterCommit(0)
+	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 2, 1, p1.Block().Hash(), tIndexB, false)
 
 	// No proposal
-	tConsY.enterCommit(0)
+	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 	shouldPublishProposalReqquest(t, tConsY)
 
-	time.Sleep(2 * time.Second) // This will change block timestamp
-	b2 := tConsX.state.ProposeBlock()
+	pub := tSigners[tIndexX].PublicKey()
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "", &pub, nil)
+	tSigners[tIndexX].SignMsg(trx)
+	assert.NoError(t, tTxPool.AppendTx(trx)) // This will change block
+	b2, err := tConsY.state.ProposeBlock(0)
+	require.NoError(t, err)
 	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
-	p2 := vote.NewProposal(1, 0, b2)
+	p2 := vote.NewProposal(2, 1, *b2)
 	tSigners[tIndexX].SignMsg(p2)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
 
 	// Invalid proposal
-	tConsY.enterCommit(0)
+	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p1)
 
 	// Everything is good
-	tConsY.enterCommit(0)
-	checkHRSWait(t, tConsY, 2, 0, hrs.StepTypePrepare)
+	tConsY.enterCommit(1)
+	shouldPublishProposalBlock(t, tConsY)
 }

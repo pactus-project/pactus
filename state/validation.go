@@ -46,12 +46,11 @@ func (st *state) validateLastCommit(commit *block.Commit) error {
 				"Only genesis block has no commit")
 		}
 	} else {
-		// if err := commit.SanityCheck(); err != nil {
-		// 	return err
-		// }
+		if err := commit.SanityCheck(); err != nil {
+			return err
+		}
 
 		// TODO: add tests for this case
-		// Make sure the committers are the cprrect one
 		if !commit.CommittersHash().EqualsTo(st.lastCommit.CommittersHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"Last committers are not same as we expected. Expected %v, got %v", st.lastCommit.CommittersHash(), commit.CommittersHash())

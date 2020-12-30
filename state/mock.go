@@ -78,9 +78,9 @@ func (m *MockState) ApplyBlock(height int, b block.Block, c block.Commit) error 
 func (m *MockState) Close() error {
 	return nil
 }
-func (m *MockState) ProposeBlock() block.Block {
+func (m *MockState) ProposeBlock(round int) (*block.Block, error) {
 	b, _ := block.GenerateTestBlock(nil, nil)
-	return *b
+	return b, nil
 }
 func (m *MockState) ValidateBlock(block block.Block) error {
 	return nil

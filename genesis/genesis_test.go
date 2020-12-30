@@ -3,7 +3,6 @@ package genesis
 import (
 	"encoding/json"
 	"testing"
-	"time"
 
 	"github.com/zarbchain/zarb-go/util"
 
@@ -18,7 +17,7 @@ func TestMarshaling(t *testing.T) {
 	acc, _ := account.GenerateTestAccount(0)
 	acc.AddToBalance(100000)
 	val, _ := validator.GenerateTestValidator(0)
-	gen1 := MakeGenesis("test", time.Now().Truncate(0), []*account.Account{acc}, []*validator.Validator{val}, 5)
+	gen1 := MakeGenesis("test", util.Now(), []*account.Account{acc}, []*validator.Validator{val}, 5)
 	gen2 := new(Genesis)
 
 	bz, err := json.MarshalIndent(gen1, " ", " ")
@@ -62,7 +61,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 		accs = append(accs, acc)
 		vals = append(vals, val)
 	}
-	gen := MakeGenesis("test", time.Now().Truncate(0), accs, vals, 5)
+	gen := MakeGenesis("test", util.Now(), accs, vals, 5)
 
 	genAccs := gen.Accounts()
 	genVals := gen.Validators()

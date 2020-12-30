@@ -11,16 +11,23 @@ func (tree *SimpleMerkleTree) ToString() string {
 	}
 
 	lines := make([]string, len(tree.merkles))
-	depth := tree.Depth() - 1
+	depth := 1
 	offset := 0
 	indent := ""
+	j := 1
 	for i := len(nodes) - 1; i >= 0; i-- {
-		if i == (1 << depth) {
+		if j == (1 << depth) {
+			lines[offset] += "\n"
 			indent += "   "
+			depth++
 		}
 		if nodes[i] != nil {
 			lines[offset] = indent + nodes[i].String()
+		} else {
+			lines[offset] = indent + "<EMPTY>"
 		}
+
+		j++
 		offset++
 	}
 

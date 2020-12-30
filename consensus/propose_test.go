@@ -17,7 +17,7 @@ func TestConsensusSetProposalAfterCommit(t *testing.T) {
 	tConsP.enterNewHeight()
 	p := tConsX.LastProposal()
 
-	commitFirstBlock(t, tConsP.state)
+	commitFirstBlock(t)
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.LastProposal())
 }

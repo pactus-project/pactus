@@ -32,7 +32,7 @@ func WriteFile(filename string, data []byte) error {
 	if err := Mkdir(filepath.Dir(filename)); err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(filename, data, 0777); err != nil {
+	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("Failed to write to %s: %v", filename, err)
 	}
 	return nil
@@ -40,7 +40,7 @@ func WriteFile(filename string, data []byte) error {
 
 func Mkdir(dir string) error {
 	// create the directory
-	if err := os.MkdirAll(dir, 0777); err != nil {
+	if err := os.MkdirAll(dir, 0644); err != nil {
 		return fmt.Errorf("Could not create directory %s", dir)
 	}
 	return nil
@@ -91,4 +91,24 @@ func IsDirNotExistsOrEmpty(name string) bool {
 	}
 
 	return IsDirEmpty(name)
+}
+
+func IsValidDirPath(fp string) bool {
+	fi, err := os.Stat(fp)
+	if err == nil {
+		if fi.IsDir() {
+			if err := ioutil.WriteFile(fp+"/test", []byte{}, 07644); err != nil {
+				return false
+			}
+			os.Remove(fp + "/test")
+			return true
+		}
+		return false
+	}
+
+	if err := Mkdir(fp); err != nil {
+		return false
+	}
+	os.Remove(fp)
+	return true
 }
