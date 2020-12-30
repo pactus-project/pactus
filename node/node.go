@@ -119,8 +119,8 @@ func (n *Node) Start() error {
 func (n *Node) Stop() {
 	logger.Info("Stopping Node")
 
-	n.network.Stop()
 	n.consensus.Stop()
+	n.network.Stop()
 	n.sync.Stop()
 	n.state.Close()
 	n.http.StopServer()
