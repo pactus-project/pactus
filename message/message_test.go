@@ -28,7 +28,7 @@ func TestSalamMessage(t *testing.T) {
 	id, _ := peer.IDB58Decode("12D3KooWDX68JokeBo8wtHtv937vM8Hj6NeNxTEh1LxZ1ragEUgn")
 	m := NewSalamMessage("abc", pub, id, h, 112, 0x1)
 	assert.NoError(t, m.SanityCheck())
-	bs, err := m.Encode(false, nil)
+	bs, err := m.Encode()
 	fmt.Printf("%x\n", bs)
 	assert.NoError(t, err)
 	m2 := new(Message)
@@ -39,12 +39,11 @@ func TestSalamMessage(t *testing.T) {
 }
 
 func TestAleykMessage(t *testing.T) {
-	h := crypto.GenerateTestHash()
 	_, pub, _ := crypto.GenerateTestKeyPair()
 	id, _ := peer.IDB58Decode("12D3KooWDX68JokeBo8wtHtv937vM8Hj6NeNxTEh1LxZ1ragEUgn")
-	m := NewAleykMessage("abc", pub, id, h, 112, 0x2, payload.SalamResponseCodeRejected, "Invalid genesis")
+	m := NewAleykMessage("abc", pub, id, 112, 0x2, payload.SalamResponseCodeRejected, "Invalid genesis")
 	assert.NoError(t, m.SanityCheck())
-	bs, err := m.Encode(false, nil)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -53,12 +52,12 @@ func TestAleykMessage(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-func TestBlockReqMessage(t *testing.T) {
+func TestLatestBlockRequestMessage(t *testing.T) {
 	h := crypto.GenerateTestHash()
-	invMsg := NewBlocksReqMessage(4, 1, h)
+	invMsg := NewLatestBlocksRequestMessage(-1, h)
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewBlocksReqMessage(1, 4, h)
-	bs, err := m.Encode(false, nil)
+	m := NewLatestBlocksRequestMessage(1, h)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -67,12 +66,12 @@ func TestBlockReqMessage(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-func TestBlocksMessage(t *testing.T) {
+func TestLatestBlocksMessage(t *testing.T) {
 	b, _ := block.GenerateTestBlock(nil, nil)
-	invMsg := NewBlocksMessage(4, nil, nil)
+	invMsg := NewLatestBlocksMessage(4, nil, nil, nil)
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewBlocksMessage(4, []*block.Block{b}, nil)
-	bs, err := m.Encode(false, nil)
+	m := NewLatestBlocksMessage(4, []*block.Block{b}, nil, nil)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -81,12 +80,12 @@ func TestBlocksMessage(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-func TestTxReqMessage(t *testing.T) {
+func TestTransactionsRequestMessage(t *testing.T) {
 	h := crypto.GenerateTestHash()
-	invMsg := NewTxsReqMessage([]crypto.Hash{})
+	invMsg := NewTransactionsRequestMessage([]crypto.Hash{})
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewTxsReqMessage([]crypto.Hash{h})
-	bs, err := m.Encode(false, nil)
+	m := NewTransactionsRequestMessage([]crypto.Hash{h})
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -95,12 +94,12 @@ func TestTxReqMessage(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-func TestTxsMessage(t *testing.T) {
+func TestTransactionsMessage(t *testing.T) {
 	trx, _ := tx.GenerateTestSendTx()
-	invMsg := NewTxsMessage([]*tx.Tx{})
+	invMsg := NewTransactionsMessage([]*tx.Tx{})
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewTxsMessage([]*tx.Tx{trx})
-	bs, err := m.Encode(false, nil)
+	m := NewTransactionsMessage([]*tx.Tx{trx})
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -109,11 +108,11 @@ func TestTxsMessage(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-func TestProposalReqMessage(t *testing.T) {
-	invMsg := NewProposalReqMessage(4, -11)
+func TestProposalRequestMessage(t *testing.T) {
+	invMsg := NewProposalRequestMessage(4, -11)
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewProposalReqMessage(4, 1)
-	bs, err := m.Encode(false, nil)
+	m := NewProposalRequestMessage(4, 1)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -127,7 +126,7 @@ func TestProposalsMessage(t *testing.T) {
 	invMsg := NewProposalMessage(nil)
 	assert.Error(t, invMsg.SanityCheck())
 	m := NewProposalMessage(p)
-	bs, err := m.Encode(false, nil)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -139,7 +138,7 @@ func TestProposalsMessage(t *testing.T) {
 func TestVoteSetMessage(t *testing.T) {
 	m := NewVoteSetMessage(4, 1, []crypto.Hash{})
 	assert.NoError(t, m.SanityCheck())
-	bs, err := m.Encode(false, nil)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -152,7 +151,7 @@ func TestVoteMessage(t *testing.T) {
 	v, _ := vote.GenerateTestPrepareVote(1, 1)
 	m := NewVoteMessage(v)
 	assert.NoError(t, m.SanityCheck())
-	bs, err := m.Encode(false, nil)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -164,7 +163,7 @@ func TestVoteMessage(t *testing.T) {
 func TestHeartbeatMessage(t *testing.T) {
 	m := NewHeartBeatMessage(crypto.GenerateTestHash(), hrs.NewHRS(1, 2, 3))
 	assert.NoError(t, m.SanityCheck())
-	bs, err := m.Encode(false, nil)
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
 	assert.NoError(t, m2.Decode(bs))
@@ -174,20 +173,23 @@ func TestHeartbeatMessage(t *testing.T) {
 }
 
 func TestMessageFingerprint(t *testing.T) {
-	msg := NewProposalReqMessage(1, 1)
+	msg := NewProposalRequestMessage(1, 1)
 	assert.Contains(t, msg.Fingerprint(), msg.Payload.Fingerprint())
 }
 
 func TestBlocksMessageCompress(t *testing.T) {
 	var blocks = []*block.Block{}
+	var trxs = []*tx.Tx{}
 	for i := 0; i < 100; i++ {
-		b, _ := block.GenerateTestBlock(nil, nil)
+		b, t := block.GenerateTestBlock(nil, nil)
+		trxs = append(trxs, t...)
 		blocks = append(blocks, b)
 	}
-	m := NewBlocksMessage(888, blocks, nil)
-	bs0, err := m.Encode(false, nil)
+	m := NewLatestBlocksMessage(888, blocks, trxs, nil)
+	bs0, err := m.Encode()
 	assert.NoError(t, err)
-	bs, err := m.Encode(true, nil)
+	m.CompressIt()
+	bs, err := m.Encode()
 	assert.NoError(t, err)
 	fmt.Printf("Compressed :%v%%\n", 100-len(bs)*100/(len(bs0)))
 	m2 := new(Message)
@@ -216,11 +218,12 @@ func TestDecodeVoteMessage(t *testing.T) {
 }
 
 func TestAddSignature(t *testing.T) {
-	m1 := NewProposalReqMessage(1, 1)
+	m1 := NewProposalRequestMessage(1, 1)
 	m2 := new(Message)
 	_, _, priv := crypto.GenerateTestKeyPair()
 	sig := priv.Sign(m1.SignBytes())
-	bs, err := m1.Encode(false, sig)
+	m1.SetSignature(sig)
+	bs, err := m1.Encode()
 	require.NoError(t, err)
 	err = m2.Decode(bs)
 	assert.NoError(t, err)

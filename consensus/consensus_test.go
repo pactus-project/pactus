@@ -45,7 +45,7 @@ func setup(t *testing.T) {
 	logger.InitLogger(conf)
 
 	_, keys := validator.GenerateTestValidatorSet()
-	tTxPool = txpool.NewMockTxPool()
+	tTxPool = txpool.MockingTxPool()
 
 	tSigners = make([]crypto.Signer, 4)
 	for i, k := range keys {
@@ -92,7 +92,7 @@ func shouldPublishProposalBlock(t *testing.T, cons *consensus) {
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishProposalBlock", "msg", msg)
 
-			if msg.PayloadType() == payload.PayloadTypeBlocks {
+			if msg.PayloadType() == payload.PayloadTypeLatestBlocks {
 				return
 			}
 		}
@@ -109,7 +109,7 @@ func shouldPublishProposalReqquest(t *testing.T, cons *consensus) {
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishProposalReqquest", "msg", msg)
 
-			if msg.PayloadType() == payload.PayloadTypeProposalReq {
+			if msg.PayloadType() == payload.PayloadTypeProposalRequest {
 				return
 			}
 		}

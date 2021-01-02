@@ -28,7 +28,7 @@ func setup(t *testing.T) {
 	logger.InitLogger(logger.DefaultConfig())
 	tCh = make(chan *message.Message, 10)
 	p, _ := NewTxPool(TestConfig(), tCh)
-	tSandbox = sandbox.NewMockSandbox()
+	tSandbox = sandbox.MockingSandbox()
 	tAcc1Addr, tAcc1Pub, tAcc1Priv = crypto.GenerateTestKeyPair()
 	acc1 := account.NewAccount(tAcc1Addr, 0)
 	acc1.AddToBalance(10000000000)
@@ -153,7 +153,7 @@ func TestPending(t *testing.T) {
 	go func() {
 		for {
 			msg := <-tCh
-			pld := msg.Payload.(*payload.TxsReqPayload)
+			pld := msg.Payload.(*payload.TransactionsRequestPayload)
 			if pld.IDs[0].EqualsTo(trx.ID()) {
 				assert.NoError(t, tPool.AppendTx(trx))
 			}

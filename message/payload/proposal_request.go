@@ -6,12 +6,12 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-type ProposalReqPayload struct {
+type ProposalRequestPayload struct {
 	Height int `cbor:"1,keyasint"`
 	Round  int `cbor:"2,keyasint"`
 }
 
-func (p *ProposalReqPayload) SanityCheck() error {
+func (p *ProposalRequestPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid height")
 	}
@@ -22,10 +22,10 @@ func (p *ProposalReqPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *ProposalReqPayload) Type() PayloadType {
-	return PayloadTypeProposalReq
+func (p *ProposalRequestPayload) Type() PayloadType {
+	return PayloadTypeProposalRequest
 }
 
-func (p *ProposalReqPayload) Fingerprint() string {
+func (p *ProposalRequestPayload) Fingerprint() string {
 	return fmt.Sprintf("%v/%v", p.Height, p.Round)
 }

@@ -46,6 +46,14 @@ func (m *Message) PayloadType() payload.PayloadType {
 	return m.Type
 }
 
+func (m *Message) SetSignature(sig *crypto.Signature) {
+	m.Signature = sig
+}
+
+func (m *Message) CompressIt() {
+	m.Flags = util.SetFlag(m.Flags, FlagCompressed)
+}
+
 type _Message struct {
 	Version     int                 `cbor:"1,keyasint"`
 	Flags       int                 `cbor:"2,keyasint"`
@@ -57,36 +65,31 @@ type _Message struct {
 func (m *Message) SignBytes() []byte {
 	ms := new(Message)
 	*ms = *m
+	ms.Flags = 0
 	ms.Signature = nil
-	sb, _ := ms.Encode(false, nil)
+	sb, _ := ms.Encode()
 	return sb
 }
 
-func (m *Message) Encode(gzip bool, signature *crypto.Signature) ([]byte, error) {
+func (m *Message) Encode() ([]byte, error) {
 	pld, err := cbor.Marshal(m.Payload)
 	if err != nil {
 		return nil, err
 	}
 
-	flags := 0
-	if gzip {
+	if util.IsFlagSet(m.Flags, FlagCompressed) {
 		c, err := util.CompressSlice(pld)
 		if err == nil {
 			pld = c
-			flags = util.SetFlag(flags, FlagCompressed)
 		}
-	}
-
-	if signature != nil {
-		flags = util.SetFlag(flags, FlagHasSignature)
 	}
 
 	msg := &_Message{
 		Version:     m.Version,
-		Flags:       flags,
+		Flags:       m.Flags,
 		PayloadType: m.Type,
 		Payload:     pld,
-		Signature:   signature,
+		Signature:   m.Signature,
 	}
 
 	return cbor.Marshal(msg)

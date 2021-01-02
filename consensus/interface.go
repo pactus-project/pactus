@@ -6,14 +6,19 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-type Consensus interface {
-	MoveToNewHeight()
-	Stop()
-	AddVote(v *vote.Vote)
+type ConsensusReader interface {
 	RoundVotes(round int) []*vote.Vote
 	RoundVotesHash(round int) []crypto.Hash
-	SetProposal(proposal *vote.Proposal)
 	LastProposal() *vote.Proposal
 	HRS() hrs.HRS
 	Fingerprint() string
+}
+
+type Consensus interface {
+	ConsensusReader
+
+	MoveToNewHeight()
+	Stop()
+	AddVote(v *vote.Vote)
+	SetProposal(proposal *vote.Proposal)
 }

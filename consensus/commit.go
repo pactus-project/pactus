@@ -67,6 +67,6 @@ func (cs *consensus) enterCommit(round int) {
 	cs.scheduleNewHeight()
 
 	// Now broadcast the committed block
-	msg := message.NewBlocksMessage(height, []*block.Block{&commitBlock}, commit)
+	msg := message.NewLatestBlocksMessage(height, []*block.Block{&commitBlock}, nil, commit)
 	cs.broadcastCh <- msg
 }

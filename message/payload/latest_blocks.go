@@ -5,15 +5,17 @@ import (
 
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
-type BlocksPayload struct {
-	From       int            `cbor:"1,keyasint"`
-	Blocks     []*block.Block `cbor:"2,keyasint"`
-	LastCommit *block.Commit  `cbor:"3,keyasint, omitempty"`
+type LatestBlocksPayload struct {
+	From         int            `cbor:"1,keyasint"`
+	Blocks       []*block.Block `cbor:"2,keyasint"`
+	Transactions []*tx.Tx       `cbor:"3,keyasint, omitempty"`
+	Commit       *block.Commit  `cbor:"4,keyasint, omitempty"`
 }
 
-func (p *BlocksPayload) SanityCheck() error {
+func (p *LatestBlocksPayload) SanityCheck() error {
 	if p.From < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
 	}
@@ -25,23 +27,29 @@ func (p *BlocksPayload) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
 		}
 	}
-	if p.LastCommit != nil {
-		if err := p.LastCommit.SanityCheck(); err != nil {
+	if p.Commit != nil {
+		if err := p.Commit.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
+		}
+	}
+
+	for _, trx := range p.Transactions {
+		if err := trx.SanityCheck(); err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
-func (p *BlocksPayload) Type() PayloadType {
-	return PayloadTypeBlocks
+func (p *LatestBlocksPayload) Type() PayloadType {
+	return PayloadTypeLatestBlocks
 }
 
-func (p *BlocksPayload) To() int {
+func (p *LatestBlocksPayload) To() int {
 	return p.From + len(p.Blocks) - 1
 }
 
-func (p *BlocksPayload) Fingerprint() string {
+func (p *LatestBlocksPayload) Fingerprint() string {
 	var s string
 	for _, b := range p.Blocks {
 		s += fmt.Sprintf("%v ", b.Hash().Fingerprint())

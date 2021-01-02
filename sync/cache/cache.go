@@ -75,8 +75,6 @@ func (c *Cache) GetCommit(blockhash crypto.Hash) *block.Commit {
 		return i.(*block.Commit)
 	}
 
-	// TODO: get block commit from store. Good idea?
-
 	return nil
 }
 
@@ -95,6 +93,10 @@ func (c *Cache) GetTransaction(id crypto.Hash) *tx.Tx {
 		c.cache.Add(txKey(id), ct.Tx)
 		return ct.Tx
 	}
+
+	// Should we check txpool?
+	// No, because transaction in txpool should be exists in cache.
+	// TODO: write tests for it
 
 	return nil
 }

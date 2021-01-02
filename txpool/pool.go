@@ -67,7 +67,7 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 		return err
 	}
 
-	msg := message.NewTxsMessage([]*tx.Tx{trx})
+	msg := message.NewTransactionsMessage([]*tx.Tx{trx})
 	pool.broadcastCh <- msg
 
 	return nil
@@ -108,7 +108,7 @@ func (pool *txPool) PendingTx(id crypto.Hash) *tx.Tx {
 	pool.logger.Debug("Request transaction from peers", "id", id)
 	pool.lk.RUnlock()
 
-	msg := message.NewTxsReqMessage([]crypto.Hash{id})
+	msg := message.NewTransactionsRequestMessage([]crypto.Hash{id})
 	pool.broadcastCh <- msg
 
 	timeout := time.NewTimer(pool.config.WaitingTimeout)

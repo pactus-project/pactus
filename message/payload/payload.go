@@ -7,17 +7,17 @@ import (
 type PayloadType int
 
 const (
-	PayloadTypeSalam       = PayloadType(1) // Hello message
-	PayloadTypeAleyk       = PayloadType(2) // Hello Ack message
-	PayloadTypeBlocksReq   = PayloadType(3)
-	PayloadTypeBlocks      = PayloadType(4)
-	PayloadTypeTxsReq      = PayloadType(5)
-	PayloadTypeTxs         = PayloadType(6)
-	PayloadTypeProposalReq = PayloadType(7)
-	PayloadTypeProposal    = PayloadType(8)
-	PayloadTypeHeartBeat   = PayloadType(9)
-	PayloadTypeVote        = PayloadType(10)
-	PayloadTypeVoteSet     = PayloadType(11)
+	PayloadTypeSalam               = PayloadType(1) // Hello message
+	PayloadTypeAleyk               = PayloadType(2) // Hello Ack message
+	PayloadTypeLatestBlocksRequest = PayloadType(3)
+	PayloadTypeLatestBlocks        = PayloadType(4)
+	PayloadTypeTransactionsRequest = PayloadType(5)
+	PayloadTypeTransactions        = PayloadType(6)
+	PayloadTypeProposalRequest     = PayloadType(7)
+	PayloadTypeProposal            = PayloadType(8)
+	PayloadTypeHeartBeat           = PayloadType(9)
+	PayloadTypeVote                = PayloadType(10)
+	PayloadTypeVoteSet             = PayloadType(11)
 )
 
 func (t PayloadType) String() string {
@@ -26,15 +26,15 @@ func (t PayloadType) String() string {
 		return "salam"
 	case PayloadTypeAleyk:
 		return "aleyk"
-	case PayloadTypeBlocksReq:
+	case PayloadTypeLatestBlocksRequest:
 		return "blocks-req"
-	case PayloadTypeBlocks:
+	case PayloadTypeLatestBlocks:
 		return "blocks"
-	case PayloadTypeTxsReq:
+	case PayloadTypeTransactionsRequest:
 		return "txs-req"
-	case PayloadTypeTxs:
+	case PayloadTypeTransactions:
 		return "txs"
-	case PayloadTypeProposalReq:
+	case PayloadTypeProposalRequest:
 		return "proposal-req"
 	case PayloadTypeProposal:
 		return "proposal"

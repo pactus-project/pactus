@@ -14,7 +14,7 @@ var tStore *store.MockStore
 
 func setup(t *testing.T) {
 	var err error
-	tStore = store.NewMockStore()
+	tStore = store.MockingStore()
 	tCache, err = NewCache(10, tStore)
 	assert.NoError(t, err)
 }

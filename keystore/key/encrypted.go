@@ -23,7 +23,6 @@ const (
 	keyHeaderKDF = "scrypt"
 	scryptDKLen  = 32
 
-	//TODO : should be configurable
 	scryptN = 2
 	scryptP = 1
 	scryptR = 8

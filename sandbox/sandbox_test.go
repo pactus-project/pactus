@@ -26,7 +26,7 @@ func init() {
 
 func setup(t *testing.T) {
 	var err error
-	tStore = store.NewMockStore()
+	tStore = store.MockingStore()
 
 	_, pb, priv := crypto.GenerateTestKeyPair()
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
@@ -48,7 +48,7 @@ func setup(t *testing.T) {
 }
 
 func TestLoadRecentBlocks(t *testing.T) {
-	store := store.NewMockStore()
+	store := store.MockingStore()
 
 	lastHeight := 21
 	for i := 0; i <= lastHeight; i++ {

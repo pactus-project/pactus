@@ -43,7 +43,7 @@ func setup(t *testing.T) {
 	tValSigner4 = crypto.NewSigner(priv4)
 
 	tGenTime = util.Now()
-	tCommonTxPool = txpool.NewMockTxPool()
+	tCommonTxPool = txpool.MockingTxPool()
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	// 2,100,000,000,000,000

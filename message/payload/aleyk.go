@@ -23,10 +23,9 @@ type AleykPayload struct {
 	Moniker     string           `cbor:"2,keyasint"`
 	PublicKey   crypto.PublicKey `cbor:"3,keyasint"`
 	PeerID      peer.ID          `cbor:"4,keyasint"`
-	GenesisHash crypto.Hash      `cbor:"5,keyasint"`
-	Height      int              `cbor:"6,keyasint"`
-	Flags       int              `cbor:"7,keyasint"`
-	Response    SalamResponse    `cbor:"8,keyasint"`
+	Height      int              `cbor:"5,keyasint"`
+	Flags       int              `cbor:"6,keyasint"`
+	Response    SalamResponse    `cbor:"7,keyasint"`
 }
 
 func (p *AleykPayload) SanityCheck() error {

@@ -24,7 +24,7 @@ type MockSandbox struct {
 	Sortition      *sortition.Sortition
 }
 
-func NewMockSandbox() *MockSandbox {
+func MockingSandbox() *MockSandbox {
 	_, _, priv := crypto.GenerateTestKeyPair()
 	return &MockSandbox{
 		Accounts:       make(map[crypto.Address]account.Account),

@@ -18,7 +18,7 @@ type MockStore struct {
 	Transactions map[crypto.Hash]*tx.CommittedTx
 }
 
-func NewMockStore() *MockStore {
+func MockingStore() *MockStore {
 	return &MockStore{
 		Blocks:       make(map[int]*block.Block),
 		Accounts:     make(map[crypto.Address]*account.Account),

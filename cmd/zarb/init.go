@@ -41,7 +41,11 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			path, _ := filepath.Abs(*workingDirOpt)
-			gen := makeGenesis(*workingDirOpt, *chainNameOpt)
+			gen, err := makeGenesis(*workingDirOpt, *chainNameOpt)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to make genesis file: %v", err)
+				return
+			}
 			conf := makeConfigfile()
 
 			// save genesis file to file system
@@ -65,7 +69,7 @@ func Init() func(c *cli.Cmd) {
 }
 
 // makeGenesis makes genisis file while on initialize
-func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
+func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) {
 
 	// create  accounts for genesis
 	accs := make([]*account.Account, 5)
@@ -78,7 +82,7 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 	for i := 1; i < len(accs); i++ {
 		k := key.GenKey()
 		if err := key.EncryptKeyToFile(k, workingDir+"/keys/"+k.Address().String()+".json", "", ""); err != nil {
-			return nil
+			return nil, err
 		}
 		acc := account.NewAccount(k.Address(), i+1)
 		acc.AddToBalance(1000000)
@@ -89,14 +93,14 @@ func makeGenesis(workingDir string, chainName string) *genesis.Genesis {
 	// create validator account for genesis
 	k := key.GenKey()
 	if err := key.EncryptKeyToFile(k, workingDir+"/validator_key.json", "", ""); err != nil {
-		return nil
+		return nil, err
 	}
 	val := validator.NewValidator(k.PublicKey(), 0, 0)
 	vals := []*validator.Validator{val}
 
 	// create genesis
 	gen := genesis.MakeGenesis(chainName, util.RoundNow(60), accs, vals, 10)
-	return gen
+	return gen, nil
 
 }
 

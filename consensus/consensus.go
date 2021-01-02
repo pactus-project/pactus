@@ -283,6 +283,6 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 }
 
 func (cs *consensus) requestForProposal() {
-	msg := message.NewProposalReqMessage(cs.hrs.Height(), cs.hrs.Round())
+	msg := message.NewProposalRequestMessage(cs.hrs.Height(), cs.hrs.Round())
 	cs.broadcastCh <- msg
 }

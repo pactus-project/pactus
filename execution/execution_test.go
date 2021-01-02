@@ -26,7 +26,7 @@ func init() {
 }
 
 func setup(t *testing.T) {
-	tSandbox = sandbox.NewMockSandbox()
+	tSandbox = sandbox.MockingSandbox()
 
 	acc1, priv1 := account.GenerateTestAccount(0)
 	tPriv1 = priv1

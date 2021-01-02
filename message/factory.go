@@ -26,7 +26,7 @@ func NewSalamMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID,
 		},
 	}
 }
-func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, genesisHash crypto.Hash, height int, flags int, resStatus int, resMessage string) *Message {
+func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, height int, flags int, resStatus int, resMessage string) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeAleyk,
@@ -35,7 +35,6 @@ func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID,
 			Moniker:     moniker,
 			PublicKey:   publicKey,
 			PeerID:      peerID,
-			GenesisHash: genesisHash,
 			Height:      height,
 			Flags:       flags,
 			Response: payload.SalamResponse{
@@ -47,26 +46,26 @@ func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID,
 
 }
 
-func NewBlocksReqMessage(from, to int, lastBlockHash crypto.Hash) *Message {
+func NewLatestBlocksRequestMessage(from int, lastBlockHash crypto.Hash) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeBlocksReq,
-		Payload: &payload.BlocksReqPayload{
+		Type:    payload.PayloadTypeLatestBlocksRequest,
+		Payload: &payload.LatestBlocksRequestPayload{
 			From:          from,
-			To:            to,
 			LastBlockHash: lastBlockHash,
 		},
 	}
 }
 
-func NewBlocksMessage(from int, blocks []*block.Block, lastCommit *block.Commit) *Message {
+func NewLatestBlocksMessage(from int, blocks []*block.Block, transactions []*tx.Tx, commit *block.Commit) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeBlocks,
-		Payload: &payload.BlocksPayload{
-			From:       from,
-			Blocks:     blocks,
-			LastCommit: lastCommit,
+		Type:    payload.PayloadTypeLatestBlocks,
+		Payload: &payload.LatestBlocksPayload{
+			From:         from,
+			Blocks:       blocks,
+			Transactions: transactions,
+			Commit:       commit,
 		},
 	}
 }
@@ -81,11 +80,11 @@ func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
 	}
 }
 
-func NewProposalReqMessage(height, round int) *Message {
+func NewProposalRequestMessage(height, round int) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeProposalReq,
-		Payload: &payload.ProposalReqPayload{
+		Type:    payload.PayloadTypeProposalRequest,
+		Payload: &payload.ProposalRequestPayload{
 			Height: height,
 			Round:  round,
 		},
@@ -102,22 +101,22 @@ func NewProposalMessage(proposal *vote.Proposal) *Message {
 	}
 }
 
-func NewTxsReqMessage(ids []crypto.Hash) *Message {
+func NewTransactionsRequestMessage(ids []crypto.Hash) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeTxsReq,
-		Payload: &payload.TxsReqPayload{
+		Type:    payload.PayloadTypeTransactionsRequest,
+		Payload: &payload.TransactionsRequestPayload{
 			IDs: ids,
 		},
 	}
 }
 
-func NewTxsMessage(txs []*tx.Tx) *Message {
+func NewTransactionsMessage(txs []*tx.Tx) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeTxs,
-		Payload: &payload.TxsPayload{
-			Txs: txs,
+		Type:    payload.PayloadTypeTransactions,
+		Payload: &payload.TransactionsPayload{
+			Transactions: txs,
 		},
 	}
 }
@@ -149,16 +148,16 @@ func makePayload(t payload.PayloadType) payload.Payload {
 		return &payload.SalamPayload{}
 	case payload.PayloadTypeAleyk:
 		return &payload.AleykPayload{}
-	case payload.PayloadTypeBlocksReq:
-		return &payload.BlocksReqPayload{}
-	case payload.PayloadTypeBlocks:
-		return &payload.BlocksPayload{}
-	case payload.PayloadTypeTxsReq:
-		return &payload.TxsReqPayload{}
-	case payload.PayloadTypeTxs:
-		return &payload.TxsPayload{}
-	case payload.PayloadTypeProposalReq:
-		return &payload.ProposalReqPayload{}
+	case payload.PayloadTypeLatestBlocksRequest:
+		return &payload.LatestBlocksRequestPayload{}
+	case payload.PayloadTypeLatestBlocks:
+		return &payload.LatestBlocksPayload{}
+	case payload.PayloadTypeTransactionsRequest:
+		return &payload.TransactionsRequestPayload{}
+	case payload.PayloadTypeTransactions:
+		return &payload.TransactionsPayload{}
+	case payload.PayloadTypeProposalRequest:
+		return &payload.ProposalRequestPayload{}
 	case payload.PayloadTypeProposal:
 		return &payload.ProposalPayload{}
 	case payload.PayloadTypeHeartBeat:

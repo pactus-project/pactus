@@ -1,4 +1,4 @@
-package sync
+package network_api
 
 import (
 	"fmt"
@@ -11,34 +11,54 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/message/payload"
+	"github.com/zarbchain/zarb-go/sync/firewall"
 )
 
-type mockNetworkAPI struct {
+type MockNetworkAPI struct {
 	ch       chan *message.Message
 	id       peer.ID
-	peerSync *Synchronizer
+	Firewall *firewall.Firewall
+	ParsFn   ParsMessageFn
+	OtherAPI *MockNetworkAPI
 }
 
-func mockingNetworkAPI(id peer.ID) *mockNetworkAPI {
-	return &mockNetworkAPI{
+func MockingNetworkAPI(id peer.ID) *MockNetworkAPI {
+	return &MockNetworkAPI{
 		ch: make(chan *message.Message, 100),
 		id: id,
 	}
 }
-func (mock *mockNetworkAPI) Start() error {
+func (mock *MockNetworkAPI) Start() error {
 	return nil
 }
-func (mock *mockNetworkAPI) Stop() {
+func (mock *MockNetworkAPI) Stop() {
 }
-func (mock *mockNetworkAPI) PublishMessage(msg *message.Message) error {
+func (mock *MockNetworkAPI) JoinDownloadTopic() error {
+	return nil
+}
+func (mock *MockNetworkAPI) LeaveDownloadTopic() {}
+func (mock *MockNetworkAPI) PublishMessage(msg *message.Message) error {
 	mock.ch <- msg
 	return nil
 }
-func (mock *mockNetworkAPI) SelfID() peer.ID {
+func (mock *MockNetworkAPI) SelfID() peer.ID {
 	return mock.id
 }
+func (mock *MockNetworkAPI) CheckAndParsMessage(data []byte, id peer.ID) bool {
+	msg := mock.Firewall.ParsMessage(data, id)
+	if msg != nil {
+		mock.ParsFn(msg, mock.id)
+		return true
+	}
+	return false
+}
 
-func (mock *mockNetworkAPI) shouldPublishThisMessage(t *testing.T, expectedMsg *message.Message) {
+func (mock *MockNetworkAPI) sendMessageToOtherPeer(m *message.Message) {
+	data, _ := m.Encode()
+	mock.OtherAPI.CheckAndParsMessage(data, mock.id)
+}
+
+func (mock *MockNetworkAPI) ShouldPublishThisMessage(t *testing.T, expectedMsg *message.Message) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -47,8 +67,7 @@ func (mock *mockNetworkAPI) shouldPublishThisMessage(t *testing.T, expectedMsg *
 			require.NoError(t, fmt.Errorf("Timeout"))
 		case msg := <-mock.ch:
 			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg)
-			b, _ := msg.Encode(false, nil)
-			mock.peerSync.ParsMessage(b, mock.id)
+			mock.sendMessageToOtherPeer(msg)
 
 			if msg.PayloadType() == expectedMsg.PayloadType() {
 				logger.Info("Comparing two messages", "msg", msg, "expected", expectedMsg)
@@ -59,7 +78,7 @@ func (mock *mockNetworkAPI) shouldPublishThisMessage(t *testing.T, expectedMsg *
 	}
 }
 
-func (mock *mockNetworkAPI) shouldPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) *message.Message {
+func (mock *MockNetworkAPI) ShouldPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) *message.Message {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -69,8 +88,7 @@ func (mock *mockNetworkAPI) shouldPublishMessageWithThisType(t *testing.T, paylo
 			return nil
 		case msg := <-mock.ch:
 			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
-			b, _ := msg.Encode(false, nil)
-			mock.peerSync.ParsMessage(b, mock.id)
+			mock.sendMessageToOtherPeer(msg)
 
 			if msg.PayloadType() == payloadType {
 				return msg
@@ -79,7 +97,7 @@ func (mock *mockNetworkAPI) shouldPublishMessageWithThisType(t *testing.T, paylo
 	}
 }
 
-func (mock *mockNetworkAPI) shouldNotPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) {
+func (mock *MockNetworkAPI) ShouldNotPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -88,8 +106,7 @@ func (mock *mockNetworkAPI) shouldNotPublishMessageWithThisType(t *testing.T, pa
 			return
 		case msg := <-mock.ch:
 			logger.Info("shouldNotPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
-			b, _ := msg.Encode(false, nil)
-			mock.peerSync.ParsMessage(b, mock.id)
+			mock.sendMessageToOtherPeer(msg)
 
 			assert.NotEqual(t, msg.PayloadType(), payloadType)
 		}

@@ -9,6 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestWriteFile(t *testing.T) {
+	p := TempDirPath()
+	d := []byte("some-data")
+	assert.NoError(t, WriteFile(p+"/d.dat", d))
+	assert.NoError(t, WriteFile(p+"/another-folder/d.dat", d))
+}
+
 func TestEmptyPath(t *testing.T) {
 	p := TempDirPath()
 	assert.True(t, IsDirEmpty(p))

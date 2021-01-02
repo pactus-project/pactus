@@ -21,10 +21,10 @@ type MockState struct {
 	InvalidBlockHash crypto.Hash
 }
 
-func NewMockState() *MockState {
+func MockingState() *MockState {
 	return &MockState{
 		GenHash: crypto.GenerateTestHash(),
-		Store:   store.NewMockStore(),
+		Store:   store.MockingStore(),
 	}
 }
 
