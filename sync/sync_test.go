@@ -80,16 +80,16 @@ func setup(t *testing.T) {
 
 	tBobState.GenHash = tAliceState.GenHash
 
-	// Alice has 12 and Bob has 6 blocks
+	// Alice has 16 and Bob has 8 blocks
 	lastBlockHash := crypto.Hash{}
-	for i := 0; i < 12; i++ {
+	for i := 0; i < 16; i++ {
 		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
 		c := block.GenerateTestCommit(b.Hash())
 		lastBlockHash = b.Hash()
 		tAliceState.AddBlock(i+1, b, trxs)
 		tAliceState.LastBlockCommit = c
 
-		if i < 6 {
+		if i < 8 {
 			tBobState.AddBlock(i+1, b, trxs)
 			tBobState.LastBlockCommit = c
 		}

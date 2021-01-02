@@ -13,7 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-// Firewall hold statistic data about peers' behaviors
+// Firewall check packets before passing them to sync module
 type Firewall struct {
 	peerSet *peerset.PeerSet
 	state   state.StateReader
@@ -72,11 +72,6 @@ func (f *Firewall) ParsMessage(data []byte, from peer.ID) *message.Message {
 		pld := msg.Payload.(*payload.VotePayload)
 		peer.UpdateHeight(pld.Vote.Height())
 		f.peerSet.UpdateMaxClaimedHeight(pld.Vote.Height() - 1)
-
-	case payload.PayloadTypeVoteSet:
-		pld := msg.Payload.(*payload.VoteSetPayload)
-		peer.UpdateHeight(pld.Height)
-		f.peerSet.UpdateMaxClaimedHeight(pld.Height - 1)
 	}
 
 	return msg

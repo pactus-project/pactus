@@ -60,7 +60,16 @@ func TestRequestForBlocksInvalidLastBlocHash(t *testing.T) {
 	invHash := crypto.GenerateTestHash()
 
 	// Alice asks bob to send blocks but last block hash is invalid
-	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(14, invHash)
+	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(8, invHash)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+
+	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
+}
+
+func TestRequestForBlocksVeryFar(t *testing.T) {
+	setup(t)
+
+	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(2, tBobState.Store.Blocks[1].Hash())
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 
 	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
@@ -69,7 +78,7 @@ func TestRequestForBlocksInvalidLastBlocHash(t *testing.T) {
 func TestSendLastCommit(t *testing.T) {
 	setup(t)
 
-	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(4, tBobState.Store.Blocks[3].Hash())
+	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(8, tBobState.Store.Blocks[7].Hash())
 
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	msg := tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
