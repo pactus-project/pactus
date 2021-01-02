@@ -18,6 +18,7 @@ func TestWriteFile(t *testing.T) {
 
 func TestEmptyPath(t *testing.T) {
 	p := TempDirPath()
+	assert.Equal(t, MakeAbs(p), p)
 	assert.True(t, IsDirEmpty(p))
 
 	f := TempFilePath()
