@@ -207,6 +207,7 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 
 	case payload.PayloadTypeLatestBlocksRequest,
 		payload.PayloadTypeLatestBlocks,
+		payload.PayloadTypeTransactionsRequest,
 		payload.PayloadTypeTransactions:
 		return api.dataTopic
 
