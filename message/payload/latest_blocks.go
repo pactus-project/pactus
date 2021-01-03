@@ -12,7 +12,7 @@ type LatestBlocksPayload struct {
 	From         int            `cbor:"1,keyasint"`
 	Blocks       []*block.Block `cbor:"2,keyasint"`
 	Transactions []*tx.Tx       `cbor:"3,keyasint, omitempty"`
-	Commit       *block.Commit  `cbor:"4,keyasint, omitempty"`
+	LastCommit   *block.Commit  `cbor:"4,keyasint, omitempty"`
 }
 
 func (p *LatestBlocksPayload) SanityCheck() error {
@@ -27,8 +27,8 @@ func (p *LatestBlocksPayload) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
 		}
 	}
-	if p.Commit != nil {
-		if err := p.Commit.SanityCheck(); err != nil {
+	if p.LastCommit != nil {
+		if err := p.LastCommit.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
 		}
 	}

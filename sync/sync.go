@@ -21,9 +21,9 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-type PublishMessageFn = func(msg *message.Message)
-
 const FlagInitialBlockDownload = 0x1
+
+type PublishMessageFn = func(msg *message.Message)
 
 type Synchronizer struct {
 	// Not: Synchronizer should not have any lock to prevent dead lock situation.
@@ -38,9 +38,8 @@ type Synchronizer struct {
 	peerSet         *peerset.PeerSet
 	firewall        *firewall.Firewall
 	cache           *cache.Cache
-	consensusTopic  *ConsensusTopic
-	generalTopic    *GeneralTopic
-	dataTopic       *DataTopic
+	consensusSync   *ConsensusSync
+	stateSync       *StateSync
 	broadcastCh     <-chan *message.Message
 	networkAPI      network_api.NetworkAPI
 	heartBeatTicker *time.Ticker
@@ -85,9 +84,14 @@ func NewSynchronizer(
 	syncer.firewall = firewall
 	syncer.networkAPI = api
 
-	syncer.generalTopic = NewGeneralTopic(conf, api.SelfID(), signer.PublicKey(), peerSet, state, logger, syncer.PublishMessage)
-	syncer.consensusTopic = NewConsensusTopic(conf, consensus, logger, syncer.PublishMessage)
-	syncer.dataTopic = NewDataTopic(conf, cache, state, logger, syncer.PublishMessage)
+	syncer.consensusSync = NewConsensusSync(conf, consensus, logger, syncer.PublishMessage)
+	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, peerSet, logger, syncer.PublishMessage)
+
+	if conf.InitialBlockDownload {
+		if err := syncer.joinDownloadTopic(); err != nil {
+			return nil, err
+		}
+	}
 
 	return syncer, nil
 }
@@ -102,7 +106,7 @@ func (syncer *Synchronizer) Start() error {
 	syncer.heartBeatTicker = time.NewTicker(syncer.config.HeartBeatTimeout)
 	go syncer.heartBeatTickerLoop()
 
-	syncer.generalTopic.BroadcastSalam()
+	syncer.BroadcastSalam()
 
 	timer := time.NewTimer(syncer.config.StartingTimeout)
 	go func() {
@@ -117,6 +121,14 @@ func (syncer *Synchronizer) Stop() {
 	syncer.ctx.Done()
 	syncer.networkAPI.Stop()
 	syncer.heartBeatTicker.Stop()
+}
+
+func (syncer *Synchronizer) joinDownloadTopic() error {
+	if err := syncer.networkAPI.JoinDownloadTopic(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (syncer *Synchronizer) maybeSynced() {
@@ -190,7 +202,7 @@ func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 	if claimedHeight > ourHeight {
 		syncer.logger.Debug("Ask for more blocks", "our_height", ourHeight, "claimed_height", claimedHeight)
 		hash := syncer.state.LastBlockHash()
-		syncer.dataTopic.BroadcastLatestBlocksRequest(ourHeight+1, hash)
+		syncer.stateSync.BroadcastLatestBlocksRequest(ourHeight+1, hash)
 	}
 }
 
@@ -200,11 +212,11 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 	switch msg.PayloadType() {
 	case payload.PayloadTypeSalam:
 		pld := msg.Payload.(*payload.SalamPayload)
-		syncer.generalTopic.ProcessSalamPayload(pld)
+		syncer.ProcessSalamPayload(pld)
 
 	case payload.PayloadTypeAleyk:
 		pld := msg.Payload.(*payload.AleykPayload)
-		syncer.generalTopic.ProcessAleykPayload(pld)
+		syncer.ProcessAleykPayload(pld)
 
 	case payload.PayloadTypeHeartBeat:
 		pld := msg.Payload.(*payload.HeartBeatPayload)
@@ -212,36 +224,36 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 
 	case payload.PayloadTypeLatestBlocksRequest:
 		pld := msg.Payload.(*payload.LatestBlocksRequestPayload)
-		syncer.dataTopic.ProcessLatestBlocksRequestPayload(pld)
+		syncer.stateSync.ProcessLatestBlocksRequestPayload(pld)
 
 	case payload.PayloadTypeLatestBlocks:
 		pld := msg.Payload.(*payload.LatestBlocksPayload)
-		syncer.dataTopic.ProcessLatestBlocksPayload(pld)
+		syncer.stateSync.ProcessLatestBlocksPayload(pld)
 		syncer.informConsensusToMoveToNewHeight()
 
 	case payload.PayloadTypeTransactionsRequest:
 		pld := msg.Payload.(*payload.TransactionsRequestPayload)
-		syncer.dataTopic.ProcessTransactionsRequestPayload(pld)
+		syncer.stateSync.ProcessTransactionsRequestPayload(pld)
 
 	case payload.PayloadTypeTransactions:
 		pld := msg.Payload.(*payload.TransactionsPayload)
-		syncer.dataTopic.ProcessTransactionsPayload(pld)
+		syncer.stateSync.ProcessTransactionsPayload(pld)
 
 	case payload.PayloadTypeProposalRequest:
 		pld := msg.Payload.(*payload.ProposalRequestPayload)
-		syncer.consensusTopic.ProcessProposalRequestPayload(pld)
+		syncer.consensusSync.ProcessProposalRequestPayload(pld)
 
 	case payload.PayloadTypeProposal:
 		pld := msg.Payload.(*payload.ProposalPayload)
-		syncer.consensusTopic.ProcessProposalPayload(pld)
+		syncer.consensusSync.ProcessProposalPayload(pld)
 
 	case payload.PayloadTypeVote:
 		pld := msg.Payload.(*payload.VotePayload)
-		syncer.consensusTopic.ProcessVotePayload(pld)
+		syncer.consensusSync.ProcessVotePayload(pld)
 
 	case payload.PayloadTypeVoteSet:
 		pld := msg.Payload.(*payload.VoteSetPayload)
-		syncer.consensusTopic.ProcessVoteSetPayload(pld)
+		syncer.consensusSync.ProcessVoteSetPayload(pld)
 
 	default:
 		syncer.logger.Error("Unknown message type", "type", msg.PayloadType())
@@ -281,11 +293,69 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 		if pld.Pulse.GreaterThan(hrs) {
 			syncer.logger.Trace("Our consensus is behind of this peer.")
 			// Let's ask for more votes
-			syncer.consensusTopic.BroadcastVoteSet()
+			syncer.consensusSync.BroadcastVoteSet()
 		} else if pld.Pulse.LessThan(hrs) {
 			syncer.logger.Trace("Our consensus is ahead of this peer.")
 		} else {
 			syncer.logger.Trace("Our consensus is at the same step with this peer.")
 		}
 	}
+}
+
+func (syncer *Synchronizer) BroadcastSalam() {
+	flags := 0
+	if syncer.config.InitialBlockDownload {
+		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+	}
+	msg := message.NewSalamMessage(
+		syncer.config.Moniker,
+		syncer.signer.PublicKey(),
+		syncer.networkAPI.SelfID(),
+		syncer.state.GenesisHash(),
+		syncer.state.LastBlockHeight(),
+		flags)
+
+	syncer.PublishMessage(msg)
+}
+
+func (syncer *Synchronizer) BroadcastAleyk(resStatus int, resMsg string) {
+	flags := 0
+	if syncer.config.InitialBlockDownload {
+		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+	}
+	msg := message.NewAleykMessage(
+		syncer.config.Moniker,
+		syncer.signer.PublicKey(),
+		syncer.networkAPI.SelfID(),
+		syncer.state.LastBlockHeight(),
+		flags,
+		resStatus,
+		resMsg)
+
+	syncer.PublishMessage(msg)
+}
+
+func (syncer *Synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
+	syncer.logger.Trace("Process salam payload", "pld", pld)
+
+	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
+		syncer.logger.Info("Received a message from different chain", "genesis_hash", pld.GenesisHash)
+		// Reply salam
+		syncer.BroadcastAleyk(payload.SalamResponseCodeRejected, "Invalid genesis hash")
+		return
+	}
+
+	p := syncer.peerSet.MustGetPeer(pld.PeerID)
+	p.UpdateMoniker(pld.Moniker)
+	p.UpdateHeight(pld.Height)
+	p.UpdateNodeVersion(pld.NodeVersion)
+	p.UpdatePublicKey(pld.PublicKey)
+	p.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
+
+	// Reply salam
+	syncer.BroadcastAleyk(payload.SalamResponseCodeOK, "Welcome!")
+}
+
+func (syncer *Synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
+	syncer.logger.Trace("Process Aleyk payload", "pld", pld)
 }

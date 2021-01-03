@@ -65,7 +65,7 @@ func NewLatestBlocksMessage(from int, blocks []*block.Block, transactions []*tx.
 			From:         from,
 			Blocks:       blocks,
 			Transactions: transactions,
-			Commit:       commit,
+			LastCommit:   commit,
 		},
 	}
 }
@@ -142,6 +142,31 @@ func NewVoteMessage(vote *vote.Vote) *Message {
 	}
 }
 
+func NewDownloadRequestMessage(peerID peer.ID, from, to int) *Message {
+	return &Message{
+		Version: LastVersion,
+		Type:    payload.PayloadTypeDownloadRequest,
+		Payload: &payload.DownloadRequestPayload{
+			PeerID: peerID,
+			From:   from,
+			To:     to,
+		},
+	}
+}
+
+func NewDownloadResponseMessage(status int, from int, blocks []*block.Block, txs []*tx.Tx) *Message {
+	return &Message{
+		Version: LastVersion,
+		Type:    payload.PayloadTypeDownloadResponse,
+		Payload: &payload.DownloadResponsePayload{
+			Status:       status,
+			From:         from,
+			Blocks:       blocks,
+			Transactions: txs,
+		},
+	}
+}
+
 func makePayload(t payload.PayloadType) payload.Payload {
 	switch t {
 	case payload.PayloadTypeSalam:
@@ -166,6 +191,10 @@ func makePayload(t payload.PayloadType) payload.Payload {
 		return &payload.VotePayload{}
 	case payload.PayloadTypeVoteSet:
 		return &payload.VoteSetPayload{}
+	case payload.PayloadTypeDownloadRequest:
+		return &payload.DownloadRequestPayload{}
+	case payload.PayloadTypeDownloadResponse:
+		return &payload.DownloadResponsePayload{}
 	}
 
 	//

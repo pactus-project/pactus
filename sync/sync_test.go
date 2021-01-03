@@ -18,6 +18,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/version"
 )
 
 var (
@@ -109,9 +110,8 @@ func setup(t *testing.T) {
 	tAliceSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "alice: ", sync: tAliceSync})
 	tAliceSync.peerSet = peerset.NewPeerSet()
 	tAliceSync.firewall = firewall.NewFirewall(tAliceSync.peerSet, tAliceState)
-	tAliceSync.consensusTopic = NewConsensusTopic(tAliceConfig, tAliceConsensus, tAliceSync.logger, tAliceSync.PublishMessage)
-	tAliceSync.generalTopic = NewGeneralTopic(tAliceConfig, tAliceNetAPI.SelfID(), tAliceSync.signer.PublicKey(), tAliceSync.peerSet, tAliceState, tAliceSync.logger, tAliceSync.PublishMessage)
-	tAliceSync.dataTopic = NewDataTopic(tAliceConfig, tAliceSync.cache, tAliceState, tAliceSync.logger, tAliceSync.PublishMessage)
+	tAliceSync.consensusSync = NewConsensusSync(tAliceConfig, tAliceConsensus, tAliceSync.logger, tAliceSync.PublishMessage)
+	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.PublishMessage)
 
 	tBobSync = &Synchronizer{
 		ctx:         context.Background(),
@@ -127,9 +127,8 @@ func setup(t *testing.T) {
 	tBobSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "bob: ", sync: tBobSync})
 	tBobSync.peerSet = peerset.NewPeerSet()
 	tBobSync.firewall = firewall.NewFirewall(tBobSync.peerSet, tBobState)
-	tBobSync.consensusTopic = NewConsensusTopic(tBobConfig, tBobConsensus, tBobSync.logger, tBobSync.PublishMessage)
-	tBobSync.generalTopic = NewGeneralTopic(tBobConfig, tBobNetAPI.SelfID(), tBobSync.signer.PublicKey(), tBobSync.peerSet, tBobState, tBobSync.logger, tBobSync.PublishMessage)
-	tBobSync.dataTopic = NewDataTopic(tBobConfig, tBobSync.cache, tBobState, tBobSync.logger, tBobSync.PublishMessage)
+	tBobSync.consensusSync = NewConsensusSync(tBobConfig, tBobConsensus, tBobSync.logger, tBobSync.PublishMessage)
+	tBobSync.stateSync = NewStateSync(tBobConfig, tBobPeerID, tBobSync.cache, tBobState, tBobSync.peerSet, tBobSync.logger, tBobSync.PublishMessage)
 
 	tAliceNetAPI.ParsFn = tAliceSync.ParsMessage
 	tAliceNetAPI.Firewall = tAliceSync.firewall
@@ -152,4 +151,87 @@ func setup(t *testing.T) {
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
+}
+
+func TestSendSalamBadGenesisHash(t *testing.T) {
+	setup(t)
+
+	invGenHash := crypto.GenerateTestHash()
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewSalamMessage("bad-genesis", pub, tAnotherPeerID, invGenHash, 0, 0)
+	d, _ := msg.Encode()
+	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
+	msg2 := tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+	pld := msg2.Payload.(*payload.AleykPayload)
+
+	assert.Equal(t, pld.Response.Status, payload.SalamResponseCodeRejected)
+}
+
+func TestSendSalamPeerBehind(t *testing.T) {
+	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 3, 0x1)
+	d, _ := msg.Encode()
+	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
+	msg2 := tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+	pld := msg2.Payload.(*payload.AleykPayload)
+
+	assert.Equal(t, pld.Response.Status, payload.SalamResponseCodeOK)
+	assert.Equal(t, tBobSync.peerSet.MaxClaimedHeight(), tAliceState.LastBlockHeight())
+
+	p := tAliceSync.peerSet.GetPeer(tAnotherPeerID)
+	assert.Equal(t, p.NodeVersion(), version.NodeVersion)
+	assert.Equal(t, p.Moniker(), "kitty")
+	assert.True(t, pub.EqualsTo(p.PublicKey()))
+	assert.Equal(t, p.PeerID(), tAnotherPeerID)
+	assert.Equal(t, p.Address(), pub.Address())
+	assert.Equal(t, p.Height(), 3)
+	assert.Equal(t, p.InitialBlockDownload(), true)
+}
+
+func TestSendSalamPeerAhead(t *testing.T) {
+	setup(t)
+
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenHash, 111, 0)
+	d, _ := msg.Encode()
+	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
+	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewLatestBlocksRequestMessage(tAliceState.LastBlockHeight()+1, tAliceState.LastBlockHash()))
+
+	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 111)
+}
+
+func TestSendAleykPeerBehind(t *testing.T) {
+	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, 1, 0, 0, "Welcome!")
+	d, _ := msg.Encode()
+	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+}
+
+func TestSendAleykPeerAhead(t *testing.T) {
+	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, 111, 0, 0, "Welcome!")
+	d, _ := msg.Encode()
+	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 111)
+}
+
+func TestSendAleykPeerSameHeight(t *testing.T) {
+	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.LastBlockHeight(), 0, 0, "Welcome!")
+	d, _ := msg.Encode()
+	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 }

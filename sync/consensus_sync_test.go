@@ -79,10 +79,10 @@ func TestUpdateConsensus(t *testing.T) {
 	v, _ := vote.GenerateTestPrecommitVote(1, 1)
 	p, _ := vote.GenerateTestProposal(1, 1)
 
-	tAliceSync.consensusTopic.BroadcastVote(v)
+	tAliceSync.consensusSync.BroadcastVote(v)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
 
-	tAliceSync.consensusTopic.BroadcastProposal(p)
+	tAliceSync.consensusSync.BroadcastProposal(p)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 
 	assert.Equal(t, tBobConsensus.Votes[0].Hash(), v.Hash())

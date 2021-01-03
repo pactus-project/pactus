@@ -7,7 +7,8 @@ import (
 )
 
 // TODO:
-// Implementing garbage collection for peerset
+// - Add tests for peerset
+// - Implementing garbage collection for peerset
 
 type PeerSet struct {
 	lk deadlock.RWMutex
@@ -79,4 +80,17 @@ func (ps *PeerSet) RemovePeer(peerID peer.ID) {
 	defer ps.lk.RUnlock()
 
 	delete(ps.peers, peerID)
+}
+
+func (ps *PeerSet) GetPeerList() []*Peer {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	l := make([]*Peer, len(ps.peers))
+	i := 0
+	for _, p := range ps.peers {
+		l[i] = p
+		i++
+	}
+	return l
 }

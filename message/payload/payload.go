@@ -18,6 +18,8 @@ const (
 	PayloadTypeHeartBeat           = PayloadType(9)
 	PayloadTypeVote                = PayloadType(10)
 	PayloadTypeVoteSet             = PayloadType(11)
+	PayloadTypeDownloadRequest     = PayloadType(12)
+	PayloadTypeDownloadResponse    = PayloadType(13)
 )
 
 func (t PayloadType) String() string {
@@ -44,6 +46,10 @@ func (t PayloadType) String() string {
 		return "vote"
 	case PayloadTypeVoteSet:
 		return "vote-set"
+	case PayloadTypeDownloadRequest:
+		return "download-req"
+	case PayloadTypeDownloadResponse:
+		return "download-res"
 	}
 	return fmt.Sprintf("%d", t)
 }

@@ -16,6 +16,12 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
+func TestInvalidPayloadType(t *testing.T) {
+	assert.Nil(t, makePayload(0))
+	m := &Message{Type: 1, Payload: makePayload(2)}
+	assert.Error(t, m.SanityCheck())
+}
+
 func TestInvalidCBOR(t *testing.T) {
 	d, _ := hex.DecodeString("a40100030004010aa301a3654d616a6f7201654d696e6f720065506174636800025820a723d8cb4fa6a4a67a4a6a8984f81cb737defb3a8daaacafcd3159f1dc545c03031870")
 	m2 := new(Message)
@@ -162,6 +168,32 @@ func TestVoteMessage(t *testing.T) {
 
 func TestHeartbeatMessage(t *testing.T) {
 	m := NewHeartBeatMessage(crypto.GenerateTestHash(), hrs.NewHRS(1, 2, 3))
+	assert.NoError(t, m.SanityCheck())
+	bs, err := m.Encode()
+	assert.NoError(t, err)
+	m2 := new(Message)
+	assert.NoError(t, m2.Decode(bs))
+	assert.Equal(t, m.SignBytes(), m2.SignBytes())
+	assert.Equal(t, m.Type, m.Payload.Type())
+	assert.Equal(t, m.Version, LastVersion)
+}
+
+func TestDownloadRequest(t *testing.T) {
+	id, _ := peer.IDB58Decode("12D3KooWDX68JokeBo8wtHtv937vM8Hj6NeNxTEh1LxZ1ragEUgn")
+	m := NewDownloadRequestMessage(id, 1234, 2234)
+	assert.NoError(t, m.SanityCheck())
+	bs, err := m.Encode()
+	assert.NoError(t, err)
+	m2 := new(Message)
+	assert.NoError(t, m2.Decode(bs))
+	assert.Equal(t, m.SignBytes(), m2.SignBytes())
+	assert.Equal(t, m.Type, m.Payload.Type())
+	assert.Equal(t, m.Version, LastVersion)
+}
+
+func TestDownloadResponse(t *testing.T) {
+	b, trxs := block.GenerateTestBlock(nil, nil)
+	m := NewDownloadResponseMessage(0, 1234, []*block.Block{b}, trxs)
 	assert.NoError(t, m.SanityCheck())
 	bs, err := m.Encode()
 	assert.NoError(t, err)

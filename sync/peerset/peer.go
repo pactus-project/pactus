@@ -13,16 +13,17 @@ type Peer struct {
 }
 
 type peerData struct {
-	Moniker       string
-	Version       version.Version
-	PeerID        peer.ID
-	Address       crypto.Address
-	PublicKey     crypto.PublicKey
-	Height        int
-	ReceivedMsg   int
-	InvalidMsg    int
-	ReceivedBytes int
-	InvalidBytes  int
+	Moniker              string
+	NodeVersion          version.Version
+	PeerID               peer.ID
+	Address              crypto.Address
+	PublicKey            crypto.PublicKey
+	InitialBlockDownload bool
+	Height               int
+	ReceivedMsg          int
+	InvalidMsg           int
+	ReceivedBytes        int
+	InvalidBytes         int
 }
 
 func NewPeer(peerID peer.ID) *Peer {
@@ -40,11 +41,11 @@ func (p *Peer) Moniker() string {
 	return p.data.Moniker
 }
 
-func (p *Peer) Version() version.Version {
+func (p *Peer) NodeVersion() version.Version {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	return p.data.Version
+	return p.data.NodeVersion
 }
 
 func (p *Peer) PeerID() peer.ID {
@@ -73,6 +74,13 @@ func (p *Peer) Height() int {
 	defer p.lk.Unlock()
 
 	return p.data.Height
+}
+
+func (p *Peer) InitialBlockDownload() bool {
+	p.lk.Lock()
+	defer p.lk.Unlock()
+
+	return p.data.InitialBlockDownload
 }
 
 func (p *Peer) ReceivedMsg() int {
@@ -110,11 +118,18 @@ func (p *Peer) UpdateMoniker(moniker string) {
 	p.data.Moniker = moniker
 }
 
-func (p *Peer) UpdateVersion(version version.Version) {
+func (p *Peer) UpdateInitialBlockDownload(initialBlockDownload bool) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.Version = version
+	p.data.InitialBlockDownload = initialBlockDownload
+}
+
+func (p *Peer) UpdateNodeVersion(version version.Version) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
+
+	p.data.NodeVersion = version
 }
 
 func (p *Peer) UpdatePublicKey(pub crypto.PublicKey) {

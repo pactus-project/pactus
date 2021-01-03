@@ -17,7 +17,7 @@ func TestAddBlockToCache(t *testing.T) {
 	b1, trxs := block.GenerateTestBlock(nil, nil)
 
 	// Alice send block to bob, bob should cache it
-	tAliceSync.dataTopic.BroadcastLatestBlocks(1001, []*block.Block{b1}, trxs, nil)
+	tAliceSync.stateSync.BroadcastLatestBlocks(1001, []*block.Block{b1}, trxs, nil)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
 	assert.Equal(t, tBobSync.cache.GetBlock(1001).Hash(), b1.Hash())
 }
@@ -28,7 +28,7 @@ func TestAddTxToCache(t *testing.T) {
 	trx1, _ := tx.GenerateTestBondTx()
 
 	// Alice send transaction to bob, bob should cache it
-	tAliceSync.dataTopic.BroadcastTransactions([]*tx.Tx{trx1})
+	tAliceSync.stateSync.BroadcastTransactions([]*tx.Tx{trx1})
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeTransactions)
 	assert.NotNil(t, tBobSync.cache.GetTransaction(trx1.ID()))
 }
@@ -60,7 +60,7 @@ func TestRequestForBlocksInvalidLastBlocHash(t *testing.T) {
 	invHash := crypto.GenerateTestHash()
 
 	// Alice asks bob to send blocks but last block hash is invalid
-	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(8, invHash)
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(8, invHash)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 
 	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
@@ -69,7 +69,7 @@ func TestRequestForBlocksInvalidLastBlocHash(t *testing.T) {
 func TestRequestForBlocksVeryFar(t *testing.T) {
 	setup(t)
 
-	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(2, tBobState.Store.Blocks[1].Hash())
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(2, tBobState.Store.Blocks[1].Hash())
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 
 	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
@@ -78,13 +78,13 @@ func TestRequestForBlocksVeryFar(t *testing.T) {
 func TestSendLastCommit(t *testing.T) {
 	setup(t)
 
-	tAliceSync.dataTopic.BroadcastLatestBlocksRequest(8, tBobState.Store.Blocks[7].Hash())
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(8, tBobState.Store.Blocks[7].Hash())
 
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	msg := tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
 	pld := msg.Payload.(*payload.LatestBlocksPayload)
 
-	assert.Equal(t, pld.Commit, tBobState.LastBlockCommit)
+	assert.Equal(t, pld.LastCommit, tBobState.LastBlockCommit)
 }
 
 func TestMoveToConsensus(t *testing.T) {
@@ -107,7 +107,7 @@ func TestMoveToConsensus(t *testing.T) {
 
 	tBobConsensus.Started = false
 
-	tAliceSync.dataTopic.BroadcastLatestBlocks(aliceHeight+1, blocks, trxs, commit)
+	tAliceSync.stateSync.BroadcastLatestBlocks(aliceHeight+1, blocks, trxs, commit)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
 
 	assert.True(t, tBobConsensus.Started)
