@@ -5,10 +5,11 @@ import (
 
 	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type DownloadRequestPayload struct {
-	RequestID int     `cbor:"1,keyasint"`
+	SessionID int     `cbor:"1,keyasint"`
 	Initiator peer.ID `cbor:"2,keyasint"`
 	Target    peer.ID `cbor:"3,keyasint"`
 	From      int     `cbor:"4,keyasint"`
@@ -36,5 +37,5 @@ func (p *DownloadRequestPayload) Type() PayloadType {
 }
 
 func (p *DownloadRequestPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v:%v}", p.From, p.To)
+	return fmt.Sprintf("{%v %v:%v}", util.FingerprintPeerID(p.Initiator), p.From, p.To)
 }

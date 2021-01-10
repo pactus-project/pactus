@@ -3,22 +3,20 @@ package payload
 import (
 	"fmt"
 
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-const DownloadResponseCodeOK = 0
-const DownloadResponseCodeNoMoreBlock = 1
-const DownloadResponseCodeRejected = 2
-const DownloadResponseCodeBusy = 3
-
 type DownloadResponsePayload struct {
-	RequestID    int            `cbor:"1,keyasint"`
-	ResponseCode int            `cbor:"2,keyasint"`
-	From         int            `cbor:"3,keyasint"`
-	Blocks       []*block.Block `cbor:"4,keyasint"`
-	Transactions []*tx.Tx       `cbor:"5,keyasint"`
+	ResponseCode ResponseCode   `cbor:"1,keyasint"`
+	SessionID    int            `cbor:"2,keyasint"`
+	Initiator    peer.ID        `cbor:"3,keyasint"`
+	Target       peer.ID        `cbor:"4,keyasint"`
+	From         int            `cbor:"5,keyasint"`
+	Blocks       []*block.Block `cbor:"6,keyasint"`
+	Transactions []*tx.Tx       `cbor:"7,keyasint"`
 }
 
 func (p *DownloadResponsePayload) SanityCheck() error {
@@ -39,6 +37,10 @@ func (p *DownloadResponsePayload) Type() PayloadType {
 	return PayloadTypeDownloadResponse
 }
 
+func (p *DownloadResponsePayload) To() int {
+	return p.From + len(p.Blocks) - 1
+}
+
 func (p *DownloadResponsePayload) Fingerprint() string {
-	return fmt.Sprintf("{%v %v %v}", p.ResponseCode, p.From, len(p.Blocks))
+	return fmt.Sprintf("{%v %v-%v}", p.ResponseCode, p.From, p.To())
 }

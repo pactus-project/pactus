@@ -51,7 +51,7 @@ func TestSalamMessage(t *testing.T) {
 
 func TestAleykMessage(t *testing.T) {
 	_, pub, _ := crypto.GenerateTestKeyPair()
-	m := NewAleykMessage("abc", pub, tPeerID1, 112, 0x2, payload.SalamResponseCodeRejected, "Invalid genesis")
+	m := NewAleykMessage(payload.ResponseCodeRejected, "Invalid genesis", "cute-kitty", pub, tPeerID1, 112, 0x2)
 	assert.NoError(t, m.SanityCheck())
 	bs, err := m.Encode()
 	assert.NoError(t, err)
@@ -75,11 +75,11 @@ func TestLatestBlockRequestMessage(t *testing.T) {
 
 func TestLatestBlocksResponseMessage(t *testing.T) {
 	b, trxs := block.GenerateTestBlock(nil, nil)
-	invMsg := NewLatestBlocksResponseMessage(1234, 4, nil, nil, nil)
+	invMsg := NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, 4, nil, nil, nil)
 	assert.Error(t, invMsg.SanityCheck())
-	invMsg = NewLatestBlocksResponseMessage(1234, 4, []*block.Block{b}, nil, nil)
+	invMsg = NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, 4, []*block.Block{b}, nil, nil)
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewLatestBlocksResponseMessage(1234, 4, []*block.Block{b}, trxs, nil)
+	m := NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, 4, []*block.Block{b}, trxs, nil)
 	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
@@ -199,7 +199,7 @@ func TestDownloadRequest(t *testing.T) {
 
 func TestDownloadResponse(t *testing.T) {
 	b, trxs := block.GenerateTestBlock(nil, nil)
-	m := NewDownloadResponseMessage(6789, 0, 1234, []*block.Block{b}, trxs)
+	m := NewDownloadResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 6789, 1234, []*block.Block{b}, trxs)
 	assert.NoError(t, m.SanityCheck())
 	bs, err := m.Encode()
 	assert.NoError(t, err)
@@ -222,7 +222,7 @@ func TestBlocksMessageCompress(t *testing.T) {
 		trxs = append(trxs, t...)
 		blocks = append(blocks, b)
 	}
-	m := NewLatestBlocksResponseMessage(1234, 888, blocks, trxs, nil)
+	m := NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, 888, blocks, trxs, nil)
 	bs0, err := m.Encode()
 	assert.NoError(t, err)
 	m.CompressIt()

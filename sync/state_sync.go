@@ -45,13 +45,14 @@ func NewStateSync(
 	}
 }
 
-func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID, requestID, from int) {
-	msg := message.NewLatestBlocksRequestMessage(ss.selfID, target, requestID, from)
+func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID, from int) {
+	s := ss.peerSet.OpenSession(target)
+	msg := message.NewLatestBlocksRequestMessage(ss.selfID, target, s.SessionID, from)
 	ss.publishFn(msg)
 }
 
-func (ss *StateSync) BroadcastLatestBlocksResponse(requestID, from int, blocks []*block.Block, trxs []*tx.Tx, commit *block.Commit) {
-	msg := message.NewLatestBlocksResponseMessage(requestID, from, blocks, trxs, commit)
+func (ss *StateSync) BroadcastLatestBlocksResponse(code payload.ResponseCode, target peer.ID, sessionID, from int, blocks []*block.Block, trxs []*tx.Tx, commit *block.Commit) {
+	msg := message.NewLatestBlocksResponseMessage(code, ss.selfID, target, sessionID, from, blocks, trxs, commit)
 	msg.CompressIt()
 	ss.publishFn(msg)
 }
@@ -61,8 +62,15 @@ func (ss *StateSync) BroadcastTransactions(txs []*tx.Tx) {
 	ss.publishFn(msg)
 }
 
-func (ss *StateSync) BroadcastDownloadResponse(requestID, status, from int, blocks []*block.Block, trxs []*tx.Tx) {
-	msg := message.NewDownloadResponseMessage(requestID, status, from, blocks, trxs)
+func (ss *StateSync) BroadcastDownloadRequest(target peer.ID, from, to int) {
+	s := ss.peerSet.OpenSession(target)
+	msg := message.NewDownloadRequestMessage(ss.selfID, target, s.SessionID, from, to)
+	msg.CompressIt()
+	ss.publishFn(msg)
+}
+
+func (ss *StateSync) BroadcastDownloadResponse(code payload.ResponseCode, target peer.ID, sessionID, from int, blocks []*block.Block, trxs []*tx.Tx) {
+	msg := message.NewDownloadResponseMessage(code, ss.selfID, target, sessionID, from, blocks, trxs)
 	msg.CompressIt()
 	ss.publishFn(msg)
 }
@@ -94,27 +102,32 @@ func (ss *StateSync) ProcessLatestBlocksRequestPayload(pld *payload.LatestBlocks
 			break
 		}
 
-		lastCommit := ss.state.LastCommit()
-		ss.BroadcastLatestBlocksResponse(0, from, blocks, trxs, lastCommit)
+		ss.BroadcastLatestBlocksResponse(payload.ResponseCodeMoreBlocks, pld.Initiator, pld.SessionID, from, blocks, trxs, nil)
 
-		from += count
+		from += len(blocks)
 	}
+
+	lastCommit := ss.state.LastCommit()
+	ss.BroadcastLatestBlocksResponse(payload.ResponseCodeNoMoreBlocks, pld.Initiator, pld.SessionID, from, nil, nil, lastCommit)
 
 }
 
 func (ss *StateSync) ProcessLatestBlocksResponsePayload(pld *payload.LatestBlocksResponsePayload) {
 	ss.logger.Trace("Process latest blocks payload", "pld", pld)
 
+	if pld.Target == ss.selfID {
+
+	}
 	ourHeight := ss.state.LastBlockHeight()
 	if ourHeight >= pld.To() {
 		return
 	}
 
-	if pld.LastCommit != nil {
-		ss.cache.AddCommit(
-			pld.Blocks[len(pld.Blocks)-1].Header().Hash(),
-			pld.LastCommit)
-	}
+	// if pld.LastCommit != nil {
+	// 	ss.cache.AddCommit(
+	// 		pld.Blocks[len(pld.Blocks)-1].Header().Hash(),
+	// 		pld.LastCommit)
+	// }
 
 	ss.addBlocksToCache(pld.From, pld.Blocks)
 	ss.addTransactionsToCache(pld.Transactions)
@@ -136,16 +149,21 @@ func (ss *StateSync) ProcessDownloadRequestPayload(pld *payload.DownloadRequestP
 		return
 	}
 
-	blocks, trxs := ss.prepareBlocksAndTransactions(pld.From, pld.To)
+	from := pld.From
+	count := ss.config.BlockPerMessage
 
-	if len(blocks) > 0 {
-		ourHeight := ss.state.LastBlockHeight()
-		status := payload.DownloadResponseCodeOK
-		if ourHeight <= pld.To {
-			status = payload.DownloadResponseCodeNoMoreBlock
+	for {
+		blocks, trxs := ss.prepareBlocksAndTransactions(from, count)
+		if len(blocks) == 0 {
+			break
 		}
-		ss.BroadcastDownloadResponse(pld.RequestID, status, pld.From, blocks, trxs)
+
+		ss.BroadcastDownloadResponse(payload.ResponseCodeMoreBlocks, pld.Initiator, pld.SessionID, from, blocks, trxs)
+
+		from += len(blocks)
 	}
+
+	ss.BroadcastDownloadResponse(payload.ResponseCodeNoMoreBlocks, pld.Initiator, pld.SessionID, from, nil, nil)
 }
 
 func (ss *StateSync) ProcessBlockAnnouncePayload(pld *payload.BlockAnnouncePayload) {
@@ -162,10 +180,6 @@ func (ss *StateSync) ProcessDownloadResponsePayload(pld *payload.DownloadRespons
 	ss.addBlocksToCache(pld.From, pld.Blocks)
 	ss.addTransactionsToCache(pld.Transactions)
 	ss.tryCommitBlocks()
-
-	if pld.ResponseCode == payload.DownloadResponseCodeOK {
-		ss.RequestForMoreBlock()
-	}
 }
 
 func (ss *StateSync) ProcessQueryTransactionsPayload(pld *payload.QueryTransactionsPayload) {
@@ -274,15 +288,17 @@ func (ss *StateSync) tryCommitBlocks() {
 }
 
 func (ss *StateSync) RequestForMoreBlock() {
-	start := ss.state.LastBlockHeight()
-
+	from := ss.state.LastBlockHeight()
 	l := ss.peerSet.GetPeerList()
 	for _, p := range l {
 		if p.InitialBlockDownload() {
-			if p.Height() > start {
-				msg := message.NewDownloadRequestMessage(ss.selfID, p.PeerID(), 0, start, start+1000)
-				ss.publishFn(msg)
-				start += DownloadBlockInterval
+			if p.Height() > from {
+				to := from + DownloadBlockInterval
+				if to > p.Height() {
+					to = p.Height()
+				}
+
+				ss.BroadcastDownloadRequest(p.PeerID(), from, to)
 			}
 		}
 	}
@@ -291,5 +307,5 @@ func (ss *StateSync) RequestForMoreBlock() {
 func (ss *StateSync) RequestForLatestBlock() {
 	ourHeight := ss.state.LastBlockHeight()
 	p := ss.peerSet.FindHighestPeer()
-	ss.BroadcastLatestBlocksRequest(p.PeerID(), 0, ourHeight+1)
+	ss.BroadcastLatestBlocksRequest(p.PeerID(), ourHeight+1)
 }

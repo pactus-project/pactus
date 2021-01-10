@@ -23,11 +23,14 @@ func setup(t *testing.T) {
 func TestIncreaseMsgCounter(t *testing.T) {
 	setup(t)
 
-	tFirewall.ParsMessage([]byte("bad"), tAnotherPeerID)
-	p := tFirewall.peerSet.GetPeer(tAnotherPeerID)
-	assert.True(t, tFirewall.badPeer(p))
-
-	msg := message.NewQueryProposalMessage(1, 1)
+	msg := message.NewQueryProposalMessage(1, 0)
 	d, _ := msg.Encode()
+	assert.NotNil(t, tFirewall.ParsMessage(d, tAnotherPeerID))
+	p := tFirewall.peerSet.GetPeer(tAnotherPeerID)
+	assert.False(t, tFirewall.badPeer(p))
+
+	tFirewall.ParsMessage([]byte("bad"), tAnotherPeerID)
+	p = tFirewall.peerSet.GetPeer(tAnotherPeerID)
+	assert.True(t, tFirewall.badPeer(p))
 	assert.Nil(t, tFirewall.ParsMessage(d, tAnotherPeerID))
 }

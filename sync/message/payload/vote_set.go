@@ -8,9 +8,9 @@ import (
 )
 
 type VoteSetPayload struct {
-	Height int
-	Round  int
-	Hashes []crypto.Hash `cbor:"1,keyasint"`
+	Height int           `cbor:"1,keyasint"`
+	Round  int           `cbor:"2,keyasint"`
+	Hashes []crypto.Hash `cbor:"3,keyasint"`
 }
 
 func (p *VoteSetPayload) SanityCheck() error {

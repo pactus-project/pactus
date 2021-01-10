@@ -26,45 +26,46 @@ func NewSalamMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID,
 		},
 	}
 }
-func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID, height int, flags int, resStatus int, resMessage string) *Message {
+func NewAleykMessage(code payload.ResponseCode, message string, moniker string, publicKey crypto.PublicKey, peerID peer.ID, height int, flags int) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeAleyk,
 		Payload: &payload.AleykPayload{
-			NodeVersion: version.NodeVersion,
-			Moniker:     moniker,
-			PublicKey:   publicKey,
-			PeerID:      peerID,
-			Height:      height,
-			Flags:       flags,
-			Response: payload.SalamResponse{
-				Status:  resStatus,
-				Message: resMessage,
-			},
+			ResponseCode:    code,
+			ResponseMessage: message,
+			NodeVersion:     version.NodeVersion,
+			Moniker:         moniker,
+			PublicKey:       publicKey,
+			PeerID:          peerID,
+			Height:          height,
+			Flags:           flags,
 		},
 	}
 
 }
 
-func NewLatestBlocksRequestMessage(initiator, target peer.ID, requestID int, from int) *Message {
+func NewLatestBlocksRequestMessage(initiator, target peer.ID, sessionID int, from int) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeLatestBlocksRequest,
 		Payload: &payload.LatestBlocksRequestPayload{
 			Initiator: initiator,
 			Target:    target,
-			RequestID: requestID,
+			SessionID: sessionID,
 			From:      from,
 		},
 	}
 }
 
-func NewLatestBlocksResponseMessage(requestID int, from int, blocks []*block.Block, transactions []*tx.Tx, commit *block.Commit) *Message {
+func NewLatestBlocksResponseMessage(code payload.ResponseCode, initiator, target peer.ID, sessionID int, from int, blocks []*block.Block, transactions []*tx.Tx, commit *block.Commit) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeLatestBlocksResponse,
 		Payload: &payload.LatestBlocksResponsePayload{
-			RequestID:    requestID,
+			ResponseCode: code,
+			SessionID:    sessionID,
+			Initiator:    initiator,
+			Target:       target,
 			From:         from,
 			Blocks:       blocks,
 			Transactions: transactions,
@@ -159,27 +160,29 @@ func NewBlockAnnounceMessage(height int, block *block.Block, commit *block.Commi
 	}
 }
 
-func NewDownloadRequestMessage(initiator, target peer.ID, requestID int, from, to int) *Message {
+func NewDownloadRequestMessage(initiator, target peer.ID, sessionID int, from, to int) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeDownloadRequest,
 		Payload: &payload.DownloadRequestPayload{
 			Initiator: initiator,
 			Target:    target,
-			RequestID: requestID,
+			SessionID: sessionID,
 			From:      from,
 			To:        to,
 		},
 	}
 }
 
-func NewDownloadResponseMessage(requestID int, code int, from int, blocks []*block.Block, txs []*tx.Tx) *Message {
+func NewDownloadResponseMessage(code payload.ResponseCode, initiator, target peer.ID, sessionID, from int, blocks []*block.Block, txs []*tx.Tx) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeDownloadResponse,
 		Payload: &payload.DownloadResponsePayload{
-			RequestID:    requestID,
 			ResponseCode: code,
+			SessionID:    sessionID,
+			Initiator:    initiator,
+			Target:       target,
 			From:         from,
 			Blocks:       blocks,
 			Transactions: txs,

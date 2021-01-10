@@ -4,6 +4,16 @@ import (
 	"fmt"
 )
 
+type ResponseCode int
+
+const (
+	ResponseCodeOK           = ResponseCode(0)
+	ResponseCodeRejected     = ResponseCode(1)
+	ResponseCodeBusy         = ResponseCode(2)
+	ResponseCodeMoreBlocks   = ResponseCode(3)
+	ResponseCodeNoMoreBlocks = ResponseCode(4)
+)
+
 type PayloadType int
 
 const (

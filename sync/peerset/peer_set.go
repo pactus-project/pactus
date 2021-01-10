@@ -1,6 +1,8 @@
 package peerset
 
 import (
+	"time"
+
 	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/util"
@@ -14,12 +16,17 @@ type PeerSet struct {
 	lk deadlock.RWMutex
 
 	peers            map[peer.ID]*Peer
+	sessions         map[int]*Session
+	nextSessionID    int
 	maxClaimedHeight int
+	sessionTimeout   time.Duration
 }
 
-func NewPeerSet() *PeerSet {
+func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	return &PeerSet{
-		peers: make(map[peer.ID]*Peer),
+		peers:          make(map[peer.ID]*Peer),
+		sessions:       make(map[int]*Session),
+		sessionTimeout: sessionTimeout,
 	}
 }
 
@@ -28,6 +35,39 @@ func (ps *PeerSet) GetPeer(peerID peer.ID) *Peer {
 	defer ps.lk.RUnlock()
 
 	return ps.getPeer(peerID)
+}
+
+func (ps *PeerSet) OpenSession(peerID peer.ID) *Session {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	s := newSession(ps.nextSessionID, peerID)
+	ps.sessions[s.SessionID] = s
+	ps.nextSessionID++
+
+	return s
+}
+
+func (ps *PeerSet) HasAnyValidSession() bool {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	// First remove stale old sessions
+	for id, s := range ps.sessions {
+		if ps.sessionTimeout < time.Now().Sub(s.LastActivityAt) {
+			// TODO: report it as bad peer?
+			delete(ps.sessions, id)
+		}
+	}
+
+	return len(ps.sessions) != 0
+}
+
+func (ps *PeerSet) CloseNewSession(id int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	delete(ps.sessions, id)
 }
 
 func (ps *PeerSet) getPeer(peerID peer.ID) *Peer {

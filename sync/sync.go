@@ -65,7 +65,7 @@ func NewSynchronizer(
 	}
 
 	logger := logger.NewLogger("_sync", syncer)
-	peerSet := peerset.NewPeerSet()
+	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
 	firewall := firewall.NewFirewall(peerSet, state)
 
 	api, err := network_api.NewNetworkAPI(syncer.ctx, net, firewall, syncer.ParsMessage)
@@ -190,13 +190,18 @@ func (syncer *Synchronizer) broadcastLoop() {
 	}
 }
 func (syncer *Synchronizer) Fingerprint() string {
-	return fmt.Sprintf("{☍ %d ⛃ %d ↑ %d}",
+	return fmt.Sprintf("{☍ %d ⛃ %d ⇈ %d ↑ %d}",
 		syncer.peerSet.Len(),
 		syncer.cache.Len(),
-		syncer.peerSet.MaxClaimedHeight())
+		syncer.peerSet.MaxClaimedHeight(),
+		syncer.state.LastBlockHeight())
 }
 
 func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
+	if syncer.peerSet.HasAnyValidSession() {
+		return
+	}
+
 	ourHeight := syncer.state.LastBlockHeight()
 	claimedHeight := syncer.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight {
@@ -271,6 +276,14 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 		pld := msg.Payload.(*payload.VoteSetPayload)
 		syncer.consensusSync.ProcessVoteSetPayload(pld)
 
+	case payload.PayloadTypeDownloadRequest:
+		pld := msg.Payload.(*payload.DownloadRequestPayload)
+		syncer.stateSync.ProcessDownloadRequestPayload(pld)
+
+	case payload.PayloadTypeDownloadResponse:
+		pld := msg.Payload.(*payload.DownloadResponsePayload)
+		syncer.stateSync.ProcessDownloadResponsePayload(pld)
+
 	default:
 		syncer.logger.Error("Unknown message type", "type", msg.PayloadType())
 	}
@@ -344,19 +357,19 @@ func (syncer *Synchronizer) BroadcastSalam() {
 	syncer.PublishMessage(msg)
 }
 
-func (syncer *Synchronizer) BroadcastAleyk(resStatus int, resMsg string) {
+func (syncer *Synchronizer) BroadcastAleyk(code payload.ResponseCode, resMsg string) {
 	flags := 0
 	if syncer.config.InitialBlockDownload {
 		flags = util.SetFlag(flags, FlagInitialBlockDownload)
 	}
 	msg := message.NewAleykMessage(
+		code,
+		resMsg,
 		syncer.config.Moniker,
 		syncer.signer.PublicKey(),
 		syncer.networkAPI.SelfID(),
 		syncer.state.LastBlockHeight(),
-		flags,
-		resStatus,
-		resMsg)
+		flags)
 
 	syncer.PublishMessage(msg)
 }
@@ -367,7 +380,7 @@ func (syncer *Synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
 	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
 		syncer.logger.Info("Received a message from different chain", "genesis_hash", pld.GenesisHash)
 		// Reply salam
-		syncer.BroadcastAleyk(payload.SalamResponseCodeRejected, "Invalid genesis hash")
+		syncer.BroadcastAleyk(payload.ResponseCodeRejected, "Invalid genesis hash")
 		return
 	}
 
@@ -381,14 +394,14 @@ func (syncer *Synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
 	syncer.peerSet.UpdateMaxClaimedHeight(pld.Height)
 
 	// Reply salam
-	syncer.BroadcastAleyk(payload.SalamResponseCodeOK, "Welcome!")
+	syncer.BroadcastAleyk(payload.ResponseCodeOK, "Welcome!")
 }
 
 func (syncer *Synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
 	syncer.logger.Trace("Process Aleyk payload", "pld", pld)
 
-	if pld.Response.Status != payload.SalamResponseCodeOK {
-		syncer.logger.Warn("Our Salam is not welcomed!", "message", pld.Response.Message)
+	if pld.ResponseCode != payload.ResponseCodeOK {
+		syncer.logger.Warn("Our Salam is not welcomed!", "message", pld.ResponseMessage)
 	} else {
 		p := syncer.peerSet.MustGetPeer(pld.PeerID)
 		p.UpdateMoniker(pld.Moniker)

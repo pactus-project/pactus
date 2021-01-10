@@ -23,9 +23,9 @@ import (
 )
 
 var (
+	tTxPool           *txpool.MockTxPool
 	tAliceConfig      *Config
 	tBobConfig        *Config
-	tTxPool           *txpool.MockTxPool
 	tAliceState       *state.MockState
 	tBobState         *state.MockState
 	tAliceConsensus   *consensus.MockConsensus
@@ -57,6 +57,9 @@ func init() {
 
 	tAliceConfig.Moniker = "alice"
 	tBobConfig.Moniker = "bob"
+
+	LatestBlockInterval = 20
+	DownloadBlockInterval = 30
 }
 
 func setup(t *testing.T) {
@@ -82,8 +85,6 @@ func setup(t *testing.T) {
 	bobCache, _ := cache.NewCache(tBobConfig.CacheSize, tBobState.StoreReader())
 
 	tBobState.GenHash = tAliceState.GenHash
-
-	LatestBlockInterval = 20
 
 	// Alice has 100 and Bob has 92 blocks
 	lastBlockHash := crypto.Hash{}
@@ -153,6 +154,7 @@ func setup(t *testing.T) {
 
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 83-92
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 93-100
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())

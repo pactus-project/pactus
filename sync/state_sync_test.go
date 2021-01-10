@@ -63,7 +63,7 @@ func TestSendTxs(t *testing.T) {
 func TestRequestForBlocksVeryFar(t *testing.T) {
 	setup(t)
 
-	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID, 0, 2)
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID, 2)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
 }
@@ -71,7 +71,7 @@ func TestRequestForBlocksVeryFar(t *testing.T) {
 func TestSendLastCommit(t *testing.T) {
 	setup(t)
 
-	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID, 0, 90)
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID, 90)
 
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	msg := tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
@@ -112,4 +112,24 @@ func TestPrepareLastBlock(t *testing.T) {
 	h := tAliceState.LastBlockHeight()
 	b, _ := tAliceSync.stateSync.prepareBlocksAndTransactions(h, 10)
 	assert.Equal(t, len(b), 1)
+}
+
+func TestDownloadBlock(t *testing.T) {
+	setup(t)
+
+	// Clear bob store
+	tBobState.Store.Blocks = make(map[int]*block.Block)
+
+	tBobSync.sendBlocksRequestIfWeAreBehind()
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse)
+
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse)
+
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse)
+
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse)
 }

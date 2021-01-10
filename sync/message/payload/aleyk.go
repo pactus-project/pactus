@@ -10,22 +10,15 @@ import (
 	"github.com/zarbchain/zarb-go/version"
 )
 
-const SalamResponseCodeOK = 0
-const SalamResponseCodeRejected = 1
-
-type SalamResponse struct {
-	Status  int    `cbor:"1,keyasint"`
-	Message string `cbor:"2,keyasint,omitempty"`
-}
-
 type AleykPayload struct {
-	NodeVersion version.Version  `cbor:"1,keyasint"`
-	Moniker     string           `cbor:"2,keyasint"`
-	PublicKey   crypto.PublicKey `cbor:"3,keyasint"`
-	PeerID      peer.ID          `cbor:"4,keyasint"`
-	Height      int              `cbor:"5,keyasint"`
-	Flags       int              `cbor:"6,keyasint"`
-	Response    SalamResponse    `cbor:"7,keyasint"`
+	ResponseCode    ResponseCode     `cbor:"1,keyasint"`
+	ResponseMessage string           `cbor:"2,keyasint,omitempty"`
+	NodeVersion     version.Version  `cbor:"3,keyasint"`
+	Moniker         string           `cbor:"4,keyasint"`
+	PublicKey       crypto.PublicKey `cbor:"5,keyasint"`
+	PeerID          peer.ID          `cbor:"6,keyasint"`
+	Height          int              `cbor:"7,keyasint"`
+	Flags           int              `cbor:"8,keyasint"`
 }
 
 func (p *AleykPayload) SanityCheck() error {

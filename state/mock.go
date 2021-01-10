@@ -67,6 +67,9 @@ func (m *MockState) Fingerprint() string {
 	return ""
 }
 func (m *MockState) ApplyBlock(height int, b block.Block, c block.Commit) error {
+	if height != m.LastBlockHeight()+1 {
+		return fmt.Errorf("Invalid height")
+	}
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
 		return fmt.Errorf("Invalid block")
 	}
