@@ -23,7 +23,6 @@ type peerData struct {
 	ReceivedMsg          int
 	InvalidMsg           int
 	ReceivedBytes        int
-	InvalidBytes         int
 }
 
 func NewPeer(peerID peer.ID) *Peer {
@@ -104,13 +103,6 @@ func (p *Peer) ReceivedBytes() int {
 	return p.data.ReceivedBytes
 }
 
-func (p *Peer) InvalidBytes() int {
-	p.lk.Lock()
-	defer p.lk.Unlock()
-
-	return p.data.InvalidBytes
-}
-
 func (p *Peer) UpdateMoniker(moniker string) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -147,30 +139,23 @@ func (p *Peer) UpdateHeight(height int) {
 	p.data.Height = height
 }
 
-func (p *Peer) IncreaseReceivedMsg() {
+func (p *Peer) IncreaseReceivedMessage() {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
 	p.data.ReceivedMsg++
 }
 
-func (p *Peer) IncreaseInvalidMsg() {
+func (p *Peer) IncreaseReceivedBytes(len int) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
+
+	p.data.ReceivedBytes += len
+}
+
+func (p *Peer) IncreaseInvalidMessage() {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
 	p.data.InvalidMsg++
-}
-
-func (p *Peer) IncreaseReceivedBytes(bytes int) {
-	p.lk.Lock()
-	defer p.lk.Unlock()
-
-	p.data.ReceivedBytes += bytes
-}
-
-func (p *Peer) IncreaseInvalidBytes(bytes int) {
-	p.lk.Lock()
-	defer p.lk.Unlock()
-
-	p.data.InvalidBytes += bytes
 }

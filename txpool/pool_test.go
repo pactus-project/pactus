@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/sandbox"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 
 	"github.com/zarbchain/zarb-go/crypto"
 
@@ -153,7 +153,7 @@ func TestPending(t *testing.T) {
 	go func() {
 		for {
 			msg := <-tCh
-			pld := msg.Payload.(*payload.TransactionsRequestPayload)
+			pld := msg.Payload.(*payload.QueryTransactionsPayload)
 			if pld.IDs[0].EqualsTo(trx.ID()) {
 				assert.NoError(t, tPool.AppendTx(trx))
 			}

@@ -23,6 +23,7 @@ func (committer *Committer) HasSigned() bool {
 	return committer.Status == CommitSigned
 }
 
+// TODO: add bloch hash to commit and update state/mock.go and ProcessLatestBlocksResponsePayload
 type Commit struct {
 	data commitData
 }

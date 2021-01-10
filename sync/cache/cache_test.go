@@ -64,3 +64,20 @@ func TestCacheTx(t *testing.T) {
 	assert.Equal(t, tCache.GetTransaction(trx2.ID()).ID(), trx2.ID())
 	assert.Nil(t, tCache.GetTransaction(trx3.ID()))
 }
+
+func TestClearCache(t *testing.T) {
+	setup(t)
+
+	b, trxs := block.GenerateTestBlock(nil, nil)
+
+	tCache.AddBlock(2, b)
+	tCache.AddTransaction(trxs[0])
+	tCache.AddTransaction(trxs[1])
+	tCache.AddTransaction(trxs[2])
+	tCache.AddTransaction(trxs[3])
+
+	assert.Equal(t, tCache.Len(), 5)
+	tCache.Clear()
+	assert.Equal(t, tCache.Len(), 0)
+	assert.Nil(t, tCache.GetBlock(2))
+}

@@ -60,6 +60,7 @@ func SetFlag(flags, mask int) int {
 	flags = flags | mask
 	return flags
 }
+
 func IsFlagSet(flags, mask int) bool {
 	return flags&mask == mask
 }

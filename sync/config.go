@@ -16,7 +16,7 @@ func DefaultConfig() *Config {
 		StartingTimeout:      time.Second * 10,
 		HeartBeatTimeout:     time.Second * 5,
 		InitialBlockDownload: true,
-		BlockPerMessage:      500,
+		BlockPerMessage:      10,
 		CacheSize:            10000,
 	}
 }

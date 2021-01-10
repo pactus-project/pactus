@@ -3,8 +3,8 @@ package sync
 import (
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -77,7 +77,7 @@ func (cs *ConsensusSync) ProcessVoteSetPayload(pld *payload.VoteSetPayload) {
 		}
 	}
 }
-func (cs *ConsensusSync) ProcessProposalRequestPayload(pld *payload.ProposalRequestPayload) {
+func (cs *ConsensusSync) ProcessQueryProposalPayload(pld *payload.QueryProposalPayload) {
 	cs.logger.Trace("Process proposal request payload", "pld", pld)
 
 	hrs := cs.consensus.HRS()

@@ -19,12 +19,15 @@ type MockState struct {
 	GenHash          crypto.Hash
 	Store            *store.MockStore
 	InvalidBlockHash crypto.Hash
+	ValSet           *validator.ValidatorSet
 }
 
 func MockingState() *MockState {
+	valset, _ := validator.GenerateTestValidatorSet()
 	return &MockState{
 		GenHash: crypto.GenerateTestHash(),
 		Store:   store.MockingStore(),
+		ValSet:  valset,
 	}
 }
 
@@ -32,7 +35,7 @@ func (m *MockState) StoreReader() store.StoreReader {
 	return m.Store
 }
 func (m *MockState) ValidatorSet() validator.ValidatorSetReader {
-	return nil
+	return m.ValSet
 }
 func (m *MockState) LastBlockHeight() int {
 	return m.Store.LastBlockHeight()

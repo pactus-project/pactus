@@ -4,22 +4,19 @@ import (
 	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/message/payload"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 const LastVersion = 1
 const FlagCompressed = 0x1
-const FlagHasSignature = 0x2
 
 type Message struct {
-	Version   int
-	Flags     int
-	Type      payload.PayloadType
-	Payload   payload.Payload
-	Signature *crypto.Signature
+	Version int
+	Flags   int
+	Type    payload.PayloadType
+	Payload payload.Payload
 }
 
 func (m *Message) SanityCheck() error {
@@ -29,11 +26,8 @@ func (m *Message) SanityCheck() error {
 	if m.Type != m.Payload.Type() {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type")
 	}
-	if m.Flags|0x3 != 0x3 {
+	if m.Flags|FlagCompressed != FlagCompressed {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
-	}
-	if util.IsFlagSet(m.Flags, FlagHasSignature) && m.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "should have signature")
 	}
 	return nil
 }
@@ -46,10 +40,6 @@ func (m *Message) PayloadType() payload.PayloadType {
 	return m.Type
 }
 
-func (m *Message) SetSignature(sig *crypto.Signature) {
-	m.Signature = sig
-}
-
 func (m *Message) CompressIt() {
 	m.Flags = util.SetFlag(m.Flags, FlagCompressed)
 }
@@ -59,16 +49,6 @@ type _Message struct {
 	Flags       int                 `cbor:"2,keyasint"`
 	PayloadType payload.PayloadType `cbor:"3,keyasint"`
 	Payload     []byte              `cbor:"4,keyasint"`
-	Signature   *crypto.Signature   `cbor:"21,keyasint,omitempty"`
-}
-
-func (m *Message) SignBytes() []byte {
-	ms := new(Message)
-	*ms = *m
-	ms.Flags = 0
-	ms.Signature = nil
-	sb, _ := ms.Encode()
-	return sb
 }
 
 func (m *Message) Encode() ([]byte, error) {
@@ -89,7 +69,6 @@ func (m *Message) Encode() ([]byte, error) {
 		Flags:       m.Flags,
 		PayloadType: m.Type,
 		Payload:     pld,
-		Signature:   m.Signature,
 	}
 
 	return cbor.Marshal(msg)
@@ -119,7 +98,6 @@ func (m *Message) Decode(bs []byte) error {
 	m.Version = msg.Version
 	m.Flags = msg.Flags
 	m.Type = msg.PayloadType
-	m.Signature = msg.Signature
 	m.Payload = pld
 	return cbor.Unmarshal(data, pld)
 }

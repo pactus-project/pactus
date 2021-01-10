@@ -8,19 +8,23 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-type LatestBlocksPayload struct {
-	From         int            `cbor:"1,keyasint"`
-	Blocks       []*block.Block `cbor:"2,keyasint"`
-	Transactions []*tx.Tx       `cbor:"3,keyasint, omitempty"`
-	LastCommit   *block.Commit  `cbor:"4,keyasint, omitempty"`
+type LatestBlocksResponsePayload struct {
+	RequestID    int            `cbor:"1,keyasint"`
+	From         int            `cbor:"2,keyasint"`
+	Blocks       []*block.Block `cbor:"3,keyasint"`
+	Transactions []*tx.Tx       `cbor:"4,keyasint, omitempty"`
+	LastCommit   *block.Commit  `cbor:"5,keyasint, omitempty"`
 }
 
-func (p *LatestBlocksPayload) SanityCheck() error {
+func (p *LatestBlocksResponsePayload) SanityCheck() error {
 	if p.From < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
 	}
 	if len(p.Blocks) == 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "No block")
+	}
+	if len(p.Transactions) == 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "No transaction")
 	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
@@ -41,15 +45,15 @@ func (p *LatestBlocksPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *LatestBlocksPayload) Type() PayloadType {
-	return PayloadTypeLatestBlocks
+func (p *LatestBlocksResponsePayload) Type() PayloadType {
+	return PayloadTypeLatestBlocksResponse
 }
 
-func (p *LatestBlocksPayload) To() int {
+func (p *LatestBlocksResponsePayload) To() int {
 	return p.From + len(p.Blocks) - 1
 }
 
-func (p *LatestBlocksPayload) Fingerprint() string {
+func (p *LatestBlocksResponsePayload) Fingerprint() string {
 	var s string
 	for _, b := range p.Blocks {
 		s += fmt.Sprintf("%v ", b.Hash().Fingerprint())

@@ -30,6 +30,12 @@ var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
 func setup(t *testing.T) {
+	if tState1 != nil {
+		tState1.Close()
+		tState2.Close()
+		tState3.Close()
+		tState4.Close()
+	}
 	logger.InitLogger(logger.TestConfig())
 
 	_, _, priv1 := crypto.GenerateTestKeyPair()

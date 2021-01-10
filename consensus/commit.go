@@ -1,9 +1,8 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
-	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/sync/message"
 )
 
 func (cs *consensus) enterCommit(round int) {
@@ -67,6 +66,6 @@ func (cs *consensus) enterCommit(round int) {
 	cs.scheduleNewHeight()
 
 	// Now broadcast the committed block
-	msg := message.NewLatestBlocksMessage(height, []*block.Block{&commitBlock}, nil, commit)
+	msg := message.NewBlockAnnounceMessage(height, &commitBlock, commit)
 	cs.broadcastCh <- msg
 }

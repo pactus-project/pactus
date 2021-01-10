@@ -8,8 +8,8 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
@@ -283,6 +283,6 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 }
 
 func (cs *consensus) requestForProposal() {
-	msg := message.NewProposalRequestMessage(cs.hrs.Height(), cs.hrs.Round())
+	msg := message.NewQueryProposalMessage(cs.hrs.Height(), cs.hrs.Round())
 	cs.broadcastCh <- msg
 }

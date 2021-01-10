@@ -2,7 +2,7 @@ package network_api
 
 import (
 	peer "github.com/libp2p/go-libp2p-peer"
-	"github.com/zarbchain/zarb-go/message"
+	"github.com/zarbchain/zarb-go/sync/message"
 )
 
 type NetworkAPI interface {

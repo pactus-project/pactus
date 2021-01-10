@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -21,8 +21,8 @@ func TestRequestForProposal(t *testing.T) {
 		tAliceConsensus.SetProposal(p)
 		tAliceConsensus.HRS_ = hrs
 
-		tBobBroadcastCh <- message.NewProposalRequestMessage(hrs.Height(), hrs.Round())
-		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposalRequest)
+		tBobBroadcastCh <- message.NewQueryProposalMessage(hrs.Height(), hrs.Round())
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 
 		assert.Equal(t, tBobConsensus.Proposal.Hash(), tBobConsensus.Proposal.Hash())
@@ -34,8 +34,8 @@ func TestRequestForProposal(t *testing.T) {
 		hrs := hrs.NewHRS(101, 1, 6)
 		tAliceConsensus.HRS_ = hrs
 
-		tBobBroadcastCh <- message.NewProposalRequestMessage(hrs.Height(), hrs.Round())
-		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposalRequest)
+		tBobBroadcastCh <- message.NewQueryProposalMessage(hrs.Height(), hrs.Round())
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 
 		// Alice doesn't respond
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
@@ -49,8 +49,8 @@ func TestRequestForProposal(t *testing.T) {
 		tAliceConsensus.SetProposal(p)
 		tAliceConsensus.HRS_ = hrs
 
-		tBobBroadcastCh <- message.NewProposalRequestMessage(hrs.Height(), hrs.Round()-1)
-		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposalRequest)
+		tBobBroadcastCh <- message.NewQueryProposalMessage(hrs.Height(), hrs.Round()-1)
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 
 		assert.Equal(t, tBobConsensus.Proposal.Hash(), tBobConsensus.Proposal.Hash())
@@ -64,8 +64,8 @@ func TestRequestForProposal(t *testing.T) {
 		tAliceConsensus.SetProposal(p)
 		tAliceConsensus.HRS_ = hrs
 
-		tBobBroadcastCh <- message.NewProposalRequestMessage(hrs.Height(), hrs.Round()+1)
-		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposalRequest)
+		tBobBroadcastCh <- message.NewQueryProposalMessage(hrs.Height(), hrs.Round()+1)
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 
 		// Alice doesn't respond
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
@@ -95,13 +95,14 @@ func TestSendVoteSet(t *testing.T) {
 	tAliceConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
 	tBobConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
 	v1, _ := vote.GenerateTestPrepareVote(100, 0)
-	v2, _ := vote.GenerateTestPrepareVote(100, 0)
+	v2, _ := vote.GenerateTestPrepareVote(100, 1)
 	v3, _ := vote.GenerateTestPrepareVote(100, 1)
 	v4, _ := vote.GenerateTestPrepareVote(100, 1)
 	v5, _ := vote.GenerateTestPrepareVote(101, 1)
 
 	tAliceConsensus.Votes = []*vote.Vote{v1, v2, v3}
-	tBobBroadcastCh <- message.NewVoteSetMessage(100, 1, []crypto.Hash{v4.Hash()})
+	tBobConsensus.Votes = []*vote.Vote{v2, v4}
+	tBobSync.consensusSync.BroadcastVoteSet()
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
 	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v3))
 

@@ -116,5 +116,5 @@ func TestEnterCommit(t *testing.T) {
 
 	// Everything is good
 	tConsY.enterCommit(1)
-	shouldPublishProposalBlock(t, tConsY)
+	shouldPublishBlockAnnounce(t, tConsY)
 }

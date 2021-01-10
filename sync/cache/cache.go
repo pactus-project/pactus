@@ -107,3 +107,7 @@ func (c *Cache) AddTransaction(trx *tx.Tx) {
 func (c *Cache) Len() int {
 	return c.cache.Len()
 }
+
+func (c *Cache) Clear() {
+	c.cache.Purge()
+}

@@ -8,13 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
+	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -51,13 +52,14 @@ func (o *OverrideFingerprint) Fingerprint() string {
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
+	tAliceConfig = TestConfig()
+	tBobConfig = TestConfig()
+
+	tAliceConfig.Moniker = "alice"
+	tBobConfig.Moniker = "bob"
 }
 
 func setup(t *testing.T) {
-	LatestBlockInterval = 10
-
-	tAliceConfig = TestConfig()
-	tBobConfig = TestConfig()
 	_, _, priv1 := crypto.GenerateTestKeyPair()
 	_, _, priv2 := crypto.GenerateTestKeyPair()
 	aliceSigner := crypto.NewSigner(priv1)
@@ -81,16 +83,18 @@ func setup(t *testing.T) {
 
 	tBobState.GenHash = tAliceState.GenHash
 
-	// Alice has 16 and Bob has 8 blocks
+	LatestBlockInterval = 20
+
+	// Alice has 100 and Bob has 92 blocks
 	lastBlockHash := crypto.Hash{}
-	for i := 0; i < 16; i++ {
+	for i := 0; i < 100; i++ {
 		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
 		c := block.GenerateTestCommit(b.Hash())
 		lastBlockHash = b.Hash()
 		tAliceState.AddBlock(i+1, b, trxs)
 		tAliceState.LastBlockCommit = c
 
-		if i < 8 {
+		if i < 82 {
 			tBobState.AddBlock(i+1, b, trxs)
 			tBobState.LastBlockCommit = c
 		}
@@ -148,7 +152,8 @@ func setup(t *testing.T) {
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
 
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocks)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 83-92
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 93-100
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
 }
@@ -200,7 +205,7 @@ func TestSendSalamPeerAhead(t *testing.T) {
 	d, _ := msg.Encode()
 	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
-	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewLatestBlocksRequestMessage(tAliceState.LastBlockHeight()+1, tAliceState.LastBlockHash()))
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 
 	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 111)
 }
@@ -234,4 +239,21 @@ func TestSendAleykPeerSameHeight(t *testing.T) {
 	d, _ := msg.Encode()
 	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+}
+
+func TestIncreaseHeight(t *testing.T) {
+	setup(t)
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	msg1 := message.NewSalamMessage("kitty", pub, tAnotherPeerID, tAliceState.GenesisHash(), 103, 0)
+	tAliceSync.ParsMessage(msg1, tAnotherPeerID)
+	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 103)
+
+	msg2 := message.NewAleykMessage("kitty-2", pub, tAnotherPeerID, 104, 0, 0, "Welcome!")
+	tAliceSync.ParsMessage(msg2, tAnotherPeerID)
+	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 104)
+
+	msg3 := message.NewHeartBeatMessage(tAnotherPeerID, crypto.GenerateTestHash(), hrs.NewHRS(106, 0, 1))
+	tAliceSync.ParsMessage(msg3, tAnotherPeerID)
+	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 105)
 }

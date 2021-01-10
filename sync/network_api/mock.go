@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/sync/firewall"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 )
 
 type MockNetworkAPI struct {
@@ -71,7 +71,9 @@ func (mock *MockNetworkAPI) ShouldPublishThisMessage(t *testing.T, expectedMsg *
 
 			if msg.PayloadType() == expectedMsg.PayloadType() {
 				logger.Info("Comparing two messages", "msg", msg, "expected", expectedMsg)
-				assert.Equal(t, msg.SignBytes(), expectedMsg.SignBytes())
+				bs1, _ := msg.Encode()
+				bs2, _ := expectedMsg.Encode()
+				assert.Equal(t, bs1, bs2)
 				return
 			}
 		}

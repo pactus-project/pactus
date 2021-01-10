@@ -9,9 +9,9 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 )
 
 type ParsMessageFn = func(msg *message.Message, from peer.ID)
@@ -101,6 +101,10 @@ func (api *networkAPI) Stop() {
 }
 
 func (api *networkAPI) JoinDownloadTopic() error {
+	if api.downloadSub != nil {
+		return nil
+	}
+
 	downloadTopic, err := api.net.JoinTopic("download")
 	if err != nil {
 		return err
@@ -206,18 +210,24 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 		return api.generalTopic
 
 	case payload.PayloadTypeLatestBlocksRequest,
-		payload.PayloadTypeLatestBlocks,
-		payload.PayloadTypeTransactionsRequest,
-		payload.PayloadTypeTransactions:
+		payload.PayloadTypeLatestBlocksResponse,
+		payload.PayloadTypeQueryTransactions,
+		payload.PayloadTypeTransactions,
+		payload.PayloadTypeBlockAnnounce:
 		return api.dataTopic
 
-	case payload.PayloadTypeProposalRequest,
+	case payload.PayloadTypeQueryProposal,
 		payload.PayloadTypeProposal,
 		payload.PayloadTypeVote,
 		payload.PayloadTypeVoteSet:
 		return api.consensusTopic
+
+	case payload.PayloadTypeDownloadRequest,
+		payload.PayloadTypeDownloadResponse:
+		return api.downloadTopic
+
 	default:
-		panic("Invalid topic")
+		panic("Invalid topic:")
 	}
 }
 

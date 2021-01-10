@@ -13,9 +13,9 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -40,6 +40,12 @@ const (
 )
 
 func setup(t *testing.T) {
+	if tConsX != nil {
+		tConsX.state.Close()
+		tConsY.state.Close()
+		tConsB.state.Close()
+		tConsP.state.Close()
+	}
 	conf := logger.TestConfig()
 	conf.Levels["_state"] = "debug"
 	logger.InitLogger(conf)
@@ -62,10 +68,14 @@ func setup(t *testing.T) {
 	acc.AddToBalance(21000000000000)
 
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, 1)
-	stX, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
-	stY, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], tTxPool)
-	stB, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexB], tTxPool)
-	stP, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], tTxPool)
+	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
+	require.NoError(t, err)
+	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], tTxPool)
+	require.NoError(t, err)
+	stB, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexB], tTxPool)
+	require.NoError(t, err)
+	stP, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], tTxPool)
+	require.NoError(t, err)
 
 	consX, err := NewConsensus(TestConfig(), stX, tSigners[tIndexX], make(chan *message.Message, 100))
 	assert.NoError(t, err)
@@ -79,9 +89,11 @@ func setup(t *testing.T) {
 	tConsY = consY.(*consensus)
 	tConsB = consB.(*consensus)
 	tConsP = consP.(*consensus)
+
+	//TODO: Give a name to the loggers. Look at sync tests
 }
 
-func shouldPublishProposalBlock(t *testing.T, cons *consensus) {
+func shouldPublishBlockAnnounce(t *testing.T, cons *consensus) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -90,9 +102,9 @@ func shouldPublishProposalBlock(t *testing.T, cons *consensus) {
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishProposalBlock", "msg", msg)
+			logger.Info("shouldPublishBlockAnnounce", "msg", msg)
 
-			if msg.PayloadType() == payload.PayloadTypeLatestBlocks {
+			if msg.PayloadType() == payload.PayloadTypeBlockAnnounce {
 				return
 			}
 		}
@@ -109,7 +121,7 @@ func shouldPublishProposalReqquest(t *testing.T, cons *consensus) {
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishProposalReqquest", "msg", msg)
 
-			if msg.PayloadType() == payload.PayloadTypeProposalRequest {
+			if msg.PayloadType() == payload.PayloadTypeQueryProposal {
 				return
 			}
 		}

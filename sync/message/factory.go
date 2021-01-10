@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/message/payload"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/version"
 	"github.com/zarbchain/zarb-go/vote"
@@ -46,22 +46,25 @@ func NewAleykMessage(moniker string, publicKey crypto.PublicKey, peerID peer.ID,
 
 }
 
-func NewLatestBlocksRequestMessage(from int, lastBlockHash crypto.Hash) *Message {
+func NewLatestBlocksRequestMessage(initiator, target peer.ID, requestID int, from int) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeLatestBlocksRequest,
 		Payload: &payload.LatestBlocksRequestPayload{
-			From:          from,
-			LastBlockHash: lastBlockHash,
+			Initiator: initiator,
+			Target:    target,
+			RequestID: requestID,
+			From:      from,
 		},
 	}
 }
 
-func NewLatestBlocksMessage(from int, blocks []*block.Block, transactions []*tx.Tx, commit *block.Commit) *Message {
+func NewLatestBlocksResponseMessage(requestID int, from int, blocks []*block.Block, transactions []*tx.Tx, commit *block.Commit) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeLatestBlocks,
-		Payload: &payload.LatestBlocksPayload{
+		Type:    payload.PayloadTypeLatestBlocksResponse,
+		Payload: &payload.LatestBlocksResponsePayload{
+			RequestID:    requestID,
 			From:         from,
 			Blocks:       blocks,
 			Transactions: transactions,
@@ -70,21 +73,23 @@ func NewLatestBlocksMessage(from int, blocks []*block.Block, transactions []*tx.
 	}
 }
 
-func NewHeartBeatMessage(lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
+func NewHeartBeatMessage(id peer.ID, lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeHeartBeat,
 		Payload: &payload.HeartBeatPayload{
-			Pulse: hrs,
+			PeerID:        id,
+			Pulse:         hrs,
+			LastBlockHash: lastBlockHash,
 		},
 	}
 }
 
-func NewProposalRequestMessage(height, round int) *Message {
+func NewQueryProposalMessage(height, round int) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeProposalRequest,
-		Payload: &payload.ProposalRequestPayload{
+		Type:    payload.PayloadTypeQueryProposal,
+		Payload: &payload.QueryProposalPayload{
 			Height: height,
 			Round:  round,
 		},
@@ -101,11 +106,11 @@ func NewProposalMessage(proposal *vote.Proposal) *Message {
 	}
 }
 
-func NewTransactionsRequestMessage(ids []crypto.Hash) *Message {
+func NewQueryTransactionsMessage(ids []crypto.Hash) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeTransactionsRequest,
-		Payload: &payload.TransactionsRequestPayload{
+		Type:    payload.PayloadTypeQueryTransactions,
+		Payload: &payload.QueryTransactionsPayload{
 			IDs: ids,
 		},
 	}
@@ -142,24 +147,39 @@ func NewVoteMessage(vote *vote.Vote) *Message {
 	}
 }
 
-func NewDownloadRequestMessage(peerID peer.ID, from, to int) *Message {
+func NewBlockAnnounceMessage(height int, block *block.Block, commit *block.Commit) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeDownloadRequest,
-		Payload: &payload.DownloadRequestPayload{
-			PeerID: peerID,
-			From:   from,
-			To:     to,
+		Type:    payload.PayloadTypeBlockAnnounce,
+		Payload: &payload.BlockAnnouncePayload{
+			Height: height,
+			Block:  block,
+			Commit: commit,
 		},
 	}
 }
 
-func NewDownloadResponseMessage(status int, from int, blocks []*block.Block, txs []*tx.Tx) *Message {
+func NewDownloadRequestMessage(initiator, target peer.ID, requestID int, from, to int) *Message {
+	return &Message{
+		Version: LastVersion,
+		Type:    payload.PayloadTypeDownloadRequest,
+		Payload: &payload.DownloadRequestPayload{
+			Initiator: initiator,
+			Target:    target,
+			RequestID: requestID,
+			From:      from,
+			To:        to,
+		},
+	}
+}
+
+func NewDownloadResponseMessage(requestID int, code int, from int, blocks []*block.Block, txs []*tx.Tx) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeDownloadResponse,
 		Payload: &payload.DownloadResponsePayload{
-			Status:       status,
+			RequestID:    requestID,
+			ResponseCode: code,
 			From:         from,
 			Blocks:       blocks,
 			Transactions: txs,
@@ -175,14 +195,14 @@ func makePayload(t payload.PayloadType) payload.Payload {
 		return &payload.AleykPayload{}
 	case payload.PayloadTypeLatestBlocksRequest:
 		return &payload.LatestBlocksRequestPayload{}
-	case payload.PayloadTypeLatestBlocks:
-		return &payload.LatestBlocksPayload{}
-	case payload.PayloadTypeTransactionsRequest:
-		return &payload.TransactionsRequestPayload{}
+	case payload.PayloadTypeLatestBlocksResponse:
+		return &payload.LatestBlocksResponsePayload{}
+	case payload.PayloadTypeQueryTransactions:
+		return &payload.QueryTransactionsPayload{}
 	case payload.PayloadTypeTransactions:
 		return &payload.TransactionsPayload{}
-	case payload.PayloadTypeProposalRequest:
-		return &payload.ProposalRequestPayload{}
+	case payload.PayloadTypeQueryProposal:
+		return &payload.QueryProposalPayload{}
 	case payload.PayloadTypeProposal:
 		return &payload.ProposalPayload{}
 	case payload.PayloadTypeHeartBeat:
@@ -191,6 +211,8 @@ func makePayload(t payload.PayloadType) payload.Payload {
 		return &payload.VotePayload{}
 	case payload.PayloadTypeVoteSet:
 		return &payload.VoteSetPayload{}
+	case payload.PayloadTypeBlockAnnounce:
+		return &payload.BlockAnnouncePayload{}
 	case payload.PayloadTypeDownloadRequest:
 		return &payload.DownloadRequestPayload{}
 	case payload.PayloadTypeDownloadResponse:

@@ -57,15 +57,15 @@ func (ps *PeerSet) MaxClaimedHeight() int {
 }
 
 func (ps *PeerSet) UpdateMaxClaimedHeight(h int) {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
 
 	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, h)
 }
 
 func (ps *PeerSet) MustGetPeer(peerID peer.ID) *Peer {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
 
 	p := ps.getPeer(peerID)
 	if p == nil {
@@ -76,8 +76,8 @@ func (ps *PeerSet) MustGetPeer(peerID peer.ID) *Peer {
 }
 
 func (ps *PeerSet) RemovePeer(peerID peer.ID) {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
 
 	delete(ps.peers, peerID)
 }
@@ -93,4 +93,16 @@ func (ps *PeerSet) GetPeerList() []*Peer {
 		i++
 	}
 	return l
+}
+
+func (ps *PeerSet) FindHighestPeer() *Peer {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	for _, p := range ps.peers {
+		if p.Height() >= ps.maxClaimedHeight {
+			return p
+		}
+	}
+	return nil
 }

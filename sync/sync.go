@@ -9,12 +9,12 @@ import (
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -166,8 +166,8 @@ func (syncer *Synchronizer) broadcastLoop() {
 
 			switch msg.PayloadType() {
 			// Check if we have transaction in the cache
-			case payload.PayloadTypeTransactionsRequest:
-				pld := msg.Payload.(*payload.TransactionsRequestPayload)
+			case payload.PayloadTypeQueryTransactions:
+				pld := msg.Payload.(*payload.QueryTransactionsPayload)
 				for i, id := range pld.IDs {
 					trx := syncer.cache.GetTransaction(id)
 					if trx != nil {
@@ -190,7 +190,7 @@ func (syncer *Synchronizer) broadcastLoop() {
 	}
 }
 func (syncer *Synchronizer) Fingerprint() string {
-	return fmt.Sprintf("{☍ %d ⛃ %d ↥ %d}",
+	return fmt.Sprintf("{☍ %d ⛃ %d ↑ %d}",
 		syncer.peerSet.Len(),
 		syncer.cache.Len(),
 		syncer.peerSet.MaxClaimedHeight())
@@ -200,9 +200,21 @@ func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 	ourHeight := syncer.state.LastBlockHeight()
 	claimedHeight := syncer.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight {
-		syncer.logger.Debug("Ask for more blocks", "our_height", ourHeight, "claimed_height", claimedHeight)
-		hash := syncer.state.LastBlockHash()
-		syncer.stateSync.BroadcastLatestBlocksRequest(ourHeight+1, hash)
+		if claimedHeight > ourHeight+LatestBlockInterval {
+			syncer.logger.Info("We are far behind the network, Join download topic", "our_height", ourHeight)
+			// TODO:
+			// If peer doesn't respond, we should leave the topic
+			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
+			// We should find a way to avoid it.
+			if err := syncer.networkAPI.JoinDownloadTopic(); err != nil {
+				syncer.logger.Info("We can't join download topic", "err", err)
+			} else {
+				syncer.stateSync.RequestForMoreBlock()
+			}
+		} else {
+			syncer.logger.Info("We are behind the network, Ask for more blocks", "our_height", ourHeight)
+			syncer.stateSync.RequestForLatestBlock()
+		}
 	}
 }
 
@@ -226,22 +238,26 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 		pld := msg.Payload.(*payload.LatestBlocksRequestPayload)
 		syncer.stateSync.ProcessLatestBlocksRequestPayload(pld)
 
-	case payload.PayloadTypeLatestBlocks:
-		pld := msg.Payload.(*payload.LatestBlocksPayload)
-		syncer.stateSync.ProcessLatestBlocksPayload(pld)
+	case payload.PayloadTypeLatestBlocksResponse:
+		pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
+		syncer.stateSync.ProcessLatestBlocksResponsePayload(pld)
 		syncer.informConsensusToMoveToNewHeight()
 
-	case payload.PayloadTypeTransactionsRequest:
-		pld := msg.Payload.(*payload.TransactionsRequestPayload)
-		syncer.stateSync.ProcessTransactionsRequestPayload(pld)
+	case payload.PayloadTypeQueryTransactions:
+		pld := msg.Payload.(*payload.QueryTransactionsPayload)
+		syncer.stateSync.ProcessQueryTransactionsPayload(pld)
 
 	case payload.PayloadTypeTransactions:
 		pld := msg.Payload.(*payload.TransactionsPayload)
 		syncer.stateSync.ProcessTransactionsPayload(pld)
 
-	case payload.PayloadTypeProposalRequest:
-		pld := msg.Payload.(*payload.ProposalRequestPayload)
-		syncer.consensusSync.ProcessProposalRequestPayload(pld)
+	case payload.PayloadTypeBlockAnnounce:
+		pld := msg.Payload.(*payload.BlockAnnouncePayload)
+		syncer.stateSync.ProcessBlockAnnouncePayload(pld)
+
+	case payload.PayloadTypeQueryProposal:
+		pld := msg.Payload.(*payload.QueryProposalPayload)
+		syncer.consensusSync.ProcessQueryProposalPayload(pld)
 
 	case payload.PayloadTypeProposal:
 		pld := msg.Payload.(*payload.ProposalPayload)
@@ -270,12 +286,17 @@ func (syncer *Synchronizer) broadcastHeartBeat() {
 		return
 	}
 
-	msg := message.NewHeartBeatMessage(syncer.state.LastBlockHash(), hrs)
+	// Check if we are an active validator
+	valSet := syncer.state.ValidatorSet()
+	if !valSet.Contains(syncer.signer.Address()) {
+		return
+	}
+
+	msg := message.NewHeartBeatMessage(syncer.networkAPI.SelfID(), syncer.state.LastBlockHash(), hrs)
 	syncer.PublishMessage(msg)
 }
 
 func (syncer *Synchronizer) PublishMessage(msg *message.Message) {
-
 	err := syncer.networkAPI.PublishMessage(msg)
 
 	if err != nil {
@@ -289,6 +310,7 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 	syncer.logger.Trace("Process heartbeat payload", "pld", pld)
 
 	hrs := syncer.consensus.HRS()
+
 	if pld.Pulse.Height() == hrs.Height() {
 		if pld.Pulse.GreaterThan(hrs) {
 			syncer.logger.Trace("Our consensus is behind of this peer.")
@@ -300,6 +322,10 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 			syncer.logger.Trace("Our consensus is at the same step with this peer.")
 		}
 	}
+
+	p := syncer.peerSet.MustGetPeer(pld.PeerID)
+	p.UpdateHeight(pld.Pulse.Height() - 1)
+	syncer.peerSet.UpdateMaxClaimedHeight(pld.Pulse.Height() - 1)
 }
 
 func (syncer *Synchronizer) BroadcastSalam() {
@@ -352,10 +378,25 @@ func (syncer *Synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
 	p.UpdatePublicKey(pld.PublicKey)
 	p.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
 
+	syncer.peerSet.UpdateMaxClaimedHeight(pld.Height)
+
 	// Reply salam
 	syncer.BroadcastAleyk(payload.SalamResponseCodeOK, "Welcome!")
 }
 
 func (syncer *Synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
 	syncer.logger.Trace("Process Aleyk payload", "pld", pld)
+
+	if pld.Response.Status != payload.SalamResponseCodeOK {
+		syncer.logger.Warn("Our Salam is not welcomed!", "message", pld.Response.Message)
+	} else {
+		p := syncer.peerSet.MustGetPeer(pld.PeerID)
+		p.UpdateMoniker(pld.Moniker)
+		p.UpdateHeight(pld.Height)
+		p.UpdateNodeVersion(pld.NodeVersion)
+		p.UpdatePublicKey(pld.PublicKey)
+		p.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
+
+		syncer.peerSet.UpdateMaxClaimedHeight(pld.Height)
+	}
 }

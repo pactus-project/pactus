@@ -14,16 +14,14 @@ const DownloadResponseCodeRejected = 2
 const DownloadResponseCodeBusy = 3
 
 type DownloadResponsePayload struct {
-	Status       int            `cbor:"1,keyasint"`
-	From         int            `cbor:"2,keyasint"`
-	Blocks       []*block.Block `cbor:"3,keyasint, omitempty"`
-	Transactions []*tx.Tx       `cbor:"4,keyasint, omitempty"`
+	RequestID    int            `cbor:"1,keyasint"`
+	ResponseCode int            `cbor:"2,keyasint"`
+	From         int            `cbor:"3,keyasint"`
+	Blocks       []*block.Block `cbor:"4,keyasint"`
+	Transactions []*tx.Tx       `cbor:"5,keyasint"`
 }
 
 func (p *DownloadResponsePayload) SanityCheck() error {
-	if p.From <= 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
-	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
@@ -42,5 +40,5 @@ func (p *DownloadResponsePayload) Type() PayloadType {
 }
 
 func (p *DownloadResponsePayload) Fingerprint() string {
-	return fmt.Sprintf("{%v %v %v}", p.Status, p.From, len(p.Blocks))
+	return fmt.Sprintf("{%v %v %v}", p.ResponseCode, p.From, len(p.Blocks))
 }
