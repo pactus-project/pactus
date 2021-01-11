@@ -15,7 +15,6 @@ import (
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 var tState1 *state
@@ -87,34 +86,42 @@ func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (bloc
 }
 
 func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Commit {
-	committers := make([]block.Committer, 4)
 	sigs := make([]*crypto.Signature, len(signers))
-	sb := vote.CommitSignBytes(blockHash, round)
-	committers[0] = block.Committer{Status: 0, Address: tValSigner1.Address()}
-	committers[1] = block.Committer{Status: 0, Address: tValSigner2.Address()}
-	committers[2] = block.Committer{Status: 0, Address: tValSigner3.Address()}
-	committers[3] = block.Committer{Status: 0, Address: tValSigner4.Address()}
+	sb := block.CommitSignBytes(blockHash, round)
+	signed := []int{}
+	missed := []int{}
 
 	for i, s := range signers {
 		if s.Address().EqualsTo(tValSigner1.Address()) {
-			committers[0] = block.Committer{Status: 1, Address: s.Address()}
+			signed = append(signed, 0)
 		}
 
 		if s.Address().EqualsTo(tValSigner2.Address()) {
-			committers[1] = block.Committer{Status: 1, Address: s.Address()}
+			signed = append(signed, 1)
 		}
 
 		if s.Address().EqualsTo(tValSigner3.Address()) {
-			committers[2] = block.Committer{Status: 1, Address: s.Address()}
+			signed = append(signed, 2)
 		}
 
 		if s.Address().EqualsTo(tValSigner4.Address()) {
-			committers[3] = block.Committer{Status: 1, Address: s.Address()}
+			signed = append(signed, 3)
 		}
-
 		sigs[i] = s.Sign(sb)
 	}
-	return *block.NewCommit(round, committers, crypto.Aggregate(sigs))
+	for i := 0; i < 4; i++ {
+		s := false
+		for _, n := range signed {
+			if n == i {
+				s = true
+			}
+		}
+
+		if s == false {
+			missed = append(missed, i)
+		}
+	}
+	return *block.NewCommit(blockHash, round, signed, missed, crypto.Aggregate(sigs))
 }
 
 func applyBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {

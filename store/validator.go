@@ -1,6 +1,8 @@
 package store
 
 import (
+	"fmt"
+
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -8,8 +10,9 @@ import (
 )
 
 type validatorStore struct {
-	db    *leveldb.DB
-	total int
+	db     *leveldb.DB
+	valMap map[int]*validator.Validator
+	total  int
 }
 
 var (
@@ -26,7 +29,17 @@ func newValidatorStore(path string) (*validatorStore, error) {
 	vs := &validatorStore{
 		db: db,
 	}
-	vs.total = vs.countValidators()
+
+	total := 0
+	valMap := make(map[int]*validator.Validator)
+	vs.iterateValidators(func(val *validator.Validator) bool {
+		valMap[val.Number()] = val
+		total++
+		return false
+	})
+
+	vs.total = total
+	vs.valMap = valMap
 
 	return vs, nil
 }
@@ -57,6 +70,15 @@ func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, 
 	return val, nil
 }
 
+func (vs *validatorStore) validatorByNumber(num int) (*validator.Validator, error) {
+	val, ok := vs.valMap[num]
+	if ok {
+		return val, nil
+	}
+
+	return nil, fmt.Errorf("Not found")
+}
+
 func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	r := util.BytesPrefix(validatorPrefix)
 	iter := vs.db.NewIterator(r, nil)
@@ -85,16 +107,8 @@ func (vs *validatorStore) updateValidator(val *validator.Validator) error {
 	}
 	if !vs.hasValidator(val.Address()) {
 		vs.total++
+		vs.valMap[val.Number()] = val
 	}
 
 	return tryPut(vs.db, validatorKey(val.Address()), data)
-}
-
-func (vs *validatorStore) countValidators() int {
-	count := 0
-	vs.iterateValidators(func(val *validator.Validator) bool {
-		count++
-		return false
-	})
-	return count
 }

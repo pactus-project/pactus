@@ -23,6 +23,28 @@ type voteData struct {
 	Signature *crypto.Signature `cbor:"6,keyasint"`
 }
 
+type signVote struct {
+	BlockHash crypto.Hash `cbor:"1,keyasint"`
+	Round     int         `cbor:"2,keyasint"`
+	Prepare   string      `cbor:"3,keyasint,omitempty"`
+}
+
+func (vote *Vote) SignBytes() []byte {
+	prepare := ""
+	if vote.VoteType() == VoteTypePrepare {
+		prepare = "prepare"
+	}
+	// Note:
+	// We omit block height, because finally block height is not matter, block hash is matter
+	bz, _ := cbor.Marshal(signVote{
+		Round:     vote.data.Round,
+		BlockHash: vote.data.BlockHash,
+		Prepare:   prepare,
+	})
+
+	return bz
+}
+
 func NewPrepare(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return NewVote(VoteTypePrepare, height, round, blockHash, signer)
 }
@@ -53,34 +75,6 @@ func (vote *Vote) Signature() *crypto.Signature { return vote.data.Signature }
 
 func (vote *Vote) SetSignature(signature *crypto.Signature) {
 	vote.data.Signature = signature
-}
-
-type signVote struct {
-	VoteType  VoteType    `cbor:"1,keyasint"`
-	BlockHash crypto.Hash `cbor:"2,keyasint"`
-	Round     int         `cbor:"3,keyasint"`
-}
-
-func CommitSignBytes(blockHash crypto.Hash, round int) []byte {
-	bz, _ := cbor.Marshal(signVote{
-		VoteType:  VoteTypePrecommit,
-		Round:     round,
-		BlockHash: blockHash,
-	})
-
-	return bz
-}
-
-func (vote Vote) SignBytes() []byte {
-	// Note:
-	// We omit block height, because finally block height is not matter, block hash is matter
-	bz, _ := cbor.Marshal(signVote{
-		VoteType:  vote.data.VoteType,
-		Round:     vote.data.Round,
-		BlockHash: vote.data.BlockHash,
-	})
-
-	return bz
 }
 
 func (vote *Vote) MarshalCBOR() ([]byte, error) {

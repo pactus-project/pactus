@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
 func TestContains(t *testing.T) {
@@ -307,12 +306,6 @@ func TestCommittersHash(t *testing.T) {
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
-	h1 := vs.CommittersHash()
-	tree := simpleMerkle.NewTreeFromHashes([]crypto.Hash{
-		crypto.HashH(val1.Address().RawBytes()),
-		crypto.HashH(val2.Address().RawBytes()),
-		crypto.HashH(val3.Address().RawBytes()),
-		crypto.HashH(val4.Address().RawBytes())})
-
-	assert.Equal(t, h1, tree.Root())
+	expected, _ := crypto.HashFromString("df5c58d8b7c13806b6d23e878526ccdf331c4fed72780e52ea2775f4aa082a44")
+	assert.Equal(t, vs.CommittersHash(), expected)
 }

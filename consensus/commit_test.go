@@ -16,20 +16,13 @@ func commitFirstBlock(t *testing.T) (b block.Block, votes [3]*vote.Vote) {
 	require.NoError(t, err)
 	b = *pb
 
-	sb := vote.CommitSignBytes(b.Hash(), 0)
+	sb := block.CommitSignBytes(b.Hash(), 0)
 	sig1 := tSigners[0].Sign(sb)
 	sig2 := tSigners[1].Sign(sb)
 	sig3 := tSigners[2].Sign(sb)
 
 	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3})
-	c := block.NewCommit(0,
-		[]block.Committer{
-			{Status: 1, Address: tSigners[0].Address()},
-			{Status: 1, Address: tSigners[1].Address()},
-			{Status: 1, Address: tSigners[2].Address()},
-			{Status: 0, Address: tSigners[3].Address()},
-		},
-		sig)
+	c := block.NewCommit(b.Hash(), 0, []int{0, 1, 2}, []int{3}, sig)
 
 	require.NotNil(t, c)
 	err = tConsX.state.ApplyBlock(1, b, *c)

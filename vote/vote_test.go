@@ -1,8 +1,11 @@
 package vote
 
 import (
+	"encoding/hex"
+	"fmt"
 	"testing"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 )
@@ -59,11 +62,30 @@ func TestVoteSanityCheck(t *testing.T) {
 	assert.Error(t, v.SanityCheck())
 }
 
-func TestCommitSignBytes(t *testing.T) {
-	v, _ := GenerateTestPrecommitVote(10, 1)
-	bz1 := v.SignBytes()
-	bz2 := CommitSignBytes(v.BlockHash(), 1)
-	assert.Equal(t, bz1, bz2)
+func TestSignBytes(t *testing.T) {
+	v1, _ := GenerateTestPrepareVote(10, 1)
+	v2, _ := GenerateTestPrecommitVote(10, 1)
+
+	bz1 := v1.SignBytes()
+	bz2 := v2.SignBytes()
+
+	assert.Contains(t, string(bz1), "prepare")
+	assert.NotContains(t, string(bz2), "prepare")
+}
+
+func TestSignBytesMatchWithCommit(t *testing.T) {
+	// Find this data in commit tests
+	d, _ := hex.DecodeString("a20158201c8f67440c5d2fcaec3176cde966e8b46ec744c836f643612bec96eb6a83c1fe0206")
+	s := new(signVote)
+	assert.NoError(t, cbor.Unmarshal(d, s))
+	v := Vote{data: voteData{
+		VoteType:  VoteTypePrecommit,
+		Round:     s.Round,
+		BlockHash: s.BlockHash},
+	}
+
+	fmt.Printf("%x", v.SignBytes())
+	assert.Equal(t, v.SignBytes(), d)
 }
 
 func TestVoteFingerprint(t *testing.T) {

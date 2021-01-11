@@ -62,17 +62,20 @@ func (f factory) ToVerboseBlock(block *block.Block, res *BlockResult) error {
 
 	// last commit
 	if block.LastCommit() != nil {
+		if err := clc.SetBlockHash(block.LastCommit().BlockHash().RawBytes()); err != nil {
+			return err
+		}
 		clc.SetRound(uint32(block.LastCommit().Round()))
 		if err := clc.SetSignature(block.LastCommit().Signature().RawBytes()); err != nil {
 			return err
 		}
-		clcc, _ := clc.NewCommitters(int32(len(block.LastCommit().Committers())))
-		for i, commiter := range block.LastCommit().Committers() {
-			c := clcc.At(i)
-			if err := c.SetAddress(commiter.Address.RawBytes()); err != nil {
-				return err
-			}
-			c.SetStatus(int32(commiter.Status))
+		signed, _ := clc.NewSigned(int32(len(block.LastCommit().Signed())))
+		for i, num := range block.LastCommit().Signed() {
+			signed.Set(i, int32(num))
+		}
+		missed, _ := clc.NewMissed(int32(len(block.LastCommit().Missed())))
+		for i, num := range block.LastCommit().Missed() {
+			missed.Set(i, int32(num))
 		}
 	}
 	// header
