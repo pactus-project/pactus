@@ -23,7 +23,7 @@ func TestNotAcceptingProposal(t *testing.T) {
 	assert.Nil(t, tConsY.LastProposal())
 }
 
-//Imagine we have four nodes: (Nx, Ny, Nb, Np) which:
+// Imagine we have four nodes: (Nx, Ny, Nb, Np) which:
 // Nb is a byzantine node and Nx, Ny, Np are honest nodes,
 // however Np is partitioned and see the network through Nb (Byzantine node).
 // In Height H, B sends its pre-votes to all the nodes

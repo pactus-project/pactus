@@ -6,9 +6,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-
 	"github.com/zarbchain/zarb-go/crypto"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
 func TestNilCommitHash(t *testing.T) {
@@ -17,45 +15,59 @@ func TestNilCommitHash(t *testing.T) {
 }
 
 func TestCommitMarshaling(t *testing.T) {
-	d, _ := hex.DecodeString("a301020258304e02ec725dd2b2ae23fc6a90bb391e3a61c1488eb0bffdffb75088da8dc7e9b267f396898dbe3e7971dd2af9395200810384a20154a7dd14a976e2894602a0c04081b66258bd930faa0201a20154f2150d173fdf8e5435712e3731237e4751675ef30201a20154c1ecaa8747f46553556d484d1345f7e152eddee20201a20154817a3ea1b55ebb68c29d45592d41da6bedb7f3350200")
+	d, _ := hex.DecodeString("a50158201c8f67440c5d2fcaec3176cde966e8b46ec744c836f643612bec96eb6a83c1fe02060383010203048100055830df65ca781a94080e2fcfb66bd443a9681f6b93985c9e696c248b778355231c44411cc2400a02a763827bc9251c553b03")
 	c := new(Commit)
 	err := cbor.Unmarshal(d, c)
 	assert.NoError(t, err)
 	d2, err := cbor.Marshal(c)
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
-	expected1, _ := crypto.HashFromString("52568b5383dd52e75bd8a956c49d80986b49802c15fc51f87a6f0650420a1bac")
+	expected1, _ := crypto.HashFromString("df5c58d8b7c13806b6d23e878526ccdf331c4fed72780e52ea2775f4aa082a44")
 	assert.Equal(t, c.CommittersHash(), expected1)
-
-	expected2, _ := crypto.HashFromString("e57cf7135136274b6db0165408dc2ff3ccfd22f2a13b85292e0984e79a310e17")
+	expected2, _ := crypto.HashFromString("ab25b4097fa3d9bdd70bf8910064a14a497bae8e1e715621f6e6818506c3d047")
 	assert.Equal(t, c.Hash(), expected2)
-}
-
-func TestCommitMerkle(t *testing.T) {
-	b, _ := GenerateTestBlock(nil, nil)
-
-	committers := b.LastCommit().Committers()
-	data := make([]crypto.Hash, len(committers))
-	for i, c := range committers {
-		b := c.Address.RawBytes()
-		data[i] = crypto.HashH(b)
-	}
-	merkle := simpleMerkle.NewTreeFromHashes(data)
-	assert.Equal(t, merkle.Root(), b.LastCommit().CommittersHash())
+	expected3, _ := hex.DecodeString("a20158201c8f67440c5d2fcaec3176cde966e8b46ec744c836f643612bec96eb6a83c1fe0206")
+	assert.Equal(t, c.SignBytes(), expected3)
 }
 
 func TestCommitSanityCheck(t *testing.T) {
-	b, _ := GenerateTestBlock(nil, nil)
-	c := b.LastCommit()
-	assert.NoError(t, c.SanityCheck())
-	c.data.Committers[0].Status = 0 // not signed
-	// Not enough signer
-	assert.Error(t, c.SanityCheck())
-	assert.Equal(t, c.SignedBy(), 2)
-	c.data.Committers[3].Status = 1 // signed
-	assert.NoError(t, c.SanityCheck())
-	assert.Equal(t, c.SignedBy(), 3)
-	c.data.Committers[2].Status = 2 // invalid status
-	assert.Error(t, c.SanityCheck())
-	assert.Equal(t, c.SignedBy(), 2)
+	c1 := GenerateTestCommit(crypto.GenerateTestHash())
+	assert.NoError(t, c1.SanityCheck())
+	c1.data.Missed = append(c1.data.Missed, 5)
+	assert.Error(t, c1.SanityCheck())
+
+	c2 := GenerateTestCommit(crypto.UndefHash)
+	assert.Error(t, c2.SanityCheck())
+
+	c3 := GenerateTestCommit(crypto.GenerateTestHash())
+	c3.data.Round = -1
+	assert.Error(t, c3.SanityCheck())
+}
+
+func TestThreshold(t *testing.T) {
+	c := GenerateTestCommit(crypto.GenerateTestHash())
+
+	assert.Equal(t, c.Threshold(), 75) // 3÷4=0.75
+	assert.True(t, c.HasTwoThirdThreshold())
+	c.data.Missed = append(c.data.Missed, 5)
+	assert.Equal(t, c.Threshold(), 60) // 3÷5=0.6
+	assert.False(t, c.HasTwoThirdThreshold())
+	c.data.Signed = append(c.data.Signed, 6)
+	assert.False(t, c.HasTwoThirdThreshold())
+	c.data.Signed = append(c.data.Signed, 7)
+	assert.Equal(t, c.Threshold(), 71) //6÷8=0.71
+	assert.True(t, c.HasTwoThirdThreshold())
+}
+
+func TestCommiters(t *testing.T) {
+	temp := GenerateTestCommit(crypto.GenerateTestHash())
+	expected1 := temp.Committers()
+	expected2 := temp.CommittersHash()
+	c1 := NewCommit(temp.BlockHash(), temp.Round(), []int{0, 1, 2, 3}, []int{}, temp.Signature())
+	assert.Equal(t, c1.Committers(), expected1)
+	assert.Equal(t, c1.CommittersHash(), expected2)
+
+	c2 := NewCommit(temp.BlockHash(), temp.Round(), []int{2, 3}, []int{0, 1}, temp.Signature())
+	assert.Equal(t, c2.Committers(), expected1)
+	assert.Equal(t, c2.CommittersHash(), expected2)
 }

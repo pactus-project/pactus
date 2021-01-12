@@ -126,8 +126,8 @@ func (st *state) tryLoadLastInfo() error {
 	st.lastReceiptsHash = li.LastReceiptHash
 
 	vals := make([]*validator.Validator, len(st.lastCommit.Committers()))
-	for i, c := range st.lastCommit.Committers() {
-		val, err := st.store.Validator(c.Address)
+	for i, num := range st.lastCommit.Committers() {
+		val, err := st.store.ValidatorByNumber(num)
 		if err != nil {
 			return fmt.Errorf("Last commit has unknown validator: %v", err)
 		}
@@ -240,9 +240,8 @@ func (st *state) UpdateLastCommit(commit *block.Commit) error {
 	defer st.lk.Unlock()
 
 	// Check if commit has more signers ...
-	if st.lastCommit.SignedBy() < commit.SignedBy() {
-
-		if err := st.validateLastCommit(commit); err != nil {
+	if commit.Threshold() > st.lastCommit.Threshold() {
+		if err := st.validateCommitForPreviousHeight(commit); err != nil {
 			st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
 			return err
 		}

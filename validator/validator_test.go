@@ -14,13 +14,12 @@ import (
 
 func TestMarshaling(t *testing.T) {
 	val1, _ := GenerateTestValidator(util.RandInt(1000))
+	assert.Equal(t, val1.PublicKey().Address(), val1.Address())
 	val1.AddToStake(1)
 	val1.IncSequence()
 	val1.data.UnbondingHeight = 100
 
 	bs, err := val1.Encode()
-	fmt.Printf("%X\n", bs)
-	fmt.Printf("%X", val1.Address().RawBytes())
 	require.NoError(t, err)
 	val2 := new(Validator)
 	err = val2.Decode(bs)
@@ -52,6 +51,10 @@ func TestMarshalingRawData(t *testing.T) {
 	val := new(Validator)
 	err := val.Decode(bs)
 	require.NoError(t, err)
+	assert.Equal(t, val.Stake(), int64(720867105))
+	assert.Equal(t, val.Sequence(), 759)
+	assert.Equal(t, val.BondingHeight(), 20)
+	assert.Equal(t, val.UnbondingHeight(), 100)
 	fmt.Println(val)
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)

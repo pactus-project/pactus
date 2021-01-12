@@ -17,5 +17,6 @@ type StoreReader interface {
 	TotalAccounts() int
 	HasValidator(crypto.Address) bool
 	Validator(addr crypto.Address) (*validator.Validator, error)
+	ValidatorByNumber(num int) (*validator.Validator, error)
 	TotalValidators() int
 }

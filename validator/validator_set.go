@@ -2,11 +2,13 @@ package validator
 
 import (
 	"fmt"
+	"sort"
+
+	"github.com/zarbchain/zarb-go/util"
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 )
 
 type ValidatorSetReader interface {
@@ -150,15 +152,16 @@ func (set *ValidatorSet) CommittersHash() crypto.Hash {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	data := make([][]byte, len(set.validators))
-
+	nums := make([]int, len(set.validators))
 	for i, v := range set.validators {
-		data[i] = make([]byte, 20)
-		copy(data[i], v.Address().RawBytes())
+		nums[i] = v.Number()
 	}
-	merkle := simpleMerkle.NewTreeFromSlices(data)
-
-	return merkle.Root()
+	sort.Ints(nums)
+	data := make([]byte, 0)
+	for _, n := range nums {
+		data = append(data, util.IntToSlice(n)...)
+	}
+	return crypto.HashH(data)
 }
 
 // GenerateTestValidatorSet generates a validator set for testing purpose

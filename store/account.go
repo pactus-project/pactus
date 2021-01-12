@@ -26,7 +26,12 @@ func newAccountStore(path string) (*accountStore, error) {
 	as := &accountStore{
 		db: db,
 	}
-	as.total = as.countAccounts()
+	total := 0
+	as.iterateAccounts(func(acc *account.Account) bool {
+		total++
+		return false
+	})
+	as.total = total
 
 	return as, nil
 }
@@ -88,13 +93,4 @@ func (as *accountStore) updateAccount(acc *account.Account) error {
 	}
 
 	return tryPut(as.db, accountKey(acc.Address()), data)
-}
-
-func (as *accountStore) countAccounts() int {
-	count := 0
-	as.iterateAccounts(func(acc *account.Account) bool {
-		count++
-		return false
-	})
-	return count
 }
