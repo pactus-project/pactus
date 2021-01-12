@@ -9,30 +9,6 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func TestRetrieveValidator(t *testing.T) {
-	store, _ := newValidatorStore(util.TempDirPath())
-
-	val, _ := validator.GenerateTestValidator(util.RandInt(1000))
-
-	t.Run("Add validator, should able to retrieve", func(t *testing.T) {
-		assert.False(t, store.hasValidator(val.Address()))
-		assert.NoError(t, store.updateValidator(val))
-		assert.True(t, store.hasValidator(val.Address()))
-		val2, err := store.validator(val.Address())
-		assert.NoError(t, err)
-		assert.Equal(t, val.Hash(), val2.Hash())
-	})
-
-	t.Run("Update validator, should update database", func(t *testing.T) {
-		val.AddToStake(1)
-		assert.NoError(t, store.updateValidator(val))
-
-		val2, err := store.validator(val.Address())
-		assert.NoError(t, err)
-		assert.Equal(t, val.Hash(), val2.Hash())
-	})
-}
-
 func TestValidatorCounter(t *testing.T) {
 	store, _ := newValidatorStore(util.TempDirPath())
 	val, _ := validator.GenerateTestValidator(util.RandInt(1000))

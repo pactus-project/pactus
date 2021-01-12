@@ -62,7 +62,7 @@ func setup(t *testing.T) {
 	tSortitions[3] = sortition.NewSortition(tValSigners[3])
 	tSortitions[4] = sortition.NewSortition(tValSigners[4])
 
-	tValset, err = validator.NewValidatorSet([]*validator.Validator{val1, val2, val3, val4}, 5, tValSigners[0].Address())
+	tValset, err = validator.NewValidatorSet([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
 	tParams := param.MainnetParams()
@@ -203,12 +203,13 @@ func TestAddValidatorToSet(t *testing.T) {
 
 	t.Run("Already in the set, Should returns error", func(t *testing.T) {
 		h := crypto.GenerateTestHash()
-		assert.Error(t, tSandbox1.AddToSet(h, tValSigners[3].Address()))
+		v := tSandbox1.Validator(tValSigners[3].Address())
+		assert.Error(t, tSandbox1.AddToSet(h, v.Address()))
 	})
 
 	t.Run("In set at time of doing sortition, Should returns error", func(t *testing.T) {
-		val1, _ := tStore.ValidatorByNumber(0)
-		assert.Error(t, tSandbox1.AddToSet(block1.Hash(), val1.Address()))
+		v := tSandbox1.Validator(tValSigners[0].Address())
+		assert.Error(t, tSandbox1.AddToSet(block1.Hash(), v.Address()))
 	})
 
 	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
@@ -379,9 +380,4 @@ func TestChangeToStake(t *testing.T) {
 	tSandbox1.UpdateValidator(val1)
 	tSandbox1.UpdateValidator(val2)
 	assert.Equal(t, tSandbox1.changeToStake, int64(3500))
-	val2.WithdrawStake()
-	assert.Equal(t, tSandbox1.changeToStake, int64(3500))
-
-	tSandbox1.UpdateValidator(val2)
-	assert.Equal(t, tSandbox1.changeToStake, int64(1500))
 }

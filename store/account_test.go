@@ -8,30 +8,6 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestRetrieveAccount(t *testing.T) {
-	store, _ := newAccountStore(util.TempDirPath())
-
-	acc, _ := account.GenerateTestAccount(util.RandInt(10000))
-
-	t.Run("Add account, should able to retrieve", func(t *testing.T) {
-		assert.False(t, store.hasAccount(acc.Address()))
-		assert.NoError(t, store.updateAccount(acc))
-		assert.True(t, store.hasAccount(acc.Address()))
-		acc2, err := store.account(acc.Address())
-		assert.NoError(t, err)
-		assert.Equal(t, acc, acc2)
-	})
-
-	t.Run("Update account, should update database", func(t *testing.T) {
-		acc.AddToBalance(1)
-		assert.NoError(t, store.updateAccount(acc))
-
-		acc2, err := store.account(acc.Address())
-		assert.NoError(t, err)
-		assert.Equal(t, acc, acc2)
-	})
-}
-
 func TestAccountCounter(t *testing.T) {
 	store, _ := newAccountStore(util.TempDirPath())
 

@@ -46,9 +46,9 @@ func MakeBlock(timestamp time.Time, txIDs TxIDs,
 	return b
 }
 
-func (b Block) Header() *Header     { return &b.data.Header }
+func (b Block) Header() Header      { return b.data.Header }
 func (b Block) LastCommit() *Commit { return b.data.LastCommit }
-func (b Block) TxIDs() *TxIDs       { return &b.data.TxIDs }
+func (b Block) TxIDs() TxIDs        { return b.data.TxIDs }
 
 func (b Block) SanityCheck() error {
 	if err := b.data.Header.SanityCheck(); err != nil {

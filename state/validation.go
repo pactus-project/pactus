@@ -43,11 +43,6 @@ func (st *state) validateCommit(commit *block.Commit) error {
 		return err
 	}
 
-	if !commit.HasTwoThirdThreshold() {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"Commit has not two third threshold.")
-	}
-
 	pubs := make([]crypto.PublicKey, len(commit.Signed()))
 	for i, num := range commit.Signed() {
 		val, _ := st.store.ValidatorByNumber(num)

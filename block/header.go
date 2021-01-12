@@ -25,15 +25,15 @@ type headerData struct {
 	ProposerAddress  crypto.Address `cbor:"9,keyasint"`
 }
 
-func (h *Header) Version() uint                   { return h.data.Version }
-func (h *Header) Time() time.Time                 { return time.Unix(h.data.UnixTime, 0) }
-func (h *Header) TxIDsHash() crypto.Hash          { return h.data.TxIDsHash }
-func (h *Header) StateHash() crypto.Hash          { return h.data.StateHash }
-func (h *Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
-func (h *Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
-func (h *Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash }
-func (h *Header) CommittersHash() crypto.Hash     { return h.data.CommittersHash }
-func (h *Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
+func (h Header) Version() uint                   { return h.data.Version }
+func (h Header) Time() time.Time                 { return time.Unix(h.data.UnixTime, 0) }
+func (h Header) TxIDsHash() crypto.Hash          { return h.data.TxIDsHash }
+func (h Header) StateHash() crypto.Hash          { return h.data.StateHash }
+func (h Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
+func (h Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
+func (h Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash }
+func (h Header) CommittersHash() crypto.Hash     { return h.data.CommittersHash }
+func (h Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
 
 func NewHeader(version uint,
 	time time.Time,
@@ -90,7 +90,7 @@ func (h *Header) SanityCheck() error {
 	return nil
 }
 
-func (h *Header) Hash() crypto.Hash {
+func (h Header) Hash() crypto.Hash {
 	bs, err := h.MarshalCBOR()
 	if err != nil {
 		return crypto.UndefHash

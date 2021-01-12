@@ -134,4 +134,9 @@ func TestQuorum(t *testing.T) {
 	assert.False(t, voteSet.HasQuorumBlock(h2))
 	assert.NotNil(t, voteSet.QuorumBlock())
 	assert.Equal(t, voteSet.QuorumBlock(), &h1)
+
+	c := voteSet.ToCommit()
+	assert.NotNil(t, c)
+	assert.Equal(t, c.Signed(), []int{0, 1, 2, 3})
+	assert.Equal(t, c.Missed(), []int{})
 }

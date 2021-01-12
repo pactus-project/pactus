@@ -46,11 +46,6 @@ func (val Validator) Power() int64 {
 	return 1
 }
 
-// WithdrawStake withdraws the whole stake after unbonding.
-func (val *Validator) WithdrawStake() {
-	val.data.Stake = 0
-}
-
 // AddToStake increases the stake by bonding transaction
 func (val *Validator) AddToStake(amt int64) {
 	val.data.Stake += amt

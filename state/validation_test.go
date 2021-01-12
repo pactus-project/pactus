@@ -101,6 +101,13 @@ func TestCommitValidation(t *testing.T) {
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
+	t.Run("Doesn't have 2/3 majority, should return no error", func(t *testing.T) {
+		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2})
+
+		c := block.NewCommit(b2.Hash(), 0, []int{0, 1}, []int{2, 3}, sig)
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
+	})
+
 	t.Run("Valid signature, should return no error", func(t *testing.T) {
 		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2}, []int{3}, validSig)
 		assert.NoError(t, tState1.ApplyBlock(2, *b2, *c))
