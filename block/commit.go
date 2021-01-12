@@ -2,117 +2,127 @@ package block
 
 import (
 	"encoding/json"
+	"sort"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
+	"github.com/zarbchain/zarb-go/util"
 )
 
-const (
-	CommitNotSigned = 0
-	CommitSigned    = 1
-)
-
-type Committer struct {
-	Address crypto.Address `cbor:"1,keyasint"`
-	Status  int            `cbor:"2,keyasint"`
-}
-
-func (committer *Committer) HasSigned() bool {
-	return committer.Status == CommitSigned
-}
-
-// TODO: add bloch hash to commit and update state/mock.go and ProcessLatestBlocksResponsePayload
 type Commit struct {
 	data commitData
 }
 type commitData struct {
-	Round      int              `cbor:"1,keyasint"`
-	Signature  crypto.Signature `cbor:"2,keyasint"`
-	Committers []Committer      `cbor:"3,keyasint"`
+	BlockHash crypto.Hash      `cbor:"1,keyasint"`
+	Round     int              `cbor:"2,keyasint"`
+	Signed    []int            `cbor:"3,keyasint"` // validator numbers that signed the commit
+	Missed    []int            `cbor:"4,keyasint"` // validator numbers that missed the commit
+	Signature crypto.Signature `cbor:"5,keyasint"`
 }
 
-func NewCommit(round int, committers []Committer, signature crypto.Signature) *Commit {
+func NewCommit(blockHash crypto.Hash, round int, signed, missed []int, signature crypto.Signature) *Commit {
 	return &Commit{
 		data: commitData{
-			Round:      round,
-			Committers: committers,
-			Signature:  signature,
+			BlockHash: blockHash,
+			Round:     round,
+			Signed:    signed,
+			Missed:    missed,
+			Signature: signature,
 		},
 	}
 }
 
-func (commit *Commit) Round() int                  { return commit.data.Round }
-func (commit *Commit) Committers() []Committer     { return commit.data.Committers }
-func (commit *Commit) Signature() crypto.Signature { return commit.data.Signature }
+func (c *Commit) BlockHash() crypto.Hash      { return c.data.BlockHash }
+func (c *Commit) Round() int                  { return c.data.Round }
+func (c *Commit) Signed() []int               { return c.data.Signed }
+func (c *Commit) Missed() []int               { return c.data.Missed }
+func (c *Commit) Signature() crypto.Signature { return c.data.Signature }
 
-func (commit *Commit) SanityCheck() error {
-	if commit.data.Round < 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Round")
-	}
-	if err := commit.data.Signature.SanityCheck(); err != nil {
+func (c *Commit) Committers() []int {
+	nums := make([]int, len(c.data.Signed))
+	copy(nums, c.data.Signed)
+	nums = append(nums, c.data.Missed...)
+	sort.Ints(nums)
+
+	return nums
+}
+
+func (c *Commit) SanityCheck() error {
+	if err := c.data.BlockHash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	for _, c := range commit.data.Committers {
-		if c.Status > 1 {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid commit status")
-		}
+	if c.data.Round < 0 {
+		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Round")
 	}
-
-	signedBy := commit.SignedBy()
-	if signedBy <= (len(commit.data.Committers) * 2 / 3) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Not enough committers")
+	if err := c.data.Signature.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+	}
+	if !c.HasTwoThirdThreshold() {
+		return errors.Errorf(errors.ErrInvalidBlock, "Not enough signatures")
 	}
 
 	return nil
 }
 
-func (commit *Commit) Hash() crypto.Hash {
-	if commit == nil {
+func (c *Commit) Hash() crypto.Hash {
+	if c == nil {
 		return crypto.UndefHash
 	}
-	bs, err := commit.MarshalCBOR()
+	bs, err := c.MarshalCBOR()
 	if err != nil {
 		return crypto.UndefHash
 	}
 	return crypto.HashH(bs)
 }
 
-func (commit *Commit) SignedBy() int {
-	signed := 0
-	for _, c := range commit.data.Committers {
-		if c.Status == CommitSigned {
-			signed++
-		}
+func (c *Commit) Threshold() int {
+	return len(c.data.Signed) * 100 / (len(c.data.Missed) + len(c.data.Signed))
+}
+
+func (c *Commit) HasTwoThirdThreshold() bool {
+	return c.Threshold() > (2 * 100 / 3)
+}
+
+func (c *Commit) CommittersHash() crypto.Hash {
+	numbers := c.Committers()
+	data := make([]byte, 0)
+	for _, n := range numbers {
+		data = append(data, util.IntToSlice(n)...)
 	}
-	return signed
+	return crypto.HashH(data)
 }
 
-func (commit *Commit) CommittersHash() crypto.Hash {
-	data := make([][]byte, len(commit.data.Committers))
-
-	for i, c := range commit.data.Committers {
-		data[i] = make([]byte, 20)
-		copy(data[i], c.Address.RawBytes())
-	}
-	merkle := simpleMerkle.NewTreeFromSlices(data)
-
-	return merkle.Root()
+func (c *Commit) MarshalCBOR() ([]byte, error) {
+	return cbor.Marshal(c.data)
 }
 
-func (commit *Commit) MarshalCBOR() ([]byte, error) {
-	return cbor.Marshal(commit.data)
+func (c *Commit) UnmarshalCBOR(bs []byte) error {
+	return cbor.Unmarshal(bs, &c.data)
 }
 
-func (commit *Commit) UnmarshalCBOR(bs []byte) error {
-	return cbor.Unmarshal(bs, &commit.data)
+func (c *Commit) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.data)
 }
 
-func (commit Commit) MarshalJSON() ([]byte, error) {
-	return json.Marshal(commit.data)
+func (c *Commit) UnmarshalJSON(bz []byte) error {
+	return json.Unmarshal(bz, &c.data)
 }
 
-func (commit *Commit) UnmarshalJSON(bz []byte) error {
-	return json.Unmarshal(bz, &commit.data)
+type signVote struct {
+	BlockHash crypto.Hash `cbor:"1,keyasint"`
+	Round     int         `cbor:"2,keyasint"`
+}
+
+func (c *Commit) SignBytes() []byte {
+	return CommitSignBytes(c.data.BlockHash, c.data.Round)
+}
+
+func CommitSignBytes(blockHash crypto.Hash, round int) []byte {
+	bz, _ := cbor.Marshal(signVote{
+		Round:     round,
+		BlockHash: blockHash,
+	})
+
+	return bz
 }

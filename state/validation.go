@@ -4,7 +4,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 func (st *state) validateBlock(block block.Block) error {
@@ -32,27 +31,52 @@ func (st *state) validateBlock(block block.Block) error {
 			"State hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
 	}
 
-	if err := st.validateLastCommit(block.LastCommit()); err != nil {
+	if err := st.validateCommitForPreviousHeight(block.LastCommit()); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (st *state) validateLastCommit(commit *block.Commit) error {
+func (st *state) validateCommit(commit *block.Commit) error {
+	if err := commit.SanityCheck(); err != nil {
+		return err
+	}
+
+	pubs := make([]crypto.PublicKey, len(commit.Signed()))
+	for i, num := range commit.Signed() {
+		val, _ := st.store.ValidatorByNumber(num)
+		if val == nil {
+			return errors.Errorf(errors.ErrInvalidBlock,
+				"invalid committer: %x", num)
+		}
+		pubs[i] = val.PublicKey()
+	}
+
+	signBytes := commit.SignBytes()
+	if !crypto.VerifyAggregated(commit.Signature(), pubs, signBytes) {
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"invalid commit signature: %v", commit.Signature())
+	}
+
+	return nil
+}
+
+// validateCommitForPreviousHeight validates commit for the previous height
+func (st *state) validateCommitForPreviousHeight(commit *block.Commit) error {
 	if commit == nil {
 		if !st.lastBlockHash.IsUndef() {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"Only genesis block has no commit")
 		}
 	} else {
-		if err := commit.SanityCheck(); err != nil {
+		if err := st.validateCommit(commit); err != nil {
 			return err
 		}
 
-		if !commit.CommittersHash().EqualsTo(st.lastCommit.CommittersHash()) {
+		if !commit.BlockHash().EqualsTo(st.lastBlockHash) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last committers are not same as we expected. Expected %v, got %v", st.lastCommit.CommittersHash(), commit.CommittersHash())
+				"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
 		}
 
 		if commit.Round() != st.lastCommit.Round() {
@@ -60,22 +84,10 @@ func (st *state) validateLastCommit(commit *block.Commit) error {
 				"Last commit round is not same as we expected. Expected %v, got %v", st.lastCommit.Round(), commit.Round())
 		}
 
-		signBytes := vote.CommitSignBytes(st.lastBlockHash, commit.Round())
-		pubs := make([]crypto.PublicKey, 0)
-		for _, c := range commit.Committers() {
-			if c.HasSigned() {
-				val, _ := st.store.Validator(c.Address)
-				if val == nil {
-					return errors.Errorf(errors.ErrInvalidBlock,
-						"invalid committer: %x", c.Address)
-				}
-				pubs = append(pubs, val.PublicKey())
-			}
-		}
-
-		if !crypto.VerifyAggregated(commit.Signature(), pubs, signBytes) {
+		// TODO: add tests for this case
+		if !commit.CommittersHash().EqualsTo(st.lastCommit.CommittersHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"invalid commit signature: %v", commit.Signature())
+				"Last committers are not same as we expected. Expected %v, got %v", st.lastCommit.CommittersHash(), commit.CommittersHash())
 		}
 	}
 
@@ -84,7 +96,7 @@ func (st *state) validateLastCommit(commit *block.Commit) error {
 
 // validateCommitForCurrentHeight validates commit for the current height
 func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash crypto.Hash) error {
-	if err := commit.SanityCheck(); err != nil {
+	if err := st.validateCommit(&commit); err != nil {
 		return err
 	}
 
@@ -93,23 +105,9 @@ func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash c
 			"Last committers are not same as we expected. Expected %v, got %v", st.validatorSet.CommittersHash(), commit.CommittersHash())
 	}
 
-	signBytes := vote.CommitSignBytes(blockHash, commit.Round())
-	pubs := make([]crypto.PublicKey, 0)
-	for _, c := range commit.Committers() {
-		if c.HasSigned() {
-			// Since this block belongs to current height, we get validator info from validator set
-			val := st.validatorSet.Validator(c.Address)
-			if val == nil {
-				return errors.Errorf(errors.ErrInvalidBlock,
-					"invalid committer: %x", c.Address)
-			}
-			pubs = append(pubs, val.PublicKey())
-		}
-	}
-
-	if !crypto.VerifyAggregated(commit.Signature(), pubs, signBytes) {
+	if !commit.BlockHash().EqualsTo(blockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"invalid commit signature: %v", commit.Signature())
+			"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
 	}
 
 	return nil

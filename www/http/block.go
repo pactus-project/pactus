@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/zarbchain/zarb-go/crypto"
+
 	"github.com/gorilla/mux"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/www/capnp"
@@ -28,6 +30,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	d, _ := st.Data()
+	h, _ := st.Hash()
 	b := new(block.Block)
 	if err = b.Decode(d); err != nil {
 		s.writeError(w, err)
@@ -36,6 +39,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 
 	out := new(BlockResult)
 	out.Block = *b
+	out.Hash, _ = crypto.HashFromRawBytes(h)
 	out.Data = hex.EncodeToString(d)
 	out.Time = b.Header().Time()
 

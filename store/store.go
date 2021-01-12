@@ -150,6 +150,13 @@ func (s *Store) Validator(addr crypto.Address) (*validator.Validator, error) {
 	return s.validatorStore.validator(addr)
 }
 
+func (s *Store) ValidatorByNumber(num int) (*validator.Validator, error) {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	return s.validatorStore.validatorByNumber(num)
+}
+
 func (s *Store) TotalValidators() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()

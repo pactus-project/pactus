@@ -75,6 +75,14 @@ func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error)
 	}
 	return nil, fmt.Errorf("Not found")
 }
+func (m *MockStore) ValidatorByNumber(num int) (*validator.Validator, error) {
+	for _, v := range m.Validators {
+		if v.Number() == num {
+			return v, nil
+		}
+	}
+	return nil, fmt.Errorf("Not found")
+}
 func (m *MockStore) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = val
 }

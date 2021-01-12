@@ -5,7 +5,7 @@
 ------
 # Zarb
 
-*Zarb blockchain*
+*Zarb blockchain* (https://zarb.network)
 
 ## Compiling the code
 

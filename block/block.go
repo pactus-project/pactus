@@ -46,9 +46,9 @@ func MakeBlock(timestamp time.Time, txIDs TxIDs,
 	return b
 }
 
-func (b Block) Header() *Header     { return &b.data.Header }
+func (b Block) Header() Header      { return b.data.Header }
 func (b Block) LastCommit() *Commit { return b.data.LastCommit }
-func (b Block) TxIDs() *TxIDs       { return &b.data.TxIDs }
+func (b Block) TxIDs() TxIDs        { return b.data.TxIDs }
 
 func (b Block) SanityCheck() error {
 	if err := b.data.Header.SanityCheck(); err != nil {
@@ -165,7 +165,8 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		commit = nil
 		lastReceiptsHash = crypto.UndefHash
 	} else {
-		commit.data.Committers = append(commit.data.Committers, Committer{Address: *proposer, Status: CommitNotSigned})
+		commit.data.Signed = []int{0, 1, 2, 3} // 0 is proposer
+		commit.data.Missed = []int{}
 	}
 	block := MakeBlock(util.Now(), ids,
 		*lastBlockHash,
@@ -179,10 +180,9 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 }
 
 func GenerateTestCommit(blockhash crypto.Hash) *Commit {
-
-	addr1, _, pv1 := crypto.GenerateTestKeyPair()
-	addr2, _, pv2 := crypto.GenerateTestKeyPair()
-	addr3, _, pv3 := crypto.GenerateTestKeyPair()
+	_, _, pv1 := crypto.GenerateTestKeyPair()
+	_, _, pv2 := crypto.GenerateTestKeyPair()
+	_, _, pv3 := crypto.GenerateTestKeyPair()
 
 	sigs := []*crypto.Signature{
 		pv1.Sign(blockhash.RawBytes()),
@@ -191,11 +191,10 @@ func GenerateTestCommit(blockhash crypto.Hash) *Commit {
 	}
 	sig := crypto.Aggregate(sigs)
 
-	return NewCommit(util.RandInt(10),
-		[]Committer{
-			{Status: CommitSigned, Address: addr1},
-			{Status: CommitSigned, Address: addr2},
-			{Status: CommitSigned, Address: addr3},
-		},
+	return NewCommit(
+		blockhash,
+		util.RandInt(10),
+		[]int{1, 2, 3},
+		[]int{0},
 		sig)
 }
