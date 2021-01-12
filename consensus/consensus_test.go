@@ -183,6 +183,45 @@ func testAddVote(t *testing.T,
 	return v
 }
 
+func commitBlockForAllStates(t *testing.T) {
+	height := tConsX.state.LastBlockHeight()
+	var err error
+	var pb *block.Block
+	switch height % 4 {
+	case 0:
+		pb, err = tConsX.state.ProposeBlock(0)
+		require.NoError(t, err)
+	case 1:
+		pb, err = tConsY.state.ProposeBlock(0)
+		require.NoError(t, err)
+	case 2:
+		pb, err = tConsB.state.ProposeBlock(0)
+		require.NoError(t, err)
+	case 3:
+		pb, err = tConsP.state.ProposeBlock(0)
+		require.NoError(t, err)
+	}
+
+	sb := block.CommitSignBytes(pb.Hash(), 0)
+	sig1 := tSigners[0].Sign(sb)
+	sig2 := tSigners[1].Sign(sb)
+	sig3 := tSigners[2].Sign(sb)
+	sig4 := tSigners[3].Sign(sb)
+
+	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3, sig4})
+	c := block.NewCommit(pb.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
+
+	require.NotNil(t, c)
+	err = tConsX.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
+	err = tConsY.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
+	err = tConsB.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
+	err = tConsP.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
+}
+
 func TestNotInValidatorSet(t *testing.T) {
 	setup(t)
 

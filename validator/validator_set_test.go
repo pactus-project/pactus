@@ -23,7 +23,7 @@ func TestProposerMoves(t *testing.T) {
 	assert.Equal(t, vs.Proposer(3).Address(), keys[3].PublicKey().Address())
 	assert.Equal(t, vs.Proposer(4).Address(), keys[0].PublicKey().Address())
 
-	assert.NoError(t, vs.MoveToNextHeight(0, nil))
+	assert.NoError(t, vs.UpdateTheSet(0, nil))
 	assert.Equal(t, vs.Proposer(0).Address(), keys[1].PublicKey().Address())
 }
 
@@ -58,7 +58,7 @@ func TestProposerMove(t *testing.T) {
 	//
 	vs.proposerIndex = 0
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
-	assert.NoError(t, vs.MoveToNextHeight(0, nil))
+	assert.NoError(t, vs.UpdateTheSet(0, nil))
 	assert.Equal(t, vs.proposerIndex, 1)
 	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
 	assert.Equal(t, vs.Proposer(1).Address(), val3.Address())
@@ -70,7 +70,7 @@ func TestProposerMove(t *testing.T) {
 	//
 	vs.proposerIndex = 3
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
-	assert.NoError(t, vs.MoveToNextHeight(0, nil))
+	assert.NoError(t, vs.UpdateTheSet(0, nil))
 	assert.Equal(t, vs.proposerIndex, 4)
 	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
 
@@ -81,7 +81,7 @@ func TestProposerMove(t *testing.T) {
 	//
 	vs.proposerIndex = 6
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
-	assert.NoError(t, vs.MoveToNextHeight(0, nil))
+	assert.NoError(t, vs.UpdateTheSet(0, nil))
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
 }
@@ -105,7 +105,7 @@ func TestProposerMoveMoreRounds(t *testing.T) {
 	//
 	vs.proposerIndex = 0
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
-	assert.NoError(t, vs.MoveToNextHeight(2, nil))
+	assert.NoError(t, vs.UpdateTheSet(2, nil))
 	assert.Equal(t, vs.proposerIndex, 3)
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
 	assert.Equal(t, vs.Proposer(1).Address(), val5.Address())
@@ -117,7 +117,7 @@ func TestProposerMoveMoreRounds(t *testing.T) {
 	//
 	vs.proposerIndex = 3
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
-	assert.NoError(t, vs.MoveToNextHeight(3, nil))
+	assert.NoError(t, vs.UpdateTheSet(3, nil))
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val1.Address())
 
@@ -128,7 +128,7 @@ func TestProposerMoveMoreRounds(t *testing.T) {
 	//
 	vs.proposerIndex = 6
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
-	assert.NoError(t, vs.MoveToNextHeight(1, nil))
+	assert.NoError(t, vs.UpdateTheSet(1, nil))
 	assert.Equal(t, vs.proposerIndex, 1)
 	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
 }
@@ -152,7 +152,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Val1 is already in set
-	assert.Error(t, vs.MoveToNextHeight(0, []*Validator{val1}))
+	assert.Error(t, vs.UpdateTheSet(0, []*Validator{val1}))
 
 	//
 	// +=+-+-+-+-+-+-+       +=+-+-+-+-+-+-+
@@ -160,7 +160,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// +=+-+-+-+-+-+-+       +=+-+-+-+-+-+-+
 	//
 	vs.proposerIndex = 0
-	assert.NoError(t, vs.MoveToNextHeight(0, []*Validator{val8}))
+	assert.NoError(t, vs.UpdateTheSet(0, []*Validator{val8}))
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val2.Address())
 	assert.Equal(t, vs.Proposer(1).Address(), val3.Address())
@@ -172,7 +172,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	//
 	//
 	vs.proposerIndex = 2
-	assert.NoError(t, vs.MoveToNextHeight(0, []*Validator{val9, valA}))
+	assert.NoError(t, vs.UpdateTheSet(0, []*Validator{val9, valA}))
 	assert.Equal(t, vs.proposerIndex, 1)
 	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
 
@@ -182,7 +182,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
 	//
 	vs.proposerIndex = 6
-	assert.NoError(t, vs.MoveToNextHeight(0, []*Validator{valB}))
+	assert.NoError(t, vs.UpdateTheSet(0, []*Validator{valB}))
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val5.Address())
 
@@ -192,7 +192,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
 	//
 	vs.proposerIndex = 6
-	assert.NoError(t, vs.MoveToNextHeight(0, []*Validator{valC, valD}))
+	assert.NoError(t, vs.UpdateTheSet(0, []*Validator{valC, valD}))
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
 }
@@ -216,7 +216,7 @@ func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Val1 is already in set
-	assert.Error(t, vs.MoveToNextHeight(0, []*Validator{val1}))
+	assert.Error(t, vs.UpdateTheSet(0, []*Validator{val1}))
 
 	//
 	// +=+-+-+-+-+-+-+       +-+-+=+-+-+-+-+
@@ -224,7 +224,7 @@ func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
 	// +=+-+-+-+-+-+-+       +-+-+=+-+-+-+-+
 	//
 	vs.proposerIndex = 0
-	assert.NoError(t, vs.MoveToNextHeight(2, []*Validator{val8}))
+	assert.NoError(t, vs.UpdateTheSet(2, []*Validator{val8}))
 	assert.Equal(t, vs.proposerIndex, 2)
 	assert.Equal(t, vs.Proposer(0).Address(), val4.Address())
 	assert.Equal(t, vs.Proposer(1).Address(), val5.Address())
@@ -236,7 +236,7 @@ func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
 	//
 	//
 	vs.proposerIndex = 2
-	assert.NoError(t, vs.MoveToNextHeight(3, []*Validator{val9, valA}))
+	assert.NoError(t, vs.UpdateTheSet(3, []*Validator{val9, valA}))
 	assert.Equal(t, vs.proposerIndex, 4)
 	assert.Equal(t, vs.Proposer(0).Address(), val8.Address())
 
@@ -247,7 +247,7 @@ func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
 	//
 	// 5 is offline
 	vs.proposerIndex = 6
-	assert.NoError(t, vs.MoveToNextHeight(2, []*Validator{valB}))
+	assert.NoError(t, vs.UpdateTheSet(2, []*Validator{valB}))
 
 	assert.Equal(t, vs.proposerIndex, 1)
 	assert.Equal(t, vs.Proposer(0).Address(), val6.Address())
@@ -258,7 +258,7 @@ func TestProposerJoinAndLeaveMoreRound(t *testing.T) {
 	// +-+-+-+-+-+-+=+       +=+-+-+-+-+-+-+
 	//
 	vs.proposerIndex = 5
-	assert.NoError(t, vs.MoveToNextHeight(2, []*Validator{valC, valD}))
+	assert.NoError(t, vs.UpdateTheSet(2, []*Validator{valC, valD}))
 
 	assert.Equal(t, vs.proposerIndex, 0)
 	assert.Equal(t, vs.Proposer(0).Address(), val7.Address())
@@ -275,7 +275,7 @@ func TestJoinMoreThatOneThird(t *testing.T) {
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
-	assert.Error(t, vs.MoveToNextHeight(0, []*Validator{val5, val6}))
+	assert.Error(t, vs.UpdateTheSet(0, []*Validator{val5, val6}))
 }
 
 func TestIsProposer(t *testing.T) {

@@ -188,9 +188,9 @@ func TestAddValidatorToSet(t *testing.T) {
 	a1 := tValSigners[0].Address()
 	a2 := tValSigners[1].Address()
 	block1, _ := block.GenerateTestBlock(&a1, nil)
-	assert.NoError(t, tValset.MoveToNextHeight(0, nil))
+	assert.NoError(t, tValset.UpdateTheSet(0, nil))
 	block2, _ := block.GenerateTestBlock(&a2, nil)
-	assert.NoError(t, tValset.MoveToNextHeight(0, []*validator.Validator{val5}))
+	assert.NoError(t, tValset.UpdateTheSet(0, []*validator.Validator{val5}))
 
 	tStore.Blocks[1] = block1
 	tStore.Blocks[2] = block2

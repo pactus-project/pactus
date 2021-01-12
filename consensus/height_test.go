@@ -14,7 +14,7 @@ func TestMoveToNewHeight(t *testing.T) {
 
 	tConsP.MoveToNewHeight()
 
-	commitFirstBlock(t)
+	commitBlockForAllStates(t)
 
 	tConsP.MoveToNewHeight()
 	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
@@ -37,7 +37,7 @@ func TestConsensusBehindState3(t *testing.T) {
 
 	// --------------------------------
 	// Syncer commit a block and trig consensus
-	commitFirstBlock(t)
+	commitBlockForAllStates(t)
 	tConsX.MoveToNewHeight()
 
 	assert.Equal(t, len(tConsX.RoundVotes(0)), 1)

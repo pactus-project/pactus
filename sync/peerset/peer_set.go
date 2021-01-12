@@ -47,15 +47,25 @@ func (ps *PeerSet) OpenSession(peerID peer.ID) *Session {
 
 	return s
 }
+func (ps *PeerSet) FindSession(id int) *Session {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	s, ok := ps.sessions[id]
+	if ok {
+		return s
+	}
+
+	return nil
+}
 
 func (ps *PeerSet) HasAnyValidSession() bool {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	// First remove stale old sessions
+	// First remove old sessions
 	for id, s := range ps.sessions {
 		if ps.sessionTimeout < time.Now().Sub(s.LastActivityAt) {
-			// TODO: report it as bad peer?
 			delete(ps.sessions, id)
 		}
 	}
@@ -63,7 +73,7 @@ func (ps *PeerSet) HasAnyValidSession() bool {
 	return len(ps.sessions) != 0
 }
 
-func (ps *PeerSet) CloseNewSession(id int) {
+func (ps *PeerSet) CloseSession(id int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 

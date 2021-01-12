@@ -81,3 +81,21 @@ func TestClearCache(t *testing.T) {
 	assert.Equal(t, tCache.Len(), 0)
 	assert.Nil(t, tCache.GetBlock(2))
 }
+
+func TestCacheIsFull(t *testing.T) {
+	setup(t)
+
+	blocks := make([]*block.Block, 0)
+	i := 0
+	for ; i < 10; i++ {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		blocks = append(blocks, b)
+		tCache.AddBlock(i+1, b)
+	}
+
+	newBlock, _ := block.GenerateTestBlock(nil, nil)
+	tCache.AddBlock(i+1, newBlock)
+
+	assert.NotNil(t, tCache.GetBlock(i+1))
+	assert.Nil(t, tCache.GetBlock(1))
+}

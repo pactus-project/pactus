@@ -7,12 +7,32 @@ import (
 type ResponseCode int
 
 const (
+	ResponseCodeNone         = ResponseCode(-1)
 	ResponseCodeOK           = ResponseCode(0)
 	ResponseCodeRejected     = ResponseCode(1)
 	ResponseCodeBusy         = ResponseCode(2)
 	ResponseCodeMoreBlocks   = ResponseCode(3)
 	ResponseCodeNoMoreBlocks = ResponseCode(4)
+	ResponseCodeSynced       = ResponseCode(5)
 )
+
+func (c ResponseCode) String() string {
+	switch c {
+	case ResponseCodeOK:
+		return "ok"
+	case ResponseCodeRejected:
+		return "rejected"
+	case ResponseCodeBusy:
+		return "busy"
+	case ResponseCodeMoreBlocks:
+		return "more-blocks"
+	case ResponseCodeNoMoreBlocks:
+		return "no-more-blocks"
+	case ResponseCodeSynced:
+		return "synced"
+	}
+	return fmt.Sprintf("%d", c)
+}
 
 type PayloadType int
 

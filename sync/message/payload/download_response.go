@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type DownloadResponsePayload struct {
@@ -20,6 +21,15 @@ type DownloadResponsePayload struct {
 }
 
 func (p *DownloadResponsePayload) SanityCheck() error {
+	if p.From < 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
+	}
+	if err := p.Initiator.Validate(); err != nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer is: %v", err)
+	}
+	if err := p.Target.Validate(); err != nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer is: %v", err)
+	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
@@ -38,9 +48,12 @@ func (p *DownloadResponsePayload) Type() PayloadType {
 }
 
 func (p *DownloadResponsePayload) To() int {
+	if len(p.Blocks) == 0 {
+		return p.From
+	}
 	return p.From + len(p.Blocks) - 1
 }
 
 func (p *DownloadResponsePayload) Fingerprint() string {
-	return fmt.Sprintf("{%v %v-%v}", p.ResponseCode, p.From, p.To())
+	return fmt.Sprintf("{%s %s ⚓ %d %v-%v}", util.FingerprintPeerID(p.Initiator), p.ResponseCode, p.SessionID, p.From, p.To())
 }

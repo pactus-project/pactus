@@ -24,6 +24,7 @@ import (
 const FlagInitialBlockDownload = 0x1
 
 type PublishMessageFn = func(msg *message.Message)
+type SyncedCallbackFn = func()
 
 type Synchronizer struct {
 	// Not: Synchronizer should not have any lock to prevent dead lock situation.
@@ -84,8 +85,8 @@ func NewSynchronizer(
 	syncer.firewall = firewall
 	syncer.networkAPI = api
 
-	syncer.consensusSync = NewConsensusSync(conf, consensus, logger, syncer.PublishMessage)
-	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, peerSet, logger, syncer.PublishMessage)
+	syncer.consensusSync = NewConsensusSync(conf, consensus, logger, syncer.publishMessage)
+	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, peerSet, logger, syncer.publishMessage, syncer.synced)
 
 	if conf.InitialBlockDownload {
 		if err := syncer.joinDownloadTopic(); err != nil {
@@ -136,12 +137,12 @@ func (syncer *Synchronizer) maybeSynced() {
 	networkHeight := syncer.peerSet.MaxClaimedHeight()
 
 	if lastHeight >= networkHeight-1 {
-		syncer.logger.Info("We are synced", "height", lastHeight)
-		syncer.informConsensusToMoveToNewHeight()
+		syncer.synced()
 	}
 }
 
-func (syncer *Synchronizer) informConsensusToMoveToNewHeight() {
+func (syncer *Synchronizer) synced() {
+	syncer.logger.Info("We are synced")
 	syncer.consensus.MoveToNewHeight()
 }
 
@@ -175,15 +176,14 @@ func (syncer *Synchronizer) broadcastLoop() {
 							pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
 						}
 					}
-
 				}
 
 				if len(pld.IDs) > 0 {
-					syncer.PublishMessage(msg)
+					syncer.publishMessage(msg)
 				}
 
 			default:
-				syncer.PublishMessage(msg)
+				syncer.publishMessage(msg)
 
 			}
 		}
@@ -246,7 +246,6 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 	case payload.PayloadTypeLatestBlocksResponse:
 		pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
 		syncer.stateSync.ProcessLatestBlocksResponsePayload(pld)
-		syncer.informConsensusToMoveToNewHeight()
 
 	case payload.PayloadTypeQueryTransactions:
 		pld := msg.Payload.(*payload.QueryTransactionsPayload)
@@ -306,10 +305,10 @@ func (syncer *Synchronizer) broadcastHeartBeat() {
 	}
 
 	msg := message.NewHeartBeatMessage(syncer.networkAPI.SelfID(), syncer.state.LastBlockHash(), hrs)
-	syncer.PublishMessage(msg)
+	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) PublishMessage(msg *message.Message) {
+func (syncer *Synchronizer) publishMessage(msg *message.Message) {
 	err := syncer.networkAPI.PublishMessage(msg)
 
 	if err != nil {
@@ -354,7 +353,7 @@ func (syncer *Synchronizer) BroadcastSalam() {
 		syncer.state.LastBlockHeight(),
 		flags)
 
-	syncer.PublishMessage(msg)
+	syncer.publishMessage(msg)
 }
 
 func (syncer *Synchronizer) BroadcastAleyk(code payload.ResponseCode, resMsg string) {
@@ -371,7 +370,7 @@ func (syncer *Synchronizer) BroadcastAleyk(code payload.ResponseCode, resMsg str
 		syncer.state.LastBlockHeight(),
 		flags)
 
-	syncer.PublishMessage(msg)
+	syncer.publishMessage(msg)
 }
 
 func (syncer *Synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {

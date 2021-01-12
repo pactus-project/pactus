@@ -73,12 +73,9 @@ func (m *MockState) ApplyBlock(height int, b block.Block, c block.Commit) error 
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
 		return fmt.Errorf("Invalid block")
 	}
-	if height == m.LastBlockHeight()+1 {
-		m.Store.Blocks[height] = &b
-		m.LastBlockCommit = &c
-		return nil
-	}
-	return fmt.Errorf("Not expected block")
+	m.Store.Blocks[height] = &b
+	m.LastBlockCommit = &c
+	return nil
 }
 
 func (m *MockState) Close() error {

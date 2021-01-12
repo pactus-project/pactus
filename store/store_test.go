@@ -54,8 +54,10 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 
 	b, txs := block.GenerateTestBlock(nil, nil)
 	h := util.RandInt(10000)
+	assert.False(t, tStore.HasAnyBlock())
 	err := tStore.SaveBlock(*b, h)
 	assert.NoError(t, err)
+	assert.True(t, tStore.HasAnyBlock())
 
 	for _, trx := range txs {
 		r := trx.GenerateReceipt(tx.Ok, b.Hash())
@@ -107,6 +109,7 @@ func TestRetrieveAccount(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, acc, acc2)
 	})
+	assert.Equal(t, tStore.TotalAccounts(), 1)
 }
 
 func TestRetrieveValidator(t *testing.T) {
@@ -131,6 +134,10 @@ func TestRetrieveValidator(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, val.Hash(), val2.Hash())
 	})
+
+	assert.Equal(t, tStore.TotalValidators(), 1)
+	val2, _ := tStore.ValidatorByNumber(val.Number())
+	assert.Equal(t, val.Hash(), val2.Hash())
 }
 
 func TestIterateAccounts(t *testing.T) {

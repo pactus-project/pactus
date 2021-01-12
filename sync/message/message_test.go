@@ -75,9 +75,7 @@ func TestLatestBlockRequestMessage(t *testing.T) {
 
 func TestLatestBlocksResponseMessage(t *testing.T) {
 	b, trxs := block.GenerateTestBlock(nil, nil)
-	invMsg := NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, 4, nil, nil, nil)
-	assert.Error(t, invMsg.SanityCheck())
-	invMsg = NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, 4, []*block.Block{b}, nil, nil)
+	invMsg := NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, -1, nil, nil, nil)
 	assert.Error(t, invMsg.SanityCheck())
 	m := NewLatestBlocksResponseMessage(payload.ResponseCodeBusy, tPeerID1, tPeerID2, 1234, 4, []*block.Block{b}, trxs, nil)
 	bs, err := m.Encode()

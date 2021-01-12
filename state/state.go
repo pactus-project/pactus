@@ -137,7 +137,7 @@ func (st *state) tryLoadLastInfo() error {
 	if err != nil {
 		return err
 	}
-	if err := st.validatorSet.MoveToNextHeight(0, nil); err != nil {
+	if err := st.validatorSet.UpdateTheSet(0, nil); err != nil {
 		return err
 	}
 
@@ -472,7 +472,7 @@ func (st *state) commitSandbox(round int) {
 	})
 
 	// TODO: for joined vals write tests
-	if err := st.validatorSet.MoveToNextHeight(round, joined); err != nil {
+	if err := st.validatorSet.UpdateTheSet(round, joined); err != nil {
 		//
 		// We should panic here before updating state
 		//

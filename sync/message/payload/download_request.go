@@ -17,14 +17,14 @@ type DownloadRequestPayload struct {
 }
 
 func (p *DownloadRequestPayload) SanityCheck() error {
+	if p.From < 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
+	}
 	if err := p.Initiator.Validate(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer is: %v", err)
 	}
 	if err := p.Target.Validate(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer is: %v", err)
-	}
-	if p.From <= 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
 	if p.From > p.To {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid range")
@@ -37,5 +37,5 @@ func (p *DownloadRequestPayload) Type() PayloadType {
 }
 
 func (p *DownloadRequestPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v %v:%v}", util.FingerprintPeerID(p.Initiator), p.From, p.To)
+	return fmt.Sprintf("{%v ⚓ %d %v:%v}", util.FingerprintPeerID(p.Initiator), p.SessionID, p.From, p.To)
 }

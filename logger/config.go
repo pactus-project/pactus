@@ -28,7 +28,7 @@ func TestConfig() *Config {
 		Levels: make(map[string]string),
 	}
 
-	conf.Levels["default"] = "debug"
+	conf.Levels["default"] = "trace"
 	conf.Levels["_network"] = "trace"
 	conf.Levels["_consensus"] = "trace"
 	conf.Levels["_state"] = "trace"

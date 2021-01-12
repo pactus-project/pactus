@@ -2,6 +2,7 @@ package firewall
 
 import (
 	"testing"
+	"time"
 
 	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ var tFirewall *Firewall
 var tAnotherPeerID peer.ID
 
 func setup(t *testing.T) {
-	peerSet := peerset.NewPeerSet()
+	peerSet := peerset.NewPeerSet(3 * time.Second)
 	state := state.MockingState()
 	tFirewall = NewFirewall(peerSet, state)
 	tAnotherPeerID, _ = peer.IDB58Decode("12D3KooWBtNwU6PiV9KrVXqhNeoeP2vrvJs7USAXtkapgCs6TwUm")

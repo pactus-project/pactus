@@ -113,10 +113,10 @@ func setup(t *testing.T) {
 		networkAPI:  tAliceNetAPI,
 	}
 	tAliceSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "alice: ", sync: tAliceSync})
-	tAliceSync.peerSet = peerset.NewPeerSet()
+	tAliceSync.peerSet = peerset.NewPeerSet(tAliceConfig.SessionTimeout)
 	tAliceSync.firewall = firewall.NewFirewall(tAliceSync.peerSet, tAliceState)
-	tAliceSync.consensusSync = NewConsensusSync(tAliceConfig, tAliceConsensus, tAliceSync.logger, tAliceSync.PublishMessage)
-	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.PublishMessage)
+	tAliceSync.consensusSync = NewConsensusSync(tAliceConfig, tAliceConsensus, tAliceSync.logger, tAliceSync.publishMessage)
+	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.publishMessage, tAliceSync.synced)
 
 	tBobSync = &Synchronizer{
 		ctx:         context.Background(),
@@ -130,10 +130,10 @@ func setup(t *testing.T) {
 		networkAPI:  tBobNetAPI,
 	}
 	tBobSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "bob: ", sync: tBobSync})
-	tBobSync.peerSet = peerset.NewPeerSet()
+	tBobSync.peerSet = peerset.NewPeerSet(tBobConfig.SessionTimeout)
 	tBobSync.firewall = firewall.NewFirewall(tBobSync.peerSet, tBobState)
-	tBobSync.consensusSync = NewConsensusSync(tBobConfig, tBobConsensus, tBobSync.logger, tBobSync.PublishMessage)
-	tBobSync.stateSync = NewStateSync(tBobConfig, tBobPeerID, tBobSync.cache, tBobState, tBobSync.peerSet, tBobSync.logger, tBobSync.PublishMessage)
+	tBobSync.consensusSync = NewConsensusSync(tBobConfig, tBobConsensus, tBobSync.logger, tBobSync.publishMessage)
+	tBobSync.stateSync = NewStateSync(tBobConfig, tBobPeerID, tBobSync.cache, tBobState, tBobSync.peerSet, tBobSync.logger, tBobSync.publishMessage, tBobSync.synced)
 
 	tAliceNetAPI.ParsFn = tAliceSync.ParsMessage
 	tAliceNetAPI.Firewall = tAliceSync.firewall
@@ -154,8 +154,8 @@ func setup(t *testing.T) {
 
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 83-92
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 93-100
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // last commit + sync response
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
 }
@@ -172,7 +172,7 @@ func TestSendSalamBadGenesisHash(t *testing.T) {
 	msg2 := tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
 	pld := msg2.Payload.(*payload.AleykPayload)
 
-	assert.Equal(t, pld.Response.Status, payload.SalamResponseCodeRejected)
+	assert.Equal(t, pld.ResponseCode, payload.ResponseCodeRejected)
 }
 
 func TestSendSalamPeerBehind(t *testing.T) {
@@ -185,7 +185,7 @@ func TestSendSalamPeerBehind(t *testing.T) {
 	msg2 := tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
 	pld := msg2.Payload.(*payload.AleykPayload)
 
-	assert.Equal(t, pld.Response.Status, payload.SalamResponseCodeOK)
+	assert.Equal(t, pld.ResponseCode, payload.ResponseCodeOK)
 	assert.Equal(t, tBobSync.peerSet.MaxClaimedHeight(), tAliceState.LastBlockHeight())
 
 	p := tAliceSync.peerSet.GetPeer(tAnotherPeerID)
@@ -216,7 +216,7 @@ func TestSendAleykPeerBehind(t *testing.T) {
 	setup(t)
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, 1, 0, 0, "Welcome!")
+	msg := message.NewAleykMessage(payload.ResponseCodeOK, "Welcome!", "kitty", pub, tAnotherPeerID, 1, 0)
 	d, _ := msg.Encode()
 	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
@@ -226,7 +226,7 @@ func TestSendAleykPeerAhead(t *testing.T) {
 	setup(t)
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, 111, 0, 0, "Welcome!")
+	msg := message.NewAleykMessage(payload.ResponseCodeOK, "Welcome!", "kitty", pub, tAnotherPeerID, 111, 0)
 	d, _ := msg.Encode()
 	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
@@ -237,7 +237,7 @@ func TestSendAleykPeerSameHeight(t *testing.T) {
 	setup(t)
 	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	msg := message.NewAleykMessage("kitty", pub, tAnotherPeerID, tAliceState.LastBlockHeight(), 0, 0, "Welcome!")
+	msg := message.NewAleykMessage(payload.ResponseCodeOK, "Welcome!", "kitty", pub, tAnotherPeerID, tAliceState.LastBlockHeight(), 0)
 	d, _ := msg.Encode()
 	tAliceNetAPI.CheckAndParsMessage(d, tAnotherPeerID)
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
@@ -251,7 +251,7 @@ func TestIncreaseHeight(t *testing.T) {
 	tAliceSync.ParsMessage(msg1, tAnotherPeerID)
 	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 103)
 
-	msg2 := message.NewAleykMessage("kitty-2", pub, tAnotherPeerID, 104, 0, 0, "Welcome!")
+	msg2 := message.NewAleykMessage(payload.ResponseCodeOK, "Welcome!", "kitty-2", pub, tAnotherPeerID, 104, 0)
 	tAliceSync.ParsMessage(msg2, tAnotherPeerID)
 	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 104)
 

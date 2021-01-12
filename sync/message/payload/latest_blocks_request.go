@@ -16,14 +16,14 @@ type LatestBlocksRequestPayload struct {
 }
 
 func (p *LatestBlocksRequestPayload) SanityCheck() error {
+	if p.From < 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+	}
 	if err := p.Initiator.Validate(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer is: %v", err)
 	}
 	if err := p.Target.Validate(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer is: %v", err)
-	}
-	if p.From <= 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
 	return nil
 }
@@ -33,5 +33,5 @@ func (p *LatestBlocksRequestPayload) Type() PayloadType {
 }
 
 func (p *LatestBlocksRequestPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v %v}", util.FingerprintPeerID(p.Initiator), p.From)
+	return fmt.Sprintf("{%v ⚓ %d %v}", util.FingerprintPeerID(p.Initiator), p.SessionID, p.From)
 }

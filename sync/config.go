@@ -28,10 +28,10 @@ func TestConfig() *Config {
 		Moniker:              "test",
 		StartingTimeout:      time.Second * 1,
 		HeartBeatTimeout:     time.Second * 1,
-		SessionTimeout:       time.Millisecond * 200,
+		SessionTimeout:       time.Second * 1,
 		InitialBlockDownload: true,
 		BlockPerMessage:      10,
-		CacheSize:            100,
+		CacheSize:            1000,
 	}
 }
 

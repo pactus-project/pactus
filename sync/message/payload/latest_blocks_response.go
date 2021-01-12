@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 const LatestBlocksResponseCodeOK = 0
@@ -27,11 +28,11 @@ func (p *LatestBlocksResponsePayload) SanityCheck() error {
 	if p.From < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
 	}
-	if len(p.Blocks) == 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "No block")
+	if err := p.Initiator.Validate(); err != nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer is: %v", err)
 	}
-	if len(p.Transactions) == 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "No transaction")
+	if err := p.Target.Validate(); err != nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer is: %v", err)
 	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
@@ -43,7 +44,6 @@ func (p *LatestBlocksResponsePayload) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
 		}
 	}
-
 	for _, trx := range p.Transactions {
 		if err := trx.SanityCheck(); err != nil {
 			return err
@@ -57,9 +57,12 @@ func (p *LatestBlocksResponsePayload) Type() PayloadType {
 }
 
 func (p *LatestBlocksResponsePayload) To() int {
+	if len(p.Blocks) == 0 {
+		return p.From
+	}
 	return p.From + len(p.Blocks) - 1
 }
 
 func (p *LatestBlocksResponsePayload) Fingerprint() string {
-	return fmt.Sprintf("{%v-%v}", p.From, p.To())
+	return fmt.Sprintf("{%s %s ⚓ %d %v-%v}", util.FingerprintPeerID(p.Initiator), p.ResponseCode, p.SessionID, p.From, p.To())
 }
