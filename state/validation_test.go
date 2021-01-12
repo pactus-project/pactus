@@ -108,13 +108,20 @@ func TestCommitValidation(t *testing.T) {
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
+	t.Run("Update last commit- Not in the set, should return no error", func(t *testing.T) {
+		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, invSig5})
+
+		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{2}, sig)
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
+	})
+
 	t.Run("Valid signature, should return no error", func(t *testing.T) {
 		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2}, []int{3}, validSig)
 		assert.NoError(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Update last commit- Invalid signer", func(t *testing.T) {
-		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, valSig4})
+		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, invSig5})
 
 		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{}, sig)
 		assert.Error(t, tState1.UpdateLastCommit(c))
@@ -125,6 +132,8 @@ func TestCommitValidation(t *testing.T) {
 
 		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 3}, []int{2}, sig)
 		assert.NoError(t, tState1.UpdateLastCommit(c))
+		// Commit didn't change
+		assert.NotEqual(t, tState1.lastCommit.Hash(), c.Hash())
 	})
 
 	t.Run("Update last commit- Valid signature, should return no error", func(t *testing.T) {
@@ -132,6 +141,8 @@ func TestCommitValidation(t *testing.T) {
 
 		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
 		assert.NoError(t, tState1.UpdateLastCommit(c))
+		// Commit updated
+		assert.Equal(t, tState1.lastCommit.Hash(), c.Hash())
 	})
 
 }

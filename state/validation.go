@@ -110,18 +110,5 @@ func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash c
 			"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
 	}
 
-	for _, num := range commit.Signed() {
-		// Check if validator is eligible to commit the block
-		val, _ := st.store.ValidatorByNumber(num)
-		if val == nil {
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"invalid committer: %x", num)
-		}
-		if !st.validatorSet.Contains(val.Address()) {
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"validator is eligible to commit the block: %x", val.Address())
-		}
-	}
-
 	return nil
 }
