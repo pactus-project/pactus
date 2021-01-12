@@ -76,8 +76,8 @@ func TestSendLastCommit(t *testing.T) {
 	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID, 95)
 
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
 	msg := tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
-	msg = tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
 	pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
 
 	assert.Equal(t, pld.LastCommit, tBobState.LastBlockCommit)
@@ -97,15 +97,15 @@ func TestProcessHeartbeat(t *testing.T) {
 	lastHash := tAliceState.LastBlockHash()
 	height := tAliceState.LastBlockHeight()
 	for i := 0; i < 5; i++ {
-		b, t := block.GenerateTestBlock(nil, &lastHash)
+		b, trxs := block.GenerateTestBlock(nil, &lastHash)
 		c := block.GenerateTestCommit(b.Hash())
-		tAliceSync.cache.AddTransactions(t)
+		tAliceSync.cache.AddTransactions(trxs)
 		lastHash = b.Hash()
-		tAliceState.ApplyBlock(height+i+1, *b, *c)
+		assert.NoError(t, tAliceState.ApplyBlock(height+i+1, *b, *c))
 	}
 
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
-	tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val})
+	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
 	tAliceConsensus.HRS_ = hrs.NewHRS(tAliceState.LastBlockHeight()+1, 0, 3)
 	tBobConsensus.Started = false
 

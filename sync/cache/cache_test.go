@@ -85,11 +85,9 @@ func TestClearCache(t *testing.T) {
 func TestCacheIsFull(t *testing.T) {
 	setup(t)
 
-	blocks := make([]*block.Block, 0)
 	i := 0
 	for ; i < 10; i++ {
 		b, _ := block.GenerateTestBlock(nil, nil)
-		blocks = append(blocks, b)
 		tCache.AddBlock(i+1, b)
 	}
 

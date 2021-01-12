@@ -65,7 +65,7 @@ func (ps *PeerSet) HasAnyValidSession() bool {
 
 	// First remove old sessions
 	for id, s := range ps.sessions {
-		if ps.sessionTimeout < time.Now().Sub(s.LastActivityAt) {
+		if ps.sessionTimeout < util.Now().Sub(s.LastActivityAt) {
 			delete(ps.sessions, id)
 		}
 	}
