@@ -52,7 +52,6 @@ func TestConsensusBehindState3(t *testing.T) {
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
-	checkHRS(t, tConsX, 1, 0, hrs.StepTypeCommit)
 
 	precommits := tConsX.pendingVotes.PrecommitVoteSet(0)
 	require.NotNil(t, precommits)
