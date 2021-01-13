@@ -151,6 +151,15 @@ func TestIterateAccounts(t *testing.T) {
 		accs1 = append(accs1, acc.Hash())
 	}
 
+	stopped := false
+	tStore.IterateAccounts(func(acc *account.Account) bool {
+		if acc.Hash().EqualsTo(accs1[0]) {
+			stopped = true
+		}
+		return stopped
+	})
+	assert.True(t, stopped)
+
 	accs2 := []crypto.Hash{}
 	tStore.IterateAccounts(func(acc *account.Account) bool {
 		accs2 = append(accs2, acc.Hash())
@@ -170,6 +179,15 @@ func TestIterateValidators(t *testing.T) {
 
 		vals1 = append(vals1, val.Hash())
 	}
+
+	stopped := false
+	tStore.IterateValidators(func(val *validator.Validator) bool {
+		if val.Hash().EqualsTo(vals1[0]) {
+			stopped = true
+		}
+		return stopped
+	})
+	assert.True(t, stopped)
 
 	vals2 := []crypto.Hash{}
 	tStore.IterateValidators(func(val *validator.Validator) bool {

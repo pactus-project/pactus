@@ -176,6 +176,12 @@ func TestApplyBlocks(t *testing.T) {
 	assert.Error(t, tState1.ApplyBlock(1, *invBlock, c1))
 	assert.Error(t, tState1.ApplyBlock(2, b1, c1))
 	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+
+	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())
+	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
+	assert.Equal(t, tState1.LastCommit().Hash(), c1.Hash())
+	assert.Equal(t, tState1.LastBlockHeight(), 1)
+	assert.Equal(t, tState1.GenesisHash(), tState2.GenesisHash())
 }
 
 func TestCommitSandbox(t *testing.T) {
@@ -275,4 +281,21 @@ func TestInvalidProposerProposeBlock(t *testing.T) {
 	assert.Error(t, err)
 	_, err = tState2.ProposeBlock(1)
 	assert.NoError(t, err)
+}
+
+func TestInvalidBlock(t *testing.T) {
+	setup(t)
+
+	b, _ := block.GenerateTestBlock(nil, nil)
+	assert.Error(t, tState1.ValidateBlock(*b))
+}
+
+func TestForkDetection(t *testing.T) {
+	setup(t)
+
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
+	b2, c2 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
+	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.Error(t, tState1.ApplyBlock(1, b2, c2))
 }

@@ -31,6 +31,15 @@ func TestAggregation(t *testing.T) {
 	pks3 := []PublicKey{pk1, pk2}
 	pks4 := []PublicKey{pk3, pk2, pk1}
 
+	assert.True(t, pk1.Verify(msg1, sig1))
+	assert.True(t, pk2.Verify(msg1, sig2))
+	assert.True(t, pk3.Verify(msg1, sig3))
+	assert.False(t, pk2.Verify(msg1, sig1))
+	assert.False(t, pk3.Verify(msg1, sig1))
+	assert.False(t, pk1.Verify(msg1, &agg1))
+	assert.False(t, pk2.Verify(msg1, &agg1))
+	assert.False(t, pk3.Verify(msg1, &agg1))
+
 	assert.True(t, VerifyAggregated(agg1, pks1, msg1))
 	assert.False(t, VerifyAggregated(agg1, pks1, msg2))
 	assert.False(t, VerifyAggregated(agg2, pks1, msg1))

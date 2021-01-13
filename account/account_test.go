@@ -60,8 +60,17 @@ func TestMarshalingRawData(t *testing.T) {
 }
 
 func TestIncSequence(t *testing.T) {
-	acc, _ := GenerateTestAccount(0)
+	acc, _ := GenerateTestAccount(100)
 	seq := acc.Sequence()
 	acc.IncSequence()
 	assert.Equal(t, acc.Sequence(), seq+1)
+	assert.Equal(t, acc.Number(), 100)
+}
+
+func TestSubtractBalance(t *testing.T) {
+	acc, _ := GenerateTestAccount(100)
+	bal := acc.Balance()
+	acc.SubtractFromBalance(1)
+	assert.Equal(t, acc.Balance(), bal-1)
+
 }

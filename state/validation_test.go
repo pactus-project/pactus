@@ -115,6 +115,11 @@ func TestCommitValidation(t *testing.T) {
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
+	t.Run("Invalid committer, should return no error", func(t *testing.T) {
+		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 5}, []int{3}, validSig)
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
+	})
+
 	t.Run("Valid signature, should return no error", func(t *testing.T) {
 		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2}, []int{3}, validSig)
 		assert.NoError(t, tState1.ApplyBlock(2, *b2, *c))
@@ -174,7 +179,7 @@ func TestBlockValidation(t *testing.T) {
 	// LastReceiptsHash		(OK)
 	// LastCommitHash		(OK)
 	// CommittersHash		(OK)
-	// ProposerAddress		(OK) -> Check in ApplyBlock
+	// ProposerAddress		(OK) -> Tested in ApplyBlock
 	//
 	invAdd, _, _ := crypto.GenerateTestKeyPair()
 	invHash := crypto.GenerateTestHash()

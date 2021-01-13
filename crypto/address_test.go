@@ -17,6 +17,7 @@ func TestAddressMarshaling(t *testing.T) {
 
 	js, err := json.Marshal(addr1)
 	assert.NoError(t, err)
+	require.Error(t, addr2.UnmarshalJSON([]byte("bad")))
 	require.NoError(t, json.Unmarshal(js, addr2))
 
 	bs, err := addr2.MarshalCBOR()
@@ -32,6 +33,8 @@ func TestAddressMarshaling(t *testing.T) {
 }
 
 func TestAddressFromBytes(t *testing.T) {
+	_, err := AddressFromRawBytes(nil)
+	assert.Error(t, err)
 	addr1, _, _ := GenerateTestKeyPair()
 	addr2, err := AddressFromRawBytes(addr1.RawBytes())
 	assert.NoError(t, err)

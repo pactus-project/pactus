@@ -317,23 +317,32 @@ func (sb *SandboxConcrete) LastBlockHash() crypto.Hash {
 }
 
 func (sb *SandboxConcrete) AppendNewBlock(hash crypto.Hash, height int) {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	sb.recentBlocks.PushBack(hash, height)
 }
 
 func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
 	return sb.sortition.VerifyProof(blockHash, proof, val)
 }
 
 func (sb *SandboxConcrete) IterateAccounts(consumer func(*AccountStatus)) {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
 	for _, as := range sb.accounts {
 		consumer(as)
 	}
 }
 
 func (sb *SandboxConcrete) IterateValidators(consumer func(*ValidatorStatus)) {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
 	for _, vs := range sb.validators {
 		consumer(vs)
 	}

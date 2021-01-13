@@ -183,6 +183,9 @@ func (st *state) Close() error {
 }
 
 func (st *state) StoreReader() store.StoreReader {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.store
 }
 
@@ -448,10 +451,6 @@ func (st *state) EvaluateSortition() {
 }
 
 func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
-	if subsidyReductionInterval == 0 {
-		return baseSubsidy
-	}
-
 	// Equivalent to: baseSubsidy / 2^(height/subsidyHalvingInterval)
 	return baseSubsidy >> uint(height/subsidyReductionInterval)
 }

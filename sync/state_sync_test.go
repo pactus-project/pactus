@@ -42,7 +42,7 @@ func TestAddTxToCache(t *testing.T) {
 	assert.NotNil(t, tBobSync.cache.GetTransaction(trx1.ID()))
 }
 
-func TestSendTxs(t *testing.T) {
+func TestQueryForTransaction(t *testing.T) {
 	setup(t)
 
 	trx1, _ := tx.GenerateTestBondTx()

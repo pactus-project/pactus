@@ -57,7 +57,11 @@ func (set *ValidatorSet) MaximumPower() int {
 }
 
 func (set *ValidatorSet) Power() int {
-	return len(set.validators)
+	p := 0
+	for _, v := range set.validators {
+		p += v.Power()
+	}
+	return p
 }
 
 func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error {

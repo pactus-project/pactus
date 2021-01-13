@@ -309,3 +309,8 @@ func TestCommittersHash(t *testing.T) {
 	expected, _ := crypto.HashFromString("df5c58d8b7c13806b6d23e878526ccdf331c4fed72780e52ea2775f4aa082a44")
 	assert.Equal(t, vs.CommittersHash(), expected)
 }
+
+func TestPower(t *testing.T) {
+	vs, _ := GenerateTestValidatorSet()
+	assert.Equal(t, vs.Power(), len(vs.validators))
+}

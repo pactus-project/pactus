@@ -106,7 +106,7 @@ func (c *Cache) AddTransaction(trx *tx.Tx) {
 
 func (c *Cache) AddTransactions(trxs []*tx.Tx) {
 	for _, trx := range trxs {
-		c.cache.Add(txKey(trx.ID()), trx)
+		c.AddTransaction(trx)
 	}
 }
 
