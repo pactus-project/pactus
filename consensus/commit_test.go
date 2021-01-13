@@ -5,42 +5,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func commitFirstBlock(t *testing.T) (b block.Block, votes [3]*vote.Vote) {
-	pb, err := tConsX.state.ProposeBlock(0)
-	require.NoError(t, err)
-	b = *pb
-
-	sb := block.CommitSignBytes(b.Hash(), 0)
-	sig1 := tSigners[0].Sign(sb)
-	sig2 := tSigners[1].Sign(sb)
-	sig3 := tSigners[2].Sign(sb)
-
-	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3})
-	c := block.NewCommit(b.Hash(), 0, []int{0, 1, 2}, []int{3}, sig)
-
-	require.NotNil(t, c)
-	err = tConsX.state.ApplyBlock(1, b, *c)
-	assert.NoError(t, err)
-	err = tConsY.state.ApplyBlock(1, b, *c)
-	assert.NoError(t, err)
-	err = tConsB.state.ApplyBlock(1, b, *c)
-	assert.NoError(t, err)
-	err = tConsP.state.ApplyBlock(1, b, *c)
-	assert.NoError(t, err)
-
-	return
-}
-
 func TestInvalidStepAfterBlockCommit(t *testing.T) {
 	setup(t)
 
-	commitFirstBlock(t)
+	commitBlockForAllStates(t)
 
 	tConsY.enterNewHeight()
 
@@ -55,7 +28,7 @@ func TestInvalidStepAfterBlockCommit(t *testing.T) {
 func TestEnterCommit(t *testing.T) {
 	setup(t)
 
-	commitFirstBlock(t)
+	commitBlockForAllStates(t)
 
 	tConsY.enterNewHeight()
 	tConsY.enterNewRound(1)
@@ -109,5 +82,5 @@ func TestEnterCommit(t *testing.T) {
 
 	// Everything is good
 	tConsY.enterCommit(1)
-	shouldPublishProposalBlock(t, tConsY)
+	shouldPublishBlockAnnounce(t, tConsY)
 }

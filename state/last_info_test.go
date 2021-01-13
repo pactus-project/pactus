@@ -38,7 +38,7 @@ func TestLoadState(t *testing.T) {
 	assert.NoError(t, tState1.Close())
 
 	// Load last state info
-	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.NewMockTxPool())
+	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.MockingTxPool())
 	require.NoError(t, err)
 
 	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
@@ -65,7 +65,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 
 	assert.NoError(t, tState1.Close())
 
-	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.NewMockTxPool())
+	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.MockingTxPool())
 	require.NoError(t, err)
 
 	// Load last state info after modifying genesis
@@ -74,6 +74,6 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
 	genDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val}, 1)
 
-	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, txpool.NewMockTxPool())
+	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, txpool.MockingTxPool())
 	require.Error(t, err)
 }

@@ -15,7 +15,7 @@ type MockConsensus struct {
 	Started  bool
 }
 
-func NewMockConsensus() *MockConsensus {
+func MockingConsensus() *MockConsensus {
 	return &MockConsensus{}
 }
 

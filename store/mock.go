@@ -7,7 +7,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -18,7 +17,7 @@ type MockStore struct {
 	Transactions map[crypto.Hash]*tx.CommittedTx
 }
 
-func NewMockStore() *MockStore {
+func MockingStore() *MockStore {
 	return &MockStore{
 		Blocks:       make(map[int]*block.Block),
 		Accounts:     make(map[crypto.Address]*account.Account),
@@ -91,10 +90,5 @@ func (m *MockStore) TotalValidators() int {
 	return len(m.Validators)
 }
 func (m *MockStore) LastBlockHeight() int {
-	max := 0
-	for h := range m.Blocks {
-		max = util.Max(max, h)
-	}
-
-	return max
+	return len(m.Blocks)
 }

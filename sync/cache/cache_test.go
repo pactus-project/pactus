@@ -14,7 +14,7 @@ var tStore *store.MockStore
 
 func setup(t *testing.T) {
 	var err error
-	tStore = store.NewMockStore()
+	tStore = store.MockingStore()
 	tCache, err = NewCache(10, tStore)
 	assert.NoError(t, err)
 }
@@ -63,4 +63,34 @@ func TestCacheTx(t *testing.T) {
 	assert.Equal(t, tCache.GetTransaction(trx1.ID()).ID(), trx1.ID())
 	assert.Equal(t, tCache.GetTransaction(trx2.ID()).ID(), trx2.ID())
 	assert.Nil(t, tCache.GetTransaction(trx3.ID()))
+}
+
+func TestClearCache(t *testing.T) {
+	setup(t)
+
+	b, trxs := block.GenerateTestBlock(nil, nil)
+
+	tCache.AddBlock(2, b)
+	tCache.AddTransactions(trxs)
+
+	assert.Equal(t, tCache.Len(), 5)
+	tCache.Clear()
+	assert.Equal(t, tCache.Len(), 0)
+	assert.Nil(t, tCache.GetBlock(2))
+}
+
+func TestCacheIsFull(t *testing.T) {
+	setup(t)
+
+	i := 0
+	for ; i < 10; i++ {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		tCache.AddBlock(i+1, b)
+	}
+
+	newBlock, _ := block.GenerateTestBlock(nil, nil)
+	tCache.AddBlock(i+1, newBlock)
+
+	assert.NotNil(t, tCache.GetBlock(i+1))
+	assert.Nil(t, tCache.GetBlock(1))
 }

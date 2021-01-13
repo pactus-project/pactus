@@ -41,7 +41,7 @@ func (val *Validator) Stake() int64                { return val.data.Stake }
 func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
 func (val *Validator) UnbondingHeight() int        { return val.data.UnbondingHeight }
 
-func (val Validator) Power() int64 {
+func (val Validator) Power() int {
 	// Viva democracy, everybody should be treated equally
 	return 1
 }

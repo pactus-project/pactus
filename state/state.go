@@ -137,7 +137,7 @@ func (st *state) tryLoadLastInfo() error {
 	if err != nil {
 		return err
 	}
-	if err := st.validatorSet.MoveToNextHeight(0, nil); err != nil {
+	if err := st.validatorSet.UpdateTheSet(0, nil); err != nil {
 		return err
 	}
 
@@ -183,6 +183,9 @@ func (st *state) Close() error {
 }
 
 func (st *state) StoreReader() store.StoreReader {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.store
 }
 
@@ -252,7 +255,10 @@ func (st *state) UpdateLastCommit(commit *block.Commit) error {
 }
 
 func (st *state) createSubsidyTx(fee int64) *tx.Tx {
-	acc, _ := st.store.Account(crypto.TreasuryAddress)
+	acc, err := st.store.Account(crypto.TreasuryAddress)
+	if err != nil {
+		return nil
+	}
 	stamp := st.lastBlockHash
 	seq := acc.Sequence() + 1
 	amt := calcBlockSubsidy(st.lastBlockHeight+1, st.params.SubsidyReductionInterval)
@@ -310,6 +316,10 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	}
 
 	subsidyTx := st.createSubsidyTx(st.execution.AccumulatedFee())
+	if subsidyTx == nil {
+		st.logger.Error("Probably the node is shutting down.")
+		return nil, errors.Errorf(errors.ErrInvalidBlock, "No subsidy transaction")
+	}
 	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
 		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
 		return nil, err
@@ -448,10 +458,6 @@ func (st *state) EvaluateSortition() {
 }
 
 func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
-	if subsidyReductionInterval == 0 {
-		return baseSubsidy
-	}
-
 	// Equivalent to: baseSubsidy / 2^(height/subsidyHalvingInterval)
 	return baseSubsidy >> uint(height/subsidyReductionInterval)
 }
@@ -472,7 +478,7 @@ func (st *state) commitSandbox(round int) {
 	})
 
 	// TODO: for joined vals write tests
-	if err := st.validatorSet.MoveToNextHeight(round, joined); err != nil {
+	if err := st.validatorSet.UpdateTheSet(round, joined); err != nil {
 		//
 		// We should panic here before updating state
 		//

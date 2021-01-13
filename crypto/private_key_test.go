@@ -17,6 +17,7 @@ func TestPrivateKeyMarshaling(t *testing.T) {
 
 	js, err := json.Marshal(priv1)
 	assert.NoError(t, err)
+	require.Error(t, priv2.UnmarshalJSON([]byte("bad")))
 	require.NoError(t, json.Unmarshal(js, priv2))
 
 	bs, err := priv2.MarshalCBOR()
@@ -32,6 +33,8 @@ func TestPrivateKeyMarshaling(t *testing.T) {
 }
 
 func TestPrivateKeyFromBytes(t *testing.T) {
+	_, err := PrivateKeyFromRawBytes(nil)
+	assert.Error(t, err)
 	_, _, priv1 := GenerateTestKeyPair()
 	priv2, err := PrivateKeyFromRawBytes(priv1.RawBytes())
 	assert.NoError(t, err)
@@ -66,4 +69,9 @@ func TestMarshalingEmptyPrivateKey(t *testing.T) {
 	var pv3 PrivateKey
 	err = pv3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
+}
+
+func TestSignNilMessage(t *testing.T) {
+	_, _, priv1 := GenerateTestKeyPair()
+	assert.Nil(t, priv1.Sign(nil))
 }

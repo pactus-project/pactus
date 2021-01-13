@@ -20,6 +20,9 @@ func TestMarshaling(t *testing.T) {
 	gen1 := MakeGenesis("test", util.Now(), []*account.Account{acc}, []*validator.Validator{val}, 5)
 	gen2 := new(Genesis)
 
+	assert.Equal(t, gen1.ChainName(), "test")
+	assert.Equal(t, gen1.Params().BlockTimeInSecond, 5)
+
 	bz, err := json.MarshalIndent(gen1, " ", " ")
 	require.NoError(t, err)
 	err = json.Unmarshal(bz, gen2)

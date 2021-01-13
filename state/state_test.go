@@ -29,6 +29,12 @@ var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
 func setup(t *testing.T) {
+	if tState1 != nil {
+		tState1.Close()
+		tState2.Close()
+		tState3.Close()
+		tState4.Close()
+	}
 	logger.InitLogger(logger.TestConfig())
 
 	_, _, priv1 := crypto.GenerateTestKeyPair()
@@ -42,7 +48,7 @@ func setup(t *testing.T) {
 	tValSigner4 = crypto.NewSigner(priv4)
 
 	tGenTime = util.Now()
-	tCommonTxPool = txpool.NewMockTxPool()
+	tCommonTxPool = txpool.MockingTxPool()
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	// 2,100,000,000,000,000
@@ -170,6 +176,12 @@ func TestApplyBlocks(t *testing.T) {
 	assert.Error(t, tState1.ApplyBlock(1, *invBlock, c1))
 	assert.Error(t, tState1.ApplyBlock(2, b1, c1))
 	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+
+	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())
+	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
+	assert.Equal(t, tState1.LastCommit().Hash(), c1.Hash())
+	assert.Equal(t, tState1.LastBlockHeight(), 1)
+	assert.Equal(t, tState1.GenesisHash(), tState2.GenesisHash())
 }
 
 func TestCommitSandbox(t *testing.T) {
@@ -269,4 +281,34 @@ func TestInvalidProposerProposeBlock(t *testing.T) {
 	assert.Error(t, err)
 	_, err = tState2.ProposeBlock(1)
 	assert.NoError(t, err)
+}
+
+func TestInvalidBlock(t *testing.T) {
+	setup(t)
+
+	b, _ := block.GenerateTestBlock(nil, nil)
+	assert.Error(t, tState1.ValidateBlock(*b))
+}
+
+func TestForkDetection(t *testing.T) {
+	setup(t)
+
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
+	b2, c2 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
+	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.Error(t, tState1.ApplyBlock(1, b2, c2))
+}
+
+func TestNodeShutdown(t *testing.T) {
+	setup(t)
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
+
+	// Should not panic or crash
+	tState1.Close()
+	assert.Error(t, tState1.ApplyBlock(1, b1, c1))
+	b, _ := block.GenerateTestBlock(nil, nil)
+	assert.Error(t, tState1.ValidateBlock(*b))
+	_, err := tState1.ProposeBlock(0)
+	assert.Error(t, err)
 }

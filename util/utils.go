@@ -55,3 +55,12 @@ func FingerprintPeerID(id peer.ID) string {
 	pid := id.Pretty()
 	return fmt.Sprintf("%s*%s", pid[:2], pid[len(pid)-6:])
 }
+
+func SetFlag(flags, mask int) int {
+	flags = flags | mask
+	return flags
+}
+
+func IsFlagSet(flags, mask int) bool {
+	return flags&mask == mask
+}

@@ -40,7 +40,7 @@ func WriteFile(filename string, data []byte) error {
 
 func Mkdir(dir string) error {
 	// create the directory
-	if err := os.MkdirAll(dir, 0644); err != nil {
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("Could not create directory %s", dir)
 	}
 	return nil

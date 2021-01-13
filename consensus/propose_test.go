@@ -17,7 +17,7 @@ func TestConsensusSetProposalAfterCommit(t *testing.T) {
 	tConsP.enterNewHeight()
 	p := tConsX.LastProposal()
 
-	commitFirstBlock(t)
+	commitBlockForAllStates(t)
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.LastProposal())
 }
@@ -109,4 +109,64 @@ func TestNetworkLagging2(t *testing.T) {
 	// Let's do it
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexB, false)
 	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
+}
+
+func TestLateProposal(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	tConsX.enterNewHeight()
+	tConsP.enterNewHeight()
+
+	p := tConsP.LastProposal()
+
+	// tConsP is partitioned, so tConsX doesn't have the proposal
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, p.Block().Hash(), tIndexB, false)
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, p.Block().Hash(), tIndexB, false)
+
+	// Now partition healed.
+
+	tConsX.SetProposal(p)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, p.Block().Hash(), tIndexY, false)
+
+	assert.True(t, tConsX.isCommitted)
+}
+
+func TestLateProposal2(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	tConsX.enterNewHeight()
+	tConsP.enterNewHeight()
+
+	p := tConsP.LastProposal()
+
+	// tConsP is partitioned, so tConsX doesn't have the proposal
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexB, false)
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexB, false)
+
+	checkHRSWait(t, tConsX, 4, 1, hrs.StepTypePrepare)
+
+	// Now partition healed.
+	tConsX.SetProposal(p)
+
+	assert.False(t, tConsX.isCommitted)
+	checkHRSWait(t, tConsX, 4, 1, hrs.StepTypePrepare)
 }

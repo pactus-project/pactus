@@ -17,6 +17,7 @@ func TestPublicKeyMarshaling(t *testing.T) {
 
 	js, err := json.Marshal(pub1)
 	assert.NoError(t, err)
+	require.Error(t, pub2.UnmarshalJSON([]byte("bad")))
 	require.NoError(t, json.Unmarshal(js, pub2))
 
 	bs, err := pub2.MarshalCBOR()
@@ -32,6 +33,8 @@ func TestPublicKeyMarshaling(t *testing.T) {
 }
 
 func TestPublicKeyFromBytes(t *testing.T) {
+	_, err := PublicKeyFromRawBytes(nil)
+	assert.Error(t, err)
 	_, pub1, _ := GenerateTestKeyPair()
 	pub2, err := PublicKeyFromRawBytes(pub1.RawBytes())
 	assert.NoError(t, err)

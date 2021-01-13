@@ -21,6 +21,7 @@ func TestSignatureMarshaling(t *testing.T) {
 
 	js, err := json.Marshal(sig1)
 	assert.NoError(t, err)
+	require.Error(t, sig2.UnmarshalJSON([]byte("bad")))
 	require.NoError(t, json.Unmarshal(js, sig2))
 
 	bs, err := sig2.MarshalCBOR()
@@ -36,6 +37,8 @@ func TestSignatureMarshaling(t *testing.T) {
 }
 
 func TestSignatureFromBytes(t *testing.T) {
+	_, err := SignatureFromRawBytes(nil)
+	assert.Error(t, err)
 	_, _, priv := RandomKeyPair()
 	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 	sig2, err := SignatureFromRawBytes(sig1.RawBytes())

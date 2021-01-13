@@ -57,10 +57,14 @@ func (set *ValidatorSet) MaximumPower() int {
 }
 
 func (set *ValidatorSet) Power() int {
-	return len(set.validators)
+	p := 0
+	for _, v := range set.validators {
+		p += v.Power()
+	}
+	return p
 }
 
-func (set *ValidatorSet) MoveToNextHeight(lastRound int, joined []*Validator) error {
+func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
@@ -71,7 +75,7 @@ func (set *ValidatorSet) MoveToNextHeight(lastRound int, joined []*Validator) er
 	}
 
 	if len(joined) > (set.MaximumPower() / 3) {
-		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
+		return errors.Errorf(errors.ErrGeneric, "In each update only 1/3 of validator can be changed")
 	}
 
 	// First update proposer index
@@ -130,7 +134,7 @@ func (set *ValidatorSet) Validator(addr crypto.Address) *Validator {
 	return nil
 }
 
-// IsProposer checks if the address is proposer for this height at the given round
+// IsProposer checks if the address is proposer for this run at the given round
 func (set *ValidatorSet) IsProposer(addr crypto.Address, round int) bool {
 	set.lk.Lock()
 	defer set.lk.Unlock()
@@ -139,7 +143,7 @@ func (set *ValidatorSet) IsProposer(addr crypto.Address, round int) bool {
 	return set.validators[idx].Address().EqualsTo(addr)
 }
 
-// Proposer returns proposer info for this height at the given round
+// Proposer returns proposer info for this run at the given round
 func (set *ValidatorSet) Proposer(round int) *Validator {
 	set.lk.Lock()
 	defer set.lk.Unlock()

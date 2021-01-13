@@ -13,7 +13,7 @@ type MockTxPool struct {
 	Txs []*tx.Tx
 }
 
-func NewMockTxPool() *MockTxPool {
+func MockingTxPool() *MockTxPool {
 	return &MockTxPool{
 		Txs: make([]*tx.Tx, 0),
 	}

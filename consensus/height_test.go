@@ -14,7 +14,7 @@ func TestMoveToNewHeight(t *testing.T) {
 
 	tConsP.MoveToNewHeight()
 
-	commitFirstBlock(t)
+	commitBlockForAllStates(t)
 
 	tConsP.MoveToNewHeight()
 	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
@@ -37,8 +37,7 @@ func TestConsensusBehindState3(t *testing.T) {
 
 	// --------------------------------
 	// Syncer commit a block and trig consensus
-	commitFirstBlock(t)
-	tConsX.MoveToNewHeight()
+	commitBlockForAllStates(t)
 
 	assert.Equal(t, len(tConsX.RoundVotes(0)), 1)
 	assert.Equal(t, tConsX.hrs, hrs.NewHRS(1, 0, hrs.StepTypePrepare))
@@ -52,7 +51,6 @@ func TestConsensusBehindState3(t *testing.T) {
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
-	checkHRS(t, tConsX, 1, 0, hrs.StepTypeCommit)
 
 	precommits := tConsX.pendingVotes.PrecommitVoteSet(0)
 	require.NotNil(t, precommits)
@@ -62,4 +60,6 @@ func TestConsensusBehindState3(t *testing.T) {
 
 	assert.NoError(t, tConsX.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
 	// We don't get any error here, but the block is not committed again. Check logs.
+
+	tConsX.enterNewHeight()
 }

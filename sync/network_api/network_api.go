@@ -1,41 +1,42 @@
-package sync
+package network_api
 
 import (
 	"context"
 
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/sync/firewall"
+
 	"github.com/libp2p/go-libp2p-core/peer"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 )
 
-type NetworkAPI interface {
-	Start() error
-	Stop()
-	PublishMessage(msg *message.Message) error
-	SelfID() peer.ID
-}
+type ParsMessageFn = func(msg *message.Message, from peer.ID)
 
 type networkAPI struct {
 	ctx            context.Context
 	selfID         peer.ID
+	net            *network.Network
+	firewall       *firewall.Firewall
 	generalTopic   *pubsub.Topic
-	txTopic        *pubsub.Topic
-	blockTopic     *pubsub.Topic
+	downloadTopic  *pubsub.Topic
+	dataTopic      *pubsub.Topic
 	consensusTopic *pubsub.Topic
 	generalSub     *pubsub.Subscription
-	txSub          *pubsub.Subscription
-	blockSub       *pubsub.Subscription
+	downloadSub    *pubsub.Subscription
+	dataSub        *pubsub.Subscription
 	consensusSub   *pubsub.Subscription
-	parsMessageFn  func(data []byte, from peer.ID)
+	parsFn         ParsMessageFn
 }
 
-func newNetworkAPI(
+func NewNetworkAPI(
 	ctx context.Context,
 	net *network.Network,
-	parsMessageFn func(data []byte, from peer.ID)) (*networkAPI, error) {
+	firewall *firewall.Firewall,
+	parsFn ParsMessageFn) (NetworkAPI, error) {
 	generalTopic, err := net.JoinTopic("general")
 	if err != nil {
 		return nil, err
@@ -44,19 +45,11 @@ func newNetworkAPI(
 	if err != nil {
 		return nil, err
 	}
-	txTopic, err := net.JoinTopic("tx")
+	dataTopic, err := net.JoinTopic("data")
 	if err != nil {
 		return nil, err
 	}
-	txSub, err := txTopic.Subscribe()
-	if err != nil {
-		return nil, err
-	}
-	blockTopic, err := net.JoinTopic("block")
-	if err != nil {
-		return nil, err
-	}
-	blockSub, err := blockTopic.Subscribe()
+	dataSub, err := dataTopic.Subscribe()
 	if err != nil {
 		return nil, err
 	}
@@ -68,24 +61,28 @@ func newNetworkAPI(
 	if err != nil {
 		return nil, err
 	}
-	return &networkAPI{
+
+	api := &networkAPI{
 		ctx:            ctx,
 		selfID:         net.ID(),
-		txTopic:        txTopic,
-		txSub:          txSub,
-		blockSub:       blockSub,
-		blockTopic:     blockTopic,
+		net:            net,
+		firewall:       firewall,
+		downloadTopic:  nil,
+		downloadSub:    nil,
+		dataSub:        dataSub,
+		dataTopic:      dataTopic,
 		generalTopic:   generalTopic,
 		generalSub:     generalSub,
 		consensusTopic: consensusTopic,
 		consensusSub:   consensusSub,
-		parsMessageFn:  parsMessageFn,
-	}, nil
+		parsFn:         parsFn,
+	}
+
+	return api, nil
 }
 
 func (api *networkAPI) Start() error {
-	go api.txLoop()
-	go api.blockLoop()
+	go api.dataLoop()
 	go api.generalLoop()
 	go api.consensusLoop()
 
@@ -93,14 +90,43 @@ func (api *networkAPI) Start() error {
 }
 
 func (api *networkAPI) Stop() {
-	api.txTopic.Close()
-	api.txSub.Cancel()
-	api.blockTopic.Close()
-	api.blockSub.Cancel()
+	api.LeaveDownloadTopic()
+
+	api.dataTopic.Close()
+	api.dataSub.Cancel()
 	api.generalTopic.Close()
 	api.generalSub.Cancel()
 	api.consensusTopic.Close()
 	api.consensusSub.Cancel()
+}
+
+func (api *networkAPI) JoinDownloadTopic() error {
+	if api.downloadSub != nil {
+		return nil
+	}
+
+	downloadTopic, err := api.net.JoinTopic("download")
+	if err != nil {
+		return err
+	}
+	downloadSub, err := downloadTopic.Subscribe()
+	if err != nil {
+		return err
+	}
+	api.downloadTopic = downloadTopic
+	api.downloadSub = downloadSub
+
+	go api.downloadLoop()
+
+	return nil
+}
+func (api *networkAPI) LeaveDownloadTopic() {
+	if api.downloadSub != nil {
+		api.downloadTopic.Close()
+		api.downloadSub.Cancel()
+		api.downloadTopic = nil
+		api.downloadSub = nil
+	}
 }
 
 func (api *networkAPI) parsMessage(m *pubsub.Message) {
@@ -109,18 +135,28 @@ func (api *networkAPI) parsMessage(m *pubsub.Message) {
 		return
 	}
 
-	api.parsMessageFn(m.Data, m.ReceivedFrom)
+	msg := api.firewall.ParsMessage(m.Data, m.ReceivedFrom)
+	if msg != nil {
+		api.parsFn(msg, m.ReceivedFrom)
+	}
 }
 
 func (api *networkAPI) PublishMessage(msg *message.Message) error {
 	topic := api.topic(msg)
-	bs, _ := msg.MarshalCBOR()
-	return topic.Publish(api.ctx, bs)
+	if topic == nil {
+		return errors.Errorf(errors.ErrNetwork, "Invalid topic.")
+	}
+	data, err := msg.Encode()
+	if err != nil {
+		return err
+	}
+
+	return topic.Publish(api.ctx, data)
 }
 
-func (api *networkAPI) txLoop() {
+func (api *networkAPI) downloadLoop() {
 	for {
-		m, err := api.txSub.Next(api.ctx)
+		m, err := api.downloadSub.Next(api.ctx)
 		if err != nil {
 			logger.Debug("readLoop error", "err", err)
 			return
@@ -130,9 +166,9 @@ func (api *networkAPI) txLoop() {
 	}
 }
 
-func (api *networkAPI) blockLoop() {
+func (api *networkAPI) dataLoop() {
 	for {
-		m, err := api.blockSub.Next(api.ctx)
+		m, err := api.dataSub.Next(api.ctx)
 		if err != nil {
 			logger.Debug("readLoop error", "err", err)
 			return
@@ -173,21 +209,25 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 		payload.PayloadTypeHeartBeat:
 		return api.generalTopic
 
-	case payload.PayloadTypeBlocksReq,
-		payload.PayloadTypeBlocks:
-		return api.blockTopic
+	case payload.PayloadTypeLatestBlocksRequest,
+		payload.PayloadTypeLatestBlocksResponse,
+		payload.PayloadTypeQueryTransactions,
+		payload.PayloadTypeTransactions,
+		payload.PayloadTypeBlockAnnounce:
+		return api.dataTopic
 
-	case payload.PayloadTypeTxsReq,
-		payload.PayloadTypeTxs:
-		return api.txTopic
-
-	case payload.PayloadTypeProposalReq,
+	case payload.PayloadTypeQueryProposal,
 		payload.PayloadTypeProposal,
 		payload.PayloadTypeVote,
 		payload.PayloadTypeVoteSet:
 		return api.consensusTopic
+
+	case payload.PayloadTypeDownloadRequest,
+		payload.PayloadTypeDownloadResponse:
+		return api.downloadTopic
+
 	default:
-		panic("Invalid topic")
+		panic("Invalid topic:")
 	}
 }
 

@@ -17,6 +17,7 @@ func TestHashMarshaling(t *testing.T) {
 
 	js, err := json.Marshal(hash1)
 	assert.NoError(t, err)
+	require.Error(t, hash2.UnmarshalJSON([]byte("bad")))
 	require.NoError(t, json.Unmarshal(js, hash2))
 
 	bs, err := hash2.MarshalCBOR()
@@ -31,6 +32,8 @@ func TestHashMarshaling(t *testing.T) {
 }
 
 func TestHashFromBytes(t *testing.T) {
+	_, err := HashFromRawBytes(nil)
+	assert.Error(t, err)
 	hash1 := GenerateTestHash()
 	hash2, err := HashFromRawBytes(hash1.RawBytes())
 	assert.NoError(t, err)

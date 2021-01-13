@@ -13,9 +13,9 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/message"
-	"github.com/zarbchain/zarb-go/message/payload"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -40,12 +40,18 @@ const (
 )
 
 func setup(t *testing.T) {
+	if tConsX != nil {
+		tConsX.state.Close()
+		tConsY.state.Close()
+		tConsB.state.Close()
+		tConsP.state.Close()
+	}
 	conf := logger.TestConfig()
 	conf.Levels["_state"] = "debug"
 	logger.InitLogger(conf)
 
 	_, keys := validator.GenerateTestValidatorSet()
-	tTxPool = txpool.NewMockTxPool()
+	tTxPool = txpool.MockingTxPool()
 
 	tSigners = make([]crypto.Signer, 4)
 	for i, k := range keys {
@@ -62,10 +68,14 @@ func setup(t *testing.T) {
 	acc.AddToBalance(21000000000000)
 
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, 1)
-	stX, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
-	stY, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], tTxPool)
-	stB, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexB], tTxPool)
-	stP, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], tTxPool)
+	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
+	require.NoError(t, err)
+	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], tTxPool)
+	require.NoError(t, err)
+	stB, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexB], tTxPool)
+	require.NoError(t, err)
+	stP, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], tTxPool)
+	require.NoError(t, err)
 
 	consX, err := NewConsensus(TestConfig(), stX, tSigners[tIndexX], make(chan *message.Message, 100))
 	assert.NoError(t, err)
@@ -79,9 +89,11 @@ func setup(t *testing.T) {
 	tConsY = consY.(*consensus)
 	tConsB = consB.(*consensus)
 	tConsP = consP.(*consensus)
+
+	//TODO: Give a name to the loggers. Look at sync tests
 }
 
-func shouldPublishProposalBlock(t *testing.T, cons *consensus) {
+func shouldPublishBlockAnnounce(t *testing.T, cons *consensus) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -90,9 +102,9 @@ func shouldPublishProposalBlock(t *testing.T, cons *consensus) {
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishProposalBlock", "msg", msg)
+			logger.Info("shouldPublishBlockAnnounce", "msg", msg)
 
-			if msg.PayloadType() == payload.PayloadTypeBlocks {
+			if msg.PayloadType() == payload.PayloadTypeBlockAnnounce {
 				return
 			}
 		}
@@ -109,7 +121,7 @@ func shouldPublishProposalReqquest(t *testing.T, cons *consensus) {
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishProposalReqquest", "msg", msg)
 
-			if msg.PayloadType() == payload.PayloadTypeProposalReq {
+			if msg.PayloadType() == payload.PayloadTypeQueryProposal {
 				return
 			}
 		}
@@ -169,6 +181,45 @@ func testAddVote(t *testing.T,
 		assert.NoError(t, cons.addVote(v))
 	}
 	return v
+}
+
+func commitBlockForAllStates(t *testing.T) {
+	height := tConsX.state.LastBlockHeight()
+	var err error
+	var pb *block.Block
+	switch height % 4 {
+	case 0:
+		pb, err = tConsX.state.ProposeBlock(0)
+		require.NoError(t, err)
+	case 1:
+		pb, err = tConsY.state.ProposeBlock(0)
+		require.NoError(t, err)
+	case 2:
+		pb, err = tConsB.state.ProposeBlock(0)
+		require.NoError(t, err)
+	case 3:
+		pb, err = tConsP.state.ProposeBlock(0)
+		require.NoError(t, err)
+	}
+
+	sb := block.CommitSignBytes(pb.Hash(), 0)
+	sig1 := tSigners[0].Sign(sb)
+	sig2 := tSigners[1].Sign(sb)
+	sig3 := tSigners[2].Sign(sb)
+	sig4 := tSigners[3].Sign(sb)
+
+	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3, sig4})
+	c := block.NewCommit(pb.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
+
+	require.NotNil(t, c)
+	err = tConsX.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
+	err = tConsY.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
+	err = tConsB.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
+	err = tConsP.state.ApplyBlock(height+1, *pb, *c)
+	assert.NoError(t, err)
 }
 
 func TestNotInValidatorSet(t *testing.T) {

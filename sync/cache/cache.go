@@ -35,7 +35,7 @@ func txKey(id crypto.Hash) [33]byte {
 }
 
 type Cache struct {
-	cache *lru.ARCCache
+	cache *lru.ARCCache // it's thread safe
 	store store.StoreReader
 }
 
@@ -75,8 +75,6 @@ func (c *Cache) GetCommit(blockhash crypto.Hash) *block.Commit {
 		return i.(*block.Commit)
 	}
 
-	// TODO: get block commit from store. Good idea?
-
 	return nil
 }
 
@@ -96,12 +94,26 @@ func (c *Cache) GetTransaction(id crypto.Hash) *tx.Tx {
 		return ct.Tx
 	}
 
+	// Should we check txpool?
+	// No, because transaction in txpool should be in cache.
+	// TODO: write tests for me
+
 	return nil
 }
 func (c *Cache) AddTransaction(trx *tx.Tx) {
 	c.cache.Add(txKey(trx.ID()), trx)
 }
 
+func (c *Cache) AddTransactions(trxs []*tx.Tx) {
+	for _, trx := range trxs {
+		c.AddTransaction(trx)
+	}
+}
+
 func (c *Cache) Len() int {
 	return c.cache.Len()
+}
+
+func (c *Cache) Clear() {
+	c.cache.Purge()
 }

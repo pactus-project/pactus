@@ -19,12 +19,15 @@ type MockState struct {
 	GenHash          crypto.Hash
 	Store            *store.MockStore
 	InvalidBlockHash crypto.Hash
+	ValSet           *validator.ValidatorSet
 }
 
-func NewMockState() *MockState {
+func MockingState() *MockState {
+	valset, _ := validator.GenerateTestValidatorSet()
 	return &MockState{
 		GenHash: crypto.GenerateTestHash(),
-		Store:   store.NewMockStore(),
+		Store:   store.MockingStore(),
+		ValSet:  valset,
 	}
 }
 
@@ -32,7 +35,7 @@ func (m *MockState) StoreReader() store.StoreReader {
 	return m.Store
 }
 func (m *MockState) ValidatorSet() validator.ValidatorSetReader {
-	return nil
+	return m.ValSet
 }
 func (m *MockState) LastBlockHeight() int {
 	return m.Store.LastBlockHeight()
@@ -64,15 +67,15 @@ func (m *MockState) Fingerprint() string {
 	return ""
 }
 func (m *MockState) ApplyBlock(height int, b block.Block, c block.Commit) error {
+	if height != m.LastBlockHeight()+1 {
+		return fmt.Errorf("Invalid height")
+	}
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
 		return fmt.Errorf("Invalid block")
 	}
-	if height == m.LastBlockHeight()+1 {
-		m.Store.Blocks[height] = &b
-		m.LastBlockCommit = &c
-		return nil
-	}
-	return fmt.Errorf("Not expected block")
+	m.Store.Blocks[height] = &b
+	m.LastBlockCommit = &c
+	return nil
 }
 
 func (m *MockState) Close() error {
