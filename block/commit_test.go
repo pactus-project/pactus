@@ -71,3 +71,10 @@ func TestCommiters(t *testing.T) {
 	assert.Equal(t, c2.Committers(), expected1)
 	assert.Equal(t, c2.CommittersHash(), expected2)
 }
+
+func TestCommitHash(t *testing.T) {
+	temp := GenerateTestCommit(crypto.GenerateTestHash())
+	expected := temp.Hash()
+	c1 := NewCommit(temp.BlockHash(), temp.Round(), []int{3, 2, 1}, []int{0}, temp.Signature())
+	assert.Equal(t, c1.Hash(), expected)
+}

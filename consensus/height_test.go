@@ -38,7 +38,6 @@ func TestConsensusBehindState3(t *testing.T) {
 	// --------------------------------
 	// Syncer commit a block and trig consensus
 	commitBlockForAllStates(t)
-	tConsX.MoveToNewHeight()
 
 	assert.Equal(t, len(tConsX.RoundVotes(0)), 1)
 	assert.Equal(t, tConsX.hrs, hrs.NewHRS(1, 0, hrs.StepTypePrepare))

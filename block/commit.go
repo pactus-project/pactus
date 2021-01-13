@@ -22,6 +22,9 @@ type commitData struct {
 }
 
 func NewCommit(blockHash crypto.Hash, round int, signed, missed []int, signature crypto.Signature) *Commit {
+	sort.Ints(signed)
+	sort.Ints(missed)
+
 	return &Commit{
 		data: commitData{
 			BlockHash: blockHash,
