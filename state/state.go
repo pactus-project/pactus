@@ -255,7 +255,10 @@ func (st *state) UpdateLastCommit(commit *block.Commit) error {
 }
 
 func (st *state) createSubsidyTx(fee int64) *tx.Tx {
-	acc, _ := st.store.Account(crypto.TreasuryAddress)
+	acc, err := st.store.Account(crypto.TreasuryAddress)
+	if err != nil {
+		return nil
+	}
 	stamp := st.lastBlockHash
 	seq := acc.Sequence() + 1
 	amt := calcBlockSubsidy(st.lastBlockHeight+1, st.params.SubsidyReductionInterval)
@@ -313,6 +316,10 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	}
 
 	subsidyTx := st.createSubsidyTx(st.execution.AccumulatedFee())
+	if subsidyTx == nil {
+		st.logger.Error("Probably the node is shutting down.")
+		return nil, errors.Errorf(errors.ErrInvalidBlock, "No subsidy transaction")
+	}
 	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
 		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
 		return nil, err

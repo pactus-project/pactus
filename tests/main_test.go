@@ -105,12 +105,10 @@ func TestMain(m *testing.M) {
 
 	exitCode := m.Run()
 
-	// Random crash here
-	// TODO: fix ma later
-	// tNodes["node_1"].Stop()
-	// tNodes["node_2"].Stop()
-	// tNodes["node_3"].Stop()
-	// tNodes["node_4"].Stop()
+	tNodes["node_1"].Stop()
+	tNodes["node_2"].Stop()
+	tNodes["node_3"].Stop()
+	tNodes["node_4"].Stop()
 
 	os.Exit(exitCode)
 }

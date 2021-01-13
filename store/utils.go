@@ -22,8 +22,7 @@ func tryPut(db *leveldb.DB, key, value []byte) error {
 	}
 	err := db.Put(key, value, nil)
 	if err != nil {
-		// should panic.
-		logger.Panic("DB error on put", "err", err)
+		return err
 	}
 
 	return nil

@@ -49,6 +49,7 @@ func TestReturnNilForNonExistingItems(t *testing.T) {
 
 	assert.NoError(t, tStore.Close())
 }
+
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
 
@@ -84,7 +85,13 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 		assert.Equal(t, r, ctrx2.Receipt)
 	}
 
+	// After closing db, we should not crash
 	assert.NoError(t, tStore.Close())
+	assert.Error(t, tStore.SaveBlock(*b, h))
+	_, err = tStore.Block(h)
+	assert.Error(t, err)
+	_, err = tStore.Transaction(txs[0].ID())
+	assert.Error(t, err)
 }
 
 func TestRetrieveAccount(t *testing.T) {
@@ -110,6 +117,12 @@ func TestRetrieveAccount(t *testing.T) {
 		assert.Equal(t, acc, acc2)
 	})
 	assert.Equal(t, tStore.TotalAccounts(), 1)
+
+	// Should not crash
+	assert.NoError(t, tStore.Close())
+	_, err := tStore.Account(acc.Address())
+	assert.Error(t, err)
+
 }
 
 func TestRetrieveValidator(t *testing.T) {
@@ -138,6 +151,10 @@ func TestRetrieveValidator(t *testing.T) {
 	assert.Equal(t, tStore.TotalValidators(), 1)
 	val2, _ := tStore.ValidatorByNumber(val.Number())
 	assert.Equal(t, val.Hash(), val2.Hash())
+
+	assert.NoError(t, tStore.Close())
+	_, err := tStore.Validator(val.Address())
+	assert.Error(t, err)
 }
 
 func TestIterateAccounts(t *testing.T) {
