@@ -60,4 +60,6 @@ func TestConsensusBehindState3(t *testing.T) {
 
 	assert.NoError(t, tConsX.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
 	// We don't get any error here, but the block is not committed again. Check logs.
+
+	tConsX.enterNewHeight()
 }

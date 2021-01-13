@@ -31,7 +31,6 @@ func (cs *consensus) enterNewHeight() {
 		if vs == nil {
 			cs.logger.Warn("NewHeight: Entering new height without last commit")
 		} else {
-			// TODO: add test for me
 			// Update last commit here, consensus had enough time to populate more votes
 			lastCommit := vs.ToCommit()
 			if lastCommit != nil {
