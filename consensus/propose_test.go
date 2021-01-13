@@ -132,7 +132,6 @@ func TestLateProposal(t *testing.T) {
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexY, false)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, p.Block().Hash(), tIndexB, false)
 
-	checkHRSWait(t, tConsX, 4, 0, hrs.StepTypePrecommit)
 	// Now partition healed.
 
 	tConsX.SetProposal(p)
