@@ -84,7 +84,6 @@ func (st *state) validateCommitForPreviousHeight(commit *block.Commit) error {
 				"Last commit round is not same as we expected. Expected %v, got %v", st.lastCommit.Round(), commit.Round())
 		}
 
-		// TODO: add tests for this case
 		if !commit.CommittersHash().EqualsTo(st.lastCommit.CommittersHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"Last committers are not same as we expected. Expected %v, got %v", st.lastCommit.CommittersHash(), commit.CommittersHash())

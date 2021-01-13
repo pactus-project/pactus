@@ -96,7 +96,7 @@ func (c *Cache) GetTransaction(id crypto.Hash) *tx.Tx {
 
 	// Should we check txpool?
 	// No, because transaction in txpool should be in cache.
-	// TODO: write tests for it
+	// TODO: write tests for me
 
 	return nil
 }
