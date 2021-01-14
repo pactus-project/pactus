@@ -94,40 +94,31 @@ func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (bloc
 func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Commit {
 	sigs := make([]*crypto.Signature, len(signers))
 	sb := block.CommitSignBytes(blockHash, round)
-	signed := []int{}
-	missed := []int{}
+	committers := make([]block.Committer, 4)
+	committers[0] = block.Committer{Status: 0, Number: 0}
+	committers[1] = block.Committer{Status: 0, Number: 1}
+	committers[2] = block.Committer{Status: 0, Number: 2}
+	committers[3] = block.Committer{Status: 0, Number: 3}
 
 	for i, s := range signers {
 		if s.Address().EqualsTo(tValSigner1.Address()) {
-			signed = append(signed, 0)
+			committers[0] = block.Committer{Status: 1, Number: 0}
 		}
 
 		if s.Address().EqualsTo(tValSigner2.Address()) {
-			signed = append(signed, 1)
+			committers[1] = block.Committer{Status: 1, Number: 1}
 		}
 
 		if s.Address().EqualsTo(tValSigner3.Address()) {
-			signed = append(signed, 2)
+			committers[2] = block.Committer{Status: 1, Number: 2}
 		}
 
 		if s.Address().EqualsTo(tValSigner4.Address()) {
-			signed = append(signed, 3)
+			committers[3] = block.Committer{Status: 1, Number: 3}
 		}
 		sigs[i] = s.Sign(sb)
 	}
-	for i := 0; i < 4; i++ {
-		s := false
-		for _, n := range signed {
-			if n == i {
-				s = true
-			}
-		}
-
-		if s == false {
-			missed = append(missed, i)
-		}
-	}
-	return *block.NewCommit(blockHash, round, signed, missed, crypto.Aggregate(sigs))
+	return *block.NewCommit(blockHash, round, committers, crypto.Aggregate(sigs))
 }
 
 func applyBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {

@@ -20,12 +20,16 @@ struct Txs {
   hashes             @0 :List(Data);
 }
 
+struct Committer {
+  number              @0 :Int32;
+  status              @1 :Int32;
+}
+
 struct Commit {
   blockHash           @0 :Data;
   round               @1 :UInt32;
-	signed              @2 :List(Int32);
-  missed              @3 :List(Int32);
-  signature           @4 :Data;
+  committers          @2 :List(Committer);
+  signature           @3 :Data;
 }
 
 struct Block {
@@ -71,11 +75,11 @@ struct SendTransactionResult {
 
 interface ZarbServer {
   getBlockchainInfo    @0 ()                                       -> (result: BlockchainResult);
-	getBlock             @1 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
-	getTransaction       @2 (id: Data, verbosity: Int32)           -> (result :TransactionResult);
-	getBlockHeight       @3 (hash: Data)                             -> (result :UInt64);
-	getAccount           @4 (address: Data, verbosity: Int32)        -> (result :AccountResult);
-	getValidator         @5 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
-  sendRawTransaction   @6 (rawTx: Data)                             -> (result:SendTransactionResult);
+  getBlock             @1 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
+  getTransaction       @2 (id: Data, verbosity: Int32)             -> (result :TransactionResult);
+  getBlockHeight       @3 (hash: Data)                             -> (result :UInt64);
+  getAccount           @4 (address: Data, verbosity: Int32)        -> (result :AccountResult);
+  getValidator         @5 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
+  sendRawTransaction   @6 (rawTx: Data)                            -> (result:SendTransactionResult);
 }
 

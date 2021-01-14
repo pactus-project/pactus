@@ -175,28 +175,30 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 
 	votesMap := vs.votesByBlock[*blockHash].votes
 	vals := vs.valSet.Validators()
-	signed := make([]int, 0)
-	missed := make([]int, 0)
+	committers := make([]block.Committer, len(vals))
 	sigs := make([]*crypto.Signature, 0)
 
-	for _, addr := range vals {
-		v := votesMap[addr]
+	for i, addr := range vals {
+		status := block.CommitNotSigned
 		val := vs.valSet.Validator(addr)
 		if val == nil {
+			// TODO: This might the node crash if validator set changes
 			panic("Invalid vote set")
 		}
+		v := votesMap[addr]
 
 		if v != nil {
 			sigs = append(sigs, v.Signature())
-			signed = append(signed, val.Number())
-		} else {
-			missed = append(missed, val.Number())
+			status = block.CommitSigned
 		}
+
+		committers[i].Number = val.Number()
+		committers[i].Status = status
 	}
 
 	sig := crypto.Aggregate(sigs)
 
-	return block.NewCommit(*blockHash, vs.round, signed, missed, sig)
+	return block.NewCommit(*blockHash, vs.round, committers, sig)
 }
 
 func (vs *VoteSet) Fingerprint() string {

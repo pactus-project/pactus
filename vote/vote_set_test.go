@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
@@ -137,6 +138,10 @@ func TestQuorum(t *testing.T) {
 
 	c := voteSet.ToCommit()
 	assert.NotNil(t, c)
-	assert.Equal(t, c.Signed(), []int{0, 1, 2, 3})
-	assert.Equal(t, c.Missed(), []int{})
+	assert.Equal(t, c.Committers(), []block.Committer{
+		{Number: 0, Status: 1},
+		{Number: 1, Status: 1},
+		{Number: 2, Status: 1},
+		{Number: 3, Status: 1},
+	})
 }

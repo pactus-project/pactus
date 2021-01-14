@@ -126,8 +126,8 @@ func (st *state) tryLoadLastInfo() error {
 	st.lastReceiptsHash = li.LastReceiptHash
 
 	vals := make([]*validator.Validator, len(st.lastCommit.Committers()))
-	for i, num := range st.lastCommit.Committers() {
-		val, err := st.store.ValidatorByNumber(num)
+	for i, c := range st.lastCommit.Committers() {
+		val, err := st.store.ValidatorByNumber(c.Number)
 		if err != nil {
 			return fmt.Errorf("Last commit has unknown validator: %v", err)
 		}

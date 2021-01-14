@@ -239,8 +239,8 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 		return errors.Errorf(errors.ErrGeneric, "Invalid block hash")
 	}
 	commiters := b.LastCommit().Committers()
-	for _, num := range commiters {
-		if s.Validator.Number() == num {
+	for _, c := range commiters {
+		if s.Validator.Number() == c.Number {
 			return errors.Errorf(errors.ErrGeneric, "This validator was in the set in time of sending the sortition")
 		}
 	}

@@ -2,10 +2,8 @@ package validator
 
 import (
 	"fmt"
-	"sort"
 
-	"github.com/zarbchain/zarb-go/util"
-
+	"github.com/fxamacker/cbor/v2"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
@@ -160,12 +158,9 @@ func (set *ValidatorSet) CommittersHash() crypto.Hash {
 	for i, v := range set.validators {
 		nums[i] = v.Number()
 	}
-	sort.Ints(nums)
-	data := make([]byte, 0)
-	for _, n := range nums {
-		data = append(data, util.IntToSlice(n)...)
-	}
-	return crypto.HashH(data)
+
+	bz, _ := cbor.Marshal(nums)
+	return crypto.HashH(bz)
 }
 
 // GenerateTestValidatorSet generates a validator set for testing purpose

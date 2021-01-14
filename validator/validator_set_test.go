@@ -306,7 +306,7 @@ func TestCommittersHash(t *testing.T) {
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
-	expected, _ := crypto.HashFromString("df5c58d8b7c13806b6d23e878526ccdf331c4fed72780e52ea2775f4aa082a44")
+	expected, _ := crypto.HashFromString("fd36b2597b028652ad4430b34a67094ba93ed84bd3abe5cd27f675bf431add48")
 	assert.Equal(t, vs.CommittersHash(), expected)
 }
 

@@ -63,9 +63,9 @@ func TestAggregationOnlyOneSignature(t *testing.T) {
 }
 
 func TestAggregateTheAggregated(t *testing.T) {
-	_, _, pv1 := GenerateTestKeyPair()
-	_, _, pv2 := GenerateTestKeyPair()
-	_, _, pv3 := GenerateTestKeyPair()
+	_, pk1, pv1 := GenerateTestKeyPair()
+	_, pk2, pv2 := GenerateTestKeyPair()
+	_, pk3, pv3 := GenerateTestKeyPair()
 
 	msg1 := []byte("zarb")
 
@@ -78,4 +78,11 @@ func TestAggregateTheAggregated(t *testing.T) {
 	agg3 := Aggregate([]*Signature{&agg2, sig3})
 
 	assert.Equal(t, agg1.RawBytes(), agg3.RawBytes())
+
+	pks2 := []PublicKey{pk1, pk2}
+	pks3 := []PublicKey{pk1, pk2, pk3}
+
+	assert.True(t, VerifyAggregated(agg3, pks3, msg1))
+	assert.True(t, VerifyAggregated(agg2, pks2, msg1))
+	assert.False(t, VerifyAggregated(agg3, pks2, msg1))
 }
