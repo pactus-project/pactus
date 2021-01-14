@@ -209,7 +209,12 @@ func commitBlockForAllStates(t *testing.T) {
 	sig4 := tSigners[3].Sign(sb)
 
 	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3, sig4})
-	c := block.NewCommit(pb.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
+	c := block.NewCommit(pb.Hash(), 0, []block.Committer{
+		{Number: 0, Status: 1},
+		{Number: 1, Status: 1},
+		{Number: 2, Status: 1},
+		{Number: 3, Status: 1},
+	}, sig)
 
 	require.NotNil(t, c)
 	err = tConsX.state.ApplyBlock(height+1, *pb, *c)

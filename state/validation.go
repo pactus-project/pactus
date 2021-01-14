@@ -43,14 +43,16 @@ func (st *state) validateCommit(commit *block.Commit) error {
 		return err
 	}
 
-	pubs := make([]crypto.PublicKey, len(commit.Signed()))
-	for i, num := range commit.Signed() {
-		val, _ := st.store.ValidatorByNumber(num)
-		if val == nil {
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"invalid committer: %x", num)
+	pubs := make([]crypto.PublicKey, 0, len(commit.Committers()))
+	for _, c := range commit.Committers() {
+		if c.HasSigned() {
+			val, _ := st.store.ValidatorByNumber(c.Number)
+			if val == nil {
+				return errors.Errorf(errors.ErrInvalidBlock,
+					"invalid committer: %x", c.Number)
+			}
+			pubs = append(pubs, val.PublicKey())
 		}
-		pubs[i] = val.PublicKey()
 	}
 
 	signBytes := commit.SignBytes()

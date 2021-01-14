@@ -164,9 +164,6 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 	if lastBlockHash.IsUndef() {
 		commit = nil
 		lastReceiptsHash = crypto.UndefHash
-	} else {
-		commit.data.Signed = []int{0, 1, 2, 3} // 0 is proposer
-		commit.data.Missed = []int{}
 	}
 	block := MakeBlock(util.Now(), ids,
 		*lastBlockHash,
@@ -180,21 +177,23 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 }
 
 func GenerateTestCommit(blockhash crypto.Hash) *Commit {
-	_, _, pv1 := crypto.GenerateTestKeyPair()
-	_, _, pv2 := crypto.GenerateTestKeyPair()
-	_, _, pv3 := crypto.GenerateTestKeyPair()
+	_, _, priv2 := crypto.GenerateTestKeyPair()
+	_, _, priv3 := crypto.GenerateTestKeyPair()
+	_, _, priv4 := crypto.GenerateTestKeyPair()
 
 	sigs := []*crypto.Signature{
-		pv1.Sign(blockhash.RawBytes()),
-		pv2.Sign(blockhash.RawBytes()),
-		pv3.Sign(blockhash.RawBytes()),
+		priv2.Sign(blockhash.RawBytes()),
+		priv3.Sign(blockhash.RawBytes()),
+		priv4.Sign(blockhash.RawBytes()),
 	}
 	sig := crypto.Aggregate(sigs)
 
-	return NewCommit(
-		blockhash,
-		util.RandInt(10),
-		[]int{1, 2, 3},
-		[]int{0},
+	return NewCommit(blockhash, util.RandInt(10),
+		[]Committer{
+			{Status: CommitNotSigned, Number: 0},
+			{Status: CommitSigned, Number: 1},
+			{Status: CommitSigned, Number: 2},
+			{Status: CommitSigned, Number: 3},
+		},
 		sig)
 }

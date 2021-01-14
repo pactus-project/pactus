@@ -2,54 +2,51 @@ package block
 
 import (
 	"encoding/json"
-	"sort"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/util"
 )
+
+const (
+	CommitNotSigned = 0
+	CommitSigned    = 1
+)
+
+type Committer struct {
+	Number int `cbor:"1,keyasint"`
+	Status int `cbor:"2,keyasint"`
+}
+
+func (committer *Committer) HasSigned() bool {
+	return committer.Status == CommitSigned
+}
 
 type Commit struct {
 	data commitData
 }
 type commitData struct {
-	BlockHash crypto.Hash      `cbor:"1,keyasint"`
-	Round     int              `cbor:"2,keyasint"`
-	Signed    []int            `cbor:"3,keyasint"` // validator numbers that signed the commit
-	Missed    []int            `cbor:"4,keyasint"` // validator numbers that missed the commit
-	Signature crypto.Signature `cbor:"5,keyasint"`
+	BlockHash  crypto.Hash      `cbor:"1,keyasint"`
+	Round      int              `cbor:"2,keyasint"`
+	Committers []Committer      `cbor:"3,keyasint"`
+	Signature  crypto.Signature `cbor:"4,keyasint"`
 }
 
-func NewCommit(blockHash crypto.Hash, round int, signed, missed []int, signature crypto.Signature) *Commit {
-	sort.Ints(signed)
-	sort.Ints(missed)
-
+func NewCommit(blockHash crypto.Hash, round int, committers []Committer, signature crypto.Signature) *Commit {
 	return &Commit{
 		data: commitData{
-			BlockHash: blockHash,
-			Round:     round,
-			Signed:    signed,
-			Missed:    missed,
-			Signature: signature,
+			BlockHash:  blockHash,
+			Round:      round,
+			Committers: committers,
+			Signature:  signature,
 		},
 	}
 }
 
 func (c *Commit) BlockHash() crypto.Hash      { return c.data.BlockHash }
 func (c *Commit) Round() int                  { return c.data.Round }
-func (c *Commit) Signed() []int               { return c.data.Signed }
-func (c *Commit) Missed() []int               { return c.data.Missed }
+func (c *Commit) Committers() []Committer     { return c.data.Committers }
 func (c *Commit) Signature() crypto.Signature { return c.data.Signature }
-
-func (c *Commit) Committers() []int {
-	nums := make([]int, len(c.data.Signed))
-	copy(nums, c.data.Signed)
-	nums = append(nums, c.data.Missed...)
-	sort.Ints(nums)
-
-	return nums
-}
 
 func (c *Commit) SanityCheck() error {
 	if err := c.data.BlockHash.SanityCheck(); err != nil {
@@ -60,6 +57,14 @@ func (c *Commit) SanityCheck() error {
 	}
 	if err := c.data.Signature.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+	}
+	for _, c := range c.data.Committers {
+		if c.Status > 1 {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid status")
+		}
+		if c.Number < 0 {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid number")
+		}
 	}
 	if !c.HasTwoThirdThreshold() {
 		return errors.Errorf(errors.ErrInvalidBlock, "Not enough signatures")
@@ -80,7 +85,13 @@ func (c *Commit) Hash() crypto.Hash {
 }
 
 func (c *Commit) Threshold() int {
-	return len(c.data.Signed) * 100 / (len(c.data.Missed) + len(c.data.Signed))
+	signed := 0
+	for _, c := range c.data.Committers {
+		if c.Status == CommitSigned {
+			signed++
+		}
+	}
+	return signed * 100 / len(c.data.Committers) // divide in golang is floor division
 }
 
 func (c *Commit) HasTwoThirdThreshold() bool {
@@ -88,12 +99,12 @@ func (c *Commit) HasTwoThirdThreshold() bool {
 }
 
 func (c *Commit) CommittersHash() crypto.Hash {
-	numbers := c.Committers()
-	data := make([]byte, 0)
-	for _, n := range numbers {
-		data = append(data, util.IntToSlice(n)...)
+	nums := []int{}
+	for _, c := range c.data.Committers {
+		nums = append(nums, c.Number)
 	}
-	return crypto.HashH(data)
+	bz, _ := cbor.Marshal(nums)
+	return crypto.HashH(bz)
 }
 
 func (c *Commit) MarshalCBOR() ([]byte, error) {

@@ -52,90 +52,157 @@ func TestCommitValidation(t *testing.T) {
 	invalidSig := crypto.Aggregate([]*crypto.Signature{invSig1, invSig2, invSig3})
 
 	t.Run("Invalid blockhahs, should return error", func(t *testing.T) {
-		c := block.NewCommit(invBlockHash, 0, []int{0, 1, 2}, []int{3}, validSig)
+		c := block.NewCommit(invBlockHash, 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 3, Status: 0},
+		}, validSig)
 
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
 		invSig := tValSigner1.Sign([]byte("abc"))
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2}, []int{3}, *invSig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 3, Status: 0},
+		}, *invSig)
 
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Invalid signer, should return error", func(t *testing.T) {
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 4}, []int{3}, validSig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 4, Status: 0},
+		}, validSig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 
-		c = block.NewCommit(b2.Hash(), 0, []int{0, 1, 3}, []int{4}, validSig)
-		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
+		c2 := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 4, Status: 1},
+		}, validSig)
+		assert.Error(t, tState1.ApplyBlock(2, *b2, *c2))
 	})
 
 	t.Run("Unexpected signature", func(t *testing.T) {
 		sig1 := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, invSig3, valSig4})
-		c1 := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig1)
+		c1 := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 3, Status: 0},
+		}, sig1)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c1))
 
 		sig2 := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, invSig5})
-		c2 := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{}, sig2)
+		c2 := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 4, Status: 0},
+		}, sig2)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c2))
 	})
 
 	t.Run("duplicated or missed number, should return error", func(t *testing.T) {
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2}, []int{2}, validSig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 2, Status: 1},
+		}, validSig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 
-		c = block.NewCommit(b2.Hash(), 0, []int{0, 1, 2}, []int{}, validSig)
+		c = block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+		}, validSig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("unexpected block hash", func(t *testing.T) {
-		c := block.NewCommit(invBlockHash, 0, []int{0, 1, 2}, []int{3}, invalidSig)
+		c := block.NewCommit(invBlockHash, 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 3, Status: 0},
+		}, invalidSig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
-		c := block.NewCommit(b2.Hash(), 1, []int{0, 1, 2}, []int{3}, validSig)
+		c := block.NewCommit(b2.Hash(), 1, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 3, Status: 0},
+		}, validSig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Doesn't have 2/3 majority, should return no error", func(t *testing.T) {
 		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2})
 
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1}, []int{2, 3}, sig)
-		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
-	})
-
-	t.Run("Update last commit- Not in the set, should return no error", func(t *testing.T) {
-		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, invSig5})
-
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{2}, sig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 0},
+			{Number: 3, Status: 0},
+		}, sig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Invalid committer, should return no error", func(t *testing.T) {
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 5}, []int{3}, validSig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 5, Status: 1},
+		}, validSig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Valid signature, should return no error", func(t *testing.T) {
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2}, []int{3}, validSig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 3, Status: 0},
+		}, validSig)
 		assert.NoError(t, tState1.ApplyBlock(2, *b2, *c))
 	})
 
 	t.Run("Update last commit- Invalid signer", func(t *testing.T) {
 		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, invSig5})
 
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{}, sig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 4, Status: 1},
+		}, sig)
 		assert.Error(t, tState1.UpdateLastCommit(c))
 	})
 
 	t.Run("Update last commit- valid signature, should return no error", func(t *testing.T) {
 		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig4})
 
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 3}, []int{2}, sig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 0},
+			{Number: 3, Status: 1},
+		}, sig)
 		assert.NoError(t, tState1.UpdateLastCommit(c))
 		// Commit didn't change
 		assert.NotEqual(t, tState1.lastCommit.Hash(), c.Hash())
@@ -144,7 +211,12 @@ func TestCommitValidation(t *testing.T) {
 	t.Run("Update last commit- Valid signature, should return no error", func(t *testing.T) {
 		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, valSig4})
 
-		c := block.NewCommit(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
+		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 1},
+			{Number: 3, Status: 1},
+		}, sig)
 		assert.NoError(t, tState1.UpdateLastCommit(c))
 		// Commit updated
 		assert.Equal(t, tState1.lastCommit.Hash(), c.Hash())

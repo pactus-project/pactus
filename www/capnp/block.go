@@ -69,13 +69,11 @@ func (f factory) ToVerboseBlock(block *block.Block, res *BlockResult) error {
 		if err := clc.SetSignature(block.LastCommit().Signature().RawBytes()); err != nil {
 			return err
 		}
-		signed, _ := clc.NewSigned(int32(len(block.LastCommit().Signed())))
-		for i, num := range block.LastCommit().Signed() {
-			signed.Set(i, int32(num))
-		}
-		missed, _ := clc.NewMissed(int32(len(block.LastCommit().Missed())))
-		for i, num := range block.LastCommit().Missed() {
-			missed.Set(i, int32(num))
+		clcc, _ := clc.NewCommitters(int32(len(block.LastCommit().Committers())))
+		for i, commiter := range block.LastCommit().Committers() {
+			c := clcc.At(i)
+			c.SetNumber(int32(commiter.Number))
+			c.SetStatus(int32(commiter.Status))
 		}
 	}
 	// header
