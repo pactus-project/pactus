@@ -49,7 +49,7 @@ func (st *state) validateCommit(commit *block.Commit) error {
 			val, _ := st.store.ValidatorByNumber(c.Number)
 			if val == nil {
 				return errors.Errorf(errors.ErrInvalidBlock,
-					"invalid committer: %x", val.Address())
+					"invalid committer: %x", c.Number)
 			}
 			pubs = append(pubs, val.PublicKey())
 		}

@@ -35,6 +35,7 @@ func TestCommitSanityCheck(t *testing.T) {
 	c := GenerateTestCommit(crypto.GenerateTestHash())
 	assert.NoError(t, c.SanityCheck())
 	c.data.Committers[1].Status = 0 // not signed
+	assert.False(t, c.Committers()[0].HasSigned())
 	// Not enough signer
 	assert.Error(t, c.SanityCheck())
 	assert.False(t, c.HasTwoThirdThreshold())
@@ -47,6 +48,10 @@ func TestCommitSanityCheck(t *testing.T) {
 
 	c2 := GenerateTestCommit(crypto.UndefHash)
 	assert.Error(t, c2.SanityCheck())
+
+	c3 := GenerateTestCommit(crypto.GenerateTestHash())
+	c3.data.Round = -1
+	assert.Error(t, c3.SanityCheck())
 }
 
 func TestThreshold(t *testing.T) {

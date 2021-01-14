@@ -167,7 +167,7 @@ func TestCommitValidation(t *testing.T) {
 			{Number: 0, Status: 1},
 			{Number: 1, Status: 1},
 			{Number: 2, Status: 1},
-			{Number: 5, Status: 0},
+			{Number: 5, Status: 1},
 		}, validSig)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
