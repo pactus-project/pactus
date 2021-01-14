@@ -1,6 +1,9 @@
 package http
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,4 +66,20 @@ func setup(t *testing.T) {
 	tHTTPServer, err = NewServer(TestConfig())
 	assert.NoError(t, err)
 	assert.NoError(t, tHTTPServer.StartServer(tCapnpServer.Address()))
+}
+
+func TestStopServer(t *testing.T) {
+	setup(t)
+
+	tHTTPServer.StopServer() // Should close properly
+}
+
+func TestRootHandler(t *testing.T) {
+	setup(t)
+
+	w := httptest.NewRecorder()
+	r := new(http.Request)
+	tHTTPServer.RootHandler(w, r)
+	assert.Equal(t, w.Code, 200)
+	fmt.Println(w.Body)
 }

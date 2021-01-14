@@ -1,9 +1,7 @@
 package tests
 
 import (
-	"bytes"
 	"fmt"
-	"net/http"
 	"testing"
 	"time"
 
@@ -11,26 +9,28 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func getAccount(t *testing.T, addr crypto.Address) *account.Account {
-	url := fmt.Sprintf("http://%s/account/address/%s", tCurlAddress, addr.String())
-	for i := 0; i < 50; i++ {
-		res, err := http.Get(url)
-		if err == nil {
-			if res.StatusCode == 200 {
-				buf := new(bytes.Buffer)
-				_, err := buf.ReadFrom(res.Body)
-				assert.NoError(t, err)
-				var acc account.Account
-				err = acc.UnmarshalJSON(buf.Bytes())
-				assert.NoError(t, err)
-				return &acc
-			}
+	for i := 0; i < 20; i++ {
+		res := tCapnpServer.GetAccount(tCtx, func(p capnp.ZarbServer_getAccount_Params) error {
+			p.SetAddress([]byte(addr.String()))
+			return nil
+		}).Result()
+
+		st, err := res.Struct()
+		if err != nil {
+			time.Sleep(500 * time.Millisecond)
+			continue
 		}
-		time.Sleep(100 * time.Millisecond)
+
+		d, _ := st.Data()
+		acc := new(account.Account)
+		assert.NoError(t, acc.Decode(d))
+		return acc
 	}
-	assert.NoError(t, fmt.Errorf("timeout"))
+	require.NoError(t, fmt.Errorf("timeout"))
 	return nil
 }
 

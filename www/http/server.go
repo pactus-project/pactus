@@ -137,7 +137,7 @@ func (s *Server) writeError(w http.ResponseWriter, err error) int {
 
 func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusOK)
 	n, _ := io.WriteString(w, html)
 	return n
 }

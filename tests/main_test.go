@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"context"
+	"net"
 	"os"
 	"testing"
 
@@ -12,13 +14,18 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/www/capnp"
+	"zombiezen.com/go/capnproto2/rpc"
 )
 
 var tSigners map[string]*crypto.Signer
 var tConfigs map[string]*config.Config
 var tNodes map[string]*node.Node
 var tCurlAddress = "0.0.0.0:1337"
+var tCapnpAddress = "0.0.0.0:31337"
 var tGenDoc *genesis.Genesis
+var tCapnpServer capnp.ZarbServer
+var tCtx context.Context
 
 func TestMain(m *testing.M) {
 	tSigners = make(map[string]*crypto.Signer)
@@ -29,15 +36,18 @@ func TestMain(m *testing.M) {
 	_, _, priv2 := crypto.GenerateTestKeyPair()
 	_, _, priv3 := crypto.GenerateTestKeyPair()
 	_, _, priv4 := crypto.GenerateTestKeyPair()
+	_, _, priv5 := crypto.GenerateTestKeyPair()
 	signer1 := crypto.NewSigner(priv1)
 	signer2 := crypto.NewSigner(priv2)
 	signer3 := crypto.NewSigner(priv3)
 	signer4 := crypto.NewSigner(priv4)
+	signer5 := crypto.NewSigner(priv5)
 
 	tSigners["node_1"] = &signer1
 	tSigners["node_2"] = &signer2
 	tSigners["node_3"] = &signer3
 	tSigners["node_4"] = &signer4
+	tSigners["alice"] = &signer5
 
 	tConfigs["node_1"] = config.DefaultConfig()
 	tConfigs["node_2"] = config.DefaultConfig()
@@ -64,13 +74,13 @@ func TestMain(m *testing.M) {
 	tConfigs["node_3"].Http.Enable = false
 	tConfigs["node_4"].Http.Enable = false
 
-	tConfigs["node_1"].Capnp.Address = "0.0.0.0:0"
+	tConfigs["node_1"].Capnp.Address = tCapnpAddress
 	tConfigs["node_2"].Capnp.Enable = false
 	tConfigs["node_3"].Capnp.Enable = false
 	tConfigs["node_4"].Capnp.Enable = false
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(21000000000000)
+	acc.AddToBalance(2100000000000000)
 
 	vals := make([]*validator.Validator, 4)
 	vals[0] = validator.NewValidator(tSigners["node_1"].PublicKey(), 0, 0)
@@ -103,11 +113,21 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
+	c, err := net.Dial("tcp", tCapnpAddress)
+	if err != nil {
+		panic(err)
+	}
+
+	tCtx = context.Background()
+	conn := rpc.NewConn(rpc.StreamTransport(c))
+	tCapnpServer = capnp.ZarbServer{Client: conn.Bootstrap(tCtx)}
+
 	t := testing.T{}
 	getBlockAt(&t, 1)
 
 	exitCode := m.Run()
 
+	tCtx.Done()
 	tNodes["node_1"].Stop()
 	tNodes["node_2"].Stop()
 	tNodes["node_3"].Stop()
