@@ -48,6 +48,7 @@ func (s *Server) StartServer(capnpServer string) error {
 	s.server = capnp.ZarbServer{Client: conn.Bootstrap(s.ctx)}
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
+	s.router.HandleFunc("/blockchain/", s.GetBlockchainHandler)
 	s.router.HandleFunc("/block/height/{height}", s.GetBlockHandler)
 	s.router.HandleFunc("/block_height/hash/{hash}", s.GetBlockHeightHandler)
 	s.router.HandleFunc("/transaction/hash/{hash}", s.GetTransactionHandler)

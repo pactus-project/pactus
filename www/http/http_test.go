@@ -68,12 +68,6 @@ func setup(t *testing.T) {
 	assert.NoError(t, tHTTPServer.StartServer(tCapnpServer.Address()))
 }
 
-func TestStopServer(t *testing.T) {
-	setup(t)
-
-	tHTTPServer.StopServer() // Should close properly
-}
-
 func TestRootHandler(t *testing.T) {
 	setup(t)
 

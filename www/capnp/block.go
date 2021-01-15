@@ -4,11 +4,13 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/txpool"
 )
 
 type factory struct {
+	state  state.StateReader
 	store  store.StoreReader
 	txPool txpool.TxPool
 	logger *logger.Logger
@@ -22,7 +24,7 @@ func (f factory) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 	}
 	num, err := f.store.BlockHeight(h)
 	if err != nil {
-		f.logger.Error("Error on retriving block number", "err", err)
+		f.logger.Debug("Error on retriving block number", "err", err)
 		return err
 	}
 	args.Results.SetResult(uint64(num))
@@ -34,7 +36,7 @@ func (f factory) GetBlock(args ZarbServer_getBlock) error {
 	v := args.Params.Verbosity()
 	b, err := f.store.Block(int(h))
 	if err != nil {
-		f.logger.Error("Error on retriving block", "height", h, "err", err)
+		f.logger.Debug("Error on retriving block", "height", h, "err", err)
 		return err
 	}
 

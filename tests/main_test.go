@@ -2,136 +2,145 @@ package tests
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 
-var tSigners map[string]*crypto.Signer
-var tConfigs map[string]*config.Config
-var tNodes map[string]*node.Node
+var tSigners []crypto.Signer
+var tConfigs []*config.Config
+var tNodes []*node.Node
 var tCurlAddress = "0.0.0.0:1337"
 var tCapnpAddress = "0.0.0.0:31337"
 var tGenDoc *genesis.Genesis
 var tCapnpServer capnp.ZarbServer
 var tCtx context.Context
+var tSequences map[crypto.Address]int
+
+const tNodeIdx1 = 0
+const tNodeIdx2 = 1
+const tNodeIdx3 = 2
+const tNodeIdx4 = 3
+
+//const tNodeIdx5 = 4
+//const tNodeIdx6 = 5
+
+func incSequence(t *testing.T, addr crypto.Address) {
+	_, ok := tSequences[addr]
+	if ok {
+		tSequences[addr]++
+	} else {
+		tSequences[addr] = 1
+	}
+}
+
+func getSequence(t *testing.T, addr crypto.Address) int {
+	i, ok := tSequences[addr]
+	if ok {
+		return i
+	}
+	return 0
+}
 
 func TestMain(m *testing.M) {
-	tSigners = make(map[string]*crypto.Signer)
-	tConfigs = make(map[string]*config.Config)
-	tNodes = make(map[string]*node.Node)
+	max := 6
+	tSigners = make([]crypto.Signer, max)
+	tConfigs = make([]*config.Config, max)
+	tNodes = make([]*node.Node, max)
+	tSequences = make(map[crypto.Address]int)
 
-	_, _, priv1 := crypto.GenerateTestKeyPair()
-	_, _, priv2 := crypto.GenerateTestKeyPair()
-	_, _, priv3 := crypto.GenerateTestKeyPair()
-	_, _, priv4 := crypto.GenerateTestKeyPair()
-	_, _, priv5 := crypto.GenerateTestKeyPair()
-	signer1 := crypto.NewSigner(priv1)
-	signer2 := crypto.NewSigner(priv2)
-	signer3 := crypto.NewSigner(priv3)
-	signer4 := crypto.NewSigner(priv4)
-	signer5 := crypto.NewSigner(priv5)
+	for i := 0; i < max; i++ {
+		addr, _, priv := crypto.GenerateTestKeyPair()
+		tSigners[i] = crypto.NewSigner(priv)
+		tConfigs[i] = config.DefaultConfig()
+		tConfigs[i].Sync.StartingTimeout = 0
+		tConfigs[i].State.Store.Path = util.TempDirPath()
+		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
+		if i == 0 {
+			tConfigs[i].Http.Address = tCurlAddress
+			tConfigs[i].Capnp.Address = tCapnpAddress
+		} else {
+			tConfigs[i].Http.Enable = false
+			tConfigs[i].Capnp.Enable = false
+		}
 
-	tSigners["node_1"] = &signer1
-	tSigners["node_2"] = &signer2
-	tSigners["node_3"] = &signer3
-	tSigners["node_4"] = &signer4
-	tSigners["alice"] = &signer5
+		tConfigs[i].Logger.Levels["default"] = "error"
+		tConfigs[i].Logger.Levels["_state"] = "error"
+		tConfigs[i].Logger.Levels["_sync"] = "error"
+		tConfigs[i].Logger.Levels["_consensus"] = "error"
 
-	tConfigs["node_1"] = config.DefaultConfig()
-	tConfigs["node_2"] = config.DefaultConfig()
-	tConfigs["node_3"] = config.DefaultConfig()
-	tConfigs["node_4"] = config.DefaultConfig()
-
-	tConfigs["node_1"].Sync.StartingTimeout = 0
-	tConfigs["node_2"].Sync.StartingTimeout = 0
-	tConfigs["node_3"].Sync.StartingTimeout = 0
-	tConfigs["node_4"].Sync.StartingTimeout = 0
-
-	tConfigs["node_1"].State.Store.Path = util.TempDirPath()
-	tConfigs["node_2"].State.Store.Path = util.TempDirPath()
-	tConfigs["node_3"].State.Store.Path = util.TempDirPath()
-	tConfigs["node_4"].State.Store.Path = util.TempDirPath()
-
-	tConfigs["node_1"].Network.NodeKeyFile = util.TempFilePath()
-	tConfigs["node_2"].Network.NodeKeyFile = util.TempFilePath()
-	tConfigs["node_3"].Network.NodeKeyFile = util.TempFilePath()
-	tConfigs["node_4"].Network.NodeKeyFile = util.TempFilePath()
-
-	tConfigs["node_1"].Http.Address = tCurlAddress
-	tConfigs["node_2"].Http.Enable = false
-	tConfigs["node_3"].Http.Enable = false
-	tConfigs["node_4"].Http.Enable = false
-
-	tConfigs["node_1"].Capnp.Address = tCapnpAddress
-	tConfigs["node_2"].Capnp.Enable = false
-	tConfigs["node_3"].Capnp.Enable = false
-	tConfigs["node_4"].Capnp.Enable = false
+		fmt.Printf("Node %d address: %s\n", i+1, addr)
+	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(2100000000000000)
 
 	vals := make([]*validator.Validator, 4)
-	vals[0] = validator.NewValidator(tSigners["node_1"].PublicKey(), 0, 0)
-	vals[1] = validator.NewValidator(tSigners["node_2"].PublicKey(), 1, 0)
-	vals[2] = validator.NewValidator(tSigners["node_3"].PublicKey(), 2, 0)
-	vals[3] = validator.NewValidator(tSigners["node_4"].PublicKey(), 3, 0)
+	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0, 0)
+	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1, 0)
+	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2, 0)
+	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 1
+	params.BlockTimeInSecond = 2
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
-	tNodes["node_1"], _ = node.NewNode(tGenDoc, tConfigs["node_1"], *tSigners["node_1"])
-	tNodes["node_2"], _ = node.NewNode(tGenDoc, tConfigs["node_2"], *tSigners["node_2"])
-	tNodes["node_3"], _ = node.NewNode(tGenDoc, tConfigs["node_3"], *tSigners["node_3"])
-	tNodes["node_4"], _ = node.NewNode(tGenDoc, tConfigs["node_4"], *tSigners["node_4"])
+	var err error
+	t := &testing.T{}
 
-	err := tNodes["node_1"].Start()
-	if err != nil {
-		panic(err)
-	}
-	err = tNodes["node_2"].Start()
-	if err != nil {
-		panic(err)
-	}
-	err = tNodes["node_3"].Start()
-	if err != nil {
-		panic(err)
-	}
-	err = tNodes["node_4"].Start()
-	if err != nil {
-		panic(err)
+	for i := 0; i < max; i++ {
+		tNodes[i], err = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
+		require.NoError(t, err)
+		err := tNodes[i].Start()
+		require.NoError(t, err)
 	}
 
 	c, err := net.Dial("tcp", tCapnpAddress)
 	if err != nil {
-		panic(err)
+		require.NoError(t, err)
 	}
 
 	tCtx = context.Background()
 	conn := rpc.NewConn(rpc.StreamTransport(c))
 	tCapnpServer = capnp.ZarbServer{Client: conn.Bootstrap(tCtx)}
 
-	t := testing.T{}
-	getBlockAt(&t, 1)
+	waitForNewBlock(t)
+	waitForNewBlock(t)
 
 	exitCode := m.Run()
 
 	tCtx.Done()
-	tNodes["node_1"].Stop()
-	tNodes["node_2"].Stop()
-	tNodes["node_3"].Stop()
-	tNodes["node_4"].Stop()
+	for i := 0; i < max; i++ {
+		tNodes[i].Stop()
+	}
+
+	s, err := store.NewStore(tConfigs[tNodeIdx1].State.Store)
+	require.NoError(t, err)
+	total := int64(0)
+	s.IterateAccounts(func(a *account.Account) bool {
+		total += a.Balance()
+		return false
+	})
+
+	s.IterateValidators(func(v *validator.Validator) bool {
+		total += v.Stake()
+		return false
+	})
+	assert.Equal(t, total, 2100000000000000)
 
 	os.Exit(exitCode)
 }

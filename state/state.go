@@ -290,6 +290,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	st.executionSandbox.Clear()
 	st.txPoolSandbox.Clear()
+	st.execution.ResetFee()
 
 	txIDs := block.NewTxIDs()
 

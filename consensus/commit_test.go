@@ -84,3 +84,16 @@ func TestEnterCommit(t *testing.T) {
 	tConsY.enterCommit(1)
 	shouldPublishBlockAnnounce(t, tConsY, p1.Block().Hash())
 }
+
+func TestSetStaleProposal(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+
+	tConsX.enterNewHeight()
+	tConsY.enterNewHeight()
+	p := tConsY.LastProposal()
+	commitBlockForAllStates(t)
+
+	tConsX.SetProposal(p)
+}

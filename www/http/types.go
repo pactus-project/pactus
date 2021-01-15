@@ -8,6 +8,9 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
+type BlockchainResult struct {
+	Height int
+}
 type BlockResult struct {
 	Hash  crypto.Hash
 	Time  time.Time

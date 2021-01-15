@@ -151,11 +151,16 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	}
 }
 
-func (cs *consensus) SetProposal(proposal *vote.Proposal) {
+func (cs *consensus) SetProposal(p *vote.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.setProposal(proposal)
+	if cs.state.LastBlockHeight() >= p.Height() {
+		cs.logger.Debug("We received a stale proposal", "proposal", p)
+		return
+	}
+
+	cs.setProposal(p)
 }
 
 func (cs *consensus) handleTimeout(ti timeout) {

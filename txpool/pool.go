@@ -79,7 +79,7 @@ func (pool *txPool) appendTx(trx *tx.Tx) error {
 	}
 
 	if err := pool.checker.Execute(trx); err != nil {
-		pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
+		pool.logger.Debug("Invalid transaction", "tx", trx, "err", err)
 		return err
 	}
 

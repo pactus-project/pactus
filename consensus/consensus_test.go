@@ -289,7 +289,7 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrecommit)
 
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
-	checkHRSWait(t, tConsX, 2, 0, hrs.StepTypePropose)
+	shouldPublishBlockAnnounce(t, tConsX, p.Block().Hash())
 }
 
 func TestConsensusUpdateVote(t *testing.T) {
@@ -352,30 +352,6 @@ func TestConsensusNoPrepares(t *testing.T) {
 	assert.Error(t, tConsB.state.ApplyBlock(5, p.Block(), *precommits.ToCommit()))
 }
 
-func TestConsensusSpamming(t *testing.T) {
-	setup(t)
-
-	tConsX.enterNewHeight()
-
-	for i := 0; i < 100; i++ {
-		v, _ := vote.GenerateTestPrecommitVote(1, 0)
-		assert.Error(t, tConsX.addVote(v))
-	}
-}
-
-func TestConsensusSpammingProposal(t *testing.T) {
-	setup(t)
-
-	tConsP.enterNewHeight()
-	assert.Nil(t, tConsP.LastProposal())
-
-	for i := 0; i < 100; i++ {
-		proposal, _ := vote.GenerateTestProposal(1, 0)
-		tConsP.SetProposal(proposal)
-	}
-	assert.Nil(t, tConsP.LastProposal())
-}
-
 func TestConsensusInvalidProposal(t *testing.T) {
 	setup(t)
 
@@ -392,7 +368,6 @@ func TestConsensusInvalidProposal(t *testing.T) {
 	tSigners[tIndexY].SignMsg(p)
 	tConsY.SetProposal(p)
 	assert.Nil(t, tConsY.LastProposal())
-
 }
 
 func TestConsensusFingerprint(t *testing.T) {

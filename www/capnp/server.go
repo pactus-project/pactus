@@ -59,7 +59,7 @@ func (s *Server) StartServer() error {
 			} else {
 				//
 				go func(c net.Conn) {
-					s2c := ZarbServer_ServerToClient(factory{s.store, s.txPool, s.logger})
+					s2c := ZarbServer_ServerToClient(factory{s.state, s.store, s.txPool, s.logger})
 					conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {

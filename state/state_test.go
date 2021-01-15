@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/zarbchain/zarb-go/tx"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
@@ -132,9 +134,33 @@ func applyBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit
 func TestProposeBlockAndValidation(t *testing.T) {
 	setup(t)
 
-	b, _ := tState1.ProposeBlock(0)
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	applyBlockAndCommitForAllStates(t, b1, c1)
+
+	b, err := tState1.ProposeBlock(0)
+	assert.Error(t, err)
+	assert.Nil(t, b)
+
+	pub := tValSigner1.PublicKey()
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "", &pub, nil)
+	tValSigner1.SignMsg(trx)
+	assert.NoError(t, tCommonTxPool.AppendTx(trx))
+
+	b, err = tState2.ProposeBlock(0)
+	assert.NoError(t, err)
 	assert.NotNil(t, b)
-	err := tState1.ValidateBlock(*b)
+	assert.Equal(t, b.TxIDs().Len(), 2)
+
+	err = tState1.ValidateBlock(*b)
+	require.NoError(t, err)
+
+	// Propose and validate again
+	b, err = tState2.ProposeBlock(0)
+	assert.NoError(t, err)
+	assert.NotNil(t, b)
+	assert.Equal(t, b.TxIDs().Len(), 2)
+
+	err = tState1.ValidateBlock(*b)
 	require.NoError(t, err)
 }
 

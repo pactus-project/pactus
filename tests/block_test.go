@@ -11,6 +11,24 @@ import (
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
+func lastHeight(t *testing.T) int {
+	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
+		return nil
+	}).Result()
+	st, err := res.Struct()
+	assert.NoError(t, err)
+
+	return int(st.Height())
+}
+
+func waitForNewBlock(t *testing.T) {
+	getBlockAt(t, lastHeight(t)+1)
+}
+
+func lastBlock(t *testing.T) *block.Block {
+	return getBlockAt(t, lastHeight(t))
+}
+
 func getBlockAt(t *testing.T, height int) *block.Block {
 	for i := 0; i < 10; i++ {
 		res := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
@@ -21,7 +39,7 @@ func getBlockAt(t *testing.T, height int) *block.Block {
 
 		st, err := res.Struct()
 		if err != nil {
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(1 * time.Second)
 			continue
 		}
 
@@ -32,10 +50,4 @@ func getBlockAt(t *testing.T, height int) *block.Block {
 	}
 	require.NoError(t, fmt.Errorf("timeout"))
 	return nil
-}
-
-func TestGeneratingBlocks(t *testing.T) {
-	res := getBlockAt(t, 1)
-	assert.Contains(t, res, "0000000000000000000000000000000000000000000000000000000000000000")
-	fmt.Println(res)
 }
