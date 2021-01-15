@@ -13,6 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -66,8 +67,11 @@ func setup(t *testing.T) {
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21000000000000)
+	params := param.MainnetParams()
+	params.BlockTimeInSecond = 1
+	params.MaximumPower = 4
 
-	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, 1)
+	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
 	require.NoError(t, err)
 	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], tTxPool)
@@ -163,7 +167,7 @@ func checkHRSWait(t *testing.T, cons *consensus, height, round int, step hrs.Ste
 		if expected.EqualsTo(cons.HRS()) {
 			return
 		}
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 	}
 	assert.Equal(t, expected, cons.hrs)
 }
@@ -395,12 +399,4 @@ func TestConsensusFingerprint(t *testing.T) {
 	setup(t)
 
 	assert.Contains(t, tConsX.Fingerprint(), tConsX.hrs.String())
-}
-
-func TestStop(t *testing.T) {
-	setup(t)
-
-	tConsX.Stop()
-	tConsX.handleTimeout(timeout{1 * time.Second, 1, 0, 0})
-	assert.Equal(t, tConsX.hrs.Height(), -1)
 }

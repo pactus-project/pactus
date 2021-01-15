@@ -14,7 +14,7 @@ func TestAddVote(t *testing.T) {
 	h1 := crypto.GenerateTestHash()
 	addr, _, pv := crypto.GenerateTestKeyPair()
 	valSet, keys := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(100, 5, VoteTypePrecommit, valSet)
+	voteSet := NewVoteSet(100, 5, VoteTypePrecommit, valSet.CopyValidators())
 
 	v1 := NewVote(VoteTypePrecommit, 100, 5, h1, addr)
 	v2 := NewVote(VoteTypePrecommit, 100, 5, h1, keys[0].PublicKey().Address())
@@ -61,7 +61,7 @@ func TestDuplicateVote(t *testing.T) {
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
 	valSet, keys := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(1, 0, VoteTypePrepare, valSet)
+	voteSet := NewVoteSet(1, 0, VoteTypePrepare, valSet.CopyValidators())
 
 	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
 	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, keys[0].PublicKey().Address())
@@ -106,7 +106,7 @@ func TestDuplicateVote(t *testing.T) {
 
 func TestQuorum(t *testing.T) {
 	valSet, keys := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet)
+	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[0].PublicKey().Address())

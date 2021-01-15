@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -99,7 +100,7 @@ func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) 
 	vals := []*validator.Validator{val}
 
 	// create genesis
-	gen := genesis.MakeGenesis(chainName, util.RoundNow(60), accs, vals, 10)
+	gen := genesis.MakeGenesis(chainName, util.RoundNow(60), accs, vals, param.MainnetParams())
 	return gen, nil
 
 }

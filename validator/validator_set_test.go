@@ -13,6 +13,7 @@ func TestContains(t *testing.T) {
 
 	assert.True(t, vs.Contains(keys[0].PublicKey().Address()))
 	assert.True(t, vs.Contains(vs.Proposer(0).Address()))
+	assert.Equal(t, vs.MaximumPower(), 4)
 	assert.False(t, vs.Contains(a))
 }
 
@@ -292,7 +293,7 @@ func TestIsProposer(t *testing.T) {
 	assert.Equal(t, vs.Proposer(1).Address(), val2.Address())
 	assert.True(t, vs.IsProposer(val3.Address(), 2))
 	assert.False(t, vs.IsProposer(val4.Address(), 2))
-	assert.Equal(t, vs.Validators(), []crypto.Address{val1.Address(), val2.Address(), val3.Address(), val4.Address()})
+	assert.Equal(t, vs.validators, []*Validator{val1, val2, val3, val4})
 	assert.Equal(t, vs.Validator(val2.Address()).Hash(), val2.Hash())
 	assert.Nil(t, vs.Validator(val5.Address()))
 }
@@ -312,5 +313,10 @@ func TestCommittersHash(t *testing.T) {
 
 func TestPower(t *testing.T) {
 	vs, _ := GenerateTestValidatorSet()
-	assert.Equal(t, vs.Power(), len(vs.validators))
+	assert.Equal(t, vs.currentPower(), len(vs.validators))
+}
+
+func TestCopyValidators(t *testing.T) {
+	vs, _ := GenerateTestValidatorSet()
+	assert.Equal(t, vs.CopyValidators(), vs.validators)
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 
 	"github.com/stretchr/testify/assert"
@@ -17,11 +18,11 @@ func TestMarshaling(t *testing.T) {
 	acc, _ := account.GenerateTestAccount(0)
 	acc.AddToBalance(100000)
 	val, _ := validator.GenerateTestValidator(0)
-	gen1 := MakeGenesis("test", util.Now(), []*account.Account{acc}, []*validator.Validator{val}, 5)
+	gen1 := MakeGenesis("test", util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.MainnetParams())
 	gen2 := new(Genesis)
 
 	assert.Equal(t, gen1.ChainName(), "test")
-	assert.Equal(t, gen1.Params().BlockTimeInSecond, 5)
+	assert.Equal(t, gen1.Params().BlockTimeInSecond, 10)
 
 	bz, err := json.MarshalIndent(gen1, " ", " ")
 	require.NoError(t, err)
@@ -64,7 +65,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 		accs = append(accs, acc)
 		vals = append(vals, val)
 	}
-	gen := MakeGenesis("test", util.Now(), accs, vals, 5)
+	gen := MakeGenesis("test", util.Now(), accs, vals, param.MainnetParams())
 
 	genAccs := gen.Accounts()
 	genVals := gen.Validators()

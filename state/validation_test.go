@@ -5,13 +5,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zarbchain/zarb-go/validator"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 func TestTransactionLost(t *testing.T) {
@@ -227,9 +226,16 @@ func TestCommitValidation(t *testing.T) {
 func TestUpdateBlockTime(t *testing.T) {
 	setup(t)
 
+	fmt.Println(tGenTime)
 	// Maipulate last block time
 	tState1.lastBlockTime = util.Now().Add(-6 * time.Second)
 	b, _ := tState1.ProposeBlock(0)
+	fmt.Println(b.Header().Time())
+	assert.True(t, b.Header().Time().After(tState1.lastBlockTime))
+	assert.Zero(t, b.Header().Time().Second()%10)
+
+	tState1.lastBlockTime = util.Now().Add(-16 * time.Second)
+	b, _ = tState1.ProposeBlock(0)
 	fmt.Println(b.Header().Time())
 	assert.True(t, b.Header().Time().After(tState1.lastBlockTime))
 	assert.Zero(t, b.Header().Time().Second()%10)

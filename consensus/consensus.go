@@ -11,7 +11,6 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -21,7 +20,6 @@ type consensus struct {
 	config         *Config
 	hrs            hrs.HRS
 	pendingVotes   *PendingVotes
-	valset         validator.ValidatorSetReader
 	signer         crypto.Signer
 	isProposed     bool
 	isPrepared     bool
@@ -40,13 +38,12 @@ func NewConsensus(
 	cs := &consensus{
 		config:      conf,
 		state:       state,
-		valset:      state.ValidatorSet(),
 		broadcastCh: broadcastCh,
 		signer:      signer,
 	}
 
 	// Update height later, See enterNewHeight.
-	cs.pendingVotes = NewPendingVotes(0, cs.valset)
+	cs.pendingVotes = NewPendingVotes()
 	cs.hrs = hrs.NewHRS(0, 0, hrs.StepTypeUnknown)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
@@ -54,10 +51,7 @@ func NewConsensus(
 }
 
 func (cs *consensus) Stop() {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
 
-	cs.hrs.UpdateHeight(-1)
 }
 
 func (cs *consensus) Fingerprint() string {
@@ -99,10 +93,7 @@ func (cs *consensus) updateStep(step hrs.StepType) {
 }
 
 func (cs *consensus) updateHeight(height int) {
-	if cs.hrs.Height() != height {
-		cs.pendingVotes.Reset(height)
-		cs.hrs.UpdateHeight(height)
-	}
+	cs.hrs.UpdateHeight(height)
 }
 
 func (cs *consensus) LastProposal() *vote.Proposal {
@@ -252,7 +243,7 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	address := cs.signer.Address()
-	if !cs.valset.Contains(address) {
+	if !cs.state.ValidatorSet().Contains(address) {
 		cs.logger.Trace("This node is not in validator set", "addr", address)
 		return
 	}

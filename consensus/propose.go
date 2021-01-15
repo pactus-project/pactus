@@ -12,11 +12,11 @@ import (
 )
 
 func (cs *consensus) proposer(round int) *validator.Validator {
-	return cs.valset.Proposer(round)
+	return cs.state.ValidatorSet().Proposer(round)
 }
 
-func (cs *consensus) isProposer(address crypto.Address, round int) bool {
-	return cs.proposer(round).Address().EqualsTo(address)
+func (cs *consensus) isProposer(addr crypto.Address, round int) bool {
+	return cs.state.ValidatorSet().IsProposer(addr, round)
 }
 
 func (cs *consensus) setProposal(proposal *vote.Proposal) {
@@ -67,7 +67,7 @@ func (cs *consensus) enterPropose(round int) {
 	cs.updateStep(hrs.StepTypePropose)
 
 	address := cs.signer.Address()
-	if !cs.valset.Contains(address) {
+	if !cs.state.ValidatorSet().Contains(address) {
 		cs.logger.Trace("Propose: This node is not in validator set", "addr", address)
 		return
 	}

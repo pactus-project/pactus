@@ -280,6 +280,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	}
 
 	timestamp := st.lastBlockTime.Add(st.params.BlockTime())
+	timestamp = util.RoundTime(timestamp, st.params.BlockTimeInSecond)
 	now := util.Now()
 
 	if now.After(timestamp.Add(1 * time.Second)) {

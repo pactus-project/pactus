@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
@@ -38,7 +37,7 @@ func TestSecondProposalCommitted(t *testing.T) {
 	p1 := tConsB.LastProposal() // valid proposal for first round
 	p2 := tConsP.LastProposal() // valid proposal for second round
 
-	// Probably the network blocked Byzantine node to communication with us
+	// Probably we have blocked Byzantine node
 	//tConsX.SetProposal(p1)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
@@ -64,15 +63,9 @@ func TestSecondProposalCommitted(t *testing.T) {
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, crypto.UndefHash, tIndexB, false)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexP, false)
+
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p2.Block().Hash())
 	shouldPublishBlockAnnounce(t, tConsX, p2.Block().Hash())
-
-	precommits0 := tConsX.pendingVotes.PrecommitVoteSet(0)
-	precommits1 := tConsX.pendingVotes.PrecommitVoteSet(1)
-	assert.Equal(t, precommits0.Len(), 4)
-	require.NotNil(t, precommits1)
-	assert.Equal(t, precommits1.Len(), 4)
-	assert.Equal(t, precommits1.ToCommit().Round(), 1)
 }
 
 func TestNetworkLagging1(t *testing.T) {
