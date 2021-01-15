@@ -52,3 +52,14 @@ func TestByzantineVote(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
 	checkHRS(t, tConsP, 1, 0, hrs.StepTypeCommit)
 }
+
+func TestPrepareTimeout(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	tConsY.enterNewHeight()
+
+	shouldPublishVote(t, tConsY, vote.VoteTypePrepare, crypto.UndefHash)
+}

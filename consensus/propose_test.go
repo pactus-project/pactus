@@ -25,28 +25,53 @@ func TestConsensusSetProposalAfterCommit(t *testing.T) {
 func TestSecondProposalCommitted(t *testing.T) {
 	setup(t)
 
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
 	tConsX.enterNewHeight()
-	tConsY.enterNewHeight()
-	tConsY.enterNewRound(1)
+	tConsB.enterNewHeight()
+	tConsP.enterNewHeight()
+	tConsP.enterNewRound(1)
 
-	p1 := tConsX.LastProposal()
-	p2 := tConsY.LastProposal() // valid proposal for second round
+	// Now it's turn for Byzantine node to propose a block
+	// Other nodes are going to not accept its proposal, even it is valid
+	p1 := tConsB.LastProposal() // valid proposal for first round
+	p2 := tConsP.LastProposal() // valid proposal for second round
 
-	tConsX.SetProposal(p1)
+	// Probably the network blocked Byzantine node to communication with us
+	//tConsX.SetProposal(p1)
+
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, p1.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, crypto.UndefHash, tIndexP, false)
+
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, p1.Block().Hash(), tIndexB, false) // Invalid vote
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexP, false)
+
 	tConsX.SetProposal(p2)
 
-	assert.NotNil(t, tConsX.pendingVotes.RoundProposal(0))
+	assert.Nil(t, tConsX.pendingVotes.RoundProposal(0))
 	assert.NotNil(t, tConsX.pendingVotes.RoundProposal(1))
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 1, p2.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 1, p2.Block().Hash(), tIndexB, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 1, p2.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexP, false)
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p2.Block().Hash())
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexP, false)
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p2.Block().Hash())
+	shouldPublishBlockAnnounce(t, tConsX, p2.Block().Hash())
 
 	precommits0 := tConsX.pendingVotes.PrecommitVoteSet(0)
 	precommits1 := tConsX.pendingVotes.PrecommitVoteSet(1)
-	assert.Equal(t, precommits0.Len(), 0)
+	assert.Equal(t, precommits0.Len(), 4)
 	require.NotNil(t, precommits1)
-	assert.Equal(t, precommits1.Len(), 3)
+	assert.Equal(t, precommits1.Len(), 4)
 	assert.Equal(t, precommits1.ToCommit().Round(), 1)
 }
 
@@ -61,7 +86,7 @@ func TestNetworkLagging1(t *testing.T) {
 	// tConsP.SetProposal(p1)
 
 	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrepare)
-	shouldPublishProposalReqquest(t, tConsP)
+	shouldPublishQueryProposal(t, tConsP, 1, 0)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexX, false)
@@ -81,9 +106,7 @@ func TestNetworkLagging2(t *testing.T) {
 	setup(t)
 
 	tConsP.enterNewHeight()
-
 	tConsX.enterNewHeight()
-	tConsP.enterNewHeight()
 
 	p1 := tConsX.LastProposal()
 	// We don't set proposal for second validator here
@@ -96,7 +119,7 @@ func TestNetworkLagging2(t *testing.T) {
 	checkHRS(t, tConsP, 1, 0, hrs.StepTypePropose)
 	assert.Nil(t, tConsP.pendingVotes.roundVotes[0].Precommits.QuorumBlock())
 
-	shouldPublishProposalReqquest(t, tConsP)
+	shouldPublishQueryProposal(t, tConsP, 1, 0)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
 	// Proposal received now, set it
@@ -108,7 +131,7 @@ func TestNetworkLagging2(t *testing.T) {
 	// But if we receive another vote we go to commit phase directly
 	// Let's do it
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexB, false)
-	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
+	shouldPublishBlockAnnounce(t, tConsP, p1.Block().Hash())
 }
 
 func TestLateProposal(t *testing.T) {
@@ -169,4 +192,21 @@ func TestLateProposal2(t *testing.T) {
 
 	assert.False(t, tConsX.isCommitted)
 	checkHRSWait(t, tConsX, 4, 1, hrs.StepTypePrepare)
+}
+
+func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+
+	tConsX.enterNewHeight()
+
+	// Byzantine node sends proposal for second round (his turn)
+	b, err := tConsB.state.ProposeBlock(1)
+	assert.NoError(t, err)
+	p := vote.NewProposal(2, 1, *b)
+	tSigners[tIndexB].SignMsg(p)
+
+	tConsX.SetProposal(p)
+	assert.Nil(t, tConsX.LastProposal())
 }

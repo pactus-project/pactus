@@ -22,7 +22,7 @@ func TestPrecommitWithNoProposal(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexB, false)
 
 	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrecommit)
-	shouldPublishProposalReqquest(t, tConsP)
+	shouldPublishQueryProposal(t, tConsP, 1, 0)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
 	tConsP.SetProposal(p1)

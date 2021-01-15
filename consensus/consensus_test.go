@@ -93,7 +93,7 @@ func setup(t *testing.T) {
 	//TODO: Give a name to the loggers. Look at sync tests
 }
 
-func shouldPublishBlockAnnounce(t *testing.T, cons *consensus) {
+func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -105,12 +105,14 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus) {
 			logger.Info("shouldPublishBlockAnnounce", "msg", msg)
 
 			if msg.PayloadType() == payload.PayloadTypeBlockAnnounce {
+				pld := msg.Payload.(*payload.BlockAnnouncePayload)
+				assert.Equal(t, pld.Block.Hash(), hash)
 				return
 			}
 		}
 	}
 }
-func shouldPublishProposalReqquest(t *testing.T, cons *consensus) {
+func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -119,9 +121,12 @@ func shouldPublishProposalReqquest(t *testing.T, cons *consensus) {
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishProposalReqquest", "msg", msg)
+			logger.Info("shouldPublishQueryProposal", "msg", msg)
 
 			if msg.PayloadType() == payload.PayloadTypeQueryProposal {
+				pld := msg.Payload.(*payload.QueryProposalPayload)
+				assert.Equal(t, pld.Height, height)
+				assert.Equal(t, pld.Round, round)
 				return
 			}
 		}
