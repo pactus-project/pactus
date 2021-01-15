@@ -352,6 +352,15 @@ func TestConsensusNoPrepares(t *testing.T) {
 	assert.Error(t, tConsB.state.ApplyBlock(5, p.Block(), *precommits.ToCommit()))
 }
 
+func TestConsensusInvalidVote(t *testing.T) {
+	setup(t)
+
+	tConsX.enterNewHeight()
+
+	v, _ := vote.GenerateTestPrecommitVote(1, 0)
+	assert.Error(t, tConsX.addVote(v))
+}
+
 func TestConsensusInvalidProposal(t *testing.T) {
 	setup(t)
 
