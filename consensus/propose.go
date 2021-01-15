@@ -25,6 +25,11 @@ func (cs *consensus) setProposal(proposal *vote.Proposal) {
 		return
 	}
 
+	if proposal.Round() != cs.hrs.Round() {
+		cs.logger.Debug("Propose: Invalid round", "proposal", proposal)
+		return
+	}
+
 	roundProposal := cs.pendingVotes.RoundProposal(proposal.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("propose: This round has proposal", "proposal", proposal)

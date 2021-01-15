@@ -12,15 +12,13 @@ import (
 func TestMoveToNewHeight(t *testing.T) {
 	setup(t)
 
-	tConsP.MoveToNewHeight()
-
 	commitBlockForAllStates(t)
 
 	tConsP.MoveToNewHeight()
 	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
 
 	// Calling MoveToNewHeight for the second time
-	tConsX.MoveToNewHeight()
+	tConsP.enterNewHeight()
 	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
 }
 

@@ -61,7 +61,7 @@ func TestEnterCommit(t *testing.T) {
 	// No proposal
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
-	shouldPublishProposalReqquest(t, tConsY)
+	shouldPublishQueryProposal(t, tConsY, 2, 1)
 
 	pub := tSigners[tIndexX].PublicKey()
 	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "", &pub, nil)
@@ -82,5 +82,5 @@ func TestEnterCommit(t *testing.T) {
 
 	// Everything is good
 	tConsY.enterCommit(1)
-	shouldPublishBlockAnnounce(t, tConsY)
+	shouldPublishBlockAnnounce(t, tConsY, p1.Block().Hash())
 }
