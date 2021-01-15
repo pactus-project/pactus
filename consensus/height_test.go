@@ -22,42 +22,74 @@ func TestMoveToNewHeight(t *testing.T) {
 	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
 }
 
-func TestConsensusBehindState3(t *testing.T) {
+func TestConsensusBehindState(t *testing.T) {
 	setup(t)
 
 	// Consensus starts here
 	tConsX.enterNewHeight()
-	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
+	tConsP.enterNewHeight()
 
 	p := tConsX.LastProposal()
-	b := p.Block()
-	assert.NoError(t, tConsX.state.ValidateBlock(b))
+	assert.NoError(t, tConsP.state.ValidateBlock(p.Block()))
+	tConsP.SetProposal(p)
 
 	// --------------------------------
 	// Syncer commit a block and trig consensus
 	commitBlockForAllStates(t)
 
-	assert.Equal(t, len(tConsX.RoundVotes(0)), 1)
-	assert.Equal(t, tConsX.hrs, hrs.NewHRS(1, 0, hrs.StepTypePrepare))
+	assert.Equal(t, len(tConsP.RoundVotes(0)), 1)
+	checkHRS(t, tConsP, 1, 0, hrs.StepTypePrepare)
 	// --------------------------------
 
 	// Consensus tries to add more votes and commit the block which is committed by syncer before.
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
-	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexB, false)
-	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
-
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
-
-	precommits := tConsX.pendingVotes.PrecommitVoteSet(0)
+	precommits := tConsP.pendingVotes.PrecommitVoteSet(0)
 	require.NotNil(t, precommits)
 	require.NotNil(t, precommits.ToCommit())
 
-	assert.Error(t, tConsX.state.ValidateBlock(b))
+	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
 
-	assert.NoError(t, tConsX.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
+	assert.NoError(t, tConsP.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
 	// We don't get any error here, but the block is not committed again. Check logs.
 
+	tConsP.enterNewHeight()
+}
+
+func TestConsensusBehindState2(t *testing.T) {
+	setup(t)
+
+	// Consensus starts here
 	tConsX.enterNewHeight()
+	tConsP.enterNewHeight()
+
+	p := tConsX.LastProposal()
+	assert.NoError(t, tConsP.state.ValidateBlock(p.Block()))
+	tConsP.SetProposal(p)
+
+	// --------------------------------
+	// Syncer commit a block and trig consensus
+	// Add some transaction to change the validator set
+
+	commitBlockForAllStates(t)
+
+	// --------------------------------
+
+	// Consensus tries to add more votes and commit the block which is committed by syncer before.
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
+
+	precommits := tConsP.pendingVotes.PrecommitVoteSet(0)
+	require.NotNil(t, precommits)
+	require.NotNil(t, precommits.ToCommit())
+
+	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
+
+	assert.NoError(t, tConsP.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
+	// We don't get any error here, but the block is not committed again. Check logs.
+
+	tConsP.enterNewHeight()
 }

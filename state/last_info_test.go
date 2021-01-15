@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -72,7 +73,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21*1e14 + 1) // manipulating genesis
 	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
-	genDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val}, 1)
+	genDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.MainnetParams())
 
 	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, txpool.MockingTxPool())
 	require.Error(t, err)

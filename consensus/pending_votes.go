@@ -47,14 +47,12 @@ func (rv *RoundVotes) voteSet(voteType vote.VoteType) *vote.VoteSet {
 
 type PendingVotes struct {
 	height     int
-	valSet     validator.ValidatorSetReader
+	validators []*validator.Validator
 	roundVotes []*RoundVotes
 }
 
-func NewPendingVotes(height int, valSet validator.ValidatorSetReader) *PendingVotes {
+func NewPendingVotes() *PendingVotes {
 	pv := &PendingVotes{
-		height:     height,
-		valSet:     valSet,
 		roundVotes: make([]*RoundVotes, 0),
 	}
 	return pv
@@ -78,8 +76,8 @@ func (pv *PendingVotes) HasVote(hash crypto.Hash) bool {
 
 func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 	for i := len(pv.roundVotes); i <= round; i++ {
-		prepares := vote.NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.valSet)
-		precommits := vote.NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.valSet)
+		prepares := vote.NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators)
+		precommits := vote.NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators)
 		votes := make([]*vote.Vote, 0)
 		rv := &RoundVotes{
 			Prepares:   prepares,
@@ -130,7 +128,8 @@ func (pv *PendingVotes) SetRoundProposal(round int, proposal *vote.Proposal) {
 	rv.proposal = proposal
 }
 
-func (pv *PendingVotes) Reset(height int) {
+func (pv *PendingVotes) MoveToNewHeight(height int, validators []*validator.Validator) {
 	pv.height = height
 	pv.roundVotes = make([]*RoundVotes, 0)
+	pv.validators = validators
 }

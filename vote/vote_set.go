@@ -44,18 +44,18 @@ type VoteSet struct {
 	height       int
 	round        int
 	voteType     VoteType
-	valSet       validator.ValidatorSetReader
+	validators   []*validator.Validator
 	votesByBlock map[crypto.Hash]*blockVotes
 	sum          int
 	quorum       *crypto.Hash
 }
 
-func NewVoteSet(height int, round int, voteType VoteType, valSet validator.ValidatorSetReader) *VoteSet {
+func NewVoteSet(height int, round int, voteType VoteType, validators []*validator.Validator) *VoteSet {
 	return &VoteSet{
 		height:       height,
 		round:        round,
 		voteType:     voteType,
-		valSet:       valSet,
+		validators:   validators,
 		votesByBlock: make(map[crypto.Hash]*blockVotes),
 	}
 }
@@ -76,6 +76,15 @@ func (vs *VoteSet) AllVotes() []*Vote {
 	return votes
 }
 
+func (vs *VoteSet) getValidatorByAddress(addr crypto.Address) *validator.Validator {
+	for _, val := range vs.validators {
+		if val.Address().EqualsTo(addr) {
+			return val
+		}
+	}
+	return nil
+}
+
 func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	signer := vote.Signer()
 	blockHash := vote.BlockHash()
@@ -88,7 +97,7 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 			vote.Height(), vote.Round(), vote.VoteType())
 	}
 
-	val := vs.valSet.Validator(signer)
+	val := vs.getValidatorByAddress(signer)
 	if val == nil {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Cannot find validator %s in valSet", signer)
 	}
@@ -144,7 +153,7 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 	return added, nil
 }
 func (vs *VoteSet) hasQuorum(sum int) bool {
-	return sum > (vs.valSet.Power() * 2 / 3)
+	return sum > (len(vs.validators) * 2 / 3)
 }
 
 func (vs *VoteSet) HasQuorum() bool {
@@ -174,18 +183,12 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 	}
 
 	votesMap := vs.votesByBlock[*blockHash].votes
-	vals := vs.valSet.Validators()
-	committers := make([]block.Committer, len(vals))
+	committers := make([]block.Committer, len(vs.validators))
 	sigs := make([]*crypto.Signature, 0)
 
-	for i, addr := range vals {
+	for i, val := range vs.validators {
 		status := block.CommitNotSigned
-		val := vs.valSet.Validator(addr)
-		if val == nil {
-			// TODO: This might the node crash if validator set changes
-			panic("Invalid vote set")
-		}
-		v := votesMap[addr]
+		v := votesMap[val.Address()]
 
 		if v != nil {
 			sigs = append(sigs, v.Signature())

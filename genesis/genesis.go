@@ -100,7 +100,7 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 
 func MakeGenesis(chainName string, genesisTime time.Time,
 	accounts []*account.Account,
-	validators []*validator.Validator, blockTime int) *Genesis {
+	validators []*validator.Validator, params param.Params) *Genesis {
 
 	genAccs := make([]genAccount, 0, len(accounts))
 	for _, acc := range accounts {
@@ -113,9 +113,6 @@ func MakeGenesis(chainName string, genesisTime time.Time,
 		genVal := makeGenesisValidator(val)
 		genVals = append(genVals, genVal)
 	}
-
-	params := param.MainnetParams()
-	params.BlockTimeInSecond = blockTime
 
 	return &Genesis{
 		data: genesisData{

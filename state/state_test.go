@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
@@ -47,7 +48,7 @@ func setup(t *testing.T) {
 	tValSigner3 = crypto.NewSigner(priv3)
 	tValSigner4 = crypto.NewSigner(priv4)
 
-	tGenTime = util.Now()
+	tGenTime = util.RoundNow(10)
 	tCommonTxPool = txpool.MockingTxPool()
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
@@ -57,7 +58,8 @@ func setup(t *testing.T) {
 	val2 := validator.NewValidator(tValSigner2.PublicKey(), 1, 0)
 	val3 := validator.NewValidator(tValSigner3.PublicKey(), 2, 0)
 	val4 := validator.NewValidator(tValSigner4.PublicKey(), 3, 0)
-	gnDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, 1)
+	params := param.MainnetParams()
+	gnDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
 	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, tCommonTxPool)
 	require.NoError(t, err)

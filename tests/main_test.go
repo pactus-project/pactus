@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/node"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -76,7 +77,9 @@ func TestMain(m *testing.M) {
 	vals[1] = validator.NewValidator(tSigners["node_2"].PublicKey(), 1, 0)
 	vals[2] = validator.NewValidator(tSigners["node_3"].PublicKey(), 2, 0)
 	vals[3] = validator.NewValidator(tSigners["node_4"].PublicKey(), 3, 0)
-	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, 1)
+	params := param.MainnetParams()
+	params.BlockTimeInSecond = 1
+	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
 	tNodes["node_1"], _ = node.NewNode(tGenDoc, tConfigs["node_1"], *tSigners["node_1"])
 	tNodes["node_2"], _ = node.NewNode(tGenDoc, tConfigs["node_2"], *tSigners["node_2"])

@@ -9,11 +9,11 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
+var _ ValidatorSetReader = &ValidatorSet{}
+
 type ValidatorSetReader interface {
 	MaximumPower() int
-	Power() int
-	Validators() []crypto.Address
-	Validator(addr crypto.Address) *Validator
+	CopyValidators() []*Validator
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *Validator
 	IsProposer(addr crypto.Address, round int) bool
@@ -54,7 +54,7 @@ func (set *ValidatorSet) MaximumPower() int {
 	return set.maximumPower
 }
 
-func (set *ValidatorSet) Power() int {
+func (set *ValidatorSet) currentPower() int {
 	p := 0
 	for _, v := range set.validators {
 		p += v.Power()
@@ -80,8 +80,8 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 	set.proposerIndex = (set.proposerIndex + lastRound + 1) % len(set.validators)
 
 	set.validators = append(set.validators, joined...)
-	if set.Power() > set.MaximumPower() {
-		shouldLeave := set.Power() - set.MaximumPower()
+	if set.currentPower() > set.maximumPower {
+		shouldLeave := set.currentPower() - set.maximumPower
 		set.validators = set.validators[shouldLeave:]
 	}
 	// Move proposer index after modifying the set
@@ -93,13 +93,13 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 	return nil
 }
 
-func (set *ValidatorSet) Validators() []crypto.Address {
+func (set *ValidatorSet) CopyValidators() []*Validator {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	vals := make([]crypto.Address, len(set.validators))
+	vals := make([]*Validator, len(set.validators))
 	for i, v := range set.validators {
-		vals[i] = v.Address()
+		vals[i] = v
 	}
 	return vals
 }
