@@ -315,3 +315,8 @@ func TestPower(t *testing.T) {
 	vs, _ := GenerateTestValidatorSet()
 	assert.Equal(t, vs.currentPower(), len(vs.validators))
 }
+
+func TestCopyValidators(t *testing.T) {
+	vs, _ := GenerateTestValidatorSet()
+	assert.Equal(t, vs.CopyValidators(), vs.validators)
+}

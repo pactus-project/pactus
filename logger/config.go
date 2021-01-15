@@ -28,14 +28,14 @@ func TestConfig() *Config {
 		Levels: make(map[string]string),
 	}
 
-	conf.Levels["default"] = "trace"
-	conf.Levels["_network"] = "trace"
-	conf.Levels["_consensus"] = "trace"
-	conf.Levels["_state"] = "trace"
-	conf.Levels["_sync"] = "trace"
-	conf.Levels["_pool"] = "trace"
-	conf.Levels["_capnp"] = "trace"
-	conf.Levels["_http"] = "trace"
+	conf.Levels["default"] = "debug"
+	conf.Levels["_network"] = "debug"
+	conf.Levels["_consensus"] = "debug"
+	conf.Levels["_state"] = "debug"
+	conf.Levels["_sync"] = "debug"
+	conf.Levels["_pool"] = "debug"
+	conf.Levels["_capnp"] = "debug"
+	conf.Levels["_http"] = "debug"
 	conf.Colorfull = true
 
 	return conf
