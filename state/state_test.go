@@ -89,7 +89,8 @@ func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (bloc
 		st = tState4
 	}
 
-	b, _ := st.ProposeBlock(round)
+	b, err := st.ProposeBlock(round)
+	assert.NoError(t, err)
 	c := makeCommitAndSign(t, b.Hash(), round, signers...)
 
 	return *b, c
@@ -300,6 +301,25 @@ func TestInvalidProposerProposeBlock(t *testing.T) {
 	assert.Error(t, err)
 	_, err = tState2.ProposeBlock(1)
 	assert.NoError(t, err)
+}
+
+func TestBlockProposal(t *testing.T) {
+	setup(t)
+
+	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner3, tValSigner4)
+	applyBlockAndCommitForAllStates(t, b1, c1)
+
+	b, err := tState2.ProposeBlock(0)
+	assert.NoError(t, err)
+	assert.NoError(t, tState1.ValidateBlock(*b)) // State1 check state2's proposed block
+
+	trx := tState3.createSubsidyTx(0)
+	assert.NoError(t, tState2.txPool.AppendTx(trx))
+
+	b, err = tState2.ProposeBlock(0)
+	assert.NoError(t, err)
+	assert.NoError(t, tState1.ValidateBlock(*b))
+
 }
 
 func TestInvalidBlock(t *testing.T) {

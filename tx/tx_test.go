@@ -274,3 +274,51 @@ func TestSortitionDecodingAndHash(t *testing.T) {
 	assert.Equal(t, trx.SignBytes(), s)
 	assert.Equal(t, trx.ID(), h)
 }
+
+func TestSendSignBytes(t *testing.T) {
+	h := crypto.GenerateTestHash()
+	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
+	a2, _, _ := crypto.GenerateTestKeyPair()
+
+	trx1 := NewSendTx(h, 1, a1, a2, 100, 10, "test send-tx", &pb1, nil)
+	sig1 := pv1.Sign(trx1.SignBytes())
+	trx1.data.Signature = sig1
+
+	trx2 := NewSendTx(h, 1, a1, a2, 100, 10, "test send-tx", nil, nil)
+	trx3 := NewSendTx(h, 2, a1, a2, 100, 10, "test send-tx", nil, nil)
+
+	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
+	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+}
+
+func TestBondSignBytes(t *testing.T) {
+	h := crypto.GenerateTestHash()
+	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
+	_, pb2, _ := crypto.GenerateTestKeyPair()
+
+	trx1 := NewBondTx(h, 1, a1, pb2, 100, "test bond-tx", &pb1, nil)
+	sig1 := pv1.Sign(trx1.SignBytes())
+	trx1.data.Signature = sig1
+
+	trx2 := NewBondTx(h, 1, a1, pb2, 100, "test bond-tx", nil, nil)
+	trx3 := NewBondTx(h, 2, a1, pb2, 100, "test bond-tx", nil, nil)
+
+	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
+	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+}
+
+func TestSortitionSignBytes(t *testing.T) {
+	h := crypto.GenerateTestHash()
+	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
+	proof := [48]byte{}
+
+	trx1 := NewSortitionTx(h, 1, a1, proof[:], "test sortition-tx", &pb1, nil)
+	sig1 := pv1.Sign(trx1.SignBytes())
+	trx1.data.Signature = sig1
+
+	trx2 := NewSortitionTx(h, 1, a1, proof[:], "test sortition-tx", nil, nil)
+	trx3 := NewSortitionTx(h, 2, a1, proof[:], "test sortition-tx", nil, nil)
+
+	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
+	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+}

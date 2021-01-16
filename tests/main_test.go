@@ -34,31 +34,20 @@ var tSequences map[crypto.Address]int
 
 const tNodeIdx1 = 0
 const tNodeIdx2 = 1
-const tNodeIdx3 = 2
-const tNodeIdx4 = 3
-
-//const tNodeIdx5 = 4
-//const tNodeIdx6 = 5
 
 func incSequence(t *testing.T, addr crypto.Address) {
-	_, ok := tSequences[addr]
-	if ok {
-		tSequences[addr]++
-	} else {
-		tSequences[addr] = 1
-	}
+	tSequences[addr] = tSequences[addr] + 1
 }
 
 func getSequence(t *testing.T, addr crypto.Address) int {
-	i, ok := tSequences[addr]
-	if ok {
-		return i
-	}
-	return 0
+	return tSequences[addr]
 }
 
 func TestMain(m *testing.M) {
-	max := 6
+	// For the integration tests we can run more nodes,
+	// but runningmore tha 4 nodes will make test unstable
+	// and sometimes faulty specially in slow test containers like Github Action
+	max := 4
 	tSigners = make([]crypto.Signer, max)
 	tConfigs = make([]*config.Config, max)
 	tNodes = make([]*node.Node, max)
@@ -79,10 +68,11 @@ func TestMain(m *testing.M) {
 			tConfigs[i].Capnp.Enable = false
 		}
 
-		tConfigs[i].Logger.Levels["default"] = "error"
-		tConfigs[i].Logger.Levels["_state"] = "error"
+		tConfigs[i].Logger.Levels["default"] = "info"
+		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
+		tConfigs[i].Logger.Levels["_txpool"] = "info"
 
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
@@ -90,13 +80,12 @@ func TestMain(m *testing.M) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(2100000000000000)
 
-	vals := make([]*validator.Validator, 4)
+	vals := make([]*validator.Validator, 2)
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0, 0)
 	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1, 0)
-	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2, 0)
-	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 5
+	params.BlockTimeInSecond = 1
+	params.MaximumPower = 3
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
 	var err error

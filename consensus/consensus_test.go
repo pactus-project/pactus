@@ -116,6 +116,7 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash)
 		}
 	}
 }
+
 func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int) {
 	timeout := time.NewTimer(1 * time.Second)
 

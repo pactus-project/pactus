@@ -39,6 +39,7 @@ func (m *MockTxPool) HasTx(id crypto.Hash) bool {
 	return false
 }
 
+func (m *MockTxPool) Recheck() {}
 func (m *MockTxPool) Size() int {
 	return len(m.Txs)
 }

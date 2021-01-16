@@ -281,15 +281,15 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	timestamp := st.lastBlockTime.Add(st.params.BlockTime())
 	timestamp = util.RoundTime(timestamp, st.params.BlockTimeInSecond)
-	now := util.Now()
 
+	now := util.Now()
 	if now.After(timestamp.Add(1 * time.Second)) {
 		st.logger.Info("It looks the last commit had delay", "delay", now.Sub(timestamp))
-		timestamp = util.RoundNow(10)
+		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
 	}
 
+	// Reset Sandbox and clear the accululated fee
 	st.executionSandbox.Clear()
-	st.txPoolSandbox.Clear()
 	st.execution.ResetFee()
 
 	txIDs := block.NewTxIDs()
@@ -434,6 +434,10 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.saveLastInfo(st.lastBlockHeight, commit, st.lastReceiptsHash)
 
 	st.EvaluateSortition()
+
+	// At this point we can reset txpool sandbox
+	st.txPoolSandbox.Clear()
+	st.txPool.Recheck()
 
 	return nil
 }

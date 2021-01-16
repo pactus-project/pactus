@@ -7,7 +7,6 @@ import (
 )
 
 func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
-	st.txPoolSandbox.Clear()
 	st.executionSandbox.Clear()
 	st.execution.ResetFee()
 
