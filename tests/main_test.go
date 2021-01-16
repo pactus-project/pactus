@@ -34,6 +34,8 @@ var tSequences map[crypto.Address]int
 
 const tNodeIdx1 = 0
 const tNodeIdx2 = 1
+const tNodeIdx3 = 2
+const tNodeIdx4 = 3
 
 func incSequence(t *testing.T, addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
@@ -72,7 +74,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
-		tConfigs[i].Logger.Levels["_txpool"] = "info"
+		tConfigs[i].Logger.Levels["_txpool"] = "error"
 
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
@@ -84,7 +86,7 @@ func TestMain(m *testing.M) {
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0, 0)
 	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1, 0)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 1
+	params.BlockTimeInSecond = 3
 	params.MaximumPower = 3
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
@@ -109,6 +111,12 @@ func TestMain(m *testing.M) {
 
 	waitForNewBlock(t)
 	waitForNewBlock(t)
+
+	//broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 0, false)
+	//broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 0, false)
+
+	//waitForNewBlock(t)
+	//waitForNewBlock(t)
 
 	exitCode := m.Run()
 

@@ -40,6 +40,24 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 	}
 }
 
+/*
+func broadcastBonTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake int64, expectError bool) {
+	pub := sender.PublicKey()
+	stamp := lastBlock(t).Hash()
+	seq := getSequence(t, pub.Address())
+	trx := tx.NewBondTx(stamp, seq+1, pub.Address(), val, stake, "", &pub, nil)
+	sender.SignMsg(trx)
+
+	d, _ := trx.Encode()
+	if expectError {
+		require.Error(t, sendRawTx(t, d))
+	} else {
+		require.NoError(t, sendRawTx(t, d))
+		incSequence(t, pub.Address())
+	}
+}
+*/
+
 func TestSendingTransactions(t *testing.T) {
 	aliceAddr, _, alicePriv := crypto.GenerateTestKeyPair()
 	bobAddr, _, bobPriv := crypto.GenerateTestKeyPair()
@@ -71,6 +89,14 @@ func TestSendingTransactions(t *testing.T) {
 
 	waitForNewBlock(t)
 	waitForNewBlock(t)
+
+	for {
+		bobAcc := getAccount(t, bobAddr)
+		if bobAcc != nil && bobAcc.Sequence() == 200 { // bob sent 200 txs
+			break
+		}
+		waitForNewBlock(t)
+	}
 
 	aliceAcc := getAccount(t, aliceAddr)
 	bobAcc := getAccount(t, bobAddr)
