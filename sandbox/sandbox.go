@@ -125,11 +125,12 @@ func (sb *SandboxConcrete) Account(addr crypto.Address) *account.Account {
 	sb.accounts[addr] = &AccountStatus{
 		Account: *acc,
 	}
+
 	return acc
 }
 func (sb *SandboxConcrete) MakeNewAccount(addr crypto.Address) *account.Account {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	if sb.store.HasAccount(addr) {
 		sb.shouldPanicForDuplicatedAddress()
@@ -179,8 +180,8 @@ func (sb *SandboxConcrete) Validator(addr crypto.Address) *validator.Validator {
 }
 
 func (sb *SandboxConcrete) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	addr := pub.Address()
 	if sb.store.HasValidator(addr) {
@@ -291,7 +292,7 @@ func (sb *SandboxConcrete) lastHeight() int {
 	if v == nil {
 		return -1
 	}
-	return v.(int) + 1
+	return v.(int)
 }
 
 func (sb *SandboxConcrete) CurrentHeight() int {

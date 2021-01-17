@@ -15,7 +15,7 @@ import (
 
 func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
 	url := fmt.Sprintf("http://%s/validator/address/%s", tCurlAddress, addr.String())
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 10; i++ {
 		res, err := http.Get(url)
 		if err == nil {
 			if res.StatusCode == 200 {
@@ -28,7 +28,7 @@ func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
 				return &val
 			}
 		}
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 	}
 	assert.NoError(t, fmt.Errorf("timeout"))
 	return nil
@@ -36,7 +36,7 @@ func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
 
 func TestValidator(t *testing.T) {
 
-	res := getValidator(t, tSigners["node_2"].Address())
+	res := getValidator(t, tSigners[tNodeIdx2].Address())
 	require.NotNil(t, res)
 	assert.Zero(t, res.Stake())
 	assert.Equal(t, res.Number(), 1)

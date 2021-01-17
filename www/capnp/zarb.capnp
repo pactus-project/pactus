@@ -39,7 +39,7 @@ struct Block {
 }
 
 struct BlockchainResult {
-
+  height             @0 :Int64;
 }
 
 struct BlockResult {

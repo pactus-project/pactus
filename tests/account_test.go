@@ -1,42 +1,27 @@
 package tests
 
 import (
-	"bytes"
-	"fmt"
-	"net/http"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func getAccount(t *testing.T, addr crypto.Address) *account.Account {
-	url := fmt.Sprintf("http://%s/account/address/%s", tCurlAddress, addr.String())
-	for i := 0; i < 50; i++ {
-		res, err := http.Get(url)
-		if err == nil {
-			if res.StatusCode == 200 {
-				buf := new(bytes.Buffer)
-				_, err := buf.ReadFrom(res.Body)
-				assert.NoError(t, err)
-				var acc account.Account
-				err = acc.UnmarshalJSON(buf.Bytes())
-				assert.NoError(t, err)
-				return &acc
-			}
-		}
-		time.Sleep(100 * time.Millisecond)
+	res := tCapnpServer.GetAccount(tCtx, func(p capnp.ZarbServer_getAccount_Params) error {
+		assert.NoError(t, p.SetAddress([]byte(addr.String())))
+		return nil
+	}).Result()
+
+	st, err := res.Struct()
+	if err != nil {
+		return nil
 	}
-	assert.NoError(t, fmt.Errorf("timeout"))
-	return nil
-}
 
-func TestTreasuryAccount(t *testing.T) {
-
-	res := getAccount(t, crypto.TreasuryAddress)
-	require.NotNil(t, res)
-	assert.Equal(t, tGenDoc.Accounts()[0].Balance(), res.Balance()+int64(res.Sequence()*500000000))
+	d, _ := st.Data()
+	acc := new(account.Account)
+	assert.NoError(t, acc.Decode(d))
+	return acc
 }

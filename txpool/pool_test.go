@@ -1,20 +1,20 @@
 package txpool
 
 import (
+	"fmt"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-
-	"github.com/zarbchain/zarb-go/crypto"
-
-	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/tx"
-
-	"github.com/zarbchain/zarb-go/logger"
 )
 
 var tPool *txPool
@@ -37,14 +37,33 @@ func setup(t *testing.T) {
 	tPool = p.(*txPool)
 }
 
+func shouldPublishTransaction(t *testing.T, id crypto.Hash) {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("Timeout"))
+			return
+		case msg := <-tCh:
+			logger.Info("shouldPublishTransaction", "msg", msg)
+
+			if msg.PayloadType() == payload.PayloadTypeTransactions {
+				pld := msg.Payload.(*payload.TransactionsPayload)
+				assert.Equal(t, pld.Transactions[0].ID(), id)
+				return
+			}
+		}
+	}
+}
+
 func TestAppendAndRemove(t *testing.T) {
 	setup(t)
 
 	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	tSandbox.AppendStampAndUpdateHeight(88, stamp)
+	trx1 := tx.NewSubsidyTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
-	trx1 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, tAcc1Addr, 1000, 1000, "acc1->acc1: ok", &tAcc1Pub, nil)
-	trx1.SetSignature(tAcc1Priv.Sign(trx1.SignBytes()))
 	assert.NoError(t, tPool.appendTx(trx1))
 	assert.Error(t, tPool.appendTx(trx1))
 	tPool.RemoveTx(trx1.ID())
@@ -144,11 +163,9 @@ func TestStampValidity(t *testing.T) {
 func TestPending(t *testing.T) {
 	setup(t)
 
-	a, _, _ := crypto.GenerateTestKeyPair()
 	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
-	trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Pub.Address(), a, 1000, 1000, "stamp1-ok", &tAcc1Pub, nil)
-	trx.SetSignature(tAcc1Priv.Sign(trx.SignBytes()))
+	tSandbox.AppendStampAndUpdateHeight(88, stamp)
+	trx := tx.NewSubsidyTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
 	go func() {
 		for {
@@ -160,6 +177,10 @@ func TestPending(t *testing.T) {
 		}
 	}()
 
+	assert.NotNil(t, tPool.PendingTx(trx.ID()))
+	assert.True(t, tPool.pendings.Has(trx.ID()))
+
+	// For second time it should response immediately
 	assert.NotNil(t, tPool.PendingTx(trx.ID()))
 
 	invID := crypto.GenerateTestHash()
@@ -174,25 +195,83 @@ func TestGetAllTransaction(t *testing.T) {
 			<-tPool.appendTxCh
 		}
 	}()
-	trxs0 := tPool.AllTransactions()
-	assert.Empty(t, trxs0)
 
 	stamp := crypto.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 	trxs1 := make([]*tx.Tx, 10)
-	for i := 0; i < len(trxs1); i++ {
+
+	t.Run("pool is empty", func(t *testing.T) {
+		trxs0 := tPool.AllTransactions()
+		assert.Empty(t, trxs0)
+	})
+
+	t.Run("Fill up the pool and get all transactions", func(t *testing.T) {
+		for i := 0; i < len(trxs1); i++ {
+			a, _, _ := crypto.GenerateTestKeyPair()
+			trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Pub.Address(), a, 1000, 1000, "stamp1-ok", &tAcc1Pub, nil)
+			trx.SetSignature(tAcc1Priv.Sign(trx.SignBytes()))
+			assert.NoError(t, tPool.AppendTx(trx))
+			trxs1[i] = trx
+		}
+
+		trxs2 := tPool.AllTransactions()
+		for i := 0; i < 10; i++ {
+			// Should be in same order
+			assert.Equal(t, trxs1[i].ID(), trxs2[i].ID())
+		}
+		assert.Equal(t, tPool.Size(), 10)
+	})
+
+	t.Run("Add one more transaction, when pool is full", func(t *testing.T) {
 		a, _, _ := crypto.GenerateTestKeyPair()
 		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Pub.Address(), a, 1000, 1000, "stamp1-ok", &tAcc1Pub, nil)
 		trx.SetSignature(tAcc1Priv.Sign(trx.SignBytes()))
 		assert.NoError(t, tPool.AppendTx(trx))
-		trxs1[i] = trx
-	}
 
-	trxs2 := tPool.AllTransactions()
-	for i := 0; i < 10; i++ {
-		// Should be in same order
-		assert.Equal(t, trxs1[i].ID(), trxs2[i].ID())
-	}
+		trxs3 := tPool.AllTransactions()
+		for i := 0; i < 9; i++ {
+			assert.Equal(t, trxs1[i+1].ID(), trxs3[i].ID())
+		}
+		assert.Equal(t, trx.ID(), trxs3[9].ID())
+		assert.Equal(t, tPool.Size(), 10)
+	})
+}
 
-	assert.Equal(t, tPool.Size(), 10)
+func TestAppendAndBroadcast(t *testing.T) {
+	setup(t)
+
+	stamp := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(88, stamp)
+	trx := tx.NewSubsidyTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
+
+	assert.NoError(t, tPool.AppendTxAndBroadcast(trx))
+	shouldPublishTransaction(t, trx.ID())
+
+	invTrx, _ := tx.GenerateTestBondTx()
+	assert.Error(t, tPool.AppendTxAndBroadcast(invTrx))
+}
+
+func TestAddSubsidyTransactions(t *testing.T) {
+	setup(t)
+
+	stamp1 := crypto.GenerateTestHash()
+	stamp2 := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(88, stamp1)
+	proposer1, _, _ := crypto.GenerateTestKeyPair()
+	proposer2, _, _ := crypto.GenerateTestKeyPair()
+	trx1 := tx.NewSubsidyTx(stamp1, 88, proposer1, 25000000, "subsidy-tx-1")
+	trx2 := tx.NewSubsidyTx(stamp1, 89, proposer1, 25000000, "subsidy-tx-1")
+	trx3 := tx.NewSubsidyTx(stamp1, 89, proposer2, 25000000, "subsidy-tx-2")
+
+	// Recheck on empty pool
+	tPool.Recheck()
+
+	assert.Error(t, tPool.AppendTx(trx1))
+	assert.NoError(t, tPool.AppendTx(trx2))
+	assert.NoError(t, tPool.AppendTx(trx3))
+
+	tSandbox.AppendStampAndUpdateHeight(89, stamp2)
+
+	tPool.Recheck()
+	assert.Zero(t, tPool.Size())
 }

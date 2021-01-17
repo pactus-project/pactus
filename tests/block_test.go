@@ -1,36 +1,53 @@
 package tests
 
 import (
-	"bytes"
 	"fmt"
-	"net/http"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
-func getBlockAt(t *testing.T, height int) string {
-	url := fmt.Sprintf("http://%s/block/height/%d", tCurlAddress, height)
-	for i := 0; i < 50; i++ {
-		res, err := http.Get(url)
-		if err == nil {
-			if res.StatusCode == 200 {
-				buf := new(bytes.Buffer)
-				_, err := buf.ReadFrom(res.Body)
-				assert.NoError(t, err)
-				return buf.String()
-			}
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
-	assert.NoError(t, fmt.Errorf("timeout"))
-	return ""
+func lastHeight(t *testing.T) int {
+	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
+		return nil
+	}).Result()
+	st, err := res.Struct()
+	assert.NoError(t, err)
+
+	return int(st.Height())
 }
 
-func TestGeneratingBlocks(t *testing.T) {
+func waitForNewBlock(t *testing.T) *block.Block {
+	return getBlockAt(t, lastHeight(t)+1)
+}
 
-	res := getBlockAt(t, 1)
-	assert.Contains(t, res, "0000000000000000000000000000000000000000000000000000000000000000")
-	fmt.Println(res)
+func lastBlock(t *testing.T) *block.Block {
+	return getBlockAt(t, lastHeight(t))
+}
+
+func getBlockAt(t *testing.T, height int) *block.Block {
+	for i := 0; i < 12; i++ {
+		res := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
+			p.SetHeight(uint64(height))
+			p.SetVerbosity(0)
+			return nil
+		}).Result()
+
+		st, err := res.Struct()
+		if err != nil {
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		d, _ := st.Data()
+		b := new(block.Block)
+		assert.NoError(t, b.Decode(d))
+		return b
+	}
+	require.NoError(t, fmt.Errorf(fmt.Sprintf("timeout: block %d", height)))
+	return nil
 }

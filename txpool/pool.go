@@ -1,18 +1,17 @@
 package txpool
 
 import (
+	"container/list"
 	"fmt"
 	"time"
-
-	"github.com/zarbchain/zarb-go/execution"
-
-	"github.com/zarbchain/zarb-go/sandbox"
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -21,6 +20,7 @@ type txPool struct {
 	lk deadlock.RWMutex
 
 	config      *Config
+	sandbox     sandbox.Sandbox
 	checker     *execution.Execution
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
@@ -43,6 +43,7 @@ func NewTxPool(
 }
 
 func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
+	pool.sandbox = sb
 	pool.checker = execution.NewExecution(sb)
 }
 
@@ -78,13 +79,32 @@ func (pool *txPool) appendTx(trx *tx.Tx) error {
 		return errors.Errorf(errors.ErrInvalidTx, "Transaction is already in pool. id: %v", trx.ID())
 	}
 
-	if err := pool.checker.Execute(trx); err != nil {
-		pool.logger.Error("Invalid transaction", "tx", trx, "err", err)
+	if err := pool.checkTx(trx); err != nil {
 		return err
 	}
 
 	pool.pendings.PushBack(trx.ID(), trx)
 
+	return nil
+}
+
+func (pool *txPool) checkTx(trx *tx.Tx) error {
+	// We accepts all subsidy transaction for the current height
+	// There maybe more than one valid subsidy transaction per height
+	// Because there maybe more than one proposal per height
+	if trx.IsSubsidyTx() {
+		if trx.Sequence() != pool.sandbox.CurrentHeight() {
+			return errors.Errorf(errors.ErrInvalidTx,
+				"Subsidy transaction is not for current height. Expected :%d, got: %d",
+				pool.sandbox.CurrentHeight(), trx.Sequence())
+		}
+	} else {
+
+		if err := pool.checker.Execute(trx); err != nil {
+			pool.logger.Debug("Invalid transaction", "tx", trx, "err", err)
+			return err
+		}
+	}
 	return nil
 }
 
@@ -152,6 +172,21 @@ func (pool *txPool) Size() int {
 	defer pool.lk.RUnlock()
 
 	return pool.pendings.Size()
+}
+
+func (pool *txPool) Recheck() {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	var next *list.Element
+	for e := pool.pendings.FirstElement(); e != nil; e = next {
+		next = e.Next()
+		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+
+		if err := pool.checkTx(trx); err != nil {
+			pool.pendings.Remove(trx.ID())
+		}
+	}
 }
 
 func (pool *txPool) Fingerprint() string {

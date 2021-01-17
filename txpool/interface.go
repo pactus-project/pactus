@@ -7,6 +7,7 @@ import (
 )
 
 type TxPoolReader interface {
+	AllTransactions() []*tx.Tx
 	PendingTx(id crypto.Hash) *tx.Tx
 	HasTx(id crypto.Hash) bool
 	Size() int
@@ -21,5 +22,5 @@ type TxPool interface {
 	AppendTx(tx *tx.Tx) error
 	AppendTxAndBroadcast(trx *tx.Tx) error
 	RemoveTx(id crypto.Hash)
-	AllTransactions() []*tx.Tx
+	Recheck()
 }
