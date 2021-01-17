@@ -34,8 +34,11 @@ var tSequences map[crypto.Address]int
 
 const tNodeIdx1 = 0
 const tNodeIdx2 = 1
-const tNodeIdx3 = 2
-const tNodeIdx4 = 3
+
+// const tNodeIdx3 = 2
+// const tNodeIdx4 = 3
+// const tNodeIdx5 = 4
+// const tNodeIdx6 = 5
 
 func incSequence(t *testing.T, addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
@@ -46,9 +49,6 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	// For the integration tests we can run more nodes,
-	// but runningmore tha 4 nodes will make test unstable
-	// and sometimes faulty specially in slow test containers like Github Action
 	max := 4
 	tSigners = make([]crypto.Signer, max)
 	tConfigs = make([]*config.Config, max)
@@ -112,11 +112,11 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
-	//broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 0, false)
-	//broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 0, false)
+	// broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 0, false)
+	// broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 0, false)
 
-	//waitForNewBlock(t)
-	//waitForNewBlock(t)
+	// waitForNewBlock(t)
+	// waitForNewBlock(t)
 
 	exitCode := m.Run()
 
