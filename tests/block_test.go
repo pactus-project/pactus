@@ -30,7 +30,7 @@ func lastBlock(t *testing.T) *block.Block {
 }
 
 func getBlockAt(t *testing.T, height int) *block.Block {
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 12; i++ {
 		res := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
 			p.SetHeight(uint64(height))
 			p.SetVerbosity(0)
@@ -48,6 +48,6 @@ func getBlockAt(t *testing.T, height int) *block.Block {
 		assert.NoError(t, b.Decode(d))
 		return b
 	}
-	require.NoError(t, fmt.Errorf("timeout"))
+	require.NoError(t, fmt.Errorf(fmt.Sprintf("timeout: block %d", height)))
 	return nil
 }
