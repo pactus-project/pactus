@@ -235,13 +235,17 @@ func (tx *Tx) IsSubsidyTx() bool {
 		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
+func (tx *Tx) IsSortitionTx() bool {
+	return tx.data.Type == payload.PayloadTypeSortition
+}
+
 // ---------
 // For tests
 func GenerateTestSendTx() (*Tx, crypto.PrivateKey) {
 	h := crypto.GenerateTestHash()
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	a2, _, _ := crypto.GenerateTestKeyPair()
-	tx := NewSendTx(h, 110, a1, a2, 100, 10, "test send-tx", &pb1, nil)
+	tx := NewSendTx(h, 110, a1, a2, 1000, 1000, "test send-tx", &pb1, nil)
 	sig := pv1.Sign(tx.SignBytes())
 	tx.data.Signature = sig
 	return tx, pv1
@@ -251,7 +255,7 @@ func GenerateTestBondTx() (*Tx, crypto.PrivateKey) {
 	h := crypto.GenerateTestHash()
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	_, pb2, _ := crypto.GenerateTestKeyPair()
-	tx := NewBondTx(h, 110, a1, pb2, 100, "test bond-tx", &pb1, nil)
+	tx := NewBondTx(h, 110, a1, pb2, 1000, 1000, "test bond-tx", &pb1, nil)
 	sig := pv1.Sign(tx.SignBytes())
 	tx.data.Signature = sig
 	return tx, pv1

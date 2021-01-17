@@ -458,7 +458,7 @@ func (st *state) EvaluateSortition() {
 	if trx != nil {
 		st.logger.Info("👏 This validator is chosen to be in set", "address", st.proposer, "stake", val.Stake(), "tx", trx)
 		if err := st.txPool.AppendTxAndBroadcast(trx); err != nil {
-			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.proposer, "stake", val.Stake(), "tx", trx)
+			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.proposer, "stake", val.Stake(), "tx", trx, "err", err)
 		}
 	}
 }

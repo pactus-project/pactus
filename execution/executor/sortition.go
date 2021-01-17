@@ -11,8 +11,8 @@ type SortitionExecutor struct {
 	sandbox sandbox.Sandbox
 }
 
-func NewSortitionExecutor(sandbox sandbox.Sandbox) *SortitionExecutor {
-	return &SortitionExecutor{sandbox}
+func NewSortitionExecutor(sb sandbox.Sandbox) *SortitionExecutor {
+	return &SortitionExecutor{sandbox: sb}
 }
 
 func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
@@ -28,9 +28,13 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Proof, val) {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
 	}
+
 	if err := e.sandbox.AddToSet(trx.Stamp(), val.Address()); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, err.Error())
 	}
+	val.IncSequence()
+
+	e.sandbox.UpdateValidator(val)
 
 	return nil
 }

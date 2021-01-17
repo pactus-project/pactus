@@ -235,7 +235,7 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
 	}
 	h, _ := sb.store.BlockHeight(blockHash)
-	b, err := sb.store.Block(h + 1)
+	b, err := sb.store.Block(h)
 	if err != nil {
 		return errors.Errorf(errors.ErrGeneric, "Invalid block hash")
 	}
@@ -285,6 +285,13 @@ func (sb *SandboxConcrete) RecentBlockHeight(hash crypto.Hash) int {
 	}
 
 	return h.(int)
+}
+
+func (sb *SandboxConcrete) MaximumPower() int {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.validatorSet.MaximumPower()
 }
 
 func (sb *SandboxConcrete) lastHeight() int {

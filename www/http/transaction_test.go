@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/tx"
-	"gotest.tools/assert"
 )
 
 func TestTransaction(t *testing.T) {

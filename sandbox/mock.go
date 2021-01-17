@@ -16,6 +16,7 @@ type MockSandbox struct {
 	Stamps         map[crypto.Hash]int
 	CurrentHeight_ int
 	TTLInterval    int
+	MaximumPower_  int
 	MaxMemoLength_ int
 	FeeFraction_   float64
 	MinFee_        int64
@@ -31,6 +32,7 @@ func MockingSandbox() *MockSandbox {
 		Validators:     make(map[crypto.Address]validator.Validator),
 		Stamps:         make(map[crypto.Hash]int),
 		TTLInterval:    4,
+		MaximumPower_:  4,
 		MaxMemoLength_: 1024,
 		FeeFraction_:   0.001,
 		MinFee_:        1000,
@@ -104,4 +106,8 @@ func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) 
 
 func (m *MockSandbox) AccSeq(a crypto.Address) int {
 	return m.Accounts[a].Sequence()
+}
+
+func (m *MockSandbox) MaximumPower() int {
+	return m.MaximumPower_
 }

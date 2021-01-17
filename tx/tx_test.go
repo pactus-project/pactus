@@ -115,6 +115,7 @@ func TestTxSanityCheck(t *testing.T) {
 func TestSubsidyTx(t *testing.T) {
 	a, pub, priv := crypto.GenerateTestKeyPair()
 	trx := NewSubsidyTx(crypto.GenerateTestHash(), 111, a, 1111, "subsidy")
+	assert.True(t, trx.IsSubsidyTx())
 
 	trx.data.Fee = 1
 	assert.Error(t, trx.SanityCheck())
@@ -296,12 +297,12 @@ func TestBondSignBytes(t *testing.T) {
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	_, pb2, _ := crypto.GenerateTestKeyPair()
 
-	trx1 := NewBondTx(h, 1, a1, pb2, 100, "test bond-tx", &pb1, nil)
+	trx1 := NewBondTx(h, 1, a1, pb2, 100, 100, "test bond-tx", &pb1, nil)
 	sig1 := pv1.Sign(trx1.SignBytes())
 	trx1.data.Signature = sig1
 
-	trx2 := NewBondTx(h, 1, a1, pb2, 100, "test bond-tx", nil, nil)
-	trx3 := NewBondTx(h, 2, a1, pb2, 100, "test bond-tx", nil, nil)
+	trx2 := NewBondTx(h, 1, a1, pb2, 100, 100, "test bond-tx", nil, nil)
+	trx3 := NewBondTx(h, 2, a1, pb2, 100, 100, "test bond-tx", nil, nil)
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
@@ -321,4 +322,5 @@ func TestSortitionSignBytes(t *testing.T) {
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+	assert.True(t, trx1.IsSortitionTx())
 }

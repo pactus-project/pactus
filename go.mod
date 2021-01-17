@@ -56,6 +56,5 @@ require (
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
 	gopkg.in/tylerb/graceful.v1 v1.2.15 // indirect
-	gotest.tools v2.2.0+incompatible
 	zombiezen.com/go/capnproto2 v2.18.0+incompatible
 )

@@ -46,7 +46,7 @@ func NewBondTx(stamp crypto.Hash,
 	sequence int,
 	bonder crypto.Address,
 	val crypto.PublicKey,
-	stake int64, memo string,
+	stake, fee int64, memo string,
 	publicKey *crypto.PublicKey, signature *crypto.Signature) *Tx {
 	return &Tx{
 		data: txData{
@@ -59,7 +59,7 @@ func NewBondTx(stamp crypto.Hash,
 				Validator: val,
 				Stake:     stake,
 			},
-			Fee:       0,
+			Fee:       fee,
 			Memo:      memo,
 			PublicKey: publicKey,
 			Signature: signature,

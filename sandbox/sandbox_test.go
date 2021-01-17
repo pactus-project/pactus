@@ -41,7 +41,7 @@ func setup(t *testing.T) {
 	tValSigners[4] = crypto.NewSigner(priv5)
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(21000000000000)
+	acc.AddToBalance(2100000000000000)
 	val1 := validator.NewValidator(pub1, 0, 0)
 	val2 := validator.NewValidator(pub2, 1, 0)
 	val3 := validator.NewValidator(pub2, 2, 0)

@@ -6,7 +6,6 @@ import (
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type SendExecutor struct {
@@ -14,8 +13,8 @@ type SendExecutor struct {
 	fee     int64
 }
 
-func NewSendExecutor(sandbox sandbox.Sandbox) *SendExecutor {
-	return &SendExecutor{sandbox: sandbox}
+func NewSendExecutor(sb sandbox.Sandbox) *SendExecutor {
+	return &SendExecutor{sandbox: sb}
 }
 
 func (e *SendExecutor) Execute(trx *tx.Tx) error {
@@ -39,17 +38,6 @@ func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence, Expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
-	}
-	if trx.IsSubsidyTx() {
-		if trx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
-		}
-	} else {
-		fee := int64(float64(trx.Payload().Value()) * e.sandbox.FeeFraction())
-		fee = util.Max64(fee, e.sandbox.MinFee())
-		if trx.Fee() != fee {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: %v, got: %v", fee, trx.Fee())
-		}
 	}
 
 	senderAcc.IncSequence()

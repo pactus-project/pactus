@@ -66,7 +66,7 @@ func setup(t *testing.T) {
 	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(21000000000000)
+	acc.AddToBalance(2100000000000000)
 	params := param.MainnetParams()
 	params.BlockTimeInSecond = 1
 	params.MaximumPower = 4
@@ -246,10 +246,10 @@ func TestNotInValidatorSet(t *testing.T) {
 	cons, err := NewConsensus(TestConfig(), st, signer, make(chan *message.Message, 100))
 	assert.NoError(t, err)
 
-	cons.MoveToNewHeight()
+	cons.(*consensus).enterNewHeight()
 
 	cons.(*consensus).signAddVote(vote.VoteTypePrepare, crypto.GenerateTestHash())
-	assert.Nil(t, cons.(*consensus).pendingVotes.GetRoundVotes(0))
+	assert.Zero(t, len(cons.RoundVotes(0)))
 }
 
 func TestRoundVotes(t *testing.T) {

@@ -34,8 +34,8 @@ var tSequences map[crypto.Address]int
 
 const tNodeIdx1 = 0
 const tNodeIdx2 = 1
+const tNodeIdx3 = 2
 
-// const tNodeIdx3 = 2
 // const tNodeIdx4 = 3
 // const tNodeIdx5 = 4
 // const tNodeIdx6 = 5
@@ -86,7 +86,7 @@ func TestMain(m *testing.M) {
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0, 0)
 	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1, 0)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 3
+	params.BlockTimeInSecond = 1
 	params.MaximumPower = 3
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
@@ -112,11 +112,11 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
-	// broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 0, false)
-	// broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 0, false)
+	broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 1000, 1000, false)
+	//broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 1000, 1000,false)
 
-	// waitForNewBlock(t)
-	// waitForNewBlock(t)
+	waitForNewBlock(t)
+	waitForNewBlock(t)
 
 	exitCode := m.Run()
 

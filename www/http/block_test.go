@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"gotest.tools/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBlock(t *testing.T) {
