@@ -196,7 +196,7 @@ func TestAddValidatorToSet(t *testing.T) {
 	tStore.Blocks[1] = block1
 	tStore.Blocks[2] = block2
 
-	t.Run("Add unknown validator to the set, Should panic", func(t *testing.T) {
+	t.Run("Add unknown validator to the set, Should returns error", func(t *testing.T) {
 		val, _ := validator.GenerateTestValidator(1)
 		h := crypto.GenerateTestHash()
 		assert.Error(t, tSandbox.AddToSet(h, val.Address()))
@@ -213,6 +213,11 @@ func TestAddValidatorToSet(t *testing.T) {
 		assert.Error(t, tSandbox.AddToSet(block1.Hash(), v.Address()))
 	})
 
+	t.Run("Invalid block hash, Should returns error", func(t *testing.T) {
+		v := tSandbox.Validator(tValSigners[0].Address())
+		assert.Error(t, tSandbox.AddToSet(crypto.GenerateTestHash(), v.Address()))
+	})
+
 	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
 		_, pub1, _ := crypto.GenerateTestKeyPair()
 		_, pub2, _ := crypto.GenerateTestKeyPair()
@@ -221,7 +226,6 @@ func TestAddValidatorToSet(t *testing.T) {
 		assert.NoError(t, tSandbox.AddToSet(block1.Hash(), val1.Address()))
 		assert.Error(t, tSandbox.AddToSet(block1.Hash(), val2.Address()))
 	})
-
 }
 
 func TestTotalAccountCounter(t *testing.T) {

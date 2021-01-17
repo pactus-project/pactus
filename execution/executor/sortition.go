@@ -22,13 +22,15 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
 	}
-	if trx.Fee() != 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+	if val.Sequence()+1 != trx.Sequence() {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+	}
+	if e.sandbox.CurrentHeight()-val.BondingHeight() < e.sandbox.TransactionToLiveInterval()+10 {
+		return errors.Errorf(errors.ErrInvalidTx, "Too early to send sortition")
 	}
 	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Proof, val) {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
 	}
-
 	if err := e.sandbox.AddToSet(trx.Stamp(), val.Address()); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, err.Error())
 	}

@@ -287,13 +287,6 @@ func (sb *SandboxConcrete) RecentBlockHeight(hash crypto.Hash) int {
 	return h.(int)
 }
 
-func (sb *SandboxConcrete) MaximumPower() int {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.validatorSet.MaximumPower()
-}
-
 func (sb *SandboxConcrete) lastHeight() int {
 	_, v := sb.recentBlocks.Last()
 	if v == nil {

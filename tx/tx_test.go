@@ -235,6 +235,13 @@ func TestSortitionSanityCheck(t *testing.T) {
 		assert.Error(t, trx.SanityCheck())
 	})
 
+	t.Run("Invalid fee", func(t *testing.T) {
+		trx, priv := GenerateTestSortitionTx()
+		trx.data.Fee = 1
+		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		assert.Error(t, trx.SanityCheck())
+	})
+
 }
 
 func TestSendDecodingAndHash(t *testing.T) {

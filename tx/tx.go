@@ -59,24 +59,11 @@ func (tx *Tx) SanityCheck() error {
 	if tx.data.Sequence < 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
 	}
-
-	if tx.IsSubsidyTx() {
-		if tx.data.PublicKey != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have public key")
-		}
-		if tx.data.Signature != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have signature")
-		}
-		if tx.data.Fee != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee for Subsidy transaction should set to zero")
-		}
-	} else {
-		if tx.data.Fee < 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid fee")
-		}
-		if err := tx.CheckSignature(); err != nil {
-			return err
-		}
+	if err := tx.checkFee(); err != nil {
+		return err
+	}
+	if err := tx.checkSignature(); err != nil {
+		return err
 	}
 	if tx.data.Type != tx.data.Payload.Type() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid payload type")
@@ -90,25 +77,48 @@ func (tx *Tx) SanityCheck() error {
 	return nil
 }
 
-func (tx *Tx) CheckSignature() error {
-	if tx.data.PublicKey == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "No public key")
+func (tx *Tx) checkFee() error {
+	if tx.IsSubsidyTx() || tx.IsSortitionTx() {
+		if tx.data.Fee != 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee should set to zero")
+		}
+	} else {
+		if tx.data.Fee <= 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee is invalid")
+		}
 	}
-	if tx.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "No signature")
-	}
-	if err := tx.data.PublicKey.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid pubic key")
-	}
-	if err := tx.data.Signature.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
-	}
-	if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
-	}
-	bs := tx.SignBytes()
-	if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+
+	return nil
+}
+
+func (tx *Tx) checkSignature() error {
+	if tx.IsSubsidyTx() {
+		if tx.data.PublicKey != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have public key")
+		}
+		if tx.data.Signature != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have signature")
+		}
+	} else {
+		if tx.data.PublicKey == nil {
+			return errors.Errorf(errors.ErrInvalidTx, "No public key")
+		}
+		if tx.data.Signature == nil {
+			return errors.Errorf(errors.ErrInvalidTx, "No signature")
+		}
+		if err := tx.data.PublicKey.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid pubic key")
+		}
+		if err := tx.data.Signature.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+		}
+		if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
+		}
+		bs := tx.SignBytes()
+		if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+		}
 	}
 	return nil
 }
