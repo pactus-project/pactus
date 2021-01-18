@@ -57,10 +57,6 @@ func (r *Receipt) MarshalJSON() ([]byte, error) {
 	return json.Marshal(r.data)
 }
 
-func (r *Receipt) UnmarshalJSON(bs []byte) error {
-	return json.Unmarshal(bs, &r.data)
-}
-
 func (r *Receipt) Encode() ([]byte, error) {
 	return cbor.Marshal(r.data)
 }

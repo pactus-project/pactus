@@ -97,5 +97,10 @@ func TestExecution(t *testing.T) {
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp2, 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee", nil, nil)
 		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.checkFee(trx))
 	})
+
+	assert.Equal(t, tExec.AccumulatedFee(), int64(1000))
+	tExec.ResetFee()
+	assert.Equal(t, tExec.AccumulatedFee(), int64(0))
 }

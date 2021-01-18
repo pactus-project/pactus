@@ -34,11 +34,8 @@ func TestConsensusBehindState(t *testing.T) {
 	tConsP.SetProposal(p)
 
 	// --------------------------------
-	// Syncer commit a block and trig consensus
+	// Syncer commits a block
 	commitBlockForAllStates(t)
-
-	assert.Equal(t, len(tConsP.RoundVotes(0)), 1)
-	checkHRS(t, tConsP, 1, 0, hrs.StepTypePrepare)
 	// --------------------------------
 
 	// Consensus tries to add more votes and commit the block which is committed by syncer before.
@@ -54,6 +51,36 @@ func TestConsensusBehindState(t *testing.T) {
 
 	assert.NoError(t, tConsP.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
 	// We don't get any error here, but the block is not committed again. Check logs.
+}
 
+func TestConsensusBehindState2(t *testing.T) {
+	setup(t)
+
+	// Consensus starts here
+	tConsX.enterNewHeight()
 	tConsP.enterNewHeight()
+
+	p := tConsX.LastProposal()
+	assert.NoError(t, tConsP.state.ValidateBlock(p.Block()))
+	tConsP.SetProposal(p)
+
+	// --------------------------------
+	// Syncer commits a block and trig consensus
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	// --------------------------------
+
+	// Consensus tries to add more votes and commit the block which is committed by syncer before.
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
+
+	precommits := tConsP.pendingVotes.PrecommitVoteSet(0)
+	require.NotNil(t, precommits)
+	require.NotNil(t, precommits.ToCommit())
+
+	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
+
+	assert.Error(t, tConsP.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
 }
