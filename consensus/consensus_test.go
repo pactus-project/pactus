@@ -240,8 +240,8 @@ func commitBlockForAllStates(t *testing.T) {
 func TestHandleTimeout(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
-	tConsX.handleTimeout(timeout{Height: 2, Step: 9}) // Should not panic
+	tConsX.handleTimeout(timeout{Height: 1})
+	checkHRS(t, tConsX, 0, 0, 0)
 }
 
 func TestNotInValidatorSet(t *testing.T) {

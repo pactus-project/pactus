@@ -2,6 +2,7 @@ package tests
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -83,6 +84,7 @@ func TestSendingTransactions(t *testing.T) {
 			broadcastSendTransaction(t, bobSigner, carolAddr, 10, 1000, false)
 			broadcastSendTransaction(t, bobSigner, daveAddr, 1, 1000, false)
 		})
+		time.Sleep(50 * time.Millisecond)
 	}
 
 	waitForNewBlock(t)
