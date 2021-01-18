@@ -237,6 +237,13 @@ func commitBlockForAllStates(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestHandleTimeout(t *testing.T) {
+	setup(t)
+
+	tConsX.enterNewHeight()
+	tConsX.handleTimeout(timeout{Height: 2, Step: 9}) // Should not panic
+}
+
 func TestNotInValidatorSet(t *testing.T) {
 	setup(t)
 
