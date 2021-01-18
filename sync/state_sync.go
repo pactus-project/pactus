@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -22,6 +23,7 @@ type StateSync struct {
 	selfID    peer.ID
 	cache     *cache.Cache
 	state     state.State
+	txPool    txpool.TxPool
 	peerSet   *peerset.PeerSet
 	logger    *logger.Logger
 	publishFn PublishMessageFn
@@ -33,6 +35,7 @@ func NewStateSync(
 	selfID peer.ID,
 	cache *cache.Cache,
 	state state.State,
+	txPool txpool.TxPool,
 	peerSet *peerset.PeerSet,
 	logger *logger.Logger,
 	publishFn PublishMessageFn,
@@ -42,6 +45,7 @@ func NewStateSync(
 		selfID:    selfID,
 		cache:     cache,
 		state:     state,
+		txPool:    txPool,
 		peerSet:   peerSet,
 		logger:    logger,
 		publishFn: publishFn,
@@ -258,6 +262,12 @@ func (ss *StateSync) ProcessTransactionsPayload(pld *payload.TransactionsPayload
 	ss.logger.Trace("Process transactions payload", "pld", pld)
 
 	ss.addTransactionsToCache(pld.Transactions)
+
+	for _, trx := range pld.Transactions {
+		if err := ss.txPool.AppendTx(trx); err != nil {
+			// TODO: set peer as bad peer?
+		}
+	}
 }
 
 func (ss *StateSync) prepareTransactions(ids []crypto.Hash) []*tx.Tx {

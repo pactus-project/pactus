@@ -354,3 +354,26 @@ func TestNodeShutdown(t *testing.T) {
 	_, err := tState1.ProposeBlock(0)
 	assert.Error(t, err)
 }
+
+func TestSortition(t *testing.T) {
+	setup(t)
+
+	_, pub, priv := crypto.GenerateTestKeyPair()
+	signer := crypto.NewSigner(priv)
+
+	tCommonTxPool = txpool.MockingTxPool()
+	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, tCommonTxPool)
+	assert.NoError(t, err)
+
+	st1 := st.(*state)
+
+	assert.False(t, tState1.EvaluateSortition())
+	assert.False(t, st1.EvaluateSortition()) //  not a validator
+
+	// Manipulating the store
+	val := validator.NewValidator(pub, 4, 88)
+	st1.store.UpdateValidator(val)
+
+	assert.False(t, st1.EvaluateSortition()) //  too soon
+
+}

@@ -386,9 +386,3 @@ func TestConsensusInvalidProposal(t *testing.T) {
 	tConsY.SetProposal(p)
 	assert.Nil(t, tConsY.LastProposal())
 }
-
-func TestConsensusFingerprint(t *testing.T) {
-	setup(t)
-
-	assert.Contains(t, tConsX.Fingerprint(), tConsX.hrs.String())
-}

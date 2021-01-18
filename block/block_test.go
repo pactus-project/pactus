@@ -112,9 +112,3 @@ func TestSanityCheck(t *testing.T) {
 			tmp.Header().LastReceiptsHash(), nil, tmp.Header().ProposerAddress())
 	})
 }
-
-func TestBlockFingerprint(t *testing.T) {
-	b, _ := GenerateTestBlock(nil, nil)
-	assert.Contains(t, b.Fingerprint(), b.Hash().Fingerprint())
-	assert.Contains(t, b.Fingerprint(), b.Header().CommittersHash().Fingerprint())
-}

@@ -129,37 +129,6 @@ func TestSendTxValidity(t *testing.T) {
 	assert.Error(t, tPool.appendTx(trx12))
 }
 
-func TestStampValidity(t *testing.T) {
-	setup(t)
-
-	stamp1 := crypto.GenerateTestHash()
-	stamp2 := crypto.GenerateTestHash()
-	stamp3 := crypto.GenerateTestHash()
-	stamp4 := crypto.GenerateTestHash()
-	stamp5 := crypto.GenerateTestHash()
-	senderAddr, senderPub, senderPriv := tAcc1Pub.Address(), tAcc1Pub, tAcc1Priv
-	receiverAddr, _, _ := crypto.GenerateTestKeyPair()
-
-	tSandbox.AppendStampAndUpdateHeight(100, stamp1)
-	tSandbox.AppendStampAndUpdateHeight(101, stamp2)
-	tSandbox.AppendStampAndUpdateHeight(102, stamp3)
-	tSandbox.AppendStampAndUpdateHeight(103, stamp4)
-
-	trx1 := tx.NewSendTx(stamp1, tSandbox.AccSeq(tAcc1Addr)+1, senderAddr, receiverAddr, 1000, 1000, "stamp1-ok", &senderPub, nil)
-	trx1.SetSignature(senderPriv.Sign(trx1.SignBytes()))
-	assert.NoError(t, tPool.appendTx(trx1))
-
-	tSandbox.AppendStampAndUpdateHeight(104, stamp5)
-
-	trx2 := tx.NewSendTx(stamp1, tSandbox.AccSeq(tAcc1Addr)+1, senderAddr, receiverAddr, 1000, 1000, "stamp1-invalid", &senderPub, nil)
-	trx2.SetSignature(senderPriv.Sign(trx2.SignBytes()))
-	assert.Error(t, tPool.appendTx(trx2))
-
-	trx3 := tx.NewSendTx(stamp2, tSandbox.AccSeq(tAcc1Addr)+1, senderAddr, receiverAddr, 1000, 1000, "stamp2-ok", &senderPub, nil)
-	trx3.SetSignature(senderPriv.Sign(trx3.SignBytes()))
-	assert.NoError(t, tPool.appendTx(trx3))
-}
-
 func TestPending(t *testing.T) {
 	setup(t)
 
@@ -190,14 +159,8 @@ func TestPending(t *testing.T) {
 func TestGetAllTransaction(t *testing.T) {
 	setup(t)
 
-	go func() {
-		for {
-			<-tPool.appendTxCh
-		}
-	}()
-
 	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	tSandbox.AppendStampAndUpdateHeight(10000, stamp)
 	trxs1 := make([]*tx.Tx, 10)
 
 	t.Run("pool is empty", func(t *testing.T) {

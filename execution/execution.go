@@ -82,6 +82,8 @@ func (exe *Execution) checkStamp(trx *tx.Tx) error {
 
 	if trx.IsSubsidyTx() {
 		interval = 1
+	} else if trx.IsSortitionTx() {
+		interval = exe.sandbox.MaximumPower()
 	}
 
 	if height == -1 || curHeight-height > interval {

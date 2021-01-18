@@ -35,9 +35,10 @@ var tSequences map[crypto.Address]int
 const tNodeIdx1 = 0
 const tNodeIdx2 = 1
 const tNodeIdx3 = 2
+const tNodeIdx4 = 3
 
-// const tNodeIdx4 = 3
-// const tNodeIdx5 = 4
+const tNodeIdx5 = 4
+
 // const tNodeIdx6 = 5
 
 func incSequence(t *testing.T, addr crypto.Address) {
@@ -88,6 +89,7 @@ func TestMain(m *testing.M) {
 	params := param.MainnetParams()
 	params.BlockTimeInSecond = 1
 	params.MaximumPower = 3
+	params.TransactionToLiveInterval = 10
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
 	var err error
@@ -112,11 +114,14 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
-	broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 1000, 1000, false)
-	//broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 1000, 1000,false)
+	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx1].PublicKey(), 1000, 1000, false)
+	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx2].PublicKey(), 1000, 1000, false)
+	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 1000, 1000, false)
+	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 1000, 1000, false)
 
-	waitForNewBlock(t)
-	waitForNewBlock(t)
+	for i := 0; i < 30; i++ {
+		waitForNewBlock(t)
+	}
 
 	exitCode := m.Run()
 

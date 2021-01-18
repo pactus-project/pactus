@@ -207,10 +207,6 @@ func TestDownloadResponse(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-func TestMessageFingerprint(t *testing.T) {
-	msg := NewQueryProposalMessage(1, 1)
-	assert.Contains(t, msg.Fingerprint(), msg.Payload.Fingerprint())
-}
 
 func TestBlocksMessageCompress(t *testing.T) {
 	var blocks = []*block.Block{}

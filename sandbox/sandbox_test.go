@@ -71,6 +71,7 @@ func setup(t *testing.T) {
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
 	assert.Equal(t, tSandbox.TransactionToLiveInterval(), params.TransactionToLiveInterval)
+	assert.Equal(t, tSandbox.MaximumPower(), params.MaximumPower)
 }
 
 func TestLoadRecentBlocks(t *testing.T) {
@@ -188,13 +189,13 @@ func TestAddValidatorToSet(t *testing.T) {
 	require.NoError(t, err)
 	a1 := tValSigners[0].Address()
 	a2 := tValSigners[1].Address()
-	block1, _ := block.GenerateTestBlock(&a1, nil)
+	block11, _ := block.GenerateTestBlock(&a1, nil)
 	assert.NoError(t, tValset.UpdateTheSet(0, nil))
-	block2, _ := block.GenerateTestBlock(&a2, nil)
+	block12, _ := block.GenerateTestBlock(&a2, nil)
 	assert.NoError(t, tValset.UpdateTheSet(0, []*validator.Validator{val5}))
 
-	tStore.Blocks[1] = block1
-	tStore.Blocks[2] = block2
+	tStore.Blocks[11] = block11
+	tStore.Blocks[12] = block12
 
 	t.Run("Add unknown validator to the set, Should returns error", func(t *testing.T) {
 		val, _ := validator.GenerateTestValidator(1)
@@ -210,7 +211,7 @@ func TestAddValidatorToSet(t *testing.T) {
 
 	t.Run("In set at time of doing sortition, Should returns error", func(t *testing.T) {
 		v := tSandbox.Validator(tValSigners[0].Address())
-		assert.Error(t, tSandbox.AddToSet(block1.Hash(), v.Address()))
+		assert.Error(t, tSandbox.AddToSet(block11.Hash(), v.Address()))
 	})
 
 	t.Run("Invalid block hash, Should returns error", func(t *testing.T) {
@@ -219,12 +220,28 @@ func TestAddValidatorToSet(t *testing.T) {
 	})
 
 	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
+		tSandbox.params.MaximumPower = 4
+		
 		_, pub1, _ := crypto.GenerateTestKeyPair()
 		_, pub2, _ := crypto.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)
 		val2 := tSandbox.MakeNewValidator(pub2)
-		assert.NoError(t, tSandbox.AddToSet(block1.Hash(), val1.Address()))
-		assert.Error(t, tSandbox.AddToSet(block1.Hash(), val2.Address()))
+		assert.NoError(t, tSandbox.AddToSet(block11.Hash(), val1.Address()))
+		assert.Error(t, tSandbox.AddToSet(block11.Hash(), val2.Address()))
+	})
+
+	t.Run("Update validator and add to set", func(t *testing.T) {
+		tSandbox.Clear()
+		addr1, pub1, _ := crypto.GenerateTestKeyPair()
+		val1 := tSandbox.MakeNewValidator(pub1)
+		assert.NoError(t, tSandbox.AddToSet(block11.Hash(), val1.Address()))
+		seq := val1.Sequence()
+		val1.IncSequence()
+		tSandbox.UpdateValidator(val1)
+		vs := tSandbox.validators[addr1]
+		assert.True(t, vs.AddToSet)
+		assert.True(t, vs.Updated)
+		assert.Equal(t, vs.Validator.Sequence(), seq+1)
 	})
 }
 

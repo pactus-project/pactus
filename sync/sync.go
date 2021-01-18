@@ -86,7 +86,7 @@ func NewSynchronizer(
 	syncer.networkAPI = api
 
 	syncer.consensusSync = NewConsensusSync(conf, consensus, logger, syncer.publishMessage)
-	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, peerSet, logger, syncer.publishMessage, syncer.synced)
+	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, txPool, peerSet, logger, syncer.publishMessage, syncer.synced)
 
 	if conf.InitialBlockDownload {
 		if err := syncer.joinDownloadTopic(); err != nil {
@@ -172,9 +172,12 @@ func (syncer *Synchronizer) broadcastLoop() {
 				for i, id := range pld.IDs {
 					trx := syncer.cache.GetTransaction(id)
 					if trx != nil {
-						if err := syncer.txPool.AppendTx(trx); err == nil {
-							pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
+						if err := syncer.txPool.AppendTx(trx); err != nil {
+							syncer.logger.Warn("Query for invalid transaction", "tx", trx)
 						}
+
+						pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
+
 					}
 				}
 

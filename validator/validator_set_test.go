@@ -13,7 +13,6 @@ func TestContains(t *testing.T) {
 
 	assert.True(t, vs.Contains(keys[0].PublicKey().Address()))
 	assert.True(t, vs.Contains(vs.Proposer(0).Address()))
-	assert.Equal(t, vs.MaximumPower(), 4)
 	assert.False(t, vs.Contains(a))
 }
 

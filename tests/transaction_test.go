@@ -41,7 +41,7 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 	}
 }
 
-func broadcastBonTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake, fee int64, expectError bool) {
+func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake, fee int64, expectError bool) {
 	pub := sender.PublicKey()
 	stamp := lastBlock(t).Hash()
 	seq := getSequence(t, pub.Address())

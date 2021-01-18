@@ -5,6 +5,7 @@ import (
 
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -16,11 +17,7 @@ type MockSandbox struct {
 	Validators      map[crypto.Address]validator.Validator
 	Stamps          map[crypto.Hash]int
 	CurrentHeight_  int
-	TTLInterval     int
-	MaximumPower_   int
-	MaxMemoLength_  int
-	FeeFraction_    float64
-	MinFee_         int64
+	Params          param.Params
 	TotalAccount    int
 	TotalValidator  int
 	AcceptSortition bool
@@ -29,13 +26,10 @@ type MockSandbox struct {
 
 func MockingSandbox() *MockSandbox {
 	return &MockSandbox{
-		Accounts:       make(map[crypto.Address]account.Account),
-		Validators:     make(map[crypto.Address]validator.Validator),
-		Stamps:         make(map[crypto.Hash]int),
-		TTLInterval:    4,
-		MaxMemoLength_: 1024,
-		FeeFraction_:   0.001,
-		MinFee_:        1000,
+		Accounts:   make(map[crypto.Address]account.Account),
+		Validators: make(map[crypto.Address]validator.Validator),
+		Stamps:     make(map[crypto.Hash]int),
+		Params:     param.MainnetParams(),
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
@@ -89,16 +83,16 @@ func (m *MockSandbox) RecentBlockHeight(hash crypto.Hash) int {
 	return h
 }
 func (m *MockSandbox) TransactionToLiveInterval() int {
-	return m.TTLInterval
+	return m.Params.TransactionToLiveInterval
 }
 func (m *MockSandbox) MaxMemoLength() int {
-	return m.MaxMemoLength_
+	return m.Params.MaximumMemoLength
 }
 func (m *MockSandbox) FeeFraction() float64 {
-	return m.FeeFraction_
+	return m.Params.FeeFraction
 }
 func (m *MockSandbox) MinFee() int64 {
-	return m.MinFee_
+	return m.Params.MinimumFee
 }
 
 func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) {
@@ -108,4 +102,7 @@ func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) 
 
 func (m *MockSandbox) AccSeq(a crypto.Address) int {
 	return m.Accounts[a].Sequence()
+}
+func (m *MockSandbox) MaximumPower() int {
+	return m.Params.MaximumPower
 }

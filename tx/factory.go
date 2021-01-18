@@ -5,10 +5,10 @@ import (
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
-func NewSubsidyTx(stamp crypto.Hash, sequence int, receiver crypto.Address, amount int64, memo string) *Tx {
+func NewSubsidyTx(stamp crypto.Hash, seq int, receiver crypto.Address, amount int64, memo string) *Tx {
 	return NewSendTx(
 		stamp,
-		sequence,
+		seq,
 		crypto.TreasuryAddress,
 		receiver,
 		amount,
@@ -19,14 +19,14 @@ func NewSubsidyTx(stamp crypto.Hash, sequence int, receiver crypto.Address, amou
 }
 
 func NewSendTx(stamp crypto.Hash,
-	sequence int,
+	seq int,
 	sender, receiver crypto.Address,
 	amount, fee int64, memo string,
 	publicKey *crypto.PublicKey, signature *crypto.Signature) *Tx {
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
-			Sequence: sequence,
+			Sequence: seq,
 			Version:  1,
 			Type:     payload.PayloadTypeSend,
 			Payload: &payload.SendPayload{
@@ -43,7 +43,7 @@ func NewSendTx(stamp crypto.Hash,
 }
 
 func NewBondTx(stamp crypto.Hash,
-	sequence int,
+	seq int,
 	bonder crypto.Address,
 	val crypto.PublicKey,
 	stake, fee int64, memo string,
@@ -51,7 +51,7 @@ func NewBondTx(stamp crypto.Hash,
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
-			Sequence: sequence,
+			Sequence: seq,
 			Version:  1,
 			Type:     payload.PayloadTypeBond,
 			Payload: &payload.BondPayload{
@@ -68,7 +68,7 @@ func NewBondTx(stamp crypto.Hash,
 }
 
 func NewSortitionTx(stamp crypto.Hash,
-	sequence int,
+	seq int,
 	addr crypto.Address,
 	proof []byte,
 	memo string,
@@ -76,7 +76,7 @@ func NewSortitionTx(stamp crypto.Hash,
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
-			Sequence: sequence,
+			Sequence: seq,
 			Version:  1,
 			Type:     payload.PayloadTypeSortition,
 			Payload: &payload.SortitionPayload{

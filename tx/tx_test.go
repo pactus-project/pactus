@@ -285,8 +285,7 @@ func TestSendSignBytes(t *testing.T) {
 	a2, _, _ := crypto.GenerateTestKeyPair()
 
 	trx1 := NewSendTx(h, 1, a1, a2, 100, 10, "test send-tx", &pb1, nil)
-	sig1 := pv1.Sign(trx1.SignBytes())
-	trx1.data.Signature = sig1
+	trx1.SetSignature(pv1.Sign(trx1.SignBytes()))
 
 	trx2 := NewSendTx(h, 1, a1, a2, 100, 10, "test send-tx", nil, nil)
 	trx3 := NewSendTx(h, 2, a1, a2, 100, 10, "test send-tx", nil, nil)
@@ -301,8 +300,7 @@ func TestBondSignBytes(t *testing.T) {
 	_, pb2, _ := crypto.GenerateTestKeyPair()
 
 	trx1 := NewBondTx(h, 1, a1, pb2, 100, 100, "test bond-tx", &pb1, nil)
-	sig1 := pv1.Sign(trx1.SignBytes())
-	trx1.data.Signature = sig1
+	trx1.SetSignature(pv1.Sign(trx1.SignBytes()))
 
 	trx2 := NewBondTx(h, 1, a1, pb2, 100, 100, "test bond-tx", nil, nil)
 	trx3 := NewBondTx(h, 2, a1, pb2, 100, 100, "test bond-tx", nil, nil)
@@ -317,8 +315,7 @@ func TestSortitionSignBytes(t *testing.T) {
 	proof := [48]byte{}
 
 	trx1 := NewSortitionTx(h, 1, a1, proof[:], "test sortition-tx", &pb1, nil)
-	sig1 := pv1.Sign(trx1.SignBytes())
-	trx1.data.Signature = sig1
+	trx1.SetSignature(pv1.Sign(trx1.SignBytes()))
 
 	trx2 := NewSortitionTx(h, 1, a1, proof[:], "test sortition-tx", nil, nil)
 	trx3 := NewSortitionTx(h, 2, a1, proof[:], "test sortition-tx", nil, nil)

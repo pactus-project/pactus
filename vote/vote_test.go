@@ -87,8 +87,3 @@ func TestSignBytesMatchWithCommit(t *testing.T) {
 	fmt.Printf("%x", v.SignBytes())
 	assert.Equal(t, v.SignBytes(), d)
 }
-
-func TestVoteFingerprint(t *testing.T) {
-	v, _ := GenerateTestPrecommitVote(1, 1)
-	assert.Contains(t, v.Fingerprint(), v.Signer().Fingerprint())
-}

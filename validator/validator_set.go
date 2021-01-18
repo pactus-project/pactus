@@ -12,7 +12,6 @@ import (
 var _ ValidatorSetReader = &ValidatorSet{}
 
 type ValidatorSetReader interface {
-	MaximumPower() int
 	CopyValidators() []*Validator
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *Validator
@@ -50,10 +49,6 @@ func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.
 	}, nil
 }
 
-func (set *ValidatorSet) MaximumPower() int {
-	return set.maximumPower
-}
-
 func (set *ValidatorSet) currentPower() int {
 	p := 0
 	for _, v := range set.validators {
@@ -72,7 +67,7 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 		}
 	}
 
-	if len(joined) > (set.MaximumPower() / 3) {
+	if len(joined) > (set.maximumPower / 3) {
 		return errors.Errorf(errors.ErrGeneric, "In each update only 1/3 of validator can be changed")
 	}
 

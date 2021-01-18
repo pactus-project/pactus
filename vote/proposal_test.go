@@ -49,8 +49,3 @@ func TestProposalSanityCheck(t *testing.T) {
 	p.data.Signature = nil
 	assert.Error(t, p.SanityCheck())
 }
-
-func TestProposalFingerprint(t *testing.T) {
-	p, _ := GenerateTestProposal(1, 1)
-	assert.Contains(t, p.Fingerprint(), p.Block().Fingerprint())
-}
