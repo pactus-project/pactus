@@ -8,25 +8,63 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func TestPrecommitWithNoProposal(t *testing.T) {
+func TestPrecommitNoProposal(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
-	p1 := tConsX.LastProposal()
+	commitBlockForAllStates(t)
+
+	h := 2
+	r := 0
+	p := makeProposal(t, h, r)
 
 	tConsP.enterNewHeight()
-	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePropose)
-
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexB, false)
-
-	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrecommit)
-	shouldPublishQueryProposal(t, tConsP, 1, 0)
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePropose) // We can't prepared, because we don't have proposal
+	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
-	tConsP.SetProposal(p1)
+	// Still no proposal
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
 
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p1.Block().Hash())
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrecommit)
+	shouldPublishQueryProposal(t, tConsP, h, r)
+
+	// Set proposal now
+	tConsP.SetProposal(p)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+}
+
+// This is a worse case scenario
+func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+
+	h := 2
+	r := 0
+	p := makeProposal(t, h, r)
+
+	tConsP.enterNewHeight()
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePropose)
+	shouldPublishQueryProposal(t, tConsP, h, r)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
+
+	// Still no proposal
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB, false)
+
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypeCommit)
+
+	// Set proposal now
+	tConsP.SetProposal(p)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
+
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
+
+	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 }

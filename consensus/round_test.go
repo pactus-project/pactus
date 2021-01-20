@@ -38,7 +38,7 @@ func TestNewRound(t *testing.T) {
 	// 4- PreCommits  for round 2 => received
 	// 5- Moved to round 3
 	// 6- PreCommits  for round 0 => received
-	// 7- Should ignore moving to round 1
+	// 7- Should ignore them
 
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 2, crypto.UndefHash, tIndexX, false)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 2, crypto.UndefHash, tIndexY, false)
@@ -56,30 +56,39 @@ func TestNewRound(t *testing.T) {
 func TestConsensusGotoNextRound(t *testing.T) {
 	setup(t)
 
-	tConsY.enterNewHeight()
+	tConsP.enterNewHeight()
 
 	// Validator_1 is offline
-	testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexB, false)
-	testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexP, false)
-	checkHRSWait(t, tConsY, 1, 0, hrs.StepTypePrecommit)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY, false)
+	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexB, false)
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexP, false)
-	checkHRSWait(t, tConsY, 1, 1, hrs.StepTypePrepare)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexY, false)
+	checkHRSWait(t, tConsP, 1, 1, hrs.StepTypePrepare)
 
 }
 
 func TestConsensusGotoNextRound2(t *testing.T) {
 	setup(t)
 
-	tConsY.enterNewHeight()
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	tConsP.enterNewHeight()
+
+	// Byzantine node sends different valid proposals for every node
+	h := 3
+	r := 0
+	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
 
 	// Validator_1 is offline
-	testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexB, false)
-	testAddVote(t, tConsY, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexP, false)
-	checkHRSWait(t, tConsY, 1, 0, hrs.StepTypePrecommit)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexY, false)
+	tConsP.SetProposal(p)
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexB, false)
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexP, false)
-	checkHRSWait(t, tConsY, 1, 1, hrs.StepTypePrepare)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
+	checkHRSWait(t, tConsP, h, r+1, hrs.StepTypePrepare)
 }

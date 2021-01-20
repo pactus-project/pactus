@@ -62,3 +62,9 @@ func (conf *Config) PrepareTimeout(round int) time.Duration {
 		conf.TimeoutPrepare.Milliseconds()+conf.DeltaDuration.Milliseconds()*int64(round),
 	) * time.Millisecond
 }
+
+func (conf *Config) PrecommitTimeout(round int) time.Duration {
+	return time.Duration(
+		conf.TimeoutPrecommit.Milliseconds()+conf.DeltaDuration.Milliseconds()*int64(round),
+	) * time.Millisecond
+}

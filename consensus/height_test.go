@@ -12,24 +12,21 @@ import (
 func TestMoveToNewHeight(t *testing.T) {
 	setup(t)
 
-	commitBlockForAllStates(t)
-
-	tConsP.MoveToNewHeight()
-	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
+	tConsX.MoveToNewHeight()
+	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	// Calling MoveToNewHeight for the second time
-	tConsP.enterNewHeight()
-	checkHRSWait(t, tConsP, 2, 0, hrs.StepTypePropose)
+	tConsX.enterNewHeight()
+	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 }
 
 func TestConsensusBehindState(t *testing.T) {
 	setup(t)
 
 	// Consensus starts here
-	tConsX.enterNewHeight()
 	tConsP.enterNewHeight()
 
-	p := tConsX.LastProposal()
+	p := makeProposal(t, 1, 0)
 	assert.NoError(t, tConsP.state.ValidateBlock(p.Block()))
 	tConsP.SetProposal(p)
 

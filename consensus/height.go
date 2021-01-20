@@ -21,7 +21,7 @@ func (cs *consensus) scheduleNewHeight() {
 func (cs *consensus) enterNewHeight() {
 	sateHeight := cs.state.LastBlockHeight()
 	if cs.hrs.Height() == sateHeight+1 {
-		cs.logger.Warn("NewHeight: Duplicated entry")
+		cs.logger.Debug("NewHeight: Duplicated entry")
 		return
 	}
 

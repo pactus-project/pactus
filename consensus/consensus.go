@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -217,6 +218,8 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 		if ok := prepares.HasQuorum(); ok {
 			blockHash := prepares.QuorumBlock()
+			cs.logger.Debug("Prepare has quorum", "blockhash", blockHash)
+
 			if blockHash == nil {
 				cs.enterPrepareWait(round)
 			} else {
@@ -230,6 +233,8 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 		if ok := precommits.HasQuorum(); ok {
 			blockHash := precommits.QuorumBlock()
+			cs.logger.Debug("precommit has quorum", "blockhash", blockHash)
+
 			if blockHash != nil {
 				if blockHash.IsUndef() {
 					cs.enterNewRound(round + 1)
@@ -269,16 +274,29 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 		rand := util.RandInt(3)
 		go func() {
 			time.Sleep(time.Duration(rand) * time.Second)
-			msg := message.NewVoteMessage(v)
-			cs.broadcastCh <- msg
+			cs.broadcastVote(v)
 		}()
 	} else {
-		msg := message.NewVoteMessage(v)
-		cs.broadcastCh <- msg
+		cs.broadcastVote(v)
 	}
 }
 
 func (cs *consensus) requestForProposal() {
 	msg := message.NewQueryProposalMessage(cs.hrs.Height(), cs.hrs.Round())
+	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) broadcastProposal(p *vote.Proposal) {
+	msg := message.NewProposalMessage(p)
+	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) broadcastVote(v *vote.Vote) {
+	msg := message.NewVoteMessage(v)
+	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Commit) {
+	msg := message.NewBlockAnnounceMessage(h, b, c)
 	cs.broadcastCh <- msg
 }
