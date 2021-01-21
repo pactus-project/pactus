@@ -395,11 +395,14 @@ func TestChangeToStake(t *testing.T) {
 	val2.AddToStake(2000)
 	tSandbox.UpdateValidator(val1)
 
-	assert.Equal(t, tSandbox.changeToStake, int64(1000))
+	assert.Equal(t, tSandbox.RiseTotalStake(), int64(1000))
 	val1.AddToStake(500)
-	assert.Equal(t, tSandbox.changeToStake, int64(1000))
+	assert.Equal(t, tSandbox.RiseTotalStake(), int64(1000))
 
 	tSandbox.UpdateValidator(val1)
 	tSandbox.UpdateValidator(val2)
-	assert.Equal(t, tSandbox.changeToStake, int64(3500))
+	assert.Equal(t, tSandbox.RiseTotalStake(), int64(3500))
+
+	tSandbox.Clear()
+	assert.Equal(t, tSandbox.RiseTotalStake(), int64(0))
 }

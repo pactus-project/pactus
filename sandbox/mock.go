@@ -16,7 +16,7 @@ type MockSandbox struct {
 	Accounts        map[crypto.Address]account.Account
 	Validators      map[crypto.Address]validator.Validator
 	Stamps          map[crypto.Hash]int
-	CurrentHeight_  int
+	CurHeight       int
 	Params          param.Params
 	TotalAccount    int
 	TotalValidator  int
@@ -55,7 +55,7 @@ func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	return &val
 }
 func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
-	v := validator.NewValidator(pub, m.TotalAccount, m.CurrentHeight_+1)
+	v := validator.NewValidator(pub, m.TotalAccount, m.CurHeight+1)
 	m.TotalValidator++
 	return v
 }
@@ -73,7 +73,7 @@ func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *
 	return m.AcceptSortition
 }
 func (m *MockSandbox) CurrentHeight() int {
-	return m.CurrentHeight_
+	return m.CurHeight
 }
 func (m *MockSandbox) RecentBlockHeight(hash crypto.Hash) int {
 	h, ok := m.Stamps[hash]
@@ -97,7 +97,7 @@ func (m *MockSandbox) MinFee() int64 {
 
 func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) {
 	m.Stamps[stamp] = height
-	m.CurrentHeight_ = height + 1
+	m.CurHeight = height + 1
 }
 
 func (m *MockSandbox) AccSeq(a crypto.Address) int {

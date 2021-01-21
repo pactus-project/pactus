@@ -515,4 +515,6 @@ func (st *state) commitSandbox(round int) {
 			st.store.UpdateValidator(&vs.Validator)
 		}
 	})
+
+	st.sortition.AddToTotalStake(st.executionSandbox.RiseTotalStake())
 }

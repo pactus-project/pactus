@@ -41,6 +41,8 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
 	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
 	assert.NoError(t, tState1.ApplyBlock(2, b2, c2))
+
+	assert.Equal(t, tState1.sortition.TotalStake(), int64(1000))
 }
 
 func TestExecuteBlock(t *testing.T) {

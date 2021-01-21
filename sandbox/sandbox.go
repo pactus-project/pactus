@@ -105,6 +105,7 @@ func (sb *SandboxConcrete) clear() {
 	sb.validators = make(map[crypto.Address]*ValidatorStatus)
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
+	sb.changeToStake = 0
 }
 
 func (sb *SandboxConcrete) Account(addr crypto.Address) *account.Account {
@@ -354,4 +355,11 @@ func (sb *SandboxConcrete) MaximumPower() int {
 	defer sb.lk.RUnlock()
 
 	return sb.params.MaximumPower
+}
+
+func (sb *SandboxConcrete) RiseTotalStake() int64 {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.changeToStake
 }
