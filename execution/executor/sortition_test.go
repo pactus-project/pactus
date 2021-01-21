@@ -47,7 +47,9 @@ func TestExecuteSortitionTx(t *testing.T) {
 	tSandbox.ErrorAddToSet = false
 	assert.NoError(t, exe.Execute(trx4))
 
-	assert.Equal(t, tSandbox.Validator(tVal1Signer.Address()).Sequence(), 1)
+	val := tSandbox.Validator(tVal1Signer.Address())
+	assert.Equal(t, val.Sequence(), 1)
+	assert.Equal(t, val.LastJoinedHeight(), 42)
 	assert.NoError(t, exe.Execute(trx2))
 	assert.Error(t, exe.Execute(trx2)) // invalid sequence
 	assert.Zero(t, exe.Fee())

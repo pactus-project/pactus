@@ -28,6 +28,7 @@ func TestProposalSignature(t *testing.T) {
 	p, pv := GenerateTestProposal(5, 5)
 	pb := pv.PublicKey()
 	assert.NoError(t, p.Verify(pb))
+	assert.False(t, p.IsForBlock(nil))
 
 	assert.Error(t, p.Verify(pb0)) // invalid public key
 

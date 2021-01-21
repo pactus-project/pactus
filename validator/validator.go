@@ -14,12 +14,12 @@ type Validator struct {
 }
 
 type validatorData struct {
-	PublicKey       crypto.PublicKey `cbor:"1,keyasint"`
-	Number          int              `cbor:"2,keyasint"`
-	Sequence        int              `cbor:"3,keyasint"`
-	Stake           int64            `cbor:"4,keyasint"`
-	BondingHeight   int              `cbor:"5,keyasint"`
-	UnbondingHeight int              `cbor:"6,keyasint"`
+	PublicKey        crypto.PublicKey `cbor:"1,keyasint"`
+	Number           int              `cbor:"2,keyasint"`
+	Sequence         int              `cbor:"3,keyasint"`
+	Stake            int64            `cbor:"4,keyasint"`
+	BondingHeight    int              `cbor:"5,keyasint"`
+	LastJoinedHeight int              `cbor:"6,keyasint"`
 }
 
 func NewValidator(publicKey crypto.PublicKey, number, bondingHeight int) *Validator {
@@ -39,7 +39,7 @@ func (val *Validator) Number() int                 { return val.data.Number }
 func (val *Validator) Sequence() int               { return val.data.Sequence }
 func (val *Validator) Stake() int64                { return val.data.Stake }
 func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
-func (val *Validator) UnbondingHeight() int        { return val.data.UnbondingHeight }
+func (val *Validator) LastJoinedHeight() int       { return val.data.LastJoinedHeight }
 
 func (val Validator) Power() int {
 	// Viva democracy, everybody should be treated equally
@@ -54,6 +54,11 @@ func (val *Validator) AddToStake(amt int64) {
 // IncSequence increases the sequence anytime this validator signs a transaction
 func (val *Validator) IncSequence() {
 	val.data.Sequence++
+}
+
+// UpdateLastJoinedHeight updates the last height that this validator joins the set
+func (val *Validator) UpdateLastJoinedHeight(height int) {
+	val.data.LastJoinedHeight = height
 }
 
 // Hash return the hash of this validator

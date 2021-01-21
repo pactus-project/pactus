@@ -35,6 +35,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 		return errors.Errorf(errors.ErrInvalidTx, err.Error())
 	}
 	val.IncSequence()
+	val.UpdateLastJoinedHeight(e.sandbox.CurrentHeight())
 
 	e.sandbox.UpdateValidator(val)
 

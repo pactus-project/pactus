@@ -100,11 +100,6 @@ func (b Block) Fingerprint() string {
 	)
 }
 
-func (b *Block) Size() int {
-	bz, _ := b.Encode()
-	return len(bz)
-}
-
 func (b Block) Encode() ([]byte, error) {
 	bs, err := cbor.Marshal(b.data)
 	if err != nil {
