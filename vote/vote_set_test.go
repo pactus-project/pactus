@@ -145,3 +145,51 @@ func TestQuorum(t *testing.T) {
 		{Number: 3, Status: 1},
 	})
 }
+
+func TestUpdateVote(t *testing.T) {
+	valSet, keys := validator.GenerateTestValidatorSet()
+	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+
+	h1 := crypto.GenerateTestHash()
+	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
+	v2 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, keys[1].PublicKey().Address())
+	v3 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, keys[2].PublicKey().Address())
+	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[0].PublicKey().Address())
+	v5 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[1].PublicKey().Address())
+	v6 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[2].PublicKey().Address())
+
+	v1.SetSignature(keys[0].Sign(v1.SignBytes()))
+	v2.SetSignature(keys[1].Sign(v2.SignBytes()))
+	v3.SetSignature(keys[2].Sign(v3.SignBytes()))
+	v4.SetSignature(keys[0].Sign(v4.SignBytes()))
+	v5.SetSignature(keys[1].Sign(v5.SignBytes()))
+	v6.SetSignature(keys[2].Sign(v6.SignBytes()))
+
+	ok, _ := voteSet.AddVote(v1)
+	assert.True(t, ok)
+	ok, _ = voteSet.AddVote(v2)
+	assert.True(t, ok)
+	ok, _ = voteSet.AddVote(v3)
+	assert.True(t, ok)
+
+	assert.True(t, voteSet.HasQuorum())
+	assert.True(t, voteSet.HasQuorumBlock(crypto.UndefHash))
+	assert.True(t, voteSet.QuorumBlock().EqualsTo(crypto.UndefHash))
+
+	// Update vote
+	ok, _ = voteSet.AddVote(v4)
+	assert.True(t, ok)
+
+	assert.True(t, voteSet.HasQuorum())
+	assert.False(t, voteSet.HasQuorumBlock(crypto.UndefHash))
+	assert.Nil(t, voteSet.QuorumBlock())
+	assert.Equal(t, voteSet.sum, 3)
+
+	ok, _ = voteSet.AddVote(v5)
+	assert.True(t, ok)
+	ok, _ = voteSet.AddVote(v6)
+	assert.True(t, ok)
+	assert.True(t, voteSet.QuorumBlock().EqualsTo(h1))
+	assert.Equal(t, voteSet.sum, 3)
+
+}

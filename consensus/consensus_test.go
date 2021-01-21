@@ -115,6 +115,26 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash)
 	}
 }
 
+func shouldPublishProposal(t *testing.T, cons *consensus, hash crypto.Hash) {
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("Timeout"))
+			return
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishProposal", "msg", msg)
+
+			if msg.PayloadType() == payload.PayloadTypeProposal {
+				pld := msg.Payload.(*payload.ProposalPayload)
+				assert.Equal(t, pld.Proposal.Hash(), hash)
+				return
+			}
+		}
+	}
+}
+
 func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int) {
 	timeout := time.NewTimer(1 * time.Second)
 
@@ -406,4 +426,14 @@ func TestConsensusInvalidProposal(t *testing.T) {
 	tSigners[tIndexY].SignMsg(p)
 	tConsY.SetProposal(p)
 	assert.Nil(t, tConsY.LastProposal())
+}
+
+func TestPickRandomVote(t *testing.T) {
+	setup(t)
+
+	tConsY.enterNewHeight()
+	assert.Nil(t, tConsY.PickRandomVote())
+
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY, false)
+	assert.NotNil(t, tConsY.PickRandomVote())
 }

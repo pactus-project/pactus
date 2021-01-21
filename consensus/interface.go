@@ -7,6 +7,7 @@ import (
 )
 
 type ConsensusReader interface {
+	PickRandomVote() *vote.Vote
 	RoundVotes(round int) []*vote.Vote
 	RoundVotesHash(round int) []crypto.Hash
 	LastProposal() *vote.Proposal

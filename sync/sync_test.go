@@ -293,5 +293,4 @@ func TestHeartbeatNotInSet(t *testing.T) {
 	msg := message.NewHeartBeatMessage(tAnotherPeerID, crypto.GenerateTestHash(), hrs.NewHRS(106, 1, 1)) // peer is in same height but further round
 	tAliceSync.ParsMessage(msg, tAnotherPeerID)
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
-
 }

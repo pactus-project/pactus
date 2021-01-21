@@ -27,7 +27,7 @@ func TestPrecommitNoProposal(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
 
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrecommit)
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrepare)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 
 	// Set proposal now
@@ -67,4 +67,46 @@ func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
 
 	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+}
+
+func TestSuspiciousPrepare1(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	h := 3
+	r := 0
+	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
+
+	tConsP.enterNewHeight()
+	tConsP.SetProposal(p)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
+
+	// Validator_1 is offline
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexY, false)
+
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
+}
+
+func TestSuspiciousPrepare2(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	h := 3
+	r := 0
+	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
+
+	tConsP.enterNewHeight()
+	tConsP.SetProposal(p)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
+
+	// Validator_1 is offline
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
+
+	shouldPublishProposal(t, tConsP, p.Hash())
 }

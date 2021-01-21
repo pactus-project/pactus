@@ -308,6 +308,11 @@ func (syncer *Synchronizer) broadcastHeartBeat() {
 		return
 	}
 
+	v := syncer.consensus.PickRandomVote()
+	if v != nil {
+		syncer.consensusSync.BroadcastVote(v)
+	}
+
 	msg := message.NewHeartBeatMessage(syncer.networkAPI.SelfID(), syncer.state.LastBlockHash(), hrs)
 	syncer.publishMessage(msg)
 }
@@ -332,10 +337,13 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 			// Check if we are an active validator
 			valSet := syncer.state.ValidatorSet()
 			if valSet.Contains(syncer.signer.Address()) {
-
 				syncer.logger.Info("Our consensus is behind of this peer.", "ours", hrs, "peer", pld.Pulse, "address", syncer.signer.Address().Fingerprint())
 				// Let's ask for more votes
-				syncer.consensusSync.BroadcastQueryProposal()
+
+				p := syncer.consensus.LastProposal()
+				if p == nil || p.Round() != pld.Pulse.Round() {
+					syncer.consensusSync.BroadcastQueryProposal()
+				}
 				syncer.consensusSync.BroadcastVoteSet()
 			}
 		} else if pld.Pulse.LessThan(hrs) {
@@ -350,7 +358,6 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 	syncer.peerSet.UpdateMaxClaimedHeight(pld.Pulse.Height() - 1)
 
 	syncer.sendBlocksRequestIfWeAreBehind()
-	syncer.synced()
 }
 
 func (syncer *Synchronizer) BroadcastSalam() {

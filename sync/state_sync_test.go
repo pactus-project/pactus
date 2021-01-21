@@ -69,7 +69,7 @@ func TestPrepareLastBlock(t *testing.T) {
 	assert.Equal(t, len(b), 1)
 }
 
-func TestProcessHeartbeat(t *testing.T) {
+func TestProcessHeartbeatForSyncing(t *testing.T) {
 	setup(t)
 
 	lastHash := tAliceState.LastBlockHash()
@@ -89,6 +89,7 @@ func TestProcessHeartbeat(t *testing.T) {
 
 	tAliceSync.broadcastHeartBeat()
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)        // blocks 101-105
 	msg := tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced response code

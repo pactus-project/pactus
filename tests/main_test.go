@@ -118,7 +118,7 @@ func TestMain(m *testing.M) {
 		incSequence(t, tSigners[tNodeIdx1].Address())
 	}
 
-	for i := 0; i < 15; i++ {
+	for i := 0; i < 16; i++ {
 		waitForNewBlock(t)
 	}
 

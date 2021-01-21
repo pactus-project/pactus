@@ -1,7 +1,6 @@
 package consensus
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -242,22 +241,29 @@ func TestEnterPrepareAfterPrecommit(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	tConsX.enterNewHeight()
-
 	p := makeProposal(t, 4, 0)
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
+	tConsX.enterNewHeight()
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
+
 	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexB, false)
 	checkHRSWait(t, tConsX, 4, 0, hrs.StepTypePrecommit)
 
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.GenerateTestHash(), tIndexB, false)
+
+	// Now partition healed
 	tConsX.SetProposal(p)
 	tConsX.enterPrepare(0)
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
 
-	votes := tConsX.RoundVotes(0)
-	for _, v := range votes {
-		if v.BlockHash() == p.Block().Hash() {
-			assert.NoError(t, fmt.Errorf("The proposal should be ignored, because we have voted for undef before"))
-		}
-	}
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, p.Block().Hash(), tIndexP, false)
+
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
+
 }

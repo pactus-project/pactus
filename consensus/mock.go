@@ -3,6 +3,7 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -54,4 +55,11 @@ func (m *MockConsensus) HRS() hrs.HRS {
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""
+}
+func (m *MockConsensus) PickRandomVote() *vote.Vote {
+	if len(m.Votes) == 0 {
+		return nil
+	}
+	r := util.RandInt(len(m.Votes))
+	return m.Votes[r]
 }

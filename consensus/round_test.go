@@ -80,13 +80,11 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 	// Byzantine node sends different valid proposals for every node
 	h := 3
 	r := 0
-	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
+	p := makeProposal(t, h, r)
+	tConsP.SetProposal(p)
 
-	// Validator_1 is offline
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexX, false)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexY, false)
-	tConsP.SetProposal(p)
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrecommit)
 
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexX, false)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)

@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -129,4 +130,32 @@ func TestSendVoteSetOnlyOneVote(t *testing.T) {
 	tBobSync.consensusSync.BroadcastVoteSet()
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
 	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v1))
+}
+
+func TestProcessHeartbeatForQueryProposal(t *testing.T) {
+	setup(t)
+
+	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
+	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
+	v, _ := vote.GenerateTestPrecommitVote(106, 0)
+	tAliceConsensus.HRS_ = hrs.NewHRS(106, 0, 3)
+	tAliceConsensus.AddVote(v)
+
+	// 1. Broadcasting heartbeat and random vote
+	// should send random vote
+	tAliceSync.broadcastHeartBeat()
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+
+	// 2. Receiving heartbeat
+	// Alice doesn't have proposal
+	msg3 := message.NewHeartBeatMessage(tAnotherPeerID, crypto.GenerateTestHash(), hrs.NewHRS(106, 0, 4))
+	tAliceSync.ParsMessage(msg3, tAnotherPeerID)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
+
+	// Alice has proposal
+	tAliceConsensus.Proposal, _ = vote.GenerateTestProposal(106, 0)
+	tAliceSync.ParsMessage(msg3, tAnotherPeerID)
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 }

@@ -74,8 +74,8 @@ func (cs *consensus) Fingerprint() string {
 	}
 	status := fmt.Sprintf("%s%s%s%s", isProposed, isPrepared, isPreCommitted, isCommitted)
 
-	return fmt.Sprintf("{%v %s}",
-		cs.hrs.String(), status)
+	return fmt.Sprintf("{%s %v %s}",
+		cs.signer.Address().Fingerprint(), cs.hrs.String(), status)
 }
 
 func (cs *consensus) HRS() hrs.HRS {
@@ -109,7 +109,7 @@ func (cs *consensus) RoundVotes(round int) []*vote.Vote {
 	defer cs.lk.Unlock()
 
 	rv := cs.pendingVotes.MustGetRoundVotes(round)
-	return rv.votes
+	return rv.AllVotes()
 }
 
 func (cs *consensus) RoundVotesHash(round int) []crypto.Hash {
@@ -117,9 +117,10 @@ func (cs *consensus) RoundVotesHash(round int) []crypto.Hash {
 	defer cs.lk.Unlock()
 
 	rv := cs.pendingVotes.MustGetRoundVotes(round)
-	hashes := make([]crypto.Hash, len(rv.votes))
+	votes := rv.AllVotes()
+	hashes := make([]crypto.Hash, len(votes))
 
-	for i, v := range rv.votes {
+	for i, v := range votes {
 		hashes[i] = v.Hash()
 	}
 
@@ -299,4 +300,17 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Commit) {
 	msg := message.NewBlockAnnounceMessage(h, b, c)
 	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) PickRandomVote() *vote.Vote {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	rv := cs.pendingVotes.MustGetRoundVotes(cs.hrs.Round())
+	votes := rv.AllVotes()
+	if len(votes) == 0 {
+		return nil
+	}
+	r := util.RandInt(len(votes))
+	return votes[r]
 }

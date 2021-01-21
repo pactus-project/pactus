@@ -109,7 +109,6 @@ func (ss *StateSync) updateSession(code payload.ResponseCode, sessionID int, ini
 	case payload.ResponseCodeNoMoreBlocks:
 		ss.logger.Debug("Peer has no more block. close session")
 		ss.peerSet.CloseSession(sessionID)
-		ss.syncedFN()
 
 	case payload.ResponseCodeSynced:
 		ss.logger.Debug("Peer infomed us we are synced. close session")
@@ -205,6 +204,7 @@ func (ss *StateSync) ProcessBlockAnnouncePayload(pld *payload.BlockAnnouncePaylo
 	ss.cache.AddCommit(pld.Commit)
 	ss.cache.AddBlock(pld.Height, pld.Block)
 	ss.tryCommitBlocks()
+	ss.syncedFN()
 }
 
 func (ss *StateSync) ProcessLatestBlocksResponsePayload(pld *payload.LatestBlocksResponsePayload) {

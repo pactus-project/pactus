@@ -127,6 +127,7 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 					v.sum--
 					vs.sum--
 					delete(v.votes, signer)
+					vs.quorum = nil
 				} else if vote.BlockHash().IsUndef() {
 					// Because of network latency, we might receive undef vote after block vote.
 					// Ignore undef vote in this case.

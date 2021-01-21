@@ -11,26 +11,30 @@ import (
 type RoundVotes struct {
 	Prepares   *vote.VoteSet
 	Precommits *vote.VoteSet
-	votes      []*vote.Vote
 	proposal   *vote.Proposal
 }
 
 func (rv *RoundVotes) addVote(v *vote.Vote) (bool, error) {
 	vs := rv.voteSet(v.VoteType())
-	added, err := vs.AddVote(v)
-	if added {
-		rv.votes = append(rv.votes, v)
-	}
-	return added, err
+	return vs.AddVote(v)
 }
 
 func (rv *RoundVotes) HasVote(hash crypto.Hash) bool {
-	for _, v := range rv.votes {
+	votes := rv.AllVotes()
+	for _, v := range votes {
 		if v.Hash().EqualsTo(hash) {
 			return true
 		}
 	}
 	return false
+}
+
+func (rv *RoundVotes) AllVotes() []*vote.Vote {
+	votes := []*vote.Vote{}
+	votes = append(votes, rv.Prepares.AllVotes()...)
+	votes = append(votes, rv.Precommits.AllVotes()...)
+
+	return votes
 }
 
 func (rv *RoundVotes) voteSet(voteType vote.VoteType) *vote.VoteSet {
@@ -78,11 +82,9 @@ func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 	for i := len(pv.roundVotes); i <= round; i++ {
 		prepares := vote.NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators)
 		precommits := vote.NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators)
-		votes := make([]*vote.Vote, 0)
 		rv := &RoundVotes{
 			Prepares:   prepares,
 			Precommits: precommits,
-			votes:      votes,
 		}
 
 		// extendind votes slice
