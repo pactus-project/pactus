@@ -37,10 +37,6 @@ const tNodeIdx2 = 1
 const tNodeIdx3 = 2
 const tNodeIdx4 = 3
 
-const tNodeIdx5 = 4
-
-// const tNodeIdx6 = 5
-
 func incSequence(t *testing.T, addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
 }
@@ -50,7 +46,7 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	max := 4
+	max := 7
 	tSigners = make([]crypto.Signer, max)
 	tConfigs = make([]*config.Config, max)
 	tNodes = make([]*node.Node, max)
@@ -73,7 +69,7 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
-		tConfigs[i].Logger.Levels["_sync"] = "info"
+		tConfigs[i].Logger.Levels["_sync"] = "error"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
 		tConfigs[i].Logger.Levels["_txpool"] = "error"
 
@@ -83,13 +79,15 @@ func TestMain(m *testing.M) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(2100000000000000)
 
-	vals := make([]*validator.Validator, 2)
+	vals := make([]*validator.Validator, 4)
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0, 0)
 	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1, 0)
+	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2, 0)
+	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 1
-	params.MaximumPower = 3
-	params.TransactionToLiveInterval = 10
+	params.BlockTimeInSecond = 2
+	params.MaximumPower = 4
+	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
 	var err error
@@ -114,12 +112,13 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
-	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx1].PublicKey(), 1000, 1000, false)
-	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx2].PublicKey(), 1000, 1000, false)
-	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 1000, 1000, false)
-	broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 1000, 1000, false)
+	for i := 0; i < max; i++ {
+		amt := util.RandInt64(1000000 - 1) // fee is always 1000
+		require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000))
+		incSequence(t, tSigners[tNodeIdx1].Address())
+	}
 
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 15; i++ {
 		waitForNewBlock(t)
 	}
 

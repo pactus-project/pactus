@@ -2,14 +2,14 @@ package sync
 
 import (
 	"testing"
-
-	"github.com/zarbchain/zarb-go/validator"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 func TestAddBlockToCache(t *testing.T) {
@@ -90,8 +90,12 @@ func TestProcessHeartbeat(t *testing.T) {
 	tAliceSync.broadcastHeartBeat()
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 101-105
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced response code
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)        // blocks 101-105
+	msg := tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced response code
+	pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
+	assert.Equal(t, pld.ResponseCode, payload.ResponseCodeSynced)
+	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
+	assert.False(t, tBobSync.peerSet.HasAnyValidSession())
 
 	assert.True(t, tBobConsensus.Started)
 }
@@ -129,4 +133,20 @@ func TestDownloadBlock(t *testing.T) {
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced
 
 	assert.True(t, tBobConsensus.Started)
+	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
+	assert.False(t, tBobSync.peerSet.HasAnyValidSession())
+}
+
+func TestSessionTieout(t *testing.T) {
+	tAliceConfig.SessionTimeout = 200 * time.Millisecond
+	setup(t)
+
+	p := tAliceSync.peerSet.MustGetPeer(tAnotherPeerID)
+	p.UpdateInitialBlockDownload(true)
+	p.UpdateHeight(1000)
+	tAliceSync.peerSet.UpdateMaxClaimedHeight(1000)
+	tAliceSync.sendBlocksRequestIfWeAreBehind()
+	assert.True(t, tAliceSync.peerSet.HasAnyValidSession())
+	time.Sleep(tAliceConfig.SessionTimeout)
+	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
 }

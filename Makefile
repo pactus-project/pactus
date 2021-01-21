@@ -4,7 +4,7 @@ GOTOOLS = \
 	github.com/golangci/golangci-lint/cmd/golangci-lint@v1.33.0
 
 
-PACKAGES=$(shell go list ./... | grep -v '/vendor/')
+PACKAGES=$(shell go list ./... | grep -v 'tests')
 TAGS=-tags 'zarb'
 HERUMI= $(shell pwd)/.herumi
 CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/mcl/lib -L$(HERUMI)/bls/lib -lmcl -lbls384_256 -lm -lstdc++"
@@ -42,11 +42,14 @@ build_with_bls:
 
 ########################################
 ### Testing
-test:
+unit_test:
 	go test $(PACKAGES)
 
+test:
+	go test ./...
+
 test_with_bls:
-	$(CGO_LDFLAGS) go test $(PACKAGES)
+	$(CGO_LDFLAGS) go test ./...
 
 ########################################
 ### Docker

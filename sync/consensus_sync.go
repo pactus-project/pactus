@@ -28,6 +28,12 @@ func NewConsensusSync(
 	}
 }
 
+func (cs *ConsensusSync) BroadcastQueryProposal() {
+	hrs := cs.consensus.HRS()
+	msg := message.NewQueryProposalMessage(hrs.Height(), hrs.Round())
+	cs.publishFn(msg)
+}
+
 func (cs *ConsensusSync) BroadcastProposal(p *vote.Proposal) {
 	msg := message.NewProposalMessage(p)
 	cs.publishFn(msg)

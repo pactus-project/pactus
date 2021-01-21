@@ -2,6 +2,7 @@ package validator
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/sasha-s/go-deadlock"
@@ -70,6 +71,10 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 	if len(joined) > (set.maximumPower / 3) {
 		return errors.Errorf(errors.ErrGeneric, "In each update only 1/3 of validator can be changed")
 	}
+
+	sort.SliceStable(joined, func(i, j int) bool {
+		return joined[i].Number() < joined[j].Number()
+	})
 
 	// First update proposer index
 	set.proposerIndex = (set.proposerIndex + lastRound + 1) % len(set.validators)

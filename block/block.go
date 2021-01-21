@@ -25,12 +25,12 @@ type blockData struct {
 }
 
 func MakeBlock(timestamp time.Time, txIDs TxIDs,
-	lastBlockHash, CommittersHash, stateHash, lastReceiptsHash crypto.Hash,
+	lastBlockHash, committersHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
 
 	txIDsHash := txIDs.Hash()
 	header := NewHeader(1, timestamp,
-		txIDsHash, lastBlockHash, CommittersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
+		txIDsHash, lastBlockHash, committersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
 
 	b := Block{
 		data: blockData{

@@ -221,7 +221,7 @@ func TestAddValidatorToSet(t *testing.T) {
 
 	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
 		tSandbox.params.MaximumPower = 4
-		
+
 		_, pub1, _ := crypto.GenerateTestKeyPair()
 		_, pub2, _ := crypto.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)

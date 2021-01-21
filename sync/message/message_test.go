@@ -207,7 +207,6 @@ func TestDownloadResponse(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-
 func TestBlocksMessageCompress(t *testing.T) {
 	var blocks = []*block.Block{}
 	var trxs = []*tx.Tx{}

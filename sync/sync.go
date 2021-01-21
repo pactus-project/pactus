@@ -142,7 +142,7 @@ func (syncer *Synchronizer) maybeSynced() {
 }
 
 func (syncer *Synchronizer) synced() {
-	syncer.logger.Info("We are synced")
+	syncer.logger.Info("We are synced", "hrs", syncer.consensus.HRS())
 	syncer.consensus.MoveToNewHeight()
 }
 
@@ -202,6 +202,7 @@ func (syncer *Synchronizer) Fingerprint() string {
 
 func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 	if syncer.peerSet.HasAnyValidSession() {
+		syncer.logger.Debug("We have open seasson")
 		return
 	}
 
@@ -328,9 +329,15 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 
 	if pld.Pulse.Height() == hrs.Height() {
 		if pld.Pulse.GreaterThan(hrs) {
-			syncer.logger.Trace("Our consensus is behind of this peer.")
-			// Let's ask for more votes
-			syncer.consensusSync.BroadcastVoteSet()
+			// Check if we are an active validator
+			valSet := syncer.state.ValidatorSet()
+			if valSet.Contains(syncer.signer.Address()) {
+
+				syncer.logger.Info("Our consensus is behind of this peer.", "ours", hrs, "peer", pld.Pulse, "address", syncer.signer.Address().Fingerprint())
+				// Let's ask for more votes
+				syncer.consensusSync.BroadcastQueryProposal()
+				syncer.consensusSync.BroadcastVoteSet()
+			}
 		} else if pld.Pulse.LessThan(hrs) {
 			syncer.logger.Trace("Our consensus is ahead of this peer.")
 		} else {
@@ -341,6 +348,9 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 	p := syncer.peerSet.MustGetPeer(pld.PeerID)
 	p.UpdateHeight(pld.Pulse.Height() - 1)
 	syncer.peerSet.UpdateMaxClaimedHeight(pld.Pulse.Height() - 1)
+
+	syncer.sendBlocksRequestIfWeAreBehind()
+	syncer.synced()
 }
 
 func (syncer *Synchronizer) BroadcastSalam() {

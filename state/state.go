@@ -306,7 +306,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		}
 
 		if err := st.execution.Execute(trx); err != nil {
-			st.logger.Error("Found invalid transaction", "tx", trx, "err", err)
+			st.logger.Debug("Found invalid transaction", "tx", trx, "err", err)
 			st.txPool.RemoveTx(trx.ID())
 		} else {
 			txIDs.Append(trx.ID())
@@ -416,6 +416,11 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		receiptsHashes[i] = ctrx.Receipt.Hash()
 	}
 
+	// Evaluating sortition before modifying the validator set
+	if st.EvaluateSortition() {
+		st.logger.Info("👏 This validator is chosen to be in the set", "address", st.proposer)
+	}
+
 	// Commit changes and move proposer index
 	st.commitSandbox(commit.Round())
 
@@ -437,10 +442,6 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.txPoolSandbox.Clear()
 	st.txPool.Recheck()
 
-	if st.EvaluateSortition() {
-		st.logger.Info("👏 This validator is chosen to be in the set", "address", st.proposer)
-	}
-
 	return nil
 }
 
@@ -456,7 +457,8 @@ func (st *state) EvaluateSortition() bool {
 		return false
 	}
 
-	if st.lastBlockHeight-val.BondingHeight() < st.params.TransactionToLiveInterval+10 {
+	if st.lastBlockHeight-val.BondingHeight() < 2*st.params.MaximumPower {
+		// Bonding period
 		return false
 	}
 
@@ -488,6 +490,8 @@ func (st *state) commitSandbox(round int) {
 	joined := make([]*validator.Validator, 0)
 	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.AddToSet {
+			st.logger.Info("New validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
+
 			joined = append(joined, &vs.Validator)
 		}
 	})

@@ -93,20 +93,40 @@ func TestSendVoteSet(t *testing.T) {
 	setup(t)
 
 	tAliceConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
-	tBobConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
+	tBobConsensus.HRS_ = hrs.NewHRS(100, 0, 1)
 	v1, _ := vote.GenerateTestPrepareVote(100, 0)
-	v2, _ := vote.GenerateTestPrepareVote(100, 1)
+	v2, _ := vote.GenerateTestPrepareVote(100, 0)
 	v3, _ := vote.GenerateTestPrepareVote(100, 1)
 	v4, _ := vote.GenerateTestPrepareVote(100, 1)
-	v5, _ := vote.GenerateTestPrepareVote(101, 1)
 
-	tAliceConsensus.Votes = []*vote.Vote{v1, v2, v3}
-	tBobConsensus.Votes = []*vote.Vote{v2, v4}
+	tAliceConsensus.Votes = []*vote.Vote{v1, v2, v3, v4}
+	tBobConsensus.Votes = []*vote.Vote{v1}
+
 	tBobSync.consensusSync.BroadcastVoteSet()
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
-	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v3))
+	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v2))
 
-	tBobBroadcastCh <- message.NewVoteSetMessage(101, 1, []crypto.Hash{v5.Hash()})
+	tBobBroadcastCh <- message.NewVoteSetMessage(100, 1, []crypto.Hash{})
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
-	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
+	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v3))
+	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v4))
+
+	tBobBroadcastCh <- message.NewVoteSetMessage(100, 2, []crypto.Hash{})
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
+	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
+}
+
+func TestSendVoteSetOnlyOneVote(t *testing.T) {
+	setup(t)
+
+	tAliceConsensus.HRS_ = hrs.NewHRS(100, 0, 1)
+	tBobConsensus.HRS_ = hrs.NewHRS(100, 0, 1)
+	v1, _ := vote.GenerateTestPrepareVote(100, 0)
+
+	tAliceConsensus.Votes = []*vote.Vote{v1}
+	tBobConsensus.Votes = []*vote.Vote{}
+
+	tBobSync.consensusSync.BroadcastVoteSet()
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
+	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v1))
 }

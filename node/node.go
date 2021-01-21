@@ -126,3 +126,13 @@ func (n *Node) Stop() {
 	n.http.StopServer()
 	n.capnp.StopServer()
 }
+
+func (n *Node) Consensus() consensus.ConsensusReader {
+	return n.consensus
+}
+func (n *Node) Sync() *sync.Synchronizer {
+	return n.sync
+}
+func (n *Node) State() state.StateReader {
+	return n.state
+}

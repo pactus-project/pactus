@@ -59,7 +59,7 @@ func (mock *MockNetworkAPI) sendMessageToOtherPeer(m *message.Message) {
 }
 
 func (mock *MockNetworkAPI) ShouldPublishThisMessage(t *testing.T, expectedMsg *message.Message) {
-	timeout := time.NewTimer(2 * time.Second)
+	timeout := time.NewTimer(1 * time.Second)
 
 	for {
 		select {
@@ -100,7 +100,7 @@ func (mock *MockNetworkAPI) ShouldPublishMessageWithThisType(t *testing.T, paylo
 }
 
 func (mock *MockNetworkAPI) ShouldNotPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) {
-	timeout := time.NewTimer(1 * time.Second)
+	timeout := time.NewTimer(300 * time.Millisecond)
 
 	for {
 		select {

@@ -280,3 +280,18 @@ func TestQueryForTransaction(t *testing.T) {
 
 	assert.NotNil(t, tAliceSync.cache.GetTransaction(trx2.ID()))
 }
+
+func TestHeartbeatNotInSet(t *testing.T) {
+	setup(t)
+
+	tAliceConsensus.HRS_ = hrs.NewHRS(106, 0, 1)
+
+	// Alice is not in validator set
+	tAliceSync.broadcastHeartBeat()
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+
+	msg := message.NewHeartBeatMessage(tAnotherPeerID, crypto.GenerateTestHash(), hrs.NewHRS(106, 1, 1)) // peer is in same height but further round
+	tAliceSync.ParsMessage(msg, tAnotherPeerID)
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
+
+}

@@ -319,3 +319,21 @@ func TestCopyValidators(t *testing.T) {
 	vs, _ := GenerateTestValidatorSet()
 	assert.Equal(t, vs.CopyValidators(), vs.validators)
 }
+
+func TestSortJoined(t *testing.T) {
+	val1, _ := GenerateTestValidator(0)
+	val2, _ := GenerateTestValidator(1)
+	val3, _ := GenerateTestValidator(2)
+	val4, _ := GenerateTestValidator(3)
+	val5, _ := GenerateTestValidator(4)
+	val6, _ := GenerateTestValidator(5)
+	val7, _ := GenerateTestValidator(6)
+
+	vs1, _ := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 17, val1.Address())
+	vs2, _ := NewValidatorSet([]*Validator{val1, val2, val3, val4}, 17, val1.Address())
+
+	assert.NoError(t, vs1.UpdateTheSet(0, []*Validator{val5, val6, val7}))
+	assert.NoError(t, vs2.UpdateTheSet(0, []*Validator{val7, val5, val6}))
+
+	assert.Equal(t, vs1.CommittersHash(), vs2.CommittersHash())
+}

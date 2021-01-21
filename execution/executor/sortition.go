@@ -25,7 +25,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if val.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
-	if e.sandbox.CurrentHeight()-val.BondingHeight() < e.sandbox.MaximumPower()+10 {
+	if e.sandbox.CurrentHeight()-val.BondingHeight() < 2*e.sandbox.MaximumPower() {
 		return errors.Errorf(errors.ErrInvalidTx, "In bonding period")
 	}
 	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Proof, val) {
