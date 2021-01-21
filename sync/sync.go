@@ -86,7 +86,7 @@ func NewSynchronizer(
 	syncer.networkAPI = api
 
 	syncer.consensusSync = NewConsensusSync(conf, consensus, logger, syncer.publishMessage)
-	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, peerSet, logger, syncer.publishMessage, syncer.synced)
+	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, txPool, peerSet, logger, syncer.publishMessage, syncer.synced)
 
 	if conf.InitialBlockDownload {
 		if err := syncer.joinDownloadTopic(); err != nil {
@@ -142,7 +142,7 @@ func (syncer *Synchronizer) maybeSynced() {
 }
 
 func (syncer *Synchronizer) synced() {
-	syncer.logger.Info("We are synced")
+	syncer.logger.Info("We are synced", "hrs", syncer.consensus.HRS())
 	syncer.consensus.MoveToNewHeight()
 }
 
@@ -172,9 +172,12 @@ func (syncer *Synchronizer) broadcastLoop() {
 				for i, id := range pld.IDs {
 					trx := syncer.cache.GetTransaction(id)
 					if trx != nil {
-						if err := syncer.txPool.AppendTx(trx); err == nil {
-							pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
+						if err := syncer.txPool.AppendTx(trx); err != nil {
+							syncer.logger.Warn("Query for invalid transaction", "tx", trx)
 						}
+
+						pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
+
 					}
 				}
 
@@ -199,6 +202,7 @@ func (syncer *Synchronizer) Fingerprint() string {
 
 func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 	if syncer.peerSet.HasAnyValidSession() {
+		syncer.logger.Debug("We have open seasson")
 		return
 	}
 
@@ -304,6 +308,11 @@ func (syncer *Synchronizer) broadcastHeartBeat() {
 		return
 	}
 
+	v := syncer.consensus.PickRandomVote()
+	if v != nil {
+		syncer.consensusSync.BroadcastVote(v)
+	}
+
 	msg := message.NewHeartBeatMessage(syncer.networkAPI.SelfID(), syncer.state.LastBlockHash(), hrs)
 	syncer.publishMessage(msg)
 }
@@ -325,9 +334,18 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 
 	if pld.Pulse.Height() == hrs.Height() {
 		if pld.Pulse.GreaterThan(hrs) {
-			syncer.logger.Trace("Our consensus is behind of this peer.")
-			// Let's ask for more votes
-			syncer.consensusSync.BroadcastVoteSet()
+			// Check if we are an active validator
+			valSet := syncer.state.ValidatorSet()
+			if valSet.Contains(syncer.signer.Address()) {
+				syncer.logger.Info("Our consensus is behind of this peer.", "ours", hrs, "peer", pld.Pulse, "address", syncer.signer.Address().Fingerprint())
+				// Let's ask for more votes
+
+				p := syncer.consensus.LastProposal()
+				if p == nil || p.Round() != pld.Pulse.Round() {
+					syncer.consensusSync.BroadcastQueryProposal()
+				}
+				syncer.consensusSync.BroadcastVoteSet()
+			}
 		} else if pld.Pulse.LessThan(hrs) {
 			syncer.logger.Trace("Our consensus is ahead of this peer.")
 		} else {
@@ -338,6 +356,8 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 	p := syncer.peerSet.MustGetPeer(pld.PeerID)
 	p.UpdateHeight(pld.Pulse.Height() - 1)
 	syncer.peerSet.UpdateMaxClaimedHeight(pld.Pulse.Height() - 1)
+
+	syncer.sendBlocksRequestIfWeAreBehind()
 }
 
 func (syncer *Synchronizer) BroadcastSalam() {

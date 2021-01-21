@@ -28,6 +28,7 @@ func TestProposalSignature(t *testing.T) {
 	p, pv := GenerateTestProposal(5, 5)
 	pb := pv.PublicKey()
 	assert.NoError(t, p.Verify(pb))
+	assert.False(t, p.IsForBlock(nil))
 
 	assert.Error(t, p.Verify(pb0)) // invalid public key
 
@@ -48,9 +49,4 @@ func TestProposalSanityCheck(t *testing.T) {
 	p.data.Height = 1
 	p.data.Signature = nil
 	assert.Error(t, p.SanityCheck())
-}
-
-func TestProposalFingerprint(t *testing.T) {
-	p, _ := GenerateTestProposal(1, 1)
-	assert.Contains(t, p.Fingerprint(), p.Block().Fingerprint())
 }

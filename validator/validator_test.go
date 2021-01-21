@@ -17,7 +17,7 @@ func TestMarshaling(t *testing.T) {
 	assert.Equal(t, val1.PublicKey().Address(), val1.Address())
 	val1.AddToStake(1)
 	val1.IncSequence()
-	val1.data.UnbondingHeight = 100
+	val1.UpdateLastJoinedHeight(100)
 
 	bs, err := val1.Encode()
 	require.NoError(t, err)
@@ -54,8 +54,7 @@ func TestMarshalingRawData(t *testing.T) {
 	assert.Equal(t, val.Stake(), int64(720867105))
 	assert.Equal(t, val.Sequence(), 759)
 	assert.Equal(t, val.BondingHeight(), 20)
-	assert.Equal(t, val.UnbondingHeight(), 100)
-	fmt.Println(val)
+	assert.Equal(t, val.LastJoinedHeight(), 100)
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, val.Hash(), crypto.HashH(bs))

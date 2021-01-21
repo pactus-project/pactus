@@ -1,6 +1,7 @@
 package execution
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,179 +9,104 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
-var tExec *Execution
-var tVal1 *validator.Validator
-var tAddr1, tAddr2 crypto.Address
-var tPriv1, tPriv2 crypto.PrivateKey
-var tPub1, tPub2 crypto.PublicKey
-var tSandbox *sandbox.MockSandbox
-var tTotalCoin int64
-
-func init() {
+func TestExecution(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
-}
 
-func setup(t *testing.T) {
-	tSandbox = sandbox.MockingSandbox()
+	tSandbox := sandbox.MockingSandbox()
+	tExec := NewExecution(tSandbox)
 
-	acc1, priv1 := account.GenerateTestAccount(0)
-	tPriv1 = priv1
-	tPub1 = tPriv1.PublicKey()
-	tAddr1 = tPub1.Address()
-	acc1.SubtractFromBalance(acc1.Balance()) // make balance zero
-	acc1.AddToBalance(3000)
+	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc0.AddToBalance(2100000000000000 - 10000000000)
+	tSandbox.UpdateAccount(acc0)
+
+	addr1, pub1, priv1 := crypto.GenerateTestKeyPair()
+	acc1 := account.NewAccount(addr1, 1)
+	acc1.AddToBalance(2100000000000000 - 10000000000)
 	tSandbox.UpdateAccount(acc1)
 
-	acc2, priv2 := account.GenerateTestAccount(1)
-	tPriv2 = priv2
-	tPub2 = tPriv2.PublicKey()
-	tAddr2 = tPub2.Address()
-	acc2.SubtractFromBalance(acc2.Balance()) // make balance zero
-	acc2.AddToBalance(10000000000000000)
-	tSandbox.UpdateAccount(acc2)
+	rcvAddr, _, _ := crypto.GenerateTestKeyPair()
+	stamp1 := crypto.GenerateTestHash()
+	stamp2 := crypto.GenerateTestHash()
+	stamp3 := crypto.GenerateTestHash()
+	stamp4 := crypto.GenerateTestHash()
+	stamp5 := crypto.GenerateTestHash()
+	stamp8640 := crypto.GenerateTestHash()
+	stamp8641 := crypto.GenerateTestHash()
+	stamp8642 := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(0, crypto.UndefHash)
+	tSandbox.AppendStampAndUpdateHeight(1, stamp1)
+	tSandbox.AppendStampAndUpdateHeight(2, stamp2)
+	tSandbox.AppendStampAndUpdateHeight(3, stamp3)
+	tSandbox.AppendStampAndUpdateHeight(4, stamp4)
+	tSandbox.AppendStampAndUpdateHeight(5, stamp5)
+	tSandbox.AppendStampAndUpdateHeight(8640, stamp8640)
+	tSandbox.AppendStampAndUpdateHeight(8641, stamp8641)
+	tSandbox.AppendStampAndUpdateHeight(8642, stamp8642)
 
-	tVal1 = validator.NewValidator(tPub1, 0, 0)
-	tSandbox.UpdateValidator(tVal1)
+	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
+		trx, _ := tx.GenerateTestSendTx()
+		trx.SetPublicKey(nil)
+		assert.Error(t, tExec.Execute(trx))
+		assert.Zero(t, tExec.AccumulatedFee())
+	})
 
-	tExec = NewExecution(tSandbox)
-	tTotalCoin = 10000000000000000 + 3000
-}
+	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
+		trx := tx.NewSendTx(crypto.UndefHash, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp", &pub1, nil)
+		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		assert.Error(t, tExec.Execute(trx))
+	})
 
-func checkTotalCoin(t *testing.T) {
-	total := int64(0)
-	for _, acc := range tSandbox.Accounts {
-		total += acc.Balance()
-	}
-	for _, val := range tSandbox.Validators {
-		total += val.Stake()
-	}
-	assert.Equal(t, total+tExec.accumulatedFee, tTotalCoin)
-}
+	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
+		trx := tx.NewSendTx(stamp1, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp", &pub1, nil)
+		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		assert.Error(t, tExec.Execute(trx))
+	})
 
-func TestExecuteSendTx(t *testing.T) {
-	setup(t)
+	t.Run("Good stamp", func(t *testing.T) {
+		trx := tx.NewSendTx(stamp3, 1, addr1, rcvAddr, 1000, 1000, "ok", &pub1, nil)
+		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		assert.NoError(t, tExec.Execute(trx))
+	})
 
-	rcvAddr, recPub, rcvPriv := crypto.GenerateTestKeyPair()
-	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	t.Run("Subsidy invalid stamp, Should returns error", func(t *testing.T) {
+		trx := tx.NewSubsidyTx(stamp8641, 1, rcvAddr, 1000, "expired-stamp")
+		assert.Error(t, tExec.Execute(trx))
+	})
 
-	trx1 := tx.NewSendTx(stamp, 1, rcvAddr, rcvAddr, 100, 1000, "invalid sender", &recPub, nil)
-	trx1.SetSignature(rcvPriv.Sign(trx1.SignBytes()))
-	assert.Error(t, tExec.Execute(trx1))
+	t.Run("Subsidy stamp is ok", func(t *testing.T) {
+		trx := tx.NewSubsidyTx(stamp8642, 1, rcvAddr, 1000, "ok")
+		assert.NoError(t, tExec.Execute(trx))
+	})
 
-	trx2 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAddr1)+2, tAddr1, rcvAddr, 1000, 1000, "invalid sequence", &tPub1, nil)
-	trx2.SetSignature(tPriv1.Sign(trx2.SignBytes()))
-	assert.Error(t, tExec.Execute(trx2))
+	t.Run("Big memo, Should returns error", func(t *testing.T) {
+		bigMemo := strings.Repeat("a", 1025)
+		trx := tx.NewSendTx(stamp8641, 2, addr1, rcvAddr, 1000, 1000, bigMemo, &pub1, nil)
+		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		assert.Error(t, tExec.Execute(trx))
+	})
 
-	trx3 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAddr1)+1, tAddr1, rcvAddr, 2001, 1000, "insufficient balance", &tPub1, nil)
-	trx3.SetSignature(tPriv1.Sign(trx3.SignBytes()))
-	assert.Error(t, tExec.Execute(trx3))
+	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
+		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1, "invalid fee", &pub1, nil)
+		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		assert.Error(t, tExec.Execute(trx))
+	})
 
-	trx4 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAddr1)+1, tAddr1, rcvAddr, 1000, 999, "invalid fee", &tPub1, nil)
-	trx4.SetSignature(tPriv1.Sign(trx4.SignBytes()))
-	assert.Error(t, tExec.Execute(trx4))
+	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
+		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1001, "invalid fee", &pub1, nil)
+		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		assert.Error(t, tExec.Execute(trx))
+	})
 
-	trx5 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAddr1)+1, tAddr1, rcvAddr, 1000, 1000, "ok", &tPub1, nil)
-	trx5.SetSignature(tPriv1.Sign(trx5.SignBytes()))
-	assert.NoError(t, tExec.Execute(trx5))
-	assert.Equal(t, tSandbox.Account(tAddr1).Balance(), int64(1000))
-	assert.Equal(t, tSandbox.Account(rcvAddr).Balance(), int64(1000))
+	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
+		trx := tx.NewSendTx(stamp2, 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee", nil, nil)
+		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.checkFee(trx))
+	})
 
-	// Duplicated. Invalid sequence
-	assert.Error(t, tExec.Execute(trx5))
-
-	trx6 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAddr1)+1, tAddr1, rcvAddr, 1, 1000, "insufficient balance", &tPub1, nil)
-	trx6.SetSignature(tPriv1.Sign(trx6.SignBytes()))
-	assert.Error(t, tExec.Execute(trx6))
-
-	trx7 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAddr2)+1, tAddr2, rcvAddr, 5000000, 5000, "ok", &tPub2, nil)
-	trx7.SetSignature(tPriv2.Sign(trx7.SignBytes()))
-	assert.NoError(t, tExec.Execute(trx7))
-	assert.Equal(t, tExec.AccumulatedFee(), int64(6000))
-
-	checkTotalCoin(t)
-}
-
-func TestExecuteBondTx(t *testing.T) {
-	setup(t)
-
-	valAddr, valPub, valPriv := crypto.GenerateTestKeyPair()
-	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
-
-	trx1 := tx.NewBondTx(stamp, 1, valAddr, valPub, 1000, "invalid boner", &valPub, nil)
-	trx1.SetSignature(valPriv.Sign(trx1.SignBytes()))
-	assert.Error(t, tExec.Execute(trx1))
-
-	trx2 := tx.NewBondTx(stamp, tSandbox.AccSeq(tAddr1)+2, tAddr1, valPub, 1000, "invalid sequence", &tPub1, nil)
-	trx2.SetSignature(tPriv1.Sign(trx2.SignBytes()))
-	assert.Error(t, tExec.Execute(trx2))
-
-	trx3 := tx.NewBondTx(stamp, tSandbox.AccSeq(tAddr1)+1, tAddr1, valPub, 3001, "insufficient balance", &tPub1, nil)
-	trx3.SetSignature(tPriv1.Sign(trx3.SignBytes()))
-	assert.Error(t, tExec.Execute(trx3))
-
-	trx4 := tx.NewBondTx(stamp, tSandbox.AccSeq(tAddr1)+1, tAddr1, valPub, 1000, "ok", &tPub1, nil)
-	trx4.SetSignature(tPriv1.Sign(trx4.SignBytes()))
-	assert.NoError(t, tExec.Execute(trx4))
-
-	// Duplicated. Invalid sequence
-	assert.Error(t, tExec.Execute(trx4))
-
-	assert.Equal(t, tSandbox.Account(tAddr1).Balance(), int64(2000))
-	assert.Equal(t, tSandbox.Validator(valAddr).Stake(), int64(1000))
+	assert.Equal(t, tExec.AccumulatedFee(), int64(1000))
+	tExec.ResetFee()
 	assert.Equal(t, tExec.AccumulatedFee(), int64(0))
-
-	checkTotalCoin(t)
-}
-
-func TestExecuteSortitionTx(t *testing.T) {
-	setup(t)
-
-	valAddr, valPub, valPriv := crypto.GenerateTestKeyPair()
-	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
-	proof := [48]byte{}
-
-	trx1 := tx.NewSortitionTx(stamp, 1, valAddr, proof[:], "invalid validator", &valPub, nil)
-	trx1.SetSignature(valPriv.Sign(trx1.SignBytes()))
-	assert.Error(t, tExec.Execute(trx1))
-
-	val := validator.NewValidator(valPub, 0, 0)
-	tSandbox.UpdateValidator(val)
-
-	trx2 := tx.NewSortitionTx(stamp, 1, valAddr, proof[:], "invalid proof", &valPub, nil)
-	trx2.SetSignature(valPriv.Sign(trx2.SignBytes()))
-	assert.Error(t, tExec.Execute(trx2))
-
-	sortition := sortition.NewSortition(crypto.NewSigner(valPriv))
-	trx3 := sortition.EvaluateTransaction(stamp, val)
-	assert.NotNil(t, trx3)
-	assert.NoError(t, tExec.Execute(trx3))
-
-	assert.Equal(t, tExec.AccumulatedFee(), int64(0))
-
-	checkTotalCoin(t)
-}
-
-func TestSendToSelf(t *testing.T) {
-	setup(t)
-
-	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
-
-	seq := tSandbox.AccSeq(tAddr1)
-	trx := tx.NewSendTx(stamp, seq+1, tAddr1, tAddr1, 1000, 1000, "ok", &tPub1, nil)
-	trx.SetSignature(tPriv1.Sign(trx.SignBytes()))
-	assert.NoError(t, tExec.Execute(trx))
-
-	assert.Equal(t, tSandbox.Account(tAddr1).Balance(), int64(2000)) // Crazy guy just want to pay fee!
-
-	acc := tSandbox.Account(tAddr1)
-	assert.Equal(t, acc.Sequence(), seq+1)
 }

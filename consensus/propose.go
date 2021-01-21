@@ -5,7 +5,6 @@ import (
 
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
@@ -67,7 +66,7 @@ func (cs *consensus) enterPropose(round int) {
 
 	address := cs.signer.Address()
 	if !cs.state.ValidatorSet().Contains(address) {
-		cs.logger.Trace("Propose: This node is not in validator set", "addr", address)
+		cs.logger.Debug("Propose: This node is not in validator set", "addr", address)
 		return
 	}
 
@@ -104,11 +103,9 @@ func (cs *consensus) createProposal(height int, round int) {
 		rand := util.RandInt(3)
 		go func() {
 			time.Sleep(time.Duration(rand) * time.Second)
-			msg := message.NewProposalMessage(proposal)
-			cs.broadcastCh <- msg
+			cs.broadcastProposal(proposal)
 		}()
 	} else {
-		msg := message.NewProposalMessage(proposal)
-		cs.broadcastCh <- msg
+		cs.broadcastProposal(proposal)
 	}
 }

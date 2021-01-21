@@ -1,9 +1,11 @@
 package sandbox
 
 import (
+	"fmt"
+
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/sortition"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -11,30 +13,23 @@ var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox
 type MockSandbox struct {
-	Accounts       map[crypto.Address]account.Account
-	Validators     map[crypto.Address]validator.Validator
-	Stamps         map[crypto.Hash]int
-	CurrentHeight_ int
-	TTLInterval    int
-	MaxMemoLength_ int
-	FeeFraction_   float64
-	MinFee_        int64
-	TotalAccount   int
-	TotalValidator int
-	Sortition      *sortition.Sortition
+	Accounts        map[crypto.Address]account.Account
+	Validators      map[crypto.Address]validator.Validator
+	Stamps          map[crypto.Hash]int
+	CurHeight       int
+	Params          param.Params
+	TotalAccount    int
+	TotalValidator  int
+	AcceptSortition bool
+	ErrorAddToSet   bool
 }
 
 func MockingSandbox() *MockSandbox {
-	_, _, priv := crypto.GenerateTestKeyPair()
 	return &MockSandbox{
-		Accounts:       make(map[crypto.Address]account.Account),
-		Validators:     make(map[crypto.Address]validator.Validator),
-		Stamps:         make(map[crypto.Hash]int),
-		TTLInterval:    4,
-		MaxMemoLength_: 1024,
-		FeeFraction_:   0.001,
-		MinFee_:        1000,
-		Sortition:      sortition.NewSortition(crypto.NewSigner(priv)),
+		Accounts:   make(map[crypto.Address]account.Account),
+		Validators: make(map[crypto.Address]validator.Validator),
+		Stamps:     make(map[crypto.Hash]int),
+		Params:     param.MainnetParams(),
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
@@ -60,7 +55,7 @@ func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	return &val
 }
 func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
-	v := validator.NewValidator(pub, m.TotalAccount, m.CurrentHeight_+1)
+	v := validator.NewValidator(pub, m.TotalAccount, m.CurHeight+1)
 	m.TotalValidator++
 	return v
 }
@@ -68,14 +63,17 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = *val
 
 }
-func (m *MockSandbox) AddToSet(crypto.Hash, crypto.Address) error {
+func (m *MockSandbox) AddToSet(hash crypto.Hash, addr crypto.Address) error {
+	if m.ErrorAddToSet {
+		return fmt.Errorf("invalid stamp")
+	}
 	return nil
 }
 func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
-	return m.Sortition.VerifyProof(blockHash, proof, val)
+	return m.AcceptSortition
 }
 func (m *MockSandbox) CurrentHeight() int {
-	return m.CurrentHeight_
+	return m.CurHeight
 }
 func (m *MockSandbox) RecentBlockHeight(hash crypto.Hash) int {
 	h, ok := m.Stamps[hash]
@@ -85,23 +83,26 @@ func (m *MockSandbox) RecentBlockHeight(hash crypto.Hash) int {
 	return h
 }
 func (m *MockSandbox) TransactionToLiveInterval() int {
-	return m.TTLInterval
+	return m.Params.TransactionToLiveInterval
 }
 func (m *MockSandbox) MaxMemoLength() int {
-	return m.MaxMemoLength_
+	return m.Params.MaximumMemoLength
 }
 func (m *MockSandbox) FeeFraction() float64 {
-	return m.FeeFraction_
+	return m.Params.FeeFraction
 }
 func (m *MockSandbox) MinFee() int64 {
-	return m.MinFee_
+	return m.Params.MinimumFee
 }
 
 func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) {
 	m.Stamps[stamp] = height
-	m.CurrentHeight_ = height + 1
+	m.CurHeight = height + 1
 }
 
 func (m *MockSandbox) AccSeq(a crypto.Address) int {
 	return m.Accounts[a].Sequence()
+}
+func (m *MockSandbox) MaximumPower() int {
+	return m.Params.MaximumPower
 }

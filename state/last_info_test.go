@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -29,6 +30,18 @@ func TestSaveLoadLastInfo(t *testing.T) {
 func TestLoadState(t *testing.T) {
 	setup(t)
 
+	addr, pub, _ := crypto.GenerateTestKeyPair()
+	signerPub := tValSigner1.PublicKey()
+
+	tx1 := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), addr, 8888000, 8888, "", &signerPub, nil)
+	tValSigner1.SignMsg((tx1))
+
+	tx2 := tx.NewBondTx(crypto.UndefHash, 2, tValSigner1.Address(), pub, 8888000, 8888, "", &signerPub, nil)
+	tValSigner1.SignMsg((tx2))
+
+	assert.NoError(t, tCommonTxPool.AppendTx(tx1))
+	assert.NoError(t, tCommonTxPool.AppendTx(tx2))
+
 	i := 0
 	for ; i < 8; i++ {
 		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
@@ -47,10 +60,12 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, tState1.sortition.TotalStake(), st2.(*state).sortition.TotalStake())
 	assert.Equal(t, tState1.executionSandbox.LastBlockHeight(), st2.(*state).executionSandbox.LastBlockHeight())
 	assert.Equal(t, tState1.executionSandbox.LastBlockHash(), st2.(*state).executionSandbox.LastBlockHash())
+	assert.Equal(t, tState1.store.TotalAccounts(), 6)
+	assert.Equal(t, tState1.sortition.TotalStake(), int64(8888000))
 
-	b, err := st2.ProposeBlock(0)
+	proposed, err := st2.ProposeBlock(0)
 	assert.NoError(t, err)
-	assert.Equal(t, newBlock.Hash(), b.Hash())
+	assert.Equal(t, newBlock.Hash(), proposed.Hash())
 	require.NoError(t, st2.ApplyBlock(i+1, newBlock, newCommit))
 }
 

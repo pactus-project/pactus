@@ -27,7 +27,7 @@ func TestProposeBlock(t *testing.T) {
 	trx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "", &pub, nil)
 	tValSigner1.SignMsg(trx1)
 
-	trx2 := tx.NewBondTx(b1.Hash(), 2, tValSigner1.Address(), pub, 1, "", &pub, nil)
+	trx2 := tx.NewBondTx(b1.Hash(), 2, tValSigner1.Address(), pub, 1000, 1000, "", &pub, nil)
 	tValSigner1.SignMsg(trx2)
 
 	assert.NoError(t, tState1.txPool.AppendTx(invSendTx))
@@ -41,6 +41,8 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
 	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
 	assert.NoError(t, tState1.ApplyBlock(2, b2, c2))
+
+	assert.Equal(t, tState1.sortition.TotalStake(), int64(1000))
 }
 
 func TestExecuteBlock(t *testing.T) {

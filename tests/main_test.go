@@ -34,11 +34,8 @@ var tSequences map[crypto.Address]int
 
 const tNodeIdx1 = 0
 const tNodeIdx2 = 1
-
-// const tNodeIdx3 = 2
-// const tNodeIdx4 = 3
-// const tNodeIdx5 = 4
-// const tNodeIdx6 = 5
+const tNodeIdx3 = 2
+const tNodeIdx4 = 3
 
 func incSequence(t *testing.T, addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
@@ -49,7 +46,7 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	max := 4
+	max := 7
 	tSigners = make([]crypto.Signer, max)
 	tConfigs = make([]*config.Config, max)
 	tNodes = make([]*node.Node, max)
@@ -82,12 +79,15 @@ func TestMain(m *testing.M) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(2100000000000000)
 
-	vals := make([]*validator.Validator, 2)
+	vals := make([]*validator.Validator, 4)
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0, 0)
 	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1, 0)
+	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2, 0)
+	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 3
-	params.MaximumPower = 3
+	params.BlockTimeInSecond = 2
+	params.MaximumPower = 4
+	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
 	var err error
@@ -112,11 +112,15 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
-	// broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx3].PublicKey(), 0, false)
-	// broadcastBonTransaction(t, tSigners[tNodeIdx1], tSigners[tNodeIdx4].PublicKey(), 0, false)
+	for i := 0; i < max; i++ {
+		amt := util.RandInt64(1000000 - 1) // fee is always 1000
+		require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000))
+		incSequence(t, tSigners[tNodeIdx1].Address())
+	}
 
-	// waitForNewBlock(t)
-	// waitForNewBlock(t)
+	for i := 0; i < 16; i++ {
+		waitForNewBlock(t)
+	}
 
 	exitCode := m.Run()
 

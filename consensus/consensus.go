@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -73,8 +74,8 @@ func (cs *consensus) Fingerprint() string {
 	}
 	status := fmt.Sprintf("%s%s%s%s", isProposed, isPrepared, isPreCommitted, isCommitted)
 
-	return fmt.Sprintf("{%v %s}",
-		cs.hrs.String(), status)
+	return fmt.Sprintf("{%s %v %s}",
+		cs.signer.Address().Fingerprint(), cs.hrs.String(), status)
 }
 
 func (cs *consensus) HRS() hrs.HRS {
@@ -108,7 +109,7 @@ func (cs *consensus) RoundVotes(round int) []*vote.Vote {
 	defer cs.lk.Unlock()
 
 	rv := cs.pendingVotes.MustGetRoundVotes(round)
-	return rv.votes
+	return rv.AllVotes()
 }
 
 func (cs *consensus) RoundVotesHash(round int) []crypto.Hash {
@@ -116,9 +117,10 @@ func (cs *consensus) RoundVotesHash(round int) []crypto.Hash {
 	defer cs.lk.Unlock()
 
 	rv := cs.pendingVotes.MustGetRoundVotes(round)
-	hashes := make([]crypto.Hash, len(rv.votes))
+	votes := rv.AllVotes()
+	hashes := make([]crypto.Hash, len(votes))
 
-	for i, v := range rv.votes {
+	for i, v := range votes {
 		hashes[i] = v.Hash()
 	}
 
@@ -217,6 +219,8 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 		if ok := prepares.HasQuorum(); ok {
 			blockHash := prepares.QuorumBlock()
+			cs.logger.Debug("Prepare has quorum", "blockhash", blockHash)
+
 			if blockHash == nil {
 				cs.enterPrepareWait(round)
 			} else {
@@ -230,6 +234,8 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 		if ok := precommits.HasQuorum(); ok {
 			blockHash := precommits.QuorumBlock()
+			cs.logger.Debug("precommit has quorum", "blockhash", blockHash)
+
 			if blockHash != nil {
 				if blockHash.IsUndef() {
 					cs.enterNewRound(round + 1)
@@ -269,16 +275,42 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 		rand := util.RandInt(3)
 		go func() {
 			time.Sleep(time.Duration(rand) * time.Second)
-			msg := message.NewVoteMessage(v)
-			cs.broadcastCh <- msg
+			cs.broadcastVote(v)
 		}()
 	} else {
-		msg := message.NewVoteMessage(v)
-		cs.broadcastCh <- msg
+		cs.broadcastVote(v)
 	}
 }
 
 func (cs *consensus) requestForProposal() {
 	msg := message.NewQueryProposalMessage(cs.hrs.Height(), cs.hrs.Round())
 	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) broadcastProposal(p *vote.Proposal) {
+	msg := message.NewProposalMessage(p)
+	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) broadcastVote(v *vote.Vote) {
+	msg := message.NewVoteMessage(v)
+	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Commit) {
+	msg := message.NewBlockAnnounceMessage(h, b, c)
+	cs.broadcastCh <- msg
+}
+
+func (cs *consensus) PickRandomVote() *vote.Vote {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	rv := cs.pendingVotes.MustGetRoundVotes(cs.hrs.Round())
+	votes := rv.AllVotes()
+	if len(votes) == 0 {
+		return nil
+	}
+	r := util.RandInt(len(votes))
+	return votes[r]
 }

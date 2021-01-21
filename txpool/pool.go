@@ -34,7 +34,6 @@ func NewTxPool(
 	pool := &txPool{
 		config:      conf,
 		pendings:    linkedmap.NewLinkedMap(conf.MaxSize),
-		appendTxCh:  make(chan *tx.Tx, 5),
 		broadcastCh: broadcastCh,
 	}
 
@@ -55,7 +54,9 @@ func (pool *txPool) AppendTx(trx *tx.Tx) error {
 		return err
 	}
 
-	pool.appendTxCh <- trx
+	if pool.appendTxCh != nil {
+		pool.appendTxCh <- trx
+	}
 
 	return nil
 }
@@ -89,15 +90,21 @@ func (pool *txPool) appendTx(trx *tx.Tx) error {
 }
 
 func (pool *txPool) checkTx(trx *tx.Tx) error {
-	// We accepts all subsidy transaction for the current height
-	// There maybe more than one valid subsidy transaction per height
-	// Because there maybe more than one proposal per height
 	if trx.IsSubsidyTx() {
+		// We accepts all subsidy transactions for the current height
+		// There maybe more than one valid subsidy transaction per height
+		// Because there maybe more than one proposal per height
 		if trx.Sequence() != pool.sandbox.CurrentHeight() {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"Subsidy transaction is not for current height. Expected :%d, got: %d",
 				pool.sandbox.CurrentHeight(), trx.Sequence())
 		}
+	} else if trx.IsSortitionTx() {
+		// We accepts all sortition transactions
+		// A validator might produce more than one sortition transaction
+		// Before entring the set
+		return nil
+
 	} else {
 
 		if err := pool.checker.Execute(trx); err != nil {
@@ -116,20 +123,26 @@ func (pool *txPool) RemoveTx(id crypto.Hash) {
 }
 
 func (pool *txPool) PendingTx(id crypto.Hash) *tx.Tx {
-	pool.lk.RLock()
+	pool.lk.Lock()
 
 	val, found := pool.pendings.Get(id)
 	if found {
 		trx := val.(*tx.Tx)
-		pool.lk.RUnlock()
+		pool.lk.Unlock()
 		return trx
 	}
 
 	pool.logger.Debug("Request transaction from peers", "id", id)
-	pool.lk.RUnlock()
+	pool.lk.Unlock()
 
 	msg := message.NewQueryTransactionsMessage([]crypto.Hash{id})
 	pool.broadcastCh <- msg
+
+	pool.appendTxCh = make(chan *tx.Tx, 100)
+	defer func() {
+		close(pool.appendTxCh)
+		pool.appendTxCh = nil
+	}()
 
 	timeout := time.NewTimer(pool.config.WaitingTimeout)
 

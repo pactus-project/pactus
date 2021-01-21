@@ -9,10 +9,11 @@ import (
 
 type BondExecutor struct {
 	sandbox sandbox.Sandbox
+	fee     int64
 }
 
-func NewBondExecutor(sandbox sandbox.Sandbox) *BondExecutor {
-	return &BondExecutor{sandbox}
+func NewBondExecutor(sb sandbox.Sandbox) *BondExecutor {
+	return &BondExecutor{sandbox: sb}
 }
 
 func (e *BondExecutor) Execute(trx *tx.Tx) error {
@@ -32,9 +33,6 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 	if bonderAcc.Balance() < pld.Stake+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
 	}
-	if trx.Fee() != 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. Expected: 0, got: %v", trx.Fee())
-	}
 	bonderAcc.IncSequence()
 	bonderAcc.SubtractFromBalance(pld.Stake + trx.Fee())
 	bondVal.AddToStake(pld.Stake)
@@ -42,9 +40,11 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 	e.sandbox.UpdateAccount(bonderAcc)
 	e.sandbox.UpdateValidator(bondVal)
 
+	e.fee = trx.Fee()
+
 	return nil
 }
 
 func (e *BondExecutor) Fee() int64 {
-	return 0
+	return e.fee
 }

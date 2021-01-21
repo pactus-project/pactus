@@ -24,7 +24,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 	return nil
 }
 
-func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64, expectError bool) {
+func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
 	pub := sender.PublicKey()
 	stamp := lastBlock(t).Hash()
 	seq := getSequence(t, pub.Address())
@@ -32,29 +32,19 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 	sender.SignMsg(trx)
 
 	d, _ := trx.Encode()
-	if expectError {
-		require.Error(t, sendRawTx(t, d))
-	} else {
-		require.NoError(t, sendRawTx(t, d))
-		incSequence(t, pub.Address())
-	}
+	return sendRawTx(t, d)
 }
 
-// func broadcastBonTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake int64, expectError bool) {
-// 	pub := sender.PublicKey()
-// 	stamp := lastBlock(t).Hash()
-// 	seq := getSequence(t, pub.Address())
-// 	trx := tx.NewBondTx(stamp, seq+1, pub.Address(), val, stake, "", &pub, nil)
-// 	sender.SignMsg(trx)
+func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake, fee int64) error {
+	pub := sender.PublicKey()
+	stamp := lastBlock(t).Hash()
+	seq := getSequence(t, pub.Address())
+	trx := tx.NewBondTx(stamp, seq+1, pub.Address(), val, stake, fee, "", &pub, nil)
+	sender.SignMsg(trx)
 
-// 	d, _ := trx.Encode()
-// 	if expectError {
-// 		require.Error(t, sendRawTx(t, d))
-// 	} else {
-// 		require.NoError(t, sendRawTx(t, d))
-// 		incSequence(t, pub.Address())
-// 	}
-// }
+	d, _ := trx.Encode()
+	return sendRawTx(t, d)
+}
 
 func TestSendingTransactions(t *testing.T) {
 	aliceAddr, _, alicePriv := crypto.GenerateTestKeyPair()
@@ -66,31 +56,37 @@ func TestSendingTransactions(t *testing.T) {
 	bobSigner := crypto.NewSigner(bobPriv)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
-		broadcastSendTransaction(t, tSigners[tNodeIdx2], aliceAddr, 80000000, 80000, false)
+		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2], aliceAddr, 80000000, 80000))
+		incSequence(t, tSigners[tNodeIdx1].Address())
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		broadcastSendTransaction(t, aliceSigner, bobAddr, 500000, 1, true)
+		require.Error(t, broadcastSendTransaction(t, aliceSigner, bobAddr, 500000, 1))
 	})
 
 	t.Run("Alice tries double spending", func(t *testing.T) {
-		broadcastSendTransaction(t, aliceSigner, bobAddr, 50000000, 50000, false)
-		broadcastSendTransaction(t, aliceSigner, carolAddr, 50000000, 50000, true)
+		require.NoError(t, broadcastSendTransaction(t, aliceSigner, bobAddr, 50000000, 50000))
+		incSequence(t, aliceSigner.Address())
+
+		require.Error(t, broadcastSendTransaction(t, aliceSigner, carolAddr, 50000000, 50000))
 	})
 
-	for i := 0; i < 100; i++ {
-		t.Run("Bob sends two transaction at once", func(t *testing.T) {
-			broadcastSendTransaction(t, bobSigner, carolAddr, 10, 1000, false)
-			broadcastSendTransaction(t, bobSigner, daveAddr, 1, 1000, false)
-		})
-	}
+	t.Run("Bob sends two transaction at once", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			require.NoError(t, broadcastSendTransaction(t, bobSigner, carolAddr, 10, 1000))
+			incSequence(t, bobSigner.Address())
+
+			require.NoError(t, broadcastSendTransaction(t, bobSigner, daveAddr, 1, 1000))
+			incSequence(t, bobSigner.Address())
+		}
+	})
 
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
 	for {
 		bobAcc := getAccount(t, bobAddr)
-		if bobAcc != nil && bobAcc.Sequence() == 200 { // bob sent 200 txs
+		if bobAcc != nil && bobAcc.Sequence() == 20 { // bob sent 200 txs
 			break
 		}
 		waitForNewBlock(t)
@@ -106,7 +102,7 @@ func TestSendingTransactions(t *testing.T) {
 	require.NotNil(t, daveAcc)
 
 	assert.Equal(t, aliceAcc.Balance(), int64(80000000-50050000))
-	assert.Equal(t, bobAcc.Balance(), int64(50000000-201100))
-	assert.Equal(t, carolAcc.Balance(), int64(1000))
-	assert.Equal(t, daveAcc.Balance(), int64(100))
+	assert.Equal(t, bobAcc.Balance(), int64(50000000-20110))
+	assert.Equal(t, carolAcc.Balance(), int64(100))
+	assert.Equal(t, daveAcc.Balance(), int64(10))
 }

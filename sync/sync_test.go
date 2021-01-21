@@ -18,6 +18,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/version"
 )
@@ -116,7 +117,7 @@ func setup(t *testing.T) {
 	tAliceSync.peerSet = peerset.NewPeerSet(tAliceConfig.SessionTimeout)
 	tAliceSync.firewall = firewall.NewFirewall(tAliceSync.peerSet, tAliceState)
 	tAliceSync.consensusSync = NewConsensusSync(tAliceConfig, tAliceConsensus, tAliceSync.logger, tAliceSync.publishMessage)
-	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.publishMessage, tAliceSync.synced)
+	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tTxPool, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.publishMessage, tAliceSync.synced)
 
 	tBobSync = &Synchronizer{
 		ctx:         context.Background(),
@@ -133,7 +134,7 @@ func setup(t *testing.T) {
 	tBobSync.peerSet = peerset.NewPeerSet(tBobConfig.SessionTimeout)
 	tBobSync.firewall = firewall.NewFirewall(tBobSync.peerSet, tBobState)
 	tBobSync.consensusSync = NewConsensusSync(tBobConfig, tBobConsensus, tBobSync.logger, tBobSync.publishMessage)
-	tBobSync.stateSync = NewStateSync(tBobConfig, tBobPeerID, tBobSync.cache, tBobState, tBobSync.peerSet, tBobSync.logger, tBobSync.publishMessage, tBobSync.synced)
+	tBobSync.stateSync = NewStateSync(tBobConfig, tBobPeerID, tBobSync.cache, tBobState, tTxPool, tBobSync.peerSet, tBobSync.logger, tBobSync.publishMessage, tBobSync.synced)
 
 	tAliceNetAPI.ParsFn = tAliceSync.ParsMessage
 	tAliceNetAPI.Firewall = tAliceSync.firewall
@@ -258,4 +259,38 @@ func TestIncreaseHeight(t *testing.T) {
 	msg3 := message.NewHeartBeatMessage(tAnotherPeerID, crypto.GenerateTestHash(), hrs.NewHRS(106, 0, 1))
 	tAliceSync.ParsMessage(msg3, tAnotherPeerID)
 	assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), 105)
+}
+
+func TestQueryForTransaction(t *testing.T) {
+	setup(t)
+
+	trx1, _ := tx.GenerateTestBondTx()
+	trx2, _ := tx.GenerateTestSendTx()
+
+	// Alice has trx1 in his cache
+	tAliceSync.cache.AddTransaction(trx1)
+	tBobSync.cache.AddTransaction(trx2)
+
+	tAliceBroadcastCh <- message.NewQueryTransactionsMessage([]crypto.Hash{trx1.ID()})
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryTransactions)
+
+	tAliceBroadcastCh <- message.NewQueryTransactionsMessage([]crypto.Hash{trx1.ID(), trx2.ID()})
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryTransactions)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeTransactions)
+
+	assert.NotNil(t, tAliceSync.cache.GetTransaction(trx2.ID()))
+}
+
+func TestHeartbeatNotInSet(t *testing.T) {
+	setup(t)
+
+	tAliceConsensus.HRS_ = hrs.NewHRS(106, 0, 1)
+
+	// Alice is not in validator set
+	tAliceSync.broadcastHeartBeat()
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+
+	msg := message.NewHeartBeatMessage(tAnotherPeerID, crypto.GenerateTestHash(), hrs.NewHRS(106, 1, 1)) // peer is in same height but further round
+	tAliceSync.ParsMessage(msg, tAnotherPeerID)
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVoteSet)
 }

@@ -14,8 +14,9 @@ func TestMustGetRound(t *testing.T) {
 	pv := NewPendingVotes()
 	pv.MoveToNewHeight(101, valSet.CopyValidators())
 	pv.MustGetRoundVotes(4)
-	assert.NotNil(t, pv.roundVotes[1])
-	assert.NotNil(t, pv.roundVotes[4])
+	assert.Nil(t, pv.GetRoundVotes(5))
+	assert.NotNil(t, pv.GetRoundVotes(1))
+	assert.NotNil(t, pv.GetRoundVotes(4))
 	assert.Equal(t, pv.roundVotes[3].Prepares.Height(), 101)
 	assert.Equal(t, pv.roundVotes[3].Prepares.Round(), 3)
 	assert.Equal(t, len(pv.roundVotes), 5)
@@ -65,8 +66,9 @@ func TestPendingVotesTest(t *testing.T) {
 	assert.Error(t, err)
 
 	prepares := pv.PrepareVoteSet(1)
-	assert.Equal(t, prepares.Len(), 1)              // validVote
-	assert.Equal(t, len(pv.roundVotes[1].votes), 2) // validVote + duplicateVote
+	assert.Equal(t, prepares.Len(), 1)
+	assert.Equal(t, len(pv.roundVotes[1].AllVotes()), 1)
+	assert.False(t, pv.HasVote(duplicateVote.Hash()))
 	assert.True(t, pv.HasVote(validVote.Hash()))
 	assert.False(t, pv.HasVote(invalidVote.Hash()))
 }

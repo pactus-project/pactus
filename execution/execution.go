@@ -6,6 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type Executor interface {
@@ -35,15 +36,14 @@ func (exe *Execution) Execute(trx *tx.Tx) error {
 		return err
 	}
 
-	curHeight := exe.sandbox.CurrentHeight()
-	height := exe.sandbox.RecentBlockHeight(trx.Stamp())
-	interval := exe.sandbox.TransactionToLiveInterval()
-
-	if height == -1 || curHeight-height > interval {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
+	if err := exe.checkStamp(trx); err != nil {
+		return err
 	}
-	if len(trx.Memo()) > exe.sandbox.MaxMemoLength() {
-		return errors.Errorf(errors.ErrInvalidTx, "Memo length exceeded")
+	if err := exe.checkMemo(trx); err != nil {
+		return err
+	}
+	if err := exe.checkFee(trx); err != nil {
+		return err
 	}
 
 	e, ok := exe.executors[trx.PayloadType()]
@@ -66,4 +66,44 @@ func (exe *Execution) ResetFee() {
 
 func (exe *Execution) AccumulatedFee() int64 {
 	return exe.accumulatedFee
+}
+
+func (exe *Execution) checkMemo(trx *tx.Tx) error {
+	if len(trx.Memo()) > exe.sandbox.MaxMemoLength() {
+		return errors.Errorf(errors.ErrInvalidTx, "Memo length exceeded")
+	}
+	return nil
+}
+
+func (exe *Execution) checkStamp(trx *tx.Tx) error {
+	curHeight := exe.sandbox.CurrentHeight()
+	height := exe.sandbox.RecentBlockHeight(trx.Stamp())
+	interval := exe.sandbox.TransactionToLiveInterval()
+
+	if trx.IsSubsidyTx() {
+		interval = 1
+	} else if trx.IsSortitionTx() {
+		interval = exe.sandbox.MaximumPower()
+	}
+
+	if height == -1 || curHeight-height > interval {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
+	}
+
+	return nil
+}
+
+func (exe *Execution) checkFee(trx *tx.Tx) error {
+	if trx.IsSubsidyTx() || trx.IsSortitionTx() {
+		if trx.Fee() != 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+		}
+	} else {
+		fee := int64(float64(trx.Payload().Value()) * exe.sandbox.FeeFraction())
+		fee = util.Max64(fee, exe.sandbox.MinFee())
+		if trx.Fee() != fee {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: %v, got: %v", fee, trx.Fee())
+		}
+	}
+	return nil
 }

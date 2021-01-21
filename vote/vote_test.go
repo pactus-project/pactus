@@ -49,6 +49,7 @@ func TestVoteSignature(t *testing.T) {
 
 func TestVoteSanityCheck(t *testing.T) {
 	v, _ := GenerateTestPrepareVote(5, 5)
+	assert.NoError(t, v.SanityCheck())
 	v.data.VoteType = 3
 	assert.Error(t, v.SanityCheck())
 	v.data.VoteType = VoteTypePrepare
@@ -86,9 +87,4 @@ func TestSignBytesMatchWithCommit(t *testing.T) {
 
 	fmt.Printf("%x", v.SignBytes())
 	assert.Equal(t, v.SignBytes(), d)
-}
-
-func TestVoteFingerprint(t *testing.T) {
-	v, _ := GenerateTestPrecommitVote(1, 1)
-	assert.Contains(t, v.Fingerprint(), v.Signer().Fingerprint())
 }

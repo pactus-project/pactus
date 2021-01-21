@@ -59,24 +59,11 @@ func (tx *Tx) SanityCheck() error {
 	if tx.data.Sequence < 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
 	}
-
-	if tx.IsSubsidyTx() {
-		if tx.data.PublicKey != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have public key")
-		}
-		if tx.data.Signature != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have signature")
-		}
-		if tx.data.Fee != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee for Subsidy transaction should set to zero")
-		}
-	} else {
-		if tx.data.Fee < 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid fee")
-		}
-		if err := tx.CheckSignature(); err != nil {
-			return err
-		}
+	if err := tx.checkFee(); err != nil {
+		return err
+	}
+	if err := tx.checkSignature(); err != nil {
+		return err
 	}
 	if tx.data.Type != tx.data.Payload.Type() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid payload type")
@@ -90,25 +77,48 @@ func (tx *Tx) SanityCheck() error {
 	return nil
 }
 
-func (tx *Tx) CheckSignature() error {
-	if tx.data.PublicKey == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "No public key")
+func (tx *Tx) checkFee() error {
+	if tx.IsSubsidyTx() || tx.IsSortitionTx() {
+		if tx.data.Fee != 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee should set to zero")
+		}
+	} else {
+		if tx.data.Fee <= 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "Fee is invalid")
+		}
 	}
-	if tx.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "No signature")
-	}
-	if err := tx.data.PublicKey.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid pubic key")
-	}
-	if err := tx.data.Signature.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
-	}
-	if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
-	}
-	bs := tx.SignBytes()
-	if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+
+	return nil
+}
+
+func (tx *Tx) checkSignature() error {
+	if tx.IsSubsidyTx() {
+		if tx.data.PublicKey != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have public key")
+		}
+		if tx.data.Signature != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have signature")
+		}
+	} else {
+		if tx.data.PublicKey == nil {
+			return errors.Errorf(errors.ErrInvalidTx, "No public key")
+		}
+		if tx.data.Signature == nil {
+			return errors.Errorf(errors.ErrInvalidTx, "No signature")
+		}
+		if err := tx.data.PublicKey.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid pubic key")
+		}
+		if err := tx.data.Signature.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+		}
+		if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
+		}
+		bs := tx.SignBytes()
+		if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+		}
 	}
 	return nil
 }
@@ -120,7 +130,7 @@ type _txData struct {
 	Fee       int64               `cbor:"4,keyasint"`
 	Type      payload.PayloadType `cbor:"5,keyasint"`
 	Payload   cbor.RawMessage     `cbor:"6,keyasint"`
-	Memo      string              `cbor:"7,keyasint,omitempty"`
+	Memo      string              `cbor:"7,keyasint"`
 	PublicKey *crypto.PublicKey   `cbor:"20,keyasint,omitempty"`
 	Signature *crypto.Signature   `cbor:"21,keyasint,omitempty"`
 }
@@ -183,10 +193,6 @@ func (tx *Tx) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tx.data)
 }
 
-func (tx *Tx) UnmarshalJSON(bs []byte) error {
-	return json.Unmarshal(bs, &tx.data)
-}
-
 func (tx *Tx) Encode() ([]byte, error) {
 	return tx.MarshalCBOR()
 }
@@ -235,13 +241,17 @@ func (tx *Tx) IsSubsidyTx() bool {
 		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
+func (tx *Tx) IsSortitionTx() bool {
+	return tx.data.Type == payload.PayloadTypeSortition
+}
+
 // ---------
 // For tests
 func GenerateTestSendTx() (*Tx, crypto.PrivateKey) {
 	h := crypto.GenerateTestHash()
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	a2, _, _ := crypto.GenerateTestKeyPair()
-	tx := NewSendTx(h, 110, a1, a2, 100, 10, "test send-tx", &pb1, nil)
+	tx := NewSendTx(h, 110, a1, a2, 1000, 1000, "test send-tx", &pb1, nil)
 	sig := pv1.Sign(tx.SignBytes())
 	tx.data.Signature = sig
 	return tx, pv1
@@ -251,7 +261,7 @@ func GenerateTestBondTx() (*Tx, crypto.PrivateKey) {
 	h := crypto.GenerateTestHash()
 	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
 	_, pb2, _ := crypto.GenerateTestKeyPair()
-	tx := NewBondTx(h, 110, a1, pb2, 100, "test bond-tx", &pb1, nil)
+	tx := NewBondTx(h, 110, a1, pb2, 1000, 1000, "test bond-tx", &pb1, nil)
 	sig := pv1.Sign(tx.SignBytes())
 	tx.data.Signature = sig
 	return tx, pv1

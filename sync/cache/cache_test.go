@@ -40,14 +40,12 @@ func TestCacheCommit(t *testing.T) {
 	b2, _ := block.GenerateTestBlock(nil, nil)
 	b3, _ := block.GenerateTestBlock(nil, nil)
 
-	tStore.Blocks[1] = b1
-	tStore.Blocks[2] = b2
-	tCache.AddCommit(b1.Hash(), b2.LastCommit())
-	tCache.AddCommit(b2.Hash(), b3.LastCommit())
+	tCache.AddCommit(b1.LastCommit())
+	tCache.AddCommit(b2.LastCommit())
 
-	assert.Equal(t, tCache.GetCommit(b1.Hash()).Hash(), b2.LastCommit().Hash())
-	assert.Equal(t, tCache.GetCommit(b2.Hash()).Hash(), b3.LastCommit().Hash())
-	assert.Nil(t, tCache.GetCommit(b3.Hash()))
+	assert.Equal(t, tCache.GetCommit(b1.Header().LastBlockHash()).Hash(), b1.LastCommit().Hash())
+	assert.Equal(t, tCache.GetCommit(b2.Header().LastBlockHash()).Hash(), b2.LastCommit().Hash())
+	assert.Nil(t, tCache.GetCommit(b3.Header().LastBlockHash()))
 }
 
 func TestCacheTx(t *testing.T) {

@@ -122,16 +122,17 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 				// A peer doesn't have a proposal, he votes for undef.
 				// Later he receives the proposal, so he vote again.
 				// We should ignore undef vote
-				if duplicated.data.BlockHash.IsUndef() {
+				if duplicated.BlockHash().IsUndef() {
 					// Remove undef vote and replace it with new vote
 					v.sum--
 					vs.sum--
 					delete(v.votes, signer)
-				} else if vote.data.BlockHash.IsUndef() {
+					vs.quorum = nil
+				} else if vote.BlockHash().IsUndef() {
 					// Because of network latency, we might receive undef vote after block vote.
 					// Ignore undef vote in this case.
 					return false, nil
-				} else if duplicated.data.BlockHash != blockHash {
+				} else if duplicated.BlockHash() != blockHash {
 					// Duplicated vote:
 					// 1- Same signer
 					// 2- Previous blockhash is not undef

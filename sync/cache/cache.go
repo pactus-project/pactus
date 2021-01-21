@@ -78,8 +78,10 @@ func (c *Cache) GetCommit(blockhash crypto.Hash) *block.Commit {
 	return nil
 }
 
-func (c *Cache) AddCommit(blockhash crypto.Hash, commit *block.Commit) {
-	c.cache.Add(commitKey(blockhash), commit)
+func (c *Cache) AddCommit(commit *block.Commit) {
+	if commit != nil {
+		c.cache.Add(commitKey(commit.BlockHash()), commit)
+	}
 }
 
 func (c *Cache) GetTransaction(id crypto.Hash) *tx.Tx {

@@ -37,7 +37,7 @@ func (h Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress
 
 func NewHeader(version uint,
 	time time.Time,
-	txIDsHash, lastBlockHash, CommittersHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
+	txIDsHash, lastBlockHash, committersHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
 	proposerAddress crypto.Address) Header {
 
 	return Header{
@@ -46,7 +46,7 @@ func NewHeader(version uint,
 			UnixTime:         time.Unix(),
 			TxIDsHash:        txIDsHash,
 			LastBlockHash:    lastBlockHash,
-			CommittersHash:   CommittersHash,
+			CommittersHash:   committersHash,
 			StateHash:        stateHash,
 			LastReceiptsHash: lastReceiptsHash,
 			LastCommitHash:   lastCommitHash,

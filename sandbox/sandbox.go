@@ -105,6 +105,7 @@ func (sb *SandboxConcrete) clear() {
 	sb.validators = make(map[crypto.Address]*ValidatorStatus)
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
+	sb.changeToStake = 0
 }
 
 func (sb *SandboxConcrete) Account(addr crypto.Address) *account.Account {
@@ -231,11 +232,11 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 			joined++
 		}
 	}
-	if joined >= (sb.validatorSet.MaximumPower() / 3) {
+	if joined >= (sb.params.MaximumPower / 3) {
 		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
 	}
 	h, _ := sb.store.BlockHeight(blockHash)
-	b, err := sb.store.Block(h + 1)
+	b, err := sb.store.Block(h)
 	if err != nil {
 		return errors.Errorf(errors.ErrGeneric, "Invalid block hash")
 	}
@@ -347,4 +348,18 @@ func (sb *SandboxConcrete) IterateValidators(consumer func(*ValidatorStatus)) {
 	for _, vs := range sb.validators {
 		consumer(vs)
 	}
+}
+
+func (sb *SandboxConcrete) MaximumPower() int {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.params.MaximumPower
+}
+
+func (sb *SandboxConcrete) RiseTotalStake() int64 {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.changeToStake
 }

@@ -38,6 +38,5 @@ func TestValidator(t *testing.T) {
 
 	res := getValidator(t, tSigners[tNodeIdx2].Address())
 	require.NotNil(t, res)
-	assert.Zero(t, res.Stake())
 	assert.Equal(t, res.Number(), 1)
 }

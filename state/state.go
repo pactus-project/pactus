@@ -416,6 +416,11 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		receiptsHashes[i] = ctrx.Receipt.Hash()
 	}
 
+	// Evaluating sortition before modifying the validator set
+	if st.EvaluateSortition() {
+		st.logger.Info("👏 This validator is chosen to be in the set", "address", st.proposer)
+	}
+
 	// Commit changes and move proposer index
 	st.commitSandbox(commit.Round())
 
@@ -433,8 +438,6 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.saveLastInfo(st.lastBlockHeight, commit, st.lastReceiptsHash)
 
-	st.EvaluateSortition()
-
 	// At this point we can reset txpool sandbox
 	st.txPoolSandbox.Clear()
 	st.txPool.Recheck()
@@ -442,25 +445,33 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	return nil
 }
 
-func (st *state) EvaluateSortition() {
+func (st *state) EvaluateSortition() bool {
 	if st.validatorSet.Contains(st.proposer) {
 		// We are in the validator set right now
-		return
+		return false
 	}
 
 	val, _ := st.store.Validator(st.proposer)
 	if val == nil {
 		// We are not a validator
-		return
+		return false
 	}
+
+	if st.lastBlockHeight-val.BondingHeight() < 2*st.params.MaximumPower {
+		// Bonding period
+		return false
+	}
+
 	//
 	trx := st.sortition.EvaluateTransaction(st.lastBlockHash, val)
 	if trx != nil {
-		st.logger.Info("👏 This validator is chosen to be in set", "address", st.proposer, "stake", val.Stake(), "tx", trx)
 		if err := st.txPool.AppendTxAndBroadcast(trx); err != nil {
-			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.proposer, "stake", val.Stake(), "tx", trx)
+			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.proposer, "stake", val.Stake(), "tx", trx, "err", err)
+			return false
 		}
 	}
+
+	return true
 }
 
 func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
@@ -479,6 +490,8 @@ func (st *state) commitSandbox(round int) {
 	joined := make([]*validator.Validator, 0)
 	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.AddToSet {
+			st.logger.Info("New validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
+
 			joined = append(joined, &vs.Validator)
 		}
 	})
@@ -502,4 +515,6 @@ func (st *state) commitSandbox(round int) {
 			st.store.UpdateValidator(&vs.Validator)
 		}
 	})
+
+	st.sortition.AddToTotalStake(st.executionSandbox.RiseTotalStake())
 }

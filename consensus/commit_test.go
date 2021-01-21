@@ -10,16 +10,35 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func TestInvalidStepAfterBlockCommit(t *testing.T) {
+func TestResetBooleanOnNewHeight(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)
 
-	tConsY.enterNewHeight()
+	tConsX.enterNewHeight()
 
-	assert.Equal(t, tConsY.hrs.Height(), 2)
-	assert.Equal(t, tConsY.hrs.Round(), 0)
-	assert.False(t, tConsX.isProposed)
+	assert.Equal(t, tConsX.hrs.Height(), 2)
+	assert.Equal(t, tConsX.hrs.Round(), 0)
+	assert.False(t, tConsX.isPrepared)
+	assert.False(t, tConsX.isPreCommitted)
+	assert.False(t, tConsX.isCommitted)
+}
+
+func TestResetBooleanOnNewRound(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+
+	tConsX.enterNewHeight()
+	tConsX.isProposed = true
+	tConsX.isPrepared = true
+	tConsX.isPreCommitted = true
+	tConsX.isCommitted = true
+
+	tConsX.enterNewRound(1)
+
+	assert.Equal(t, tConsX.hrs.Height(), 2)
+	assert.Equal(t, tConsX.hrs.Round(), 1)
 	assert.False(t, tConsX.isPrepared)
 	assert.False(t, tConsX.isPreCommitted)
 	assert.False(t, tConsX.isCommitted)
@@ -30,11 +49,12 @@ func TestEnterCommit(t *testing.T) {
 
 	commitBlockForAllStates(t)
 
+	h := 2
+	r := 1
+	p1 := makeProposal(t, h, r)
+
 	tConsY.enterNewHeight()
 	tConsY.enterNewRound(1)
-	tConsB.enterNewHeight()
-	tConsB.enterNewRound(1)
-	p1 := tConsB.LastProposal()
 
 	// Invalid round
 	tConsY.enterCommit(0)
@@ -44,10 +64,10 @@ func TestEnterCommit(t *testing.T) {
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 2, 1, p1.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 2, 1, p1.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexP, false)
 
-	v3 := vote.NewPrecommit(2, 1, crypto.UndefHash, tSigners[tIndexB].Address())
+	v3 := vote.NewPrecommit(h, r, crypto.UndefHash, tSigners[tIndexB].Address())
 	tSigners[tIndexB].SignMsg(v3)
 	ok, _ := tConsY.pendingVotes.AddVote(v3)
 	assert.True(t, ok)
@@ -56,12 +76,12 @@ func TestEnterCommit(t *testing.T) {
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 2, 1, p1.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB, false)
 
 	// No proposal
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
-	shouldPublishQueryProposal(t, tConsY, 2, 1)
+	shouldPublishQueryProposal(t, tConsY, h, r)
 
 	pub := tSigners[tIndexX].PublicKey()
 	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "", &pub, nil)
@@ -70,7 +90,7 @@ func TestEnterCommit(t *testing.T) {
 	b2, err := tConsY.state.ProposeBlock(0)
 	require.NoError(t, err)
 	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
-	p2 := vote.NewProposal(2, 1, *b2)
+	p2 := vote.NewProposal(h, r, *b2)
 	tSigners[tIndexX].SignMsg(p2)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
 
@@ -90,9 +110,8 @@ func TestSetStaleProposal(t *testing.T) {
 
 	commitBlockForAllStates(t)
 
-	tConsX.enterNewHeight()
-	tConsY.enterNewHeight()
-	p := tConsY.LastProposal()
+	p := makeProposal(t, 2, 0)
+
 	commitBlockForAllStates(t)
 
 	tConsX.SetProposal(p)

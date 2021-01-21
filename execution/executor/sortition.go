@@ -11,8 +11,8 @@ type SortitionExecutor struct {
 	sandbox sandbox.Sandbox
 }
 
-func NewSortitionExecutor(sandbox sandbox.Sandbox) *SortitionExecutor {
-	return &SortitionExecutor{sandbox}
+func NewSortitionExecutor(sb sandbox.Sandbox) *SortitionExecutor {
+	return &SortitionExecutor{sandbox: sb}
 }
 
 func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
@@ -22,8 +22,11 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
 	}
-	if trx.Fee() != 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+	if val.Sequence()+1 != trx.Sequence() {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+	}
+	if e.sandbox.CurrentHeight()-val.BondingHeight() < 2*e.sandbox.MaximumPower() {
+		return errors.Errorf(errors.ErrInvalidTx, "In bonding period")
 	}
 	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Proof, val) {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
@@ -31,6 +34,10 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if err := e.sandbox.AddToSet(trx.Stamp(), val.Address()); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, err.Error())
 	}
+	val.IncSequence()
+	val.UpdateLastJoinedHeight(e.sandbox.CurrentHeight())
+
+	e.sandbox.UpdateValidator(val)
 
 	return nil
 }

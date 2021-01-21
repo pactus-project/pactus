@@ -4,8 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zarbchain/zarb-go/tx"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
@@ -14,6 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
@@ -309,17 +308,21 @@ func TestBlockProposal(t *testing.T) {
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner3, tValSigner4)
 	applyBlockAndCommitForAllStates(t, b1, c1)
 
-	b, err := tState2.ProposeBlock(0)
-	assert.NoError(t, err)
-	assert.NoError(t, tState1.ValidateBlock(*b)) // State1 check state2's proposed block
+	t.Run("validity of proposed block", func(t *testing.T) {
+		b, err := tState2.ProposeBlock(0)
+		assert.NoError(t, err)
+		assert.NoError(t, tState1.ValidateBlock(*b)) // State1 check state2's proposed block
+	})
 
-	trx := tState3.createSubsidyTx(0)
-	assert.NoError(t, tState2.txPool.AppendTx(trx))
+	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
+		trx := tState2.createSubsidyTx(0)
+		assert.NoError(t, tState2.txPool.AppendTx(trx))
 
-	b, err = tState2.ProposeBlock(0)
-	assert.NoError(t, err)
-	assert.NoError(t, tState1.ValidateBlock(*b))
-
+		// Moving to next round
+		b, err := tState3.ProposeBlock(1)
+		assert.NoError(t, err)
+		assert.NoError(t, tState1.ValidateBlock(*b))
+	})
 }
 
 func TestInvalidBlock(t *testing.T) {
@@ -350,4 +353,27 @@ func TestNodeShutdown(t *testing.T) {
 	assert.Error(t, tState1.ValidateBlock(*b))
 	_, err := tState1.ProposeBlock(0)
 	assert.Error(t, err)
+}
+
+func TestSortition(t *testing.T) {
+	setup(t)
+
+	_, pub, priv := crypto.GenerateTestKeyPair()
+	signer := crypto.NewSigner(priv)
+
+	tCommonTxPool = txpool.MockingTxPool()
+	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, tCommonTxPool)
+	assert.NoError(t, err)
+
+	st1 := st.(*state)
+
+	assert.False(t, tState1.EvaluateSortition())
+	assert.False(t, st1.EvaluateSortition()) //  not a validator
+
+	// Manipulating the store
+	val := validator.NewValidator(pub, 4, 88)
+	st1.store.UpdateValidator(val)
+
+	assert.False(t, st1.EvaluateSortition()) //  too soon
+
 }
