@@ -17,7 +17,7 @@ func Sign() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		messageFileOpt := c.String(cli.StringOpt{
 			Name: "f file",
-			Desc: "Message file path to read the file and sign the message inside",
+			Desc: "A file path to sign its content",
 		})
 		messageOpt := c.String(cli.StringOpt{
 			Name: "m message",
@@ -27,17 +27,13 @@ func Sign() func(c *cli.Cmd) {
 			Name: "t tx",
 			Desc: "Raw transaction to sign",
 		})
-		privateKeyOpt := c.String(cli.StringOpt{
-			Name: "p private-Key",
-			Desc: "Private key to sign the message",
-		})
 		keyFileOpt := c.String(cli.StringOpt{
 			Name: "k keyfile",
 			Desc: "Path to the encrypted key file",
 		})
 		authOpt := c.String(cli.StringOpt{
 			Name: "a auth",
-			Desc: "Key file's passphrase",
+			Desc: "Passphrase of the key file",
 		})
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
@@ -74,13 +70,7 @@ func Sign() func(c *cli.Cmd) {
 
 			var pv crypto.PrivateKey
 			//Sign the message with the private key
-			if *privateKeyOpt != "" {
-				pv, err = crypto.PrivateKeyFromString(*privateKeyOpt)
-				if err != nil {
-					cmd.PrintErrorMsg("%v", err)
-					return
-				}
-			} else if *keyFileOpt != "" {
+			if *keyFileOpt != "" {
 				var auth string
 				if *authOpt == "" {
 					auth = cmd.PromptPassphrase("Passphrase: ", false)
@@ -103,7 +93,7 @@ func Sign() func(c *cli.Cmd) {
 			if trx != nil {
 				sig := pv.Sign(trx.SignBytes())
 				pub := pv.PublicKey()
-				trx.SetPublicKey(&pub)
+				trx.SetPublicKey(pub)
 				trx.SetSignature(sig)
 
 				bz, _ := trx.Encode()

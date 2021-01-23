@@ -22,14 +22,14 @@ func Verify() func(c *cli.Cmd) {
 		})
 		messageOpt := c.String(cli.StringOpt{
 			Name: "m message",
-			Desc: "Message to be verified",
+			Desc: "Message to verify",
 		})
 		messageFileOpt := c.String(cli.StringOpt{
 			Name: "f messagefile",
-			Desc: "Message file to be verified",
+			Desc: "Message file to verify",
 		})
 
-		c.Spec = "PUBLICKEY SIGNATURE [-m=<message to be verified>] | [-f=<Message File to be verified>]"
+		c.Spec = "PUBLICKEY SIGNATURE"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			var msg []byte
@@ -60,8 +60,8 @@ func Verify() func(c *cli.Cmd) {
 				return
 			}
 
-			fmt.Println()
-			verify := publickey.Verify(msg, &sign)
+			cmd.PrintLine()
+			verify := publickey.Verify(msg, sign)
 			if verify {
 				cmd.PrintSuccessMsg("Signature is verified successfully!")
 			} else {

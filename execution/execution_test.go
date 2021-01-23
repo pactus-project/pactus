@@ -22,7 +22,8 @@ func TestExecution(t *testing.T) {
 	acc0.AddToBalance(2100000000000000 - 10000000000)
 	tSandbox.UpdateAccount(acc0)
 
-	addr1, pub1, priv1 := crypto.GenerateTestKeyPair()
+	signer1 := crypto.GenerateTestSigner()
+	addr1 := signer1.Address()
 	acc1 := account.NewAccount(addr1, 1)
 	acc1.AddToBalance(2100000000000000 - 10000000000)
 	tSandbox.UpdateAccount(acc1)
@@ -31,8 +32,6 @@ func TestExecution(t *testing.T) {
 	stamp1 := crypto.GenerateTestHash()
 	stamp2 := crypto.GenerateTestHash()
 	stamp3 := crypto.GenerateTestHash()
-	stamp4 := crypto.GenerateTestHash()
-	stamp5 := crypto.GenerateTestHash()
 	stamp8640 := crypto.GenerateTestHash()
 	stamp8641 := crypto.GenerateTestHash()
 	stamp8642 := crypto.GenerateTestHash()
@@ -40,68 +39,65 @@ func TestExecution(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(1, stamp1)
 	tSandbox.AppendStampAndUpdateHeight(2, stamp2)
 	tSandbox.AppendStampAndUpdateHeight(3, stamp3)
-	tSandbox.AppendStampAndUpdateHeight(4, stamp4)
-	tSandbox.AppendStampAndUpdateHeight(5, stamp5)
 	tSandbox.AppendStampAndUpdateHeight(8640, stamp8640)
 	tSandbox.AppendStampAndUpdateHeight(8641, stamp8641)
 	tSandbox.AppendStampAndUpdateHeight(8642, stamp8642)
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
 		trx, _ := tx.GenerateTestSendTx()
-		trx.SetPublicKey(nil)
 		assert.Error(t, tExec.Execute(trx))
 		assert.Zero(t, tExec.AccumulatedFee())
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(crypto.UndefHash, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp", &pub1, nil)
-		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		trx := tx.NewSendTx(crypto.UndefHash, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx))
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(stamp1, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp", &pub1, nil)
-		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		trx := tx.NewSendTx(stamp1, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx))
 	})
 
 	t.Run("Good stamp", func(t *testing.T) {
-		trx := tx.NewSendTx(stamp3, 1, addr1, rcvAddr, 1000, 1000, "ok", &pub1, nil)
-		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		trx := tx.NewSendTx(stamp3, 1, addr1, rcvAddr, 1000, 1000, "ok")
+		signer1.SignMsg(trx)
 		assert.NoError(t, tExec.Execute(trx))
 	})
 
 	t.Run("Subsidy invalid stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(stamp8641, 1, rcvAddr, 1000, "expired-stamp")
+		trx := tx.NewMintbaseTx(stamp8641, 1, rcvAddr, 1000, "expired-stamp")
 		assert.Error(t, tExec.Execute(trx))
 	})
 
 	t.Run("Subsidy stamp is ok", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(stamp8642, 1, rcvAddr, 1000, "ok")
+		trx := tx.NewMintbaseTx(stamp8642, 1, rcvAddr, 1000, "ok")
 		assert.NoError(t, tExec.Execute(trx))
 	})
 
 	t.Run("Big memo, Should returns error", func(t *testing.T) {
 		bigMemo := strings.Repeat("a", 1025)
-		trx := tx.NewSendTx(stamp8641, 2, addr1, rcvAddr, 1000, 1000, bigMemo, &pub1, nil)
-		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		trx := tx.NewSendTx(stamp8641, 2, addr1, rcvAddr, 1000, 1000, bigMemo)
+		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1, "invalid fee", &pub1, nil)
-		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1, "invalid fee")
+		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1001, "invalid fee", &pub1, nil)
-		trx.SetSignature(priv1.Sign(trx.SignBytes()))
+		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1001, "invalid fee")
+		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(stamp2, 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee", nil, nil)
+		trx := tx.NewSendTx(stamp2, 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee")
 		assert.Error(t, tExec.Execute(trx))
 		assert.Error(t, tExec.checkFee(trx))
 	})

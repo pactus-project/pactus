@@ -16,7 +16,7 @@ func init() {
 	bls.VerifySignatureOrder(true)
 }
 
-func Aggregate(sigs []*Signature) Signature {
+func Aggregate(sigs []Signature) Signature {
 	aggregated := new(bls.Sign)
 	signatures := make([]bls.Sign, len(sigs))
 

@@ -81,10 +81,19 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 
 	set.validators = append(set.validators, joined...)
 	if set.currentPower() > set.maximumPower {
+		//
+		//
 		shouldLeave := set.currentPower() - set.maximumPower
 		set.validators = set.validators[shouldLeave:]
 	}
-	// Move proposer index after modifying the set
+	// Correct proposer index:
+	// Some nodes from the previous round left the set,
+	// This means we have pulled right the validator queue,
+	// Correcting proposer index by pulling it to the right.
+	// If it's less than zero consider an unlucky leader for
+	// this round has missed his chance for proposing a block.
+	// But it;s ok, because it is his second time proposing block.
+	// We never let to change validator set more
 	set.proposerIndex = set.proposerIndex - len(joined)
 	if set.proposerIndex < 0 {
 		set.proposerIndex = 0
@@ -164,14 +173,14 @@ func (set *ValidatorSet) CommittersHash() crypto.Hash {
 }
 
 // GenerateTestValidatorSet generates a validator set for testing purpose
-func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
-	val1, pv1 := GenerateTestValidator(0)
-	val2, pv2 := GenerateTestValidator(1)
-	val3, pv3 := GenerateTestValidator(2)
-	val4, pv4 := GenerateTestValidator(3)
+func GenerateTestValidatorSet() (*ValidatorSet, []crypto.Signer) {
+	val1, s1 := GenerateTestValidator(0)
+	val2, s2 := GenerateTestValidator(1)
+	val3, s3 := GenerateTestValidator(2)
+	val4, s4 := GenerateTestValidator(3)
 
-	keys := []crypto.PrivateKey{pv1, pv2, pv3, pv4}
+	signers := []crypto.Signer{s1, s2, s3, s4}
 	vals := []*Validator{val1, val2, val3, val4}
 	valset, _ := NewValidatorSet(vals, 4, val1.Address())
-	return valset, keys
+	return valset, signers
 }

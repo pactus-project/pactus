@@ -21,7 +21,7 @@ func Inspect() func(c *cli.Cmd) {
 		})
 		authOpt := c.String(cli.StringOpt{
 			Name: "a auth",
-			Desc: "Key file's passphrase",
+			Desc: "Passphrase of the key file",
 		})
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
@@ -44,7 +44,7 @@ func Inspect() func(c *cli.Cmd) {
 				return
 			}
 
-			fmt.Println()
+			cmd.PrintLine()
 			cmd.PrintInfoMsg("Label: %v", ek.Label)
 			cmd.PrintInfoMsg("Address: %v", keyObj.Address())
 			cmd.PrintInfoMsg("Public key: %v", keyObj.PublicKey())

@@ -90,7 +90,7 @@ func (pool *txPool) appendTx(trx *tx.Tx) error {
 }
 
 func (pool *txPool) checkTx(trx *tx.Tx) error {
-	if trx.IsSubsidyTx() {
+	if trx.IsMintbaseTx() {
 		// We accepts all subsidy transactions for the current height
 		// There maybe more than one valid subsidy transaction per height
 		// Because there maybe more than one proposal per height

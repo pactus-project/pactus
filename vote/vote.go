@@ -73,9 +73,12 @@ func (vote *Vote) BlockHash() crypto.Hash       { return vote.data.BlockHash }
 func (vote *Vote) Signer() crypto.Address       { return vote.data.Signer }
 func (vote *Vote) Signature() *crypto.Signature { return vote.data.Signature }
 
-func (vote *Vote) SetSignature(signature *crypto.Signature) {
-	vote.data.Signature = signature
+func (vote *Vote) SetSignature(sig crypto.Signature) {
+	vote.data.Signature = &sig
 }
+
+// SetPublicKey is doing nothing and just satisfies SignableMsg interface
+func (vote *Vote) SetPublicKey(crypto.PublicKey) {}
 
 func (vote *Vote) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(vote.data)
@@ -97,7 +100,7 @@ func (vote *Vote) Verify(pubKey crypto.PublicKey) error {
 	if !pubKey.Address().EqualsTo(vote.data.Signer) {
 		return errors.Errorf(errors.ErrInvalidVote, "Invalid signer")
 	}
-	if !pubKey.Verify(vote.SignBytes(), vote.data.Signature) {
+	if !pubKey.Verify(vote.SignBytes(), *vote.data.Signature) {
 		return errors.Errorf(errors.ErrInvalidProposal, "Invalid signature")
 	}
 	return nil

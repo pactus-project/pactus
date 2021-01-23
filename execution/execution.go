@@ -80,7 +80,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx) error {
 	height := exe.sandbox.RecentBlockHeight(trx.Stamp())
 	interval := exe.sandbox.TransactionToLiveInterval()
 
-	if trx.IsSubsidyTx() {
+	if trx.IsMintbaseTx() {
 		interval = 1
 	} else if trx.IsSortitionTx() {
 		interval = exe.sandbox.MaximumPower()
@@ -94,7 +94,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx) error {
 }
 
 func (exe *Execution) checkFee(trx *tx.Tx) error {
-	if trx.IsSubsidyTx() || trx.IsSortitionTx() {
+	if trx.IsMintbaseTx() || trx.IsSortitionTx() {
 		if trx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
 		}

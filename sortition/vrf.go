@@ -32,7 +32,7 @@ func (vrf *VRF) Max() int64 {
 
 // Evaluate returns a random number between 0 and max with the proof
 func (vrf *VRF) Evaluate(hash crypto.Hash) (index int64, proof []byte) {
-	sig := vrf.signer.Sign(hash.RawBytes())
+	sig := vrf.signer.SignData(hash.RawBytes())
 
 	proof = sig.RawBytes()
 	index = vrf.getIndex(proof)
@@ -48,7 +48,7 @@ func (vrf *VRF) Verify(hash crypto.Hash, publicKey crypto.PublicKey, proof []byt
 	}
 
 	// Verify signature (proof)
-	if !publicKey.Verify(hash.RawBytes(), &sig) {
+	if !publicKey.Verify(hash.RawBytes(), sig) {
 		return 0, false
 	}
 

@@ -12,7 +12,7 @@ func (cs *consensus) enterCommit(round int) {
 
 	precommits := cs.pendingVotes.PrecommitVoteSet(round)
 	if !precommits.HasQuorum() {
-		cs.logger.Error("Commit: No quorum for precommit stage")
+		cs.logger.Warn("Commit: No quorum for precommit stage")
 		return
 	}
 	cs.updateStep(hrs.StepTypeCommit)
@@ -27,7 +27,7 @@ func (cs *consensus) enterCommit(round int) {
 	prepares := cs.pendingVotes.PrepareVoteSet(round)
 	hash := prepares.QuorumBlock()
 	if hash == nil || !blockHash.EqualsTo(*hash) {
-		cs.logger.Error("Commit: Commit without prepare quorum")
+		cs.logger.Warn("Commit: Commit without prepare quorum")
 	}
 
 	// For any reason, we are don't have proposal
@@ -35,7 +35,7 @@ func (cs *consensus) enterCommit(round int) {
 	if roundProposal == nil {
 		cs.requestForProposal()
 
-		cs.logger.Error("Commit: No proposal, send proposal request.")
+		cs.logger.Warn("Commit: No proposal, send proposal request.")
 		return
 	}
 
@@ -55,7 +55,7 @@ func (cs *consensus) enterCommit(round int) {
 	}
 
 	if err := cs.state.ApplyBlock(height, commitBlock, *commit); err != nil {
-		cs.logger.Error("Commit: Applying block failed", "block", commitBlock, "err", err)
+		cs.logger.Warn("Commit: Applying block failed", "block", commitBlock, "err", err)
 		return
 	}
 

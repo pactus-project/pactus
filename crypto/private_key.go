@@ -7,7 +7,6 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/logger"
 )
 
 const PrivateKeySize = 32
@@ -135,18 +134,14 @@ func (pv *PrivateKey) SanityCheck() error {
 	return nil
 }
 
-func (pv *PrivateKey) Sign(msg []byte) *Signature {
-	if len(msg) == 0 {
-		logger.Error("Try to sign an empty message")
-		return nil
-	}
+func (pv *PrivateKey) Sign(msg []byte) Signature {
 	sig := new(Signature)
 	sig.data.Signature = pv.data.SecretKey.SignByte(Hash256(msg))
 
-	return sig
+	return *sig
 }
 
-func (pv PrivateKey) PublicKey() PublicKey {
+func (pv *PrivateKey) PublicKey() PublicKey {
 	pb := new(PublicKey)
 	pb.data.PublicKey = pv.data.SecretKey.GetPublicKey()
 

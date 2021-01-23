@@ -1,37 +1,54 @@
 package crypto
 
-type Signable interface {
+type SignableMsg interface {
 	SignBytes() []byte
-	SetSignature(sig *Signature)
+	SetSignature(sig Signature)
+	SetPublicKey(pub PublicKey)
 }
-type Signer struct {
+
+type Signer interface {
+	Address() Address
+	PublicKey() PublicKey
+	SignData(data []byte) Signature
+	SignMsg(msg SignableMsg)
+}
+
+type signer struct {
 	address    Address
 	publicKey  PublicKey
 	privateKey PrivateKey
 }
 
 func NewSigner(pv PrivateKey) Signer {
-	return Signer{
+	return &signer{
 		privateKey: pv,
 		publicKey:  pv.PublicKey(),
 		address:    pv.PublicKey().Address(),
 	}
 }
 
-func (s *Signer) Address() Address {
+func (s *signer) Address() Address {
 	return s.address
 }
 
-func (s *Signer) PublicKey() PublicKey {
+func (s *signer) PublicKey() PublicKey {
 	return s.publicKey
 }
 
-func (s *Signer) SignMsg(msg Signable) {
+func (s *signer) SignMsg(msg SignableMsg) {
 	bz := msg.SignBytes()
 	sig := s.privateKey.Sign(bz)
 	msg.SetSignature(sig)
+	msg.SetPublicKey(s.publicKey)
 }
 
-func (s *Signer) Sign(data []byte) *Signature {
+func (s *signer) SignData(data []byte) Signature {
 	return s.privateKey.Sign(data)
+}
+
+// ---------
+// For tests
+func GenerateTestSigner() Signer {
+	_, _, priv := RandomKeyPair()
+	return NewSigner(priv)
 }

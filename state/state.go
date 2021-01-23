@@ -267,7 +267,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	if mintbaseAddr == nil {
 		mintbaseAddr = &st.proposer
 	}
-	tx := tx.NewSubsidyTx(stamp, seq, *mintbaseAddr, amt+fee, "")
+	tx := tx.NewMintbaseTx(stamp, seq, *mintbaseAddr, amt+fee, "")
 	return tx
 }
 
@@ -299,7 +299,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	for _, trx := range trxs {
 		// All subsidy transactions (probably from invalid rounds)
 		// should be removed from the pool
-		if trx.IsSubsidyTx() {
+		if trx.IsMintbaseTx() {
 			st.logger.Debug("Found duplicated subsidy transaction", "tx", trx)
 			st.txPool.RemoveTx(trx.ID())
 			continue
@@ -364,7 +364,8 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 	defer st.lk.Unlock()
 
 	if height != st.lastBlockHeight && height != st.lastBlockHeight+1 {
-		return errors.Errorf(errors.ErrInvalidBlock, "We are not expecting a block for this height: %v", height)
+		st.logger.Debug("Unexpected block height", "height", height)
+		return nil
 	}
 
 	/// There are two modules can commit a block: Consensus and Syncer.
@@ -374,7 +375,7 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 
 	if st.lastBlockHeight == height {
 		if block.Hash().EqualsTo(st.lastBlockHash) {
-			st.logger.Debug("We have committed this block before", "hash", block.Hash())
+			st.logger.Debug("This block committed before", "hash", block.Hash())
 			return nil
 		}
 
@@ -416,12 +417,12 @@ func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) 
 		receiptsHashes[i] = ctrx.Receipt.Hash()
 	}
 
-	// Evaluating sortition before modifying the validator set
+	// Evaluate sortition before updating the validator set
 	if st.EvaluateSortition() {
 		st.logger.Info("👏 This validator is chosen to be in the set", "address", st.proposer)
 	}
 
-	// Commit changes and move proposer index
+	// Commit changes and update the validator set
 	st.commitSandbox(commit.Round())
 
 	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)

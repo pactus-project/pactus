@@ -38,28 +38,25 @@ func Start() func(c *cli.Cmd) {
 			Name: "a auth",
 			Desc: "Passphrase of the key file",
 		})
-
 		deadlockOpt := c.Bool(cli.BoolOpt{
 			Name:  "disable-deadlock",
 			Desc:  "Disable deadlock detection mode",
 			Value: false,
 		})
 
-		c.Spec = "[-w=<path>] [-p=<private_key>] | ([-k=<path>] [-a=<passphrase>]) | [--disable-deadlock] "
 		c.LongDesc = "Starting the node from working directory"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-
-			if *deadlockOpt {
-				// Disable dead-lock detection
-				deadlock.Opts.Disable = true
-			}
-
 			configFile := "./config.toml"
 			genesisFile := "./genesis.json"
 			var err error
 			var keyObj *key.Key
 			var workspace string
+
+			if *deadlockOpt {
+				// Disable dead-lock detection
+				deadlock.Opts.Disable = true
+			}
 
 			workspace = *workingDirOpt
 			if workspace == "." {
@@ -73,52 +70,6 @@ func Start() func(c *cli.Cmd) {
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! %v", err)
 				return
-			}
-			switch {
-			case *keyFileOpt == "" && *privateKeyOpt == "":
-				f := workspace + "/validator_key.json"
-				if util.PathExists(f) {
-					kj, err := key.DecryptKeyFile(f, "")
-					if err != nil {
-						cmd.PrintErrorMsg("Aborted! %v", err)
-						return
-					}
-					keyObj = kj
-				} else {
-					// Creating KeyObject from Private Key
-					kj, err := cmd.PromptPrivateKey("Please enter the privateKey for the validator: ")
-					if err != nil {
-						cmd.PrintErrorMsg("Aborted! %v", err)
-						return
-					}
-					keyObj = kj
-				}
-			case *keyFileOpt != "" && *authOpt != "":
-				//Creating KeyObject from keystore
-				auth := *authOpt
-				kj, err := key.DecryptKeyFile(*keyFileOpt, auth)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
-				keyObj = kj
-			case *keyFileOpt != "" && *authOpt == "":
-				//Creating KeyObject from keystore
-				auth := cmd.PromptPassphrase("Passphrase: ", false)
-				kj, err := key.DecryptKeyFile(*keyFileOpt, auth)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
-				keyObj = kj
-			case *privateKeyOpt != "":
-				// Creating KeyObject from Private Key
-				pv, err := crypto.PrivateKeyFromString(*privateKeyOpt)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
-				keyObj, _ = key.NewKey(pv.PublicKey().Address(), pv)
 			}
 
 			// change working directory
@@ -139,9 +90,14 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			err = conf.SanityCheck()
+			if err = conf.SanityCheck(); err != nil {
+				cmd.PrintErrorMsg("Aborted! Config is invalid. %v", err)
+				return
+			}
+
+			keyObj, err = retrievePrivateKey(workspace, keyFileOpt, authOpt, privateKeyOpt)
 			if err != nil {
-				cmd.PrintErrorMsg("Aborted! Config is invalid - %v", err)
+				cmd.PrintErrorMsg("Aborted! %v", err)
 				return
 			}
 
@@ -153,7 +109,7 @@ func Start() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are running a zarb block chain node version: %v. Welcome! ", version.NodeVersion.String())
 			cmd.PrintInfoMsg("Validator address: %v", validatorAddr)
 			cmd.PrintInfoMsg("Mintbase address : %v", mintbaseAddr)
-			cmd.PrintInfoMsg("")
+			cmd.PrintLine()
 
 			signer := keyObj.ToSigner()
 			node, err := node.NewNode(gen, conf, signer)
@@ -176,4 +132,51 @@ func Start() func(c *cli.Cmd) {
 			select {}
 		}
 	}
+}
+
+func retrievePrivateKey(workspace string, keyFileOpt, authOpt, privateKeyOpt *string) (*key.Key, error) {
+
+	switch {
+	case *keyFileOpt == "" && *privateKeyOpt == "":
+		f := workspace + "/validator_key.json"
+		if util.PathExists(f) {
+			kj, err := key.DecryptKeyFile(f, "")
+			if err != nil {
+				return nil, err
+			}
+			return kj, nil
+		}
+		// Creating KeyObject from Private Key
+		kj, err := cmd.PromptPrivateKey("Please enter the privateKey for the validator: ")
+		if err != nil {
+			return nil, err
+		}
+		return kj, nil
+
+	case *keyFileOpt != "" && *authOpt != "":
+		// Creating KeyObject from keystore
+		auth := *authOpt
+		kj, err := key.DecryptKeyFile(*keyFileOpt, auth)
+		if err != nil {
+			return nil, err
+		}
+		return kj, nil
+	case *keyFileOpt != "" && *authOpt == "":
+		// Creating KeyObject from keystore
+		auth := cmd.PromptPassphrase("Passphrase: ", false)
+		kj, err := key.DecryptKeyFile(*keyFileOpt, auth)
+		if err != nil {
+			return nil, err
+		}
+		return kj, nil
+	case *privateKeyOpt != "":
+		// Creating KeyObject from Private Key
+		pv, err := crypto.PrivateKeyFromString(*privateKeyOpt)
+		if err != nil {
+			return nil, err
+		}
+		return key.NewKey(pv.PublicKey().Address(), pv)
+	}
+
+	return nil, fmt.Errorf("Invalid input")
 }

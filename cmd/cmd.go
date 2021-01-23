@@ -190,6 +190,10 @@ func PrintInfoMsg(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
+func PrintLine() {
+	fmt.Println()
+}
+
 func PrintJsonData(data []byte) {
 	var out bytes.Buffer
 	err := json.Indent(&out, data, "", "   ")

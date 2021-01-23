@@ -23,7 +23,7 @@ func TestMustGetRound(t *testing.T) {
 }
 
 func TestPendingVotesTest(t *testing.T) {
-	valSet, keys := validator.GenerateTestValidatorSet()
+	valSet, signers := validator.GenerateTestValidatorSet()
 
 	pv := NewPendingVotes()
 	pv.MoveToNewHeight(101, valSet.CopyValidators())
@@ -37,14 +37,14 @@ func TestPendingVotesTest(t *testing.T) {
 	assert.False(t, ok)
 	assert.Error(t, err)
 
-	undefVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.UndefHash, keys[0].PublicKey().Address())
-	undefVote.SetSignature(keys[0].Sign(undefVote.SignBytes()))
+	undefVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.UndefHash, signers[0].Address())
+	signers[0].SignMsg(undefVote)
 
-	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
-	validVote.SetSignature(keys[0].Sign(validVote.SignBytes()))
+	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
+	signers[0].SignMsg(validVote)
 
-	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), keys[0].PublicKey().Address())
-	duplicateVote.SetSignature(keys[0].Sign(duplicateVote.SignBytes()))
+	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
+	signers[0].SignMsg(duplicateVote)
 
 	ok, err = pv.AddVote(undefVote)
 	assert.True(t, ok)

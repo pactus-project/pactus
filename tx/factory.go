@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
-func NewSubsidyTx(stamp crypto.Hash, seq int, receiver crypto.Address, amount int64, memo string) *Tx {
+func NewMintbaseTx(stamp crypto.Hash, seq int, receiver crypto.Address, amount int64, memo string) *Tx {
 	return NewSendTx(
 		stamp,
 		seq,
@@ -13,16 +13,13 @@ func NewSubsidyTx(stamp crypto.Hash, seq int, receiver crypto.Address, amount in
 		receiver,
 		amount,
 		0,
-		memo,
-		nil,
-		nil)
+		memo)
 }
 
 func NewSendTx(stamp crypto.Hash,
 	seq int,
 	sender, receiver crypto.Address,
-	amount, fee int64, memo string,
-	publicKey *crypto.PublicKey, signature *crypto.Signature) *Tx {
+	amount, fee int64, memo string) *Tx {
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
@@ -34,10 +31,8 @@ func NewSendTx(stamp crypto.Hash,
 				Receiver: receiver,
 				Amount:   amount,
 			},
-			Fee:       fee,
-			Memo:      memo,
-			PublicKey: publicKey,
-			Signature: signature,
+			Fee:  fee,
+			Memo: memo,
 		},
 	}
 }
@@ -46,8 +41,7 @@ func NewBondTx(stamp crypto.Hash,
 	seq int,
 	bonder crypto.Address,
 	val crypto.PublicKey,
-	stake, fee int64, memo string,
-	publicKey *crypto.PublicKey, signature *crypto.Signature) *Tx {
+	stake, fee int64, memo string) *Tx {
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
@@ -59,10 +53,8 @@ func NewBondTx(stamp crypto.Hash,
 				Validator: val,
 				Stake:     stake,
 			},
-			Fee:       fee,
-			Memo:      memo,
-			PublicKey: publicKey,
-			Signature: signature,
+			Fee:  fee,
+			Memo: memo,
 		},
 	}
 }
@@ -70,9 +62,7 @@ func NewBondTx(stamp crypto.Hash,
 func NewSortitionTx(stamp crypto.Hash,
 	seq int,
 	addr crypto.Address,
-	proof []byte,
-	memo string,
-	publicKey *crypto.PublicKey, signature *crypto.Signature) *Tx {
+	proof []byte) *Tx {
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
@@ -83,10 +73,7 @@ func NewSortitionTx(stamp crypto.Hash,
 				Address: addr,
 				Proof:   proof,
 			},
-			Fee:       0,
-			Memo:      memo,
-			PublicKey: publicKey,
-			Signature: signature,
+			Fee: 0,
 		},
 	}
 }
