@@ -26,21 +26,20 @@ Run `zarb version` to make sure Zarb is properly compiled and installed in your 
 
 ### Testnet
 
-To join test nest, run this command:
+To join the TestNet, first you need to create a working directory for running:
 
 ```bash
-zarb start --wizard
+zarb init  -w=<working_dir> --test-net
+zarb start -w=<working_dir>
 ```
-
-And follow the instruction.
 
 ### Local net
 
 Initialize the working directory by running:
 
  ```bash
- zarb init -w=<workspace_directory>
- zarb start -w=<workspace_directory>
+ zarb init -w=<working_dir>
+ zarb start -w=<working_dir>
  ```
 
  This command will create config.toml, genesis.json and private key for the validator.

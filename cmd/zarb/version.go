@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/version"
 )
 
-//Version prints the version of the Zarb node
+// Version prints the version of the Zarb node
 func Version() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }

@@ -11,33 +11,42 @@ import (
 // ChangeAuth changes the passphrase of the key file
 func ChangeAuth() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		keyFile := c.String(cli.StringArg{
+		keyFileArg := c.String(cli.StringArg{
 			Name: "KEYFILE",
 			Desc: "Path to the encrypted key file",
+		})
+		authOpt := c.String(cli.StringOpt{
+			Name: "a auth",
+			Desc: "Key file's passphrase",
 		})
 
 		c.Spec = "KEYFILE"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			if *keyFile == "" {
+			if *keyFileArg == "" {
 				cmd.PrintWarnMsg("Key file is not specified.")
 				c.PrintHelp()
 				return
 			}
-			path := *keyFile
+			path := *keyFileArg
 			// Decrypt key with passphrase.
-			passphrase := cmd.PromptPassphrase("Old passphrase: ", false)
-			keyObj, err := key.DecryptKeyFile(path, passphrase)
+			var oldAuth string
+			if *authOpt == "" {
+				oldAuth = cmd.PromptPassphrase("Passphrase: ", false)
+			} else {
+				oldAuth = *authOpt
+			}
+			keyObj, err := key.DecryptKeyFile(path, oldAuth)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to decrypt: %v", err)
 				return
 			}
 			//Prompt for the new passphrase
-			passphrase = cmd.PromptPassphrase("New passphrase: ", true)
+			newAuth := cmd.PromptPassphrase("New passphrase: ", true)
 			//Prompt for the label
 			label := cmd.PromptInput("New label: ")
 			// Encrypt key with passphrase.
-			err = key.EncryptKeyToFile(keyObj, path, passphrase, label)
+			err = key.EncryptKeyToFile(keyObj, path, newAuth, label)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to encrypt: %v", err)
 				return

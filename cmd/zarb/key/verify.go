@@ -12,19 +12,19 @@ import (
 //Verify the signature of the signed message
 func Verify() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		publicKey := c.String(cli.StringArg{
+		publicKeyArg := c.String(cli.StringArg{
 			Name: "PUBLICKEY",
 			Desc: "Public key",
 		})
-		signature := c.String(cli.StringArg{
+		signatureArg := c.String(cli.StringArg{
 			Name: "SIGNATURE",
 			Desc: "Signature of the message",
 		})
-		message := c.String(cli.StringOpt{
+		messageOpt := c.String(cli.StringOpt{
 			Name: "m message",
 			Desc: "Message to be verified",
 		})
-		messageFile := c.String(cli.StringOpt{
+		messageFileOpt := c.String(cli.StringOpt{
 			Name: "f messagefile",
 			Desc: "Message file to be verified",
 		})
@@ -34,10 +34,10 @@ func Verify() func(c *cli.Cmd) {
 		c.Action = func() {
 			var msg []byte
 			var err error
-			if *message != "" {
-				msg = []byte(*message)
-			} else if *messageFile != "" {
-				msg, err = ioutil.ReadFile(*messageFile)
+			if *messageOpt != "" {
+				msg = []byte(*messageOpt)
+			} else if *messageFileOpt != "" {
+				msg, err = ioutil.ReadFile(*messageFileOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Failed to read the file: %v", err)
 					return
@@ -49,12 +49,12 @@ func Verify() func(c *cli.Cmd) {
 			}
 
 			var sign crypto.Signature
-			publickey, err := crypto.PublicKeyFromString(*publicKey)
+			publickey, err := crypto.PublicKeyFromString(*publicKeyArg)
 			if err != nil {
 				cmd.PrintErrorMsg("%v", err)
 				return
 			}
-			sign, err = crypto.SignatureFromString(*signature)
+			sign, err = crypto.SignatureFromString(*signatureArg)
 			if err != nil {
 				cmd.PrintErrorMsg("%v", err)
 				return
