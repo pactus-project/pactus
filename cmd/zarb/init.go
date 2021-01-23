@@ -26,28 +26,32 @@ func Init() func(c *cli.Cmd) {
 			Desc:  "Working directory to save configuration and genesis files.",
 			Value: cmd.ZarbHomeDir(),
 		})
-		chainNameOpt := c.String(cli.StringOpt{
-			Name: "n chain-name",
-			Desc: "A name for the blockchain",
+		testnetOpt := c.Bool(cli.BoolOpt{
+			Name:  "testnet",
+			Desc:  "Initialize working directory for joining the testnet",
+			Value: false,
 		})
 
-		c.Spec = "[-w=<path>] [-n=<name>]"
-		c.LongDesc = "Initializing the working directory"
+		c.Spec = "[-w=<path>] [--testnet]"
+		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 
-			// Check chain-name for genesis
-			if *chainNameOpt == "" {
-				*chainNameOpt = fmt.Sprintf("local-chain-%v", cmd.RandomHex(2))
-			}
-
 			path, _ := filepath.Abs(*workingDirOpt)
-			gen, err := makeGenesis(*workingDirOpt, *chainNameOpt)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to make genesis file: %v", err)
-				return
+
+			var gen *genesis.Genesis
+			conf := config.DefaultConfig()
+
+			if *testnetOpt {
+				gen = genesis.Testnet()
+
+				conf.Network.Name = "zarb-testnet"
+				conf.Network.Bootstrap.Addresses = []string{""}
+				conf.Network.Bootstrap.MinPeerThreshold = 1
+			} else {
+				name := fmt.Sprintf("zarb-local-%v", cmd.RandomHex(2))
+				gen, _ = makeGenesis(*workingDirOpt, name)
 			}
-			conf := makeConfigfile()
 
 			// save genesis file to file system
 			genFile := path + "/genesis.json"
@@ -102,12 +106,4 @@ func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) 
 	// create genesis
 	gen := genesis.MakeGenesis(chainName, util.RoundNow(60), accs, vals, param.MainnetParams())
 	return gen, nil
-
-}
-
-// makeConfigfile makes configuration file
-func makeConfigfile() *config.Config {
-	conf := config.DefaultConfig()
-	return conf
-
 }

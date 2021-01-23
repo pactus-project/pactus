@@ -11,26 +11,34 @@ import (
 //Inspect displays various information of the keyfile
 func Inspect() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		keyFile := c.String(cli.StringArg{
+		keyFileArg := c.String(cli.StringArg{
 			Name: "KEYFILE",
 			Desc: "Path to the encrypted key file",
 		})
-		showPrivate := c.Bool(cli.BoolOpt{
+		showPrivateOpt := c.Bool(cli.BoolOpt{
 			Name: "e expose-private-key",
 			Desc: "expose the private key in the output",
 		})
-		c.Spec = "KEYFILE [-e]"
+		authOpt := c.String(cli.StringOpt{
+			Name: "a auth",
+			Desc: "Key file's passphrase",
+		})
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 
-			ek, err := key.NewEncryptedKey(*keyFile)
+			ek, err := key.NewEncryptedKey(*keyFileArg)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to read the key file: %v", err)
 				return
 			}
+			var auth string
+			if *authOpt == "" {
+				auth = cmd.PromptPassphrase("Passphrase: ", false)
+			} else {
+				auth = *authOpt
+			}
 			// Decrypt key with passphrase.
-			passphrase := cmd.PromptPassphrase("Passphrase: ", false)
-			keyObj, err := ek.Decrypt(passphrase)
+			keyObj, err := ek.Decrypt(auth)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to decrypt: %v", err)
 				return
@@ -40,7 +48,7 @@ func Inspect() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Label: %v", ek.Label)
 			cmd.PrintInfoMsg("Address: %v", keyObj.Address())
 			cmd.PrintInfoMsg("Public key: %v", keyObj.PublicKey())
-			if *showPrivate {
+			if *showPrivateOpt {
 				cmd.PrintInfoMsg("Private key: %v", keyObj.PrivateKey())
 			}
 		}
