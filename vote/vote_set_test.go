@@ -12,46 +12,42 @@ import (
 
 func TestAddVote(t *testing.T) {
 	h1 := crypto.GenerateTestHash()
-	addr, _, pv := crypto.GenerateTestKeyPair()
-	valSet, keys := validator.GenerateTestValidatorSet()
+	invSigner := crypto.GenerateTestSigner()
+	valSet, signers := validator.GenerateTestValidatorSet()
 	voteSet := NewVoteSet(100, 5, VoteTypePrecommit, valSet.CopyValidators())
 
-	v1 := NewVote(VoteTypePrecommit, 100, 5, h1, addr)
-	v2 := NewVote(VoteTypePrecommit, 100, 5, h1, keys[0].PublicKey().Address())
-	v3 := NewVote(VoteTypePrecommit, 101, 5, h1, keys[1].PublicKey().Address())
-	v4 := NewVote(VoteTypePrecommit, 100, 6, h1, keys[2].PublicKey().Address())
+	v1 := NewVote(VoteTypePrecommit, 100, 5, h1, invSigner.Address())
+	v2 := NewVote(VoteTypePrecommit, 100, 5, h1, signers[0].Address())
+	v3 := NewVote(VoteTypePrecommit, 101, 5, h1, signers[1].Address())
+	v4 := NewVote(VoteTypePrecommit, 100, 6, h1, signers[2].Address())
 
+	invSigner.SignMsg(v1)
 	added, err := voteSet.AddVote(v1)
 	assert.False(t, added) // not in val set
 	assert.Error(t, err)
 	assert.Nil(t, voteSet.ToCommit())
 
-	sig := pv.Sign(v2.SignBytes())
-	v2.SetSignature(sig)
+	invSigner.SignMsg(v2)
 	added, err = voteSet.AddVote(v2)
 	assert.False(t, added) // invalid signature
 	assert.Error(t, err)
 
-	sig = keys[1].Sign(v2.SignBytes())
-	v2.SetSignature(sig)
+	signers[1].SignMsg(v2)
 	added, err = voteSet.AddVote(v2)
 	assert.False(t, added) // wrong signer
 	assert.Error(t, err)
 
-	sig = keys[0].Sign(v2.SignBytes())
-	v2.SetSignature(sig)
+	signers[0].SignMsg(v2)
 	added, err = voteSet.AddVote(v2)
 	assert.True(t, added) // ok
 	assert.NoError(t, err)
 
-	sig = keys[1].Sign(v2.SignBytes())
-	v3.SetSignature(sig)
+	signers[1].SignMsg(v3)
 	added, err = voteSet.AddVote(v3)
 	assert.False(t, added) // invalid height
 	assert.Error(t, err)
 
-	sig = keys[2].Sign(v2.SignBytes())
-	v4.SetSignature(sig)
+	signers[2].SignMsg(v4)
 	added, err = voteSet.AddVote(v4)
 	assert.False(t, added) // invalid round
 	assert.Error(t, err)
@@ -60,22 +56,17 @@ func TestAddVote(t *testing.T) {
 func TestDuplicateVote(t *testing.T) {
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
-	valSet, keys := validator.GenerateTestValidatorSet()
+	valSet, signers := validator.GenerateTestValidatorSet()
 	voteSet := NewVoteSet(1, 0, VoteTypePrepare, valSet.CopyValidators())
 
-	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
-	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, keys[0].PublicKey().Address())
-	duplicatedVote := NewVote(VoteTypePrepare, 1, 0, h2, keys[0].PublicKey().Address())
+	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
+	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, signers[0].Address())
+	duplicatedVote := NewVote(VoteTypePrepare, 1, 0, h2, signers[0].Address())
 
 	// sign the votes
-	sig := keys[0].Sign(undefVote.SignBytes())
-	undefVote.SetSignature(sig)
-
-	sig = keys[0].Sign(undefVote.SignBytes())
-	undefVote.SetSignature(sig)
-
-	sig = keys[0].Sign(correctVote.SignBytes())
-	correctVote.SetSignature(sig)
+	signers[0].SignMsg(undefVote)
+	signers[0].SignMsg(correctVote)
+	signers[0].SignMsg(duplicatedVote)
 
 	added, err := voteSet.AddVote(undefVote)
 	assert.True(t, added) // ok
@@ -96,8 +87,6 @@ func TestDuplicateVote(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(voteSet.AllVotes()), 1)
 
-	sig = keys[0].Sign(duplicatedVote.SignBytes())
-	duplicatedVote.SetSignature(sig)
 	added, err = voteSet.AddVote(duplicatedVote)
 	assert.False(t, added) // ok, replace UndefHash
 	assert.Error(t, err)
@@ -105,19 +94,19 @@ func TestDuplicateVote(t *testing.T) {
 }
 
 func TestQuorum(t *testing.T) {
-	valSet, keys := validator.GenerateTestValidatorSet()
+	valSet, signers := validator.GenerateTestValidatorSet()
 	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
-	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[0].PublicKey().Address())
-	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[1].PublicKey().Address())
-	v3 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[2].PublicKey().Address())
-	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[3].PublicKey().Address())
+	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[0].Address())
+	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
+	v3 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[2].Address())
+	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[3].Address())
 
-	v1.SetSignature(keys[0].Sign(v1.SignBytes()))
-	v2.SetSignature(keys[1].Sign(v2.SignBytes()))
-	v3.SetSignature(keys[2].Sign(v3.SignBytes()))
-	v4.SetSignature(keys[3].Sign(v4.SignBytes()))
+	signers[0].SignMsg(v1)
+	signers[1].SignMsg(v2)
+	signers[2].SignMsg(v3)
+	signers[3].SignMsg(v4)
 
 	ok, _ := voteSet.AddVote(v1)
 	assert.True(t, ok)
@@ -147,23 +136,23 @@ func TestQuorum(t *testing.T) {
 }
 
 func TestUpdateVote(t *testing.T) {
-	valSet, keys := validator.GenerateTestValidatorSet()
+	valSet, signers := validator.GenerateTestValidatorSet()
 	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
 
 	h1 := crypto.GenerateTestHash()
-	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, keys[0].PublicKey().Address())
-	v2 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, keys[1].PublicKey().Address())
-	v3 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, keys[2].PublicKey().Address())
-	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[0].PublicKey().Address())
-	v5 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[1].PublicKey().Address())
-	v6 := NewVote(VoteTypePrecommit, 1, 0, h1, keys[2].PublicKey().Address())
+	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
+	v2 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[1].Address())
+	v3 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[2].Address())
+	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[0].Address())
+	v5 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
+	v6 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[2].Address())
 
-	v1.SetSignature(keys[0].Sign(v1.SignBytes()))
-	v2.SetSignature(keys[1].Sign(v2.SignBytes()))
-	v3.SetSignature(keys[2].Sign(v3.SignBytes()))
-	v4.SetSignature(keys[0].Sign(v4.SignBytes()))
-	v5.SetSignature(keys[1].Sign(v5.SignBytes()))
-	v6.SetSignature(keys[2].Sign(v6.SignBytes()))
+	signers[0].SignMsg(v1)
+	signers[1].SignMsg(v2)
+	signers[2].SignMsg(v3)
+	signers[0].SignMsg(v4)
+	signers[1].SignMsg(v5)
+	signers[2].SignMsg(v6)
 
 	ok, _ := voteSet.AddVote(v1)
 	assert.True(t, ok)

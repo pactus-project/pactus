@@ -51,13 +51,8 @@ func setup(t *testing.T) {
 	conf.Levels["_state"] = "debug"
 	logger.InitLogger(conf)
 
-	_, keys := validator.GenerateTestValidatorSet()
+	_, tSigners = validator.GenerateTestValidatorSet()
 	tTxPool = txpool.MockingTxPool()
-
-	tSigners = make([]crypto.Signer, 4)
-	for i, k := range keys {
-		tSigners[i] = crypto.NewSigner(k)
-	}
 
 	vals := make([]*validator.Validator, 4)
 	for i, s := range tSigners {

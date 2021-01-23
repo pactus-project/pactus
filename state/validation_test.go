@@ -30,7 +30,7 @@ func TestCommitValidation(t *testing.T) {
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner4)
 	applyBlockAndCommitForAllStates(t, b1, c1)
 
-	val5, key5 := validator.GenerateTestValidator(4)
+	val5, siners5 := validator.GenerateTestValidator(4)
 	tState1.store.UpdateValidator(val5)
 	tState2.store.UpdateValidator(val5)
 
@@ -45,7 +45,7 @@ func TestCommitValidation(t *testing.T) {
 	invSig1 := tValSigner1.SignData(block.CommitSignBytes(invBlockHash, round))
 	invSig2 := tValSigner2.SignData(block.CommitSignBytes(invBlockHash, round))
 	invSig3 := tValSigner3.SignData(block.CommitSignBytes(invBlockHash, round))
-	invSig5 := key5.Sign(block.CommitSignBytes(b2.Hash(), round))
+	invSig5 := siners5.SignData(block.CommitSignBytes(b2.Hash(), round))
 
 	validSig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3})
 	invalidSig := crypto.Aggregate([]crypto.Signature{invSig1, invSig2, invSig3})

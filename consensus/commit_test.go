@@ -44,7 +44,7 @@ func TestResetBooleanOnNewRound(t *testing.T) {
 	assert.False(t, tConsX.isCommitted)
 }
 
-func TestEnterCommit(t *testing.T) {
+func TestEnterCommitAllFailed(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)
@@ -72,7 +72,7 @@ func TestEnterCommit(t *testing.T) {
 	ok, _ := tConsY.pendingVotes.AddVote(v3)
 	assert.True(t, ok)
 
-	// Undef quorum
+	// Still no quorum
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 
@@ -83,25 +83,25 @@ func TestEnterCommit(t *testing.T) {
 	assert.False(t, tConsY.isCommitted)
 	shouldPublishQueryProposal(t, tConsY, h, r)
 
+	// Invalid proposal
 	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "")
 	tSigners[tIndexX].SignMsg(trx)
 	assert.NoError(t, tTxPool.AppendTx(trx)) // This will change block
-	b2, err := tConsY.state.ProposeBlock(0)
+	b2, err := tConsY.state.ProposeBlock(0)  // Propose again
 	require.NoError(t, err)
 	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
 	p2 := vote.NewProposal(h, r, *b2)
 	tSigners[tIndexX].SignMsg(p2)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
 
-	// Invalid proposal
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 
+	// Valid proposal but applying block will fail (no transaction)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p1)
-
-	// Everything is good
+	tTxPool.Txs = make([]*tx.Tx, 0)
 	tConsY.enterCommit(1)
-	shouldPublishBlockAnnounce(t, tConsY, p1.Block().Hash())
+	assert.False(t, tConsY.isCommitted)
 }
 
 func TestSetStaleProposal(t *testing.T) {

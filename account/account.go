@@ -79,10 +79,10 @@ func (acc Account) Fingerprint() string {
 }
 
 // GenerateTestAccount generates an account for testing purpose
-func GenerateTestAccount(number int) (*Account, crypto.PrivateKey) {
-	a, _, priv := crypto.GenerateTestKeyPair()
-	acc := NewAccount(a, number)
+func GenerateTestAccount(number int) (*Account, crypto.Signer) {
+	signer := crypto.GenerateTestSigner()
+	acc := NewAccount(signer.Address(), number)
 	acc.data.Balance = util.RandInt64(10000000)
 	acc.data.Sequence = util.RandInt(100)
-	return acc, priv
+	return acc, signer
 }

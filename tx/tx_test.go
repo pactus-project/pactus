@@ -161,6 +161,13 @@ func TestSendSanityCheck(t *testing.T) {
 		assert.Error(t, trx.SanityCheck())
 	})
 
+	t.Run("Invalid fee", func(t *testing.T) {
+		trx, signer := GenerateTestSendTx()
+		trx.data.Fee = 0
+		signer.SignMsg(trx)
+		assert.Error(t, trx.SanityCheck())
+	})
+
 	t.Run("Invalid sender", func(t *testing.T) {
 		trx, signer := GenerateTestSendTx()
 		pld := trx.data.Payload.(*payload.SendPayload)
@@ -308,11 +315,11 @@ func TestSortitionSignBytes(t *testing.T) {
 	signer := crypto.GenerateTestSigner()
 	proof := [48]byte{}
 
-	trx1 := NewSortitionTx(h, 1, signer.Address(), proof[:], "test sortition-tx")
+	trx1 := NewSortitionTx(h, 1, signer.Address(), proof[:])
 	signer.SignMsg(trx1)
 
-	trx2 := NewSortitionTx(h, 1, signer.Address(), proof[:], "test sortition-tx")
-	trx3 := NewSortitionTx(h, 2, signer.Address(), proof[:], "test sortition-tx")
+	trx2 := NewSortitionTx(h, 1, signer.Address(), proof[:])
+	trx3 := NewSortitionTx(h, 2, signer.Address(), proof[:])
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())

@@ -173,14 +173,14 @@ func (set *ValidatorSet) CommittersHash() crypto.Hash {
 }
 
 // GenerateTestValidatorSet generates a validator set for testing purpose
-func GenerateTestValidatorSet() (*ValidatorSet, []crypto.PrivateKey) {
-	val1, pv1 := GenerateTestValidator(0)
-	val2, pv2 := GenerateTestValidator(1)
-	val3, pv3 := GenerateTestValidator(2)
-	val4, pv4 := GenerateTestValidator(3)
+func GenerateTestValidatorSet() (*ValidatorSet, []crypto.Signer) {
+	val1, s1 := GenerateTestValidator(0)
+	val2, s2 := GenerateTestValidator(1)
+	val3, s3 := GenerateTestValidator(2)
+	val4, s4 := GenerateTestValidator(3)
 
-	keys := []crypto.PrivateKey{pv1, pv2, pv3, pv4}
+	signers := []crypto.Signer{s1, s2, s3, s4}
 	vals := []*Validator{val1, val2, val3, val4}
 	valset, _ := NewValidatorSet(vals, 4, val1.Address())
-	return valset, keys
+	return valset, signers
 }

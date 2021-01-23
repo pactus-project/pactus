@@ -62,8 +62,7 @@ func NewBondTx(stamp crypto.Hash,
 func NewSortitionTx(stamp crypto.Hash,
 	seq int,
 	addr crypto.Address,
-	proof []byte,
-	memo string) *Tx {
+	proof []byte) *Tx {
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
@@ -74,8 +73,7 @@ func NewSortitionTx(stamp crypto.Hash,
 				Address: addr,
 				Proof:   proof,
 			},
-			Fee:  0,
-			Memo: memo,
+			Fee: 0,
 		},
 	}
 }

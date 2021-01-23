@@ -269,7 +269,7 @@ func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
 	h := crypto.GenerateTestHash()
 	s := crypto.GenerateTestSigner()
 	proof := [48]byte{}
-	tx := NewSortitionTx(h, 110, s.Address(), proof[:], "test sortition-tx")
+	tx := NewSortitionTx(h, 110, s.Address(), proof[:])
 	s.SignMsg(tx)
 	return tx, s
 }

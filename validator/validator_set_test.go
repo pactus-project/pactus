@@ -8,23 +8,21 @@ import (
 )
 
 func TestContains(t *testing.T) {
-	vs, keys := GenerateTestValidatorSet()
-	a, _, _ := crypto.GenerateTestKeyPair()
+	vs, signers := GenerateTestValidatorSet()
 
-	assert.True(t, vs.Contains(keys[0].PublicKey().Address()))
+	assert.True(t, vs.Contains(signers[0].Address()))
 	assert.True(t, vs.Contains(vs.Proposer(0).Address()))
-	assert.False(t, vs.Contains(a))
 }
 
-func TestProposerMoves(t *testing.T) {
-	vs, keys := GenerateTestValidatorSet()
+func TestProposer(t *testing.T) {
+	vs, signers := GenerateTestValidatorSet()
 
-	assert.Equal(t, vs.Proposer(0).Address(), keys[0].PublicKey().Address())
-	assert.Equal(t, vs.Proposer(3).Address(), keys[3].PublicKey().Address())
-	assert.Equal(t, vs.Proposer(4).Address(), keys[0].PublicKey().Address())
+	assert.Equal(t, vs.Proposer(0).Address(), signers[0].Address())
+	assert.Equal(t, vs.Proposer(3).Address(), signers[3].Address())
+	assert.Equal(t, vs.Proposer(4).Address(), signers[0].Address())
 
 	assert.NoError(t, vs.UpdateTheSet(0, nil))
-	assert.Equal(t, vs.Proposer(0).Address(), keys[1].PublicKey().Address())
+	assert.Equal(t, vs.Proposer(0).Address(), signers[1].Address())
 }
 
 func TestInvalidProposerJoinAndLeave(t *testing.T) {

@@ -23,17 +23,16 @@ func TestProposalMarshaling(t *testing.T) {
 }
 
 func TestProposalSignature(t *testing.T) {
-	_, pb0, pv0 := crypto.GenerateTestKeyPair()
+	signer := crypto.GenerateTestSigner()
 
 	p, pv := GenerateTestProposal(5, 5)
 	pb := pv.PublicKey()
 	assert.NoError(t, p.Verify(pb))
 	assert.False(t, p.IsForBlock(nil))
 
-	assert.Error(t, p.Verify(pb0)) // invalid public key
+	assert.Error(t, p.Verify(signer.PublicKey())) // invalid public key
 
-	sig0 := pv0.Sign(p.SignBytes())
-	p.SetSignature(sig0)
+	signer.SignMsg(p)
 	assert.Error(t, p.Verify(pb)) // invalid signature
 
 	p.data.Signature = nil // No signature
