@@ -96,7 +96,7 @@ func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (bloc
 }
 
 func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Commit {
-	sigs := make([]*crypto.Signature, len(signers))
+	sigs := make([]crypto.Signature, len(signers))
 	sb := block.CommitSignBytes(blockHash, round)
 	committers := make([]block.Committer, 4)
 	committers[0] = block.Committer{Status: 0, Number: 0}
@@ -120,7 +120,7 @@ func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers .
 		if s.Address().EqualsTo(tValSigner4.Address()) {
 			committers[3] = block.Committer{Status: 1, Number: 3}
 		}
-		sigs[i] = s.Sign(sb)
+		sigs[i] = s.SignData(sb)
 	}
 	return *block.NewCommit(blockHash, round, committers, crypto.Aggregate(sigs))
 }
@@ -141,8 +141,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, b)
 
-	pub := tValSigner1.PublicKey()
-	trx := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "", &pub, nil)
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "")
 	tValSigner1.SignMsg(trx)
 	assert.NoError(t, tCommonTxPool.AppendTx(trx))
 
@@ -177,7 +176,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	setup(t)
 
 	trx := tState1.createSubsidyTx(7)
-	assert.True(t, trx.IsSubsidyTx())
+	assert.True(t, trx.IsMintbaseTx())
 	assert.Equal(t, trx.Payload().Value(), calcBlockSubsidy(1, tState1.params.SubsidyReductionInterval)+7)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
 
@@ -193,7 +192,9 @@ func TestApplyBlocks(t *testing.T) {
 	b1, c1 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, tState1.ApplyBlock(1, *invBlock, c1))
-	assert.Error(t, tState1.ApplyBlock(2, b1, c1))
+	// TODO: clean these tests
+	// No error here but block ignored
+	assert.NoError(t, tState1.ApplyBlock(2, b1, c1))
 	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
 
 	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())

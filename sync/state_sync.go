@@ -95,30 +95,30 @@ func (ss *StateSync) updateSession(code payload.ResponseCode, sessionID int, ini
 
 	switch code {
 	case payload.ResponseCodeRejected:
-		ss.logger.Debug("session rejected, close session")
+		ss.logger.Debug("session rejected, close session", "session-id", sessionID)
 		ss.peerSet.CloseSession(sessionID)
 
 	case payload.ResponseCodeBusy:
 		// TODO: handle this situation
-		ss.logger.Debug("Peer is busy. close session")
+		ss.logger.Debug("Peer is busy. close session", "session-id", sessionID)
 		ss.peerSet.CloseSession(sessionID)
 
 	case payload.ResponseCodeMoreBlocks:
-		ss.logger.Debug("Peer responding us. keep session open")
+		ss.logger.Debug("Peer responding us. keep session open", "session-id", sessionID)
 
 	case payload.ResponseCodeNoMoreBlocks:
-		ss.logger.Debug("Peer has no more block. close session")
+		ss.logger.Debug("Peer has no more block. close session", "session-id", sessionID)
 		ss.peerSet.CloseSession(sessionID)
 
 	case payload.ResponseCodeSynced:
-		ss.logger.Debug("Peer infomed us we are synced. close session")
+		ss.logger.Debug("Peer infomed us we are synced. close session", "session-id", sessionID)
 		ss.peerSet.CloseSession(sessionID)
 		ss.syncedFN()
 	}
 
 	s := ss.peerSet.FindSession(sessionID)
 	if s == nil {
-		ss.logger.Debug("Session not found or closed")
+		ss.logger.Debug("Session not found or closed", "session-id", sessionID)
 	} else {
 		s.LastResponseCode = code
 		s.LastActivityAt = util.Now()

@@ -112,7 +112,7 @@ func BondTx() func(c *cli.Cmd) {
 				return
 			}
 
-			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt, nil, nil)
+			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
 			bz, _ := trx.Encode()
 			cmd.PrintInfoMsg("Unsigned transaction raw bytes:\n%x", bz)
 

@@ -81,10 +81,19 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 
 	set.validators = append(set.validators, joined...)
 	if set.currentPower() > set.maximumPower {
+		//
+		//
 		shouldLeave := set.currentPower() - set.maximumPower
 		set.validators = set.validators[shouldLeave:]
 	}
-	// Move proposer index after modifying the set
+	// Correct proposer index:
+	// Some nodes from the previous round left the set,
+	// This means we have pulled right the validator queue,
+	// Correcting proposer index by pulling it to the right.
+	// If it's less than zero consider an unlucky leader for
+	// this round has missed his chance for proposing a block.
+	// But it;s ok, because it is his second time proposing block.
+	// We never let to change validator set more
 	set.proposerIndex = set.proposerIndex - len(joined)
 	if set.proposerIndex < 0 {
 		set.proposerIndex = 0

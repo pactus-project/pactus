@@ -17,7 +17,7 @@ func ChangeAuth() func(c *cli.Cmd) {
 		})
 		authOpt := c.String(cli.StringOpt{
 			Name: "a auth",
-			Desc: "Key file's passphrase",
+			Desc: "Passphrase of the key file",
 		})
 
 		c.Spec = "KEYFILE"

@@ -136,7 +136,7 @@ func (pb *PublicKey) SanityCheck() error {
 	return nil
 }
 
-func (pb *PublicKey) Verify(msg []byte, sig *Signature) bool {
+func (pb *PublicKey) Verify(msg []byte, sig Signature) bool {
 	return sig.data.Signature.VerifyByte(pb.data.PublicKey, Hash256(msg))
 }
 

@@ -18,16 +18,16 @@ func TestProposeBlock(t *testing.T) {
 	assert.NoError(t, tState2.ApplyBlock(1, b1, c1))
 
 	subsidy := calcBlockSubsidy(tState1.LastBlockHeight(), tState1.params.SubsidyReductionInterval)
-	invSubsidyTx := tx.NewSubsidyTx(tState1.LastBlockHash(), 1, tValSigner2.Address(), subsidy, "")
+	invSubsidyTx := tx.NewMintbaseTx(tState1.LastBlockHash(), 1, tValSigner2.Address(), subsidy, "")
 	invSendTx, _ := tx.GenerateTestSendTx()
 	invBondTx, _ := tx.GenerateTestBondTx()
 	invSortitionTx, _ := tx.GenerateTestSortitionTx()
 
 	pub := tValSigner1.PublicKey()
-	trx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "", &pub, nil)
+	trx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
 	tValSigner1.SignMsg(trx1)
 
-	trx2 := tx.NewBondTx(b1.Hash(), 2, tValSigner1.Address(), pub, 1000, 1000, "", &pub, nil)
+	trx2 := tx.NewBondTx(b1.Hash(), 2, tValSigner1.Address(), pub, 1000, 1000, "")
 	tValSigner1.SignMsg(trx2)
 
 	assert.NoError(t, tState1.txPool.AppendTx(invSendTx))
@@ -55,8 +55,7 @@ func TestExecuteBlock(t *testing.T) {
 	validSubsidyTx := tState1.createSubsidyTx(1000)
 	invSendTx, _ := tx.GenerateTestSendTx()
 
-	pub := tValSigner1.PublicKey()
-	validTx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "", &pub, nil)
+	validTx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
 	tValSigner1.SignMsg(validTx1)
 
 	assert.NoError(t, tState1.txPool.AppendTx(invSendTx))

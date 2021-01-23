@@ -70,8 +70,3 @@ func TestMarshalingEmptyPrivateKey(t *testing.T) {
 	err = pv3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 }
-
-func TestSignNilMessage(t *testing.T) {
-	_, _, priv1 := GenerateTestKeyPair()
-	assert.Nil(t, priv1.Sign(nil))
-}

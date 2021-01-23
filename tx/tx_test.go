@@ -36,8 +36,8 @@ func TestBondEncodingTx(t *testing.T) {
 
 func TestEncodingTxNoSig(t *testing.T) {
 	tx, _ := GenerateTestSendTx()
-	tx.SetPublicKey(nil)
-	tx.SetSignature(nil)
+	tx.data.Signature = nil
+	tx.data.PublicKey = nil
 	bz, err := tx.MarshalCBOR()
 	require.NoError(t, err)
 	var tx2 Tx
@@ -48,26 +48,23 @@ func TestEncodingTxNoSig(t *testing.T) {
 func TestTxSanityCheck(t *testing.T) {
 
 	t.Run("Invalid version", func(t *testing.T) {
-		tx, priv := GenerateTestSendTx()
+		tx, signer := GenerateTestSendTx()
 		tx.data.Version = 2
-		sig := priv.Sign(tx.SignBytes())
-		tx.data.Signature = sig
+		signer.SignMsg(tx)
 		assert.Error(t, tx.SanityCheck())
 	})
 
 	t.Run("Invalid sequence", func(t *testing.T) {
-		tx, priv := GenerateTestSendTx()
+		tx, signer := GenerateTestSendTx()
 		tx.data.Sequence = -1
-		sig := priv.Sign(tx.SignBytes())
-		tx.data.Signature = sig
+		signer.SignMsg(tx)
 		assert.Error(t, tx.SanityCheck())
 	})
 
 	t.Run("Invalid payload type", func(t *testing.T) {
-		tx, priv := GenerateTestSendTx()
+		tx, signer := GenerateTestSendTx()
 		tx.data.Type = 2
-		sig := priv.Sign(tx.SignBytes())
-		tx.data.Signature = sig
+		signer.SignMsg(tx)
 		assert.Error(t, tx.SanityCheck())
 	})
 
@@ -87,22 +84,22 @@ func TestTxSanityCheck(t *testing.T) {
 func TestSubsidyTx(t *testing.T) {
 	a, pub, priv := crypto.GenerateTestKeyPair()
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx := NewSubsidyTx(crypto.GenerateTestHash(), 88, a, 2500, "subsidy")
-		assert.True(t, trx.IsSubsidyTx())
+		trx := NewMintbaseTx(crypto.GenerateTestHash(), 88, a, 2500, "subsidy")
+		assert.True(t, trx.IsMintbaseTx())
 		trx.data.Fee = 1
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := NewSubsidyTx(crypto.GenerateTestHash(), 88, a, 2500, "subsidy")
+		trx := NewMintbaseTx(crypto.GenerateTestHash(), 88, a, 2500, "subsidy")
 		sig := priv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := NewSubsidyTx(crypto.GenerateTestHash(), 88, a, 2500, "subsidy")
-		trx.SetPublicKey(&pub)
+		trx := NewMintbaseTx(crypto.GenerateTestHash(), 88, a, 2500, "subsidy")
+		trx.SetPublicKey(pub)
 		assert.Error(t, trx.SanityCheck())
 	})
 }
@@ -115,13 +112,13 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("No signature", func(t *testing.T) {
 		tx, _ := GenerateTestSendTx()
-		tx.SetSignature(nil)
+		tx.data.Signature = nil
 		assert.Error(t, tx.SanityCheck())
 	})
 
 	t.Run("No public key", func(t *testing.T) {
 		tx, _ := GenerateTestSendTx()
-		tx.SetPublicKey(nil)
+		tx.data.PublicKey = nil
 		assert.Error(t, tx.SanityCheck())
 	})
 
@@ -135,19 +132,16 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Invalid public key", func(t *testing.T) {
 		tx, _ := GenerateTestSendTx()
-		tx.SetPublicKey(&pbInv)
+		tx.SetPublicKey(pbInv)
 		assert.Error(t, tx.SanityCheck())
 
 	})
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
-		tx, pv := GenerateTestSendTx()
+		tx, signer := GenerateTestSendTx()
 		var tx2 = new(Tx)
 		tx2.data.Memo = "Hello"
-		sig := pv.Sign(tx2.SignBytes())
-		pb := pv.PublicKey()
-		tx.SetPublicKey(&pb)
-		tx.SetSignature(sig)
+		tx.SetSignature(signer.SignData(tx2.SignBytes()))
 		assert.Error(t, tx.SanityCheck())
 	})
 }
@@ -160,26 +154,26 @@ func TestSendSanityCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
-		trx, priv := GenerateTestSendTx()
+		trx, signer := GenerateTestSendTx()
 		pld := trx.data.Payload.(*payload.SendPayload)
 		pld.Amount = -1
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Invalid sender", func(t *testing.T) {
-		trx, priv := GenerateTestSendTx()
+		trx, signer := GenerateTestSendTx()
 		pld := trx.data.Payload.(*payload.SendPayload)
 		pld.Sender = invAddr
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Invalid receiver", func(t *testing.T) {
-		trx, priv := GenerateTestSendTx()
+		trx, signer := GenerateTestSendTx()
 		pld := trx.data.Payload.(*payload.SendPayload)
 		pld.Receiver = crypto.TreasuryAddress
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 }
@@ -192,18 +186,18 @@ func TestBondSanityCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid stake", func(t *testing.T) {
-		trx, priv := GenerateTestBondTx()
+		trx, signer := GenerateTestBondTx()
 		pld := trx.data.Payload.(*payload.BondPayload)
 		pld.Stake = -1
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Invalid bonder", func(t *testing.T) {
-		trx, priv := GenerateTestBondTx()
+		trx, signer := GenerateTestBondTx()
 		pld := trx.data.Payload.(*payload.BondPayload)
 		pld.Bonder = invAddr
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 }
@@ -216,25 +210,25 @@ func TestSortitionSanityCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid address", func(t *testing.T) {
-		trx, priv := GenerateTestSortitionTx()
+		trx, signer := GenerateTestSortitionTx()
 		pld := trx.data.Payload.(*payload.SortitionPayload)
 		pld.Address = invAddr
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Invalid proof", func(t *testing.T) {
-		trx, priv := GenerateTestSortitionTx()
+		trx, signer := GenerateTestSortitionTx()
 		pld := trx.data.Payload.(*payload.SortitionPayload)
 		pld.Proof = nil
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx, priv := GenerateTestSortitionTx()
+		trx, signer := GenerateTestSortitionTx()
 		trx.data.Fee = 1
-		trx.SetSignature(priv.Sign(trx.SignBytes()))
+		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 
@@ -281,14 +275,14 @@ func TestSortitionDecodingAndHash(t *testing.T) {
 
 func TestSendSignBytes(t *testing.T) {
 	h := crypto.GenerateTestHash()
-	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
-	a2, _, _ := crypto.GenerateTestKeyPair()
+	signer := crypto.GenerateTestSigner()
+	addr, _, _ := crypto.GenerateTestKeyPair()
 
-	trx1 := NewSendTx(h, 1, a1, a2, 100, 10, "test send-tx", &pb1, nil)
-	trx1.SetSignature(pv1.Sign(trx1.SignBytes()))
+	trx1 := NewSendTx(h, 1, signer.Address(), addr, 100, 10, "test send-tx")
+	signer.SignMsg(trx1)
 
-	trx2 := NewSendTx(h, 1, a1, a2, 100, 10, "test send-tx", nil, nil)
-	trx3 := NewSendTx(h, 2, a1, a2, 100, 10, "test send-tx", nil, nil)
+	trx2 := NewSendTx(h, 1, signer.Address(), addr, 100, 10, "test send-tx")
+	trx3 := NewSendTx(h, 2, signer.Address(), addr, 100, 10, "test send-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
@@ -296,14 +290,14 @@ func TestSendSignBytes(t *testing.T) {
 
 func TestBondSignBytes(t *testing.T) {
 	h := crypto.GenerateTestHash()
-	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
-	_, pb2, _ := crypto.GenerateTestKeyPair()
+	signer := crypto.GenerateTestSigner()
+	_, pub, _ := crypto.GenerateTestKeyPair()
 
-	trx1 := NewBondTx(h, 1, a1, pb2, 100, 100, "test bond-tx", &pb1, nil)
-	trx1.SetSignature(pv1.Sign(trx1.SignBytes()))
+	trx1 := NewBondTx(h, 1, signer.Address(), pub, 100, 100, "test bond-tx")
+	signer.SignMsg(trx1)
 
-	trx2 := NewBondTx(h, 1, a1, pb2, 100, 100, "test bond-tx", nil, nil)
-	trx3 := NewBondTx(h, 2, a1, pb2, 100, 100, "test bond-tx", nil, nil)
+	trx2 := NewBondTx(h, 1, signer.Address(), pub, 100, 100, "test bond-tx")
+	trx3 := NewBondTx(h, 2, signer.Address(), pub, 100, 100, "test bond-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
@@ -311,14 +305,14 @@ func TestBondSignBytes(t *testing.T) {
 
 func TestSortitionSignBytes(t *testing.T) {
 	h := crypto.GenerateTestHash()
-	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
+	signer := crypto.GenerateTestSigner()
 	proof := [48]byte{}
 
-	trx1 := NewSortitionTx(h, 1, a1, proof[:], "test sortition-tx", &pb1, nil)
-	trx1.SetSignature(pv1.Sign(trx1.SignBytes()))
+	trx1 := NewSortitionTx(h, 1, signer.Address(), proof[:], "test sortition-tx")
+	signer.SignMsg(trx1)
 
-	trx2 := NewSortitionTx(h, 1, a1, proof[:], "test sortition-tx", nil, nil)
-	trx3 := NewSortitionTx(h, 2, a1, proof[:], "test sortition-tx", nil, nil)
+	trx2 := NewSortitionTx(h, 1, signer.Address(), proof[:], "test sortition-tx")
+	trx3 := NewSortitionTx(h, 2, signer.Address(), proof[:], "test sortition-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())

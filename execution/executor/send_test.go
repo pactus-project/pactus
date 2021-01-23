@@ -63,29 +63,29 @@ func TestExecuteSendTx(t *testing.T) {
 	setup(t)
 	exe := NewSendExecutor(tSandbox)
 
-	addr1, pub1, priv1 := crypto.GenerateTestKeyPair()
+	addr1, _, priv1 := crypto.GenerateTestKeyPair()
 	addr2, _, _ := crypto.GenerateTestKeyPair()
 	signer := crypto.NewSigner(priv1)
 	stamp := crypto.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 
-	trx1 := tx.NewSendTx(stamp, 1, addr1, addr2, 3000, 1000, "invalid-sender", &tAcc1Pub, nil)
+	trx1 := tx.NewSendTx(stamp, 1, addr1, addr2, 3000, 1000, "invalid-sender")
 	signer.SignMsg(trx1)
 	assert.Error(t, exe.Execute(trx1))
 
-	trx2 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Signer.Address())+1, tAcc1Signer.Address(), addr1, 3000, 1000, "ok", &tAcc1Pub, nil)
+	trx2 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Signer.Address())+1, tAcc1Signer.Address(), addr1, 3000, 1000, "ok")
 	signer.SignMsg(trx2)
 	assert.NoError(t, exe.Execute(trx2))
 
-	trx3 := tx.NewSendTx(stamp, tSandbox.AccSeq(addr1)-2, addr1, addr2, 1000, 1000, "invalid sequence", &pub1, nil)
+	trx3 := tx.NewSendTx(stamp, tSandbox.AccSeq(addr1)-2, addr1, addr2, 1000, 1000, "invalid sequence")
 	signer.SignMsg(trx3)
 	assert.Error(t, exe.Execute(trx3))
 
-	trx4 := tx.NewSendTx(stamp, tSandbox.AccSeq(addr1)+1, addr1, addr2, 2001, 1000, "insufficient balance", &pub1, nil)
+	trx4 := tx.NewSendTx(stamp, tSandbox.AccSeq(addr1)+1, addr1, addr2, 2001, 1000, "insufficient balance")
 	signer.SignMsg(trx4)
 	assert.Error(t, exe.Execute(trx4))
 
-	trx5 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Signer.Address())+1, tAcc1Signer.Address(), addr1, 3000, 1000, "ok", &tAcc1Pub, nil)
+	trx5 := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Signer.Address())+1, tAcc1Signer.Address(), addr1, 3000, 1000, "ok")
 	signer.SignMsg(trx5)
 	assert.NoError(t, exe.Execute(trx5))
 
@@ -111,7 +111,7 @@ func TestSendToSelf(t *testing.T) {
 	self := tAcc1Signer.Address()
 
 	bal := tSandbox.Account(self).Balance()
-	trx := tx.NewSendTx(stamp, tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok", &tAcc1Pub, nil)
+	trx := tx.NewSendTx(stamp, tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok")
 	tAcc1Signer.SignMsg(trx)
 	assert.NoError(t, exe.Execute(trx))
 

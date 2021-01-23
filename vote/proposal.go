@@ -53,9 +53,12 @@ func (p *Proposal) SanityCheck() error {
 	return nil
 }
 
-func (p *Proposal) SetSignature(sig *crypto.Signature) {
-	p.data.Signature = sig
+func (p *Proposal) SetSignature(sig crypto.Signature) {
+	p.data.Signature = &sig
 }
+
+// SetPublicKey is doing nothing and just satisfies SignableMsg interface
+func (p *Proposal) SetPublicKey(crypto.PublicKey) {}
 
 func (p *Proposal) SignBytes() []byte {
 	type signProposal struct {
@@ -94,7 +97,7 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	if !pubKey.Address().EqualsTo(p.data.Block.Header().ProposerAddress()) {
 		return errors.Errorf(errors.ErrInvalidProposal, "Invalid proposer")
 	}
-	if !pubKey.Verify(p.SignBytes(), p.data.Signature) {
+	if !pubKey.Verify(p.SignBytes(), *p.data.Signature) {
 		return errors.Errorf(errors.ErrInvalidProposal, "Invalid signature")
 	}
 	return nil

@@ -38,17 +38,17 @@ func TestCommitValidation(t *testing.T) {
 
 	invBlockHash := crypto.GenerateTestHash()
 	round := 0
-	valSig1 := tValSigner1.Sign(block.CommitSignBytes(b2.Hash(), round))
-	valSig2 := tValSigner2.Sign(block.CommitSignBytes(b2.Hash(), round))
-	valSig3 := tValSigner3.Sign(block.CommitSignBytes(b2.Hash(), round))
-	valSig4 := tValSigner4.Sign(block.CommitSignBytes(b2.Hash(), round))
-	invSig1 := tValSigner1.Sign(block.CommitSignBytes(invBlockHash, round))
-	invSig2 := tValSigner2.Sign(block.CommitSignBytes(invBlockHash, round))
-	invSig3 := tValSigner3.Sign(block.CommitSignBytes(invBlockHash, round))
+	valSig1 := tValSigner1.SignData(block.CommitSignBytes(b2.Hash(), round))
+	valSig2 := tValSigner2.SignData(block.CommitSignBytes(b2.Hash(), round))
+	valSig3 := tValSigner3.SignData(block.CommitSignBytes(b2.Hash(), round))
+	valSig4 := tValSigner4.SignData(block.CommitSignBytes(b2.Hash(), round))
+	invSig1 := tValSigner1.SignData(block.CommitSignBytes(invBlockHash, round))
+	invSig2 := tValSigner2.SignData(block.CommitSignBytes(invBlockHash, round))
+	invSig3 := tValSigner3.SignData(block.CommitSignBytes(invBlockHash, round))
 	invSig5 := key5.Sign(block.CommitSignBytes(b2.Hash(), round))
 
-	validSig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3})
-	invalidSig := crypto.Aggregate([]*crypto.Signature{invSig1, invSig2, invSig3})
+	validSig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3})
+	invalidSig := crypto.Aggregate([]crypto.Signature{invSig1, invSig2, invSig3})
 
 	t.Run("Invalid blockhahs, should return error", func(t *testing.T) {
 		c := block.NewCommit(invBlockHash, 0, []block.Committer{
@@ -62,13 +62,13 @@ func TestCommitValidation(t *testing.T) {
 	})
 
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
-		invSig := tValSigner1.Sign([]byte("abc"))
+		invSig := tValSigner1.SignData([]byte("abc"))
 		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
 			{Number: 0, Status: 1},
 			{Number: 1, Status: 1},
 			{Number: 2, Status: 1},
 			{Number: 3, Status: 0},
-		}, *invSig)
+		}, invSig)
 
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c))
 	})
@@ -92,7 +92,7 @@ func TestCommitValidation(t *testing.T) {
 	})
 
 	t.Run("Unexpected signature", func(t *testing.T) {
-		sig1 := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, invSig3, valSig4})
+		sig1 := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, invSig3, valSig4})
 		c1 := block.NewCommit(b2.Hash(), 0, []block.Committer{
 			{Number: 0, Status: 1},
 			{Number: 1, Status: 1},
@@ -101,7 +101,7 @@ func TestCommitValidation(t *testing.T) {
 		}, sig1)
 		assert.Error(t, tState1.ApplyBlock(2, *b2, *c1))
 
-		sig2 := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, invSig5})
+		sig2 := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, invSig5})
 		c2 := block.NewCommit(b2.Hash(), 0, []block.Committer{
 			{Number: 0, Status: 1},
 			{Number: 1, Status: 1},
@@ -150,7 +150,7 @@ func TestCommitValidation(t *testing.T) {
 	})
 
 	t.Run("Doesn't have 2/3 majority, should return no error", func(t *testing.T) {
-		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2})
+		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2})
 
 		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
 			{Number: 0, Status: 1},
@@ -182,7 +182,7 @@ func TestCommitValidation(t *testing.T) {
 	})
 
 	t.Run("Update last commit- Invalid signer", func(t *testing.T) {
-		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, invSig5})
+		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, invSig5})
 
 		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
 			{Number: 0, Status: 1},
@@ -194,7 +194,7 @@ func TestCommitValidation(t *testing.T) {
 	})
 
 	t.Run("Update last commit- valid signature, should return no error", func(t *testing.T) {
-		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig4})
+		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig4})
 
 		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
 			{Number: 0, Status: 1},
@@ -208,7 +208,7 @@ func TestCommitValidation(t *testing.T) {
 	})
 
 	t.Run("Update last commit- Valid signature, should return no error", func(t *testing.T) {
-		sig := crypto.Aggregate([]*crypto.Signature{valSig1, valSig2, valSig3, valSig4})
+		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, valSig4})
 
 		c := block.NewCommit(b2.Hash(), 0, []block.Committer{
 			{Number: 0, Status: 1},

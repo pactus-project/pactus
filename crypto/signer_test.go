@@ -6,31 +6,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type testSignable struct {
+type testSignableMsg struct {
 	sig *Signature
+	pub *PublicKey
 }
 
-func (t *testSignable) SignBytes() []byte {
+func (t *testSignableMsg) SignBytes() []byte {
 	return []byte("zarb")
 }
-func (t *testSignable) SetSignature(sig *Signature) {
-	t.sig = sig
+func (t *testSignableMsg) SetSignature(sig Signature) {
+	t.sig = &sig
 }
-
-func TestSigner(t *testing.T) {
-	_, _, priv := GenerateTestKeyPair()
-	s := NewSigner(priv)
-	pub := s.PublicKey()
-	assert.True(t, pub.EqualsTo(priv.PublicKey()))
-	assert.True(t, s.Address().EqualsTo(priv.PublicKey().Address()))
-	assert.True(t, s.Sign([]byte("zarb")).EqualsTo(*priv.Sign([]byte("zarb"))))
+func (t *testSignableMsg) SetPublicKey(pub PublicKey) {
+	t.pub = &pub
 }
 
 func TestSignable(t *testing.T) {
-	signable := new(testSignable)
-	_, pub, priv := GenerateTestKeyPair()
-	s := NewSigner(priv)
+	signable := new(testSignableMsg)
+	s := GenerateTestSigner()
 	s.SignMsg(signable)
 
-	assert.True(t, pub.Verify(signable.SignBytes(), signable.sig))
+	assert.True(t, s.Address().EqualsTo(s.PublicKey().Address()))
+	assert.True(t, signable.pub.EqualsTo(s.PublicKey()))
+	assert.True(t, signable.pub.Verify(signable.SignBytes(), *signable.sig))
+
+	assert.True(t, s.SignData([]byte("zarb")).EqualsTo(*signable.sig))
+
 }

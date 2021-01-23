@@ -73,26 +73,26 @@ func TestCommitersHash(t *testing.T) {
 	temp := GenerateTestCommit(crypto.GenerateTestHash())
 	expected2 := temp.CommittersHash()
 	c1 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
-		Committer{0, CommitSigned},
-		Committer{1, CommitSigned},
-		Committer{2, CommitSigned},
-		Committer{3, CommitSigned},
+		{0, CommitSigned},
+		{1, CommitSigned},
+		{2, CommitSigned},
+		{3, CommitSigned},
 	}, temp.Signature())
 	assert.Equal(t, c1.CommittersHash(), expected2)
 
 	c2 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
-		Committer{0, CommitSigned},
-		Committer{1, CommitSigned},
-		Committer{2, CommitNotSigned},
-		Committer{3, CommitNotSigned},
+		{0, CommitSigned},
+		{1, CommitSigned},
+		{2, CommitNotSigned},
+		{3, CommitNotSigned},
 	}, temp.Signature())
 	assert.Equal(t, c2.CommittersHash(), expected2)
 
 	c3 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
-		Committer{1, CommitSigned},
-		Committer{2, CommitSigned},
-		Committer{3, CommitSigned},
-		Committer{0, CommitNotSigned},
+		{1, CommitSigned},
+		{2, CommitSigned},
+		{3, CommitSigned},
+		{0, CommitNotSigned},
 	}, temp.Signature())
 	assert.NotEqual(t, c3.CommittersHash(), expected2)
 }

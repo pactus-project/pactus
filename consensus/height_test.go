@@ -78,6 +78,4 @@ func TestConsensusBehindState2(t *testing.T) {
 	require.NotNil(t, precommits.ToCommit())
 
 	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
-
-	assert.Error(t, tConsP.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
 }

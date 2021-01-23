@@ -217,12 +217,12 @@ func commitBlockForAllStates(t *testing.T) {
 	p := makeProposal(t, height+1, 0)
 
 	sb := block.CommitSignBytes(p.Block().Hash(), 0)
-	sig1 := tSigners[0].Sign(sb)
-	sig2 := tSigners[1].Sign(sb)
-	sig3 := tSigners[2].Sign(sb)
-	sig4 := tSigners[3].Sign(sb)
+	sig1 := tSigners[0].SignData(sb)
+	sig2 := tSigners[1].SignData(sb)
+	sig3 := tSigners[2].SignData(sb)
+	sig4 := tSigners[3].SignData(sb)
 
-	sig := crypto.Aggregate([]*crypto.Signature{sig1, sig2, sig3, sig4})
+	sig := crypto.Aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
 	c := block.NewCommit(p.Block().Hash(), 0, []block.Committer{
 		{Number: 0, Status: 1},
 		{Number: 1, Status: 1},
@@ -396,9 +396,6 @@ func TestConsensusNoPrepares(t *testing.T) {
 
 	// Commit block again
 	assert.NoError(t, tConsB.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
-
-	// Commit a block for wrong height
-	assert.Error(t, tConsB.state.ApplyBlock(5, p.Block(), *precommits.ToCommit()))
 }
 
 func TestConsensusInvalidVote(t *testing.T) {

@@ -185,14 +185,14 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 
 	votesMap := vs.votesByBlock[*blockHash].votes
 	committers := make([]block.Committer, len(vs.validators))
-	sigs := make([]*crypto.Signature, 0)
+	sigs := make([]crypto.Signature, 0)
 
 	for i, val := range vs.validators {
 		status := block.CommitNotSigned
 		v := votesMap[val.Address()]
 
 		if v != nil {
-			sigs = append(sigs, v.Signature())
+			sigs = append(sigs, *v.Signature())
 			status = block.CommitSigned
 		}
 

@@ -111,6 +111,6 @@ func TestSignature(t *testing.T) {
 
 	sig1 := priv.Sign(msg)
 	assert.Equal(t, sig1.RawBytes(), sig.RawBytes())
-	assert.True(t, pub.Verify(msg, &sig))
+	assert.True(t, pub.Verify(msg, sig))
 	assert.Equal(t, pub.Address(), addr)
 }

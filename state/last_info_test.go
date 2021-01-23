@@ -31,12 +31,11 @@ func TestLoadState(t *testing.T) {
 	setup(t)
 
 	addr, pub, _ := crypto.GenerateTestKeyPair()
-	signerPub := tValSigner1.PublicKey()
 
-	tx1 := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), addr, 8888000, 8888, "", &signerPub, nil)
+	tx1 := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), addr, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx1))
 
-	tx2 := tx.NewBondTx(crypto.UndefHash, 2, tValSigner1.Address(), pub, 8888000, 8888, "", &signerPub, nil)
+	tx2 := tx.NewBondTx(crypto.UndefHash, 2, tValSigner1.Address(), pub, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx2))
 
 	assert.NoError(t, tCommonTxPool.AppendTx(tx1))

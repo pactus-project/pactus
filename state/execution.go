@@ -19,14 +19,14 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 			return nil, errors.Errorf(errors.ErrInvalidBlock, "Transaction not found")
 		}
 		// Only first transaction should be subsidy transaction
-		isSubsidyTx := (i == 0)
-		if isSubsidyTx {
-			if !trx.IsSubsidyTx() {
+		IsMintbaseTx := (i == 0)
+		if IsMintbaseTx {
+			if !trx.IsMintbaseTx() {
 				return nil, errors.Errorf(errors.ErrInvalidTx, "First transaction should be a subsidy transaction")
 			}
 			subsidyTrx = trx
 		} else {
-			if trx.IsSubsidyTx() {
+			if trx.IsMintbaseTx() {
 				return nil, errors.Errorf(errors.ErrInvalidTx, "Duplicated subsidy transaction")
 			}
 		}

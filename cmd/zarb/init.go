@@ -32,7 +32,6 @@ func Init() func(c *cli.Cmd) {
 			Value: false,
 		})
 
-		c.Spec = "[-w=<path>] [--testnet]"
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {

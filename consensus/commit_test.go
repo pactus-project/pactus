@@ -83,8 +83,7 @@ func TestEnterCommit(t *testing.T) {
 	assert.False(t, tConsY.isCommitted)
 	shouldPublishQueryProposal(t, tConsY, h, r)
 
-	pub := tSigners[tIndexX].PublicKey()
-	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "", &pub, nil)
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "")
 	tSigners[tIndexX].SignMsg(trx)
 	assert.NoError(t, tTxPool.AppendTx(trx)) // This will change block
 	b2, err := tConsY.state.ProposeBlock(0)

@@ -176,7 +176,7 @@ func GenerateTestCommit(blockhash crypto.Hash) *Commit {
 	_, _, priv3 := crypto.GenerateTestKeyPair()
 	_, _, priv4 := crypto.GenerateTestKeyPair()
 
-	sigs := []*crypto.Signature{
+	sigs := []crypto.Signature{
 		priv2.Sign(blockhash.RawBytes()),
 		priv3.Sign(blockhash.RawBytes()),
 		priv4.Sign(blockhash.RawBytes()),

@@ -39,14 +39,14 @@ func (tx *Tx) Memo() string                     { return tx.data.Memo }
 func (tx *Tx) PublicKey() *crypto.PublicKey     { return tx.data.PublicKey }
 func (tx *Tx) Signature() *crypto.Signature     { return tx.data.Signature }
 
-func (tx *Tx) SetSignature(sig *crypto.Signature) {
+func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.sanityChecked = false
-	tx.data.Signature = sig
+	tx.data.Signature = &sig
 }
 
-func (tx *Tx) SetPublicKey(pub *crypto.PublicKey) {
+func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
 	tx.sanityChecked = false
-	tx.data.PublicKey = pub
+	tx.data.PublicKey = &pub
 }
 
 func (tx *Tx) SanityCheck() error {
@@ -78,7 +78,7 @@ func (tx *Tx) SanityCheck() error {
 }
 
 func (tx *Tx) checkFee() error {
-	if tx.IsSubsidyTx() || tx.IsSortitionTx() {
+	if tx.IsMintbaseTx() || tx.IsSortitionTx() {
 		if tx.data.Fee != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Fee should set to zero")
 		}
@@ -92,7 +92,7 @@ func (tx *Tx) checkFee() error {
 }
 
 func (tx *Tx) checkSignature() error {
-	if tx.IsSubsidyTx() {
+	if tx.IsMintbaseTx() {
 		if tx.data.PublicKey != nil {
 			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have public key")
 		}
@@ -116,7 +116,7 @@ func (tx *Tx) checkSignature() error {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
 		}
 		bs := tx.SignBytes()
-		if !tx.data.PublicKey.Verify(bs, tx.data.Signature) {
+		if !tx.data.PublicKey.Verify(bs, *tx.data.Signature) {
 			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
 		}
 	}
@@ -236,7 +236,7 @@ func (tx *Tx) ID() crypto.Hash {
 	return *tx.memorizedHash
 }
 
-func (tx *Tx) IsSubsidyTx() bool {
+func (tx *Tx) IsMintbaseTx() bool {
 	return tx.data.Type == payload.PayloadTypeSend &&
 		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
@@ -247,32 +247,29 @@ func (tx *Tx) IsSortitionTx() bool {
 
 // ---------
 // For tests
-func GenerateTestSendTx() (*Tx, crypto.PrivateKey) {
+func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	h := crypto.GenerateTestHash()
-	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
-	a2, _, _ := crypto.GenerateTestKeyPair()
-	tx := NewSendTx(h, 110, a1, a2, 1000, 1000, "test send-tx", &pb1, nil)
-	sig := pv1.Sign(tx.SignBytes())
-	tx.data.Signature = sig
-	return tx, pv1
+	s := crypto.GenerateTestSigner()
+	a, _, _ := crypto.GenerateTestKeyPair()
+	tx := NewSendTx(h, 110, s.Address(), a, 1000, 1000, "test send-tx")
+	s.SignMsg(tx)
+	return tx, s
 }
 
-func GenerateTestBondTx() (*Tx, crypto.PrivateKey) {
+func GenerateTestBondTx() (*Tx, crypto.Signer) {
 	h := crypto.GenerateTestHash()
-	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
-	_, pb2, _ := crypto.GenerateTestKeyPair()
-	tx := NewBondTx(h, 110, a1, pb2, 1000, 1000, "test bond-tx", &pb1, nil)
-	sig := pv1.Sign(tx.SignBytes())
-	tx.data.Signature = sig
-	return tx, pv1
+	s := crypto.GenerateTestSigner()
+	_, pb, _ := crypto.GenerateTestKeyPair()
+	tx := NewBondTx(h, 110, s.Address(), pb, 1000, 1000, "test bond-tx")
+	s.SignMsg(tx)
+	return tx, s
 }
 
-func GenerateTestSortitionTx() (*Tx, crypto.PrivateKey) {
+func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
 	h := crypto.GenerateTestHash()
-	a1, pb1, pv1 := crypto.GenerateTestKeyPair()
+	s := crypto.GenerateTestSigner()
 	proof := [48]byte{}
-	tx := NewSortitionTx(h, 110, a1, proof[:], "test sortition-tx", &pb1, nil)
-	sig := pv1.Sign(tx.SignBytes())
-	tx.data.Signature = sig
-	return tx, pv1
+	tx := NewSortitionTx(h, 110, s.Address(), proof[:], "test sortition-tx")
+	s.SignMsg(tx)
+	return tx, s
 }

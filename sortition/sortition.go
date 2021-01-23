@@ -56,8 +56,7 @@ func (s *Sortition) EvaluateTransaction(hash crypto.Hash, val *validator.Validat
 		return nil
 	}
 
-	pub := s.signer.PublicKey()
-	trx := tx.NewSortitionTx(hash, val.Sequence()+1, val.Address(), proof, "", &pub, nil)
+	trx := tx.NewSortitionTx(hash, val.Sequence()+1, val.Address(), proof, "")
 	s.signer.SignMsg(trx)
 	return trx
 }
