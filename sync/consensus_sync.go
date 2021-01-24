@@ -70,7 +70,9 @@ func (cs *ConsensusSync) ProcessQueryVotesPayload(pld *payload.QueryVotesPayload
 	hrs := cs.consensus.HRS()
 	if pld.Height == hrs.Height() {
 		v := cs.consensus.PickRandomVote(pld.Round)
-		cs.BroadcastVote(v)
+		if v != nil {
+			cs.BroadcastVote(v)
+		}
 	}
 }
 func (cs *ConsensusSync) ProcessQueryProposalPayload(pld *payload.QueryProposalPayload) {

@@ -296,15 +296,18 @@ func TestQueryTransaction(t *testing.T) {
 
 	trx1, _ := tx.GenerateTestBondTx()
 	trx2, _ := tx.GenerateTestSendTx()
+	trx3, _ := tx.GenerateTestSendTx()
 
 	// Alice has trx1 in his cache
 	tAliceSync.cache.AddTransaction(trx1)
+	tAliceSync.cache.AddTransaction(trx3)
 	tBobSync.cache.AddTransaction(trx2)
-	msg := message.NewQueryTransactionsMessage(tAlicePeerID, []crypto.Hash{trx2.ID()})
+	msg := message.NewQueryTransactionsMessage(tAlicePeerID, []crypto.Hash{trx2.ID(), trx3.ID()})
 
 	t.Run("Alice should not send query transaction message because she is not an active validator", func(t *testing.T) {
 		tAliceBroadcastCh <- msg
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryTransactions)
+		assert.True(t, tTxPool.HasTx(trx3.ID()))
 	})
 
 	t.Run("Bob should not process alice message because he is not an active validator", func(t *testing.T) {
@@ -328,7 +331,7 @@ func TestQueryTransaction(t *testing.T) {
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryTransactions)
 	})
 
-	t.Run("Alice sends query transaction message, but she has it in her cache", func(t *testing.T) {
+	t.Run("Alice sends query transaction message, but she has it in the cache", func(t *testing.T) {
 		tAliceBroadcastCh <- message.NewQueryTransactionsMessage(tAlicePeerID, []crypto.Hash{trx1.ID()})
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryTransactions)
 	})

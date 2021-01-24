@@ -457,9 +457,6 @@ func (syncer *Synchronizer) isThisActiveValidator() bool {
 // queryTransactions queries for a missed transactions if we don't have it in the cache
 // Only active validators can send this messsage
 func (syncer *Synchronizer) queryTransactions(ids []crypto.Hash) {
-	if !syncer.isThisActiveValidator() {
-		return
-	}
 
 	for i, id := range ids {
 		trx := syncer.cache.GetTransaction(id)
@@ -474,7 +471,9 @@ func (syncer *Synchronizer) queryTransactions(ids []crypto.Hash) {
 	}
 
 	if len(ids) > 0 {
-		syncer.consensusSync.BroadcastQueryTransaction(ids)
+		if syncer.isThisActiveValidator() {
+			syncer.consensusSync.BroadcastQueryTransaction(ids)
+		}
 	}
 }
 
