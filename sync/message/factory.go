@@ -86,13 +86,18 @@ func NewHeartBeatMessage(id peer.ID, lastBlockHash crypto.Hash, hrs hrs.HRS) *Me
 	}
 }
 
-func NewQueryProposalMessage(height, round int) *Message {
+func NewOpaqueQueryProposalMessage(height, round int) *Message {
+	return NewQueryProposalMessage("", height, round)
+}
+
+func NewQueryProposalMessage(querier peer.ID, height, round int) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeQueryProposal,
 		Payload: &payload.QueryProposalPayload{
-			Height: height,
-			Round:  round,
+			Querier: querier,
+			Height:  height,
+			Round:   round,
 		},
 	}
 }
@@ -107,12 +112,17 @@ func NewProposalMessage(proposal *vote.Proposal) *Message {
 	}
 }
 
-func NewQueryTransactionsMessage(ids []crypto.Hash) *Message {
+func NewOpaqueQueryTransactionsMessage(ids []crypto.Hash) *Message {
+	return NewQueryTransactionsMessage("", ids)
+}
+
+func NewQueryTransactionsMessage(querier peer.ID, ids []crypto.Hash) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeQueryTransactions,
 		Payload: &payload.QueryTransactionsPayload{
-			IDs: ids,
+			Querier: querier,
+			IDs:     ids,
 		},
 	}
 }
@@ -126,14 +136,14 @@ func NewTransactionsMessage(txs []*tx.Tx) *Message {
 		},
 	}
 }
-func NewVoteSetMessage(height, round int, Hashes []crypto.Hash) *Message {
+func NewQueryVoteMessage(querier peer.ID, height, round int) *Message {
 	return &Message{
 		Version: LastVersion,
-		Type:    payload.PayloadTypeVoteSet,
-		Payload: &payload.VoteSetPayload{
-			Height: height,
-			Round:  round,
-			Hashes: Hashes,
+		Type:    payload.PayloadTypeQueryVotes,
+		Payload: &payload.QueryVotesPayload{
+			Querier: querier,
+			Height:  height,
+			Round:   round,
 		},
 	}
 }
@@ -147,12 +157,16 @@ func NewVoteMessage(vote *vote.Vote) *Message {
 		},
 	}
 }
+func NewOpaqueBlockAnnounceMessage(height int, block *block.Block, commit *block.Commit) *Message {
+	return NewBlockAnnounceMessage("", height, block, commit)
+}
 
-func NewBlockAnnounceMessage(height int, block *block.Block, commit *block.Commit) *Message {
+func NewBlockAnnounceMessage(peerID peer.ID, height int, block *block.Block, commit *block.Commit) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeBlockAnnounce,
 		Payload: &payload.BlockAnnouncePayload{
+			PeerID: peerID,
 			Height: height,
 			Block:  block,
 			Commit: commit,
@@ -210,10 +224,10 @@ func makePayload(t payload.PayloadType) payload.Payload {
 		return &payload.ProposalPayload{}
 	case payload.PayloadTypeHeartBeat:
 		return &payload.HeartBeatPayload{}
+	case payload.PayloadTypeQueryVotes:
+		return &payload.QueryVotesPayload{}
 	case payload.PayloadTypeVote:
 		return &payload.VotePayload{}
-	case payload.PayloadTypeVoteSet:
-		return &payload.VoteSetPayload{}
 	case payload.PayloadTypeBlockAnnounce:
 		return &payload.BlockAnnouncePayload{}
 	case payload.PayloadTypeDownloadRequest:

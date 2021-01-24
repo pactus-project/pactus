@@ -6,10 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 func TestAddBlockToCache(t *testing.T) {
@@ -40,10 +38,24 @@ func TestAddTxToCache(t *testing.T) {
 	assert.NotNil(t, tBobSync.cache.GetTransaction(trx1.ID()))
 	assert.True(t, tBobSync.txPool.HasTx(trx1.ID()))
 }
-func TestRequestForBlocksVeryFar(t *testing.T) {
+
+func TestRequestForBlocksNotVeryFar(t *testing.T) {
 	setup(t)
 
-	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID, 2)
+	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 15)
+
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 21-30
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 31-35
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // last commit + sync response
+}
+
+func TestRequestForBlocksVeryFar(t *testing.T) {
+	setup(t)
+	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 40)
+
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
 }
@@ -51,7 +63,10 @@ func TestRequestForBlocksVeryFar(t *testing.T) {
 func TestSendLastCommit(t *testing.T) {
 	setup(t)
 
-	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID, 95)
+	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 5)
+
+	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID)
+	tAliceConsensus.Started = false
 
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
@@ -59,6 +74,7 @@ func TestSendLastCommit(t *testing.T) {
 	pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
 
 	assert.Equal(t, pld.LastCommit, tBobState.LastBlockCommit)
+	assert.True(t, tAliceConsensus.Started)
 }
 
 func TestPrepareLastBlock(t *testing.T) {
@@ -69,69 +85,53 @@ func TestPrepareLastBlock(t *testing.T) {
 	assert.Equal(t, len(b), 1)
 }
 
-func TestProcessHeartbeatForSyncing(t *testing.T) {
+func TestMoveToConcensusByBlockAnnounceMessage(t *testing.T) {
 	setup(t)
 
-	lastHash := tAliceState.LastBlockHash()
-	height := tAliceState.LastBlockHeight()
-	for i := 0; i < 5; i++ {
-		b, trxs := block.GenerateTestBlock(nil, &lastHash)
-		c := block.GenerateTestCommit(b.Hash())
-		tAliceSync.cache.AddTransactions(trxs)
-		lastHash = b.Hash()
-		assert.NoError(t, tAliceState.ApplyBlock(height+i+1, *b, *c))
-	}
+	tAliceConsensus.Started = false
+	joinBobToTheSet(t)
+	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 1)
 
-	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
-	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
-	tAliceConsensus.HRS_ = hrs.NewHRS(tAliceState.LastBlockHeight()+1, 0, 3)
-	tBobConsensus.Started = false
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
 
-	tAliceSync.broadcastHeartBeat()
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
-
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)        // blocks 101-105
-	msg := tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced response code
-	pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
-	assert.Equal(t, pld.ResponseCode, payload.ResponseCodeSynced)
-	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
-	assert.False(t, tBobSync.peerSet.HasAnyValidSession())
-
-	assert.True(t, tBobConsensus.Started)
+	assert.True(t, tAliceConsensus.Started)
 }
 
 func TestDownloadBlock(t *testing.T) {
 	setup(t)
 
-	// Clear bob store
-	tBobSync.cache.Clear()
-	tBobState.Store.Blocks = make(map[int]*block.Block)
-	tBobConsensus.Started = false
+	// Clear alice store
+	tAliceSync.cache.Clear()
+	tAliceState.Store.Blocks = make(map[int]*block.Block)
+	tAliceConsensus.Started = false
 
-	tBobSync.sendBlocksRequestIfWeAreBehind()
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 1-10
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 11-20
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 21-31 (one extra block)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // NoMoreBlock
+	joinBobToTheSet(t)
+	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 80)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
 
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 40-49
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 50-59
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 60-70 (one extra block)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // NoMoreBlock
+	tAliceSync.sendBlocksRequestIfWeAreBehind()
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 1-10
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 11-20
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 21-31 (one extra block)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // NoMoreBlock
 
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 61-70
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 71-80
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 81-91 (one extra block)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // NoMoreBlock
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 40-49
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 50-59
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 60-70 (one extra block)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // NoMoreBlock
+
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 61-70
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 71-80
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 81-91 (one extra block)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // NoMoreBlock
 
 	// Latest block requests
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // 91-100
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // 91-100
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced
 
 	assert.True(t, tBobConsensus.Started)
 	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())

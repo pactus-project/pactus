@@ -135,7 +135,7 @@ func (pool *txPool) PendingTx(id crypto.Hash) *tx.Tx {
 	pool.logger.Debug("Request transaction from peers", "id", id)
 	pool.lk.Unlock()
 
-	msg := message.NewQueryTransactionsMessage([]crypto.Hash{id})
+	msg := message.NewOpaqueQueryTransactionsMessage([]crypto.Hash{id})
 	pool.broadcastCh <- msg
 
 	pool.appendTxCh = make(chan *tx.Tx, 100)

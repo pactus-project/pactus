@@ -116,12 +116,18 @@ func (pv *PendingVotes) PrecommitVoteSet(round int) *vote.VoteSet {
 }
 
 func (pv *PendingVotes) HasRoundProposal(round int) bool {
-	rv := pv.MustGetRoundVotes(round)
+	rv := pv.GetRoundVotes(round)
+	if rv == nil {
+		return false
+	}
 	return rv.proposal != nil
 }
 
 func (pv *PendingVotes) RoundProposal(round int) *vote.Proposal {
-	rv := pv.MustGetRoundVotes(round)
+	rv := pv.GetRoundVotes(round)
+	if rv == nil {
+		return nil
+	}
 	return rv.proposal
 }
 

@@ -219,7 +219,7 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 	case payload.PayloadTypeQueryProposal,
 		payload.PayloadTypeProposal,
 		payload.PayloadTypeVote,
-		payload.PayloadTypeVoteSet:
+		payload.PayloadTypeQueryVotes:
 		return api.consensusTopic
 
 	case payload.PayloadTypeDownloadRequest,

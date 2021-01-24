@@ -44,18 +44,18 @@ func (mock *MockNetworkAPI) PublishMessage(msg *message.Message) error {
 func (mock *MockNetworkAPI) SelfID() peer.ID {
 	return mock.id
 }
-func (mock *MockNetworkAPI) CheckAndParsMessage(data []byte, id peer.ID) bool {
-	msg := mock.Firewall.ParsMessage(data, id)
-	if msg != nil {
-		mock.ParsFn(msg, mock.id)
+func (mock *MockNetworkAPI) CheckAndParsMessage(msg *message.Message, id peer.ID) bool {
+	d, _ := msg.Encode()
+	msg2 := mock.Firewall.ParsMessage(d, id)
+	if msg2 != nil {
+		mock.ParsFn(msg2, mock.id)
 		return true
 	}
 	return false
 }
 
 func (mock *MockNetworkAPI) sendMessageToOtherPeer(m *message.Message) {
-	data, _ := m.Encode()
-	mock.OtherAPI.CheckAndParsMessage(data, mock.id)
+	mock.OtherAPI.CheckAndParsMessage(m, mock.id)
 }
 
 func (mock *MockNetworkAPI) ShouldPublishThisMessage(t *testing.T, expectedMsg *message.Message) {

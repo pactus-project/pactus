@@ -97,11 +97,11 @@ func (cs *consensus) updateHeight(height int) {
 	cs.hrs.UpdateHeight(height)
 }
 
-func (cs *consensus) LastProposal() *vote.Proposal {
+func (cs *consensus) RoundProposal(round int) *vote.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.pendingVotes.RoundProposal(cs.hrs.Round())
+	return cs.pendingVotes.RoundProposal(round)
 }
 
 func (cs *consensus) RoundVotes(round int) []*vote.Vote {
@@ -110,21 +110,6 @@ func (cs *consensus) RoundVotes(round int) []*vote.Vote {
 
 	rv := cs.pendingVotes.MustGetRoundVotes(round)
 	return rv.AllVotes()
-}
-
-func (cs *consensus) RoundVotesHash(round int) []crypto.Hash {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	rv := cs.pendingVotes.MustGetRoundVotes(round)
-	votes := rv.AllVotes()
-	hashes := make([]crypto.Hash, len(votes))
-
-	for i, v := range votes {
-		hashes[i] = v.Hash()
-	}
-
-	return hashes
 }
 
 func (cs *consensus) HasVote(hash crypto.Hash) bool {
@@ -283,7 +268,7 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 }
 
 func (cs *consensus) requestForProposal() {
-	msg := message.NewQueryProposalMessage(cs.hrs.Height(), cs.hrs.Round())
+	msg := message.NewOpaqueQueryProposalMessage(cs.hrs.Height(), cs.hrs.Round())
 	cs.broadcastCh <- msg
 }
 
@@ -298,15 +283,15 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 }
 
 func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Commit) {
-	msg := message.NewBlockAnnounceMessage(h, b, c)
+	msg := message.NewOpaqueBlockAnnounceMessage(h, b, c)
 	cs.broadcastCh <- msg
 }
 
-func (cs *consensus) PickRandomVote() *vote.Vote {
+func (cs *consensus) PickRandomVote(round int) *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	rv := cs.pendingVotes.MustGetRoundVotes(cs.hrs.Round())
+	rv := cs.pendingVotes.MustGetRoundVotes(round)
 	votes := rv.AllVotes()
 	if len(votes) == 0 {
 		return nil

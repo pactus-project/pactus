@@ -81,5 +81,6 @@ func TestSetProposal(t *testing.T) {
 	pv.SetRoundProposal(4, prop)
 	assert.False(t, pv.HasRoundProposal(0))
 	assert.True(t, pv.HasRoundProposal(4))
+	assert.Nil(t, pv.RoundProposal(0))
 	assert.Equal(t, pv.RoundProposal(4).Hash(), prop.Hash())
 }

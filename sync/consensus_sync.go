@@ -1,7 +1,9 @@
 package sync
 
 import (
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/zarbchain/zarb-go/consensus"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -10,6 +12,7 @@ import (
 
 type ConsensusSync struct {
 	config    *Config
+	selfID    peer.ID
 	consensus consensus.Consensus
 	logger    *logger.Logger
 	publishFn PublishMessageFn
@@ -17,20 +20,21 @@ type ConsensusSync struct {
 
 func NewConsensusSync(
 	conf *Config,
+	selfID peer.ID,
 	consensus consensus.Consensus,
 	logger *logger.Logger,
 	publishFn PublishMessageFn) *ConsensusSync {
 	return &ConsensusSync{
 		config:    conf,
+		selfID:    selfID,
 		consensus: consensus,
 		logger:    logger,
 		publishFn: publishFn,
 	}
 }
 
-func (cs *ConsensusSync) BroadcastQueryProposal() {
-	hrs := cs.consensus.HRS()
-	msg := message.NewQueryProposalMessage(hrs.Height(), hrs.Round())
+func (cs *ConsensusSync) BroadcastQueryProposal(height, round int) {
+	msg := message.NewQueryProposalMessage(cs.selfID, height, round)
 	cs.publishFn(msg)
 }
 
@@ -44,11 +48,13 @@ func (cs *ConsensusSync) BroadcastVote(v *vote.Vote) {
 	cs.publishFn(msg)
 }
 
-func (cs *ConsensusSync) BroadcastVoteSet() {
-	hrs := cs.consensus.HRS()
-	hashes := cs.consensus.RoundVotesHash(hrs.Round())
+func (cs *ConsensusSync) BroadcastQueryVotes(height, round int) {
+	msg := message.NewQueryVoteMessage(cs.selfID, height, round)
+	cs.publishFn(msg)
+}
 
-	msg := message.NewVoteSetMessage(hrs.Height(), hrs.Round(), hashes)
+func (cs *ConsensusSync) BroadcastQueryTransaction(ids []crypto.Hash) {
+	msg := message.NewQueryTransactionsMessage(cs.selfID, ids)
 	cs.publishFn(msg)
 }
 
@@ -58,29 +64,13 @@ func (cs *ConsensusSync) ProcessVotePayload(pld *payload.VotePayload) {
 	cs.consensus.AddVote(pld.Vote)
 }
 
-func (cs *ConsensusSync) ProcessVoteSetPayload(pld *payload.VoteSetPayload) {
+func (cs *ConsensusSync) ProcessQueryVotesPayload(pld *payload.QueryVotesPayload) {
 	cs.logger.Trace("Process vote-set payload", "pld", pld)
 
 	hrs := cs.consensus.HRS()
 	if pld.Height == hrs.Height() {
-
-		// Check peers vote and send the votes he doesn't have
-		ourVotes := cs.consensus.RoundVotes(pld.Round)
-		peerVotes := pld.Hashes
-
-		for _, v1 := range ourVotes {
-			hasVote := false
-			for _, v2 := range peerVotes {
-				if v1.Hash().EqualsTo(v2) {
-					hasVote = true
-					break
-				}
-			}
-
-			if !hasVote {
-				cs.BroadcastVote(v1)
-			}
-		}
+		v := cs.consensus.PickRandomVote(pld.Round)
+		cs.BroadcastVote(v)
 	}
 }
 func (cs *ConsensusSync) ProcessQueryProposalPayload(pld *payload.QueryProposalPayload) {
@@ -88,11 +78,9 @@ func (cs *ConsensusSync) ProcessQueryProposalPayload(pld *payload.QueryProposalP
 
 	hrs := cs.consensus.HRS()
 	if pld.Height == hrs.Height() {
-		p := cs.consensus.LastProposal()
+		p := cs.consensus.RoundProposal(pld.Round)
 		if p != nil {
-			if p.Round() >= pld.Round {
-				cs.BroadcastProposal(p)
-			}
+			cs.BroadcastProposal(p)
 		}
 	}
 }

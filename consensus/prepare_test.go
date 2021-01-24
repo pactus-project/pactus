@@ -3,25 +3,10 @@ package consensus
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
 )
-
-func TestNotAcceptingProposal(t *testing.T) {
-	setup(t)
-
-	tConsY.MoveToNewHeight()
-
-	addr := tSigners[tIndexX].Address()
-	b, _ := block.GenerateTestBlock(&addr, nil)
-	invalidProposal := vote.NewProposal(1, 0, *b)
-	tSigners[tIndexX].SignMsg(invalidProposal)
-	tConsY.SetProposal(invalidProposal)
-	assert.Nil(t, tConsY.LastProposal())
-}
 
 // Imagine we have four nodes: (Nx, Ny, Nb, Np) which:
 // Nb is a byzantine node and Nx, Ny, Np are honest nodes,
@@ -32,25 +17,26 @@ func TestNotAcceptingProposal(t *testing.T) {
 func TestByzantineVote(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
-	p := tConsX.LastProposal()
+	h := 1
+	r := 0
+	p := makeProposal(t, h, r)
 
 	tConsP.enterNewHeight()
 	tConsP.SetProposal(p)
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexB, false)
-	checkHRS(t, tConsP, 1, 0, hrs.StepTypePrecommit)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
+	checkHRS(t, tConsP, h, r, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexB, false) // Byzantine vote
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB, false) // Byzantine vote
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 
 	// Partition heals
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
-	checkHRS(t, tConsP, 1, 0, hrs.StepTypeCommit)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
+	checkHRS(t, tConsP, h, r, hrs.StepTypeCommit)
 }
 
 func TestPrepareTimeout(t *testing.T) {

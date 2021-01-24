@@ -88,9 +88,9 @@ func TestLatestBlocksResponseMessage(t *testing.T) {
 
 func TestQueryTransactionsMessage(t *testing.T) {
 	h := crypto.GenerateTestHash()
-	invMsg := NewQueryTransactionsMessage([]crypto.Hash{})
+	invMsg := NewOpaqueQueryTransactionsMessage([]crypto.Hash{h})
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewQueryTransactionsMessage([]crypto.Hash{h})
+	m := NewQueryTransactionsMessage(tPeerID1, []crypto.Hash{h})
 	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
@@ -113,9 +113,9 @@ func TestTransactionsMessage(t *testing.T) {
 }
 
 func TestQueryProposalMessage(t *testing.T) {
-	invMsg := NewQueryProposalMessage(4, -11)
+	invMsg := NewOpaqueQueryProposalMessage(4, 11)
 	assert.Error(t, invMsg.SanityCheck())
-	m := NewQueryProposalMessage(4, 1)
+	m := NewQueryProposalMessage(tPeerID1, 4, 1)
 	bs, err := m.Encode()
 	assert.NoError(t, err)
 	m2 := new(Message)
@@ -137,8 +137,8 @@ func TestProposalsMessage(t *testing.T) {
 	assert.Equal(t, m.Version, LastVersion)
 }
 
-func TestVoteSetMessage(t *testing.T) {
-	m := NewVoteSetMessage(4, 1, []crypto.Hash{})
+func TestQueryVoteMessage(t *testing.T) {
+	m := NewQueryVoteMessage(tPeerID1, 4, 1)
 	assert.NoError(t, m.SanityCheck())
 	bs, err := m.Encode()
 	assert.NoError(t, err)
@@ -163,7 +163,9 @@ func TestVoteMessage(t *testing.T) {
 func TestBlockAnnounceMessage(t *testing.T) {
 	b, _ := block.GenerateTestBlock(nil, nil)
 	c := block.GenerateTestCommit(b.Hash())
-	m := NewBlockAnnounceMessage(1001, b, c)
+	m := NewOpaqueBlockAnnounceMessage(1001, b, c)
+	assert.Error(t, m.SanityCheck())
+	m = NewBlockAnnounceMessage(tPeerID1, 1001, b, c)
 	assert.NoError(t, m.SanityCheck())
 	bs, err := m.Encode()
 	assert.NoError(t, err)
@@ -230,9 +232,9 @@ func TestBlocksMessageCompress(t *testing.T) {
 }
 
 func TestDecodeVoteMessage(t *testing.T) {
-	d1, _ := hex.DecodeString("a401010200030a045875a101a601010201030104582070f4338d6ed218ba9e0884352bcee8c19cfe5e110d4aa8b248881a90a96b7d980554d94f1e7acfdc43db98e3cbd51f56e832be4d6d73065830f4dbe13687e792bdf51ddcdf746e38001c60a9b05e94ae86e5ffc116a835e930e32b5da0e6163a0f785ed294f4c69e18")
+	d1, _ := hex.DecodeString("a401010200030b045875a101a601010201030104582070f4338d6ed218ba9e0884352bcee8c19cfe5e110d4aa8b248881a90a96b7d980554d94f1e7acfdc43db98e3cbd51f56e832be4d6d73065830f4dbe13687e792bdf51ddcdf746e38001c60a9b05e94ae86e5ffc116a835e930e32b5da0e6163a0f785ed294f4c69e18")
 	// Compressed
-	d2, _ := hex.DecodeString("a401010201030a0458911f8b08000000000000ff0075008affa101a601010201030104582070f4338d6ed218ba9e0884352bcee8c19cfe5e110d4aa8b248881a90a96b7d980554d94f1e7acfdc43db98e3cbd51f56e832be4d6d73065830f4dbe13687e792bdf51ddcdf746e38001c60a9b05e94ae86e5ffc116a835e930e32b5da0e6163a0f785ed294f4c69e18010000ffffc303af1e75000000")
+	d2, _ := hex.DecodeString("a401010201030b0458911f8b08000000000000ff0075008affa101a601010201030104582070f4338d6ed218ba9e0884352bcee8c19cfe5e110d4aa8b248881a90a96b7d980554d94f1e7acfdc43db98e3cbd51f56e832be4d6d73065830f4dbe13687e792bdf51ddcdf746e38001c60a9b05e94ae86e5ffc116a835e930e32b5da0e6163a0f785ed294f4c69e18010000ffffc303af1e75000000")
 	m1 := new(Message)
 	m2 := new(Message)
 	assert.NoError(t, m1.Decode(d1))

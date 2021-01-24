@@ -7,30 +7,41 @@ import (
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
 const (
-	blockPrefix  = 0x01
-	commitPrefix = 0x02
-	txPrefix     = 0x03
+	blockPrefix    = 0x01
+	commitPrefix   = 0x02
+	txPrefix       = 0x03
+	proposalPrefix = 0x04
 )
 
-func blockKey(height int) [9]byte {
-	var k [9]byte
+type key [32]byte
+
+func blockKey(height int) key {
+	var k key
 	k[0] = blockPrefix
 	copy(k[1:], util.IntToSlice(height))
 	return k
 }
-func commitKey(hash crypto.Hash) [33]byte {
-	var k [33]byte
+func commitKey(hash crypto.Hash) key {
+	var k key
 	k[0] = commitPrefix
 	copy(k[1:], hash.RawBytes())
 	return k
 }
-func txKey(id crypto.Hash) [33]byte {
-	var k [33]byte
+func txKey(id crypto.Hash) key {
+	var k key
 	k[0] = txPrefix
 	copy(k[1:], id.RawBytes())
+	return k
+}
+func proposalKey(height, round int) key {
+	var k key
+	k[0] = proposalPrefix
+	copy(k[1:], util.IntToSlice(height))
+	copy(k[16:], util.IntToSlice(round))
 	return k
 }
 
@@ -112,6 +123,18 @@ func (c *Cache) AddTransactions(trxs []*tx.Tx) {
 	}
 }
 
+func (c *Cache) GetProposal(height, round int) *vote.Proposal {
+	i, ok := c.cache.Get(proposalKey(height, round))
+	if ok {
+		return i.(*vote.Proposal)
+	}
+
+	return nil
+}
+
+func (c *Cache) AddProposal(p *vote.Proposal) {
+	c.cache.Add(proposalKey(p.Height(), p.Round()), p)
+}
 func (c *Cache) Len() int {
 	return c.cache.Len()
 }

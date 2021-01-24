@@ -29,10 +29,10 @@ func (p *LatestBlocksResponsePayload) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
 	}
 	if err := p.Initiator.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer is: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer id: %v", err)
 	}
 	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer is: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
 	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {

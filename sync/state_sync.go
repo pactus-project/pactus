@@ -53,9 +53,10 @@ func NewStateSync(
 	}
 }
 
-func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID, from int) {
+func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID) {
 	s := ss.openNewSession(target)
-	msg := message.NewLatestBlocksRequestMessage(ss.selfID, target, s.SessionID, from)
+	ourHeight := ss.state.LastBlockHeight()
+	msg := message.NewLatestBlocksRequestMessage(ss.selfID, target, s.SessionID, ourHeight+1)
 	ss.publishFn(msg)
 }
 
@@ -205,6 +206,10 @@ func (ss *StateSync) ProcessBlockAnnouncePayload(pld *payload.BlockAnnouncePaylo
 	ss.cache.AddBlock(pld.Height, pld.Block)
 	ss.tryCommitBlocks()
 	ss.syncedFN()
+
+	p := ss.peerSet.MustGetPeer(pld.PeerID)
+	p.UpdateHeight(pld.Height)
+	ss.peerSet.UpdateMaxClaimedHeight(pld.Height)
 }
 
 func (ss *StateSync) ProcessLatestBlocksResponsePayload(pld *payload.LatestBlocksResponsePayload) {
@@ -360,9 +365,8 @@ func (ss *StateSync) RequestForMoreBlock() {
 }
 
 func (ss *StateSync) RequestForLatestBlock() {
-	ourHeight := ss.state.LastBlockHeight()
 	p := ss.peerSet.FindHighestPeer()
 	if p != nil {
-		ss.BroadcastLatestBlocksRequest(p.PeerID(), ourHeight+1)
+		ss.BroadcastLatestBlocksRequest(p.PeerID())
 	}
 }

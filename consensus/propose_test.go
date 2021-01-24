@@ -12,13 +12,12 @@ import (
 func TestConsensusSetProposalAfterCommit(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
-	tConsP.enterNewHeight()
-	p := tConsX.LastProposal()
+	p := makeProposal(t, 1, 0)
 
+	tConsP.enterNewHeight()
 	commitBlockForAllStates(t)
 	tConsP.SetProposal(p)
-	assert.Nil(t, tConsP.LastProposal())
+	assert.Nil(t, tConsP.RoundProposal(0))
 }
 
 func TestGotoNextRoundWithoutProposal(t *testing.T) {
@@ -49,8 +48,8 @@ func TestSecondProposalCommitted(t *testing.T) {
 
 	// Now it's turn for Byzantine node to propose a block
 	// Other nodes are going to not accept its proposal, even it is valid
-	p1 := tConsB.LastProposal() // valid proposal for first round
-	p2 := tConsP.LastProposal() // valid proposal for second round
+	p1 := tConsB.RoundProposal(0) // valid proposal for round 0
+	p2 := tConsP.RoundProposal(1) // valid proposal for round 1
 
 	// Probably we have blocked Byzantine node
 	//tConsX.SetProposal(p1)
@@ -108,33 +107,34 @@ func TestNetworkLagging1(t *testing.T) {
 func TestNetworkLagging2(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
-	tConsX.enterNewHeight()
+	h := 1
+	r := 0
+	p1 := makeProposal(t, h, r)
 
-	p1 := tConsX.LastProposal()
+	tConsP.enterNewHeight()
 	// We don't set proposal for second validator here
 	// tConsP.SetProposal(p1)
 
 	// Networks lags and we don't receive prepare from val_1 and pre-commit from val_4
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY, false)
 
-	checkHRS(t, tConsP, 1, 0, hrs.StepTypePropose)
+	checkHRS(t, tConsP, h, r, hrs.StepTypePropose)
 	assert.Nil(t, tConsP.pendingVotes.roundVotes[0].Precommits.QuorumBlock())
 
-	shouldPublishQueryProposal(t, tConsP, 1, 0)
+	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
 	// Proposal received now, set it
 	tConsP.SetProposal(p1)
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())
-	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrepare)
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrepare)
 
 	// We can't go to precommit stage, because we haven't prepared yet
 	// But if we receive another vote we go to commit phase directly
 	// Let's do it
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB, false)
 	shouldPublishBlockAnnounce(t, tConsP, p1.Block().Hash())
 }
 
@@ -197,17 +197,18 @@ func TestLateProposal2(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	tConsX.enterNewHeight()
-	tConsP.enterNewHeight()
+	h := 4
+	r := 0
+	p := makeProposal(t, h, r) // tConsP should propose for this round
 
-	p := tConsP.LastProposal()
+	tConsX.enterNewHeight()
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB, false)
 
 	checkHRSWait(t, tConsX, 4, 1, hrs.StepTypePrepare)
 
@@ -231,7 +232,11 @@ func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
 	tSigners[tIndexB].SignMsg(p)
 
 	tConsX.SetProposal(p)
-	assert.Nil(t, tConsX.LastProposal())
+	// tConsX accepts his proposal
+	assert.NotNil(t, tConsX.RoundProposal(1))
+
+	// But doesn't move to prepare phase
+	checkHRS(t, tConsX, 2, 0, hrs.StepTypePropose)
 }
 
 func TestEnterPrepareAfterPrecommit(t *testing.T) {
@@ -241,28 +246,30 @@ func TestEnterPrepareAfterPrecommit(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	p := makeProposal(t, 4, 0)
+	h := 4
+	r := 0
+	p := makeProposal(t, h, r)
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
 	tConsX.enterNewHeight()
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, crypto.UndefHash, tIndexB, false)
-	checkHRSWait(t, tConsX, 4, 0, hrs.StepTypePrecommit)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
+	checkHRSWait(t, tConsX, h, r, hrs.StepTypePrecommit)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 4, 0, crypto.GenerateTestHash(), tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.GenerateTestHash(), tIndexB, false)
 
 	// Now partition healed
 	tConsX.SetProposal(p)
 	tConsX.enterPrepare(0)
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 4, 0, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP, false)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
 
