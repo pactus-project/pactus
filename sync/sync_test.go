@@ -177,6 +177,10 @@ func addMoreBlocksForBobAndSendBlockAnnounceMessage(t *testing.T, count int) {
 
 	tBobBroadcastCh <- msg
 }
+func disableHeartbeat(t *testing.T) {
+	tAliceSync.heartBeatTicker.Stop()
+	tBobSync.heartBeatTicker.Stop()
+}
 
 func joinAliceToTheSet(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
@@ -234,7 +238,6 @@ func TestStop(t *testing.T) {
 	tAliceSync.Stop()
 	tBobSync.Stop()
 }
-
 
 func TestSendSalamPeerAhead(t *testing.T) {
 	setup(t)

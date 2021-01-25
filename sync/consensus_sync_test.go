@@ -102,6 +102,7 @@ func TestUpdateConsensus(t *testing.T) {
 func TestProcessQueryVote(t *testing.T) {
 	setup(t)
 
+	disableHeartbeat(t)
 	joinAliceToTheSet(t)
 	joinBobToTheSet(t)
 
@@ -110,6 +111,7 @@ func TestProcessQueryVote(t *testing.T) {
 
 	// No vote to send
 	tBobSync.consensusSync.BroadcastQueryVotes(100, 0)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
 
 	// Send first vote
@@ -117,6 +119,7 @@ func TestProcessQueryVote(t *testing.T) {
 	tAliceConsensus.Votes = []*vote.Vote{v1}
 
 	tBobSync.consensusSync.BroadcastQueryVotes(100, 0)
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
 	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v1))
 }
 
