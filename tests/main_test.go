@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -47,6 +48,8 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 
 func TestMain(m *testing.M) {
 	max := 7
+	power := 4
+	blockTime := 2
 	tSigners = make([]crypto.Signer, max)
 	tConfigs = make([]*config.Config, max)
 	tNodes = make([]*node.Node, max)
@@ -73,6 +76,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
 		tConfigs[i].Logger.Levels["_txpool"] = "error"
 
+		tConfigs[i].Sync.CacheSize = 5000
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
 
@@ -85,8 +89,8 @@ func TestMain(m *testing.M) {
 	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2, 0)
 	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 2
-	params.MaximumPower = 4
+	params.BlockTimeInSecond = blockTime
+	params.MaximumPower = power
 	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
@@ -112,13 +116,43 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
+	totalStake := int64(0)
 	for i := 0; i < max; i++ {
 		amt := util.RandInt64(1000000 - 1) // fee is always 1000
 		require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000))
 		incSequence(t, tSigners[tNodeIdx1].Address())
+		totalStake += amt
 	}
 
-	for i := 0; i < 16; i++ {
+	go func() {
+		file, _ := os.OpenFile("./debug.log", os.O_CREATE|os.O_WRONLY, 0666)
+		fmt.Fprintf(file, "total stake: %d\n\n", totalStake)
+
+		for {
+			for i := 0; i < max; i++ {
+				tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round())
+
+				fmt.Fprintf(file, "node %d: %s %s %s proposal: %v ",
+					i,
+					tNodes[i].Sync().Fingerprint(),
+					tNodes[i].State().Fingerprint(),
+					tNodes[i].Consensus().Fingerprint(),
+					tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round()) != nil)
+
+				votes := tNodes[i].Consensus().RoundVotes(tNodes[i].Consensus().HRS().Round())
+
+				for _, v := range votes {
+					fmt.Fprintf(file, "%s:%s,%s ", v.VoteType(), v.BlockHash().Fingerprint(), v.Signer().Fingerprint())
+				}
+				fmt.Fprintf(file, "\n")
+			}
+			fmt.Fprintf(file, "================================================================================\n")
+
+			time.Sleep(10 * time.Second)
+		}
+	}()
+
+	for i := 0; i < 20; i++ {
 		waitForNewBlock(t)
 	}
 

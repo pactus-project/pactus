@@ -146,6 +146,9 @@ func (api *networkAPI) PublishMessage(msg *message.Message) error {
 	if topic == nil {
 		return errors.Errorf(errors.ErrNetwork, "Invalid topic.")
 	}
+	if err := msg.SanityCheck(); err != nil {
+		return err
+	}
 	data, err := msg.Encode()
 	if err != nil {
 		return err

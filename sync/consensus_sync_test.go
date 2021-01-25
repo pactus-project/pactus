@@ -107,12 +107,16 @@ func TestProcessQueryVote(t *testing.T) {
 
 	tAliceConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
 	tBobConsensus.HRS_ = hrs.NewHRS(100, 0, 1)
-	v1, _ := vote.GenerateTestPrepareVote(100, 0)
 
+	// No vote to send
+	tBobSync.consensusSync.BroadcastQueryVotes(100, 0)
+	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
+
+	// Send first vote
+	v1, _ := vote.GenerateTestPrepareVote(100, 0)
 	tAliceConsensus.Votes = []*vote.Vote{v1}
 
 	tBobSync.consensusSync.BroadcastQueryVotes(100, 0)
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
 	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v1))
 }
 

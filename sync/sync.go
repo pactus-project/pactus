@@ -6,6 +6,7 @@ import (
 	"time"
 
 	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -133,10 +134,10 @@ func (syncer *Synchronizer) joinDownloadTopic() error {
 }
 
 func (syncer *Synchronizer) maybeSynced() {
-	lastHeight := syncer.state.LastBlockHeight()
+	ourHeight := syncer.state.LastBlockHeight()
 	networkHeight := syncer.peerSet.MaxClaimedHeight()
 
-	if lastHeight >= networkHeight-1 {
+	if ourHeight >= networkHeight-1 {
 		syncer.synced()
 	}
 }
@@ -175,9 +176,8 @@ func (syncer *Synchronizer) broadcastLoop() {
 				syncer.queryProposal(pld.Height, pld.Round)
 
 			case payload.PayloadTypeBlockAnnounce:
-				if syncer.isThisActiveValidator() {
-					syncer.publishMessage(msg)
-				}
+				pld := msg.Payload.(*payload.BlockAnnouncePayload)
+				syncer.announceBlock(pld.Height, pld.Block, pld.Commit)
 
 			case payload.PayloadTypeVote,
 				payload.PayloadTypeProposal,
@@ -209,7 +209,7 @@ func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 	claimedHeight := syncer.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight+1 {
 		if claimedHeight > ourHeight+LatestBlockInterval {
-			syncer.logger.Info("We are far behind the network, Join download topic", "our_height", ourHeight)
+			syncer.logger.Info("We are far behind the network, Join download topic")
 			// TODO:
 			// If peer doesn't respond, we should leave the topic
 			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
@@ -220,7 +220,7 @@ func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 				syncer.stateSync.RequestForMoreBlock()
 			}
 		} else {
-			syncer.logger.Info("We are behind the network, Ask for more blocks", "our_height", ourHeight)
+			syncer.logger.Info("We are behind the network, Ask for more blocks")
 			syncer.stateSync.RequestForLatestBlock()
 		}
 	}
@@ -302,6 +302,7 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 	}
 
 	syncer.sendBlocksRequestIfWeAreBehind()
+	syncer.maybeSynced()
 }
 
 func (syncer *Synchronizer) broadcastHeartBeat() {
@@ -504,4 +505,12 @@ func (syncer *Synchronizer) queryVotes(height, round int) {
 	}
 
 	syncer.consensusSync.BroadcastQueryVotes(height, round)
+}
+
+func (syncer *Synchronizer) announceBlock(height int, block *block.Block, commit *block.Commit) {
+	if !syncer.isThisActiveValidator() {
+		return
+	}
+
+	syncer.stateSync.BroadcastBlockAnnounce(height, block, commit)
 }

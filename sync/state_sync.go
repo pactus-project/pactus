@@ -53,6 +53,11 @@ func NewStateSync(
 	}
 }
 
+func (ss *StateSync) BroadcastBlockAnnounce(height int, block *block.Block, commit *block.Commit) {
+	msg := message.NewBlockAnnounceMessage(ss.selfID, height, block, commit)
+	ss.publishFn(msg)
+}
+
 func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID) {
 	s := ss.openNewSession(target)
 	ourHeight := ss.state.LastBlockHeight()
@@ -339,7 +344,7 @@ func (ss *StateSync) tryCommitBlocks() {
 		}
 		ss.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
 		if err := ss.state.ApplyBlock(ourHeight+1, *b, *c); err != nil {
-			ss.logger.Error("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
+			ss.logger.Warn("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...
 			break
 		}
