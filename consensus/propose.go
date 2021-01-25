@@ -1,11 +1,8 @@
 package consensus
 
 import (
-	"time"
-
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -98,14 +95,5 @@ func (cs *consensus) createProposal(height int, round int) {
 
 	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
 
-	// Broadcast proposal
-	if cs.config.FuzzTesting {
-		rand := util.RandInt(3)
-		go func() {
-			time.Sleep(time.Duration(rand) * time.Second)
-			cs.broadcastProposal(proposal)
-		}()
-	} else {
-		cs.broadcastProposal(proposal)
-	}
+	cs.broadcastProposal(proposal)
 }

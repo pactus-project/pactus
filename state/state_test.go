@@ -384,8 +384,8 @@ func TestValidateBlockTime(t *testing.T) {
 	setup(t)
 
 	fmt.Printf("BlockTimeInSecond: %d\n", tState1.params.BlockTimeInSecond)
-	tState1.lastBlockTime = util.Now().Add(-1 * time.Minute)
 	roundedNow := util.RoundNow(10)
+	tState1.lastBlockTime = roundedNow.Add(-1 * time.Minute)
 
 	// Time not rounded
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-15*time.Second)))

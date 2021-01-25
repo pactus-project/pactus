@@ -255,16 +255,7 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 		return
 	}
 
-	// Broadcast our vote
-	if cs.config.FuzzTesting {
-		rand := util.RandInt(3)
-		go func() {
-			time.Sleep(time.Duration(rand) * time.Second)
-			cs.broadcastVote(v)
-		}()
-	} else {
-		cs.broadcastVote(v)
-	}
+	cs.broadcastVote(v)
 }
 
 func (cs *consensus) requestForProposal() {

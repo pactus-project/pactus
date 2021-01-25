@@ -78,7 +78,7 @@ func TestSendingTransactions(t *testing.T) {
 			incSequence(t, bobSigner.Address())
 		}
 	})
-	
+
 	// Make sure all transaction confirmed
 	for {
 		bobAcc := getAccount(t, bobAddr)
