@@ -79,16 +79,11 @@ func TestSendingTransactions(t *testing.T) {
 		}
 	})
 
+	// Make sure all transaction confirmed
 	waitForNewBlock(t)
 	waitForNewBlock(t)
-
-	for {
-		bobAcc := getAccount(t, bobAddr)
-		if bobAcc != nil && bobAcc.Sequence() == 20 { // bob sent 200 txs
-			break
-		}
-		waitForNewBlock(t)
-	}
+	waitForNewBlock(t)
+	waitForNewBlock(t)
 
 	aliceAcc := getAccount(t, aliceAddr)
 	bobAcc := getAccount(t, bobAddr)

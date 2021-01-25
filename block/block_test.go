@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/zarbchain/zarb-go/util"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 )
