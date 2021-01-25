@@ -6,7 +6,6 @@ import (
 	"net"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -124,33 +123,34 @@ func TestMain(m *testing.M) {
 		totalStake += amt
 	}
 
-	go func() {
-		file, _ := os.OpenFile("./debug.log", os.O_CREATE|os.O_WRONLY, 0666)
-		fmt.Fprintf(file, "total stake: %d\n\n", totalStake)
+	// Uncomment this for debugging the test
+	// go func() {
+	// 	file, _ := os.OpenFile("./debug.log", os.O_CREATE|os.O_WRONLY, 0666)
+	// 	fmt.Fprintf(file, "total stake: %d\n\n", totalStake)
 
-		for {
-			for i := 0; i < max; i++ {
-				tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round())
+	// 	for {
+	// 		for i := 0; i < max; i++ {
+	// 			tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round())
 
-				fmt.Fprintf(file, "node %d: %s %s %s proposal: %v ",
-					i,
-					tNodes[i].Sync().Fingerprint(),
-					tNodes[i].State().Fingerprint(),
-					tNodes[i].Consensus().Fingerprint(),
-					tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round()) != nil)
+	// 			fmt.Fprintf(file, "node %d: %s %s %s proposal: %v ",
+	// 				i,
+	// 				tNodes[i].Sync().Fingerprint(),
+	// 				tNodes[i].State().Fingerprint(),
+	// 				tNodes[i].Consensus().Fingerprint(),
+	// 				tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round()) != nil)
 
-				votes := tNodes[i].Consensus().RoundVotes(tNodes[i].Consensus().HRS().Round())
+	// 			votes := tNodes[i].Consensus().RoundVotes(tNodes[i].Consensus().HRS().Round())
 
-				for _, v := range votes {
-					fmt.Fprintf(file, "%s:%s,%s ", v.VoteType(), v.BlockHash().Fingerprint(), v.Signer().Fingerprint())
-				}
-				fmt.Fprintf(file, "\n")
-			}
-			fmt.Fprintf(file, "================================================================================\n")
+	// 			for _, v := range votes {
+	// 				fmt.Fprintf(file, "%s:%s,%s ", v.VoteType(), v.BlockHash().Fingerprint(), v.Signer().Fingerprint())
+	// 			}
+	// 			fmt.Fprintf(file, "\n")
+	// 		}
+	// 		fmt.Fprintf(file, "================================================================================\n")
 
-			time.Sleep(10 * time.Second)
-		}
-	}()
+	// 		time.Sleep(10 * time.Second)
+	// 	}
+	// }()
 
 	for i := 0; i < 20; i++ {
 		waitForNewBlock(t)
