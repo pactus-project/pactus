@@ -146,6 +146,9 @@ func (api *networkAPI) PublishMessage(msg *message.Message) error {
 	if topic == nil {
 		return errors.Errorf(errors.ErrNetwork, "Invalid topic.")
 	}
+	if err := msg.SanityCheck(); err != nil {
+		return err
+	}
 	data, err := msg.Encode()
 	if err != nil {
 		return err
@@ -219,7 +222,7 @@ func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
 	case payload.PayloadTypeQueryProposal,
 		payload.PayloadTypeProposal,
 		payload.PayloadTypeVote,
-		payload.PayloadTypeVoteSet:
+		payload.PayloadTypeQueryVotes:
 		return api.consensusTopic
 
 	case payload.PayloadTypeDownloadRequest,

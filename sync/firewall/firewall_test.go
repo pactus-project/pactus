@@ -24,7 +24,7 @@ func setup(t *testing.T) {
 func TestIncreaseMsgCounter(t *testing.T) {
 	setup(t)
 
-	msg := message.NewQueryProposalMessage(1, 0)
+	msg := message.NewQueryProposalMessage(tAnotherPeerID, 1, 0)
 	d, _ := msg.Encode()
 	assert.NotNil(t, tFirewall.ParsMessage(d, tAnotherPeerID))
 	p := tFirewall.peerSet.GetPeer(tAnotherPeerID)

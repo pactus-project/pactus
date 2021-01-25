@@ -3,17 +3,22 @@ package payload
 import (
 	"fmt"
 
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type QueryTransactionsPayload struct {
-	IDs []crypto.Hash `cbor:"1,keyasint"`
+	Querier peer.ID       `cbor:"1,keyasint"`
+	IDs     []crypto.Hash `cbor:"2,keyasint"`
 }
 
 func (p *QueryTransactionsPayload) SanityCheck() error {
 	if len(p.IDs) == 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Empty list")
+	}
+	if err := p.Querier.Validate(); err != nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid querier peer id: %v", err)
 	}
 	return nil
 }

@@ -46,8 +46,8 @@ const (
 	PayloadTypeQueryProposal        = PayloadType(7)
 	PayloadTypeProposal             = PayloadType(8)
 	PayloadTypeHeartBeat            = PayloadType(9)
-	PayloadTypeVote                 = PayloadType(10)
-	PayloadTypeVoteSet              = PayloadType(11)
+	PayloadTypeQueryVotes           = PayloadType(10)
+	PayloadTypeVote                 = PayloadType(11)
 	PayloadTypeBlockAnnounce        = PayloadType(12)
 	PayloadTypeDownloadRequest      = PayloadType(13)
 	PayloadTypeDownloadResponse     = PayloadType(14)
@@ -73,10 +73,10 @@ func (t PayloadType) String() string {
 		return "proposal"
 	case PayloadTypeHeartBeat:
 		return "heart-beat"
+	case PayloadTypeQueryVotes:
+		return "query-votes"
 	case PayloadTypeVote:
 		return "vote"
-	case PayloadTypeVoteSet:
-		return "vote-set"
 	case PayloadTypeBlockAnnounce:
 		return "block-announce"
 	case PayloadTypeDownloadRequest:

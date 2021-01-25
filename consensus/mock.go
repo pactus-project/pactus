@@ -2,7 +2,6 @@ package consensus
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -37,17 +36,13 @@ func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
 	}
 	return votes
 }
-func (m *MockConsensus) RoundVotesHash(round int) []crypto.Hash {
-	hashes := make([]crypto.Hash, len(m.Votes))
-	for i, v := range m.RoundVotes(round) {
-		hashes[i] = v.Hash()
-	}
-	return hashes
-}
 func (m *MockConsensus) SetProposal(p *vote.Proposal) {
 	m.Proposal = p
 }
-func (m *MockConsensus) LastProposal() *vote.Proposal {
+func (m *MockConsensus) RoundProposal(round int) *vote.Proposal {
+	if m.Proposal == nil || m.Proposal.Round() != round {
+		return nil
+	}
 	return m.Proposal
 }
 func (m *MockConsensus) HRS() hrs.HRS {
@@ -56,7 +51,7 @@ func (m *MockConsensus) HRS() hrs.HRS {
 func (m *MockConsensus) Fingerprint() string {
 	return ""
 }
-func (m *MockConsensus) PickRandomVote() *vote.Vote {
+func (m *MockConsensus) PickRandomVote(round int) *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}

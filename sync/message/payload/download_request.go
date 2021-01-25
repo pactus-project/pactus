@@ -21,10 +21,10 @@ func (p *DownloadRequestPayload) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
 	if err := p.Initiator.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer is: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer id: %v", err)
 	}
 	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer is: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
 	}
 	if p.From > p.To {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid range")

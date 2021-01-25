@@ -19,7 +19,7 @@ func DefaultConfig() *Config {
 		SessionTimeout:       time.Second * 3,
 		InitialBlockDownload: true,
 		BlockPerMessage:      10,
-		CacheSize:            10000,
+		CacheSize:            100000,
 	}
 }
 

@@ -78,13 +78,11 @@ func TestSendingTransactions(t *testing.T) {
 			incSequence(t, bobSigner.Address())
 		}
 	})
-
-	waitForNewBlock(t)
-	waitForNewBlock(t)
-
+	
+	// Make sure all transaction confirmed
 	for {
 		bobAcc := getAccount(t, bobAddr)
-		if bobAcc != nil && bobAcc.Sequence() == 20 { // bob sent 200 txs
+		if bobAcc != nil && bobAcc.Sequence() == getSequence(t, bobSigner.Address()) {
 			break
 		}
 		waitForNewBlock(t)

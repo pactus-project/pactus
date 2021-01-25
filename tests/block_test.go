@@ -1,12 +1,10 @@
 package tests
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
@@ -30,7 +28,7 @@ func lastBlock(t *testing.T) *block.Block {
 }
 
 func getBlockAt(t *testing.T, height int) *block.Block {
-	for i := 0; i < 12; i++ {
+	for i := 0; i < 100; i++ {
 		res := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
 			p.SetHeight(uint64(height))
 			p.SetVerbosity(0)
@@ -48,6 +46,5 @@ func getBlockAt(t *testing.T, height int) *block.Block {
 		assert.NoError(t, b.Decode(d))
 		return b
 	}
-	require.NoError(t, fmt.Errorf(fmt.Sprintf("timeout: block %d", height)))
-	return nil
+	panic("get block timeout")
 }

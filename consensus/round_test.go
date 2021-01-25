@@ -3,28 +3,11 @@ package consensus
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
-
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func TestInvalidBlock(t *testing.T) {
-	setup(t)
-
-	a := tSigners[tIndexB].Address()
-	invBlock, _ := block.GenerateTestBlock(&a, nil)
-	p := vote.NewProposal(1, 2, *invBlock)
-	tSigners[tIndexB].SignMsg(p)
-
-	tConsY.enterNewHeight()
-	tConsY.enterNewRound(2)
-	tConsY.SetProposal(p)
-	assert.Nil(t, tConsY.LastProposal())
-
-}
 func TestNewRound(t *testing.T) {
 	setup(t)
 

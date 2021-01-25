@@ -53,9 +53,15 @@ func NewStateSync(
 	}
 }
 
-func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID, from int) {
+func (ss *StateSync) BroadcastBlockAnnounce(height int, block *block.Block, commit *block.Commit) {
+	msg := message.NewBlockAnnounceMessage(ss.selfID, height, block, commit)
+	ss.publishFn(msg)
+}
+
+func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID) {
 	s := ss.openNewSession(target)
-	msg := message.NewLatestBlocksRequestMessage(ss.selfID, target, s.SessionID, from)
+	ourHeight := ss.state.LastBlockHeight()
+	msg := message.NewLatestBlocksRequestMessage(ss.selfID, target, s.SessionID, ourHeight+1)
 	ss.publishFn(msg)
 }
 
@@ -205,6 +211,10 @@ func (ss *StateSync) ProcessBlockAnnouncePayload(pld *payload.BlockAnnouncePaylo
 	ss.cache.AddBlock(pld.Height, pld.Block)
 	ss.tryCommitBlocks()
 	ss.syncedFN()
+
+	p := ss.peerSet.MustGetPeer(pld.PeerID)
+	p.UpdateHeight(pld.Height)
+	ss.peerSet.UpdateMaxClaimedHeight(pld.Height)
 }
 
 func (ss *StateSync) ProcessLatestBlocksResponsePayload(pld *payload.LatestBlocksResponsePayload) {
@@ -334,7 +344,7 @@ func (ss *StateSync) tryCommitBlocks() {
 		}
 		ss.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
 		if err := ss.state.ApplyBlock(ourHeight+1, *b, *c); err != nil {
-			ss.logger.Error("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
+			ss.logger.Warn("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...
 			break
 		}
@@ -360,9 +370,8 @@ func (ss *StateSync) RequestForMoreBlock() {
 }
 
 func (ss *StateSync) RequestForLatestBlock() {
-	ourHeight := ss.state.LastBlockHeight()
 	p := ss.peerSet.FindHighestPeer()
 	if p != nil {
-		ss.BroadcastLatestBlocksRequest(p.PeerID(), ourHeight+1)
+		ss.BroadcastLatestBlocksRequest(p.PeerID())
 	}
 }

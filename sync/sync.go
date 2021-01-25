@@ -6,6 +6,7 @@ import (
 	"time"
 
 	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -85,7 +86,7 @@ func NewSynchronizer(
 	syncer.firewall = firewall
 	syncer.networkAPI = api
 
-	syncer.consensusSync = NewConsensusSync(conf, consensus, logger, syncer.publishMessage)
+	syncer.consensusSync = NewConsensusSync(conf, net.ID(), consensus, logger, syncer.publishMessage)
 	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, txPool, peerSet, logger, syncer.publishMessage, syncer.synced)
 
 	if conf.InitialBlockDownload {
@@ -133,10 +134,10 @@ func (syncer *Synchronizer) joinDownloadTopic() error {
 }
 
 func (syncer *Synchronizer) maybeSynced() {
-	lastHeight := syncer.state.LastBlockHeight()
+	ourHeight := syncer.state.LastBlockHeight()
 	networkHeight := syncer.peerSet.MaxClaimedHeight()
 
-	if lastHeight >= networkHeight-1 {
+	if ourHeight >= networkHeight-1 {
 		syncer.synced()
 	}
 }
@@ -166,27 +167,25 @@ func (syncer *Synchronizer) broadcastLoop() {
 		case msg := <-syncer.broadcastCh:
 
 			switch msg.PayloadType() {
-			// Check if we have transaction in the cache
 			case payload.PayloadTypeQueryTransactions:
 				pld := msg.Payload.(*payload.QueryTransactionsPayload)
-				for i, id := range pld.IDs {
-					trx := syncer.cache.GetTransaction(id)
-					if trx != nil {
-						if err := syncer.txPool.AppendTx(trx); err != nil {
-							syncer.logger.Warn("Query for invalid transaction", "tx", trx)
-						}
+				syncer.queryTransactions(pld.IDs)
 
-						pld.IDs = append(pld.IDs[:i], pld.IDs[i+1:]...)
+			case payload.PayloadTypeQueryProposal:
+				pld := msg.Payload.(*payload.QueryProposalPayload)
+				syncer.queryProposal(pld.Height, pld.Round)
 
-					}
-				}
+			case payload.PayloadTypeBlockAnnounce:
+				pld := msg.Payload.(*payload.BlockAnnouncePayload)
+				syncer.announceBlock(pld.Height, pld.Block, pld.Commit)
 
-				if len(pld.IDs) > 0 {
-					syncer.publishMessage(msg)
-				}
+			case payload.PayloadTypeVote,
+				payload.PayloadTypeProposal,
+				payload.PayloadTypeTransactions:
+				syncer.publishMessage(msg)
 
 			default:
-				syncer.publishMessage(msg)
+				panic("Unexpected message to broadcast")
 
 			}
 		}
@@ -208,20 +207,20 @@ func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 
 	ourHeight := syncer.state.LastBlockHeight()
 	claimedHeight := syncer.peerSet.MaxClaimedHeight()
-	if claimedHeight > ourHeight {
+	if claimedHeight > ourHeight+1 {
 		if claimedHeight > ourHeight+LatestBlockInterval {
-			syncer.logger.Info("We are far behind the network, Join download topic", "our_height", ourHeight)
+			syncer.logger.Info("We are far behind the network, Join download topic")
 			// TODO:
 			// If peer doesn't respond, we should leave the topic
 			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
 			// We should find a way to avoid it.
-			if err := syncer.networkAPI.JoinDownloadTopic(); err != nil {
+			if err := syncer.joinDownloadTopic(); err != nil {
 				syncer.logger.Info("We can't join download topic", "err", err)
 			} else {
 				syncer.stateSync.RequestForMoreBlock()
 			}
 		} else {
-			syncer.logger.Info("We are behind the network, Ask for more blocks", "our_height", ourHeight)
+			syncer.logger.Info("We are behind the network, Ask for more blocks")
 			syncer.stateSync.RequestForLatestBlock()
 		}
 	}
@@ -252,8 +251,12 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 		syncer.stateSync.ProcessLatestBlocksResponsePayload(pld)
 
 	case payload.PayloadTypeQueryTransactions:
-		pld := msg.Payload.(*payload.QueryTransactionsPayload)
-		syncer.stateSync.ProcessQueryTransactionsPayload(pld)
+		if syncer.isThisActiveValidator() {
+			pld := msg.Payload.(*payload.QueryTransactionsPayload)
+			if syncer.isPeerActiveValidator(pld.Querier) {
+				syncer.stateSync.ProcessQueryTransactionsPayload(pld)
+			}
+		}
 
 	case payload.PayloadTypeTransactions:
 		pld := msg.Payload.(*payload.TransactionsPayload)
@@ -264,20 +267,27 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 		syncer.stateSync.ProcessBlockAnnouncePayload(pld)
 
 	case payload.PayloadTypeQueryProposal:
-		pld := msg.Payload.(*payload.QueryProposalPayload)
-		syncer.consensusSync.ProcessQueryProposalPayload(pld)
+		if syncer.isThisActiveValidator() {
+			pld := msg.Payload.(*payload.QueryProposalPayload)
+			if syncer.isPeerActiveValidator(pld.Querier) {
+				syncer.consensusSync.ProcessQueryProposalPayload(pld)
+			}
+		}
 
 	case payload.PayloadTypeProposal:
 		pld := msg.Payload.(*payload.ProposalPayload)
 		syncer.consensusSync.ProcessProposalPayload(pld)
+		syncer.cache.AddProposal(pld.Proposal)
 
 	case payload.PayloadTypeVote:
 		pld := msg.Payload.(*payload.VotePayload)
 		syncer.consensusSync.ProcessVotePayload(pld)
 
-	case payload.PayloadTypeVoteSet:
-		pld := msg.Payload.(*payload.VoteSetPayload)
-		syncer.consensusSync.ProcessVoteSetPayload(pld)
+	case payload.PayloadTypeQueryVotes:
+		pld := msg.Payload.(*payload.QueryVotesPayload)
+		if syncer.isPeerActiveValidator(pld.Querier) {
+			syncer.consensusSync.ProcessQueryVotesPayload(pld)
+		}
 
 	case payload.PayloadTypeDownloadRequest:
 		pld := msg.Payload.(*payload.DownloadRequestPayload)
@@ -292,6 +302,7 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 	}
 
 	syncer.sendBlocksRequestIfWeAreBehind()
+	syncer.maybeSynced()
 }
 
 func (syncer *Synchronizer) broadcastHeartBeat() {
@@ -303,12 +314,11 @@ func (syncer *Synchronizer) broadcastHeartBeat() {
 	}
 
 	// Check if we are an active validator
-	valSet := syncer.state.ValidatorSet()
-	if !valSet.Contains(syncer.signer.Address()) {
+	if !syncer.isThisActiveValidator() {
 		return
 	}
 
-	v := syncer.consensus.PickRandomVote()
+	v := syncer.consensus.PickRandomVote(hrs.Round())
 	if v != nil {
 		syncer.consensusSync.BroadcastVote(v)
 	}
@@ -334,17 +344,11 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 
 	if pld.Pulse.Height() == hrs.Height() {
 		if pld.Pulse.GreaterThan(hrs) {
-			// Check if we are an active validator
-			valSet := syncer.state.ValidatorSet()
-			if valSet.Contains(syncer.signer.Address()) {
+			if syncer.isThisActiveValidator() {
 				syncer.logger.Info("Our consensus is behind of this peer.", "ours", hrs, "peer", pld.Pulse, "address", syncer.signer.Address().Fingerprint())
-				// Let's ask for more votes
 
-				p := syncer.consensus.LastProposal()
-				if p == nil || p.Round() != pld.Pulse.Round() {
-					syncer.consensusSync.BroadcastQueryProposal()
-				}
-				syncer.consensusSync.BroadcastVoteSet()
+				syncer.queryProposal(hrs.Height(), hrs.Round())
+				syncer.queryVotes(hrs.Height(), hrs.Round())
 			}
 		} else if pld.Pulse.LessThan(hrs) {
 			syncer.logger.Trace("Our consensus is ahead of this peer.")
@@ -431,4 +435,82 @@ func (syncer *Synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
 
 		syncer.peerSet.UpdateMaxClaimedHeight(pld.Height)
 	}
+}
+
+// isPeerActiveValidator checks if the peer is an active validator
+func (syncer *Synchronizer) isPeerActiveValidator(id peer.ID) bool {
+	p := syncer.peerSet.GetPeer(id)
+	if p == nil {
+		return false
+	}
+
+	addr := p.PublicKey().Address()
+	valSet := syncer.state.ValidatorSet()
+	return valSet.Contains(addr)
+}
+
+// isThisActiveValidator checks if we are an active validator
+func (syncer *Synchronizer) isThisActiveValidator() bool {
+	valSet := syncer.state.ValidatorSet()
+	return valSet.Contains(syncer.signer.Address())
+}
+
+// queryTransactions queries for a missed transactions if we don't have it in the cache
+// Only active validators can send this messsage
+func (syncer *Synchronizer) queryTransactions(ids []crypto.Hash) {
+
+	for i, id := range ids {
+		trx := syncer.cache.GetTransaction(id)
+		if trx != nil {
+			if err := syncer.txPool.AppendTx(trx); err != nil {
+				syncer.logger.Warn("Query for an invalid transaction", "tx", trx)
+			}
+
+			ids = append(ids[:i], ids[i+1:]...)
+
+		}
+	}
+
+	if len(ids) > 0 {
+		if syncer.isThisActiveValidator() {
+			syncer.consensusSync.BroadcastQueryTransaction(ids)
+		}
+	}
+}
+
+// queryProposal queries for proposal if we don't have it in the cache
+// Only active validators can send this messsage
+func (syncer *Synchronizer) queryProposal(height, round int) {
+	if !syncer.isThisActiveValidator() {
+		return
+	}
+
+	p := syncer.consensus.RoundProposal(round)
+	if p == nil {
+		p = syncer.cache.GetProposal(height, round)
+		if p != nil {
+			// We have the proposal inside the cache
+			syncer.consensus.SetProposal(p)
+		} else {
+			syncer.consensusSync.BroadcastQueryProposal(height, round)
+		}
+	}
+}
+
+// queryVotes asks other peers to send us some votes randomly
+// Only active validators can send this messsage
+func (syncer *Synchronizer) queryVotes(height, round int) {
+	if !syncer.isThisActiveValidator() {
+		return
+	}
+
+	syncer.consensusSync.BroadcastQueryVotes(height, round)
+}
+
+func (syncer *Synchronizer) announceBlock(height int, block *block.Block, commit *block.Commit) {
+	if !syncer.isThisActiveValidator() {
+		return
+	}
+
+	syncer.stateSync.BroadcastBlockAnnounce(height, block, commit)
 }

@@ -17,7 +17,7 @@ type HeartBeatPayload struct {
 
 func (p *HeartBeatPayload) SanityCheck() error {
 	if err := p.PeerID.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid peer is: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid peer id: %v", err)
 	}
 	if !p.Pulse.IsValid() {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid step")
