@@ -347,6 +347,11 @@ func (st *state) ValidateBlock(block block.Block) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
+	t := block.Header().Time()
+	if err := st.validateBlockTime(t); err != nil {
+		return err
+	}
+
 	if err := st.validateBlock(block); err != nil {
 		return err
 	}
@@ -518,4 +523,14 @@ func (st *state) commitSandbox(round int) {
 	})
 
 	st.sortition.AddToTotalStake(st.executionSandbox.RiseTotalStake())
+}
+
+func (st *state) validateBlockTime(t time.Time) error {
+	if t.Second()%st.params.BlockTimeInSecond != 0 {
+		return errors.Errorf(errors.ErrInvalidBlock, "Block time is not rounded")
+	}
+	if t.After(util.Now().Add(15 * time.Second)) {
+		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too far")
+	}
+	return nil
 }

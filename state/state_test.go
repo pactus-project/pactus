@@ -1,6 +1,7 @@
 package state
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -376,5 +377,14 @@ func TestSortition(t *testing.T) {
 	st1.store.UpdateValidator(val)
 
 	assert.False(t, st1.EvaluateSortition()) //  too soon
+}
 
+func TestInvalidBlockTime(t *testing.T) {
+	setup(t)
+
+	fmt.Printf("BlockTimeInSecond: %d\n", tState1.params.BlockTimeInSecond)
+
+	// tState1.validateBlock(util.Now().Second(5 * time.Second))
+	// tState1.validateBlock(util.Now().Second(5 * time.Second))
+	// tState1.validateBlock(util.Now().Second(5 * time.Second))
 }

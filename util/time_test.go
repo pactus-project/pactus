@@ -23,8 +23,8 @@ func TestNow(t *testing.T) {
 
 func TestTimeCanonical(t *testing.T) {
 	t1, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:04.999999999Z")
-	t2, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:05.111111111Z")
-	t3, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:01.999999999Z")
+	t2, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:01.999999999Z")
+	t3, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:05.111111111Z")
 	t4, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:09.999999999Z")
 	c1 := RoundTime(t1, 10)
 	c2 := RoundTime(t2, 10)
@@ -41,8 +41,8 @@ func TestTimeCanonical(t *testing.T) {
 	assert.Equal(t, c4.Nanosecond(), 0)
 
 	assert.Equal(t, c1.Second(), 0)
-	assert.Equal(t, c2.Second(), 10)
-	assert.Equal(t, c3.Second(), 0)
+	assert.Equal(t, c2.Second(), 0)
+	assert.Equal(t, c3.Second(), 10)
 	assert.Equal(t, c4.Second(), 10)
 
 }
