@@ -11,7 +11,6 @@ type Config struct {
 	TimeoutPrepare   time.Duration
 	TimeoutPrecommit time.Duration
 	DeltaDuration    time.Duration
-	FuzzTesting      bool
 }
 
 func DefaultConfig() *Config {
@@ -20,7 +19,6 @@ func DefaultConfig() *Config {
 		TimeoutPrepare:   2 * time.Second,
 		TimeoutPrecommit: 2 * time.Second,
 		DeltaDuration:    1 * time.Second,
-		FuzzTesting:      false,
 	}
 }
 
@@ -30,7 +28,6 @@ func TestConfig() *Config {
 		TimeoutPrepare:   200 * time.Millisecond,
 		TimeoutPrecommit: 200 * time.Millisecond,
 		DeltaDuration:    100 * time.Millisecond,
-		FuzzTesting:      false,
 	}
 }
 

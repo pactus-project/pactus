@@ -26,9 +26,7 @@ func TestTransactionLost(t *testing.T) {
 
 func TestCommitValidation(t *testing.T) {
 	setup(t)
-
-	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner4)
-	applyBlockAndCommitForAllStates(t, b1, c1)
+	moveToNextHeightForAllStates(t)
 
 	val5, siners5 := validator.GenerateTestValidator(4)
 	tState1.store.UpdateValidator(val5)
@@ -243,9 +241,8 @@ func TestUpdateBlockTime(t *testing.T) {
 
 func TestBlockValidation(t *testing.T) {
 	setup(t)
+	moveToNextHeightForAllStates(t)
 
-	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	applyBlockAndCommitForAllStates(t, b1, c1)
 	assert.False(t, tState1.lastBlockHash.EqualsTo(crypto.UndefHash))
 
 	//

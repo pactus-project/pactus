@@ -90,7 +90,7 @@ func TestGotoNextRoundWithoutProposal(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexY, false)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexB, false)
 
-	checkHRSWait(t, tConsP, 3, 1, hrs.StepTypePrepare)
+	checkHRS(t, tConsP, 3, 1, hrs.StepTypePrepare)
 }
 
 func TestSecondProposalCommitted(t *testing.T) {
@@ -158,7 +158,7 @@ func TestNetworkLagging1(t *testing.T) {
 
 	// Proposal received now, set it
 	tConsP.SetProposal(p)
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrecommit)
+	checkHRS(t, tConsP, h, r, hrs.StepTypePrecommit)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 }
 
@@ -187,7 +187,7 @@ func TestNetworkLagging2(t *testing.T) {
 	tConsP.SetProposal(p1)
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrepare)
+	checkHRS(t, tConsP, h, r, hrs.StepTypePrepare)
 
 	// We can't go to precommit stage, because we haven't prepared yet
 	// But if we receive another vote we go to commit phase directly
@@ -273,7 +273,7 @@ func TestLateProposal2(t *testing.T) {
 	// Now partition healed, but it's too late, We already moved to the next round
 	tConsX.SetProposal(p)
 
-	checkHRSWait(t, tConsX, 4, 1, hrs.StepTypePrepare)
+	checkHRS(t, tConsX, 4, 1, hrs.StepTypePrepare)
 }
 
 func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
@@ -314,7 +314,7 @@ func TestEnterPrepareAfterPrecommit(t *testing.T) {
 
 	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
 	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
-	checkHRSWait(t, tConsX, h, r, hrs.StepTypePrecommit)
+	checkHRS(t, tConsX, h, r, hrs.StepTypePrecommit)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
 

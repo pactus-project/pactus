@@ -63,7 +63,6 @@ func setup(t *testing.T) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(2100000000000000)
 	params := param.MainnetParams()
-	params.BlockTimeInSecond = 1
 	params.MaximumPower = 4
 
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
@@ -316,8 +315,8 @@ func TestRoundVotes(t *testing.T) {
 func TestConsensusAddVotesNormal(t *testing.T) {
 	setup(t)
 
-	tConsX.MoveToNewHeight()
-	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
+	tConsX.enterNewHeight()
+	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	p := tConsX.RoundProposal(0)
 	require.NotNil(t, p)
@@ -361,7 +360,6 @@ func TestConsensusUpdateVote(t *testing.T) {
 func TestConsensusNoPrepares(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
 	tConsB.enterNewHeight()
 
 	h := 1
@@ -372,8 +370,6 @@ func TestConsensusNoPrepares(t *testing.T) {
 	tConsB.SetProposal(p)
 
 	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
-	checkHRSWait(t, tConsB, h, r, hrs.StepTypePrepare)
-
 	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
 	checkHRS(t, tConsB, h, r, hrs.StepTypePrepare)
 

@@ -43,8 +43,7 @@ func TestLoadState(t *testing.T) {
 
 	i := 0
 	for ; i < 8; i++ {
-		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
-		applyBlockAndCommitForAllStates(t, b, c)
+		moveToNextHeightForAllStates(t)
 	}
 
 	newBlock, newCommit := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
@@ -74,8 +73,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	// Let's commit some blocks
 	i := 0
 	for ; i < 10; i++ {
-		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
-		applyBlockAndCommitForAllStates(t, b, c)
+		moveToNextHeightForAllStates(t)
 	}
 
 	assert.NoError(t, tState1.Close())
