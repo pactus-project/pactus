@@ -397,21 +397,6 @@ func TestConsensusInvalidVote(t *testing.T) {
 	assert.Error(t, tConsX.addVote(v))
 }
 
-func TestSetInvalidProposal(t *testing.T) {
-	setup(t)
-
-	tConsY.enterNewHeight()
-	assert.Nil(t, tConsY.RoundProposal(0))
-
-	addr := tSigners[tIndexB].Address()
-	b, _ := block.GenerateTestBlock(&addr, nil)
-	p := vote.NewProposal(1, 0, *b)
-
-	tSigners[tIndexB].SignMsg(p) // Invalid signature
-	tConsY.SetProposal(p)
-	assert.Nil(t, tConsY.RoundProposal(0))
-}
-
 func TestPickRandomVote(t *testing.T) {
 	setup(t)
 

@@ -228,6 +228,14 @@ func TestSendSalamPeerBehind(t *testing.T) {
 	assert.Equal(t, p.InitialBlockDownload(), true)
 }
 
+func TestStop(t *testing.T) {
+	setup(t)
+	// Should stop normally
+	tAliceSync.Stop()
+	tBobSync.Stop()
+}
+
+
 func TestSendSalamPeerAhead(t *testing.T) {
 	setup(t)
 

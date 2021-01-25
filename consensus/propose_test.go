@@ -4,10 +4,68 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
 )
+
+func TestSetProposalInvalidProposer(t *testing.T) {
+	setup(t)
+
+	tConsY.enterNewHeight()
+	assert.Nil(t, tConsY.RoundProposal(0))
+
+	addr := tSigners[tIndexB].Address()
+	b, _ := block.GenerateTestBlock(&addr, nil)
+	p := vote.NewProposal(1, 0, *b)
+
+	tConsY.SetProposal(p)
+	assert.Nil(t, tConsY.RoundProposal(0))
+
+	tSigners[tIndexB].SignMsg(p) // Invalid signature
+	tConsY.SetProposal(p)
+	assert.Nil(t, tConsY.RoundProposal(0))
+}
+
+func TestSetProposalInvalidBlock(t *testing.T) {
+	setup(t)
+
+	a := tSigners[tIndexB].Address()
+	invBlock, _ := block.GenerateTestBlock(&a, nil)
+	p := vote.NewProposal(1, 2, *invBlock)
+	tSigners[tIndexB].SignMsg(p)
+
+	tConsY.enterNewHeight()
+	tConsY.enterNewRound(2)
+	tConsY.SetProposal(p)
+	assert.Nil(t, tConsY.RoundProposal(2))
+}
+
+func TestSetProposalInvalidHeight(t *testing.T) {
+	setup(t)
+
+	a := tSigners[tIndexB].Address()
+	invBlock, _ := block.GenerateTestBlock(&a, nil)
+	p := vote.NewProposal(2, 0, *invBlock)
+	tSigners[tIndexB].SignMsg(p)
+
+	tConsY.enterNewHeight()
+	tConsY.SetProposal(p)
+	assert.Nil(t, tConsY.RoundProposal(2))
+}
+
+func TestProposeTimeout(t *testing.T) {
+	setup(t)
+
+	tConsY.enterNewHeight()
+	checkHRSWait(t, tConsY, 1, 0, hrs.StepTypePrepare)
+
+	// Invalid args for propose phase
+	tConsY.enterPropose(1)
+	tConsY.enterPropose(0)
+	checkHRS(t, tConsY, 1, 0, hrs.StepTypePrepare)
+}
 
 func TestConsensusSetProposalAfterCommit(t *testing.T) {
 	setup(t)

@@ -214,7 +214,7 @@ func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 			// If peer doesn't respond, we should leave the topic
 			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
 			// We should find a way to avoid it.
-			if err := syncer.networkAPI.JoinDownloadTopic(); err != nil {
+			if err := syncer.joinDownloadTopic(); err != nil {
 				syncer.logger.Info("We can't join download topic", "err", err)
 			} else {
 				syncer.stateSync.RequestForMoreBlock()
