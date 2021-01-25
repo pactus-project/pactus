@@ -18,7 +18,7 @@ func TestPrecommitNoProposal(t *testing.T) {
 	p := makeProposal(t, h, r)
 
 	tConsP.enterNewHeight()
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypePropose) // We can't prepared, because we don't have proposal
+	checkHRS(t, tConsP, h, r, hrs.StepTypePropose) // We can't prepared, because we don't have proposal
 	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
@@ -27,7 +27,7 @@ func TestPrecommitNoProposal(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
 
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrepare)
+	checkHRS(t, tConsP, h, r, hrs.StepTypePrepare)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 
 	// Set proposal now
@@ -46,7 +46,7 @@ func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
 	p := makeProposal(t, h, r)
 
 	tConsP.enterNewHeight()
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypePropose)
+	checkHRS(t, tConsP, h, r, hrs.StepTypePropose)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
@@ -55,7 +55,7 @@ func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB, false)
 
-	checkHRSWait(t, tConsP, h, r, hrs.StepTypeCommit)
+	checkHRS(t, tConsP, h, r, hrs.StepTypeCommit)
 
 	// Set proposal now
 	tConsP.SetProposal(p)

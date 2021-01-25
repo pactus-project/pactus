@@ -279,15 +279,6 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		return nil, errors.Errorf(errors.ErrInvalidAddress, "We are not propser for this round")
 	}
 
-	timestamp := st.lastBlockTime.Add(st.params.BlockTime())
-	timestamp = util.RoundTime(timestamp, st.params.BlockTimeInSecond)
-
-	now := util.Now()
-	if now.After(timestamp.Add(1 * time.Second)) {
-		st.logger.Info("It looks the last commit had delay", "delay", now.Sub(timestamp))
-		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
-	}
-
 	// Reset Sandbox and clear the accululated fee
 	st.executionSandbox.Clear()
 	st.execution.ResetFee()
@@ -330,6 +321,8 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	stateHash := st.stateHash()
 	committersHash := st.validatorSet.CommittersHash()
+	timestamp := st.proposeNextBlockTime()
+
 	block := block.MakeBlock(
 		timestamp,
 		txIDs,
@@ -529,8 +522,28 @@ func (st *state) validateBlockTime(t time.Time) error {
 	if t.Second()%st.params.BlockTimeInSecond != 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "Block time is not rounded")
 	}
-	if t.After(util.Now().Add(15 * time.Second)) {
+	if t.Before(st.lastBlockTime.Add(1 * time.Second)) {
+		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too early")
+	}
+	proposeTime := st.proposeNextBlockTime()
+	threshold := 2 * st.params.BlockTime()
+	if t.After(proposeTime.Add(threshold)) {
+		fmt.Println(t)
+		fmt.Println(util.RoundNow(st.params.BlockTimeInSecond).Add(threshold))
 		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too far")
 	}
+
 	return nil
+}
+
+func (st *state) proposeNextBlockTime() time.Time {
+	timestamp := st.lastBlockTime.Add(st.params.BlockTime())
+	timestamp = util.RoundTime(timestamp, st.params.BlockTimeInSecond)
+
+	now := util.Now()
+	if now.After(timestamp.Add(1 * time.Second)) {
+		st.logger.Debug("It looks the last commit had delay", "delay", now.Sub(timestamp))
+		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
+	}
+	return timestamp
 }

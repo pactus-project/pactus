@@ -132,11 +132,14 @@ func applyBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit
 	assert.NoError(t, tState3.ApplyBlock(tState3.lastBlockHeight+1, b, c))
 	assert.NoError(t, tState4.ApplyBlock(tState4.lastBlockHeight+1, b, c))
 }
+
+func moveToNextHeightForAllStates(t *testing.T) {
+	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	applyBlockAndCommitForAllStates(t, b, c)
+}
 func TestProposeBlockAndValidation(t *testing.T) {
 	setup(t)
-
-	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	applyBlockAndCommitForAllStates(t, b1, c1)
+	moveToNextHeightForAllStates(t)
 
 	b, err := tState1.ProposeBlock(0)
 	assert.Error(t, err)
@@ -306,9 +309,7 @@ func TestInvalidProposerProposeBlock(t *testing.T) {
 
 func TestBlockProposal(t *testing.T) {
 	setup(t)
-
-	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner3, tValSigner4)
-	applyBlockAndCommitForAllStates(t, b1, c1)
+	moveToNextHeightForAllStates(t)
 
 	t.Run("validity of proposed block", func(t *testing.T) {
 		b, err := tState2.ProposeBlock(0)
@@ -379,12 +380,50 @@ func TestSortition(t *testing.T) {
 	assert.False(t, st1.EvaluateSortition()) //  too soon
 }
 
-func TestInvalidBlockTime(t *testing.T) {
+func TestValidateBlockTime(t *testing.T) {
 	setup(t)
 
 	fmt.Printf("BlockTimeInSecond: %d\n", tState1.params.BlockTimeInSecond)
+	tState1.lastBlockTime = util.Now().Add(-1 * time.Minute)
+	roundedNow := util.RoundNow(10)
 
-	// tState1.validateBlock(util.Now().Second(5 * time.Second))
-	// tState1.validateBlock(util.Now().Second(5 * time.Second))
-	// tState1.validateBlock(util.Now().Second(5 * time.Second))
+	// Time not rounded
+	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-15*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-5*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(5*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(15*time.Second)))
+
+	// Too early
+	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime.Add(-20*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime.Add(-10*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime))
+
+	// Ok
+	assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(10*time.Second)))
+	assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(20*time.Second)))
+
+	// Too late
+	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(30*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(40*time.Second)))
+}
+
+func TestInvalidBlockTime(t *testing.T) {
+	setup(t)
+	moveToNextHeightForAllStates(t)
+
+	validBlock, _ := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+
+	invalidBlock := block.MakeBlock(
+		validBlock.Header().Time().Add(30*time.Second),
+		validBlock.TxIDs(),
+		validBlock.Header().LastBlockHash(),
+		validBlock.Header().CommittersHash(),
+		validBlock.Header().StateHash(),
+		validBlock.Header().LastReceiptsHash(),
+		validBlock.LastCommit(),
+		validBlock.Header().ProposerAddress())
+
+	assert.NoError(t, tState1.ValidateBlock(validBlock))
+	assert.Error(t, tState1.ValidateBlock(invalidBlock))
+
 }

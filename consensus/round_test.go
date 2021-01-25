@@ -11,8 +11,8 @@ import (
 func TestNewRound(t *testing.T) {
 	setup(t)
 
-	tConsP.MoveToNewHeight()
-	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePropose)
+	tConsP.enterNewHeight()
+	checkHRS(t, tConsP, 1, 0, hrs.StepTypePropose)
 
 	//
 	// 1- Move to round 0
@@ -27,7 +27,7 @@ func TestNewRound(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 2, crypto.UndefHash, tIndexY, false)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 2, crypto.UndefHash, tIndexB, false)
 
-	checkHRSWait(t, tConsP, 1, 3, hrs.StepTypePrepare)
+	checkHRS(t, tConsP, 1, 3, hrs.StepTypePrepare)
 
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexX, false)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexY, false)
