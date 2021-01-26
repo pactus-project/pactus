@@ -17,7 +17,7 @@ type ValidatorSetReader interface {
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *Validator
 	IsProposer(addr crypto.Address, round int) bool
-	CommittersHash() crypto.Hash
+	CommitteeHash() crypto.Hash
 }
 
 type ValidatorSet struct {
@@ -159,7 +159,7 @@ func (set *ValidatorSet) Proposer(round int) *Validator {
 	return set.validators[idx]
 }
 
-func (set *ValidatorSet) CommittersHash() crypto.Hash {
+func (set *ValidatorSet) CommitteeHash() crypto.Hash {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 

@@ -21,9 +21,9 @@ func (st *state) validateBlock(block block.Block) error {
 			"last receipts hash is not same as we expected. Expected %v, got %v", st.lastReceiptsHash, block.Header().LastReceiptsHash())
 	}
 
-	if !block.Header().CommittersHash().EqualsTo(st.validatorSet.CommittersHash()) {
+	if !block.Header().CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Committers hash is not same as we expected. Expected %v, got %v", st.validatorSet.CommittersHash(), block.Header().CommittersHash())
+			"Committee hash is not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), block.Header().CommitteeHash())
 	}
 
 	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
@@ -86,9 +86,9 @@ func (st *state) validateCommitForPreviousHeight(commit *block.Commit) error {
 				"Last commit round is not same as we expected. Expected %v, got %v", st.lastCommit.Round(), commit.Round())
 		}
 
-		if !commit.CommittersHash().EqualsTo(st.lastCommit.CommittersHash()) {
+		if !commit.CommitteeHash().EqualsTo(st.lastCommit.CommitteeHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last committers are not same as we expected. Expected %v, got %v", st.lastCommit.CommittersHash(), commit.CommittersHash())
+				"Last committee hash are not same as we expected. Expected %v, got %v", st.lastCommit.CommitteeHash(), commit.CommitteeHash())
 		}
 	}
 
@@ -101,9 +101,9 @@ func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash c
 		return err
 	}
 
-	if !commit.CommittersHash().EqualsTo(st.validatorSet.CommittersHash()) {
+	if !commit.CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last committers are not same as we expected. Expected %v, got %v", st.validatorSet.CommittersHash(), commit.CommittersHash())
+			"Last committee hash are not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), commit.CommitteeHash())
 	}
 
 	if !commit.BlockHash().EqualsTo(blockHash) {

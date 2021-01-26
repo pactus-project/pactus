@@ -98,7 +98,7 @@ func (c *Commit) HasTwoThirdThreshold() bool {
 	return c.Threshold() > (2 * 100 / 3)
 }
 
-func (c *Commit) CommittersHash() crypto.Hash {
+func (c *Commit) CommitteeHash() crypto.Hash {
 	nums := []int{}
 	for _, c := range c.data.Committers {
 		nums = append(nums, c.Number)

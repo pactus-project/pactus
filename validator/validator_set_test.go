@@ -295,7 +295,7 @@ func TestIsProposer(t *testing.T) {
 	assert.Nil(t, vs.Validator(val5.Address()))
 }
 
-func TestCommittersHash(t *testing.T) {
+func TestCommitteeHash(t *testing.T) {
 	val1, _ := GenerateTestValidator(0)
 	val2, _ := GenerateTestValidator(1)
 	val3, _ := GenerateTestValidator(2)
@@ -305,7 +305,7 @@ func TestCommittersHash(t *testing.T) {
 	assert.NoError(t, err)
 
 	expected, _ := crypto.HashFromString("fd36b2597b028652ad4430b34a67094ba93ed84bd3abe5cd27f675bf431add48")
-	assert.Equal(t, vs.CommittersHash(), expected)
+	assert.Equal(t, vs.CommitteeHash(), expected)
 }
 
 func TestPower(t *testing.T) {
@@ -333,5 +333,5 @@ func TestSortJoined(t *testing.T) {
 	assert.NoError(t, vs1.UpdateTheSet(0, []*Validator{val5, val6, val7}))
 	assert.NoError(t, vs2.UpdateTheSet(0, []*Validator{val7, val5, val6}))
 
-	assert.Equal(t, vs1.CommittersHash(), vs2.CommittersHash())
+	assert.Equal(t, vs1.CommitteeHash(), vs2.CommitteeHash())
 }

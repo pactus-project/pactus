@@ -89,7 +89,7 @@ func (f factory) ToVerboseBlock(block *block.Block, res *BlockResult) error {
 	if err := ch.SetStateHash(block.Header().StateHash().RawBytes()); err != nil {
 		return err
 	}
-	if err := ch.SetCommittersHash(block.Header().CommittersHash().RawBytes()); err != nil {
+	if err := ch.SetCommitteeHash(block.Header().CommitteeHash().RawBytes()); err != nil {
 		return err
 	}
 	if err := ch.SetLastBlockHash(block.Header().LastBlockHash().RawBytes()); err != nil {

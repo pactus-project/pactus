@@ -23,8 +23,8 @@ func TestCommitMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
 	expected1, _ := crypto.HashFromString("fd36b2597b028652ad4430b34a67094ba93ed84bd3abe5cd27f675bf431add48")
-	assert.Equal(t, c.CommittersHash(), expected1)
-	assert.Equal(t, c.CommittersHash(), crypto.HashH([]byte{0x84, 0x00, 0x01, 0x02, 03}))
+	assert.Equal(t, c.CommitteeHash(), expected1)
+	assert.Equal(t, c.CommitteeHash(), crypto.HashH([]byte{0x84, 0x00, 0x01, 0x02, 03}))
 	expected2, _ := crypto.HashFromString("9e954e738f696a49ae6aac4fb837ec1fff2757b36d4ec0647aacb90cca180bd1")
 	assert.Equal(t, c.Hash(), expected2)
 	expected3, _ := hex.DecodeString("a20158207e7f2aceae7e3bfa6a023cd3221a093d27fbd6e05a7686538b83d9d6308b1f250206")
@@ -71,14 +71,14 @@ func TestThreshold(t *testing.T) {
 
 func TestCommitersHash(t *testing.T) {
 	temp := GenerateTestCommit(crypto.GenerateTestHash())
-	expected2 := temp.CommittersHash()
+	expected2 := temp.CommitteeHash()
 	c1 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
 		{0, CommitSigned},
 		{1, CommitSigned},
 		{2, CommitSigned},
 		{3, CommitSigned},
 	}, temp.Signature())
-	assert.Equal(t, c1.CommittersHash(), expected2)
+	assert.Equal(t, c1.CommitteeHash(), expected2)
 
 	c2 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
 		{0, CommitSigned},
@@ -86,7 +86,7 @@ func TestCommitersHash(t *testing.T) {
 		{2, CommitNotSigned},
 		{3, CommitNotSigned},
 	}, temp.Signature())
-	assert.Equal(t, c2.CommittersHash(), expected2)
+	assert.Equal(t, c2.CommitteeHash(), expected2)
 
 	c3 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
 		{1, CommitSigned},
@@ -94,5 +94,5 @@ func TestCommitersHash(t *testing.T) {
 		{3, CommitSigned},
 		{0, CommitNotSigned},
 	}, temp.Signature())
-	assert.NotEqual(t, c3.CommittersHash(), expected2)
+	assert.NotEqual(t, c3.CommitteeHash(), expected2)
 }

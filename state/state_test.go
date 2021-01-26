@@ -417,7 +417,7 @@ func TestInvalidBlockTime(t *testing.T) {
 		validBlock.Header().Time().Add(30*time.Second),
 		validBlock.TxIDs(),
 		validBlock.Header().LastBlockHash(),
-		validBlock.Header().CommittersHash(),
+		validBlock.Header().CommitteeHash(),
 		validBlock.Header().StateHash(),
 		validBlock.Header().LastReceiptsHash(),
 		validBlock.LastCommit(),

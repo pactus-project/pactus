@@ -74,8 +74,7 @@ func (cs *consensus) Fingerprint() string {
 	}
 	status := fmt.Sprintf("%s%s%s%s", isProposed, isPrepared, isPreCommitted, isCommitted)
 
-	return fmt.Sprintf("{%s %v %s}",
-		cs.signer.Address().Fingerprint(), cs.hrs.String(), status)
+	return fmt.Sprintf("{%v %s}", cs.hrs.String(), status)
 }
 
 func (cs *consensus) HRS() hrs.HRS {
