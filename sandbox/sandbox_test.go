@@ -71,7 +71,7 @@ func setup(t *testing.T) {
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
 	assert.Equal(t, tSandbox.TransactionToLiveInterval(), params.TransactionToLiveInterval)
-	assert.Equal(t, tSandbox.MaximumPower(), params.MaximumPower)
+	assert.Equal(t, tSandbox.CommitteeSize(), params.CommitteeSize)
 }
 
 func TestLoadRecentBlocks(t *testing.T) {
@@ -220,7 +220,7 @@ func TestAddValidatorToSet(t *testing.T) {
 	})
 
 	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
-		tSandbox.params.MaximumPower = 4
+		tSandbox.params.CommitteeSize = 4
 
 		_, pub1, _ := crypto.GenerateTestKeyPair()
 		_, pub2, _ := crypto.GenerateTestKeyPair()

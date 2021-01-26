@@ -133,7 +133,7 @@ func (st *state) tryLoadLastInfo() error {
 		}
 		vals[i] = val
 	}
-	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.MaximumPower, b.Header().ProposerAddress())
+	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.CommitteeSize, b.Header().ProposerAddress())
 	if err != nil {
 		return err
 	}
@@ -165,7 +165,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		totalStake += val.Stake()
 	}
 
-	valSet, err := validator.NewValidatorSet(vals, st.params.MaximumPower, vals[0].Address())
+	valSet, err := validator.NewValidatorSet(vals, st.params.CommitteeSize, vals[0].Address())
 	if err != nil {
 		return err
 	}
@@ -456,7 +456,7 @@ func (st *state) EvaluateSortition() bool {
 		return false
 	}
 
-	if st.lastBlockHeight-val.BondingHeight() < 2*st.params.MaximumPower {
+	if st.lastBlockHeight-val.BondingHeight() < 2*st.params.CommitteeSize {
 		// Bonding period
 		return false
 	}

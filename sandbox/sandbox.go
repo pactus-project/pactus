@@ -232,7 +232,7 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 			joined++
 		}
 	}
-	if joined >= (sb.params.MaximumPower / 3) {
+	if joined >= (sb.params.CommitteeSize / 3) {
 		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
 	}
 	h, _ := sb.store.BlockHeight(blockHash)
@@ -350,11 +350,11 @@ func (sb *SandboxConcrete) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
-func (sb *SandboxConcrete) MaximumPower() int {
+func (sb *SandboxConcrete) CommitteeSize() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.params.MaximumPower
+	return sb.params.CommitteeSize
 }
 
 func (sb *SandboxConcrete) RiseTotalStake() int64 {

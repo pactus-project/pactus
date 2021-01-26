@@ -90,7 +90,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx) error {
 	if trx.IsMintbaseTx() {
 		interval = 1
 	} else if trx.IsSortitionTx() {
-		interval = exe.sandbox.MaximumPower()
+		interval = exe.sandbox.CommitteeSize()
 	}
 
 	if height == -1 || curHeight-height > interval {

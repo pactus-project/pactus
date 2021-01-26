@@ -63,7 +63,7 @@ func setup(t *testing.T) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(2100000000000000)
 	params := param.MainnetParams()
-	params.MaximumPower = 4
+	params.CommitteeSize = 4
 	params.BlockTimeInSecond = 2
 
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)

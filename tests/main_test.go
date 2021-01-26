@@ -44,15 +44,16 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	max := 6
-	power := 4
+	nodeCount := 7
+	committeeSize := 4
 	blockTime := 2
-	tSigners = make([]crypto.Signer, max)
-	tConfigs = make([]*config.Config, max)
-	tNodes = make([]*node.Node, max)
+
+	tSigners = make([]crypto.Signer, nodeCount)
+	tConfigs = make([]*config.Config, nodeCount)
+	tNodes = make([]*node.Node, nodeCount)
 	tSequences = make(map[crypto.Address]int)
 
-	for i := 0; i < max; i++ {
+	for i := 0; i < nodeCount; i++ {
 		addr, _, priv := crypto.GenerateTestKeyPair()
 		tSigners[i] = crypto.NewSigner(priv)
 		tConfigs[i] = config.DefaultConfig()
@@ -87,7 +88,7 @@ func TestMain(m *testing.M) {
 	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
 	params := param.MainnetParams()
 	params.BlockTimeInSecond = blockTime
-	params.MaximumPower = power
+	params.CommitteeSize = committeeSize
 	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 
@@ -113,7 +114,7 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 
 	totalStake := int64(0)
-	for i := 0; i < max; i++ {
+	for i := 0; i < nodeCount; i++ {
 		amt := util.RandInt64(1000000 - 1) // fee is always 1000
 		err := broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000)
 		if err != nil {
@@ -130,7 +131,7 @@ func TestMain(m *testing.M) {
 	// 	fmt.Fprintf(file, "total stake: %d\n\n", totalStake)
 
 	// 	for {
-	// 		for i := 0; i < max; i++ {
+	// 		for i := 0; i < nodeCount; i++ {
 	// 			tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round())
 
 	// 			fmt.Fprintf(file, "node %d: %s %s %s proposal: %v ",
@@ -162,7 +163,7 @@ func TestMain(m *testing.M) {
 	exitCode := m.Run()
 
 	tCtx.Done()
-	for i := 0; i < max; i++ {
+	for i := 0; i < nodeCount; i++ {
 		tNodes[i].Stop()
 	}
 
