@@ -66,7 +66,7 @@ func (m *MockState) UpdateLastCommit(commit *block.Commit) error {
 func (m *MockState) Fingerprint() string {
 	return ""
 }
-func (m *MockState) ApplyBlock(height int, b block.Block, c block.Commit) error {
+func (m *MockState) CommitBlock(height int, b block.Block, c block.Commit) error {
 	if height != m.LastBlockHeight()+1 {
 		return fmt.Errorf("Invalid height")
 	}

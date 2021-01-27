@@ -243,7 +243,7 @@ func (st *state) UpdateLastCommit(commit *block.Commit) error {
 	defer st.lk.Unlock()
 
 	// Check if commit has more signers ...
-	if commit.Threshold() > st.lastCommit.Threshold() {
+	if commit.Signers() > st.lastCommit.Signers() {
 		if err := st.validateCommitForPreviousHeight(commit); err != nil {
 			st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
 			return err
@@ -357,7 +357,7 @@ func (st *state) ValidateBlock(block block.Block) error {
 	return nil
 }
 
-func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) error {
+func (st *state) CommitBlock(height int, block block.Block, commit block.Commit) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 

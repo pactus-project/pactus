@@ -66,9 +66,6 @@ func (c *Commit) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidBlock, "Invalid number")
 		}
 	}
-	if !c.HasTwoThirdThreshold() {
-		return errors.Errorf(errors.ErrInvalidBlock, "Not enough signatures")
-	}
 
 	return nil
 }
@@ -82,20 +79,6 @@ func (c *Commit) Hash() crypto.Hash {
 		return crypto.UndefHash
 	}
 	return crypto.HashH(bs)
-}
-
-func (c *Commit) Threshold() int {
-	signed := 0
-	for _, c := range c.data.Committers {
-		if c.Status == CommitSigned {
-			signed++
-		}
-	}
-	return signed * 100 / len(c.data.Committers) // divide in golang is floor division
-}
-
-func (c *Commit) HasTwoThirdThreshold() bool {
-	return c.Threshold() > (2 * 100 / 3)
 }
 
 func (c *Commit) CommitteeHash() crypto.Hash {
@@ -139,4 +122,15 @@ func CommitSignBytes(blockHash crypto.Hash, round int) []byte {
 	})
 
 	return bz
+}
+
+func (c *Commit) Signers() int {
+	signers := 0
+	for _, c := range c.data.Committers {
+		if c.Status == CommitSigned {
+			signers++
+		}
+	}
+
+	return signers
 }

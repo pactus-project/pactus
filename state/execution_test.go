@@ -14,8 +14,8 @@ func TestProposeBlock(t *testing.T) {
 	setup(t)
 
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
-	assert.NoError(t, tState2.ApplyBlock(1, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
+	assert.NoError(t, tState2.CommitBlock(1, b1, c1))
 
 	subsidy := calcBlockSubsidy(tState1.LastBlockHeight(), tState1.params.SubsidyReductionInterval)
 	invSubsidyTx := tx.NewMintbaseTx(tState1.LastBlockHash(), 1, tValSigner2.Address(), subsidy, "")
@@ -40,7 +40,7 @@ func TestProposeBlock(t *testing.T) {
 	b2, c2 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
 	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
 	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
-	assert.NoError(t, tState1.ApplyBlock(2, b2, c2))
+	assert.NoError(t, tState1.CommitBlock(2, b2, c2))
 
 	assert.Equal(t, tState1.sortition.TotalStake(), int64(1000))
 }
@@ -49,7 +49,7 @@ func TestExecuteBlock(t *testing.T) {
 	setup(t)
 
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
 
 	invSubsidyTx := tState1.createSubsidyTx(1001)
 	validSubsidyTx := tState1.createSubsidyTx(1000)

@@ -64,7 +64,7 @@ func TestLoadState(t *testing.T) {
 	proposed, err := st2.ProposeBlock(0)
 	assert.NoError(t, err)
 	assert.Equal(t, newBlock.Hash(), proposed.Hash())
-	require.NoError(t, st2.ApplyBlock(i+1, newBlock, newCommit))
+	require.NoError(t, st2.CommitBlock(i+1, newBlock, newCommit))
 }
 
 func TestLoadStateAfterChangingGenesis(t *testing.T) {

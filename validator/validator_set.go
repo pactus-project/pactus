@@ -23,12 +23,12 @@ type ValidatorSetReader interface {
 type ValidatorSet struct {
 	lk deadlock.RWMutex
 
-	maximumPower  int
+	committeeSize int
 	validators    []*Validator
 	proposerIndex int
 }
 
-func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.Address) (*ValidatorSet, error) {
+func NewValidatorSet(validators []*Validator, committeeSize int, proposer crypto.Address) (*ValidatorSet, error) {
 
 	index := -1
 	for i, v := range validators {
@@ -44,14 +44,14 @@ func NewValidatorSet(validators []*Validator, maximumPower int, proposer crypto.
 	validators2 := make([]*Validator, len(validators))
 	copy(validators2, validators)
 	return &ValidatorSet{
-		maximumPower:  maximumPower,
+		committeeSize: committeeSize,
 		validators:    validators2,
 		proposerIndex: index,
 	}, nil
 }
 
-func (set *ValidatorSet) currentPower() int {
-	p := 0
+func (set *ValidatorSet) currentPower() int64 {
+	p := int64(0)
 	for _, v := range set.validators {
 		p += v.Power()
 	}
@@ -68,8 +68,8 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 		}
 	}
 
-	if len(joined) > (set.maximumPower / 3) {
-		return errors.Errorf(errors.ErrGeneric, "In each update only 1/3 of validator can be changed")
+	if len(joined) > (set.committeeSize / 3) {
+		return errors.Errorf(errors.ErrGeneric, "In each update only 1/3 of validator set can be changed")
 	}
 
 	sort.SliceStable(joined, func(i, j int) bool {
@@ -80,20 +80,12 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 	set.proposerIndex = (set.proposerIndex + lastRound + 1) % len(set.validators)
 
 	set.validators = append(set.validators, joined...)
-	if set.currentPower() > set.maximumPower {
+	if len(set.validators) > set.committeeSize {
 		//
-		//
-		shouldLeave := set.currentPower() - set.maximumPower
+		shouldLeave := len(set.validators) - set.committeeSize
 		set.validators = set.validators[shouldLeave:]
 	}
-	// Correct proposer index:
-	// Some nodes from the previous round left the set,
-	// This means we have pulled right the validator queue,
-	// Correcting proposer index by pulling it to the right.
-	// If it's less than zero consider an unlucky leader for
-	// this round has missed his chance for proposing a block.
-	// But it;s ok, because it is his second time proposing block.
-	// We never let to change validator set more
+	// Correcting proposer index
 	set.proposerIndex = set.proposerIndex - len(joined)
 	if set.proposerIndex < 0 {
 		set.proposerIndex = 0

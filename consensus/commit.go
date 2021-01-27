@@ -54,8 +54,8 @@ func (cs *consensus) enterCommit(round int) {
 		return
 	}
 
-	if err := cs.state.ApplyBlock(height, commitBlock, *commit); err != nil {
-		cs.logger.Warn("Commit: Applying block failed", "block", commitBlock, "err", err)
+	if err := cs.state.CommitBlock(height, commitBlock, *commit); err != nil {
+		cs.logger.Warn("Commit: committing block failed", "block", commitBlock, "err", err)
 		return
 	}
 

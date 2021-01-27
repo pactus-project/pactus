@@ -126,16 +126,16 @@ func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers .
 	return *block.NewCommit(blockHash, round, committers, crypto.Aggregate(sigs))
 }
 
-func applyBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {
-	assert.NoError(t, tState1.ApplyBlock(tState1.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState2.ApplyBlock(tState2.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState3.ApplyBlock(tState3.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState4.ApplyBlock(tState4.lastBlockHeight+1, b, c))
+func CommitBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {
+	assert.NoError(t, tState1.CommitBlock(tState1.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState2.CommitBlock(tState2.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState3.CommitBlock(tState3.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState4.CommitBlock(tState4.lastBlockHeight+1, b, c))
 }
 
 func moveToNextHeightForAllStates(t *testing.T) {
 	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	applyBlockAndCommitForAllStates(t, b, c)
+	CommitBlockAndCommitForAllStates(t, b, c)
 }
 func TestProposeBlockAndValidation(t *testing.T) {
 	setup(t)
@@ -190,16 +190,16 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
 }
 
-func TestApplyBlocks(t *testing.T) {
+func TestCommitBlocks(t *testing.T) {
 	setup(t)
 
 	b1, c1 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
-	assert.Error(t, tState1.ApplyBlock(1, *invBlock, c1))
-
+	assert.Error(t, tState1.CommitBlock(1, *invBlock, c1))
+	// TODO: clean these tests
 	// No error here but block ignored
-	assert.NoError(t, tState1.ApplyBlock(2, b1, c1))
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(2, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
 
 	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())
 	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
@@ -284,7 +284,7 @@ func TestUpdateLastCommit(t *testing.T) {
 
 	assert.Equal(t, b1.Hash(), b11.Hash())
 
-	applyBlockAndCommitForAllStates(t, b1, c1)
+	CommitBlockAndCommitForAllStates(t, b1, c1)
 
 	b2, c2 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NotEqual(t, b1.Hash(), b2.Hash())
@@ -340,9 +340,9 @@ func TestForkDetection(t *testing.T) {
 
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
 	b2, c2 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
-	assert.Error(t, tState1.ApplyBlock(1, b2, c2))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
+	assert.Error(t, tState1.CommitBlock(1, b2, c2))
 }
 
 func TestNodeShutdown(t *testing.T) {
@@ -351,7 +351,7 @@ func TestNodeShutdown(t *testing.T) {
 
 	// Should not panic or crash
 	tState1.Close()
-	assert.Error(t, tState1.ApplyBlock(1, b1, c1))
+	assert.Error(t, tState1.CommitBlock(1, b1, c1))
 	b, _ := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, tState1.ValidateBlock(*b))
 	_, err := tState1.ProposeBlock(0)

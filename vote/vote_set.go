@@ -11,14 +11,14 @@ import (
 )
 
 type blockVotes struct {
-	votes map[crypto.Address]*Vote //
-	sum   int                      // vote sum
+	votes map[crypto.Address]*Vote
+	power int64
 }
 
 func newBlockVotes() *blockVotes {
 	return &blockVotes{
 		votes: make(map[crypto.Address]*Vote),
-		sum:   0,
+		power: 0,
 	}
 }
 
@@ -35,27 +35,35 @@ func (vs *blockVotes) addVote(vote *Vote) bool {
 	}
 
 	vs.votes[signer] = vote
-	vs.sum++
 
 	return true
 }
 
 type VoteSet struct {
-	height       int
-	round        int
-	voteType     VoteType
-	validators   []*validator.Validator
-	votesByBlock map[crypto.Hash]*blockVotes
-	sum          int
-	quorum       *crypto.Hash
+	height           int
+	round            int
+	voteType         VoteType
+	validators       []*validator.Validator
+	votesByBlock     map[crypto.Hash]*blockVotes
+	sum              int
+	totalPower       int64
+	accumulatedPower int64
+	quorumBlock      *crypto.Hash
 }
 
 func NewVoteSet(height int, round int, voteType VoteType, validators []*validator.Validator) *VoteSet {
+
+	totalPower := int64(0)
+	for _, val := range validators {
+		totalPower += val.Power()
+	}
+
 	return &VoteSet{
 		height:       height,
 		round:        round,
 		voteType:     voteType,
 		validators:   validators,
+		totalPower:   totalPower,
 		votesByBlock: make(map[crypto.Hash]*blockVotes),
 	}
 }
@@ -64,6 +72,7 @@ func (vs *VoteSet) Type() VoteType { return vs.voteType }
 func (vs *VoteSet) Height() int    { return vs.height }
 func (vs *VoteSet) Round() int     { return vs.round }
 func (vs *VoteSet) Len() int       { return vs.sum }
+func (vs *VoteSet) Power() int64   { return vs.accumulatedPower }
 
 func (vs *VoteSet) AllVotes() []*Vote {
 	votes := make([]*Vote, 0)
@@ -106,16 +115,16 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Failed to verify vote")
 	}
 
-	blockVotes, exists := vs.votesByBlock[blockHash]
+	bv, exists := vs.votesByBlock[blockHash]
 	if !exists {
-		blockVotes = newBlockVotes()
-		vs.votesByBlock[blockHash] = blockVotes
+		bv = newBlockVotes()
+		vs.votesByBlock[blockHash] = bv
 	}
 
 	// check for conflict
-	for id, v := range vs.votesByBlock {
+	for id, bv := range vs.votesByBlock {
 		if id != vote.data.BlockHash {
-			duplicated, ok := v.votes[signer]
+			duplicated, ok := bv.votes[signer]
 
 			if ok {
 				// A possible scenario:
@@ -124,10 +133,11 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 				// We should ignore undef vote
 				if duplicated.BlockHash().IsUndef() {
 					// Remove undef vote and replace it with new vote
-					v.sum--
 					vs.sum--
-					delete(v.votes, signer)
-					vs.quorum = nil
+					vs.accumulatedPower -= val.Power()
+					bv.power -= val.Power()
+					delete(bv.votes, signer)
+					vs.quorumBlock = nil
 				} else if vote.BlockHash().IsUndef() {
 					// Because of network latency, we might receive undef vote after block vote.
 					// Ignore undef vote in this case.
@@ -143,42 +153,36 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 		}
 	}
 
-	added := blockVotes.addVote(vote)
+	added := bv.addVote(vote)
 	if added {
-		if vs.hasQuorum(blockVotes.sum) {
-			vs.quorum = &blockHash
-		}
 		vs.sum++
+		vs.accumulatedPower += val.Power()
+		bv.power += val.Power()
+		if vs.hasQuorum(bv.power) {
+			vs.quorumBlock = &blockHash
+		}
+
 	}
 
 	return added, nil
 }
-func (vs *VoteSet) hasQuorum(sum int) bool {
-	return sum > (len(vs.validators) * 2 / 3)
+func (vs *VoteSet) hasQuorum(power int64) bool {
+	return power > (vs.totalPower * 2 / 3)
 }
 
 func (vs *VoteSet) HasQuorum() bool {
-	return vs.hasQuorum(vs.sum)
+	return vs.hasQuorum(vs.accumulatedPower)
 }
 
 func (vs *VoteSet) QuorumBlock() *crypto.Hash {
-	return vs.quorum
-}
-
-func (vs *VoteSet) HasQuorumBlock(blockHash crypto.Hash) bool {
-	blockVotes, exists := vs.votesByBlock[blockHash]
-	if !exists {
-		return false
-	}
-
-	return vs.hasQuorum(blockVotes.sum)
+	return vs.quorumBlock
 }
 
 func (vs *VoteSet) ToCommit() *block.Commit {
 	if vs.voteType != VoteTypePrecommit {
 		return nil
 	}
-	blockHash := vs.quorum
+	blockHash := vs.quorumBlock
 	if blockHash == nil || blockHash.IsUndef() {
 		return nil
 	}

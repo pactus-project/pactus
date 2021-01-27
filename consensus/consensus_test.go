@@ -227,13 +227,13 @@ func commitBlockForAllStates(t *testing.T) {
 	}, sig)
 
 	require.NotNil(t, c)
-	err = tConsX.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsX.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
-	err = tConsY.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsY.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
-	err = tConsB.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsB.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
-	err = tConsP.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsP.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
 }
 

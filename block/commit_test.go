@@ -29,44 +29,30 @@ func TestCommitMarshaling(t *testing.T) {
 	assert.Equal(t, c.Hash(), expected2)
 	expected3, _ := hex.DecodeString("a20158207e7f2aceae7e3bfa6a023cd3221a093d27fbd6e05a7686538b83d9d6308b1f250206")
 	assert.Equal(t, c.SignBytes(), expected3)
+	assert.NoError(t, c.SanityCheck())
 }
 
-func TestCommitSanityCheck(t *testing.T) {
+func TestInvalidCommit(t *testing.T) {
+	c1 := GenerateTestCommit(crypto.UndefHash)
+	assert.Error(t, c1.SanityCheck())
+
+	c2 := GenerateTestCommit(crypto.GenerateTestHash())
+	c2.data.Round = -1
+	assert.Error(t, c2.SanityCheck())
+}
+
+func TestCommitCommitterStatus(t *testing.T) {
 	c := GenerateTestCommit(crypto.GenerateTestHash())
 	assert.NoError(t, c.SanityCheck())
+
 	c.data.Committers[1].Status = 0 // not signed
 	assert.False(t, c.Committers()[0].HasSigned())
-	// Not enough signer
-	assert.Error(t, c.SanityCheck())
-	assert.False(t, c.HasTwoThirdThreshold())
+
 	c.data.Committers[0].Status = 1 // signed
-	assert.NoError(t, c.SanityCheck())
-	assert.True(t, c.HasTwoThirdThreshold())
+	assert.True(t, c.Committers()[0].HasSigned())
+
 	c.data.Committers[2].Status = 2 // invalid status
 	assert.Error(t, c.SanityCheck())
-	assert.False(t, c.HasTwoThirdThreshold())
-
-	c2 := GenerateTestCommit(crypto.UndefHash)
-	assert.Error(t, c2.SanityCheck())
-
-	c3 := GenerateTestCommit(crypto.GenerateTestHash())
-	c3.data.Round = -1
-	assert.Error(t, c3.SanityCheck())
-}
-
-func TestThreshold(t *testing.T) {
-	c := GenerateTestCommit(crypto.GenerateTestHash())
-
-	assert.Equal(t, c.Threshold(), 75) // 3÷4=0.75
-	assert.True(t, c.HasTwoThirdThreshold())
-	c.data.Committers = append(c.data.Committers, Committer{5, CommitNotSigned})
-	assert.Equal(t, c.Threshold(), 60) // 3÷5=0.6
-	assert.False(t, c.HasTwoThirdThreshold())
-	c.data.Committers = append(c.data.Committers, Committer{6, CommitSigned})
-	assert.False(t, c.HasTwoThirdThreshold())
-	c.data.Committers = append(c.data.Committers, Committer{7, CommitSigned})
-	assert.Equal(t, c.Threshold(), 71) //6÷8=0.71
-	assert.True(t, c.HasTwoThirdThreshold())
 }
 
 func TestCommitersHash(t *testing.T) {
@@ -79,6 +65,8 @@ func TestCommitersHash(t *testing.T) {
 		{3, CommitSigned},
 	}, temp.Signature())
 	assert.Equal(t, c1.CommitteeHash(), expected2)
+	assert.Equal(t, c1.Signers(), 4)
+	assert.NoError(t, c1.SanityCheck())
 
 	c2 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
 		{0, CommitSigned},
@@ -87,6 +75,8 @@ func TestCommitersHash(t *testing.T) {
 		{3, CommitNotSigned},
 	}, temp.Signature())
 	assert.Equal(t, c2.CommitteeHash(), expected2)
+	assert.Equal(t, c2.Signers(), 2)
+	assert.NoError(t, c2.SanityCheck())
 
 	c3 := NewCommit(temp.BlockHash(), temp.Round(), []Committer{
 		{1, CommitSigned},
@@ -95,4 +85,6 @@ func TestCommitersHash(t *testing.T) {
 		{0, CommitNotSigned},
 	}, temp.Signature())
 	assert.NotEqual(t, c3.CommitteeHash(), expected2)
+	assert.Equal(t, c3.Signers(), 3)
+	assert.NoError(t, c3.SanityCheck())
 }

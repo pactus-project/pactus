@@ -44,21 +44,31 @@ func (st *state) validateCommit(commit *block.Commit) error {
 	}
 
 	pubs := make([]crypto.PublicKey, 0, len(commit.Committers()))
+	totalStake := int64(0)
+	signersStake := int64(0)
 	for _, c := range commit.Committers() {
+		val, _ := st.store.ValidatorByNumber(c.Number)
 		if c.HasSigned() {
-			val, _ := st.store.ValidatorByNumber(c.Number)
 			if val == nil {
 				return errors.Errorf(errors.ErrInvalidBlock,
-					"invalid committer: %x", c.Number)
+					"Invalid committer: %x", c.Number)
 			}
 			pubs = append(pubs, val.PublicKey())
+			signersStake += val.Power()
 		}
+		totalStake += val.Power()
 	}
 
+	// Check if signers have 2/3+ of total stake
+	if signersStake <= totalStake*2/3 {
+		return errors.Errorf(errors.ErrInvalidBlock, "No quorom")
+	}
+
+	// Check signature
 	signBytes := commit.SignBytes()
 	if !crypto.VerifyAggregated(commit.Signature(), pubs, signBytes) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"invalid commit signature: %v", commit.Signature())
+			"Invalid commit signature: %v", commit.Signature())
 	}
 
 	return nil
@@ -101,14 +111,14 @@ func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash c
 		return err
 	}
 
-	if !commit.CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last committee hash are not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), commit.CommitteeHash())
-	}
-
 	if !commit.BlockHash().EqualsTo(blockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
+	}
+
+	if !commit.CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"Last committee hash are not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), commit.CommitteeHash())
 	}
 
 	return nil
