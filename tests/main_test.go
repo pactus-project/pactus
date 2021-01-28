@@ -79,7 +79,7 @@ func TestMain(m *testing.M) {
 	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(2100000000000000)
+	acc.AddToBalance(21 * 1e14)
 
 	vals := make([]*validator.Validator, 4)
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0, 0)
@@ -178,8 +178,8 @@ func TestMain(m *testing.M) {
 		total += v.Stake()
 		return false
 	})
-	if total != int64(2100000000000000) {
-		panic(fmt.Sprintf("Some coins missed: %v", total-2100000000000000))
+	if total != int64(21*1e14) {
+		panic(fmt.Sprintf("Some coins missed: %v", total-21*1e14))
 	}
 
 	os.Exit(exitCode)

@@ -25,7 +25,7 @@ func init() {
 func setup(t *testing.T) {
 	tSandbox = sandbox.MockingSandbox()
 
-	tTotalCoin = 2100000000000000
+	tTotalCoin = 21 * 1e14
 	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc0.AddToBalance(tTotalCoin - 10000000000 - 5000000000)
 	tSandbox.UpdateAccount(acc0)

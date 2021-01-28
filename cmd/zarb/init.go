@@ -88,7 +88,7 @@ func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) 
 
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(2100000000000000)
+	acc.AddToBalance(21 * 1e14)
 	accs := []*account.Account{acc}
 
 	// create validator account for genesis

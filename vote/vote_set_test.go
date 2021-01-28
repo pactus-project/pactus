@@ -139,6 +139,7 @@ func TestQuorum(t *testing.T) {
 	assert.True(t, vs.HasQuorum())
 	assert.NotNil(t, vs.QuorumBlock())
 	assert.Equal(t, vs.QuorumBlock(), &h1)
+	assert.Equal(t, vs.Len(), 4)
 
 	c := vs.ToCommit()
 	assert.NotNil(t, c)
@@ -150,6 +151,7 @@ func TestQuorum(t *testing.T) {
 	})
 }
 
+// This test is very important. Change it with cautious
 func TestUpdateVote(t *testing.T) {
 	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
 
@@ -186,6 +188,19 @@ func TestUpdateVote(t *testing.T) {
 	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
 
+	// Check block votes power
+	bv1 := vs.votesByBlock[crypto.UndefHash]
+	assert.Equal(t, bv1.power, int64(1500+2500))
+	bv2 := vs.votesByBlock[h1]
+	assert.Equal(t, bv2.power, int64(1000))
+
+	// Check previous votes
+	_, exists1 := bv1.votes[v1.Signer()]
+	_, exists2 := bv1.votes[v2.Signer()]
+	assert.False(t, exists1)
+	assert.True(t, exists2)
+
+	// Check accumulated power
 	assert.True(t, vs.HasQuorum())
 	assert.Nil(t, vs.QuorumBlock())
 	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
@@ -197,8 +212,20 @@ func TestUpdateVote(t *testing.T) {
 	ok, _ = vs.AddVote(v6)
 	assert.True(t, ok)
 
+	// Check block votes power
+	bv1 = vs.votesByBlock[crypto.UndefHash]
+	assert.Equal(t, bv1.power, int64(0))
+	bv2 = vs.votesByBlock[h1]
+	assert.Equal(t, bv2.power, int64(1000+1500+2500))
+
 	assert.True(t, vs.HasQuorum())
 	assert.Equal(t, vs.QuorumBlock(), &h1)
 	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
 	assert.Equal(t, vs.Len(), 3)
+
+	// Check previous votes
+	_, exists1 = bv1.votes[v1.Signer()]
+	_, exists2 = bv1.votes[v2.Signer()]
+	assert.False(t, exists1)
+	assert.False(t, exists2)
 }

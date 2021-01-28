@@ -19,7 +19,7 @@ func TestExecution(t *testing.T) {
 	tExec := NewExecution(tSandbox)
 
 	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc0.AddToBalance(21e14 - 10000000000)
+	acc0.AddToBalance(21*1e14 - 10000000000)
 	tSandbox.UpdateAccount(acc0)
 
 	signer1 := crypto.GenerateTestSigner()
@@ -108,7 +108,7 @@ func TestExecution(t *testing.T) {
 		for _, acc := range tSandbox.Accounts {
 			total += acc.Balance()
 		}
-		assert.Equal(t, total, int64(21e14))
+		assert.Equal(t, total, int64(21*1e14))
 	})
 
 	assert.Equal(t, tExec.AccumulatedFee(), int64(1000))

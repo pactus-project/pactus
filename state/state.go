@@ -362,6 +362,8 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 	defer st.lk.Unlock()
 
 	if height != st.lastBlockHeight && height != st.lastBlockHeight+1 {
+		/// Returning error here will cause so many error logs during syncing blockchain
+		/// Syncing is asynchronous job and we might receive blocks not in order
 		st.logger.Debug("Unexpected block height", "height", height)
 		return nil
 	}

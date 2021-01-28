@@ -87,6 +87,15 @@ func TestCommitValidation(t *testing.T) {
 			{Number: 4, Status: 1},
 		}, validSig)
 		assert.Error(t, tState1.CommitBlock(2, *b2, *c2))
+
+		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, invSig5})
+		c3 := block.NewCommit(b2.Hash(), 0, []block.Committer{
+			{Number: 0, Status: 1},
+			{Number: 1, Status: 1},
+			{Number: 2, Status: 0},
+			{Number: 4, Status: 1},
+		}, sig)
+		assert.Error(t, tState1.CommitBlock(2, *b2, *c3))
 	})
 
 	t.Run("Unexpected signature", func(t *testing.T) {
@@ -106,7 +115,7 @@ func TestCommitValidation(t *testing.T) {
 			{Number: 2, Status: 1},
 			{Number: 4, Status: 0},
 		}, sig2)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c2))
+		assert.Error(t, tState1.CommitBlock(2, *b2, *c2)) // committee hash is invalid
 	})
 
 	t.Run("duplicated or missed number, should return error", func(t *testing.T) {

@@ -17,7 +17,7 @@ import (
 func TestRunningNode(t *testing.T) {
 	_, pb, pv := crypto.RandomKeyPair()
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(2100000000000000)
+	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(pb, 0, 0)
 	param := param.MainnetParams()
 	gen := genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param)

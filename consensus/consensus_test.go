@@ -61,7 +61,7 @@ func setup(t *testing.T) {
 	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(2100000000000000)
+	acc.AddToBalance(21 * 1e14)
 	params := param.MainnetParams()
 	params.CommitteeSize = 4
 	params.BlockTimeInSecond = 2
