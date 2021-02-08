@@ -69,8 +69,10 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 		return err
 	}
 
-	msg := message.NewTransactionsMessage([]*tx.Tx{trx})
-	pool.broadcastCh <- msg
+	go func(trx *tx.Tx) {
+		msg := message.NewTransactionsMessage([]*tx.Tx{trx})
+		pool.broadcastCh <- msg
+	}(trx)
 
 	return nil
 }
