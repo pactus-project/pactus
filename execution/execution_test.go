@@ -19,13 +19,13 @@ func TestExecution(t *testing.T) {
 	tExec := NewExecution(tSandbox)
 
 	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc0.AddToBalance(2100000000000000 - 10000000000)
+	acc0.AddToBalance(21e14 - 10000000000)
 	tSandbox.UpdateAccount(acc0)
 
 	signer1 := crypto.GenerateTestSigner()
 	addr1 := signer1.Address()
 	acc1 := account.NewAccount(addr1, 1)
-	acc1.AddToBalance(2100000000000000 - 10000000000)
+	acc1.AddToBalance(10000000000)
 	tSandbox.UpdateAccount(acc1)
 
 	rcvAddr, _, _ := crypto.GenerateTestKeyPair()
@@ -100,6 +100,15 @@ func TestExecution(t *testing.T) {
 		trx := tx.NewSendTx(stamp2, 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee")
 		assert.Error(t, tExec.Execute(trx))
 		assert.Error(t, tExec.checkFee(trx))
+	})
+
+	t.Run("Claim accumulated fee", func(t *testing.T) {
+		tExec.ClaimAccumulatedFee()
+		total := int64(0)
+		for _, acc := range tSandbox.Accounts {
+			total += acc.Balance()
+		}
+		assert.Equal(t, total, int64(21e14))
 	})
 
 	assert.Equal(t, tExec.AccumulatedFee(), int64(1000))

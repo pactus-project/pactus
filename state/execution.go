@@ -12,7 +12,7 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 
 	ids := block.TxIDs().IDs()
 	twrs := make([]tx.CommittedTx, len(ids))
-	var subsidyTrx *tx.Tx
+	var mintbaseTrx *tx.Tx
 	for i := 0; i < len(ids); i++ {
 		trx := st.txPool.PendingTx(ids[i])
 		if trx == nil {
@@ -24,7 +24,7 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 			if !trx.IsMintbaseTx() {
 				return nil, errors.Errorf(errors.ErrInvalidTx, "First transaction should be a subsidy transaction")
 			}
-			subsidyTrx = trx
+			mintbaseTrx = trx
 		} else {
 			if trx.IsMintbaseTx() {
 				return nil, errors.Errorf(errors.ErrInvalidTx, "Duplicated subsidy transaction")
@@ -41,9 +41,10 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 	}
 
 	subsidyAmt := calcBlockSubsidy(st.lastBlockHeight+1, st.params.SubsidyReductionInterval) + st.execution.AccumulatedFee()
-	if subsidyTrx.Payload().Value() != subsidyAmt {
-		return nil, errors.Errorf(errors.ErrInvalidTx, "Invalid subsidy amount. Expected %v, got %v", subsidyAmt, subsidyTrx.Payload().Value())
+	if mintbaseTrx.Payload().Value() != subsidyAmt {
+		return nil, errors.Errorf(errors.ErrInvalidTx, "Invalid subsidy amount. Expected %v, got %v", subsidyAmt, mintbaseTrx.Payload().Value())
 	}
+	st.execution.ClaimAccumulatedFee()
 
 	return twrs, nil
 }

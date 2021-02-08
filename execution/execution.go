@@ -1,6 +1,7 @@
 package execution
 
 import (
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution/executor"
 	"github.com/zarbchain/zarb-go/sandbox"
@@ -66,6 +67,12 @@ func (exe *Execution) ResetFee() {
 
 func (exe *Execution) AccumulatedFee() int64 {
 	return exe.accumulatedFee
+}
+
+func (exe *Execution) ClaimAccumulatedFee() {
+	acc := exe.sandbox.Account(crypto.TreasuryAddress)
+	acc.AddToBalance(exe.accumulatedFee)
+	exe.sandbox.UpdateAccount(acc)
 }
 
 func (exe *Execution) checkMemo(trx *tx.Tx) error {

@@ -18,7 +18,7 @@ func TestPrecommitNoProposal(t *testing.T) {
 	p := makeProposal(t, h, r)
 
 	tConsP.enterNewHeight()
-	checkHRS(t, tConsP, h, r, hrs.StepTypePropose) // We can't prepared, because we don't have proposal
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrepare)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
@@ -27,7 +27,7 @@ func TestPrecommitNoProposal(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
 
-	checkHRS(t, tConsP, h, r, hrs.StepTypePrepare)
+	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrecommit)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 
 	// Set proposal now
@@ -109,4 +109,25 @@ func TestSuspiciousPrepare2(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
 
 	shouldPublishProposal(t, tConsP, p.Hash())
+}
+
+func TestPrecommitTimeout(t *testing.T) {
+	setup(t)
+
+	tConsP.enterNewHeight()
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY, false)
+
+	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrecommit)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
+}
+
+func TestPrecommitIvalidArgs(t *testing.T) {
+	setup(t)
+
+	tConsP.enterNewHeight()
+
+	// Invalid args for propose phase
+	tConsP.enterPrecommit(1)
+	checkHRS(t, tConsP, 1, 0, hrs.StepTypePropose)
 }
