@@ -162,9 +162,10 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 
 			if msg.PayloadType() == payload.PayloadTypeVote {
 				pld := msg.Payload.(*payload.VotePayload)
-				assert.Equal(t, pld.Vote.VoteType(), voteType)
-				assert.Equal(t, pld.Vote.BlockHash(), hash)
-				return
+				if pld.Vote.BlockHash().EqualsTo(hash) {
+					assert.Equal(t, pld.Vote.VoteType(), voteType)
+					return
+				}
 			}
 		}
 	}
@@ -253,7 +254,7 @@ func makeProposal(t *testing.T, height, round int) *vote.Proposal {
 		require.NoError(t, err)
 		p = vote.NewProposal(height, round, *pb)
 		tConsB.signer.SignMsg(p)
-	case 0:
+	case 0, 4:
 		pb, err := tConsP.state.ProposeBlock(round)
 		require.NoError(t, err)
 		p = vote.NewProposal(height, round, *pb)

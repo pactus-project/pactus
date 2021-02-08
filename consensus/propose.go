@@ -60,6 +60,7 @@ func (cs *consensus) enterPropose(round int) {
 		return
 	}
 	cs.updateStep(hrs.StepTypePropose)
+	cs.scheduleTimeout(cs.config.PrepareTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrepare)
 
 	address := cs.signer.Address()
 	if !cs.state.ValidatorSet().Contains(address) {
@@ -75,7 +76,6 @@ func (cs *consensus) enterPropose(round int) {
 	}
 
 	cs.isProposed = true
-	cs.scheduleTimeout(cs.config.ProposeTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrepare)
 }
 
 func (cs *consensus) createProposal(height int, round int) {

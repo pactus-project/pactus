@@ -49,3 +49,23 @@ func TestPrepareTimeout(t *testing.T) {
 
 	shouldPublishVote(t, tConsY, vote.VoteTypePrepare, crypto.UndefHash)
 }
+
+func TestPropareTimeout(t *testing.T) {
+	setup(t)
+
+	tConsP.enterNewHeight()
+
+	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrepare)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
+}
+
+func TestPrepareIvalidArgs(t *testing.T) {
+	setup(t)
+
+	tConsP.enterNewHeight()
+	tConsP.enterPrepare(0)
+
+	// Invalid args for propose phase
+	tConsP.enterPrepare(1)
+	checkHRS(t, tConsP, 1, 0, hrs.StepTypePrepare)
+}

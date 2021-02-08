@@ -12,6 +12,7 @@ func (cs *consensus) enterPrepare(round int) {
 		return
 	}
 	cs.updateStep(hrs.StepTypePrepare)
+	cs.scheduleTimeout(cs.config.PrecommitTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrecommit)
 
 	roundProposal := cs.pendingVotes.RoundProposal(round)
 	if roundProposal == nil {
@@ -26,10 +27,4 @@ func (cs *consensus) enterPrepare(round int) {
 	cs.isPrepared = true
 	cs.logger.Info("Prepare: Proposal signed", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrepare, roundProposal.Block().Hash())
-}
-
-func (cs *consensus) enterPrepareWait(round int) {
-	cs.logger.Info("PrepareWait: Wait for some more prepares") //then enter precommit
-
-	cs.scheduleTimeout(cs.config.PrepareTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrecommit)
 }

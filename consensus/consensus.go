@@ -206,11 +206,7 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 			blockHash := prepares.QuorumBlock()
 			cs.logger.Debug("Prepare has quorum", "blockhash", blockHash)
 
-			if blockHash == nil {
-				cs.enterPrepareWait(round)
-			} else {
-				cs.enterPrecommit(round)
-			}
+			cs.enterPrecommit(round)
 		}
 
 	case vote.VoteTypePrecommit:

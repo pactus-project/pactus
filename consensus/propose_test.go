@@ -55,18 +55,6 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 	assert.Nil(t, tConsY.RoundProposal(2))
 }
 
-func TestProposeTimeout(t *testing.T) {
-	setup(t)
-
-	tConsY.enterNewHeight()
-	checkHRSWait(t, tConsY, 1, 0, hrs.StepTypePrepare)
-
-	// Invalid args for propose phase
-	tConsY.enterPropose(1)
-	tConsY.enterPropose(0)
-	checkHRS(t, tConsY, 1, 0, hrs.StepTypePrepare)
-}
-
 func TestConsensusSetProposalAfterCommit(t *testing.T) {
 	setup(t)
 
@@ -100,14 +88,11 @@ func TestSecondProposalCommitted(t *testing.T) {
 	commitBlockForAllStates(t)
 
 	tConsX.enterNewHeight()
-	tConsB.enterNewHeight()
-	tConsP.enterNewHeight()
-	tConsP.enterNewRound(1)
 
 	// Now it's turn for Byzantine node to propose a block
 	// Other nodes are going to not accept its proposal, even it is valid
-	p1 := tConsB.RoundProposal(0) // valid proposal for round 0
-	p2 := tConsP.RoundProposal(1) // valid proposal for round 1
+	p1 := makeProposal(t, 3, 0) // valid proposal for round 0, byzantine proposer
+	p2 := makeProposal(t, 3, 1) // valid proposal for round 1, partitioned proposer
 
 	// Probably we have blocked Byzantine node
 	//tConsX.SetProposal(p1)
@@ -124,16 +109,16 @@ func TestSecondProposalCommitted(t *testing.T) {
 
 	tConsX.SetProposal(p2)
 
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p2.Block().Hash())
 	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, crypto.UndefHash, tIndexB, false)
 	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexP, false)
-	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p2.Block().Hash())
 
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p2.Block().Hash())
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, crypto.UndefHash, tIndexB, false)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexP, false)
 
-	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p2.Block().Hash())
 	shouldPublishBlockAnnounce(t, tConsX, p2.Block().Hash())
 }
 
