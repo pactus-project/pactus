@@ -7,8 +7,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -97,16 +95,13 @@ func TestMain(m *testing.M) {
 	t := &testing.T{}
 
 	for i := 0; i < max; i++ {
-		tNodes[i], err = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
-		require.NoError(t, err)
-		err := tNodes[i].Start()
-		require.NoError(t, err)
+		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
+		if tNodes[i].Start() != nil {
+			panic(fmt.Sprintf("Error on starting the node: %v", err))
+		}
 	}
 
-	c, err := net.Dial("tcp", tCapnpAddress)
-	if err != nil {
-		require.NoError(t, err)
-	}
+	c, _ := net.Dial("tcp", tCapnpAddress)
 
 	tCtx = context.Background()
 	conn := rpc.NewConn(rpc.StreamTransport(c))
@@ -114,11 +109,17 @@ func TestMain(m *testing.M) {
 
 	waitForNewBlock(t)
 	waitForNewBlock(t)
+	waitForNewBlock(t)
+	waitForNewBlock(t)
 
 	totalStake := int64(0)
 	for i := 0; i < max; i++ {
 		amt := util.RandInt64(1000000 - 1) // fee is always 1000
-		require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000))
+		err := broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000)
+		if err != nil {
+			panic(fmt.Sprintf("Error on broadcasting transaction: %v", err))
+		}
+		fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
 		incSequence(t, tSigners[tNodeIdx1].Address())
 		totalStake += amt
 	}
@@ -163,8 +164,7 @@ func TestMain(m *testing.M) {
 		tNodes[i].Stop()
 	}
 
-	s, err := store.NewStore(tConfigs[tNodeIdx1].State.Store)
-	require.NoError(t, err)
+	s, _ := store.NewStore(tConfigs[tNodeIdx1].State.Store)
 	total := int64(0)
 	s.IterateAccounts(func(a *account.Account) bool {
 		total += a.Balance()
@@ -175,7 +175,9 @@ func TestMain(m *testing.M) {
 		total += v.Stake()
 		return false
 	})
-	assert.Equal(t, total, 2100000000000000)
+	if total != int64(2100000000000000) {
+		panic(fmt.Sprintf("Some coins missed: %v", total-2100000000000000))
+	}
 
 	os.Exit(exitCode)
 }
