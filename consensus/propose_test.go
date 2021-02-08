@@ -317,3 +317,12 @@ func TestEnterPrepareAfterPrecommit(t *testing.T) {
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
 
 }
+
+func TestProposeIvalidArgs(t *testing.T) {
+	setup(t)
+
+	tConsP.hrs = hrs.NewHRS(1, 0, hrs.StepTypeNewHeight)
+	// Invalid args for propose phase
+	tConsP.enterPropose(1)
+	checkHRS(t, tConsP, 1, 0, hrs.StepTypeNewHeight)
+}

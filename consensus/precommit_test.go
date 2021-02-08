@@ -127,7 +127,6 @@ func TestPrecommitIvalidArgs(t *testing.T) {
 
 	tConsP.enterNewHeight()
 
-
 	// Invalid args for propose phase
 	tConsP.enterPrecommit(1)
 	checkHRS(t, tConsP, 1, 0, hrs.StepTypePropose)
