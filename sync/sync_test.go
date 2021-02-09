@@ -456,3 +456,9 @@ func TestRequestForBlock(t *testing.T) {
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	})
 }
+func TestAccessors(t *testing.T) {
+	setup(t)
+
+	assert.Equal(t, tAliceSync.PeerID(), tAlicePeerID)
+	assert.Equal(t, len(tAliceSync.Peers()), 1)
+}
