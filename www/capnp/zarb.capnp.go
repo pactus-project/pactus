@@ -1074,6 +1074,263 @@ func (p ValidatorResult_Promise) Struct() (ValidatorResult, error) {
 	return ValidatorResult{s}, err
 }
 
+type Peer struct{ capnp.Struct }
+
+// Peer_TypeID is the unique identifier for the type Peer.
+const Peer_TypeID = 0xdeb9cfe7754f053f
+
+func NewPeer(s *capnp.Segment) (Peer, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 24, PointerCount: 4})
+	return Peer{st}, err
+}
+
+func NewRootPeer(s *capnp.Segment) (Peer, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 24, PointerCount: 4})
+	return Peer{st}, err
+}
+
+func ReadRootPeer(msg *capnp.Message) (Peer, error) {
+	root, err := msg.RootPtr()
+	return Peer{root.Struct()}, err
+}
+
+func (s Peer) String() string {
+	str, _ := text.Marshal(0xdeb9cfe7754f053f, s.Struct)
+	return str
+}
+
+func (s Peer) Moniker() (string, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.Text(), err
+}
+
+func (s Peer) HasMoniker() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s Peer) MonikerBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.TextBytes(), err
+}
+
+func (s Peer) SetMoniker(v string) error {
+	return s.Struct.SetText(0, v)
+}
+
+func (s Peer) NodeVersion() ([]byte, error) {
+	p, err := s.Struct.Ptr(1)
+	return []byte(p.Data()), err
+}
+
+func (s Peer) HasNodeVersion() bool {
+	p, err := s.Struct.Ptr(1)
+	return p.IsValid() || err != nil
+}
+
+func (s Peer) SetNodeVersion(v []byte) error {
+	return s.Struct.SetData(1, v)
+}
+
+func (s Peer) PeerID() (string, error) {
+	p, err := s.Struct.Ptr(2)
+	return p.Text(), err
+}
+
+func (s Peer) HasPeerID() bool {
+	p, err := s.Struct.Ptr(2)
+	return p.IsValid() || err != nil
+}
+
+func (s Peer) PeerIDBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(2)
+	return p.TextBytes(), err
+}
+
+func (s Peer) SetPeerID(v string) error {
+	return s.Struct.SetText(2, v)
+}
+
+func (s Peer) PublicKey() (string, error) {
+	p, err := s.Struct.Ptr(3)
+	return p.Text(), err
+}
+
+func (s Peer) HasPublicKey() bool {
+	p, err := s.Struct.Ptr(3)
+	return p.IsValid() || err != nil
+}
+
+func (s Peer) PublicKeyBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(3)
+	return p.TextBytes(), err
+}
+
+func (s Peer) SetPublicKey(v string) error {
+	return s.Struct.SetText(3, v)
+}
+
+func (s Peer) InitialBlockDownload() bool {
+	return s.Struct.Bit(0)
+}
+
+func (s Peer) SetInitialBlockDownload(v bool) {
+	s.Struct.SetBit(0, v)
+}
+
+func (s Peer) Height() int32 {
+	return int32(s.Struct.Uint32(4))
+}
+
+func (s Peer) SetHeight(v int32) {
+	s.Struct.SetUint32(4, uint32(v))
+}
+
+func (s Peer) ReceivedMsg() int32 {
+	return int32(s.Struct.Uint32(8))
+}
+
+func (s Peer) SetReceivedMsg(v int32) {
+	s.Struct.SetUint32(8, uint32(v))
+}
+
+func (s Peer) InvalidMsg() int32 {
+	return int32(s.Struct.Uint32(12))
+}
+
+func (s Peer) SetInvalidMsg(v int32) {
+	s.Struct.SetUint32(12, uint32(v))
+}
+
+func (s Peer) ReceivedBytes() int32 {
+	return int32(s.Struct.Uint32(16))
+}
+
+func (s Peer) SetReceivedBytes(v int32) {
+	s.Struct.SetUint32(16, uint32(v))
+}
+
+// Peer_List is a list of Peer.
+type Peer_List struct{ capnp.List }
+
+// NewPeer creates a new list of Peer.
+func NewPeer_List(s *capnp.Segment, sz int32) (Peer_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 24, PointerCount: 4}, sz)
+	return Peer_List{l}, err
+}
+
+func (s Peer_List) At(i int) Peer { return Peer{s.List.Struct(i)} }
+
+func (s Peer_List) Set(i int, v Peer) error { return s.List.SetStruct(i, v.Struct) }
+
+func (s Peer_List) String() string {
+	str, _ := text.MarshalList(0xdeb9cfe7754f053f, s.List)
+	return str
+}
+
+// Peer_Promise is a wrapper for a Peer promised by a client call.
+type Peer_Promise struct{ *capnp.Pipeline }
+
+func (p Peer_Promise) Struct() (Peer, error) {
+	s, err := p.Pipeline.Struct()
+	return Peer{s}, err
+}
+
+type NetworkResult struct{ capnp.Struct }
+
+// NetworkResult_TypeID is the unique identifier for the type NetworkResult.
+const NetworkResult_TypeID = 0xefbaa00121a2907b
+
+func NewNetworkResult(s *capnp.Segment) (NetworkResult, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 2})
+	return NetworkResult{st}, err
+}
+
+func NewRootNetworkResult(s *capnp.Segment) (NetworkResult, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 2})
+	return NetworkResult{st}, err
+}
+
+func ReadRootNetworkResult(msg *capnp.Message) (NetworkResult, error) {
+	root, err := msg.RootPtr()
+	return NetworkResult{root.Struct()}, err
+}
+
+func (s NetworkResult) String() string {
+	str, _ := text.Marshal(0xefbaa00121a2907b, s.Struct)
+	return str
+}
+
+func (s NetworkResult) PeerID() (string, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.Text(), err
+}
+
+func (s NetworkResult) HasPeerID() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s NetworkResult) PeerIDBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.TextBytes(), err
+}
+
+func (s NetworkResult) SetPeerID(v string) error {
+	return s.Struct.SetText(0, v)
+}
+
+func (s NetworkResult) Peers() (Peer_List, error) {
+	p, err := s.Struct.Ptr(1)
+	return Peer_List{List: p.List()}, err
+}
+
+func (s NetworkResult) HasPeers() bool {
+	p, err := s.Struct.Ptr(1)
+	return p.IsValid() || err != nil
+}
+
+func (s NetworkResult) SetPeers(v Peer_List) error {
+	return s.Struct.SetPtr(1, v.List.ToPtr())
+}
+
+// NewPeers sets the peers field to a newly
+// allocated Peer_List, preferring placement in s's segment.
+func (s NetworkResult) NewPeers(n int32) (Peer_List, error) {
+	l, err := NewPeer_List(s.Struct.Segment(), n)
+	if err != nil {
+		return Peer_List{}, err
+	}
+	err = s.Struct.SetPtr(1, l.List.ToPtr())
+	return l, err
+}
+
+// NetworkResult_List is a list of NetworkResult.
+type NetworkResult_List struct{ capnp.List }
+
+// NewNetworkResult creates a new list of NetworkResult.
+func NewNetworkResult_List(s *capnp.Segment, sz int32) (NetworkResult_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 2}, sz)
+	return NetworkResult_List{l}, err
+}
+
+func (s NetworkResult_List) At(i int) NetworkResult { return NetworkResult{s.List.Struct(i)} }
+
+func (s NetworkResult_List) Set(i int, v NetworkResult) error { return s.List.SetStruct(i, v.Struct) }
+
+func (s NetworkResult_List) String() string {
+	str, _ := text.MarshalList(0xefbaa00121a2907b, s.List)
+	return str
+}
+
+// NetworkResult_Promise is a wrapper for a NetworkResult promised by a client call.
+type NetworkResult_Promise struct{ *capnp.Pipeline }
+
+func (p NetworkResult_Promise) Struct() (NetworkResult, error) {
+	s, err := p.Pipeline.Struct()
+	return NetworkResult{s}, err
+}
+
 type SendTransactionResult struct{ capnp.Struct }
 
 // SendTransactionResult_TypeID is the unique identifier for the type SendTransactionResult.
@@ -1156,26 +1413,6 @@ type ZarbServer struct{ Client capnp.Client }
 // ZarbServer_TypeID is the unique identifier for the type ZarbServer.
 const ZarbServer_TypeID = 0xf906e2ae0dd37fe4
 
-func (c ZarbServer) GetBlockchainInfo(ctx context.Context, params func(ZarbServer_getBlockchainInfo_Params) error, opts ...capnp.CallOption) ZarbServer_getBlockchainInfo_Results_Promise {
-	if c.Client == nil {
-		return ZarbServer_getBlockchainInfo_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
-	}
-	call := &capnp.Call{
-		Ctx: ctx,
-		Method: capnp.Method{
-			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      0,
-			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
-			MethodName:    "getBlockchainInfo",
-		},
-		Options: capnp.NewCallOptions(opts),
-	}
-	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 0}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_getBlockchainInfo_Params{Struct: s}) }
-	}
-	return ZarbServer_getBlockchainInfo_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
-}
 func (c ZarbServer) GetBlock(ctx context.Context, params func(ZarbServer_getBlock_Params) error, opts ...capnp.CallOption) ZarbServer_getBlock_Results_Promise {
 	if c.Client == nil {
 		return ZarbServer_getBlock_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
@@ -1184,7 +1421,7 @@ func (c ZarbServer) GetBlock(ctx context.Context, params func(ZarbServer_getBloc
 		Ctx: ctx,
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      1,
+			MethodID:      0,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getBlock",
 		},
@@ -1204,7 +1441,7 @@ func (c ZarbServer) GetTransaction(ctx context.Context, params func(ZarbServer_g
 		Ctx: ctx,
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      2,
+			MethodID:      1,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getTransaction",
 		},
@@ -1224,7 +1461,7 @@ func (c ZarbServer) GetBlockHeight(ctx context.Context, params func(ZarbServer_g
 		Ctx: ctx,
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      3,
+			MethodID:      2,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getBlockHeight",
 		},
@@ -1244,7 +1481,7 @@ func (c ZarbServer) GetAccount(ctx context.Context, params func(ZarbServer_getAc
 		Ctx: ctx,
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      4,
+			MethodID:      3,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getAccount",
 		},
@@ -1264,7 +1501,7 @@ func (c ZarbServer) GetValidator(ctx context.Context, params func(ZarbServer_get
 		Ctx: ctx,
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      5,
+			MethodID:      4,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getValidator",
 		},
@@ -1276,6 +1513,46 @@ func (c ZarbServer) GetValidator(ctx context.Context, params func(ZarbServer_get
 	}
 	return ZarbServer_getValidator_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
 }
+func (c ZarbServer) GetBlockchainInfo(ctx context.Context, params func(ZarbServer_getBlockchainInfo_Params) error, opts ...capnp.CallOption) ZarbServer_getBlockchainInfo_Results_Promise {
+	if c.Client == nil {
+		return ZarbServer_getBlockchainInfo_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
+	}
+	call := &capnp.Call{
+		Ctx: ctx,
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      5,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "getBlockchainInfo",
+		},
+		Options: capnp.NewCallOptions(opts),
+	}
+	if params != nil {
+		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 0}
+		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_getBlockchainInfo_Params{Struct: s}) }
+	}
+	return ZarbServer_getBlockchainInfo_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+}
+func (c ZarbServer) GetNetworkInfo(ctx context.Context, params func(ZarbServer_getNetworkInfo_Params) error, opts ...capnp.CallOption) ZarbServer_getNetworkInfo_Results_Promise {
+	if c.Client == nil {
+		return ZarbServer_getNetworkInfo_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
+	}
+	call := &capnp.Call{
+		Ctx: ctx,
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      6,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "getNetworkInfo",
+		},
+		Options: capnp.NewCallOptions(opts),
+	}
+	if params != nil {
+		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 0}
+		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_getNetworkInfo_Params{Struct: s}) }
+	}
+	return ZarbServer_getNetworkInfo_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+}
 func (c ZarbServer) SendRawTransaction(ctx context.Context, params func(ZarbServer_sendRawTransaction_Params) error, opts ...capnp.CallOption) ZarbServer_sendRawTransaction_Results_Promise {
 	if c.Client == nil {
 		return ZarbServer_sendRawTransaction_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
@@ -1284,7 +1561,7 @@ func (c ZarbServer) SendRawTransaction(ctx context.Context, params func(ZarbServ
 		Ctx: ctx,
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      6,
+			MethodID:      7,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "sendRawTransaction",
 		},
@@ -1298,8 +1575,6 @@ func (c ZarbServer) SendRawTransaction(ctx context.Context, params func(ZarbServ
 }
 
 type ZarbServer_Server interface {
-	GetBlockchainInfo(ZarbServer_getBlockchainInfo) error
-
 	GetBlock(ZarbServer_getBlock) error
 
 	GetTransaction(ZarbServer_getTransaction) error
@@ -1309,6 +1584,10 @@ type ZarbServer_Server interface {
 	GetAccount(ZarbServer_getAccount) error
 
 	GetValidator(ZarbServer_getValidator) error
+
+	GetBlockchainInfo(ZarbServer_getBlockchainInfo) error
+
+	GetNetworkInfo(ZarbServer_getNetworkInfo) error
 
 	SendRawTransaction(ZarbServer_sendRawTransaction) error
 }
@@ -1320,27 +1599,13 @@ func ZarbServer_ServerToClient(s ZarbServer_Server) ZarbServer {
 
 func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.Method {
 	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 7)
+		methods = make([]server.Method, 0, 8)
 	}
 
 	methods = append(methods, server.Method{
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
 			MethodID:      0,
-			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
-			MethodName:    "getBlockchainInfo",
-		},
-		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := ZarbServer_getBlockchainInfo{c, opts, ZarbServer_getBlockchainInfo_Params{Struct: p}, ZarbServer_getBlockchainInfo_Results{Struct: r}}
-			return s.GetBlockchainInfo(call)
-		},
-		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
-	})
-
-	methods = append(methods, server.Method{
-		Method: capnp.Method{
-			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      1,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getBlock",
 		},
@@ -1354,7 +1619,7 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 	methods = append(methods, server.Method{
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      2,
+			MethodID:      1,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getTransaction",
 		},
@@ -1368,7 +1633,7 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 	methods = append(methods, server.Method{
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      3,
+			MethodID:      2,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getBlockHeight",
 		},
@@ -1382,7 +1647,7 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 	methods = append(methods, server.Method{
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      4,
+			MethodID:      3,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getAccount",
 		},
@@ -1396,7 +1661,7 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 	methods = append(methods, server.Method{
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      5,
+			MethodID:      4,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "getValidator",
 		},
@@ -1410,7 +1675,35 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 	methods = append(methods, server.Method{
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      5,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "getBlockchainInfo",
+		},
+		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
+			call := ZarbServer_getBlockchainInfo{c, opts, ZarbServer_getBlockchainInfo_Params{Struct: p}, ZarbServer_getBlockchainInfo_Results{Struct: r}}
+			return s.GetBlockchainInfo(call)
+		},
+		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
+	})
+
+	methods = append(methods, server.Method{
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
 			MethodID:      6,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "getNetworkInfo",
+		},
+		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
+			call := ZarbServer_getNetworkInfo{c, opts, ZarbServer_getNetworkInfo_Params{Struct: p}, ZarbServer_getNetworkInfo_Results{Struct: r}}
+			return s.GetNetworkInfo(call)
+		},
+		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
+	})
+
+	methods = append(methods, server.Method{
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      7,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "sendRawTransaction",
 		},
@@ -1422,14 +1715,6 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 	})
 
 	return methods
-}
-
-// ZarbServer_getBlockchainInfo holds the arguments for a server call to ZarbServer.getBlockchainInfo.
-type ZarbServer_getBlockchainInfo struct {
-	Ctx     context.Context
-	Options capnp.CallOptions
-	Params  ZarbServer_getBlockchainInfo_Params
-	Results ZarbServer_getBlockchainInfo_Results
 }
 
 // ZarbServer_getBlock holds the arguments for a server call to ZarbServer.getBlock.
@@ -1472,6 +1757,22 @@ type ZarbServer_getValidator struct {
 	Results ZarbServer_getValidator_Results
 }
 
+// ZarbServer_getBlockchainInfo holds the arguments for a server call to ZarbServer.getBlockchainInfo.
+type ZarbServer_getBlockchainInfo struct {
+	Ctx     context.Context
+	Options capnp.CallOptions
+	Params  ZarbServer_getBlockchainInfo_Params
+	Results ZarbServer_getBlockchainInfo_Results
+}
+
+// ZarbServer_getNetworkInfo holds the arguments for a server call to ZarbServer.getNetworkInfo.
+type ZarbServer_getNetworkInfo struct {
+	Ctx     context.Context
+	Options capnp.CallOptions
+	Params  ZarbServer_getNetworkInfo_Params
+	Results ZarbServer_getNetworkInfo_Results
+}
+
 // ZarbServer_sendRawTransaction holds the arguments for a server call to ZarbServer.sendRawTransaction.
 type ZarbServer_sendRawTransaction struct {
 	Ctx     context.Context
@@ -1480,149 +1781,10 @@ type ZarbServer_sendRawTransaction struct {
 	Results ZarbServer_sendRawTransaction_Results
 }
 
-type ZarbServer_getBlockchainInfo_Params struct{ capnp.Struct }
-
-// ZarbServer_getBlockchainInfo_Params_TypeID is the unique identifier for the type ZarbServer_getBlockchainInfo_Params.
-const ZarbServer_getBlockchainInfo_Params_TypeID = 0x8df1c729f8d2ca00
-
-func NewZarbServer_getBlockchainInfo_Params(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return ZarbServer_getBlockchainInfo_Params{st}, err
-}
-
-func NewRootZarbServer_getBlockchainInfo_Params(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
-	return ZarbServer_getBlockchainInfo_Params{st}, err
-}
-
-func ReadRootZarbServer_getBlockchainInfo_Params(msg *capnp.Message) (ZarbServer_getBlockchainInfo_Params, error) {
-	root, err := msg.RootPtr()
-	return ZarbServer_getBlockchainInfo_Params{root.Struct()}, err
-}
-
-func (s ZarbServer_getBlockchainInfo_Params) String() string {
-	str, _ := text.Marshal(0x8df1c729f8d2ca00, s.Struct)
-	return str
-}
-
-// ZarbServer_getBlockchainInfo_Params_List is a list of ZarbServer_getBlockchainInfo_Params.
-type ZarbServer_getBlockchainInfo_Params_List struct{ capnp.List }
-
-// NewZarbServer_getBlockchainInfo_Params creates a new list of ZarbServer_getBlockchainInfo_Params.
-func NewZarbServer_getBlockchainInfo_Params_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockchainInfo_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
-	return ZarbServer_getBlockchainInfo_Params_List{l}, err
-}
-
-func (s ZarbServer_getBlockchainInfo_Params_List) At(i int) ZarbServer_getBlockchainInfo_Params {
-	return ZarbServer_getBlockchainInfo_Params{s.List.Struct(i)}
-}
-
-func (s ZarbServer_getBlockchainInfo_Params_List) Set(i int, v ZarbServer_getBlockchainInfo_Params) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s ZarbServer_getBlockchainInfo_Params_List) String() string {
-	str, _ := text.MarshalList(0x8df1c729f8d2ca00, s.List)
-	return str
-}
-
-// ZarbServer_getBlockchainInfo_Params_Promise is a wrapper for a ZarbServer_getBlockchainInfo_Params promised by a client call.
-type ZarbServer_getBlockchainInfo_Params_Promise struct{ *capnp.Pipeline }
-
-func (p ZarbServer_getBlockchainInfo_Params_Promise) Struct() (ZarbServer_getBlockchainInfo_Params, error) {
-	s, err := p.Pipeline.Struct()
-	return ZarbServer_getBlockchainInfo_Params{s}, err
-}
-
-type ZarbServer_getBlockchainInfo_Results struct{ capnp.Struct }
-
-// ZarbServer_getBlockchainInfo_Results_TypeID is the unique identifier for the type ZarbServer_getBlockchainInfo_Results.
-const ZarbServer_getBlockchainInfo_Results_TypeID = 0xf5e8509c82a71e1c
-
-func NewZarbServer_getBlockchainInfo_Results(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Results, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return ZarbServer_getBlockchainInfo_Results{st}, err
-}
-
-func NewRootZarbServer_getBlockchainInfo_Results(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Results, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return ZarbServer_getBlockchainInfo_Results{st}, err
-}
-
-func ReadRootZarbServer_getBlockchainInfo_Results(msg *capnp.Message) (ZarbServer_getBlockchainInfo_Results, error) {
-	root, err := msg.RootPtr()
-	return ZarbServer_getBlockchainInfo_Results{root.Struct()}, err
-}
-
-func (s ZarbServer_getBlockchainInfo_Results) String() string {
-	str, _ := text.Marshal(0xf5e8509c82a71e1c, s.Struct)
-	return str
-}
-
-func (s ZarbServer_getBlockchainInfo_Results) Result() (BlockchainResult, error) {
-	p, err := s.Struct.Ptr(0)
-	return BlockchainResult{Struct: p.Struct()}, err
-}
-
-func (s ZarbServer_getBlockchainInfo_Results) HasResult() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
-}
-
-func (s ZarbServer_getBlockchainInfo_Results) SetResult(v BlockchainResult) error {
-	return s.Struct.SetPtr(0, v.Struct.ToPtr())
-}
-
-// NewResult sets the result field to a newly
-// allocated BlockchainResult struct, preferring placement in s's segment.
-func (s ZarbServer_getBlockchainInfo_Results) NewResult() (BlockchainResult, error) {
-	ss, err := NewBlockchainResult(s.Struct.Segment())
-	if err != nil {
-		return BlockchainResult{}, err
-	}
-	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
-	return ss, err
-}
-
-// ZarbServer_getBlockchainInfo_Results_List is a list of ZarbServer_getBlockchainInfo_Results.
-type ZarbServer_getBlockchainInfo_Results_List struct{ capnp.List }
-
-// NewZarbServer_getBlockchainInfo_Results creates a new list of ZarbServer_getBlockchainInfo_Results.
-func NewZarbServer_getBlockchainInfo_Results_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockchainInfo_Results_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return ZarbServer_getBlockchainInfo_Results_List{l}, err
-}
-
-func (s ZarbServer_getBlockchainInfo_Results_List) At(i int) ZarbServer_getBlockchainInfo_Results {
-	return ZarbServer_getBlockchainInfo_Results{s.List.Struct(i)}
-}
-
-func (s ZarbServer_getBlockchainInfo_Results_List) Set(i int, v ZarbServer_getBlockchainInfo_Results) error {
-	return s.List.SetStruct(i, v.Struct)
-}
-
-func (s ZarbServer_getBlockchainInfo_Results_List) String() string {
-	str, _ := text.MarshalList(0xf5e8509c82a71e1c, s.List)
-	return str
-}
-
-// ZarbServer_getBlockchainInfo_Results_Promise is a wrapper for a ZarbServer_getBlockchainInfo_Results promised by a client call.
-type ZarbServer_getBlockchainInfo_Results_Promise struct{ *capnp.Pipeline }
-
-func (p ZarbServer_getBlockchainInfo_Results_Promise) Struct() (ZarbServer_getBlockchainInfo_Results, error) {
-	s, err := p.Pipeline.Struct()
-	return ZarbServer_getBlockchainInfo_Results{s}, err
-}
-
-func (p ZarbServer_getBlockchainInfo_Results_Promise) Result() BlockchainResult_Promise {
-	return BlockchainResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
-}
-
 type ZarbServer_getBlock_Params struct{ capnp.Struct }
 
 // ZarbServer_getBlock_Params_TypeID is the unique identifier for the type ZarbServer_getBlock_Params.
-const ZarbServer_getBlock_Params_TypeID = 0x85252b1ec1c352d2
+const ZarbServer_getBlock_Params_TypeID = 0x8df1c729f8d2ca00
 
 func NewZarbServer_getBlock_Params(s *capnp.Segment) (ZarbServer_getBlock_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 16, PointerCount: 0})
@@ -1640,7 +1802,7 @@ func ReadRootZarbServer_getBlock_Params(msg *capnp.Message) (ZarbServer_getBlock
 }
 
 func (s ZarbServer_getBlock_Params) String() string {
-	str, _ := text.Marshal(0x85252b1ec1c352d2, s.Struct)
+	str, _ := text.Marshal(0x8df1c729f8d2ca00, s.Struct)
 	return str
 }
 
@@ -1678,7 +1840,7 @@ func (s ZarbServer_getBlock_Params_List) Set(i int, v ZarbServer_getBlock_Params
 }
 
 func (s ZarbServer_getBlock_Params_List) String() string {
-	str, _ := text.MarshalList(0x85252b1ec1c352d2, s.List)
+	str, _ := text.MarshalList(0x8df1c729f8d2ca00, s.List)
 	return str
 }
 
@@ -1693,7 +1855,7 @@ func (p ZarbServer_getBlock_Params_Promise) Struct() (ZarbServer_getBlock_Params
 type ZarbServer_getBlock_Results struct{ capnp.Struct }
 
 // ZarbServer_getBlock_Results_TypeID is the unique identifier for the type ZarbServer_getBlock_Results.
-const ZarbServer_getBlock_Results_TypeID = 0x946b1f715eac1308
+const ZarbServer_getBlock_Results_TypeID = 0xf5e8509c82a71e1c
 
 func NewZarbServer_getBlock_Results(s *capnp.Segment) (ZarbServer_getBlock_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -1711,7 +1873,7 @@ func ReadRootZarbServer_getBlock_Results(msg *capnp.Message) (ZarbServer_getBloc
 }
 
 func (s ZarbServer_getBlock_Results) String() string {
-	str, _ := text.Marshal(0x946b1f715eac1308, s.Struct)
+	str, _ := text.Marshal(0xf5e8509c82a71e1c, s.Struct)
 	return str
 }
 
@@ -1758,7 +1920,7 @@ func (s ZarbServer_getBlock_Results_List) Set(i int, v ZarbServer_getBlock_Resul
 }
 
 func (s ZarbServer_getBlock_Results_List) String() string {
-	str, _ := text.MarshalList(0x946b1f715eac1308, s.List)
+	str, _ := text.MarshalList(0xf5e8509c82a71e1c, s.List)
 	return str
 }
 
@@ -1777,7 +1939,7 @@ func (p ZarbServer_getBlock_Results_Promise) Result() BlockResult_Promise {
 type ZarbServer_getTransaction_Params struct{ capnp.Struct }
 
 // ZarbServer_getTransaction_Params_TypeID is the unique identifier for the type ZarbServer_getTransaction_Params.
-const ZarbServer_getTransaction_Params_TypeID = 0xd3df8a6125925ab9
+const ZarbServer_getTransaction_Params_TypeID = 0x85252b1ec1c352d2
 
 func NewZarbServer_getTransaction_Params(s *capnp.Segment) (ZarbServer_getTransaction_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
@@ -1795,7 +1957,7 @@ func ReadRootZarbServer_getTransaction_Params(msg *capnp.Message) (ZarbServer_ge
 }
 
 func (s ZarbServer_getTransaction_Params) String() string {
-	str, _ := text.Marshal(0xd3df8a6125925ab9, s.Struct)
+	str, _ := text.Marshal(0x85252b1ec1c352d2, s.Struct)
 	return str
 }
 
@@ -1839,7 +2001,7 @@ func (s ZarbServer_getTransaction_Params_List) Set(i int, v ZarbServer_getTransa
 }
 
 func (s ZarbServer_getTransaction_Params_List) String() string {
-	str, _ := text.MarshalList(0xd3df8a6125925ab9, s.List)
+	str, _ := text.MarshalList(0x85252b1ec1c352d2, s.List)
 	return str
 }
 
@@ -1854,7 +2016,7 @@ func (p ZarbServer_getTransaction_Params_Promise) Struct() (ZarbServer_getTransa
 type ZarbServer_getTransaction_Results struct{ capnp.Struct }
 
 // ZarbServer_getTransaction_Results_TypeID is the unique identifier for the type ZarbServer_getTransaction_Results.
-const ZarbServer_getTransaction_Results_TypeID = 0xa2b1016cefab775b
+const ZarbServer_getTransaction_Results_TypeID = 0x946b1f715eac1308
 
 func NewZarbServer_getTransaction_Results(s *capnp.Segment) (ZarbServer_getTransaction_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -1872,7 +2034,7 @@ func ReadRootZarbServer_getTransaction_Results(msg *capnp.Message) (ZarbServer_g
 }
 
 func (s ZarbServer_getTransaction_Results) String() string {
-	str, _ := text.Marshal(0xa2b1016cefab775b, s.Struct)
+	str, _ := text.Marshal(0x946b1f715eac1308, s.Struct)
 	return str
 }
 
@@ -1919,7 +2081,7 @@ func (s ZarbServer_getTransaction_Results_List) Set(i int, v ZarbServer_getTrans
 }
 
 func (s ZarbServer_getTransaction_Results_List) String() string {
-	str, _ := text.MarshalList(0xa2b1016cefab775b, s.List)
+	str, _ := text.MarshalList(0x946b1f715eac1308, s.List)
 	return str
 }
 
@@ -1938,7 +2100,7 @@ func (p ZarbServer_getTransaction_Results_Promise) Result() TransactionResult_Pr
 type ZarbServer_getBlockHeight_Params struct{ capnp.Struct }
 
 // ZarbServer_getBlockHeight_Params_TypeID is the unique identifier for the type ZarbServer_getBlockHeight_Params.
-const ZarbServer_getBlockHeight_Params_TypeID = 0xcd6c734787642800
+const ZarbServer_getBlockHeight_Params_TypeID = 0xd3df8a6125925ab9
 
 func NewZarbServer_getBlockHeight_Params(s *capnp.Segment) (ZarbServer_getBlockHeight_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -1956,7 +2118,7 @@ func ReadRootZarbServer_getBlockHeight_Params(msg *capnp.Message) (ZarbServer_ge
 }
 
 func (s ZarbServer_getBlockHeight_Params) String() string {
-	str, _ := text.Marshal(0xcd6c734787642800, s.Struct)
+	str, _ := text.Marshal(0xd3df8a6125925ab9, s.Struct)
 	return str
 }
 
@@ -1992,7 +2154,7 @@ func (s ZarbServer_getBlockHeight_Params_List) Set(i int, v ZarbServer_getBlockH
 }
 
 func (s ZarbServer_getBlockHeight_Params_List) String() string {
-	str, _ := text.MarshalList(0xcd6c734787642800, s.List)
+	str, _ := text.MarshalList(0xd3df8a6125925ab9, s.List)
 	return str
 }
 
@@ -2007,7 +2169,7 @@ func (p ZarbServer_getBlockHeight_Params_Promise) Struct() (ZarbServer_getBlockH
 type ZarbServer_getBlockHeight_Results struct{ capnp.Struct }
 
 // ZarbServer_getBlockHeight_Results_TypeID is the unique identifier for the type ZarbServer_getBlockHeight_Results.
-const ZarbServer_getBlockHeight_Results_TypeID = 0x8e979661cc6a1161
+const ZarbServer_getBlockHeight_Results_TypeID = 0xa2b1016cefab775b
 
 func NewZarbServer_getBlockHeight_Results(s *capnp.Segment) (ZarbServer_getBlockHeight_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0})
@@ -2025,7 +2187,7 @@ func ReadRootZarbServer_getBlockHeight_Results(msg *capnp.Message) (ZarbServer_g
 }
 
 func (s ZarbServer_getBlockHeight_Results) String() string {
-	str, _ := text.Marshal(0x8e979661cc6a1161, s.Struct)
+	str, _ := text.Marshal(0xa2b1016cefab775b, s.Struct)
 	return str
 }
 
@@ -2055,7 +2217,7 @@ func (s ZarbServer_getBlockHeight_Results_List) Set(i int, v ZarbServer_getBlock
 }
 
 func (s ZarbServer_getBlockHeight_Results_List) String() string {
-	str, _ := text.MarshalList(0x8e979661cc6a1161, s.List)
+	str, _ := text.MarshalList(0xa2b1016cefab775b, s.List)
 	return str
 }
 
@@ -2070,7 +2232,7 @@ func (p ZarbServer_getBlockHeight_Results_Promise) Struct() (ZarbServer_getBlock
 type ZarbServer_getAccount_Params struct{ capnp.Struct }
 
 // ZarbServer_getAccount_Params_TypeID is the unique identifier for the type ZarbServer_getAccount_Params.
-const ZarbServer_getAccount_Params_TypeID = 0xeed94cf76be61d8e
+const ZarbServer_getAccount_Params_TypeID = 0xcd6c734787642800
 
 func NewZarbServer_getAccount_Params(s *capnp.Segment) (ZarbServer_getAccount_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
@@ -2088,7 +2250,7 @@ func ReadRootZarbServer_getAccount_Params(msg *capnp.Message) (ZarbServer_getAcc
 }
 
 func (s ZarbServer_getAccount_Params) String() string {
-	str, _ := text.Marshal(0xeed94cf76be61d8e, s.Struct)
+	str, _ := text.Marshal(0xcd6c734787642800, s.Struct)
 	return str
 }
 
@@ -2132,7 +2294,7 @@ func (s ZarbServer_getAccount_Params_List) Set(i int, v ZarbServer_getAccount_Pa
 }
 
 func (s ZarbServer_getAccount_Params_List) String() string {
-	str, _ := text.MarshalList(0xeed94cf76be61d8e, s.List)
+	str, _ := text.MarshalList(0xcd6c734787642800, s.List)
 	return str
 }
 
@@ -2147,7 +2309,7 @@ func (p ZarbServer_getAccount_Params_Promise) Struct() (ZarbServer_getAccount_Pa
 type ZarbServer_getAccount_Results struct{ capnp.Struct }
 
 // ZarbServer_getAccount_Results_TypeID is the unique identifier for the type ZarbServer_getAccount_Results.
-const ZarbServer_getAccount_Results_TypeID = 0xfb42d1f26b074c15
+const ZarbServer_getAccount_Results_TypeID = 0x8e979661cc6a1161
 
 func NewZarbServer_getAccount_Results(s *capnp.Segment) (ZarbServer_getAccount_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -2165,7 +2327,7 @@ func ReadRootZarbServer_getAccount_Results(msg *capnp.Message) (ZarbServer_getAc
 }
 
 func (s ZarbServer_getAccount_Results) String() string {
-	str, _ := text.Marshal(0xfb42d1f26b074c15, s.Struct)
+	str, _ := text.Marshal(0x8e979661cc6a1161, s.Struct)
 	return str
 }
 
@@ -2212,7 +2374,7 @@ func (s ZarbServer_getAccount_Results_List) Set(i int, v ZarbServer_getAccount_R
 }
 
 func (s ZarbServer_getAccount_Results_List) String() string {
-	str, _ := text.MarshalList(0xfb42d1f26b074c15, s.List)
+	str, _ := text.MarshalList(0x8e979661cc6a1161, s.List)
 	return str
 }
 
@@ -2231,7 +2393,7 @@ func (p ZarbServer_getAccount_Results_Promise) Result() AccountResult_Promise {
 type ZarbServer_getValidator_Params struct{ capnp.Struct }
 
 // ZarbServer_getValidator_Params_TypeID is the unique identifier for the type ZarbServer_getValidator_Params.
-const ZarbServer_getValidator_Params_TypeID = 0x8fb41d4bd35c5a30
+const ZarbServer_getValidator_Params_TypeID = 0xeed94cf76be61d8e
 
 func NewZarbServer_getValidator_Params(s *capnp.Segment) (ZarbServer_getValidator_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
@@ -2249,7 +2411,7 @@ func ReadRootZarbServer_getValidator_Params(msg *capnp.Message) (ZarbServer_getV
 }
 
 func (s ZarbServer_getValidator_Params) String() string {
-	str, _ := text.Marshal(0x8fb41d4bd35c5a30, s.Struct)
+	str, _ := text.Marshal(0xeed94cf76be61d8e, s.Struct)
 	return str
 }
 
@@ -2293,7 +2455,7 @@ func (s ZarbServer_getValidator_Params_List) Set(i int, v ZarbServer_getValidato
 }
 
 func (s ZarbServer_getValidator_Params_List) String() string {
-	str, _ := text.MarshalList(0x8fb41d4bd35c5a30, s.List)
+	str, _ := text.MarshalList(0xeed94cf76be61d8e, s.List)
 	return str
 }
 
@@ -2308,7 +2470,7 @@ func (p ZarbServer_getValidator_Params_Promise) Struct() (ZarbServer_getValidato
 type ZarbServer_getValidator_Results struct{ capnp.Struct }
 
 // ZarbServer_getValidator_Results_TypeID is the unique identifier for the type ZarbServer_getValidator_Results.
-const ZarbServer_getValidator_Results_TypeID = 0xa128fe760c2612c4
+const ZarbServer_getValidator_Results_TypeID = 0xfb42d1f26b074c15
 
 func NewZarbServer_getValidator_Results(s *capnp.Segment) (ZarbServer_getValidator_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -2326,7 +2488,7 @@ func ReadRootZarbServer_getValidator_Results(msg *capnp.Message) (ZarbServer_get
 }
 
 func (s ZarbServer_getValidator_Results) String() string {
-	str, _ := text.Marshal(0xa128fe760c2612c4, s.Struct)
+	str, _ := text.Marshal(0xfb42d1f26b074c15, s.Struct)
 	return str
 }
 
@@ -2373,7 +2535,7 @@ func (s ZarbServer_getValidator_Results_List) Set(i int, v ZarbServer_getValidat
 }
 
 func (s ZarbServer_getValidator_Results_List) String() string {
-	str, _ := text.MarshalList(0xa128fe760c2612c4, s.List)
+	str, _ := text.MarshalList(0xfb42d1f26b074c15, s.List)
 	return str
 }
 
@@ -2389,10 +2551,288 @@ func (p ZarbServer_getValidator_Results_Promise) Result() ValidatorResult_Promis
 	return ValidatorResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
+type ZarbServer_getBlockchainInfo_Params struct{ capnp.Struct }
+
+// ZarbServer_getBlockchainInfo_Params_TypeID is the unique identifier for the type ZarbServer_getBlockchainInfo_Params.
+const ZarbServer_getBlockchainInfo_Params_TypeID = 0x8fb41d4bd35c5a30
+
+func NewZarbServer_getBlockchainInfo_Params(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return ZarbServer_getBlockchainInfo_Params{st}, err
+}
+
+func NewRootZarbServer_getBlockchainInfo_Params(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return ZarbServer_getBlockchainInfo_Params{st}, err
+}
+
+func ReadRootZarbServer_getBlockchainInfo_Params(msg *capnp.Message) (ZarbServer_getBlockchainInfo_Params, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_getBlockchainInfo_Params{root.Struct()}, err
+}
+
+func (s ZarbServer_getBlockchainInfo_Params) String() string {
+	str, _ := text.Marshal(0x8fb41d4bd35c5a30, s.Struct)
+	return str
+}
+
+// ZarbServer_getBlockchainInfo_Params_List is a list of ZarbServer_getBlockchainInfo_Params.
+type ZarbServer_getBlockchainInfo_Params_List struct{ capnp.List }
+
+// NewZarbServer_getBlockchainInfo_Params creates a new list of ZarbServer_getBlockchainInfo_Params.
+func NewZarbServer_getBlockchainInfo_Params_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockchainInfo_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
+	return ZarbServer_getBlockchainInfo_Params_List{l}, err
+}
+
+func (s ZarbServer_getBlockchainInfo_Params_List) At(i int) ZarbServer_getBlockchainInfo_Params {
+	return ZarbServer_getBlockchainInfo_Params{s.List.Struct(i)}
+}
+
+func (s ZarbServer_getBlockchainInfo_Params_List) Set(i int, v ZarbServer_getBlockchainInfo_Params) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_getBlockchainInfo_Params_List) String() string {
+	str, _ := text.MarshalList(0x8fb41d4bd35c5a30, s.List)
+	return str
+}
+
+// ZarbServer_getBlockchainInfo_Params_Promise is a wrapper for a ZarbServer_getBlockchainInfo_Params promised by a client call.
+type ZarbServer_getBlockchainInfo_Params_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_getBlockchainInfo_Params_Promise) Struct() (ZarbServer_getBlockchainInfo_Params, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_getBlockchainInfo_Params{s}, err
+}
+
+type ZarbServer_getBlockchainInfo_Results struct{ capnp.Struct }
+
+// ZarbServer_getBlockchainInfo_Results_TypeID is the unique identifier for the type ZarbServer_getBlockchainInfo_Results.
+const ZarbServer_getBlockchainInfo_Results_TypeID = 0xa128fe760c2612c4
+
+func NewZarbServer_getBlockchainInfo_Results(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getBlockchainInfo_Results{st}, err
+}
+
+func NewRootZarbServer_getBlockchainInfo_Results(s *capnp.Segment) (ZarbServer_getBlockchainInfo_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getBlockchainInfo_Results{st}, err
+}
+
+func ReadRootZarbServer_getBlockchainInfo_Results(msg *capnp.Message) (ZarbServer_getBlockchainInfo_Results, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_getBlockchainInfo_Results{root.Struct()}, err
+}
+
+func (s ZarbServer_getBlockchainInfo_Results) String() string {
+	str, _ := text.Marshal(0xa128fe760c2612c4, s.Struct)
+	return str
+}
+
+func (s ZarbServer_getBlockchainInfo_Results) Result() (BlockchainResult, error) {
+	p, err := s.Struct.Ptr(0)
+	return BlockchainResult{Struct: p.Struct()}, err
+}
+
+func (s ZarbServer_getBlockchainInfo_Results) HasResult() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s ZarbServer_getBlockchainInfo_Results) SetResult(v BlockchainResult) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
+}
+
+// NewResult sets the result field to a newly
+// allocated BlockchainResult struct, preferring placement in s's segment.
+func (s ZarbServer_getBlockchainInfo_Results) NewResult() (BlockchainResult, error) {
+	ss, err := NewBlockchainResult(s.Struct.Segment())
+	if err != nil {
+		return BlockchainResult{}, err
+	}
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
+}
+
+// ZarbServer_getBlockchainInfo_Results_List is a list of ZarbServer_getBlockchainInfo_Results.
+type ZarbServer_getBlockchainInfo_Results_List struct{ capnp.List }
+
+// NewZarbServer_getBlockchainInfo_Results creates a new list of ZarbServer_getBlockchainInfo_Results.
+func NewZarbServer_getBlockchainInfo_Results_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockchainInfo_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return ZarbServer_getBlockchainInfo_Results_List{l}, err
+}
+
+func (s ZarbServer_getBlockchainInfo_Results_List) At(i int) ZarbServer_getBlockchainInfo_Results {
+	return ZarbServer_getBlockchainInfo_Results{s.List.Struct(i)}
+}
+
+func (s ZarbServer_getBlockchainInfo_Results_List) Set(i int, v ZarbServer_getBlockchainInfo_Results) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_getBlockchainInfo_Results_List) String() string {
+	str, _ := text.MarshalList(0xa128fe760c2612c4, s.List)
+	return str
+}
+
+// ZarbServer_getBlockchainInfo_Results_Promise is a wrapper for a ZarbServer_getBlockchainInfo_Results promised by a client call.
+type ZarbServer_getBlockchainInfo_Results_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_getBlockchainInfo_Results_Promise) Struct() (ZarbServer_getBlockchainInfo_Results, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_getBlockchainInfo_Results{s}, err
+}
+
+func (p ZarbServer_getBlockchainInfo_Results_Promise) Result() BlockchainResult_Promise {
+	return BlockchainResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+}
+
+type ZarbServer_getNetworkInfo_Params struct{ capnp.Struct }
+
+// ZarbServer_getNetworkInfo_Params_TypeID is the unique identifier for the type ZarbServer_getNetworkInfo_Params.
+const ZarbServer_getNetworkInfo_Params_TypeID = 0xe051a47070c97f9e
+
+func NewZarbServer_getNetworkInfo_Params(s *capnp.Segment) (ZarbServer_getNetworkInfo_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return ZarbServer_getNetworkInfo_Params{st}, err
+}
+
+func NewRootZarbServer_getNetworkInfo_Params(s *capnp.Segment) (ZarbServer_getNetworkInfo_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return ZarbServer_getNetworkInfo_Params{st}, err
+}
+
+func ReadRootZarbServer_getNetworkInfo_Params(msg *capnp.Message) (ZarbServer_getNetworkInfo_Params, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_getNetworkInfo_Params{root.Struct()}, err
+}
+
+func (s ZarbServer_getNetworkInfo_Params) String() string {
+	str, _ := text.Marshal(0xe051a47070c97f9e, s.Struct)
+	return str
+}
+
+// ZarbServer_getNetworkInfo_Params_List is a list of ZarbServer_getNetworkInfo_Params.
+type ZarbServer_getNetworkInfo_Params_List struct{ capnp.List }
+
+// NewZarbServer_getNetworkInfo_Params creates a new list of ZarbServer_getNetworkInfo_Params.
+func NewZarbServer_getNetworkInfo_Params_List(s *capnp.Segment, sz int32) (ZarbServer_getNetworkInfo_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
+	return ZarbServer_getNetworkInfo_Params_List{l}, err
+}
+
+func (s ZarbServer_getNetworkInfo_Params_List) At(i int) ZarbServer_getNetworkInfo_Params {
+	return ZarbServer_getNetworkInfo_Params{s.List.Struct(i)}
+}
+
+func (s ZarbServer_getNetworkInfo_Params_List) Set(i int, v ZarbServer_getNetworkInfo_Params) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_getNetworkInfo_Params_List) String() string {
+	str, _ := text.MarshalList(0xe051a47070c97f9e, s.List)
+	return str
+}
+
+// ZarbServer_getNetworkInfo_Params_Promise is a wrapper for a ZarbServer_getNetworkInfo_Params promised by a client call.
+type ZarbServer_getNetworkInfo_Params_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_getNetworkInfo_Params_Promise) Struct() (ZarbServer_getNetworkInfo_Params, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_getNetworkInfo_Params{s}, err
+}
+
+type ZarbServer_getNetworkInfo_Results struct{ capnp.Struct }
+
+// ZarbServer_getNetworkInfo_Results_TypeID is the unique identifier for the type ZarbServer_getNetworkInfo_Results.
+const ZarbServer_getNetworkInfo_Results_TypeID = 0x8d7ad02d9eab8fb7
+
+func NewZarbServer_getNetworkInfo_Results(s *capnp.Segment) (ZarbServer_getNetworkInfo_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getNetworkInfo_Results{st}, err
+}
+
+func NewRootZarbServer_getNetworkInfo_Results(s *capnp.Segment) (ZarbServer_getNetworkInfo_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getNetworkInfo_Results{st}, err
+}
+
+func ReadRootZarbServer_getNetworkInfo_Results(msg *capnp.Message) (ZarbServer_getNetworkInfo_Results, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_getNetworkInfo_Results{root.Struct()}, err
+}
+
+func (s ZarbServer_getNetworkInfo_Results) String() string {
+	str, _ := text.Marshal(0x8d7ad02d9eab8fb7, s.Struct)
+	return str
+}
+
+func (s ZarbServer_getNetworkInfo_Results) Result() (NetworkResult, error) {
+	p, err := s.Struct.Ptr(0)
+	return NetworkResult{Struct: p.Struct()}, err
+}
+
+func (s ZarbServer_getNetworkInfo_Results) HasResult() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s ZarbServer_getNetworkInfo_Results) SetResult(v NetworkResult) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
+}
+
+// NewResult sets the result field to a newly
+// allocated NetworkResult struct, preferring placement in s's segment.
+func (s ZarbServer_getNetworkInfo_Results) NewResult() (NetworkResult, error) {
+	ss, err := NewNetworkResult(s.Struct.Segment())
+	if err != nil {
+		return NetworkResult{}, err
+	}
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
+}
+
+// ZarbServer_getNetworkInfo_Results_List is a list of ZarbServer_getNetworkInfo_Results.
+type ZarbServer_getNetworkInfo_Results_List struct{ capnp.List }
+
+// NewZarbServer_getNetworkInfo_Results creates a new list of ZarbServer_getNetworkInfo_Results.
+func NewZarbServer_getNetworkInfo_Results_List(s *capnp.Segment, sz int32) (ZarbServer_getNetworkInfo_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return ZarbServer_getNetworkInfo_Results_List{l}, err
+}
+
+func (s ZarbServer_getNetworkInfo_Results_List) At(i int) ZarbServer_getNetworkInfo_Results {
+	return ZarbServer_getNetworkInfo_Results{s.List.Struct(i)}
+}
+
+func (s ZarbServer_getNetworkInfo_Results_List) Set(i int, v ZarbServer_getNetworkInfo_Results) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_getNetworkInfo_Results_List) String() string {
+	str, _ := text.MarshalList(0x8d7ad02d9eab8fb7, s.List)
+	return str
+}
+
+// ZarbServer_getNetworkInfo_Results_Promise is a wrapper for a ZarbServer_getNetworkInfo_Results promised by a client call.
+type ZarbServer_getNetworkInfo_Results_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_getNetworkInfo_Results_Promise) Struct() (ZarbServer_getNetworkInfo_Results, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_getNetworkInfo_Results{s}, err
+}
+
+func (p ZarbServer_getNetworkInfo_Results_Promise) Result() NetworkResult_Promise {
+	return NetworkResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+}
+
 type ZarbServer_sendRawTransaction_Params struct{ capnp.Struct }
 
 // ZarbServer_sendRawTransaction_Params_TypeID is the unique identifier for the type ZarbServer_sendRawTransaction_Params.
-const ZarbServer_sendRawTransaction_Params_TypeID = 0xe051a47070c97f9e
+const ZarbServer_sendRawTransaction_Params_TypeID = 0x8317eae56a55f0ba
 
 func NewZarbServer_sendRawTransaction_Params(s *capnp.Segment) (ZarbServer_sendRawTransaction_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -2410,7 +2850,7 @@ func ReadRootZarbServer_sendRawTransaction_Params(msg *capnp.Message) (ZarbServe
 }
 
 func (s ZarbServer_sendRawTransaction_Params) String() string {
-	str, _ := text.Marshal(0xe051a47070c97f9e, s.Struct)
+	str, _ := text.Marshal(0x8317eae56a55f0ba, s.Struct)
 	return str
 }
 
@@ -2446,7 +2886,7 @@ func (s ZarbServer_sendRawTransaction_Params_List) Set(i int, v ZarbServer_sendR
 }
 
 func (s ZarbServer_sendRawTransaction_Params_List) String() string {
-	str, _ := text.MarshalList(0xe051a47070c97f9e, s.List)
+	str, _ := text.MarshalList(0x8317eae56a55f0ba, s.List)
 	return str
 }
 
@@ -2461,7 +2901,7 @@ func (p ZarbServer_sendRawTransaction_Params_Promise) Struct() (ZarbServer_sendR
 type ZarbServer_sendRawTransaction_Results struct{ capnp.Struct }
 
 // ZarbServer_sendRawTransaction_Results_TypeID is the unique identifier for the type ZarbServer_sendRawTransaction_Results.
-const ZarbServer_sendRawTransaction_Results_TypeID = 0x8d7ad02d9eab8fb7
+const ZarbServer_sendRawTransaction_Results_TypeID = 0xc0689e5f33bf949d
 
 func NewZarbServer_sendRawTransaction_Results(s *capnp.Segment) (ZarbServer_sendRawTransaction_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -2479,7 +2919,7 @@ func ReadRootZarbServer_sendRawTransaction_Results(msg *capnp.Message) (ZarbServ
 }
 
 func (s ZarbServer_sendRawTransaction_Results) String() string {
-	str, _ := text.Marshal(0x8d7ad02d9eab8fb7, s.Struct)
+	str, _ := text.Marshal(0xc0689e5f33bf949d, s.Struct)
 	return str
 }
 
@@ -2526,7 +2966,7 @@ func (s ZarbServer_sendRawTransaction_Results_List) Set(i int, v ZarbServer_send
 }
 
 func (s ZarbServer_sendRawTransaction_Results_List) String() string {
-	str, _ := text.MarshalList(0x8d7ad02d9eab8fb7, s.List)
+	str, _ := text.MarshalList(0xc0689e5f33bf949d, s.List)
 	return str
 }
 
@@ -2542,130 +2982,150 @@ func (p ZarbServer_sendRawTransaction_Results_Promise) Result() SendTransactionR
 	return SendTransactionResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-const schema_84b56bd0975dfd33 = "x\xda\xb4X{\x8cTg\x15?\xe7\xfb\xe6\xcecw" +
-	"\x86\x99\xeb\x9d\x8dJ\x96.1\x8baWi\x815\xa9" +
-	"\x92\xd4a\xb7\x10\x17\x84\xb8w\x96\x98\xb2\x16\xe3\xdd\x99" +
-	"+{\xbb\xf3\xe2\xde\xbb\xecJb6YK\xac\xe8\x82" +
-	"\xe2\xa3\xd2\xd8&mmL\x8b\xad\xa1\x8a\x16\x13\xfe@" +
-	"\xad\x0d\x04\"\x8f\x10\xd3\xa6U!\xa6bS\xadh\x09" +
-	"\xa0\xc25\xe7\xbb{\x1f3\xcc\xbe\x12\xfb\xdf\xcc\xb9\xe7" +
-	";\xe7w^\xbf\xef\xb1z\xb3\xb4\x9e\xad\x91>\x93\x00" +
-	"PKR\xd4\xb9r\xf3\x1b\xdb\xa3\xb9\xecW@nC" +
-	"\xa7\xe7\xd6\x8eG\xcf\x8e\x1e}\x18$\x1e\x03\xe8\x99\x8e" +
-	"\xb4\xa0\xf2x$\x06\xa0\x1c\x8a\xfc\x04\xd09\x9f\xff\xf5" +
-	"\x89\xbb>\xb2b/\xa8\xcb\x91\x01\xd0\x97\x9e5\xd2\x14" +
-	"\x02*\xf7I\xe3\x80\xce/\x0e\x1c~b\xd5\xd9=\xd3" +
-	" /G\x00\x09I\xe1q\xe95R8\"\xe5\x00o" +
-	"\x9f:\x7f\xa3\xeb\x95\xab\xd3\xe2\xb3X~N:\x85\x10" +
-	"q4\xf9\xa1\xd3\xda\xf7\x1e\xddO\x96\xbdO/K\xbf" +
-	"\xa4\x85\x17i\xa1\xf3\x8f\xe7\xbe?y\xf4\xf5?\xec\x07" +
-	"\xb5\x0dY\x08h\x8c\xd0]\x93.+\x18\xa55\xb7$" +
-	"\x07\x01\x9d\xd5C\x0f^\xf8\xf4\xb2\x9f\x1d\x981\xe7\x02" +
-	"\xf9`\xfc)\xb2\xd7\x15'\xa4q\xe5\xc7\x9f\xdf\xd51" +
-	"\xfa\x9d0\xd2\xaf\xc5\xf7\x91\xc2\xa189\xfc\xcd\xfb>" +
-	"\x9c\xdc}{\xe5\x93a\x85c\xf1\xe7H\xe1\xa4P\xf8" +
-	"\xdc\xf8\xe1wJx\xe4\xa9\xb0\xc2_\xe3\x02\xf2M\xa1" +
-	"\xf0\xfe\x81\x96O\xbe\xbe\xf5\xf8\xd3\x0d\xa9u\xb1$\x96" +
-	"\xa2\xd2\x95 \xf0+\x12\xa4|\xfa\xfa\x86\xe2\x8d\x93c" +
-	"/Q|!m\x91\xfc\x8d\x89\x7f+\xaa\xd0\xdd\x9a " +
-	"\xec\x1b\x92\x93\xd5[\xdf\xfe\xd7KMj\xa6<\x9bx" +
-	"M9*t\x8f$\xa8d#?\xbf\x9dm\xbfw\xfc" +
-	"x\x83\xaeH\xf0\xd6\x96u\xa8\xech!\xe5\xed-\x7f" +
-	"\x01t\x9e\x1d\x9d\xfa\xe9[g\x1f9\xde\x04D\xcf\x9a" +
-	"\xd6\xb5\xa8\xf4\xb6\x92\xf2}\xad\x84\xb8\xebZ\xf7;\xcf" +
-	"_^~\xa2Ix\xca\x8e\xd6S\x8a!tu\xd2\xbd" +
-	"\xbd\xb2\xf8\xd5OY\xa53\xa1L}\xb7\xf5E\xca\xd4" +
-	"3\xc2\xd4\xe6\xee\xdf\xbex,\xf2\xfb\xdf5\xf8u5" +
-	"_n\x1dB\xe5Ua\xecb+\x85\x7fl\xe8\xe0\x0a" +
-	"m\xdf\x1f/\xd4\x15wMR\xd8\xebM\x92\xc6\x13\x93" +
-	"'k\xb5\x1f\xaa\x7f\x0a\x97\xe6\xc9\xe4yR8\x9a$" +
-	"\x87\x0f\xfc\xea4\xeb\x9d~\xf3J\x03v&\x9c$\xdf" +
-	"R.%\xe9\xd7\x1b\xc2\xd8\xd3\xce\xd7_\x98\x9ej\x7f" +
-	"\xbbY\x19?\x91\xeaFeSJ\x14)E\x86\xf7/" +
-	"{s\xf4\xfa\x96W\xff^\x87MO\x1d$\xd7c)" +
-	"2w\xef\xe1\xec\xb2\x03\xfd\xd1\xab\x8d\xb1\x8a\xea]L" +
-	"]V.\x09so\xa4\xa8 \xedw\xfdh\xea\x07\x03" +
-	"W\xae\x85\x039\xb3D\x04ri\x09\xf9\xfb\xf3\xe4\x85" +
-	"\xd4\x0b\x97\xa37An\xe3\x811\xc0\x1eL3TR" +
-	"iZ\x90H\xbf\x82\xca\xc6L\x0c\xc0i\xdb\x12\x1b\xfd" +
-	"\xe7\xb9\xbe\xff\x84\xed\xad\xca<&\x068C\xf6\xc6\xc7" +
-	"\xc7\xef)h\xb5\x0a\xaf\xdd\xb3G3\x87\xef\xa6\xdf\xb5" +
-	"u}\xa5ja4\xaf[c%\x1b`\x00QM\xf2" +
-	"\x08@\x04\x01\xe4\x8d\xdd\x00\xeaz\x8e\xea\x16\x862b" +
-	"\x96\xa2\x967\x91p\x03Gu\x80\xa1\xccX\x96\xc8B" +
-	"\xde\xba\x16@\xed\xe7\xa8nc\x98\x1e\xd1\xac\x11L\x01" +
-	"\xc3\x14`\xba\xa8\xd9\x9a\xf7\xa7c\x98|a&hr" +
-	"@\xcc\x84\x90Iu\xc8\x864sxP7w\xeb\xe6" +
-	"\xdd;u[\xe0\xec\x1c\xd0L\xadl\x81\x1a\xf7Av" +
-	"\xad\x03P;9\xaa\xab\x09$sA\xae\xca\x03\xa8\x1f" +
-	"\xe5\xa8~\x9canD7v\x8e\xd8\x98\x00\x86\x09@" +
-	"g\xb7n\x0eW-\xc3\x06\xfc\x12F\x80a$\x04 " +
-	":\x1b\x00K\xaf\x14\xf3\xda\xf86S\xabXZ\xc16" +
-	"\xaa\x95N\x913n[j\xc4\xc7\x92\",q\x8ej" +
-	"\x96a\xce\x149\xc5L0\x01\x0d\xd1F\xe7\x8b\xb60" +
-	"\xa2\x19\x95M\x95/V\xbd\xb0a\xe1\x99\xea\x17Aw" +
-	"\xe6s\x02\xc5| \xbd\xdcx\xe6Y\x9d\xf9~]\x8b" +
-	"\x15u\x93\x9a\xa3\xd37\xf3\xb7>\x00\xf5\x0aG\xf5\xdd" +
-	"Ps\\\xa5\xe6x\x9b\xa3z\x83!\xce\xf4\xc65\x13" +
-	"@}\x97c\x1e\x19\xca\x1c\xb3\xc8\x01\xe4[T\xa0\xff" +
-	"r\x1c\x8c\x934\xc2\xb2\x18\x01P$\xec\x03\xc8#\xc7" +
-	"\xc1$\x89%\x9eE\x09@I\xe0>\x80\xc1$\xc9?" +
-	"@\xf2h$\x8bQ\x00\xa5\x0d\xf7\x00\x0cfI\xbe\x9c" +
-	"\xe41)+\x18j\x99\x90\xb7\x93|%\xc9\xe3\xd1," +
-	"\xc6\x89\x8dq\x0a`\xb0\x93\xe4\xab\x91\xe1\xe4n\xdd\xb4" +
-	"\x8cj\xc5\xeb\x82\xb4m\x94u\x94\x80\xa1\x04\xe8\x944" +
-	"Kd\x12:F\xfbC\x0d\xedX\xb6f\xeb\xfd\x9a\x05" +
-	"\xe8\xcb&\xed\x09\xabN\x87\xd6\xe6\xf5\x82\x8eF\xcd\x16" +
-	"_\x00\xea\xbe\xdd_-\x97!g\xd8u\x8b\x0a\xd5r" +
-	"\xd9\xb0m\x1drf\xbd\xb5\x9aY\xadU-\xdd\xc4\xde" +
-	"b\xd1\xd4-+\xb0\xb5\x90n\xf8\xacV2\x8a\x9a]" +
-	"5\xa9\x89bZ\xd9\x0a\xcfN_0;^\x09\xc3\xa3" +
-	"3\xa9\xb9\x1e}\x87s\xcd\xce\xfc\xc3\xeb\xb2\x8c\x050" +
-	"\xef\xc8\xf8'\x97E\x10D\x10h^\xb7\xd2\x0bh\xfa" +
-	"L@\xff\x8bpSG\x01\x0b\x9b\xaeL\xb0S78" +
-	"\xaa\xa7\xe2\xdeB\xa1:V\xb1)M\xbcd\xd3\xb8\x85" +
-	"\xecv\x07v\xebHu\x96\x99\xbd\xbfZ\xce\x89v\x12" +
-	"c;\x1b]z5'\xe1J\x8e\xea\xc7\x18\xe6*c" +
-	"\xe5a\xdd\xf4\xca\x9b\xa3~\x1f\xb3\xee\xa86k\xdcD" +
-	"xa\xb4a\xf7X\xd7l\xf7\x18\x0a6\x0a\x7f\xf7P" +
-	"?\x04\xa0n\xe1\xa8> \xd8Z+\xea&f\x82S" +
-	"\xe1L\xce\xfc\xc1\xe1\x06\xa5\xd4\xdfk\xdd\xcf1{\xc2" +
-	"\xc2Lpp\x993\xd1\xa1\x1a\xe6\xdc\xa6$\xe8\x19\x1f" +
-	"\xba\xb6\x14@}\x90\xa3:\x12\x82\xaeS\x05\xbe\xc0Q" +
-	"-\x85\xa0\x1b\xc3\x00\xea\x08G\xd5&r\xe3.\xb9\xed" +
-	"\xa2\xb1*qT'\x18r\xa3\xd8t/t\xec\x19\x0c" +
-	"\x10#\x0a\xf2\x98\xc4\xd4\x0b\xbaQ\xa3\xf8\xfcc\xcc\x9c" +
-	"\x91\x04\xfbD\xbe\xc3\x0fd\x96n\x9c\xd9\x07=\x82k" +
-	"^\xc9m\x13\x96{\x0chb\xa4\x93\x8ch\xd6\x88n" +
-	"\xe1\x12\xc0\x01\x8e\x02\xf6\x92\xc5p\xc0\xcc\xb64\xd0!" +
-	"6\xb4\xd9\xfa;|\x82\xf0mG\xeal\x0f\xea\x95b" +
-	"\xa8\x8c\xa1\x99i\xde\xeb~\xab/\x0d\xb5z}o\x87" +
-	"J\xb5h&\xf0\x02\x0a9_:7\xb7\x86\xbd\xfd\xbf" +
-	"\x8e$\xe2\x98\x80ui]\x1b\xa4\xb5\xc3\xd4\xc6\xb7M" +
-	"\xcc\xc3\x1by\xbd\x90\xa6\x0el\xc8dw3\xd6\xe8\x0e" +
-	"R9\xfb\xa1o\x96\xc6\xf5\xd9:\xaf\xa7\x9b\xf4\xed\xbc" +
-	"l7Wafx\xd4O\xc7{\xb4\xe1\xddA\xb8\xb1" +
-	"\xb2\xd1H$\xf9\x803<\x7f\x06\x95\xa4\xc8Q\xad\x11" +
-	"\x8f\xa0\xcb#\xe5\xa1\x19\xcax\x84x\x84\xb9<\xb2\x97" +
-	"V?\xccQ\xfd&CG\x9c\x9d\xeb\xcf\x1d\x1dfu" +
-	"\xacR\xc480\x8c\x87\x0f\x10\xdc\xf4\x074\x13\\>" +
-	"\x01\xc5\xa8Z\xc6\xce\x8af\x8f\x99\x80\xfa\x1dI]\xc4" +
-	"\x89\xd4\xa5M\x9c\x7f\xeb\xf3\xef\x9ds\xf2X\xe0K\x90" +
-	"O;\x97\x00\xbc\x07\x85\xd0M\xe9\xdcA`\xf2\x99\x18" +
-	"\x06\xcf\x15\xe8]\xf6\xe5\x13\x9b\x81\xc9\xc7b\xc8\xfcK" +
-	"$z\xd7x\xf9\xf9=\xc0\xe4gb\xc8\xbd\xdbj\xf0" +
-	"(!\x1f\xa2o\xdf\x8aa\xc4\xbf\xe0\xa1w\x95\x92\xf7" +
-	"\x0e\x01\x93\xbf\x1cC\xc9\x7fu@\xef\xed@\xde\xf5\x10" +
-	"0\xd9\x88a\xd4\xbf\x92\xa2\xf7D\"\xefx\x0c\x98\xbc" +
-	"=\xe6xyC/qX]\x8f\xbe\x14\x00\xdc\x7fb" +
-	"\x86!\xe7NqX!\xe7\xf2\xa5+\x12m\x0d\xbc2" +
-	"\xf3WL\x10\xa4i\x86\xd6\xa3\xe3\xb1\x01zt\xc0\xc9" +
-	"\xd2\x00.nb\x16|\xa7\xf1\xdf?\xdc\xaa\xfe/\x00" +
-	"\x00\xff\xff\x16>\xd3G"
+const schema_84b56bd0975dfd33 = "x\xda\xacX\x7f\x8c\x14w\x15\x7fo\xbe\xbb;w\xd7" +
+	"\xdd\xee\xce\xcd^j\x08\xf4\x0es\x188\xa5\xe58M" +
+	"\xcd%\xb8\xdc\xf5\x1a\x8f\x96\xd3\x9b=\xda\xb4'\xa8s" +
+	"\xbb#7\xdc\xfe\xea\xcc\xec-\xa0\xcdEZb\x8b\x1e" +
+	"4\xd8Zi\x94Xjb\x04i#\x8a\x16\x12\xa2\xa8" +
+	"\xd5@ E\x0814\xa5*\xd1\x16I\x15\xd0\x92\x82" +
+	"\x16\xd6\xbc\xef\xec\xcc\xce,{\xc7]\xf5\xbf\xdd7o" +
+	"\xde\xaf\xef\xfb\xbc\xcfw\xde\x92\xd5\xa1\xe5Bg\xf0\xe5" +
+	"&\x00\xe5+\xc1P\xf9\xfc\xb5o<\x12J\xc4\x1f\x07" +
+	"\xa9\x05\xcb]\xd7\xd7<wbl\xff\x13\x10d\"@" +
+	"\xd7\xb2`\x13\xca\x03A\x11@^\x11|\x19\xb0|\xf0" +
+	"\xd2\x83\xeb\xfez\xe1\x8e\xc7AjC\x80 \x92\xd2\x9f" +
+	"\x83'\x11P\xbe\x12L\x00\x96O&\x7f}\xf8\xce\x8f" +
+	".\xd8\x0cJ\x1b\xba\x1a-\xa1}\xa4\xb1 T\x02," +
+	"\xff|\xdb\x9e\x9d\x8bOl\x9c\xf4\x9a\xd8\x1c:H\x0a" +
+	"\xcf\x86\x12\x807\x8e\x9e\xbc\xba\xe8w\x97'\x956\x14" +
+	"\x00\x02\xf4x\x7fh\x13=>\xcc\xdfW\xa5u\xc7\xd4" +
+	"o=\xb7\xd5\xfb\xfe|\xf1yR\xe8\x14)\x84K\xbb" +
+	"\xbf=\xb1\xff\x8d7\xb7\x82\xd2\x82\x82'#\x91\xd2P" +
+	"\xc4s\xf2\x1a\xfa\xd5\xf5\x88XF\xc0\xf2\x92\xe1\xd5\xa7" +
+	"\x1e\x98\xf7\xd3m\xb69\xee\xae\xd8x\x14!Pn\x90" +
+	"\x7f\xf4\xf9G[\xc7\x9e\xf1:\xd2\x1by\xa0\x1b\x1a\xc9" +
+	"\xd1o\x9a?\x12\x1e\xbf\xb1\xf0\x05\xaf\xc2\x8eF^\x8c" +
+	"\xbd\\\xe1s\xa5=\x173\xf8\xe3]\x95bp\xe3\xc7" +
+	"m\x0bg\xb9\xc2\x1d\x83M\x9fzc\xe0\xd0\x8b5\xb5" +
+	"\xe7\x96\xae7\xceA9\xd2DA76\x91\xf2\xb1\xf7" +
+	"\xfa\xd2W\x8f\x14_\xa1\xbc<\xdadU^\xd4\xf4o" +
+	"\xf9\x13\\\xb7\xb3\x89\x8a\xd4\x17\x9e\xc8_\xff\xe6\xbf^" +
+	"\xa9s\xa8\xf2d\xd3\xeb\xf2\x0e\xae\xfbl\x13\x9d\xe9\xe8" +
+	"\xcfn\xc4\xe7\xdeS:T\xa3\xcb\xa3\xed\xbc\xad\x1b\xe5" +
+	"\x9e\xdbHy\xd9mo\x03\x96\x7f8\xb6\xe9'\x17N" +
+	"<y\xa8N\x10]-\xe1\xa5(/\x08\x93\xf2\xfc0" +
+	"E\xfc\xddg~\xd1\xf5\x85\x9d\xa3\xbf\xf4\x16\xa8'\xfc" +
+	":\xe5\xff WXt\xa5\xe3\xe2\xdesm\x87\xeb\xe4" +
+	"/\x17\xc3G\xe5\xafrc\x8f\x91\xee\x8d\x85\xe9\xaf}" +
+	"\xda\xcc\x1c\xf7\xf6\xd5\xde\xf0v\xb2u(L)\xdf\xdf" +
+	"\xf1\xdb}\x07\x02\x7fx\xad&2[s^d\x18\xe5" +
+	"\xce\x08Y[\x1c!\xed\x03\xc3\xdb\x17\xa8[\xfex\xca" +
+	"\x1b\xdaS\x11\xde\xa6;\"\x14Z\"\xf8\xd9\xe2\xdb\xaf" +
+	"\x1dx\x93\xcc\xb1\x9a\xb2\xc8\x07\"'\xe5W\xc9Z\xd7" +
+	"\xe1\x08\xef\xa2\x9d\x13G\x0a\x85\xef+\x7f\xf2t\xd1\xd9" +
+	"\xe8>\xea\xa2\x87\x7fuL\xe8\x99|\xeb|M\x8a\x02" +
+	"\x999\x1e\xbd \x9f\x89\xd2\xaf\xd3Q\x0a\xea\xc5\xf2\xd7" +
+	"_\x9a\xdc4\xf7\x9dz\xed\xd0\x19\xeb@\xb9'\xc6O" +
+	"\"F\x01n\x9d\xf7\xd6\xd8{+\xcf\xfc\xc3\x87\xb45" +
+	"\xb1]\x94B6F\xe6\xbe\xfc\xf4\xae\xf9\xf8\xbd\x83\x17" +
+	"\xeb\xb8\xee:\x1e\x9b\x83\xf2Yn\xee\x0cW\xbegO" +
+	"|\xde\xb6\xfe\xd0\xe5\xda\xf2\xf1\x96\xb9O:'+\x12" +
+	"\xfd\x1a\x90\xa8\x0b\xe6\xde\xf9\x83M\xdf\x19<\x7f\xc5[" +
+	"\xbde\xcd[\xc8\xf5@3\x05\xf7\x97\x89S\x91\x97\xce" +
+	"\x85\xae\x81\xd4\xe2)\x1e`W\xb6Y@yC3\x87" +
+	"Y\xb3(\xc8ge\x11\xa0\xdc\xb2R\x1c\xfb\xe7\xef{" +
+	"\xff\xe3\xb5\xf7\xaa\xbc\x9b\xec\x9d\x96\xc9^\xa9T\xba;" +
+	"\xa5\x16r\xacp\xf7F\xd5\x18\xb9\x8b~\x17\xba{3" +
+	"\xf9\xd4XR3\x8b\x19\x0b`\x10Q\x09\xb3\x00@\x00" +
+	"\x01\xa4\xfb:\x00\x94\xe5\x0c\x95\x95\x02J\x88q*\x91" +
+	"\xb4\x82\x84}\x0c\x95A\x01%A\x88\xd3\x80\x91\x06\x96" +
+	"\x02(\xfd\x0c\x95U\x02FGUs\x14# `\x04" +
+	"0\x9aV-\xd5\xf9\xd3:B\xbe0VE\x16 \xc6" +
+	"<\x91\x85|\x91\x0d\xab\xc6\xc8\x90f\x8ck\xc6]\xa6" +
+	"\x96K'\xd5\xd2*C\xcd\x99j\xca\xd2\xf3\xb9\xf6A" +
+	"\xd5P\xb3h*\x017\xdc\x08\x05\xd1\xc0P\x89\x0b\xd8" +
+	"j\xa8\xa5U\xeb\x1d\xc7\xae\x83\xe0T\x0e\xd6j\x96\xcf" +
+	"x+Y7\x95\x06\xd7\xf8\xa29\x00J;Ce\x89" +
+	"\x80N)\x16'\x01\x94\x8f1T>) \xd3\xd3\xae" +
+	"\xb7q\xcd\x18\xc9\x9b\xba\x05\xb8\x01\x03 ``\x86\x11" +
+	"|F\xb3JyclE\xeeK\xf9\xf6d\x82\x1f\x89" +
+	"/\xbf\xeej~\x09\x83?\xc6X\xb5Akj9\x9d" +
+	"#~\xe6v\x05M\xf0&\xd9]MRB\xe1\xe6," +
+	"\x13\xa3\x9a\xbev\xd4\xc2F\x10\xb0\xf1\x7f\xc8\xb4'\x95" +
+	"\xca\x17sV;\xef;6\x83,\xdd!_\x93\xa5\xe0" +
+	"s\xd2\xaf\xa9bZ3\xa8\x8b\xdb]\x83\x7f\xef\x05P" +
+	"\xce3T\xde\xf5t\xf1e\xea\xe2w\x18*W\x05\xc4" +
+	"J\x13_1\x00\x94w\x19&Q@\x89a\x1c\x19\x80" +
+	"t\x9d\xb2\x7f\x9f\xe1P\x03I\x03B\x1c\x03\x00r\x10" +
+	"{\x01\x92\xc8p(L\xe2 \x8bc\x908\x06\xb7\x00" +
+	"\x0c\x85I\xfe!\x92\x87\x02q\x0c\x01\xc8-\xb8\x11`" +
+	"(N\xf26\x92\x8b\xc18\x1f\xcf\xf3\xb8|.\xc9\x17" +
+	"\x92\xbc!\x14\xc7\x06\x00y\x01n\x02\x18j'\xf9\x12" +
+	"\x14pb\\3L=\x9fsJ\x1c\xb5\xf4\xac\x86A" +
+	"\x100\x08X\xce\xa8&?Ph\x1d\xeb\xf7 \xafl" +
+	"Z\xaa\xa5\xf5\xab&\xa0+\x9b\xb0\xd6\x9b>\x1dz7" +
+	"\xa9\xa54\xd4\x0b\x16\x7f\x02\xe0{vo>\x9b\x85\x84" +
+	"n\xf9^J\xe5\xb3Y\xdd\xb24H\x18~k\x05#" +
+	"_\xc8\x9b\x9a\x81=\xe9\xb4\xa1\x99&\xdc\x84\xbf\xd0\xad" +
+	"\x9a25\xaa\xea9\x0e\x80Jw\xc2\xac\xb1;c\xe4" +
+	"\xb8\x9c=\xd3)ts\x90\xf6\xdc\xc4[\xfbr)\x7f" +
+	"\xb6(\xed\xe7\x80\x9biR\x0e.\xeb\x8f\xfa\x0a\xea(" +
+	"h\x96\xb1\x08%\x1ek\x1dUk\xbe\xa1=\x05\xd4\xee" +
+	"\xcdg\x13\xbc\x0b8\xda\xa6\x1a!\xce\xa0$\xe1B\x86" +
+	"\xca\xc7\x05L\xe4\x8a\xd9\x11\xcdpz9AmZ4" +
+	"o\x9a\x1eB-I\xb1\xd4X\x0d;u\xd7c\xa7\xe1" +
+	"*\x11\xb9\xec\xa4|\x18@Y\xc9Py\x98O05" +
+	"\xad\x19\x18\xab^q+G\xe2\xf6;\xd3\xe9\xc4\\." +
+	"\xb7\x1f\x8b\xd6z\x13c\xd5\xcbV\xcd9\xfa\x0b\xedi" +
+	"\xc7\x84\xdd\"\x14z\xcc\x0d]%2Y\xcdP\x19\xf5" +
+	"\x84\xae\xd1\x09|\x91\xa1\x92\xf1\x84\xae\x8f\x00(\xa3\x0c" +
+	"\x15\x8bf\x12\xb3g\xd2\xa34\xd12\x0c\x95\xf5>\xde" +
+	"\xf1\x1f\x9bU\x89\x01D\x9a\x1c\xce\x000\xb4\x94\xa6\x17" +
+	"(?\xf7N5m&\xd5~O\xb6\xba\x89L\xd1\x83" +
+	"\x15np\xe6\xd2\x07!\xf5\x19\xf3\x81{Q\x9d\x96\x0f" +
+	"V\xad7\xed;M\x1ds\xed\x14\xb1j\x8ej&\xde" +
+	"\x0e8\xc8\x90\xd7\xe8\xf6Y\x12\x98s\x0b\xf1\x00\xa0w" +
+	"\xfa\x8b\xc2\x84j\x0f\xc7\x19\xdd\x16\x02\xbe\x10\x86\xb4\\" +
+	"\xdaS-\x0f\x8e\xeb\xe3\xcfu?\xc7\x03??\xde\xbc" +
+	"\xd7\x96\xd9\xce$\xe7\x924\xc5\x10\xf1^\x03\xa78\x9f" +
+	"AM\xc3\x19\xb15\xa1\xe0\x12C\xe5}\x0f4\xaeu" +
+	"{\xe9\x9a\xd5\xa1k\x0c8l\xbd\x1b`\xa8\x81\xe84" +
+	"\xce\xe9\x1am\xba\x96\xb0\xdbO\xd7\x82C\xd7#~\xba" +
+	"f\x0e]\x0f\xfb\xe9:\xe0\xd0\xb5\xe1\xa3\xebl>\xa7" +
+	"\x8fi\x06\x86A\xc00`9\x97Ok\x0fi\x86\xe9" +
+	"\x83b\xa2\xa0i\xc6\x8a>W\xa9P\x1c\xc9\xe8\xa9\x07" +
+	"4j\x03G\xa6\xe7tKW3\xbdHU\xef\xcb\x97" +
+	"r\xd1L^M#\x82\x80\x08.\xe0\x9c\xa6\xe1\xd8\x1e" +
+	"\xd7\xd2 \x0e\x98k]\xa9\x9e\x1bW3zz\x00\x98" +
+	"G\xe8\xaa\xb6\xf6n\xb04\xf3\x03\xdfR+-0\xc5" +
+	"\xf1&\xb5T\x94\xa6MM\x87v\xd4c\x88\x8ej\x8b" +
+	"N\xfd\x011\xc5\x90z\x88\x12T\xad\xbc\x91\xd4\xa2u" +
+	"f\xd4-\x99m\xbal]\xdb\x04u\xb1\xe6\x9b\xe0\xff" +
+	"\x09u\x7fJ\x95\"\xdf\x12\xe2\xd5\x02.\xad\x14\xb0O" +
+	"\xa8m\xadV\xfa\xebN\xb9X\xf5\xab\x1c\xd07\xefn" +
+	"\"x1\xab\xd7\x12W\xb2\xcaQ\x8eg\x9d<\xa7\x19" +
+	"*\x05\x02'\xda\xe0\xcc\x0eW(\xeaI\x02\xa7`\x83" +
+	"s3\xbd\xfd\x04C\xe5i\x01\xcb\xfc[\xd0\x7f=m" +
+	"5\xf2\xc5\\\x1a\x1b@\xc0\x06\xef=\x93y\xa3w7" +
+	"8\x95\xe8M}mN\xb5\x8a\x06\xa06\xfbIV\xb9" +
+	"\xc0\x99\x00\xb7d\x1cw\xc57-_V}p\xdei" +
+	"cA\x00g\x19\xe7\xf9\xe2\xbf|?\x08\xd2\xdfD\xac" +
+	"\xee\xfa\xd0\xd9\x94Ig7\x82 \x9d\x16Qp\xf7+" +
+	"\xe8\xec\xc0\xa4#\xf4\xec\xb0\x88\xcc\xd9\xe4x6y\xfb" +
+	"\x87A\x90\xf6\x8a\x18p\xb7\x1a\xe8\xac\x04\xa4\x17\xd6\x81" +
+	" \xed\x101\xe8\xae\xea\xd0Y\xbcI\x93\xdbA\x90\x9e" +
+	"\x121\xe4.`\xd0Y/J\x8f\x91\xbf\xa2\x88\xa2\xbb" +
+	"\xb4Dg\x1f%\xe9\xcf\x83 ib\xd9\xa9%\x00," +
+	"\xc7\xb2s\x19\x87\x84MR\xb6\xc8VH\xd8\xc4a\x8b" +
+	"8\x83\x02\xcbU\xfer\x9cA\x94\x90\xe6y\x05\x9d\xab" +
+	"6\xe6m)\xc7\x05$\xec\xf1\xb3\x1c\xcb\xce\x1d\x02\x1d" +
+	"Zd\xe4r\x10g\x0b\xee\xa4fFg\xf4\xd1\xe0\xae" +
+	"\x97\xec6\xf8o\x00\x00\x00\xff\xff\x93\xb9\xb32"
 
 func init() {
 	schemas.Register(schema_84b56bd0975dfd33,
 		0x83143f06598cf9e8,
+		0x8317eae56a55f0ba,
 		0x85252b1ec1c352d2,
 		0x8d7ad02d9eab8fb7,
 		0x8df1c729f8d2ca00,
@@ -2680,14 +3140,17 @@ func init() {
 		0xb8f393fd6f7f0c44,
 		0xbd77371c14feb668,
 		0xbd88d0eab3826ba9,
+		0xc0689e5f33bf949d,
 		0xc120e2adef2af529,
 		0xcd6c734787642800,
 		0xcfd704b9b2c62a4a,
 		0xd3df8a6125925ab9,
+		0xdeb9cfe7754f053f,
 		0xe051a47070c97f9e,
 		0xe8e68d4102ccc258,
 		0xec1c828dae8bffa3,
 		0xeed94cf76be61d8e,
+		0xefbaa00121a2907b,
 		0xf106488f1d14ab37,
 		0xf5e8509c82a71e1c,
 		0xf906e2ae0dd37fe4,

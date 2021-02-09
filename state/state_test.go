@@ -196,7 +196,7 @@ func TestApplyBlocks(t *testing.T) {
 	b1, c1 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, tState1.ApplyBlock(1, *invBlock, c1))
-	// TODO: clean these tests
+
 	// No error here but block ignored
 	assert.NoError(t, tState1.ApplyBlock(2, b1, c1))
 	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))

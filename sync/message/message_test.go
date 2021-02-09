@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -19,8 +20,8 @@ var tPeerID1 peer.ID
 var tPeerID2 peer.ID
 
 func init() {
-	tPeerID1, _ = peer.IDB58Decode("12D3KooWDX68JokeBo8wtHtv937vM8Hj6NeNxTEh1LxZ1ragEUgn")
-	tPeerID2, _ = peer.IDB58Decode("12D3KooWBAoXit47Mxbax1FdbE91aphCkR9V2nUZ1yiXDCe3nh18")
+	tPeerID1 = util.RandomPeerID()
+	tPeerID2 = util.RandomPeerID()
 
 }
 func TestInvalidPayloadType(t *testing.T) {

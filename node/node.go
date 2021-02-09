@@ -26,7 +26,7 @@ type Node struct {
 	txPool     txpool.TxPool
 	consensus  consensus.Consensus
 	network    *network.Network
-	sync       *sync.Synchronizer
+	sync       sync.Synchronizer
 	capnp      *capnp.Server
 	http       *http.Server
 }
@@ -62,7 +62,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	capnp, err := capnp.NewServer(conf.Capnp, state, txPool)
+	capnp, err := capnp.NewServer(conf.Capnp, state, sync, txPool)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create Capnproto server")
 	}
@@ -130,7 +130,7 @@ func (n *Node) Stop() {
 func (n *Node) Consensus() consensus.ConsensusReader {
 	return n.consensus
 }
-func (n *Node) Sync() *sync.Synchronizer {
+func (n *Node) Sync() sync.Synchronizer {
 	return n.sync
 }
 func (n *Node) State() state.StateReader {

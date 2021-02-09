@@ -3,7 +3,7 @@ package payload
 import (
 	"fmt"
 
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"

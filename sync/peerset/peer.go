@@ -1,7 +1,9 @@
 package peerset
 
 import (
-	peer "github.com/libp2p/go-libp2p-peer"
+	"encoding/json"
+
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/version"
@@ -52,13 +54,6 @@ func (p *Peer) PeerID() peer.ID {
 	defer p.lk.Unlock()
 
 	return p.data.PeerID
-}
-
-func (p *Peer) Address() crypto.Address {
-	p.lk.Lock()
-	defer p.lk.Unlock()
-
-	return p.data.Address
 }
 
 func (p *Peer) PublicKey() crypto.PublicKey {
@@ -153,9 +148,37 @@ func (p *Peer) IncreaseReceivedBytes(len int) {
 	p.data.ReceivedBytes += len
 }
 
+func (p *Peer) UpdateInvalidMessage(msg int) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
+
+	p.data.InvalidMsg = msg
+}
+
+func (p *Peer) UpdateReceivedMessage(msg int) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
+
+	p.data.ReceivedMsg = msg
+}
+
+func (p *Peer) UpdateReceivedBytes(len int) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
+
+	p.data.ReceivedBytes = len
+}
+
 func (p *Peer) IncreaseInvalidMessage() {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
 	p.data.InvalidMsg++
+}
+
+func (p *Peer) MarshalJSON() ([]byte, error) {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return json.Marshal(p.data)
 }

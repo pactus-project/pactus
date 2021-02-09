@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 )
 
 const MaxUint64 = ^uint64(0)
@@ -51,6 +51,13 @@ func RandInt64(max int64) int64 {
 	return rand.Int63n(max)
 }
 
+func RandomPeerID() peer.ID {
+	s := Int64ToSlice(RandInt64(MaxInt64))
+	id := [34]byte{0x12, 32}
+	copy(id[2:], s[:])
+	return peer.ID(id[:])
+
+}
 func FingerprintPeerID(id peer.ID) string {
 	pid := id.Pretty()
 	return fmt.Sprintf("%s*%s", pid[:2], pid[len(pid)-6:])

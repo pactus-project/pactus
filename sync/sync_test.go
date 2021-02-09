@@ -20,6 +20,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/version"
 	"github.com/zarbchain/zarb-go/vote"
@@ -35,8 +36,8 @@ var (
 	tBobConsensus     *consensus.MockConsensus
 	tAliceNetAPI      *network_api.MockNetworkAPI
 	tBobNetAPI        *network_api.MockNetworkAPI
-	tAliceSync        *Synchronizer
-	tBobSync          *Synchronizer
+	tAliceSync        *synchronizer
+	tBobSync          *synchronizer
 	tAliceBroadcastCh chan *message.Message
 	tBobBroadcastCh   chan *message.Message
 	tAlicePeerID      peer.ID
@@ -45,7 +46,7 @@ var (
 )
 
 type OverrideFingerprint struct {
-	sync *Synchronizer
+	sync Synchronizer
 	name string
 }
 
@@ -73,9 +74,9 @@ func setup(t *testing.T) {
 
 	tTxPool = txpool.MockingTxPool()
 
-	tAlicePeerID, _ = peer.IDB58Decode("12D3KooWLQ8GKaLdKU8Ms6AkMYjDWCr5UTPvdewag3tcarxh7saC")
-	tBobPeerID, _ = peer.IDB58Decode("12D3KooWHyepEGGdeSk3nPZrEamxLNba7tFZJKWbyEdZ654fHJdk")
-	tAnotherPeerID, _ = peer.IDB58Decode("12D3KooWM4dZKiZ8y21biCZXuAJYD5db8vSr1hfMpSgBSqpekY4Q")
+	tAlicePeerID = util.RandomPeerID()
+	tBobPeerID = util.RandomPeerID()
+	tAnotherPeerID = util.RandomPeerID()
 	tAliceState = state.MockingState()
 	tBobState = state.MockingState()
 	tAliceConsensus = consensus.MockingConsensus()
@@ -103,7 +104,7 @@ func setup(t *testing.T) {
 		tBobState.LastBlockCommit = c
 	}
 
-	tAliceSync = &Synchronizer{
+	tAliceSync = &synchronizer{
 		ctx:         context.Background(),
 		config:      tAliceConfig,
 		signer:      aliceSigner,
@@ -120,7 +121,7 @@ func setup(t *testing.T) {
 	tAliceSync.consensusSync = NewConsensusSync(tAliceConfig, tAlicePeerID, tAliceConsensus, tAliceSync.logger, tAliceSync.publishMessage)
 	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tTxPool, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.publishMessage, tAliceSync.synced)
 
-	tBobSync = &Synchronizer{
+	tBobSync = &synchronizer{
 		ctx:         context.Background(),
 		config:      tBobConfig,
 		signer:      bobSigner,
@@ -227,7 +228,6 @@ func TestSendSalamPeerBehind(t *testing.T) {
 	assert.Equal(t, p.Moniker(), "kitty")
 	assert.True(t, pub.EqualsTo(p.PublicKey()))
 	assert.Equal(t, p.PeerID(), tAnotherPeerID)
-	assert.Equal(t, p.Address(), pub.Address())
 	assert.Equal(t, p.Height(), 3)
 	assert.Equal(t, p.InitialBlockDownload(), true)
 }
@@ -455,4 +455,10 @@ func TestRequestForBlock(t *testing.T) {
 		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	})
+}
+func TestAccessors(t *testing.T) {
+	setup(t)
+
+	assert.Equal(t, tAliceSync.PeerID(), tAlicePeerID)
+	assert.Equal(t, len(tAliceSync.Peers()), 1)
 }

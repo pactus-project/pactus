@@ -1,7 +1,7 @@
 package sync
 
 import (
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -15,7 +15,7 @@ type ConsensusSync struct {
 	selfID    peer.ID
 	consensus consensus.Consensus
 	logger    *logger.Logger
-	publishFn PublishMessageFn
+	publishFn publishMessageFn
 }
 
 func NewConsensusSync(
@@ -23,7 +23,7 @@ func NewConsensusSync(
 	selfID peer.ID,
 	consensus consensus.Consensus,
 	logger *logger.Logger,
-	publishFn PublishMessageFn) *ConsensusSync {
+	publishFn publishMessageFn) *ConsensusSync {
 	return &ConsensusSync{
 		config:    conf,
 		selfID:    selfID,

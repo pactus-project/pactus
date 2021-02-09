@@ -56,7 +56,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	s.writeJSON(w, out)
 }
 
-func (s *Server) SendRawTransaction(w http.ResponseWriter, r *http.Request) {
+func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	txRes := s.server.SendRawTransaction(s.ctx, func(p capnp.ZarbServer_sendRawTransaction_Params) error {
 		vars := mux.Vars(r)

@@ -6,6 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
 )
 
@@ -13,6 +14,7 @@ type factory struct {
 	state  state.StateReader
 	store  store.StoreReader
 	txPool txpool.TxPool
+	sync   sync.Synchronizer
 	logger *logger.Logger
 }
 

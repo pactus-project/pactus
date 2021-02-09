@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -24,10 +24,10 @@ import (
 
 const FlagInitialBlockDownload = 0x1
 
-type PublishMessageFn = func(msg *message.Message)
-type SyncedCallbackFn = func()
+type publishMessageFn = func(msg *message.Message)
+type syncedCallbackFn = func()
 
-type Synchronizer struct {
+type synchronizer struct {
 	// Not: Synchronizer should not have any lock to prevent dead lock situation.
 	// Other modules like state or consesnus are thread safe
 
@@ -55,8 +55,8 @@ func NewSynchronizer(
 	consensus consensus.Consensus,
 	txPool txpool.TxPool,
 	net *network.Network,
-	broadcastCh <-chan *message.Message) (*Synchronizer, error) {
-	syncer := &Synchronizer{
+	broadcastCh <-chan *message.Message) (Synchronizer, error) {
+	syncer := &synchronizer{
 		ctx:         context.Background(),
 		config:      conf,
 		signer:      signer,
@@ -98,7 +98,7 @@ func NewSynchronizer(
 	return syncer, nil
 }
 
-func (syncer *Synchronizer) Start() error {
+func (syncer *synchronizer) Start() error {
 	if err := syncer.networkAPI.Start(); err != nil {
 		return err
 	}
@@ -119,13 +119,13 @@ func (syncer *Synchronizer) Start() error {
 	return nil
 }
 
-func (syncer *Synchronizer) Stop() {
+func (syncer *synchronizer) Stop() {
 	syncer.ctx.Done()
 	syncer.networkAPI.Stop()
 	syncer.heartBeatTicker.Stop()
 }
 
-func (syncer *Synchronizer) joinDownloadTopic() error {
+func (syncer *synchronizer) joinDownloadTopic() error {
 	if err := syncer.networkAPI.JoinDownloadTopic(); err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func (syncer *Synchronizer) joinDownloadTopic() error {
 	return nil
 }
 
-func (syncer *Synchronizer) maybeSynced() {
+func (syncer *synchronizer) maybeSynced() {
 	ourHeight := syncer.state.LastBlockHeight()
 	networkHeight := syncer.peerSet.MaxClaimedHeight()
 
@@ -142,12 +142,12 @@ func (syncer *Synchronizer) maybeSynced() {
 	}
 }
 
-func (syncer *Synchronizer) synced() {
-	syncer.logger.Info("We are synced", "hrs", syncer.consensus.HRS())
+func (syncer *synchronizer) synced() {
+	syncer.logger.Debug("We are synced", "hrs", syncer.consensus.HRS())
 	syncer.consensus.MoveToNewHeight()
 }
 
-func (syncer *Synchronizer) heartBeatTickerLoop() {
+func (syncer *synchronizer) heartBeatTickerLoop() {
 	for {
 		select {
 		case <-syncer.ctx.Done():
@@ -158,7 +158,7 @@ func (syncer *Synchronizer) heartBeatTickerLoop() {
 	}
 }
 
-func (syncer *Synchronizer) broadcastLoop() {
+func (syncer *synchronizer) broadcastLoop() {
 	for {
 		select {
 		case <-syncer.ctx.Done():
@@ -191,7 +191,7 @@ func (syncer *Synchronizer) broadcastLoop() {
 		}
 	}
 }
-func (syncer *Synchronizer) Fingerprint() string {
+func (syncer *synchronizer) Fingerprint() string {
 	return fmt.Sprintf("{☍ %d ⛃ %d ⇈ %d ↑ %d}",
 		syncer.peerSet.Len(),
 		syncer.cache.Len(),
@@ -199,7 +199,7 @@ func (syncer *Synchronizer) Fingerprint() string {
 		syncer.state.LastBlockHeight())
 }
 
-func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
+func (syncer *synchronizer) sendBlocksRequestIfWeAreBehind() {
 	if syncer.peerSet.HasAnyValidSession() {
 		syncer.logger.Debug("We have open seasson")
 		return
@@ -226,7 +226,7 @@ func (syncer *Synchronizer) sendBlocksRequestIfWeAreBehind() {
 	}
 }
 
-func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
+func (syncer *synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 	syncer.logger.Debug("Received a message", "from", util.FingerprintPeerID(from), "message", msg)
 
 	switch msg.PayloadType() {
@@ -302,10 +302,9 @@ func (syncer *Synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 	}
 
 	syncer.sendBlocksRequestIfWeAreBehind()
-	syncer.maybeSynced()
 }
 
-func (syncer *Synchronizer) broadcastHeartBeat() {
+func (syncer *synchronizer) broadcastHeartBeat() {
 	hrs := syncer.consensus.HRS()
 
 	// Probable we are syncing
@@ -327,7 +326,7 @@ func (syncer *Synchronizer) broadcastHeartBeat() {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) publishMessage(msg *message.Message) {
+func (syncer *synchronizer) publishMessage(msg *message.Message) {
 	err := syncer.networkAPI.PublishMessage(msg)
 
 	if err != nil {
@@ -337,7 +336,7 @@ func (syncer *Synchronizer) publishMessage(msg *message.Message) {
 	}
 }
 
-func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayload) {
+func (syncer *synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayload) {
 	syncer.logger.Trace("Process heartbeat payload", "pld", pld)
 
 	hrs := syncer.consensus.HRS()
@@ -364,7 +363,7 @@ func (syncer *Synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 	syncer.sendBlocksRequestIfWeAreBehind()
 }
 
-func (syncer *Synchronizer) BroadcastSalam() {
+func (syncer *synchronizer) BroadcastSalam() {
 	flags := 0
 	if syncer.config.InitialBlockDownload {
 		flags = util.SetFlag(flags, FlagInitialBlockDownload)
@@ -380,7 +379,7 @@ func (syncer *Synchronizer) BroadcastSalam() {
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) BroadcastAleyk(code payload.ResponseCode, resMsg string) {
+func (syncer *synchronizer) BroadcastAleyk(code payload.ResponseCode, resMsg string) {
 	flags := 0
 	if syncer.config.InitialBlockDownload {
 		flags = util.SetFlag(flags, FlagInitialBlockDownload)
@@ -397,7 +396,7 @@ func (syncer *Synchronizer) BroadcastAleyk(code payload.ResponseCode, resMsg str
 	syncer.publishMessage(msg)
 }
 
-func (syncer *Synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
+func (syncer *synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
 	syncer.logger.Trace("Process salam payload", "pld", pld)
 
 	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
@@ -420,7 +419,7 @@ func (syncer *Synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
 	syncer.BroadcastAleyk(payload.ResponseCodeOK, "Welcome!")
 }
 
-func (syncer *Synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
+func (syncer *synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
 	syncer.logger.Trace("Process Aleyk payload", "pld", pld)
 
 	if pld.ResponseCode != payload.ResponseCodeOK {
@@ -438,7 +437,7 @@ func (syncer *Synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
 }
 
 // isPeerActiveValidator checks if the peer is an active validator
-func (syncer *Synchronizer) isPeerActiveValidator(id peer.ID) bool {
+func (syncer *synchronizer) isPeerActiveValidator(id peer.ID) bool {
 	p := syncer.peerSet.GetPeer(id)
 	if p == nil {
 		return false
@@ -450,14 +449,14 @@ func (syncer *Synchronizer) isPeerActiveValidator(id peer.ID) bool {
 }
 
 // isThisActiveValidator checks if we are an active validator
-func (syncer *Synchronizer) isThisActiveValidator() bool {
+func (syncer *synchronizer) isThisActiveValidator() bool {
 	valSet := syncer.state.ValidatorSet()
 	return valSet.Contains(syncer.signer.Address())
 }
 
 // queryTransactions queries for a missed transactions if we don't have it in the cache
 // Only active validators can send this messsage
-func (syncer *Synchronizer) queryTransactions(ids []crypto.Hash) {
+func (syncer *synchronizer) queryTransactions(ids []crypto.Hash) {
 
 	for i, id := range ids {
 		trx := syncer.cache.GetTransaction(id)
@@ -480,7 +479,7 @@ func (syncer *Synchronizer) queryTransactions(ids []crypto.Hash) {
 
 // queryProposal queries for proposal if we don't have it in the cache
 // Only active validators can send this messsage
-func (syncer *Synchronizer) queryProposal(height, round int) {
+func (syncer *synchronizer) queryProposal(height, round int) {
 	if !syncer.isThisActiveValidator() {
 		return
 	}
@@ -499,7 +498,7 @@ func (syncer *Synchronizer) queryProposal(height, round int) {
 
 // queryVotes asks other peers to send us some votes randomly
 // Only active validators can send this messsage
-func (syncer *Synchronizer) queryVotes(height, round int) {
+func (syncer *synchronizer) queryVotes(height, round int) {
 	if !syncer.isThisActiveValidator() {
 		return
 	}
@@ -507,10 +506,18 @@ func (syncer *Synchronizer) queryVotes(height, round int) {
 	syncer.consensusSync.BroadcastQueryVotes(height, round)
 }
 
-func (syncer *Synchronizer) announceBlock(height int, block *block.Block, commit *block.Commit) {
+func (syncer *synchronizer) announceBlock(height int, block *block.Block, commit *block.Commit) {
 	if !syncer.isThisActiveValidator() {
 		return
 	}
 
 	syncer.stateSync.BroadcastBlockAnnounce(height, block, commit)
+}
+
+func (syncer *synchronizer) PeerID() peer.ID {
+	return syncer.networkAPI.SelfID()
+}
+
+func (syncer *synchronizer) Peers() []*peerset.Peer {
+	return syncer.peerSet.GetPeerList()
 }
