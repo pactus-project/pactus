@@ -68,18 +68,36 @@ struct ValidatorResult {
   data                @0 :Data;
 }
 
+struct Peer {
+  moniker               @0 :Text;
+  nodeVersion           @1 :Data;
+  peerID                @2 :Text;
+  publicKey             @3 :Text;
+  initialBlockDownload  @4 :Bool;
+  height                @5 :Int32;
+	receivedMsg           @6 :Int32;
+	invalidMsg            @7 :Int32;
+	receivedBytes         @8 :Int32;
+}
+
+struct NetworkResult {
+  peerID              @0 :Text;
+  peers               @1 :List(Peer);
+}
+
 struct SendTransactionResult {
-  status                @0 :Int32;
-  id                    @1 :Data;
+  status              @0 :Int32;
+  id                  @1 :Data;
 }
 
 interface ZarbServer {
-  getBlockchainInfo    @0 ()                                       -> (result: BlockchainResult);
-  getBlock             @1 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
-  getTransaction       @2 (id: Data, verbosity: Int32)             -> (result :TransactionResult);
-  getBlockHeight       @3 (hash: Data)                             -> (result :UInt64);
-  getAccount           @4 (address: Data, verbosity: Int32)        -> (result :AccountResult);
-  getValidator         @5 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
-  sendRawTransaction   @6 (rawTx: Data)                            -> (result:SendTransactionResult);
+  getBlock             @0 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
+  getTransaction       @1 (id: Data, verbosity: Int32)             -> (result :TransactionResult);
+  getBlockHeight       @2 (hash: Data)                             -> (result :UInt64);
+  getAccount           @3 (address: Data, verbosity: Int32)        -> (result :AccountResult);
+  getValidator         @4 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
+  getBlockchainInfo    @5 ()                                       -> (result :BlockchainResult);
+  getNetworkInfo       @6 ()                                       -> (result :NetworkResult);
+  sendRawTransaction   @7 (rawTx: Data)                            -> (result :SendTransactionResult);
 }
 

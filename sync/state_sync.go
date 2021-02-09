@@ -1,7 +1,7 @@
 package sync
 
 import (
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
@@ -26,8 +26,8 @@ type StateSync struct {
 	txPool    txpool.TxPool
 	peerSet   *peerset.PeerSet
 	logger    *logger.Logger
-	publishFn PublishMessageFn
-	syncedFN  SyncedCallbackFn
+	publishFn publishMessageFn
+	syncedFN  syncedCallbackFn
 }
 
 func NewStateSync(
@@ -38,8 +38,8 @@ func NewStateSync(
 	txPool txpool.TxPool,
 	peerSet *peerset.PeerSet,
 	logger *logger.Logger,
-	publishFn PublishMessageFn,
-	syncedFN SyncedCallbackFn) *StateSync {
+	publishFn publishMessageFn,
+	syncedFN syncedCallbackFn) *StateSync {
 	return &StateSync{
 		config:    conf,
 		selfID:    selfID,
@@ -351,6 +351,9 @@ func (ss *StateSync) tryCommitBlocks() {
 	}
 }
 
+// TODO:
+// maximum nodes to query block should be 8
+//
 func (ss *StateSync) RequestForMoreBlock() {
 	from := ss.state.LastBlockHeight()
 	l := ss.peerSet.GetPeerList()

@@ -175,8 +175,6 @@ func (cs *consensus) handleTimeout(ti timeout) {
 
 }
 
-//-----------------------------------------------------------------------------
-
 func (cs *consensus) addVote(v *vote.Vote) error {
 	// Height mismatch is ignored.
 	if cs.hrs.Height() != v.Height() {
@@ -192,7 +190,7 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 		return err
 	}
 	if !added {
-		// we probably had this vote before
+		// we probably have this vote
 		return nil
 	}
 

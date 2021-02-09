@@ -12,6 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/validator"
@@ -20,6 +21,7 @@ import (
 
 var tMockState *state.MockState
 var tMockPool txpool.TxPool
+var tMockSync *sync.MockSync
 var tCapnpServer *capnp.Server
 var tHTTPServer *Server
 var tAccTestAddr crypto.Address
@@ -37,6 +39,7 @@ func setup(t *testing.T) {
 
 	tMockState = state.MockingState()
 	tMockPool = txpool.MockingTxPool()
+	tMockSync = sync.MockingSync()
 
 	b1, txs := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
@@ -59,7 +62,7 @@ func setup(t *testing.T) {
 	tMockState.Store.UpdateValidator(v)
 
 	var err error
-	tCapnpServer, err = capnp.NewServer(capnp.TestConfig(), tMockState, tMockPool)
+	tCapnpServer, err = capnp.NewServer(capnp.TestConfig(), tMockState, tMockSync, tMockPool)
 	assert.NoError(t, err)
 	assert.NoError(t, tCapnpServer.StartServer())
 

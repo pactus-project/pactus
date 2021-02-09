@@ -28,3 +28,8 @@ func TestSetFlags(t *testing.T) {
 	assert.True(t, IsFlagSet(flags, 0x2))
 	assert.False(t, IsFlagSet(flags, 0x4))
 }
+
+func TestRandomPeerID(t *testing.T) {
+	id := RandomPeerID()
+	assert.NoError(t, id.Validate())
+}

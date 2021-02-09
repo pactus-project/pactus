@@ -3,8 +3,10 @@ package http
 import (
 	"time"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -33,4 +35,9 @@ type TransactionResult struct {
 type SendTranscationResult struct {
 	Status int
 	ID     crypto.Hash
+}
+
+type NetworkResult struct {
+	ID    peer.ID
+	Peers []*peerset.Peer
 }

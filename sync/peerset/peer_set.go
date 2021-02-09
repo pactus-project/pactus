@@ -3,7 +3,7 @@ package peerset
 import (
 	"time"
 
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/util"
 )
