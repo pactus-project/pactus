@@ -27,7 +27,7 @@ func Init() func(c *cli.Cmd) {
 			Value: cmd.ZarbHomeDir(),
 		})
 		testnetOpt := c.Bool(cli.BoolOpt{
-			Name:  "testnet",
+			Name:  "test-net",
 			Desc:  "Initialize working directory for joining the testnet",
 			Value: false,
 		})
@@ -38,15 +38,26 @@ func Init() func(c *cli.Cmd) {
 
 			path, _ := filepath.Abs(*workingDirOpt)
 
+			if !util.IsDirNotExistsOrEmpty(path) {
+				cmd.PrintErrorMsg("Please choose an empty directory")
+				return
+			}
+
 			var gen *genesis.Genesis
 			conf := config.DefaultConfig()
 
 			if *testnetOpt {
 				gen = genesis.Testnet()
 
-				conf.Network.Name = "zarb-testnet"
-				conf.Network.Bootstrap.Addresses = []string{""}
+				conf.Network.Name = "zarb"
+				conf.Network.Bootstrap.Addresses = []string{"/ip4/139.162.135.180/tcp/31887/ipfs/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinPeerThreshold = 1
+
+				k := key.GenKey()
+				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {
+					cmd.PrintErrorMsg("Failed to crate validator key: %v", err)
+					return
+				}
 			} else {
 				name := fmt.Sprintf("zarb-local-%v", cmd.RandomHex(2))
 				gen, _ = makeGenesis(*workingDirOpt, name)
@@ -75,24 +86,10 @@ func Init() func(c *cli.Cmd) {
 // makeGenesis makes genisis file while on initialize
 func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) {
 
-	// create  accounts for genesis
-	accs := make([]*account.Account, 5)
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(2100000000000000)
-
-	accs[0] = acc
-
-	for i := 1; i < len(accs); i++ {
-		k := key.GenKey()
-		if err := key.EncryptKeyToFile(k, workingDir+"/keys/"+k.Address().String()+".json", "", ""); err != nil {
-			return nil, err
-		}
-		acc := account.NewAccount(k.Address(), i+1)
-		acc.AddToBalance(1000000)
-
-		accs[i] = acc
-	}
+	accs := []*account.Account{acc}
 
 	// create validator account for genesis
 	k := key.GenKey()

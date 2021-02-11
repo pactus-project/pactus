@@ -4,12 +4,12 @@ import "encoding/json"
 
 const testnetJSON = `
 {
-   "ChainName":"zarb-testnet",
-   "GenesisTime":"2020-12-20T12:00:00.0+03:30",
+   "ChainName":"zarb",
+   "GenesisTime":"2021-01-22T00:00:00.0+03:30",
    "Params":{
       "BlockTimeInSecond":10,
       "MaximumTransactionPerBlock":1000,
-      "MaximumPower":5,
+      "MaximumPower":21,
       "SubsidyReductionInterval":2100000,
       "MaximumMemoLength":1024,
       "FeeFraction":0.001,
@@ -25,16 +25,16 @@ const testnetJSON = `
    ],
    "Validators":[
       {
-         "PublicKey":"b8388bde49b17b62b63f7660435d1480904ea83cd2d4e8758d9ce487dd3d45b88884373f0c1c29afbb1bff3959216f15690bb5da1f1f0857a7dd64999f81c2be17917b468058126883fff3ba0a5cc789cce90134c79a372e5ed2a4d9fbd80b8c"
+         "PublicKey":"230e0c8723a930af757cda3ec7aab45f7a313fb8c8217e600cf1c90b4c12c1a13c0b9d9e68ef5441240e011f13658d0767d3ce405565cc51d8f3be408d594616be55d31f62167583d945f86732e2293374e1aceeb37fce0d4aacb253ceb98303"
       },
       {
-         "PublicKey":"38b258b8f5be33ebb77bdb3126fd43db0bec88dfcfb6357d9c52a39220b218d744ccfe58926d738de881afe35af4a406fc181b104a17f4a4dba4474a6a450407162a8b6deb5c9282af777505ebc9ccbd1b3a107ef2e77b5d7558a43a8100ae18"
+         "PublicKey":"d4f6c52071b4874142089c7f258aa2baa01460660cbbf1aae6f1c7c836e5ec76bd705eb384849f0316b96d86cb59a512c953af60c761ee8dd65ba87f813e3e7e9723159e46f14b1737fb684680c3cebc9437e55f4164af5978d3b6a46f62cd98"
       },
       {
-         "PublicKey":"12fe7b4eafee633ec476380afbc87e48b40536a353cd00380bdd18a46b3aeefff5685b54908b9d617949eb6ee66c98178f114b7c747b422e0bc08903a23ba0e27ca2dfe6ed4dc4fa4ae0e8f44c3e1e9ebfadbf98e03a28c5334c5dc3dd26b683"
+         "PublicKey":"705071243915281c0fd2c4a1186830b016d5d67bb08746fffffa589e21a92496983094996c517ab0f21940c2d635f9059ed25e495f2d384975f9cc2c999f684eee319f365689a8cd0fa6a285197213fa4c1e3c97bfa1478809246bc0fafcf096"
       },
       {
-         "PublicKey":"e2087bfaa5dd4681a2691fdb173f2a7dbe3c3beb9597288f3d5e9825a1d099b3e5322e5269f451ef40ecb8e7cfda0208027d90153deda6a474254ab9abf54066f4e0cb67ebf1dc2427bb21f8a1f08623a36024a37d3904c28fa1fd9e7c4a9b95"
+         "PublicKey":"3d03bc94da2da41622e4ce5c0bb235db6dba7002e6ed727a5fa583fd980598f74e3ea4cb74734d3e7c64b88b6bf37c132e162e4f154321344ff176cb488cea8e3baf76201167774a8e9147d5f674a8b9496f4c6cecfaa2272fc257400ece7311"
       }
    ]
 }
