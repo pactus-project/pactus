@@ -9,26 +9,28 @@ import (
 	"github.com/zarbchain/zarb-go/keystore/key"
 )
 
-// Generate creates a new keyfile and stores the keyfile in the disk
-func Generate() func(c *cli.Cmd) {
+// Recover tries to recover a key from the seed
+func Recover() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 
-			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
-			label := cmd.PromptInput("Label: ")
+			mnemonic := cmd.PromptInput("Seed: ")
+			passphrase := cmd.PromptInput("Passphrase: ")
 
-			entropy, _ := bip39.NewEntropy(128)
-			mnemonic, _ := bip39.NewMnemonic(entropy)
-			seed := bip39.NewSeed(mnemonic, passphrase)
+			seed, err := bip39.NewSeedWithErrorChecking(mnemonic, passphrase)
+			if err != nil {
+				cmd.PrintErrorMsg("Seed is not correct: %v", err)
+				return
+			}
 			keyObj, err := key.KeyFromSeed(seed)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create key from the seed: %v", err)
 				return
 			}
 
-			keyfilepath := cmd.ZarbKeystoreDir() + keyObj.Address().String() + ".json"
-			err = key.EncryptKeyToFile(keyObj, keyfilepath, passphrase, label)
+			keyfilepath := cmd.ZarbKeystoreDir() + keyObj.Address().String() + "_recovered.json"
+			err = key.EncryptKeyToFile(keyObj, keyfilepath, passphrase, "recovered")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to encrypt: %v", err)
 				return
@@ -37,7 +39,6 @@ func Generate() func(c *cli.Cmd) {
 			fmt.Println()
 			cmd.PrintInfoMsg("Key path: %v", keyfilepath)
 			cmd.PrintInfoMsg("Address: %v", keyObj.Address())
-			cmd.PrintSuccessMsg("mnemonic: \"%v\"", mnemonic)
 		}
 	}
 }

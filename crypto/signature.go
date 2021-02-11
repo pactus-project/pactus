@@ -19,9 +19,6 @@ type signatureData struct {
 	Signature *bls.Sign
 }
 
-/// ------------
-/// CONSTRUCTORS
-
 func SignatureFromString(text string) (Signature, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {

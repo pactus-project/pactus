@@ -14,6 +14,17 @@ Example:
 zarb key generate
 ```
 
+### Recovering a key
+
+You can recover a key if you have the seed phrase and passphrase.
+
+Example:
+
+```bash
+zarb key recover
+```
+
+
 ### Inspect KeyFile
 
 Print various information about the given key file.

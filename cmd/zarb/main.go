@@ -15,6 +15,7 @@ func zarb() *cli.Cli {
 	app.Command("start", "Start the zarb blockchain", Start())
 	app.Command("key", "Create zarb key file for signing messages", func(k *cli.Cmd) {
 		k.Command("generate", "Generate a new key", key.Generate())
+		k.Command("recover", "Recover a key from the seed", key.Recover())
 		k.Command("inspect", "Inspect a key file", key.Inspect())
 		k.Command("sign", "Sign a transaction or message with a key file", key.Sign())
 		k.Command("verify", "Verify a signature", key.Verify())

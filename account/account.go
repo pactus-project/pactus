@@ -21,7 +21,7 @@ type accountData struct {
 	Balance  int64          `cbor:"4,keyasint"`
 }
 
-///---- Constructors
+// NewAccount constructs a new account object
 func NewAccount(addr crypto.Address, number int) *Account {
 	return &Account{
 		data: accountData{

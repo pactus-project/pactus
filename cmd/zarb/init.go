@@ -53,7 +53,7 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/139.162.135.180/tcp/31887/ipfs/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinPeerThreshold = 1
 
-				k := key.GenKey()
+				k := key.GenerateRandomKey()
 				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {
 					cmd.PrintErrorMsg("Failed to crate validator key: %v", err)
 					return
@@ -92,7 +92,7 @@ func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) 
 	accs := []*account.Account{acc}
 
 	// create validator account for genesis
-	k := key.GenKey()
+	k := key.GenerateRandomKey()
 	if err := key.EncryptKeyToFile(k, workingDir+"/validator_key.json", "", ""); err != nil {
 		return nil, err
 	}

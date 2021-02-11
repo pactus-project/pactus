@@ -16,7 +16,7 @@ type keyData struct {
 	PrivateKey crypto.PrivateKey
 }
 
-func GenKey() *Key {
+func GenerateRandomKey() *Key {
 	addr, pk, pv := crypto.RandomKeyPair()
 	return &Key{
 		data: keyData{
@@ -27,8 +27,22 @@ func GenKey() *Key {
 	}
 }
 
+func KeyFromSeed(seed []byte) (*Key, error) {
+	priv, err := crypto.PrivateKeyFromSeed(seed)
+	if err != nil {
+		return nil, err
+	}
+	return &Key{
+		data: keyData{
+			PrivateKey: priv,
+			PublicKey:  priv.PublicKey(),
+			Address:    priv.PublicKey().Address(),
+		},
+	}, nil
+}
+
+// NewKey Checks if the address is derived from the given private key
 func NewKey(addr crypto.Address, pv crypto.PrivateKey) (*Key, error) {
-	/// Check if the address is derived from given private key
 	if !addr.Verify(pv.PublicKey()) {
 		return nil, fmt.Errorf("This address doesn't belong to this privatekey")
 	}
