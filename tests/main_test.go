@@ -44,7 +44,7 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	max := 7
+	max := 6
 	power := 4
 	blockTime := 2
 	tSigners = make([]crypto.Signer, max)
