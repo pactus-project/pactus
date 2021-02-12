@@ -12,16 +12,13 @@ import (
 func TestMoveToNewHeight(t *testing.T) {
 	setup(t)
 
-	commitBlockForAllStates(t)
-
 	tConsX.MoveToNewHeight()
-	tConsX.enterNewHeight() // trig timer
 
-	checkHRSWait(t, tConsX, 2, 0, hrs.StepTypePrepare)
+	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	// Calling MoveToNewHeight for the second time
 	tConsX.enterNewHeight()
-	checkHRS(t, tConsX, 2, 0, hrs.StepTypePrepare)
+	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 }
 
 func TestConsensusBehindState(t *testing.T) {
