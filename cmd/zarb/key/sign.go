@@ -7,12 +7,11 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-// Sign the message with the private key and returns the signature hash
+// Sign the message with the private key and returns the signature
 func Sign() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		messageFileOpt := c.String(cli.StringOpt{
@@ -68,46 +67,37 @@ func Sign() func(c *cli.Cmd) {
 				return
 			}
 
-			var pv crypto.PrivateKey
 			//Sign the message with the private key
-			if *keyFileOpt != "" {
-				var auth string
-				if *authOpt == "" {
-					auth = cmd.PromptPassphrase("Passphrase: ", false)
-				} else {
-					auth = *authOpt
-				}
-
-				kj, err := key.DecryptKeyFile(*keyFileOpt, auth)
-				if err != nil {
-					cmd.PrintErrorMsg("Failed to decrypt: %v", err)
-					return
-				}
-				pv = kj.PrivateKey()
-			} else {
+			if *keyFileOpt == "" {
 				cmd.PrintWarnMsg("Please specify a key file to sign.")
 				c.PrintHelp()
 				return
 			}
+			var auth string
+			if *authOpt == "" {
+				auth = cmd.PromptPassphrase("Passphrase: ", false)
+			} else {
+				auth = *authOpt
+			}
+
+			key, err := key.DecryptKeyFile(*keyFileOpt, auth)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to decrypt: %v", err)
+				return
+			}
 
 			if trx != nil {
-				sig := pv.Sign(trx.SignBytes())
-				pub := pv.PublicKey()
-				trx.SetPublicKey(pub)
-				trx.SetSignature(sig)
-
+				key.ToSigner().SignMsg(trx)
 				bz, _ := trx.Encode()
 
 				fmt.Println()
 				cmd.PrintInfoMsg("Signed raw transaction:\n%x", bz)
 			} else {
-				signature := pv.Sign(msg)
+				signature := key.ToSigner().SignData(msg)
 
-				//display the signature
 				fmt.Println()
 				cmd.PrintInfoMsg("Signature: %s", signature)
 			}
-
 		}
 	}
 }

@@ -70,3 +70,9 @@ func TestMarshalingEmptyPrivateKey(t *testing.T) {
 	err = pv3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 }
+
+func TestPrivateKeyFromSeed(t *testing.T) {
+	priv, err := PrivateKeyFromSeed([]byte{0})
+	assert.NoError(t, err)
+	assert.NoError(t, priv.SanityCheck())
+}

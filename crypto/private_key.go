@@ -19,9 +19,6 @@ type privateKeyData struct {
 	SecretKey *bls.SecretKey
 }
 
-/// ------------
-/// CONSTRUCTORS
-
 func PrivateKeyFromString(text string) (PrivateKey, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
@@ -29,6 +26,19 @@ func PrivateKeyFromString(text string) (PrivateKey, error) {
 	}
 
 	return PrivateKeyFromRawBytes(data)
+}
+
+func PrivateKeyFromSeed(seed []byte) (PrivateKey, error) {
+	sc := new(bls.SecretKey)
+	err := sc.SetLittleEndianMod(seed)
+	if err != nil {
+		return PrivateKey{}, err
+	}
+
+	var pv PrivateKey
+	pv.data.SecretKey = sc
+
+	return pv, nil
 }
 
 func PrivateKeyFromRawBytes(data []byte) (PrivateKey, error) {
@@ -43,9 +53,6 @@ func PrivateKeyFromRawBytes(data []byte) (PrivateKey, error) {
 	var pv PrivateKey
 	pv.data.SecretKey = sc
 
-	if err := pv.SanityCheck(); err != nil {
-		return PrivateKey{}, err
-	}
 	return pv, nil
 }
 
@@ -122,9 +129,6 @@ func (pv *PrivateKey) UnmarshalCBOR(bs []byte) error {
 	*pv = p
 	return nil
 }
-
-/// -------
-/// METHODS
 
 func (pv *PrivateKey) SanityCheck() error {
 	bs := pv.RawBytes()

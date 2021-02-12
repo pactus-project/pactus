@@ -20,9 +20,6 @@ type addressData struct {
 	Address [AddressSize]byte
 }
 
-/// ------------
-/// CONSTRUCTORS
-
 func AddressFromString(text string) (Address, error) {
 	bs, err := hex.DecodeString(text)
 	if err != nil {
@@ -103,9 +100,6 @@ func (addr Address) MarshalCBOR() ([]byte, error) {
 func (addr *Address) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &addr.data.Address)
 }
-
-/// -------
-/// METHODS
 
 func (addr *Address) SanityCheck() error {
 	if addr.EqualsTo(TreasuryAddress) {

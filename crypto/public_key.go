@@ -19,9 +19,6 @@ type publicKeyData struct {
 	PublicKey *bls.PublicKey
 }
 
-/// ------------
-/// CONSTRUCTORS
-
 func PublicKeyFromString(text string) (PublicKey, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {

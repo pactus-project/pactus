@@ -11,7 +11,7 @@ import (
 func TestEncryption(t *testing.T) {
 	auth := "secret"
 	//Generates Private Key
-	k1 := GenKey()
+	k1 := GenerateRandomKey()
 	filePath := fmt.Sprintf("/tmp/%s.key", k1.Address().String())
 	//Encrypts the key json blob
 	err := EncryptKeyToFile(k1, filePath, auth, "")
@@ -35,7 +35,7 @@ func TestEncryption(t *testing.T) {
 func TestEncryptionData(t *testing.T) {
 	auth := "secret"
 	//Generates
-	k1 := GenKey()
+	k1 := GenerateRandomKey()
 	//Encrypts the key json blob
 	ek, err := EncryptKey(k1, auth, "")
 	f := util.TempFilePath()
@@ -83,14 +83,14 @@ func TestEncryptionData(t *testing.T) {
 }
 
 func TestNonEncryptied(t *testing.T) {
-	k1 := GenKey()
+	k1 := GenerateRandomKey()
 	ek, _ := EncryptKey(k1, "", "")
 	k2, _ := ek.Decrypt("")
 	assert.Equal(t, k1, k2)
 }
 
 func TestCheckLabel(t *testing.T) {
-	k1 := GenKey()
+	k1 := GenerateRandomKey()
 	label := "zarb"
 	f := util.TempFilePath()
 	assert.NoError(t, EncryptKeyToFile(k1, f, "secret", label))

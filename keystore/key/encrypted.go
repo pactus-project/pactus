@@ -84,7 +84,6 @@ func (ek *EncryptedKey) Save(p string) error {
 
 // Decrypt decrypts the Key from a json blob and returns the plaintext of the private key
 func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
-
 	if ek.PrivateKey != nil {
 		return NewKey(ek.Address, *ek.PrivateKey)
 	}
