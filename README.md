@@ -45,17 +45,37 @@ Initialize the working directory by running:
 
 ## Usage of Docker
 
-Install [Docker](https://www.docker.com/) and run the following commands to build the docker file:
+You can run the Zarb using docker file. Please make sure you have installed [docker](https://docs.docker.com/engine/install/) in your machine. 
 
-```bash
-make docker
-```
-
-Then you can execute the Zarb blockchain, using the docker:
+Pull the docker from docker hub.
 
 ```bash
 docker pull zarb/zarb
-docker run -it zarb/zarb start --wizard
+```
+
+Let's create a worksapce at `~/zarb/testnet` for the testnet:
+
+```bash
+docker run -it -v ~/zarb/testnet:/zarb zarb/zarb init -w /zarb --test-net
+```
+
+Now we can run the zarb and join the testnet:
+
+```bash
+docker run -it -v ~/zarb/testnet4:/zarb -p 8080:8080 --name zarb-testnet zarb/zarb start -w /zarb
+```
+
+check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
+
+Also you can stop/start docker:
+```
+docker start zarb-testnet
+docker stop zarb-testnet
+```
+
+Or check the logs:
+```
+docker logs zarb-testnet --tail 100 -f
 ```
 
 ## Contribution
