@@ -80,11 +80,7 @@ func TestSendingTransactions(t *testing.T) {
 	})
 
 	// Make sure all transaction confirmed
-	for {
-		bobAcc := getAccount(t, bobAddr)
-		if bobAcc != nil && bobAcc.Sequence() == getSequence(t, bobSigner.Address()) {
-			break
-		}
+	for i := 0; i < 10; i++ {
 		waitForNewBlock(t)
 	}
 

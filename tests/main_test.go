@@ -157,6 +157,8 @@ func TestMain(m *testing.M) {
 		waitForNewBlock(t)
 	}
 
+	fmt.Printf("Running the tests")
+
 	exitCode := m.Run()
 
 	tCtx.Done()
