@@ -64,6 +64,7 @@ func setup(t *testing.T) {
 	acc.AddToBalance(2100000000000000)
 	params := param.MainnetParams()
 	params.MaximumPower = 4
+	params.BlockTimeInSecond = 2
 
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
 	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
@@ -158,7 +159,7 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishUndefVote", "msg", msg)
+			logger.Info("shouldPublishVote", "msg", msg)
 
 			if msg.PayloadType() == payload.PayloadTypeVote {
 				pld := msg.Payload.(*payload.VotePayload)
@@ -317,7 +318,7 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	setup(t)
 
 	tConsX.enterNewHeight()
-	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
+	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	p := tConsX.RoundProposal(0)
 	require.NotNil(t, p)
@@ -377,12 +378,8 @@ func TestConsensusNoPrepares(t *testing.T) {
 	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP, false)
 	checkHRS(t, tConsB, h, r, hrs.StepTypeCommit)
 
-	assert.Equal(t, tConsB.isCommitted, true)
-	precommits := tConsB.pendingVotes.PrecommitVoteSet(0)
-	assert.Equal(t, precommits.Len(), 3)
-
-	// Commit block again
-	assert.NoError(t, tConsB.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
+	shouldPublishBlockAnnounce(t, tConsB, p.Block().Hash())
+	assert.Equal(t, tConsB.pendingVotes.PrecommitVoteSet(0).Len(), 3)
 }
 
 func TestConsensusInvalidVote(t *testing.T) {

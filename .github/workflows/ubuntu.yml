@@ -1,12 +1,13 @@
 on: [push, pull_request]
-name: Build, Test and lint
+name: Build, test and lint (Ubuntu)
 jobs:
   test:
     strategy:
       matrix:
         go-version: [1.14.x, 1.15.x]
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
+
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -19,7 +20,7 @@ jobs:
     - name: Build
       run: make build
 
-    - name: Test With Coverage
+    - name: Test with coverage
       run: go test -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic ./...
 
     - name: Upload coverage to Codecov
@@ -30,5 +31,5 @@ jobs:
     - name: golangci-lint
       uses: golangci/golangci-lint-action@v2
       with:
-        version: v1.29
-        args: --exclude="SA1019"
+        version: v1.36
+        args: --exclude="SA1019"  --timeout=5m

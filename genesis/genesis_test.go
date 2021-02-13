@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/zarbchain/zarb-go/param"
-	"github.com/zarbchain/zarb-go/util"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -50,7 +49,7 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, g.Accounts()[0].Address(), crypto.TreasuryAddress)
 	assert.Equal(t, g.Accounts()[0].Balance(), int64(0x775F05A074000))
 
-	expected, _ := crypto.HashFromString("abf50863ebdd3a2a862a565be780bc82510ef26fda56e31a535c018ffdd97488")
+	expected, _ := crypto.HashFromString("8c098f2acb06ea1b282d0b4593a62a99491030e1b1232fab8437d76369251940")
 	assert.Equal(t, g.Hash(), expected)
 }
 

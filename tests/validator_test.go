@@ -1,42 +1,34 @@
 package tests
 
 import (
-	"bytes"
-	"fmt"
-	"net/http"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
-	url := fmt.Sprintf("http://%s/validator/address/%s", tCurlAddress, addr.String())
-	for i := 0; i < 10; i++ {
-		res, err := http.Get(url)
-		if err == nil {
-			if res.StatusCode == 200 {
-				buf := new(bytes.Buffer)
-				_, err := buf.ReadFrom(res.Body)
-				assert.NoError(t, err)
-				var val validator.Validator
-				err = val.UnmarshalJSON(buf.Bytes())
-				assert.NoError(t, err)
-				return &val
-			}
-		}
-		time.Sleep(500 * time.Millisecond)
+	res := tCapnpServer.GetValidator(tCtx, func(p capnp.ZarbServer_getValidator_Params) error {
+		assert.NoError(t, p.SetAddress([]byte(addr.String())))
+		return nil
+	}).Result()
+
+	st, err := res.Struct()
+	if err != nil {
+		return nil
 	}
-	assert.NoError(t, fmt.Errorf("timeout"))
-	return nil
+
+	d, _ := st.Data()
+	val := new(validator.Validator)
+	assert.NoError(t, val.Decode(d))
+	return val
 }
 
 func TestValidator(t *testing.T) {
-
-	res := getValidator(t, tSigners[tNodeIdx2].Address())
-	require.NotNil(t, res)
-	assert.Equal(t, res.Number(), 1)
+	val := getValidator(t, tSigners[tNodeIdx2].Address())
+	require.NotNil(t, val)
+	assert.Equal(t, val.Number(), 1)
 }

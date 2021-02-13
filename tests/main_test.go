@@ -44,7 +44,7 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	max := 7
+	max := 6
 	power := 4
 	blockTime := 2
 	tSigners = make([]crypto.Signer, max)
@@ -73,7 +73,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
 		tConfigs[i].Logger.Levels["_txpool"] = "error"
 
-		tConfigs[i].Sync.CacheSize = 5000
+		tConfigs[i].Sync.CacheSize = 1000
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
 
@@ -156,6 +156,8 @@ func TestMain(m *testing.M) {
 	for i := 0; i < 20; i++ {
 		waitForNewBlock(t)
 	}
+
+	fmt.Printf("Running the tests")
 
 	exitCode := m.Run()
 

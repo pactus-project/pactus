@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestAddBlockToCache(t *testing.T) {
@@ -96,6 +97,47 @@ func TestMoveToConcensusByBlockAnnounceMessage(t *testing.T) {
 
 	assert.True(t, tAliceConsensus.Started)
 }
+func TestInvalidRangeForDownload(t *testing.T) {
+	setup(t)
+
+	t.Run("Bob is not target", func(t *testing.T) {
+		pld := &payload.DownloadRequestPayload{
+			SessionID: 1,
+			Initiator: tAnotherPeerID,
+			Target:    util.RandomPeerID(),
+			From:      1000,
+			To:        1001,
+		}
+		tBobSync.stateSync.ProcessDownloadRequestPayload(pld)
+		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse)
+	})
+
+	t.Run("Ask Bob to send big range of blocks", func(t *testing.T) {
+		pld := &payload.DownloadRequestPayload{
+			SessionID: 1,
+			Initiator: tAnotherPeerID,
+			Target:    tBobPeerID,
+			From:      1000,
+			To:        2000,
+		}
+		tBobSync.stateSync.ProcessDownloadRequestPayload(pld)
+		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse)
+	})
+
+	t.Run("Ask bob for the blocks that he doesn't have", func(t *testing.T) {
+		pld := &payload.DownloadRequestPayload{
+			SessionID: 1,
+			Initiator: tAnotherPeerID,
+			Target:    tBobPeerID,
+			From:      1000,
+			To:        1010,
+		}
+		tBobSync.stateSync.ProcessDownloadRequestPayload(pld)
+		msg := tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // No more block
+		assert.Equal(t, msg.Payload.(*payload.DownloadResponsePayload).ResponseCode, payload.ResponseCodeNoMoreBlocks)
+	})
+
+}
 
 func TestDownloadBlock(t *testing.T) {
 	setup(t)
@@ -109,7 +151,6 @@ func TestDownloadBlock(t *testing.T) {
 	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 80)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
 
-	tAliceSync.sendBlocksRequestIfWeAreBehind()
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 1-10
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadResponse) // 11-20
@@ -131,6 +172,7 @@ func TestDownloadBlock(t *testing.T) {
 	// Latest block requests
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // 91-100
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // 101-101
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced
 
 	assert.True(t, tBobConsensus.Started)
