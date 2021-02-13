@@ -92,7 +92,7 @@ func setup(t *testing.T) {
 
 	// Apply 20 blocks for both Alice and Bob
 	lastBlockHash := crypto.Hash{}
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 21; i++ {
 		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
 		c := block.GenerateTestCommit(b.Hash())
 		lastBlockHash = b.Hash()

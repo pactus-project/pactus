@@ -73,7 +73,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
 		tConfigs[i].Logger.Levels["_txpool"] = "error"
 
-		tConfigs[i].Sync.CacheSize = 5000
+		tConfigs[i].Sync.CacheSize = 1000
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
 

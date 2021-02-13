@@ -172,7 +172,6 @@ func (cs *consensus) handleTimeout(ti timeout) {
 	default:
 		panic(fmt.Sprintf("Invalid timeout step: %v", ti.Step))
 	}
-
 }
 
 func (cs *consensus) addVote(v *vote.Vote) error {
@@ -183,10 +182,6 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 	added, err := cs.pendingVotes.AddVote(v)
 	if err != nil {
-		if v.Signer().EqualsTo(cs.signer.Address()) {
-			cs.logger.Error("Detecting a duplicated vote from ourself. Did you restart the node?")
-		}
-
 		return err
 	}
 	if !added {
