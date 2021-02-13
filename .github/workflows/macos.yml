@@ -1,5 +1,7 @@
-on: [push, pull_request]
-name: Build, Test and lint
+
+
+on: [pull_request]
+name: Build and test (mac-os)
 jobs:
   test:
     strategy:
@@ -7,6 +9,7 @@ jobs:
         go-version: [1.14.x, 1.15.x]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
+
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -20,6 +23,6 @@ jobs:
       run: make build
 
     # Only unit-tests for mac-OS,
-    - name: Unit Test
+    - name: Unit tests
       run: make unit_test
 

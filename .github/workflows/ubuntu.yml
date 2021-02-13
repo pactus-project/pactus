@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Build, Test and lint
+name: Build, test and lint (Ubuntu)
 jobs:
   test:
     strategy:
@@ -7,6 +7,7 @@ jobs:
         go-version: [1.14.x, 1.15.x]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
+
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -19,7 +20,7 @@ jobs:
     - name: Build
       run: make build
 
-    - name: Test With Coverage
+    - name: Test with coverage
       run: go test -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic ./...
 
     - name: Upload coverage to Codecov
