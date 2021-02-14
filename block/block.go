@@ -25,12 +25,12 @@ type blockData struct {
 }
 
 func MakeBlock(timestamp time.Time, txIDs TxIDs,
-	lastBlockHash, committersHash, stateHash, lastReceiptsHash crypto.Hash,
+	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
 
 	txIDsHash := txIDs.Hash()
 	header := NewHeader(1, timestamp,
-		txIDsHash, lastBlockHash, committersHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
+		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
 
 	b := Block{
 		data: blockData{
@@ -95,7 +95,7 @@ func (b Block) Fingerprint() string {
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.Header.StateHash().Fingerprint(),
-		b.data.Header.CommittersHash().Fingerprint(),
+		b.data.Header.CommitteeHash().Fingerprint(),
 		b.data.TxIDs.Len(),
 	)
 }

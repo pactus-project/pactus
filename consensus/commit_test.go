@@ -97,7 +97,7 @@ func TestEnterCommitAllFailed(t *testing.T) {
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.isCommitted)
 
-	// Valid proposal but applying block will fail (no transaction)
+	// Valid proposal but committing block will fail (no transaction)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p1)
 	tTxPool.Txs = make([]*tx.Tx, 0)
 	tConsY.enterCommit(1)

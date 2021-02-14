@@ -41,9 +41,12 @@ func (val *Validator) Stake() int64                { return val.data.Stake }
 func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
 func (val *Validator) LastJoinedHeight() int       { return val.data.LastJoinedHeight }
 
-func (val Validator) Power() int {
-	// Viva democracy, everybody should be treated equally
-	return 1
+func (val Validator) Power() int64 {
+	// Only bootstrap validators at genesis block has no stake
+	if val.data.Stake == 0 {
+		return 1
+	}
+	return val.data.Stake
 }
 
 // AddToStake increases the stake by bonding transaction

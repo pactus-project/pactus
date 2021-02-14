@@ -41,7 +41,7 @@ func setup(t *testing.T) {
 	tValSigners[4] = crypto.NewSigner(priv5)
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(2100000000000000)
+	acc.AddToBalance(21 * 1e14)
 	val1 := validator.NewValidator(pub1, 0, 0)
 	val2 := validator.NewValidator(pub2, 1, 0)
 	val3 := validator.NewValidator(pub2, 2, 0)
@@ -71,7 +71,7 @@ func setup(t *testing.T) {
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
 	assert.Equal(t, tSandbox.TransactionToLiveInterval(), params.TransactionToLiveInterval)
-	assert.Equal(t, tSandbox.MaximumPower(), params.MaximumPower)
+	assert.Equal(t, tSandbox.CommitteeSize(), params.CommitteeSize)
 }
 
 func TestLoadRecentBlocks(t *testing.T) {
@@ -220,7 +220,7 @@ func TestAddValidatorToSet(t *testing.T) {
 	})
 
 	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
-		tSandbox.params.MaximumPower = 4
+		tSandbox.params.CommitteeSize = 4
 
 		_, pub1, _ := crypto.GenerateTestKeyPair()
 		_, pub2, _ := crypto.GenerateTestKeyPair()

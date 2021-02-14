@@ -28,5 +28,5 @@ type State interface {
 	Close() error
 	ProposeBlock(round int) (*block.Block, error)
 	ValidateBlock(block block.Block) error
-	ApplyBlock(height int, block block.Block, commit block.Commit) error
+	CommitBlock(height int, block block.Block, commit block.Commit) error
 }

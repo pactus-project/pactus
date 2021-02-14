@@ -129,11 +129,11 @@ func (st *state) tryLoadLastInfo() error {
 	for i, c := range st.lastCommit.Committers() {
 		val, err := st.store.ValidatorByNumber(c.Number)
 		if err != nil {
-			return fmt.Errorf("Last commit has unknown validator: %v", err)
+			return fmt.Errorf("Last commit has unknown committer: %v", err)
 		}
 		vals[i] = val
 	}
-	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.MaximumPower, b.Header().ProposerAddress())
+	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.CommitteeSize, b.Header().ProposerAddress())
 	if err != nil {
 		return err
 	}
@@ -165,7 +165,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		totalStake += val.Stake()
 	}
 
-	valSet, err := validator.NewValidatorSet(vals, st.params.MaximumPower, vals[0].Address())
+	valSet, err := validator.NewValidatorSet(vals, st.params.CommitteeSize, vals[0].Address())
 	if err != nil {
 		return err
 	}
@@ -243,7 +243,7 @@ func (st *state) UpdateLastCommit(commit *block.Commit) error {
 	defer st.lk.Unlock()
 
 	// Check if commit has more signers ...
-	if commit.Threshold() > st.lastCommit.Threshold() {
+	if commit.Signers() > st.lastCommit.Signers() {
 		if err := st.validateCommitForPreviousHeight(commit); err != nil {
 			st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
 			return err
@@ -320,14 +320,14 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	txIDs.Prepend(subsidyTx.ID())
 
 	stateHash := st.stateHash()
-	committersHash := st.validatorSet.CommittersHash()
+	committeeHash := st.validatorSet.CommitteeHash()
 	timestamp := st.proposeNextBlockTime()
 
 	block := block.MakeBlock(
 		timestamp,
 		txIDs,
 		st.lastBlockHash,
-		committersHash,
+		committeeHash,
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,
@@ -357,11 +357,13 @@ func (st *state) ValidateBlock(block block.Block) error {
 	return nil
 }
 
-func (st *state) ApplyBlock(height int, block block.Block, commit block.Commit) error {
+func (st *state) CommitBlock(height int, block block.Block, commit block.Commit) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	if height != st.lastBlockHeight && height != st.lastBlockHeight+1 {
+		/// Returning error here will cause so many error logs during syncing blockchain
+		/// Syncing is asynchronous job and we might receive blocks not in order
 		st.logger.Debug("Unexpected block height", "height", height)
 		return nil
 	}
@@ -456,7 +458,7 @@ func (st *state) EvaluateSortition() bool {
 		return false
 	}
 
-	if st.lastBlockHeight-val.BondingHeight() < 2*st.params.MaximumPower {
+	if st.lastBlockHeight-val.BondingHeight() < 2*st.params.CommitteeSize {
 		// Bonding period
 		return false
 	}

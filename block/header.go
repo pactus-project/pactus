@@ -21,7 +21,7 @@ type headerData struct {
 	TxIDsHash        crypto.Hash    `cbor:"5,keyasint"`
 	LastReceiptsHash crypto.Hash    `cbor:"6,keyasint"`
 	LastCommitHash   crypto.Hash    `cbor:"7,keyasint"`
-	CommittersHash   crypto.Hash    `cbor:"8,keyasint"`
+	CommitteeHash    crypto.Hash    `cbor:"8,keyasint"`
 	ProposerAddress  crypto.Address `cbor:"9,keyasint"`
 }
 
@@ -32,12 +32,12 @@ func (h Header) StateHash() crypto.Hash          { return h.data.StateHash }
 func (h Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
 func (h Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
 func (h Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash }
-func (h Header) CommittersHash() crypto.Hash     { return h.data.CommittersHash }
+func (h Header) CommitteeHash() crypto.Hash      { return h.data.CommitteeHash }
 func (h Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
 
 func NewHeader(version uint,
 	time time.Time,
-	txIDsHash, lastBlockHash, committersHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
+	txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
 	proposerAddress crypto.Address) Header {
 
 	return Header{
@@ -46,7 +46,7 @@ func NewHeader(version uint,
 			UnixTime:         time.Unix(),
 			TxIDsHash:        txIDsHash,
 			LastBlockHash:    lastBlockHash,
-			CommittersHash:   committersHash,
+			CommitteeHash:    committeeHash,
 			StateHash:        stateHash,
 			LastReceiptsHash: lastReceiptsHash,
 			LastCommitHash:   lastCommitHash,
@@ -68,7 +68,7 @@ func (h *Header) SanityCheck() error {
 	if err := h.data.ProposerAddress.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	if err := h.data.CommittersHash.SanityCheck(); err != nil {
+	if err := h.data.CommitteeHash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 

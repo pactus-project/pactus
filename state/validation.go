@@ -21,9 +21,9 @@ func (st *state) validateBlock(block block.Block) error {
 			"last receipts hash is not same as we expected. Expected %v, got %v", st.lastReceiptsHash, block.Header().LastReceiptsHash())
 	}
 
-	if !block.Header().CommittersHash().EqualsTo(st.validatorSet.CommittersHash()) {
+	if !block.Header().CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Committers hash is not same as we expected. Expected %v, got %v", st.validatorSet.CommittersHash(), block.Header().CommittersHash())
+			"Committee hash is not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), block.Header().CommitteeHash())
 	}
 
 	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
@@ -44,21 +44,31 @@ func (st *state) validateCommit(commit *block.Commit) error {
 	}
 
 	pubs := make([]crypto.PublicKey, 0, len(commit.Committers()))
+	totalStake := int64(0)
+	signersStake := int64(0)
 	for _, c := range commit.Committers() {
+		val, _ := st.store.ValidatorByNumber(c.Number)
 		if c.HasSigned() {
-			val, _ := st.store.ValidatorByNumber(c.Number)
 			if val == nil {
 				return errors.Errorf(errors.ErrInvalidBlock,
-					"invalid committer: %x", c.Number)
+					"Invalid committer: %x", c.Number)
 			}
 			pubs = append(pubs, val.PublicKey())
+			signersStake += val.Power()
 		}
+		totalStake += val.Power()
 	}
 
+	// Check if signers have 2/3+ of total stake
+	if signersStake <= totalStake*2/3 {
+		return errors.Errorf(errors.ErrInvalidBlock, "No quorom")
+	}
+
+	// Check signature
 	signBytes := commit.SignBytes()
 	if !crypto.VerifyAggregated(commit.Signature(), pubs, signBytes) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"invalid commit signature: %v", commit.Signature())
+			"Invalid commit signature: %v", commit.Signature())
 	}
 
 	return nil
@@ -86,9 +96,9 @@ func (st *state) validateCommitForPreviousHeight(commit *block.Commit) error {
 				"Last commit round is not same as we expected. Expected %v, got %v", st.lastCommit.Round(), commit.Round())
 		}
 
-		if !commit.CommittersHash().EqualsTo(st.lastCommit.CommittersHash()) {
+		if !commit.CommitteeHash().EqualsTo(st.lastCommit.CommitteeHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last committers are not same as we expected. Expected %v, got %v", st.lastCommit.CommittersHash(), commit.CommittersHash())
+				"Last committee hash are not same as we expected. Expected %v, got %v", st.lastCommit.CommitteeHash(), commit.CommitteeHash())
 		}
 	}
 
@@ -101,14 +111,14 @@ func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash c
 		return err
 	}
 
-	if !commit.CommittersHash().EqualsTo(st.validatorSet.CommittersHash()) {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last committers are not same as we expected. Expected %v, got %v", st.validatorSet.CommittersHash(), commit.CommittersHash())
-	}
-
 	if !commit.BlockHash().EqualsTo(blockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
+	}
+
+	if !commit.CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"Last committee hash are not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), commit.CommitteeHash())
 	}
 
 	return nil

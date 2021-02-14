@@ -10,11 +10,27 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+func setupValidatorSet(t *testing.T, stakes ...int64) (*validator.ValidatorSet, []crypto.Signer) {
+
+	signers := []crypto.Signer{}
+	vals := []*validator.Validator{}
+	for i, s := range stakes {
+		signer := crypto.GenerateTestSigner()
+		val := validator.NewValidator(signer.PublicKey(), i, 0)
+		val.AddToStake(s)
+		vals = append(vals, val)
+		signers = append(signers, signer)
+	}
+	valset, _ := validator.NewValidatorSet(vals, len(stakes), signers[0].Address())
+	return valset, signers
+}
+
 func TestAddVote(t *testing.T) {
+	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+
 	h1 := crypto.GenerateTestHash()
 	invSigner := crypto.GenerateTestSigner()
-	valSet, signers := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(100, 5, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(100, 5, VoteTypePrecommit, valSet.CopyValidators())
 
 	v1 := NewVote(VoteTypePrecommit, 100, 5, h1, invSigner.Address())
 	v2 := NewVote(VoteTypePrecommit, 100, 5, h1, signers[0].Address())
@@ -22,42 +38,43 @@ func TestAddVote(t *testing.T) {
 	v4 := NewVote(VoteTypePrecommit, 100, 6, h1, signers[2].Address())
 
 	invSigner.SignMsg(v1)
-	added, err := voteSet.AddVote(v1)
+	added, err := vs.AddVote(v1)
 	assert.False(t, added) // not in val set
 	assert.Error(t, err)
-	assert.Nil(t, voteSet.ToCommit())
+	assert.Nil(t, vs.ToCommit())
 
 	invSigner.SignMsg(v2)
-	added, err = voteSet.AddVote(v2)
+	added, err = vs.AddVote(v2)
 	assert.False(t, added) // invalid signature
 	assert.Error(t, err)
 
 	signers[1].SignMsg(v2)
-	added, err = voteSet.AddVote(v2)
+	added, err = vs.AddVote(v2)
 	assert.False(t, added) // wrong signer
 	assert.Error(t, err)
 
 	signers[0].SignMsg(v2)
-	added, err = voteSet.AddVote(v2)
+	added, err = vs.AddVote(v2)
 	assert.True(t, added) // ok
 	assert.NoError(t, err)
 
 	signers[1].SignMsg(v3)
-	added, err = voteSet.AddVote(v3)
+	added, err = vs.AddVote(v3)
 	assert.False(t, added) // invalid height
 	assert.Error(t, err)
 
 	signers[2].SignMsg(v4)
-	added, err = voteSet.AddVote(v4)
+	added, err = vs.AddVote(v4)
 	assert.False(t, added) // invalid round
 	assert.Error(t, err)
 }
 
 func TestDuplicateVote(t *testing.T) {
+	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
-	valSet, signers := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(1, 0, VoteTypePrepare, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrepare, valSet.CopyValidators())
 
 	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
 	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, signers[0].Address())
@@ -68,36 +85,36 @@ func TestDuplicateVote(t *testing.T) {
 	signers[0].SignMsg(correctVote)
 	signers[0].SignMsg(duplicatedVote)
 
-	added, err := voteSet.AddVote(undefVote)
+	added, err := vs.AddVote(undefVote)
 	assert.True(t, added) // ok
 	assert.NoError(t, err)
 
-	added, err = voteSet.AddVote(undefVote)
+	added, err = vs.AddVote(undefVote)
 	assert.False(t, added) // added before
 	assert.NoError(t, err)
 
-	added, err = voteSet.AddVote(correctVote)
+	added, err = vs.AddVote(correctVote)
 	assert.True(t, added) // ok, replace UndefHash
 	assert.NoError(t, err)
-	assert.Equal(t, len(voteSet.AllVotes()), 1)
+	assert.Equal(t, len(vs.AllVotes()), 1)
 
 	// Again add undef vote
-	added, err = voteSet.AddVote(undefVote)
+	added, err = vs.AddVote(undefVote)
 	assert.False(t, added) // ok
 	assert.NoError(t, err)
-	assert.Equal(t, len(voteSet.AllVotes()), 1)
+	assert.Equal(t, len(vs.AllVotes()), 1)
 
-	added, err = voteSet.AddVote(duplicatedVote)
+	added, err = vs.AddVote(duplicatedVote)
 	assert.False(t, added) // ok, replace UndefHash
 	assert.Error(t, err)
 	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
 }
 
 func TestQuorum(t *testing.T) {
-	valSet, signers := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
 	h1 := crypto.GenerateTestHash()
-	h2 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
 	v3 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[2].Address())
@@ -108,24 +125,23 @@ func TestQuorum(t *testing.T) {
 	signers[2].SignMsg(v3)
 	signers[3].SignMsg(v4)
 
-	ok, _ := voteSet.AddVote(v1)
+	ok, _ := vs.AddVote(v1)
 	assert.True(t, ok)
-	assert.False(t, voteSet.HasQuorum())
-	ok, _ = voteSet.AddVote(v2)
+	assert.False(t, vs.HasQuorum())
+	ok, _ = vs.AddVote(v2)
 	assert.True(t, ok)
-	assert.False(t, voteSet.HasQuorum())
-	ok, _ = voteSet.AddVote(v3)
+	assert.False(t, vs.HasQuorum())
+	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
-	assert.True(t, voteSet.HasQuorum())
-	ok, _ = voteSet.AddVote(v4)
+	assert.True(t, vs.HasQuorum())
+	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
-	assert.True(t, voteSet.HasQuorum())
-	assert.True(t, voteSet.HasQuorumBlock(h1))
-	assert.False(t, voteSet.HasQuorumBlock(h2))
-	assert.NotNil(t, voteSet.QuorumBlock())
-	assert.Equal(t, voteSet.QuorumBlock(), &h1)
+	assert.True(t, vs.HasQuorum())
+	assert.NotNil(t, vs.QuorumBlock())
+	assert.Equal(t, vs.QuorumBlock(), &h1)
+	assert.Equal(t, vs.Len(), 4)
 
-	c := voteSet.ToCommit()
+	c := vs.ToCommit()
 	assert.NotNil(t, c)
 	assert.Equal(t, c.Committers(), []block.Committer{
 		{Number: 0, Status: 1},
@@ -135,9 +151,11 @@ func TestQuorum(t *testing.T) {
 	})
 }
 
+// This test is very important. Change it with cautious
 func TestUpdateVote(t *testing.T) {
-	valSet, signers := validator.GenerateTestValidatorSet()
-	voteSet := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
 
 	h1 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
@@ -154,31 +172,60 @@ func TestUpdateVote(t *testing.T) {
 	signers[1].SignMsg(v5)
 	signers[2].SignMsg(v6)
 
-	ok, _ := voteSet.AddVote(v1)
+	ok, _ := vs.AddVote(v1)
 	assert.True(t, ok)
-	ok, _ = voteSet.AddVote(v2)
+	ok, _ = vs.AddVote(v2)
 	assert.True(t, ok)
-	ok, _ = voteSet.AddVote(v3)
+	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
 
-	assert.True(t, voteSet.HasQuorum())
-	assert.True(t, voteSet.HasQuorumBlock(crypto.UndefHash))
-	assert.True(t, voteSet.QuorumBlock().EqualsTo(crypto.UndefHash))
+	assert.True(t, vs.HasQuorum())
+	assert.True(t, vs.QuorumBlock().EqualsTo(crypto.UndefHash))
+	assert.Equal(t, vs.Len(), 3)
+	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
 
 	// Update vote
-	ok, _ = voteSet.AddVote(v4)
+	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
 
-	assert.True(t, voteSet.HasQuorum())
-	assert.False(t, voteSet.HasQuorumBlock(crypto.UndefHash))
-	assert.Nil(t, voteSet.QuorumBlock())
-	assert.Equal(t, voteSet.sum, 3)
+	// Check block votes power
+	bv1 := vs.votesByBlock[crypto.UndefHash]
+	assert.Equal(t, bv1.power, int64(1500+2500))
+	bv2 := vs.votesByBlock[h1]
+	assert.Equal(t, bv2.power, int64(1000))
 
-	ok, _ = voteSet.AddVote(v5)
-	assert.True(t, ok)
-	ok, _ = voteSet.AddVote(v6)
-	assert.True(t, ok)
-	assert.True(t, voteSet.QuorumBlock().EqualsTo(h1))
-	assert.Equal(t, voteSet.sum, 3)
+	// Check previous votes
+	_, exists1 := bv1.votes[v1.Signer()]
+	_, exists2 := bv1.votes[v2.Signer()]
+	assert.False(t, exists1)
+	assert.True(t, exists2)
 
+	// Check accumulated power
+	assert.True(t, vs.HasQuorum())
+	assert.Nil(t, vs.QuorumBlock())
+	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
+	assert.Equal(t, vs.Len(), 3)
+
+	// Update more votes
+	ok, _ = vs.AddVote(v5)
+	assert.True(t, ok)
+	ok, _ = vs.AddVote(v6)
+	assert.True(t, ok)
+
+	// Check block votes power
+	bv1 = vs.votesByBlock[crypto.UndefHash]
+	assert.Equal(t, bv1.power, int64(0))
+	bv2 = vs.votesByBlock[h1]
+	assert.Equal(t, bv2.power, int64(1000+1500+2500))
+
+	assert.True(t, vs.HasQuorum())
+	assert.Equal(t, vs.QuorumBlock(), &h1)
+	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
+	assert.Equal(t, vs.Len(), 3)
+
+	// Check previous votes
+	_, exists1 = bv1.votes[v1.Signer()]
+	_, exists2 = bv1.votes[v2.Signer()]
+	assert.False(t, exists1)
+	assert.False(t, exists2)
 }

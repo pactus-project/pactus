@@ -61,9 +61,9 @@ func setup(t *testing.T) {
 	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(2100000000000000)
+	acc.AddToBalance(21 * 1e14)
 	params := param.MainnetParams()
-	params.MaximumPower = 4
+	params.CommitteeSize = 4
 	params.BlockTimeInSecond = 2
 
 	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
@@ -227,13 +227,13 @@ func commitBlockForAllStates(t *testing.T) {
 	}, sig)
 
 	require.NotNil(t, c)
-	err = tConsX.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsX.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
-	err = tConsY.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsY.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
-	err = tConsB.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsB.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
-	err = tConsP.state.ApplyBlock(height+1, p.Block(), *c)
+	err = tConsP.state.CommitBlock(height+1, p.Block(), *c)
 	assert.NoError(t, err)
 }
 

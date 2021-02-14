@@ -103,6 +103,6 @@ func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) 
 func (m *MockSandbox) AccSeq(a crypto.Address) int {
 	return m.Accounts[a].Sequence()
 }
-func (m *MockSandbox) MaximumPower() int {
-	return m.Params.MaximumPower
+func (m *MockSandbox) CommitteeSize() int {
+	return m.Params.CommitteeSize
 }

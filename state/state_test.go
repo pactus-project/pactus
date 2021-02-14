@@ -54,8 +54,7 @@ func setup(t *testing.T) {
 	tCommonTxPool = txpool.MockingTxPool()
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	// 2,100,000,000,000,000
-	acc.AddToBalance(21 * 1e14)
+	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
 	val1 := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
 	val2 := validator.NewValidator(tValSigner2.PublicKey(), 1, 0)
 	val3 := validator.NewValidator(tValSigner3.PublicKey(), 2, 0)
@@ -126,16 +125,16 @@ func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers .
 	return *block.NewCommit(blockHash, round, committers, crypto.Aggregate(sigs))
 }
 
-func applyBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {
-	assert.NoError(t, tState1.ApplyBlock(tState1.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState2.ApplyBlock(tState2.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState3.ApplyBlock(tState3.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState4.ApplyBlock(tState4.lastBlockHeight+1, b, c))
+func CommitBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {
+	assert.NoError(t, tState1.CommitBlock(tState1.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState2.CommitBlock(tState2.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState3.CommitBlock(tState3.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState4.CommitBlock(tState4.lastBlockHeight+1, b, c))
 }
 
 func moveToNextHeightForAllStates(t *testing.T) {
 	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	applyBlockAndCommitForAllStates(t, b, c)
+	CommitBlockAndCommitForAllStates(t, b, c)
 }
 func TestProposeBlockAndValidation(t *testing.T) {
 	setup(t)
@@ -190,16 +189,15 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
 }
 
-func TestApplyBlocks(t *testing.T) {
+func TestCommitBlocks(t *testing.T) {
 	setup(t)
 
 	b1, c1 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
-	assert.Error(t, tState1.ApplyBlock(1, *invBlock, c1))
-
-	// No error here but block ignored
-	assert.NoError(t, tState1.ApplyBlock(2, b1, c1))
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.Error(t, tState1.CommitBlock(1, *invBlock, c1))
+	// No error here but block is ignored, because the height is invalid
+	assert.NoError(t, tState1.CommitBlock(2, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
 
 	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())
 	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
@@ -284,7 +282,7 @@ func TestUpdateLastCommit(t *testing.T) {
 
 	assert.Equal(t, b1.Hash(), b11.Hash())
 
-	applyBlockAndCommitForAllStates(t, b1, c1)
+	CommitBlockAndCommitForAllStates(t, b1, c1)
 
 	b2, c2 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NotEqual(t, b1.Hash(), b2.Hash())
@@ -321,7 +319,7 @@ func TestBlockProposal(t *testing.T) {
 		trx := tState2.createSubsidyTx(0)
 		assert.NoError(t, tState2.txPool.AppendTx(trx))
 
-		// Moving to next round
+		// Moving to the next round
 		b, err := tState3.ProposeBlock(1)
 		assert.NoError(t, err)
 		assert.NoError(t, tState1.ValidateBlock(*b))
@@ -340,9 +338,9 @@ func TestForkDetection(t *testing.T) {
 
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
 	b2, c2 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
-	assert.Error(t, tState1.ApplyBlock(1, b2, c2))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
+	assert.Error(t, tState1.CommitBlock(1, b2, c2))
 }
 
 func TestNodeShutdown(t *testing.T) {
@@ -351,7 +349,7 @@ func TestNodeShutdown(t *testing.T) {
 
 	// Should not panic or crash
 	tState1.Close()
-	assert.Error(t, tState1.ApplyBlock(1, b1, c1))
+	assert.Error(t, tState1.CommitBlock(1, b1, c1))
 	b, _ := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, tState1.ValidateBlock(*b))
 	_, err := tState1.ProposeBlock(0)
@@ -361,23 +359,45 @@ func TestNodeShutdown(t *testing.T) {
 func TestSortition(t *testing.T) {
 	setup(t)
 
-	_, pub, priv := crypto.GenerateTestKeyPair()
+	addr, pub, priv := crypto.GenerateTestKeyPair()
 	signer := crypto.NewSigner(priv)
 
-	tCommonTxPool = txpool.MockingTxPool()
 	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, tCommonTxPool)
 	assert.NoError(t, err)
-
 	st1 := st.(*state)
 
-	assert.False(t, tState1.EvaluateSortition())
 	assert.False(t, st1.EvaluateSortition()) //  not a validator
 
-	// Manipulating the store
-	val := validator.NewValidator(pub, 4, 88)
-	st1.store.UpdateValidator(val)
+	// Commit 45 blocks, bonding tx is in block 4
+	for i := 0; i < 45; i++ {
+		if i == 3 {
+			trx := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 1000, 1000, "")
+			tValSigner1.SignMsg(trx)
+			assert.NoError(t, tCommonTxPool.AppendTx(trx))
+		}
 
-	assert.False(t, st1.EvaluateSortition()) //  too soon
+		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+		CommitBlockAndCommitForAllStates(t, b, c)
+		require.NoError(t, st.CommitBlock(i+1, b, c))
+	}
+
+	assert.False(t, st1.EvaluateSortition()) //  bonding period
+
+	// Commit another block
+	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockAndCommitForAllStates(t, b, c)
+	require.NoError(t, st.CommitBlock(46, b, c))
+
+	assert.True(t, st1.EvaluateSortition())                //  ok
+	assert.False(t, tState1.ValidatorSet().Contains(addr)) // still not in the set
+
+	// Commit another block, new validator should be in the set now
+	b, c = makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockAndCommitForAllStates(t, b, c)
+	require.NoError(t, st.CommitBlock(47, b, c))
+
+	assert.False(t, st1.EvaluateSortition()) // already in the set
+	assert.True(t, tState1.ValidatorSet().Contains(addr))
 }
 
 func TestValidateBlockTime(t *testing.T) {
@@ -417,7 +437,7 @@ func TestInvalidBlockTime(t *testing.T) {
 		validBlock.Header().Time().Add(30*time.Second),
 		validBlock.TxIDs(),
 		validBlock.Header().LastBlockHash(),
-		validBlock.Header().CommittersHash(),
+		validBlock.Header().CommitteeHash(),
 		validBlock.Header().StateHash(),
 		validBlock.Header().LastReceiptsHash(),
 		validBlock.LastCommit(),

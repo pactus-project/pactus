@@ -49,7 +49,7 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, g.Accounts()[0].Address(), crypto.TreasuryAddress)
 	assert.Equal(t, g.Accounts()[0].Balance(), int64(0x775F05A074000))
 
-	expected, _ := crypto.HashFromString("8c098f2acb06ea1b282d0b4593a62a99491030e1b1232fab8437d76369251940")
+	expected, _ := crypto.HashFromString("497b3475e1c5401c233dcf9c0d1b4bca9ba9c98299a4b9e86bf4ff5cc8d132d3")
 	assert.Equal(t, g.Hash(), expected)
 }
 

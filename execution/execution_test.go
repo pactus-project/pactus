@@ -19,7 +19,7 @@ func TestExecution(t *testing.T) {
 	tExec := NewExecution(tSandbox)
 
 	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc0.AddToBalance(21e14 - 10000000000)
+	acc0.AddToBalance(21*1e14 - 10000000000)
 	tSandbox.UpdateAccount(acc0)
 
 	signer1 := crypto.GenerateTestSigner()
@@ -32,6 +32,7 @@ func TestExecution(t *testing.T) {
 	stamp1 := crypto.GenerateTestHash()
 	stamp2 := crypto.GenerateTestHash()
 	stamp3 := crypto.GenerateTestHash()
+	stamp8635 := crypto.GenerateTestHash()
 	stamp8640 := crypto.GenerateTestHash()
 	stamp8641 := crypto.GenerateTestHash()
 	stamp8642 := crypto.GenerateTestHash()
@@ -39,6 +40,7 @@ func TestExecution(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(1, stamp1)
 	tSandbox.AppendStampAndUpdateHeight(2, stamp2)
 	tSandbox.AppendStampAndUpdateHeight(3, stamp3)
+	tSandbox.AppendStampAndUpdateHeight(8635, stamp8635)
 	tSandbox.AppendStampAndUpdateHeight(8640, stamp8640)
 	tSandbox.AppendStampAndUpdateHeight(8641, stamp8641)
 	tSandbox.AppendStampAndUpdateHeight(8642, stamp8642)
@@ -67,12 +69,12 @@ func TestExecution(t *testing.T) {
 		assert.NoError(t, tExec.Execute(trx))
 	})
 
-	t.Run("Subsidy invalid stamp, Should returns error", func(t *testing.T) {
+	t.Run("Mintbase invalid stamp, Should returns error", func(t *testing.T) {
 		trx := tx.NewMintbaseTx(stamp8641, 1, rcvAddr, 1000, "expired-stamp")
 		assert.Error(t, tExec.Execute(trx))
 	})
 
-	t.Run("Subsidy stamp is ok", func(t *testing.T) {
+	t.Run("Mintbase stamp is ok", func(t *testing.T) {
 		trx := tx.NewMintbaseTx(stamp8642, 1, rcvAddr, 1000, "ok")
 		assert.NoError(t, tExec.Execute(trx))
 	})
@@ -102,13 +104,27 @@ func TestExecution(t *testing.T) {
 		assert.Error(t, tExec.checkFee(trx))
 	})
 
+	t.Run("Sortition tx - Invalid stamp, Should returns error", func(t *testing.T) {
+		p := signer1.SignData(stamp8635.RawBytes())
+		trx := tx.NewSortitionTx(stamp8635, 1, addr1, p.RawBytes())
+		signer1.SignMsg(trx)
+		assert.Error(t, tExec.Execute(trx))
+	})
+
+	t.Run("Execution failed", func(t *testing.T) {
+		p := signer1.SignData(stamp8642.RawBytes())
+		trx := tx.NewSortitionTx(stamp8642, 1, addr1, p.RawBytes())
+		signer1.SignMsg(trx)
+		assert.Error(t, tExec.Execute(trx))
+	})
+
 	t.Run("Claim accumulated fee", func(t *testing.T) {
 		tExec.ClaimAccumulatedFee()
 		total := int64(0)
 		for _, acc := range tSandbox.Accounts {
 			total += acc.Balance()
 		}
-		assert.Equal(t, total, int64(21e14))
+		assert.Equal(t, total, int64(21*1e14))
 	})
 
 	assert.Equal(t, tExec.AccumulatedFee(), int64(1000))

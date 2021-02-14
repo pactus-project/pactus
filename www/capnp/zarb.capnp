@@ -12,7 +12,7 @@ struct Header {
   txsHash             @4 :Data;
   lastReceiptsHash    @5 :Data;
   lastCommitHash      @6 :Data;
-  committersHash      @7 :Data;
+  committeeHash       @7 :Data;
   proposerAddress     @8 :Data;
 }
 

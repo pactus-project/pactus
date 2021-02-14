@@ -18,7 +18,7 @@ type Sandbox interface {
 	VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool
 	AddToSet(crypto.Hash, crypto.Address) error
 
-	MaximumPower() int
+	CommitteeSize() int
 	CurrentHeight() int
 	RecentBlockHeight(crypto.Hash) int
 	TransactionToLiveInterval() int

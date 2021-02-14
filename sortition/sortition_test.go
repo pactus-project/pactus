@@ -36,6 +36,7 @@ func TestEvaluation(t *testing.T) {
 		sortition.AddToTotalStake(100000000)
 		h := crypto.GenerateTestHash()
 
+		require.Equal(t, sortition.TotalStake(), int64(100000000))
 		require.Nil(t, sortition.EvaluateTransaction(h, val))
 	})
 
@@ -85,11 +86,9 @@ func TestEvaluationTotalStakeNotZero(t *testing.T) {
 	val.AddToStake(stake) // 1/10 of total stake
 
 	s := NewSortition(crypto.NewSigner(priv))
-	s.SetTotalStake(stake)
-	s.AddToTotalStake(stake)
-	assert.Equal(t, s.TotalStake(), 2*stake)
+	s.SetTotalStake(10 * stake)
 
-	total := 100
+	total := 500
 	median := 0
 	for j := 0; j < total; j++ {
 		var h crypto.Hash
@@ -102,6 +101,6 @@ func TestEvaluationTotalStakeNotZero(t *testing.T) {
 		}
 	}
 
-	// Should be in range of 40 to 60
-	fmt.Printf("%v ", median*100/total)
+	// Should be about 10%
+	fmt.Printf("%v%% ", median*100/total)
 }

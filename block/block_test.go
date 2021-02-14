@@ -30,7 +30,7 @@ func TestRandomBlock(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.CommittersHash = crypto.UndefHash
+	b.data.Header.data.CommitteeHash = crypto.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
@@ -106,7 +106,7 @@ func TestSanityCheck(t *testing.T) {
 
 		MakeBlock(util.Now(), tmp.TxIDs(),
 			tmp.Header().LastBlockHash(),
-			tmp.Header().CommittersHash(),
+			tmp.Header().CommitteeHash(),
 			tmp.Header().StateHash(),
 			tmp.Header().LastReceiptsHash(), nil, tmp.Header().ProposerAddress())
 	})

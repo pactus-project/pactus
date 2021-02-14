@@ -14,8 +14,8 @@ func TestProposeBlock(t *testing.T) {
 	setup(t)
 
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
-	assert.NoError(t, tState2.ApplyBlock(1, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
+	assert.NoError(t, tState2.CommitBlock(1, b1, c1))
 
 	subsidy := calcBlockSubsidy(tState1.LastBlockHeight(), tState1.params.SubsidyReductionInterval)
 	invSubsidyTx := tx.NewMintbaseTx(tState1.LastBlockHash(), 1, tValSigner2.Address(), subsidy, "")
@@ -40,7 +40,7 @@ func TestProposeBlock(t *testing.T) {
 	b2, c2 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
 	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
 	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
-	assert.NoError(t, tState1.ApplyBlock(2, b2, c2))
+	assert.NoError(t, tState1.CommitBlock(2, b2, c2))
 
 	assert.Equal(t, tState1.sortition.TotalStake(), int64(1000))
 }
@@ -49,7 +49,7 @@ func TestExecuteBlock(t *testing.T) {
 	setup(t)
 
 	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.ApplyBlock(1, b1, c1))
+	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
 
 	invSubsidyTx := tState1.createSubsidyTx(1001)
 	validSubsidyTx := tState1.createSubsidyTx(1000)
@@ -66,7 +66,7 @@ func TestExecuteBlock(t *testing.T) {
 	t.Run("Subsidy tx is invalid", func(t *testing.T) {
 		txIDs := block.NewTxIDs()
 		txIDs.Append(invSubsidyTx.ID())
-		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
 		_, err := tState1.executeBlock(invBlock)
 		assert.Error(t, err)
 	})
@@ -75,7 +75,7 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs := block.NewTxIDs()
 		txIDs.Append(validSubsidyTx.ID())
 		txIDs.Append(invSendTx.ID())
-		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
 		_, err := tState1.executeBlock(invBlock)
 		assert.Error(t, err)
 	})
@@ -84,7 +84,7 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs := block.NewTxIDs()
 		txIDs.Append(validTx1.ID())
 		txIDs.Append(validSubsidyTx.ID())
-		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
 		_, err := tState1.executeBlock(invBlock)
 		assert.Error(t, err)
 	})
@@ -92,7 +92,7 @@ func TestExecuteBlock(t *testing.T) {
 	t.Run("Has no subsidy", func(t *testing.T) {
 		txIDs := block.NewTxIDs()
 		txIDs.Append(validTx1.ID())
-		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
 		_, err := tState1.executeBlock(invBlock)
 		assert.Error(t, err)
 	})
@@ -101,7 +101,7 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs := block.NewTxIDs()
 		txIDs.Append(validSubsidyTx.ID())
 		txIDs.Append(validTx1.ID())
-		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommittersHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+		invBlock := block.MakeBlock(util.Now(), txIDs, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
 		_, err := tState1.executeBlock(invBlock)
 		assert.NoError(t, err)
 	})

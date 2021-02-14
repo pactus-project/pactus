@@ -47,7 +47,7 @@ func TestConsensusBehindState(t *testing.T) {
 
 	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
 
-	assert.NoError(t, tConsP.state.ApplyBlock(1, p.Block(), *precommits.ToCommit()))
+	assert.NoError(t, tConsP.state.CommitBlock(1, p.Block(), *precommits.ToCommit()))
 	// We don't get any error here, but the block is not committed again. Check logs.
 }
 
