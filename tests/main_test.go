@@ -95,7 +95,7 @@ func TestMain(m *testing.M) {
 	var err error
 	t := &testing.T{}
 
-	for i := 0; i < max; i++ {
+	for i := 0; i < nodeCount; i++ {
 		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
 		if tNodes[i].Start() != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))
