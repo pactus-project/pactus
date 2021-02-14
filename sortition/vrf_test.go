@@ -20,7 +20,7 @@ func TestVRF(t *testing.T) {
 		index, proof := vrf.Evaluate(h)
 		//fmt.Printf("index is : %v \n", index)
 
-		assert.Equal(t, index <= max, true)
+		assert.LessOrEqual(t, index, max)
 
 		index2, result := vrf.Verify(h, pk, proof)
 
@@ -42,6 +42,7 @@ func TestEntropy(t *testing.T) {
 		h := crypto.GenerateTestHash()
 
 		index, _ := vrf.Evaluate(h)
+		assert.LessOrEqual(t, index, max)
 
 		entropy[index] = true
 	}
