@@ -59,8 +59,7 @@ func Init() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				name := fmt.Sprintf("zarb-local-%v", cmd.RandomHex(2))
-				gen, _ = makeGenesis(*workingDirOpt, name)
+				gen, _ = makeGenesis(*workingDirOpt)
 			}
 
 			// save genesis file to file system
@@ -84,7 +83,7 @@ func Init() func(c *cli.Cmd) {
 }
 
 // makeGenesis makes genisis file while on initialize
-func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) {
+func makeGenesis(workingDir string) (*genesis.Genesis, error) {
 
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
@@ -100,6 +99,6 @@ func makeGenesis(workingDir string, chainName string) (*genesis.Genesis, error) 
 	vals := []*validator.Validator{val}
 
 	// create genesis
-	gen := genesis.MakeGenesis(chainName, util.RoundNow(60), accs, vals, param.MainnetParams())
+	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, param.DefaultParams())
 	return gen, nil
 }

@@ -104,7 +104,7 @@ func TestSanityCheck(t *testing.T) {
 			}
 		}()
 
-		MakeBlock(util.Now(), tmp.TxIDs(),
+		MakeBlock(1, util.Now(), tmp.TxIDs(),
 			tmp.Header().LastBlockHash(),
 			tmp.Header().CommitteeHash(),
 			tmp.Header().StateHash(),

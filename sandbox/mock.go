@@ -29,7 +29,7 @@ func MockingSandbox() *MockSandbox {
 		Accounts:   make(map[crypto.Address]account.Account),
 		Validators: make(map[crypto.Address]validator.Validator),
 		Stamps:     make(map[crypto.Hash]int),
-		Params:     param.MainnetParams(),
+		Params:     param.DefaultParams(),
 	}
 }
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {

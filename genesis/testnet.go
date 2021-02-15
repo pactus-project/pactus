@@ -4,18 +4,18 @@ import "encoding/json"
 
 const testnetJSON = `
 {
-   "ChainName":"zarb-testnet",
-   "GenesisTime":"2021-02-13T00:00:00.0+03:30",
+   "GenesisTime":"2021-02-15T00:00:00.0+03:30",
    "Params":{
-      "BlockTimeInSecond":5,
-      "MaximumTransactionPerBlock":1000,
-      "MaximumPower":4,
-      "SubsidyReductionInterval":4200000,
-      "MaximumMemoLength":1024,
-      "FeeFraction":0.001,
-      "MinimumFee":1000,
-      "TransactionToLiveInterval":8640,
-      "WiredrawStakeInterval":181440
+        "BlockVersion": 1001,
+        "BlockTimeInSecond": 5,
+        "CommitteeSize": 4,
+        "SubsidyReductionInterval": 4200000,
+        "TransactionToLiveInterval": 8640,
+        "UnbondInterval": 181440,
+        "MaximumTransactionPerBlock": 1000,
+        "MaximumMemoLength": 1024,
+        "FeeFraction": 0.001,
+        "MinimumFee": 1000
    },
    "Accounts":[
       {

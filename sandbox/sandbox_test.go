@@ -64,7 +64,7 @@ func setup(t *testing.T) {
 	tValset, err = validator.NewValidatorSet([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
-	params := param.MainnetParams()
+	params := param.DefaultParams()
 	tSandbox, err = NewSandbox(tStore, params, 0, tSortitions[0], tValset)
 	assert.NoError(t, err)
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
@@ -83,7 +83,7 @@ func TestLoadRecentBlocks(t *testing.T) {
 		store.Blocks[i+1] = b
 	}
 
-	params := param.MainnetParams()
+	params := param.DefaultParams()
 	params.TransactionToLiveInterval = 10
 
 	sandbox, err := NewSandbox(store, params, lastHeight, nil, nil)

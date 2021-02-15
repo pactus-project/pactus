@@ -14,7 +14,7 @@ type Header struct {
 	data headerData
 }
 type headerData struct {
-	Version          uint           `cbor:"1,keyasint"`
+	Version          int            `cbor:"1,keyasint"`
 	UnixTime         int64          `cbor:"2,keyasint"`
 	LastBlockHash    crypto.Hash    `cbor:"3,keyasint"`
 	StateHash        crypto.Hash    `cbor:"4,keyasint"`
@@ -25,7 +25,7 @@ type headerData struct {
 	ProposerAddress  crypto.Address `cbor:"9,keyasint"`
 }
 
-func (h Header) Version() uint                   { return h.data.Version }
+func (h Header) Version() int                   { return h.data.Version }
 func (h Header) Time() time.Time                 { return time.Unix(h.data.UnixTime, 0) }
 func (h Header) TxIDsHash() crypto.Hash          { return h.data.TxIDsHash }
 func (h Header) StateHash() crypto.Hash          { return h.data.StateHash }
@@ -35,7 +35,7 @@ func (h Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash 
 func (h Header) CommitteeHash() crypto.Hash      { return h.data.CommitteeHash }
 func (h Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
 
-func NewHeader(version uint,
+func NewHeader(version int,
 	time time.Time,
 	txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
 	proposerAddress crypto.Address) Header {

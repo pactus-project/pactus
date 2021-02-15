@@ -59,8 +59,8 @@ func setup(t *testing.T) {
 	val2 := validator.NewValidator(tValSigner2.PublicKey(), 1, 0)
 	val3 := validator.NewValidator(tValSigner3.PublicKey(), 2, 0)
 	val4 := validator.NewValidator(tValSigner4.PublicKey(), 3, 0)
-	params := param.MainnetParams()
-	gnDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
+	params := param.DefaultParams()
+	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
 	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, tCommonTxPool)
 	require.NoError(t, err)
@@ -434,6 +434,7 @@ func TestInvalidBlockTime(t *testing.T) {
 	validBlock, _ := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
 	invalidBlock := block.MakeBlock(
+		validBlock.Header().Version(),
 		validBlock.Header().Time().Add(30*time.Second),
 		validBlock.TxIDs(),
 		validBlock.Header().LastBlockHash(),

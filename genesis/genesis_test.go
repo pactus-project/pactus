@@ -17,10 +17,9 @@ func TestMarshaling(t *testing.T) {
 	acc, _ := account.GenerateTestAccount(0)
 	acc.AddToBalance(100000)
 	val, _ := validator.GenerateTestValidator(0)
-	gen1 := MakeGenesis("test", util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.MainnetParams())
+	gen1 := MakeGenesis(util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 	gen2 := new(Genesis)
 
-	assert.Equal(t, gen1.ChainName(), "test")
 	assert.Equal(t, gen1.Params().BlockTimeInSecond, 10)
 
 	bz, err := json.MarshalIndent(gen1, " ", " ")
@@ -49,7 +48,7 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, g.Accounts()[0].Address(), crypto.TreasuryAddress)
 	assert.Equal(t, g.Accounts()[0].Balance(), int64(0x775F05A074000))
 
-	expected, _ := crypto.HashFromString("497b3475e1c5401c233dcf9c0d1b4bca9ba9c98299a4b9e86bf4ff5cc8d132d3")
+	expected, _ := crypto.HashFromString("3cbf034f64fc50948a7b552be5cf2bd2f5c7af684f4c308d1207668dfd3e75c9")
 	assert.Equal(t, g.Hash(), expected)
 }
 
@@ -64,7 +63,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 		accs = append(accs, acc)
 		vals = append(vals, val)
 	}
-	gen := MakeGenesis("test", util.Now(), accs, vals, param.MainnetParams())
+	gen := MakeGenesis(util.Now(), accs, vals, param.DefaultParams())
 
 	genAccs := gen.Accounts()
 	genVals := gen.Validators()

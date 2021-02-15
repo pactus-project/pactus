@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -211,14 +209,6 @@ func PrintJsonObject(obj interface{}) {
 		return
 	}
 	PrintJsonData(data)
-}
-
-func RandomHex(n int) string {
-	bytes := make([]byte, n)
-	if _, err := rand.Read(bytes); err != nil {
-		return ""
-	}
-	return hex.EncodeToString(bytes)
 }
 
 func ZarbHomeDir() string {
