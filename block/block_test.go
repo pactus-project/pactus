@@ -69,8 +69,10 @@ func TestMarshaling(t *testing.T) {
 	assert.NoError(t, b2.SanityCheck())
 	assert.Equal(t, b1.Hash(), b2.Hash())
 
-	bz2, _ := b1.MarshalCBOR()
-	assert.Equal(t, bz1, bz2)
+	assert.Equal(t, b1.Hash(), b2.Hash())
+	assert.Equal(t, b1.Header().Time(), b2.Header().Time())
+	assert.Equal(t, b1.Header().Version(), b2.Header().Version())
+	assert.Equal(t, b2.Header().Version(), 1)
 }
 
 func TestJSONMarshaling(t *testing.T) {
