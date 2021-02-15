@@ -62,11 +62,11 @@ func setup(t *testing.T) {
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
-	params := param.MainnetParams()
+	params := param.DefaultParams()
 	params.CommitteeSize = 4
 	params.BlockTimeInSecond = 2
 
-	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
+	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
 	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
 	require.NoError(t, err)
 	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], tTxPool)

@@ -324,6 +324,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	timestamp := st.proposeNextBlockTime()
 
 	block := block.MakeBlock(
+		st.params.BlockVersion,
 		timestamp,
 		txIDs,
 		st.lastBlockHash,

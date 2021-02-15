@@ -86,11 +86,11 @@ func TestMain(m *testing.M) {
 	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1, 0)
 	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2, 0)
 	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
-	params := param.MainnetParams()
+	params := param.DefaultParams()
 	params.BlockTimeInSecond = blockTime
 	params.CommitteeSize = committeeSize
 	params.TransactionToLiveInterval = 8
-	tGenDoc = genesis.MakeGenesis("test", util.Now(), []*account.Account{acc}, vals, params)
+	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
 
 	var err error
 	t := &testing.T{}

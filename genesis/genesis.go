@@ -29,11 +29,10 @@ type Genesis struct {
 }
 
 type genesisData struct {
-	ChainName   string         `cbor:"1,keyasint"`
-	GenesisTime time.Time      `cbor:"2,keyasint"`
-	Params      param.Params   `cbor:"3,keyasint"`
-	Accounts    []genAccount   `cbor:"4,keyasint"`
-	Validators  []genValidator `cbor:"5,keyasint"`
+	GenesisTime time.Time      `cbor:"1,keyasint"`
+	Params      param.Params   `cbor:"2,keyasint"`
+	Accounts    []genAccount   `cbor:"3,keyasint"`
+	Validators  []genValidator `cbor:"4,keyasint"`
 }
 
 func (gen *Genesis) Hash() crypto.Hash {
@@ -42,10 +41,6 @@ func (gen *Genesis) Hash() crypto.Hash {
 		panic(fmt.Errorf("could not create hash of Genesis: %v", err))
 	}
 	return crypto.HashH(bs)
-}
-
-func (gen *Genesis) ChainName() string {
-	return gen.data.ChainName
 }
 
 func (gen *Genesis) GenesisTime() time.Time {
@@ -98,7 +93,7 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 	}
 }
 
-func MakeGenesis(chainName string, genesisTime time.Time,
+func MakeGenesis(genesisTime time.Time,
 	accounts []*account.Account,
 	validators []*validator.Validator, params param.Params) *Genesis {
 
@@ -116,7 +111,6 @@ func MakeGenesis(chainName string, genesisTime time.Time,
 
 	return &Genesis{
 		data: genesisData{
-			ChainName:   chainName,
 			GenesisTime: genesisTime,
 			Accounts:    genAccs,
 			Validators:  genVals,

@@ -24,12 +24,12 @@ type blockData struct {
 	TxIDs      TxIDs   `cbor:"3,keyasint"`
 }
 
-func MakeBlock(timestamp time.Time, txIDs TxIDs,
+func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
 	lastCommit *Commit, proposer crypto.Address) Block {
 
 	txIDsHash := txIDs.Hash()
-	header := NewHeader(1, timestamp,
+	header := NewHeader(version, timestamp,
 		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
 
 	b := Block{
@@ -160,7 +160,7 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		commit = nil
 		lastReceiptsHash = crypto.UndefHash
 	}
-	block := MakeBlock(util.Now(), ids,
+	block := MakeBlock(1, util.Now(), ids,
 		*lastBlockHash,
 		crypto.GenerateTestHash(),
 		crypto.GenerateTestHash(),

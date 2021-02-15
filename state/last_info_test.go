@@ -85,7 +85,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21*1e14 + 1) // manipulating genesis
 	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
-	genDoc := genesis.MakeGenesis("test", tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.MainnetParams())
+	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 
 	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, txpool.MockingTxPool())
 	require.Error(t, err)
