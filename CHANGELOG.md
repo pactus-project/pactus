@@ -1,6 +1,9 @@
 # Changelog
 
 ## 1.0.0
+- Refactoring commit base on zip-0001 proposal
+- Introducing Download topic for downloading blockchain
+- Transaction ID is hash of transaction without signature and public-key
 - Using blake2b for hashing
 - Using ARC cache for syncing module
 - Reap transaction from txpool before proposing block
@@ -12,6 +15,14 @@
 - Add chain params to genesis
 - Stamp validation check for transaction
 - Refactoring transactions and transaction receipts
+- Assigning version 1001 for testnet blocks
+- Generating keys based on BIP-0039 (mnemonic or seed phrase)
+- Add new command for recovering key by seed
+- Add new command for sending raw transaction
+- Add new command for making `Bond` transaction
+- Add new argument for signing transaction to `key sign` command
+- Improve consensus mechanism
+- Improve syncing process
 
 ## 0.9.1
 - Adding wizard argument to start command
