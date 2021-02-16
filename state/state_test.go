@@ -427,6 +427,14 @@ func TestValidateBlockTime(t *testing.T) {
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(40*time.Second)))
 }
 
+func TestInvalidBlockVersion(t *testing.T) {
+	setup(t)
+
+	tState1.params.BlockVersion = 2
+	b, _ := tState1.ProposeBlock(0)
+	assert.Error(t, tState2.ValidateBlock(*b))
+}
+
 func TestInvalidBlockTime(t *testing.T) {
 	setup(t)
 	moveToNextHeightForAllStates(t)

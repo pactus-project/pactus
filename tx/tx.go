@@ -130,7 +130,7 @@ type _txData struct {
 	Fee       int64               `cbor:"4,keyasint"`
 	Type      payload.PayloadType `cbor:"5,keyasint"`
 	Payload   cbor.RawMessage     `cbor:"6,keyasint"`
-	Memo      string              `cbor:"7,keyasint"`
+	Memo      string              `cbor:"7,keyasint,omitempty"`
 	PublicKey *crypto.PublicKey   `cbor:"20,keyasint,omitempty"`
 	Signature *crypto.Signature   `cbor:"21,keyasint,omitempty"`
 }

@@ -9,16 +9,12 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestRandomBlock(t *testing.T) {
+func TestBlockSanityCheck(t *testing.T) {
 	b, _ := GenerateTestBlock(nil, nil)
 	assert.NoError(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
 	b.data.TxIDs = TxIDs{}
-	assert.Error(t, b.SanityCheck())
-
-	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.Version = 2
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)

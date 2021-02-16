@@ -46,14 +46,6 @@ func TestEncodingTxNoSig(t *testing.T) {
 }
 
 func TestTxSanityCheck(t *testing.T) {
-
-	t.Run("Invalid version", func(t *testing.T) {
-		tx, signer := GenerateTestSendTx()
-		tx.data.Version = 2
-		signer.SignMsg(tx)
-		assert.Error(t, tx.SanityCheck())
-	})
-
 	t.Run("Invalid sequence", func(t *testing.T) {
 		tx, signer := GenerateTestSendTx()
 		tx.data.Sequence = -1

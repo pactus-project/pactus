@@ -11,6 +11,10 @@ func (st *state) validateBlock(block block.Block) error {
 		return err
 	}
 
+	if block.Header().Version() != st.params.BlockVersion {
+		return errors.Errorf(errors.ErrInvalidBlock, "Invalid version")
+	}
+
 	if !block.Header().LastBlockHash().EqualsTo(st.lastBlockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"Last block hash is not same as we expected. Expected %v, got %v", st.lastBlockHash, block.Header().LastBlockHash())

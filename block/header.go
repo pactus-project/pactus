@@ -25,7 +25,7 @@ type headerData struct {
 	ProposerAddress  crypto.Address `cbor:"9,keyasint"`
 }
 
-func (h Header) Version() int                   { return h.data.Version }
+func (h Header) Version() int                    { return h.data.Version }
 func (h Header) Time() time.Time                 { return time.Unix(h.data.UnixTime, 0) }
 func (h Header) TxIDsHash() crypto.Hash          { return h.data.TxIDsHash }
 func (h Header) StateHash() crypto.Hash          { return h.data.StateHash }
@@ -56,9 +56,6 @@ func NewHeader(version int,
 }
 
 func (h *Header) SanityCheck() error {
-	if h.data.Version != 1 {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid version")
-	}
 	if err := h.data.StateHash.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
