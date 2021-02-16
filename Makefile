@@ -34,7 +34,7 @@ bls:
 build:
 	go build $(LDFLAGS) $(TAGS) -o build/zarb ./cmd/zarb/
 
-install:
+install: fmt
 	go install $(LDFLAGS) $(TAGS) ./cmd/zarb
 
 build_with_bls:
@@ -66,7 +66,7 @@ capnp: tools
 ### Formatting, linting, and vetting
 fmt:
 	@go vet ./...
-	@go fmt ./...
+	@gofmt -s -w .
 	@golangci-lint run -e "SA1019"
 
 # To avoid unintended conflicts with file names, always add to .PHONY
