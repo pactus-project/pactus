@@ -4,7 +4,7 @@ import "encoding/json"
 
 const testnetJSON = `
 {
-   "GenesisTime":"2021-02-15T00:00:00.0+03:30",
+   "GenesisTime":"2021-02-16T00:00:00.0+03:30",
    "Params":{
         "BlockVersion": 1001,
         "BlockTimeInSecond": 5,
