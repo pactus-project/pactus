@@ -251,11 +251,9 @@ func (syncer *synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 		syncer.stateSync.ProcessLatestBlocksResponsePayload(pld)
 
 	case payload.PayloadTypeQueryTransactions:
-		if syncer.isThisActiveValidator() {
-			pld := msg.Payload.(*payload.QueryTransactionsPayload)
-			if syncer.isPeerActiveValidator(pld.Querier) {
-				syncer.stateSync.ProcessQueryTransactionsPayload(pld)
-			}
+		pld := msg.Payload.(*payload.QueryTransactionsPayload)
+		if syncer.isPeerActiveValidator(pld.Querier) {
+			syncer.stateSync.ProcessQueryTransactionsPayload(pld)
 		}
 
 	case payload.PayloadTypeTransactions:
@@ -267,11 +265,9 @@ func (syncer *synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 		syncer.stateSync.ProcessBlockAnnouncePayload(pld)
 
 	case payload.PayloadTypeQueryProposal:
-		if syncer.isThisActiveValidator() {
-			pld := msg.Payload.(*payload.QueryProposalPayload)
-			if syncer.isPeerActiveValidator(pld.Querier) {
-				syncer.consensusSync.ProcessQueryProposalPayload(pld)
-			}
+		pld := msg.Payload.(*payload.QueryProposalPayload)
+		if syncer.isPeerActiveValidator(pld.Querier) {
+			syncer.consensusSync.ProcessQueryProposalPayload(pld)
 		}
 
 	case payload.PayloadTypeProposal:
@@ -480,10 +476,6 @@ func (syncer *synchronizer) queryTransactions(ids []crypto.Hash) {
 // queryProposal queries for proposal if we don't have it in the cache
 // Only active validators can send this messsage
 func (syncer *synchronizer) queryProposal(height, round int) {
-	if !syncer.isThisActiveValidator() {
-		return
-	}
-
 	p := syncer.consensus.RoundProposal(round)
 	if p == nil {
 		p = syncer.cache.GetProposal(height, round)
@@ -491,7 +483,11 @@ func (syncer *synchronizer) queryProposal(height, round int) {
 			// We have the proposal inside the cache
 			syncer.consensus.SetProposal(p)
 		} else {
-			syncer.consensusSync.BroadcastQueryProposal(height, round)
+			if syncer.isThisActiveValidator() {
+				syncer.consensusSync.BroadcastQueryProposal(height, round)
+			} else {
+				syncer.logger.Debug("queryProposal ignored. Not an active validator")
+			}
 		}
 	}
 }
@@ -499,11 +495,11 @@ func (syncer *synchronizer) queryProposal(height, round int) {
 // queryVotes asks other peers to send us some votes randomly
 // Only active validators can send this messsage
 func (syncer *synchronizer) queryVotes(height, round int) {
-	if !syncer.isThisActiveValidator() {
-		return
+	if syncer.isThisActiveValidator() {
+		syncer.consensusSync.BroadcastQueryVotes(height, round)
+	} else {
+		syncer.logger.Debug("queryVotes ignored. Not an active validator")
 	}
-
-	syncer.consensusSync.BroadcastQueryVotes(height, round)
 }
 
 func (syncer *synchronizer) announceBlock(height int, block *block.Block, commit *block.Commit) {

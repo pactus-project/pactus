@@ -195,6 +195,13 @@ func joinBobToTheSet(t *testing.T) {
 	assert.NoError(t, tBobState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
 }
 
+func TestAccessors(t *testing.T) {
+	setup(t)
+
+	assert.Equal(t, tAliceSync.PeerID(), tAlicePeerID)
+	assert.Equal(t, len(tAliceSync.Peers()), 1)
+}
+
 func TestSendSalamBadGenesisHash(t *testing.T) {
 	setup(t)
 
@@ -456,9 +463,29 @@ func TestRequestForBlock(t *testing.T) {
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	})
 }
-func TestAccessors(t *testing.T) {
+
+func TestNotActiveValidator(t *testing.T) {
 	setup(t)
 
-	assert.Equal(t, tAliceSync.PeerID(), tAlicePeerID)
-	assert.Equal(t, len(tAliceSync.Peers()), 1)
+	t.Run("Alice is not an active validator, She should not send query proposal message", func(t *testing.T) {
+		tAliceSync.queryProposal(1, 1)
+		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+	})
+
+	t.Run("Alice is not an active validator, She should not send query votes message", func(t *testing.T) {
+		tAliceSync.queryVotes(1, 1)
+		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
+	})
+
+	joinAliceToTheSet(t)
+
+	t.Run("Alice is an active validator, She can send query proposal message", func(t *testing.T) {
+		tAliceSync.queryProposal(1, 1)
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+	})
+
+	t.Run("Alice is an active validator, She can send query votes message", func(t *testing.T) {
+		tAliceSync.queryVotes(1, 1)
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
+	})
 }
