@@ -131,7 +131,6 @@ func (b *Bootstrapper) checkConnectivity() {
 			wg.Done()
 		}(pinfo)
 	}
-	b.logger.Warn("not enough bootstrap nodes to maintain connections", "threshold", b.config.MinThreshold, "current", len(currentPeers))
 }
 
 func hasPID(pids []peer.ID, pid peer.ID) bool {
