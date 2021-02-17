@@ -89,10 +89,6 @@ func NewNetwork(conf *Config) (*Network, error) {
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
-	addresses, err := PeerAddrsToAddrInfo(conf.Bootstrap.Addresses)
-	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, "couldn't parse bootstrap addresses: %s", conf.Bootstrap.Addresses)
-	}
 
 	n := &Network{
 		ctx:    ctx,
@@ -117,7 +113,9 @@ func NewNetwork(conf *Config) (*Network, error) {
 			n.logger.Error("Unable to setup Kademlia DHT", "err", err)
 		}
 		n.kademlia = kademlia
-		n.bootstrapper = NewBootstrapper(ctx, addresses, host, host.Network(), kademlia, conf.Bootstrap.MinPeerThreshold, conf.Bootstrap.Period)
+		n.bootstrapper = NewBootstrapper(ctx,
+			host, host.Network(), kademlia,
+			conf.Bootstrap, n.logger)
 	}
 
 	return n, nil

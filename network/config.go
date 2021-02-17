@@ -17,9 +17,15 @@ type Config struct {
 
 // BootstrapConfig holds all configuration options related to bootstrap nodes
 type BootstrapConfig struct {
-	Addresses        []string
-	MinPeerThreshold int
-	Period           time.Duration
+	// Peers to connect to if we fall below the threshold.
+	Addresses []string
+	// MinPeerThreshold is the number of connections it attempts to maintain.
+	MinThreshold int
+	// Period is the interval at which it periodically checks to see
+	// if the threshold is maintained.
+	Period time.Duration
+	// ConnectionTimeout is how long to wait before timing out a connection attempt.
+	Timeout time.Duration
 }
 
 func DefaultConfig() *Config {
@@ -30,9 +36,10 @@ func DefaultConfig() *Config {
 		EnableMDNS:     true,
 		EnableKademlia: true,
 		Bootstrap: &BootstrapConfig{
-			Addresses:        []string{},
-			MinPeerThreshold: 0,
-			Period:           1 * time.Minute,
+			Addresses:    []string{},
+			MinThreshold: 8,
+			Period:       1 * time.Minute,
+			Timeout:      20 * time.Second,
 		},
 	}
 }
@@ -45,9 +52,10 @@ func TestConfig() *Config {
 		EnableMDNS:     false,
 		EnableKademlia: false,
 		Bootstrap: &BootstrapConfig{
-			Addresses:        []string{},
-			MinPeerThreshold: 0,
-			Period:           1 * time.Minute,
+			Addresses:    []string{},
+			MinThreshold: 4,
+			Period:       1 * time.Minute,
+			Timeout:      20 * time.Second,
 		},
 	}
 }
