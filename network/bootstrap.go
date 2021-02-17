@@ -2,7 +2,6 @@ package network
 
 import (
 	"context"
-	"math/rand"
 	"sync"
 	"time"
 
@@ -20,49 +19,43 @@ import (
 // to discover new peers. To stop a Bootstrapper cancel the context passed in Start()
 // or call Stop().
 type Bootstrapper struct {
-	// Config
-	// MinPeerThreshold is the number of connections it attempts to maintain.
-	minPeerThreshold int
-	// Peers to connect to if we fall below the threshold.
+	config *BootstrapConfig
+
 	bootstrapPeers []peer.AddrInfo
-	// Period is the interval at which it periodically checks to see
-	// if the threshold is maintained.
-	period time.Duration
-	// ConnectionTimeout is how long to wait before timing out a connection attempt.
-	connectionTimeout time.Duration
 
 	// Dependencies
 	h host.Host
 	d inet.Dialer
 	r routing.Routing
-	// Does the work. Usually Bootstrapper.bootstrap. Argument is a slice of
-	// currently-connected peers (so it won't attempt to reconnect).
-	Bootstrap func([]peer.ID)
 
 	// Bookkeeping
 	ticker         *time.Ticker
 	ctx            context.Context
 	cancel         context.CancelFunc
 	dhtBootStarted bool
+
+	logger *logger.Logger
 }
 
 // NewBootstrapper returns a new Bootstrapper that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
-func NewBootstrapper(ctx context.Context, bootstrapPeers []peer.AddrInfo, h host.Host, d inet.Dialer, r routing.Routing, minPeer int, period time.Duration) *Bootstrapper {
+func NewBootstrapper(ctx context.Context, h host.Host, d inet.Dialer, r routing.Routing, conf *BootstrapConfig, logger *logger.Logger) *Bootstrapper {
 	b := &Bootstrapper{
-		minPeerThreshold:  minPeer,
-		bootstrapPeers:    bootstrapPeers,
-		period:            period,
-		connectionTimeout: 20 * time.Second,
-		ctx:               ctx,
-
-		h: h,
-		d: d,
-		r: r,
+		ctx:    ctx,
+		config: conf,
+		h:      h,
+		d:      d,
+		r:      r,
+		logger: logger,
 	}
-	b.Bootstrap = b.bootstrap
 
-	b.Bootstrap(b.d.Peers())
+	addresses, err := PeerAddrsToAddrInfo(conf.Addresses)
+	if err != nil {
+		b.logger.Panic("couldn't parse bootstrap addresses", "addressed", conf.Addresses)
+	}
+
+	b.bootstrapPeers = addresses
+	b.checkConnectivity()
 
 	return b
 }
@@ -70,7 +63,7 @@ func NewBootstrapper(ctx context.Context, bootstrapPeers []peer.AddrInfo, h host
 // Start starts the Bootstrapper bootstrapping. Cancel `ctx` or call Stop() to stop it.
 func (b *Bootstrapper) Start() {
 	b.ctx, b.cancel = context.WithCancel(b.ctx)
-	b.ticker = time.NewTicker(b.period)
+	b.ticker = time.NewTicker(b.config.Period)
 
 	go func() {
 		defer b.ticker.Stop()
@@ -80,7 +73,7 @@ func (b *Bootstrapper) Start() {
 			case <-b.ctx.Done():
 				return
 			case <-b.ticker.C:
-				b.Bootstrap(b.d.Peers())
+				b.checkConnectivity()
 			}
 		}
 	}()
@@ -93,16 +86,19 @@ func (b *Bootstrapper) Stop() {
 	}
 }
 
-// bootstrap does the actual work. If the number of connected peers
+// checkConnectivity does the actual work. If the number of connected peers
 // has fallen below b.MinPeerThreshold it will attempt to connect to
 // a random subset of its bootstrap peers.
-func (b *Bootstrapper) bootstrap(currentPeers []peer.ID) {
-	peersNeeded := b.minPeerThreshold - len(currentPeers)
+func (b *Bootstrapper) checkConnectivity() {
+	currentPeers := b.d.Peers()
+	b.logger.Debug("Check connectivity", "peers", len(currentPeers), "threshold", b.config.MinThreshold, "timeout", b.config.Timeout)
+
+	peersNeeded := b.config.MinThreshold - len(currentPeers)
 	if peersNeeded < 1 {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(b.ctx, b.connectionTimeout)
+	ctx, cancel := context.WithTimeout(b.ctx, b.config.Timeout)
 	var wg sync.WaitGroup
 	defer func() {
 		wg.Wait()
@@ -112,33 +108,30 @@ func (b *Bootstrapper) bootstrap(currentPeers []peer.ID) {
 			b.dhtBootStarted = true
 			err := b.bootstrapIpfsRouting()
 			if err != nil {
-				logger.Warn("got error trying to bootstrap Routing. Peer discovery may suffer.", "err", err)
+				b.logger.Warn("Peer discovery may suffer.", "err", err)
 			}
 		}
 		cancel()
 	}()
 
-	peersAttempted := 0
-	for _, i := range rand.Perm(len(b.bootstrapPeers)) {
-		pinfo := b.bootstrapPeers[i]
+	for _, pinfo := range b.bootstrapPeers {
+		b.logger.Trace("Try connecting to a bootstrap peer.", "peer", pinfo.String())
+
 		// Don't try to connect to an already connected peer.
 		if hasPID(currentPeers, pinfo.ID) {
+			b.logger.Trace("Already connected.", "peer", pinfo.String())
 			continue
 		}
 
 		wg.Add(1)
-		go func() {
-			if err := b.h.Connect(ctx, pinfo); err != nil {
-				logger.Error("got error trying to connect to bootstrap node ", "info", pinfo, "err", err.Error())
+		go func(pi peer.AddrInfo) {
+			if err := b.h.Connect(ctx, pi); err != nil {
+				b.logger.Error("got error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
 			}
 			wg.Done()
-		}()
-		peersAttempted++
-		if peersAttempted == peersNeeded {
-			return
-		}
+		}(pinfo)
 	}
-	logger.Warn("not enough bootstrap nodes to maintain connections", "threshold", b.minPeerThreshold, "current", len(currentPeers))
+	b.logger.Warn("not enough bootstrap nodes to maintain connections", "threshold", b.config.MinThreshold, "current", len(currentPeers))
 }
 
 func hasPID(pids []peer.ID, pid peer.ID) bool {
@@ -153,6 +146,7 @@ func hasPID(pids []peer.ID, pid peer.ID) bool {
 func (b *Bootstrapper) bootstrapIpfsRouting() error {
 	dht, ok := b.r.(*dht.IpfsDHT)
 	if !ok {
+		b.logger.Warn("No bootstrapping to do exit quietly.")
 		// No bootstrapping to do exit quietly.
 		return nil
 	}
