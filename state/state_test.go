@@ -60,6 +60,7 @@ func setup(t *testing.T) {
 	val3 := validator.NewValidator(tValSigner3.PublicKey(), 2, 0)
 	val4 := validator.NewValidator(tValSigner4.PublicKey(), 3, 0)
 	params := param.DefaultParams()
+	params.CommitteeSize = 4
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
 	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, tCommonTxPool)
@@ -78,18 +79,19 @@ func setup(t *testing.T) {
 }
 
 func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (block.Block, block.Commit) {
-	next := tState1.lastBlockHeight + round
 	st := tState1
-	if next%4 == 1 {
+	if tState1.validatorSet.IsProposer(tState1.proposer, round) {
+		st = tState1
+	} else if tState1.validatorSet.IsProposer(tState2.proposer, round) {
 		st = tState2
-	} else if next%4 == 2 {
+	} else if tState1.validatorSet.IsProposer(tState3.proposer, round) {
 		st = tState3
-	} else if next%4 == 3 {
+	} else {
 		st = tState4
 	}
 
 	b, err := st.ProposeBlock(round)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	c := makeCommitAndSign(t, b.Hash(), round, signers...)
 
 	return *b, c
@@ -225,9 +227,12 @@ func TestCommitSandbox(t *testing.T) {
 		addr, pub, _ := crypto.GenerateTestKeyPair()
 		newVal := tState1.executionSandbox.MakeNewValidator(pub)
 		newVal.AddToStake(1)
+		tState1.executionSandbox.UpdateValidator(newVal)
 		tState1.commitSandbox(0)
 
 		assert.True(t, tState1.store.HasValidator(addr))
+		assert.Equal(t, tState1.executionSandbox.RiseTotalStake(), int64(1))
+		assert.Equal(t, tState1.sortition.TotalStake(), int64(1))
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
@@ -246,12 +251,13 @@ func TestCommitSandbox(t *testing.T) {
 		setup(t)
 
 		val := tState1.executionSandbox.Validator(tValSigner2.Address())
-		val.AddToStake(1)
+		val.AddToStake(2)
 		tState1.executionSandbox.UpdateValidator(val)
 		tState1.commitSandbox(0)
 
 		val1, _ := tState1.store.Validator(tValSigner2.Address())
 		assert.Equal(t, val1.Stake(), val.Stake())
+		assert.Equal(t, tState1.executionSandbox.RiseTotalStake(), int64(2))
 	})
 
 	t.Run("Move valset", func(t *testing.T) {
@@ -368,9 +374,9 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.EvaluateSortition()) //  not a validator
 
-	// Commit 45 blocks, bonding tx is in block 4
-	for i := 0; i < 45; i++ {
-		if i == 3 {
+	// Commit 10 blocks, bonding tx is in block 2
+	for i := 0; i < 10; i++ {
+		if i == 2 {
 			trx := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 1000, 1000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
@@ -378,7 +384,7 @@ func TestSortition(t *testing.T) {
 
 		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 		CommitBlockAndCommitForAllStates(t, b, c)
-		require.NoError(t, st.CommitBlock(i+1, b, c))
+		require.NoError(t, st1.CommitBlock(i+1, b, c))
 	}
 
 	assert.False(t, st1.EvaluateSortition()) //  bonding period
@@ -386,18 +392,51 @@ func TestSortition(t *testing.T) {
 	// Commit another block
 	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockAndCommitForAllStates(t, b, c)
-	require.NoError(t, st.CommitBlock(46, b, c))
+	require.NoError(t, st1.CommitBlock(11, b, c))
 
 	assert.True(t, st1.EvaluateSortition())                //  ok
 	assert.False(t, tState1.ValidatorSet().Contains(addr)) // still not in the set
 
+	// ---------------------------------------------
 	// Commit another block, new validator should be in the set now
-	b, c = makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	b, c = makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockAndCommitForAllStates(t, b, c)
-	require.NoError(t, st.CommitBlock(47, b, c))
+	require.NoError(t, st1.CommitBlock(12, b, c))
 
 	assert.False(t, st1.EvaluateSortition()) // already in the set
+	assert.False(t, tState1.ValidatorSet().Contains(tValSigner1.Address()))
 	assert.True(t, tState1.ValidatorSet().Contains(addr))
+
+	// ---------------------------------------------
+	// Let's save and load tState1
+	committeeHash := tState1.validatorSet.CommitteeHash()
+	tState1.Close()
+	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
+
+	assert.Equal(t, state1.(*state).validatorSet.CommitteeHash(), committeeHash)
+
+	// ---------------------------------------------
+	// Let's commit another block with new Validator set
+	b1, err := st1.ProposeBlock(3)
+	require.NoError(t, err)
+	require.NotNil(t, b1)
+
+	sigs := make([]crypto.Signature, 4)
+	sb := block.CommitSignBytes(b1.Hash(), 3)
+	committers := make([]block.Committer, 4)
+	committers[0] = block.Committer{Status: 1, Number: 1}
+	committers[1] = block.Committer{Status: 1, Number: 2}
+	committers[2] = block.Committer{Status: 1, Number: 3}
+	committers[3] = block.Committer{Status: 1, Number: 4}
+
+	sigs[0] = tValSigner2.SignData(sb)
+	sigs[1] = tValSigner3.SignData(sb)
+	sigs[2] = tValSigner4.SignData(sb)
+	sigs[3] = signer.SignData(sb)
+	c1 := block.NewCommit(b1.Hash(), 3, committers, crypto.Aggregate(sigs))
+
+	require.NoError(t, st1.CommitBlock(13, *b1, *c1))
+	require.NoError(t, tState2.CommitBlock(13, *b1, *c1))
 }
 
 func TestValidateBlockTime(t *testing.T) {

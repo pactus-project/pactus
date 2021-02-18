@@ -300,7 +300,7 @@ func TestIsProposer(t *testing.T) {
 	assert.Nil(t, vs.Validator(val5.Address()))
 }
 
-func TestCommitteeHash(t *testing.T) {
+func TestCommittee(t *testing.T) {
 	val1, _ := GenerateTestValidator(0)
 	val2, _ := GenerateTestValidator(1)
 	val3, _ := GenerateTestValidator(2)
@@ -310,6 +310,7 @@ func TestCommitteeHash(t *testing.T) {
 	assert.NoError(t, err)
 
 	expected, _ := crypto.HashFromString("fd36b2597b028652ad4430b34a67094ba93ed84bd3abe5cd27f675bf431add48")
+	assert.Equal(t, vs.Committee(), []int{0, 1, 2, 3})
 	assert.Equal(t, vs.CommitteeHash(), expected)
 }
 

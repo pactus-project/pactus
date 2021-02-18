@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/param"
@@ -17,40 +16,47 @@ import (
 
 func TestSaveLoadLastInfo(t *testing.T) {
 	setup(t)
-	b, _ := block.GenerateTestBlock(nil, nil)
+	for i := 0; i < 4; i++ {
+		moveToNextHeightForAllStates(t)
+	}
 
-	tState1.saveLastInfo(125, *b.LastCommit(), b.Header().LastReceiptsHash())
+	tState1.saveLastInfo(
+		tState1.lastBlockHeight,
+		*tState1.lastCommit,
+		tState1.lastReceiptsHash,
+		tState1.validatorSet.Committee(),
+		tState1.validatorSet.Proposer(0).Address())
+
 	li, err := tState1.loadLastInfo()
 	assert.NoError(t, err)
-	assert.Equal(t, li.LastHeight, 125)
-	assert.Equal(t, li.LastCommit.Hash(), b.LastCommit().Hash())
-	assert.Equal(t, li.LastReceiptHash, b.Header().LastReceiptsHash())
+	assert.Equal(t, li.LastHeight, tState1.lastBlockHeight)
+	assert.Equal(t, li.LastCommit.Hash(), tState1.lastCommit.Hash())
+	assert.Equal(t, li.LastReceiptHash, tState1.lastReceiptsHash)
+	assert.Equal(t, li.Committee, tState1.validatorSet.Committee())
+	assert.Equal(t, li.NextProposer, tState1.validatorSet.Proposer(0).Address())
 }
 
 func TestLoadState(t *testing.T) {
 	setup(t)
 
-	addr, pub, _ := crypto.GenerateTestKeyPair()
-
-	tx1 := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), addr, 8888000, 8888, "")
-	tValSigner1.SignMsg((tx1))
-
-	tx2 := tx.NewBondTx(crypto.UndefHash, 2, tValSigner1.Address(), pub, 8888000, 8888, "")
+	// Add a bond transactions to change total stake
+	_, pub, _ := crypto.GenerateTestKeyPair()
+	tx2 := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx2))
 
-	assert.NoError(t, tCommonTxPool.AppendTx(tx1))
 	assert.NoError(t, tCommonTxPool.AppendTx(tx2))
 
-	i := 0
-	for ; i < 8; i++ {
+	for i := 0; i < 4; i++ {
 		moveToNextHeightForAllStates(t)
 	}
+	b5, c5 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockAndCommitForAllStates(t, b5, c5)
 
-	newBlock, newCommit := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	b6, c6 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NoError(t, tState1.Close())
 
 	// Load last state info
-	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.MockingTxPool())
+	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
 	require.NoError(t, err)
 
 	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
@@ -58,13 +64,11 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, tState1.sortition.TotalStake(), st2.(*state).sortition.TotalStake())
 	assert.Equal(t, tState1.executionSandbox.LastBlockHeight(), st2.(*state).executionSandbox.LastBlockHeight())
 	assert.Equal(t, tState1.executionSandbox.LastBlockHash(), st2.(*state).executionSandbox.LastBlockHash())
-	assert.Equal(t, tState1.store.TotalAccounts(), 6)
+	assert.Equal(t, tState1.store.TotalAccounts(), 5)
 	assert.Equal(t, tState1.sortition.TotalStake(), int64(8888000))
 
-	proposed, err := st2.ProposeBlock(0)
-	assert.NoError(t, err)
-	assert.Equal(t, newBlock.Hash(), proposed.Hash())
-	require.NoError(t, st2.CommitBlock(i+1, newBlock, newCommit))
+	require.NoError(t, st2.CommitBlock(6, b6, c6))
+	require.NoError(t, tState2.CommitBlock(6, b6, c6))
 }
 
 func TestLoadStateAfterChangingGenesis(t *testing.T) {

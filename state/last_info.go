@@ -9,18 +9,25 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
+// TODO:
+// If we can replay the last block, then we don''t need this ugly structure
+//
 type lastInfo struct {
 	LastHeight      int
 	LastCommit      block.Commit
 	LastReceiptHash crypto.Hash
+	Committee       []int
+	NextProposer    crypto.Address
 }
 
-func (st *state) saveLastInfo(height int, commit block.Commit, lastReceiptHash crypto.Hash) {
+func (st *state) saveLastInfo(height int, commit block.Commit, lastReceiptHash crypto.Hash, committee []int, proposer crypto.Address) {
 	path := st.config.Store.Path + "/last_info.json"
 	li := lastInfo{
 		LastHeight:      height,
 		LastCommit:      commit,
 		LastReceiptHash: lastReceiptHash,
+		Committee:       committee,
+		NextProposer:    proposer,
 	}
 
 	bs, _ := json.Marshal(&li)

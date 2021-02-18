@@ -126,18 +126,15 @@ func (st *state) tryLoadLastInfo() error {
 	st.lastReceiptsHash = li.LastReceiptHash
 
 	vals := make([]*validator.Validator, len(st.lastCommit.Committers()))
-	for i, c := range st.lastCommit.Committers() {
-		val, err := st.store.ValidatorByNumber(c.Number)
+	for i, num := range li.Committee {
+		val, err := st.store.ValidatorByNumber(num)
 		if err != nil {
-			return fmt.Errorf("Last commit has unknown committer: %v", err)
+			return fmt.Errorf("Unknown committee member: %v", err)
 		}
 		vals[i] = val
 	}
-	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.CommitteeSize, b.Header().ProposerAddress())
+	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.CommitteeSize, li.NextProposer)
 	if err != nil {
-		return err
-	}
-	if err := st.validatorSet.UpdateTheSet(0, nil); err != nil {
 		return err
 	}
 
@@ -438,7 +435,9 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 
 	st.executionSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
-	st.saveLastInfo(st.lastBlockHeight, commit, st.lastReceiptsHash)
+	st.saveLastInfo(st.lastBlockHeight, commit, st.lastReceiptsHash,
+		st.validatorSet.Committee(),
+		st.validatorSet.Proposer(0).Address())
 
 	// At this point we can reset txpool sandbox
 	st.txPoolSandbox.Clear()
