@@ -151,16 +151,27 @@ func (set *ValidatorSet) Proposer(round int) *Validator {
 	return set.validators[idx]
 }
 
+func (set *ValidatorSet) Committee() []int {
+	set.lk.Lock()
+	defer set.lk.Unlock()
+
+	return set.committee()
+}
+
+func (set *ValidatorSet) committee() []int {
+	committee := make([]int, len(set.validators))
+	for i, v := range set.validators {
+		committee[i] = v.Number()
+	}
+
+	return committee
+}
+
 func (set *ValidatorSet) CommitteeHash() crypto.Hash {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	nums := make([]int, len(set.validators))
-	for i, v := range set.validators {
-		nums[i] = v.Number()
-	}
-
-	bz, _ := cbor.Marshal(nums)
+	bz, _ := cbor.Marshal(set.committee())
 	return crypto.HashH(bz)
 }
 
