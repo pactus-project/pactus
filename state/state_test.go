@@ -79,7 +79,7 @@ func setup(t *testing.T) {
 }
 
 func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (block.Block, block.Commit) {
-	st := tState1
+	var st *state
 	if tState1.validatorSet.IsProposer(tState1.proposer, round) {
 		st = tState1
 	} else if tState1.validatorSet.IsProposer(tState2.proposer, round) {
