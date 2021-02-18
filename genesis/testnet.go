@@ -4,10 +4,10 @@ import "encoding/json"
 
 const testnetJSON = `
 {
-   "GenesisTime":"2021-02-16T00:00:00.0+03:30",
+   "GenesisTime":"2021-02-17T00:00:00.0+03:30",
    "Params":{
         "BlockVersion": 1001,
-        "BlockTimeInSecond": 5,
+        "BlockTimeInSecond": 10,
         "CommitteeSize": 4,
         "SubsidyReductionInterval": 4200000,
         "TransactionToLiveInterval": 8640,
