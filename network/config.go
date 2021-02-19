@@ -21,6 +21,8 @@ type BootstrapConfig struct {
 	Addresses []string
 	// MinPeerThreshold is the number of connections it attempts to maintain.
 	MinThreshold int
+	// MaxThreshold is the threshold of maximum number of connections.
+	MaxThreshold int
 	// Period is the interval at which it periodically checks to see
 	// if the threshold is maintained.
 	Period time.Duration
@@ -38,6 +40,7 @@ func DefaultConfig() *Config {
 		Bootstrap: &BootstrapConfig{
 			Addresses:    []string{},
 			MinThreshold: 8,
+			MaxThreshold: 16,
 			Period:       1 * time.Minute,
 			Timeout:      20 * time.Second,
 		},
@@ -49,11 +52,12 @@ func TestConfig() *Config {
 		Name:           "zarb-testnet",
 		Address:        "/ip4/0.0.0.0/tcp/0",
 		NodeKeyFile:    util.TempFilePath(),
-		EnableMDNS:     false,
-		EnableKademlia: false,
+		EnableMDNS:     true,
+		EnableKademlia: true,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    []string{},
 			MinThreshold: 4,
+			MaxThreshold: 8,
 			Period:       1 * time.Minute,
 			Timeout:      20 * time.Second,
 		},

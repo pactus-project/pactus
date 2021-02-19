@@ -6,6 +6,7 @@ import (
 	"time"
 
 	host "github.com/libp2p/go-libp2p-core/host"
+	"github.com/libp2p/go-libp2p-core/network"
 	inet "github.com/libp2p/go-libp2p-core/network"
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p-core/routing"
@@ -29,10 +30,9 @@ type Bootstrapper struct {
 	r routing.Routing
 
 	// Bookkeeping
-	ticker         *time.Ticker
-	ctx            context.Context
-	cancel         context.CancelFunc
-	dhtBootStarted bool
+	ticker *time.Ticker
+	ctx    context.Context
+	cancel context.CancelFunc
 
 	logger *logger.Logger
 }
@@ -91,45 +91,56 @@ func (b *Bootstrapper) Stop() {
 // a random subset of its bootstrap peers.
 func (b *Bootstrapper) checkConnectivity() {
 	currentPeers := b.d.Peers()
-	b.logger.Debug("Check connectivity", "peers", len(currentPeers), "threshold", b.config.MinThreshold, "timeout", b.config.Timeout)
+	b.logger.Debug("Check connectivity", "peers", len(currentPeers), "timeout", b.config.Timeout)
 
-	peersNeeded := b.config.MinThreshold - len(currentPeers)
-	if peersNeeded < 1 {
-		return
+	// Let's check if some peers are disconnected
+	var connectedPeers []peer.ID
+	for _, p := range currentPeers {
+		connectedness := b.d.Connectedness(p)
+		if connectedness == network.Connected {
+			connectedPeers = append(connectedPeers, p)
+		} else {
+			b.logger.Warn("Peer is not connected to us", "peer", p)
+		}
 	}
 
-	ctx, cancel := context.WithTimeout(b.ctx, b.config.Timeout)
-	var wg sync.WaitGroup
-	defer func() {
-		wg.Wait()
-		// After connecting to bootstrap peers, bootstrap the DHT.
-		// DHT Bootstrap is a persistent process so only do this once.
-		if !b.dhtBootStarted {
-			b.dhtBootStarted = true
+	if len(connectedPeers) > b.config.MaxThreshold {
+		b.logger.Debug("peer count is about maximum threshold", "count", len(connectedPeers), "threshold", b.config.MaxThreshold)
+	} else if len(connectedPeers) < b.config.MinThreshold {
+		b.logger.Debug("peer count is less than minimum threshold", "count", len(connectedPeers), "threshold", b.config.MinThreshold)
+
+		ctx, cancel := context.WithTimeout(b.ctx, b.config.Timeout)
+		var wg sync.WaitGroup
+		defer func() {
+			wg.Wait()
+
+			b.logger.Trace("bootstrap Ipfs Routing")
+
 			err := b.bootstrapIpfsRouting()
 			if err != nil {
 				b.logger.Warn("Peer discovery may suffer.", "err", err)
 			}
-		}
-		cancel()
-	}()
 
-	for _, pinfo := range b.bootstrapPeers {
-		b.logger.Trace("Try connecting to a bootstrap peer.", "peer", pinfo.String())
+			cancel()
+		}()
 
-		// Don't try to connect to an already connected peer.
-		if hasPID(currentPeers, pinfo.ID) {
-			b.logger.Trace("Already connected.", "peer", pinfo.String())
-			continue
-		}
+		for _, pinfo := range b.bootstrapPeers {
+			b.logger.Trace("Try connecting to a bootstrap peer.", "peer", pinfo.String())
 
-		wg.Add(1)
-		go func(pi peer.AddrInfo) {
-			if err := b.h.Connect(ctx, pi); err != nil {
-				b.logger.Error("got error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
+			// Don't try to connect to an already connected peer.
+			if hasPID(connectedPeers, pinfo.ID) {
+				b.logger.Trace("Already connected.", "peer", pinfo.String())
+				continue
 			}
-			wg.Done()
-		}(pinfo)
+
+			wg.Add(1)
+			go func(pi peer.AddrInfo) {
+				if err := b.h.Connect(ctx, pi); err != nil {
+					b.logger.Error("got error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
+				}
+				wg.Done()
+			}(pinfo)
+		}
 	}
 }
 
