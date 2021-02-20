@@ -79,8 +79,8 @@ func setup(t *testing.T) {
 	tAnotherPeerID = util.RandomPeerID()
 	tAliceState = state.MockingState()
 	tBobState = state.MockingState()
-	tAliceConsensus = consensus.MockingConsensus()
-	tBobConsensus = consensus.MockingConsensus()
+	tAliceConsensus = consensus.MockingConsensus(tAliceState)
+	tBobConsensus = consensus.MockingConsensus(tBobState)
 	tAliceBroadcastCh = make(chan *message.Message, 100)
 	tBobBroadcastCh = make(chan *message.Message, 100)
 	tAliceNetAPI = network_api.MockingNetworkAPI(tAlicePeerID)
@@ -156,12 +156,9 @@ func setup(t *testing.T) {
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeAleyk)
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
-
-	updateAliceHRS(t)
-	updateBobHRS(t)
 }
 
-func addMoreBlocksForBobAndUpdateHRS(t *testing.T, count int) {
+func addMoreBlocksForBob(t *testing.T, count int) {
 	lastBlockHash := tBobState.LastBlockHash()
 	for i := 0; i < count; i++ {
 		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
@@ -171,17 +168,15 @@ func addMoreBlocksForBobAndUpdateHRS(t *testing.T, count int) {
 		tBobState.AddBlock(tBobState.LastBlockHeight()+1, b, trxs)
 		tBobState.LastBlockCommit = c
 	}
-
-	updateBobHRS(t)
 }
 
-func addMoreBlocksForBobAndSendBlockAnnounceMessage(t *testing.T, count int) {
-	addMoreBlocksForBobAndUpdateHRS(t, count)
+func addMoreBlocksForBobAndAnnounceLastBlock(t *testing.T, count int) {
+	addMoreBlocksForBob(t, count)
 
 	msg := message.NewBlockAnnounceMessage(
 		tBobPeerID,
 		tBobState.LastBlockHeight(),
-		tBobState.Store.Blocks[len(tBobState.Store.Blocks)-1],
+		tBobState.Store.Blocks[tBobState.LastBlockHeight()],
 		tBobState.LastBlockCommit)
 
 	tBobBroadcastCh <- msg
@@ -192,28 +187,16 @@ func disableHeartbeat(t *testing.T) {
 	tBobSync.heartBeatTicker.Stop()
 }
 
-func joinAliceToTheSetAndUpdateHRS(t *testing.T) {
+func joinAliceToTheSet(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
 	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
 	assert.NoError(t, tBobState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
-
-	updateAliceHRS(t)
 }
 
-func joinBobToTheSetAndUpdateHRS(t *testing.T) {
+func joinBobToTheSet(t *testing.T) {
 	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
 	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
 	assert.NoError(t, tBobState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
-
-	updateBobHRS(t)
-}
-
-func updateAliceHRS(t *testing.T) {
-	tAliceConsensus.HRS_ = hrs.NewHRS(tBobState.LastBlockHeight()+1, 0, hrs.StepTypeNewHeight)
-}
-
-func updateBobHRS(t *testing.T) {
-	tBobConsensus.HRS_ = hrs.NewHRS(tBobState.LastBlockHeight()+1, 0, hrs.StepTypeNewHeight)
 }
 
 func TestAccessors(t *testing.T) {
@@ -355,7 +338,7 @@ func TestQueryTransaction(t *testing.T) {
 		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeTransactions)
 	})
 
-	joinBobToTheSetAndUpdateHRS(t)
+	joinBobToTheSet(t)
 
 	t.Run("Bob should not process alice message because she is not an active validator", func(t *testing.T) {
 		msg := msg
@@ -363,7 +346,7 @@ func TestQueryTransaction(t *testing.T) {
 		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeTransactions)
 	})
 
-	joinAliceToTheSetAndUpdateHRS(t)
+	joinAliceToTheSet(t)
 
 	t.Run("Alice sends query transaction message", func(t *testing.T) {
 		tAliceBroadcastCh <- msg
@@ -389,9 +372,6 @@ func TestQueryProposal(t *testing.T) {
 	p1, _ := vote.GenerateTestProposal(consensusHeight, 0)
 	p2, _ := vote.GenerateTestProposal(consensusHeight, 1)
 
-	tAliceConsensus.HRS_ = hrs.NewHRS(consensusHeight, 0, 1)
-	tBobConsensus.HRS_ = hrs.NewHRS(consensusHeight, 1, 1)
-
 	tAliceSync.cache.AddProposal(p1)
 	tBobConsensus.SetProposal(p2)
 	msg := message.NewQueryProposalMessage(tAlicePeerID, consensusHeight, 1)
@@ -406,14 +386,14 @@ func TestQueryProposal(t *testing.T) {
 		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeTransactions)
 	})
 
-	joinBobToTheSetAndUpdateHRS(t)
+	joinBobToTheSet(t)
 
 	t.Run("Bob should not process alice message because she is not an active validator", func(t *testing.T) {
 		tBobNetAPI.CheckAndParsMessage(msg, tAnotherPeerID)
 		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeTransactions)
 	})
 
-	joinAliceToTheSetAndUpdateHRS(t)
+	joinAliceToTheSet(t)
 
 	t.Run("Alice sends query transaction message", func(t *testing.T) {
 		tAliceBroadcastCh <- msg
@@ -438,8 +418,8 @@ func TestHeartbeatNotInSet(t *testing.T) {
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
 
-	joinAliceToTheSetAndUpdateHRS(t)
-	v1, _ := vote.GenerateTestPrepareVote(tAliceConsensus.HRS_.Height(), 0)
+	joinAliceToTheSet(t)
+	v1, _ := vote.GenerateTestPrepareVote(tAliceConsensus.HRS().Height(), 0)
 	tAliceConsensus.Votes = []*vote.Vote{v1}
 
 	// Alice is in validator set
@@ -451,33 +431,15 @@ func TestHeartbeatNotInSet(t *testing.T) {
 func TestBlockAnnounceMessage(t *testing.T) {
 	setup(t)
 
-	tAliceConsensus.Started = false
-
-	t.Run("Bob should not broadcast block announce message because he is not an active validator", func(t *testing.T) {
-		addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 1)
-
-		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
-	})
-
-	joinBobToTheSetAndUpdateHRS(t)
+	joinBobToTheSet(t)
 
 	t.Run("Bob should broadcast block announce message because he is an active validator", func(t *testing.T) {
-		addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 1)
+		addMoreBlocksForBobAndAnnounceLastBlock(t, 1)
 
 		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
-		assert.True(t, tAliceConsensus.Started)
-	})
-}
-
-func TestRequestForBlock(t *testing.T) {
-	setup(t)
-
-	joinBobToTheSetAndUpdateHRS(t)
-
-	t.Run("Bob claims that he has one more block", func(t *testing.T) {
-		addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 1)
-		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
-		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+		assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
+		assert.Equal(t, tAliceConsensus.HRS(), tBobConsensus.HRS())
 	})
 }
 
@@ -494,7 +456,7 @@ func TestNotActiveValidator(t *testing.T) {
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
 	})
 
-	joinAliceToTheSetAndUpdateHRS(t)
+	joinAliceToTheSet(t)
 
 	t.Run("Alice is an active validator, She can send query proposal message", func(t *testing.T) {
 		tAliceSync.queryProposal(1, 1)

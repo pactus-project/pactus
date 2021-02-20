@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -9,18 +10,19 @@ import (
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
-	Votes    []*vote.Vote
-	Proposal *vote.Proposal
-	HRS_     hrs.HRS
-	Started  bool
+	Votes     []*vote.Vote
+	Proposal  *vote.Proposal
+	Scheduled bool
+	State     *state.MockState
+	Round     int
 }
 
-func MockingConsensus() *MockConsensus {
-	return &MockConsensus{}
+func MockingConsensus(state *state.MockState) *MockConsensus {
+	return &MockConsensus{State: state}
 }
 
 func (m *MockConsensus) MoveToNewHeight() {
-	m.Started = true
+	m.Scheduled = true
 }
 func (m *MockConsensus) Stop() {}
 
@@ -46,7 +48,7 @@ func (m *MockConsensus) RoundProposal(round int) *vote.Proposal {
 	return m.Proposal
 }
 func (m *MockConsensus) HRS() hrs.HRS {
-	return m.HRS_
+	return hrs.NewHRS(m.State.LastBlockHeight()+1, m.Round, hrs.StepTypeNewHeight)
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""
