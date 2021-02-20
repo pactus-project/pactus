@@ -92,22 +92,29 @@ func TestDuplicateVote(t *testing.T) {
 	added, err = vs.AddVote(undefVote)
 	assert.False(t, added) // added before
 	assert.NoError(t, err)
+	assert.Equal(t, vs.Len(), 1)
+	assert.Equal(t, vs.Power(), int64(1000)) // First validator's stake
 
 	added, err = vs.AddVote(correctVote)
 	assert.True(t, added) // ok, replace UndefHash
 	assert.NoError(t, err)
-	assert.Equal(t, len(vs.AllVotes()), 1)
+	assert.Equal(t, vs.Len(), 1)             // The vote has replaced
+	assert.Equal(t, vs.Power(), int64(1000)) // First validator's stake
 
 	// Again add undef vote
 	added, err = vs.AddVote(undefVote)
 	assert.False(t, added) // ok
 	assert.NoError(t, err)
-	assert.Equal(t, len(vs.AllVotes()), 1)
+	assert.Equal(t, vs.Len(), 1)
 
+	bv := vs.blockVotes[h1]
 	added, err = vs.AddVote(duplicatedVote)
-	assert.False(t, added) // ok, replace UndefHash
+	assert.False(t, added)
 	assert.Error(t, err)
 	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
+	assert.Equal(t, bv.power, int64(0))   // vote has removed
+	assert.Equal(t, vs.Len(), 0)          //
+	assert.Equal(t, vs.Power(), int64(0)) //
 }
 
 func TestQuorum(t *testing.T) {
@@ -189,9 +196,9 @@ func TestUpdateVote(t *testing.T) {
 	assert.True(t, ok)
 
 	// Check block votes power
-	bv1 := vs.votesByBlock[crypto.UndefHash]
+	bv1 := vs.blockVotes[crypto.UndefHash]
 	assert.Equal(t, bv1.power, int64(1500+2500))
-	bv2 := vs.votesByBlock[h1]
+	bv2 := vs.blockVotes[h1]
 	assert.Equal(t, bv2.power, int64(1000))
 
 	// Check previous votes
@@ -213,9 +220,9 @@ func TestUpdateVote(t *testing.T) {
 	assert.True(t, ok)
 
 	// Check block votes power
-	bv1 = vs.votesByBlock[crypto.UndefHash]
+	bv1 = vs.blockVotes[crypto.UndefHash]
 	assert.Equal(t, bv1.power, int64(0))
-	bv2 = vs.votesByBlock[h1]
+	bv2 = vs.blockVotes[h1]
 	assert.Equal(t, bv2.power, int64(1000+1500+2500))
 
 	assert.True(t, vs.HasQuorum())
@@ -228,4 +235,29 @@ func TestUpdateVote(t *testing.T) {
 	_, exists2 = bv1.votes[v2.Signer()]
 	assert.False(t, exists1)
 	assert.False(t, exists2)
+}
+
+func TestAllVotes(t *testing.T) {
+	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+
+	h1 := crypto.GenerateTestHash()
+	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
+	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
+
+	signers[0].SignMsg(v1)
+	signers[1].SignMsg(v2)
+
+	assert.Equal(t, vs.Len(), 0)
+	assert.Empty(t, vs.AllVotes())
+
+	ok, _ := vs.AddVote(v1)
+	assert.True(t, ok)
+	ok, _ = vs.AddVote(v2)
+	assert.True(t, ok)
+
+	assert.Equal(t, vs.Len(), 2)
+	assert.Contains(t, vs.AllVotes(), v1)
+	assert.Contains(t, vs.AllVotes(), v2)
 }

@@ -66,10 +66,10 @@ func TestPendingVotesTest(t *testing.T) {
 	assert.Error(t, err)
 
 	prepares := pv.PrepareVoteSet(1)
-	assert.Equal(t, prepares.Len(), 1)
-	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 1)
+	assert.Equal(t, prepares.Len(), 0) // duplicated vote has removed
+	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 0)
 	assert.False(t, pv.HasVote(duplicateVote.Hash()))
-	assert.True(t, pv.HasVote(validVote.Hash()))
+	assert.False(t, pv.HasVote(validVote.Hash()))
 	assert.False(t, pv.HasVote(invalidVote.Hash()))
 }
 
