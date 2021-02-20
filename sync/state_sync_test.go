@@ -43,39 +43,13 @@ func TestAddTxToCache(t *testing.T) {
 func TestRequestForBlocksNotVeryFar(t *testing.T) {
 	setup(t)
 
-	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 15)
+	addMoreBlocksForBobAndAnnounceLastBlock(t, 15)
 
 	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 21-30
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // blocks 31-35
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // last commit + sync response
-}
-
-func TestRequestForBlocksVeryFar(t *testing.T) {
-	setup(t)
-	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 40)
-
-	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
-	tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
-}
-
-func TestSendLastCommit(t *testing.T) {
-	setup(t)
-
-	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 5)
-
-	tAliceSync.stateSync.BroadcastLatestBlocksRequest(tBobPeerID)
-	tAliceConsensus.Started = false
-
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
-	msg := tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse)
-	pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
-
-	assert.Equal(t, pld.LastCommit, tBobState.LastBlockCommit)
-	assert.True(t, tAliceConsensus.Started)
 }
 
 func TestPrepareLastBlock(t *testing.T) {
@@ -86,17 +60,6 @@ func TestPrepareLastBlock(t *testing.T) {
 	assert.Equal(t, len(b), 1)
 }
 
-func TestMoveToConcensusByBlockAnnounceMessage(t *testing.T) {
-	setup(t)
-
-	tAliceConsensus.Started = false
-	joinBobToTheSetAndUpdateHRS(t)
-	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 1)
-
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
-
-	assert.True(t, tAliceConsensus.Started)
-}
 func TestInvalidRangeForDownload(t *testing.T) {
 	setup(t)
 
@@ -147,10 +110,10 @@ func TestDownloadBlocks(t *testing.T) {
 	// Clear alice store
 	tAliceSync.cache.Clear()
 	tAliceState.Store.Blocks = make(map[int]*block.Block)
-	tAliceConsensus.Started = false
+	tAliceConsensus.Scheduled = false
 
-	joinBobToTheSetAndUpdateHRS(t)
-	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 80)
+	joinBobToTheSet(t)
+	addMoreBlocksForBobAndAnnounceLastBlock(t, 80)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
 
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeDownloadRequest)
@@ -177,12 +140,14 @@ func TestDownloadBlocks(t *testing.T) {
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // 101-101
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // Synced
 
-	assert.True(t, tBobConsensus.Started)
+	assert.Equal(t, tAliceConsensus.HRS(), tBobConsensus.HRS())
+	assert.Equal(t, tAliceState.LastBlockHash(), tBobState.LastBlockHash())
+	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
 	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
 	assert.False(t, tBobSync.peerSet.HasAnyValidSession())
 }
 
-func TestSessionTieout(t *testing.T) {
+func TestSessionTimeout(t *testing.T) {
 	tAliceConfig.SessionTimeout = 200 * time.Millisecond
 	setup(t)
 
@@ -199,9 +164,16 @@ func TestSessionTieout(t *testing.T) {
 func TestOneBlockBehind(t *testing.T) {
 	setup(t)
 
-	addMoreBlocksForBobAndUpdateHRS(t, 1)
+	t.Run("Bob is not in the set. Bob commits one block. Bob should broadcasts heartbeat. Alice should ask for the last block.", func(t *testing.T) {
+		addMoreBlocksForBob(t, 1)
 
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // 22
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksResponse) // No more block
 
+		assert.Equal(t, tAliceConsensus.HRS(), tBobConsensus.HRS())
+		assert.Equal(t, tAliceState.LastBlockHash(), tBobState.LastBlockHash())
+		assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
+	})
 }

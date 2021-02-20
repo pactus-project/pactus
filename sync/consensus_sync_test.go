@@ -22,8 +22,8 @@ func TestProposalToCache(t *testing.T) {
 func TestRequestForProposal(t *testing.T) {
 	setup(t)
 
-	joinAliceToTheSetAndUpdateHRS(t)
-	joinBobToTheSetAndUpdateHRS(t)
+	joinAliceToTheSet(t)
+	joinBobToTheSet(t)
 
 	hrs := tAliceConsensus.HRS()
 	assert.Equal(t, hrs.Height(), tAliceState.LastBlockHeight()+1)
@@ -57,8 +57,8 @@ func TestRequestForProposal(t *testing.T) {
 	})
 
 	p2, _ := vote.GenerateTestProposal(hrs.Height(), 1)
-	tAliceConsensus.SetProposal(p2)
-	tAliceConsensus.HRS_.UpdateRound(1)
+	tAliceConsensus.Proposal = p2
+	tAliceConsensus.Round = 1
 
 	t.Run("Alice and bob are in same height. Alice is in next round. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
 		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), 1)
@@ -90,8 +90,8 @@ func TestProcessQueryVote(t *testing.T) {
 	setup(t)
 
 	disableHeartbeat(t)
-	joinAliceToTheSetAndUpdateHRS(t)
-	joinBobToTheSetAndUpdateHRS(t)
+	joinAliceToTheSet(t)
+	joinBobToTheSet(t)
 
 	hrs := tAliceConsensus.HRS()
 	v1, _ := vote.GenerateTestPrepareVote(hrs.Height(), 0)
@@ -108,8 +108,8 @@ func TestProcessQueryVote(t *testing.T) {
 func TestProcessHeartbeatForQueryProposal(t *testing.T) {
 	setup(t)
 
-	joinAliceToTheSetAndUpdateHRS(t)
-	joinBobToTheSetAndUpdateHRS(t)
+	joinAliceToTheSet(t)
+	joinBobToTheSet(t)
 
 	hrs := tAliceConsensus.HRS()
 	v1, _ := vote.GenerateTestPrepareVote(hrs.Height(), 0)
@@ -124,7 +124,7 @@ func TestProcessHeartbeatForQueryProposal(t *testing.T) {
 		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 	})
 
-	tAliceConsensus.HRS_.UpdateRound(1)
+	tAliceConsensus.Round = 1
 	t.Run("Alice is in the next round. Bob isn't", func(t *testing.T) {
 		tAliceSync.broadcastHeartBeat()
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
