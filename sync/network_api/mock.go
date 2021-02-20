@@ -58,28 +58,6 @@ func (mock *MockNetworkAPI) sendMessageToOtherPeer(m *message.Message) {
 	mock.OtherAPI.CheckAndParsMessage(m, mock.id)
 }
 
-func (mock *MockNetworkAPI) ShouldPublishThisMessage(t *testing.T, expectedMsg *message.Message) {
-	timeout := time.NewTimer(1 * time.Second)
-
-	for {
-		select {
-		case <-timeout.C:
-			require.NoError(t, fmt.Errorf("Timeout"))
-		case msg := <-mock.ch:
-			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg)
-			mock.sendMessageToOtherPeer(msg)
-
-			if msg.PayloadType() == expectedMsg.PayloadType() {
-				logger.Info("Comparing two messages", "msg", msg, "expected", expectedMsg)
-				bs1, _ := msg.Encode()
-				bs2, _ := expectedMsg.Encode()
-				assert.Equal(t, bs1, bs2)
-				return
-			}
-		}
-	}
-}
-
 func (mock *MockNetworkAPI) ShouldPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) *message.Message {
 	timeout := time.NewTimer(2 * time.Second)
 

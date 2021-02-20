@@ -22,6 +22,12 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
+// IMPORTANT NOTE
+//
+// Sync module is based on pulling, not pushing
+// Means if a node is behind the network, we don't send him anything
+// The node should request (pull) itself.
+
 const FlagInitialBlockDownload = 0x1
 
 type publishMessageFn = func(msg *message.Message)
@@ -207,7 +213,7 @@ func (syncer *synchronizer) sendBlocksRequestIfWeAreBehind() {
 
 	ourHeight := syncer.state.LastBlockHeight()
 	claimedHeight := syncer.peerSet.MaxClaimedHeight()
-	if claimedHeight > ourHeight+1 {
+	if claimedHeight > ourHeight {
 		if claimedHeight > ourHeight+LatestBlockInterval {
 			syncer.logger.Info("We are far behind the network, Join download topic")
 			// TODO:
@@ -308,14 +314,12 @@ func (syncer *synchronizer) broadcastHeartBeat() {
 		return
 	}
 
-	// Check if we are an active validator
-	if !syncer.isThisActiveValidator() {
-		return
-	}
-
-	v := syncer.consensus.PickRandomVote(hrs.Round())
-	if v != nil {
-		syncer.consensusSync.BroadcastVote(v)
+	// Broadcast a random vote if the validator is an active validator
+	if syncer.isThisActiveValidator() {
+		v := syncer.consensus.PickRandomVote(hrs.Round())
+		if v != nil {
+			syncer.consensusSync.BroadcastVote(v)
+		}
 	}
 
 	msg := message.NewHeartBeatMessage(syncer.networkAPI.SelfID(), syncer.state.LastBlockHash(), hrs)

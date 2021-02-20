@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/vote"
@@ -16,9 +14,6 @@ func TestProposalToCache(t *testing.T) {
 
 	p, _ := vote.GenerateTestProposal(106, 0)
 
-	joinBobToTheSet(t)
-	joinAliceToTheSet(t)
-
 	tAliceSync.consensusSync.BroadcastProposal(p)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 	assert.NotNil(t, tBobSync.cache.GetProposal(p.Height(), p.Round()))
@@ -27,59 +22,51 @@ func TestProposalToCache(t *testing.T) {
 func TestRequestForProposal(t *testing.T) {
 	setup(t)
 
-	joinAliceToTheSet(t)
-	joinBobToTheSet(t)
+	joinAliceToTheSetAndUpdateHRS(t)
+	joinBobToTheSetAndUpdateHRS(t)
 
-	t.Run("Alice and bob are in same height. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
-
-		hrs := hrs.NewHRS(100, 1, 6)
-		p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
-		tAliceConsensus.SetProposal(p)
-		tAliceConsensus.HRS_ = hrs
-
-		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), hrs.Round())
-
-		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
-		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
-
-		assert.Equal(t, tBobConsensus.Proposal.Hash(), tBobConsensus.Proposal.Hash())
-	})
+	hrs := tAliceConsensus.HRS()
+	assert.Equal(t, hrs.Height(), tAliceState.LastBlockHeight()+1)
 
 	t.Run("Alice and bob are in same height. Alice doesn't have have proposal. Bob ask for the proposal", func(t *testing.T) {
-		hrs := hrs.NewHRS(101, 2, 6)
-		tAliceConsensus.HRS_ = hrs
-
-		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), hrs.Round())
+		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), 0)
 		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 
 		// Alice doesn't respond
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 	})
 
-	t.Run("Alice and bob are in same height. Alice is in next round. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
-		hrs := hrs.NewHRS(102, 3, 6)
-		p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
-		tAliceConsensus.SetProposal(p)
-		tAliceConsensus.HRS_ = hrs
+	p1, _ := vote.GenerateTestProposal(hrs.Height(), 0)
+	tAliceConsensus.SetProposal(p1)
 
-		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), hrs.Round())
+	t.Run("Alice and bob are in same height. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
+		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), 0)
+
 		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 
-		assert.Equal(t, tBobConsensus.Proposal.Hash(), tBobConsensus.Proposal.Hash())
+		assert.Equal(t, tBobConsensus.Proposal.Hash(), p1.Hash())
 	})
 
-	t.Run("Alice and bob are in same height. Alice is in previous round. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
-		hrs := hrs.NewHRS(103, 1, 6)
-		p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
-		tAliceConsensus.SetProposal(p)
-		tAliceConsensus.HRS_ = hrs
-
-		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), hrs.Round()+1)
+	t.Run("Alice and bob are in same height. Bob is in next round. Bob ask for the proposal", func(t *testing.T) {
+		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), 1)
 		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 
 		// Alice doesn't respond
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
+	})
+
+	p2, _ := vote.GenerateTestProposal(hrs.Height(), 1)
+	tAliceConsensus.SetProposal(p2)
+	tAliceConsensus.HRS_.UpdateRound(1)
+
+	t.Run("Alice and bob are in same height. Alice is in next round. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
+		tBobBroadcastCh <- message.NewQueryProposalMessage(tBobPeerID, hrs.Height(), 1)
+
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
+
+		assert.Equal(t, tBobConsensus.Proposal.Hash(), p2.Hash())
 	})
 }
 
@@ -103,50 +90,47 @@ func TestProcessQueryVote(t *testing.T) {
 	setup(t)
 
 	disableHeartbeat(t)
-	joinAliceToTheSet(t)
-	joinBobToTheSet(t)
+	joinAliceToTheSetAndUpdateHRS(t)
+	joinBobToTheSetAndUpdateHRS(t)
 
-	tAliceConsensus.HRS_ = hrs.NewHRS(100, 1, 1)
-	tBobConsensus.HRS_ = hrs.NewHRS(100, 0, 1)
+	hrs := tAliceConsensus.HRS()
+	v1, _ := vote.GenerateTestPrepareVote(hrs.Height(), 0)
+	v2, _ := vote.GenerateTestPrepareVote(hrs.Height(), 1)
+	tAliceConsensus.Votes = []*vote.Vote{v1, v2}
 
-	// No vote to send
-	tBobSync.consensusSync.BroadcastQueryVotes(100, 0)
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
-	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
-
-	// Send first vote
-	v1, _ := vote.GenerateTestPrepareVote(100, 0)
-	tAliceConsensus.Votes = []*vote.Vote{v1}
-
-	tBobSync.consensusSync.BroadcastQueryVotes(100, 0)
-	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
-	tAliceNetAPI.ShouldPublishThisMessage(t, message.NewVoteMessage(v1))
+	t.Run("Alice and bob are in same height. Bob queries for votes, alice sends a random vote", func(t *testing.T) {
+		tBobSync.consensusSync.BroadcastQueryVotes(hrs.Height(), 1)
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
+	})
 }
 
 func TestProcessHeartbeatForQueryProposal(t *testing.T) {
 	setup(t)
 
-	joinAliceToTheSet(t)
+	joinAliceToTheSetAndUpdateHRS(t)
+	joinBobToTheSetAndUpdateHRS(t)
 
-	v, _ := vote.GenerateTestPrecommitVote(106, 0)
-	tAliceConsensus.HRS_ = hrs.NewHRS(106, 0, 3)
-	tAliceConsensus.AddVote(v)
+	hrs := tAliceConsensus.HRS()
+	v1, _ := vote.GenerateTestPrepareVote(hrs.Height(), 0)
+	v2, _ := vote.GenerateTestPrepareVote(hrs.Height(), 1)
+	tAliceConsensus.Votes = []*vote.Vote{v1, v2}
 
-	// 1. Broadcasting heartbeat and random vote
-	// should send random vote
-	tAliceSync.broadcastHeartBeat()
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+	t.Run("Alice and bob are in same HRS.", func(t *testing.T) {
+		tAliceSync.broadcastHeartBeat()
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
 
-	// 2. Receiving heartbeat
-	// Alice doesn't have proposal
-	msg3 := message.NewHeartBeatMessage(tAnotherPeerID, crypto.GenerateTestHash(), hrs.NewHRS(106, 0, 4))
-	tAliceSync.ParsMessage(msg3, tAnotherPeerID)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
-	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
+		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+	})
 
-	// Alice has proposal
-	tAliceConsensus.Proposal, _ = vote.GenerateTestProposal(106, 0)
-	tAliceSync.ParsMessage(msg3, tAnotherPeerID)
-	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+	tAliceConsensus.HRS_.UpdateRound(1)
+	t.Run("Alice is in the next round. Bob isn't", func(t *testing.T) {
+		tAliceSync.broadcastHeartBeat()
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
+	})
 }

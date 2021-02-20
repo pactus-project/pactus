@@ -90,7 +90,7 @@ func TestMoveToConcensusByBlockAnnounceMessage(t *testing.T) {
 	setup(t)
 
 	tAliceConsensus.Started = false
-	joinBobToTheSet(t)
+	joinBobToTheSetAndUpdateHRS(t)
 	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 1)
 
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
@@ -139,15 +139,17 @@ func TestInvalidRangeForDownload(t *testing.T) {
 
 }
 
-func TestDownloadBlock(t *testing.T) {
+func TestDownloadBlocks(t *testing.T) {
 	setup(t)
+
+	disableHeartbeat(t)
 
 	// Clear alice store
 	tAliceSync.cache.Clear()
 	tAliceState.Store.Blocks = make(map[int]*block.Block)
 	tAliceConsensus.Started = false
 
-	joinBobToTheSet(t)
+	joinBobToTheSetAndUpdateHRS(t)
 	addMoreBlocksForBobAndSendBlockAnnounceMessage(t, 80)
 	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeBlockAnnounce)
 
@@ -192,4 +194,14 @@ func TestSessionTieout(t *testing.T) {
 	assert.True(t, tAliceSync.peerSet.HasAnyValidSession())
 	time.Sleep(tAliceConfig.SessionTimeout)
 	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
+}
+
+func TestOneBlockBehind(t *testing.T) {
+	setup(t)
+
+	addMoreBlocksForBobAndUpdateHRS(t, 1)
+
+	tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
+	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeLatestBlocksRequest)
+
 }
