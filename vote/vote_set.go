@@ -44,8 +44,7 @@ type VoteSet struct {
 	round            int
 	voteType         VoteType
 	validators       []*validator.Validator
-	votesByBlock     map[crypto.Hash]*blockVotes
-	sum              int
+	blockVotes       map[crypto.Hash]*blockVotes
 	totalPower       int64
 	accumulatedPower int64
 	quorumBlock      *crypto.Hash
@@ -59,25 +58,32 @@ func NewVoteSet(height int, round int, voteType VoteType, validators []*validato
 	}
 
 	return &VoteSet{
-		height:       height,
-		round:        round,
-		voteType:     voteType,
-		validators:   validators,
-		totalPower:   totalPower,
-		votesByBlock: make(map[crypto.Hash]*blockVotes),
+		height:     height,
+		round:      round,
+		voteType:   voteType,
+		validators: validators,
+		totalPower: totalPower,
+		blockVotes: make(map[crypto.Hash]*blockVotes),
 	}
 }
 
 func (vs *VoteSet) Type() VoteType { return vs.voteType }
 func (vs *VoteSet) Height() int    { return vs.height }
 func (vs *VoteSet) Round() int     { return vs.round }
-func (vs *VoteSet) Len() int       { return vs.sum }
 func (vs *VoteSet) Power() int64   { return vs.accumulatedPower }
+
+func (vs *VoteSet) Len() int {
+	sum := 0
+	for _, bv := range vs.blockVotes {
+		sum += len(bv.votes)
+	}
+	return sum
+}
 
 func (vs *VoteSet) AllVotes() []*Vote {
 	votes := make([]*Vote, 0)
 
-	for _, blockVotes := range vs.votesByBlock {
+	for _, blockVotes := range vs.blockVotes {
 		for _, vote := range blockVotes.votes {
 			votes = append(votes, vote)
 		}
@@ -115,14 +121,14 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Failed to verify vote")
 	}
 
-	bv, exists := vs.votesByBlock[blockHash]
+	bv, exists := vs.blockVotes[blockHash]
 	if !exists {
 		bv = newBlockVotes()
-		vs.votesByBlock[blockHash] = bv
+		vs.blockVotes[blockHash] = bv
 	}
 
 	// check for conflict
-	for id, bv := range vs.votesByBlock {
+	for id, bv := range vs.blockVotes {
 		if id != vote.data.BlockHash {
 			duplicated, ok := bv.votes[signer]
 
@@ -133,7 +139,6 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 				// We should ignore undef vote
 				if duplicated.BlockHash().IsUndef() {
 					// Remove undef vote and replace it with new vote
-					vs.sum--
 					vs.accumulatedPower -= val.Power()
 					bv.power -= val.Power()
 					delete(bv.votes, signer)
@@ -147,6 +152,13 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 					// 1- Same signer
 					// 2- Previous blockhash is not undef
 					// 3- Block hashes are different
+					//
+					// We report an error and remove the previous vote
+					//
+					vs.accumulatedPower -= val.Power()
+					bv.power -= val.Power()
+					delete(bv.votes, signer)
+
 					return false, errors.Error(errors.ErrDuplicateVote)
 				}
 			}
@@ -155,7 +167,6 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 
 	added := bv.addVote(vote)
 	if added {
-		vs.sum++
 		vs.accumulatedPower += val.Power()
 		bv.power += val.Power()
 		if vs.hasQuorum(bv.power) {
@@ -187,7 +198,7 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 		return nil
 	}
 
-	votesMap := vs.votesByBlock[*blockHash].votes
+	votesMap := vs.blockVotes[*blockHash].votes
 	committers := make([]block.Committer, len(vs.validators))
 	sigs := make([]crypto.Signature, 0)
 
@@ -210,5 +221,5 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 }
 
 func (vs *VoteSet) Fingerprint() string {
-	return fmt.Sprintf("{%v/%v/%s SUM:%v}", vs.height, vs.round, vs.voteType, vs.sum)
+	return fmt.Sprintf("{%v/%v/%s SUM:%v}", vs.height, vs.round, vs.voteType, vs.Len())
 }
