@@ -26,7 +26,7 @@ func (cs *consensus) enterNewHeight() {
 	}
 
 	// Apply last committed block, We might have more votes now
-	if cs.hrs.Height() == sateHeight {
+	if cs.hrs.Height() == sateHeight && cs.hrs.Round() >= 0 {
 		vs := cs.pendingVotes.PrecommitVoteSet(cs.hrs.Round())
 		if vs == nil {
 			cs.logger.Warn("NewHeight: Entering new height without last commit")
@@ -45,7 +45,7 @@ func (cs *consensus) enterNewHeight() {
 	cs.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
 
 	cs.updateHeight(sateHeight + 1)
-	cs.updateRound(0)
+	cs.updateRound(-1)
 	cs.updateStep(hrs.StepTypeNewHeight)
 	cs.logger.Info("NewHeight: Entering new height", "height", sateHeight+1)
 

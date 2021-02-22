@@ -40,6 +40,15 @@ const (
 	tIndexP = 3
 )
 
+type OverrideFingerprint struct {
+	cons Consensus
+	name string
+}
+
+func (o *OverrideFingerprint) Fingerprint() string {
+	return o.name + o.cons.Fingerprint()
+}
+
 func setup(t *testing.T) {
 	if tConsX != nil {
 		tConsX.state.Close()
@@ -88,6 +97,11 @@ func setup(t *testing.T) {
 	tConsY = consY.(*consensus)
 	tConsB = consB.(*consensus)
 	tConsP = consP.(*consensus)
+
+	tConsX.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consX: ", cons: tConsX})
+	tConsY.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consY: ", cons: tConsY})
+	tConsB.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consB: ", cons: tConsB})
+	tConsP.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consP: ", cons: tConsP})
 }
 
 func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash) {
@@ -151,7 +165,7 @@ func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int
 	}
 }
 
-func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, hash crypto.Hash) {
+func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, hash crypto.Hash) *vote.Vote {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -165,7 +179,7 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 				pld := msg.Payload.(*payload.VotePayload)
 				if pld.Vote.BlockHash().EqualsTo(hash) {
 					assert.Equal(t, pld.Vote.VoteType(), voteType)
-					return
+					return pld.Vote
 				}
 			}
 		}
@@ -268,8 +282,8 @@ func makeProposal(t *testing.T, height, round int) *vote.Proposal {
 func TestHandleTimeout(t *testing.T) {
 	setup(t)
 
-	tConsX.handleTimeout(timeout{Height: 1})
-	checkHRS(t, tConsX, 0, 0, 0)
+	tConsY.handleTimeout(timeout{Height: 1, Step: hrs.StepTypeNewHeight})
+	checkHRS(t, tConsY, 1, 0, hrs.StepTypePropose)
 }
 
 func TestNotInValidatorSet(t *testing.T) {
@@ -283,7 +297,7 @@ func TestNotInValidatorSet(t *testing.T) {
 
 	cons.(*consensus).enterNewHeight()
 
-	cons.(*consensus).signAddVote(vote.VoteTypePrepare, crypto.GenerateTestHash())
+	cons.(*consensus).signAddVote(vote.VoteTypePrepare, 0, crypto.GenerateTestHash())
 	assert.Zero(t, len(cons.RoundVotes(0)))
 }
 
@@ -294,7 +308,6 @@ func TestRoundVotes(t *testing.T) {
 	tConsP.enterNewHeight()
 
 	t.Run("Ignore votes from invalid height", func(t *testing.T) {
-
 		v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v1)
 
@@ -336,27 +349,22 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	shouldPublishBlockAnnounce(t, tConsX, p.Block().Hash())
 }
 
-func TestConsensusUpdateVote(t *testing.T) {
+func TestConsensusAddVote(t *testing.T) {
 	setup(t)
 
 	tConsP.enterNewHeight()
 
-	h1 := crypto.GenerateTestHash()
+	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX, false)
+	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX, false)
+	v3 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX, false)
+	v4 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, crypto.GenerateTestHash(), tIndexX, false)
+	v5 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX, false)
 
-	// Ignore votes from invalid height
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, h1, tIndexB, false)
-
-	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX, false)
-	v2 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexP, false)
-	tConsP.enterNewRound(1)
-	v3 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, crypto.UndefHash, tIndexX, false)
-	tConsP.enterNewRound(2)
-	v4 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.UndefHash, tIndexX, false)
-
-	assert.Contains(t, tConsP.RoundVotes(0), v1)
-	assert.Contains(t, tConsP.RoundVotes(0), v2)
-	assert.Contains(t, tConsP.RoundVotes(1), v3)
-	assert.Contains(t, tConsP.RoundVotes(2), v4)
+	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
+	assert.True(t, tConsP.HasVote(v2.Hash()))
+	assert.True(t, tConsP.HasVote(v3.Hash()))
+	assert.True(t, tConsP.HasVote(v4.Hash()))
+	assert.True(t, tConsP.HasVote(v5.Hash()))
 }
 
 func TestConsensusNoPrepares(t *testing.T) {
@@ -399,4 +407,17 @@ func TestPickRandomVote(t *testing.T) {
 
 	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY, false)
 	assert.NotNil(t, tConsY.PickRandomVote(0))
+}
+
+func TestSignProposalFromPreviousRound(t *testing.T) {
+	setup(t)
+
+	p0 := makeProposal(t, 1, 0)
+	tConsP.enterNewHeight()
+	tConsP.enterNewRound(1)
+
+	tConsP.SetProposal(p0)
+
+	v := shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p0.Block().Hash())
+	assert.Equal(t, v.Round(), 0)
 }
