@@ -50,7 +50,7 @@ func Init() func(c *cli.Cmd) {
 				gen = genesis.Testnet()
 
 				conf.Network.Name = "zarb-testnet"
-				conf.Network.Bootstrap.Addresses = []string{"/ip4/139.162.135.180/tcp/31887/ipfs/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
+				conf.Network.Bootstrap.Addresses = []string{"/ip4/139.162.135.180/tcp/31887/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 

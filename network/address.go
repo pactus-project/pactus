@@ -6,7 +6,7 @@ import (
 )
 
 // PeerAddrsToAddrInfo converts a slice of string peer addresses
-// (multiaddr + ipfs peerid) to PeerInfos.
+// to AddrInfo.
 func PeerAddrsToAddrInfo(addrs []string) ([]peer.AddrInfo, error) {
 	var pis []peer.AddrInfo
 	for _, addr := range addrs {
