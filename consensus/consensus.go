@@ -45,7 +45,7 @@ func NewConsensus(
 
 	// Update height later, See enterNewHeight.
 	cs.pendingVotes = NewPendingVotes()
-	cs.hrs = hrs.NewHRS(0, 0, hrs.StepTypeUnknown)
+	cs.hrs = hrs.NewHRS(0, -1, hrs.StepTypeUnknown)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
@@ -142,6 +142,7 @@ func (cs *consensus) SetProposal(p *vote.Proposal) {
 	defer cs.lk.Unlock()
 
 	if cs.state.LastBlockHeight() >= p.Height() {
+		// A useful log for debugging
 		cs.logger.Debug("We received a stale proposal", "proposal", p)
 		return
 	}
@@ -154,12 +155,6 @@ func (cs *consensus) handleTimeout(ti timeout) {
 	defer cs.lk.Unlock()
 
 	cs.logger.Debug("Handle timeout", "timeout", ti)
-
-	// timeouts must be for current height
-	if ti.Height != cs.hrs.Height() {
-		cs.logger.Debug("Ignoring timeout", "timeout", ti)
-		return
-	}
 
 	switch ti.Step {
 	case hrs.StepTypeNewHeight:
@@ -225,7 +220,7 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 	return err
 }
 
-func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
+func (cs *consensus) signAddVote(msgType vote.VoteType, round int, hash crypto.Hash) {
 	address := cs.signer.Address()
 	if !cs.state.ValidatorSet().Contains(address) {
 		cs.logger.Trace("This node is not in validator set", "addr", address)
@@ -233,7 +228,7 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	}
 
 	// Sign the vote
-	v := vote.NewVote(msgType, cs.hrs.Height(), cs.hrs.Round(), hash, address)
+	v := vote.NewVote(msgType, cs.hrs.Height(), round, hash, address)
 	cs.signer.SignMsg(v)
 	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
 

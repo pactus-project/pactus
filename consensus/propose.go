@@ -20,7 +20,7 @@ func (cs *consensus) setProposal(proposal *vote.Proposal) {
 		cs.logger.Debug("Propose: Invalid height", "proposal", proposal)
 		return
 	}
-	if proposal.Round() < cs.hrs.Round() {
+	if proposal.Round() > cs.hrs.Round() {
 		cs.logger.Debug("Propose: Invalid round", "proposal", proposal)
 		return
 	}

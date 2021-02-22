@@ -5,7 +5,7 @@ import (
 )
 
 func (cs *consensus) enterCommit(round int) {
-	if cs.isCommitted || round != cs.hrs.Round() {
+	if cs.isCommitted || round > cs.hrs.Round() {
 		cs.logger.Debug("Commit: Committed or invalid round", "round", round)
 		return
 	}

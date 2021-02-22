@@ -7,7 +7,7 @@ import (
 )
 
 func (cs *consensus) enterPrecommit(round int) {
-	if cs.isPreCommitted || round != cs.hrs.Round() {
+	if cs.isPreCommitted || round > cs.hrs.Round() {
 		cs.logger.Debug("Precommit: Precommitted or invalid round/step", "round", round)
 		return
 	}
@@ -59,20 +59,20 @@ func (cs *consensus) enterPrecommit(round int) {
 
 	if blockHash == nil {
 		cs.logger.Info("Precommit: No quorum for prepare")
-		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
+		cs.signAddVote(vote.VoteTypePrecommit, round, crypto.UndefHash)
 		return
 	}
 
 	if blockHash.IsUndef() {
 		cs.logger.Info("Precommit: Undef quorum for prepare")
-		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
+		cs.signAddVote(vote.VoteTypePrecommit, round, crypto.UndefHash)
 		return
 	}
 
 	if !roundProposal.IsForBlock(blockHash) {
 		cs.pendingVotes.SetRoundProposal(round, nil)
 		cs.logger.Warn("Precommit: Invalid proposal.")
-		cs.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
+		cs.signAddVote(vote.VoteTypePrecommit, round, crypto.UndefHash)
 		return
 	}
 
@@ -80,5 +80,5 @@ func (cs *consensus) enterPrecommit(round int) {
 
 	// Everything is good
 	cs.logger.Info("Precommit: Proposal signed", "proposal", roundProposal)
-	cs.signAddVote(vote.VoteTypePrecommit, *blockHash)
+	cs.signAddVote(vote.VoteTypePrecommit, round, *blockHash)
 }
