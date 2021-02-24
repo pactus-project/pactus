@@ -59,7 +59,8 @@ func TestMarshalingEmptyPrivateKey(t *testing.T) {
 	pv1 := PrivateKey{}
 
 	js, err := json.Marshal(pv1)
-	assert.Error(t, err)
+	assert.NoError(t, err)
+	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
 	var pv2 PrivateKey
 	err = json.Unmarshal(js, &pv2)
 	assert.Error(t, err)

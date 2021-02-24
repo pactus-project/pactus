@@ -76,9 +76,6 @@ func (pv PrivateKey) String() string {
 /// MARSHALING
 
 func (pv PrivateKey) MarshalText() ([]byte, error) {
-	if pv.data.SecretKey == nil {
-		return nil, fmt.Errorf("Invalid private key")
-	}
 	return []byte(pv.String()), nil
 }
 

@@ -72,9 +72,6 @@ func (sig Signature) Fingerprint() string {
 /// MARSHALING
 
 func (sig Signature) MarshalText() ([]byte, error) {
-	if sig.data.Signature == nil {
-		return nil, fmt.Errorf("Invalid signature")
-	}
 	return []byte(sig.String()), nil
 }
 
