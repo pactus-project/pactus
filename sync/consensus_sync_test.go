@@ -112,6 +112,16 @@ func TestProcessHeartbeatForQueryProposal(t *testing.T) {
 	joinBobToTheSet(t)
 
 	hrs := tAliceConsensus.HRS()
+
+	p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
+	tBobConsensus.SetProposal(p)
+
+	t.Run("Alice Doesn't have proposal. She should query it.", func(t *testing.T) {
+		tAliceSync.broadcastHeartBeat()
+		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
+		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
+	})
+
 	v1, _ := vote.GenerateTestPrepareVote(hrs.Height(), 0)
 	v2, _ := vote.GenerateTestPrepareVote(hrs.Height(), 1)
 	tAliceConsensus.Votes = []*vote.Vote{v1, v2}
@@ -120,8 +130,6 @@ func TestProcessHeartbeatForQueryProposal(t *testing.T) {
 		tAliceSync.broadcastHeartBeat()
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
-
-		tBobNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 	})
 
 	tAliceConsensus.Round = 1
@@ -130,7 +138,6 @@ func TestProcessHeartbeatForQueryProposal(t *testing.T) {
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
 		tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
 
-		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryProposal)
 		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeQueryVotes)
 	})
 }

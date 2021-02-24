@@ -316,6 +316,10 @@ func (syncer *synchronizer) broadcastHeartBeat() {
 
 	// Broadcast a random vote if the validator is an active validator
 	if syncer.isThisActiveValidator() {
+		if syncer.consensus.RoundProposal(hrs.Round()) == nil {
+			// We don't have proposal yet
+			syncer.queryProposal(hrs.Height(), hrs.Round())
+		}
 		v := syncer.consensus.PickRandomVote(hrs.Round())
 		if v != nil {
 			syncer.consensusSync.BroadcastVote(v)
@@ -346,7 +350,6 @@ func (syncer *synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayloa
 			if syncer.isThisActiveValidator() {
 				syncer.logger.Info("Our consensus is behind of this peer.", "ours", hrs, "peer", pld.Pulse, "address", syncer.signer.Address().Fingerprint())
 
-				syncer.queryProposal(hrs.Height(), hrs.Round())
 				syncer.queryVotes(hrs.Height(), hrs.Round())
 			}
 		} else if pld.Pulse.LessThan(hrs) {
