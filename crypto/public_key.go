@@ -68,9 +68,6 @@ func (pb PublicKey) String() string {
 /// MARSHALING
 
 func (pb PublicKey) MarshalText() ([]byte, error) {
-	if pb.data.PublicKey == nil {
-		return nil, fmt.Errorf("Invalid public key")
-	}
 	return []byte(pb.String()), nil
 }
 

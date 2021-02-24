@@ -65,7 +65,8 @@ func TestMarshalingEmptySignature(t *testing.T) {
 	sig1 := Signature{}
 
 	js, err := json.Marshal(sig1)
-	assert.Error(t, err)
+	assert.NoError(t, err)
+	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
 	sig2 := new(Signature)
 	err = json.Unmarshal(js, &sig2)
 	assert.Error(t, err)

@@ -113,18 +113,22 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	s.writeHTML(w, buf.String())
 }
 
-func (s *Server) writeJSON(w http.ResponseWriter, val interface{}) int {
-	j, _ := json.MarshalIndent(val, "", "  ")
+func (s *Server) writeJSON(w http.ResponseWriter, out interface{}) int {
+	j, err := json.MarshalIndent(out, "", "  ")
+	if err != nil {
+		s.writeError(w, err)
+		return 0
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	n, _ := io.WriteString(w, string(j))
 	return n
 }
 
-func (s *Server) writePlainText(w http.ResponseWriter, val string) int {
+func (s *Server) writePlainText(w http.ResponseWriter, out string) int {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	n, _ := io.WriteString(w, val)
+	n, _ := io.WriteString(w, out)
 	return n
 }
 
