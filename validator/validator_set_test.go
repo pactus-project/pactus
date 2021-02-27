@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -165,10 +164,39 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	vs, err := NewValidatorSet([]*Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
 
+	// How validator set moves when new validator(s) join(s)?
 	//
-	// +=+-+-+-+-+-+-+     +-+=+-+-+-+-+-+     +-+-+-+-+-+=+-+     +-+-+-+-+-+-+=+     +=+-+-+-+-+-+-+     +-+-+-+=+-+-+-+
-	// |1|2|3|4|5|6|7| ==> |8|2|3|4|5|6|7| ==> |8|2|3|4|5|6|7| ==> |8|4|5|9|A|6|7| ==> |8|5|9|A|6|B|7| ==> |C|D|8|9|A|B|7|
-	// +=+-+-+-+-+-+-+     +-+=+-+-+-+-+-+     +-+-+-+-+-+=+-+     +-+-+-+-+-+-+=+     +=+-+-+-+-+-+-+     +-+-+-+=+-+-+-+
+	// Example:
+	//
+	// Imagine validators `1` to `7` are in the set, and `1` is the oldest and also proposer.
+	// +=+-+-+-+-+-+-+
+	// |1|2|3|4|5|6|7|
+	// +=+-+-+-+-+-+-+
+	//
+	// New validator joins and sits before proposer.
+	// In this example `8` sits before `1` (current proposer):
+	// +*+=+-+-+-+-+-+-+
+	// |8|1|2|3|4|5|6|7|
+	// +*+=+-+-+-+-+-+-+
+	//
+	// Now validator set should be adjusted and the oldest validator should leave.
+	// In this example `1` is the oldest validator:
+	// +-+-+-+-+-+-+-+
+	// |8|2|3|4|5|6|7|
+	// +-+-+-+-+-+-+-+
+	//
+	// Now we move to the next proposer.
+	// In this example next proposer is `2`:
+	// +-+=+-+-+-+-+-+
+	// |8|2|3|4|5|6|7|
+	// +-+=+-+-+-+-+-+
+	//
+	//
+	// In this test we are covering these cases:
+	//
+	// +=+-+-+-+-+-+-+     +-+=+-+-+-+-+-+     +-+-+-+-+-+=+-+     +-+-+-+-+-+-+=+     +=+-+-+-+-+-+-+     +-+-+-+=+-+-+-+     +=+-+-+-+-+-+-+
+	// |1|2|3|4|5|6|7| ==> |8|2|3|4|5|6|7| ==> |8|2|3|4|5|6|7| ==> |8|4|5|9|A|6|7| ==> |8|5|9|A|6|B|7| ==> |C|D|8|9|A|B|7| ==> |C|D|8|1|9|A|B|
+	// +=+-+-+-+-+-+-+     +-+=+-+-+-+-+-+     +-+-+-+-+-+=+-+     +-+-+-+-+-+-+=+     +=+-+-+-+-+-+-+     +-+-+-+=+-+-+-+     +=+-+-+-+-+-+-+
 	//
 
 	// Height 1
@@ -205,9 +233,17 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, vs.Proposer(2).Number(), 11)
 	assert.Equal(t, vs.Validators(), []*Validator{valC, valD, val8, val9, valA, valB, val7})
 
-	for _, v := range vs.Validators() {
-		fmt.Printf("%v-", v.Number())
-	}
+	// Height 6
+	val1.UpdateLastJoinedHeight(6)
+	assert.NoError(t, vs.UpdateTheSet(2, []*Validator{val1}))
+	assert.Equal(t, vs.Proposer(0).Number(), 12)
+	assert.Equal(t, vs.Proposer(1).Number(), 13)
+	assert.Equal(t, vs.Proposer(2).Number(), 8)
+	assert.Equal(t, vs.Proposer(3).Number(), 1)
+	assert.Equal(t, vs.Proposer(4).Number(), 9)
+	assert.Equal(t, vs.Proposer(5).Number(), 10)
+	assert.Equal(t, vs.Proposer(6).Number(), 11)
+	assert.Equal(t, vs.Validators(), []*Validator{valC, valD, val8, val1, val9, valA, valB})
 }
 
 func TestJoinMoreThatOneThird(t *testing.T) {

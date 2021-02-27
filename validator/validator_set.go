@@ -86,13 +86,6 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 
 	// Now adjust the list
 
-	for i := 0; i <= lastRound; i++ {
-		set.proposerPos = set.proposerPos.Next()
-		if set.proposerPos == nil {
-			set.proposerPos = set.validatorList.Front()
-		}
-	}
-
 	oldestFirst := make([]*list.Element, set.validatorList.Len())
 	i := 0
 	for e := set.validatorList.Front(); e != nil; e = e.Next() {
@@ -104,10 +97,20 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 		return oldestFirst[i].Value.(*Validator).LastJoinedHeight() < oldestFirst[j].Value.(*Validator).LastJoinedHeight()
 	})
 
+	for i := 0; i <= lastRound; i++ {
+		set.proposerPos = set.proposerPos.Next()
+		if set.proposerPos == nil {
+			set.proposerPos = set.validatorList.Front()
+		}
+	}
+
 	adjust := set.validatorList.Len() - set.committeeSize
 	for i := 0; i < adjust; i++ {
 		if oldestFirst[i] == set.proposerPos {
 			set.proposerPos = set.proposerPos.Next()
+			if set.proposerPos == nil {
+				set.proposerPos = set.validatorList.Front()
+			}
 		}
 		set.validatorList.Remove(oldestFirst[i])
 	}
