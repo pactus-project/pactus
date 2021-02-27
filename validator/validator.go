@@ -99,7 +99,7 @@ func (val Validator) Fingerprint() string {
 // GenerateTestValidator generates a validator for testing purpose
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
 	signer := crypto.GenerateTestSigner()
-	val := NewValidator(signer.PublicKey(), number, util.RandInt(100))
+	val := NewValidator(signer.PublicKey(), number, 0)
 	val.data.Stake = util.RandInt64(1000000000)
 	val.data.Sequence = util.RandInt(1000)
 	return val, signer

@@ -22,12 +22,11 @@ type MockState struct {
 	ValSet           *validator.ValidatorSet
 }
 
-func MockingState() *MockState {
-	valset, _ := validator.GenerateTestValidatorSet()
+func MockingState(valSet *validator.ValidatorSet) *MockState {
 	return &MockState{
 		GenHash: crypto.GenerateTestHash(),
 		Store:   store.MockingStore(),
-		ValSet:  valset,
+		ValSet:  valSet,
 	}
 }
 

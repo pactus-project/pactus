@@ -374,9 +374,10 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.EvaluateSortition()) //  not a validator
 
-	// Commit 10 blocks, bonding tx is in block 2
-	for i := 0; i < 10; i++ {
-		if i == 2 {
+	// Commit 14 blocks
+	height := 1
+	for ; height < 12; height++ {
+		if height == 4 {
 			trx := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 1000, 1000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
@@ -384,7 +385,7 @@ func TestSortition(t *testing.T) {
 
 		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 		CommitBlockAndCommitForAllStates(t, b, c)
-		require.NoError(t, st1.CommitBlock(i+1, b, c))
+		require.NoError(t, st1.CommitBlock(height, b, c))
 	}
 
 	assert.False(t, st1.EvaluateSortition()) //  bonding period
@@ -392,16 +393,17 @@ func TestSortition(t *testing.T) {
 	// Commit another block
 	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockAndCommitForAllStates(t, b, c)
-	require.NoError(t, st1.CommitBlock(11, b, c))
+	require.NoError(t, st1.CommitBlock(height, b, c))
 
 	assert.True(t, st1.EvaluateSortition())                //  ok
 	assert.False(t, tState1.ValidatorSet().Contains(addr)) // still not in the set
 
 	// ---------------------------------------------
 	// Commit another block, new validator should be in the set now
-	b, c = makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	height++
+	b, c = makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockAndCommitForAllStates(t, b, c)
-	require.NoError(t, st1.CommitBlock(12, b, c))
+	require.NoError(t, st1.CommitBlock(height, b, c))
 
 	assert.False(t, st1.EvaluateSortition()) // already in the set
 	assert.False(t, tState1.ValidatorSet().Contains(tValSigner1.Address()))
@@ -424,10 +426,10 @@ func TestSortition(t *testing.T) {
 	sigs := make([]crypto.Signature, 4)
 	sb := block.CommitSignBytes(b1.Hash(), 3)
 	committers := make([]block.Committer, 4)
-	committers[0] = block.Committer{Status: 1, Number: 1}
-	committers[1] = block.Committer{Status: 1, Number: 2}
-	committers[2] = block.Committer{Status: 1, Number: 3}
-	committers[3] = block.Committer{Status: 1, Number: 4}
+	committers[0] = block.Committer{Status: 1, Number: 4}
+	committers[1] = block.Committer{Status: 1, Number: 1}
+	committers[2] = block.Committer{Status: 1, Number: 2}
+	committers[3] = block.Committer{Status: 1, Number: 3}
 
 	sigs[0] = tValSigner2.SignData(sb)
 	sigs[1] = tValSigner3.SignData(sb)
@@ -435,8 +437,9 @@ func TestSortition(t *testing.T) {
 	sigs[3] = signer.SignData(sb)
 	c1 := block.NewCommit(b1.Hash(), 3, committers, crypto.Aggregate(sigs))
 
-	require.NoError(t, st1.CommitBlock(13, *b1, *c1))
-	require.NoError(t, tState2.CommitBlock(13, *b1, *c1))
+	height++
+	require.NoError(t, st1.CommitBlock(height, *b1, *c1))
+	require.NoError(t, tState2.CommitBlock(height, *b1, *c1))
 }
 
 func TestValidateBlockTime(t *testing.T) {

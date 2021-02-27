@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"container/list"
 	"fmt"
 	"sort"
 
@@ -13,7 +14,7 @@ import (
 var _ ValidatorSetReader = &ValidatorSet{}
 
 type ValidatorSetReader interface {
-	CopyValidators() []*Validator
+	Validators() []*Validator
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *Validator
 	IsProposer(addr crypto.Address, round int) bool
@@ -24,37 +25,39 @@ type ValidatorSet struct {
 	lk deadlock.RWMutex
 
 	committeeSize int
-	validators    []*Validator
-	proposerIndex int
+	validatorList *list.List
+	proposerPos   *list.Element
 }
 
-func NewValidatorSet(validators []*Validator, committeeSize int, proposer crypto.Address) (*ValidatorSet, error) {
+func NewValidatorSet(validators []*Validator, committeeSize int, proposerAddress crypto.Address) (*ValidatorSet, error) {
 
-	index := -1
-	for i, v := range validators {
-		if v.Address().EqualsTo(proposer) {
-			index = i
-			break
+	validatorList := list.New()
+	var proposerPos *list.Element
+
+	for _, v := range validators {
+		el := validatorList.PushBack(v)
+		if v.Address().EqualsTo(proposerAddress) {
+			proposerPos = el
 		}
 	}
 
-	if index == -1 {
+	if proposerPos == nil {
 		return nil, fmt.Errorf("Proposer is not in the list")
 	}
-	validators2 := make([]*Validator, len(validators))
-	copy(validators2, validators)
+
 	return &ValidatorSet{
 		committeeSize: committeeSize,
-		validators:    validators2,
-		proposerIndex: index,
+		validatorList: validatorList,
+		proposerPos:   proposerPos,
 	}, nil
 }
 
 func (set *ValidatorSet) currentPower() int64 {
 	p := int64(0)
-	for _, v := range set.validators {
+	set.iterate(func(v *Validator) (stop bool) {
 		p += v.Power()
-	}
+		return false
+	})
 	return p
 }
 
@@ -76,32 +79,54 @@ func (set *ValidatorSet) UpdateTheSet(lastRound int, joined []*Validator) error 
 		return joined[i].Number() < joined[j].Number()
 	})
 
-	// First update proposer index
-	set.proposerIndex = (set.proposerIndex + lastRound + 1) % len(set.validators)
-
-	set.validators = append(set.validators, joined...)
-	if len(set.validators) > set.committeeSize {
-		//
-		shouldLeave := len(set.validators) - set.committeeSize
-		set.validators = set.validators[shouldLeave:]
+	// First update validator list
+	for _, val := range joined {
+		set.validatorList.InsertBefore(val, set.proposerPos)
 	}
-	// Correcting proposer index
-	set.proposerIndex = set.proposerIndex - len(joined)
-	if set.proposerIndex < 0 {
-		set.proposerIndex = 0
+
+	// Now adjust the list
+
+	for i := 0; i <= lastRound; i++ {
+		set.proposerPos = set.proposerPos.Next()
+		if set.proposerPos == nil {
+			set.proposerPos = set.validatorList.Front()
+		}
+	}
+
+	oldestFirst := make([]*list.Element, set.validatorList.Len())
+	i := 0
+	for e := set.validatorList.Front(); e != nil; e = e.Next() {
+		oldestFirst[i] = e
+		i++
+	}
+
+	sort.SliceStable(oldestFirst, func(i, j int) bool {
+		return oldestFirst[i].Value.(*Validator).LastJoinedHeight() < oldestFirst[j].Value.(*Validator).LastJoinedHeight()
+	})
+
+	adjust := set.validatorList.Len() - set.committeeSize
+	for i := 0; i < adjust; i++ {
+		if oldestFirst[i] == set.proposerPos {
+			set.proposerPos = set.proposerPos.Next()
+		}
+		set.validatorList.Remove(oldestFirst[i])
 	}
 
 	return nil
 }
 
-func (set *ValidatorSet) CopyValidators() []*Validator {
+func (set *ValidatorSet) Validators() []*Validator {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	vals := make([]*Validator, len(set.validators))
-	for i, v := range set.validators {
+	vals := make([]*Validator, set.validatorList.Len())
+	i := 0
+	set.iterate(func(v *Validator) (stop bool) {
 		vals[i] = v
-	}
+		i++
+		return false
+	})
+
 	return vals
 }
 
@@ -113,24 +138,30 @@ func (set *ValidatorSet) Contains(addr crypto.Address) bool {
 }
 
 func (set *ValidatorSet) contains(addr crypto.Address) bool {
-	for _, v := range set.validators {
+	found := false
+	set.iterate(func(v *Validator) (stop bool) {
 		if v.Address().EqualsTo(addr) {
+			found = true
 			return true
 		}
-	}
-	return false
+		return false
+	})
+	return found
 }
 
 func (set *ValidatorSet) Validator(addr crypto.Address) *Validator {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	for _, v := range set.validators {
+	var val *Validator
+	set.iterate(func(v *Validator) (stop bool) {
 		if v.Address().EqualsTo(addr) {
-			return v
+			val = v
+			return true
 		}
-	}
-	return nil
+		return false
+	})
+	return val
 }
 
 // IsProposer checks if the address is proposer for this run at the given round
@@ -138,8 +169,8 @@ func (set *ValidatorSet) IsProposer(addr crypto.Address, round int) bool {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	idx := (set.proposerIndex + round) % len(set.validators)
-	return set.validators[idx].Address().EqualsTo(addr)
+	p := set.proposer(round)
+	return p.Address().EqualsTo(addr)
 }
 
 // Proposer returns proposer info for this run at the given round
@@ -147,8 +178,19 @@ func (set *ValidatorSet) Proposer(round int) *Validator {
 	set.lk.Lock()
 	defer set.lk.Unlock()
 
-	idx := (set.proposerIndex + round) % len(set.validators)
-	return set.validators[idx]
+	return set.proposer(round)
+}
+
+func (set *ValidatorSet) proposer(round int) *Validator {
+	pos := set.proposerPos
+	for i := 0; i < round; i++ {
+		pos = pos.Next()
+		if pos == nil {
+			pos = set.validatorList.Front()
+		}
+	}
+
+	return pos.Value.(*Validator)
 }
 
 func (set *ValidatorSet) Committee() []int {
@@ -159,10 +201,13 @@ func (set *ValidatorSet) Committee() []int {
 }
 
 func (set *ValidatorSet) committee() []int {
-	committee := make([]int, len(set.validators))
-	for i, v := range set.validators {
+	committee := make([]int, set.validatorList.Len())
+	i := 0
+	set.iterate(func(v *Validator) (stop bool) {
 		committee[i] = v.Number()
-	}
+		i++
+		return false
+	})
 
 	return committee
 }
@@ -173,6 +218,15 @@ func (set *ValidatorSet) CommitteeHash() crypto.Hash {
 
 	bz, _ := cbor.Marshal(set.committee())
 	return crypto.HashH(bz)
+}
+
+// iterate uses for easy iteration over validators in list
+func (set *ValidatorSet) iterate(consumer func(*Validator) (stop bool)) {
+	for e := set.validatorList.Front(); e != nil; e = e.Next() {
+		if consumer(e.Value.(*Validator)) {
+			return
+		}
+	}
 }
 
 // GenerateTestValidatorSet generates a validator set for testing purpose

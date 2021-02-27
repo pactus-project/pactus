@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 var tFirewall *Firewall
@@ -17,7 +18,8 @@ var tAnotherPeerID peer.ID
 
 func setup(t *testing.T) {
 	peerSet := peerset.NewPeerSet(3 * time.Second)
-	state := state.MockingState()
+	valSet, _ := validator.GenerateTestValidatorSet()
+	state := state.MockingState(valSet)
 	tFirewall = NewFirewall(peerSet, state)
 	tAnotherPeerID = util.RandomPeerID()
 }

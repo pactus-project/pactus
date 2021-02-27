@@ -37,7 +37,8 @@ func setup(t *testing.T) {
 		return
 	}
 
-	tMockState = state.MockingState()
+	valSet, _ := validator.GenerateTestValidatorSet()
+	tMockState = state.MockingState(valSet)
 	tMockPool = txpool.MockingTxPool()
 	tMockSync = sync.MockingSync()
 

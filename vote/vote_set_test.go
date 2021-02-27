@@ -30,7 +30,7 @@ func TestAddVote(t *testing.T) {
 
 	h1 := crypto.GenerateTestHash()
 	invSigner := crypto.GenerateTestSigner()
-	vs := NewVoteSet(100, 5, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(100, 5, VoteTypePrecommit, valSet.Validators())
 
 	v1 := NewVote(VoteTypePrecommit, 100, 5, h1, invSigner.Address())
 	v2 := NewVote(VoteTypePrecommit, 100, 5, h1, signers[0].Address())
@@ -74,7 +74,7 @@ func TestDuplicateVote(t *testing.T) {
 
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
-	vs := NewVoteSet(1, 0, VoteTypePrepare, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrepare, valSet.Validators())
 
 	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
 	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, signers[0].Address())
@@ -120,7 +120,7 @@ func TestDuplicateVote(t *testing.T) {
 func TestQuorum(t *testing.T) {
 	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.Validators())
 	h1 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
@@ -162,7 +162,7 @@ func TestQuorum(t *testing.T) {
 func TestUpdateVote(t *testing.T) {
 	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.Validators())
 
 	h1 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
@@ -240,7 +240,7 @@ func TestUpdateVote(t *testing.T) {
 func TestAllVotes(t *testing.T) {
 	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.Validators())
 
 	h1 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())

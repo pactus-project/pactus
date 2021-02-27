@@ -41,7 +41,7 @@ func (cs *consensus) enterNewHeight() {
 		}
 	}
 
-	vals := cs.state.ValidatorSet().CopyValidators()
+	vals := cs.state.ValidatorSet().Validators()
 	cs.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
 
 	cs.updateHeight(sateHeight + 1)

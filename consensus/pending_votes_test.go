@@ -12,7 +12,7 @@ import (
 func TestMustGetRound(t *testing.T) {
 	valSet, _ := validator.GenerateTestValidatorSet()
 	pv := NewPendingVotes()
-	pv.MoveToNewHeight(101, valSet.CopyValidators())
+	pv.MoveToNewHeight(101, valSet.Validators())
 	pv.MustGetRoundVotes(4)
 	assert.Nil(t, pv.GetRoundVotes(5))
 	assert.NotNil(t, pv.GetRoundVotes(1))
@@ -26,7 +26,7 @@ func TestPendingVotesTest(t *testing.T) {
 	valSet, signers := validator.GenerateTestValidatorSet()
 
 	pv := NewPendingVotes()
-	pv.MoveToNewHeight(101, valSet.CopyValidators())
+	pv.MoveToNewHeight(101, valSet.Validators())
 	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
 	ok, err := pv.AddVote(invalidVote) // invalid height
 	assert.False(t, ok)
@@ -77,7 +77,7 @@ func TestSetRoundProposal(t *testing.T) {
 	valSet, _ := validator.GenerateTestValidatorSet()
 	prop, _ := vote.GenerateTestProposal(101, 0)
 	pv := NewPendingVotes()
-	pv.MoveToNewHeight(101, valSet.CopyValidators())
+	pv.MoveToNewHeight(101, valSet.Validators())
 	pv.SetRoundProposal(4, prop)
 	assert.False(t, pv.HasRoundProposal(0))
 	assert.True(t, pv.HasRoundProposal(4))

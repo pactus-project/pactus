@@ -74,11 +74,12 @@ func setup(t *testing.T) {
 
 	tTxPool = txpool.MockingTxPool()
 
+	valSet, _ := validator.GenerateTestValidatorSet()
 	tAlicePeerID = util.RandomPeerID()
 	tBobPeerID = util.RandomPeerID()
 	tAnotherPeerID = util.RandomPeerID()
-	tAliceState = state.MockingState()
-	tBobState = state.MockingState()
+	tAliceState = state.MockingState(valSet)
+	tBobState = state.MockingState(valSet)
 	tAliceConsensus = consensus.MockingConsensus(tAliceState)
 	tBobConsensus = consensus.MockingConsensus(tBobState)
 	tAliceBroadcastCh = make(chan *message.Message, 100)
@@ -189,14 +190,16 @@ func disableHeartbeat(t *testing.T) {
 
 func joinAliceToTheSet(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
+	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
+
 	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
-	assert.NoError(t, tBobState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
 }
 
 func joinBobToTheSet(t *testing.T) {
 	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
+	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
+
 	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
-	assert.NoError(t, tBobState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
 }
 
 func TestAccessors(t *testing.T) {
