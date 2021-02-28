@@ -263,35 +263,36 @@ func TestBlockValidation(t *testing.T) {
 	// LastReceiptsHash		(OK)
 	// LastCommitHash		(OK)
 	// CommitteeHash		(OK)
+	// SortitionSeed		(?)
 	// ProposerAddress		(OK) -> Tested in CommitBlock
 	//
-	invAdd, _, _ := crypto.GenerateTestKeyPair()
+	invAddr, _, _ := crypto.GenerateTestKeyPair()
 	invHash := crypto.GenerateTestHash()
 	invCommit := block.GenerateTestCommit(tState1.lastBlockHash)
 	trx := tState1.createSubsidyTx(0)
 	ids := block.NewTxIDs()
 	ids.Append(trx.ID())
 
-	b := block.MakeBlock(1, util.Now(), ids, invHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	b := block.MakeBlock(1, util.Now(), ids, invHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.sortitionSeed, tState1.proposer)
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, invHash, tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, invHash, tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.sortitionSeed, tState1.proposer)
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), invHash, tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), invHash, tState1.lastReceiptsHash, tState1.lastCommit, tState1.sortitionSeed, tState1.proposer)
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), invHash, tState1.lastCommit, tState1.proposer)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), invHash, tState1.lastCommit, tState1.sortitionSeed, tState1.proposer)
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, invCommit, tState1.proposer)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, invCommit, tState1.sortitionSeed, tState1.proposer)
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, invAdd)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.sortitionSeed, invAddr)
 	assert.NoError(t, tState1.validateBlock(b))
 	c := makeCommitAndSign(t, b.Hash(), 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.proposer)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.sortitionSeed, tState1.proposer)
 	assert.NoError(t, tState1.validateBlock(b))
 }

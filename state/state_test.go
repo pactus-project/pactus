@@ -489,6 +489,7 @@ func TestInvalidBlockTime(t *testing.T) {
 		validBlock.Header().StateHash(),
 		validBlock.Header().LastReceiptsHash(),
 		validBlock.LastCommit(),
+		validBlock.Header().SortitionSeed(),
 		validBlock.Header().ProposerAddress())
 
 	assert.NoError(t, tState1.ValidateBlock(validBlock))

@@ -3,6 +3,7 @@ package block
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
@@ -26,11 +27,11 @@ type blockData struct {
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
-	lastCommit *Commit, proposer crypto.Address) Block {
+	lastCommit *Commit, sortitionSeed [48]byte, proposer crypto.Address) Block {
 
 	txIDsHash := txIDs.Hash()
 	header := NewHeader(version, timestamp,
-		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommit.Hash(), proposer)
+		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommit.Hash(), sortitionSeed, proposer)
 
 	b := Block{
 		data: blockData{
@@ -160,12 +161,15 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		commit = nil
 		lastReceiptsHash = crypto.UndefHash
 	}
+	sortitionSeed := [48]byte{}
+	rand.Read(sortitionSeed[:])
 	block := MakeBlock(1, util.Now(), ids,
 		*lastBlockHash,
 		crypto.GenerateTestHash(),
 		crypto.GenerateTestHash(),
 		lastReceiptsHash,
 		commit,
+		sortitionSeed,
 		*proposer)
 
 	return &block, txs

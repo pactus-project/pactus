@@ -44,6 +44,7 @@ type state struct {
 	lastReceiptsHash crypto.Hash
 	lastCommit       *block.Commit
 	lastBlockTime    time.Time
+	sortitionSeed    [48]byte
 	logger           *logger.Logger
 }
 
@@ -329,6 +330,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,
+		st.sortitionSeed,
 		st.proposer)
 
 	return &block, nil
