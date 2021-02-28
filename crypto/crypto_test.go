@@ -86,3 +86,40 @@ func TestAggregateTheAggregated(t *testing.T) {
 	assert.True(t, VerifyAggregated(agg2, pks2, msg1))
 	assert.False(t, VerifyAggregated(agg3, pks2, msg1))
 }
+
+func TestCrossAggregation(t *testing.T) {
+	_, pk1, pv1 := GenerateTestKeyPair()
+	_, pk2, pv2 := GenerateTestKeyPair()
+
+	msg1 := []byte("zarb")
+
+	sig1 := pv1.Sign(msg1)
+	sig2 := pv2.Sign(msg1)
+
+	agg1 := Aggregate([]Signature{sig1, sig2})
+	agg2 := Aggregate([]Signature{sig2, sig1})
+
+	assert.Equal(t, agg1.RawBytes(), agg2.RawBytes())
+
+	pks1 := []PublicKey{pk1, pk2}
+	pks2 := []PublicKey{pk2, pk1}
+
+	assert.True(t, VerifyAggregated(agg1, pks2, msg1))
+	assert.True(t, VerifyAggregated(agg2, pks1, msg1))
+}
+
+func TestDuplicatedAggregation(t *testing.T) {
+	_, pk1, pv1 := GenerateTestKeyPair()
+	_, pk2, pv2 := GenerateTestKeyPair()
+
+	msg1 := []byte("zarb")
+
+	sig1 := pv1.Sign(msg1)
+	sig2 := pv2.Sign(msg1)
+
+	agg1 := Aggregate([]Signature{sig1, sig2, sig1})
+
+	pks1 := []PublicKey{pk1, pk2}
+
+	assert.False(t, VerifyAggregated(agg1, pks1, msg1))
+}
