@@ -8,14 +8,11 @@ import (
 )
 
 type VRF struct {
-	signer crypto.Signer
-	max    int64
+	max int64
 }
 
-func NewVRF(signer crypto.Signer) *VRF {
-	return &VRF{
-		signer: signer,
-	}
+func NewVRF() *VRF {
+	return &VRF{}
 }
 
 func (vrf *VRF) SetMax(max int64) {
@@ -31,8 +28,8 @@ func (vrf *VRF) Max() int64 {
 }
 
 // Evaluate returns a random number between 0 and max with the proof
-func (vrf *VRF) Evaluate(hash crypto.Hash) (index int64, proof []byte) {
-	sig := vrf.signer.SignData(hash.RawBytes())
+func (vrf *VRF) Evaluate(seed [48]byte, signer crypto.Signer) (index int64, proof []byte) {
+	sig := signer.SignData(seed[:])
 
 	proof = sig.RawBytes()
 	index = vrf.getIndex(proof)
@@ -41,29 +38,29 @@ func (vrf *VRF) Evaluate(hash crypto.Hash) (index int64, proof []byte) {
 }
 
 // Verify ensures the proof is valid
-func (vrf *VRF) Verify(hash crypto.Hash, publicKey crypto.PublicKey, proof []byte) (index int64, result bool) {
-	sig, err := crypto.SignatureFromRawBytes(proof)
+func (vrf *VRF) Verify(seed [48]byte, public crypto.PublicKey, proof []byte) (index int64, result bool) {
+	proofSig, err := crypto.SignatureFromRawBytes(proof)
 	if err != nil {
 		return 0, false
 	}
 
 	// Verify signature (proof)
-	if !publicKey.Verify(hash.RawBytes(), sig) {
+	if !public.Verify(seed[:], proofSig) {
 		return 0, false
 	}
 
-	index = vrf.getIndex(sig.RawBytes())
+	index = vrf.getIndex(proofSig.RawBytes())
 
 	return index, true
 }
 
-func (vrf *VRF) getIndex(sig []byte) int64 {
-	h := crypto.HashH(sig)
+func (vrf *VRF) getIndex(proof []byte) int64 {
+	h := crypto.HashH(proof)
 
 	rnd64 := util.SliceToInt64(h.RawBytes())
 	rnd64 = rnd64 & 0x7fffffffffffffff
 
-	// construct the numerator and denominator for normalizing the signature uint between [0, 1]
+	// construct the numerator and denominator for normalizing the proof uint between [0, 1]
 	index := big.NewInt(0)
 	numerator := big.NewInt(0)
 	rnd := big.NewInt(rnd64)

@@ -55,12 +55,11 @@ func setup(t *testing.T) {
 	tStore.UpdateValidator(val4)
 	tStore.UpdateValidator(val5)
 
-	tSortitions[0] = sortition.NewSortition(tValSigners[0])
-	tSortitions[1] = sortition.NewSortition(tValSigners[1])
-	tSortitions[2] = sortition.NewSortition(tValSigners[2])
-	tSortitions[3] = sortition.NewSortition(tValSigners[3])
-	tSortitions[4] = sortition.NewSortition(tValSigners[4])
-
+	tSortitions[0] = sortition.NewSortition()
+	tSortitions[1] = sortition.NewSortition()
+	tSortitions[2] = sortition.NewSortition()
+	tSortitions[3] = sortition.NewSortition()
+	tSortitions[4] = sortition.NewSortition()
 	tValset, err = validator.NewValidatorSet([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
