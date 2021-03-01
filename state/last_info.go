@@ -8,9 +8,18 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 )
-
-// TODO:
-// If we can replay the last block, then we don''t need this ugly structure
+//
+// Some thoughts about this structure:
+//
+// This structure helps the node to restore the last state upon restarting the node.
+// We could also replay the last block to recover the last state, but there is a tradeoff here.
+//
+// There are two ways to safely replay the last block:
+// 1- Have a snapshot of the database for current state and previous state. (which is not beautiful)
+// 2- Commit block after receiving the next block. Note that the next block has adjustment or proof for the previous block
+// However postponing committing a block has its own complexity.
+//
+// For now, we keep this structure as it is.
 //
 type lastInfo struct {
 	LastHeight      int
