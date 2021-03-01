@@ -329,7 +329,13 @@ func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof []byte, 
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.sortition.VerifyProof(blockHash, proof, val)
+	h, _ := sb.store.BlockHeight(blockHash)
+	b, err := sb.store.Block(h)
+	if err != nil {
+		return false
+	}
+
+	return sb.sortition.VerifyProof(b.Header().SortitionSeed(), proof, val.PublicKey(), val.Stake())
 }
 
 func (sb *SandboxConcrete) IterateAccounts(consumer func(*AccountStatus)) {

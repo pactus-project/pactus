@@ -25,7 +25,7 @@ func TestConfig() *Config {
 	}
 }
 
-// SanityCheck is a basic hecks for config
+// SanityCheck is a basic checks for config
 func (conf *Config) SanityCheck() error {
 	if conf.WaitingTimeout < 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "WaitingTimeout can't be negative")

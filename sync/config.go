@@ -35,7 +35,7 @@ func TestConfig() *Config {
 	}
 }
 
-// SanityCheck is a basic hecks for config
+// SanityCheck is a basic checks for config
 func (conf *Config) SanityCheck() error {
 	return nil
 }

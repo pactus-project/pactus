@@ -15,7 +15,7 @@ type Sandbox interface {
 	MakeNewValidator(crypto.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
 
-	VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool
+	VerifySortition(crypto.Hash, []byte, *validator.Validator) bool
 	AddToSet(crypto.Hash, crypto.Address) error
 
 	CommitteeSize() int
