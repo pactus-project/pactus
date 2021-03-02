@@ -54,11 +54,12 @@ func TestVerifyProof(t *testing.T) {
 	pub, _ := crypto.PublicKeyFromString("9a267cac764b1d860f1d587d0d5a61110c0c21bc6a57bdfdb8d4f2941e59fe709a017a32a599a35e81b91255d1b9d500f2427135a97d89a0a9431946d5db35d539bbe33f9f9b534c2cf88ef1a532f9d52a065a45221d18d6d4e6912680a5b58f")
 	proof, _ := ProofFromString("2fbbe418b7b12068b2cfe43138e02453ea0146b1345381c72061274483af580f1c47a3e626c4927431c5447346860084")
 	totalStake := int64(1000000000)
-	sortition := NewSortition()
-	sortition.AddToTotalStake(totalStake)
+	s := NewSortition()
+	s.AddToTotalStake(totalStake)
 
-	assert.True(t, sortition.VerifyProof(seed, proof, pub, totalStake/10))
-	assert.False(t, sortition.VerifyProof(seed, proof, pub, totalStake/30))
+	assert.Equal(t, s.TotalStake(), totalStake)
+	assert.True(t, s.VerifyProof(seed, proof, pub, totalStake/10))
+	assert.False(t, s.VerifyProof(seed, proof, pub, totalStake/30))
 }
 
 func TestSortitionMedian(t *testing.T) {

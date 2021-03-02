@@ -333,8 +333,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	stateHash := st.stateHash()
 	committeeHash := st.validatorSet.CommitteeHash()
 	timestamp := st.proposeNextBlockTime()
-	sortitionSig := st.signer.SignData(st.lastSortitionSeed[:])
-	newSortitionSeed, _ := sortition.SeedFromRawBytes(sortitionSig.RawBytes())
+	newSortitionSeed := st.lastSortitionSeed.Generate(st.signer)
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
@@ -383,11 +382,10 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 		return nil
 	}
 
-	/// There are two modules can commit a block: Consensus and Syncer.
+	/// There are two modules that can commit a block: Consensus and Syncer.
 	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
-	/// In the other hand, Syncer module receives new blocks from other peers and if we are behind them, he tries to commit them.
+	/// In the other hand, Syncer module receives new blocks from other peers and if we are behind them, it tries to commit them.
 	/// We should never have a fork in our blockchain. but if it happens here we can catch it.
-
 	if st.lastBlockHeight == height {
 		if block.Hash().EqualsTo(st.lastBlockHash) {
 			st.logger.Debug("This block committed before", "hash", block.Hash())

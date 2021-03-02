@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -45,7 +46,7 @@ func TestSignatureFromBytes(t *testing.T) {
 	assert.NoError(t, err)
 	require.True(t, sig1.EqualsTo(sig2))
 
-	inv, _ := hex.DecodeString("0102")
+	inv, _ := hex.DecodeString(strings.Repeat("ff", SignatureSize))
 	_, err = SignatureFromRawBytes(inv)
 	assert.Error(t, err)
 }
