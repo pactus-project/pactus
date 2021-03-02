@@ -7,6 +7,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/sortition"
 )
 
 // TODO: try to memorize hash for better performance
@@ -22,7 +23,7 @@ type headerData struct {
 	LastReceiptsHash crypto.Hash    `cbor:"6,keyasint"`
 	LastCommitHash   crypto.Hash    `cbor:"7,keyasint"`
 	CommitteeHash    crypto.Hash    `cbor:"8,keyasint"`
-	SortitionSeed    [48]byte       `cbor:"9,keyasint"`
+	SortitionSeed    sortition.Seed `cbor:"9,keyasint"`
 	ProposerAddress  crypto.Address `cbor:"10,keyasint"`
 }
 
@@ -34,13 +35,13 @@ func (h Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
 func (h Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
 func (h Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash }
 func (h Header) CommitteeHash() crypto.Hash      { return h.data.CommitteeHash }
-func (h Header) SortitionSeed() [48]byte         { return h.data.SortitionSeed }
+func (h Header) SortitionSeed() sortition.Seed   { return h.data.SortitionSeed }
 func (h Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
 
 func NewHeader(version int,
 	time time.Time,
 	txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
-	sortitionSeed [48]byte, proposerAddress crypto.Address) Header {
+	sortitionSeed sortition.Seed, proposerAddress crypto.Address) Header {
 
 	return Header{
 		data: headerData{

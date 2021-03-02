@@ -1,9 +1,7 @@
 package sortition
 
 import (
-	"encoding/hex"
 	"fmt"
-	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,9 +11,8 @@ import (
 func TestVRF(t *testing.T) {
 	_, pk, pv := crypto.GenerateTestKeyPair()
 	signer := crypto.NewSigner(pv)
-	seed := [48]byte{}
 	for i := 0; i < 100; i++ {
-		rand.Read(seed[:])
+		seed := GenerateRandomSeed()
 		fmt.Printf("index is : %x \n", seed)
 
 		vrf := NewVRF()
@@ -42,11 +39,10 @@ func TestEntropy(t *testing.T) {
 	max := int64(100)
 	vrf := NewVRF()
 	vrf.SetMax(max)
-	seed := [48]byte{}
 
 	entropy := make([]bool, max)
 	for i := int64(0); i < max; i++ {
-		rand.Read(seed[:])
+		seed := GenerateRandomSeed()
 
 		index, _ := vrf.Evaluate(seed, signer)
 		assert.LessOrEqual(t, index, max)
@@ -74,7 +70,7 @@ func TestGetIndex(t *testing.T) {
 	//
 	// 0x4e7f38846516b8a7 & 0x7fffffffffffffff = 0x4e7f38846516b8a7
 	// 0x4e7f38846516b8a7*1000000/0x7fffffffffffffff=613257.46
-	proof1, _ := hex.DecodeString("1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03")
+	proof1, _ := ProofFromString("1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03")
 	assert.Equal(t, vrf.getIndex(proof1), int64(613257))
 
 	// proof: 45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396
@@ -82,6 +78,6 @@ func TestGetIndex(t *testing.T) {
 	//
 	// 0xa41cded179292180 & 0x7fffffffffffffff = 0x241cded179292180
 	// 0x241cded179292180*1000000/0x7fffffffffffffff=282131.05419337929094808699
-	proof2, _ := hex.DecodeString("45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396")
+	proof2, _ := ProofFromString("45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396")
 	assert.Equal(t, vrf.getIndex(proof2), int64(282131))
 }

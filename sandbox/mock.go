@@ -6,6 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -69,7 +70,7 @@ func (m *MockSandbox) AddToSet(hash crypto.Hash, addr crypto.Address) error {
 	}
 	return nil
 }
-func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
+func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	return m.AcceptSortition
 }
 func (m *MockSandbox) CurrentHeight() int {

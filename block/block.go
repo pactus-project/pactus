@@ -3,12 +3,12 @@ package block
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -27,7 +27,7 @@ type blockData struct {
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
-	lastCommit *Commit, sortitionSeed [48]byte, proposer crypto.Address) Block {
+	lastCommit *Commit, sortitionSeed sortition.Seed, proposer crypto.Address) Block {
 
 	txIDsHash := txIDs.Hash()
 	header := NewHeader(version, timestamp,
@@ -161,8 +161,7 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		commit = nil
 		lastReceiptsHash = crypto.UndefHash
 	}
-	sortitionSeed := [48]byte{}
-	rand.Read(sortitionSeed[:])
+	sortitionSeed := sortition.GenerateRandomSeed()
 	block := MakeBlock(1, util.Now(), ids,
 		*lastBlockHash,
 		crypto.GenerateTestHash(),

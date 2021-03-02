@@ -29,7 +29,7 @@ func SignatureFromString(text string) (Signature, error) {
 }
 
 func SignatureFromRawBytes(data []byte) (Signature, error) {
-	if len(data) == 0 {
+	if len(data) != SignatureSize {
 		return Signature{}, fmt.Errorf("Invalid signature")
 	}
 	s := new(bls.Sign)

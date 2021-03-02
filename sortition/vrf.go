@@ -28,18 +28,18 @@ func (vrf *VRF) Max() int64 {
 }
 
 // Evaluate returns a random number between 0 and max with the proof
-func (vrf *VRF) Evaluate(seed [48]byte, signer crypto.Signer) (index int64, proof []byte) {
+func (vrf *VRF) Evaluate(seed Seed, signer crypto.Signer) (index int64, proof Proof) {
 	sig := signer.SignData(seed[:])
 
-	proof = sig.RawBytes()
+	proof, _ = ProofFromRawBytes(sig.RawBytes())
 	index = vrf.getIndex(proof)
 
 	return index, proof
 }
 
 // Verify ensures the proof is valid
-func (vrf *VRF) Verify(seed [48]byte, public crypto.PublicKey, proof []byte) (index int64, result bool) {
-	proofSig, err := crypto.SignatureFromRawBytes(proof)
+func (vrf *VRF) Verify(seed Seed, public crypto.PublicKey, proof Proof) (index int64, result bool) {
+	proofSig, err := crypto.SignatureFromRawBytes(proof[:])
 	if err != nil {
 		return 0, false
 	}
@@ -49,13 +49,13 @@ func (vrf *VRF) Verify(seed [48]byte, public crypto.PublicKey, proof []byte) (in
 		return 0, false
 	}
 
-	index = vrf.getIndex(proofSig.RawBytes())
+	index = vrf.getIndex(proof)
 
 	return index, true
 }
 
-func (vrf *VRF) getIndex(proof []byte) int64 {
-	h := crypto.HashH(proof)
+func (vrf *VRF) getIndex(proof Proof) int64 {
+	h := crypto.HashH(proof[:])
 
 	rnd64 := util.SliceToInt64(h.RawBytes())
 	rnd64 = rnd64 & 0x7fffffffffffffff

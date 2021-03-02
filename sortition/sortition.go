@@ -39,19 +39,19 @@ func (s *Sortition) TotalStake() int64 {
 	return s.vrf.Max()
 }
 
-func (s *Sortition) EvaluateSortition(seed [48]byte, signer crypto.Signer, threshold int64) []byte {
+func (s *Sortition) EvaluateSortition(seed Seed, signer crypto.Signer, threshold int64) (bool, Proof) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
 	index, proof := s.vrf.Evaluate(seed, signer)
 	if index > threshold {
-		return nil
+		return false, proof
 	}
 
-	return proof
+	return true, proof
 }
 
-func (s *Sortition) VerifyProof(seed [48]byte, proof []byte, public crypto.PublicKey, threshold int64) bool {
+func (s *Sortition) VerifyProof(seed Seed, proof Proof, public crypto.PublicKey, threshold int64) bool {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 

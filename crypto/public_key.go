@@ -29,7 +29,7 @@ func PublicKeyFromString(text string) (PublicKey, error) {
 }
 
 func PublicKeyFromRawBytes(data []byte) (PublicKey, error) {
-	if len(data) == 0 {
+	if len(data) != PublicKeySize {
 		return PublicKey{}, fmt.Errorf("Invalid public key")
 	}
 	pk := new(bls.PublicKey)

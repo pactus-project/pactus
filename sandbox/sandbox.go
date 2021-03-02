@@ -325,7 +325,7 @@ func (sb *SandboxConcrete) AppendNewBlock(hash crypto.Hash, height int) {
 	sb.recentBlocks.PushBack(hash, height)
 }
 
-func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
+func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 

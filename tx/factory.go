@@ -2,6 +2,7 @@ package tx
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
@@ -62,7 +63,7 @@ func NewBondTx(stamp crypto.Hash,
 func NewSortitionTx(stamp crypto.Hash,
 	seq int,
 	addr crypto.Address,
-	proof []byte) *Tx {
+	proof sortition.Proof) *Tx {
 	return &Tx{
 		data: txData{
 			Stamp:    stamp,
