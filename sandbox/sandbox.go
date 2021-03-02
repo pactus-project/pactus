@@ -16,16 +16,16 @@ import (
 type SandboxConcrete struct {
 	lk deadlock.RWMutex
 
-	store           store.StoreReader
-	sortition       *sortition.Sortition
-	validatorSet    validator.ValidatorSetReader
-	accounts        map[crypto.Address]*AccountStatus
-	validators      map[crypto.Address]*ValidatorStatus
-	recentBlocks    *linkedmap.LinkedMap
-	params          param.Params
-	totalAccounts   int
-	totalValidators int
-	changeToStake   int64
+	store            store.StoreReader
+	sortition        *sortition.Sortition
+	validatorSet     validator.ValidatorSetReader
+	accounts         map[crypto.Address]*AccountStatus
+	validators       map[crypto.Address]*ValidatorStatus
+	recentBlocks     *linkedmap.LinkedMap
+	params           param.Params
+	totalAccounts    int
+	totalValidators  int
+	totalStakeChange int64
 }
 
 type ValidatorStatus struct {
@@ -105,7 +105,7 @@ func (sb *SandboxConcrete) clear() {
 	sb.validators = make(map[crypto.Address]*ValidatorStatus)
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
-	sb.changeToStake = 0
+	sb.totalStakeChange = 0
 }
 
 func (sb *SandboxConcrete) Account(addr crypto.Address) *account.Account {
@@ -208,7 +208,7 @@ func (sb *SandboxConcrete) UpdateValidator(val *validator.Validator) {
 		sb.shouldPanicForUnknownAddress()
 	}
 
-	sb.changeToStake += val.Stake() - s.Validator.Stake()
+	sb.totalStakeChange += val.Stake() - s.Validator.Stake()
 	s.Validator = *val
 	s.Updated = true
 }
@@ -357,9 +357,9 @@ func (sb *SandboxConcrete) CommitteeSize() int {
 	return sb.params.CommitteeSize
 }
 
-func (sb *SandboxConcrete) RiseTotalStake() int64 {
+func (sb *SandboxConcrete) TotalStakeChange() int64 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.changeToStake
+	return sb.totalStakeChange
 }
