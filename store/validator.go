@@ -107,8 +107,8 @@ func (vs *validatorStore) updateValidator(val *validator.Validator) error {
 	}
 	if !vs.hasValidator(val.Address()) {
 		vs.total++
-		vs.valMap[val.Number()] = val
 	}
+	vs.valMap[val.Number()] = val
 
 	return tryPut(vs.db, validatorKey(val.Address()), data)
 }

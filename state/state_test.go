@@ -231,7 +231,7 @@ func TestCommitSandbox(t *testing.T) {
 		tState1.commitSandbox(0)
 
 		assert.True(t, tState1.store.HasValidator(addr))
-		assert.Equal(t, tState1.executionSandbox.RiseTotalStake(), int64(1))
+		assert.Equal(t, tState1.executionSandbox.TotalStakeChange(), int64(1))
 		assert.Equal(t, tState1.sortition.TotalStake(), int64(1))
 	})
 
@@ -257,7 +257,7 @@ func TestCommitSandbox(t *testing.T) {
 
 		val1, _ := tState1.store.Validator(tValSigner2.Address())
 		assert.Equal(t, val1.Stake(), val.Stake())
-		assert.Equal(t, tState1.executionSandbox.RiseTotalStake(), int64(2))
+		assert.Equal(t, tState1.executionSandbox.TotalStakeChange(), int64(2))
 	})
 
 	t.Run("Move valset", func(t *testing.T) {

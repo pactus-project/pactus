@@ -83,3 +83,21 @@ func TestValidatorByNumber(t *testing.T) {
 		assert.Nil(t, v)
 	})
 }
+
+func TestUpdateValidator(t *testing.T) {
+	path := util.TempDirPath()
+	store, _ := newValidatorStore(path)
+
+	val1, _ := validator.GenerateTestValidator(0)
+	assert.NoError(t, store.updateValidator(val1))
+
+	val2, _ := store.validatorByNumber(val1.Number())
+	assert.Equal(t, val1.Hash(), val2.Hash())
+
+	val3, _ := store.validator(val1.Address())
+	val3.AddToStake(10000)
+	assert.NoError(t, store.updateValidator(val3))
+
+	val4, _ := store.validatorByNumber(val1.Number())
+	assert.Equal(t, val4.Hash(), val3.Hash())
+}

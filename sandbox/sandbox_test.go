@@ -390,19 +390,23 @@ func TestChangeToStake(t *testing.T) {
 	_, pub2, _ := crypto.GenerateTestKeyPair()
 	val1 := tSandbox.MakeNewValidator(pub1)
 	val2 := tSandbox.MakeNewValidator(pub2)
+	val3 := tSandbox.Validator(tValSigners[0].Address())
 
 	val1.AddToStake(1000)
 	val2.AddToStake(2000)
-	tSandbox.UpdateValidator(val1)
+	val3.AddToStake(3000)
 
-	assert.Equal(t, tSandbox.RiseTotalStake(), int64(1000))
+	tSandbox.UpdateValidator(val1)
+	assert.Equal(t, tSandbox.TotalStakeChange(), int64(1000))
+
 	val1.AddToStake(500)
-	assert.Equal(t, tSandbox.RiseTotalStake(), int64(1000))
+	assert.Equal(t, tSandbox.TotalStakeChange(), int64(1000))
 
 	tSandbox.UpdateValidator(val1)
 	tSandbox.UpdateValidator(val2)
-	assert.Equal(t, tSandbox.RiseTotalStake(), int64(3500))
+	tSandbox.UpdateValidator(val3)
+	assert.Equal(t, tSandbox.TotalStakeChange(), int64(6500))
 
 	tSandbox.Clear()
-	assert.Equal(t, tSandbox.RiseTotalStake(), int64(0))
+	assert.Equal(t, tSandbox.TotalStakeChange(), int64(0))
 }

@@ -517,7 +517,7 @@ func (st *state) commitSandbox(round int) {
 		}
 	})
 
-	st.sortition.AddToTotalStake(st.executionSandbox.RiseTotalStake())
+	st.sortition.AddToTotalStake(st.executionSandbox.TotalStakeChange())
 }
 
 func (st *state) validateBlockTime(t time.Time) error {
