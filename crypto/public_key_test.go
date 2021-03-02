@@ -3,6 +3,7 @@ package crypto
 import (
 	"encoding/hex"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,7 +41,7 @@ func TestPublicKeyFromBytes(t *testing.T) {
 	assert.NoError(t, err)
 	require.True(t, pub1.EqualsTo(pub2))
 
-	inv, _ := hex.DecodeString("0102")
+	inv, _ := hex.DecodeString(strings.Repeat("ff", PublicKeySize))
 	_, err = PublicKeyFromRawBytes(inv)
 	assert.Error(t, err)
 }

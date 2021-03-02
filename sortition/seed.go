@@ -30,6 +30,12 @@ func SeedFromRawBytes(data []byte) (Seed, error) {
 	return s, nil
 }
 
+func (s Seed) Generate(signer crypto.Signer) Seed {
+	sig := signer.SignData(s[:])
+	newSeed, _ := SeedFromRawBytes(sig.RawBytes())
+	return newSeed
+}
+
 func (s Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
 	sig, _ := crypto.SignatureFromRawBytes(s[:])
 	return public.Verify(prevSeed[:], sig)
