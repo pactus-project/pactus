@@ -40,13 +40,12 @@ type state struct {
 	executionSandbox  *sandbox.SandboxConcrete
 	validatorSet      *validator.ValidatorSet
 	sortition         *sortition.Sortition
-	lastSortitionSeed [48]byte
+	lastSortitionSeed sortition.Seed
 	lastBlockHeight   int
 	lastBlockHash     crypto.Hash
 	lastReceiptsHash  crypto.Hash
 	lastCommit        *block.Commit
 	lastBlockTime     time.Time
-	sortitionSeed     [48]byte
 	logger            *logger.Logger
 }
 
@@ -138,6 +137,7 @@ func (st *state) tryLoadLastInfo() error {
 	st.lastBlockHash = b.Header().Hash()
 	st.lastCommit = &li.LastCommit
 	st.lastBlockTime = b.Header().Time()
+	st.lastSortitionSeed = b.Header().SortitionSeed()
 	st.lastReceiptsHash = li.LastReceiptHash
 
 	vals := make([]*validator.Validator, len(st.lastCommit.Committers()))
@@ -330,6 +330,8 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	stateHash := st.stateHash()
 	committeeHash := st.validatorSet.CommitteeHash()
 	timestamp := st.proposeNextBlockTime()
+	sortitionSig := st.signer.SignData(st.lastSortitionSeed[:])
+	newSortitionSeed, _ := sortition.SeedFromRawBytes(sortitionSig.RawBytes())
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
@@ -340,7 +342,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		stateHash,
 		st.lastReceiptsHash,
 		st.lastCommit,
-		st.sortitionSeed,
+		newSortitionSeed,
 		st.signer.Address())
 
 	return &block, nil
@@ -408,6 +410,10 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
+	// Validate sortition seed
+	if !block.Header().SortitionSeed().Validate(proposer.PublicKey(), st.lastSortitionSeed) {
+		return errors.Errorf(errors.ErrInvalidBlock, "Invalid sortition seed.")
+	}
 
 	ctrxs, err := st.executeBlock(block)
 	if err != nil {
@@ -417,6 +423,9 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 	if err := st.store.SaveBlock(block, st.lastBlockHeight+1); err != nil {
 		return err
 	}
+
+	// Commit changes and update the validator set
+	st.commitSandbox(commit.Round())
 
 	// Save txs and receipts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
@@ -431,16 +440,14 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 	st.lastBlockHeight++
 	st.lastBlockHash = block.Hash()
 	st.lastBlockTime = block.Header().Time()
+	st.lastSortitionSeed = block.Header().SortitionSeed()
 	st.lastReceiptsHash = receiptsMerkle.Root()
+	st.lastCommit = &commit
 
 	// Evaluate sortition before updating the validator set
 	if st.evaluateSortition() {
 		st.logger.Info("👏 This validator is chosen to be in the set", "address", st.signer.Address())
 	}
-
-	// Commit changes and update the validator set
-	st.commitSandbox(commit.Round())
-	st.lastCommit = &commit
 
 	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
 
@@ -475,8 +482,8 @@ func (st *state) evaluateSortition() bool {
 	}
 
 	//
-	proof := st.sortition.EvaluateSortition(st.lastSortitionSeed, st.signer, val.Stake())
-	if proof != nil {
+	ok, proof := st.sortition.EvaluateSortition(st.lastSortitionSeed, st.signer, val.Stake())
+	if ok {
 		//
 		trx := tx.NewSortitionTx(st.lastBlockHash, val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)

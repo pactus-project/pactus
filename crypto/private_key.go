@@ -42,7 +42,7 @@ func PrivateKeyFromSeed(seed []byte) (PrivateKey, error) {
 }
 
 func PrivateKeyFromRawBytes(data []byte) (PrivateKey, error) {
-	if len(data) == 0 {
+	if len(data) != PrivateKeySize {
 		return PrivateKey{}, fmt.Errorf("Invalid private key")
 	}
 	sc := new(bls.SecretKey)

@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
@@ -216,14 +217,6 @@ func TestSortitionSanityCheck(t *testing.T) {
 		assert.Error(t, trx.SanityCheck())
 	})
 
-	t.Run("Invalid proof", func(t *testing.T) {
-		trx, signer := GenerateTestSortitionTx()
-		pld := trx.data.Payload.(*payload.SortitionPayload)
-		pld.Proof = nil
-		signer.SignMsg(trx)
-		assert.Error(t, trx.SanityCheck())
-	})
-
 	t.Run("Invalid fee", func(t *testing.T) {
 		trx, signer := GenerateTestSortitionTx()
 		trx.data.Fee = 1
@@ -305,13 +298,13 @@ func TestBondSignBytes(t *testing.T) {
 func TestSortitionSignBytes(t *testing.T) {
 	h := crypto.GenerateTestHash()
 	signer := crypto.GenerateTestSigner()
-	proof := [48]byte{}
+	proof := sortition.GenerateRandomProof()
 
-	trx1 := NewSortitionTx(h, 1, signer.Address(), proof[:])
+	trx1 := NewSortitionTx(h, 1, signer.Address(), proof)
 	signer.SignMsg(trx1)
 
-	trx2 := NewSortitionTx(h, 1, signer.Address(), proof[:])
-	trx3 := NewSortitionTx(h, 2, signer.Address(), proof[:])
+	trx2 := NewSortitionTx(h, 1, signer.Address(), proof)
+	trx3 := NewSortitionTx(h, 2, signer.Address(), proof)
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())

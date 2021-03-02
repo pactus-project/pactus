@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -14,9 +15,9 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	stamp40 := crypto.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(40, stamp40)
-	proof1 := tValSigner.SignData(stamp40.RawBytes()).RawBytes()
+	proof1 := sortition.GenerateRandomProof()
 
-	t.Run("Should fail, Bondinf period", func(t *testing.T) {
+	t.Run("Should fail, Bonding period", func(t *testing.T) {
 		trx := tx.NewSortitionTx(stamp40, 1, tValSigner.Address(), proof1)
 
 		assert.Error(t, exe.Execute(trx))

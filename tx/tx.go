@@ -7,6 +7,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
@@ -268,8 +269,8 @@ func GenerateTestBondTx() (*Tx, crypto.Signer) {
 func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
 	h := crypto.GenerateTestHash()
 	s := crypto.GenerateTestSigner()
-	proof := [48]byte{}
-	tx := NewSortitionTx(h, 110, s.Address(), proof[:])
+	proof := sortition.GenerateRandomProof()
+	tx := NewSortitionTx(h, 110, s.Address(), proof)
 	s.SignMsg(tx)
 	return tx, s
 }
