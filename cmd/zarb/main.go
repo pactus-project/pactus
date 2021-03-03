@@ -22,7 +22,8 @@ func zarb() *cli.Cli {
 		k.Command("change-auth", "Change the passphrase of a keyfile", key.ChangeAuth())
 	})
 	app.Command("tx", "Create raw transaction", func(k *cli.Cmd) {
-		k.Command("bond", "Generate raw bonding transaction.", tx.BondTx())
+		k.Command("bond", "Generate raw bond transaction", tx.BondTx())
+		k.Command("send", "Generate raw send transaction", tx.SendTx())
 	})
 	app.Command("version", "Print the zarb version", Version())
 	return app
