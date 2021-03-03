@@ -10,7 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/txpool"
 )
 
-type factory struct {
+type zarbServer struct {
 	state  state.StateReader
 	store  store.StoreReader
 	txPool txpool.TxPool
@@ -18,27 +18,27 @@ type factory struct {
 	logger *logger.Logger
 }
 
-func (f factory) GetBlockHeight(args ZarbServer_getBlockHeight) error {
+func (zs zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 	s, _ := args.Params.Hash()
 	h, err := crypto.HashFromString(string(s))
 	if err != nil {
 		return err
 	}
-	num, err := f.store.BlockHeight(h)
+	num, err := zs.store.BlockHeight(h)
 	if err != nil {
-		f.logger.Debug("Error on retriving block number", "err", err)
+		zs.logger.Debug("Error on retriving block number", "err", err)
 		return err
 	}
 	args.Results.SetResult(uint64(num))
 	return nil
 }
 
-func (f factory) GetBlock(args ZarbServer_getBlock) error {
+func (zs zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	h := args.Params.Height()
 	v := args.Params.Verbosity()
-	b, err := f.store.Block(int(h))
+	b, err := zs.store.Block(int(h))
 	if err != nil {
-		f.logger.Debug("Error on retriving block", "height", h, "err", err)
+		zs.logger.Debug("Error on retriving block", "height", h, "err", err)
 		return err
 	}
 
@@ -51,14 +51,14 @@ func (f factory) GetBlock(args ZarbServer_getBlock) error {
 		return err
 	}
 	if v == 1 {
-		if err := f.ToVerboseBlock(b, &res); err != nil {
+		if err := zs.ToVerboseBlock(b, &res); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (f factory) ToVerboseBlock(block *block.Block, res *BlockResult) error {
+func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error {
 	cb, _ := res.NewBlock()
 	ch, _ := cb.NewHeader()
 	ctxs, _ := cb.NewTxs()

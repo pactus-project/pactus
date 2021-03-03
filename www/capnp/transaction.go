@@ -5,13 +5,13 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
+func (zs zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	s, _ := args.Params.Id()
 	h, err := crypto.HashFromString(string(s))
 	if err != nil {
 		return err
 	}
-	ctx, err := f.store.Transaction(h)
+	ctx, err := zs.store.Transaction(h)
 	if err != nil {
 		return err
 	}
@@ -36,7 +36,7 @@ func (f factory) GetTransaction(args ZarbServer_getTransaction) error {
 }
 
 //Send the raw transaction
-func (f factory) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
+func (zs zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
 	rawTx, _ := args.Params.RawTx()
 
 	var tx tx.Tx
@@ -49,7 +49,7 @@ func (f factory) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
 		return err
 	}
 
-	if err := f.txPool.AppendTxAndBroadcast(&tx); err != nil {
+	if err := zs.txPool.AppendTxAndBroadcast(&tx); err != nil {
 		return err
 	}
 

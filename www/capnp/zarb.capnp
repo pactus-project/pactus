@@ -92,8 +92,8 @@ struct SendTransactionResult {
 
 interface ZarbServer {
   getBlock             @0 (height: UInt64, verbosity: Int32)       -> (result :BlockResult);
-  getTransaction       @1 (id: Data, verbosity: Int32)             -> (result :TransactionResult);
-  getBlockHeight       @2 (hash: Data)                             -> (result :UInt64);
+  getBlockHeight       @1 (hash: Data)                             -> (result :UInt64);
+  getTransaction       @2 (id: Data, verbosity: Int32)             -> (result :TransactionResult);
   getAccount           @3 (address: Data, verbosity: Int32)        -> (result :AccountResult);
   getValidator         @4 (address: Data, verbosity: Int32)        -> (result :ValidatorResult);
   getBlockchainInfo    @5 ()                                       -> (result :BlockchainResult);
