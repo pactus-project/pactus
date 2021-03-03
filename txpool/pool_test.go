@@ -36,7 +36,7 @@ func setup(t *testing.T) {
 	tPool = p.(*txPool)
 }
 
-func shouldPublishTransaction(t *testing.T, id crypto.Hash) {
+func shouldPublishTransaction(t *testing.T, id tx.ID) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -184,4 +184,24 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 	tPool.Recheck()
 	assert.Zero(t, tPool.Size())
+}
+
+func TestBroadcastTxs(t *testing.T) {
+	setup(t)
+
+	stamp := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(88, stamp)
+	ids := make([]tx.ID, 5)
+
+	for i := 0; i < 5; i++ {
+		a, _, _ := crypto.GenerateTestKeyPair()
+		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
+		tAcc1Signer.SignMsg(trx)
+		assert.NoError(t, tPool.AppendTx(trx))
+		ids[i] = trx.ID()
+	}
+
+	tPool.BroadcastTxs(ids)
+
+	shouldPublishTransaction(t, ids[0])
 }

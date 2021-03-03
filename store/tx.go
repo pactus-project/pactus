@@ -3,7 +3,6 @@ package store
 import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -11,7 +10,7 @@ var (
 	txPrefix = []byte{0x01}
 )
 
-func txKey(hash crypto.Hash) []byte { return append(txPrefix, hash.RawBytes()...) }
+func txKey(id tx.ID) []byte { return append(txPrefix, id.RawBytes()...) }
 
 type txStore struct {
 	db *leveldb.DB
@@ -47,8 +46,8 @@ func (ts *txStore) saveTx(ctrs tx.CommittedTx) error {
 	return nil
 }
 
-func (ts *txStore) tx(hash crypto.Hash) (*tx.CommittedTx, error) {
-	txKey := txKey(hash)
+func (ts *txStore) tx(id tx.ID) (*tx.CommittedTx, error) {
+	txKey := txKey(id)
 	data, err := tryGet(ts.db, txKey)
 	if err != nil {
 		return nil, err

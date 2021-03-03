@@ -319,12 +319,14 @@ func TestQueryTransaction(t *testing.T) {
 	trx1, _ := tx.GenerateTestBondTx()
 	trx2, _ := tx.GenerateTestSendTx()
 	trx3, _ := tx.GenerateTestSendTx()
+	trx4, _ := tx.GenerateTestSendTx()
 
 	// Alice has trx1 in his cache
 	tAliceSync.cache.AddTransaction(trx1)
 	tAliceSync.cache.AddTransaction(trx3)
+	tAliceSync.cache.AddTransaction(trx4)
 	tBobSync.cache.AddTransaction(trx2)
-	msg := message.NewQueryTransactionsMessage(tAlicePeerID, []crypto.Hash{trx2.ID(), trx3.ID()})
+	msg := message.NewQueryTransactionsMessage(tAlicePeerID, []crypto.Hash{trx2.ID(), trx3.ID(), trx4.ID()})
 
 	t.Run("Alice should not send query transaction message because she is not an active validator", func(t *testing.T) {
 		tAliceBroadcastCh <- msg

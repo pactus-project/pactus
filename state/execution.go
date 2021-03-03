@@ -16,7 +16,7 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 	for i := 0; i < len(ids); i++ {
 		trx := st.txPool.PendingTx(ids[i])
 		if trx == nil {
-			return nil, errors.Errorf(errors.ErrInvalidBlock, "Transaction not found")
+			return nil, errors.Errorf(errors.ErrInvalidBlock, "Transaction not found: %s", ids[i])
 		}
 		// Only first transaction should be subsidy transaction
 		IsMintbaseTx := (i == 0)

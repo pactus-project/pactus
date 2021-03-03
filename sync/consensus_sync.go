@@ -3,10 +3,10 @@ package sync
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -53,7 +53,7 @@ func (cs *ConsensusSync) BroadcastQueryVotes(height, round int) {
 	cs.publishFn(msg)
 }
 
-func (cs *ConsensusSync) BroadcastQueryTransaction(ids []crypto.Hash) {
+func (cs *ConsensusSync) BroadcastQueryTransaction(ids []tx.ID) {
 	msg := message.NewQueryTransactionsMessage(cs.selfID, ids)
 	cs.publishFn(msg)
 }

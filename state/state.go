@@ -310,11 +310,14 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		st.logger.Error("Probably the node is shutting down.")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "No subsidy transaction")
 	}
-	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
+	if err := st.txPool.AppendTx(subsidyTx); err != nil {
 		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
 		return nil, err
 	}
 	txIDs.Prepend(subsidyTx.ID())
+
+	// Broadcast all transaction
+	st.txPool.BroadcastTxs(txIDs.IDs())
 
 	stateHash := st.stateHash()
 	committeeHash := st.validatorSet.CommitteeHash()

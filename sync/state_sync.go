@@ -3,7 +3,6 @@ package sync
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
@@ -260,14 +259,14 @@ func (ss *StateSync) ProcessTransactionsPayload(pld *payload.TransactionsPayload
 
 	for _, trx := range pld.Transactions {
 		if err := ss.txPool.AppendTx(trx); err != nil {
-			ss.logger.Debug("Peer send us an invalid transaction", "tx", trx, "err", err)
+			ss.logger.Debug("Cannot append transaction", "tx", trx, "err", err)
 
 			// TODO: set peer as bad peer?
 		}
 	}
 }
 
-func (ss *StateSync) prepareTransactions(ids []crypto.Hash) []*tx.Tx {
+func (ss *StateSync) prepareTransactions(ids []tx.ID) []*tx.Tx {
 	trxs := make([]*tx.Tx, 0, len(ids))
 
 	for _, id := range ids {

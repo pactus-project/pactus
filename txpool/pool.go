@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
@@ -69,8 +68,8 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 		return err
 	}
 
-	go func(trx *tx.Tx) {
-		msg := message.NewTransactionsMessage([]*tx.Tx{trx})
+	go func(_trx *tx.Tx) {
+		msg := message.NewTransactionsMessage([]*tx.Tx{_trx})
 		pool.broadcastCh <- msg
 	}(trx)
 
@@ -117,14 +116,14 @@ func (pool *txPool) checkTx(trx *tx.Tx) error {
 	return nil
 }
 
-func (pool *txPool) RemoveTx(id crypto.Hash) {
+func (pool *txPool) RemoveTx(id tx.ID) {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
 	pool.pendings.Remove(id)
 }
 
-func (pool *txPool) PendingTx(id crypto.Hash) *tx.Tx {
+func (pool *txPool) PendingTx(id tx.ID) *tx.Tx {
 	pool.lk.Lock()
 
 	val, found := pool.pendings.Get(id)
@@ -137,7 +136,7 @@ func (pool *txPool) PendingTx(id crypto.Hash) *tx.Tx {
 	pool.logger.Debug("Request transaction from peers", "id", id)
 	pool.lk.Unlock()
 
-	msg := message.NewOpaqueQueryTransactionsMessage([]crypto.Hash{id})
+	msg := message.NewOpaqueQueryTransactionsMessage([]tx.ID{id})
 	pool.broadcastCh <- msg
 
 	pool.appendTxCh = make(chan *tx.Tx, 100)
@@ -175,7 +174,7 @@ func (pool *txPool) AllTransactions() []*tx.Tx {
 	return trxs
 }
 
-func (pool *txPool) HasTx(id crypto.Hash) bool {
+func (pool *txPool) HasTx(id tx.ID) bool {
 	pool.lk.RLock()
 	defer pool.lk.RUnlock()
 
@@ -202,6 +201,27 @@ func (pool *txPool) Recheck() {
 			pool.pendings.Remove(trx.ID())
 		}
 	}
+}
+
+func (pool *txPool) BroadcastTxs(ids []tx.ID) {
+	pool.lk.Lock()
+	defer pool.lk.Unlock()
+
+	trxs := make([]*tx.Tx, len(ids))
+	for i, id := range ids {
+		val, found := pool.pendings.Get(id)
+		if !found {
+			pool.logger.Error("Try broadcast a transaction which is not in pool", "id", id)
+			return
+		}
+
+		trxs[i] = val.(*tx.Tx)
+	}
+
+	go func(_trxs []*tx.Tx) {
+		msg := message.NewTransactionsMessage(_trxs)
+		pool.broadcastCh <- msg
+	}(trxs)
 }
 
 func (pool *txPool) Fingerprint() string {

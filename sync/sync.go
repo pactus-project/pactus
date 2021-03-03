@@ -18,6 +18,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -448,6 +449,7 @@ func (syncer *synchronizer) isPeerActiveValidator(id peer.ID) bool {
 
 	addr := p.PublicKey().Address()
 	valSet := syncer.state.ValidatorSet()
+
 	return valSet.Contains(addr)
 }
 
@@ -459,23 +461,22 @@ func (syncer *synchronizer) isThisActiveValidator() bool {
 
 // queryTransactions queries for a missed transactions if we don't have it in the cache
 // Only active validators can send this messsage
-func (syncer *synchronizer) queryTransactions(ids []crypto.Hash) {
-
+func (syncer *synchronizer) queryTransactions(ids []tx.ID) {
+	missed := []crypto.Hash{}
 	for i, id := range ids {
 		trx := syncer.cache.GetTransaction(id)
 		if trx != nil {
 			if err := syncer.txPool.AppendTx(trx); err != nil {
 				syncer.logger.Warn("Query for an invalid transaction", "tx", trx)
 			}
-
-			ids = append(ids[:i], ids[i+1:]...)
-
+		} else {
+			missed = append(missed, ids[i])
 		}
 	}
 
-	if len(ids) > 0 {
+	if len(missed) > 0 {
 		if syncer.isThisActiveValidator() {
-			syncer.consensusSync.BroadcastQueryTransaction(ids)
+			syncer.consensusSync.BroadcastQueryTransaction(missed)
 		}
 	}
 }

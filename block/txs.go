@@ -6,6 +6,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
+	"github.com/zarbchain/zarb-go/tx"
 )
 
 type TxIDs struct {
@@ -13,22 +14,22 @@ type TxIDs struct {
 }
 
 type txIDsData struct {
-	IDs []crypto.Hash `cbor:"1,keyasint"`
+	IDs []tx.ID `cbor:"1,keyasint"`
 }
 
 func NewTxIDs() TxIDs {
 	return TxIDs{
 		data: txIDsData{
-			IDs: make([]crypto.Hash, 0),
+			IDs: make([]tx.ID, 0),
 		},
 	}
 }
-func (txs *TxIDs) Append(id crypto.Hash) {
+func (txs *TxIDs) Append(id tx.ID) {
 	txs.data.IDs = append(txs.data.IDs, id)
 }
 
-func (txs *TxIDs) Prepend(id crypto.Hash) {
-	ids := make([]crypto.Hash, len(txs.data.IDs)+1)
+func (txs *TxIDs) Prepend(id tx.ID) {
+	ids := make([]tx.ID, len(txs.data.IDs)+1)
 	ids[0] = id
 	copy(ids[1:], txs.data.IDs)
 	txs.data.IDs = ids
@@ -39,7 +40,7 @@ func (txs TxIDs) Hash() crypto.Hash {
 	return merkle.Root()
 }
 
-func (txs TxIDs) IDs() []crypto.Hash {
+func (txs TxIDs) IDs() []tx.ID {
 	return txs.data.IDs
 }
 
