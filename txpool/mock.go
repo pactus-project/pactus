@@ -21,7 +21,7 @@ func MockingTxPool() *MockTxPool {
 func (m *MockTxPool) SetSandbox(sandbox sandbox.Sandbox) {
 
 }
-func (m *MockTxPool) PendingTx(id crypto.Hash) *tx.Tx {
+func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	for _, t := range m.Txs {
 		if t.ID().EqualsTo(id) {
 			return t
@@ -30,7 +30,7 @@ func (m *MockTxPool) PendingTx(id crypto.Hash) *tx.Tx {
 	return nil
 }
 
-func (m *MockTxPool) HasTx(id crypto.Hash) bool {
+func (m *MockTxPool) HasTx(id tx.ID) bool {
 	for _, t := range m.Txs {
 		if t.ID().EqualsTo(id) {
 			return true
@@ -65,4 +65,7 @@ func (m *MockTxPool) RemoveTx(hash crypto.Hash) {
 
 func (m *MockTxPool) AllTransactions() []*tx.Tx {
 	return m.Txs
+}
+
+func (m *MockTxPool) BroadcastTxs([]tx.ID) {
 }

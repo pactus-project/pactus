@@ -1,15 +1,15 @@
 package txpool
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
 type TxPoolReader interface {
 	AllTransactions() []*tx.Tx
-	PendingTx(id crypto.Hash) *tx.Tx
-	HasTx(id crypto.Hash) bool
+	PendingTx(id tx.ID) *tx.Tx
+	BroadcastTxs(ids []tx.ID)
+	HasTx(id tx.ID) bool
 	Size() int
 
 	Fingerprint() string
@@ -21,6 +21,6 @@ type TxPool interface {
 	SetSandbox(sandbox sandbox.Sandbox)
 	AppendTx(tx *tx.Tx) error
 	AppendTxAndBroadcast(trx *tx.Tx) error
-	RemoveTx(id crypto.Hash)
+	RemoveTx(id tx.ID)
 	Recheck()
 }

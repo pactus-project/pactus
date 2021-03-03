@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 )
+
 //
 // Some thoughts about this structure:
 //

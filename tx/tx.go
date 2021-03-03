@@ -10,10 +10,12 @@ import (
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
+type ID = crypto.Hash
+
 type Tx struct {
 	data txData
 
-	memorizedHash *crypto.Hash
+	memorizedID   *ID
 	sanityChecked bool
 }
 
@@ -227,13 +229,13 @@ func (tx Tx) SignBytes() []byte {
 	return bz
 }
 
-func (tx *Tx) ID() crypto.Hash {
-	if tx.memorizedHash == nil {
-		hash := crypto.HashH(tx.SignBytes())
-		tx.memorizedHash = &hash
+func (tx *Tx) ID() ID {
+	if tx.memorizedID == nil {
+		id := crypto.HashH(tx.SignBytes())
+		tx.memorizedID = &id
 	}
 
-	return *tx.memorizedHash
+	return *tx.memorizedID
 }
 
 func (tx *Tx) IsMintbaseTx() bool {

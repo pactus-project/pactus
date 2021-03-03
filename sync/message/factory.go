@@ -112,11 +112,11 @@ func NewProposalMessage(proposal *vote.Proposal) *Message {
 	}
 }
 
-func NewOpaqueQueryTransactionsMessage(ids []crypto.Hash) *Message {
+func NewOpaqueQueryTransactionsMessage(ids []tx.ID) *Message {
 	return NewQueryTransactionsMessage("", ids)
 }
 
-func NewQueryTransactionsMessage(querier peer.ID, ids []crypto.Hash) *Message {
+func NewQueryTransactionsMessage(querier peer.ID, ids []tx.ID) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeQueryTransactions,

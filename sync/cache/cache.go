@@ -31,7 +31,7 @@ func commitKey(hash crypto.Hash) key {
 	copy(k[1:], hash.RawBytes())
 	return k
 }
-func txKey(id crypto.Hash) key {
+func txKey(id tx.ID) key {
 	var k key
 	k[0] = txPrefix
 	copy(k[1:], id.RawBytes())
@@ -95,7 +95,7 @@ func (c *Cache) AddCommit(commit *block.Commit) {
 	}
 }
 
-func (c *Cache) GetTransaction(id crypto.Hash) *tx.Tx {
+func (c *Cache) GetTransaction(id tx.ID) *tx.Tx {
 	i, ok := c.cache.Get(txKey(id))
 	if ok {
 		return i.(*tx.Tx)

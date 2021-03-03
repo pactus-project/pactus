@@ -19,12 +19,12 @@ type Receipt struct {
 }
 type receiptData struct {
 	Status    int         `cbor:"1,keyasint"`
-	TxID      crypto.Hash `cbor:"2,keyasint"`
+	TxID      ID          `cbor:"2,keyasint"`
 	BlockHash crypto.Hash `cbor:"3,keyasint"`
 }
 
 func (r *Receipt) Status() int            { return r.data.Status }
-func (r *Receipt) TxID() crypto.Hash      { return r.data.TxID }
+func (r *Receipt) TxID() ID               { return r.data.TxID }
 func (r *Receipt) BlockHash() crypto.Hash { return r.data.BlockHash }
 
 func (r *Receipt) Hash() crypto.Hash {

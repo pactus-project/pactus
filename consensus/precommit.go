@@ -28,7 +28,7 @@ func (cs *consensus) enterPrecommit(round int) {
 		return
 	}
 
-	if blockHash == nil && cs.isPrepared {
+	if roundProposal != nil && blockHash == nil {
 		// We have a valid proposal, but there is no consensus about it
 		//
 		// If we are behind the partition, it might be easy to find it here
@@ -49,7 +49,7 @@ func (cs *consensus) enterPrecommit(round int) {
 		}
 
 		if count > len(votes)/3 {
-			cs.logger.Debug("Precommit: Broadcst proposal.")
+			cs.logger.Debug("Precommit: Broadcst proposal.", "proposal", roundProposal)
 			cs.broadcastProposal(roundProposal)
 			return
 		}
