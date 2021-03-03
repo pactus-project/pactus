@@ -211,7 +211,7 @@ func (pool *txPool) BroadcastTxs(ids []tx.ID) {
 	for i, id := range ids {
 		val, found := pool.pendings.Get(id)
 		if !found {
-			pool.logger.Error("Try broadcast a transaction which is not in pool", "id", id)
+			pool.logger.Error("Try to broadcast a transaction which is not in the pool", "id", id)
 			return
 		}
 
