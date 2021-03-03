@@ -91,13 +91,13 @@ func BondTx() func(c *cli.Cmd) {
 			}
 
 			if *bonderOpt == "" {
-				cmd.PrintWarnMsg("bonder is not defined.")
+				cmd.PrintWarnMsg("Bonder address is not defined.")
 				c.PrintHelp()
 				return
 			}
 			bonder, err = crypto.AddressFromString(*bonderOpt)
 			if err != nil {
-				cmd.PrintErrorMsg("Bonder's address is wrong: %v", err)
+				cmd.PrintErrorMsg("Bonder address is not valid: %v", err)
 				return
 			}
 
