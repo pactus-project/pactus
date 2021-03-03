@@ -21,7 +21,7 @@ type Server struct {
 	ctx      context.Context
 	config   *Config
 	router   *mux.Router
-	server   capnp.ZarbServer
+	capnp    capnp.ZarbServer
 	listener net.Listener
 	logger   *logger.Logger
 }
@@ -45,13 +45,13 @@ func (s *Server) StartServer(capnpServer string) error {
 	}
 
 	conn := rpc.NewConn(rpc.StreamTransport(c))
-	s.server = capnp.ZarbServer{Client: conn.Bootstrap(s.ctx)}
+	s.capnp = capnp.ZarbServer{Client: conn.Bootstrap(s.ctx)}
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
 	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)
 	s.router.HandleFunc("/block/height/{height}", s.GetBlockHandler)
 	s.router.HandleFunc("/block_height/hash/{hash}", s.GetBlockHeightHandler)
-	s.router.HandleFunc("/transaction/hash/{hash}", s.GetTransactionHandler)
+	s.router.HandleFunc("/transaction/id/{hash}", s.GetTransactionHandler)
 	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	s.router.HandleFunc("/send_raw_transaction/{data}", s.SendRawTransactionHandler)
@@ -80,8 +80,8 @@ func (s *Server) StartServer(capnpServer string) error {
 func (s *Server) StopServer() {
 	s.ctx.Done()
 
-	if s.server.Client != nil {
-		s.server.Client.Close()
+	if s.capnp.Client != nil {
+		s.capnp.Client.Close()
 	}
 }
 

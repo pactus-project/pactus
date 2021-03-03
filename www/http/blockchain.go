@@ -12,7 +12,7 @@ import (
 )
 
 func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.server.GetBlockchainInfo(s.ctx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
+	res := s.capnp.GetBlockchainInfo(s.ctx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
 		return nil
 	}).Result()
 
@@ -27,7 +27,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.server.GetNetworkInfo(s.ctx, func(p capnp.ZarbServer_getNetworkInfo_Params) error {
+	res := s.capnp.GetNetworkInfo(s.ctx, func(p capnp.ZarbServer_getNetworkInfo_Params) error {
 		return nil
 	}).Result()
 	st, err := res.Struct()

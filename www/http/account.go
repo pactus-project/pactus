@@ -10,7 +10,7 @@ import (
 
 // GetAccountHandler returns a handler to get account by address
 func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.server.GetAccount(s.ctx, func(p capnp.ZarbServer_getAccount_Params) error {
+	b := s.capnp.GetAccount(s.ctx, func(p capnp.ZarbServer_getAccount_Params) error {
 		vars := mux.Vars(r)
 		if err := p.SetAddress([]byte(vars["address"])); err != nil {
 			return err
