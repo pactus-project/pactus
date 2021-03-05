@@ -7,12 +7,12 @@ require (
 	github.com/davidlazar/go-crypto v0.0.0-20190912175916-7055855a373f // indirect
 	github.com/dchest/blake2b v1.0.0
 	github.com/fxamacker/cbor/v2 v2.2.0
-	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
+	github.com/golang/protobuf v1.4.3
 	github.com/golang/snappy v0.0.2-0.20190904063534-ff6b7dc882cf // indirect
 	github.com/google/btree v1.0.0
-	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/gorilla/handlers v1.5.0
 	github.com/gorilla/mux v1.7.4
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.3.0
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/herumi/bls-go-binary v1.0.1-0.20200729052526-ef6a150a928b
 	github.com/ipfs/go-log/v2 v2.1.2-0.20200626104915-0016c0b4b3e4 // indirect
@@ -32,17 +32,18 @@ require (
 	github.com/peterh/liner v1.2.1
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1
+	github.com/rakyll/statik v0.1.7
 	github.com/sasha-s/go-deadlock v0.2.0
 	github.com/sirupsen/logrus v1.7.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/syndtr/goleveldb v1.0.1-0.20190923125748-758128399b1d
 	github.com/tinylib/msgp v1.1.5 // indirect
 	github.com/tyler-smith/go-bip39 v1.1.0
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
-	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
-	golang.org/x/sys v0.0.0-20201009025420-dfb3f7c4e634 // indirect
-	google.golang.org/protobuf v1.25.0 // indirect
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
+	google.golang.org/genproto v0.0.0-20210224155714-063164c882e6
+	google.golang.org/grpc v1.36.0
+	google.golang.org/protobuf v1.25.1-0.20201208041424-160c7477e0e8
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	honnef.co/go/tools v0.0.1-2020.1.6 // indirect
 	zombiezen.com/go/capnproto2 v2.18.0+incompatible

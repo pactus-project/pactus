@@ -1,0 +1,85 @@
+syntax = 'proto3';
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+
+package zarb;
+
+service Zarb {
+  rpc GetBlock(BlockRequest) returns(BlockResponse)                                         { option (google.api.http).get = "/api/block/height/{height}";}
+  rpc GetBlockHeight(BlockHeightRequest) returns(BlockHeightResponse)                       { option (google.api.http).get = "/api/block_height/{hash}";}
+  rpc GetTransaction(TransactionRequest) returns (TransactionResponse)                      { option (google.api.http).get = "/api/tranaction/id/{id}";}
+  rpc GetAccount(AccountRequest) returns (AccountResponse)                                  { option (google.api.http).get = "/api/account/address/{address}";}
+  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validator/address/{address}";}
+  rpc GetBlockchainInfo(BlockchainInfoRequest) returns (BlockchainInfoResponse)             { option (google.api.http).get = "/api/blockchain";}
+  rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse)                      { option (google.api.http).get = "/api/network";}
+  rpc SendRawTransaction(SendRawTransactionRequest) returns(SendRawTransactionResponse)     { option (google.api.http).put = "/api/send_raw_transaction/{data}";};
+}
+
+
+message AccountRequest {
+	string address = 1;
+  uint32 verbosity = 2;
+}
+
+message AccountResponse {
+  bytes data = 1;
+  string json = 2;
+}
+
+message ValidatorRequest {
+	string address = 1;
+  uint32 verbosity = 2;
+}
+
+message ValidatorResponse {
+  bytes data = 1;
+  string json = 2;
+}
+
+message BlockRequest {
+  int64 height = 1;
+  uint32 verbosity = 2;
+}
+
+message BlockResponse {
+  string hash = 1;
+  google.protobuf.Timestamp block_time = 2;
+  bytes data = 3;
+  string json = 4;
+}
+
+message BlockHeightRequest {
+  string hash = 1;
+}
+
+message BlockHeightResponse {
+}
+
+message BlockchainInfoRequest {
+}
+
+message BlockchainInfoResponse {
+}
+
+message NetworkInfoRequest {
+}
+
+message NetworkInfoResponse {
+}
+
+message TransactionRequest {
+  string id = 1;
+}
+
+message TransactionResponse {
+}
+
+message SendRawTransactionRequest {
+  string data = 1;
+}
+
+message SendRawTransactionResponse {
+}
