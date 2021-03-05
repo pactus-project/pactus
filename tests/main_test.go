@@ -67,6 +67,7 @@ func TestMain(m *testing.M) {
 			tConfigs[i].Http.Enable = false
 			tConfigs[i].Capnp.Enable = false
 		}
+		tConfigs[i].GRPC.Enable = false
 
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
@@ -92,13 +93,11 @@ func TestMain(m *testing.M) {
 	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
 
-	var err error
 	t := &testing.T{}
-
 	for i := 0; i < nodeCount; i++ {
 		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
-		if tNodes[i].Start() != nil {
-			panic(fmt.Sprintf("Error on starting the node: %v", err))
+		if err := tNodes[i].Start(); err != nil {
+			panic(fmt.Sprintf("Error on starting the node: %v", err.Error()))
 		}
 	}
 

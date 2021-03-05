@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.server.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
+	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
 		vars := mux.Vars(r)
 		height, err := strconv.Atoi(vars["height"])
 		if err != nil {
@@ -47,7 +47,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.server.GetBlockHeight(s.ctx, func(p capnp.ZarbServer_getBlockHeight_Params) error {
+	res := s.capnp.GetBlockHeight(s.ctx, func(p capnp.ZarbServer_getBlockHeight_Params) error {
 		vars := mux.Vars(r)
 		if err := p.SetHash([]byte(vars["hash"])); err != nil {
 			return err

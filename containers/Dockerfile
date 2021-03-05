@@ -1,5 +1,5 @@
 
-FROM alpine:3.12 as builder
+FROM alpine:3.13 as builder
 
 ENV WORKING_DIR /zarb
 

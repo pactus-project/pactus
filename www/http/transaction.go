@@ -12,7 +12,7 @@ import (
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.server.GetTransaction(s.ctx, func(p capnp.ZarbServer_getTransaction_Params) error {
+	b := s.capnp.GetTransaction(s.ctx, func(p capnp.ZarbServer_getTransaction_Params) error {
 		vars := mux.Vars(r)
 		if err := p.SetId([]byte(vars["hash"])); err != nil {
 			return err
@@ -57,8 +57,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Request) {
-
-	txRes := s.server.SendRawTransaction(s.ctx, func(p capnp.ZarbServer_sendRawTransaction_Params) error {
+	txRes := s.capnp.SendRawTransaction(s.ctx, func(p capnp.ZarbServer_sendRawTransaction_Params) error {
 		vars := mux.Vars(r)
 		d, err := hex.DecodeString(vars["data"])
 		if err != nil {

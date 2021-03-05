@@ -16,6 +16,7 @@ import (
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/zarbchain/zarb-go/www/grpc"
 	"github.com/zarbchain/zarb-go/www/http"
 )
 
@@ -28,6 +29,7 @@ type Config struct {
 	Sync      *sync.Config
 	Capnp     *capnp.Config
 	Http      *http.Config
+	GRPC      *grpc.Config
 }
 
 func DefaultConfig() *Config {
@@ -40,6 +42,7 @@ func DefaultConfig() *Config {
 		Logger:    logger.DefaultConfig(),
 		Capnp:     capnp.DefaultConfig(),
 		Http:      http.DefaultConfig(),
+		GRPC:      grpc.DefaultConfig(),
 	}
 
 	return conf
@@ -55,6 +58,7 @@ func TestConfig() *Config {
 		Logger:    logger.TestConfig(),
 		Capnp:     capnp.TestConfig(),
 		Http:      http.TestConfig(),
+		GRPC:      grpc.TestConfig(),
 	}
 
 	return conf

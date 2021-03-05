@@ -2,25 +2,25 @@ package capnp
 
 import "github.com/fxamacker/cbor/v2"
 
-func (f factory) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
-	height := f.state.LastBlockHeight()
+func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
+	height := zs.state.LastBlockHeight()
 	res, _ := args.Results.NewResult()
 	res.SetHeight(int64(height))
 	return nil
 }
 
-func (f factory) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
+func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 	res, _ := args.Results.NewResult()
 
-	err := res.SetPeerID(f.sync.PeerID().String())
+	err := res.SetPeerID(zs.sync.PeerID().String())
 	if err != nil {
 		return err
 	}
-	pl, err := res.NewPeers(int32(len(f.sync.Peers())))
+	pl, err := res.NewPeers(int32(len(zs.sync.Peers())))
 	if err != nil {
 		return err
 	}
-	for i, peer := range f.sync.Peers() {
+	for i, peer := range zs.sync.Peers() {
 		p := pl.At(i)
 
 		if err := p.SetMoniker(peer.Moniker()); err != nil {

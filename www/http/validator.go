@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.server.GetValidator(s.ctx, func(p capnp.ZarbServer_getValidator_Params) error {
+	b := s.capnp.GetValidator(s.ctx, func(p capnp.ZarbServer_getValidator_Params) error {
 		vars := mux.Vars(r)
 		if err := p.SetAddress([]byte(vars["address"])); err != nil {
 			return err

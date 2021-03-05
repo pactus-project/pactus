@@ -12,7 +12,7 @@ func DefaultConfig() *Config {
 		Address: "[::]:9090",
 		Gateway: GatewayConfig{
 			Enable:  true,
-			Address: "[::]:8081",
+			Address: "[::]:8080",
 		},
 	}
 }

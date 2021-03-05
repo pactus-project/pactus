@@ -65,7 +65,7 @@ func (st *state) validateCommit(commit *block.Commit) error {
 
 	// Check if signers have 2/3+ of total stake
 	if signersStake <= totalStake*2/3 {
-		return errors.Errorf(errors.ErrInvalidBlock, "No quorom")
+		return errors.Errorf(errors.ErrInvalidBlock, "No quorom. Has %v, should be more than %v", signersStake, totalStake*2/3)
 	}
 
 	// Check signature
