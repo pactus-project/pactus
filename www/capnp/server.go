@@ -12,6 +12,14 @@ import (
 	"zombiezen.com/go/capnproto2/rpc"
 )
 
+type zarbServer struct {
+	state  state.StateReader
+	store  store.StoreReader
+	txPool txpool.TxPool
+	sync   sync.Synchronizer
+	logger *logger.Logger
+}
+
 type Server struct {
 	ctx      context.Context
 	config   *Config
@@ -62,7 +70,7 @@ func (s *Server) StartServer() error {
 			} else {
 				//
 				go func(c net.Conn) {
-					s2c := ZarbServer_ServerToClient(zarbServer{s.state, s.store, s.txPool, s.sync, s.logger})
+					s2c := ZarbServer_ServerToClient(&zarbServer{s.state, s.store, s.txPool, s.sync, s.logger})
 					conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {

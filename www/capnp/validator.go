@@ -2,7 +2,7 @@ package capnp
 
 import "github.com/zarbchain/zarb-go/crypto"
 
-func (zs zarbServer) GetValidator(b ZarbServer_getValidator) error {
+func (zs *zarbServer) GetValidator(b ZarbServer_getValidator) error {
 	s, _ := b.Params.Address()
 	addr, err := crypto.AddressFromString(string(s))
 	if err != nil {

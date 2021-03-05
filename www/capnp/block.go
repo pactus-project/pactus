@@ -3,22 +3,9 @@ package capnp
 import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/txpool"
 )
 
-type zarbServer struct {
-	state  state.StateReader
-	store  store.StoreReader
-	txPool txpool.TxPool
-	sync   sync.Synchronizer
-	logger *logger.Logger
-}
-
-func (zs zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
+func (zs *zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 	s, _ := args.Params.Hash()
 	h, err := crypto.HashFromString(string(s))
 	if err != nil {
@@ -33,7 +20,7 @@ func (zs zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 	return nil
 }
 
-func (zs zarbServer) GetBlock(args ZarbServer_getBlock) error {
+func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	h := args.Params.Height()
 	v := args.Params.Verbosity()
 	b, err := zs.store.Block(int(h))

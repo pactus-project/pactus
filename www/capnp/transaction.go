@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (zs zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
+func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	s, _ := args.Params.Id()
 	h, err := crypto.HashFromString(string(s))
 	if err != nil {
@@ -36,7 +36,7 @@ func (zs zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 }
 
 //Send the raw transaction
-func (zs zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
+func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
 	rawTx, _ := args.Params.RawTx()
 
 	var tx tx.Tx

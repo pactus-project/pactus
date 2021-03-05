@@ -16,6 +16,7 @@ import (
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/zarbchain/zarb-go/www/grpc"
 	"github.com/zarbchain/zarb-go/www/http"
 )
 
@@ -29,6 +30,7 @@ type Node struct {
 	sync       sync.Synchronizer
 	capnp      *capnp.Server
 	http       *http.Server
+	grpc       *grpc.Server
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer) (*Node, error) {
@@ -72,6 +74,11 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, errors.Wrap(err, "could not create http server")
 	}
 
+	grpc, err := grpc.NewServer(conf.GRPC, state, sync, txPool)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not create grpc server")
+	}
+
 	node := &Node{
 		config:     conf,
 		genesisDoc: genDoc,
@@ -82,6 +89,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		sync:       sync,
 		capnp:      capnp,
 		http:       http,
+		grpc:       grpc,
 	}
 
 	return node, nil
@@ -113,6 +121,11 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start http server")
 	}
 
+	err = n.grpc.StartServer()
+	if err != nil {
+		return errors.Wrap(err, "could not start grpc server")
+	}
+
 	return nil
 }
 
@@ -125,6 +138,7 @@ func (n *Node) Stop() {
 	n.state.Close()
 	n.http.StopServer()
 	n.capnp.StopServer()
+	n.grpc.StopServer()
 }
 
 func (n *Node) Consensus() consensus.ConsensusReader {

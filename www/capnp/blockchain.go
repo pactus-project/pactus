@@ -2,14 +2,14 @@ package capnp
 
 import "github.com/fxamacker/cbor/v2"
 
-func (zs zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
+func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
 	height := zs.state.LastBlockHeight()
 	res, _ := args.Results.NewResult()
 	res.SetHeight(int64(height))
 	return nil
 }
 
-func (zs zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
+func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 	res, _ := args.Results.NewResult()
 
 	err := res.SetPeerID(zs.sync.PeerID().String())
