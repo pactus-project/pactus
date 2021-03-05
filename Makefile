@@ -15,13 +15,14 @@ all: tools build install test
 tools:
 	@echo "Installing tools"
 	GO111MODULE=off go get zombiezen.com/go/capnproto2/...
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	go install github.com/bufbuild/buf/cmd/buf@latest
-	go install github.com/rakyll/statik@latest
+	go get github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+	go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+	go get google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	go get google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	go get github.com/bufbuild/buf/cmd/buf@latest
+	go get github.com/rakyll/statik@latest
+	go mod tidy
 
 bls:
 	@echo "Compiling bls"
