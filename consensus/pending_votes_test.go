@@ -4,16 +4,16 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/proposal"
-	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
 func TestMustGetRound(t *testing.T) {
-	valSet, _ := validator.GenerateTestValidatorSet()
+	committee, _ := committee.GenerateTestCommittee()
 	pv := NewPendingVotes()
-	pv.MoveToNewHeight(101, valSet.CopyValidators())
+	pv.MoveToNewHeight(101, committee.CopyValidators())
 	pv.MustGetRoundVotes(4)
 	assert.Nil(t, pv.GetRoundVotes(5))
 	assert.NotNil(t, pv.GetRoundVotes(1))
@@ -24,10 +24,10 @@ func TestMustGetRound(t *testing.T) {
 }
 
 func TestPendingVotesTest(t *testing.T) {
-	valSet, signers := validator.GenerateTestValidatorSet()
+	committee, signers := committee.GenerateTestCommittee()
 
 	pv := NewPendingVotes()
-	pv.MoveToNewHeight(101, valSet.CopyValidators())
+	pv.MoveToNewHeight(101, committee.CopyValidators())
 	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
 	ok, err := pv.AddVote(invalidVote) // invalid height
 	assert.False(t, ok)
@@ -75,10 +75,10 @@ func TestPendingVotesTest(t *testing.T) {
 }
 
 func TestSetRoundProposal(t *testing.T) {
-	valSet, _ := validator.GenerateTestValidatorSet()
+	committee, _ := committee.GenerateTestCommittee()
 	prop, _ := proposal.GenerateTestProposal(101, 0)
 	pv := NewPendingVotes()
-	pv.MoveToNewHeight(101, valSet.CopyValidators())
+	pv.MoveToNewHeight(101, committee.CopyValidators())
 	pv.SetRoundProposal(4, prop)
 	assert.False(t, pv.HasRoundProposal(0))
 	assert.True(t, pv.HasRoundProposal(4))

@@ -24,16 +24,16 @@ func TestSaveLoadLastInfo(t *testing.T) {
 		tState1.lastBlockHeight,
 		*tState1.lastCommit,
 		tState1.lastReceiptsHash,
-		tState1.validatorSet.Committee(),
-		tState1.validatorSet.Proposer(0).Address())
+		tState1.committee.Members(),
+		tState1.committee.Proposer(0).Address())
 
 	li, err := tState1.loadLastInfo()
 	assert.NoError(t, err)
 	assert.Equal(t, li.LastHeight, tState1.lastBlockHeight)
 	assert.Equal(t, li.LastCommit.Hash(), tState1.lastCommit.Hash())
 	assert.Equal(t, li.LastReceiptHash, tState1.lastReceiptsHash)
-	assert.Equal(t, li.Committee, tState1.validatorSet.Committee())
-	assert.Equal(t, li.NextProposer, tState1.validatorSet.Proposer(0).Address())
+	assert.Equal(t, li.Committee, tState1.committee.Members())
+	assert.Equal(t, li.NextProposer, tState1.committee.Proposer(0).Address())
 }
 
 func TestLoadState(t *testing.T) {

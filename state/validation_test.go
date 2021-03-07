@@ -272,36 +272,36 @@ func TestBlockValidation(t *testing.T) {
 	invHash := crypto.GenerateTestHash()
 	invCommit := block.GenerateTestCommit(tState1.lastBlockHash)
 	trx := tState2.createSubsidyTx(0)
-	tCommonTxPool.AppendTx(trx)
+	assert.NoError(t, tCommonTxPool.AppendTx(trx))
 	ids := block.NewTxIDs()
 	ids.Append(trx.ID())
 
-	b := block.MakeBlock(1, util.Now(), ids, invHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed, tState2.signer.Address())
+	b := block.MakeBlock(1, util.Now(), ids, invHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed, tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
 	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, invHash, tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed, tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), invHash, tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), invHash, tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed, tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), invHash, tState1.lastCommit, tState1.lastSortitionSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), invHash, tState1.lastCommit, tState1.lastSortitionSeed, tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, invCommit, tState1.lastSortitionSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, invCommit, tState1.lastSortitionSeed, tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed, invAddr)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed, invAddr)
 	assert.NoError(t, tState1.validateBlock(b))
 	c := makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, sortition.GenerateRandomSeed(), tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, sortition.GenerateRandomSeed(), tState2.signer.Address())
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.validatorSet.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed.Generate(tState2.signer), tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCommit, tState1.lastSortitionSeed.Generate(tState2.signer), tState2.signer.Address())
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCommitAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NoError(t, tState1.CommitBlock(2, b, c))

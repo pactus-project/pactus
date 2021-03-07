@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
@@ -17,7 +18,7 @@ import (
 
 var tValSigners [5]crypto.Signer
 var tSortitions [5]*sortition.Sortition
-var tValset *validator.ValidatorSet
+var tCommittee *committee.Committee
 var tStore *store.MockStore
 var tSandbox *SandboxConcrete
 
@@ -60,11 +61,11 @@ func setup(t *testing.T) {
 	tSortitions[2] = sortition.NewSortition()
 	tSortitions[3] = sortition.NewSortition()
 	tSortitions[4] = sortition.NewSortition()
-	tValset, err = validator.NewValidatorSet([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
+	tCommittee, err = committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
 	params := param.DefaultParams()
-	tSandbox, err = NewSandbox(tStore, params, 0, tSortitions[0], tValset)
+	tSandbox, err = NewSandbox(tStore, params, 0, tSortitions[0], tCommittee)
 	assert.NoError(t, err)
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
@@ -189,26 +190,26 @@ func TestAddValidatorToSet(t *testing.T) {
 	a1 := tValSigners[0].Address()
 	a2 := tValSigners[1].Address()
 	block11, _ := block.GenerateTestBlock(&a1, nil)
-	assert.NoError(t, tValset.UpdateTheSet(0, nil))
+	assert.NoError(t, tCommittee.Update(0, nil))
 	block12, _ := block.GenerateTestBlock(&a2, nil)
-	assert.NoError(t, tValset.UpdateTheSet(0, []*validator.Validator{val5}))
+	assert.NoError(t, tCommittee.Update(0, []*validator.Validator{val5}))
 
 	tStore.Blocks[11] = block11
 	tStore.Blocks[12] = block12
 
-	t.Run("Add unknown validator to the set, Should returns error", func(t *testing.T) {
+	t.Run("Add unknown validator to the committee, Should returns error", func(t *testing.T) {
 		val, _ := validator.GenerateTestValidator(1)
 		h := crypto.GenerateTestHash()
 		assert.Error(t, tSandbox.AddToSet(h, val.Address()))
 	})
 
-	t.Run("Already in the set, Should returns error", func(t *testing.T) {
+	t.Run("Already in the committee, Should returns error", func(t *testing.T) {
 		h := crypto.GenerateTestHash()
 		v := tSandbox.Validator(tValSigners[3].Address())
 		assert.Error(t, tSandbox.AddToSet(h, v.Address()))
 	})
 
-	t.Run("In set at time of doing sortition, Should returns error", func(t *testing.T) {
+	t.Run("In committee at time of doing sortition, Should returns error", func(t *testing.T) {
 		v := tSandbox.Validator(tValSigners[0].Address())
 		assert.Error(t, tSandbox.AddToSet(block11.Hash(), v.Address()))
 	})
@@ -229,7 +230,7 @@ func TestAddValidatorToSet(t *testing.T) {
 		assert.Error(t, tSandbox.AddToSet(block11.Hash(), val2.Address()))
 	})
 
-	t.Run("Update validator and add to set", func(t *testing.T) {
+	t.Run("Update validator and add to committee", func(t *testing.T) {
 		tSandbox.Clear()
 		addr1, pub1, _ := crypto.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)

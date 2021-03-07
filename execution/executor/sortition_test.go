@@ -42,7 +42,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should be ok", func(t *testing.T) {
 		trx := tx.NewSortitionTx(stamp41, 1, tValSigner.Address(), proof1)
 
-		// Check if can't join to validator set
+		// Check if can't join to committee
 		tSandbox.AcceptSortition = true
 		tSandbox.ErrorAddToSet = true
 		assert.Error(t, exe.Execute(trx))

@@ -6,6 +6,7 @@ import (
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
@@ -38,7 +39,7 @@ type state struct {
 	txPoolSandbox     *sandbox.SandboxConcrete
 	execution         *execution.Execution
 	executionSandbox  *sandbox.SandboxConcrete
-	validatorSet      *validator.ValidatorSet
+	committee         *committee.Committee
 	sortition         *sortition.Sortition
 	lastSortitionSeed sortition.Seed
 	lastBlockHeight   int
@@ -95,11 +96,11 @@ func LoadOrNewState(
 		}
 	}
 
-	st.txPoolSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.validatorSet)
+	st.txPoolSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.committee)
 	if err != nil {
 		return nil, err
 	}
-	st.executionSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.validatorSet)
+	st.executionSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.committee)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +149,7 @@ func (st *state) tryLoadLastInfo() error {
 		}
 		vals[i] = val
 	}
-	st.validatorSet, err = validator.NewValidatorSet(vals, st.params.CommitteeSize, li.NextProposer)
+	st.committee, err = committee.NewCommittee(vals, st.params.CommitteeSize, li.NextProposer)
 	if err != nil {
 		return err
 	}
@@ -177,11 +178,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		totalStake += val.Stake()
 	}
 
-	valSet, err := validator.NewValidatorSet(vals, st.params.CommitteeSize, vals[0].Address())
+	committee, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
 	if err != nil {
 		return err
 	}
-	st.validatorSet = valSet
+	st.committee = committee
 	st.lastBlockTime = genDoc.GenesisTime()
 	st.sortition.SetTotalStake(totalStake)
 	return nil
@@ -201,11 +202,11 @@ func (st *state) StoreReader() store.StoreReader {
 	return st.store
 }
 
-func (st *state) ValidatorSet() validator.ValidatorSetReader {
+func (st *state) Committee() committee.CommitteeReader {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.validatorSet
+	return st.committee
 }
 
 func (st *state) LastBlockHeight() int {
@@ -283,7 +284,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if !st.validatorSet.IsProposer(st.signer.Address(), round) {
+	if !st.committee.IsProposer(st.signer.Address(), round) {
 		return nil, errors.Errorf(errors.ErrInvalidAddress, "We are not propser for this round")
 	}
 
@@ -331,7 +332,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	st.txPool.BroadcastTxs(txIDs.IDs())
 
 	stateHash := st.stateHash()
-	committeeHash := st.validatorSet.CommitteeHash()
+	committeeHash := st.committee.CommitteeHash()
 	timestamp := st.proposeNextBlockTime()
 	newSortitionSeed := st.lastSortitionSeed.Generate(st.signer)
 
@@ -407,7 +408,7 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 	}
 
 	// Verify proposer
-	proposer := st.validatorSet.Proposer(commit.Round())
+	proposer := st.committee.Proposer(commit.Round())
 	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
@@ -455,8 +456,8 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 	st.executionSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.saveLastInfo(st.lastBlockHeight, commit, st.lastReceiptsHash,
-		st.validatorSet.Committee(),
-		st.validatorSet.Proposer(0).Address())
+		st.committee.Members(),
+		st.committee.Proposer(0).Address())
 
 	// At this point we can reset txpool sandbox
 	st.txPoolSandbox.Clear()
@@ -466,7 +467,7 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 }
 
 func (st *state) evaluateSortition() bool {
-	if st.validatorSet.Contains(st.signer.Address()) {
+	if st.committee.Contains(st.signer.Address()) {
 		// We are in the validator set right now
 		return false
 	}
@@ -520,10 +521,9 @@ func (st *state) commitSandbox(round int) {
 		}
 	})
 
-	// TODO: for joined vals write tests
-	if err := st.validatorSet.UpdateTheSet(round, joined); err != nil {
+	if err := st.committee.Update(round, joined); err != nil {
 		//
-		// We should panic here before updating state
+		// We should panic here before updating the state
 		//
 		logger.Panic("An error occurred", "err", err)
 	}

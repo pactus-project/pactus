@@ -164,7 +164,7 @@ func TestSessionTimeout(t *testing.T) {
 func TestOneBlockBehind(t *testing.T) {
 	setup(t)
 
-	t.Run("Bob is not in the set. Bob commits one block. Bob should broadcasts heartbeat. Alice should ask for the last block.", func(t *testing.T) {
+	t.Run("Bob is not in the committee. Bob commits one block. Bob should broadcasts heartbeat. Alice should ask for the last block.", func(t *testing.T) {
 		addMoreBlocksForBob(t, 1)
 
 		tBobNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)

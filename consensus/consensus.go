@@ -223,8 +223,8 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 func (cs *consensus) signAddVote(msgType vote.VoteType, round int, hash crypto.Hash) {
 	address := cs.signer.Address()
-	if !cs.state.ValidatorSet().Contains(address) {
-		cs.logger.Trace("This node is not in validator set", "addr", address)
+	if !cs.state.Committee().Contains(address) {
+		cs.logger.Trace("This node is not in committee", "addr", address)
 		return
 	}
 
