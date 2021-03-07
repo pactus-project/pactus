@@ -2,11 +2,11 @@ package payload
 
 import (
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/vote"
+	"github.com/zarbchain/zarb-go/proposal"
 )
 
 type ProposalPayload struct {
-	Proposal *vote.Proposal `cbor:"1,keyasint"`
+	Proposal *proposal.Proposal `cbor:"1,keyasint"`
 }
 
 func (p *ProposalPayload) SanityCheck() error {

@@ -4,6 +4,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
@@ -38,7 +39,7 @@ func (cs *ConsensusSync) BroadcastQueryProposal(height, round int) {
 	cs.publishFn(msg)
 }
 
-func (cs *ConsensusSync) BroadcastProposal(p *vote.Proposal) {
+func (cs *ConsensusSync) BroadcastProposal(p *proposal.Proposal) {
 	msg := message.NewProposalMessage(p)
 	cs.publishFn(msg)
 }

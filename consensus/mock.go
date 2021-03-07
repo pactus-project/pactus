@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
@@ -11,7 +12,7 @@ var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
 	Votes     []*vote.Vote
-	Proposal  *vote.Proposal
+	Proposal  *proposal.Proposal
 	Scheduled bool
 	State     *state.MockState
 	Round     int
@@ -38,10 +39,10 @@ func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
 	}
 	return votes
 }
-func (m *MockConsensus) SetProposal(p *vote.Proposal) {
+func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 	m.Proposal = p
 }
-func (m *MockConsensus) RoundProposal(round int) *vote.Proposal {
+func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
 	if m.Proposal == nil || m.Proposal.Round() != round {
 		return nil
 	}

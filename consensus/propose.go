@@ -3,8 +3,8 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/validator"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 func (cs *consensus) proposer(round int) *validator.Validator {
@@ -15,7 +15,7 @@ func (cs *consensus) isProposer(addr crypto.Address, round int) bool {
 	return cs.state.ValidatorSet().IsProposer(addr, round)
 }
 
-func (cs *consensus) setProposal(proposal *vote.Proposal) {
+func (cs *consensus) setProposal(proposal *proposal.Proposal) {
 	if proposal.Height() != cs.hrs.Height() {
 		cs.logger.Debug("Propose: Invalid height", "proposal", proposal)
 		return
@@ -89,7 +89,7 @@ func (cs *consensus) createProposal(height int, round int) {
 		return
 	}
 
-	proposal := vote.NewProposal(height, round, *block)
+	proposal := proposal.NewProposal(height, round, *block)
 	cs.signer.SignMsg(proposal)
 	cs.setProposal(proposal)
 

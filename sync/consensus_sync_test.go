@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/vote"
@@ -12,7 +13,7 @@ import (
 func TestProposalToCache(t *testing.T) {
 	setup(t)
 
-	p, _ := vote.GenerateTestProposal(106, 0)
+	p, _ := proposal.GenerateTestProposal(106, 0)
 
 	tAliceSync.consensusSync.BroadcastProposal(p)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeProposal)
@@ -36,7 +37,7 @@ func TestRequestForProposal(t *testing.T) {
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 	})
 
-	p1, _ := vote.GenerateTestProposal(hrs.Height(), 0)
+	p1, _ := proposal.GenerateTestProposal(hrs.Height(), 0)
 	tAliceConsensus.SetProposal(p1)
 
 	t.Run("Alice and bob are in same height. Alice has proposal. Bob ask for the proposal", func(t *testing.T) {
@@ -56,7 +57,7 @@ func TestRequestForProposal(t *testing.T) {
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeProposal)
 	})
 
-	p2, _ := vote.GenerateTestProposal(hrs.Height(), 1)
+	p2, _ := proposal.GenerateTestProposal(hrs.Height(), 1)
 	tAliceConsensus.Proposal = p2
 	tAliceConsensus.Round = 1
 
@@ -74,7 +75,7 @@ func TestUpdateConsensus(t *testing.T) {
 	setup(t)
 
 	v, _ := vote.GenerateTestPrecommitVote(1, 1)
-	p, _ := vote.GenerateTestProposal(1, 1)
+	p, _ := proposal.GenerateTestProposal(1, 1)
 
 	tAliceSync.consensusSync.BroadcastVote(v)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)
@@ -113,7 +114,7 @@ func TestProcessHeartbeatForQueryProposal(t *testing.T) {
 
 	hrs := tAliceConsensus.HRS()
 
-	p, _ := vote.GenerateTestProposal(hrs.Height(), hrs.Round())
+	p, _ := proposal.GenerateTestProposal(hrs.Height(), hrs.Round())
 	tBobConsensus.SetProposal(p)
 
 	t.Run("Alice Doesn't have proposal. She should query it.", func(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -11,7 +12,7 @@ import (
 type RoundVotes struct {
 	Prepares   *vote.VoteSet
 	Precommits *vote.VoteSet
-	proposal   *vote.Proposal
+	proposal   *proposal.Proposal
 }
 
 func (rv *RoundVotes) addVote(v *vote.Vote) (bool, error) {
@@ -119,7 +120,7 @@ func (pv *PendingVotes) HasRoundProposal(round int) bool {
 	return pv.RoundProposal(round) != nil
 }
 
-func (pv *PendingVotes) RoundProposal(round int) *vote.Proposal {
+func (pv *PendingVotes) RoundProposal(round int) *proposal.Proposal {
 	rv := pv.GetRoundVotes(round)
 	if rv == nil {
 		return nil
@@ -127,7 +128,7 @@ func (pv *PendingVotes) RoundProposal(round int) *vote.Proposal {
 	return rv.proposal
 }
 
-func (pv *PendingVotes) SetRoundProposal(round int, proposal *vote.Proposal) {
+func (pv *PendingVotes) SetRoundProposal(round int, proposal *proposal.Proposal) {
 	rv := pv.MustGetRoundVotes(round)
 	rv.proposal = proposal
 }
