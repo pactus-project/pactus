@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -18,7 +19,7 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 
 	addr := tSigners[tIndexB].Address()
 	b, _ := block.GenerateTestBlock(&addr, nil)
-	p := vote.NewProposal(1, 0, *b)
+	p := proposal.NewProposal(1, 0, *b)
 
 	tConsY.SetProposal(p)
 	assert.Nil(t, tConsY.RoundProposal(0))
@@ -33,7 +34,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 
 	a := tSigners[tIndexB].Address()
 	invBlock, _ := block.GenerateTestBlock(&a, nil)
-	p := vote.NewProposal(1, 2, *invBlock)
+	p := proposal.NewProposal(1, 2, *invBlock)
 	tSigners[tIndexB].SignMsg(p)
 
 	tConsY.enterNewHeight()
@@ -47,7 +48,7 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 
 	a := tSigners[tIndexB].Address()
 	invBlock, _ := block.GenerateTestBlock(&a, nil)
-	p := vote.NewProposal(2, 0, *invBlock)
+	p := proposal.NewProposal(2, 0, *invBlock)
 	tSigners[tIndexB].SignMsg(p)
 
 	tConsY.enterNewHeight()
@@ -275,7 +276,7 @@ func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
 	// Byzantine node sends proposal for second round (his turn)
 	b, err := tConsB.state.ProposeBlock(1)
 	assert.NoError(t, err)
-	p := vote.NewProposal(2, 1, *b)
+	p := proposal.NewProposal(2, 1, *b)
 	tSigners[tIndexB].SignMsg(p)
 
 	tConsX.SetProposal(p)

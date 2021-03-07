@@ -5,6 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/version"
@@ -102,7 +103,7 @@ func NewQueryProposalMessage(querier peer.ID, height, round int) *Message {
 	}
 }
 
-func NewProposalMessage(proposal *vote.Proposal) *Message {
+func NewProposalMessage(proposal *proposal.Proposal) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeProposal,

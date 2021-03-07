@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 var tCache *Cache
@@ -76,8 +76,8 @@ func TestCacheTx(t *testing.T) {
 func TestCacheProposal(t *testing.T) {
 	setup(t)
 
-	p1, _ := vote.GenerateTestProposal(100, 0)
-	p2, _ := vote.GenerateTestProposal(101, 1)
+	p1, _ := proposal.GenerateTestProposal(100, 0)
+	p2, _ := proposal.GenerateTestProposal(101, 1)
 
 	tCache.AddProposal(p1)
 	tCache.AddProposal(p2)

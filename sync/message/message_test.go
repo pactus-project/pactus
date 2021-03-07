@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
@@ -126,7 +127,7 @@ func TestQueryProposalMessage(t *testing.T) {
 }
 
 func TestProposalsMessage(t *testing.T) {
-	p, _ := vote.GenerateTestProposal(5, 1)
+	p, _ := proposal.GenerateTestProposal(5, 1)
 	invMsg := NewProposalMessage(nil)
 	assert.Error(t, invMsg.SanityCheck())
 	m := NewProposalMessage(p)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -75,7 +76,7 @@ func TestPendingVotesTest(t *testing.T) {
 
 func TestSetRoundProposal(t *testing.T) {
 	valSet, _ := validator.GenerateTestValidatorSet()
-	prop, _ := vote.GenerateTestProposal(101, 0)
+	prop, _ := proposal.GenerateTestProposal(101, 0)
 	pv := NewPendingVotes()
 	pv.MoveToNewHeight(101, valSet.CopyValidators())
 	pv.SetRoundProposal(4, prop)

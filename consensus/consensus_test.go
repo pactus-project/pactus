@@ -14,6 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -251,28 +252,28 @@ func commitBlockForAllStates(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func makeProposal(t *testing.T, height, round int) *vote.Proposal {
-	var p *vote.Proposal
+func makeProposal(t *testing.T, height, round int) *proposal.Proposal {
+	var p *proposal.Proposal
 	switch (height % 4) + round {
 	case 1:
 		pb, err := tConsX.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = vote.NewProposal(height, round, *pb)
+		p = proposal.NewProposal(height, round, *pb)
 		tConsX.signer.SignMsg(p)
 	case 2:
 		pb, err := tConsY.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = vote.NewProposal(height, round, *pb)
+		p = proposal.NewProposal(height, round, *pb)
 		tConsY.signer.SignMsg(p)
 	case 3:
 		pb, err := tConsB.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = vote.NewProposal(height, round, *pb)
+		p = proposal.NewProposal(height, round, *pb)
 		tConsB.signer.SignMsg(p)
 	case 0, 4:
 		pb, err := tConsP.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = vote.NewProposal(height, round, *pb)
+		p = proposal.NewProposal(height, round, *pb)
 		tConsP.signer.SignMsg(p)
 	}
 

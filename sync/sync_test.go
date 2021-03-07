@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
@@ -371,8 +372,8 @@ func TestQueryProposal(t *testing.T) {
 	setup(t)
 
 	consensusHeight := tAliceState.LastBlockHeight() + 1
-	p1, _ := vote.GenerateTestProposal(consensusHeight, 0)
-	p2, _ := vote.GenerateTestProposal(consensusHeight, 1)
+	p1, _ := proposal.GenerateTestProposal(consensusHeight, 0)
+	p2, _ := proposal.GenerateTestProposal(consensusHeight, 1)
 
 	tAliceSync.cache.AddProposal(p1)
 	tBobConsensus.SetProposal(p2)

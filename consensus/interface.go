@@ -2,13 +2,14 @@ package consensus
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
 type ConsensusReader interface {
 	PickRandomVote(round int) *vote.Vote
 	RoundVotes(round int) []*vote.Vote
-	RoundProposal(round int) *vote.Proposal
+	RoundProposal(round int) *proposal.Proposal
 	HRS() hrs.HRS
 	Fingerprint() string
 }
@@ -19,5 +20,5 @@ type Consensus interface {
 	MoveToNewHeight()
 	Stop()
 	AddVote(v *vote.Vote)
-	SetProposal(proposal *vote.Proposal)
+	SetProposal(proposal *proposal.Proposal)
 }

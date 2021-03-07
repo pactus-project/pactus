@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/util"
@@ -96,7 +97,7 @@ func (cs *consensus) updateHeight(height int) {
 	cs.hrs.UpdateHeight(height)
 }
 
-func (cs *consensus) RoundProposal(round int) *vote.Proposal {
+func (cs *consensus) RoundProposal(round int) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -137,7 +138,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	}
 }
 
-func (cs *consensus) SetProposal(p *vote.Proposal) {
+func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
@@ -246,7 +247,7 @@ func (cs *consensus) requestForProposal() {
 	cs.broadcastCh <- msg
 }
 
-func (cs *consensus) broadcastProposal(p *vote.Proposal) {
+func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
 	msg := message.NewProposalMessage(p)
 	cs.broadcastCh <- msg
 }

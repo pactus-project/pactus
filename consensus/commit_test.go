@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -90,7 +91,7 @@ func TestEnterCommitAllFailed(t *testing.T) {
 	b2, err := tConsY.state.ProposeBlock(0)  // Propose again
 	require.NoError(t, err)
 	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
-	p2 := vote.NewProposal(h, r, *b2)
+	p2 := proposal.NewProposal(h, r, *b2)
 	tSigners[tIndexX].SignMsg(p2)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
 

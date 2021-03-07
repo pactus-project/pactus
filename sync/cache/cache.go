@@ -4,10 +4,10 @@ import (
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 const (
@@ -123,16 +123,16 @@ func (c *Cache) AddTransactions(trxs []*tx.Tx) {
 	}
 }
 
-func (c *Cache) GetProposal(height, round int) *vote.Proposal {
+func (c *Cache) GetProposal(height, round int) *proposal.Proposal {
 	i, ok := c.cache.Get(proposalKey(height, round))
 	if ok {
-		return i.(*vote.Proposal)
+		return i.(*proposal.Proposal)
 	}
 
 	return nil
 }
 
-func (c *Cache) AddProposal(p *vote.Proposal) {
+func (c *Cache) AddProposal(p *proposal.Proposal) {
 	c.cache.Add(proposalKey(p.Height(), p.Round()), p)
 }
 func (c *Cache) Len() int {
