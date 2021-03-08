@@ -103,6 +103,11 @@ func TestCertificateValidation(t *testing.T) {
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
+		valSig1 := tValSigner1.SignData(block.CertificateSignBytes(b2.Hash(), 1))
+		valSig2 := tValSigner2.SignData(block.CertificateSignBytes(b2.Hash(), 1))
+		valSig3 := tValSigner3.SignData(block.CertificateSignBytes(b2.Hash(), 1))
+		validSig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3})
+
 		c := block.NewCertificate(b2.Hash(), 1, []int{0, 1, 2, 3}, []int{3}, validSig)
 		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
 	})
@@ -117,6 +122,17 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("Valid signature, should return no error", func(t *testing.T) {
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{3}, validSig)
 		assert.NoError(t, tState1.CommitBlock(2, *b2, *c))
+	})
+
+	t.Run("Invalid round", func(t *testing.T) {
+		valSig1 := tValSigner1.SignData(block.CertificateSignBytes(b2.Hash(), 1))
+		valSig2 := tValSigner2.SignData(block.CertificateSignBytes(b2.Hash(), 1))
+		valSig3 := tValSigner3.SignData(block.CertificateSignBytes(b2.Hash(), 1))
+		valSig4 := tValSigner4.SignData(block.CertificateSignBytes(b2.Hash(), 1))
+		validSig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, valSig4})
+
+		c := block.NewCertificate(b2.Hash(), 1, []int{0, 1, 2, 3}, []int{}, validSig)
+		assert.Error(t, tState1.UpdateLastCertificate(c))
 	})
 
 	t.Run("Update last commit- Invalid signer", func(t *testing.T) {
