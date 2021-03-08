@@ -6,7 +6,7 @@ import (
 )
 
 type CommitteeReader interface {
-	CopyValidators() []*validator.Validator
+	Validators() []*validator.Validator
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *validator.Validator
 	IsProposer(addr crypto.Address, round int) bool

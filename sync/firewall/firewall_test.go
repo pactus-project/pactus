@@ -6,6 +6,7 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/peerset"
@@ -17,7 +18,8 @@ var tAnotherPeerID peer.ID
 
 func setup(t *testing.T) {
 	peerSet := peerset.NewPeerSet(3 * time.Second)
-	state := state.MockingState()
+	committee, _ := committee.GenerateTestCommittee()
+	state := state.MockingState(committee)
 	tFirewall = NewFirewall(peerSet, state)
 	tAnotherPeerID = util.RandomPeerID()
 }

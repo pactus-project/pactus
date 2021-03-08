@@ -6,6 +6,7 @@ import (
 	"net"
 	"testing"
 
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
@@ -26,8 +27,9 @@ func init() {
 
 	const bufSize = 1024 * 1024
 
+	committee, _ := committee.GenerateTestCommittee()
 	tListener = bufconn.Listen(bufSize)
-	tMockState = state.MockingState()
+	tMockState = state.MockingState(committee)
 	tMockPool = txpool.MockingTxPool()
 	tMockSync = sync.MockingSync()
 	tCtx = context.Background()

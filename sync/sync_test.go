@@ -7,6 +7,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -75,11 +76,12 @@ func setup(t *testing.T) {
 
 	tTxPool = txpool.MockingTxPool()
 
+	committee, _ := committee.GenerateTestCommittee()
 	tAlicePeerID = util.RandomPeerID()
 	tBobPeerID = util.RandomPeerID()
 	tAnotherPeerID = util.RandomPeerID()
-	tAliceState = state.MockingState()
-	tBobState = state.MockingState()
+	tAliceState = state.MockingState(committee)
+	tBobState = state.MockingState(committee)
 	tAliceConsensus = consensus.MockingConsensus(tAliceState)
 	tBobConsensus = consensus.MockingConsensus(tBobState)
 	tAliceBroadcastCh = make(chan *message.Message, 100)
@@ -190,14 +192,16 @@ func disableHeartbeat(t *testing.T) {
 
 func joinAliceToTheSet(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
-	assert.NoError(t, tAliceState.Committee_.Update(0, []*validator.Validator{val}))
-	assert.NoError(t, tBobState.Committee_.Update(0, []*validator.Validator{val}))
+	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
+
+	assert.NoError(t, tAliceState.TestCommittee.Update(0, []*validator.Validator{val}))
 }
 
 func joinBobToTheSet(t *testing.T) {
 	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
-	assert.NoError(t, tAliceState.Committee_.Update(0, []*validator.Validator{val}))
-	assert.NoError(t, tBobState.Committee_.Update(0, []*validator.Validator{val}))
+	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
+
+	assert.NoError(t, tAliceState.TestCommittee.Update(0, []*validator.Validator{val}))
 }
 
 func TestAccessors(t *testing.T) {
