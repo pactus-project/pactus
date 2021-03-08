@@ -3,6 +3,7 @@ package sandbox
 import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
@@ -18,7 +19,7 @@ type SandboxConcrete struct {
 
 	store            store.StoreReader
 	sortition        *sortition.Sortition
-	validatorSet     validator.ValidatorSetReader
+	committee        committee.CommitteeReader
 	accounts         map[crypto.Address]*AccountStatus
 	validators       map[crypto.Address]*ValidatorStatus
 	recentBlocks     *linkedmap.LinkedMap
@@ -39,11 +40,11 @@ type AccountStatus struct {
 	Updated bool
 }
 
-func NewSandbox(store store.StoreReader, params param.Params, lastBlockHeight int, sortition *sortition.Sortition, valset validator.ValidatorSetReader) (*SandboxConcrete, error) {
+func NewSandbox(store store.StoreReader, params param.Params, lastBlockHeight int, sortition *sortition.Sortition, committee committee.CommitteeReader) (*SandboxConcrete, error) {
 	sb := &SandboxConcrete{
 		store:        store,
 		sortition:    sortition,
-		validatorSet: valset,
+		committee:    committee,
 		params:       params,
 		recentBlocks: linkedmap.NewLinkedMap(params.TransactionToLiveInterval),
 		accounts:     make(map[crypto.Address]*AccountStatus),
@@ -222,8 +223,8 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 		return errors.Errorf(errors.ErrGeneric, "Unknown validator")
 	}
 
-	if sb.validatorSet.Contains(addr) {
-		return errors.Errorf(errors.ErrGeneric, "This validator already is in the set")
+	if sb.committee.Contains(addr) {
+		return errors.Errorf(errors.ErrGeneric, "This validator already is in the committee")
 	}
 
 	joined := 0
@@ -243,7 +244,7 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 	commiters := b.LastCommit().Committers()
 	for _, c := range commiters {
 		if s.Validator.Number() == c.Number {
-			return errors.Errorf(errors.ErrGeneric, "This validator was in the set in time of sending the sortition")
+			return errors.Errorf(errors.ErrGeneric, "This validator was in the committee in time of sending the sortition")
 		}
 	}
 
@@ -325,11 +326,17 @@ func (sb *SandboxConcrete) AppendNewBlock(hash crypto.Hash, height int) {
 	sb.recentBlocks.PushBack(hash, height)
 }
 
-func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool {
+func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.sortition.VerifyProof(blockHash, proof, val)
+	h, _ := sb.store.BlockHeight(blockHash)
+	b, err := sb.store.Block(h)
+	if err != nil {
+		return false
+	}
+
+	return sb.sortition.VerifyProof(b.Header().SortitionSeed(), proof, val.PublicKey(), val.Stake())
 }
 
 func (sb *SandboxConcrete) IterateAccounts(consumer func(*AccountStatus)) {

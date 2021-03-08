@@ -3,6 +3,7 @@ package sandbox
 import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -15,7 +16,7 @@ type Sandbox interface {
 	MakeNewValidator(crypto.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
 
-	VerifySortition(blockHash crypto.Hash, proof []byte, val *validator.Validator) bool
+	VerifySortition(crypto.Hash, sortition.Proof, *validator.Validator) bool
 	AddToSet(crypto.Hash, crypto.Address) error
 
 	CommitteeSize() int

@@ -25,9 +25,9 @@ func (st *state) validateBlock(block block.Block) error {
 			"last receipts hash is not same as we expected. Expected %v, got %v", st.lastReceiptsHash, block.Header().LastReceiptsHash())
 	}
 
-	if !block.Header().CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
+	if !block.Header().CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Committee hash is not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), block.Header().CommitteeHash())
+			"Committee hash is not same as we expected. Expected %v, got %v", st.committee.CommitteeHash(), block.Header().CommitteeHash())
 	}
 
 	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
@@ -120,9 +120,9 @@ func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash c
 			"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
 	}
 
-	if !commit.CommitteeHash().EqualsTo(st.validatorSet.CommitteeHash()) {
+	if !commit.CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last committee hash are not same as we expected. Expected %v, got %v", st.validatorSet.CommitteeHash(), commit.CommitteeHash())
+			"Last committee hash are not same as we expected. Expected %v, got %v", st.committee.CommitteeHash(), commit.CommitteeHash())
 	}
 
 	return nil

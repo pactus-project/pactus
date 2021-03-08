@@ -448,15 +448,15 @@ func (syncer *synchronizer) isPeerActiveValidator(id peer.ID) bool {
 	}
 
 	addr := p.PublicKey().Address()
-	valSet := syncer.state.ValidatorSet()
+	committee := syncer.state.Committee()
 
-	return valSet.Contains(addr)
+	return committee.Contains(addr)
 }
 
 // isThisActiveValidator checks if we are an active validator
 func (syncer *synchronizer) isThisActiveValidator() bool {
-	valSet := syncer.state.ValidatorSet()
-	return valSet.Contains(syncer.signer.Address())
+	committee := syncer.state.Committee()
+	return committee.Contains(syncer.signer.Address())
 }
 
 // queryTransactions queries for a missed transactions if we don't have it in the cache

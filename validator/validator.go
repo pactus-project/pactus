@@ -59,7 +59,7 @@ func (val *Validator) IncSequence() {
 	val.data.Sequence++
 }
 
-// UpdateLastJoinedHeight updates the last height that this validator joins the set
+// UpdateLastJoinedHeight updates the last height that this validator joins the committee
 func (val *Validator) UpdateLastJoinedHeight(height int) {
 	val.data.LastJoinedHeight = height
 }

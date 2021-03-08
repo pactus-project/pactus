@@ -149,7 +149,7 @@ func TestUpdatePrecommitFromPreviousRound(t *testing.T) {
 	tConsY.enterNewHeight()
 	prepareYRound0Null := shouldPublishVote(t, tConsY, vote.VoteTypePrepare, crypto.UndefHash)
 
-	// Byzantine node set proposal for Partitioned node, but not for others
+	// Byzantine node send proposal for Partitioned node, but not for others
 	tConsP.enterNewHeight()
 	tConsP.SetProposal(p0)
 	preparePRound0Block := shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p0.Block().Hash())

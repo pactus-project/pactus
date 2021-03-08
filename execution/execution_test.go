@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -105,15 +106,15 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Sortition tx - Invalid stamp, Should returns error", func(t *testing.T) {
-		p := signer1.SignData(stamp8635.RawBytes())
-		trx := tx.NewSortitionTx(stamp8635, 1, addr1, p.RawBytes())
+		proof := sortition.GenerateRandomProof()
+		trx := tx.NewSortitionTx(stamp8635, 1, addr1, proof)
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx))
 	})
 
 	t.Run("Execution failed", func(t *testing.T) {
-		p := signer1.SignData(stamp8642.RawBytes())
-		trx := tx.NewSortitionTx(stamp8642, 1, addr1, p.RawBytes())
+		proof := sortition.GenerateRandomProof()
+		trx := tx.NewSortitionTx(stamp8642, 1, addr1, proof)
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx))
 	})

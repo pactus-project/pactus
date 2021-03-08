@@ -8,11 +8,11 @@ import (
 )
 
 func (cs *consensus) proposer(round int) *validator.Validator {
-	return cs.state.ValidatorSet().Proposer(round)
+	return cs.state.Committee().Proposer(round)
 }
 
 func (cs *consensus) isProposer(addr crypto.Address, round int) bool {
-	return cs.state.ValidatorSet().IsProposer(addr, round)
+	return cs.state.Committee().IsProposer(addr, round)
 }
 
 func (cs *consensus) setProposal(proposal *proposal.Proposal) {
@@ -63,8 +63,8 @@ func (cs *consensus) enterPropose(round int) {
 	cs.scheduleTimeout(cs.config.PrepareTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrepare)
 
 	address := cs.signer.Address()
-	if !cs.state.ValidatorSet().Contains(address) {
-		cs.logger.Debug("Propose: This node is not in validator set", "addr", address)
+	if !cs.state.Committee().Contains(address) {
+		cs.logger.Debug("Propose: This node is not in committee", "addr", address)
 		return
 	}
 

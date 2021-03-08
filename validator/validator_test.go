@@ -68,3 +68,18 @@ func TestIncSequence(t *testing.T) {
 	val.IncSequence()
 	assert.Equal(t, val.Sequence(), seq+1)
 }
+
+func TestNumber(t *testing.T) {
+	val, _ := GenerateTestValidator(5)
+	assert.Equal(t, val.Number(), 5)
+}
+
+func TestPower(t *testing.T) {
+	val, _ := GenerateTestValidator(util.RandInt(1000))
+	val.data.Stake = 0
+	assert.Equal(t, val.Stake(), int64(0))
+	assert.Equal(t, val.Power(), int64(1))
+	val.data.Stake = 1
+	assert.Equal(t, val.Stake(), int64(1))
+	assert.Equal(t, val.Power(), int64(1))
+}

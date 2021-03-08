@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/genesis"
@@ -61,7 +62,7 @@ func setup(t *testing.T) {
 	conf.Levels["_state"] = "debug"
 	logger.InitLogger(conf)
 
-	_, tSigners = validator.GenerateTestValidatorSet()
+	_, tSigners = committee.GenerateTestCommittee()
 	tTxPool = txpool.MockingTxPool()
 
 	vals := make([]*validator.Validator, 4)
@@ -287,7 +288,7 @@ func TestHandleTimeout(t *testing.T) {
 	checkHRS(t, tConsY, 1, 0, hrs.StepTypePropose)
 }
 
-func TestNotInValidatorSet(t *testing.T) {
+func TestNotInCommittee(t *testing.T) {
 	setup(t)
 
 	_, _, priv := crypto.GenerateTestKeyPair()

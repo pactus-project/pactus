@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.0.0
+## 0.9.3
+- Adding sortition_seed to block header
+- Sortition runs on sortition_seed instead of block_hash
+
+## 0.9.2
 - Refactoring commit base on zip-0001 proposal
 - Introducing Download topic for downloading blockchain
 - Transaction ID is hash of transaction without signature and public-key

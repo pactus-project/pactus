@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 type StateReader interface {
 	StoreReader() store.StoreReader
-	ValidatorSet() validator.ValidatorSetReader
+	Committee() committee.CommitteeReader
 	LastBlockHeight() int
 	GenesisHash() crypto.Hash
 	LastBlockHash() crypto.Hash

@@ -142,7 +142,7 @@ func TestNetworkLagging1(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
 
-	// Proposal received now, set it
+	// Now let's set the proposal
 	tConsP.SetProposal(p)
 	checkHRS(t, tConsP, h, r, hrs.StepTypePrecommit)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
@@ -169,7 +169,7 @@ func TestNetworkLagging2(t *testing.T) {
 	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
-	// Proposal received now, set it
+	// Now let's set the proposal
 	tConsP.SetProposal(p1)
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())

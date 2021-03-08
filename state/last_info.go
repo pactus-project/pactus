@@ -12,15 +12,15 @@ import (
 //
 // Some thoughts about this structure:
 //
-// This structure helps the node to restore the last state upon restarting the node.
+// This structure helps the node to restore the last state upon starting the node.
 // We could also replay the last block to recover the last state, but there is a tradeoff here.
 //
 // There are two ways to safely replay the last block:
-// 1- Have a snapshot of the database for current state and previous state. (which is not beautiful)
-// 2- Commit block after receiving the next block. Note that the next block has adjustment or proof for the previous block
+// 1- Keeping a snapshot for previous state. (not beautiful)
+// 2- Committing block after receiving the next block. Note that the next block has proof for the previous block
 // However postponing committing a block has its own complexity.
 //
-// For now, we keep this structure as it is.
+// For now, we keep this structure.
 //
 type lastInfo struct {
 	LastHeight      int

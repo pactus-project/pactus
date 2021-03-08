@@ -114,7 +114,7 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 
 	val := vs.getValidatorByAddress(signer)
 	if val == nil {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Cannot find validator %s in valSet", signer)
+		return false, errors.Errorf(errors.ErrInvalidVote, "Cannot find validator %s in committee", signer)
 	}
 
 	if err := vote.Verify(val.PublicKey()); err != nil {

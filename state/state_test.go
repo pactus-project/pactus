@@ -80,11 +80,11 @@ func setup(t *testing.T) {
 
 func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (block.Block, block.Commit) {
 	var st *state
-	if tState1.validatorSet.IsProposer(tState1.proposer, round) {
+	if tState1.committee.IsProposer(tState1.signer.Address(), round) {
 		st = tState1
-	} else if tState1.validatorSet.IsProposer(tState2.proposer, round) {
+	} else if tState1.committee.IsProposer(tState2.signer.Address(), round) {
 		st = tState2
-	} else if tState1.validatorSet.IsProposer(tState3.proposer, round) {
+	} else if tState1.committee.IsProposer(tState3.signer.Address(), round) {
 		st = tState3
 	} else {
 		st = tState4
@@ -138,6 +138,7 @@ func moveToNextHeightForAllStates(t *testing.T) {
 	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockAndCommitForAllStates(t, b, c)
 }
+
 func TestProposeBlockAndValidation(t *testing.T) {
 	setup(t)
 	moveToNextHeightForAllStates(t)
@@ -180,14 +181,25 @@ func TestBlockSubsidy(t *testing.T) {
 func TestBlockSubsidyTx(t *testing.T) {
 	setup(t)
 
+	// Without mintbase address in config
 	trx := tState1.createSubsidyTx(7)
 	assert.True(t, trx.IsMintbaseTx())
 	assert.Equal(t, trx.Payload().Value(), calcBlockSubsidy(1, tState1.params.SubsidyReductionInterval)+7)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
 
+	// With ivalid mintbase address in config
+	tState1.config.MintbaseAddress = "invalid"
+	tState1.Close()
+	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
+	assert.Error(t, err)
+
+	// With mintbase address in config
 	addr, _, _ := crypto.GenerateTestKeyPair()
-	tState1.config.MintbaseAddress = &addr
-	trx = tState1.createSubsidyTx(0)
+	tState1.config.MintbaseAddress = addr.String()
+	tState1.Close()
+	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
+	assert.NoError(t, err)
+	trx = st.(*state).createSubsidyTx(0)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
 }
 
@@ -260,24 +272,24 @@ func TestCommitSandbox(t *testing.T) {
 		assert.Equal(t, tState1.executionSandbox.TotalStakeChange(), int64(2))
 	})
 
-	t.Run("Move valset", func(t *testing.T) {
+	t.Run("Move committee", func(t *testing.T) {
 		setup(t)
 
-		nextProposer := tState1.validatorSet.Proposer(1)
+		nextProposer := tState1.committee.Proposer(1)
 
 		tState1.commitSandbox(0)
 
-		assert.Equal(t, tState1.validatorSet.Proposer(0).Address(), nextProposer.Address())
+		assert.Equal(t, tState1.committee.Proposer(0).Address(), nextProposer.Address())
 	})
 
-	t.Run("Move valset next round", func(t *testing.T) {
+	t.Run("Move committee next round", func(t *testing.T) {
 		setup(t)
 
-		nextNextProposer := tState1.validatorSet.Proposer(2)
+		nextNextProposer := tState1.committee.Proposer(2)
 
 		tState1.commitSandbox(1)
 
-		assert.Equal(t, tState1.validatorSet.Proposer(0).Address(), nextNextProposer.Address())
+		assert.Equal(t, tState1.committee.Proposer(0).Address(), nextNextProposer.Address())
 	})
 }
 
@@ -372,7 +384,7 @@ func TestSortition(t *testing.T) {
 	assert.NoError(t, err)
 	st1 := st.(*state)
 
-	assert.False(t, st1.EvaluateSortition()) //  not a validator
+	assert.False(t, st1.evaluateSortition()) //  not a validator
 
 	// Commit 10 blocks, bonding tx is in block 2
 	for i := 0; i < 10; i++ {
@@ -387,36 +399,36 @@ func TestSortition(t *testing.T) {
 		require.NoError(t, st1.CommitBlock(i+1, b, c))
 	}
 
-	assert.False(t, st1.EvaluateSortition()) //  bonding period
+	assert.False(t, st1.evaluateSortition()) //  bonding period
 
 	// Commit another block
 	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockAndCommitForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(11, b, c))
 
-	assert.True(t, st1.EvaluateSortition())                //  ok
-	assert.False(t, tState1.ValidatorSet().Contains(addr)) // still not in the set
+	assert.True(t, st1.evaluateSortition())             //  ok
+	assert.False(t, tState1.Committee().Contains(addr)) // still not in the set
 
 	// ---------------------------------------------
-	// Commit another block, new validator should be in the set now
+	// Commit another block, new validator should be in the committee now
 	b, c = makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockAndCommitForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(12, b, c))
 
-	assert.False(t, st1.EvaluateSortition()) // already in the set
-	assert.False(t, tState1.ValidatorSet().Contains(tValSigner1.Address()))
-	assert.True(t, tState1.ValidatorSet().Contains(addr))
+	assert.False(t, st1.evaluateSortition()) // already in the set
+	assert.False(t, tState1.Committee().Contains(tValSigner1.Address()))
+	assert.True(t, tState1.Committee().Contains(addr))
 
 	// ---------------------------------------------
 	// Let's save and load tState1
-	committeeHash := tState1.validatorSet.CommitteeHash()
+	committeeHash := tState1.committee.CommitteeHash()
 	tState1.Close()
 	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
 
-	assert.Equal(t, state1.(*state).validatorSet.CommitteeHash(), committeeHash)
+	assert.Equal(t, state1.(*state).committee.CommitteeHash(), committeeHash)
 
 	// ---------------------------------------------
-	// Let's commit another block with new Validator set
+	// Let's commit another block with new committee
 	b1, err := st1.ProposeBlock(3)
 	require.NoError(t, err)
 	require.NotNil(t, b1)
@@ -489,6 +501,7 @@ func TestInvalidBlockTime(t *testing.T) {
 		validBlock.Header().StateHash(),
 		validBlock.Header().LastReceiptsHash(),
 		validBlock.LastCommit(),
+		validBlock.Header().SortitionSeed(),
 		validBlock.Header().ProposerAddress())
 
 	assert.NoError(t, tState1.ValidateBlock(validBlock))

@@ -5,12 +5,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func setupValidatorSet(t *testing.T, stakes ...int64) (*validator.ValidatorSet, []crypto.Signer) {
+func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []crypto.Signer) {
 
 	signers := []crypto.Signer{}
 	vals := []*validator.Validator{}
@@ -21,16 +22,16 @@ func setupValidatorSet(t *testing.T, stakes ...int64) (*validator.ValidatorSet, 
 		vals = append(vals, val)
 		signers = append(signers, signer)
 	}
-	valset, _ := validator.NewValidatorSet(vals, len(stakes), signers[0].Address())
-	return valset, signers
+	committee, _ := committee.NewCommittee(vals, len(stakes), signers[0].Address())
+	return committee, signers
 }
 
 func TestAddVote(t *testing.T) {
-	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
 	h1 := crypto.GenerateTestHash()
 	invSigner := crypto.GenerateTestSigner()
-	vs := NewVoteSet(100, 5, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(100, 5, VoteTypePrecommit, committee.CopyValidators())
 
 	v1 := NewVote(VoteTypePrecommit, 100, 5, h1, invSigner.Address())
 	v2 := NewVote(VoteTypePrecommit, 100, 5, h1, signers[0].Address())
@@ -39,7 +40,7 @@ func TestAddVote(t *testing.T) {
 
 	invSigner.SignMsg(v1)
 	added, err := vs.AddVote(v1)
-	assert.False(t, added) // not in val set
+	assert.False(t, added) // not in committee
 	assert.Error(t, err)
 	assert.Nil(t, vs.ToCommit())
 
@@ -70,11 +71,11 @@ func TestAddVote(t *testing.T) {
 }
 
 func TestDuplicateVote(t *testing.T) {
-	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
-	vs := NewVoteSet(1, 0, VoteTypePrepare, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrepare, committee.CopyValidators())
 
 	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
 	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, signers[0].Address())
@@ -118,9 +119,9 @@ func TestDuplicateVote(t *testing.T) {
 }
 
 func TestQuorum(t *testing.T) {
-	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, committee.CopyValidators())
 	h1 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
@@ -160,9 +161,9 @@ func TestQuorum(t *testing.T) {
 
 // This test is very important. Change it with cautious
 func TestUpdateVote(t *testing.T) {
-	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, committee.CopyValidators())
 
 	h1 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
@@ -238,9 +239,9 @@ func TestUpdateVote(t *testing.T) {
 }
 
 func TestAllVotes(t *testing.T) {
-	valSet, signers := setupValidatorSet(t, 1000, 1500, 2500, 2000)
+	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, valSet.CopyValidators())
+	vs := NewVoteSet(1, 0, VoteTypePrecommit, committee.CopyValidators())
 
 	h1 := crypto.GenerateTestHash()
 	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())

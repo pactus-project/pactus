@@ -5,11 +5,12 @@ import (
 
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/sortition"
 )
 
 type SortitionPayload struct {
-	Address crypto.Address `cbor:"1,keyasint"`
-	Proof   []byte         `cbor:"2,keyasint"`
+	Address crypto.Address  `cbor:"1,keyasint"`
+	Proof   sortition.Proof `cbor:"2,keyasint"`
 }
 
 func (p *SortitionPayload) Type() PayloadType {
@@ -27,9 +28,6 @@ func (p *SortitionPayload) Value() int64 {
 func (p *SortitionPayload) SanityCheck() error {
 	if err := p.Address.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid address")
-	}
-	if len(p.Proof) != crypto.SignatureSize {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof")
 	}
 
 	return nil

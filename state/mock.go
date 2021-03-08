@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 var _ State = &MockState{}
@@ -19,23 +19,23 @@ type MockState struct {
 	GenHash          crypto.Hash
 	Store            *store.MockStore
 	InvalidBlockHash crypto.Hash
-	ValSet           *validator.ValidatorSet
+	Committee_       *committee.Committee
 }
 
 func MockingState() *MockState {
-	valset, _ := validator.GenerateTestValidatorSet()
+	committee, _ := committee.GenerateTestCommittee()
 	return &MockState{
-		GenHash: crypto.GenerateTestHash(),
-		Store:   store.MockingStore(),
-		ValSet:  valset,
+		GenHash:    crypto.GenerateTestHash(),
+		Store:      store.MockingStore(),
+		Committee_: committee,
 	}
 }
 
 func (m *MockState) StoreReader() store.StoreReader {
 	return m.Store
 }
-func (m *MockState) ValidatorSet() validator.ValidatorSetReader {
-	return m.ValSet
+func (m *MockState) Committee() committee.CommitteeReader {
+	return m.Committee_
 }
 func (m *MockState) LastBlockHeight() int {
 	return m.Store.LastBlockHeight()

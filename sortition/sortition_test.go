@@ -7,100 +7,80 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 func TestEvaluation(t *testing.T) {
-	t.Run("Signer should be same as validator", func(t *testing.T) {
-		val, _ := validator.GenerateTestValidator(5)
-		invSortition := NewSortition(crypto.GenerateTestSigner())
-		h := crypto.GenerateTestHash()
+	signer := crypto.GenerateTestSigner()
+	seed := GenerateRandomSeed()
 
-		require.Nil(t, invSortition.EvaluateTransaction(h, val))
+	t.Run("Total stake is zero", func(t *testing.T) {
+		s := NewSortition()
+
+		ok, proof := s.EvaluateSortition(seed, signer, 0)
+		require.True(t, ok)
+		ok = s.VerifyProof(seed, proof, signer.PublicKey(), 0)
+		require.True(t, ok)
 	})
 
-	t.Run("Sortition on zero total stake", func(t *testing.T) {
-		signer := crypto.GenerateTestSigner()
-		val := validator.NewValidator(signer.PublicKey(), 1, 0)
-		sortition := NewSortition(signer)
-		h := crypto.GenerateTestHash()
+	t.Run("Total stake is not zero, but validator stake is zero", func(t *testing.T) {
+		s := NewSortition()
+		s.SetTotalStake(1000)
 
-		require.NotNil(t, sortition.EvaluateTransaction(h, val))
-	})
-
-	t.Run("Sortition on non-zero total stake", func(t *testing.T) {
-		signer := crypto.GenerateTestSigner()
-		val := validator.NewValidator(signer.PublicKey(), 1, 0)
-		sortition := NewSortition(signer)
-		sortition.AddToTotalStake(100000000)
-		h := crypto.GenerateTestHash()
-
-		require.Equal(t, sortition.TotalStake(), int64(100000000))
-		require.Nil(t, sortition.EvaluateTransaction(h, val))
+		ok, _ := s.EvaluateSortition(seed, signer, 0)
+		require.False(t, ok)
 	})
 
 	t.Run("Sortition ok", func(t *testing.T) {
-		h, _ := crypto.HashFromString("a8fee3ae118a7c0c12a2a7a894af719655f2e9cbdfd2bbcd346c8cb99a0e71ba")
-		priv, _ := crypto.PrivateKeyFromString("2b973a9589bd251341288cd8b19e62397ae5dd0367d45dbcbdfbe9b28253dd68")
+		seed, _ := SeedFromString("8d019192c24224e2cafccae3a61fb586b14323a6bc8f9e7df1d929333ff993933bea6f5b3af6de0374366c4719e43a1b")
+		priv, _ := crypto.PrivateKeyFromString("39bc26dfcd0a5aec45cd2375122dffe46f713b6f93bc06c1fed759c251d4a13b")
 		signer := crypto.NewSigner(priv)
-		val := validator.NewValidator(signer.PublicKey(), 1, 0)
-		val.AddToStake(1000)
-		sortition := NewSortition(signer)
-		sortition.AddToTotalStake(100000000)
+		totalStake := int64(1000000000)
+		s := NewSortition()
+		s.AddToTotalStake(totalStake)
 
-		require.NotNil(t, sortition.EvaluateTransaction(h, val))
+		ok, proof := s.EvaluateSortition(seed, signer, totalStake/10)
+		require.True(t, ok)
+		ok = s.VerifyProof(seed, proof, signer.PublicKey(), totalStake/10)
+		require.True(t, ok)
+		ok = s.VerifyProof(seed, GenerateRandomProof(), signer.PublicKey(), totalStake/10)
+		require.False(t, ok)
+		ok = s.VerifyProof(GenerateRandomSeed(), proof, signer.PublicKey(), totalStake/10)
+		require.False(t, ok)
 	})
 }
 
 func TestVerifyProof(t *testing.T) {
-	h, _ := crypto.HashFromString("a8fee3ae118a7c0c12a2a7a894af719655f2e9cbdfd2bbcd346c8cb99a0e71ba")
-	priv, _ := crypto.PrivateKeyFromString("2b973a9589bd251341288cd8b19e62397ae5dd0367d45dbcbdfbe9b28253dd68")
-	signer := crypto.NewSigner(priv)
-	val := validator.NewValidator(signer.PublicKey(), 1, 0)
-	val.AddToStake(1000)
-	sortition := NewSortition(signer)
-	sortition.AddToTotalStake(100000000)
+	seed, _ := SeedFromString("8d019192c24224e2cafccae3a61fb586b14323a6bc8f9e7df1d929333ff993933bea6f5b3af6de0374366c4719e43a1b")
+	pub, _ := crypto.PublicKeyFromString("9a267cac764b1d860f1d587d0d5a61110c0c21bc6a57bdfdb8d4f2941e59fe709a017a32a599a35e81b91255d1b9d500f2427135a97d89a0a9431946d5db35d539bbe33f9f9b534c2cf88ef1a532f9d52a065a45221d18d6d4e6912680a5b58f")
+	proof, _ := ProofFromString("2fbbe418b7b12068b2cfe43138e02453ea0146b1345381c72061274483af580f1c47a3e626c4927431c5447346860084")
+	totalStake := int64(1000000000)
+	s := NewSortition()
+	s.AddToTotalStake(totalStake)
 
-	index, proof := sortition.vrf.Evaluate(h)
-	assert.Less(t, index, val.Stake())
-	assert.True(t, sortition.VerifyProof(h, proof, val))
-
-	t.Run("Invalid validator", func(t *testing.T) {
-		anotherValidator, _ := validator.GenerateTestValidator(2)
-		assert.False(t, sortition.VerifyProof(h, proof, anotherValidator))
-	})
-
-	t.Run("Less stake ", func(t *testing.T) {
-		val2 := validator.NewValidator(signer.PublicKey(), 1, 0)
-		val2.AddToStake(1000 / 2)
-		assert.False(t, sortition.VerifyProof(h, proof, val2))
-	})
-
+	assert.Equal(t, s.TotalStake(), totalStake)
+	assert.True(t, s.VerifyProof(seed, proof, pub, totalStake/10))
+	assert.False(t, s.VerifyProof(seed, proof, pub, totalStake/30))
 }
 
-func TestEvaluationTotalStakeNotZero(t *testing.T) {
-	stake := int64(100000000)
-	_, pub, priv := crypto.GenerateTestKeyPair()
-	val := validator.NewValidator(pub, 0, 0)
-	val.AddToStake(stake) // 1/10 of total stake
+func TestSortitionMedian(t *testing.T) {
+	stake := int64(100000000) // 1/10 of total stake
+	totalStake := 10 * stake
 
-	s := NewSortition(crypto.NewSigner(priv))
-	s.SetTotalStake(10 * stake)
+	s := NewSortition()
+	s.SetTotalStake(totalStake)
 
+	signer := crypto.GenerateTestSigner()
 	total := 500
 	median := 0
 	for j := 0; j < total; j++ {
-		var h crypto.Hash
-		var trx *tx.Tx
-
-		h = crypto.GenerateTestHash()
-		trx = s.EvaluateTransaction(h, val)
-		if trx != nil {
+		seed := GenerateRandomSeed()
+		ok, _ := s.EvaluateSortition(seed, signer, stake)
+		if ok {
 			median++
 		}
 	}
 
 	// Should be about 10%
 	fmt.Printf("%v%% ", median*100/total)
+	assert.NotZero(t, median*100/total)
 }

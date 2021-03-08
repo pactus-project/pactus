@@ -190,14 +190,14 @@ func disableHeartbeat(t *testing.T) {
 
 func joinAliceToTheSet(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
-	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
-	assert.NoError(t, tBobState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
+	assert.NoError(t, tAliceState.Committee_.Update(0, []*validator.Validator{val}))
+	assert.NoError(t, tBobState.Committee_.Update(0, []*validator.Validator{val}))
 }
 
 func joinBobToTheSet(t *testing.T) {
 	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
-	assert.NoError(t, tAliceState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
-	assert.NoError(t, tBobState.ValSet.UpdateTheSet(0, []*validator.Validator{val}))
+	assert.NoError(t, tAliceState.Committee_.Update(0, []*validator.Validator{val}))
+	assert.NoError(t, tBobState.Committee_.Update(0, []*validator.Validator{val}))
 }
 
 func TestAccessors(t *testing.T) {
@@ -416,7 +416,7 @@ func TestQueryProposal(t *testing.T) {
 func TestHeartbeatNotInSet(t *testing.T) {
 	setup(t)
 
-	// Alice is not in validator set
+	// Alice is not in committee
 	tAliceSync.broadcastHeartBeat()
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
@@ -425,7 +425,7 @@ func TestHeartbeatNotInSet(t *testing.T) {
 	v1, _ := vote.GenerateTestPrepareVote(tAliceConsensus.HRS().Height(), 0)
 	tAliceConsensus.Votes = []*vote.Vote{v1}
 
-	// Alice is in validator set
+	// Alice is in committee
 	tAliceSync.broadcastHeartBeat()
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeHeartBeat)
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeVote)

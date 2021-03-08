@@ -103,7 +103,7 @@ func (pool *txPool) checkTx(trx *tx.Tx) error {
 	} else if trx.IsSortitionTx() {
 		// We accepts all sortition transactions
 		// A validator might produce more than one sortition transaction
-		// Before entring the set
+		// Before entring the committee
 		return nil
 
 	} else {
