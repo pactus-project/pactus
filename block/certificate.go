@@ -51,6 +51,9 @@ func (cert *Certificate) SanityCheck() error {
 	if cert.data.Committers == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid committers")
 	}
+	if cert.data.Absences == nil {
+		return errors.Errorf(errors.ErrInvalidBlock, "Invalid absences")
+	}
 	signedBy := util.Subtracts(cert.data.Committers, cert.data.Absences)
 	if !util.Equal(util.Subtracts(cert.data.Committers, signedBy), cert.data.Absences) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Absences is not subset of committers")

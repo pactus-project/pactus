@@ -46,7 +46,7 @@ func TestInvalidCertificate(t *testing.T) {
 
 	c4 := GenerateTestCertificate(crypto.GenerateTestHash())
 	c4.data.Absences = nil
-	assert.NoError(t, c4.SanityCheck())
+	assert.Error(t, c4.SanityCheck())
 
 	c6 := GenerateTestCertificate(crypto.GenerateTestHash())
 	c6.data.Absences = append(c6.data.Absences, -1)
