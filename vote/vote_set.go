@@ -189,7 +189,7 @@ func (vs *VoteSet) QuorumBlock() *crypto.Hash {
 	return vs.quorumBlock
 }
 
-func (vs *VoteSet) ToCommit() *block.Commit {
+func (vs *VoteSet) ToCertificate() *block.Certificate {
 	if vs.voteType != VoteTypePrecommit {
 		return nil
 	}
@@ -199,25 +199,25 @@ func (vs *VoteSet) ToCommit() *block.Commit {
 	}
 
 	votesMap := vs.blockVotes[*blockHash].votes
-	committers := make([]block.Committer, len(vs.validators))
+	committers := make([]int, len(vs.validators))
+	absences := make([]int, 0)
 	sigs := make([]crypto.Signature, 0)
 
 	for i, val := range vs.validators {
-		status := block.CommitNotSigned
 		v := votesMap[val.Address()]
 
 		if v != nil {
 			sigs = append(sigs, *v.Signature())
-			status = block.CommitSigned
+		} else {
+			absences = append(absences, val.Number())
 		}
 
-		committers[i].Number = val.Number()
-		committers[i].Status = status
+		committers[i] = val.Number()
 	}
 
 	sig := crypto.Aggregate(sigs)
 
-	return block.NewCommit(*blockHash, vs.round, committers, sig)
+	return block.NewCertificate(*blockHash, vs.round, committers, absences, sig)
 }
 
 func (vs *VoteSet) Fingerprint() string {

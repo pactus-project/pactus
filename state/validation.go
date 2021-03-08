@@ -4,6 +4,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func (st *state) validateBlock(block block.Block) error {
@@ -35,28 +36,29 @@ func (st *state) validateBlock(block block.Block) error {
 			"State hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
 	}
 
-	if err := st.validateCommitForPreviousHeight(block.LastCommit()); err != nil {
+	if err := st.validateCertificateForPreviousHeight(block.LastCertificate()); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (st *state) validateCommit(commit *block.Commit) error {
-	if err := commit.SanityCheck(); err != nil {
+func (st *state) validateCertificate(cert *block.Certificate) error {
+	if err := cert.SanityCheck(); err != nil {
 		return err
 	}
 
-	pubs := make([]crypto.PublicKey, 0, len(commit.Committers()))
+	pubs := make([]crypto.PublicKey, 0, len(cert.Committers()))
 	totalStake := int64(0)
 	signersStake := int64(0)
-	for _, c := range commit.Committers() {
-		val, _ := st.store.ValidatorByNumber(c.Number)
-		if c.HasSigned() {
-			if val == nil {
-				return errors.Errorf(errors.ErrInvalidBlock,
-					"Invalid committer: %x", c.Number)
-			}
+
+	for _, num := range cert.Committers() {
+		val, _ := st.store.ValidatorByNumber(num)
+		if val == nil {
+			return errors.Errorf(errors.ErrInvalidBlock,
+				"Invalid committer: %x", num)
+		}
+		if !util.HasItem(cert.Absences(), num) {
 			pubs = append(pubs, val.PublicKey())
 			signersStake += val.Power()
 		}
@@ -69,60 +71,60 @@ func (st *state) validateCommit(commit *block.Commit) error {
 	}
 
 	// Check signature
-	signBytes := commit.SignBytes()
-	if !crypto.VerifyAggregated(commit.Signature(), pubs, signBytes) {
+	signBytes := cert.SignBytes()
+	if !crypto.VerifyAggregated(cert.Signature(), pubs, signBytes) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Invalid commit signature: %v", commit.Signature())
+			"Invalid certificate's signature: %v", cert.Signature())
 	}
 
 	return nil
 }
 
-// validateCommitForPreviousHeight validates commit for the previous height
-func (st *state) validateCommitForPreviousHeight(commit *block.Commit) error {
-	if commit == nil {
+// validateCertificateForPreviousHeight validates certificate for the previous height
+func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) error {
+	if cert == nil {
 		if !st.lastBlockHash.IsUndef() {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Only genesis block has no commit")
+				"Only genesis block has no certificate")
 		}
 	} else {
-		if err := st.validateCommit(commit); err != nil {
+		if err := st.validateCertificate(cert); err != nil {
 			return err
 		}
 
-		if !commit.BlockHash().EqualsTo(st.lastBlockHash) {
+		if !cert.BlockHash().EqualsTo(st.lastBlockHash) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
+				"Certificate has invalid block hash. Expected %v, got %v", st.lastBlockHash, cert.BlockHash())
 		}
 
-		if commit.Round() != st.lastCommit.Round() {
+		if cert.Round() != st.lastCertificate.Round() {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last commit round is not same as we expected. Expected %v, got %v", st.lastCommit.Round(), commit.Round())
+				"Last certificate's round is not same as we expected. Expected %v, got %v", st.lastCertificate.Round(), cert.Round())
 		}
 
-		if !commit.CommitteeHash().EqualsTo(st.lastCommit.CommitteeHash()) {
+		if !cert.CommitteeHash().EqualsTo(st.lastCertificate.CommitteeHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last committee hash are not same as we expected. Expected %v, got %v", st.lastCommit.CommitteeHash(), commit.CommitteeHash())
+				"Last committee hash are not same as we expected. Expected %v, got %v", st.lastCertificate.CommitteeHash(), cert.CommitteeHash())
 		}
 	}
 
 	return nil
 }
 
-// validateCommitForCurrentHeight validates commit for the current height
-func (st *state) validateCommitForCurrentHeight(commit block.Commit, blockHash crypto.Hash) error {
-	if err := st.validateCommit(&commit); err != nil {
+// validateCertificateForCurrentHeight validates certificate for the current height
+func (st *state) validateCertificateForCurrentHeight(cert block.Certificate, blockHash crypto.Hash) error {
+	if err := st.validateCertificate(&cert); err != nil {
 		return err
 	}
 
-	if !commit.BlockHash().EqualsTo(blockHash) {
+	if !cert.BlockHash().EqualsTo(blockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Commit has invalid block hash. Expected %v, got %v", st.lastBlockHash, commit.BlockHash())
+			"Certificate has invalid block hash. Expected %v, got %v", st.lastBlockHash, cert.BlockHash())
 	}
 
-	if !commit.CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {
+	if !cert.CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last committee hash are not same as we expected. Expected %v, got %v", st.committee.CommitteeHash(), commit.CommitteeHash())
+			"Last committee hash are not same as we expected. Expected %v, got %v", st.committee.CommitteeHash(), cert.CommitteeHash())
 	}
 
 	return nil

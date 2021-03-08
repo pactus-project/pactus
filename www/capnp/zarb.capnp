@@ -20,21 +20,17 @@ struct Txs {
   hashes             @0 :List(Data);
 }
 
-struct Committer {
-  number              @0 :Int32;
-  status              @1 :Int32;
-}
-
-struct Commit {
+struct Certificate {
   blockHash           @0 :Data;
   round               @1 :UInt32;
-  committers          @2 :List(Committer);
-  signature           @3 :Data;
+  committers          @2 :List(Int32);
+  absences            @3 :List(Int32);
+  signature           @4 :Data;
 }
 
 struct Block {
   header              @0 :Header;
-  lastCommit          @1 :Commit;
+  lastCertificate          @1 :Certificate;
   txs                 @2 :Txs;
 }
 

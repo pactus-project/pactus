@@ -15,11 +15,11 @@ import (
 var _ State = &MockState{}
 
 type MockState struct {
-	LastBlockCommit  *block.Commit
-	GenHash          crypto.Hash
-	Store            *store.MockStore
-	InvalidBlockHash crypto.Hash
-	TestCommittee    *committee.Committee
+	LastBlockCertificate *block.Certificate
+	GenHash              crypto.Hash
+	Store                *store.MockStore
+	InvalidBlockHash     crypto.Hash
+	TestCommittee        *committee.Committee
 }
 
 func MockingState(committee *committee.Committee) *MockState {
@@ -52,20 +52,20 @@ func (m *MockState) LastBlockHash() crypto.Hash {
 func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
 }
-func (m *MockState) LastCommit() *block.Commit {
-	return m.LastBlockCommit
+func (m *MockState) LastCertificate() *block.Certificate {
+	return m.LastBlockCertificate
 }
 func (m *MockState) BlockTime() time.Duration {
 	return time.Second
 }
-func (m *MockState) UpdateLastCommit(commit *block.Commit) error {
-	m.LastBlockCommit = commit
+func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
+	m.LastBlockCertificate = cert
 	return nil
 }
 func (m *MockState) Fingerprint() string {
 	return ""
 }
-func (m *MockState) CommitBlock(height int, b block.Block, c block.Commit) error {
+func (m *MockState) CommitBlock(height int, b block.Block, cert block.Certificate) error {
 	if height != m.LastBlockHeight()+1 {
 		return fmt.Errorf("Invalid height")
 	}
@@ -73,7 +73,7 @@ func (m *MockState) CommitBlock(height int, b block.Block, c block.Commit) error
 		return fmt.Errorf("Invalid block")
 	}
 	m.Store.Blocks[height] = &b
-	m.LastBlockCommit = &c
+	m.LastBlockCertificate = &cert
 	return nil
 }
 

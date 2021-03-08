@@ -3,8 +3,8 @@
 ## 0.9.3
 - Adding sortition_seed to block header
 - Sortition runs on sortition_seed instead of block_hash
-- Updating round-robin mechanism for choosing proposer (#commit_id)
--
+- Updating round-robin mechanism for choosing proposer
+- Block certificate includes committers and absences
 
 ## 0.9.2
 - Refactoring commit base on zip-0001 proposal
@@ -31,14 +31,13 @@
 - Improve syncing process
 
 ## 0.9.1
-- Adding wizard argument to start command
 - Ensure messages belongs to same network
 
 ## 0.9.0
 - Refactoring block structure
-- Refactoring Commit structure
+- Refactoring Certificate structure
 - Aggregating validators' signatures
-- Validating Commit and committers
+- Validating Certificate and committers
 - Calculating root hash of committers
 - Report UndefHash as a sanity error
 - Try to load last state info upon starting the node

@@ -52,8 +52,8 @@ func NewStateSync(
 	}
 }
 
-func (ss *StateSync) BroadcastBlockAnnounce(height int, block *block.Block, commit *block.Commit) {
-	msg := message.NewBlockAnnounceMessage(ss.selfID, height, block, commit)
+func (ss *StateSync) BroadcastBlockAnnounce(height int, block *block.Block, cert *block.Certificate) {
+	msg := message.NewBlockAnnounceMessage(ss.selfID, height, block, cert)
 	ss.publishFn(msg)
 }
 
@@ -64,8 +64,8 @@ func (ss *StateSync) BroadcastLatestBlocksRequest(target peer.ID) {
 	ss.publishFn(msg)
 }
 
-func (ss *StateSync) BroadcastLatestBlocksResponse(code payload.ResponseCode, target peer.ID, sessionID, from int, blocks []*block.Block, trxs []*tx.Tx, commit *block.Commit) {
-	msg := message.NewLatestBlocksResponseMessage(code, ss.selfID, target, sessionID, from, blocks, trxs, commit)
+func (ss *StateSync) BroadcastLatestBlocksResponse(code payload.ResponseCode, target peer.ID, sessionID, from int, blocks []*block.Block, trxs []*tx.Tx, cert *block.Certificate) {
+	msg := message.NewLatestBlocksResponseMessage(code, ss.selfID, target, sessionID, from, blocks, trxs, cert)
 	msg.CompressIt()
 	ss.publishFn(msg)
 }
@@ -161,8 +161,8 @@ func (ss *StateSync) ProcessLatestBlocksRequestPayload(pld *payload.LatestBlocks
 		from += len(blocks)
 	}
 
-	lastCommit := ss.state.LastCommit()
-	ss.BroadcastLatestBlocksResponse(payload.ResponseCodeSynced, pld.Initiator, pld.SessionID, 0, nil, nil, lastCommit)
+	lastCertificate := ss.state.LastCertificate()
+	ss.BroadcastLatestBlocksResponse(payload.ResponseCodeSynced, pld.Initiator, pld.SessionID, 0, nil, nil, lastCertificate)
 }
 
 func (ss *StateSync) ProcessDownloadRequestPayload(pld *payload.DownloadRequestPayload) {
@@ -206,7 +206,7 @@ func (ss *StateSync) ProcessDownloadRequestPayload(pld *payload.DownloadRequestP
 func (ss *StateSync) ProcessBlockAnnouncePayload(pld *payload.BlockAnnouncePayload) {
 	ss.logger.Trace("Process block announce payload", "pld", pld)
 
-	ss.cache.AddCommit(pld.Commit)
+	ss.cache.AddCertificate(pld.Certificate)
 	ss.cache.AddBlock(pld.Height, pld.Block)
 	ss.tryCommitBlocks()
 	ss.syncedFN()
@@ -221,7 +221,7 @@ func (ss *StateSync) ProcessLatestBlocksResponsePayload(pld *payload.LatestBlock
 
 	ourHeight := ss.state.LastBlockHeight()
 	if pld.To() == 0 || ourHeight < pld.To() {
-		ss.cache.AddCommit(pld.LastCommit)
+		ss.cache.AddCertificate(pld.LastCertificate)
 		ss.addBlocksToCache(pld.From, pld.Blocks)
 		ss.addTransactionsToCache(pld.Transactions)
 		ss.tryCommitBlocks()
@@ -319,7 +319,7 @@ func (ss *StateSync) prepareBlocksAndTransactions(from, count int) ([]*block.Blo
 
 func (ss *StateSync) addBlocksToCache(from int, blocks []*block.Block) {
 	for _, block := range blocks {
-		ss.cache.AddCommit(block.LastCommit())
+		ss.cache.AddCertificate(block.LastCertificate())
 		ss.cache.AddBlock(from, block)
 
 		from++
@@ -337,7 +337,7 @@ func (ss *StateSync) tryCommitBlocks() {
 		if b == nil {
 			break
 		}
-		c := ss.cache.GetCommit(b.Hash())
+		c := ss.cache.GetCertificate(b.Hash())
 		if c == nil {
 			break
 		}

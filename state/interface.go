@@ -16,9 +16,9 @@ type StateReader interface {
 	GenesisHash() crypto.Hash
 	LastBlockHash() crypto.Hash
 	LastBlockTime() time.Time
-	LastCommit() *block.Commit
+	LastCertificate() *block.Certificate
 	BlockTime() time.Duration
-	UpdateLastCommit(lastCommit *block.Commit) error
+	UpdateLastCertificate(lastCertificate *block.Certificate) error
 	Fingerprint() string
 }
 
@@ -28,5 +28,5 @@ type State interface {
 	Close() error
 	ProposeBlock(round int) (*block.Block, error)
 	ValidateBlock(block block.Block) error
-	CommitBlock(height int, block block.Block, commit block.Commit) error
+	CommitBlock(height int, block block.Block, cert block.Certificate) error
 }

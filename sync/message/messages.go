@@ -58,7 +58,7 @@ func (m *Message) Encode() ([]byte, error) {
 	}
 
 	if util.IsFlagSet(m.Flags, FlagCompressed) {
-		c, err := util.CompressSlice(pld)
+		c, err := util.CompressBuffer(pld)
 		if err == nil {
 			pld = c
 		}
@@ -88,7 +88,7 @@ func (m *Message) Decode(bs []byte) error {
 	}
 
 	if util.IsFlagSet(msg.Flags, FlagCompressed) {
-		c, err := util.DecompressSlice(msg.Payload)
+		c, err := util.DecompressBuffer(msg.Payload)
 		if err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 		}

@@ -46,16 +46,16 @@ func (cs *consensus) enterCommit(round int) {
 		return
 	}
 
-	commitBlock := roundProposal.Block()
-	commit := precommits.ToCommit()
+	certBlock := roundProposal.Block()
+	cert := precommits.ToCertificate()
 	height := cs.hrs.Height()
-	if commit == nil {
+	if cert == nil {
 		cs.logger.Error("Commit: Invalid precommits", "precommits", precommits)
 		return
 	}
 
-	if err := cs.state.CommitBlock(height, commitBlock, *commit); err != nil {
-		cs.logger.Warn("Commit: committing block failed", "block", commitBlock, "err", err)
+	if err := cs.state.CommitBlock(height, certBlock, *cert); err != nil {
+		cs.logger.Warn("Commit: committing block failed", "block", certBlock, "err", err)
 		return
 	}
 
@@ -65,5 +65,5 @@ func (cs *consensus) enterCommit(round int) {
 	cs.scheduleNewHeight()
 
 	// Now broadcast the committed block
-	cs.broadcastBlock(height, &commitBlock, commit)
+	cs.broadcastBlock(height, &certBlock, cert)
 }

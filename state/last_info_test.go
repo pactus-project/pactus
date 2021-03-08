@@ -22,17 +22,17 @@ func TestSaveLoadLastInfo(t *testing.T) {
 
 	tState1.saveLastInfo(
 		tState1.lastBlockHeight,
-		*tState1.lastCommit,
+		*tState1.lastCertificate,
 		tState1.lastReceiptsHash,
-		tState1.committee.Members(),
+		tState1.committee.Committers(),
 		tState1.committee.Proposer(0).Address())
 
 	li, err := tState1.loadLastInfo()
 	assert.NoError(t, err)
 	assert.Equal(t, li.LastHeight, tState1.lastBlockHeight)
-	assert.Equal(t, li.LastCommit.Hash(), tState1.lastCommit.Hash())
+	assert.Equal(t, li.LastCertificate.Hash(), tState1.lastCertificate.Hash())
 	assert.Equal(t, li.LastReceiptHash, tState1.lastReceiptsHash)
-	assert.Equal(t, li.Committee, tState1.committee.Members())
+	assert.Equal(t, li.Committee, tState1.committee.Committers())
 	assert.Equal(t, li.NextProposer, tState1.committee.Proposer(0).Address())
 }
 
@@ -49,10 +49,10 @@ func TestLoadState(t *testing.T) {
 	for i := 0; i < 4; i++ {
 		moveToNextHeightForAllStates(t)
 	}
-	b5, c5 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	CommitBlockAndCommitForAllStates(t, b5, c5)
+	b5, c5 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockForAllStates(t, b5, c5)
 
-	b6, c6 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	b6, c6 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NoError(t, tState1.Close())
 
 	// Load last state info

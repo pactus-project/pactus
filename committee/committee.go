@@ -189,30 +189,30 @@ func (committee *Committee) proposer(round int) *validator.Validator {
 	return pos.Value.(*validator.Validator)
 }
 
-func (committee *Committee) Members() []int {
+func (committee *Committee) Committers() []int {
 	committee.lk.Lock()
 	defer committee.lk.Unlock()
 
-	return committee.members()
+	return committee.committers()
 }
 
-func (committee *Committee) members() []int {
-	members := make([]int, committee.validatorList.Len())
+func (committee *Committee) committers() []int {
+	committers := make([]int, committee.validatorList.Len())
 	i := 0
 	committee.iterate(func(v *validator.Validator) (stop bool) {
-		members[i] = v.Number()
+		committers[i] = v.Number()
 		i++
 		return false
 	})
 
-	return members
+	return committers
 }
 
 func (committee *Committee) CommitteeHash() crypto.Hash {
 	committee.lk.Lock()
 	defer committee.lk.Unlock()
 
-	bz, _ := cbor.Marshal(committee.members())
+	bz, _ := cbor.Marshal(committee.committers())
 	return crypto.HashH(bz)
 }
 

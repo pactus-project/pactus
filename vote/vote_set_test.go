@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
@@ -42,7 +41,7 @@ func TestAddVote(t *testing.T) {
 	added, err := vs.AddVote(v1)
 	assert.False(t, added) // not in committee
 	assert.Error(t, err)
-	assert.Nil(t, vs.ToCommit())
+	assert.Nil(t, vs.ToCertificate())
 
 	invSigner.SignMsg(v2)
 	added, err = vs.AddVote(v2)
@@ -149,14 +148,10 @@ func TestQuorum(t *testing.T) {
 	assert.Equal(t, vs.QuorumBlock(), &h1)
 	assert.Equal(t, vs.Len(), 4)
 
-	c := vs.ToCommit()
+	c := vs.ToCertificate()
 	assert.NotNil(t, c)
-	assert.Equal(t, c.Committers(), []block.Committer{
-		{Number: 0, Status: 1},
-		{Number: 1, Status: 1},
-		{Number: 2, Status: 1},
-		{Number: 3, Status: 1},
-	})
+	assert.Equal(t, c.Committers(), []int{0, 1, 2, 3})
+	assert.Equal(t, c.Absences(), []int{})
 }
 
 // This test is very important. Change it with cautious

@@ -20,24 +20,24 @@ type Block struct {
 }
 
 type blockData struct {
-	Header     Header  `cbor:"1,keyasint"`
-	LastCommit *Commit `cbor:"2,keyasint"`
-	TxIDs      TxIDs   `cbor:"3,keyasint"`
+	Header          Header       `cbor:"1,keyasint"`
+	LastCertificate *Certificate `cbor:"2,keyasint"`
+	TxIDs           TxIDs        `cbor:"3,keyasint"`
 }
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
-	lastCommit *Commit, sortitionSeed sortition.Seed, proposer crypto.Address) Block {
+	lastCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) Block {
 
 	txIDsHash := txIDs.Hash()
 	header := NewHeader(version, timestamp,
-		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommit.Hash(), sortitionSeed, proposer)
+		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCertificate.Hash(), sortitionSeed, proposer)
 
 	b := Block{
 		data: blockData{
-			Header:     header,
-			LastCommit: lastCommit,
-			TxIDs:      txIDs,
+			Header:          header,
+			LastCertificate: lastCertificate,
+			TxIDs:           txIDs,
 		},
 	}
 
@@ -47,9 +47,9 @@ func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	return b
 }
 
-func (b Block) Header() Header      { return b.data.Header }
-func (b Block) LastCommit() *Commit { return b.data.LastCommit }
-func (b Block) TxIDs() TxIDs        { return b.data.TxIDs }
+func (b Block) Header() Header                { return b.data.Header }
+func (b Block) LastCertificate() *Certificate { return b.data.LastCertificate }
+func (b Block) TxIDs() TxIDs                  { return b.data.TxIDs }
 
 func (b Block) SanityCheck() error {
 	if err := b.data.Header.SanityCheck(); err != nil {
@@ -61,12 +61,12 @@ func (b Block) SanityCheck() error {
 	if !b.data.Header.TxIDsHash().EqualsTo(b.data.TxIDs.Hash()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Txs Hash")
 	}
-	if b.data.LastCommit != nil {
-		if err := b.data.LastCommit.SanityCheck(); err != nil {
+	if b.data.LastCertificate != nil {
+		if err := b.data.LastCertificate.SanityCheck(); err != nil {
 			return err
 		}
-		if !b.data.Header.LastCommitHash().EqualsTo(b.data.LastCommit.Hash()) {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Commit Hash")
+		if !b.data.Header.LastCommitHash().EqualsTo(b.data.LastCertificate.Hash()) {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Certificate Hash")
 		}
 	} else {
 		// Check for genesis block
@@ -156,9 +156,9 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		lastBlockHash = &h
 	}
 	lastReceiptsHash := crypto.GenerateTestHash()
-	commit := GenerateTestCommit(*lastBlockHash)
+	cert := GenerateTestCertificate(*lastBlockHash)
 	if lastBlockHash.IsUndef() {
-		commit = nil
+		cert = nil
 		lastReceiptsHash = crypto.UndefHash
 	}
 	sortitionSeed := sortition.GenerateRandomSeed()
@@ -167,31 +167,9 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		crypto.GenerateTestHash(),
 		crypto.GenerateTestHash(),
 		lastReceiptsHash,
-		commit,
+		cert,
 		sortitionSeed,
 		*proposer)
 
 	return &block, txs
-}
-
-func GenerateTestCommit(blockhash crypto.Hash) *Commit {
-	_, _, priv2 := crypto.GenerateTestKeyPair()
-	_, _, priv3 := crypto.GenerateTestKeyPair()
-	_, _, priv4 := crypto.GenerateTestKeyPair()
-
-	sigs := []crypto.Signature{
-		priv2.Sign(blockhash.RawBytes()),
-		priv3.Sign(blockhash.RawBytes()),
-		priv4.Sign(blockhash.RawBytes()),
-	}
-	sig := crypto.Aggregate(sigs)
-
-	return NewCommit(blockhash, util.RandInt(10),
-		[]Committer{
-			{Status: CommitNotSigned, Number: 0},
-			{Status: CommitSigned, Number: 1},
-			{Status: CommitSigned, Number: 2},
-			{Status: CommitSigned, Number: 3},
-		},
-		sig)
 }

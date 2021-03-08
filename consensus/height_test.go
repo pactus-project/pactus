@@ -43,11 +43,11 @@ func TestConsensusBehindState(t *testing.T) {
 
 	precommits := tConsP.pendingVotes.PrecommitVoteSet(0)
 	require.NotNil(t, precommits)
-	require.NotNil(t, precommits.ToCommit())
+	require.NotNil(t, precommits.ToCertificate())
 
 	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
 
-	assert.NoError(t, tConsP.state.CommitBlock(1, p.Block(), *precommits.ToCommit()))
+	assert.NoError(t, tConsP.state.CommitBlock(1, p.Block(), *precommits.ToCertificate()))
 	// We don't get any error here, but the block is not committed again. Check logs.
 }
 
@@ -77,7 +77,7 @@ func TestConsensusBehindState2(t *testing.T) {
 
 	precommits := tConsP.pendingVotes.PrecommitVoteSet(r)
 	require.NotNil(t, precommits)
-	require.NotNil(t, precommits.ToCommit())
+	require.NotNil(t, precommits.ToCertificate())
 
 	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
 }
