@@ -138,9 +138,18 @@ func TestQuorum(t *testing.T) {
 	ok, _ = vs.AddVote(v2)
 	assert.True(t, ok)
 	assert.False(t, vs.HasQuorum())
+	assert.Nil(t, vs.ToCertificate())
+
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
 	assert.True(t, vs.HasQuorum())
+
+	cert1 := vs.ToCertificate()
+	assert.NotNil(t, cert1)
+	assert.Equal(t, cert1.Committers(), []int{0, 1, 2, 3})
+	assert.Equal(t, cert1.Absences(), []int{3})
+
+	// Add one more vote
 	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
 	assert.True(t, vs.HasQuorum())
@@ -148,10 +157,10 @@ func TestQuorum(t *testing.T) {
 	assert.Equal(t, vs.QuorumBlock(), &h1)
 	assert.Equal(t, vs.Len(), 4)
 
-	c := vs.ToCertificate()
-	assert.NotNil(t, c)
-	assert.Equal(t, c.Committers(), []int{0, 1, 2, 3})
-	assert.Equal(t, c.Absences(), []int{})
+	cert2 := vs.ToCertificate()
+	assert.NotNil(t, cert2)
+	assert.Equal(t, cert2.Committers(), []int{0, 1, 2, 3})
+	assert.Equal(t, cert2.Absences(), []int{})
 }
 
 // This test is very important. Change it with cautious
@@ -256,4 +265,20 @@ func TestAllVotes(t *testing.T) {
 	assert.Equal(t, vs.Len(), 2)
 	assert.Contains(t, vs.AllVotes(), v1)
 	assert.Contains(t, vs.AllVotes(), v2)
+}
+
+func TestInvalidVoteType(t *testing.T) {
+	_, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
+
+	v1 := NewVote(-1, 1, 0, crypto.UndefHash, signers[0].Address())
+	assert.Equal(t, v1.VoteType(), VoteType(-1))
+	assert.Error(t, v1.SanityCheck())
+
+	v2 := NewVote(VoteTypePrecommit, -1, 0, crypto.UndefHash, signers[0].Address())
+	assert.Equal(t, v2.Height(), -1)
+	assert.Error(t, v2.SanityCheck())
+
+	v3 := NewVote(VoteTypePrecommit, 1, -1, crypto.UndefHash, signers[0].Address())
+	assert.Equal(t, v3.Round(), -1)
+	assert.Error(t, v3.SanityCheck())
 }
