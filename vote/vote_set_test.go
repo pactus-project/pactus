@@ -266,19 +266,3 @@ func TestAllVotes(t *testing.T) {
 	assert.Contains(t, vs.AllVotes(), v1)
 	assert.Contains(t, vs.AllVotes(), v2)
 }
-
-func TestInvalidVoteType(t *testing.T) {
-	_, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
-
-	v1 := NewVote(-1, 1, 0, crypto.UndefHash, signers[0].Address())
-	assert.Equal(t, v1.VoteType(), VoteType(-1))
-	assert.Error(t, v1.SanityCheck())
-
-	v2 := NewVote(VoteTypePrecommit, -1, 0, crypto.UndefHash, signers[0].Address())
-	assert.Equal(t, v2.Height(), -1)
-	assert.Error(t, v2.SanityCheck())
-
-	v3 := NewVote(VoteTypePrecommit, 1, -1, crypto.UndefHash, signers[0].Address())
-	assert.Equal(t, v3.Round(), -1)
-	assert.Error(t, v3.SanityCheck())
-}
