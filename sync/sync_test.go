@@ -97,14 +97,14 @@ func setup(t *testing.T) {
 	lastBlockHash := crypto.Hash{}
 	for i := 0; i < 21; i++ {
 		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
-		c := block.GenerateTestCommit(b.Hash())
+		c := block.GenerateTestCertificate(b.Hash())
 		lastBlockHash = b.Hash()
 
 		tAliceState.AddBlock(i+1, b, trxs)
-		tAliceState.LastBlockCommit = c
+		tAliceState.LastBlockCertificate = c
 
 		tBobState.AddBlock(i+1, b, trxs)
-		tBobState.LastBlockCommit = c
+		tBobState.LastBlockCertificate = c
 	}
 
 	tAliceSync = &synchronizer{
@@ -165,11 +165,11 @@ func addMoreBlocksForBob(t *testing.T, count int) {
 	lastBlockHash := tBobState.LastBlockHash()
 	for i := 0; i < count; i++ {
 		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
-		c := block.GenerateTestCommit(b.Hash())
+		c := block.GenerateTestCertificate(b.Hash())
 		lastBlockHash = b.Hash()
 
 		tBobState.AddBlock(tBobState.LastBlockHeight()+1, b, trxs)
-		tBobState.LastBlockCommit = c
+		tBobState.LastBlockCertificate = c
 	}
 }
 
@@ -180,7 +180,7 @@ func addMoreBlocksForBobAndAnnounceLastBlock(t *testing.T, count int) {
 		tBobPeerID,
 		tBobState.LastBlockHeight(),
 		tBobState.Store.Blocks[tBobState.LastBlockHeight()],
-		tBobState.LastBlockCommit)
+		tBobState.LastBlockCertificate)
 
 	tBobBroadcastCh <- msg
 }

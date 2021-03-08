@@ -290,7 +290,7 @@ func TestCommittee(t *testing.T) {
 	assert.NoError(t, err)
 
 	expected, _ := crypto.HashFromString("fd36b2597b028652ad4430b34a67094ba93ed84bd3abe5cd27f675bf431add48")
-	assert.Equal(t, committee.Members(), []int{0, 1, 2, 3})
+	assert.Equal(t, committee.Committers(), []int{0, 1, 2, 3})
 	assert.Equal(t, committee.CommitteeHash(), expected)
 }
 

@@ -24,17 +24,17 @@ import (
 //
 type lastInfo struct {
 	LastHeight      int
-	LastCommit      block.Commit
+	LastCertificate block.Certificate
 	LastReceiptHash crypto.Hash
 	Committee       []int
 	NextProposer    crypto.Address
 }
 
-func (st *state) saveLastInfo(height int, commit block.Commit, lastReceiptHash crypto.Hash, committee []int, proposer crypto.Address) {
+func (st *state) saveLastInfo(height int, cert block.Certificate, lastReceiptHash crypto.Hash, committee []int, proposer crypto.Address) {
 	path := st.config.Store.Path + "/last_info.json"
 	li := lastInfo{
 		LastHeight:      height,
-		LastCommit:      commit,
+		LastCertificate: cert,
 		LastReceiptHash: lastReceiptHash,
 		Committee:       committee,
 		NextProposer:    proposer,

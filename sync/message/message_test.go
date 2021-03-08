@@ -164,7 +164,7 @@ func TestVoteMessage(t *testing.T) {
 
 func TestBlockAnnounceMessage(t *testing.T) {
 	b, _ := block.GenerateTestBlock(nil, nil)
-	c := block.GenerateTestCommit(b.Hash())
+	c := block.GenerateTestCertificate(b.Hash())
 	m := NewOpaqueBlockAnnounceMessage(1001, b, c)
 	assert.Error(t, m.SanityCheck())
 	m = NewBlockAnnounceMessage(tPeerID1, 1001, b, c)

@@ -58,19 +58,19 @@ func NewLatestBlocksRequestMessage(initiator, target peer.ID, sessionID int, fro
 	}
 }
 
-func NewLatestBlocksResponseMessage(code payload.ResponseCode, initiator, target peer.ID, sessionID int, from int, blocks []*block.Block, transactions []*tx.Tx, commit *block.Commit) *Message {
+func NewLatestBlocksResponseMessage(code payload.ResponseCode, initiator, target peer.ID, sessionID int, from int, blocks []*block.Block, transactions []*tx.Tx, cert *block.Certificate) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeLatestBlocksResponse,
 		Payload: &payload.LatestBlocksResponsePayload{
-			ResponseCode: code,
-			SessionID:    sessionID,
-			Initiator:    initiator,
-			Target:       target,
-			From:         from,
-			Blocks:       blocks,
-			Transactions: transactions,
-			LastCommit:   commit,
+			ResponseCode:    code,
+			SessionID:       sessionID,
+			Initiator:       initiator,
+			Target:          target,
+			From:            from,
+			Blocks:          blocks,
+			Transactions:    transactions,
+			LastCertificate: cert,
 		},
 	}
 }
@@ -158,19 +158,19 @@ func NewVoteMessage(vote *vote.Vote) *Message {
 		},
 	}
 }
-func NewOpaqueBlockAnnounceMessage(height int, block *block.Block, commit *block.Commit) *Message {
-	return NewBlockAnnounceMessage("", height, block, commit)
+func NewOpaqueBlockAnnounceMessage(height int, block *block.Block, cert *block.Certificate) *Message {
+	return NewBlockAnnounceMessage("", height, block, cert)
 }
 
-func NewBlockAnnounceMessage(peerID peer.ID, height int, block *block.Block, commit *block.Commit) *Message {
+func NewBlockAnnounceMessage(peerID peer.ID, height int, block *block.Block, cert *block.Certificate) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeBlockAnnounce,
 		Payload: &payload.BlockAnnouncePayload{
-			PeerID: peerID,
-			Height: height,
-			Block:  block,
-			Commit: commit,
+			PeerID:      peerID,
+			Height:      height,
+			Block:       block,
+			Certificate: cert,
 		},
 	}
 }

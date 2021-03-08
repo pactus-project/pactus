@@ -78,7 +78,7 @@ func setup(t *testing.T) {
 	tState4, _ = st4.(*state)
 }
 
-func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (block.Block, block.Commit) {
+func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) (block.Block, block.Certificate) {
 	var st *state
 	if tState1.committee.IsProposer(tState1.signer.Address(), round) {
 		st = tState1
@@ -92,42 +92,41 @@ func makeBlockAndCommit(t *testing.T, round int, signers ...crypto.Signer) (bloc
 
 	b, err := st.ProposeBlock(round)
 	require.NoError(t, err)
-	c := makeCommitAndSign(t, b.Hash(), round, signers...)
+	c := makeCertificateAndSign(t, b.Hash(), round, signers...)
 
 	return *b, c
 }
 
-func makeCommitAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Commit {
+func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Certificate {
 	sigs := make([]crypto.Signature, len(signers))
-	sb := block.CommitSignBytes(blockHash, round)
-	committers := make([]block.Committer, 4)
-	committers[0] = block.Committer{Status: 0, Number: 0}
-	committers[1] = block.Committer{Status: 0, Number: 1}
-	committers[2] = block.Committer{Status: 0, Number: 2}
-	committers[3] = block.Committer{Status: 0, Number: 3}
+	sb := block.CertificateSignBytes(blockHash, round)
+	committers := []int{0, 1, 2, 3}
+	signedBy := []int{}
 
 	for i, s := range signers {
 		if s.Address().EqualsTo(tValSigner1.Address()) {
-			committers[0] = block.Committer{Status: 1, Number: 0}
+			signedBy = append(signedBy, 0)
 		}
 
 		if s.Address().EqualsTo(tValSigner2.Address()) {
-			committers[1] = block.Committer{Status: 1, Number: 1}
+			signedBy = append(signedBy, 1)
 		}
 
 		if s.Address().EqualsTo(tValSigner3.Address()) {
-			committers[2] = block.Committer{Status: 1, Number: 2}
+			signedBy = append(signedBy, 2)
 		}
 
 		if s.Address().EqualsTo(tValSigner4.Address()) {
-			committers[3] = block.Committer{Status: 1, Number: 3}
+			signedBy = append(signedBy, 3)
 		}
 		sigs[i] = s.SignData(sb)
 	}
-	return *block.NewCommit(blockHash, round, committers, crypto.Aggregate(sigs))
+
+	absences := util.Subtracts(committers, signedBy)
+	return *block.NewCertificate(blockHash, round, committers, absences, crypto.Aggregate(sigs))
 }
 
-func CommitBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commit) {
+func CommitBlockForAllStates(t *testing.T, b block.Block, c block.Certificate) {
 	assert.NoError(t, tState1.CommitBlock(tState1.lastBlockHeight+1, b, c))
 	assert.NoError(t, tState2.CommitBlock(tState2.lastBlockHeight+1, b, c))
 	assert.NoError(t, tState3.CommitBlock(tState3.lastBlockHeight+1, b, c))
@@ -135,8 +134,8 @@ func CommitBlockAndCommitForAllStates(t *testing.T, b block.Block, c block.Commi
 }
 
 func moveToNextHeightForAllStates(t *testing.T) {
-	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	CommitBlockAndCommitForAllStates(t, b, c)
+	b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockForAllStates(t, b, c)
 }
 
 func TestProposeBlockAndValidation(t *testing.T) {
@@ -206,7 +205,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 func TestCommitBlocks(t *testing.T) {
 	setup(t)
 
-	b1, c1 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
+	b1, c1 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, tState1.CommitBlock(1, *invBlock, c1))
 	// No error here but block is ignored, because the height is invalid
@@ -215,14 +214,14 @@ func TestCommitBlocks(t *testing.T) {
 
 	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())
 	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
-	assert.Equal(t, tState1.LastCommit().Hash(), c1.Hash())
+	assert.Equal(t, tState1.LastCertificate().Hash(), c1.Hash())
 	assert.Equal(t, tState1.LastBlockHeight(), 1)
 	assert.Equal(t, tState1.GenesisHash(), tState2.GenesisHash())
 }
 
 func TestCommitSandbox(t *testing.T) {
 
-	t.Run("Commit new account", func(t *testing.T) {
+	t.Run("Certificate new account", func(t *testing.T) {
 		setup(t)
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
@@ -233,7 +232,7 @@ func TestCommitSandbox(t *testing.T) {
 		assert.True(t, tState1.store.HasAccount(addr))
 	})
 
-	t.Run("Commit new validator", func(t *testing.T) {
+	t.Run("Certificate new validator", func(t *testing.T) {
 		setup(t)
 
 		addr, pub, _ := crypto.GenerateTestKeyPair()
@@ -293,25 +292,21 @@ func TestCommitSandbox(t *testing.T) {
 	})
 }
 
-func TestUpdateLastCommit(t *testing.T) {
+func TestUpdateLastCertificate(t *testing.T) {
 	setup(t)
-	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner3, tValSigner4)
-	b11, c11 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	b1, c1 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner3, tValSigner4)
+	b11, c11 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	_, c12 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+
+	CommitBlockForAllStates(t, b1, c1)
 
 	assert.Equal(t, b1.Hash(), b11.Hash())
-
-	CommitBlockAndCommitForAllStates(t, b1, c1)
-
-	b2, c2 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	assert.NotEqual(t, b1.Hash(), b2.Hash())
-
-	assert.Equal(t, tState1.lastCommit.Hash(), c1.Hash())
-	assert.Error(t, tState1.UpdateLastCommit(&c2))
-	assert.NoError(t, tState1.UpdateLastCommit(&c1))
-	assert.Equal(t, tState1.lastCommit.Hash(), c1.Hash())
-	assert.NoError(t, tState1.UpdateLastCommit(&c11))
-	assert.NoError(t, tState1.UpdateLastCommit(&c1))
-	assert.Equal(t, tState1.lastCommit.Hash(), c11.Hash())
+	assert.Equal(t, tState1.lastCertificate.Hash(), c1.Hash())
+	assert.Error(t, tState1.UpdateLastCertificate(&c12))
+	assert.NoError(t, tState1.UpdateLastCertificate(&c1))
+	assert.Equal(t, tState1.lastCertificate.Hash(), c1.Hash())
+	assert.NoError(t, tState1.UpdateLastCertificate(&c11))
+	assert.Equal(t, tState1.lastCertificate.Hash(), c11.Hash())
 }
 
 func TestInvalidProposerProposeBlock(t *testing.T) {
@@ -354,8 +349,8 @@ func TestInvalidBlock(t *testing.T) {
 func TestForkDetection(t *testing.T) {
 	setup(t)
 
-	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	b2, c2 := makeBlockAndCommit(t, 1, tValSigner1, tValSigner2, tValSigner3)
+	b1, c1 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
+	b2, c2 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
 	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
 	assert.Error(t, tState1.CommitBlock(1, b2, c2))
@@ -363,7 +358,7 @@ func TestForkDetection(t *testing.T) {
 
 func TestNodeShutdown(t *testing.T) {
 	setup(t)
-	b1, c1 := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3)
+	b1, c1 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
 
 	// Should not panic or crash
 	tState1.Close()
@@ -386,7 +381,7 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.evaluateSortition()) //  not a validator
 
-	// Commit 14 blocks
+	// Certificate 14 blocks
 	height := 1
 	for ; height < 12; height++ {
 		if height == 4 {
@@ -395,26 +390,26 @@ func TestSortition(t *testing.T) {
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
 		}
 
-		b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-		CommitBlockAndCommitForAllStates(t, b, c)
+		b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+		CommitBlockForAllStates(t, b, c)
 		require.NoError(t, st1.CommitBlock(height, b, c))
 	}
 
 	assert.False(t, st1.evaluateSortition()) //  bonding period
 
-	// Commit another block
-	b, c := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	CommitBlockAndCommitForAllStates(t, b, c)
+	// Certificate another block
+	b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
 	assert.True(t, st1.evaluateSortition())             //  ok
 	assert.False(t, tState1.Committee().Contains(addr)) // still not in the set
 
 	// ---------------------------------------------
-	// Commit another block, new validator should be in the set now
+	// Certificate another block, new validator should be in the set now
 	height++
-	b, c = makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	CommitBlockAndCommitForAllStates(t, b, c)
+	b, c = makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
 	assert.False(t, st1.evaluateSortition()) // already in the set
@@ -436,18 +431,13 @@ func TestSortition(t *testing.T) {
 	require.NotNil(t, b1)
 
 	sigs := make([]crypto.Signature, 4)
-	sb := block.CommitSignBytes(b1.Hash(), 3)
-	committers := make([]block.Committer, 4)
-	committers[0] = block.Committer{Status: 1, Number: 4}
-	committers[1] = block.Committer{Status: 1, Number: 1}
-	committers[2] = block.Committer{Status: 1, Number: 2}
-	committers[3] = block.Committer{Status: 1, Number: 3}
+	sb := block.CertificateSignBytes(b1.Hash(), 3)
 
 	sigs[0] = tValSigner2.SignData(sb)
 	sigs[1] = tValSigner3.SignData(sb)
 	sigs[2] = tValSigner4.SignData(sb)
 	sigs[3] = signer.SignData(sb)
-	c1 := block.NewCommit(b1.Hash(), 3, committers, crypto.Aggregate(sigs))
+	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 1, 2, 3}, []int{}, crypto.Aggregate(sigs))
 
 	height++
 	require.NoError(t, st1.CommitBlock(height, *b1, *c1))
@@ -493,7 +483,7 @@ func TestInvalidBlockTime(t *testing.T) {
 	setup(t)
 	moveToNextHeightForAllStates(t)
 
-	validBlock, _ := makeBlockAndCommit(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	validBlock, _ := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
 	invalidBlock := block.MakeBlock(
 		validBlock.Header().Version(),
@@ -503,7 +493,7 @@ func TestInvalidBlockTime(t *testing.T) {
 		validBlock.Header().CommitteeHash(),
 		validBlock.Header().StateHash(),
 		validBlock.Header().LastReceiptsHash(),
-		validBlock.LastCommit(),
+		validBlock.LastCertificate(),
 		validBlock.Header().SortitionSeed(),
 		validBlock.Header().ProposerAddress())
 

@@ -228,28 +228,23 @@ func commitBlockForAllStates(t *testing.T) {
 	var err error
 	p := makeProposal(t, height+1, 0)
 
-	sb := block.CommitSignBytes(p.Block().Hash(), 0)
+	sb := block.CertificateSignBytes(p.Block().Hash(), 0)
 	sig1 := tSigners[0].SignData(sb)
 	sig2 := tSigners[1].SignData(sb)
 	sig3 := tSigners[2].SignData(sb)
 	sig4 := tSigners[3].SignData(sb)
 
 	sig := crypto.Aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-	c := block.NewCommit(p.Block().Hash(), 0, []block.Committer{
-		{Number: 0, Status: 1},
-		{Number: 1, Status: 1},
-		{Number: 2, Status: 1},
-		{Number: 3, Status: 1},
-	}, sig)
+	cert := block.NewCertificate(p.Block().Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
 
-	require.NotNil(t, c)
-	err = tConsX.state.CommitBlock(height+1, p.Block(), *c)
+	require.NotNil(t, cert)
+	err = tConsX.state.CommitBlock(height+1, p.Block(), *cert)
 	assert.NoError(t, err)
-	err = tConsY.state.CommitBlock(height+1, p.Block(), *c)
+	err = tConsY.state.CommitBlock(height+1, p.Block(), *cert)
 	assert.NoError(t, err)
-	err = tConsB.state.CommitBlock(height+1, p.Block(), *c)
+	err = tConsB.state.CommitBlock(height+1, p.Block(), *cert)
 	assert.NoError(t, err)
-	err = tConsP.state.CommitBlock(height+1, p.Block(), *c)
+	err = tConsP.state.CommitBlock(height+1, p.Block(), *cert)
 	assert.NoError(t, err)
 }
 

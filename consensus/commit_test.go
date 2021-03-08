@@ -45,7 +45,7 @@ func TestResetBooleanOnNewRound(t *testing.T) {
 	assert.False(t, tConsX.isCommitted)
 }
 
-func TestEnterCommitAllFailed(t *testing.T) {
+func TestEnterCommit(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)

@@ -257,7 +257,7 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 	cs.broadcastCh <- msg
 }
 
-func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Commit) {
+func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Certificate) {
 	msg := message.NewOpaqueBlockAnnounceMessage(h, b, c)
 	cs.broadcastCh <- msg
 }

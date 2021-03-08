@@ -45,7 +45,7 @@ type state struct {
 	lastBlockHeight   int
 	lastBlockHash     crypto.Hash
 	lastReceiptsHash  crypto.Hash
-	lastCommit        *block.Commit
+	lastCertificate   *block.Certificate
 	lastBlockTime     time.Time
 	logger            *logger.Logger
 }
@@ -136,12 +136,12 @@ func (st *state) tryLoadLastInfo() error {
 	}
 	st.lastBlockHeight = li.LastHeight
 	st.lastBlockHash = b.Header().Hash()
-	st.lastCommit = &li.LastCommit
+	st.lastCertificate = &li.LastCertificate
 	st.lastBlockTime = b.Header().Time()
 	st.lastSortitionSeed = b.Header().SortitionSeed()
 	st.lastReceiptsHash = li.LastReceiptHash
 
-	vals := make([]*validator.Validator, len(st.lastCommit.Committers()))
+	vals := make([]*validator.Validator, len(st.lastCertificate.Committers()))
 	for i, num := range li.Committee {
 		val, err := st.store.ValidatorByNumber(num)
 		if err != nil {
@@ -237,11 +237,11 @@ func (st *state) LastBlockTime() time.Time {
 	return st.lastBlockTime
 }
 
-func (st *state) LastCommit() *block.Commit {
+func (st *state) LastCertificate() *block.Certificate {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.lastCommit
+	return st.lastCertificate
 }
 
 func (st *state) BlockTime() time.Duration {
@@ -251,19 +251,19 @@ func (st *state) BlockTime() time.Duration {
 	return st.params.BlockTime()
 }
 
-func (st *state) UpdateLastCommit(commit *block.Commit) error {
+func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	// Check if commit has more signers ...
-	if commit.Signers() > st.lastCommit.Signers() {
-		if err := st.validateCommitForPreviousHeight(commit); err != nil {
+	if len(cert.Absences()) < len(st.lastCertificate.Absences()) {
+		if err := st.validateCertificateForPreviousHeight(cert); err != nil {
 			st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
 			return err
 		}
-
-		st.lastCommit = commit
+		st.lastCertificate = cert
 	}
+
 	return nil
 }
 
@@ -344,7 +344,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		committeeHash,
 		stateHash,
 		st.lastReceiptsHash,
-		st.lastCommit,
+		st.lastCertificate,
 		newSortitionSeed,
 		st.signer.Address())
 
@@ -372,7 +372,7 @@ func (st *state) ValidateBlock(block block.Block) error {
 	return nil
 }
 
-func (st *state) CommitBlock(height int, block block.Block, commit block.Commit) error {
+func (st *state) CommitBlock(height int, block block.Block, cert block.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -402,13 +402,13 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 		return err
 	}
 
-	err = st.validateCommitForCurrentHeight(commit, block.Hash())
+	err = st.validateCertificateForCurrentHeight(cert, block.Hash())
 	if err != nil {
 		return err
 	}
 
 	// Verify proposer
-	proposer := st.committee.Proposer(commit.Round())
+	proposer := st.committee.Proposer(cert.Round())
 	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
@@ -426,8 +426,8 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 		return err
 	}
 
-	// Commit changes and update the validator set
-	st.commitSandbox(commit.Round())
+	// Commit and update the validator set
+	st.commitSandbox(cert.Round())
 
 	// Save txs and receipts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
@@ -444,19 +444,19 @@ func (st *state) CommitBlock(height int, block block.Block, commit block.Commit)
 	st.lastBlockTime = block.Header().Time()
 	st.lastSortitionSeed = block.Header().SortitionSeed()
 	st.lastReceiptsHash = receiptsMerkle.Root()
-	st.lastCommit = &commit
+	st.lastCertificate = &cert
 
 	// Evaluate sortition before updating the validator set
 	if st.evaluateSortition() {
 		st.logger.Info("👏 This validator is chosen to be in the set", "address", st.signer.Address())
 	}
 
-	st.logger.Info("New block is committed", "block", block, "round", commit.Round())
+	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
 
 	st.executionSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
 	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
-	st.saveLastInfo(st.lastBlockHeight, commit, st.lastReceiptsHash,
-		st.committee.Members(),
+	st.saveLastInfo(st.lastBlockHeight, cert, st.lastReceiptsHash,
+		st.committee.Committers(),
 		st.committee.Proposer(0).Address())
 
 	// At this point we can reset txpool sandbox

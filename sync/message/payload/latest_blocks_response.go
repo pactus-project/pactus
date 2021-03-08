@@ -14,14 +14,14 @@ const LatestBlocksResponseCodeOK = 0
 const LatestBlocksResponseCodeNoMoreBlock = 1
 
 type LatestBlocksResponsePayload struct {
-	ResponseCode ResponseCode   `cbor:"1,keyasint"`
-	SessionID    int            `cbor:"2,keyasint"`
-	Initiator    peer.ID        `cbor:"3,keyasint"`
-	Target       peer.ID        `cbor:"4,keyasint"`
-	From         int            `cbor:"5,keyasint"`
-	Blocks       []*block.Block `cbor:"6,keyasint"`
-	Transactions []*tx.Tx       `cbor:"7,keyasint"`
-	LastCommit   *block.Commit  `cbor:"8,keyasint"`
+	ResponseCode    ResponseCode       `cbor:"1,keyasint"`
+	SessionID       int                `cbor:"2,keyasint"`
+	Initiator       peer.ID            `cbor:"3,keyasint"`
+	Target          peer.ID            `cbor:"4,keyasint"`
+	From            int                `cbor:"5,keyasint"`
+	Blocks          []*block.Block     `cbor:"6,keyasint"`
+	Transactions    []*tx.Tx           `cbor:"7,keyasint"`
+	LastCertificate *block.Certificate `cbor:"8,keyasint"`
 }
 
 func (p *LatestBlocksResponsePayload) SanityCheck() error {
@@ -39,8 +39,8 @@ func (p *LatestBlocksResponsePayload) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
 		}
 	}
-	if p.LastCommit != nil {
-		if err := p.LastCommit.SanityCheck(); err != nil {
+	if p.LastCertificate != nil {
+		if err := p.LastCertificate.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
 		}
 	}

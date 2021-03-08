@@ -184,7 +184,7 @@ func (syncer *synchronizer) broadcastLoop() {
 
 			case payload.PayloadTypeBlockAnnounce:
 				pld := msg.Payload.(*payload.BlockAnnouncePayload)
-				syncer.announceBlock(pld.Height, pld.Block, pld.Commit)
+				syncer.announceBlock(pld.Height, pld.Block, pld.Certificate)
 
 			case payload.PayloadTypeVote,
 				payload.PayloadTypeProposal,
@@ -510,12 +510,12 @@ func (syncer *synchronizer) queryVotes(height, round int) {
 	}
 }
 
-func (syncer *synchronizer) announceBlock(height int, block *block.Block, commit *block.Commit) {
+func (syncer *synchronizer) announceBlock(height int, block *block.Block, cert *block.Certificate) {
 	if !syncer.isThisActiveValidator() {
 		return
 	}
 
-	syncer.stateSync.BroadcastBlockAnnounce(height, block, commit)
+	syncer.stateSync.BroadcastBlockAnnounce(height, block, cert)
 }
 
 func (syncer *synchronizer) PeerID() peer.ID {

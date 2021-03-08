@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
@@ -42,7 +41,7 @@ func TestAddVote(t *testing.T) {
 	added, err := vs.AddVote(v1)
 	assert.False(t, added) // not in committee
 	assert.Error(t, err)
-	assert.Nil(t, vs.ToCommit())
+	assert.Nil(t, vs.ToCertificate())
 
 	invSigner.SignMsg(v2)
 	added, err = vs.AddVote(v2)
@@ -139,9 +138,18 @@ func TestQuorum(t *testing.T) {
 	ok, _ = vs.AddVote(v2)
 	assert.True(t, ok)
 	assert.False(t, vs.HasQuorum())
+	assert.Nil(t, vs.ToCertificate())
+
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
 	assert.True(t, vs.HasQuorum())
+
+	cert1 := vs.ToCertificate()
+	assert.NotNil(t, cert1)
+	assert.Equal(t, cert1.Committers(), []int{0, 1, 2, 3})
+	assert.Equal(t, cert1.Absences(), []int{3})
+
+	// Add one more vote
 	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
 	assert.True(t, vs.HasQuorum())
@@ -149,14 +157,10 @@ func TestQuorum(t *testing.T) {
 	assert.Equal(t, vs.QuorumBlock(), &h1)
 	assert.Equal(t, vs.Len(), 4)
 
-	c := vs.ToCommit()
-	assert.NotNil(t, c)
-	assert.Equal(t, c.Committers(), []block.Committer{
-		{Number: 0, Status: 1},
-		{Number: 1, Status: 1},
-		{Number: 2, Status: 1},
-		{Number: 3, Status: 1},
-	})
+	cert2 := vs.ToCertificate()
+	assert.NotNil(t, cert2)
+	assert.Equal(t, cert2.Committers(), []int{0, 1, 2, 3})
+	assert.Equal(t, cert2.Absences(), []int{})
 }
 
 // This test is very important. Change it with cautious

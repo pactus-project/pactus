@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	blockPrefix    = 0x01
-	commitPrefix   = 0x02
-	txPrefix       = 0x03
-	proposalPrefix = 0x04
+	blockPrefix       = 0x01
+	certificatePrefix = 0x02
+	txPrefix          = 0x03
+	proposalPrefix    = 0x04
 )
 
 type key [32]byte
@@ -25,9 +25,9 @@ func blockKey(height int) key {
 	copy(k[1:], util.IntToSlice(height))
 	return k
 }
-func commitKey(hash crypto.Hash) key {
+func certificateKey(hash crypto.Hash) key {
 	var k key
-	k[0] = commitPrefix
+	k[0] = certificatePrefix
 	copy(k[1:], hash.RawBytes())
 	return k
 }
@@ -80,18 +80,18 @@ func (c *Cache) AddBlock(height int, block *block.Block) {
 	c.cache.Add(blockKey(height), block)
 }
 
-func (c *Cache) GetCommit(blockhash crypto.Hash) *block.Commit {
-	i, ok := c.cache.Get(commitKey(blockhash))
+func (c *Cache) GetCertificate(blockhash crypto.Hash) *block.Certificate {
+	i, ok := c.cache.Get(certificateKey(blockhash))
 	if ok {
-		return i.(*block.Commit)
+		return i.(*block.Certificate)
 	}
 
 	return nil
 }
 
-func (c *Cache) AddCommit(commit *block.Commit) {
-	if commit != nil {
-		c.cache.Add(commitKey(commit.BlockHash()), commit)
+func (c *Cache) AddCertificate(cert *block.Certificate) {
+	if cert != nil {
+		c.cache.Add(certificateKey(cert.BlockHash()), cert)
 	}
 }
 
