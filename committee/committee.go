@@ -1,6 +1,7 @@
 package committee
 
 import (
+	"container/list"
 	"fmt"
 	"sort"
 
@@ -17,37 +18,39 @@ type Committee struct {
 	lk deadlock.RWMutex
 
 	committeeSize int
-	validators    []*validator.Validator
-	proposerIndex int
+	validatorList *list.List
+	proposerPos   *list.Element
 }
 
-func NewCommittee(validators []*validator.Validator, committeeSize int, proposer crypto.Address) (*Committee, error) {
+func NewCommittee(validators []*validator.Validator, committeeSize int, proposerAddress crypto.Address) (*Committee, error) {
 
-	index := -1
-	for i, v := range validators {
-		if v.Address().EqualsTo(proposer) {
-			index = i
-			break
+	validatorList := list.New()
+	var proposerPos *list.Element
+
+	for _, v := range validators {
+		el := validatorList.PushBack(v)
+		if v.Address().EqualsTo(proposerAddress) {
+			proposerPos = el
 		}
 	}
 
-	if index == -1 {
+	if proposerPos == nil {
 		return nil, fmt.Errorf("Proposer is not in the list")
 	}
-	validators2 := make([]*validator.Validator, len(validators))
-	copy(validators2, validators)
+
 	return &Committee{
 		committeeSize: committeeSize,
-		validators:    validators2,
-		proposerIndex: index,
+		validatorList: validatorList,
+		proposerPos:   proposerPos,
 	}, nil
 }
 
 func (committee *Committee) currentPower() int64 {
 	p := int64(0)
-	for _, v := range committee.validators {
+	committee.iterate(func(v *validator.Validator) (stop bool) {
 		p += v.Power()
-	}
+		return false
+	})
 	return p
 }
 
@@ -69,32 +72,57 @@ func (committee *Committee) Update(lastRound int, joined []*validator.Validator)
 		return joined[i].Number() < joined[j].Number()
 	})
 
-	// First update proposer index
-	committee.proposerIndex = (committee.proposerIndex + lastRound + 1) % len(committee.validators)
-
-	committee.validators = append(committee.validators, joined...)
-	if len(committee.validators) > committee.committeeSize {
-		//
-		shouldLeave := len(committee.validators) - committee.committeeSize
-		committee.validators = committee.validators[shouldLeave:]
+	// First update validator list
+	for _, val := range joined {
+		committee.validatorList.InsertBefore(val, committee.proposerPos)
 	}
-	// Correcting proposer index
-	committee.proposerIndex = committee.proposerIndex - len(joined)
-	if committee.proposerIndex < 0 {
-		committee.proposerIndex = 0
+
+	// Now adjust the list
+
+	oldestFirst := make([]*list.Element, committee.validatorList.Len())
+	i := 0
+	for e := committee.validatorList.Front(); e != nil; e = e.Next() {
+		oldestFirst[i] = e
+		i++
+	}
+
+	sort.SliceStable(oldestFirst, func(i, j int) bool {
+		return oldestFirst[i].Value.(*validator.Validator).LastJoinedHeight() < oldestFirst[j].Value.(*validator.Validator).LastJoinedHeight()
+	})
+
+	for i := 0; i <= lastRound; i++ {
+		committee.proposerPos = committee.proposerPos.Next()
+		if committee.proposerPos == nil {
+			committee.proposerPos = committee.validatorList.Front()
+		}
+	}
+
+	adjust := committee.validatorList.Len() - committee.committeeSize
+	for i := 0; i < adjust; i++ {
+		if oldestFirst[i] == committee.proposerPos {
+			committee.proposerPos = committee.proposerPos.Next()
+			if committee.proposerPos == nil {
+				committee.proposerPos = committee.validatorList.Front()
+			}
+		}
+		committee.validatorList.Remove(oldestFirst[i])
 	}
 
 	return nil
 }
 
-func (committee *Committee) CopyValidators() []*validator.Validator {
+func (committee *Committee) Validators() []*validator.Validator {
 	committee.lk.Lock()
 	defer committee.lk.Unlock()
 
-	vals := make([]*validator.Validator, len(committee.validators))
-	for i, v := range committee.validators {
+	vals := make([]*validator.Validator, committee.validatorList.Len())
+	i := 0
+	committee.iterate(func(v *validator.Validator) (stop bool) {
 		vals[i] = v
-	}
+		i++
+		return false
+	})
+
 	return vals
 }
 
@@ -106,24 +134,30 @@ func (committee *Committee) Contains(addr crypto.Address) bool {
 }
 
 func (committee *Committee) contains(addr crypto.Address) bool {
-	for _, v := range committee.validators {
+	found := false
+	committee.iterate(func(v *validator.Validator) (stop bool) {
 		if v.Address().EqualsTo(addr) {
+			found = true
 			return true
 		}
-	}
-	return false
+		return false
+	})
+	return found
 }
 
 func (committee *Committee) Validator(addr crypto.Address) *validator.Validator {
 	committee.lk.Lock()
 	defer committee.lk.Unlock()
 
-	for _, v := range committee.validators {
+	var val *validator.Validator
+	committee.iterate(func(v *validator.Validator) (stop bool) {
 		if v.Address().EqualsTo(addr) {
-			return v
+			val = v
+			return true
 		}
-	}
-	return nil
+		return false
+	})
+	return val
 }
 
 // IsProposer checks if the address is proposer for this run at the given round
@@ -131,8 +165,8 @@ func (committee *Committee) IsProposer(addr crypto.Address, round int) bool {
 	committee.lk.Lock()
 	defer committee.lk.Unlock()
 
-	idx := (committee.proposerIndex + round) % len(committee.validators)
-	return committee.validators[idx].Address().EqualsTo(addr)
+	p := committee.proposer(round)
+	return p.Address().EqualsTo(addr)
 }
 
 // Proposer returns proposer info for this run at the given round
@@ -140,8 +174,19 @@ func (committee *Committee) Proposer(round int) *validator.Validator {
 	committee.lk.Lock()
 	defer committee.lk.Unlock()
 
-	idx := (committee.proposerIndex + round) % len(committee.validators)
-	return committee.validators[idx]
+	return committee.proposer(round)
+}
+
+func (committee *Committee) proposer(round int) *validator.Validator {
+	pos := committee.proposerPos
+	for i := 0; i < round; i++ {
+		pos = pos.Next()
+		if pos == nil {
+			pos = committee.validatorList.Front()
+		}
+	}
+
+	return pos.Value.(*validator.Validator)
 }
 
 func (committee *Committee) Members() []int {
@@ -152,10 +197,13 @@ func (committee *Committee) Members() []int {
 }
 
 func (committee *Committee) members() []int {
-	members := make([]int, len(committee.validators))
-	for i, v := range committee.validators {
+	members := make([]int, committee.validatorList.Len())
+	i := 0
+	committee.iterate(func(v *validator.Validator) (stop bool) {
 		members[i] = v.Number()
-	}
+		i++
+		return false
+	})
 
 	return members
 }
@@ -168,6 +216,15 @@ func (committee *Committee) CommitteeHash() crypto.Hash {
 	return crypto.HashH(bz)
 }
 
+// iterate uses for easy iteration over validators in list
+func (committee *Committee) iterate(consumer func(*validator.Validator) (stop bool)) {
+	for e := committee.validatorList.Front(); e != nil; e = e.Next() {
+		if consumer(e.Value.(*validator.Validator)) {
+			return
+		}
+	}
+}
+
 // GenerateTestCommittee generates a validator committee for testing purpose
 func GenerateTestCommittee() (*Committee, []crypto.Signer) {
 	val1, s1 := validator.GenerateTestValidator(0)
@@ -177,6 +234,6 @@ func GenerateTestCommittee() (*Committee, []crypto.Signer) {
 
 	signers := []crypto.Signer{s1, s2, s3, s4}
 	vals := []*validator.Validator{val1, val2, val3, val4}
-	committee, _ := NewCommittee(vals, 4, val1.Address())
-	return committee, signers
+	valset, _ := NewCommittee(vals, 4, val1.Address())
+	return valset, signers
 }

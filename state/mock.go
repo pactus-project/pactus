@@ -19,15 +19,14 @@ type MockState struct {
 	GenHash          crypto.Hash
 	Store            *store.MockStore
 	InvalidBlockHash crypto.Hash
-	Committee_       *committee.Committee
+	TestCommittee    *committee.Committee
 }
 
-func MockingState() *MockState {
-	committee, _ := committee.GenerateTestCommittee()
+func MockingState(committee *committee.Committee) *MockState {
 	return &MockState{
-		GenHash:    crypto.GenerateTestHash(),
-		Store:      store.MockingStore(),
-		Committee_: committee,
+		GenHash:       crypto.GenerateTestHash(),
+		Store:         store.MockingStore(),
+		TestCommittee: committee,
 	}
 }
 
@@ -35,7 +34,7 @@ func (m *MockState) StoreReader() store.StoreReader {
 	return m.Store
 }
 func (m *MockState) Committee() committee.CommitteeReader {
-	return m.Committee_
+	return m.TestCommittee
 }
 func (m *MockState) LastBlockHeight() int {
 	return m.Store.LastBlockHeight()
