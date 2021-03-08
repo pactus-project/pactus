@@ -47,7 +47,7 @@ func TestCertificateValidation(t *testing.T) {
 	invSig5 := siners5.SignData(block.CertificateSignBytes(b2.Hash(), round))
 
 	validSig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3})
-	invalidSig := crypto.Aggregate([]crypto.Signature{invSig1, invSig2, invSig5})
+	invalidSig := crypto.Aggregate([]crypto.Signature{invSig1, invSig2, invSig3})
 
 	t.Run("Invalid blockhahs, should return error", func(t *testing.T) {
 		c := block.NewCertificate(invBlockHash, 0, []int{0, 1, 2, 3}, []int{3}, validSig)
@@ -93,12 +93,12 @@ func TestCertificateValidation(t *testing.T) {
 	})
 
 	t.Run("unexpected block hash", func(t *testing.T) {
-		c := block.NewCertificate(invBlockHash, 0, []int{0, 1, 2, 3}, []int{3}, validSig)
+		c := block.NewCertificate(invBlockHash, 0, []int{0, 1, 2, 3}, []int{3}, invalidSig)
 		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
 	})
 
 	t.Run("invalid signature", func(t *testing.T) {
-		c := block.NewCertificate(invBlockHash, 0, []int{0, 1, 2, 3}, []int{3}, invalidSig)
+		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{3}, invalidSig)
 		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
 	})
 
@@ -135,6 +135,13 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, tState1.UpdateLastCertificate(c))
 	})
 
+	t.Run("Update last commit- Invalid committers", func(t *testing.T) {
+		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, invSig5})
+
+		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{}, sig)
+		assert.Error(t, tState1.UpdateLastCertificate(c))
+	})
+
 	t.Run("Update last commit- Invalid signer", func(t *testing.T) {
 		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, invSig5})
 
@@ -151,7 +158,7 @@ func TestCertificateValidation(t *testing.T) {
 		assert.NotEqual(t, tState1.lastCertificate.Hash(), c.Hash())
 	})
 
-	t.Run("Update last commit- Valid signature, should return no error", func(t *testing.T) {
+	t.Run("Update last commit- Valid signature, should update the certificate", func(t *testing.T) {
 		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, valSig4})
 
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
