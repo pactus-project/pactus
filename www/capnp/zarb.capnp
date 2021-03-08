@@ -11,7 +11,7 @@ struct Header {
   stateHash           @3 :Data;
   txsHash             @4 :Data;
   lastReceiptsHash    @5 :Data;
-  lastCommitHash      @6 :Data;
+  lastCertificateHash      @6 :Data;
   committeeHash       @7 :Data;
   proposerAddress     @8 :Data;
 }
@@ -30,7 +30,7 @@ struct Certificate {
 
 struct Block {
   header              @0 :Header;
-  lastCertificate          @1 :Certificate;
+  lastCertificate     @1 :Certificate;
   txs                 @2 :Txs;
 }
 

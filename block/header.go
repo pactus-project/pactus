@@ -15,46 +15,46 @@ type Header struct {
 	data headerData
 }
 type headerData struct {
-	Version          int            `cbor:"1,keyasint"`
-	UnixTime         int64          `cbor:"2,keyasint"`
-	LastBlockHash    crypto.Hash    `cbor:"3,keyasint"`
-	StateHash        crypto.Hash    `cbor:"4,keyasint"`
-	TxIDsHash        crypto.Hash    `cbor:"5,keyasint"`
-	LastReceiptsHash crypto.Hash    `cbor:"6,keyasint"`
-	LastCommitHash   crypto.Hash    `cbor:"7,keyasint"`
-	CommitteeHash    crypto.Hash    `cbor:"8,keyasint"`
-	SortitionSeed    sortition.Seed `cbor:"9,keyasint"`
-	ProposerAddress  crypto.Address `cbor:"10,keyasint"`
+	Version             int            `cbor:"1,keyasint"`
+	UnixTime            int64          `cbor:"2,keyasint"`
+	LastBlockHash       crypto.Hash    `cbor:"3,keyasint"`
+	StateHash           crypto.Hash    `cbor:"4,keyasint"`
+	TxIDsHash           crypto.Hash    `cbor:"5,keyasint"`
+	LastReceiptsHash    crypto.Hash    `cbor:"6,keyasint"`
+	LastCertificateHash crypto.Hash    `cbor:"7,keyasint"`
+	CommitteeHash       crypto.Hash    `cbor:"8,keyasint"`
+	SortitionSeed       sortition.Seed `cbor:"9,keyasint"`
+	ProposerAddress     crypto.Address `cbor:"10,keyasint"`
 }
 
-func (h Header) Version() int                    { return h.data.Version }
-func (h Header) Time() time.Time                 { return time.Unix(h.data.UnixTime, 0) }
-func (h Header) TxIDsHash() crypto.Hash          { return h.data.TxIDsHash }
-func (h Header) StateHash() crypto.Hash          { return h.data.StateHash }
-func (h Header) LastBlockHash() crypto.Hash      { return h.data.LastBlockHash }
-func (h Header) LastReceiptsHash() crypto.Hash   { return h.data.LastReceiptsHash }
-func (h Header) LastCommitHash() crypto.Hash     { return h.data.LastCommitHash }
-func (h Header) CommitteeHash() crypto.Hash      { return h.data.CommitteeHash }
-func (h Header) SortitionSeed() sortition.Seed   { return h.data.SortitionSeed }
-func (h Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
+func (h Header) Version() int                     { return h.data.Version }
+func (h Header) Time() time.Time                  { return time.Unix(h.data.UnixTime, 0) }
+func (h Header) TxIDsHash() crypto.Hash           { return h.data.TxIDsHash }
+func (h Header) StateHash() crypto.Hash           { return h.data.StateHash }
+func (h Header) LastBlockHash() crypto.Hash       { return h.data.LastBlockHash }
+func (h Header) LastReceiptsHash() crypto.Hash    { return h.data.LastReceiptsHash }
+func (h Header) LastCertificateHash() crypto.Hash { return h.data.LastCertificateHash }
+func (h Header) CommitteeHash() crypto.Hash       { return h.data.CommitteeHash }
+func (h Header) SortitionSeed() sortition.Seed    { return h.data.SortitionSeed }
+func (h Header) ProposerAddress() crypto.Address  { return h.data.ProposerAddress }
 
 func NewHeader(version int,
 	time time.Time,
-	txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCommitHash crypto.Hash,
+	txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCertificateHash crypto.Hash,
 	sortitionSeed sortition.Seed, proposerAddress crypto.Address) Header {
 
 	return Header{
 		data: headerData{
-			Version:          version,
-			UnixTime:         time.Unix(),
-			TxIDsHash:        txIDsHash,
-			LastBlockHash:    lastBlockHash,
-			CommitteeHash:    committeeHash,
-			StateHash:        stateHash,
-			LastReceiptsHash: lastReceiptsHash,
-			LastCommitHash:   lastCommitHash,
-			ProposerAddress:  proposerAddress,
-			SortitionSeed:    sortitionSeed,
+			Version:             version,
+			UnixTime:            time.Unix(),
+			TxIDsHash:           txIDsHash,
+			LastBlockHash:       lastBlockHash,
+			CommitteeHash:       committeeHash,
+			StateHash:           stateHash,
+			LastReceiptsHash:    lastReceiptsHash,
+			LastCertificateHash: lastCertificateHash,
+			ProposerAddress:     proposerAddress,
+			SortitionSeed:       sortitionSeed,
 		},
 	}
 }
@@ -73,11 +73,13 @@ func (h *Header) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 
-	if h.data.LastCommitHash.IsUndef() {
+	if h.data.LastCertificateHash.IsUndef() {
 		// Check for genesis block
-		if !h.data.LastBlockHash.IsUndef() ||
-			!h.data.LastReceiptsHash.IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid genesis block hash")
+		if !h.data.LastBlockHash.IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Block hash")
+		}
+		if !h.data.LastReceiptsHash.IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Receipts hash")
 		}
 	} else {
 		if err := h.data.LastBlockHash.SanityCheck(); err != nil {

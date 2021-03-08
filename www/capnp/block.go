@@ -87,7 +87,7 @@ func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error 
 	if err := ch.SetLastReceiptsHash(block.Header().LastReceiptsHash().RawBytes()); err != nil {
 		return err
 	}
-	if err := ch.SetLastCommitHash(block.Header().LastCommitHash().RawBytes()); err != nil {
+	if err := ch.SetLastCertificateHash(block.Header().LastCertificateHash().RawBytes()); err != nil {
 		return err
 	}
 	if err := ch.SetProposerAddress(block.Header().ProposerAddress().RawBytes()); err != nil {

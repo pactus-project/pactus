@@ -38,7 +38,7 @@ func TestBlockSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.LastCommitHash = crypto.UndefHash
+	b.data.Header.data.LastCertificateHash = crypto.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)

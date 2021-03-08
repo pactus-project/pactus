@@ -65,13 +65,13 @@ func (b Block) SanityCheck() error {
 		if err := b.data.LastCertificate.SanityCheck(); err != nil {
 			return err
 		}
-		if !b.data.Header.LastCommitHash().EqualsTo(b.data.LastCertificate.Hash()) {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Certificate Hash")
+		if !b.data.Header.LastCertificateHash().EqualsTo(b.data.LastCertificate.Hash()) {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Certificate hash")
 		}
 	} else {
 		// Check for genesis block
-		if !b.data.Header.LastCommitHash().IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid genesis block hash")
+		if !b.data.Header.LastCertificateHash().IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Certificate hash")
 		}
 	}
 

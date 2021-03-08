@@ -70,7 +70,7 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, tState1.CommitBlock(2, *b2, *c2))
 
 		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, invSig5})
-		c3 := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{2}, sig)
+		c3 := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 5}, []int{2}, sig)
 		assert.Error(t, tState1.CommitBlock(2, *b2, *c3))
 	})
 
@@ -194,7 +194,7 @@ func TestBlockValidation(t *testing.T) {
 	// StateHash			(OK)
 	// TxIDsHash			(?)
 	// LastReceiptsHash		(OK)
-	// LastCommitHash		(OK)
+	// LastCertificateHash		(OK)
 	// CommitteeHash		(OK)
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)
