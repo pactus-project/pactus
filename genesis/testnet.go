@@ -4,11 +4,11 @@ import "encoding/json"
 
 const testnetJSON = `
 {
-   "GenesisTime":"2021-02-17T00:00:00.0+03:30",
+   "GenesisTime":"2021-03-08T00:00:00.0+03:30",
    "Params":{
         "BlockVersion": 1001,
         "BlockTimeInSecond": 10,
-        "CommitteeSize": 4,
+        "CommitteeSize": 11,
         "SubsidyReductionInterval": 4200000,
         "TransactionToLiveInterval": 8640,
         "UnbondInterval": 181440,
@@ -20,7 +20,7 @@ const testnetJSON = `
    "Accounts":[
       {
          "Address":"0000000000000000000000000000000000000000",
-         "Balance":2100000000000000
+         "Balance":4200000000000000
       }
    ],
    "Validators":[
