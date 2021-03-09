@@ -187,7 +187,8 @@
             "name": "data",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         ],
         "tags": [
@@ -218,6 +219,13 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "verbosity",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -307,7 +315,13 @@
       }
     },
     "zarbBlockHeightResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "zarbBlockResponse": {
       "type": "object",
@@ -329,13 +343,24 @@
       }
     },
     "zarbBlockchainInfoResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "lastHeight": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "zarbNetworkInfoResponse": {
       "type": "object"
     },
     "zarbSendRawTransactionResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "zarbTransactionResponse": {
       "type": "object"
