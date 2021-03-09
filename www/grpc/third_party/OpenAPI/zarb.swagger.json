@@ -335,10 +335,28 @@
       "type": "object"
     },
     "zarbSendRawTransactionResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "json": {
+          "type": "string"
+        }
+      }
     },
     "zarbTransactionResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "json": {
+          "type": "string"
+        }
+      }
     },
     "zarbValidatorResponse": {
       "type": "object",
