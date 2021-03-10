@@ -7,3 +7,4 @@ vendor
 .vscode
 todo
 local.mk
+.herumi
