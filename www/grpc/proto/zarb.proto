@@ -75,6 +75,8 @@ message TransactionRequest {
 }
 
 message TransactionResponse {
+  bytes data = 1;
+  string json = 2;
 }
 
 message SendRawTransactionRequest {
@@ -82,4 +84,6 @@ message SendRawTransactionRequest {
 }
 
 message SendRawTransactionResponse {
+  bytes data = 1;
+  string json = 2;
 }
