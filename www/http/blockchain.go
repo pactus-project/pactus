@@ -66,8 +66,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		peer.UpdateNodeVersion(ver)
 		peer.UpdateInitialBlockDownload(p.InitialBlockDownload())
 		peer.UpdateHeight(int(p.Height()))
-		peer.UpdateInvalidMessage(int(p.InvalidMsg()))
-		peer.UpdateReceivedMessage(int(p.ReceivedMsg()))
+		peer.UpdateInvalidMessage(int(p.InvalidMessages()))
+		peer.UpdateReceivedMessage(int(p.ReceivedMessages()))
 		peer.UpdateReceivedBytes(int(p.ReceivedBytes()))
 
 		out.Peers[i] = peer

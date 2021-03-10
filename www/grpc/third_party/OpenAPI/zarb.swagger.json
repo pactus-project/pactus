@@ -334,7 +334,7 @@
     "zarbNetworkInfoResponse": {
       "type": "object",
       "properties": {
-        "peerID": {
+        "peerId": {
           "type": "string"
         },
         "peers": {
@@ -355,7 +355,7 @@
           "type": "string",
           "format": "byte"
         },
-        "peerID": {
+        "peerId": {
           "type": "string"
         },
         "publicKey": {
@@ -368,11 +368,11 @@
           "type": "integer",
           "format": "int32"
         },
-        "receivedMsg": {
+        "receivedMessages": {
           "type": "integer",
           "format": "int32"
         },
-        "invalidMsg": {
+        "invalidMessages": {
           "type": "integer",
           "format": "int32"
         },

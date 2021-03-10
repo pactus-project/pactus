@@ -14,10 +14,10 @@ func (zs *zarbServer) GetBlockchainInfo(ctx context.Context, request *zarb.Block
 }
 
 func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkInfoRequest) (*zarb.NetworkInfoResponse, error) {
-	//Create response peers
+	// Create response peers
 	rps := make([]*zarb.Peer, int32(len(zs.sync.Peers())))
 
-	//cast to response peers from synced peers
+	// cast to response peers from synced peers
 	for i, peer := range zs.sync.Peers() {
 		rps[i] = new(zarb.Peer)
 		p := rps[i]
@@ -26,24 +26,21 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkI
 		if err != nil {
 			zs.logger.Error("Couldn't marshal peer version", "err", err)
 			continue
-			// return nil, status.Errorf(codes.Internal, "Couldn't marshal node Version")
 		}
 		p.NodeVersion = bs
 
-		p.PeerID = peer.PeerID().String()
+		p.PeerId = peer.PeerID().String()
 		p.Moniker = peer.Moniker()
 		p.PublicKey = peer.PublicKey().String()
 		p.InitialBlockDownload = peer.InitialBlockDownload()
 		p.Height = int32(peer.Height())
-		p.ReceivedMsg = int32(peer.ReceivedMsg())
-		p.InvalidMsg = int32(peer.InvalidMsg())
+		p.ReceivedMessages = int32(peer.ReceivedMessages())
+		p.InvalidMessages = int32(peer.InvalidMessages())
 		p.ReceivedBytes = int32(peer.ReceivedBytes())
 	}
 
-	// res:=&zarb.NetworkInfoResponse{}
-	// res
 	return &zarb.NetworkInfoResponse{
-		PeerID: zs.sync.PeerID().String(),
+		PeerId: zs.sync.PeerID().String(),
 		Peers:  rps,
 	}, nil
 }
