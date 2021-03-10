@@ -6,3 +6,5 @@ vendor
 .bls
 .vscode
 todo
+local.mk
+.herumi

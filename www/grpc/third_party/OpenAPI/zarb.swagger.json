@@ -332,13 +332,79 @@
       "type": "object"
     },
     "zarbNetworkInfoResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "peerId": {
+          "type": "string"
+        },
+        "peers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zarbPeer"
+          }
+        }
+      }
+    },
+    "zarbPeer": {
+      "type": "object",
+      "properties": {
+        "moniker": {
+          "type": "string"
+        },
+        "nodeVersion": {
+          "type": "string",
+          "format": "byte"
+        },
+        "peerId": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "initialBlockDownload": {
+          "type": "boolean"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "receivedMessages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "invalidMessages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "receivedBytes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
     },
     "zarbSendRawTransactionResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "json": {
+          "type": "string"
+        }
+      }
     },
     "zarbTransactionResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "json": {
+          "type": "string"
+        }
+      }
     },
     "zarbValidatorResponse": {
       "type": "object",

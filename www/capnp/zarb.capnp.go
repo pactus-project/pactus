@@ -1144,19 +1144,19 @@ func (s Peer) SetHeight(v int32) {
 	s.Struct.SetUint32(4, uint32(v))
 }
 
-func (s Peer) ReceivedMsg() int32 {
+func (s Peer) ReceivedMessages() int32 {
 	return int32(s.Struct.Uint32(8))
 }
 
-func (s Peer) SetReceivedMsg(v int32) {
+func (s Peer) SetReceivedMessages(v int32) {
 	s.Struct.SetUint32(8, uint32(v))
 }
 
-func (s Peer) InvalidMsg() int32 {
+func (s Peer) InvalidMessages() int32 {
 	return int32(s.Struct.Uint32(12))
 }
 
-func (s Peer) SetInvalidMsg(v int32) {
+func (s Peer) SetInvalidMessages(v int32) {
 	s.Struct.SetUint32(12, uint32(v))
 }
 

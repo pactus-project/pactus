@@ -52,3 +52,17 @@ func (m *MockSync) PeerID() peer.ID {
 func (m *MockSync) Peers() []*peerset.Peer {
 	return m.PeerSet.GetPeerList()
 }
+
+// AddPeer will add new peer to mocked PeerSet
+func (m *MockSync) AddPeer(name string, height int) *peerset.Peer {
+	newPeer := m.PeerSet.MustGetPeer(util.RandomPeerID())
+	_, pub1, _ := crypto.GenerateTestKeyPair()
+	newPeer.UpdateMoniker(name)
+	newPeer.UpdatePublicKey(pub1)
+	newPeer.IncreaseInvalidMessage()
+	newPeer.IncreaseReceivedBytes(height * 8)
+	newPeer.IncreaseReceivedMessage()
+	newPeer.UpdateNodeVersion(version.NodeVersion)
+	newPeer.UpdateHeight(height)
+	return newPeer
+}

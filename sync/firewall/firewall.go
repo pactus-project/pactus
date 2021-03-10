@@ -52,7 +52,7 @@ func (f *Firewall) ParsMessage(data []byte, from peer.ID) *message.Message {
 }
 
 func (f *Firewall) badPeer(peer *peerset.Peer) bool {
-	ratio := (peer.InvalidMsg() * 100) / peer.ReceivedMsg()
+	ratio := (peer.InvalidMessages() * 100) / peer.ReceivedMessages()
 
 	return ratio > 10
 }
