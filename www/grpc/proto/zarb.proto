@@ -70,7 +70,6 @@ message NetworkInfoRequest {
 message NetworkInfoResponse {
   string peerID = 1;
   repeated Peer peers=2;
-  // string json = 3;
 }
 
 message TransactionRequest {
