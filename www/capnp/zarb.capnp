@@ -71,9 +71,9 @@ struct Peer {
   publicKey             @3 :Text;
   initialBlockDownload  @4 :Bool;
   height                @5 :Int32;
-	ReceivedMessages      @6 :Int32;
-	InvalidMessages       @7 :Int32;
-	receivedBytes         @8 :Int32;
+  ReceivedMessages      @6 :Int32;
+  InvalidMessages       @7 :Int32;
+  receivedBytes         @8 :Int32;
 }
 
 struct NetworkResult {
