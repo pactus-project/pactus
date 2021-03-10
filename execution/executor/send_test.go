@@ -55,7 +55,7 @@ func checkTotalCoin(t *testing.T, fee int64) {
 
 func TestExecuteSendTx(t *testing.T) {
 	setup(t)
-	exe := NewSendExecutor(tSandbox)
+	exe := NewSendExecutor(tSandbox, true)
 
 	sender := crypto.GenerateTestSigner()
 	receiver := crypto.GenerateTestSigner()

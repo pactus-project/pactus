@@ -18,6 +18,7 @@ func DefaultConfig() *Config {
 	conf.Levels["_pool"] = "error"
 	conf.Levels["_capnp"] = "error"
 	conf.Levels["_http"] = "error"
+	conf.Levels["_grpc"] = "error"
 	conf.Colorfull = true
 
 	return conf

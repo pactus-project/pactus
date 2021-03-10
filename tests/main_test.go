@@ -44,7 +44,7 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	nodeCount := 7
+	nodeCount := 8
 	committeeSize := 4
 	blockTime := 2
 
@@ -72,7 +72,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
-		tConfigs[i].Logger.Levels["_consensus"] = "error"
+		tConfigs[i].Logger.Levels["_consensus"] = "info"
 		tConfigs[i].Logger.Levels["_txpool"] = "error"
 
 		tConfigs[i].Sync.CacheSize = 1000
@@ -113,7 +113,7 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 
 	totalStake := int64(0)
-	for i := 0; i < nodeCount; i++ {
+	for i := 4; i < nodeCount; i++ {
 		amt := util.RandInt64(1000000 - 1) // fee is always 1000
 		err := broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000)
 		if err != nil {

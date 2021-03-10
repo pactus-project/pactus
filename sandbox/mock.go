@@ -23,6 +23,7 @@ type MockSandbox struct {
 	TotalValidator  int
 	AcceptSortition bool
 	ErrorAddToSet   bool
+	InCommittee     bool
 }
 
 func MockingSandbox() *MockSandbox {
@@ -106,4 +107,8 @@ func (m *MockSandbox) AccSeq(a crypto.Address) int {
 }
 func (m *MockSandbox) CommitteeSize() int {
 	return m.Params.CommitteeSize
+}
+
+func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
+	return m.InCommittee
 }

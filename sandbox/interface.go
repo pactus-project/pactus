@@ -15,6 +15,7 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(crypto.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
+	IsInCommittee(crypto.Address) bool
 
 	VerifySortition(crypto.Hash, sortition.Proof, *validator.Validator) bool
 	AddToSet(crypto.Hash, crypto.Address) error

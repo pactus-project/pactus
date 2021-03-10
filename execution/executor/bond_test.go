@@ -10,7 +10,7 @@ import (
 
 func TestExecuteBondTx(t *testing.T) {
 	setup(t)
-	exe := NewBondExecutor(tSandbox)
+	exe := NewBondExecutor(tSandbox, true)
 
 	bonder := tAcc1.Address()
 	addr, pub, _ := crypto.GenerateTestKeyPair()

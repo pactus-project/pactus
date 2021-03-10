@@ -17,7 +17,7 @@ func TestExecution(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
 
 	tSandbox := sandbox.MockingSandbox()
-	tExec := NewExecution(tSandbox)
+	tExec := NewExecution(tSandbox, true)
 
 	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc0.AddToBalance(21*1e14 - 10000000000)

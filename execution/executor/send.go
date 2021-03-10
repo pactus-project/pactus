@@ -11,10 +11,11 @@ import (
 type SendExecutor struct {
 	sandbox sandbox.Sandbox
 	fee     int64
+	strict  bool
 }
 
-func NewSendExecutor(sb sandbox.Sandbox) *SendExecutor {
-	return &SendExecutor{sandbox: sb}
+func NewSendExecutor(sb sandbox.Sandbox, strict bool) *SendExecutor {
+	return &SendExecutor{sandbox: sb, strict: strict}
 }
 
 func (e *SendExecutor) Execute(trx *tx.Tx) error {

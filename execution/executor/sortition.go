@@ -9,10 +9,11 @@ import (
 
 type SortitionExecutor struct {
 	sandbox sandbox.Sandbox
+	strict bool
 }
 
-func NewSortitionExecutor(sb sandbox.Sandbox) *SortitionExecutor {
-	return &SortitionExecutor{sandbox: sb}
+func NewSortitionExecutor(sb sandbox.Sandbox, strict bool) *SortitionExecutor {
+	return &SortitionExecutor{sandbox: sb, strict: strict}
 }
 
 func (e *SortitionExecutor) Execute(trx *tx.Tx) error {

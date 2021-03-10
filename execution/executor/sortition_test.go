@@ -11,7 +11,7 @@ import (
 
 func TestExecuteSortitionTx(t *testing.T) {
 	setup(t)
-	exe := NewSortitionExecutor(tSandbox)
+	exe := NewSortitionExecutor(tSandbox, true)
 
 	stamp40 := crypto.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(40, stamp40)

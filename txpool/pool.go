@@ -42,7 +42,7 @@ func NewTxPool(
 
 func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
 	pool.sandbox = sb
-	pool.checker = execution.NewExecution(sb)
+	pool.checker = execution.NewExecution(sb, false)
 }
 
 func (pool *txPool) AppendTx(trx *tx.Tx) error {

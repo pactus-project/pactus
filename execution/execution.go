@@ -20,11 +20,12 @@ type Execution struct {
 	accumulatedFee int64
 }
 
-func NewExecution(sb sandbox.Sandbox) *Execution {
+
+func NewExecution(sb sandbox.Sandbox, strict bool) *Execution {
 	execs := make(map[payload.PayloadType]Executor)
-	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(sb)
-	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(sb)
-	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(sb)
+	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(sb, strict)
+	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(sb, strict)
+	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(sb, strict)
 
 	return &Execution{
 		executors: execs,

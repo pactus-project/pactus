@@ -370,3 +370,7 @@ func (sb *SandboxConcrete) TotalStakeChange() int64 {
 
 	return sb.totalStakeChange
 }
+
+func (sb *SandboxConcrete) IsInCommittee(addr crypto.Address) bool {
+	return sb.committee.Contains(addr)
+}

@@ -105,7 +105,7 @@ func LoadOrNewState(
 		return nil, err
 	}
 	st.txPool.SetSandbox(st.txPoolSandbox)
-	st.execution = execution.NewExecution(st.executionSandbox)
+	st.execution = execution.NewExecution(st.executionSandbox, true)
 
 	return st, nil
 }
