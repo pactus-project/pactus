@@ -332,7 +332,55 @@
       "type": "object"
     },
     "zarbNetworkInfoResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "peerID": {
+          "type": "string"
+        },
+        "peers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zarbPeer"
+          }
+        }
+      }
+    },
+    "zarbPeer": {
+      "type": "object",
+      "properties": {
+        "moniker": {
+          "type": "string"
+        },
+        "nodeVersion": {
+          "type": "string",
+          "format": "byte"
+        },
+        "peerID": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "initialBlockDownload": {
+          "type": "boolean"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "receivedMsg": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "invalidMsg": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "receivedBytes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
     },
     "zarbSendRawTransactionResponse": {
       "type": "object",
