@@ -11,7 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func TestResetBooleanOnNewHeight(t *testing.T) {
+func TestStatusFlags(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)
@@ -23,14 +23,7 @@ func TestResetBooleanOnNewHeight(t *testing.T) {
 	assert.False(t, tConsX.isPrepared)
 	assert.False(t, tConsX.isPreCommitted)
 	assert.False(t, tConsX.isCommitted)
-}
 
-func TestResetBooleanOnNewRound(t *testing.T) {
-	setup(t)
-
-	commitBlockForAllStates(t)
-
-	tConsX.enterNewHeight()
 	tConsX.isProposed = true
 	tConsX.isPrepared = true
 	tConsX.isPreCommitted = true
@@ -41,8 +34,8 @@ func TestResetBooleanOnNewRound(t *testing.T) {
 	assert.Equal(t, tConsX.hrs.Height(), 2)
 	assert.Equal(t, tConsX.hrs.Round(), 1)
 	assert.False(t, tConsX.isPrepared)
-	assert.False(t, tConsX.isPreCommitted)
-	assert.False(t, tConsX.isCommitted)
+	assert.True(t, tConsX.isPreCommitted)
+	assert.True(t, tConsX.isCommitted)
 }
 
 func TestEnterCommit(t *testing.T) {

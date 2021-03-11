@@ -279,8 +279,15 @@ func makeProposal(t *testing.T, height, round int) *proposal.Proposal {
 func TestHandleTimeout(t *testing.T) {
 	setup(t)
 
-	tConsY.handleTimeout(timeout{Height: 1, Step: hrs.StepTypeNewHeight})
-	checkHRS(t, tConsY, 1, 0, hrs.StepTypePropose)
+	commitBlockForAllStates(t)
+
+	tConsX.hrs = hrs.NewHRS(2, 0, hrs.StepTypeNewHeight)
+
+	tConsX.handleTimeout(timeout{Height: 1, Step: hrs.StepTypePrepare})
+	checkHRS(t, tConsX, 2, 0, hrs.StepTypeNewHeight)
+
+	tConsX.handleTimeout(timeout{Height: 2, Step: hrs.StepTypePrepare})
+	checkHRS(t, tConsX, 2, 0, hrs.StepTypePrepare)
 }
 
 func TestNotInCommittee(t *testing.T) {
