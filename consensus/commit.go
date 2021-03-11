@@ -15,22 +15,22 @@ func (cs *consensus) enterCommit(round int) {
 		cs.logger.Warn("Commit: No quorum for precommit stage")
 		return
 	}
-	cs.updateStep(hrs.StepTypeCommit)
 
 	blockHash := precommits.QuorumBlock()
 	if blockHash == nil || blockHash.IsUndef() {
-		cs.logger.Error("Commit: Block is invalid")
+		cs.logger.Error("Commit: quorum block  hash is invalid", "hash", blockHash)
 		return
 	}
+	cs.updateStep(hrs.StepTypeCommit)
 
 	// Additional check. blockHash should be same for both prepares and precommits
 	prepares := cs.pendingVotes.PrepareVoteSet(round)
 	hash := prepares.QuorumBlock()
 	if hash == nil || !blockHash.EqualsTo(*hash) {
-		cs.logger.Warn("Commit: Commit without prepare quorum")
+		cs.logger.Warn("Commit: Commit without prepare quorum", "hash", hash)
 	}
 
-	// For any reason, we are don't have proposal
+	// For any reason, we don't have proposal
 	roundProposal := cs.pendingVotes.RoundProposal(round)
 	if roundProposal == nil {
 		cs.requestForProposal()

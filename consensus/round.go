@@ -25,8 +25,6 @@ func (cs *consensus) enterNewRound(round int) {
 
 	cs.isProposed = false
 	cs.isPrepared = false
-	cs.isPreCommitted = false
-	cs.isCommitted = false
 	cs.updateRound(round)
 	cs.updateStep(hrs.StepTypeNewRound)
 	cs.logger.Info("NewRound: Entering new round", "round", round)

@@ -157,6 +157,12 @@ func (cs *consensus) handleTimeout(ti timeout) {
 
 	cs.logger.Debug("Handle timeout", "timeout", ti)
 
+	// A timer for previous height might trig in new height. Ignore them
+	if cs.hrs.Height() != ti.Height {
+		cs.logger.Debug("Stale timeout", "timeout", ti)
+		return
+	}
+
 	switch ti.Step {
 	case hrs.StepTypeNewHeight:
 		cs.enterNewHeight()

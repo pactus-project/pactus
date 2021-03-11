@@ -76,9 +76,8 @@ func (cs *consensus) enterPrecommit(round int) {
 		return
 	}
 
-	cs.isPreCommitted = true
-
 	// Everything is good
+	cs.isPreCommitted = true
 	cs.logger.Info("Precommit: Proposal signed", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrecommit, round, *blockHash)
 }

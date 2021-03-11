@@ -239,31 +239,27 @@ func TestLateProposal2(t *testing.T) {
 
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
 
-	h := 4
-	r := 0
-	p := makeProposal(t, h, r) // tConsP should propose for this round
+	h := 3
+	p := makeProposal(t, h, 0) // tConsP should propose for this round
 
 	tConsX.enterNewHeight()
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexB, false)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexB, false)
 
-	checkHRSWait(t, tConsX, 4, 1, hrs.StepTypePrepare)
+	checkHRSWait(t, tConsX, h, 1, hrs.StepTypePrepare)
 
 	// Now partition healed, but it's too late, We already moved to the next round
 	tConsX.SetProposal(p)
 
-	// TODO
-	// Uncomment this part after refactoring the consesnus
-	//	checkHRS(t, tConsX, 4, 1, hrs.StepTypePrepare)
+	checkHRS(t, tConsX, h, 1, hrs.StepTypePrepare)
 }
 
 func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
@@ -320,7 +316,6 @@ func TestEnterPrepareAfterPrecommit(t *testing.T) {
 	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP, false)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
-
 }
 
 func TestProposeIvalidArgs(t *testing.T) {
