@@ -28,12 +28,13 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 	}
 
 	var json string
-	bz, err := tx.Tx.MarshalJSON()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+	if request.Verbosity == 1 {
+		bz, err := tx.Tx.MarshalJSON()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+		json = string(bz)
 	}
-	json = string(bz)
-
 	res := &zarb.TransactionResponse{
 		Data: data,
 		Json: json,

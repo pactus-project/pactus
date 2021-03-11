@@ -74,6 +74,7 @@ message NetworkInfoResponse {
 
 message TransactionRequest {
   string id = 1;
+  uint32 verbosity = 2;
 }
 
 message TransactionResponse {

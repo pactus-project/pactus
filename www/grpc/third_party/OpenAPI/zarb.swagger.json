@@ -218,6 +218,13 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "verbosity",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [
