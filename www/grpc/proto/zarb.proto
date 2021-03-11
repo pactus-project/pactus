@@ -68,6 +68,8 @@ message NetworkInfoRequest {
 }
 
 message NetworkInfoResponse {
+  string peer_id = 1;
+  repeated Peer peers = 2;
 }
 
 message TransactionRequest {
@@ -86,4 +88,16 @@ message SendRawTransactionRequest {
 message SendRawTransactionResponse {
   bytes data = 1;
   string json = 2;
+}
+
+message Peer{
+  string moniker = 1;
+  bytes node_version = 2;
+  string peer_id = 3;
+  string public_key = 4;
+  bool initial_block_download = 5;
+  int32 height = 6;
+  int32 received_messages = 7;
+  int32 invalid_messages = 8;
+  int32 received_bytes = 9;
 }

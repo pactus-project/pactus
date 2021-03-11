@@ -22,8 +22,8 @@ type peerData struct {
 	PublicKey            crypto.PublicKey
 	InitialBlockDownload bool
 	Height               int
-	ReceivedMsg          int
-	InvalidMsg           int
+	ReceivedMessages     int
+	InvalidMessages      int
 	ReceivedBytes        int
 }
 
@@ -77,18 +77,18 @@ func (p *Peer) InitialBlockDownload() bool {
 	return p.data.InitialBlockDownload
 }
 
-func (p *Peer) ReceivedMsg() int {
+func (p *Peer) ReceivedMessages() int {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	return p.data.ReceivedMsg
+	return p.data.ReceivedMessages
 }
 
-func (p *Peer) InvalidMsg() int {
+func (p *Peer) InvalidMessages() int {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	return p.data.InvalidMsg
+	return p.data.InvalidMessages
 }
 
 func (p *Peer) ReceivedBytes() int {
@@ -138,7 +138,7 @@ func (p *Peer) IncreaseReceivedMessage() {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.ReceivedMsg++
+	p.data.ReceivedMessages++
 }
 
 func (p *Peer) IncreaseReceivedBytes(len int) {
@@ -152,14 +152,14 @@ func (p *Peer) UpdateInvalidMessage(msg int) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.InvalidMsg = msg
+	p.data.InvalidMessages = msg
 }
 
 func (p *Peer) UpdateReceivedMessage(msg int) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.ReceivedMsg = msg
+	p.data.ReceivedMessages = msg
 }
 
 func (p *Peer) UpdateReceivedBytes(len int) {
@@ -173,7 +173,7 @@ func (p *Peer) IncreaseInvalidMessage() {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.InvalidMsg++
+	p.data.InvalidMessages++
 }
 
 func (p *Peer) MarshalJSON() ([]byte, error) {
