@@ -123,27 +123,41 @@ func (pool *txPool) RemoveTx(id tx.ID) {
 	pool.pendings.Remove(id)
 }
 
+// QueryTx returns immediately a transaction  if we have, otherwise nil
 func (pool *txPool) PendingTx(id tx.ID) *tx.Tx {
 	pool.lk.Lock()
+	defer pool.lk.Unlock()
 
 	val, found := pool.pendings.Get(id)
 	if found {
 		trx := val.(*tx.Tx)
-		pool.lk.Unlock()
 		return trx
 	}
 
-	pool.logger.Debug("Request transaction from peers", "id", id)
-	pool.lk.Unlock()
+	return nil
+}
+
+// QueryTx returns immediately a transaction  if we have,
+// it queries from other nodes
+func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
+	trx := pool.PendingTx(id)
+	if trx != nil {
+		return trx
+	}
+
+	pool.logger.Debug("Query transaction from nodes", "id", id)
 
 	msg := message.NewOpaqueQueryTransactionsMessage([]tx.ID{id})
 	pool.broadcastCh <- msg
 
-	pool.appendTxCh = make(chan *tx.Tx, 100)
 	defer func() {
-		close(pool.appendTxCh)
-		pool.appendTxCh = nil
+		if pool.appendTxCh != nil {
+			close(pool.appendTxCh)
+			pool.appendTxCh = nil
+		}
 	}()
+
+	pool.appendTxCh = make(chan *tx.Tx, 100)
 
 	timeout := time.NewTimer(pool.config.WaitingTimeout)
 
@@ -201,27 +215,6 @@ func (pool *txPool) Recheck() {
 			pool.pendings.Remove(trx.ID())
 		}
 	}
-}
-
-func (pool *txPool) BroadcastTxs(ids []tx.ID) {
-	pool.lk.Lock()
-	defer pool.lk.Unlock()
-
-	trxs := make([]*tx.Tx, len(ids))
-	for i, id := range ids {
-		val, found := pool.pendings.Get(id)
-		if !found {
-			pool.logger.Error("Try to broadcast a transaction which is not in the pool", "id", id)
-			return
-		}
-
-		trxs[i] = val.(*tx.Tx)
-	}
-
-	go func(_trxs []*tx.Tx) {
-		msg := message.NewTransactionsMessage(_trxs)
-		pool.broadcastCh <- msg
-	}(trxs)
 }
 
 func (pool *txPool) Fingerprint() string {

@@ -9,15 +9,18 @@ import (
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/txpool"
 )
 
 var tCache *Cache
 var tStore *store.MockStore
+var tTxPool *txpool.MockTxPool
 
 func setup(t *testing.T) {
 	var err error
 	tStore = store.MockingStore()
-	tCache, err = NewCache(10, tStore)
+	tTxPool = txpool.MockingTxPool()
+	tCache, err = NewCache(10, tStore, tTxPool)
 	assert.NoError(t, err)
 }
 
@@ -58,19 +61,24 @@ func TestCacheCommit(t *testing.T) {
 	assert.Nil(t, tCache.GetCertificate(b3.Header().LastBlockHash()))
 }
 
-func TestCacheTx(t *testing.T) {
+func TestGetTx(t *testing.T) {
 	setup(t)
 
 	trx1, _ := tx.GenerateTestSendTx()
 	trx2, _ := tx.GenerateTestSendTx()
 	trx3, _ := tx.GenerateTestSendTx()
+	trx4, _ := tx.GenerateTestSendTx()
 
 	tStore.Transactions[trx1.ID()] = &tx.CommittedTx{Tx: trx1}
+	tTxPool.AppendTx(trx4)
 	tCache.AddTransaction(trx2)
 
 	assert.Equal(t, tCache.GetTransaction(trx1.ID()).ID(), trx1.ID())
 	assert.Equal(t, tCache.GetTransaction(trx2.ID()).ID(), trx2.ID())
+	assert.Equal(t, tCache.GetTransaction(trx4.ID()).ID(), trx4.ID())
 	assert.Nil(t, tCache.GetTransaction(trx3.ID()))
+	assert.NotNil(t, tCache.GetTransaction(trx1.ID()))
+	assert.NotNil(t, tCache.GetTransaction(trx4.ID()))
 }
 
 func TestCacheProposal(t *testing.T) {

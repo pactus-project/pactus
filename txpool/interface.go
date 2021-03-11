@@ -8,7 +8,6 @@ import (
 type TxPoolReader interface {
 	AllTransactions() []*tx.Tx
 	PendingTx(id tx.ID) *tx.Tx
-	BroadcastTxs(ids []tx.ID)
 	HasTx(id tx.ID) bool
 	Size() int
 
@@ -21,6 +20,7 @@ type TxPool interface {
 	SetSandbox(sandbox sandbox.Sandbox)
 	AppendTx(tx *tx.Tx) error
 	AppendTxAndBroadcast(trx *tx.Tx) error
+	QueryTx(id tx.ID) *tx.Tx
 	RemoveTx(id tx.ID)
 	Recheck()
 }

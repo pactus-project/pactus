@@ -88,8 +88,8 @@ func setup(t *testing.T) {
 	tBobBroadcastCh = make(chan *message.Message, 100)
 	tAliceNetAPI = network_api.MockingNetworkAPI(tAlicePeerID)
 	tBobNetAPI = network_api.MockingNetworkAPI(tBobPeerID)
-	aliceCache, _ := cache.NewCache(tAliceConfig.CacheSize, tAliceState.StoreReader())
-	bobCache, _ := cache.NewCache(tBobConfig.CacheSize, tBobState.StoreReader())
+	aliceCache, _ := cache.NewCache(tAliceConfig.CacheSize, tAliceState.StoreReader(), tTxPool)
+	bobCache, _ := cache.NewCache(tBobConfig.CacheSize, tBobState.StoreReader(), tTxPool)
 
 	tBobState.GenHash = tAliceState.GenHash
 

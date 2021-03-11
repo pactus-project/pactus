@@ -82,7 +82,7 @@ func NewSynchronizer(
 		return nil, err
 	}
 
-	cache, err := cache.NewCache(conf.CacheSize, state.StoreReader())
+	cache, err := cache.NewCache(conf.CacheSize, state.StoreReader(), txPool)
 	if err != nil {
 		return nil, err
 	}

@@ -30,6 +30,10 @@ func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	return nil
 }
 
+func (m *MockTxPool) QueryTx(id tx.ID) *tx.Tx {
+	return m.PendingTx(id)
+}
+
 func (m *MockTxPool) HasTx(id tx.ID) bool {
 	for _, t := range m.Txs {
 		if t.ID().EqualsTo(id) {
@@ -65,7 +69,4 @@ func (m *MockTxPool) RemoveTx(hash crypto.Hash) {
 
 func (m *MockTxPool) AllTransactions() []*tx.Tx {
 	return m.Txs
-}
-
-func (m *MockTxPool) BroadcastTxs([]tx.ID) {
 }

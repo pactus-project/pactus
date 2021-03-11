@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -46,18 +47,20 @@ func proposalKey(height, round int) key {
 }
 
 type Cache struct {
-	cache *lru.ARCCache // it's thread safe
-	store store.StoreReader
+	cache  *lru.ARCCache // it's thread safe
+	store  store.StoreReader
+	txPool txpool.TxPoolReader
 }
 
-func NewCache(size int, store store.StoreReader) (*Cache, error) {
+func NewCache(size int, store store.StoreReader, txPool txpool.TxPoolReader) (*Cache, error) {
 	c, err := lru.NewARC(size)
 	if err != nil {
 		return nil, err
 	}
 	return &Cache{
-		cache: c,
-		store: store,
+		cache:  c,
+		store:  store,
+		txPool: txPool,
 	}, nil
 }
 
@@ -101,15 +104,17 @@ func (c *Cache) GetTransaction(id tx.ID) *tx.Tx {
 		return i.(*tx.Tx)
 	}
 
+	trx := c.txPool.PendingTx(id)
+	if trx != nil {
+		c.cache.Add(txKey(id), trx)
+		return trx
+	}
+
 	ct, err := c.store.Transaction(id)
 	if err == nil {
 		c.cache.Add(txKey(id), ct.Tx)
 		return ct.Tx
 	}
-
-	// Should we check txpool?
-	// No, because transaction in txpool should be in cache.
-	// TODO: write tests for me
 
 	return nil
 }

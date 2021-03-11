@@ -23,7 +23,7 @@ var tAcc1Signer crypto.Signer
 var tCh chan *message.Message
 
 func setup(t *testing.T) {
-	logger.InitLogger(logger.DefaultConfig())
+	logger.InitLogger(logger.TestConfig())
 	tCh = make(chan *message.Message, 10)
 	p, _ := NewTxPool(TestConfig(), tCh)
 	tSandbox = sandbox.MockingSandbox()
@@ -93,11 +93,9 @@ func TestPending(t *testing.T) {
 		}
 	}()
 
-	assert.NotNil(t, tPool.PendingTx(trx.ID()))
+	assert.Nil(t, tPool.PendingTx(trx.ID()))
+	assert.NotNil(t, tPool.QueryTx(trx.ID()))
 	assert.True(t, tPool.pendings.Has(trx.ID()))
-
-	// For second time it should response immediately
-	assert.NotNil(t, tPool.PendingTx(trx.ID()))
 
 	invID := crypto.GenerateTestHash()
 	assert.Nil(t, tPool.PendingTx(invID))
@@ -184,24 +182,4 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 	tPool.Recheck()
 	assert.Zero(t, tPool.Size())
-}
-
-func TestBroadcastTxs(t *testing.T) {
-	setup(t)
-
-	stamp := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(88, stamp)
-	ids := make([]tx.ID, 5)
-
-	for i := 0; i < 5; i++ {
-		a, _, _ := crypto.GenerateTestKeyPair()
-		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
-		tAcc1Signer.SignMsg(trx)
-		assert.NoError(t, tPool.AppendTx(trx))
-		ids[i] = trx.ID()
-	}
-
-	tPool.BroadcastTxs(ids)
-
-	shouldPublishTransaction(t, ids[0])
 }
