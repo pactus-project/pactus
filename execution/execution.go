@@ -20,7 +20,6 @@ type Execution struct {
 	accumulatedFee int64
 }
 
-
 func NewExecution(sb sandbox.Sandbox, strict bool) *Execution {
 	execs := make(map[payload.PayloadType]Executor)
 	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(sb, strict)
@@ -37,7 +36,6 @@ func (exe *Execution) Execute(trx *tx.Tx) error {
 	if err := trx.SanityCheck(); err != nil {
 		return err
 	}
-
 	if err := exe.checkStamp(trx); err != nil {
 		return err
 	}

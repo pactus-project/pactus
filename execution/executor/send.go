@@ -21,6 +21,19 @@ func NewSendExecutor(sb sandbox.Sandbox, strict bool) *SendExecutor {
 func (e *SendExecutor) Execute(trx *tx.Tx) error {
 	pld := trx.Payload().(*payload.SendPayload)
 
+	// In not-restrict mode We accepts all subsidy transactions for the current height
+	// There might be more than one valid subsidy transaction per height
+	// Because There might be more than one proposal per height
+	if !e.strict && trx.IsMintbaseTx() {
+		if trx.Sequence() != e.sandbox.CurrentHeight() {
+			return errors.Errorf(errors.ErrInvalidTx,
+				"Subsidy transaction is not for current height. Expected :%d, got: %d",
+				e.sandbox.CurrentHeight(), trx.Sequence())
+		}
+
+		return nil
+	}
+
 	senderAcc := e.sandbox.Account(pld.Sender)
 	if senderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve sender account")

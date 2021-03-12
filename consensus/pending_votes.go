@@ -138,3 +138,12 @@ func (pv *PendingVotes) MoveToNewHeight(height int, validators []*validator.Vali
 	pv.roundVotes = make([]*RoundVotes, 0)
 	pv.validators = validators
 }
+
+func (pv *PendingVotes) CanVote(addr crypto.Address) bool {
+	for _, val := range pv.validators {
+		if val.Address().EqualsTo(addr) {
+			return true
+		}
+	}
+	return false
+}

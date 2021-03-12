@@ -44,17 +44,17 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 		// Check if can't join to committee
 		tSandbox.AcceptSortition = true
-		tSandbox.ErrorAddToSet = true
+		tSandbox.WelcomeToCommittee = false
 		assert.Error(t, exe.Execute(trx))
 
 		// Check if proof is wrong
 		tSandbox.AcceptSortition = false
-		tSandbox.ErrorAddToSet = true
+		tSandbox.WelcomeToCommittee = true
 		assert.Error(t, exe.Execute(trx))
 
 		// Sounds good
 		tSandbox.AcceptSortition = true
-		tSandbox.ErrorAddToSet = false
+		tSandbox.WelcomeToCommittee = true
 		assert.NoError(t, exe.Execute(trx))
 
 		// replay
@@ -67,4 +67,29 @@ func TestExecuteSortitionTx(t *testing.T) {
 	assert.Zero(t, exe.Fee())
 
 	checkTotalCoin(t, 0)
+}
+
+func TestSortitionNonStrictMode(t *testing.T) {
+	setup(t)
+	exe1 := NewSortitionExecutor(tSandbox, false)
+	exe2 := NewSortitionExecutor(tSandbox, true)
+
+	stamp100 := crypto.GenerateTestHash()
+	stamp101 := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(100, stamp100)
+	tSandbox.AppendStampAndUpdateHeight(101, stamp101)
+	proof1 := sortition.GenerateRandomProof()
+
+	tSandbox.AcceptSortition = true
+	tSandbox.WelcomeToCommittee = true
+
+	sortition1 := tx.NewSortitionTx(stamp100, 102, tValSigner.Address(), proof1)
+	sortition2 := tx.NewSortitionTx(stamp101, 102, tValSigner.Address(), proof1)
+
+	assert.NoError(t, exe1.Execute(sortition1))
+	assert.NoError(t, exe1.Execute(sortition2))
+
+	assert.Error(t, exe2.Execute(sortition1))
+	assert.Error(t, exe2.Execute(sortition2))
+
 }

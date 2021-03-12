@@ -5,9 +5,8 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/proposal"
-	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -47,20 +46,18 @@ func proposalKey(height, round int) key {
 }
 
 type Cache struct {
-	cache  *lru.ARCCache // it's thread safe
-	store  store.StoreReader
-	txPool txpool.TxPoolReader
+	cache *lru.ARCCache // it's thread safe
+	state state.StateFacade
 }
 
-func NewCache(size int, store store.StoreReader, txPool txpool.TxPoolReader) (*Cache, error) {
+func NewCache(size int, state state.StateFacade) (*Cache, error) {
 	c, err := lru.NewARC(size)
 	if err != nil {
 		return nil, err
 	}
 	return &Cache{
-		cache:  c,
-		store:  store,
-		txPool: txPool,
+		cache: c,
+		state: state,
 	}, nil
 }
 
@@ -70,8 +67,8 @@ func (c *Cache) GetBlock(height int) *block.Block {
 		return i.(*block.Block)
 	}
 
-	b, err := c.store.Block(height)
-	if err == nil {
+	b := c.state.Block(height)
+	if b != nil {
 		c.cache.Add(blockKey(height), b)
 		return b
 	}
@@ -104,14 +101,14 @@ func (c *Cache) GetTransaction(id tx.ID) *tx.Tx {
 		return i.(*tx.Tx)
 	}
 
-	trx := c.txPool.PendingTx(id)
+	trx := c.state.PendingTx(id)
 	if trx != nil {
 		c.cache.Add(txKey(id), trx)
 		return trx
 	}
 
-	ct, err := c.store.Transaction(id)
-	if err == nil {
+	ct := c.state.Transaction(id)
+	if ct != nil {
 		c.cache.Add(txKey(id), ct.Tx)
 		return ct.Tx
 	}

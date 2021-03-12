@@ -40,8 +40,8 @@ func (m *MockStore) BlockHeight(hash crypto.Hash) (int, error) {
 	}
 	return -1, nil
 }
-func (m *MockStore) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
-	b, ok := m.Transactions[hash]
+func (m *MockStore) Transaction(id tx.ID) (*tx.CommittedTx, error) {
+	b, ok := m.Transactions[id]
 	if ok {
 		return b, nil
 	}

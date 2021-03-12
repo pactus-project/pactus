@@ -19,7 +19,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -41,8 +40,7 @@ type synchronizer struct {
 	ctx             context.Context
 	config          *Config
 	signer          crypto.Signer
-	state           state.State
-	txPool          txpool.TxPool
+	state           state.StateFacade
 	consensus       consensus.Consensus
 	peerSet         *peerset.PeerSet
 	firewall        *firewall.Firewall
@@ -58,9 +56,8 @@ type synchronizer struct {
 func NewSynchronizer(
 	conf *Config,
 	signer crypto.Signer,
-	state state.State,
+	state state.StateFacade,
 	consensus consensus.Consensus,
-	txPool txpool.TxPool,
 	net *network.Network,
 	broadcastCh <-chan *message.Message) (Synchronizer, error) {
 	syncer := &synchronizer{
@@ -69,7 +66,6 @@ func NewSynchronizer(
 		signer:      signer,
 		state:       state,
 		consensus:   consensus,
-		txPool:      txPool,
 		broadcastCh: broadcastCh,
 	}
 
@@ -82,7 +78,7 @@ func NewSynchronizer(
 		return nil, err
 	}
 
-	cache, err := cache.NewCache(conf.CacheSize, state.StoreReader(), txPool)
+	cache, err := cache.NewCache(conf.CacheSize, state)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +90,7 @@ func NewSynchronizer(
 	syncer.networkAPI = api
 
 	syncer.consensusSync = NewConsensusSync(conf, net.ID(), consensus, logger, syncer.publishMessage)
-	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, txPool, peerSet, logger, syncer.publishMessage, syncer.synced)
+	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, peerSet, logger, syncer.publishMessage, syncer.synced)
 
 	if conf.InitialBlockDownload {
 		if err := syncer.joinDownloadTopic(); err != nil {
@@ -448,15 +444,12 @@ func (syncer *synchronizer) isPeerActiveValidator(id peer.ID) bool {
 	}
 
 	addr := p.PublicKey().Address()
-	committee := syncer.state.Committee()
-
-	return committee.Contains(addr)
+	return syncer.state.IsInCommittee(addr)
 }
 
 // isThisActiveValidator checks if we are an active validator
 func (syncer *synchronizer) isThisActiveValidator() bool {
-	committee := syncer.state.Committee()
-	return committee.Contains(syncer.signer.Address())
+	return syncer.state.IsInCommittee(syncer.signer.Address())
 }
 
 // queryTransactions queries for a missed transactions if we don't have it in the cache
@@ -466,7 +459,7 @@ func (syncer *synchronizer) queryTransactions(ids []tx.ID) {
 	for i, id := range ids {
 		trx := syncer.cache.GetTransaction(id)
 		if trx != nil {
-			if err := syncer.txPool.AppendTx(trx); err != nil {
+			if err := syncer.state.AddPendingTx(trx); err != nil {
 				syncer.logger.Warn("Query for an invalid transaction", "tx", trx)
 			}
 		} else {

@@ -1,6 +1,8 @@
 package capnp
 
 import (
+	"fmt"
+
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -9,11 +11,11 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	s, _ := args.Params.Id()
 	h, err := crypto.HashFromString(string(s))
 	if err != nil {
-		return err
+		return fmt.Errorf("Invalid transaction id: %s", err)
 	}
-	ctx, err := zs.store.Transaction(h)
-	if err != nil {
-		return err
+	ctx := zs.state.Transaction(h)
+	if ctx == nil {
+		return fmt.Errorf("Transaction not found")
 	}
 
 	res, _ := args.Results.NewResult()
@@ -49,7 +51,7 @@ func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) err
 		return err
 	}
 
-	if err := zs.txPool.AppendTxAndBroadcast(&tx); err != nil {
+	if err := zs.state.AddPendingTxAndBroadcast(&tx); err != nil {
 		return err
 	}
 

@@ -10,16 +10,14 @@ import (
 )
 
 func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.TransactionRequest) (*zarb.TransactionResponse, error) {
-
-	hash, err := crypto.HashFromString(request.Id)
+	id, err := crypto.HashFromString(request.Id)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "transaction ID not found")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid transaction ID: %v", err.Error())
 
 	}
-	tx, err := zs.store.Transaction(hash)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-
+	tx := zs.state.Transaction(id)
+	if tx == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Transaction not found")
 	}
 
 	data, err := tx.Tx.Encode()

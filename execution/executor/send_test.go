@@ -114,3 +114,25 @@ func TestExecuteSendTx(t *testing.T) {
 
 	checkTotalCoin(t, 4000)
 }
+
+func TestSendNonStrictMode(t *testing.T) {
+	setup(t)
+	exe1 := NewSendExecutor(tSandbox, false)
+	exe2 := NewSendExecutor(tSandbox, true)
+
+	stamp := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	receiver1, _, _ := crypto.GenerateTestKeyPair()
+	receiver2, _, _ := crypto.GenerateTestKeyPair()
+
+	mintbase1 := tx.NewMintbaseTx(stamp, 101, receiver1, 5, "")
+	mintbase2 := tx.NewMintbaseTx(stamp, 101, receiver2, 5, "")
+	mintbase3 := tx.NewMintbaseTx(stamp, 102, receiver2, 5, "")
+
+	assert.NoError(t, exe1.Execute(mintbase1))
+	assert.NoError(t, exe1.Execute(mintbase2))
+	assert.Error(t, exe1.Execute(mintbase3)) // Invalid sequence
+
+	assert.Error(t, exe2.Execute(mintbase1))
+	assert.Error(t, exe2.Execute(mintbase2))
+}

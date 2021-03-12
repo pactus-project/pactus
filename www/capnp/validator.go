@@ -1,18 +1,20 @@
 package capnp
 
-import "github.com/zarbchain/zarb-go/crypto"
+import (
+	"fmt"
+
+	"github.com/zarbchain/zarb-go/crypto"
+)
 
 func (zs *zarbServer) GetValidator(b ZarbServer_getValidator) error {
 	s, _ := b.Params.Address()
 	addr, err := crypto.AddressFromString(string(s))
 	if err != nil {
-		zs.logger.Error("Error on retriving validator", "err", err)
-		return err
+		return fmt.Errorf("Invalid address: %s", err)
 	}
-	val, err := zs.store.Validator(addr)
-	if err != nil {
-		zs.logger.Error("Error on retriving validator", "address", addr, "err", err)
-		return err
+	val := zs.state.Validator(addr)
+	if val == nil {
+		return fmt.Errorf("Validator not found")
 	}
 
 	d, _ := val.Encode()

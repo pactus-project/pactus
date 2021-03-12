@@ -15,10 +15,10 @@ import (
 // Firewall check packets before passing them to sync module
 type Firewall struct {
 	peerSet *peerset.PeerSet
-	state   state.StateReader
+	state   state.StateFacade
 }
 
-func NewFirewall(peerSet *peerset.PeerSet, state state.StateReader) *Firewall {
+func NewFirewall(peerSet *peerset.PeerSet, state state.StateFacade) *Firewall {
 	return &Firewall{
 		peerSet: peerSet,
 		state:   state,

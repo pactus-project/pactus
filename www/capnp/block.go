@@ -1,6 +1,8 @@
 package capnp
 
 import (
+	"fmt"
+
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 )
@@ -11,11 +13,7 @@ func (zs *zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 	if err != nil {
 		return err
 	}
-	num, err := zs.store.BlockHeight(h)
-	if err != nil {
-		zs.logger.Debug("Error on retriving block number", "err", err)
-		return err
-	}
+	num := zs.state.BlockHeight(h)
 	args.Results.SetResult(uint64(num))
 	return nil
 }
@@ -23,15 +21,14 @@ func (zs *zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	h := args.Params.Height()
 	v := args.Params.Verbosity()
-	b, err := zs.store.Block(int(h))
-	if err != nil {
-		zs.logger.Debug("Error on retriving block", "height", h, "err", err)
-		return err
+	b := zs.state.Block(int(h))
+	if b == nil {
+		return fmt.Errorf("Block not found")
 	}
 
 	res, _ := args.Results.NewResult()
 	d, _ := b.Encode()
-	if err = res.SetData(d); err != nil {
+	if err := res.SetData(d); err != nil {
 		return err
 	}
 	if err := res.SetHash(b.Hash().RawBytes()); err != nil {

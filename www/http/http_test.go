@@ -15,13 +15,11 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 var tMockState *state.MockState
-var tMockPool txpool.TxPool
 var tMockSync *sync.MockSync
 var tCapnpServer *capnp.Server
 var tHTTPServer *Server
@@ -40,7 +38,6 @@ func setup(t *testing.T) {
 
 	committee, _ := committee.GenerateTestCommittee()
 	tMockState = state.MockingState(committee)
-	tMockPool = txpool.MockingTxPool()
 	tMockSync = sync.MockingSync()
 
 	b1, txs := block.GenerateTestBlock(nil, nil)
@@ -64,7 +61,7 @@ func setup(t *testing.T) {
 	tMockState.Store.UpdateValidator(v)
 
 	var err error
-	tCapnpServer, err = capnp.NewServer(capnp.TestConfig(), tMockState, tMockSync, tMockPool)
+	tCapnpServer, err = capnp.NewServer(capnp.TestConfig(), tMockState, tMockSync)
 	assert.NoError(t, err)
 	assert.NoError(t, tCapnpServer.StartServer())
 

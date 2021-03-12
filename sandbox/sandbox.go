@@ -30,9 +30,9 @@ type SandboxConcrete struct {
 }
 
 type ValidatorStatus struct {
-	Validator validator.Validator
-	Updated   bool
-	AddToSet  bool
+	Validator       validator.Validator
+	Updated         bool
+	JoinedCommittee bool
 }
 
 type AccountStatus struct {
@@ -214,7 +214,7 @@ func (sb *SandboxConcrete) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) error {
+func (sb *SandboxConcrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Address) error {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -229,7 +229,7 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 
 	joined := 0
 	for _, s := range sb.validators {
-		if s.AddToSet {
+		if s.JoinedCommittee {
 			joined++
 		}
 	}
@@ -248,7 +248,7 @@ func (sb *SandboxConcrete) AddToSet(blockHash crypto.Hash, addr crypto.Address) 
 		}
 	}
 
-	s.AddToSet = true
+	s.JoinedCommittee = true
 	return nil
 }
 

@@ -37,7 +37,7 @@ func TestAddTxToCache(t *testing.T) {
 	tAliceSync.stateSync.BroadcastTransactions([]*tx.Tx{trx1})
 	tAliceNetAPI.ShouldPublishMessageWithThisType(t, payload.PayloadTypeTransactions)
 	assert.NotNil(t, tBobSync.cache.GetTransaction(trx1.ID()))
-	assert.True(t, tBobSync.txPool.HasTx(trx1.ID()))
+	assert.NotNil(t, tBobSync.state.PendingTx(trx1.ID()))
 }
 
 func TestRequestForBlocksNotVeryFar(t *testing.T) {

@@ -41,7 +41,7 @@ func (cs *consensus) enterNewHeight() {
 		}
 	}
 
-	vals := cs.state.Committee().Validators()
+	vals := cs.state.CommitteeValidators()
 	cs.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
 	cs.isPreCommitted = false
 	cs.isCommitted = false

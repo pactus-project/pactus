@@ -14,16 +14,16 @@ var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox
 type MockSandbox struct {
-	Accounts        map[crypto.Address]account.Account
-	Validators      map[crypto.Address]validator.Validator
-	Stamps          map[crypto.Hash]int
-	CurHeight       int
-	Params          param.Params
-	TotalAccount    int
-	TotalValidator  int
-	AcceptSortition bool
-	ErrorAddToSet   bool
-	InCommittee     bool
+	Accounts           map[crypto.Address]account.Account
+	Validators         map[crypto.Address]validator.Validator
+	Stamps             map[crypto.Hash]int
+	CurHeight          int
+	Params             param.Params
+	TotalAccount       int
+	TotalValidator     int
+	AcceptSortition    bool
+	WelcomeToCommittee bool
+	InCommittee        bool
 }
 
 func MockingSandbox() *MockSandbox {
@@ -65,9 +65,9 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = *val
 
 }
-func (m *MockSandbox) AddToSet(hash crypto.Hash, addr crypto.Address) error {
-	if m.ErrorAddToSet {
-		return fmt.Errorf("invalid stamp")
+func (m *MockSandbox) EnterCommittee(hash crypto.Hash, addr crypto.Address) error {
+	if !m.WelcomeToCommittee {
+		return fmt.Errorf("Cannot enter to the committee")
 	}
 	return nil
 }
@@ -105,6 +105,7 @@ func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) 
 func (m *MockSandbox) AccSeq(a crypto.Address) int {
 	return m.Accounts[a].Sequence()
 }
+
 func (m *MockSandbox) CommitteeSize() int {
 	return m.Params.CommitteeSize
 }

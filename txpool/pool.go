@@ -6,11 +6,9 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -19,7 +17,6 @@ type txPool struct {
 	lk deadlock.RWMutex
 
 	config      *Config
-	sandbox     sandbox.Sandbox
 	checker     *execution.Execution
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
@@ -40,11 +37,9 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *txPool) SetSandbox(sb sandbox.Sandbox) {
-	pool.sandbox = sb
-	pool.checker = execution.NewExecution(sb, false)
+func (pool *txPool) SetChecker(checker *execution.Execution) {
+	pool.checker = checker
 }
-
 func (pool *txPool) AppendTx(trx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
@@ -78,7 +73,8 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 
 func (pool *txPool) appendTx(trx *tx.Tx) error {
 	if pool.pendings.Has(trx.ID()) {
-		return errors.Errorf(errors.ErrInvalidTx, "Transaction is already in pool. id: %v", trx.ID())
+		pool.logger.Trace("Transaction is already in pool.", "id", trx.ID())
+		return nil
 	}
 
 	if err := pool.checkTx(trx); err != nil {
@@ -91,27 +87,9 @@ func (pool *txPool) appendTx(trx *tx.Tx) error {
 }
 
 func (pool *txPool) checkTx(trx *tx.Tx) error {
-	if trx.IsMintbaseTx() {
-		// We accepts all subsidy transactions for the current height
-		// There maybe more than one valid subsidy transaction per height
-		// Because there maybe more than one proposal per height
-		if trx.Sequence() != pool.sandbox.CurrentHeight() {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"Subsidy transaction is not for current height. Expected :%d, got: %d",
-				pool.sandbox.CurrentHeight(), trx.Sequence())
-		}
-	} else if trx.IsSortitionTx() {
-		// We accepts all sortition transactions
-		// A validator might produce more than one sortition transaction
-		// Before entring the committee
-		return nil
-
-	} else {
-
-		if err := pool.checker.Execute(trx); err != nil {
-			pool.logger.Debug("Invalid transaction", "tx", trx, "err", err)
-			return err
-		}
+	if err := pool.checker.Execute(trx); err != nil {
+		pool.logger.Debug("Invalid transaction", "tx", trx, "err", err)
+		return err
 	}
 	return nil
 }
@@ -164,7 +142,7 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 	for {
 		select {
 		case <-timeout.C:
-			pool.logger.Warn("Transaction not received", "id", id, "timeout", pool.config.WaitingTimeout)
+			pool.logger.Warn("no transaction received", "id", id, "timeout", pool.config.WaitingTimeout)
 			return nil
 		case trx := <-pool.appendTxCh:
 			pool.logger.Debug("Transaction found", "id", id)

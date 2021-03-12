@@ -21,7 +21,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/version"
@@ -29,7 +28,6 @@ import (
 )
 
 var (
-	tTxPool           *txpool.MockTxPool
 	tAliceConfig      *Config
 	tBobConfig        *Config
 	tAliceState       *state.MockState
@@ -74,8 +72,6 @@ func setup(t *testing.T) {
 	aliceSigner := crypto.NewSigner(priv1)
 	bobSigner := crypto.NewSigner(priv2)
 
-	tTxPool = txpool.MockingTxPool()
-
 	committee, _ := committee.GenerateTestCommittee()
 	tAlicePeerID = util.RandomPeerID()
 	tBobPeerID = util.RandomPeerID()
@@ -88,8 +84,8 @@ func setup(t *testing.T) {
 	tBobBroadcastCh = make(chan *message.Message, 100)
 	tAliceNetAPI = network_api.MockingNetworkAPI(tAlicePeerID)
 	tBobNetAPI = network_api.MockingNetworkAPI(tBobPeerID)
-	aliceCache, _ := cache.NewCache(tAliceConfig.CacheSize, tAliceState.StoreReader(), tTxPool)
-	bobCache, _ := cache.NewCache(tBobConfig.CacheSize, tBobState.StoreReader(), tTxPool)
+	aliceCache, _ := cache.NewCache(tAliceConfig.CacheSize, tAliceState)
+	bobCache, _ := cache.NewCache(tBobConfig.CacheSize, tBobState)
 
 	tBobState.GenHash = tAliceState.GenHash
 
@@ -114,7 +110,6 @@ func setup(t *testing.T) {
 		state:       tAliceState,
 		consensus:   tAliceConsensus,
 		cache:       aliceCache,
-		txPool:      tTxPool,
 		broadcastCh: tAliceBroadcastCh,
 		networkAPI:  tAliceNetAPI,
 	}
@@ -122,7 +117,7 @@ func setup(t *testing.T) {
 	tAliceSync.peerSet = peerset.NewPeerSet(tAliceConfig.SessionTimeout)
 	tAliceSync.firewall = firewall.NewFirewall(tAliceSync.peerSet, tAliceState)
 	tAliceSync.consensusSync = NewConsensusSync(tAliceConfig, tAlicePeerID, tAliceConsensus, tAliceSync.logger, tAliceSync.publishMessage)
-	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tTxPool, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.publishMessage, tAliceSync.synced)
+	tAliceSync.stateSync = NewStateSync(tAliceConfig, tAlicePeerID, tAliceSync.cache, tAliceState, tAliceSync.peerSet, tAliceSync.logger, tAliceSync.publishMessage, tAliceSync.synced)
 
 	tBobSync = &synchronizer{
 		ctx:         context.Background(),
@@ -131,7 +126,6 @@ func setup(t *testing.T) {
 		state:       tBobState,
 		consensus:   tBobConsensus,
 		cache:       bobCache,
-		txPool:      tTxPool,
 		broadcastCh: tBobBroadcastCh,
 		networkAPI:  tBobNetAPI,
 	}
@@ -139,7 +133,7 @@ func setup(t *testing.T) {
 	tBobSync.peerSet = peerset.NewPeerSet(tBobConfig.SessionTimeout)
 	tBobSync.firewall = firewall.NewFirewall(tBobSync.peerSet, tBobState)
 	tBobSync.consensusSync = NewConsensusSync(tBobConfig, tBobPeerID, tBobConsensus, tBobSync.logger, tBobSync.publishMessage)
-	tBobSync.stateSync = NewStateSync(tBobConfig, tBobPeerID, tBobSync.cache, tBobState, tTxPool, tBobSync.peerSet, tBobSync.logger, tBobSync.publishMessage, tBobSync.synced)
+	tBobSync.stateSync = NewStateSync(tBobConfig, tBobPeerID, tBobSync.cache, tBobState, tBobSync.peerSet, tBobSync.logger, tBobSync.publishMessage, tBobSync.synced)
 
 	tAliceNetAPI.ParsFn = tAliceSync.ParsMessage
 	tAliceNetAPI.Firewall = tAliceSync.firewall
@@ -194,14 +188,14 @@ func joinAliceToTheSet(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
 	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
 
-	assert.NoError(t, tAliceState.TestCommittee.Update(0, []*validator.Validator{val}))
+	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
 }
 
 func joinBobToTheSet(t *testing.T) {
 	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
 	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
 
-	assert.NoError(t, tAliceState.TestCommittee.Update(0, []*validator.Validator{val}))
+	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
 }
 
 func TestAccessors(t *testing.T) {
@@ -336,7 +330,6 @@ func TestQueryTransaction(t *testing.T) {
 	t.Run("Alice should not send query transaction message because she is not an active validator", func(t *testing.T) {
 		tAliceBroadcastCh <- msg
 		tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeQueryTransactions)
-		assert.True(t, tTxPool.HasTx(trx3.ID()))
 	})
 
 	t.Run("Bob should not process alice message because he is not an active validator", func(t *testing.T) {

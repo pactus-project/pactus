@@ -15,8 +15,8 @@ func (zs *zarbServer) GetBlockHeight(ctx context.Context, request *zarb.BlockHei
 
 func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) (*zarb.BlockResponse, error) {
 	height := request.GetHeight()
-	block, err := zs.store.Block(int(height))
-	if err != nil {
+	block := zs.state.Block(int(height))
+	if block == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Block not found")
 	}
 	hash := block.Hash().String()

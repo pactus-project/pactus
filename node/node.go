@@ -23,7 +23,7 @@ import (
 type Node struct {
 	genesisDoc *genesis.Genesis
 	config     *config.Config
-	state      state.State
+	state      state.StateFacade
 	txPool     txpool.TxPool
 	consensus  consensus.Consensus
 	network    *network.Network
@@ -59,12 +59,12 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	sync, err := sync.NewSynchronizer(conf.Sync, signer, state, consensus, txPool, network, broadcastCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, signer, state, consensus, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	capnp, err := capnp.NewServer(conf.Capnp, state, sync, txPool)
+	capnp, err := capnp.NewServer(conf.Capnp, state, sync)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create Capnproto server")
 	}
@@ -74,7 +74,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, errors.Wrap(err, "could not create http server")
 	}
 
-	grpc, err := grpc.NewServer(conf.GRPC, state, sync, txPool)
+	grpc, err := grpc.NewServer(conf.GRPC, state, sync)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create grpc server")
 	}
@@ -147,6 +147,6 @@ func (n *Node) Consensus() consensus.ConsensusReader {
 func (n *Node) Sync() sync.Synchronizer {
 	return n.sync
 }
-func (n *Node) State() state.StateReader {
+func (n *Node) State() state.StateFacade {
 	return n.state
 }
