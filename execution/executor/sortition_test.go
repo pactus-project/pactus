@@ -72,7 +72,6 @@ func TestExecuteSortitionTx(t *testing.T) {
 func TestSortitionNonStrictMode(t *testing.T) {
 	setup(t)
 	exe1 := NewSortitionExecutor(tSandbox, false)
-	exe2 := NewSortitionExecutor(tSandbox, true)
 
 	stamp100 := crypto.GenerateTestHash()
 	stamp101 := crypto.GenerateTestHash()
@@ -88,8 +87,4 @@ func TestSortitionNonStrictMode(t *testing.T) {
 
 	assert.NoError(t, exe1.Execute(sortition1))
 	assert.NoError(t, exe1.Execute(sortition2))
-
-	assert.Error(t, exe2.Execute(sortition1))
-	assert.Error(t, exe2.Execute(sortition2))
-
 }

@@ -118,7 +118,6 @@ func TestExecuteSendTx(t *testing.T) {
 func TestSendNonStrictMode(t *testing.T) {
 	setup(t)
 	exe1 := NewSendExecutor(tSandbox, false)
-	exe2 := NewSendExecutor(tSandbox, true)
 
 	stamp := crypto.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
@@ -132,7 +131,4 @@ func TestSendNonStrictMode(t *testing.T) {
 	assert.NoError(t, exe1.Execute(mintbase1))
 	assert.NoError(t, exe1.Execute(mintbase2))
 	assert.Error(t, exe1.Execute(mintbase3)) // Invalid sequence
-
-	assert.Error(t, exe2.Execute(mintbase1))
-	assert.Error(t, exe2.Execute(mintbase2))
 }
