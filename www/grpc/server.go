@@ -6,9 +6,7 @@ import (
 
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/txpool"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc"
 )
@@ -16,9 +14,7 @@ import (
 type zarbServer struct {
 	zarb.UnimplementedZarbServer
 
-	state  state.StateReader
-	store  store.StoreReader
-	txPool txpool.TxPool
+	state  state.StateFacade
 	sync   sync.Synchronizer
 	logger *logger.Logger
 }
@@ -28,21 +24,17 @@ type Server struct {
 	config   *Config
 	listener net.Listener
 	grpc     *grpc.Server
-	store    store.StoreReader
-	state    state.StateReader
-	txPool   txpool.TxPool
+	state    state.StateFacade
 	sync     sync.Synchronizer
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.StateReader, sync sync.Synchronizer, txPool txpool.TxPool) (*Server, error) {
+func NewServer(conf *Config, state state.StateFacade, sync sync.Synchronizer) (*Server, error) {
 
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
-		store:  state.StoreReader(),
 		state:  state,
-		txPool: txPool,
 		sync:   sync,
 		logger: logger.NewLogger("_grpc", nil),
 	}, nil
@@ -56,8 +48,6 @@ func (s *Server) StartServer() error {
 	grpc := grpc.NewServer()
 	server := &zarbServer{
 		state:  s.state,
-		store:  s.store,
-		txPool: s.txPool,
 		sync:   s.sync,
 		logger: s.logger,
 	}

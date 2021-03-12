@@ -402,8 +402,8 @@ func TestSortition(t *testing.T) {
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
-	assert.True(t, st1.evaluateSortition())             //  ok
-	assert.False(t, tState1.Committee().Contains(addr)) // still not in the set
+	assert.True(t, st1.evaluateSortition())           //  ok
+	assert.False(t, tState1.committee.Contains(addr)) // still not in the set
 
 	// ---------------------------------------------
 	// Certificate another block, new validator should be in the set now
@@ -413,8 +413,8 @@ func TestSortition(t *testing.T) {
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
 	assert.False(t, st1.evaluateSortition()) // already in the set
-	assert.False(t, tState1.Committee().Contains(tValSigner1.Address()))
-	assert.True(t, tState1.Committee().Contains(addr))
+	assert.False(t, tState1.committee.Contains(tValSigner1.Address()))
+	assert.True(t, tState1.committee.Contains(addr))
 
 	// ---------------------------------------------
 	// Let's save and load tState1

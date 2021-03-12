@@ -12,12 +12,12 @@ import (
 func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountRequest) (*zarb.AccountResponse, error) {
 	addr, err := crypto.AddressFromString(request.Address)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Address not found")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid address: %v", err)
 
 	}
-	acc, err := zs.store.Account(addr)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	acc := zs.state.Account(addr)
+	if acc == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Account not found")
 
 	}
 	data, err := acc.Encode()

@@ -9,10 +9,11 @@ import (
 
 type SortitionExecutor struct {
 	sandbox sandbox.Sandbox
+	strict  bool
 }
 
-func NewSortitionExecutor(sb sandbox.Sandbox) *SortitionExecutor {
-	return &SortitionExecutor{sandbox: sb}
+func NewSortitionExecutor(sb sandbox.Sandbox, strict bool) *SortitionExecutor {
+	return &SortitionExecutor{sandbox: sb, strict: strict}
 }
 
 func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
@@ -22,7 +23,10 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
 	}
-	if val.Sequence()+1 != trx.Sequence() {
+	// A validator might produce more than one sortition transaction
+	// before entring into the committee
+	// In non-strict mode we don't check the sequence number
+	if e.strict && val.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
 	if e.sandbox.CurrentHeight()-val.BondingHeight() < 2*e.sandbox.CommitteeSize() {
@@ -31,7 +35,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Proof, val) {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
 	}
-	if err := e.sandbox.AddToSet(trx.Stamp(), val.Address()); err != nil {
+	if err := e.sandbox.EnterCommittee(trx.Stamp(), val.Address()); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, err.Error())
 	}
 	val.IncSequence()

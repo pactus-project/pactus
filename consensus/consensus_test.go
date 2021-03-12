@@ -59,7 +59,7 @@ func setup(t *testing.T) {
 		tConsP.state.Close()
 	}
 	conf := logger.TestConfig()
-	conf.Levels["_state"] = "debug"
+	conf.Levels["_consensus"] = "debug"
 	logger.InitLogger(conf)
 
 	_, tSigners = committee.GenerateTestCommittee()
@@ -100,10 +100,10 @@ func setup(t *testing.T) {
 	tConsB = consB.(*consensus)
 	tConsP = consP.(*consensus)
 
-	tConsX.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consX: ", cons: tConsX})
-	tConsY.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consY: ", cons: tConsY})
-	tConsB.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consB: ", cons: tConsB})
-	tConsP.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "consP: ", cons: tConsP})
+	tConsX.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consX: ", cons: tConsX})
+	tConsY.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consY: ", cons: tConsY})
+	tConsB.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consB: ", cons: tConsB})
+	tConsP.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consP: ", cons: tConsP})
 }
 
 func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash) {

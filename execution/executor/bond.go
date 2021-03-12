@@ -10,10 +10,11 @@ import (
 type BondExecutor struct {
 	sandbox sandbox.Sandbox
 	fee     int64
+	strict  bool
 }
 
-func NewBondExecutor(sb sandbox.Sandbox) *BondExecutor {
-	return &BondExecutor{sandbox: sb}
+func NewBondExecutor(sb sandbox.Sandbox, strict bool) *BondExecutor {
+	return &BondExecutor{sandbox: sb, strict: strict}
 }
 
 func (e *BondExecutor) Execute(trx *tx.Tx) error {
@@ -23,9 +24,12 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 	if bonderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve bonder account")
 	}
-	bondVal := e.sandbox.Validator(pld.Validator.Address())
-	if bondVal == nil {
-		bondVal = e.sandbox.MakeNewValidator(pld.Validator)
+	val := e.sandbox.Validator(pld.Validator.Address())
+	if val == nil {
+		val = e.sandbox.MakeNewValidator(pld.Validator)
+	}
+	if e.strict && e.sandbox.IsInCommittee(pld.Validator.Address()) {
+		return errors.Errorf(errors.ErrInvalidTx, "Validator is in committee right now")
 	}
 	if bonderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", bonderAcc.Sequence()+1, trx.Sequence())
@@ -35,10 +39,10 @@ func (e *BondExecutor) Execute(trx *tx.Tx) error {
 	}
 	bonderAcc.IncSequence()
 	bonderAcc.SubtractFromBalance(pld.Stake + trx.Fee())
-	bondVal.AddToStake(pld.Stake)
+	val.AddToStake(pld.Stake)
 
 	e.sandbox.UpdateAccount(bonderAcc)
-	e.sandbox.UpdateValidator(bondVal)
+	e.sandbox.UpdateValidator(val)
 
 	e.fee = trx.Fee()
 

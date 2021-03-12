@@ -6,16 +6,12 @@ import (
 
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/txpool"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 
 type zarbServer struct {
-	state  state.StateReader
-	store  store.StoreReader
-	txPool txpool.TxPool
+	state  state.StateFacade
 	sync   sync.Synchronizer
 	logger *logger.Logger
 }
@@ -25,19 +21,15 @@ type Server struct {
 	config   *Config
 	address  string
 	listener net.Listener
-	store    store.StoreReader
-	state    state.StateReader
-	txPool   txpool.TxPool
+	state    state.StateFacade
 	sync     sync.Synchronizer
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.StateReader, sync sync.Synchronizer, txPool txpool.TxPool) (*Server, error) {
+func NewServer(conf *Config, state state.StateFacade, sync sync.Synchronizer) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
-		store:  state.StoreReader(),
 		state:  state,
-		txPool: txPool,
 		sync:   sync,
 		config: conf,
 		logger: logger.NewLogger("_capnp", nil),
@@ -70,7 +62,7 @@ func (s *Server) StartServer() error {
 			} else {
 				//
 				go func(c net.Conn) {
-					s2c := ZarbServer_ServerToClient(&zarbServer{s.state, s.store, s.txPool, s.sync, s.logger})
+					s2c := ZarbServer_ServerToClient(&zarbServer{s.state, s.sync, s.logger})
 					conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {

@@ -210,7 +210,7 @@ func TestBlockValidation(t *testing.T) {
 	invHash := crypto.GenerateTestHash()
 	invCert := block.GenerateTestCertificate(tState1.lastBlockHash)
 	trx := tState2.createSubsidyTx(0)
-	assert.NoError(t, tCommonTxPool.AppendTx(trx))
+	assert.NoError(t, tState2.AddPendingTx(trx))
 	ids := block.NewTxIDs()
 	ids.Append(trx.ID())
 

@@ -7,17 +7,17 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/proposal"
-	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
 var tCache *Cache
-var tStore *store.MockStore
+var tState *state.MockState
 
 func setup(t *testing.T) {
 	var err error
-	tStore = store.MockingStore()
-	tCache, err = NewCache(10, tStore)
+	tState = state.MockingState(nil)
+	tCache, err = NewCache(10, tState)
 	assert.NoError(t, err)
 }
 
@@ -35,7 +35,7 @@ func TestCacheBlock(t *testing.T) {
 	b1, _ := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
 
-	tStore.Blocks[1] = b1
+	tState.Store.Blocks[1] = b1
 	tCache.AddBlock(2, b2)
 
 	assert.Equal(t, tCache.GetBlock(1).Hash(), b1.Hash())
@@ -58,19 +58,24 @@ func TestCacheCommit(t *testing.T) {
 	assert.Nil(t, tCache.GetCertificate(b3.Header().LastBlockHash()))
 }
 
-func TestCacheTx(t *testing.T) {
+func TestGetTransaction(t *testing.T) {
 	setup(t)
 
 	trx1, _ := tx.GenerateTestSendTx()
 	trx2, _ := tx.GenerateTestSendTx()
 	trx3, _ := tx.GenerateTestSendTx()
+	trx4, _ := tx.GenerateTestSendTx()
 
-	tStore.Transactions[trx1.ID()] = &tx.CommittedTx{Tx: trx1}
+	tState.Store.Transactions[trx1.ID()] = &tx.CommittedTx{Tx: trx1}
+	assert.NoError(t, tState.AddPendingTx(trx4))
 	tCache.AddTransaction(trx2)
 
 	assert.Equal(t, tCache.GetTransaction(trx1.ID()).ID(), trx1.ID())
 	assert.Equal(t, tCache.GetTransaction(trx2.ID()).ID(), trx2.ID())
+	assert.Equal(t, tCache.GetTransaction(trx4.ID()).ID(), trx4.ID())
 	assert.Nil(t, tCache.GetTransaction(trx3.ID()))
+	assert.NotNil(t, tCache.GetTransaction(trx1.ID()))
+	assert.NotNil(t, tCache.GetTransaction(trx4.ID()))
 }
 
 func TestCacheProposal(t *testing.T) {

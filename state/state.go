@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/sasha-s/go-deadlock"
+	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -37,8 +38,9 @@ type state struct {
 	params            param.Params
 	txPool            txpool.TxPool
 	txPoolSandbox     *sandbox.SandboxConcrete
-	execution         *execution.Execution
 	executionSandbox  *sandbox.SandboxConcrete
+	execution         *execution.Execution
+	checker           *execution.Execution
 	committee         *committee.Committee
 	sortition         *sortition.Sortition
 	lastSortitionSeed sortition.Seed
@@ -54,7 +56,7 @@ func LoadOrNewState(
 	conf *Config,
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
-	txPool txpool.TxPool) (State, error) {
+	txPool txpool.TxPool) (StateFacade, error) {
 
 	var mintbaseAddr crypto.Address
 	if conf.MintbaseAddress != "" {
@@ -104,8 +106,9 @@ func LoadOrNewState(
 	if err != nil {
 		return nil, err
 	}
-	st.txPool.SetSandbox(st.txPoolSandbox)
-	st.execution = execution.NewExecution(st.executionSandbox)
+	st.execution = execution.NewExecution(st.executionSandbox, true)
+	st.checker = execution.NewExecution(st.executionSandbox, false)
+	txPool.SetChecker(st.checker)
 
 	return st, nil
 }
@@ -193,20 +196,6 @@ func (st *state) Close() error {
 	defer st.lk.RUnlock()
 
 	return st.store.Close()
-}
-
-func (st *state) StoreReader() store.StoreReader {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.store
-}
-
-func (st *state) Committee() committee.CommitteeReader {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.committee
 }
 
 func (st *state) LastBlockHeight() int {
@@ -322,14 +311,11 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		st.logger.Error("Probably the node is shutting down.")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "No subsidy transaction")
 	}
-	if err := st.txPool.AppendTx(subsidyTx); err != nil {
+	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
 		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
 		return nil, err
 	}
 	txIDs.Prepend(subsidyTx.ID())
-
-	// Broadcast all transaction
-	st.txPool.BroadcastTxs(txIDs.IDs())
 
 	stateHash := st.stateHash()
 	committeeHash := st.committee.CommitteeHash()
@@ -514,7 +500,7 @@ func (st *state) Fingerprint() string {
 func (st *state) commitSandbox(round int) {
 	joined := make([]*validator.Validator, 0)
 	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.AddToSet {
+		if vs.JoinedCommittee {
 			st.logger.Info("New validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
 
 			joined = append(joined, &vs.Validator)
@@ -571,4 +557,66 @@ func (st *state) proposeNextBlockTime() time.Time {
 		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
 	}
 	return timestamp
+}
+
+func (st *state) CommitteeValidators() []*validator.Validator {
+	return st.committee.Validators()
+}
+
+func (st *state) IsInCommittee(addr crypto.Address) bool {
+	return st.committee.Contains(addr)
+}
+
+func (st *state) Proposer(round int) *validator.Validator {
+	return st.committee.Proposer(round)
+}
+
+func (st *state) IsProposer(addr crypto.Address, round int) bool {
+	return st.committee.IsProposer(addr, round)
+}
+
+func (st *state) Transaction(id tx.ID) *tx.CommittedTx {
+	tx, _ := st.store.Transaction(id)
+	return tx
+}
+
+func (st *state) Block(height int) *block.Block {
+	b, err := st.store.Block(height)
+	if err != nil {
+		st.logger.Debug("Error on retrieving block", "err", err)
+	}
+	return b
+}
+
+func (st *state) BlockHeight(hash crypto.Hash) int {
+	h, err := st.store.BlockHeight(hash)
+	if err != nil {
+		st.logger.Debug("Error on retrieving block height", "err", err)
+	}
+	return h
+}
+
+func (st *state) Account(addr crypto.Address) *account.Account {
+	acc, err := st.store.Account(addr)
+	if err != nil {
+		st.logger.Debug("Error on retrieving block", "err", err)
+	}
+	return acc
+}
+
+func (st *state) Validator(addr crypto.Address) *validator.Validator {
+	val, err := st.store.Validator(addr)
+	if err != nil {
+		st.logger.Debug("Error on retrieving block", "err", err)
+	}
+	return val
+}
+func (st *state) PendingTx(id tx.ID) *tx.Tx {
+	return st.txPool.PendingTx(id)
+}
+func (st *state) AddPendingTx(trx *tx.Tx) error {
+	return st.txPool.AppendTx(trx)
+}
+func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
+	return st.txPool.AppendTxAndBroadcast(trx)
 }

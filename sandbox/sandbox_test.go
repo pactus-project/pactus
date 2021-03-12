@@ -159,10 +159,10 @@ func TestValidatorChange(t *testing.T) {
 		val1a.AddToStake(val1a.Stake() + 1)
 
 		assert.False(t, tSandbox.validators[val1a.Address()].Updated)
-		assert.False(t, tSandbox.validators[val1a.Address()].AddToSet)
+		assert.False(t, tSandbox.validators[val1a.Address()].JoinedCommittee)
 		tSandbox.UpdateValidator(val1a)
 		assert.True(t, tSandbox.validators[val1a.Address()].Updated)
-		assert.False(t, tSandbox.validators[val1a.Address()].AddToSet)
+		assert.False(t, tSandbox.validators[val1a.Address()].JoinedCommittee)
 	})
 
 	t.Run("Make new validator and reset the sandbox", func(t *testing.T) {
@@ -200,23 +200,23 @@ func TestAddValidatorToSet(t *testing.T) {
 	t.Run("Add unknown validator to the committee, Should returns error", func(t *testing.T) {
 		val, _ := validator.GenerateTestValidator(1)
 		h := crypto.GenerateTestHash()
-		assert.Error(t, tSandbox.AddToSet(h, val.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(h, val.Address()))
 	})
 
 	t.Run("Already in the committee, Should returns error", func(t *testing.T) {
 		h := crypto.GenerateTestHash()
 		v := tSandbox.Validator(tValSigners[3].Address())
-		assert.Error(t, tSandbox.AddToSet(h, v.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(h, v.Address()))
 	})
 
 	t.Run("In committee at time of doing sortition, Should returns error", func(t *testing.T) {
 		v := tSandbox.Validator(tValSigners[0].Address())
-		assert.Error(t, tSandbox.AddToSet(block11.Hash(), v.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(block11.Hash(), v.Address()))
 	})
 
 	t.Run("Invalid block hash, Should returns error", func(t *testing.T) {
 		v := tSandbox.Validator(tValSigners[0].Address())
-		assert.Error(t, tSandbox.AddToSet(crypto.GenerateTestHash(), v.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(crypto.GenerateTestHash(), v.Address()))
 	})
 
 	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
@@ -226,20 +226,20 @@ func TestAddValidatorToSet(t *testing.T) {
 		_, pub2, _ := crypto.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)
 		val2 := tSandbox.MakeNewValidator(pub2)
-		assert.NoError(t, tSandbox.AddToSet(block11.Hash(), val1.Address()))
-		assert.Error(t, tSandbox.AddToSet(block11.Hash(), val2.Address()))
+		assert.NoError(t, tSandbox.EnterCommittee(block11.Hash(), val1.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(block11.Hash(), val2.Address()))
 	})
 
 	t.Run("Update validator and add to committee", func(t *testing.T) {
 		tSandbox.Clear()
 		addr1, pub1, _ := crypto.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)
-		assert.NoError(t, tSandbox.AddToSet(block11.Hash(), val1.Address()))
+		assert.NoError(t, tSandbox.EnterCommittee(block11.Hash(), val1.Address()))
 		seq := val1.Sequence()
 		val1.IncSequence()
 		tSandbox.UpdateValidator(val1)
 		vs := tSandbox.validators[addr1]
-		assert.True(t, vs.AddToSet)
+		assert.True(t, vs.JoinedCommittee)
 		assert.True(t, vs.Updated)
 		assert.Equal(t, vs.Validator.Sequence(), seq+1)
 	})

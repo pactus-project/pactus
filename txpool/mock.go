@@ -2,7 +2,7 @@ package txpool
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/sandbox"
+	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -18,9 +18,7 @@ func MockingTxPool() *MockTxPool {
 		Txs: make([]*tx.Tx, 0),
 	}
 }
-func (m *MockTxPool) SetSandbox(sandbox sandbox.Sandbox) {
-
-}
+func (m *MockTxPool) SetChecker(*execution.Execution) {}
 func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	for _, t := range m.Txs {
 		if t.ID().EqualsTo(id) {
@@ -28,6 +26,10 @@ func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 		}
 	}
 	return nil
+}
+
+func (m *MockTxPool) QueryTx(id tx.ID) *tx.Tx {
+	return m.PendingTx(id)
 }
 
 func (m *MockTxPool) HasTx(id tx.ID) bool {
@@ -57,7 +59,7 @@ func (m *MockTxPool) AppendTxAndBroadcast(t *tx.Tx) error {
 	return nil
 }
 
-func (m *MockTxPool) RemoveTx(hash crypto.Hash) {
+func (m *MockTxPool) RemoveTx(id crypto.Hash) {
 	// This pools is shared between different instances
 	// Lets keep txs then
 	//delete(m.txs, hash)
@@ -65,7 +67,4 @@ func (m *MockTxPool) RemoveTx(hash crypto.Hash) {
 
 func (m *MockTxPool) AllTransactions() []*tx.Tx {
 	return m.Txs
-}
-
-func (m *MockTxPool) BroadcastTxs([]tx.ID) {
 }

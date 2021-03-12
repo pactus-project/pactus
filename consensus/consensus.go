@@ -27,14 +27,14 @@ type consensus struct {
 	isPrepared     bool
 	isPreCommitted bool
 	isCommitted    bool
-	state          state.State
+	state          state.StateFacade
 	broadcastCh    chan *message.Message
 	logger         *logger.Logger
 }
 
 func NewConsensus(
 	conf *Config,
-	state state.State,
+	state state.StateFacade,
 	signer crypto.Signer,
 	broadcastCh chan *message.Message) (Consensus, error) {
 	cs := &consensus{
@@ -229,7 +229,7 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 
 func (cs *consensus) signAddVote(msgType vote.VoteType, round int, hash crypto.Hash) {
 	address := cs.signer.Address()
-	if !cs.state.Committee().Contains(address) {
+	if !cs.pendingVotes.CanVote(address) {
 		cs.logger.Trace("This node is not in committee", "addr", address)
 		return
 	}

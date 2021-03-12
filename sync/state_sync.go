@@ -10,7 +10,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -21,8 +20,7 @@ type StateSync struct {
 	config    *Config
 	selfID    peer.ID
 	cache     *cache.Cache
-	state     state.State
-	txPool    txpool.TxPool
+	state     state.StateFacade
 	peerSet   *peerset.PeerSet
 	logger    *logger.Logger
 	publishFn publishMessageFn
@@ -33,8 +31,7 @@ func NewStateSync(
 	conf *Config,
 	selfID peer.ID,
 	cache *cache.Cache,
-	state state.State,
-	txPool txpool.TxPool,
+	state state.StateFacade,
 	peerSet *peerset.PeerSet,
 	logger *logger.Logger,
 	publishFn publishMessageFn,
@@ -44,7 +41,6 @@ func NewStateSync(
 		selfID:    selfID,
 		cache:     cache,
 		state:     state,
-		txPool:    txPool,
 		peerSet:   peerSet,
 		logger:    logger,
 		publishFn: publishFn,
@@ -258,7 +254,7 @@ func (ss *StateSync) ProcessTransactionsPayload(pld *payload.TransactionsPayload
 	ss.addTransactionsToCache(pld.Transactions)
 
 	for _, trx := range pld.Transactions {
-		if err := ss.txPool.AppendTx(trx); err != nil {
+		if err := ss.state.AddPendingTx(trx); err != nil {
 			ss.logger.Debug("Cannot append transaction", "tx", trx, "err", err)
 
 			// TODO: set peer as bad peer?

@@ -14,7 +14,7 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 	twrs := make([]tx.CommittedTx, len(ids))
 	var mintbaseTrx *tx.Tx
 	for i := 0; i < len(ids); i++ {
-		trx := st.txPool.PendingTx(ids[i])
+		trx := st.txPool.QueryTx(ids[i])
 		if trx == nil {
 			return nil, errors.Errorf(errors.ErrInvalidBlock, "Transaction not found: %s", ids[i])
 		}

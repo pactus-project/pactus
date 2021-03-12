@@ -10,7 +10,7 @@ import (
 
 func TestExecuteBondTx(t *testing.T) {
 	setup(t)
-	exe := NewBondExecutor(tSandbox)
+	exe := NewBondExecutor(tSandbox, true)
 
 	bonder := tAcc1.Address()
 	addr, pub, _ := crypto.GenerateTestKeyPair()
@@ -34,7 +34,15 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx))
 	})
 
+	t.Run("Should fail, Inside committee", func(t *testing.T) {
+		tSandbox.InCommittee = true
+		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "inside committee")
+
+		assert.Error(t, exe.Execute(trx))
+	})
+
 	t.Run("Ok", func(t *testing.T) {
+		tSandbox.InCommittee = false
 		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "ok")
 
 		assert.NoError(t, exe.Execute(trx))
@@ -48,4 +56,21 @@ func TestExecuteBondTx(t *testing.T) {
 	assert.Equal(t, exe.Fee(), int64(1000))
 
 	checkTotalCoin(t, 1000)
+}
+
+func TestBondNonStrictMode(t *testing.T) {
+	setup(t)
+	exe1 := NewBondExecutor(tSandbox, false)
+
+	tSandbox.InCommittee = true
+	stamp := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	bonder := tAcc1.Address()
+	_, pub, _ := crypto.GenerateTestKeyPair()
+
+	mintbase1 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
+	mintbase2 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
+
+	assert.NoError(t, exe1.Execute(mintbase1))
+	assert.Error(t, exe1.Execute(mintbase2)) // Invalid sequence
 }

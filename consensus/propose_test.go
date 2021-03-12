@@ -326,3 +326,16 @@ func TestProposeIvalidArgs(t *testing.T) {
 	tConsP.enterPropose(1)
 	checkHRS(t, tConsP, 1, 0, hrs.StepTypeNewHeight)
 }
+
+func TestCreateProposal(t *testing.T) {
+	setup(t)
+
+	tConsX.enterNewHeight()
+	tConsY.enterNewHeight()
+
+	tConsX.createProposal(1, 0)
+	assert.NotNil(t, tConsX.RoundProposal(0))
+
+	tConsY.createProposal(1, 0)
+	assert.Nil(t, tConsY.RoundProposal(0))
+}
