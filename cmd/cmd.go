@@ -58,7 +58,7 @@ func newTerminalPrompter() *terminalPrompter {
 	}
 	p.SetCtrlCAborts(true)
 	p.SetTabCompletionStyle(liner.TabPrints)
-	p.SetMultiLineMode(true)
+	p.SetMultiLineMode(false)
 	return p
 }
 
@@ -142,6 +142,16 @@ func PromptPassphrase(prompt string, confirmation bool) string {
 // Promptlabel prompts for an input string
 func PromptInput(prompt string) string {
 	input, err := Stdin.PromptInput(prompt)
+	if err != nil {
+		PrintErrorMsg("Failed to read input: %v", err)
+		os.Exit(1)
+	}
+	return input
+}
+
+// Promptlabel prompts for an input string with a suggestion
+func PromptInputWithSuggestion(prompt, suggestion string) string {
+	input, err := Stdin.PromptWithSuggestion(prompt, suggestion, 0)
 	if err != nil {
 		PrintErrorMsg("Failed to read input: %v", err)
 		os.Exit(1)

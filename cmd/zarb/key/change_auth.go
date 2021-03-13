@@ -20,7 +20,6 @@ func ChangeAuth() func(c *cli.Cmd) {
 			Desc: "Passphrase of the key file",
 		})
 
-		c.Spec = "KEYFILE"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			if *keyFileArg == "" {
@@ -36,7 +35,12 @@ func ChangeAuth() func(c *cli.Cmd) {
 			} else {
 				oldAuth = *authOpt
 			}
-			keyObj, err := key.DecryptKeyFile(path, oldAuth)
+			ek, err := key.NewEncryptedKey(path)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to read the key: %v", err)
+				return
+			}
+			keyObj, err := ek.Decrypt(oldAuth)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to decrypt: %v", err)
 				return
@@ -44,7 +48,7 @@ func ChangeAuth() func(c *cli.Cmd) {
 			//Prompt for the new passphrase
 			newAuth := cmd.PromptPassphrase("New passphrase: ", true)
 			//Prompt for the label
-			label := cmd.PromptInput("New label: ")
+			label := cmd.PromptInputWithSuggestion("New label: ", ek.Label)
 			// Encrypt key with passphrase.
 			err = key.EncryptKeyToFile(keyObj, path, newAuth, label)
 			if err != nil {
