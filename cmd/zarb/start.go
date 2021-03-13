@@ -58,6 +58,12 @@ func Start() func(c *cli.Cmd) {
 				deadlock.Opts.Disable = true
 			}
 
+			keyObj, err = retrievePrivateKey(workspace, keyFileOpt, authOpt, privateKeyOpt)
+			if err != nil {
+				cmd.PrintErrorMsg("Aborted! %v", err)
+				return
+			}
+
 			workspace = *workingDirOpt
 			if workspace == "." {
 				if !util.PathExists(genesisFile) {
@@ -92,12 +98,6 @@ func Start() func(c *cli.Cmd) {
 
 			if err = conf.SanityCheck(); err != nil {
 				cmd.PrintErrorMsg("Aborted! Config is invalid. %v", err)
-				return
-			}
-
-			keyObj, err = retrievePrivateKey(workspace, keyFileOpt, authOpt, privateKeyOpt)
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! %v", err)
 				return
 			}
 
@@ -162,11 +162,15 @@ func retrievePrivateKey(workspace string, keyFileOpt, authOpt, privateKeyOpt *st
 		}
 		return kj, nil
 	case *keyFileOpt != "" && *authOpt == "":
-		// Creating KeyObject from keystore
-		auth := cmd.PromptPassphrase("Passphrase: ", false)
-		kj, err := key.DecryptKeyFile(*keyFileOpt, auth)
+		// First try to open the file without password
+		kj, err := key.DecryptKeyFile(*keyFileOpt, "")
 		if err != nil {
-			return nil, err
+			// Creating KeyObject from keystore
+			auth := cmd.PromptPassphrase("Passphrase: ", false)
+			kj, err = key.DecryptKeyFile(*keyFileOpt, auth)
+			if err != nil {
+				return nil, err
+			}
 		}
 		return kj, nil
 	case *privateKeyOpt != "":
