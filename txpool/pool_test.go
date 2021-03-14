@@ -85,15 +85,15 @@ func TestPending(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(88, stamp)
 	trx := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
-	go func() {
+	go func(ch chan *message.Message) {
 		for {
-			msg := <-tCh
+			msg := <-ch
 			pld := msg.Payload.(*payload.QueryTransactionsPayload)
 			if pld.IDs[0].EqualsTo(trx.ID()) {
 				assert.NoError(t, tPool.AppendTx(trx))
 			}
 		}
-	}()
+	}(tCh)
 
 	assert.Nil(t, tPool.PendingTx(trx.ID()))
 	assert.NotNil(t, tPool.QueryTx(trx.ID()))

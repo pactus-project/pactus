@@ -135,7 +135,9 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		}
 	}()
 
+	pool.lk.Lock()
 	pool.appendTxCh = make(chan *tx.Tx, 100)
+	pool.lk.Unlock()
 
 	timeout := time.NewTimer(pool.config.WaitingTimeout)
 

@@ -490,7 +490,7 @@ func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
 	return baseSubsidy >> uint(height/subsidyReductionInterval)
 }
 
-func (st *state) Fingerprint() string {
+func (_ *state) DefaultLog(st *state) string {
 	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastBlockHeight,
 		st.lastBlockHash.Fingerprint(),
