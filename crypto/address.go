@@ -21,15 +21,15 @@ type addressData struct {
 }
 
 func AddressFromString(text string) (Address, error) {
-	bs, err := hex.DecodeString(text)
+	_, data, err := DecodeToBase256(text)
 	if err != nil {
 		return Address{}, err
 	}
+	return addressFromRawBytes(data)
 
-	return AddressFromRawBytes(bs)
 }
 
-func AddressFromRawBytes(bs []byte) (Address, error) {
+func addressFromRawBytes(bs []byte) (Address, error) {
 	if len(bs) != AddressSize {
 		return Address{}, fmt.Errorf("Address should be %d bytes, but it is %v bytes", AddressSize, len(bs))
 	}
@@ -52,7 +52,13 @@ func (addr Address) Fingerprint() string {
 }
 
 func (addr Address) String() string {
-	return hex.EncodeToString(addr.data.Address[:])
+
+	str, err := EncodeFromBase256("zrb", addr.data.Address[:])
+	if err != nil {
+		panic(fmt.Sprintf("Invalid address. %v", err))
+	}
+
+	return str // to bech 32 string
 }
 
 /// ----------
