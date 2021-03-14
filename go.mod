@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
-	github.com/btcsuite/btcutil v1.0.3-0.20201201144236-d63d9f2b44dd
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/davidlazar/go-crypto v0.0.0-20190912175916-7055855a373f // indirect
 	github.com/dchest/blake2b v1.0.0
 	github.com/fxamacker/cbor/v2 v2.2.0
@@ -44,6 +44,7 @@ require (
 	github.com/tinylib/msgp v1.1.5 // indirect
 	github.com/tyler-smith/go-bip39 v1.1.0
 	go.opencensus.io v0.23.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	golang.org/x/mod v0.4.0 // indirect
 	golang.org/x/net v0.0.0-20210315170653-34ac3e1c2000
