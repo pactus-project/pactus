@@ -204,7 +204,7 @@ func TestLateProposal(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
-	assert.True(t, tConsP.isCommitted)
+	assert.True(t, tConsP.status.IsCommitted())
 }
 
 func TestLateUndefVote(t *testing.T) {

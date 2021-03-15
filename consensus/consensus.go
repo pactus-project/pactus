@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/consensus/pending_votes"
+	"github.com/zarbchain/zarb-go/consensus/status"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/proposal"
@@ -20,17 +21,14 @@ import (
 type consensus struct {
 	lk deadlock.RWMutex
 
-	config         *Config
-	hrs            *hrs.HRS
-	pendingVotes   *pending_votes.PendingVotes
-	signer         crypto.Signer
-	isProposed     bool
-	isPrepared     bool
-	isPreCommitted bool
-	isCommitted    bool
-	state          state.StateFacade
-	broadcastCh    chan *message.Message
-	logger         *logger.Logger
+	config       *Config
+	hrs          *hrs.HRS
+	status       *status.Status
+	pendingVotes *pending_votes.PendingVotes
+	signer       crypto.Signer
+	state        state.StateFacade
+	broadcastCh  chan *message.Message
+	logger       *logger.Logger
 }
 
 func NewConsensus(
@@ -48,6 +46,7 @@ func NewConsensus(
 	// Update height later, See enterNewHeight.
 	cs.pendingVotes = pending_votes.NewPendingVotes()
 	cs.hrs = hrs.NewHRS(0, -1, hrs.StepTypeUnknown)
+	cs.status = status.NewStatus()
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
@@ -58,41 +57,12 @@ func (cs *consensus) Stop() {
 }
 
 func (cs *consensus) Fingerprint() string {
-	isProposed := "-"
-	if cs.isProposed {
-		isProposed = "X"
-	}
-	isPrepared := "-"
-	if cs.isPrepared {
-		isPrepared = "X"
-	}
-	isPreCommitted := "-"
-	if cs.isPreCommitted {
-		isPreCommitted = "X"
-	}
-	isCommitted := "-"
-	if cs.isCommitted {
-		isCommitted = "X"
-	}
-	status := fmt.Sprintf("%s%s%s%s", isProposed, isPrepared, isPreCommitted, isCommitted)
 
-	return fmt.Sprintf("{%v %s}", cs.hrs.String(), status)
+	return fmt.Sprintf("{%v %s}", cs.hrs.String(), cs.status.String())
 }
 
 func (cs *consensus) HRS() *hrs.HRS {
 	return cs.hrs
-}
-
-func (cs *consensus) updateRound(round int) {
-	cs.hrs.UpdateRound(round)
-}
-
-func (cs *consensus) updateStep(step hrs.StepType) {
-	cs.hrs.UpdateStep(step)
-}
-
-func (cs *consensus) updateHeight(height int) {
-	cs.hrs.UpdateHeight(height)
 }
 
 func (cs *consensus) RoundProposal(round int) *proposal.Proposal {

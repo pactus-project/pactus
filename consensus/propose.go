@@ -55,11 +55,11 @@ func (cs *consensus) setProposal(proposal *proposal.Proposal) {
 }
 
 func (cs *consensus) enterPropose(round int) {
-	if cs.isProposed || round != cs.hrs.Round() {
+	if cs.status.IsProposed() || round != cs.hrs.Round() {
 		cs.logger.Debug("Propose: Proposed before or invalid round", "round", round)
 		return
 	}
-	cs.updateStep(hrs.StepTypePropose)
+	cs.hrs.UpdateStep(hrs.StepTypePropose)
 	cs.scheduleTimeout(cs.config.PrepareTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrepare)
 
 	address := cs.signer.Address()
@@ -75,7 +75,7 @@ func (cs *consensus) enterPropose(round int) {
 		cs.logger.Debug("Propose: Not our turn to propose", "proposer", cs.proposer(round).Address())
 	}
 
-	cs.isProposed = true
+	cs.status.SetProposed(true)
 }
 
 func (cs *consensus) createProposal(height int, round int) {

@@ -189,7 +189,8 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 }
 
 func checkHRS(t *testing.T, cons *consensus, height, round int, step hrs.StepType) {
-	assert.Equal(t, hrs.NewHRS(height, round, step), cons.HRS())
+	expected := hrs.NewHRS(height, round, step)
+	assert.True(t, expected.EqualsTo(cons.HRS()))
 }
 
 func checkHRSWait(t *testing.T, cons *consensus, height, round int, step hrs.StepType) {
@@ -200,7 +201,7 @@ func checkHRSWait(t *testing.T, cons *consensus, height, round int, step hrs.Ste
 		}
 		time.Sleep(200 * time.Millisecond)
 	}
-	assert.Equal(t, expected, cons.HRS())
+	assert.True(t, expected.EqualsTo(cons.HRS()))
 }
 
 func testAddVote(t *testing.T,
