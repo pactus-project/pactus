@@ -75,7 +75,7 @@ func NewLatestBlocksResponseMessage(code payload.ResponseCode, initiator, target
 	}
 }
 
-func NewHeartBeatMessage(id peer.ID, lastBlockHash crypto.Hash, hrs hrs.HRS) *Message {
+func NewHeartBeatMessage(id peer.ID, lastBlockHash crypto.Hash, hrs *hrs.HRS) *Message {
 	return &Message{
 		Version: LastVersion,
 		Type:    payload.PayloadTypeHeartBeat,

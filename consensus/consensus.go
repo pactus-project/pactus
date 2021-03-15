@@ -7,6 +7,7 @@ import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/consensus/pending_votes"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/proposal"
@@ -20,8 +21,8 @@ type consensus struct {
 	lk deadlock.RWMutex
 
 	config         *Config
-	hrs            hrs.HRS
-	pendingVotes   *PendingVotes
+	hrs            *hrs.HRS
+	pendingVotes   *pending_votes.PendingVotes
 	signer         crypto.Signer
 	isProposed     bool
 	isPrepared     bool
@@ -45,7 +46,7 @@ func NewConsensus(
 	}
 
 	// Update height later, See enterNewHeight.
-	cs.pendingVotes = NewPendingVotes()
+	cs.pendingVotes = pending_votes.NewPendingVotes()
 	cs.hrs = hrs.NewHRS(0, -1, hrs.StepTypeUnknown)
 	cs.logger = logger.NewLogger("_consensus", cs)
 
@@ -78,10 +79,7 @@ func (cs *consensus) Fingerprint() string {
 	return fmt.Sprintf("{%v %s}", cs.hrs.String(), status)
 }
 
-func (cs *consensus) HRS() hrs.HRS {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
+func (cs *consensus) HRS() *hrs.HRS {
 	return cs.hrs
 }
 

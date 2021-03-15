@@ -64,7 +64,7 @@ func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
 	}
 	return m.Proposal
 }
-func (m *MockConsensus) HRS() hrs.HRS {
+func (m *MockConsensus) HRS() *hrs.HRS {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
