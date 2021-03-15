@@ -36,7 +36,7 @@ bls:
 build:
 	go build $(LDFLAGS) $(TAGS) -o build/zarb ./cmd/zarb/
 
-install: fmt
+install:
 	go install $(LDFLAGS) $(TAGS) ./cmd/zarb
 
 build_with_bls:
@@ -48,7 +48,7 @@ unit_test:
 	go test $(PACKAGES)
 
 test:
-	go test ./...
+	go test ./... -covermode=atomic
 
 test_with_bls:
 	$(CGO_LDFLAGS) go test ./...
