@@ -1,4 +1,4 @@
-package consensus
+package pending_votes
 
 import (
 	"testing"
