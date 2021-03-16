@@ -1,4 +1,4 @@
-package consensus
+package pending_votes
 
 import (
 	"testing"
@@ -23,7 +23,7 @@ func TestMustGetRound(t *testing.T) {
 	assert.Equal(t, len(pv.roundVotes), 5)
 }
 
-func TestPendingVotesTest(t *testing.T) {
+func TestAddVotes(t *testing.T) {
 	committee, signers := committee.GenerateTestCommittee()
 
 	pv := NewPendingVotes()
@@ -60,6 +60,7 @@ func TestPendingVotesTest(t *testing.T) {
 	ok, err = pv.AddVote(undefVote)
 	assert.False(t, ok)
 	assert.NoError(t, err)
+	assert.True(t, pv.HasVote(validVote.Hash()))
 
 	// Definitely it is a duplicated error
 	ok, err = pv.AddVote(duplicateVote)
@@ -67,7 +68,9 @@ func TestPendingVotesTest(t *testing.T) {
 	assert.Error(t, err)
 
 	prepares := pv.PrepareVoteSet(1)
-	assert.Equal(t, prepares.Len(), 0) // duplicated vote has removed
+	precommits := pv.PrecommitVoteSet(1)
+	assert.Equal(t, prepares.Len(), 0)   // duplicated vote has removed
+	assert.Equal(t, precommits.Len(), 0) // no precommit votes
 	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 0)
 	assert.False(t, pv.HasVote(duplicateVote.Hash()))
 	assert.False(t, pv.HasVote(validVote.Hash()))
@@ -84,5 +87,16 @@ func TestSetRoundProposal(t *testing.T) {
 	assert.True(t, pv.HasRoundProposal(4))
 	assert.True(t, pv.HasRoundProposal(4))
 	assert.Nil(t, pv.RoundProposal(0))
+	assert.Nil(t, pv.RoundProposal(5))
 	assert.Equal(t, pv.RoundProposal(4).Hash(), prop.Hash())
+}
+
+func TestCanVote(t *testing.T) {
+	committee, signers := committee.GenerateTestCommittee()
+	pv := NewPendingVotes()
+	pv.MoveToNewHeight(101, committee.Validators())
+
+	addr, _, _ := crypto.GenerateTestKeyPair()
+	assert.True(t, pv.CanVote(signers[0].Address()))
+	assert.False(t, pv.CanVote(addr))
 }
