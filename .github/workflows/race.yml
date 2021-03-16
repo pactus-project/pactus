@@ -1,7 +1,7 @@
 on: [push, pull_request]
 name: Data race detection
 jobs:
-  test:
+  data-race:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,5 +13,5 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Test with coverage
+    - name: Test with data race detection
       run: go test --race ./...
