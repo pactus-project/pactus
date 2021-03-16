@@ -30,8 +30,8 @@ func NewHRS(height int, round int, step StepType) *HRS {
 }
 
 func (hrs *HRS) IsValid() bool {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
 	if hrs.data.Height <= 0 || hrs.data.Round < 0 {
 		return false
@@ -40,22 +40,22 @@ func (hrs *HRS) IsValid() bool {
 }
 
 func (hrs *HRS) Height() int {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
 	return hrs.data.Height
 }
 
 func (hrs *HRS) Round() int {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
 	return hrs.data.Round
 }
 
 func (hrs *HRS) Step() StepType {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
 	return hrs.data.Step
 }
@@ -82,22 +82,22 @@ func (hrs *HRS) UpdateStep(step StepType) {
 }
 
 func (hrs *HRS) LessThan(r *HRS) bool {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
-	if hrs.data.Height < r.data.Height ||
-		(hrs.data.Height == r.data.Height && hrs.data.Round < r.data.Round) ||
-		(hrs.data.Height == r.data.Height && hrs.data.Round == r.data.Round && hrs.data.Step < r.data.Step) {
+	if hrs.data.Height < r.Height() ||
+		(hrs.data.Height == r.Height() && hrs.data.Round < r.Round()) ||
+		(hrs.data.Height == r.Height() && hrs.data.Round == r.Round() && hrs.data.Step < r.Step()) {
 		return true
 	}
 	return false
 }
 
 func (hrs *HRS) EqualsTo(r *HRS) bool {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
-	if hrs.data.Height == r.data.Height && hrs.data.Round == r.data.Round && hrs.data.Step == r.data.Step {
+	if hrs.data.Height == r.Height() && hrs.data.Round == r.Round() && hrs.data.Step == r.Step() {
 		return true
 	}
 	return false
@@ -114,8 +114,8 @@ func (hrs *HRS) GreaterThan(r *HRS) bool {
 }
 
 func (hrs *HRS) String() string {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
 	return fmt.Sprintf("%v/%v/%s",
 		hrs.data.Height, hrs.data.Round, hrs.data.Step)

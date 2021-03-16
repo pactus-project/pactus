@@ -17,8 +17,6 @@ func TestOperator(t *testing.T) {
 	assert.True(t, hrs1.LessThan(hrs2))
 	assert.True(t, hrs1.LessThan(hrs3))
 	assert.True(t, hrs1.LessThan(hrs4))
-
-	assert.True(t, hrs4.GreaterThan(hrs1))
 	assert.True(t, hrs4.GreaterThan(hrs2))
 	assert.True(t, hrs4.GreaterThan(hrs3))
 

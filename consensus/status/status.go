@@ -20,29 +20,29 @@ func NewStatus() *Status {
 }
 
 func (s *Status) IsProposed() bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.isProposed
 }
 
 func (s *Status) IsPrepared() bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.isPrepared
 }
 
 func (s *Status) IsPreCommitted() bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.isPreCommitted
 }
 
 func (s *Status) IsCommitted() bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.isCommitted
 }
@@ -76,8 +76,8 @@ func (s *Status) SetCommitted(isCommitted bool) {
 }
 
 func (s *Status) String() string {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	isProposed := "-"
 	if s.isProposed {
