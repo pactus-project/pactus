@@ -85,12 +85,14 @@ func TestPending(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(88, stamp)
 	trx := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
+
 	// Increat the waiting time for testing
-	tPool.config.WaitingTimeout = 1 * time.Second
+	tPool.config.WaitingTimeout = 3 * time.Second
 
 	go func(ch chan *message.Message) {
 		for {
 			msg := <-ch
+			fmt.Printf("Received a message: %v\n", msg.Fingerprint())
 			pld := msg.Payload.(*payload.QueryTransactionsPayload)
 			if pld.IDs[0].EqualsTo(trx.ID()) {
 				assert.NoError(t, tPool.AppendTx(trx))

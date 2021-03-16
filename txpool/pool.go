@@ -82,6 +82,7 @@ func (pool *txPool) appendTx(trx *tx.Tx) error {
 	}
 
 	pool.pendings.PushBack(trx.ID(), trx)
+	pool.logger.Trace("Transaction appended into pool.", "id", trx.ID())
 
 	return nil
 }
