@@ -5,7 +5,7 @@ import (
 )
 
 func (cs *consensus) enterCommit(round int) {
-	if cs.status.IsCommitted() || round > cs.hrs.Round() {
+	if cs.isCommitted || round > cs.hrs.Round() {
 		cs.logger.Debug("Commit: Committed or invalid round", "round", round)
 		return
 	}
@@ -21,7 +21,7 @@ func (cs *consensus) enterCommit(round int) {
 		cs.logger.Error("Commit: quorum block  hash is invalid", "hash", blockHash)
 		return
 	}
-	cs.hrs.UpdateStep(hrs.StepTypeCommit)
+	cs.updateStep(hrs.StepTypeCommit)
 
 	// Additional check. blockHash should be same for both prepares and precommits
 	prepares := cs.pendingVotes.PrepareVoteSet(round)
@@ -59,7 +59,7 @@ func (cs *consensus) enterCommit(round int) {
 		return
 	}
 
-	cs.status.SetCommitted(true)
+	cs.isCommitted = true
 	cs.logger.Info("Commit: Block committed, Schedule new height", "block", blockHash.Fingerprint())
 
 	cs.scheduleNewHeight()

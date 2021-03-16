@@ -1,7 +1,6 @@
 package consensus
 
 import (
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
@@ -17,7 +16,6 @@ type MockConsensus struct {
 	Scheduled bool
 	State     *state.MockState
 	Round     int
-	Lock      deadlock.RWMutex
 }
 
 func MockingConsensus(state *state.MockState) *MockConsensus {
@@ -25,22 +23,14 @@ func MockingConsensus(state *state.MockState) *MockConsensus {
 }
 
 func (m *MockConsensus) MoveToNewHeight() {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
 	m.Scheduled = true
 }
 func (m *MockConsensus) Stop() {}
 
 func (m *MockConsensus) AddVote(v *vote.Vote) {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
-
 	m.Votes = append(m.Votes, v)
 }
 func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
-
 	votes := make([]*vote.Vote, 0)
 	for _, v := range m.Votes {
 		if v.Round() == round {
@@ -50,33 +40,21 @@ func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
 	return votes
 }
 func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
-
 	m.Proposal = p
 }
 func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
-
 	if m.Proposal == nil || m.Proposal.Round() != round {
 		return nil
 	}
 	return m.Proposal
 }
-func (m *MockConsensus) HRS() *hrs.HRS {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
-
+func (m *MockConsensus) HRS() hrs.HRS {
 	return hrs.NewHRS(m.State.LastBlockHeight()+1, m.Round, hrs.StepTypeNewHeight)
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""
 }
 func (m *MockConsensus) PickRandomVote(round int) *vote.Vote {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
-
 	if len(m.Votes) == 0 {
 		return nil
 	}

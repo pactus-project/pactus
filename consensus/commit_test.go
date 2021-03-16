@@ -16,31 +16,26 @@ func TestStatusFlags(t *testing.T) {
 
 	commitBlockForAllStates(t)
 
-	tConsX.status.SetProposed(true)
-	tConsX.status.SetPrepared(true)
-	tConsX.status.SetPreCommitted(true)
-	tConsX.status.SetCommitted(true)
-
 	tConsX.enterNewHeight()
 
 	assert.Equal(t, tConsX.hrs.Height(), 2)
 	assert.Equal(t, tConsX.hrs.Round(), 0)
-	assert.True(t, tConsX.status.IsProposed())
-	assert.False(t, tConsX.status.IsPrepared())
-	assert.False(t, tConsX.status.IsPreCommitted())
-	assert.False(t, tConsX.status.IsCommitted())
+	assert.False(t, tConsX.isPrepared)
+	assert.False(t, tConsX.isPreCommitted)
+	assert.False(t, tConsX.isCommitted)
 
-	tConsX.status.SetProposed(true)
-	tConsX.status.SetPrepared(true)
+	tConsX.isProposed = true
+	tConsX.isPrepared = true
+	tConsX.isPreCommitted = true
+	tConsX.isCommitted = true
 
 	tConsX.enterNewRound(1)
 
 	assert.Equal(t, tConsX.hrs.Height(), 2)
 	assert.Equal(t, tConsX.hrs.Round(), 1)
-	assert.True(t, tConsX.status.IsProposed())
-	assert.False(t, tConsX.status.IsPrepared())
-	assert.False(t, tConsX.status.IsPreCommitted())
-	assert.False(t, tConsX.status.IsCommitted())
+	assert.False(t, tConsX.isPrepared)
+	assert.True(t, tConsX.isPreCommitted)
+	assert.True(t, tConsX.isCommitted)
 }
 
 func TestEnterCommit(t *testing.T) {
@@ -57,11 +52,11 @@ func TestEnterCommit(t *testing.T) {
 
 	// Invalid round
 	tConsY.enterCommit(0)
-	assert.False(t, tConsY.status.IsCommitted())
+	assert.False(t, tConsY.isCommitted)
 
 	// No quorum
 	tConsY.enterCommit(1)
-	assert.False(t, tConsY.status.IsCommitted())
+	assert.False(t, tConsY.isCommitted)
 
 	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX, false)
 	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexP, false)
@@ -73,13 +68,13 @@ func TestEnterCommit(t *testing.T) {
 
 	// Still no quorum
 	tConsY.enterCommit(1)
-	assert.False(t, tConsY.status.IsCommitted())
+	assert.False(t, tConsY.isCommitted)
 
 	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB, false)
 
 	// No proposal
 	tConsY.enterCommit(1)
-	assert.False(t, tConsY.status.IsCommitted())
+	assert.False(t, tConsY.isCommitted)
 	shouldPublishQueryProposal(t, tConsY, h, r)
 
 	// Invalid proposal
@@ -94,13 +89,13 @@ func TestEnterCommit(t *testing.T) {
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
 
 	tConsY.enterCommit(1)
-	assert.False(t, tConsY.status.IsCommitted())
+	assert.False(t, tConsY.isCommitted)
 
 	// Valid proposal but committing block will fail (no transaction)
 	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p1)
 	tTxPool.Txs = make([]*tx.Tx, 0)
 	tConsY.enterCommit(1)
-	assert.False(t, tConsY.status.IsCommitted())
+	assert.False(t, tConsY.isCommitted)
 }
 
 func TestSetStaleProposal(t *testing.T) {

@@ -23,10 +23,10 @@ func (cs *consensus) enterNewRound(round int) {
 		}
 	}
 
-	cs.status.SetProposed(false)
-	cs.status.SetPrepared(false)
-	cs.hrs.UpdateRound(round)
-	cs.hrs.UpdateStep(hrs.StepTypeNewRound)
+	cs.isProposed = false
+	cs.isPrepared = false
+	cs.updateRound(round)
+	cs.updateStep(hrs.StepTypeNewRound)
 	cs.logger.Info("NewRound: Entering new round", "round", round)
 
 	cs.enterPropose(round)

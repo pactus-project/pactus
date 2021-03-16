@@ -41,15 +41,9 @@ func MockingSync() *MockSync {
 
 }
 
-func (m *MockSync) Start() error {
-	return nil
-}
-func (m *MockSync) Stop() {
-
-}
-func (m *MockSync) Fingerprint() string {
-	return ""
-}
+func (m *MockSync) Start() error        { return nil }
+func (m *MockSync) Stop()               {}
+func (m *MockSync) Fingerprint() string { return "" }
 
 func (m *MockSync) PeerID() peer.ID {
 	return m.ID

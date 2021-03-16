@@ -7,7 +7,7 @@ import (
 )
 
 func (cs *consensus) enterPrecommit(round int) {
-	if cs.status.IsPreCommitted() || round > cs.hrs.Round() {
+	if cs.isPreCommitted || round > cs.hrs.Round() {
 		cs.logger.Debug("Precommit: Precommitted or invalid round/step", "round", round)
 		return
 	}
@@ -55,7 +55,7 @@ func (cs *consensus) enterPrecommit(round int) {
 		}
 	}
 
-	cs.hrs.UpdateStep(hrs.StepTypePrecommit)
+	cs.updateStep(hrs.StepTypePrecommit)
 
 	if blockHash == nil {
 		cs.logger.Info("Precommit: No quorum for prepare")
@@ -77,7 +77,7 @@ func (cs *consensus) enterPrecommit(round int) {
 	}
 
 	// Everything is good
-	cs.status.SetPreCommitted(true)
+	cs.isPreCommitted = true
 	cs.logger.Info("Precommit: Proposal signed", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrecommit, round, *blockHash)
 }

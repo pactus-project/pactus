@@ -10,7 +10,7 @@ type ConsensusReader interface {
 	PickRandomVote(round int) *vote.Vote
 	RoundVotes(round int) []*vote.Vote
 	RoundProposal(round int) *proposal.Proposal
-	HRS() *hrs.HRS
+	HRS() hrs.HRS
 	Fingerprint() string
 }
 

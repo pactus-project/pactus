@@ -34,5 +34,4 @@ type StateFacade interface {
 	Account(addr crypto.Address) *account.Account
 	Validator(addr crypto.Address) *validator.Validator
 	Close() error
-	Fingerprint() string
 }

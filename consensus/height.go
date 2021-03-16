@@ -43,12 +43,12 @@ func (cs *consensus) enterNewHeight() {
 
 	vals := cs.state.CommitteeValidators()
 	cs.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
-	cs.status.SetPreCommitted(false)
-	cs.status.SetCommitted(false)
+	cs.isPreCommitted = false
+	cs.isCommitted = false
 
-	cs.hrs.UpdateHeight(sateHeight + 1)
-	cs.hrs.UpdateRound(-1)
-	cs.hrs.UpdateStep(hrs.StepTypeNewHeight)
+	cs.updateHeight(sateHeight + 1)
+	cs.updateRound(-1)
+	cs.updateStep(hrs.StepTypeNewHeight)
 	cs.logger.Info("NewHeight: Entering new height", "height", sateHeight+1)
 
 	cs.enterNewRound(0)

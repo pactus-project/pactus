@@ -7,11 +7,11 @@ import (
 )
 
 func (cs *consensus) enterPrepare(round int) {
-	if cs.status.IsPrepared() || round > cs.hrs.Round() {
+	if cs.isPrepared || round > cs.hrs.Round() {
 		cs.logger.Debug("Prepare: Precommitted, prepared or invalid round/step", "round", round)
 		return
 	}
-	cs.hrs.UpdateStep(hrs.StepTypePrepare)
+	cs.updateStep(hrs.StepTypePrepare)
 	cs.scheduleTimeout(cs.config.PrecommitTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrecommit)
 
 	roundProposal := cs.pendingVotes.RoundProposal(round)
@@ -24,7 +24,7 @@ func (cs *consensus) enterPrepare(round int) {
 	}
 
 	// Everything is good
-	cs.status.SetPrepared(true)
+	cs.isPrepared = true
 	cs.logger.Info("Prepare: Proposal signed", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrepare, round, roundProposal.Block().Hash())
 }

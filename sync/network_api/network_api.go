@@ -2,7 +2,6 @@ package network_api
 
 import (
 	"context"
-	"sync"
 
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
@@ -31,7 +30,6 @@ type networkAPI struct {
 	dataSub        *pubsub.Subscription
 	consensusSub   *pubsub.Subscription
 	parsFn         ParsMessageFn
-	wg             sync.WaitGroup
 }
 
 func NewNetworkAPI(
@@ -84,14 +82,8 @@ func NewNetworkAPI(
 }
 
 func (api *networkAPI) Start() error {
-
-	api.wg.Add(1)
 	go api.dataLoop()
-
-	api.wg.Add(1)
 	go api.generalLoop()
-
-	api.wg.Add(1)
 	go api.consensusLoop()
 
 	return nil
@@ -102,17 +94,10 @@ func (api *networkAPI) Stop() {
 
 	api.dataTopic.Close()
 	api.dataSub.Cancel()
-
 	api.generalTopic.Close()
 	api.generalSub.Cancel()
-
 	api.consensusTopic.Close()
 	api.consensusSub.Cancel()
-
-	api.wg.Wait()
-
-	api.downloadTopic = nil
-	api.downloadSub = nil
 }
 
 func (api *networkAPI) JoinDownloadTopic() error {
@@ -131,7 +116,6 @@ func (api *networkAPI) JoinDownloadTopic() error {
 	api.downloadTopic = downloadTopic
 	api.downloadSub = downloadSub
 
-	api.wg.Add(1)
 	go api.downloadLoop()
 
 	return nil
@@ -140,6 +124,8 @@ func (api *networkAPI) LeaveDownloadTopic() {
 	if api.downloadSub != nil {
 		api.downloadTopic.Close()
 		api.downloadSub.Cancel()
+		api.downloadTopic = nil
+		api.downloadSub = nil
 	}
 }
 
@@ -172,8 +158,6 @@ func (api *networkAPI) PublishMessage(msg *message.Message) error {
 }
 
 func (api *networkAPI) downloadLoop() {
-	defer api.wg.Done()
-
 	for {
 		m, err := api.downloadSub.Next(api.ctx)
 		if err != nil {
@@ -186,8 +170,6 @@ func (api *networkAPI) downloadLoop() {
 }
 
 func (api *networkAPI) dataLoop() {
-	defer api.wg.Done()
-
 	for {
 		m, err := api.dataSub.Next(api.ctx)
 		if err != nil {
@@ -200,8 +182,6 @@ func (api *networkAPI) dataLoop() {
 }
 
 func (api *networkAPI) generalLoop() {
-	defer api.wg.Done()
-
 	for {
 		m, err := api.generalSub.Next(api.ctx)
 		if err != nil {
@@ -214,8 +194,6 @@ func (api *networkAPI) generalLoop() {
 }
 
 func (api *networkAPI) consensusLoop() {
-	defer api.wg.Done()
-
 	for {
 		m, err := api.consensusSub.Next(api.ctx)
 		if err != nil {
