@@ -291,6 +291,15 @@ func TestHandleTimeout(t *testing.T) {
 	checkHRS(t, tConsX, 2, 0, hrs.StepTypePrepare)
 }
 
+func TestDoubleVote(t *testing.T) {
+	setup(t)
+
+	tConsX.enterNewHeight()
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, true)
+}
+
 func TestNotInCommittee(t *testing.T) {
 	setup(t)
 

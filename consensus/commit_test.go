@@ -16,26 +16,31 @@ func TestStatusFlags(t *testing.T) {
 
 	commitBlockForAllStates(t)
 
+	tConsX.status.SetProposed(true)
+	tConsX.status.SetPrepared(true)
+	tConsX.status.SetPreCommitted(true)
+	tConsX.status.SetCommitted(true)
+
 	tConsX.enterNewHeight()
 
 	assert.Equal(t, tConsX.hrs.Height(), 2)
 	assert.Equal(t, tConsX.hrs.Round(), 0)
+	assert.True(t, tConsX.status.IsProposed())
 	assert.False(t, tConsX.status.IsPrepared())
 	assert.False(t, tConsX.status.IsPreCommitted())
 	assert.False(t, tConsX.status.IsCommitted())
 
 	tConsX.status.SetProposed(true)
 	tConsX.status.SetPrepared(true)
-	tConsX.status.SetPreCommitted(true)
-	tConsX.status.SetCommitted(true)
 
 	tConsX.enterNewRound(1)
 
 	assert.Equal(t, tConsX.hrs.Height(), 2)
 	assert.Equal(t, tConsX.hrs.Round(), 1)
+	assert.True(t, tConsX.status.IsProposed())
 	assert.False(t, tConsX.status.IsPrepared())
-	assert.True(t, tConsX.status.IsPreCommitted())
-	assert.True(t, tConsX.status.IsCommitted())
+	assert.False(t, tConsX.status.IsPreCommitted())
+	assert.False(t, tConsX.status.IsCommitted())
 }
 
 func TestEnterCommit(t *testing.T) {
