@@ -7,8 +7,7 @@ import (
 )
 
 func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
-	st.executionSandbox.Clear()
-	st.execution.ResetFee()
+	st.execution.Reset()
 
 	ids := block.TxIDs().IDs()
 	twrs := make([]tx.CommittedTx, len(ids))

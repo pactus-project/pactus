@@ -72,7 +72,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
-		tConfigs[i].Logger.Levels["_consensus"] = "info"
+		tConfigs[i].Logger.Levels["_consensus"] = "error"
 		tConfigs[i].Logger.Levels["_txpool"] = "error"
 
 		tConfigs[i].Sync.CacheSize = 1000
@@ -157,7 +157,7 @@ func TestMain(m *testing.M) {
 		waitForNewBlock(t)
 	}
 
-	fmt.Printf("Running the tests")
+	fmt.Println("Running tests")
 
 	exitCode := m.Run()
 

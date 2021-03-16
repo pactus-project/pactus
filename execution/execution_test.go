@@ -129,6 +129,6 @@ func TestExecution(t *testing.T) {
 	})
 
 	assert.Equal(t, tExec.AccumulatedFee(), int64(1000))
-	tExec.ResetFee()
+	tExec.Reset()
 	assert.Equal(t, tExec.AccumulatedFee(), int64(0))
 }

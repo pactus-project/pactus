@@ -187,6 +187,8 @@ func (pool *txPool) Recheck() {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
+	pool.checker.Reset()
+
 	var next *list.Element
 	for e := pool.pendings.FirstElement(); e != nil; e = next {
 		next = e.Next()

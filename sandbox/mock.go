@@ -34,6 +34,9 @@ func MockingSandbox() *MockSandbox {
 		Params:     param.DefaultParams(),
 	}
 }
+func (m *MockSandbox) Reset() {
+}
+
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	acc, ok := m.Accounts[addr]
 	if !ok {

@@ -85,10 +85,6 @@ func TestPending(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(88, stamp)
 	trx := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
-
-	// Increat the waiting time for testing
-	tPool.config.WaitingTimeout = 3 * time.Second
-
 	go func(ch chan *message.Message) {
 		for {
 			msg := <-ch

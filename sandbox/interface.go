@@ -8,6 +8,8 @@ import (
 )
 
 type Sandbox interface {
+	Reset()
+
 	Account(crypto.Address) *account.Account
 	MakeNewAccount(crypto.Address) *account.Account
 	UpdateAccount(*account.Account)

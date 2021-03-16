@@ -70,7 +70,7 @@ func NewSandbox(store store.StoreReader, params param.Params, lastBlockHeight in
 	}
 
 	// To update total accounts and validator counters
-	sb.clear()
+	sb.reset()
 
 	return sb, nil
 }
@@ -94,14 +94,14 @@ func (sb *SandboxConcrete) shouldPanicForUnknownAddress() {
 	logger.Panic("Unknown address")
 }
 
-func (sb *SandboxConcrete) Clear() {
+func (sb *SandboxConcrete) Reset() {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	sb.clear()
+	sb.reset()
 }
 
-func (sb *SandboxConcrete) clear() {
+func (sb *SandboxConcrete) reset() {
 	sb.accounts = make(map[crypto.Address]*AccountStatus)
 	sb.validators = make(map[crypto.Address]*ValidatorStatus)
 	sb.totalAccounts = sb.store.TotalAccounts()

@@ -278,8 +278,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	}
 
 	// Reset Sandbox and clear the accululated fee
-	st.executionSandbox.Clear()
-	st.execution.ResetFee()
+	st.execution.Reset()
 
 	txIDs := block.NewTxIDs()
 
@@ -446,7 +445,6 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 		st.committee.Proposer(0).Address())
 
 	// At this point we can reset txpool sandbox
-	st.txPoolSandbox.Clear()
 	st.txPool.Recheck()
 
 	return nil
