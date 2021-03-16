@@ -23,7 +23,7 @@ func TestMustGetRound(t *testing.T) {
 	assert.Equal(t, len(pv.roundVotes), 5)
 }
 
-func TestPendingVotesTest(t *testing.T) {
+func TestAddVotes(t *testing.T) {
 	committee, signers := committee.GenerateTestCommittee()
 
 	pv := NewPendingVotes()
