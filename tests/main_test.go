@@ -73,7 +73,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
-		tConfigs[i].Logger.Levels["_txpool"] = "error"
+		tConfigs[i].Logger.Levels["_txpool"] = "trace"
 
 		tConfigs[i].Sync.CacheSize = 1000
 		fmt.Printf("Node %d address: %s\n", i+1, addr)

@@ -148,7 +148,7 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 			pool.logger.Warn("no transaction received", "id", id, "timeout", pool.config.WaitingTimeout)
 			return nil
 		case trx := <-pool.appendTxCh:
-			pool.logger.Debug("Transaction found", "id", id)
+			pool.logger.Debug("Transaction received", "id", id)
 			if trx.ID().EqualsTo(id) {
 				return trx
 			}
@@ -187,6 +187,8 @@ func (pool *txPool) Recheck() {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
+	pool.logger.Debug("Rechecking Transactions")
+
 	pool.checker.Reset()
 
 	var next *list.Element
@@ -195,6 +197,7 @@ func (pool *txPool) Recheck() {
 		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
 
 		if err := pool.checkTx(trx); err != nil {
+			pool.logger.Debug("Invalid transaction after rechecking", "id", trx.ID())
 			pool.pendings.Remove(trx.ID())
 		}
 	}
