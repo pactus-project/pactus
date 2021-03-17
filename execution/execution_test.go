@@ -17,7 +17,7 @@ func TestExecution(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
 
 	tSandbox := sandbox.MockingSandbox()
-	tExec := NewExecution(tSandbox, true)
+	tExec := NewExecution()
 
 	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc0.AddToBalance(21*1e14 - 10000000000)
@@ -48,87 +48,92 @@ func TestExecution(t *testing.T) {
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
 		trx, _ := tx.GenerateTestSendTx()
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 		assert.Zero(t, tExec.AccumulatedFee())
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(crypto.UndefHash, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
 		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp1, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
 		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Good stamp", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp3, 1, addr1, rcvAddr, 1000, 1000, "ok")
 		signer1.SignMsg(trx)
-		assert.NoError(t, tExec.Execute(trx))
+		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Mintbase invalid stamp, Should returns error", func(t *testing.T) {
 		trx := tx.NewMintbaseTx(stamp8641, 1, rcvAddr, 1000, "expired-stamp")
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Mintbase stamp is ok", func(t *testing.T) {
 		trx := tx.NewMintbaseTx(stamp8642, 1, rcvAddr, 1000, "ok")
-		assert.NoError(t, tExec.Execute(trx))
+		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Big memo, Should returns error", func(t *testing.T) {
 		bigMemo := strings.Repeat("a", 1025)
 		trx := tx.NewSendTx(stamp8641, 2, addr1, rcvAddr, 1000, 1000, bigMemo)
 		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1, "invalid fee")
 		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp2, 2, addr1, rcvAddr, 1000, 1001, "invalid fee")
 		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp2, 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee")
-		assert.Error(t, tExec.Execute(trx))
-		assert.Error(t, tExec.checkFee(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
+		assert.Error(t, tExec.checkFee(trx, tSandbox))
 	})
 
 	t.Run("Sortition tx - Invalid stamp, Should returns error", func(t *testing.T) {
 		proof := sortition.GenerateRandomProof()
 		trx := tx.NewSortitionTx(stamp8635, 1, addr1, proof)
 		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Execution failed", func(t *testing.T) {
 		proof := sortition.GenerateRandomProof()
 		trx := tx.NewSortitionTx(stamp8642, 1, addr1, proof)
 		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx))
+		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
+}
 
-	t.Run("Claim accumulated fee", func(t *testing.T) {
-		tExec.ClaimAccumulatedFee()
-		total := int64(0)
-		for _, acc := range tSandbox.Accounts {
-			total += acc.Balance()
-		}
-		assert.Equal(t, total, int64(21*1e14))
+func TestChecker(t *testing.T) {
+	tChecker := NewChecker()
+	tSandbox := sandbox.MockingSandbox()
+
+	stamp1000 := crypto.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(1000, stamp1000)
+
+	t.Run("Accept bond transaction for future blocks", func(t *testing.T) {
+		acc, signer := account.GenerateTestAccount(1)
+		tSandbox.Accounts[acc.Address()] = *acc
+
+		tSandbox.InCommittee = true
+		trx := tx.NewBondTx(stamp1000, acc.Sequence()+1, signer.Address(), signer.PublicKey(), 1000, 1000, "")
+		signer.SignMsg(trx)
+		assert.NoError(t, tChecker.Execute(trx, tSandbox))
 	})
-
-	assert.Equal(t, tExec.AccumulatedFee(), int64(1000))
-	tExec.Reset()
-	assert.Equal(t, tExec.AccumulatedFee(), int64(0))
 }

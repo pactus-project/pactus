@@ -67,7 +67,8 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs := block.NewTxIDs()
 		txIDs.Append(invSubsidyTx.ID())
 		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
-		_, err := tState1.executeBlock(invBlock)
+		sb := tState1.makeSandbox()
+		_, err := tState1.executeBlock(invBlock, sb)
 		assert.Error(t, err)
 	})
 
@@ -76,7 +77,8 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs.Append(validSubsidyTx.ID())
 		txIDs.Append(invSendTx.ID())
 		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
-		_, err := tState1.executeBlock(invBlock)
+		sb := tState1.makeSandbox()
+		_, err := tState1.executeBlock(invBlock, sb)
 		assert.Error(t, err)
 	})
 
@@ -85,7 +87,8 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs.Append(validTx1.ID())
 		txIDs.Append(validSubsidyTx.ID())
 		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
-		_, err := tState1.executeBlock(invBlock)
+		sb := tState1.makeSandbox()
+		_, err := tState1.executeBlock(invBlock, sb)
 		assert.Error(t, err)
 	})
 
@@ -93,7 +96,8 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs := block.NewTxIDs()
 		txIDs.Append(validTx1.ID())
 		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
-		_, err := tState1.executeBlock(invBlock)
+		sb := tState1.makeSandbox()
+		_, err := tState1.executeBlock(invBlock, sb)
 		assert.Error(t, err)
 	})
 
@@ -102,7 +106,13 @@ func TestExecuteBlock(t *testing.T) {
 		txIDs.Append(validSubsidyTx.ID())
 		txIDs.Append(validTx1.ID())
 		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
-		_, err := tState1.executeBlock(invBlock)
+		sb := tState1.makeSandbox()
+		_, err := tState1.executeBlock(invBlock, sb)
 		assert.NoError(t, err)
+
+		// Check if fee is claimed
+		treasury := sb.Account(crypto.TreasuryAddress)
+		subsidy := calcBlockSubsidy(2, tState1.params.SubsidyReductionInterval)
+		assert.Equal(t, treasury.Balance(), 21*1e14-(2*subsidy)) // Two blocks has committed yet
 	})
 }

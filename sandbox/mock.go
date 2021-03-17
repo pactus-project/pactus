@@ -34,8 +34,6 @@ func MockingSandbox() *MockSandbox {
 		Params:     param.DefaultParams(),
 	}
 }
-func (m *MockSandbox) Reset() {
-}
 
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	acc, ok := m.Accounts[addr]
@@ -80,7 +78,7 @@ func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof sortition.Pro
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurHeight
 }
-func (m *MockSandbox) RecentBlockHeight(hash crypto.Hash) int {
+func (m *MockSandbox) BlockHeight(hash crypto.Hash) int {
 	h, ok := m.Stamps[hash]
 	if !ok {
 		return -1

@@ -50,6 +50,9 @@ unit_test:
 test:
 	go test ./... -covermode=atomic
 
+test_race:
+	go test ./... --race
+
 test_with_bls:
 	$(CGO_LDFLAGS) go test ./...
 

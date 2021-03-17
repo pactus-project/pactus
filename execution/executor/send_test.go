@@ -55,7 +55,7 @@ func checkTotalCoin(t *testing.T, fee int64) {
 
 func TestExecuteSendTx(t *testing.T) {
 	setup(t)
-	exe := NewSendExecutor(tSandbox, true)
+	exe := NewSendExecutor(true)
 
 	sender := crypto.GenerateTestSigner()
 	receiver := crypto.GenerateTestSigner()
@@ -66,44 +66,44 @@ func TestExecuteSendTx(t *testing.T) {
 		trx := tx.NewSendTx(stamp, 1, sender.Address(), sender.Address(), 3000, 1000, "non-existing account")
 		sender.SignMsg(trx)
 
-		assert.Error(t, exe.Execute(trx))
+		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("ok. Create sender account", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
 
-		assert.NoError(t, exe.Execute(trx))
+		assert.NoError(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp, 2, sender.Address(), receiver.Address(), 1000, 1000, "invalid sequence")
 
-		assert.Error(t, exe.Execute(trx))
+		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewSendTx(stamp, 1, sender.Address(), receiver.Address(), 2001, 1000, "insufficient balance")
 
-		assert.Error(t, exe.Execute(trx))
+		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		trx1 := tx.NewSendTx(stamp, 1, sender.Address(), receiver.Address(), 700, 1000, "ok")
-		assert.NoError(t, exe.Execute(trx1))
+		assert.NoError(t, exe.Execute(trx1, tSandbox))
 
 		trx2 := tx.NewSendTx(stamp, 2, sender.Address(), receiver.Address(), 300, 1000, "ok")
-		assert.NoError(t, exe.Execute(trx2))
+		assert.NoError(t, exe.Execute(trx2, tSandbox))
 
 		// Replay transactions
-		assert.Error(t, exe.Execute(trx1))
-		assert.Error(t, exe.Execute(trx2))
+		assert.Error(t, exe.Execute(trx1, tSandbox))
+		assert.Error(t, exe.Execute(trx2, tSandbox))
 	})
 
 	t.Run("Send to self", func(t *testing.T) {
 		self := tAcc1.Address()
 		bal := tSandbox.Account(self).Balance()
 		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok")
-		assert.NoError(t, exe.Execute(trx))
+		assert.NoError(t, exe.Execute(trx, tSandbox))
 
 		assert.Equal(t, tSandbox.Account(self).Balance(), bal-1000) /// Fee should be deducted
 		assert.Equal(t, exe.Fee(), int64(1000))
@@ -117,7 +117,7 @@ func TestExecuteSendTx(t *testing.T) {
 
 func TestSendNonStrictMode(t *testing.T) {
 	setup(t)
-	exe1 := NewSendExecutor(tSandbox, false)
+	exe1 := NewSendExecutor(false)
 
 	stamp := crypto.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
@@ -128,7 +128,7 @@ func TestSendNonStrictMode(t *testing.T) {
 	mintbase2 := tx.NewMintbaseTx(stamp, 101, receiver2, 5, "")
 	mintbase3 := tx.NewMintbaseTx(stamp, 102, receiver2, 5, "")
 
-	assert.NoError(t, exe1.Execute(mintbase1))
-	assert.NoError(t, exe1.Execute(mintbase2))
-	assert.Error(t, exe1.Execute(mintbase3)) // Invalid sequence
+	assert.NoError(t, exe1.Execute(mintbase1, tSandbox))
+	assert.NoError(t, exe1.Execute(mintbase2, tSandbox))
+	assert.Error(t, exe1.Execute(mintbase3, tSandbox)) // Invalid sequence
 }

@@ -2,15 +2,18 @@ package state
 
 import (
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/execution"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
-	st.execution.Reset()
+func (st *state) executeBlock(block block.Block, sb sandbox.Sandbox) ([]tx.CommittedTx, error) {
+	exe := execution.NewExecution()
 
 	ids := block.TxIDs().IDs()
-	twrs := make([]tx.CommittedTx, len(ids))
+	ctrxs := make([]tx.CommittedTx, len(ids))
 	var mintbaseTrx *tx.Tx
 	for i := 0; i < len(ids); i++ {
 		trx := st.txPool.QueryTx(ids[i])
@@ -30,20 +33,25 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 			}
 		}
 
-		err := st.execution.Execute(trx)
+		err := exe.Execute(trx, sb)
 		if err != nil {
 			return nil, err
 		}
 		receipt := trx.GenerateReceipt(tx.Ok, block.Hash())
-		twrs[i].Tx = trx
-		twrs[i].Receipt = receipt
+		ctrxs[i].Tx = trx
+		ctrxs[i].Receipt = receipt
 	}
 
-	subsidyAmt := calcBlockSubsidy(st.lastInfo.BlockHeight()+1, st.params.SubsidyReductionInterval) + st.execution.AccumulatedFee()
+	accumulatedFee := exe.AccumulatedFee()
+	subsidyAmt := calcBlockSubsidy(st.lastInfo.BlockHeight()+1, st.params.SubsidyReductionInterval) + exe.AccumulatedFee()
 	if mintbaseTrx.Payload().Value() != subsidyAmt {
 		return nil, errors.Errorf(errors.ErrInvalidTx, "Invalid subsidy amount. Expected %v, got %v", subsidyAmt, mintbaseTrx.Payload().Value())
 	}
-	st.execution.ClaimAccumulatedFee()
 
-	return twrs, nil
+	// Claim accumulated fees
+	acc := sb.Account(crypto.TreasuryAddress)
+	acc.AddToBalance(accumulatedFee)
+	sb.UpdateAccount(acc)
+
+	return ctrxs, nil
 }

@@ -8,8 +8,6 @@ import (
 )
 
 type Sandbox interface {
-	Reset()
-
 	Account(crypto.Address) *account.Account
 	MakeNewAccount(crypto.Address) *account.Account
 	UpdateAccount(*account.Account)
@@ -24,7 +22,7 @@ type Sandbox interface {
 
 	CommitteeSize() int
 	CurrentHeight() int
-	RecentBlockHeight(crypto.Hash) int
+	BlockHeight(crypto.Hash) int
 	TransactionToLiveInterval() int
 	MaxMemoLength() int
 	FeeFraction() float64

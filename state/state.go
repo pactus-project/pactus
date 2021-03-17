@@ -31,21 +31,17 @@ const baseSubsidy = 5 * 1e8
 type state struct {
 	lk deadlock.RWMutex
 
-	config           *Config
-	signer           crypto.Signer
-	mintbaseAddr     crypto.Address
-	genDoc           *genesis.Genesis
-	store            *store.Store
-	params           param.Params
-	txPool           txpool.TxPool
-	txPoolSandbox    *sandbox.SandboxConcrete
-	executionSandbox *sandbox.SandboxConcrete
-	execution        *execution.Execution
-	checker          *execution.Execution
-	committee        *committee.Committee
-	sortition        *sortition.Sortition
-	lastInfo         *last_info.LastInfo
-	logger           *logger.Logger
+	config       *Config
+	signer       crypto.Signer
+	mintbaseAddr crypto.Address
+	genDoc       *genesis.Genesis
+	store        *store.Store
+	params       param.Params
+	txPool       txpool.TxPool
+	committee    *committee.Committee
+	sortition    *sortition.Sortition
+	lastInfo     *last_info.LastInfo
+	logger       *logger.Logger
 }
 
 func LoadOrNewState(
@@ -95,19 +91,13 @@ func LoadOrNewState(
 		}
 	}
 
-	st.txPoolSandbox, err = sandbox.NewSandbox(store, st.params, st.lastInfo.BlockHeight(), st.sortition, st.committee)
-	if err != nil {
-		return nil, err
-	}
-	st.executionSandbox, err = sandbox.NewSandbox(store, st.params, st.lastInfo.BlockHeight(), st.sortition, st.committee)
-	if err != nil {
-		return nil, err
-	}
-	st.execution = execution.NewExecution(st.executionSandbox, true)
-	st.checker = execution.NewExecution(st.executionSandbox, false)
-	txPool.SetChecker(st.checker)
+	txPool.SetNewSandboxAndRecheck(st.makeSandbox())
 
 	return st, nil
+}
+
+func (st *state) makeSandbox() *sandbox.SandboxConcrete {
+	return sandbox.NewSandbox(st.store, st.params, st.lastInfo.BlockHeight(), st.sortition, st.committee)
 }
 
 func (st *state) tryLoadLastInfo() error {
@@ -274,8 +264,9 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		return nil, errors.Errorf(errors.ErrInvalidAddress, "We are not propser for this round")
 	}
 
-	// Reset Sandbox and clear the accululated fee
-	st.execution.Reset()
+	// Create new sandbox and execute transactions
+	sb := st.makeSandbox()
+	exe := execution.NewExecution()
 
 	txIDs := block.NewTxIDs()
 
@@ -290,7 +281,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 			continue
 		}
 
-		if err := st.execution.Execute(trx); err != nil {
+		if err := exe.Execute(trx, sb); err != nil {
 			st.logger.Debug("Found invalid transaction", "tx", trx, "err", err)
 			st.txPool.RemoveTx(trx.ID())
 		} else {
@@ -302,7 +293,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(st.execution.AccumulatedFee())
+	subsidyTx := st.createSubsidyTx(exe.AccumulatedFee())
 	if subsidyTx == nil {
 		st.logger.Error("Probably the node is shutting down.")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "No subsidy transaction")
@@ -346,7 +337,8 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	_, err := st.executeBlock(block)
+	sb := st.makeSandbox()
+	_, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
 	}
@@ -399,17 +391,18 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid sortition seed.")
 	}
 
-	ctrxs, err := st.executeBlock(block)
+	sb := st.makeSandbox()
+	ctrxs, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
 	}
 
+	// Commit and update the validator set
+	st.commitSandbox(sb, cert.Round())
+
 	if err := st.store.SaveBlock(block, st.lastInfo.BlockHeight()+1); err != nil {
 		return err
 	}
-
-	// Commit and update the validator set
-	st.commitSandbox(cert.Round())
 
 	// Save txs and receipts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
@@ -435,14 +428,12 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 
 	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
 
-	st.executionSandbox.AppendNewBlock(st.lastInfo.BlockHash(), st.lastInfo.BlockHeight())
-	st.txPoolSandbox.AppendNewBlock(st.lastInfo.BlockHash(), st.lastInfo.BlockHeight())
 	st.saveLastInfo(st.lastInfo.BlockHeight(), cert, st.lastInfo.ReceiptsHash(),
 		st.committee.Committers(),
 		st.committee.Proposer(0).Address())
 
-	// At this point we can reset txpool sandbox
-	st.txPool.Recheck()
+	// At this point we can assign new sandbox to tx pool
+	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())
 
 	return nil
 }
@@ -492,9 +483,9 @@ func (st *state) Fingerprint() string {
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(round int) {
+func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
 	joined := make([]*validator.Validator, 0)
-	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
+	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.JoinedCommittee {
 			st.logger.Info("New validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
 
@@ -509,19 +500,19 @@ func (st *state) commitSandbox(round int) {
 		logger.Panic("An error occurred", "err", err)
 	}
 
-	st.executionSandbox.IterateAccounts(func(as *sandbox.AccountStatus) {
+	sb.IterateAccounts(func(as *sandbox.AccountStatus) {
 		if as.Updated {
 			st.store.UpdateAccount(&as.Account)
 		}
 	})
 
-	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
+	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.Updated {
 			st.store.UpdateValidator(&vs.Validator)
 		}
 	})
 
-	st.sortition.AddToTotalStake(st.executionSandbox.TotalStakeChange())
+	st.sortition.AddToTotalStake(sb.TotalStakeChange())
 }
 
 func (st *state) validateBlockTime(t time.Time) error {

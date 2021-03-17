@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sync/message"
@@ -26,15 +25,14 @@ var tCh chan *message.Message
 func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
 	tCh = make(chan *message.Message, 10)
-	p, _ := NewTxPool(TestConfig(), tCh)
 	tSandbox = sandbox.MockingSandbox()
-	checker := execution.NewExecution(tSandbox, false)
+	p, _ := NewTxPool(TestConfig(), tCh)
+	p.SetNewSandboxAndRecheck(tSandbox)
 	tAcc1Signer = crypto.GenerateTestSigner()
 	tAcc1Addr = tAcc1Signer.Address()
 	acc1 := account.NewAccount(tAcc1Addr, 0)
 	acc1.AddToBalance(10000000000)
 	tSandbox.UpdateAccount(acc1)
-	p.SetChecker(checker)
 	tPool = p.(*txPool)
 }
 
@@ -177,15 +175,12 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	trx2 := tx.NewMintbaseTx(stamp1, 89, proposer1, 25000000, "subsidy-tx-1")
 	trx3 := tx.NewMintbaseTx(stamp1, 89, proposer2, 25000000, "subsidy-tx-2")
 
-	// Recheck on empty pool
-	tPool.Recheck()
-
 	assert.Error(t, tPool.AppendTx(trx1))
 	assert.NoError(t, tPool.AppendTx(trx2))
 	assert.NoError(t, tPool.AppendTx(trx3))
 
 	tSandbox.AppendStampAndUpdateHeight(89, stamp2)
 
-	tPool.Recheck()
+	tPool.SetNewSandboxAndRecheck(sandbox.MockingSandbox())
 	assert.Zero(t, tPool.Size())
 }

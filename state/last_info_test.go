@@ -62,8 +62,6 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
 	assert.Equal(t, tState1.store.TotalValidators(), st2.(*state).store.TotalValidators())
 	assert.Equal(t, tState1.sortition.TotalStake(), st2.(*state).sortition.TotalStake())
-	assert.Equal(t, tState1.executionSandbox.LastBlockHeight(), st2.(*state).executionSandbox.LastBlockHeight())
-	assert.Equal(t, tState1.executionSandbox.LastBlockHash(), st2.(*state).executionSandbox.LastBlockHash())
 	assert.Equal(t, tState1.store.TotalAccounts(), 5)
 	assert.Equal(t, tState1.sortition.TotalStake(), int64(8888000))
 
