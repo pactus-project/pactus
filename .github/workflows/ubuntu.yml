@@ -28,7 +28,7 @@ jobs:
       with:
         file: ./coverage.txt
 
-    - name: golangci-lint
+    - name: Check linting with golangci-lint
       uses: golangci/golangci-lint-action@v2
       with:
         version: v1.36

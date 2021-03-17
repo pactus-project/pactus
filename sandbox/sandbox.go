@@ -6,7 +6,6 @@ import (
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -22,8 +21,8 @@ type SandboxConcrete struct {
 	committee        committee.CommitteeReader
 	accounts         map[crypto.Address]*AccountStatus
 	validators       map[crypto.Address]*ValidatorStatus
-	recentBlocks     *linkedmap.LinkedMap
 	params           param.Params
+	lastHeight       int
 	totalAccounts    int
 	totalValidators  int
 	totalStakeChange int64
@@ -40,39 +39,22 @@ type AccountStatus struct {
 	Updated bool
 }
 
-func NewSandbox(store store.StoreReader, params param.Params, lastBlockHeight int, sortition *sortition.Sortition, committee committee.CommitteeReader) (*SandboxConcrete, error) {
+func NewSandbox(store store.StoreReader, params param.Params, lastHeight int, sortition *sortition.Sortition, committee committee.CommitteeReader) *SandboxConcrete {
 	sb := &SandboxConcrete{
-		store:        store,
-		sortition:    sortition,
-		committee:    committee,
-		params:       params,
-		recentBlocks: linkedmap.NewLinkedMap(params.TransactionToLiveInterval),
-		accounts:     make(map[crypto.Address]*AccountStatus),
-		validators:   make(map[crypto.Address]*ValidatorStatus),
+		store:      store,
+		sortition:  sortition,
+		committee:  committee,
+		lastHeight: lastHeight,
+		params:     params,
 	}
 
-	// First, let add genesis block (Block 0) hash
-	sb.recentBlocks.PushBack(crypto.UndefHash, 0)
+	sb.accounts = make(map[crypto.Address]*AccountStatus)
+	sb.validators = make(map[crypto.Address]*ValidatorStatus)
+	sb.totalAccounts = sb.store.TotalAccounts()
+	sb.totalValidators = sb.store.TotalValidators()
+	sb.totalStakeChange = 0
 
-	// Now we try to fetch recent block hashes
-	// Block zero will be kicked out of the list if we have enough blocks
-	from := lastBlockHeight - params.TransactionToLiveInterval
-	if from <= 0 {
-		from = 1
-	}
-	to := lastBlockHeight
-	for i := from; i <= to; i++ {
-		b, err := store.Block(i)
-		if err != nil {
-			return nil, err
-		}
-		sb.recentBlocks.PushBack(b.Hash(), i)
-	}
-
-	// To update total accounts and validator counters
-	sb.clear()
-
-	return sb, nil
+	return sb
 }
 
 func (sb *SandboxConcrete) shouldPanicForDuplicatedAddress() {
@@ -92,21 +74,6 @@ func (sb *SandboxConcrete) shouldPanicForUnknownAddress() {
 	// We must either make a new one (i.e. `MakeNewAccount`) or get it from store (i.e. `Account`) in advance.
 	//
 	logger.Panic("Unknown address")
-}
-
-func (sb *SandboxConcrete) Clear() {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	sb.clear()
-}
-
-func (sb *SandboxConcrete) clear() {
-	sb.accounts = make(map[crypto.Address]*AccountStatus)
-	sb.validators = make(map[crypto.Address]*ValidatorStatus)
-	sb.totalAccounts = sb.store.TotalAccounts()
-	sb.totalValidators = sb.store.TotalValidators()
-	sb.totalStakeChange = 0
 }
 
 func (sb *SandboxConcrete) Account(addr crypto.Address) *account.Account {
@@ -190,7 +157,7 @@ func (sb *SandboxConcrete) MakeNewValidator(pub crypto.PublicKey) *validator.Val
 		sb.shouldPanicForDuplicatedAddress()
 	}
 
-	val := validator.NewValidator(pub, sb.totalValidators, sb.lastHeight()+1)
+	val := validator.NewValidator(pub, sb.totalValidators, sb.lastHeight+1)
 	sb.validators[addr] = &ValidatorStatus{
 		Validator: *val,
 		Updated:   true,
@@ -277,53 +244,42 @@ func (sb *SandboxConcrete) TransactionToLiveInterval() int {
 	return sb.params.TransactionToLiveInterval
 }
 
-func (sb *SandboxConcrete) RecentBlockHeight(hash crypto.Hash) int {
+func (sb *SandboxConcrete) BlockHeight(hash crypto.Hash) int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	h, has := sb.recentBlocks.Get(hash)
-	if !has {
+	if hash.EqualsTo(crypto.UndefHash) {
+		return 0
+	}
+
+	h, err := sb.store.BlockHeight(hash)
+	if err != nil {
 		return -1
 	}
 
-	return h.(int)
-}
-
-func (sb *SandboxConcrete) lastHeight() int {
-	_, v := sb.recentBlocks.Last()
-	if v == nil {
-		return -1
-	}
-	return v.(int)
+	return h
 }
 
 func (sb *SandboxConcrete) CurrentHeight() int {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	return sb.lastHeight() + 1
-}
-
-func (sb *SandboxConcrete) LastBlockHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.lastHeight()
+	return sb.lastHeight + 1
+}
+
+func (sb *SandboxConcrete) LastHeight() int {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.lastHeight
 }
 
 func (sb *SandboxConcrete) LastBlockHash() crypto.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	k, _ := sb.recentBlocks.Last()
-	return k.(crypto.Hash)
-}
-
-func (sb *SandboxConcrete) AppendNewBlock(hash crypto.Hash, height int) {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	sb.recentBlocks.PushBack(hash, height)
+	b, _ := sb.store.Block(sb.lastHeight)
+	return b.Hash()
 }
 
 func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {

@@ -17,6 +17,7 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
+	"github.com/zarbchain/zarb-go/state/last_info"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -30,26 +31,17 @@ const baseSubsidy = 5 * 1e8
 type state struct {
 	lk deadlock.RWMutex
 
-	config            *Config
-	signer            crypto.Signer
-	mintbaseAddr      crypto.Address
-	genDoc            *genesis.Genesis
-	store             *store.Store
-	params            param.Params
-	txPool            txpool.TxPool
-	txPoolSandbox     *sandbox.SandboxConcrete
-	executionSandbox  *sandbox.SandboxConcrete
-	execution         *execution.Execution
-	checker           *execution.Execution
-	committee         *committee.Committee
-	sortition         *sortition.Sortition
-	lastSortitionSeed sortition.Seed
-	lastBlockHeight   int
-	lastBlockHash     crypto.Hash
-	lastReceiptsHash  crypto.Hash
-	lastCertificate   *block.Certificate
-	lastBlockTime     time.Time
-	logger            *logger.Logger
+	config       *Config
+	signer       crypto.Signer
+	mintbaseAddr crypto.Address
+	genDoc       *genesis.Genesis
+	store        *store.Store
+	params       param.Params
+	txPool       txpool.TxPool
+	committee    *committee.Committee
+	sortition    *sortition.Sortition
+	lastInfo     *last_info.LastInfo
+	logger       *logger.Logger
 }
 
 func LoadOrNewState(
@@ -77,6 +69,7 @@ func LoadOrNewState(
 		signer:       signer,
 		mintbaseAddr: mintbaseAddr,
 		sortition:    sortition.NewSortition(),
+		lastInfo:     last_info.NewLastInfo(),
 	}
 	st.logger = logger.NewLogger("_state", st)
 
@@ -98,26 +91,16 @@ func LoadOrNewState(
 		}
 	}
 
-	st.txPoolSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.committee)
-	if err != nil {
-		return nil, err
-	}
-	st.executionSandbox, err = sandbox.NewSandbox(store, st.params, st.lastBlockHeight, st.sortition, st.committee)
-	if err != nil {
-		return nil, err
-	}
-	st.execution = execution.NewExecution(st.executionSandbox, true)
-	st.checker = execution.NewExecution(st.executionSandbox, false)
-	txPool.SetChecker(st.checker)
+	txPool.SetNewSandboxAndRecheck(st.makeSandbox())
 
 	return st, nil
 }
 
+func (st *state) makeSandbox() *sandbox.SandboxConcrete {
+	return sandbox.NewSandbox(st.store, st.params, st.lastInfo.BlockHeight(), st.sortition, st.committee)
+}
+
 func (st *state) tryLoadLastInfo() error {
-	li, err := st.loadLastInfo()
-	if err != nil {
-		return err
-	}
 	// Make sure genesis hash is same
 	//
 	// This check is not important because genesis state is committed.
@@ -131,20 +114,24 @@ func (st *state) tryLoadLastInfo() error {
 		return fmt.Errorf("Invalid genesis doc")
 	}
 
+	li, err := st.loadLastInfo()
+	if err != nil {
+		return err
+	}
 	logger.Info("Try to load the last state info", "height", li.LastHeight)
 
 	b, err := st.store.Block(li.LastHeight)
 	if err != nil {
 		return err
 	}
-	st.lastBlockHeight = li.LastHeight
-	st.lastBlockHash = b.Header().Hash()
-	st.lastCertificate = &li.LastCertificate
-	st.lastBlockTime = b.Header().Time()
-	st.lastSortitionSeed = b.Header().SortitionSeed()
-	st.lastReceiptsHash = li.LastReceiptHash
+	st.lastInfo.SetBlockHeight(li.LastHeight)
+	st.lastInfo.SetBlockHash(b.Header().Hash())
+	st.lastInfo.SetCertificate(&li.LastCertificate)
+	st.lastInfo.SetBlockTime(b.Header().Time())
+	st.lastInfo.SetSortitionSeed(b.Header().SortitionSeed())
+	st.lastInfo.SetReceiptsHash(li.LastReceiptHash)
 
-	vals := make([]*validator.Validator, len(st.lastCertificate.Committers()))
+	vals := make([]*validator.Validator, len(st.lastInfo.Certificate().Committers()))
 	for i, num := range li.Committee {
 		val, err := st.store.ValidatorByNumber(num)
 		if err != nil {
@@ -186,7 +173,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		return err
 	}
 	st.committee = committee
-	st.lastBlockTime = genDoc.GenesisTime()
+	st.lastInfo.SetBlockTime(genDoc.GenesisTime())
 	st.sortition.SetTotalStake(totalStake)
 	return nil
 }
@@ -198,13 +185,6 @@ func (st *state) Close() error {
 	return st.store.Close()
 }
 
-func (st *state) LastBlockHeight() int {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.lastBlockHeight
-}
-
 func (st *state) GenesisHash() crypto.Hash {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
@@ -212,25 +192,32 @@ func (st *state) GenesisHash() crypto.Hash {
 	return st.genDoc.Hash()
 }
 
+func (st *state) LastBlockHeight() int {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.lastInfo.BlockHeight()
+}
+
 func (st *state) LastBlockHash() crypto.Hash {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.lastBlockHash
+	return st.lastInfo.BlockHash()
 }
 
 func (st *state) LastBlockTime() time.Time {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.lastBlockTime
+	return st.lastInfo.BlockTime()
 }
 
 func (st *state) LastCertificate() *block.Certificate {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.lastCertificate
+	return st.lastInfo.Certificate()
 }
 
 func (st *state) BlockTime() time.Duration {
@@ -245,12 +232,12 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 	defer st.lk.Unlock()
 
 	// Check if commit has more signers ...
-	if len(cert.Absences()) < len(st.lastCertificate.Absences()) {
+	if len(cert.Absences()) < len(st.lastInfo.Certificate().Absences()) {
 		if err := st.validateCertificateForPreviousHeight(cert); err != nil {
 			st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
 			return err
 		}
-		st.lastCertificate = cert
+		st.lastInfo.SetCertificate(cert)
 	}
 
 	return nil
@@ -261,9 +248,9 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	if err != nil {
 		return nil
 	}
-	stamp := st.lastBlockHash
+	stamp := st.lastInfo.BlockHash()
 	seq := acc.Sequence() + 1
-	amt := calcBlockSubsidy(st.lastBlockHeight+1, st.params.SubsidyReductionInterval)
+	amt := calcBlockSubsidy(st.lastInfo.BlockHeight()+1, st.params.SubsidyReductionInterval)
 
 	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, amt+fee, "")
 	return tx
@@ -277,9 +264,9 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		return nil, errors.Errorf(errors.ErrInvalidAddress, "We are not propser for this round")
 	}
 
-	// Reset Sandbox and clear the accululated fee
-	st.executionSandbox.Clear()
-	st.execution.ResetFee()
+	// Create new sandbox and execute transactions
+	sb := st.makeSandbox()
+	exe := execution.NewExecution()
 
 	txIDs := block.NewTxIDs()
 
@@ -294,7 +281,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 			continue
 		}
 
-		if err := st.execution.Execute(trx); err != nil {
+		if err := exe.Execute(trx, sb); err != nil {
 			st.logger.Debug("Found invalid transaction", "tx", trx, "err", err)
 			st.txPool.RemoveTx(trx.ID())
 		} else {
@@ -306,7 +293,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(st.execution.AccumulatedFee())
+	subsidyTx := st.createSubsidyTx(exe.AccumulatedFee())
 	if subsidyTx == nil {
 		st.logger.Error("Probably the node is shutting down.")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "No subsidy transaction")
@@ -320,17 +307,17 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	stateHash := st.stateHash()
 	committeeHash := st.committee.CommitteeHash()
 	timestamp := st.proposeNextBlockTime()
-	newSortitionSeed := st.lastSortitionSeed.Generate(st.signer)
+	newSortitionSeed := st.lastInfo.SortitionSeed().Generate(st.signer)
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
 		timestamp,
 		txIDs,
-		st.lastBlockHash,
+		st.lastInfo.BlockHash(),
 		committeeHash,
 		stateHash,
-		st.lastReceiptsHash,
-		st.lastCertificate,
+		st.lastInfo.ReceiptsHash(),
+		st.lastInfo.Certificate(),
 		newSortitionSeed,
 		st.signer.Address())
 
@@ -350,7 +337,8 @@ func (st *state) ValidateBlock(block block.Block) error {
 		return err
 	}
 
-	_, err := st.executeBlock(block)
+	sb := st.makeSandbox()
+	_, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
 	}
@@ -362,7 +350,7 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if height != st.lastBlockHeight && height != st.lastBlockHeight+1 {
+	if height != st.lastInfo.BlockHeight() && height != st.lastInfo.BlockHeight()+1 {
 		/// Returning error here will cause so many error logs during syncing blockchain
 		/// Syncing is asynchronous job and we might receive blocks not in order
 		st.logger.Debug("Unexpected block height", "height", height)
@@ -373,13 +361,13 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
 	/// In the other hand, Syncer module receives new blocks from other peers and if we are behind them, it tries to commit them.
 	/// We should never have a fork in our blockchain. but if it happens here we can catch it.
-	if st.lastBlockHeight == height {
-		if block.Hash().EqualsTo(st.lastBlockHash) {
+	if st.lastInfo.BlockHeight() == height {
+		if block.Hash().EqualsTo(st.lastInfo.BlockHash()) {
 			st.logger.Debug("This block committed before", "hash", block.Hash())
 			return nil
 		}
 
-		st.logger.Error("A possible fork is detected", "our hash", st.lastBlockHash, "block hash", block.Hash())
+		st.logger.Error("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Hash())
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
@@ -399,21 +387,22 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
 	// Validate sortition seed
-	if !block.Header().SortitionSeed().Validate(proposer.PublicKey(), st.lastSortitionSeed) {
+	if !block.Header().SortitionSeed().Validate(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid sortition seed.")
 	}
 
-	ctrxs, err := st.executeBlock(block)
+	sb := st.makeSandbox()
+	ctrxs, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
 	}
 
-	if err := st.store.SaveBlock(block, st.lastBlockHeight+1); err != nil {
+	// Commit and update the validator set
+	st.commitSandbox(sb, cert.Round())
+
+	if err := st.store.SaveBlock(block, st.lastInfo.BlockHeight()+1); err != nil {
 		return err
 	}
-
-	// Commit and update the validator set
-	st.commitSandbox(cert.Round())
 
 	// Save txs and receipts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
@@ -425,12 +414,12 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 	}
 	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)
 
-	st.lastBlockHeight++
-	st.lastBlockHash = block.Hash()
-	st.lastBlockTime = block.Header().Time()
-	st.lastSortitionSeed = block.Header().SortitionSeed()
-	st.lastReceiptsHash = receiptsMerkle.Root()
-	st.lastCertificate = &cert
+	st.lastInfo.SetBlockHeight(st.lastInfo.BlockHeight() + 1)
+	st.lastInfo.SetBlockHash(block.Hash())
+	st.lastInfo.SetBlockTime(block.Header().Time())
+	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
+	st.lastInfo.SetReceiptsHash(receiptsMerkle.Root())
+	st.lastInfo.SetCertificate(&cert)
 
 	// Evaluate sortition before updating the validator set
 	if st.evaluateSortition() {
@@ -439,15 +428,12 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 
 	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
 
-	st.executionSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
-	st.txPoolSandbox.AppendNewBlock(st.lastBlockHash, st.lastBlockHeight)
-	st.saveLastInfo(st.lastBlockHeight, cert, st.lastReceiptsHash,
+	st.saveLastInfo(st.lastInfo.BlockHeight(), cert, st.lastInfo.ReceiptsHash(),
 		st.committee.Committers(),
 		st.committee.Proposer(0).Address())
 
-	// At this point we can reset txpool sandbox
-	st.txPoolSandbox.Clear()
-	st.txPool.Recheck()
+	// At this point we can assign new sandbox to tx pool
+	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())
 
 	return nil
 }
@@ -464,16 +450,16 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
-	if st.lastBlockHeight-val.BondingHeight() < 2*st.params.CommitteeSize {
+	if st.lastInfo.BlockHeight()-val.BondingHeight() < 2*st.params.CommitteeSize {
 		// Bonding period
 		return false
 	}
 
 	//
-	ok, proof := st.sortition.EvaluateSortition(st.lastSortitionSeed, st.signer, val.Stake())
+	ok, proof := st.sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), st.signer, val.Stake())
 	if ok {
 		//
-		trx := tx.NewSortitionTx(st.lastBlockHash, val.Sequence()+1, val.Address(), proof)
+		trx := tx.NewSortitionTx(st.lastInfo.BlockHash(), val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)
 
 		if err := st.txPool.AppendTxAndBroadcast(trx); err != nil {
@@ -492,14 +478,14 @@ func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
 
 func (st *state) Fingerprint() string {
 	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
-		st.lastBlockHeight,
-		st.lastBlockHash.Fingerprint(),
-		st.lastBlockTime.Format("15.04.05"))
+		st.lastInfo.BlockHeight(),
+		st.lastInfo.BlockHash().Fingerprint(),
+		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(round int) {
+func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
 	joined := make([]*validator.Validator, 0)
-	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
+	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.JoinedCommittee {
 			st.logger.Info("New validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
 
@@ -514,26 +500,26 @@ func (st *state) commitSandbox(round int) {
 		logger.Panic("An error occurred", "err", err)
 	}
 
-	st.executionSandbox.IterateAccounts(func(as *sandbox.AccountStatus) {
+	sb.IterateAccounts(func(as *sandbox.AccountStatus) {
 		if as.Updated {
 			st.store.UpdateAccount(&as.Account)
 		}
 	})
 
-	st.executionSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
+	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.Updated {
 			st.store.UpdateValidator(&vs.Validator)
 		}
 	})
 
-	st.sortition.AddToTotalStake(st.executionSandbox.TotalStakeChange())
+	st.sortition.AddToTotalStake(sb.TotalStakeChange())
 }
 
 func (st *state) validateBlockTime(t time.Time) error {
 	if t.Second()%st.params.BlockTimeInSecond != 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "Block time is not rounded")
 	}
-	if t.Before(st.lastBlockTime.Add(1 * time.Second)) {
+	if t.Before(st.lastInfo.BlockTime().Add(1 * time.Second)) {
 		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too early")
 	}
 	proposeTime := st.proposeNextBlockTime()
@@ -548,7 +534,7 @@ func (st *state) validateBlockTime(t time.Time) error {
 }
 
 func (st *state) proposeNextBlockTime() time.Time {
-	timestamp := st.lastBlockTime.Add(st.params.BlockTime())
+	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockTime())
 	timestamp = util.RoundTime(timestamp, st.params.BlockTimeInSecond)
 
 	now := util.Now()

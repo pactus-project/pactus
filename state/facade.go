@@ -11,8 +11,8 @@ import (
 )
 
 type StateFacade interface {
-	LastBlockHeight() int
 	GenesisHash() crypto.Hash
+	LastBlockHeight() int
 	LastBlockHash() crypto.Hash
 	LastBlockTime() time.Time
 	LastCertificate() *block.Certificate
@@ -34,4 +34,5 @@ type StateFacade interface {
 	Account(addr crypto.Address) *account.Account
 	Validator(addr crypto.Address) *validator.Validator
 	Close() error
+	Fingerprint() string
 }

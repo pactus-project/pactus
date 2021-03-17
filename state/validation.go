@@ -16,14 +16,14 @@ func (st *state) validateBlock(block block.Block) error {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid version")
 	}
 
-	if !block.Header().LastBlockHash().EqualsTo(st.lastBlockHash) {
+	if !block.Header().LastBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last block hash is not same as we expected. Expected %v, got %v", st.lastBlockHash, block.Header().LastBlockHash())
+			"Last block hash is not same as we expected. Expected %v, got %v", st.lastInfo.BlockHash(), block.Header().LastBlockHash())
 	}
 
-	if !block.Header().LastReceiptsHash().EqualsTo(st.lastReceiptsHash) {
+	if !block.Header().LastReceiptsHash().EqualsTo(st.lastInfo.ReceiptsHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"last receipts hash is not same as we expected. Expected %v, got %v", st.lastReceiptsHash, block.Header().LastReceiptsHash())
+			"last receipts hash is not same as we expected. Expected %v, got %v", st.lastInfo.ReceiptsHash(), block.Header().LastReceiptsHash())
 	}
 
 	if !block.Header().CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {
@@ -83,7 +83,7 @@ func (st *state) validateCertificate(cert *block.Certificate) error {
 // validateCertificateForPreviousHeight validates certificate for the previous height
 func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) error {
 	if cert == nil {
-		if !st.lastBlockHash.IsUndef() {
+		if !st.lastInfo.BlockHash().IsUndef() {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"Only genesis block has no certificate")
 		}
@@ -92,19 +92,19 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 			return err
 		}
 
-		if !cert.BlockHash().EqualsTo(st.lastBlockHash) {
+		if !cert.BlockHash().EqualsTo(st.lastInfo.BlockHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Certificate has invalid block hash. Expected %v, got %v", st.lastBlockHash, cert.BlockHash())
+				"Certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
 		}
 
-		if cert.Round() != st.lastCertificate.Round() {
+		if cert.Round() != st.lastInfo.Certificate().Round() {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last certificate's round is not same as we expected. Expected %v, got %v", st.lastCertificate.Round(), cert.Round())
+				"Last certificate's round is not same as we expected. Expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
 		}
 
-		if !cert.CommitteeHash().EqualsTo(st.lastCertificate.CommitteeHash()) {
+		if !cert.CommitteeHash().EqualsTo(st.lastInfo.Certificate().CommitteeHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last committee hash are not same as we expected. Expected %v, got %v", st.lastCertificate.CommitteeHash(), cert.CommitteeHash())
+				"Last committee hash are not same as we expected. Expected %v, got %v", st.lastInfo.Certificate().CommitteeHash(), cert.CommitteeHash())
 		}
 	}
 
@@ -119,7 +119,7 @@ func (st *state) validateCertificateForCurrentHeight(cert block.Certificate, blo
 
 	if !cert.BlockHash().EqualsTo(blockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Certificate has invalid block hash. Expected %v, got %v", st.lastBlockHash, cert.BlockHash())
+			"Certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
 	}
 
 	if !cert.CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {

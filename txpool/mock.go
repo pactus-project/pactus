@@ -2,7 +2,7 @@ package txpool
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/execution"
+	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -18,7 +18,7 @@ func MockingTxPool() *MockTxPool {
 		Txs: make([]*tx.Tx, 0),
 	}
 }
-func (m *MockTxPool) SetChecker(*execution.Execution) {}
+func (m *MockTxPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {}
 func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	for _, t := range m.Txs {
 		if t.ID().EqualsTo(id) {
@@ -41,7 +41,6 @@ func (m *MockTxPool) HasTx(id tx.ID) bool {
 	return false
 }
 
-func (m *MockTxPool) Recheck() {}
 func (m *MockTxPool) Size() int {
 	return len(m.Txs)
 }

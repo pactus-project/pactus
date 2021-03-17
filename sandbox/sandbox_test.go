@@ -65,8 +65,7 @@ func setup(t *testing.T) {
 	assert.NoError(t, err)
 
 	params := param.DefaultParams()
-	tSandbox, err = NewSandbox(tStore, params, 0, tSortitions[0], tCommittee)
-	assert.NoError(t, err)
+	tSandbox = NewSandbox(tStore, params, 10, tSortitions[0], tCommittee)
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
@@ -86,18 +85,12 @@ func TestLoadRecentBlocks(t *testing.T) {
 	params := param.DefaultParams()
 	params.TransactionToLiveInterval = 10
 
-	sandbox, err := NewSandbox(store, params, lastHeight, nil, nil)
-	assert.NoError(t, err)
+	sandbox := NewSandbox(store, params, lastHeight, nil, nil)
 
-	assert.Equal(t, sandbox.RecentBlockHeight(crypto.UndefHash), -1)
-	assert.Equal(t, sandbox.RecentBlockHeight(store.Blocks[11].Hash()), -1)
-	assert.Equal(t, sandbox.RecentBlockHeight(store.Blocks[12].Hash()), 12)
-	assert.Equal(t, sandbox.RecentBlockHeight(store.Blocks[21].Hash()), 21)
-
-	h := crypto.GenerateTestHash()
-	sandbox.AppendNewBlock(h, 22)
-	assert.Equal(t, sandbox.RecentBlockHeight(store.Blocks[12].Hash()), -1)
-	assert.Equal(t, sandbox.RecentBlockHeight(store.Blocks[21].Hash()), 21)
+	assert.Equal(t, sandbox.BlockHeight(crypto.UndefHash), 0)
+	assert.Equal(t, sandbox.BlockHeight(store.Blocks[11].Hash()), 11)
+	assert.Equal(t, sandbox.BlockHeight(store.Blocks[12].Hash()), 12)
+	assert.Equal(t, sandbox.BlockHeight(store.Blocks[21].Hash()), 21)
 }
 
 func TestAccountChange(t *testing.T) {
@@ -123,7 +116,7 @@ func TestAccountChange(t *testing.T) {
 		assert.True(t, tSandbox.accounts[acc1a.Address()].Updated)
 	})
 
-	t.Run("Make new account and reset the sandbox", func(t *testing.T) {
+	t.Run("Make new account", func(t *testing.T) {
 		addr, _, _ := crypto.GenerateTestKeyPair()
 		acc2 := tSandbox.MakeNewAccount(addr)
 
@@ -133,10 +126,6 @@ func TestAccountChange(t *testing.T) {
 		tSandbox.UpdateAccount(acc2)
 		acc22 := tSandbox.Account(acc2.Address())
 		assert.Equal(t, acc2, acc22)
-
-		tSandbox.Clear()
-		assert.Equal(t, len(tSandbox.accounts), 0)
-		assert.Nil(t, tSandbox.Account(addr))
 	})
 }
 
@@ -165,7 +154,7 @@ func TestValidatorChange(t *testing.T) {
 		assert.False(t, tSandbox.validators[val1a.Address()].JoinedCommittee)
 	})
 
-	t.Run("Make new validator and reset the sandbox", func(t *testing.T) {
+	t.Run("Make new validator", func(t *testing.T) {
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		val2 := tSandbox.MakeNewValidator(pub)
 
@@ -175,10 +164,6 @@ func TestValidatorChange(t *testing.T) {
 		tSandbox.UpdateValidator(val2)
 		val22 := tSandbox.Validator(val2.Address())
 		assert.Equal(t, val2, val22)
-
-		tSandbox.Clear()
-		assert.Equal(t, len(tSandbox.validators), 0)
-		assert.Nil(t, tSandbox.Validator(pub.Address()))
 	})
 }
 
@@ -231,17 +216,18 @@ func TestAddValidatorToSet(t *testing.T) {
 	})
 
 	t.Run("Update validator and add to committee", func(t *testing.T) {
-		tSandbox.Clear()
+		tSandbox.params.CommitteeSize = 8
+
 		addr1, pub1, _ := crypto.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)
 		assert.NoError(t, tSandbox.EnterCommittee(block11.Hash(), val1.Address()))
 		seq := val1.Sequence()
 		val1.IncSequence()
 		tSandbox.UpdateValidator(val1)
-		vs := tSandbox.validators[addr1]
-		assert.True(t, vs.JoinedCommittee)
-		assert.True(t, vs.Updated)
-		assert.Equal(t, vs.Validator.Sequence(), seq+1)
+		val := tSandbox.validators[addr1]
+		assert.True(t, val.JoinedCommittee)
+		assert.True(t, val.Updated)
+		assert.Equal(t, val.Validator.Sequence(), seq+1)
 	})
 }
 
@@ -258,18 +244,6 @@ func TestTotalAccountCounter(t *testing.T) {
 		acc2 := tSandbox.MakeNewAccount(addr2)
 		assert.Equal(t, acc2.Number(), 2)
 		assert.Equal(t, acc2.Balance(), int64(0))
-
-		tSandbox.Clear()
-		assert.Equal(t, tSandbox.totalAccounts, 1)
-		assert.Equal(t, tStore.TotalAccounts(), 1)
-
-		acc = tSandbox.MakeNewAccount(addr)
-		assert.Equal(t, tSandbox.totalAccounts, 2)
-
-		tSandbox.UpdateAccount(acc)
-
-		assert.Equal(t, tSandbox.totalAccounts, 2)
-		assert.Equal(t, tStore.TotalAccounts(), 1)
 	})
 }
 
@@ -288,18 +262,6 @@ func TestTotalValidatorCounter(t *testing.T) {
 		assert.Equal(t, val2.Number(), 5)
 		assert.Equal(t, val2.BondingHeight(), tSandbox.CurrentHeight())
 		assert.Equal(t, val2.Stake(), int64(0))
-
-		tSandbox.Clear()
-		assert.Equal(t, tSandbox.totalValidators, 4)
-		assert.Equal(t, tStore.TotalValidators(), 4)
-
-		val = tSandbox.MakeNewValidator(pub)
-		tSandbox.UpdateValidator(val)
-		assert.Equal(t, val.Number(), 4)
-		assert.Equal(t, val.BondingHeight(), tSandbox.CurrentHeight())
-
-		assert.Equal(t, tSandbox.totalValidators, 5)
-		assert.Equal(t, tStore.TotalValidators(), 4)
 	})
 }
 
@@ -406,7 +368,4 @@ func TestChangeToStake(t *testing.T) {
 	tSandbox.UpdateValidator(val2)
 	tSandbox.UpdateValidator(val3)
 	assert.Equal(t, tSandbox.TotalStakeChange(), int64(6500))
-
-	tSandbox.Clear()
-	assert.Equal(t, tSandbox.TotalStakeChange(), int64(0))
 }

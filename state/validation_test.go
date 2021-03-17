@@ -155,7 +155,7 @@ func TestCertificateValidation(t *testing.T) {
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{2}, sig)
 		assert.NoError(t, tState1.UpdateLastCertificate(c))
 		// Certificate didn't change
-		assert.NotEqual(t, tState1.lastCertificate.Hash(), c.Hash())
+		assert.NotEqual(t, tState1.lastInfo.Certificate().Hash(), c.Hash())
 	})
 
 	t.Run("Update last commit- Valid signature, should update the certificate", func(t *testing.T) {
@@ -164,7 +164,7 @@ func TestCertificateValidation(t *testing.T) {
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
 		assert.NoError(t, tState1.UpdateLastCertificate(c))
 		// Certificate updated
-		assert.Equal(t, tState1.lastCertificate.Hash(), c.Hash())
+		assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c.Hash())
 	})
 
 }
@@ -174,16 +174,16 @@ func TestUpdateBlockTime(t *testing.T) {
 
 	fmt.Println(tGenTime)
 	// Maipulate last block time
-	tState1.lastBlockTime = util.Now().Add(-6 * time.Second)
+	tState1.lastInfo.SetBlockTime(util.Now().Add(-6 * time.Second))
 	b, _ := tState1.ProposeBlock(0)
 	fmt.Println(b.Header().Time())
-	assert.True(t, b.Header().Time().After(tState1.lastBlockTime))
+	assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
 	assert.Zero(t, b.Header().Time().Second()%10)
 
-	tState1.lastBlockTime = util.Now().Add(-16 * time.Second)
+	tState1.lastInfo.SetBlockTime(util.Now().Add(-16 * time.Second))
 	b, _ = tState1.ProposeBlock(0)
 	fmt.Println(b.Header().Time())
-	assert.True(t, b.Header().Time().After(tState1.lastBlockTime))
+	assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
 	assert.Zero(t, b.Header().Time().Second()%10)
 }
 
@@ -192,7 +192,7 @@ func TestBlockValidation(t *testing.T) {
 
 	moveToNextHeightForAllStates(t)
 
-	assert.False(t, tState1.lastBlockHash.EqualsTo(crypto.UndefHash))
+	assert.False(t, tState1.lastInfo.BlockHash().EqualsTo(crypto.UndefHash))
 
 	//
 	// Version   			(SanityCheck)
@@ -208,38 +208,38 @@ func TestBlockValidation(t *testing.T) {
 	//
 	invAddr, _, _ := crypto.GenerateTestKeyPair()
 	invHash := crypto.GenerateTestHash()
-	invCert := block.GenerateTestCertificate(tState1.lastBlockHash)
+	invCert := block.GenerateTestCertificate(tState1.lastInfo.BlockHash())
 	trx := tState2.createSubsidyTx(0)
 	assert.NoError(t, tState2.AddPendingTx(trx))
 	ids := block.NewTxIDs()
 	ids.Append(trx.ID())
 
-	b := block.MakeBlock(1, util.Now(), ids, invHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCertificate, tState1.lastSortitionSeed, tState2.signer.Address())
+	b := block.MakeBlock(1, util.Now(), ids, invHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, invHash, tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCertificate, tState1.lastSortitionSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastInfo.BlockHash(), invHash, tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), invHash, tState1.lastReceiptsHash, tState1.lastCertificate, tState1.lastSortitionSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), invHash, tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), invHash, tState1.lastCertificate, tState1.lastSortitionSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), invHash, tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, invCert, tState1.lastSortitionSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), invCert, tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCertificate, tState1.lastSortitionSeed, invAddr)
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), invAddr)
 	assert.NoError(t, tState1.validateBlock(b))
 	c := makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCertificate, sortition.GenerateRandomSeed(), tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), sortition.GenerateRandomSeed(), tState2.signer.Address())
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 
-	b = block.MakeBlock(1, util.Now(), ids, tState1.lastBlockHash, tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastReceiptsHash, tState1.lastCertificate, tState1.lastSortitionSeed.Generate(tState2.signer), tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), ids, tState1.lastInfo.BlockHash(), tState1.committee.CommitteeHash(), tState1.stateHash(), tState1.lastInfo.ReceiptsHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed().Generate(tState2.signer), tState2.signer.Address())
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NoError(t, tState1.CommitBlock(2, b, c))

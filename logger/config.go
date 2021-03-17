@@ -34,9 +34,10 @@ func TestConfig() *Config {
 	conf.Levels["_consensus"] = "debug"
 	conf.Levels["_state"] = "debug"
 	conf.Levels["_sync"] = "debug"
-	conf.Levels["_pool"] = "debug"
-	conf.Levels["_capnp"] = "debug"
-	conf.Levels["_http"] = "debug"
+	conf.Levels["_pool"] = "trace"
+	conf.Levels["_capnp"] = "trace"
+	conf.Levels["_http"] = "trace"
+	conf.Levels["_grpc"] = "trace"
 	conf.Colorfull = true
 
 	return conf

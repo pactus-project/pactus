@@ -1,7 +1,6 @@
 package execution
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution/executor"
 	"github.com/zarbchain/zarb-go/sandbox"
@@ -11,38 +10,43 @@ import (
 )
 
 type Executor interface {
-	Execute(trx *tx.Tx) error
+	Execute(trx *tx.Tx, sb sandbox.Sandbox) error
 	Fee() int64
 }
 type Execution struct {
 	executors      map[payload.PayloadType]Executor
-	sandbox        sandbox.Sandbox
 	accumulatedFee int64
 }
 
-func NewExecution(sb sandbox.Sandbox, strict bool) *Execution {
+func newExecution(strict bool) *Execution {
 	execs := make(map[payload.PayloadType]Executor)
-	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(sb, strict)
-	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(sb, strict)
-	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(sb, strict)
+	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(strict)
+	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(strict)
+	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(strict)
 
 	return &Execution{
 		executors: execs,
-		sandbox:   sb,
 	}
 }
+func NewExecution() *Execution {
+	return newExecution(true)
+}
 
-func (exe *Execution) Execute(trx *tx.Tx) error {
+func NewChecker() *Execution {
+	return newExecution(false)
+}
+
+func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if err := trx.SanityCheck(); err != nil {
 		return err
 	}
-	if err := exe.checkStamp(trx); err != nil {
+	if err := exe.checkStamp(trx, sb); err != nil {
 		return err
 	}
-	if err := exe.checkMemo(trx); err != nil {
+	if err := exe.checkMemo(trx, sb); err != nil {
 		return err
 	}
-	if err := exe.checkFee(trx); err != nil {
+	if err := exe.checkFee(trx, sb); err != nil {
 		return err
 	}
 
@@ -51,7 +55,7 @@ func (exe *Execution) Execute(trx *tx.Tx) error {
 		return errors.Errorf(errors.ErrInvalidTx, "unknown transaction type: %v", trx.PayloadType())
 	}
 
-	if err := e.Execute(trx); err != nil {
+	if err := e.Execute(trx, sb); err != nil {
 		return err
 	}
 
@@ -60,31 +64,21 @@ func (exe *Execution) Execute(trx *tx.Tx) error {
 	return nil
 }
 
-func (exe *Execution) ResetFee() {
-	exe.accumulatedFee = 0
-}
-
 func (exe *Execution) AccumulatedFee() int64 {
 	return exe.accumulatedFee
 }
 
-func (exe *Execution) ClaimAccumulatedFee() {
-	acc := exe.sandbox.Account(crypto.TreasuryAddress)
-	acc.AddToBalance(exe.accumulatedFee)
-	exe.sandbox.UpdateAccount(acc)
-}
-
-func (exe *Execution) checkMemo(trx *tx.Tx) error {
-	if len(trx.Memo()) > exe.sandbox.MaxMemoLength() {
+func (exe *Execution) checkMemo(trx *tx.Tx, sb sandbox.Sandbox) error {
+	if len(trx.Memo()) > sb.MaxMemoLength() {
 		return errors.Errorf(errors.ErrInvalidTx, "Memo length exceeded")
 	}
 	return nil
 }
 
-func (exe *Execution) checkStamp(trx *tx.Tx) error {
-	curHeight := exe.sandbox.CurrentHeight()
-	height := exe.sandbox.RecentBlockHeight(trx.Stamp())
-	interval := exe.sandbox.TransactionToLiveInterval()
+func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
+	curHeight := sb.CurrentHeight()
+	height := sb.BlockHeight(trx.Stamp())
+	interval := sb.TransactionToLiveInterval()
 
 	if trx.IsMintbaseTx() {
 		interval = 1
@@ -99,14 +93,14 @@ func (exe *Execution) checkStamp(trx *tx.Tx) error {
 	return nil
 }
 
-func (exe *Execution) checkFee(trx *tx.Tx) error {
+func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if trx.IsMintbaseTx() || trx.IsSortitionTx() {
 		if trx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
 		}
 	} else {
-		fee := int64(float64(trx.Payload().Value()) * exe.sandbox.FeeFraction())
-		fee = util.Max64(fee, exe.sandbox.MinFee())
+		fee := int64(float64(trx.Payload().Value()) * sb.FeeFraction())
+		fee = util.Max64(fee, sb.MinFee())
 		if trx.Fee() != fee {
 			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: %v, got: %v", fee, trx.Fee())
 		}

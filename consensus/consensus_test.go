@@ -189,7 +189,8 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 }
 
 func checkHRS(t *testing.T, cons *consensus, height, round int, step hrs.StepType) {
-	assert.Equal(t, hrs.NewHRS(height, round, step), cons.hrs)
+	expected := hrs.NewHRS(height, round, step)
+	assert.True(t, expected.EqualsTo(cons.HRS()))
 }
 
 func checkHRSWait(t *testing.T, cons *consensus, height, round int, step hrs.StepType) {
@@ -200,7 +201,7 @@ func checkHRSWait(t *testing.T, cons *consensus, height, round int, step hrs.Ste
 		}
 		time.Sleep(200 * time.Millisecond)
 	}
-	assert.Equal(t, expected, cons.hrs)
+	assert.True(t, expected.EqualsTo(cons.HRS()))
 }
 
 func testAddVote(t *testing.T,
@@ -288,6 +289,15 @@ func TestHandleTimeout(t *testing.T) {
 
 	tConsX.handleTimeout(timeout{Height: 2, Step: hrs.StepTypePrepare})
 	checkHRS(t, tConsX, 2, 0, hrs.StepTypePrepare)
+}
+
+func TestDoubleVote(t *testing.T) {
+	setup(t)
+
+	tConsX.enterNewHeight()
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, true)
 }
 
 func TestNotInCommittee(t *testing.T) {

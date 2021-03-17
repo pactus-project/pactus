@@ -127,10 +127,10 @@ func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, sign
 }
 
 func CommitBlockForAllStates(t *testing.T, b block.Block, c block.Certificate) {
-	assert.NoError(t, tState1.CommitBlock(tState1.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState2.CommitBlock(tState2.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState3.CommitBlock(tState3.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState4.CommitBlock(tState4.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState1.CommitBlock(tState1.lastInfo.BlockHeight()+1, b, c))
+	assert.NoError(t, tState2.CommitBlock(tState2.lastInfo.BlockHeight()+1, b, c))
+	assert.NoError(t, tState3.CommitBlock(tState3.lastInfo.BlockHeight()+1, b, c))
+	assert.NoError(t, tState4.CommitBlock(tState4.lastInfo.BlockHeight()+1, b, c))
 }
 
 func moveToNextHeightForAllStates(t *testing.T) {
@@ -225,9 +225,10 @@ func TestCommitSandbox(t *testing.T) {
 		setup(t)
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
-		newAcc := tState1.executionSandbox.MakeNewAccount(addr)
+		sb := tState1.makeSandbox()
+		newAcc := sb.MakeNewAccount(addr)
 		newAcc.AddToBalance(1)
-		tState1.commitSandbox(0)
+		tState1.commitSandbox(sb, 0)
 
 		assert.True(t, tState1.store.HasAccount(addr))
 	})
@@ -236,23 +237,25 @@ func TestCommitSandbox(t *testing.T) {
 		setup(t)
 
 		addr, pub, _ := crypto.GenerateTestKeyPair()
-		newVal := tState1.executionSandbox.MakeNewValidator(pub)
+		sb := tState1.makeSandbox()
+		newVal := sb.MakeNewValidator(pub)
 		newVal.AddToStake(1)
-		tState1.executionSandbox.UpdateValidator(newVal)
-		tState1.commitSandbox(0)
+		sb.UpdateValidator(newVal)
+		tState1.commitSandbox(sb, 0)
 
 		assert.True(t, tState1.store.HasValidator(addr))
-		assert.Equal(t, tState1.executionSandbox.TotalStakeChange(), int64(1))
+		assert.Equal(t, sb.TotalStakeChange(), int64(1))
 		assert.Equal(t, tState1.sortition.TotalStake(), int64(1))
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
 		setup(t)
 
-		acc := tState1.executionSandbox.Account(crypto.TreasuryAddress)
+		sb := tState1.makeSandbox()
+		acc := sb.Account(crypto.TreasuryAddress)
 		acc.SubtractFromBalance(1)
-		tState1.executionSandbox.UpdateAccount(acc)
-		tState1.commitSandbox(0)
+		sb.UpdateAccount(acc)
+		tState1.commitSandbox(sb, 0)
 
 		acc1, _ := tState1.store.Account(crypto.TreasuryAddress)
 		assert.Equal(t, acc1.Balance(), acc.Balance())
@@ -261,14 +264,15 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Modify validator", func(t *testing.T) {
 		setup(t)
 
-		val := tState1.executionSandbox.Validator(tValSigner2.Address())
+		sb := tState1.makeSandbox()
+		val := sb.Validator(tValSigner2.Address())
 		val.AddToStake(2)
-		tState1.executionSandbox.UpdateValidator(val)
-		tState1.commitSandbox(0)
+		sb.UpdateValidator(val)
+		tState1.commitSandbox(sb, 0)
 
 		val1, _ := tState1.store.Validator(tValSigner2.Address())
 		assert.Equal(t, val1.Stake(), val.Stake())
-		assert.Equal(t, tState1.executionSandbox.TotalStakeChange(), int64(2))
+		assert.Equal(t, sb.TotalStakeChange(), int64(2))
 	})
 
 	t.Run("Move committee", func(t *testing.T) {
@@ -276,7 +280,8 @@ func TestCommitSandbox(t *testing.T) {
 
 		nextProposer := tState1.committee.Proposer(1)
 
-		tState1.commitSandbox(0)
+		sb := tState1.makeSandbox()
+		tState1.commitSandbox(sb, 0)
 
 		assert.Equal(t, tState1.committee.Proposer(0).Address(), nextProposer.Address())
 	})
@@ -286,7 +291,8 @@ func TestCommitSandbox(t *testing.T) {
 
 		nextNextProposer := tState1.committee.Proposer(2)
 
-		tState1.commitSandbox(1)
+		sb := tState1.makeSandbox()
+		tState1.commitSandbox(sb, 1)
 
 		assert.Equal(t, tState1.committee.Proposer(0).Address(), nextNextProposer.Address())
 	})
@@ -301,12 +307,12 @@ func TestUpdateLastCertificate(t *testing.T) {
 	CommitBlockForAllStates(t, b1, c1)
 
 	assert.Equal(t, b1.Hash(), b11.Hash())
-	assert.Equal(t, tState1.lastCertificate.Hash(), c1.Hash())
+	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c1.Hash())
 	assert.Error(t, tState1.UpdateLastCertificate(&c12))
 	assert.NoError(t, tState1.UpdateLastCertificate(&c1))
-	assert.Equal(t, tState1.lastCertificate.Hash(), c1.Hash())
+	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c1.Hash())
 	assert.NoError(t, tState1.UpdateLastCertificate(&c11))
-	assert.Equal(t, tState1.lastCertificate.Hash(), c11.Hash())
+	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c11.Hash())
 }
 
 func TestInvalidProposerProposeBlock(t *testing.T) {
@@ -401,13 +407,13 @@ func TestSortition(t *testing.T) {
 	b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
+	height++
 
 	assert.True(t, st1.evaluateSortition())           //  ok
 	assert.False(t, tState1.committee.Contains(addr)) // still not in the set
 
 	// ---------------------------------------------
 	// Certificate another block, new validator should be in the set now
-	height++
 	b, c = makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
@@ -449,7 +455,7 @@ func TestValidateBlockTime(t *testing.T) {
 
 	fmt.Printf("BlockTimeInSecond: %d\n", tState1.params.BlockTimeInSecond)
 	roundedNow := util.RoundNow(10)
-	tState1.lastBlockTime = roundedNow.Add(-1 * time.Minute)
+	tState1.lastInfo.SetBlockTime(roundedNow.Add(-1 * time.Minute))
 
 	// Time not rounded
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-15*time.Second)))
@@ -458,9 +464,9 @@ func TestValidateBlockTime(t *testing.T) {
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(15*time.Second)))
 
 	// Too early
-	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime.Add(-20*time.Second)))
-	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime.Add(-10*time.Second)))
-	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-20*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-10*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime()))
 
 	// Ok
 	assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(10*time.Second)))

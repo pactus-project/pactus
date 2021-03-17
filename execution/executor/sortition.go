@@ -8,18 +8,17 @@ import (
 )
 
 type SortitionExecutor struct {
-	sandbox sandbox.Sandbox
-	strict  bool
+	strict bool
 }
 
-func NewSortitionExecutor(sb sandbox.Sandbox, strict bool) *SortitionExecutor {
-	return &SortitionExecutor{sandbox: sb, strict: strict}
+func NewSortitionExecutor(strict bool) *SortitionExecutor {
+	return &SortitionExecutor{strict: strict}
 }
 
-func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
+func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.SortitionPayload)
 
-	val := e.sandbox.Validator(pld.Address)
+	val := sb.Validator(pld.Address)
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
 	}
@@ -29,19 +28,19 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx) error {
 	if e.strict && val.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
-	if e.sandbox.CurrentHeight()-val.BondingHeight() < 2*e.sandbox.CommitteeSize() {
+	if sb.CurrentHeight()-val.BondingHeight() < 2*sb.CommitteeSize() {
 		return errors.Errorf(errors.ErrInvalidTx, "In bonding period")
 	}
-	if !e.sandbox.VerifySortition(trx.Stamp(), pld.Proof, val) {
+	if !sb.VerifySortition(trx.Stamp(), pld.Proof, val) {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
 	}
-	if err := e.sandbox.EnterCommittee(trx.Stamp(), val.Address()); err != nil {
+	if err := sb.EnterCommittee(trx.Stamp(), val.Address()); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, err.Error())
 	}
 	val.IncSequence()
-	val.UpdateLastJoinedHeight(e.sandbox.CurrentHeight())
+	val.UpdateLastJoinedHeight(sb.CurrentHeight())
 
-	e.sandbox.UpdateValidator(val)
+	sb.UpdateValidator(val)
 
 	return nil
 }
