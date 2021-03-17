@@ -465,10 +465,13 @@ func (st *state) evaluateSortition() bool {
 		if err := st.txPool.AppendTxAndBroadcast(trx); err != nil {
 			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
 			return false
+		} else {
+			st.logger.Debug("Sortition transaction broadcasted?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
+			return true
 		}
 	}
 
-	return true
+	return false
 }
 
 func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
