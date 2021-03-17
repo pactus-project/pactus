@@ -11,8 +11,8 @@ import (
 )
 
 type StateFacade interface {
-	LastBlockHeight() int
 	GenesisHash() crypto.Hash
+	LastBlockHeight() int
 	LastBlockHash() crypto.Hash
 	LastBlockTime() time.Time
 	LastCertificate() *block.Certificate

@@ -21,17 +21,17 @@ func TestSaveLoadLastInfo(t *testing.T) {
 	}
 
 	tState1.saveLastInfo(
-		tState1.lastBlockHeight,
-		*tState1.lastCertificate,
-		tState1.lastReceiptsHash,
+		tState1.lastInfo.BlockHeight(),
+		*tState1.lastInfo.Certificate(),
+		tState1.lastInfo.ReceiptsHash(),
 		tState1.committee.Committers(),
 		tState1.committee.Proposer(0).Address())
 
 	li, err := tState1.loadLastInfo()
 	assert.NoError(t, err)
-	assert.Equal(t, li.LastHeight, tState1.lastBlockHeight)
-	assert.Equal(t, li.LastCertificate.Hash(), tState1.lastCertificate.Hash())
-	assert.Equal(t, li.LastReceiptHash, tState1.lastReceiptsHash)
+	assert.Equal(t, li.LastHeight, tState1.lastInfo.BlockHeight())
+	assert.Equal(t, li.LastCertificate.Hash(), tState1.lastInfo.Certificate().Hash())
+	assert.Equal(t, li.LastReceiptHash, tState1.lastInfo.ReceiptsHash())
 	assert.Equal(t, li.Committee, tState1.committee.Committers())
 	assert.Equal(t, li.NextProposer, tState1.committee.Proposer(0).Address())
 }

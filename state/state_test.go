@@ -127,10 +127,10 @@ func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, sign
 }
 
 func CommitBlockForAllStates(t *testing.T, b block.Block, c block.Certificate) {
-	assert.NoError(t, tState1.CommitBlock(tState1.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState2.CommitBlock(tState2.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState3.CommitBlock(tState3.lastBlockHeight+1, b, c))
-	assert.NoError(t, tState4.CommitBlock(tState4.lastBlockHeight+1, b, c))
+	assert.NoError(t, tState1.CommitBlock(tState1.lastInfo.BlockHeight()+1, b, c))
+	assert.NoError(t, tState2.CommitBlock(tState2.lastInfo.BlockHeight()+1, b, c))
+	assert.NoError(t, tState3.CommitBlock(tState3.lastInfo.BlockHeight()+1, b, c))
+	assert.NoError(t, tState4.CommitBlock(tState4.lastInfo.BlockHeight()+1, b, c))
 }
 
 func moveToNextHeightForAllStates(t *testing.T) {
@@ -301,12 +301,12 @@ func TestUpdateLastCertificate(t *testing.T) {
 	CommitBlockForAllStates(t, b1, c1)
 
 	assert.Equal(t, b1.Hash(), b11.Hash())
-	assert.Equal(t, tState1.lastCertificate.Hash(), c1.Hash())
+	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c1.Hash())
 	assert.Error(t, tState1.UpdateLastCertificate(&c12))
 	assert.NoError(t, tState1.UpdateLastCertificate(&c1))
-	assert.Equal(t, tState1.lastCertificate.Hash(), c1.Hash())
+	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c1.Hash())
 	assert.NoError(t, tState1.UpdateLastCertificate(&c11))
-	assert.Equal(t, tState1.lastCertificate.Hash(), c11.Hash())
+	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c11.Hash())
 }
 
 func TestInvalidProposerProposeBlock(t *testing.T) {
@@ -449,7 +449,7 @@ func TestValidateBlockTime(t *testing.T) {
 
 	fmt.Printf("BlockTimeInSecond: %d\n", tState1.params.BlockTimeInSecond)
 	roundedNow := util.RoundNow(10)
-	tState1.lastBlockTime = roundedNow.Add(-1 * time.Minute)
+	tState1.lastInfo.SetBlockTime(roundedNow.Add(-1 * time.Minute))
 
 	// Time not rounded
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-15*time.Second)))
@@ -458,9 +458,9 @@ func TestValidateBlockTime(t *testing.T) {
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(15*time.Second)))
 
 	// Too early
-	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime.Add(-20*time.Second)))
-	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime.Add(-10*time.Second)))
-	assert.Error(t, tState1.validateBlockTime(tState1.lastBlockTime))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-20*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-10*time.Second)))
+	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime()))
 
 	// Ok
 	assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(10*time.Second)))

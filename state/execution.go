@@ -39,7 +39,7 @@ func (st *state) executeBlock(block block.Block) ([]tx.CommittedTx, error) {
 		twrs[i].Receipt = receipt
 	}
 
-	subsidyAmt := calcBlockSubsidy(st.lastBlockHeight+1, st.params.SubsidyReductionInterval) + st.execution.AccumulatedFee()
+	subsidyAmt := calcBlockSubsidy(st.lastInfo.BlockHeight()+1, st.params.SubsidyReductionInterval) + st.execution.AccumulatedFee()
 	if mintbaseTrx.Payload().Value() != subsidyAmt {
 		return nil, errors.Errorf(errors.ErrInvalidTx, "Invalid subsidy amount. Expected %v, got %v", subsidyAmt, mintbaseTrx.Payload().Value())
 	}
