@@ -14,8 +14,8 @@ var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox
 type MockSandbox struct {
-	Accounts           map[crypto.Address]account.Account
-	Validators         map[crypto.Address]validator.Validator
+	Accounts           map[crypto.Address]*account.Account
+	Validators         map[crypto.Address]*validator.Validator
 	Stamps             map[crypto.Hash]int
 	CurHeight          int
 	Params             param.Params
@@ -28,8 +28,8 @@ type MockSandbox struct {
 
 func MockingSandbox() *MockSandbox {
 	return &MockSandbox{
-		Accounts:   make(map[crypto.Address]account.Account),
-		Validators: make(map[crypto.Address]validator.Validator),
+		Accounts:   make(map[crypto.Address]*account.Account),
+		Validators: make(map[crypto.Address]*validator.Validator),
 		Stamps:     make(map[crypto.Hash]int),
 		Params:     param.DefaultParams(),
 	}
@@ -40,7 +40,7 @@ func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	if !ok {
 		return nil
 	}
-	return &acc
+	return acc
 }
 func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	a := account.NewAccount(addr, m.TotalAccount)
@@ -48,14 +48,14 @@ func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	return a
 }
 func (m *MockSandbox) UpdateAccount(acc *account.Account) {
-	m.Accounts[acc.Address()] = *acc
+	m.Accounts[acc.Address()] = acc
 }
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	val, ok := m.Validators[addr]
 	if !ok {
 		return nil
 	}
-	return &val
+	return val
 }
 func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
 	v := validator.NewValidator(pub, m.TotalAccount, m.CurHeight+1)
@@ -63,7 +63,7 @@ func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validato
 	return v
 }
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
-	m.Validators[val.Address()] = *val
+	m.Validators[val.Address()] = val
 
 }
 func (m *MockSandbox) EnterCommittee(hash crypto.Hash, addr crypto.Address) error {

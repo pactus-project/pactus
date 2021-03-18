@@ -78,12 +78,13 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(100, stamp100)
 	tSandbox.AppendStampAndUpdateHeight(101, stamp101)
 	proof1 := sortition.GenerateRandomProof()
+	proof2 := sortition.GenerateRandomProof()
 
 	tSandbox.AcceptSortition = true
-	tSandbox.WelcomeToCommittee = true
+	tSandbox.WelcomeToCommittee = false
 
 	sortition1 := tx.NewSortitionTx(stamp100, 102, tValSigner.Address(), proof1)
-	sortition2 := tx.NewSortitionTx(stamp101, 102, tValSigner.Address(), proof1)
+	sortition2 := tx.NewSortitionTx(stamp101, 102, tValSigner.Address(), proof2)
 
 	assert.NoError(t, exe1.Execute(sortition1, tSandbox))
 	assert.NoError(t, exe1.Execute(sortition2, tSandbox))

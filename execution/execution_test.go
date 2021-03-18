@@ -129,7 +129,7 @@ func TestChecker(t *testing.T) {
 
 	t.Run("Accept bond transaction for future blocks", func(t *testing.T) {
 		acc, signer := account.GenerateTestAccount(1)
-		tSandbox.Accounts[acc.Address()] = *acc
+		tSandbox.Accounts[acc.Address()] = acc
 
 		tSandbox.InCommittee = true
 		trx := tx.NewBondTx(stamp1000, acc.Sequence()+1, signer.Address(), signer.PublicKey(), 1000, 1000, "")

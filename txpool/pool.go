@@ -69,7 +69,9 @@ func (pool *txPool) AppendTx(trx *tx.Tx) error {
 	}
 
 	if pool.appendTxCh != nil {
-		pool.appendTxCh <- trx
+		go func(_trx *tx.Tx) {
+			pool.appendTxCh <- trx
+		}(trx)
 	}
 
 	return nil
@@ -144,11 +146,6 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		return trx
 	}
 
-	pool.logger.Debug("Query transaction from nodes", "id", id)
-
-	msg := message.NewOpaqueQueryTransactionsMessage([]tx.ID{id})
-	pool.broadcastCh <- msg
-
 	defer func() {
 		if pool.appendTxCh != nil {
 			close(pool.appendTxCh)
@@ -156,9 +153,14 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		}
 	}()
 
+	pool.logger.Debug("Query transaction from nodes", "id", id)
+
 	pool.lk.Lock()
 	pool.appendTxCh = make(chan *tx.Tx, 100)
 	pool.lk.Unlock()
+
+	msg := message.NewOpaqueQueryTransactionsMessage([]tx.ID{id})
+	pool.broadcastCh <- msg
 
 	timeout := time.NewTimer(pool.config.WaitingTimeout)
 
