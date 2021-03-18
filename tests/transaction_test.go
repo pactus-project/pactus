@@ -69,15 +69,13 @@ func TestSendingTransactions(t *testing.T) {
 		require.Error(t, broadcastSendTransaction(t, aliceSigner, carolAddr, 50000000, 50000))
 	})
 
-	for i := 0; i < 100; i++ {
-		t.Run("Bob sends two transaction at once", func(t *testing.T) {
-			require.NoError(t, broadcastSendTransaction(t, bobSigner, carolAddr, 10, 1000))
-			incSequence(t, bobSigner.Address())
+	t.Run("Bob sends two transaction at once", func(t *testing.T) {
+		require.NoError(t, broadcastSendTransaction(t, bobSigner, carolAddr, 10, 1000))
+		incSequence(t, bobSigner.Address())
 
-			require.NoError(t, broadcastSendTransaction(t, bobSigner, daveAddr, 1, 1000))
-			incSequence(t, bobSigner.Address())
-		})
-	}
+		require.NoError(t, broadcastSendTransaction(t, bobSigner, daveAddr, 1, 1000))
+		incSequence(t, bobSigner.Address())
+	})
 
 	// Make sure all transaction confirmed
 	for i := 0; i < 10; i++ {
@@ -94,7 +92,7 @@ func TestSendingTransactions(t *testing.T) {
 	require.NotNil(t, daveAcc)
 
 	assert.Equal(t, aliceAcc.Balance(), int64(80000000-50050000))
-	assert.Equal(t, bobAcc.Balance(), int64(50000000-201100))
-	assert.Equal(t, carolAcc.Balance(), int64(1000))
-	assert.Equal(t, daveAcc.Balance(), int64(100))
+	assert.Equal(t, bobAcc.Balance(), int64(50000000-2011))
+	assert.Equal(t, carolAcc.Balance(), int64(10))
+	assert.Equal(t, daveAcc.Balance(), int64(1))
 }

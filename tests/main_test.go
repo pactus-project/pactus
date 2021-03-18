@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
@@ -70,9 +71,10 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "info"
-		tConfigs[i].Logger.Levels["_consensus"] = "error"
-		tConfigs[i].Logger.Levels["_txpool"] = "debug"
+		tConfigs[i].Logger.Levels["_consensus"] = "info"
+		tConfigs[i].Logger.Levels["_pool"] = "debug"
 
+		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
 		tConfigs[i].Sync.CacheSize = 1000
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
@@ -111,7 +113,7 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 
 	totalStake := int64(0)
-	for i := 4; i < nodeCount; i++ {
+	for i := committeeSize; i < nodeCount; i++ {
 		amt := util.RandInt64(1000000 - 1) // fee is always 1000
 		err := broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000)
 		if err != nil {
