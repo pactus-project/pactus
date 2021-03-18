@@ -72,15 +72,3 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
 	checkHRSWait(t, tConsP, h, r+1, hrs.StepTypePrepare)
 }
-
-func TestEnterNewRound(t *testing.T) {
-	setup(t)
-
-	tConsP.enterNewHeight()
-
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY, false)
-	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrecommit)
-	tConsP.enterNewRound(0)
-	checkHRS(t, tConsP, 1, 0, hrs.StepTypePrecommit)
-}
