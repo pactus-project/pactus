@@ -23,8 +23,7 @@ import (
 var tSigners []crypto.Signer
 var tConfigs []*config.Config
 var tNodes []*node.Node
-var tCurlAddress = "0.0.0.0:1337"
-var tCapnpAddress = "0.0.0.0:31337"
+var tCapnpAddress = "0.0.0.0:1337"
 var tGenDoc *genesis.Genesis
 var tCapnpServer capnp.ZarbServer
 var tCtx context.Context
@@ -61,19 +60,18 @@ func TestMain(m *testing.M) {
 		tConfigs[i].State.Store.Path = util.TempDirPath()
 		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
 		if i == 0 {
-			tConfigs[i].Http.Address = tCurlAddress
 			tConfigs[i].Capnp.Address = tCapnpAddress
 		} else {
-			tConfigs[i].Http.Enable = false
 			tConfigs[i].Capnp.Enable = false
 		}
+		tConfigs[i].Http.Enable = false
 		tConfigs[i].GRPC.Enable = false
 
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
-		tConfigs[i].Logger.Levels["_sync"] = "error"
+		tConfigs[i].Logger.Levels["_sync"] = "info"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
-		tConfigs[i].Logger.Levels["_txpool"] = "error"
+		tConfigs[i].Logger.Levels["_txpool"] = "debug"
 
 		tConfigs[i].Sync.CacheSize = 1000
 		fmt.Printf("Node %d address: %s\n", i+1, addr)

@@ -466,7 +466,7 @@ func (st *state) evaluateSortition() bool {
 			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
 			return false
 		} else {
-			st.logger.Debug("Sortition transaction broadcasted?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
+			st.logger.Debug("Sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
 			return true
 		}
 	}
@@ -572,7 +572,7 @@ func (st *state) Transaction(id tx.ID) *tx.CommittedTx {
 func (st *state) Block(height int) *block.Block {
 	b, err := st.store.Block(height)
 	if err != nil {
-		st.logger.Debug("Error on retrieving block", "err", err)
+		st.logger.Trace("Error on retrieving block", "err", err)
 	}
 	return b
 }
@@ -580,7 +580,7 @@ func (st *state) Block(height int) *block.Block {
 func (st *state) BlockHeight(hash crypto.Hash) int {
 	h, err := st.store.BlockHeight(hash)
 	if err != nil {
-		st.logger.Debug("Error on retrieving block height", "err", err)
+		st.logger.Trace("Error on retrieving block height", "err", err)
 	}
 	return h
 }
@@ -588,7 +588,7 @@ func (st *state) BlockHeight(hash crypto.Hash) int {
 func (st *state) Account(addr crypto.Address) *account.Account {
 	acc, err := st.store.Account(addr)
 	if err != nil {
-		st.logger.Debug("Error on retrieving block", "err", err)
+		st.logger.Trace("Error on retrieving account", "err", err)
 	}
 	return acc
 }
@@ -596,7 +596,7 @@ func (st *state) Account(addr crypto.Address) *account.Account {
 func (st *state) Validator(addr crypto.Address) *validator.Validator {
 	val, err := st.store.Validator(addr)
 	if err != nil {
-		st.logger.Debug("Error on retrieving block", "err", err)
+		st.logger.Trace("Error on retrieving validator", "err", err)
 	}
 	return val
 }

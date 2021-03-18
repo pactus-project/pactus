@@ -460,7 +460,7 @@ func (syncer *synchronizer) queryTransactions(ids []tx.ID) {
 		trx := syncer.cache.GetTransaction(id)
 		if trx != nil {
 			if err := syncer.state.AddPendingTx(trx); err != nil {
-				syncer.logger.Warn("Query for an invalid transaction", "tx", trx)
+				syncer.logger.Warn("Query for an invalid transaction", "tx", trx, "err", err)
 			}
 		} else {
 			missed = append(missed, ids[i])
