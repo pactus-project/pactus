@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	Name           string
-	Address        string
+	ListenAddress  []string
 	NodeKeyFile    string
 	EnableMDNS     bool
 	EnableKademlia bool
@@ -33,7 +33,7 @@ type BootstrapConfig struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Name:           "zarb",
-		Address:        "/ip4/0.0.0.0/tcp/0",
+		ListenAddress:  []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
 		NodeKeyFile:    "node_key",
 		EnableMDNS:     true,
 		EnableKademlia: true,
@@ -50,7 +50,7 @@ func DefaultConfig() *Config {
 func TestConfig() *Config {
 	return &Config{
 		Name:           "zarb-testnet",
-		Address:        "/ip4/0.0.0.0/tcp/0",
+		ListenAddress:  []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
 		NodeKeyFile:    util.TempFilePath(),
 		EnableMDNS:     true,
 		EnableKademlia: true,

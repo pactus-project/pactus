@@ -2,19 +2,27 @@ package network
 
 import (
 	"context"
+	"time"
 
 	host "github.com/libp2p/go-libp2p-core/host"
-	peer "github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p/p2p/discovery"
 )
+
+// DiscoveryInterval is how often we re-publish our mDNS records.
+const DiscoveryInterval = time.Hour
+
+// DiscoveryServiceTag is used in our mDNS advertisements to discover other peers.
+const DiscoveryServiceTag = "pubsub-zarb"
 
 // HandlePeerFound connects to peers discovered via mDNS. Once they're connected,
 // the PubSub system will automatically start interacting with them if they also
 // support PubSub.
 func (n *Network) HandlePeerFound(pi peer.AddrInfo) {
 	n.logger.Trace("discovered new peer", "id", pi.ID.Pretty())
-	err := n.host.Connect(context.Background(), pi)
-	if err != nil {
+	ctx, cancel := context.WithTimeout(n.ctx, time.Second*30)
+	defer cancel()
+	if err := n.host.Connect(ctx, pi); err != nil {
 		n.logger.Error("error connecting to peer", "id", pi.ID.Pretty(), "err", err)
 	}
 }

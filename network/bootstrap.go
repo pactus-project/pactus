@@ -25,9 +25,9 @@ type Bootstrapper struct {
 	bootstrapPeers []peer.AddrInfo
 
 	// Dependencies
-	h host.Host
-	d inet.Dialer
-	r routing.Routing
+	host    host.Host
+	dialer  inet.Dialer
+	routing routing.Routing
 
 	// Bookkeeping
 	ticker *time.Ticker
@@ -41,12 +41,12 @@ type Bootstrapper struct {
 // to the network by connecting to the given bootstrap peers.
 func NewBootstrapper(ctx context.Context, h host.Host, d inet.Dialer, r routing.Routing, conf *BootstrapConfig, logger *logger.Logger) *Bootstrapper {
 	b := &Bootstrapper{
-		ctx:    ctx,
-		config: conf,
-		h:      h,
-		d:      d,
-		r:      r,
-		logger: logger,
+		ctx:     ctx,
+		config:  conf,
+		host:    h,
+		dialer:  d,
+		routing: r,
+		logger:  logger,
 	}
 
 	addresses, err := PeerAddrsToAddrInfo(conf.Addresses)
@@ -90,13 +90,13 @@ func (b *Bootstrapper) Stop() {
 // has fallen below b.MinPeerThreshold it will attempt to connect to
 // a random subset of its bootstrap peers.
 func (b *Bootstrapper) checkConnectivity() {
-	currentPeers := b.d.Peers()
+	currentPeers := b.dialer.Peers()
 	b.logger.Debug("Check connectivity", "peers", len(currentPeers), "timeout", b.config.Timeout)
 
 	// Let's check if some peers are disconnected
 	var connectedPeers []peer.ID
 	for _, p := range currentPeers {
-		connectedness := b.d.Connectedness(p)
+		connectedness := b.dialer.Connectedness(p)
 		if connectedness == network.Connected {
 			connectedPeers = append(connectedPeers, p)
 		} else {
@@ -106,7 +106,10 @@ func (b *Bootstrapper) checkConnectivity() {
 
 	if len(connectedPeers) > b.config.MaxThreshold {
 		b.logger.Debug("peer count is about maximum threshold", "count", len(connectedPeers), "threshold", b.config.MaxThreshold)
-	} else if len(connectedPeers) < b.config.MinThreshold {
+		return
+	}
+
+	if len(connectedPeers) < b.config.MinThreshold {
 		b.logger.Debug("peer count is less than minimum threshold", "count", len(connectedPeers), "threshold", b.config.MinThreshold)
 
 		ctx, cancel := context.WithTimeout(b.ctx, b.config.Timeout)
@@ -135,12 +138,15 @@ func (b *Bootstrapper) checkConnectivity() {
 
 			wg.Add(1)
 			go func(pi peer.AddrInfo) {
-				if err := b.h.Connect(ctx, pi); err != nil {
+				if err := b.host.Connect(ctx, pi); err != nil {
 					b.logger.Error("got error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
 				}
 				wg.Done()
 			}(pinfo)
 		}
+
+		peers := b.host.Peerstore().Peers()
+		b.logger.Debug("Peer store info", "peers", peers)
 	}
 }
 
@@ -154,7 +160,7 @@ func hasPID(pids []peer.ID, pid peer.ID) bool {
 }
 
 func (b *Bootstrapper) bootstrapIpfsRouting() error {
-	dht, ok := b.r.(*dht.IpfsDHT)
+	dht, ok := b.routing.(*dht.IpfsDHT)
 	if !ok {
 		b.logger.Warn("No bootstrapping to do exit quietly.")
 		// No bootstrapping to do exit quietly.

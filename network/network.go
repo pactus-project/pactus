@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"time"
 
 	"github.com/libp2p/go-libp2p"
 	acrypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p-core/peerstore"
 	libp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	libp2pps "github.com/libp2p/go-libp2p-pubsub"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -17,13 +17,8 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/version"
 )
-
-// DiscoveryInterval is how often we re-publish our mDNS records.
-const DiscoveryInterval = time.Hour
-
-// DiscoveryServiceTag is used in our mDNS advertisements to discover other chat peers.
-const DiscoveryServiceTag = "pubsub-chat-example"
 
 type Network struct {
 	ctx          context.Context
@@ -76,11 +71,13 @@ func NewNetwork(conf *Config) (*Network, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	host, err := libp2p.New(
-		ctx,
-		libp2p.ListenAddrStrings(conf.Address),
+	opts := []libp2p.Option{
 		libp2p.Identity(nodeKey),
-	)
+		libp2p.ListenAddrStrings(conf.ListenAddress...),
+		libp2p.Ping(true),
+		libp2p.UserAgent("zarb-" + version.NodeVersion.String()),
+	}
+	host, err := libp2p.New(ctx, opts...)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
@@ -97,7 +94,7 @@ func NewNetwork(conf *Config) (*Network, error) {
 		pubsub: pubsub,
 	}
 	n.logger = logger.NewLogger("_network", n)
-	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.Address)
+	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.ListenAddress)
 
 	if conf.EnableMDNS {
 		mdns, err := n.setupMNSDiscovery(n.ctx, n.host)
@@ -150,11 +147,15 @@ func (n *Network) ID() peer.ID {
 	return n.host.ID()
 }
 
+func (n *Network) Peerstore() peerstore.Peerstore {
+	return n.host.Peerstore()
+}
+
 func (n *Network) Fingerprint() string {
 	return fmt.Sprintf("{%d}", len(n.host.Network().Peers()))
 }
 
 func (n *Network) JoinTopic(name string) (*pubsub.Topic, error) {
-	topic := fmt.Sprintf("/zarb/%s/%s", n.config.Name, name)
+	topic := fmt.Sprintf("/zarb/pubsub/%s/v1/%s", n.config.Name, name)
 	return n.pubsub.Join(topic)
 }

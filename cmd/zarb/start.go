@@ -58,12 +58,6 @@ func Start() func(c *cli.Cmd) {
 				deadlock.Opts.Disable = true
 			}
 
-			keyObj, err = retrievePrivateKey(workspace, keyFileOpt, authOpt, privateKeyOpt)
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! %v", err)
-				return
-			}
-
 			workspace = *workingDirOpt
 			if workspace == "." {
 				if !util.PathExists(genesisFile) {
@@ -73,6 +67,12 @@ func Start() func(c *cli.Cmd) {
 			}
 
 			workspace, err = filepath.Abs(workspace)
+			if err != nil {
+				cmd.PrintErrorMsg("Aborted! %v", err)
+				return
+			}
+
+			keyObj, err = retrievePrivateKey(workspace, keyFileOpt, authOpt, privateKeyOpt)
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! %v", err)
 				return

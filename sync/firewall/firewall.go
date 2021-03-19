@@ -40,7 +40,7 @@ func (f *Firewall) ParsMessage(data []byte, from peer.ID) *message.Message {
 
 	if err = msg.SanityCheck(); err != nil {
 		peer.IncreaseInvalidMessage()
-		logger.Debug("Peer sent us invalid msg", "peer", util.FingerprintPeerID(from), "msg", msg, "err", err)
+		logger.Debug("Peer sent us invalid msg", "from", util.FingerprintPeerID(from), "msg", msg, "err", err)
 		return nil
 	}
 
