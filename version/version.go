@@ -27,3 +27,9 @@ func (v Version) String() string {
 	return fmt.Sprintf("%d.%d.%d-%s",
 		v.Major, v.Minor, v.Patch, GitCommit)
 }
+
+func (v Version) MarshalText() ([]byte, error) {
+	str := fmt.Sprintf("%d.%d.%d",
+		v.Major, v.Minor, v.Patch)
+	return []byte(str), nil
+}

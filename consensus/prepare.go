@@ -25,6 +25,6 @@ func (cs *consensus) enterPrepare(round int) {
 
 	// Everything is good
 	cs.status.SetPrepared(true)
-	cs.logger.Info("Prepare: Proposal signed", "proposal", roundProposal)
+	cs.logger.Info("Prepare: Proposal approved", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrepare, round, roundProposal.Block().Hash())
 }
