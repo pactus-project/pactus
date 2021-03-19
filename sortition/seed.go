@@ -41,6 +41,19 @@ func (s Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
 	return public.Verify(prevSeed[:], sig)
 }
 
+func (s Seed) MarshalText() ([]byte, error) {
+	return []byte(hex.EncodeToString(s[:])), nil
+}
+
+func (s *Seed) UnmarshalText(text []byte) error {
+	seed, err := SeedFromString(string(text))
+	if err != nil {
+		return err
+	}
+	*s = seed
+	return nil
+}
+
 func GenerateRandomSeed() Seed {
 	s := Seed{}
 	_, err := rand.Read(s[:])

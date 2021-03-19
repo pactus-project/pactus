@@ -28,6 +28,19 @@ func ProofFromRawBytes(data []byte) (Proof, error) {
 	return p, nil
 }
 
+func (p Proof) MarshalText() ([]byte, error) {
+	return []byte(hex.EncodeToString(p[:])), nil
+}
+
+func (p *Proof) UnmarshalText(text []byte) error {
+	proof, err := ProofFromString(string(text))
+	if err != nil {
+		return err
+	}
+	*p = proof
+	return nil
+}
+
 func GenerateRandomProof() Proof {
 	p := Proof{}
 	_, err := rand.Read(p[:])
