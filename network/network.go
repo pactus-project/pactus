@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/libp2p/go-libp2p"
+	circuit "github.com/libp2p/go-libp2p-circuit"
 	acrypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/peer"
@@ -76,6 +77,15 @@ func NewNetwork(conf *Config) (*Network, error) {
 		libp2p.ListenAddrStrings(conf.ListenAddress...),
 		libp2p.Ping(true),
 		libp2p.UserAgent("zarb-" + version.NodeVersion.String()),
+	}
+	if conf.EnableNATService {
+		opts = append(opts,
+			libp2p.EnableNATService(),
+			libp2p.NATPortMap())
+	}
+	if conf.EnableRelay {
+		opts = append(opts,
+			libp2p.EnableRelay(circuit.OptHop))
 	}
 	host, err := libp2p.New(ctx, opts...)
 	if err != nil {

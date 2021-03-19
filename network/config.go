@@ -7,12 +7,14 @@ import (
 )
 
 type Config struct {
-	Name           string
-	ListenAddress  []string
-	NodeKeyFile    string
-	EnableMDNS     bool
-	EnableKademlia bool
-	Bootstrap      *BootstrapConfig
+	Name             string
+	ListenAddress    []string
+	NodeKeyFile      string
+	EnableNATService bool
+	EnableRelay      bool
+	EnableMDNS       bool
+	EnableKademlia   bool
+	Bootstrap        *BootstrapConfig
 }
 
 // BootstrapConfig holds all configuration options related to bootstrap nodes
@@ -32,11 +34,13 @@ type BootstrapConfig struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Name:           "zarb",
-		ListenAddress:  []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
-		NodeKeyFile:    "node_key",
-		EnableMDNS:     true,
-		EnableKademlia: true,
+		Name:             "zarb",
+		ListenAddress:    []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
+		NodeKeyFile:      "node_key",
+		EnableNATService: true,
+		EnableRelay:      true,
+		EnableMDNS:       true,
+		EnableKademlia:   true,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    []string{},
 			MinThreshold: 8,
@@ -49,11 +53,13 @@ func DefaultConfig() *Config {
 
 func TestConfig() *Config {
 	return &Config{
-		Name:           "zarb-testnet",
-		ListenAddress:  []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
-		NodeKeyFile:    util.TempFilePath(),
-		EnableMDNS:     true,
-		EnableKademlia: true,
+		Name:             "zarb-testnet",
+		ListenAddress:    []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
+		NodeKeyFile:      util.TempFilePath(),
+		EnableNATService: true,
+		EnableRelay:      true,
+		EnableMDNS:       true,
+		EnableKademlia:   true,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    []string{},
 			MinThreshold: 4,

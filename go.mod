@@ -19,10 +19,11 @@ require (
 	github.com/jawher/mow.cli v1.2.0
 	github.com/kr/text v0.2.0 // indirect
 	github.com/libp2p/go-libp2p v0.12.0
+	github.com/libp2p/go-libp2p-circuit v0.4.0
 	github.com/libp2p/go-libp2p-core v0.7.0
 	github.com/libp2p/go-libp2p-kad-dht v0.11.0
 	github.com/libp2p/go-libp2p-noise v0.1.2 // indirect
-	github.com/libp2p/go-libp2p-protocol v0.1.0 // indirect
+	github.com/libp2p/go-libp2p-protocol v0.1.0
 	github.com/libp2p/go-libp2p-pubsub v0.4.1
 	github.com/libp2p/go-libp2p-yamux v0.4.1 // indirect
 	github.com/mattn/go-runewidth v0.0.8 // indirect
