@@ -8,10 +8,6 @@ const (
 	hrpAddress = "zrb"
 )
 
-const (
-	hrpAddress = "zrb"
-)
-
 var TreasuryAddress = Address{data: addressData{Address: [AddressSize]byte{0}}}
 
 func init() {
