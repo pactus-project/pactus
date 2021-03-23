@@ -87,6 +87,6 @@ func TestInvalidBech32(t *testing.T) {
 	assert.Error(t, err)
 	
 	// Invalid checksum
-	_, err := AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dz")
+	_, err = AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dz")
 	assert.Error(t, err)
 }
