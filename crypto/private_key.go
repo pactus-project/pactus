@@ -56,8 +56,6 @@ func PrivateKeyFromRawBytes(data []byte) (PrivateKey, error) {
 	return pv, nil
 }
 
-/// -------
-/// CASTING
 func (pv PrivateKey) RawBytes() []byte {
 	if pv.data.SecretKey == nil {
 		return nil
@@ -71,9 +69,6 @@ func (pv PrivateKey) String() string {
 	}
 	return pv.data.SecretKey.SerializeToHexStr()
 }
-
-/// ----------
-/// MARSHALING
 
 func (pv PrivateKey) MarshalText() ([]byte, error) {
 	return []byte(pv.String()), nil

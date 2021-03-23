@@ -25,10 +25,10 @@ func PublicKeyFromString(text string) (PublicKey, error) {
 		return PublicKey{}, err
 	}
 
-	return publicKeyFromRawBytes(data)
+	return PublicKeyFromRawBytes(data)
 }
 
-func publicKeyFromRawBytes(data []byte) (PublicKey, error) {
+func PublicKeyFromRawBytes(data []byte) (PublicKey, error) {
 	if len(data) != PublicKeySize {
 		return PublicKey{}, fmt.Errorf("Invalid public key")
 	}
@@ -47,9 +47,6 @@ func publicKeyFromRawBytes(data []byte) (PublicKey, error) {
 	return pb, nil
 }
 
-/// -------
-/// CASTING
-
 func (pb PublicKey) RawBytes() []byte {
 	if pb.data.PublicKey == nil {
 		return nil
@@ -61,11 +58,8 @@ func (pb PublicKey) String() string {
 	if pb.data.PublicKey == nil {
 		return ""
 	}
-	return pb.data.PublicKey.SerializeToHexStr() // to bech32
+	return pb.data.PublicKey.SerializeToHexStr()
 }
-
-/// ----------
-/// MARSHALING
 
 func (pb PublicKey) MarshalText() ([]byte, error) {
 	return []byte(pb.String()), nil
@@ -110,7 +104,7 @@ func (pb *PublicKey) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	p, err := publicKeyFromRawBytes(data)
+	p, err := PublicKeyFromRawBytes(data)
 	if err != nil {
 		return err
 	}
@@ -118,9 +112,6 @@ func (pb *PublicKey) UnmarshalCBOR(bs []byte) error {
 	*pb = p
 	return nil
 }
-
-/// ----------
-/// ATTRIBUTES
 
 func (pb *PublicKey) SanityCheck() error {
 	bs := pb.RawBytes()

@@ -46,9 +46,6 @@ func SignatureFromRawBytes(data []byte) (Signature, error) {
 	return sig, nil
 }
 
-/// -------
-/// CASTING
-
 func (sig Signature) RawBytes() []byte {
 	if sig.data.Signature == nil {
 		return nil
@@ -67,9 +64,6 @@ func (sig Signature) String() string {
 func (sig Signature) Fingerprint() string {
 	return hex.EncodeToString(sig.RawBytes()[:6])
 }
-
-/// ----------
-/// MARSHALING
 
 func (sig Signature) MarshalText() ([]byte, error) {
 	return []byte(sig.String()), nil
@@ -122,9 +116,6 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 	*sig = s
 	return nil
 }
-
-/// ----------
-/// ATTRIBUTES
 
 func (sig *Signature) SanityCheck() error {
 	bs := sig.RawBytes()
