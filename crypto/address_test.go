@@ -76,7 +76,7 @@ func TestMarshalingEmptyAddress(t *testing.T) {
 }
 
 func TestTreasuryAddress(t *testing.T) {
-	expected, err := AddressFromString("0000000000000000000000000000000000000000")
+	expected, err := AddressFromString("zrb1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqn627cy")
 	assert.NoError(t, err)
 	assert.Equal(t, TreasuryAddress.RawBytes(), expected.RawBytes())
 }

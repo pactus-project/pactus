@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/btcsuite/btcutil/bech32"
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/errors"
 )
@@ -21,12 +22,15 @@ type addressData struct {
 }
 
 func AddressFromString(text string) (Address, error) {
-	bs, err := hex.DecodeString(text)
+	hrp, data, err := bech32.DecodeToBase256(text)
 	if err != nil {
 		return Address{}, err
 	}
+	if hrp != hrpAddress {
+		return Address{}, fmt.Errorf("Invalid hrp: %v", hrp)
+	}
+	return AddressFromRawBytes(data)
 
-	return AddressFromRawBytes(bs)
 }
 
 func AddressFromRawBytes(bs []byte) (Address, error) {
@@ -40,9 +44,6 @@ func AddressFromRawBytes(bs []byte) (Address, error) {
 	return addr, nil
 }
 
-/// -------
-/// CASTING
-
 func (addr Address) RawBytes() []byte {
 	return addr.data.Address[:]
 }
@@ -52,11 +53,13 @@ func (addr Address) Fingerprint() string {
 }
 
 func (addr Address) String() string {
-	return hex.EncodeToString(addr.data.Address[:])
-}
+	str, err := bech32.EncodeFromBase256(hrpAddress, addr.data.Address[:])
+	if err != nil {
+		panic(fmt.Sprintf("Invalid address. %v", err))
+	}
 
-/// ----------
-/// MARSHALING
+	return str
+}
 
 func (addr Address) MarshalText() ([]byte, error) {
 	return []byte(addr.String()), nil

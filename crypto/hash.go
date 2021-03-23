@@ -78,9 +78,6 @@ func (h Hash) IsUndef() bool {
 	return h.EqualsTo(UndefHash)
 }
 
-/// ----------
-/// MARSHALING
-
 func (h Hash) MarshalText() ([]byte, error) {
 	return []byte(h.String()), nil
 }
