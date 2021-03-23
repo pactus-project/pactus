@@ -34,15 +34,15 @@ func TestPublicKeyMarshaling(t *testing.T) {
 }
 
 func TestPublicKeyFromBytes(t *testing.T) {
-	_, err := publicKeyFromRawBytes(nil)
+	_, err := PublicKeyFromRawBytes(nil)
 	assert.Error(t, err)
 	_, pub1, _ := GenerateTestKeyPair()
-	pub2, err := publicKeyFromRawBytes(pub1.RawBytes())
+	pub2, err := PublicKeyFromRawBytes(pub1.RawBytes())
 	assert.NoError(t, err)
 	require.True(t, pub1.EqualsTo(pub2))
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", PublicKeySize))
-	_, err = publicKeyFromRawBytes(inv)
+	_, err = PublicKeyFromRawBytes(inv)
 	assert.Error(t, err)
 }
 

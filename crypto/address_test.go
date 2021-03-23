@@ -33,15 +33,15 @@ func TestAddressMarshaling(t *testing.T) {
 }
 
 func TestAddressFromBytes(t *testing.T) {
-	_, err := addressFromRawBytes(nil)
+	_, err := AddressFromRawBytes(nil)
 	assert.Error(t, err)
 	addr1, _, _ := GenerateTestKeyPair()
-	addr2, err := addressFromRawBytes(addr1.RawBytes())
+	addr2, err := AddressFromRawBytes(addr1.RawBytes())
 	assert.NoError(t, err)
 	require.True(t, addr1.EqualsTo(addr2))
 
 	inv, _ := hex.DecodeString("0102")
-	_, err = addressFromRawBytes(inv)
+	_, err = AddressFromRawBytes(inv)
 	assert.Error(t, err)
 }
 
