@@ -20,7 +20,7 @@ type publicKeyData struct {
 }
 
 func PublicKeyFromString(text string) (PublicKey, error) {
-	data, err := hex.DecodeString(text)
+	data, err := hex.DecodeString(text) // from bech32 string
 	if err != nil {
 		return PublicKey{}, err
 	}
@@ -47,9 +47,6 @@ func PublicKeyFromRawBytes(data []byte) (PublicKey, error) {
 	return pb, nil
 }
 
-/// -------
-/// CASTING
-
 func (pb PublicKey) RawBytes() []byte {
 	if pb.data.PublicKey == nil {
 		return nil
@@ -63,9 +60,6 @@ func (pb PublicKey) String() string {
 	}
 	return pb.data.PublicKey.SerializeToHexStr()
 }
-
-/// ----------
-/// MARSHALING
 
 func (pb PublicKey) MarshalText() ([]byte, error) {
 	return []byte(pb.String()), nil
@@ -118,9 +112,6 @@ func (pb *PublicKey) UnmarshalCBOR(bs []byte) error {
 	*pb = p
 	return nil
 }
-
-/// ----------
-/// ATTRIBUTES
 
 func (pb *PublicKey) SanityCheck() error {
 	bs := pb.RawBytes()
