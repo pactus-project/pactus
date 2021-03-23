@@ -80,3 +80,13 @@ func TestTreasuryAddress(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, TreasuryAddress.RawBytes(), expected.RawBytes())
 }
+
+func TestInvalidBech32(t *testing.T) {
+	// Invalid hrp
+	_, err := AddressFromString("srb17mka0cw484es5whq638xkm89msgzczmrwy64dy")
+	assert.Error(t, err)
+	
+	// Invalid checksum
+	_, err := AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dz")
+	assert.Error(t, err)
+}
