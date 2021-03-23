@@ -313,10 +313,8 @@ func (syncer *synchronizer) broadcastHeartBeat() {
 
 	// Broadcast a random vote if the validator is an active validator
 	if syncer.isThisActiveValidator() {
-		if syncer.consensus.RoundProposal(hrs.Round()) == nil {
-			// We don't have proposal yet
-			syncer.queryProposal(hrs.Height(), hrs.Round())
-		}
+		syncer.queryProposal(hrs.Height(), hrs.Round())
+
 		v := syncer.consensus.PickRandomVote(hrs.Round())
 		if v != nil {
 			syncer.consensusSync.BroadcastVote(v)
