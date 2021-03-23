@@ -10,6 +10,7 @@ import (
 
 type StoreReader interface {
 	Block(height int) (*block.Block, error)
+	HasAnyBlock() bool
 	BlockHeight(hash crypto.Hash) (int, error)
 	Transaction(hash crypto.Hash) (*tx.CommittedTx, error)
 	HasAccount(crypto.Address) bool
@@ -18,5 +19,16 @@ type StoreReader interface {
 	HasValidator(crypto.Address) bool
 	Validator(addr crypto.Address) (*validator.Validator, error)
 	ValidatorByNumber(num int) (*validator.Validator, error)
+	IterateValidators(consumer func(*validator.Validator) (stop bool))
+	IterateAccounts(consumer func(*account.Account) (stop bool))
 	TotalValidators() int
+}
+
+type Store interface {
+	StoreReader
+	UpdateAccount(acc *account.Account)
+	UpdateValidator(acc *validator.Validator)
+	SaveBlock(block block.Block, height int) error
+	SaveTransaction(ctrx tx.CommittedTx)
+	Close() error
 }
