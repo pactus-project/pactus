@@ -92,3 +92,41 @@ func (m *MockStore) TotalValidators() int {
 func (m *MockStore) LastBlockHeight() int {
 	return len(m.Blocks)
 }
+
+func (m *MockStore) Close() error {
+	return nil
+}
+
+func (m *MockStore) HasAnyBlock() bool {
+
+	return len(m.Blocks) > 0
+}
+
+func (m *MockStore) IterateAccounts(consumer func(*account.Account) (stop bool)) {
+
+	for _, v := range m.Accounts {
+		stopped := consumer(v)
+		if stopped {
+			return
+		}
+	}
+}
+
+func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
+
+	for _, v := range m.Validators {
+		stopped := consumer(v)
+		if stopped {
+			return
+		}
+	}
+}
+
+func (m *MockStore) SaveBlock(block block.Block, height int) error {
+	m.Blocks[height] = &block
+	return nil
+}
+
+func (m *MockStore) SaveTransaction(ctrx tx.CommittedTx) {
+	m.Transactions[ctrx.Tx.ID()] = &ctrx
+}

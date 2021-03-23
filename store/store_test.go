@@ -12,14 +12,14 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-var tStore *Store
+var tStore *store
 
 func setup(t *testing.T) {
 	conf := TestConfig()
-	store, err := NewStore(conf)
+	s, err := NewStore(conf)
 	assert.NoError(t, err)
 
-	tStore = store
+	tStore = s.(*store)
 }
 
 func TestReturnNilForNonExistingItems(t *testing.T) {

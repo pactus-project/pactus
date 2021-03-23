@@ -17,6 +17,7 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -77,14 +78,19 @@ func setup(t *testing.T) {
 	params.CommitteeSize = 4
 	params.BlockTimeInSecond = 2
 
+	store1 := store.MockingStore()
+	store2 := store.MockingStore()
+	store3 := store.MockingStore()
+	store4 := store.MockingStore()
+
 	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
-	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], tTxPool)
+	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)
 	require.NoError(t, err)
-	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], tTxPool)
+	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool)
 	require.NoError(t, err)
-	stB, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexB], tTxPool)
+	stB, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexB], store3, tTxPool)
 	require.NoError(t, err)
-	stP, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], tTxPool)
+	stP, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool)
 	require.NoError(t, err)
 
 	consX, err := NewConsensus(TestConfig(), stX, tSigners[tIndexX], make(chan *message.Message, 100))
@@ -305,7 +311,9 @@ func TestNotInCommittee(t *testing.T) {
 
 	_, _, priv := crypto.GenerateTestKeyPair()
 	signer := crypto.NewSigner(priv)
-	st, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, signer, tTxPool)
+	store := store.MockingStore()
+
+	st, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, signer, store, tTxPool)
 	cons, err := NewConsensus(TestConfig(), st, signer, make(chan *message.Message, 100))
 	assert.NoError(t, err)
 
