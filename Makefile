@@ -2,7 +2,7 @@ UNAME := $(shell uname)
 PACKAGES=$(shell go list ./... | grep -v 'tests')
 TAGS=-tags 'zarb'
 HERUMI= $(shell pwd)/.herumi
-CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/mcl/lib -L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++"
+CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++"
 LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD`"
 CAPNP_INC = -I$(GOPATH)/src/zombiezen.com/go/capnproto2/std
 PROTO_INC = -I. -I$(GOPATH)/src/github.com/googleapis/googleapis
