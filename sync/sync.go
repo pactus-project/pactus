@@ -315,7 +315,7 @@ func (syncer *synchronizer) broadcastHeartBeat() {
 	if syncer.isThisActiveValidator() {
 		syncer.queryProposal(hrs.Height(), hrs.Round())
 
-		v := syncer.consensus.PickRandomVote(hrs.Round())
+		v := syncer.consensus.PickRandomVote()
 		if v != nil {
 			syncer.consensusSync.BroadcastVote(v)
 		}

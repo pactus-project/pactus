@@ -73,7 +73,7 @@ func (m *MockConsensus) HRS() *hrs.HRS {
 func (m *MockConsensus) Fingerprint() string {
 	return ""
 }
-func (m *MockConsensus) PickRandomVote(round int) *vote.Vote {
+func (m *MockConsensus) PickRandomVote() *vote.Vote {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
