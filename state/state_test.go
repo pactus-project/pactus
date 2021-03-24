@@ -33,12 +33,6 @@ var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
 func setup(t *testing.T) {
-	if tState1 != nil {
-		tState1.Close()
-		tState2.Close()
-		tState3.Close()
-		tState4.Close()
-	}
 	logger.InitLogger(logger.TestConfig())
 
 	_, _, priv1 := crypto.GenerateTestKeyPair()
@@ -84,7 +78,7 @@ func setup(t *testing.T) {
 	tState4, _ = st4.(*state)
 }
 
-func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) (block.Block, block.Certificate) {
+func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) (*block.Block, *block.Certificate) {
 	var st *state
 	if tState1.committee.IsProposer(tState1.signer.Address(), round) {
 		st = tState1
@@ -100,10 +94,10 @@ func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) 
 	require.NoError(t, err)
 	c := makeCertificateAndSign(t, b.Hash(), round, signers...)
 
-	return *b, c
+	return b, c
 }
 
-func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) block.Certificate {
+func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) *block.Certificate {
 	sigs := make([]crypto.Signature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)
 	committers := []int{0, 1, 2, 3}
@@ -129,10 +123,10 @@ func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, sign
 	}
 
 	absences := util.Subtracts(committers, signedBy)
-	return *block.NewCertificate(blockHash, round, committers, absences, crypto.Aggregate(sigs))
+	return block.NewCertificate(blockHash, round, committers, absences, crypto.Aggregate(sigs))
 }
 
-func CommitBlockForAllStates(t *testing.T, b block.Block, c block.Certificate) {
+func CommitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {
 	assert.NoError(t, tState1.CommitBlock(tState1.lastInfo.BlockHeight()+1, b, c))
 	assert.NoError(t, tState2.CommitBlock(tState2.lastInfo.BlockHeight()+1, b, c))
 	assert.NoError(t, tState3.CommitBlock(tState3.lastInfo.BlockHeight()+1, b, c))
@@ -161,7 +155,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.NotNil(t, b)
 	assert.Equal(t, b.TxIDs().Len(), 2)
 
-	err = tState1.ValidateBlock(*b)
+	err = tState1.ValidateBlock(b)
 	require.NoError(t, err)
 
 	// Propose and validate again
@@ -170,7 +164,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.NotNil(t, b)
 	assert.Equal(t, b.TxIDs().Len(), 2)
 
-	err = tState1.ValidateBlock(*b)
+	err = tState1.ValidateBlock(b)
 	require.NoError(t, err)
 }
 
@@ -215,7 +209,7 @@ func TestCommitBlocks(t *testing.T) {
 
 	b1, c1 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
 	invBlock, _ := block.GenerateTestBlock(nil, nil)
-	assert.Error(t, tState1.CommitBlock(1, *invBlock, c1))
+	assert.Error(t, tState1.CommitBlock(1, invBlock, c1))
 	// No error here but block is ignored, because the height is invalid
 	assert.NoError(t, tState1.CommitBlock(2, b1, c1))
 	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
@@ -316,10 +310,10 @@ func TestUpdateLastCertificate(t *testing.T) {
 
 	assert.Equal(t, b1.Hash(), b11.Hash())
 	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c1.Hash())
-	assert.Error(t, tState1.UpdateLastCertificate(&c12))
-	assert.NoError(t, tState1.UpdateLastCertificate(&c1))
+	assert.Error(t, tState1.UpdateLastCertificate(c12))
+	assert.NoError(t, tState1.UpdateLastCertificate(c1))
 	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c1.Hash())
-	assert.NoError(t, tState1.UpdateLastCertificate(&c11))
+	assert.NoError(t, tState1.UpdateLastCertificate(c11))
 	assert.Equal(t, tState1.lastInfo.Certificate().Hash(), c11.Hash())
 }
 
@@ -339,7 +333,7 @@ func TestBlockProposal(t *testing.T) {
 	t.Run("validity of proposed block", func(t *testing.T) {
 		b, err := tState2.ProposeBlock(0)
 		assert.NoError(t, err)
-		assert.NoError(t, tState1.ValidateBlock(*b)) // State1 check state2's proposed block
+		assert.NoError(t, tState1.ValidateBlock(b)) // State1 check state2's proposed block
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
@@ -349,7 +343,7 @@ func TestBlockProposal(t *testing.T) {
 		// Moving to the next round
 		b, err := tState3.ProposeBlock(1)
 		assert.NoError(t, err)
-		assert.NoError(t, tState1.ValidateBlock(*b))
+		assert.NoError(t, tState1.ValidateBlock(b))
 	})
 }
 
@@ -357,7 +351,7 @@ func TestInvalidBlock(t *testing.T) {
 	setup(t)
 
 	b, _ := block.GenerateTestBlock(nil, nil)
-	assert.Error(t, tState1.ValidateBlock(*b))
+	assert.Error(t, tState1.ValidateBlock(b))
 }
 
 func TestForkDetection(t *testing.T) {
@@ -378,7 +372,7 @@ func TestNodeShutdown(t *testing.T) {
 	tState1.Close()
 	assert.Error(t, tState1.CommitBlock(1, b1, c1))
 	b, _ := block.GenerateTestBlock(nil, nil)
-	assert.Error(t, tState1.ValidateBlock(*b))
+	assert.Error(t, tState1.ValidateBlock(b))
 	_, err := tState1.ProposeBlock(0)
 	assert.Error(t, err)
 }
@@ -454,8 +448,8 @@ func TestSortition(t *testing.T) {
 	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 1, 2, 3}, []int{}, crypto.Aggregate(sigs))
 
 	height++
-	require.NoError(t, st1.CommitBlock(height, *b1, *c1))
-	require.NoError(t, tState2.CommitBlock(height, *b1, *c1))
+	require.NoError(t, st1.CommitBlock(height, b1, c1))
+	require.NoError(t, tState2.CommitBlock(height, b1, c1))
 }
 
 func TestValidateBlockTime(t *testing.T) {
@@ -490,7 +484,7 @@ func TestInvalidBlockVersion(t *testing.T) {
 
 	tState1.params.BlockVersion = 2
 	b, _ := tState1.ProposeBlock(0)
-	assert.Error(t, tState2.ValidateBlock(*b))
+	assert.Error(t, tState2.ValidateBlock(b))
 }
 
 func TestInvalidBlockTime(t *testing.T) {

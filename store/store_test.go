@@ -56,13 +56,13 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	b, txs := block.GenerateTestBlock(nil, nil)
 	h := util.RandInt(10000)
 	assert.False(t, tStore.HasAnyBlock())
-	err := tStore.SaveBlock(*b, h)
+	err := tStore.SaveBlock(h, b)
 	assert.NoError(t, err)
 	assert.True(t, tStore.HasAnyBlock())
 
 	for _, trx := range txs {
 		r := trx.GenerateReceipt(tx.Ok, b.Hash())
-		ctrx := tx.CommittedTx{Tx: trx, Receipt: r}
+		ctrx := &tx.CommittedTx{Tx: trx, Receipt: r}
 		tStore.SaveTransaction(ctrx)
 	}
 
@@ -87,7 +87,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 
 	// After closing db, we should not crash
 	assert.NoError(t, tStore.Close())
-	assert.Error(t, tStore.SaveBlock(*b, h))
+	assert.Error(t, tStore.SaveBlock(h, b))
 	_, err = tStore.Block(h)
 	assert.Error(t, err)
 	_, err = tStore.Transaction(txs[0].ID())

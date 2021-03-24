@@ -35,7 +35,7 @@ func TestCacheBlock(t *testing.T) {
 	b1, _ := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
 
-	tState.Store.Blocks[1] = b1
+	tState.Store.SaveBlock(1, b1)
 	tCache.AddBlock(2, b2)
 
 	assert.Equal(t, tCache.GetBlock(1).Hash(), b1.Hash())
@@ -66,7 +66,7 @@ func TestGetTransaction(t *testing.T) {
 	trx3, _ := tx.GenerateTestSendTx()
 	trx4, _ := tx.GenerateTestSendTx()
 
-	tState.Store.Transactions[trx1.ID()] = &tx.CommittedTx{Tx: trx1}
+	tState.Store.SaveTransaction(&tx.CommittedTx{Tx: trx1})
 	assert.NoError(t, tState.AddPendingTx(trx4))
 	tCache.AddTransaction(trx2)
 

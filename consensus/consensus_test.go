@@ -53,12 +53,6 @@ func (o *OverrideFingerprint) Fingerprint() string {
 }
 
 func setup(t *testing.T) {
-	if tConsX != nil {
-		tConsX.state.Close()
-		tConsY.state.Close()
-		tConsB.state.Close()
-		tConsP.state.Close()
-	}
 	conf := logger.TestConfig()
 	conf.Levels["_consensus"] = "debug"
 	logger.InitLogger(conf)
@@ -245,13 +239,13 @@ func commitBlockForAllStates(t *testing.T) {
 	cert := block.NewCertificate(p.Block().Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
 
 	require.NotNil(t, cert)
-	err = tConsX.state.CommitBlock(height+1, p.Block(), *cert)
+	err = tConsX.state.CommitBlock(height+1, p.Block(), cert)
 	assert.NoError(t, err)
-	err = tConsY.state.CommitBlock(height+1, p.Block(), *cert)
+	err = tConsY.state.CommitBlock(height+1, p.Block(), cert)
 	assert.NoError(t, err)
-	err = tConsB.state.CommitBlock(height+1, p.Block(), *cert)
+	err = tConsB.state.CommitBlock(height+1, p.Block(), cert)
 	assert.NoError(t, err)
-	err = tConsP.state.CommitBlock(height+1, p.Block(), *cert)
+	err = tConsP.state.CommitBlock(height+1, p.Block(), cert)
 	assert.NoError(t, err)
 }
 

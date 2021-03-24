@@ -87,7 +87,7 @@ func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
 func (m *MockState) Fingerprint() string {
 	return ""
 }
-func (m *MockState) CommitBlock(height int, b block.Block, cert block.Certificate) error {
+func (m *MockState) CommitBlock(height int, b *block.Block, cert *block.Certificate) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
@@ -97,8 +97,8 @@ func (m *MockState) CommitBlock(height int, b block.Block, cert block.Certificat
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
 		return fmt.Errorf("Invalid block")
 	}
-	m.Store.Blocks[height] = &b
-	m.LastBlockCertificate = &cert
+	m.Store.Blocks[height] = *b
+	m.LastBlockCertificate = cert
 	return nil
 }
 
@@ -112,7 +112,7 @@ func (m *MockState) ProposeBlock(round int) (*block.Block, error) {
 	b, _ := block.GenerateTestBlock(nil, nil)
 	return b, nil
 }
-func (m *MockState) ValidateBlock(block block.Block) error {
+func (m *MockState) ValidateBlock(block *block.Block) error {
 	return nil
 }
 
@@ -120,9 +120,9 @@ func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
-	m.Store.Blocks[h] = b
+	m.Store.SaveBlock(h, b)
 	for _, t := range trxs {
-		m.Store.Transactions[t.ID()] = &tx.CommittedTx{
+		m.Store.Transactions[t.ID()] = tx.CommittedTx{
 			Tx: t, Receipt: t.GenerateReceipt(0, b.Hash()),
 		}
 	}

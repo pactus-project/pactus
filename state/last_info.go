@@ -24,13 +24,13 @@ import (
 //
 type lastInfo struct {
 	LastHeight      int
-	LastCertificate block.Certificate
+	LastCertificate *block.Certificate
 	LastReceiptHash crypto.Hash
 	Committee       []int
 	NextProposer    crypto.Address
 }
 
-func (st *state) saveLastInfo(height int, cert block.Certificate, lastReceiptHash crypto.Hash, committee []int, proposer crypto.Address) {
+func (st *state) saveLastInfo(height int, cert *block.Certificate, lastReceiptHash crypto.Hash, committee []int, proposer crypto.Address) {
 	path := st.config.Store.Path + "/last_info.json"
 	li := lastInfo{
 		LastHeight:      height,

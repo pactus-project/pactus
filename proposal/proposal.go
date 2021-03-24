@@ -31,7 +31,7 @@ func NewProposal(height int, round int, block block.Block) *Proposal {
 }
 func (p *Proposal) Height() int                  { return p.data.Height }
 func (p *Proposal) Round() int                   { return p.data.Round }
-func (p *Proposal) Block() block.Block           { return p.data.Block }
+func (p *Proposal) Block() *block.Block          { return &p.data.Block }
 func (p *Proposal) Signature() *crypto.Signature { return p.data.Signature }
 
 func (p *Proposal) SanityCheck() error {

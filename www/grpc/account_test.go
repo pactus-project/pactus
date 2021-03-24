@@ -20,7 +20,7 @@ func TestGetAccount(t *testing.T) {
 	})
 	conn.Close()
 
-	tMockState.Store.Accounts[acc1.Address()] = acc1
+	tMockState.Store.UpdateAccount(acc1)
 	t.Run("Should return account details", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx, &zarb.AccountRequest{Address: acc1.Address().String(), Verbosity: 1})
 		fmt.Println("the vlaue in", res)
