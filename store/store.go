@@ -10,7 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type Store struct {
+type store struct {
 	lk deadlock.RWMutex
 
 	config         *Config
@@ -20,7 +20,7 @@ type Store struct {
 	validatorStore *validatorStore
 }
 
-func NewStore(conf *Config) (*Store, error) {
+func NewStore(conf *Config) (Store, error) {
 	blockStore, err := newBlockStore(conf.BlockStorePath())
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func NewStore(conf *Config) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Store{
+	return &store{
 		config:         conf,
 		blockStore:     blockStore,
 		txStore:        txStore,
@@ -45,7 +45,7 @@ func NewStore(conf *Config) (*Store, error) {
 		validatorStore: validatorStore,
 	}, nil
 }
-func (s *Store) Close() error {
+func (s *store) Close() error {
 	if err := s.blockStore.close(); err != nil {
 		return err
 	}
@@ -62,28 +62,28 @@ func (s *Store) Close() error {
 	return nil
 }
 
-func (s *Store) SaveBlock(block block.Block, height int) error {
+func (s *store) SaveBlock(block block.Block, height int) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.saveBlock(block, height)
 }
 
-func (s *Store) Block(height int) (*block.Block, error) {
+func (s *store) Block(height int) (*block.Block, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.block(height)
 }
 
-func (s *Store) BlockHeight(hash crypto.Hash) (int, error) {
+func (s *store) BlockHeight(hash crypto.Hash) (int, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.blockHeight(hash)
 }
 
-func (s *Store) SaveTransaction(ctrx tx.CommittedTx) {
+func (s *store) SaveTransaction(ctrx tx.CommittedTx) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -92,42 +92,42 @@ func (s *Store) SaveTransaction(ctrx tx.CommittedTx) {
 	}
 }
 
-func (s *Store) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
+func (s *store) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.txStore.tx(hash)
 }
 
-func (s *Store) HasAccount(addr crypto.Address) bool {
+func (s *store) HasAccount(addr crypto.Address) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.accountStore.hasAccount(addr)
 }
 
-func (s *Store) Account(addr crypto.Address) (*account.Account, error) {
+func (s *store) Account(addr crypto.Address) (*account.Account, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.accountStore.account(addr)
 }
 
-func (s *Store) TotalAccounts() int {
+func (s *store) TotalAccounts() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.accountStore.total
 }
 
-func (s *Store) IterateAccounts(consumer func(*account.Account) (stop bool)) {
+func (s *store) IterateAccounts(consumer func(*account.Account) (stop bool)) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	s.accountStore.iterateAccounts(consumer)
 }
 
-func (s *Store) UpdateAccount(acc *account.Account) {
+func (s *store) UpdateAccount(acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -136,42 +136,42 @@ func (s *Store) UpdateAccount(acc *account.Account) {
 	}
 }
 
-func (s *Store) HasValidator(addr crypto.Address) bool {
+func (s *store) HasValidator(addr crypto.Address) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.hasValidator(addr)
 }
 
-func (s *Store) Validator(addr crypto.Address) (*validator.Validator, error) {
+func (s *store) Validator(addr crypto.Address) (*validator.Validator, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.validator(addr)
 }
 
-func (s *Store) ValidatorByNumber(num int) (*validator.Validator, error) {
+func (s *store) ValidatorByNumber(num int) (*validator.Validator, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.validatorByNumber(num)
 }
 
-func (s *Store) TotalValidators() int {
+func (s *store) TotalValidators() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.total
 }
 
-func (s *Store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
+func (s *store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	s.validatorStore.iterateValidators(consumer)
 }
 
-func (s *Store) UpdateValidator(acc *validator.Validator) {
+func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -180,7 +180,7 @@ func (s *Store) UpdateValidator(acc *validator.Validator) {
 	}
 }
 
-func (s *Store) HasAnyBlock() bool {
+func (s *store) HasAnyBlock() bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 

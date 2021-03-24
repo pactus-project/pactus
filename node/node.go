@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -49,7 +50,12 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(conf.State, genDoc, signer, txPool)
+	store, err := store.NewStore(conf.State.Store)
+	if err != nil {
+		return nil, err
+	}
+
+	state, err := state.LoadOrNewState(conf.State, genDoc, signer, store, txPool)
 	if err != nil {
 		return nil, err
 	}

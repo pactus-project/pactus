@@ -35,7 +35,7 @@ type state struct {
 	signer       crypto.Signer
 	mintbaseAddr crypto.Address
 	genDoc       *genesis.Genesis
-	store        *store.Store
+	store        store.Store
 	params       param.Params
 	txPool       txpool.TxPool
 	committee    *committee.Committee
@@ -48,6 +48,7 @@ func LoadOrNewState(
 	conf *Config,
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
+	store store.Store,
 	txPool txpool.TxPool) (StateFacade, error) {
 
 	var mintbaseAddr crypto.Address
@@ -67,16 +68,12 @@ func LoadOrNewState(
 		txPool:       txPool,
 		params:       genDoc.Params(),
 		signer:       signer,
+		store:        store,
 		mintbaseAddr: mintbaseAddr,
 		sortition:    sortition.NewSortition(),
 		lastInfo:     last_info.NewLastInfo(),
 	}
 	st.logger = logger.NewLogger("_state", st)
-
-	store, err := store.NewStore(conf.Store)
-	if err != nil {
-		return nil, err
-	}
 	st.store = store
 
 	if store.HasAnyBlock() {

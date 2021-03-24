@@ -13,6 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -53,6 +54,11 @@ func setup(t *testing.T) {
 	tGenTime = util.RoundNow(10)
 	tCommonTxPool = txpool.MockingTxPool()
 
+	store1 := store.MockingStore()
+	store2 := store.MockingStore()
+	store3 := store.MockingStore()
+	store4 := store.MockingStore()
+
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
 	val1 := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
@@ -63,13 +69,13 @@ func setup(t *testing.T) {
 	params.CommitteeSize = 4
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
-	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, tCommonTxPool)
+	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, store1, tCommonTxPool)
 	require.NoError(t, err)
-	st2, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner2, tCommonTxPool)
+	st2, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner2, store2, tCommonTxPool)
 	require.NoError(t, err)
-	st3, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner3, tCommonTxPool)
+	st3, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner3, store3, tCommonTxPool)
 	require.NoError(t, err)
-	st4, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner4, tCommonTxPool)
+	st4, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner4, store4, tCommonTxPool)
 	require.NoError(t, err)
 
 	tState1, _ = st1.(*state)
@@ -186,17 +192,19 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Equal(t, trx.Payload().Value(), calcBlockSubsidy(1, tState1.params.SubsidyReductionInterval)+7)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
 
+	store := store.MockingStore()
+
 	// With ivalid mintbase address in config
 	tState1.config.MintbaseAddress = "invalid"
 	tState1.Close()
-	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
+	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
 	assert.Error(t, err)
 
 	// With mintbase address in config
 	addr, _, _ := crypto.GenerateTestKeyPair()
 	tState1.config.MintbaseAddress = addr.String()
 	tState1.Close()
-	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
+	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
 	assert.NoError(t, err)
 	trx = st.(*state).createSubsidyTx(0)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
@@ -380,8 +388,8 @@ func TestSortition(t *testing.T) {
 
 	addr, pub, priv := crypto.GenerateTestKeyPair()
 	signer := crypto.NewSigner(priv)
-
-	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, tCommonTxPool)
+	store := store.MockingStore()
+	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, store, tCommonTxPool)
 	assert.NoError(t, err)
 	st1 := st.(*state)
 
@@ -426,7 +434,7 @@ func TestSortition(t *testing.T) {
 	// Let's save and load tState1
 	committeeHash := tState1.committee.CommitteeHash()
 	tState1.Close()
-	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
+	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
 
 	assert.Equal(t, state1.(*state).committee.CommitteeHash(), committeeHash)
 
