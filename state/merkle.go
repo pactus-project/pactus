@@ -9,6 +9,7 @@ import (
 
 func (st *state) accountsMerkleRootHash() crypto.Hash {
 	total := st.store.TotalAccounts()
+
 	hashes := make([]crypto.Hash, total)
 	st.store.IterateAccounts(func(acc *account.Account) (stop bool) {
 		if acc.Number() >= total {
@@ -18,6 +19,7 @@ func (st *state) accountsMerkleRootHash() crypto.Hash {
 			panic("Duplicated account number")
 		}
 		hashes[acc.Number()] = acc.Hash()
+
 		return false
 	})
 
@@ -48,6 +50,7 @@ func (st *state) stateHash() crypto.Hash {
 	valRootHash := st.validatorsMerkleRootHash()
 
 	rootHash := simpleMerkle.HashMerkleBranches(&accRootHash, &valRootHash)
+
 	return *rootHash
 }
 

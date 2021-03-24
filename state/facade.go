@@ -19,8 +19,8 @@ type StateFacade interface {
 	BlockTime() time.Duration
 	UpdateLastCertificate(lastCertificate *block.Certificate) error
 	ProposeBlock(round int) (*block.Block, error)
-	ValidateBlock(block block.Block) error
-	CommitBlock(height int, block block.Block, cert block.Certificate) error
+	ValidateBlock(block *block.Block) error
+	CommitBlock(height int, block *block.Block, cert *block.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int) *validator.Validator

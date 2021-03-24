@@ -30,7 +30,7 @@ func (ts *txStore) close() error {
 	return ts.db.Close()
 }
 
-func (ts *txStore) saveTx(ctrs tx.CommittedTx) error {
+func (ts *txStore) saveTx(ctrs *tx.CommittedTx) error {
 	if err := ctrs.SanityCheck(); err != nil {
 		return err
 	}

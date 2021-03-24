@@ -84,7 +84,7 @@ func (cs *consensus) createProposal(height int, round int) {
 		cs.logger.Error("Propose: We can't propose a block. Why?", "err", err)
 		return
 	}
-	if err := cs.state.ValidateBlock(*block); err != nil {
+	if err := cs.state.ValidateBlock(block); err != nil {
 		cs.logger.Error("Propose: Our block is invalid. Why?", "err", err)
 		return
 	}

@@ -26,9 +26,10 @@ type StoreReader interface {
 
 type Store interface {
 	StoreReader
+
 	UpdateAccount(acc *account.Account)
 	UpdateValidator(acc *validator.Validator)
-	SaveBlock(block block.Block, height int) error
-	SaveTransaction(ctrx tx.CommittedTx)
+	SaveBlock(height int, block *block.Block) error
+	SaveTransaction(ctrx *tx.CommittedTx)
 	Close() error
 }

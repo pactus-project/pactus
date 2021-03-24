@@ -62,11 +62,11 @@ func (s *store) Close() error {
 	return nil
 }
 
-func (s *store) SaveBlock(block block.Block, height int) error {
+func (s *store) SaveBlock(height int, block *block.Block) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.saveBlock(block, height)
+	return s.blockStore.saveBlock(height, block)
 }
 
 func (s *store) Block(height int) (*block.Block, error) {
@@ -83,7 +83,7 @@ func (s *store) BlockHeight(hash crypto.Hash) (int, error) {
 	return s.blockStore.blockHeight(hash)
 }
 
-func (s *store) SaveTransaction(ctrx tx.CommittedTx) {
+func (s *store) SaveTransaction(ctrx *tx.CommittedTx) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 

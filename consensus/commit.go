@@ -54,7 +54,7 @@ func (cs *consensus) enterCommit(round int) {
 		return
 	}
 
-	if err := cs.state.CommitBlock(height, certBlock, *cert); err != nil {
+	if err := cs.state.CommitBlock(height, certBlock, cert); err != nil {
 		cs.logger.Warn("Commit: committing block failed", "block", certBlock, "err", err)
 		return
 	}
@@ -65,5 +65,5 @@ func (cs *consensus) enterCommit(round int) {
 	cs.scheduleNewHeight()
 
 	// Now broadcast the committed block
-	cs.broadcastBlock(height, &certBlock, cert)
+	cs.broadcastBlock(height, certBlock, cert)
 }
