@@ -507,3 +507,36 @@ func TestInvalidBlockTime(t *testing.T) {
 	assert.Error(t, tState1.ValidateBlock(invalidBlock))
 
 }
+
+func TestValidatorHelpers(t *testing.T) {
+	setup(t)
+
+	t.Run("Should return nil for NonExisting Validator Address", func(t *testing.T) {
+		_, _, priv5 := crypto.GenerateTestKeyPair()
+		nonExistenceValidator := tState1.Validator(priv5.PublicKey().Address())
+		assert.Nil(t, nonExistenceValidator, "State 1 returned Non nil For nonExisting validator")
+		nonExistenceValidator = tState2.Validator(priv5.PublicKey().Address())
+		assert.Nil(t, nonExistenceValidator, "State 2 returned Non nil For nonExisting validator")
+		nonExistenceValidator = tState3.Validator(priv5.PublicKey().Address())
+		assert.Nil(t, nonExistenceValidator, "State 3 returned Non nil For nonExisting validator")
+		nonExistenceValidator = tState4.Validator(priv5.PublicKey().Address())
+		assert.Nil(t, nonExistenceValidator, "State 4 returned Non nil For nonExisting validator")
+	})
+
+	t.Run("Should return validator for valid commitee Validator Address", func(t *testing.T) {
+		existeingValidator := tState4.Validator(tValSigner1.Address())
+		assert.NotNil(t, existeingValidator)
+		assert.Equal(t, 0, existeingValidator.Number())
+	})
+
+	t.Run("Should return validator for corresponding Validator number", func(t *testing.T) {
+		existeingValidator := tState4.ValidatorByNumber(1)
+		assert.NotNil(t, existeingValidator)
+		assert.Equal(t, tValSigner2.Address(), existeingValidator.Address())
+	})
+
+	t.Run("Should return nil for invalid Validator number", func(t *testing.T) {
+		nonExistenceValidator := tState4.ValidatorByNumber(10)
+		assert.Nil(t, nonExistenceValidator)
+	})
+}
