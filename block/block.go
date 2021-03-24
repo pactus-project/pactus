@@ -27,13 +27,13 @@ type blockData struct {
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
-	lastCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) Block {
+	lastCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) *Block {
 
 	txIDsHash := txIDs.Hash()
 	header := NewHeader(version, timestamp,
 		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCertificate.Hash(), sortitionSeed, proposer)
 
-	b := Block{
+	b := &Block{
 		data: blockData{
 			Header:          header,
 			LastCertificate: lastCertificate,
@@ -171,5 +171,5 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		sortitionSeed,
 		*proposer)
 
-	return &block, txs
+	return block, txs
 }
