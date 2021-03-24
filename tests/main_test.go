@@ -76,6 +76,10 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
 		tConfigs[i].Sync.CacheSize = 1000
+		tConfigs[i].Network.EnableKademlia = false
+		tConfigs[i].Network.EnableNATService = false
+		tConfigs[i].Network.EnableRelay = false
+
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
 
