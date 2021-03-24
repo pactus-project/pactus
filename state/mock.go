@@ -186,6 +186,12 @@ func (m *MockState) Validator(addr crypto.Address) *validator.Validator {
 	v, _ := m.Store.Validator(addr)
 	return v
 }
+func (m *MockState) ValidatorByNumber(n int) *validator.Validator {
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+	v, _ := m.Store.ValidatorByNumber(n)
+	return v
+}
 func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
