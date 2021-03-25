@@ -600,6 +600,15 @@ func (st *state) Validator(addr crypto.Address) *validator.Validator {
 	}
 	return val
 }
+
+// ValidatorByNumber returns validator data based on validator number
+func (st *state) ValidatorByNumber(n int) *validator.Validator {
+	val, err := st.store.ValidatorByNumber(n)
+	if err != nil {
+		st.logger.Trace("Error on retrieving validator", "err", err)
+	}
+	return val
+}
 func (st *state) PendingTx(id tx.ID) *tx.Tx {
 	return st.txPool.PendingTx(id)
 }
