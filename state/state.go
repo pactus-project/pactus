@@ -601,7 +601,7 @@ func (st *state) Validator(addr crypto.Address) *validator.Validator {
 	return val
 }
 
-//ValidatorByNumber returns validator data based on assigned number on commitee
+// ValidatorByNumber returns validator data based on validator number
 func (st *state) ValidatorByNumber(n int) *validator.Validator {
 	val, err := st.store.ValidatorByNumber(n)
 	if err != nil {
