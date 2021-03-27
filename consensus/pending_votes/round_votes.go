@@ -8,8 +8,8 @@ import (
 )
 
 type RoundVotes struct {
-	Prepares   *vote.VoteSet
-	Precommits *vote.VoteSet
+	prepares   *VoteSet
+	precommits *VoteSet
 	proposal   *proposal.Proposal
 }
 
@@ -30,18 +30,18 @@ func (rv *RoundVotes) HasVote(hash crypto.Hash) bool {
 
 func (rv *RoundVotes) AllVotes() []*vote.Vote {
 	votes := []*vote.Vote{}
-	votes = append(votes, rv.Prepares.AllVotes()...)
-	votes = append(votes, rv.Precommits.AllVotes()...)
+	votes = append(votes, rv.prepares.AllVotes()...)
+	votes = append(votes, rv.precommits.AllVotes()...)
 
 	return votes
 }
 
-func (rv *RoundVotes) voteSet(voteType vote.VoteType) *vote.VoteSet {
+func (rv *RoundVotes) voteSet(voteType vote.VoteType) *VoteSet {
 	switch voteType {
 	case vote.VoteTypePrepare:
-		return rv.Prepares
+		return rv.prepares
 	case vote.VoteTypePrecommit:
-		return rv.Precommits
+		return rv.precommits
 	}
 
 	logger.Panic("Unexpected vote type %d", voteType)

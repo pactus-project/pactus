@@ -1,4 +1,4 @@
-package vote
+package pending_votes
 
 import (
 	"testing"
@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
 func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []crypto.Signer) {
@@ -30,12 +31,12 @@ func TestAddVote(t *testing.T) {
 
 	h1 := crypto.GenerateTestHash()
 	invSigner := crypto.GenerateTestSigner()
-	vs := NewVoteSet(100, 5, VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(100, 5, vote.VoteTypePrecommit, committee.Validators())
 
-	v1 := NewVote(VoteTypePrecommit, 100, 5, h1, invSigner.Address())
-	v2 := NewVote(VoteTypePrecommit, 100, 5, h1, signers[0].Address())
-	v3 := NewVote(VoteTypePrecommit, 101, 5, h1, signers[1].Address())
-	v4 := NewVote(VoteTypePrecommit, 100, 6, h1, signers[2].Address())
+	v1 := vote.NewVote(vote.VoteTypePrecommit, 100, 5, h1, invSigner.Address())
+	v2 := vote.NewVote(vote.VoteTypePrecommit, 100, 5, h1, signers[0].Address())
+	v3 := vote.NewVote(vote.VoteTypePrecommit, 101, 5, h1, signers[1].Address())
+	v4 := vote.NewVote(vote.VoteTypePrecommit, 100, 6, h1, signers[2].Address())
 
 	invSigner.SignMsg(v1)
 	added, err := vs.AddVote(v1)
@@ -74,11 +75,11 @@ func TestDuplicateVote(t *testing.T) {
 
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
-	vs := NewVoteSet(1, 0, VoteTypePrepare, committee.Validators())
+	vs := NewVoteSet(1, 0, vote.VoteTypePrepare, committee.Validators())
 
-	undefVote := NewVote(VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
-	correctVote := NewVote(VoteTypePrepare, 1, 0, h1, signers[0].Address())
-	duplicatedVote := NewVote(VoteTypePrepare, 1, 0, h2, signers[0].Address())
+	undefVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
+	correctVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[0].Address())
+	duplicatedVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h2, signers[0].Address())
 
 	// sign the votes
 	signers[0].SignMsg(undefVote)
@@ -96,36 +97,41 @@ func TestDuplicateVote(t *testing.T) {
 	assert.Equal(t, vs.Power(), int64(1000)) // First validator's stake
 
 	added, err = vs.AddVote(correctVote)
-	assert.True(t, added) // ok, replace UndefHash
-	assert.NoError(t, err)
-	assert.Equal(t, vs.Len(), 1)             // The vote has replaced
+	assert.True(t, added)                    // ok
+	assert.NoError(t, err)                   //
+	assert.Equal(t, vs.Len(), 2)             // undef + vote
 	assert.Equal(t, vs.Power(), int64(1000)) // First validator's stake
 
 	// Again add undef vote
 	added, err = vs.AddVote(undefVote)
-	assert.False(t, added) // ok
+	assert.False(t, added) // added before
 	assert.NoError(t, err)
-	assert.Equal(t, vs.Len(), 1)
+	assert.Equal(t, vs.Len(), 2)
 
-	bv := vs.blockVotes[h1]
 	added, err = vs.AddVote(duplicatedVote)
-	assert.False(t, added)
+	assert.True(t, added)
 	assert.Error(t, err)
 	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
-	assert.Equal(t, bv.power, int64(0))   // vote has removed
-	assert.Equal(t, vs.Len(), 0)          //
-	assert.Equal(t, vs.Power(), int64(0)) //
+
+	bv1 := vs.blockVotes[h1]
+	bv2 := vs.blockVotes[h2]
+	bv3 := vs.blockVotes[crypto.UndefHash]
+	assert.Equal(t, vs.Len(), 3)             //
+	assert.Equal(t, vs.Power(), int64(1000)) //
+	assert.Equal(t, bv1.power, int64(1000))  //
+	assert.Equal(t, bv2.power, int64(1000))  //
+	assert.Equal(t, bv3.power, int64(1000))  //
 }
 
 func TestQuorum(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
 	h1 := crypto.GenerateTestHash()
-	v1 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[0].Address())
-	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
-	v3 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[2].Address())
-	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[3].Address())
+	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
+	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
+	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[2].Address())
+	v4 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[3].Address())
 
 	signers[0].SignMsg(v1)
 	signers[1].SignMsg(v2)
@@ -164,18 +170,18 @@ func TestQuorum(t *testing.T) {
 }
 
 // This test is very important. Change it with cautious
-func TestUpdateVote(t *testing.T) {
+func TestPower(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
 
 	h1 := crypto.GenerateTestHash()
-	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
-	v2 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[1].Address())
-	v3 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[2].Address())
-	v4 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[0].Address())
-	v5 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
-	v6 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[2].Address())
+	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
+	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[1].Address())
+	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[2].Address())
+	v4 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
+	v5 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
+	v6 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[2].Address())
 
 	signers[0].SignMsg(v1)
 	signers[1].SignMsg(v2)
@@ -192,33 +198,32 @@ func TestUpdateVote(t *testing.T) {
 	assert.True(t, ok)
 
 	assert.True(t, vs.HasQuorum())
-	assert.True(t, vs.QuorumBlock().EqualsTo(crypto.UndefHash))
+	assert.True(t, vs.QuorumBlock().IsUndef())
 	assert.Equal(t, vs.Len(), 3)
 	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
 
-	// Update vote
 	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
 
 	// Check block votes power
 	bv1 := vs.blockVotes[crypto.UndefHash]
-	assert.Equal(t, bv1.power, int64(1500+2500))
+	assert.Equal(t, bv1.power, int64(1000+1500+2500))
 	bv2 := vs.blockVotes[h1]
 	assert.Equal(t, bv2.power, int64(1000))
 
 	// Check previous votes
 	_, exists1 := bv1.votes[v1.Signer()]
 	_, exists2 := bv1.votes[v2.Signer()]
-	assert.False(t, exists1)
+	assert.True(t, exists1)
 	assert.True(t, exists2)
 
 	// Check accumulated power
 	assert.True(t, vs.HasQuorum())
-	assert.Nil(t, vs.QuorumBlock())
+	assert.True(t, vs.QuorumBlock().IsUndef())
 	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
-	assert.Equal(t, vs.Len(), 3)
+	assert.Equal(t, vs.Len(), 4)
 
-	// Update more votes
+	// Add more votes
 	ok, _ = vs.AddVote(v5)
 	assert.True(t, ok)
 	ok, _ = vs.AddVote(v6)
@@ -226,30 +231,30 @@ func TestUpdateVote(t *testing.T) {
 
 	// Check block votes power
 	bv1 = vs.blockVotes[crypto.UndefHash]
-	assert.Equal(t, bv1.power, int64(0))
+	assert.Equal(t, bv1.power, int64(1000+1500+2500))
 	bv2 = vs.blockVotes[h1]
 	assert.Equal(t, bv2.power, int64(1000+1500+2500))
 
 	assert.True(t, vs.HasQuorum())
 	assert.Equal(t, vs.QuorumBlock(), &h1)
 	assert.Equal(t, vs.Power(), int64(1000+1500+2500))
-	assert.Equal(t, vs.Len(), 3)
+	assert.Equal(t, vs.Len(), 6)
 
 	// Check previous votes
 	_, exists1 = bv1.votes[v1.Signer()]
 	_, exists2 = bv1.votes[v2.Signer()]
-	assert.False(t, exists1)
-	assert.False(t, exists2)
+	assert.True(t, exists1)
+	assert.True(t, exists2)
 }
 
 func TestAllVotes(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
 
 	h1 := crypto.GenerateTestHash()
-	v1 := NewVote(VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
-	v2 := NewVote(VoteTypePrecommit, 1, 0, h1, signers[1].Address())
+	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
+	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
 
 	signers[0].SignMsg(v1)
 	signers[1].SignMsg(v2)

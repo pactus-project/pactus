@@ -207,6 +207,34 @@ func TestLateProposal(t *testing.T) {
 	assert.True(t, tConsP.status.IsCommitted())
 }
 
+func TestLateProposal2(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	h := 3
+	p := makeProposal(t, h, 0) // tConsP should propose for this round
+
+	tConsX.enterNewHeight()
+
+	// tConsP is partitioned, so tConsX doesn't have the proposal
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexB, false)
+
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexB, false)
+
+	checkHRSWait(t, tConsX, h, 1, hrs.StepTypePrepare)
+
+	tConsX.SetProposal(p)
+
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
+}
+
 func TestLateUndefVote(t *testing.T) {
 	setup(t)
 
@@ -232,35 +260,6 @@ func TestLateUndefVote(t *testing.T) {
 
 	checkHRSWait(t, tConsX, h, r+1, hrs.StepTypePropose)
 }
-
-func TestLateProposal2(t *testing.T) {
-	setup(t)
-
-	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
-
-	h := 3
-	p := makeProposal(t, h, 0) // tConsP should propose for this round
-
-	tConsX.enterNewHeight()
-
-	// tConsP is partitioned, so tConsX doesn't have the proposal
-	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexB, false)
-
-	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexB, false)
-
-	checkHRSWait(t, tConsX, h, 1, hrs.StepTypePrepare)
-
-	// Now partition healed, but it's too late, We already moved to the next round
-	tConsX.SetProposal(p)
-
-	checkHRS(t, tConsX, h, 1, hrs.StepTypePrepare)
-}
-
 func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
 	setup(t)
 

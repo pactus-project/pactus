@@ -252,7 +252,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	seq := acc.Sequence() + 1
 	amt := calcBlockSubsidy(st.lastInfo.BlockHeight()+1, st.params.SubsidyReductionInterval)
 
-	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, amt+fee, "")
+	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, amt+fee, "hello!")
 	return tx
 }
 

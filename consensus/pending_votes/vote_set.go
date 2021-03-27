@@ -1,4 +1,4 @@
-package vote
+package pending_votes
 
 import (
 	"fmt"
@@ -6,43 +6,14 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/vote"
 )
-
-type blockVotes struct {
-	votes map[crypto.Address]*Vote
-	power int64
-}
-
-func newBlockVotes() *blockVotes {
-	return &blockVotes{
-		votes: make(map[crypto.Address]*Vote),
-		power: 0,
-	}
-}
-
-func (vs *blockVotes) addVote(vote *Vote) bool {
-	signer := vote.Signer()
-	if existing, ok := vs.votes[signer]; ok {
-		if !existing.data.Signature.EqualsTo(*vote.data.Signature) {
-			// Signature malleability?
-			logger.Panic("Invalid vote")
-		} else {
-			//
-			return false
-		}
-	}
-
-	vs.votes[signer] = vote
-
-	return true
-}
 
 type VoteSet struct {
 	height           int
 	round            int
-	voteType         VoteType
+	voteType         vote.VoteType
 	validators       []*validator.Validator
 	blockVotes       map[crypto.Hash]*blockVotes
 	totalPower       int64
@@ -50,7 +21,7 @@ type VoteSet struct {
 	quorumBlock      *crypto.Hash
 }
 
-func NewVoteSet(height int, round int, voteType VoteType, validators []*validator.Validator) *VoteSet {
+func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*validator.Validator) *VoteSet {
 
 	totalPower := int64(0)
 	for _, val := range validators {
@@ -67,10 +38,10 @@ func NewVoteSet(height int, round int, voteType VoteType, validators []*validato
 	}
 }
 
-func (vs *VoteSet) Type() VoteType { return vs.voteType }
-func (vs *VoteSet) Height() int    { return vs.height }
-func (vs *VoteSet) Round() int     { return vs.round }
-func (vs *VoteSet) Power() int64   { return vs.accumulatedPower }
+func (vs *VoteSet) Type() vote.VoteType { return vs.voteType }
+func (vs *VoteSet) Height() int         { return vs.height }
+func (vs *VoteSet) Round() int          { return vs.round }
+func (vs *VoteSet) Power() int64        { return vs.accumulatedPower }
 
 func (vs *VoteSet) Len() int {
 	sum := 0
@@ -80,8 +51,8 @@ func (vs *VoteSet) Len() int {
 	return sum
 }
 
-func (vs *VoteSet) AllVotes() []*Vote {
-	votes := make([]*Vote, 0)
+func (vs *VoteSet) AllVotes() []*vote.Vote {
+	votes := make([]*vote.Vote, 0)
 
 	for _, blockVotes := range vs.blockVotes {
 		for _, vote := range blockVotes.votes {
@@ -100,13 +71,13 @@ func (vs *VoteSet) getValidatorByAddress(addr crypto.Address) *validator.Validat
 	return nil
 }
 
-func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
+func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	signer := vote.Signer()
 	blockHash := vote.BlockHash()
 
-	if (vote.data.Height != vs.height) ||
-		(vote.data.Round != vs.round) ||
-		(vote.data.VoteType != vs.voteType) {
+	if (vote.Height() != vs.height) ||
+		(vote.Round() != vs.round) ||
+		(vote.VoteType() != vs.voteType) {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
 			vs.height, vs.round, vs.voteType,
 			vote.Height(), vote.Round(), vote.VoteType())
@@ -127,39 +98,34 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 		vs.blockVotes[blockHash] = bv
 	}
 
+	var err error
+	var duplicated bool
 	// check for conflict
 	for id, bv := range vs.blockVotes {
-		if id != vote.data.BlockHash {
-			duplicated, ok := bv.votes[signer]
+		if !id.EqualsTo(vote.BlockHash()) {
+			anotherVote, ok := bv.votes[signer]
 
 			if ok {
 				// A possible scenario:
 				// A peer doesn't have a proposal, he votes for undef.
 				// Later he receives the proposal, so he vote again.
 				// We should ignore undef vote
-				if duplicated.BlockHash().IsUndef() {
+				if anotherVote.BlockHash().IsUndef() {
 					// Remove undef vote and replace it with new vote
-					vs.accumulatedPower -= val.Power()
-					bv.power -= val.Power()
-					delete(bv.votes, signer)
-					vs.quorumBlock = nil
+					duplicated = true
 				} else if vote.BlockHash().IsUndef() {
 					// Because of network latency, we might receive undef vote after block vote.
 					// Ignore undef vote in this case.
 					return false, nil
-				} else if duplicated.BlockHash() != blockHash {
+				} else if anotherVote.BlockHash() != blockHash {
 					// Duplicated vote:
 					// 1- Same signer
-					// 2- Previous blockhash is not undef
-					// 3- Block hashes are different
+					// 2- Block hashes are not undef and different
 					//
-					// We report an error and remove the previous vote
+					// We report an error but keep both votes
 					//
-					vs.accumulatedPower -= val.Power()
-					bv.power -= val.Power()
-					delete(bv.votes, signer)
-
-					return false, errors.Error(errors.ErrDuplicateVote)
+					duplicated = true
+					err = errors.Error(errors.ErrDuplicateVote)
 				}
 			}
 		}
@@ -167,15 +133,16 @@ func (vs *VoteSet) AddVote(vote *Vote) (bool, error) {
 
 	added := bv.addVote(vote)
 	if added {
-		vs.accumulatedPower += val.Power()
 		bv.power += val.Power()
 		if vs.hasQuorum(bv.power) {
 			vs.quorumBlock = &blockHash
 		}
-
+		if !duplicated {
+			vs.accumulatedPower += val.Power()
+		}
 	}
 
-	return added, nil
+	return added, err
 }
 func (vs *VoteSet) hasQuorum(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)
@@ -190,7 +157,7 @@ func (vs *VoteSet) QuorumBlock() *crypto.Hash {
 }
 
 func (vs *VoteSet) ToCertificate() *block.Certificate {
-	if vs.voteType != VoteTypePrecommit {
+	if vs.voteType != vote.VoteTypePrecommit {
 		return nil
 	}
 	blockHash := vs.quorumBlock

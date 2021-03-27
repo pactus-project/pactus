@@ -45,7 +45,7 @@ func NewConsensus(
 
 	// Update height later, See enterNewHeight.
 	cs.pendingVotes = pending_votes.NewPendingVotes()
-	cs.hrs = hrs.NewHRS(0, -1, hrs.StepTypeUnknown)
+	cs.hrs = hrs.NewHRS(0, 0, hrs.StepTypeUnknown)
 	cs.status = status.NewStatus()
 	cs.logger = logger.NewLogger("_consensus", cs)
 
@@ -144,7 +144,6 @@ func (cs *consensus) handleTimeout(ti timeout) {
 }
 
 func (cs *consensus) addVote(v *vote.Vote) error {
-	// Height mismatch is ignored.
 	if cs.hrs.Height() != v.Height() {
 		return nil
 	}

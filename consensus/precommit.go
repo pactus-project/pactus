@@ -33,7 +33,7 @@ func (cs *consensus) enterPrecommit(round int) {
 		//
 		// If we are behind the partition, it might be easy to find it here
 		// There should be some null-votes here
-		// If number of null-votes are greather tha `1f` (`f` stands for faulty)
+		// If weight of null-votes are greather tha `1f` (`f` stands for faulty)
 		// Then we broadcast our proposal and return here
 		//
 		// Note: Byzantine node might send different valid proposals to different nodes

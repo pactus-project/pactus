@@ -72,7 +72,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "info"
 		tConfigs[i].Logger.Levels["_consensus"] = "info"
-		tConfigs[i].Logger.Levels["_pool"] = "debug"
+		tConfigs[i].Logger.Levels["_pool"] = "info"
 
 		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
 		tConfigs[i].Sync.CacheSize = 1000
