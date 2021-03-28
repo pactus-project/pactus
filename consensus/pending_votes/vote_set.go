@@ -38,10 +38,10 @@ func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*val
 	}
 }
 
-func (vs *VoteSet) Type() vote.VoteType { return vs.voteType }
-func (vs *VoteSet) Height() int         { return vs.height }
-func (vs *VoteSet) Round() int          { return vs.round }
-func (vs *VoteSet) Power() int64        { return vs.accumulatedPower }
+func (vs *VoteSet) Type() vote.VoteType     { return vs.voteType }
+func (vs *VoteSet) Height() int             { return vs.height }
+func (vs *VoteSet) Round() int              { return vs.round }
+func (vs *VoteSet) AccumulatedPower() int64 { return vs.accumulatedPower }
 
 func (vs *VoteSet) Len() int {
 	sum := 0
@@ -106,21 +106,20 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 			anotherVote, ok := bv.votes[signer]
 
 			if ok {
-				// A possible scenario:
-				// A peer doesn't have a proposal, he votes for undef.
-				// Later he receives the proposal, so he vote again.
-				// We should ignore undef vote
+
 				if anotherVote.BlockHash().IsUndef() {
-					// Remove undef vote and replace it with new vote
+					// A possible scenario:
+					// A peer doesn't have a proposal, it votes for null.
+					// Later it receives the proposal, so it votes again.
 					duplicated = true
 				} else if vote.BlockHash().IsUndef() {
-					// Because of network latency, we might receive undef vote after block vote.
-					// Ignore undef vote in this case.
-					return false, nil
+					// A possible scenario:
+					// Because of network latency, we might receive null_vote after block_vote.
+					duplicated = true
 				} else if anotherVote.BlockHash() != blockHash {
 					// Duplicated vote:
 					// 1- Same signer
-					// 2- Block hashes are not undef and different
+					// 2- Block hashes are not null and they are different
 					//
 					// We report an error but keep both votes
 					//
@@ -134,11 +133,13 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	added := bv.addVote(vote)
 	if added {
 		bv.power += val.Power()
-		if vs.hasQuorum(bv.power) {
-			vs.quorumBlock = &blockHash
-		}
 		if !duplicated {
 			vs.accumulatedPower += val.Power()
+		}
+		if vs.hasQuorum(bv.power) {
+			if vs.quorumBlock == nil || vs.quorumBlock.IsUndef() {
+				vs.quorumBlock = &blockHash
+			}
 		}
 	}
 
@@ -154,6 +155,14 @@ func (vs *VoteSet) HasQuorum() bool {
 
 func (vs *VoteSet) QuorumBlock() *crypto.Hash {
 	return vs.quorumBlock
+}
+
+func (vs *VoteSet) HasOneThirdOfTotalPower(hash crypto.Hash) bool {
+	bv := vs.blockVotes[hash]
+	if bv == nil {
+		return false
+	}
+	return bv.power > (vs.totalPower * 1 / 3)
 }
 
 func (vs *VoteSet) ToCertificate() *block.Certificate {

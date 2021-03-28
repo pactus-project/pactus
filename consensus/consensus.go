@@ -149,12 +149,9 @@ func (cs *consensus) addVote(v *vote.Vote) error {
 	}
 
 	added, err := cs.pendingVotes.AddVote(v)
-	if err != nil {
-		return err
-	}
 	if !added {
 		// we probably have this vote
-		return nil
+		return err
 	}
 
 	round := v.Round()
