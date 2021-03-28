@@ -52,8 +52,8 @@ func TestGetValidatorByNumber(t *testing.T) {
 	conn, client := callServer(t)
 
 	k, k1 := key.GenerateRandomKey(), key.GenerateRandomKey()
-	val := validator.NewValidator(k.PublicKey(), 0, 0)
-	val1 := validator.NewValidator(k1.PublicKey(), 1, 0)
+	val := validator.NewValidator(k.PublicKey(), 5, 0)
+	val1 := validator.NewValidator(k1.PublicKey(), 6, 0)
 	tMockState.Store.Validators[k.Address()] = val
 	tMockState.Store.Validators[k1.Address()] = val1
 
@@ -75,9 +75,9 @@ func TestGetValidatorByNumber(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return validator json, with matching public key and number", func(t *testing.T) {
+	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: 1,
+			Number: 6,
 		})
 		assert.NotNil(t, res)
 		assert.Nil(t, err)
