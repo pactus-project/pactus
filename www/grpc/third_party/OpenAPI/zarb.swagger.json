@@ -514,7 +514,7 @@
     "zarbValidatorResponse": {
       "type": "object",
       "properties": {
-        "validators": {
+        "validator": {
           "$ref": "#/definitions/zarbValidator"
         }
       }

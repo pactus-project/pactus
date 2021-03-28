@@ -47,7 +47,7 @@ message ValidatorsResponse {
   repeated Validator validators = 1;
 }
 message ValidatorResponse {
-  Validator validators = 1;
+  Validator validator = 1;
 }
 
 message BlockRequest {
