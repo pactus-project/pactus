@@ -3,6 +3,7 @@ package consensus
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
@@ -71,4 +72,26 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexX, false)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
 	checkHRSWait(t, tConsP, h, r+1, hrs.StepTypePrepare)
+}
+
+func TestDuplicatedNewRound(t *testing.T) {
+	setup(t)
+
+	tConsP.enterNewHeight()
+	p := makeProposal(t, 1, 1)
+
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY, false)
+
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexX, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexY, false)
+
+	checkHRSWait(t, tConsP, 1, 1, hrs.StepTypePrepare)
+
+	tConsP.SetProposal(p)
+	assert.True(t, tConsP.status.IsPrepared())
+
+	// Add another precommit from previous round and call `enterNewRound(1)`
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexB, false)
+	assert.True(t, tConsP.status.IsPrepared())
 }
