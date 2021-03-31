@@ -12,8 +12,9 @@ service Zarb {
   rpc GetBlockHeight(BlockHeightRequest) returns(BlockHeightResponse)                       { option (google.api.http).get = "/api/block_height/{hash}";}
   rpc GetTransaction(TransactionRequest) returns (TransactionResponse)                      { option (google.api.http).get = "/api/tranaction/id/{id}";}
   rpc GetAccount(AccountRequest) returns (AccountResponse)                                  { option (google.api.http).get = "/api/account/address/{address}";}
-  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validator/address/{address}";}
-  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse)            { option (google.api.http).get = "/api/validator/{number}";}
+  rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse)                         { option (google.api.http).get = "/api/validators";}
+  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validators/address/{address}";}
+  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse)            { option (google.api.http).get = "/api/validators/{number}";}
   rpc GetBlockchainInfo(BlockchainInfoRequest) returns (BlockchainInfoResponse)             { option (google.api.http).get = "/api/blockchain";}
   rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse)                      { option (google.api.http).get = "/api/network";}
   rpc SendRawTransaction(SendRawTransactionRequest) returns(SendRawTransactionResponse)     { option (google.api.http).put = "/api/send_raw_transaction/{data}";};
@@ -30,6 +31,9 @@ message AccountResponse {
   string json = 2;
 }
 
+message ValidatorsRequest {
+  uint32 verbosity = 2;
+}
 message ValidatorRequest {
 	string address = 1;
   uint32 verbosity = 2;
@@ -39,9 +43,11 @@ message ValidatorByNumberRequest {
   uint32 verbosity = 2;
 }
 
+message ValidatorsResponse {
+  repeated Validator validators = 1;
+}
 message ValidatorResponse {
-  bytes data = 1;
-  string json = 2;
+  Validator validator = 1;
 }
 
 message BlockRequest {
@@ -94,6 +100,15 @@ message SendRawTransactionRequest {
 message SendRawTransactionResponse {
   bytes data = 1;
   string json = 2;
+}
+
+message Validator{
+  bytes public_key = 1;
+  int32 number = 2;
+  int32 sequence = 3;
+  int64 stake = 4;
+  int32 bonding_height = 5;
+  int32 last_joined_height = 6;
 }
 
 message Peer{

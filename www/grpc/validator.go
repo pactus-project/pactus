@@ -9,6 +9,24 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func (zs *zarbServer) GetValidatorByNumber(ctx context.Context, request *zarb.ValidatorByNumberRequest) (*zarb.ValidatorResponse, error) {
+	validator := zs.state.ValidatorByNumber(int(request.Number))
+	if validator == nil {
+		return nil, status.Errorf(codes.NotFound, "NotFound Validator Address")
+	}
+
+	return &zarb.ValidatorResponse{
+		Validator: &zarb.Validator{
+			PublicKey:        validator.PublicKey().RawBytes(),
+			Number:           int32(validator.Number()),
+			Sequence:         int32(validator.Sequence()),
+			Stake:            validator.Stake(),
+			BondingHeight:    int32(validator.BondingHeight()),
+			LastJoinedHeight: int32(validator.LastJoinedHeight()),
+		},
+	}, nil
+}
+
 func (zs *zarbServer) GetValidator(ctx context.Context, request *zarb.ValidatorRequest) (*zarb.ValidatorResponse, error) {
 	addr, err := crypto.AddressFromString(request.Address)
 	if err != nil {
@@ -19,48 +37,29 @@ func (zs *zarbServer) GetValidator(ctx context.Context, request *zarb.ValidatorR
 		return nil, status.Errorf(codes.NotFound, "NotFound Validator Address")
 	}
 
-	data, err := validator.Encode()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	var json string
-	if request.Verbosity == 1 {
-		bz, err := validator.MarshalJSON()
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, err.Error())
-		}
-		json = string(bz)
-	}
-
 	return &zarb.ValidatorResponse{
-		Data: data,
-		Json: json,
+		Validator: &zarb.Validator{
+			PublicKey:        validator.PublicKey().RawBytes(),
+			Number:           int32(validator.Number()),
+			Sequence:         int32(validator.Sequence()),
+			Stake:            validator.Stake(),
+			BondingHeight:    int32(validator.BondingHeight()),
+			LastJoinedHeight: int32(validator.LastJoinedHeight()),
+		},
 	}, nil
 }
-
-func (zs *zarbServer) GetValidatorByNumber(ctx context.Context, request *zarb.ValidatorByNumberRequest) (*zarb.ValidatorResponse, error) {
-	validator := zs.state.ValidatorByNumber(int(request.Number))
-	if validator == nil {
-		return nil, status.Errorf(codes.NotFound, "NotFound Validator Address")
+func (zs *zarbServer) GetValidators(ctx context.Context, request *zarb.ValidatorsRequest) (*zarb.ValidatorsResponse, error) {
+	validators := zs.state.CommitteeValidators()
+	validatorsResp := make([]*zarb.Validator, 0)
+	for _, v := range validators {
+		validatorsResp = append(validatorsResp, &zarb.Validator{
+			PublicKey:        v.PublicKey().RawBytes(),
+			Number:           int32(v.Number()),
+			Sequence:         int32(v.Sequence()),
+			Stake:            v.Stake(),
+			BondingHeight:    int32(v.BondingHeight()),
+			LastJoinedHeight: int32(v.LastJoinedHeight()),
+		})
 	}
-
-	data, err := validator.Encode()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	var json string
-	if request.Verbosity == 1 {
-		bz, err := validator.MarshalJSON()
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, err.Error())
-		}
-		json = string(bz)
-	}
-
-	return &zarb.ValidatorResponse{
-		Data: data,
-		Json: json,
-	}, nil
+	return &zarb.ValidatorsResponse{Validators: validatorsResp}, nil
 }
