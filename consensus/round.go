@@ -3,7 +3,7 @@ package consensus
 import "github.com/zarbchain/zarb-go/consensus/hrs"
 
 func (cs *consensus) enterNewRound(round int) {
-	if round < cs.hrs.Round() {
+	if round > 0 && round <= cs.hrs.Round() {
 		cs.logger.Trace("NewRound: Try to enter prior round", "round", round)
 		return
 	}
