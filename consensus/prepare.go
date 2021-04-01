@@ -8,7 +8,7 @@ import (
 
 func (cs *consensus) enterPrepare(round int) {
 	if cs.status.IsPrepared() || round > cs.hrs.Round() {
-		cs.logger.Debug("Prepare: Precommitted, prepared or invalid round/step", "round", round)
+		cs.logger.Trace("Prepare: Precommitted, prepared or invalid round/step", "round", round)
 		return
 	}
 	cs.hrs.UpdateStep(hrs.StepTypePrepare)

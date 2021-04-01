@@ -8,7 +8,7 @@ import (
 
 func (cs *consensus) enterPrecommit(round int) {
 	if cs.status.IsPreCommitted() || round > cs.hrs.Round() {
-		cs.logger.Debug("Precommit: Precommitted or invalid round/step", "round", round)
+		cs.logger.Trace("Precommit: Precommitted or invalid round/step", "round", round)
 		return
 	}
 

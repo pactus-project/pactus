@@ -28,7 +28,7 @@ func lastBlock(t *testing.T) *block.Block {
 }
 
 func getBlockAt(t *testing.T, height int) *block.Block {
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 60; i++ {
 		res := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
 			p.SetHeight(uint64(height))
 			p.SetVerbosity(0)

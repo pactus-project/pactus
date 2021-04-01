@@ -140,28 +140,26 @@ func (vote Vote) Fingerprint() string {
 
 // ---------
 // For tests
-func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.PrivateKey) {
-	addr, _, pv := crypto.GenerateTestKeyPair()
+func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.Signer) {
+	s := crypto.GenerateTestSigner()
 	v := NewPrecommit(
 		height,
 		round,
 		crypto.GenerateTestHash(),
-		addr)
-	sig := pv.Sign(v.SignBytes())
-	v.SetSignature(sig)
+		s.Address())
+	s.SignMsg(v)
 
-	return v, pv
+	return v, s
 }
 
-func GenerateTestPrepareVote(height, round int) (*Vote, crypto.PrivateKey) {
-	addr, _, pv := crypto.GenerateTestKeyPair()
+func GenerateTestPrepareVote(height, round int) (*Vote, crypto.Signer) {
+	s := crypto.GenerateTestSigner()
 	v := NewPrepare(
 		height,
 		round,
 		crypto.GenerateTestHash(),
-		addr)
-	sig := pv.Sign(v.SignBytes())
-	v.SetSignature(sig)
+		s.Address())
+	s.SignMsg(v)
 
-	return v, pv
+	return v, s
 }

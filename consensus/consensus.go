@@ -112,7 +112,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 	if cs.state.LastBlockHeight() >= p.Height() {
 		// A useful log for debugging
-		cs.logger.Debug("We received a stale proposal", "proposal", p)
+		cs.logger.Trace("We received a stale proposal", "proposal", p)
 		return
 	}
 
@@ -123,11 +123,11 @@ func (cs *consensus) handleTimeout(ti timeout) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.logger.Debug("Handle timeout", "timeout", ti)
+	cs.logger.Trace("Handle timeout", "timeout", ti)
 
 	// A timer for previous height might trig in new height. Ignore them
 	if cs.hrs.Height() != ti.Height {
-		cs.logger.Debug("Stale timeout", "timeout", ti)
+		cs.logger.Trace("Stale timeout", "timeout", ti)
 		return
 	}
 
