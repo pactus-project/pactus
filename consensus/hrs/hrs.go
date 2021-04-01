@@ -122,8 +122,8 @@ func (hrs *HRS) String() string {
 }
 
 func (hrs *HRS) MarshalCBOR() ([]byte, error) {
-	hrs.lk.Lock()
-	defer hrs.lk.Unlock()
+	hrs.lk.RLock()
+	defer hrs.lk.RUnlock()
 
 	return cbor.Marshal(hrs.data)
 }
