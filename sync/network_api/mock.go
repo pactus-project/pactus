@@ -15,17 +15,17 @@ import (
 )
 
 type MockNetworkAPI struct {
-	ch       chan *message.Message
-	id       peer.ID
-	Firewall *firewall.Firewall
-	ParsFn   ParsMessageFn
-	OtherAPI *MockNetworkAPI
+	PublishCh chan *message.Message
+	id        peer.ID
+	Firewall  *firewall.Firewall
+	ParsFn    ParsMessageFn
+	OtherAPI  *MockNetworkAPI
 }
 
 func MockingNetworkAPI(id peer.ID) *MockNetworkAPI {
 	return &MockNetworkAPI{
-		ch: make(chan *message.Message, 100),
-		id: id,
+		PublishCh: make(chan *message.Message, 1000),
+		id:        id,
 	}
 }
 func (mock *MockNetworkAPI) Start() error {
@@ -37,17 +37,18 @@ func (mock *MockNetworkAPI) JoinDownloadTopic() error {
 	return nil
 }
 func (mock *MockNetworkAPI) LeaveDownloadTopic() {}
-func (mock *MockNetworkAPI) PublishMessage(msg *message.Message) error {
-	mock.ch <- msg
-	return nil
-}
 func (mock *MockNetworkAPI) SelfID() peer.ID {
 	return mock.id
+}
+func (mock *MockNetworkAPI) PublishMessage(msg *message.Message) error {
+	mock.PublishCh <- msg
+	return nil
 }
 func (mock *MockNetworkAPI) CheckAndParsMessage(msg *message.Message, id peer.ID) bool {
 	d, _ := msg.Encode()
 	msg2 := mock.Firewall.ParsMessage(d, id)
 	if msg2 != nil {
+		logger.Info("Parsing the message", "msg", msg)
 		mock.ParsFn(msg2, mock.id)
 		return true
 	}
@@ -64,11 +65,12 @@ func (mock *MockNetworkAPI) ShouldPublishMessageWithThisType(t *testing.T, paylo
 	for {
 		select {
 		case <-timeout.C:
-			require.NoError(t, fmt.Errorf("Timeout"))
+			require.NoError(t, fmt.Errorf("ShouldPublishMessageWithThisType: Timeout"))
 			return nil
-		case msg := <-mock.ch:
+		case msg := <-mock.PublishCh:
 			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
 			mock.sendMessageToOtherPeer(msg)
+			logger.Info("Nessage sent to other peer", "msg", msg)
 
 			if msg.PayloadType() == payloadType {
 				return msg
@@ -84,9 +86,10 @@ func (mock *MockNetworkAPI) ShouldNotPublishMessageWithThisType(t *testing.T, pa
 		select {
 		case <-timeout.C:
 			return
-		case msg := <-mock.ch:
+		case msg := <-mock.PublishCh:
 			logger.Info("shouldNotPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
 			mock.sendMessageToOtherPeer(msg)
+			logger.Info("Nessage sent to other peer", "msg", msg)
 
 			assert.NotEqual(t, msg.PayloadType(), payloadType)
 		}

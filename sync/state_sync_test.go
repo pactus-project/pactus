@@ -13,6 +13,7 @@ import (
 
 func TestAddBlockToCache(t *testing.T) {
 	setup(t)
+	disableHeartbeat(t)
 
 	b1, trxs1 := block.GenerateTestBlock(nil, nil)
 	b2, trxs2 := block.GenerateTestBlock(nil, nil)
