@@ -57,7 +57,6 @@ func (cs *consensus) Stop() {
 }
 
 func (cs *consensus) Fingerprint() string {
-
 	return fmt.Sprintf("{%v %s}", cs.hrs.String(), cs.status.String())
 }
 

@@ -12,12 +12,12 @@ import (
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
+	Lock      deadlock.RWMutex
 	Votes     []*vote.Vote
 	Proposal  *proposal.Proposal
 	Scheduled bool
 	State     *state.MockState
 	Round     int
-	Lock      deadlock.RWMutex
 }
 
 func MockingConsensus(state *state.MockState) *MockConsensus {
