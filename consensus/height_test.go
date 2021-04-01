@@ -37,9 +37,9 @@ func TestConsensusBehindState(t *testing.T) {
 	// --------------------------------
 
 	// Consensus tries to add more votes and commit the block which is committed by syncer before.
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)
 
 	precommits := tConsP.pendingVotes.PrecommitVoteSet(0)
 	require.NotNil(t, precommits)
@@ -71,9 +71,9 @@ func TestConsensusBehindState2(t *testing.T) {
 	// --------------------------------
 
 	// Consensus tries to add more votes and commit the block which is committed by syncer before.
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
 
 	precommits := tConsP.pendingVotes.PrecommitVoteSet(r)
 	require.NotNil(t, precommits)

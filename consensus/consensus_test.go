@@ -210,17 +210,13 @@ func testAddVote(t *testing.T,
 	height int,
 	round int,
 	blockHash crypto.Hash,
-	valID int,
-	expectError bool) *vote.Vote {
+	valID int) *vote.Vote {
 
 	v := vote.NewVote(voteType, height, round, blockHash, tSigners[valID].Address())
 	tSigners[valID].SignMsg(v)
 
-	if expectError {
-		assert.Error(t, cons.addVote(v))
-	} else {
-		assert.NoError(t, cons.addVote(v))
-	}
+	cons.AddVote(v)
+
 	return v
 }
 
@@ -291,15 +287,6 @@ func TestHandleTimeout(t *testing.T) {
 	checkHRS(t, tConsX, 2, 0, hrs.StepTypePrepare)
 }
 
-func TestDoubleVote(t *testing.T) {
-	setup(t)
-
-	tConsX.enterNewHeight()
-
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, true)
-}
-
 func TestNotInCommittee(t *testing.T) {
 	setup(t)
 
@@ -350,16 +337,16 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	p := tConsX.RoundProposal(0)
 	require.NotNil(t, p)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexY)
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexP)
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)
 	shouldPublishBlockAnnounce(t, tConsX, p.Block().Hash())
 }
 
@@ -368,11 +355,11 @@ func TestConsensusAddVote(t *testing.T) {
 
 	tConsP.enterNewHeight()
 
-	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX, false)
-	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX, false)
-	v3 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX, false)
-	v4 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, crypto.GenerateTestHash(), tIndexX, false)
-	v5 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX, false)
+	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
+	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX)
+	v3 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX)
+	v4 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, crypto.GenerateTestHash(), tIndexX)
+	v5 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX)
 
 	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
 	assert.True(t, tConsP.HasVote(v2.Hash()))
@@ -393,11 +380,11 @@ func TestConsensusNoPrepares(t *testing.T) {
 
 	tConsB.SetProposal(p)
 
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
 	checkHRS(t, tConsB, h, r, hrs.StepTypePrepare)
 
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
 	checkHRS(t, tConsB, h, r, hrs.StepTypeCommit)
 
 	shouldPublishBlockAnnounce(t, tConsB, p.Block().Hash())
@@ -419,7 +406,7 @@ func TestPickRandomVote(t *testing.T) {
 	tConsY.enterNewHeight()
 	assert.Nil(t, tConsY.PickRandomVote())
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY)
 	assert.NotNil(t, tConsY.PickRandomVote())
 }
 

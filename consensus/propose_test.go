@@ -75,9 +75,9 @@ func TestGotoNextRoundWithoutProposal(t *testing.T) {
 
 	tConsP.enterNewHeight()
 
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexB)
 
 	checkHRS(t, tConsP, 3, 1, hrs.StepTypePrepare)
 }
@@ -99,26 +99,26 @@ func TestSecondProposalCommitted(t *testing.T) {
 	//tConsX.SetProposal(p1)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, p1.Block().Hash(), tIndexB, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, crypto.UndefHash, tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, p1.Block().Hash(), tIndexB)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 0, crypto.UndefHash, tIndexP)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, p1.Block().Hash(), tIndexB, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, p1.Block().Hash(), tIndexB)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexP)
 
 	tConsX.SetProposal(p2)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p2.Block().Hash())
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, crypto.UndefHash, tIndexB, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, crypto.UndefHash, tIndexB)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 3, 1, p2.Block().Hash(), tIndexP)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p2.Block().Hash())
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, crypto.UndefHash, tIndexB, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, crypto.UndefHash, tIndexB)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 3, 1, p2.Block().Hash(), tIndexP)
 
 	shouldPublishBlockAnnounce(t, tConsX, p2.Block().Hash())
 }
@@ -138,9 +138,9 @@ func TestNetworkLagging1(t *testing.T) {
 	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB)
 
 	// Now let's set the proposal
 	tConsP.SetProposal(p)
@@ -160,8 +160,8 @@ func TestNetworkLagging2(t *testing.T) {
 	// tConsP.SetProposal(p1)
 
 	// Networks lags and we don't receive prepare from val_1 and pre-commit from val_4
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY)
 
 	checkHRS(t, tConsP, h, r, hrs.StepTypePropose)
 
@@ -177,7 +177,7 @@ func TestNetworkLagging2(t *testing.T) {
 	// We can't go to precommit stage, because we haven't prepared yet
 	// But if we receive another vote we go to commit phase directly
 	// Let's do it
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
 	shouldPublishBlockAnnounce(t, tConsP, p1.Block().Hash())
 }
 
@@ -191,13 +191,13 @@ func TestLateProposal(t *testing.T) {
 	p := makeProposal(t, h, r)
 
 	// tConsP is partitioned, so tConsP doesn't have the proposal
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB)
 
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB)
 
 	// Now partition healed.
 	tConsP.SetProposal(p)
@@ -220,12 +220,12 @@ func TestLateProposal2(t *testing.T) {
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexB)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexB)
 
 	checkHRSWait(t, tConsX, h, 1, hrs.StepTypePrepare)
 
@@ -248,15 +248,15 @@ func TestLateUndefVote(t *testing.T) {
 	p := makeProposal(t, h, r) // Other nodes doesn't accept byzantine proposal
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
 
 	// Now partition healed.
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexP, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexP)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexP)
 
 	checkHRSWait(t, tConsX, h, r+1, hrs.StepTypePropose)
 }
@@ -296,22 +296,22 @@ func TestEnterPrepareAfterPrecommit(t *testing.T) {
 	tConsX.enterNewHeight()
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB)
 	checkHRS(t, tConsX, h, r, hrs.StepTypePrecommit)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, crypto.UndefHash)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.GenerateTestHash(), tIndexB, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.GenerateTestHash(), tIndexB)
 
 	// Now partition healed
 	tConsX.SetProposal(p)
 	tConsX.enterPrepare(0)
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP)
 
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
 }

@@ -97,15 +97,6 @@ func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round i
 	logger.Debug("Scheduled timeout", "duration", duration, "height", height, "round", round, "step", step)
 }
 
-func (cs *consensus) AddVote(v *vote.Vote) {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	if err := cs.addVote(v); err != nil {
-		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
-	}
-}
-
 func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
@@ -140,6 +131,15 @@ func (cs *consensus) handleTimeout(ti timeout) {
 		cs.enterPrecommit(ti.Round)
 	default:
 		panic(fmt.Sprintf("Invalid timeout step: %v", ti.Step))
+	}
+}
+
+func (cs *consensus) AddVote(v *vote.Vote) {
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
+
+	if err := cs.addVote(v); err != nil {
+		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
 	}
 }
 

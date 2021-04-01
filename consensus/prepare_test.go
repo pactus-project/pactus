@@ -24,18 +24,18 @@ func TestByzantineVote(t *testing.T) {
 	tConsP.enterNewHeight()
 	tConsP.SetProposal(p)
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 	checkHRS(t, tConsP, h, r, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB, false) // Byzantine vote
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 
 	// Partition heals
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
 	checkHRS(t, tConsP, h, r, hrs.StepTypeCommit)
 }
 

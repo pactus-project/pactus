@@ -63,8 +63,8 @@ func TestEnterCommit(t *testing.T) {
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.status.IsCommitted())
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexP)
 
 	v3 := vote.NewPrecommit(h, r, crypto.UndefHash, tSigners[tIndexB].Address())
 	tSigners[tIndexB].SignMsg(v3)
@@ -75,7 +75,7 @@ func TestEnterCommit(t *testing.T) {
 	tConsY.enterCommit(1)
 	assert.False(t, tConsY.status.IsCommitted())
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
 
 	// No proposal
 	tConsY.enterCommit(1)

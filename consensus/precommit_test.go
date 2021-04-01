@@ -24,9 +24,9 @@ func TestPrecommitNoProposal(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
 	// Still no proposal
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
 	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrecommit)
 	shouldPublishQueryProposal(t, tConsP, h, r)
@@ -52,9 +52,9 @@ func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
 	// Still no proposal
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
 
 	checkHRS(t, tConsP, h, r, hrs.StepTypeCommit)
 
@@ -62,9 +62,9 @@ func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
 	tConsP.SetProposal(p)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
 	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
@@ -85,8 +85,8 @@ func TestSuspiciousPrepare1(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
 	// Validator_1 is offline
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexY)
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
 }
@@ -106,8 +106,8 @@ func TestSuspiciousPrepare2(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
 	// Validator_1 is offline
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY)
 
 	shouldPublishProposal(t, tConsP, p.Hash())
 }
@@ -116,8 +116,8 @@ func TestPrecommitTimeout(t *testing.T) {
 	setup(t)
 
 	tConsP.enterNewHeight()
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX, false)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY)
 
 	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrecommit)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
@@ -167,8 +167,8 @@ func TestUpdatePrecommitFromPreviousRound(t *testing.T) {
 	shouldPublishProposal(t, tConsP, p0.Hash())
 
 	// Byzantine node send its Null votes to partitioned node
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexB, false)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexB, false)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, 0, crypto.UndefHash, tIndexB)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, 0, crypto.UndefHash, tIndexB)
 	precommitPRound0Null := shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
 
 	assert.NoError(t, tConsX.addVote(precommitYRound0Null))
@@ -197,11 +197,11 @@ func TestUpdatePrecommitFromPreviousRound(t *testing.T) {
 	prepareYRound0Block := shouldPublishVote(t, tConsY, vote.VoteTypePrepare, p0.Block().Hash())
 	assert.NotNil(t, prepareYRound0Block)
 
-	assert.NoError(t, tConsX.addVote(prepareYRound0Block))
+	tConsX.AddVote(prepareYRound0Block)
 	precommitXRound0Block := shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p0.Block().Hash())
 	assert.NotNil(t, precommitXRound0Block)
 
-	assert.NoError(t, tConsY.addVote(prepareXRound0Block))
+	tConsY.AddVote(prepareXRound0Block)
 	precommitYRound0Block := shouldPublishVote(t, tConsY, vote.VoteTypePrecommit, p0.Block().Hash())
 	assert.NotNil(t, precommitYRound0Block)
 
