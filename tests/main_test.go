@@ -62,6 +62,12 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
 		if i == 0 {
 			tConfigs[i].Capnp.Address = tCapnpAddress
+			f, _ := os.Create(tConfigs[i].Network.NodeKeyFile)
+			_, err := f.WriteString("08011240f22591817d8803e32525db7fc5cb9949d77c402e20867a6cac6b3ffb3dc643fb2521ef3c844a12eee79c275f19958999aeebb173496b67ea4a40f5d34b0a1355")
+			if err != nil {
+				panic(err)
+			}
+			f.Close()
 		} else {
 			tConfigs[i].Capnp.Enable = false
 		}
@@ -76,10 +82,8 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
 		tConfigs[i].Sync.CacheSize = 1000
-		tConfigs[i].Network.EnableKademlia = false
-		tConfigs[i].Network.EnableNATService = false
-		tConfigs[i].Network.EnableRelay = false
 		tConfigs[i].Network.ListenAddress = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
+		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
 
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
