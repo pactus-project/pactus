@@ -122,54 +122,26 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
-	totalStake := int64(0)
+	// These validators are not in the committee now.
+	// Bond transactions are valid and they can enter the committee soon
 	for i := committeeSize; i < nodeCount; i++ {
 		amt := util.RandInt64(1000000 - 1) // fee is always 1000
-		err := broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000)
+		err := broadcastBondTransaction(t, tSigners[tNodeIdx2], tSigners[i].PublicKey(), amt, 1000)
 		if err != nil {
 			panic(fmt.Sprintf("Error on broadcasting transaction: %v", err))
 		}
 		fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
-		incSequence(t, tSigners[tNodeIdx1].Address())
-		totalStake += amt
-	}
-
-	// Uncomment this for debugging the test
-	// go func() {
-	// 	file, _ := os.OpenFile("./debug.log", os.O_CREATE|os.O_WRONLY, 0666)
-	// 	fmt.Fprintf(file, "total stake: %d\n\n", totalStake)
-
-	// 	for {
-	// 		for i := 0; i < nodeCount; i++ {
-	// 			tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round())
-
-	// 			fmt.Fprintf(file, "node %d: %s %s %s proposal: %v ",
-	// 				i,
-	// 				tNodes[i].Sync().Fingerprint(),
-	// 				tNodes[i].State().Fingerprint(),
-	// 				tNodes[i].Consensus().Fingerprint(),
-	// 				tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round()) != nil)
-
-	// 			votes := tNodes[i].Consensus().RoundVotes(tNodes[i].Consensus().HRS().Round())
-
-	// 			for _, v := range votes {
-	// 				fmt.Fprintf(file, "%s:%s,%s ", v.VoteType(), v.BlockHash().Fingerprint(), v.Signer().Fingerprint())
-	// 			}
-	// 			fmt.Fprintf(file, "\n")
-	// 		}
-	// 		fmt.Fprintf(file, "================================================================================\n")
-
-	// 		time.Sleep(10 * time.Second)
-	// 	}
-	// }()
-
-	for i := 0; i < 20; i++ {
-		waitForNewBlock(t)
+		incSequence(t, tSigners[tNodeIdx2].Address())
 	}
 
 	fmt.Println("Running tests")
 
 	exitCode := m.Run()
+
+	// Some more blocks
+	for i := 0; i < 20; i++ {
+		waitForNewBlock(t)
+	}
 
 	tCtx.Done()
 	for i := 0; i < nodeCount; i++ {
