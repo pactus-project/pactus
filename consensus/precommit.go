@@ -7,8 +7,8 @@ import (
 )
 
 func (cs *consensus) enterPrecommit(round int) {
-	if cs.status.IsPreCommitted() || round > cs.hrs.Round() {
-		cs.logger.Debug("Precommit: Precommitted or invalid round/step", "round", round)
+	if cs.isPreCommitted || round > cs.hrs.Round() {
+		cs.logger.Trace("Precommit: Precommitted or invalid round/step", "round", round)
 		return
 	}
 
@@ -32,23 +32,15 @@ func (cs *consensus) enterPrecommit(round int) {
 		// We have a valid proposal, but there is no consensus about it
 		//
 		// If we are behind the partition, it might be easy to find it here
-		// There should be some null-votes here
-		// If number of null-votes are greather tha `1f` (`f` stands for faulty)
+		// There should be some null-votes here.
+		// If weight of null-votes are greather than `1f` (`f` stands for faulty)
 		// Then we broadcast our proposal and return here
 		//
 		// Note: Byzantine node might send different valid proposals to different nodes
 		//
 		cs.logger.Info("Precommit: Some peers don't have proposal yet.")
 
-		votes := prepares.AllVotes()
-		count := 0
-		for _, v := range votes {
-			if v.BlockHash().IsUndef() {
-				count++
-			}
-		}
-
-		if count > len(votes)/3 {
+		if prepares.HasOneThirdOfTotalPower(crypto.UndefHash) {
 			cs.logger.Debug("Precommit: Broadcst proposal.", "proposal", roundProposal)
 			cs.broadcastProposal(roundProposal)
 			return
@@ -77,7 +69,7 @@ func (cs *consensus) enterPrecommit(round int) {
 	}
 
 	// Everything is good
-	cs.status.SetPreCommitted(true)
+	cs.isPreCommitted = true
 	cs.logger.Info("Precommit: Proposal approved", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrecommit, round, *blockHash)
 }

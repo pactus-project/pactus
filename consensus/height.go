@@ -14,14 +14,14 @@ func (cs *consensus) MoveToNewHeight() {
 
 func (cs *consensus) scheduleNewHeight() {
 	sleep := cs.state.LastBlockTime().Add(cs.state.BlockTime()).Sub(util.Now())
-	cs.logger.Debug("NewHeight is scheduled", "seconds", sleep.Seconds())
+	cs.logger.Trace("NewHeight is scheduled", "seconds", sleep.Seconds())
 	cs.scheduleTimeout(sleep, cs.hrs.Height(), 0, hrs.StepTypeNewHeight)
 }
 
 func (cs *consensus) enterNewHeight() {
 	sateHeight := cs.state.LastBlockHeight()
 	if cs.hrs.Height() == sateHeight+1 {
-		cs.logger.Debug("NewHeight: Duplicated entry")
+		cs.logger.Trace("NewHeight: Duplicated entry")
 		return
 	}
 
@@ -43,8 +43,8 @@ func (cs *consensus) enterNewHeight() {
 
 	vals := cs.state.CommitteeValidators()
 	cs.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
-	cs.status.SetPreCommitted(false)
-	cs.status.SetCommitted(false)
+	cs.isPreCommitted = false
+	cs.isCommitted = false
 
 	cs.hrs.UpdateHeight(sateHeight + 1)
 	cs.hrs.UpdateRound(0)

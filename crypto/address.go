@@ -2,7 +2,6 @@ package crypto
 
 import (
 	"bytes"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -49,7 +48,7 @@ func (addr Address) RawBytes() []byte {
 }
 
 func (addr Address) Fingerprint() string {
-	return hex.EncodeToString(addr.data.Address[:6])
+	return addr.String()[0:12]
 }
 
 func (addr Address) String() string {

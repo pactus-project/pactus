@@ -39,11 +39,11 @@ func (pv *PendingVotes) HasVote(hash crypto.Hash) bool {
 
 func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 	for i := len(pv.roundVotes); i <= round; i++ {
-		prepares := vote.NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators)
-		precommits := vote.NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators)
+		prepares := NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators)
+		precommits := NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators)
 		rv := &RoundVotes{
-			Prepares:   prepares,
-			Precommits: precommits,
+			prepares:   prepares,
+			precommits: precommits,
 		}
 
 		// extendind votes slice
@@ -64,12 +64,12 @@ func (pv *PendingVotes) AddVote(v *vote.Vote) (bool, error) {
 	return rv.addVote(v)
 }
 
-func (pv *PendingVotes) PrepareVoteSet(round int) *vote.VoteSet {
+func (pv *PendingVotes) PrepareVoteSet(round int) *VoteSet {
 	rv := pv.MustGetRoundVotes(round)
 	return rv.voteSet(vote.VoteTypePrepare)
 }
 
-func (pv *PendingVotes) PrecommitVoteSet(round int) *vote.VoteSet {
+func (pv *PendingVotes) PrecommitVoteSet(round int) *VoteSet {
 	rv := pv.MustGetRoundVotes(round)
 	return rv.voteSet(vote.VoteTypePrecommit)
 }

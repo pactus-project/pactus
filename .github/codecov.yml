@@ -1,9 +1,16 @@
-
-ignore:
-  - "*/mock.go"
-
+comment:
+  layout: header, changes, diff, sunburst
 coverage:
   status:
     patch:
       default:
-        threshold: 60
+        threshold: "10%"
+        only_pulls: true
+
+    project:
+      default:
+        target: auto
+        threshold: "10%"
+
+ignore:
+  - "*/mock.go"

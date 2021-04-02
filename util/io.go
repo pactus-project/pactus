@@ -33,7 +33,7 @@ func WriteFile(filename string, data []byte) error {
 		return err
 	}
 	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
-		return fmt.Errorf("Failed to write to %s: %v", filename, err)
+		return fmt.Errorf("failed to write to %s: %v", filename, err)
 	}
 	return nil
 }
@@ -41,7 +41,7 @@ func WriteFile(filename string, data []byte) error {
 func Mkdir(dir string) error {
 	// create the directory
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		return fmt.Errorf("Could not create directory %s", dir)
+		return fmt.Errorf("could not create directory %s", dir)
 	}
 	return nil
 }

@@ -210,18 +210,22 @@ func testAddVote(t *testing.T,
 	height int,
 	round int,
 	blockHash crypto.Hash,
-	valID int,
-	expectError bool) *vote.Vote {
+	valID int) *vote.Vote {
 
 	v := vote.NewVote(voteType, height, round, blockHash, tSigners[valID].Address())
 	tSigners[valID].SignMsg(v)
 
-	if expectError {
-		assert.Error(t, cons.addVote(v))
-	} else {
-		assert.NoError(t, cons.addVote(v))
-	}
+	cons.AddVote(v)
+
 	return v
+}
+
+// testEnterNewHeight helps tests to call enterNewHeight method safely
+// without scheduling new height. It boosts the test speed
+func testEnterNewHeight(cons *consensus) {
+	cons.lk.Lock()
+	cons.enterNewHeight()
+	cons.lk.Unlock()
 }
 
 func commitBlockForAllStates(t *testing.T) {
@@ -291,15 +295,6 @@ func TestHandleTimeout(t *testing.T) {
 	checkHRS(t, tConsX, 2, 0, hrs.StepTypePrepare)
 }
 
-func TestDoubleVote(t *testing.T) {
-	setup(t)
-
-	tConsX.enterNewHeight()
-
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, false)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexB, true)
-}
-
 func TestNotInCommittee(t *testing.T) {
 	setup(t)
 
@@ -309,7 +304,7 @@ func TestNotInCommittee(t *testing.T) {
 	cons, err := NewConsensus(TestConfig(), st, signer, make(chan *message.Message, 100))
 	assert.NoError(t, err)
 
-	cons.(*consensus).enterNewHeight()
+	testEnterNewHeight(cons.(*consensus))
 
 	cons.(*consensus).signAddVote(vote.VoteTypePrepare, 0, crypto.GenerateTestHash())
 	assert.Zero(t, len(cons.RoundVotes(0)))
@@ -319,7 +314,7 @@ func TestRoundVotes(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t) // height 1
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	t.Run("Ignore votes from invalid height", func(t *testing.T) {
 		v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tSigners[tIndexX].Address())
@@ -344,35 +339,35 @@ func TestRoundVotes(t *testing.T) {
 func TestConsensusAddVotesNormal(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	p := tConsX.RoundProposal(0)
 	require.NotNil(t, p)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexY)
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexP)
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrecommit)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)
 	shouldPublishBlockAnnounce(t, tConsX, p.Block().Hash())
 }
 
 func TestConsensusAddVote(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
-	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX, false)
-	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX, false)
-	v3 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX, false)
-	v4 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, crypto.GenerateTestHash(), tIndexX, false)
-	v5 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX, false)
+	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
+	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX)
+	v3 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX)
+	v4 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, crypto.GenerateTestHash(), tIndexX)
+	v5 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX)
 
 	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
 	assert.True(t, tConsP.HasVote(v2.Hash()))
@@ -384,7 +379,7 @@ func TestConsensusAddVote(t *testing.T) {
 func TestConsensusNoPrepares(t *testing.T) {
 	setup(t)
 
-	tConsB.enterNewHeight()
+	testEnterNewHeight(tConsB)
 
 	h := 1
 	r := 0
@@ -393,11 +388,11 @@ func TestConsensusNoPrepares(t *testing.T) {
 
 	tConsB.SetProposal(p)
 
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX, false)
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY, false)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
 	checkHRS(t, tConsB, h, r, hrs.StepTypePrepare)
 
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP, false)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
 	checkHRS(t, tConsB, h, r, hrs.StepTypeCommit)
 
 	shouldPublishBlockAnnounce(t, tConsB, p.Block().Hash())
@@ -407,7 +402,7 @@ func TestConsensusNoPrepares(t *testing.T) {
 func TestConsensusInvalidVote(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 
 	v, _ := vote.GenerateTestPrecommitVote(1, 0)
 	assert.Error(t, tConsX.addVote(v))
@@ -416,10 +411,10 @@ func TestConsensusInvalidVote(t *testing.T) {
 func TestPickRandomVote(t *testing.T) {
 	setup(t)
 
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsY)
 	assert.Nil(t, tConsY.PickRandomVote())
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY, false)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY)
 	assert.NotNil(t, tConsY.PickRandomVote())
 }
 
@@ -427,7 +422,7 @@ func TestSignProposalFromPreviousRound(t *testing.T) {
 	setup(t)
 
 	p0 := makeProposal(t, 1, 0)
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	tConsP.enterNewRound(1)
 
 	tConsP.SetProposal(p0)

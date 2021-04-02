@@ -7,8 +7,8 @@ import (
 )
 
 func (cs *consensus) enterPrepare(round int) {
-	if cs.status.IsPrepared() || round > cs.hrs.Round() {
-		cs.logger.Debug("Prepare: Precommitted, prepared or invalid round/step", "round", round)
+	if cs.isPrepared || round > cs.hrs.Round() {
+		cs.logger.Trace("Prepare: Precommitted, prepared or invalid round/step", "round", round)
 		return
 	}
 	cs.hrs.UpdateStep(hrs.StepTypePrepare)
@@ -24,7 +24,7 @@ func (cs *consensus) enterPrepare(round int) {
 	}
 
 	// Everything is good
-	cs.status.SetPrepared(true)
+	cs.isPrepared = true
 	cs.logger.Info("Prepare: Proposal approved", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrepare, round, roundProposal.Block().Hash())
 }

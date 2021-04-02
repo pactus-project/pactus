@@ -22,6 +22,10 @@ func TestVoteMarshaling(t *testing.T) {
 
 	assert.Equal(t, bz1, bz2)
 	assert.Equal(t, v1.Hash(), v2.Hash())
+	assert.Equal(t, v1.Height(), v2.Height())
+	assert.Equal(t, v1.Round(), v2.Round())
+	assert.Equal(t, v1.BlockHash(), v2.BlockHash())
+	assert.Equal(t, v1.Signer(), v2.Signer())
 }
 
 func TestVoteSignature(t *testing.T) {
