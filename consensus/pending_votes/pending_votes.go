@@ -2,7 +2,6 @@ package pending_votes
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
@@ -54,12 +53,6 @@ func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 }
 
 func (pv *PendingVotes) AddVote(v *vote.Vote) (bool, error) {
-	if err := v.SanityCheck(); err != nil {
-		return false, errors.Errorf(errors.ErrInvalidVote, "%v", err)
-	}
-	if v.Height() != pv.height {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Invalid height")
-	}
 	rv := pv.MustGetRoundVotes(v.Round())
 	return rv.addVote(v)
 }

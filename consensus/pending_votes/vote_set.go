@@ -71,18 +71,33 @@ func (vs *VoteSet) getValidatorByAddress(addr crypto.Address) *validator.Validat
 	return nil
 }
 
-func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
-	signer := vote.Signer()
-	blockHash := vote.BlockHash()
-
+func (vs *VoteSet) checkVote(vote *vote.Vote) error {
 	if (vote.Height() != vs.height) ||
 		(vote.Round() != vs.round) ||
 		(vote.VoteType() != vs.voteType) {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
+		return errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
 			vs.height, vs.round, vs.voteType,
 			vote.Height(), vote.Round(), vote.VoteType())
 	}
 
+	return nil
+}
+
+func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
+	bv, exists := vs.blockVotes[blockhash]
+	if !exists {
+		bv = newBlockVotes()
+		vs.blockVotes[blockhash] = bv
+	}
+	return bv
+}
+
+func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
+	if err := vs.checkVote(vote); err != nil {
+		return false, err
+	}
+
+	signer := vote.Signer()
 	val := vs.getValidatorByAddress(signer)
 	if val == nil {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Cannot find validator %s in committee", signer)
@@ -92,21 +107,15 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Failed to verify vote")
 	}
 
-	bv, exists := vs.blockVotes[blockHash]
-	if !exists {
-		bv = newBlockVotes()
-		vs.blockVotes[blockHash] = bv
-	}
+	bv := vs.mustGetBlockVotes(vote.BlockHash())
 
 	var err error
 	var duplicated bool
-	// check for conflict
-	for id, bv := range vs.blockVotes {
-		if !id.EqualsTo(vote.BlockHash()) {
+	// check for conflicts
+	for h, bv := range vs.blockVotes {
+		if !h.EqualsTo(vote.BlockHash()) {
 			anotherVote, ok := bv.votes[signer]
-
 			if ok {
-
 				if anotherVote.BlockHash().IsUndef() {
 					// A possible scenario:
 					// A peer doesn't have a proposal, it votes for null.
@@ -116,10 +125,11 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 					// A possible scenario:
 					// Because of network latency, we might receive null_vote after block_vote.
 					duplicated = true
-				} else if anotherVote.BlockHash() != blockHash {
+				} else if anotherVote.BlockHash() != vote.BlockHash() {
 					// Duplicated vote:
 					// 1- Same signer
-					// 2- Block hashes are not null and they are different
+					// 2- Both votes are not null
+					// 3- Both votes are different
 					//
 					// We report an error but keep both votes
 					//
@@ -138,6 +148,7 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		}
 		if vs.hasQuorum(bv.power) {
 			if vs.quorumBlock == nil || vs.quorumBlock.IsUndef() {
+				blockHash := vote.BlockHash()
 				vs.quorumBlock = &blockHash
 			}
 		}
