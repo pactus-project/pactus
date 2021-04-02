@@ -169,7 +169,7 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 			pool.lk.Lock()
 			pool.logger.Warn("no transaction received", "id", id, "timeout", pool.config.WaitingTimeout)
 			pool.lk.Unlock()
-			
+
 			return nil
 		case trx := <-pool.appendTxCh:
 			pool.lk.Lock()
