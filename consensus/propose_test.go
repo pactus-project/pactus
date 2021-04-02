@@ -241,25 +241,26 @@ func TestLateUndefVote(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	testEnterNewHeight(tConsX)
+	testEnterNewHeight(tConsP)
 
 	h := 3
 	r := 0
 	p := makeProposal(t, h, r) // Other nodes doesn't accept byzantine proposal
 
-	// tConsP is partitioned, so tConsX doesn't have the proposal
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+	// tConsP is partitioned
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
+	//  tConsP doesn't accept tConsB's proposal
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
-	// Now partition healed.
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexP)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexP)
+	// Now partition healed
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexX)
 
-	checkHRSWait(t, tConsX, h, r+1, hrs.StepTypePropose)
+	// Enough prepare votes, tConsP can vote for undef precommit
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
 }
+
 func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
 	setup(t)
 
