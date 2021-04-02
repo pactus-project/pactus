@@ -10,7 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/vote"
 )
-/*
+
 func TestStatusFlags(t *testing.T) {
 	setup(t)
 
@@ -42,7 +42,7 @@ func TestStatusFlags(t *testing.T) {
 	assert.False(t, tConsX.isPreCommitted)
 	assert.False(t, tConsX.isCommitted)
 }
-*/
+
 func TestEnterCommit(t *testing.T) {
 	setup(t)
 
