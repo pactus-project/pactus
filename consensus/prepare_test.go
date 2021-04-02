@@ -21,7 +21,7 @@ func TestByzantineVote(t *testing.T) {
 	r := 0
 	p := makeProposal(t, h, r)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	tConsP.SetProposal(p)
 
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
@@ -45,7 +45,7 @@ func TestPrepareTimeout(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsY)
 
 	shouldPublishVote(t, tConsY, vote.VoteTypePrepare, crypto.UndefHash)
 }
@@ -53,7 +53,7 @@ func TestPrepareTimeout(t *testing.T) {
 func TestPropareTimeout(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	checkHRSWait(t, tConsP, 1, 0, hrs.StepTypePrepare)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
@@ -62,7 +62,7 @@ func TestPropareTimeout(t *testing.T) {
 func TestPrepareIvalidArgs(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	tConsP.enterPrepare(0)
 
 	// Invalid args for propose phase

@@ -14,7 +14,7 @@ import (
 func TestSetProposalInvalidProposer(t *testing.T) {
 	setup(t)
 
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsY)
 	assert.Nil(t, tConsY.RoundProposal(0))
 
 	addr := tSigners[tIndexB].Address()
@@ -37,7 +37,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 	p := proposal.NewProposal(1, 2, *invBlock)
 	tSigners[tIndexB].SignMsg(p)
 
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsY)
 	tConsY.enterNewRound(2)
 	tConsY.SetProposal(p)
 	assert.Nil(t, tConsY.RoundProposal(2))
@@ -51,7 +51,7 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 	p := proposal.NewProposal(2, 0, *invBlock)
 	tSigners[tIndexB].SignMsg(p)
 
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsY)
 	tConsY.SetProposal(p)
 	assert.Nil(t, tConsY.RoundProposal(2))
 }
@@ -61,7 +61,7 @@ func TestConsensusSetProposalAfterCommit(t *testing.T) {
 
 	p := makeProposal(t, 1, 0)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	commitBlockForAllStates(t)
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.RoundProposal(0))
@@ -73,7 +73,7 @@ func TestGotoNextRoundWithoutProposal(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexX)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 3, 0, crypto.UndefHash, tIndexY)
@@ -88,7 +88,7 @@ func TestSecondProposalCommitted(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 
 	// Now it's turn for Byzantine node to propose a block
 	// Other nodes are going to not accept its proposal, even it is valid
@@ -126,7 +126,7 @@ func TestSecondProposalCommitted(t *testing.T) {
 func TestNetworkLagging1(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	h := 1
 	r := 0
@@ -155,7 +155,7 @@ func TestNetworkLagging2(t *testing.T) {
 	r := 0
 	p1 := makeProposal(t, h, r)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	// We don't set proposal for second validator here
 	// tConsP.SetProposal(p1)
 
@@ -184,7 +184,7 @@ func TestNetworkLagging2(t *testing.T) {
 func TestLateProposal(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	h := 1
 	r := 0
@@ -204,7 +204,7 @@ func TestLateProposal(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
-	assert.True(t, tConsP.status.IsCommitted())
+	assert.True(t, tConsP.isCommitted)
 }
 
 func TestLateProposal2(t *testing.T) {
@@ -216,7 +216,7 @@ func TestLateProposal2(t *testing.T) {
 	h := 3
 	p := makeProposal(t, h, 0) // tConsP should propose for this round
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
@@ -241,7 +241,7 @@ func TestLateUndefVote(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 
 	h := 3
 	r := 0
@@ -265,7 +265,7 @@ func TestSetProposalForNextRoundWithoutFinishingTheFirstRound(t *testing.T) {
 
 	commitBlockForAllStates(t)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 
 	// Byzantine node sends proposal for second round (his turn)
 	b, err := tConsB.state.ProposeBlock(1)
@@ -293,7 +293,7 @@ func TestEnterPrepareAfterPrecommit(t *testing.T) {
 	p := makeProposal(t, h, r)
 
 	// tConsP is partitioned, so tConsX doesn't have the proposal
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
 
 	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY)
@@ -328,8 +328,8 @@ func TestProposeIvalidArgs(t *testing.T) {
 func TestCreateProposal(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsX)
+	testEnterNewHeight(tConsY)
 
 	tConsX.createProposal(1, 0)
 	assert.NotNil(t, tConsX.RoundProposal(0))

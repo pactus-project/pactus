@@ -158,7 +158,7 @@ func TestSessionTimeout(t *testing.T) {
 	tAliceSync.peerSet.UpdateMaxClaimedHeight(1000)
 	tAliceSync.sendBlocksRequestIfWeAreBehind()
 	assert.True(t, tAliceSync.peerSet.HasAnyValidSession())
-	time.Sleep(tAliceConfig.SessionTimeout)
+	time.Sleep(2 * tAliceConfig.SessionTimeout)
 	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
 }
 

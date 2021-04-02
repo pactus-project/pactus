@@ -8,7 +8,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/consensus/pending_votes"
-	"github.com/zarbchain/zarb-go/consensus/status"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/proposal"
@@ -21,14 +20,17 @@ import (
 type consensus struct {
 	lk deadlock.RWMutex
 
-	config       *Config
-	hrs          *hrs.HRS
-	status       *status.Status
-	pendingVotes *pending_votes.PendingVotes
-	signer       crypto.Signer
-	state        state.StateFacade
-	broadcastCh  chan *message.Message
-	logger       *logger.Logger
+	config         *Config
+	pendingVotes   *pending_votes.PendingVotes
+	signer         crypto.Signer
+	state          state.StateFacade
+	hrs            hrs.HRS
+	isProposed     bool
+	isPrepared     bool
+	isPreCommitted bool
+	isCommitted    bool
+	broadcastCh    chan *message.Message
+	logger         *logger.Logger
 }
 
 func NewConsensus(
@@ -46,7 +48,6 @@ func NewConsensus(
 	// Update height later, See enterNewHeight.
 	cs.pendingVotes = pending_votes.NewPendingVotes()
 	cs.hrs = hrs.NewHRS(0, 0, hrs.StepTypeUnknown)
-	cs.status = status.NewStatus()
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	return cs, nil
@@ -57,10 +58,29 @@ func (cs *consensus) Stop() {
 }
 
 func (cs *consensus) Fingerprint() string {
-	return fmt.Sprintf("{%v %s}", cs.hrs.String(), cs.status.String())
+	isProposed := "-"
+	if cs.isProposed {
+		isProposed = "X"
+	}
+	isPrepared := "-"
+	if cs.isPrepared {
+		isPrepared = "X"
+	}
+	isPreCommitted := "-"
+	if cs.isPreCommitted {
+		isPreCommitted = "X"
+	}
+	isCommitted := "-"
+	if cs.isCommitted {
+		isCommitted = "X"
+	}
+	return fmt.Sprintf("{%v %s%s%s%s}", cs.hrs.String(), isProposed, isPrepared, isPreCommitted, isCommitted)
 }
 
-func (cs *consensus) HRS() *hrs.HRS {
+func (cs *consensus) HRS() hrs.HRS {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
 	return cs.hrs
 }
 

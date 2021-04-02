@@ -11,7 +11,7 @@ import (
 
 type HeartBeatPayload struct {
 	PeerID        peer.ID     `cbor:"1,keyasint"`
-	Pulse         *hrs.HRS    `cbor:"2,keyasint"`
+	Pulse         hrs.HRS     `cbor:"2,keyasint"`
 	LastBlockHash crypto.Hash `cbor:"3,keyasint"`
 }
 

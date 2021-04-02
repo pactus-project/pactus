@@ -17,7 +17,7 @@ func TestMoveToNewHeight(t *testing.T) {
 	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	// Calling MoveToNewHeight for the second time
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
 }
 
@@ -25,7 +25,7 @@ func TestConsensusBehindState(t *testing.T) {
 	setup(t)
 
 	// Consensus starts here
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	p := makeProposal(t, 1, 0)
 	assert.NoError(t, tConsP.state.ValidateBlock(p.Block()))
@@ -55,7 +55,7 @@ func TestConsensusBehindState2(t *testing.T) {
 	setup(t)
 
 	// Consensus starts here
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	h := 1
 	r := 0

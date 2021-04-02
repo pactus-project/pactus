@@ -54,8 +54,8 @@ func (vs *VoteSet) Len() int {
 func (vs *VoteSet) AllVotes() []*vote.Vote {
 	votes := make([]*vote.Vote, 0)
 
-	for _, blockVotes := range vs.blockVotes {
-		for _, vote := range blockVotes.votes {
+	for _, bv := range vs.blockVotes {
+		for _, vote := range bv.votes {
 			votes = append(votes, vote)
 		}
 	}

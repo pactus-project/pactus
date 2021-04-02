@@ -5,7 +5,7 @@ import (
 )
 
 func (cs *consensus) enterCommit(round int) {
-	if cs.status.IsCommitted() || round > cs.hrs.Round() {
+	if cs.isCommitted || round > cs.hrs.Round() {
 		cs.logger.Trace("Commit: Committed or invalid round", "round", round)
 		return
 	}
@@ -59,7 +59,7 @@ func (cs *consensus) enterCommit(round int) {
 		return
 	}
 
-	cs.status.SetCommitted(true)
+	cs.isCommitted = true
 	cs.logger.Info("Commit: Block committed, Schedule new height", "block", blockHash.Fingerprint())
 
 	cs.scheduleNewHeight()

@@ -12,7 +12,7 @@ import (
 func TestNewRound(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	checkHRS(t, tConsP, 1, 0, hrs.StepTypePropose)
 
 	//
@@ -40,7 +40,7 @@ func TestNewRound(t *testing.T) {
 func TestConsensusGotoNextRound(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	// Validator_1 is offline
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX)
@@ -58,7 +58,7 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	// Byzantine node sends different valid proposals for every node
 	h := 3
@@ -77,7 +77,7 @@ func TestConsensusGotoNextRound2(t *testing.T) {
 func TestDuplicatedNewRound(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	p := makeProposal(t, 1, 1)
 
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX)
@@ -89,9 +89,9 @@ func TestDuplicatedNewRound(t *testing.T) {
 	checkHRSWait(t, tConsP, 1, 1, hrs.StepTypePrepare)
 
 	tConsP.SetProposal(p)
-	assert.True(t, tConsP.status.IsPrepared())
+	assert.True(t, tConsP.isPrepared)
 
 	// Add another precommit from previous round and call `enterNewRound(1)`
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexB)
-	assert.True(t, tConsP.status.IsPrepared())
+	assert.True(t, tConsP.isPrepared)
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func (cs *consensus) enterPrecommit(round int) {
-	if cs.status.IsPreCommitted() || round > cs.hrs.Round() {
+	if cs.isPreCommitted || round > cs.hrs.Round() {
 		cs.logger.Trace("Precommit: Precommitted or invalid round/step", "round", round)
 		return
 	}
@@ -69,7 +69,7 @@ func (cs *consensus) enterPrecommit(round int) {
 	}
 
 	// Everything is good
-	cs.status.SetPreCommitted(true)
+	cs.isPreCommitted = true
 	cs.logger.Info("Precommit: Proposal approved", "proposal", roundProposal)
 	cs.signAddVote(vote.VoteTypePrecommit, round, *blockHash)
 }

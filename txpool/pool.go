@@ -153,9 +153,8 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		}
 	}()
 
-	pool.logger.Debug("Query transaction from nodes", "id", id)
-
 	pool.lk.Lock()
+	pool.logger.Debug("Query transaction from nodes", "id", id)
 	pool.appendTxCh = make(chan *tx.Tx, 100)
 	pool.lk.Unlock()
 
@@ -167,10 +166,16 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 	for {
 		select {
 		case <-timeout.C:
+			pool.lk.Lock()
 			pool.logger.Warn("no transaction received", "id", id, "timeout", pool.config.WaitingTimeout)
+			pool.lk.Unlock()
+			
 			return nil
 		case trx := <-pool.appendTxCh:
+			pool.lk.Lock()
 			pool.logger.Debug("Transaction received", "id", id)
+			pool.lk.Unlock()
+
 			if trx.ID().EqualsTo(id) {
 				return trx
 			}

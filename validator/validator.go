@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type Validator struct {
@@ -100,7 +99,7 @@ func (val Validator) Fingerprint() string {
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
 	signer := crypto.GenerateTestSigner()
 	val := NewValidator(signer.PublicKey(), number, 0)
-	val.data.Stake = util.RandInt64(1000000000)
-	val.data.Sequence = util.RandInt(1000)
+	val.data.Stake = 777777777
+	val.data.Sequence = 77
 	return val, signer
 }

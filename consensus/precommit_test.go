@@ -18,7 +18,7 @@ func TestPrecommitNoProposal(t *testing.T) {
 	r := 0
 	p := makeProposal(t, h, r)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	checkHRSWait(t, tConsP, h, r, hrs.StepTypePrepare)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
@@ -46,7 +46,7 @@ func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
 	r := 0
 	p := makeProposal(t, h, r)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	checkHRS(t, tConsP, h, r, hrs.StepTypePropose)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
@@ -80,7 +80,7 @@ func TestSuspiciousPrepare1(t *testing.T) {
 	r := 0
 	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	tConsP.SetProposal(p)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
@@ -101,7 +101,7 @@ func TestSuspiciousPrepare2(t *testing.T) {
 	r := 0
 	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	tConsP.SetProposal(p)
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
@@ -115,7 +115,7 @@ func TestSuspiciousPrepare2(t *testing.T) {
 func TestPrecommitTimeout(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY)
 
@@ -126,7 +126,7 @@ func TestPrecommitTimeout(t *testing.T) {
 func TestPrecommitIvalidArgs(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	// Invalid args for propose phase
 	tConsP.enterPrecommit(1)
@@ -143,14 +143,14 @@ func TestUpdatePrecommitFromPreviousRound(t *testing.T) {
 	h := 3
 	p0 := makeProposal(t, h, 0)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 	prepareXRound0Null := shouldPublishVote(t, tConsX, vote.VoteTypePrepare, crypto.UndefHash)
 
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsY)
 	prepareYRound0Null := shouldPublishVote(t, tConsY, vote.VoteTypePrepare, crypto.UndefHash)
 
 	// Byzantine node send proposal for Partitioned node, but not for others
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	tConsP.SetProposal(p0)
 	preparePRound0Block := shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p0.Block().Hash())
 

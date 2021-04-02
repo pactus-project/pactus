@@ -220,6 +220,14 @@ func testAddVote(t *testing.T,
 	return v
 }
 
+// testEnterNewHeight helps tests to call enterNewHeight method safely
+// without scheduling new height. It boosts the test speed
+func testEnterNewHeight(cons *consensus) {
+	cons.lk.Lock()
+	cons.enterNewHeight()
+	cons.lk.Unlock()
+}
+
 func commitBlockForAllStates(t *testing.T) {
 	height := tConsX.state.LastBlockHeight()
 	var err error
@@ -296,7 +304,7 @@ func TestNotInCommittee(t *testing.T) {
 	cons, err := NewConsensus(TestConfig(), st, signer, make(chan *message.Message, 100))
 	assert.NoError(t, err)
 
-	cons.(*consensus).enterNewHeight()
+	testEnterNewHeight(cons.(*consensus))
 
 	cons.(*consensus).signAddVote(vote.VoteTypePrepare, 0, crypto.GenerateTestHash())
 	assert.Zero(t, len(cons.RoundVotes(0)))
@@ -306,7 +314,7 @@ func TestRoundVotes(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t) // height 1
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	t.Run("Ignore votes from invalid height", func(t *testing.T) {
 		v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tSigners[tIndexX].Address())
@@ -331,7 +339,7 @@ func TestRoundVotes(t *testing.T) {
 func TestConsensusAddVotesNormal(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
 
 	p := tConsX.RoundProposal(0)
@@ -353,7 +361,7 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 func TestConsensusAddVote(t *testing.T) {
 	setup(t)
 
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 
 	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
 	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX)
@@ -371,7 +379,7 @@ func TestConsensusAddVote(t *testing.T) {
 func TestConsensusNoPrepares(t *testing.T) {
 	setup(t)
 
-	tConsB.enterNewHeight()
+	testEnterNewHeight(tConsB)
 
 	h := 1
 	r := 0
@@ -394,7 +402,7 @@ func TestConsensusNoPrepares(t *testing.T) {
 func TestConsensusInvalidVote(t *testing.T) {
 	setup(t)
 
-	tConsX.enterNewHeight()
+	testEnterNewHeight(tConsX)
 
 	v, _ := vote.GenerateTestPrecommitVote(1, 0)
 	assert.Error(t, tConsX.addVote(v))
@@ -403,7 +411,7 @@ func TestConsensusInvalidVote(t *testing.T) {
 func TestPickRandomVote(t *testing.T) {
 	setup(t)
 
-	tConsY.enterNewHeight()
+	testEnterNewHeight(tConsY)
 	assert.Nil(t, tConsY.PickRandomVote())
 
 	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY)
@@ -414,7 +422,7 @@ func TestSignProposalFromPreviousRound(t *testing.T) {
 	setup(t)
 
 	p0 := makeProposal(t, 1, 0)
-	tConsP.enterNewHeight()
+	testEnterNewHeight(tConsP)
 	tConsP.enterNewRound(1)
 
 	tConsP.SetProposal(p0)
