@@ -16,13 +16,13 @@ type VoteSet struct {
 	voteType         vote.VoteType
 	validators       []*validator.Validator
 	blockVotes       map[crypto.Hash]*blockVotes
+	allVotes         map[crypto.Hash]*vote.Vote
 	totalPower       int64
 	accumulatedPower int64
 	quorumBlock      *crypto.Hash
 }
 
 func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*validator.Validator) *VoteSet {
-
 	totalPower := int64(0)
 	for _, val := range validators {
 		totalPower += val.Power()
@@ -35,6 +35,7 @@ func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*val
 		validators: validators,
 		totalPower: totalPower,
 		blockVotes: make(map[crypto.Hash]*blockVotes),
+		allVotes:   make(map[crypto.Hash]*vote.Vote),
 	}
 }
 
@@ -44,20 +45,13 @@ func (vs *VoteSet) Round() int              { return vs.round }
 func (vs *VoteSet) AccumulatedPower() int64 { return vs.accumulatedPower }
 
 func (vs *VoteSet) Len() int {
-	sum := 0
-	for _, bv := range vs.blockVotes {
-		sum += len(bv.votes)
-	}
-	return sum
+	return len(vs.allVotes)
 }
 
 func (vs *VoteSet) AllVotes() []*vote.Vote {
 	votes := make([]*vote.Vote, 0)
-
-	for _, bv := range vs.blockVotes {
-		for _, vote := range bv.votes {
-			votes = append(votes, vote)
-		}
+	for _, v := range vs.allVotes {
+		votes = append(votes, v)
 	}
 	return votes
 }
@@ -107,11 +101,17 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		return false, errors.Errorf(errors.ErrInvalidVote, "Failed to verify vote")
 	}
 
-	bv := vs.mustGetBlockVotes(vote.BlockHash())
+	_, exists := vs.allVotes[vote.Hash()]
+	if exists {
+		return false, nil
+	}
 
+	// Alright! We don't have this vote yet
+	vs.allVotes[vote.Hash()] = vote
+
+	// Now check for duplicity
+	duplicated := false
 	var err error
-	var duplicated bool
-	// check for conflicts
 	for h, bv := range vs.blockVotes {
 		if !h.EqualsTo(vote.BlockHash()) {
 			anotherVote, ok := bv.votes[signer]
@@ -120,11 +120,16 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 					// A possible scenario:
 					// A peer doesn't have a proposal, it votes for null.
 					// Later it receives the proposal, so it votes again.
-					duplicated = true
+					// Replace undef vote with block vote
+					vs.accumulatedPower -= val.Power()
+					bv.power -= val.Power()
+					delete(bv.votes, signer)
+					vs.quorumBlock = nil
 				} else if vote.BlockHash().IsUndef() {
 					// A possible scenario:
 					// Because of network latency, we might receive null_vote after block_vote.
-					duplicated = true
+					// Ignore undef vote in this case.
+					return false, nil
 				} else if anotherVote.BlockHash() != vote.BlockHash() {
 					// Duplicated vote:
 					// 1- Same signer
@@ -140,21 +145,18 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		}
 	}
 
-	added := bv.addVote(vote)
-	if added {
-		bv.power += val.Power()
-		if !duplicated {
-			vs.accumulatedPower += val.Power()
-		}
-		if vs.hasQuorum(bv.power) {
-			if vs.quorumBlock == nil || vs.quorumBlock.IsUndef() {
-				blockHash := vote.BlockHash()
-				vs.quorumBlock = &blockHash
-			}
-		}
+	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
+	blockVotes.addVote(vote)
+	blockVotes.power += val.Power()
+	if !duplicated {
+		vs.accumulatedPower += val.Power()
+	}
+	if vs.hasQuorum(blockVotes.power) {
+		blockHash := vote.BlockHash()
+		vs.quorumBlock = &blockHash
 	}
 
-	return added, err
+	return true, err
 }
 func (vs *VoteSet) hasQuorum(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)

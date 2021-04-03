@@ -75,52 +75,71 @@ func TestDuplicateVote(t *testing.T) {
 
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
+	h3 := crypto.GenerateTestHash()
 	vs := NewVoteSet(1, 0, vote.VoteTypePrepare, committee.Validators())
 
 	nullVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
 	correctVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[0].Address())
-	duplicatedVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h2, signers[0].Address())
+	duplicatedVote1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, h2, signers[0].Address())
+	duplicatedVote2 := vote.NewVote(vote.VoteTypePrepare, 1, 0, h3, signers[0].Address())
 
 	// sign the votes
 	signers[0].SignMsg(nullVote)
 	signers[0].SignMsg(correctVote)
-	signers[0].SignMsg(duplicatedVote)
+	signers[0].SignMsg(duplicatedVote1)
+	signers[0].SignMsg(duplicatedVote2)
 
 	added, err := vs.AddVote(nullVote)
-	assert.True(t, added) // ok
-	assert.NoError(t, err)
-
-	added, err = vs.AddVote(nullVote)
-	assert.False(t, added) // added before
-	assert.NoError(t, err)
-	assert.Equal(t, vs.Len(), 1)
+	assert.True(t, added)                               // ok
+	assert.NoError(t, err)                              //
+	assert.Equal(t, vs.Len(), 1)                        //
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) // First validator's stake
 
 	added, err = vs.AddVote(correctVote)
 	assert.True(t, added)                               // ok
 	assert.NoError(t, err)                              //
-	assert.Equal(t, vs.Len(), 2)                        // null_vote + block_vote
-	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) // First validator's stake
+	assert.Equal(t, vs.Len(), 2)                        // null + block_vote
+	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
+
+	added, err = vs.AddVote(duplicatedVote1)
+	assert.True(t, added)                               // ok
+	assert.Error(t, err)                                //
+	assert.Equal(t, vs.Len(), 3)                        // null + block_vote + duplicated1
+	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
+	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
+
+	added, err = vs.AddVote(duplicatedVote2)
+	assert.True(t, added)                               // ok
+	assert.Error(t, err)                                //
+	assert.Equal(t, vs.Len(), 4)                        // null + block_vote + duplicated1 + duplicated2
+	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
+	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
+
+	added, err = vs.AddVote(nullVote)
+	assert.False(t, added)                              // added before
+	assert.NoError(t, err)                              //
+	assert.Equal(t, vs.Len(), 4)                        //
+	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
 
 	// Again add null_vote
 	added, err = vs.AddVote(nullVote)
-	assert.False(t, added) // added before
-	assert.NoError(t, err)
-	assert.Equal(t, vs.Len(), 2)
-
-	added, err = vs.AddVote(duplicatedVote)
-	assert.True(t, added)
-	assert.Error(t, err)
-	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
+	assert.False(t, added)                              // added before
+	assert.NoError(t, err)                              //
+	assert.Equal(t, vs.Len(), 4)                        //
+	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
 
 	bv1 := vs.blockVotes[h1]
 	bv2 := vs.blockVotes[h2]
-	bv3 := vs.blockVotes[crypto.UndefHash]
-	assert.Equal(t, vs.Len(), 3)                        //
+	bv3 := vs.blockVotes[h3]
+	bv4 := vs.blockVotes[crypto.UndefHash]
+	assert.Equal(t, vs.Len(), 4)                        // vote + duplicated1 + duplicated2
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
 	assert.Equal(t, bv1.power, int64(1000))             //
 	assert.Equal(t, bv2.power, int64(1000))             //
 	assert.Equal(t, bv3.power, int64(1000))             //
+	assert.Equal(t, bv4.power, int64(0))                //
+
+	// Add vote again
 }
 
 func TestQuorum(t *testing.T) {
@@ -207,19 +226,17 @@ func TestPower(t *testing.T) {
 
 	// Check block votes power
 	bv1 := vs.blockVotes[crypto.UndefHash]
-	assert.Equal(t, bv1.power, int64(1000+1500+2500))
 	bv2 := vs.blockVotes[h1]
+	assert.Equal(t, bv1.power, int64(1500+2500))
 	assert.Equal(t, bv2.power, int64(1000))
 
 	// Check previous votes
-	_, exists1 := bv1.votes[v1.Signer()]
-	_, exists2 := bv1.votes[v2.Signer()]
-	assert.True(t, exists1)
-	assert.True(t, exists2)
+	assert.Contains(t, vs.AllVotes(), v1)
+	assert.Contains(t, vs.AllVotes(), v2)
 
 	// Check accumulated power
 	assert.True(t, vs.HasQuorum())
-	assert.True(t, vs.QuorumBlock().IsUndef())
+	assert.Nil(t, vs.QuorumBlock())
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000+1500+2500))
 	assert.Equal(t, vs.Len(), 4)
 
@@ -231,8 +248,8 @@ func TestPower(t *testing.T) {
 
 	// Check block votes power
 	bv1 = vs.blockVotes[crypto.UndefHash]
-	assert.Equal(t, bv1.power, int64(1000+1500+2500))
 	bv2 = vs.blockVotes[h1]
+	assert.Equal(t, bv1.power, int64(0))
 	assert.Equal(t, bv2.power, int64(1000+1500+2500))
 
 	assert.True(t, vs.HasQuorum())
@@ -241,10 +258,12 @@ func TestPower(t *testing.T) {
 	assert.Equal(t, vs.Len(), 6)
 
 	// Check previous votes
-	_, exists1 = bv1.votes[v1.Signer()]
-	_, exists2 = bv1.votes[v2.Signer()]
-	assert.True(t, exists1)
-	assert.True(t, exists2)
+	assert.Contains(t, vs.AllVotes(), v1)
+	assert.Contains(t, vs.AllVotes(), v2)
+	assert.Contains(t, vs.AllVotes(), v3)
+	assert.Contains(t, vs.AllVotes(), v4)
+	assert.Contains(t, vs.AllVotes(), v5)
+	assert.Contains(t, vs.AllVotes(), v6)
 }
 
 func TestAllVotes(t *testing.T) {
@@ -266,7 +285,7 @@ func TestAllVotes(t *testing.T) {
 	ok, _ := vs.AddVote(v1)
 	assert.True(t, ok)
 	ok, _ = vs.AddVote(v2)
-	assert.True(t, ok)
+	assert.False(t, ok) // Ignore null after block vote
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
 
@@ -307,7 +326,7 @@ func TestUpdateQuoromBlock(t *testing.T) {
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
 	assert.True(t, vs.HasQuorum())
-	assert.Equal(t, vs.QuorumBlock(), &crypto.UndefHash)
+	assert.Nil(t, vs.QuorumBlock())
 
 	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)

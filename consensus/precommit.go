@@ -41,7 +41,7 @@ func (cs *consensus) enterPrecommit(round int) {
 		cs.logger.Info("Precommit: Some peers don't have proposal yet.")
 
 		if prepares.HasOneThirdOfTotalPower(crypto.UndefHash) {
-			cs.logger.Debug("Precommit: Broadcst proposal.", "proposal", roundProposal)
+			cs.logger.Debug("Precommit: Broadcast proposal.", "proposal", roundProposal)
 			cs.broadcastProposal(roundProposal)
 			return
 		}
