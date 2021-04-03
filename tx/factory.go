@@ -60,6 +60,25 @@ func NewBondTx(stamp crypto.Hash,
 	}
 }
 
+func NewUnbondTx(stamp crypto.Hash,
+	seq int,
+	val crypto.Address,
+	memo string) *Tx {
+	return &Tx{
+		data: txData{
+			Stamp:    stamp,
+			Sequence: seq,
+			Version:  1,
+			Type:     payload.PayloadTypeUnbond,
+			Payload: &payload.UnbondPayload{
+				Validator: val,
+			},
+			Fee:  0,
+			Memo: memo,
+		},
+	}
+}
+
 func NewSortitionTx(stamp crypto.Hash,
 	seq int,
 	addr crypto.Address,

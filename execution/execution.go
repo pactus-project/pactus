@@ -23,6 +23,7 @@ func newExecution(strict bool) *Execution {
 	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(strict)
 	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(strict)
 	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(strict)
+	execs[payload.PayloadTypeUnbond] = executor.NewUnbondExecutor(strict)
 
 	return &Execution{
 		executors: execs,

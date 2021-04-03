@@ -20,6 +20,7 @@ type validatorData struct {
 	Stake            int64            `cbor:"4,keyasint"`
 	BondingHeight    int              `cbor:"5,keyasint"`
 	LastJoinedHeight int              `cbor:"6,keyasint"`
+	UnbondingHeight  int              `cbor:"7,keyasint"`
 }
 
 func NewValidator(publicKey crypto.PublicKey, number, bondingHeight int) *Validator {
@@ -39,12 +40,15 @@ func (val *Validator) Number() int                 { return val.data.Number }
 func (val *Validator) Sequence() int               { return val.data.Sequence }
 func (val *Validator) Stake() int64                { return val.data.Stake }
 func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
+func (val *Validator) UnbondingHeight() int        { return val.data.UnbondingHeight }
 func (val *Validator) LastJoinedHeight() int       { return val.data.LastJoinedHeight }
 
 func (val Validator) Power() int64 {
 	// Only bootstrap validators at genesis block has no stake
 	if val.data.Stake == 0 {
 		return 1
+	} else if val.data.UnbondingHeight > 0 { //if the validator requested to unbound ignore stake
+		return 0
 	}
 	return val.data.Stake
 }
@@ -62,6 +66,11 @@ func (val *Validator) IncSequence() {
 // UpdateLastJoinedHeight updates the last height that this validator joins the committee
 func (val *Validator) UpdateLastJoinedHeight(height int) {
 	val.data.LastJoinedHeight = height
+}
+
+// UpdateUnbondingHeight updates the UnbondingHeight validator requested unbonding it's stake
+func (val *Validator) UpdateUnbondingHeight(height int) {
+	val.data.UnbondingHeight = height
 }
 
 // Hash return the hash of this validator

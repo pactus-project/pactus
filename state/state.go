@@ -146,7 +146,7 @@ func (st *state) tryLoadLastInfo() error {
 
 	totalStake := int64(0)
 	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
-		totalStake += val.Stake()
+		totalStake += val.Power()
 		return false
 	})
 
@@ -165,7 +165,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	vals := genDoc.Validators()
 	for _, val := range vals {
 		st.store.UpdateValidator(val)
-		totalStake += val.Stake()
+		totalStake += val.Power()
 	}
 
 	committee, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
@@ -565,7 +565,10 @@ func (st *state) IsProposer(addr crypto.Address, round int) bool {
 }
 
 func (st *state) Transaction(id tx.ID) *tx.CommittedTx {
-	tx, _ := st.store.Transaction(id)
+	tx, err := st.store.Transaction(id)
+	if err != nil {
+		st.logger.Error("Transaction Search in local store failed", "trx", id, "err", err)
+	}
 	return tx
 }
 

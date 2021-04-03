@@ -66,7 +66,7 @@ func SendTx() func(c *cli.Cmd) {
 			seq = *seqOpt
 
 			if *amountOpt == 0 {
-				cmd.PrintWarnMsg("Stake is not defined.")
+				cmd.PrintWarnMsg("Amount is not defined.")
 				c.PrintHelp()
 				return
 			}

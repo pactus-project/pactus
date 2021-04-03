@@ -8,3 +8,4 @@ vendor
 todo
 local.mk
 .herumi
+*.local.md
