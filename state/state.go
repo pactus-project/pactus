@@ -165,7 +165,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	vals := genDoc.Validators()
 	for _, val := range vals {
 		st.store.UpdateValidator(val)
-		totalStake += val.Power()
+		totalStake += val.Stake()
 	}
 
 	committee, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
