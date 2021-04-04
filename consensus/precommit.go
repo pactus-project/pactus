@@ -11,11 +11,12 @@ type precommitState struct {
 }
 
 func (s *precommitState) enter() {
+	s.queryProposalIfMissed()
+	s.vote()
+
 	sleep := s.config.PrecommitTimeout(s.round)
 	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetPrecommit)
 	s.logger.Trace("Precommit scheduled", "timeout", sleep.Seconds())
-
-	s.vote()
 }
 
 func (s *precommitState) execute() {
@@ -23,7 +24,6 @@ func (s *precommitState) execute() {
 
 	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
-
 	if precommitQH != nil {
 		if precommitQH.IsUndef() {
 			s.enterNewState(s.newRoundState)
@@ -40,8 +40,7 @@ func (s *precommitState) vote() {
 	if roundProposal == nil && prepareQH != nil && !prepareQH.IsUndef() {
 		// There is a consensus about a proposal which we don't have it yet.
 		// Ask peers for this proposal
-		s.requestForProposal()
-		s.logger.Debug("No proposal, send proposal request.")
+		s.logger.Debug("No proposal yet.")
 		return
 	}
 
@@ -57,11 +56,10 @@ func (s *precommitState) vote() {
 		return
 	}
 
-	// TODO: write test for me!
 	if !roundProposal.IsForBlock(*prepareQH) {
 		s.pendingVotes.SetRoundProposal(s.round, nil)
-		s.logger.Warn("Invalid proposal.")
 		s.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
+		s.logger.Error("Proposal is invalid.", "proposal", roundProposal)
 		return
 	}
 

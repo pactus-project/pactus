@@ -168,22 +168,17 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
-	if err := cs.addVote(v); err != nil {
+	added, err := cs.pendingVotes.AddVote(v)
+	if err != nil {
 		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
 	}
-}
-
-func (cs *consensus) addVote(v *vote.Vote) error {
-	added, err := cs.pendingVotes.AddVote(v)
 	if !added {
 		// we probably have this vote
-		return err
+		return
 	}
 
 	cs.logger.Debug("New vote added", "vote", v)
 	cs.currentState.voteAdded(v)
-
-	return err
 }
 
 func (cs *consensus) proposer(round int) *validator.Validator {
@@ -192,33 +187,36 @@ func (cs *consensus) proposer(round int) *validator.Validator {
 
 func (cs *consensus) setProposal(p *proposal.Proposal) {
 	if p.Height() != cs.height {
-		cs.logger.Trace("Propose: Invalid height", "proposal", p)
+		cs.logger.Trace("Invalid height", "proposal", p)
+		return
+	}
+
+	if p.Round() != cs.round {
+		cs.logger.Trace("Invalid round", "proposal", p)
 		return
 	}
 
 	roundProposal := cs.pendingVotes.RoundProposal(p.Round())
 	if roundProposal != nil {
-		cs.logger.Trace("propose: This round has proposal", "proposal", p)
+		cs.logger.Trace("This round has proposal", "proposal", p)
 		return
 	}
 
 	proposer := cs.proposer(p.Round())
 	if err := p.Verify(proposer.PublicKey()); err != nil {
-		cs.logger.Error("propose: Proposal has invalid signature", "proposal", p, "err", err)
+		cs.logger.Error("Proposal has invalid signature", "proposal", p, "err", err)
 		return
 	}
 
 	if err := cs.state.ValidateBlock(p.Block()); err != nil {
-		cs.logger.Warn("propose: Invalid block", "proposal", p, "err", err)
+		cs.logger.Warn("Invalid block", "proposal", p, "err", err)
 		return
 	}
 
-	cs.logger.Info("propose: Proposal set", "proposal", p)
+	cs.logger.Info("Proposal set", "proposal", p)
 	cs.pendingVotes.SetRoundProposal(p.Round(), p)
 
-	if p.Round() == cs.round {
-		cs.currentState.execute()
-	}
+	cs.currentState.execute()
 }
 
 func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
@@ -233,18 +231,22 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	cs.signer.SignMsg(v)
 	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
 
-	err := cs.addVote(v)
+	added, err := cs.pendingVotes.AddVote(v)
+	if added {
+		cs.broadcastVote(v)
+	}
 	if err != nil {
 		cs.logger.Error("Error on adding our vote!", "err", err, "vote", v)
 		return
 	}
-
-	cs.broadcastVote(v)
 }
 
-func (cs *consensus) requestForProposal() {
-	msg := message.NewOpaqueQueryProposalMessage(cs.height, cs.round)
-	cs.broadcastCh <- msg
+func (cs *consensus) queryProposalIfMissed() {
+	p := cs.pendingVotes.RoundProposal(cs.round)
+	if p == nil {
+		msg := message.NewOpaqueQueryProposalMessage(cs.height, cs.round)
+		cs.broadcastCh <- msg
+	}
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
@@ -257,7 +259,7 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 	cs.broadcastCh <- msg
 }
 
-func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Certificate) {
+func (cs *consensus) announceNewBlock(h int, b *block.Block, c *block.Certificate) {
 	msg := message.NewOpaqueBlockAnnounceMessage(h, b, c)
 	cs.broadcastCh <- msg
 }

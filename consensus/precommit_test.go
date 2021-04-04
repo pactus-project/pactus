@@ -1,127 +1,143 @@
 package consensus
 
-/*
-func TestPrecommitNoProposal(t *testing.T) {
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/vote"
+)
+
+func TestPrecommitTimedout(t *testing.T) {
 	setup(t)
 
-	commitBlockForAllStates(t)
+	testEnterNewHeight(tConsY)
 
-	h := 2
-	r := 0
-	p := makeProposal(t, h, r)
+	s := &precommitState{tConsY, false}
 
-	testEnterNewHeight(tConsP)
-	checkStateWait(t, tConsP, h, r, hrs.StepTypePrepare)
-	shouldPublishQueryProposal(t, tConsP, h, r)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
+	// Invalid target
+	s.timedout(&ticker{Height: 2, Target: tickerTargetPrepare})
+	assert.False(t, s.hasTimedout)
 
-	// Still no proposal
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+	s.timedout(&ticker{Height: 2, Target: tickerTargetPrecommit})
+	assert.True(t, s.hasTimedout)
 
-	checkStateWait(t, tConsP, h, r, hrs.StepTypePrecommit)
-	shouldPublishQueryProposal(t, tConsP, h, r)
-
-	// Set proposal now
-	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+	// Add votes calls execute
+	v, _ := vote.GenerateTestPrecommitVote(2, 0)
+	s.voteAdded(v)
+	shouldPublishVote(t, tConsY, vote.VoteTypePrecommit, crypto.UndefHash)
 }
 
-// This is a worse case scenario
-func TestPrecommitNoProposalWithPrecommitQuorom(t *testing.T) {
+func TestPrecommitGotoNewRound(t *testing.T) {
 	setup(t)
 
-	commitBlockForAllStates(t)
+	testEnterNewHeight(tConsY)
 
-	h := 2
-	r := 0
-	p := makeProposal(t, h, r)
+	s := &precommitState{tConsY, false}
 
-	testEnterNewHeight(tConsP)
-	checkState(t, tConsP, h, r, hrs.StepTypePropose)
-	shouldPublishQueryProposal(t, tConsP, h, r)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexP)
 
-	// Still no proposal
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
-
-	checkState(t, tConsP, h, r, hrs.StepTypeCommit)
-
-	// Set proposal now
-	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
-
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
-
-	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+	s.execute()
+	checkHeightRound(t, tConsY, 1, 1)
 }
 
-func TestSuspiciousPrepare1(t *testing.T) {
+func TestPrecommitGotoNewHeight(t *testing.T) {
+	setup(t)
+
+	p := makeProposal(t, 1, 0)
+	testEnterNewHeight(tConsY)
+	tConsY.SetProposal(p)
+
+	s := &precommitState{tConsY, false}
+
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)
+
+	s.execute()
+	shouldPublishBlockAnnounce(t, tConsY, p.Block().Hash())
+}
+
+func TestPrecommitQueryProposal(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
-
-	h := 3
-	r := 0
-	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
 
 	testEnterNewHeight(tConsP)
-	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
+	shouldPublishQueryProposal(t, tConsP, 2, 0) // prepare stage, ignore it
 
-	// Validator_1 is offline
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.GenerateTestHash(), tIndexY)
+	p := makeProposal(t, 2, 0)
 
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+
+	s := &precommitState{tConsP, false}
+	s.vote()
+	shouldPublishQueryProposal(t, tConsP, 2, 0)
+}
+
+func TestPrecommitNullVote1(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+
+	testEnterNewHeight(tConsP)
+
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexB)
+
+	s := &precommitState{tConsP, false}
+	s.vote()
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
 }
 
-func TestSuspiciousPrepare2(t *testing.T) {
+func TestPrecommitNullVote2(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
-
-	h := 3
-	r := 0
-	p := makeProposal(t, h, r) // Byzantine node send different proposal for every node, all valid
 
 	testEnterNewHeight(tConsP)
-	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 
-	// Validator_1 is offline
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.UndefHash, tIndexB)
 
-	shouldPublishProposal(t, tConsP, p.Hash())
-}
-
-func TestPrecommitTimeout(t *testing.T) {
-	setup(t)
-
-	testEnterNewHeight(tConsP)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.UndefHash, tIndexY)
-
-	checkStateWait(t, tConsP, 1, 0, hrs.StepTypePrecommit)
+	s := &precommitState{tConsP, false}
+	s.vote()
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
 }
 
-func TestPrecommitIvalidArgs(t *testing.T) {
+func TestPrecommitInvalidProposal(t *testing.T) {
 	setup(t)
+
+	commitBlockForAllStates(t)
+
+	p1 := makeProposal(t, 2, 0)
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	tSigners[0].SignMsg(trx)
+	assert.NoError(t, tTxPool.AppendTx(trx))
+	p2 := makeProposal(t, 2, 0)
+	assert.NotEqual(t, p1.Hash(), p2.Hash())
 
 	testEnterNewHeight(tConsP)
 
-	// Invalid args for propose phase
-	// MMMMM tConsP.enterPrecommit(1)
-	checkState(t, tConsP, 1, 0, hrs.StepTypePropose)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexB)
+
+	s := &precommitState{tConsP, false}
+	tConsP.SetProposal(p2)
+
+	assert.NotNil(t, tConsP.RoundProposal(0))
+	s.vote()
+	assert.Nil(t, tConsP.RoundProposal(0))
+
+	tConsP.SetProposal(p1)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p1.Block().Hash())
 }
-*/

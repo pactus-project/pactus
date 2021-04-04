@@ -1,65 +1,42 @@
 package consensus
 
-/*
-// Imagine we have four nodes: (Nx, Ny, Nb, Np) which:
-// Nb is a byzantine node and Nx, Ny, Np are honest nodes,
-// however Np is partitioned and see the network through Nb (Byzantine node).
-// In Height H, B sends its pre-votes to all the nodes
-// but only sends valid pre-commit to P and nil pre-commit to X,Y.
-// For should not hapens
-func TestByzantineVote(t *testing.T) {
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/vote"
+)
+
+func TestPrepareTimedout(t *testing.T) {
 	setup(t)
-
-	h := 1
-	r := 0
-	p := makeProposal(t, h, r)
-
-	testEnterNewHeight(tConsP)
-	tConsP.SetProposal(p)
-
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
-	checkState(t, tConsP, h, r, hrs.StepTypePrecommit)
-
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
-
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
-
-	// Partition heals
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
-	checkState(t, tConsP, h, r, hrs.StepTypeCommit)
-}
-
-func TestPrepareTimeout(t *testing.T) {
-	setup(t)
-
-	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
 
 	testEnterNewHeight(tConsY)
 
+	s := &prepareState{tConsY, false}
+
+	// Invalid target
+	s.timedout(&ticker{Height: 2, Target: tickerTargetPrecommit})
+	assert.False(t, s.hasTimedout)
+
+	s.timedout(&ticker{Height: 2, Target: tickerTargetPrepare})
+	assert.True(t, s.hasTimedout)
+
+	// Add votes calls execute
+	v, _ := vote.GenerateTestPrepareVote(2, 0)
+	s.voteAdded(v)
 	shouldPublishVote(t, tConsY, vote.VoteTypePrepare, crypto.UndefHash)
 }
 
-func TestPropareTimeout(t *testing.T) {
+func TestPrepareNullVote(t *testing.T) {
 	setup(t)
 
-	testEnterNewHeight(tConsP)
+	commitBlockForAllStates(t)
 
-	checkStateWait(t, tConsP, 1, 0, hrs.StepTypePrepare)
+	testEnterNewHeight(tConsP)
+	shouldPublishQueryProposal(t, tConsP, 2, 0)
+
+	s := &prepareState{tConsP, false}
+	s.vote()
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 }
-
-func TestPrepareIvalidArgs(t *testing.T) {
-	setup(t)
-
-	testEnterNewHeight(tConsP)
-	// MMMM tConsP.enterPrepare(0)
-
-	// Invalid args for propose phase
-	// MMMM tConsP.enterPrepare(1)
-	checkState(t, tConsP, 1, 0, hrs.StepTypePrepare)
-}
-*/

@@ -11,11 +11,12 @@ type prepareState struct {
 }
 
 func (s *prepareState) enter() {
+	s.queryProposalIfMissed()
+	s.vote()
+
 	sleep := s.config.PrepareTimeout(s.round)
 	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetPrepare)
 	s.logger.Trace("Prepare scheduled", "timeout", sleep.Seconds())
-
-	s.vote()
 }
 
 func (s *prepareState) execute() {
@@ -30,8 +31,6 @@ func (s *prepareState) execute() {
 func (s *prepareState) vote() {
 	roundProposal := s.pendingVotes.RoundProposal(s.round)
 	if roundProposal == nil {
-		s.requestForProposal()
-
 		s.logger.Warn("No proposal")
 		s.signAddVote(vote.VoteTypePrepare, crypto.UndefHash)
 		return

@@ -9,6 +9,7 @@ type commitState struct {
 }
 
 func (s *commitState) enter() {
+	s.queryProposalIfMissed()
 	s.execute()
 }
 
@@ -19,8 +20,6 @@ func (s *commitState) execute() {
 	// For any reason, we don't have proposal
 	roundProposal := s.pendingVotes.RoundProposal(s.round)
 	if roundProposal == nil {
-		s.requestForProposal()
-
 		s.logger.Warn("No proposal, send proposal request.")
 		return
 	}
@@ -47,7 +46,7 @@ func (s *commitState) execute() {
 
 	s.logger.Info("Block committed, Schedule new height", "precommitQH", precommitQH)
 	// Now we can broadcast the committed block
-	s.broadcastBlock(s.height, &certBlock, cert)
+	s.announceNewBlock(s.height, &certBlock, cert)
 
 	s.enterNewState(s.newHeightState)
 }

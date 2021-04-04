@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -14,16 +14,18 @@ func TestCommitExecute(t *testing.T) {
 
 	commitBlockForAllStates(t)
 
-	h := 2
-	r := 0
-	p1 := makeProposal(t, h, r)
-	p2, _ := proposal.GenerateTestProposal(2, 0)
+	p1 := makeProposal(t, 2, 0)
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	tSigners[0].SignMsg(trx)
+	assert.NoError(t, tTxPool.AppendTx(trx))
+	p2 := makeProposal(t, 2, 0)
+	assert.NotEqual(t, p1.Hash(), p2.Hash())
 
 	testEnterNewHeight(tConsX)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexP)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p1.Block().Hash(), tIndexB)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p1.Block().Hash(), tIndexP)
 
 	s := &commitState{tConsX}
 

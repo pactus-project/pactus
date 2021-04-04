@@ -125,7 +125,7 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash)
 	}
 }
 
-func shouldPublishProposal(t *testing.T, cons *consensus, hash crypto.Hash) {
+func shouldPublishProposal(t *testing.T, cons *consensus) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -137,8 +137,6 @@ func shouldPublishProposal(t *testing.T, cons *consensus, hash crypto.Hash) {
 			logger.Info("shouldPublishProposal", "msg", msg)
 
 			if msg.PayloadType() == payload.PayloadTypeProposal {
-				pld := msg.Payload.(*payload.ProposalPayload)
-				assert.Equal(t, pld.Proposal.Hash(), hash)
 				return
 			}
 		}
@@ -178,7 +176,8 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 
 			if msg.PayloadType() == payload.PayloadTypeVote {
 				pld := msg.Payload.(*payload.VotePayload)
-				if pld.Vote.BlockHash().EqualsTo(hash) {
+				if pld.Vote.VoteType() == voteType &&
+					pld.Vote.BlockHash().EqualsTo(hash) {
 					return pld.Vote
 				}
 			}
@@ -388,8 +387,8 @@ func TestConsensusLateProposal1(t *testing.T) {
 
 	// Partitioned node receives proposal now
 	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
 }
 
@@ -415,8 +414,8 @@ func TestConsensusLateProposal2(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
 
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
 }
 func TestConsensusInvalidVote(t *testing.T) {
@@ -425,7 +424,8 @@ func TestConsensusInvalidVote(t *testing.T) {
 	testEnterNewHeight(tConsX)
 
 	v, _ := vote.GenerateTestPrecommitVote(1, 0)
-	assert.Error(t, tConsX.addVote(v))
+	tConsX.AddVote(v)
+	assert.False(t, tConsX.HasVote(v.Hash()))
 }
 
 func TestPickRandomVote(t *testing.T) {
@@ -447,7 +447,7 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 
 	tConsP.SetProposal(p)
 
-	assert.NotNil(t, tConsP.RoundProposal(0), 0)
+	assert.Nil(t, tConsP.RoundProposal(0), 0)
 	checkHeightRoundWait(t, tConsP, 1, 1)
 }
 
@@ -462,4 +462,36 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.RoundProposal(0), 0)
 	checkHeightRoundWait(t, tConsP, 2, 0)
+}
+
+// Imagine we have four nodes: (Nx, Ny, Nb, Np) which:
+// Nb is a byzantine node and Nx, Ny, Np are honest nodes,
+// however Np is partitioned and see the network through Nb (Byzantine node).
+// In Height H, B sends its pre-votes to all the nodes
+// but only sends valid pre-commit to P and nil pre-commit to X,Y.
+// Fork should not hapens
+func TestByzantineVote(t *testing.T) {
+	setup(t)
+
+	h := 1
+	r := 0
+	p := makeProposal(t, h, r)
+
+	testEnterNewHeight(tConsP)
+	tConsP.SetProposal(p)
+
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
+
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+
+	// Partitioned node is unable to progress
+
+	// Now, Partition heals
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
 }
