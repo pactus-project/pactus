@@ -486,8 +486,7 @@
       "type": "object",
       "properties": {
         "publicKey": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "number": {
           "type": "integer",
@@ -508,6 +507,9 @@
         "lastJoinedHeight": {
           "type": "integer",
           "format": "int32"
+        },
+        "address": {
+          "type": "string"
         }
       }
     },
