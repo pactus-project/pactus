@@ -1,4 +1,4 @@
-package pending_votes
+package vote_set
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ type VoteSet struct {
 	allVotes         map[crypto.Hash]*vote.Vote
 	totalPower       int64
 	accumulatedPower int64
-	quorumBlock      *crypto.Hash
+	quorumHash       *crypto.Hash
 }
 
 func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*validator.Validator) *VoteSet {
@@ -124,7 +124,7 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 					vs.accumulatedPower -= val.Power()
 					bv.power -= val.Power()
 					delete(bv.votes, signer)
-					vs.quorumBlock = nil
+					vs.quorumHash = nil
 				} else if vote.BlockHash().IsUndef() {
 					// A possible scenario:
 					// Because of network latency, we might receive null_vote after block_vote.
@@ -151,38 +151,30 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	if !duplicated {
 		vs.accumulatedPower += val.Power()
 	}
-	if vs.hasQuorum(blockVotes.power) {
+	if vs.hasTwoThirdOfTotalPower(blockVotes.power) {
 		blockHash := vote.BlockHash()
-		vs.quorumBlock = &blockHash
+		vs.quorumHash = &blockHash
 	}
 
 	return true, err
 }
-func (vs *VoteSet) hasQuorum(power int64) bool {
+func (vs *VoteSet) hasTwoThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)
 }
 
-func (vs *VoteSet) HasQuorum() bool {
-	return vs.hasQuorum(vs.accumulatedPower)
+func (vs *VoteSet) HasAccumulatedTwoThirdOfTotalPower() bool {
+	return vs.hasTwoThirdOfTotalPower(vs.accumulatedPower)
 }
 
-func (vs *VoteSet) QuorumBlock() *crypto.Hash {
-	return vs.quorumBlock
-}
-
-func (vs *VoteSet) HasOneThirdOfTotalPower(hash crypto.Hash) bool {
-	bv := vs.blockVotes[hash]
-	if bv == nil {
-		return false
-	}
-	return bv.power > (vs.totalPower * 1 / 3)
+func (vs *VoteSet) QuorumHash() *crypto.Hash {
+	return vs.quorumHash
 }
 
 func (vs *VoteSet) ToCertificate() *block.Certificate {
 	if vs.voteType != vote.VoteTypePrecommit {
 		return nil
 	}
-	blockHash := vs.quorumBlock
+	blockHash := vs.quorumHash
 	if blockHash == nil || blockHash.IsUndef() {
 		return nil
 	}

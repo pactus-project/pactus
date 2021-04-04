@@ -1,75 +1,99 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) enterPrecommit(round int) {
-	if cs.isPreCommitted || round > cs.hrs.Round() {
-		cs.logger.Trace("Precommit: Precommitted or invalid round/step", "round", round)
-		return
-	}
+type precommitState struct {
+	*consensus
+	hasTimedout bool
+}
 
-	prepares := cs.pendingVotes.PrepareVoteSet(round)
-	if !prepares.HasQuorum() {
-		cs.logger.Debug("Precommit: Entering without prepare quorum")
-		return
-	}
+func (s *precommitState) enter() {
+	sleep := s.config.PrecommitTimeout(s.round)
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetPrecommit)
+	s.logger.Trace("Precommit scheduled", "timeout", sleep.Seconds())
 
-	blockHash := prepares.QuorumBlock()
-	roundProposal := cs.pendingVotes.RoundProposal(round)
-	if roundProposal == nil && blockHash != nil && !blockHash.IsUndef() {
-		// There is a consensus about a proposal which we don't have it yet.
-		// Ask peers for this proposal
-		cs.requestForProposal()
-		cs.logger.Debug("Precommit: No proposal, send proposal request.")
-		return
-	}
+	s.vote()
+}
 
-	if roundProposal != nil && blockHash == nil {
-		// We have a valid proposal, but there is no consensus about it
-		//
-		// If we are behind the partition, it might be easy to find it here
-		// There should be some null-votes here.
-		// If weight of null-votes are greather than `1f` (`f` stands for faulty)
-		// Then we broadcast our proposal and return here
-		//
-		// Note: Byzantine node might send different valid proposals to different nodes
-		//
-		cs.logger.Info("Precommit: Some peers don't have proposal yet.")
+func (s *precommitState) execute() {
+	s.vote()
 
-		if prepares.HasOneThirdOfTotalPower(crypto.UndefHash) {
-			cs.logger.Debug("Precommit: Broadcast proposal.", "proposal", roundProposal)
-			cs.broadcastProposal(roundProposal)
-			return
+	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
+	precommitQH := precommits.QuorumHash()
+
+	if precommitQH != nil {
+		if precommitQH.IsUndef() {
+			s.enterNewState(s.newRoundState)
+		} else {
+			s.enterNewState(s.commitState)
 		}
 	}
+}
 
-	cs.hrs.UpdateStep(hrs.StepTypePrecommit)
-
-	if blockHash == nil {
-		cs.logger.Info("Precommit: No quorum for prepare")
-		cs.signAddVote(vote.VoteTypePrecommit, round, crypto.UndefHash)
+func (s *precommitState) vote() {
+	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	prepareQH := prepares.QuorumHash()
+	roundProposal := s.pendingVotes.RoundProposal(s.round)
+	if roundProposal == nil && prepareQH != nil && !prepareQH.IsUndef() {
+		// There is a consensus about a proposal which we don't have it yet.
+		// Ask peers for this proposal
+		s.requestForProposal()
+		s.logger.Debug("No proposal, send proposal request.")
 		return
 	}
 
-	if blockHash.IsUndef() {
-		cs.logger.Info("Precommit: Undef quorum for prepare")
-		cs.signAddVote(vote.VoteTypePrecommit, round, crypto.UndefHash)
+	if prepareQH == nil {
+		s.logger.Info("No quorum for prepare")
+		s.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
 		return
 	}
 
-	if !roundProposal.IsForBlock(blockHash) {
-		cs.pendingVotes.SetRoundProposal(round, nil)
-		cs.logger.Warn("Precommit: Invalid proposal.")
-		cs.signAddVote(vote.VoteTypePrecommit, round, crypto.UndefHash)
+	if prepareQH.IsUndef() {
+		s.logger.Info("Undef quorum for prepare")
+		s.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
+		return
+	}
+
+	// TODO: write test for me!
+	if !roundProposal.IsForBlock(*prepareQH) {
+		s.pendingVotes.SetRoundProposal(s.round, nil)
+		s.logger.Warn("Invalid proposal.")
+		s.signAddVote(vote.VoteTypePrecommit, crypto.UndefHash)
 		return
 	}
 
 	// Everything is good
-	cs.isPreCommitted = true
-	cs.logger.Info("Precommit: Proposal approved", "proposal", roundProposal)
-	cs.signAddVote(vote.VoteTypePrecommit, round, *blockHash)
+	s.logger.Info("Proposal approved", "proposal", roundProposal)
+	s.signAddVote(vote.VoteTypePrepare, *prepareQH)
+	s.signAddVote(vote.VoteTypePrecommit, *prepareQH)
+}
+
+func (s *precommitState) voteAdded(v *vote.Vote) {
+	if s.hasTimedout {
+		s.execute()
+	}
+
+	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
+	precommitQH := precommits.QuorumHash()
+	if precommitQH != nil {
+		s.logger.Debug("precommit has quorum", "precommitQH", precommitQH)
+		s.execute()
+	}
+}
+
+func (s *precommitState) timedout(t *ticker) {
+	if t.Target != tickerTargetPrecommit {
+		s.logger.Debug("Invalid ticker", "ticker", t)
+		return
+	}
+
+	s.hasTimedout = true
+	s.execute()
+}
+
+func (s *precommitState) name() string {
+	return precommitName
 }

@@ -1,6 +1,7 @@
 package pending_votes
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/vote_set"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/validator"
@@ -38,8 +39,8 @@ func (pv *PendingVotes) HasVote(hash crypto.Hash) bool {
 
 func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 	for i := len(pv.roundVotes); i <= round; i++ {
-		prepares := NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators)
-		precommits := NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators)
+		prepares := vote_set.NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators)
+		precommits := vote_set.NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators)
 		rv := &RoundVotes{
 			prepares:   prepares,
 			precommits: precommits,
@@ -57,12 +58,12 @@ func (pv *PendingVotes) AddVote(v *vote.Vote) (bool, error) {
 	return rv.addVote(v)
 }
 
-func (pv *PendingVotes) PrepareVoteSet(round int) *VoteSet {
+func (pv *PendingVotes) PrepareVoteSet(round int) *vote_set.VoteSet {
 	rv := pv.MustGetRoundVotes(round)
 	return rv.voteSet(vote.VoteTypePrepare)
 }
 
-func (pv *PendingVotes) PrecommitVoteSet(round int) *VoteSet {
+func (pv *PendingVotes) PrecommitVoteSet(round int) *vote_set.VoteSet {
 	rv := pv.MustGetRoundVotes(round)
 	return rv.voteSet(vote.VoteTypePrecommit)
 }

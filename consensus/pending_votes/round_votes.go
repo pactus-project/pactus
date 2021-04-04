@@ -1,6 +1,7 @@
 package pending_votes
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/vote_set"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/proposal"
@@ -8,8 +9,8 @@ import (
 )
 
 type RoundVotes struct {
-	prepares   *VoteSet
-	precommits *VoteSet
+	prepares   *vote_set.VoteSet
+	precommits *vote_set.VoteSet
 	proposal   *proposal.Proposal
 }
 
@@ -36,7 +37,7 @@ func (rv *RoundVotes) AllVotes() []*vote.Vote {
 	return votes
 }
 
-func (rv *RoundVotes) voteSet(voteType vote.VoteType) *VoteSet {
+func (rv *RoundVotes) voteSet(voteType vote.VoteType) *vote_set.VoteSet {
 	switch voteType {
 	case vote.VoteTypePrepare:
 		return rv.prepares

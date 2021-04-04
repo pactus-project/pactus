@@ -1,4 +1,4 @@
-package pending_votes
+package vote_set
 
 import (
 	"testing"
@@ -159,15 +159,15 @@ func TestQuorum(t *testing.T) {
 
 	ok, _ := vs.AddVote(v1)
 	assert.True(t, ok)
-	assert.False(t, vs.HasQuorum())
+	assert.False(t, vs.HasAccumulatedTwoThirdOfTotalPower())
 	ok, _ = vs.AddVote(v2)
 	assert.True(t, ok)
-	assert.False(t, vs.HasQuorum())
+	assert.False(t, vs.HasAccumulatedTwoThirdOfTotalPower())
 	assert.Nil(t, vs.ToCertificate())
 
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
-	assert.True(t, vs.HasQuorum())
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
 
 	cert1 := vs.ToCertificate()
 	assert.NotNil(t, cert1)
@@ -177,9 +177,9 @@ func TestQuorum(t *testing.T) {
 	// Add one more vote
 	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
-	assert.True(t, vs.HasQuorum())
-	assert.NotNil(t, vs.QuorumBlock())
-	assert.Equal(t, vs.QuorumBlock(), &h1)
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.NotNil(t, vs.QuorumHash())
+	assert.Equal(t, vs.QuorumHash(), &h1)
 	assert.Equal(t, vs.Len(), 4)
 
 	cert2 := vs.ToCertificate()
@@ -216,8 +216,8 @@ func TestPower(t *testing.T) {
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
 
-	assert.True(t, vs.HasQuorum())
-	assert.True(t, vs.QuorumBlock().IsUndef())
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.True(t, vs.QuorumHash().IsUndef())
 	assert.Equal(t, vs.Len(), 3)
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000+1500+2500))
 
@@ -235,8 +235,8 @@ func TestPower(t *testing.T) {
 	assert.Contains(t, vs.AllVotes(), v2)
 
 	// Check accumulated power
-	assert.True(t, vs.HasQuorum())
-	assert.Nil(t, vs.QuorumBlock())
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.Nil(t, vs.QuorumHash())
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000+1500+2500))
 	assert.Equal(t, vs.Len(), 4)
 
@@ -252,8 +252,8 @@ func TestPower(t *testing.T) {
 	assert.Equal(t, bv1.power, int64(0))
 	assert.Equal(t, bv2.power, int64(1000+1500+2500))
 
-	assert.True(t, vs.HasQuorum())
-	assert.Equal(t, vs.QuorumBlock(), &h1)
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.Equal(t, vs.QuorumHash(), &h1)
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000+1500+2500))
 	assert.Equal(t, vs.Len(), 6)
 
@@ -315,48 +315,26 @@ func TestUpdateQuoromBlock(t *testing.T) {
 
 	ok, _ := vs.AddVote(v1)
 	assert.True(t, ok)
-	assert.False(t, vs.HasQuorum())
-	assert.Nil(t, vs.QuorumBlock())
+	assert.False(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.Nil(t, vs.QuorumHash())
 
 	ok, _ = vs.AddVote(v2)
 	assert.True(t, ok)
-	assert.True(t, vs.HasQuorum())
-	assert.Equal(t, vs.QuorumBlock(), &crypto.UndefHash)
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.Equal(t, vs.QuorumHash(), &crypto.UndefHash)
 
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
-	assert.True(t, vs.HasQuorum())
-	assert.Nil(t, vs.QuorumBlock())
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.Nil(t, vs.QuorumHash())
 
 	ok, _ = vs.AddVote(v4)
 	assert.True(t, ok)
-	assert.True(t, vs.HasQuorum())
-	assert.Equal(t, vs.QuorumBlock(), &h1)
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.Equal(t, vs.QuorumHash(), &h1)
 
 	ok, _ = vs.AddVote(v5)
 	assert.True(t, ok)
-	assert.True(t, vs.HasQuorum())
-	assert.Equal(t, vs.QuorumBlock(), &h1)
-}
-
-func TestHasOneThirdOfTotalPower(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
-
-	vs := NewVoteSet(1, 0, vote.VoteTypePrepare, committee.Validators())
-
-	v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
-	v2 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[1].Address())
-
-	signers[0].SignMsg(v1)
-	signers[1].SignMsg(v2)
-
-	assert.False(t, vs.HasOneThirdOfTotalPower(crypto.UndefHash))
-
-	ok, _ := vs.AddVote(v1)
-	assert.True(t, ok)
-	assert.False(t, vs.HasOneThirdOfTotalPower(crypto.UndefHash))
-
-	ok, _ = vs.AddVote(v2)
-	assert.True(t, ok)
-	assert.True(t, vs.HasOneThirdOfTotalPower(crypto.UndefHash))
+	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
+	assert.Equal(t, vs.QuorumHash(), &h1)
 }

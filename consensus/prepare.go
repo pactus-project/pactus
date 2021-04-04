@@ -1,30 +1,70 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) enterPrepare(round int) {
-	if cs.isPrepared || round > cs.hrs.Round() {
-		cs.logger.Trace("Prepare: Precommitted, prepared or invalid round/step", "round", round)
-		return
+type prepareState struct {
+	*consensus
+	hasTimedout bool
+}
+
+func (s *prepareState) enter() {
+	sleep := s.config.PrepareTimeout(s.round)
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetPrepare)
+	s.logger.Trace("Prepare scheduled", "timeout", sleep.Seconds())
+
+	s.vote()
+}
+
+func (s *prepareState) execute() {
+	s.vote()
+
+	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	if prepares.HasAccumulatedTwoThirdOfTotalPower() {
+		s.enterNewState(s.precommitState)
 	}
-	cs.hrs.UpdateStep(hrs.StepTypePrepare)
-	cs.scheduleTimeout(cs.config.PrecommitTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrecommit)
+}
 
-	roundProposal := cs.pendingVotes.RoundProposal(round)
+func (s *prepareState) vote() {
+	roundProposal := s.pendingVotes.RoundProposal(s.round)
 	if roundProposal == nil {
-		cs.requestForProposal()
+		s.requestForProposal()
 
-		cs.logger.Warn("Prepare: No proposal")
-		cs.signAddVote(vote.VoteTypePrepare, round, crypto.UndefHash)
+		s.logger.Warn("No proposal")
+		s.signAddVote(vote.VoteTypePrepare, crypto.UndefHash)
 		return
 	}
 
 	// Everything is good
-	cs.isPrepared = true
-	cs.logger.Info("Prepare: Proposal approved", "proposal", roundProposal)
-	cs.signAddVote(vote.VoteTypePrepare, round, roundProposal.Block().Hash())
+	s.logger.Info("Proposal approved", "proposal", roundProposal)
+	s.signAddVote(vote.VoteTypePrepare, roundProposal.Block().Hash())
+}
+
+func (s *prepareState) voteAdded(v *vote.Vote) {
+	if s.hasTimedout {
+		s.execute()
+	}
+
+	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	prepareQH := prepares.QuorumHash()
+	if prepareQH != nil {
+		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
+		s.execute()
+	}
+}
+
+func (s *prepareState) timedout(t *ticker) {
+	if t.Target != tickerTargetPrepare {
+		s.logger.Debug("Invalid ticker", "ticker", t)
+		return
+	}
+
+	s.hasTimedout = true
+	s.execute()
+}
+
+func (s *prepareState) name() string {
+	return prepareName
 }

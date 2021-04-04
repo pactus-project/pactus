@@ -1,33 +1,42 @@
 package consensus
 
-import "github.com/zarbchain/zarb-go/consensus/hrs"
+import "github.com/zarbchain/zarb-go/vote"
 
-func (cs *consensus) enterNewRound(round int) {
-	if round > 0 && round <= cs.hrs.Round() {
-		cs.logger.Trace("NewRound: Try to enter prior round", "round", round)
-		return
-	}
+type newRoundState struct {
+	*consensus
+}
 
+func (s *newRoundState) enter() {
+	s.execute()
+}
+
+func (s *newRoundState) execute() {
 	// make sure we have quorum votes for previous round
-	if round > 0 {
-		prepares := cs.pendingVotes.PrepareVoteSet(round - 1)
-		precommits := cs.pendingVotes.PrecommitVoteSet(round - 1)
+	if s.round > 0 {
+		prepares := s.pendingVotes.PrepareVoteSet(s.round - 1)
+		precommits := s.pendingVotes.PrecommitVoteSet(s.round - 1)
 		// Normally when there is no proposal for this round, every one should vote for nil
-		prepareBlockHash := prepares.QuorumBlock()
-		precommitBlockHash := precommits.QuorumBlock()
-		if prepareBlockHash == nil || !prepareBlockHash.IsUndef() {
-			cs.logger.Warn("NewRound: Suspicious prepares", "blockHash", prepareBlockHash)
+		prepareQH := prepares.QuorumHash()
+		precommitQH := precommits.QuorumHash()
+		if prepareQH == nil || !prepareQH.IsUndef() {
+			s.logger.Warn("Suspicious prepares", "prepareQH", prepareQH)
 		}
-		if precommitBlockHash == nil || !precommitBlockHash.IsUndef() {
-			cs.logger.Warn("NewRound: Suspicious precommits", "blockHash", precommitBlockHash)
+		if precommitQH == nil || !precommitQH.IsUndef() {
+			s.logger.Warn("Suspicious precommits", "precommitQH", precommitQH)
 		}
 	}
 
-	cs.isProposed = false
-	cs.isPrepared = false
-	cs.hrs.UpdateRound(round)
-	cs.hrs.UpdateStep(hrs.StepTypeNewRound)
-	cs.logger.Info("NewRound: Entering new round", "round", round)
+	s.round = s.round + 1
+	s.logger.Info("Entering new round", "round", s.round)
+	s.enterNewState(s.proposeState)
+}
 
-	cs.enterPropose(round)
+func (s *newRoundState) timedout(t *ticker) {
+}
+
+func (s *newRoundState) voteAdded(v *vote.Vote) {
+}
+
+func (s *newRoundState) name() string {
+	return newRoundName
 }
