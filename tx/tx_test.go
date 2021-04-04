@@ -295,6 +295,21 @@ func TestBondSignBytes(t *testing.T) {
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
 }
 
+func TestUnbondSignBytes(t *testing.T) {
+	h := crypto.GenerateTestHash()
+	signer := crypto.GenerateTestSigner()
+	// _, pub, _ := crypto.GenerateTestKeyPair()
+
+	trx1 := NewUnbondTx(h, 1, signer.Address(), "test unbond-tx")
+	signer.SignMsg(trx1)
+
+	trx2 := NewUnbondTx(h, 1, signer.Address(), "test unbond-tx")
+	trx3 := NewUnbondTx(h, 2, signer.Address(), "test unbond-tx")
+
+	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
+	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+}
+
 func TestSortitionSignBytes(t *testing.T) {
 	h := crypto.GenerateTestHash()
 	signer := crypto.GenerateTestSigner()
