@@ -92,6 +92,20 @@ func (cs *consensus) HRS() hrs.HRS {
 	return hrs.NewHRS(cs.height, cs.round, hrs.StepTypePropose)
 }
 
+func (cs *consensus) Height() int {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.height
+}
+
+func (cs *consensus) Round() int {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.round
+}
+
 func (cs *consensus) RoundProposal(round int) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()

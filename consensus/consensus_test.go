@@ -186,13 +186,13 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 }
 
 func checkHeightRound(t *testing.T, cons *consensus, height, round int) {
-	assert.Equal(t, cons.height, height)
-	assert.Equal(t, cons.round, round)
+	assert.Equal(t, cons.Height(), height)
+	assert.Equal(t, cons.Round(), round)
 }
 
 func checkHeightRoundWait(t *testing.T, cons *consensus, height, round int) {
 	for i := 0; i < 20; i++ {
-		if cons.height == height && cons.round == round {
+		if cons.Height() == height && cons.Round() == round {
 			break
 		}
 		time.Sleep(200 * time.Millisecond)
