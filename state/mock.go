@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -26,14 +27,18 @@ type MockState struct {
 	InvalidBlockHash     crypto.Hash
 	Committee            *committee.Committee
 	Lock                 deadlock.RWMutex
+	AddToPool            bool
+	BroadCastTx          bool
 }
 
 func MockingState(committee *committee.Committee) *MockState {
 	return &MockState{
-		GenHash:   crypto.GenerateTestHash(),
-		Store:     store.MockingStore(),
-		TxPool:    txpool.MockingTxPool(),
-		Committee: committee,
+		GenHash:     crypto.GenerateTestHash(),
+		Store:       store.MockingStore(),
+		TxPool:      txpool.MockingTxPool(),
+		Committee:   committee,
+		AddToPool:   true,
+		BroadCastTx: true,
 	}
 }
 
@@ -178,11 +183,16 @@ func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
-	return m.TxPool.AppendTx(trx)
+	if m.AddToPool {
+		return m.TxPool.AppendTx(trx)
+	}
+	return errors.Error(errors.ErrGeneric)
 }
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
-
-	return m.TxPool.AppendTxAndBroadcast(trx)
+	if m.BroadCastTx {
+		return m.TxPool.AppendTxAndBroadcast(trx)
+	}
+	return errors.Error(errors.ErrGeneric)
 }

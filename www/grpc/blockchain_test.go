@@ -43,6 +43,7 @@ func TestGetNetworkInfo(t *testing.T) {
 
 func TestGetBlockchainInfo(t *testing.T) {
 	conn, client := callServer(t)
+	tMockState.Store.Blocks = make(map[int]*block.Block)
 
 	t.Run("Should return 0,for no block yet", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})

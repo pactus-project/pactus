@@ -473,11 +473,7 @@
     "zarbSendRawTransactionResponse": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
-        "json": {
+        "id": {
           "type": "string"
         }
       }

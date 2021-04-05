@@ -100,8 +100,7 @@ message SendRawTransactionRequest {
 }
 
 message SendRawTransactionResponse {
-  bytes data = 1;
-  string json = 2;
+  string id = 2;
 }
 
 message Validator{
