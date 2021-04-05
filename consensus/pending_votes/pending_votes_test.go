@@ -55,7 +55,7 @@ func TestAddVotes(t *testing.T) {
 
 	prepares := pv.PrepareVoteSet(1)
 	precommits := pv.PrecommitVoteSet(1)
-	assert.Equal(t, prepares.Len(), 2)   // Null + Vote + Duplicated
+	assert.Equal(t, prepares.Len(), 2)   //  Vote + Duplicated
 	assert.Equal(t, precommits.Len(), 0) // no precommit votes
 	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 2)
 	assert.True(t, pv.HasVote(duplicateVote.Hash()))

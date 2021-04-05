@@ -42,7 +42,7 @@ func (s *newHeightState) execute() {
 	s.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
 
 	s.height = sateHeight + 1
-	s.round = -1
+	s.round = 0
 	s.logger.Info("Entering new height", "height", s.height)
 
 	s.enterNewState(s.newRoundState)

@@ -26,7 +26,6 @@ func (s *newRoundState) execute() {
 		}
 	}
 
-	s.round = s.round + 1
 	s.logger.Info("Entering new round", "round", s.round)
 	s.enterNewState(s.proposeState)
 }

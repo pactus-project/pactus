@@ -229,6 +229,7 @@ func testEnterNewHeight(cons *consensus) {
 // testEnterNewRound helps tests to enter new round safely
 func testEnterNewRound(cons *consensus) {
 	cons.lk.Lock()
+	cons.round++
 	cons.enterNewState(cons.newRoundState)
 	cons.currentState.execute()
 	cons.lk.Unlock()
@@ -442,7 +443,7 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 // Nb is a byzantine node and Nx, Ny, Np are honest nodes,
 // however Np is partitioned and see the network through Nb (Byzantine node).
 // In Height H, B sends its pre-votes to all the nodes
-// but only sends valid pre-commit to P and nil pre-commit to X,Y.
+// but only sends valid pre-commit to P.
 func TestByzantineVote(t *testing.T) {
 	setup(t)
 
@@ -457,7 +458,7 @@ func TestByzantineVote(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.GenerateTestHash(), tIndexB) // Byzantine vote
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())

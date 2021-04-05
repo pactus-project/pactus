@@ -8,22 +8,16 @@ import (
 type tickerTarget int
 
 const (
-	tickerTargetNewHeight = tickerTarget(1)
-	tickerTargetPropose   = tickerTarget(2)
-	tickerTargetPrepare   = tickerTarget(3)
-	tickerTargetPrecommit = tickerTarget(4)
+	tickerTargetNewHeight      = tickerTarget(1)
+	tickerTargetChangeProposer = tickerTarget(2)
 )
 
 func (rs tickerTarget) String() string {
 	switch rs {
 	case tickerTargetNewHeight:
 		return newHeightName
-	case tickerTargetPropose:
+	case tickerTargetChangeProposer:
 		return proposeName
-	case tickerTargetPrepare:
-		return prepareName
-	case tickerTargetPrecommit:
-		return precommitName
 	default:
 		return "Unknown"
 	}

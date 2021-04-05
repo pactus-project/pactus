@@ -11,15 +11,14 @@ import (
 )
 
 type VoteSet struct {
-	height           int
-	round            int
-	voteType         vote.VoteType
-	validators       []*validator.Validator
-	blockVotes       map[crypto.Hash]*blockVotes
-	allVotes         map[crypto.Hash]*vote.Vote
-	totalPower       int64
-	accumulatedPower int64
-	quorumHash       *crypto.Hash
+	height     int
+	round      int
+	voteType   vote.VoteType
+	validators []*validator.Validator
+	blockVotes map[crypto.Hash]*blockVotes
+	allVotes   map[crypto.Hash]*vote.Vote
+	totalPower int64
+	quorumHash *crypto.Hash
 }
 
 func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*validator.Validator) *VoteSet {
@@ -39,10 +38,9 @@ func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*val
 	}
 }
 
-func (vs *VoteSet) Type() vote.VoteType     { return vs.voteType }
-func (vs *VoteSet) Height() int             { return vs.height }
-func (vs *VoteSet) Round() int              { return vs.round }
-func (vs *VoteSet) AccumulatedPower() int64 { return vs.accumulatedPower }
+func (vs *VoteSet) Type() vote.VoteType { return vs.voteType }
+func (vs *VoteSet) Height() int         { return vs.height }
+func (vs *VoteSet) Round() int          { return vs.round }
 
 func (vs *VoteSet) Len() int {
 	return len(vs.allVotes)
@@ -120,7 +118,6 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
 	blockVotes.addVote(vote)
 	blockVotes.power += val.Power()
-	vs.accumulatedPower += val.Power()
 	if vs.hasTwoThirdOfTotalPower(blockVotes.power) {
 		blockHash := vote.BlockHash()
 		vs.quorumHash = &blockHash
@@ -130,10 +127,6 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 }
 func (vs *VoteSet) hasTwoThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)
-}
-
-func (vs *VoteSet) HasAccumulatedTwoThirdOfTotalPower() bool {
-	return vs.hasTwoThirdOfTotalPower(vs.accumulatedPower)
 }
 
 func (vs *VoteSet) QuorumHash() *crypto.Hash {

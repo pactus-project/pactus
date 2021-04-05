@@ -10,6 +10,10 @@ type proposeState struct {
 }
 
 func (s *proposeState) enter() {
+	s.execute()
+}
+
+func (s *proposeState) execute() {
 	proposer := s.proposer(s.round)
 	if proposer.Address().EqualsTo(s.signer.Address()) {
 		s.logger.Info("Our turn to propose", "proposer", proposer.Address())
@@ -19,12 +23,6 @@ func (s *proposeState) enter() {
 		s.logger.Debug("Not our turn to propose", "proposer", proposer.Address())
 	}
 
-	sleep := s.config.ProposeTimeout(s.round)
-	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetPropose)
-	s.logger.Trace("Propose scheduled", "timeout", sleep.Seconds())
-}
-
-func (s *proposeState) execute() {
 	s.enterNewState(s.prepareState)
 }
 
@@ -49,11 +47,6 @@ func (s *proposeState) createProposal(height int, round int) {
 }
 
 func (s *proposeState) timedout(t *ticker) {
-	if t.Target != tickerTargetPropose {
-		s.logger.Debug("Invalid ticker", "ticker", t)
-		return
-	}
-
 	s.execute()
 }
 
