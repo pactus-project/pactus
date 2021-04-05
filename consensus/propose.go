@@ -20,7 +20,6 @@ func (s *proposeState) decide() {
 		s.createProposal(s.height, s.round)
 	} else {
 		s.logger.Debug("Not our turn to propose", "proposer", proposer.Address())
-		s.queryProposal()
 	}
 
 	s.enterNewState(s.prepareState)

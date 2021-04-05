@@ -65,13 +65,12 @@ func NewConsensus(
 
 	cs.height = -1
 	cs.round = -1
-	cs.currentState = &initState{}
+	cs.enterNewState(cs.newHeightState)
 
 	return cs, nil
 }
 
 func (cs *consensus) Stop() {
-
 }
 
 func (cs *consensus) Fingerprint() string {

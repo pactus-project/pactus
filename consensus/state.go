@@ -12,14 +12,3 @@ type consState interface {
 	onTimedout(t *ticker)
 	name() string
 }
-
-type initState struct {
-}
-
-func (s *initState) enter()                             {}
-func (s *initState) onSetProposal(p *proposal.Proposal) {}
-func (s *initState) onTimedout(t *ticker)               {}
-func (s *initState) onAddVote(v *vote.Vote)             {}
-func (s *initState) name() string {
-	return "initializing"
-}

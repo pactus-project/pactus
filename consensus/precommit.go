@@ -67,6 +67,10 @@ func (s *precommitState) onSetProposal(p *proposal.Proposal) {
 }
 
 func (s *precommitState) onTimedout(t *ticker) {
+	if t.Target != tickerTargetChangeProposer {
+		s.logger.Debug("Invalid ticker", "ticker", t)
+		return
+	}
 	s.enterNewState(s.changeProposerState)
 }
 
