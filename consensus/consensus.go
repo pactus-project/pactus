@@ -18,33 +18,25 @@ import (
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-const (
-	newHeightName = "new-height"
-	newRoundName  = "new-round"
-	proposeName   = "propose"
-	prepareName   = "prepare"
-	precommitName = "precommit"
-	commitName    = "commit"
-)
-
 type consensus struct {
 	lk deadlock.RWMutex
 
-	config         *Config
-	pendingVotes   *pending_votes.PendingVotes
-	signer         crypto.Signer
-	state          state.StateFacade
-	height         int
-	round          int
-	newHeightState consState
-	newRoundState  consState
-	proposeState   consState
-	prepareState   consState
-	precommitState consState
-	commitState    consState
-	currentState   consState
-	broadcastCh    chan *message.Message
-	logger         *logger.Logger
+	config              *Config
+	pendingVotes        *pending_votes.PendingVotes
+	signer              crypto.Signer
+	state               state.StateFacade
+	height              int
+	round               int
+	newHeightState      consState
+	newRoundState       consState
+	proposeState        consState
+	prepareState        consState
+	precommitState      consState
+	commitState         consState
+	currentState        consState
+	changeProposerState consState
+	broadcastCh         chan *message.Message
+	logger              *logger.Logger
 }
 
 func NewConsensus(
@@ -69,6 +61,7 @@ func NewConsensus(
 	cs.prepareState = &prepareState{cs, false}
 	cs.precommitState = &precommitState{cs, false}
 	cs.commitState = &commitState{cs}
+	cs.changeProposerState = &changeProposerState{cs}
 
 	cs.height = -1
 	cs.round = -1
@@ -156,50 +149,6 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.setProposal(p)
-}
-
-func (cs *consensus) handleTimeout(t *ticker) {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	cs.logger.Trace("Handle ticker", "ticker", t)
-
-	// Old tickers might trigged now. Ignore them
-	if cs.height != t.Height || cs.round != t.Round {
-		cs.logger.Trace("Stale ticker", "ticker", t)
-		return
-	}
-
-	cs.currentState.timedout(t)
-}
-
-func (cs *consensus) AddVote(v *vote.Vote) {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	if cs.height != v.Height() {
-		return
-	}
-
-	added, err := cs.pendingVotes.AddVote(v)
-	if err != nil {
-		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
-	}
-	if !added {
-		// we probably have this vote
-		return
-	}
-
-	cs.logger.Debug("New vote added", "vote", v)
-	cs.currentState.voteAdded(v)
-}
-
-func (cs *consensus) proposer(round int) *validator.Validator {
-	return cs.state.Proposer(round)
-}
-
-func (cs *consensus) setProposal(p *proposal.Proposal) {
 	if p.Height() != cs.height {
 		cs.logger.Trace("Invalid height", "proposal", p)
 		return
@@ -210,6 +159,10 @@ func (cs *consensus) setProposal(p *proposal.Proposal) {
 		return
 	}
 
+	cs.currentState.onSetProposal(p)
+}
+
+func (cs *consensus) doSetProposal(p *proposal.Proposal) {
 	roundProposal := cs.pendingVotes.RoundProposal(p.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("This round has proposal", "proposal", p)
@@ -229,8 +182,56 @@ func (cs *consensus) setProposal(p *proposal.Proposal) {
 
 	cs.logger.Info("Proposal set", "proposal", p)
 	cs.pendingVotes.SetRoundProposal(p.Round(), p)
+}
 
-	cs.currentState.execute()
+func (cs *consensus) handleTimeout(t *ticker) {
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
+
+	cs.logger.Trace("Handle ticker", "ticker", t)
+
+	// Old tickers might trigged now. Ignore them
+	if cs.height != t.Height || cs.round != t.Round {
+		cs.logger.Trace("Stale ticker", "ticker", t)
+		return
+	}
+
+	cs.currentState.onTimedout(t)
+}
+
+func (cs *consensus) AddVote(v *vote.Vote) {
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
+
+	if v.Height() != cs.height {
+		cs.logger.Trace("Invalid height", "vote", v)
+		return
+	}
+
+	if v.Round() != cs.round {
+		cs.logger.Trace("Invalid round", "vote", v)
+		return
+	}
+
+	cs.currentState.onAddVote(v)
+}
+
+func (cs *consensus) doAddVote(v *vote.Vote) {
+	added, err := cs.pendingVotes.AddVote(v)
+	if err != nil {
+		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
+	}
+	if !added {
+		// we probably have this vote
+		return
+	}
+
+	cs.logger.Debug("New vote added", "vote", v)
+	cs.currentState.onAddVote(v)
+}
+
+func (cs *consensus) proposer(round int) *validator.Validator {
+	return cs.state.Proposer(round)
 }
 
 func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {

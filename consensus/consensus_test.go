@@ -222,7 +222,7 @@ func testAddVote(t *testing.T,
 func testEnterNewHeight(cons *consensus) {
 	cons.lk.Lock()
 	cons.enterNewState(cons.newHeightState)
-	cons.currentState.execute()
+	cons.currentState.onTimedout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
 	cons.lk.Unlock()
 }
 
@@ -231,7 +231,6 @@ func testEnterNewRound(cons *consensus) {
 	cons.lk.Lock()
 	cons.round++
 	cons.enterNewState(cons.newRoundState)
-	cons.currentState.execute()
 	cons.lk.Unlock()
 }
 
@@ -357,14 +356,14 @@ func TestConsensusAddVote(t *testing.T) {
 	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
 	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX)
 	v3 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX)
-	v4 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, crypto.GenerateTestHash(), tIndexX)
+	v4 := testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.GenerateTestHash(), tIndexX)
 	v5 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX)
 
 	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
 	assert.True(t, tConsP.HasVote(v2.Hash()))
 	assert.True(t, tConsP.HasVote(v3.Hash()))
 	assert.True(t, tConsP.HasVote(v4.Hash()))
-	assert.True(t, tConsP.HasVote(v5.Hash()))
+	assert.False(t, tConsP.HasVote(v5.Hash())) // invalid round
 }
 
 func TestConsensusLateProposal1(t *testing.T) {

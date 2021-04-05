@@ -15,9 +15,9 @@ const (
 func (rs tickerTarget) String() string {
 	switch rs {
 	case tickerTargetNewHeight:
-		return newHeightName
+		return "new-height"
 	case tickerTargetChangeProposer:
-		return proposeName
+		return "change-proposer"
 	default:
 		return "Unknown"
 	}

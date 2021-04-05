@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -43,13 +44,20 @@ func (s *prepareState) vote() {
 	s.hasVoted = true
 }
 
-func (s *prepareState) voteAdded(v *vote.Vote) {
+func (s *prepareState) onAddVote(v *vote.Vote) {
+	s.doAddVote(v)
 	s.execute()
 }
 
-func (s *prepareState) timedout(t *ticker) {
+func (s *prepareState) onSetProposal(p *proposal.Proposal) {
+	s.doSetProposal(p)
+	s.execute()
+}
+
+func (s *prepareState) onTimedout(t *ticker) {
+	s.enterNewState(s.changeProposerState)
 }
 
 func (s *prepareState) name() string {
-	return prepareName
+	return "prepare"
 }

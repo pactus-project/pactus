@@ -18,8 +18,6 @@ func TestMustGetRound(t *testing.T) {
 	assert.Nil(t, pv.GetRoundVotes(5))
 	assert.NotNil(t, pv.GetRoundVotes(1))
 	assert.NotNil(t, pv.GetRoundVotes(4))
-	assert.Equal(t, pv.GetRoundVotes(3).prepares.Height(), 101)
-	assert.Equal(t, pv.GetRoundVotes(3).prepares.Round(), 3)
 	assert.Equal(t, len(pv.roundVotes), 5)
 }
 

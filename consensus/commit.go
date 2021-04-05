@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -51,13 +52,20 @@ func (s *commitState) execute() {
 	s.enterNewState(s.newHeightState)
 }
 
-func (s *commitState) voteAdded(v *vote.Vote) {
+func (s *commitState) onAddVote(v *vote.Vote) {
+	s.doAddVote(v)
 	s.execute()
 }
 
-func (s *commitState) timedout(t *ticker) {
+func (s *commitState) onSetProposal(p *proposal.Proposal) {
+	s.doSetProposal(p)
+	s.execute()
+}
+
+func (s *commitState) onTimedout(t *ticker) {
+	s.logger.Debug("Invalid ticker", "ticker", t)
 }
 
 func (s *commitState) name() string {
-	return commitName
+	return "commit"
 }

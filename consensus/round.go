@@ -1,12 +1,19 @@
 package consensus
 
-import "github.com/zarbchain/zarb-go/vote"
+import (
+	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/vote"
+)
 
 type newRoundState struct {
 	*consensus
 }
 
 func (s *newRoundState) enter() {
+	sleep := s.config.ChangeProposerTimeout
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
+	s.logger.Debug("Change proposer timer started...", "timeout", sleep.Seconds())
+
 	s.execute()
 }
 
@@ -30,12 +37,18 @@ func (s *newRoundState) execute() {
 	s.enterNewState(s.proposeState)
 }
 
-func (s *newRoundState) timedout(t *ticker) {
+func (s *newRoundState) onAddVote(v *vote.Vote) {
+	panic("Unreachable")
 }
 
-func (s *newRoundState) voteAdded(v *vote.Vote) {
+func (s *newRoundState) onSetProposal(p *proposal.Proposal) {
+	panic("Unreachable")
+}
+
+func (s *newRoundState) onTimedout(t *ticker) {
+	panic("Unreachable")
 }
 
 func (s *newRoundState) name() string {
-	return newRoundName
+	return "new-round"
 }

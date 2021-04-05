@@ -3,13 +3,14 @@ package vote
 type VoteType int
 
 const (
-	VoteTypePrepare   = VoteType(1)
-	VoteTypePrecommit = VoteType(2)
+	VoteTypePrepare        = VoteType(1)
+	VoteTypePrecommit      = VoteType(2)
+	VoteTypeChangeProposer = VoteType(3)
 )
 
 func (t VoteType) IsValid() bool {
 	switch t {
-	case VoteTypePrepare, VoteTypePrecommit:
+	case VoteTypePrepare, VoteTypePrecommit, VoteTypeChangeProposer:
 		return true
 	}
 
@@ -22,6 +23,8 @@ func (t VoteType) String() string {
 		return "Prepare"
 	case VoteTypePrecommit:
 		return "Precommit"
+	case VoteTypeChangeProposer:
+		return "ChangeProposer"
 	default:
 		return ("Invalid vote type")
 	}

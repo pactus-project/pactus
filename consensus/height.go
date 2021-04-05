@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -48,7 +49,13 @@ func (s *newHeightState) execute() {
 	s.enterNewState(s.newRoundState)
 }
 
-func (s *newHeightState) timedout(t *ticker) {
+func (s *newHeightState) onAddVote(v *vote.Vote) {
+}
+
+func (s *newHeightState) onSetProposal(p *proposal.Proposal) {
+}
+
+func (s *newHeightState) onTimedout(t *ticker) {
 	if t.Target != tickerTargetNewHeight {
 		s.logger.Debug("Invalid ticker", "ticker", t)
 		return
@@ -56,9 +63,6 @@ func (s *newHeightState) timedout(t *ticker) {
 	s.execute()
 }
 
-func (s *newHeightState) voteAdded(v *vote.Vote) {
-}
-
 func (s *newHeightState) name() string {
-	return newHeightName
+	return "new-height"
 }

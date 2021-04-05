@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
@@ -26,6 +27,10 @@ func (s *precommitState) execute() {
 }
 
 func (s *precommitState) vote() {
+	if s.hasVoted {
+		return
+	}
+
 	prepares := s.pendingVotes.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
 	roundProposal := s.pendingVotes.RoundProposal(s.round)
@@ -51,13 +56,20 @@ func (s *precommitState) vote() {
 	s.hasVoted = true
 }
 
-func (s *precommitState) voteAdded(v *vote.Vote) {
+func (s *precommitState) onAddVote(v *vote.Vote) {
+	s.doAddVote(v)
 	s.execute()
 }
 
-func (s *precommitState) timedout(t *ticker) {
+func (s *precommitState) onSetProposal(p *proposal.Proposal) {
+	s.doSetProposal(p)
+	s.execute()
+}
+
+func (s *precommitState) onTimedout(t *ticker) {
+	s.enterNewState(s.changeProposerState)
 }
 
 func (s *precommitState) name() string {
-	return precommitName
+	return "precommit"
 }

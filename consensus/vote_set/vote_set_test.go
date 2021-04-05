@@ -135,6 +135,7 @@ func TestQuorum(t *testing.T) {
 	ok, _ = vs.AddVote(v2)
 	assert.True(t, ok)
 	assert.Nil(t, vs.ToCertificate())
+	assert.Nil(t, vs.QuorumHash())
 
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
@@ -201,11 +202,11 @@ func TestPower(t *testing.T) {
 func TestAllVotes(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(1, 0, vote.VoteTypeChangeProposer, committee.Validators())
 
-	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), signers[0].Address())
-	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), signers[1].Address())
-	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), signers[2].Address())
+	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[0].Address())
+	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[1].Address())
+	v3 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[2].Address())
 
 	signers[0].SignMsg(v1)
 	signers[1].SignMsg(v2)
@@ -225,5 +226,5 @@ func TestAllVotes(t *testing.T) {
 	assert.Contains(t, vs.AllVotes(), v1)
 	assert.Contains(t, vs.AllVotes(), v2)
 	assert.Contains(t, vs.AllVotes(), v3)
-	assert.Nil(t, vs.QuorumHash())
+	assert.NotNil(t, vs.QuorumHash())
 }

@@ -16,10 +16,10 @@ func TestNewHeightTimedout(t *testing.T) {
 	s := &newHeightState{tConsX}
 
 	// Invalid target
-	s.timedout(&ticker{Height: 2, Target: 3})
+	s.onTimedout(&ticker{Height: 2, Target: 3})
 	checkHeightRound(t, tConsX, 1, 0)
 
-	s.timedout(&ticker{Height: 2, Target: tickerTargetNewHeight})
+	s.onTimedout(&ticker{Height: 2, Target: tickerTargetNewHeight})
 	checkHeightRound(t, tConsX, 2, 0)
 }
 
@@ -31,7 +31,7 @@ func TestNewHeightDuplicateEntry(t *testing.T) {
 
 	s := &newHeightState{tConsX}
 
-	s.timedout(&ticker{Height: 1, Target: tickerTargetNewHeight})
+	s.onTimedout(&ticker{Height: 1, Target: tickerTargetNewHeight})
 	checkHeightRound(t, tConsX, 1, 1)
 }
 

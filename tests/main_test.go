@@ -74,7 +74,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Http.Enable = false
 		tConfigs[i].GRPC.Enable = false
 
-		tConfigs[i].Consensus.Timeout = 1 * time.Second
+		tConfigs[i].Consensus.ChangeProposerTimeout = 1 * time.Second
 
 		tConfigs[i].Logger.Levels["default"] = "error"
 		tConfigs[i].Logger.Levels["_state"] = "info"
