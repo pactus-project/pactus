@@ -10,10 +10,10 @@ type commitState struct {
 }
 
 func (s *commitState) enter() {
-	s.execute()
+	s.decide()
 }
 
-func (s *commitState) execute() {
+func (s *commitState) decide() {
 	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
 
@@ -54,12 +54,12 @@ func (s *commitState) execute() {
 
 func (s *commitState) onAddVote(v *vote.Vote) {
 	s.doAddVote(v)
-	s.execute()
+	s.decide()
 }
 
 func (s *commitState) onSetProposal(p *proposal.Proposal) {
 	s.doSetProposal(p)
-	s.execute()
+	s.decide()
 }
 
 func (s *commitState) onTimedout(t *ticker) {

@@ -10,10 +10,10 @@ type proposeState struct {
 }
 
 func (s *proposeState) enter() {
-	s.execute()
+	s.decide()
 }
 
-func (s *proposeState) execute() {
+func (s *proposeState) decide() {
 	proposer := s.proposer(s.round)
 	if proposer.Address().EqualsTo(s.signer.Address()) {
 		s.logger.Info("Our turn to propose", "proposer", proposer.Address())

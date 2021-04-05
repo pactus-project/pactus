@@ -12,10 +12,10 @@ type precommitState struct {
 
 func (s *precommitState) enter() {
 	s.hasVoted = false
-	s.vote()
+	s.decide()
 }
 
-func (s *precommitState) execute() {
+func (s *precommitState) decide() {
 	s.vote()
 
 	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
@@ -58,12 +58,12 @@ func (s *precommitState) vote() {
 
 func (s *precommitState) onAddVote(v *vote.Vote) {
 	s.doAddVote(v)
-	s.execute()
+	s.decide()
 }
 
 func (s *precommitState) onSetProposal(p *proposal.Proposal) {
 	s.doSetProposal(p)
-	s.execute()
+	s.decide()
 }
 
 func (s *precommitState) onTimedout(t *ticker) {

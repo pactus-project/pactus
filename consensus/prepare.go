@@ -12,10 +12,10 @@ type prepareState struct {
 
 func (s *prepareState) enter() {
 	s.hasVoted = false
-	s.execute()
+	s.decide()
 }
 
-func (s *prepareState) execute() {
+func (s *prepareState) decide() {
 	s.vote()
 
 	prepares := s.pendingVotes.PrepareVoteSet(s.round)
@@ -46,12 +46,12 @@ func (s *prepareState) vote() {
 
 func (s *prepareState) onAddVote(v *vote.Vote) {
 	s.doAddVote(v)
-	s.execute()
+	s.decide()
 }
 
 func (s *prepareState) onSetProposal(p *proposal.Proposal) {
 	s.doSetProposal(p)
-	s.execute()
+	s.decide()
 }
 
 func (s *prepareState) onTimedout(t *ticker) {

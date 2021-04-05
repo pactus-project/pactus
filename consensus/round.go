@@ -14,10 +14,10 @@ func (s *newRoundState) enter() {
 	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
 	s.logger.Debug("Change proposer timer started...", "timeout", sleep.Seconds())
 
-	s.execute()
+	s.decide()
 }
 
-func (s *newRoundState) execute() {
+func (s *newRoundState) decide() {
 	// make sure we have quorum votes for previous round
 	if s.round > 0 {
 		prepares := s.pendingVotes.PrepareVoteSet(s.round - 1)

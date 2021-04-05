@@ -51,7 +51,9 @@ func TestUpdateCertificate(t *testing.T) {
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexB)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexP)
 
-	s.execute()
+	s.lk.Lock()
+	s.decide()
+	s.lk.Unlock()
 
 	// This certificate has all signers' vote
 	cert2 := tConsX.state.LastCertificate()

@@ -16,7 +16,7 @@ func (s *newHeightState) enter() {
 	s.logger.Debug("NewHeight is scheduled", "timeout", sleep.Seconds())
 }
 
-func (s *newHeightState) execute() {
+func (s *newHeightState) decide() {
 	sateHeight := s.state.LastBlockHeight()
 	if s.height == sateHeight+1 {
 		s.logger.Trace("Duplicated entry")
@@ -60,7 +60,7 @@ func (s *newHeightState) onTimedout(t *ticker) {
 		s.logger.Debug("Invalid ticker", "ticker", t)
 		return
 	}
-	s.execute()
+	s.decide()
 }
 
 func (s *newHeightState) name() string {
