@@ -43,6 +43,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 
 	testEnterNewHeight(tConsP)
 	testEnterNewRound(tConsP)
+	testEnterNewRound(tConsP)
 
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.RoundProposal(2))
