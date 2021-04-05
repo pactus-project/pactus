@@ -1,30 +1,67 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) enterPrepare(round int) {
-	if cs.isPrepared || round > cs.hrs.Round() {
-		cs.logger.Trace("Prepare: Precommitted, prepared or invalid round/step", "round", round)
+type prepareState struct {
+	*consensus
+	hasVoted bool
+}
+
+func (s *prepareState) enter() {
+	s.hasVoted = false
+	s.decide()
+}
+
+func (s *prepareState) decide() {
+	s.vote()
+
+	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	prepareQH := prepares.QuorumHash()
+	if prepareQH != nil {
+		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
+		s.enterNewState(s.precommitState)
+	}
+}
+
+func (s *prepareState) vote() {
+	if s.hasVoted {
 		return
 	}
-	cs.hrs.UpdateStep(hrs.StepTypePrepare)
-	cs.scheduleTimeout(cs.config.PrecommitTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrecommit)
 
-	roundProposal := cs.pendingVotes.RoundProposal(round)
+	roundProposal := s.pendingVotes.RoundProposal(s.round)
 	if roundProposal == nil {
-		cs.requestForProposal()
-
-		cs.logger.Warn("Prepare: No proposal")
-		cs.signAddVote(vote.VoteTypePrepare, round, crypto.UndefHash)
+		s.queryProposal()
+		s.logger.Warn("No proposal yet.")
 		return
 	}
 
 	// Everything is good
-	cs.isPrepared = true
-	cs.logger.Info("Prepare: Proposal approved", "proposal", roundProposal)
-	cs.signAddVote(vote.VoteTypePrepare, round, roundProposal.Block().Hash())
+	s.logger.Info("Proposal approved", "proposal", roundProposal)
+	s.signAddVote(vote.VoteTypePrepare, roundProposal.Block().Hash())
+	s.hasVoted = true
+}
+
+func (s *prepareState) onAddVote(v *vote.Vote) {
+	s.doAddVote(v)
+	s.decide()
+}
+
+func (s *prepareState) onSetProposal(p *proposal.Proposal) {
+	s.doSetProposal(p)
+	s.decide()
+}
+
+func (s *prepareState) onTimedout(t *ticker) {
+	if t.Target != tickerTargetChangeProposer {
+		s.logger.Debug("Invalid ticker", "ticker", t)
+		return
+	}
+	s.enterNewState(s.changeProposerState)
+}
+
+func (s *prepareState) name() string {
+	return "prepare"
 }

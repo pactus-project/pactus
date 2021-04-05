@@ -18,8 +18,6 @@ func TestMustGetRound(t *testing.T) {
 	assert.Nil(t, pv.GetRoundVotes(5))
 	assert.NotNil(t, pv.GetRoundVotes(1))
 	assert.NotNil(t, pv.GetRoundVotes(4))
-	assert.Equal(t, pv.GetRoundVotes(3).prepares.Height(), 101)
-	assert.Equal(t, pv.GetRoundVotes(3).prepares.Round(), 3)
 	assert.Equal(t, len(pv.roundVotes), 5)
 }
 
@@ -38,42 +36,28 @@ func TestAddVotes(t *testing.T) {
 	assert.False(t, ok)
 	assert.Error(t, err)
 
-	nullVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.UndefHash, signers[0].Address())
-	signers[0].SignMsg(nullVote)
-
 	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
 	signers[0].SignMsg(validVote)
 
 	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
 	signers[0].SignMsg(duplicateVote)
 
-	ok, err = pv.AddVote(nullVote)
-	assert.True(t, ok)
-	assert.NoError(t, err)
-
 	ok, err = pv.AddVote(validVote)
 	assert.True(t, ok)
 	assert.NoError(t, err)
 
-	// Because of network lagging we might receive nil-vote after block-vote
-	ok, err = pv.AddVote(nullVote)
-	assert.False(t, ok)
-	assert.NoError(t, err)
-	assert.True(t, pv.HasVote(validVote.Hash()))
-
 	// Definitely it is a duplicated error
 	ok, err = pv.AddVote(duplicateVote)
-	assert.True(t, ok)   //
+	assert.False(t, ok)  //
 	assert.Error(t, err) // duplicated vote error
 
 	prepares := pv.PrepareVoteSet(1)
 	precommits := pv.PrecommitVoteSet(1)
-	assert.Equal(t, prepares.Len(), 3)   // Null + Vote + Duplicated
+	assert.Equal(t, prepares.Len(), 2)   //  Vote + Duplicated
 	assert.Equal(t, precommits.Len(), 0) // no precommit votes
-	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 3)
+	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 2)
 	assert.True(t, pv.HasVote(duplicateVote.Hash()))
 	assert.True(t, pv.HasVote(validVote.Hash()))
-	assert.True(t, pv.HasVote(nullVote.Hash()))
 	assert.False(t, pv.HasVote(invalidVote.Hash()))
 }
 

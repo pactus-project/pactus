@@ -4,21 +4,61 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/vote"
 )
 
-func TestMoveToNewHeight(t *testing.T) {
+func TestNewHeightTimedout(t *testing.T) {
 	setup(t)
 
-	tConsX.MoveToNewHeight()
-
-	checkHRSWait(t, tConsX, 1, 0, hrs.StepTypePrepare)
-
-	// Calling MoveToNewHeight for the second time
 	testEnterNewHeight(tConsX)
-	checkHRS(t, tConsX, 1, 0, hrs.StepTypePrepare)
+	commitBlockForAllStates(t)
+
+	s := &newHeightState{tConsX}
+
+	// Invalid target
+	s.onTimedout(&ticker{Height: 2, Target: 3})
+	checkHeightRound(t, tConsX, 1, 0)
+
+	s.onTimedout(&ticker{Height: 2, Target: tickerTargetNewHeight})
+	checkHeightRound(t, tConsX, 2, 0)
+}
+
+func TestNewHeightDuplicateEntry(t *testing.T) {
+	setup(t)
+
+	testEnterNewHeight(tConsX)
+	testEnterNewRound(tConsX)
+
+	s := &newHeightState{tConsX}
+
+	s.onTimedout(&ticker{Height: 1, Target: tickerTargetNewHeight})
+	checkHeightRound(t, tConsX, 1, 1)
+}
+
+func TestUpdateCertificate(t *testing.T) {
+	setup(t)
+
+	testEnterNewHeight(tConsX)
+
+	commitBlockForAllStates(t)
+
+	s := &newHeightState{tConsX}
+
+	h := tConsX.state.LastBlockHash()
+	cert1 := tConsX.state.LastCertificate()
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexX)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexB)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexP)
+
+	s.lk.Lock()
+	s.decide()
+	s.lk.Unlock()
+
+	// This certificate has all signers' vote
+	cert2 := tConsX.state.LastCertificate()
+
+	assert.NotEqual(t, cert1.Hash(), cert2.Hash())
 }
 
 func TestConsensusBehindState(t *testing.T) {
@@ -40,44 +80,6 @@ func TestConsensusBehindState(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
 	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)
-
-	precommits := tConsP.pendingVotes.PrecommitVoteSet(0)
-	require.NotNil(t, precommits)
-	require.NotNil(t, precommits.ToCertificate())
-
-	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
-
-	assert.NoError(t, tConsP.state.CommitBlock(1, p.Block(), *precommits.ToCertificate()))
-	// We don't get any error here, but the block is not committed again. Check logs.
-}
-
-func TestConsensusBehindState2(t *testing.T) {
-	setup(t)
-
-	// Consensus starts here
-	testEnterNewHeight(tConsP)
-
-	h := 1
-	r := 0
-	p := makeProposal(t, h, r)
-	assert.NoError(t, tConsP.state.ValidateBlock(p.Block()))
-	tConsP.SetProposal(p)
-
-	// --------------------------------
-	// Syncer commits a block and trig consensus
-	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
-
-	// --------------------------------
-
-	// Consensus tries to add more votes and commit the block which is committed by syncer before.
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
-
-	precommits := tConsP.pendingVotes.PrecommitVoteSet(r)
-	require.NotNil(t, precommits)
-	require.NotNil(t, precommits.ToCertificate())
 
 	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
 }

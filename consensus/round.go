@@ -1,33 +1,39 @@
 package consensus
 
-import "github.com/zarbchain/zarb-go/consensus/hrs"
+import (
+	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/vote"
+)
 
-func (cs *consensus) enterNewRound(round int) {
-	if round > 0 && round <= cs.hrs.Round() {
-		cs.logger.Trace("NewRound: Try to enter prior round", "round", round)
-		return
-	}
+type newRoundState struct {
+	*consensus
+}
 
-	// make sure we have quorum votes for previous round
-	if round > 0 {
-		prepares := cs.pendingVotes.PrepareVoteSet(round - 1)
-		precommits := cs.pendingVotes.PrecommitVoteSet(round - 1)
-		// Normally when there is no proposal for this round, every one should vote for nil
-		prepareBlockHash := prepares.QuorumBlock()
-		precommitBlockHash := precommits.QuorumBlock()
-		if prepareBlockHash == nil || !prepareBlockHash.IsUndef() {
-			cs.logger.Warn("NewRound: Suspicious prepares", "blockHash", prepareBlockHash)
-		}
-		if precommitBlockHash == nil || !precommitBlockHash.IsUndef() {
-			cs.logger.Warn("NewRound: Suspicious precommits", "blockHash", precommitBlockHash)
-		}
-	}
+func (s *newRoundState) enter() {
+	sleep := s.config.ChangeProposerTimeout
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetChangeProposer)
+	s.logger.Debug("Change proposer timer started...", "timeout", sleep.Seconds())
 
-	cs.isProposed = false
-	cs.isPrepared = false
-	cs.hrs.UpdateRound(round)
-	cs.hrs.UpdateStep(hrs.StepTypeNewRound)
-	cs.logger.Info("NewRound: Entering new round", "round", round)
+	s.decide()
+}
 
-	cs.enterPropose(round)
+func (s *newRoundState) decide() {
+	s.logger.Info("Entering new round", "round", s.round)
+	s.enterNewState(s.proposeState)
+}
+
+func (s *newRoundState) onAddVote(v *vote.Vote) {
+	panic("Unreachable")
+}
+
+func (s *newRoundState) onSetProposal(p *proposal.Proposal) {
+	panic("Unreachable")
+}
+
+func (s *newRoundState) onTimedout(t *ticker) {
+	panic("Unreachable")
+}
+
+func (s *newRoundState) name() string {
+	return "new-round"
 }

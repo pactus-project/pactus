@@ -1,99 +1,61 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/proposal"
-	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) proposer(round int) *validator.Validator {
-	return cs.state.Proposer(round)
+type proposeState struct {
+	*consensus
 }
 
-func (cs *consensus) isProposer(addr crypto.Address, round int) bool {
-	return cs.state.IsProposer(addr, round)
+func (s *proposeState) enter() {
+	s.decide()
 }
 
-func (cs *consensus) setProposal(proposal *proposal.Proposal) {
-	if proposal.Height() != cs.hrs.Height() {
-		cs.logger.Debug("Propose: Invalid height", "proposal", proposal)
-		return
-	}
-	if proposal.Round() > cs.hrs.Round() {
-		cs.logger.Debug("Propose: Invalid round", "proposal", proposal)
-		return
-	}
-
-	roundProposal := cs.pendingVotes.RoundProposal(proposal.Round())
-	if roundProposal != nil {
-		cs.logger.Trace("propose: This round has proposal", "proposal", proposal)
-		return
-	}
-
-	if err := proposal.SanityCheck(); err != nil {
-		cs.logger.Error("propose: Proposal is invalid", "proposal", proposal, "err", err)
-		return
-	}
-
-	proposer := cs.proposer(proposal.Round())
-	if err := proposal.Verify(proposer.PublicKey()); err != nil {
-		cs.logger.Error("propose: Proposal has invalid signature", "proposal", proposal, "err", err)
-		return
-	}
-
-	if err := cs.state.ValidateBlock(proposal.Block()); err != nil {
-		cs.logger.Warn("propose: Invalid block", "proposal", proposal, "err", err)
-		return
-	}
-
-	cs.logger.Info("propose: Proposal set", "proposal", proposal)
-	cs.pendingVotes.SetRoundProposal(proposal.Round(), proposal)
-	// Proposal might be received after prepare or precommit, (maybe because of network latency?)
-	cs.enterPrepare(proposal.Round())
-	cs.enterPrecommit(proposal.Round())
-}
-
-func (cs *consensus) enterPropose(round int) {
-	if cs.isProposed || round != cs.hrs.Round() {
-		cs.logger.Debug("Propose: Proposed before or invalid round", "round", round)
-		return
-	}
-	cs.hrs.UpdateStep(hrs.StepTypePropose)
-	cs.scheduleTimeout(cs.config.PrepareTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrepare)
-
-	address := cs.signer.Address()
-	if !cs.pendingVotes.CanVote(address) {
-		cs.logger.Debug("Propose: This node is not in committee", "addr", address)
-		return
-	}
-
-	if cs.isProposer(address, round) {
-		cs.logger.Info("Propose: Our turn to propose", "proposer", address)
-		cs.createProposal(cs.hrs.Height(), round)
+func (s *proposeState) decide() {
+	proposer := s.proposer(s.round)
+	if proposer.Address().EqualsTo(s.signer.Address()) {
+		s.logger.Info("Our turn to propose", "proposer", proposer.Address())
+		s.createProposal(s.height, s.round)
 	} else {
-		cs.logger.Debug("Propose: Not our turn to propose", "proposer", cs.proposer(round).Address())
+		s.logger.Debug("Not our turn to propose", "proposer", proposer.Address())
 	}
 
-	cs.isProposed = true
+	s.enterNewState(s.prepareState)
 }
 
-func (cs *consensus) createProposal(height int, round int) {
-	block, err := cs.state.ProposeBlock(round)
+func (s *proposeState) createProposal(height int, round int) {
+	block, err := s.state.ProposeBlock(round)
 	if err != nil {
-		cs.logger.Error("Propose: We can't propose a block. Why?", "err", err)
+		s.logger.Error("We can't propose a block. Why?", "err", err)
 		return
 	}
-	if err := cs.state.ValidateBlock(*block); err != nil {
-		cs.logger.Error("Propose: Our block is invalid. Why?", "err", err)
+	if err := s.state.ValidateBlock(*block); err != nil {
+		s.logger.Error("Our block is invalid. Why?", "err", err)
 		return
 	}
 
 	proposal := proposal.NewProposal(height, round, *block)
-	cs.signer.SignMsg(proposal)
-	cs.setProposal(proposal)
+	s.signer.SignMsg(proposal)
+	s.doSetProposal(proposal)
 
-	cs.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
+	s.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
 
-	cs.broadcastProposal(proposal)
+	s.broadcastProposal(proposal)
+}
+
+func (s *proposeState) onAddVote(v *vote.Vote) {
+	panic("Unreachable")
+}
+
+func (s *proposeState) onSetProposal(p *proposal.Proposal) {
+	panic("Unreachable")
+}
+
+func (s *proposeState) onTimedout(t *ticker) {
+	panic("Unreachable")
+}
+func (s *proposeState) name() string {
+	return "propose"
 }

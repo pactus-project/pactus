@@ -51,7 +51,10 @@ func NewPrepare(height int, round int, blockHash crypto.Hash, signer crypto.Addr
 
 func NewPrecommit(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return NewVote(VoteTypePrecommit, height, round, blockHash, signer)
+}
 
+func NewChangeProposer(height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+	return NewVote(VoteTypeChangeProposer, height, round, blockHash, signer)
 }
 
 func NewVote(voteType VoteType, height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
@@ -155,6 +158,18 @@ func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.Signer) {
 func GenerateTestPrepareVote(height, round int) (*Vote, crypto.Signer) {
 	s := crypto.GenerateTestSigner()
 	v := NewPrepare(
+		height,
+		round,
+		crypto.GenerateTestHash(),
+		s.Address())
+	s.SignMsg(v)
+
+	return v, s
+}
+
+func GenerateTestChangeProposerVote(height, round int) (*Vote, crypto.Signer) {
+	s := crypto.GenerateTestSigner()
+	v := NewChangeProposer(
 		height,
 		round,
 		crypto.GenerateTestHash(),

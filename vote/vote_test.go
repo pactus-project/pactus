@@ -52,9 +52,9 @@ func TestVoteSignature(t *testing.T) {
 }
 
 func TestVoteSanityCheck(t *testing.T) {
-	v, _ := GenerateTestPrepareVote(5, 5)
+	v, _ := GenerateTestChangeProposerVote(5, 5)
 	assert.NoError(t, v.SanityCheck())
-	v.data.VoteType = 3
+	v.data.VoteType = 4
 	assert.Error(t, v.SanityCheck())
 	v.data.VoteType = VoteTypePrepare
 	v.data.Round = -1

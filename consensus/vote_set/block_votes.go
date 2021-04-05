@@ -1,4 +1,4 @@
-package pending_votes
+package vote_set
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"

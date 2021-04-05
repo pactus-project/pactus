@@ -1,55 +1,68 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) MoveToNewHeight() {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	cs.scheduleNewHeight()
+type newHeightState struct {
+	*consensus
 }
 
-func (cs *consensus) scheduleNewHeight() {
-	sleep := cs.state.LastBlockTime().Add(cs.state.BlockTime()).Sub(util.Now())
-	cs.logger.Trace("NewHeight is scheduled", "seconds", sleep.Seconds())
-	cs.scheduleTimeout(sleep, cs.hrs.Height(), 0, hrs.StepTypeNewHeight)
+func (s *newHeightState) enter() {
+	sleep := s.state.LastBlockTime().Add(s.state.BlockTime()).Sub(util.Now())
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
+	s.logger.Debug("NewHeight is scheduled", "timeout", sleep.Seconds())
 }
 
-func (cs *consensus) enterNewHeight() {
-	sateHeight := cs.state.LastBlockHeight()
-	if cs.hrs.Height() == sateHeight+1 {
-		cs.logger.Trace("NewHeight: Duplicated entry")
+func (s *newHeightState) decide() {
+	sateHeight := s.state.LastBlockHeight()
+	if s.height == sateHeight+1 {
+		s.logger.Trace("Duplicated entry")
 		return
 	}
 
-	// Apply last committed block, We might have more votes now
-	if cs.hrs.Height() == sateHeight && cs.hrs.Round() >= 0 {
-		vs := cs.pendingVotes.PrecommitVoteSet(cs.hrs.Round())
+	// Apply last certificate. We may have more votes now
+	if s.height == sateHeight && s.round >= 0 {
+		vs := s.pendingVotes.PrecommitVoteSet(s.round)
 		if vs == nil {
-			cs.logger.Warn("NewHeight: Entering new height without last commit")
+			s.logger.Warn("Entering new height without last commit")
 		} else {
 			// Update last commit here, consensus had enough time to populate more votes
 			lastCert := vs.ToCertificate()
 			if lastCert != nil {
-				if err := cs.state.UpdateLastCertificate(lastCert); err != nil {
-					cs.logger.Warn("NewHeight: Updating last commit failed", "err", err)
+				if err := s.state.UpdateLastCertificate(lastCert); err != nil {
+					s.logger.Warn("Updating last commit failed", "err", err)
 				}
 			}
 		}
 	}
 
-	vals := cs.state.CommitteeValidators()
-	cs.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
-	cs.isPreCommitted = false
-	cs.isCommitted = false
+	vals := s.state.CommitteeValidators()
+	s.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
 
-	cs.hrs.UpdateHeight(sateHeight + 1)
-	cs.hrs.UpdateRound(0)
-	cs.hrs.UpdateStep(hrs.StepTypeNewHeight)
-	cs.logger.Info("NewHeight: Entering new height", "height", sateHeight+1)
+	s.height = sateHeight + 1
+	s.round = 0
+	s.logger.Info("Entering new height", "height", s.height)
 
-	cs.enterNewRound(0)
+	s.enterNewState(s.newRoundState)
+}
+
+func (s *newHeightState) onAddVote(v *vote.Vote) {
+}
+
+func (s *newHeightState) onSetProposal(p *proposal.Proposal) {
+}
+
+func (s *newHeightState) onTimedout(t *ticker) {
+	if t.Target != tickerTargetNewHeight {
+		s.logger.Debug("Invalid ticker", "ticker", t)
+		return
+	}
+	s.decide()
+}
+
+func (s *newHeightState) name() string {
+	return "new-height"
 }

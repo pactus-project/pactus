@@ -1,4 +1,4 @@
-package pending_votes
+package vote_set
 
 import (
 	"fmt"
@@ -11,15 +11,14 @@ import (
 )
 
 type VoteSet struct {
-	height           int
-	round            int
-	voteType         vote.VoteType
-	validators       []*validator.Validator
-	blockVotes       map[crypto.Hash]*blockVotes
-	allVotes         map[crypto.Hash]*vote.Vote
-	totalPower       int64
-	accumulatedPower int64
-	quorumBlock      *crypto.Hash
+	height     int
+	round      int
+	voteType   vote.VoteType
+	validators []*validator.Validator
+	blockVotes map[crypto.Hash]*blockVotes
+	allVotes   map[crypto.Hash]*vote.Vote
+	totalPower int64
+	quorumHash *crypto.Hash
 }
 
 func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*validator.Validator) *VoteSet {
@@ -39,10 +38,9 @@ func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*val
 	}
 }
 
-func (vs *VoteSet) Type() vote.VoteType     { return vs.voteType }
-func (vs *VoteSet) Height() int             { return vs.height }
-func (vs *VoteSet) Round() int              { return vs.round }
-func (vs *VoteSet) AccumulatedPower() int64 { return vs.accumulatedPower }
+func (vs *VoteSet) Type() vote.VoteType { return vs.voteType }
+func (vs *VoteSet) Height() int         { return vs.height }
+func (vs *VoteSet) Round() int          { return vs.round }
 
 func (vs *VoteSet) Len() int {
 	return len(vs.allVotes)
@@ -65,18 +63,6 @@ func (vs *VoteSet) getValidatorByAddress(addr crypto.Address) *validator.Validat
 	return nil
 }
 
-func (vs *VoteSet) checkVote(vote *vote.Vote) error {
-	if (vote.Height() != vs.height) ||
-		(vote.Round() != vs.round) ||
-		(vote.VoteType() != vs.voteType) {
-		return errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
-			vs.height, vs.round, vs.voteType,
-			vote.Height(), vote.Round(), vote.VoteType())
-	}
-
-	return nil
-}
-
 func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
 	bv, exists := vs.blockVotes[blockhash]
 	if !exists {
@@ -87,8 +73,12 @@ func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
 }
 
 func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
-	if err := vs.checkVote(vote); err != nil {
-		return false, err
+	if (vote.Height() != vs.height) ||
+		(vote.Round() != vs.round) ||
+		(vote.VoteType() != vs.voteType) {
+		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
+			vs.height, vs.round, vs.voteType,
+			vote.Height(), vote.Round(), vote.VoteType())
 	}
 
 	signer := vote.Signer()
@@ -110,37 +100,17 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	vs.allVotes[vote.Hash()] = vote
 
 	// Now check for duplicity
-	duplicated := false
-	var err error
 	for h, bv := range vs.blockVotes {
 		if !h.EqualsTo(vote.BlockHash()) {
-			anotherVote, ok := bv.votes[signer]
+			_, ok := bv.votes[signer]
 			if ok {
-				if anotherVote.BlockHash().IsUndef() {
-					// A possible scenario:
-					// A peer doesn't have a proposal, it votes for null.
-					// Later it receives the proposal, so it votes again.
-					// Replace undef vote with block vote
-					vs.accumulatedPower -= val.Power()
-					bv.power -= val.Power()
-					delete(bv.votes, signer)
-					vs.quorumBlock = nil
-				} else if vote.BlockHash().IsUndef() {
-					// A possible scenario:
-					// Because of network latency, we might receive null_vote after block_vote.
-					// Ignore undef vote in this case.
-					return false, nil
-				} else if anotherVote.BlockHash() != vote.BlockHash() {
-					// Duplicated vote:
-					// 1- Same signer
-					// 2- Both votes are not null
-					// 3- Both votes are different
-					//
-					// We report an error but keep both votes
-					//
-					duplicated = true
-					err = errors.Error(errors.ErrDuplicateVote)
-				}
+				// Duplicated vote:
+				// 1- Same signer
+				// 2- Both votes are different
+				//
+				// We report an error
+				//
+				return false, errors.Error(errors.ErrDuplicateVote)
 			}
 		}
 	}
@@ -148,41 +118,26 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
 	blockVotes.addVote(vote)
 	blockVotes.power += val.Power()
-	if !duplicated {
-		vs.accumulatedPower += val.Power()
-	}
-	if vs.hasQuorum(blockVotes.power) {
+	if vs.hasTwoThirdOfTotalPower(blockVotes.power) {
 		blockHash := vote.BlockHash()
-		vs.quorumBlock = &blockHash
+		vs.quorumHash = &blockHash
 	}
 
-	return true, err
+	return true, nil
 }
-func (vs *VoteSet) hasQuorum(power int64) bool {
+func (vs *VoteSet) hasTwoThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)
 }
 
-func (vs *VoteSet) HasQuorum() bool {
-	return vs.hasQuorum(vs.accumulatedPower)
-}
-
-func (vs *VoteSet) QuorumBlock() *crypto.Hash {
-	return vs.quorumBlock
-}
-
-func (vs *VoteSet) HasOneThirdOfTotalPower(hash crypto.Hash) bool {
-	bv := vs.blockVotes[hash]
-	if bv == nil {
-		return false
-	}
-	return bv.power > (vs.totalPower * 1 / 3)
+func (vs *VoteSet) QuorumHash() *crypto.Hash {
+	return vs.quorumHash
 }
 
 func (vs *VoteSet) ToCertificate() *block.Certificate {
 	if vs.voteType != vote.VoteTypePrecommit {
 		return nil
 	}
-	blockHash := vs.quorumBlock
+	blockHash := vs.quorumHash
 	if blockHash == nil || blockHash.IsUndef() {
 		return nil
 	}
