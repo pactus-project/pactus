@@ -63,7 +63,6 @@ func (s *precommitState) vote() {
 
 	// Everything is good
 	s.logger.Info("Proposal approved", "proposal", roundProposal)
-	s.signAddVote(vote.VoteTypePrepare, *prepareQH)
 	s.signAddVote(vote.VoteTypePrecommit, *prepareQH)
 }
 

@@ -30,22 +30,30 @@ func TestCommitExecute(t *testing.T) {
 	s := &commitState{tConsX}
 
 	// No proposal
+	tConsX.lk.Lock()
 	s.execute()
-	shouldPublishQueryProposal(t, tConsX, 2, 0)
+	tConsX.lk.Unlock()
+	checkHeightRound(t, tConsX, 2, 0)
 
 	// Invalid proposal
 	tConsX.SetProposal(p2)
+	tConsX.lk.Lock()
 	s.execute()
+	tConsX.lk.Unlock()
 	assert.Nil(t, tConsX.RoundProposal(0))
 
 	tConsX.SetProposal(p1)
 	txs := tTxPool.Txs
 	tTxPool.Txs = []*tx.Tx{}
+	tConsX.lk.Lock()
 	s.execute()
+	tConsX.lk.Unlock()
 	assert.NotNil(t, tConsX.RoundProposal(0))
 	checkHeightRound(t, tConsX, 2, 0)
 
 	tTxPool.Txs = txs
+	tConsX.lk.Lock()
 	s.execute()
+	tConsX.lk.Unlock()
 	shouldPublishBlockAnnounce(t, tConsX, p1.Block().Hash())
 }

@@ -65,18 +65,6 @@ func (vs *VoteSet) getValidatorByAddress(addr crypto.Address) *validator.Validat
 	return nil
 }
 
-func (vs *VoteSet) checkVote(vote *vote.Vote) error {
-	if (vote.Height() != vs.height) ||
-		(vote.Round() != vs.round) ||
-		(vote.VoteType() != vs.voteType) {
-		return errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
-			vs.height, vs.round, vs.voteType,
-			vote.Height(), vote.Round(), vote.VoteType())
-	}
-
-	return nil
-}
-
 func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
 	bv, exists := vs.blockVotes[blockhash]
 	if !exists {
@@ -87,8 +75,12 @@ func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
 }
 
 func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
-	if err := vs.checkVote(vote); err != nil {
-		return false, err
+	if (vote.Height() != vs.height) ||
+		(vote.Round() != vs.round) ||
+		(vote.VoteType() != vs.voteType) {
+		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
+			vs.height, vs.round, vs.voteType,
+			vote.Height(), vote.Round(), vote.VoteType())
 	}
 
 	signer := vote.Signer()
