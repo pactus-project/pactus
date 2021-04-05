@@ -411,7 +411,13 @@
       }
     },
     "zarbBlockchainInfoResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "zarbNetworkInfoResponse": {
       "type": "object",
