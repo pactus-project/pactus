@@ -110,37 +110,17 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	vs.allVotes[vote.Hash()] = vote
 
 	// Now check for duplicity
-	duplicated := false
-	var err error
 	for h, bv := range vs.blockVotes {
 		if !h.EqualsTo(vote.BlockHash()) {
-			anotherVote, ok := bv.votes[signer]
+			_, ok := bv.votes[signer]
 			if ok {
-				if anotherVote.BlockHash().IsUndef() {
-					// A possible scenario:
-					// A peer doesn't have a proposal, it votes for null.
-					// Later it receives the proposal, so it votes again.
-					// Replace undef vote with block vote
-					vs.accumulatedPower -= val.Power()
-					bv.power -= val.Power()
-					delete(bv.votes, signer)
-					vs.quorumHash = nil
-				} else if vote.BlockHash().IsUndef() {
-					// A possible scenario:
-					// Because of network latency, we might receive null_vote after block_vote.
-					// Ignore undef vote in this case.
-					return false, nil
-				} else if anotherVote.BlockHash() != vote.BlockHash() {
-					// Duplicated vote:
-					// 1- Same signer
-					// 2- Both votes are not null
-					// 3- Both votes are different
-					//
-					// We report an error but keep both votes
-					//
-					duplicated = true
-					err = errors.Error(errors.ErrDuplicateVote)
-				}
+				// Duplicated vote:
+				// 1- Same signer
+				// 2- Both votes are different
+				//
+				// We report an error
+				//
+				return false, errors.Error(errors.ErrDuplicateVote)
 			}
 		}
 	}
@@ -148,15 +128,13 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
 	blockVotes.addVote(vote)
 	blockVotes.power += val.Power()
-	if !duplicated {
-		vs.accumulatedPower += val.Power()
-	}
+	vs.accumulatedPower += val.Power()
 	if vs.hasTwoThirdOfTotalPower(blockVotes.power) {
 		blockHash := vote.BlockHash()
 		vs.quorumHash = &blockHash
 	}
 
-	return true, err
+	return true, nil
 }
 func (vs *VoteSet) hasTwoThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)

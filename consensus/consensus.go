@@ -255,12 +255,9 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	}
 }
 
-func (cs *consensus) queryProposalIfMissed() {
-	p := cs.pendingVotes.RoundProposal(cs.round)
-	if p == nil {
-		msg := message.NewOpaqueQueryProposalMessage(cs.height, cs.round)
-		cs.broadcastCh <- msg
-	}
+func (cs *consensus) queryProposal() {
+	msg := message.NewOpaqueQueryProposalMessage(cs.height, cs.round)
+	cs.broadcastCh <- msg
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {

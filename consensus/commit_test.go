@@ -31,7 +31,7 @@ func TestCommitExecute(t *testing.T) {
 
 	// No proposal
 	s.execute()
-	checkHeightRound(t, tConsX, 2, 0)
+	shouldPublishQueryProposal(t, tConsX, 2, 0)
 
 	// Invalid proposal
 	tConsX.SetProposal(p2)

@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
 )
@@ -75,71 +74,52 @@ func TestDuplicateVote(t *testing.T) {
 
 	h1 := crypto.GenerateTestHash()
 	h2 := crypto.GenerateTestHash()
-	h3 := crypto.GenerateTestHash()
+	h3 := crypto.UndefHash
 	vs := NewVoteSet(1, 0, vote.VoteTypePrepare, committee.Validators())
 
-	nullVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[0].Address())
 	correctVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[0].Address())
 	duplicatedVote1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, h2, signers[0].Address())
 	duplicatedVote2 := vote.NewVote(vote.VoteTypePrepare, 1, 0, h3, signers[0].Address())
 
 	// sign the votes
-	signers[0].SignMsg(nullVote)
 	signers[0].SignMsg(correctVote)
 	signers[0].SignMsg(duplicatedVote1)
 	signers[0].SignMsg(duplicatedVote2)
 
-	added, err := vs.AddVote(nullVote)
+	added, err := vs.AddVote(correctVote)
 	assert.True(t, added)                               // ok
 	assert.NoError(t, err)                              //
-	assert.Equal(t, vs.Len(), 1)                        //
-	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) // First validator's stake
-
-	added, err = vs.AddVote(correctVote)
-	assert.True(t, added)                               // ok
-	assert.NoError(t, err)                              //
-	assert.Equal(t, vs.Len(), 2)                        // null + block_vote
+	assert.Equal(t, vs.Len(), 1)                        // correctVote
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
 
 	added, err = vs.AddVote(duplicatedVote1)
-	assert.True(t, added)                               // ok
+	assert.False(t, added)                              // rejected
 	assert.Error(t, err)                                //
-	assert.Equal(t, vs.Len(), 3)                        // null + block_vote + duplicated1
+	assert.Equal(t, vs.Len(), 2)                        // correctVote + duplicatedVote1
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
-	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
 
 	added, err = vs.AddVote(duplicatedVote2)
-	assert.True(t, added)                               // ok
+	assert.False(t, added)                              // rejected
 	assert.Error(t, err)                                //
-	assert.Equal(t, vs.Len(), 4)                        // null + block_vote + duplicated1 + duplicated2
-	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
-	assert.Equal(t, err, errors.Error(errors.ErrDuplicateVote))
-
-	added, err = vs.AddVote(nullVote)
-	assert.False(t, added)                              // added before
-	assert.NoError(t, err)                              //
-	assert.Equal(t, vs.Len(), 4)                        //
+	assert.Equal(t, vs.Len(), 3)                        // correctVote + duplicatedVote1 + duplicatedVote2
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
 
-	// Again add null_vote
-	added, err = vs.AddVote(nullVote)
+	added, err = vs.AddVote(correctVote)
 	assert.False(t, added)                              // added before
-	assert.NoError(t, err)                              //
-	assert.Equal(t, vs.Len(), 4)                        //
+	assert.NoError(t, err)                              // No error
+	assert.Equal(t, vs.Len(), 3)                        // correctVote + duplicatedVote1 + duplicatedVote2
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
 
 	bv1 := vs.blockVotes[h1]
 	bv2 := vs.blockVotes[h2]
 	bv3 := vs.blockVotes[h3]
 	bv4 := vs.blockVotes[crypto.UndefHash]
-	assert.Equal(t, vs.Len(), 4)                        // vote + duplicated1 + duplicated2
+	assert.Equal(t, vs.Len(), 3)                        // correctVote + duplicatedVote1 + duplicatedVote2
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000)) //
 	assert.Equal(t, bv1.power, int64(1000))             //
-	assert.Equal(t, bv2.power, int64(1000))             //
-	assert.Equal(t, bv3.power, int64(1000))             //
-	assert.Equal(t, bv4.power, int64(0))                //
-
-	// Add vote again
+	assert.Nil(t, bv2)                                  //
+	assert.Nil(t, bv3)                                  //
+	assert.Nil(t, bv4)                                  //
 }
 
 func TestQuorum(t *testing.T) {
@@ -188,7 +168,6 @@ func TestQuorum(t *testing.T) {
 	assert.Equal(t, cert2.Absences(), []int{})
 }
 
-// This test is very important. Change it with cautious
 func TestPower(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
@@ -199,15 +178,11 @@ func TestPower(t *testing.T) {
 	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[1].Address())
 	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[2].Address())
 	v4 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
-	v5 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
-	v6 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[2].Address())
 
 	signers[0].SignMsg(v1)
 	signers[1].SignMsg(v2)
 	signers[2].SignMsg(v3)
 	signers[0].SignMsg(v4)
-	signers[1].SignMsg(v5)
-	signers[2].SignMsg(v6)
 
 	ok, _ := vs.AddVote(v1)
 	assert.True(t, ok)
@@ -222,48 +197,19 @@ func TestPower(t *testing.T) {
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000+1500+2500))
 
 	ok, _ = vs.AddVote(v4)
-	assert.True(t, ok)
-
-	// Check block votes power
-	bv1 := vs.blockVotes[crypto.UndefHash]
-	bv2 := vs.blockVotes[h1]
-	assert.Equal(t, bv1.power, int64(1500+2500))
-	assert.Equal(t, bv2.power, int64(1000))
-
-	// Check previous votes
-	assert.Contains(t, vs.AllVotes(), v1)
-	assert.Contains(t, vs.AllVotes(), v2)
+	assert.False(t, ok)
 
 	// Check accumulated power
 	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
-	assert.Nil(t, vs.QuorumHash())
+	assert.True(t, vs.QuorumHash().IsUndef())
 	assert.Equal(t, vs.AccumulatedPower(), int64(1000+1500+2500))
 	assert.Equal(t, vs.Len(), 4)
-
-	// Add more votes
-	ok, _ = vs.AddVote(v5)
-	assert.True(t, ok)
-	ok, _ = vs.AddVote(v6)
-	assert.True(t, ok)
-
-	// Check block votes power
-	bv1 = vs.blockVotes[crypto.UndefHash]
-	bv2 = vs.blockVotes[h1]
-	assert.Equal(t, bv1.power, int64(0))
-	assert.Equal(t, bv2.power, int64(1000+1500+2500))
-
-	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
-	assert.Equal(t, vs.QuorumHash(), &h1)
-	assert.Equal(t, vs.AccumulatedPower(), int64(1000+1500+2500))
-	assert.Equal(t, vs.Len(), 6)
 
 	// Check previous votes
 	assert.Contains(t, vs.AllVotes(), v1)
 	assert.Contains(t, vs.AllVotes(), v2)
 	assert.Contains(t, vs.AllVotes(), v3)
 	assert.Contains(t, vs.AllVotes(), v4)
-	assert.Contains(t, vs.AllVotes(), v5)
-	assert.Contains(t, vs.AllVotes(), v6)
 }
 
 func TestAllVotes(t *testing.T) {
@@ -272,12 +218,12 @@ func TestAllVotes(t *testing.T) {
 	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
 
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), signers[0].Address())
-	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[0].Address())
-	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), signers[1].Address())
+	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, signers[1].Address())
+	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), signers[2].Address())
 
 	signers[0].SignMsg(v1)
-	signers[0].SignMsg(v2)
-	signers[1].SignMsg(v3)
+	signers[1].SignMsg(v2)
+	signers[2].SignMsg(v3)
 
 	assert.Equal(t, vs.Len(), 0)
 	assert.Empty(t, vs.AllVotes())
@@ -285,7 +231,7 @@ func TestAllVotes(t *testing.T) {
 	ok, _ := vs.AddVote(v1)
 	assert.True(t, ok)
 	ok, _ = vs.AddVote(v2)
-	assert.False(t, ok) // Ignore null after block vote
+	assert.True(t, ok)
 	ok, _ = vs.AddVote(v3)
 	assert.True(t, ok)
 
@@ -293,48 +239,5 @@ func TestAllVotes(t *testing.T) {
 	assert.Contains(t, vs.AllVotes(), v1)
 	assert.Contains(t, vs.AllVotes(), v2)
 	assert.Contains(t, vs.AllVotes(), v3)
-}
-
-func TestUpdateQuoromBlock(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1000, 2500, 2000)
-
-	vs := NewVoteSet(1, 0, vote.VoteTypePrepare, committee.Validators())
-
-	h1 := crypto.GenerateTestHash()
-	v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[3].Address())
-	v2 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[2].Address())
-	v3 := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[3].Address())
-	v4 := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[2].Address())
-	v5 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.UndefHash, signers[1].Address())
-
-	signers[3].SignMsg(v1)
-	signers[2].SignMsg(v2)
-	signers[3].SignMsg(v3)
-	signers[2].SignMsg(v4)
-	signers[1].SignMsg(v5)
-
-	ok, _ := vs.AddVote(v1)
-	assert.True(t, ok)
-	assert.False(t, vs.HasAccumulatedTwoThirdOfTotalPower())
 	assert.Nil(t, vs.QuorumHash())
-
-	ok, _ = vs.AddVote(v2)
-	assert.True(t, ok)
-	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
-	assert.Equal(t, vs.QuorumHash(), &crypto.UndefHash)
-
-	ok, _ = vs.AddVote(v3)
-	assert.True(t, ok)
-	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
-	assert.Nil(t, vs.QuorumHash())
-
-	ok, _ = vs.AddVote(v4)
-	assert.True(t, ok)
-	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
-	assert.Equal(t, vs.QuorumHash(), &h1)
-
-	ok, _ = vs.AddVote(v5)
-	assert.True(t, ok)
-	assert.True(t, vs.HasAccumulatedTwoThirdOfTotalPower())
-	assert.Equal(t, vs.QuorumHash(), &h1)
 }

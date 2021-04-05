@@ -9,7 +9,6 @@ type commitState struct {
 }
 
 func (s *commitState) enter() {
-	s.queryProposalIfMissed()
 	s.execute()
 }
 
@@ -21,6 +20,7 @@ func (s *commitState) execute() {
 	roundProposal := s.pendingVotes.RoundProposal(s.round)
 	if roundProposal == nil {
 		s.logger.Warn("No proposal, send proposal request.")
+		s.queryProposal()
 		return
 	}
 

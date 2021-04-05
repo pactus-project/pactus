@@ -17,16 +17,18 @@ func TestPrecommitTimedout(t *testing.T) {
 	s := &precommitState{tConsY, false}
 
 	// Invalid target
-	s.timedout(&ticker{Height: 2, Target: tickerTargetPrepare})
+	s.timedout(&ticker{Height: 1, Target: tickerTargetPrepare})
 	assert.False(t, s.hasTimedout)
 
-	s.timedout(&ticker{Height: 2, Target: tickerTargetPrecommit})
+	s.timedout(&ticker{Height: 1, Target: tickerTargetPrecommit})
 	assert.True(t, s.hasTimedout)
 
 	// Add votes calls execute
-	v, _ := vote.GenerateTestPrecommitVote(2, 0)
-	s.voteAdded(v)
-	shouldPublishVote(t, tConsY, vote.VoteTypePrecommit, crypto.UndefHash)
+	s.voteAdded(testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexX))
+	s.voteAdded(testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexY))
+	s.voteAdded(testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.UndefHash, tIndexP))
+
+	checkHeightRound(t, tConsY, 1, 1)
 }
 
 func TestPrecommitGotoNewRound(t *testing.T) {
@@ -136,8 +138,4 @@ func TestPrecommitInvalidProposal(t *testing.T) {
 	assert.NotNil(t, tConsP.RoundProposal(0))
 	s.vote()
 	assert.Nil(t, tConsP.RoundProposal(0))
-
-	tConsP.SetProposal(p1)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p1.Block().Hash())
 }

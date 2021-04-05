@@ -11,7 +11,6 @@ type precommitState struct {
 }
 
 func (s *precommitState) enter() {
-	s.queryProposalIfMissed()
 	s.vote()
 
 	sleep := s.config.PrecommitTimeout(s.round)
@@ -20,8 +19,6 @@ func (s *precommitState) enter() {
 }
 
 func (s *precommitState) execute() {
-	s.vote()
-
 	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
 	if precommitQH != nil {
@@ -40,6 +37,7 @@ func (s *precommitState) vote() {
 	if roundProposal == nil && prepareQH != nil && !prepareQH.IsUndef() {
 		// There is a consensus about a proposal which we don't have it yet.
 		// Ask peers for this proposal
+		s.queryProposal()
 		s.logger.Debug("No proposal yet.")
 		return
 	}

@@ -11,7 +11,6 @@ type prepareState struct {
 }
 
 func (s *prepareState) enter() {
-	s.queryProposalIfMissed()
 	s.vote()
 
 	sleep := s.config.PrepareTimeout(s.round)
@@ -20,8 +19,6 @@ func (s *prepareState) enter() {
 }
 
 func (s *prepareState) execute() {
-	s.vote()
-
 	prepares := s.pendingVotes.PrepareVoteSet(s.round)
 	if prepares.HasAccumulatedTwoThirdOfTotalPower() {
 		s.enterNewState(s.precommitState)

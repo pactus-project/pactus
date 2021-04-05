@@ -371,7 +371,7 @@ func TestConsensusLateProposal1(t *testing.T) {
 
 	commitBlockForAllStates(t) // height 1
 
-	testEnterNewHeight(tConsP)
+	testEnterNewHeight(tConsB)
 
 	h := 2
 	r := 0
@@ -379,45 +379,19 @@ func TestConsensusLateProposal1(t *testing.T) {
 	require.NotNil(t, p)
 
 	// Partitioned node doesn't receive all the votes
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-
-	// Partitioned node receives proposal now
-	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
-	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
-}
-
-func TestConsensusLateProposal2(t *testing.T) {
-	setup(t)
-
-	commitBlockForAllStates(t) // height 1
-
-	testEnterNewHeight(tConsP)
-
-	h := 2
-	r := 0
-	p := makeProposal(t, h, r)
-	require.NotNil(t, p)
-
-	// Partitioned node doesn't receive all the votes
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP)
 
 	// Partitioned node receives proposal now
-	tConsP.SetProposal(p)
-
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
-	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
+	tConsB.SetProposal(p)
+	shouldPublishBlockAnnounce(t, tConsB, p.Block().Hash())
 }
+
 func TestConsensusInvalidVote(t *testing.T) {
 	setup(t)
 
@@ -469,7 +443,6 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 // however Np is partitioned and see the network through Nb (Byzantine node).
 // In Height H, B sends its pre-votes to all the nodes
 // but only sends valid pre-commit to P and nil pre-commit to X,Y.
-// Fork should not hapens
 func TestByzantineVote(t *testing.T) {
 	setup(t)
 

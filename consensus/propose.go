@@ -15,6 +15,7 @@ func (s *proposeState) enter() {
 		s.logger.Info("Our turn to propose", "proposer", proposer.Address())
 		s.createProposal(s.height, s.round)
 	} else {
+		s.queryProposal()
 		s.logger.Debug("Not our turn to propose", "proposer", proposer.Address())
 	}
 

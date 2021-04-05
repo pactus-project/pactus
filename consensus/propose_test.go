@@ -122,19 +122,17 @@ func TestNetworkLagging(t *testing.T) {
 	h := 1
 	r := 0
 	p := makeProposal(t, h, r)
-	// We don't set proposal for second validator here
+	// We don't receive proposal on time
 	// tConsP.SetProposal(p)
 
 	shouldPublishQueryProposal(t, tConsP, h, r)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
 
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, crypto.UndefHash, tIndexB)
 
-	// Now let's set the proposal
-	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, crypto.UndefHash)
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, crypto.UndefHash)
 }
 
 func TestLateUndefVote(t *testing.T) {
