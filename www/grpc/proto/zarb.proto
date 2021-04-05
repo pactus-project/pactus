@@ -67,6 +67,7 @@ message BlockHeightRequest {
 }
 
 message BlockHeightResponse {
+  int64 height=1;
 }
 
 message BlockchainInfoRequest {

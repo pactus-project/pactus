@@ -40,7 +40,7 @@ func TestGetValidator(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{Address: k1.Address().String()})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 	})
 
 	err := conn.Close()
@@ -81,7 +81,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 		})
 		assert.NotNil(t, res)
 		assert.Nil(t, err)
-		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 		assert.Equal(t, int32(val1.Number()), res.GetValidator().GetNumber())
 
 	})

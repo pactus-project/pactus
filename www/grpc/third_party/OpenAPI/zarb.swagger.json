@@ -383,7 +383,13 @@
       }
     },
     "zarbBlockHeightResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "zarbBlockResponse": {
       "type": "object",
