@@ -18,7 +18,8 @@ type validatorData struct {
 	Sequence         int              `cbor:"3,keyasint"`
 	Stake            int64            `cbor:"4,keyasint"`
 	BondingHeight    int              `cbor:"5,keyasint"`
-	LastJoinedHeight int              `cbor:"6,keyasint"`
+	UnbondingHeight  int              `cbor:"6,keyasint"`
+	LastJoinedHeight int              `cbor:"7,keyasint"`
 }
 
 func NewValidator(publicKey crypto.PublicKey, number, bondingHeight int) *Validator {
@@ -38,6 +39,7 @@ func (val *Validator) Number() int                 { return val.data.Number }
 func (val *Validator) Sequence() int               { return val.data.Sequence }
 func (val *Validator) Stake() int64                { return val.data.Stake }
 func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
+func (val *Validator) UnbondingHeight() int        { return val.data.UnbondingHeight }
 func (val *Validator) LastJoinedHeight() int       { return val.data.LastJoinedHeight }
 
 func (val Validator) Power() int64 {
