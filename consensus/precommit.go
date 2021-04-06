@@ -51,19 +51,25 @@ func (s *precommitState) vote() {
 
 	// Everything is good
 	s.logger.Info("Proposal approved", "proposal", roundProposal)
-	s.signAddVote(vote.VoteTypePrepare, *prepareQH)
 	s.signAddVote(vote.VoteTypePrecommit, *prepareQH)
 	s.hasVoted = true
 }
 
 func (s *precommitState) onAddVote(v *vote.Vote) {
 	s.doAddVote(v)
-	s.decide()
+
+	if v.Round() == s.round &&
+		v.VoteType() == vote.VoteTypePrecommit {
+		s.decide()
+	}
 }
 
 func (s *precommitState) onSetProposal(p *proposal.Proposal) {
 	s.doSetProposal(p)
-	s.decide()
+
+	if p.Round() == s.round {
+		s.decide()
+	}
 }
 
 func (s *precommitState) onTimedout(t *ticker) {

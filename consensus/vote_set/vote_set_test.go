@@ -38,35 +38,29 @@ func TestAddVote(t *testing.T) {
 	v4 := vote.NewVote(vote.VoteTypePrecommit, 100, 6, h1, signers[2].Address())
 
 	invSigner.SignMsg(v1)
-	added, err := vs.AddVote(v1)
-	assert.False(t, added) // not in committee
-	assert.Error(t, err)
+	err := vs.AddVote(v1)
+	assert.Error(t, err) // not in committee
 	assert.Nil(t, vs.ToCertificate())
 
 	invSigner.SignMsg(v2)
-	added, err = vs.AddVote(v2)
-	assert.False(t, added) // invalid signature
-	assert.Error(t, err)
+	err = vs.AddVote(v2)
+	assert.Error(t, err) // invalid signature
 
 	signers[1].SignMsg(v2)
-	added, err = vs.AddVote(v2)
-	assert.False(t, added) // wrong signer
-	assert.Error(t, err)
+	err = vs.AddVote(v2)
+	assert.Error(t, err) // wrong signer
 
 	signers[0].SignMsg(v2)
-	added, err = vs.AddVote(v2)
-	assert.True(t, added) // ok
-	assert.NoError(t, err)
+	err = vs.AddVote(v2)
+	assert.NoError(t, err) // ok
 
 	signers[1].SignMsg(v3)
-	added, err = vs.AddVote(v3)
-	assert.False(t, added) // invalid height
-	assert.Error(t, err)
+	err = vs.AddVote(v3)
+	assert.Error(t, err) // invalid height
 
 	signers[2].SignMsg(v4)
-	added, err = vs.AddVote(v4)
-	assert.False(t, added) // invalid round
-	assert.Error(t, err)
+	err = vs.AddVote(v4)
+	assert.Error(t, err) // invalid round
 }
 
 func TestDuplicateVote(t *testing.T) {
@@ -86,25 +80,17 @@ func TestDuplicateVote(t *testing.T) {
 	signers[0].SignMsg(duplicatedVote1)
 	signers[0].SignMsg(duplicatedVote2)
 
-	added, err := vs.AddVote(correctVote)
-	assert.True(t, added)        // ok
-	assert.NoError(t, err)       //
-	assert.Equal(t, vs.Len(), 1) // correctVote
+	assert.NoError(t, vs.AddVote(correctVote)) // ok
+	assert.Equal(t, vs.Len(), 1)               // correctVote
 
-	added, err = vs.AddVote(duplicatedVote1)
-	assert.False(t, added)       // rejected
-	assert.Error(t, err)         //
-	assert.Equal(t, vs.Len(), 2) // correctVote + duplicatedVote1
+	assert.Error(t, vs.AddVote(duplicatedVote1)) // rejected
+	assert.Equal(t, vs.Len(), 2)                 // correctVote + duplicatedVote1
 
-	added, err = vs.AddVote(duplicatedVote2)
-	assert.False(t, added)       // rejected
-	assert.Error(t, err)         //
-	assert.Equal(t, vs.Len(), 3) // correctVote + duplicatedVote1 + duplicatedVote2
+	assert.Error(t, vs.AddVote(duplicatedVote2)) // rejected
+	assert.Equal(t, vs.Len(), 3)                 // correctVote + duplicatedVote1 + duplicatedVote2
 
-	added, err = vs.AddVote(correctVote)
-	assert.False(t, added)       // added before
-	assert.NoError(t, err)       // No error
-	assert.Equal(t, vs.Len(), 3) // correctVote + duplicatedVote1 + duplicatedVote2
+	assert.Error(t, vs.AddVote(correctVote)) // added before
+	assert.Equal(t, vs.Len(), 3)             // correctVote + duplicatedVote1 + duplicatedVote2
 
 	bv1 := vs.blockVotes[h1]
 	bv2 := vs.blockVotes[h2]
@@ -130,24 +116,19 @@ func TestQuorum(t *testing.T) {
 	signers[2].SignMsg(v3)
 	signers[3].SignMsg(v4)
 
-	ok, _ := vs.AddVote(v1)
-	assert.True(t, ok)
-	ok, _ = vs.AddVote(v2)
-	assert.True(t, ok)
+	assert.NoError(t, vs.AddVote(v1))
+	assert.NoError(t, vs.AddVote(v2))
 	assert.Nil(t, vs.ToCertificate())
 	assert.Nil(t, vs.QuorumHash())
 
-	ok, _ = vs.AddVote(v3)
-	assert.True(t, ok)
-
+	assert.NoError(t, vs.AddVote(v3))
 	cert1 := vs.ToCertificate()
 	assert.NotNil(t, cert1)
 	assert.Equal(t, cert1.Committers(), []int{0, 1, 2, 3})
 	assert.Equal(t, cert1.Absences(), []int{3})
 
 	// Add one more vote
-	ok, _ = vs.AddVote(v4)
-	assert.True(t, ok)
+	assert.NoError(t, vs.AddVote(v4))
 	assert.NotNil(t, vs.QuorumHash())
 	assert.Equal(t, vs.QuorumHash(), &h1)
 	assert.Equal(t, vs.Len(), 4)
@@ -175,18 +156,14 @@ func TestPower(t *testing.T) {
 	signers[2].SignMsg(v3)
 	signers[0].SignMsg(v4)
 
-	ok, _ := vs.AddVote(v1)
-	assert.True(t, ok)
-	ok, _ = vs.AddVote(v2)
-	assert.True(t, ok)
-	ok, _ = vs.AddVote(v3)
-	assert.True(t, ok)
+	assert.NoError(t, vs.AddVote(v1))
+	assert.NoError(t, vs.AddVote(v2))
+	assert.NoError(t, vs.AddVote(v3))
 
 	assert.True(t, vs.QuorumHash().EqualsTo(h1))
 	assert.Equal(t, vs.Len(), 3)
 
-	ok, _ = vs.AddVote(v4)
-	assert.False(t, ok)
+	assert.Error(t, vs.AddVote(v4)) // duplicated
 
 	// Check accumulated power
 	assert.True(t, vs.QuorumHash().EqualsTo(h1))
@@ -215,12 +192,9 @@ func TestAllVotes(t *testing.T) {
 	assert.Equal(t, vs.Len(), 0)
 	assert.Empty(t, vs.AllVotes())
 
-	ok, _ := vs.AddVote(v1)
-	assert.True(t, ok)
-	ok, _ = vs.AddVote(v2)
-	assert.True(t, ok)
-	ok, _ = vs.AddVote(v3)
-	assert.True(t, ok)
+	assert.NoError(t, vs.AddVote(v1))
+	assert.NoError(t, vs.AddVote(v2))
+	assert.NoError(t, vs.AddVote(v3))
 
 	assert.Equal(t, vs.Len(), 3)
 	assert.Contains(t, vs.AllVotes(), v1)

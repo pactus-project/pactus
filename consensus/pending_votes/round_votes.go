@@ -15,7 +15,7 @@ type RoundVotes struct {
 	proposal            *proposal.Proposal
 }
 
-func (rv *RoundVotes) addVote(v *vote.Vote) (bool, error) {
+func (rv *RoundVotes) addVote(v *vote.Vote) error {
 	vs := rv.voteSet(v.VoteType())
 	return vs.AddVote(v)
 }

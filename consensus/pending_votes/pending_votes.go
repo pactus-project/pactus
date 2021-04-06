@@ -52,7 +52,7 @@ func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 	return pv.GetRoundVotes(round)
 }
 
-func (pv *PendingVotes) AddVote(v *vote.Vote) (bool, error) {
+func (pv *PendingVotes) AddVote(v *vote.Vote) error {
 	rv := pv.MustGetRoundVotes(v.Round())
 	return rv.addVote(v)
 }

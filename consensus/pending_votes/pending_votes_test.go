@@ -27,13 +27,11 @@ func TestAddVotes(t *testing.T) {
 	pv := NewPendingVotes()
 	pv.MoveToNewHeight(101, committee.Validators())
 	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
-	ok, err := pv.AddVote(invalidVote) // invalid height
-	assert.False(t, ok)
+	err := pv.AddVote(invalidVote) // invalid height
 	assert.Error(t, err)
 
 	v1, _ := vote.GenerateTestPrecommitVote(101, 5)
-	ok, err = pv.AddVote(v1) // invalid signer
-	assert.False(t, ok)
+	err = pv.AddVote(v1) // invalid signer
 	assert.Error(t, err)
 
 	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
@@ -42,13 +40,11 @@ func TestAddVotes(t *testing.T) {
 	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
 	signers[0].SignMsg(duplicateVote)
 
-	ok, err = pv.AddVote(validVote)
-	assert.True(t, ok)
+	err = pv.AddVote(validVote)
 	assert.NoError(t, err)
 
 	// Definitely it is a duplicated error
-	ok, err = pv.AddVote(duplicateVote)
-	assert.False(t, ok)  //
+	err = pv.AddVote(duplicateVote)
 	assert.Error(t, err) // duplicated vote error
 
 	prepares := pv.PrepareVoteSet(1)

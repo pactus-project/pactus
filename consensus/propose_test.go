@@ -96,7 +96,7 @@ func TestNetworkLagging(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
 }
 
-func TestProposalInvalidRound(t *testing.T) {
+func TestProposalNextRound(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)
@@ -112,5 +112,5 @@ func TestProposalInvalidRound(t *testing.T) {
 	tConsX.SetProposal(p)
 
 	// tConsX doesn't accept the proposal for next rounds
-	assert.Nil(t, tConsX.RoundProposal(1))
+	assert.NotNil(t, tConsX.RoundProposal(1))
 }

@@ -72,11 +72,11 @@ func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
 	return bv
 }
 
-func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
+func (vs *VoteSet) AddVote(vote *vote.Vote) error {
 	if (vote.Height() != vs.height) ||
 		(vote.Round() != vs.round) ||
 		(vote.VoteType() != vs.voteType) {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
+		return errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
 			vs.height, vs.round, vs.voteType,
 			vote.Height(), vote.Round(), vote.VoteType())
 	}
@@ -84,16 +84,16 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	signer := vote.Signer()
 	val := vs.getValidatorByAddress(signer)
 	if val == nil {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Cannot find validator %s in committee", signer)
+		return errors.Errorf(errors.ErrInvalidVote, "Cannot find validator %s in committee", signer)
 	}
 
 	if err := vote.Verify(val.PublicKey()); err != nil {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Failed to verify vote")
+		return errors.Errorf(errors.ErrInvalidVote, "Failed to verify vote")
 	}
 
 	_, exists := vs.allVotes[vote.Hash()]
 	if exists {
-		return false, nil
+		return errors.Errorf(errors.ErrInvalidVote, "Existing vote")
 	}
 
 	// Alright! We don't have this vote yet
@@ -110,7 +110,7 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 				//
 				// We report an error
 				//
-				return false, errors.Error(errors.ErrDuplicateVote)
+				return errors.Error(errors.ErrDuplicateVote)
 			}
 		}
 	}
@@ -123,7 +123,7 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		vs.quorumHash = &blockHash
 	}
 
-	return true, nil
+	return nil
 }
 func (vs *VoteSet) hasTwoThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)

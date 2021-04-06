@@ -126,8 +126,8 @@ func (cs *consensus) enterNewState(s consState) {
 }
 
 func (cs *consensus) MoveToNewHeight() {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
 
 	if cs.state.LastBlockHeight()+1 > cs.height {
 		cs.enterNewState(cs.newHeightState)
@@ -153,15 +153,6 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
-	if p.Round() != cs.round {
-		cs.logger.Trace("Invalid round", "proposal", p)
-		return
-	}
-
-	cs.currentState.onSetProposal(p)
-}
-
-func (cs *consensus) doSetProposal(p *proposal.Proposal) {
 	roundProposal := cs.pendingVotes.RoundProposal(p.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("This round has proposal", "proposal", p)
@@ -179,6 +170,10 @@ func (cs *consensus) doSetProposal(p *proposal.Proposal) {
 		return
 	}
 
+	cs.currentState.onSetProposal(p)
+}
+
+func (cs *consensus) doSetProposal(p *proposal.Proposal) {
 	cs.logger.Info("Proposal set", "proposal", p)
 	cs.pendingVotes.SetRoundProposal(p.Round(), p)
 }
@@ -203,12 +198,12 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	defer cs.lk.Unlock()
 
 	if v.Height() != cs.height {
-		cs.logger.Trace("Invalid height", "vote", v)
+		cs.logger.Trace("Vote has invalid height", "vote", v)
 		return
 	}
 
-	if v.Round() != cs.round {
-		cs.logger.Trace("Invalid round", "vote", v)
+	if cs.pendingVotes.HasVote(v.Hash()) {
+		cs.logger.Trace("Vote exists", "vote", v)
 		return
 	}
 
@@ -216,17 +211,12 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 }
 
 func (cs *consensus) doAddVote(v *vote.Vote) {
-	added, err := cs.pendingVotes.AddVote(v)
+	err := cs.pendingVotes.AddVote(v)
 	if err != nil {
 		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
 	}
-	if !added {
-		// we probably have this vote
-		return
-	}
 
 	cs.logger.Debug("New vote added", "vote", v)
-	cs.currentState.onAddVote(v)
 }
 
 func (cs *consensus) proposer(round int) *validator.Validator {
@@ -245,13 +235,11 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	cs.signer.SignMsg(v)
 	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
 
-	added, err := cs.pendingVotes.AddVote(v)
-	if added {
-		cs.broadcastVote(v)
-	}
+	err := cs.pendingVotes.AddVote(v)
 	if err != nil {
 		cs.logger.Error("Error on adding our vote!", "err", err, "vote", v)
-		return
+	} else {
+		cs.broadcastVote(v)
 	}
 }
 

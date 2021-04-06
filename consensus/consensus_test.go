@@ -363,7 +363,7 @@ func TestConsensusAddVote(t *testing.T) {
 	assert.True(t, tConsP.HasVote(v2.Hash()))
 	assert.True(t, tConsP.HasVote(v3.Hash()))
 	assert.True(t, tConsP.HasVote(v4.Hash()))
-	assert.False(t, tConsP.HasVote(v5.Hash())) // invalid round
+	assert.True(t, tConsP.HasVote(v5.Hash())) // next round
 }
 
 func TestConsensusLateProposal1(t *testing.T) {
@@ -419,9 +419,10 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 	testEnterNewHeight(tConsP)
 	testEnterNewRound(tConsP)
 
+	// Keep proposal for previous round, but don't change the state
 	tConsP.SetProposal(p)
 
-	assert.Nil(t, tConsP.RoundProposal(0), 0)
+	assert.NotNil(t, tConsP.RoundProposal(0), 0)
 	checkHeightRoundWait(t, tConsP, 1, 1)
 }
 
