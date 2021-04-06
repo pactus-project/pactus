@@ -11,7 +11,7 @@ type QueryVotesPayload struct {
 	Round  int `cbor:"2,keyasint"`
 }
 
-func NewQueryVotesPAyload(h, r int) Payload {
+func NewQueryVotesPayload(h, r int) Payload {
 	return &QueryVotesPayload{
 		Height: h,
 		Round:  r,

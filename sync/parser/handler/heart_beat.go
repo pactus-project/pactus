@@ -26,7 +26,7 @@ func (h *heartBeatHandler) ParsPayload(p payload.Payload, initiator peer.ID) err
 			if h.weAreInTheCommittee() {
 				h.logger.Info("Our consensus is behind of this peer.", "ours", round, "peer", pld.Round)
 
-				q := payload.NewQueryVotesPAyload(height, round)
+				q := payload.NewQueryVotesPayload(height, round)
 				h.publishFn(q)
 			}
 		} else if pld.Round < round {

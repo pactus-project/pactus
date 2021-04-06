@@ -111,7 +111,7 @@ func (ctx *HandlerContext) tryCommitBlocks() {
 				ctx.state.AddPendingTx(tx)
 			}
 		}
-		ctx.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
+		ctx.logger.Debug("Committing block", "height", ourHeight+1, "block", b)
 		if err := ctx.state.CommitBlock(ourHeight+1, *b, *c); err != nil {
 			ctx.logger.Warn("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...

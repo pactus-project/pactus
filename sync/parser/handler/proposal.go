@@ -19,6 +19,7 @@ func (h *proposalHandler) ParsPayload(p payload.Payload, initiator peer.ID) erro
 	pld := p.(*payload.ProposalPayload)
 	h.logger.Trace("Parsing proposal payload", "pld", pld)
 
+	h.cache.AddProposal(&pld.Proposal)
 	h.consensus.SetProposal(&pld.Proposal)
 
 	return nil

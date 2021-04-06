@@ -17,6 +17,7 @@ func NewParser(ctx *handler.HandlerContext) *Parser {
 	handlers[payload.PayloadTypeAleyk] = handler.NewAleykHandler(ctx)
 	handlers[payload.PayloadTypeHeartBeat] = handler.NewHeartBeatHandler(ctx)
 	handlers[payload.PayloadTypeVote] = handler.NewVoteHandler(ctx)
+	handlers[payload.PayloadTypeProposal] = handler.NewProposalHandler(ctx)
 	handlers[payload.PayloadTypeTransactions] = handler.NewTransactionsHandler(ctx)
 	handlers[payload.PayloadTypeHeartBeat] = handler.NewHeartBeatHandler(ctx)
 	handlers[payload.PayloadTypeQueryVotes] = handler.NewQueryVotesHandler(ctx)

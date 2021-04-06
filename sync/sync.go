@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
+	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
@@ -19,7 +20,9 @@ import (
 	"github.com/zarbchain/zarb-go/sync/parser"
 	"github.com/zarbchain/zarb-go/sync/parser/handler"
 	"github.com/zarbchain/zarb-go/sync/peerset"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
 // IMPORTANT NOTE
@@ -94,6 +97,7 @@ func (syncer *synchronizer) new(
 	syncer.cache = cache
 	syncer.peerSet = peerSet
 	syncer.networkAPI = api
+	syncer.broadcastCh = broadcastCh
 
 	ctx := handler.NewHandlerContext(
 		state,
@@ -237,6 +241,7 @@ func (syncer *synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
 	syncer.sendBlocksRequestIfWeAreBehind()
 }
 
+// TODO: Refactor this:
 func (syncer *synchronizer) broadcastHeartBeat() {
 	// Broadcast a random vote if the validator is an active validator
 	if syncer.weAreInTheCommittee() {
@@ -256,14 +261,28 @@ func (syncer *synchronizer) broadcast(pld payload.Payload) {
 	msg := message.NewMessage(syncer.networkAPI.SelfID(), pld)
 
 	switch pld.Type() {
-	case payload.PayloadTypeLatestBlocksResponse:
-	case payload.PayloadTypeDownloadResponse:
-	case payload.PayloadTypeTransactions:
+	case payload.PayloadTypeLatestBlocksResponse,
+		payload.PayloadTypeDownloadResponse,
+		payload.PayloadTypeTransactions:
 		msg.CompressIt()
+
+	case payload.PayloadTypeQueryVotes:
+		p := pld.(*payload.QueryVotesPayload)
+		syncer.queryVotes(p.Height, p.Round)
+		return
+
+	case payload.PayloadTypeQueryProposal:
+		p := pld.(*payload.QueryProposalPayload)
+		syncer.queryProposal(p.Height, p.Round)
+		return
+
+	case payload.PayloadTypeQueryTransactions:
+		p := pld.(*payload.QueryTransactionsPayload)
+		syncer.queryTransactions(p.IDs)
+		return
 	}
 
 	err := syncer.networkAPI.PublishMessage(msg)
-
 	if err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
 	} else {
@@ -271,6 +290,56 @@ func (syncer *synchronizer) broadcast(pld payload.Payload) {
 	}
 }
 
+// queryTransactions queries for a missed transactions if we don't have it in the cache
+// Only active validators can send this messsage
+func (syncer *synchronizer) queryTransactions(ids []tx.ID) {
+	missed := []crypto.Hash{}
+	for i, id := range ids {
+		trx := syncer.cache.GetTransaction(id)
+		if trx != nil {
+			if err := syncer.state.AddPendingTx(trx); err != nil {
+				syncer.logger.Warn("Query for an invalid transaction", "tx", trx, "err", err)
+			}
+		} else {
+			missed = append(missed, ids[i])
+		}
+	}
+
+	if len(missed) > 0 {
+		if syncer.weAreInTheCommittee() {
+			syncer.BroadcastQueryTransaction(missed)
+		}
+	}
+}
+
+// queryProposal queries for proposal if we don't have it in the cache
+// Only active validators can send this messsage
+func (syncer *synchronizer) queryProposal(height, round int) {
+	p := syncer.consensus.RoundProposal(round)
+	if p == nil {
+		p = syncer.cache.GetProposal(height, round)
+		if p != nil {
+			// We have the proposal inside the cache
+			syncer.consensus.SetProposal(p)
+		} else {
+			if syncer.weAreInTheCommittee() {
+				syncer.BroadcastQueryProposal(height, round)
+			} else {
+				syncer.logger.Debug("queryProposal ignored. Not an active validator")
+			}
+		}
+	}
+}
+
+// queryVotes asks other peers to send us some votes randomly
+// Only active validators can send this messsage
+func (syncer *synchronizer) queryVotes(height, round int) {
+	if syncer.weAreInTheCommittee() {
+		syncer.BroadcastQueryVotes(height, round)
+	} else {
+		syncer.logger.Debug("queryVotes ignored. Not an active validator")
+	}
+}
 func (syncer *synchronizer) BroadcastSalam() {
 	flags := 0
 	if syncer.config.InitialBlockDownload {
@@ -283,6 +352,47 @@ func (syncer *synchronizer) BroadcastSalam() {
 		syncer.state.LastBlockHeight(),
 		flags)
 
+	syncer.broadcast(pld)
+}
+
+func (syncer *synchronizer) BroadcastQueryProposal(height, round int) {
+	msg := message.NewMessage(syncer.networkAPI.SelfID(), payload.NewQueryProposalPayload(height, round))
+	err := syncer.networkAPI.PublishMessage(msg)
+	if err != nil {
+		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
+	} else {
+		syncer.logger.Debug("Publishing new message", "message", msg)
+	}
+}
+
+func (syncer *synchronizer) BroadcastQueryVotes(height, round int) {
+	msg := message.NewMessage(syncer.networkAPI.SelfID(), payload.NewQueryVotesPayload(height, round))
+	err := syncer.networkAPI.PublishMessage(msg)
+	if err != nil {
+		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
+	} else {
+		syncer.logger.Debug("Publishing new message", "message", msg)
+	}
+}
+
+func (syncer *synchronizer) BroadcastQueryTransaction(ids []tx.ID) {
+	msg := message.NewMessage(syncer.networkAPI.SelfID(), payload.NewQueryTransactionsPayload(ids))
+	err := syncer.networkAPI.PublishMessage(msg)
+	if err != nil {
+		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
+	} else {
+		syncer.logger.Debug("Publishing new message", "message", msg)
+	}
+}
+
+// TODO: Move to test!?!??!
+func (syncer *synchronizer) BroadcastProposal(p *proposal.Proposal) {
+	pld := payload.NewProposalPayload(*p)
+	syncer.broadcast(pld)
+}
+
+func (syncer *synchronizer) BroadcastVote(v *vote.Vote) {
+	pld := payload.NewVotePayload(*v)
 	syncer.broadcast(pld)
 }
 
