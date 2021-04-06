@@ -8,7 +8,13 @@ import (
 )
 
 type TransactionsPayload struct {
-	Transactions []*tx.Tx `cbor:"1,keyasint"`
+	Transactions []tx.Tx `cbor:"1,keyasint"`
+}
+
+func NewTransactionsPayload(trxs []tx.Tx) Payload {
+	return &TransactionsPayload{
+		Transactions: trxs,
+	}
 }
 
 func (p *TransactionsPayload) SanityCheck() error {

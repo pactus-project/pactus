@@ -11,7 +11,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -20,11 +19,11 @@ var tPool *txPool
 var tSandbox *sandbox.MockSandbox
 var tAcc1Addr crypto.Address
 var tAcc1Signer crypto.Signer
-var tCh chan *message.Message
+var tCh chan payload.Payload
 
 func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
-	tCh = make(chan *message.Message, 10)
+	tCh = make(chan payload.Payload, 10)
 	tSandbox = sandbox.MockingSandbox()
 	p, _ := NewTxPool(TestConfig(), tCh)
 	p.SetNewSandboxAndRecheck(tSandbox)
@@ -44,11 +43,11 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
-		case msg := <-tCh:
-			logger.Info("shouldPublishTransaction", "msg", msg)
+		case pld := <-tCh:
+			logger.Info("shouldPublishTransaction", "pld", pld)
 
-			if msg.PayloadType() == payload.PayloadTypeTransactions {
-				pld := msg.Payload.(*payload.TransactionsPayload)
+			if pld.Type() == payload.PayloadTypeTransactions {
+				pld := pld.(*payload.TransactionsPayload)
 				assert.Equal(t, pld.Transactions[0].ID(), id)
 				return
 			}
@@ -86,12 +85,12 @@ func TestPending(t *testing.T) {
 	// Increat the waiting time for testing
 	tPool.config.WaitingTimeout = 2 * time.Second
 
-	go func(ch chan *message.Message) {
+	go func(ch chan payload.Payload) {
 		for {
-			msg := <-ch
-			fmt.Printf("Received a message: %v\n", msg.Fingerprint())
-			pld := msg.Payload.(*payload.QueryTransactionsPayload)
-			if pld.IDs[0].EqualsTo(trx.ID()) {
+			pld := <-ch
+			fmt.Printf("Received a message payload: %v\n", pld.Fingerprint())
+			p := pld.(*payload.QueryTransactionsPayload)
+			if p.IDs[0].EqualsTo(trx.ID()) {
 				assert.NoError(t, tPool.AppendTx(trx))
 			}
 		}

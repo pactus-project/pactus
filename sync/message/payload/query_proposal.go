@@ -3,14 +3,19 @@ package payload
 import (
 	"fmt"
 
-	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type QueryProposalPayload struct {
-	Querier peer.ID `cbor:"1,keyasint"`
-	Height  int     `cbor:"2,keyasint"`
-	Round   int     `cbor:"3,keyasint"`
+	Height int `cbor:"1,keyasint"`
+	Round  int `cbor:"2,keyasint"`
+}
+
+func NewQueryProposalPayload(h, r int) Payload {
+	return &QueryProposalPayload{
+		Height: h,
+		Round:  r,
+	}
 }
 
 func (p *QueryProposalPayload) SanityCheck() error {
@@ -19,9 +24,6 @@ func (p *QueryProposalPayload) SanityCheck() error {
 	}
 	if p.Round < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid round")
-	}
-	if err := p.Querier.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid querier peer id: %v", err)
 	}
 
 	return nil

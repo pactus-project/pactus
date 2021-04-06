@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -27,7 +28,7 @@ func setup(t *testing.T) {
 func TestIncreaseMsgCounter(t *testing.T) {
 	setup(t)
 
-	msg := message.NewQueryProposalMessage(tAnotherPeerID, 1, 0)
+	msg := message.NewMessage(tAnotherPeerID, payload.NewQueryProposalPayload(1, 0))
 	d, _ := msg.Encode()
 	assert.NotNil(t, tFirewall.ParsMessage(d, tAnotherPeerID))
 	p := tFirewall.peerSet.GetPeer(tAnotherPeerID)
