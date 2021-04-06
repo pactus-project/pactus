@@ -98,7 +98,7 @@ func TestClearCache(t *testing.T) {
 	b, trxs := block.GenerateTestBlock(nil, nil)
 
 	tCache.AddBlock(2, b)
-	tCache.AddTransactions(trxs)
+	tCache.AddTransactions([]tx.Tx{*trxs[0], *trxs[1], *trxs[2], *trxs[3]})
 
 	assert.Equal(t, tCache.Len(), 5)
 	tCache.Clear()

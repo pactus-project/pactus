@@ -6,13 +6,12 @@ import (
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/consensus/pending_votes"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
@@ -35,7 +34,7 @@ type consensus struct {
 	commitState         consState
 	currentState        consState
 	changeProposerState consState
-	broadcastCh         chan *message.Message
+	broadcastCh         chan payload.Payload
 	logger              *logger.Logger
 }
 
@@ -43,7 +42,7 @@ func NewConsensus(
 	conf *Config,
 	state state.StateFacade,
 	signer crypto.Signer,
-	broadcastCh chan *message.Message) (Consensus, error) {
+	broadcastCh chan payload.Payload) (Consensus, error) {
 	cs := &consensus{
 		config:      conf,
 		state:       state,
@@ -77,11 +76,11 @@ func (cs *consensus) Fingerprint() string {
 	return fmt.Sprintf("{%d/%d/%s}", cs.height, cs.round, cs.currentState.name())
 }
 
-func (cs *consensus) HRS() hrs.HRS {
+func (cs *consensus) HeightRound() (int, int) {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return hrs.NewHRS(cs.height, cs.round, hrs.StepTypePropose)
+	return cs.height, cs.round
 }
 
 func (cs *consensus) Height() int {
@@ -244,23 +243,23 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 }
 
 func (cs *consensus) queryProposal() {
-	msg := message.NewOpaqueQueryProposalMessage(cs.height, cs.round)
-	cs.broadcastCh <- msg
+	pld := payload.NewQueryProposalPayload(cs.height, cs.round)
+	cs.broadcastCh <- pld
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
-	msg := message.NewProposalMessage(p)
-	cs.broadcastCh <- msg
+	pld := payload.NewProposalPayload(*p)
+	cs.broadcastCh <- pld
 }
 
 func (cs *consensus) broadcastVote(v *vote.Vote) {
-	msg := message.NewVoteMessage(v)
-	cs.broadcastCh <- msg
+	pld := payload.NewVotePayload(*v)
+	cs.broadcastCh <- pld
 }
 
 func (cs *consensus) announceNewBlock(h int, b *block.Block, c *block.Certificate) {
-	msg := message.NewOpaqueBlockAnnounceMessage(h, b, c)
-	cs.broadcastCh <- msg
+	pld := payload.NewBlockAnnouncePayload(h, *b, *c)
+	cs.broadcastCh <- pld
 }
 
 func (cs *consensus) PickRandomVote() *vote.Vote {

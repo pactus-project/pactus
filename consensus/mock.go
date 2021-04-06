@@ -2,7 +2,6 @@ package consensus
 
 import (
 	"github.com/sasha-s/go-deadlock"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/util"
@@ -64,11 +63,11 @@ func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
 	}
 	return m.Proposal
 }
-func (m *MockConsensus) HRS() hrs.HRS {
+func (m *MockConsensus) HeightRound() (int, int) {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 
-	return hrs.NewHRS(m.State.LastBlockHeight()+1, m.Round, hrs.StepTypeNewHeight)
+	return m.State.LastBlockHeight() + 1, m.Round
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""

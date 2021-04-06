@@ -44,7 +44,8 @@ func (mock *MockNetworkAPI) PublishMessage(msg *message.Message) error {
 	mock.PublishCh <- msg
 	return nil
 }
-func (mock *MockNetworkAPI) CheckAndParsMessage(msg *message.Message, id peer.ID) bool {
+func (mock *MockNetworkAPI) CheckAndParsPayload(pld payload.Payload, id peer.ID) bool {
+	msg := message.NewMessage(id, pld)
 	d, _ := msg.Encode()
 	msg2 := mock.Firewall.ParsMessage(d, id)
 	if msg2 != nil {
@@ -56,7 +57,7 @@ func (mock *MockNetworkAPI) CheckAndParsMessage(msg *message.Message, id peer.ID
 }
 
 func (mock *MockNetworkAPI) sendMessageToOtherPeer(m *message.Message) {
-	mock.OtherAPI.CheckAndParsMessage(m, mock.id)
+	mock.OtherAPI.CheckAndParsPayload(m.Payload, mock.id)
 }
 
 func (mock *MockNetworkAPI) ShouldPublishMessageWithThisType(t *testing.T, payloadType payload.PayloadType) *message.Message {
@@ -65,14 +66,14 @@ func (mock *MockNetworkAPI) ShouldPublishMessageWithThisType(t *testing.T, paylo
 	for {
 		select {
 		case <-timeout.C:
-			require.NoError(t, fmt.Errorf("ShouldPublishMessageWithThisType: Timeout"))
+			require.NoError(t, fmt.Errorf("ShouldPublishMessageWithThisType %v: Timeout", payloadType))
 			return nil
 		case msg := <-mock.PublishCh:
 			logger.Info("shouldPublishMessageWithThisType", "id", mock.id, "msg", msg, "type", payloadType.String())
 			mock.sendMessageToOtherPeer(msg)
 			logger.Info("Nessage sent to other peer", "msg", msg)
 
-			if msg.PayloadType() == payloadType {
+			if msg.Payload.Type() == payloadType {
 				return msg
 			}
 		}
@@ -91,7 +92,7 @@ func (mock *MockNetworkAPI) ShouldNotPublishMessageWithThisType(t *testing.T, pa
 			mock.sendMessageToOtherPeer(msg)
 			logger.Info("Nessage sent to other peer", "msg", msg)
 
-			assert.NotEqual(t, msg.PayloadType(), payloadType)
+			assert.NotEqual(t, msg.Payload.Type(), payloadType)
 		}
 	}
 }

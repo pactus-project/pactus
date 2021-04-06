@@ -87,6 +87,42 @@ func (t PayloadType) String() string {
 	return fmt.Sprintf("%d", t)
 }
 
+func MakePayload(t PayloadType) Payload {
+	switch t {
+	case PayloadTypeSalam:
+		return &SalamPayload{}
+	case PayloadTypeAleyk:
+		return &AleykPayload{}
+	case PayloadTypeLatestBlocksRequest:
+		return &LatestBlocksRequestPayload{}
+	case PayloadTypeLatestBlocksResponse:
+		return &LatestBlocksResponsePayload{}
+	case PayloadTypeQueryTransactions:
+		return &QueryTransactionsPayload{}
+	case PayloadTypeTransactions:
+		return &TransactionsPayload{}
+	case PayloadTypeQueryProposal:
+		return &QueryProposalPayload{}
+	case PayloadTypeProposal:
+		return &ProposalPayload{}
+	case PayloadTypeHeartBeat:
+		return &HeartBeatPayload{}
+	case PayloadTypeQueryVotes:
+		return &QueryVotesPayload{}
+	case PayloadTypeVote:
+		return &VotePayload{}
+	case PayloadTypeBlockAnnounce:
+		return &BlockAnnouncePayload{}
+	case PayloadTypeDownloadRequest:
+		return &DownloadRequestPayload{}
+	case PayloadTypeDownloadResponse:
+		return &DownloadResponsePayload{}
+	}
+
+	//
+	return nil
+}
+
 type Payload interface {
 	SanityCheck() error
 	Type() PayloadType
