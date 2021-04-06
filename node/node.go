@@ -13,7 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/www/capnp"
@@ -43,7 +43,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	if err != nil {
 		return nil, err
 	}
-	broadcastCh := make(chan *message.Message, 100)
+	broadcastCh := make(chan payload.Payload, 100)
 
 	txPool, err := txpool.NewTxPool(conf.TxPool, broadcastCh)
 	if err != nil {

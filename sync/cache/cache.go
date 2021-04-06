@@ -119,9 +119,9 @@ func (c *Cache) AddTransaction(trx *tx.Tx) {
 	c.cache.Add(txKey(trx.ID()), trx)
 }
 
-func (c *Cache) AddTransactions(trxs []*tx.Tx) {
+func (c *Cache) AddTransactions(trxs []tx.Tx) {
 	for _, trx := range trxs {
-		c.AddTransaction(trx)
+		c.AddTransaction(&trx)
 	}
 }
 

@@ -3,16 +3,22 @@ package payload
 import (
 	"fmt"
 
-	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type BlockAnnouncePayload struct {
-	PeerID      peer.ID            `cbor:"1,keyasint"`
-	Height      int                `cbor:"2,keyasint"`
-	Block       *block.Block       `cbor:"3,keyasint"`
-	Certificate *block.Certificate `cbor:"4,keyasint"`
+	Height      int                `cbor:"1,keyasint"`
+	Block       *block.Block       `cbor:"2,keyasint"`
+	Certificate *block.Certificate `cbor:"3,keyasint"`
+}
+
+func NewBlockAnnouncePayload(h int, b *block.Block, c *block.Certificate) Payload {
+	return &BlockAnnouncePayload{
+		Height:      h,
+		Block:       b,
+		Certificate: c,
+	}
 }
 
 func (p *BlockAnnouncePayload) SanityCheck() error {
@@ -24,9 +30,6 @@ func (p *BlockAnnouncePayload) SanityCheck() error {
 	}
 	if err := p.Certificate.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
-	}
-	if err := p.PeerID.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid querier peer id: %v", err)
 	}
 
 	return nil

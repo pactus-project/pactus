@@ -228,7 +228,7 @@ func (api *networkAPI) consensusLoop() {
 }
 
 func (api *networkAPI) topic(msg *message.Message) *pubsub.Topic {
-	switch msg.PayloadType() {
+	switch msg.Payload.Type() {
 	case payload.PayloadTypeSalam,
 		payload.PayloadTypeAleyk,
 		payload.PayloadTypeHeartBeat:

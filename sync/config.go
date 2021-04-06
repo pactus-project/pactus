@@ -9,16 +9,18 @@ type Config struct {
 	SessionTimeout       time.Duration
 	InitialBlockDownload bool
 	BlockPerMessage      int
+	RequestBlockInterval int
 	CacheSize            int
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		StartingTimeout:      time.Second * 5,
+		StartingTimeout:      time.Second * 3,
 		HeartBeatTimeout:     time.Second * 5,
 		SessionTimeout:       time.Second * 3,
 		InitialBlockDownload: true,
 		BlockPerMessage:      10,
+		RequestBlockInterval: 720,
 		CacheSize:            100000,
 	}
 }
@@ -31,6 +33,7 @@ func TestConfig() *Config {
 		SessionTimeout:       time.Second * 1,
 		InitialBlockDownload: true,
 		BlockPerMessage:      10,
+		RequestBlockInterval: 20,
 		CacheSize:            1000,
 	}
 }
