@@ -17,7 +17,7 @@ func TestProposeBlock(t *testing.T) {
 	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
 	assert.NoError(t, tState2.CommitBlock(1, b1, c1))
 
-	subsidy := calcBlockSubsidy(tState1.lastInfo.BlockHeight(), tState1.params.SubsidyReductionInterval)
+	subsidy := tState1.params.BlockReward
 	invSubsidyTx := tx.NewMintbaseTx(tState1.lastInfo.BlockHash(), 1, tValSigner2.Address(), subsidy, "")
 	invSendTx, _ := tx.GenerateTestSendTx()
 	invBondTx, _ := tx.GenerateTestBondTx()
@@ -112,7 +112,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)
-		subsidy := calcBlockSubsidy(2, tState1.params.SubsidyReductionInterval)
+		subsidy := tState1.params.BlockReward
 		assert.Equal(t, treasury.Balance(), 21*1e14-(2*subsidy)) // Two blocks has committed yet
 	})
 }
