@@ -168,22 +168,13 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestBlockSubsidy(t *testing.T) {
-	interval := 2100000
-	assert.Equal(t, int64(5*1e8), calcBlockSubsidy(1, interval))
-	assert.Equal(t, int64(5*1e8), calcBlockSubsidy((1*interval)-1, interval))
-	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((1*interval), interval))
-	assert.Equal(t, int64(2.5*1e8), calcBlockSubsidy((2*interval)-1, interval))
-	assert.Equal(t, int64(1.25*1e8), calcBlockSubsidy((2*interval), interval))
-}
-
 func TestBlockSubsidyTx(t *testing.T) {
 	setup(t)
 
 	// Without mintbase address in config
 	trx := tState1.createSubsidyTx(7)
 	assert.True(t, trx.IsMintbaseTx())
-	assert.Equal(t, trx.Payload().Value(), calcBlockSubsidy(1, tState1.params.SubsidyReductionInterval)+7)
+	assert.Equal(t, trx.Payload().Value(), tState1.params.BlockReward+7)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
 
 	store := store.MockingStore()

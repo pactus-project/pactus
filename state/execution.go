@@ -42,7 +42,7 @@ func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.Com
 	}
 
 	accumulatedFee := exe.AccumulatedFee()
-	subsidyAmt := calcBlockSubsidy(st.lastInfo.BlockHeight()+1, st.params.SubsidyReductionInterval) + exe.AccumulatedFee()
+	subsidyAmt := st.params.BlockReward + exe.AccumulatedFee()
 	if mintbaseTrx.Payload().Value() != subsidyAmt {
 		return nil, errors.Errorf(errors.ErrInvalidTx, "Invalid subsidy amount. Expected %v, got %v", subsidyAmt, mintbaseTrx.Payload().Value())
 	}

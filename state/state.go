@@ -229,9 +229,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	}
 	stamp := st.lastInfo.BlockHash()
 	seq := acc.Sequence() + 1
-	amt := calcBlockSubsidy(st.lastInfo.BlockHeight()+1, st.params.SubsidyReductionInterval)
-
-	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, amt+fee, "")
+	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, st.params.BlockReward+fee, "")
 	return tx
 }
 
@@ -452,11 +450,6 @@ func (st *state) evaluateSortition() bool {
 	}
 
 	return false
-}
-
-func calcBlockSubsidy(height int, subsidyReductionInterval int) int64 {
-	// Equivalent to: baseSubsidy / 2^(height/subsidyHalvingInterval)
-	return baseSubsidy >> uint(height/subsidyReductionInterval)
 }
 
 func (st *state) Fingerprint() string {
