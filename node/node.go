@@ -26,7 +26,7 @@ type Node struct {
 	state      state.StateFacade
 	txPool     txpool.TxPool
 	consensus  consensus.Consensus
-	network    *network.Network
+	network    network.Network
 	sync       sync.Synchronizer
 	capnp      *capnp.Server
 	http       *http.Server
@@ -103,9 +103,15 @@ func (n *Node) Start() error {
 		time.Sleep(genTime.Sub(now) - 1*time.Second)
 	}
 
-	n.network.Start()
+	if err := n.network.Start(); err != nil {
+		return err
+	}
 	// Wait for network to started
 	time.Sleep(1 * time.Second)
+
+	if err := n.consensus.Start(); err != nil {
+		return err
+	}
 
 	if err := n.sync.Start(); err != nil {
 		return err

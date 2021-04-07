@@ -25,7 +25,7 @@ func NewFirewall(peerSet *peerset.PeerSet, state state.StateFacade) *Firewall {
 	}
 }
 
-func (f *Firewall) ParsMessage(data []byte, from peer.ID) *message.Message {
+func (f *Firewall) OpenMessage(data []byte, from peer.ID) *message.Message {
 	peer := f.peerSet.MustGetPeer(from)
 	msg := new(message.Message)
 	err := msg.Decode(data)

@@ -28,6 +28,9 @@ func (m *MockConsensus) MoveToNewHeight() {
 	defer m.Lock.Unlock()
 	m.Scheduled = true
 }
+func (m *MockConsensus) Start() error {
+	return nil
+}
 func (m *MockConsensus) Stop() {}
 
 func (m *MockConsensus) AddVote(v *vote.Vote) {
