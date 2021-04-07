@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"sync"
 
 	"github.com/libp2p/go-libp2p"
 	circuit "github.com/libp2p/go-libp2p-circuit"
 	acrypto "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-core/peerstore"
 	libp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	libp2pps "github.com/libp2p/go-libp2p-pubsub"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -21,15 +21,25 @@ import (
 	"github.com/zarbchain/zarb-go/version"
 )
 
-type Network struct {
-	ctx          context.Context
-	config       *Config
-	host         host.Host
-	pubsub       *libp2pps.PubSub
-	mdns         discovery.Service
-	kademlia     *libp2pdht.IpfsDHT
-	bootstrapper *Bootstrapper
-	logger       *logger.Logger
+type network struct {
+	ctx            context.Context
+	config         *Config
+	host           host.Host
+	wg             sync.WaitGroup
+	mdns           discovery.Service
+	kademlia       *libp2pdht.IpfsDHT
+	pubsub         *libp2pps.PubSub
+	generalTopic   *pubsub.Topic
+	downloadTopic  *pubsub.Topic
+	dataTopic      *pubsub.Topic
+	consensusTopic *pubsub.Topic
+	generalSub     *pubsub.Subscription
+	downloadSub    *pubsub.Subscription
+	dataSub        *pubsub.Subscription
+	consensusSub   *pubsub.Subscription
+	callback       CallbackFn
+	bootstrapper   *Bootstrapper
+	logger         *logger.Logger
 }
 
 func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
@@ -64,7 +74,7 @@ func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(conf *Config) (*Network, error) {
+func NewNetwork(conf *Config) (Network, error) {
 	ctx := context.Background()
 
 	nodeKey, err := loadOrCreateKey(conf.NodeKeyFile)
@@ -97,14 +107,14 @@ func NewNetwork(conf *Config) (*Network, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	n := &Network{
+	n := &network{
 		ctx:    ctx,
 		config: conf,
 		host:   host,
 		pubsub: pubsub,
 	}
 	n.logger = logger.NewLogger("_network", n)
-	n.logger.Info("Network started", "id", n.host.ID(), "address", conf.ListenAddress)
+	n.logger.Info("network started", "id", n.host.ID(), "address", conf.ListenAddress)
 
 	if conf.EnableMDNS {
 		mdns, err := n.setupMNSDiscovery(n.ctx, n.host)
@@ -128,13 +138,16 @@ func NewNetwork(conf *Config) (*Network, error) {
 	return n, nil
 }
 
-func (n *Network) Start() {
+func (n *network) Start() error {
 	if n.bootstrapper != nil {
 		n.bootstrapper.Start()
 	}
+	return nil
 }
 
-func (n *Network) Stop() {
+func (n *network) Stop() {
+	n.closeTopics()
+
 	if n.mdns != nil {
 		if err := n.mdns.Close(); err != nil {
 			n.logger.Error("Unable to close mDNS", "err", err)
@@ -153,19 +166,15 @@ func (n *Network) Stop() {
 	}
 }
 
-func (n *Network) ID() peer.ID {
+func (n *network) SelfID() peer.ID {
 	return n.host.ID()
 }
 
-func (n *Network) Peerstore() peerstore.Peerstore {
-	return n.host.Peerstore()
-}
-
-func (n *Network) Fingerprint() string {
+func (n *network) Fingerprint() string {
 	return fmt.Sprintf("{%d}", len(n.host.Network().Peers()))
 }
 
-func (n *Network) JoinTopic(name string) (*pubsub.Topic, error) {
+func (n *network) joinTopic(name string) (*pubsub.Topic, error) {
 	topic := fmt.Sprintf("/zarb/pubsub/%s/v1/%s", n.config.Name, name)
 	return n.pubsub.Join(topic)
 }

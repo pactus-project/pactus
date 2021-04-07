@@ -16,7 +16,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync/firewall"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/parser"
 	"github.com/zarbchain/zarb-go/sync/parser/handler"
 	"github.com/zarbchain/zarb-go/sync/peerset"
@@ -43,10 +42,11 @@ type synchronizer struct {
 	state           state.StateFacade
 	consensus       consensus.Consensus
 	peerSet         *peerset.PeerSet
+	firewall        *firewall.Firewall
 	cache           *cache.Cache
 	parser          *parser.Parser
 	broadcastCh     <-chan payload.Payload
-	networkAPI      network_api.NetworkAPI
+	network         network.Network
 	heartBeatTicker *time.Ticker
 	logger          *logger.Logger
 }
@@ -56,48 +56,30 @@ func NewSynchronizer(
 	signer crypto.Signer,
 	state state.StateFacade,
 	consensus consensus.Consensus,
-	net *network.Network,
+	net network.Network,
 	broadcastCh <-chan payload.Payload) (Synchronizer, error) {
 	syncer := &synchronizer{
-		ctx: context.Background(),
+		ctx:         context.Background(),
+		config:      conf,
+		signer:      signer,
+		state:       state,
+		consensus:   consensus,
+		network:     net,
+		broadcastCh: broadcastCh,
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
 	firewall := firewall.NewFirewall(peerSet, state)
-	api, err := network_api.NewNetworkAPI(syncer.ctx, net, firewall, syncer.ParsMessage)
-	if err != nil {
-		return nil, err
-	}
-	err = syncer.new(conf, signer, state, consensus, api, peerSet, broadcastCh)
-	if err != nil {
-		return nil, err
-	}
-	return syncer, nil
-}
-
-func (syncer *synchronizer) new(
-	conf *Config,
-	signer crypto.Signer,
-	state state.StateFacade,
-	consensus consensus.Consensus,
-	api network_api.NetworkAPI,
-	peerSet *peerset.PeerSet,
-	broadcastCh <-chan payload.Payload) error {
 	logger := logger.NewLogger("_sync", syncer)
 	cache, err := cache.NewCache(conf.CacheSize, state)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	syncer.config = conf
-	syncer.signer = signer
-	syncer.state = state
-	syncer.consensus = consensus
 	syncer.logger = logger
 	syncer.cache = cache
 	syncer.peerSet = peerSet
-	syncer.networkAPI = api
-	syncer.broadcastCh = broadcastCh
+	syncer.firewall = firewall
 
 	ctx := handler.NewHandlerContext(
 		state,
@@ -106,7 +88,7 @@ func (syncer *synchronizer) new(
 		peerSet,
 		conf.Moniker,
 		signer.PublicKey(),
-		api.SelfID(),
+		net.SelfID(),
 		syncer.broadcast,
 		syncer.synced,
 		conf.BlockPerMessage,
@@ -118,14 +100,14 @@ func (syncer *synchronizer) new(
 
 	if conf.InitialBlockDownload {
 		if err := syncer.joinDownloadTopic(); err != nil {
-			return err
+			return nil, err
 		}
 	}
-	return nil
+	return syncer, nil
 }
 
 func (syncer *synchronizer) Start() error {
-	if err := syncer.networkAPI.Start(); err != nil {
+	if err := syncer.network.JoinTopics(syncer.onReceiveData); err != nil {
 		return err
 	}
 
@@ -134,12 +116,10 @@ func (syncer *synchronizer) Start() error {
 	syncer.heartBeatTicker = time.NewTicker(syncer.config.HeartBeatTimeout)
 	go syncer.heartBeatTickerLoop()
 
-	syncer.BroadcastSalam()
-
 	timer := time.NewTimer(syncer.config.StartingTimeout)
 	go func() {
 		<-timer.C
-		syncer.maybeSynced()
+		syncer.onStartingTimeout()
 	}()
 
 	return nil
@@ -147,19 +127,20 @@ func (syncer *synchronizer) Start() error {
 
 func (syncer *synchronizer) Stop() {
 	syncer.ctx.Done()
-	syncer.networkAPI.Stop()
 	syncer.heartBeatTicker.Stop()
 }
 
 func (syncer *synchronizer) joinDownloadTopic() error {
-	if err := syncer.networkAPI.JoinDownloadTopic(); err != nil {
+	if err := syncer.network.JoinDownloadTopic(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (syncer *synchronizer) maybeSynced() {
+func (syncer *synchronizer) onStartingTimeout() {
+	syncer.BroadcastSalam()
+
 	ourHeight := syncer.state.LastBlockHeight()
 	networkHeight := syncer.peerSet.MaxClaimedHeight()
 
@@ -230,9 +211,13 @@ func (syncer *synchronizer) sendBlocksRequestIfWeAreBehind() {
 	}
 }
 
-func (syncer *synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
-	syncer.logger.Debug("Received a message", "from", util.FingerprintPeerID(from), "message", msg)
+func (syncer *synchronizer) onReceiveData(data []byte, from peer.ID) {
+	msg := syncer.firewall.OpenMessage(data, from)
+	if msg == nil {
+		return
+	}
 
+	syncer.logger.Debug("Received a message", "from", util.FingerprintPeerID(from), "message", msg)
 	if err := syncer.parser.ParsMessage(msg); err != nil {
 		syncer.logger.Warn("Error on parsing a message", "from", util.FingerprintPeerID(from), "message", msg, "err", err)
 		return
@@ -258,7 +243,7 @@ func (syncer *synchronizer) broadcastHeartBeat() {
 }
 
 func (syncer *synchronizer) broadcast(pld payload.Payload) {
-	msg := message.NewMessage(syncer.networkAPI.SelfID(), pld)
+	msg := message.NewMessage(syncer.network.SelfID(), pld)
 
 	switch pld.Type() {
 	case payload.PayloadTypeLatestBlocksResponse,
@@ -282,7 +267,7 @@ func (syncer *synchronizer) broadcast(pld payload.Payload) {
 		return
 	}
 
-	err := syncer.networkAPI.PublishMessage(msg)
+	err := syncer.network.PublishMessage(msg)
 	if err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
 	} else {
@@ -356,8 +341,8 @@ func (syncer *synchronizer) BroadcastSalam() {
 }
 
 func (syncer *synchronizer) BroadcastQueryProposal(height, round int) {
-	msg := message.NewMessage(syncer.networkAPI.SelfID(), payload.NewQueryProposalPayload(height, round))
-	err := syncer.networkAPI.PublishMessage(msg)
+	msg := message.NewMessage(syncer.network.SelfID(), payload.NewQueryProposalPayload(height, round))
+	err := syncer.network.PublishMessage(msg)
 	if err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
 	} else {
@@ -366,8 +351,8 @@ func (syncer *synchronizer) BroadcastQueryProposal(height, round int) {
 }
 
 func (syncer *synchronizer) BroadcastQueryVotes(height, round int) {
-	msg := message.NewMessage(syncer.networkAPI.SelfID(), payload.NewQueryVotesPayload(height, round))
-	err := syncer.networkAPI.PublishMessage(msg)
+	msg := message.NewMessage(syncer.network.SelfID(), payload.NewQueryVotesPayload(height, round))
+	err := syncer.network.PublishMessage(msg)
 	if err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
 	} else {
@@ -376,8 +361,8 @@ func (syncer *synchronizer) BroadcastQueryVotes(height, round int) {
 }
 
 func (syncer *synchronizer) BroadcastQueryTransaction(ids []tx.ID) {
-	msg := message.NewMessage(syncer.networkAPI.SelfID(), payload.NewQueryTransactionsPayload(ids))
-	err := syncer.networkAPI.PublishMessage(msg)
+	msg := message.NewMessage(syncer.network.SelfID(), payload.NewQueryTransactionsPayload(ids))
+	err := syncer.network.PublishMessage(msg)
 	if err != nil {
 		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
 	} else {
@@ -402,7 +387,7 @@ func (syncer *synchronizer) weAreInTheCommittee() bool {
 }
 
 func (syncer *synchronizer) PeerID() peer.ID {
-	return syncer.networkAPI.SelfID()
+	return syncer.network.SelfID()
 }
 
 func (syncer *synchronizer) Peers() []*peerset.Peer {

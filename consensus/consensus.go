@@ -69,6 +69,10 @@ func NewConsensus(
 	return cs, nil
 }
 
+func (cs *consensus) Start() error {
+	return nil
+}
+
 func (cs *consensus) Stop() {
 }
 
