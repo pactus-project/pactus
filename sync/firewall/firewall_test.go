@@ -30,12 +30,12 @@ func TestIncreaseMsgCounter(t *testing.T) {
 
 	msg := message.NewMessage(tAnotherPeerID, payload.NewQueryProposalPayload(1, 0))
 	d, _ := msg.Encode()
-	assert.NotNil(t, tFirewall.ParsMessage(d, tAnotherPeerID))
+	assert.NotNil(t, tFirewall.OpenMessage(d, tAnotherPeerID))
 	p := tFirewall.peerSet.GetPeer(tAnotherPeerID)
 	assert.False(t, tFirewall.badPeer(p))
 
-	tFirewall.ParsMessage([]byte("bad"), tAnotherPeerID)
+	tFirewall.OpenMessage([]byte("bad"), tAnotherPeerID)
 	p = tFirewall.peerSet.GetPeer(tAnotherPeerID)
 	assert.True(t, tFirewall.badPeer(p))
-	assert.Nil(t, tFirewall.ParsMessage(d, tAnotherPeerID))
+	assert.Nil(t, tFirewall.OpenMessage(d, tAnotherPeerID))
 }

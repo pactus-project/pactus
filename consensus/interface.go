@@ -17,6 +17,7 @@ type Consensus interface {
 	ConsensusReader
 
 	MoveToNewHeight()
+	Start() error
 	Stop()
 	AddVote(v *vote.Vote)
 	SetProposal(proposal *proposal.Proposal)
