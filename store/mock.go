@@ -30,7 +30,7 @@ func (m *MockStore) Block(height int) (*block.Block, error) {
 	if ok {
 		return &b, nil
 	}
-	return nil, fmt.Errorf("Not found")
+	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) BlockHeight(hash crypto.Hash) (int, error) {
 	for i, b := range m.Blocks {
@@ -45,7 +45,7 @@ func (m *MockStore) Transaction(id tx.ID) (*tx.CommittedTx, error) {
 	if ok {
 		return &b, nil
 	}
-	return nil, fmt.Errorf("Not found")
+	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) HasAccount(addr crypto.Address) bool {
 	_, ok := m.Accounts[addr]
@@ -56,7 +56,7 @@ func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 	if ok {
 		return &a, nil
 	}
-	return nil, fmt.Errorf("Not found")
+	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) UpdateAccount(acc *account.Account) {
 	m.Accounts[acc.Address()] = *acc
@@ -73,7 +73,7 @@ func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error)
 	if ok {
 		return &v, nil
 	}
-	return nil, fmt.Errorf("Not found")
+	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) ValidatorByNumber(num int) (*validator.Validator, error) {
 	for _, v := range m.Validators {
@@ -81,7 +81,7 @@ func (m *MockStore) ValidatorByNumber(num int) (*validator.Validator, error) {
 			return &v, nil
 		}
 	}
-	return nil, fmt.Errorf("Not found")
+	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = *val

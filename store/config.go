@@ -21,20 +21,8 @@ func TestConfig() *Config {
 	}
 }
 
-func (conf *Config) BlockStorePath() string {
-	return util.MakeAbs(conf.Path + "/block.db")
-}
-
-func (conf *Config) TxStorePath() string {
-	return util.MakeAbs(conf.Path + "/tx.db")
-}
-
-func (conf *Config) AccountStorePath() string {
-	return util.MakeAbs(conf.Path + "/account.db")
-}
-
-func (conf *Config) ValidatorStorePath() string {
-	return util.MakeAbs(conf.Path + "/validator.db")
+func (conf *Config) StorePath() string {
+	return util.MakeAbs(conf.Path + "/store.db")
 }
 
 // SanityCheck is a basic checks for config

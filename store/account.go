@@ -12,17 +12,9 @@ type accountStore struct {
 	total int
 }
 
-var (
-	accountPrefix = []byte{0x01}
-)
-
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.RawBytes()...) }
 
-func newAccountStore(path string) (*accountStore, error) {
-	db, err := leveldb.OpenFile(path, nil)
-	if err != nil {
-		return nil, err
-	}
+func newAccountStore(db *leveldb.DB) (*accountStore, error) {
 	as := &accountStore{
 		db: db,
 	}
@@ -34,10 +26,6 @@ func newAccountStore(path string) (*accountStore, error) {
 	as.total = total
 
 	return as, nil
-}
-
-func (as *accountStore) close() error {
-	return as.db.Close()
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
