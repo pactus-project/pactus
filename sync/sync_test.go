@@ -138,11 +138,9 @@ func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, pa
 			require.NoError(t, fmt.Errorf("ShouldPublishPayloadWithThisType %v: Timeout", payloadType))
 			return
 		case msg := <-net.BroadcastCh:
-			logger.Info("shouldPublishPayloadWithThisType", "msg", msg, "type", payloadType.String())
 			net.SendMessageToOthePeer(msg)
-			logger.Info("Nessage sent to other peer", "msg", msg)
-
 			if msg.Payload.Type() == payloadType {
+				logger.Info("shouldPublishPayloadWithThisType", "msg", msg, "type", payloadType.String())
 				return
 			}
 		}
@@ -158,10 +156,7 @@ func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.
 			require.NoError(t, fmt.Errorf("ShouldPublishPayloadWithThisType %v: Timeout", payloadType))
 			return
 		case msg := <-net.BroadcastCh:
-			logger.Info("shouldPublishPayloadWithThisType", "msg", msg, "type", payloadType.String())
 			net.SendMessageToOthePeer(msg)
-			logger.Info("Nessage sent to other peer", "msg", msg)
-
 			if msg.Payload.Type() == payloadType {
 				switch payloadType {
 				case payload.PayloadTypeAleyk:
@@ -190,10 +185,7 @@ func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork,
 		case <-timeout.C:
 			return
 		case msg := <-net.BroadcastCh:
-			logger.Info("shouldNotPublishPayloadWithThisType", "msg", msg, "type", payloadType.String())
 			net.SendMessageToOthePeer(msg)
-			logger.Info("Nessage sent to other peer", "msg", msg)
-
 			assert.NotEqual(t, msg.Payload.Type(), payloadType)
 		}
 	}

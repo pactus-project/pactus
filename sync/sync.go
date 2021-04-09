@@ -121,6 +121,8 @@ func (sync *synchronizer) Start() error {
 		sync.onStartingTimeout()
 	}()
 
+	sync.broadcastSalam()
+
 	return nil
 }
 
@@ -138,8 +140,6 @@ func (sync *synchronizer) joinDownloadTopic() error {
 }
 
 func (sync *synchronizer) onStartingTimeout() {
-	sync.broadcastSalam()
-
 	ourHeight := sync.state.LastBlockHeight()
 	networkHeight := sync.peerSet.MaxClaimedHeight()
 

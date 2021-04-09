@@ -28,7 +28,7 @@ func DefaultConfig() *Config {
 func TestConfig() *Config {
 	return &Config{
 		Moniker:              "test",
-		StartingTimeout:      time.Millisecond * 100,
+		StartingTimeout:      0,
 		HeartBeatTimeout:     time.Second * 1,
 		SessionTimeout:       time.Second * 1,
 		InitialBlockDownload: true,

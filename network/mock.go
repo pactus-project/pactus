@@ -51,7 +51,7 @@ func (mock *MockNetwork) PublishMessage(msg *message.Message) error {
 func (mock *MockNetwork) SendMessageToOthePeer(msg *message.Message) {
 	d, _ := msg.Encode()
 	if d != nil {
-		logger.Info("Parsing the message", "msg", msg)
+		logger.Debug("Sending message to other peer", "msg", msg)
 		mock.OtherNet.CallbackFn(d, mock.id)
 	}
 }
