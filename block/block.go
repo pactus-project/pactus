@@ -27,13 +27,13 @@ type blockData struct {
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
-	lastCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) Block {
+	lastCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) *Block {
 
 	txIDsHash := txIDs.Hash()
 	header := NewHeader(version, timestamp,
 		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCertificate.Hash(), sortitionSeed, proposer)
 
-	b := Block{
+	b := &Block{
 		data: blockData{
 			Header:          header,
 			LastCertificate: lastCertificate,
@@ -47,11 +47,11 @@ func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	return b
 }
 
-func (b Block) Header() Header                { return b.data.Header }
-func (b Block) LastCertificate() *Certificate { return b.data.LastCertificate }
-func (b Block) TxIDs() TxIDs                  { return b.data.TxIDs }
+func (b *Block) Header() *Header               { return &b.data.Header }
+func (b *Block) LastCertificate() *Certificate { return b.data.LastCertificate }
+func (b *Block) TxIDs() TxIDs                  { return b.data.TxIDs }
 
-func (b Block) SanityCheck() error {
+func (b *Block) SanityCheck() error {
 	if err := b.data.Header.SanityCheck(); err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (b Block) SanityCheck() error {
 	return nil
 }
 
-func (b Block) Hash() crypto.Hash {
+func (b *Block) Hash() crypto.Hash {
 	if b.memorizedHash == nil {
 		h := b.data.Header.Hash()
 		b.memorizedHash = &h
@@ -91,7 +91,7 @@ func (b Block) HashesTo(hash crypto.Hash) bool {
 	return b.Hash().EqualsTo(hash)
 }
 
-func (b Block) Fingerprint() string {
+func (b *Block) Fingerprint() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 👥 %v 📨 %d}",
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
@@ -171,5 +171,5 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		sortitionSeed,
 		*proposer)
 
-	return &block, txs
+	return block, txs
 }

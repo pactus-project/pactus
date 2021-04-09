@@ -126,7 +126,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 	st.lastInfo.SetBlockHeight(li.LastHeight)
 	st.lastInfo.SetBlockHash(b.Header().Hash())
-	st.lastInfo.SetCertificate(&li.LastCertificate)
+	st.lastInfo.SetCertificate(li.LastCertificate)
 	st.lastInfo.SetBlockTime(b.Header().Time())
 	st.lastInfo.SetSortitionSeed(b.Header().SortitionSeed())
 	st.lastInfo.SetReceiptsHash(li.LastReceiptHash)
@@ -319,10 +319,10 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		newSortitionSeed,
 		st.signer.Address())
 
-	return &block, nil
+	return block, nil
 }
 
-func (st *state) ValidateBlock(block block.Block) error {
+func (st *state) ValidateBlock(block *block.Block) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -344,7 +344,7 @@ func (st *state) ValidateBlock(block block.Block) error {
 	return nil
 }
 
-func (st *state) CommitBlock(height int, block block.Block, cert block.Certificate) error {
+func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -417,7 +417,7 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 	st.lastInfo.SetBlockTime(block.Header().Time())
 	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
 	st.lastInfo.SetReceiptsHash(receiptsMerkle.Root())
-	st.lastInfo.SetCertificate(&cert)
+	st.lastInfo.SetCertificate(cert)
 
 	// Evaluate sortition before updating the validator set
 	if st.evaluateSortition() {

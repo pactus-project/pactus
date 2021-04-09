@@ -98,9 +98,9 @@ func TestClearCache(t *testing.T) {
 	b, trxs := block.GenerateTestBlock(nil, nil)
 
 	tCache.AddBlock(2, b)
-	tCache.AddTransactions([]tx.Tx{*trxs[0], *trxs[1], *trxs[2], *trxs[3]})
+	tCache.AddTransactions(trxs)
 
-	assert.Equal(t, tCache.Len(), 5)
+	assert.Equal(t, tCache.Len(), 6) // block + certificate + 4 transactions
 	tCache.Clear()
 	assert.Equal(t, tCache.Len(), 0)
 	assert.Nil(t, tCache.GetBlock(2))

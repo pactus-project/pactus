@@ -6,10 +6,10 @@ import (
 )
 
 type VotePayload struct {
-	Vote vote.Vote `cbor:"1,keyasint"`
+	Vote *vote.Vote `cbor:"1,keyasint"`
 }
 
-func NewVotePayload(v vote.Vote) Payload {
+func NewVotePayload(v *vote.Vote) Payload {
 	return &VotePayload{
 		Vote: v,
 	}

@@ -17,9 +17,9 @@ func TestBlockAnnouncePayload(t *testing.T) {
 	b, _ := block.GenerateTestBlock(nil, nil)
 	c := block.GenerateTestCertificate(crypto.UndefHash)
 
-	p1 := NewBlockAnnouncePayload(-1, *b, *c)
+	p1 := NewBlockAnnouncePayload(-1, b, c)
 	assert.Error(t, p1.SanityCheck())
 
-	p2 := NewBlockAnnouncePayload(666, *b, *c)
+	p2 := NewBlockAnnouncePayload(666, b, c)
 	assert.Error(t, p2.SanityCheck())
 }

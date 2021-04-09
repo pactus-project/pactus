@@ -40,14 +40,14 @@ func (s *commitState) decide() {
 		return
 	}
 
-	if err := s.state.CommitBlock(s.height, certBlock, *cert); err != nil {
+	if err := s.state.CommitBlock(s.height, certBlock, cert); err != nil {
 		s.logger.Warn("committing block failed", "block", certBlock, "err", err)
 		return
 	}
 
 	s.logger.Info("Block committed, Schedule new height", "precommitQH", precommitQH)
 	// Now we can broadcast the committed block
-	s.announceNewBlock(s.height, &certBlock, cert)
+	s.announceNewBlock(s.height, certBlock, cert)
 
 	s.enterNewState(s.newHeightState)
 }

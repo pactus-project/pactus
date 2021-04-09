@@ -6,10 +6,10 @@ import (
 )
 
 type ProposalPayload struct {
-	Proposal proposal.Proposal `cbor:"1,keyasint"`
+	Proposal *proposal.Proposal `cbor:"1,keyasint"`
 }
 
-func NewProposalPayload(p proposal.Proposal) Payload {
+func NewProposalPayload(p *proposal.Proposal) Payload {
 	return &ProposalPayload{
 		Proposal: p,
 	}

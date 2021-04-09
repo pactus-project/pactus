@@ -9,7 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (st *state) executeBlock(block block.Block, sb sandbox.Sandbox) ([]tx.CommittedTx, error) {
+func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]tx.CommittedTx, error) {
 	exe := execution.NewExecution()
 
 	ids := block.TxIDs().IDs()

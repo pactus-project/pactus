@@ -8,12 +8,12 @@ import (
 )
 
 type BlockAnnouncePayload struct {
-	Height      int               `cbor:"1,keyasint"`
-	Block       block.Block       `cbor:"2,keyasint"`
-	Certificate block.Certificate `cbor:"3,keyasint"`
+	Height      int                `cbor:"1,keyasint"`
+	Block       *block.Block       `cbor:"2,keyasint"`
+	Certificate *block.Certificate `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnouncePayload(h int, b block.Block, c block.Certificate) Payload {
+func NewBlockAnnouncePayload(h int, b *block.Block, c *block.Certificate) Payload {
 	return &BlockAnnouncePayload{
 		Height:      h,
 		Block:       b,

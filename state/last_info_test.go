@@ -22,7 +22,7 @@ func TestSaveLoadLastInfo(t *testing.T) {
 
 	tState1.saveLastInfo(
 		tState1.lastInfo.BlockHeight(),
-		*tState1.lastInfo.Certificate(),
+		tState1.lastInfo.Certificate(),
 		tState1.lastInfo.ReceiptsHash(),
 		tState1.committee.Committers(),
 		tState1.committee.Proposer(0).Address())

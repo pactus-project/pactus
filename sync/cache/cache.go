@@ -78,6 +78,14 @@ func (c *Cache) GetBlock(height int) *block.Block {
 
 func (c *Cache) AddBlock(height int, block *block.Block) {
 	c.cache.Add(blockKey(height), block)
+	c.AddCertificate(block.LastCertificate())
+}
+
+func (c *Cache) AddBlocks(height int, blocks []*block.Block) {
+	for _, block := range blocks {
+		c.AddBlock(height, block)
+		height++
+	}
 }
 
 func (c *Cache) GetCertificate(blockhash crypto.Hash) *block.Certificate {
@@ -119,9 +127,9 @@ func (c *Cache) AddTransaction(trx *tx.Tx) {
 	c.cache.Add(txKey(trx.ID()), trx)
 }
 
-func (c *Cache) AddTransactions(trxs []tx.Tx) {
+func (c *Cache) AddTransactions(trxs []*tx.Tx) {
 	for _, trx := range trxs {
-		c.AddTransaction(&trx)
+		c.AddTransaction(trx)
 	}
 }
 

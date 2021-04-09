@@ -4,6 +4,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 )
 
 type MockNetwork struct {
@@ -35,14 +36,22 @@ func (mock *MockNetwork) LeaveDownloadTopic() {}
 func (mock *MockNetwork) SelfID() peer.ID {
 	return mock.id
 }
-func (mock *MockNetwork) PublishMessage(msg *message.Message) error {
-	mock.BroadcastCh <- msg
-	return nil
-}
-func (mock *MockNetwork) ReceivedMessage(msg *message.Message, id peer.ID) {
+func (mock *MockNetwork) ReceivingMessageFromOtherPeer(id peer.ID, pld payload.Payload) {
+	msg := message.NewMessage(id, pld)
 	d, _ := msg.Encode()
 	if d != nil {
 		logger.Info("Parsing the message", "msg", msg)
 		mock.CallbackFn(d, id)
+	}
+}
+func (mock *MockNetwork) PublishMessage(msg *message.Message) error {
+	mock.BroadcastCh <- msg
+	return nil
+}
+func (mock *MockNetwork) SendMessageToOthePeer(msg *message.Message) {
+	d, _ := msg.Encode()
+	if d != nil {
+		logger.Info("Parsing the message", "msg", msg)
+		mock.OtherNet.CallbackFn(d, mock.id)
 	}
 }

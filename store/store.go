@@ -62,7 +62,7 @@ func (s *Store) Close() error {
 	return nil
 }
 
-func (s *Store) SaveBlock(block block.Block, height int) error {
+func (s *Store) SaveBlock(block *block.Block, height int) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 

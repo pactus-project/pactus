@@ -34,7 +34,7 @@ func (bs *blockStore) close() error {
 	return bs.db.Close()
 }
 
-func (bs *blockStore) saveBlock(block block.Block, height int) error {
+func (bs *blockStore) saveBlock(block *block.Block, height int) error {
 	blockData, err := block.Encode()
 	if err != nil {
 		return err
