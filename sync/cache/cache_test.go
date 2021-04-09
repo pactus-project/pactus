@@ -39,7 +39,7 @@ func TestCacheBlock(t *testing.T) {
 	tState.Store.Blocks[1] = b1
 	tCache.AddBlock(2, b2)
 
-	tCache.AddBlocks(1, []*block.Block{b2, b3})
+	tCache.AddBlocks(2, []*block.Block{b2, b3})
 
 	assert.NotNil(t, tCache.GetBlock(1).Hash(), b1.Hash())
 	assert.NotNil(t, tCache.GetBlock(2).Hash(), b2.Hash())
