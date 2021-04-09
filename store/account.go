@@ -54,7 +54,7 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 	r := util.BytesPrefix(accountPrefix)
 	iter := as.db.NewIterator(r, nil)
 	for iter.Next() {
-		// key := iter.Key()
+		//key := iter.Key()
 		value := iter.Value()
 
 		acc := new(account.Account)

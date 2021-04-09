@@ -15,8 +15,8 @@ func TestGetValidator(t *testing.T) {
 	k, k1, k2 := key.GenerateRandomKey(), key.GenerateRandomKey(), key.GenerateRandomKey()
 	val := validator.NewValidator(k.PublicKey(), 0, 0)
 	val1 := validator.NewValidator(k1.PublicKey(), 1, 0)
-	tMockState.Store.Validators[k.Address()] = val
-	tMockState.Store.Validators[k1.Address()] = val1
+	tMockState.Store.Validators[k.Address()] = *val
+	tMockState.Store.Validators[k1.Address()] = *val1
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
@@ -61,8 +61,8 @@ func TestGetValidatorByNumber(t *testing.T) {
 	k, k1 := key.GenerateRandomKey(), key.GenerateRandomKey()
 	val := validator.NewValidator(k.PublicKey(), 0, 0)
 	val1 := validator.NewValidator(k1.PublicKey(), 1, 0)
-	tMockState.Store.Validators[k.Address()] = val
-	tMockState.Store.Validators[k1.Address()] = val1
+	tMockState.Store.Validators[k.Address()] = *val
+	tMockState.Store.Validators[k1.Address()] = *val1
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{

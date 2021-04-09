@@ -32,7 +32,7 @@ type store struct {
 
 func NewStore(conf *Config) (Store, error) {
 
-	db, err := leveldb.OpenFile(conf.Path, nil)
+	db, err := leveldb.OpenFile(conf.StorePath(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -53,14 +53,17 @@ func NewStore(conf *Config) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &store{
 		config:         conf,
+		db:             db,
 		blockStore:     blockStore,
 		txStore:        txStore,
 		accountStore:   accountStore,
 		validatorStore: validatorStore,
 	}, nil
 }
+
 func (s *store) Close() error {
 	if err := s.db.Close(); err != nil {
 		return err
