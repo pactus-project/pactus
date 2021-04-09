@@ -33,9 +33,7 @@ func TestMessageCompress(t *testing.T) {
 	var trxs = []*tx.Tx{}
 	for i := 0; i < 10; i++ {
 		b, t := block.GenerateTestBlock(nil, nil)
-		for _, trx := range t {
-			trxs = append(trxs, trx)
-		}
+		trxs = append(trxs, t...)
 		blocks = append(blocks, b)
 	}
 	pld := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeBusy, 1234, tPeerID2, 888, blocks, trxs, nil)

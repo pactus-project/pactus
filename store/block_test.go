@@ -3,9 +3,9 @@ package store
 import (
 	"testing"
 
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestLastBlockHeight(t *testing.T) {

@@ -366,7 +366,9 @@ func (sync *synchronizer) tryCommitBlocks() {
 		}
 		for _, id := range b.TxIDs().IDs() {
 			if tx := sync.cache.GetTransaction(id); tx != nil {
-				sync.state.AddPendingTx(tx)
+				if err := sync.state.AddPendingTx(tx); err != nil {
+					sync.logger.Trace("Error on appending pending transaction", "err", err)
+				}
 			}
 		}
 		sync.logger.Trace("Committing block", "height", ourHeight+1, "block", b)

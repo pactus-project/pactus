@@ -25,9 +25,6 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-// baseSubsidy, one tenth of Bitcoin network
-const baseSubsidy = 5 * 1e8
-
 type state struct {
 	lk deadlock.RWMutex
 
