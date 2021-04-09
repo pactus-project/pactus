@@ -28,7 +28,8 @@ func TestValidatorCounter(t *testing.T) {
 }
 
 func TestValidatorBatchSaving(t *testing.T) {
-	store, _ := NewStore(TestConfig())
+	conf := TestConfig()
+	store, _ := NewStore(conf)
 
 	t.Run("Add 100 validators", func(t *testing.T) {
 
@@ -41,14 +42,15 @@ func TestValidatorBatchSaving(t *testing.T) {
 	})
 	t.Run("Close and load db", func(t *testing.T) {
 		store.Close()
-		store, _ = NewStore(TestConfig())
+		store, _ = NewStore(conf)
 
 		assert.Equal(t, store.TotalValidators(), 100)
 	})
 }
 
 func TestValidatorByNumber(t *testing.T) {
-	store, _ := NewStore(TestConfig())
+	conf := TestConfig()
+	store, _ := NewStore(conf)
 
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := 0; i < 10; i++ {
@@ -68,7 +70,7 @@ func TestValidatorByNumber(t *testing.T) {
 
 	t.Run("Reopen the store", func(t *testing.T) {
 		store.Close()
-		store, _ := NewStore(TestConfig())
+		store, _ := NewStore(conf)
 
 		v, err := store.ValidatorByNumber(5)
 		assert.NoError(t, err)

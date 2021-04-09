@@ -1,7 +1,6 @@
 package store
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +27,9 @@ func TestAccountCounter(t *testing.T) {
 }
 
 func TestAccountBatchSaving(t *testing.T) {
-	store, _ := NewStore(TestConfig())
+
+	conf := TestConfig()
+	store, _ := NewStore(conf)
 
 	t.Run("Add 100 accounts", func(t *testing.T) {
 
@@ -40,9 +41,7 @@ func TestAccountBatchSaving(t *testing.T) {
 	})
 	t.Run("Close and load db", func(t *testing.T) {
 		store.Close()
-		fmt.Println(TestConfig().Path)
-		store, _ := NewStore(TestConfig())
-		fmt.Println(TestConfig().Path)
+		store, _ := NewStore(conf)
 		assert.Equal(t, store.TotalAccounts(), 100)
 	})
 }
