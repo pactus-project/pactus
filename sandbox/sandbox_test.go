@@ -74,7 +74,7 @@ func TestLoadRecentBlocks(t *testing.T) {
 	lastHeight := 21
 	for i := 0; i <= lastHeight; i++ {
 		b, _ := block.GenerateTestBlock(nil, nil)
-		store.SaveBlock(i+1, b)
+		assert.NoError(t, store.SaveBlock(i+1, b))
 	}
 
 	params := param.DefaultParams()

@@ -103,7 +103,7 @@ func TestMain(m *testing.M) {
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err.Error()))
 		}
-		time.Sleep(500*time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 	}
 
 	c, _ := net.Dial("tcp", tCapnpAddress)

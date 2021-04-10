@@ -108,7 +108,11 @@ func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
-	m.Store.SaveBlock(h, b)
+	err := m.Store.SaveBlock(h, b)
+	if err != nil {
+		panic(err)
+	}
+
 	for _, t := range trxs {
 		m.Store.Transactions[t.ID()] = tx.CommittedTx{
 			Tx: t, Receipt: t.GenerateReceipt(0, b.Hash()),
