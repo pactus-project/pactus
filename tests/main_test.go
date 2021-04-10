@@ -71,7 +71,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
 		tConfigs[i].Network.ListenAddress = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
 		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
-		tConfigs[i].Network.Bootstrap.Period = 20 * time.Second
+		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3
 		tConfigs[i].Http.Enable = false
 		tConfigs[i].GRPC.Enable = false
@@ -144,9 +144,7 @@ func TestMain(m *testing.M) {
 	committers := b.LastCertificate().Committers()
 	for _, num := range committers {
 		if num == tNodeIdx1 ||
-			num == tNodeIdx2 ||
-			num == tNodeIdx3 ||
-			num == tNodeIdx4 {
+			num == tNodeIdx2 {
 			panic("Sortition didn't work")
 		}
 	}
