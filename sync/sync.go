@@ -319,7 +319,7 @@ func (sync *synchronizer) RequestForMoreBlock() {
 				}
 
 				session := sync.peerSet.OpenSession(p.PeerID())
-				pld := payload.NewDownloadRequestPayload(session.SessionID, p.PeerID(), from+1, to)
+				pld := payload.NewDownloadRequestPayload(session.SessionID(), p.PeerID(), from+1, to)
 				sync.broadcast(pld)
 				from = to
 			}
@@ -332,7 +332,7 @@ func (sync *synchronizer) RequestForLatestBlock() {
 	if p != nil {
 		session := sync.peerSet.OpenSession(p.PeerID())
 		ourHeight := sync.state.LastBlockHeight()
-		pld := payload.NewLatestBlocksRequestPayload(session.SessionID, p.PeerID(), ourHeight+1, p.Height())
+		pld := payload.NewLatestBlocksRequestPayload(session.SessionID(), p.PeerID(), ourHeight+1, p.Height())
 		sync.broadcast(pld)
 	}
 }
@@ -463,7 +463,6 @@ func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int
 	if s == nil {
 		sync.logger.Debug("Session not found or closed", "session-id", sessionID)
 	} else {
-		s.LastResponseCode = code
-		s.LastActivityAt = util.Now()
+		s.SetLastResponseCode(code)
 	}
 }

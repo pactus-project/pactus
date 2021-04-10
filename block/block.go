@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -14,9 +15,10 @@ import (
 )
 
 type Block struct {
-	data blockData
-
+	lk            deadlock.RWMutex
 	memorizedHash *crypto.Hash
+
+	data blockData
 }
 
 type blockData struct {
@@ -79,6 +81,9 @@ func (b *Block) SanityCheck() error {
 }
 
 func (b *Block) Hash() crypto.Hash {
+	b.lk.Lock()
+	defer b.lk.Unlock()
+
 	if b.memorizedHash == nil {
 		h := b.data.Header.Hash()
 		b.memorizedHash = &h
@@ -87,7 +92,7 @@ func (b *Block) Hash() crypto.Hash {
 	return *b.memorizedHash
 }
 
-func (b Block) HashesTo(hash crypto.Hash) bool {
+func (b *Block) HashesTo(hash crypto.Hash) bool {
 	return b.Hash().EqualsTo(hash)
 }
 
@@ -101,7 +106,7 @@ func (b *Block) Fingerprint() string {
 	)
 }
 
-func (b Block) Encode() ([]byte, error) {
+func (b *Block) Encode() ([]byte, error) {
 	bs, err := cbor.Marshal(b.data)
 	if err != nil {
 		return nil, err
@@ -121,7 +126,7 @@ func (b *Block) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &b.data)
 }
 
-func (b Block) MarshalJSON() ([]byte, error) {
+func (b *Block) MarshalJSON() ([]byte, error) {
 	return json.Marshal(b.data)
 }
 
