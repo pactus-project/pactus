@@ -36,7 +36,7 @@ func (s *proposeState) createProposal(height int, round int) {
 		return
 	}
 
-	proposal := proposal.NewProposal(height, round, *block)
+	proposal := proposal.NewProposal(height, round, block)
 	s.signer.SignMsg(proposal)
 	s.doSetProposal(proposal)
 

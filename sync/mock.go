@@ -51,7 +51,7 @@ func (m *MockSync) Fingerprint() string {
 	return ""
 }
 
-func (m *MockSync) PeerID() peer.ID {
+func (m *MockSync) SelfID() peer.ID {
 	return m.ID
 }
 

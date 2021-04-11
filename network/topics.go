@@ -70,6 +70,9 @@ func (n *network) JoinTopics(callbackFn CallbackFn) error {
 }
 
 func (n *network) JoinDownloadTopic() error {
+	n.lk.Lock()
+	defer n.lk.Unlock()
+
 	if n.downloadSub != nil {
 		return nil
 	}
@@ -92,6 +95,9 @@ func (n *network) JoinDownloadTopic() error {
 }
 
 func (n *network) LeaveDownloadTopic() {
+	n.lk.Lock()
+	defer n.lk.Unlock()
+
 	if n.downloadSub != nil {
 		n.downloadTopic.Close()
 		n.downloadSub.Cancel()

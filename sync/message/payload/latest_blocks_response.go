@@ -17,13 +17,13 @@ type LatestBlocksResponsePayload struct {
 	SessionID       int                `cbor:"2,keyasint"`
 	Target          peer.ID            `cbor:"3,keyasint"`
 	From            int                `cbor:"4,keyasint"`
-	Blocks          []block.Block      `cbor:"5,keyasint"`
-	Transactions    []tx.Tx            `cbor:"6,keyasint"`
+	Blocks          []*block.Block     `cbor:"5,keyasint"`
+	Transactions    []*tx.Tx           `cbor:"6,keyasint"`
 	LastCertificate *block.Certificate `cbor:"7,keyasint"`
 }
 
 func NewLatestBlocksResponsePayload(code ResponseCode, sid int, target peer.ID, from int,
-	blocks []block.Block, trxs []tx.Tx, cert *block.Certificate) Payload {
+	blocks []*block.Block, trxs []*tx.Tx, cert *block.Certificate) Payload {
 	return &LatestBlocksResponsePayload{
 		ResponseCode:    code,
 		SessionID:       sid,

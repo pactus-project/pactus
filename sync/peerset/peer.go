@@ -2,10 +2,12 @@ package peerset
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
 )
 
@@ -181,4 +183,13 @@ func (p *Peer) MarshalJSON() ([]byte, error) {
 	defer p.lk.RUnlock()
 
 	return json.Marshal(p.data)
+}
+
+func (p *Peer) Fingerprint() string {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return fmt.Sprintf("{%v %v}",
+		util.FingerprintPeerID(p.data.PeerID),
+		p.data.Height)
 }

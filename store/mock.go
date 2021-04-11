@@ -11,7 +11,7 @@ import (
 )
 
 type MockStore struct {
-	Blocks       map[int]block.Block
+	Blocks       map[int]*block.Block
 	Accounts     map[crypto.Address]account.Account
 	Validators   map[crypto.Address]validator.Validator
 	Transactions map[crypto.Hash]tx.CommittedTx
@@ -19,7 +19,7 @@ type MockStore struct {
 
 func MockingStore() *MockStore {
 	return &MockStore{
-		Blocks:       make(map[int]block.Block),
+		Blocks:       make(map[int]*block.Block),
 		Accounts:     make(map[crypto.Address]account.Account),
 		Validators:   make(map[crypto.Address]validator.Validator),
 		Transactions: make(map[crypto.Hash]tx.CommittedTx),
@@ -28,7 +28,7 @@ func MockingStore() *MockStore {
 func (m *MockStore) Block(height int) (*block.Block, error) {
 	b, ok := m.Blocks[height]
 	if ok {
-		return &b, nil
+		return b, nil
 	}
 	return nil, fmt.Errorf("not found")
 }
@@ -94,7 +94,7 @@ func (m *MockStore) LastBlockHeight() int {
 }
 
 func (m *MockStore) Close() error {
-	m.Blocks = make(map[int]block.Block)
+	m.Blocks = make(map[int]*block.Block)
 	m.Accounts = make(map[crypto.Address]account.Account)
 	m.Validators = make(map[crypto.Address]validator.Validator)
 	m.Transactions = make(map[crypto.Hash]tx.CommittedTx)
@@ -124,7 +124,7 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 }
 
 func (m *MockStore) SaveBlock(height int, block *block.Block) {
-	m.Blocks[height] = *block
+	m.Blocks[height] = block
 }
 
 func (m *MockStore) SaveTransaction(ctrx *tx.CommittedTx) {

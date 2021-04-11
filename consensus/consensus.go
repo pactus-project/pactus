@@ -252,12 +252,12 @@ func (cs *consensus) queryProposal() {
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
-	pld := payload.NewProposalPayload(*p)
+	pld := payload.NewProposalPayload(p)
 	cs.broadcastCh <- pld
 }
 
 func (cs *consensus) broadcastVote(v *vote.Vote) {
-	pld := payload.NewVotePayload(*v)
+	pld := payload.NewVotePayload(v)
 	cs.broadcastCh <- pld
 }
 

@@ -10,16 +10,16 @@ import (
 )
 
 type DownloadResponsePayload struct {
-	ResponseCode ResponseCode  `cbor:"1,keyasint"`
-	SessionID    int           `cbor:"2,keyasint"`
-	Target       peer.ID       `cbor:"3,keyasint"`
-	From         int           `cbor:"4,keyasint"`
-	Blocks       []block.Block `cbor:"5,keyasint"`
-	Transactions []tx.Tx       `cbor:"6,keyasint"`
+	ResponseCode ResponseCode   `cbor:"1,keyasint"`
+	SessionID    int            `cbor:"2,keyasint"`
+	Target       peer.ID        `cbor:"3,keyasint"`
+	From         int            `cbor:"4,keyasint"`
+	Blocks       []*block.Block `cbor:"5,keyasint"`
+	Transactions []*tx.Tx       `cbor:"6,keyasint"`
 }
 
 func NewDownloadResponsePayload(code ResponseCode, sid int, target peer.ID, from int,
-	blocks []block.Block, trxs []tx.Tx) Payload {
+	blocks []*block.Block, trxs []*tx.Tx) Payload {
 	return &DownloadResponsePayload{
 		ResponseCode: code,
 		SessionID:    sid,

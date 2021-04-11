@@ -29,14 +29,12 @@ func TestInvalidCBOR(t *testing.T) {
 	assert.Error(t, m2.Decode(d))
 }
 func TestMessageCompress(t *testing.T) {
-	var blocks = []block.Block{}
-	var trxs = []tx.Tx{}
+	var blocks = []*block.Block{}
+	var trxs = []*tx.Tx{}
 	for i := 0; i < 10; i++ {
 		b, t := block.GenerateTestBlock(nil, nil)
-		for _, trx := range t {
-			trxs = append(trxs, *trx)
-		}
-		blocks = append(blocks, *b)
+		trxs = append(trxs, t...)
+		blocks = append(blocks, b)
 	}
 	pld := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeBusy, 1234, tPeerID2, 888, blocks, trxs, nil)
 	msg := NewMessage(tPeerID1, pld)
@@ -58,7 +56,7 @@ func TestMessageCompress(t *testing.T) {
 
 func TestDecodeVoteMessage(t *testing.T) {
 	v, _ := vote.GenerateTestPrecommitVote(88, 0)
-	pld := payload.NewVotePayload(*v)
+	pld := payload.NewVotePayload(v)
 	msg := NewMessage(tPeerID1, pld)
 	bs0, err := msg.Encode()
 	assert.NoError(t, err)

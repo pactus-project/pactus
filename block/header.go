@@ -27,16 +27,16 @@ type headerData struct {
 	ProposerAddress     crypto.Address `cbor:"10,keyasint"`
 }
 
-func (h Header) Version() int                     { return h.data.Version }
-func (h Header) Time() time.Time                  { return time.Unix(h.data.UnixTime, 0) }
-func (h Header) TxIDsHash() crypto.Hash           { return h.data.TxIDsHash }
-func (h Header) StateHash() crypto.Hash           { return h.data.StateHash }
-func (h Header) LastBlockHash() crypto.Hash       { return h.data.LastBlockHash }
-func (h Header) LastReceiptsHash() crypto.Hash    { return h.data.LastReceiptsHash }
-func (h Header) LastCertificateHash() crypto.Hash { return h.data.LastCertificateHash }
-func (h Header) CommitteeHash() crypto.Hash       { return h.data.CommitteeHash }
-func (h Header) SortitionSeed() sortition.Seed    { return h.data.SortitionSeed }
-func (h Header) ProposerAddress() crypto.Address  { return h.data.ProposerAddress }
+func (h *Header) Version() int                     { return h.data.Version }
+func (h *Header) Time() time.Time                  { return time.Unix(h.data.UnixTime, 0) }
+func (h *Header) TxIDsHash() crypto.Hash           { return h.data.TxIDsHash }
+func (h *Header) StateHash() crypto.Hash           { return h.data.StateHash }
+func (h *Header) LastBlockHash() crypto.Hash       { return h.data.LastBlockHash }
+func (h *Header) LastReceiptsHash() crypto.Hash    { return h.data.LastReceiptsHash }
+func (h *Header) LastCertificateHash() crypto.Hash { return h.data.LastCertificateHash }
+func (h *Header) CommitteeHash() crypto.Hash       { return h.data.CommitteeHash }
+func (h *Header) SortitionSeed() sortition.Seed    { return h.data.SortitionSeed }
+func (h *Header) ProposerAddress() crypto.Address  { return h.data.ProposerAddress }
 
 func NewHeader(version int,
 	time time.Time,

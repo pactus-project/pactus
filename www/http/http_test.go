@@ -46,7 +46,6 @@ func setup(t *testing.T) {
 	tMockState.Store.SaveBlock(2, b2)
 
 	tTxTestHash = txs[0].ID()
-
 	tMockState.Store.SaveTransaction(&tx.CommittedTx{
 		Tx:      txs[0],
 		Receipt: txs[0].GenerateReceipt(0, b1.Hash()),

@@ -89,7 +89,7 @@ func (m *MockState) CommitBlock(height int, b *block.Block, cert *block.Certific
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
 		return fmt.Errorf("invalid block")
 	}
-	m.Store.Blocks[height] = *b
+	m.Store.SaveBlock(height, b)
 	m.LastBlockCertificate = cert
 	return nil
 }

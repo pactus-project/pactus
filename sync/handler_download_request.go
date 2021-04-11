@@ -1,50 +1,51 @@
-package handler
+package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 )
 
 type downloadRequestHandler struct {
-	*HandlerContext
+	*synchronizer
 }
 
-func NewDownloadRequestHandler(ctx *HandlerContext) Handler {
+func newDownloadRequestHandler(sync *synchronizer) payloadHandler {
 	return &downloadRequestHandler{
-		ctx,
+		sync,
 	}
 }
 
-func (h *downloadRequestHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
+func (handler *downloadRequestHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.DownloadRequestPayload)
-	h.logger.Trace("Parsing download request payload", "pld", pld)
+	handler.logger.Trace("Parsing download request payload", "pld", pld)
 
-	peer := h.peerSet.MustGetPeer(initiator)
+	peer := handler.peerSet.MustGetPeer(initiator)
 	peer.UpdateHeight(pld.From)
 
-	if pld.Target != h.selfID {
+	if pld.Target != handler.SelfID() {
 		return nil
 	}
-	if pld.To-pld.From > h.requestBlockInterval {
+	if pld.To-pld.From > handler.config.RequestBlockInterval {
 		return errors.Errorf(errors.ErrInvalidMessage, "Peer request interval is not acceptable: %v", pld.To-pld.From)
 	}
 
 	from := pld.From
-	count := h.blockPerMessage
+	count := handler.config.BlockPerMessage
 
 	for {
 		if from+count >= pld.To {
 			// Last packet has one extra block, for confirming last block
 			count++
 		}
-		blocks, trxs := h.prepareBlocksAndTransactions(from, count)
+		blocks, trxs := handler.prepareBlocksAndTransactions(from, count)
 		if len(blocks) == 0 {
 			break
 		}
 
 		response := payload.NewDownloadResponsePayload(payload.ResponseCodeMoreBlocks, pld.SessionID, initiator, from, blocks, trxs)
-		h.publishFn(response)
+		handler.broadcast(response)
 
 		from += len(blocks)
 		if from >= pld.To {
@@ -53,7 +54,11 @@ func (h *downloadRequestHandler) ParsPayload(p payload.Payload, initiator peer.I
 	}
 
 	response := payload.NewDownloadResponsePayload(payload.ResponseCodeNoMoreBlocks, pld.SessionID, initiator, 0, nil, nil)
-	h.publishFn(response)
+	handler.broadcast(response)
 
 	return nil
+}
+
+func (handler *downloadRequestHandler) PrepareMessage(p payload.Payload) *message.Message {
+	return message.NewMessage(handler.SelfID(), p)
 }

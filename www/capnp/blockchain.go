@@ -12,7 +12,7 @@ func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error
 func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 	res, _ := args.Results.NewResult()
 
-	err := res.SetPeerID(zs.sync.PeerID().String())
+	err := res.SetPeerID(zs.sync.SelfID().String())
 	if err != nil {
 		return err
 	}

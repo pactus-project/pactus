@@ -27,7 +27,7 @@ func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
 	return val
 }
 
-func TestValidator(t *testing.T) {
+func TestGetValidator(t *testing.T) {
 	val := getValidator(t, tSigners[tNodeIdx2].Address())
 	require.NotNil(t, val)
 	assert.Equal(t, val.Number(), 1)

@@ -86,7 +86,7 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	}
 
 	go func(t *tx.Tx) {
-		pld := payload.NewTransactionsPayload([]tx.Tx{*t})
+		pld := payload.NewTransactionsPayload([]*tx.Tx{t})
 		pool.broadcastCh <- pld
 	}(trx)
 

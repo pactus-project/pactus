@@ -40,7 +40,7 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkI
 	}
 
 	return &zarb.NetworkInfoResponse{
-		PeerId: zs.sync.PeerID().String(),
+		PeerId: zs.sync.SelfID().String(),
 		Peers:  rps,
 	}, nil
 }

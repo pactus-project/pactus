@@ -23,7 +23,7 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 
 	addr := tSigners[tIndexB].Address()
 	b, _ := block.GenerateTestBlock(&addr, nil)
-	p := proposal.NewProposal(1, 0, *b)
+	p := proposal.NewProposal(1, 0, b)
 
 	tConsY.SetProposal(p)
 	assert.Nil(t, tConsY.RoundProposal(0))
@@ -38,7 +38,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 
 	a := tSigners[tIndexB].Address()
 	invBlock, _ := block.GenerateTestBlock(&a, nil)
-	p := proposal.NewProposal(1, 2, *invBlock)
+	p := proposal.NewProposal(1, 2, invBlock)
 	tSigners[tIndexB].SignMsg(p)
 
 	testEnterNewHeight(tConsP)
@@ -54,7 +54,7 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 
 	a := tSigners[tIndexB].Address()
 	invBlock, _ := block.GenerateTestBlock(&a, nil)
-	p := proposal.NewProposal(2, 0, *invBlock)
+	p := proposal.NewProposal(2, 0, invBlock)
 	tSigners[tIndexB].SignMsg(p)
 
 	testEnterNewHeight(tConsY)
@@ -106,7 +106,7 @@ func TestProposalNextRound(t *testing.T) {
 	// Byzantine node sends proposal for second round (his turn)
 	b, err := tConsB.state.ProposeBlock(1)
 	assert.NoError(t, err)
-	p := proposal.NewProposal(2, 1, *b)
+	p := proposal.NewProposal(2, 1, b)
 	tSigners[tIndexB].SignMsg(p)
 
 	tConsX.SetProposal(p)
