@@ -268,44 +268,6 @@
           "Zarb"
         ]
       }
-    },
-    "/api/validator/{number}": {
-      "get": {
-        "operationId": "Zarb_GetValidatorByNumber",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/zarbValidatorResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "number",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "verbosity",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Zarb"
-        ]
-      }
     }
   },
   "definitions": {

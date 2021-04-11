@@ -38,8 +38,8 @@ func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.Votes = append(m.Votes, v)
 }
 func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
 
 	votes := make([]*vote.Vote, 0)
 	for _, v := range m.Votes {
@@ -50,14 +50,14 @@ func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
 	return votes
 }
 func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
 
 	m.Proposal = p
 }
 func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
 
 	if m.Proposal == nil || m.Proposal.Round() != round {
 		return nil
@@ -65,17 +65,17 @@ func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
 	return m.Proposal
 }
 func (m *MockConsensus) HRS() *hrs.HRS {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
 
 	return hrs.NewHRS(m.State.LastBlockHeight()+1, m.Round, hrs.StepTypeNewHeight)
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""
 }
-func (m *MockConsensus) PickRandomVote() *vote.Vote {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+func (m *MockConsensus) PickRandomVote(round int) *vote.Vote {
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
 
 	if len(m.Votes) == 0 {
 		return nil

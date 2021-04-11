@@ -209,7 +209,7 @@ func (sb *SandboxConcrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Add
 		return errors.Errorf(errors.ErrGeneric, "Invalid block hash")
 	}
 	commiters := b.LastCertificate().Committers()
-	for _, num := range commiters {
+	for num := range commiters {
 		if s.Validator.Number() == num {
 			return errors.Errorf(errors.ErrGeneric, "This validator was in the committee in time of sending the sortition")
 		}

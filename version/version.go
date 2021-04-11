@@ -2,30 +2,19 @@ package version
 
 import (
 	"fmt"
-
-	"github.com/coreos/go-semver/semver"
 )
 
 var (
-	NodeVersion Version = Version{
+	NodeVersion Version
+	GitCommit   string
+)
+
+func init() {
+	NodeVersion = Version{
 		Major: 1,
 		Minor: 0,
 		Patch: 0,
 	}
-	SemVersion string = "1.0.0-beta"
-	GitCommit  string
-)
-
-func init() {
-	sv, err := semver.NewVersion(SemVersion)
-	if err == nil {
-		NodeVersion = Version{
-			Major: int(sv.Major),
-			Minor: int(sv.Minor),
-			Patch: int(sv.Patch),
-		}
-	}
-
 }
 
 type Version struct {

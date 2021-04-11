@@ -38,18 +38,21 @@ func MockingState(committee *committee.Committee) *MockState {
 }
 
 func (m *MockState) LastBlockHeight() int {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return m.Store.LastBlockHeight()
 }
 func (m *MockState) GenesisHash() crypto.Hash {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return m.GenHash
 }
 func (m *MockState) LastBlockHash() crypto.Hash {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	h := m.Store.LastBlockHeight()
 	if h > 0 {
 		return m.Store.Blocks[m.Store.LastBlockHeight()].Hash()
@@ -57,23 +60,27 @@ func (m *MockState) LastBlockHash() crypto.Hash {
 	return crypto.UndefHash
 }
 func (m *MockState) LastBlockTime() time.Time {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return util.Now()
 }
 func (m *MockState) LastCertificate() *block.Certificate {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return m.LastBlockCertificate
 }
 func (m *MockState) BlockTime() time.Duration {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return time.Second
 }
 func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
+
 	m.LastBlockCertificate = cert
 	return nil
 }
@@ -83,6 +90,7 @@ func (m *MockState) Fingerprint() string {
 func (m *MockState) CommitBlock(height int, b *block.Block, cert *block.Certificate) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
+
 	if height != m.Store.LastBlockHeight()+1 {
 		return fmt.Errorf("Invalid height")
 	}
@@ -98,21 +106,21 @@ func (m *MockState) Close() error {
 	return nil
 }
 func (m *MockState) ProposeBlock(round int) (*block.Block, error) {
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	b, _ := block.GenerateTestBlock(nil, nil)
 	return b, nil
 }
 func (m *MockState) ValidateBlock(block *block.Block) error {
 	return nil
 }
+
 func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
-	err := m.Store.SaveBlock(h, b)
-	if err != nil {
-		panic(err)
-	}
-
+	m.Store.SaveBlock(h, b)
 	for _, t := range trxs {
 		m.Store.Transactions[t.ID()] = tx.CommittedTx{
 			Tx: t, Receipt: t.GenerateReceipt(0, b.Hash()),
@@ -120,69 +128,74 @@ func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	}
 }
 func (m *MockState) CommitteeValidators() []*validator.Validator {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return m.Committee.Validators()
 }
 func (m *MockState) IsInCommittee(addr crypto.Address) bool {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return m.Committee.Contains(addr)
 }
 func (m *MockState) Proposer(round int) *validator.Validator {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return m.Committee.Proposer(round)
 }
 func (m *MockState) IsProposer(addr crypto.Address, round int) bool {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
+
 	return m.Committee.IsProposer(addr, round)
 }
 func (m *MockState) Transaction(id tx.ID) *tx.CommittedTx {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	tx, _ := m.Store.Transaction(id)
 	return tx
 }
 func (m *MockState) Block(height int) *block.Block {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	b, _ := m.Store.Block(height)
 	return b
 }
 func (m *MockState) BlockHeight(hash crypto.Hash) int {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	h, _ := m.Store.BlockHeight(hash)
 	return h
 }
 func (m *MockState) Account(addr crypto.Address) *account.Account {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	a, _ := m.Store.Account(addr)
 	return a
 }
 func (m *MockState) Validator(addr crypto.Address) *validator.Validator {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	v, _ := m.Store.Validator(addr)
 	return v
 }
-func (m *MockState) ValidatorByNumber(n int) *validator.Validator {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
-	v, _ := m.Store.ValidatorByNumber(n)
-	return v
-}
 func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
-	m.Lock.RLock()
-	defer m.Lock.RUnlock()
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
 	return m.TxPool.PendingTx(id)
 }
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
+
 	return m.TxPool.AppendTx(trx)
 }
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {

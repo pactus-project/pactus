@@ -1,9 +1,3 @@
 
 ignore:
   - "*/mock.go"
-
-coverage:
-  status:
-    patch:
-      default:
-        threshold: 60%

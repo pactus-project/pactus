@@ -33,7 +33,6 @@ type StateFacade interface {
 	BlockHeight(hash crypto.Hash) int
 	Account(addr crypto.Address) *account.Account
 	Validator(addr crypto.Address) *validator.Validator
-	ValidatorByNumber(number int) *validator.Validator
 	Close() error
 	Fingerprint() string
 }

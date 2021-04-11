@@ -18,7 +18,7 @@ func TestProofMarshaling(t *testing.T) {
 	p1 := GenerateRandomProof()
 	bz, err := json.Marshal(p1)
 	assert.NoError(t, err)
-	var p2 Proof
+	var p2  Proof
 	assert.NoError(t, json.Unmarshal(bz, &p2))
 	assert.Equal(t, p1, p2)
 }

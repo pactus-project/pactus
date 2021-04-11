@@ -5,15 +5,16 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestLastBlockHeight(t *testing.T) {
-	store, _ := NewStore(TestConfig())
+	store, _ := newBlockStore(util.TempDirPath())
 
-	assert.False(t, store.HasAnyBlock())
+	assert.False(t, store.hasAnyBlock())
 
 	b1, _ := block.GenerateTestBlock(nil, nil)
-	assert.NoError(t, store.SaveBlock(1, b1))
+	assert.NoError(t, store.saveBlock(1, b1))
 
-	assert.True(t, store.HasAnyBlock())
+	assert.True(t, store.hasAnyBlock())
 }

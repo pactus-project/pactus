@@ -8,6 +8,11 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
+var (
+	blockPrefix     = []byte{0x01}
+	blockHashPrefix = []byte{0x03}
+)
+
 func blockKey(height int) []byte           { return append(blockPrefix, util.IntToSlice(height)...) }
 func blockHashKey(hash crypto.Hash) []byte { return append(blockHashPrefix, hash.RawBytes()...) }
 
@@ -15,13 +20,21 @@ type blockStore struct {
 	db *leveldb.DB
 }
 
-func newBlockStore(db *leveldb.DB) (*blockStore, error) {
+func newBlockStore(path string) (*blockStore, error) {
+	db, err := leveldb.OpenFile(path, nil)
+	if err != nil {
+		return nil, err
+	}
 	return &blockStore{
 		db: db,
 	}, nil
 }
 
-func (bs *blockStore) saveBlock(height int, block *block.Block) error {
+func (bs *blockStore) close() error {
+	return bs.db.Close()
+}
+
+func (bs *blockStore) saveBlock(height int, block *block.Block, ) error {
 	blockData, err := block.Encode()
 	if err != nil {
 		return err

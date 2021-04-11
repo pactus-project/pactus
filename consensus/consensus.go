@@ -236,11 +236,10 @@ func (cs *consensus) broadcastBlock(h int, b *block.Block, c *block.Certificate)
 	cs.broadcastCh <- msg
 }
 
-func (cs *consensus) PickRandomVote() *vote.Vote {
+func (cs *consensus) PickRandomVote(round int) *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	round := util.RandInt(cs.hrs.Round() + 1)
 	rv := cs.pendingVotes.MustGetRoundVotes(round)
 	votes := rv.AllVotes()
 	if len(votes) == 0 {

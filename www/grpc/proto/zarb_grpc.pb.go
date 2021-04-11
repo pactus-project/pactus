@@ -23,7 +23,6 @@ type ZarbClient interface {
 	GetTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
 	GetAccount(ctx context.Context, in *AccountRequest, opts ...grpc.CallOption) (*AccountResponse, error)
 	GetValidator(ctx context.Context, in *ValidatorRequest, opts ...grpc.CallOption) (*ValidatorResponse, error)
-	GetValidatorByNumber(ctx context.Context, in *ValidatorByNumberRequest, opts ...grpc.CallOption) (*ValidatorResponse, error)
 	GetBlockchainInfo(ctx context.Context, in *BlockchainInfoRequest, opts ...grpc.CallOption) (*BlockchainInfoResponse, error)
 	GetNetworkInfo(ctx context.Context, in *NetworkInfoRequest, opts ...grpc.CallOption) (*NetworkInfoResponse, error)
 	SendRawTransaction(ctx context.Context, in *SendRawTransactionRequest, opts ...grpc.CallOption) (*SendRawTransactionResponse, error)
@@ -82,15 +81,6 @@ func (c *zarbClient) GetValidator(ctx context.Context, in *ValidatorRequest, opt
 	return out, nil
 }
 
-func (c *zarbClient) GetValidatorByNumber(ctx context.Context, in *ValidatorByNumberRequest, opts ...grpc.CallOption) (*ValidatorResponse, error) {
-	out := new(ValidatorResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Zarb/GetValidatorByNumber", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *zarbClient) GetBlockchainInfo(ctx context.Context, in *BlockchainInfoRequest, opts ...grpc.CallOption) (*BlockchainInfoResponse, error) {
 	out := new(BlockchainInfoResponse)
 	err := c.cc.Invoke(ctx, "/zarb.Zarb/GetBlockchainInfo", in, out, opts...)
@@ -127,7 +117,6 @@ type ZarbServer interface {
 	GetTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error)
 	GetAccount(context.Context, *AccountRequest) (*AccountResponse, error)
 	GetValidator(context.Context, *ValidatorRequest) (*ValidatorResponse, error)
-	GetValidatorByNumber(context.Context, *ValidatorByNumberRequest) (*ValidatorResponse, error)
 	GetBlockchainInfo(context.Context, *BlockchainInfoRequest) (*BlockchainInfoResponse, error)
 	GetNetworkInfo(context.Context, *NetworkInfoRequest) (*NetworkInfoResponse, error)
 	SendRawTransaction(context.Context, *SendRawTransactionRequest) (*SendRawTransactionResponse, error)
@@ -151,9 +140,6 @@ func (UnimplementedZarbServer) GetAccount(context.Context, *AccountRequest) (*Ac
 }
 func (UnimplementedZarbServer) GetValidator(context.Context, *ValidatorRequest) (*ValidatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidator not implemented")
-}
-func (UnimplementedZarbServer) GetValidatorByNumber(context.Context, *ValidatorByNumberRequest) (*ValidatorResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetValidatorByNumber not implemented")
 }
 func (UnimplementedZarbServer) GetBlockchainInfo(context.Context, *BlockchainInfoRequest) (*BlockchainInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockchainInfo not implemented")
@@ -266,24 +252,6 @@ func _Zarb_GetValidator_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Zarb_GetValidatorByNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ValidatorByNumberRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ZarbServer).GetValidatorByNumber(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zarb.Zarb/GetValidatorByNumber",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ZarbServer).GetValidatorByNumber(ctx, req.(*ValidatorByNumberRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Zarb_GetBlockchainInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlockchainInfoRequest)
 	if err := dec(in); err != nil {
@@ -364,10 +332,6 @@ var Zarb_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetValidator",
 			Handler:    _Zarb_GetValidator_Handler,
-		},
-		{
-			MethodName: "GetValidatorByNumber",
-			Handler:    _Zarb_GetValidatorByNumber_Handler,
 		},
 		{
 			MethodName: "GetBlockchainInfo",

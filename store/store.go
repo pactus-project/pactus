@@ -2,7 +2,6 @@ package store
 
 import (
 	"github.com/sasha-s/go-deadlock"
-	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -11,19 +10,10 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-var (
-	blockPrefix     = []byte{0x01}
-	blockHashPrefix = []byte{0x02}
-	accountPrefix   = []byte{0x03}
-	validatorPrefix = []byte{0x04}
-	txPrefix        = []byte{0x05}
-)
-
 type store struct {
 	lk deadlock.RWMutex
 
 	config         *Config
-	db             *leveldb.DB
 	blockStore     *blockStore
 	txStore        *txStore
 	accountStore   *accountStore
@@ -31,43 +21,44 @@ type store struct {
 }
 
 func NewStore(conf *Config) (Store, error) {
-
-	db, err := leveldb.OpenFile(conf.StorePath(), nil)
+	blockStore, err := newBlockStore(conf.BlockStorePath())
 	if err != nil {
 		return nil, err
 	}
-
-	blockStore, err := newBlockStore(db)
+	txStore, err := newTxStore(conf.TxStorePath())
 	if err != nil {
 		return nil, err
 	}
-	txStore, err := newTxStore(db)
+	accountStore, err := newAccountStore(conf.AccountStorePath())
 	if err != nil {
 		return nil, err
 	}
-	accountStore, err := newAccountStore(db)
+	validatorStore, err := newValidatorStore(conf.ValidatorStorePath())
 	if err != nil {
 		return nil, err
 	}
-	validatorStore, err := newValidatorStore(db)
-	if err != nil {
-		return nil, err
-	}
-
 	return &store{
 		config:         conf,
-		db:             db,
 		blockStore:     blockStore,
 		txStore:        txStore,
 		accountStore:   accountStore,
 		validatorStore: validatorStore,
 	}, nil
 }
-
 func (s *store) Close() error {
-	if err := s.db.Close(); err != nil {
+	if err := s.blockStore.close(); err != nil {
 		return err
 	}
+	if err := s.txStore.close(); err != nil {
+		return err
+	}
+	if err := s.accountStore.close(); err != nil {
+		return err
+	}
+	if err := s.validatorStore.close(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

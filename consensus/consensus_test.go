@@ -419,10 +419,10 @@ func TestPickRandomVote(t *testing.T) {
 	setup(t)
 
 	tConsY.enterNewHeight()
-	assert.Nil(t, tConsY.PickRandomVote())
+	assert.Nil(t, tConsY.PickRandomVote(0))
 
 	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY, false)
-	assert.NotNil(t, tConsY.PickRandomVote())
+	assert.NotNil(t, tConsY.PickRandomVote(0))
 }
 
 func TestSignProposalFromPreviousRound(t *testing.T) {

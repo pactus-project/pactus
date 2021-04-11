@@ -1,7 +1,7 @@
 on: [pull_request]
-name: Compile libbls384_256 and test
+name: Build with BLS library
 jobs:
-  bls-test:
+  data-race:
     runs-on: ubuntu-latest
 
     steps:
