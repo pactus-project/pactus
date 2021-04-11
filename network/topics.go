@@ -95,6 +95,9 @@ func (n *network) JoinDownloadTopic() error {
 }
 
 func (n *network) LeaveDownloadTopic() {
+	n.lk.Lock()
+	defer n.lk.Unlock()
+
 	if n.downloadSub != nil {
 		n.downloadTopic.Close()
 		n.downloadSub.Cancel()
