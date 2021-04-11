@@ -13,6 +13,7 @@ import (
 
 func TestAddBlockToCache(t *testing.T) {
 	setup(t)
+	disableHeartbeat(t)
 
 	b1, trxs1 := block.GenerateTestBlock(nil, nil)
 	b2, trxs2 := block.GenerateTestBlock(nil, nil)
@@ -157,7 +158,7 @@ func TestSessionTimeout(t *testing.T) {
 	tAliceSync.peerSet.UpdateMaxClaimedHeight(1000)
 	tAliceSync.sendBlocksRequestIfWeAreBehind()
 	assert.True(t, tAliceSync.peerSet.HasAnyValidSession())
-	time.Sleep(tAliceConfig.SessionTimeout)
+	time.Sleep(2 * tAliceConfig.SessionTimeout)
 	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
 }
 

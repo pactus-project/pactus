@@ -15,8 +15,8 @@ func TestGetValidator(t *testing.T) {
 	k, k1, k2 := key.GenerateRandomKey(), key.GenerateRandomKey(), key.GenerateRandomKey()
 	val := validator.NewValidator(k.PublicKey(), 0, 0)
 	val1 := validator.NewValidator(k1.PublicKey(), 1, 0)
-	tMockState.Store.Validators[k.Address()] = *val
-	tMockState.Store.Validators[k1.Address()] = *val1
+	tMockState.Store.Validators[k.Address()] = val
+	tMockState.Store.Validators[k1.Address()] = val1
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
@@ -36,18 +36,11 @@ func TestGetValidator(t *testing.T) {
 		assert.NotEmpty(t, err)
 	})
 
-	t.Run("Should return validator, verbosity 0", func(t *testing.T) {
+	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{Address: k1.Address().String()})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Empty(t, res.Json)
-	})
-
-	t.Run("Should return transaction, verbosity 1", func(t *testing.T) {
-		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{Address: k.Address().String(), Verbosity: 1})
-		assert.NoError(t, err)
-		assert.NotNil(t, res)
-		assert.NotEmpty(t, res.Json)
+		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
 	})
 
 	err := conn.Close()
@@ -59,10 +52,10 @@ func TestGetValidatorByNumber(t *testing.T) {
 	conn, client := callServer(t)
 
 	k, k1 := key.GenerateRandomKey(), key.GenerateRandomKey()
-	val := validator.NewValidator(k.PublicKey(), 0, 0)
-	val1 := validator.NewValidator(k1.PublicKey(), 1, 0)
-	tMockState.Store.Validators[k.Address()] = *val
-	tMockState.Store.Validators[k1.Address()] = *val1
+	val := validator.NewValidator(k.PublicKey(), 5, 0)
+	val1 := validator.NewValidator(k1.PublicKey(), 6, 0)
+	tMockState.Store.Validators[k.Address()] = val
+	tMockState.Store.Validators[k1.Address()] = val1
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
@@ -82,23 +75,30 @@ func TestGetValidatorByNumber(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return validator json, verbosity 0", func(t *testing.T) {
+	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: 1,
+			Number: 6,
 		})
 		assert.NotNil(t, res)
 		assert.Nil(t, err)
-		assert.Empty(t, res.Json)
+		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
+		assert.Equal(t, int32(val1.Number()), res.GetValidator().GetNumber())
+
 	})
 
-	t.Run("Should return transaction json, verbosity 1", func(t *testing.T) {
-		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number:    0,
-			Verbosity: 1,
-		})
+	err := conn.Close()
+
+	assert.Nil(t, err, "Error closing connection")
+}
+
+func TestGetValidators(t *testing.T) {
+	conn, client := callServer(t)
+
+	t.Run("should setup commiters", func(t *testing.T) {
+		res, err := client.GetValidators(tCtx, &zarb.ValidatorsRequest{})
 		assert.NotNil(t, res)
 		assert.Nil(t, err)
-		assert.NotEmpty(t, res.Json)
+		assert.Equal(t, 4, len(res.GetValidators()))
 	})
 
 	err := conn.Close()

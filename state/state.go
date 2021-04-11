@@ -325,12 +325,12 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	t := block.Header().Time()
-	if err := st.validateBlockTime(t); err != nil {
+	if err := st.validateBlock(block); err != nil {
 		return err
 	}
 
-	if err := st.validateBlock(block); err != nil {
+	t := block.Header().Time()
+	if err := st.validateBlockTime(t); err != nil {
 		return err
 	}
 
@@ -520,7 +520,7 @@ func (st *state) validateBlockTime(t time.Time) error {
 		return errors.Errorf(errors.ErrInvalidBlock, "Block time is not rounded")
 	}
 	if t.Before(st.lastInfo.BlockTime().Add(1 * time.Second)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too early")
+		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too early: %s", t.String())
 	}
 	proposeTime := st.proposeNextBlockTime()
 	threshold := 2 * st.params.BlockTime()

@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 // Account structure
@@ -82,7 +81,7 @@ func (acc Account) Fingerprint() string {
 func GenerateTestAccount(number int) (*Account, crypto.Signer) {
 	signer := crypto.GenerateTestSigner()
 	acc := NewAccount(signer.Address(), number)
-	acc.data.Balance = util.RandInt64(10000000)
-	acc.data.Sequence = util.RandInt(100)
+	acc.data.Balance = 888888888
+	acc.data.Sequence = 88
 	return acc, signer
 }

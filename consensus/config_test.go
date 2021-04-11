@@ -8,23 +8,26 @@ import (
 )
 
 func TestDefaultConfigCheck(t *testing.T) {
-	c := DefaultConfig()
-	assert.NoError(t, c.SanityCheck())
+	c1 := DefaultConfig()
+	c2 := DefaultConfig()
+	c3 := DefaultConfig()
+	c4 := DefaultConfig()
+	assert.NoError(t, c1.SanityCheck())
 
-	c.DeltaDuration = -1 * time.Second
-	assert.Error(t, c.SanityCheck())
-	c.TimeoutPrecommit = -1 * time.Second
-	assert.Error(t, c.SanityCheck())
-	c.TimeoutPrepare = -1 * time.Second
-	assert.Error(t, c.SanityCheck())
+	c2.ChangeProposerDelta = 0 * time.Second
+	assert.Error(t, c2.SanityCheck())
+
+	c3.ChangeProposerTimeout = 0 * time.Second
+	assert.Error(t, c3.SanityCheck())
+
+	c4.ChangeProposerTimeout = -1 * time.Second
+	assert.Error(t, c4.SanityCheck())
 }
 
-func TestTimeoutWithDelta(t *testing.T) {
+func TestCalculateChangeProposerTimeout(t *testing.T) {
 	c := DefaultConfig()
 
-	assert.Equal(t, c.PrepareTimeout(0), c.TimeoutPrepare)
-	assert.Equal(t, c.PrepareTimeout(1), c.TimeoutPrepare+c.DeltaDuration)
-
-	assert.Equal(t, c.PrecommitTimeout(0), c.TimeoutPrecommit)
-	assert.Equal(t, c.PrecommitTimeout(1), c.TimeoutPrecommit+c.DeltaDuration)
+	assert.Equal(t, c.CalculateChangeProposerTimeout(0), c.ChangeProposerTimeout)
+	assert.Equal(t, c.CalculateChangeProposerTimeout(1), c.ChangeProposerTimeout+c.ChangeProposerDelta)
+	assert.Equal(t, c.CalculateChangeProposerTimeout(4), c.ChangeProposerTimeout+(4*c.ChangeProposerDelta))
 }

@@ -48,8 +48,8 @@ func (ps *PeerSet) OpenSession(peerID peer.ID) *Session {
 	return s
 }
 func (ps *PeerSet) FindSession(id int) *Session {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
 
 	s, ok := ps.sessions[id]
 	if ok {
@@ -60,8 +60,8 @@ func (ps *PeerSet) FindSession(id int) *Session {
 }
 
 func (ps *PeerSet) HasAnyValidSession() bool {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
 
 	// First remove old sessions
 	for id, s := range ps.sessions {

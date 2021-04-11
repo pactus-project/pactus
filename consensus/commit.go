@@ -1,69 +1,71 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) enterCommit(round int) {
-	if cs.status.IsCommitted() || round > cs.hrs.Round() {
-		cs.logger.Debug("Commit: Committed or invalid round", "round", round)
-		return
-	}
+type commitState struct {
+	*consensus
+}
 
-	precommits := cs.pendingVotes.PrecommitVoteSet(round)
-	if !precommits.HasQuorum() {
-		cs.logger.Warn("Commit: No quorum for precommit stage")
-		return
-	}
+func (s *commitState) enter() {
+	s.decide()
+}
 
-	blockHash := precommits.QuorumBlock()
-	if blockHash == nil || blockHash.IsUndef() {
-		cs.logger.Error("Commit: quorum block  hash is invalid", "hash", blockHash)
-		return
-	}
-	cs.hrs.UpdateStep(hrs.StepTypeCommit)
-
-	// Additional check. blockHash should be same for both prepares and precommits
-	prepares := cs.pendingVotes.PrepareVoteSet(round)
-	hash := prepares.QuorumBlock()
-	if hash == nil || !blockHash.EqualsTo(*hash) {
-		cs.logger.Warn("Commit: Commit without prepare quorum", "hash", hash)
-	}
+func (s *commitState) decide() {
+	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
+	precommitQH := precommits.QuorumHash()
 
 	// For any reason, we don't have proposal
-	roundProposal := cs.pendingVotes.RoundProposal(round)
+	roundProposal := s.pendingVotes.RoundProposal(s.round)
 	if roundProposal == nil {
-		cs.requestForProposal()
-
-		cs.logger.Warn("Commit: No proposal, send proposal request.")
+		s.logger.Warn("No proposal, send proposal request.")
+		s.queryProposal()
 		return
 	}
 
 	// Proposal is not for quorum block
 	// It is impossible, but good to keep this check
-	if !roundProposal.IsForBlock(blockHash) {
-		cs.logger.Error("Commit: Proposal is invalid.", "proposal", roundProposal)
+	if !roundProposal.IsForBlock(*precommitQH) {
+		s.pendingVotes.SetRoundProposal(s.round, nil)
+		s.logger.Error("Proposal is invalid.", "proposal", roundProposal)
 		return
 	}
 
 	certBlock := roundProposal.Block()
 	cert := precommits.ToCertificate()
-	height := cs.hrs.Height()
 	if cert == nil {
-		cs.logger.Error("Commit: Invalid precommits", "precommits", precommits)
+		s.logger.Error("Invalid precommits", "precommitQH", precommitQH)
 		return
 	}
 
-	if err := cs.state.CommitBlock(height, certBlock, cert); err != nil {
-		cs.logger.Warn("Commit: committing block failed", "block", certBlock, "err", err)
+	if err := s.state.CommitBlock(s.height, certBlock, *cert); err != nil {
+		s.logger.Warn("committing block failed", "block", certBlock, "err", err)
 		return
 	}
 
-	cs.status.SetCommitted(true)
-	cs.logger.Info("Commit: Block committed, Schedule new height", "block", blockHash.Fingerprint())
+	s.logger.Info("Block committed, Schedule new height", "precommitQH", precommitQH)
+	// Now we can broadcast the committed block
+	s.announceNewBlock(s.height, &certBlock, cert)
 
-	cs.scheduleNewHeight()
+	s.enterNewState(s.newHeightState)
+}
 
-	// Now broadcast the committed block
-	cs.broadcastBlock(height, certBlock, cert)
+func (s *commitState) onAddVote(v *vote.Vote) {
+	s.doAddVote(v)
+	s.decide()
+}
+
+func (s *commitState) onSetProposal(p *proposal.Proposal) {
+	s.doSetProposal(p)
+	s.decide()
+}
+
+func (s *commitState) onTimedout(t *ticker) {
+	s.logger.Debug("Invalid ticker", "ticker", t)
+}
+
+func (s *commitState) name() string {
+	return "commit"
 }

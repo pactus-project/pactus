@@ -80,8 +80,8 @@ func setup(t *testing.T) {
 	tBobState = state.MockingState(committee)
 	tAliceConsensus = consensus.MockingConsensus(tAliceState)
 	tBobConsensus = consensus.MockingConsensus(tBobState)
-	tAliceBroadcastCh = make(chan *message.Message, 100)
-	tBobBroadcastCh = make(chan *message.Message, 100)
+	tAliceBroadcastCh = make(chan *message.Message, 1000)
+	tBobBroadcastCh = make(chan *message.Message, 1000)
 	tAliceNetAPI = network_api.MockingNetworkAPI(tAlicePeerID)
 	tBobNetAPI = network_api.MockingNetworkAPI(tBobPeerID)
 	aliceCache, _ := cache.NewCache(tAliceConfig.CacheSize, tAliceState)
@@ -419,7 +419,8 @@ func TestHeartbeatNotInSet(t *testing.T) {
 	tAliceNetAPI.ShouldNotPublishMessageWithThisType(t, payload.PayloadTypeVote)
 
 	joinAliceToTheSet(t)
-	v1, _ := vote.GenerateTestPrepareVote(tAliceConsensus.HRS().Height(), 0)
+	aliceHRS := tAliceConsensus.HRS()
+	v1, _ := vote.GenerateTestPrepareVote(aliceHRS.Height(), 0)
 	tAliceConsensus.Votes = []*vote.Vote{v1}
 
 	// Alice is in committee

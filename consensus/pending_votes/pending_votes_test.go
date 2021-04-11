@@ -18,8 +18,6 @@ func TestMustGetRound(t *testing.T) {
 	assert.Nil(t, pv.GetRoundVotes(5))
 	assert.NotNil(t, pv.GetRoundVotes(1))
 	assert.NotNil(t, pv.GetRoundVotes(4))
-	assert.Equal(t, pv.GetRoundVotes(3).Prepares.Height(), 101)
-	assert.Equal(t, pv.GetRoundVotes(3).Prepares.Round(), 3)
 	assert.Equal(t, len(pv.roundVotes), 5)
 }
 
@@ -29,17 +27,12 @@ func TestAddVotes(t *testing.T) {
 	pv := NewPendingVotes()
 	pv.MoveToNewHeight(101, committee.Validators())
 	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
-	ok, err := pv.AddVote(invalidVote) // invalid height
-	assert.False(t, ok)
+	err := pv.AddVote(invalidVote) // invalid height
 	assert.Error(t, err)
 
 	v1, _ := vote.GenerateTestPrecommitVote(101, 5)
-	ok, err = pv.AddVote(v1) // invalid signer
-	assert.False(t, ok)
+	err = pv.AddVote(v1) // invalid signer
 	assert.Error(t, err)
-
-	undefVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.UndefHash, signers[0].Address())
-	signers[0].SignMsg(undefVote)
 
 	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
 	signers[0].SignMsg(validVote)
@@ -47,33 +40,20 @@ func TestAddVotes(t *testing.T) {
 	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
 	signers[0].SignMsg(duplicateVote)
 
-	ok, err = pv.AddVote(undefVote)
-	assert.True(t, ok)
+	err = pv.AddVote(validVote)
 	assert.NoError(t, err)
-
-	ok, err = pv.AddVote(validVote)
-	assert.True(t, ok)
-	assert.NoError(t, err)
-
-	// Because of network lagging we might receive nil-vote after block-vote
-	// We don't add this vote and we don't report it as duplicated
-	ok, err = pv.AddVote(undefVote)
-	assert.False(t, ok)
-	assert.NoError(t, err)
-	assert.True(t, pv.HasVote(validVote.Hash()))
 
 	// Definitely it is a duplicated error
-	ok, err = pv.AddVote(duplicateVote)
-	assert.False(t, ok) // duplicated vote
-	assert.Error(t, err)
+	err = pv.AddVote(duplicateVote)
+	assert.Error(t, err) // duplicated vote error
 
 	prepares := pv.PrepareVoteSet(1)
 	precommits := pv.PrecommitVoteSet(1)
-	assert.Equal(t, prepares.Len(), 0)   // duplicated vote has removed
+	assert.Equal(t, prepares.Len(), 2)   //  Vote + Duplicated
 	assert.Equal(t, precommits.Len(), 0) // no precommit votes
-	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 0)
-	assert.False(t, pv.HasVote(duplicateVote.Hash()))
-	assert.False(t, pv.HasVote(validVote.Hash()))
+	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 2)
+	assert.True(t, pv.HasVote(duplicateVote.Hash()))
+	assert.True(t, pv.HasVote(validVote.Hash()))
 	assert.False(t, pv.HasVote(invalidVote.Hash()))
 }
 

@@ -232,7 +232,38 @@
         ]
       }
     },
-    "/api/validator/address/{address}": {
+    "/api/validators": {
+      "get": {
+        "operationId": "Zarb_GetValidators",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbValidatorsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "verbosity",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Zarb"
+        ]
+      }
+    },
+    "/api/validators/address/{address}": {
       "get": {
         "operationId": "Zarb_GetValidator",
         "responses": {
@@ -269,7 +300,7 @@
         ]
       }
     },
-    "/api/validator/{number}": {
+    "/api/validators/{number}": {
       "get": {
         "operationId": "Zarb_GetValidatorByNumber",
         "responses": {
@@ -451,15 +482,51 @@
         }
       }
     },
-    "zarbValidatorResponse": {
+    "zarbValidator": {
       "type": "object",
       "properties": {
-        "data": {
+        "publicKey": {
           "type": "string",
           "format": "byte"
         },
-        "json": {
-          "type": "string"
+        "number": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        },
+        "bondingHeight": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastJoinedHeight": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "zarbValidatorResponse": {
+      "type": "object",
+      "properties": {
+        "validator": {
+          "$ref": "#/definitions/zarbValidator"
+        }
+      }
+    },
+    "zarbValidatorsResponse": {
+      "type": "object",
+      "properties": {
+        "validators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zarbValidator"
+          }
         }
       }
     }

@@ -62,23 +62,30 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
 		if i == 0 {
 			tConfigs[i].Capnp.Address = tCapnpAddress
+			f, _ := os.Create(tConfigs[i].Network.NodeKeyFile)
+			_, err := f.WriteString("08011240f22591817d8803e32525db7fc5cb9949d77c402e20867a6cac6b3ffb3dc643fb2521ef3c844a12eee79c275f19958999aeebb173496b67ea4a40f5d34b0a1355")
+			if err != nil {
+				panic(err)
+			}
+			f.Close()
 		} else {
 			tConfigs[i].Capnp.Enable = false
 		}
 		tConfigs[i].Http.Enable = false
 		tConfigs[i].GRPC.Enable = false
 
-		tConfigs[i].Logger.Levels["default"] = "info"
+		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
+
+		tConfigs[i].Logger.Levels["default"] = "error"
 		tConfigs[i].Logger.Levels["_state"] = "info"
-		tConfigs[i].Logger.Levels["_sync"] = "info"
-		tConfigs[i].Logger.Levels["_consensus"] = "info"
-		tConfigs[i].Logger.Levels["_pool"] = "debug"
+		tConfigs[i].Logger.Levels["_sync"] = "error"
+		tConfigs[i].Logger.Levels["_consensus"] = "debug"
+		tConfigs[i].Logger.Levels["_pool"] = "error"
 
 		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
 		tConfigs[i].Sync.CacheSize = 1000
-		tConfigs[i].Network.EnableKademlia = false
-		tConfigs[i].Network.EnableNATService = false
-		tConfigs[i].Network.EnableRelay = false
+		tConfigs[i].Network.ListenAddress = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
+		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
 
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
@@ -117,54 +124,26 @@ func TestMain(m *testing.M) {
 	waitForNewBlock(t)
 	waitForNewBlock(t)
 
-	totalStake := int64(0)
+	// These validators are not in the committee now.
+	// Bond transactions are valid and they can enter the committee soon
 	for i := committeeSize; i < nodeCount; i++ {
 		amt := util.RandInt64(1000000 - 1) // fee is always 1000
-		err := broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000)
+		err := broadcastBondTransaction(t, tSigners[tNodeIdx2], tSigners[i].PublicKey(), amt, 1000)
 		if err != nil {
 			panic(fmt.Sprintf("Error on broadcasting transaction: %v", err))
 		}
 		fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
-		incSequence(t, tSigners[tNodeIdx1].Address())
-		totalStake += amt
-	}
-
-	// Uncomment this for debugging the test
-	// go func() {
-	// 	file, _ := os.OpenFile("./debug.log", os.O_CREATE|os.O_WRONLY, 0666)
-	// 	fmt.Fprintf(file, "total stake: %d\n\n", totalStake)
-
-	// 	for {
-	// 		for i := 0; i < nodeCount; i++ {
-	// 			tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round())
-
-	// 			fmt.Fprintf(file, "node %d: %s %s %s proposal: %v ",
-	// 				i,
-	// 				tNodes[i].Sync().Fingerprint(),
-	// 				tNodes[i].State().Fingerprint(),
-	// 				tNodes[i].Consensus().Fingerprint(),
-	// 				tNodes[i].Consensus().RoundProposal(tNodes[i].Consensus().HRS().Round()) != nil)
-
-	// 			votes := tNodes[i].Consensus().RoundVotes(tNodes[i].Consensus().HRS().Round())
-
-	// 			for _, v := range votes {
-	// 				fmt.Fprintf(file, "%s:%s,%s ", v.VoteType(), v.BlockHash().Fingerprint(), v.Signer().Fingerprint())
-	// 			}
-	// 			fmt.Fprintf(file, "\n")
-	// 		}
-	// 		fmt.Fprintf(file, "================================================================================\n")
-
-	// 		time.Sleep(10 * time.Second)
-	// 	}
-	// }()
-
-	for i := 0; i < 20; i++ {
-		waitForNewBlock(t)
+		incSequence(t, tSigners[tNodeIdx2].Address())
 	}
 
 	fmt.Println("Running tests")
 
 	exitCode := m.Run()
+
+	// Some more blocks
+	for i := 0; i < 20; i++ {
+		waitForNewBlock(t)
+	}
 
 	tCtx.Done()
 	for i := 0; i < nodeCount; i++ {

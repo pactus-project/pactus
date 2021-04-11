@@ -106,11 +106,8 @@ func (p *Proposal) Hash() crypto.Hash {
 	return crypto.HashH(p.SignBytes())
 }
 
-func (p *Proposal) IsForBlock(hash *crypto.Hash) bool {
-	if hash == nil {
-		return false
-	}
-	return p.Block().HashesTo(*hash)
+func (p *Proposal) IsForBlock(hash crypto.Hash) bool {
+	return p.Block().HashesTo(hash)
 }
 
 func (p Proposal) Fingerprint() string {

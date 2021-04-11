@@ -11,8 +11,8 @@ func TestOperator(t *testing.T) {
 	hrs2 := NewHRS(100, 1, 2) // bigger than hrs1
 	hrs3 := NewHRS(100, 2, 1) // bigger than hrs2
 	hrs4 := NewHRS(101, 0, 0) // bigger than hrs3
-	hrs5 := new(HRS)
-	hrs6 := new(HRS)
+	hrs5 := HRS{}
+	hrs6 := HRS{}
 
 	assert.True(t, hrs1.LessThan(hrs2))
 	assert.True(t, hrs1.LessThan(hrs3))
@@ -37,7 +37,7 @@ func TestOperator(t *testing.T) {
 
 func TestMarshaling(t *testing.T) {
 	hrs1 := NewHRS(100, 1, 1)
-	hrs2 := new(HRS)
+	hrs2 := HRS{}
 
 	bs, err := hrs1.MarshalCBOR()
 	assert.NoError(t, err)
@@ -46,8 +46,11 @@ func TestMarshaling(t *testing.T) {
 }
 
 func TestInvalidHRS(t *testing.T) {
-	assert.False(t, NewHRS(0, 1, 1).IsValid())
-	assert.False(t, NewHRS(1, -1, 1).IsValid())
-	assert.False(t, NewHRS(1, 1, 0).IsValid())
+	hrs1 := NewHRS(0, 1, 1)
+	hrs2 := NewHRS(1, -1, 1)
+	hrs3 := NewHRS(1, 1, 0)
+	assert.False(t, hrs1.IsValid())
+	assert.False(t, hrs2.IsValid())
+	assert.False(t, hrs3.IsValid())
 
 }

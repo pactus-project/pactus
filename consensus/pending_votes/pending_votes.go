@@ -1,8 +1,8 @@
 package pending_votes
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/vote_set"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/vote"
@@ -39,11 +39,10 @@ func (pv *PendingVotes) HasVote(hash crypto.Hash) bool {
 
 func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 	for i := len(pv.roundVotes); i <= round; i++ {
-		prepares := vote.NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators)
-		precommits := vote.NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators)
 		rv := &RoundVotes{
-			Prepares:   prepares,
-			Precommits: precommits,
+			prepareVotes:        vote_set.NewVoteSet(pv.height, i, vote.VoteTypePrepare, pv.validators),
+			precommitVotes:      vote_set.NewVoteSet(pv.height, i, vote.VoteTypePrecommit, pv.validators),
+			changeProposerVotes: vote_set.NewVoteSet(pv.height, i, vote.VoteTypeChangeProposer, pv.validators),
 		}
 
 		// extendind votes slice
@@ -53,25 +52,24 @@ func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 	return pv.GetRoundVotes(round)
 }
 
-func (pv *PendingVotes) AddVote(v *vote.Vote) (bool, error) {
-	if err := v.SanityCheck(); err != nil {
-		return false, errors.Errorf(errors.ErrInvalidVote, "%v", err)
-	}
-	if v.Height() != pv.height {
-		return false, errors.Errorf(errors.ErrInvalidVote, "Invalid height")
-	}
+func (pv *PendingVotes) AddVote(v *vote.Vote) error {
 	rv := pv.MustGetRoundVotes(v.Round())
 	return rv.addVote(v)
 }
 
-func (pv *PendingVotes) PrepareVoteSet(round int) *vote.VoteSet {
+func (pv *PendingVotes) PrepareVoteSet(round int) *vote_set.VoteSet {
 	rv := pv.MustGetRoundVotes(round)
 	return rv.voteSet(vote.VoteTypePrepare)
 }
 
-func (pv *PendingVotes) PrecommitVoteSet(round int) *vote.VoteSet {
+func (pv *PendingVotes) PrecommitVoteSet(round int) *vote_set.VoteSet {
 	rv := pv.MustGetRoundVotes(round)
 	return rv.voteSet(vote.VoteTypePrecommit)
+}
+
+func (pv *PendingVotes) ChangeProposerVoteSet(round int) *vote_set.VoteSet {
+	rv := pv.MustGetRoundVotes(round)
+	return rv.voteSet(vote.VoteTypeChangeProposer)
 }
 
 func (pv *PendingVotes) HasRoundProposal(round int) bool {

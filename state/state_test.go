@@ -525,16 +525,16 @@ func TestValidatorHelpers(t *testing.T) {
 		assert.Nil(t, nonExistenceValidator, "State 4 returned Non nil For nonExisting validator")
 	})
 
-	t.Run("Should return validator for valid commitee Validator Address", func(t *testing.T) {
-		existeingValidator := tState4.Validator(tValSigner1.Address())
-		assert.NotNil(t, existeingValidator)
-		assert.Equal(t, 0, existeingValidator.Number())
+	t.Run("Should return validator for valid committee Validator Address", func(t *testing.T) {
+		existingValidator := tState4.Validator(tValSigner1.Address())
+		assert.NotNil(t, existingValidator)
+		assert.Equal(t, 0, existingValidator.Number())
 	})
 
 	t.Run("Should return validator for corresponding Validator number", func(t *testing.T) {
-		existeingValidator := tState4.ValidatorByNumber(1)
-		assert.NotNil(t, existeingValidator)
-		assert.Equal(t, tValSigner2.Address(), existeingValidator.Address())
+		existingValidator := tState4.ValidatorByNumber(1)
+		assert.NotNil(t, existingValidator)
+		assert.Equal(t, tValSigner2.Address(), existingValidator.Address())
 	})
 
 	t.Run("Should return nil for invalid Validator number", func(t *testing.T) {
