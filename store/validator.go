@@ -15,17 +15,9 @@ type validatorStore struct {
 	total  int
 }
 
-var (
-	validatorPrefix = []byte{0x01}
-)
-
 func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.RawBytes()...) }
 
-func newValidatorStore(path string) (*validatorStore, error) {
-	db, err := leveldb.OpenFile(path, nil)
-	if err != nil {
-		return nil, err
-	}
+func newValidatorStore(db *leveldb.DB) (*validatorStore, error) {
 	vs := &validatorStore{
 		db: db,
 	}
@@ -42,10 +34,6 @@ func newValidatorStore(path string) (*validatorStore, error) {
 	vs.valMap = valMap
 
 	return vs, nil
-}
-
-func (vs *validatorStore) close() error {
-	return vs.db.Close()
 }
 
 func (vs *validatorStore) hasValidator(addr crypto.Address) bool {

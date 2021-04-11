@@ -35,7 +35,7 @@ func TestCacheBlock(t *testing.T) {
 	b1, _ := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
 
-	tState.Store.SaveBlock(1, b1)
+	assert.NoError(t, tState.Store.SaveBlock(1, b1))
 	tCache.AddBlock(2, b2)
 
 	assert.Equal(t, tCache.GetBlock(1).Hash(), b1.Hash())

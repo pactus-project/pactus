@@ -13,9 +13,8 @@ You need to make sure you have install [Go](https://golang.org/).
 Follow these steps to compile and build Zarb blockchain:
 
 ```bash
-mkdir -p $GOPATH/src/github.com/zarbchain/zarb-go
-cd $GOPATH/src/github.com/zarbchain/zarb-go
-git clone https://github.com/zarbchain/zarb-go.git .
+git clone https://github.com/zarbchain/zarb-go.git
+cd zarb-go
 make
 ```
 
