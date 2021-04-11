@@ -13,7 +13,7 @@ func TestVRF(t *testing.T) {
 	signer := crypto.NewSigner(pv)
 	for i := 0; i < 100; i++ {
 		seed := GenerateRandomSeed()
-		fmt.Printf("index is : %x \n", seed)
+		fmt.Printf("seed is: %x \n", seed)
 
 		vrf := NewVRF()
 

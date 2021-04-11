@@ -42,8 +42,8 @@ func setup(t *testing.T) {
 
 	b1, txs := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
-	tMockState.Store.SaveBlock(1, b1)
-	tMockState.Store.SaveBlock(2, b2)
+	assert.NoError(t, tMockState.Store.SaveBlock(1, b1))
+	assert.NoError(t, tMockState.Store.SaveBlock(2, b2))
 
 	tTxTestHash = txs[0].ID()
 
