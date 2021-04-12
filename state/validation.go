@@ -99,7 +99,7 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 
 		if cert.Round() != st.lastInfo.Certificate().Round() {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last certificate's round is not same as we expected. Expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
+				"Last certificate round is not same as we expected. Expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
 		}
 
 		if !cert.CommitteeHash().EqualsTo(st.lastInfo.Certificate().CommitteeHash()) {
