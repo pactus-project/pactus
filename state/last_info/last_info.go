@@ -133,7 +133,7 @@ func (li *LastInfo) SaveLastInfo() error {
 
 	bs, _ := json.Marshal(&lid)
 	if err := util.WriteFile(path, bs); err != nil {
-		return fmt.Errorf("Unable to write last sate info: %v", err)
+		return fmt.Errorf("unable to write last sate info: %v", err)
 	}
 	return nil
 }
@@ -141,7 +141,7 @@ func (li *LastInfo) SaveLastInfo() error {
 func (li *LastInfo) RestoreLastInfo(store store.StoreReader) (*committee.Committee, error) {
 	path := li.path + "/last_info.json"
 	if !util.PathExists(path) {
-		return nil, fmt.Errorf("Unable to load %v", path)
+		return nil, fmt.Errorf("unable to load %v", path)
 	}
 	bs, err := util.ReadFile(path)
 	if err != nil {
@@ -156,7 +156,7 @@ func (li *LastInfo) RestoreLastInfo(store store.StoreReader) (*committee.Committ
 
 	b, err := store.Block(lid.LastHeight)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to retrieve block %v: %v", lid.LastHeight, err)
+		return nil, fmt.Errorf("unable to retrieve block %v: %v", lid.LastHeight, err)
 	}
 
 	joinedVals := make([]*validator.Validator, 0)
@@ -164,7 +164,7 @@ func (li *LastInfo) RestoreLastInfo(store store.StoreReader) (*committee.Committ
 	for i, id := range b.TxIDs().IDs() {
 		ctx, err := store.Transaction(id)
 		if err != nil {
-			return nil, fmt.Errorf("Unable to retrieve transaction %s: %v", id, err)
+			return nil, fmt.Errorf("unable to retrieve transaction %s: %v", id, err)
 		}
 		receiptsHashes[i] = ctx.Receipt.Hash()
 
@@ -172,7 +172,7 @@ func (li *LastInfo) RestoreLastInfo(store store.StoreReader) (*committee.Committ
 			pld := ctx.Tx.Payload().(*payload.SortitionPayload)
 			val, err := store.Validator(pld.Address)
 			if err != nil {
-				return nil, fmt.Errorf("Unable to retrieve validator %s: %v", pld.Address, err)
+				return nil, fmt.Errorf("unable to retrieve validator %s: %v", pld.Address, err)
 			}
 			joinedVals = append(joinedVals, val)
 		}
@@ -190,18 +190,18 @@ func (li *LastInfo) RestoreLastInfo(store store.StoreReader) (*committee.Committ
 	for i, num := range b.LastCertificate().Committers() {
 		val, err := store.ValidatorByNumber(num)
 		if err != nil {
-			return nil, fmt.Errorf("Unable to retrieve committee member %v: %v", num, err)
+			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
 		}
 		vals[i] = val
 	}
 	committee, err := committee.NewCommittee(vals, len(b.LastCertificate().Committers()), b.Header().ProposerAddress())
 	if err != nil {
-		return nil, fmt.Errorf("Unable to create last committee: %v", err)
+		return nil, fmt.Errorf("unable to create last committee: %v", err)
 	}
 
 	err = committee.Update(0, joinedVals)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to update last committee: %v", err)
+		return nil, fmt.Errorf("unable to update last committee: %v", err)
 	}
 
 	return committee, nil
