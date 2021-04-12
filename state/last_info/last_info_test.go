@@ -8,10 +8,11 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sortition"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestLastInfoAccessors(t *testing.T) {
-	li := NewLastInfo()
+	li := NewLastInfo(util.TempDirPath())
 
 	lastSortitionSeed := sortition.GenerateRandomSeed()
 	lastBlockHeight := 111

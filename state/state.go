@@ -71,7 +71,7 @@ func LoadOrNewState(
 		store:        store,
 		mintbaseAddr: mintbaseAddr,
 		sortition:    sortition.NewSortition(),
-		lastInfo:     last_info.NewLastInfo(),
+		lastInfo:     last_info.NewLastInfo(conf.Store.Path),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -108,35 +108,11 @@ func (st *state) tryLoadLastInfo() error {
 		return err
 	}
 	if !genHash.EqualsTo(blockOne.Header().StateHash()) {
-		return fmt.Errorf("Invalid genesis doc")
+		return fmt.Errorf("invalid genesis doc")
 	}
 
-	li, err := st.loadLastInfo()
-	if err != nil {
-		return err
-	}
-	logger.Info("Try to load the last state info", "height", li.LastHeight)
-
-	b, err := st.store.Block(li.LastHeight)
-	if err != nil {
-		return err
-	}
-	st.lastInfo.SetBlockHeight(li.LastHeight)
-	st.lastInfo.SetBlockHash(b.Header().Hash())
-	st.lastInfo.SetCertificate(li.LastCertificate)
-	st.lastInfo.SetBlockTime(b.Header().Time())
-	st.lastInfo.SetSortitionSeed(b.Header().SortitionSeed())
-	st.lastInfo.SetReceiptsHash(li.LastReceiptHash)
-
-	vals := make([]*validator.Validator, len(st.lastInfo.Certificate().Committers()))
-	for i, num := range li.Committee {
-		val, err := st.store.ValidatorByNumber(num)
-		if err != nil {
-			return fmt.Errorf("Unknown committee member: %v", err)
-		}
-		vals[i] = val
-	}
-	st.committee, err = committee.NewCommittee(vals, st.params.CommitteeSize, li.NextProposer)
+	logger.Info("Try to load the last state info")
+	committee, err := st.lastInfo.RestoreLastInfo(st.store)
 	if err != nil {
 		return err
 	}
@@ -148,6 +124,7 @@ func (st *state) tryLoadLastInfo() error {
 	})
 
 	st.sortition.SetTotalStake(totalStake)
+	st.committee = committee
 
 	return nil
 }
@@ -425,9 +402,10 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
 
-	st.saveLastInfo(st.lastInfo.BlockHeight(), cert, st.lastInfo.ReceiptsHash(),
-		st.committee.Committers(),
-		st.committee.Proposer(0).Address())
+	err = st.lastInfo.SaveLastInfo()
+	if err != nil {
+		st.logger.Info("Saving last info failed", "err", err)
+	}
 
 	// At this point we can assign new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())

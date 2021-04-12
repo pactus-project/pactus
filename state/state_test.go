@@ -389,7 +389,6 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.evaluateSortition()) //  not a validator
 
-	// Certificate 14 blocks
 	height := 1
 	for ; height < 12; height++ {
 		if height == 4 {
@@ -541,4 +540,57 @@ func TestValidatorHelpers(t *testing.T) {
 		nonExistenceValidator := tState4.ValidatorByNumber(10)
 		assert.Nil(t, nonExistenceValidator)
 	})
+}
+func TestLoadState(t *testing.T) {
+	setup(t)
+
+	// Add a bond transactions to change total stake
+	_, pub, _ := crypto.GenerateTestKeyPair()
+	tx2 := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 8888000, 8888, "")
+	tValSigner1.SignMsg((tx2))
+
+	assert.NoError(t, tCommonTxPool.AppendTx(tx2))
+
+	for i := 0; i < 4; i++ {
+		moveToNextHeightForAllStates(t)
+	}
+	b5, c5 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+	CommitBlockForAllStates(t, b5, c5)
+
+	b6, c6 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+
+	// Load last state info
+	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, tCommonTxPool)
+	require.NoError(t, err)
+
+	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
+	assert.Equal(t, tState1.store.TotalValidators(), st2.(*state).store.TotalValidators())
+	assert.Equal(t, tState1.sortition.TotalStake(), st2.(*state).sortition.TotalStake())
+	assert.Equal(t, tState1.store.TotalAccounts(), 5)
+	assert.Equal(t, tState1.sortition.TotalStake(), int64(8888000))
+
+	require.NoError(t, st2.CommitBlock(6, b6, c6))
+	require.NoError(t, tState2.CommitBlock(6, b6, c6))
+}
+
+func TestLoadStateAfterChangingGenesis(t *testing.T) {
+	setup(t)
+
+	// Let's commit some blocks
+	i := 0
+	for ; i < 10; i++ {
+		moveToNextHeightForAllStates(t)
+	}
+
+	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())
+	require.NoError(t, err)
+
+	// Load last state info after modifying genesis
+	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc.AddToBalance(21*1e14 + 1) // manipulating genesis
+	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
+	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
+
+	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())
+	require.Error(t, err)
 }
