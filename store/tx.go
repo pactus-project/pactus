@@ -6,31 +6,19 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-var (
-	txPrefix = []byte{0x01}
-)
-
 func txKey(id tx.ID) []byte { return append(txPrefix, id.RawBytes()...) }
 
 type txStore struct {
 	db *leveldb.DB
 }
 
-func newTxStore(path string) (*txStore, error) {
-	db, err := leveldb.OpenFile(path, nil)
-	if err != nil {
-		return nil, err
-	}
+func newTxStore(db *leveldb.DB) (*txStore, error) {
 	return &txStore{
 		db: db,
 	}, nil
 }
 
-func (ts *txStore) close() error {
-	return ts.db.Close()
-}
-
-func (ts *txStore) saveTx(ctrs tx.CommittedTx) error {
+func (ts *txStore) saveTx(ctrs *tx.CommittedTx) error {
 	if err := ctrs.SanityCheck(); err != nil {
 		return err
 	}

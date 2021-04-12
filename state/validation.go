@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func (st *state) validateBlock(block block.Block) error {
+func (st *state) validateBlock(block *block.Block) error {
 	if err := block.SanityCheck(); err != nil {
 		return err
 	}
@@ -112,8 +112,8 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 }
 
 // validateCertificateForCurrentHeight validates certificate for the current height
-func (st *state) validateCertificateForCurrentHeight(cert block.Certificate, blockHash crypto.Hash) error {
-	if err := st.validateCertificate(&cert); err != nil {
+func (st *state) validateCertificateForCurrentHeight(cert *block.Certificate, blockHash crypto.Hash) error {
+	if err := st.validateCertificate(cert); err != nil {
 		return err
 	}
 

@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/sasha-s/go-deadlock"
+	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -10,80 +11,88 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type Store struct {
+var (
+	blockPrefix     = []byte{0x01}
+	blockHashPrefix = []byte{0x02}
+	accountPrefix   = []byte{0x03}
+	validatorPrefix = []byte{0x04}
+	txPrefix        = []byte{0x05}
+)
+
+type store struct {
 	lk deadlock.RWMutex
 
 	config         *Config
+	db             *leveldb.DB
 	blockStore     *blockStore
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
 }
 
-func NewStore(conf *Config) (*Store, error) {
-	blockStore, err := newBlockStore(conf.BlockStorePath())
+func NewStore(conf *Config) (Store, error) {
+
+	db, err := leveldb.OpenFile(conf.StorePath(), nil)
 	if err != nil {
 		return nil, err
 	}
-	txStore, err := newTxStore(conf.TxStorePath())
+
+	blockStore, err := newBlockStore(db)
 	if err != nil {
 		return nil, err
 	}
-	accountStore, err := newAccountStore(conf.AccountStorePath())
+	txStore, err := newTxStore(db)
 	if err != nil {
 		return nil, err
 	}
-	validatorStore, err := newValidatorStore(conf.ValidatorStorePath())
+	accountStore, err := newAccountStore(db)
 	if err != nil {
 		return nil, err
 	}
-	return &Store{
+	validatorStore, err := newValidatorStore(db)
+	if err != nil {
+		return nil, err
+	}
+
+	return &store{
 		config:         conf,
+		db:             db,
 		blockStore:     blockStore,
 		txStore:        txStore,
 		accountStore:   accountStore,
 		validatorStore: validatorStore,
 	}, nil
 }
-func (s *Store) Close() error {
-	if err := s.blockStore.close(); err != nil {
-		return err
-	}
-	if err := s.txStore.close(); err != nil {
-		return err
-	}
-	if err := s.accountStore.close(); err != nil {
-		return err
-	}
-	if err := s.validatorStore.close(); err != nil {
-		return err
-	}
 
+func (s *store) Close() error {
+	if err := s.db.Close(); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (s *Store) SaveBlock(block block.Block, height int) error {
+func (s *store) SaveBlock(height int, block *block.Block) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.saveBlock(block, height)
+	return s.blockStore.saveBlock(height, block)
 }
 
-func (s *Store) Block(height int) (*block.Block, error) {
+func (s *store) Block(height int) (*block.Block, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.block(height)
 }
 
-func (s *Store) BlockHeight(hash crypto.Hash) (int, error) {
+func (s *store) BlockHeight(hash crypto.Hash) (int, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.blockHeight(hash)
 }
 
-func (s *Store) SaveTransaction(ctrx tx.CommittedTx) {
+func (s *store) SaveTransaction(ctrx *tx.CommittedTx) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -92,42 +101,42 @@ func (s *Store) SaveTransaction(ctrx tx.CommittedTx) {
 	}
 }
 
-func (s *Store) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
+func (s *store) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.txStore.tx(hash)
 }
 
-func (s *Store) HasAccount(addr crypto.Address) bool {
+func (s *store) HasAccount(addr crypto.Address) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.accountStore.hasAccount(addr)
 }
 
-func (s *Store) Account(addr crypto.Address) (*account.Account, error) {
+func (s *store) Account(addr crypto.Address) (*account.Account, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.accountStore.account(addr)
 }
 
-func (s *Store) TotalAccounts() int {
+func (s *store) TotalAccounts() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.accountStore.total
 }
 
-func (s *Store) IterateAccounts(consumer func(*account.Account) (stop bool)) {
+func (s *store) IterateAccounts(consumer func(*account.Account) (stop bool)) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	s.accountStore.iterateAccounts(consumer)
 }
 
-func (s *Store) UpdateAccount(acc *account.Account) {
+func (s *store) UpdateAccount(acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -136,42 +145,42 @@ func (s *Store) UpdateAccount(acc *account.Account) {
 	}
 }
 
-func (s *Store) HasValidator(addr crypto.Address) bool {
+func (s *store) HasValidator(addr crypto.Address) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.hasValidator(addr)
 }
 
-func (s *Store) Validator(addr crypto.Address) (*validator.Validator, error) {
+func (s *store) Validator(addr crypto.Address) (*validator.Validator, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.validator(addr)
 }
 
-func (s *Store) ValidatorByNumber(num int) (*validator.Validator, error) {
+func (s *store) ValidatorByNumber(num int) (*validator.Validator, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.validatorByNumber(num)
 }
 
-func (s *Store) TotalValidators() int {
+func (s *store) TotalValidators() int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.total
 }
 
-func (s *Store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
+func (s *store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	s.validatorStore.iterateValidators(consumer)
 }
 
-func (s *Store) UpdateValidator(acc *validator.Validator) {
+func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -180,7 +189,7 @@ func (s *Store) UpdateValidator(acc *validator.Validator) {
 	}
 }
 
-func (s *Store) HasAnyBlock() bool {
+func (s *store) HasAnyBlock() bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 

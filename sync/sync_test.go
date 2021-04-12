@@ -173,8 +173,8 @@ func addMoreBlocksForBobAndAnnounceLastBlock(t *testing.T, count int) {
 	msg := message.NewBlockAnnounceMessage(
 		tBobPeerID,
 		tBobState.LastBlockHeight(),
-		tBobState.Store.Blocks[tBobState.LastBlockHeight()],
-		tBobState.LastBlockCertificate)
+		tBobState.Block(tBobState.LastBlockHeight()),
+		tBobState.LastCertificate())
 
 	tBobBroadcastCh <- msg
 }

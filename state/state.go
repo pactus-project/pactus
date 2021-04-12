@@ -35,7 +35,7 @@ type state struct {
 	signer       crypto.Signer
 	mintbaseAddr crypto.Address
 	genDoc       *genesis.Genesis
-	store        *store.Store
+	store        store.Store
 	params       param.Params
 	txPool       txpool.TxPool
 	committee    *committee.Committee
@@ -48,6 +48,7 @@ func LoadOrNewState(
 	conf *Config,
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
+	store store.Store,
 	txPool txpool.TxPool) (StateFacade, error) {
 
 	var mintbaseAddr crypto.Address
@@ -67,16 +68,12 @@ func LoadOrNewState(
 		txPool:       txPool,
 		params:       genDoc.Params(),
 		signer:       signer,
+		store:        store,
 		mintbaseAddr: mintbaseAddr,
 		sortition:    sortition.NewSortition(),
 		lastInfo:     last_info.NewLastInfo(),
 	}
 	st.logger = logger.NewLogger("_state", st)
-
-	store, err := store.NewStore(conf.Store)
-	if err != nil {
-		return nil, err
-	}
 	st.store = store
 
 	if store.HasAnyBlock() {
@@ -126,7 +123,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 	st.lastInfo.SetBlockHeight(li.LastHeight)
 	st.lastInfo.SetBlockHash(b.Header().Hash())
-	st.lastInfo.SetCertificate(&li.LastCertificate)
+	st.lastInfo.SetCertificate(li.LastCertificate)
 	st.lastInfo.SetBlockTime(b.Header().Time())
 	st.lastInfo.SetSortitionSeed(b.Header().SortitionSeed())
 	st.lastInfo.SetReceiptsHash(li.LastReceiptHash)
@@ -321,10 +318,10 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		newSortitionSeed,
 		st.signer.Address())
 
-	return &block, nil
+	return block, nil
 }
 
-func (st *state) ValidateBlock(block block.Block) error {
+func (st *state) ValidateBlock(block *block.Block) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -346,7 +343,7 @@ func (st *state) ValidateBlock(block block.Block) error {
 	return nil
 }
 
-func (st *state) CommitBlock(height int, block block.Block, cert block.Certificate) error {
+func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -400,7 +397,7 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 	// Commit and update the validator set
 	st.commitSandbox(sb, cert.Round())
 
-	if err := st.store.SaveBlock(block, st.lastInfo.BlockHeight()+1); err != nil {
+	if err := st.store.SaveBlock(st.lastInfo.BlockHeight()+1, block); err != nil {
 		return err
 	}
 
@@ -419,7 +416,7 @@ func (st *state) CommitBlock(height int, block block.Block, cert block.Certifica
 	st.lastInfo.SetBlockTime(block.Header().Time())
 	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
 	st.lastInfo.SetReceiptsHash(receiptsMerkle.Root())
-	st.lastInfo.SetCertificate(&cert)
+	st.lastInfo.SetCertificate(cert)
 
 	// Evaluate sortition before updating the validator set
 	if st.evaluateSortition() {

@@ -42,15 +42,15 @@ func setup(t *testing.T) {
 
 	b1, txs := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
-	tMockState.Store.Blocks[1] = b1
-	tMockState.Store.Blocks[2] = b2
+	assert.NoError(t, tMockState.Store.SaveBlock(1, b1))
+	assert.NoError(t, tMockState.Store.SaveBlock(2, b2))
 
 	tTxTestHash = txs[0].ID()
 
-	tMockState.Store.Transactions[tTxTestHash] = &tx.CommittedTx{
+	tMockState.Store.SaveTransaction(&tx.CommittedTx{
 		Tx:      txs[0],
 		Receipt: txs[0].GenerateReceipt(0, b1.Hash()),
-	}
+	})
 
 	a, _ := account.GenerateTestAccount(888)
 	tAccTestAddr = a.Address()

@@ -110,7 +110,7 @@ func TestDownloadBlocks(t *testing.T) {
 
 	// Clear alice store
 	tAliceSync.cache.Clear()
-	tAliceState.Store.Blocks = make(map[int]*block.Block)
+	tAliceState.Store.Blocks = make(map[int]block.Block)
 	tAliceConsensus.Scheduled = false
 
 	joinBobToTheSet(t)

@@ -3,20 +3,17 @@ package store
 import (
 	"testing"
 
-	"github.com/zarbchain/zarb-go/util"
-
-	"github.com/zarbchain/zarb-go/block"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
 )
 
 func TestLastBlockHeight(t *testing.T) {
-	store, _ := newBlockStore(util.TempDirPath())
+	store, _ := NewStore(TestConfig())
 
-	assert.False(t, store.hasAnyBlock())
+	assert.False(t, store.HasAnyBlock())
 
 	b1, _ := block.GenerateTestBlock(nil, nil)
-	assert.NoError(t, store.saveBlock(*b1, 1))
+	assert.NoError(t, store.SaveBlock(1, b1))
 
-	assert.True(t, store.hasAnyBlock())
+	assert.True(t, store.HasAnyBlock())
 }

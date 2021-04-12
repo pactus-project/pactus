@@ -22,7 +22,7 @@ func TestSaveLoadLastInfo(t *testing.T) {
 
 	tState1.saveLastInfo(
 		tState1.lastInfo.BlockHeight(),
-		*tState1.lastInfo.Certificate(),
+		tState1.lastInfo.Certificate(),
 		tState1.lastInfo.ReceiptsHash(),
 		tState1.committee.Committers(),
 		tState1.committee.Proposer(0).Address())
@@ -53,10 +53,9 @@ func TestLoadState(t *testing.T) {
 	CommitBlockForAllStates(t, b5, c5)
 
 	b6, c6 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	assert.NoError(t, tState1.Close())
 
 	// Load last state info
-	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tCommonTxPool)
+	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, tCommonTxPool)
 	require.NoError(t, err)
 
 	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
@@ -78,9 +77,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 		moveToNextHeightForAllStates(t)
 	}
 
-	assert.NoError(t, tState1.Close())
-
-	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, txpool.MockingTxPool())
+	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())
 	require.NoError(t, err)
 
 	// Load last state info after modifying genesis
@@ -89,6 +86,6 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	val := validator.NewValidator(tValSigner1.PublicKey(), 0, 0)
 	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 
-	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, txpool.MockingTxPool())
+	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())
 	require.Error(t, err)
 }

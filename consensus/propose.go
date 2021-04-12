@@ -31,7 +31,7 @@ func (s *proposeState) createProposal(height int, round int) {
 		s.logger.Error("We can't propose a block. Why?", "err", err)
 		return
 	}
-	if err := s.state.ValidateBlock(*block); err != nil {
+	if err := s.state.ValidateBlock(block); err != nil {
 		s.logger.Error("Our block is invalid. Why?", "err", err)
 		return
 	}

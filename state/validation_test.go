@@ -18,11 +18,11 @@ func TestTransactionLost(t *testing.T) {
 	setup(t)
 
 	b1, _ := tState1.ProposeBlock(0)
-	assert.NoError(t, tState2.ValidateBlock(*b1))
+	assert.NoError(t, tState2.ValidateBlock(b1))
 
 	b2, _ := tState1.ProposeBlock(0)
 	tCommonTxPool.Txs = make([]*tx.Tx, 0)
-	assert.Error(t, tState2.ValidateBlock(*b2))
+	assert.Error(t, tState2.ValidateBlock(b2))
 }
 
 func TestCertificateValidation(t *testing.T) {
@@ -52,54 +52,54 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("Invalid blockhahs, should return error", func(t *testing.T) {
 		c := block.NewCertificate(invBlockHash, 0, []int{0, 1, 2, 3}, []int{3}, validSig)
 
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
 		invSig := tValSigner1.SignData([]byte("abc"))
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{3}, invSig)
 
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("Invalid committer, should return error", func(t *testing.T) {
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{4}, validSig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 
 		c2 := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{}, validSig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c2))
+		assert.Error(t, tState1.CommitBlock(2, b2, c2))
 
 		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, invSig5})
 		c3 := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 5}, []int{2}, sig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c3))
+		assert.Error(t, tState1.CommitBlock(2, b2, c3))
 	})
 
 	t.Run("Unexpected signature", func(t *testing.T) {
 		sig1 := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, invSig3, valSig4})
 		c1 := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{3}, sig1)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c1))
+		assert.Error(t, tState1.CommitBlock(2, b2, c1))
 
 		sig2 := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3, invSig5})
 		c2 := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 4}, []int{4}, sig2)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c2)) // committee hash is invalid
+		assert.Error(t, tState1.CommitBlock(2, b2, c2)) // committee hash is invalid
 	})
 
 	t.Run("duplicated or missed number, should return error", func(t *testing.T) {
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 2}, []int{}, validSig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 
 		c = block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2}, []int{}, validSig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("unexpected block hash", func(t *testing.T) {
 		c := block.NewCertificate(invBlockHash, 0, []int{0, 1, 2, 3}, []int{3}, invalidSig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("invalid signature", func(t *testing.T) {
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{3}, invalidSig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
@@ -109,19 +109,19 @@ func TestCertificateValidation(t *testing.T) {
 		validSig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2, valSig3})
 
 		c := block.NewCertificate(b2.Hash(), 1, []int{0, 1, 2, 3}, []int{3}, validSig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("Doesn't have 2/3 majority", func(t *testing.T) {
 		sig := crypto.Aggregate([]crypto.Signature{valSig1, valSig2})
 
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{2, 3}, sig)
-		assert.Error(t, tState1.CommitBlock(2, *b2, *c))
+		assert.Error(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("Valid signature, should return no error", func(t *testing.T) {
 		c := block.NewCertificate(b2.Hash(), 0, []int{0, 1, 2, 3}, []int{3}, validSig)
-		assert.NoError(t, tState1.CommitBlock(2, *b2, *c))
+		assert.NoError(t, tState1.CommitBlock(2, b2, c))
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {

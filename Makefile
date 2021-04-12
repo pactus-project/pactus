@@ -77,6 +77,11 @@ fmt:
 	@gofmt -s -w .
 	@golangci-lint run -e "SA1019"
 
+fmt_with_bls:
+	$(CGO_LDFLAGS) go vet ./...
+	$(CGO_LDFLAGS) gofmt -s -w .
+	$(CGO_LDFLAGS) golangci-lint run -e "SA1019"
+
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html

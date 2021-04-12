@@ -74,7 +74,7 @@ func TestLoadRecentBlocks(t *testing.T) {
 	lastHeight := 21
 	for i := 0; i <= lastHeight; i++ {
 		b, _ := block.GenerateTestBlock(nil, nil)
-		store.Blocks[i+1] = b
+		assert.NoError(t, store.SaveBlock(i+1, b))
 	}
 
 	params := param.DefaultParams()
@@ -170,8 +170,8 @@ func TestAddValidatorToSet(t *testing.T) {
 	block1002, _ := block.GenerateTestBlock(nil, nil)
 	assert.NoError(t, tCommittee.Update(0, nil))
 
-	tStore.Blocks[1001] = block1001
-	tStore.Blocks[1002] = block1002
+	assert.NoError(t, tStore.SaveBlock(1001, block1001))
+	assert.NoError(t, tStore.SaveBlock(1002, block1002))
 
 	t.Run("Add unknown validator to the committee, Should returns error", func(t *testing.T) {
 		val, _ := validator.GenerateTestValidator(777)

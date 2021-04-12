@@ -338,7 +338,7 @@ func (ss *StateSync) tryCommitBlocks() {
 			break
 		}
 		ss.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
-		if err := ss.state.CommitBlock(ourHeight+1, *b, *c); err != nil {
+		if err := ss.state.CommitBlock(ourHeight+1, b, c); err != nil {
 			ss.logger.Warn("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask peers to send this block later ...
 			break
