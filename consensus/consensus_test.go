@@ -291,7 +291,6 @@ func TestNotInCommittee(t *testing.T) {
 	_, _, priv := crypto.GenerateTestKeyPair()
 	signer := crypto.NewSigner(priv)
 	store := store.MockingStore()
-
 	st, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, signer, store, tTxPool)
 	cons, err := NewConsensus(TestConfig(), st, signer, make(chan payload.Payload, 100))
 	assert.NoError(t, err)
