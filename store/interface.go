@@ -31,5 +31,6 @@ type Store interface {
 	UpdateValidator(acc *validator.Validator)
 	SaveBlock(height int, block *block.Block) error
 	SaveTransaction(ctrx *tx.CommittedTx)
+	WriteBatch() error
 	Close() error
 }

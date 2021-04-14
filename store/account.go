@@ -71,7 +71,7 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 	iter.Release()
 }
 
-func (as *accountStore) updateAccount(acc *account.Account) error {
+func (as *accountStore) updateAccount(batch *leveldb.Batch, acc *account.Account) error {
 	data, err := acc.Encode()
 	if err != nil {
 		panic(err)
@@ -79,6 +79,6 @@ func (as *accountStore) updateAccount(acc *account.Account) error {
 	if !as.hasAccount(acc.Address()) {
 		as.total++
 	}
-
-	return tryPut(as.db, accountKey(acc.Address()), data)
+	batch.Put(accountKey(acc.Address()), data)
+	return nil
 }

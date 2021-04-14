@@ -131,3 +131,7 @@ func (m *MockStore) SaveBlock(height int, block *block.Block) error {
 func (m *MockStore) SaveTransaction(ctrx *tx.CommittedTx) {
 	m.Transactions[ctrx.Tx.ID()] = *ctrx
 }
+
+func (m *MockStore) WriteBatch() error {
+	return nil
+}

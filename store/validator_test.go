@@ -16,6 +16,7 @@ func TestValidatorCounter(t *testing.T) {
 	t.Run("Update count after adding new validator", func(t *testing.T) {
 		assert.Equal(t, store.TotalValidators(), 0)
 		store.UpdateValidator(val)
+		assert.NoError(t, store.WriteBatch())
 		assert.Equal(t, store.TotalValidators(), 1)
 	})
 
@@ -23,6 +24,7 @@ func TestValidatorCounter(t *testing.T) {
 		val.AddToStake(1)
 
 		store.UpdateValidator(val)
+		assert.NoError(t, store.WriteBatch())
 		assert.Equal(t, store.TotalValidators(), 1)
 	})
 }
@@ -36,6 +38,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 		for i := 0; i < 100; i++ {
 			val, _ := validator.GenerateTestValidator(util.RandInt(1000))
 			store.UpdateValidator(val)
+			assert.NoError(t, store.WriteBatch())
 		}
 
 		assert.Equal(t, store.TotalValidators(), 100)
@@ -56,6 +59,7 @@ func TestValidatorByNumber(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			val, _ := validator.GenerateTestValidator(i)
 			store.UpdateValidator(val)
+			assert.NoError(t, store.WriteBatch())
 		}
 
 		v, err := store.ValidatorByNumber(5)
@@ -88,6 +92,7 @@ func TestUpdateValidator(t *testing.T) {
 
 	val1, _ := validator.GenerateTestValidator(0)
 	store.UpdateValidator(val1)
+	assert.NoError(t, store.WriteBatch())
 
 	val2, _ := store.ValidatorByNumber(val1.Number())
 	assert.Equal(t, val1.Hash(), val2.Hash())
@@ -95,7 +100,7 @@ func TestUpdateValidator(t *testing.T) {
 	val3, _ := store.Validator(val1.Address())
 	val3.AddToStake(10000)
 	store.UpdateValidator(val3)
-
+	assert.NoError(t, store.WriteBatch())
 	val4, _ := store.ValidatorByNumber(val1.Number())
 	assert.Equal(t, val4.Hash(), val3.Hash())
 }
