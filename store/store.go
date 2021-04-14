@@ -73,11 +73,12 @@ func (s *store) Close() error {
 	return nil
 }
 
-func (s *store) SaveBlock(height int, block *block.Block) error {
+func (s *store) SaveBlock(height int, block *block.Block) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
-
-	return s.blockStore.saveBlock(s.batch, height, block)
+	if err := s.blockStore.saveBlock(s.batch, height, block); err != nil {
+		logger.Panic("Error on saving block: %v", err)
+	}
 }
 
 func (s *store) Block(height int) (*block.Block, error) {

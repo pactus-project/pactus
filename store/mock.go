@@ -123,9 +123,8 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(height int, block *block.Block) error {
+func (m *MockStore) SaveBlock(height int, block *block.Block) {
 	m.Blocks[height] = *block
-	return nil
 }
 
 func (m *MockStore) SaveTransaction(ctrx *tx.CommittedTx) {

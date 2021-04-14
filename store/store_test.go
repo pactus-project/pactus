@@ -56,8 +56,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	b, txs := block.GenerateTestBlock(nil, nil)
 	h := util.RandInt(10000)
 	assert.False(t, tStore.HasAnyBlock())
-	err := tStore.SaveBlock(h, b)
-	assert.NoError(t, err)
+	tStore.SaveBlock(h, b)
 	assert.NoError(t, tStore.WriteBatch())
 	assert.True(t, tStore.HasAnyBlock())
 

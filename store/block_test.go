@@ -14,13 +14,13 @@ func TestBlockStore(t *testing.T) {
 
 	t.Run("Add block, but not write batch.", func(t *testing.T) {
 		b1, _ := block.GenerateTestBlock(nil, nil)
-		assert.NoError(t, store.SaveBlock(1, b1))
+		store.SaveBlock(1, b1)
 		assert.False(t, store.HasAnyBlock())
 	})
 
 	t.Run("Add block and write batch", func(t *testing.T) {
 		b1, _ := block.GenerateTestBlock(nil, nil)
-		assert.NoError(t, store.SaveBlock(1, b1))
+		store.SaveBlock(1, b1)
 		assert.NoError(t, store.WriteBatch())
 		assert.True(t, store.HasAnyBlock())
 	})

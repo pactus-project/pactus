@@ -379,9 +379,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	// Commit and update the validator set
 	st.commitSandbox(sb, cert.Round())
 
-	if err := st.store.SaveBlock(st.lastInfo.BlockHeight()+1, block); err != nil {
-		return err
-	}
+	st.store.SaveBlock(st.lastInfo.BlockHeight()+1, block)
 
 	// Save txs and receipts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
