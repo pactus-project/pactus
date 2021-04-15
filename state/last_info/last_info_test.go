@@ -69,6 +69,7 @@ func TestRestore(t *testing.T) {
 	assert.Error(t, err)
 
 	val := validator.NewValidator(newValSigner.PublicKey(), 54, 45)
+	val.UpdateLastJoinedHeight(lastBlockHeight)
 	store.UpdateValidator(val)
 	_, err = li2.RestoreLastInfo()
 	assert.Error(t, err)
@@ -78,7 +79,7 @@ func TestRestore(t *testing.T) {
 	store.UpdateValidator(val3)
 	store.UpdateValidator(val4)
 
-	_, err = li2.RestoreLastInfo()
+	c, err := li2.RestoreLastInfo()
 	assert.NoError(t, err)
 
 	assert.Equal(t, li1.SortitionSeed(), li2.SortitionSeed())
@@ -86,4 +87,5 @@ func TestRestore(t *testing.T) {
 	assert.Equal(t, li1.BlockHash(), li2.BlockHash())
 	assert.Equal(t, li1.Certificate().Hash(), li2.Certificate().Hash())
 	assert.Equal(t, li1.BlockTime(), li2.BlockTime())
+	assert.Equal(t, c.Committers(), []int{54, 18, 2, 6})
 }
