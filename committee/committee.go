@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
@@ -23,7 +22,6 @@ type Committee struct {
 }
 
 func NewCommittee(validators []*validator.Validator, committeeSize int, proposerAddress crypto.Address) (*Committee, error) {
-
 	validatorList := list.New()
 	var proposerPos *list.Element
 
@@ -45,7 +43,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int, proposer
 	}, nil
 }
 
-func (committee *Committee) currentPower() int64 {
+func (committee *Committee) TotalPower() int64 {
 	p := int64(0)
 	committee.iterate(func(v *validator.Validator) (stop bool) {
 		p += v.Power()
@@ -65,7 +63,7 @@ func (committee *Committee) Update(lastRound int, joined []*validator.Validator)
 	}
 
 	if len(joined) > (committee.committeeSize / 3) {
-		return errors.Errorf(errors.ErrGeneric, "In each update only 1/3 of validator committee can be changed")
+		return errors.Errorf(errors.ErrGeneric, "in each update only 1/3 of validator committee can be changed")
 	}
 
 	sort.SliceStable(joined, func(i, j int) bool {
@@ -208,14 +206,6 @@ func (committee *Committee) committers() []int {
 	return committers
 }
 
-func (committee *Committee) CommitteeHash() crypto.Hash {
-	committee.lk.Lock()
-	defer committee.lk.Unlock()
-
-	bz, _ := cbor.Marshal(committee.committers())
-	return crypto.HashH(bz)
-}
-
 // iterate uses for easy iteration over validators in list
 func (committee *Committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 	for e := committee.validatorList.Front(); e != nil; e = e.Next() {
@@ -234,6 +224,6 @@ func GenerateTestCommittee() (*Committee, []crypto.Signer) {
 
 	signers := []crypto.Signer{s1, s2, s3, s4}
 	vals := []*validator.Validator{val1, val2, val3, val4}
-	valset, _ := NewCommittee(vals, 4, val1.Address())
-	return valset, signers
+	committee, _ := NewCommittee(vals, 4, val1.Address())
+	return committee, signers
 }

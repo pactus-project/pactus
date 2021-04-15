@@ -1,8 +1,8 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/proposal"
-	"github.com/zarbchain/zarb-go/vote"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 )
 
 type proposeState struct {
@@ -10,6 +10,10 @@ type proposeState struct {
 }
 
 func (s *proposeState) enter() {
+	sleep := s.config.CalculateChangeProposerTimeout(s.round)
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetChangeProposer)
+	s.logger.Debug("Change proposer timer started...", "timeout", sleep.Seconds())
+
 	s.decide()
 }
 
@@ -36,7 +40,7 @@ func (s *proposeState) createProposal(height int, round int) {
 		return
 	}
 
-	proposal := proposal.NewProposal(height, round, *block)
+	proposal := proposal.NewProposal(height, round, block)
 	s.signer.SignMsg(proposal)
 	s.doSetProposal(proposal)
 

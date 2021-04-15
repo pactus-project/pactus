@@ -8,7 +8,7 @@ import (
 type Synchronizer interface {
 	Start() error
 	Stop()
-	PeerID() peer.ID
+	SelfID() peer.ID
 	Peers() []*peerset.Peer
 	Fingerprint() string
 }

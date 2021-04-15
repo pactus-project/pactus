@@ -14,9 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
-	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-	"github.com/zarbchain/zarb-go/sync/network_api"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
@@ -30,9 +28,6 @@ import (
 
 const FlagInitialBlockDownload = 0x1
 
-type publishMessageFn = func(msg *message.Message)
-type syncedCallbackFn = func()
-
 type synchronizer struct {
 	// Not: Synchronizer should not have any lock to prevent dead lock situation.
 	// Other modules like state or consesnus are thread safe
@@ -45,10 +40,9 @@ type synchronizer struct {
 	peerSet         *peerset.PeerSet
 	firewall        *firewall.Firewall
 	cache           *cache.Cache
-	consensusSync   *ConsensusSync
-	stateSync       *StateSync
-	broadcastCh     <-chan *message.Message
-	networkAPI      network_api.NetworkAPI
+	handlers        map[payload.PayloadType]payloadHandler
+	broadcastCh     <-chan payload.Payload
+	network         network.Network
 	heartBeatTicker *time.Ticker
 	logger          *logger.Logger
 }
@@ -58,461 +52,417 @@ func NewSynchronizer(
 	signer crypto.Signer,
 	state state.StateFacade,
 	consensus consensus.Consensus,
-	net *network.Network,
-	broadcastCh <-chan *message.Message) (Synchronizer, error) {
-	syncer := &synchronizer{
+	net network.Network,
+	broadcastCh <-chan payload.Payload) (Synchronizer, error) {
+	sync := &synchronizer{
 		ctx:         context.Background(),
 		config:      conf,
 		signer:      signer,
 		state:       state,
 		consensus:   consensus,
+		network:     net,
 		broadcastCh: broadcastCh,
 	}
 
-	logger := logger.NewLogger("_sync", syncer)
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
 	firewall := firewall.NewFirewall(peerSet, state)
-
-	api, err := network_api.NewNetworkAPI(syncer.ctx, net, firewall, syncer.ParsMessage)
-	if err != nil {
-		return nil, err
-	}
-
+	logger := logger.NewLogger("_sync", sync)
 	cache, err := cache.NewCache(conf.CacheSize, state)
 	if err != nil {
 		return nil, err
 	}
 
-	syncer.logger = logger
-	syncer.cache = cache
-	syncer.peerSet = peerSet
-	syncer.firewall = firewall
-	syncer.networkAPI = api
+	sync.logger = logger
+	sync.cache = cache
+	sync.peerSet = peerSet
+	sync.firewall = firewall
 
-	syncer.consensusSync = NewConsensusSync(conf, net.ID(), consensus, logger, syncer.publishMessage)
-	syncer.stateSync = NewStateSync(conf, net.ID(), cache, state, peerSet, logger, syncer.publishMessage, syncer.synced)
+	handlers := make(map[payload.PayloadType]payloadHandler)
+
+	handlers[payload.PayloadTypeSalam] = newSalamHandler(sync)
+	handlers[payload.PayloadTypeAleyk] = newAleykHandler(sync)
+	handlers[payload.PayloadTypeHeartBeat] = newHeartBeatHandler(sync)
+	handlers[payload.PayloadTypeVote] = newVoteHandler(sync)
+	handlers[payload.PayloadTypeProposal] = newProposalHandler(sync)
+	handlers[payload.PayloadTypeTransactions] = newTransactionsHandler(sync)
+	handlers[payload.PayloadTypeHeartBeat] = newHeartBeatHandler(sync)
+	handlers[payload.PayloadTypeQueryVotes] = newQueryVotesHandler(sync)
+	handlers[payload.PayloadTypeQueryProposal] = newQueryProposalHandler(sync)
+	handlers[payload.PayloadTypeQueryTransactions] = newQueryTransactionsHandler(sync)
+	handlers[payload.PayloadTypeBlockAnnounce] = newBlockAnnounceHandler(sync)
+	handlers[payload.PayloadTypeDownloadRequest] = newDownloadRequestHandler(sync)
+	handlers[payload.PayloadTypeDownloadResponse] = newDownloadResponseHandler(sync)
+	handlers[payload.PayloadTypeLatestBlocksRequest] = newLatestBlocksRequestHandler(sync)
+	handlers[payload.PayloadTypeLatestBlocksResponse] = newLatestBlocksResponseHandler(sync)
+
+	sync.handlers = handlers
 
 	if conf.InitialBlockDownload {
-		if err := syncer.joinDownloadTopic(); err != nil {
+		if err := sync.joinDownloadTopic(); err != nil {
 			return nil, err
 		}
 	}
-
-	return syncer, nil
+	return sync, nil
 }
 
-func (syncer *synchronizer) Start() error {
-	if err := syncer.networkAPI.Start(); err != nil {
+func (sync *synchronizer) Start() error {
+	if err := sync.network.JoinTopics(sync.onReceiveData); err != nil {
 		return err
 	}
 
-	go syncer.broadcastLoop()
+	go sync.broadcastLoop()
 
-	syncer.heartBeatTicker = time.NewTicker(syncer.config.HeartBeatTimeout)
-	go syncer.heartBeatTickerLoop()
+	sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimeout)
+	go sync.heartBeatTickerLoop()
 
-	syncer.BroadcastSalam()
-
-	timer := time.NewTimer(syncer.config.StartingTimeout)
+	timer := time.NewTimer(sync.config.StartingTimeout)
 	go func() {
 		<-timer.C
-		syncer.maybeSynced()
+		sync.onStartingTimeout()
 	}()
+
+	sync.broadcastSalam()
 
 	return nil
 }
 
-func (syncer *synchronizer) Stop() {
-	syncer.ctx.Done()
-	syncer.networkAPI.Stop()
-	syncer.heartBeatTicker.Stop()
+func (sync *synchronizer) Stop() {
+	sync.ctx.Done()
+	sync.heartBeatTicker.Stop()
 }
 
-func (syncer *synchronizer) joinDownloadTopic() error {
-	if err := syncer.networkAPI.JoinDownloadTopic(); err != nil {
+func (sync *synchronizer) joinDownloadTopic() error {
+	if err := sync.network.JoinDownloadTopic(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (syncer *synchronizer) maybeSynced() {
-	ourHeight := syncer.state.LastBlockHeight()
-	networkHeight := syncer.peerSet.MaxClaimedHeight()
+func (sync *synchronizer) onStartingTimeout() {
+	ourHeight := sync.state.LastBlockHeight()
+	networkHeight := sync.peerSet.MaxClaimedHeight()
 
 	if ourHeight >= networkHeight-1 {
-		syncer.synced()
+		sync.synced()
 	}
 }
 
-func (syncer *synchronizer) synced() {
-	syncer.logger.Debug("We are synced", "hrs", syncer.consensus.HRS())
-	syncer.consensus.MoveToNewHeight()
+func (sync *synchronizer) synced() {
+	sync.logger.Debug("We are synced", "height", sync.state.LastBlockHeight())
+	sync.consensus.MoveToNewHeight()
 }
 
-func (syncer *synchronizer) heartBeatTickerLoop() {
+func (sync *synchronizer) heartBeatTickerLoop() {
 	for {
 		select {
-		case <-syncer.ctx.Done():
+		case <-sync.ctx.Done():
 			return
-		case <-syncer.heartBeatTicker.C:
-			syncer.broadcastHeartBeat()
+		case <-sync.heartBeatTicker.C:
+			sync.broadcastHeartBeat()
 		}
 	}
 }
 
-func (syncer *synchronizer) broadcastLoop() {
+func (sync *synchronizer) broadcastHeartBeat() {
+	// Broadcast a random vote if the validator is an active validator
+	if sync.weAreInTheCommittee() {
+		v := sync.consensus.PickRandomVote()
+		if v != nil {
+			pld := payload.NewVotePayload(v)
+			sync.broadcast(pld)
+		}
+	}
+
+	height, round := sync.consensus.HeightRound()
+	pld := payload.NewHeartBeatPayload(height, round, sync.state.LastBlockHash())
+	sync.broadcast(pld)
+}
+
+func (sync *synchronizer) broadcastSalam() {
+	flags := 0
+	if sync.config.InitialBlockDownload {
+		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+	}
+	pld := payload.NewSalamPayload(
+		sync.config.Moniker,
+		sync.signer.PublicKey(),
+		sync.state.GenesisHash(),
+		sync.state.LastBlockHeight(),
+		flags)
+
+	sync.broadcast(pld)
+}
+
+func (sync *synchronizer) broadcastAleyk(code payload.ResponseCode, resMsg string) {
+	flags := 0
+	if sync.config.InitialBlockDownload {
+		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+	}
+	response := payload.NewAleykPayload(
+		code,
+		resMsg,
+		sync.config.Moniker,
+		sync.signer.PublicKey(),
+		sync.state.LastBlockHeight(),
+		flags)
+
+	sync.broadcast(response)
+}
+
+func (sync *synchronizer) broadcastLoop() {
 	for {
 		select {
-		case <-syncer.ctx.Done():
+		case <-sync.ctx.Done():
 			return
 
-		case msg := <-syncer.broadcastCh:
-
-			switch msg.PayloadType() {
-			case payload.PayloadTypeQueryTransactions:
-				pld := msg.Payload.(*payload.QueryTransactionsPayload)
-				syncer.queryTransactions(pld.IDs)
-
-			case payload.PayloadTypeQueryProposal:
-				pld := msg.Payload.(*payload.QueryProposalPayload)
-				syncer.queryProposal(pld.Height, pld.Round)
-
-			case payload.PayloadTypeBlockAnnounce:
-				pld := msg.Payload.(*payload.BlockAnnouncePayload)
-				syncer.announceBlock(pld.Height, pld.Block, pld.Certificate)
-
-			case payload.PayloadTypeVote,
-				payload.PayloadTypeProposal,
-				payload.PayloadTypeTransactions:
-				syncer.publishMessage(msg)
-
-			default:
-				panic("Unexpected message to broadcast")
-
-			}
+		case pld := <-sync.broadcastCh:
+			sync.broadcast(pld)
 		}
 	}
 }
-func (syncer *synchronizer) Fingerprint() string {
+func (sync *synchronizer) Fingerprint() string {
 	return fmt.Sprintf("{☍ %d ⛃ %d ⇈ %d ↑ %d}",
-		syncer.peerSet.Len(),
-		syncer.cache.Len(),
-		syncer.peerSet.MaxClaimedHeight(),
-		syncer.state.LastBlockHeight())
+		sync.peerSet.Len(),
+		sync.cache.Len(),
+		sync.peerSet.MaxClaimedHeight(),
+		sync.state.LastBlockHeight())
 }
 
-func (syncer *synchronizer) sendBlocksRequestIfWeAreBehind() {
-	if syncer.peerSet.HasAnyValidSession() {
-		syncer.logger.Debug("We have open seasson")
+func (sync *synchronizer) sendBlocksRequestIfWeAreBehind() {
+	if sync.peerSet.HasAnyValidSession() {
+		sync.logger.Debug("We have open seasson")
 		return
 	}
 
-	ourHeight := syncer.state.LastBlockHeight()
-	claimedHeight := syncer.peerSet.MaxClaimedHeight()
+	ourHeight := sync.state.LastBlockHeight()
+	claimedHeight := sync.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight {
-		if claimedHeight > ourHeight+LatestBlockInterval {
-			syncer.logger.Info("We are far behind the network, Join download topic")
+		if claimedHeight > ourHeight+sync.config.RequestBlockInterval {
+			sync.logger.Info("We are far behind the network, Join download topic")
 			// TODO:
 			// If peer doesn't respond, we should leave the topic
 			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
 			// We should find a way to avoid it.
-			if err := syncer.joinDownloadTopic(); err != nil {
-				syncer.logger.Info("We can't join download topic", "err", err)
+			if err := sync.joinDownloadTopic(); err != nil {
+				sync.logger.Info("We can't join download topic", "err", err)
 			} else {
-				syncer.stateSync.RequestForMoreBlock()
+				sync.RequestForMoreBlock()
 			}
 		} else {
-			syncer.logger.Info("We are behind the network, Ask for more blocks")
-			syncer.stateSync.RequestForLatestBlock()
+			sync.logger.Info("We are behind the network, Ask for more blocks")
+			sync.RequestForLatestBlock()
 		}
 	}
 }
 
-func (syncer *synchronizer) ParsMessage(msg *message.Message, from peer.ID) {
-	syncer.logger.Debug("Received a message", "from", util.FingerprintPeerID(from), "message", msg)
-
-	switch msg.PayloadType() {
-	case payload.PayloadTypeSalam:
-		pld := msg.Payload.(*payload.SalamPayload)
-		syncer.ProcessSalamPayload(pld)
-
-	case payload.PayloadTypeAleyk:
-		pld := msg.Payload.(*payload.AleykPayload)
-		syncer.ProcessAleykPayload(pld)
-
-	case payload.PayloadTypeHeartBeat:
-		pld := msg.Payload.(*payload.HeartBeatPayload)
-		syncer.processHeartBeatPayload(pld)
-
-	case payload.PayloadTypeLatestBlocksRequest:
-		pld := msg.Payload.(*payload.LatestBlocksRequestPayload)
-		syncer.stateSync.ProcessLatestBlocksRequestPayload(pld)
-
-	case payload.PayloadTypeLatestBlocksResponse:
-		pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
-		syncer.stateSync.ProcessLatestBlocksResponsePayload(pld)
-
-	case payload.PayloadTypeQueryTransactions:
-		pld := msg.Payload.(*payload.QueryTransactionsPayload)
-		if syncer.isPeerActiveValidator(pld.Querier) {
-			syncer.stateSync.ProcessQueryTransactionsPayload(pld)
-		}
-
-	case payload.PayloadTypeTransactions:
-		pld := msg.Payload.(*payload.TransactionsPayload)
-		syncer.stateSync.ProcessTransactionsPayload(pld)
-
-	case payload.PayloadTypeBlockAnnounce:
-		pld := msg.Payload.(*payload.BlockAnnouncePayload)
-		syncer.stateSync.ProcessBlockAnnouncePayload(pld)
-
-	case payload.PayloadTypeQueryProposal:
-		pld := msg.Payload.(*payload.QueryProposalPayload)
-		if syncer.isPeerActiveValidator(pld.Querier) {
-			syncer.consensusSync.ProcessQueryProposalPayload(pld)
-		}
-
-	case payload.PayloadTypeProposal:
-		pld := msg.Payload.(*payload.ProposalPayload)
-		syncer.consensusSync.ProcessProposalPayload(pld)
-		syncer.cache.AddProposal(pld.Proposal)
-
-	case payload.PayloadTypeVote:
-		pld := msg.Payload.(*payload.VotePayload)
-		syncer.consensusSync.ProcessVotePayload(pld)
-
-	case payload.PayloadTypeQueryVotes:
-		pld := msg.Payload.(*payload.QueryVotesPayload)
-		if syncer.isPeerActiveValidator(pld.Querier) {
-			syncer.consensusSync.ProcessQueryVotesPayload(pld)
-		}
-
-	case payload.PayloadTypeDownloadRequest:
-		pld := msg.Payload.(*payload.DownloadRequestPayload)
-		syncer.stateSync.ProcessDownloadRequestPayload(pld)
-
-	case payload.PayloadTypeDownloadResponse:
-		pld := msg.Payload.(*payload.DownloadResponsePayload)
-		syncer.stateSync.ProcessDownloadResponsePayload(pld)
-
-	default:
-		syncer.logger.Error("Unknown message type", "type", msg.PayloadType())
-	}
-
-	syncer.sendBlocksRequestIfWeAreBehind()
-}
-
-func (syncer *synchronizer) broadcastHeartBeat() {
-	hrs := syncer.consensus.HRS()
-
-	// Probable we are syncing
-	if !hrs.IsValid() {
+func (sync *synchronizer) onReceiveData(data []byte, from peer.ID) {
+	msg := sync.firewall.OpenMessage(data, from)
+	if msg == nil {
 		return
 	}
 
-	// Broadcast a random vote if the validator is an active validator
-	if syncer.isThisActiveValidator() {
-		syncer.queryProposal(hrs.Height(), hrs.Round())
-
-		v := syncer.consensus.PickRandomVote()
-		if v != nil {
-			syncer.consensusSync.BroadcastVote(v)
-		}
-	}
-
-	msg := message.NewHeartBeatMessage(syncer.networkAPI.SelfID(), syncer.state.LastBlockHash(), hrs)
-	syncer.publishMessage(msg)
-}
-
-func (syncer *synchronizer) publishMessage(msg *message.Message) {
-	err := syncer.networkAPI.PublishMessage(msg)
-
-	if err != nil {
-		syncer.logger.Error("Error on publishing message", "message", msg, "err", err)
-	} else {
-		syncer.logger.Debug("Publishing new message", "message", msg)
-	}
-}
-
-func (syncer *synchronizer) processHeartBeatPayload(pld *payload.HeartBeatPayload) {
-	syncer.logger.Trace("Process heartbeat payload", "pld", pld)
-
-	hrs := syncer.consensus.HRS()
-
-	if pld.Pulse.Height() == hrs.Height() {
-		if pld.Pulse.GreaterThan(hrs) {
-			if syncer.isThisActiveValidator() {
-				syncer.logger.Info("Our consensus is behind of this peer.", "ours", hrs, "peer", pld.Pulse, "address", syncer.signer.Address().Fingerprint())
-
-				syncer.queryVotes(hrs.Height(), hrs.Round())
-			}
-		} else if pld.Pulse.LessThan(hrs) {
-			syncer.logger.Trace("Our consensus is ahead of this peer.")
-		} else {
-			syncer.logger.Trace("Our consensus is at the same step with this peer.")
-		}
-	}
-
-	p := syncer.peerSet.MustGetPeer(pld.PeerID)
-	p.UpdateHeight(pld.Pulse.Height() - 1)
-	syncer.peerSet.UpdateMaxClaimedHeight(pld.Pulse.Height() - 1)
-
-	syncer.sendBlocksRequestIfWeAreBehind()
-}
-
-func (syncer *synchronizer) BroadcastSalam() {
-	flags := 0
-	if syncer.config.InitialBlockDownload {
-		flags = util.SetFlag(flags, FlagInitialBlockDownload)
-	}
-	msg := message.NewSalamMessage(
-		syncer.config.Moniker,
-		syncer.signer.PublicKey(),
-		syncer.networkAPI.SelfID(),
-		syncer.state.GenesisHash(),
-		syncer.state.LastBlockHeight(),
-		flags)
-
-	syncer.publishMessage(msg)
-}
-
-func (syncer *synchronizer) BroadcastAleyk(code payload.ResponseCode, resMsg string) {
-	flags := 0
-	if syncer.config.InitialBlockDownload {
-		flags = util.SetFlag(flags, FlagInitialBlockDownload)
-	}
-	msg := message.NewAleykMessage(
-		code,
-		resMsg,
-		syncer.config.Moniker,
-		syncer.signer.PublicKey(),
-		syncer.networkAPI.SelfID(),
-		syncer.state.LastBlockHeight(),
-		flags)
-
-	syncer.publishMessage(msg)
-}
-
-func (syncer *synchronizer) ProcessSalamPayload(pld *payload.SalamPayload) {
-	syncer.logger.Trace("Process salam payload", "pld", pld)
-
-	if !pld.GenesisHash.EqualsTo(syncer.state.GenesisHash()) {
-		syncer.logger.Info("Received a message from different chain", "genesis_hash", pld.GenesisHash)
-		// Reply salam
-		syncer.BroadcastAleyk(payload.ResponseCodeRejected, "Invalid genesis hash")
+	sync.logger.Debug("Received a message", "from", util.FingerprintPeerID(from), "message", msg)
+	handler := sync.handlers[msg.Payload.Type()]
+	if handler == nil {
+		// TODO: mark as bad message
+		sync.logger.Warn("Invalid payload type: %v", msg.Payload.Type())
 		return
 	}
 
-	p := syncer.peerSet.MustGetPeer(pld.PeerID)
-	p.UpdateMoniker(pld.Moniker)
-	p.UpdateHeight(pld.Height)
-	p.UpdateNodeVersion(pld.NodeVersion)
-	p.UpdatePublicKey(pld.PublicKey)
-	p.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
+	if err := handler.ParsPayload(msg.Payload, msg.Initiator); err != nil {
+		// TODO: mark as bad message
+		sync.logger.Warn("Error on parsing a message", "from", util.FingerprintPeerID(from), "message", msg, "err", err)
+		return
+	}
 
-	syncer.peerSet.UpdateMaxClaimedHeight(pld.Height)
-
-	// Reply salam
-	syncer.BroadcastAleyk(payload.ResponseCodeOK, "Welcome!")
+	sync.sendBlocksRequestIfWeAreBehind()
 }
 
-func (syncer *synchronizer) ProcessAleykPayload(pld *payload.AleykPayload) {
-	syncer.logger.Trace("Process Aleyk payload", "pld", pld)
-
-	if pld.ResponseCode != payload.ResponseCodeOK {
-		syncer.logger.Warn("Our Salam is not welcomed!", "message", pld.ResponseMessage)
-	} else {
-		p := syncer.peerSet.MustGetPeer(pld.PeerID)
-		p.UpdateMoniker(pld.Moniker)
-		p.UpdateHeight(pld.Height)
-		p.UpdateNodeVersion(pld.NodeVersion)
-		p.UpdatePublicKey(pld.PublicKey)
-		p.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
-
-		syncer.peerSet.UpdateMaxClaimedHeight(pld.Height)
+func (sync *synchronizer) broadcast(pld payload.Payload) {
+	handler := sync.handlers[pld.Type()]
+	if handler == nil {
+		sync.logger.Warn("Invalid payload type: %v", pld.Type())
+		return
+	}
+	msg := handler.PrepareMessage(pld)
+	if msg != nil {
+		err := sync.network.PublishMessage(msg)
+		if err != nil {
+			sync.logger.Error("Error on publishing message", "message", msg, "err", err)
+		} else {
+			sync.logger.Debug("Publishing new message", "message", msg)
+		}
 	}
 }
 
-// isPeerActiveValidator checks if the peer is an active validator
-func (syncer *synchronizer) isPeerActiveValidator(id peer.ID) bool {
-	p := syncer.peerSet.GetPeer(id)
+func (sync *synchronizer) SelfID() peer.ID {
+	return sync.network.SelfID()
+}
+
+func (sync *synchronizer) Peers() []*peerset.Peer {
+	return sync.peerSet.GetPeerList()
+}
+
+// TODO:
+// maximum nodes to query block should be 8
+//
+func (sync *synchronizer) RequestForMoreBlock() {
+	from := sync.state.LastBlockHeight()
+	l := sync.peerSet.GetPeerList()
+	for _, p := range l {
+		if p.InitialBlockDownload() {
+			if p.Height() > from {
+				to := from + sync.config.RequestBlockInterval
+				if to > p.Height() {
+					to = p.Height()
+				}
+
+				session := sync.peerSet.OpenSession(p.PeerID())
+				pld := payload.NewDownloadRequestPayload(session.SessionID(), p.PeerID(), from+1, to)
+				sync.broadcast(pld)
+				from = to
+			}
+		}
+	}
+}
+
+func (sync *synchronizer) RequestForLatestBlock() {
+	p := sync.peerSet.FindHighestPeer()
+	if p != nil {
+		session := sync.peerSet.OpenSession(p.PeerID())
+		ourHeight := sync.state.LastBlockHeight()
+		pld := payload.NewLatestBlocksRequestPayload(session.SessionID(), p.PeerID(), ourHeight+1, p.Height())
+		sync.broadcast(pld)
+	}
+}
+
+// peerIsInTheCommittee checks if the peer is a member of committee
+func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
+	p := sync.peerSet.GetPeer(id)
 	if p == nil {
 		return false
 	}
 
 	addr := p.PublicKey().Address()
-	return syncer.state.IsInCommittee(addr)
+	return sync.state.IsInCommittee(addr)
 }
 
-// isThisActiveValidator checks if we are an active validator
-func (syncer *synchronizer) isThisActiveValidator() bool {
-	return syncer.state.IsInCommittee(syncer.signer.Address())
+// weAreInTheCommittee checks if we are a member of committee
+func (sync *synchronizer) weAreInTheCommittee() bool {
+	return sync.state.IsInCommittee(sync.signer.PublicKey().Address())
 }
 
-// queryTransactions queries for a missed transactions if we don't have it in the cache
-// Only active validators can send this messsage
-func (syncer *synchronizer) queryTransactions(ids []tx.ID) {
-	missed := []crypto.Hash{}
-	for i, id := range ids {
-		trx := syncer.cache.GetTransaction(id)
-		if trx != nil {
-			if err := syncer.state.AddPendingTx(trx); err != nil {
-				syncer.logger.Warn("Query for an invalid transaction", "tx", trx, "err", err)
+func (sync *synchronizer) tryCommitBlocks() {
+	for {
+		ourHeight := sync.state.LastBlockHeight()
+		b := sync.cache.GetBlock(ourHeight + 1)
+		if b == nil {
+			break
+		}
+		c := sync.cache.GetCertificate(b.Hash())
+		if c == nil {
+			break
+		}
+		for _, id := range b.TxIDs().IDs() {
+			if tx := sync.cache.GetTransaction(id); tx != nil {
+				if err := sync.state.AddPendingTx(tx); err != nil {
+					sync.logger.Trace("Error on appending pending transaction", "err", err)
+				}
 			}
-		} else {
-			missed = append(missed, ids[i])
 		}
-	}
-
-	if len(missed) > 0 {
-		if syncer.isThisActiveValidator() {
-			syncer.consensusSync.BroadcastQueryTransaction(missed)
+		sync.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
+		if err := sync.state.CommitBlock(ourHeight+1, b, c); err != nil {
+			sync.logger.Warn("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
+			// We will ask peers to send this block later ...
+			break
 		}
 	}
 }
 
-// queryProposal queries for proposal if we don't have it in the cache
-// Only active validators can send this messsage
-func (syncer *synchronizer) queryProposal(height, round int) {
-	p := syncer.consensus.RoundProposal(round)
-	if p == nil {
-		p = syncer.cache.GetProposal(height, round)
-		if p != nil {
-			// We have the proposal inside the cache
-			syncer.consensus.SetProposal(p)
-		} else {
-			if syncer.isThisActiveValidator() {
-				syncer.consensusSync.BroadcastQueryProposal(height, round)
+func (sync *synchronizer) prepareBlocksAndTransactions(from, count int) ([]*block.Block, []*tx.Tx) {
+	ourHeight := sync.state.LastBlockHeight()
+
+	if from > ourHeight {
+		sync.logger.Debug("We don't have block at this height", "height", from)
+		return nil, nil
+	}
+
+	if from+count > ourHeight {
+		count = ourHeight - from + 1
+	}
+
+	blocks := make([]*block.Block, 0, count)
+	trxs := make([]*tx.Tx, 0)
+
+	for h := from; h < from+count; h++ {
+		b := sync.cache.GetBlock(h)
+		if b == nil {
+			sync.logger.Warn("Unable to find a block", "height", h)
+			return nil, nil
+		}
+		for _, id := range b.TxIDs().IDs() {
+			trx := sync.cache.GetTransaction(id)
+			if trx != nil {
+				trxs = append(trxs, trx)
 			} else {
-				syncer.logger.Debug("queryProposal ignored. Not an active validator")
+				sync.logger.Debug("Unable to find a transaction", "id", id.Fingerprint())
+				return nil, nil
 			}
 		}
+
+		blocks = append(blocks, b)
 	}
+
+	return blocks, trxs
 }
 
-// queryVotes asks other peers to send us some votes randomly
-// Only active validators can send this messsage
-func (syncer *synchronizer) queryVotes(height, round int) {
-	if syncer.isThisActiveValidator() {
-		syncer.consensusSync.BroadcastQueryVotes(height, round)
-	} else {
-		syncer.logger.Debug("queryVotes ignored. Not an active validator")
+func (sync *synchronizer) prepareTransactions(ids []tx.ID) []*tx.Tx {
+	trxs := make([]*tx.Tx, 0, len(ids))
+
+	for _, id := range ids {
+		trx := sync.cache.GetTransaction(id)
+		if trx == nil {
+			sync.logger.Debug("Unable to find a transaction", "id", id.Fingerprint())
+			continue
+		}
+		trxs = append(trxs, trx)
 	}
+	return trxs
 }
 
-func (syncer *synchronizer) announceBlock(height int, block *block.Block, cert *block.Certificate) {
-	if !syncer.isThisActiveValidator() {
+func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int, initiator peer.ID, target peer.ID) {
+	if target != sync.network.SelfID() {
 		return
 	}
 
-	syncer.stateSync.BroadcastBlockAnnounce(height, block, cert)
-}
+	switch code {
+	case payload.ResponseCodeRejected:
+		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
+		sync.peerSet.CloseSession(sessionID)
 
-func (syncer *synchronizer) PeerID() peer.ID {
-	return syncer.networkAPI.SelfID()
-}
+	case payload.ResponseCodeBusy:
+		// TODO: handle this situation
+		sync.logger.Debug("Peer is busy. close session", "session-id", sessionID)
+		sync.peerSet.CloseSession(sessionID)
 
-func (syncer *synchronizer) Peers() []*peerset.Peer {
-	return syncer.peerSet.GetPeerList()
+	case payload.ResponseCodeMoreBlocks:
+		sync.logger.Debug("Peer responding us. keep session open", "session-id", sessionID)
+
+	case payload.ResponseCodeNoMoreBlocks:
+		sync.logger.Debug("Peer has no more block. close session", "session-id", sessionID)
+		sync.peerSet.CloseSession(sessionID)
+
+	case payload.ResponseCodeSynced:
+		sync.logger.Debug("Peer infomed us we are synced. close session", "session-id", sessionID)
+		sync.peerSet.CloseSession(sessionID)
+		sync.synced()
+	}
+
+	s := sync.peerSet.FindSession(sessionID)
+	if s == nil {
+		sync.logger.Debug("Session not found or closed", "session-id", sessionID)
+	} else {
+		s.SetLastResponseCode(code)
+	}
 }

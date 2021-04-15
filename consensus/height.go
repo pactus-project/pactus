@@ -1,9 +1,9 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 type newHeightState struct {
@@ -46,7 +46,7 @@ func (s *newHeightState) decide() {
 	s.round = 0
 	s.logger.Info("Entering new height", "height", s.height)
 
-	s.enterNewState(s.newRoundState)
+	s.enterNewState(s.proposeState)
 }
 
 func (s *newHeightState) onAddVote(v *vote.Vote) {

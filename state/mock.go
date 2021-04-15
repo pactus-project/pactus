@@ -52,7 +52,8 @@ func (m *MockState) LastBlockHash() crypto.Hash {
 	defer m.Lock.RUnlock()
 	h := m.Store.LastBlockHeight()
 	if h > 0 {
-		return m.Store.Blocks[m.Store.LastBlockHeight()].Hash()
+		b := m.Store.Blocks[m.Store.LastBlockHeight()]
+		return b.Hash()
 	}
 	return crypto.UndefHash
 }
@@ -80,16 +81,16 @@ func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
 func (m *MockState) Fingerprint() string {
 	return ""
 }
-func (m *MockState) CommitBlock(height int, b *block.Block, cert *block.Certificate) error {
+func (m *MockState) CommitBlock(h int, b *block.Block, cert *block.Certificate) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
-	if height != m.Store.LastBlockHeight()+1 {
+	if h != m.Store.LastBlockHeight()+1 {
 		return fmt.Errorf("invalid height")
 	}
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
 		return fmt.Errorf("invalid block")
 	}
-	m.Store.Blocks[height] = *b
+	m.Store.SaveBlock(h, b)
 	m.LastBlockCertificate = cert
 	return nil
 }
@@ -111,9 +112,9 @@ func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	m.Store.SaveBlock(h, b)
 
 	for _, t := range trxs {
-		m.Store.Transactions[t.ID()] = tx.CommittedTx{
+		m.Store.SaveTransaction(&tx.CommittedTx{
 			Tx: t, Receipt: t.GenerateReceipt(0, b.Hash()),
-		}
+		})
 	}
 }
 func (m *MockState) CommitteeValidators() []*validator.Validator {

@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 type VoteSet struct {
@@ -38,9 +38,9 @@ func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*val
 	}
 }
 
-func (vs *VoteSet) Type() vote.VoteType { return vs.voteType }
-func (vs *VoteSet) Height() int         { return vs.height }
-func (vs *VoteSet) Round() int          { return vs.round }
+func (vs *VoteSet) VoteType() vote.VoteType { return vs.voteType }
+func (vs *VoteSet) Height() int             { return vs.height }
+func (vs *VoteSet) Round() int              { return vs.round }
 
 func (vs *VoteSet) Len() int {
 	return len(vs.allVotes)
@@ -72,36 +72,36 @@ func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
 	return bv
 }
 
-func (vs *VoteSet) AddVote(vote *vote.Vote) error {
-	if (vote.Height() != vs.height) ||
-		(vote.Round() != vs.round) ||
-		(vote.VoteType() != vs.voteType) {
-		return errors.Errorf(errors.ErrInvalidVote, "Expected %d/%d/%s, but got %d/%d/%s",
-			vs.height, vs.round, vs.voteType,
-			vote.Height(), vote.Round(), vote.VoteType())
+func (vs *VoteSet) AddVote(v *vote.Vote) error {
+	if (v.Height() != vs.Height()) ||
+		(v.Round() != vs.Round()) ||
+		(v.VoteType() != vs.VoteType()) {
+		return errors.Errorf(errors.ErrInvalidVote, "expected %d/%d/%s, but got %d/%d/%s",
+			vs.Height(), vs.Round(), vs.VoteType(),
+			v.Height(), v.Round(), v.VoteType())
 	}
 
-	signer := vote.Signer()
+	signer := v.Signer()
 	val := vs.getValidatorByAddress(signer)
 	if val == nil {
-		return errors.Errorf(errors.ErrInvalidVote, "Cannot find validator %s in committee", signer)
+		return errors.Errorf(errors.ErrInvalidVote, "cannot find validator %s in committee", signer)
 	}
 
-	if err := vote.Verify(val.PublicKey()); err != nil {
-		return errors.Errorf(errors.ErrInvalidVote, "Failed to verify vote")
+	if err := v.Verify(val.PublicKey()); err != nil {
+		return errors.Errorf(errors.ErrInvalidVote, "failed to verify vote")
 	}
 
-	_, exists := vs.allVotes[vote.Hash()]
+	_, exists := vs.allVotes[v.Hash()]
 	if exists {
-		return errors.Errorf(errors.ErrInvalidVote, "Existing vote")
+		return errors.Errorf(errors.ErrInvalidVote, "existing vote")
 	}
 
 	// Alright! We don't have this vote yet
-	vs.allVotes[vote.Hash()] = vote
+	vs.allVotes[v.Hash()] = v
 
 	// Now check for duplicity
 	for h, bv := range vs.blockVotes {
-		if !h.EqualsTo(vote.BlockHash()) {
+		if !h.EqualsTo(v.BlockHash()) {
 			_, ok := bv.votes[signer]
 			if ok {
 				// Duplicated vote:
@@ -115,12 +115,12 @@ func (vs *VoteSet) AddVote(vote *vote.Vote) error {
 		}
 	}
 
-	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
-	blockVotes.addVote(vote)
+	blockVotes := vs.mustGetBlockVotes(v.BlockHash())
+	blockVotes.addVote(v)
 	blockVotes.power += val.Power()
 	if vs.hasTwoThirdOfTotalPower(blockVotes.power) {
-		blockHash := vote.BlockHash()
-		vs.quorumHash = &blockHash
+		hash := v.BlockHash()
+		vs.quorumHash = &hash
 	}
 
 	return nil
@@ -134,7 +134,7 @@ func (vs *VoteSet) QuorumHash() *crypto.Hash {
 }
 
 func (vs *VoteSet) ToCertificate() *block.Certificate {
-	if vs.voteType != vote.VoteTypePrecommit {
+	if vs.VoteType() != vote.VoteTypePrecommit {
 		return nil
 	}
 	blockHash := vs.quorumHash
@@ -161,7 +161,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 
 	sig := crypto.Aggregate(sigs)
 
-	return block.NewCertificate(*blockHash, vs.round, committers, absences, sig)
+	return block.NewCertificate(*blockHash, vs.Round(), committers, absences, sig)
 }
 
 func (vs *VoteSet) Fingerprint() string {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/www/capnp"
@@ -24,4 +25,10 @@ func getAccount(t *testing.T, addr crypto.Address) *account.Account {
 	acc := new(account.Account)
 	assert.NoError(t, acc.Decode(d))
 	return acc
+}
+
+func TestGetAccount(t *testing.T) {
+	acc := getAccount(t, crypto.TreasuryAddress)
+	require.NotNil(t, acc)
+	assert.Equal(t, acc.Number(), 0)
 }

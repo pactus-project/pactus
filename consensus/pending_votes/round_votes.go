@@ -1,11 +1,11 @@
 package pending_votes
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/consensus/vote_set"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/proposal"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 type RoundVotes struct {

@@ -28,10 +28,10 @@ func TestConfig() *Config {
 // SanityCheck is a basic checks for config
 func (conf *Config) SanityCheck() error {
 	if conf.WaitingTimeout < 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "WaitingTimeout can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "waitingTimeout can't be negative")
 	}
 	if conf.MaxSize == 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "MaxSize can't be negative or zero")
+		return errors.Errorf(errors.ErrInvalidConfig, "maxSize can't be negative or zero")
 	}
 	return nil
 }

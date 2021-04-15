@@ -1,20 +1,18 @@
 package last_info
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
-	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx/payload"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -26,18 +24,16 @@ type lastInfoData struct {
 type LastInfo struct {
 	lk deadlock.RWMutex
 
-	path string // temproray
-
+	store             store.Store
 	lastBlockHeight   int
 	lastSortitionSeed sortition.Seed
 	lastBlockHash     crypto.Hash
-	lastReceiptsHash  crypto.Hash
 	lastCertificate   *block.Certificate
 	lastBlockTime     time.Time
 }
 
-func NewLastInfo(path string) *LastInfo {
-	return &LastInfo{path: path}
+func NewLastInfo(store store.Store) *LastInfo {
+	return &LastInfo{store: store}
 }
 
 func (li *LastInfo) SortitionSeed() sortition.Seed {
@@ -59,13 +55,6 @@ func (li *LastInfo) BlockHash() crypto.Hash {
 	defer li.lk.RUnlock()
 
 	return li.lastBlockHash
-}
-
-func (li *LastInfo) ReceiptsHash() crypto.Hash {
-	li.lk.RLock()
-	defer li.lk.RUnlock()
-
-	return li.lastReceiptsHash
 }
 
 func (li *LastInfo) Certificate() *block.Certificate {
@@ -103,13 +92,6 @@ func (li *LastInfo) SetBlockHash(lastBlockHash crypto.Hash) {
 	li.lastBlockHash = lastBlockHash
 }
 
-func (li *LastInfo) SetReceiptsHash(lastReceiptsHash crypto.Hash) {
-	li.lk.Lock()
-	defer li.lk.Unlock()
-
-	li.lastReceiptsHash = lastReceiptsHash
-}
-
 func (li *LastInfo) SetCertificate(lastCertificate *block.Certificate) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
@@ -124,71 +106,55 @@ func (li *LastInfo) SetBlockTime(lastBlockTime time.Time) {
 	li.lastBlockTime = lastBlockTime
 }
 
-func (li *LastInfo) SaveLastInfo() error {
-	path := li.path + "/last_info.json"
+func (li *LastInfo) SaveLastInfo() {
 	lid := lastInfoData{
 		LastHeight:      li.lastBlockHeight,
 		LastCertificate: li.lastCertificate,
 	}
 
-	bs, _ := json.Marshal(&lid)
-	if err := util.WriteFile(path, bs); err != nil {
-		return fmt.Errorf("unable to write last sate info: %v", err)
-	}
-	return nil
+	bs, _ := cbor.Marshal(&lid)
+	li.store.SaveLastInfo(bs)
 }
 
-func (li *LastInfo) RestoreLastInfo(store store.StoreReader) (*committee.Committee, error) {
-	path := li.path + "/last_info.json"
-	if !util.PathExists(path) {
-		return nil, fmt.Errorf("unable to load %v", path)
-	}
-	bs, err := util.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
+func (li *LastInfo) RestoreLastInfo() (*committee.Committee, error) {
+	bs := li.store.RestoreLastInfo()
 	lid := new(lastInfoData)
-	err = json.Unmarshal(bs, lid)
+	err := cbor.Unmarshal(bs, lid)
 	if err != nil {
 		return nil, err
 	}
 	logger.Debug("Try to restore last state info", "height", lid.LastHeight)
 
-	b, err := store.Block(lid.LastHeight)
+	b, err := li.store.Block(lid.LastHeight)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve block %v: %v", lid.LastHeight, err)
 	}
 
 	joinedVals := make([]*validator.Validator, 0)
-	receiptsHashes := make([]crypto.Hash, len(b.TxIDs().IDs()))
-	for i, id := range b.TxIDs().IDs() {
-		ctx, err := store.Transaction(id)
+	for _, id := range b.TxIDs().IDs() {
+		ctx, err := li.store.Transaction(id)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve transaction %s: %v", id, err)
 		}
-		receiptsHashes[i] = ctx.Receipt.Hash()
-
 		if ctx.Tx.IsSortitionTx() {
 			pld := ctx.Tx.Payload().(*payload.SortitionPayload)
-			val, err := store.Validator(pld.Address)
+			val, err := li.store.Validator(pld.Address)
 			if err != nil {
 				return nil, fmt.Errorf("unable to retrieve validator %s: %v", pld.Address, err)
 			}
 			joinedVals = append(joinedVals, val)
 		}
 	}
-	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)
 
 	li.lastBlockHeight = lid.LastHeight
 	li.lastCertificate = lid.LastCertificate
 	li.lastSortitionSeed = b.Header().SortitionSeed()
 	li.lastBlockHash = b.Hash()
-	li.lastReceiptsHash = receiptsMerkle.Root()
 	li.lastBlockTime = b.Header().Time()
 
 	vals := make([]*validator.Validator, len(b.LastCertificate().Committers()))
 	for i, num := range b.LastCertificate().Committers() {
-		val, err := store.ValidatorByNumber(num)
+		val, err := li.store.ValidatorByNumber(num)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
 		}

@@ -12,11 +12,12 @@ import (
 )
 
 var (
+	infoKey         = []byte{0x00}
 	blockPrefix     = []byte{0x01}
-	blockHashPrefix = []byte{0x02}
-	accountPrefix   = []byte{0x03}
-	validatorPrefix = []byte{0x04}
-	txPrefix        = []byte{0x05}
+	blockHashPrefix = []byte{0x03}
+	accountPrefix   = []byte{0x05}
+	validatorPrefix = []byte{0x07}
+	txPrefix        = []byte{0x09}
 )
 
 type store struct {
@@ -197,6 +198,14 @@ func (s *store) HasAnyBlock() bool {
 	defer s.lk.Unlock()
 
 	return s.blockStore.hasAnyBlock()
+}
+func (s *store) SaveLastInfo(info []byte) {
+	s.batch.Put(infoKey, info)
+}
+
+func (s *store) RestoreLastInfo() []byte {
+	info, _ := tryGet(s.db, infoKey)
+	return info
 }
 
 func (s *store) WriteBatch() error {

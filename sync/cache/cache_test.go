@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -34,28 +34,30 @@ func TestCacheBlock(t *testing.T) {
 
 	b1, _ := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
+	b3, _ := block.GenerateTestBlock(nil, nil)
 
 	tState.Store.SaveBlock(1, b1)
 	tCache.AddBlock(2, b2)
 
-	assert.Equal(t, tCache.GetBlock(1).Hash(), b1.Hash())
-	assert.Equal(t, tCache.GetBlock(2).Hash(), b2.Hash())
-	assert.Nil(t, tCache.GetBlock(3))
+	tCache.AddBlocks(2, []*block.Block{b2, b3})
+
+	assert.NotNil(t, tCache.GetBlock(1).Hash(), b1.Hash())
+	assert.NotNil(t, tCache.GetBlock(2).Hash(), b2.Hash())
+	assert.NotNil(t, tCache.GetCertificate(b1.Header().LastBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b2.Header().LastBlockHash()).Hash())
+	assert.Nil(t, tCache.GetBlock(4))
 }
 
-func TestCacheCommit(t *testing.T) {
+func TestCacheBlocks(t *testing.T) {
 	setup(t)
 
 	b1, _ := block.GenerateTestBlock(nil, nil)
 	b2, _ := block.GenerateTestBlock(nil, nil)
-	b3, _ := block.GenerateTestBlock(nil, nil)
 
-	tCache.AddCertificate(b1.LastCertificate())
-	tCache.AddCertificate(b2.LastCertificate())
+	tCache.AddBlocks(1, []*block.Block{b1, b2})
 
-	assert.Equal(t, tCache.GetCertificate(b1.Header().LastBlockHash()).Hash(), b1.LastCertificate().Hash())
-	assert.Equal(t, tCache.GetCertificate(b2.Header().LastBlockHash()).Hash(), b2.LastCertificate().Hash())
-	assert.Nil(t, tCache.GetCertificate(b3.Header().LastBlockHash()))
+	assert.NotNil(t, tCache.GetCertificate(b1.Header().LastBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b2.Header().LastBlockHash()).Hash())
 }
 
 func TestGetTransaction(t *testing.T) {
@@ -100,7 +102,7 @@ func TestClearCache(t *testing.T) {
 	tCache.AddBlock(2, b)
 	tCache.AddTransactions(trxs)
 
-	assert.Equal(t, tCache.Len(), 5)
+	assert.Equal(t, tCache.Len(), 6) // block + certificate + 4 transactions
 	tCache.Clear()
 	assert.Equal(t, tCache.Len(), 0)
 	assert.Nil(t, tCache.GetBlock(2))

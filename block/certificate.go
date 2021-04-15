@@ -17,7 +17,7 @@ type certificateData struct {
 	Round      int              `cbor:"2,keyasint"`
 	Committers []int            `cbor:"3,keyasint"`
 	Absences   []int            `cbor:"4,keyasint"`
-	Signature  crypto.Signature `cbor:"8,keyasint"`
+	Signature  crypto.Signature `cbor:"5,keyasint"`
 }
 
 func NewCertificate(blockHash crypto.Hash, round int, committers, absences []int, signature crypto.Signature) *Certificate {
@@ -39,43 +39,35 @@ func (cert *Certificate) Absences() []int             { return cert.data.Absence
 func (cert *Certificate) Signature() crypto.Signature { return cert.data.Signature }
 
 func (cert *Certificate) SanityCheck() error {
-	if err := cert.data.BlockHash.SanityCheck(); err != nil {
+	if err := cert.BlockHash().SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	if cert.data.Round < 0 {
+	if cert.Round() < 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Round")
 	}
-	if err := cert.data.Signature.SanityCheck(); err != nil {
+	if err := cert.Signature().SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	if cert.data.Committers == nil {
+	if cert.Committers() == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid committers")
 	}
 	if cert.data.Absences == nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid absences")
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid absences")
 	}
-	signedBy := util.Subtracts(cert.data.Committers, cert.data.Absences)
-	if !util.Equal(util.Subtracts(cert.data.Committers, signedBy), cert.data.Absences) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Absences is not subset of committers")
+	signedBy := util.Subtracts(cert.Committers(), cert.Absences())
+	if !util.Equal(util.Subtracts(cert.Committers(), signedBy), cert.Absences()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "absences is not subset of committers")
 	}
 
 	return nil
 }
 
 func (cert *Certificate) Hash() crypto.Hash {
-	if cert == nil {
-		return crypto.UndefHash
-	}
 	bs, err := cert.MarshalCBOR()
 	if err != nil {
 		return crypto.UndefHash
 	}
 	return crypto.HashH(bs)
-}
-
-func (cert *Certificate) CommitteeHash() crypto.Hash {
-	bz, _ := cbor.Marshal(cert.data.Committers)
-	return crypto.HashH(bz)
 }
 
 func (cert *Certificate) MarshalCBOR() ([]byte, error) {
@@ -88,10 +80,6 @@ func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 
 func (cert *Certificate) MarshalJSON() ([]byte, error) {
 	return json.Marshal(cert.data)
-}
-
-func (cert *Certificate) UnmarshalJSON(bz []byte) error {
-	return json.Unmarshal(bz, &cert.data)
 }
 
 type signVote struct {
@@ -112,20 +100,20 @@ func CertificateSignBytes(blockHash crypto.Hash, round int) []byte {
 	return bz
 }
 
-func GenerateTestCertificate(blockhash crypto.Hash) *Certificate {
+func GenerateTestCertificate(blockHash crypto.Hash) *Certificate {
 	_, _, priv2 := crypto.GenerateTestKeyPair()
 	_, _, priv3 := crypto.GenerateTestKeyPair()
 	_, _, priv4 := crypto.GenerateTestKeyPair()
 
 	sigs := []crypto.Signature{
-		priv2.Sign(blockhash.RawBytes()),
-		priv3.Sign(blockhash.RawBytes()),
-		priv4.Sign(blockhash.RawBytes()),
+		priv2.Sign(blockHash.RawBytes()),
+		priv3.Sign(blockHash.RawBytes()),
+		priv4.Sign(blockHash.RawBytes()),
 	}
 	sig := crypto.Aggregate(sigs)
 
 	return NewCertificate(
-		blockhash,
+		blockHash,
 		util.RandInt(10),
 		[]int{10, 18, 2, 6},
 		[]int{10},

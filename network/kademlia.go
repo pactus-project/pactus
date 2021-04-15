@@ -9,7 +9,7 @@ import (
 	protocol "github.com/libp2p/go-libp2p-protocol"
 )
 
-func (n *Network) setupKademlia(ctx context.Context, host host.Host) (*dht.IpfsDHT, error) {
+func (n *network) setupKademlia(ctx context.Context, host host.Host) (*dht.IpfsDHT, error) {
 
 	opts := []dht.Option{
 		dht.Mode(dht.ModeAuto),

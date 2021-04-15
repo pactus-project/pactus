@@ -30,7 +30,7 @@ func SignatureFromString(text string) (Signature, error) {
 
 func SignatureFromRawBytes(data []byte) (Signature, error) {
 	if len(data) != SignatureSize {
-		return Signature{}, fmt.Errorf("Invalid signature")
+		return Signature{}, fmt.Errorf("invalid signature")
 	}
 	s := new(bls.Sign)
 	if err := s.Deserialize(data); err != nil {
@@ -97,7 +97,7 @@ func (sig *Signature) UnmarshalJSON(bz []byte) error {
 
 func (sig Signature) MarshalCBOR() ([]byte, error) {
 	if sig.data.Signature == nil {
-		return nil, fmt.Errorf("Invalid signature")
+		return nil, fmt.Errorf("invalid signature")
 	}
 	return cbor.Marshal(sig.RawBytes())
 }
@@ -117,7 +117,7 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 	return nil
 }
 
-func (sig *Signature) SanityCheck() error {
+func (sig Signature) SanityCheck() error {
 	bs := sig.RawBytes()
 	if len(bs) != SignatureSize {
 		return fmt.Errorf("Signature should be %v bytes but it is %v bytes", SignatureSize, len(bs))

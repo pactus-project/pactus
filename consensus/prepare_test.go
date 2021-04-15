@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/vote"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 )
 
 func TestPrepareQueryProposal(t *testing.T) {

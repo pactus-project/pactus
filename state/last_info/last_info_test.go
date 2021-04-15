@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
@@ -15,9 +14,9 @@ import (
 )
 
 func TestRestore(t *testing.T) {
-	path := util.TempDirPath()
-	li1 := NewLastInfo(path)
-	li2 := NewLastInfo(path)
+	store := store.MockingStore()
+	li1 := NewLastInfo(store)
+	li2 := NewLastInfo(store)
 
 	val1 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 10, 20)
 	val2 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 18, 28)
@@ -37,8 +36,7 @@ func TestRestore(t *testing.T) {
 	lastBlock := block.MakeBlock(1, util.Now(), txIDs,
 		hash,
 		crypto.GenerateTestHash(),
-		crypto.GenerateTestHash(),
-		crypto.GenerateTestHash(), lastCertificate, lastSortitionSeed, val1.Address())
+		lastCertificate, lastSortitionSeed, val1.Address())
 	lastBlockHeight := 111
 	lastBlockHash := lastBlock.Hash()
 	ctrxs := []*tx.CommittedTx{}
@@ -49,34 +47,31 @@ func TestRestore(t *testing.T) {
 		}
 		ctrxs = append(ctrxs, ctrx)
 	}
-	lastReceiptsTree := simpleMerkle.NewTreeFromHashes([]crypto.Hash{ctrxs[0].Receipt.Hash(), ctrxs[1].Receipt.Hash(), ctrxs[2].Receipt.Hash()})
-	lastReceiptsHash := lastReceiptsTree.Root()
 
 	li1.SetSortitionSeed(lastSortitionSeed)
 	li1.SetBlockHeight(lastBlockHeight)
 	li1.SetBlockHash(lastBlockHash)
-	li1.SetReceiptsHash(lastReceiptsHash)
 	li1.SetCertificate(lastCertificate)
 	li1.SetBlockTime(lastBlock.Header().Time())
-	assert.NoError(t, li1.SaveLastInfo())
+	li1.SaveLastInfo()
 
-	store := store.MockingStore()
-	_, err := li2.RestoreLastInfo(store)
+	_, err := li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	store.SaveBlock(lastBlockHeight, lastBlock)
-	_, err = li2.RestoreLastInfo(store)
+	_, err = li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	for _, ctrx := range ctrxs {
 		store.SaveTransaction(ctrx)
 	}
-	_, err = li2.RestoreLastInfo(store)
+	_, err = li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	val := validator.NewValidator(newValSigner.PublicKey(), 54, 45)
+	val.UpdateLastJoinedHeight(lastBlockHeight)
 	store.UpdateValidator(val)
-	_, err = li2.RestoreLastInfo(store)
+	_, err = li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	store.UpdateValidator(val1)
@@ -84,13 +79,13 @@ func TestRestore(t *testing.T) {
 	store.UpdateValidator(val3)
 	store.UpdateValidator(val4)
 
-	_, err = li2.RestoreLastInfo(store)
+	c, err := li2.RestoreLastInfo()
 	assert.NoError(t, err)
 
 	assert.Equal(t, li1.SortitionSeed(), li2.SortitionSeed())
 	assert.Equal(t, li1.BlockHeight(), li2.BlockHeight())
 	assert.Equal(t, li1.BlockHash(), li2.BlockHash())
-	assert.Equal(t, li1.ReceiptsHash(), li2.ReceiptsHash())
 	assert.Equal(t, li1.Certificate().Hash(), li2.Certificate().Hash())
 	assert.Equal(t, li1.BlockTime(), li2.BlockTime())
+	assert.Equal(t, c.Committers(), []int{54, 18, 2, 6})
 }

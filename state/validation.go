@@ -13,27 +13,18 @@ func (st *state) validateBlock(block *block.Block) error {
 	}
 
 	if block.Header().Version() != st.params.BlockVersion {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid version")
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"invalid version")
 	}
 
 	if !block.Header().LastBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last block hash is not same as we expected. Expected %v, got %v", st.lastInfo.BlockHash(), block.Header().LastBlockHash())
-	}
-
-	if !block.Header().LastReceiptsHash().EqualsTo(st.lastInfo.ReceiptsHash()) {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"last receipts hash is not same as we expected. Expected %v, got %v", st.lastInfo.ReceiptsHash(), block.Header().LastReceiptsHash())
-	}
-
-	if !block.Header().CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"Committee hash is not same as we expected. Expected %v, got %v", st.committee.CommitteeHash(), block.Header().CommitteeHash())
+			"last block hash is not same as we expected. Expected %v, got %v", st.lastInfo.BlockHash(), block.Header().LastBlockHash())
 	}
 
 	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"State hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
+			"state hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
 	}
 
 	if err := st.validateCertificateForPreviousHeight(block.LastCertificate()); err != nil {
@@ -56,7 +47,7 @@ func (st *state) validateCertificate(cert *block.Certificate) error {
 		val, _ := st.store.ValidatorByNumber(num)
 		if val == nil {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Invalid committer: %x", num)
+				"certificate has invalid committer: %x", num)
 		}
 		if !util.HasItem(cert.Absences(), num) {
 			pubs = append(pubs, val.PublicKey())
@@ -74,7 +65,7 @@ func (st *state) validateCertificate(cert *block.Certificate) error {
 	signBytes := cert.SignBytes()
 	if !crypto.VerifyAggregated(cert.Signature(), pubs, signBytes) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Invalid certificate's signature: %v", cert.Signature())
+			"certificate has invalid signature: %v", cert.Signature())
 	}
 
 	return nil
@@ -85,7 +76,7 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 	if cert == nil {
 		if !st.lastInfo.BlockHash().IsUndef() {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Only genesis block has no certificate")
+				"only genesis block has no certificate")
 		}
 	} else {
 		if err := st.validateCertificate(cert); err != nil {
@@ -94,17 +85,12 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 
 		if !cert.BlockHash().EqualsTo(st.lastInfo.BlockHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
+				"certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
 		}
 
 		if cert.Round() != st.lastInfo.Certificate().Round() {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last certificate round is not same as we expected. Expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
-		}
-
-		if !cert.CommitteeHash().EqualsTo(st.lastInfo.Certificate().CommitteeHash()) {
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"Last committee hash are not same as we expected. Expected %v, got %v", st.lastInfo.Certificate().CommitteeHash(), cert.CommitteeHash())
+				"certificate has invalid round. Expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
 		}
 	}
 
@@ -119,12 +105,12 @@ func (st *state) validateCertificateForCurrentHeight(cert *block.Certificate, bl
 
 	if !cert.BlockHash().EqualsTo(blockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
+			"certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
 	}
 
-	if !cert.CommitteeHash().EqualsTo(st.committee.CommitteeHash()) {
+	if !util.Equal(st.committee.Committers(), cert.Committers()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"Last committee hash are not same as we expected. Expected %v, got %v", st.committee.CommitteeHash(), cert.CommitteeHash())
+			"invalid committers")
 	}
 
 	return nil

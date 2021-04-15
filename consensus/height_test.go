@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/vote"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 )
 
 func TestNewHeightTimedout(t *testing.T) {
@@ -27,7 +27,7 @@ func TestNewHeightDuplicateEntry(t *testing.T) {
 	setup(t)
 
 	testEnterNewHeight(tConsX)
-	testEnterNewRound(tConsX)
+	testEnterPropose(tConsX)
 
 	s := &newHeightState{tConsX}
 

@@ -22,6 +22,7 @@ type StoreReader interface {
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(*account.Account) (stop bool))
 	TotalValidators() int
+	RestoreLastInfo() []byte
 }
 
 type Store interface {
@@ -29,8 +30,9 @@ type Store interface {
 
 	UpdateAccount(acc *account.Account)
 	UpdateValidator(acc *validator.Validator)
-	SaveBlock(height int, block *block.Block) 
+	SaveBlock(height int, block *block.Block)
 	SaveTransaction(ctrx *tx.CommittedTx)
+	SaveLastInfo(info []byte)
 	WriteBatch() error
 	Close() error
 }

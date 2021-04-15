@@ -1,9 +1,9 @@
 package consensus
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/proposal"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 type changeProposerState struct {
@@ -23,7 +23,7 @@ func (s *changeProposerState) decide() {
 		s.logger.Debug("change proposer has quorum")
 		s.round++
 
-		s.enterNewState(s.newRoundState)
+		s.enterNewState(s.proposeState)
 	}
 }
 

@@ -20,19 +20,19 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	val := sb.Validator(pld.Address)
 	if val == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
+		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve validator")
 	}
 	if sb.CurrentHeight()-val.BondingHeight() < 2*sb.CommitteeSize() {
-		return errors.Errorf(errors.ErrInvalidTx, "In bonding period")
+		return errors.Errorf(errors.ErrInvalidTx, "in bonding period")
 	}
 	if !sb.VerifySortition(trx.Stamp(), pld.Proof, val) {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid proof or index")
 	}
 	if e.strict {
 		// A validator might produce more than one sortition transaction before entring into the committee
 		// In non-strict mode we don't check the sequence number and committee check
 		if val.Sequence()+1 != trx.Sequence() {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+			return errors.Errorf(errors.ErrInvalidTx, "invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 		}
 
 		if err := sb.EnterCommittee(trx.Stamp(), val.Address()); err != nil {
