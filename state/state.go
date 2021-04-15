@@ -384,6 +384,8 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
 	st.lastInfo.SetCertificate(cert)
 
+	st.store.WriteBatch()
+
 	// Evaluate sortition before updating the committee
 	if st.evaluateSortition() {
 		st.logger.Info("👏 This validator is chosen to be in the committee", "address", st.signer.Address())
@@ -398,8 +400,6 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 	// At this point we can assign new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())
-
-	st.store.WriteBatch()
 
 	return nil
 }
