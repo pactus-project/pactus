@@ -38,7 +38,7 @@ func (m *Message) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
 	}
 	if err := m.Initiator.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer id: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid initiator peer id: %v", err)
 	}
 	return nil
 }
@@ -94,7 +94,7 @@ func (m *Message) Decode(bs []byte) error {
 	data := msg.Payload
 	pld := payload.MakePayload(msg.PayloadType)
 	if pld == nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
 	}
 
 	if util.IsFlagSet(msg.Flags, FlagCompressed) {

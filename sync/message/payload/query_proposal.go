@@ -20,10 +20,10 @@ func NewQueryProposalPayload(h, r int) Payload {
 
 func (p *QueryProposalPayload) SanityCheck() error {
 	if p.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid height")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
 	if p.Round < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid round")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid round")
 	}
 
 	return nil

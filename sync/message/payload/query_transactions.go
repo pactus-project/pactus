@@ -19,7 +19,7 @@ func NewQueryTransactionsPayload(ids []tx.ID) Payload {
 
 func (p *QueryTransactionsPayload) SanityCheck() error {
 	if len(p.IDs) == 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "Empty list")
+		return errors.Errorf(errors.ErrInvalidMessage, "empty list")
 	}
 	return nil
 }

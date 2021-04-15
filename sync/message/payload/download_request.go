@@ -25,7 +25,7 @@ func NewDownloadRequestPayload(sid int, target peer.ID, from, to int) Payload {
 
 func (p *DownloadRequestPayload) SanityCheck() error {
 	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid target peer id: %v", err)
 	}
 	if p.From < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")

@@ -3,7 +3,7 @@ package sync
 import (
 	"testing"
 
-	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 )
 

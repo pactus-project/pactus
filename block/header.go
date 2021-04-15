@@ -20,11 +20,9 @@ type headerData struct {
 	LastBlockHash       crypto.Hash    `cbor:"3,keyasint"`
 	StateHash           crypto.Hash    `cbor:"4,keyasint"`
 	TxIDsHash           crypto.Hash    `cbor:"5,keyasint"`
-	LastReceiptsHash    crypto.Hash    `cbor:"6,keyasint"`
-	LastCertificateHash crypto.Hash    `cbor:"7,keyasint"`
-	CommitteeHash       crypto.Hash    `cbor:"8,keyasint"`
-	SortitionSeed       sortition.Seed `cbor:"9,keyasint"`
-	ProposerAddress     crypto.Address `cbor:"10,keyasint"`
+	LastCertificateHash crypto.Hash    `cbor:"6,keyasint"`
+	SortitionSeed       sortition.Seed `cbor:"7,keyasint"`
+	ProposerAddress     crypto.Address `cbor:"8,keyasint"`
 }
 
 func (h *Header) Version() int                     { return h.data.Version }
@@ -32,15 +30,13 @@ func (h *Header) Time() time.Time                  { return time.Unix(h.data.Uni
 func (h *Header) TxIDsHash() crypto.Hash           { return h.data.TxIDsHash }
 func (h *Header) StateHash() crypto.Hash           { return h.data.StateHash }
 func (h *Header) LastBlockHash() crypto.Hash       { return h.data.LastBlockHash }
-func (h *Header) LastReceiptsHash() crypto.Hash    { return h.data.LastReceiptsHash }
 func (h *Header) LastCertificateHash() crypto.Hash { return h.data.LastCertificateHash }
-func (h *Header) CommitteeHash() crypto.Hash       { return h.data.CommitteeHash }
 func (h *Header) SortitionSeed() sortition.Seed    { return h.data.SortitionSeed }
 func (h *Header) ProposerAddress() crypto.Address  { return h.data.ProposerAddress }
 
 func NewHeader(version int,
 	time time.Time,
-	txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCertificateHash crypto.Hash,
+	txIDsHash, lastBlockHash, stateHash, lastCertificateHash crypto.Hash,
 	sortitionSeed sortition.Seed, proposerAddress crypto.Address) Header {
 
 	return Header{
@@ -49,9 +45,7 @@ func NewHeader(version int,
 			UnixTime:            time.Unix(),
 			TxIDsHash:           txIDsHash,
 			LastBlockHash:       lastBlockHash,
-			CommitteeHash:       committeeHash,
 			StateHash:           stateHash,
-			LastReceiptsHash:    lastReceiptsHash,
 			LastCertificateHash: lastCertificateHash,
 			ProposerAddress:     proposerAddress,
 			SortitionSeed:       sortitionSeed,
@@ -69,23 +63,14 @@ func (h *Header) SanityCheck() error {
 	if err := h.data.ProposerAddress.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
-	if err := h.data.CommitteeHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
-	}
 
 	if h.data.LastCertificateHash.IsUndef() {
 		// Check for genesis block
 		if !h.data.LastBlockHash.IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Block hash")
-		}
-		if !h.data.LastReceiptsHash.IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Receipts hash")
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid Last Block hash")
 		}
 	} else {
 		if err := h.data.LastBlockHash.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
-		}
-		if err := h.data.LastReceiptsHash.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 		}
 	}
@@ -111,8 +96,4 @@ func (h *Header) UnmarshalCBOR(bs []byte) error {
 
 func (h Header) MarshalJSON() ([]byte, error) {
 	return json.Marshal(h.data)
-}
-
-func (h *Header) UnmarshalJSON(bz []byte) error {
-	return json.Unmarshal(bz, &h.data)
 }

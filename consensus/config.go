@@ -27,11 +27,11 @@ func TestConfig() *Config {
 
 func (conf *Config) SanityCheck() error {
 	if conf.ChangeProposerTimeout <= 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "ChangeProposerTimeout can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "changeProposerTimeout can't be negative")
 	}
 
 	if conf.ChangeProposerDelta <= 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "ChangeProposerDelta can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "changeProposerDelta can't be negative")
 	}
 
 	return nil

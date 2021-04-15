@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
@@ -37,8 +36,7 @@ func TestRestore(t *testing.T) {
 	lastBlock := block.MakeBlock(1, util.Now(), txIDs,
 		hash,
 		crypto.GenerateTestHash(),
-		crypto.GenerateTestHash(),
-		crypto.GenerateTestHash(), lastCertificate, lastSortitionSeed, val1.Address())
+		lastCertificate, lastSortitionSeed, val1.Address())
 	lastBlockHeight := 111
 	lastBlockHash := lastBlock.Hash()
 	ctrxs := []*tx.CommittedTx{}
@@ -49,13 +47,10 @@ func TestRestore(t *testing.T) {
 		}
 		ctrxs = append(ctrxs, ctrx)
 	}
-	lastReceiptsTree := simpleMerkle.NewTreeFromHashes([]crypto.Hash{ctrxs[0].Receipt.Hash(), ctrxs[1].Receipt.Hash(), ctrxs[2].Receipt.Hash()})
-	lastReceiptsHash := lastReceiptsTree.Root()
 
 	li1.SetSortitionSeed(lastSortitionSeed)
 	li1.SetBlockHeight(lastBlockHeight)
 	li1.SetBlockHash(lastBlockHash)
-	li1.SetReceiptsHash(lastReceiptsHash)
 	li1.SetCertificate(lastCertificate)
 	li1.SetBlockTime(lastBlock.Header().Time())
 	assert.NoError(t, li1.SaveLastInfo())
@@ -90,7 +85,6 @@ func TestRestore(t *testing.T) {
 	assert.Equal(t, li1.SortitionSeed(), li2.SortitionSeed())
 	assert.Equal(t, li1.BlockHeight(), li2.BlockHeight())
 	assert.Equal(t, li1.BlockHash(), li2.BlockHash())
-	assert.Equal(t, li1.ReceiptsHash(), li2.ReceiptsHash())
 	assert.Equal(t, li1.Certificate().Hash(), li2.Certificate().Hash())
 	assert.Equal(t, li1.BlockTime(), li2.BlockTime())
 }

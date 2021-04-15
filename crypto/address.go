@@ -26,7 +26,7 @@ func AddressFromString(text string) (Address, error) {
 		return Address{}, err
 	}
 	if hrp != hrpAddress {
-		return Address{}, fmt.Errorf("Invalid hrp: %v", hrp)
+		return Address{}, fmt.Errorf("invalid hrp: %v", hrp)
 	}
 	return AddressFromRawBytes(data)
 
@@ -34,7 +34,7 @@ func AddressFromString(text string) (Address, error) {
 
 func AddressFromRawBytes(bs []byte) (Address, error) {
 	if len(bs) != AddressSize {
-		return Address{}, fmt.Errorf("Address should be %d bytes, but it is %v bytes", AddressSize, len(bs))
+		return Address{}, fmt.Errorf("address should be %d bytes, but it is %v bytes", AddressSize, len(bs))
 	}
 
 	var addr Address

@@ -108,7 +108,7 @@ func LoadFromFile(file string) (*Config, error) {
 		return FromJSON(string(dat))
 	}
 
-	return nil, errors.Errorf(errors.ErrInvalidConfig, "Invalid suffix for the config file")
+	return nil, errors.Errorf(errors.ErrInvalidConfig, "invalid suffix for the config file")
 }
 
 func (conf *Config) SaveToFile(file string) error {
@@ -118,7 +118,7 @@ func (conf *Config) SaveToFile(file string) error {
 	} else if strings.HasSuffix(file, "json") {
 		dat, _ = conf.ToJSON()
 	} else {
-		return errors.Errorf(errors.ErrInvalidConfig, "Invalid suffix for the config file")
+		return errors.Errorf(errors.ErrInvalidConfig, "invalid suffix for the config file")
 	}
 	if err := util.WriteFile(file, dat); err != nil {
 		return err

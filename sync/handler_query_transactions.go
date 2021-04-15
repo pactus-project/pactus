@@ -23,7 +23,7 @@ func (handler *queryTransactionsHandler) ParsPayload(p payload.Payload, initiato
 	handler.logger.Trace("Parsing query transactions payload", "pld", pld)
 
 	if !handler.peerIsInTheCommittee(initiator) {
-		return errors.Errorf(errors.ErrInvalidMessage, "Peers is not in the commmittee")
+		return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
 	}
 
 	trxs := handler.prepareTransactions(pld.IDs)

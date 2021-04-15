@@ -28,7 +28,7 @@ func (handler *downloadRequestHandler) ParsPayload(p payload.Payload, initiator 
 		return nil
 	}
 	if pld.To-pld.From > handler.config.RequestBlockInterval {
-		return errors.Errorf(errors.ErrInvalidMessage, "Peer request interval is not acceptable: %v", pld.To-pld.From)
+		return errors.Errorf(errors.ErrInvalidMessage, "peer request interval is not acceptable: %v", pld.To-pld.From)
 	}
 
 	from := pld.From

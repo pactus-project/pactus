@@ -14,22 +14,33 @@ func TestNilCertificateHash(t *testing.T) {
 	assert.Equal(t, cert.Hash(), crypto.UndefHash)
 }
 
+func TestCertificateJSONMarshaling(t *testing.T) {
+	c1 := GenerateTestCertificate(crypto.UndefHash)
+	bz, err := c1.MarshalJSON()
+	assert.NoError(t, err)
+	assert.NotNil(t, bz)
+}
+
 func TestCertificateMarshaling(t *testing.T) {
-	d, _ := hex.DecodeString("a5015820e809498c15e07dd5a99edfe01639193531137d603ac6f43bc59d9c4f5d42d047020603840001020304810008583057bf20c441010af1bc25fc49ce5d12066042d83f2202d650fcc57df40b9591de57670fef2d5237907fd4b5a9b26cb788")
+	/*
+		{
+			1: h'D846EF49A6C72390645F12970987865A795A55FA19C92DBB9CBE24D6503ECA9F',
+			2: 6,
+			3: [10, 18, 2, 6],
+			4: [10],
+			5: h'85C368E9E6DF4EA1B16E29AEBBF74A3DA45A033683E753C93130336E035C2181BF469DAB5E0448064FB64F6282B28296'
+		}
+	*/
+	d, _ := hex.DecodeString("a5015820d846ef49a6c72390645f12970987865a795a55fa19c92dbb9cbe24d6503eca9f020603840a12020604810a05583085c368e9e6df4ea1b16e29aebbf74a3da45a033683e753c93130336e035c2181bf469dab5e0448064fb64f6282b28296")
 	cert := new(Certificate)
 	err := cbor.Unmarshal(d, cert)
 	assert.NoError(t, err)
 	d2, err := cbor.Marshal(cert)
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
-	expected1, _ := crypto.HashFromString("fd36b2597b028652ad4430b34a67094ba93ed84bd3abe5cd27f675bf431add48")
-	assert.Equal(t, cert.CommitteeHash(), expected1)
-	assert.Equal(t, cert.CommitteeHash(), crypto.HashH([]byte{0x84, 0x00, 0x01, 0x02, 03}))
-	expected2, _ := crypto.HashFromString("3c14a9f114da38708cd4385865eafd1d90a5a0214f92cb8378ae2ed186e68ffe")
-	assert.Equal(t, cert.Hash(), expected2)
-	expected3, _ := hex.DecodeString("a2015820e809498c15e07dd5a99edfe01639193531137d603ac6f43bc59d9c4f5d42d0470206")
-	assert.Equal(t, cert.SignBytes(), expected3)
-	assert.NoError(t, cert.SanityCheck())
+
+	expected1 := crypto.HashH(d)
+	assert.Equal(t, cert.Hash(), expected1)
 }
 
 func TestInvalidCertificate(t *testing.T) {
@@ -59,22 +70,18 @@ func TestInvalidCertificate(t *testing.T) {
 
 func TestCertificateersHash(t *testing.T) {
 	temp := GenerateTestCertificate(crypto.GenerateTestHash())
-	expected2 := temp.CommitteeHash()
 
 	cert1 := NewCertificate(temp.BlockHash(), temp.Round(), []int{10, 18, 2, 6}, []int{}, temp.Signature())
-	assert.Equal(t, cert1.CommitteeHash(), expected2)
 	assert.Equal(t, cert1.Committers(), []int{10, 18, 2, 6})
 	assert.Equal(t, cert1.Absences(), []int{})
 	assert.NoError(t, cert1.SanityCheck())
 
 	cert2 := NewCertificate(temp.BlockHash(), temp.Round(), []int{10, 18, 2, 6}, []int{2, 6}, temp.Signature())
-	assert.Equal(t, cert2.CommitteeHash(), cert1.CommitteeHash())
 	assert.Equal(t, cert2.Committers(), []int{10, 18, 2, 6})
 	assert.Equal(t, cert2.Absences(), []int{2, 6})
 	assert.NoError(t, cert2.SanityCheck())
 
 	cert3 := NewCertificate(temp.BlockHash(), temp.Round(), []int{10, 18, 2, 6}, []int{18}, temp.Signature())
-	assert.Equal(t, cert3.CommitteeHash(), cert1.CommitteeHash())
 	assert.Equal(t, cert3.Committers(), []int{10, 18, 2, 6})
 	assert.Equal(t, cert3.Absences(), []int{18})
 	assert.NoError(t, cert3.SanityCheck())

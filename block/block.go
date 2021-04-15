@@ -28,12 +28,15 @@ type blockData struct {
 }
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
-	lastBlockHash, committeeHash, stateHash, lastReceiptsHash crypto.Hash,
+	lastBlockHash, stateHash crypto.Hash,
 	lastCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) *Block {
-
 	txIDsHash := txIDs.Hash()
+	lastCertHash := crypto.UndefHash
+	if lastCertificate != nil {
+		lastCertHash = lastCertificate.Hash()
+	}
 	header := NewHeader(version, timestamp,
-		txIDsHash, lastBlockHash, committeeHash, stateHash, lastReceiptsHash, lastCertificate.Hash(), sortitionSeed, proposer)
+		txIDsHash, lastBlockHash, stateHash, lastCertHash, sortitionSeed, proposer)
 
 	b := &Block{
 		data: blockData{
@@ -54,26 +57,26 @@ func (b *Block) LastCertificate() *Certificate { return b.data.LastCertificate }
 func (b *Block) TxIDs() TxIDs                  { return b.data.TxIDs }
 
 func (b *Block) SanityCheck() error {
-	if err := b.data.Header.SanityCheck(); err != nil {
+	if err := b.Header().SanityCheck(); err != nil {
 		return err
 	}
-	if b.data.TxIDs.Len() == 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "Block at least should have one transaction")
+	if b.TxIDs().Len() == 0 {
+		return errors.Errorf(errors.ErrInvalidBlock, "block at least should have one transaction")
 	}
-	if !b.data.Header.TxIDsHash().EqualsTo(b.data.TxIDs.Hash()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Txs Hash")
+	if !b.Header().TxIDsHash().EqualsTo(b.data.TxIDs.Hash()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid Txs Hash")
 	}
-	if b.data.LastCertificate != nil {
-		if err := b.data.LastCertificate.SanityCheck(); err != nil {
+	if b.LastCertificate() != nil {
+		if err := b.LastCertificate().SanityCheck(); err != nil {
 			return err
 		}
-		if !b.data.Header.LastCertificateHash().EqualsTo(b.data.LastCertificate.Hash()) {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Certificate hash")
+		if !b.Header().LastCertificateHash().EqualsTo(b.LastCertificate().Hash()) {
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid Last Certificate hash")
 		}
 	} else {
 		// Check for genesis block
-		if !b.data.Header.LastCertificateHash().IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "Invalid Last Certificate hash")
+		if !b.Header().LastCertificateHash().IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid Last Certificate hash")
 		}
 	}
 
@@ -97,11 +100,10 @@ func (b *Block) HashesTo(hash crypto.Hash) bool {
 }
 
 func (b *Block) Fingerprint() string {
-	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 👥 %v 📨 %d}",
+	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.Header.StateHash().Fingerprint(),
-		b.data.Header.CommitteeHash().Fingerprint(),
 		b.data.TxIDs.Len(),
 	)
 }
@@ -130,10 +132,6 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 	return json.Marshal(b.data)
 }
 
-func (b *Block) UnmarshalJSON(bz []byte) error {
-	return json.Unmarshal(bz, &b.data)
-}
-
 // ---------
 // For tests
 func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*Block, []*tx.Tx) {
@@ -160,18 +158,14 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		h := crypto.GenerateTestHash()
 		lastBlockHash = &h
 	}
-	lastReceiptsHash := crypto.GenerateTestHash()
 	cert := GenerateTestCertificate(*lastBlockHash)
 	if lastBlockHash.IsUndef() {
 		cert = nil
-		lastReceiptsHash = crypto.UndefHash
 	}
 	sortitionSeed := sortition.GenerateRandomSeed()
 	block := MakeBlock(1, util.Now(), ids,
 		*lastBlockHash,
 		crypto.GenerateTestHash(),
-		crypto.GenerateTestHash(),
-		lastReceiptsHash,
 		cert,
 		sortitionSeed,
 		*proposer)

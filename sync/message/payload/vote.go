@@ -1,8 +1,8 @@
 package payload
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 type VotePayload struct {

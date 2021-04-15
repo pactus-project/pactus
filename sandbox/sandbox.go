@@ -187,11 +187,11 @@ func (sb *SandboxConcrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Add
 
 	s, ok := sb.validators[addr]
 	if !ok {
-		return errors.Errorf(errors.ErrGeneric, "Unknown validator")
+		return errors.Errorf(errors.ErrGeneric, "unknown validator")
 	}
 
 	if sb.committee.Contains(addr) {
-		return errors.Errorf(errors.ErrGeneric, "This validator already is in the committee")
+		return errors.Errorf(errors.ErrGeneric, "this validator already is in the committee")
 	}
 
 	joined := 0
@@ -201,17 +201,17 @@ func (sb *SandboxConcrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Add
 		}
 	}
 	if joined >= (sb.params.CommitteeSize / 3) {
-		return errors.Errorf(errors.ErrGeneric, "In each height only 1/3 of validator can be changed")
+		return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of validator can be changed")
 	}
 	h, _ := sb.store.BlockHeight(blockHash)
 	b, err := sb.store.Block(h)
 	if err != nil {
-		return errors.Errorf(errors.ErrGeneric, "Invalid block hash")
+		return errors.Errorf(errors.ErrGeneric, "invalid block hash")
 	}
 	commiters := b.LastCertificate().Committers()
 	for _, num := range commiters {
 		if s.Validator.Number() == num {
-			return errors.Errorf(errors.ErrGeneric, "This validator was in the committee in time of sending the sortition")
+			return errors.Errorf(errors.ErrGeneric, "this validator was in the committee in time of sending the sortition")
 		}
 	}
 

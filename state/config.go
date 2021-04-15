@@ -31,7 +31,7 @@ func (conf *Config) SanityCheck() error {
 	if conf.MintbaseAddress != "" {
 		_, err := crypto.AddressFromString(conf.MintbaseAddress)
 		if err != nil {
-			return errors.Errorf(errors.ErrInvalidConfig, "Invalid mintbase address: %s", err.Error())
+			return errors.Errorf(errors.ErrInvalidConfig, "invalid mintbase address: %s", err.Error())
 		}
 	}
 	return nil

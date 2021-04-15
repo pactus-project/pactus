@@ -64,7 +64,7 @@ func (vs *validatorStore) validatorByNumber(num int) (*validator.Validator, erro
 		return val, nil
 	}
 
-	return nil, fmt.Errorf("Not found")
+	return nil, fmt.Errorf("not found")
 }
 
 func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) (stop bool)) {

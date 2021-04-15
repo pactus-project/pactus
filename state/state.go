@@ -12,7 +12,6 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/genesis"
-	merkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sandbox"
@@ -207,10 +206,10 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	// Check if commit has more signers ...
+	// Check if certificate has more signers ...
 	if len(cert.Absences()) < len(st.lastInfo.Certificate().Absences()) {
 		if err := st.validateCertificateForPreviousHeight(cert); err != nil {
-			st.logger.Warn("Try to update last commit, but it's invalid", "err", err)
+			st.logger.Warn("Try to update last certificate, but it's invalid", "err", err)
 			return err
 		}
 		st.lastInfo.SetCertificate(cert)
@@ -235,7 +234,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	defer st.lk.Unlock()
 
 	if !st.committee.IsProposer(st.signer.Address(), round) {
-		return nil, errors.Errorf(errors.ErrInvalidAddress, "We are not propser for this round")
+		return nil, errors.Errorf(errors.ErrInvalidAddress, "we are not propser for this round")
 	}
 
 	// Create new sandbox and execute transactions
@@ -270,7 +269,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	subsidyTx := st.createSubsidyTx(exe.AccumulatedFee())
 	if subsidyTx == nil {
 		st.logger.Error("Probably the node is shutting down.")
-		return nil, errors.Errorf(errors.ErrInvalidBlock, "No subsidy transaction")
+		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
 	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
 		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
@@ -279,7 +278,6 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	txIDs.Prepend(subsidyTx.ID())
 
 	stateHash := st.stateHash()
-	committeeHash := st.committee.CommitteeHash()
 	timestamp := st.proposeNextBlockTime()
 	newSortitionSeed := st.lastInfo.SortitionSeed().Generate(st.signer)
 
@@ -288,9 +286,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		timestamp,
 		txIDs,
 		st.lastInfo.BlockHash(),
-		committeeHash,
 		stateHash,
-		st.lastInfo.ReceiptsHash(),
 		st.lastInfo.Certificate(),
 		newSortitionSeed,
 		st.signer.Address())
@@ -358,11 +354,11 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	// Verify proposer
 	proposer := st.committee.Proposer(cert.Round())
 	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
 	// Validate sortition seed
 	if !block.Header().SortitionSeed().Validate(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid sortition seed.")
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed.")
 	}
 
 	sb := st.makeSandbox()
@@ -371,31 +367,26 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		return err
 	}
 
-	// Commit and update the validator set
+	// Commit and update the committee
 	st.commitSandbox(sb, cert.Round())
 
 	st.store.SaveBlock(st.lastInfo.BlockHeight()+1, block)
 
 	// Save txs and receipts
-	receiptsHashes := make([]crypto.Hash, len(ctrxs))
-	for i, ctrx := range ctrxs {
+	for _, ctrx := range ctrxs {
 		st.txPool.RemoveTx(ctrx.Tx.ID())
 		st.store.SaveTransaction(ctrx)
-
-		receiptsHashes[i] = ctrx.Receipt.Hash()
 	}
-	receiptsMerkle := merkle.NewTreeFromHashes(receiptsHashes)
 
 	st.lastInfo.SetBlockHeight(st.lastInfo.BlockHeight() + 1)
 	st.lastInfo.SetBlockHash(block.Hash())
 	st.lastInfo.SetBlockTime(block.Header().Time())
 	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
-	st.lastInfo.SetReceiptsHash(receiptsMerkle.Root())
 	st.lastInfo.SetCertificate(cert)
 
-	// Evaluate sortition before updating the validator set
+	// Evaluate sortition before updating the committee
 	if st.evaluateSortition() {
-		st.logger.Info("👏 This validator is chosen to be in the set", "address", st.signer.Address())
+		st.logger.Info("👏 This validator is chosen to be in the committee", "address", st.signer.Address())
 	}
 
 	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
@@ -415,7 +406,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 func (st *state) evaluateSortition() bool {
 	if st.committee.Contains(st.signer.Address()) {
-		// We are in the validator set right now
+		// We are in the committee right now
 		return false
 	}
 
@@ -490,17 +481,17 @@ func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
 
 func (st *state) validateBlockTime(t time.Time) error {
 	if t.Second()%st.params.BlockTimeInSecond != 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "Block time is not rounded")
+		return errors.Errorf(errors.ErrInvalidBlock, "block time is not rounded")
 	}
 	if t.Before(st.lastInfo.BlockTime().Add(1 * time.Second)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too early: %s", t.String())
+		return errors.Errorf(errors.ErrInvalidBlock, "block time is too early: %s", t.String())
 	}
 	proposeTime := st.proposeNextBlockTime()
 	threshold := 2 * st.params.BlockTime()
 	if t.After(proposeTime.Add(threshold)) {
 		fmt.Println(t)
 		fmt.Println(util.RoundNow(st.params.BlockTimeInSecond).Add(threshold))
-		return errors.Errorf(errors.ErrInvalidBlock, "Block time is too far")
+		return errors.Errorf(errors.ErrInvalidBlock, "block time is too far")
 	}
 
 	return nil
@@ -512,7 +503,7 @@ func (st *state) proposeNextBlockTime() time.Time {
 
 	now := util.Now()
 	if now.After(timestamp.Add(1 * time.Second)) {
-		st.logger.Debug("It looks the last commit had delay", "delay", now.Sub(timestamp))
+		st.logger.Debug("It looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
 	}
 	return timestamp

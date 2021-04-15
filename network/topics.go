@@ -10,7 +10,7 @@ import (
 func (n *network) PublishMessage(msg *message.Message) error {
 	topic := n.topic(msg)
 	if topic == nil {
-		return errors.Errorf(errors.ErrNetwork, "Invalid topic.")
+		return errors.Errorf(errors.ErrNetwork, "invalid topic.")
 	}
 	if err := msg.SanityCheck(); err != nil {
 		return err

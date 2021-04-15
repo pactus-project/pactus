@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
@@ -15,11 +14,9 @@ func TestProposalMarshaling(t *testing.T) {
 	var p2 Proposal
 	err = p2.UnmarshalCBOR(bz1)
 	assert.NoError(t, err)
-	var p3 Proposal
 	bz2, err := p2.MarshalJSON()
 	assert.NoError(t, err)
-	assert.NoError(t, p3.UnmarshalJSON(bz2))
-	assert.Equal(t, p1.Hash(), p3.Hash())
+	assert.NotNil(t, bz2)
 }
 
 func TestProposalSignature(t *testing.T) {

@@ -39,16 +39,16 @@ func (p *Proposal) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidProposal, err.Error())
 	}
 	if p.data.Height <= 0 {
-		return errors.Errorf(errors.ErrInvalidProposal, "Invalid round")
+		return errors.Errorf(errors.ErrInvalidProposal, "invalid round")
 	}
 	if p.data.Round < 0 {
-		return errors.Errorf(errors.ErrInvalidProposal, "Invalid round")
+		return errors.Errorf(errors.ErrInvalidProposal, "invalid round")
 	}
 	if p.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "No signature")
+		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
 	}
 	if p.data.Signature.SanityCheck() != nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "Invalid signature")
+		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
 	}
 	return nil
 }
@@ -86,19 +86,15 @@ func (p Proposal) MarshalJSON() ([]byte, error) {
 	return json.Marshal(p.data)
 }
 
-func (p *Proposal) UnmarshalJSON(bs []byte) error {
-	return json.Unmarshal(bs, &p.data)
-}
-
 func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	if p.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "No signature")
+		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
 	}
 	if !pubKey.Address().EqualsTo(p.data.Block.Header().ProposerAddress()) {
-		return errors.Errorf(errors.ErrInvalidProposal, "Invalid proposer")
+		return errors.Errorf(errors.ErrInvalidProposal, "invalid proposer")
 	}
 	if !pubKey.Verify(p.SignBytes(), *p.data.Signature) {
-		return errors.Errorf(errors.ErrInvalidProposal, "Invalid signature")
+		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
 	}
 	return nil
 }

@@ -36,19 +36,19 @@ func NewLatestBlocksResponsePayload(code ResponseCode, sid int, target peer.ID, 
 }
 func (p *LatestBlocksResponsePayload) SanityCheck() error {
 	if p.From < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
 	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid target peer id: %v", err)
 	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
+			return errors.Errorf(errors.ErrInvalidMessage, "invalid block: %v", err)
 		}
 	}
 	if p.LastCertificate != nil {
 		if err := p.LastCertificate.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
+			return errors.Errorf(errors.ErrInvalidMessage, "invalid certificate: %v", err)
 		}
 	}
 	for _, trx := range p.Transactions {

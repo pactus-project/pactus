@@ -29,7 +29,7 @@ func (handler *latestBlocksRequestHandler) ParsPayload(p payload.Payload, initia
 	}
 	ourHeight := handler.state.LastBlockHeight()
 	if pld.From < ourHeight-handler.config.RequestBlockInterval {
-		return errors.Errorf(errors.ErrInvalidMessage, "The request height is not acceptable: %v", pld.From)
+		return errors.Errorf(errors.ErrInvalidMessage, "the request height is not acceptable: %v", pld.From)
 	}
 	from := pld.From
 	count := handler.config.BlockPerMessage

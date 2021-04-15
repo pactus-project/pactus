@@ -30,7 +30,7 @@ func PublicKeyFromString(text string) (PublicKey, error) {
 
 func PublicKeyFromRawBytes(data []byte) (PublicKey, error) {
 	if len(data) != PublicKeySize {
-		return PublicKey{}, fmt.Errorf("Invalid public key")
+		return PublicKey{}, fmt.Errorf("invalid public key")
 	}
 	pk := new(bls.PublicKey)
 	if err := pk.Deserialize(data); err != nil {
@@ -93,7 +93,7 @@ func (pb *PublicKey) UnmarshalJSON(bz []byte) error {
 
 func (pb PublicKey) MarshalCBOR() ([]byte, error) {
 	if pb.data.PublicKey == nil {
-		return nil, fmt.Errorf("Invalid public key")
+		return nil, fmt.Errorf("invalid public key")
 	}
 	return cbor.Marshal(pb.RawBytes())
 }
@@ -116,7 +116,7 @@ func (pb *PublicKey) UnmarshalCBOR(bs []byte) error {
 func (pb *PublicKey) SanityCheck() error {
 	bs := pb.RawBytes()
 	if len(bs) != PublicKeySize {
-		return fmt.Errorf("Public key should be %v bytes but it is %v bytes", PublicKeySize, len(bs))
+		return fmt.Errorf("public key should be %v bytes but it is %v bytes", PublicKeySize, len(bs))
 	}
 	return nil
 }

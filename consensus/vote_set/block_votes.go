@@ -1,9 +1,9 @@
 package vote_set
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 type blockVotes struct {

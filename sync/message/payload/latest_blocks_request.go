@@ -31,7 +31,7 @@ func (p *LatestBlocksRequestPayload) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid range")
 	}
 	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid target peer id: %v", err)
 	}
 	return nil
 }

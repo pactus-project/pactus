@@ -10,5 +10,5 @@ type CommitteeReader interface {
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *validator.Validator
 	IsProposer(addr crypto.Address, round int) bool
-	CommitteeHash() crypto.Hash
+	TotalPower() int64
 }

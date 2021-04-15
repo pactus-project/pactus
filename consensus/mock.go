@@ -2,10 +2,10 @@ package consensus
 
 import (
 	"github.com/sasha-s/go-deadlock"
-	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 var _ Consensus = &MockConsensus{}

@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 func TestChangeProposer(t *testing.T) {

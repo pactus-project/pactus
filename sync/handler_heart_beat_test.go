@@ -3,8 +3,8 @@ package sync
 import (
 	"testing"
 
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 func TestParsingHeartbeatMessages(t *testing.T) {

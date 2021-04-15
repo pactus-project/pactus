@@ -32,14 +32,14 @@ func NewDownloadResponsePayload(code ResponseCode, sid int, target peer.ID, from
 
 func (p *DownloadResponsePayload) SanityCheck() error {
 	if p.From < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
 	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid target peer id: %v", err)
 	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
+			return errors.Errorf(errors.ErrInvalidMessage, "invalid block: %v", err)
 		}
 	}
 	for _, trx := range p.Transactions {

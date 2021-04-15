@@ -24,6 +24,7 @@ func NewTxIDs() TxIDs {
 		},
 	}
 }
+
 func (txs *TxIDs) Append(id tx.ID) {
 	txs.data.IDs = append(txs.data.IDs, id)
 }

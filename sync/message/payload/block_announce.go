@@ -23,13 +23,13 @@ func NewBlockAnnouncePayload(h int, b *block.Block, c *block.Certificate) Payloa
 
 func (p *BlockAnnouncePayload) SanityCheck() error {
 	if p.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid height")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
 	if err := p.Block.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid block: %v", err)
 	}
 	if err := p.Certificate.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid commit: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid certificate: %v", err)
 	}
 
 	return nil

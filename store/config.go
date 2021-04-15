@@ -28,7 +28,7 @@ func (conf *Config) StorePath() string {
 // SanityCheck is a basic checks for config
 func (conf *Config) SanityCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
-		return errors.Errorf(errors.ErrInvalidConfig, "Path is not valid")
+		return errors.Errorf(errors.ErrInvalidConfig, "path is not valid")
 	}
 	return nil
 }

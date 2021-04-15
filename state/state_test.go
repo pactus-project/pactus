@@ -335,6 +335,7 @@ func TestBlockProposal(t *testing.T) {
 		b, err := tState3.ProposeBlock(1)
 		assert.NoError(t, err)
 		assert.NoError(t, tState1.ValidateBlock(b))
+		assert.Equal(t, b.TxIDs().Len(), 1)
 	})
 }
 
@@ -402,28 +403,26 @@ func TestSortition(t *testing.T) {
 	height++
 
 	assert.True(t, st1.evaluateSortition())           //  ok
-	assert.False(t, tState1.committee.Contains(addr)) // still not in the set
+	assert.False(t, tState1.committee.Contains(addr)) // still not in the committee
 
 	// ---------------------------------------------
-	// Certificate another block, new validator should be in the set now
+	// Certificate another block, new validator should be in the committee now
 	b, c = makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
-	assert.False(t, st1.evaluateSortition()) // already in the set
+	assert.False(t, st1.evaluateSortition()) // already in the committee
 	assert.False(t, tState1.committee.Contains(tValSigner1.Address()))
 	assert.True(t, tState1.committee.Contains(addr))
 
 	// ---------------------------------------------
 	// Let's save and load tState1
-	committeeHash := tState1.committee.CommitteeHash()
 	tState1.Close()
 	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
-
-	assert.Equal(t, state1.(*state).committee.CommitteeHash(), committeeHash)
+	st2 := state1.(*state)
 
 	// ---------------------------------------------
-	// Let's commit another block with new Validator set
+	// Let's commit another block with new committee
 	b1, err := st1.ProposeBlock(3)
 	require.NoError(t, err)
 	require.NotNil(t, b1)
@@ -438,8 +437,8 @@ func TestSortition(t *testing.T) {
 	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 1, 2, 3}, []int{}, crypto.Aggregate(sigs))
 
 	height++
-	require.NoError(t, st1.CommitBlock(height, b1, c1))
-	require.NoError(t, tState2.CommitBlock(height, b1, c1))
+	assert.NoError(t, st2.CommitBlock(height, b1, c1))
+	assert.NoError(t, tState2.CommitBlock(height, b1, c1))
 }
 
 func TestValidateBlockTime(t *testing.T) {
@@ -482,15 +481,12 @@ func TestInvalidBlockTime(t *testing.T) {
 	moveToNextHeightForAllStates(t)
 
 	validBlock, _ := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-
 	invalidBlock := block.MakeBlock(
 		validBlock.Header().Version(),
 		validBlock.Header().Time().Add(30*time.Second),
 		validBlock.TxIDs(),
 		validBlock.Header().LastBlockHash(),
-		validBlock.Header().CommitteeHash(),
 		validBlock.Header().StateHash(),
-		validBlock.Header().LastReceiptsHash(),
 		validBlock.LastCertificate(),
 		validBlock.Header().SortitionSeed(),
 		validBlock.Header().ProposerAddress())
@@ -584,4 +580,45 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 
 	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())
 	require.Error(t, err)
+}
+
+func TestSetBlockTime(t *testing.T) {
+	setup(t)
+
+	t.Run("Last block time is a bit far in past", func(t *testing.T) {
+		tState1.lastInfo.SetBlockTime(util.Now().Add(-16 * time.Second))
+		b, _ := tState1.ProposeBlock(0)
+		fmt.Println(b.Header().Time().UTC())
+		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
+		assert.True(t, b.Header().Time().Before(util.Now().Add(20*time.Second)))
+		assert.Zero(t, b.Header().Time().Second()%10)
+	})
+
+	t.Run("Last block time is almost good", func(t *testing.T) {
+		tState1.lastInfo.SetBlockTime(util.Now().Add(-6 * time.Second))
+		b, _ := tState1.ProposeBlock(0)
+		fmt.Println(b.Header().Time().UTC())
+		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
+		assert.True(t, b.Header().Time().Before(util.Now().Add(20*time.Second)))
+		assert.Zero(t, b.Header().Time().Second()%10)
+	})
+
+	// After our time
+	t.Run("Last block time is in near future", func(t *testing.T) {
+		tState1.lastInfo.SetBlockTime(util.Now().Add(+6 * time.Second))
+		b, _ := tState1.ProposeBlock(0)
+		fmt.Println(b.Header().Time().UTC())
+		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
+		assert.True(t, b.Header().Time().Before(tState1.lastInfo.BlockTime().Add(20*time.Second)))
+		assert.Zero(t, b.Header().Time().Second()%10)
+	})
+
+	t.Run("Last block time is more than a block in future", func(t *testing.T) {
+		tState1.lastInfo.SetBlockTime(util.Now().Add(+16 * time.Second))
+		b, _ := tState1.ProposeBlock(0)
+		fmt.Println(b.Header().Time().UTC())
+		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
+		assert.True(t, b.Header().Time().Before(tState1.lastInfo.BlockTime().Add(20*time.Second)))
+		assert.Zero(t, b.Header().Time().Second()%10)
+	})
 }
