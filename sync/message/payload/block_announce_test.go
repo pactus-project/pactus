@@ -20,6 +20,10 @@ func TestBlockAnnouncePayload(t *testing.T) {
 	p1 := NewBlockAnnouncePayload(-1, b, c)
 	assert.Error(t, p1.SanityCheck())
 
-	p2 := NewBlockAnnouncePayload(666, b, c)
+	p2 := NewBlockAnnouncePayload(100, b, c)
 	assert.Error(t, p2.SanityCheck())
+
+	c = block.GenerateTestCertificate(b.Hash())
+	p3 := NewBlockAnnouncePayload(100, b, c)
+	assert.NoError(t, p3.SanityCheck())
 }
