@@ -46,7 +46,7 @@ func (s *newHeightState) decide() {
 	s.round = 0
 	s.logger.Info("Entering new height", "height", s.height)
 
-	s.enterNewState(s.newRoundState)
+	s.enterNewState(s.proposeState)
 }
 
 func (s *newHeightState) onAddVote(v *vote.Vote) {

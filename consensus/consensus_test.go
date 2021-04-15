@@ -225,11 +225,11 @@ func testEnterNewHeight(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-// testEnterNewRound helps tests to enter new round safely
-func testEnterNewRound(cons *consensus) {
+// testEnterPropose helps tests to enter new round safely
+func testEnterPropose(cons *consensus) {
 	cons.lk.Lock()
 	cons.round++
-	cons.enterNewState(cons.newRoundState)
+	cons.enterNewState(cons.proposeState)
 	cons.lk.Unlock()
 }
 
@@ -418,7 +418,7 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 
 	p := makeProposal(t, 1, 0)
 	testEnterNewHeight(tConsP)
-	testEnterNewRound(tConsP)
+	testEnterPropose(tConsP)
 
 	// Keep proposal for previous round, but don't change the state
 	tConsP.SetProposal(p)

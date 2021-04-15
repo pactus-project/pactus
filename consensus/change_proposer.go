@@ -23,7 +23,7 @@ func (s *changeProposerState) decide() {
 		s.logger.Debug("change proposer has quorum")
 		s.round++
 
-		s.enterNewState(s.newRoundState)
+		s.enterNewState(s.proposeState)
 	}
 }
 

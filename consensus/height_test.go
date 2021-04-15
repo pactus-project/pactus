@@ -27,7 +27,7 @@ func TestNewHeightDuplicateEntry(t *testing.T) {
 	setup(t)
 
 	testEnterNewHeight(tConsX)
-	testEnterNewRound(tConsX)
+	testEnterPropose(tConsX)
 
 	s := &newHeightState{tConsX}
 

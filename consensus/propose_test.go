@@ -42,8 +42,8 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 	tSigners[tIndexB].SignMsg(p)
 
 	testEnterNewHeight(tConsP)
-	testEnterNewRound(tConsP)
-	testEnterNewRound(tConsP)
+	testEnterPropose(tConsP)
+	testEnterPropose(tConsP)
 
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.RoundProposal(2))

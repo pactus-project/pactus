@@ -27,7 +27,6 @@ type consensus struct {
 	height              int
 	round               int
 	newHeightState      consState
-	newRoundState       consState
 	proposeState        consState
 	prepareState        consState
 	precommitState      consState
@@ -55,7 +54,6 @@ func NewConsensus(
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	cs.newHeightState = &newHeightState{cs}
-	cs.newRoundState = &newRoundState{cs}
 	cs.proposeState = &proposeState{cs}
 	cs.prepareState = &prepareState{cs, false}
 	cs.precommitState = &precommitState{cs, false}
