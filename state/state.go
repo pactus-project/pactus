@@ -142,6 +142,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		totalStake += val.Stake()
 	}
 
+	err := st.store.WriteBatch()
+	if err != nil {
+		return err
+	}
+
 	committee, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
 	if err != nil {
 		return err
@@ -374,9 +379,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	// Commit and update the validator set
 	st.commitSandbox(sb, cert.Round())
 
-	if err := st.store.SaveBlock(st.lastInfo.BlockHeight()+1, block); err != nil {
-		return err
-	}
+	st.store.SaveBlock(st.lastInfo.BlockHeight()+1, block)
 
 	// Save txs and receipts
 	receiptsHashes := make([]crypto.Hash, len(ctrxs))
@@ -409,6 +412,8 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 	// At this point we can assign new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())
+
+	st.store.WriteBatch()
 
 	return nil
 }

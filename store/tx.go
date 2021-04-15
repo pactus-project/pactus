@@ -18,7 +18,7 @@ func newTxStore(db *leveldb.DB) (*txStore, error) {
 	}, nil
 }
 
-func (ts *txStore) saveTx(ctrs *tx.CommittedTx) error {
+func (ts *txStore) saveTx(batch *leveldb.Batch, ctrs *tx.CommittedTx) error {
 	if err := ctrs.SanityCheck(); err != nil {
 		return err
 	}
@@ -27,10 +27,12 @@ func (ts *txStore) saveTx(ctrs *tx.CommittedTx) error {
 		return err
 	}
 	txKey := txKey(ctrs.Tx.ID())
-	err = tryPut(ts.db, txKey, data)
+	batch.Put(txKey, data)
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 

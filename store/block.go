@@ -21,21 +21,17 @@ func newBlockStore(db *leveldb.DB) (*blockStore, error) {
 	}, nil
 }
 
-func (bs *blockStore) saveBlock(height int, block *block.Block) error {
+func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int, block *block.Block) error {
 	blockData, err := block.Encode()
 	if err != nil {
 		return err
 	}
 	blockKey := blockKey(height)
 	blockHashKey := blockHashKey(block.Hash())
-	err = tryPut(bs.db, blockKey, blockData)
-	if err != nil {
-		return err
-	}
-	err = tryPut(bs.db, blockHashKey, util.IntToSlice(height))
-	if err != nil {
-		return err
-	}
+
+	batch.Put(blockKey, blockData)
+	batch.Put(blockHashKey, util.IntToSlice(height))
+
 	return nil
 }
 

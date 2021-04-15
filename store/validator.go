@@ -88,7 +88,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 	iter.Release()
 }
 
-func (vs *validatorStore) updateValidator(val *validator.Validator) error {
+func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) error {
 	data, err := val.Encode()
 	if err != nil {
 		return err
@@ -98,5 +98,7 @@ func (vs *validatorStore) updateValidator(val *validator.Validator) error {
 	}
 	vs.valMap[val.Number()] = val
 
-	return tryPut(vs.db, validatorKey(val.Address()), data)
+	batch.Put(validatorKey(val.Address()), data)
+
+	return nil
 }

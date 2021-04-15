@@ -56,14 +56,15 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	b, txs := block.GenerateTestBlock(nil, nil)
 	h := util.RandInt(10000)
 	assert.False(t, tStore.HasAnyBlock())
-	err := tStore.SaveBlock(h, b)
-	assert.NoError(t, err)
+	tStore.SaveBlock(h, b)
+	assert.NoError(t, tStore.WriteBatch())
 	assert.True(t, tStore.HasAnyBlock())
 
 	for _, trx := range txs {
 		r := trx.GenerateReceipt(tx.Ok, b.Hash())
 		ctrx := &tx.CommittedTx{Tx: trx, Receipt: r}
 		tStore.SaveTransaction(ctrx)
+		assert.NoError(t, tStore.WriteBatch())
 	}
 
 	h2, err := tStore.BlockHeight(b.Hash())
@@ -87,7 +88,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 
 	// After closing db, we should not crash
 	assert.NoError(t, tStore.Close())
-	assert.Error(t, tStore.SaveBlock(h, b))
+	assert.Error(t, tStore.WriteBatch())
 	_, err = tStore.Block(h)
 	assert.Error(t, err)
 	_, err = tStore.Transaction(txs[0].ID())
@@ -102,6 +103,7 @@ func TestRetrieveAccount(t *testing.T) {
 	t.Run("Add account, should able to retrieve", func(t *testing.T) {
 		assert.False(t, tStore.HasAccount(acc.Address()))
 		tStore.UpdateAccount(acc)
+		assert.NoError(t, tStore.WriteBatch())
 		assert.True(t, tStore.HasAccount(acc.Address()))
 		acc2, err := tStore.Account(acc.Address())
 		assert.NoError(t, err)
@@ -111,7 +113,7 @@ func TestRetrieveAccount(t *testing.T) {
 	t.Run("Update account, should update database", func(t *testing.T) {
 		acc.AddToBalance(1)
 		tStore.UpdateAccount(acc)
-
+		assert.NoError(t, tStore.WriteBatch())
 		acc2, err := tStore.Account(acc.Address())
 		assert.NoError(t, err)
 		assert.Equal(t, acc, acc2)
@@ -133,6 +135,7 @@ func TestRetrieveValidator(t *testing.T) {
 	t.Run("Add validator, should able to retrieve", func(t *testing.T) {
 		assert.False(t, tStore.HasValidator(val.Address()))
 		tStore.UpdateValidator(val)
+		assert.NoError(t, tStore.WriteBatch())
 		assert.True(t, tStore.HasValidator(val.Address()))
 		val2, err := tStore.Validator(val.Address())
 		assert.NoError(t, err)
@@ -142,7 +145,7 @@ func TestRetrieveValidator(t *testing.T) {
 	t.Run("Update validator, should update database", func(t *testing.T) {
 		val.AddToStake(1)
 		tStore.UpdateValidator(val)
-
+		assert.NoError(t, tStore.WriteBatch())
 		val2, err := tStore.Validator(val.Address())
 		assert.NoError(t, err)
 		assert.Equal(t, val.Hash(), val2.Hash())
@@ -164,7 +167,7 @@ func TestIterateAccounts(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		acc, _ := account.GenerateTestAccount(i)
 		tStore.UpdateAccount(acc)
-
+		assert.NoError(t, tStore.WriteBatch())
 		accs1 = append(accs1, acc.Hash())
 	}
 
@@ -193,7 +196,7 @@ func TestIterateValidators(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		val, _ := validator.GenerateTestValidator(i)
 		tStore.UpdateValidator(val)
-
+		assert.NoError(t, tStore.WriteBatch())
 		vals1 = append(vals1, val.Hash())
 	}
 

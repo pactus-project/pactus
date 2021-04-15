@@ -64,7 +64,7 @@ func TestRestore(t *testing.T) {
 	_, err := li2.RestoreLastInfo(store)
 	assert.Error(t, err)
 
-	assert.NoError(t, store.SaveBlock(lastBlockHeight, lastBlock))
+	store.SaveBlock(lastBlockHeight, lastBlock)
 	_, err = li2.RestoreLastInfo(store)
 	assert.Error(t, err)
 

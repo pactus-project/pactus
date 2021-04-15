@@ -24,6 +24,7 @@ type store struct {
 
 	config         *Config
 	db             *leveldb.DB
+	batch          *leveldb.Batch
 	blockStore     *blockStore
 	txStore        *txStore
 	accountStore   *accountStore
@@ -57,6 +58,7 @@ func NewStore(conf *Config) (Store, error) {
 	return &store{
 		config:         conf,
 		db:             db,
+		batch:          new(leveldb.Batch),
 		blockStore:     blockStore,
 		txStore:        txStore,
 		accountStore:   accountStore,
@@ -71,11 +73,12 @@ func (s *store) Close() error {
 	return nil
 }
 
-func (s *store) SaveBlock(height int, block *block.Block) error {
+func (s *store) SaveBlock(height int, block *block.Block) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
-
-	return s.blockStore.saveBlock(height, block)
+	if err := s.blockStore.saveBlock(s.batch, height, block); err != nil {
+		logger.Panic("Error on saving block: %v", err)
+	}
 }
 
 func (s *store) Block(height int) (*block.Block, error) {
@@ -96,7 +99,7 @@ func (s *store) SaveTransaction(ctrx *tx.CommittedTx) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	if err := s.txStore.saveTx(ctrx); err != nil {
+	if err := s.txStore.saveTx(s.batch, ctrx); err != nil {
 		logger.Panic("Error on saving a transaction: %v", err)
 	}
 }
@@ -140,7 +143,7 @@ func (s *store) UpdateAccount(acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	if err := s.accountStore.updateAccount(acc); err != nil {
+	if err := s.accountStore.updateAccount(s.batch, acc); err != nil {
 		logger.Panic("Error on updating an account: %v", err)
 	}
 }
@@ -184,7 +187,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	if err := s.validatorStore.updateValidator(acc); err != nil {
+	if err := s.validatorStore.updateValidator(s.batch, acc); err != nil {
 		logger.Panic("Error on updating a validator: %v", err)
 	}
 }
@@ -194,4 +197,8 @@ func (s *store) HasAnyBlock() bool {
 	defer s.lk.Unlock()
 
 	return s.blockStore.hasAnyBlock()
+}
+
+func (s *store) WriteBatch() error {
+	return s.db.Write(s.batch, nil)
 }

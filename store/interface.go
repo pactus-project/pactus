@@ -29,7 +29,8 @@ type Store interface {
 
 	UpdateAccount(acc *account.Account)
 	UpdateValidator(acc *validator.Validator)
-	SaveBlock(height int, block *block.Block) error
+	SaveBlock(height int, block *block.Block) 
 	SaveTransaction(ctrx *tx.CommittedTx)
+	WriteBatch() error
 	Close() error
 }
