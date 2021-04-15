@@ -356,19 +356,6 @@ func TestForkDetection(t *testing.T) {
 	assert.Error(t, tState1.CommitBlock(1, b2, c2))
 }
 
-func TestNodeShutdown(t *testing.T) {
-	setup(t)
-	b1, c1 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
-
-	// Should not panic or crash
-	tState1.Close()
-	assert.Error(t, tState1.CommitBlock(1, b1, c1))
-	b, _ := block.GenerateTestBlock(nil, nil)
-	assert.Error(t, tState1.ValidateBlock(b))
-	_, err := tState1.ProposeBlock(0)
-	assert.Error(t, err)
-}
-
 func TestSortition(t *testing.T) {
 	setup(t)
 

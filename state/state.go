@@ -67,7 +67,7 @@ func LoadOrNewState(
 		store:        store,
 		mintbaseAddr: mintbaseAddr,
 		sortition:    sortition.NewSortition(),
-		lastInfo:     last_info.NewLastInfo(conf.Store.Path),
+		lastInfo:     last_info.NewLastInfo(store),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -108,7 +108,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 
 	logger.Info("Try to load the last state info")
-	committee, err := st.lastInfo.RestoreLastInfo(st.store)
+	committee, err := st.lastInfo.RestoreLastInfo()
 	if err != nil {
 		return err
 	}
@@ -367,10 +367,17 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		return err
 	}
 
+	st.lastInfo.SetBlockHeight(st.lastInfo.BlockHeight() + 1)
+	st.lastInfo.SetBlockHash(block.Hash())
+	st.lastInfo.SetBlockTime(block.Header().Time())
+	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
+	st.lastInfo.SetCertificate(cert)
+	st.lastInfo.SaveLastInfo()
+
 	// Commit and update the committee
 	st.commitSandbox(sb, cert.Round())
 
-	st.store.SaveBlock(st.lastInfo.BlockHeight()+1, block)
+	st.store.SaveBlock(st.lastInfo.BlockHeight(), block)
 
 	// Save txs and receipts
 	for _, ctrx := range ctrxs {
@@ -378,13 +385,9 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		st.store.SaveTransaction(ctrx)
 	}
 
-	st.lastInfo.SetBlockHeight(st.lastInfo.BlockHeight() + 1)
-	st.lastInfo.SetBlockHash(block.Hash())
-	st.lastInfo.SetBlockTime(block.Header().Time())
-	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
-	st.lastInfo.SetCertificate(cert)
-
-	st.store.WriteBatch()
+	if err := st.store.WriteBatch(); err != nil {
+		st.logger.Panic("Unable to update state", "err", err)
+	}
 
 	// Evaluate sortition before updating the committee
 	if st.evaluateSortition() {
@@ -392,11 +395,6 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	}
 
 	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
-
-	err = st.lastInfo.SaveLastInfo()
-	if err != nil {
-		st.logger.Info("Saving last info failed", "err", err)
-	}
 
 	// At this point we can assign new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())

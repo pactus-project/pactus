@@ -14,9 +14,9 @@ import (
 )
 
 func TestRestore(t *testing.T) {
-	path := util.TempDirPath()
-	li1 := NewLastInfo(path)
-	li2 := NewLastInfo(path)
+	store := store.MockingStore()
+	li1 := NewLastInfo(store)
+	li2 := NewLastInfo(store)
 
 	val1 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 10, 20)
 	val2 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 18, 28)
@@ -53,25 +53,24 @@ func TestRestore(t *testing.T) {
 	li1.SetBlockHash(lastBlockHash)
 	li1.SetCertificate(lastCertificate)
 	li1.SetBlockTime(lastBlock.Header().Time())
-	assert.NoError(t, li1.SaveLastInfo())
+	li1.SaveLastInfo()
 
-	store := store.MockingStore()
-	_, err := li2.RestoreLastInfo(store)
+	_, err := li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	store.SaveBlock(lastBlockHeight, lastBlock)
-	_, err = li2.RestoreLastInfo(store)
+	_, err = li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	for _, ctrx := range ctrxs {
 		store.SaveTransaction(ctrx)
 	}
-	_, err = li2.RestoreLastInfo(store)
+	_, err = li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	val := validator.NewValidator(newValSigner.PublicKey(), 54, 45)
 	store.UpdateValidator(val)
-	_, err = li2.RestoreLastInfo(store)
+	_, err = li2.RestoreLastInfo()
 	assert.Error(t, err)
 
 	store.UpdateValidator(val1)
@@ -79,7 +78,7 @@ func TestRestore(t *testing.T) {
 	store.UpdateValidator(val3)
 	store.UpdateValidator(val4)
 
-	_, err = li2.RestoreLastInfo(store)
+	_, err = li2.RestoreLastInfo()
 	assert.NoError(t, err)
 
 	assert.Equal(t, li1.SortitionSeed(), li2.SortitionSeed())

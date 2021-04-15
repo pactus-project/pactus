@@ -112,9 +112,9 @@ func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	m.Store.SaveBlock(h, b)
 
 	for _, t := range trxs {
-		m.Store.Transactions[t.ID()] = tx.CommittedTx{
+		m.Store.SaveTransaction(&tx.CommittedTx{
 			Tx: t, Receipt: t.GenerateReceipt(0, b.Hash()),
-		}
+		})
 	}
 }
 func (m *MockState) CommitteeValidators() []*validator.Validator {
