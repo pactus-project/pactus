@@ -15,7 +15,6 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	commitBlockForAllStates(t)
 
 	testEnterNewHeight(tConsP)
-	shouldPublishQueryProposal(t, tConsP, 2, 0) // prepare stage, ignore it
 
 	p := makeProposal(t, 2, 0)
 
@@ -23,10 +22,6 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
 
-	s := &precommitState{tConsP, false}
-	tConsX.lk.Lock()
-	s.vote()
-	tConsX.lk.Unlock()
 	shouldPublishQueryProposal(t, tConsP, 2, 0)
 }
 

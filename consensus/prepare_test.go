@@ -3,8 +3,8 @@ package consensus
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func TestPrepareQueryProposal(t *testing.T) {
@@ -13,21 +13,9 @@ func TestPrepareQueryProposal(t *testing.T) {
 	commitBlockForAllStates(t)
 
 	testEnterNewHeight(tConsP)
+
+	// After receiving one vote, it should query for proposal (if don't have it yet)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
+
 	shouldPublishQueryProposal(t, tConsP, 2, 0)
-}
-
-func TestEnterPrecommitWithoutProposal(t *testing.T) {
-	setup(t)
-
-	commitBlockForAllStates(t)
-
-	testEnterNewHeight(tConsB)
-	shouldPublishQueryProposal(t, tConsB, 2, 0)
-
-	p := makeProposal(t, 2, 0)
-	testAddVote(t, tConsB, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsB, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsB, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexP)
-
-	assert.Equal(t, tConsB.currentState.name(), "precommit")
 }
