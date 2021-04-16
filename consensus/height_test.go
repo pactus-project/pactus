@@ -26,13 +26,10 @@ func TestNewHeightTimedout(t *testing.T) {
 func TestNewHeightDuplicateEntry(t *testing.T) {
 	setup(t)
 
-	testEnterNewHeight(tConsX)
-	testEnterPropose(tConsX)
+	tConsX.MoveToNewHeight()
+	tConsX.MoveToNewHeight()
 
-	s := &newHeightState{tConsX}
-
-	s.onTimedout(&ticker{Height: 1, Target: tickerTargetNewHeight})
-	checkHeightRound(t, tConsX, 1, 1)
+	checkHeightRoundWait(t, tConsX, 1, 0)
 }
 
 func TestUpdateCertificate(t *testing.T) {
