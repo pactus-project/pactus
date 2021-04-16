@@ -55,23 +55,23 @@ func TestRestore(t *testing.T) {
 	li1.SetBlockTime(lastBlock.Header().Time())
 	li1.SaveLastInfo()
 
-	_, err := li2.RestoreLastInfo()
+	_, err := li2.RestoreLastInfo(4)
 	assert.Error(t, err)
 
 	store.SaveBlock(lastBlockHeight, lastBlock)
-	_, err = li2.RestoreLastInfo()
+	_, err = li2.RestoreLastInfo(4)
 	assert.Error(t, err)
 
 	for _, ctrx := range ctrxs {
 		store.SaveTransaction(ctrx)
 	}
-	_, err = li2.RestoreLastInfo()
+	_, err = li2.RestoreLastInfo(4)
 	assert.Error(t, err)
 
 	val := validator.NewValidator(newValSigner.PublicKey(), 54, 45)
 	val.UpdateLastJoinedHeight(lastBlockHeight)
 	store.UpdateValidator(val)
-	_, err = li2.RestoreLastInfo()
+	_, err = li2.RestoreLastInfo(4)
 	assert.Error(t, err)
 
 	store.UpdateValidator(val1)
@@ -79,7 +79,7 @@ func TestRestore(t *testing.T) {
 	store.UpdateValidator(val3)
 	store.UpdateValidator(val4)
 
-	c, err := li2.RestoreLastInfo()
+	c, err := li2.RestoreLastInfo(4)
 	assert.NoError(t, err)
 
 	assert.Equal(t, li1.SortitionSeed(), li2.SortitionSeed())

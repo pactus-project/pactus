@@ -271,7 +271,8 @@ func (sync *synchronizer) onReceiveData(data []byte, from peer.ID) {
 	}
 
 	if err := handler.ParsPayload(msg.Payload, msg.Initiator); err != nil {
-		// TODO: mark as bad message
+		// TODO:Check if we are syncing, ignore errors
+		// TODO: mark as bad message?
 		sync.logger.Warn("Error on parsing a message", "from", util.FingerprintPeerID(from), "message", msg, "err", err)
 		return
 	}

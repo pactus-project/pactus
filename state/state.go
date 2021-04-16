@@ -108,7 +108,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 
 	logger.Info("Try to load the last state info")
-	committee, err := st.lastInfo.RestoreLastInfo()
+	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize)
 	if err != nil {
 		return err
 	}
