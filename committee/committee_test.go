@@ -10,9 +10,10 @@ import (
 
 func TestContains(t *testing.T) {
 	committee, signers := GenerateTestCommittee()
+	nonExist, _, _ := crypto.GenerateTestKeyPair()
 
 	assert.True(t, committee.Contains(signers[0].Address()))
-	assert.True(t, committee.Contains(committee.Proposer(0).Address()))
+	assert.False(t, committee.Contains(nonExist))
 }
 
 func TestProposer(t *testing.T) {
