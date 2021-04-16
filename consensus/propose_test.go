@@ -84,10 +84,10 @@ func TestNetworkLagging(t *testing.T) {
 	// We don't receive proposal on time
 	// tConsP.SetProposal(p)
 
-	shouldPublishQueryProposal(t, tConsP, h, r)
 
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	shouldPublishQueryProposal(t, tConsP, h, r)
 
 	// Proposal receives now
 	tConsP.SetProposal(p)

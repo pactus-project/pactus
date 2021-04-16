@@ -131,7 +131,9 @@ func (cs *consensus) MoveToNewHeight() {
 	defer cs.lk.Unlock()
 
 	if cs.state.LastBlockHeight()+1 > cs.height {
-		cs.enterNewState(cs.newHeightState)
+		if cs.currentState != cs.newHeightState {
+			cs.enterNewState(cs.newHeightState)
+		}
 	}
 }
 

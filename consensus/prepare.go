@@ -12,7 +12,6 @@ type prepareState struct {
 
 func (s *prepareState) enter() {
 	s.hasVoted = false
-	s.decide()
 }
 
 func (s *prepareState) decide() {

@@ -116,7 +116,7 @@ func (li *LastInfo) SaveLastInfo() {
 	li.store.SaveLastInfo(bs)
 }
 
-func (li *LastInfo) RestoreLastInfo() (*committee.Committee, error) {
+func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, error) {
 	bs := li.store.RestoreLastInfo()
 	lid := new(lastInfoData)
 	err := cbor.Unmarshal(bs, lid)
@@ -152,15 +152,15 @@ func (li *LastInfo) RestoreLastInfo() (*committee.Committee, error) {
 	li.lastBlockHash = b.Hash()
 	li.lastBlockTime = b.Header().Time()
 
-	vals := make([]*validator.Validator, len(b.LastCertificate().Committers()))
-	for i, num := range b.LastCertificate().Committers() {
+	vals := make([]*validator.Validator, len(lid.LastCertificate.Committers()))
+	for i, num := range lid.LastCertificate.Committers() {
 		val, err := li.store.ValidatorByNumber(num)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
 		}
 		vals[i] = val
 	}
-	committee, err := committee.NewCommittee(vals, len(b.LastCertificate().Committers()), b.Header().ProposerAddress())
+	committee, err := committee.NewCommittee(vals, committeeSize, b.Header().ProposerAddress())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %v", err)
 	}
