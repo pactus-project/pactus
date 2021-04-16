@@ -38,27 +38,32 @@ func TestNewHeightDuplicateEntry(t *testing.T) {
 func TestUpdateCertificate(t *testing.T) {
 	setup(t)
 
-	testEnterNewHeight(tConsX)
-
 	commitBlockForAllStates(t)
 
-	s := &newHeightState{tConsX}
+	testEnterNewHeight(tConsX)
 
-	h := tConsX.state.LastBlockHash()
-	cert1 := tConsX.state.LastCertificate()
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexX)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexB)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 1, 0, h, tIndexP)
+	p := makeProposal(t, 2, 0)
+	tConsX.SetProposal(p)
 
-	s.lk.Lock()
-	s.decide()
-	s.lk.Unlock()
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexB)
+
+	assert.Equal(t, tConsX.state.LastBlockHeight(), 2)
+
+	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexP)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexP)
+
+	testEnterNewHeight(tConsX)
 
 	// This certificate has all signers' vote
-	cert2 := tConsX.state.LastCertificate()
+	cert := tConsX.state.LastCertificate()
 
-	assert.NotEqual(t, cert1.Hash(), cert2.Hash())
+	assert.Empty(t, cert.Absences())
 }
 
 func TestConsensusBehindState(t *testing.T) {

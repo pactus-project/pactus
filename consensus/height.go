@@ -50,6 +50,7 @@ func (s *newHeightState) decide() {
 }
 
 func (s *newHeightState) onAddVote(v *vote.Vote) {
+	s.doAddVote(v)
 }
 
 func (s *newHeightState) onSetProposal(p *proposal.Proposal) {
