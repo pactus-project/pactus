@@ -21,12 +21,11 @@ func (handler *queryVotesHandler) ParsPayload(p payload.Payload, initiator peer.
 	pld := p.(*payload.QueryVotesPayload)
 	handler.logger.Trace("Parsing query votes payload", "pld", pld)
 
-	if !handler.peerIsInTheCommittee(initiator) {
-		return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
-	}
-
 	height, _ := handler.consensus.HeightRound()
 	if pld.Height == height {
+		if !handler.peerIsInTheCommittee(initiator) {
+			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
+		}
 		v := handler.consensus.PickRandomVote()
 		if v != nil {
 			response := payload.NewVotePayload(v)

@@ -12,15 +12,17 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	disableHeartbeat(t)
 
 	consensusHeight := tAliceState.LastBlockHeight() + 1
-	p1, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-	p2, _ := proposal.GenerateTestProposal(consensusHeight, 1)
+	proposalRound0, _ := proposal.GenerateTestProposal(consensusHeight, 0)
+	proposalRound1, _ := proposal.GenerateTestProposal(consensusHeight, 1)
 
-	tAliceSync.cache.AddProposal(p1)
-	tBobConsensus.SetProposal(p2)
-	pld := payload.NewQueryProposalPayload(consensusHeight, 1)
+	pldRound0 := payload.NewQueryProposalPayload(consensusHeight, 0)
+	pldRound1 := payload.NewQueryProposalPayload(consensusHeight, 1)
+
+	tBobConsensus.Round = 0
+	tBobConsensus.SetProposal(proposalRound0)
 
 	t.Run("Alice should not send query proposal message because she is not an active validator", func(t *testing.T) {
-		tAliceBroadcastCh <- pld
+		tAliceBroadcastCh <- pldRound0
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
 	})
 
@@ -30,19 +32,35 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	})
 
 	t.Run("Bob should not process alice's message because she is not an active validator", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pld)
+		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pldRound0)
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
 	})
 
 	joinAliceToTheSet(t)
+	tBobConsensus.Round = 1
+	tBobConsensus.SetProposal(proposalRound1)
 
-	t.Run("Alice should be able to send query proposal message because sh is an active validator", func(t *testing.T) {
-		tAliceBroadcastCh <- pld
+	t.Run("Alice should not query for proposal, because she has proposal in her cache", func(t *testing.T) {
+		tAliceSync.cache.AddProposal(proposalRound0)
+
+		tAliceBroadcastCh <- pldRound0
+		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
+	})
+
+	t.Run("Bob should not send Alice the stale proposal", func(t *testing.T) {
+		// This case is importance for stability and performance of consensus
+
+		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pldRound0)
+		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
+	})
+
+	t.Run("Alice should be able to send query proposal message because she is an active validator", func(t *testing.T) {
+		tAliceBroadcastCh <- pldRound1
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
 	})
 
 	t.Run("Bob processes Alice's message", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pld)
+		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pldRound1)
 		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
 	})
 }
