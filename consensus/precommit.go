@@ -3,6 +3,7 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type precommitState struct {
@@ -23,6 +24,13 @@ func (s *precommitState) decide() {
 	if precommitQH != nil {
 		s.logger.Debug("precommit has quorum", "precommitQH", precommitQH)
 		s.enterNewState(s.commitState)
+	}
+
+	// Liveness on PBFT
+	// ...
+	voteset := s.pendingVotes.ChangeProposerVoteSet(s.round + 1)
+	if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
+		s.enterNewState(s.changeProposerState)
 	}
 }
 
@@ -66,7 +74,6 @@ func (s *precommitState) onAddVote(v *vote.Vote) {
 
 func (s *precommitState) onSetProposal(p *proposal.Proposal) {
 	s.doSetProposal(p)
-
 	if p.Round() == s.round {
 		s.decide()
 	}
@@ -77,6 +84,7 @@ func (s *precommitState) onTimedout(t *ticker) {
 		s.logger.Debug("Invalid ticker", "ticker", t)
 		return
 	}
+
 	s.enterNewState(s.changeProposerState)
 }
 

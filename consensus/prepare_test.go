@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"testing"
+	"time"
 
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -18,4 +19,131 @@ func TestPrepareQueryProposal(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
 
 	shouldPublishQueryProposal(t, tConsP, 2, 0)
+}
+
+func TestGoToChangeProposerFromPrepare(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+
+	testEnterNewHeight(tConsP)
+	p := makeProposal(t, 2, 0)
+
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexY)
+
+	tConsP.SetProposal(p)
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+}
+
+// We have four nodes: Nx, Ny, Nb, Np, which:
+// Nb is a byzantine node and Nx, Ny, Np are honest nodes,
+// however Np is partitioned and see the network through Nb (Byzantine node).
+
+// In Height H, B sends prepare votes to Nx, Ny and change-proposer vote to Np.
+// Np should not move to change-proposer stage unless it has 1/3+ votes from other replicas.
+func TestByzantineVote1(t *testing.T) {
+	setup(t)
+
+	h := 1
+	r := 0
+	p := makeProposal(t, h, r)
+
+	testEnterNewHeight(tConsX)
+	testEnterNewHeight(tConsP)
+
+	// =================================
+	// Nx votes
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
+	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
+
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	// Byzantine node doesn't broadcast its precommit vote
+
+	// Nx, Ny are unable to progress
+
+	// =================================
+	// Np votes
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
+
+	// Np is unable to progress
+
+	// =================================
+	time.Sleep(1 * time.Second)
+	checkHeightRound(t, tConsX, h, r)
+	checkHeightRound(t, tConsP, h, r)
+
+	// =================================
+	// Now, Partition heals
+
+	tConsP.SetProposal(p)
+	for _, v := range tConsX.AllVotes() {
+		tConsP.AddVote(v)
+	}
+	checkHeightRoundWait(t, tConsP, h, r+1)
+
+	for _, v := range tConsP.AllVotes() {
+		tConsX.AddVote(v)
+	}
+	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	checkHeightRoundWait(t, tConsX, h, r+1)
+}
+
+// Np should propose a block. Np is partitioned and Nb doesn't send proposal to Nx, Ny.
+func TestByzantineVote2(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	h := 4
+	r := 0
+	p1 := makeProposal(t, h, r)
+	p2 := makeProposal(t, h, r+1)
+
+	testEnterNewHeight(tConsX)
+	testEnterNewHeight(tConsP)
+
+	// =================================
+	// Np votes
+	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p1.Block().Hash(), tIndexB) // Byzantine vote
+	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())
+
+	// Partitioned node is unable to progress
+
+	// =================================
+	// Nx votes
+	testAddVote(t, tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Nb sends change proposer vote to Nx, Ny
+
+	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	// Nx goes to the next round
+
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r+1, p2.Block().Hash(), tIndexY)
+	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p2.Block().Hash())
+
+	// Nx, Ny are unable to progress
+
+	// =================================
+	time.Sleep(1 * time.Second)
+	checkHeightRound(t, tConsX, h, r+1)
+	checkHeightRound(t, tConsP, h, r)
+
+	// =================================
+	// Now, Partition heals
+	tConsP.SetProposal(p2)
+	for _, v := range tConsX.AllVotes() {
+		tConsP.AddVote(v)
+	}
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	checkHeightRoundWait(t, tConsP, h, r+1)
+
+	for _, v := range tConsP.AllVotes() {
+		tConsX.AddVote(v)
+	}
+	checkHeightRoundWait(t, tConsX, h, r+1)
 }

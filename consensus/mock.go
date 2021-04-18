@@ -39,6 +39,11 @@ func (m *MockConsensus) AddVote(v *vote.Vote) {
 
 	m.Votes = append(m.Votes, v)
 }
+func (m *MockConsensus) AllVotes() []*vote.Vote {
+	m.Lock.RLock()
+	defer m.Lock.RUnlock()
+	return m.Votes
+}
 func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()

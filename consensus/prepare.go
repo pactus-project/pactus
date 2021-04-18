@@ -3,6 +3,7 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type prepareState struct {
@@ -22,6 +23,16 @@ func (s *prepareState) decide() {
 	if prepareQH != nil {
 		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
 		s.enterNewState(s.precommitState)
+	}
+
+	// Liveness on PBFT
+	//
+	// If a replica receives a set of f+1 valid change-proposer votes for the next round
+	// it sends a change-proposer vote for this round, even if its timer has not expired;
+	// this prevents it from starting the next change-proposer state too late.
+	voteset := s.pendingVotes.ChangeProposerVoteSet(s.round + 1)
+	if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
+		s.enterNewState(s.changeProposerState)
 	}
 }
 
@@ -45,12 +56,17 @@ func (s *prepareState) vote() {
 
 func (s *prepareState) onAddVote(v *vote.Vote) {
 	s.doAddVote(v)
-	s.decide()
+	if v.Round() == s.round &&
+		v.VoteType() == vote.VoteTypePrepare {
+		s.decide()
+	}
 }
 
 func (s *prepareState) onSetProposal(p *proposal.Proposal) {
 	s.doSetProposal(p)
-	s.decide()
+	if p.Round() == s.round {
+		s.decide()
+	}
 }
 
 func (s *prepareState) onTimedout(t *ticker) {

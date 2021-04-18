@@ -105,18 +105,28 @@ func (cs *consensus) RoundProposal(round int) *proposal.Proposal {
 
 	return cs.pendingVotes.RoundProposal(round)
 }
-
-func (cs *consensus) RoundVotes(round int) []*vote.Vote {
+func (cs *consensus) AllVotes() []*vote.Vote {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
+
+	votes := []*vote.Vote{}
+	for r := 0; r <= cs.round; r++ {
+		rv := cs.pendingVotes.MustGetRoundVotes(r)
+		votes = append(votes, rv.AllVotes()...)
+	}
+	return votes
+}
+func (cs *consensus) RoundVotes(round int) []*vote.Vote {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
 
 	rv := cs.pendingVotes.MustGetRoundVotes(round)
 	return rv.AllVotes()
 }
 
 func (cs *consensus) HasVote(hash crypto.Hash) bool {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
 
 	return cs.pendingVotes.HasVote(hash)
 }

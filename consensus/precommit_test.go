@@ -49,3 +49,22 @@ func TestPrecommitInvalidProposal(t *testing.T) {
 	tConsP.SetProposal(p1)
 	assert.NotNil(t, tConsP.RoundProposal(0))
 }
+
+func TestGoToChangeProposerFromPrecommit(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+
+	testEnterNewHeight(tConsP)
+	p := makeProposal(t, 2, 0)
+
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexY)
+
+	tConsP.SetProposal(p)
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+}

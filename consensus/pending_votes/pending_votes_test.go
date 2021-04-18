@@ -15,9 +15,9 @@ func TestMustGetRound(t *testing.T) {
 	pv := NewPendingVotes()
 	pv.MoveToNewHeight(101, committee.Validators())
 	pv.MustGetRoundVotes(4)
-	assert.Nil(t, pv.GetRoundVotes(5))
-	assert.NotNil(t, pv.GetRoundVotes(1))
-	assert.NotNil(t, pv.GetRoundVotes(4))
+	assert.Nil(t, pv.RoundVotes(5))
+	assert.NotNil(t, pv.RoundVotes(1))
+	assert.NotNil(t, pv.RoundVotes(4))
 	assert.Equal(t, len(pv.roundVotes), 5)
 }
 
@@ -51,7 +51,7 @@ func TestAddVotes(t *testing.T) {
 	precommits := pv.PrecommitVoteSet(1)
 	assert.Equal(t, prepares.Len(), 2)   //  Vote + Duplicated
 	assert.Equal(t, precommits.Len(), 0) // no precommit votes
-	assert.Equal(t, len(pv.GetRoundVotes(1).AllVotes()), 2)
+	assert.Equal(t, len(pv.RoundVotes(1).AllVotes()), 2)
 	assert.True(t, pv.HasVote(duplicateVote.Hash()))
 	assert.True(t, pv.HasVote(validVote.Hash()))
 	assert.False(t, pv.HasVote(invalidVote.Hash()))

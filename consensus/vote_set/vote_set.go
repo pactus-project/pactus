@@ -129,6 +129,15 @@ func (vs *VoteSet) hasTwoThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)
 }
 
+func (vs *VoteSet) hasOneThirdOfTotalPower(power int64) bool {
+	return power > (vs.totalPower * 1 / 3)
+}
+
+func (vs *VoteSet) BlockHashHasOneThirdOfTotalPower(hash crypto.Hash) bool {
+	blockVotes := vs.mustGetBlockVotes(hash)
+	return vs.hasOneThirdOfTotalPower(blockVotes.power)
+}
+
 func (vs *VoteSet) QuorumHash() *crypto.Hash {
 	return vs.quorumHash
 }

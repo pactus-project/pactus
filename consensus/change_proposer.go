@@ -18,9 +18,9 @@ func (s *changeProposerState) enter() {
 }
 
 func (s *changeProposerState) decide() {
-	votes := s.pendingVotes.ChangeProposerVoteSet(s.round)
-	if votes.QuorumHash() != nil {
-		s.logger.Debug("change proposer has quorum")
+	voteset := s.pendingVotes.ChangeProposerVoteSet(s.round)
+	if voteset.QuorumHash() != nil {
+		s.logger.Debug("change proposer has quorum", "proposer", s.proposer(s.round).Address())
 		s.round++
 
 		s.enterNewState(s.proposeState)

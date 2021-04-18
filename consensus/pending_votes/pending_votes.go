@@ -21,7 +21,7 @@ func NewPendingVotes() *PendingVotes {
 	return pv
 }
 
-func (pv *PendingVotes) GetRoundVotes(round int) *RoundVotes {
+func (pv *PendingVotes) RoundVotes(round int) *RoundVotes {
 	if round < len(pv.roundVotes) {
 		return pv.roundVotes[round]
 	}
@@ -49,7 +49,7 @@ func (pv *PendingVotes) MustGetRoundVotes(round int) *RoundVotes {
 		pv.roundVotes = append(pv.roundVotes, rv)
 	}
 
-	return pv.GetRoundVotes(round)
+	return pv.RoundVotes(round)
 }
 
 func (pv *PendingVotes) AddVote(v *vote.Vote) error {
@@ -77,7 +77,7 @@ func (pv *PendingVotes) HasRoundProposal(round int) bool {
 }
 
 func (pv *PendingVotes) RoundProposal(round int) *proposal.Proposal {
-	rv := pv.GetRoundVotes(round)
+	rv := pv.RoundVotes(round)
 	if rv == nil {
 		return nil
 	}

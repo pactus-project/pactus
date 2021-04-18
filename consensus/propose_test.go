@@ -12,7 +12,7 @@ import (
 func TestProposeBlock(t *testing.T) {
 	setup(t)
 	testEnterNewHeight(tConsX)
-	shouldPublishProposal(t, tConsX)
+	shouldPublishProposal(t, tConsX, 1, 0)
 }
 
 func TestSetProposalInvalidProposer(t *testing.T) {
@@ -83,7 +83,6 @@ func TestNetworkLagging(t *testing.T) {
 	p := makeProposal(t, h, r)
 	// We don't receive proposal on time
 	// tConsP.SetProposal(p)
-
 
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)

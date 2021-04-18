@@ -124,7 +124,7 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash)
 	}
 }
 
-func shouldPublishProposal(t *testing.T, cons *consensus) {
+func shouldPublishProposal(t *testing.T, cons *consensus, height, round int) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -136,6 +136,9 @@ func shouldPublishProposal(t *testing.T, cons *consensus) {
 			logger.Info("shouldPublishProposal", "pld", pld)
 
 			if pld.Type() == payload.PayloadTypeProposal {
+				p := pld.(*payload.ProposalPayload)
+				assert.Equal(t, p.Proposal.Height(), height)
+				assert.Equal(t, p.Proposal.Round(), round)
 				return
 			}
 		}
@@ -164,7 +167,7 @@ func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int
 }
 
 func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, hash crypto.Hash) *vote.Vote {
-	timeout := time.NewTimer(1 * time.Second)
+	timeout := time.NewTimer(2 * time.Second)
 
 	for {
 		select {
@@ -438,35 +441,4 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.RoundProposal(0), 0)
 	checkHeightRoundWait(t, tConsP, 2, 0)
-}
-
-// Imagine we have four nodes: (Nx, Ny, Nb, Np) which:
-// Nb is a byzantine node and Nx, Ny, Np are honest nodes,
-// however Np is partitioned and see the network through Nb (Byzantine node).
-// In Height H, B sends its pre-votes to all the nodes
-// but only sends valid pre-commit to P.
-func TestByzantineVote(t *testing.T) {
-	setup(t)
-
-	h := 1
-	r := 0
-	p := makeProposal(t, h, r)
-
-	testEnterNewHeight(tConsP)
-	tConsP.SetProposal(p)
-
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
-
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, crypto.GenerateTestHash(), tIndexB) // Byzantine vote
-
-	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
-	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
-
-	// Partitioned node is unable to progress
-
-	// Now, Partition heals
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
-	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
 }

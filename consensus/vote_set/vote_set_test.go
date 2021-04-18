@@ -11,7 +11,6 @@ import (
 )
 
 func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []crypto.Signer) {
-
 	signers := []crypto.Signer{}
 	vals := []*validator.Validator{}
 	for i, s := range stakes {
@@ -201,4 +200,22 @@ func TestAllVotes(t *testing.T) {
 	assert.Contains(t, vs.AllVotes(), v2)
 	assert.Contains(t, vs.AllVotes(), v3)
 	assert.NotNil(t, vs.QuorumHash())
+}
+
+func TestOneThirdPower(t *testing.T) {
+	committee, signers := setupCommittee(t, 1000, 1000, 1500, 1500)
+
+	vs := NewVoteSet(1, 0, vote.VoteTypeChangeProposer, committee.Validators())
+
+	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[0].Address())
+	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[1].Address())
+
+	signers[0].SignMsg(v1)
+	signers[1].SignMsg(v2)
+
+	assert.NoError(t, vs.AddVote(v1))
+	assert.False(t, vs.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash))
+
+	assert.NoError(t, vs.AddVote(v2))
+	assert.True(t, vs.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash))
 }
