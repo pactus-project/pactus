@@ -73,7 +73,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: 6,
+			Number: 5,
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)

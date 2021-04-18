@@ -21,12 +21,12 @@ func (handler *queryProposalHandler) ParsPayload(p payload.Payload, initiator pe
 	pld := p.(*payload.QueryProposalPayload)
 	handler.logger.Trace("Parsing query proposal payload", "pld", pld)
 
-	if !handler.peerIsInTheCommittee(initiator) {
-		return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
-	}
+	height, round := handler.consensus.HeightRound()
+	if pld.Height == height && pld.Round == round {
+		if !handler.peerIsInTheCommittee(initiator) {
+			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
+		}
 
-	height, _ := handler.consensus.HeightRound()
-	if pld.Height == height {
 		p := handler.consensus.RoundProposal(pld.Round)
 		if p != nil {
 			response := payload.NewProposalPayload(p)
