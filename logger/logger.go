@@ -92,7 +92,10 @@ func keyvalsToFields(keyvals ...interface{}) logrus.Fields {
 	}
 	fields := make(logrus.Fields)
 	for i := 0; i < len(keyvals); i += 2 {
-		key := keyvals[i].(string)
+		key, ok := keyvals[i].(string)
+		if !ok {
+			key = "invalid-key"
+		}
 		///
 		val := "nil"
 		switch v := keyvals[i+1].(type) {

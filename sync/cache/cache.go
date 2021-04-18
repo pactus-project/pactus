@@ -3,8 +3,8 @@ package cache
 import (
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
@@ -69,7 +69,7 @@ func (c *Cache) GetBlock(height int) *block.Block {
 
 	b := c.state.Block(height)
 	if b != nil {
-		c.cache.Add(blockKey(height), b)
+		c.AddBlock(height, b)
 		return b
 	}
 
@@ -78,6 +78,14 @@ func (c *Cache) GetBlock(height int) *block.Block {
 
 func (c *Cache) AddBlock(height int, block *block.Block) {
 	c.cache.Add(blockKey(height), block)
+	c.AddCertificate(block.LastCertificate())
+}
+
+func (c *Cache) AddBlocks(height int, blocks []*block.Block) {
+	for _, block := range blocks {
+		c.AddBlock(height, block)
+		height++
+	}
 }
 
 func (c *Cache) GetCertificate(blockhash crypto.Hash) *block.Certificate {

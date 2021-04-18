@@ -10,14 +10,13 @@ struct Header {
   lastBlockHash       @2 :Data;
   stateHash           @3 :Data;
   txsHash             @4 :Data;
-  lastReceiptsHash    @5 :Data;
-  lastCertificateHash      @6 :Data;
-  committeeHash       @7 :Data;
-  proposerAddress     @8 :Data;
+  lastCertificateHash @5 :Data;
+  sortitionSeed       @6 :Data;
+  proposerAddress     @7 :Data;
 }
 
 struct Txs {
-  hashes             @0 :List(Data);
+  hashes              @0 :List(Data);
 }
 
 struct Certificate {
@@ -71,8 +70,8 @@ struct Peer {
   publicKey             @3 :Text;
   initialBlockDownload  @4 :Bool;
   height                @5 :Int32;
-  ReceivedMessages      @6 :Int32;
-  InvalidMessages       @7 :Int32;
+  receivedMessages      @6 :Int32;
+  invalidMessages       @7 :Int32;
   receivedBytes         @8 :Int32;
 }
 

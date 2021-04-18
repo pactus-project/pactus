@@ -32,6 +32,9 @@ func TestFingerprint(t *testing.T) {
 	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
 	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
 	assert.Equal(t, keyvalsToFields("key", b2)["key"], "bar")
+	assert.Nil(t, keyvalsToFields(1)["key"])
+	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
+	assert.Nil(t, keyvalsToFields(1, nil)["key"])
 }
 
 func TestNilFingerprint(t *testing.T) {
@@ -46,6 +49,9 @@ func TestNilFingerprint(t *testing.T) {
 	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
 	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
 	assert.Equal(t, keyvalsToFields("key", b2)["key"], "nil")
+	assert.Nil(t, keyvalsToFields(1)["key"])
+	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
+	assert.Nil(t, keyvalsToFields(1, nil)["key"])
 }
 
 func TestObjLogger(t *testing.T) {

@@ -34,13 +34,13 @@ func (r *Receipt) Hash() crypto.Hash {
 
 func (r *Receipt) SanityCheck() error {
 	if r.data.Status != Ok {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid status")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid status")
 	}
 	if err := r.data.BlockHash.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid block hash")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid block hash")
 	}
 	if err := r.data.TxID.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid block hash")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid block hash")
 	}
 	return nil
 }

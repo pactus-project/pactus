@@ -14,7 +14,7 @@ func TestGetTransaction(t *testing.T) {
 	conn, client := callServer(t)
 	tx1, _ := tx.GenerateTestSortitionTx()
 
-	tMockState.Store.Transactions[tx1.ID()] = &tx.CommittedTx{Tx: tx1}
+	tMockState.Store.SaveTransaction(&tx.CommittedTx{Tx: tx1})
 	t.Run("Should return transaction, verbosity 0", func(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &zarb.TransactionRequest{Id: tx1.ID().String()})
 		assert.NoError(t, err)

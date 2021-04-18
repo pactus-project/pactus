@@ -10,9 +10,10 @@ import (
 
 func TestContains(t *testing.T) {
 	committee, signers := GenerateTestCommittee()
+	nonExist, _, _ := crypto.GenerateTestKeyPair()
 
 	assert.True(t, committee.Contains(signers[0].Address()))
-	assert.True(t, committee.Contains(committee.Proposer(0).Address()))
+	assert.False(t, committee.Contains(nonExist))
 }
 
 func TestProposer(t *testing.T) {
@@ -99,7 +100,7 @@ func TestProposerJoin(t *testing.T) {
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
 	assert.NoError(t, err)
 
-	// Val1 is already in set
+	// Val1 is already in committee
 	assert.Error(t, committee.Update(0, []*validator.Validator{val1}))
 	// More than 2/3 of power
 	assert.Error(t, committee.Update(0, []*validator.Validator{val5, val6, val7}))
@@ -165,11 +166,11 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
 
-	// How validator set moves when new validator(s) join(s)?
+	// How committee moves when new validator(s) join(s)?
 	//
 	// Example:
 	//
-	// Imagine validators `1` to `7` are in the set, and `1` is the oldest and also proposer.
+	// Imagine validators `1` to `7` are in the committee, and `1` is the oldest and also proposer.
 	// +=+-+-+-+-+-+-+
 	// |1|2|3|4|5|6|7|
 	// +=+-+-+-+-+-+-+
@@ -180,7 +181,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// |8|1|2|3|4|5|6|7|
 	// +*+=+-+-+-+-+-+-+
 	//
-	// Now validator set should be adjusted and the oldest validator should leave.
+	// Now committee should be adjusted and the oldest validator should leave.
 	// In this example `1` is the oldest validator:
 	// +-+-+-+-+-+-+-+
 	// |8|2|3|4|5|6|7|
@@ -288,10 +289,7 @@ func TestCommittee(t *testing.T) {
 
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
-
-	expected, _ := crypto.HashFromString("fd36b2597b028652ad4430b34a67094ba93ed84bd3abe5cd27f675bf431add48")
 	assert.Equal(t, committee.Committers(), []int{0, 1, 2, 3})
-	assert.Equal(t, committee.CommitteeHash(), expected)
 }
 
 func TestSortJoined(t *testing.T) {
@@ -308,8 +306,6 @@ func TestSortJoined(t *testing.T) {
 
 	assert.NoError(t, vs1.Update(0, []*validator.Validator{val5, val6, val7}))
 	assert.NoError(t, vs2.Update(0, []*validator.Validator{val7, val5, val6}))
-
-	assert.Equal(t, vs1.CommitteeHash(), vs2.CommitteeHash())
 }
 
 func TestCurrentPower(t *testing.T) {
@@ -322,5 +318,5 @@ func TestCurrentPower(t *testing.T) {
 	assert.NoError(t, err)
 
 	total := val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
-	assert.Equal(t, committee.currentPower(), total)
+	assert.Equal(t, committee.TotalPower(), total)
 }

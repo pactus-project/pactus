@@ -34,6 +34,8 @@ const tNodeIdx1 = 0
 const tNodeIdx2 = 1
 const tNodeIdx3 = 2
 const tNodeIdx4 = 3
+const tTotalNodes = 8
+const tCommitteeSize = 4
 
 func incSequence(t *testing.T, addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
@@ -44,47 +46,49 @@ func getSequence(t *testing.T, addr crypto.Address) int {
 }
 
 func TestMain(m *testing.M) {
-	nodeCount := 8
-	committeeSize := 4
-	blockTime := 2
-
-	tSigners = make([]crypto.Signer, nodeCount)
-	tConfigs = make([]*config.Config, nodeCount)
-	tNodes = make([]*node.Node, nodeCount)
+	tSigners = make([]crypto.Signer, tTotalNodes)
+	tConfigs = make([]*config.Config, tTotalNodes)
+	tNodes = make([]*node.Node, tTotalNodes)
 	tSequences = make(map[crypto.Address]int)
 
-	for i := 0; i < nodeCount; i++ {
+	for i := 0; i < tTotalNodes; i++ {
 		addr, _, priv := crypto.GenerateTestKeyPair()
 		tSigners[i] = crypto.NewSigner(priv)
 		tConfigs[i] = config.DefaultConfig()
-		tConfigs[i].Sync.StartingTimeout = 0
+
 		tConfigs[i].State.Store.Path = util.TempDirPath()
+		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
+		tConfigs[i].Logger.Levels["default"] = "error"
+		tConfigs[i].Logger.Levels["_state"] = "info"
+		tConfigs[i].Logger.Levels["_sync"] = "error"
+		tConfigs[i].Logger.Levels["_consensus"] = "error"
+		tConfigs[i].Logger.Levels["_pool"] = "error"
+		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
+		tConfigs[i].Sync.CacheSize = 1000
+		tConfigs[i].Sync.RequestBlockInterval = 10
+		tConfigs[i].Sync.StartingTimeout = 0
+		tConfigs[i].Sync.InitialBlockDownload = false
 		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
+		tConfigs[i].Network.ListenAddress = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
+		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
+		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
+		tConfigs[i].Network.Bootstrap.MinThreshold = 3
+		tConfigs[i].Http.Enable = false
+		tConfigs[i].GRPC.Enable = false
+		tConfigs[i].Capnp.Enable = false
+
 		if i == 0 {
+			tConfigs[i].Sync.InitialBlockDownload = true
+			tConfigs[i].Capnp.Enable = true
 			tConfigs[i].Capnp.Address = tCapnpAddress
+
 			f, _ := os.Create(tConfigs[i].Network.NodeKeyFile)
 			_, err := f.WriteString("08011240f22591817d8803e32525db7fc5cb9949d77c402e20867a6cac6b3ffb3dc643fb2521ef3c844a12eee79c275f19958999aeebb173496b67ea4a40f5d34b0a1355")
 			if err != nil {
 				panic(err)
 			}
 			f.Close()
-		} else {
-			tConfigs[i].Capnp.Enable = false
 		}
-		tConfigs[i].Http.Enable = false
-		tConfigs[i].GRPC.Enable = false
-
-		tConfigs[i].Logger.Levels["default"] = "error"
-		tConfigs[i].Logger.Levels["_state"] = "info"
-		tConfigs[i].Logger.Levels["_sync"] = "error"
-		tConfigs[i].Logger.Levels["_consensus"] = "error"
-		tConfigs[i].Logger.Levels["_pool"] = "error"
-
-		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
-		tConfigs[i].Sync.CacheSize = 1000
-		tConfigs[i].Network.ListenAddress = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
-		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
-
 		fmt.Printf("Node %d address: %s\n", i+1, addr)
 	}
 
@@ -97,54 +101,57 @@ func TestMain(m *testing.M) {
 	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2, 0)
 	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3, 0)
 	params := param.DefaultParams()
-	params.BlockTimeInSecond = blockTime
-	params.CommitteeSize = committeeSize
+	params.BlockTimeInSecond = 2
+	params.CommitteeSize = tCommitteeSize
 	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
 
-	t := &testing.T{}
-	for i := 0; i < nodeCount; i++ {
+	for i := 0; i < tCommitteeSize; i++ {
 		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err.Error()))
 		}
-		time.Sleep(500 * time.Millisecond)
 	}
 
 	c, _ := net.Dial("tcp", tCapnpAddress)
-
 	tCtx = context.Background()
 	conn := rpc.NewConn(rpc.StreamTransport(c))
 	tCapnpServer = capnp.ZarbServer{Client: conn.Bootstrap(tCtx)}
 
-	waitForNewBlock(t)
-	waitForNewBlock(t)
-	waitForNewBlock(t)
-	waitForNewBlock(t)
-
-	// These validators are not in the committee now.
-	// Bond transactions are valid and they can enter the committee soon
-	for i := committeeSize; i < nodeCount; i++ {
-		amt := util.RandInt64(1000000 - 1) // fee is always 1000
-		err := broadcastBondTransaction(t, tSigners[tNodeIdx2], tSigners[i].PublicKey(), amt, 1000)
-		if err != nil {
-			panic(fmt.Sprintf("Error on broadcasting transaction: %v", err))
-		}
-		fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
-		incSequence(t, tSigners[tNodeIdx2].Address())
+	// Wait for some blocks
+	for i := 0; i < 10; i++ {
+		waitForNewBlock()
 	}
 
 	fmt.Println("Running tests")
-
 	exitCode := m.Run()
 
-	// Some more blocks
-	for i := 0; i < 20; i++ {
-		waitForNewBlock(t)
+	// Running other nodes
+	for i := tCommitteeSize; i < tTotalNodes; i++ {
+		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
+		if err := tNodes[i].Start(); err != nil {
+			panic(fmt.Sprintf("Error on starting the node: %v", err.Error()))
+		}
 	}
 
+	// Commit more blocks, then new nodes can catch up and send sortition transactions
+	for i := 0; i < 40; i++ {
+		waitForNewBlock()
+	}
+
+	// Check if sortition worked or not?
+	b := lastBlock()
+	committers := b.LastCertificate().Committers()
+	for _, num := range committers {
+		if num == tNodeIdx1 ||
+			num == tNodeIdx2 {
+			panic("Sortition didn't work")
+		}
+	}
+
+	// Let's shutdown the nodes
 	tCtx.Done()
-	for i := 0; i < nodeCount; i++ {
+	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i].Stop()
 	}
 

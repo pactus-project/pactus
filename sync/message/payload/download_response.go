@@ -7,32 +7,39 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type DownloadResponsePayload struct {
 	ResponseCode ResponseCode   `cbor:"1,keyasint"`
 	SessionID    int            `cbor:"2,keyasint"`
-	Initiator    peer.ID        `cbor:"3,keyasint"`
-	Target       peer.ID        `cbor:"4,keyasint"`
-	From         int            `cbor:"5,keyasint"`
-	Blocks       []*block.Block `cbor:"6,keyasint"`
-	Transactions []*tx.Tx       `cbor:"7,keyasint"`
+	Target       peer.ID        `cbor:"3,keyasint"`
+	From         int            `cbor:"4,keyasint"`
+	Blocks       []*block.Block `cbor:"5,keyasint"`
+	Transactions []*tx.Tx       `cbor:"6,keyasint"`
+}
+
+func NewDownloadResponsePayload(code ResponseCode, sid int, target peer.ID, from int,
+	blocks []*block.Block, trxs []*tx.Tx) Payload {
+	return &DownloadResponsePayload{
+		ResponseCode: code,
+		SessionID:    sid,
+		Target:       target,
+		From:         from,
+		Blocks:       blocks,
+		Transactions: trxs,
+	}
 }
 
 func (p *DownloadResponsePayload) SanityCheck() error {
 	if p.From < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid Height")
-	}
-	if err := p.Initiator.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer id: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
 	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid target peer id: %v", err)
 	}
 	for _, b := range p.Blocks {
 		if err := b.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, "Invalid block: %v", err)
+			return errors.Errorf(errors.ErrInvalidMessage, "invalid block: %v", err)
 		}
 	}
 	for _, trx := range p.Transactions {
@@ -55,5 +62,5 @@ func (p *DownloadResponsePayload) To() int {
 }
 
 func (p *DownloadResponsePayload) Fingerprint() string {
-	return fmt.Sprintf("{%s %s ⚓ %d %v-%v}", util.FingerprintPeerID(p.Initiator), p.ResponseCode, p.SessionID, p.From, p.To())
+	return fmt.Sprintf("{⚓ %d %s %v-%v}", p.SessionID, p.ResponseCode, p.From, p.To())
 }

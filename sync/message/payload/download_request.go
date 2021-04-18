@@ -5,26 +5,30 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type DownloadRequestPayload struct {
 	SessionID int     `cbor:"1,keyasint"`
-	Initiator peer.ID `cbor:"2,keyasint"`
-	Target    peer.ID `cbor:"3,keyasint"`
-	From      int     `cbor:"4,keyasint"`
-	To        int     `cbor:"5,keyasint"`
+	Target    peer.ID `cbor:"2,keyasint"`
+	From      int     `cbor:"3,keyasint"`
+	To        int     `cbor:"4,keyasint"`
+}
+
+func NewDownloadRequestPayload(sid int, target peer.ID, from, to int) Payload {
+	return &DownloadRequestPayload{
+		SessionID: sid,
+		Target:    target,
+		From:      from,
+		To:        to,
+	}
 }
 
 func (p *DownloadRequestPayload) SanityCheck() error {
+	if err := p.Target.Validate(); err != nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid target peer id: %v", err)
+	}
 	if p.From < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
-	}
-	if err := p.Initiator.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid initiator peer id: %v", err)
-	}
-	if err := p.Target.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid target peer id: %v", err)
 	}
 	if p.From > p.To {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid range")
@@ -37,5 +41,5 @@ func (p *DownloadRequestPayload) Type() PayloadType {
 }
 
 func (p *DownloadRequestPayload) Fingerprint() string {
-	return fmt.Sprintf("{%v ⚓ %d %v:%v}", util.FingerprintPeerID(p.Initiator), p.SessionID, p.From, p.To)
+	return fmt.Sprintf("{⚓ %d %v:%v}", p.SessionID, p.From, p.To)
 }

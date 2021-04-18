@@ -1,30 +1,82 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/hrs"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
-func (cs *consensus) enterPrepare(round int) {
-	if cs.isPrepared || round > cs.hrs.Round() {
-		cs.logger.Trace("Prepare: Precommitted, prepared or invalid round/step", "round", round)
+type prepareState struct {
+	*consensus
+	hasVoted bool
+}
+
+func (s *prepareState) enter() {
+	s.hasVoted = false
+}
+
+func (s *prepareState) decide() {
+	s.vote()
+
+	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	prepareQH := prepares.QuorumHash()
+	if prepareQH != nil {
+		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
+		s.enterNewState(s.precommitState)
+	}
+
+	// Liveness on PBFT
+	//
+	// If a replica receives a set of f+1 valid change-proposer votes for the next round
+	// it sends a change-proposer vote for this round, even if its timer has not expired;
+	// this prevents it from starting the next change-proposer state too late.
+	voteset := s.pendingVotes.ChangeProposerVoteSet(s.round + 1)
+	if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
+		s.enterNewState(s.changeProposerState)
+	}
+}
+
+func (s *prepareState) vote() {
+	if s.hasVoted {
 		return
 	}
-	cs.hrs.UpdateStep(hrs.StepTypePrepare)
-	cs.scheduleTimeout(cs.config.PrecommitTimeout(round), cs.hrs.Height(), round, hrs.StepTypePrecommit)
 
-	roundProposal := cs.pendingVotes.RoundProposal(round)
+	roundProposal := s.pendingVotes.RoundProposal(s.round)
 	if roundProposal == nil {
-		cs.requestForProposal()
-
-		cs.logger.Warn("Prepare: No proposal")
-		cs.signAddVote(vote.VoteTypePrepare, round, crypto.UndefHash)
+		s.queryProposal()
+		s.logger.Warn("No proposal yet.")
 		return
 	}
 
 	// Everything is good
-	cs.isPrepared = true
-	cs.logger.Info("Prepare: Proposal approved", "proposal", roundProposal)
-	cs.signAddVote(vote.VoteTypePrepare, round, roundProposal.Block().Hash())
+	s.logger.Info("Proposal approved", "proposal", roundProposal)
+	s.signAddVote(vote.VoteTypePrepare, roundProposal.Block().Hash())
+	s.hasVoted = true
+}
+
+func (s *prepareState) onAddVote(v *vote.Vote) {
+	s.doAddVote(v)
+	if v.Round() == s.round &&
+		v.VoteType() == vote.VoteTypePrepare {
+		s.decide()
+	}
+}
+
+func (s *prepareState) onSetProposal(p *proposal.Proposal) {
+	s.doSetProposal(p)
+	if p.Round() == s.round {
+		s.decide()
+	}
+}
+
+func (s *prepareState) onTimedout(t *ticker) {
+	if t.Target != tickerTargetChangeProposer {
+		s.logger.Debug("Invalid ticker", "ticker", t)
+		return
+	}
+	s.enterNewState(s.changeProposerState)
+}
+
+func (s *prepareState) name() string {
+	return "prepare"
 }

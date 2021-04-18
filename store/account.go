@@ -12,17 +12,9 @@ type accountStore struct {
 	total int
 }
 
-var (
-	accountPrefix = []byte{0x01}
-)
-
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.RawBytes()...) }
 
-func newAccountStore(path string) (*accountStore, error) {
-	db, err := leveldb.OpenFile(path, nil)
-	if err != nil {
-		return nil, err
-	}
+func newAccountStore(db *leveldb.DB) (*accountStore, error) {
 	as := &accountStore{
 		db: db,
 	}
@@ -34,10 +26,6 @@ func newAccountStore(path string) (*accountStore, error) {
 	as.total = total
 
 	return as, nil
-}
-
-func (as *accountStore) close() error {
-	return as.db.Close()
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
@@ -66,7 +54,7 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 	r := util.BytesPrefix(accountPrefix)
 	iter := as.db.NewIterator(r, nil)
 	for iter.Next() {
-		// key := iter.Key()
+		//key := iter.Key()
 		value := iter.Value()
 
 		acc := new(account.Account)
@@ -83,7 +71,7 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 	iter.Release()
 }
 
-func (as *accountStore) updateAccount(acc *account.Account) error {
+func (as *accountStore) updateAccount(batch *leveldb.Batch, acc *account.Account) error {
 	data, err := acc.Encode()
 	if err != nil {
 		panic(err)
@@ -91,6 +79,6 @@ func (as *accountStore) updateAccount(acc *account.Account) error {
 	if !as.hasAccount(acc.Address()) {
 		as.total++
 	}
-
-	return tryPut(as.db, accountKey(acc.Address()), data)
+	batch.Put(accountKey(acc.Address()), data)
+	return nil
 }

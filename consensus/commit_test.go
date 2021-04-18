@@ -4,113 +4,56 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/proposal"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
-func TestStatusFlags(t *testing.T) {
+func TestCommitExecute(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t)
 
-	tConsX.isProposed = true
-	tConsX.isPrepared = true
-	tConsX.isPreCommitted = true
-	tConsX.isCommitted = true
+	p1 := makeProposal(t, 2, 0)
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	tSigners[0].SignMsg(trx)
+	assert.NoError(t, tTxPool.AppendTx(trx))
+	p2 := makeProposal(t, 2, 0)
+	assert.NotEqual(t, p1.Hash(), p2.Hash())
 
 	testEnterNewHeight(tConsX)
 
-	assert.Equal(t, tConsX.hrs.Height(), 2)
-	assert.Equal(t, tConsX.hrs.Round(), 0)
-	assert.True(t, tConsX.isProposed)
-	assert.False(t, tConsX.isPrepared)
-	assert.False(t, tConsX.isPreCommitted)
-	assert.False(t, tConsX.isCommitted)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p1.Block().Hash(), tIndexB)
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p1.Block().Hash(), tIndexP)
 
-	tConsX.isProposed = true
-	tConsX.isPrepared = true
-
-	tConsX.enterNewRound(1)
-
-	assert.Equal(t, tConsX.hrs.Height(), 2)
-	assert.Equal(t, tConsX.hrs.Round(), 1)
-	assert.True(t, tConsX.isProposed)
-	assert.False(t, tConsX.isPrepared)
-	assert.False(t, tConsX.isPreCommitted)
-	assert.False(t, tConsX.isCommitted)
-}
-
-func TestEnterCommit(t *testing.T) {
-	setup(t)
-
-	commitBlockForAllStates(t)
-
-	h := 2
-	r := 1
-	p1 := makeProposal(t, h, r)
-
-	testEnterNewHeight(tConsY)
-	tConsY.enterNewRound(1)
-
-	// Invalid round
-	tConsY.enterCommit(0)
-	assert.False(t, tConsY.isCommitted)
-
-	// No quorum
-	tConsY.enterCommit(1)
-	assert.False(t, tConsY.isCommitted)
-
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexP)
-
-	v3 := vote.NewPrecommit(h, r, crypto.UndefHash, tSigners[tIndexB].Address())
-	tSigners[tIndexB].SignMsg(v3)
-	ok, _ := tConsY.pendingVotes.AddVote(v3)
-	assert.True(t, ok)
-
-	// Still no quorum
-	tConsY.enterCommit(1)
-	assert.False(t, tConsY.isCommitted)
-
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
+	s := &commitState{tConsX}
 
 	// No proposal
-	tConsY.enterCommit(1)
-	assert.False(t, tConsY.isCommitted)
-	shouldPublishQueryProposal(t, tConsY, h, r)
+	tConsX.lk.Lock()
+	s.decide()
+	tConsX.lk.Unlock()
+	checkHeightRound(t, tConsX, 2, 0)
 
 	// Invalid proposal
-	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[tIndexX].Address(), tSigners[tIndexY].Address(), 1000, 1000, "")
-	tSigners[tIndexX].SignMsg(trx)
-	assert.NoError(t, tTxPool.AppendTx(trx)) // This will change block
-	b2, err := tConsY.state.ProposeBlock(0)  // Propose again
-	require.NoError(t, err)
-	assert.NotEqual(t, b2.Hash(), p1.Block().Hash())
-	p2 := proposal.NewProposal(h, r, *b2)
-	tSigners[tIndexX].SignMsg(p2)
-	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p2)
+	tConsX.SetProposal(p2)
+	tConsX.lk.Lock()
+	s.decide()
+	tConsX.lk.Unlock()
+	assert.Nil(t, tConsX.RoundProposal(0))
 
-	tConsY.enterCommit(1)
-	assert.False(t, tConsY.isCommitted)
+	tConsX.SetProposal(p1)
+	txs := tTxPool.Txs
+	tTxPool.Txs = []*tx.Tx{}
+	tConsX.lk.Lock()
+	s.decide()
+	tConsX.lk.Unlock()
+	assert.NotNil(t, tConsX.RoundProposal(0))
+	checkHeightRound(t, tConsX, 2, 0)
 
-	// Valid proposal but committing block will fail (no transaction)
-	tConsY.pendingVotes.SetRoundProposal(p2.Round(), p1)
-	tTxPool.Txs = make([]*tx.Tx, 0)
-	tConsY.enterCommit(1)
-	assert.False(t, tConsY.isCommitted)
-}
-
-func TestSetStaleProposal(t *testing.T) {
-	setup(t)
-
-	commitBlockForAllStates(t)
-
-	p := makeProposal(t, 2, 0)
-
-	commitBlockForAllStates(t)
-
-	tConsX.SetProposal(p)
+	tTxPool.Txs = txs
+	tConsX.lk.Lock()
+	s.decide()
+	tConsX.lk.Unlock()
+	shouldPublishBlockAnnounce(t, tConsX, p1.Block().Hash())
 }

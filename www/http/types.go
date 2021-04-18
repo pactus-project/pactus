@@ -17,7 +17,7 @@ type BlockResult struct {
 	Hash  crypto.Hash
 	Time  time.Time
 	Data  string
-	Block block.Block
+	Block *block.Block
 }
 
 type ReceiptResult struct {
