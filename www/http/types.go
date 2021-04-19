@@ -20,16 +20,10 @@ type BlockResult struct {
 	Block *block.Block
 }
 
-type ReceiptResult struct {
-	Hash    crypto.Hash
-	Data    string
-	Receipt tx.Receipt
-}
 type TransactionResult struct {
-	ID      crypto.Hash
-	Data    string
-	Tx      tx.Tx
-	Receipt ReceiptResult
+	ID   crypto.Hash
+	Data string
+	Tx   tx.Tx
 }
 
 type SendTranscationResult struct {

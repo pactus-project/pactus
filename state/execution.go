@@ -9,11 +9,11 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.CommittedTx, error) {
+func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.Tx, error) {
 	exe := execution.NewExecution()
 
 	ids := block.TxIDs().IDs()
-	ctrxs := make([]*tx.CommittedTx, len(ids))
+	trxs := make([]*tx.Tx, len(ids))
 	var mintbaseTrx *tx.Tx
 	for i := 0; i < len(ids); i++ {
 		trx := st.txPool.QueryTx(ids[i])
@@ -40,8 +40,7 @@ func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.Com
 		if err != nil {
 			return nil, err
 		}
-		receipt := trx.GenerateReceipt(tx.Ok, block.Hash())
-		ctrxs[i] = &tx.CommittedTx{Tx: trx, Receipt: receipt}
+		trxs[i] = trx
 	}
 
 	accumulatedFee := exe.AccumulatedFee()
@@ -56,5 +55,5 @@ func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.Com
 	acc.AddToBalance(accumulatedFee)
 	sb.UpdateAccount(acc)
 
-	return ctrxs, nil
+	return trxs, nil
 }
