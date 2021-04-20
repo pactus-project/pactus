@@ -362,7 +362,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	}
 
 	sb := st.makeSandbox()
-	ctrxs, err := st.executeBlock(block, sb)
+	trxs, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
 	}
@@ -380,9 +380,9 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.store.SaveBlock(st.lastInfo.BlockHeight(), block)
 
 	// Save txs and receipts
-	for _, ctrx := range ctrxs {
-		st.txPool.RemoveTx(ctrx.Tx.ID())
-		st.store.SaveTransaction(ctrx)
+	for _, trx := range trxs {
+		st.txPool.RemoveTx(trx.ID())
+		st.store.SaveTransaction(trx)
 	}
 
 	if err := st.store.WriteBatch(); err != nil {
@@ -523,7 +523,7 @@ func (st *state) IsProposer(addr crypto.Address, round int) bool {
 	return st.committee.IsProposer(addr, round)
 }
 
-func (st *state) Transaction(id tx.ID) *tx.CommittedTx {
+func (st *state) Transaction(id tx.ID) *tx.Tx {
 	tx, err := st.store.Transaction(id)
 	if err != nil {
 		st.logger.Error("Transaction Search in local store failed", "trx", id, "err", err)

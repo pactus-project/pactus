@@ -212,16 +212,6 @@ func (tx *Tx) Fingerprint() string {
 		tx.data.Payload.Fingerprint())
 }
 
-func (tx *Tx) GenerateReceipt(status int, blockHash crypto.Hash) *Receipt {
-	return &Receipt{
-		data: receiptData{
-			TxID:      tx.ID(),
-			BlockHash: blockHash,
-			Status:    status,
-		},
-	}
-}
-
 func (tx Tx) SignBytes() []byte {
 	tx.data.PublicKey = nil
 	tx.data.Signature = nil

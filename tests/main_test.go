@@ -56,7 +56,7 @@ func TestMain(m *testing.M) {
 		tSigners[i] = crypto.NewSigner(priv)
 		tConfigs[i] = config.DefaultConfig()
 
-		tConfigs[i].State.Store.Path = util.TempDirPath()
+		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
 		tConfigs[i].Logger.Levels["default"] = "error"
 		tConfigs[i].Logger.Levels["_state"] = "info"
@@ -155,7 +155,7 @@ func TestMain(m *testing.M) {
 		tNodes[i].Stop()
 	}
 
-	s, _ := store.NewStore(tConfigs[tNodeIdx1].State.Store)
+	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
 	total := int64(0)
 	s.IterateAccounts(func(a *account.Account) bool {
 		total += a.Balance()

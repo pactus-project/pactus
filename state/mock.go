@@ -112,9 +112,7 @@ func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	m.Store.SaveBlock(h, b)
 
 	for _, t := range trxs {
-		m.Store.SaveTransaction(&tx.CommittedTx{
-			Tx: t, Receipt: t.GenerateReceipt(0, b.Hash()),
-		})
+		m.Store.SaveTransaction(t)
 	}
 }
 func (m *MockState) CommitteeValidators() []*validator.Validator {
@@ -137,7 +135,7 @@ func (m *MockState) IsProposer(addr crypto.Address, round int) bool {
 	defer m.Lock.Unlock()
 	return m.Committee.IsProposer(addr, round)
 }
-func (m *MockState) Transaction(id tx.ID) *tx.CommittedTx {
+func (m *MockState) Transaction(id tx.ID) *tx.Tx {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 	tx, _ := m.Store.Transaction(id)

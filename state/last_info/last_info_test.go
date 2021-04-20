@@ -28,6 +28,7 @@ func TestRestore(t *testing.T) {
 	trx3, newValSigner := tx.GenerateTestSortitionTx()
 	hash := crypto.GenerateTestHash()
 	lastCertificate := block.GenerateTestCertificate(hash)
+	trxs := []*tx.Tx{trx1, trx2, trx3}
 	txIDs := block.NewTxIDs()
 	txIDs.Append(trx1.ID())
 	txIDs.Append(trx2.ID())
@@ -39,14 +40,6 @@ func TestRestore(t *testing.T) {
 		lastCertificate, lastSortitionSeed, val1.Address())
 	lastBlockHeight := 111
 	lastBlockHash := lastBlock.Hash()
-	ctrxs := []*tx.CommittedTx{}
-	for _, trx := range []*tx.Tx{trx1, trx2, trx3} {
-		ctrx := &tx.CommittedTx{
-			Tx:      trx,
-			Receipt: trx.GenerateReceipt(tx.Ok, lastBlockHash),
-		}
-		ctrxs = append(ctrxs, ctrx)
-	}
 
 	li1.SetSortitionSeed(lastSortitionSeed)
 	li1.SetBlockHeight(lastBlockHeight)
@@ -62,8 +55,8 @@ func TestRestore(t *testing.T) {
 	_, err = li2.RestoreLastInfo(4)
 	assert.Error(t, err)
 
-	for _, ctrx := range ctrxs {
-		store.SaveTransaction(ctrx)
+	for _, trx := range trxs {
+		store.SaveTransaction(trx)
 	}
 	_, err = li2.RestoreLastInfo(4)
 	assert.Error(t, err)

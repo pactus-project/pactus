@@ -132,12 +132,12 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, er
 
 	joinedVals := make([]*validator.Validator, 0)
 	for _, id := range b.TxIDs().IDs() {
-		ctx, err := li.store.Transaction(id)
+		trx, err := li.store.Transaction(id)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve transaction %s: %v", id, err)
 		}
-		if ctx.Tx.IsSortitionTx() {
-			pld := ctx.Tx.Payload().(*payload.SortitionPayload)
+		if trx.IsSortitionTx() {
+			pld := trx.Payload().(*payload.SortitionPayload)
 			val, err := li.store.Validator(pld.Address)
 			if err != nil {
 				return nil, fmt.Errorf("unable to retrieve validator %s: %v", pld.Address, err)

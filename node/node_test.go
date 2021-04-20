@@ -21,7 +21,7 @@ func TestRunningNode(t *testing.T) {
 	val := validator.NewValidator(pb, 0, 0)
 	gen := genesis.MakeGenesis(util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfig()
-	conf.State.Store.Path = util.TempDirPath()
+	conf.Store.Path = util.TempDirPath()
 	conf.Network.NodeKeyFile = util.TempFilePath()
 
 	signer := crypto.NewSigner(pv)
