@@ -10,17 +10,31 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-const AddressSize = 20
+const (
+	addressSize           = 20
+	hrpAddress            = "zrb"
+	treasuryAddressString = "0000000000000000000000000000000000000000"
+)
+
+var TreasuryAddress = Address{
+	data: addressData{
+		Address: [addressSize]byte{0},
+	},
+}
 
 type Address struct {
 	data addressData
 }
 
 type addressData struct {
-	Address [AddressSize]byte
+	Address [addressSize]byte
 }
 
 func AddressFromString(text string) (Address, error) {
+	if text == treasuryAddressString {
+		return TreasuryAddress, nil
+	}
+
 	hrp, data, err := bech32.DecodeToBase256(text)
 	if err != nil {
 		return Address{}, err
@@ -33,8 +47,8 @@ func AddressFromString(text string) (Address, error) {
 }
 
 func AddressFromRawBytes(bs []byte) (Address, error) {
-	if len(bs) != AddressSize {
-		return Address{}, fmt.Errorf("address should be %d bytes, but it is %v bytes", AddressSize, len(bs))
+	if len(bs) != addressSize {
+		return Address{}, fmt.Errorf("address should be %d bytes, but it is %v bytes", addressSize, len(bs))
 	}
 
 	var addr Address
@@ -52,6 +66,9 @@ func (addr Address) Fingerprint() string {
 }
 
 func (addr Address) String() string {
+	if addr.EqualsTo(TreasuryAddress) {
+		return treasuryAddressString
+	}
 	str, err := bech32.EncodeFromBase256(hrpAddress, addr.data.Address[:])
 	if err != nil {
 		panic(fmt.Sprintf("Invalid address. %v", err))
