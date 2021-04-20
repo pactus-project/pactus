@@ -14,7 +14,7 @@ type MockStore struct {
 	Blocks       map[int]*block.Block
 	Accounts     map[crypto.Address]account.Account
 	Validators   map[crypto.Address]validator.Validator
-	Transactions map[crypto.Hash]tx.CommittedTx
+	Transactions map[crypto.Hash]tx.Tx
 	LastInfo     []byte
 }
 
@@ -23,7 +23,7 @@ func MockingStore() *MockStore {
 		Blocks:       make(map[int]*block.Block),
 		Accounts:     make(map[crypto.Address]account.Account),
 		Validators:   make(map[crypto.Address]validator.Validator),
-		Transactions: make(map[crypto.Hash]tx.CommittedTx),
+		Transactions: make(map[crypto.Hash]tx.Tx),
 	}
 }
 func (m *MockStore) Block(height int) (*block.Block, error) {
@@ -41,7 +41,7 @@ func (m *MockStore) BlockHeight(hash crypto.Hash) (int, error) {
 	}
 	return -1, nil
 }
-func (m *MockStore) Transaction(id tx.ID) (*tx.CommittedTx, error) {
+func (m *MockStore) Transaction(id tx.ID) (*tx.Tx, error) {
 	trx, ok := m.Transactions[id]
 	if ok {
 		return &trx, nil
@@ -124,8 +124,8 @@ func (m *MockStore) SaveBlock(height int, block *block.Block) {
 	m.Blocks[height] = block
 }
 
-func (m *MockStore) SaveTransaction(ctrx *tx.CommittedTx) {
-	m.Transactions[ctrx.Tx.ID()] = *ctrx
+func (m *MockStore) SaveTransaction(trx *tx.Tx) {
+	m.Transactions[trx.ID()] = *trx
 }
 
 func (m *MockStore) SaveLastInfo(info []byte) {

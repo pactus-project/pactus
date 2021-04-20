@@ -43,16 +43,11 @@ struct BlockResult {
   block               @2 :Block;
 }
 
-struct Receipt {
-  hash                @0 :Data;
-  data                @1 :Data;
-}
 
 struct TransactionResult {
   id                  @0 :Data;
   data                @1 :Data;
   transaction         @2 :Data; # TODO: define tx struct
-  receipt             @3 :Receipt;
 }
 
 struct AccountResult {
