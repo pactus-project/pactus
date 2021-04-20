@@ -209,5 +209,9 @@ func (s *store) RestoreLastInfo() []byte {
 }
 
 func (s *store) WriteBatch() error {
-	return s.db.Write(s.batch, nil)
+	if err := s.db.Write(s.batch, nil); err != nil {
+		return err
+	}
+	s.batch.Reset()
+	return nil
 }
