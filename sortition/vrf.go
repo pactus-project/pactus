@@ -60,7 +60,7 @@ func (vrf *VRF) getIndex(proof Proof) int64 {
 	rnd64 := util.SliceToInt64(h.RawBytes())
 	rnd64 = rnd64 & 0x7fffffffffffffff
 
-	// construct the numerator and denominator for normalizing the proof uint between [0, 1]
+	// construct the numerator and denominator for normalizing the proof uint between [0, max]
 	index := big.NewInt(0)
 	numerator := big.NewInt(0)
 	rnd := big.NewInt(rnd64)
