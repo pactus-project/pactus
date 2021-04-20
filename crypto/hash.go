@@ -121,7 +121,7 @@ func (h *Hash) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &h.data.Hash)
 }
 
-func (h *Hash) SanityCheck() error {
+func (h Hash) SanityCheck() error {
 	if h.EqualsTo(UndefHash) {
 		return fmt.Errorf("Hash is not defined")
 	}

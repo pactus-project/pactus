@@ -15,17 +15,9 @@ type validatorStore struct {
 	total  int
 }
 
-var (
-	validatorPrefix = []byte{0x01}
-)
-
 func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.RawBytes()...) }
 
-func newValidatorStore(path string) (*validatorStore, error) {
-	db, err := leveldb.OpenFile(path, nil)
-	if err != nil {
-		return nil, err
-	}
+func newValidatorStore(db *leveldb.DB) (*validatorStore, error) {
 	vs := &validatorStore{
 		db: db,
 	}
@@ -42,10 +34,6 @@ func newValidatorStore(path string) (*validatorStore, error) {
 	vs.valMap = valMap
 
 	return vs, nil
-}
-
-func (vs *validatorStore) close() error {
-	return vs.db.Close()
 }
 
 func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
@@ -76,7 +64,7 @@ func (vs *validatorStore) validatorByNumber(num int) (*validator.Validator, erro
 		return val, nil
 	}
 
-	return nil, fmt.Errorf("Not found")
+	return nil, fmt.Errorf("not found")
 }
 
 func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) (stop bool)) {
@@ -100,7 +88,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 	iter.Release()
 }
 
-func (vs *validatorStore) updateValidator(val *validator.Validator) error {
+func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) error {
 	data, err := val.Encode()
 	if err != nil {
 		return err
@@ -110,5 +98,7 @@ func (vs *validatorStore) updateValidator(val *validator.Validator) error {
 	}
 	vs.valMap[val.Number()] = val
 
-	return tryPut(vs.db, validatorKey(val.Address()), data)
+	batch.Put(validatorKey(val.Address()), data)
+
+	return nil
 }

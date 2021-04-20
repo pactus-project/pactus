@@ -1,18 +1,21 @@
 package payload
 
 import (
+	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/proposal"
 )
 
 type ProposalPayload struct {
 	Proposal *proposal.Proposal `cbor:"1,keyasint"`
 }
 
-func (p *ProposalPayload) SanityCheck() error {
-	if p.Proposal == nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "No proposal")
+func NewProposalPayload(p *proposal.Proposal) Payload {
+	return &ProposalPayload{
+		Proposal: p,
 	}
+}
+
+func (p *ProposalPayload) SanityCheck() error {
 	if err := p.Proposal.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}

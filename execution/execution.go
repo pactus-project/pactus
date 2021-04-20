@@ -71,7 +71,7 @@ func (exe *Execution) AccumulatedFee() int64 {
 
 func (exe *Execution) checkMemo(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if len(trx.Memo()) > sb.MaxMemoLength() {
-		return errors.Errorf(errors.ErrInvalidTx, "Memo length exceeded")
+		return errors.Errorf(errors.ErrInvalidTx, "memo length exceeded")
 	}
 	return nil
 }
@@ -88,7 +88,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	if height == -1 || curHeight-height > interval {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid stamp")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid stamp")
 	}
 
 	return nil
@@ -97,13 +97,13 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if trx.IsMintbaseTx() || trx.IsSortitionTx() {
 		if trx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: 0, got: %v", trx.Fee())
+			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong. expected: 0, got: %v", trx.Fee())
 		}
 	} else {
 		fee := int64(float64(trx.Payload().Value()) * sb.FeeFraction())
 		fee = util.Max64(fee, sb.MinFee())
 		if trx.Fee() != fee {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee is wrong. expected: %v, got: %v", fee, trx.Fee())
+			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong. expected: %v, got: %v", fee, trx.Fee())
 		}
 	}
 	return nil

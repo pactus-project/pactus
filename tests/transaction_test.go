@@ -1,12 +1,14 @@
 package tests
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
@@ -25,7 +27,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 }
 
 func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
-	stamp := lastBlock(t).Hash()
+	stamp := lastBlock().Hash()
 	seq := getSequence(t, sender.Address())
 	trx := tx.NewSendTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
 	sender.SignMsg(trx)
@@ -35,13 +37,27 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 }
 
 func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake, fee int64) error {
-	stamp := lastBlock(t).Hash()
+	stamp := lastBlock().Hash()
 	seq := getSequence(t, sender.Address())
 	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), val, stake, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Encode()
 	return sendRawTx(t, d)
+}
+
+func TestBondingTransactions(t *testing.T) {
+	t.Run("Bonding transactions", func(t *testing.T) {
+		// These validators are not in the committee now.
+		// Bond transactions are valid and they can enter the committee soon
+		for i := tCommitteeSize; i < tTotalNodes; i++ {
+			amt := util.RandInt64(1000000 - 1) // fee is always 1000
+			require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000))
+
+			fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
+			incSequence(t, tSigners[tNodeIdx1].Address())
+		}
+	})
 }
 
 func TestSendingTransactions(t *testing.T) {
@@ -77,9 +93,21 @@ func TestSendingTransactions(t *testing.T) {
 		incSequence(t, bobSigner.Address())
 	})
 
+	t.Run("Bonding transactions", func(t *testing.T) {
+		// These validators are not in the committee now.
+		// Bond transactions are valid and they can enter the committee soon
+		for i := tTotalNodes; i < tTotalNodes; i++ {
+			amt := util.RandInt64(1000000 - 1) // fee is always 1000
+			require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx2], tSigners[i].PublicKey(), amt, 1000))
+
+			fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
+			incSequence(t, tSigners[tNodeIdx2].Address())
+		}
+	})
+
 	// Make sure all transaction confirmed
 	for i := 0; i < 10; i++ {
-		waitForNewBlock(t)
+		waitForNewBlock()
 	}
 
 	aliceAcc := getAccount(t, aliceAddr)

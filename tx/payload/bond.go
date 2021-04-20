@@ -27,13 +27,13 @@ func (p *BondPayload) Value() int64 {
 
 func (p *BondPayload) SanityCheck() error {
 	if p.Stake < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid amount")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid amount")
 	}
 	if err := p.Bonder.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid Bonder address")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid Bonder address")
 	}
 	if err := p.Validator.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid receiver address")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid receiver address")
 	}
 
 	return nil

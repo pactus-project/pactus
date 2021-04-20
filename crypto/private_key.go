@@ -43,7 +43,7 @@ func PrivateKeyFromSeed(seed []byte) (PrivateKey, error) {
 
 func PrivateKeyFromRawBytes(data []byte) (PrivateKey, error) {
 	if len(data) != PrivateKeySize {
-		return PrivateKey{}, fmt.Errorf("Invalid private key")
+		return PrivateKey{}, fmt.Errorf("invalid private key")
 	}
 	sc := new(bls.SecretKey)
 	if err := sc.Deserialize(data); err != nil {
@@ -102,7 +102,7 @@ func (pv *PrivateKey) UnmarshalJSON(bz []byte) error {
 
 func (pv PrivateKey) MarshalCBOR() ([]byte, error) {
 	if pv.data.SecretKey == nil {
-		return nil, fmt.Errorf("Invalid private key")
+		return nil, fmt.Errorf("invalid private key")
 	}
 	return cbor.Marshal(pv.RawBytes())
 }
@@ -125,7 +125,7 @@ func (pv *PrivateKey) UnmarshalCBOR(bs []byte) error {
 func (pv *PrivateKey) SanityCheck() error {
 	bs := pv.RawBytes()
 	if len(bs) != PrivateKeySize {
-		return fmt.Errorf("Private key should be %v bytes but it is %v bytes", PrivateKeySize, len(bs))
+		return fmt.Errorf("private key should be %v bytes but it is %v bytes", PrivateKeySize, len(bs))
 	}
 	return nil
 }

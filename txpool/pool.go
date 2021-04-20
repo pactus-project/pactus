@@ -10,7 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -22,13 +22,13 @@ type txPool struct {
 	sandbox     sandbox.Sandbox
 	pendings    *linkedmap.LinkedMap
 	appendTxCh  chan *tx.Tx
-	broadcastCh chan *message.Message
+	broadcastCh chan payload.Payload
 	logger      *logger.Logger
 }
 
 func NewTxPool(
 	conf *Config,
-	broadcastCh chan *message.Message) (TxPool, error) {
+	broadcastCh chan payload.Payload) (TxPool, error) {
 	pool := &txPool{
 		config:      conf,
 		checker:     execution.NewChecker(),
@@ -85,9 +85,9 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 		return err
 	}
 
-	go func(_trx *tx.Tx) {
-		msg := message.NewTransactionsMessage([]*tx.Tx{_trx})
-		pool.broadcastCh <- msg
+	go func(t *tx.Tx) {
+		pld := payload.NewTransactionsPayload([]*tx.Tx{t})
+		pool.broadcastCh <- pld
 	}(trx)
 
 	return nil
@@ -153,24 +153,29 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		}
 	}()
 
-	pool.logger.Debug("Query transaction from nodes", "id", id)
-
 	pool.lk.Lock()
+	pool.logger.Debug("Query transaction from nodes", "id", id)
 	pool.appendTxCh = make(chan *tx.Tx, 100)
 	pool.lk.Unlock()
 
-	msg := message.NewOpaqueQueryTransactionsMessage([]tx.ID{id})
-	pool.broadcastCh <- msg
+	pld := payload.NewQueryTransactionsPayload([]tx.ID{id})
+	pool.broadcastCh <- pld
 
 	timeout := time.NewTimer(pool.config.WaitingTimeout)
 
 	for {
 		select {
 		case <-timeout.C:
+			pool.lk.Lock()
 			pool.logger.Warn("no transaction received", "id", id, "timeout", pool.config.WaitingTimeout)
+			pool.lk.Unlock()
+
 			return nil
 		case trx := <-pool.appendTxCh:
+			pool.lk.Lock()
 			pool.logger.Debug("Transaction received", "id", id)
+			pool.lk.Unlock()
+
 			if trx.ID().EqualsTo(id) {
 				return trx
 			}

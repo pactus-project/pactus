@@ -14,10 +14,11 @@ import (
 type ID = crypto.Hash
 
 type Tx struct {
-	data txData
-
+	// TODO: Memorizing ID is thread safe?
 	memorizedID   *ID
 	sanityChecked bool
+
+	data txData
 }
 
 type txData struct {
@@ -56,11 +57,11 @@ func (tx *Tx) SanityCheck() error {
 	if tx.sanityChecked {
 		return nil
 	}
-	if tx.data.Version != 1 {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid version")
+	if tx.Version() != 1 {
+		return errors.Errorf(errors.ErrInvalidTx, "invalid version")
 	}
-	if tx.data.Sequence < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence")
+	if tx.Sequence() < 0 {
+		return errors.Errorf(errors.ErrInvalidTx, "invalid sequence")
 	}
 	if err := tx.checkFee(); err != nil {
 		return err
@@ -68,10 +69,10 @@ func (tx *Tx) SanityCheck() error {
 	if err := tx.checkSignature(); err != nil {
 		return err
 	}
-	if tx.data.Type != tx.data.Payload.Type() {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid payload type")
+	if tx.PayloadType() != tx.Payload().Type() {
+		return errors.Errorf(errors.ErrInvalidTx, "invalid payload type")
 	}
-	if err := tx.data.Payload.SanityCheck(); err != nil {
+	if err := tx.Payload().SanityCheck(); err != nil {
 		return err
 	}
 
@@ -82,12 +83,12 @@ func (tx *Tx) SanityCheck() error {
 
 func (tx *Tx) checkFee() error {
 	if tx.IsMintbaseTx() || tx.IsSortitionTx() {
-		if tx.data.Fee != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee should set to zero")
+		if tx.Fee() != 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "fee should set to zero")
 		}
 	} else {
-		if tx.data.Fee <= 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "Fee is invalid")
+		if tx.Fee() <= 0 {
+			return errors.Errorf(errors.ErrInvalidTx, "fee is invalid")
 		}
 	}
 
@@ -96,31 +97,31 @@ func (tx *Tx) checkFee() error {
 
 func (tx *Tx) checkSignature() error {
 	if tx.IsMintbaseTx() {
-		if tx.data.PublicKey != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have public key")
+		if tx.PublicKey() != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "subsidy transaction should not have public key")
 		}
-		if tx.data.Signature != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Subsidy transaction should not have signature")
+		if tx.Signature() != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "subsidy transaction should not have signature")
 		}
 	} else {
-		if tx.data.PublicKey == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "No public key")
+		if tx.PublicKey() == nil {
+			return errors.Errorf(errors.ErrInvalidTx, "no public key")
 		}
-		if tx.data.Signature == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "No signature")
+		if tx.Signature() == nil {
+			return errors.Errorf(errors.ErrInvalidTx, "no signature")
 		}
-		if err := tx.data.PublicKey.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid pubic key")
+		if err := tx.PublicKey().SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "invalid pubic key")
 		}
-		if err := tx.data.Signature.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+		if err := tx.Signature().SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidTx, "invalid signature")
 		}
-		if !tx.data.Payload.Signer().Verify(*tx.data.PublicKey) {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid public key")
+		if !tx.Payload().Signer().Verify(*tx.PublicKey()) {
+			return errors.Errorf(errors.ErrInvalidTx, "invalid public key")
 		}
 		bs := tx.SignBytes()
-		if !tx.data.PublicKey.Verify(bs, *tx.data.Signature) {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid signature")
+		if !tx.PublicKey().Verify(bs, *tx.Signature()) {
+			return errors.Errorf(errors.ErrInvalidTx, "invalid signature")
 		}
 	}
 	return nil
@@ -176,7 +177,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		p = &payload.SortitionPayload{}
 
 	default:
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
 	}
 
 	tx.data.Version = _data.Version
@@ -204,7 +205,7 @@ func (tx *Tx) Decode(bs []byte) error {
 	return tx.UnmarshalCBOR(bs)
 }
 
-func (tx Tx) Fingerprint() string {
+func (tx *Tx) Fingerprint() string {
 	return fmt.Sprintf("{⌘ %v 🏵 %v %v}",
 		tx.ID().Fingerprint(),
 		tx.data.Stamp.Fingerprint(),
@@ -222,11 +223,10 @@ func (tx *Tx) GenerateReceipt(status int, blockHash crypto.Hash) *Receipt {
 }
 
 func (tx Tx) SignBytes() []byte {
-	tx2 := tx
-	tx2.data.PublicKey = nil
-	tx2.data.Signature = nil
+	tx.data.PublicKey = nil
+	tx.data.Signature = nil
 
-	bz, _ := tx2.MarshalCBOR()
+	bz, _ := tx.MarshalCBOR()
 	return bz
 }
 

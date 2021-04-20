@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type Validator struct {
@@ -19,8 +18,8 @@ type validatorData struct {
 	Sequence         int              `cbor:"3,keyasint"`
 	Stake            int64            `cbor:"4,keyasint"`
 	BondingHeight    int              `cbor:"5,keyasint"`
-	LastJoinedHeight int              `cbor:"6,keyasint"`
-	UnbondingHeight  int              `cbor:"7,keyasint"`
+	UnbondingHeight  int              `cbor:"6,keyasint"`
+	LastJoinedHeight int              `cbor:"7,keyasint"`
 }
 
 func NewValidator(publicKey crypto.PublicKey, number, bondingHeight int) *Validator {
@@ -109,7 +108,7 @@ func (val Validator) Fingerprint() string {
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
 	signer := crypto.GenerateTestSigner()
 	val := NewValidator(signer.PublicKey(), number, 0)
-	val.data.Stake = util.RandInt64(1000000000)
-	val.data.Sequence = util.RandInt(1000)
+	val.data.Stake = 777777777
+	val.data.Sequence = 77
 	return val, signer
 }

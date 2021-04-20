@@ -2,22 +2,21 @@ package consensus
 
 import (
 	"github.com/sasha-s/go-deadlock"
-	"github.com/zarbchain/zarb-go/consensus/hrs"
-	"github.com/zarbchain/zarb-go/proposal"
+	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/vote"
 )
 
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
+	Lock      deadlock.RWMutex
 	Votes     []*vote.Vote
 	Proposal  *proposal.Proposal
 	Scheduled bool
 	State     *state.MockState
 	Round     int
-	Lock      deadlock.RWMutex
 }
 
 func MockingConsensus(state *state.MockState) *MockConsensus {
@@ -29,6 +28,9 @@ func (m *MockConsensus) MoveToNewHeight() {
 	defer m.Lock.Unlock()
 	m.Scheduled = true
 }
+func (m *MockConsensus) Start() error {
+	return nil
+}
 func (m *MockConsensus) Stop() {}
 
 func (m *MockConsensus) AddVote(v *vote.Vote) {
@@ -36,6 +38,11 @@ func (m *MockConsensus) AddVote(v *vote.Vote) {
 	defer m.Lock.Unlock()
 
 	m.Votes = append(m.Votes, v)
+}
+func (m *MockConsensus) AllVotes() []*vote.Vote {
+	m.Lock.RLock()
+	defer m.Lock.RUnlock()
+	return m.Votes
 }
 func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
 	m.Lock.RLock()
@@ -64,11 +71,11 @@ func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
 	}
 	return m.Proposal
 }
-func (m *MockConsensus) HRS() *hrs.HRS {
+func (m *MockConsensus) HeightRound() (int, int) {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 
-	return hrs.NewHRS(m.State.LastBlockHeight()+1, m.Round, hrs.StepTypeNewHeight)
+	return m.State.LastBlockHeight() + 1, m.Round
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""

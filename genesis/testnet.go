@@ -4,23 +4,23 @@ import "encoding/json"
 
 const testnetJSON = `
 {
-   "GenesisTime":"2021-03-08T00:00:00.0+03:30",
+   "GenesisTime":"2021-04-16T00:00:00Z",
    "Params":{
-        "BlockVersion": 1001,
-        "BlockTimeInSecond": 10,
-        "CommitteeSize": 11,
-        "SubsidyReductionInterval": 4200000,
-        "TransactionToLiveInterval": 8640,
-        "UnbondInterval": 181440,
-        "MaximumTransactionPerBlock": 1000,
-        "MaximumMemoLength": 1024,
-        "FeeFraction": 0.001,
-        "MinimumFee": 1000
+      "BlockVersion":1001,
+      "BlockTimeInSecond":10,
+      "CommitteeSize":11,
+      "BlockReward":100000000,
+      "TransactionToLiveInterval":8640,
+      "UnbondInterval":181440,
+      "MaximumTransactionPerBlock":1000,
+      "MaximumMemoLength":1024,
+      "FeeFraction":0.001,
+      "MinimumFee":1000
    },
    "Accounts":[
       {
          "Address":"zrb1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqn627cy",
-         "Balance":4200000000000000
+         "Balance":2100000000000000
       }
    ],
    "Validators":[
