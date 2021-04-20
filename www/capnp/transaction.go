@@ -13,25 +13,17 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	if err != nil {
 		return fmt.Errorf("Invalid transaction id: %s", err)
 	}
-	ctx := zs.state.Transaction(h)
-	if ctx == nil {
+	trx := zs.state.Transaction(h)
+	if trx == nil {
 		return fmt.Errorf("Transaction not found")
 	}
 
 	res, _ := args.Results.NewResult()
-	trxData, _ := ctx.Tx.Encode()
+	trxData, _ := trx.Encode()
 	if err := res.SetData(trxData); err != nil {
 		return err
 	}
-	if err := res.SetId(ctx.Tx.ID().RawBytes()); err != nil {
-		return err
-	}
-	rec, _ := res.NewReceipt()
-	recData, _ := ctx.Receipt.Encode()
-	if err := rec.SetData(recData); err != nil {
-		return err
-	}
-	if err := rec.SetHash(ctx.Receipt.Hash().RawBytes()); err != nil {
+	if err := res.SetId(trx.ID().RawBytes()); err != nil {
 		return err
 	}
 	return nil

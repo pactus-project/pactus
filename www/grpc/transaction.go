@@ -15,19 +15,19 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid transaction ID: %v", err.Error())
 
 	}
-	tx := zs.state.Transaction(id)
-	if tx == nil {
+	trx := zs.state.Transaction(id)
+	if trx == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Transaction not found")
 	}
 
-	data, err := tx.Tx.Encode()
+	data, err := trx.Encode()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	var json string
 	if request.Verbosity == 1 {
-		bz, err := tx.Tx.MarshalJSON()
+		bz, err := trx.MarshalJSON()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}

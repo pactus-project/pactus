@@ -25,7 +25,7 @@ type StateFacade interface {
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int) *validator.Validator
 	IsProposer(addr crypto.Address, round int) bool
-	Transaction(id tx.ID) *tx.CommittedTx
+	Transaction(id tx.ID) *tx.Tx
 	PendingTx(id tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error

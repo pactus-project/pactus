@@ -109,16 +109,16 @@ func (c *Cache) GetTransaction(id tx.ID) *tx.Tx {
 		return i.(*tx.Tx)
 	}
 
-	trx := c.state.PendingTx(id)
-	if trx != nil {
-		c.cache.Add(txKey(id), trx)
-		return trx
+	pendingTrx := c.state.PendingTx(id)
+	if pendingTrx != nil {
+		c.cache.Add(txKey(id), pendingTrx)
+		return pendingTrx
 	}
 
-	ct := c.state.Transaction(id)
-	if ct != nil {
-		c.cache.Add(txKey(id), ct.Tx)
-		return ct.Tx
+	cacheTrx := c.state.Transaction(id)
+	if cacheTrx != nil {
+		c.cache.Add(txKey(id), cacheTrx)
+		return cacheTrx
 	}
 
 	return nil

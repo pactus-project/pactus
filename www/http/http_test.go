@@ -14,7 +14,6 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
@@ -46,10 +45,7 @@ func setup(t *testing.T) {
 	tMockState.Store.SaveBlock(2, b2)
 
 	tTxTestHash = txs[0].ID()
-	tMockState.Store.SaveTransaction(&tx.CommittedTx{
-		Tx:      txs[0],
-		Receipt: txs[0].GenerateReceipt(0, b1.Hash()),
-	})
+	tMockState.Store.SaveTransaction(txs[0])
 
 	a, _ := account.GenerateTestAccount(888)
 	tAccTestAddr = a.Address()
