@@ -115,7 +115,7 @@ func (st *state) tryLoadLastInfo() error {
 
 	totalStake := int64(0)
 	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
-		totalStake += val.Power()
+		totalStake += val.Stake()
 		return false
 	})
 
