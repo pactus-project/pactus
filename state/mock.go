@@ -27,18 +27,14 @@ type MockState struct {
 	InvalidBlockHash     crypto.Hash
 	Committee            *committee.Committee
 	Lock                 deadlock.RWMutex
-	AddToPool            bool
-	BroadCastTx          bool
 }
 
 func MockingState(committee *committee.Committee) *MockState {
 	return &MockState{
-		GenHash:     crypto.GenerateTestHash(),
-		Store:       store.MockingStore(),
-		TxPool:      txpool.MockingTxPool(),
-		Committee:   committee,
-		AddToPool:   true,
-		BroadCastTx: true,
+		GenHash:   crypto.GenerateTestHash(),
+		Store:     store.MockingStore(),
+		TxPool:    txpool.MockingTxPool(),
+		Committee: committee,
 	}
 }
 
@@ -186,16 +182,17 @@ func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
-	if m.AddToPool {
-		return m.TxPool.AppendTx(trx)
+	if m.TxPool.HasTx(trx.ID()) {
+		return errors.Error(errors.ErrGeneric)
 	}
-	return errors.Error(errors.ErrGeneric)
+	return m.TxPool.AppendTx(trx)
 }
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
-	if m.BroadCastTx {
-		return m.TxPool.AppendTxAndBroadcast(trx)
+
+	if m.TxPool.HasTx(trx.ID()) {
+		return errors.Error(errors.ErrGeneric)
 	}
-	return errors.Error(errors.ErrGeneric)
+	return m.TxPool.AppendTxAndBroadcast(trx)
 }

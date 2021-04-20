@@ -67,22 +67,17 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-	tMockState.BroadCastTx = false
-	t.Run("Should fail, Not Broadcasted", func(t *testing.T) {
-		trx, _ := tx.GenerateTestSendTx()
-		data, _ := trx.Encode()
-		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
-		assert.Error(t, err)
-		assert.Nil(t, res)
-	})
-	tMockState.BroadCastTx = true
+	trx, _ := tx.GenerateTestSendTx()
+	data, _ := trx.Encode()
 	t.Run("Should pass", func(t *testing.T) {
-		trx, _ := tx.GenerateTestSendTx()
-		data, _ := trx.Encode()
 		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 	})
-
+	t.Run("Should fail, Not Broadcasted", func(t *testing.T) {
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
 	assert.NoError(t, conn.Close())
 }
