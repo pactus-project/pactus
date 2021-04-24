@@ -11,8 +11,9 @@ func DefaultConfig() *Config {
 		Enable:  true,
 		Address: "[::]:9090",
 		Gateway: GatewayConfig{
-			Enable:  true,
-			Address: "[::]:8080",
+			Enable:     true,
+			Address:    "[::]:8080",
+			EnableCORS: false,
 		},
 	}
 }
@@ -22,8 +23,9 @@ func TestConfig() *Config {
 		Enable:  true,
 		Address: "[::]:0",
 		Gateway: GatewayConfig{
-			Enable:  true,
-			Address: "[::]:0",
+			Enable:     true,
+			Address:    "[::]:0",
+			EnableCORS: false,
 		},
 	}
 }

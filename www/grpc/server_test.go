@@ -19,6 +19,7 @@ var tMockState *state.MockState
 var tMockSync *sync.MockSync
 var tListener *bufconn.Listener
 var tCtx context.Context
+var tGrpc Config
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
