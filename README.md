@@ -25,27 +25,27 @@ Run `zarb version` to make sure Zarb is properly compiled and installed in your 
 
 ### Testnet
 
-To join the TestNet, first you need to create a working directory for running:
+To join the TestNet, first you need to create a working directory
+and then start the node:
 
 ```bash
-zarb init  -w=<working_dir> --test-net
+zarb init  -w=<working_dir> --testnet
 zarb start -w=<working_dir>
 ```
 
 ### Local net
 
-Initialize the working directory by running:
+You can create a local node with one validator to test Zerb in your machine:
 
  ```bash
  zarb init -w=<working_dir>
  zarb start -w=<working_dir>
  ```
 
- This command will create config.toml, genesis.json and private key for the validator.
-
 ## Usage of Docker
 
-You can run the Zarb using docker file. Please make sure you have installed [docker](https://docs.docker.com/engine/install/) in your machine.
+You can run the Zarb using docker file.
+Please make sure you have installed [docker](https://docs.docker.com/engine/install/) in your machine.
 
 Pull the docker from docker hub.
 
@@ -56,7 +56,7 @@ docker pull zarb/zarb
 Let's create a worksapce at `~/zarb/testnet` for the testnet:
 
 ```bash
-docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb init -w /zarb --test-net
+docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb init -w /zarb --testnet
 ```
 
 Now we can run the zarb and join the testnet:
@@ -75,7 +75,7 @@ docker start zarb-testnet
 
 Or check the logs:
 ```
-docker logs zarb-testnet --tail 100 -f
+docker logs zarb-testnet --tail 1000 -f
 ```
 
 ## Contribution

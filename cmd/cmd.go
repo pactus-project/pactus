@@ -165,7 +165,7 @@ func PromptInputWithSuggestion(prompt, suggestion string) string {
 func PromptPrivateKey(promp string) (*key.Key, error) {
 	privatekey, err := Stdin.PromptInput(promp)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to read Private Key %v", err)
+		return nil, fmt.Errorf("failed to read Private Key %v", err)
 	}
 	pv, err := crypto.PrivateKeyFromString(privatekey)
 	if err != nil {
@@ -177,6 +177,11 @@ func PromptPrivateKey(promp string) (*key.Key, error) {
 	key, _ := key.NewKey(addr, pv)
 
 	return key, nil
+}
+
+func PrintDangerMsg(format string, a ...interface{}) {
+	format = fmt.Sprintf("\033[31m%s\033[0m\n", format)
+	fmt.Printf(format, a...)
 }
 
 func PrintErrorMsg(format string, a ...interface{}) {
@@ -225,7 +230,12 @@ func ZarbHomeDir() string {
 	home := ""
 	usr, err := user.Current()
 	if err == nil {
-		home = usr.HomeDir + "/zarb/"
+		// Running as root, probably inside docker
+		if usr.HomeDir == "/root" {
+			home = "/zarb/"
+		} else {
+			home = usr.HomeDir + "/zarb/"
+		}
 	}
 	return home
 }

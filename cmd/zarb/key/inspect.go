@@ -49,7 +49,7 @@ func Inspect() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Address: %v", keyObj.Address())
 			cmd.PrintInfoMsg("Public key: %v", keyObj.PublicKey())
 			if *showPrivateOpt {
-				cmd.PrintInfoMsg("Private key: %v", keyObj.PrivateKey())
+				cmd.PrintDangerMsg("Private key: %v", keyObj.PrivateKey())
 			}
 		}
 	}

@@ -13,7 +13,7 @@ type Config struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		ChangeProposerTimeout: 5 * time.Second,
+		ChangeProposerTimeout: 6 * time.Second,
 		ChangeProposerDelta:   2 * time.Second,
 	}
 }
