@@ -92,6 +92,11 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"certificate has invalid round. Expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
 		}
+
+		if !util.Equal(cert.Committers(), st.lastInfo.Certificate().Committers()) {
+			return errors.Errorf(errors.ErrInvalidBlock,
+				"certificate has invalid committers")
+		}
 	}
 
 	return nil
