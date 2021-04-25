@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -179,11 +180,17 @@ func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
+	if m.TxPool.HasTx(trx.ID()) {
+		return errors.Error(errors.ErrGeneric)
+	}
 	return m.TxPool.AppendTx(trx)
 }
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
+	if m.TxPool.HasTx(trx.ID()) {
+		return errors.Error(errors.ErrGeneric)
+	}
 	return m.TxPool.AppendTxAndBroadcast(trx)
 }

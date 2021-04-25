@@ -3,14 +3,25 @@ package grpc
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes"
+	"github.com/zarbchain/zarb-go/crypto"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (zs *zarbServer) GetBlockHeight(ctx context.Context, request *zarb.BlockHeightRequest) (*zarb.BlockHeightResponse, error) {
-	return nil, status.Errorf(codes.Unavailable, "Not implemented yet!")
+	h, err := crypto.HashFromString(request.GetHash())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Hash provided is not Valid")
+	}
+	height := zs.state.BlockHeight(h)
+	if height == -1 {
+		return nil, status.Errorf(codes.NotFound, "No block found with the Hash provided")
+	}
+	return &zarb.BlockHeightResponse{
+		Height: int64(height),
+	}, nil
 }
 
 func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) (*zarb.BlockResponse, error) {
@@ -20,10 +31,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 		return nil, status.Errorf(codes.InvalidArgument, "Block not found")
 	}
 	hash := block.Hash().String()
-	timestamp, err := ptypes.TimestampProto(block.Header().Time())
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
+	timestamp := timestamppb.New(block.Header().Time())
 	data, err := block.Encode()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
