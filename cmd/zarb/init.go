@@ -45,7 +45,7 @@ func Init() func(c *cli.Cmd) {
 			path, _ := filepath.Abs(*workingDirOpt)
 
 			if !util.IsDirNotExistsOrEmpty(path) {
-				cmd.PrintErrorMsg("Please choose an empty directory")
+				cmd.PrintErrorMsg("The workspace directory is not empty: %v", path)
 				return
 			}
 

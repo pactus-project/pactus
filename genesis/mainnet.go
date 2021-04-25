@@ -37,7 +37,7 @@ const mainnetJSON = `
 		  "PublicKey":"2a59438cb5790fa9d0d3c584e54dfc6f41f998b0bbd5297ea74d5a1b62b1022f222ee1c966fcc060ef199bd867d0d80b416a10423b070d3dd5d4c8d32678b9a686703fe818ba662162416389965579162134c622a9d90d10fb508eef03c38d92"
 	   }
 	]
- }
+}
 `
 
 func Mainnet() *Genesis {

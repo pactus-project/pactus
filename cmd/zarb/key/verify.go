@@ -25,8 +25,8 @@ func Verify() func(c *cli.Cmd) {
 			Desc: "Message to verify",
 		})
 		messageFileOpt := c.String(cli.StringOpt{
-			Name: "f messagefile",
-			Desc: "Message file to verify",
+			Name: "f file",
+			Desc: "A file path to verify",
 		})
 
 		c.Spec = "PUBLICKEY SIGNATURE"
