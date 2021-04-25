@@ -16,6 +16,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/zarbchain/zarb-go/www/grpc"
 )
 
 var tMockState *state.MockState
@@ -25,6 +26,7 @@ var tHTTPServer *Server
 var tAccTestAddr crypto.Address
 var tValTestAddr crypto.Address
 var tTxTestHash crypto.Hash
+var tGrpcServer *grpc.Server
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
@@ -59,6 +61,16 @@ func setup(t *testing.T) {
 	tCapnpServer, err = capnp.NewServer(capnp.TestConfig(), tMockState, tMockSync)
 	assert.NoError(t, err)
 	assert.NoError(t, tCapnpServer.StartServer())
+
+	tGrpcServer, err = grpc.NewServer(grpc.TestConfig(), tMockState, tMockSync)
+	assert.NoError(t, err)
+	assert.NoError(t, tGrpcServer.StartServer())
+
+	//grpc enable cors
+	grpc.TestConfig().Gateway.EnableCORS = true
+	tGrpcServer, err = grpc.NewServer(grpc.TestConfig(), tMockState, tMockSync)
+	assert.NoError(t, err)
+	assert.NoError(t, tGrpcServer.StartServer())
 
 	tHTTPServer, err = NewServer(TestConfig())
 	assert.NoError(t, err)
