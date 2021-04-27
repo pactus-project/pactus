@@ -24,13 +24,13 @@ func (s *precommitState) decide() {
 	if precommitQH != nil {
 		s.logger.Debug("precommit has quorum", "precommitQH", precommitQH)
 		s.enterNewState(s.commitState)
-	}
-
-	// Liveness on PBFT
-	// ...
-	voteset := s.pendingVotes.ChangeProposerVoteSet(s.round + 1)
-	if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
-		s.enterNewState(s.changeProposerState)
+	} else {
+		// Liveness on PBFT
+		// ...
+		voteset := s.pendingVotes.ChangeProposerVoteSet(s.round)
+		if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
+			s.enterNewState(s.changeProposerState)
+		}
 	}
 }
 
