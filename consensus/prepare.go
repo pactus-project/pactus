@@ -13,6 +13,8 @@ type prepareState struct {
 
 func (s *prepareState) enter() {
 	s.hasVoted = false
+
+	s.scheduleTimeout(s.config.QueryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
 }
 
 func (s *prepareState) decide() {
@@ -70,11 +72,13 @@ func (s *prepareState) onSetProposal(p *proposal.Proposal) {
 }
 
 func (s *prepareState) onTimedout(t *ticker) {
-	if t.Target != tickerTargetChangeProposer {
-		s.logger.Debug("Invalid ticker", "ticker", t)
-		return
+	if t.Target == tickerTargetQueryProposal {
+		s.queryProposal()
+	} else if t.Target == tickerTargetChangeProposer {
+		s.enterNewState(s.changeProposerState)
+	} else {
+		s.logger.Trace("Invalid ticker", "ticker", t)
 	}
-	s.enterNewState(s.changeProposerState)
 }
 
 func (s *prepareState) name() string {
