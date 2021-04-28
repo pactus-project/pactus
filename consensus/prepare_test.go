@@ -147,3 +147,11 @@ func TestByzantineVote2(t *testing.T) {
 	}
 	checkHeightRoundWait(t, tConsX, h, r+1)
 }
+
+func TestQueryProposal(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	testEnterNewHeight(tConsX)
+	shouldPublishQueryProposal(t, tConsX, 2, 0)
+}
