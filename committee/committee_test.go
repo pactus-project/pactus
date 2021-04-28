@@ -308,15 +308,20 @@ func TestSortJoined(t *testing.T) {
 	assert.NoError(t, vs2.Update(0, []*validator.Validator{val7, val5, val6}))
 }
 
-func TestCurrentPower(t *testing.T) {
+func TestTotalPower(t *testing.T) {
+	_, pub, _ := crypto.GenerateTestKeyPair()
+	val0 := validator.NewValidator(pub, 0, 0) // Bootstrap validator
 	val1, _ := validator.GenerateTestValidator(0)
 	val2, _ := validator.GenerateTestValidator(1)
 	val3, _ := validator.GenerateTestValidator(2)
 	val4, _ := validator.GenerateTestValidator(3)
 
-	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
+	committee, err := NewCommittee([]*validator.Validator{val0, val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
-	total := val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
-	assert.Equal(t, committee.TotalPower(), total)
+	totalPower := val0.Power() + val1.Power() + val2.Power() + val3.Power() + val4.Power()
+	totalStake := val0.Stake() + val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
+	assert.Equal(t, committee.TotalStake(), totalStake)
+	assert.Equal(t, committee.TotalPower(), totalPower)
+	assert.Equal(t, committee.TotalPower(), totalStake+1)
 }

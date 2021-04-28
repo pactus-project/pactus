@@ -11,4 +11,5 @@ type CommitteeReader interface {
 	Proposer(round int) *validator.Validator
 	IsProposer(addr crypto.Address, round int) bool
 	TotalPower() int64
+	TotalStake() int64
 }

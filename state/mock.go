@@ -136,6 +136,39 @@ func (m *MockState) IsProposer(addr crypto.Address, round int) bool {
 	defer m.Lock.Unlock()
 	return m.Committee.IsProposer(addr, round)
 }
+
+func (m *MockState) TotalStake() int64 {
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
+	stake := int64(0)
+	m.Store.IterateValidators(func(val *validator.Validator) bool {
+		stake += val.Stake()
+		return false
+	})
+	return stake
+}
+
+func (m *MockState) CommitteeStake() int64 {
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
+	return m.Committee.TotalStake()
+}
+
+func (m *MockState) PoolStake() int64 {
+	m.Lock.Lock()
+	defer m.Lock.Unlock()
+
+	stake := int64(0)
+	m.Store.IterateValidators(func(val *validator.Validator) bool {
+		if !m.Committee.Contains(val.Address()) {
+			stake += val.Stake()
+		}
+		return false
+	})
+	return stake
+}
 func (m *MockState) Transaction(id tx.ID) *tx.Tx {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()

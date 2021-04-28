@@ -43,6 +43,15 @@ func NewCommittee(validators []*validator.Validator, committeeSize int, proposer
 	}, nil
 }
 
+func (committee *Committee) TotalStake() int64 {
+	s := int64(0)
+	committee.iterate(func(v *validator.Validator) (stop bool) {
+		s += v.Stake()
+		return false
+	})
+	return s
+}
+
 func (committee *Committee) TotalPower() int64 {
 	p := int64(0)
 	committee.iterate(func(v *validator.Validator) (stop bool) {

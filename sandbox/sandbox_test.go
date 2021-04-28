@@ -337,28 +337,3 @@ func TestDeepCopy(t *testing.T) {
 	assert.NotEqual(t, acc2.Hash(), acc3.Account.Hash())
 	assert.NotEqual(t, val2.Hash(), val3.Validator.Hash())
 }
-
-func TestChangeToStake(t *testing.T) {
-	setup(t)
-
-	_, pub1, _ := crypto.GenerateTestKeyPair()
-	_, pub2, _ := crypto.GenerateTestKeyPair()
-	val1 := tSandbox.MakeNewValidator(pub1)
-	val2 := tSandbox.MakeNewValidator(pub2)
-	val3 := tSandbox.Validator(tValSigners[0].Address())
-
-	val1.AddToStake(1000)
-	val2.AddToStake(2000)
-	val3.AddToStake(3000)
-
-	tSandbox.UpdateValidator(val1)
-	assert.Equal(t, tSandbox.TotalStakeChange(), int64(1000))
-
-	val1.AddToStake(500)
-	assert.Equal(t, tSandbox.TotalStakeChange(), int64(1000))
-
-	tSandbox.UpdateValidator(val1)
-	tSandbox.UpdateValidator(val2)
-	tSandbox.UpdateValidator(val3)
-	assert.Equal(t, tSandbox.TotalStakeChange(), int64(6500))
-}

@@ -238,6 +238,10 @@ func (tx *Tx) IsSortitionTx() bool {
 	return tx.data.Type == payload.PayloadTypeSortition
 }
 
+func (tx *Tx) IsBondTx() bool {
+	return tx.data.Type == payload.PayloadTypeBond
+}
+
 // ---------
 // For tests
 func GenerateTestSendTx() (*Tx, crypto.Signer) {

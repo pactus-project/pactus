@@ -214,7 +214,7 @@ func TestCommitBlocks(t *testing.T) {
 
 func TestCommitSandbox(t *testing.T) {
 
-	t.Run("Certificate new account", func(t *testing.T) {
+	t.Run("Add new account", func(t *testing.T) {
 		setup(t)
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
@@ -226,19 +226,17 @@ func TestCommitSandbox(t *testing.T) {
 		assert.True(t, tState1.store.HasAccount(addr))
 	})
 
-	t.Run("Certificate new validator", func(t *testing.T) {
+	t.Run("Add new validator", func(t *testing.T) {
 		setup(t)
 
 		addr, pub, _ := crypto.GenerateTestKeyPair()
 		sb := tState1.makeSandbox()
 		newVal := sb.MakeNewValidator(pub)
-		newVal.AddToStake(1)
+		newVal.AddToStake(123)
 		sb.UpdateValidator(newVal)
 		tState1.commitSandbox(sb, 0)
 
 		assert.True(t, tState1.store.HasValidator(addr))
-		assert.Equal(t, sb.TotalStakeChange(), int64(1))
-		assert.Equal(t, tState1.sortition.TotalStake(), int64(1))
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
@@ -259,13 +257,12 @@ func TestCommitSandbox(t *testing.T) {
 
 		sb := tState1.makeSandbox()
 		val := sb.Validator(tValSigner2.Address())
-		val.AddToStake(2)
+		val.AddToStake(2002)
 		sb.UpdateValidator(val)
 		tState1.commitSandbox(sb, 0)
 
 		val1, _ := tState1.store.Validator(tValSigner2.Address())
 		assert.Equal(t, val1.Stake(), val.Stake())
-		assert.Equal(t, sb.TotalStakeChange(), int64(2))
 	})
 
 	t.Run("Move committee", func(t *testing.T) {
@@ -539,9 +536,11 @@ func TestLoadState(t *testing.T) {
 
 	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
 	assert.Equal(t, tState1.store.TotalValidators(), st2.(*state).store.TotalValidators())
-	assert.Equal(t, tState1.sortition.TotalStake(), st2.(*state).sortition.TotalStake())
+	assert.Equal(t, tState1.committee.Committers(), st2.(*state).committee.Committers())
+	assert.Equal(t, tState1.TotalStake(), st2.(*state).TotalStake())
+	assert.Equal(t, tState1.committeeStake(), st2.(*state).committeeStake())
+	assert.Equal(t, tState1.PoolStake(), st2.(*state).PoolStake())
 	assert.Equal(t, tState1.store.TotalAccounts(), 5)
-	assert.Equal(t, tState1.sortition.TotalStake(), int64(8888000))
 
 	require.NoError(t, st2.CommitBlock(6, b6, c6))
 	require.NoError(t, tState2.CommitBlock(6, b6, c6))

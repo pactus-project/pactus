@@ -42,7 +42,9 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
 	assert.NoError(t, tState1.CommitBlock(2, b2, c2))
 
-	assert.Equal(t, tState1.sortition.TotalStake(), int64(1000))
+	assert.Equal(t, tState1.TotalStake(), int64(1000))
+	assert.Equal(t, tState1.PoolStake(), int64(1000))
+	assert.Equal(t, tState1.committeeStake(), int64(0))
 }
 
 func TestExecuteBlock(t *testing.T) {
