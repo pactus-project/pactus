@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/BurntSushi/toml"
+	toml "github.com/pelletier/go-toml"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
@@ -22,16 +22,16 @@ import (
 )
 
 type Config struct {
-	State     *state.Config
-	Store     *store.Config
-	TxPool    *txpool.Config
-	Consensus *consensus.Config
-	Network   *network.Config
-	Logger    *logger.Config
-	Sync      *sync.Config
-	Capnp     *capnp.Config
-	Http      *http.Config
-	GRPC      *grpc.Config
+	State     *state.Config     `toml:"state" comment:"State contians the state of the accounts."`
+	Store     *store.Config     `toml:"store" comment:"Store db which write and store the blockchin data.Default golevel db. "`
+	TxPool    *txpool.Config    `toml:"txPool" comment:"TxPool is blockchain mempool.Limit the total size of all txs in the txPool."`
+	Consensus *consensus.Config `toml:"Consensus" comment:"Consensus contains proposer(block creator) and validator(block validator) configuration."`
+	Network   *network.Config   `toml:"Network" comment:"Network contains all details of network confgiuration. Zarb uses lip2p protocal configuration."`
+	Logger    *logger.Config    `toml:"Logger" comment:"Logger contains Output level for logging."`
+	Sync      *sync.Config      `toml:"Sync" comment:"Sync is used for peer connection and synchronising blockchain and it also contains monkier and its details."`
+	Capnp     *capnp.Config     `toml:"Capnp" comment:"Cap’n Proto is an insanely fast data interchange format and capability-based RPC system."`
+	Http      *http.Config      `toml:"Http" comment:"TCP or UNIX socket address for the tcp server to listen on. Default port is 8081."`
+	GRPC      *grpc.Config      `toml:"GRPC" comment:"TCP or UNIX socket address for zarb to listen on for connections from an external process. Default port is 9090."`
 }
 
 func DefaultConfig() *Config {
@@ -71,7 +71,7 @@ func TestConfig() *Config {
 func FromTOML(t string) (*Config, error) {
 	conf := DefaultConfig()
 
-	if _, err := toml.Decode(t, conf); err != nil {
+	if _, err := toml.Load(t); err != nil {
 		return nil, err
 	}
 	return conf, nil

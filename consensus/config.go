@@ -7,9 +7,9 @@ import (
 )
 
 type Config struct {
-	QueryProposalTimeout  time.Duration
-	ChangeProposerTimeout time.Duration
-	ChangeProposerDelta   time.Duration
+	QueryProposalTimeout  time.Duration `toml:"QueryProposalTimeout" comment:"QueryProposalTimeout time taken by proposer to propose block.Default is 1 second."`
+	ChangeProposerTimeout time.Duration `toml:"ChangeProposerTimeout" comment:"ChangeProposerTimeout time given to proposer to create block.Default is 6 second."`
+	ChangeProposerDelta   time.Duration `toml:"ChangeProposerDelta" comment:"ChangeProposerDelta poposer can set timeout to propose block.Default is 2 second."`
 }
 
 func DefaultConfig() *Config {
