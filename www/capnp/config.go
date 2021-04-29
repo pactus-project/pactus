@@ -1,8 +1,8 @@
 package capnp
 
 type Config struct {
-	Enable  bool
-	Address string
+	Enable  bool   `toml:"Enable" comment:"Enable CAPN servers for client communication."`
+	Address string `toml:"Address" comment:"Address to listen for incoming connections for CAPNP. Default port is 37621."`
 }
 
 func DefaultConfig() *Config {

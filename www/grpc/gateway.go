@@ -16,8 +16,8 @@ import (
 )
 
 type GatewayConfig struct {
-	Enable  bool
-	Address string
+	Enable  bool   `toml:"Enable" comment:"Enable GRPCGateway servers for client communication."`
+	Address string `toml:"Address"  comment:"Address to listen for incoming connections for GRPCGateway.Default port is 8080."`
 }
 
 // getOpenAPIHandler serves an OpenAPI UI.

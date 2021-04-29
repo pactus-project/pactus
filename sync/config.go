@@ -7,14 +7,14 @@ import (
 )
 
 type Config struct {
-	Moniker              string
-	StartingTimeout      time.Duration
-	HeartBeatTimeout     time.Duration
-	SessionTimeout       time.Duration
-	InitialBlockDownload bool
-	BlockPerMessage      int
-	RequestBlockInterval int
-	CacheSize            int
+	Moniker              string        `toml:"Moniker" comment:"Moniker A custom human readable name for this node."`
+	StartingTimeout      time.Duration `toml:"StartingTimeout" comment:"StartingTimeout is timeout to syncing the node."`
+	HeartBeatTimeout     time.Duration `toml:"HeartBeatTimeout" comment:"HeartBeatTimeout timeout for detecting the tcp connections."`
+	SessionTimeout       time.Duration `toml:"SessionTimeout" comment:"SessionTimeout session."`
+	InitialBlockDownload bool          `toml:"InitialBlockDownload" comment:"InitialBlockDownload enable or disable for initial block downloading."`
+	BlockPerMessage      int           `toml:"BlockPerMessage" comment:"BlockPerMessage receive the number of blocks per message. Default is 10."`
+	RequestBlockInterval int           `toml:"RequestBlockInterval" comment:"RequestBlockInterval max duration for a request, block interval."`
+	CacheSize            int           `toml:"CacheSize" comment:"CacheSize Size of the cache in transactions."`
 	Firewall             *firewall.Config
 }
 

@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	WaitingTimeout time.Duration
-	MaxSize        int
+	WaitingTimeout time.Duration `toml:"WaitingTimeout" comment:"WaitingTimeout is block interval time. Default is 2 second."`
+	MaxSize        int           `toml:"MaxSize" comment:"MaxSize descirbe the txpool maximum memory size."`
 }
 
 func DefaultConfig() *Config {
