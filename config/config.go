@@ -22,9 +22,9 @@ import (
 )
 
 type Config struct {
-	State     *state.Config     `toml:"state" comment:"State contians the state of the accounts."`
-	Store     *store.Config     `toml:"store" comment:"Store db which write and store the blockchin data.Default golevel db. "`
-	TxPool    *txpool.Config    `toml:"txPool" comment:"TxPool is blockchain mempool.Limit the total size of all txs in the txPool."`
+	State     *state.Config     `toml:"State" comment:"State contians the state of the accounts."`
+	Store     *store.Config     `toml:"Store" comment:"Store db which write and store the blockchin data.Default golevel db. "`
+	TxPool    *txpool.Config    `toml:"TxPool" comment:"TxPool is blockchain mempool.Limit the total size of all txs in the txPool."`
 	Consensus *consensus.Config `toml:"Consensus" comment:"Consensus contains proposer(block creator) and validator(block validator) configuration."`
 	Network   *network.Config   `toml:"Network" comment:"Network contains all details of network confgiuration. Zarb uses lip2p protocal configuration."`
 	Logger    *logger.Config    `toml:"Logger" comment:"Logger contains Output level for logging."`
