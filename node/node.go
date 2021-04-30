@@ -25,6 +25,7 @@ type Node struct {
 	genesisDoc *genesis.Genesis
 	config     *config.Config
 	state      state.StateFacade
+	store      store.Store
 	txPool     txpool.TxPool
 	consensus  consensus.Consensus
 	network    network.Network
@@ -93,6 +94,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		txPool:     txPool,
 		consensus:  consensus,
 		sync:       sync,
+		store:      store,
 		capnp:      capnp,
 		http:       http,
 		grpc:       grpc,
@@ -148,6 +150,7 @@ func (n *Node) Stop() {
 	n.network.Stop()
 	n.sync.Stop()
 	n.state.Close()
+	n.store.Close()
 	n.http.StopServer()
 	n.capnp.StopServer()
 	n.grpc.StopServer()

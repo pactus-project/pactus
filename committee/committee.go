@@ -44,6 +44,13 @@ func NewCommittee(validators []*validator.Validator, committeeSize int, proposer
 }
 
 func (committee *Committee) TotalStake() int64 {
+	committee.lk.RLock()
+	defer committee.lk.RUnlock()
+
+	return committee.totalStake()
+}
+
+func (committee *Committee) totalStake() int64 {
 	s := int64(0)
 	committee.iterate(func(v *validator.Validator) (stop bool) {
 		s += v.Stake()
@@ -53,6 +60,9 @@ func (committee *Committee) TotalStake() int64 {
 }
 
 func (committee *Committee) TotalPower() int64 {
+	committee.lk.RLock()
+	defer committee.lk.RUnlock()
+
 	p := int64(0)
 	committee.iterate(func(v *validator.Validator) (stop bool) {
 		p += v.Power()
@@ -69,10 +79,6 @@ func (committee *Committee) Update(lastRound int, joined []*validator.Validator)
 		if committee.contains(v.Address()) {
 			return errors.Errorf(errors.ErrGeneric, "validator.Validator already is in the committee")
 		}
-	}
-
-	if len(joined) > (committee.committeeSize / 3) {
-		return errors.Errorf(errors.ErrGeneric, "in each update only 1/3 of validator committee can be changed")
 	}
 
 	sort.SliceStable(joined, func(i, j int) bool {
@@ -197,10 +203,17 @@ func (committee *Committee) proposer(round int) *validator.Validator {
 }
 
 func (committee *Committee) Committers() []int {
-	committee.lk.Lock()
-	defer committee.lk.Unlock()
+	committee.lk.RLock()
+	defer committee.lk.RUnlock()
 
 	return committee.committers()
+}
+
+func (committee *Committee) Size() int {
+	committee.lk.RLock()
+	defer committee.lk.RUnlock()
+
+	return committee.validatorList.Len()
 }
 
 func (committee *Committee) committers() []int {

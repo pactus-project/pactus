@@ -60,7 +60,7 @@ func setup(t *testing.T) {
 	val3 := validator.NewValidator(tValSigner3.PublicKey(), 2, 0)
 	val4 := validator.NewValidator(tValSigner4.PublicKey(), 3, 0)
 	params := param.DefaultParams()
-	params.CommitteeSize = 4
+	params.CommitteeSize = 5
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
 	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, store1, tCommonTxPool)
@@ -367,7 +367,7 @@ func TestSortition(t *testing.T) {
 
 	height := 1
 	for ; height < 12; height++ {
-		if height == 4 {
+		if height == 2 {
 			trx := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 1000, 1000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
@@ -396,7 +396,7 @@ func TestSortition(t *testing.T) {
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
 	assert.False(t, st1.evaluateSortition()) // already in the committee
-	assert.False(t, tState1.committee.Contains(tValSigner1.Address()))
+	assert.True(t, tState1.committee.Contains(tValSigner1.Address()))
 	assert.True(t, tState1.committee.Contains(addr))
 
 	// ---------------------------------------------
@@ -418,7 +418,7 @@ func TestSortition(t *testing.T) {
 	sigs[1] = tValSigner3.SignData(sb)
 	sigs[2] = tValSigner4.SignData(sb)
 	sigs[3] = signer.SignData(sb)
-	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 1, 2, 3}, []int{}, crypto.Aggregate(sigs))
+	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 0, 1, 2, 3}, []int{0}, crypto.Aggregate(sigs))
 
 	height++
 	assert.NoError(t, st2.CommitBlock(height, b1, c1))

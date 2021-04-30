@@ -12,11 +12,12 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-var tValSigners [4]crypto.Signer
-var tSortitions [4]*sortition.Sortition
+var tValSigners [9]crypto.Signer
+var tSortitions *sortition.Sortition
 var tCommittee *committee.Committee
 var tStore *store.MockStore
 var tSandbox *SandboxConcrete
@@ -29,63 +30,72 @@ func setup(t *testing.T) {
 	var err error
 	tStore = store.MockingStore()
 
+	lastHeight := 21
+	for i := 0; i <= lastHeight; i++ {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		tStore.SaveBlock(i+1, b)
+	}
+
 	_, pub1, priv1 := crypto.GenerateTestKeyPair()
 	_, pub2, priv2 := crypto.GenerateTestKeyPair()
 	_, pub3, priv3 := crypto.GenerateTestKeyPair()
 	_, pub4, priv4 := crypto.GenerateTestKeyPair()
+	_, pub5, priv5 := crypto.GenerateTestKeyPair()
+	_, pub6, priv6 := crypto.GenerateTestKeyPair()
+	_, pub7, priv7 := crypto.GenerateTestKeyPair()
+	_, pub8, priv8 := crypto.GenerateTestKeyPair()
+
 	tValSigners[0] = crypto.NewSigner(priv1)
 	tValSigners[1] = crypto.NewSigner(priv2)
 	tValSigners[2] = crypto.NewSigner(priv3)
 	tValSigners[3] = crypto.NewSigner(priv4)
+	tValSigners[4] = crypto.NewSigner(priv5)
+	tValSigners[5] = crypto.NewSigner(priv6)
+	tValSigners[6] = crypto.NewSigner(priv7)
+	tValSigners[7] = crypto.NewSigner(priv8)
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
-	// Validator numbers are same as GenerateTestCertificate(...) numbers
-	val1 := validator.NewValidator(pub1, 10, 400)
-	val2 := validator.NewValidator(pub2, 18, 500)
-	val3 := validator.NewValidator(pub3, 2, 200)
-	val4 := validator.NewValidator(pub4, 6, 300)
+
+	val1 := validator.NewValidator(pub1, 0, util.RandInt(1000))
+	val2 := validator.NewValidator(pub2, 1, util.RandInt(1000))
+	val3 := validator.NewValidator(pub3, 2, util.RandInt(1000))
+	val4 := validator.NewValidator(pub4, 3, util.RandInt(1000))
+	val5 := validator.NewValidator(pub5, 4, util.RandInt(1000))
+	val6 := validator.NewValidator(pub6, 5, util.RandInt(1000))
+	val7 := validator.NewValidator(pub7, 6, util.RandInt(1000))
+	val8 := validator.NewValidator(pub8, 7, util.RandInt(1000))
+
+	val1.AddToStake(1000)
+	val2.AddToStake(2000)
+	val3.AddToStake(3000)
+	val4.AddToStake(4000)
+	val5.AddToStake(1000)
+	val6.AddToStake(3000)
+	val7.AddToStake(1000)
+	val8.AddToStake(100)
 
 	tStore.UpdateAccount(acc)
 	tStore.UpdateValidator(val1)
 	tStore.UpdateValidator(val2)
 	tStore.UpdateValidator(val3)
 	tStore.UpdateValidator(val4)
+	tStore.UpdateValidator(val5)
+	tStore.UpdateValidator(val6)
+	tStore.UpdateValidator(val7)
+	tStore.UpdateValidator(val8)
 
-	tSortitions[0] = sortition.NewSortition()
-	tSortitions[1] = sortition.NewSortition()
-	tSortitions[2] = sortition.NewSortition()
-	tSortitions[3] = sortition.NewSortition()
+	tSortitions = sortition.NewSortition()
 	tCommittee, err = committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
 	params := param.DefaultParams()
-	tSandbox = NewSandbox(tStore, params, 10, tSortitions[0], tCommittee)
+	tSandbox = NewSandbox(tStore, params, tStore.LastBlockHeight(), tSortitions, tCommittee)
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
 	assert.Equal(t, tSandbox.TransactionToLiveInterval(), params.TransactionToLiveInterval)
 	assert.Equal(t, tSandbox.CommitteeSize(), params.CommitteeSize)
-}
-
-func TestLoadRecentBlocks(t *testing.T) {
-	store := store.MockingStore()
-
-	lastHeight := 21
-	for i := 0; i <= lastHeight; i++ {
-		b, _ := block.GenerateTestBlock(nil, nil)
-		store.SaveBlock(i+1, b)
-	}
-
-	params := param.DefaultParams()
-	params.TransactionToLiveInterval = 10
-
-	sandbox := NewSandbox(store, params, lastHeight, nil, nil)
-
-	assert.Equal(t, sandbox.BlockHeight(crypto.UndefHash), 0)
-	assert.Equal(t, sandbox.BlockHeight(store.Blocks[11].Hash()), 11)
-	assert.Equal(t, sandbox.BlockHeight(store.Blocks[12].Hash()), 12)
-	assert.Equal(t, sandbox.BlockHeight(store.Blocks[21].Hash()), 21)
 }
 
 func TestAccountChange(t *testing.T) {
@@ -162,25 +172,20 @@ func TestValidatorChange(t *testing.T) {
 	})
 }
 
-func TestAddValidatorToSet(t *testing.T) {
+func TestAddValidatorToCommittee(t *testing.T) {
 	setup(t)
 
-	block1001, _ := block.GenerateTestBlock(nil, nil)
-	assert.NoError(t, tCommittee.Update(0, nil))
-	block1002, _ := block.GenerateTestBlock(nil, nil)
-	assert.NoError(t, tCommittee.Update(0, nil))
-
-	tStore.SaveBlock(1001, block1001)
-	tStore.SaveBlock(1002, block1002)
+	stamp := tSandbox.LastBlockHash()
+	height := tSandbox.CurrentHeight()
 
 	t.Run("Add unknown validator to the committee, Should returns error", func(t *testing.T) {
 		val, _ := validator.GenerateTestValidator(777)
-		assert.Error(t, tSandbox.EnterCommittee(block1002.Hash(), val.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(stamp, val.Address()))
 	})
 
 	t.Run("Already in the committee, Should returns error", func(t *testing.T) {
 		v := tSandbox.Validator(tValSigners[3].Address())
-		assert.Error(t, tSandbox.EnterCommittee(block1002.Hash(), v.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(stamp, v.Address()))
 	})
 
 	t.Run("Invalid block hash, Should returns error", func(t *testing.T) {
@@ -189,23 +194,44 @@ func TestAddValidatorToSet(t *testing.T) {
 		assert.Error(t, tSandbox.EnterCommittee(crypto.GenerateTestHash(), val.Address()))
 	})
 
-	t.Run("More than 1/3, Should returns error", func(t *testing.T) {
+	t.Run("More than 1/3 stake, Should returns error", func(t *testing.T) {
 		tSandbox.params.CommitteeSize = 4
 
-		_, pub1, _ := crypto.GenerateTestKeyPair()
-		_, pub2, _ := crypto.GenerateTestKeyPair()
-		val1 := tSandbox.MakeNewValidator(pub1)
-		val2 := tSandbox.MakeNewValidator(pub2)
-		assert.NoError(t, tSandbox.EnterCommittee(block1002.Hash(), val1.Address()))
-		assert.Error(t, tSandbox.EnterCommittee(block1002.Hash(), val2.Address()))
-		assert.NoError(t, tCommittee.Update(0, []*validator.Validator{val1}))
+		val5 := tSandbox.Validator(tValSigners[4].Address())
+		val6 := tSandbox.Validator(tValSigners[5].Address())
+		val7 := tSandbox.Validator(tValSigners[6].Address())
+
+		assert.Equal(t, tSandbox.committee.TotalStake(), int64(10000), "Total stake should be 10000")
+		assert.NoError(t, tSandbox.EnterCommittee(stamp, val5.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(stamp, val5.Address()), "Duplicated entry")
+		assert.Error(t, tSandbox.EnterCommittee(stamp, val6.Address()), "More than 1/3 of stake is going to change")
+		assert.NoError(t, tSandbox.EnterCommittee(stamp, val7.Address()))
 	})
 
 	t.Run("In committee at time of sending sortition, Should returns error", func(t *testing.T) {
-		tSandbox.params.CommitteeSize = 8
+		tSandbox.params.CommitteeSize = 4
 
-		v := tSandbox.Validator(tValSigners[0].Address())
-		assert.Error(t, tSandbox.EnterCommittee(block1002.Hash(), v.Address()))
+		b, _ := tStore.Block(height - 3)
+		num := b.LastCertificate().Committers()[2]
+		addr, pub, _ := crypto.GenerateTestKeyPair()
+		val := validator.NewValidator(pub, num, 0)
+		tStore.UpdateValidator(val)
+		assert.Equal(t, tSandbox.Validator(addr), val)
+
+		assert.Error(t, tSandbox.EnterCommittee(stamp, val.Address()))
+	})
+
+	t.Run("Not leaving committee before proposing a block", func(t *testing.T) {
+
+		vals := tSandbox.committee.Validators()
+		vals[0].UpdateLastJoinedHeight(height - 4)
+		vals[1].UpdateLastJoinedHeight(height - 3)
+		vals[2].UpdateLastJoinedHeight(height - 2)
+		vals[3].UpdateLastJoinedHeight(height - 1)
+
+		val8 := tSandbox.Validator(tValSigners[7].Address())
+
+		assert.Error(t, tSandbox.EnterCommittee(stamp, val8.Address()))
 	})
 
 	t.Run("Update validator and add to committee", func(t *testing.T) {
@@ -213,7 +239,7 @@ func TestAddValidatorToSet(t *testing.T) {
 
 		addr1, pub1, _ := crypto.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)
-		assert.NoError(t, tSandbox.EnterCommittee(block1002.Hash(), val1.Address()))
+		assert.NoError(t, tSandbox.EnterCommittee(stamp, val1.Address()))
 		seq := val1.Sequence()
 		val1.IncSequence()
 		tSandbox.UpdateValidator(val1)
@@ -244,15 +270,15 @@ func TestTotalValidatorCounter(t *testing.T) {
 	setup(t)
 
 	t.Run("Should update total validator counter", func(t *testing.T) {
-		assert.Equal(t, tStore.TotalValidators(), 4) // Sandbox has 5 validators
+		assert.Equal(t, tStore.TotalValidators(), 8)
 
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		_, pub2, _ := crypto.GenerateTestKeyPair()
 		val := tSandbox.MakeNewValidator(pub)
-		assert.Equal(t, val.Number(), 4)
+		assert.Equal(t, val.Number(), 8)
 		assert.Equal(t, val.BondingHeight(), tSandbox.CurrentHeight())
 		val2 := tSandbox.MakeNewValidator(pub2)
-		assert.Equal(t, val2.Number(), 5)
+		assert.Equal(t, val2.Number(), 9)
 		assert.Equal(t, val2.BondingHeight(), tSandbox.CurrentHeight())
 		assert.Equal(t, val2.Stake(), int64(0))
 	})

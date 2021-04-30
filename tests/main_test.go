@@ -35,7 +35,7 @@ const tNodeIdx2 = 1
 const tNodeIdx3 = 2
 const tNodeIdx4 = 3
 const tTotalNodes = 8
-const tCommitteeSize = 4
+const tCommitteeSize = 7
 
 func incSequence(t *testing.T, addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
@@ -58,7 +58,7 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
-		tConfigs[i].Logger.Levels["default"] = "error"
+		tConfigs[i].Logger.Levels["default"] = "warning"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
@@ -142,11 +142,8 @@ func TestMain(m *testing.M) {
 	// Check if sortition worked or not?
 	b := lastBlock()
 	committers := b.LastCertificate().Committers()
-	for _, num := range committers {
-		if num == tNodeIdx1 ||
-			num == tNodeIdx2 {
-			panic("Sortition didn't work")
-		}
+	if len(committers) == 4 {
+		panic("Sortition didn't work")
 	}
 
 	// Let's shutdown the nodes

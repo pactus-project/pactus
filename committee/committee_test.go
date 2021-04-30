@@ -99,11 +99,10 @@ func TestProposerJoin(t *testing.T) {
 
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
 	assert.NoError(t, err)
+	assert.Equal(t, committee.Size(), 4)
 
 	// Val1 is already in committee
 	assert.Error(t, committee.Update(0, []*validator.Validator{val1}))
-	// More than 2/3 of power
-	assert.Error(t, committee.Update(0, []*validator.Validator{val5, val6, val7}))
 
 	//
 	// +=+-+-+-+     +-+-+=+-+-+     +-+-+-+-+=+     +=+-+-+-+-+-+-+     +-+-+=+-+-+-+-+
@@ -117,6 +116,7 @@ func TestProposerJoin(t *testing.T) {
 	assert.NoError(t, committee.Update(0, []*validator.Validator{val5}))
 	assert.Equal(t, committee.Proposer(0).Number(), 2)
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val5, val1, val2, val3, val4})
+	assert.Equal(t, committee.Size(), 5)
 
 	// Height 2
 	assert.NoError(t, committee.Update(1, nil))
@@ -128,6 +128,7 @@ func TestProposerJoin(t *testing.T) {
 	assert.NoError(t, committee.Update(1, []*validator.Validator{val6, val7}))
 	assert.Equal(t, committee.Proposer(0).Number(), 1)
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val5, val1, val2, val3, val6, val7, val4})
+	assert.Equal(t, committee.Size(), 7)
 
 	//
 	assert.NoError(t, committee.Update(0, nil))
@@ -246,20 +247,6 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, committee.Proposer(5).Number(), 10)
 	assert.Equal(t, committee.Proposer(6).Number(), 11)
 	assert.Equal(t, committee.Validators(), []*validator.Validator{valC, valD, val8, val1, val9, valA, valB})
-}
-
-func TestJoinMoreThatOneThird(t *testing.T) {
-	val1, _ := validator.GenerateTestValidator(0)
-	val2, _ := validator.GenerateTestValidator(1)
-	val3, _ := validator.GenerateTestValidator(2)
-	val4, _ := validator.GenerateTestValidator(3)
-	val5, _ := validator.GenerateTestValidator(4)
-	val6, _ := validator.GenerateTestValidator(6)
-
-	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
-	assert.NoError(t, err)
-
-	assert.Error(t, committee.Update(0, []*validator.Validator{val5, val6}))
 }
 
 func TestIsProposer(t *testing.T) {
