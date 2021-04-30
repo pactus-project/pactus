@@ -221,3 +221,39 @@ func TestRestore(t *testing.T) {
 		assert.Equal(t, stake1, stake2, "Invalid stake for block %v", i)
 	}
 }
+
+func TestRestoreFailed(t *testing.T) {
+	t.Run("Unable to get validator from store", func(t *testing.T) {
+		setup(t)
+
+		li := NewLastInfo(tStore)
+		srt := sortition.NewSortition()
+
+		tStore.Validators = make(map[crypto.Address]validator.Validator) // Reset Validators
+		_, err := li.RestoreLastInfo(4, srt)
+		assert.Error(t, err)
+	})
+
+	t.Run("Unable to get transaction from store", func(t *testing.T) {
+		setup(t)
+
+		li := NewLastInfo(tStore)
+		srt := sortition.NewSortition()
+
+		tStore.Transactions = make(map[crypto.Hash]tx.Tx) // Reset transactions
+		_, err := li.RestoreLastInfo(4, srt)
+		assert.Error(t, err)
+	})
+
+	t.Run("Unable to get block from store", func(t *testing.T) {
+		setup(t)
+
+		li := NewLastInfo(tStore)
+		srt := sortition.NewSortition()
+
+		tStore.Blocks = make(map[int]*block.Block) // Reset Blocks
+		_, err := li.RestoreLastInfo(4, srt)
+		assert.Error(t, err)
+	})
+
+}
