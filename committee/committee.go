@@ -47,10 +47,6 @@ func (committee *Committee) TotalStake() int64 {
 	committee.lk.RLock()
 	defer committee.lk.RUnlock()
 
-	return committee.totalStake()
-}
-
-func (committee *Committee) totalStake() int64 {
 	s := int64(0)
 	committee.iterate(func(v *validator.Validator) (stop bool) {
 		s += v.Stake()
