@@ -156,7 +156,7 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int, srt *sortition.Sortition)
 		return nil, err
 	}
 
-	err = li.restoreSortition(srt)
+	err = li.restoreSortition(srt, cmt)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +212,7 @@ func (li *LastInfo) makeCommittee(committeeSize int) (*committee.Committee, erro
 	return committee, nil
 }
 
-func (li *LastInfo) restoreSortition(srt *sortition.Sortition) error {
+func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Committee) error {
 	type sortitionParam struct {
 		blockHash crypto.Hash
 		seed      sortition.Seed
@@ -228,13 +228,14 @@ func (li *LastInfo) restoreSortition(srt *sortition.Sortition) error {
 	params := []sortitionParam{}
 
 	// Read last seven blocks
-	start := li.lastBlockHeight - 6
+	start := li.lastBlockHeight - 7
 	if start < 0 {
 		start = 0
 	}
 
 	stakeChanged := make(map[crypto.Address]int64)
 	cert := li.lastCertificate
+	curCommitters := cmt.Committers()
 	for h := li.lastBlockHeight; h > start; h-- {
 		b, err := li.store.Block(h)
 		if err != nil {
@@ -242,7 +243,7 @@ func (li *LastInfo) restoreSortition(srt *sortition.Sortition) error {
 		}
 
 		committeeStake := int64(0)
-		for _, num := range cert.Committers() {
+		for _, num := range curCommitters {
 			val, err := li.store.ValidatorByNumber(num)
 			if err != nil {
 				return fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
@@ -273,11 +274,13 @@ func (li *LastInfo) restoreSortition(srt *sortition.Sortition) error {
 				stakeChanged[pld.Validator.Address()] = stakeChanged[pld.Validator.Address()] - pld.Stake
 			}
 		}
+		curCommitters = cert.Committers()
 		cert = b.LastCertificate()
 	}
 
 	for i := len(params) - 1; i >= 0; i-- {
 		p := params[i]
+		//fmt.Printf("param: %v, %x, %v\n", p.blockHash, p.seed, p.poolStake)
 		srt.SetParams(p.blockHash, p.seed, p.poolStake)
 	}
 

@@ -14,6 +14,12 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+// The best way to test this module, is writting test code in `state.CommitBlock` function
+// And try to sync with the main net and restore state after each commit.
+// The restored info should be exactly same as currect info.
+//
+// Testing this module is not easy ;(
+
 var tStore *store.MockStore
 var tLastInfo *LastInfo
 var tSortition *sortition.Sortition
@@ -23,7 +29,7 @@ func setup(t *testing.T) {
 	tLastInfo = NewLastInfo(tStore)
 	tSortition = sortition.NewSortition()
 
-	setSortitionParams := func(hash crypto.Hash, seed sortition.Seed, cert *block.Certificate) {
+	setSortitionParams := func(hash crypto.Hash, seed sortition.Seed, committers []int) {
 		totalStake := int64(0)
 		tStore.IterateValidators(func(v *validator.Validator) (stop bool) {
 			totalStake += v.Stake()
@@ -31,7 +37,7 @@ func setup(t *testing.T) {
 		})
 
 		committeeStake := int64(0)
-		for _, num := range cert.Committers() {
+		for _, num := range committers {
 			v, _ := tStore.ValidatorByNumber(num)
 			committeeStake += v.Stake()
 		}
@@ -50,6 +56,7 @@ func setup(t *testing.T) {
 	signer4 := crypto.GenerateTestSigner()
 	signer5 := crypto.GenerateTestSigner()
 	signer6 := crypto.GenerateTestSigner()
+	signer7 := crypto.GenerateTestSigner()
 
 	val0 := validator.NewValidator(signer0.PublicKey(), 0, 0)
 	val1 := validator.NewValidator(signer1.PublicKey(), 1, 0)
@@ -68,6 +75,7 @@ func setup(t *testing.T) {
 
 	sig := signer1.SignData([]byte("dummy"))
 
+	committers1 := []int{0, 1, 2, 3}
 	// Block 1
 	trx1, _ := tx.GenerateTestSendTx()
 	ids1 := block.NewTxIDs()
@@ -78,10 +86,11 @@ func setup(t *testing.T) {
 		crypto.GenerateTestHash(),
 		nil, seed1, val1.Address())
 
-	cert1 := block.NewCertificate(block1.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
+	cert1 := block.NewCertificate(block1.Hash(), 0, committers1, []int{}, sig)
 	tStore.SaveBlock(1, block1)
 	tStore.SaveTransaction(trx1)
-	setSortitionParams(block1.Hash(), seed1, cert1)
+	committers2 := []int{0, 1, 2, 3}
+	setSortitionParams(block1.Hash(), seed1, committers2)
 
 	// Block 2
 	val4 := validator.NewValidator(signer4.PublicKey(), 4, 3)
@@ -96,55 +105,73 @@ func setup(t *testing.T) {
 		crypto.GenerateTestHash(),
 		cert1, seed2, val1.Address())
 
-	cert2 := block.NewCertificate(block2.Hash(), 0, []int{0, 1, 2, 3}, []int{}, sig)
+	cert2 := block.NewCertificate(block2.Hash(), 0, committers2, []int{}, sig)
 	tStore.SaveBlock(2, block2)
 	tStore.SaveTransaction(trx2)
-	setSortitionParams(block2.Hash(), seed2, cert2)
+	committers3 := []int{0, 1, 2, 3}
+	setSortitionParams(block2.Hash(), seed2, committers3)
 
 	// Block 3
-	val5 := validator.NewValidator(signer5.PublicKey(), 5, 4)
+	val5 := validator.NewValidator(signer5.PublicKey(), 5, 3)
 	val5.AddToStake(5000)
+	val6 := validator.NewValidator(signer6.PublicKey(), 6, 3)
+	val5.AddToStake(5000)
+	val4.UpdateLastJoinedHeight(3)
+	tStore.UpdateValidator(val4)
 	tStore.UpdateValidator(val5)
+	tStore.UpdateValidator(val6)
 	trx31 := tx.NewBondTx(block2.Hash(), 1, signer1.Address(), val5.PublicKey(), 5000, 5000, "")
-	trx32 := tx.NewSortitionTx(block2.Hash(), 1, signer3.Address(), sortition.GenerateRandomProof())
+	trx32 := tx.NewBondTx(block2.Hash(), 2, signer1.Address(), val6.PublicKey(), 5000, 5000, "")
+	trx33 := tx.NewSortitionTx(block2.Hash(), 1, signer4.Address(), sortition.GenerateRandomProof())
 	ids3 := block.NewTxIDs()
 	ids3.Append(trx31.ID())
 	ids3.Append(trx32.ID())
+	ids3.Append(trx33.ID())
 	seed3 := sortition.GenerateRandomSeed()
 	block3 := block.MakeBlock(1, util.Now(), ids3,
 		block2.Hash(),
 		crypto.GenerateTestHash(),
 		cert2, seed3, val1.Address())
 
-	cert3 := block.NewCertificate(block3.Hash(), 0, []int{4, 1, 2, 3}, []int{}, sig)
+	cert3 := block.NewCertificate(block3.Hash(), 0, committers2, []int{}, sig)
 	tStore.SaveBlock(3, block3)
 	tStore.SaveTransaction(trx31)
 	tStore.SaveTransaction(trx32)
-	setSortitionParams(block3.Hash(), seed3, cert3)
+	tStore.SaveTransaction(trx33)
+	committers4 := []int{4, 1, 2, 3}
+	setSortitionParams(block3.Hash(), seed3, committers4)
 
 	// Block 4
 	val0.AddToStake(5000)
+	val6.UpdateLastJoinedHeight(4)
 	tStore.UpdateValidator(val0)
-	trx4 := tx.NewBondTx(block3.Hash(), 1, signer1.Address(), val0.PublicKey(), 5000, 5000, "")
+	tStore.UpdateValidator(val6)
+	trx41 := tx.NewBondTx(block3.Hash(), 1, signer1.Address(), val0.PublicKey(), 5000, 5000, "")
+	trx42 := tx.NewSortitionTx(block3.Hash(), 1, signer6.Address(), sortition.GenerateRandomProof())
 	ids4 := block.NewTxIDs()
-	ids4.Append(trx4.ID())
+	ids4.Append(trx41.ID())
+	ids4.Append(trx42.ID())
 	seed4 := sortition.GenerateRandomSeed()
 	block4 := block.MakeBlock(1, util.Now(), ids4,
 		block3.Hash(),
 		crypto.GenerateTestHash(),
 		cert3, seed4, val1.Address())
 
-	cert4 := block.NewCertificate(block4.Hash(), 0, []int{4, 1, 2, 3}, []int{}, sig)
+	cert4 := block.NewCertificate(block4.Hash(), 0, committers4, []int{}, sig)
 	tStore.SaveBlock(4, block4)
-	tStore.SaveTransaction(trx4)
-	setSortitionParams(block4.Hash(), seed4, cert4)
+	tStore.SaveTransaction(trx41)
+	tStore.SaveTransaction(trx42)
+	committers5 := []int{4, 6, 2, 3}
+	setSortitionParams(block4.Hash(), seed4, committers5)
 
 	// Block 5
-	val6 := validator.NewValidator(signer6.PublicKey(), 6, 6)
-	val6.AddToStake(6000)
-	tStore.UpdateValidator(val6)
-	trx51 := tx.NewBondTx(block3.Hash(), 1, signer1.Address(), val6.PublicKey(), 6000, 6000, "")
-	trx52 := tx.NewSortitionTx(block3.Hash(), 1, signer6.Address(), sortition.GenerateRandomProof())
+	val7 := validator.NewValidator(signer7.PublicKey(), 7, 5)
+	val7.AddToStake(7000)
+	val5.UpdateLastJoinedHeight(5)
+	tStore.UpdateValidator(val5)
+	tStore.UpdateValidator(val7)
+	trx51 := tx.NewBondTx(block3.Hash(), 1, signer1.Address(), val7.PublicKey(), 7000, 7000, "")
+	trx52 := tx.NewSortitionTx(block3.Hash(), 1, signer5.Address(), sortition.GenerateRandomProof())
 	ids5 := block.NewTxIDs()
 	ids5.Append(trx51.ID())
 	ids5.Append(trx52.ID())
@@ -154,11 +181,12 @@ func setup(t *testing.T) {
 		crypto.GenerateTestHash(),
 		cert4, seed5, val1.Address())
 
-	cert5 := block.NewCertificate(block5.Hash(), 0, []int{4, 5, 2, 3}, []int{}, sig)
+	cert5 := block.NewCertificate(block5.Hash(), 0, committers5, []int{}, sig)
 	tStore.SaveBlock(5, block5)
 	tStore.SaveTransaction(trx51)
 	tStore.SaveTransaction(trx52)
-	setSortitionParams(block5.Hash(), seed5, cert5)
+	committers6 := []int{5, 4, 6, 3}
+	setSortitionParams(block5.Hash(), seed5, committers6)
 
 	tLastInfo.SetSortitionSeed(seed5)
 	tLastInfo.SetBlockHeight(5)
@@ -182,7 +210,7 @@ func TestRestore(t *testing.T) {
 	assert.Equal(t, tLastInfo.BlockHash(), li.BlockHash())
 	assert.Equal(t, tLastInfo.Certificate().Hash(), li.Certificate().Hash())
 	assert.Equal(t, tLastInfo.BlockTime(), li.BlockTime())
-	assert.Equal(t, cmt.Committers(), []int{4, 5, 2, 3})
+	assert.Equal(t, cmt.Committers(), []int{5, 4, 6, 3})
 
 	for i := 1; i < 6; i++ {
 		b, _ := tStore.Block(i)
@@ -192,5 +220,4 @@ func TestRestore(t *testing.T) {
 		assert.Equal(t, seed1, seed2, "Invalid seed for block %v", i)
 		assert.Equal(t, stake1, stake2, "Invalid stake for block %v", i)
 	}
-
 }
