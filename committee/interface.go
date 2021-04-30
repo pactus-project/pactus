@@ -10,5 +10,7 @@ type Reader interface {
 	Contains(addr crypto.Address) bool
 	Proposer(round int) *validator.Validator
 	IsProposer(addr crypto.Address, round int) bool
+	Size() int
 	TotalPower() int64
+	TotalStake() int64
 }

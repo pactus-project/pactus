@@ -89,7 +89,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 func TestGetValidators(t *testing.T) {
 	conn, client := callServer(t)
 
-	t.Run("should setup commiters", func(t *testing.T) {
+	t.Run("should return list of validators", func(t *testing.T) {
 		res, err := client.GetValidators(tCtx, &zarb.ValidatorsRequest{})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
