@@ -11,11 +11,11 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	s, _ := args.Params.Id()
 	h, err := crypto.HashFromString(string(s))
 	if err != nil {
-		return fmt.Errorf("Invalid transaction id: %s", err)
+		return fmt.Errorf("invalid transaction id: %s", err)
 	}
 	trx := zs.state.Transaction(h)
 	if trx == nil {
-		return fmt.Errorf("Transaction not found")
+		return fmt.Errorf("transaction not found")
 	}
 
 	res, _ := args.Results.NewResult()

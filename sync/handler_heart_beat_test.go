@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingHeartbeatMessages(t *testing.T) {
@@ -26,5 +28,31 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 		tAliceSync.broadcastHeartBeat()
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHeartBeat)
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeVote)
+	})
+
+	t.Run("Bob processes Alice's HeartBeat but he is not in committee", func(t *testing.T) {
+		h, r := tBobConsensus.HeightRound()
+		pld := payload.NewHeartBeatPayload(h, r+2, crypto.GenerateTestHash())
+		tBobNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+
+		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
+	})
+
+	joinBobToTheSet(t)
+
+	t.Run("Bob should query for votes", func(t *testing.T) {
+		h, r := tBobConsensus.HeightRound()
+		pld := payload.NewHeartBeatPayload(h, r+2, crypto.GenerateTestHash())
+		tBobNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+
+		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
+	})
+
+	t.Run("Bob should not query for votes", func(t *testing.T) {
+		h, r := tBobConsensus.HeightRound()
+		pld := payload.NewHeartBeatPayload(h, r+1, crypto.GenerateTestHash())
+		tBobNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+
+		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
 	})
 }

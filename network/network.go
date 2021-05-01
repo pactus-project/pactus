@@ -173,6 +173,12 @@ func (n *network) SelfID() peer.ID {
 	return n.host.ID()
 }
 
+func (n *network) CloseConnection(pid peer.ID) {
+	if err := n.host.Network().ClosePeer(pid); err != nil {
+		n.logger.Warn("Unable to close connestion", "peer", pid)
+	}
+}
+
 func (n *network) Fingerprint() string {
 	return fmt.Sprintf("{%d}", len(n.host.Network().Peers()))
 }

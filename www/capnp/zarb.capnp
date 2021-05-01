@@ -59,15 +59,16 @@ struct ValidatorResult {
 }
 
 struct Peer {
-  moniker               @0 :Text;
-  nodeVersion           @1 :Text;
-  peerID                @2 :Text;
-  publicKey             @3 :Text;
-  initialBlockDownload  @4 :Bool;
-  height                @5 :Int32;
-  receivedMessages      @6 :Int32;
-  invalidMessages       @7 :Int32;
-  receivedBytes         @8 :Int32;
+  status                @0 :Int32;
+  moniker               @1 :Text;
+  nodeVersion           @2 :Text;
+  peerID                @3 :Text;
+  publicKey             @4 :Text;
+  initialBlockDownload  @5 :Bool;
+  height                @6 :Int32;
+  receivedMessages      @7 :Int32;
+  invalidMessages       @8 :Int32;
+  receivedBytes         @9 :Int32;
 }
 
 struct NetworkResult {

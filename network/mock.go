@@ -12,6 +12,7 @@ type MockNetwork struct {
 	id          peer.ID
 	CallbackFn  CallbackFn
 	OtherNet    *MockNetwork
+	Closed      bool
 }
 
 func MockingNetwork(id peer.ID) *MockNetwork {
@@ -54,4 +55,7 @@ func (mock *MockNetwork) SendMessageToOthePeer(msg *message.Message) {
 		logger.Debug("Sending message to other peer", "msg", msg)
 		mock.OtherNet.CallbackFn(d, mock.id)
 	}
+}
+func (mock *MockNetwork) CloseConnection(pid peer.ID) {
+	mock.Closed = true
 }

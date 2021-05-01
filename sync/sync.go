@@ -65,8 +65,8 @@ func NewSynchronizer(
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
-	firewall := firewall.NewFirewall(peerSet, state)
 	logger := logger.NewLogger("_sync", sync)
+	firewall := firewall.NewFirewall(conf.EnableFirewall, net, peerSet, state, logger)
 	cache, err := cache.NewCache(conf.CacheSize, state)
 	if err != nil {
 		return nil, err
