@@ -15,16 +15,16 @@ import (
 
 // Firewall check packets before passing them to sync module
 type Firewall struct {
-	Enabled bool
+	config  *Config
 	network network.Network
 	peerSet *peerset.PeerSet
 	state   state.StateFacade
 	logger  *logger.Logger
 }
 
-func NewFirewall(enabled bool, net network.Network, peerSet *peerset.PeerSet, state state.StateFacade, logger *logger.Logger) *Firewall {
+func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, state state.StateFacade, logger *logger.Logger) *Firewall {
 	return &Firewall{
-		Enabled: enabled,
+		config:  conf,
 		network: net,
 		peerSet: peerSet,
 		state:   state,
@@ -57,19 +57,21 @@ func (f *Firewall) OpenMessage(data []byte, from peer.ID) *message.Message {
 		return nil
 	}
 
-	if f.Enabled {
-		if f.shouldDropMessage(msg) {
-			// TODO: A better way for handshaking
-			// peer.IncreaseInvalidMessage()
-			f.logger.Warn("Firewall: Message dropped", "msg", msg, "from", util.FingerprintPeerID(from))
-			return nil
-		}
+	if f.shouldDropMessage(msg) {
+		// TODO: A better way for handshaking
+		peer.IncreaseInvalidMessage()
+		f.logger.Warn("Firewall: Message dropped", "msg", msg, "from", util.FingerprintPeerID(from))
+		return nil
 	}
 
 	return msg
 }
 
 func (f *Firewall) shouldDropMessage(msg *message.Message) bool {
+	if !f.config.Enabled {
+		return false
+	}
+
 	initiatorPeer := f.peerSet.MustGetPeer(msg.Initiator)
 	switch initiatorPeer.Status() {
 	case peerset.StatusCodeBanned:
@@ -80,16 +82,8 @@ func (f *Firewall) shouldDropMessage(msg *message.Message) bool {
 }
 
 func (f *Firewall) shouldBanPeer(peer *peerset.Peer) bool {
-	if !f.Enabled {
+	if !f.config.Enabled {
 		return false
-	}
-
-	// Ban peers after sending many invalid messages
-	if peer.ReceivedMessages() > 1000 {
-		ratio := (peer.InvalidMessages() * 100) / peer.ReceivedMessages()
-		if ratio >= 10 {
-			peer.UpdateStatus(peerset.StatusCodeBanned)
-		}
 	}
 
 	switch peer.Status() {

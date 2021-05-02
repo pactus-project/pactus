@@ -1,6 +1,10 @@
 package sync
 
-import "time"
+import (
+	"time"
+
+	"github.com/zarbchain/zarb-go/sync/firewall"
+)
 
 type Config struct {
 	Moniker              string
@@ -11,7 +15,7 @@ type Config struct {
 	BlockPerMessage      int
 	RequestBlockInterval int
 	CacheSize            int
-	EnableFirewall       bool
+	Firewall             *firewall.Config
 }
 
 func DefaultConfig() *Config {
@@ -23,7 +27,7 @@ func DefaultConfig() *Config {
 		BlockPerMessage:      10,
 		RequestBlockInterval: 720,
 		CacheSize:            500000,
-		EnableFirewall:       true,
+		Firewall:             firewall.DefaultConfig(),
 	}
 }
 
@@ -37,7 +41,7 @@ func TestConfig() *Config {
 		BlockPerMessage:      10,
 		RequestBlockInterval: 20,
 		CacheSize:            1000,
-		EnableFirewall:       false,
+		Firewall:             firewall.TestConfig(),
 	}
 }
 

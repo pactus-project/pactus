@@ -68,7 +68,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.RequestBlockInterval = 10
 		tConfigs[i].Sync.StartingTimeout = 0
 		tConfigs[i].Sync.InitialBlockDownload = false
-		tConfigs[i].Sync.EnableFirewall = false
+		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
 		tConfigs[i].Network.ListenAddress = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
 		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}

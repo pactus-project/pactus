@@ -29,7 +29,9 @@ func setup(t *testing.T) {
 	committee, _ := committee.GenerateTestCommittee()
 	state := state.MockingState(committee)
 	tNetwork = network.MockingNetwork(util.RandomPeerID())
-	tFirewall = NewFirewall(true, tNetwork, peerSet, state, logger)
+	conf := TestConfig()
+	conf.Enabled = true
+	tFirewall = NewFirewall(conf, tNetwork, peerSet, state, logger)
 	tBadPeerID = util.RandomPeerID()
 	tGoodPeerID = util.RandomPeerID()
 	tUnknownPeerID = util.RandomPeerID()
@@ -85,20 +87,6 @@ func TestBanPeer(t *testing.T) {
 		assert.Nil(t, tFirewall.OpenMessage(d, tUnknownPeerID))
 		assert.False(t, tNetwork.Closed)
 	})
-
-	t.Run("Receive many bad messages from a good peer => should close the connection", func(t *testing.T) {
-		setup(t)
-
-		peer := tFirewall.peerSet.GetPeer(tGoodPeerID)
-		peer.UpdateInvalidMessage(101)
-		peer.UpdateReceivedMessage(1001)
-
-		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
-		d, _ := msg.Encode()
-
-		assert.Nil(t, tFirewall.OpenMessage(d, tGoodPeerID))
-		assert.True(t, tNetwork.Closed)
-	})
 }
 
 func TestDropMessage(t *testing.T) {
@@ -134,6 +122,6 @@ func TestDisabledFirewal(t *testing.T) {
 	msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(1, 0))
 	d, _ := msg.Encode()
 
-	tFirewall.Enabled = false
+	tFirewall.config.Enabled = false
 	assert.NotNil(t, tFirewall.OpenMessage(d, tBadPeerID))
 }
