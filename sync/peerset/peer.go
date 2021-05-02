@@ -8,7 +8,6 @@ import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/version"
 )
 
 type Peer struct {
@@ -18,7 +17,7 @@ type Peer struct {
 
 type peerData struct {
 	Moniker              string
-	NodeVersion          version.Version
+	NodeVersion          string
 	PeerID               peer.ID
 	Address              crypto.Address
 	PublicKey            crypto.PublicKey
@@ -44,7 +43,7 @@ func (p *Peer) Moniker() string {
 	return p.data.Moniker
 }
 
-func (p *Peer) NodeVersion() version.Version {
+func (p *Peer) NodeVersion() string {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
@@ -114,7 +113,7 @@ func (p *Peer) UpdateInitialBlockDownload(initialBlockDownload bool) {
 	p.data.InitialBlockDownload = initialBlockDownload
 }
 
-func (p *Peer) UpdateNodeVersion(version version.Version) {
+func (p *Peer) UpdateNodeVersion(version string) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 

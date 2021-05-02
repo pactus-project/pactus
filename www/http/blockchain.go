@@ -3,11 +3,9 @@ package http
 import (
 	"net/http"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sync/peerset"
-	"github.com/zarbchain/zarb-go/version"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
@@ -53,17 +51,13 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		peerID, _ := peer.IDFromString(id)
 		peer := peerset.NewPeer(peerID)
 		moniker, _ := p.Moniker()
-		peer.UpdateMoniker(moniker)
 		pubStr, _ := p.PublicKey()
 		pub, _ := crypto.PublicKeyFromString(pubStr)
-		peer.UpdatePublicKey(pub)
-		bs, _ := p.NodeVersion()
-		ver := version.Version{}
-		if err := cbor.Unmarshal(bs, &ver); err != nil {
-			s.writeError(w, err)
-			return
-		}
+		ver, _ := p.NodeVersion()
+
 		peer.UpdateNodeVersion(ver)
+		peer.UpdateMoniker(moniker)
+		peer.UpdatePublicKey(pub)
 		peer.UpdateInitialBlockDownload(p.InitialBlockDownload())
 		peer.UpdateHeight(int(p.Height()))
 		peer.UpdateInvalidMessage(int(p.InvalidMessages()))
