@@ -60,7 +60,7 @@ struct ValidatorResult {
 
 struct Peer {
   moniker               @0 :Text;
-  nodeVersion           @1 :Data;
+  nodeVersion           @1 :Text;
   peerID                @2 :Text;
   publicKey             @3 :Text;
   initialBlockDownload  @4 :Bool;

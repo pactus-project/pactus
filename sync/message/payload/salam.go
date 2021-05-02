@@ -9,7 +9,7 @@ import (
 )
 
 type SalamPayload struct {
-	NodeVersion version.Version  `cbor:"1,keyasint"`
+	NodeVersion string           `cbor:"1,keyasint"`
 	Moniker     string           `cbor:"2,keyasint"`
 	PublicKey   crypto.PublicKey `cbor:"3,keyasint"`
 	GenesisHash crypto.Hash      `cbor:"4,keyasint"`
@@ -21,7 +21,7 @@ func NewSalamPayload(moniker string,
 	publicKey crypto.PublicKey, genesisHash crypto.Hash,
 	height int, flags int) Payload {
 	return &SalamPayload{
-		NodeVersion: version.NodeVersion,
+		NodeVersion: version.Version(),
 		Moniker:     moniker,
 		PublicKey:   publicKey,
 		GenesisHash: genesisHash,

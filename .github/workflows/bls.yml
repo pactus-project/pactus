@@ -14,4 +14,4 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Test with BLS library
-      run: make bls && make test_with_bls
+      run: make bls && make test_bls
