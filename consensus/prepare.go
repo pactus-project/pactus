@@ -20,7 +20,7 @@ func (s *prepareState) enter() {
 func (s *prepareState) decide() {
 	s.vote()
 
-	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
 	if prepareQH != nil {
 		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
@@ -31,7 +31,7 @@ func (s *prepareState) decide() {
 		// If a replica receives a set of f+1 valid change-proposer votes for this round,
 		// it sends a change-proposer vote, even if its timer has not expired;
 		// this prevents it from starting the change-proposer state too late.
-		voteset := s.pendingVotes.ChangeProposerVoteSet(s.round)
+		voteset := s.log.ChangeProposerVoteSet(s.round)
 		if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
 			s.enterNewState(s.changeProposerState)
 		}
@@ -43,7 +43,7 @@ func (s *prepareState) vote() {
 		return
 	}
 
-	roundProposal := s.pendingVotes.RoundProposal(s.round)
+	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
 		s.queryProposal()
 		s.logger.Warn("No proposal yet.")

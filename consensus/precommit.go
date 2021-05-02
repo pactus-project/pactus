@@ -19,7 +19,7 @@ func (s *precommitState) enter() {
 func (s *precommitState) decide() {
 	s.vote()
 
-	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
+	precommits := s.log.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
 	if precommitQH != nil {
 		s.logger.Debug("precommit has quorum", "precommitQH", precommitQH)
@@ -27,7 +27,7 @@ func (s *precommitState) decide() {
 	} else {
 		// Liveness on PBFT
 		// ...
-		voteset := s.pendingVotes.ChangeProposerVoteSet(s.round)
+		voteset := s.log.ChangeProposerVoteSet(s.round)
 		if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
 			s.enterNewState(s.changeProposerState)
 		}
@@ -39,9 +39,9 @@ func (s *precommitState) vote() {
 		return
 	}
 
-	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
-	roundProposal := s.pendingVotes.RoundProposal(s.round)
+	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
 		// There is a consensus about a proposal which we don't have it yet.
 		// Ask peers for this proposal
@@ -51,7 +51,7 @@ func (s *precommitState) vote() {
 	}
 
 	if !roundProposal.IsForBlock(*prepareQH) {
-		s.pendingVotes.SetRoundProposal(s.round, nil)
+		s.log.SetRoundProposal(s.round, nil)
 		s.queryProposal()
 		s.logger.Error("Proposal is invalid.", "proposal", roundProposal)
 		return

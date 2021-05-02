@@ -14,11 +14,11 @@ func (s *commitState) enter() {
 }
 
 func (s *commitState) decide() {
-	precommits := s.pendingVotes.PrecommitVoteSet(s.round)
+	precommits := s.log.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
 
 	// For any reason, we don't have proposal
-	roundProposal := s.pendingVotes.RoundProposal(s.round)
+	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
 		s.logger.Warn("No proposal, send proposal request.")
 		s.queryProposal()
@@ -28,7 +28,7 @@ func (s *commitState) decide() {
 	// Proposal is not for quorum block
 	// It is impossible, but good to keep this check
 	if !roundProposal.IsForBlock(*precommitQH) {
-		s.pendingVotes.SetRoundProposal(s.round, nil)
+		s.log.SetRoundProposal(s.round, nil)
 		s.logger.Error("Proposal is invalid.", "proposal", roundProposal)
 		return
 	}
