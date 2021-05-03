@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	host "github.com/libp2p/go-libp2p-core/host"
-	dht "github.com/libp2p/go-libp2p-kad-dht"
-	protocol "github.com/libp2p/go-libp2p-protocol"
+	lp2pcore "github.com/libp2p/go-libp2p-core"
+	lp2phost "github.com/libp2p/go-libp2p-core/host"
+	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 )
 
-func (n *network) setupKademlia(ctx context.Context, host host.Host) (*dht.IpfsDHT, error) {
+func (n *network) setupKademlia(ctx context.Context, host lp2phost.Host) (*lp2pdht.IpfsDHT, error) {
 
-	opts := []dht.Option{
-		dht.Mode(dht.ModeAuto),
-		dht.ProtocolPrefix(protocol.ID(fmt.Sprintf("/zarb/kad/%s", n.config.Name))),
+	opts := []lp2pdht.Option{
+		lp2pdht.Mode(lp2pdht.ModeAuto),
+		lp2pdht.ProtocolPrefix(lp2pcore.ProtocolID(fmt.Sprintf("/zarb/kad/%s", n.config.Name))),
 	}
 
-	dht, err := dht.New(ctx, host, opts...)
+	dht, err := lp2pdht.New(ctx, host, opts...)
 	if err != nil {
 		return nil, err
 	}
