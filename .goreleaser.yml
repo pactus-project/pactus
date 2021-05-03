@@ -14,7 +14,7 @@ builds:
     # Custom ldflags templates.
     # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
     ldflags:
-     - -s -w -X github.com/zarbchain/zarb-go/version.GitCommit={{.ShortCommit}} -X github.com/zarbchain/zarb-go/version.SemVersion={{.Version}} -extldflags "-static"
+     - -s -w -X github.com/zarbchain/zarb-go/version.build={{.ShortCommit}} -X github.com/zarbchain/zarb-go/version.semVer={{.Version}} #-extldflags "-static"
     # GOOS list to build for.
     # For more info refer to: https://golang.org/doc/install/source#environment
     # Defaults are darwin and linux.

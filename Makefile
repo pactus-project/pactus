@@ -3,7 +3,7 @@ PACKAGES=$(shell go list ./... | grep -v 'tests')
 TAGS="zarb"
 VTAG=$(shell git describe --tags --abbrev=0)
 HERUMI= .herumi
-LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.SemVersion=$(VTAG)"
+LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.semVer=$(VTAG)"
 
 
 _OS=$(shell go env GOOS)
