@@ -23,6 +23,8 @@ func MockingSync() *MockSync {
 	_, pub2, _ := crypto.GenerateTestKeyPair()
 	p1 := ps.MustGetPeer(util.RandomPeerID())
 	p2 := ps.MustGetPeer(util.RandomPeerID())
+	p1.UpdateStatus(peerset.StatusCodeOK)
+	p2.UpdateStatus(peerset.StatusCodeBanned)
 	p1.UpdateMoniker("test-1")
 	p2.UpdateMoniker("test-2")
 	p1.UpdatePublicKey(pub1)

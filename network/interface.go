@@ -14,5 +14,6 @@ type Network interface {
 	JoinTopics(CallbackFn) error
 	JoinDownloadTopic() error
 	LeaveDownloadTopic()
+	CloseConnection(pid peer.ID)
 	SelfID() peer.ID
 }
