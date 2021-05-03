@@ -410,11 +410,41 @@ func TestConsensusInvalidVote(t *testing.T) {
 func TestPickRandomVote(t *testing.T) {
 	setup(t)
 
-	testEnterNewHeight(tConsY)
-	assert.Nil(t, tConsY.PickRandomVote())
+	testEnterNewHeight(tConsP)
+	assert.Nil(t, tConsP.PickRandomVote())
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY)
-	assert.NotNil(t, tConsY.PickRandomVote())
+	p1 := makeProposal(t, 1, 0)
+	p2 := makeProposal(t, 1, 1)
+
+	// round 0
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexP)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexY)
+
+	assert.NotNil(t, tConsP.PickRandomVote())
+
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexP)
+
+	// Round 1
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexP)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexP)
+
+	// Round 2
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 2, crypto.UndefHash, tIndexP)
+
+	for i := 0; i < 10; i++ {
+		rndVote := tConsP.PickRandomVote()
+		assert.NotNil(t, rndVote)
+		assert.Equal(t, rndVote.VoteType(), vote.VoteTypeChangeProposer, "Should only pick Change Proposer votes")
+	}
 }
 
 func TestSetProposalFromPreviousRound(t *testing.T) {
