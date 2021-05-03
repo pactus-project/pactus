@@ -58,8 +58,7 @@ func (s *prepareState) vote() {
 
 func (s *prepareState) onAddVote(v *vote.Vote) {
 	s.doAddVote(v)
-	if v.Round() == s.round &&
-		v.VoteType() == vote.VoteTypePrepare {
+	if v.Round() == s.round {
 		s.decide()
 	}
 }

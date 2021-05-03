@@ -66,8 +66,7 @@ func (s *precommitState) vote() {
 func (s *precommitState) onAddVote(v *vote.Vote) {
 	s.doAddVote(v)
 
-	if v.Round() == s.round &&
-		v.VoteType() == vote.VoteTypePrecommit {
+	if v.Round() == s.round {
 		s.decide()
 	}
 }

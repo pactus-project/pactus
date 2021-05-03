@@ -106,8 +106,8 @@ func (cs *consensus) RoundProposal(round int) *proposal.Proposal {
 	return cs.log.RoundProposal(round)
 }
 func (cs *consensus) AllVotes() []*vote.Vote {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
 	for r := 0; r <= cs.round; r++ {
@@ -280,16 +280,23 @@ func (cs *consensus) announceNewBlock(h int, b *block.Block, c *block.Certificat
 	cs.broadcastCh <- pld
 }
 
+// TODO: Improve the performance?
 func (cs *consensus) PickRandomVote() *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	round := util.RandInt(cs.round + 1)
-	rm := cs.log.MustGetRoundMessages(round)
-	votes := rm.AllVotes()
+	rndRound := util.RandInt(cs.round + 1)
+	votes := []*vote.Vote{}
+	if rndRound == cs.round {
+		m := cs.log.MustGetRoundMessages(rndRound)
+		votes = append(votes, m.AllVotes()...)
+	} else {
+		// Don't broadcast prepare and precommit votes for previous rounds
+		vs := cs.log.ChangeProposerVoteSet(rndRound)
+		votes = append(votes, vs.AllVotes()...)
+	}
 	if len(votes) == 0 {
 		return nil
 	}
-	r := util.RandInt(len(votes))
-	return votes[r]
+	return votes[util.RandInt(len(votes))]
 }
