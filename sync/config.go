@@ -21,7 +21,7 @@ func DefaultConfig() *Config {
 		InitialBlockDownload: true,
 		BlockPerMessage:      10,
 		RequestBlockInterval: 720,
-		CacheSize:            100000,
+		CacheSize:            500000,
 	}
 }
 

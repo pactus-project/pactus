@@ -97,17 +97,18 @@ func NewSynchronizer(
 
 	sync.handlers = handlers
 
-	if conf.InitialBlockDownload {
-		if err := sync.joinDownloadTopic(); err != nil {
-			return nil, err
-		}
-	}
 	return sync, nil
 }
 
 func (sync *synchronizer) Start() error {
 	if err := sync.network.JoinTopics(sync.onReceiveData); err != nil {
 		return err
+	}
+
+	if sync.config.InitialBlockDownload {
+		if err := sync.network.JoinDownloadTopic(); err != nil {
+			return err
+		}
 	}
 
 	go sync.broadcastLoop()
@@ -129,14 +130,6 @@ func (sync *synchronizer) Start() error {
 func (sync *synchronizer) Stop() {
 	sync.ctx.Done()
 	sync.heartBeatTicker.Stop()
-}
-
-func (sync *synchronizer) joinDownloadTopic() error {
-	if err := sync.network.JoinDownloadTopic(); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (sync *synchronizer) onStartingTimeout() {
@@ -244,7 +237,7 @@ func (sync *synchronizer) sendBlocksRequestIfWeAreBehind() {
 			// If peer doesn't respond, we should leave the topic
 			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
 			// We should find a way to avoid it.
-			if err := sync.joinDownloadTopic(); err != nil {
+			if err := sync.network.JoinDownloadTopic(); err != nil {
 				sync.logger.Info("We can't join download topic", "err", err)
 			} else {
 				sync.RequestForMoreBlock()

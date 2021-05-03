@@ -1,11 +1,10 @@
-UNAME := $(shell uname)
 PACKAGES=$(shell go list ./... | grep -v 'tests')
+
 TAGS="zarb"
 VTAG=$(shell git describe --tags --abbrev=0)
 HERUMI= .herumi
 LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.SemVersion=$(VTAG)"
-CAPNP_INC = -I$(GOPATH)/src/zombiezen.com/go/capnproto2/std
-PROTO_INC = -I. -I$(GOPATH)/src/github.com/googleapis/googleapis
+
 
 _OS=$(shell go env GOOS)
 _ARCH=$(shell go env GOARCH)
@@ -39,7 +38,7 @@ bls:
 
 
 ########################################
-### Build zarb
+### Building
 build:
 	go build $(LDFLAGS) -tags $(TAGS) -o build/zarb ./cmd/zarb/
 
@@ -62,8 +61,8 @@ test:
 test_race:
 	go test ./... --race
 
-test_with_bls:
-	$(CGO_LDFLAGS) go test ./...
+test_bls:
+	$(BLS_CGO_LDFLAGS) go test ./...
 
 ########################################
 ### Docker
@@ -73,7 +72,9 @@ docker:
 ########################################
 ### capnp and proto
 capnp:
-	capnp compile $(CAPNP_INC) -ogo ./www/capnp/zarb.capnp
+	capnp compile \
+		-I $(GOPATH)/src/zombiezen.com/go/capnproto2/std \
+		-ogo ./www/capnp/zarb.capnp
 
 proto:
 	cd www/grpc/ && buf generate  --path ./proto/zarb.proto
@@ -87,14 +88,15 @@ fmt:
 	@gofmt -s -w .
 	@golangci-lint run -e "SA1019"
 
-fmt_with_bls:
-	$(CGO_LDFLAGS) go vet ./...
-	$(CGO_LDFLAGS) gofmt -s -w .
-	$(CGO_LDFLAGS) golangci-lint run -e "SA1019"
+fmt_bls:
+	$(BLS_CGO_LDFLAGS) go vet ./...
+	$(BLS_CGO_LDFLAGS) gofmt -s -w .
+	$(BLS_CGO_LDFLAGS) golangci-lint run -e "SA1019"
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
-.PHONY: build install test
-.PHONY: tools deps bls capnp proto
-.PHONY: fmt metalinter docker
+.PHONY: build install build_bls build_bls_release
+.PHONY: test unit_test test_race test_bls
+.PHONY: tools bls capnp proto
+.PHONY: fmt fmt_bls docker

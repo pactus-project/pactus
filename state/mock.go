@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -112,9 +113,7 @@ func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
 	m.Store.SaveBlock(h, b)
 
 	for _, t := range trxs {
-		m.Store.SaveTransaction(&tx.CommittedTx{
-			Tx: t, Receipt: t.GenerateReceipt(0, b.Hash()),
-		})
+		m.Store.SaveTransaction(t)
 	}
 }
 func (m *MockState) CommitteeValidators() []*validator.Validator {
@@ -137,7 +136,7 @@ func (m *MockState) IsProposer(addr crypto.Address, round int) bool {
 	defer m.Lock.Unlock()
 	return m.Committee.IsProposer(addr, round)
 }
-func (m *MockState) Transaction(id tx.ID) *tx.CommittedTx {
+func (m *MockState) Transaction(id tx.ID) *tx.Tx {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 	tx, _ := m.Store.Transaction(id)
@@ -181,11 +180,17 @@ func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
+	if m.TxPool.HasTx(trx.ID()) {
+		return errors.Error(errors.ErrGeneric)
+	}
 	return m.TxPool.AppendTx(trx)
 }
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
 
+	if m.TxPool.HasTx(trx.ID()) {
+		return errors.Error(errors.ErrGeneric)
+	}
 	return m.TxPool.AppendTxAndBroadcast(trx)
 }

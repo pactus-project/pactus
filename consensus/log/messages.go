@@ -1,4 +1,4 @@
-package pending_votes
+package log
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
@@ -8,20 +8,20 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 )
 
-type RoundVotes struct {
+type Messages struct {
 	prepareVotes        *vote_set.VoteSet
 	precommitVotes      *vote_set.VoteSet
 	changeProposerVotes *vote_set.VoteSet
 	proposal            *proposal.Proposal
 }
 
-func (rv *RoundVotes) addVote(v *vote.Vote) error {
-	vs := rv.voteSet(v.VoteType())
+func (m *Messages) addVote(v *vote.Vote) error {
+	vs := m.voteSet(v.VoteType())
 	return vs.AddVote(v)
 }
 
-func (rv *RoundVotes) HasVote(hash crypto.Hash) bool {
-	votes := rv.AllVotes()
+func (m *Messages) HasVote(hash crypto.Hash) bool {
+	votes := m.AllVotes()
 	for _, v := range votes {
 		if v.Hash().EqualsTo(hash) {
 			return true
@@ -30,23 +30,23 @@ func (rv *RoundVotes) HasVote(hash crypto.Hash) bool {
 	return false
 }
 
-func (rv *RoundVotes) AllVotes() []*vote.Vote {
+func (m *Messages) AllVotes() []*vote.Vote {
 	votes := []*vote.Vote{}
-	votes = append(votes, rv.prepareVotes.AllVotes()...)
-	votes = append(votes, rv.precommitVotes.AllVotes()...)
-	votes = append(votes, rv.changeProposerVotes.AllVotes()...)
+	votes = append(votes, m.prepareVotes.AllVotes()...)
+	votes = append(votes, m.precommitVotes.AllVotes()...)
+	votes = append(votes, m.changeProposerVotes.AllVotes()...)
 
 	return votes
 }
 
-func (rv *RoundVotes) voteSet(voteType vote.VoteType) *vote_set.VoteSet {
+func (m *Messages) voteSet(voteType vote.VoteType) *vote_set.VoteSet {
 	switch voteType {
 	case vote.VoteTypePrepare:
-		return rv.prepareVotes
+		return m.prepareVotes
 	case vote.VoteTypePrecommit:
-		return rv.precommitVotes
+		return m.precommitVotes
 	case vote.VoteTypeChangeProposer:
-		return rv.changeProposerVotes
+		return m.changeProposerVotes
 	}
 
 	logger.Panic("Unexpected vote type %d", voteType)

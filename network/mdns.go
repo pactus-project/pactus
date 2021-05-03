@@ -20,7 +20,7 @@ const DiscoveryServiceTag = "pubsub-zarb"
 // support PubSub.
 func (n *network) HandlePeerFound(pi peer.AddrInfo) {
 	n.logger.Trace("discovered new peer", "id", pi.ID.Pretty())
-	ctx, cancel := context.WithTimeout(n.ctx, time.Second*30)
+	ctx, cancel := context.WithTimeout(n.ctx, time.Second*10)
 	defer cancel()
 	if err := n.host.Connect(ctx, pi); err != nil {
 		n.logger.Error("error connecting to peer", "id", pi.ID.Pretty(), "err", err)

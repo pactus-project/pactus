@@ -96,16 +96,16 @@ func (s *store) BlockHeight(hash crypto.Hash) (int, error) {
 	return s.blockStore.blockHeight(hash)
 }
 
-func (s *store) SaveTransaction(ctrx *tx.CommittedTx) {
+func (s *store) SaveTransaction(trx *tx.Tx) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	if err := s.txStore.saveTx(s.batch, ctrx); err != nil {
+	if err := s.txStore.saveTx(s.batch, trx); err != nil {
 		logger.Panic("Error on saving a transaction: %v", err)
 	}
 }
 
-func (s *store) Transaction(hash crypto.Hash) (*tx.CommittedTx, error) {
+func (s *store) Transaction(hash crypto.Hash) (*tx.Tx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -209,5 +209,9 @@ func (s *store) RestoreLastInfo() []byte {
 }
 
 func (s *store) WriteBatch() error {
-	return s.db.Write(s.batch, nil)
+	if err := s.db.Write(s.batch, nil); err != nil {
+		return err
+	}
+	s.batch.Reset()
+	return nil
 }

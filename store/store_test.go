@@ -7,7 +7,6 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -53,17 +52,15 @@ func TestReturnNilForNonExistingItems(t *testing.T) {
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
 
-	b, txs := block.GenerateTestBlock(nil, nil)
+	b, trxs := block.GenerateTestBlock(nil, nil)
 	h := util.RandInt(10000)
 	assert.False(t, tStore.HasAnyBlock())
 	tStore.SaveBlock(h, b)
 	assert.NoError(t, tStore.WriteBatch())
 	assert.True(t, tStore.HasAnyBlock())
 
-	for _, trx := range txs {
-		r := trx.GenerateReceipt(tx.Ok, b.Hash())
-		ctrx := &tx.CommittedTx{Tx: trx, Receipt: r}
-		tStore.SaveTransaction(ctrx)
+	for _, trx := range trxs {
+		tStore.SaveTransaction(trx)
 		assert.NoError(t, tStore.WriteBatch())
 	}
 
@@ -77,13 +74,11 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	assert.Equal(t, bz1, bz2)
 	assert.Equal(t, h, h2)
 
-	for _, trx := range txs {
-		r := trx.GenerateReceipt(tx.Ok, b.Hash())
-		ctrx2, err := tStore.Transaction(trx.ID())
+	for _, trx := range trxs {
+		trx2, err := tStore.Transaction(trx.ID())
 		assert.NoError(t, err)
 
-		assert.Equal(t, trx.ID(), ctrx2.Tx.ID())
-		assert.Equal(t, r, ctrx2.Receipt)
+		assert.Equal(t, trx.ID(), trx2.ID())
 	}
 
 	// After closing db, we should not crash
@@ -91,7 +86,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	assert.Error(t, tStore.WriteBatch())
 	_, err = tStore.Block(h)
 	assert.Error(t, err)
-	_, err = tStore.Transaction(txs[0].ID())
+	_, err = tStore.Transaction(trxs[0].ID())
 	assert.Error(t, err)
 }
 

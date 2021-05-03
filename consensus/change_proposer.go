@@ -11,14 +11,14 @@ type changeProposerState struct {
 }
 
 func (s *changeProposerState) enter() {
-	s.logger.Info("Requesting for chaning proposer")
+	s.logger.Info("Requesting for chaning proposer", "proposer", s.proposer(s.round).Address())
 	s.signAddVote(vote.VoteTypeChangeProposer, crypto.UndefHash)
 
 	s.decide()
 }
 
 func (s *changeProposerState) decide() {
-	voteset := s.pendingVotes.ChangeProposerVoteSet(s.round)
+	voteset := s.log.ChangeProposerVoteSet(s.round)
 	if voteset.QuorumHash() != nil {
 		s.logger.Debug("change proposer has quorum", "proposer", s.proposer(s.round).Address())
 		s.round++

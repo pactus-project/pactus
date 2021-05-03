@@ -18,35 +18,39 @@ func TestRestore(t *testing.T) {
 	li1 := NewLastInfo(store)
 	li2 := NewLastInfo(store)
 
-	val1 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 10, 20)
-	val2 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 18, 28)
-	val3 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 2, 12)
-	val4 := validator.NewValidator(crypto.GenerateTestSigner().PublicKey(), 6, 16)
+	signer1 := crypto.GenerateTestSigner()
+	signer2 := crypto.GenerateTestSigner()
+	signer3 := crypto.GenerateTestSigner()
+	signer4 := crypto.GenerateTestSigner()
+
+	val1 := validator.NewValidator(signer1.PublicKey(), 10, 20)
+	val2 := validator.NewValidator(signer2.PublicKey(), 18, 28)
+	val3 := validator.NewValidator(signer3.PublicKey(), 2, 12)
+	val4 := validator.NewValidator(signer4.PublicKey(), 6, 16)
 
 	trx1, _ := tx.GenerateTestBondTx()
 	trx2, _ := tx.GenerateTestSendTx()
 	trx3, newValSigner := tx.GenerateTestSortitionTx()
-	hash := crypto.GenerateTestHash()
-	lastCertificate := block.GenerateTestCertificate(hash)
+	blockHash := crypto.GenerateTestHash()
+	sigs := []crypto.Signature{
+		signer1.SignData(blockHash.RawBytes()),
+		signer2.SignData(blockHash.RawBytes()),
+		signer3.SignData(blockHash.RawBytes()),
+	}
+	sig := crypto.Aggregate(sigs)
+	lastCertificate := block.NewCertificate(blockHash, 5, []int{10, 18, 2, 6}, []int{10}, sig)
+	trxs := []*tx.Tx{trx1, trx2, trx3}
 	txIDs := block.NewTxIDs()
 	txIDs.Append(trx1.ID())
 	txIDs.Append(trx2.ID())
 	txIDs.Append(trx3.ID())
 	lastSortitionSeed := sortition.GenerateRandomSeed()
 	lastBlock := block.MakeBlock(1, util.Now(), txIDs,
-		hash,
+		blockHash,
 		crypto.GenerateTestHash(),
 		lastCertificate, lastSortitionSeed, val1.Address())
 	lastBlockHeight := 111
 	lastBlockHash := lastBlock.Hash()
-	ctrxs := []*tx.CommittedTx{}
-	for _, trx := range []*tx.Tx{trx1, trx2, trx3} {
-		ctrx := &tx.CommittedTx{
-			Tx:      trx,
-			Receipt: trx.GenerateReceipt(tx.Ok, lastBlockHash),
-		}
-		ctrxs = append(ctrxs, ctrx)
-	}
 
 	li1.SetSortitionSeed(lastSortitionSeed)
 	li1.SetBlockHeight(lastBlockHeight)
@@ -62,8 +66,8 @@ func TestRestore(t *testing.T) {
 	_, err = li2.RestoreLastInfo(4)
 	assert.Error(t, err)
 
-	for _, ctrx := range ctrxs {
-		store.SaveTransaction(ctrx)
+	for _, trx := range trxs {
+		store.SaveTransaction(trx)
 	}
 	_, err = li2.RestoreLastInfo(4)
 	assert.Error(t, err)
@@ -87,5 +91,5 @@ func TestRestore(t *testing.T) {
 	assert.Equal(t, li1.BlockHash(), li2.BlockHash())
 	assert.Equal(t, li1.Certificate().Hash(), li2.Certificate().Hash())
 	assert.Equal(t, li1.BlockTime(), li2.BlockTime())
-	assert.Equal(t, c.Committers(), []int{54, 18, 2, 6})
+	assert.Equal(t, c.Committers(), []int{18, 2, 54, 6})
 }

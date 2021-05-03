@@ -43,16 +43,11 @@ struct BlockResult {
   block               @2 :Block;
 }
 
-struct Receipt {
-  hash                @0 :Data;
-  data                @1 :Data;
-}
 
 struct TransactionResult {
   id                  @0 :Data;
   data                @1 :Data;
   transaction         @2 :Data; # TODO: define tx struct
-  receipt             @3 :Receipt;
 }
 
 struct AccountResult {
@@ -65,7 +60,7 @@ struct ValidatorResult {
 
 struct Peer {
   moniker               @0 :Text;
-  nodeVersion           @1 :Data;
+  nodeVersion           @1 :Text;
   peerID                @2 :Text;
   publicKey             @3 :Text;
   initialBlockDownload  @4 :Bool;

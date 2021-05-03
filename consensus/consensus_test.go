@@ -19,6 +19,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -146,7 +147,7 @@ func shouldPublishProposal(t *testing.T, cons *consensus, height, round int) {
 }
 
 func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int) {
-	timeout := time.NewTimer(1 * time.Second)
+	timeout := time.NewTimer(2 * time.Second)
 
 	for {
 		select {
@@ -441,4 +442,28 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.RoundProposal(0), 0)
 	checkHeightRoundWait(t, tConsP, 2, 0)
+}
+
+func TestDuplicateProposal(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	testEnterNewHeight(tConsX)
+
+	h := 4
+	r := 0
+	p1 := makeProposal(t, h, r)
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	tSigners[0].SignMsg(trx)
+	assert.NoError(t, tTxPool.AppendTx(trx))
+	p2 := makeProposal(t, h, r)
+	assert.NotEqual(t, p1.Hash(), p2.Hash())
+
+	tConsX.SetProposal(p1)
+	tConsX.SetProposal(p2)
+
+	assert.Equal(t, tConsX.RoundProposal(0).Hash(), p1.Hash())
 }

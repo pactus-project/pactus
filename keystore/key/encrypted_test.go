@@ -16,6 +16,9 @@ func TestEncryption(t *testing.T) {
 	//Encrypts the key json blob
 	err := EncryptKeyToFile(k1, filePath, auth, "")
 	assert.NoError(t, err)
+	// Existing file
+	err = EncryptKeyToFile(k1, filePath, auth, "")
+	assert.Error(t, err)
 	//Decrypts Json Object
 	k2, err := DecryptKeyFile(filePath, auth)
 	assert.NoError(t, err)

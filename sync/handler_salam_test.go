@@ -33,7 +33,7 @@ func TestParsingSalamMessages(t *testing.T) {
 		assert.Equal(t, tBobSync.peerSet.MaxClaimedHeight(), tAliceState.LastBlockHeight())
 
 		p := tAliceSync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.NodeVersion(), version.NodeVersion)
+		assert.Equal(t, p.NodeVersion(), version.Version())
 		assert.Equal(t, p.Moniker(), "kitty")
 		assert.True(t, pub.EqualsTo(p.PublicKey()))
 		assert.Equal(t, p.PeerID(), pid)

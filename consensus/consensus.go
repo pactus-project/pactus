@@ -6,7 +6,7 @@ import (
 
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/consensus/pending_votes"
+	"github.com/zarbchain/zarb-go/consensus/log"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -21,7 +21,7 @@ type consensus struct {
 	lk deadlock.RWMutex
 
 	config              *Config
-	pendingVotes        *pending_votes.PendingVotes
+	log                 *log.Log
 	signer              crypto.Signer
 	state               state.StateFacade
 	height              int
@@ -50,7 +50,7 @@ func NewConsensus(
 	}
 
 	// Update height later, See enterNewHeight.
-	cs.pendingVotes = pending_votes.NewPendingVotes()
+	cs.log = log.NewLog()
 	cs.logger = logger.NewLogger("_consensus", cs)
 
 	cs.newHeightState = &newHeightState{cs}
@@ -103,7 +103,7 @@ func (cs *consensus) RoundProposal(round int) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.pendingVotes.RoundProposal(round)
+	return cs.log.RoundProposal(round)
 }
 func (cs *consensus) AllVotes() []*vote.Vote {
 	cs.lk.Lock()
@@ -111,8 +111,8 @@ func (cs *consensus) AllVotes() []*vote.Vote {
 
 	votes := []*vote.Vote{}
 	for r := 0; r <= cs.round; r++ {
-		rv := cs.pendingVotes.MustGetRoundVotes(r)
-		votes = append(votes, rv.AllVotes()...)
+		m := cs.log.MustGetRoundMessages(r)
+		votes = append(votes, m.AllVotes()...)
 	}
 	return votes
 }
@@ -120,15 +120,18 @@ func (cs *consensus) RoundVotes(round int) []*vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	rv := cs.pendingVotes.MustGetRoundVotes(round)
-	return rv.AllVotes()
+	rm := cs.log.RoundMessages(round)
+	if rm != nil {
+		return rm.AllVotes()
+	}
+	return nil
 }
 
 func (cs *consensus) HasVote(hash crypto.Hash) bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.pendingVotes.HasVote(hash)
+	return cs.log.HasVote(hash)
 }
 
 func (cs *consensus) enterNewState(s consState) {
@@ -150,11 +153,12 @@ func (cs *consensus) MoveToNewHeight() {
 func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round int, target tickerTarget) {
 	ti := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
+	cs.logger.Debug("New timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
+
 	go func() {
 		<-timer.C
 		cs.handleTimeout(ti)
 	}()
-	logger.Trace("Scheduled timeout", "duration", duration, "height", height, "round", round, "target", target)
 }
 
 func (cs *consensus) SetProposal(p *proposal.Proposal) {
@@ -166,7 +170,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
-	roundProposal := cs.pendingVotes.RoundProposal(p.Round())
+	roundProposal := cs.log.RoundProposal(p.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("This round has proposal", "proposal", p)
 		return
@@ -188,7 +192,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 func (cs *consensus) doSetProposal(p *proposal.Proposal) {
 	cs.logger.Info("Proposal set", "proposal", p)
-	cs.pendingVotes.SetRoundProposal(p.Round(), p)
+	cs.log.SetRoundProposal(p.Round(), p)
 }
 
 func (cs *consensus) handleTimeout(t *ticker) {
@@ -215,7 +219,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
-	if cs.pendingVotes.HasVote(v.Hash()) {
+	if cs.log.HasVote(v.Hash()) {
 		cs.logger.Trace("Vote exists", "vote", v)
 		return
 	}
@@ -224,7 +228,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 }
 
 func (cs *consensus) doAddVote(v *vote.Vote) {
-	err := cs.pendingVotes.AddVote(v)
+	err := cs.log.AddVote(v)
 	if err != nil {
 		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
 	}
@@ -238,7 +242,7 @@ func (cs *consensus) proposer(round int) *validator.Validator {
 
 func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	address := cs.signer.Address()
-	if !cs.pendingVotes.CanVote(address) {
+	if !cs.log.CanVote(address) {
 		cs.logger.Trace("This node is not in committee", "addr", address)
 		return
 	}
@@ -248,7 +252,7 @@ func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
 	cs.signer.SignMsg(v)
 	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
 
-	err := cs.pendingVotes.AddVote(v)
+	err := cs.log.AddVote(v)
 	if err != nil {
 		cs.logger.Error("Error on adding our vote!", "err", err, "vote", v)
 	} else {
@@ -281,8 +285,8 @@ func (cs *consensus) PickRandomVote() *vote.Vote {
 	defer cs.lk.RUnlock()
 
 	round := util.RandInt(cs.round + 1)
-	rv := cs.pendingVotes.MustGetRoundVotes(round)
-	votes := rv.AllVotes()
+	rm := cs.log.MustGetRoundMessages(round)
+	votes := rm.AllVotes()
 	if len(votes) == 0 {
 		return nil
 	}

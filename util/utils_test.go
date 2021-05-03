@@ -33,3 +33,27 @@ func TestRandomPeerID(t *testing.T) {
 	id := RandomPeerID()
 	assert.NoError(t, id.Validate())
 }
+
+func TestRandInt(t *testing.T) {
+	rnd1 := RandInt(4)
+	assert.GreaterOrEqual(t, rnd1, 0)
+	assert.LessOrEqual(t, rnd1, 4)
+
+	rnd2 := RandInt(0)
+	assert.Equal(t, rnd2, 0)
+
+	rnd3 := RandInt(-1)
+	assert.Equal(t, rnd3, 0)
+}
+
+func TestRandInt65(t *testing.T) {
+	rnd1 := RandInt64(4)
+	assert.GreaterOrEqual(t, rnd1, int64(0))
+	assert.LessOrEqual(t, rnd1, int64(4))
+
+	rnd2 := RandInt64(0)
+	assert.Equal(t, rnd2, int64(0))
+
+	rnd3 := RandInt64(-1)
+	assert.Equal(t, rnd3, int64(0))
+}

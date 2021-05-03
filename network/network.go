@@ -89,7 +89,7 @@ func NewNetwork(conf *Config) (Network, error) {
 		libp2p.Identity(nodeKey),
 		libp2p.ListenAddrStrings(conf.ListenAddress...),
 		libp2p.Ping(true),
-		libp2p.UserAgent("zarb-" + version.NodeVersion.String()),
+		libp2p.UserAgent("zarb-" + version.Version()),
 	}
 	if conf.EnableNATService {
 		opts = append(opts,

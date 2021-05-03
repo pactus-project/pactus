@@ -12,7 +12,6 @@ type proposeState struct {
 func (s *proposeState) enter() {
 	sleep := s.config.CalculateChangeProposerTimeout(s.round)
 	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetChangeProposer)
-	s.logger.Debug("Change proposer timer started...", "timeout", sleep.Seconds())
 
 	s.decide()
 }

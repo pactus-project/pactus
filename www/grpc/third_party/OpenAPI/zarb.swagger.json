@@ -383,7 +383,13 @@
       }
     },
     "zarbBlockHeightResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "zarbBlockResponse": {
       "type": "object",
@@ -405,7 +411,13 @@
       }
     },
     "zarbBlockchainInfoResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
     },
     "zarbNetworkInfoResponse": {
       "type": "object",
@@ -461,11 +473,7 @@
     "zarbSendRawTransactionResponse": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
-        "json": {
+        "id": {
           "type": "string"
         }
       }
@@ -486,8 +494,7 @@
       "type": "object",
       "properties": {
         "publicKey": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "number": {
           "type": "integer",
@@ -508,6 +515,9 @@
         "lastJoinedHeight": {
           "type": "integer",
           "format": "int32"
+        },
+        "address": {
+          "type": "string"
         }
       }
     },

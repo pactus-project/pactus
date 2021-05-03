@@ -68,7 +68,7 @@ func TestGetTransaction(t *testing.T) {
 	trx3, _ := tx.GenerateTestSendTx()
 	trx4, _ := tx.GenerateTestSendTx()
 
-	tState.Store.SaveTransaction(&tx.CommittedTx{Tx: trx1})
+	tState.Store.SaveTransaction(trx1)
 	assert.NoError(t, tState.AddPendingTx(trx4))
 	tCache.AddTransaction(trx2)
 

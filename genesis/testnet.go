@@ -19,7 +19,7 @@ const testnetJSON = `
    },
    "Accounts":[
       {
-         "Address":"zrb1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqn627cy",
+         "Address":"0000000000000000000000000000000000000000",
          "Balance":2100000000000000
       }
    ],

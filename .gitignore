@@ -11,3 +11,4 @@ local.mk
 .herumi
 dist/
 .releaser.yml
+*.local.md

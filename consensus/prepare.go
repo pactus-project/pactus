@@ -13,26 +13,28 @@ type prepareState struct {
 
 func (s *prepareState) enter() {
 	s.hasVoted = false
+
+	s.scheduleTimeout(s.config.QueryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
 }
 
 func (s *prepareState) decide() {
 	s.vote()
 
-	prepares := s.pendingVotes.PrepareVoteSet(s.round)
+	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
 	if prepareQH != nil {
 		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
 		s.enterNewState(s.precommitState)
-	}
-
-	// Liveness on PBFT
-	//
-	// If a replica receives a set of f+1 valid change-proposer votes for the next round
-	// it sends a change-proposer vote for this round, even if its timer has not expired;
-	// this prevents it from starting the next change-proposer state too late.
-	voteset := s.pendingVotes.ChangeProposerVoteSet(s.round + 1)
-	if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
-		s.enterNewState(s.changeProposerState)
+	} else {
+		// Liveness on PBFT
+		//
+		// If a replica receives a set of f+1 valid change-proposer votes for this round,
+		// it sends a change-proposer vote, even if its timer has not expired;
+		// this prevents it from starting the change-proposer state too late.
+		voteset := s.log.ChangeProposerVoteSet(s.round)
+		if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
+			s.enterNewState(s.changeProposerState)
+		}
 	}
 }
 
@@ -41,7 +43,7 @@ func (s *prepareState) vote() {
 		return
 	}
 
-	roundProposal := s.pendingVotes.RoundProposal(s.round)
+	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
 		s.queryProposal()
 		s.logger.Warn("No proposal yet.")
@@ -70,11 +72,14 @@ func (s *prepareState) onSetProposal(p *proposal.Proposal) {
 }
 
 func (s *prepareState) onTimedout(t *ticker) {
-	if t.Target != tickerTargetChangeProposer {
-		s.logger.Debug("Invalid ticker", "ticker", t)
-		return
+	if t.Target == tickerTargetQueryProposal {
+		s.queryProposal()
+		s.decide()
+	} else if t.Target == tickerTargetChangeProposer {
+		s.enterNewState(s.changeProposerState)
+	} else {
+		s.logger.Trace("Invalid ticker", "ticker", t)
 	}
-	s.enterNewState(s.changeProposerState)
 }
 
 func (s *prepareState) name() string {

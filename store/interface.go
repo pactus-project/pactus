@@ -12,7 +12,7 @@ type StoreReader interface {
 	Block(height int) (*block.Block, error)
 	HasAnyBlock() bool
 	BlockHeight(hash crypto.Hash) (int, error)
-	Transaction(hash crypto.Hash) (*tx.CommittedTx, error)
+	Transaction(hash crypto.Hash) (*tx.Tx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int
@@ -31,7 +31,7 @@ type Store interface {
 	UpdateAccount(acc *account.Account)
 	UpdateValidator(acc *validator.Validator)
 	SaveBlock(height int, block *block.Block)
-	SaveTransaction(ctrx *tx.CommittedTx)
+	SaveTransaction(trx *tx.Tx)
 	SaveLastInfo(info []byte)
 	WriteBatch() error
 	Close() error

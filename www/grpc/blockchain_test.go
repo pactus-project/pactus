@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
@@ -33,6 +34,43 @@ func TestGetNetworkInfo(t *testing.T) {
 			}
 		}
 		t.Error("new Peer Not Found")
+	})
+
+	err := conn.Close()
+
+	assert.Nil(t, err, "Error closing connection")
+}
+
+func TestGetBlockchainInfo(t *testing.T) {
+	conn, client := callServer(t)
+	tMockState.Store.Blocks = make(map[int]*block.Block)
+
+	t.Run("Should return 0,for no block yet", func(t *testing.T) {
+		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), res.Height)
+	})
+
+	b1, trxs := block.GenerateTestBlock(nil, nil)
+	tMockState.AddBlock(1, b1, trxs)
+	t.Run("Should return 1,for first block", func(t *testing.T) {
+		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), res.Height)
+	})
+	b2, trxs2 := block.GenerateTestBlock(nil, nil)
+	b3, trxs3 := block.GenerateTestBlock(nil, nil)
+	b4, trxs4 := block.GenerateTestBlock(nil, nil)
+	b5, trxs5 := block.GenerateTestBlock(nil, nil)
+	tMockState.AddBlock(2, b2, trxs2)
+	tMockState.AddBlock(3, b3, trxs3)
+	tMockState.AddBlock(4, b4, trxs4)
+	tMockState.AddBlock(5, b5, trxs5)
+
+	t.Run("Should return 5", func(t *testing.T) {
+		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
+		assert.NoError(t, err)
+		assert.Equal(t, int64(5), res.Height)
 	})
 
 	err := conn.Close()

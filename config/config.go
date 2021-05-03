@@ -12,6 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
@@ -22,6 +23,7 @@ import (
 
 type Config struct {
 	State     *state.Config
+	Store     *store.Config
 	TxPool    *txpool.Config
 	Consensus *consensus.Config
 	Network   *network.Config
@@ -35,6 +37,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	conf := &Config{
 		State:     state.DefaultConfig(),
+		Store:     store.DefaultConfig(),
 		TxPool:    txpool.DefaultConfig(),
 		Consensus: consensus.DefaultConfig(),
 		Network:   network.DefaultConfig(),
@@ -51,6 +54,7 @@ func DefaultConfig() *Config {
 func TestConfig() *Config {
 	conf := &Config{
 		State:     state.TestConfig(),
+		Store:     store.TestConfig(),
 		TxPool:    txpool.TestConfig(),
 		Consensus: consensus.TestConfig(),
 		Network:   network.TestConfig(),
@@ -129,6 +133,9 @@ func (conf *Config) SaveToFile(file string) error {
 
 func (conf *Config) SanityCheck() error {
 	if err := conf.State.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Store.SanityCheck(); err != nil {
 		return err
 	}
 	if err := conf.TxPool.SanityCheck(); err != nil {

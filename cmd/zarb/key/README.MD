@@ -24,20 +24,19 @@ Example:
 zarb key recover
 ```
 
-
 ### Inspect KeyFile
 
 Print various information about the given key file.
-Private key information can be printed using the `-e` flag. make sure you use this feature with great caution.
+Private key information can be printed using the `-e` flag. Make sure you use this feature with great caution.
 
 Example:
 
 ```bash
 zarb key inspect <PATH_TO_KEYFILE>
-zarb key inspect <PATH_TO_KEYFILE> -e
+zarb key inspect -e <PATH_TO_KEYFILE>
 ```
 
-###  Signing a message
+### Signing a message
 
 Signs the message with the private key. User can directly specify the private key to sign the message or specify the a key file and password to decrypt the private key and sign the message.
 

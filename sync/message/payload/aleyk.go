@@ -11,7 +11,7 @@ import (
 type AleykPayload struct {
 	ResponseCode    ResponseCode     `cbor:"1,keyasint"`
 	ResponseMessage string           `cbor:"2,keyasint"`
-	NodeVersion     version.Version  `cbor:"3,keyasint"`
+	NodeVersion     string           `cbor:"3,keyasint"`
 	Moniker         string           `cbor:"4,keyasint"`
 	PublicKey       crypto.PublicKey `cbor:"5,keyasint"`
 	Height          int              `cbor:"6,keyasint"`
@@ -23,7 +23,7 @@ func NewAleykPayload(code ResponseCode, msg string, moniker string,
 	return &AleykPayload{
 		ResponseCode:    code,
 		ResponseMessage: msg,
-		NodeVersion:     version.NodeVersion,
+		NodeVersion:     version.Version(),
 		Moniker:         moniker,
 		PublicKey:       pub,
 		Height:          height,
