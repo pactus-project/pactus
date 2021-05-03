@@ -24,7 +24,7 @@ func (s *newHeightState) decide() {
 
 	// Apply last certificate. We may have more votes now
 	if s.height == sateHeight && s.round >= 0 {
-		vs := s.pendingVotes.PrecommitVoteSet(s.round)
+		vs := s.log.PrecommitVoteSet(s.round)
 		if vs == nil {
 			s.logger.Warn("Entering new height without certificate")
 		} else {
@@ -39,7 +39,7 @@ func (s *newHeightState) decide() {
 	}
 
 	vals := s.state.CommitteeValidators()
-	s.pendingVotes.MoveToNewHeight(sateHeight+1, vals)
+	s.log.MoveToNewHeight(sateHeight+1, vals)
 
 	s.height = sateHeight + 1
 	s.round = 0
