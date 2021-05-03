@@ -175,7 +175,7 @@ func (n *network) SelfID() peer.ID {
 
 func (n *network) CloseConnection(pid peer.ID) {
 	if err := n.host.Network().ClosePeer(pid); err != nil {
-		n.logger.Warn("Unable to close connestion", "peer", pid)
+		n.logger.Warn("Unable to close connection", "peer", pid)
 	}
 }
 
