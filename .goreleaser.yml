@@ -1,0 +1,50 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+project_name: zarb-cli
+
+before:
+  hooks:
+    - go mod tidy
+    - make bls
+builds:
+  - main: ./cmd/zarb/
+    env:
+      - CGO_ENABLED=1
+      - pwd = $(pwd)
+    # GOOS list to build for.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    # Defaults are darwin and linux.
+    goos: 
+      - "${GOHOSTOS}"
+      # - darwin
+    # GOARCH to build for.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    # Defaults are 386, amd64 and arm64.
+    goarch:
+      - amd64
+      # - arm
+      # - arm64
+    hooks:
+      pre:
+       - go env -w CGO_LDFLAGS="-L{{.Env.pwd}}/.herumi/bls/lib/{{.Os}}/{{.Arch}}/ -lbls384_256 -lm -lstdc++"
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: 'checksums-${GOHOSTOS}.txt'
+snapshot:
+  name_template: "{{ .Tag }}-{{.Os}}-zarb"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

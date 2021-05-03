@@ -1,12 +1,20 @@
 UNAME := $(shell uname)
 PACKAGES=$(shell go list ./... | grep -v 'tests')
-TAGS=-tags 'zarb'
-HERUMI= $(shell pwd)/.herumi
-CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++"
-LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.SemVersion=`git describe --tags --abbrev=0`"
+TAGS="zarb"
+VTAG=$(shell git describe --tags --abbrev=0)
+HERUMI= .herumi
+LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.GitCommit=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.SemVersion=$(VTAG)"
 CAPNP_INC = -I$(GOPATH)/src/zombiezen.com/go/capnproto2/std
 PROTO_INC = -I. -I$(GOPATH)/src/github.com/googleapis/googleapis
 
+_OS=$(shell go env GOOS)
+_ARCH=$(shell go env GOARCH)
+
+
+LIB_DIR=$(HERUMI)/bls/lib/$(_OS)/$(_ARCH)
+CGO_LDFLAGS=CGO_LDFLAGS="-L$(LIB_DIR) -lbls384_256 -lm -lstdc++"
+CGO_LDFLAGS_Default=$(shell go env CGO_CFLAGS)
+_EXT=$(shell go env GOEXE)
 
 all: tools build install test
 
@@ -27,19 +35,21 @@ tools:
 bls:
 	@echo "Compiling bls"
 	rm -rf $(HERUMI)
-	git clone --recursive git://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static
+	git clone https://github.com/herumi/bls-go-binary.git $(HERUMI) #&& cd $(HERUMI)/bls && make minimized_static
 
 
 ########################################
 ### Build zarb
 build:
-	go build $(LDFLAGS) $(TAGS) -o build/zarb ./cmd/zarb/
+	go build $(LDFLAGS) -tags $(TAGS) -o build/zarb ./cmd/zarb/
 
 install:
-	go install $(LDFLAGS) $(TAGS) ./cmd/zarb
+	go install $(LDFLAGS) -tags $(TAGS) ./cmd/zarb
 
 build_with_bls:
-	$(CGO_LDFLAGS) go build $(LDFLAGS) $(TAGS) -o build/zarb ./cmd/zarb/
+	go env -w $(CGO_LDFLAGS)
+	go build $(LDFLAGS) -tags $(TAGS) -o build/zarb-$(VTAG)$(_EXT) ./cmd/zarb/
+	go env -w CGO_LDFLAGS="$(CGO_LDFLAGS_Default)"
 
 ########################################
 ### Testing
