@@ -46,6 +46,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			tBobNet.ReceivingMessageFromOtherPeer(pid, pld)
 
 			shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeAleyk)
+			// First Session open here
 		})
 	})
 
@@ -91,10 +92,14 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		tBobSync.peerSet.OpenSession(util.RandomPeerID())
 		tBobSync.peerSet.OpenSession(util.RandomPeerID())
 		tBobSync.peerSet.OpenSession(util.RandomPeerID())
+		assert.Equal(t, tBobSync.peerSet.NumberOfOpenSessions(), 5)
 
-		pld := payload.NewLatestBlocksRequestPayload(6, tBobPeerID, 100, 105)
-		tBobNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		s := tAliceSync.peerSet.OpenSession(tBobPeerID)
+		pld := payload.NewLatestBlocksRequestPayload(s.SessionID(), tBobPeerID, 100, 105)
+		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pld)
+		assert.Equal(t, tAliceSync.peerSet.NumberOfOpenSessions(), 2)
 
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tBobNet, payload.PayloadTypeLatestBlocksResponse, payload.ResponseCodeBusy)
+		assert.Equal(t, tAliceSync.peerSet.NumberOfOpenSessions(), 1, "Alice should close the session")
 	})
 }

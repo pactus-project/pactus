@@ -3,6 +3,7 @@ package sync
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
@@ -70,10 +71,14 @@ func TestDownloadBlocksRequestMessages(t *testing.T) {
 		tAliceSync.peerSet.OpenSession(util.RandomPeerID())
 		tAliceSync.peerSet.OpenSession(util.RandomPeerID())
 		tAliceSync.peerSet.OpenSession(util.RandomPeerID())
+		assert.Equal(t, tAliceSync.peerSet.NumberOfOpenSessions(), 5)
 
-		pld := payload.NewDownloadRequestPayload(6, tAlicePeerID, 100, 105)
-		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		s := tBobSync.peerSet.OpenSession(tAlicePeerID)
+		pld := payload.NewDownloadRequestPayload(s.SessionID(), tAlicePeerID, 100, 105)
+		tAliceNet.ReceivingMessageFromOtherPeer(tBobPeerID, pld)
+		assert.Equal(t, tBobSync.peerSet.NumberOfOpenSessions(), 1)
 
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeDownloadResponse, payload.ResponseCodeBusy)
+		assert.Equal(t, tBobSync.peerSet.NumberOfOpenSessions(), 0, "Bob should close the session")
 	})
 }
