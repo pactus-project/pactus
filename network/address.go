@@ -1,21 +1,21 @@
 package network
 
 import (
-	"github.com/libp2p/go-libp2p-core/peer"
-	ma "github.com/multiformats/go-multiaddr"
+	lp2ppeer "github.com/libp2p/go-libp2p-core/peer"
+	"github.com/multiformats/go-multiaddr"
 )
 
 // PeerAddrsToAddrInfo converts a slice of string peer addresses
 // to AddrInfo.
-func PeerAddrsToAddrInfo(addrs []string) ([]peer.AddrInfo, error) {
-	var pis []peer.AddrInfo
+func PeerAddrsToAddrInfo(addrs []string) ([]lp2ppeer.AddrInfo, error) {
+	var pis []lp2ppeer.AddrInfo
 	for _, addr := range addrs {
-		a, err := ma.NewMultiaddr(addr)
+		a, err := multiaddr.NewMultiaddr(addr)
 		if err != nil {
 			return nil, err
 		}
 
-		pinfo, err := peer.AddrInfoFromP2pAddr(a)
+		pinfo, err := lp2ppeer.AddrInfoFromP2pAddr(a)
 		if err != nil {
 			return nil, err
 		}
