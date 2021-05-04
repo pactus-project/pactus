@@ -34,7 +34,7 @@ tools:
 bls:
 	@echo "Compiling bls"
 	rm -rf $(HERUMI)
-	git clone https://github.com/herumi/bls-go-binary.git $(HERUMI) #&& cd $(HERUMI)/bls && make minimized_static
+	git clone https://github.com/herumi/bls-go-binary.git $(HERUMI)
 
 
 ########################################
