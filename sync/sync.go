@@ -187,12 +187,13 @@ func (sync *synchronizer) broadcastSalam() {
 	sync.broadcast(pld)
 }
 
-func (sync *synchronizer) broadcastAleyk(code payload.ResponseCode, resMsg string) {
+func (sync *synchronizer) broadcastAleyk(target peer.ID, code payload.ResponseCode, resMsg string) {
 	flags := 0
 	if sync.config.InitialBlockDownload {
 		flags = util.SetFlag(flags, FlagInitialBlockDownload)
 	}
 	response := payload.NewAleykPayload(
+		target,
 		code,
 		resMsg,
 		sync.config.Moniker,

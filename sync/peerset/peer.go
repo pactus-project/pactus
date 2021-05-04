@@ -44,7 +44,7 @@ type peerData struct {
 	Moniker              string
 	NodeVersion          string
 	PeerID               peer.ID
-	Address              crypto.Address
+	Address              *crypto.Address
 	PublicKey            crypto.PublicKey
 	InitialBlockDownload bool
 	Height               int
@@ -163,8 +163,12 @@ func (p *Peer) UpdatePublicKey(pub crypto.PublicKey) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.PublicKey = pub
-	p.data.Address = pub.Address()
+	// TODO: write test for me
+	if err := pub.SanityCheck(); err == nil {
+		addr := pub.Address()
+		p.data.PublicKey = pub
+		p.data.Address = &addr
+	}
 }
 
 func (p *Peer) UpdateHeight(height int) {

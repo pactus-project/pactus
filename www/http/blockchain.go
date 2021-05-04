@@ -61,7 +61,6 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		peer.UpdateMoniker(moniker)
 		peer.UpdateNodeVersion(ver)
 		peer.UpdateMoniker(moniker)
-		peer.UpdatePublicKey(pub)
 		peer.UpdateInitialBlockDownload(p.InitialBlockDownload())
 		peer.UpdateHeight(int(p.Height()))
 		peer.UpdateInvalidMessage(int(p.InvalidMessages()))
