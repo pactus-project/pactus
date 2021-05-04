@@ -36,7 +36,6 @@ func (handler *latestBlocksRequestHandler) ParsPayload(p payload.Payload, initia
 
 	peer := handler.peerSet.MustGetPeer(initiator)
 	if peer.Status() != peerset.StatusCodeOK {
-		handler.logger.Warn("Peer status is not ok", "pld", pld, "pid", initiator)
 		response := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil, nil)
 		handler.broadcast(response)
 

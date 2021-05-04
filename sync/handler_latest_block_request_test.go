@@ -16,15 +16,8 @@ func TestSessionTimeout(t *testing.T) {
 
 	t.Run("An unknown peers claims has more blocks. Alice requests for more blocks. Alice doesn't get any response. Session should be closed", func(t *testing.T) {
 		_, pub, _ := crypto.GenerateTestKeyPair()
-		pld := payload.NewSalamPayload("devil", pub, tAliceState.GenHash, 6666, 0x1) // InitialBlockDownload:  true
+		pld := payload.NewAleykPayload(payload.ResponseCodeOK, "ok", "devil", pub, 6666, 0x1) // InitialBlockDownload:  true
 		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
-
-		// ------
-		// To trig checkIfWeAreBehindTheNetwork function
-		joinBobToCommittee(t)
-		addMoreBlocksForBobAndAnnounceLastBlock(t, 1)
-		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlockAnnounce)
-		// ------
 
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeDownloadRequest)
 

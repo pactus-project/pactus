@@ -36,7 +36,6 @@ func (handler *downloadRequestHandler) ParsPayload(p payload.Payload, initiator 
 
 	peer := handler.peerSet.MustGetPeer(initiator)
 	if peer.Status() != peerset.StatusCodeOK {
-		handler.logger.Warn("Peer status is not ok", "pld", pld, "pid", initiator)
 		response := payload.NewDownloadResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil)
 		handler.broadcast(response)
 
