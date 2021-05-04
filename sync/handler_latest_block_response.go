@@ -26,12 +26,15 @@ func (handler *latestBlocksResponseHandler) ParsPayload(p payload.Payload, initi
 		return nil
 	}
 
-	handler.cache.AddCertificate(pld.LastCertificate)
-	handler.cache.AddBlocks(pld.From, pld.Blocks)
-	handler.cache.AddTransactions(pld.Transactions)
-	handler.tryCommitBlocks()
-
-	handler.updateSession(pld.ResponseCode, pld.SessionID, initiator, pld.Target)
+	if pld.IsRejected() {
+		handler.logger.Warn("Query blocks request is rejected", "pid", initiator, "response", pld.ResponseCode)
+	} else {
+		handler.cache.AddCertificate(pld.LastCertificate)
+		handler.cache.AddBlocks(pld.From, pld.Blocks)
+		handler.cache.AddTransactions(pld.Transactions)
+		handler.tryCommitBlocks()
+		handler.updateSession(pld.ResponseCode, pld.SessionID, initiator, pld.Target)
+	}
 
 	return nil
 }

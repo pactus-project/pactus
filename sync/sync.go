@@ -223,8 +223,9 @@ func (sync *synchronizer) Fingerprint() string {
 		sync.state.LastBlockHeight())
 }
 
-func (sync *synchronizer) sendBlocksRequestIfWeAreBehind() {
-	if sync.peerSet.HasAnyValidSession() {
+func (sync *synchronizer) checkIfWeAreBehindTheNetwork() {
+	// TODO: write test for me
+	if sync.peerSet.HasAnyOpenSession() {
 		sync.logger.Debug("We have open seasson")
 		return
 	}
@@ -241,11 +242,11 @@ func (sync *synchronizer) sendBlocksRequestIfWeAreBehind() {
 			if err := sync.network.JoinDownloadTopic(); err != nil {
 				sync.logger.Info("We can't join download topic", "err", err)
 			} else {
-				sync.RequestForMoreBlock()
+				sync.downloadBlocks()
 			}
 		} else {
 			sync.logger.Info("We are behind the network, Ask for more blocks")
-			sync.RequestForLatestBlock()
+			sync.queryLatestBlocks()
 		}
 	}
 }
@@ -269,8 +270,6 @@ func (sync *synchronizer) onReceiveData(data []byte, from peer.ID) {
 		sync.logger.Warn("Error on parsing a message", "from", util.FingerprintPeerID(from), "message", msg, "err", err)
 		return
 	}
-
-	sync.sendBlocksRequestIfWeAreBehind()
 }
 
 func (sync *synchronizer) broadcast(pld payload.Payload) {
@@ -301,34 +300,63 @@ func (sync *synchronizer) Peers() []*peerset.Peer {
 // TODO:
 // maximum nodes to query block should be 8
 //
-func (sync *synchronizer) RequestForMoreBlock() {
+func (sync *synchronizer) downloadBlocks() {
 	from := sync.state.LastBlockHeight()
 	l := sync.peerSet.GetPeerList()
-	for _, p := range l {
-		if p.InitialBlockDownload() {
-			if p.Height() > from {
-				to := from + sync.config.RequestBlockInterval
-				if to > p.Height() {
-					to = p.Height()
-				}
-
-				session := sync.peerSet.OpenSession(p.PeerID())
-				pld := payload.NewDownloadRequestPayload(session.SessionID(), p.PeerID(), from+1, to)
-				sync.broadcast(pld)
-				from = to
-			}
+	for _, peer := range l {
+		// TODO: write test for me
+		if sync.peerSet.NumberOfOpenSessions() > sync.config.MaximumOpenSessions {
+			sync.logger.Debug("We reached maximum number of open sessions")
+			break
 		}
+
+		// TODO: write test for me
+		if !peer.InitialBlockDownload() {
+			continue
+		}
+
+		// TODO: write test for me
+		if peer.Status() != peerset.StatusCodeOK {
+			continue
+		}
+
+		// TODO: write test for me
+		if peer.Height() < from+1 {
+			continue
+		}
+		to := from + sync.config.RequestBlockInterval
+		if to > peer.Height() {
+			to = peer.Height()
+		}
+
+		sync.logger.Debug("Sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID()))
+		session := sync.peerSet.OpenSession(peer.PeerID())
+		pld := payload.NewDownloadRequestPayload(session.SessionID(), peer.PeerID(), from+1, to)
+		sync.broadcast(pld)
+		from = to
 	}
 }
 
-func (sync *synchronizer) RequestForLatestBlock() {
-	p := sync.peerSet.FindHighestPeer()
-	if p != nil {
-		session := sync.peerSet.OpenSession(p.PeerID())
-		ourHeight := sync.state.LastBlockHeight()
-		pld := payload.NewLatestBlocksRequestPayload(session.SessionID(), p.PeerID(), ourHeight+1, p.Height())
-		sync.broadcast(pld)
+func (sync *synchronizer) queryLatestBlocks() {
+	randPeer := sync.peerSet.GetRandomPeer()
+
+	// TODO: write test for me
+	if randPeer == nil || randPeer.Status() != peerset.StatusCodeOK {
+		return
 	}
+
+	// TODO: write test for me
+	from := sync.state.LastBlockHeight()
+	to := randPeer.Height()
+	if randPeer.Height() < from+1 {
+		return
+	}
+
+	sync.logger.Debug("Querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID()))
+	session := sync.peerSet.OpenSession(randPeer.PeerID())
+	pld := payload.NewLatestBlocksRequestPayload(session.SessionID(), randPeer.PeerID(), from+1, to)
+	sync.broadcast(pld)
+
 }
 
 // peerIsInTheCommittee checks if the peer is a member of committee
@@ -434,11 +462,12 @@ func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int
 	case payload.ResponseCodeRejected:
 		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
+		sync.checkIfWeAreBehindTheNetwork()
 
 	case payload.ResponseCodeBusy:
-		// TODO: handle this situation
 		sync.logger.Debug("Peer is busy. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
+		sync.checkIfWeAreBehindTheNetwork()
 
 	case payload.ResponseCodeMoreBlocks:
 		sync.logger.Debug("Peer responding us. keep session open", "session-id", sessionID)
@@ -446,6 +475,7 @@ func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int
 	case payload.ResponseCodeNoMoreBlocks:
 		sync.logger.Debug("Peer has no more block. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
+		sync.checkIfWeAreBehindTheNetwork()
 
 	case payload.ResponseCodeSynced:
 		sync.logger.Debug("Peer infomed us we are synced. close session", "session-id", sessionID)

@@ -14,6 +14,7 @@ type Config struct {
 	InitialBlockDownload bool
 	BlockPerMessage      int
 	RequestBlockInterval int
+	MaximumOpenSessions  int
 	CacheSize            int
 	Firewall             *firewall.Config
 }
@@ -22,10 +23,11 @@ func DefaultConfig() *Config {
 	return &Config{
 		StartingTimeout:      time.Second * 3,
 		HeartBeatTimeout:     time.Second * 5,
-		SessionTimeout:       time.Second * 3,
+		SessionTimeout:       time.Second * 30,
 		InitialBlockDownload: true,
-		BlockPerMessage:      10,
+		BlockPerMessage:      120,
 		RequestBlockInterval: 720,
+		MaximumOpenSessions:  8,
 		CacheSize:            500000,
 		Firewall:             firewall.DefaultConfig(),
 	}
@@ -40,6 +42,7 @@ func TestConfig() *Config {
 		InitialBlockDownload: true,
 		BlockPerMessage:      10,
 		RequestBlockInterval: 20,
+		MaximumOpenSessions:  4,
 		CacheSize:            1000,
 		Firewall:             firewall.TestConfig(),
 	}

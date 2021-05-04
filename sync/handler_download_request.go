@@ -5,6 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/peerset"
 )
 
 type downloadRequestHandler struct {
@@ -21,13 +22,38 @@ func (handler *downloadRequestHandler) ParsPayload(p payload.Payload, initiator 
 	pld := p.(*payload.DownloadRequestPayload)
 	handler.logger.Trace("Parsing download request payload", "pld", pld)
 
-	peer := handler.peerSet.MustGetPeer(initiator)
-	peer.UpdateHeight(pld.From)
-
 	if pld.Target != handler.SelfID() {
 		return nil
 	}
+
+	if handler.peerSet.NumberOfOpenSessions() > handler.config.MaximumOpenSessions {
+		handler.logger.Warn("We are busy", "pld", pld, "pid", initiator)
+		response := payload.NewDownloadResponsePayload(payload.ResponseCodeBusy, pld.SessionID, initiator, 0, nil, nil)
+		handler.broadcast(response)
+
+		return nil
+	}
+
+	peer := handler.peerSet.MustGetPeer(initiator)
+	if peer.Status() != peerset.StatusCodeOK {
+		handler.logger.Warn("Peer status is not ok", "pld", pld, "pid", initiator)
+		response := payload.NewDownloadResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil)
+		handler.broadcast(response)
+
+		return errors.Errorf(errors.ErrInvalidMessage, "Peer status is not ok: %v", peer.Status())
+	}
+
+	if peer.Height() > pld.From {
+		response := payload.NewDownloadResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil)
+		handler.broadcast(response)
+
+		return errors.Errorf(errors.ErrInvalidMessage, "Peer request for blocks that already has: %v", pld.From)
+	}
+
 	if pld.To-pld.From > handler.config.RequestBlockInterval {
+		response := payload.NewDownloadResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil)
+		handler.broadcast(response)
+
 		return errors.Errorf(errors.ErrInvalidMessage, "peer request interval is not acceptable: %v", pld.To-pld.From)
 	}
 
@@ -52,6 +78,8 @@ func (handler *downloadRequestHandler) ParsPayload(p payload.Payload, initiator 
 			break
 		}
 	}
+	// To avoid sending blocks again, we update height for this peer
+	peer.UpdateHeight(from - 1)
 
 	response := payload.NewDownloadResponsePayload(payload.ResponseCodeNoMoreBlocks, pld.SessionID, initiator, 0, nil, nil)
 	handler.broadcast(response)

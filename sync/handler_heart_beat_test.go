@@ -18,7 +18,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeVote)
 	})
 
-	joinAliceToTheSet(t)
+	joinAliceToCommittee(t)
 
 	t.Run("Alice is in committee", func(t *testing.T) {
 		aliceH, _ := tAliceConsensus.HeightRound()
@@ -38,7 +38,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
 	})
 
-	joinBobToTheSet(t)
+	joinBobToCommittee(t)
 
 	t.Run("Bob should query for votes", func(t *testing.T) {
 		h, r := tBobConsensus.HeightRound()

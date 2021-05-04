@@ -219,14 +219,14 @@ func disableHeartbeat(t *testing.T) {
 	tBobSync.heartBeatTicker.Stop()
 }
 
-func joinAliceToTheSet(t *testing.T) {
+func joinAliceToCommittee(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
 	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
 }
 
-func joinBobToTheSet(t *testing.T) {
+func joinBobToCommittee(t *testing.T) {
 	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
 	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
 
@@ -245,4 +245,13 @@ func TestStop(t *testing.T) {
 	// Should stop normally
 	tAliceSync.Stop()
 	tBobSync.Stop()
+}
+
+func TestBroadcastInvalidMessage(t *testing.T) {
+	setup(t)
+	t.Run("Should not publish invalid messages", func(t *testing.T) {
+		pld := payload.NewHeartBeatPayload(-1, -1, crypto.GenerateTestHash())
+		tAliceBroadcastCh <- pld
+		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHeartBeat)
+	})
 }
