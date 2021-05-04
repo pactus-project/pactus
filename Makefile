@@ -10,7 +10,7 @@ _OS=$(shell go env GOOS)
 _ARCH=$(shell go env GOARCH)
 
 
-LIB_DIR=$(HERUMI)/bls/lib/$(_OS)/$(_ARCH)
+LIB_DIR=$(shell pwd)/$(HERUMI)/bls/lib/$(_OS)/$(_ARCH)
 CGO_LDFLAGS=CGO_LDFLAGS="-L$(LIB_DIR) -lbls384_256 -lm -lstdc++"
 CGO_LDFLAGS_Default=$(shell go env CGO_CFLAGS)
 _EXT=$(shell go env GOEXE)
@@ -32,7 +32,7 @@ tools:
 	go mod tidy
 
 bls:
-	@echo "Compiling bls"
+	@echo "cloning bls"
 	rm -rf $(HERUMI)
 	git clone https://github.com/herumi/bls-go-binary.git $(HERUMI)
 
