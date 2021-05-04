@@ -28,8 +28,6 @@ type BootstrapConfig struct {
 	// Period is the interval at which it periodically checks to see
 	// if the threshold is maintained.
 	Period time.Duration
-	// ConnectionTimeout is how long to wait before timing out a connection attempt.
-	Timeout time.Duration
 }
 
 func DefaultConfig() *Config {
@@ -46,7 +44,6 @@ func DefaultConfig() *Config {
 			MinThreshold: 8,
 			MaxThreshold: 16,
 			Period:       1 * time.Minute,
-			Timeout:      20 * time.Second,
 		},
 	}
 }
@@ -65,7 +62,6 @@ func TestConfig() *Config {
 			MinThreshold: 4,
 			MaxThreshold: 8,
 			Period:       1 * time.Minute,
-			Timeout:      20 * time.Second,
 		},
 	}
 }

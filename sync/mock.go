@@ -23,6 +23,8 @@ func MockingSync() *MockSync {
 	_, pub2, _ := crypto.GenerateTestKeyPair()
 	p1 := ps.MustGetPeer(util.RandomPeerID())
 	p2 := ps.MustGetPeer(util.RandomPeerID())
+	p1.UpdateStatus(peerset.StatusCodeOK)
+	p2.UpdateStatus(peerset.StatusCodeBanned)
 	p1.UpdateMoniker("test-1")
 	p2.UpdateMoniker("test-2")
 	p1.UpdatePublicKey(pub1)
@@ -30,8 +32,8 @@ func MockingSync() *MockSync {
 	p1.IncreaseInvalidMessage()
 	p1.IncreaseReceivedBytes(100)
 	p1.IncreaseReceivedMessage()
-	p1.UpdateNodeVersion(version.NodeVersion)
-	p2.UpdateNodeVersion(version.NodeVersion)
+	p1.UpdateNodeVersion(version.Version())
+	p2.UpdateNodeVersion(version.Version())
 	p1.UpdateInitialBlockDownload(true)
 	p1.UpdateHeight(100)
 	return &MockSync{
@@ -68,7 +70,7 @@ func (m *MockSync) AddPeer(name string, height int) *peerset.Peer {
 	newPeer.IncreaseInvalidMessage()
 	newPeer.IncreaseReceivedBytes(height * 8)
 	newPeer.IncreaseReceivedMessage()
-	newPeer.UpdateNodeVersion(version.NodeVersion)
+	newPeer.UpdateNodeVersion(version.Version())
 	newPeer.UpdateHeight(height)
 	return newPeer
 }

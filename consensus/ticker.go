@@ -10,6 +10,7 @@ type tickerTarget int
 const (
 	tickerTargetNewHeight      = tickerTarget(1)
 	tickerTargetChangeProposer = tickerTarget(2)
+	tickerTargetQueryProposal  = tickerTarget(3)
 )
 
 func (rs tickerTarget) String() string {
@@ -18,6 +19,8 @@ func (rs tickerTarget) String() string {
 		return "new-height"
 	case tickerTargetChangeProposer:
 		return "change-proposer"
+	case tickerTargetQueryProposal:
+		return "query-proposal"
 	default:
 		return "Unknown"
 	}

@@ -1,7 +1,5 @@
 package capnp
 
-import "github.com/fxamacker/cbor/v2"
-
 func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
 	height := zs.state.LastBlockHeight()
 	res, _ := args.Results.NewResult()
@@ -26,8 +24,7 @@ func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 		if err := p.SetMoniker(peer.Moniker()); err != nil {
 			return err
 		}
-		bs, _ := cbor.Marshal(peer.NodeVersion())
-		if err := p.SetNodeVersion(bs); err != nil {
+		if err := p.SetNodeVersion(peer.NodeVersion()); err != nil {
 			return err
 		}
 		if err := p.SetPeerID(string(peer.PeerID())); err != nil {
@@ -36,6 +33,7 @@ func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 		if err := p.SetPublicKey(peer.PublicKey().String()); err != nil {
 			return err
 		}
+		p.SetStatus(int32(peer.Status()))
 		p.SetInitialBlockDownload(peer.InitialBlockDownload())
 		p.SetHeight(int32(peer.Height()))
 		p.SetReceivedMessages(int32(peer.ReceivedMessages()))

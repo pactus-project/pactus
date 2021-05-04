@@ -23,7 +23,7 @@ func (handler *heartBeatHandler) ParsPayload(p payload.Payload, initiator peer.I
 	height, round := handler.consensus.HeightRound()
 
 	if pld.Height == height {
-		if pld.Round > round {
+		if pld.Round > round+1 {
 			if handler.weAreInTheCommittee() {
 				handler.logger.Info("Our consensus is behind of this peer.", "ours", round, "peer", pld.Round)
 
@@ -31,9 +31,9 @@ func (handler *heartBeatHandler) ParsPayload(p payload.Payload, initiator peer.I
 				handler.broadcast(query)
 			}
 		} else if pld.Round < round {
-			handler.logger.Trace("Our consensus is ahead of this peer.")
+			handler.logger.Trace("Our consensus is ahead of this peer.", "ours", round, "peer", pld.Round)
 		} else {
-			handler.logger.Trace("Our consensus is at the same step with this peer.")
+			handler.logger.Trace("Our consensus is about the same round with this peer.", "ours", round, "peer", pld.Round)
 		}
 	}
 

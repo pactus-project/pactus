@@ -91,7 +91,7 @@ func (b *Bootstrapper) Stop() {
 // a random subset of its bootstrap peers.
 func (b *Bootstrapper) checkConnectivity() {
 	currentPeers := b.dialer.Peers()
-	b.logger.Debug("Check connectivity", "peers", len(currentPeers), "timeout", b.config.Timeout)
+	b.logger.Debug("Check connectivity", "peers", len(currentPeers))
 
 	// Let's check if some peers are disconnected
 	var connectedPeers []peer.ID
@@ -112,7 +112,7 @@ func (b *Bootstrapper) checkConnectivity() {
 	if len(connectedPeers) < b.config.MinThreshold {
 		b.logger.Debug("peer count is less than minimum threshold", "count", len(connectedPeers), "threshold", b.config.MinThreshold)
 
-		ctx, cancel := context.WithTimeout(b.ctx, b.config.Timeout)
+		ctx, cancel := context.WithTimeout(b.ctx, time.Second*10)
 		var wg sync.WaitGroup
 		defer func() {
 			wg.Wait()

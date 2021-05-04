@@ -19,6 +19,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -146,7 +147,7 @@ func shouldPublishProposal(t *testing.T, cons *consensus, height, round int) {
 }
 
 func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int) {
-	timeout := time.NewTimer(1 * time.Second)
+	timeout := time.NewTimer(2 * time.Second)
 
 	for {
 		select {
@@ -409,11 +410,41 @@ func TestConsensusInvalidVote(t *testing.T) {
 func TestPickRandomVote(t *testing.T) {
 	setup(t)
 
-	testEnterNewHeight(tConsY)
-	assert.Nil(t, tConsY.PickRandomVote())
+	testEnterNewHeight(tConsP)
+	assert.Nil(t, tConsP.PickRandomVote())
 
-	testAddVote(t, tConsY, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexY)
-	assert.NotNil(t, tConsY.PickRandomVote())
+	p1 := makeProposal(t, 1, 0)
+	p2 := makeProposal(t, 1, 1)
+
+	// round 0
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexP)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexY)
+
+	assert.NotNil(t, tConsP.PickRandomVote())
+
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexP)
+
+	// Round 1
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexP)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexP)
+
+	// Round 2
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 2, crypto.UndefHash, tIndexP)
+
+	for i := 0; i < 10; i++ {
+		rndVote := tConsP.PickRandomVote()
+		assert.NotNil(t, rndVote)
+		assert.Equal(t, rndVote.VoteType(), vote.VoteTypeChangeProposer, "Should only pick Change Proposer votes")
+	}
 }
 
 func TestSetProposalFromPreviousRound(t *testing.T) {
@@ -441,4 +472,28 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 	tConsP.SetProposal(p)
 	assert.Nil(t, tConsP.RoundProposal(0), 0)
 	checkHeightRoundWait(t, tConsP, 2, 0)
+}
+
+func TestDuplicateProposal(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+	commitBlockForAllStates(t)
+
+	testEnterNewHeight(tConsX)
+
+	h := 4
+	r := 0
+	p1 := makeProposal(t, h, r)
+	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	tSigners[0].SignMsg(trx)
+	assert.NoError(t, tTxPool.AppendTx(trx))
+	p2 := makeProposal(t, h, r)
+	assert.NotEqual(t, p1.Hash(), p2.Hash())
+
+	tConsX.SetProposal(p1)
+	tConsX.SetProposal(p2)
+
+	assert.Equal(t, tConsX.RoundProposal(0).Hash(), p1.Hash())
 }

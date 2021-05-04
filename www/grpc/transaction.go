@@ -2,8 +2,10 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/tx"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -43,6 +45,29 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 }
 
 func (zs *zarbServer) SendRawTransaction(ctx context.Context, request *zarb.SendRawTransactionRequest) (*zarb.SendRawTransactionResponse, error) {
-	return nil, status.Errorf(codes.Unavailable, "Not implemented yet!")
+	var tx tx.Tx
 
+	hexDecoded, err := hex.DecodeString(request.Data)
+	if err != nil {
+		zs.logger.Error("Invalid transaction", "err", err, "type", "hex decode")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid transaction: Couldn't decode transaction")
+	}
+	if err := tx.Decode(hexDecoded); err != nil {
+		zs.logger.Error("Invalid transaction", "err", err, "type", "decode")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid transaction: Couldn't decode transaction")
+	}
+
+	if err := tx.SanityCheck(); err != nil {
+		zs.logger.Error("Invalid transaction", "err", err, "type", "sanity")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid transaction: Couldn't Verify Transaction")
+	}
+
+	if err := zs.state.AddPendingTxAndBroadcast(&tx); err != nil {
+		zs.logger.Error("Couldn't add trx to pool", "err", err)
+		return nil, status.Errorf(codes.Canceled, "Couldn't add to Pending pool")
+	}
+
+	return &zarb.SendRawTransactionResponse{
+		Id: tx.ID().String(),
+	}, nil
 }

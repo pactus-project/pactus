@@ -17,7 +17,8 @@ func (zs *zarbServer) GetValidatorByNumber(ctx context.Context, request *zarb.Va
 
 	return &zarb.ValidatorResponse{
 		Validator: &zarb.Validator{
-			PublicKey:        validator.PublicKey().RawBytes(),
+			PublicKey:        validator.PublicKey().String(),
+			Address:          validator.Address().String(),
 			Number:           int32(validator.Number()),
 			Sequence:         int32(validator.Sequence()),
 			Stake:            validator.Stake(),
@@ -39,7 +40,8 @@ func (zs *zarbServer) GetValidator(ctx context.Context, request *zarb.ValidatorR
 
 	return &zarb.ValidatorResponse{
 		Validator: &zarb.Validator{
-			PublicKey:        validator.PublicKey().RawBytes(),
+			PublicKey:        validator.PublicKey().String(),
+			Address:          validator.Address().String(),
 			Number:           int32(validator.Number()),
 			Sequence:         int32(validator.Sequence()),
 			Stake:            validator.Stake(),
@@ -53,7 +55,8 @@ func (zs *zarbServer) GetValidators(ctx context.Context, request *zarb.Validator
 	validatorsResp := make([]*zarb.Validator, 0)
 	for _, v := range validators {
 		validatorsResp = append(validatorsResp, &zarb.Validator{
-			PublicKey:        v.PublicKey().RawBytes(),
+			PublicKey:        v.PublicKey().String(),
+			Address:          v.Address().String(),
 			Number:           int32(v.Number()),
 			Sequence:         int32(v.Sequence()),
 			Stake:            v.Stake(),

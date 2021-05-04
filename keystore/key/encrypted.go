@@ -88,7 +88,7 @@ func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 		return NewKey(ek.Address, *ek.PrivateKey)
 	}
 	if ek.Crypto.Cipher != "aes-128-ctr" {
-		return nil, fmt.Errorf("Cipher not supported: %v", ek.Crypto.Cipher)
+		return nil, fmt.Errorf("cipher not supported: %v", ek.Crypto.Cipher)
 	}
 	mac, err := hex.DecodeString(ek.Crypto.MAC)
 	if err != nil {
@@ -108,7 +108,7 @@ func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	}
 	calculatedMAC := crypto.Hash256(append(derivedKey[16:32], cipherText...))
 	if !bytes.Equal(calculatedMAC, mac) {
-		return nil, fmt.Errorf("Could not decrypt key with given passphrase")
+		return nil, fmt.Errorf("could not decrypt key with given passphrase")
 	}
 	plainText, err := aesCTRXOR(derivedKey[:16], cipherText, iv)
 	if err != nil {
@@ -141,17 +141,20 @@ func getKDFKey(cryptoJSON *cryptoJSON, auth string) ([]byte, error) {
 		c := ensureInt(cryptoJSON.KDFParams["c"])
 		prf := cryptoJSON.KDFParams["prf"].(string)
 		if prf != "hmac-sha256" {
-			return nil, fmt.Errorf("Unsupported PBKDF2 PRF: %s", prf)
+			return nil, fmt.Errorf("unsupported PBKDF2 PRF: %s", prf)
 		}
 		key := pbkdf2.Key(authArray, salt, c, dkLen, sha256.New)
 		return key, nil
 	}
 
-	return nil, fmt.Errorf("Unsupported KDF: %s", cryptoJSON.KDF)
+	return nil, fmt.Errorf("unsupported KDF: %s", cryptoJSON.KDF)
 }
 
 // EncryptKeyToFile encrypts the key and saves it to file
 func EncryptKeyToFile(key *Key, filePath, auth, label string) error {
+	if util.PathExists(filePath) {
+		return fmt.Errorf("file exists: %s", filePath)
+	}
 	ek, err := EncryptKey(key, auth, label)
 	if err != nil {
 		return err

@@ -3,11 +3,9 @@ package http
 import (
 	"net/http"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/sync/peerset"
-	"github.com/zarbchain/zarb-go/version"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
@@ -50,20 +48,20 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		p := pl.At(i)
 
 		id, _ := p.PeerID()
-		peerID, _ := peer.IDFromString(id)
-		peer := peerset.NewPeer(peerID)
+		pid, _ := peer.IDFromString(id)
+		peer := peerset.NewPeer(pid)
+		status := p.Status()
 		moniker, _ := p.Moniker()
-		peer.UpdateMoniker(moniker)
 		pubStr, _ := p.PublicKey()
 		pub, _ := crypto.PublicKeyFromString(pubStr)
+		ver, _ := p.NodeVersion()
+
+		peer.UpdateStatus(peerset.StatusCode(status))
 		peer.UpdatePublicKey(pub)
-		bs, _ := p.NodeVersion()
-		ver := version.Version{}
-		if err := cbor.Unmarshal(bs, &ver); err != nil {
-			s.writeError(w, err)
-			return
-		}
+		peer.UpdateMoniker(moniker)
 		peer.UpdateNodeVersion(ver)
+		peer.UpdateMoniker(moniker)
+		peer.UpdatePublicKey(pub)
 		peer.UpdateInitialBlockDownload(p.InitialBlockDownload())
 		peer.UpdateHeight(int(p.Height()))
 		peer.UpdateInvalidMessage(int(p.InvalidMessages()))

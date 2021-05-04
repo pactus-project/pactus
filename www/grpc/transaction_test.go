@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"encoding/hex"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,4 +43,41 @@ func TestGetTransaction(t *testing.T) {
 	})
 	conn.Close()
 
+}
+
+func TestSendRawTransaction(t *testing.T) {
+	conn, client := callServer(t)
+
+	t.Run("Should fail, Non decodable hex", func(t *testing.T) {
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: "None Decodable hex"})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+	t.Run("Should fail, Non decodable data", func(t *testing.T) {
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString([]byte("None Decodable data"))})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+	t.Run("Should fail, Non verifable trx", func(t *testing.T) {
+		trx, _ := tx.GenerateTestSendTx()
+		_, signer := tx.GenerateTestSendTx()
+		trx.SetSignature(signer.SignData(trx.SignBytes()))
+		data, _ := trx.Encode()
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+	trx, _ := tx.GenerateTestSendTx()
+	data, _ := trx.Encode()
+	t.Run("Should pass", func(t *testing.T) {
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+	})
+	t.Run("Should fail, Not Broadcasted", func(t *testing.T) {
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+	assert.NoError(t, conn.Close())
 }

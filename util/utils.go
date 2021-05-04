@@ -42,11 +42,17 @@ func Max64(a, b int64) int64 {
 }
 
 func RandInt(max int) int {
+	if max <= 0 {
+		return 0
+	}
 	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Intn(max)
 }
 
 func RandInt64(max int64) int64 {
+	if max <= 0 {
+		return 0
+	}
 	rand.Seed(time.Now().UTC().UnixNano())
 	return rand.Int63n(max)
 }

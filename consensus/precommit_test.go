@@ -62,8 +62,8 @@ func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
 	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
 
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
 
 	tConsP.SetProposal(p)
 	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)

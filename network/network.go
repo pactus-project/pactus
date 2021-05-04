@@ -89,7 +89,7 @@ func NewNetwork(conf *Config) (Network, error) {
 		libp2p.Identity(nodeKey),
 		libp2p.ListenAddrStrings(conf.ListenAddress...),
 		libp2p.Ping(true),
-		libp2p.UserAgent("zarb-" + version.NodeVersion.String()),
+		libp2p.UserAgent("zarb-" + version.Version()),
 	}
 	if conf.EnableNATService {
 		opts = append(opts,
@@ -171,6 +171,12 @@ func (n *network) Stop() {
 
 func (n *network) SelfID() peer.ID {
 	return n.host.ID()
+}
+
+func (n *network) CloseConnection(pid peer.ID) {
+	if err := n.host.Network().ClosePeer(pid); err != nil {
+		n.logger.Warn("Unable to close connection", "peer", pid)
+	}
 }
 
 func (n *network) Fingerprint() string {

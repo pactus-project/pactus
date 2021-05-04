@@ -44,7 +44,7 @@ func KeyFromSeed(seed []byte) (*Key, error) {
 // NewKey Checks if the address is derived from the given private key
 func NewKey(addr crypto.Address, pv crypto.PrivateKey) (*Key, error) {
 	if !addr.Verify(pv.PublicKey()) {
-		return nil, fmt.Errorf("This address doesn't belong to this privatekey")
+		return nil, fmt.Errorf("this address doesn't belong to this privatekey")
 	}
 
 	return &Key{

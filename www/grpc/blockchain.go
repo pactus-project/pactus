@@ -5,14 +5,15 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (zs *zarbServer) GetBlockchainInfo(ctx context.Context, request *zarb.BlockchainInfoRequest) (*zarb.BlockchainInfoResponse, error) {
-	return nil, status.Errorf(codes.Unavailable, "Not implemented yet!")
-}
+	height := zs.state.LastBlockHeight()
 
+	return &zarb.BlockchainInfoResponse{
+		Height: int64(height),
+	}, nil
+}
 func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkInfoRequest) (*zarb.NetworkInfoResponse, error) {
 	// Create response peers
 	rps := make([]*zarb.Peer, int32(len(zs.sync.Peers())))

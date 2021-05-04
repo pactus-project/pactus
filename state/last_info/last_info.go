@@ -152,20 +152,26 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, er
 	li.lastBlockHash = b.Hash()
 	li.lastBlockTime = b.Header().Time()
 
+	proposerIndex := 0
 	vals := make([]*validator.Validator, len(lid.LastCertificate.Committers()))
 	for i, num := range lid.LastCertificate.Committers() {
 		val, err := li.store.ValidatorByNumber(num)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
 		}
+		if b.Header().ProposerAddress() == val.Address() {
+			proposerIndex = i
+		}
 		vals[i] = val
 	}
-	committee, err := committee.NewCommittee(vals, committeeSize, b.Header().ProposerAddress())
+
+	proposerIndex = (proposerIndex + committeeSize - (lid.LastCertificate.Round() % committeeSize)) % committeeSize
+	committee, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %v", err)
 	}
 
-	err = committee.Update(0, joinedVals)
+	err = committee.Update(lid.LastCertificate.Round(), joinedVals)
 	if err != nil {
 		return nil, fmt.Errorf("unable to update last committee: %v", err)
 	}

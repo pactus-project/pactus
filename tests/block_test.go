@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
@@ -30,7 +31,7 @@ func lastBlock() *block.Block {
 }
 
 func getBlockAt(height int) *block.Block {
-	for i := 0; i < 60; i++ {
+	for i := 0; i < 120; i++ {
 		res := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
 			p.SetHeight(uint64(height))
 			p.SetVerbosity(0)
@@ -51,7 +52,8 @@ func getBlockAt(height int) *block.Block {
 		}
 		return b
 	}
-	panic("get block timeout")
+	logger.Panic("get block timeout.", "height", height)
+	return nil
 }
 
 func TestGetBlock(t *testing.T) {

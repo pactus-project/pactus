@@ -50,7 +50,7 @@ func (handler *queryProposalHandler) PrepareMessage(p payload.Payload) *message.
 				msg := message.NewMessage(handler.SelfID(), p)
 				return msg
 			} else {
-				handler.logger.Debug("queryProposal ignored. Not an active validator")
+				handler.logger.Debug("Not an active validator", "pld", pld)
 			}
 		}
 	}

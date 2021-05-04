@@ -65,8 +65,8 @@ func NewSynchronizer(
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
-	firewall := firewall.NewFirewall(peerSet, state)
 	logger := logger.NewLogger("_sync", sync)
+	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
 	cache, err := cache.NewCache(conf.CacheSize, state)
 	if err != nil {
 		return nil, err
@@ -97,17 +97,18 @@ func NewSynchronizer(
 
 	sync.handlers = handlers
 
-	if conf.InitialBlockDownload {
-		if err := sync.joinDownloadTopic(); err != nil {
-			return nil, err
-		}
-	}
 	return sync, nil
 }
 
 func (sync *synchronizer) Start() error {
 	if err := sync.network.JoinTopics(sync.onReceiveData); err != nil {
 		return err
+	}
+
+	if sync.config.InitialBlockDownload {
+		if err := sync.network.JoinDownloadTopic(); err != nil {
+			return err
+		}
 	}
 
 	go sync.broadcastLoop()
@@ -129,14 +130,6 @@ func (sync *synchronizer) Start() error {
 func (sync *synchronizer) Stop() {
 	sync.ctx.Done()
 	sync.heartBeatTicker.Stop()
-}
-
-func (sync *synchronizer) joinDownloadTopic() error {
-	if err := sync.network.JoinDownloadTopic(); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (sync *synchronizer) onStartingTimeout() {
@@ -239,12 +232,12 @@ func (sync *synchronizer) sendBlocksRequestIfWeAreBehind() {
 	claimedHeight := sync.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight {
 		if claimedHeight > ourHeight+sync.config.RequestBlockInterval {
-			sync.logger.Info("We are far behind the network, Join download topic")
+			sync.logger.Info("We are far behind the network. Joining download topic")
 			// TODO:
 			// If peer doesn't respond, we should leave the topic
 			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
 			// We should find a way to avoid it.
-			if err := sync.joinDownloadTopic(); err != nil {
+			if err := sync.network.JoinDownloadTopic(); err != nil {
 				sync.logger.Info("We can't join download topic", "err", err)
 			} else {
 				sync.RequestForMoreBlock()
@@ -265,14 +258,13 @@ func (sync *synchronizer) onReceiveData(data []byte, from peer.ID) {
 	sync.logger.Debug("Received a message", "from", util.FingerprintPeerID(from), "message", msg)
 	handler := sync.handlers[msg.Payload.Type()]
 	if handler == nil {
-		// TODO: mark as bad message
-		sync.logger.Warn("Invalid payload type: %v", msg.Payload.Type())
+		sync.logger.Error("Invalid payload type: %v", msg.Payload.Type())
 		return
 	}
 
 	if err := handler.ParsPayload(msg.Payload, msg.Initiator); err != nil {
-		// TODO:Check if we are syncing, ignore errors
-		// TODO: mark as bad message?
+		peer := sync.peerSet.MustGetPeer(from)
+		peer.IncreaseInvalidMessage()
 		sync.logger.Warn("Error on parsing a message", "from", util.FingerprintPeerID(from), "message", msg, "err", err)
 		return
 	}

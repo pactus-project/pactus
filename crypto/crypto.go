@@ -4,12 +4,6 @@ import (
 	"github.com/herumi/bls-go-binary/bls"
 )
 
-const (
-	hrpAddress = "zrb"
-)
-
-var TreasuryAddress = Address{data: addressData{Address: [AddressSize]byte{0}}}
-
 func init() {
 	if err := bls.Init(bls.BLS12_381); err != nil {
 		panic(err)

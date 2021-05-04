@@ -29,8 +29,8 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 	testEnterNewHeight(tConsP)
 	p := makeProposal(t, 2, 0)
 
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 1, crypto.UndefHash, tIndexY)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
+	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
 
 	tConsP.SetProposal(p)
 	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
@@ -39,7 +39,7 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 // We have four nodes: Nx, Ny, Nb, Np, which:
 // Nb is a byzantine node and Nx, Ny, Np are honest nodes,
 // however Np is partitioned and see the network through Nb (Byzantine node).
-
+//
 // In Height H, B sends prepare votes to Nx, Ny and change-proposer vote to Np.
 // Np should not move to change-proposer stage unless it has 1/3+ votes from other replicas.
 func TestByzantineVote1(t *testing.T) {
@@ -146,4 +146,12 @@ func TestByzantineVote2(t *testing.T) {
 		tConsX.AddVote(v)
 	}
 	checkHeightRoundWait(t, tConsX, h, r+1)
+}
+
+func TestQueryProposal(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t)
+	testEnterNewHeight(tConsX)
+	shouldPublishQueryProposal(t, tConsX, 2, 0)
 }

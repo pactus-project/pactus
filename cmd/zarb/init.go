@@ -27,8 +27,14 @@ func Init() func(c *cli.Cmd) {
 			Value: cmd.ZarbHomeDir(),
 		})
 		testnetOpt := c.Bool(cli.BoolOpt{
-			Name:  "test-net",
+			Name:  "testnet",
 			Desc:  "Initialize working directory for joining the testnet",
+			Value: false,
+		})
+
+		mainnetOpt := c.Bool(cli.BoolOpt{
+			Name:  "mainnet",
+			Desc:  "Initialize working directory for joining the mainnet",
 			Value: false,
 		})
 
@@ -39,7 +45,7 @@ func Init() func(c *cli.Cmd) {
 			path, _ := filepath.Abs(*workingDirOpt)
 
 			if !util.IsDirNotExistsOrEmpty(path) {
-				cmd.PrintErrorMsg("Please choose an empty directory")
+				cmd.PrintErrorMsg("The workspace directory is not empty: %v", path)
 				return
 			}
 
@@ -53,6 +59,17 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/139.162.135.180/tcp/31887/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
+
+				k := key.GenerateRandomKey()
+				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {
+					cmd.PrintErrorMsg("Failed to crate validator key: %v", err)
+					return
+				}
+			} else if *mainnetOpt {
+				gen = genesis.Mainnet()
+
+				conf.Network.Name = "zarb"
+				conf.Network.Bootstrap.Addresses = []string{}
 
 				k := key.GenerateRandomKey()
 				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {

@@ -44,3 +44,31 @@ func TestGetBlock(t *testing.T) {
 
 	conn.Close()
 }
+
+func TestGetBlockHieght(t *testing.T) {
+	conn, client := callServer(t)
+
+	t.Run("Should return InvalidArgument for invalid hash", func(t *testing.T) {
+		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: "NOt A  valid has"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "Hash provided is not Valid")
+		assert.Nil(t, res)
+	})
+
+	b1, trxs := block.GenerateTestBlock(nil, nil)
+	t.Run("Should return NotFound for non existing block ", func(t *testing.T) {
+		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: b1.Hash().String()})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "No block found with the Hash provided")
+		assert.Nil(t, res)
+	})
+
+	tMockState.AddBlock(1, b1, trxs)
+	t.Run("Should return height of existing block", func(t *testing.T) {
+		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: b1.Hash().String()})
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), res.Height)
+	})
+
+	conn.Close()
+}

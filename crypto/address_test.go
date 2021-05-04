@@ -76,7 +76,8 @@ func TestMarshalingEmptyAddress(t *testing.T) {
 }
 
 func TestTreasuryAddress(t *testing.T) {
-	expected, err := AddressFromString("zrb1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqn627cy")
+	assert.Equal(t, TreasuryAddress.String(), treasuryAddressString)
+	expected, err := AddressFromString(treasuryAddressString)
 	assert.NoError(t, err)
 	assert.Equal(t, TreasuryAddress.RawBytes(), expected.RawBytes())
 }
@@ -88,7 +89,7 @@ func TestInvalidBech32(t *testing.T) {
 	assert.Equal(t, addr.Fingerprint(), "zrb17mka0cw4")
 
 	// Invalid hrp
-	_, err = AddressFromString("srb17mka0cw484es5whq638xkm89msgzczmrwy64dy")
+	_, err = AddressFromString("srb17mka0cw484es5whq638xkm89msgzczmrpd86dv")
 	assert.Error(t, err)
 
 	// Invalid checksum
