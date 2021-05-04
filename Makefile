@@ -47,7 +47,7 @@ install:
 
 build_with_bls:
 	go env -w $(CGO_LDFLAGS)
-	go build $(LDFLAGS) -tags $(TAGS) -o build/zarb-$(VTAG)$(_EXT) ./cmd/zarb/
+	go build $(LDFLAGS) -tags $(TAGS) -o build/zarb ./cmd/zarb/
 	go env -w CGO_LDFLAGS="$(CGO_LDFLAGS_Default)"
 
 ########################################
