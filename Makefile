@@ -62,7 +62,7 @@ test_race:
 	go test ./... --race
 
 test_bls:
-	$(BLS_CGO_LDFLAGS) go test ./...
+	$(CGO_LDFLAGS) go test ./...
 
 ########################################
 ### Docker
@@ -89,9 +89,9 @@ fmt:
 	@golangci-lint run -e "SA1019"
 
 fmt_bls:
-	$(BLS_CGO_LDFLAGS) go vet ./...
-	$(BLS_CGO_LDFLAGS) gofmt -s -w .
-	$(BLS_CGO_LDFLAGS) golangci-lint run -e "SA1019"
+	$(CGO_LDFLAGS) go vet ./...
+	$(CGO_LDFLAGS) gofmt -s -w .
+	$(CGO_LDFLAGS) golangci-lint run -e "SA1019"
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
