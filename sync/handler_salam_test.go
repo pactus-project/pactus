@@ -46,4 +46,15 @@ func TestParsingSalamMessages(t *testing.T) {
 		assert.Equal(t, p.Height(), 3)
 		assert.Equal(t, p.InitialBlockDownload(), true)
 	})
+
+	t.Run("Alice receives Salam message from a peer. Peer is ahead. Alice should request for blocks", func(t *testing.T) {
+		_, pub, _ := crypto.GenerateTestKeyPair()
+		claimedHeight := tAliceState.LastBlockHeight() + 5
+		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, claimedHeight, 0)
+		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+
+		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeAleyk, payload.ResponseCodeOK)
+		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeLatestBlocksRequest)
+		assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), claimedHeight)
+	})
 }
