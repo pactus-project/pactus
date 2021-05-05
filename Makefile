@@ -11,8 +11,8 @@ _ARCH=$(shell go env GOARCH)
 
 
 LIB_DIR=$(shell pwd)/$(HERUMI)/bls/lib/$(_OS)/$(_ARCH)
-CGO_LDFLAGS=CGO_LDFLAGS="-L$(LIB_DIR) -lbls384_256 -lm -lstdc++"
-CGO_LDFLAGS_Default=$(shell go env CGO_CFLAGS)
+CGO_LDFLAGS=CGO_LDFLAGS="-L$(LIB_DIR) -lbls384_256 -lm -lstdc++ -g -O2"
+CGO_LDFLAGS_Default=$(shell go env CGO_LDFLAGS)
 _EXT=$(shell go env GOEXE)
 
 all: tools build install test

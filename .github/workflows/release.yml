@@ -3,11 +3,6 @@ name: releaser
 on:
   create:
       tags:
-  # push:
-  #   branches:
-  #     - 'release'
-  #   tags:
-  #     - 'v*'
 
 jobs:
   build:
@@ -31,20 +26,20 @@ jobs:
           - os: windows-latest
             compiler: cl
             target: Windows
-    # if: github.event_name == 'create' && github.event.ref_type == 'tag' && startsWith(github.event.ref, 'v')
-    # https://stackoverflow.com/questions/59349905/which-properties-does-github-event-in-a-github-workflow-have
-    # https://github.community/t/how-to-get-just-the-tag-name/16241/15
+    if: github.event_name == 'create' && github.event.ref_type == 'tag' && startsWith(github.event.ref, 'v')
     steps:
       -
         name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       -
         name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.15
+
       -
         name: Cache Go modules
         uses: actions/cache@v1
@@ -53,23 +48,16 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-            
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
 
-      - name: Get the version
-        id: get_version
+      - name: Set OS Spesific env
+        id: set_os_env
         run: |
-          echo ::set-output name=VERSION::$(git describe --tags --abbrev=0)
           GOHOSTOS=$(go env GOHOSTOS) envsubst < ".goreleaser.yml" > .releaser.yml
-        # env:
-        #   GITHUB_CONTEXT: ${{ toJson(github) }}
 
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          # version: ${{ steps.get_version.outputs.version }}
           version: latest
           args: release --rm-dist -f .releaser.yml
         env:
