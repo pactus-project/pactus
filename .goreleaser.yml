@@ -5,7 +5,7 @@ project_name: zarb-cli
 before:
   hooks:
     - go mod tidy
-    - make bls
+    - make bls_prebuilt
 builds:
   - main: ./cmd/zarb/
     env:

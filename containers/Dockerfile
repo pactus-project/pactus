@@ -3,7 +3,7 @@ FROM alpine:3.13 as builder
 
 RUN apk add --no-cache git go gmp-dev build-base g++ openssl-dev
 ADD . /zarb-go
-RUN cd /zarb-go && make bls build_with_bls
+RUN cd /zarb-go && make bls build_bls
 
 ## Copy binary files from builder into second container
 FROM alpine:3.12

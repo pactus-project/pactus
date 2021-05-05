@@ -1,21 +1,24 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests')
-
-TAGS="zarb"
+HERUMI= $(shell pwd)/.herumi
+BLS_CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++ -g -O2"
+BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.semVer=$(VTAG)"
 VTAG=$(shell git describe --tags --abbrev=0)
-HERUMI= .herumi
-LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.semVer=$(VTAG)"
 
+
+
+all: tools build install test
+
+########################################
+### Prebuilt Env
 
 _OS=$(shell go env GOOS)
 _ARCH=$(shell go env GOARCH)
 
-
-LIB_DIR=$(shell pwd)/$(HERUMI)/bls/lib/$(_OS)/$(_ARCH)
-CGO_LDFLAGS=CGO_LDFLAGS="-L$(LIB_DIR) -lbls384_256 -lm -lstdc++ -g -O2"
-CGO_LDFLAGS_Default=$(shell go env CGO_LDFLAGS)
+LIB_DIR=$(HERUMI)/bls/lib/$(_OS)/$(_ARCH)
+Pre_CGO_LDFLAGS=CGO_LDFLAGS="-L$(LIB_DIR) -lbls384_256 -lm -lstdc++ -g -O2"
+Pre_CGO_LDFLAGS_Default=$(shell go env CGO_LDFLAGS)
 _EXT=$(shell go env GOEXE)
 
-all: tools build install test
 
 ########################################
 ### Tools & dependencies
@@ -32,6 +35,13 @@ tools:
 	go mod tidy
 
 bls:
+	@echo "Compiling bls"
+	rm -rf $(HERUMI)
+	git clone --recursive git://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static
+
+
+
+bls_prebuilt:
 	@echo "cloning bls"
 	rm -rf $(HERUMI)
 	git clone https://github.com/herumi/bls-go-binary.git $(HERUMI)
@@ -40,16 +50,22 @@ bls:
 ########################################
 ### Building
 build:
-	go build $(LDFLAGS) -tags $(TAGS) -o build/zarb ./cmd/zarb/
+	go build $(BUILD_LDFLAGS) -o build/zarb ./cmd/zarb/
 
 install:
-	go install $(LDFLAGS) -tags $(TAGS) ./cmd/zarb
+	go install $(BUILD_LDFLAGS) ./cmd/zarb
 
-build_with_bls:
-	go env -w $(CGO_LDFLAGS)
-	go build $(LDFLAGS) -tags $(TAGS) -o build/zarb ./cmd/zarb/
-	go env -w CGO_LDFLAGS="$(CGO_LDFLAGS_Default)"
+build_bls:
+	$(BLS_CGO_LDFLAGS) go build $(BUILD_LDFLAGS) -o build/zarb ./cmd/zarb/
 
+build_bls_release:
+	$(BLS_CGO_LDFLAGS) go build -o build/zarb ./cmd/zarb/
+
+
+build_with_pre_bls:
+	go env -w $(Pre_CGO_LDFLAGS)
+	go build $(BUILD_LDFLAGS) -o build/zarb-$(VTAG).$(_EXT) ./cmd/zarb/
+	go env -w CGO_LDFLAGS="$(Pre_CGO_LDFLAGS_Default)"
 ########################################
 ### Testing
 unit_test:
@@ -62,7 +78,7 @@ test_race:
 	go test ./... --race
 
 test_bls:
-	$(CGO_LDFLAGS) go test ./...
+	$(BLS_CGO_LDFLAGS) go test ./...
 
 ########################################
 ### Docker
@@ -89,9 +105,9 @@ fmt:
 	@golangci-lint run -e "SA1019"
 
 fmt_bls:
-	$(CGO_LDFLAGS) go vet ./...
-	$(CGO_LDFLAGS) gofmt -s -w .
-	$(CGO_LDFLAGS) golangci-lint run -e "SA1019"
+	$(BLS_CGO_LDFLAGS) go vet ./...
+	$(BLS_CGO_LDFLAGS) gofmt -s -w .
+	$(BLS_CGO_LDFLAGS) golangci-lint run -e "SA1019"
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
