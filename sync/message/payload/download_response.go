@@ -65,7 +65,7 @@ func (p *DownloadResponsePayload) Fingerprint() string {
 	return fmt.Sprintf("{⚓ %d %s %v-%v}", p.SessionID, p.ResponseCode, p.From, p.To())
 }
 
-func (p *DownloadResponsePayload) IsRejected() bool {
+func (p *DownloadResponsePayload) IsRequestNotProcessed() bool {
 	if p.ResponseCode == ResponseCodeBusy ||
 		p.ResponseCode == ResponseCodeRejected {
 		return true

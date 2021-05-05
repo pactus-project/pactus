@@ -16,7 +16,7 @@ func TestSessionTimeout(t *testing.T) {
 
 	t.Run("An unknown peers claims has more blocks. Alice requests for more blocks. Alice doesn't get any response. Session should be closed", func(t *testing.T) {
 		_, pub, _ := crypto.GenerateTestKeyPair()
-		pld := payload.NewAleykPayload(payload.ResponseCodeOK, "ok", "devil", pub, 6666, 0x1) // InitialBlockDownload:  true
+		pld := payload.NewAleykPayload(tAlicePeerID, payload.ResponseCodeOK, "ok", "devil", pub, 6666, 0x1) // InitialBlockDownload:  true
 		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
 
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeDownloadRequest)
@@ -64,7 +64,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tBobNet, payload.PayloadTypeLatestBlocksResponse, payload.ResponseCodeRejected)
 	})
 
-	t.Run("Bob send blocks to peer", func(t *testing.T) {
+	t.Run("Bob should send blocks to peer", func(t *testing.T) {
 		bobHeight := tBobState.LastBlockHeight()
 		pld := payload.NewLatestBlocksRequestPayload(6, tBobPeerID, bobHeight-5, bobHeight)
 		tBobNet.ReceivingMessageFromOtherPeer(pid, pld)
@@ -72,7 +72,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tBobNet, payload.PayloadTypeLatestBlocksResponse, payload.ResponseCodeMoreBlocks)
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tBobNet, payload.PayloadTypeLatestBlocksResponse, payload.ResponseCodeSynced)
 
-		t.Run("Peer requests Bob to send blocks again, Bob should reject it", func(t *testing.T) {
+		t.Run("Peer requests from Bob to send the blocks again, Bob should reject it.", func(t *testing.T) {
 			tBobNet.ReceivingMessageFromOtherPeer(pid, pld)
 
 			shouldPublishPayloadWithThisTypeAndResponseCode(t, tBobNet, payload.PayloadTypeLatestBlocksResponse, payload.ResponseCodeRejected)

@@ -27,7 +27,7 @@ func (handler *downloadResponseHandler) ParsPayload(p payload.Payload, initiator
 		return nil
 	}
 
-	if pld.IsRejected() {
+	if pld.IsRequestNotProcessed() {
 		handler.logger.Warn("Download blocks request is rejected", "pid", util.FingerprintPeerID(initiator), "response", pld.ResponseCode)
 	} else {
 		handler.cache.AddBlocks(pld.From, pld.Blocks)

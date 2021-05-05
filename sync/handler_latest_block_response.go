@@ -26,7 +26,7 @@ func (handler *latestBlocksResponseHandler) ParsPayload(p payload.Payload, initi
 		return nil
 	}
 
-	if pld.IsRejected() {
+	if pld.IsRequestNotProcessed() {
 		handler.logger.Warn("Query blocks request is rejected", "pid", initiator, "response", pld.ResponseCode)
 	} else {
 		handler.cache.AddCertificate(pld.LastCertificate)

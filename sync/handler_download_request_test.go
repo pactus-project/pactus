@@ -51,7 +51,7 @@ func TestDownloadBlocksRequestMessages(t *testing.T) {
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeDownloadResponse, payload.ResponseCodeMoreBlocks)
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeDownloadResponse, payload.ResponseCodeNoMoreBlocks)
 
-		t.Run("Peer requests Alice to send blocks again, Alice should reject it", func(t *testing.T) {
+		t.Run("Peer requests from Alice to send the blocks again, Alice should reject it.", func(t *testing.T) {
 			tAliceNet.ReceivingMessageFromOtherPeer(pid, pld)
 
 			shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeDownloadResponse, payload.ResponseCodeRejected)
