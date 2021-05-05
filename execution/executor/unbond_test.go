@@ -34,6 +34,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
+
 	t.Run("Ok", func(t *testing.T) {
 		tSandbox.InCommittee = false
 		trx := tx.NewUnbondTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")

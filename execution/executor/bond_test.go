@@ -50,6 +50,13 @@ func TestExecuteBondTx(t *testing.T) {
 		// Replay
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
+
+	t.Run("Should fail, Rebounding not allowed", func(t *testing.T) {
+		tSandbox.InCommittee = false
+		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "rebound")
+
+		assert.Error(t, exe.Execute(trx, tSandbox))
+	})
 	assert.Equal(t, tSandbox.Account(bonder).Balance(), int64(10000000000-2000))
 	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(1000))
 	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(1000))

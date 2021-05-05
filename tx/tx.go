@@ -33,7 +33,7 @@ type txData struct {
 	Signature *crypto.Signature
 }
 
-func (tx *Tx) Version() int                     { return tx.data.Version }   // nodes version generating transaction
+func (tx *Tx) Version() int                     { return tx.data.Version }   // Transaction version
 func (tx *Tx) Stamp() crypto.Hash               { return tx.data.Stamp }     // hash of previus block
 func (tx *Tx) Sequence() int                    { return tx.data.Sequence }  // sequence of intraction with the network
 func (tx *Tx) PayloadType() payload.PayloadType { return tx.data.Type }      // payload type indecator (transaction,sortion,bonding,...)

@@ -176,6 +176,7 @@ func (sb *SandboxConcrete) UpdateValidator(val *validator.Validator) {
 		sb.shouldPanicForUnknownAddress()
 	}
 
+	// shouldn't this be power??
 	sb.totalStakeChange += val.Stake() - s.Validator.Stake()
 	s.Validator = *val
 	s.Updated = true
