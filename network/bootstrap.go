@@ -5,12 +5,11 @@ import (
 	"sync"
 	"time"
 
-	host "github.com/libp2p/go-libp2p-core/host"
-	inet "github.com/libp2p/go-libp2p-core/network"
-	net "github.com/libp2p/go-libp2p-core/network"
-	peer "github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-core/routing"
-	dht "github.com/libp2p/go-libp2p-kad-dht"
+	lp2phost "github.com/libp2p/go-libp2p-core/host"
+	lp2pnet "github.com/libp2p/go-libp2p-core/network"
+	lp2ppeer "github.com/libp2p/go-libp2p-core/peer"
+	lp2prouting "github.com/libp2p/go-libp2p-core/routing"
+	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/zarbchain/zarb-go/logger"
 )
 
@@ -22,12 +21,12 @@ import (
 type Bootstrapper struct {
 	config *BootstrapConfig
 
-	bootstrapPeers []peer.AddrInfo
+	bootstrapPeers []lp2ppeer.AddrInfo
 
 	// Dependencies
-	host    host.Host
-	dialer  inet.Dialer
-	routing routing.Routing
+	host    lp2phost.Host
+	dialer  lp2pnet.Dialer
+	routing lp2prouting.Routing
 
 	// Bookkeeping
 	ticker *time.Ticker
@@ -39,7 +38,7 @@ type Bootstrapper struct {
 
 // NewBootstrapper returns a new Bootstrapper that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
-func NewBootstrapper(ctx context.Context, h host.Host, d inet.Dialer, r routing.Routing, conf *BootstrapConfig, logger *logger.Logger) *Bootstrapper {
+func NewBootstrapper(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing, conf *BootstrapConfig, logger *logger.Logger) *Bootstrapper {
 	b := &Bootstrapper{
 		ctx:     ctx,
 		config:  conf,
@@ -94,10 +93,10 @@ func (b *Bootstrapper) checkConnectivity() {
 	b.logger.Debug("Check connectivity", "peers", len(currentPeers))
 
 	// Let's check if some peers are disconnected
-	var connectedPeers []peer.ID
+	var connectedPeers []lp2ppeer.ID
 	for _, p := range currentPeers {
 		connectedness := b.dialer.Connectedness(p)
-		if connectedness == net.Connected {
+		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, p)
 		} else {
 			b.logger.Warn("Peer is not connected to us", "peer", p)
@@ -137,7 +136,7 @@ func (b *Bootstrapper) checkConnectivity() {
 			}
 
 			wg.Add(1)
-			go func(pi peer.AddrInfo) {
+			go func(pi lp2ppeer.AddrInfo) {
 				if err := b.host.Connect(ctx, pi); err != nil {
 					b.logger.Error("got error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
 				}
@@ -150,7 +149,7 @@ func (b *Bootstrapper) checkConnectivity() {
 	}
 }
 
-func hasPID(pids []peer.ID, pid peer.ID) bool {
+func hasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
 	for _, p := range pids {
 		if p == pid {
 			return true
@@ -160,7 +159,7 @@ func hasPID(pids []peer.ID, pid peer.ID) bool {
 }
 
 func (b *Bootstrapper) bootstrapIpfsRouting() error {
-	dht, ok := b.routing.(*dht.IpfsDHT)
+	dht, ok := b.routing.(*lp2pdht.IpfsDHT)
 	if !ok {
 		b.logger.Warn("No bootstrapping to do exit quietly.")
 		// No bootstrapping to do exit quietly.
