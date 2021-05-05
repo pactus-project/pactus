@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	host "github.com/libp2p/go-libp2p-core/host"
-	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p/p2p/discovery"
+	lp2phost "github.com/libp2p/go-libp2p-core/host"
+	lp2ppeer "github.com/libp2p/go-libp2p-core/peer"
+	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery"
 )
 
 // DiscoveryInterval is how often we re-publish our mDNS records.
@@ -18,7 +18,7 @@ const DiscoveryServiceTag = "pubsub-zarb"
 // HandlePeerFound connects to peers discovered via mDNS. Once they're connected,
 // the PubSub system will automatically start interacting with them if they also
 // support PubSub.
-func (n *network) HandlePeerFound(pi peer.AddrInfo) {
+func (n *network) HandlePeerFound(pi lp2ppeer.AddrInfo) {
 	n.logger.Trace("discovered new peer", "id", pi.ID.Pretty())
 	ctx, cancel := context.WithTimeout(n.ctx, time.Second*10)
 	defer cancel()
@@ -29,9 +29,9 @@ func (n *network) HandlePeerFound(pi peer.AddrInfo) {
 
 // setupDiscovery creates an mDNS discovery service and attaches it to the libp2p Host.
 // This lets us automatically discover peers on the same LAN and connect to them.
-func (n *network) setupMNSDiscovery(ctx context.Context, h host.Host) (discovery.Service, error) {
+func (n *network) setupMNSDiscovery(ctx context.Context, h lp2phost.Host) (lp2pdiscovery.Service, error) {
 	// setup mDNS discovery to find local peers
-	service, err := discovery.NewMdnsService(ctx, h, DiscoveryInterval, DiscoveryServiceTag)
+	service, err := lp2pdiscovery.NewMdnsService(ctx, h, DiscoveryInterval, DiscoveryServiceTag)
 	if err != nil {
 		return nil, err
 	}

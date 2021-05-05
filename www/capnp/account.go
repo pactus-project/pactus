@@ -10,11 +10,11 @@ func (zs zarbServer) GetAccount(args ZarbServer_getAccount) error {
 	s, _ := args.Params.Address()
 	addr, err := crypto.AddressFromString(string(s))
 	if err != nil {
-		return fmt.Errorf("Invalid address: %s", err)
+		return fmt.Errorf("invalid address: %s", err)
 	}
 	acc := zs.state.Account(addr)
 	if acc == nil {
-		return fmt.Errorf("Account not found")
+		return fmt.Errorf("account not found")
 	}
 
 	d, _ := acc.Encode()

@@ -6,15 +6,14 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/libp2p/go-libp2p"
-	circuit "github.com/libp2p/go-libp2p-circuit"
-	acrypto "github.com/libp2p/go-libp2p-core/crypto"
-	"github.com/libp2p/go-libp2p-core/host"
-	"github.com/libp2p/go-libp2p-core/peer"
-	libp2pdht "github.com/libp2p/go-libp2p-kad-dht"
-	libp2pps "github.com/libp2p/go-libp2p-pubsub"
-	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/libp2p/go-libp2p/p2p/discovery"
+	lp2p "github.com/libp2p/go-libp2p"
+	lp2pcircuit "github.com/libp2p/go-libp2p-circuit"
+	lp2pcrypto "github.com/libp2p/go-libp2p-core/crypto"
+	lp2phost "github.com/libp2p/go-libp2p-core/host"
+	lp2peer "github.com/libp2p/go-libp2p-core/peer"
+	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
+	lp2pps "github.com/libp2p/go-libp2p-pubsub"
+	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery"
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
@@ -27,25 +26,25 @@ type network struct {
 
 	ctx            context.Context
 	config         *Config
-	host           host.Host
+	host           lp2phost.Host
 	wg             sync.WaitGroup
-	mdns           discovery.Service
-	kademlia       *libp2pdht.IpfsDHT
-	pubsub         *libp2pps.PubSub
-	generalTopic   *pubsub.Topic
-	downloadTopic  *pubsub.Topic
-	dataTopic      *pubsub.Topic
-	consensusTopic *pubsub.Topic
-	generalSub     *pubsub.Subscription
-	downloadSub    *pubsub.Subscription
-	dataSub        *pubsub.Subscription
-	consensusSub   *pubsub.Subscription
+	mdns           lp2pdiscovery.Service
+	kademlia       *lp2pdht.IpfsDHT
+	pubsub         *lp2pps.PubSub
+	generalTopic   *lp2pps.Topic
+	downloadTopic  *lp2pps.Topic
+	dataTopic      *lp2pps.Topic
+	consensusTopic *lp2pps.Topic
+	generalSub     *lp2pps.Subscription
+	downloadSub    *lp2pps.Subscription
+	dataSub        *lp2pps.Subscription
+	consensusSub   *lp2pps.Subscription
 	callback       CallbackFn
 	bootstrapper   *Bootstrapper
 	logger         *logger.Logger
 }
 
-func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
+func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	if util.PathExists(path) {
 		h, err := util.ReadFile(path)
 		if err != nil {
@@ -55,17 +54,17 @@ func loadOrCreateKey(path string) (acrypto.PrivKey, error) {
 		if err != nil {
 			return nil, err
 		}
-		key, err := acrypto.UnmarshalPrivateKey(bs)
+		key, err := lp2pcrypto.UnmarshalPrivateKey(bs)
 		if err != nil {
 			return nil, err
 		}
 		return key, nil
 	}
-	key, _, err := acrypto.GenerateEd25519Key(nil)
+	key, _, err := lp2pcrypto.GenerateEd25519Key(nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate private key")
 	}
-	bs, err := acrypto.MarshalPrivateKey(key)
+	bs, err := lp2pcrypto.MarshalPrivateKey(key)
 	if err != nil {
 		return nil, err
 	}
@@ -85,27 +84,27 @@ func NewNetwork(conf *Config) (Network, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	opts := []libp2p.Option{
-		libp2p.Identity(nodeKey),
-		libp2p.ListenAddrStrings(conf.ListenAddress...),
-		libp2p.Ping(true),
-		libp2p.UserAgent("zarb-" + version.Version()),
+	opts := []lp2p.Option{
+		lp2p.Identity(nodeKey),
+		lp2p.ListenAddrStrings(conf.ListenAddress...),
+		lp2p.Ping(true),
+		lp2p.UserAgent("zarb-" + version.Version()),
 	}
 	if conf.EnableNATService {
 		opts = append(opts,
-			libp2p.EnableNATService(),
-			libp2p.NATPortMap())
+			lp2p.EnableNATService(),
+			lp2p.NATPortMap())
 	}
 	if conf.EnableRelay {
 		opts = append(opts,
-			libp2p.EnableRelay(circuit.OptHop))
+			lp2p.EnableRelay(lp2pcircuit.OptHop))
 	}
-	host, err := libp2p.New(ctx, opts...)
+	host, err := lp2p.New(ctx, opts...)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	pubsub, err := libp2pps.NewGossipSub(ctx, host)
+	pubsub, err := lp2pps.NewGossipSub(ctx, host)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
@@ -169,15 +168,21 @@ func (n *network) Stop() {
 	}
 }
 
-func (n *network) SelfID() peer.ID {
+func (n *network) SelfID() lp2peer.ID {
 	return n.host.ID()
+}
+
+func (n *network) CloseConnection(pid lp2peer.ID) {
+	if err := n.host.Network().ClosePeer(pid); err != nil {
+		n.logger.Warn("Unable to close connection", "peer", pid)
+	}
 }
 
 func (n *network) Fingerprint() string {
 	return fmt.Sprintf("{%d}", len(n.host.Network().Peers()))
 }
 
-func (n *network) joinTopic(name string) (*pubsub.Topic, error) {
+func (n *network) joinTopic(name string) (*lp2pps.Topic, error) {
 	topic := fmt.Sprintf("/zarb/pubsub/%s/v1/%s", n.config.Name, name)
 	return n.pubsub.Join(topic)
 }

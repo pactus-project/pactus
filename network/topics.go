@@ -1,7 +1,7 @@
 package network
 
 import (
-	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -175,7 +175,7 @@ func (n *network) closeTopics() {
 	n.wg.Wait()
 }
 
-func (n *network) topic(msg *message.Message) *pubsub.Topic {
+func (n *network) topic(msg *message.Message) *lp2pps.Topic {
 	switch msg.Payload.Type() {
 	case payload.PayloadTypeSalam,
 		payload.PayloadTypeAleyk,
@@ -204,7 +204,7 @@ func (n *network) topic(msg *message.Message) *pubsub.Topic {
 	}
 }
 
-func (n *network) onReceiveMessage(m *pubsub.Message) {
+func (n *network) onReceiveMessage(m *lp2pps.Message) {
 	// only forward messages delivered by others
 	if m.ReceivedFrom == n.SelfID() {
 		return

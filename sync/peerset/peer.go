@@ -10,12 +10,37 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
+type StatusCode int
+
+const (
+	StatusCodeUnknown = StatusCode(-1)
+	StatusCodeOK      = StatusCode(0)
+	StatusCodeBanned  = StatusCode(1)
+)
+
+func (code StatusCode) String() string {
+	switch code {
+	case StatusCodeUnknown:
+		return "Unknown"
+	case StatusCodeOK:
+		return "Ok"
+	case StatusCodeBanned:
+		return "Banned"
+	}
+	return "Invalid"
+}
+
+func (code StatusCode) MarshalJSON() ([]byte, error) {
+	return json.Marshal(code.String())
+}
+
 type Peer struct {
 	lk   deadlock.RWMutex
 	data peerData
 }
 
 type peerData struct {
+	Status               StatusCode
 	Moniker              string
 	NodeVersion          string
 	PeerID               peer.ID
@@ -31,72 +56,86 @@ type peerData struct {
 func NewPeer(peerID peer.ID) *Peer {
 	return &Peer{
 		data: peerData{
+			Status: StatusCodeUnknown,
 			PeerID: peerID,
 		},
 	}
 }
+func (p *Peer) Status() StatusCode {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return p.data.Status
+}
 
 func (p *Peer) Moniker() string {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.Moniker
 }
 
 func (p *Peer) NodeVersion() string {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.NodeVersion
 }
 
 func (p *Peer) PeerID() peer.ID {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.PeerID
 }
 
 func (p *Peer) PublicKey() crypto.PublicKey {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.PublicKey
 }
 
 func (p *Peer) Height() int {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.Height
 }
 
 func (p *Peer) InitialBlockDownload() bool {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.InitialBlockDownload
 }
 
 func (p *Peer) ReceivedMessages() int {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.ReceivedMessages
 }
 
 func (p *Peer) InvalidMessages() int {
-	p.lk.Lock()
-	defer p.lk.Unlock()
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
 	return p.data.InvalidMessages
 }
 
 func (p *Peer) ReceivedBytes() int {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return p.data.ReceivedBytes
+}
+
+func (p *Peer) UpdateStatus(status StatusCode) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	return p.data.ReceivedBytes
+	p.data.Status = status
 }
 
 func (p *Peer) UpdateMoniker(moniker string) {

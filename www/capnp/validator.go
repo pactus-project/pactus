@@ -10,11 +10,11 @@ func (zs *zarbServer) GetValidator(b ZarbServer_getValidator) error {
 	s, _ := b.Params.Address()
 	addr, err := crypto.AddressFromString(string(s))
 	if err != nil {
-		return fmt.Errorf("Invalid address: %s", err)
+		return fmt.Errorf("invalid address: %s", err)
 	}
 	val := zs.state.Validator(addr)
 	if val == nil {
-		return fmt.Errorf("Validator not found")
+		return fmt.Errorf("validator not found")
 	}
 
 	d, _ := val.Encode()

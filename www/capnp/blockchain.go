@@ -33,6 +33,7 @@ func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 		if err := p.SetPublicKey(peer.PublicKey().String()); err != nil {
 			return err
 		}
+		p.SetStatus(int32(peer.Status()))
 		p.SetInitialBlockDownload(peer.InitialBlockDownload())
 		p.SetHeight(int32(peer.Height()))
 		p.SetReceivedMessages(int32(peer.ReceivedMessages()))

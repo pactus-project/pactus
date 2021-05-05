@@ -23,7 +23,7 @@ func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	v := args.Params.Verbosity()
 	b := zs.state.Block(int(h))
 	if b == nil {
-		return fmt.Errorf("Block not found")
+		return fmt.Errorf("block not found")
 	}
 
 	res, _ := args.Results.NewResult()
