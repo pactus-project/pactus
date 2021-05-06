@@ -4,7 +4,7 @@
 - Adding sortition_seed to block header
 - Sortition runs on sortition_seed instead of block_hash
 - Updating round-robin mechanism for choosing proposer
-- Block certificate includes committers and absences
+- Block certificate includes committers and absentees
 
 ## 0.9.2
 - Refactoring commit base on zip-0001 proposal
