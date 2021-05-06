@@ -14,11 +14,17 @@ Your additional work here is greatly appreciated and will help us respond as qui
 > Provide a clear and concise description of the issue, including what you expected to happen.
 
 ### Reproduction
+## How To Reproduce
+> Detail the steps taken to reproduce this error, and whether this issue can be reproduced consistently or if it is intermittent.
 
-> Detail the steps taken to reproduce this error, what was expected, and whether this issue can be reproduced consistently or if it is intermittent.
->
-> Please include any log information if you have.
+## What Happened
+> What actually happened including any error log or so
 
+## Expected Behavior
+> What were you expecting
+
+## Extra
+> any extra information you think is relevant to issue
 ### Environment
 
 > Please provide the following:
