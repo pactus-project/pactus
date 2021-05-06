@@ -122,8 +122,8 @@ func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, sign
 		sigs[i] = s.SignData(sb)
 	}
 
-	absences := util.Subtracts(committers, signedBy)
-	return block.NewCertificate(blockHash, round, committers, absences, crypto.Aggregate(sigs))
+	absentees := util.Subtracts(committers, signedBy)
+	return block.NewCertificate(blockHash, round, committers, absentees, crypto.Aggregate(sigs))
 }
 
 func CommitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {

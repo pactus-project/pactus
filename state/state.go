@@ -207,7 +207,7 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 	defer st.lk.Unlock()
 
 	// Check if certificate has more signers ...
-	if len(cert.Absences()) < len(st.lastInfo.Certificate().Absences()) {
+	if len(cert.Absentees()) < len(st.lastInfo.Certificate().Absentees()) {
 		if err := st.validateCertificateForPreviousHeight(cert); err != nil {
 			st.logger.Warn("Try to update last certificate, but it's invalid", "err", err)
 			return err

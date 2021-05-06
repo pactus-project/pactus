@@ -23,7 +23,7 @@ struct Certificate {
   blockHash           @0 :Data;
   round               @1 :UInt32;
   committers          @2 :List(Int32);
-  absences            @3 :List(Int32);
+  absentees            @3 :List(Int32);
   signature           @4 :Data;
 }
 

@@ -56,15 +56,15 @@ func TestInvalidCertificate(t *testing.T) {
 	assert.Error(t, c3.SanityCheck())
 
 	c4 := GenerateTestCertificate(crypto.GenerateTestHash())
-	c4.data.Absences = nil
+	c4.data.Absentees = nil
 	assert.Error(t, c4.SanityCheck())
 
 	c6 := GenerateTestCertificate(crypto.GenerateTestHash())
-	c6.data.Absences = append(c6.data.Absences, -1)
+	c6.data.Absentees = append(c6.data.Absentees, -1)
 	assert.Error(t, c6.SanityCheck())
 
 	c7 := GenerateTestCertificate(crypto.GenerateTestHash())
-	c7.data.Absences = []int{2, 1}
+	c7.data.Absentees = []int{2, 1}
 	assert.Error(t, c7.SanityCheck())
 }
 
@@ -73,16 +73,16 @@ func TestCertificateersHash(t *testing.T) {
 
 	cert1 := NewCertificate(temp.BlockHash(), temp.Round(), []int{10, 18, 2, 6}, []int{}, temp.Signature())
 	assert.Equal(t, cert1.Committers(), []int{10, 18, 2, 6})
-	assert.Equal(t, cert1.Absences(), []int{})
+	assert.Equal(t, cert1.Absentees(), []int{})
 	assert.NoError(t, cert1.SanityCheck())
 
 	cert2 := NewCertificate(temp.BlockHash(), temp.Round(), []int{10, 18, 2, 6}, []int{2, 6}, temp.Signature())
 	assert.Equal(t, cert2.Committers(), []int{10, 18, 2, 6})
-	assert.Equal(t, cert2.Absences(), []int{2, 6})
+	assert.Equal(t, cert2.Absentees(), []int{2, 6})
 	assert.NoError(t, cert2.SanityCheck())
 
 	cert3 := NewCertificate(temp.BlockHash(), temp.Round(), []int{10, 18, 2, 6}, []int{18}, temp.Signature())
 	assert.Equal(t, cert3.Committers(), []int{10, 18, 2, 6})
-	assert.Equal(t, cert3.Absences(), []int{18})
+	assert.Equal(t, cert3.Absentees(), []int{18})
 	assert.NoError(t, cert3.SanityCheck())
 }
