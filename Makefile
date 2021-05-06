@@ -1,24 +1,12 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests')
 HERUMI= $(shell pwd)/.herumi
 BLS_CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++ -g -O2"
-BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD` -X github.com/zarbchain/zarb-go/version.semVer=$(VTAG)"
-VTAG=$(shell git describe --tags --abbrev=0)
+BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
+
 
 
 
 all: tools build install test
-
-########################################
-### Prebuilt Env
-
-_OS=$(shell go env GOOS)
-_ARCH=$(shell go env GOARCH)
-
-LIB_DIR=$(HERUMI)/bls/lib/$(_OS)/$(_ARCH)
-Pre_CGO_LDFLAGS=CGO_LDFLAGS="-L$(LIB_DIR) -lbls384_256 -lm -lstdc++ -g -O2"
-Pre_CGO_LDFLAGS_Default=$(shell go env CGO_LDFLAGS)
-_EXT=$(shell go env GOEXE)
-
 
 ########################################
 ### Tools & dependencies
@@ -40,13 +28,6 @@ bls:
 	git clone --recursive git://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static
 
 
-
-bls_prebuilt:
-	@echo "cloning bls"
-	rm -rf $(HERUMI)
-	git clone https://github.com/herumi/bls-go-binary.git $(HERUMI)
-
-
 ########################################
 ### Building
 build:
@@ -61,11 +42,6 @@ build_bls:
 build_bls_release:
 	$(BLS_CGO_LDFLAGS) go build -o build/zarb ./cmd/zarb/
 
-
-build_with_pre_bls:
-	go env -w $(Pre_CGO_LDFLAGS)
-	go build $(BUILD_LDFLAGS) -o build/zarb-$(VTAG).$(_EXT) ./cmd/zarb/
-	go env -w CGO_LDFLAGS="$(Pre_CGO_LDFLAGS_Default)"
 ########################################
 ### Testing
 unit_test:

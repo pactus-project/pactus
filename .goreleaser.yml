@@ -5,7 +5,6 @@ project_name: zarb-cli
 before:
   hooks:
     - go mod tidy
-    - make bls_prebuilt
 builds:
   - main: ./cmd/zarb/
     env:
@@ -13,24 +12,19 @@ builds:
       - pwd = $(pwd)
     # Custom ldflags templates.
     # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
+    # could use `-X github.com/zarbchain/zarb-go/version.semVer={{.Version}} -extldflags "-static"` to dynamicly version and staticly build(has some issues with mac)
     ldflags:
-     - -s -w -X github.com/zarbchain/zarb-go/version.build={{.ShortCommit}} -X github.com/zarbchain/zarb-go/version.semVer={{.Version}} #-extldflags "-static"
+     - -s -w -X github.com/zarbchain/zarb-go/version.build={{.ShortCommit}} 
     # GOOS list to build for.
     # For more info refer to: https://golang.org/doc/install/source#environment
     # Defaults are darwin and linux.
     goos: 
       - "${GOHOSTOS}"
-      # - darwin
     # GOARCH to build for.
     # For more info refer to: https://golang.org/doc/install/source#environment
     # Defaults are 386, amd64 and arm64.
     goarch:
       - amd64
-      # - arm
-      # - arm64
-    hooks:
-      pre:
-       - go env -w CGO_LDFLAGS="-L{{.Env.pwd}}/.herumi/bls/lib/{{.Os}}/{{.Arch}}/ -lbls384_256 -lm -lstdc++"
 
 archives:
   - replacements:
