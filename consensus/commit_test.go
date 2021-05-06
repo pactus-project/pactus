@@ -26,17 +26,12 @@ func TestCommitExecute(t *testing.T) {
 	assert.NotEqual(t, p1.Hash(), p2.Hash())
 
 	testEnterNewHeight(tConsX)
-	vals := tConsX.state.CommitteeValidators()
-	tConsX.log.MoveToNewHeight(4, vals)
-	tConsX.height = 4
-	tConsX.round = 0
-
-	s := &commitState{tConsX}
-	tConsX.enterNewState(s)
 
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
+
+	s := &commitState{tConsX}
 
 	// No proposal
 	tConsX.lk.Lock()
