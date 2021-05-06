@@ -21,11 +21,11 @@ type Message struct {
 	Payload   payload.Payload
 }
 
-func NewMessage(id peer.ID, pld payload.Payload) *Message {
+func NewMessage(initiator peer.ID, pld payload.Payload) *Message {
 	return &Message{
 		Version:   LastVersion,
 		Flags:     0,
-		Initiator: id,
+		Initiator: initiator,
 		Payload:   pld,
 	}
 }

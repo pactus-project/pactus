@@ -23,19 +23,23 @@ func (handler *aleykHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 	handler.logger.Trace("Parsing Aleyk payload", "pld", pld)
 
 	peer := handler.peerSet.MustGetPeer(initiator)
-	if pld.ResponseCode != payload.ResponseCodeOK {
-		handler.logger.Warn("Our Salam is not welcomed!", "message", pld.ResponseMessage, "peer", util.FingerprintPeerID(initiator))
-		peer.UpdateStatus(peerset.StatusCodeBanned)
-	} else {
-		peer.UpdateStatus(peerset.StatusCodeOK)
-		peer.UpdateMoniker(pld.Moniker)
-		peer.UpdateHeight(pld.Height)
-		peer.UpdateNodeVersion(pld.NodeVersion)
-		peer.UpdatePublicKey(pld.PublicKey)
-		peer.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
 
-		handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
+	if pld.ResponseTarget == handler.SelfID() {
+		if pld.ResponseCode == payload.ResponseCodeOK {
+			peer.UpdateStatus(peerset.StatusCodeOK)
+		} else {
+			handler.logger.Warn("Our Salam is not welcomed!", "message", pld.ResponseMessage, "peer", util.FingerprintPeerID(initiator))
+			peer.UpdateStatus(peerset.StatusCodeBanned)
+		}
 	}
+
+	peer.UpdateMoniker(pld.Moniker)
+	peer.UpdateHeight(pld.Height)
+	peer.UpdateNodeVersion(pld.NodeVersion)
+	peer.UpdatePublicKey(pld.PublicKey)
+	peer.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
+
+	handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
 
 	return nil
 }

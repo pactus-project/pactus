@@ -153,7 +153,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 
 	votesMap := vs.blockVotes[*blockHash].votes
 	committers := make([]int, len(vs.validators))
-	absences := make([]int, 0)
+	absentees := make([]int, 0)
 	sigs := make([]crypto.Signature, 0)
 
 	for i, val := range vs.validators {
@@ -162,7 +162,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 		if v != nil {
 			sigs = append(sigs, *v.Signature())
 		} else {
-			absences = append(absences, val.Number())
+			absentees = append(absentees, val.Number())
 		}
 
 		committers[i] = val.Number()
@@ -170,7 +170,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 
 	sig := crypto.Aggregate(sigs)
 
-	return block.NewCertificate(*blockHash, vs.Round(), committers, absences, sig)
+	return block.NewCertificate(*blockHash, vs.Round(), committers, absentees, sig)
 }
 
 func (vs *VoteSet) Fingerprint() string {

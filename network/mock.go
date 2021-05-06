@@ -37,15 +37,18 @@ func (mock *MockNetwork) LeaveDownloadTopic() {}
 func (mock *MockNetwork) SelfID() peer.ID {
 	return mock.id
 }
-func (mock *MockNetwork) ReceivingMessageFromOtherPeer(id peer.ID, pld payload.Payload) {
-	msg := message.NewMessage(id, pld)
+func (mock *MockNetwork) ReceivingMessageFromOtherPeer(initiator peer.ID, pld payload.Payload) {
+	msg := message.NewMessage(initiator, pld)
 	d, _ := msg.Encode()
 	if d != nil {
 		logger.Info("Parsing the message", "msg", msg)
-		mock.CallbackFn(d, id)
+		mock.CallbackFn(d, initiator)
 	}
 }
 func (mock *MockNetwork) PublishMessage(msg *message.Message) error {
+	if err := msg.SanityCheck(); err != nil {
+		return err
+	}
 	mock.BroadcastCh <- msg
 	return nil
 }

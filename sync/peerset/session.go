@@ -40,6 +40,13 @@ func (s *Session) SetLastResponseCode(code payload.ResponseCode) {
 	s.data.LastActivityAt = util.Now()
 }
 
+func (s *Session) PeerID() peer.ID {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	return s.data.PeerID
+}
+
 func (s *Session) SessionID() int {
 	s.lk.RLock()
 	defer s.lk.RUnlock()

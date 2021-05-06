@@ -3,24 +3,27 @@ package payload
 import (
 	"fmt"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/version"
 )
 
 type AleykPayload struct {
-	ResponseCode    ResponseCode     `cbor:"1,keyasint"`
-	ResponseMessage string           `cbor:"2,keyasint"`
-	NodeVersion     string           `cbor:"3,keyasint"`
-	Moniker         string           `cbor:"4,keyasint"`
-	PublicKey       crypto.PublicKey `cbor:"5,keyasint"`
-	Height          int              `cbor:"6,keyasint"`
-	Flags           int              `cbor:"7,keyasint"`
+	ResponseTarget  peer.ID          `cbor:"1,keyasint"`
+	ResponseCode    ResponseCode     `cbor:"2,keyasint"`
+	ResponseMessage string           `cbor:"3,keyasint"`
+	NodeVersion     string           `cbor:"4,keyasint"`
+	Moniker         string           `cbor:"5,keyasint"`
+	PublicKey       crypto.PublicKey `cbor:"6,keyasint"`
+	Height          int              `cbor:"7,keyasint"`
+	Flags           int              `cbor:"8,keyasint"`
 }
 
-func NewAleykPayload(code ResponseCode, msg string, moniker string,
+func NewAleykPayload(target peer.ID, code ResponseCode, msg string, moniker string,
 	pub crypto.PublicKey, height int, flags int) Payload {
 	return &AleykPayload{
+		ResponseTarget:  target,
 		ResponseCode:    code,
 		ResponseMessage: msg,
 		NodeVersion:     version.Version(),
@@ -32,6 +35,9 @@ func NewAleykPayload(code ResponseCode, msg string, moniker string,
 }
 
 func (p *AleykPayload) SanityCheck() error {
+	if err := p.ResponseTarget.Validate(); err != nil {
+		return err
+	}
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}

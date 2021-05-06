@@ -16,17 +16,17 @@ type certificateData struct {
 	BlockHash  crypto.Hash      `cbor:"1,keyasint"`
 	Round      int              `cbor:"2,keyasint"`
 	Committers []int            `cbor:"3,keyasint"`
-	Absences   []int            `cbor:"4,keyasint"`
+	Absentees  []int            `cbor:"4,keyasint"`
 	Signature  crypto.Signature `cbor:"5,keyasint"`
 }
 
-func NewCertificate(blockHash crypto.Hash, round int, committers, absences []int, signature crypto.Signature) *Certificate {
+func NewCertificate(blockHash crypto.Hash, round int, committers, absentees []int, signature crypto.Signature) *Certificate {
 	return &Certificate{
 		data: certificateData{
 			BlockHash:  blockHash,
 			Round:      round,
 			Committers: committers,
-			Absences:   absences,
+			Absentees:  absentees,
 			Signature:  signature,
 		},
 	}
@@ -35,7 +35,7 @@ func NewCertificate(blockHash crypto.Hash, round int, committers, absences []int
 func (cert *Certificate) BlockHash() crypto.Hash      { return cert.data.BlockHash }
 func (cert *Certificate) Round() int                  { return cert.data.Round }
 func (cert *Certificate) Committers() []int           { return cert.data.Committers }
-func (cert *Certificate) Absences() []int             { return cert.data.Absences }
+func (cert *Certificate) Absentees() []int            { return cert.data.Absentees }
 func (cert *Certificate) Signature() crypto.Signature { return cert.data.Signature }
 
 func (cert *Certificate) SanityCheck() error {
@@ -51,12 +51,12 @@ func (cert *Certificate) SanityCheck() error {
 	if cert.Committers() == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "Invalid committers")
 	}
-	if cert.data.Absences == nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid absences")
+	if cert.data.Absentees == nil {
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid absentees")
 	}
-	signedBy := util.Subtracts(cert.Committers(), cert.Absences())
-	if !util.Equal(util.Subtracts(cert.Committers(), signedBy), cert.Absences()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "absences is not subset of committers")
+	signedBy := util.Subtracts(cert.Committers(), cert.Absentees())
+	if !util.Equal(util.Subtracts(cert.Committers(), signedBy), cert.Absentees()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "absentees is not subset of committers")
 	}
 
 	return nil

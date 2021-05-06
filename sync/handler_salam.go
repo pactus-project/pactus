@@ -28,7 +28,7 @@ func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 		handler.logger.Info("Received a message from different chain", "genesis_hash", pld.GenesisHash, "peer", util.FingerprintPeerID(initiator))
 		// Response to salam
 		peer.UpdateStatus(peerset.StatusCodeBanned)
-		handler.broadcastAleyk(payload.ResponseCodeRejected, "Invalid genesis hash")
+		handler.broadcastAleyk(initiator, payload.ResponseCodeRejected, "Invalid genesis hash")
 		return nil
 	}
 
@@ -42,7 +42,7 @@ func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 	handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
 
 	// Response to salam
-	handler.broadcastAleyk(payload.ResponseCodeOK, "Welcome!")
+	handler.broadcastAleyk(initiator, payload.ResponseCodeOK, "Welcome!")
 
 	return nil
 }
