@@ -13,7 +13,7 @@ import (
 func TestParsingAleykMessages(t *testing.T) {
 	setup(t)
 
-	t.Run("Alice receives Aleyk message from a Peer. Peer has less block than Alice", func(t *testing.T) {
+	t.Run("Alice receives Aleyk message from a Peer. Peer has less blocks than Alice", func(t *testing.T) {
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		pid := util.RandomPeerID()
 		pld := payload.NewAleykPayload(tAlicePeerID, payload.ResponseCodeOK, "Welcome", "kitty", pub, 1, 0)
@@ -24,7 +24,7 @@ func TestParsingAleykMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeLatestBlocksRequest)
 	})
 
-	t.Run("Alice receives Aleyk message from a Peer. Peer has more block than Alice", func(t *testing.T) {
+	t.Run("Alice receives Aleyk message from a Peer. Peer has more blocks than Alice", func(t *testing.T) {
 		tAliceSync.peerSet.Clear()
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		pid := util.RandomPeerID()
