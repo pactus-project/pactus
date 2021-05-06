@@ -76,7 +76,7 @@ func setup(t *testing.T) {
 	store3 := store.MockingStore()
 	store4 := store.MockingStore()
 
-	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
+	tGenDoc = genesis.MakeGenesis(util.RoundNow(params.BlockTimeInSecond), []*account.Account{acc}, vals, params)
 	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)
 	require.NoError(t, err)
 	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool)
