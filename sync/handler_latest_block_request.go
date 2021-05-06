@@ -50,7 +50,7 @@ func (handler *latestBlocksRequestHandler) ParsPayload(p payload.Payload, initia
 	}
 
 	ourHeight := handler.state.LastBlockHeight()
-	if pld.From < ourHeight-handler.config.RequestBlockInterval {
+	if pld.From < ourHeight-LatestBlockInterval {
 		response := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil, nil)
 		handler.broadcast(response)
 

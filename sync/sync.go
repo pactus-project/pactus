@@ -23,7 +23,7 @@ import (
 // IMPORTANT NOTE
 //
 // Sync module is based on pulling, not pushing
-// Means if a node is behind the network, we don't send him anything
+// Means if a node is shorter than the network, we don't send him anything
 // The node should request (pull) itself.
 
 const FlagInitialBlockDownload = 0x1
@@ -223,7 +223,11 @@ func (sync *synchronizer) Fingerprint() string {
 		sync.state.LastBlockHeight())
 }
 
-func (sync *synchronizer) checkIfWeAreBehindTheNetwork() {
+// updateBlokchain checks if the node height is shorter than the network or not.
+// If the node height is shorter than network more than two hours (720 blocks),
+// it should join the download topic and start downlaoding the blocks,
+// otherwise the node can request the latest blocks from the network.
+func (sync *synchronizer) updateBlokchain() {
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
 		sync.logger.Debug("We have open seasson")
@@ -233,8 +237,8 @@ func (sync *synchronizer) checkIfWeAreBehindTheNetwork() {
 	ourHeight := sync.state.LastBlockHeight()
 	claimedHeight := sync.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight {
-		if claimedHeight > ourHeight+sync.config.RequestBlockInterval {
-			sync.logger.Info("We are far behind the network. Joining download topic")
+		if claimedHeight > ourHeight+LatestBlockInterval {
+			sync.logger.Info("Need more blocks. Joining download topic")
 			// TODO:
 			// If peer doesn't respond, we should leave the topic
 			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
@@ -245,7 +249,7 @@ func (sync *synchronizer) checkIfWeAreBehindTheNetwork() {
 				sync.downloadBlocks()
 			}
 		} else {
-			sync.logger.Info("We are behind the network, Ask for more blocks")
+			sync.logger.Info("Need more blocks. Ask for the latest blocks")
 			sync.queryLatestBlocks()
 		}
 	}
@@ -324,7 +328,7 @@ func (sync *synchronizer) downloadBlocks() {
 		if peer.Height() < from+1 {
 			continue
 		}
-		to := from + sync.config.RequestBlockInterval
+		to := from + LatestBlockInterval
 		if to > peer.Height() {
 			to = peer.Height()
 		}
@@ -462,12 +466,12 @@ func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int
 	case payload.ResponseCodeRejected:
 		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.checkIfWeAreBehindTheNetwork()
+		sync.updateBlokchain()
 
 	case payload.ResponseCodeBusy:
 		sync.logger.Debug("Peer is busy. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.checkIfWeAreBehindTheNetwork()
+		sync.updateBlokchain()
 
 	case payload.ResponseCodeMoreBlocks:
 		sync.logger.Debug("Peer responding us. keep session open", "session-id", sessionID)
@@ -475,7 +479,7 @@ func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int
 	case payload.ResponseCodeNoMoreBlocks:
 		sync.logger.Debug("Peer has no more block. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.checkIfWeAreBehindTheNetwork()
+		sync.updateBlokchain()
 
 	case payload.ResponseCodeSynced:
 		sync.logger.Debug("Peer infomed us we are synced. close session", "session-id", sessionID)

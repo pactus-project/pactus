@@ -6,6 +6,8 @@ import (
 	"github.com/zarbchain/zarb-go/sync/firewall"
 )
 
+var LatestBlockInterval = 720 // 720 blocks is about two hours
+
 type Config struct {
 	Moniker              string
 	StartingTimeout      time.Duration
@@ -13,7 +15,6 @@ type Config struct {
 	SessionTimeout       time.Duration
 	InitialBlockDownload bool
 	BlockPerMessage      int
-	RequestBlockInterval int
 	MaximumOpenSessions  int
 	CacheSize            int
 	Firewall             *firewall.Config
@@ -26,7 +27,6 @@ func DefaultConfig() *Config {
 		SessionTimeout:       time.Second * 30,
 		InitialBlockDownload: true,
 		BlockPerMessage:      120,
-		RequestBlockInterval: 720,
 		MaximumOpenSessions:  8,
 		CacheSize:            500000,
 		Firewall:             firewall.DefaultConfig(),
@@ -41,7 +41,6 @@ func TestConfig() *Config {
 		SessionTimeout:       time.Second * 1,
 		InitialBlockDownload: true,
 		BlockPerMessage:      10,
-		RequestBlockInterval: 20,
 		MaximumOpenSessions:  4,
 		CacheSize:            1000,
 		Firewall:             firewall.TestConfig(),

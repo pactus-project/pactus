@@ -44,7 +44,7 @@ func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 	// Response to salam
 	handler.broadcastAleyk(initiator, payload.ResponseCodeOK, "Welcome!")
 
-	handler.checkIfWeAreBehindTheNetwork()
+	handler.updateBlokchain()
 
 	return nil
 }

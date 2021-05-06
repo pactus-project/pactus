@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 )
 
-func TestOneBlockBehind(t *testing.T) {
+func TestOneBlockShorter(t *testing.T) {
 	setup(t)
 	disableHeartbeat(t)
 

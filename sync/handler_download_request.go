@@ -49,7 +49,7 @@ func (handler *downloadRequestHandler) ParsPayload(p payload.Payload, initiator 
 		return errors.Errorf(errors.ErrInvalidMessage, "Peer request for blocks that already has: %v", pld.From)
 	}
 
-	if pld.To-pld.From > handler.config.RequestBlockInterval {
+	if pld.To-pld.From > LatestBlockInterval {
 		response := payload.NewDownloadResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil)
 		handler.broadcast(response)
 

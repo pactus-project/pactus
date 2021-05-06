@@ -15,6 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
@@ -65,7 +66,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_pool"] = "error"
 		tConfigs[i].TxPool.WaitingTimeout = 500 * time.Millisecond
 		tConfigs[i].Sync.CacheSize = 1000
-		tConfigs[i].Sync.RequestBlockInterval = 10
 		tConfigs[i].Sync.StartingTimeout = 0
 		tConfigs[i].Sync.InitialBlockDownload = false
 		tConfigs[i].Sync.Firewall.Enabled = false
@@ -77,6 +77,8 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Http.Enable = false
 		tConfigs[i].GRPC.Enable = false
 		tConfigs[i].Capnp.Enable = false
+
+		sync.LatestBlockInterval = 10
 
 		if i == 0 {
 			tConfigs[i].Sync.InitialBlockDownload = true

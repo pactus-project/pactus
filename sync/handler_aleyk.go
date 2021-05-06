@@ -40,7 +40,7 @@ func (handler *aleykHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 	peer.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
 
 	handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
-	handler.checkIfWeAreBehindTheNetwork()
+	handler.updateBlokchain()
 
 	return nil
 }

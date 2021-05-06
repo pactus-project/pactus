@@ -10,8 +10,7 @@ import (
 )
 
 func TestDownloadBlocks(t *testing.T) {
-	tAliceConfig.RequestBlockInterval = 30
-	tBobConfig.RequestBlockInterval = 30
+	LatestBlockInterval = 30
 	setup(t)
 	disableHeartbeat(t)
 

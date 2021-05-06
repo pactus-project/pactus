@@ -61,8 +61,8 @@ func (ps *PeerSet) FindSession(id int) *Session {
 }
 
 func (ps *PeerSet) NumberOfOpenSessions() int {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
 
 	ps.removeExpiredSessions()
 
