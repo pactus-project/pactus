@@ -54,8 +54,9 @@ func (vrf *VRF) getIndex(proof Proof, max int64) int64 {
 	numerator := big.NewInt(0)
 	numerator = numerator.Mul(bigRnd, bigMax)
 
-	// divide numerator and denominator to get the election ratio for this block height
 	denominator := big.NewInt(util.MaxInt64)
+
+	// divide numerator and denominator to get the election ratio for this block height
 	index := big.NewInt(0)
 	index = index.Div(numerator, denominator)
 
