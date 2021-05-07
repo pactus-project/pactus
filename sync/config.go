@@ -7,15 +7,15 @@ import (
 )
 
 type Config struct {
-	Moniker              string        `toml:"Moniker" comment:"Moniker A custom human readable name for this node."`
-	StartingTimeout      time.Duration `toml:"StartingTimeout" comment:"StartingTimeout is timeout to syncing the node."`
-	HeartBeatTimeout     time.Duration `toml:"HeartBeatTimeout" comment:"HeartBeatTimeout timeout for detecting the tcp connections."`
-	SessionTimeout       time.Duration `toml:"SessionTimeout" comment:"SessionTimeout session."`
-	InitialBlockDownload bool          `toml:"InitialBlockDownload" comment:"InitialBlockDownload enable or disable for initial block downloading."`
-	BlockPerMessage      int           `toml:"BlockPerMessage" comment:"BlockPerMessage receive the number of blocks per message. Default is 10."`
-	RequestBlockInterval int           `toml:"RequestBlockInterval" comment:"RequestBlockInterval max duration for a request, block interval."`
-	CacheSize            int           `toml:"CacheSize" comment:"CacheSize Size of the cache in transactions."`
-	Firewall             *firewall.Config
+	Moniker              string        `toml:"" comment:"Moniker A custom human readable name for this node."`
+	StartingTimeout      time.Duration `toml:"" comment:"StartingTimeout is time taken for syncing the node."`
+	HeartBeatTimeout     time.Duration `toml:"" comment:"HeartBeatTimeout timeout for broadcasting heartbeat message to network."`
+	SessionTimeout       time.Duration `toml:"" comment:"SessionTimeout timeout for session of node."`
+	InitialBlockDownload bool          `toml:"" comment:"InitialBlockDownload enable or disable for initial block downloading."`
+	BlockPerMessage      int           `toml:"" comment:"BlockPerMessage the number of blocks per message. Default is 120."`
+	RequestBlockInterval int
+	CacheSize            int              `toml:"" comment:"CacheSize is the total capacity of the cache"`
+	Firewall             *firewall.Config `toml:"" comment:"Setting for firewall"`
 }
 
 func DefaultConfig() *Config {

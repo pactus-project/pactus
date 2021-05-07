@@ -7,7 +7,7 @@ import (
 
 // Config holds the configuration of the node
 type Config struct {
-	MintbaseAddress string `toml:"MintbaseAddress" comment:"Mintbase Address contains accounts details like balance, sequence, number."`
+	MintbaseAddress string `toml:"" comment:"Mintbase Address to collect the rewards."`
 }
 
 // DefaultConfig instantiates the default configuration for the node

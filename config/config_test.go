@@ -17,6 +17,9 @@ func TestTOML(t *testing.T) {
 	f := util.TempFilePath()
 	f += ".toml"
 	conf1 := DefaultConfig()
+	conf1.Store.Path = "abc"
+	conf1.Sync.Moniker = "Test1"
+	conf1.Consensus.ChangeProposerTimeout = 22
 	assert.NoError(t, conf1.SaveToFile(f))
 	conf2, err := LoadFromFile(f)
 	assert.NoError(t, err)

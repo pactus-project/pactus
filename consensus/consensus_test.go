@@ -76,7 +76,7 @@ func setup(t *testing.T) {
 	store3 := store.MockingStore()
 	store4 := store.MockingStore()
 
-	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height. 
+	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height.
 	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
 	tGenDoc = genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
 	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)

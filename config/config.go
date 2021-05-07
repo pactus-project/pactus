@@ -22,16 +22,16 @@ import (
 )
 
 type Config struct {
-	State     *state.Config     `toml:"State" comment:"State contians the state of the accounts."`
-	Store     *store.Config     `toml:"Store" comment:"Store db which write and store the blockchin data.Default golevel db. "`
-	TxPool    *txpool.Config    `toml:"TxPool" comment:"TxPool is blockchain mempool.Limit the total size of all txs in the txPool."`
-	Consensus *consensus.Config `toml:"Consensus" comment:"Consensus contains proposer(block creator) and validator(block validator) configuration."`
-	Network   *network.Config   `toml:"Network" comment:"Network contains all details of network confgiuration. Zarb uses lip2p protocal configuration."`
-	Logger    *logger.Config    `toml:"Logger" comment:"Logger contains Output level for logging."`
-	Sync      *sync.Config      `toml:"Sync" comment:"Sync is used for peer connection and synchronising blockchain and it also contains monkier and its details."`
-	Capnp     *capnp.Config     `toml:"Capnp" comment:"Cap’n Proto is an insanely fast data interchange format and capability-based RPC system."`
-	Http      *http.Config      `toml:"Http" comment:"TCP or UNIX socket address for the tcp server to listen on. Default port is 8081."`
-	GRPC      *grpc.Config      `toml:"GRPC" comment:"TCP or UNIX socket address for zarb to listen on for connections from an external process. Default port is 9090."`
+	State     *state.Config     `toml:"" comment:"State contains the state of the blockchain."`
+	Store     *store.Config     `toml:"" comment:"Store which write and store the blockchin data using golevel db. "`
+	TxPool    *txpool.Config    `toml:"" comment:"TxPool is pool of unconfirmed transaction."`
+	Consensus *consensus.Config `toml:"" comment:"Consensus configuration."`
+	Network   *network.Config   `toml:"" comment:"Network contains all details of network configuration. Zarb uses lip2p protocol."`
+	Logger    *logger.Config    `toml:"" comment:"Logger contains Output level for logging."`
+	Sync      *sync.Config      `toml:"" comment:"Sync is used for peer to peer connection and synchronizing blockchain and it also contains monkier and its details."`
+	Capnp     *capnp.Config     `toml:"" comment:"Cap’n Proto is an insanely fast data interchange format and capability-based RPC system."`
+	Http      *http.Config      `toml:"" comment:"Http configuration."`
+	GRPC      *grpc.Config      `toml:"" comment:"GRPC configuration."`
 }
 
 func DefaultConfig() *Config {
@@ -71,7 +71,7 @@ func TestConfig() *Config {
 func FromTOML(t string) (*Config, error) {
 	conf := DefaultConfig()
 
-	if _, err := toml.Load(t); err != nil {
+	if err := toml.Unmarshal([]byte(t), conf); err != nil {
 		return nil, err
 	}
 	return conf, nil

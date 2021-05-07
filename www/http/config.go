@@ -1,13 +1,13 @@
 package http
 
 type Config struct {
-	Enable  bool   `toml:"Enable" comment:"Enable Http server for client communication."`
-	Address string `toml:"Address" comment:"Address to listen for incoming connections for Http.Default port is 8081."`
+	Enable  bool   `toml:"" comment:"Enable Http server for client communication."`
+	Address string `toml:"" comment:"Address of Http server."`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Enable:  true,
+		Enable:  false,
 		Address: "[::]:8081",
 	}
 }

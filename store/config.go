@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	Path string `toml:"Path" comment:"Path conatins database directory. Default is ~/$HOME/zarb."`
+	Path string `toml:"" comment:"Path contains database directory. Default is ./store.db"`
 }
 
 func DefaultConfig() *Config {

@@ -1,9 +1,9 @@
 package grpc
 
 type Config struct {
-	Enable  bool          `toml:"Enable"   comment:"Enable GRPC servers for client communication."`
-	Address string        `toml:"Address"  comment:"Address to listen for incoming connections for GRPC.Default port is 9090."`
-	Gateway GatewayConfig `toml:"Gateway"  comment:"Gateway  server which translates a RESTful HTTP API into gRPC."`
+	Enable  bool          `toml:""   comment:"Enable GRPC servers for client communication."`
+	Address string        `toml:""  comment:"Address to listen for incoming connections for GRPC.Default port is 9090."`
+	Gateway GatewayConfig `toml:""  comment:"Gateway  server which translates a RESTful HTTP API into gRPC."`
 }
 
 func DefaultConfig() *Config {
