@@ -479,17 +479,21 @@ func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
 
 func (st *state) validateBlockTime(t time.Time) error {
 	if t.Second()%st.params.BlockTimeInSecond != 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time is not rounded")
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is not rounded", t.String())
 	}
-	if t.Before(st.lastInfo.BlockTime().Add(1 * time.Second)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time is too early: %s", t.String())
+	if t.Before(st.lastInfo.BlockTime()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is before the last block time", t.String())
+	}
+	if t.Equal(st.lastInfo.BlockTime()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is same as the last block time", t.String())
 	}
 	proposeTime := st.proposeNextBlockTime()
-	threshold := 2 * st.params.BlockTime()
+	threshold := st.params.BlockTime()
+	if t.Before(proposeTime.Add(-threshold)) {
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is less than threshold (%s)", t.String(), proposeTime.String())
+	}
 	if t.After(proposeTime.Add(threshold)) {
-		fmt.Println(t)
-		fmt.Println(util.RoundNow(st.params.BlockTimeInSecond).Add(threshold))
-		return errors.Errorf(errors.ErrInvalidBlock, "block time is too far")
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)", t.String(), proposeTime.String())
 	}
 
 	return nil
@@ -497,7 +501,6 @@ func (st *state) validateBlockTime(t time.Time) error {
 
 func (st *state) proposeNextBlockTime() time.Time {
 	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockTime())
-	timestamp = util.RoundTime(timestamp, st.params.BlockTimeInSecond)
 
 	now := util.Now()
 	if now.After(timestamp.Add(1 * time.Second)) {

@@ -76,7 +76,9 @@ func setup(t *testing.T) {
 	store3 := store.MockingStore()
 	store4 := store.MockingStore()
 
-	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
+	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height. 
+	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
+	tGenDoc = genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
 	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)
 	require.NoError(t, err)
 	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool)
@@ -103,6 +105,8 @@ func setup(t *testing.T) {
 	tConsY.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consY: ", cons: tConsY})
 	tConsB.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consB: ", cons: tConsB})
 	tConsP.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consP: ", cons: tConsP})
+
+	logger.Info("Setup finished, start running the test")
 }
 
 func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash) {
@@ -229,8 +233,8 @@ func testEnterNewHeight(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-// testEnterPropose helps tests to enter new round safely
-func testEnterPropose(cons *consensus) {
+// testEnterNextRound helps tests to enter next round safely
+func testEnterNextRound(cons *consensus) {
 	cons.lk.Lock()
 	cons.round++
 	cons.enterNewState(cons.proposeState)
@@ -452,7 +456,7 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 
 	p := makeProposal(t, 1, 0)
 	testEnterNewHeight(tConsP)
-	testEnterPropose(tConsP)
+	testEnterNextRound(tConsP)
 
 	// Keep proposal for previous round, but don't change the state
 	tConsP.SetProposal(p)
