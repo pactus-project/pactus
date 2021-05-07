@@ -36,7 +36,7 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("SanityCheck fails, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 0)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
@@ -48,7 +48,7 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 0)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		aggSig := signer5.SignData(signBytes)
 		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2}, aggSig)
 
@@ -57,7 +57,7 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("Invalid round, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 1)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 1)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
@@ -70,7 +70,7 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("Invalid committer, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		committers = append(committers, 666)
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 0)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
@@ -96,7 +96,7 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("Invalid committers, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		committers[0] = val5.Number()
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 0)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		sig1 := signer5.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
@@ -108,7 +108,7 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("Doesn't have 2/3 majority", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 0)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		aggSig := crypto.Aggregate([]crypto.Signature{sig1, sig2})
@@ -119,7 +119,7 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 0)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
@@ -129,21 +129,22 @@ func TestCertificateValidation(t *testing.T) {
 		assert.NoError(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
 
-	t.Run("Update last commit- Invalid committers", func(t *testing.T) {
+	t.Run("Update last certificate, Invalid committers", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		committers = append(committers, val5.Number())
-		signBytes := block.CertificateSignBytes(nextBlock.Hash(), 0)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
+		sig3 := tValSigner3.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		sig5 := signer5.SignData(signBytes)
-		aggSig := crypto.Aggregate([]crypto.Signature{sig1, sig2, sig4, sig5})
+		aggSig := crypto.Aggregate([]crypto.Signature{sig1, sig2, sig3, sig4, sig5})
 		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{}, aggSig)
 
 		assert.Error(t, tState1.UpdateLastCertificate(cert))
 	})
 
-	t.Run("Update last commit- Invalid blockhash", func(t *testing.T) {
+	t.Run("Update last certificate, Invalid blockhash", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		invBlockHash := crypto.GenerateTestHash()
 		signBytes := block.CertificateSignBytes(invBlockHash, 0)
@@ -157,7 +158,7 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, tState1.UpdateLastCertificate(cert))
 	})
 
-	t.Run("Update last commit- Invalid round", func(t *testing.T) {
+	t.Run("Update last certificate, Invalid round", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		signBytes := block.CertificateSignBytes(nextBlockHash, 1)
 		sig1 := tValSigner1.SignData(signBytes)

@@ -349,11 +349,28 @@ func TestInvalidBlock(t *testing.T) {
 func TestForkDetection(t *testing.T) {
 	setup(t)
 
-	b1, c1 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	b2, c2 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
-	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
-	assert.Error(t, tState1.CommitBlock(1, b2, c2))
+	moveToNextHeightForAllStates(t)
+
+	b5m, c5m := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
+	b5f, c5f := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
+	assert.NoError(t, tState1.CommitBlock(2, b5m, c5m))
+	assert.NoError(t, tState2.CommitBlock(2, b5m, c5m))
+	assert.NoError(t, tState3.CommitBlock(2, b5m, c5m))
+	assert.NoError(t, tState4.CommitBlock(2, b5f, c5f))
+
+	b6, c6 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
+
+	assert.NoError(t, tState1.CommitBlock(3, b6, c6))
+	assert.NoError(t, tState2.CommitBlock(3, b6, c6))
+	assert.NoError(t, tState3.CommitBlock(3, b6, c6))
+	t.Run("Fork is detected, Should panic ", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("The code did not panic")
+			}
+		}()
+		assert.Error(t, tState4.CommitBlock(3, b6, c6))
+	})
 }
 
 func TestSortition(t *testing.T) {

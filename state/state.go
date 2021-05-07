@@ -320,33 +320,28 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if height != st.lastInfo.BlockHeight() && height != st.lastInfo.BlockHeight()+1 {
+	if height != st.lastInfo.BlockHeight()+1 {
 		/// Returning error here will cause so many error logs during syncing blockchain
 		/// Syncing is asynchronous job and we might receive blocks not in order
 		st.logger.Debug("Unexpected block height", "height", height)
 		return nil
 	}
 
-	/// There are two modules that can commit a block: Consensus and Syncer.
-	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
-	/// In the other hand, Syncer module receives new blocks from other peers and if we are behind them, it tries to commit them.
-	/// We should never have a fork in our blockchain. but if it happens here we can catch it.
-	if st.lastInfo.BlockHeight() == height {
-		if block.Hash().EqualsTo(st.lastInfo.BlockHash()) {
-			st.logger.Debug("This block committed before", "hash", block.Hash())
-			return nil
-		}
-
-		st.logger.Error("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Hash())
-		return errors.Error(errors.ErrInvalidBlock)
-	}
-
-	err := st.validateBlock(block)
+	err := st.validateCertificate(cert, block.Hash())
 	if err != nil {
 		return err
 	}
 
-	err = st.validateCertificateForCurrentHeight(cert, block.Hash())
+	/// There are two modules that can commit a block: Consensus and Syncer.
+	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
+	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
+	/// We should never have a fork in our blockchain. but if it happens, here we can catch it.
+	if !block.Header().LastBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
+		st.logger.Panic("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().LastBlockHash())
+		return errors.Error(errors.ErrInvalidBlock)
+	}
+
+	err = st.validateBlock(block)
 	if err != nil {
 		return err
 	}
