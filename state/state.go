@@ -329,7 +329,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 	/// There are two modules that can commit a block: Consensus and Syncer.
 	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
-	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
+	/// In the other hand, Syncer module receives new blocks from other peers and if we are behind them, it tries to commit them.
 	/// We should never have a fork in our blockchain. but if it happens here we can catch it.
 	if st.lastInfo.BlockHeight() == height {
 		if block.Hash().EqualsTo(st.lastInfo.BlockHash()) {
