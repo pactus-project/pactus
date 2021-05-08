@@ -77,8 +77,8 @@ func (sb *Concrete) shouldPanicForUnknownAddress() {
 }
 
 func (sb *Concrete) Account(addr crypto.Address) *account.Account {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	s, ok := sb.accounts[addr]
 	if ok {
@@ -128,8 +128,8 @@ func (sb *Concrete) UpdateAccount(acc *account.Account) {
 }
 
 func (sb *Concrete) Validator(addr crypto.Address) *validator.Validator {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	s, ok := sb.validators[addr]
 	if ok {
@@ -185,37 +185,57 @@ func (sb *Concrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Address) e
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	s, ok := sb.validators[addr]
-	if !ok {
-		return errors.Errorf(errors.ErrGeneric, "unknown validator")
-	}
-
 	if sb.committee.Contains(addr) {
 		return errors.Errorf(errors.ErrGeneric, "this validator already is in the committee")
 	}
 
-	joined := 0
-	for _, s := range sb.validators {
-		if s.JoinedCommittee {
-			joined++
+	valS, ok := sb.validators[addr]
+	if !ok {
+		return errors.Errorf(errors.ErrGeneric, "unknown validator")
+	}
+
+	if valS.JoinedCommittee {
+		return errors.Errorf(errors.ErrGeneric, "this validator has joined into committee before")
+	}
+
+	if sb.committee.Size() >= sb.params.CommitteeSize {
+		oldestJoinedHeight := sb.lastHeight
+		committeeStake := int64(0)
+		for _, v := range sb.committee.Validators() {
+			committeeStake += v.Stake()
+			if v.LastJoinedHeight() < oldestJoinedHeight {
+				oldestJoinedHeight = v.LastJoinedHeight()
+			}
+		}
+		if sb.lastHeight-oldestJoinedHeight < sb.params.CommitteeSize {
+			return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
+		}
+		joinedStake := int64(0)
+		for _, s := range sb.validators {
+			if s.JoinedCommittee {
+				joinedStake += s.Validator.Stake()
+			}
+		}
+
+		joinedStake += valS.Validator.Stake()
+		if joinedStake >= (committeeStake / 3) {
+			return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
 		}
 	}
-	if joined >= (sb.params.CommitteeSize / 3) {
-		return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of validator can be changed")
-	}
+
 	h, _ := sb.store.BlockHeight(blockHash)
 	b, err := sb.store.Block(h)
 	if err != nil {
-		return errors.Errorf(errors.ErrGeneric, "invalid block hash")
+		return errors.Errorf(errors.ErrGeneric, "invalid block number")
 	}
-	commiters := b.LastCertificate().Committers()
-	for _, num := range commiters {
-		if s.Validator.Number() == num {
+	committers := b.LastCertificate().Committers()
+	for _, num := range committers {
+		if valS.Validator.Number() == num {
 			return errors.Errorf(errors.ErrGeneric, "this validator was in the committee in time of sending the sortition")
 		}
 	}
 
-	s.JoinedCommittee = true
+	valS.JoinedCommittee = true
 	return nil
 }
 
@@ -286,13 +306,7 @@ func (sb *Concrete) VerifySortition(blockHash crypto.Hash, proof sortition.Proof
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	h, _ := sb.store.BlockHeight(blockHash)
-	b, err := sb.store.Block(h)
-	if err != nil {
-		return false
-	}
-
-	return sb.sortition.VerifyProof(b.Header().SortitionSeed(), proof, val.PublicKey(), val.Stake())
+	return sb.sortition.VerifyProof(blockHash, proof, val.PublicKey(), val.Stake())
 }
 
 func (sb *Concrete) IterateAccounts(consumer func(*AccountStatus)) {
@@ -318,13 +332,6 @@ func (sb *Concrete) CommitteeSize() int {
 	defer sb.lk.RUnlock()
 
 	return sb.params.CommitteeSize
-}
-
-func (sb *Concrete) TotalStakeChange() int64 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.totalStakeChange
 }
 
 func (sb *Concrete) IsInCommittee(addr crypto.Address) bool {

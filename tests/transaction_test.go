@@ -50,7 +50,7 @@ func TestBondingTransactions(t *testing.T) {
 	t.Run("Bonding transactions", func(t *testing.T) {
 		// These validators are not in the committee now.
 		// Bond transactions are valid and they can enter the committee soon
-		for i := tCommitteeSize; i < tTotalNodes; i++ {
+		for i := 4; i < tTotalNodes; i++ {
 			amt := util.RandInt64(1000000 - 1) // fee is always 1000
 			require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000))
 

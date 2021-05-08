@@ -16,9 +16,14 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type lastInfoData struct {
+type oldLastInfoData struct {
 	LastHeight      int
 	LastCertificate *block.Certificate
+}
+
+type lastInfoData struct {
+	LastBlockHeight int                `cbor:"1,keyasint"`
+	LastCertificate *block.Certificate `cbor:"2,keyasint"`
 }
 
 type LastInfo struct {
@@ -108,7 +113,7 @@ func (li *LastInfo) SetBlockTime(lastBlockTime time.Time) {
 
 func (li *LastInfo) SaveLastInfo() {
 	lid := lastInfoData{
-		LastHeight:      li.lastBlockHeight,
+		LastBlockHeight: li.lastBlockHeight,
 		LastCertificate: li.lastCertificate,
 	}
 
@@ -116,19 +121,51 @@ func (li *LastInfo) SaveLastInfo() {
 	li.store.SaveLastInfo(bs)
 }
 
-func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, error) {
+func (li *LastInfo) RestoreLastInfo(committeeSize int, srt *sortition.Sortition) (*committee.Committee, error) {
 	bs := li.store.RestoreLastInfo()
 	lid := new(lastInfoData)
 	err := cbor.Unmarshal(bs, lid)
 	if err != nil {
 		return nil, err
 	}
-	logger.Debug("Try to restore last state info", "height", lid.LastHeight)
 
-	b, err := li.store.Block(lid.LastHeight)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve block %v: %v", lid.LastHeight, err)
+	if lid.LastBlockHeight == 0 {
+		oldlid := new(oldLastInfoData)
+		err := cbor.Unmarshal(bs, oldlid)
+		if err != nil {
+			return nil, err
+		}
+		lid.LastBlockHeight = oldlid.LastHeight
+		lid.LastCertificate = oldlid.LastCertificate
 	}
+	logger.Debug("Try to restore last state info", "height", lid.LastBlockHeight)
+
+	b, err := li.store.Block(lid.LastBlockHeight)
+	if err != nil {
+		return nil, fmt.Errorf("unable to retrieve block %v: %v", lid.LastBlockHeight, err)
+	}
+
+	li.lastBlockHeight = lid.LastBlockHeight
+	li.lastCertificate = lid.LastCertificate
+	li.lastSortitionSeed = b.Header().SortitionSeed()
+	li.lastBlockHash = b.Hash()
+	li.lastBlockTime = b.Header().Time()
+
+	cmt, err := li.makeCommittee(committeeSize)
+	if err != nil {
+		return nil, err
+	}
+
+	err = li.restoreSortition(srt, cmt)
+	if err != nil {
+		return nil, err
+	}
+
+	return cmt, nil
+}
+
+func (li *LastInfo) makeCommittee(committeeSize int) (*committee.Committee, error) {
+	b, _ := li.store.Block(li.lastBlockHeight)
 
 	joinedVals := make([]*validator.Validator, 0)
 	for _, id := range b.TxIDs().IDs() {
@@ -136,6 +173,8 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, er
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve transaction %s: %v", id, err)
 		}
+		// If there is any sortition transaction in last block,
+		// we should update last committee
 		if trx.IsSortitionTx() {
 			pld := trx.Payload().(*payload.SortitionPayload)
 			val, err := li.store.Validator(pld.Address)
@@ -146,15 +185,9 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, er
 		}
 	}
 
-	li.lastBlockHeight = lid.LastHeight
-	li.lastCertificate = lid.LastCertificate
-	li.lastSortitionSeed = b.Header().SortitionSeed()
-	li.lastBlockHash = b.Hash()
-	li.lastBlockTime = b.Header().Time()
-
 	proposerIndex := 0
-	vals := make([]*validator.Validator, len(lid.LastCertificate.Committers()))
-	for i, num := range lid.LastCertificate.Committers() {
+	vals := make([]*validator.Validator, len(li.lastCertificate.Committers()))
+	for i, num := range li.lastCertificate.Committers() {
 		val, err := li.store.ValidatorByNumber(num)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
@@ -165,16 +198,91 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, er
 		vals[i] = val
 	}
 
-	proposerIndex = (proposerIndex + committeeSize - (lid.LastCertificate.Round() % committeeSize)) % committeeSize
+	proposerIndex = (proposerIndex + committeeSize - (li.lastCertificate.Round() % committeeSize)) % committeeSize
 	committee, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %v", err)
 	}
 
-	err = committee.Update(lid.LastCertificate.Round(), joinedVals)
+	err = committee.Update(li.lastCertificate.Round(), joinedVals)
 	if err != nil {
 		return nil, fmt.Errorf("unable to update last committee: %v", err)
 	}
 
 	return committee, nil
+}
+
+func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Committee) error {
+	type sortitionParam struct {
+		blockHash crypto.Hash
+		seed      sortition.Seed
+		poolStake int64
+	}
+
+	totalStake := int64(0)
+	li.store.IterateValidators(func(v *validator.Validator) (stop bool) {
+		totalStake += v.Stake()
+		return false
+	})
+
+	params := []sortitionParam{}
+
+	// Read last seven blocks
+	start := li.lastBlockHeight - 7
+	if start < 0 {
+		start = 0
+	}
+
+	stakeChanged := make(map[crypto.Address]int64)
+	cert := li.lastCertificate
+	curCommitters := cmt.Committers()
+	for h := li.lastBlockHeight; h > start; h-- {
+		b, err := li.store.Block(h)
+		if err != nil {
+			return fmt.Errorf("unable to retrieve block %v: %v", h, err)
+		}
+
+		committeeStake := int64(0)
+		for _, num := range curCommitters {
+			val, err := li.store.ValidatorByNumber(num)
+			if err != nil {
+				return fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
+			}
+
+			committeeStake += val.Stake()
+			changed, ok := stakeChanged[val.Address()]
+			if ok {
+				committeeStake += changed
+			}
+		}
+
+		param := sortitionParam{
+			blockHash: b.Hash(),
+			seed:      b.Header().SortitionSeed(),
+			poolStake: totalStake - committeeStake,
+		}
+		params = append(params, param)
+
+		for _, id := range b.TxIDs().IDs() {
+			trx, err := li.store.Transaction(id)
+			if err != nil {
+				return fmt.Errorf("unable to retrieve transaction %s: %v", id, err)
+			}
+			if trx.IsBondTx() {
+				pld := trx.Payload().(*payload.BondPayload)
+				totalStake -= pld.Stake
+				stakeChanged[pld.Validator.Address()] = stakeChanged[pld.Validator.Address()] - pld.Stake
+			}
+		}
+		curCommitters = cert.Committers()
+		cert = b.LastCertificate()
+	}
+
+	for i := len(params) - 1; i >= 0; i-- {
+		p := params[i]
+		//fmt.Printf("param: %v, %x, %v\n", p.blockHash, p.seed, p.poolStake)
+		srt.SetParams(p.blockHash, p.seed, p.poolStake)
+	}
+
+	return nil
 }
