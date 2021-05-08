@@ -1,5 +1,5 @@
 on: [pull_request]
-name: linting
+name: Linting and formatter
 jobs:
   linting:
     runs-on: ubuntu-latest
