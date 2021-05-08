@@ -59,7 +59,7 @@ func (p *LatestBlocksResponsePayload) SanityCheck() error {
 	return nil
 }
 
-func (p *LatestBlocksResponsePayload) Type() PayloadType {
+func (p *LatestBlocksResponsePayload) Type() Type {
 	return PayloadTypeLatestBlocksResponse
 }
 

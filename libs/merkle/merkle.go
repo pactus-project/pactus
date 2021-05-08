@@ -1,4 +1,4 @@
-package simpleMerkle
+package simplemerkle
 
 import (
 	"math"
@@ -12,7 +12,7 @@ func init() {
 	hasher = crypto.HashH
 }
 
-type SimpleMerkleTree struct {
+type Tree struct {
 	merkles []*crypto.Hash
 }
 
@@ -43,7 +43,7 @@ func HashMerkleBranches(left *crypto.Hash, right *crypto.Hash) *crypto.Hash {
 	return &newHash
 }
 
-func NewTreeFromSlices(slices [][]byte) *SimpleMerkleTree {
+func NewTreeFromSlices(slices [][]byte) *Tree {
 	hashes := make([]crypto.Hash, len(slices))
 	for i, b := range slices {
 		hashes[i] = hasher(b)
@@ -52,7 +52,7 @@ func NewTreeFromSlices(slices [][]byte) *SimpleMerkleTree {
 	return NewTreeFromHashes(hashes)
 }
 
-func NewTreeFromHashes(hashes []crypto.Hash) *SimpleMerkleTree {
+func NewTreeFromHashes(hashes []crypto.Hash) *Tree {
 	if len(hashes) == 0 {
 		return nil
 	}
@@ -82,7 +82,7 @@ func NewTreeFromHashes(hashes []crypto.Hash) *SimpleMerkleTree {
 			merkles[offset] = newHash
 
 		// The normal case sets the parent node to the double sha256
-		// of the concatentation of the left and right children.
+		// of the concatenation of the left and right children.
 		default:
 			newHash := HashMerkleBranches(merkles[i], merkles[i+1])
 			merkles[offset] = newHash
@@ -90,10 +90,10 @@ func NewTreeFromHashes(hashes []crypto.Hash) *SimpleMerkleTree {
 		offset++
 	}
 
-	return &SimpleMerkleTree{merkles: merkles}
+	return &Tree{merkles: merkles}
 }
 
-func (tree *SimpleMerkleTree) Root() crypto.Hash {
+func (tree *Tree) Root() crypto.Hash {
 	if tree == nil {
 		return crypto.UndefHash
 	}
@@ -104,7 +104,7 @@ func (tree *SimpleMerkleTree) Root() crypto.Hash {
 	return crypto.UndefHash
 }
 
-func (tree *SimpleMerkleTree) Depth() int {
+func (tree *Tree) Depth() int {
 	if tree == nil {
 		return 0
 	}

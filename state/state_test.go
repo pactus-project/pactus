@@ -98,6 +98,8 @@ func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) 
 }
 
 func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) *block.Certificate {
+	assert.NotZero(t, len(signers))
+
 	sigs := make([]crypto.Signature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)
 	committers := []int{0, 1, 2, 3}
@@ -218,7 +220,7 @@ func TestCommitSandbox(t *testing.T) {
 		setup(t)
 
 		addr, _, _ := crypto.GenerateTestKeyPair()
-		sb := tState1.makeSandbox()
+		sb := tState1.concreteSandbox()
 		newAcc := sb.MakeNewAccount(addr)
 		newAcc.AddToBalance(1)
 		tState1.commitSandbox(sb, 0)
@@ -230,7 +232,7 @@ func TestCommitSandbox(t *testing.T) {
 		setup(t)
 
 		addr, pub, _ := crypto.GenerateTestKeyPair()
-		sb := tState1.makeSandbox()
+		sb := tState1.concreteSandbox()
 		newVal := sb.MakeNewValidator(pub)
 		newVal.AddToStake(1)
 		sb.UpdateValidator(newVal)
@@ -244,7 +246,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Modify account", func(t *testing.T) {
 		setup(t)
 
-		sb := tState1.makeSandbox()
+		sb := tState1.concreteSandbox()
 		acc := sb.Account(crypto.TreasuryAddress)
 		acc.SubtractFromBalance(1)
 		sb.UpdateAccount(acc)
@@ -257,7 +259,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Modify validator", func(t *testing.T) {
 		setup(t)
 
-		sb := tState1.makeSandbox()
+		sb := tState1.concreteSandbox()
 		val := sb.Validator(tValSigner2.Address())
 		val.AddToStake(2)
 		sb.UpdateValidator(val)
@@ -273,7 +275,7 @@ func TestCommitSandbox(t *testing.T) {
 
 		nextProposer := tState1.committee.Proposer(1)
 
-		sb := tState1.makeSandbox()
+		sb := tState1.concreteSandbox()
 		tState1.commitSandbox(sb, 0)
 
 		assert.Equal(t, tState1.committee.Proposer(0).Address(), nextProposer.Address())
@@ -284,7 +286,7 @@ func TestCommitSandbox(t *testing.T) {
 
 		nextNextProposer := tState1.committee.Proposer(2)
 
-		sb := tState1.makeSandbox()
+		sb := tState1.concreteSandbox()
 		tState1.commitSandbox(sb, 1)
 
 		assert.Equal(t, tState1.committee.Proposer(0).Address(), nextNextProposer.Address())

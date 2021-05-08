@@ -97,7 +97,7 @@ func IsValidDirPath(fp string) bool {
 	fi, err := os.Stat(fp)
 	if err == nil {
 		if fi.IsDir() {
-			if err := ioutil.WriteFile(fp+"/test", []byte{}, 07644); err != nil {
+			if err := ioutil.WriteFile(fp+"/test", []byte{}, 0600); err != nil {
 				return false
 			}
 			os.Remove(fp + "/test")

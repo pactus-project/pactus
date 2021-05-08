@@ -38,11 +38,11 @@ const tNodeIdx4 = 3
 const tTotalNodes = 8
 const tCommitteeSize = 4
 
-func incSequence(t *testing.T, addr crypto.Address) {
+func incSequence(addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
 }
 
-func getSequence(t *testing.T, addr crypto.Address) int {
+func getSequence(addr crypto.Address) int {
 	return tSequences[addr]
 }
 
@@ -74,7 +74,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
 		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3
-		tConfigs[i].Http.Enable = false
+		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
 		tConfigs[i].Capnp.Enable = false
 

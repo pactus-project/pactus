@@ -49,9 +49,8 @@ func (handler *queryProposalHandler) PrepareMessage(p payload.Payload) *message.
 			if handler.weAreInTheCommittee() {
 				msg := message.NewMessage(handler.SelfID(), p)
 				return msg
-			} else {
-				handler.logger.Debug("Not an active validator", "pld", pld)
 			}
+			handler.logger.Debug("Not an active validator", "pld", pld)
 		}
 	}
 

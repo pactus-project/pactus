@@ -1,4 +1,4 @@
-package last_info
+package lastinfo
 
 import (
 	"fmt"

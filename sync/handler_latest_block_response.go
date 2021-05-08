@@ -34,7 +34,7 @@ func (handler *latestBlocksResponseHandler) ParsPayload(p payload.Payload, initi
 		handler.cache.AddTransactions(pld.Transactions)
 		handler.tryCommitBlocks()
 	}
-	handler.updateSession(pld.ResponseCode, pld.SessionID, initiator, pld.Target)
+	handler.updateSession(pld.ResponseCode, pld.SessionID, pld.Target)
 
 	return nil
 }

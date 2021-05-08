@@ -19,7 +19,7 @@ var tValSigners [4]crypto.Signer
 var tSortitions [4]*sortition.Sortition
 var tCommittee *committee.Committee
 var tStore *store.MockStore
-var tSandbox *SandboxConcrete
+var tSandbox *Concrete
 
 func init() {
 	logger.InitLogger(logger.TestConfig())

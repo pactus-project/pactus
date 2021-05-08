@@ -98,11 +98,7 @@ func (h *Hash) UnmarshalText(text []byte) error {
 }
 
 func (h Hash) MarshalJSON() ([]byte, error) {
-	bz, err := h.MarshalText()
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(bz))
+	return json.Marshal(h.String())
 }
 
 func (h *Hash) UnmarshalJSON(bz []byte) error {

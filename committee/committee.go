@@ -11,7 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-var _ CommitteeReader = &Committee{}
+var _ Reader = &Committee{}
 
 type Committee struct {
 	lk deadlock.RWMutex

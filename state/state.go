@@ -16,7 +16,7 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
-	"github.com/zarbchain/zarb-go/state/last_info"
+	"github.com/zarbchain/zarb-go/state/lastinfo"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -36,7 +36,7 @@ type state struct {
 	txPool       txpool.TxPool
 	committee    *committee.Committee
 	sortition    *sortition.Sortition
-	lastInfo     *last_info.LastInfo
+	lastInfo     *lastinfo.LastInfo
 	logger       *logger.Logger
 }
 
@@ -45,7 +45,7 @@ func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
 	store store.Store,
-	txPool txpool.TxPool) (StateFacade, error) {
+	txPool txpool.TxPool) (Facade, error) {
 
 	var mintbaseAddr crypto.Address
 	if conf.MintbaseAddress != "" {
@@ -67,7 +67,7 @@ func LoadOrNewState(
 		store:        store,
 		mintbaseAddr: mintbaseAddr,
 		sortition:    sortition.NewSortition(),
-		lastInfo:     last_info.NewLastInfo(store),
+		lastInfo:     lastinfo.NewLastInfo(store),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -84,12 +84,12 @@ func LoadOrNewState(
 		}
 	}
 
-	txPool.SetNewSandboxAndRecheck(st.makeSandbox())
+	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	return st, nil
 }
 
-func (st *state) makeSandbox() *sandbox.SandboxConcrete {
+func (st *state) concreteSandbox() *sandbox.Concrete {
 	return sandbox.NewSandbox(st.store, st.params, st.lastInfo.BlockHeight(), st.sortition, st.committee)
 }
 
@@ -238,7 +238,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	}
 
 	// Create new sandbox and execute transactions
-	sb := st.makeSandbox()
+	sb := st.concreteSandbox()
 	exe := execution.NewExecution()
 
 	txIDs := block.NewTxIDs()
@@ -307,7 +307,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 		return err
 	}
 
-	sb := st.makeSandbox()
+	sb := st.concreteSandbox()
 	_, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
@@ -356,7 +356,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed.")
 	}
 
-	sb := st.makeSandbox()
+	sb := st.concreteSandbox()
 	trxs, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
@@ -392,7 +392,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
 
 	// At this point we can assign new sandbox to tx pool
-	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())
+	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	return nil
 }
@@ -421,13 +421,12 @@ func (st *state) evaluateSortition() bool {
 		trx := tx.NewSortitionTx(st.lastInfo.BlockHash(), val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)
 
-		if err := st.txPool.AppendTxAndBroadcast(trx); err != nil {
-			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
-			return false
-		} else {
+		err := st.txPool.AppendTxAndBroadcast(trx)
+		if err == nil {
 			st.logger.Debug("Sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
 			return true
 		}
+		st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
 	}
 
 	return false
@@ -440,7 +439,7 @@ func (st *state) Fingerprint() string {
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
+func (st *state) commitSandbox(sb *sandbox.Concrete, round int) {
 	joined := make([]*validator.Validator, 0)
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.JoinedCommittee {

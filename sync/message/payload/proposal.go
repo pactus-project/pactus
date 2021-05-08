@@ -23,7 +23,7 @@ func (p *ProposalPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *ProposalPayload) Type() PayloadType {
+func (p *ProposalPayload) Type() Type {
 	return PayloadTypeProposal
 }
 

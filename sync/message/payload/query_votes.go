@@ -28,7 +28,7 @@ func (p *QueryVotesPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *QueryVotesPayload) Type() PayloadType {
+func (p *QueryVotesPayload) Type() Type {
 	return PayloadTypeQueryVotes
 }
 

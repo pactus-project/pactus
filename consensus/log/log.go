@@ -3,7 +3,7 @@ package log
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/consensus/vote_set"
+	"github.com/zarbchain/zarb-go/consensus/voteset"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -39,9 +39,9 @@ func (log *Log) HasVote(hash crypto.Hash) bool {
 func (log *Log) MustGetRoundMessages(round int) *Messages {
 	for i := len(log.roundMessages); i <= round; i++ {
 		rv := &Messages{
-			prepareVotes:        vote_set.NewVoteSet(log.height, i, vote.VoteTypePrepare, log.validators),
-			precommitVotes:      vote_set.NewVoteSet(log.height, i, vote.VoteTypePrecommit, log.validators),
-			changeProposerVotes: vote_set.NewVoteSet(log.height, i, vote.VoteTypeChangeProposer, log.validators),
+			prepareVotes:        voteset.NewVoteSet(log.height, i, vote.VoteTypePrepare, log.validators),
+			precommitVotes:      voteset.NewVoteSet(log.height, i, vote.VoteTypePrecommit, log.validators),
+			changeProposerVotes: voteset.NewVoteSet(log.height, i, vote.VoteTypeChangeProposer, log.validators),
 		}
 
 		// extendind votes slice
@@ -56,17 +56,17 @@ func (log *Log) AddVote(v *vote.Vote) error {
 	return m.addVote(v)
 }
 
-func (log *Log) PrepareVoteSet(round int) *vote_set.VoteSet {
+func (log *Log) PrepareVoteSet(round int) *voteset.VoteSet {
 	m := log.MustGetRoundMessages(round)
 	return m.voteSet(vote.VoteTypePrepare)
 }
 
-func (log *Log) PrecommitVoteSet(round int) *vote_set.VoteSet {
+func (log *Log) PrecommitVoteSet(round int) *voteset.VoteSet {
 	m := log.MustGetRoundMessages(round)
 	return m.voteSet(vote.VoteTypePrecommit)
 }
 
-func (log *Log) ChangeProposerVoteSet(round int) *vote_set.VoteSet {
+func (log *Log) ChangeProposerVoteSet(round int) *voteset.VoteSet {
 	m := log.MustGetRoundMessages(round)
 	return m.voteSet(vote.VoteTypeChangeProposer)
 }

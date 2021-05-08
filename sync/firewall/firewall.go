@@ -18,11 +18,11 @@ type Firewall struct {
 	config  *Config
 	network network.Network
 	peerSet *peerset.PeerSet
-	state   state.StateFacade
+	state   state.Facade
 	logger  *logger.Logger
 }
 
-func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, state state.StateFacade, logger *logger.Logger) *Firewall {
+func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, state state.Facade, logger *logger.Logger) *Firewall {
 	return &Firewall{
 		config:  conf,
 		network: net,

@@ -24,7 +24,7 @@ func (p *QueryTransactionsPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *QueryTransactionsPayload) Type() PayloadType {
+func (p *QueryTransactionsPayload) Type() Type {
 	return PayloadTypeQueryTransactions
 }
 

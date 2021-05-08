@@ -1,4 +1,4 @@
-package simpleMerkle
+package simplemerkle
 
 import (
 	"crypto/sha256"

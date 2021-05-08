@@ -10,7 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type StateFacade interface {
+type Facade interface {
 	GenesisHash() crypto.Hash
 	LastBlockHeight() int
 	LastBlockHash() crypto.Hash

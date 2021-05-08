@@ -29,7 +29,7 @@ func (s *changeProposerState) decide() {
 
 func (s *changeProposerState) onAddVote(v *vote.Vote) {
 	// Only accept change propser votes
-	if v.VoteType() == vote.VoteTypeChangeProposer {
+	if v.Type() == vote.VoteTypeChangeProposer {
 		s.doAddVote(v)
 		s.decide()
 	}

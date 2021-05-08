@@ -171,7 +171,7 @@ func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int
 	}
 }
 
-func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, hash crypto.Hash) *vote.Vote {
+func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash crypto.Hash) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -183,9 +183,9 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.VoteType, ha
 
 			if pld.Type() == payload.PayloadTypeVote {
 				p := pld.(*payload.VotePayload)
-				if p.Vote.VoteType() == voteType &&
+				if p.Vote.Type() == voteType &&
 					p.Vote.BlockHash().EqualsTo(hash) {
-					return p.Vote
+					return
 				}
 			}
 		}
@@ -208,9 +208,8 @@ func checkHeightRoundWait(t *testing.T, cons *consensus, height, round int) {
 	checkHeightRound(t, cons, height, round)
 }
 
-func testAddVote(t *testing.T,
-	cons *consensus,
-	voteType vote.VoteType,
+func testAddVote(cons *consensus,
+	voteType vote.Type,
 	height int,
 	round int,
 	blockHash crypto.Hash,
@@ -347,12 +346,12 @@ func TestConsensusAddVotesNormal(t *testing.T) {
 	p := makeProposal(t, 2, 0)
 	tConsX.SetProposal(p)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexP)
+	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexP)
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexP)
+	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexP)
 	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
 	shouldPublishBlockAnnounce(t, tConsX, p.Block().Hash())
 }
@@ -362,11 +361,11 @@ func TestConsensusAddVote(t *testing.T) {
 
 	testEnterNewHeight(tConsP)
 
-	v1 := testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
-	v2 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX)
-	v3 := testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX)
-	v4 := testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.GenerateTestHash(), tIndexX)
-	v5 := testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX)
+	v1 := testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
+	v2 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX)
+	v3 := testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX)
+	v4 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.GenerateTestHash(), tIndexX)
+	v5 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX)
 
 	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
 	assert.True(t, tConsP.HasVote(v2.Hash()))
@@ -388,13 +387,13 @@ func TestConsensusLateProposal1(t *testing.T) {
 	require.NotNil(t, p)
 
 	// Partitioned node doesn't receive all the votes
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
+	testAddVote(tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
 
-	testAddVote(t, tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP)
+	testAddVote(tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP)
 
 	// Partitioned node receives proposal now
 	tConsB.SetProposal(p)
@@ -421,33 +420,33 @@ func TestPickRandomVote(t *testing.T) {
 	p2 := makeProposal(t, 1, 1)
 
 	// round 0
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexP)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, 1, 0, p1.Block().Hash(), tIndexP)
+	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexY)
 
 	assert.NotNil(t, tConsP.PickRandomVote())
 
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexP)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexP)
 
 	// Round 1
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexP)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexP)
+	testAddVote(tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexP)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexP)
 
 	// Round 2
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 1, 2, crypto.UndefHash, tIndexP)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 2, crypto.UndefHash, tIndexP)
 
 	for i := 0; i < 10; i++ {
 		rndVote := tConsP.PickRandomVote()
 		assert.NotNil(t, rndVote)
-		assert.Equal(t, rndVote.VoteType(), vote.VoteTypeChangeProposer, "Should only pick Change Proposer votes")
+		assert.Equal(t, rndVote.Type(), vote.VoteTypeChangeProposer, "Should only pick Change Proposer votes")
 	}
 }
 

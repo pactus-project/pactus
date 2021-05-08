@@ -17,7 +17,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-var _ StateFacade = &MockState{}
+var _ Facade = &MockState{}
 
 type MockState struct {
 	LastBlockCertificate *block.Certificate

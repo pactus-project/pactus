@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type StoreReader interface {
+type Reader interface {
 	Block(height int) (*block.Block, error)
 	HasAnyBlock() bool
 	BlockHeight(hash crypto.Hash) (int, error)
@@ -26,7 +26,7 @@ type StoreReader interface {
 }
 
 type Store interface {
-	StoreReader
+	Reader
 
 	UpdateAccount(acc *account.Account)
 	UpdateValidator(acc *validator.Validator)

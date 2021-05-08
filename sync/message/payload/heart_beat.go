@@ -31,7 +31,7 @@ func (p *HeartBeatPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *HeartBeatPayload) Type() PayloadType {
+func (p *HeartBeatPayload) Type() Type {
 	return PayloadTypeHeartBeat
 }
 
