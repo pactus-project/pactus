@@ -14,7 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-// The best way to test this module, is writting test code in `state.CommitBlock` function
+// The best way to test this module, is writing test code in `state.CommitBlock` function
 // And try to sync with the main net and restore state after each commit.
 // The restored info should be exactly same as currect info.
 //
@@ -38,7 +38,8 @@ func setup(t *testing.T) {
 
 		committeeStake := int64(0)
 		for _, num := range committers {
-			v, _ := tStore.ValidatorByNumber(num)
+			v, err := tStore.ValidatorByNumber(num)
+			assert.NoError(t, err)
 			committeeStake += v.Stake()
 		}
 
