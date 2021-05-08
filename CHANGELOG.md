@@ -18,6 +18,9 @@
 - Updating BLS library
 - Evaluate sortition based on pool stake
 - Collect more votes when scheduling for new height
+- Rounding down the proposed block time
+- Adding maximum session parameter to config
+- Updating firewall to drop connection for banned peer (experimental)
 - Simplifying consensus and sync tests
 - Adding more tests
 
