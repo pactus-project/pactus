@@ -48,6 +48,7 @@ func TestParsingSalamMessages(t *testing.T) {
 	})
 
 	t.Run("Alice receives Salam message from a peer. Peer is ahead. Alice should request for blocks", func(t *testing.T) {
+		tAliceSync.peerSet.Clear()
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		claimedHeight := tAliceState.LastBlockHeight() + 5
 		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, claimedHeight, 0)

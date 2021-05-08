@@ -61,9 +61,9 @@ func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error 
 		for i, num := range block.LastCertificate().Committers() {
 			committers.Set(i, int32(num))
 		}
-		absences, _ := clc.NewAbsences(int32(len(block.LastCertificate().Absences())))
-		for i, num := range block.LastCertificate().Absences() {
-			absences.Set(i, int32(num))
+		absentees, _ := clc.NewAbsentees(int32(len(block.LastCertificate().Absentees())))
+		for i, num := range block.LastCertificate().Absentees() {
+			absentees.Set(i, int32(num))
 		}
 	}
 	// header

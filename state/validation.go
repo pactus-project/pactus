@@ -17,11 +17,6 @@ func (st *state) validateBlock(block *block.Block) error {
 			"invalid version")
 	}
 
-	if !block.Header().LastBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"last block hash is not same as we expected. Expected %v, got %v", st.lastInfo.BlockHash(), block.Header().LastBlockHash())
-	}
-
 	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"state hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
@@ -34,7 +29,7 @@ func (st *state) validateBlock(block *block.Block) error {
 	return nil
 }
 
-func (st *state) validateCertificate(cert *block.Certificate) error {
+func (st *state) checkCertificate(cert *block.Certificate) error {
 	if err := cert.SanityCheck(); err != nil {
 		return err
 	}
@@ -49,7 +44,7 @@ func (st *state) validateCertificate(cert *block.Certificate) error {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"certificate has invalid committer: %x", num)
 		}
-		if !util.HasItem(cert.Absences(), num) {
+		if !util.HasItem(cert.Absentees(), num) {
 			pubs = append(pubs, val.PublicKey())
 			signersStake += val.Power()
 		}
@@ -79,7 +74,7 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 				"only genesis block has no certificate")
 		}
 	} else {
-		if err := st.validateCertificate(cert); err != nil {
+		if err := st.checkCertificate(cert); err != nil {
 			return err
 		}
 
@@ -102,9 +97,9 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 	return nil
 }
 
-// validateCertificateForCurrentHeight validates certificate for the current height
-func (st *state) validateCertificateForCurrentHeight(cert *block.Certificate, blockHash crypto.Hash) error {
-	if err := st.validateCertificate(cert); err != nil {
+// validateCertificate validates certificate for the current height
+func (st *state) validateCertificate(cert *block.Certificate, blockHash crypto.Hash) error {
+	if err := st.checkCertificate(cert); err != nil {
 		return err
 	}
 

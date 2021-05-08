@@ -60,10 +60,10 @@ func TestUpdateCertificate(t *testing.T) {
 	// This certificate has all signers' vote
 	cert := tConsX.state.LastCertificate()
 
-	assert.Empty(t, cert.Absences())
+	assert.Empty(t, cert.Absentees())
 }
 
-func TestConsensusBehindState(t *testing.T) {
+func TestConsensusHeightIsShorterThanState(t *testing.T) {
 	setup(t)
 
 	// Consensus starts here

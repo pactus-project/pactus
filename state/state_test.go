@@ -122,8 +122,8 @@ func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, sign
 		sigs[i] = s.SignData(sb)
 	}
 
-	absences := util.Subtracts(committers, signedBy)
-	return block.NewCertificate(blockHash, round, committers, absences, crypto.Aggregate(sigs))
+	absentees := util.Subtracts(committers, signedBy)
+	return block.NewCertificate(blockHash, round, committers, absentees, crypto.Aggregate(sigs))
 }
 
 func CommitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {
@@ -349,11 +349,28 @@ func TestInvalidBlock(t *testing.T) {
 func TestForkDetection(t *testing.T) {
 	setup(t)
 
-	b1, c1 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	b2, c2 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
-	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
-	assert.NoError(t, tState1.CommitBlock(1, b1, c1))
-	assert.Error(t, tState1.CommitBlock(1, b2, c2))
+	moveToNextHeightForAllStates(t)
+
+	b5m, c5m := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
+	b5f, c5f := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
+	assert.NoError(t, tState1.CommitBlock(2, b5m, c5m))
+	assert.NoError(t, tState2.CommitBlock(2, b5m, c5m))
+	assert.NoError(t, tState3.CommitBlock(2, b5m, c5m))
+	assert.NoError(t, tState4.CommitBlock(2, b5f, c5f))
+
+	b6, c6 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
+
+	assert.NoError(t, tState1.CommitBlock(3, b6, c6))
+	assert.NoError(t, tState2.CommitBlock(3, b6, c6))
+	assert.NoError(t, tState3.CommitBlock(3, b6, c6))
+	t.Run("Fork is detected, Should panic ", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("The code did not panic")
+			}
+		}()
+		assert.Error(t, tState4.CommitBlock(3, b6, c6))
+	})
 }
 
 func TestSortition(t *testing.T) {
@@ -430,29 +447,68 @@ func TestSortition(t *testing.T) {
 
 func TestValidateBlockTime(t *testing.T) {
 	setup(t)
-
 	fmt.Printf("BlockTimeInSecond: %d\n", tState1.params.BlockTimeInSecond)
-	roundedNow := util.RoundNow(10)
-	tState1.lastInfo.SetBlockTime(roundedNow.Add(-1 * time.Minute))
 
 	// Time not rounded
+	roundedNow := util.RoundNow(10)
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-15*time.Second)))
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-5*time.Second)))
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(5*time.Second)))
 	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(15*time.Second)))
 
-	// Too early
-	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-20*time.Second)))
-	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-10*time.Second)))
-	assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime()))
+	t.Run("Last block is committed 10 seconds ago", func(t *testing.T) {
+		tState1.lastInfo.SetBlockTime(roundedNow.Add(-10 * time.Second))
 
-	// Ok
-	assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(10*time.Second)))
-	assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(20*time.Second)))
+		// Before or same as the last block time
+		assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-20*time.Second)))
+		assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-10*time.Second)))
 
-	// Too late
-	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(30*time.Second)))
-	assert.Error(t, tState1.validateBlockTime(roundedNow.Add(40*time.Second)))
+		// Ok
+		assert.NoError(t, tState1.validateBlockTime(roundedNow))
+		assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(10*time.Second)))
+		assert.Equal(t, tState1.proposeNextBlockTime(), roundedNow, "Invalid proposed time for the next block")
+
+		// More than threshold
+		assert.Error(t, tState1.validateBlockTime(roundedNow.Add(20*time.Second)))
+	})
+
+	t.Run("Last block is committed one minute ago", func(t *testing.T) {
+		tState1.lastInfo.SetBlockTime(roundedNow.Add(-1 * time.Minute)) // One minute ago
+
+		// Before or same as the last block time
+		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-10*time.Second)))
+		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime()))
+		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(+10*time.Second)))
+
+		// less than threshold
+		assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-20*time.Second)))
+
+		// Ok
+		assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(-10*time.Second)))
+		assert.NoError(t, tState1.validateBlockTime(roundedNow))
+		assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(10*time.Second)))
+		assert.Equal(t, tState1.proposeNextBlockTime(), roundedNow, "Invalid proposed time for the next block")
+
+		// More than threshold
+		assert.Error(t, tState1.validateBlockTime(roundedNow.Add(20*time.Second)))
+	})
+
+	t.Run("Last block is committed in future", func(t *testing.T) {
+		tState1.lastInfo.SetBlockTime(roundedNow.Add(1 * time.Minute)) // One minute later
+
+		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(+1*time.Minute)))
+
+		// Before the last block time
+		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-10*time.Second)))
+		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime()))
+
+		// Ok
+		assert.NoError(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(10*time.Second)))
+		assert.NoError(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(20*time.Second)))
+
+		// More than threshold
+		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(30*time.Second)))
+	})
 }
 
 func TestInvalidBlockVersion(t *testing.T) {
@@ -573,39 +629,37 @@ func TestSetBlockTime(t *testing.T) {
 	setup(t)
 
 	t.Run("Last block time is a bit far in past", func(t *testing.T) {
-		tState1.lastInfo.SetBlockTime(util.Now().Add(-16 * time.Second))
+		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(-20 * time.Second))
 		b, _ := tState1.ProposeBlock(0)
-		fmt.Println(b.Header().Time().UTC())
+		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
-		assert.True(t, b.Header().Time().Before(util.Now().Add(20*time.Second)))
+		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
 		assert.Zero(t, b.Header().Time().Second()%10)
 	})
 
 	t.Run("Last block time is almost good", func(t *testing.T) {
-		tState1.lastInfo.SetBlockTime(util.Now().Add(-6 * time.Second))
+		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(-10 * time.Second))
 		b, _ := tState1.ProposeBlock(0)
-		fmt.Println(b.Header().Time().UTC())
+		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
-		assert.True(t, b.Header().Time().Before(util.Now().Add(20*time.Second)))
+		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
 		assert.Zero(t, b.Header().Time().Second()%10)
 	})
 
 	// After our time
 	t.Run("Last block time is in near future", func(t *testing.T) {
-		tState1.lastInfo.SetBlockTime(util.Now().Add(+6 * time.Second))
+		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(+10 * time.Second))
 		b, _ := tState1.ProposeBlock(0)
-		fmt.Println(b.Header().Time().UTC())
+		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
-		assert.True(t, b.Header().Time().Before(tState1.lastInfo.BlockTime().Add(20*time.Second)))
 		assert.Zero(t, b.Header().Time().Second()%10)
 	})
 
 	t.Run("Last block time is more than a block in future", func(t *testing.T) {
-		tState1.lastInfo.SetBlockTime(util.Now().Add(+16 * time.Second))
+		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(+20 * time.Second))
 		b, _ := tState1.ProposeBlock(0)
-		fmt.Println(b.Header().Time().UTC())
+		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
-		assert.True(t, b.Header().Time().Before(tState1.lastInfo.BlockTime().Add(20*time.Second)))
 		assert.Zero(t, b.Header().Time().Second()%10)
 	})
 }

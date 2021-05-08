@@ -36,7 +36,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
 	})
 
-	joinAliceToTheSet(t)
+	joinAliceToCommittee(t)
 	tBobConsensus.Round = 1
 	tBobConsensus.SetProposal(proposalRound1)
 

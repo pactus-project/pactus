@@ -36,7 +36,7 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeTransactions)
 	})
 
-	joinAliceToTheSet(t)
+	joinAliceToCommittee(t)
 
 	t.Run("Alice sends query transaction message", func(t *testing.T) {
 		tAliceBroadcastCh <- pld

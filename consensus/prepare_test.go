@@ -45,7 +45,9 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 func TestByzantineVote1(t *testing.T) {
 	setup(t)
 
-	h := 1
+	commitBlockForAllStates(t)
+
+	h := 2
 	r := 0
 	p := makeProposal(t, h, r)
 
@@ -54,12 +56,11 @@ func TestByzantineVote1(t *testing.T) {
 
 	// =================================
 	// Nx votes
+	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
 	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
 	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
-	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
-	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
-
+	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
 	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
 	// Byzantine node doesn't broadcast its precommit vote
 
@@ -79,17 +80,17 @@ func TestByzantineVote1(t *testing.T) {
 	// =================================
 	// Now, Partition heals
 
-	tConsP.SetProposal(p)
-	for _, v := range tConsX.AllVotes() {
-		tConsP.AddVote(v)
-	}
-	checkHeightRoundWait(t, tConsP, h, r+1)
-
 	for _, v := range tConsP.AllVotes() {
 		tConsX.AddVote(v)
 	}
 	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, crypto.UndefHash)
 	checkHeightRoundWait(t, tConsX, h, r+1)
+
+	tConsP.SetProposal(p)
+	for _, v := range tConsX.AllVotes() {
+		tConsP.AddVote(v)
+	}
+	checkHeightRoundWait(t, tConsP, h, r+1)
 }
 
 // Np should propose a block. Np is partitioned and Nb doesn't send proposal to Nx, Ny.

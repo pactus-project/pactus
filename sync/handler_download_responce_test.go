@@ -6,20 +6,23 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/peerset"
 )
 
 func TestDownloadBlocks(t *testing.T) {
-	tAliceConfig.RequestBlockInterval = 30
-	tBobConfig.RequestBlockInterval = 30
+	LatestBlockInterval = 30
 	setup(t)
 	disableHeartbeat(t)
 
 	// Clear alice store
 	tAliceSync.cache.Clear()
 	tAliceState.Store.Blocks = make(map[int]*block.Block)
+	tBobSync.peerSet.RemovePeer(tAlicePeerID)
+	p := tBobSync.peerSet.MustGetPeer(tAlicePeerID)
+	p.UpdateStatus(peerset.StatusCodeOK)
 	tAliceConsensus.Scheduled = false
 
-	joinBobToTheSet(t)
+	joinBobToCommittee(t)
 	addMoreBlocksForBobAndAnnounceLastBlock(t, 79) // total blocks: 21+79 = 100
 	shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlockAnnounce)
 
@@ -48,6 +51,6 @@ func TestDownloadBlocks(t *testing.T) {
 
 	assert.Equal(t, tAliceState.LastBlockHash(), tBobState.LastBlockHash())
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
-	assert.False(t, tAliceSync.peerSet.HasAnyValidSession())
-	assert.False(t, tBobSync.peerSet.HasAnyValidSession())
+	assert.False(t, tAliceSync.peerSet.HasAnyOpenSession())
+	assert.False(t, tBobSync.peerSet.HasAnyOpenSession())
 }

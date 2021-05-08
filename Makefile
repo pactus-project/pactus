@@ -1,7 +1,8 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests')
 HERUMI= $(shell pwd)/.herumi
-BLS_CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++"
+BLS_CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++ -g -O2"
 BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
+
 
 
 

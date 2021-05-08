@@ -309,23 +309,23 @@ func (s Certificate) NewCommitters(n int32) (capnp.Int32List, error) {
 	return l, err
 }
 
-func (s Certificate) Absences() (capnp.Int32List, error) {
+func (s Certificate) Absentees() (capnp.Int32List, error) {
 	p, err := s.Struct.Ptr(2)
 	return capnp.Int32List{List: p.List()}, err
 }
 
-func (s Certificate) HasAbsences() bool {
+func (s Certificate) HasAbsentees() bool {
 	p, err := s.Struct.Ptr(2)
 	return p.IsValid() || err != nil
 }
 
-func (s Certificate) SetAbsences(v capnp.Int32List) error {
+func (s Certificate) SetAbsentees(v capnp.Int32List) error {
 	return s.Struct.SetPtr(2, v.List.ToPtr())
 }
 
-// NewAbsences sets the absences field to a newly
+// NewAbsentees sets the absentees field to a newly
 // allocated capnp.Int32List, preferring placement in s's segment.
-func (s Certificate) NewAbsences(n int32) (capnp.Int32List, error) {
+func (s Certificate) NewAbsentees(n int32) (capnp.Int32List, error) {
 	l, err := capnp.NewInt32List(s.Struct.Segment(), n)
 	if err != nil {
 		return capnp.Int32List{}, err

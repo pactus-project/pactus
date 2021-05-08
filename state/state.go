@@ -207,7 +207,7 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 	defer st.lk.Unlock()
 
 	// Check if certificate has more signers ...
-	if len(cert.Absences()) < len(st.lastInfo.Certificate().Absences()) {
+	if len(cert.Absentees()) < len(st.lastInfo.Certificate().Absentees()) {
 		if err := st.validateCertificateForPreviousHeight(cert); err != nil {
 			st.logger.Warn("Try to update last certificate, but it's invalid", "err", err)
 			return err
@@ -320,33 +320,28 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if height != st.lastInfo.BlockHeight() && height != st.lastInfo.BlockHeight()+1 {
+	if height != st.lastInfo.BlockHeight()+1 {
 		/// Returning error here will cause so many error logs during syncing blockchain
 		/// Syncing is asynchronous job and we might receive blocks not in order
 		st.logger.Debug("Unexpected block height", "height", height)
 		return nil
 	}
 
-	/// There are two modules that can commit a block: Consensus and Syncer.
-	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
-	/// In the other hand, Syncer module receives new blocks from other peers and if we are behind them, it tries to commit them.
-	/// We should never have a fork in our blockchain. but if it happens here we can catch it.
-	if st.lastInfo.BlockHeight() == height {
-		if block.Hash().EqualsTo(st.lastInfo.BlockHash()) {
-			st.logger.Debug("This block committed before", "hash", block.Hash())
-			return nil
-		}
-
-		st.logger.Error("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Hash())
-		return errors.Error(errors.ErrInvalidBlock)
-	}
-
-	err := st.validateBlock(block)
+	err := st.validateCertificate(cert, block.Hash())
 	if err != nil {
 		return err
 	}
 
-	err = st.validateCertificateForCurrentHeight(cert, block.Hash())
+	/// There are two modules that can commit a block: Consensus and Syncer.
+	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
+	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
+	/// We should never have a fork in our blockchain. but if it happens, here we can catch it.
+	if !block.Header().LastBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
+		st.logger.Panic("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().LastBlockHash())
+		return errors.Error(errors.ErrInvalidBlock)
+	}
+
+	err = st.validateBlock(block)
 	if err != nil {
 		return err
 	}
@@ -479,17 +474,21 @@ func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
 
 func (st *state) validateBlockTime(t time.Time) error {
 	if t.Second()%st.params.BlockTimeInSecond != 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time is not rounded")
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is not rounded", t.String())
 	}
-	if t.Before(st.lastInfo.BlockTime().Add(1 * time.Second)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time is too early: %s", t.String())
+	if t.Before(st.lastInfo.BlockTime()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is before the last block time", t.String())
+	}
+	if t.Equal(st.lastInfo.BlockTime()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is same as the last block time", t.String())
 	}
 	proposeTime := st.proposeNextBlockTime()
-	threshold := 2 * st.params.BlockTime()
+	threshold := st.params.BlockTime()
+	if t.Before(proposeTime.Add(-threshold)) {
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is less than threshold (%s)", t.String(), proposeTime.String())
+	}
 	if t.After(proposeTime.Add(threshold)) {
-		fmt.Println(t)
-		fmt.Println(util.RoundNow(st.params.BlockTimeInSecond).Add(threshold))
-		return errors.Errorf(errors.ErrInvalidBlock, "block time is too far")
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)", t.String(), proposeTime.String())
 	}
 
 	return nil
@@ -497,7 +496,6 @@ func (st *state) validateBlockTime(t time.Time) error {
 
 func (st *state) proposeNextBlockTime() time.Time {
 	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockTime())
-	timestamp = util.RoundTime(timestamp, st.params.BlockTimeInSecond)
 
 	now := util.Now()
 	if now.After(timestamp.Add(1 * time.Second)) {
