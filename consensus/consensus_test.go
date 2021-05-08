@@ -76,7 +76,7 @@ func setup(t *testing.T) {
 	store3 := store.MockingStore()
 	store4 := store.MockingStore()
 
-	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height. 
+	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height.
 	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
 	tGenDoc = genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
 	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)
@@ -101,12 +101,12 @@ func setup(t *testing.T) {
 	tConsB = consB.(*consensus)
 	tConsP = consP.(*consensus)
 
-	tConsX.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consX: ", cons: tConsX})
-	tConsY.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consY: ", cons: tConsY})
-	tConsB.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consB: ", cons: tConsB})
-	tConsP.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: "consP: ", cons: tConsP})
+	tConsX.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consX - %s: ", t.Name()), cons: tConsX})
+	tConsY.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consY - %s: ", t.Name()), cons: tConsY})
+	tConsB.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consB - %s: ", t.Name()), cons: tConsB})
+	tConsP.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consP - %s: ", t.Name()), cons: tConsP})
 
-	logger.Info("Setup finished, start running the test")
+	logger.Info("Setup finished, start running the test", "name", t.Name())
 }
 
 func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash) {
