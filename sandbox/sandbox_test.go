@@ -222,16 +222,29 @@ func TestAddValidatorToCommittee(t *testing.T) {
 	})
 
 	t.Run("Not leaving committee before proposing a block", func(t *testing.T) {
+		t.Run("Oldest validator had chance to propose a block", func(t *testing.T) {
+			vals := tSandbox.committee.Validators()
+			vals[0].UpdateLastJoinedHeight(height - 5)
+			vals[1].UpdateLastJoinedHeight(height - 4)
+			vals[2].UpdateLastJoinedHeight(height - 3)
+			vals[3].UpdateLastJoinedHeight(height - 2)
 
-		vals := tSandbox.committee.Validators()
-		vals[0].UpdateLastJoinedHeight(height - 4)
-		vals[1].UpdateLastJoinedHeight(height - 3)
-		vals[2].UpdateLastJoinedHeight(height - 2)
-		vals[3].UpdateLastJoinedHeight(height - 1)
+			val8 := tSandbox.Validator(tValSigners[7].Address())
 
-		val8 := tSandbox.Validator(tValSigners[7].Address())
+			assert.NoError(t, tSandbox.EnterCommittee(stamp, val8.Address()))
+		})
 
-		assert.Error(t, tSandbox.EnterCommittee(stamp, val8.Address()))
+		t.Run("Oldest validator had NO chance to propose a block", func(t *testing.T) {
+			vals := tSandbox.committee.Validators()
+			vals[0].UpdateLastJoinedHeight(height - 4)
+			vals[1].UpdateLastJoinedHeight(height - 3)
+			vals[2].UpdateLastJoinedHeight(height - 2)
+			vals[3].UpdateLastJoinedHeight(height - 1)
+
+			val8 := tSandbox.Validator(tValSigners[7].Address())
+
+			assert.Error(t, tSandbox.EnterCommittee(stamp, val8.Address()))
+		})
 	})
 
 	t.Run("Update validator and add to committee", func(t *testing.T) {
