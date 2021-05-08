@@ -1,13 +1,35 @@
 # Changelog
 
+## 1.0.0
+- Refactoring Consensus module
+- Refactoring Sync module
+- Refactoring certificate verification
+- Refactoring sync messages
+- Adding message log to consensus module
+- Adding send_raw_transaction API for capnp
+- Adding gRPC and gRPC gateway endpoints
+- Detecting data race conditions in tests
+- Detecting deadlock conditions in tests
+- Isolating sandbox
+- Reset sandbox for tx pool after committing a block
+- Recheck all the transaction inside tx pool
+- Updating libp2p package
+- Updating BLS library
+- Evaluate sortition based on pool stake
+- Batch writing
+- Collect more votes when scheduling for new height
+- Simplifying consensus and sync tests
+- Adding more tests
+- Ready to fire!
+
 ## 0.9.3
 - Adding sortition_seed to block header
-- Sortition runs on sortition_seed instead of block_hash
+- Sortition runs on sortition_seed instead of last_block_hash
 - Updating round-robin mechanism for choosing proposer
 - Block certificate includes committers and absentees
 
 ## 0.9.2
-- Refactoring commit base on zip-0001 proposal
+- Refactoring certificate base on zip-0001 proposal
 - Introducing Download topic for downloading blockchain
 - Transaction ID is hash of transaction without signature and public-key
 - Using blake2b for hashing
@@ -20,7 +42,7 @@
 - Add number to account and validator structure (Used for Merklizing state)
 - Add chain params to genesis
 - Stamp validation check for transaction
-- Refactoring transactions and transaction receipts
+- Refactoring transactions
 - Assigning version 1001 for testnet blocks
 - Generating keys based on BIP-0039 (mnemonic or seed phrase)
 - Add new command for recovering key by seed
@@ -37,8 +59,7 @@
 - Refactoring block structure
 - Refactoring Certificate structure
 - Aggregating validators' signatures
-- Validating Certificate and committers
-- Calculating root hash of committers
+- Validating certificate and committers
 - Report UndefHash as a sanity error
 - Try to load last state info upon starting the node
 - Saving the last state info when a new block is committed
@@ -60,4 +81,4 @@
 
 ## 0.7.0
 
- First version
+ Migrating to github
