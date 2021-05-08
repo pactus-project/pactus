@@ -10,17 +10,16 @@
 - Adding gRPC and gRPC gateway endpoints
 - Detecting data race conditions in tests
 - Detecting deadlock conditions in tests
+- Batch writing
 - Isolating sandbox
-- Reset sandbox for tx pool after committing a block
+- Resetting sandbox for tx pool after committing a block
 - Recheck all the transaction inside tx pool
 - Updating libp2p package
 - Updating BLS library
 - Evaluate sortition based on pool stake
-- Batch writing
 - Collect more votes when scheduling for new height
 - Simplifying consensus and sync tests
 - Adding more tests
-- Ready to fire!
 
 ## 0.9.3
 - Adding sortition_seed to block header
