@@ -5,6 +5,7 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type LatestBlocksRequestPayload struct {
@@ -41,5 +42,5 @@ func (p *LatestBlocksRequestPayload) Type() PayloadType {
 }
 
 func (p *LatestBlocksRequestPayload) Fingerprint() string {
-	return fmt.Sprintf("{⚓ %d %v}", p.SessionID, p.From)
+	return fmt.Sprintf("{⚓ %d %v %v:%v}", p.SessionID, util.FingerprintPeerID(p.Target), p.From, p.To)
 }

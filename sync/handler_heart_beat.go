@@ -25,7 +25,7 @@ func (handler *heartBeatHandler) ParsPayload(p payload.Payload, initiator peer.I
 	if pld.Height == height {
 		if pld.Round > round+1 {
 			if handler.weAreInTheCommittee() {
-				handler.logger.Info("Our consensus is behind of this peer.", "ours", round, "peer", pld.Round)
+				handler.logger.Info("Our consensus is shorter than this peer.", "ours", round, "peer", pld.Round)
 
 				query := payload.NewQueryVotesPayload(height, round)
 				handler.broadcast(query)

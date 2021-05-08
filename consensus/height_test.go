@@ -63,7 +63,7 @@ func TestUpdateCertificate(t *testing.T) {
 	assert.Empty(t, cert.Absentees())
 }
 
-func TestConsensusBehindState(t *testing.T) {
+func TestConsensusHeightIsShorterThanState(t *testing.T) {
 	setup(t)
 
 	// Consensus starts here

@@ -4,6 +4,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type downloadResponseHandler struct {
@@ -26,9 +27,13 @@ func (handler *downloadResponseHandler) ParsPayload(p payload.Payload, initiator
 		return nil
 	}
 
-	handler.cache.AddBlocks(pld.From, pld.Blocks)
-	handler.cache.AddTransactions(pld.Transactions)
-	handler.tryCommitBlocks()
+	if pld.IsRequestNotProcessed() {
+		handler.logger.Warn("Download blocks request is rejected", "pid", util.FingerprintPeerID(initiator), "response", pld.ResponseCode)
+	} else {
+		handler.cache.AddBlocks(pld.From, pld.Blocks)
+		handler.cache.AddTransactions(pld.Transactions)
+		handler.tryCommitBlocks()
+	}
 	handler.updateSession(pld.ResponseCode, pld.SessionID, initiator, pld.Target)
 
 	return nil

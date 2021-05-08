@@ -5,6 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/peerset"
 )
 
 type latestBlocksRequestHandler struct {
@@ -21,14 +22,38 @@ func (handler *latestBlocksRequestHandler) ParsPayload(p payload.Payload, initia
 	pld := p.(*payload.LatestBlocksRequestPayload)
 	handler.logger.Trace("Parsing latest blocks request payload", "pld", pld)
 
-	peer := handler.peerSet.MustGetPeer(initiator)
-	peer.UpdateHeight(pld.From)
-
 	if pld.Target != handler.SelfID() {
 		return nil
 	}
+
+	if handler.peerSet.NumberOfOpenSessions() > handler.config.MaximumOpenSessions {
+		handler.logger.Warn("We are busy", "pld", pld, "pid", initiator)
+		response := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeBusy, pld.SessionID, initiator, 0, nil, nil, nil)
+		handler.broadcast(response)
+
+		return nil
+	}
+
+	peer := handler.peerSet.MustGetPeer(initiator)
+	if peer.Status() != peerset.StatusCodeOK {
+		response := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil, nil)
+		handler.broadcast(response)
+
+		return errors.Errorf(errors.ErrInvalidMessage, "Peer status is not ok: %v", peer.Status())
+	}
+
+	if peer.Height() > pld.From {
+		response := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil, nil)
+		handler.broadcast(response)
+
+		return errors.Errorf(errors.ErrInvalidMessage, "Peer request for blocks that already has: %v", pld.From)
+	}
+
 	ourHeight := handler.state.LastBlockHeight()
-	if pld.From < ourHeight-handler.config.RequestBlockInterval {
+	if pld.From < ourHeight-LatestBlockInterval {
+		response := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeRejected, pld.SessionID, initiator, 0, nil, nil, nil)
+		handler.broadcast(response)
+
 		return errors.Errorf(errors.ErrInvalidMessage, "the request height is not acceptable: %v", pld.From)
 	}
 	from := pld.From
@@ -46,6 +71,8 @@ func (handler *latestBlocksRequestHandler) ParsPayload(p payload.Payload, initia
 
 		from += len(blocks)
 	}
+	// To avoid sending blocks again, we update height for this peer
+	peer.UpdateHeight(from - 1)
 
 	lastCertificate := handler.state.LastCertificate()
 	response := payload.NewLatestBlocksResponsePayload(payload.ResponseCodeSynced, pld.SessionID, initiator, from, nil, nil, lastCertificate)

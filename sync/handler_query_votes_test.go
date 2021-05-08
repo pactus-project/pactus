@@ -27,7 +27,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeVote)
 	})
 
-	joinAliceToTheSet(t)
+	joinAliceToCommittee(t)
 
 	t.Run("Alice should be able to send query votes message because she is an active validator", func(t *testing.T) {
 		tAliceBroadcastCh <- pld
