@@ -2,7 +2,6 @@ package executor
 
 import (
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
@@ -37,7 +36,6 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 
 		if err := sb.EnterCommittee(trx.Stamp(), val.Address()); err != nil {
-			logger.Warn("Unable to enter committee", "err", err)
 			return errors.Errorf(errors.ErrInvalidTx, err.Error())
 		}
 	}

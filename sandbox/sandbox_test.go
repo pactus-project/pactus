@@ -197,9 +197,9 @@ func TestAddValidatorToCommittee(t *testing.T) {
 	t.Run("More than 1/3 stake, Should returns error", func(t *testing.T) {
 		tSandbox.params.CommitteeSize = 4
 
-		val5 := tSandbox.Validator(tValSigners[4].Address())
-		val6 := tSandbox.Validator(tValSigners[5].Address())
-		val7 := tSandbox.Validator(tValSigners[6].Address())
+		val5 := tSandbox.Validator(tValSigners[4].Address()) // stake -> 1000
+		val6 := tSandbox.Validator(tValSigners[5].Address()) // stake -> 3000
+		val7 := tSandbox.Validator(tValSigners[6].Address()) // stake -> 1000
 
 		assert.Equal(t, tSandbox.committee.TotalStake(), int64(10000), "Total stake should be 10000")
 		assert.NoError(t, tSandbox.EnterCommittee(stamp, val5.Address()))
