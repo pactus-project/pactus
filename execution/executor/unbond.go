@@ -19,7 +19,8 @@ func NewUnbondExecutor(strict bool) *UnbondExecutor {
 func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.UnbondPayload)
 
-	val := sb.Validator(pld.Validator)
+	val := sb.Validator(pld.Signer())
+
 	if val == nil {
 		//if couldn't retrive the validator then cann't unbound it
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator assoiciated with this key")
@@ -30,11 +31,8 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if val.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
-	//should use the vlidator stake to pay fee??
-	//can make the unbonding free
 
 	val.IncSequence()
-	// unbondingVal.SubtractFromBalance(trx.Fee())
 	val.UpdateUnbondingHeight(sb.CurrentHeight())
 	sb.UpdateValidator(val)
 
