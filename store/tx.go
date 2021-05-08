@@ -12,10 +12,10 @@ type txStore struct {
 	db *leveldb.DB
 }
 
-func newTxStore(db *leveldb.DB) (*txStore, error) {
+func newTxStore(db *leveldb.DB) *txStore {
 	return &txStore{
 		db: db,
-	}, nil
+	}
 }
 
 func (ts *txStore) saveTx(batch *leveldb.Batch, trx *tx.Tx) error {

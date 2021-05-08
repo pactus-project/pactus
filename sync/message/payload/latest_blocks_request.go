@@ -37,7 +37,7 @@ func (p *LatestBlocksRequestPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *LatestBlocksRequestPayload) Type() PayloadType {
+func (p *LatestBlocksRequestPayload) Type() Type {
 	return PayloadTypeLatestBlocksRequest
 }
 

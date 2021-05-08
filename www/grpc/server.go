@@ -14,7 +14,7 @@ import (
 type zarbServer struct {
 	zarb.UnimplementedZarbServer
 
-	state  state.StateFacade
+	state  state.Facade
 	sync   sync.Synchronizer
 	logger *logger.Logger
 }
@@ -24,12 +24,12 @@ type Server struct {
 	config   *Config
 	listener net.Listener
 	grpc     *grpc.Server
-	state    state.StateFacade
+	state    state.Facade
 	sync     sync.Synchronizer
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.StateFacade, sync sync.Synchronizer) (*Server, error) {
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) (*Server, error) {
 
 	return &Server{
 		ctx:    context.Background(),

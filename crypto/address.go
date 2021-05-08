@@ -97,11 +97,7 @@ func (addr *Address) UnmarshalText(text []byte) error {
 }
 
 func (addr Address) MarshalJSON() ([]byte, error) {
-	bz, err := addr.MarshalText()
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(bz))
+	return json.Marshal(addr.String())
 }
 
 func (addr *Address) UnmarshalJSON(bz []byte) error {

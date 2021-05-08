@@ -22,8 +22,8 @@ func lastHeight() int {
 	return int(st.Height())
 }
 
-func waitForNewBlock() *block.Block {
-	return getBlockAt(lastHeight() + 1)
+func waitForNewBlock() {
+	getBlockAt(lastHeight() + 1)
 }
 
 func lastBlock() *block.Block {

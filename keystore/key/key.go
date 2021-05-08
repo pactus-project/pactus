@@ -27,7 +27,7 @@ func GenerateRandomKey() *Key {
 	}
 }
 
-func KeyFromSeed(seed []byte) (*Key, error) {
+func FromSeed(seed []byte) (*Key, error) {
 	priv, err := crypto.PrivateKeyFromSeed(seed)
 	if err != nil {
 		return nil, err

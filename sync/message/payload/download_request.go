@@ -37,7 +37,7 @@ func (p *DownloadRequestPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *DownloadRequestPayload) Type() PayloadType {
+func (p *DownloadRequestPayload) Type() Type {
 	return PayloadTypeDownloadRequest
 }
 

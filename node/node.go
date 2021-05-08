@@ -24,7 +24,7 @@ import (
 type Node struct {
 	genesisDoc *genesis.Genesis
 	config     *config.Config
-	state      state.StateFacade
+	state      state.Facade
 	txPool     txpool.TxPool
 	consensus  consensus.Consensus
 	network    network.Network
@@ -75,7 +75,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, errors.Wrap(err, "could not create Capnproto server")
 	}
 
-	http, err := http.NewServer(conf.Http)
+	http, err := http.NewServer(conf.HTTP)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create http server")
 	}
@@ -153,12 +153,12 @@ func (n *Node) Stop() {
 	n.grpc.StopServer()
 }
 
-func (n *Node) Consensus() consensus.ConsensusReader {
+func (n *Node) Consensus() consensus.Reader {
 	return n.consensus
 }
 func (n *Node) Sync() sync.Synchronizer {
 	return n.sync
 }
-func (n *Node) State() state.StateFacade {
+func (n *Node) State() state.Facade {
 	return n.state
 }

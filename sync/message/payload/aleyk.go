@@ -47,7 +47,7 @@ func (p *AleykPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *AleykPayload) Type() PayloadType {
+func (p *AleykPayload) Type() Type {
 	return PayloadTypeAleyk
 }
 

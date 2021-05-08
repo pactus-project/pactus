@@ -30,7 +30,7 @@ type Config struct {
 	Logger    *logger.Config
 	Sync      *sync.Config
 	Capnp     *capnp.Config
-	Http      *http.Config
+	HTTP      *http.Config
 	GRPC      *grpc.Config
 }
 
@@ -44,7 +44,7 @@ func DefaultConfig() *Config {
 		Sync:      sync.DefaultConfig(),
 		Logger:    logger.DefaultConfig(),
 		Capnp:     capnp.DefaultConfig(),
-		Http:      http.DefaultConfig(),
+		HTTP:      http.DefaultConfig(),
 		GRPC:      grpc.DefaultConfig(),
 	}
 
@@ -61,7 +61,7 @@ func TestConfig() *Config {
 		Sync:      sync.TestConfig(),
 		Logger:    logger.TestConfig(),
 		Capnp:     capnp.TestConfig(),
-		Http:      http.TestConfig(),
+		HTTP:      http.TestConfig(),
 		GRPC:      grpc.TestConfig(),
 	}
 
@@ -156,7 +156,7 @@ func (conf *Config) SanityCheck() error {
 	if err := conf.Capnp.SanityCheck(); err != nil {
 		return err
 	}
-	if err := conf.Http.SanityCheck(); err != nil {
+	if err := conf.HTTP.SanityCheck(); err != nil {
 		return err
 	}
 	return nil

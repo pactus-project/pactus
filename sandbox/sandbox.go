@@ -13,12 +13,12 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type SandboxConcrete struct {
+type Concrete struct {
 	lk deadlock.RWMutex
 
-	store            store.StoreReader
+	store            store.Reader
 	sortition        *sortition.Sortition
-	committee        committee.CommitteeReader
+	committee        committee.Reader
 	accounts         map[crypto.Address]*AccountStatus
 	validators       map[crypto.Address]*ValidatorStatus
 	params           param.Params
@@ -39,8 +39,8 @@ type AccountStatus struct {
 	Updated bool
 }
 
-func NewSandbox(store store.StoreReader, params param.Params, lastHeight int, sortition *sortition.Sortition, committee committee.CommitteeReader) *SandboxConcrete {
-	sb := &SandboxConcrete{
+func NewSandbox(store store.Reader, params param.Params, lastHeight int, sortition *sortition.Sortition, committee committee.Reader) *Concrete {
+	sb := &Concrete{
 		store:      store,
 		sortition:  sortition,
 		committee:  committee,
@@ -57,7 +57,7 @@ func NewSandbox(store store.StoreReader, params param.Params, lastHeight int, so
 	return sb
 }
 
-func (sb *SandboxConcrete) shouldPanicForDuplicatedAddress() {
+func (sb *Concrete) shouldPanicForDuplicatedAddress() {
 	//
 	// Why we should panic here?
 	//
@@ -66,7 +66,7 @@ func (sb *SandboxConcrete) shouldPanicForDuplicatedAddress() {
 	logger.Panic("Duplicated address")
 }
 
-func (sb *SandboxConcrete) shouldPanicForUnknownAddress() {
+func (sb *Concrete) shouldPanicForUnknownAddress() {
 	//
 	// Why we should panic here?
 	//
@@ -76,7 +76,7 @@ func (sb *SandboxConcrete) shouldPanicForUnknownAddress() {
 	logger.Panic("Unknown address")
 }
 
-func (sb *SandboxConcrete) Account(addr crypto.Address) *account.Account {
+func (sb *Concrete) Account(addr crypto.Address) *account.Account {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -97,7 +97,7 @@ func (sb *SandboxConcrete) Account(addr crypto.Address) *account.Account {
 
 	return acc
 }
-func (sb *SandboxConcrete) MakeNewAccount(addr crypto.Address) *account.Account {
+func (sb *Concrete) MakeNewAccount(addr crypto.Address) *account.Account {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -114,7 +114,7 @@ func (sb *SandboxConcrete) MakeNewAccount(addr crypto.Address) *account.Account 
 	return acc
 }
 
-func (sb *SandboxConcrete) UpdateAccount(acc *account.Account) {
+func (sb *Concrete) UpdateAccount(acc *account.Account) {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -127,7 +127,7 @@ func (sb *SandboxConcrete) UpdateAccount(acc *account.Account) {
 	s.Updated = true
 }
 
-func (sb *SandboxConcrete) Validator(addr crypto.Address) *validator.Validator {
+func (sb *Concrete) Validator(addr crypto.Address) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -148,7 +148,7 @@ func (sb *SandboxConcrete) Validator(addr crypto.Address) *validator.Validator {
 	return val
 }
 
-func (sb *SandboxConcrete) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
+func (sb *Concrete) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -166,7 +166,7 @@ func (sb *SandboxConcrete) MakeNewValidator(pub crypto.PublicKey) *validator.Val
 	return val
 }
 
-func (sb *SandboxConcrete) UpdateValidator(val *validator.Validator) {
+func (sb *Concrete) UpdateValidator(val *validator.Validator) {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -181,7 +181,7 @@ func (sb *SandboxConcrete) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-func (sb *SandboxConcrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Address) error {
+func (sb *Concrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Address) error {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -219,32 +219,32 @@ func (sb *SandboxConcrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Add
 	return nil
 }
 
-func (sb *SandboxConcrete) MaxMemoLength() int {
+func (sb *Concrete) MaxMemoLength() int {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
 	return sb.params.MaximumMemoLength
 }
 
-func (sb *SandboxConcrete) FeeFraction() float64 {
+func (sb *Concrete) FeeFraction() float64 {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
 	return sb.params.FeeFraction
 }
 
-func (sb *SandboxConcrete) MinFee() int64 {
+func (sb *Concrete) MinFee() int64 {
 	return sb.params.MinimumFee
 }
 
-func (sb *SandboxConcrete) TransactionToLiveInterval() int {
+func (sb *Concrete) TransactionToLiveInterval() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.TransactionToLiveInterval
 }
 
-func (sb *SandboxConcrete) BlockHeight(hash crypto.Hash) int {
+func (sb *Concrete) BlockHeight(hash crypto.Hash) int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -260,21 +260,21 @@ func (sb *SandboxConcrete) BlockHeight(hash crypto.Hash) int {
 	return h
 }
 
-func (sb *SandboxConcrete) CurrentHeight() int {
+func (sb *Concrete) CurrentHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.lastHeight + 1
 }
 
-func (sb *SandboxConcrete) LastHeight() int {
+func (sb *Concrete) LastHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.lastHeight
 }
 
-func (sb *SandboxConcrete) LastBlockHash() crypto.Hash {
+func (sb *Concrete) LastBlockHash() crypto.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -282,7 +282,7 @@ func (sb *SandboxConcrete) LastBlockHash() crypto.Hash {
 	return b.Hash()
 }
 
-func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {
+func (sb *Concrete) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -295,7 +295,7 @@ func (sb *SandboxConcrete) VerifySortition(blockHash crypto.Hash, proof sortitio
 	return sb.sortition.VerifyProof(b.Header().SortitionSeed(), proof, val.PublicKey(), val.Stake())
 }
 
-func (sb *SandboxConcrete) IterateAccounts(consumer func(*AccountStatus)) {
+func (sb *Concrete) IterateAccounts(consumer func(*AccountStatus)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -304,7 +304,7 @@ func (sb *SandboxConcrete) IterateAccounts(consumer func(*AccountStatus)) {
 	}
 }
 
-func (sb *SandboxConcrete) IterateValidators(consumer func(*ValidatorStatus)) {
+func (sb *Concrete) IterateValidators(consumer func(*ValidatorStatus)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -313,20 +313,20 @@ func (sb *SandboxConcrete) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
-func (sb *SandboxConcrete) CommitteeSize() int {
+func (sb *Concrete) CommitteeSize() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.CommitteeSize
 }
 
-func (sb *SandboxConcrete) TotalStakeChange() int64 {
+func (sb *Concrete) TotalStakeChange() int64 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.totalStakeChange
 }
 
-func (sb *SandboxConcrete) IsInCommittee(addr crypto.Address) bool {
+func (sb *Concrete) IsInCommittee(addr crypto.Address) bool {
 	return sb.committee.Contains(addr)
 }

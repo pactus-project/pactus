@@ -5,7 +5,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
+	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -37,7 +37,7 @@ func (txs *TxIDs) Prepend(id tx.ID) {
 }
 
 func (txs TxIDs) Hash() crypto.Hash {
-	merkle := simpleMerkle.NewTreeFromHashes(txs.data.IDs)
+	merkle := simplemerkle.NewTreeFromHashes(txs.data.IDs)
 	return merkle.Root()
 }
 

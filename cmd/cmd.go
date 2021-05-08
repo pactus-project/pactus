@@ -207,7 +207,7 @@ func PrintLine() {
 	fmt.Println()
 }
 
-func PrintJsonData(data []byte) {
+func PrintJSONData(data []byte) {
 	var out bytes.Buffer
 	err := json.Indent(&out, data, "", "   ")
 	if err != nil {
@@ -217,13 +217,13 @@ func PrintJsonData(data []byte) {
 	PrintInfoMsg(out.String())
 }
 
-func PrintJsonObject(obj interface{}) {
+func PrintJSONObject(obj interface{}) {
 	data, err := json.Marshal(obj)
 	if err != nil {
 		PrintErrorMsg("json.Marshal error: %s", err)
 		return
 	}
-	PrintJsonData(data)
+	PrintJSONData(data)
 }
 
 func ZarbHomeDir() string {

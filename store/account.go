@@ -14,7 +14,7 @@ type accountStore struct {
 
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.RawBytes()...) }
 
-func newAccountStore(db *leveldb.DB) (*accountStore, error) {
+func newAccountStore(db *leveldb.DB) *accountStore {
 	as := &accountStore{
 		db: db,
 	}
@@ -25,7 +25,7 @@ func newAccountStore(db *leveldb.DB) (*accountStore, error) {
 	})
 	as.total = total
 
-	return as, nil
+	return as
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
@@ -74,7 +74,7 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 func (as *accountStore) updateAccount(batch *leveldb.Batch, acc *account.Account) error {
 	data, err := acc.Encode()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if !as.hasAccount(acc.Address()) {
 		as.total++

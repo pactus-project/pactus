@@ -1,4 +1,4 @@
-package vote_set
+package voteset
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 type VoteSet struct {
 	height     int
 	round      int
-	voteType   vote.VoteType
+	voteType   vote.Type
 	validators []*validator.Validator
 	blockVotes map[crypto.Hash]*blockVotes
 	allVotes   map[crypto.Hash]*vote.Vote
@@ -21,7 +21,7 @@ type VoteSet struct {
 	quorumHash *crypto.Hash
 }
 
-func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*validator.Validator) *VoteSet {
+func NewVoteSet(height int, round int, voteType vote.Type, validators []*validator.Validator) *VoteSet {
 	totalPower := int64(0)
 	for _, val := range validators {
 		totalPower += val.Power()
@@ -38,9 +38,9 @@ func NewVoteSet(height int, round int, voteType vote.VoteType, validators []*val
 	}
 }
 
-func (vs *VoteSet) VoteType() vote.VoteType { return vs.voteType }
-func (vs *VoteSet) Height() int             { return vs.height }
-func (vs *VoteSet) Round() int              { return vs.round }
+func (vs *VoteSet) Type() vote.Type { return vs.voteType }
+func (vs *VoteSet) Height() int     { return vs.height }
+func (vs *VoteSet) Round() int      { return vs.round }
 
 func (vs *VoteSet) Len() int {
 	return len(vs.allVotes)
@@ -75,10 +75,10 @@ func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
 func (vs *VoteSet) AddVote(v *vote.Vote) error {
 	if (v.Height() != vs.Height()) ||
 		(v.Round() != vs.Round()) ||
-		(v.VoteType() != vs.VoteType()) {
+		(v.Type() != vs.Type()) {
 		return errors.Errorf(errors.ErrInvalidVote, "expected %d/%d/%s, but got %d/%d/%s",
-			vs.Height(), vs.Round(), vs.VoteType(),
-			v.Height(), v.Round(), v.VoteType())
+			vs.Height(), vs.Round(), vs.Type(),
+			v.Height(), v.Round(), v.Type())
 	}
 
 	signer := v.Signer()
@@ -143,7 +143,7 @@ func (vs *VoteSet) QuorumHash() *crypto.Hash {
 }
 
 func (vs *VoteSet) ToCertificate() *block.Certificate {
-	if vs.VoteType() != vote.VoteTypePrecommit {
+	if vs.Type() != vote.VoteTypePrecommit {
 		return nil
 	}
 	blockHash := vs.quorumHash

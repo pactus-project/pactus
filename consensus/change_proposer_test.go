@@ -26,8 +26,8 @@ func TestGotoNewRound(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
 
 	checkHeightRound(t, tConsP, 2, 1)
 }

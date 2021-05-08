@@ -50,7 +50,7 @@ func (p *DownloadResponsePayload) SanityCheck() error {
 	return nil
 }
 
-func (p *DownloadResponsePayload) Type() PayloadType {
+func (p *DownloadResponsePayload) Type() Type {
 	return PayloadTypeDownloadResponse
 }
 

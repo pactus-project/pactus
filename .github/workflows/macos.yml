@@ -1,7 +1,7 @@
 
 
 on: [pull_request]
-name: Build and test (mac-os)
+name: Build and test (macOS)
 jobs:
   unit-test:
     runs-on: macos-latest

@@ -11,7 +11,7 @@ import (
 )
 
 type zarbServer struct {
-	state  state.StateFacade
+	state  state.Facade
 	sync   sync.Synchronizer
 	logger *logger.Logger
 }
@@ -21,12 +21,12 @@ type Server struct {
 	config   *Config
 	address  string
 	listener net.Listener
-	state    state.StateFacade
+	state    state.Facade
 	sync     sync.Synchronizer
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.StateFacade, sync sync.Synchronizer) (*Server, error) {
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) (*Server, error) {
 	return &Server{
 		ctx:    context.Background(),
 		state:  state,
@@ -63,7 +63,7 @@ func (s *Server) StartServer() error {
 				//
 				go func(c net.Conn) {
 					s2c := ZarbServer_ServerToClient(&zarbServer{s.state, s.sync, s.logger})
-					conn := rpc.NewConn(rpc.StreamTransport(conn), rpc.MainInterface(s2c.Client))
+					conn := rpc.NewConn(rpc.StreamTransport(c), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {
 						s.logger.Error("Error on  a connection", "err", err)

@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
+	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -16,7 +16,7 @@ func TestTxsMerkle(t *testing.T) {
 	for i, tx := range txs {
 		data[i] = tx.ID()
 	}
-	merkle := simpleMerkle.NewTreeFromHashes(data)
+	merkle := simplemerkle.NewTreeFromHashes(data)
 	assert.Equal(t, b.Header().TxIDsHash(), merkle.Root())
 }
 

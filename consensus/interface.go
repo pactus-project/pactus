@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/vote"
 )
 
-type ConsensusReader interface {
+type Reader interface {
 	PickRandomVote() *vote.Vote
 	AllVotes() []*vote.Vote
 	RoundVotes(round int) []*vote.Vote
@@ -15,7 +15,7 @@ type ConsensusReader interface {
 }
 
 type Consensus interface {
-	ConsensusReader
+	Reader
 
 	MoveToNewHeight()
 	Start() error

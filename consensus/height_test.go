@@ -42,18 +42,18 @@ func TestUpdateCertificate(t *testing.T) {
 	p := makeProposal(t, 2, 0)
 	tConsX.SetProposal(p)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexB)
+	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexB)
 
 	assert.Equal(t, tConsX.state.LastBlockHeight(), 2)
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexP)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexP)
+	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexP)
+	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexP)
 
 	testEnterNewHeight(tConsX)
 
@@ -79,9 +79,9 @@ func TestConsensusHeightIsShorterThanState(t *testing.T) {
 	// --------------------------------
 
 	// Consensus tries to add more votes and commit the block which is committed by syncer before.
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)
+	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)
 
 	assert.Error(t, tConsP.state.ValidateBlock(p.Block()))
 }

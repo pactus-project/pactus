@@ -3,7 +3,7 @@ package state
 import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
-	simpleMerkle "github.com/zarbchain/zarb-go/libs/merkle"
+	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -23,7 +23,7 @@ func (st *state) accountsMerkleRootHash() crypto.Hash {
 		return false
 	})
 
-	tree := simpleMerkle.NewTreeFromHashes(hashes)
+	tree := simplemerkle.NewTreeFromHashes(hashes)
 	return tree.Root()
 }
 
@@ -41,7 +41,7 @@ func (st *state) validatorsMerkleRootHash() crypto.Hash {
 		hashes[val.Number()] = val.Hash()
 		return false
 	})
-	tree := simpleMerkle.NewTreeFromHashes(hashes)
+	tree := simplemerkle.NewTreeFromHashes(hashes)
 	return tree.Root()
 }
 
@@ -49,7 +49,7 @@ func (st *state) stateHash() crypto.Hash {
 	accRootHash := st.accountsMerkleRootHash()
 	valRootHash := st.validatorsMerkleRootHash()
 
-	rootHash := simpleMerkle.HashMerkleBranches(&accRootHash, &valRootHash)
+	rootHash := simplemerkle.HashMerkleBranches(&accRootHash, &valRootHash)
 
 	return *rootHash
 }
@@ -67,10 +67,10 @@ func (st *state) calculateGenesisStateHashFromGenesisDoc() crypto.Hash {
 		valHashes[i] = val.Hash()
 	}
 
-	accTree := simpleMerkle.NewTreeFromHashes(accHashes)
-	valTree := simpleMerkle.NewTreeFromHashes(valHashes)
+	accTree := simplemerkle.NewTreeFromHashes(accHashes)
+	valTree := simplemerkle.NewTreeFromHashes(valHashes)
 	accRootHash := accTree.Root()
 	valRootHash := valTree.Root()
 
-	return *simpleMerkle.HashMerkleBranches(&accRootHash, &valRootHash)
+	return *simplemerkle.HashMerkleBranches(&accRootHash, &valRootHash)
 }

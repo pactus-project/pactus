@@ -52,12 +52,12 @@ func (m *Message) CompressIt() {
 }
 
 type _Message struct {
-	Version     int                 `cbor:"1,keyasint"`
-	Flags       int                 `cbor:"2,keyasint"`
-	Initiator   peer.ID             `cbor:"3,keyasint"`
-	PayloadType payload.PayloadType `cbor:"4,keyasint"`
-	Payload     []byte              `cbor:"5,keyasint"`
-	Signature   *crypto.Signature   `cbor:"6,keyasint,omitempty"`
+	Version     int               `cbor:"1,keyasint"`
+	Flags       int               `cbor:"2,keyasint"`
+	Initiator   peer.ID           `cbor:"3,keyasint"`
+	PayloadType payload.Type      `cbor:"4,keyasint"`
+	Payload     []byte            `cbor:"5,keyasint"`
+	Signature   *crypto.Signature `cbor:"6,keyasint,omitempty"`
 }
 
 func (m *Message) Encode() ([]byte, error) {

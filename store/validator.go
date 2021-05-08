@@ -17,7 +17,7 @@ type validatorStore struct {
 
 func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.RawBytes()...) }
 
-func newValidatorStore(db *leveldb.DB) (*validatorStore, error) {
+func newValidatorStore(db *leveldb.DB) *validatorStore {
 	vs := &validatorStore{
 		db: db,
 	}
@@ -33,7 +33,7 @@ func newValidatorStore(db *leveldb.DB) (*validatorStore, error) {
 	vs.total = total
 	vs.valMap = valMap
 
-	return vs, nil
+	return vs
 }
 
 func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
