@@ -13,5 +13,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Formatting and linting
+    - name: Make tool
+      run: make tool
+
+    - name: Formatting and linting the project
       run: make fmt
