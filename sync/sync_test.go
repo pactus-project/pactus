@@ -48,6 +48,7 @@ func (o *OverrideFingerprint) Fingerprint() string {
 }
 
 func init() {
+	LatestBlockInterval = 20
 	logger.InitLogger(logger.TestConfig())
 	tAliceConfig = TestConfig()
 	tBobConfig = TestConfig()
