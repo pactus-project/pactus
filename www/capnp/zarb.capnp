@@ -1,4 +1,4 @@
-using Go = import "/go.capnp";
+using Go = import "go.capnp";
 @0x84b56bd0975dfd33;
 $Go.package("capnp");
 $Go.import("capnp");

@@ -1,9 +1,9 @@
 package util
 
 import (
+	crand "crypto/rand"
 	"fmt"
-	"math/rand"
-	"time"
+	"math/big"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 )
@@ -42,19 +42,17 @@ func Max64(a, b int64) int64 {
 }
 
 func RandInt(max int) int {
-	if max <= 0 {
-		return 0
-	}
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Intn(max)
+	rnd := RandInt64(int64(max))
+	return int(rnd)
 }
 
 func RandInt64(max int64) int64 {
 	if max <= 0 {
 		return 0
 	}
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Int63n(max)
+	bigMax := big.NewInt(max)
+	bigRnd, _ := crand.Int(crand.Reader, bigMax)
+	return bigRnd.Int64()
 }
 
 func RandomPeerID() peer.ID {
