@@ -1,8 +1,8 @@
-name: releaser
-
+name: Releaser
 on:
   create:
-      tags:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -26,36 +26,32 @@ jobs:
           - os: windows-latest
             compiler: cl
             target: Windows
-    if: github.event_name == 'create' && github.event.ref_type == 'tag' && startsWith(github.event.ref, 'v')
+
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      -
-        name: Set up Go
+      - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.15
 
-      -
-        name: Cache Go modules
-        uses: actions/cache@v1
+      - name: Cache Go modules
+        uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Set OS Spesific env
+      - name: Set GOHOSTOS env for goreleaser.yml
         id: set_os_env
         run: |
           GOHOSTOS=$(go env GOHOSTOS) envsubst < ".goreleaser.yml" > .releaser.yml
 
-      -
-        name: Run GoReleaser
+      - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
