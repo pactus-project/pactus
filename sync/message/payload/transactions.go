@@ -30,7 +30,7 @@ func (p *TransactionsPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *TransactionsPayload) Type() PayloadType {
+func (p *TransactionsPayload) Type() Type {
 	return PayloadTypeTransactions
 }
 

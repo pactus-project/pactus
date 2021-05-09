@@ -26,7 +26,7 @@ func Generate() func(c *cli.Cmd) {
 			entropy, _ := bip39.NewEntropy(128)
 			mnemonic, _ := bip39.NewMnemonic(entropy)
 			seed := bip39.NewSeed(mnemonic, passphrase)
-			keyObj, err := key.KeyFromSeed(seed)
+			keyObj, err := key.FromSeed(seed)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create key from the seed: %v", err)
 				return

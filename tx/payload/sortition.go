@@ -13,7 +13,7 @@ type SortitionPayload struct {
 	Proof   sortition.Proof `cbor:"2,keyasint"`
 }
 
-func (p *SortitionPayload) Type() PayloadType {
+func (p *SortitionPayload) Type() Type {
 	return PayloadTypeSortition
 }
 

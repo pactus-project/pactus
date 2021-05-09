@@ -47,10 +47,10 @@ func proposalKey(height, round int) key {
 
 type Cache struct {
 	cache *lru.ARCCache // it's thread safe
-	state state.StateFacade
+	state state.Facade
 }
 
-func NewCache(size int, state state.StateFacade) (*Cache, error) {
+func NewCache(size int, state state.Facade) (*Cache, error) {
 	c, err := lru.NewARC(size)
 	if err != nil {
 		return nil, err

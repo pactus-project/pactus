@@ -21,7 +21,7 @@ func SeedFromString(text string) (Seed, error) {
 
 func SeedFromRawBytes(data []byte) (Seed, error) {
 	if len(data) != 48 {
-		return Seed{}, fmt.Errorf("invalid seed data")
+		return Seed{}, fmt.Errorf("invalid seed length")
 	}
 
 	s := Seed{}

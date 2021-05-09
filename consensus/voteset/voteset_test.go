@@ -1,4 +1,4 @@
-package vote_set
+package voteset
 
 import (
 	"testing"
@@ -20,7 +20,8 @@ func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []cryp
 		vals = append(vals, val)
 		signers = append(signers, signer)
 	}
-	committee, _ := committee.NewCommittee(vals, len(stakes), signers[0].Address())
+	committee, err := committee.NewCommittee(vals, len(stakes), signers[0].Address())
+	assert.NoError(t, err)
 	return committee, signers
 }
 

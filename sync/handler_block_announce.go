@@ -29,6 +29,8 @@ func (handler *blockAnnounceHandler) ParsPayload(p payload.Payload, initiator pe
 	peer.UpdateHeight(pld.Height)
 	handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
 
+	handler.updateBlokchain()
+
 	return nil
 }
 

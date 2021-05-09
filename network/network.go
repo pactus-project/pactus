@@ -148,6 +148,7 @@ func (n *network) Start() error {
 }
 
 func (n *network) Stop() {
+	n.ctx.Done()
 	n.closeTopics()
 
 	if n.mdns != nil {

@@ -16,7 +16,7 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
-	"github.com/zarbchain/zarb-go/state/last_info"
+	"github.com/zarbchain/zarb-go/state/lastinfo"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -36,7 +36,7 @@ type state struct {
 	txPool       txpool.TxPool
 	committee    *committee.Committee
 	sortition    *sortition.Sortition
-	lastInfo     *last_info.LastInfo
+	lastInfo     *lastinfo.LastInfo
 	logger       *logger.Logger
 }
 
@@ -45,7 +45,7 @@ func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
 	store store.Store,
-	txPool txpool.TxPool) (StateFacade, error) {
+	txPool txpool.TxPool) (Facade, error) {
 
 	var mintbaseAddr crypto.Address
 	if conf.MintbaseAddress != "" {
@@ -67,7 +67,7 @@ func LoadOrNewState(
 		store:        store,
 		mintbaseAddr: mintbaseAddr,
 		sortition:    sortition.NewSortition(),
-		lastInfo:     last_info.NewLastInfo(store),
+		lastInfo:     lastinfo.NewLastInfo(store),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -84,12 +84,12 @@ func LoadOrNewState(
 		}
 	}
 
-	txPool.SetNewSandboxAndRecheck(st.makeSandbox())
+	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	return st, nil
 }
 
-func (st *state) makeSandbox() *sandbox.SandboxConcrete {
+func (st *state) concreteSandbox() *sandbox.Concrete {
 	return sandbox.NewSandbox(st.store, st.params, st.lastInfo.BlockHeight(), st.sortition, st.committee)
 }
 
@@ -108,18 +108,11 @@ func (st *state) tryLoadLastInfo() error {
 	}
 
 	logger.Info("Try to load the last state info")
-	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize)
+	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize, st.sortition)
 	if err != nil {
 		return err
 	}
 
-	totalStake := int64(0)
-	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
-		totalStake += val.Stake()
-		return false
-	})
-
-	st.sortition.SetTotalStake(totalStake)
 	st.committee = committee
 
 	return nil
@@ -149,7 +142,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	}
 	st.committee = committee
 	st.lastInfo.SetBlockTime(genDoc.GenesisTime())
-	st.sortition.SetTotalStake(totalStake)
+
 	return nil
 }
 
@@ -238,7 +231,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	}
 
 	// Create new sandbox and execute transactions
-	sb := st.makeSandbox()
+	sb := st.concreteSandbox()
 	exe := execution.NewExecution()
 
 	txIDs := block.NewTxIDs()
@@ -307,7 +300,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 		return err
 	}
 
-	sb := st.makeSandbox()
+	sb := st.concreteSandbox()
 	_, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
@@ -356,12 +349,16 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed.")
 	}
 
-	sb := st.makeSandbox()
+	// -----------------------------------
+	// Execute block
+	sb := st.concreteSandbox()
 	trxs, err := st.executeBlock(block, sb)
 	if err != nil {
 		return err
 	}
 
+	// -----------------------------------
+	// Commit block
 	st.lastInfo.SetBlockHeight(st.lastInfo.BlockHeight() + 1)
 	st.lastInfo.SetBlockHash(block.Hash())
 	st.lastInfo.SetBlockTime(block.Header().Time())
@@ -384,15 +381,20 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		st.logger.Panic("Unable to update state", "err", err)
 	}
 
+	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
+
+	// -----------------------------------
+	// Update sortition params and evaluate sortition
+	st.sortition.SetParams(block.Hash(), block.Header().SortitionSeed(), st.poolStake())
+
 	// Evaluate sortition before updating the committee
 	if st.evaluateSortition() {
 		st.logger.Info("👏 This validator is chosen to be in the committee", "address", st.signer.Address())
 	}
 
-	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
-
+	// -----------------------------------
 	// At this point we can assign new sandbox to tx pool
-	st.txPool.SetNewSandboxAndRecheck(st.makeSandbox())
+	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	return nil
 }
@@ -414,20 +416,18 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
-	//
-	ok, proof := st.sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), st.signer, val.Stake())
+	ok, proof := st.sortition.EvaluateSortition(st.lastInfo.BlockHash(), st.signer, val.Stake())
 	if ok {
 		//
 		trx := tx.NewSortitionTx(st.lastInfo.BlockHash(), val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)
 
-		if err := st.txPool.AppendTxAndBroadcast(trx); err != nil {
-			st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
-			return false
-		} else {
+		err := st.txPool.AppendTxAndBroadcast(trx)
+		if err == nil {
 			st.logger.Debug("Sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
 			return true
 		}
+		st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
 	}
 
 	return false
@@ -440,7 +440,7 @@ func (st *state) Fingerprint() string {
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
+func (st *state) commitSandbox(sb *sandbox.Concrete, round int) {
 	joined := make([]*validator.Validator, 0)
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.JoinedCommittee {
@@ -468,8 +468,6 @@ func (st *state) commitSandbox(sb *sandbox.SandboxConcrete, round int) {
 			st.store.UpdateValidator(&vs.Validator)
 		}
 	})
-
-	st.sortition.AddToTotalStake(sb.TotalStakeChange())
 }
 
 func (st *state) validateBlockTime(t time.Time) error {
@@ -492,6 +490,52 @@ func (st *state) validateBlockTime(t time.Time) error {
 	}
 
 	return nil
+}
+
+func (st *state) TotalStake() int64 {
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
+	return st.totalStake()
+}
+
+func (st *state) CommitteeStake() int64 {
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
+	return st.committeeStake()
+}
+
+func (st *state) PoolStake() int64 {
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
+	return st.poolStake()
+}
+
+// TODO: Improve performance of these calculations by two local variables: committeeStake and poolStake
+func (st *state) totalStake() int64 {
+	totalStake := int64(0)
+	st.store.IterateValidators(func(val *validator.Validator) bool {
+		totalStake += val.Stake()
+		return false
+	})
+	return totalStake
+}
+
+func (st *state) committeeStake() int64 {
+	return st.committee.TotalStake()
+}
+
+func (st *state) poolStake() int64 {
+	poolStake := int64(0)
+	st.store.IterateValidators(func(val *validator.Validator) bool {
+		if !st.committee.Contains(val.Address()) {
+			poolStake += val.Stake()
+		}
+		return false
+	})
+	return poolStake
 }
 
 func (st *state) proposeNextBlockTime() time.Time {

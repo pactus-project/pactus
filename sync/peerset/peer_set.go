@@ -47,6 +47,7 @@ func (ps *PeerSet) OpenSession(peerID peer.ID) *Session {
 
 	return s
 }
+
 func (ps *PeerSet) FindSession(id int) *Session {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
@@ -59,18 +60,31 @@ func (ps *PeerSet) FindSession(id int) *Session {
 	return nil
 }
 
-func (ps *PeerSet) HasAnyValidSession() bool {
+func (ps *PeerSet) NumberOfOpenSessions() int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
+	ps.removeExpiredSessions()
+
+	return len(ps.sessions)
+}
+
+func (ps *PeerSet) HasAnyOpenSession() bool {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.removeExpiredSessions()
+
+	return len(ps.sessions) != 0
+}
+
+func (ps *PeerSet) removeExpiredSessions() {
 	// First remove old sessions
 	for id, s := range ps.sessions {
 		if ps.sessionTimeout < util.Now().Sub(s.LastActivityAt()) {
 			delete(ps.sessions, id)
 		}
 	}
-
-	return len(ps.sessions) != 0
 }
 
 func (ps *PeerSet) CloseSession(id int) {
@@ -125,6 +139,16 @@ func (ps *PeerSet) MustGetPeer(peerID peer.ID) *Peer {
 	return p
 }
 
+// TODO: write test for me
+func (ps *PeerSet) Clear() {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.peers = make(map[peer.ID]*Peer)
+	ps.sessions = make(map[int]*Session)
+	ps.maxClaimedHeight = 0
+}
+
 func (ps *PeerSet) RemovePeer(peerID peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -145,14 +169,17 @@ func (ps *PeerSet) GetPeerList() []*Peer {
 	return l
 }
 
-func (ps *PeerSet) FindHighestPeer() *Peer {
+func (ps *PeerSet) GetRandomPeer() *Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
+	i := util.RandInt(len(ps.peers))
 	for _, p := range ps.peers {
-		if p.Height() >= ps.maxClaimedHeight {
+		i--
+		if i <= 0 {
 			return p
 		}
 	}
+
 	return nil
 }

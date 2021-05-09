@@ -40,7 +40,7 @@ func (p *SalamPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *SalamPayload) Type() PayloadType {
+func (p *SalamPayload) Type() Type {
 	return PayloadTypeSalam
 }
 

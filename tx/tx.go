@@ -26,22 +26,22 @@ type txData struct {
 	Stamp     crypto.Hash
 	Sequence  int
 	Fee       int64
-	Type      payload.PayloadType
+	Type      payload.Type
 	Payload   payload.Payload
 	Memo      string
 	PublicKey *crypto.PublicKey
 	Signature *crypto.Signature
 }
 
-func (tx *Tx) Version() int                     { return tx.data.Version }
-func (tx *Tx) Stamp() crypto.Hash               { return tx.data.Stamp }
-func (tx *Tx) Sequence() int                    { return tx.data.Sequence }
-func (tx *Tx) PayloadType() payload.PayloadType { return tx.data.Type }
-func (tx *Tx) Payload() payload.Payload         { return tx.data.Payload }
-func (tx *Tx) Fee() int64                       { return tx.data.Fee }
-func (tx *Tx) Memo() string                     { return tx.data.Memo }
-func (tx *Tx) PublicKey() *crypto.PublicKey     { return tx.data.PublicKey }
-func (tx *Tx) Signature() *crypto.Signature     { return tx.data.Signature }
+func (tx *Tx) Version() int                 { return tx.data.Version }
+func (tx *Tx) Stamp() crypto.Hash           { return tx.data.Stamp }
+func (tx *Tx) Sequence() int                { return tx.data.Sequence }
+func (tx *Tx) PayloadType() payload.Type    { return tx.data.Type }
+func (tx *Tx) Payload() payload.Payload     { return tx.data.Payload }
+func (tx *Tx) Fee() int64                   { return tx.data.Fee }
+func (tx *Tx) Memo() string                 { return tx.data.Memo }
+func (tx *Tx) PublicKey() *crypto.PublicKey { return tx.data.PublicKey }
+func (tx *Tx) Signature() *crypto.Signature { return tx.data.Signature }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.sanityChecked = false
@@ -128,15 +128,15 @@ func (tx *Tx) checkSignature() error {
 }
 
 type _txData struct {
-	Version   int                 `cbor:"1,keyasint"`
-	Stamp     crypto.Hash         `cbor:"2,keyasint"`
-	Sequence  int                 `cbor:"3,keyasint"`
-	Fee       int64               `cbor:"4,keyasint"`
-	Type      payload.PayloadType `cbor:"5,keyasint"`
-	Payload   cbor.RawMessage     `cbor:"6,keyasint"`
-	Memo      string              `cbor:"7,keyasint,omitempty"`
-	PublicKey *crypto.PublicKey   `cbor:"20,keyasint,omitempty"`
-	Signature *crypto.Signature   `cbor:"21,keyasint,omitempty"`
+	Version   int               `cbor:"1,keyasint"`
+	Stamp     crypto.Hash       `cbor:"2,keyasint"`
+	Sequence  int               `cbor:"3,keyasint"`
+	Fee       int64             `cbor:"4,keyasint"`
+	Type      payload.Type      `cbor:"5,keyasint"`
+	Payload   cbor.RawMessage   `cbor:"6,keyasint"`
+	Memo      string            `cbor:"7,keyasint,omitempty"`
+	PublicKey *crypto.PublicKey `cbor:"20,keyasint,omitempty"`
+	Signature *crypto.Signature `cbor:"21,keyasint,omitempty"`
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
@@ -236,6 +236,10 @@ func (tx *Tx) IsMintbaseTx() bool {
 
 func (tx *Tx) IsSortitionTx() bool {
 	return tx.data.Type == payload.PayloadTypeSortition
+}
+
+func (tx *Tx) IsBondTx() bool {
+	return tx.data.Type == payload.PayloadTypeBond
 }
 
 // ---------

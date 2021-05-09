@@ -23,7 +23,7 @@ type consensus struct {
 	config              *Config
 	log                 *log.Log
 	signer              crypto.Signer
-	state               state.StateFacade
+	state               state.Facade
 	height              int
 	round               int
 	newHeightState      consState
@@ -39,7 +39,7 @@ type consensus struct {
 
 func NewConsensus(
 	conf *Config,
-	state state.StateFacade,
+	state state.Facade,
 	signer crypto.Signer,
 	broadcastCh chan payload.Payload) (Consensus, error) {
 	cs := &consensus{
@@ -240,7 +240,7 @@ func (cs *consensus) proposer(round int) *validator.Validator {
 	return cs.state.Proposer(round)
 }
 
-func (cs *consensus) signAddVote(msgType vote.VoteType, hash crypto.Hash) {
+func (cs *consensus) signAddVote(msgType vote.Type, hash crypto.Hash) {
 	address := cs.signer.Address()
 	if !cs.log.CanVote(address) {
 		cs.logger.Trace("This node is not in committee", "addr", address)

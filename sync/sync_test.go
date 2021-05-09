@@ -100,7 +100,7 @@ func setup(t *testing.T) {
 	)
 	assert.NoError(t, err)
 	tAliceSync = aliceSync.(*synchronizer)
-	tAliceSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "alice: ", sync: tAliceSync})
+	tAliceSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("Alice - %s: ", t.Name()), sync: tAliceSync})
 
 	tBobSync = &synchronizer{ctx: context.Background()}
 	bobSync, err := NewSynchronizer(tBobConfig,
@@ -112,7 +112,7 @@ func setup(t *testing.T) {
 	)
 	assert.NoError(t, err)
 	tBobSync = bobSync.(*synchronizer)
-	tBobSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: "bob: ", sync: tBobSync})
+	tBobSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("Bob - %s: ", t.Name()), sync: tBobSync})
 
 	tAliceNet.OtherNet = tBobNet
 	tBobNet.OtherNet = tAliceNet
@@ -127,9 +127,11 @@ func setup(t *testing.T) {
 	shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeAleyk)
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
+
+	logger.Info("Setup finished, start running the test", "name", t.Name())
 }
 
-func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.PayloadType) {
+func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -147,7 +149,7 @@ func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, pa
 	}
 }
 
-func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.MockNetwork, payloadType payload.PayloadType, code payload.ResponseCode) {
+func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.MockNetwork, payloadType payload.Type, code payload.ResponseCode) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -177,7 +179,7 @@ func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.
 	}
 }
 
-func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.PayloadType) {
+func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) {
 	timeout := time.NewTimer(300 * time.Millisecond)
 
 	for {
@@ -201,6 +203,7 @@ func addMoreBlocksForBob(t *testing.T, count int) {
 		tBobState.AddBlock(tBobState.LastBlockHeight()+1, b, trxs)
 		tBobState.LastBlockCertificate = c
 	}
+	assert.Equal(t, lastBlockHash, tBobState.LastBlockHash())
 }
 
 func addMoreBlocksForBobAndAnnounceLastBlock(t *testing.T, count int) {
@@ -215,18 +218,21 @@ func addMoreBlocksForBobAndAnnounceLastBlock(t *testing.T, count int) {
 }
 
 func disableHeartbeat(t *testing.T) {
+	require.NotNil(t, tAliceSync)
+	require.NotNil(t, tBobSync)
+
 	tAliceSync.heartBeatTicker.Stop()
 	tBobSync.heartBeatTicker.Stop()
 }
 
-func joinAliceToTheSet(t *testing.T) {
+func joinAliceToCommittee(t *testing.T) {
 	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
 	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
 }
 
-func joinBobToTheSet(t *testing.T) {
+func joinBobToCommittee(t *testing.T) {
 	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
 	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
 
@@ -245,4 +251,13 @@ func TestStop(t *testing.T) {
 	// Should stop normally
 	tAliceSync.Stop()
 	tBobSync.Stop()
+}
+
+func TestBroadcastInvalidMessage(t *testing.T) {
+	setup(t)
+	t.Run("Should not publish invalid messages", func(t *testing.T) {
+		pld := payload.NewHeartBeatPayload(-1, -1, crypto.GenerateTestHash())
+		tAliceBroadcastCh <- pld
+		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHeartBeat)
+	})
 }

@@ -15,10 +15,10 @@ type blockStore struct {
 	db *leveldb.DB
 }
 
-func newBlockStore(db *leveldb.DB) (*blockStore, error) {
+func newBlockStore(db *leveldb.DB) *blockStore {
 	return &blockStore{
 		db: db,
-	}, nil
+	}
 }
 
 func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int, block *block.Block) error {

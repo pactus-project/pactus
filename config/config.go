@@ -22,6 +22,7 @@ import (
 )
 
 type Config struct {
+
 	State     *state.Config     `toml:"" comment:"State contains the state of the blockchain."`
 	Store     *store.Config     `toml:"" comment:"Store which write and store the blockchin data using golevel db. "`
 	TxPool    *txpool.Config    `toml:"" comment:"TxPool is pool of unconfirmed transaction."`
@@ -44,7 +45,7 @@ func DefaultConfig() *Config {
 		Sync:      sync.DefaultConfig(),
 		Logger:    logger.DefaultConfig(),
 		Capnp:     capnp.DefaultConfig(),
-		Http:      http.DefaultConfig(),
+		HTTP:      http.DefaultConfig(),
 		GRPC:      grpc.DefaultConfig(),
 	}
 
@@ -61,7 +62,7 @@ func TestConfig() *Config {
 		Sync:      sync.TestConfig(),
 		Logger:    logger.TestConfig(),
 		Capnp:     capnp.TestConfig(),
-		Http:      http.TestConfig(),
+		HTTP:      http.TestConfig(),
 		GRPC:      grpc.TestConfig(),
 	}
 
@@ -156,7 +157,7 @@ func (conf *Config) SanityCheck() error {
 	if err := conf.Capnp.SanityCheck(); err != nil {
 		return err
 	}
-	if err := conf.Http.SanityCheck(); err != nil {
+	if err := conf.HTTP.SanityCheck(); err != nil {
 		return err
 	}
 	return nil

@@ -76,11 +76,7 @@ func (pb *PublicKey) UnmarshalText(text []byte) error {
 }
 
 func (pb PublicKey) MarshalJSON() ([]byte, error) {
-	bz, err := pb.MarshalText()
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(bz))
+	return json.Marshal(pb.String())
 }
 
 func (pb *PublicKey) UnmarshalJSON(bz []byte) error {

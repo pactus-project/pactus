@@ -59,7 +59,7 @@ func (p *LatestBlocksResponsePayload) SanityCheck() error {
 	return nil
 }
 
-func (p *LatestBlocksResponsePayload) Type() PayloadType {
+func (p *LatestBlocksResponsePayload) Type() Type {
 	return PayloadTypeLatestBlocksResponse
 }
 
@@ -72,4 +72,13 @@ func (p *LatestBlocksResponsePayload) To() int {
 
 func (p *LatestBlocksResponsePayload) Fingerprint() string {
 	return fmt.Sprintf("{⚓ %d %s %v-%v}", p.SessionID, p.ResponseCode, p.From, p.To())
+}
+
+func (p *LatestBlocksResponsePayload) IsRequestNotProcessed() bool {
+	if p.ResponseCode == ResponseCodeBusy ||
+		p.ResponseCode == ResponseCodeRejected {
+		return true
+	}
+
+	return false
 }

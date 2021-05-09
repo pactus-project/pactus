@@ -36,10 +36,13 @@ func setup(t *testing.T) {
 	tAcc1 = account.NewAccount(signer1.Address(), 0)
 	tAcc1.AddToBalance(10000000000)
 	tSandbox.UpdateAccount(tAcc1)
+	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), int64(10000000000))
 
 	tVal1 = validator.NewValidator(tValSigner.PublicKey(), 0, 0)
 	tVal1.AddToStake(5000000000)
 	tSandbox.UpdateValidator(tVal1)
+	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), int64(5000000000))
+
 }
 
 func checkTotalCoin(t *testing.T, fee int64) {

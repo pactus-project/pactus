@@ -6,16 +6,16 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-type PayloadType int
+type Type int
 
 const (
-	PayloadTypeSend      = PayloadType(1)
-	PayloadTypeBond      = PayloadType(2)
-	PayloadTypeSortition = PayloadType(3)
-	PayloadTypeUnbond    = PayloadType(4)
+	PayloadTypeSend      = Type(1)
+	PayloadTypeBond      = Type(2)
+	PayloadTypeSortition = Type(3)
+	PayloadTypeUnbond    = Type(4)
 )
 
-func (t PayloadType) String() string {
+func (t Type) String() string {
 	switch t {
 	case PayloadTypeSend:
 		return "send"
@@ -32,7 +32,7 @@ func (t PayloadType) String() string {
 type Payload interface {
 	Signer() crypto.Address
 	Value() int64
-	Type() PayloadType
+	Type() Type
 	SanityCheck() error
 	Fingerprint() string
 }

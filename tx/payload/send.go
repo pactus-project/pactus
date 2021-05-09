@@ -13,7 +13,7 @@ type SendPayload struct {
 	Amount   int64          `cbor:"3,keyasint"`
 }
 
-func (p *SendPayload) Type() PayloadType {
+func (p *SendPayload) Type() Type {
 	return PayloadTypeSend
 }
 

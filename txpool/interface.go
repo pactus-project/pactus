@@ -5,7 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-type TxPoolReader interface {
+type Reader interface {
 	AllTransactions() []*tx.Tx
 	PendingTx(id tx.ID) *tx.Tx
 	QueryTx(id tx.ID) *tx.Tx
@@ -15,7 +15,7 @@ type TxPoolReader interface {
 }
 
 type TxPool interface {
-	TxPoolReader
+	Reader
 
 	SetNewSandboxAndRecheck(sb sandbox.Sandbox)
 	AppendTx(tx *tx.Tx) error

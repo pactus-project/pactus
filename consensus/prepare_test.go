@@ -16,7 +16,7 @@ func TestPrepareQueryProposal(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	// After receiving one vote, it should query for proposal (if don't have it yet)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
 
 	shouldPublishQueryProposal(t, tConsP, 2, 0)
 }
@@ -29,8 +29,8 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 	testEnterNewHeight(tConsP)
 	p := makeProposal(t, 2, 0)
 
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
 
 	tConsP.SetProposal(p)
 	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
@@ -45,7 +45,9 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 func TestByzantineVote1(t *testing.T) {
 	setup(t)
 
-	h := 1
+	commitBlockForAllStates(t)
+
+	h := 2
 	r := 0
 	p := makeProposal(t, h, r)
 
@@ -54,20 +56,19 @@ func TestByzantineVote1(t *testing.T) {
 
 	// =================================
 	// Nx votes
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+	testAddVote(tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
-	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
-	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
-
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
 	// Byzantine node doesn't broadcast its precommit vote
 
 	// Nx, Ny are unable to progress
 
 	// =================================
 	// Np votes
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
 
 	// Np is unable to progress
 
@@ -79,17 +80,17 @@ func TestByzantineVote1(t *testing.T) {
 	// =================================
 	// Now, Partition heals
 
-	tConsP.SetProposal(p)
-	for _, v := range tConsX.AllVotes() {
-		tConsP.AddVote(v)
-	}
-	checkHeightRoundWait(t, tConsP, h, r+1)
-
 	for _, v := range tConsP.AllVotes() {
 		tConsX.AddVote(v)
 	}
 	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, crypto.UndefHash)
 	checkHeightRoundWait(t, tConsX, h, r+1)
+
+	tConsP.SetProposal(p)
+	for _, v := range tConsX.AllVotes() {
+		tConsP.AddVote(v)
+	}
+	checkHeightRoundWait(t, tConsP, h, r+1)
 }
 
 // Np should propose a block. Np is partitioned and Nb doesn't send proposal to Nx, Ny.
@@ -110,20 +111,20 @@ func TestByzantineVote2(t *testing.T) {
 
 	// =================================
 	// Np votes
-	testAddVote(t, tConsP, vote.VoteTypePrepare, h, r, p1.Block().Hash(), tIndexB) // Byzantine vote
+	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p1.Block().Hash(), tIndexB) // Byzantine vote
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p1.Block().Hash())
 
 	// Partitioned node is unable to progress
 
 	// =================================
 	// Nx votes
-	testAddVote(t, tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Nb sends change proposer vote to Nx, Ny
+	testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexY)
+	testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Nb sends change proposer vote to Nx, Ny
 
 	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, crypto.UndefHash)
 	// Nx goes to the next round
 
-	testAddVote(t, tConsX, vote.VoteTypePrepare, h, r+1, p2.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrepare, h, r+1, p2.Block().Hash(), tIndexY)
 	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p2.Block().Hash())
 
 	// Nx, Ny are unable to progress
@@ -153,5 +154,6 @@ func TestQueryProposal(t *testing.T) {
 
 	commitBlockForAllStates(t)
 	testEnterNewHeight(tConsX)
-	shouldPublishQueryProposal(t, tConsX, 2, 0)
+	testEnterNextRound(tConsX)
+	shouldPublishQueryProposal(t, tConsX, 2, 1)
 }

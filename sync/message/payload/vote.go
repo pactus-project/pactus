@@ -22,7 +22,7 @@ func (p *VotePayload) SanityCheck() error {
 	return nil
 }
 
-func (p *VotePayload) Type() PayloadType {
+func (p *VotePayload) Type() Type {
 	return PayloadTypeVote
 }
 

@@ -115,7 +115,7 @@ func GenerateTestCertificate(blockHash crypto.Hash) *Certificate {
 	return NewCertificate(
 		blockHash,
 		util.RandInt(10),
-		[]int{10, 18, 2, 6},
-		[]int{10},
+		[]int{10, 18, 12, 16},
+		[]int{18},
 		sig)
 }

@@ -27,9 +27,9 @@ func TestCommitExecute(t *testing.T) {
 
 	testEnterNewHeight(tConsX)
 
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY)
-	testAddVote(t, tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
+	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
+	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY)
+	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
 
 	s := &commitState{tConsX}
 

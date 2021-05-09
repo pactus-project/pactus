@@ -70,7 +70,7 @@ func (pool *txPool) AppendTx(trx *tx.Tx) error {
 
 	if pool.appendTxCh != nil {
 		go func(_trx *tx.Tx) {
-			pool.appendTxCh <- trx
+			pool.appendTxCh <- _trx
 		}(trx)
 	}
 

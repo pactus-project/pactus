@@ -50,7 +50,7 @@ func (p *DownloadResponsePayload) SanityCheck() error {
 	return nil
 }
 
-func (p *DownloadResponsePayload) Type() PayloadType {
+func (p *DownloadResponsePayload) Type() Type {
 	return PayloadTypeDownloadResponse
 }
 
@@ -63,4 +63,13 @@ func (p *DownloadResponsePayload) To() int {
 
 func (p *DownloadResponsePayload) Fingerprint() string {
 	return fmt.Sprintf("{⚓ %d %s %v-%v}", p.SessionID, p.ResponseCode, p.From, p.To())
+}
+
+func (p *DownloadResponsePayload) IsRequestNotProcessed() bool {
+	if p.ResponseCode == ResponseCodeBusy ||
+		p.ResponseCode == ResponseCodeRejected {
+		return true
+	}
+
+	return false
 }

@@ -1,14 +1,14 @@
 package vote
 
-type VoteType int
+type Type int
 
 const (
-	VoteTypePrepare        = VoteType(1)
-	VoteTypePrecommit      = VoteType(2)
-	VoteTypeChangeProposer = VoteType(3)
+	VoteTypePrepare        = Type(1)
+	VoteTypePrecommit      = Type(2)
+	VoteTypeChangeProposer = Type(3)
 )
 
-func (t VoteType) IsValid() bool {
+func (t Type) IsValid() bool {
 	switch t {
 	case VoteTypePrepare, VoteTypePrecommit, VoteTypeChangeProposer:
 		return true
@@ -17,7 +17,7 @@ func (t VoteType) IsValid() bool {
 	return false
 }
 
-func (t VoteType) String() string {
+func (t Type) String() string {
 	switch t {
 	case VoteTypePrepare:
 		return "Prepare"

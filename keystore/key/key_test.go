@@ -18,6 +18,6 @@ func TestKeyGeneration(t *testing.T) {
 }
 
 func TestKeyFromSeed(t *testing.T) {
-	_, err := KeyFromSeed([]byte{0})
+	_, err := FromSeed([]byte{0})
 	assert.NoError(t, err)
 }
