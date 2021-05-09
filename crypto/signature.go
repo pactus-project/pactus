@@ -80,11 +80,7 @@ func (sig *Signature) UnmarshalText(text []byte) error {
 }
 
 func (sig Signature) MarshalJSON() ([]byte, error) {
-	bz, err := sig.MarshalText()
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(bz))
+	return json.Marshal(sig.String())
 }
 
 func (sig *Signature) UnmarshalJSON(bz []byte) error {

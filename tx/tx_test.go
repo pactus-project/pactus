@@ -293,6 +293,7 @@ func TestBondSignBytes(t *testing.T) {
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+	assert.True(t, trx1.IsBondTx())
 }
 
 func TestUnbondSignBytes(t *testing.T) {
@@ -308,6 +309,8 @@ func TestUnbondSignBytes(t *testing.T) {
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+	assert.True(t, trx1.IsUnbondTx())
+
 }
 
 func TestSortitionSignBytes(t *testing.T) {

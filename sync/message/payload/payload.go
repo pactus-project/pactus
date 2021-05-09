@@ -34,26 +34,26 @@ func (c ResponseCode) String() string {
 	return fmt.Sprintf("%d", c)
 }
 
-type PayloadType int
+type Type int
 
 const (
-	PayloadTypeSalam                = PayloadType(1) // Hello message
-	PayloadTypeAleyk                = PayloadType(2) // Hello Ack message
-	PayloadTypeLatestBlocksRequest  = PayloadType(3)
-	PayloadTypeLatestBlocksResponse = PayloadType(4)
-	PayloadTypeQueryTransactions    = PayloadType(5)
-	PayloadTypeTransactions         = PayloadType(6)
-	PayloadTypeQueryProposal        = PayloadType(7)
-	PayloadTypeProposal             = PayloadType(8)
-	PayloadTypeHeartBeat            = PayloadType(9)
-	PayloadTypeQueryVotes           = PayloadType(10)
-	PayloadTypeVote                 = PayloadType(11)
-	PayloadTypeBlockAnnounce        = PayloadType(12)
-	PayloadTypeDownloadRequest      = PayloadType(13)
-	PayloadTypeDownloadResponse     = PayloadType(14)
+	PayloadTypeSalam                = Type(1) // Hello message
+	PayloadTypeAleyk                = Type(2) // Hello Ack message
+	PayloadTypeLatestBlocksRequest  = Type(3)
+	PayloadTypeLatestBlocksResponse = Type(4)
+	PayloadTypeQueryTransactions    = Type(5)
+	PayloadTypeTransactions         = Type(6)
+	PayloadTypeQueryProposal        = Type(7)
+	PayloadTypeProposal             = Type(8)
+	PayloadTypeHeartBeat            = Type(9)
+	PayloadTypeQueryVotes           = Type(10)
+	PayloadTypeVote                 = Type(11)
+	PayloadTypeBlockAnnounce        = Type(12)
+	PayloadTypeDownloadRequest      = Type(13)
+	PayloadTypeDownloadResponse     = Type(14)
 )
 
-func (t PayloadType) String() string {
+func (t Type) String() string {
 	switch t {
 	case PayloadTypeSalam:
 		return "salam"
@@ -87,7 +87,7 @@ func (t PayloadType) String() string {
 	return fmt.Sprintf("%d", t)
 }
 
-func MakePayload(t PayloadType) Payload {
+func MakePayload(t Type) Payload {
 	switch t {
 	case PayloadTypeSalam:
 		return &SalamPayload{}
@@ -125,6 +125,6 @@ func MakePayload(t PayloadType) Payload {
 
 type Payload interface {
 	SanityCheck() error
-	Type() PayloadType
+	Type() Type
 	Fingerprint() string
 }

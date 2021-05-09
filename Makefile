@@ -76,14 +76,25 @@ proto:
 ########################################
 ### Formatting, linting, and vetting
 fmt:
-	@go vet ./...
-	@gofmt -s -w .
-	@golangci-lint run -e "SA1019"
+	gofmt -s -w .
+	golangci-lint run -e "SA1019" \
+	--enable=gofmt \
+	--enable=unconvert \
+	--enable=unparam \
+	--enable=golint \
+	--enable=asciicheck \
+	--enable=misspell
 
 fmt_bls:
-	$(BLS_CGO_LDFLAGS) go vet ./...
 	$(BLS_CGO_LDFLAGS) gofmt -s -w .
-	$(BLS_CGO_LDFLAGS) golangci-lint run -e "SA1019"
+	$(BLS_CGO_LDFLAGS) golangci-lint run -e "SA1019" \
+	--enable=govet \
+	--enable=gofmt \
+	--enable=unconvert \
+	--enable=unparam \
+	--enable=golint \
+	--enable=asciicheck \
+	--enable=misspell
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.

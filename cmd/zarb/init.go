@@ -69,7 +69,7 @@ func Init() func(c *cli.Cmd) {
 				gen = genesis.Mainnet()
 
 				conf.Network.Name = "zarb"
-				conf.Network.Bootstrap.Addresses = []string{}
+				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.186.100/tcp/8421/p2p/12D3KooWLB7zCZ2VV1AtqHwYy2RBgpxdtwYRYt1ZU7iECFNfpks6", "/ip4/139.177.199.21/tcp/8421/p2p/12D3KooWMjGbsP2XbR11RmjevPvTsC33qT48sbqiBhB9ekoFiedx"}
 
 				k := key.GenerateRandomKey()
 				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {

@@ -3,65 +3,89 @@ package sortition
 import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/libs/linkedmap"
 )
+
+type param struct {
+	seed  Seed
+	stake int64
+}
 
 type Sortition struct {
 	lk deadlock.RWMutex
 
-	vrf *VRF
+	params *linkedmap.LinkedMap
+	vrf    *VRF
 }
 
 func NewSortition() *Sortition {
 	return &Sortition{
-		vrf: NewVRF(),
+		vrf:    NewVRF(),
+		params: linkedmap.NewLinkedMap(7), // Sortitions are valid for 7 height
 	}
 }
 
-func (s *Sortition) SetTotalStake(totalStake int64) {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
+func (s *Sortition) SetParams(blockHash crypto.Hash, seed Seed, poolStake int64) {
+	s.lk.Lock()
+	defer s.lk.Unlock()
 
-	s.vrf.SetMax(totalStake)
+	p := &param{
+		seed:  seed,
+		stake: poolStake,
+	}
+	s.params.PushBack(blockHash, p)
 }
 
-// AddToTotalStake adds new stakes to total stake. stake can be negative
-func (s *Sortition) AddToTotalStake(stake int64) {
+func (s *Sortition) GetParams(blockHash crypto.Hash) (seed Seed, poolStake int64) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	s.vrf.AddToMax(stake)
-}
-
-func (s *Sortition) TotalStake() int64 {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
-
-	return s.vrf.Max()
-}
-
-func (s *Sortition) EvaluateSortition(seed Seed, signer crypto.Signer, threshold int64) (bool, Proof) {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
-
-	index, proof := s.vrf.Evaluate(seed, signer)
-	if index > threshold {
-		return false, proof
+	p := s.getParam(blockHash)
+	if p == nil {
+		return
 	}
 
-	return true, proof
+	return p.seed, p.stake
 }
 
-func (s *Sortition) VerifyProof(seed Seed, proof Proof, public crypto.PublicKey, threshold int64) bool {
+func (s *Sortition) EvaluateSortition(blockHash crypto.Hash, signer crypto.Signer, threshold int64) (bool, Proof) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	index, result := s.vrf.Verify(seed, public, proof)
+	p := s.getParam(blockHash)
+	if p == nil {
+		return false, Proof{}
+	}
+
+	index, proof := s.vrf.Evaluate(p.seed, signer, p.stake)
+	if index < threshold {
+		return true, proof
+	}
+
+	return false, Proof{}
+}
+
+func (s *Sortition) VerifyProof(blockHash crypto.Hash, proof Proof, public crypto.PublicKey, threshold int64) bool {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	p := s.getParam(blockHash)
+	if p == nil {
+		return false
+	}
+
+	index, result := s.vrf.Verify(p.seed, public, proof, p.stake)
 	if !result {
 		return false
 	}
-	if index > threshold {
-		return false
+	return index < threshold
+}
+
+func (s *Sortition) getParam(hash crypto.Hash) *param {
+	p, ok := s.params.Get(hash)
+	if !ok {
+		return nil
 	}
 
-	return true
+	return p.(*param)
 }

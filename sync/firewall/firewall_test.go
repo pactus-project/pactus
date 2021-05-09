@@ -32,6 +32,7 @@ func setup(t *testing.T) {
 	conf := TestConfig()
 	conf.Enabled = true
 	tFirewall = NewFirewall(conf, tNetwork, peerSet, state, logger)
+	assert.NotNil(t, tFirewall)
 	tBadPeerID = util.RandomPeerID()
 	tGoodPeerID = util.RandomPeerID()
 	tUnknownPeerID = util.RandomPeerID()

@@ -85,11 +85,7 @@ func (pv *PrivateKey) UnmarshalText(text []byte) error {
 }
 
 func (pv PrivateKey) MarshalJSON() ([]byte, error) {
-	bz, err := pv.MarshalText()
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(bz))
+	return json.Marshal(pv.String())
 }
 
 func (pv *PrivateKey) UnmarshalJSON(bz []byte) error {

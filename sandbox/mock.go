@@ -68,7 +68,7 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 }
 func (m *MockSandbox) EnterCommittee(hash crypto.Hash, addr crypto.Address) error {
 	if !m.WelcomeToCommittee {
-		return fmt.Errorf("Cannot enter to the committee")
+		return fmt.Errorf("cannot enter to the committee")
 	}
 	return nil
 }

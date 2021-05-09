@@ -35,12 +35,12 @@ type synchronizer struct {
 	ctx             context.Context
 	config          *Config
 	signer          crypto.Signer
-	state           state.StateFacade
+	state           state.Facade
 	consensus       consensus.Consensus
 	peerSet         *peerset.PeerSet
 	firewall        *firewall.Firewall
 	cache           *cache.Cache
-	handlers        map[payload.PayloadType]payloadHandler
+	handlers        map[payload.Type]payloadHandler
 	broadcastCh     <-chan payload.Payload
 	network         network.Network
 	heartBeatTicker *time.Ticker
@@ -50,7 +50,7 @@ type synchronizer struct {
 func NewSynchronizer(
 	conf *Config,
 	signer crypto.Signer,
-	state state.StateFacade,
+	state state.Facade,
 	consensus consensus.Consensus,
 	net network.Network,
 	broadcastCh <-chan payload.Payload) (Synchronizer, error) {
@@ -77,7 +77,7 @@ func NewSynchronizer(
 	sync.peerSet = peerSet
 	sync.firewall = firewall
 
-	handlers := make(map[payload.PayloadType]payloadHandler)
+	handlers := make(map[payload.Type]payloadHandler)
 
 	handlers[payload.PayloadTypeSalam] = newSalamHandler(sync)
 	handlers[payload.PayloadTypeAleyk] = newAleykHandler(sync)
@@ -225,7 +225,7 @@ func (sync *synchronizer) Fingerprint() string {
 
 // updateBlokchain checks if the node height is shorter than the network or not.
 // If the node height is shorter than network more than two hours (720 blocks),
-// it should join the download topic and start downlaoding the blocks,
+// it should join the download topic and start downloading the blocks,
 // otherwise the node can request the latest blocks from the network.
 func (sync *synchronizer) updateBlokchain() {
 	// TODO: write test for me
@@ -457,7 +457,7 @@ func (sync *synchronizer) prepareTransactions(ids []tx.ID) []*tx.Tx {
 	return trxs
 }
 
-func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int, initiator peer.ID, target peer.ID) {
+func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int, target peer.ID) {
 	if target != sync.network.SelfID() {
 		return
 	}

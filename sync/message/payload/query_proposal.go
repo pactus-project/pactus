@@ -29,7 +29,7 @@ func (p *QueryProposalPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *QueryProposalPayload) Type() PayloadType {
+func (p *QueryProposalPayload) Type() Type {
 	return PayloadTypeQueryProposal
 }
 

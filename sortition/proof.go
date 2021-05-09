@@ -19,7 +19,7 @@ func ProofFromString(text string) (Proof, error) {
 
 func ProofFromRawBytes(data []byte) (Proof, error) {
 	if len(data) != 48 {
-		return Proof{}, fmt.Errorf("Invalid proof data")
+		return Proof{}, fmt.Errorf("invalid proof length")
 	}
 
 	p := Proof{}

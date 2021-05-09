@@ -14,12 +14,12 @@ type Executor interface {
 	Fee() int64
 }
 type Execution struct {
-	executors      map[payload.PayloadType]Executor
+	executors      map[payload.Type]Executor
 	accumulatedFee int64
 }
 
 func newExecution(strict bool) *Execution {
-	execs := make(map[payload.PayloadType]Executor)
+	execs := make(map[payload.Type]Executor)
 	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(strict)
 	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(strict)
 	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(strict)

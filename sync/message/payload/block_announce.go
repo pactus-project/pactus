@@ -35,7 +35,7 @@ func (p *BlockAnnouncePayload) SanityCheck() error {
 	return nil
 }
 
-func (p *BlockAnnouncePayload) Type() PayloadType {
+func (p *BlockAnnouncePayload) Type() Type {
 	return PayloadTypeBlockAnnounce
 }
 

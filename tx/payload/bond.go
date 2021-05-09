@@ -13,7 +13,7 @@ type BondPayload struct {
 	Stake     int64            `cbor:"3,keyasint"`
 }
 
-func (p *BondPayload) Type() PayloadType {
+func (p *BondPayload) Type() Type {
 	return PayloadTypeBond
 }
 

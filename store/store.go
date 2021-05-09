@@ -39,31 +39,14 @@ func NewStore(conf *Config) (Store, error) {
 		return nil, err
 	}
 
-	blockStore, err := newBlockStore(db)
-	if err != nil {
-		return nil, err
-	}
-	txStore, err := newTxStore(db)
-	if err != nil {
-		return nil, err
-	}
-	accountStore, err := newAccountStore(db)
-	if err != nil {
-		return nil, err
-	}
-	validatorStore, err := newValidatorStore(db)
-	if err != nil {
-		return nil, err
-	}
-
 	return &store{
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
-		blockStore:     blockStore,
-		txStore:        txStore,
-		accountStore:   accountStore,
-		validatorStore: validatorStore,
+		blockStore:     newBlockStore(db),
+		txStore:        newTxStore(db),
+		accountStore:   newAccountStore(db),
+		validatorStore: newValidatorStore(db),
 	}, nil
 }
 

@@ -18,9 +18,9 @@ func TestPrecommitQueryProposal(t *testing.T) {
 
 	p := makeProposal(t, 2, 0)
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
 
 	shouldPublishQueryProposal(t, tConsP, 2, 0)
 }
@@ -39,9 +39,9 @@ func TestPrecommitInvalidProposal(t *testing.T) {
 
 	testEnterNewHeight(tConsP)
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexB)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexB)
 
 	tConsP.SetProposal(p2)
 	assert.Nil(t, tConsP.RoundProposal(0))
@@ -58,12 +58,12 @@ func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 	testEnterNewHeight(tConsP)
 	p := makeProposal(t, 2, 0)
 
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(t, tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
 
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
-	testAddVote(t, tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
 
 	tConsP.SetProposal(p)
 	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)

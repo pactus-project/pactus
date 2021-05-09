@@ -3,20 +3,20 @@ package log
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/consensus/vote_set"
+	"github.com/zarbchain/zarb-go/consensus/voteset"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/logger"
 )
 
 type Messages struct {
-	prepareVotes        *vote_set.VoteSet
-	precommitVotes      *vote_set.VoteSet
-	changeProposerVotes *vote_set.VoteSet
+	prepareVotes        *voteset.VoteSet
+	precommitVotes      *voteset.VoteSet
+	changeProposerVotes *voteset.VoteSet
 	proposal            *proposal.Proposal
 }
 
 func (m *Messages) addVote(v *vote.Vote) error {
-	vs := m.voteSet(v.VoteType())
+	vs := m.voteSet(v.Type())
 	return vs.AddVote(v)
 }
 
@@ -39,7 +39,7 @@ func (m *Messages) AllVotes() []*vote.Vote {
 	return votes
 }
 
-func (m *Messages) voteSet(voteType vote.VoteType) *vote_set.VoteSet {
+func (m *Messages) voteSet(voteType vote.Type) *voteset.VoteSet {
 	switch voteType {
 	case vote.VoteTypePrepare:
 		return m.prepareVotes

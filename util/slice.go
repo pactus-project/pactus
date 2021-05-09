@@ -24,7 +24,7 @@ func SliceToInt(bs []byte) int {
 
 func UInt64ToSlice(n uint64) []byte {
 	bs := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bs, uint64(n))
+	binary.LittleEndian.PutUint64(bs, n)
 	return bs
 }
 func Int64ToSlice(n int64) []byte {

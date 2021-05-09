@@ -1,4 +1,4 @@
-package vote_set
+package voteset
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/vote"

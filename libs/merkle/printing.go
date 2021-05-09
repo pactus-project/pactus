@@ -1,10 +1,10 @@
-package simpleMerkle
+package simplemerkle
 
 import (
 	"strings"
 )
 
-func (tree *SimpleMerkleTree) ToString() string {
+func (tree *Tree) ToString() string {
 	nodes := tree.merkles
 	if len(nodes) == 0 {
 		return ""

@@ -131,7 +131,7 @@ func setup(t *testing.T) {
 	logger.Info("Setup finished, start running the test", "name", t.Name())
 }
 
-func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.PayloadType) {
+func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -149,7 +149,7 @@ func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, pa
 	}
 }
 
-func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.MockNetwork, payloadType payload.PayloadType, code payload.ResponseCode) {
+func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.MockNetwork, payloadType payload.Type, code payload.ResponseCode) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -179,7 +179,7 @@ func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.
 	}
 }
 
-func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.PayloadType) {
+func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) {
 	timeout := time.NewTimer(300 * time.Millisecond)
 
 	for {
@@ -203,6 +203,7 @@ func addMoreBlocksForBob(t *testing.T, count int) {
 		tBobState.AddBlock(tBobState.LastBlockHeight()+1, b, trxs)
 		tBobState.LastBlockCertificate = c
 	}
+	assert.Equal(t, lastBlockHash, tBobState.LastBlockHash())
 }
 
 func addMoreBlocksForBobAndAnnounceLastBlock(t *testing.T, count int) {
@@ -217,6 +218,9 @@ func addMoreBlocksForBobAndAnnounceLastBlock(t *testing.T, count int) {
 }
 
 func disableHeartbeat(t *testing.T) {
+	require.NotNil(t, tAliceSync)
+	require.NotNil(t, tBobSync)
+
 	tAliceSync.heartBeatTicker.Stop()
 	tBobSync.heartBeatTicker.Stop()
 }

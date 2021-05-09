@@ -15,7 +15,7 @@ type Vote struct {
 }
 
 type voteData struct {
-	VoteType  VoteType          `cbor:"1,keyasint"`
+	Type      Type              `cbor:"1,keyasint"`
 	Height    int               `cbor:"2,keyasint"`
 	Round     int               `cbor:"3,keyasint"`
 	BlockHash crypto.Hash       `cbor:"4,keyasint"`
@@ -29,28 +29,28 @@ type signVote struct {
 	Tail      string      `cbor:"3,keyasint,omitempty"`
 }
 
-func (vote *Vote) SignBytes() []byte {
+func (v *Vote) SignBytes() []byte {
 	tail := ""
-	if vote.VoteType() == VoteTypePrepare {
+	if v.Type() == VoteTypePrepare {
 		tail = "prepare"
-	} else if vote.VoteType() == VoteTypeChangeProposer {
+	} else if v.Type() == VoteTypeChangeProposer {
 		tail = "change-proposer"
 	}
 	// Note:
 	// We omit block height, because finally block height is not matter, block hash is matter
 	bz, _ := cbor.Marshal(signVote{
-		Round:     vote.data.Round,
-		BlockHash: vote.data.BlockHash,
+		Round:     v.data.Round,
+		BlockHash: v.data.BlockHash,
 		Tail:      tail,
 	})
 
 	return bz
 }
 
-func NewVote(voteType VoteType, height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+func NewVote(voteType Type, height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
 	return &Vote{
 		data: voteData{
-			VoteType:  voteType,
+			Type:      voteType,
 			Height:    height,
 			Round:     round,
 			BlockHash: blockHash,
@@ -59,7 +59,7 @@ func NewVote(voteType VoteType, height int, round int, blockHash crypto.Hash, si
 	}
 }
 
-func (v *Vote) VoteType() VoteType           { return v.data.VoteType }
+func (v *Vote) Type() Type                   { return v.data.Type }
 func (v *Vote) Height() int                  { return v.data.Height }
 func (v *Vote) Round() int                   { return v.data.Round }
 func (v *Vote) BlockHash() crypto.Hash       { return v.data.BlockHash }
@@ -100,7 +100,7 @@ func (v *Vote) Verify(pubKey crypto.PublicKey) error {
 }
 
 func (v *Vote) SanityCheck() error {
-	if !v.data.VoteType.IsValid() {
+	if !v.data.Type.IsValid() {
 		return errors.Errorf(errors.ErrInvalidVote, "invalid vote type")
 	}
 	if v.data.Height <= 0 {
@@ -125,7 +125,7 @@ func (v *Vote) Fingerprint() string {
 	return fmt.Sprintf("{%v/%d/%s ⌘ %v 👤 %s}",
 		v.Height(),
 		v.Round(),
-		v.VoteType(),
+		v.Type(),
 		v.BlockHash().Fingerprint(),
 		v.Signer().Fingerprint(),
 	)

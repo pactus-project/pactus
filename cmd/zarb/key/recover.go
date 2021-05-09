@@ -23,7 +23,7 @@ func Recover() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("Seed is not correct: %v", err)
 				return
 			}
-			keyObj, err := key.KeyFromSeed(seed)
+			keyObj, err := key.FromSeed(seed)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create key from the seed: %v", err)
 				return

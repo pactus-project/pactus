@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Build, test and lint (Ubuntu)
+name: Build and test (Ubuntu)
 jobs:
   test:
     strategy:
@@ -27,9 +27,3 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         file: ./coverage.txt
-
-    - name: Check linting with golangci-lint
-      uses: golangci/golangci-lint-action@v2
-      with:
-        version: v1.36
-        args: --exclude="SA1019"  --timeout=5m

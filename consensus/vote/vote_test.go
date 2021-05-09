@@ -54,9 +54,9 @@ func TestVoteSignature(t *testing.T) {
 func TestVoteSanityCheck(t *testing.T) {
 	v, _ := GenerateTestChangeProposerVote(5, 5)
 	assert.NoError(t, v.SanityCheck())
-	v.data.VoteType = 4
+	v.data.Type = 4
 	assert.Error(t, v.SanityCheck())
-	v.data.VoteType = VoteTypePrepare
+	v.data.Type = VoteTypePrepare
 	v.data.Round = -1
 	assert.Error(t, v.SanityCheck())
 	v.data.Round = 0
@@ -84,7 +84,7 @@ func TestSignBytesMatchWithCommit(t *testing.T) {
 	s := new(signVote)
 	assert.NoError(t, cbor.Unmarshal(d, s))
 	v := Vote{data: voteData{
-		VoteType:  VoteTypePrecommit,
+		Type:      VoteTypePrecommit,
 		Round:     s.Round,
 		BlockHash: s.BlockHash},
 	}

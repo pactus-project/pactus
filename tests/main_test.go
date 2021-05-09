@@ -36,13 +36,13 @@ const tNodeIdx2 = 1
 const tNodeIdx3 = 2
 const tNodeIdx4 = 3
 const tTotalNodes = 8
-const tCommitteeSize = 4
+const tCommitteeSize = 7
 
-func incSequence(t *testing.T, addr crypto.Address) {
+func incSequence(addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
 }
 
-func getSequence(t *testing.T, addr crypto.Address) int {
+func getSequence(addr crypto.Address) int {
 	return tSequences[addr]
 }
 
@@ -59,7 +59,7 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
-		tConfigs[i].Logger.Levels["default"] = "error"
+		tConfigs[i].Logger.Levels["default"] = "warning"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
@@ -74,7 +74,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
 		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3
-		tConfigs[i].Http.Enable = false
+		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
 		tConfigs[i].Capnp.Enable = false
 
@@ -145,11 +145,8 @@ func TestMain(m *testing.M) {
 	// Check if sortition worked or not?
 	b := lastBlock()
 	committers := b.LastCertificate().Committers()
-	for _, num := range committers {
-		if num == tNodeIdx1 ||
-			num == tNodeIdx2 {
-			panic("Sortition didn't work")
-		}
+	if len(committers) == 4 {
+		panic("Sortition didn't work")
 	}
 
 	// Let's shutdown the nodes
