@@ -24,12 +24,12 @@ jobs:
       run: make bls && make build_bls_release
 
     - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            LICENSE
-            README.md
-            CHANGELOG.md
-            build/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          LICENSE
+          README.md
+          CHANGELOG.md
+          build/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
