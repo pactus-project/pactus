@@ -9,6 +9,3 @@ todo
 local.mk
 *.local.md
 .herumi
-dist/
-.releaser.yml
-*.local.md
