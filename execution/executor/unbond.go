@@ -21,7 +21,7 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	val := sb.Validator(pld.Signer())
 
 	if val == nil {
-		//if couldn't retrive the validator then cann't unbound it
+		//if couldn't retrieve the validator then cann't unbond it
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator assoiciated with this key")
 	}
 	if e.strict && sb.IsInCommittee(pld.Validator) {
@@ -31,7 +31,7 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
 	if val.UnbondingHeight() > 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "you already have unbounded at Height %v", val.UnbondingHeight())
+		return errors.Errorf(errors.ErrInvalidTx, "you already have unbonded at Height %v", val.UnbondingHeight())
 	}
 
 	val.IncSequence()
@@ -41,7 +41,7 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-//Fee will return unbound execution fee
+//Fee will return unbond execution fee
 func (e *UnbondExecutor) Fee() int64 {
 	return 0
 }

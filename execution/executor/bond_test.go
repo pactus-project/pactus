@@ -65,14 +65,13 @@ func TestExecuteBondTx(t *testing.T) {
 		tSandbox.InCommittee = false
 		uexe := NewUnbondExecutor(true)
 
-		unboundTrx := tx.NewUnbondTx(stamp, 1, addr, "Unbond")
-		assert.NoError(t, uexe.Execute(unboundTrx, tSandbox))
+		unbondTrx := tx.NewUnbondTx(stamp, 1, addr, "Unbond")
+		assert.NoError(t, uexe.Execute(unbondTrx, tSandbox))
 
 		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "Rebond")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	
 	assert.Equal(t, tSandbox.Account(bonder).Balance(), int64(10000000000-4000))
 	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(2000))
 	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(0))

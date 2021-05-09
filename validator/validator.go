@@ -46,7 +46,7 @@ func (val Validator) Power() int64 {
 	// Only bootstrap validators at genesis block has no stake
 	if val.data.Stake == 0 {
 		return 1
-	} else if val.data.UnbondingHeight > 0 { //if the validator requested to unbound ignore stake
+	} else if val.data.UnbondingHeight > 0 { //if the validator requested to unbond ignore stake
 		return 0
 	}
 	return val.data.Stake
