@@ -95,7 +95,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 }
 
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if trx.IsMintbaseTx() || trx.IsSortitionTx() {
+	if trx.IsMintbaseTx() || trx.IsSortitionTx() || trx.IsUnbondingTx() {
 		if trx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong. expected: 0, got: %v", trx.Fee())
 		}

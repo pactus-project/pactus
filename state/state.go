@@ -414,6 +414,11 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
+	if val.UnbondingHeight() > 0 {
+		// we have Unbonded
+		return false
+	}
+
 	//
 	ok, proof := st.sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), st.signer, val.Stake())
 	if ok {

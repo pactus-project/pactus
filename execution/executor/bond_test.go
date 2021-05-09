@@ -51,19 +51,35 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	t.Run("Should fail, Rebounding not allowed", func(t *testing.T) {
+	t.Run("Should be able to rebond if hasn't ever unbonded", func(t *testing.T) {
 		tSandbox.InCommittee = false
-		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "rebound")
+		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "Rebond")
 
+		assert.NoError(t, exe.Execute(trx, tSandbox))
+	})
+
+	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(2000))
+	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(2000))
+
+	t.Run("Shouldn't be able to rebond after unbonding", func(t *testing.T) {
+		tSandbox.InCommittee = false
+		uexe := NewUnbondExecutor(true)
+
+		unboundTrx := tx.NewUnbondTx(stamp, 1, addr, "Unbond")
+		assert.NoError(t, uexe.Execute(unboundTrx, tSandbox))
+
+		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "Rebond")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
-	assert.Equal(t, tSandbox.Account(bonder).Balance(), int64(10000000000-2000))
-	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(1000))
-	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(1000))
+
+	
+	assert.Equal(t, tSandbox.Account(bonder).Balance(), int64(10000000000-4000))
+	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(2000))
+	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(0))
 	assert.Equal(t, tSandbox.Validator(addr).BondingHeight(), 102)
 	assert.Equal(t, exe.Fee(), int64(1000))
 
-	checkTotalCoin(t, 1000)
+	checkTotalCoin(t, 2000)
 }
 
 func TestBondNonStrictMode(t *testing.T) {

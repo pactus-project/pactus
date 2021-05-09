@@ -82,7 +82,7 @@ func (tx *Tx) SanityCheck() error {
 }
 
 func (tx *Tx) checkFee() error {
-	if tx.IsMintbaseTx() || tx.IsSortitionTx() {
+	if tx.IsMintbaseTx() || tx.IsSortitionTx() || tx.IsUnbondingTx() {
 		if tx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "fee should set to zero")
 		}
@@ -173,6 +173,8 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		p = &payload.SendPayload{}
 	case payload.PayloadTypeBond:
 		p = &payload.BondPayload{}
+	case payload.PayloadTypeUnbond:
+		p = &payload.UnbondPayload{}
 	case payload.PayloadTypeSortition:
 		p = &payload.SortitionPayload{}
 
@@ -236,6 +238,10 @@ func (tx *Tx) IsMintbaseTx() bool {
 
 func (tx *Tx) IsSortitionTx() bool {
 	return tx.data.Type == payload.PayloadTypeSortition
+}
+
+func (tx *Tx) IsUnbondingTx() bool {
+	return tx.data.Type == payload.PayloadTypeUnbond
 }
 
 // ---------

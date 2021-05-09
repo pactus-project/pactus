@@ -27,8 +27,8 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if e.strict && sb.IsInCommittee(pld.Validator.Address()) {
 		return errors.Errorf(errors.ErrInvalidTx, "validator is in committee right now")
 	}
-	if val != nil && val.BondingHeight() > 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "you cannot rebound please generate new set of keys")
+	if val != nil && val.UnbondingHeight() > 0 {
+		return errors.Errorf(errors.ErrInvalidTx, "you cannot Rebond please generate new set of keys")
 	}
 	if bonderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid sequence. Expected: %v, got: %v", bonderAcc.Sequence()+1, trx.Sequence())

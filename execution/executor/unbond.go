@@ -8,7 +8,6 @@ import (
 )
 
 type UnbondExecutor struct {
-	fee    int64
 	strict bool
 }
 
@@ -31,12 +30,13 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if val.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
+	if val.UnbondingHeight() > 0 {
+		return errors.Errorf(errors.ErrInvalidTx, "you already have unbounded at Height %v", val.UnbondingHeight())
+	}
 
 	val.IncSequence()
 	val.UpdateUnbondingHeight(sb.CurrentHeight())
 	sb.UpdateValidator(val)
-
-	e.fee = trx.Fee()
 
 	return nil
 }
