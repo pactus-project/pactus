@@ -11,7 +11,7 @@ type UnbondPayload struct {
 	Validator crypto.Address `cbor:"1,keyasint"`
 }
 
-func (p *UnbondPayload) Type() PayloadType {
+func (p *UnbondPayload) Type() Type {
 	return PayloadTypeUnbond
 }
 
