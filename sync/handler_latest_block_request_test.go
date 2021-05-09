@@ -46,7 +46,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			tBobNet.ReceivingMessageFromOtherPeer(pid, pld)
 
 			shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeAleyk)
-			// First Session open here
+			// First session opens here
 		})
 	})
 
@@ -57,7 +57,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeLatestBlocksResponse)
 	})
 
-	t.Run("Bob should reject to requests with invalid ranges", func(t *testing.T) {
+	t.Run("Bob should reject requests with invalid ranges", func(t *testing.T) {
 		pld := payload.NewLatestBlocksRequestPayload(6, tBobPeerID, 0, 20)
 		tBobNet.ReceivingMessageFromOtherPeer(pid, pld)
 
