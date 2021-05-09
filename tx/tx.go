@@ -81,7 +81,7 @@ func (tx *Tx) SanityCheck() error {
 	return nil
 }
 
-func (tx *Tx) checkFee() error {
+func (tx *Tx) CheckFee() error {
 	if tx.IsMintbaseTx() || tx.IsSortitionTx() || tx.IsUnbondingTx() {
 		if tx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "fee should set to zero")

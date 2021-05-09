@@ -95,16 +95,15 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 }
 
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if trx.IsMintbaseTx() || trx.IsSortitionTx() || trx.IsUnbondingTx() {
-		if trx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong. expected: 0, got: %v", trx.Fee())
-		}
-	} else {
-		fee := int64(float64(trx.Payload().Value()) * sb.FeeFraction())
-		fee = util.Max64(fee, sb.MinFee())
-		if trx.Fee() != fee {
-			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong. expected: %v, got: %v", fee, trx.Fee())
-		}
+	if trx.CheckFee() != nil {
+		return trx.CheckFee()
 	}
+
+	fee := int64(float64(trx.Payload().Value()) * sb.FeeFraction())
+	fee = util.Max64(fee, sb.MinFee())
+	if trx.Fee() != fee {
+		return errors.Errorf(errors.ErrInvalidTx, "fee is wrong. expected: %v, got: %v", fee, trx.Fee())
+	}
+
 	return nil
 }
