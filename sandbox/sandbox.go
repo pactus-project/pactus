@@ -335,6 +335,13 @@ func (sb *Concrete) CommitteeSize() int {
 	return sb.params.CommitteeSize
 }
 
+func (sb *Concrete) UnbondInterval() int {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.params.UnbondInterval
+}
+
 func (sb *Concrete) IsInCommittee(addr crypto.Address) bool {
 	return sb.committee.Contains(addr)
 }

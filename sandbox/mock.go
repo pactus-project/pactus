@@ -115,6 +115,9 @@ func (m *MockSandbox) AccSeq(a crypto.Address) int {
 func (m *MockSandbox) CommitteeSize() int {
 	return m.Params.CommitteeSize
 }
+func (m *MockSandbox) UnbondInterval() int {
+	return m.Params.UnbondInterval
+}
 
 func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
 	return m.InCommittee

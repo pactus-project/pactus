@@ -79,6 +79,29 @@ func NewUnbondTx(stamp crypto.Hash,
 	}
 }
 
+func NewWithdrawTx(stamp crypto.Hash,
+	seq int,
+	val crypto.Address,
+	acc crypto.Address,
+	amount, fee int64,
+	memo string) *Tx {
+	return &Tx{
+		data: txData{
+			Stamp:    stamp,
+			Sequence: seq,
+			Version:  1,
+			Type:     payload.PayloadTypeWithdraw,
+			Payload: &payload.WithdrawPayload{
+				From:   val,
+				To:     acc,
+				Amount: amount,
+			},
+			Fee:  fee,
+			Memo: memo,
+		},
+	}
+}
+
 func NewSortitionTx(stamp crypto.Hash,
 	seq int,
 	addr crypto.Address,

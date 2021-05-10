@@ -173,6 +173,8 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		p = &payload.SendPayload{}
 	case payload.PayloadTypeBond:
 		p = &payload.BondPayload{}
+	case payload.PayloadTypeWithdraw:
+		p = &payload.WithdrawPayload{}
 	case payload.PayloadTypeUnbond:
 		p = &payload.UnbondPayload{}
 	case payload.PayloadTypeSortition:
@@ -242,6 +244,10 @@ func (tx *Tx) IsSortitionTx() bool {
 
 func (tx *Tx) IsUnbondTx() bool {
 	return tx.data.Type == payload.PayloadTypeUnbond
+}
+
+func (tx *Tx) IsWithdrawTx() bool {
+	return tx.data.Type == payload.PayloadTypeWithdraw
 }
 
 func (tx *Tx) IsBondTx() bool {
