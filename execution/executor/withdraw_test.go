@@ -29,7 +29,7 @@ func Test_WithdrawExecutor(t *testing.T) {
 
 	t.Run("should fail, stack amount secceded", func(t *testing.T) {
 		assert.Equal(t, int64(5000000000), tVal1.Stake())
-		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 5000000000, 1000, "need to unbond first")
+		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tAcc1.Address(), tAcc1.Address(), 5000000000, 1000, "need to unbond first")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 

@@ -24,6 +24,7 @@ func newExecution(strict bool) *Execution {
 	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(strict)
 	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(strict)
 	execs[payload.PayloadTypeUnbond] = executor.NewUnbondExecutor(strict)
+	execs[payload.PayloadTypeWithdraw] = executor.NewWithdrawExecutor(strict)
 
 	return &Execution{
 		executors: execs,
@@ -95,7 +96,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 }
 
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if trx.IsMintbaseTx() || trx.IsSortitionTx() || trx.IsUnbondTx() {
+	if trx.IsFreeTx() {
 		if trx.Fee() != 0 {
 			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong. expected: 0, got: %v", trx.Fee())
 		}

@@ -312,6 +312,22 @@ func TestUnbondSignBytes(t *testing.T) {
 	assert.True(t, trx1.IsUnbondTx())
 
 }
+func TestWithdrawSignBytes(t *testing.T) {
+	h := crypto.GenerateTestHash()
+	signer := crypto.GenerateTestSigner()
+	addr, _, _ := crypto.GenerateTestKeyPair()
+
+	trx1 := NewWithdrawTx(h, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
+	signer.SignMsg(trx1)
+
+	trx2 := NewWithdrawTx(h, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
+	trx3 := NewWithdrawTx(h, 2, signer.Address(), addr, 1000, 1000, "test unbond-tx")
+
+	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
+	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
+	assert.True(t, trx1.IsWithdrawTx())
+
+}
 
 func TestSortitionSignBytes(t *testing.T) {
 	h := crypto.GenerateTestHash()
