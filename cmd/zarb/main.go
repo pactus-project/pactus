@@ -25,6 +25,7 @@ func zarb() *cli.Cli {
 		k.Command("bond", "Generate raw bond transaction", tx.BondTx())
 		k.Command("send", "Generate raw send transaction", tx.SendTx())
 		k.Command("unbond", "Generate raw unbond transaction", tx.UnbondTx())
+		k.Command("withdraw", "Generate raw withdraw transaction", tx.WithdrawTx())
 	})
 	app.Command("version", "Print the zarb version", Version())
 	return app
