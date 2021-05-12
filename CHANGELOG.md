@@ -2,7 +2,7 @@
 
 ## 1.0.1
 
-- Fixing dll missing issue on Windows
+- Fixing dll missing issue on Windows #192
 
 ## 1.0.0
 - Refactoring Consensus module
