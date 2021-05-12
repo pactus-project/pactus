@@ -1,0 +1,35 @@
+name: releaser
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  releaser:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.x
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create release archive
+        run: bash ./.github/workflows/releaser.sh
+
+      - name: Print list of files
+        run: ls
+
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: zarb-*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
