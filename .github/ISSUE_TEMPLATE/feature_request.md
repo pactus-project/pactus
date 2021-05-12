@@ -9,7 +9,7 @@ labels: ''
 Please read through the template below and answer all relevant questions.
 Your additional work here is greatly appreciated and will help us respond as quickly as possible.
 
-**For More Advanced Features Please Consider Our [ZIPs repo](https://github.com/zarbchain/zips)**
+**For more advanced features please consider our [ZIPs repo](https://github.com/zarbchain/zips)**
 
 ### Describe the problem you'd like to have solved
 

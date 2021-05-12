@@ -34,6 +34,6 @@ and help.
 
 ## Configuration, dependencies, and tests
 
-Please see the [Developers' Guide](https://zarb.network/guide/run-index.html)
+Please see the [Developers' Guide](https://zarb.network/dev/dev-index.html)
 for more details on configuring your environment, managing project dependencies
 and testing procedures.
