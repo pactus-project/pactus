@@ -40,7 +40,7 @@ build_bls:
 	$(BLS_CGO_LDFLAGS) go build $(BUILD_LDFLAGS) -o build/zarb ./cmd/zarb/
 
 build_bls_release:
-	$(BLS_CGO_LDFLAGS) go build -o build/zarb ./cmd/zarb/
+	$(BLS_CGO_LDFLAGS) go build ./cmd/zarb/
 
 ########################################
 ### Testing

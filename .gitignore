@@ -12,3 +12,4 @@ local.mk
 dist/
 .releaser.yml
 *.local.md
+zarb*
