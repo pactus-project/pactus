@@ -28,9 +28,9 @@ type txData struct {
 	Fee       int64
 	Type      payload.Type
 	Payload   payload.Payload
-	Memo      string
-	PublicKey *crypto.PublicKey
-	Signature *crypto.Signature
+	Memo      string            `json:",omitempty"`
+	PublicKey *crypto.PublicKey `json:",omitempty"`
+	Signature *crypto.Signature `json:",omitempty"`
 }
 
 func (tx *Tx) Version() int                 { return tx.data.Version }

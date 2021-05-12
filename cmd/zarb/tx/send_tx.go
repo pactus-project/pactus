@@ -1,6 +1,7 @@
 package tx
 
 import (
+	"encoding/json"
 	"fmt"
 
 	cli "github.com/jawher/mow.cli"
@@ -17,8 +18,9 @@ func SendTx() func(c *cli.Cmd) {
 		})
 
 		seqOpt := c.Int(cli.IntOpt{
-			Name: "seq",
-			Desc: "Transaction sequence number",
+			Name:      "seq",
+			Desc:      "Transaction sequence number",
+			HideValue: true,
 		})
 
 		senderOpt := c.String(cli.StringOpt{
@@ -32,13 +34,15 @@ func SendTx() func(c *cli.Cmd) {
 		})
 
 		amountOpt := c.Int(cli.IntOpt{
-			Name: "amount",
-			Desc: "The amount to be transferred",
+			Name:      "amount",
+			Desc:      "The amount to be transferred",
+			HideValue: true,
 		})
 
 		feeOpt := c.Int(cli.IntOpt{
-			Name: "fee",
-			Desc: "Transaction fee",
+			Name:      "fee",
+			Desc:      "Transaction fee",
+			HideValue: true,
 		})
 
 		memoOpt := c.String(cli.StringOpt{
@@ -114,7 +118,10 @@ func SendTx() func(c *cli.Cmd) {
 
 			trx := tx.NewSendTx(stamp, seq, sender, receiver, amount, fee, *memoOpt)
 			bz, _ := trx.Encode()
-			cmd.PrintInfoMsg("Unsigned transaction raw bytes:\n%x", bz)
+			js, _ := json.MarshalIndent(trx, " ", " ")
+			cmd.PrintInfoMsg("Transaction format:\n%s", js)
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Transaction raw bytes:\n%x", bz)
 
 		}
 	}

@@ -1,6 +1,7 @@
 package tx
 
 import (
+	"encoding/json"
 	"fmt"
 
 	cli "github.com/jawher/mow.cli"
@@ -17,8 +18,9 @@ func BondTx() func(c *cli.Cmd) {
 		})
 
 		seqOpt := c.Int(cli.IntOpt{
-			Name: "seq",
-			Desc: "Transaction sequence number",
+			Name:      "seq",
+			Desc:      "Transaction sequence number",
+			HideValue: true,
 		})
 
 		bonderOpt := c.String(cli.StringOpt{
@@ -32,13 +34,15 @@ func BondTx() func(c *cli.Cmd) {
 		})
 
 		stakeOpt := c.Int(cli.IntOpt{
-			Name: "stake",
-			Desc: "Stake amount",
+			Name:      "stake",
+			Desc:      "Stake amount",
+			HideValue: true,
 		})
 
 		feeOpt := c.Int(cli.IntOpt{
-			Name: "fee",
-			Desc: "Transaction fee",
+			Name:      "fee",
+			Desc:      "Transaction fee",
+			HideValue: true,
 		})
 
 		memoOpt := c.String(cli.StringOpt{
@@ -114,7 +118,10 @@ func BondTx() func(c *cli.Cmd) {
 
 			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
 			bz, _ := trx.Encode()
-			cmd.PrintInfoMsg("Unsigned transaction raw bytes:\n%x", bz)
+			js, _ := json.MarshalIndent(trx, " ", " ")
+			cmd.PrintInfoMsg("Transaction format:\n%s", js)
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Transaction raw bytes:\n%x", bz)
 
 		}
 	}
