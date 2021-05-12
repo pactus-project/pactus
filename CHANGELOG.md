@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Fixing dll missing issue on Windows
+
 ## 1.0.0
 - Refactoring Consensus module
 - Refactoring Sync module
