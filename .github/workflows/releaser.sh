@@ -10,6 +10,6 @@ make bls && make build_bls_release
 if [[ "$OS" == "mingw"* ]]; then
     OS="windows"
     Compress-Archive ./zarb.exe zarb-windows-$TAG-$MACH.zip
-elif
+else
     tar -czvf zarb-$OS-$TAG-$MACH.tar.gz ./zarb
 fi
