@@ -9,7 +9,7 @@
 
 ## Compiling the code
 
-You need to make sure you have install [Go](https://golang.org/).
+You need to make sure you have install [(Go1.15 or higher)](https://golang.org/).
 Follow these steps to compile and build Zarb blockchain:
 
 ```bash
