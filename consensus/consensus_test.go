@@ -61,7 +61,7 @@ func setup(t *testing.T) {
 
 	vals := make([]*validator.Validator, 4)
 	for i, s := range tSigners {
-		val := validator.NewValidator(s.PublicKey(), 0, i)
+		val := validator.NewValidator(s.PublicKey(), i)
 		vals[i] = val
 	}
 

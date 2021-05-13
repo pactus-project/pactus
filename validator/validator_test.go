@@ -53,7 +53,7 @@ func TestMarshalingRawData(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, val.Stake(), int64(720867105))
 	assert.Equal(t, val.Sequence(), 759)
-	assert.Equal(t, val.BondingHeight(), 20)
+	assert.Equal(t, val.LastBondingHeight(), 20)
 	assert.Equal(t, val.UnbondingHeight(), 100)
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)
