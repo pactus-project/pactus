@@ -1,6 +1,6 @@
 # zarb key
 
-`zarb key` is a simple command-line tool to work with zarb key files.
+`zarb key` is a simple command-line tool to work with Zarb key files.
 
 ## Usage
 
