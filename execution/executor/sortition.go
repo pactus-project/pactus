@@ -22,7 +22,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve validator")
 	}
-	if sb.CurrentHeight()-val.BondingHeight() < 2*sb.CommitteeSize() {
+	if sb.CurrentHeight()-val.LastBondingHeight() < 2*sb.CommitteeSize() {
 		return errors.Errorf(errors.ErrInvalidTx, "in bonding period")
 	}
 	if !sb.VerifySortition(trx.Stamp(), pld.Proof, val) {

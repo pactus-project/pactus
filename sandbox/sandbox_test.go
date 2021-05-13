@@ -12,7 +12,6 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -57,14 +56,14 @@ func setup(t *testing.T) {
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 
-	val1 := validator.NewValidator(pub1, 0, util.RandInt(1000))
-	val2 := validator.NewValidator(pub2, 1, util.RandInt(1000))
-	val3 := validator.NewValidator(pub3, 2, util.RandInt(1000))
-	val4 := validator.NewValidator(pub4, 3, util.RandInt(1000))
-	val5 := validator.NewValidator(pub5, 4, util.RandInt(1000))
-	val6 := validator.NewValidator(pub6, 5, util.RandInt(1000))
-	val7 := validator.NewValidator(pub7, 6, util.RandInt(1000))
-	val8 := validator.NewValidator(pub8, 7, util.RandInt(1000))
+	val1 := validator.NewValidator(pub1, 0)
+	val2 := validator.NewValidator(pub2, 1)
+	val3 := validator.NewValidator(pub3, 2)
+	val4 := validator.NewValidator(pub4, 3)
+	val5 := validator.NewValidator(pub5, 4)
+	val6 := validator.NewValidator(pub6, 5)
+	val7 := validator.NewValidator(pub7, 6)
+	val8 := validator.NewValidator(pub8, 7)
 
 	val1.AddToStake(1000)
 	val2.AddToStake(2000)
@@ -214,7 +213,7 @@ func TestAddValidatorToCommittee(t *testing.T) {
 		b, _ := tStore.Block(height - 3)
 		num := b.LastCertificate().Committers()[2]
 		addr, pub, _ := crypto.GenerateTestKeyPair()
-		val := validator.NewValidator(pub, num, 0)
+		val := validator.NewValidator(pub, num)
 		tStore.UpdateValidator(val)
 		assert.Equal(t, tSandbox.Validator(addr), val)
 
@@ -287,12 +286,15 @@ func TestTotalValidatorCounter(t *testing.T) {
 
 		_, pub, _ := crypto.GenerateTestKeyPair()
 		_, pub2, _ := crypto.GenerateTestKeyPair()
-		val := tSandbox.MakeNewValidator(pub)
-		assert.Equal(t, val.Number(), 8)
-		assert.Equal(t, val.BondingHeight(), tSandbox.CurrentHeight())
+		val1 := tSandbox.MakeNewValidator(pub)
+		val1.UpdateLastBondingHeight(tSandbox.CurrentHeight())
+		assert.Equal(t, val1.Number(), 8)
+		assert.Equal(t, val1.LastBondingHeight(), tSandbox.CurrentHeight())
+
 		val2 := tSandbox.MakeNewValidator(pub2)
+		val2.UpdateLastBondingHeight(tSandbox.CurrentHeight()+1)
 		assert.Equal(t, val2.Number(), 9)
-		assert.Equal(t, val2.BondingHeight(), tSandbox.CurrentHeight())
+		assert.Equal(t, val2.LastBondingHeight(), tSandbox.CurrentHeight()+1)
 		assert.Equal(t, val2.Stake(), int64(0))
 	})
 }

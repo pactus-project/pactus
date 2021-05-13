@@ -15,7 +15,7 @@ func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []cryp
 	vals := []*validator.Validator{}
 	for i, s := range stakes {
 		signer := crypto.GenerateTestSigner()
-		val := validator.NewValidator(signer.PublicKey(), i, 0)
+		val := validator.NewValidator(signer.PublicKey(), i)
 		val.AddToStake(s)
 		vals = append(vals, val)
 		signers = append(signers, signer)
