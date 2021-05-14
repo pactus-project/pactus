@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -32,7 +33,7 @@ func WriteFile(filename string, data []byte) error {
 	if err := Mkdir(filepath.Dir(filename)); err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
+	if err := ioutil.WriteFile(filename, data, 0600); err != nil {
 		return fmt.Errorf("failed to write to %s: %v", filename, err)
 	}
 	return nil
@@ -63,12 +64,7 @@ func TempDirPath() string {
 }
 
 func TempFilePath() string {
-	f, err := ioutil.TempFile("", "zarb*")
-	if err != nil {
-		panic(err)
-	}
-	os.Remove(f.Name())
-	return f.Name()
+	return path.Join(TempDirPath(), "file")
 }
 
 func IsDirEmpty(name string) bool {
