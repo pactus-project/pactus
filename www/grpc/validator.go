@@ -15,15 +15,17 @@ func (zs *zarbServer) GetValidatorByNumber(ctx context.Context, request *zarb.Va
 		return nil, status.Errorf(codes.NotFound, "NotFound Validator Address")
 	}
 
+	// TODO: make a function
+	// proto validator from native validator
 	return &zarb.ValidatorResponse{
 		Validator: &zarb.Validator{
-			PublicKey:        validator.PublicKey().String(),
-			Address:          validator.Address().String(),
-			Number:           int32(validator.Number()),
-			Sequence:         int32(validator.Sequence()),
-			Stake:            validator.Stake(),
-			BondingHeight:    int32(validator.BondingHeight()),
-			LastJoinedHeight: int32(validator.LastJoinedHeight()),
+			PublicKey:         validator.PublicKey().String(),
+			Address:           validator.Address().String(),
+			Number:            int32(validator.Number()),
+			Sequence:          int32(validator.Sequence()),
+			Stake:             validator.Stake(),
+			LastBondingHeight: int32(validator.LastBondingHeight()),
+			LastJoinedHeight:  int32(validator.LastJoinedHeight()),
 		},
 	}, nil
 }
@@ -38,15 +40,17 @@ func (zs *zarbServer) GetValidator(ctx context.Context, request *zarb.ValidatorR
 		return nil, status.Errorf(codes.NotFound, "NotFound Validator Address")
 	}
 
+	// TODO: make a function
+	// proto validator from native validator
 	return &zarb.ValidatorResponse{
 		Validator: &zarb.Validator{
-			PublicKey:        validator.PublicKey().String(),
-			Address:          validator.Address().String(),
-			Number:           int32(validator.Number()),
-			Sequence:         int32(validator.Sequence()),
-			Stake:            validator.Stake(),
-			BondingHeight:    int32(validator.BondingHeight()),
-			LastJoinedHeight: int32(validator.LastJoinedHeight()),
+			PublicKey:         validator.PublicKey().String(),
+			Address:           validator.Address().String(),
+			Number:            int32(validator.Number()),
+			Sequence:          int32(validator.Sequence()),
+			Stake:             validator.Stake(),
+			LastBondingHeight: int32(validator.LastBondingHeight()),
+			LastJoinedHeight:  int32(validator.LastJoinedHeight()),
 		},
 	}, nil
 }
@@ -54,14 +58,16 @@ func (zs *zarbServer) GetValidators(ctx context.Context, request *zarb.Validator
 	validators := zs.state.CommitteeValidators()
 	validatorsResp := make([]*zarb.Validator, 0)
 	for _, v := range validators {
+		// TODO: make a function
+		// proto validator from native validator
 		validatorsResp = append(validatorsResp, &zarb.Validator{
-			PublicKey:        v.PublicKey().String(),
-			Address:          v.Address().String(),
-			Number:           int32(v.Number()),
-			Sequence:         int32(v.Sequence()),
-			Stake:            v.Stake(),
-			BondingHeight:    int32(v.BondingHeight()),
-			LastJoinedHeight: int32(v.LastJoinedHeight()),
+			PublicKey:         v.PublicKey().String(),
+			Address:           v.Address().String(),
+			Number:            int32(v.Number()),
+			Sequence:          int32(v.Sequence()),
+			Stake:             v.Stake(),
+			LastBondingHeight: int32(v.LastBondingHeight()),
+			LastJoinedHeight:  int32(v.LastJoinedHeight()),
 		})
 	}
 	return &zarb.ValidatorsResponse{Validators: validatorsResp}, nil

@@ -511,7 +511,7 @@
           "type": "string",
           "format": "int64"
         },
-        "bondingHeight": {
+        "lastBondingHeight": {
           "type": "integer",
           "format": "int32"
         },
@@ -522,7 +522,8 @@
         "address": {
           "type": "string"
         }
-      }
+      },
+      "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"
     },
     "zarbValidatorResponse": {
       "type": "object",

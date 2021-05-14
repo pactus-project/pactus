@@ -104,12 +104,14 @@ message SendRawTransactionResponse {
   string id = 2;
 }
 
+// TODO: add unbond height
+// TODO: in32 -> int64
 message Validator{
   string public_key = 1;
   int32 number = 2;
   int32 sequence = 3;
   int64 stake = 4;
-  int32 bonding_height = 5;
+  int32 last_bonding_height = 5;
   int32 last_joined_height = 6;
   string address = 7;
 }

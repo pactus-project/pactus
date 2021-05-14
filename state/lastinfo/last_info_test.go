@@ -59,10 +59,10 @@ func setup(t *testing.T) {
 	signer6 := crypto.GenerateTestSigner()
 	signer7 := crypto.GenerateTestSigner()
 
-	val0 := validator.NewValidator(signer0.PublicKey(), 0, 0)
-	val1 := validator.NewValidator(signer1.PublicKey(), 1, 0)
-	val2 := validator.NewValidator(signer2.PublicKey(), 2, 0)
-	val3 := validator.NewValidator(signer3.PublicKey(), 3, 0)
+	val0 := validator.NewValidator(signer0.PublicKey(), 0)
+	val1 := validator.NewValidator(signer1.PublicKey(), 1)
+	val2 := validator.NewValidator(signer2.PublicKey(), 2)
+	val3 := validator.NewValidator(signer3.PublicKey(), 3)
 
 	val0.AddToStake(1000)
 	val1.AddToStake(2000)
@@ -94,7 +94,8 @@ func setup(t *testing.T) {
 	setSortitionParams(block1.Hash(), seed1, committers2)
 
 	// Block 2
-	val4 := validator.NewValidator(signer4.PublicKey(), 4, 3)
+	val4 := validator.NewValidator(signer4.PublicKey(), 4)
+	val4.UpdateLastBondingHeight(3)
 	val4.AddToStake(4000)
 	tStore.UpdateValidator(val4)
 	trx2 := tx.NewBondTx(block1.Hash(), 1, signer1.Address(), val4.PublicKey(), 4000, 4000, "")
@@ -113,9 +114,11 @@ func setup(t *testing.T) {
 	setSortitionParams(block2.Hash(), seed2, committers3)
 
 	// Block 3
-	val5 := validator.NewValidator(signer5.PublicKey(), 5, 3)
+	val5 := validator.NewValidator(signer5.PublicKey(), 5)
+	val5.UpdateLastBondingHeight(3)
 	val5.AddToStake(5000)
-	val6 := validator.NewValidator(signer6.PublicKey(), 6, 3)
+	val6 := validator.NewValidator(signer6.PublicKey(), 6)
+	val6.UpdateLastBondingHeight(3)
 	val5.AddToStake(5000)
 	val4.UpdateLastJoinedHeight(3)
 	tStore.UpdateValidator(val4)
@@ -166,7 +169,8 @@ func setup(t *testing.T) {
 	setSortitionParams(block4.Hash(), seed4, committers5)
 
 	// Block 5
-	val7 := validator.NewValidator(signer7.PublicKey(), 7, 5)
+	val7 := validator.NewValidator(signer7.PublicKey(), 7)
+	val7.UpdateLastBondingHeight(5)
 	val7.AddToStake(7000)
 	val5.UpdateLastJoinedHeight(5)
 	tStore.UpdateValidator(val5)

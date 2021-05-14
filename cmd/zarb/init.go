@@ -113,7 +113,7 @@ func makeGenesis(workingDir string) (*genesis.Genesis, error) {
 	if err := key.EncryptKeyToFile(k, workingDir+"/validator_key.json", "", ""); err != nil {
 		return nil, err
 	}
-	val := validator.NewValidator(k.PublicKey(), 0, 0)
+	val := validator.NewValidator(k.PublicKey(), 0)
 	vals := []*validator.Validator{val}
 
 	// create genesis

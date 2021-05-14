@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+- Updating last bonding height for validators
+- Refactor Transactions in CMD
+
 ## 1.0.0
 - Refactoring Consensus module
 - Refactoring Sync module
