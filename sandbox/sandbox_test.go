@@ -292,7 +292,7 @@ func TestTotalValidatorCounter(t *testing.T) {
 		assert.Equal(t, val1.LastBondingHeight(), tSandbox.CurrentHeight())
 
 		val2 := tSandbox.MakeNewValidator(pub2)
-		val2.UpdateLastBondingHeight(tSandbox.CurrentHeight()+1)
+		val2.UpdateLastBondingHeight(tSandbox.CurrentHeight() + 1)
 		assert.Equal(t, val2.Number(), 9)
 		assert.Equal(t, val2.LastBondingHeight(), tSandbox.CurrentHeight()+1)
 		assert.Equal(t, val2.Stake(), int64(0))

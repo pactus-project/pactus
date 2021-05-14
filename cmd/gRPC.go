@@ -28,8 +28,8 @@ func GetSequence(client zarb.ZarbClient, addr crypto.Address) (int, error) {
 		return 0, err
 	}
 	acc := account.NewAccount(addr, 0)
-	acc.Decode(a.Data)
 
+	err = acc.Decode(a.Data)
 	if err != nil {
 		return 0, err
 	}

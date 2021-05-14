@@ -30,7 +30,6 @@ func signAndPublish(trx *tx.Tx, keyfile, auth string, grpcClient zarb.ZarbClient
 	signedTrx, _ := trx.Encode()
 	if id, err := cmd.SendTx(grpcClient, signedTrx); err != nil {
 		cmd.PrintErrorMsg("Couldn't publish transaction: %v", err)
-		return
 	} else {
 		cmd.PrintSuccessMsg("transaction sent with Id: %v", id)
 	}
