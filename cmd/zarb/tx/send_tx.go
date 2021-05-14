@@ -2,12 +2,10 @@ package tx
 
 import (
 	"fmt"
-	"strings"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -15,12 +13,12 @@ func SendTx() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		stampOpt := c.String(cli.StringOpt{
 			Name: "stamp",
-			Desc: "Transaction stamp if not specified will get from RPC server",
+			Desc: "Transaction stamp if not specified will query from RPC server",
 		})
 
 		seqOpt := c.Int(cli.IntOpt{
 			Name: "seq",
-			Desc: "Transaction sequence number if not specified will get from RPC server",
+			Desc: "Transaction sequence number if not specified will query from RPC server",
 		})
 
 		senderOpt := c.String(cli.StringOpt{
@@ -69,11 +67,11 @@ func SendTx() func(c *cli.Cmd) {
 			var stamp crypto.Hash
 			var sender crypto.Address
 			var receiver crypto.Address
-			var rpc string
 			var seq int
 			var amount int64
 			var fee int64
 			var auth string
+			var rpc string
 
 			// ---
 			if *amountOpt == 0 {
@@ -160,29 +158,7 @@ func SendTx() func(c *cli.Cmd) {
 			trx := tx.NewSendTx(stamp, seq, sender, receiver, amount, fee, *memoOpt)
 
 			//sign transaction
-			k, err := key.DecryptKeyFile(*keyFileOpt, auth)
-			if err != nil {
-				cmd.PrintErrorMsg("Couldn't retrieve Key: %v", err)
-				return
-			}
-			k.ToSigner().SignMsg(trx)
-
-			cmd.PrintWarnMsg("you are about to publish:")
-			cmd.PrintJSONObject(trx)
-			confirm := cmd.PromptInput("press y/yes to continue:")
-			if !strings.HasSuffix(strings.ToLower(confirm), "y") {
-				cmd.PrintWarnMsg("Opration aborted!")
-				return
-			}
-
-			// publish
-			signedTrx, _ := trx.Encode()
-			if id, err := cmd.SendTx(grpcClient, signedTrx); err != nil {
-				cmd.PrintErrorMsg("Couldn't publish transaction: %v", err)
-				return
-			} else {
-				cmd.PrintSuccessMsg("transaction sent with Id: %v", id)
-			}
+			signAndPublish(trx, *keyFileOpt, auth, grpcClient)
 		}
 	}
 }
