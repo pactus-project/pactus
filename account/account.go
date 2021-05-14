@@ -72,8 +72,9 @@ func (acc *Account) UnmarshalJSON(bs []byte) error {
 }
 
 func (acc Account) Fingerprint() string {
-	return fmt.Sprintf("{ %s %v}",
+	return fmt.Sprintf("{ %s %d %v}",
 		acc.Address().Fingerprint(),
+		acc.Sequence(),
 		acc.Balance())
 }
 

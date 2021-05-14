@@ -75,6 +75,7 @@ message BlockchainInfoRequest {
 
 message BlockchainInfoResponse {
   int64 height=1;
+  string stamp=2;
 }
 
 message NetworkInfoRequest {

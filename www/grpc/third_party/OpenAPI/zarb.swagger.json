@@ -416,6 +416,9 @@
         "height": {
           "type": "string",
           "format": "int64"
+        },
+        "stamp": {
+          "type": "string"
         }
       }
     },
