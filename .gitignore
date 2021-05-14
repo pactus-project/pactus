@@ -4,8 +4,7 @@ vendor
 .DS_Store
 .vscode
 todo
-local*
-.local*
+*.local.*
 .herumi
 dist/
 .releaser.yml
