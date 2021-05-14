@@ -62,7 +62,7 @@ func Init() func(c *cli.Cmd) {
 
 				k := key.GenerateRandomKey()
 				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {
-					cmd.PrintErrorMsg("Failed to crate validator key: %v", err)
+					cmd.PrintErrorMsg("Failed to create validator key: %v", err)
 					return
 				}
 			} else if *mainnetOpt {
@@ -73,7 +73,7 @@ func Init() func(c *cli.Cmd) {
 
 				k := key.GenerateRandomKey()
 				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {
-					cmd.PrintErrorMsg("Failed to crate validator key: %v", err)
+					cmd.PrintErrorMsg("Failed to create validator key: %v", err)
 					return
 				}
 			} else {
