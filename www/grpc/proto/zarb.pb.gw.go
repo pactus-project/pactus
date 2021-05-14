@@ -1048,9 +1048,9 @@ var (
 
 	pattern_Zarb_GetValidators_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "validators"}, ""))
 
-	pattern_Zarb_GetValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"api", "validators", "address"}, ""))
+	pattern_Zarb_GetValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"api", "validator", "address"}, ""))
 
-	pattern_Zarb_GetValidatorByNumber_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "validators", "number"}, ""))
+	pattern_Zarb_GetValidatorByNumber_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "validator", "number"}, ""))
 
 	pattern_Zarb_GetBlockchainInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "blockchain"}, ""))
 
