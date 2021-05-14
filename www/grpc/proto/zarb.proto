@@ -13,8 +13,8 @@ service Zarb {
   rpc GetTransaction(TransactionRequest) returns (TransactionResponse)                      { option (google.api.http).get = "/api/tranaction/id/{id}";}
   rpc GetAccount(AccountRequest) returns (AccountResponse)                                  { option (google.api.http).get = "/api/account/address/{address}";}
   rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse)                         { option (google.api.http).get = "/api/validators";}
-  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validators/address/{address}";}
-  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse)            { option (google.api.http).get = "/api/validators/{number}";}
+  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validator/address/{address}";}
+  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse)            { option (google.api.http).get = "/api/validator/{number}";}
   rpc GetBlockchainInfo(BlockchainInfoRequest) returns (BlockchainInfoResponse)             { option (google.api.http).get = "/api/blockchain";}
   rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse)                      { option (google.api.http).get = "/api/network";}
   rpc SendRawTransaction(SendRawTransactionRequest) returns(SendRawTransactionResponse)     { option (google.api.http).put = "/api/send_raw_transaction/{data}";};

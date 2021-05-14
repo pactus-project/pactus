@@ -263,7 +263,7 @@
         ]
       }
     },
-    "/api/validators/address/{address}": {
+    "/api/validator/address/{address}": {
       "get": {
         "operationId": "Zarb_GetValidator",
         "responses": {
@@ -300,7 +300,7 @@
         ]
       }
     },
-    "/api/validators/{number}": {
+    "/api/validator/{number}": {
       "get": {
         "operationId": "Zarb_GetValidatorByNumber",
         "responses": {
