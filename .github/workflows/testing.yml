@@ -1,10 +1,14 @@
 
 
-on: [pull_request]
-name: Build and test (macOS)
+on: [push, pull_request]
+name: Unit testing
 jobs:
-  unit-test:
-    runs-on: macos-latest
+  testing:
+    strategy:
+      matrix:
+        go-version: [1.15.x, 1.16.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Install Go
@@ -15,10 +19,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build
-      run: make build
-
-    # Only unit-tests for mac-OS,
     - name: Unit tests
       run: make unit_test
 

@@ -104,7 +104,8 @@ func (m *MockStore) HasAnyBlock() bool {
 
 func (m *MockStore) IterateAccounts(consumer func(*account.Account) (stop bool)) {
 	for _, a := range m.Accounts {
-		stopped := consumer(&a)
+		acc := a
+		stopped := consumer(&acc)
 		if stopped {
 			return
 		}
@@ -113,7 +114,8 @@ func (m *MockStore) IterateAccounts(consumer func(*account.Account) (stop bool))
 
 func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	for _, v := range m.Validators {
-		stopped := consumer(&v)
+		val := v
+		stopped := consumer(&val)
 		if stopped {
 			return
 		}

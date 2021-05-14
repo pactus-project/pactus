@@ -55,4 +55,3 @@ require (
 	honnef.co/go/tools v0.1.2 // indirect
 	zombiezen.com/go/capnproto2 v2.18.0+incompatible
 )
-
