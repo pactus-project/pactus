@@ -14,4 +14,4 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Test with data race detection
-      run: go test --race ./...
+      run: make test_race

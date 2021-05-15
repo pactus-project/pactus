@@ -1,14 +1,11 @@
 build/
 .idea
-.vscode/launch.json
 vendor
 .DS_Store
-.bls
 .vscode
 todo
-local.mk
-*.local.md
+*.local.*
 .herumi
 dist/
 .releaser.yml
-*.local.md
+zarb*
