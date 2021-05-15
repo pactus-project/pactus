@@ -49,6 +49,14 @@ func Init() func(c *cli.Cmd) {
 				return
 			}
 
+			// TODO: Show Mnemonics for validator key to user
+			// Generate key for the validator and save it to file system
+			valKey := key.GenerateRandomKey()
+			if err := key.EncryptKeyToFile(valKey, path+"/validator_key.json", "", ""); err != nil {
+				cmd.PrintErrorMsg("Failed to crate validator key: %v", err)
+				return
+			}
+
 			var gen *genesis.Genesis
 			conf := config.DefaultConfig()
 
@@ -59,35 +67,24 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/139.162.135.180/tcp/31887/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
-
-				k := key.GenerateRandomKey()
-				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {
-					cmd.PrintErrorMsg("Failed to create validator key: %v", err)
-					return
-				}
 			} else if *mainnetOpt {
 				gen = genesis.Mainnet()
 
 				conf.Network.Name = "zarb"
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.186.100/tcp/8421/p2p/12D3KooWLB7zCZ2VV1AtqHwYy2RBgpxdtwYRYt1ZU7iECFNfpks6", "/ip4/139.177.199.21/tcp/8421/p2p/12D3KooWMjGbsP2XbR11RmjevPvTsC33qT48sbqiBhB9ekoFiedx"}
-
-				k := key.GenerateRandomKey()
-				if err := key.EncryptKeyToFile(k, path+"/validator_key.json", "", ""); err != nil {
-					cmd.PrintErrorMsg("Failed to create validator key: %v", err)
-					return
-				}
 			} else {
-				gen, _ = makeGenesis(*workingDirOpt)
+				gen, _ = makeLocalGenesis(*workingDirOpt, valKey.PublicKey())
+				conf.Network.Name = "zarb-local"
 			}
 
-			// save genesis file to file system
+			// Save genesis file to file system
 			genFile := path + "/genesis.json"
 			if err := gen.SaveToFile(genFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
 				return
 			}
 
-			// save config file to file system
+			// Save config file to file system
 			confFile := path + "/config.toml"
 			if err := conf.SaveToFile(confFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write config file: %v", err)
@@ -100,20 +97,15 @@ func Init() func(c *cli.Cmd) {
 	}
 }
 
-// makeGenesis makes genisis file while on initialize
-func makeGenesis(workingDir string) (*genesis.Genesis, error) {
+// makeLocalGenesis makes genisis file for the local network
+func makeLocalGenesis(workingDir string, pub crypto.PublicKey) (*genesis.Genesis, error) {
 
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 	accs := []*account.Account{acc}
 
-	// create validator account for genesis
-	k := key.GenerateRandomKey()
-	if err := key.EncryptKeyToFile(k, workingDir+"/validator_key.json", "", ""); err != nil {
-		return nil, err
-	}
-	val := validator.NewValidator(k.PublicKey(), 0)
+	val := validator.NewValidator(pub, 0)
 	vals := []*validator.Validator{val}
 
 	// create genesis
