@@ -73,7 +73,7 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Name = "zarb"
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.186.100/tcp/8421/p2p/12D3KooWLB7zCZ2VV1AtqHwYy2RBgpxdtwYRYt1ZU7iECFNfpks6", "/ip4/139.177.199.21/tcp/8421/p2p/12D3KooWMjGbsP2XbR11RmjevPvTsC33qT48sbqiBhB9ekoFiedx"}
 			} else {
-				gen, _ = makeLocalGenesis(*workingDirOpt, valKey.PublicKey())
+				gen, _ = makeLocalGenesis(valKey.PublicKey())
 				conf.Network.Name = "zarb-local"
 			}
 
@@ -98,7 +98,7 @@ func Init() func(c *cli.Cmd) {
 }
 
 // makeLocalGenesis makes genisis file for the local network
-func makeLocalGenesis(workingDir string, pub crypto.PublicKey) (*genesis.Genesis, error) {
+func makeLocalGenesis(pub crypto.PublicKey) (*genesis.Genesis, error) {
 
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
