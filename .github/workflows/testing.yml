@@ -1,13 +1,12 @@
 on: [push,pull_request]
 name: Unit testing
 jobs:
-  testingPull:
+  test_pull:
     if: ${{ github.event_name == 'pull_request' }}
     strategy:
       matrix:
-        go-version: [1.15.x]
         os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: 1.15.x
 
     steps:
     - name: Install Go
@@ -20,7 +19,7 @@ jobs:
 
     - name: Unit tests
       run: make unit_test
-  testingPush:
+  test_push:
     if: ${{ github.event_name == 'push' }}
     strategy:
       matrix:
