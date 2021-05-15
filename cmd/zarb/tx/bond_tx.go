@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/util"
+	grpcclient "github.com/zarbchain/zarb-go/www/grpc/client"
 )
 
 func BondTx() func(c *cli.Cmd) {
@@ -125,7 +125,7 @@ func BondTx() func(c *cli.Cmd) {
 			//RPC
 			seq = *seqOpt
 			if *seqOpt == 0 {
-				seq, err = util.GetSequence(promptRPCEndpoint(*grpcOpt), bonder)
+				seq, err = grpcclient.GetSequence(promptRPCEndpoint(*grpcOpt), bonder)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve Sequence number from RPC Server: %v", err)
 					return
@@ -134,7 +134,7 @@ func BondTx() func(c *cli.Cmd) {
 
 			stamp, err = crypto.HashFromString(*stampOpt)
 			if err != nil {
-				stamp, err = util.GetStamp(promptRPCEndpoint(*grpcOpt))
+				stamp, err = grpcclient.GetStamp(promptRPCEndpoint(*grpcOpt))
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve stamp from RPC Server: %v", err)
 					return

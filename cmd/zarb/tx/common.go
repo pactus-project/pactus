@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/util"
+	grpcclient "github.com/zarbchain/zarb-go/www/grpc/client"
 )
 
 func signAndPublish(trx *tx.Tx, keyfile, auth, rpcEndpoint string) {
@@ -35,7 +35,7 @@ func signAndPublish(trx *tx.Tx, keyfile, auth, rpcEndpoint string) {
 	}
 
 	// publish
-	if id, err := util.SendTx(rpcEndpoint, signedTrx); err != nil {
+	if id, err := grpcclient.SendTx(rpcEndpoint, signedTrx); err != nil {
 		cmd.PrintErrorMsg("Couldn't publish transaction: %v", err)
 	} else {
 		cmd.PrintSuccessMsg("Transaction sent with ID: %v", id)
