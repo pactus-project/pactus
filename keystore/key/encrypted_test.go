@@ -9,18 +9,22 @@ import (
 )
 
 func TestEncryption(t *testing.T) {
-	auth := "secret"
+	auth1 := "secret1"
+	auth2 := "secret2"
 	//Generates Private Key
 	k1 := GenerateRandomKey()
 	filePath := fmt.Sprintf("/tmp/%s.key", k1.Address().String())
 	//Encrypts the key json blob
-	err := EncryptKeyToFile(k1, filePath, auth, "")
+	err := EncryptKeyToFile(k1, filePath, auth1, "")
 	assert.NoError(t, err)
 	// Existing file
-	err = EncryptKeyToFile(k1, filePath, auth, "")
+	err = EncryptKeyToFile(k1, filePath, auth2, "")
+	assert.NoError(t, err)
+	// Invalid auth
+	_, err = DecryptKeyFile(filePath, auth1)
 	assert.Error(t, err)
-	//Decrypts Json Object
-	k2, err := DecryptKeyFile(filePath, auth)
+	// Decrypts Json Object
+	k2, err := DecryptKeyFile(filePath, auth2)
 	assert.NoError(t, err)
 	assert.Equal(t, k1, k2)
 	// wrong password: should fails
@@ -29,7 +33,7 @@ func TestEncryption(t *testing.T) {
 	assert.Nil(t, k3)
 	// invalid file path, should fails
 	filePath1 := fmt.Sprintf("/tmp/%s_invalid_path.key", k1.Address().String())
-	k4, err := DecryptKeyFile(filePath1, auth)
+	k4, err := DecryptKeyFile(filePath1, auth2)
 	fmt.Println(err)
 	assert.Error(t, err)
 	assert.Nil(t, k4)

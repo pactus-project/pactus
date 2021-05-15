@@ -18,7 +18,7 @@ func TestRunningNode(t *testing.T) {
 	_, pb, pv := crypto.RandomKeyPair()
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
-	val := validator.NewValidator(pb,0)
+	val := validator.NewValidator(pb, 0)
 	gen := genesis.MakeGenesis(util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfig()
 	conf.Store.Path = util.TempDirPath()
