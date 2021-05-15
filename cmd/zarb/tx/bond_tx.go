@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func BondTx() func(c *cli.Cmd) {
@@ -71,7 +72,6 @@ func BondTx() func(c *cli.Cmd) {
 			var stake int64
 			var fee int64
 			var auth string
-			var rpc string
 
 			// ---
 			if *stakeOpt == 0 {
@@ -123,21 +123,9 @@ func BondTx() func(c *cli.Cmd) {
 			}
 
 			//RPC
-			if *grpcOpt == "" {
-				rpc = cmd.PromptInput("gRPC server address: ")
-			} else {
-				rpc = *grpcOpt
-			}
-
-			grpcClient, err := cmd.GetRPCClient(rpc)
-			if err != nil {
-				cmd.PrintErrorMsg("Couldn't connect to RPC Server: %v", err)
-				return
-			}
-
 			seq = *seqOpt
 			if *seqOpt == 0 {
-				seq, err = cmd.GetSequence(grpcClient, bonder)
+				seq, err = util.GetSequence(*grpcOpt, bonder)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve Sequence number from RPC Server: %v", err)
 					return
@@ -146,7 +134,7 @@ func BondTx() func(c *cli.Cmd) {
 
 			stamp, err = crypto.HashFromString(*stampOpt)
 			if err != nil {
-				stamp, err = cmd.GetStamp(grpcClient)
+				stamp, err = util.GetStamp(*grpcOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve stamp from RPC Server: %v", err)
 					return
@@ -155,7 +143,7 @@ func BondTx() func(c *cli.Cmd) {
 			//fulfill transaction payload
 			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
 
-			signAndPublish(trx, *keyFileOpt, auth, grpcClient)
+			signAndPublish(trx, *keyFileOpt, auth, *grpcOpt)
 		}
 	}
 }

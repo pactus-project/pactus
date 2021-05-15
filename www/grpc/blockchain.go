@@ -11,8 +11,8 @@ func (zs *zarbServer) GetBlockchainInfo(ctx context.Context, request *zarb.Block
 	height := zs.state.LastBlockHeight()
 
 	return &zarb.BlockchainInfoResponse{
-		Height: int64(height),
-		Stamp:  zs.state.LastBlockHash().String(),
+		Height:        int64(height),
+		LastBlockHash: zs.state.LastBlockHash().String(),
 	}, nil
 }
 func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkInfoRequest) (*zarb.NetworkInfoResponse, error) {

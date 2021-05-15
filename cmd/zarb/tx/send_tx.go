@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func SendTx() func(c *cli.Cmd) {
@@ -71,11 +72,10 @@ func SendTx() func(c *cli.Cmd) {
 			var amount int64
 			var fee int64
 			var auth string
-			var rpc string
 
 			// ---
 			if *amountOpt == 0 {
-				cmd.PrintWarnMsg("Stake is not defined.")
+				cmd.PrintWarnMsg("Amount is not defined.")
 				c.PrintHelp()
 				return
 			}
@@ -124,21 +124,9 @@ func SendTx() func(c *cli.Cmd) {
 			}
 
 			//RPC
-			if *grpcOpt == "" {
-				rpc = cmd.PromptInput("gRPC server address: ")
-			} else {
-				rpc = *grpcOpt
-			}
-
-			grpcClient, err := cmd.GetRPCClient(rpc)
-			if err != nil {
-				cmd.PrintErrorMsg("Couldn't connect to RPC Server: %v", err)
-				return
-			}
-
 			seq = *seqOpt
 			if *seqOpt == 0 {
-				seq, err = cmd.GetSequence(grpcClient, sender)
+				seq, err = util.GetSequence(*grpcOpt, sender)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve Sequence number from RPC Server: %v", err)
 					return
@@ -147,7 +135,7 @@ func SendTx() func(c *cli.Cmd) {
 
 			stamp, err = crypto.HashFromString(*stampOpt)
 			if err != nil {
-				stamp, err = cmd.GetStamp(grpcClient)
+				stamp, err = util.GetStamp(*grpcOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve stamp from RPC Server: %v", err)
 					return
@@ -158,7 +146,7 @@ func SendTx() func(c *cli.Cmd) {
 			trx := tx.NewSendTx(stamp, seq, sender, receiver, amount, fee, *memoOpt)
 
 			//sign transaction
-			signAndPublish(trx, *keyFileOpt, auth, grpcClient)
+			signAndPublish(trx, *keyFileOpt, auth, *grpcOpt)
 		}
 	}
 }
