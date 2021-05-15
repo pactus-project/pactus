@@ -126,7 +126,7 @@ func SendTx() func(c *cli.Cmd) {
 			//RPC
 			seq = *seqOpt
 			if *seqOpt == 0 {
-				seq, err = util.GetSequence(*grpcOpt, sender)
+				seq, err = util.GetSequence(promptRPCEndpoint(*grpcOpt), sender)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve Sequence number from RPC Server: %v", err)
 					return
@@ -135,7 +135,7 @@ func SendTx() func(c *cli.Cmd) {
 
 			stamp, err = crypto.HashFromString(*stampOpt)
 			if err != nil {
-				stamp, err = util.GetStamp(*grpcOpt)
+				stamp, err = util.GetStamp(promptRPCEndpoint(*grpcOpt))
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve stamp from RPC Server: %v", err)
 					return

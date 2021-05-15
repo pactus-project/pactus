@@ -41,3 +41,10 @@ func signAndPublish(trx *tx.Tx, keyfile, auth, rpcEndpoint string) {
 		cmd.PrintSuccessMsg("Transaction sent with ID: %v", id)
 	}
 }
+
+func promptRPCEndpoint(rpcEndpoint string) string {
+	if len(rpcEndpoint) < 0 {
+		return cmd.PromptInput("gRPC Endpoint: ")
+	}
+	return rpcEndpoint
+}
