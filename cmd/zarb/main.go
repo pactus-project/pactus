@@ -5,7 +5,6 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd/zarb/key"
-	"github.com/zarbchain/zarb-go/cmd/zarb/payload"
 	"github.com/zarbchain/zarb-go/cmd/zarb/tx"
 )
 
@@ -25,10 +24,6 @@ func zarb() *cli.Cli {
 	app.Command("tx", "Create, sign and publish a transaction", func(k *cli.Cmd) {
 		k.Command("bond", "Create, sign and publish a bond transaction", tx.BondTx())
 		k.Command("send", "Create, sign and publish a send transactio", tx.SendTx())
-	})
-	app.Command("payload", "Create raw transaction", func(k *cli.Cmd) {
-		k.Command("bond", "Generate raw bond transaction", payload.BondTx())
-		k.Command("send", "Generate raw send transaction", payload.SendTx())
 	})
 	app.Command("version", "Print the zarb version", Version())
 	return app
