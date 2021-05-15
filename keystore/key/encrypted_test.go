@@ -21,10 +21,10 @@ func TestEncryption(t *testing.T) {
 	err = EncryptKeyToFile(k1, filePath, auth2, "")
 	assert.NoError(t, err)
 	// Invalid auth
-	k2, err := DecryptKeyFile(filePath, auth1)
+	_, err = DecryptKeyFile(filePath, auth1)
 	assert.Error(t, err)
 	// Decrypts Json Object
-	k2, err = DecryptKeyFile(filePath, auth2)
+	k2, err := DecryptKeyFile(filePath, auth2)
 	assert.NoError(t, err)
 	assert.Equal(t, k1, k2)
 	// wrong password: should fails
