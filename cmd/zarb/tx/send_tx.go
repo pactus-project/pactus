@@ -59,7 +59,7 @@ func SendTx() func(c *cli.Cmd) {
 
 		grpcOpt := c.String(cli.StringOpt{
 			Name: "e endpoint",
-			Desc: "gRPC server address if not specifed will just print raw signed transaction",
+			Desc: "gRPC server address if not specified will just print raw signed transaction",
 		})
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
