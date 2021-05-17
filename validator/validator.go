@@ -96,8 +96,9 @@ func (val *Validator) UnmarshalJSON(bs []byte) error {
 }
 
 func (val Validator) Fingerprint() string {
-	return fmt.Sprintf("{%s %v}",
+	return fmt.Sprintf("{%s %d %v}",
 		val.Address().Fingerprint(),
+		val.Sequence(),
 		val.Stake())
 }
 

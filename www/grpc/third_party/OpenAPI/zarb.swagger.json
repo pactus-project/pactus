@@ -416,6 +416,9 @@
         "height": {
           "type": "string",
           "format": "int64"
+        },
+        "lastBlockHash": {
+          "type": "string"
         }
       }
     },
@@ -520,7 +523,7 @@
           "type": "string"
         }
       },
-      "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"
+      "title": "TODO: add unbond height\r\nTODO: in32 -\u003e int64"
     },
     "zarbValidatorResponse": {
       "type": "object",
