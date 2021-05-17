@@ -10,7 +10,7 @@ import (
 	grpcclient "github.com/zarbchain/zarb-go/www/grpc/client"
 )
 
-func signAndPublish(trx *tx.Tx, keyfile, auth, rpcEndpoint string) {
+func signAndPublish(trx *tx.Tx, keyfile, auth string, rpcEndpoint *string) {
 	//sign transaction
 	k, err := key.DecryptKeyFile(keyfile, auth)
 	if err != nil {
@@ -20,31 +20,35 @@ func signAndPublish(trx *tx.Tx, keyfile, auth, rpcEndpoint string) {
 	k.ToSigner().SignMsg(trx)
 
 	//show
-	cmd.PrintWarnMsg("you are about to publish:")
+	cmd.PrintWarnMsg("Your transaction:")
 	cmd.PrintJSONObject(trx)
-
 	cmd.PrintLine()
+
 	signedTrx, _ := trx.Encode()
-	cmd.PrintInfoMsg("raw signed transaction payload:\n%v", hex.EncodeToString(signedTrx))
 
-	cmd.PrintLine()
-	confirm := cmd.PromptInput("This operation is \"not reversible\". Are you sure [yes/no]? ")
-	if !strings.HasPrefix(strings.ToLower(confirm), "yes") {
-		cmd.PrintWarnMsg("Opration aborted!")
-		return
-	}
+	if rpcEndpoint == nil || *rpcEndpoint == "" {
+		//no endpoint specified just print the raw payload and leave
+		cmd.PrintInfoMsg("raw signed transaction payload:\n%v", hex.EncodeToString(signedTrx))
 
-	// publish
-	if id, err := grpcclient.SendTx(rpcEndpoint, signedTrx); err != nil {
-		cmd.PrintErrorMsg("Couldn't publish transaction: %v", err)
 	} else {
-		cmd.PrintSuccessMsg("Transaction sent with ID: %v", id)
+
+		confirm := cmd.PromptInput("This operation is \"not reversible\". Are you sure [yes/no]? ")
+		if !strings.HasPrefix(strings.ToLower(confirm), "yes") {
+			cmd.PrintWarnMsg("Opration aborted!")
+			return
+		}
+		// publish
+		if id, err := grpcclient.SendTx(*rpcEndpoint, signedTrx); err != nil {
+			cmd.PrintErrorMsg("Couldn't publish transaction: %v", err)
+		} else {
+			cmd.PrintSuccessMsg("Transaction sent with ID: %v", id)
+		}
 	}
 }
 
-func promptRPCEndpoint(rpcEndpoint string) string {
-	if len(rpcEndpoint) < 0 {
-		return cmd.PromptInput("gRPC Endpoint: ")
+func promptRPCEndpoint(rpcEndpoint *string) string {
+	if rpcEndpoint == nil || len(*rpcEndpoint) <= 0 {
+		*rpcEndpoint = cmd.PromptInput("gRPC Endpoint: ")
 	}
-	return rpcEndpoint
+	return *rpcEndpoint
 }

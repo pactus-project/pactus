@@ -126,14 +126,14 @@ func BondTx() func(c *cli.Cmd) {
 			if seqOpt != nil {
 				seq = *seqOpt
 			} else {
-				seq, err = grpcclient.GetSequence(promptRPCEndpoint(*grpcOpt), bonder)
+				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), bonder)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve sequence number from RPC Server: %v", err)
 					return
 				}
 			}
-			if stampOpt == nil {
-				stamp, err = grpcclient.GetStamp(promptRPCEndpoint(*grpcOpt))
+			if stampOpt == nil || *stampOpt == "" {
+				stamp, err = grpcclient.GetStamp(promptRPCEndpoint(grpcOpt))
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve stamp from RPC Server: %v", err)
 					return
@@ -149,7 +149,7 @@ func BondTx() func(c *cli.Cmd) {
 			//fulfill transaction payload
 			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
 
-			signAndPublish(trx, *keyFileOpt, auth, *grpcOpt)
+			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)
 		}
 	}
 }

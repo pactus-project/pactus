@@ -59,7 +59,7 @@ func SendTx() func(c *cli.Cmd) {
 
 		grpcOpt := c.String(cli.StringOpt{
 			Name: "e endpoint",
-			Desc: "gRPC server address",
+			Desc: "gRPC server address if not specifed will just print raw signed transaction",
 		})
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
@@ -127,14 +127,15 @@ func SendTx() func(c *cli.Cmd) {
 			if seqOpt != nil {
 				seq = *seqOpt
 			} else {
-				seq, err = grpcclient.GetSequence(promptRPCEndpoint(*grpcOpt), sender)
+				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), sender)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve sequence number from RPC Server: %v", err)
 					return
 				}
 			}
-			if stampOpt == nil {
-				stamp, err = grpcclient.GetStamp(promptRPCEndpoint(*grpcOpt))
+
+			if stampOpt == nil || *stampOpt == "" {
+				stamp, err = grpcclient.GetStamp(promptRPCEndpoint(grpcOpt))
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve stamp from RPC Server: %v", err)
 					return
@@ -151,7 +152,7 @@ func SendTx() func(c *cli.Cmd) {
 			trx := tx.NewSendTx(stamp, seq, sender, receiver, amount, fee, *memoOpt)
 
 			//sign transaction
-			signAndPublish(trx, *keyFileOpt, auth, *grpcOpt)
+			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)
 		}
 	}
 }
