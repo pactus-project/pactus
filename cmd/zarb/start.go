@@ -41,8 +41,8 @@ func Start() func(c *cli.Cmd) {
 			Desc: "Passphrase of the key file",
 		})
 		pprofOpt := c.String(cli.StringOpt{
-			Name: "d pprof",
-			Desc: "debug pprof server address Address(not recommended to expose to internet)",
+			Name: "pprof",
+			Desc: "debug pprof server address(not recommended to expose to internet)",
 		})
 		deadlockOpt := c.Bool(cli.BoolOpt{
 			Name:  "disable-deadlock",
