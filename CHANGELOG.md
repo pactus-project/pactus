@@ -3,6 +3,7 @@
 ## 1.1.0
 - Updating last bonding height for validators
 - Refactor Transactions in CMD
+- ADd support for pprof
 
 ## 1.0.0
 - Refactoring Consensus module
