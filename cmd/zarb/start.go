@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	_ "net/http/pprof"
+	_ "net/http/pprof" // #nosec
 	"os"
 	"path/filepath"
 
@@ -90,7 +90,7 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			// seperate pprof handlers from DefaultServeMux.
+			// separate pprof handlers from DefaultServeMux.
 			pprofMux := http.DefaultServeMux
 			http.DefaultServeMux = http.NewServeMux()
 			if pprofOpt != nil && *pprofOpt != "" {
