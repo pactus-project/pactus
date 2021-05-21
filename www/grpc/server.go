@@ -78,11 +78,11 @@ func (s *Server) StartServer() error {
 func (s *Server) StopServer() {
 	s.ctx.Done()
 
-	if s.listener != nil {
-		s.listener.Close()
-	}
-
 	if s.grpc != nil {
 		s.grpc.Stop()
+	}
+
+	if s.listener != nil {
+		s.listener.Close()
 	}
 }
