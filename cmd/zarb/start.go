@@ -93,7 +93,7 @@ func Start() func(c *cli.Cmd) {
 			// separate pprof handlers from DefaultServeMux.
 			pprofMux := http.DefaultServeMux
 			http.DefaultServeMux = http.NewServeMux()
-			if pprofOpt != nil && *pprofOpt != "" {
+			if *pprofOpt != "" {
 				cmd.PrintWarnMsg("Starting Debug pprof server on: %v", *pprofOpt)
 				go func() {
 					err := http.ListenAndServe(*pprofOpt, pprofMux)
