@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"path/filepath"
 
@@ -37,6 +39,10 @@ func Start() func(c *cli.Cmd) {
 		authOpt := c.String(cli.StringOpt{
 			Name: "a auth",
 			Desc: "Passphrase of the key file",
+		})
+		pprofOpt := c.String(cli.StringOpt{
+			Name: "d pprof",
+			Desc: "debug pprof server address Address(not recommended to expose to internet)",
 		})
 		deadlockOpt := c.Bool(cli.BoolOpt{
 			Name:  "disable-deadlock",
@@ -82,6 +88,19 @@ func Start() func(c *cli.Cmd) {
 			if err := os.Chdir(workspace); err != nil {
 				cmd.PrintErrorMsg("Aborted! Unable to changes working directory. %v", err)
 				return
+			}
+
+			// seperate pprof handlers from DefaultServeMux.
+			pprofMux := http.DefaultServeMux
+			http.DefaultServeMux = http.NewServeMux()
+			if pprofOpt != nil && *pprofOpt != "" {
+				cmd.PrintWarnMsg("Starting Debug pprof server on: %v", *pprofOpt)
+				go func() {
+					err := http.ListenAndServe(*pprofOpt, pprofMux)
+					if err != nil {
+						cmd.PrintErrorMsg("Could not initialize pprof server. %v", err)
+					}
+				}()
 			}
 
 			gen, err := genesis.LoadFromFile(genesisFile)
