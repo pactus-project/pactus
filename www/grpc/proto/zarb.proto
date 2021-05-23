@@ -135,7 +135,7 @@ message BlockInfo {
   string state_hash=3;          
   string tx_ids_hash=4;
   string last_certificate_hash=5;
-  string sortition_seed=6;
+  bytes sortition_seed=6;
   string proposer_address=7;   
   int64 round=8;  
   repeated int32 committers=9;
@@ -144,15 +144,16 @@ message BlockInfo {
 }
 
 message Transaction{
-  int32 Version =1;  
-  string stamp=2;    
-  int64 sequence=3; 
-  int64 Fee =4;
-  PayloadType Type=5;
-  bytes Payload=6;
-  string memo=7;     
-  string public_key=8;
-  string signature=9;
+  string id=1;    
+  int32 Version =2;  
+  string stamp=3;    
+  int64 sequence=4; 
+  int64 Fee =5;
+  PayloadType Type=6;
+  bytes Payload=7;
+  string memo=8;     
+  string public_key=9;
+  string signature=10;
 }
 
 enum PayloadType {

@@ -395,7 +395,8 @@
           "type": "string"
         },
         "sortitionSeed": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "proposerAddress": {
           "type": "string"
@@ -537,6 +538,9 @@
     "zarbTransaction": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
         "Version": {
           "type": "integer",
           "format": "int32"
