@@ -23,43 +23,39 @@ service Zarb {
 
 message AccountRequest {
 	string address = 1;
-  uint32 verbosity = 2;
 }
 
 message AccountResponse {
-  bytes data = 1;
-  string json = 2;
+  Account account =1;
 }
 
-message ValidatorsRequest {
-  uint32 verbosity = 2;
-}
+message ValidatorsRequest {}
+
 message ValidatorRequest {
 	string address = 1;
-  uint32 verbosity = 2;
 }
 message ValidatorByNumberRequest {
 	int32 number = 1;
-  uint32 verbosity = 2;
 }
 
 message ValidatorsResponse {
   repeated Validator validators = 1;
 }
+
 message ValidatorResponse {
   Validator validator = 1;
 }
 
 message BlockRequest {
   int64 height = 1;
-  uint32 verbosity = 2;
+  BlockVerbosity verbosity = 2;
 }
 
 message BlockResponse {
   string hash = 1;
   google.protobuf.Timestamp block_time = 2;
-  bytes data = 3;
-  string json = 4;
+  BlockInfo info=3;
+  repeated Transaction tranactions=5;
 }
 
 message BlockHeightRequest {
@@ -88,12 +84,10 @@ message NetworkInfoResponse {
 
 message TransactionRequest {
   string id = 1;
-  uint32 verbosity = 2;
 }
 
 message TransactionResponse {
-  bytes data = 1;
-  string json = 2;
+  Transaction tranactions=1;
 }
 
 message SendRawTransactionRequest {
@@ -126,4 +120,50 @@ message Peer{
   int32 received_messages = 7;
   int32 invalid_messages = 8;
   int32 received_bytes = 9;
+}
+
+message Account{
+  string address = 1;
+  int32 number = 2;
+  int32 sequence = 3;
+  int64 Balance = 4;
+}
+
+message BlockInfo {
+  int32 version = 1;
+  string last_block_hash = 2;
+  string state_hash=3;          
+  string tx_ids_hash=4;
+  string last_certificate_hash=5;
+  string sortition_seed=6;
+  string proposer_address=7;   
+  int64 round=8;  
+  repeated int32 committers=9;
+  repeated int32 absentees=10;
+  string signature=11;
+}
+
+message Transaction{
+  int32 Version =1;  
+  string stamp=2;    
+  int64 sequence=3; 
+  int64 Fee =4;
+  PayloadType Type=5;
+  bytes Payload=6;
+  string memo=7;     
+  string public_key=8;
+  string signature=9;
+}
+
+enum PayloadType {
+  SEND_PAYLOAD=0;
+  BOND_PAYLOAD =1;
+  SORTITION_PAYLOAD=2;
+  UNBOND_PAYLOAD =3;
+}
+
+enum BlockVerbosity {
+  BLOCK_HASH = 0;
+  BLOCK_DATA = 1;
+  BLOCK_TRANSACTIONS = 2;
 }

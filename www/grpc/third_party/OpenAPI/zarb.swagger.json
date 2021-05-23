@@ -39,13 +39,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "verbosity",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
           }
         ],
         "tags": [
@@ -82,8 +75,13 @@
             "name": "verbosity",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int64"
+            "type": "string",
+            "enum": [
+              "BLOCK_HASH",
+              "BLOCK_DATA",
+              "BLOCK_TRANSACTIONS"
+            ],
+            "default": "BLOCK_HASH"
           }
         ],
         "tags": [
@@ -218,13 +216,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "verbosity",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
           }
         ],
         "tags": [
@@ -255,13 +246,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "verbosity",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
           }
         ],
         "tags": [
@@ -293,13 +277,6 @@
             "required": true,
             "type": "integer",
             "format": "int32"
-          },
-          {
-            "name": "verbosity",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
           }
         ],
         "tags": [
@@ -324,15 +301,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "verbosity",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
         "tags": [
           "Zarb"
         ]
@@ -370,15 +338,31 @@
         }
       }
     },
+    "zarbAccount": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Balance": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "zarbAccountResponse": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
-        "json": {
-          "type": "string"
+        "account": {
+          "$ref": "#/definitions/zarbAccount"
         }
       }
     },
@@ -388,6 +372,54 @@
         "height": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "zarbBlockInfo": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastBlockHash": {
+          "type": "string"
+        },
+        "stateHash": {
+          "type": "string"
+        },
+        "txIdsHash": {
+          "type": "string"
+        },
+        "lastCertificateHash": {
+          "type": "string"
+        },
+        "sortitionSeed": {
+          "type": "string"
+        },
+        "proposerAddress": {
+          "type": "string"
+        },
+        "round": {
+          "type": "string",
+          "format": "int64"
+        },
+        "committers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "absentees": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "signature": {
+          "type": "string"
         }
       }
     },
@@ -401,14 +433,25 @@
           "type": "string",
           "format": "date-time"
         },
-        "data": {
-          "type": "string",
-          "format": "byte"
+        "info": {
+          "$ref": "#/definitions/zarbBlockInfo"
         },
-        "json": {
-          "type": "string"
+        "tranactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zarbTransaction"
+          }
         }
       }
+    },
+    "zarbBlockVerbosity": {
+      "type": "string",
+      "enum": [
+        "BLOCK_HASH",
+        "BLOCK_DATA",
+        "BLOCK_TRANSACTIONS"
+      ],
+      "default": "BLOCK_HASH"
     },
     "zarbBlockchainInfoResponse": {
       "type": "object",
@@ -435,6 +478,16 @@
           }
         }
       }
+    },
+    "zarbPayloadType": {
+      "type": "string",
+      "enum": [
+        "SEND_PAYLOAD",
+        "BOND_PAYLOAD",
+        "SORTITION_PAYLOAD",
+        "UNBOND_PAYLOAD"
+      ],
+      "default": "SEND_PAYLOAD"
     },
     "zarbPeer": {
       "type": "object",
@@ -481,15 +534,47 @@
         }
       }
     },
-    "zarbTransactionResponse": {
+    "zarbTransaction": {
       "type": "object",
       "properties": {
-        "data": {
+        "Version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stamp": {
+          "type": "string"
+        },
+        "sequence": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Fee": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Type": {
+          "$ref": "#/definitions/zarbPayloadType"
+        },
+        "Payload": {
           "type": "string",
           "format": "byte"
         },
-        "json": {
+        "memo": {
           "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        }
+      }
+    },
+    "zarbTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "tranactions": {
+          "$ref": "#/definitions/zarbTransaction"
         }
       }
     },
@@ -523,7 +608,7 @@
           "type": "string"
         }
       },
-      "title": "TODO: add unbond height\r\nTODO: in32 -\u003e int64"
+      "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"
     },
     "zarbValidatorResponse": {
       "type": "object",
