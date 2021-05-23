@@ -14,16 +14,27 @@ func TestBlockAnnounceType(t *testing.T) {
 }
 
 func TestBlockAnnouncePayload(t *testing.T) {
-	b, _ := block.GenerateTestBlock(nil, nil)
-	c := block.GenerateTestCertificate(crypto.UndefHash)
+	t.Run("Invalid height", func(t *testing.T) {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		c := block.GenerateTestCertificate(b.Hash())
 
-	p1 := NewBlockAnnouncePayload(-1, b, c)
-	assert.Error(t, p1.SanityCheck())
+		p1 := NewBlockAnnouncePayload(-1, b, c)
+		assert.Error(t, p1.SanityCheck())
+	})
 
-	p2 := NewBlockAnnouncePayload(100, b, c)
-	assert.Error(t, p2.SanityCheck())
+	t.Run("Invalid certificate", func(t *testing.T) {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		c := block.GenerateTestCertificate(crypto.UndefHash)
 
-	c = block.GenerateTestCertificate(b.Hash())
-	p3 := NewBlockAnnouncePayload(100, b, c)
-	assert.NoError(t, p3.SanityCheck())
+		p2 := NewBlockAnnouncePayload(100, b, c)
+		assert.Error(t, p2.SanityCheck())
+	})
+
+	t.Run("OK", func(t *testing.T) {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		c := block.GenerateTestCertificate(b.Hash())
+
+		p3 := NewBlockAnnouncePayload(100, b, c)
+		assert.NoError(t, p3.SanityCheck())
+	})
 }

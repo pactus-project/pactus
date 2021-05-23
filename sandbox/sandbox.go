@@ -226,7 +226,7 @@ func (sb *Concrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Address) e
 	h, _ := sb.store.BlockHeight(blockHash)
 	b, err := sb.store.Block(h)
 	if err != nil {
-		return errors.Errorf(errors.ErrGeneric, "invalid block number")
+		return errors.Errorf(errors.ErrGeneric, "invalid block hash")
 	}
 	committers := b.LastCertificate().Committers()
 	for _, num := range committers {

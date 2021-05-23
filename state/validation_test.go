@@ -80,7 +80,7 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
 
-	t.Run("Invalid blockhahs, should return error", func(t *testing.T) {
+	t.Run("Invalid block hash, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		invBlockHash := crypto.GenerateTestHash()
 		signBytes := block.CertificateSignBytes(invBlockHash, 0)
@@ -144,7 +144,7 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, tState1.UpdateLastCertificate(cert))
 	})
 
-	t.Run("Update last certificate, Invalid blockhash", func(t *testing.T) {
+	t.Run("Update last certificate, Invalid block hash", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		invBlockHash := crypto.GenerateTestHash()
 		signBytes := block.CertificateSignBytes(invBlockHash, 0)
