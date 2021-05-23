@@ -22,26 +22,20 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 		return nil, status.Errorf(codes.InvalidArgument, "Transaction not found")
 	}
 
-	// data, err := trx.Encode()
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.Internal, err.Error())
-	// }
-
-	// var json string
-	// if request.Verbosity == 1 {
-	// 	bz, err := trx.MarshalJSON()
-	// 	if err != nil {
-	// 		return nil, status.Errorf(codes.Internal, err.Error())
-	// 	}
-	// 	json = string(bz)
-	// }
-	// res := &zarb.TransactionResponse{
-	// 	Data: data,
-	// 	Json: json,
-	// }
-
-	return nil, nil
-	// return res, nil
+	return &zarb.TransactionResponse{
+		Tranaction: &zarb.Transaction{
+			Id: trx.ID().String(),
+			Version:   int32(trx.Version()),
+			Stamp:     trx.Stamp().String(),
+			Sequence:  int64(trx.Sequence()),
+			Fee:       trx.Fee(),
+			Type:      zarb.PayloadType(trx.PayloadType() - 1),//enums starting from 0
+			Payload:   trx.Payload().Signer().RawBytes(),
+			Memo:      trx.Memo(),
+			PublicKey: trx.PublicKey().String(),
+			Signature: trx.Signature().String(),
+		},
+	}, nil
 
 }
 

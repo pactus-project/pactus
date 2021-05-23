@@ -87,7 +87,7 @@ message TransactionRequest {
 }
 
 message TransactionResponse {
-  Transaction tranactions=1;
+  Transaction tranaction=1;
 }
 
 message SendRawTransactionRequest {

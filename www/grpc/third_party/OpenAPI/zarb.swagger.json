@@ -577,7 +577,7 @@
     "zarbTransactionResponse": {
       "type": "object",
       "properties": {
-        "tranactions": {
+        "tranaction": {
           "$ref": "#/definitions/zarbTransaction"
         }
       }
