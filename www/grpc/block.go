@@ -69,7 +69,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 
 	}
 
-	//TODO: Cache for better preformance
+	//TODO: Cache for better performance
 	//populate BLOCK_TRANSACTIONS
 	if request.Verbosity.Number() > 1 {
 		for _, id := range block.TxIDs().IDs() {
