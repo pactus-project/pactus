@@ -7,27 +7,22 @@ import (
 )
 
 type Config struct {
-	Name             string
-	ListenAddress    []string
-	NodeKeyFile      string
-	EnableNATService bool
-	EnableRelay      bool
-	EnableMDNS       bool
-	EnableKademlia   bool
-	Bootstrap        *BootstrapConfig
+	Name             string           `toml:"" comment:"Name dispay network name."`
+	ListenAddress    []string         `toml:"" comment:"ListenAddress which support multiaddrs."`
+	NodeKeyFile      string           `toml:"" comment:"NodeKeyFile contains the private key to use for node authentication in the p2p protocol."`
+	EnableNATService bool             `toml:"" comment:"EnableNATService NAT allows many machines to share a single public address."`
+	EnableRelay      bool             `toml:"" comment:"EnableRelay is a transport protocol that routes traffic between two peers over a third-party “relay” peer."`
+	EnableMDNS       bool             `toml:"" comment:"EnableMDNS is a protocol to discover local peers quickly and efficiently."`
+	EnableKademlia   bool             `toml:"" comment:"EnableKademlia which is used a routing algorithm and it uses the dht routing table."`
+	Bootstrap        *BootstrapConfig `toml:"" comment:"Bootstrap comma separated list of peers to be added to the peer store on startup bootstrap peers."`
 }
 
 // BootstrapConfig holds all configuration options related to bootstrap nodes
 type BootstrapConfig struct {
-	// Peers to connect to if we fall below the threshold.
-	Addresses []string
-	// MinPeerThreshold is the number of connections it attempts to maintain.
-	MinThreshold int
-	// MaxThreshold is the threshold of maximum number of connections.
-	MaxThreshold int
-	// Period is the interval at which it periodically checks to see
-	// if the threshold is maintained.
-	Period time.Duration
+	Addresses    []string      `toml:"" comment:"Addresses it is List of peers address needed for peer discovery."`
+	MinThreshold int           `toml:"" comment:"MinPeerThreshold is the number of connections it attempts to maintain."`
+	MaxThreshold int           `toml:"" comment:"MaxThreshold is the threshold of maximum number of connections."`
+	Period       time.Duration `toml:"" comment:"Period periodically checks to see if the threshold is maintained."`
 }
 
 func DefaultConfig() *Config {
