@@ -15,13 +15,16 @@ func TestVoteType(t *testing.T) {
 func TestVotePayload(t *testing.T) {
 	t.Run("Invalid vote", func(t *testing.T) {
 		v, _ := vote.GenerateTestPrepareVote(100, -1)
-		p1 := NewVotePayload(v)
-		assert.Error(t, p1.SanityCheck())
+		p := NewVotePayload(v)
+
+		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		v, _ := vote.GenerateTestPrepareVote(100, 0)
-		p2 := NewVotePayload(v)
-		assert.NoError(t, p2.SanityCheck())
+		p := NewVotePayload(v)
+
+		assert.NoError(t, p.SanityCheck())
+		assert.Contains(t, p.Fingerprint(), v.Fingerprint())
 	})
 }

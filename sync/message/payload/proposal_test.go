@@ -15,13 +15,16 @@ func TestProposalType(t *testing.T) {
 func TestProposalPayload(t *testing.T) {
 	t.Run("Invalid proposal", func(t *testing.T) {
 		proposal, _ := proposal.GenerateTestProposal(100, -1)
-		p1 := NewProposalPayload(proposal)
-		assert.Error(t, p1.SanityCheck())
+		p := NewProposalPayload(proposal)
+
+		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		proposal2, _ := proposal.GenerateTestProposal(100, 0)
-		p2 := NewProposalPayload(proposal2)
-		assert.NoError(t, p2.SanityCheck())
+		proposal, _ := proposal.GenerateTestProposal(100, 0)
+		p := NewProposalPayload(proposal)
+
+		assert.NoError(t, p.SanityCheck())
+		assert.Contains(t, p.Fingerprint(), "100")
 	})
 }

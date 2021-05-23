@@ -15,12 +15,16 @@ func TestQueryTransactionsType(t *testing.T) {
 
 func TestQueryTransactionsPayload(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
-		p1 := NewQueryTransactionsPayload(nil)
-		assert.Error(t, p1.SanityCheck())
+		p := NewQueryTransactionsPayload(nil)
+
+		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		p2 := NewQueryTransactionsPayload([]tx.ID{crypto.GenerateTestHash()})
-		assert.NoError(t, p2.SanityCheck())
+		id := crypto.GenerateTestHash()
+		p := NewQueryTransactionsPayload([]tx.ID{id})
+
+		assert.NoError(t, p.SanityCheck())
+		assert.Contains(t, p.Fingerprint(), id.Fingerprint())
 	})
 }

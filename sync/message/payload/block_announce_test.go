@@ -17,24 +17,25 @@ func TestBlockAnnouncePayload(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
 		b, _ := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
+		p := NewBlockAnnouncePayload(-1, b, c)
 
-		p1 := NewBlockAnnouncePayload(-1, b, c)
-		assert.Error(t, p1.SanityCheck())
+		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b, _ := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(crypto.UndefHash)
+		p := NewBlockAnnouncePayload(100, b, c)
 
-		p2 := NewBlockAnnouncePayload(100, b, c)
-		assert.Error(t, p2.SanityCheck())
+		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		b, _ := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
+		p := NewBlockAnnouncePayload(100, b, c)
 
-		p3 := NewBlockAnnouncePayload(100, b, c)
-		assert.NoError(t, p3.SanityCheck())
+		assert.NoError(t, p.SanityCheck())
+		assert.Contains(t, p.Fingerprint(), "100")
 	})
 }

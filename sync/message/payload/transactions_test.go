@@ -14,13 +14,16 @@ func TestTransactionsType(t *testing.T) {
 
 func TestTransactionsPayload(t *testing.T) {
 	t.Run("No transactions", func(t *testing.T) {
-		p1 := NewTransactionsPayload(nil)
-		assert.Error(t, p1.SanityCheck())
+		p := NewTransactionsPayload(nil)
+
+		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		trx, _ := tx.GenerateTestSendTx()
-		p2 := NewTransactionsPayload([]*tx.Tx{trx})
-		assert.NoError(t, p2.SanityCheck())
+		p := NewTransactionsPayload([]*tx.Tx{trx})
+
+		assert.NoError(t, p.SanityCheck())
+		assert.Contains(t, p.Fingerprint(), trx.ID().Fingerprint())
 	})
 }

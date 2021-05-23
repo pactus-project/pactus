@@ -33,5 +33,6 @@ func TestAleykPayload(t *testing.T) {
 			"Alice", crypto.GenerateTestSigner().PublicKey(), 100, 0)
 
 		assert.NoError(t, p.SanityCheck())
+		assert.Contains(t, p.Fingerprint(), "Alice")
 	})
 }
