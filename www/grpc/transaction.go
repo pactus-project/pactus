@@ -24,12 +24,12 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 
 	return &zarb.TransactionResponse{
 		Tranaction: &zarb.Transaction{
-			Id: trx.ID().String(),
+			Id:        trx.ID().String(),
 			Version:   int32(trx.Version()),
 			Stamp:     trx.Stamp().String(),
 			Sequence:  int64(trx.Sequence()),
 			Fee:       trx.Fee(),
-			Type:      zarb.PayloadType(trx.PayloadType() - 1),//enums starting from 0
+			Type:      zarb.PayloadType(trx.PayloadType() - 1), //enums starting from 0
 			Payload:   trx.Payload().Signer().RawBytes(),
 			Memo:      trx.Memo(),
 			PublicKey: trx.PublicKey().String(),
