@@ -1,8 +1,8 @@
 package logger
 
 type Config struct {
-	Levels    map[string]string
-	Colorfull bool
+	Levels    map[string]string `toml:"" comment:"Levels contains trace,debug,info,warning,error type."`
+	Colorfull bool              `toml:"" comment:"Colorfull Output format can be enable or disable. Default is true."`
 }
 
 func DefaultConfig() *Config {

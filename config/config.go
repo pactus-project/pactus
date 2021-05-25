@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/BurntSushi/toml"
+	toml "github.com/pelletier/go-toml"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
@@ -22,16 +22,16 @@ import (
 )
 
 type Config struct {
-	State     *state.Config
-	Store     *store.Config
-	TxPool    *txpool.Config
-	Consensus *consensus.Config
-	Network   *network.Config
-	Logger    *logger.Config
-	Sync      *sync.Config
-	Capnp     *capnp.Config
-	HTTP      *http.Config
-	GRPC      *grpc.Config
+	State     *state.Config     `toml:"" comment:"State contains the state of the blockchain."`
+	Store     *store.Config     `toml:"" comment:"Store which write and store the blockchin data using golevel db. "`
+	TxPool    *txpool.Config    `toml:"" comment:"TxPool is pool of unconfirmed transaction."`
+	Consensus *consensus.Config `toml:"" comment:"Consensus configuration."`
+	Network   *network.Config   `toml:"" comment:"Network contains all details of network configuration. Zarb uses lip2p protocol."`
+	Logger    *logger.Config    `toml:"" comment:"Logger contains Output level for logging."`
+	Sync      *sync.Config      `toml:"" comment:"Sync is used for peer to peer connection and synchronizing blockchain and it also contains monkier and its details."`
+	Capnp     *capnp.Config     `toml:"" comment:"Cap’n Proto is an insanely fast data interchange format and capability-based RPC system."`
+	HTTP      *http.Config      `toml:"" comment:"Http configuration."`
+	GRPC      *grpc.Config      `toml:"" comment:"GRPC configuration."`
 }
 
 func DefaultConfig() *Config {
@@ -71,7 +71,7 @@ func TestConfig() *Config {
 func FromTOML(t string) (*Config, error) {
 	conf := DefaultConfig()
 
-	if _, err := toml.Decode(t, conf); err != nil {
+	if err := toml.Unmarshal([]byte(t), conf); err != nil {
 		return nil, err
 	}
 	return conf, nil

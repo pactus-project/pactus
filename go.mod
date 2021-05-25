@@ -3,7 +3,6 @@ module github.com/zarbchain/zarb-go
 go 1.15
 
 require (
-	github.com/BurntSushi/toml v0.3.1
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
 	github.com/btcsuite/btcutil v1.0.3-0.20201201144236-d63d9f2b44dd
 	github.com/davidlazar/go-crypto v0.0.0-20190912175916-7055855a373f // indirect
@@ -33,6 +32,7 @@ require (
 	github.com/multiformats/go-multiaddr v0.3.1
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.4 // indirect
+	github.com/pelletier/go-toml v1.9.0
 	github.com/peterh/liner v1.2.1
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1

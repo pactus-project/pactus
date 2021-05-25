@@ -9,3 +9,4 @@ todo
 dist/
 .releaser.yml
 ./zarb*
+zarb
