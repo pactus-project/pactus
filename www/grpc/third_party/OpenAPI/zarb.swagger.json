@@ -232,38 +232,7 @@
         ]
       }
     },
-    "/api/validators": {
-      "get": {
-        "operationId": "Zarb_GetValidators",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/zarbValidatorsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "verbosity",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Zarb"
-        ]
-      }
-    },
-    "/api/validators/address/{address}": {
+    "/api/validator/address/{address}": {
       "get": {
         "operationId": "Zarb_GetValidator",
         "responses": {
@@ -300,7 +269,7 @@
         ]
       }
     },
-    "/api/validators/{number}": {
+    "/api/validator/{number}": {
       "get": {
         "operationId": "Zarb_GetValidatorByNumber",
         "responses": {
@@ -325,6 +294,37 @@
             "type": "integer",
             "format": "int32"
           },
+          {
+            "name": "verbosity",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Zarb"
+        ]
+      }
+    },
+    "/api/validators": {
+      "get": {
+        "operationId": "Zarb_GetValidators",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbValidatorsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
           {
             "name": "verbosity",
             "in": "query",
@@ -416,6 +416,9 @@
         "height": {
           "type": "string",
           "format": "int64"
+        },
+        "lastBlockHash": {
+          "type": "string"
         }
       }
     },
@@ -508,7 +511,7 @@
           "type": "string",
           "format": "int64"
         },
-        "bondingHeight": {
+        "lastBondingHeight": {
           "type": "integer",
           "format": "int32"
         },
@@ -519,7 +522,8 @@
         "address": {
           "type": "string"
         }
-      }
+      },
+      "title": "TODO: add unbond height\r\nTODO: in32 -\u003e int64"
     },
     "zarbValidatorResponse": {
       "type": "object",

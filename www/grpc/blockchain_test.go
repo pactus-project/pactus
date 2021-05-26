@@ -49,6 +49,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(0), res.Height)
+		assert.Equal(t, "0000000000000000000000000000000000000000000000000000000000000000", res.LastBlockHash)
 	})
 
 	b1, trxs := block.GenerateTestBlock(nil, nil)
@@ -57,6 +58,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(1), res.Height)
+		assert.Equal(t, b1.Hash().String(), res.LastBlockHash)
 	})
 	b2, trxs2 := block.GenerateTestBlock(nil, nil)
 	b3, trxs3 := block.GenerateTestBlock(nil, nil)
@@ -71,6 +73,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(5), res.Height)
+		assert.Equal(t, b5.Hash().String(), res.LastBlockHash)
 	})
 
 	err := conn.Close()

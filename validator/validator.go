@@ -13,21 +13,20 @@ type Validator struct {
 }
 
 type validatorData struct {
-	PublicKey        crypto.PublicKey `cbor:"1,keyasint"`
-	Number           int              `cbor:"2,keyasint"`
-	Sequence         int              `cbor:"3,keyasint"`
-	Stake            int64            `cbor:"4,keyasint"`
-	BondingHeight    int              `cbor:"5,keyasint"`
-	UnbondingHeight  int              `cbor:"6,keyasint"`
-	LastJoinedHeight int              `cbor:"7,keyasint"`
+	PublicKey         crypto.PublicKey `cbor:"1,keyasint"`
+	Number            int              `cbor:"2,keyasint"`
+	Sequence          int              `cbor:"3,keyasint"`
+	Stake             int64            `cbor:"4,keyasint"`
+	LastBondingHeight int              `cbor:"5,keyasint"`
+	UnbondingHeight   int              `cbor:"6,keyasint"`
+	LastJoinedHeight  int              `cbor:"7,keyasint"`
 }
 
-func NewValidator(publicKey crypto.PublicKey, number, bondingHeight int) *Validator {
+func NewValidator(publicKey crypto.PublicKey, number int) *Validator {
 	val := &Validator{
 		data: validatorData{
-			PublicKey:     publicKey,
-			Number:        number,
-			BondingHeight: bondingHeight,
+			PublicKey: publicKey,
+			Number:    number,
 		},
 	}
 	return val
@@ -38,7 +37,7 @@ func (val *Validator) Address() crypto.Address     { return val.data.PublicKey.A
 func (val *Validator) Number() int                 { return val.data.Number }
 func (val *Validator) Sequence() int               { return val.data.Sequence }
 func (val *Validator) Stake() int64                { return val.data.Stake }
-func (val *Validator) BondingHeight() int          { return val.data.BondingHeight }
+func (val *Validator) LastBondingHeight() int      { return val.data.LastBondingHeight }
 func (val *Validator) UnbondingHeight() int        { return val.data.UnbondingHeight }
 func (val *Validator) LastJoinedHeight() int       { return val.data.LastJoinedHeight }
 
@@ -60,9 +59,14 @@ func (val *Validator) IncSequence() {
 	val.data.Sequence++
 }
 
-// UpdateLastJoinedHeight updates the last height that this validator joins the committee
+// UpdateLastJoinedHeight updates the last height that this validator joined the committee
 func (val *Validator) UpdateLastJoinedHeight(height int) {
 	val.data.LastJoinedHeight = height
+}
+
+// UpdateLastBondingHeight updates the last height that this validator bonded some stakes
+func (val *Validator) UpdateLastBondingHeight(height int) {
+	val.data.LastBondingHeight = height
 }
 
 // Hash return the hash of this validator
@@ -92,15 +96,16 @@ func (val *Validator) UnmarshalJSON(bs []byte) error {
 }
 
 func (val Validator) Fingerprint() string {
-	return fmt.Sprintf("{%s %v}",
+	return fmt.Sprintf("{%s %d %v}",
 		val.Address().Fingerprint(),
+		val.Sequence(),
 		val.Stake())
 }
 
 // GenerateTestValidator generates a validator for testing purpose
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
 	signer := crypto.GenerateTestSigner()
-	val := NewValidator(signer.PublicKey(), number, 0)
+	val := NewValidator(signer.PublicKey(), number)
 	val.data.Stake = 777777777
 	val.data.Sequence = 77
 	return val, signer

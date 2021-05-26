@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"testing"
 
@@ -81,7 +82,7 @@ func isRoot() bool {
 }
 func TestIsValidPath(t *testing.T) {
 	// To pass this tests inside docker
-	if !isRoot() {
+	if runtime.GOOS != "windows" && !isRoot() {
 		assert.False(t, IsValidDirPath("/root"))
 		assert.False(t, IsValidDirPath("/test"))
 	}

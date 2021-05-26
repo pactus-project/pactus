@@ -152,9 +152,6 @@ func getKDFKey(cryptoJSON *cryptoJSON, auth string) ([]byte, error) {
 
 // EncryptKeyToFile encrypts the key and saves it to file
 func EncryptKeyToFile(key *Key, filePath, auth, label string) error {
-	if util.PathExists(filePath) {
-		return fmt.Errorf("file exists: %s", filePath)
-	}
 	ek, err := EncryptKey(key, auth, label)
 	if err != nil {
 		return err

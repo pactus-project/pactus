@@ -13,8 +13,8 @@ service Zarb {
   rpc GetTransaction(TransactionRequest) returns (TransactionResponse)                      { option (google.api.http).get = "/api/tranaction/id/{id}";}
   rpc GetAccount(AccountRequest) returns (AccountResponse)                                  { option (google.api.http).get = "/api/account/address/{address}";}
   rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse)                         { option (google.api.http).get = "/api/validators";}
-  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validators/address/{address}";}
-  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse)            { option (google.api.http).get = "/api/validators/{number}";}
+  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validator/address/{address}";}
+  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse)            { option (google.api.http).get = "/api/validator/{number}";}
   rpc GetBlockchainInfo(BlockchainInfoRequest) returns (BlockchainInfoResponse)             { option (google.api.http).get = "/api/blockchain";}
   rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse)                      { option (google.api.http).get = "/api/network";}
   rpc SendRawTransaction(SendRawTransactionRequest) returns(SendRawTransactionResponse)     { option (google.api.http).put = "/api/send_raw_transaction/{data}";};
@@ -75,6 +75,7 @@ message BlockchainInfoRequest {
 
 message BlockchainInfoResponse {
   int64 height=1;
+  string last_block_hash=2;
 }
 
 message NetworkInfoRequest {
@@ -103,12 +104,14 @@ message SendRawTransactionResponse {
   string id = 2;
 }
 
+// TODO: add unbond height
+// TODO: in32 -> int64
 message Validator{
   string public_key = 1;
   int32 number = 2;
   int32 sequence = 3;
   int64 stake = 4;
-  int32 bonding_height = 5;
+  int32 last_bonding_height = 5;
   int32 last_joined_height = 6;
   string address = 7;
 }

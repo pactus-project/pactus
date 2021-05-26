@@ -121,7 +121,9 @@ func (s *Server) writeJSON(w http.ResponseWriter, out interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, err = io.WriteString(w, string(j))
-	s.logger.Error("Error on writing JSON string", "err", err)
+	if err != nil {
+		s.logger.Error("Error on writing JSON string", "err", err)
+	}
 }
 
 func (s *Server) writePlainText(w http.ResponseWriter, out string) int {

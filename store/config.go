@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	Path string
+	Path string `toml:"" comment:"Path contains database directory. Default is ./store.db"`
 }
 
 func DefaultConfig() *Config {

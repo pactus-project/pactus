@@ -65,7 +65,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		a, pub, _ := crypto.GenerateTestKeyPair()
 		acc := account.NewAccount(a, i)
-		val := validator.NewValidator(pub, i, 0)
+		val := validator.NewValidator(pub, i)
 
 		accs = append(accs, acc)
 		vals = append(vals, val)

@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	WaitingTimeout time.Duration
-	MaxSize        int
+	WaitingTimeout time.Duration `toml:"" comment:"Query and validate transaction wait-timeout. Default is 2s"`
+	MaxSize        int           `toml:"" comment:"Maximum number of unconfirmed transaction inside txpool.Default is 2000"`
 }
 
 func DefaultConfig() *Config {

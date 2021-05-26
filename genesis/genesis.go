@@ -65,7 +65,7 @@ func (gen *Genesis) Accounts() []*account.Account {
 func (gen *Genesis) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, 0, len(gen.data.Validators))
 	for i, genVal := range gen.data.Validators {
-		val := validator.NewValidator(genVal.PublicKey, i, 0)
+		val := validator.NewValidator(genVal.PublicKey, i)
 		vals = append(vals, val)
 	}
 

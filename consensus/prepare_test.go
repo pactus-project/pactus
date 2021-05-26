@@ -69,7 +69,7 @@ func TestByzantineVote1(t *testing.T) {
 	// =================================
 	// Np votes
 	testAddVote(tConsP, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
-
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
 	// Np is unable to progress
 
 	// =================================

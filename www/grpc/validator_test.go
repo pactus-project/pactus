@@ -13,8 +13,8 @@ func TestGetValidator(t *testing.T) {
 	conn, client := callServer(t)
 
 	k1, k2, k3 := key.GenerateRandomKey(), key.GenerateRandomKey(), key.GenerateRandomKey()
-	val1 := validator.NewValidator(k1.PublicKey(), 0, 0)
-	val2 := validator.NewValidator(k2.PublicKey(), 1, 0)
+	val1 := validator.NewValidator(k1.PublicKey(), 0)
+	val2 := validator.NewValidator(k2.PublicKey(), 1)
 	tMockState.Store.UpdateValidator(val1)
 	tMockState.Store.UpdateValidator(val2)
 
@@ -50,8 +50,9 @@ func TestGetValidatorByNumber(t *testing.T) {
 	conn, client := callServer(t)
 
 	k1, k2 := key.GenerateRandomKey(), key.GenerateRandomKey()
-	val1 := validator.NewValidator(k1.PublicKey(), 5, 0)
-	val2 := validator.NewValidator(k2.PublicKey(), 6, 0)
+	val1 := validator.NewValidator(k1.PublicKey(), 5)
+	val2 := validator.NewValidator(k2.PublicKey(), 6)
+	val2.UpdateLastBondingHeight(100)
 	tMockState.Store.UpdateValidator(val1)
 	tMockState.Store.UpdateValidator(val2)
 

@@ -1,7 +1,7 @@
 on: [pull_request]
-name: Build Docker
+name: Building Docker
 jobs:
-  build_docker:
+  docker:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code

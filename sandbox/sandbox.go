@@ -157,7 +157,7 @@ func (sb *Concrete) MakeNewValidator(pub crypto.PublicKey) *validator.Validator 
 		sb.shouldPanicForDuplicatedAddress()
 	}
 
-	val := validator.NewValidator(pub, sb.totalValidators, sb.lastHeight+1)
+	val := validator.NewValidator(pub, sb.totalValidators)
 	sb.validators[addr] = &ValidatorStatus{
 		Validator: *val,
 		Updated:   true,
@@ -226,7 +226,7 @@ func (sb *Concrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Address) e
 	h, _ := sb.store.BlockHeight(blockHash)
 	b, err := sb.store.Block(h)
 	if err != nil {
-		return errors.Errorf(errors.ErrGeneric, "invalid block number")
+		return errors.Errorf(errors.ErrGeneric, "invalid block hash")
 	}
 	committers := b.LastCertificate().Committers()
 	for _, num := range committers {
@@ -285,13 +285,6 @@ func (sb *Concrete) CurrentHeight() int {
 	defer sb.lk.RUnlock()
 
 	return sb.lastHeight + 1
-}
-
-func (sb *Concrete) LastHeight() int {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.lastHeight
 }
 
 func (sb *Concrete) LastBlockHash() crypto.Hash {
