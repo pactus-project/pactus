@@ -21,10 +21,10 @@ func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountReque
 
 	}
 	res := &zarb.AccountResponse{
-		Account: &zarb.Account{
+		Account: &zarb.AccountInfo{
 			Address:  acc.Address().String(),
 			Number:   int32(acc.Number()),
-			Sequence: int32(acc.Sequence()),
+			Sequence: int64(acc.Sequence()),
 			Balance:  acc.Balance(),
 		},
 	}

@@ -26,7 +26,7 @@ message AccountRequest {
 }
 
 message AccountResponse {
-  Account account =1;
+  AccountInfo account =1;
 }
 
 message ValidatorsRequest {}
@@ -39,11 +39,11 @@ message ValidatorByNumberRequest {
 }
 
 message ValidatorsResponse {
-  repeated Validator validators = 1;
+  repeated ValidatorInfo validators = 1;
 }
 
 message ValidatorResponse {
-  Validator validator = 1;
+  ValidatorInfo validator = 1;
 }
 
 message BlockRequest {
@@ -55,7 +55,7 @@ message BlockResponse {
   string hash = 1;
   google.protobuf.Timestamp block_time = 2;
   BlockInfo info=3;
-  repeated Transaction tranactions=5;
+  repeated TransactionInfo tranactions=5;
 }
 
 message BlockHeightRequest {
@@ -79,7 +79,7 @@ message NetworkInfoRequest {
 
 message NetworkInfoResponse {
   string peer_id = 1;
-  repeated Peer peers = 2;
+  repeated PeerInfo peers = 2;
 }
 
 message TransactionRequest {
@@ -87,7 +87,7 @@ message TransactionRequest {
 }
 
 message TransactionResponse {
-  Transaction tranaction=1;
+  TransactionInfo tranaction=1;
 }
 
 message SendRawTransactionRequest {
@@ -100,17 +100,17 @@ message SendRawTransactionResponse {
 
 // TODO: add unbond height
 // TODO: in32 -> int64
-message Validator{
+message ValidatorInfo{
   string public_key = 1;
   int32 number = 2;
-  int32 sequence = 3;
+  int64 sequence = 3;
   int64 stake = 4;
   int32 last_bonding_height = 5;
   int32 last_joined_height = 6;
   string address = 7;
 }
 
-message Peer{
+message PeerInfo{
   string moniker = 1;
   bytes node_version = 2;
   string peer_id = 3;
@@ -122,10 +122,10 @@ message Peer{
   int32 received_bytes = 9;
 }
 
-message Account{
+message AccountInfo{
   string address = 1;
   int32 number = 2;
-  int32 sequence = 3;
+  int64 sequence = 3;
   int64 Balance = 4;
 }
 
@@ -143,7 +143,7 @@ message BlockInfo {
   string signature=11;
 }
 
-message Transaction{
+message TransactionInfo{
   string id=1;    
   int32 Version =2;  
   string stamp=3;    
@@ -165,6 +165,6 @@ enum PayloadType {
 
 enum BlockVerbosity {
   BLOCK_HASH = 0;
-  BLOCK_DATA = 1;
+  BLOCK_INFO = 1;
   BLOCK_TRANSACTIONS = 2;
 }

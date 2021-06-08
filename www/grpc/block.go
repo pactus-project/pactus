@@ -33,7 +33,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	hash := block.Hash().String()
 	timestamp := timestamppb.New(block.Header().Time())
 	info := &zarb.BlockInfo{}
-	tranactions := make([]*zarb.Transaction, 0)
+	tranactions := make([]*zarb.TransactionInfo, 0)
 
 	//populate BLOCK_DATA
 	if request.Verbosity.Number() > 0 {
@@ -74,7 +74,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	if request.Verbosity.Number() > 1 {
 		for _, id := range block.TxIDs().IDs() {
 			t := zs.state.Transaction(id)
-			tranactions = append(tranactions, &zarb.Transaction{
+			tranactions = append(tranactions, &zarb.TransactionInfo{
 				Id:        id.String(),
 				Version:   int32(t.Version()),
 				Stamp:     t.Stamp().String(),

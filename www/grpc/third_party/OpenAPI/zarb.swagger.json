@@ -78,7 +78,7 @@
             "type": "string",
             "enum": [
               "BLOCK_HASH",
-              "BLOCK_DATA",
+              "BLOCK_INFO",
               "BLOCK_TRANSACTIONS"
             ],
             "default": "BLOCK_HASH"
@@ -338,7 +338,7 @@
         }
       }
     },
-    "zarbAccount": {
+    "zarbAccountInfo": {
       "type": "object",
       "properties": {
         "address": {
@@ -349,8 +349,8 @@
           "format": "int32"
         },
         "sequence": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string",
+          "format": "int64"
         },
         "Balance": {
           "type": "string",
@@ -362,7 +362,7 @@
       "type": "object",
       "properties": {
         "account": {
-          "$ref": "#/definitions/zarbAccount"
+          "$ref": "#/definitions/zarbAccountInfo"
         }
       }
     },
@@ -440,7 +440,7 @@
         "tranactions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/zarbTransaction"
+            "$ref": "#/definitions/zarbTransactionInfo"
           }
         }
       }
@@ -449,7 +449,7 @@
       "type": "string",
       "enum": [
         "BLOCK_HASH",
-        "BLOCK_DATA",
+        "BLOCK_INFO",
         "BLOCK_TRANSACTIONS"
       ],
       "default": "BLOCK_HASH"
@@ -475,7 +475,7 @@
         "peers": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/zarbPeer"
+            "$ref": "#/definitions/zarbPeerInfo"
           }
         }
       }
@@ -490,7 +490,7 @@
       ],
       "default": "SEND_PAYLOAD"
     },
-    "zarbPeer": {
+    "zarbPeerInfo": {
       "type": "object",
       "properties": {
         "moniker": {
@@ -535,7 +535,7 @@
         }
       }
     },
-    "zarbTransaction": {
+    "zarbTransactionInfo": {
       "type": "object",
       "properties": {
         "id": {
@@ -578,11 +578,11 @@
       "type": "object",
       "properties": {
         "tranaction": {
-          "$ref": "#/definitions/zarbTransaction"
+          "$ref": "#/definitions/zarbTransactionInfo"
         }
       }
     },
-    "zarbValidator": {
+    "zarbValidatorInfo": {
       "type": "object",
       "properties": {
         "publicKey": {
@@ -593,8 +593,8 @@
           "format": "int32"
         },
         "sequence": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string",
+          "format": "int64"
         },
         "stake": {
           "type": "string",
@@ -612,13 +612,13 @@
           "type": "string"
         }
       },
-      "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"
+      "title": "TODO: add unbond height\r\nTODO: in32 -\u003e int64"
     },
     "zarbValidatorResponse": {
       "type": "object",
       "properties": {
         "validator": {
-          "$ref": "#/definitions/zarbValidator"
+          "$ref": "#/definitions/zarbValidatorInfo"
         }
       }
     },
@@ -628,7 +628,7 @@
         "validators": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/zarbValidator"
+            "$ref": "#/definitions/zarbValidatorInfo"
           }
         }
       }

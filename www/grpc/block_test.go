@@ -33,7 +33,7 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return json object with verbosity 1 ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_DATA})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		h, err := crypto.HashFromString(res.Hash)

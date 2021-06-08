@@ -23,7 +23,7 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 	}
 
 	return &zarb.TransactionResponse{
-		Tranaction: &zarb.Transaction{
+		Tranaction: &zarb.TransactionInfo{
 			Id:        trx.ID().String(),
 			Version:   int32(trx.Version()),
 			Stamp:     trx.Stamp().String(),
