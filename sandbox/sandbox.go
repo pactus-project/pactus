@@ -1,7 +1,8 @@
 package sandbox
 
 import (
-	"github.com/sasha-s/go-deadlock"
+	"sync"
+
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -14,7 +15,7 @@ import (
 )
 
 type Concrete struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	store            store.Reader
 	sortition        *sortition.Sortition

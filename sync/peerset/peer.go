@@ -3,9 +3,9 @@ package peerset
 import (
 	"encoding/json"
 	"fmt"
+	"sync"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -35,7 +35,7 @@ func (code StatusCode) MarshalJSON() ([]byte, error) {
 }
 
 type Peer struct {
-	lk   deadlock.RWMutex
+	lk   sync.RWMutex
 	data peerData
 }
 

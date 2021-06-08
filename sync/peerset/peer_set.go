@@ -1,10 +1,10 @@
 package peerset
 
 import (
+	"sync"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -13,7 +13,7 @@ import (
 // - Implementing garbage collection for peerset
 
 type PeerSet struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	peers            map[peer.ID]*Peer
 	sessions         map[int]*Session

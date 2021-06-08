@@ -14,7 +14,6 @@ import (
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
@@ -22,7 +21,7 @@ import (
 )
 
 type network struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	ctx            context.Context
 	config         *Config

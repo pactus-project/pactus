@@ -3,10 +3,10 @@ package block
 import (
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -15,7 +15,7 @@ import (
 )
 
 type Block struct {
-	lk            deadlock.RWMutex
+	lk            sync.RWMutex
 	memorizedHash *crypto.Hash
 
 	data blockData

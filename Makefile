@@ -77,7 +77,9 @@ fmt: herumi
 		--enable=asciicheck \
 		--enable=misspell \
 		--enable=gosec
-
+		
+deadlock:
+	find . -type f -not -path '*/\.*' -exec sed -i -- 's/\t"sync"/\tsync "github.com\/sasha-s\/go-deadlock"/g' {} +
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
