@@ -2,6 +2,7 @@ syntax = 'proto3';
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "payloads.proto";
 
 option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
 
@@ -150,17 +151,22 @@ message TransactionInfo{
   int64 sequence=4; 
   int64 Fee =5;
   PayloadType Type=6;
-  bytes Payload=7;
-  string memo=8;     
-  string public_key=9;
-  string signature=10;
+  oneof Payload {
+    SEND_PAYLOAD send=30;
+    BOND_PAYLOAD bond=31;
+    SORTITION_PAYLOAD sortition=32;
+  };
+  string memo=7;     
+  string public_key=8;
+  string signature=9;
 }
 
 enum PayloadType {
-  SEND_PAYLOAD=0;
-  BOND_PAYLOAD =1;
-  SORTITION_PAYLOAD=2;
-  UNBOND_PAYLOAD =3;
+  UNKNOWN=0;
+  SEND_PAYLOAD=1;
+  BOND_PAYLOAD =2;
+  SORTITION_PAYLOAD=3;
+  UNBOND_PAYLOAD =4;
 }
 
 enum BlockVerbosity {

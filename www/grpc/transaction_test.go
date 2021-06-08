@@ -7,12 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/tx/payload"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
 func TestGetTransaction(t *testing.T) {
 	conn, client := callServer(t)
-	tx1, _ := tx.GenerateTestSortitionTx()
+	tx1, _ := tx.GenerateTestSendTx()
 
 	tMockState.Store.SaveTransaction(tx1)
 
@@ -25,9 +26,11 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, tx1.Stamp().String(), res.Tranaction.Stamp)
 		assert.Equal(t, tx1.Fee(), res.Tranaction.Fee)
 		assert.Equal(t, tx1.Memo(), res.Tranaction.Memo)
-		assert.Equal(t, tx1.Payload().Signer().RawBytes(), res.Tranaction.Payload)
 		assert.Equal(t, int64(tx1.Sequence()), res.Tranaction.Sequence)
 		assert.Equal(t, tx1.Signature().String(), res.Tranaction.Signature)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Amount, res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Amount)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Receiver.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Receiver)
 	})
 
 	t.Run("Should return nil value because transcation id is invalid", func(t *testing.T) {

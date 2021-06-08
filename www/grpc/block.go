@@ -74,18 +74,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	if request.Verbosity.Number() > 1 {
 		for _, id := range block.TxIDs().IDs() {
 			t := zs.state.Transaction(id)
-			tranactions = append(tranactions, &zarb.TransactionInfo{
-				Id:        id.String(),
-				Version:   int32(t.Version()),
-				Stamp:     t.Stamp().String(),
-				Sequence:  int64(t.Sequence()),
-				Fee:       t.Fee(),
-				Type:      zarb.PayloadType(t.PayloadType() - 1),
-				Payload:   t.Payload().Signer().RawBytes(),
-				Memo:      t.Memo(),
-				PublicKey: t.PublicKey().String(),
-				Signature: t.Signature().String(),
-			})
+			tranactions = append(tranactions, zs.encodeTransaction(t))
 		}
 	}
 

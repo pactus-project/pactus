@@ -308,6 +308,47 @@
     }
   },
   "definitions": {
+    "BOND_PAYLOAD": {
+      "type": "object",
+      "properties": {
+        "bonder": {
+          "type": "string"
+        },
+        "validator": {
+          "type": "string"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "SEND_PAYLOAD": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "SORTITION_PAYLOAD": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -483,12 +524,13 @@
     "zarbPayloadType": {
       "type": "string",
       "enum": [
+        "UNKNOWN",
         "SEND_PAYLOAD",
         "BOND_PAYLOAD",
         "SORTITION_PAYLOAD",
         "UNBOND_PAYLOAD"
       ],
-      "default": "SEND_PAYLOAD"
+      "default": "UNKNOWN"
     },
     "zarbPeerInfo": {
       "type": "object",
@@ -559,9 +601,14 @@
         "Type": {
           "$ref": "#/definitions/zarbPayloadType"
         },
-        "Payload": {
-          "type": "string",
-          "format": "byte"
+        "send": {
+          "$ref": "#/definitions/SEND_PAYLOAD"
+        },
+        "bond": {
+          "$ref": "#/definitions/BOND_PAYLOAD"
+        },
+        "sortition": {
+          "$ref": "#/definitions/SORTITION_PAYLOAD"
         },
         "memo": {
           "type": "string"
