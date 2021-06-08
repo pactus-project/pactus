@@ -16,6 +16,9 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v2
+    
+    - name: Replace sync.RWMutux with deadlock.RWMutux
+      run: make replace_mutux
 
     - name: Unit tests
       run: make unit_test
