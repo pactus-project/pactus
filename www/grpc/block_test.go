@@ -44,7 +44,7 @@ func TestGetBlock(t *testing.T) {
 		assert.Empty(t, res.Tranactions)
 	})
 
-	t.Run("Should return json object with verbosity 2 ", func(t *testing.T) {
+	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_TRANSACTIONS})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
@@ -54,7 +54,7 @@ func TestGetBlock(t *testing.T) {
 		assert.NotEmpty(t, res.Info)
 		assert.Equal(t, b1.LastCertificate().Signature().String(), res.Info.Signature)
 		assert.NotEmpty(t, res.Tranactions)
-		assert.Equal(t, int(trxs[0].PayloadType()), int(res.Tranactions[0].Type+1)) //enums starting 1
+		assert.Equal(t, int(trxs[0].PayloadType()), int(res.Tranactions[0].Type)) //enums starting 1
 		assert.Equal(t, trxs[0].ID().String(), res.Tranactions[0].Id)
 	})
 
