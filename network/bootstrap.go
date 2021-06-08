@@ -2,7 +2,7 @@ package network
 
 import (
 	"context"
-	"sync"
+	sync "sync"
 	"time"
 
 	lp2phost "github.com/libp2p/go-libp2p-core/host"

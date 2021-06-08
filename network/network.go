@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"sync"
+	syncer "sync"
 
 	lp2p "github.com/libp2p/go-libp2p"
 	lp2pcircuit "github.com/libp2p/go-libp2p-circuit"
@@ -26,7 +27,7 @@ type network struct {
 	ctx            context.Context
 	config         *Config
 	host           lp2phost.Host
-	wg             sync.WaitGroup
+	wg             syncer.WaitGroup
 	mdns           lp2pdiscovery.Service
 	kademlia       *lp2pdht.IpfsDHT
 	pubsub         *lp2pps.PubSub
