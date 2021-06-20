@@ -64,6 +64,12 @@ func TestExecuteSortitionTx(t *testing.T) {
 		tSandbox.Validator(tValSigner.Address()).UpdateLastBondingHeight(0)
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
+		// Check unbond state
+		tSandbox.AcceptSortition = true
+		tSandbox.WelcomeToCommittee = true
+		tSandbox.Validator(tValSigner.Address()).UpdateUnbondingHeight(1)
+		assert.Error(t, exe.Execute(trx, tSandbox))
+
 		// replay
 		assert.Error(t, exe.Execute(trx, tSandbox))
 

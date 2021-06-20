@@ -44,6 +44,13 @@ func TestExecuteUnbondTx(t *testing.T) {
 		// Replay
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
+
+	t.Run("Should fail, Cann't unbond if unbonded already", func(t *testing.T) {
+		tSandbox.InCommittee = false
+		trx := tx.NewUnbondTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")
+
+		assert.Error(t, exe.Execute(trx, tSandbox))
+	})
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), int64(5000000000))
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Power(), int64(0))
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).UnbondingHeight(), 101)

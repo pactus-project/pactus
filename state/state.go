@@ -421,10 +421,8 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
-	//
 	ok, proof := st.sortition.EvaluateSortition(st.lastInfo.BlockHash(), st.signer, val.Stake())
 	if ok {
-		//
 		trx := tx.NewSortitionTx(st.lastInfo.BlockHash(), val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)
 
