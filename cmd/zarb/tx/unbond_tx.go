@@ -56,12 +56,6 @@ func UnbondTx() func(c *cli.Cmd) {
 			var auth string
 
 			// ---
-			if *seqOpt == 0 {
-				cmd.PrintWarnMsg("Sequence number is not defined.")
-				c.PrintHelp()
-				return
-			}
-
 			if *valOpt == "" {
 				cmd.PrintWarnMsg("Validator address is not defined.")
 				c.PrintHelp()

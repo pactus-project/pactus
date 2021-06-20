@@ -74,12 +74,6 @@ func WithdrawTx() func(c *cli.Cmd) {
 			var auth string
 
 			// ---
-			if *seqOpt == 0 {
-				cmd.PrintWarnMsg("Sequence number is not defined.")
-				c.PrintHelp()
-				return
-			}
-
 			if *amountOpt == 0 {
 				cmd.PrintWarnMsg("Amount is not defined.")
 				c.PrintHelp()
