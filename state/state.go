@@ -411,7 +411,7 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
-	if st.lastInfo.BlockHeight()-val.BondingHeight() < 2*st.params.CommitteeSize {
+	if st.lastInfo.BlockHeight()-val.LastBondingHeight() < 2*st.params.CommitteeSize {
 		// Bonding period
 		return false
 	}

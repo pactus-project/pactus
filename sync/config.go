@@ -9,15 +9,15 @@ import (
 var LatestBlockInterval = 720 // 720 blocks is about two hours
 
 type Config struct {
-	Moniker              string
-	StartingTimeout      time.Duration
-	HeartBeatTimeout     time.Duration
-	SessionTimeout       time.Duration
-	InitialBlockDownload bool
-	BlockPerMessage      int
-	MaximumOpenSessions  int
-	CacheSize            int
-	Firewall             *firewall.Config
+	Moniker              string           `toml:"" comment:"Moniker A custom human readable name for this node."`
+	StartingTimeout      time.Duration    `toml:"" comment:"StartingTimeout is time taken for syncing the node."`
+	HeartBeatTimeout     time.Duration    `toml:"" comment:"HeartBeatTimeout timeout for broadcasting heartbeat message to network."`
+	SessionTimeout       time.Duration    `toml:"" comment:"SessionTimeout timeout for session of node."`
+	InitialBlockDownload bool             `toml:"" comment:"InitialBlockDownload enable or disable for initial block downloading."`
+	BlockPerMessage      int              `toml:"" comment:"BlockPerMessage the number of blocks per message.Default is 120."`
+	MaximumOpenSessions  int              `toml:"" comment:"Maximum number of open session.Default is 8"`
+	CacheSize            int              `toml:"" comment:"CacheSize is the total capacity of the cache"`
+	Firewall             *firewall.Config `toml:"" comment:"Setting for firewall"`
 }
 
 func DefaultConfig() *Config {

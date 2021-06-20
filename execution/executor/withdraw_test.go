@@ -67,7 +67,7 @@ func Test_WithdrawExecutor(t *testing.T) {
 	})
 
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), int64(0))
-	// assert.Equal(t, tSandbox.Validator(tVal1.Address()).Power(), int64(0)) it shouldn't return 1 but it does
+	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Power(), int64(0)) //it shouldn't return 1 but it does
 	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), int64(14999999000))
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).UnbondingHeight(), 101)
 	assert.Equal(t, exe.Fee(), int64(1000))

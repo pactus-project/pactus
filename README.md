@@ -1,6 +1,7 @@
 [![codecov](https://codecov.io/gh/zarbchain/zarb-go/branch/main/graph/badge.svg?token=8N6N60D5UI)](https://codecov.io/gh/zarbchain/zarb-go)
 [![CI](https://github.com/zarbchain/zarb-go/workflows/CI/badge.svg)](https://github.com/zarbchain/zarb-go/actions?query=workflow%3ACI+branch%3Amain+)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zarbchain/zarb-go)](https://goreportcard.com/report/github.com/zarbchain/zarb-go)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/zPqWqV85ch)
 ------
 # Zarb
@@ -9,7 +10,7 @@
 
 ## Compiling the code
 
-You need to make sure you have install [Go](https://golang.org/).
+You need to make sure you have installed [Go1.15 or higher](https://golang.org/).
 Follow these steps to compile and build Zarb blockchain:
 
 ```bash

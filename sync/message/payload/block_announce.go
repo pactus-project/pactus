@@ -40,5 +40,5 @@ func (p *BlockAnnouncePayload) Type() Type {
 }
 
 func (p *BlockAnnouncePayload) Fingerprint() string {
-	return fmt.Sprintf("{⌘ %v}", p.Block.Hash().Fingerprint())
+	return fmt.Sprintf("{⌘ %d %v}", p.Height, p.Block.Hash().Fingerprint())
 }

@@ -227,14 +227,14 @@ func disableHeartbeat(t *testing.T) {
 }
 
 func joinAliceToCommittee(t *testing.T) {
-	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4, tAliceState.LastBlockHeight())
+	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4)
 	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
 }
 
 func joinBobToCommittee(t *testing.T) {
-	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5, tBobState.LastBlockHeight())
+	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5)
 	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))

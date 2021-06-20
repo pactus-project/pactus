@@ -51,6 +51,7 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
+	tSandbox.AppendStampAndUpdateHeight(101, crypto.GenerateTestHash())
 	t.Run("Should be able to rebond if hasn't ever unbonded", func(t *testing.T) {
 		tSandbox.InCommittee = false
 		trx := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "Rebond")
@@ -60,6 +61,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(2000))
 	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(2000))
+	tSandbox.AppendStampAndUpdateHeight(102, crypto.GenerateTestHash())
 
 	t.Run("Shouldn't be able to rebond after unbonding", func(t *testing.T) {
 		tSandbox.InCommittee = false
@@ -72,10 +74,12 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Equal(t, tSandbox.Account(bonder).Balance(), int64(10000000000-4000))
-	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(2000))
-	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(0))
-	assert.Equal(t, tSandbox.Validator(addr).BondingHeight(), 102)
+	assert.Equal(t, int64(10000000000-4000), tSandbox.Account(bonder).Balance())
+	assert.Equal(t, int64(2000), tSandbox.Validator(addr).Stake())
+	assert.Equal(t, int64(0), tSandbox.Validator(addr).Power())
+	assert.Equal(t, 102, tSandbox.Validator(addr).LastBondingHeight())
+	assert.Equal(t, 103, tSandbox.Validator(addr).UnbondingHeight())
+
 	assert.Equal(t, exe.Fee(), int64(1000))
 
 	checkTotalCoin(t, 2000)

@@ -1,13 +1,13 @@
 package http
 
 type Config struct {
-	Enable  bool
-	Address string
+	Enable  bool   `toml:"" comment:"Enable HTTP server for client communication."`
+	Address string `toml:"" comment:"Address of HTTP server."`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Enable:  true,
+		Enable:  false,
 		Address: "[::]:8081",
 	}
 }

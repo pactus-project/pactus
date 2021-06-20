@@ -7,18 +7,19 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/tx"
+	grpcclient "github.com/zarbchain/zarb-go/www/grpc/client"
 )
 
 func SendTx() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		stampOpt := c.String(cli.StringOpt{
 			Name: "stamp",
-			Desc: "Transaction stamp",
+			Desc: "Transaction stamp if not specified will query from RPC server",
 		})
 
 		seqOpt := c.Int(cli.IntOpt{
 			Name: "seq",
-			Desc: "Transaction sequence number",
+			Desc: "Transaction sequence number if not specified will query from RPC server",
 		})
 
 		senderOpt := c.String(cli.StringOpt{
@@ -46,6 +47,20 @@ func SendTx() func(c *cli.Cmd) {
 			Desc:  "Transaction memo (Optional)",
 			Value: "",
 		})
+
+		authOpt := c.String(cli.StringOpt{
+			Name: "a auth",
+			Desc: "Passphrase of the key file",
+		})
+		keyFileOpt := c.String(cli.StringOpt{
+			Name: "k keyfile",
+			Desc: "Path to the encrypted key file",
+		})
+
+		grpcOpt := c.String(cli.StringOpt{
+			Name: "e endpoint",
+			Desc: "gRPC server address if not specified will just print raw signed transaction",
+		})
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 
@@ -56,15 +71,9 @@ func SendTx() func(c *cli.Cmd) {
 			var seq int
 			var amount int64
 			var fee int64
+			var auth string
 
 			// ---
-			if *seqOpt == 0 {
-				cmd.PrintWarnMsg("Sequence number is not defined.")
-				c.PrintHelp()
-				return
-			}
-			seq = *seqOpt
-
 			if *amountOpt == 0 {
 				cmd.PrintWarnMsg("Amount is not defined.")
 				c.PrintHelp()
@@ -78,17 +87,6 @@ func SendTx() func(c *cli.Cmd) {
 				return
 			}
 			fee = int64(*feeOpt)
-
-			if *stampOpt == "" {
-				cmd.PrintWarnMsg("stamp is not defined.")
-				c.PrintHelp()
-				return
-			}
-			stamp, err = crypto.HashFromString(*stampOpt)
-			if err != nil {
-				cmd.PrintErrorMsg("Stamp is wrong: %v", err)
-				return
-			}
 
 			if *senderOpt == "" {
 				cmd.PrintWarnMsg("Sender address is not defined.")
@@ -112,10 +110,49 @@ func SendTx() func(c *cli.Cmd) {
 				return
 			}
 
-			trx := tx.NewSendTx(stamp, seq, sender, receiver, amount, fee, *memoOpt)
-			bz, _ := trx.Encode()
-			cmd.PrintInfoMsg("Unsigned transaction raw bytes:\n%x", bz)
+			//sign transaction
+			if *keyFileOpt == "" {
+				cmd.PrintWarnMsg("Please specify a key file to sign.")
+				c.PrintHelp()
+				return
+			}
 
+			if *authOpt == "" {
+				auth = cmd.PromptPassphrase("Passphrase: ", false)
+			} else {
+				auth = *authOpt
+			}
+
+			//RPC
+			if seqOpt != nil {
+				seq = *seqOpt
+			} else {
+				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), sender)
+				if err != nil {
+					cmd.PrintErrorMsg("Couldn't retrieve sequence number from RPC Server: %v", err)
+					return
+				}
+			}
+
+			if stampOpt == nil || *stampOpt == "" {
+				stamp, err = grpcclient.GetStamp(promptRPCEndpoint(grpcOpt))
+				if err != nil {
+					cmd.PrintErrorMsg("Couldn't retrieve stamp from RPC Server: %v", err)
+					return
+				}
+			} else {
+				stamp, err = crypto.HashFromString(*stampOpt)
+				if err != nil {
+					cmd.PrintErrorMsg("Couldn't decode stamp from input: %v", err)
+					return
+				}
+			}
+
+			//fulfill transaction payload
+			trx := tx.NewSendTx(stamp, seq, sender, receiver, amount, fee, *memoOpt)
+
+			//sign transaction
+			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)
 		}
 	}
 }

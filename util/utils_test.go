@@ -44,9 +44,13 @@ func TestRandInt(t *testing.T) {
 
 	rnd3 := RandInt(-1)
 	assert.Equal(t, rnd3, 0)
+
+	rnd4 := RandInt(1000)
+	rnd5 := RandInt(1000)
+	assert.NotEqual(t, rnd4, rnd5)
 }
 
-func TestRandInt65(t *testing.T) {
+func TestRandInt64(t *testing.T) {
 	rnd1 := RandInt64(4)
 	assert.GreaterOrEqual(t, rnd1, int64(0))
 	assert.LessOrEqual(t, rnd1, int64(4))
@@ -56,4 +60,8 @@ func TestRandInt65(t *testing.T) {
 
 	rnd3 := RandInt64(-1)
 	assert.Equal(t, rnd3, int64(0))
+
+	rnd4 := RandInt64(1000)
+	rnd5 := RandInt64(1000)
+	assert.NotEqual(t, rnd4, rnd5)
 }
