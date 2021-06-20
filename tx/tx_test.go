@@ -299,7 +299,6 @@ func TestBondSignBytes(t *testing.T) {
 func TestUnbondSignBytes(t *testing.T) {
 	h := crypto.GenerateTestHash()
 	signer := crypto.GenerateTestSigner()
-	// _, pub, _ := crypto.GenerateTestKeyPair()
 
 	trx1 := NewUnbondTx(h, 1, signer.Address(), "test unbond-tx")
 	signer.SignMsg(trx1)

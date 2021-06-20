@@ -33,15 +33,15 @@ type txData struct {
 	Signature *crypto.Signature
 }
 
-func (tx *Tx) Version() int                 { return tx.data.Version }   // Transaction version
-func (tx *Tx) Stamp() crypto.Hash           { return tx.data.Stamp }     // hash of previus block
-func (tx *Tx) Sequence() int                { return tx.data.Sequence }  // sequence of intraction with the network
-func (tx *Tx) PayloadType() payload.Type    { return tx.data.Type }      // payload type indecator (transaction,sortion,bonding,...)
-func (tx *Tx) Payload() payload.Payload     { return tx.data.Payload }   // content of payload itself
-func (tx *Tx) Fee() int64                   { return tx.data.Fee }       // transaction fee
-func (tx *Tx) Memo() string                 { return tx.data.Memo }      // memo for transaction
-func (tx *Tx) PublicKey() *crypto.PublicKey { return tx.data.PublicKey } // the publickey of transaction signer
-func (tx *Tx) Signature() *crypto.Signature { return tx.data.Signature } // the transaction singnature
+func (tx *Tx) Version() int                 { return tx.data.Version }
+func (tx *Tx) Stamp() crypto.Hash           { return tx.data.Stamp }
+func (tx *Tx) Sequence() int                { return tx.data.Sequence }
+func (tx *Tx) PayloadType() payload.Type    { return tx.data.Type }
+func (tx *Tx) Payload() payload.Payload     { return tx.data.Payload }
+func (tx *Tx) Fee() int64                   { return tx.data.Fee }
+func (tx *Tx) Memo() string                 { return tx.data.Memo }
+func (tx *Tx) PublicKey() *crypto.PublicKey { return tx.data.PublicKey }
+func (tx *Tx) Signature() *crypto.Signature { return tx.data.Signature }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.sanityChecked = false
