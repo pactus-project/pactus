@@ -94,17 +94,6 @@ func WithdrawTx() func(c *cli.Cmd) {
 			}
 			fee = int64(*feeOpt)
 
-			if *stampOpt == "" {
-				cmd.PrintWarnMsg("stamp is not defined.")
-				c.PrintHelp()
-				return
-			}
-			stamp, err = crypto.HashFromString(*stampOpt)
-			if err != nil {
-				cmd.PrintErrorMsg("Stamp is wrong: %v", err)
-				return
-			}
-
 			if *fromOpt == "" {
 				cmd.PrintWarnMsg("Validator address is not defined.")
 				c.PrintHelp()
