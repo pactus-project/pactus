@@ -12,9 +12,6 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v2
-      
-    - name: Replace sync.RWMutux with deadlock.RWMutux
-      run: make replace_mutux
 
     - name: Test with coverage
       run: go test -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic ./...
