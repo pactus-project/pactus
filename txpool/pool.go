@@ -3,9 +3,9 @@ package txpool
 import (
 	"container/list"
 	"fmt"
+	"sync"
 	"time"
 
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
@@ -15,7 +15,7 @@ import (
 )
 
 type txPool struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	config      *Config
 	checker     *execution.Execution

@@ -1,7 +1,8 @@
 package store
 
 import (
-	"github.com/sasha-s/go-deadlock"
+	"sync"
+
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
@@ -21,7 +22,7 @@ var (
 )
 
 type store struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	config         *Config
 	db             *leveldb.DB

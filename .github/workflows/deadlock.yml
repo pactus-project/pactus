@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Data race detection
+name: Deadlock and data race detection
 jobs:
   data-race:
     runs-on: ubuntu-latest
@@ -12,6 +12,9 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Replace sync.RWMutux with deadlock.RWMutux
+      run: find . -type f -name "*.go" -not -path '*/\.*' -exec sed -i -- 's/\t"sync"/\tsync "github.com\/sasha-s\/go-deadlock"/g' {} +
 
     - name: Test with data race detection
       run: make test_race

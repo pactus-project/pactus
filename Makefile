@@ -78,7 +78,6 @@ fmt: herumi
 		--enable=misspell \
 		--enable=gosec
 
-
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html

@@ -2,9 +2,9 @@ package state
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
@@ -26,7 +26,7 @@ type MockState struct {
 	TxPool               *txpool.MockTxPool
 	InvalidBlockHash     crypto.Hash
 	Committee            *committee.Committee
-	Lock                 deadlock.RWMutex
+	Lock                 sync.RWMutex
 }
 
 func MockingState(committee *committee.Committee) *MockState {
