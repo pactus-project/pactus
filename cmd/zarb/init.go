@@ -32,12 +32,6 @@ func Init() func(c *cli.Cmd) {
 			Value: false,
 		})
 
-		mainnetOpt := c.Bool(cli.BoolOpt{
-			Name:  "mainnet",
-			Desc:  "Initialize working directory for joining the mainnet",
-			Value: false,
-		})
-
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
@@ -67,11 +61,6 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/139.162.135.180/tcp/31887/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
-			} else if *mainnetOpt {
-				gen = genesis.Mainnet()
-
-				conf.Network.Name = "zarb"
-				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.186.100/tcp/8421/p2p/12D3KooWLB7zCZ2VV1AtqHwYy2RBgpxdtwYRYt1ZU7iECFNfpks6", "/ip4/139.177.199.21/tcp/8421/p2p/12D3KooWMjGbsP2XbR11RmjevPvTsC33qT48sbqiBhB9ekoFiedx"}
 			} else {
 				gen = makeLocalGenesis(valKey.PublicKey())
 				conf.Network.Name = "zarb-local"
