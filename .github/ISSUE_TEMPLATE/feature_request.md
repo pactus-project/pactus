@@ -10,6 +10,8 @@ Thank you in advance for helping us to improve Zarb!
 
 Please read through the template below and answer all relevant questions.
 Your additional work here is greatly appreciated and will help us respond as quickly as possible.
+
+For more advanced features please consider our [ZIPs repo](https://github.com/zarbchain/zips)
 -->
 
 ## Describe the problem you'd like to have solved

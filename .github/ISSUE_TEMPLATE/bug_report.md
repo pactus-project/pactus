@@ -36,3 +36,4 @@ Your additional work here is greatly appreciated and will help us respond as qui
 
 - **Operation System: **
 - **Zarb Version: **
+- **Go Version**
