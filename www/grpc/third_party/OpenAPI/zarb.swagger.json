@@ -308,7 +308,7 @@
     }
   },
   "definitions": {
-    "BOND_PAYLOAD": {
+    "payloadsBOND_PAYLOAD": {
       "type": "object",
       "properties": {
         "bonder": {
@@ -323,7 +323,7 @@
         }
       }
     },
-    "SEND_PAYLOAD": {
+    "payloadsSEND_PAYLOAD": {
       "type": "object",
       "properties": {
         "sender": {
@@ -338,7 +338,7 @@
         }
       }
     },
-    "SORTITION_PAYLOAD": {
+    "payloadsSORTITION_PAYLOAD": {
       "type": "object",
       "properties": {
         "address": {
@@ -602,13 +602,13 @@
           "$ref": "#/definitions/zarbPayloadType"
         },
         "send": {
-          "$ref": "#/definitions/SEND_PAYLOAD"
+          "$ref": "#/definitions/payloadsSEND_PAYLOAD"
         },
         "bond": {
-          "$ref": "#/definitions/BOND_PAYLOAD"
+          "$ref": "#/definitions/payloadsBOND_PAYLOAD"
         },
         "sortition": {
-          "$ref": "#/definitions/SORTITION_PAYLOAD"
+          "$ref": "#/definitions/payloadsSORTITION_PAYLOAD"
         },
         "memo": {
           "type": "string"
@@ -659,7 +659,7 @@
           "type": "string"
         }
       },
-      "title": "TODO: add unbond height\r\nTODO: in32 -\u003e int64"
+      "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"
     },
     "zarbValidatorResponse": {
       "type": "object",

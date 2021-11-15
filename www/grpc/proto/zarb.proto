@@ -152,9 +152,9 @@ message TransactionInfo{
   int64 Fee =5;
   PayloadType Type=6;
   oneof Payload {
-    SEND_PAYLOAD send=30;
-    BOND_PAYLOAD bond=31;
-    SORTITION_PAYLOAD sortition=32;
+    payloads.SEND_PAYLOAD send=30;
+    payloads.BOND_PAYLOAD bond=31;
+    payloads.SORTITION_PAYLOAD sortition=32;
   };
   string memo=7;     
   string public_key=8;

@@ -1,6 +1,7 @@
 syntax = 'proto3';
 
 option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+package payloads;
 
 message SEND_PAYLOAD{
     string sender = 1;
