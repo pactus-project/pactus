@@ -1,7 +1,8 @@
 package sandbox
 
 import (
-	"github.com/sasha-s/go-deadlock"
+	"sync"
+
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -14,7 +15,7 @@ import (
 )
 
 type Concrete struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	store            store.Reader
 	sortition        *sortition.Sortition
@@ -176,6 +177,7 @@ func (sb *Concrete) UpdateValidator(val *validator.Validator) {
 		sb.shouldPanicForUnknownAddress()
 	}
 
+	// shouldn't this be power??
 	sb.totalStakeChange += val.Stake() - s.Validator.Stake()
 	s.Validator = *val
 	s.Updated = true
@@ -325,6 +327,13 @@ func (sb *Concrete) CommitteeSize() int {
 	defer sb.lk.RUnlock()
 
 	return sb.params.CommitteeSize
+}
+
+func (sb *Concrete) UnbondInterval() int {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.params.UnbondInterval
 }
 
 func (sb *Concrete) IsInCommittee(addr crypto.Address) bool {

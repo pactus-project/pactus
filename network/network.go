@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"sync"
+	syncer "sync"
 
 	lp2p "github.com/libp2p/go-libp2p"
 	lp2pcircuit "github.com/libp2p/go-libp2p-circuit"
@@ -14,7 +15,6 @@ import (
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
@@ -22,12 +22,12 @@ import (
 )
 
 type network struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	ctx            context.Context
 	config         *Config
 	host           lp2phost.Host
-	wg             sync.WaitGroup
+	wg             syncer.WaitGroup
 	mdns           lp2pdiscovery.Service
 	kademlia       *lp2pdht.IpfsDHT
 	pubsub         *lp2pps.PubSub

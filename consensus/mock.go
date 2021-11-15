@@ -1,7 +1,8 @@
 package consensus
 
 import (
-	"github.com/sasha-s/go-deadlock"
+	"sync"
+
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/state"
@@ -11,7 +12,7 @@ import (
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
-	Lock      deadlock.RWMutex
+	Lock      sync.RWMutex
 	Votes     []*vote.Vote
 	Proposal  *proposal.Proposal
 	Scheduled bool

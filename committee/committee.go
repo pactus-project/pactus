@@ -4,8 +4,8 @@ import (
 	"container/list"
 	"fmt"
 	"sort"
+	"sync"
 
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
@@ -14,7 +14,7 @@ import (
 var _ Reader = &Committee{}
 
 type Committee struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	committeeSize int
 	validatorList *list.List

@@ -2,16 +2,16 @@ package peerset
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 type Session struct {
-	lk   deadlock.RWMutex
+	lk   sync.RWMutex
 	data sessionData
 }
 

@@ -52,13 +52,6 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, g.Hash(), expected)
 }
 
-func TestGenesisMainNet(t *testing.T) {
-	g := Mainnet()
-
-	expected, _ := crypto.HashFromString("819ad7ea213d6a37fc440df70780b1b7d90a4d9a66edc3b7ccbbbf750a1ca5de")
-	assert.Equal(t, g.Hash(), expected)
-}
-
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	accs := []*account.Account{}
 	vals := []*validator.Validator{}

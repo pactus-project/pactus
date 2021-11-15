@@ -1,7 +1,8 @@
 package sortition
 
 import (
-	"github.com/sasha-s/go-deadlock"
+	"sync"
+
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 )
@@ -12,7 +13,7 @@ type param struct {
 }
 
 type Sortition struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	params *linkedmap.LinkedMap
 	vrf    *VRF

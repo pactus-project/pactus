@@ -2,10 +2,10 @@ package lastinfo
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -27,7 +27,7 @@ type lastInfoData struct {
 }
 
 type LastInfo struct {
-	lk deadlock.RWMutex
+	lk sync.RWMutex
 
 	store             store.Store
 	lastBlockHeight   int
