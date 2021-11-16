@@ -30,7 +30,7 @@ func setup(t *testing.T) {
 	p, err := NewTxPool(TestConfig(), tCh)
 	assert.NoError(t, err)
 	p.SetNewSandboxAndRecheck(tSandbox)
-	tAcc1Signer = crypto.GenerateTestSigner()
+	tAcc1Signer = bls.GenerateTestSigner()
 	tAcc1Addr = tAcc1Signer.Address()
 	acc1 := account.NewAccount(tAcc1Addr, 0)
 	acc1.AddToBalance(10000000000)

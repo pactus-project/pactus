@@ -269,7 +269,7 @@ func TestSortitionDecodingAndHash(t *testing.T) {
 
 func TestSendSignBytes(t *testing.T) {
 	h := hash.GenerateTestHash()
-	signer := crypto.GenerateTestSigner()
+	signer := bls.GenerateTestSigner()
 	addr, _, _ := bls.GenerateTestKeyPair()
 
 	trx1 := NewSendTx(h, 1, signer.Address(), addr, 100, 10, "test send-tx")
@@ -284,7 +284,7 @@ func TestSendSignBytes(t *testing.T) {
 
 func TestBondSignBytes(t *testing.T) {
 	h := hash.GenerateTestHash()
-	signer := crypto.GenerateTestSigner()
+	signer := bls.GenerateTestSigner()
 	_, pub, _ := bls.GenerateTestKeyPair()
 
 	trx1 := NewBondTx(h, 1, signer.Address(), pub, 100, 100, "test bond-tx")
@@ -299,8 +299,8 @@ func TestBondSignBytes(t *testing.T) {
 }
 
 func TestUnbondSignBytes(t *testing.T) {
-	h := crypto.GenerateTestHash()
-	signer := crypto.GenerateTestSigner()
+	h := hash.GenerateTestHash()
+	signer := bls.GenerateTestSigner()
 
 	trx1 := NewUnbondTx(h, 1, signer.Address(), "test unbond-tx")
 	signer.SignMsg(trx1)
@@ -314,9 +314,9 @@ func TestUnbondSignBytes(t *testing.T) {
 
 }
 func TestWithdrawSignBytes(t *testing.T) {
-	h := crypto.GenerateTestHash()
-	signer := crypto.GenerateTestSigner()
-	addr, _, _ := crypto.GenerateTestKeyPair()
+	h := hash.GenerateTestHash()
+	signer := bls.GenerateTestSigner()
+	addr, _, _ := bls.GenerateTestKeyPair()
 
 	trx1 := NewWithdrawTx(h, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
 	signer.SignMsg(trx1)
@@ -332,7 +332,7 @@ func TestWithdrawSignBytes(t *testing.T) {
 
 func TestSortitionSignBytes(t *testing.T) {
 	h := hash.GenerateTestHash()
-	signer := crypto.GenerateTestSigner()
+	signer := bls.GenerateTestSigner()
 	proof := sortition.GenerateRandomProof()
 
 	trx1 := NewSortitionTx(h, 1, signer.Address(), proof)

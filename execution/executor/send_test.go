@@ -32,8 +32,8 @@ func setup(t *testing.T) {
 	acc0.AddToBalance(tTotalCoin - 10000000000 - 5000000000)
 	tSandbox.UpdateAccount(acc0)
 
-	signer1 := crypto.GenerateTestSigner()
-	tValSigner = crypto.GenerateTestSigner()
+	signer1 := bls.GenerateTestSigner()
+	tValSigner = bls.GenerateTestSigner()
 
 	tAcc1 = account.NewAccount(signer1.Address(), 0)
 	tAcc1.AddToBalance(10000000000)
@@ -62,8 +62,8 @@ func TestExecuteSendTx(t *testing.T) {
 	setup(t)
 	exe := NewSendExecutor(true)
 
-	sender := crypto.GenerateTestSigner()
-	receiver := crypto.GenerateTestSigner()
+	sender := bls.GenerateTestSigner()
+	receiver := bls.GenerateTestSigner()
 	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 

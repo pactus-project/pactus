@@ -25,7 +25,7 @@ func TestExecution(t *testing.T) {
 	acc0.AddToBalance(21*1e14 - 10000000000)
 	tSandbox.UpdateAccount(acc0)
 
-	signer1 := crypto.GenerateTestSigner()
+	signer1 := bls.GenerateTestSigner()
 	addr1 := signer1.Address()
 	acc1 := account.NewAccount(addr1, 1)
 	acc1.AddToBalance(10000000000)

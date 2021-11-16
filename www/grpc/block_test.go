@@ -36,7 +36,7 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		h, err := crypto.HashFromString(res.Hash)
+		h, err := hash.HashFromString(res.Hash)
 		assert.NoError(t, err)
 		assert.Equal(t, h, b1.Hash())
 		assert.NotEmpty(t, res.Info)

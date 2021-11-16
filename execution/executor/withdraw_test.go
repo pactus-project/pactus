@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -12,8 +13,8 @@ func Test_WithdrawExecutor(t *testing.T) {
 	setup(t)
 	exe := NewWithdrawExecutor(true)
 
-	addr, _, _ := crypto.GenerateTestKeyPair()
-	stamp := crypto.GenerateTestHash()
+	addr, _, _ := bls.GenerateTestKeyPair()
+	stamp := hash.GenerateTestHash()
 
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 
@@ -41,7 +42,7 @@ func Test_WithdrawExecutor(t *testing.T) {
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.Equal(t, 0, tVal1.UnbondingHeight())
 		tVal1.UpdateUnbondingHeight(101)
-		stamp1 := crypto.GenerateTestHash()
+		stamp1 := hash.GenerateTestHash()
 		tSandbox.AppendStampAndUpdateHeight(201, stamp1)
 		assert.Equal(t, 101, tVal1.UnbondingHeight())
 
@@ -50,7 +51,7 @@ func Test_WithdrawExecutor(t *testing.T) {
 	})
 
 	t.Run("Should pass", func(t *testing.T) {
-		stamp1 := crypto.GenerateTestHash()
+		stamp1 := hash.GenerateTestHash()
 		tSandbox.AppendStampAndUpdateHeight(tVal1.UnbondingHeight()+tSandbox.UnbondInterval(), stamp1)
 		assert.Equal(t, 101, tVal1.UnbondingHeight())
 

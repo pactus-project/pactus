@@ -252,7 +252,7 @@ func commitBlockForAllStates(t *testing.T) {
 	sig2 := tSigners[1].SignData(sb)
 	sig4 := tSigners[3].SignData(sb)
 
-	sig := crypto.Aggregate([]crypto.Signature{sig1, sig2, sig4})
+	sig := bls.Aggregate([]crypto.Signature{sig1, sig2, sig4})
 	cert := block.NewCertificate(p.Block().Hash(), 0, []int{0, 1, 2, 3}, []int{2}, sig)
 
 	require.NotNil(t, cert)

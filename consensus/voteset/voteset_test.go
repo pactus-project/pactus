@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -15,7 +16,7 @@ func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []cryp
 	signers := []crypto.Signer{}
 	vals := []*validator.Validator{}
 	for i, s := range stakes {
-		signer := crypto.GenerateTestSigner()
+		signer := bls.GenerateTestSigner()
 		val := validator.NewValidator(signer.PublicKey(), i)
 		val.AddToStake(s)
 		vals = append(vals, val)
@@ -30,7 +31,7 @@ func TestAddVote(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
 	h1 := hash.GenerateTestHash()
-	invSigner := crypto.GenerateTestSigner()
+	invSigner := bls.GenerateTestSigner()
 	vs := NewVoteSet(100, 5, vote.VoteTypePrecommit, committee.Validators())
 
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 100, 5, h1, invSigner.Address())

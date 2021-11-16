@@ -128,7 +128,6 @@ func (pb *BLSPublicKey) EqualsTo(right crypto.PublicKey) bool {
 }
 
 func (pb *BLSPublicKey) Address() crypto.Address {
-	addr := new(crypto.Address)
-	copy(addr.RawBytes()[:], hash.Hash160(hash.Hash256(pb.RawBytes())))
-	return *addr
+	addr, _ := crypto.AddressFromRawBytes(hash.Hash160(hash.Hash256(pb.RawBytes())))
+	return addr
 }
