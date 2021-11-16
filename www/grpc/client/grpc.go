@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc"
 )
@@ -13,17 +14,17 @@ var (
 	zclient zarb.ZarbClient
 )
 
-func GetStamp(rpcEndpoint string) (crypto.Hash, error) {
+func GetStamp(rpcEndpoint string) (hash.Hash, error) {
 	client, err := GetRPCClient(rpcEndpoint)
 	if err != nil {
-		return crypto.Hash{}, err
+		return hash.Hash{}, err
 	}
 
 	info, err := client.GetBlockchainInfo(context.Background(), &zarb.BlockchainInfoRequest{})
 	if err != nil {
-		return crypto.Hash{}, err
+		return hash.Hash{}, err
 	}
-	return crypto.HashFromString(info.LastBlockHash)
+	return hash.HashFromString(info.LastBlockHash)
 }
 
 func GetSequence(rpcEndpoint string, addr crypto.Address) (int, error) {

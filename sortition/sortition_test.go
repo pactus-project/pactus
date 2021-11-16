@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestEvaluation(t *testing.T) {
@@ -14,7 +15,7 @@ func TestEvaluation(t *testing.T) {
 
 	t.Run("Pool stake is zero", func(t *testing.T) {
 		s := NewSortition()
-		h := crypto.GenerateTestHash()
+		h := hash.GenerateTestHash()
 		s.SetParams(h, GenerateRandomSeed(), 0)
 
 		valStake := int64(1000000)
@@ -26,7 +27,7 @@ func TestEvaluation(t *testing.T) {
 
 	t.Run("Pool stake is not zero, but validator stake is zero", func(t *testing.T) {
 		s := NewSortition()
-		h := crypto.GenerateTestHash()
+		h := hash.GenerateTestHash()
 		s.SetParams(h, GenerateRandomSeed(), 1*1e9)
 
 		ok, _ := s.EvaluateSortition(h, signer, 0)
@@ -39,10 +40,10 @@ func TestEvaluation(t *testing.T) {
 		signer := crypto.NewSigner(priv)
 		poolStake := int64(1 * 1e9)
 		s := NewSortition()
-		h := crypto.GenerateTestHash()
+		h := hash.GenerateTestHash()
 		s.SetParams(h, seed, poolStake)
 
-		ok, _ := s.EvaluateSortition(crypto.GenerateTestHash(), signer, poolStake/10)
+		ok, _ := s.EvaluateSortition(hash.GenerateTestHash(), signer, poolStake/10)
 		require.False(t, ok)
 
 		ok, proof := s.EvaluateSortition(h, signer, poolStake/10)
@@ -51,7 +52,7 @@ func TestEvaluation(t *testing.T) {
 		require.True(t, s.VerifyProof(h, proof, signer.PublicKey(), poolStake/10))
 		require.False(t, s.VerifyProof(h, GenerateRandomProof(), signer.PublicKey(), poolStake/10))
 		require.False(t, s.VerifyProof(h, Proof{}, signer.PublicKey(), poolStake/10))
-		require.False(t, s.VerifyProof(crypto.GenerateTestHash(), proof, signer.PublicKey(), poolStake/10))
+		require.False(t, s.VerifyProof(hash.GenerateTestHash(), proof, signer.PublicKey(), poolStake/10))
 	})
 }
 
@@ -61,7 +62,7 @@ func TestVerifyProof(t *testing.T) {
 	proof, _ := ProofFromString("2fbbe418b7b12068b2cfe43138e02453ea0146b1345381c72061274483af580f1c47a3e626c4927431c5447346860084")
 	poolStake := int64(1 * 1e9)
 	s := NewSortition()
-	h := crypto.GenerateTestHash()
+	h := hash.GenerateTestHash()
 	s.SetParams(h, seed, poolStake)
 
 	assert.True(t, s.VerifyProof(h, proof, pub, poolStake/10))
@@ -73,7 +74,7 @@ func TestSortitionMedian(t *testing.T) {
 	valStake := poolStake / 10
 
 	s := NewSortition()
-	h := crypto.GenerateTestHash()
+	h := hash.GenerateTestHash()
 
 	signer := crypto.GenerateTestSigner()
 	total := 1000
@@ -100,23 +101,23 @@ func TestExpiredProof(t *testing.T) {
 	proof, _ := ProofFromString("70e4951675331ce0bba3701f9c442889a6ff7b8364af1174cec27dedcbc90cfc9da1cf920ad6af64ffe70d9cfe826a0c")
 	poolStake := int64(884 * 1e8)
 	s := NewSortition()
-	h := crypto.GenerateTestHash()
+	h := hash.GenerateTestHash()
 	s.SetParams(h, seed, poolStake)
 
 	for i := 0; i < 3; i++ {
-		s.SetParams(crypto.GenerateTestHash(), GenerateRandomSeed(), poolStake)
+		s.SetParams(hash.GenerateTestHash(), GenerateRandomSeed(), poolStake)
 	}
 	assert.True(t, s.VerifyProof(h, proof, pub, 21*1e8), "Sortition is valid")
 
 	for i := 0; i < 4; i++ {
-		s.SetParams(crypto.GenerateTestHash(), GenerateRandomSeed(), poolStake)
+		s.SetParams(hash.GenerateTestHash(), GenerateRandomSeed(), poolStake)
 	}
 	assert.False(t, s.VerifyProof(h, proof, pub, 21*1e8), "Sortition expired")
 }
 
 func TestGetParam(t *testing.T) {
-	h1 := crypto.GenerateTestHash()
-	h2 := crypto.GenerateTestHash()
+	h1 := hash.GenerateTestHash()
+	h2 := hash.GenerateTestHash()
 	s1 := GenerateRandomSeed()
 	s2 := GenerateRandomSeed()
 

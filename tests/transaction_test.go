@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/www/capnp"
@@ -61,10 +62,10 @@ func TestBondingTransactions(t *testing.T) {
 }
 
 func TestSendingTransactions(t *testing.T) {
-	aliceAddr, _, alicePriv := crypto.GenerateTestKeyPair()
-	bobAddr, _, bobPriv := crypto.GenerateTestKeyPair()
-	carolAddr, _, _ := crypto.GenerateTestKeyPair()
-	daveAddr, _, _ := crypto.GenerateTestKeyPair()
+	aliceAddr, _, alicePriv := bls.GenerateTestKeyPair()
+	bobAddr, _, bobPriv := bls.GenerateTestKeyPair()
+	carolAddr, _, _ := bls.GenerateTestKeyPair()
+	daveAddr, _, _ := bls.GenerateTestKeyPair()
 
 	aliceSigner := crypto.NewSigner(alicePriv)
 	bobSigner := crypto.NewSigner(bobPriv)

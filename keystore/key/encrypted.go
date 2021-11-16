@@ -13,6 +13,8 @@ import (
 	"io/ioutil"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/scrypt"
@@ -106,7 +108,7 @@ func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	calculatedMAC := crypto.Hash256(append(derivedKey[16:32], cipherText...))
+	calculatedMAC := hash.Hash256(append(derivedKey[16:32], cipherText...))
 	if !bytes.Equal(calculatedMAC, mac) {
 		return nil, fmt.Errorf("could not decrypt key with given passphrase")
 	}
@@ -114,7 +116,7 @@ func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	pv, err := crypto.PrivateKeyFromRawBytes(plainText)
+	pv, err := bls.PrivateKeyFromRawBytes(plainText)
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +188,7 @@ func EncryptKey(key *Key, auth, label string) (*EncryptedKey, error) {
 	if err != nil {
 		return nil, err
 	}
-	mac := crypto.Hash256(append(derivedKey[16:32], cipherText...))
+	mac := hash.Hash256(append(derivedKey[16:32], cipherText...))
 
 	scryptParamsJSON := make(map[string]interface{}, 5)
 	scryptParamsJSON["n"] = scryptN

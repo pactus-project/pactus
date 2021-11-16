@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
@@ -19,8 +19,8 @@ type MockSync struct {
 
 func MockingSync() *MockSync {
 	ps := peerset.NewPeerSet(1 * time.Second)
-	_, pub1, _ := crypto.GenerateTestKeyPair()
-	_, pub2, _ := crypto.GenerateTestKeyPair()
+	_, pub1, _ := bls.GenerateTestKeyPair()
+	_, pub2, _ := bls.GenerateTestKeyPair()
 	p1 := ps.MustGetPeer(util.RandomPeerID())
 	p2 := ps.MustGetPeer(util.RandomPeerID())
 	p1.UpdateStatus(peerset.StatusCodeOK)
@@ -64,7 +64,7 @@ func (m *MockSync) Peers() []*peerset.Peer {
 // AddPeer will add new peer to mocked PeerSet
 func (m *MockSync) AddPeer(name string, height int) *peerset.Peer {
 	newPeer := m.PeerSet.MustGetPeer(util.RandomPeerID())
-	_, pub1, _ := crypto.GenerateTestKeyPair()
+	_, pub1, _ := bls.GenerateTestKeyPair()
 	newPeer.UpdateMoniker(name)
 	newPeer.UpdatePublicKey(pub1)
 	newPeer.IncreaseInvalidMessage()

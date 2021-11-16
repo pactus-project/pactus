@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -23,7 +25,7 @@ func TestProposeBlock(t *testing.T) {
 	invBondTx, _ := tx.GenerateTestBondTx()
 	invSortitionTx, _ := tx.GenerateTestSortitionTx()
 
-	_, pub, _ := crypto.GenerateTestKeyPair()
+	_, pub, _ := bls.GenerateTestKeyPair()
 	trx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
 	tValSigner1.SignMsg(trx1)
 
@@ -39,7 +41,7 @@ func TestProposeBlock(t *testing.T) {
 
 	b2, c2 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
 	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
-	assert.Equal(t, b2.TxIDs().IDs()[1:], []crypto.Hash{trx1.ID(), trx2.ID()})
+	assert.Equal(t, b2.TxIDs().IDs()[1:], []hash.Hash{trx1.ID(), trx2.ID()})
 	assert.NoError(t, tState1.CommitBlock(2, b2, c2))
 
 	assert.Equal(t, tState1.TotalStake(), int64(1000))

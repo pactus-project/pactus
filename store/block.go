@@ -4,12 +4,12 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	dbutil "github.com/syndtr/goleveldb/leveldb/util"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func blockKey(height int) []byte           { return append(blockPrefix, util.IntToSlice(height)...) }
-func blockHashKey(hash crypto.Hash) []byte { return append(blockHashPrefix, hash.RawBytes()...) }
+func blockKey(height int) []byte         { return append(blockPrefix, util.IntToSlice(height)...) }
+func blockHashKey(hash hash.Hash) []byte { return append(blockHashPrefix, hash.RawBytes()...) }
 
 type blockStore struct {
 	db *leveldb.DB
@@ -49,7 +49,7 @@ func (bs *blockStore) block(height int) (*block.Block, error) {
 	return block, nil
 }
 
-func (bs *blockStore) blockHeight(hash crypto.Hash) (int, error) {
+func (bs *blockStore) blockHeight(hash hash.Hash) (int, error) {
 	blockHashKey := blockHashKey(hash)
 	heightData, err := tryGet(bs.db, blockHashKey)
 	if err != nil {

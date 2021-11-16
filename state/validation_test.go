@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
@@ -41,7 +43,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := crypto.Aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := block.NewCertificate(crypto.UndefHash, 0, committers, []int{2}, aggSig)
+		cert := block.NewCertificate(hash.UndefHash, 0, committers, []int{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -82,7 +84,7 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("Invalid block hash, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		invBlockHash := crypto.GenerateTestHash()
+		invBlockHash := hash.GenerateTestHash()
 		signBytes := block.CertificateSignBytes(invBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
@@ -146,7 +148,7 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("Update last certificate, Invalid block hash", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		invBlockHash := crypto.GenerateTestHash()
+		invBlockHash := hash.GenerateTestHash()
 		signBytes := block.CertificateSignBytes(invBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
@@ -190,7 +192,7 @@ func TestBlockValidation(t *testing.T) {
 
 	moveToNextHeightForAllStates(t)
 
-	assert.False(t, tState1.lastInfo.BlockHash().EqualsTo(crypto.UndefHash))
+	assert.False(t, tState1.lastInfo.BlockHash().EqualsTo(hash.UndefHash))
 
 	//
 	// Version   			(OK)
@@ -202,8 +204,8 @@ func TestBlockValidation(t *testing.T) {
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)
 	//
-	invAddr, _, _ := crypto.GenerateTestKeyPair()
-	invHash := crypto.GenerateTestHash()
+	invAddr, _, _ := bls.GenerateTestKeyPair()
+	invHash := hash.GenerateTestHash()
 	invCert := block.GenerateTestCertificate(tState1.lastInfo.BlockHash())
 	invSeed := sortition.GenerateRandomSeed()
 	trx := tState2.createSubsidyTx(0)

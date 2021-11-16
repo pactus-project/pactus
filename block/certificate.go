@@ -5,6 +5,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -13,14 +15,14 @@ type Certificate struct {
 	data certificateData
 }
 type certificateData struct {
-	BlockHash  crypto.Hash      `cbor:"1,keyasint"`
+	BlockHash  hash.Hash        `cbor:"1,keyasint"`
 	Round      int              `cbor:"2,keyasint"`
 	Committers []int            `cbor:"3,keyasint"`
 	Absentees  []int            `cbor:"4,keyasint"`
 	Signature  crypto.Signature `cbor:"5,keyasint"`
 }
 
-func NewCertificate(blockHash crypto.Hash, round int, committers, absentees []int, signature crypto.Signature) *Certificate {
+func NewCertificate(blockHash hash.Hash, round int, committers, absentees []int, signature crypto.Signature) *Certificate {
 	return &Certificate{
 		data: certificateData{
 			BlockHash:  blockHash,
@@ -32,7 +34,7 @@ func NewCertificate(blockHash crypto.Hash, round int, committers, absentees []in
 	}
 }
 
-func (cert *Certificate) BlockHash() crypto.Hash      { return cert.data.BlockHash }
+func (cert *Certificate) BlockHash() hash.Hash        { return cert.data.BlockHash }
 func (cert *Certificate) Round() int                  { return cert.data.Round }
 func (cert *Certificate) Committers() []int           { return cert.data.Committers }
 func (cert *Certificate) Absentees() []int            { return cert.data.Absentees }
@@ -62,12 +64,12 @@ func (cert *Certificate) SanityCheck() error {
 	return nil
 }
 
-func (cert *Certificate) Hash() crypto.Hash {
+func (cert *Certificate) Hash() hash.Hash {
 	bs, err := cert.MarshalCBOR()
 	if err != nil {
-		return crypto.UndefHash
+		return hash.UndefHash
 	}
-	return crypto.HashH(bs)
+	return hash.HashH(bs)
 }
 
 func (cert *Certificate) MarshalCBOR() ([]byte, error) {
@@ -83,15 +85,15 @@ func (cert *Certificate) MarshalJSON() ([]byte, error) {
 }
 
 type signVote struct {
-	BlockHash crypto.Hash `cbor:"1,keyasint"`
-	Round     int         `cbor:"2,keyasint"`
+	BlockHash hash.Hash `cbor:"1,keyasint"`
+	Round     int       `cbor:"2,keyasint"`
 }
 
 func (cert *Certificate) SignBytes() []byte {
 	return CertificateSignBytes(cert.data.BlockHash, cert.data.Round)
 }
 
-func CertificateSignBytes(blockHash crypto.Hash, round int) []byte {
+func CertificateSignBytes(blockHash hash.Hash, round int) []byte {
 	bz, _ := cbor.Marshal(signVote{
 		Round:     round,
 		BlockHash: blockHash,
@@ -100,17 +102,17 @@ func CertificateSignBytes(blockHash crypto.Hash, round int) []byte {
 	return bz
 }
 
-func GenerateTestCertificate(blockHash crypto.Hash) *Certificate {
-	_, _, priv2 := crypto.GenerateTestKeyPair()
-	_, _, priv3 := crypto.GenerateTestKeyPair()
-	_, _, priv4 := crypto.GenerateTestKeyPair()
+func GenerateTestCertificate(blockHash hash.Hash) *Certificate {
+	_, _, priv2 := bls.GenerateTestKeyPair()
+	_, _, priv3 := bls.GenerateTestKeyPair()
+	_, _, priv4 := bls.GenerateTestKeyPair()
 
 	sigs := []crypto.Signature{
 		priv2.Sign(blockHash.RawBytes()),
 		priv3.Sign(blockHash.RawBytes()),
 		priv4.Sign(blockHash.RawBytes()),
 	}
-	sig := crypto.Aggregate(sigs)
+	sig := bls.Aggregate(sigs)
 
 	return NewCertificate(
 		blockHash,

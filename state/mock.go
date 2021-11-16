@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
@@ -21,17 +22,17 @@ var _ Facade = &MockState{}
 
 type MockState struct {
 	LastBlockCertificate *block.Certificate
-	GenHash              crypto.Hash
+	GenHash              hash.Hash
 	Store                *store.MockStore
 	TxPool               *txpool.MockTxPool
-	InvalidBlockHash     crypto.Hash
+	InvalidBlockHash     hash.Hash
 	Committee            *committee.Committee
 	Lock                 sync.RWMutex
 }
 
 func MockingState(committee *committee.Committee) *MockState {
 	return &MockState{
-		GenHash:   crypto.GenerateTestHash(),
+		GenHash:   hash.GenerateTestHash(),
 		Store:     store.MockingStore(),
 		TxPool:    txpool.MockingTxPool(),
 		Committee: committee,
@@ -43,12 +44,12 @@ func (m *MockState) LastBlockHeight() int {
 	defer m.Lock.RUnlock()
 	return m.Store.LastBlockHeight()
 }
-func (m *MockState) GenesisHash() crypto.Hash {
+func (m *MockState) GenesisHash() hash.Hash {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 	return m.GenHash
 }
-func (m *MockState) LastBlockHash() crypto.Hash {
+func (m *MockState) LastBlockHash() hash.Hash {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 	h := m.Store.LastBlockHeight()
@@ -56,7 +57,7 @@ func (m *MockState) LastBlockHash() crypto.Hash {
 		b := m.Store.Blocks[m.Store.LastBlockHeight()]
 		return b.Hash()
 	}
-	return crypto.UndefHash
+	return hash.UndefHash
 }
 func (m *MockState) LastBlockTime() time.Time {
 	m.Lock.RLock()
@@ -181,7 +182,7 @@ func (m *MockState) Block(height int) *block.Block {
 	b, _ := m.Store.Block(height)
 	return b
 }
-func (m *MockState) BlockHeight(hash crypto.Hash) int {
+func (m *MockState) BlockHeight(hash hash.Hash) int {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 	h, _ := m.Store.BlockHeight(hash)

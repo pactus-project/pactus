@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -21,7 +21,7 @@ func TestQueryTransactionsPayload(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		id := crypto.GenerateTestHash()
+		id := hash.GenerateTestHash()
 		p := NewQueryTransactionsPayload([]tx.ID{id})
 
 		assert.NoError(t, p.SanityCheck())

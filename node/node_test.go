@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
@@ -28,7 +29,7 @@ func TestRunningNode(t *testing.T) {
 	n, err := NewNode(gen, conf, signer)
 
 	require.NoError(t, err)
-	assert.Equal(t, n.state.LastBlockHash(), crypto.UndefHash)
+	assert.Equal(t, n.state.LastBlockHash(), hash.UndefHash)
 
 	err = n.Start()
 	require.NoError(t, err)

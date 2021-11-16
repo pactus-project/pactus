@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/genesis"
@@ -153,7 +154,7 @@ func (st *state) Close() error {
 	return st.store.Close()
 }
 
-func (st *state) GenesisHash() crypto.Hash {
+func (st *state) GenesisHash() hash.Hash {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -167,7 +168,7 @@ func (st *state) LastBlockHeight() int {
 	return st.lastInfo.BlockHeight()
 }
 
-func (st *state) LastBlockHash() crypto.Hash {
+func (st *state) LastBlockHash() hash.Hash {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -585,7 +586,7 @@ func (st *state) Block(height int) *block.Block {
 	return b
 }
 
-func (st *state) BlockHeight(hash crypto.Hash) int {
+func (st *state) BlockHeight(hash hash.Hash) int {
 	h, err := st.store.BlockHeight(hash)
 	if err != nil {
 		st.logger.Trace("Error on retrieving block height", "err", err)

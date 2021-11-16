@@ -6,12 +6,14 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
-type ID = crypto.Hash
+type ID = hash.Hash
 
 type Tx struct {
 	// TODO: Memorizing ID is thread safe?
@@ -23,34 +25,34 @@ type Tx struct {
 
 type txData struct {
 	Version   int
-	Stamp     crypto.Hash
+	Stamp     hash.Hash
 	Sequence  int
 	Fee       int64
 	Type      payload.Type
 	Payload   payload.Payload
 	Memo      string
-	PublicKey *crypto.PublicKey
-	Signature *crypto.Signature
+	PublicKey crypto.PublicKey
+	Signature crypto.Signature
 }
 
-func (tx *Tx) Version() int                 { return tx.data.Version }
-func (tx *Tx) Stamp() crypto.Hash           { return tx.data.Stamp }
-func (tx *Tx) Sequence() int                { return tx.data.Sequence }
-func (tx *Tx) PayloadType() payload.Type    { return tx.data.Type }
-func (tx *Tx) Payload() payload.Payload     { return tx.data.Payload }
-func (tx *Tx) Fee() int64                   { return tx.data.Fee }
-func (tx *Tx) Memo() string                 { return tx.data.Memo }
-func (tx *Tx) PublicKey() *crypto.PublicKey { return tx.data.PublicKey }
-func (tx *Tx) Signature() *crypto.Signature { return tx.data.Signature }
+func (tx *Tx) Version() int                { return tx.data.Version }
+func (tx *Tx) Stamp() hash.Hash            { return tx.data.Stamp }
+func (tx *Tx) Sequence() int               { return tx.data.Sequence }
+func (tx *Tx) PayloadType() payload.Type   { return tx.data.Type }
+func (tx *Tx) Payload() payload.Payload    { return tx.data.Payload }
+func (tx *Tx) Fee() int64                  { return tx.data.Fee }
+func (tx *Tx) Memo() string                { return tx.data.Memo }
+func (tx *Tx) PublicKey() crypto.PublicKey { return tx.data.PublicKey }
+func (tx *Tx) Signature() crypto.Signature { return tx.data.Signature }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.sanityChecked = false
-	tx.data.Signature = &sig
+	tx.data.Signature = sig
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
 	tx.sanityChecked = false
-	tx.data.PublicKey = &pub
+	tx.data.PublicKey = pub
 }
 
 func (tx *Tx) SanityCheck() error {
@@ -116,11 +118,11 @@ func (tx *Tx) checkSignature() error {
 		if err := tx.Signature().SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid signature")
 		}
-		if !tx.Payload().Signer().Verify(*tx.PublicKey()) {
+		if !tx.Payload().Signer().Verify(tx.PublicKey()) {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid public key")
 		}
 		bs := tx.SignBytes()
-		if !tx.PublicKey().Verify(bs, *tx.Signature()) {
+		if !tx.PublicKey().Verify(bs, tx.Signature()) {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid signature")
 		}
 	}
@@ -128,15 +130,15 @@ func (tx *Tx) checkSignature() error {
 }
 
 type _txData struct {
-	Version   int               `cbor:"1,keyasint"`
-	Stamp     crypto.Hash       `cbor:"2,keyasint"`
-	Sequence  int               `cbor:"3,keyasint"`
-	Fee       int64             `cbor:"4,keyasint"`
-	Type      payload.Type      `cbor:"5,keyasint"`
-	Payload   cbor.RawMessage   `cbor:"6,keyasint"`
-	Memo      string            `cbor:"7,keyasint,omitempty"`
-	PublicKey *crypto.PublicKey `cbor:"20,keyasint,omitempty"`
-	Signature *crypto.Signature `cbor:"21,keyasint,omitempty"`
+	Version   int              `cbor:"1,keyasint"`
+	Stamp     hash.Hash        `cbor:"2,keyasint"`
+	Sequence  int              `cbor:"3,keyasint"`
+	Fee       int64            `cbor:"4,keyasint"`
+	Type      payload.Type     `cbor:"5,keyasint"`
+	Payload   cbor.RawMessage  `cbor:"6,keyasint"`
+	Memo      string           `cbor:"7,keyasint,omitempty"`
+	PublicKey crypto.PublicKey `cbor:"20,keyasint,omitempty"`
+	Signature crypto.Signature `cbor:"21,keyasint,omitempty"`
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
@@ -226,7 +228,7 @@ func (tx Tx) SignBytes() []byte {
 
 func (tx *Tx) ID() ID {
 	if tx.memorizedID == nil {
-		id := crypto.HashH(tx.SignBytes())
+		id := hash.HashH(tx.SignBytes())
 		tx.memorizedID = &id
 	}
 
@@ -262,26 +264,26 @@ func (tx *Tx) IsFreeTx() bool {
 // ---------
 // For tests
 func GenerateTestSendTx() (*Tx, crypto.Signer) {
-	h := crypto.GenerateTestHash()
-	s := crypto.GenerateTestSigner()
-	a, _, _ := crypto.GenerateTestKeyPair()
+	h := hash.GenerateTestHash()
+	s := bls.GenerateTestSigner()
+	a, _, _ := bls.GenerateTestKeyPair()
 	tx := NewSendTx(h, 110, s.Address(), a, 1000, 1000, "test send-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
 
 func GenerateTestBondTx() (*Tx, crypto.Signer) {
-	h := crypto.GenerateTestHash()
-	s := crypto.GenerateTestSigner()
-	_, pb, _ := crypto.GenerateTestKeyPair()
+	h := hash.GenerateTestHash()
+	s := bls.GenerateTestSigner()
+	_, pb, _ := bls.GenerateTestKeyPair()
 	tx := NewBondTx(h, 110, s.Address(), pb, 1000, 1000, "test bond-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
 
 func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
-	h := crypto.GenerateTestHash()
-	s := crypto.GenerateTestSigner()
+	h := hash.GenerateTestHash()
+	s := bls.GenerateTestSigner()
 	proof := sortition.GenerateRandomProof()
 	tx := NewSortitionTx(h, 110, s.Address(), proof)
 	s.SignMsg(tx)

@@ -4,7 +4,7 @@ import (
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
@@ -25,7 +25,7 @@ func blockKey(height int) key {
 	copy(k[1:], util.IntToSlice(height))
 	return k
 }
-func certificateKey(hash crypto.Hash) key {
+func certificateKey(hash hash.Hash) key {
 	var k key
 	k[0] = certificatePrefix
 	copy(k[1:], hash.RawBytes())
@@ -88,7 +88,7 @@ func (c *Cache) AddBlocks(height int, blocks []*block.Block) {
 	}
 }
 
-func (c *Cache) GetCertificate(blockhash crypto.Hash) *block.Certificate {
+func (c *Cache) GetCertificate(blockhash hash.Hash) *block.Certificate {
 	i, ok := c.cache.Get(certificateKey(blockhash))
 	if ok {
 		return i.(*block.Certificate)

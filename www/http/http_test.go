@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
@@ -24,7 +25,7 @@ var tCapnpServer *capnp.Server
 var tHTTPServer *Server
 var tAccTestAddr crypto.Address
 var tValTestAddr crypto.Address
-var tTxTestHash crypto.Hash
+var tTxTestHash hash.Hash
 
 func init() {
 	logger.InitLogger(logger.TestConfig())

@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/param"
@@ -53,7 +54,7 @@ func TestMain(m *testing.M) {
 	tSequences = make(map[crypto.Address]int)
 
 	for i := 0; i < tTotalNodes; i++ {
-		addr, _, priv := crypto.GenerateTestKeyPair()
+		addr, _, priv := bls.GenerateTestKeyPair()
 		tSigners[i] = crypto.NewSigner(priv)
 		tConfigs[i] = config.DefaultConfig()
 

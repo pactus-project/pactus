@@ -2,7 +2,7 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -37,7 +37,7 @@ func (handler *queryTransactionsHandler) ParsPayload(p payload.Payload, initiato
 
 func (handler *queryTransactionsHandler) PrepareMessage(p payload.Payload) *message.Message {
 	pld := p.(*payload.QueryTransactionsPayload)
-	missed := []crypto.Hash{}
+	missed := []hash.Hash{}
 	for _, id := range pld.IDs {
 		trx := handler.cache.GetTransaction(id)
 		if trx != nil {

@@ -6,6 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
@@ -183,7 +184,7 @@ func (sb *Concrete) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-func (sb *Concrete) EnterCommittee(blockHash crypto.Hash, addr crypto.Address) error {
+func (sb *Concrete) EnterCommittee(blockHash hash.Hash, addr crypto.Address) error {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -266,20 +267,20 @@ func (sb *Concrete) TransactionToLiveInterval() int {
 	return sb.params.TransactionToLiveInterval
 }
 
-func (sb *Concrete) BlockHeight(hash crypto.Hash) int {
+func (sb *Concrete) BlockHeight(h hash.Hash) int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	if hash.EqualsTo(crypto.UndefHash) {
+	if h.EqualsTo(hash.UndefHash) {
 		return 0
 	}
 
-	h, err := sb.store.BlockHeight(hash)
+	height, err := sb.store.BlockHeight(h)
 	if err != nil {
 		return -1
 	}
 
-	return h
+	return height
 }
 
 func (sb *Concrete) CurrentHeight() int {
@@ -289,7 +290,7 @@ func (sb *Concrete) CurrentHeight() int {
 	return sb.lastHeight + 1
 }
 
-func (sb *Concrete) LastBlockHash() crypto.Hash {
+func (sb *Concrete) LastBlockHash() hash.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -297,7 +298,7 @@ func (sb *Concrete) LastBlockHash() crypto.Hash {
 	return b.Hash()
 }
 
-func (sb *Concrete) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {
+func (sb *Concrete) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 

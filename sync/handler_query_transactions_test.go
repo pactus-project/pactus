@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -23,7 +23,7 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 	tAliceSync.cache.AddTransaction(trx2)
 	tBobSync.cache.AddTransaction(trx3)
 	tBobSync.cache.AddTransaction(trx4)
-	pld := payload.NewQueryTransactionsPayload([]crypto.Hash{trx2.ID(), trx3.ID(), trx4.ID()})
+	pld := payload.NewQueryTransactionsPayload([]hash.Hash{trx2.ID(), trx3.ID(), trx4.ID()})
 
 	t.Run("Alice should not send query transaction message because she is not an active validator", func(t *testing.T) {
 		tAliceBroadcastCh <- pld
@@ -49,7 +49,7 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 	})
 
 	t.Run("Alice queries for a transaction, but she has it in her cache", func(t *testing.T) {
-		tAliceBroadcastCh <- payload.NewQueryTransactionsPayload([]crypto.Hash{trx1.ID()})
+		tAliceBroadcastCh <- payload.NewQueryTransactionsPayload([]hash.Hash{trx1.ID()})
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryTransactions)
 	})
 }

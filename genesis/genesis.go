@@ -9,6 +9,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -35,12 +36,12 @@ type genesisData struct {
 	Validators  []genValidator `cbor:"4,keyasint"`
 }
 
-func (gen *Genesis) Hash() crypto.Hash {
+func (gen *Genesis) Hash() hash.Hash {
 	bs, err := cbor.Marshal(gen.data)
 	if err != nil {
 		panic(fmt.Errorf("could not create hash of Genesis: %v", err))
 	}
-	return crypto.HashH(bs)
+	return hash.HashH(bs)
 }
 
 func (gen *Genesis) GenesisTime() time.Time {

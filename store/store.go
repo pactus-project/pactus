@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
@@ -34,7 +35,6 @@ type store struct {
 }
 
 func NewStore(conf *Config) (Store, error) {
-
 	db, err := leveldb.OpenFile(conf.StorePath(), nil)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (s *store) Block(height int) (*block.Block, error) {
 	return s.blockStore.block(height)
 }
 
-func (s *store) BlockHeight(hash crypto.Hash) (int, error) {
+func (s *store) BlockHeight(hash hash.Hash) (int, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -89,7 +89,7 @@ func (s *store) SaveTransaction(trx *tx.Tx) {
 	}
 }
 
-func (s *store) Transaction(hash crypto.Hash) (*tx.Tx, error) {
+func (s *store) Transaction(hash hash.Hash) (*tx.Tx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 

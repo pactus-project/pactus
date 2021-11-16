@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
@@ -71,7 +71,7 @@ func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Reques
 		s.writeError(w, err)
 		return
 	}
-	out.ID, err = crypto.HashFromRawBytes(txID)
+	out.ID, err = hash.HashFromRawBytes(txID)
 	if err != nil {
 		s.writeError(w, err)
 		return

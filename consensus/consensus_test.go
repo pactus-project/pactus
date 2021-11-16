@@ -13,6 +13,8 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
@@ -109,7 +111,7 @@ func setup(t *testing.T) {
 	logger.Info("Setup finished, start running the test", "name", t.Name())
 }
 
-func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash crypto.Hash) {
+func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -171,7 +173,7 @@ func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int
 	}
 }
 
-func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash crypto.Hash) {
+func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash hash.Hash) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -212,7 +214,7 @@ func testAddVote(cons *consensus,
 	voteType vote.Type,
 	height int,
 	round int,
-	blockHash crypto.Hash,
+	blockHash hash.Hash,
 	valID int) *vote.Vote {
 
 	v := vote.NewVote(voteType, height, round, blockHash, tSigners[valID].Address())
@@ -295,7 +297,7 @@ func makeProposal(t *testing.T, height, round int) *proposal.Proposal {
 func TestNotInCommittee(t *testing.T) {
 	setup(t)
 
-	_, _, priv := crypto.GenerateTestKeyPair()
+	_, _, priv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(priv)
 	store := store.MockingStore()
 
@@ -305,7 +307,7 @@ func TestNotInCommittee(t *testing.T) {
 
 	testEnterNewHeight(cons.(*consensus))
 
-	cons.(*consensus).signAddVote(vote.VoteTypePrepare, crypto.GenerateTestHash())
+	cons.(*consensus).signAddVote(vote.VoteTypePrepare, hash.GenerateTestHash())
 	assert.Zero(t, len(cons.RoundVotes(0)))
 }
 
@@ -316,13 +318,13 @@ func TestRoundVotes(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	t.Run("Ignore votes from invalid height", func(t *testing.T) {
-		v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tSigners[tIndexX].Address())
+		v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v1)
 
-		v2 := vote.NewVote(vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tSigners[tIndexX].Address())
+		v2 := vote.NewVote(vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v2)
 
-		v3 := vote.NewVote(vote.VoteTypePrepare, 3, 0, crypto.GenerateTestHash(), tSigners[tIndexX].Address())
+		v3 := vote.NewVote(vote.VoteTypePrepare, 3, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v3)
 
 		tConsP.AddVote(v1)
@@ -361,11 +363,11 @@ func TestConsensusAddVote(t *testing.T) {
 
 	testEnterNewHeight(tConsP)
 
-	v1 := testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
-	v2 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 0, crypto.GenerateTestHash(), tIndexX)
-	v3 := testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, crypto.GenerateTestHash(), tIndexX)
-	v4 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.GenerateTestHash(), tIndexX)
-	v5 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 2, crypto.GenerateTestHash(), tIndexX)
+	v1 := testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(), tIndexX)
+	v2 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 0, hash.GenerateTestHash(), tIndexX)
+	v3 := testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, hash.GenerateTestHash(), tIndexX)
+	v4 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, hash.GenerateTestHash(), tIndexX)
+	v5 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 2, hash.GenerateTestHash(), tIndexX)
 
 	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
 	assert.True(t, tConsP.HasVote(v2.Hash()))
@@ -428,20 +430,20 @@ func TestPickRandomVote(t *testing.T) {
 
 	assert.NotNil(t, tConsP.PickRandomVote())
 
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexY)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, tIndexP)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexP)
 
 	// Round 1
 	testAddVote(tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexX)
 	testAddVote(tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexY)
 	testAddVote(tConsP, vote.VoteTypePrepare, 1, 1, p2.Block().Hash(), tIndexP)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexY)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, crypto.UndefHash, tIndexP)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, hash.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, hash.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 1, hash.UndefHash, tIndexP)
 
 	// Round 2
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 2, crypto.UndefHash, tIndexP)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 2, hash.UndefHash, tIndexP)
 
 	for i := 0; i < 10; i++ {
 		rndVote := tConsP.PickRandomVote()
@@ -489,7 +491,7 @@ func TestDuplicateProposal(t *testing.T) {
 	h := 4
 	r := 0
 	p1 := makeProposal(t, h, r)
-	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	trx := tx.NewSendTx(hash.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
 	tSigners[0].SignMsg(trx)
 	assert.NoError(t, tTxPool.AppendTx(trx))
 	p2 := makeProposal(t, h, r)

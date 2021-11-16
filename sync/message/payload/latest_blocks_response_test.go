@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -31,7 +31,7 @@ func TestLatestBlocksResponsePayload(t *testing.T) {
 
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b, trxs := block.GenerateTestBlock(nil, nil)
-		cert := block.GenerateTestCertificate(crypto.UndefHash)
+		cert := block.GenerateTestCertificate(hash.UndefHash)
 		p := NewLatestBlocksResponsePayload(ResponseCodeMoreBlocks, 1, util.RandomPeerID(), 100, []*block.Block{b}, trxs, cert)
 
 		assert.Error(t, p.SanityCheck())

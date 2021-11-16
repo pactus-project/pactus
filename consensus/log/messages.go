@@ -4,7 +4,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/consensus/voteset"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 )
 
@@ -20,7 +20,7 @@ func (m *Messages) addVote(v *vote.Vote) error {
 	return vs.AddVote(v)
 }
 
-func (m *Messages) HasVote(hash crypto.Hash) bool {
+func (m *Messages) HasVote(hash hash.Hash) bool {
 	votes := m.AllVotes()
 	for _, v := range votes {
 		if v.Hash().EqualsTo(hash) {

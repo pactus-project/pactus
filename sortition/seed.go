@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 type Seed [48]byte
@@ -31,15 +33,15 @@ func SeedFromRawBytes(data []byte) (Seed, error) {
 }
 
 func (s Seed) Generate(signer crypto.Signer) Seed {
-	hash := crypto.HashH(s[:])
+	hash := hash.HashH(s[:])
 	sig := signer.SignData(hash.RawBytes())
 	newSeed, _ := SeedFromRawBytes(sig.RawBytes())
 	return newSeed
 }
 
 func (s Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
-	sig, _ := crypto.SignatureFromRawBytes(s[:])
-	hash := crypto.HashH(prevSeed[:])
+	sig, _ := bls.SignatureFromRawBytes(s[:])
+	hash := hash.HashH(prevSeed[:])
 	return public.Verify(hash.RawBytes(), sig)
 }
 

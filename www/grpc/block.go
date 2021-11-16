@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -11,7 +11,7 @@ import (
 )
 
 func (zs *zarbServer) GetBlockHeight(ctx context.Context, request *zarb.BlockHeightRequest) (*zarb.BlockHeightResponse, error) {
-	h, err := crypto.HashFromString(request.GetHash())
+	h, err := hash.HashFromString(request.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Hash provided is not Valid")
 	}

@@ -7,7 +7,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestVoteMarshaling(t *testing.T) {
@@ -29,9 +30,9 @@ func TestVoteMarshaling(t *testing.T) {
 }
 
 func TestVoteSignature(t *testing.T) {
-	h1 := crypto.GenerateTestHash()
-	addr1, pb1, pv1 := crypto.GenerateTestKeyPair()
-	addr2, pb2, pv2 := crypto.GenerateTestKeyPair()
+	h1 := hash.GenerateTestHash()
+	addr1, pb1, pv1 := bls.GenerateTestKeyPair()
+	addr2, pb2, pv2 := bls.GenerateTestKeyPair()
 
 	v1 := NewVote(VoteTypePrepare, 101, 5, h1, addr1)
 	v2 := NewVote(VoteTypePrepare, 101, 5, h1, addr2)

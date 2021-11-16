@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -31,7 +31,7 @@ func TestPrecommitInvalidProposal(t *testing.T) {
 	commitBlockForAllStates(t)
 
 	p1 := makeProposal(t, 2, 0)
-	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	trx := tx.NewSendTx(hash.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
 	tSigners[0].SignMsg(trx)
 	assert.NoError(t, tTxPool.AppendTx(trx))
 	p2 := makeProposal(t, 2, 0)
@@ -62,9 +62,9 @@ func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
 	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
 
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
 	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
 }

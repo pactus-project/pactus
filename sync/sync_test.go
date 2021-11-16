@@ -13,6 +13,8 @@ import (
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
@@ -58,8 +60,8 @@ func init() {
 }
 
 func setup(t *testing.T) {
-	_, _, priv1 := crypto.GenerateTestKeyPair()
-	_, _, priv2 := crypto.GenerateTestKeyPair()
+	_, _, priv1 := bls.GenerateTestKeyPair()
+	_, _, priv2 := bls.GenerateTestKeyPair()
 	aliceSigner := crypto.NewSigner(priv1)
 	bobSigner := crypto.NewSigner(priv2)
 
@@ -78,7 +80,7 @@ func setup(t *testing.T) {
 	tBobState.GenHash = tAliceState.GenHash
 
 	// Apply 20 blocks for both Alice and Bob
-	lastBlockHash := crypto.Hash{}
+	lastBlockHash := hash.Hash{}
 	for i := 0; i < 21; i++ {
 		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
 		c := block.GenerateTestCertificate(b.Hash())
@@ -257,7 +259,7 @@ func TestStop(t *testing.T) {
 func TestBroadcastInvalidMessage(t *testing.T) {
 	setup(t)
 	t.Run("Should not publish invalid messages", func(t *testing.T) {
-		pld := payload.NewHeartBeatPayload(-1, -1, crypto.GenerateTestHash())
+		pld := payload.NewHeartBeatPayload(-1, -1, hash.GenerateTestHash())
 		tAliceBroadcastCh <- pld
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHeartBeat)
 	})

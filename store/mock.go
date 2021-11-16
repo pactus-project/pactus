@@ -6,6 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -14,7 +15,7 @@ type MockStore struct {
 	Blocks       map[int]*block.Block
 	Accounts     map[crypto.Address]account.Account
 	Validators   map[crypto.Address]validator.Validator
-	Transactions map[crypto.Hash]tx.Tx
+	Transactions map[hash.Hash]tx.Tx
 	LastInfo     []byte
 }
 
@@ -23,7 +24,7 @@ func MockingStore() *MockStore {
 		Blocks:       make(map[int]*block.Block),
 		Accounts:     make(map[crypto.Address]account.Account),
 		Validators:   make(map[crypto.Address]validator.Validator),
-		Transactions: make(map[crypto.Hash]tx.Tx),
+		Transactions: make(map[hash.Hash]tx.Tx),
 	}
 }
 func (m *MockStore) Block(height int) (*block.Block, error) {
@@ -33,7 +34,7 @@ func (m *MockStore) Block(height int) (*block.Block, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
-func (m *MockStore) BlockHeight(hash crypto.Hash) (int, error) {
+func (m *MockStore) BlockHeight(hash hash.Hash) (int, error) {
 	for i, b := range m.Blocks {
 		if b.Hash().EqualsTo(hash) {
 			return i, nil

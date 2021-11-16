@@ -4,6 +4,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -11,8 +12,8 @@ import (
 type Reader interface {
 	Block(height int) (*block.Block, error)
 	HasAnyBlock() bool
-	BlockHeight(hash crypto.Hash) (int, error)
-	Transaction(hash crypto.Hash) (*tx.Tx, error)
+	BlockHeight(hash hash.Hash) (int, error)
+	Transaction(hash hash.Hash) (*tx.Tx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int

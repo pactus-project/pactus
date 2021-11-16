@@ -6,6 +6,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 // Account structure
@@ -47,12 +49,12 @@ func (acc *Account) IncSequence() {
 	acc.data.Sequence++
 }
 
-func (acc *Account) Hash() crypto.Hash {
+func (acc *Account) Hash() hash.Hash {
 	bs, err := acc.Encode()
 	if err != nil {
 		panic(err)
 	}
-	return crypto.HashH(bs)
+	return hash.HashH(bs)
 }
 
 func (acc *Account) Encode() ([]byte, error) {
@@ -80,7 +82,7 @@ func (acc Account) Fingerprint() string {
 
 // GenerateTestAccount generates an account for testing purpose
 func GenerateTestAccount(number int) (*Account, crypto.Signer) {
-	signer := crypto.GenerateTestSigner()
+	signer := bls.GenerateTestSigner()
 	acc := NewAccount(signer.Address(), number)
 	acc.data.Balance = 888888888
 	acc.data.Sequence = 88

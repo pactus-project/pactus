@@ -1,4 +1,4 @@
-package crypto
+package bls
 
 import (
 	"encoding/hex"
@@ -12,9 +12,9 @@ import (
 
 func TestPrivateKeyMarshaling(t *testing.T) {
 	_, _, priv1 := GenerateTestKeyPair()
-	priv2 := new(PrivateKey)
-	priv3 := new(PrivateKey)
-	priv4 := new(PrivateKey)
+	priv2 := new(BLSPrivateKey)
+	priv3 := new(BLSPrivateKey)
+	priv4 := new(BLSPrivateKey)
 
 	js, err := json.Marshal(priv1)
 	assert.NoError(t, err)
@@ -29,7 +29,7 @@ func TestPrivateKeyMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, priv4.UnmarshalText(txt))
 
-	require.True(t, priv1.EqualsTo(*priv4))
+	require.True(t, priv1.EqualsTo(priv4))
 	require.NoError(t, priv1.SanityCheck())
 }
 
@@ -57,18 +57,18 @@ func TestPrivateKeyFromString(t *testing.T) {
 }
 
 func TestMarshalingEmptyPrivateKey(t *testing.T) {
-	pv1 := PrivateKey{}
+	pv1 := BLSPrivateKey{}
 
 	js, err := json.Marshal(pv1)
 	assert.NoError(t, err)
 	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
-	var pv2 PrivateKey
+	var pv2 BLSPrivateKey
 	err = json.Unmarshal(js, &pv2)
 	assert.Error(t, err)
 
 	bs, err := pv1.MarshalCBOR()
 	assert.Error(t, err)
-	var pv3 PrivateKey
+	var pv3 BLSPrivateKey
 	err = pv3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 }

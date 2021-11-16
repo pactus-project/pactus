@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -127,7 +128,7 @@ func (cs *consensus) RoundVotes(round int) []*vote.Vote {
 	return nil
 }
 
-func (cs *consensus) HasVote(hash crypto.Hash) bool {
+func (cs *consensus) HasVote(hash hash.Hash) bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -240,7 +241,7 @@ func (cs *consensus) proposer(round int) *validator.Validator {
 	return cs.state.Proposer(round)
 }
 
-func (cs *consensus) signAddVote(msgType vote.Type, hash crypto.Hash) {
+func (cs *consensus) signAddVote(msgType vote.Type, hash hash.Hash) {
 	address := cs.signer.Address()
 	if !cs.log.CanVote(address) {
 		cs.logger.Trace("This node is not in committee", "addr", address)

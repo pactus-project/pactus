@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -28,7 +29,7 @@ func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []cryp
 func TestAddVote(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	h1 := crypto.GenerateTestHash()
+	h1 := hash.GenerateTestHash()
 	invSigner := crypto.GenerateTestSigner()
 	vs := NewVoteSet(100, 5, vote.VoteTypePrecommit, committee.Validators())
 
@@ -66,9 +67,9 @@ func TestAddVote(t *testing.T) {
 func TestDuplicateVote(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	h1 := crypto.GenerateTestHash()
-	h2 := crypto.GenerateTestHash()
-	h3 := crypto.GenerateTestHash()
+	h1 := hash.GenerateTestHash()
+	h2 := hash.GenerateTestHash()
+	h3 := hash.GenerateTestHash()
 	vs := NewVoteSet(1, 0, vote.VoteTypePrepare, committee.Validators())
 
 	correctVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[0].Address())
@@ -105,7 +106,7 @@ func TestQuorum(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
 	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
-	h1 := crypto.GenerateTestHash()
+	h1 := hash.GenerateTestHash()
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
 	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[2].Address())
@@ -144,8 +145,8 @@ func TestPower(t *testing.T) {
 
 	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
 
-	h1 := crypto.GenerateTestHash()
-	h2 := crypto.GenerateTestHash()
+	h1 := hash.GenerateTestHash()
+	h2 := hash.GenerateTestHash()
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
 	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[2].Address())
@@ -181,9 +182,9 @@ func TestAllVotes(t *testing.T) {
 
 	vs := NewVoteSet(1, 0, vote.VoteTypeChangeProposer, committee.Validators())
 
-	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[0].Address())
-	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[1].Address())
-	v3 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[2].Address())
+	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[0].Address())
+	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[1].Address())
+	v3 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[2].Address())
 
 	signers[0].SignMsg(v1)
 	signers[1].SignMsg(v2)
@@ -208,15 +209,15 @@ func TestOneThirdPower(t *testing.T) {
 
 	vs := NewVoteSet(1, 0, vote.VoteTypeChangeProposer, committee.Validators())
 
-	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[0].Address())
-	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, crypto.UndefHash, signers[1].Address())
+	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[0].Address())
+	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[1].Address())
 
 	signers[0].SignMsg(v1)
 	signers[1].SignMsg(v2)
 
 	assert.NoError(t, vs.AddVote(v1))
-	assert.False(t, vs.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash))
+	assert.False(t, vs.BlockHashHasOneThirdOfTotalPower(hash.UndefHash))
 
 	assert.NoError(t, vs.AddVote(v2))
-	assert.True(t, vs.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash))
+	assert.True(t, vs.BlockHashHasOneThirdOfTotalPower(hash.UndefHash))
 }

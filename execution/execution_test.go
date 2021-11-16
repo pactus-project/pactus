@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -29,15 +31,15 @@ func TestExecution(t *testing.T) {
 	acc1.AddToBalance(10000000000)
 	tSandbox.UpdateAccount(acc1)
 
-	rcvAddr, _, _ := crypto.GenerateTestKeyPair()
-	stamp1 := crypto.GenerateTestHash()
-	stamp2 := crypto.GenerateTestHash()
-	stamp3 := crypto.GenerateTestHash()
-	stamp8635 := crypto.GenerateTestHash()
-	stamp8640 := crypto.GenerateTestHash()
-	stamp8641 := crypto.GenerateTestHash()
-	stamp8642 := crypto.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(0, crypto.UndefHash)
+	rcvAddr, _, _ := bls.GenerateTestKeyPair()
+	stamp1 := hash.GenerateTestHash()
+	stamp2 := hash.GenerateTestHash()
+	stamp3 := hash.GenerateTestHash()
+	stamp8635 := hash.GenerateTestHash()
+	stamp8640 := hash.GenerateTestHash()
+	stamp8641 := hash.GenerateTestHash()
+	stamp8642 := hash.GenerateTestHash()
+	tSandbox.AppendStampAndUpdateHeight(0, hash.UndefHash)
 	tSandbox.AppendStampAndUpdateHeight(1, stamp1)
 	tSandbox.AppendStampAndUpdateHeight(2, stamp2)
 	tSandbox.AppendStampAndUpdateHeight(3, stamp3)
@@ -53,7 +55,7 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(crypto.UndefHash, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		trx := tx.NewSendTx(hash.UndefHash, 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
@@ -124,7 +126,7 @@ func TestChecker(t *testing.T) {
 	tChecker := NewChecker()
 	tSandbox := sandbox.MockingSandbox()
 
-	stamp1000 := crypto.GenerateTestHash()
+	stamp1000 := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(1000, stamp1000)
 
 	t.Run("Accept bond transaction for future blocks", func(t *testing.T) {

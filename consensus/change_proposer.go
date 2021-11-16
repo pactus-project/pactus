@@ -3,7 +3,7 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 type changeProposerState struct {
@@ -12,7 +12,7 @@ type changeProposerState struct {
 
 func (s *changeProposerState) enter() {
 	s.logger.Info("Requesting for changing proposer", "proposer", s.proposer(s.round).Address())
-	s.signAddVote(vote.VoteTypeChangeProposer, crypto.UndefHash)
+	s.signAddVote(vote.VoteTypeChangeProposer, hash.UndefHash)
 
 	s.decide()
 }

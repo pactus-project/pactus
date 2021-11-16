@@ -45,10 +45,3 @@ func (s *signer) SignMsg(msg SignableMsg) {
 func (s *signer) SignData(data []byte) Signature {
 	return s.privateKey.Sign(data)
 }
-
-// ---------
-// For tests
-func GenerateTestSigner() Signer {
-	_, _, priv := RandomKeyPair()
-	return NewSigner(priv)
-}

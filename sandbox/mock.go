@@ -2,7 +2,8 @@ package sandbox
 
 import (
 	"fmt"
-
+	
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/param"
@@ -16,7 +17,7 @@ var _ Sandbox = &MockSandbox{}
 type MockSandbox struct {
 	Accounts           map[crypto.Address]*account.Account
 	Validators         map[crypto.Address]*validator.Validator
-	Stamps             map[crypto.Hash]int
+	Stamps             map[hash.Hash]int
 	CurHeight          int
 	Params             param.Params
 	TotalAccount       int
@@ -30,7 +31,7 @@ func MockingSandbox() *MockSandbox {
 	return &MockSandbox{
 		Accounts:   make(map[crypto.Address]*account.Account),
 		Validators: make(map[crypto.Address]*validator.Validator),
-		Stamps:     make(map[crypto.Hash]int),
+		Stamps:     make(map[hash.Hash]int),
 		Params:     param.DefaultParams(),
 	}
 }
@@ -66,19 +67,19 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = val
 
 }
-func (m *MockSandbox) EnterCommittee(hash crypto.Hash, addr crypto.Address) error {
+func (m *MockSandbox) EnterCommittee(hash hash.Hash, addr crypto.Address) error {
 	if !m.WelcomeToCommittee {
 		return fmt.Errorf("cannot enter to the committee")
 	}
 	return nil
 }
-func (m *MockSandbox) VerifySortition(blockHash crypto.Hash, proof sortition.Proof, val *validator.Validator) bool {
+func (m *MockSandbox) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	return m.AcceptSortition
 }
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurHeight
 }
-func (m *MockSandbox) BlockHeight(hash crypto.Hash) int {
+func (m *MockSandbox) BlockHeight(hash hash.Hash) int {
 	h, ok := m.Stamps[hash]
 	if !ok {
 		return -1
@@ -98,7 +99,7 @@ func (m *MockSandbox) MinFee() int64 {
 	return m.Params.MinimumFee
 }
 
-func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp crypto.Hash) {
+func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp hash.Hash) {
 	m.Stamps[stamp] = height
 	m.CurHeight = height + 1
 }

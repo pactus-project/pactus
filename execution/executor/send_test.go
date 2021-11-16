@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
@@ -62,7 +64,7 @@ func TestExecuteSendTx(t *testing.T) {
 
 	sender := crypto.GenerateTestSigner()
 	receiver := crypto.GenerateTestSigner()
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
@@ -122,10 +124,10 @@ func TestSendNonStrictMode(t *testing.T) {
 	setup(t)
 	exe1 := NewSendExecutor(false)
 
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
-	receiver1, _, _ := crypto.GenerateTestKeyPair()
-	receiver2, _, _ := crypto.GenerateTestKeyPair()
+	receiver1, _, _ := bls.GenerateTestKeyPair()
+	receiver2, _, _ := bls.GenerateTestKeyPair()
 
 	mintbase1 := tx.NewMintbaseTx(stamp, 101, receiver1, 5, "")
 	mintbase2 := tx.NewMintbaseTx(stamp, 101, receiver2, 5, "")

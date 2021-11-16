@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
@@ -29,7 +30,7 @@ func setup(t *testing.T) {
 	tLastInfo = NewLastInfo(tStore)
 	tSortition = sortition.NewSortition()
 
-	setSortitionParams := func(hash crypto.Hash, seed sortition.Seed, committers []int) {
+	setSortitionParams := func(hash hash.Hash, seed sortition.Seed, committers []int) {
 		totalStake := int64(0)
 		tStore.IterateValidators(func(v *validator.Validator) (stop bool) {
 			totalStake += v.Stake()
@@ -83,8 +84,8 @@ func setup(t *testing.T) {
 	ids1.Append(trx1.ID())
 	seed1 := sortition.GenerateRandomSeed()
 	block1 := block.MakeBlock(1, util.Now(), ids1,
-		crypto.UndefHash,
-		crypto.GenerateTestHash(),
+		hash.UndefHash,
+		hash.GenerateTestHash(),
 		nil, seed1, val1.Address())
 
 	cert1 := block.NewCertificate(block1.Hash(), 0, committers1, []int{}, sig)
@@ -104,7 +105,7 @@ func setup(t *testing.T) {
 	seed2 := sortition.GenerateRandomSeed()
 	block2 := block.MakeBlock(1, util.Now(), ids2,
 		block1.Hash(),
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		cert1, seed2, val1.Address())
 
 	cert2 := block.NewCertificate(block2.Hash(), 0, committers2, []int{}, sig)
@@ -134,7 +135,7 @@ func setup(t *testing.T) {
 	seed3 := sortition.GenerateRandomSeed()
 	block3 := block.MakeBlock(1, util.Now(), ids3,
 		block2.Hash(),
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		cert2, seed3, val1.Address())
 
 	cert3 := block.NewCertificate(block3.Hash(), 0, committers2, []int{}, sig)
@@ -158,7 +159,7 @@ func setup(t *testing.T) {
 	seed4 := sortition.GenerateRandomSeed()
 	block4 := block.MakeBlock(1, util.Now(), ids4,
 		block3.Hash(),
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		cert3, seed4, val1.Address())
 
 	cert4 := block.NewCertificate(block4.Hash(), 0, committers4, []int{}, sig)
@@ -183,7 +184,7 @@ func setup(t *testing.T) {
 	seed5 := sortition.GenerateRandomSeed()
 	block5 := block.MakeBlock(1, util.Now(), ids5,
 		block4.Hash(),
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		cert4, seed5, val1.Address())
 
 	cert5 := block.NewCertificate(block5.Hash(), 0, committers5, []int{}, sig)
@@ -245,7 +246,7 @@ func TestRestoreFailed(t *testing.T) {
 		li := NewLastInfo(tStore)
 		srt := sortition.NewSortition()
 
-		tStore.Transactions = make(map[crypto.Hash]tx.Tx) // Reset transactions
+		tStore.Transactions = make(map[hash.Hash]tx.Tx) // Reset transactions
 		_, err := li.RestoreLastInfo(4, srt)
 		assert.Error(t, err)
 	})

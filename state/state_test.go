@@ -10,6 +10,8 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
@@ -35,10 +37,10 @@ var tCommonTxPool *txpool.MockTxPool
 func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
 
-	_, _, priv1 := crypto.GenerateTestKeyPair()
-	_, _, priv2 := crypto.GenerateTestKeyPair()
-	_, _, priv3 := crypto.GenerateTestKeyPair()
-	_, _, priv4 := crypto.GenerateTestKeyPair()
+	_, _, priv1 := bls.GenerateTestKeyPair()
+	_, _, priv2 := bls.GenerateTestKeyPair()
+	_, _, priv3 := bls.GenerateTestKeyPair()
+	_, _, priv4 := bls.GenerateTestKeyPair()
 
 	tValSigner1 = crypto.NewSigner(priv1)
 	tValSigner2 = crypto.NewSigner(priv2)
@@ -97,7 +99,7 @@ func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) 
 	return b, c
 }
 
-func makeCertificateAndSign(t *testing.T, blockHash crypto.Hash, round int, signers ...crypto.Signer) *block.Certificate {
+func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int, signers ...crypto.Signer) *block.Certificate {
 	assert.NotZero(t, len(signers))
 
 	sigs := make([]crypto.Signature, len(signers))
@@ -148,7 +150,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, b)
 
-	trx := tx.NewSendTx(crypto.UndefHash, 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "")
+	trx := tx.NewSendTx(hash.UndefHash, 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "")
 	tValSigner1.SignMsg(trx)
 	assert.NoError(t, tCommonTxPool.AppendTx(trx))
 
@@ -188,7 +190,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Error(t, err)
 
 	// With mintbase address in config
-	addr, _, _ := crypto.GenerateTestKeyPair()
+	addr, _, _ := bls.GenerateTestKeyPair()
 	tState1.config.MintbaseAddress = addr.String()
 	tState1.Close()
 	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
@@ -219,7 +221,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Add new account", func(t *testing.T) {
 		setup(t)
 
-		addr, _, _ := crypto.GenerateTestKeyPair()
+		addr, _, _ := bls.GenerateTestKeyPair()
 		sb := tState1.concreteSandbox()
 		newAcc := sb.MakeNewAccount(addr)
 		newAcc.AddToBalance(1)
@@ -231,7 +233,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Add new validator", func(t *testing.T) {
 		setup(t)
 
-		addr, pub, _ := crypto.GenerateTestKeyPair()
+		addr, pub, _ := bls.GenerateTestKeyPair()
 		sb := tState1.concreteSandbox()
 		newVal := sb.MakeNewValidator(pub)
 		newVal.AddToStake(123)
@@ -375,7 +377,7 @@ func TestForkDetection(t *testing.T) {
 func TestSortition(t *testing.T) {
 	setup(t)
 
-	addr, pub, priv := crypto.GenerateTestKeyPair()
+	addr, pub, priv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(priv)
 	store := store.MockingStore()
 	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, store, tCommonTxPool)
@@ -387,7 +389,7 @@ func TestSortition(t *testing.T) {
 	height := 1
 	for ; height < 12; height++ {
 		if height == 2 {
-			trx := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 1000, 1000, "")
+			trx := tx.NewBondTx(hash.UndefHash, 1, tValSigner1.Address(), pub, 1000, 1000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
 		}
@@ -542,7 +544,7 @@ func TestValidatorHelpers(t *testing.T) {
 	setup(t)
 
 	t.Run("Should return nil for NonExisting Validator Address", func(t *testing.T) {
-		_, _, priv5 := crypto.GenerateTestKeyPair()
+		_, _, priv5 := bls.GenerateTestKeyPair()
 		nonExistenceValidator := tState1.Validator(priv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 1 returned Non nil For nonExisting validator")
 		nonExistenceValidator = tState2.Validator(priv5.PublicKey().Address())
@@ -574,8 +576,8 @@ func TestLoadState(t *testing.T) {
 	setup(t)
 
 	// Add a bond transactions to change total stake
-	_, pub, _ := crypto.GenerateTestKeyPair()
-	tx2 := tx.NewBondTx(crypto.UndefHash, 1, tValSigner1.Address(), pub, 8888000, 8888, "")
+	_, pub, _ := bls.GenerateTestKeyPair()
+	tx2 := tx.NewBondTx(hash.UndefHash, 1, tValSigner1.Address(), pub, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx2))
 
 	assert.NoError(t, tCommonTxPool.AppendTx(tx2))

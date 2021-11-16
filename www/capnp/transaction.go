@@ -3,13 +3,13 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
 func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	s, _ := args.Params.Id()
-	h, err := crypto.HashFromString(string(s))
+	h, err := hash.HashFromString(string(s))
 	if err != nil {
 		return fmt.Errorf("invalid transaction id: %s", err)
 	}

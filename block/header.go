@@ -6,6 +6,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
 )
@@ -17,26 +18,26 @@ type Header struct {
 type headerData struct {
 	Version             int            `cbor:"1,keyasint"`
 	UnixTime            int64          `cbor:"2,keyasint"`
-	LastBlockHash       crypto.Hash    `cbor:"3,keyasint"`
-	StateHash           crypto.Hash    `cbor:"4,keyasint"`
-	TxIDsHash           crypto.Hash    `cbor:"5,keyasint"`
-	LastCertificateHash crypto.Hash    `cbor:"6,keyasint"`
+	LastBlockHash       hash.Hash      `cbor:"3,keyasint"`
+	StateHash           hash.Hash      `cbor:"4,keyasint"`
+	TxIDsHash           hash.Hash      `cbor:"5,keyasint"`
+	LastCertificateHash hash.Hash      `cbor:"6,keyasint"`
 	SortitionSeed       sortition.Seed `cbor:"7,keyasint"`
 	ProposerAddress     crypto.Address `cbor:"8,keyasint"`
 }
 
-func (h *Header) Version() int                     { return h.data.Version }
-func (h *Header) Time() time.Time                  { return time.Unix(h.data.UnixTime, 0) }
-func (h *Header) TxIDsHash() crypto.Hash           { return h.data.TxIDsHash }
-func (h *Header) StateHash() crypto.Hash           { return h.data.StateHash }
-func (h *Header) LastBlockHash() crypto.Hash       { return h.data.LastBlockHash }
-func (h *Header) LastCertificateHash() crypto.Hash { return h.data.LastCertificateHash }
-func (h *Header) SortitionSeed() sortition.Seed    { return h.data.SortitionSeed }
-func (h *Header) ProposerAddress() crypto.Address  { return h.data.ProposerAddress }
+func (h *Header) Version() int                    { return h.data.Version }
+func (h *Header) Time() time.Time                 { return time.Unix(h.data.UnixTime, 0) }
+func (h *Header) TxIDsHash() hash.Hash            { return h.data.TxIDsHash }
+func (h *Header) StateHash() hash.Hash            { return h.data.StateHash }
+func (h *Header) LastBlockHash() hash.Hash        { return h.data.LastBlockHash }
+func (h *Header) LastCertificateHash() hash.Hash  { return h.data.LastCertificateHash }
+func (h *Header) SortitionSeed() sortition.Seed   { return h.data.SortitionSeed }
+func (h *Header) ProposerAddress() crypto.Address { return h.data.ProposerAddress }
 
 func NewHeader(version int,
 	time time.Time,
-	txIDsHash, lastBlockHash, stateHash, lastCertificateHash crypto.Hash,
+	txIDsHash, lastBlockHash, stateHash, lastCertificateHash hash.Hash,
 	sortitionSeed sortition.Seed, proposerAddress crypto.Address) Header {
 
 	return Header{
@@ -78,12 +79,12 @@ func (h *Header) SanityCheck() error {
 	return nil
 }
 
-func (h Header) Hash() crypto.Hash {
+func (h Header) Hash() hash.Hash {
 	bs, err := h.MarshalCBOR()
 	if err != nil {
-		return crypto.UndefHash
+		return hash.UndefHash
 	}
-	return crypto.HashH(bs)
+	return hash.HashH(bs)
 }
 
 func (h *Header) MarshalCBOR() ([]byte, error) {

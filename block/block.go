@@ -8,6 +8,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
@@ -16,7 +18,7 @@ import (
 
 type Block struct {
 	lk            sync.RWMutex
-	memorizedHash *crypto.Hash
+	memorizedHash *hash.Hash
 
 	data blockData
 }
@@ -28,10 +30,10 @@ type blockData struct {
 }
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
-	lastBlockHash, stateHash crypto.Hash,
+	lastBlockHash, stateHash hash.Hash,
 	lastCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) *Block {
 	txIDsHash := txIDs.Hash()
-	lastCertHash := crypto.UndefHash
+	lastCertHash := hash.UndefHash
 	if lastCertificate != nil {
 		lastCertHash = lastCertificate.Hash()
 	}
@@ -83,7 +85,7 @@ func (b *Block) SanityCheck() error {
 	return nil
 }
 
-func (b *Block) Hash() crypto.Hash {
+func (b *Block) Hash() hash.Hash {
 	b.lk.Lock()
 	defer b.lk.Unlock()
 
@@ -95,7 +97,7 @@ func (b *Block) Hash() crypto.Hash {
 	return *b.memorizedHash
 }
 
-func (b *Block) HashesTo(hash crypto.Hash) bool {
+func (b *Block) HashesTo(hash hash.Hash) bool {
 	return b.Hash().EqualsTo(hash)
 }
 
@@ -134,9 +136,9 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 
 // ---------
 // For tests
-func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*Block, []*tx.Tx) {
+func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *hash.Hash) (*Block, []*tx.Tx) {
 	if proposer == nil {
-		addr, _, _ := crypto.GenerateTestKeyPair()
+		addr, _, _ := bls.GenerateTestKeyPair()
 		proposer = &addr
 	}
 	txs := make([]*tx.Tx, 0)
@@ -155,7 +157,7 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 		ids.Append(tx.ID())
 	}
 	if lastBlockHash == nil {
-		h := crypto.GenerateTestHash()
+		h := hash.GenerateTestHash()
 		lastBlockHash = &h
 	}
 	cert := GenerateTestCertificate(*lastBlockHash)
@@ -165,7 +167,7 @@ func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *crypto.Hash) (*B
 	sortitionSeed := sortition.GenerateRandomSeed()
 	block := MakeBlock(1, util.Now(), ids,
 		*lastBlockHash,
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		cert,
 		sortitionSeed,
 		*proposer)

@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func (zs *zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 	s, _ := args.Params.Hash()
-	h, err := crypto.HashFromString(string(s))
+	h, err := hash.HashFromString(string(s))
 	if err != nil {
 		return err
 	}

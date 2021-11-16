@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
@@ -15,8 +16,8 @@ func TestParsingSalamMessages(t *testing.T) {
 	setup(t)
 
 	t.Run("Alice receives Salam message from a peer. Genesis hash is wrong. Alice should not handshake", func(t *testing.T) {
-		invGenHash := crypto.GenerateTestHash()
-		_, pub, _ := crypto.GenerateTestKeyPair()
+		invGenHash := hash.GenerateTestHash()
+		_, pub, _ := bls.GenerateTestKeyPair()
 		pld := payload.NewSalamPayload("bad-genesis", pub, invGenHash, 0, 0)
 		pid := util.RandomPeerID()
 		tAliceNet.ReceivingMessageFromOtherPeer(pid, pld)
@@ -27,7 +28,7 @@ func TestParsingSalamMessages(t *testing.T) {
 	})
 
 	t.Run("Alice receives Salam message from a peer. Genesis hash is Ok. Alice should update the peer info", func(t *testing.T) {
-		_, pub, _ := crypto.GenerateTestKeyPair()
+		_, pub, _ := bls.GenerateTestKeyPair()
 
 		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, 3, 0x1)
 		pid := util.RandomPeerID()
@@ -49,7 +50,7 @@ func TestParsingSalamMessages(t *testing.T) {
 
 	t.Run("Alice receives Salam message from a peer. Peer is ahead. Alice should request for blocks", func(t *testing.T) {
 		tAliceSync.peerSet.Clear()
-		_, pub, _ := crypto.GenerateTestKeyPair()
+		_, pub, _ := bls.GenerateTestKeyPair()
 		claimedHeight := tAliceState.LastBlockHeight() + 5
 		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, claimedHeight, 0)
 		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)

@@ -21,7 +21,7 @@ func newBlockVotes() *blockVotes {
 func (vs *blockVotes) addVote(vote *vote.Vote) {
 	signer := vote.Signer()
 	if existing, ok := vs.votes[signer]; ok {
-		if !existing.Signature().EqualsTo(*vote.Signature()) {
+		if !existing.Signature().EqualsTo(vote.Signature()) {
 			// Signature malleability?
 			logger.Panic("Invalid vote", "sig1", existing.Signature().RawBytes(), "sig2", vote.Signature().RawBytes())
 		}

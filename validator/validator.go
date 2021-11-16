@@ -6,6 +6,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 type Validator struct {
@@ -77,15 +79,15 @@ func (val *Validator) UpdateUnbondingHeight(height int) {
 }
 
 // Hash return the hash of this validator
-func (val *Validator) Hash() crypto.Hash {
+func (val *Validator) Hash() hash.Hash {
 	bs, err := val.Encode()
 	if err != nil {
 		panic(err)
 	}
-	return crypto.HashH(bs)
+	return hash.HashH(bs)
 }
 
-///---- Serialization methods
+///----  methods
 func (val Validator) Encode() ([]byte, error) {
 	return cbor.Marshal(val.data)
 }
@@ -111,7 +113,7 @@ func (val Validator) Fingerprint() string {
 
 // GenerateTestValidator generates a validator for testing purpose
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
-	signer := crypto.GenerateTestSigner()
+	signer := bls.GenerateTestSigner()
 	val := NewValidator(signer.PublicKey(), number)
 	val.data.Stake = 777777777
 	val.data.Sequence = 77

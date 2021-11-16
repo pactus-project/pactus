@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -19,7 +19,7 @@ func TestCommitExecute(t *testing.T) {
 	h := 4
 	r := 0
 	p1 := makeProposal(t, h, r)
-	trx := tx.NewSendTx(crypto.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	trx := tx.NewSendTx(hash.UndefHash, 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
 	tSigners[0].SignMsg(trx)
 	assert.NoError(t, tTxPool.AppendTx(trx))
 	p2 := makeProposal(t, h, r)

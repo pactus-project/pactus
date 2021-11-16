@@ -3,6 +3,8 @@ package state
 import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -58,7 +60,7 @@ func (st *state) checkCertificate(cert *block.Certificate) error {
 
 	// Check signature
 	signBytes := cert.SignBytes()
-	if !crypto.VerifyAggregated(cert.Signature(), pubs, signBytes) {
+	if !bls.VerifyAggregated(cert.Signature(), pubs, signBytes) {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"certificate has invalid signature: %v", cert.Signature())
 	}
@@ -98,7 +100,7 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 }
 
 // validateCertificate validates certificate for the current height
-func (st *state) validateCertificate(cert *block.Certificate, blockHash crypto.Hash) error {
+func (st *state) validateCertificate(cert *block.Certificate, blockHash hash.Hash) error {
 	if err := st.checkCertificate(cert); err != nil {
 		return err
 	}

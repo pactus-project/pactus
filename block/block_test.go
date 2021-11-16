@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -19,27 +19,27 @@ func TestBlockSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.StateHash = crypto.UndefHash
+	b.data.Header.data.StateHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.TxIDsHash = crypto.UndefHash
+	b.data.Header.data.TxIDsHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.LastBlockHash = crypto.UndefHash
+	b.data.Header.data.LastBlockHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.LastCertificateHash = crypto.UndefHash
+	b.data.Header.data.LastCertificateHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.LastCertificate = GenerateTestCertificate(crypto.UndefHash)
+	b.data.LastCertificate = GenerateTestCertificate(hash.UndefHash)
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.TxIDsHash = crypto.UndefHash
+	b.data.Header.data.TxIDsHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
@@ -109,14 +109,14 @@ func TestDecode(t *testing.T) {
 	assert.Equal(t, d, d2)
 
 	// a80101021a6077b9fe035820d846ef49a6c72390645f12970987865a795a55fa19c92dbb9cbe24d6503eca9f0458208ae0a4883808290510bb77678bb24a2527d22d7dcf2d5d605ea57595260bfdf00558208e442e0f18a7797d7c289ead53b7c02d9f77147003bebbf7b0572a72fb004bbb06582085c4963c28750eef54ba1b14dd03fc85dbe482a280d06e0eefb427fcb15b616c075830db66ddce5cd16ec9710294769c7386977e48eef2bc38c5a93b49ea06ac9fa8fc502976397abc00c5df21d2d1c757d80d08543bfc7df5c9915c56e399fbe47be7d25aeff238b3
-	expected1 := crypto.HashH(d[2:224])
+	expected1 := hash.HashH(d[2:224])
 	assert.True(t, b1.HashesTo(expected1))
 
-	expected2, _ := crypto.HashFromString("e161e98f19001e1f3fbcb2ae72fa8ff4a57bf8337ebebb65b0632f87763368ba")
+	expected2, _ := hash.HashFromString("e161e98f19001e1f3fbcb2ae72fa8ff4a57bf8337ebebb65b0632f87763368ba")
 	assert.Equal(t, b1.Hash(), expected2)
 
 	// hash TxIDs
-	merkleTree := simplemerkle.NewTreeFromHashes([]crypto.Hash{b1.TxIDs().IDs()[0], b1.TxIDs().IDs()[1], b1.TxIDs().IDs()[2], b1.TxIDs().IDs()[3]})
+	merkleTree := simplemerkle.NewTreeFromHashes([]hash.Hash{b1.TxIDs().IDs()[0], b1.TxIDs().IDs()[1], b1.TxIDs().IDs()[2], b1.TxIDs().IDs()[3]})
 	expected3 := merkleTree.Root()
 	assert.Equal(t, b1.Header().TxIDsHash(), expected3)
 }

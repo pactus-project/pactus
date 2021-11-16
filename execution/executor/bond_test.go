@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -13,8 +14,8 @@ func TestExecuteBondTx(t *testing.T) {
 	exe := NewBondExecutor(true)
 
 	bonder := tAcc1.Address()
-	addr, pub, _ := crypto.GenerateTestKeyPair()
-	stamp := crypto.GenerateTestHash()
+	addr, pub, _ := bls.GenerateTestKeyPair()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 
 	t.Run("Should fail, Invalid bonder", func(t *testing.T) {
@@ -95,10 +96,10 @@ func TestBondNonStrictMode(t *testing.T) {
 	exe1 := NewBondExecutor(false)
 
 	tSandbox.InCommittee = true
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 	bonder := tAcc1.Address()
-	_, pub, _ := crypto.GenerateTestKeyPair()
+	_, pub, _ := bls.GenerateTestKeyPair()
 
 	mintbase1 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
 	mintbase2 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")

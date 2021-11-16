@@ -5,6 +5,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/consensus/voteset"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -27,9 +28,9 @@ func (log *Log) RoundMessages(round int) *Messages {
 	return nil
 }
 
-func (log *Log) HasVote(hash crypto.Hash) bool {
+func (log *Log) HasVote(h hash.Hash) bool {
 	for _, m := range log.roundMessages {
-		if m.HasVote(hash) {
+		if m.HasVote(h) {
 			return true
 		}
 	}

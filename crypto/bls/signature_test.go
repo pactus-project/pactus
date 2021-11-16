@@ -1,4 +1,4 @@
-package crypto
+package bls
 
 import (
 	"encoding/hex"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -16,9 +17,9 @@ func TestSignatureMarshaling(t *testing.T) {
 	_, _, priv := RandomKeyPair()
 	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 
-	sig2 := new(Signature)
-	sig3 := new(Signature)
-	sig4 := new(Signature)
+	sig2 := new(BLSSignature)
+	sig3 := new(BLSSignature)
+	sig4 := new(BLSSignature)
 
 	js, err := json.Marshal(sig1)
 	assert.NoError(t, err)
@@ -33,7 +34,7 @@ func TestSignatureMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, sig4.UnmarshalText(txt))
 
-	require.True(t, sig1.EqualsTo(*sig4))
+	require.True(t, sig1.EqualsTo(sig4))
 	require.NoError(t, sig1.SanityCheck())
 }
 
@@ -63,19 +64,19 @@ func TestSignatureFromString(t *testing.T) {
 }
 
 func TestMarshalingEmptySignature(t *testing.T) {
-	sig1 := Signature{}
+	sig1 := BLSSignature{}
 
 	js, err := json.Marshal(sig1)
 	assert.NoError(t, err)
 	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
-	sig2 := new(Signature)
+	sig2 := new(BLSSignature)
 	err = json.Unmarshal(js, &sig2)
 	assert.Error(t, err)
 
 	bs, err := sig1.MarshalCBOR()
 	assert.Error(t, err)
 
-	sig3 := new(Signature)
+	sig3 := new(BLSSignature)
 	err = sig3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 }
@@ -108,7 +109,7 @@ func TestSignature(t *testing.T) {
 	assert.NoError(t, err)
 	sig, err := SignatureFromString("76da6c523c4abac463aad1ead5b7a042f143e354c346f6921a4975cc16959559e9b738fa197ab4df123f580a553b1596")
 	assert.NoError(t, err)
-	addr, err := AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dy")
+	addr, err := crypto.AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dy")
 	assert.NoError(t, err)
 
 	sig1 := priv.Sign(msg)

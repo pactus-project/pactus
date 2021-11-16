@@ -10,7 +10,7 @@ import (
 )
 
 func TestAddressMarshaling(t *testing.T) {
-	addr1, _, _ := GenerateTestKeyPair()
+	addr1, _, _ := bls.GenerateTestKeyPair()
 	addr2 := new(Address)
 	addr3 := new(Address)
 	addr4 := new(Address)
