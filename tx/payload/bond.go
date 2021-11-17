@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type BondPayload struct {
 	Bonder    crypto.Address   `cbor:"1,keyasint"`
-	Validator crypto.PublicKey `cbor:"2,keyasint"`
+	PublicKey bls.BLSPublicKey `cbor:"2,keyasint"`
 	Stake     int64            `cbor:"3,keyasint"`
 }
 
@@ -32,7 +33,7 @@ func (p *BondPayload) SanityCheck() error {
 	if err := p.Bonder.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid Bonder address")
 	}
-	if err := p.Validator.SanityCheck(); err != nil {
+	if err := p.PublicKey.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid receiver address")
 	}
 
@@ -42,6 +43,6 @@ func (p *BondPayload) SanityCheck() error {
 func (p *BondPayload) Fingerprint() string {
 	return fmt.Sprintf("{Bond: %v->%v 🔐 %v",
 		p.Bonder.Fingerprint(),
-		p.Validator.Address().Fingerprint(),
+		p.PublicKey.Address().Fingerprint(),
 		p.Stake)
 }

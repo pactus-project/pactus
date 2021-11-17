@@ -72,7 +72,7 @@ func (pv BLSPrivateKey) String() string {
 	return pv.data.SecretKey.SerializeToHexStr()
 }
 
-func (pv BLSPrivateKey) MarshalText() ([]byte, error) {
+func (pv *BLSPrivateKey) MarshalText() ([]byte, error) {
 	return []byte(pv.String()), nil
 }
 
@@ -86,7 +86,7 @@ func (pv *BLSPrivateKey) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func (pv BLSPrivateKey) MarshalJSON() ([]byte, error) {
+func (pv *BLSPrivateKey) MarshalJSON() ([]byte, error) {
 	return json.Marshal(pv.String())
 }
 

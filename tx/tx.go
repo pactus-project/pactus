@@ -24,15 +24,15 @@ type Tx struct {
 }
 
 type txData struct {
-	Version   int
-	Stamp     hash.Hash
-	Sequence  int
-	Fee       int64
-	Type      payload.Type
-	Payload   payload.Payload
-	Memo      string
-	PublicKey crypto.PublicKey
-	Signature crypto.Signature
+	Version   int              `cbor:"1,keyasint"`
+	Stamp     hash.Hash        `cbor:"2,keyasint"`
+	Sequence  int              `cbor:"3,keyasint"`
+	Fee       int64            `cbor:"4,keyasint"`
+	Type      payload.Type     `cbor:"5,keyasint"`
+	Payload   payload.Payload  `cbor:"6,keyasint"`
+	Memo      string           `cbor:"7,keyasint,omitempty"`
+	PublicKey crypto.PublicKey `cbor:"20,keyasint,omitempty"`
+	Signature crypto.Signature `cbor:"21,keyasint,omitempty"`
 }
 
 func (tx *Tx) Version() int                { return tx.data.Version }
@@ -130,36 +130,19 @@ func (tx *Tx) checkSignature() error {
 }
 
 type _txData struct {
-	Version   int              `cbor:"1,keyasint"`
-	Stamp     hash.Hash        `cbor:"2,keyasint"`
-	Sequence  int              `cbor:"3,keyasint"`
-	Fee       int64            `cbor:"4,keyasint"`
-	Type      payload.Type     `cbor:"5,keyasint"`
-	Payload   cbor.RawMessage  `cbor:"6,keyasint"`
-	Memo      string           `cbor:"7,keyasint,omitempty"`
-	PublicKey crypto.PublicKey `cbor:"20,keyasint,omitempty"`
-	Signature crypto.Signature `cbor:"21,keyasint,omitempty"`
+	Version   int             `cbor:"1,keyasint"`
+	Stamp     hash.Hash       `cbor:"2,keyasint"`
+	Sequence  int             `cbor:"3,keyasint"`
+	Fee       int64           `cbor:"4,keyasint"`
+	Type      payload.Type    `cbor:"5,keyasint"`
+	Payload   cbor.RawMessage `cbor:"6,keyasint"`
+	Memo      string          `cbor:"7,keyasint,omitempty"`
+	PublicKey cbor.RawMessage `cbor:"20,keyasint,omitempty"`
+	Signature cbor.RawMessage `cbor:"21,keyasint,omitempty"`
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
-	bs, err := cbor.Marshal(tx.data.Payload)
-	if err != nil {
-		return nil, err
-	}
-
-	_data := &_txData{
-		Version:   tx.data.Version,
-		Stamp:     tx.data.Stamp,
-		Sequence:  tx.data.Sequence,
-		Type:      tx.data.Type,
-		Payload:   bs,
-		Fee:       tx.data.Fee,
-		Memo:      tx.data.Memo,
-		PublicKey: tx.data.PublicKey,
-		Signature: tx.data.Signature,
-	}
-
-	return cbor.Marshal(_data)
+	return cbor.Marshal(tx.data)
 }
 
 func (tx *Tx) UnmarshalCBOR(bs []byte) error {
@@ -186,6 +169,17 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
 	}
 
+	publicKey := new(bls.BLSPublicKey)
+	err = publicKey.UnmarshalCBOR(_data.PublicKey)
+	if err != nil {
+		return err
+	}
+	signature := new(bls.BLSSignature)
+	err = signature.UnmarshalCBOR(_data.Signature)
+	if err != nil {
+		return err
+	}
+
 	tx.data.Version = _data.Version
 	tx.data.Stamp = _data.Stamp
 	tx.data.Sequence = _data.Sequence
@@ -193,8 +187,8 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	tx.data.Payload = p
 	tx.data.Fee = _data.Fee
 	tx.data.Memo = _data.Memo
-	tx.data.PublicKey = _data.PublicKey
-	tx.data.Signature = _data.Signature
+	tx.data.PublicKey = publicKey
+	tx.data.Signature = signature
 
 	return cbor.Unmarshal(_data.Payload, p)
 }

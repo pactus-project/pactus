@@ -11,7 +11,7 @@ import (
 )
 
 func TestPrivateKeyMarshaling(t *testing.T) {
-	_, _, priv1 := GenerateTestKeyPair()
+	_, priv1 := GenerateTestKeyPair()
 	priv2 := new(BLSPrivateKey)
 	priv3 := new(BLSPrivateKey)
 	priv4 := new(BLSPrivateKey)
@@ -36,7 +36,7 @@ func TestPrivateKeyMarshaling(t *testing.T) {
 func TestPrivateKeyFromBytes(t *testing.T) {
 	_, err := PrivateKeyFromRawBytes(nil)
 	assert.Error(t, err)
-	_, _, priv1 := GenerateTestKeyPair()
+	_, priv1 := GenerateTestKeyPair()
 	priv2, err := PrivateKeyFromRawBytes(priv1.RawBytes())
 	assert.NoError(t, err)
 	require.True(t, priv1.EqualsTo(priv2))
@@ -47,7 +47,7 @@ func TestPrivateKeyFromBytes(t *testing.T) {
 }
 
 func TestPrivateKeyFromString(t *testing.T) {
-	_, _, priv1 := GenerateTestKeyPair()
+	_, priv1 := GenerateTestKeyPair()
 	priv2, err := PrivateKeyFromString(priv1.String())
 	assert.NoError(t, err)
 	require.True(t, priv1.EqualsTo(priv2))
@@ -57,7 +57,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 }
 
 func TestMarshalingEmptyPrivateKey(t *testing.T) {
-	pv1 := BLSPrivateKey{}
+	pv1 := &BLSPrivateKey{}
 
 	js, err := json.Marshal(pv1)
 	assert.NoError(t, err)

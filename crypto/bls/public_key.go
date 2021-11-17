@@ -77,7 +77,7 @@ func (pb *BLSPublicKey) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func (pb BLSPublicKey) MarshalJSON() ([]byte, error) {
+func (pb *BLSPublicKey) MarshalJSON() ([]byte, error) {
 	return json.Marshal(pb.String())
 }
 
@@ -89,7 +89,7 @@ func (pb *BLSPublicKey) UnmarshalJSON(bz []byte) error {
 	return pb.UnmarshalText([]byte(text))
 }
 
-func (pb BLSPublicKey) MarshalCBOR() ([]byte, error) {
+func (pb *BLSPublicKey) MarshalCBOR() ([]byte, error) {
 	if pb.data.PublicKey == nil {
 		return nil, fmt.Errorf("invalid public key")
 	}

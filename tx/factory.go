@@ -2,6 +2,7 @@ package tx
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
@@ -42,7 +43,7 @@ func NewSendTx(stamp hash.Hash,
 func NewBondTx(stamp hash.Hash,
 	seq int,
 	bonder crypto.Address,
-	val crypto.PublicKey,
+	val bls.BLSPublicKey,
 	stake, fee int64, memo string) *Tx {
 	return &Tx{
 		data: txData{
@@ -52,7 +53,7 @@ func NewBondTx(stamp hash.Hash,
 			Type:     payload.PayloadTypeBond,
 			Payload: &payload.BondPayload{
 				Bonder:    bonder,
-				Validator: val,
+				PublicKey: val,
 				Stake:     stake,
 			},
 			Fee:  fee,

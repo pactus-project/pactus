@@ -272,7 +272,7 @@ func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Co
 			if trx.IsBondTx() {
 				pld := trx.Payload().(*payload.BondPayload)
 				totalStake -= pld.Stake
-				stakeChanged[pld.Validator.Address()] = stakeChanged[pld.Validator.Address()] - pld.Stake
+				stakeChanged[pld.PublicKey.Address()] = stakeChanged[pld.PublicKey.Address()] - pld.Stake
 			}
 		}
 		curCommitters = cert.Committers()

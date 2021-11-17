@@ -41,21 +41,21 @@ func VerifyAggregated(aggregated crypto.Signature, pubs []crypto.PublicKey, msg 
 	return aggregated.(*BLSSignature).data.Signature.FastAggregateVerify(pubVec, hash.Hash256(msg))
 }
 
-func RandomKeyPair() (crypto.Address, crypto.PublicKey, crypto.PrivateKey) {
+func RandomKeyPair() (crypto.PublicKey, crypto.PrivateKey) {
 	pv := new(BLSPrivateKey)
 	pv.data.SecretKey = new(bls.SecretKey)
 	pv.data.SecretKey.SetByCSPRNG()
 
-	return pv.PublicKey().Address(), pv.PublicKey(), pv
+	return pv.PublicKey(), pv
 }
 
 // ---------
 // For tests
 func GenerateTestSigner() crypto.Signer {
-	_, _, priv := RandomKeyPair()
+	_, priv := RandomKeyPair()
 	return crypto.NewSigner(priv)
 }
 
-func GenerateTestKeyPair() (crypto.Address, crypto.PublicKey, crypto.PrivateKey) {
+func GenerateTestKeyPair() (crypto.PublicKey, crypto.PrivateKey) {
 	return RandomKeyPair()
 }

@@ -72,6 +72,14 @@ func (cert *Certificate) Hash() hash.Hash {
 	return hash.HashH(bs)
 }
 
+type _certificateData struct {
+	BlockHash  hash.Hash `cbor:"1,keyasint"`
+	Round      int       `cbor:"2,keyasint"`
+	Committers []int     `cbor:"3,keyasint"`
+	Absentees  []int     `cbor:"4,keyasint"`
+	Signature  []byte    `cbor:"5,keyasint"`
+}
+
 func (cert *Certificate) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(cert.data)
 }
@@ -103,9 +111,9 @@ func CertificateSignBytes(blockHash hash.Hash, round int) []byte {
 }
 
 func GenerateTestCertificate(blockHash hash.Hash) *Certificate {
-	_, _, priv2 := bls.GenerateTestKeyPair()
-	_, _, priv3 := bls.GenerateTestKeyPair()
-	_, _, priv4 := bls.GenerateTestKeyPair()
+	_, priv2 := bls.GenerateTestKeyPair()
+	_, priv3 := bls.GenerateTestKeyPair()
+	_, priv4 := bls.GenerateTestKeyPair()
 
 	sigs := []crypto.Signature{
 		priv2.Sign(blockHash.RawBytes()),

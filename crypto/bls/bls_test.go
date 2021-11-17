@@ -1,16 +1,17 @@
-package crypto
+package bls
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func TestAggregation(t *testing.T) {
-	_, pk1, pv1 := GenerateTestKeyPair()
-	_, pk2, pv2 := GenerateTestKeyPair()
-	_, pk3, pv3 := GenerateTestKeyPair()
-	_, pk4, pv4 := GenerateTestKeyPair()
+	pk1, pv1 := GenerateTestKeyPair()
+	pk2, pv2 := GenerateTestKeyPair()
+	pk3, pv3 := GenerateTestKeyPair()
+	pk4, pv4 := GenerateTestKeyPair()
 	msg1 := []byte("zarb")
 	msg2 := []byte("zarb0")
 
@@ -20,11 +21,11 @@ func TestAggregation(t *testing.T) {
 	sig3 := pv3.Sign(msg1)
 	sig4 := pv4.Sign(msg1)
 
-	agg1 := Aggregate([]Signature{sig1, sig2, sig3})
-	agg2 := Aggregate([]Signature{sig1, sig2, sig4})
-	agg3 := Aggregate([]Signature{sig11, sig2, sig3})
-	agg4 := Aggregate([]Signature{sig1, sig2})
-	agg5 := Aggregate([]Signature{sig3, sig2, sig1})
+	agg1 := Aggregate([]crypto.Signature{sig1, sig2, sig3})
+	agg2 := Aggregate([]crypto.Signature{sig1, sig2, sig4})
+	agg3 := Aggregate([]crypto.Signature{sig11, sig2, sig3})
+	agg4 := Aggregate([]crypto.Signature{sig1, sig2})
+	agg5 := Aggregate([]crypto.Signature{sig3, sig2, sig1})
 
 	pks1 := []PublicKey{pk1, pk2, pk3}
 	pks2 := []PublicKey{pk1, pk2, pk4}

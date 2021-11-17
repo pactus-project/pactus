@@ -85,7 +85,7 @@ func (zs *zarbServer) encodeTransaction(trx *tx.Tx) *zarb.TransactionInfo {
 		transaction.Payload = &zarb.TransactionInfo_Bond{
 			Bond: &zarb.BOND_PAYLOAD{
 				Bonder:    pld.Bonder.String(),
-				Validator: pld.Validator.String(),
+				Validator: pld.PublicKey.String(),
 				Stake:     pld.Stake,
 			},
 		}

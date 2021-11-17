@@ -12,7 +12,7 @@ import (
 )
 
 func TestPublicKeyMarshaling(t *testing.T) {
-	_, pub1, _ := GenerateTestKeyPair()
+	pub1, _ := GenerateTestKeyPair()
 	pub2 := new(BLSPublicKey)
 	pub3 := new(BLSPublicKey)
 	pub4 := new(BLSPublicKey)
@@ -37,7 +37,7 @@ func TestPublicKeyMarshaling(t *testing.T) {
 func TestPublicKeyFromBytes(t *testing.T) {
 	_, err := PublicKeyFromRawBytes(nil)
 	assert.Error(t, err)
-	_, pub1, _ := GenerateTestKeyPair()
+	pub1, _ := GenerateTestKeyPair()
 	pub2, err := PublicKeyFromRawBytes(pub1.RawBytes())
 	assert.NoError(t, err)
 	require.True(t, pub1.EqualsTo(pub2))
@@ -48,7 +48,7 @@ func TestPublicKeyFromBytes(t *testing.T) {
 }
 
 func TestPublicKeyFromString(t *testing.T) {
-	_, pub1, _ := GenerateTestKeyPair()
+	pub1, _ := GenerateTestKeyPair()
 	pub2, err := PublicKeyFromString(pub1.String())
 	assert.NoError(t, err)
 	require.True(t, pub1.EqualsTo(pub2))

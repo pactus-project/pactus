@@ -14,7 +14,7 @@ import (
 )
 
 func TestSignatureMarshaling(t *testing.T) {
-	_, _, priv := RandomKeyPair()
+	_, priv := RandomKeyPair()
 	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 
 	sig2 := new(BLSSignature)
@@ -41,7 +41,7 @@ func TestSignatureMarshaling(t *testing.T) {
 func TestSignatureFromBytes(t *testing.T) {
 	_, err := SignatureFromRawBytes(nil)
 	assert.Error(t, err)
-	_, _, priv := RandomKeyPair()
+	_, priv := RandomKeyPair()
 	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 	sig2, err := SignatureFromRawBytes(sig1.RawBytes())
 	assert.NoError(t, err)
@@ -53,7 +53,7 @@ func TestSignatureFromBytes(t *testing.T) {
 }
 
 func TestSignatureFromString(t *testing.T) {
-	_, _, priv := RandomKeyPair()
+	_, priv := RandomKeyPair()
 	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 	sig2, err := SignatureFromString(sig1.String())
 	assert.NoError(t, err)
@@ -84,8 +84,8 @@ func TestMarshalingEmptySignature(t *testing.T) {
 func TestVerifyingSignature(t *testing.T) {
 	msg := []byte("zarb")
 
-	_, pb1, pv1 := RandomKeyPair()
-	_, pb2, pv2 := RandomKeyPair()
+	pb1, pv1 := GenerateTestKeyPair()
+	pb2, pv2 := GenerateTestKeyPair()
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 

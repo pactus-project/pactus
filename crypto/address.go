@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 
@@ -129,4 +130,12 @@ func (addr Address) Verify(pb PublicKey) bool {
 
 func (addr Address) EqualsTo(right Address) bool {
 	return bytes.Equal(addr.RawBytes(), right.RawBytes())
+}
+
+/// For tests
+func GenerateTestAddress() Address {
+	data := make([]byte, 20)
+	rand.Read(data)
+	addr, _ := AddressFromRawBytes(data)
+	return addr
 }
