@@ -1,12 +1,15 @@
 # Changelog
 
-## 1.1.0
+## 0.9.6
+
+
+## 0.9.5
 - Updating last bonding height for validators
 - Refactor Transactions in CMD
 - Add support for pprof
 - refactored gRPC
 
-## 1.0.0
+## 0.9.4
 - Refactoring Consensus module
 - Refactoring Sync module
 - Refactoring certificate verification
