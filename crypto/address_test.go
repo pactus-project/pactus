@@ -84,15 +84,19 @@ func TestTreasuryAddress(t *testing.T) {
 
 func TestInvalidBech32(t *testing.T) {
 	// ok
-	addr, err := AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dy")
+	addr, err := AddressFromString("zc17mka0cw484es5whq638xkm89msgzczmrmf7p27")
 	assert.NoError(t, err)
-	assert.Equal(t, addr.Fingerprint(), "zrb17mka0cw4")
+	assert.Equal(t, addr.Fingerprint(), "zc17mka0cw48")
 
 	// Invalid hrp
-	_, err = AddressFromString("srb17mka0cw484es5whq638xkm89msgzczmrpd86dv")
+	_, err = AddressFromString("sc17mka0cw484es5whq638xkm89msgzczmrpd86dv")
+	assert.Error(t, err)
+
+	// Invalid type
+	_, err = AddressFromString("zc27mka0cw484es5whq638xkm89msgzczmrpd86dv")
 	assert.Error(t, err)
 
 	// Invalid checksum
-	_, err = AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dz")
+	_, err = AddressFromString("zc17mka0cw484es5whq638xkm89msgzczmrwy64dz")
 	assert.Error(t, err)
 }
