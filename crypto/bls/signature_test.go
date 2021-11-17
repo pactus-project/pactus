@@ -109,7 +109,7 @@ func TestSignature(t *testing.T) {
 	assert.NoError(t, err)
 	sig, err := SignatureFromString("76da6c523c4abac463aad1ead5b7a042f143e354c346f6921a4975cc16959559e9b738fa197ab4df123f580a553b1596")
 	assert.NoError(t, err)
-	addr, err := crypto.AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dy")
+	addr, err := crypto.AddressFromString("zc17mka0cw484es5whq638xkm89msgzczmrmf7p27")
 	assert.NoError(t, err)
 
 	sig1 := prv.Sign(msg)

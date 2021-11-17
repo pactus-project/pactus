@@ -11,9 +11,13 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
+// Address format
+// `zc` + type + data
+// type is 1 for schnorr signatures
+
 const (
 	addressSize           = 20
-	hrpAddress            = "zrb"
+	hrpAddress            = "zc"
 	treasuryAddressString = "0000000000000000000000000000000000000000"
 )
 

@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.9.6
-
+- Updating address hrp for bech32
 
 ## 0.9.5
 - Updating last bonding height for validators
