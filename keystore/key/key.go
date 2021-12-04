@@ -18,12 +18,12 @@ type keyData struct {
 }
 
 func GenerateRandomKey() *Key {
-	addr, pk, pv := bls.RandomKeyPair()
+	pk, pv := bls.RandomKeyPair()
 	return &Key{
 		data: keyData{
 			PrivateKey: pv,
 			PublicKey:  pk,
-			Address:    addr,
+			Address:    pk.Address(),
 		},
 	}
 }

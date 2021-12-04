@@ -8,7 +8,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -138,7 +137,7 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 // For tests
 func GenerateTestBlock(proposer *crypto.Address, lastBlockHash *hash.Hash) (*Block, []*tx.Tx) {
 	if proposer == nil {
-		addr, _, _ := bls.GenerateTestKeyPair()
+		addr := crypto.GenerateTestAddress()
 		proposer = &addr
 	}
 	txs := make([]*tx.Tx, 0)

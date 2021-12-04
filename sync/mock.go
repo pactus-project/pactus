@@ -19,8 +19,8 @@ type MockSync struct {
 
 func MockingSync() *MockSync {
 	ps := peerset.NewPeerSet(1 * time.Second)
-	_, pub1, _ := bls.GenerateTestKeyPair()
-	_, pub2, _ := bls.GenerateTestKeyPair()
+	pub1, _ := bls.GenerateTestKeyPair()
+	pub2, _ := bls.GenerateTestKeyPair()
 	p1 := ps.MustGetPeer(util.RandomPeerID())
 	p2 := ps.MustGetPeer(util.RandomPeerID())
 	p1.UpdateStatus(peerset.StatusCodeOK)
@@ -64,7 +64,7 @@ func (m *MockSync) Peers() []*peerset.Peer {
 // AddPeer will add new peer to mocked PeerSet
 func (m *MockSync) AddPeer(name string, height int) *peerset.Peer {
 	newPeer := m.PeerSet.MustGetPeer(util.RandomPeerID())
-	_, pub1, _ := bls.GenerateTestKeyPair()
+	pub1, _ := bls.GenerateTestKeyPair()
 	newPeer.UpdateMoniker(name)
 	newPeer.UpdatePublicKey(pub1)
 	newPeer.IncreaseInvalidMessage()

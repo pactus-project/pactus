@@ -116,7 +116,8 @@ func (p Proposal) Fingerprint() string {
 // ---------
 // For tests
 func GenerateTestProposal(height, round int) (*Proposal, crypto.PrivateKey) {
-	addr, _, pv := bls.GenerateTestKeyPair()
+	pb, pv := bls.GenerateTestKeyPair()
+	addr := pb.Address()
 	b, _ := block.GenerateTestBlock(&addr, nil)
 	p := NewProposal(height, round, b)
 	sig := pv.Sign(p.SignBytes())

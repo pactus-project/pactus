@@ -21,7 +21,7 @@ type privateKeyData struct {
 	SecretKey *bls.SecretKey
 }
 
-func PrivateKeyFromString(text string) (crypto.PrivateKey, error) {
+func PrivateKeyFromString(text string) (*BLSPrivateKey, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func PrivateKeyFromString(text string) (crypto.PrivateKey, error) {
 	return PrivateKeyFromRawBytes(data)
 }
 
-func PrivateKeyFromSeed(seed []byte) (crypto.PrivateKey, error) {
+func PrivateKeyFromSeed(seed []byte) (*BLSPrivateKey, error) {
 	sc := new(bls.SecretKey)
 	err := sc.SetLittleEndianMod(seed)
 	if err != nil {
@@ -43,7 +43,7 @@ func PrivateKeyFromSeed(seed []byte) (crypto.PrivateKey, error) {
 	return &pv, nil
 }
 
-func PrivateKeyFromRawBytes(data []byte) (crypto.PrivateKey, error) {
+func PrivateKeyFromRawBytes(data []byte) (*BLSPrivateKey, error) {
 	if len(data) != PrivateKeySize {
 		return nil, fmt.Errorf("invalid private key")
 	}
@@ -82,7 +82,7 @@ func (pv *BLSPrivateKey) UnmarshalText(text []byte) error {
 		return err
 	}
 
-	*pv = *p.(*BLSPrivateKey)
+	*pv = *p
 	return nil
 }
 
@@ -116,7 +116,7 @@ func (pv *BLSPrivateKey) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	*pv = *p.(*BLSPrivateKey)
+	*pv = *p
 	return nil
 }
 

@@ -260,8 +260,8 @@ func (tx *Tx) IsFreeTx() bool {
 func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	h := hash.GenerateTestHash()
 	s := bls.GenerateTestSigner()
-	a, _, _ := bls.GenerateTestKeyPair()
-	tx := NewSendTx(h, 110, s.Address(), a, 1000, 1000, "test send-tx")
+	pb, _ := bls.GenerateTestKeyPair()
+	tx := NewSendTx(h, 110, s.Address(), pb.Address(), 1000, 1000, "test send-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
@@ -269,8 +269,8 @@ func GenerateTestSendTx() (*Tx, crypto.Signer) {
 func GenerateTestBondTx() (*Tx, crypto.Signer) {
 	h := hash.GenerateTestHash()
 	s := bls.GenerateTestSigner()
-	_, pb, _ := bls.GenerateTestKeyPair()
-	tx := NewBondTx(h, 110, s.Address(), pb, 1000, 1000, "test bond-tx")
+	pb, _ := bls.GenerateTestKeyPair()
+	tx := NewBondTx(h, 110, s.Address(), *pb, 1000, 1000, "test bond-tx")
 	s.SignMsg(tx)
 	return tx, s
 }

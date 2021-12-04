@@ -21,7 +21,7 @@ type publicKeyData struct {
 	PublicKey *bls.PublicKey
 }
 
-func PublicKeyFromString(text string) (crypto.PublicKey, error) {
+func PublicKeyFromString(text string) (*BLSPublicKey, error) {
 	data, err := hex.DecodeString(text) // from bech32 string
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func PublicKeyFromString(text string) (crypto.PublicKey, error) {
 	return PublicKeyFromRawBytes(data)
 }
 
-func PublicKeyFromRawBytes(data []byte) (crypto.PublicKey, error) {
+func PublicKeyFromRawBytes(data []byte) (*BLSPublicKey, error) {
 	if len(data) != PublicKeySize {
 		return nil, fmt.Errorf("invalid public key")
 	}
@@ -73,7 +73,7 @@ func (pb *BLSPublicKey) UnmarshalText(text []byte) error {
 		return err
 	}
 
-	*pb = *p.(*BLSPublicKey)
+	*pb = *p
 	return nil
 }
 
@@ -107,7 +107,7 @@ func (pb *BLSPublicKey) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	*pb = *p.(*BLSPublicKey)
+	*pb = *p
 	return nil
 }
 

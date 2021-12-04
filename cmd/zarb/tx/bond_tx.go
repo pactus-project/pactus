@@ -69,7 +69,7 @@ func BondTx() func(c *cli.Cmd) {
 			var err error
 			var stamp hash.Hash
 			var bonder crypto.Address
-			var pub crypto.PublicKey
+			var pub *bls.BLSPublicKey
 			var seq int
 			var stake int64
 			var fee int64
@@ -148,8 +148,7 @@ func BondTx() func(c *cli.Cmd) {
 				}
 			}
 
-			//fulfill transaction payload
-			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
+			trx := tx.NewBondTx(stamp, seq, bonder, *pub, stake, fee, *memoOpt)
 
 			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)
 		}
