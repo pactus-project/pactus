@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -13,7 +13,7 @@ func Test_WithdrawExecutor(t *testing.T) {
 	setup(t)
 	exe := NewWithdrawExecutor(true)
 
-	addr, _, _ := bls.GenerateTestKeyPair()
+	addr := crypto.GenerateTestAddress()
 	stamp := hash.GenerateTestHash()
 
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)

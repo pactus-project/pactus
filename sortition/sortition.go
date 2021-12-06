@@ -3,8 +3,8 @@ package sortition
 import (
 	"sync"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 )
 

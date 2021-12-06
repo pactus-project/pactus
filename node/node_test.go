@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/param"
@@ -16,10 +17,10 @@ import (
 )
 
 func TestRunningNode(t *testing.T) {
-	_, pb, pv := crypto.RandomKeyPair()
+	pub, pv := bls.RandomKeyPair()
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
-	val := validator.NewValidator(pb, 0)
+	val := validator.NewValidator(pub, 0)
 	gen := genesis.MakeGenesis(util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfig()
 	conf.Store.Path = util.TempDirPath()

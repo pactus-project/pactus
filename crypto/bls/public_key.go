@@ -39,64 +39,64 @@ func PublicKeyFromRawBytes(data []byte) (*BLSPublicKey, error) {
 		return nil, err
 	}
 
-	var pb BLSPublicKey
-	pb.data.PublicKey = pk
+	var pub BLSPublicKey
+	pub.data.PublicKey = pk
 
-	if err := pb.SanityCheck(); err != nil {
+	if err := pub.SanityCheck(); err != nil {
 		return nil, err
 	}
 
-	return &pb, nil
+	return &pub, nil
 }
 
-func (pb BLSPublicKey) RawBytes() []byte {
-	if pb.data.PublicKey == nil {
+func (pub BLSPublicKey) RawBytes() []byte {
+	if pub.data.PublicKey == nil {
 		return nil
 	}
-	return pb.data.PublicKey.Serialize()
+	return pub.data.PublicKey.Serialize()
 }
 
-func (pb BLSPublicKey) String() string {
-	if pb.data.PublicKey == nil {
+func (pub BLSPublicKey) String() string {
+	if pub.data.PublicKey == nil {
 		return ""
 	}
-	return pb.data.PublicKey.SerializeToHexStr()
+	return pub.data.PublicKey.SerializeToHexStr()
 }
 
-func (pb BLSPublicKey) MarshalText() ([]byte, error) {
-	return []byte(pb.String()), nil
+func (pub BLSPublicKey) MarshalText() ([]byte, error) {
+	return []byte(pub.String()), nil
 }
 
-func (pb *BLSPublicKey) UnmarshalText(text []byte) error {
+func (pub *BLSPublicKey) UnmarshalText(text []byte) error {
 	p, err := PublicKeyFromString(string(text))
 	if err != nil {
 		return err
 	}
 
-	*pb = *p
+	*pub = *p
 	return nil
 }
 
-func (pb *BLSPublicKey) MarshalJSON() ([]byte, error) {
-	return json.Marshal(pb.String())
+func (pub *BLSPublicKey) MarshalJSON() ([]byte, error) {
+	return json.Marshal(pub.String())
 }
 
-func (pb *BLSPublicKey) UnmarshalJSON(bz []byte) error {
+func (pub *BLSPublicKey) UnmarshalJSON(bz []byte) error {
 	var text string
 	if err := json.Unmarshal(bz, &text); err != nil {
 		return err
 	}
-	return pb.UnmarshalText([]byte(text))
+	return pub.UnmarshalText([]byte(text))
 }
 
-func (pb *BLSPublicKey) MarshalCBOR() ([]byte, error) {
-	if pb.data.PublicKey == nil {
+func (pub *BLSPublicKey) MarshalCBOR() ([]byte, error) {
+	if pub.data.PublicKey == nil {
 		return nil, fmt.Errorf("invalid public key")
 	}
-	return cbor.Marshal(pb.RawBytes())
+	return cbor.Marshal(pub.RawBytes())
 }
 
-func (pb *BLSPublicKey) UnmarshalCBOR(bs []byte) error {
+func (pub *BLSPublicKey) UnmarshalCBOR(bs []byte) error {
 	var data []byte
 	if err := cbor.Unmarshal(bs, &data); err != nil {
 		return err
@@ -107,27 +107,27 @@ func (pb *BLSPublicKey) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	*pb = *p
+	*pub = *p
 	return nil
 }
 
-func (pb *BLSPublicKey) SanityCheck() error {
-	bs := pb.RawBytes()
+func (pub *BLSPublicKey) SanityCheck() error {
+	bs := pub.RawBytes()
 	if len(bs) != PublicKeySize {
 		return fmt.Errorf("public key should be %v bytes but it is %v bytes", PublicKeySize, len(bs))
 	}
 	return nil
 }
 
-func (pb *BLSPublicKey) Verify(msg []byte, sig crypto.Signature) bool {
-	return sig.(*BLSSignature).data.Signature.VerifyByte(pb.data.PublicKey, hash.Hash256(msg))
+func (pub *BLSPublicKey) Verify(msg []byte, sig crypto.Signature) bool {
+	return sig.(*BLSSignature).data.Signature.VerifyByte(pub.data.PublicKey, hash.Hash256(msg))
 }
 
-func (pb *BLSPublicKey) EqualsTo(right crypto.PublicKey) bool {
-	return pb.data.PublicKey.IsEqual(right.(*BLSPublicKey).data.PublicKey)
+func (pub *BLSPublicKey) EqualsTo(right crypto.PublicKey) bool {
+	return pub.data.PublicKey.IsEqual(right.(*BLSPublicKey).data.PublicKey)
 }
 
-func (pb *BLSPublicKey) Address() crypto.Address {
-	addr, _ := crypto.AddressFromRawBytes(hash.Hash160(hash.Hash256(pb.RawBytes())))
+func (pub *BLSPublicKey) Address() crypto.Address {
+	addr, _ := crypto.AddressFromRawBytes(hash.Hash160(hash.Hash256(pub.RawBytes())))
 	return addr
 }

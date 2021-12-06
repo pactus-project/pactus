@@ -10,7 +10,7 @@ import (
 )
 
 func TestVRF(t *testing.T) {
-	_, pk, pv := bls.GenerateTestKeyPair()
+	pk, pv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(pv)
 	for i := 0; i < 100; i++ {
 		seed := GenerateRandomSeed()
@@ -33,7 +33,7 @@ func TestVRF(t *testing.T) {
 }
 
 func TestEntropy(t *testing.T) {
-	_, _, pv := bls.GenerateTestKeyPair()
+	_, pv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(pv)
 
 	max := int64(100)

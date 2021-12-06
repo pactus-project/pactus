@@ -1,7 +1,6 @@
 package sortition
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"fmt"
 
@@ -32,14 +31,14 @@ func SeedFromRawBytes(data []byte) (Seed, error) {
 	return s, nil
 }
 
-func (s Seed) Generate(signer crypto.Signer) Seed {
+func (s *Seed) Generate(signer crypto.Signer) Seed {
 	hash := hash.HashH(s[:])
 	sig := signer.SignData(hash.RawBytes())
 	newSeed, _ := SeedFromRawBytes(sig.RawBytes())
 	return newSeed
 }
 
-func (s Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
+func (s *Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
 	sig, _ := bls.SignatureFromRawBytes(s[:])
 	hash := hash.HashH(prevSeed[:])
 	return public.Verify(hash.RawBytes(), sig)
@@ -59,10 +58,9 @@ func (s *Seed) UnmarshalText(text []byte) error {
 }
 
 func GenerateRandomSeed() Seed {
-	s := Seed{}
-	_, err := rand.Read(s[:])
-	if err != nil {
-		panic(err)
-	}
-	return s
+	h := hash.GenerateTestHash()
+	signer := bls.GenerateTestSigner()
+	sig := signer.SignData(h.RawBytes())
+	seed, _ := SeedFromRawBytes(sig.RawBytes())
+	return seed
 }

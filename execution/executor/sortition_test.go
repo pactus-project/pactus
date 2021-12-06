@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
@@ -28,7 +28,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(41, stamp41)
 
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
-		addr, _, _ := bls.GenerateTestKeyPair()
+		addr := crypto.GenerateTestAddress()
 		trx := tx.NewSortitionTx(stamp41, 1, addr, proof1)
 
 		assert.Error(t, exe.Execute(trx, tSandbox))

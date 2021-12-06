@@ -15,16 +15,16 @@ type Validator struct {
 }
 
 type validatorData struct {
-	PublicKey         crypto.PublicKey `cbor:"1,keyasint"`
-	Number            int              `cbor:"2,keyasint"`
-	Sequence          int              `cbor:"3,keyasint"`
-	Stake             int64            `cbor:"4,keyasint"`
-	LastBondingHeight int              `cbor:"5,keyasint"`
-	UnbondingHeight   int              `cbor:"6,keyasint"`
-	LastJoinedHeight  int              `cbor:"7,keyasint"`
+	PublicKey         *bls.BLSPublicKey `cbor:"1,keyasint"`
+	Number            int               `cbor:"2,keyasint"`
+	Sequence          int               `cbor:"3,keyasint"`
+	Stake             int64             `cbor:"4,keyasint"`
+	LastBondingHeight int               `cbor:"5,keyasint"`
+	UnbondingHeight   int               `cbor:"6,keyasint"`
+	LastJoinedHeight  int               `cbor:"7,keyasint"`
 }
 
-func NewValidator(publicKey crypto.PublicKey, number int) *Validator {
+func NewValidator(publicKey *bls.BLSPublicKey, number int) *Validator {
 	val := &Validator{
 		data: validatorData{
 			PublicKey: publicKey,
@@ -34,14 +34,14 @@ func NewValidator(publicKey crypto.PublicKey, number int) *Validator {
 	return val
 }
 
-func (val *Validator) PublicKey() crypto.PublicKey { return val.data.PublicKey }
-func (val *Validator) Address() crypto.Address     { return val.data.PublicKey.Address() }
-func (val *Validator) Number() int                 { return val.data.Number }
-func (val *Validator) Sequence() int               { return val.data.Sequence }
-func (val *Validator) Stake() int64                { return val.data.Stake }
-func (val *Validator) LastBondingHeight() int      { return val.data.LastBondingHeight }
-func (val *Validator) UnbondingHeight() int        { return val.data.UnbondingHeight }
-func (val *Validator) LastJoinedHeight() int       { return val.data.LastJoinedHeight }
+func (val *Validator) PublicKey() *bls.BLSPublicKey { return val.data.PublicKey }
+func (val *Validator) Address() crypto.Address      { return val.data.PublicKey.Address() }
+func (val *Validator) Number() int                  { return val.data.Number }
+func (val *Validator) Sequence() int                { return val.data.Sequence }
+func (val *Validator) Stake() int64                 { return val.data.Stake }
+func (val *Validator) LastBondingHeight() int       { return val.data.LastBondingHeight }
+func (val *Validator) UnbondingHeight() int         { return val.data.UnbondingHeight }
+func (val *Validator) LastJoinedHeight() int        { return val.data.LastJoinedHeight }
 
 func (val Validator) Power() int64 {
 	//if the validator requested to unbond ignore stake
@@ -113,9 +113,9 @@ func (val Validator) Fingerprint() string {
 
 // GenerateTestValidator generates a validator for testing purpose
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
-	signer := bls.GenerateTestSigner()
-	val := NewValidator(signer.PublicKey(), number)
+	pub, pv := bls.GenerateTestKeyPair()
+	val := NewValidator(pub, number)
 	val.data.Stake = 777777777
 	val.data.Sequence = 77
-	return val, signer
+	return val, crypto.NewSigner(pv)
 }

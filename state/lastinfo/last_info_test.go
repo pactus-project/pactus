@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
@@ -51,19 +52,19 @@ func setup(t *testing.T) {
 		tSortition.SetParams(hash, seed, poolStake)
 	}
 
-	signer0 := crypto.GenerateTestSigner()
-	signer1 := crypto.GenerateTestSigner()
-	signer2 := crypto.GenerateTestSigner()
-	signer3 := crypto.GenerateTestSigner()
-	signer4 := crypto.GenerateTestSigner()
-	signer5 := crypto.GenerateTestSigner()
-	signer6 := crypto.GenerateTestSigner()
-	signer7 := crypto.GenerateTestSigner()
+	pub0, _ := bls.GenerateTestKeyPair()
+	pub1, prv1 := bls.GenerateTestKeyPair()
+	pub2, _ := bls.GenerateTestKeyPair()
+	pub3, _ := bls.GenerateTestKeyPair()
+	pub4, _ := bls.GenerateTestKeyPair()
+	pub5, _ := bls.GenerateTestKeyPair()
+	pub6, _ := bls.GenerateTestKeyPair()
+	pub7, _ := bls.GenerateTestKeyPair()
 
-	val0 := validator.NewValidator(signer0.PublicKey(), 0)
-	val1 := validator.NewValidator(signer1.PublicKey(), 1)
-	val2 := validator.NewValidator(signer2.PublicKey(), 2)
-	val3 := validator.NewValidator(signer3.PublicKey(), 3)
+	val0 := validator.NewValidator(pub0, 0)
+	val1 := validator.NewValidator(pub1, 1)
+	val2 := validator.NewValidator(pub2, 2)
+	val3 := validator.NewValidator(pub3, 3)
 
 	val0.AddToStake(1000)
 	val1.AddToStake(2000)
@@ -75,7 +76,7 @@ func setup(t *testing.T) {
 	tStore.UpdateValidator(val2)
 	tStore.UpdateValidator(val3)
 
-	sig := signer1.SignData([]byte("dummy"))
+	sig := prv1.Sign([]byte("dummy")).(*bls.BLSSignature)
 
 	committers1 := []int{0, 1, 2, 3}
 	// Block 1
@@ -95,11 +96,11 @@ func setup(t *testing.T) {
 	setSortitionParams(block1.Hash(), seed1, committers2)
 
 	// Block 2
-	val4 := validator.NewValidator(signer4.PublicKey(), 4)
+	val4 := validator.NewValidator(pub4, 4)
 	val4.UpdateLastBondingHeight(3)
 	val4.AddToStake(4000)
 	tStore.UpdateValidator(val4)
-	trx2 := tx.NewBondTx(block1.Hash(), 1, signer1.Address(), val4.PublicKey(), 4000, 4000, "")
+	trx2 := tx.NewBondTx(block1.Hash(), 1, pub1.Address(), val4.PublicKey(), 4000, 4000, "")
 	ids2 := block.NewTxIDs()
 	ids2.Append(trx2.ID())
 	seed2 := sortition.GenerateRandomSeed()
@@ -115,19 +116,19 @@ func setup(t *testing.T) {
 	setSortitionParams(block2.Hash(), seed2, committers3)
 
 	// Block 3
-	val5 := validator.NewValidator(signer5.PublicKey(), 5)
+	val5 := validator.NewValidator(pub5, 5)
 	val5.UpdateLastBondingHeight(3)
 	val5.AddToStake(5000)
-	val6 := validator.NewValidator(signer6.PublicKey(), 6)
+	val6 := validator.NewValidator(pub6, 6)
 	val6.UpdateLastBondingHeight(3)
 	val5.AddToStake(5000)
 	val4.UpdateLastJoinedHeight(3)
 	tStore.UpdateValidator(val4)
 	tStore.UpdateValidator(val5)
 	tStore.UpdateValidator(val6)
-	trx31 := tx.NewBondTx(block2.Hash(), 1, signer1.Address(), val5.PublicKey(), 5000, 5000, "")
-	trx32 := tx.NewBondTx(block2.Hash(), 2, signer1.Address(), val6.PublicKey(), 5000, 5000, "")
-	trx33 := tx.NewSortitionTx(block2.Hash(), 1, signer4.Address(), sortition.GenerateRandomProof())
+	trx31 := tx.NewBondTx(block2.Hash(), 1, pub1.Address(), val5.PublicKey(), 5000, 5000, "")
+	trx32 := tx.NewBondTx(block2.Hash(), 2, pub1.Address(), val6.PublicKey(), 5000, 5000, "")
+	trx33 := tx.NewSortitionTx(block2.Hash(), 1, pub4.Address(), sortition.GenerateRandomProof())
 	ids3 := block.NewTxIDs()
 	ids3.Append(trx31.ID())
 	ids3.Append(trx32.ID())
@@ -151,8 +152,8 @@ func setup(t *testing.T) {
 	val6.UpdateLastJoinedHeight(4)
 	tStore.UpdateValidator(val0)
 	tStore.UpdateValidator(val6)
-	trx41 := tx.NewBondTx(block3.Hash(), 1, signer1.Address(), val0.PublicKey(), 5000, 5000, "")
-	trx42 := tx.NewSortitionTx(block3.Hash(), 1, signer6.Address(), sortition.GenerateRandomProof())
+	trx41 := tx.NewBondTx(block3.Hash(), 1, pub1.Address(), val0.PublicKey(), 5000, 5000, "")
+	trx42 := tx.NewSortitionTx(block3.Hash(), 1, pub6.Address(), sortition.GenerateRandomProof())
 	ids4 := block.NewTxIDs()
 	ids4.Append(trx41.ID())
 	ids4.Append(trx42.ID())
@@ -170,14 +171,14 @@ func setup(t *testing.T) {
 	setSortitionParams(block4.Hash(), seed4, committers5)
 
 	// Block 5
-	val7 := validator.NewValidator(signer7.PublicKey(), 7)
+	val7 := validator.NewValidator(pub7, 7)
 	val7.UpdateLastBondingHeight(5)
 	val7.AddToStake(7000)
 	val5.UpdateLastJoinedHeight(5)
 	tStore.UpdateValidator(val5)
 	tStore.UpdateValidator(val7)
-	trx51 := tx.NewBondTx(block3.Hash(), 1, signer1.Address(), val7.PublicKey(), 7000, 7000, "")
-	trx52 := tx.NewSortitionTx(block3.Hash(), 1, signer5.Address(), sortition.GenerateRandomProof())
+	trx51 := tx.NewBondTx(block3.Hash(), 1, pub1.Address(), val7.PublicKey(), 7000, 7000, "")
+	trx52 := tx.NewSortitionTx(block3.Hash(), 1, pub5.Address(), sortition.GenerateRandomProof())
 	ids5 := block.NewTxIDs()
 	ids5.Append(trx51.ID())
 	ids5.Append(trx52.ID())

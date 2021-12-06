@@ -58,8 +58,8 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	accs := []*account.Account{}
 	vals := []*validator.Validator{}
 	for i := 0; i < 10; i++ {
-		a, pub, _ := bls.GenerateTestKeyPair()
-		acc := account.NewAccount(a, i)
+		pub, _ := bls.GenerateTestKeyPair()
+		acc := account.NewAccount(pub.Address(), i)
 		val := validator.NewValidator(pub, i)
 
 		accs = append(accs, acc)

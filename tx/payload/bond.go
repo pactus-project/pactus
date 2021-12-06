@@ -9,9 +9,9 @@ import (
 )
 
 type BondPayload struct {
-	Bonder    crypto.Address   `cbor:"1,keyasint"`
-	PublicKey bls.BLSPublicKey `cbor:"2,keyasint"`
-	Stake     int64            `cbor:"3,keyasint"`
+	Bonder    crypto.Address    `cbor:"1,keyasint"`
+	PublicKey *bls.BLSPublicKey `cbor:"2,keyasint"`
+	Stake     int64             `cbor:"3,keyasint"`
 }
 
 func (p *BondPayload) Type() Type {

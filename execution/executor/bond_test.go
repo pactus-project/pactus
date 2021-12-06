@@ -14,12 +14,13 @@ func TestExecuteBondTx(t *testing.T) {
 	exe := NewBondExecutor(true)
 
 	bonder := tAcc1.Address()
-	addr, pub, _ := bls.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
+	addr := pub.Address()
 	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 
 	t.Run("Should fail, Invalid bonder", func(t *testing.T) {
-		trx := tx.NewBondTx(stamp, 1, addr, pub, 1000, 1000, "invalid bonder")
+		trx := tx.NewBondTx(stamp, 1, pub.Address(), pub, 1000, 1000, "invalid bonder")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
@@ -99,7 +100,7 @@ func TestBondNonStrictMode(t *testing.T) {
 	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 	bonder := tAcc1.Address()
-	_, pub, _ := bls.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
 
 	mintbase1 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
 	mintbase2 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")

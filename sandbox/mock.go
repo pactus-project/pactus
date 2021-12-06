@@ -2,10 +2,11 @@ package sandbox
 
 import (
 	"fmt"
-	
-	"github.com/zarbchain/zarb-go/crypto/hash"
+
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/validator"
@@ -58,7 +59,7 @@ func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	}
 	return val
 }
-func (m *MockSandbox) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
+func (m *MockSandbox) MakeNewValidator(pub *bls.BLSPublicKey) *validator.Validator {
 	v := validator.NewValidator(pub, m.TotalAccount)
 	m.TotalValidator++
 	return v

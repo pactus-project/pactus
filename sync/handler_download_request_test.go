@@ -22,7 +22,7 @@ func TestDownloadBlocksRequestMessages(t *testing.T) {
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeDownloadResponse, payload.ResponseCodeRejected)
 
 		t.Run("Alice handshakes with the new peer", func(t *testing.T) {
-			_, pub, _ := bls.GenerateTestKeyPair()
+			pub, _ := bls.GenerateTestKeyPair()
 			pld := payload.NewSalamPayload("new-peer", pub, tAliceState.GenHash, 0, 0)
 			tAliceNet.ReceivingMessageFromOtherPeer(pid, pld)
 

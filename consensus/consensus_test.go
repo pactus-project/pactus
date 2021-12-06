@@ -63,7 +63,7 @@ func setup(t *testing.T) {
 
 	vals := make([]*validator.Validator, 4)
 	for i, s := range tSigners {
-		val := validator.NewValidator(s.PublicKey(), i)
+		val := validator.NewValidator(s.PublicKey().(*bls.BLSPublicKey), i)
 		vals[i] = val
 	}
 
@@ -248,11 +248,11 @@ func commitBlockForAllStates(t *testing.T) {
 	p := makeProposal(t, height+1, 0)
 
 	sb := block.CertificateSignBytes(p.Block().Hash(), 0)
-	sig1 := tSigners[0].SignData(sb)
-	sig2 := tSigners[1].SignData(sb)
-	sig4 := tSigners[3].SignData(sb)
+	sig1 := tSigners[0].SignData(sb).(*bls.BLSSignature)
+	sig2 := tSigners[1].SignData(sb).(*bls.BLSSignature)
+	sig4 := tSigners[3].SignData(sb).(*bls.BLSSignature)
 
-	sig := bls.Aggregate([]crypto.Signature{sig1, sig2, sig4})
+	sig := bls.Aggregate([]*bls.BLSSignature{sig1, sig2, sig4})
 	cert := block.NewCertificate(p.Block().Hash(), 0, []int{0, 1, 2, 3}, []int{2}, sig)
 
 	require.NotNil(t, cert)
@@ -270,24 +270,24 @@ func makeProposal(t *testing.T, height, round int) *proposal.Proposal {
 	var p *proposal.Proposal
 	switch (height % 4) + round {
 	case 1:
-		pb, err := tConsX.state.ProposeBlock(round)
+		pub, err := tConsX.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pb)
+		p = proposal.NewProposal(height, round, pub)
 		tConsX.signer.SignMsg(p)
 	case 2:
-		pb, err := tConsY.state.ProposeBlock(round)
+		pub, err := tConsY.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pb)
+		p = proposal.NewProposal(height, round, pub)
 		tConsY.signer.SignMsg(p)
 	case 3:
-		pb, err := tConsB.state.ProposeBlock(round)
+		pub, err := tConsB.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pb)
+		p = proposal.NewProposal(height, round, pub)
 		tConsB.signer.SignMsg(p)
 	case 0, 4:
-		pb, err := tConsP.state.ProposeBlock(round)
+		pub, err := tConsP.state.ProposeBlock(round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pb)
+		p = proposal.NewProposal(height, round, pub)
 		tConsP.signer.SignMsg(p)
 	}
 
@@ -297,8 +297,8 @@ func makeProposal(t *testing.T, height, round int) *proposal.Proposal {
 func TestNotInCommittee(t *testing.T) {
 	setup(t)
 
-	_, _, priv := bls.GenerateTestKeyPair()
-	signer := crypto.NewSigner(priv)
+	_, prv := bls.GenerateTestKeyPair()
+	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
 
 	st, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, signer, store, tTxPool)

@@ -1,9 +1,10 @@
 package sandbox
 
 import (
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -14,7 +15,7 @@ type Sandbox interface {
 	UpdateAccount(*account.Account)
 
 	Validator(crypto.Address) *validator.Validator
-	MakeNewValidator(crypto.PublicKey) *validator.Validator
+	MakeNewValidator(*bls.BLSPublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
 	IsInCommittee(crypto.Address) bool
 

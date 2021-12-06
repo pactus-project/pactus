@@ -273,7 +273,8 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	stateHash := st.stateHash()
 	timestamp := st.proposeNextBlockTime()
-	newSortitionSeed := st.lastInfo.SortitionSeed().Generate(st.signer)
+	seed := st.lastInfo.SortitionSeed()
+	newSortitionSeed := seed.Generate(st.signer)
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
@@ -346,7 +347,8 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
 	// Validate sortition seed
-	if !block.Header().SortitionSeed().Validate(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
+	seed := block.Header().SortitionSeed()
+	if !seed.Validate(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed.")
 	}
 

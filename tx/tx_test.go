@@ -77,23 +77,23 @@ func TestTxSanityCheck(t *testing.T) {
 }
 
 func TestSubsidyTx(t *testing.T) {
-	a, pub, priv := bls.GenerateTestKeyPair()
+	pub, prv := bls.GenerateTestKeyPair()
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, a, 2500, "subsidy")
+		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, pub.Address(), 2500, "subsidy")
 		assert.True(t, trx.IsMintbaseTx())
 		trx.data.Fee = 1
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, a, 2500, "subsidy")
-		sig := priv.Sign(trx.SignBytes())
+		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, pub.Address(), 2500, "subsidy")
+		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, a, 2500, "subsidy")
+		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, pub.Address(), 2500, "subsidy")
 		trx.SetPublicKey(pub)
 		assert.Error(t, trx.SanityCheck())
 	})
@@ -117,7 +117,7 @@ func TestInvalidSignature(t *testing.T) {
 		assert.Error(t, tx.SanityCheck())
 	})
 
-	_, pbInv, pvInv := bls.GenerateTestKeyPair()
+	pbInv, pvInv := bls.GenerateTestKeyPair()
 	t.Run("Invalid signature", func(t *testing.T) {
 		tx, _ := GenerateTestSendTx()
 		sig := pvInv.Sign(tx.SignBytes())
@@ -142,7 +142,7 @@ func TestInvalidSignature(t *testing.T) {
 }
 
 func TestSendSanityCheck(t *testing.T) {
-	invAddr, _, _ := bls.GenerateTestKeyPair()
+	invAddr := crypto.GenerateTestAddress()
 	t.Run("Ok", func(t *testing.T) {
 		trx, _ := GenerateTestSendTx()
 		assert.NoError(t, trx.SanityCheck())
@@ -181,7 +181,7 @@ func TestSendSanityCheck(t *testing.T) {
 }
 
 func TestBondSanityCheck(t *testing.T) {
-	invAddr, _, _ := bls.GenerateTestKeyPair()
+	invAddr := crypto.GenerateTestAddress()
 	t.Run("Ok", func(t *testing.T) {
 		trx, _ := GenerateTestBondTx()
 		assert.NoError(t, trx.SanityCheck())
@@ -205,7 +205,7 @@ func TestBondSanityCheck(t *testing.T) {
 }
 
 func TestSortitionSanityCheck(t *testing.T) {
-	invAddr, _, _ := bls.GenerateTestKeyPair()
+	invAddr := crypto.GenerateTestAddress()
 	t.Run("Ok", func(t *testing.T) {
 		trx, _ := GenerateTestSortitionTx()
 		assert.NoError(t, trx.SanityCheck())
@@ -270,7 +270,7 @@ func TestSortitionDecodingAndHash(t *testing.T) {
 func TestSendSignBytes(t *testing.T) {
 	h := hash.GenerateTestHash()
 	signer := bls.GenerateTestSigner()
-	addr, _, _ := bls.GenerateTestKeyPair()
+	addr := crypto.GenerateTestAddress()
 
 	trx1 := NewSendTx(h, 1, signer.Address(), addr, 100, 10, "test send-tx")
 	signer.SignMsg(trx1)
@@ -285,7 +285,7 @@ func TestSendSignBytes(t *testing.T) {
 func TestBondSignBytes(t *testing.T) {
 	h := hash.GenerateTestHash()
 	signer := bls.GenerateTestSigner()
-	_, pub, _ := bls.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
 
 	trx1 := NewBondTx(h, 1, signer.Address(), pub, 100, 100, "test bond-tx")
 	signer.SignMsg(trx1)
@@ -316,7 +316,7 @@ func TestUnbondSignBytes(t *testing.T) {
 func TestWithdrawSignBytes(t *testing.T) {
 	h := hash.GenerateTestHash()
 	signer := bls.GenerateTestSigner()
-	addr, _, _ := bls.GenerateTestKeyPair()
+	addr := crypto.GenerateTestAddress()
 
 	trx1 := NewWithdrawTx(h, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
 	signer.SignMsg(trx1)

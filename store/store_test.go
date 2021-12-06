@@ -3,10 +3,10 @@ package store
 import (
 	"testing"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )

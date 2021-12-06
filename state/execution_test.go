@@ -25,7 +25,7 @@ func TestProposeBlock(t *testing.T) {
 	invBondTx, _ := tx.GenerateTestBondTx()
 	invSortitionTx, _ := tx.GenerateTestSortitionTx()
 
-	_, pub, _ := bls.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
 	trx1 := tx.NewSendTx(b1.Hash(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
 	tValSigner1.SignMsg(trx1)
 

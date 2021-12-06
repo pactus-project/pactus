@@ -2,7 +2,6 @@ package state
 
 import (
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
@@ -36,7 +35,7 @@ func (st *state) checkCertificate(cert *block.Certificate) error {
 		return err
 	}
 
-	pubs := make([]crypto.PublicKey, 0, len(cert.Committers()))
+	pubs := make([]*bls.BLSPublicKey, 0, len(cert.Committers()))
 	totalStake := int64(0)
 	signersStake := int64(0)
 

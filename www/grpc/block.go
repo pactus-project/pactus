@@ -38,7 +38,8 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	//populate BLOCK_DATA
 	if request.Verbosity.Number() > 0 {
 
-		SortitionSeed, err := block.Header().SortitionSeed().MarshalText()
+		seed := block.Header().SortitionSeed()
+		SortitionSeed, err := seed.MarshalText()
 		if err != nil {
 			zs.logger.Error("couldn't marshal sortition seed: %v", err)
 		}

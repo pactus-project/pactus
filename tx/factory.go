@@ -43,7 +43,7 @@ func NewSendTx(stamp hash.Hash,
 func NewBondTx(stamp hash.Hash,
 	seq int,
 	bonder crypto.Address,
-	val bls.BLSPublicKey,
+	val *bls.BLSPublicKey,
 	stake, fee int64, memo string) *Tx {
 	return &Tx{
 		data: txData{

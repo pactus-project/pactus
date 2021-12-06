@@ -121,7 +121,7 @@ func TestGetAllTransaction(t *testing.T) {
 
 	t.Run("Fill up the pool and get all transactions", func(t *testing.T) {
 		for i := 0; i < len(trxs1); i++ {
-			a, _, _ := bls.GenerateTestKeyPair()
+			a := crypto.GenerateTestAddress()
 			trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
 			tAcc1Signer.SignMsg(trx)
 			assert.NoError(t, tPool.AppendTx(trx))
@@ -137,7 +137,7 @@ func TestGetAllTransaction(t *testing.T) {
 	})
 
 	t.Run("Add one more transaction, when pool is full", func(t *testing.T) {
-		a, _, _ := bls.GenerateTestKeyPair()
+		a := crypto.GenerateTestAddress()
 		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
 		tAcc1Signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
@@ -171,8 +171,8 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	stamp1 := hash.GenerateTestHash()
 	stamp2 := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(88, stamp1)
-	proposer1, _, _ := bls.GenerateTestKeyPair()
-	proposer2, _, _ := bls.GenerateTestKeyPair()
+	proposer1 := crypto.GenerateTestAddress()
+	proposer2 := crypto.GenerateTestAddress()
 	trx1 := tx.NewMintbaseTx(stamp1, 88, proposer1, 25000000, "subsidy-tx-1")
 	trx2 := tx.NewMintbaseTx(stamp1, 89, proposer1, 25000000, "subsidy-tx-1")
 	trx3 := tx.NewMintbaseTx(stamp1, 89, proposer2, 25000000, "subsidy-tx-2")

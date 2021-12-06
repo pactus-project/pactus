@@ -148,7 +148,7 @@ func BondTx() func(c *cli.Cmd) {
 				}
 			}
 
-			trx := tx.NewBondTx(stamp, seq, bonder, *pub, stake, fee, *memoOpt)
+			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
 
 			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)
 		}

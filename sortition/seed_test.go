@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
 func TestSeedFromString(t *testing.T) {
@@ -16,7 +16,7 @@ func TestSeedFromString(t *testing.T) {
 }
 
 func TestValidate(t *testing.T) {
-	signer := crypto.GenerateTestSigner()
+	signer := bls.GenerateTestSigner()
 	seed1 := GenerateRandomSeed()
 	seed2 := seed1.Generate(signer)
 

@@ -60,8 +60,8 @@ func init() {
 }
 
 func setup(t *testing.T) {
-	_, _, priv1 := bls.GenerateTestKeyPair()
-	_, _, priv2 := bls.GenerateTestKeyPair()
+	_, priv1 := bls.GenerateTestKeyPair()
+	_, priv2 := bls.GenerateTestKeyPair()
 	aliceSigner := crypto.NewSigner(priv1)
 	bobSigner := crypto.NewSigner(priv2)
 
@@ -229,14 +229,14 @@ func disableHeartbeat(t *testing.T) {
 }
 
 func joinAliceToCommittee(t *testing.T) {
-	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4)
+	val := validator.NewValidator(tAliceSync.signer.PublicKey().(*bls.BLSPublicKey), 4)
 	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
 }
 
 func joinBobToCommittee(t *testing.T) {
-	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5)
+	val := validator.NewValidator(tBobSync.signer.PublicKey().(*bls.BLSPublicKey), 5)
 	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))

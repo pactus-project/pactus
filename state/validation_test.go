@@ -39,10 +39,10 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("SanityCheck fails, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
-		sig1 := tValSigner1.SignData(signBytes)
-		sig2 := tValSigner2.SignData(signBytes)
-		sig4 := tValSigner4.SignData(signBytes)
-		aggSig := crypto.Aggregate([]crypto.Signature{sig1, sig2, sig4})
+		sig1 := tValSigner1.SignData(signBytes).(*bls.BLSSignature)
+		sig2 := tValSigner2.SignData(signBytes).(*bls.BLSSignature)
+		sig4 := tValSigner4.SignData(signBytes).(*bls.BLSSignature)
+		aggSig := bls.Aggregate([]*bls.BLSSignature{sig1, sig2, sig4})
 		cert := block.NewCertificate(hash.UndefHash, 0, committers, []int{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
@@ -204,7 +204,7 @@ func TestBlockValidation(t *testing.T) {
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)
 	//
-	invAddr, _, _ := bls.GenerateTestKeyPair()
+	invAddr := crypto.GenerateTestAddress()
 	invHash := hash.GenerateTestHash()
 	invCert := block.GenerateTestCertificate(tState1.lastInfo.BlockHash())
 	invSeed := sortition.GenerateRandomSeed()

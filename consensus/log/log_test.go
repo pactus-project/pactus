@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
@@ -77,7 +77,7 @@ func TestCanVote(t *testing.T) {
 	log := NewLog()
 	log.MoveToNewHeight(101, committee.Validators())
 
-	addr, _, _ := bls.GenerateTestKeyPair()
+	addr := crypto.GenerateTestAddress()
 	assert.True(t, log.CanVote(signers[0].Address()))
 	assert.False(t, log.CanVote(addr))
 }

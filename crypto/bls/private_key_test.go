@@ -74,7 +74,7 @@ func TestMarshalingEmptyPrivateKey(t *testing.T) {
 }
 
 func TestPrivateKeyFromSeed(t *testing.T) {
-	priv, err := PrivateKeyFromSeed([]byte{0})
+	prv, err := PrivateKeyFromSeed([]byte{0})
 	assert.NoError(t, err)
-	assert.NoError(t, priv.SanityCheck())
+	assert.NoError(t, prv.SanityCheck())
 }

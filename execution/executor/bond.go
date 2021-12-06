@@ -37,7 +37,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidTx, "insufficient balance")
 	}
 	if val == nil {
-		val = sb.MakeNewValidator(&pld.PublicKey)
+		val = sb.MakeNewValidator(pld.PublicKey)
 	}
 	bonderAcc.IncSequence()
 	bonderAcc.SubtractFromBalance(pld.Stake + trx.Fee())

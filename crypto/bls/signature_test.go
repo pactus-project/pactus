@@ -14,8 +14,8 @@ import (
 )
 
 func TestSignatureMarshaling(t *testing.T) {
-	_, priv := RandomKeyPair()
-	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+	_, prv := RandomKeyPair()
+	sig1 := prv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 
 	sig2 := new(BLSSignature)
 	sig3 := new(BLSSignature)
@@ -41,8 +41,8 @@ func TestSignatureMarshaling(t *testing.T) {
 func TestSignatureFromBytes(t *testing.T) {
 	_, err := SignatureFromRawBytes(nil)
 	assert.Error(t, err)
-	_, priv := RandomKeyPair()
-	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+	_, prv := RandomKeyPair()
+	sig1 := prv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 	sig2, err := SignatureFromRawBytes(sig1.RawBytes())
 	assert.NoError(t, err)
 	require.True(t, sig1.EqualsTo(sig2))
@@ -53,8 +53,8 @@ func TestSignatureFromBytes(t *testing.T) {
 }
 
 func TestSignatureFromString(t *testing.T) {
-	_, priv := RandomKeyPair()
-	sig1 := priv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+	_, prv := RandomKeyPair()
+	sig1 := prv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 	sig2, err := SignatureFromString(sig1.String())
 	assert.NoError(t, err)
 	require.True(t, sig1.EqualsTo(sig2))
@@ -103,7 +103,7 @@ func TestVerifyingSignature(t *testing.T) {
 
 func TestSignature(t *testing.T) {
 	msg := []byte("zarb")
-	priv, err := PrivateKeyFromString("d0c6a560de2e60b6ac55386defefdf93b0c907290c2ad1b4dbd3338186bfdc68")
+	prv, err := PrivateKeyFromString("d0c6a560de2e60b6ac55386defefdf93b0c907290c2ad1b4dbd3338186bfdc68")
 	assert.NoError(t, err)
 	pub, err := PublicKeyFromString("37bfe636693eac0b674ae6603442192ef0432ad84384f0cec8bea5f63c9f45c29bf085b8b9b7f069ae873ccefe61a50a59ad3fefd729af5d63e9cb2325a8f064ab2514b3f846dbfded53234800603a9e752422ad48b99f835bcd95df945aac93")
 	assert.NoError(t, err)
@@ -112,7 +112,7 @@ func TestSignature(t *testing.T) {
 	addr, err := crypto.AddressFromString("zrb17mka0cw484es5whq638xkm89msgzczmrwy64dy")
 	assert.NoError(t, err)
 
-	sig1 := priv.Sign(msg)
+	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig1.RawBytes(), sig.RawBytes())
 	assert.True(t, pub.Verify(msg, sig))
 	assert.Equal(t, pub.Address(), addr)

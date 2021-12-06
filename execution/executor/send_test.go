@@ -33,14 +33,15 @@ func setup(t *testing.T) {
 	tSandbox.UpdateAccount(acc0)
 
 	signer1 := bls.GenerateTestSigner()
-	tValSigner = bls.GenerateTestSigner()
+	pub, prv := bls.GenerateTestKeyPair()
+	tValSigner = crypto.NewSigner(prv)
 
 	tAcc1 = account.NewAccount(signer1.Address(), 0)
 	tAcc1.AddToBalance(10000000000)
 	tSandbox.UpdateAccount(tAcc1)
 	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), int64(10000000000))
 
-	tVal1 = validator.NewValidator(tValSigner.PublicKey(), 0)
+	tVal1 = validator.NewValidator(pub, 0)
 	tVal1.AddToStake(5000000000)
 	tSandbox.UpdateValidator(tVal1)
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), int64(5000000000))
@@ -126,8 +127,8 @@ func TestSendNonStrictMode(t *testing.T) {
 
 	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
-	receiver1, _, _ := bls.GenerateTestKeyPair()
-	receiver2, _, _ := bls.GenerateTestKeyPair()
+	receiver1 := crypto.GenerateTestAddress()
+	receiver2 := crypto.GenerateTestAddress()
 
 	mintbase1 := tx.NewMintbaseTx(stamp, 101, receiver1, 5, "")
 	mintbase2 := tx.NewMintbaseTx(stamp, 101, receiver2, 5, "")

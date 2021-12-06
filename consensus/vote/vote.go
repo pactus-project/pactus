@@ -17,12 +17,12 @@ type Vote struct {
 }
 
 type voteData struct {
-	Type      Type             `cbor:"1,keyasint"`
-	Height    int              `cbor:"2,keyasint"`
-	Round     int              `cbor:"3,keyasint"`
-	BlockHash hash.Hash        `cbor:"4,keyasint"`
-	Signer    crypto.Address   `cbor:"5,keyasint"`
-	Signature crypto.Signature `cbor:"6,keyasint"`
+	Type      Type              `cbor:"1,keyasint"`
+	Height    int               `cbor:"2,keyasint"`
+	Round     int               `cbor:"3,keyasint"`
+	BlockHash hash.Hash         `cbor:"4,keyasint"`
+	Signer    crypto.Address    `cbor:"5,keyasint"`
+	Signature *bls.BLSSignature `cbor:"6,keyasint"`
 }
 
 type signVote struct {
@@ -61,15 +61,15 @@ func NewVote(voteType Type, height int, round int, blockHash hash.Hash, signer c
 	}
 }
 
-func (v *Vote) Type() Type                  { return v.data.Type }
-func (v *Vote) Height() int                 { return v.data.Height }
-func (v *Vote) Round() int                  { return v.data.Round }
-func (v *Vote) BlockHash() hash.Hash        { return v.data.BlockHash }
-func (v *Vote) Signer() crypto.Address      { return v.data.Signer }
-func (v *Vote) Signature() crypto.Signature { return v.data.Signature }
+func (v *Vote) Type() Type                   { return v.data.Type }
+func (v *Vote) Height() int                  { return v.data.Height }
+func (v *Vote) Round() int                   { return v.data.Round }
+func (v *Vote) BlockHash() hash.Hash         { return v.data.BlockHash }
+func (v *Vote) Signer() crypto.Address       { return v.data.Signer }
+func (v *Vote) Signature() *bls.BLSSignature { return v.data.Signature }
 
 func (v *Vote) SetSignature(sig crypto.Signature) {
-	v.data.Signature = sig
+	v.data.Signature = sig.(*bls.BLSSignature)
 }
 
 // SetPublicKey is doing nothing and just satisfies SignableMsg interface
@@ -88,7 +88,7 @@ func (v *Vote) Hash() hash.Hash {
 	return hash.HashH(bz)
 }
 
-func (v *Vote) Verify(pubKey crypto.PublicKey) error {
+func (v *Vote) Verify(pubKey *bls.BLSPublicKey) error {
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
 	}

@@ -31,7 +31,7 @@ func TestExecution(t *testing.T) {
 	acc1.AddToBalance(10000000000)
 	tSandbox.UpdateAccount(acc1)
 
-	rcvAddr, _, _ := bls.GenerateTestKeyPair()
+	rcvAddr := crypto.GenerateTestAddress()
 	stamp1 := hash.GenerateTestHash()
 	stamp2 := hash.GenerateTestHash()
 	stamp3 := hash.GenerateTestHash()
@@ -130,11 +130,12 @@ func TestChecker(t *testing.T) {
 	tSandbox.AppendStampAndUpdateHeight(1000, stamp1000)
 
 	t.Run("Accept bond transaction for future blocks", func(t *testing.T) {
+		pub, _ := bls.GenerateTestKeyPair()
 		acc, signer := account.GenerateTestAccount(1)
 		tSandbox.Accounts[acc.Address()] = acc
 
 		tSandbox.InCommittee = true
-		trx := tx.NewBondTx(stamp1000, acc.Sequence()+1, signer.Address(), signer.PublicKey(), 1000, 1000, "")
+		trx := tx.NewBondTx(stamp1000, acc.Sequence()+1, acc.Address(), pub, 1000, 1000, "")
 		signer.SignMsg(trx)
 		assert.NoError(t, tChecker.Execute(trx, tSandbox))
 	})

@@ -54,8 +54,8 @@ func TestMain(m *testing.M) {
 	tSequences = make(map[crypto.Address]int)
 
 	for i := 0; i < tTotalNodes; i++ {
-		addr, _, priv := bls.GenerateTestKeyPair()
-		tSigners[i] = crypto.NewSigner(priv)
+		pub, prv := bls.GenerateTestKeyPair()
+		tSigners[i] = crypto.NewSigner(prv)
 		tConfigs[i] = config.DefaultConfig()
 
 		tConfigs[i].Store.Path = util.TempDirPath()
@@ -93,17 +93,17 @@ func TestMain(m *testing.M) {
 			}
 			f.Close()
 		}
-		fmt.Printf("Node %d address: %s\n", i+1, addr)
+		fmt.Printf("Node %d address: %s\n", i+1, pub.Address())
 	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 
 	vals := make([]*validator.Validator, 4)
-	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0)
-	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1)
-	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2)
-	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3)
+	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey().(*bls.BLSPublicKey), 0)
+	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey().(*bls.BLSPublicKey), 1)
+	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey().(*bls.BLSPublicKey), 2)
+	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey().(*bls.BLSPublicKey), 3)
 	params := param.DefaultParams()
 	params.BlockTimeInSecond = 2
 	params.CommitteeSize = tCommitteeSize

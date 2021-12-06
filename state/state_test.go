@@ -37,15 +37,15 @@ var tCommonTxPool *txpool.MockTxPool
 func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
 
-	_, _, priv1 := bls.GenerateTestKeyPair()
-	_, _, priv2 := bls.GenerateTestKeyPair()
-	_, _, priv3 := bls.GenerateTestKeyPair()
-	_, _, priv4 := bls.GenerateTestKeyPair()
+	_, prv1 := bls.GenerateTestKeyPair()
+	_, prv2 := bls.GenerateTestKeyPair()
+	_, prv3 := bls.GenerateTestKeyPair()
+	_, prv4 := bls.GenerateTestKeyPair()
 
-	tValSigner1 = crypto.NewSigner(priv1)
-	tValSigner2 = crypto.NewSigner(priv2)
-	tValSigner3 = crypto.NewSigner(priv3)
-	tValSigner4 = crypto.NewSigner(priv4)
+	tValSigner1 = crypto.NewSigner(prv1)
+	tValSigner2 = crypto.NewSigner(prv2)
+	tValSigner3 = crypto.NewSigner(prv3)
+	tValSigner4 = crypto.NewSigner(prv4)
 
 	tGenTime = util.RoundNow(10)
 	tCommonTxPool = txpool.MockingTxPool()
@@ -57,10 +57,10 @@ func setup(t *testing.T) {
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
-	val1 := validator.NewValidator(tValSigner1.PublicKey(), 0)
-	val2 := validator.NewValidator(tValSigner2.PublicKey(), 1)
-	val3 := validator.NewValidator(tValSigner3.PublicKey(), 2)
-	val4 := validator.NewValidator(tValSigner4.PublicKey(), 3)
+	val1 := validator.NewValidator(tValSigner1.PublicKey().(*bls.BLSPublicKey), 0)
+	val2 := validator.NewValidator(tValSigner2.PublicKey().(*bls.BLSPublicKey), 1)
+	val3 := validator.NewValidator(tValSigner3.PublicKey().(*bls.BLSPublicKey), 2)
+	val4 := validator.NewValidator(tValSigner4.PublicKey().(*bls.BLSPublicKey), 3)
 	params := param.DefaultParams()
 	params.CommitteeSize = 5
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
@@ -102,7 +102,7 @@ func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) 
 func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int, signers ...crypto.Signer) *block.Certificate {
 	assert.NotZero(t, len(signers))
 
-	sigs := make([]crypto.Signature, len(signers))
+	sigs := make([]*bls.BLSSignature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)
 	committers := []int{0, 1, 2, 3}
 	signedBy := []int{}
@@ -123,11 +123,11 @@ func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int, signer
 		if s.Address().EqualsTo(tValSigner4.Address()) {
 			signedBy = append(signedBy, 3)
 		}
-		sigs[i] = s.SignData(sb)
+		sigs[i] = s.SignData(sb).(*bls.BLSSignature)
 	}
 
 	absentees := util.Subtracts(committers, signedBy)
-	return block.NewCertificate(blockHash, round, committers, absentees, crypto.Aggregate(sigs))
+	return block.NewCertificate(blockHash, round, committers, absentees, bls.Aggregate(sigs))
 }
 
 func CommitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {
@@ -190,7 +190,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Error(t, err)
 
 	// With mintbase address in config
-	addr, _, _ := bls.GenerateTestKeyPair()
+	addr := crypto.GenerateTestAddress()
 	tState1.config.MintbaseAddress = addr.String()
 	tState1.Close()
 	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
@@ -221,7 +221,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Add new account", func(t *testing.T) {
 		setup(t)
 
-		addr, _, _ := bls.GenerateTestKeyPair()
+		addr := crypto.GenerateTestAddress()
 		sb := tState1.concreteSandbox()
 		newAcc := sb.MakeNewAccount(addr)
 		newAcc.AddToBalance(1)
@@ -233,14 +233,14 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Add new validator", func(t *testing.T) {
 		setup(t)
 
-		addr, pub, _ := bls.GenerateTestKeyPair()
+		pub, _ := bls.GenerateTestKeyPair()
 		sb := tState1.concreteSandbox()
 		newVal := sb.MakeNewValidator(pub)
 		newVal.AddToStake(123)
 		sb.UpdateValidator(newVal)
 		tState1.commitSandbox(sb, 0)
 
-		assert.True(t, tState1.store.HasValidator(addr))
+		assert.True(t, tState1.store.HasValidator(pub.Address()))
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
@@ -377,8 +377,8 @@ func TestForkDetection(t *testing.T) {
 func TestSortition(t *testing.T) {
 	setup(t)
 
-	addr, pub, priv := bls.GenerateTestKeyPair()
-	signer := crypto.NewSigner(priv)
+	pub, prv := bls.GenerateTestKeyPair()
+	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
 	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, store, tCommonTxPool)
 	assert.NoError(t, err)
@@ -407,8 +407,8 @@ func TestSortition(t *testing.T) {
 	require.NoError(t, st1.CommitBlock(height, b, c))
 	height++
 
-	assert.True(t, st1.evaluateSortition())           //  ok
-	assert.False(t, tState1.committee.Contains(addr)) // still not in the committee
+	assert.True(t, st1.evaluateSortition())                    //  ok
+	assert.False(t, tState1.committee.Contains(pub.Address())) // still not in the committee
 
 	// ---------------------------------------------
 	// Certificate another block, new validator should be in the committee now
@@ -418,7 +418,7 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.evaluateSortition()) // already in the committee
 	assert.True(t, tState1.committee.Contains(tValSigner1.Address()))
-	assert.True(t, tState1.committee.Contains(addr))
+	assert.True(t, tState1.committee.Contains(pub.Address()))
 
 	// ---------------------------------------------
 	// Let's save and load tState1
@@ -432,14 +432,14 @@ func TestSortition(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, b1)
 
-	sigs := make([]crypto.Signature, 4)
+	sigs := make([]*bls.BLSSignature, 4)
 	sb := block.CertificateSignBytes(b1.Hash(), 3)
 
-	sigs[0] = tValSigner2.SignData(sb)
-	sigs[1] = tValSigner3.SignData(sb)
-	sigs[2] = tValSigner4.SignData(sb)
-	sigs[3] = signer.SignData(sb)
-	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 0, 1, 2, 3}, []int{0}, crypto.Aggregate(sigs))
+	sigs[0] = tValSigner2.SignData(sb).(*bls.BLSSignature)
+	sigs[1] = tValSigner3.SignData(sb).(*bls.BLSSignature)
+	sigs[2] = tValSigner4.SignData(sb).(*bls.BLSSignature)
+	sigs[3] = signer.SignData(sb).(*bls.BLSSignature)
+	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 0, 1, 2, 3}, []int{0}, bls.Aggregate(sigs))
 
 	height++
 	assert.NoError(t, st2.CommitBlock(height, b1, c1))
@@ -544,14 +544,14 @@ func TestValidatorHelpers(t *testing.T) {
 	setup(t)
 
 	t.Run("Should return nil for NonExisting Validator Address", func(t *testing.T) {
-		_, _, priv5 := bls.GenerateTestKeyPair()
-		nonExistenceValidator := tState1.Validator(priv5.PublicKey().Address())
+		_, prv5 := bls.GenerateTestKeyPair()
+		nonExistenceValidator := tState1.Validator(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 1 returned Non nil For nonExisting validator")
-		nonExistenceValidator = tState2.Validator(priv5.PublicKey().Address())
+		nonExistenceValidator = tState2.Validator(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 2 returned Non nil For nonExisting validator")
-		nonExistenceValidator = tState3.Validator(priv5.PublicKey().Address())
+		nonExistenceValidator = tState3.Validator(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 3 returned Non nil For nonExisting validator")
-		nonExistenceValidator = tState4.Validator(priv5.PublicKey().Address())
+		nonExistenceValidator = tState4.Validator(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 4 returned Non nil For nonExisting validator")
 	})
 
@@ -576,7 +576,7 @@ func TestLoadState(t *testing.T) {
 	setup(t)
 
 	// Add a bond transactions to change total stake
-	_, pub, _ := bls.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
 	tx2 := tx.NewBondTx(hash.UndefHash, 1, tValSigner1.Address(), pub, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx2))
 
@@ -621,7 +621,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	// Load last state info after modifying genesis
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21*1e14 + 1) // manipulating genesis
-	val := validator.NewValidator(tValSigner1.PublicKey(), 0)
+	val := validator.NewValidator(tValSigner1.PublicKey().(*bls.BLSPublicKey), 0)
 	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 
 	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())

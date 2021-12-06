@@ -9,6 +9,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
@@ -21,7 +22,7 @@ type genAccount struct {
 }
 
 type genValidator struct {
-	PublicKey crypto.PublicKey `cbor:"1,keyasint"`
+	PublicKey *bls.BLSPublicKey `cbor:"1,keyasint"`
 }
 
 // Genesis is stored in the state database

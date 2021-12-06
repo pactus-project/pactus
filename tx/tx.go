@@ -169,17 +169,6 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
 	}
 
-	publicKey := new(bls.BLSPublicKey)
-	err = publicKey.UnmarshalCBOR(_data.PublicKey)
-	if err != nil {
-		return err
-	}
-	signature := new(bls.BLSSignature)
-	err = signature.UnmarshalCBOR(_data.Signature)
-	if err != nil {
-		return err
-	}
-
 	tx.data.Version = _data.Version
 	tx.data.Stamp = _data.Stamp
 	tx.data.Sequence = _data.Sequence
@@ -187,8 +176,24 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	tx.data.Payload = p
 	tx.data.Fee = _data.Fee
 	tx.data.Memo = _data.Memo
-	tx.data.PublicKey = publicKey
-	tx.data.Signature = signature
+
+	if _data.PublicKey != nil {
+		publicKey := new(bls.BLSPublicKey)
+		err = publicKey.UnmarshalCBOR(_data.PublicKey)
+		if err != nil {
+			return err
+		}
+		tx.data.PublicKey = publicKey
+	}
+
+	if _data.Signature != nil {
+		signature := new(bls.BLSSignature)
+		err = signature.UnmarshalCBOR(_data.Signature)
+		if err != nil {
+			return err
+		}
+		tx.data.Signature = signature
+	}
 
 	return cbor.Unmarshal(_data.Payload, p)
 }
@@ -260,8 +265,8 @@ func (tx *Tx) IsFreeTx() bool {
 func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	h := hash.GenerateTestHash()
 	s := bls.GenerateTestSigner()
-	pb, _ := bls.GenerateTestKeyPair()
-	tx := NewSendTx(h, 110, s.Address(), pb.Address(), 1000, 1000, "test send-tx")
+	pub, _ := bls.GenerateTestKeyPair()
+	tx := NewSendTx(h, 110, s.Address(), pub.Address(), 1000, 1000, "test send-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
@@ -269,8 +274,8 @@ func GenerateTestSendTx() (*Tx, crypto.Signer) {
 func GenerateTestBondTx() (*Tx, crypto.Signer) {
 	h := hash.GenerateTestHash()
 	s := bls.GenerateTestSigner()
-	pb, _ := bls.GenerateTestKeyPair()
-	tx := NewBondTx(h, 110, s.Address(), *pb, 1000, 1000, "test bond-tx")
+	pub, _ := bls.GenerateTestKeyPair()
+	tx := NewBondTx(h, 110, s.Address(), pub, 1000, 1000, "test bond-tx")
 	s.SignMsg(tx)
 	return tx, s
 }

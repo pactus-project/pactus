@@ -6,6 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
@@ -150,7 +151,7 @@ func (sb *Concrete) Validator(addr crypto.Address) *validator.Validator {
 	return val
 }
 
-func (sb *Concrete) MakeNewValidator(pub crypto.PublicKey) *validator.Validator {
+func (sb *Concrete) MakeNewValidator(pub *bls.BLSPublicKey) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 

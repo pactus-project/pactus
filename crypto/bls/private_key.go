@@ -98,7 +98,7 @@ func (pv *BLSPrivateKey) UnmarshalJSON(bz []byte) error {
 	return pv.UnmarshalText([]byte(text))
 }
 
-func (pv BLSPrivateKey) MarshalCBOR() ([]byte, error) {
+func (pv *BLSPrivateKey) MarshalCBOR() ([]byte, error) {
 	if pv.data.SecretKey == nil {
 		return nil, fmt.Errorf("invalid private key")
 	}

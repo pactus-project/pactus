@@ -31,11 +31,11 @@ func TestVoteMarshaling(t *testing.T) {
 
 func TestVoteSignature(t *testing.T) {
 	h1 := hash.GenerateTestHash()
-	addr1, pb1, pv1 := bls.GenerateTestKeyPair()
-	addr2, pb2, pv2 := bls.GenerateTestKeyPair()
+	pb1, pv1 := bls.GenerateTestKeyPair()
+	pb2, pv2 := bls.GenerateTestKeyPair()
 
-	v1 := NewVote(VoteTypePrepare, 101, 5, h1, addr1)
-	v2 := NewVote(VoteTypePrepare, 101, 5, h1, addr2)
+	v1 := NewVote(VoteTypePrepare, 101, 5, h1, pb1.Address())
+	v2 := NewVote(VoteTypePrepare, 101, 5, h1, pb2.Address())
 
 	assert.Error(t, v1.Verify(pb1), "No signature")
 

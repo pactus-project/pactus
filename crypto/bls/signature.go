@@ -92,7 +92,7 @@ func (sig *BLSSignature) UnmarshalJSON(bz []byte) error {
 	return sig.UnmarshalText([]byte(text))
 }
 
-func (sig BLSSignature) MarshalCBOR() ([]byte, error) {
+func (sig *BLSSignature) MarshalCBOR() ([]byte, error) {
 	if sig.data.Signature == nil {
 		return nil, fmt.Errorf("invalid signature")
 	}
