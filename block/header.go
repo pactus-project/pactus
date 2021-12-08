@@ -84,7 +84,7 @@ func (h Header) Hash() hash.Hash {
 	if err != nil {
 		return hash.UndefHash
 	}
-	return hash.HashH(bs)
+	return hash.CalcHash(bs)
 }
 
 func (h *Header) MarshalCBOR() ([]byte, error) {

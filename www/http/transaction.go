@@ -71,7 +71,7 @@ func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Reques
 		s.writeError(w, err)
 		return
 	}
-	out.ID, err = hash.HashFromRawBytes(txID)
+	out.ID, err = hash.FromRawBytes(txID)
 	if err != nil {
 		s.writeError(w, err)
 		return

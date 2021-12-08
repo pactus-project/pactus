@@ -16,7 +16,7 @@ func init() {
 	bls.VerifySignatureOrder(true)
 }
 
-func Aggregate(sigs []*BLSSignature) *BLSSignature {
+func Aggregate(sigs []*Signature) *Signature {
 	aggregated := new(bls.Sign)
 	signatures := make([]bls.Sign, len(sigs))
 
@@ -26,14 +26,14 @@ func Aggregate(sigs []*BLSSignature) *BLSSignature {
 
 	aggregated.Aggregate(signatures)
 
-	return &BLSSignature{
+	return &Signature{
 		data: signatureData{
 			Signature: aggregated,
 		},
 	}
 }
 
-func VerifyAggregated(aggregated *BLSSignature, pubs []*BLSPublicKey, msg []byte) bool {
+func VerifyAggregated(aggregated *Signature, pubs []*PublicKey, msg []byte) bool {
 	pubVec := make([]bls.PublicKey, len(pubs))
 	for i, p := range pubs {
 		pubVec[i] = *p.data.PublicKey
@@ -41,12 +41,12 @@ func VerifyAggregated(aggregated *BLSSignature, pubs []*BLSPublicKey, msg []byte
 	return aggregated.data.Signature.FastAggregateVerify(pubVec, hash.Hash256(msg))
 }
 
-func RandomKeyPair() (*BLSPublicKey, *BLSPrivateKey) {
-	prv := new(BLSPrivateKey)
+func RandomKeyPair() (*PublicKey, *PrivateKey) {
+	prv := new(PrivateKey)
 	prv.data.SecretKey = new(bls.SecretKey)
 	prv.data.SecretKey.SetByCSPRNG()
 
-	pub := new(BLSPublicKey)
+	pub := new(PublicKey)
 	pub.data.PublicKey = prv.data.SecretKey.GetPublicKey()
 
 	return pub, prv
@@ -59,6 +59,6 @@ func GenerateTestSigner() crypto.Signer {
 	return crypto.NewSigner(prv)
 }
 
-func GenerateTestKeyPair() (*BLSPublicKey, *BLSPrivateKey) {
+func GenerateTestKeyPair() (*PublicKey, *PrivateKey) {
 	return RandomKeyPair()
 }

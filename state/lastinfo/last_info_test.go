@@ -76,7 +76,7 @@ func setup(t *testing.T) {
 	tStore.UpdateValidator(val2)
 	tStore.UpdateValidator(val3)
 
-	sig := prv1.Sign([]byte("dummy")).(*bls.BLSSignature)
+	sig := prv1.Sign([]byte("dummy")).(*bls.Signature)
 
 	committers1 := []int{0, 1, 2, 3}
 	// Block 1

@@ -12,7 +12,7 @@ import (
 
 const SignatureSize = 48
 
-type BLSSignature struct {
+type Signature struct {
 	data signatureData
 }
 
@@ -38,7 +38,7 @@ func SignatureFromRawBytes(data []byte) (crypto.Signature, error) {
 		return nil, err
 	}
 
-	var sig BLSSignature
+	var sig Signature
 	sig.data.Signature = s
 
 	if err := sig.SanityCheck(); err != nil {
@@ -47,7 +47,7 @@ func SignatureFromRawBytes(data []byte) (crypto.Signature, error) {
 	return &sig, nil
 }
 
-func (sig BLSSignature) RawBytes() []byte {
+func (sig Signature) RawBytes() []byte {
 	if sig.data.Signature == nil {
 		return nil
 	}
@@ -55,36 +55,36 @@ func (sig BLSSignature) RawBytes() []byte {
 	return sig.data.Signature.Serialize()
 }
 
-func (sig BLSSignature) String() string {
+func (sig Signature) String() string {
 	if sig.data.Signature == nil {
 		return ""
 	}
 	return sig.data.Signature.SerializeToHexStr()
 }
 
-func (sig BLSSignature) Fingerprint() string {
+func (sig Signature) Fingerprint() string {
 	return hex.EncodeToString(sig.RawBytes()[:6])
 }
 
-func (sig BLSSignature) MarshalText() ([]byte, error) {
+func (sig Signature) MarshalText() ([]byte, error) {
 	return []byte(sig.String()), nil
 }
 
-func (sig *BLSSignature) UnmarshalText(text []byte) error {
+func (sig *Signature) UnmarshalText(text []byte) error {
 	s, err := SignatureFromString(string(text))
 	if err != nil {
 		return err
 	}
 
-	*sig = *s.(*BLSSignature)
+	*sig = *s.(*Signature)
 	return nil
 }
 
-func (sig BLSSignature) MarshalJSON() ([]byte, error) {
+func (sig Signature) MarshalJSON() ([]byte, error) {
 	return json.Marshal(sig.String())
 }
 
-func (sig *BLSSignature) UnmarshalJSON(bz []byte) error {
+func (sig *Signature) UnmarshalJSON(bz []byte) error {
 	var text string
 	if err := json.Unmarshal(bz, &text); err != nil {
 		return err
@@ -92,14 +92,14 @@ func (sig *BLSSignature) UnmarshalJSON(bz []byte) error {
 	return sig.UnmarshalText([]byte(text))
 }
 
-func (sig *BLSSignature) MarshalCBOR() ([]byte, error) {
+func (sig *Signature) MarshalCBOR() ([]byte, error) {
 	if sig.data.Signature == nil {
 		return nil, fmt.Errorf("invalid signature")
 	}
 	return cbor.Marshal(sig.RawBytes())
 }
 
-func (sig *BLSSignature) UnmarshalCBOR(bs []byte) error {
+func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 	var data []byte
 	if err := cbor.Unmarshal(bs, &data); err != nil {
 		return err
@@ -110,11 +110,11 @@ func (sig *BLSSignature) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	*sig = *s.(*BLSSignature)
+	*sig = *s.(*Signature)
 	return nil
 }
 
-func (sig BLSSignature) SanityCheck() error {
+func (sig Signature) SanityCheck() error {
 	bs := sig.RawBytes()
 	if len(bs) != SignatureSize {
 		return fmt.Errorf("signature should be %v bytes but it is %v bytes", SignatureSize, len(bs))
@@ -123,6 +123,6 @@ func (sig BLSSignature) SanityCheck() error {
 	return nil
 }
 
-func (sig BLSSignature) EqualsTo(right crypto.Signature) bool {
-	return sig.data.Signature.IsEqual(right.(*BLSSignature).data.Signature)
+func (sig Signature) EqualsTo(right crypto.Signature) bool {
+	return sig.data.Signature.IsEqual(right.(*Signature).data.Signature)
 }

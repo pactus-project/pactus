@@ -11,7 +11,7 @@ import (
 )
 
 func (zs *zarbServer) GetBlockHeight(ctx context.Context, request *zarb.BlockHeightRequest) (*zarb.BlockHeightResponse, error) {
-	h, err := hash.HashFromString(request.GetHash())
+	h, err := hash.FromString(request.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Hash provided is not Valid")
 	}

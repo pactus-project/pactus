@@ -64,7 +64,7 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.MaxThreshold = 8
 			} else {
 				pub := valKey.PublicKey()
-				gen = makeLocalGenesis(pub.(*bls.BLSPublicKey))
+				gen = makeLocalGenesis(pub.(*bls.PublicKey))
 				conf.Network.Name = "zarb-local"
 			}
 
@@ -89,7 +89,7 @@ func Init() func(c *cli.Cmd) {
 }
 
 // makeLocalGenesis makes genisis file for the local network
-func makeLocalGenesis(pub *bls.BLSPublicKey) *genesis.Genesis {
+func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)

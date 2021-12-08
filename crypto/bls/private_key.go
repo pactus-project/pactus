@@ -13,7 +13,7 @@ import (
 
 const PrivateKeySize = 32
 
-type BLSPrivateKey struct {
+type PrivateKey struct {
 	data privateKeyData
 }
 
@@ -21,7 +21,7 @@ type privateKeyData struct {
 	SecretKey *bls.SecretKey
 }
 
-func PrivateKeyFromString(text string) (*BLSPrivateKey, error) {
+func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
 		return nil, err
@@ -30,20 +30,20 @@ func PrivateKeyFromString(text string) (*BLSPrivateKey, error) {
 	return PrivateKeyFromRawBytes(data)
 }
 
-func PrivateKeyFromSeed(seed []byte) (*BLSPrivateKey, error) {
+func PrivateKeyFromSeed(seed []byte) (*PrivateKey, error) {
 	sc := new(bls.SecretKey)
 	err := sc.SetLittleEndianMod(seed)
 	if err != nil {
 		return nil, err
 	}
 
-	var pv BLSPrivateKey
+	var pv PrivateKey
 	pv.data.SecretKey = sc
 
 	return &pv, nil
 }
 
-func PrivateKeyFromRawBytes(data []byte) (*BLSPrivateKey, error) {
+func PrivateKeyFromRawBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
 		return nil, fmt.Errorf("invalid private key")
 	}
@@ -52,31 +52,31 @@ func PrivateKeyFromRawBytes(data []byte) (*BLSPrivateKey, error) {
 		return nil, err
 	}
 
-	var pv BLSPrivateKey
+	var pv PrivateKey
 	pv.data.SecretKey = sc
 
 	return &pv, nil
 }
 
-func (pv BLSPrivateKey) RawBytes() []byte {
+func (pv PrivateKey) RawBytes() []byte {
 	if pv.data.SecretKey == nil {
 		return nil
 	}
 	return pv.data.SecretKey.Serialize()
 }
 
-func (pv BLSPrivateKey) String() string {
+func (pv PrivateKey) String() string {
 	if pv.data.SecretKey == nil {
 		return ""
 	}
 	return pv.data.SecretKey.SerializeToHexStr()
 }
 
-func (pv *BLSPrivateKey) MarshalText() ([]byte, error) {
+func (pv *PrivateKey) MarshalText() ([]byte, error) {
 	return []byte(pv.String()), nil
 }
 
-func (pv *BLSPrivateKey) UnmarshalText(text []byte) error {
+func (pv *PrivateKey) UnmarshalText(text []byte) error {
 	p, err := PrivateKeyFromString(string(text))
 	if err != nil {
 		return err
@@ -86,11 +86,11 @@ func (pv *BLSPrivateKey) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func (pv *BLSPrivateKey) MarshalJSON() ([]byte, error) {
+func (pv *PrivateKey) MarshalJSON() ([]byte, error) {
 	return json.Marshal(pv.String())
 }
 
-func (pv *BLSPrivateKey) UnmarshalJSON(bz []byte) error {
+func (pv *PrivateKey) UnmarshalJSON(bz []byte) error {
 	var text string
 	if err := json.Unmarshal(bz, &text); err != nil {
 		return err
@@ -98,14 +98,14 @@ func (pv *BLSPrivateKey) UnmarshalJSON(bz []byte) error {
 	return pv.UnmarshalText([]byte(text))
 }
 
-func (pv *BLSPrivateKey) MarshalCBOR() ([]byte, error) {
+func (pv *PrivateKey) MarshalCBOR() ([]byte, error) {
 	if pv.data.SecretKey == nil {
 		return nil, fmt.Errorf("invalid private key")
 	}
 	return cbor.Marshal(pv.RawBytes())
 }
 
-func (pv *BLSPrivateKey) UnmarshalCBOR(bs []byte) error {
+func (pv *PrivateKey) UnmarshalCBOR(bs []byte) error {
 	var data []byte
 	if err := cbor.Unmarshal(bs, &data); err != nil {
 		return err
@@ -120,7 +120,7 @@ func (pv *BLSPrivateKey) UnmarshalCBOR(bs []byte) error {
 	return nil
 }
 
-func (pv *BLSPrivateKey) SanityCheck() error {
+func (pv *PrivateKey) SanityCheck() error {
 	bs := pv.RawBytes()
 	if len(bs) != PrivateKeySize {
 		return fmt.Errorf("private key should be %v bytes but it is %v bytes", PrivateKeySize, len(bs))
@@ -128,20 +128,20 @@ func (pv *BLSPrivateKey) SanityCheck() error {
 	return nil
 }
 
-func (pv *BLSPrivateKey) Sign(msg []byte) crypto.Signature {
-	sig := new(BLSSignature)
+func (pv *PrivateKey) Sign(msg []byte) crypto.Signature {
+	sig := new(Signature)
 	sig.data.Signature = pv.data.SecretKey.SignByte(hash.Hash256(msg))
 
 	return sig
 }
 
-func (pv *BLSPrivateKey) PublicKey() crypto.PublicKey {
-	pb := new(BLSPublicKey)
+func (pv *PrivateKey) PublicKey() crypto.PublicKey {
+	pb := new(PublicKey)
 	pb.data.PublicKey = pv.data.SecretKey.GetPublicKey()
 
 	return pb
 }
 
-func (pv *BLSPrivateKey) EqualsTo(right crypto.PrivateKey) bool {
-	return pv.data.SecretKey.IsEqual(right.(*BLSPrivateKey).data.SecretKey)
+func (pv *PrivateKey) EqualsTo(right crypto.PrivateKey) bool {
+	return pv.data.SecretKey.IsEqual(right.(*PrivateKey).data.SecretKey)
 }

@@ -17,9 +17,9 @@ func TestSignatureMarshaling(t *testing.T) {
 	_, prv := RandomKeyPair()
 	sig1 := prv.Sign(util.IntToSlice(util.RandInt(9999999999)))
 
-	sig2 := new(BLSSignature)
-	sig3 := new(BLSSignature)
-	sig4 := new(BLSSignature)
+	sig2 := new(Signature)
+	sig3 := new(Signature)
+	sig4 := new(Signature)
 
 	js, err := json.Marshal(sig1)
 	assert.NoError(t, err)
@@ -64,19 +64,19 @@ func TestSignatureFromString(t *testing.T) {
 }
 
 func TestMarshalingEmptySignature(t *testing.T) {
-	sig1 := BLSSignature{}
+	sig1 := Signature{}
 
 	js, err := json.Marshal(sig1)
 	assert.NoError(t, err)
 	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
-	sig2 := new(BLSSignature)
+	sig2 := new(Signature)
 	err = json.Unmarshal(js, &sig2)
 	assert.Error(t, err)
 
 	bs, err := sig1.MarshalCBOR()
 	assert.Error(t, err)
 
-	sig3 := new(BLSSignature)
+	sig3 := new(Signature)
 	err = sig3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 }

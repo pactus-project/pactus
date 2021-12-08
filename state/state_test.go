@@ -57,10 +57,10 @@ func setup(t *testing.T) {
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
-	val1 := validator.NewValidator(tValSigner1.PublicKey().(*bls.BLSPublicKey), 0)
-	val2 := validator.NewValidator(tValSigner2.PublicKey().(*bls.BLSPublicKey), 1)
-	val3 := validator.NewValidator(tValSigner3.PublicKey().(*bls.BLSPublicKey), 2)
-	val4 := validator.NewValidator(tValSigner4.PublicKey().(*bls.BLSPublicKey), 3)
+	val1 := validator.NewValidator(tValSigner1.PublicKey().(*bls.PublicKey), 0)
+	val2 := validator.NewValidator(tValSigner2.PublicKey().(*bls.PublicKey), 1)
+	val3 := validator.NewValidator(tValSigner3.PublicKey().(*bls.PublicKey), 2)
+	val4 := validator.NewValidator(tValSigner4.PublicKey().(*bls.PublicKey), 3)
 	params := param.DefaultParams()
 	params.CommitteeSize = 5
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
@@ -102,7 +102,7 @@ func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) 
 func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int, signers ...crypto.Signer) *block.Certificate {
 	assert.NotZero(t, len(signers))
 
-	sigs := make([]*bls.BLSSignature, len(signers))
+	sigs := make([]*bls.Signature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)
 	committers := []int{0, 1, 2, 3}
 	signedBy := []int{}
@@ -123,7 +123,7 @@ func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int, signer
 		if s.Address().EqualsTo(tValSigner4.Address()) {
 			signedBy = append(signedBy, 3)
 		}
-		sigs[i] = s.SignData(sb).(*bls.BLSSignature)
+		sigs[i] = s.SignData(sb).(*bls.Signature)
 	}
 
 	absentees := util.Subtracts(committers, signedBy)
@@ -432,13 +432,13 @@ func TestSortition(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, b1)
 
-	sigs := make([]*bls.BLSSignature, 4)
+	sigs := make([]*bls.Signature, 4)
 	sb := block.CertificateSignBytes(b1.Hash(), 3)
 
-	sigs[0] = tValSigner2.SignData(sb).(*bls.BLSSignature)
-	sigs[1] = tValSigner3.SignData(sb).(*bls.BLSSignature)
-	sigs[2] = tValSigner4.SignData(sb).(*bls.BLSSignature)
-	sigs[3] = signer.SignData(sb).(*bls.BLSSignature)
+	sigs[0] = tValSigner2.SignData(sb).(*bls.Signature)
+	sigs[1] = tValSigner3.SignData(sb).(*bls.Signature)
+	sigs[2] = tValSigner4.SignData(sb).(*bls.Signature)
+	sigs[3] = signer.SignData(sb).(*bls.Signature)
 	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 0, 1, 2, 3}, []int{0}, bls.Aggregate(sigs))
 
 	height++
@@ -621,7 +621,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	// Load last state info after modifying genesis
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21*1e14 + 1) // manipulating genesis
-	val := validator.NewValidator(tValSigner1.PublicKey().(*bls.BLSPublicKey), 0)
+	val := validator.NewValidator(tValSigner1.PublicKey().(*bls.PublicKey), 0)
 	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 
 	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())

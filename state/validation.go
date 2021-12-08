@@ -35,7 +35,7 @@ func (st *state) checkCertificate(cert *block.Certificate) error {
 		return err
 	}
 
-	pubs := make([]*bls.BLSPublicKey, 0, len(cert.Committers()))
+	pubs := make([]*bls.PublicKey, 0, len(cert.Committers()))
 	totalStake := int64(0)
 	signersStake := int64(0)
 

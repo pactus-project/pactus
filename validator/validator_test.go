@@ -58,8 +58,8 @@ func TestMarshalingRawData(t *testing.T) {
 	assert.Zero(t, val.LastJoinedHeight())
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)
-	assert.Equal(t, val.Hash(), hash.HashH(bs))
-	expected, _ := hash.HashFromString("4ae73f2be07945e814e21b106d4a4cb27982f01179c85231074799745b63b92d")
+	assert.Equal(t, val.Hash(), hash.CalcHash(bs))
+	expected, _ := hash.FromString("4ae73f2be07945e814e21b106d4a4cb27982f01179c85231074799745b63b92d")
 	assert.Equal(t, val.Hash(), expected)
 }
 

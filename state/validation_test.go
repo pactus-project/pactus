@@ -14,10 +14,10 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func aggregate(sigs []crypto.Signature) *bls.BLSSignature {
-	blsSigs := make([]*bls.BLSSignature, len(sigs))
+func aggregate(sigs []crypto.Signature) *bls.Signature {
+	blsSigs := make([]*bls.Signature, len(sigs))
 	for i, s := range sigs {
-		blsSigs[i] = s.(*bls.BLSSignature)
+		blsSigs[i] = s.(*bls.Signature)
 	}
 	return bls.Aggregate(blsSigs)
 }
@@ -47,9 +47,9 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("SanityCheck fails, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
-		sig1 := tValSigner1.SignData(signBytes).(*bls.BLSSignature)
-		sig2 := tValSigner2.SignData(signBytes).(*bls.BLSSignature)
-		sig4 := tValSigner4.SignData(signBytes).(*bls.BLSSignature)
+		sig1 := tValSigner1.SignData(signBytes).(*bls.Signature)
+		sig2 := tValSigner2.SignData(signBytes).(*bls.Signature)
+		sig4 := tValSigner4.SignData(signBytes).(*bls.Signature)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
 		cert := block.NewCertificate(hash.UndefHash, 0, committers, []int{2}, aggSig)
 
@@ -59,7 +59,7 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
-		aggSig := signer5.SignData(signBytes).(*bls.BLSSignature)
+		aggSig := signer5.SignData(signBytes).(*bls.Signature)
 		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))

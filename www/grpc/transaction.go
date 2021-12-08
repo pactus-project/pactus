@@ -13,7 +13,7 @@ import (
 )
 
 func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.TransactionRequest) (*zarb.TransactionResponse, error) {
-	id, err := hash.HashFromString(request.Id)
+	id, err := hash.FromString(request.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid transaction ID: %v", err.Error())
 

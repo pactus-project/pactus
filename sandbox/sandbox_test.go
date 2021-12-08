@@ -321,7 +321,7 @@ func TestCreateDuplicated(t *testing.T) {
 			}
 		}()
 		pub := tValSigners[3].PublicKey()
-		tSandbox.MakeNewValidator(pub.(*bls.BLSPublicKey))
+		tSandbox.MakeNewValidator(pub.(*bls.PublicKey))
 	})
 }
 

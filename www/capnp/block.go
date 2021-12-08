@@ -9,7 +9,7 @@ import (
 
 func (zs *zarbServer) GetBlockHeight(args ZarbServer_getBlockHeight) error {
 	s, _ := args.Params.Hash()
-	h, err := hash.HashFromString(string(s))
+	h, err := hash.FromString(string(s))
 	if err != nil {
 		return err
 	}

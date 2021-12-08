@@ -97,7 +97,7 @@ func UnbondTx() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				stamp, err = hash.HashFromString(*stampOpt)
+				stamp, err = hash.FromString(*stampOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't decode stamp from input: %v", err)
 					return

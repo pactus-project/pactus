@@ -63,7 +63,7 @@ func setup(t *testing.T) {
 
 	vals := make([]*validator.Validator, 4)
 	for i, s := range tSigners {
-		val := validator.NewValidator(s.PublicKey().(*bls.BLSPublicKey), i)
+		val := validator.NewValidator(s.PublicKey().(*bls.PublicKey), i)
 		vals[i] = val
 	}
 
@@ -248,11 +248,11 @@ func commitBlockForAllStates(t *testing.T) {
 	p := makeProposal(t, height+1, 0)
 
 	sb := block.CertificateSignBytes(p.Block().Hash(), 0)
-	sig1 := tSigners[0].SignData(sb).(*bls.BLSSignature)
-	sig2 := tSigners[1].SignData(sb).(*bls.BLSSignature)
-	sig4 := tSigners[3].SignData(sb).(*bls.BLSSignature)
+	sig1 := tSigners[0].SignData(sb).(*bls.Signature)
+	sig2 := tSigners[1].SignData(sb).(*bls.Signature)
+	sig4 := tSigners[3].SignData(sb).(*bls.Signature)
 
-	sig := bls.Aggregate([]*bls.BLSSignature{sig1, sig2, sig4})
+	sig := bls.Aggregate([]*bls.Signature{sig1, sig2, sig4})
 	cert := block.NewCertificate(p.Block().Hash(), 0, []int{0, 1, 2, 3}, []int{2}, sig)
 
 	require.NotNil(t, cert)

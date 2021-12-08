@@ -13,9 +13,9 @@ import (
 
 func TestPublicKeyMarshaling(t *testing.T) {
 	pub1, _ := GenerateTestKeyPair()
-	pub2 := new(BLSPublicKey)
-	pub3 := new(BLSPublicKey)
-	pub4 := new(BLSPublicKey)
+	pub2 := new(PublicKey)
+	pub3 := new(PublicKey)
+	pub4 := new(PublicKey)
 
 	js, err := json.Marshal(pub1)
 	assert.NoError(t, err)
@@ -58,19 +58,19 @@ func TestPublicKeyFromString(t *testing.T) {
 }
 
 func TestMarshalingEmptyPublicKey(t *testing.T) {
-	pb1 := BLSPublicKey{}
+	pb1 := PublicKey{}
 
 	js, err := json.Marshal(pb1)
 	assert.NoError(t, err)
 	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
-	var pb2 BLSPublicKey
+	var pb2 PublicKey
 	err = json.Unmarshal(js, &pb2)
 	assert.Error(t, err)
 
 	bs, err := pb1.MarshalCBOR()
 	assert.Error(t, err)
 
-	var pb3 BLSPublicKey
+	var pb3 PublicKey
 	err = pb3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 

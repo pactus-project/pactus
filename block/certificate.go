@@ -14,14 +14,14 @@ type Certificate struct {
 	data certificateData
 }
 type certificateData struct {
-	BlockHash  hash.Hash        `cbor:"1,keyasint"`
-	Round      int              `cbor:"2,keyasint"`
-	Committers []int            `cbor:"3,keyasint"`
-	Absentees  []int            `cbor:"4,keyasint"`
-	Signature  bls.BLSSignature `cbor:"5,keyasint"`
+	BlockHash  hash.Hash     `cbor:"1,keyasint"`
+	Round      int           `cbor:"2,keyasint"`
+	Committers []int         `cbor:"3,keyasint"`
+	Absentees  []int         `cbor:"4,keyasint"`
+	Signature  bls.Signature `cbor:"5,keyasint"`
 }
 
-func NewCertificate(blockHash hash.Hash, round int, committers, absentees []int, signature *bls.BLSSignature) *Certificate {
+func NewCertificate(blockHash hash.Hash, round int, committers, absentees []int, signature *bls.Signature) *Certificate {
 	return &Certificate{
 		data: certificateData{
 			BlockHash:  blockHash,
@@ -33,11 +33,11 @@ func NewCertificate(blockHash hash.Hash, round int, committers, absentees []int,
 	}
 }
 
-func (cert *Certificate) BlockHash() hash.Hash         { return cert.data.BlockHash }
-func (cert *Certificate) Round() int                   { return cert.data.Round }
-func (cert *Certificate) Committers() []int            { return cert.data.Committers }
-func (cert *Certificate) Absentees() []int             { return cert.data.Absentees }
-func (cert *Certificate) Signature() *bls.BLSSignature { return &cert.data.Signature }
+func (cert *Certificate) BlockHash() hash.Hash      { return cert.data.BlockHash }
+func (cert *Certificate) Round() int                { return cert.data.Round }
+func (cert *Certificate) Committers() []int         { return cert.data.Committers }
+func (cert *Certificate) Absentees() []int          { return cert.data.Absentees }
+func (cert *Certificate) Signature() *bls.Signature { return &cert.data.Signature }
 
 func (cert *Certificate) SanityCheck() error {
 	if err := cert.BlockHash().SanityCheck(); err != nil {
@@ -68,7 +68,7 @@ func (cert *Certificate) Hash() hash.Hash {
 	if err != nil {
 		return hash.UndefHash
 	}
-	return hash.HashH(bs)
+	return hash.CalcHash(bs)
 }
 
 func (cert *Certificate) MarshalCBOR() ([]byte, error) {
@@ -106,10 +106,10 @@ func GenerateTestCertificate(blockHash hash.Hash) *Certificate {
 	_, priv3 := bls.GenerateTestKeyPair()
 	_, priv4 := bls.GenerateTestKeyPair()
 
-	sigs := []*bls.BLSSignature{
-		priv2.Sign(blockHash.RawBytes()).(*bls.BLSSignature),
-		priv3.Sign(blockHash.RawBytes()).(*bls.BLSSignature),
-		priv4.Sign(blockHash.RawBytes()).(*bls.BLSSignature),
+	sigs := []*bls.Signature{
+		priv2.Sign(blockHash.RawBytes()).(*bls.Signature),
+		priv3.Sign(blockHash.RawBytes()).(*bls.Signature),
+		priv4.Sign(blockHash.RawBytes()).(*bls.Signature),
 	}
 	sig := bls.Aggregate(sigs)
 

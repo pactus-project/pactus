@@ -9,7 +9,7 @@ import (
 
 func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	s, _ := args.Params.Id()
-	h, err := hash.HashFromString(string(s))
+	h, err := hash.FromString(string(s))
 	if err != nil {
 		return fmt.Errorf("invalid transaction id: %s", err)
 	}

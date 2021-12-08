@@ -151,7 +151,7 @@ func (sb *Concrete) Validator(addr crypto.Address) *validator.Validator {
 	return val
 }
 
-func (sb *Concrete) MakeNewValidator(pub *bls.BLSPublicKey) *validator.Validator {
+func (sb *Concrete) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 

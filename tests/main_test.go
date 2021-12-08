@@ -100,10 +100,10 @@ func TestMain(m *testing.M) {
 	acc.AddToBalance(21 * 1e14)
 
 	vals := make([]*validator.Validator, 4)
-	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey().(*bls.BLSPublicKey), 0)
-	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey().(*bls.BLSPublicKey), 1)
-	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey().(*bls.BLSPublicKey), 2)
-	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey().(*bls.BLSPublicKey), 3)
+	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey().(*bls.PublicKey), 0)
+	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey().(*bls.PublicKey), 1)
+	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey().(*bls.PublicKey), 2)
+	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey().(*bls.PublicKey), 3)
 	params := param.DefaultParams()
 	params.BlockTimeInSecond = 2
 	params.CommitteeSize = tCommitteeSize

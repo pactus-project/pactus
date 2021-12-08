@@ -40,15 +40,15 @@ func Hash160(data []byte) []byte {
 	return h.Sum(nil)
 }
 
-func HashFromString(str string) (Hash, error) {
+func FromString(str string) (Hash, error) {
 	b, err := hex.DecodeString(str)
 	if err != nil {
 		return Hash{}, err
 	}
-	return HashFromRawBytes(b)
+	return FromRawBytes(b)
 }
 
-func HashFromRawBytes(data []byte) (Hash, error) {
+func FromRawBytes(data []byte) (Hash, error) {
 	if len(data) != HashSize {
 		return Hash{}, fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(data))
 	}
@@ -57,8 +57,8 @@ func HashFromRawBytes(data []byte) (Hash, error) {
 	return h, nil
 }
 
-func HashH(data []byte) Hash {
-	h, _ := HashFromRawBytes(Hash256(data))
+func CalcHash(data []byte) Hash {
+	h, _ := FromRawBytes(Hash256(data))
 	return h
 }
 
@@ -88,7 +88,7 @@ func (h *Hash) UnmarshalText(text []byte) error {
 		return nil
 	}
 
-	hash, err := HashFromString(string(text))
+	hash, err := FromString(string(text))
 	if err != nil {
 		return err
 	}
@@ -138,5 +138,5 @@ func GenerateTestHash() Hash {
 	if err != nil {
 		return UndefHash
 	}
-	return HashH(p)
+	return CalcHash(p)
 }

@@ -22,7 +22,7 @@ type genAccount struct {
 }
 
 type genValidator struct {
-	PublicKey *bls.BLSPublicKey `cbor:"1,keyasint"`
+	PublicKey *bls.PublicKey `cbor:"1,keyasint"`
 }
 
 // Genesis is stored in the state database
@@ -42,7 +42,7 @@ func (gen *Genesis) Hash() hash.Hash {
 	if err != nil {
 		panic(fmt.Errorf("could not create hash of Genesis: %v", err))
 	}
-	return hash.HashH(bs)
+	return hash.CalcHash(bs)
 }
 
 func (gen *Genesis) GenesisTime() time.Time {

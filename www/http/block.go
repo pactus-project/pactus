@@ -38,7 +38,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 
 	out := new(BlockResult)
 	out.Block = b
-	out.Hash, _ = hash.HashFromRawBytes(h)
+	out.Hash, _ = hash.FromRawBytes(h)
 	out.Data = hex.EncodeToString(d)
 	out.Time = b.Header().Time()
 

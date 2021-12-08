@@ -8,18 +8,18 @@ import (
 )
 
 type testSignableMsg struct {
-	sig *BLSSignature
-	pub *BLSPublicKey
+	sig *Signature
+	pub *PublicKey
 }
 
 func (t *testSignableMsg) SignBytes() []byte {
 	return []byte("zarb")
 }
 func (t *testSignableMsg) SetSignature(sig crypto.Signature) {
-	t.sig = sig.(*BLSSignature)
+	t.sig = sig.(*Signature)
 }
 func (t *testSignableMsg) SetPublicKey(pub crypto.PublicKey) {
-	t.pub = pub.(*BLSPublicKey)
+	t.pub = pub.(*PublicKey)
 }
 
 func TestSignable(t *testing.T) {

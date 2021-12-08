@@ -46,7 +46,7 @@ type peerData struct {
 	NodeVersion          string
 	PeerID               peer.ID
 	Address              *crypto.Address
-	PublicKey            *bls.BLSPublicKey
+	PublicKey            *bls.PublicKey
 	InitialBlockDownload bool
 	Height               int
 	ReceivedMessages     int
@@ -171,7 +171,7 @@ func (p *Peer) UpdatePublicKey(pub crypto.PublicKey) {
 	// TODO: write test for me
 	if err := pub.SanityCheck(); err == nil {
 		addr := pub.Address()
-		p.data.PublicKey = pub.(*bls.BLSPublicKey)
+		p.data.PublicKey = pub.(*bls.PublicKey)
 		p.data.Address = &addr
 	}
 }

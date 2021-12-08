@@ -9,7 +9,7 @@ import (
 var hasher func([]byte) hash.Hash
 
 func init() {
-	hasher = hash.HashH
+	hasher = hash.CalcHash
 }
 
 type Tree struct {

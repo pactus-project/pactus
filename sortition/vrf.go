@@ -44,7 +44,7 @@ func (vrf *VRF) Verify(seed Seed, public crypto.PublicKey, proof Proof, max int6
 }
 
 func (vrf *VRF) getIndex(proof Proof, max int64) int64 {
-	h := hash.HashH(proof[:])
+	h := hash.CalcHash(proof[:])
 
 	rnd64 := util.SliceToInt64(h.RawBytes())
 	rnd64 = rnd64 & 0x7fffffffffffffff

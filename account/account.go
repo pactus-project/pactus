@@ -54,7 +54,7 @@ func (acc *Account) Hash() hash.Hash {
 	if err != nil {
 		panic(err)
 	}
-	return hash.HashH(bs)
+	return hash.CalcHash(bs)
 }
 
 func (acc *Account) Encode() ([]byte, error) {

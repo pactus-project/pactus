@@ -24,7 +24,7 @@ func GetStamp(rpcEndpoint string) (hash.Hash, error) {
 	if err != nil {
 		return hash.Hash{}, err
 	}
-	return hash.HashFromString(info.LastBlockHash)
+	return hash.FromString(info.LastBlockHash)
 }
 
 func GetSequence(rpcEndpoint string, addr crypto.Address) (int, error) {

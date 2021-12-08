@@ -12,9 +12,9 @@ import (
 
 func TestPrivateKeyMarshaling(t *testing.T) {
 	_, priv1 := GenerateTestKeyPair()
-	priv2 := new(BLSPrivateKey)
-	priv3 := new(BLSPrivateKey)
-	priv4 := new(BLSPrivateKey)
+	priv2 := new(PrivateKey)
+	priv3 := new(PrivateKey)
+	priv4 := new(PrivateKey)
 
 	js, err := json.Marshal(priv1)
 	assert.NoError(t, err)
@@ -57,18 +57,18 @@ func TestPrivateKeyFromString(t *testing.T) {
 }
 
 func TestMarshalingEmptyPrivateKey(t *testing.T) {
-	pv1 := &BLSPrivateKey{}
+	pv1 := &PrivateKey{}
 
 	js, err := json.Marshal(pv1)
 	assert.NoError(t, err)
 	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
-	var pv2 BLSPrivateKey
+	var pv2 PrivateKey
 	err = json.Unmarshal(js, &pv2)
 	assert.Error(t, err)
 
 	bs, err := pv1.MarshalCBOR()
 	assert.Error(t, err)
-	var pv3 BLSPrivateKey
+	var pv3 PrivateKey
 	err = pv3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 }

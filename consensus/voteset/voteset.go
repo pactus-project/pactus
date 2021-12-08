@@ -156,7 +156,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 	votesMap := vs.blockVotes[*blockHash].votes
 	committers := make([]int, len(vs.validators))
 	absentees := make([]int, 0)
-	sigs := make([]*bls.BLSSignature, 0)
+	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vs.validators {
 		v := votesMap[val.Address()]

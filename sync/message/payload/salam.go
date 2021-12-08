@@ -11,12 +11,12 @@ import (
 )
 
 type SalamPayload struct {
-	NodeVersion string            `cbor:"1,keyasint"`
-	Moniker     string            `cbor:"2,keyasint"`
-	PublicKey   *bls.BLSPublicKey `cbor:"3,keyasint"`
-	GenesisHash hash.Hash         `cbor:"4,keyasint"`
-	Height      int               `cbor:"5,keyasint"`
-	Flags       int               `cbor:"6,keyasint"`
+	NodeVersion string         `cbor:"1,keyasint"`
+	Moniker     string         `cbor:"2,keyasint"`
+	PublicKey   *bls.PublicKey `cbor:"3,keyasint"`
+	GenesisHash hash.Hash      `cbor:"4,keyasint"`
+	Height      int            `cbor:"5,keyasint"`
+	Flags       int            `cbor:"6,keyasint"`
 }
 
 func NewSalamPayload(moniker string,
@@ -25,7 +25,7 @@ func NewSalamPayload(moniker string,
 	return &SalamPayload{
 		NodeVersion: version.Version(),
 		Moniker:     moniker,
-		PublicKey:   publicKey.(*bls.BLSPublicKey),
+		PublicKey:   publicKey.(*bls.PublicKey),
 		GenesisHash: genesisHash,
 		Height:      height,
 		Flags:       flags,

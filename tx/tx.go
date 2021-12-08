@@ -178,7 +178,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	tx.data.Memo = _data.Memo
 
 	if _data.PublicKey != nil {
-		publicKey := new(bls.BLSPublicKey)
+		publicKey := new(bls.PublicKey)
 		err = publicKey.UnmarshalCBOR(_data.PublicKey)
 		if err != nil {
 			return err
@@ -187,7 +187,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	}
 
 	if _data.Signature != nil {
-		signature := new(bls.BLSSignature)
+		signature := new(bls.Signature)
 		err = signature.UnmarshalCBOR(_data.Signature)
 		if err != nil {
 			return err
@@ -227,7 +227,7 @@ func (tx Tx) SignBytes() []byte {
 
 func (tx *Tx) ID() ID {
 	if tx.memorizedID == nil {
-		id := hash.HashH(tx.SignBytes())
+		id := hash.CalcHash(tx.SignBytes())
 		tx.memorizedID = &id
 	}
 

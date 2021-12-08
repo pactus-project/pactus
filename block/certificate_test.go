@@ -39,7 +39,7 @@ func TestCertificateMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
 
-	expected1 := hash.HashH(d)
+	expected1 := hash.CalcHash(d)
 	assert.Equal(t, cert.Hash(), expected1)
 }
 

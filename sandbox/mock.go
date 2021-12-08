@@ -59,7 +59,7 @@ func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	}
 	return val
 }
-func (m *MockSandbox) MakeNewValidator(pub *bls.BLSPublicKey) *validator.Validator {
+func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	v := validator.NewValidator(pub, m.TotalAccount)
 	m.TotalValidator++
 	return v

@@ -15,16 +15,16 @@ type Validator struct {
 }
 
 type validatorData struct {
-	PublicKey         *bls.BLSPublicKey `cbor:"1,keyasint"`
-	Number            int               `cbor:"2,keyasint"`
-	Sequence          int               `cbor:"3,keyasint"`
-	Stake             int64             `cbor:"4,keyasint"`
-	LastBondingHeight int               `cbor:"5,keyasint"`
-	UnbondingHeight   int               `cbor:"6,keyasint"`
-	LastJoinedHeight  int               `cbor:"7,keyasint"`
+	PublicKey         *bls.PublicKey `cbor:"1,keyasint"`
+	Number            int            `cbor:"2,keyasint"`
+	Sequence          int            `cbor:"3,keyasint"`
+	Stake             int64          `cbor:"4,keyasint"`
+	LastBondingHeight int            `cbor:"5,keyasint"`
+	UnbondingHeight   int            `cbor:"6,keyasint"`
+	LastJoinedHeight  int            `cbor:"7,keyasint"`
 }
 
-func NewValidator(publicKey *bls.BLSPublicKey, number int) *Validator {
+func NewValidator(publicKey *bls.PublicKey, number int) *Validator {
 	val := &Validator{
 		data: validatorData{
 			PublicKey: publicKey,
@@ -34,14 +34,14 @@ func NewValidator(publicKey *bls.BLSPublicKey, number int) *Validator {
 	return val
 }
 
-func (val *Validator) PublicKey() *bls.BLSPublicKey { return val.data.PublicKey }
-func (val *Validator) Address() crypto.Address      { return val.data.PublicKey.Address() }
-func (val *Validator) Number() int                  { return val.data.Number }
-func (val *Validator) Sequence() int                { return val.data.Sequence }
-func (val *Validator) Stake() int64                 { return val.data.Stake }
-func (val *Validator) LastBondingHeight() int       { return val.data.LastBondingHeight }
-func (val *Validator) UnbondingHeight() int         { return val.data.UnbondingHeight }
-func (val *Validator) LastJoinedHeight() int        { return val.data.LastJoinedHeight }
+func (val *Validator) PublicKey() *bls.PublicKey { return val.data.PublicKey }
+func (val *Validator) Address() crypto.Address   { return val.data.PublicKey.Address() }
+func (val *Validator) Number() int               { return val.data.Number }
+func (val *Validator) Sequence() int             { return val.data.Sequence }
+func (val *Validator) Stake() int64              { return val.data.Stake }
+func (val *Validator) LastBondingHeight() int    { return val.data.LastBondingHeight }
+func (val *Validator) UnbondingHeight() int      { return val.data.UnbondingHeight }
+func (val *Validator) LastJoinedHeight() int     { return val.data.LastJoinedHeight }
 
 func (val Validator) Power() int64 {
 	//if the validator requested to unbond ignore stake
@@ -84,7 +84,7 @@ func (val *Validator) Hash() hash.Hash {
 	if err != nil {
 		panic(err)
 	}
-	return hash.HashH(bs)
+	return hash.CalcHash(bs)
 }
 
 ///----  methods

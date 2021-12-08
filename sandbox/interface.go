@@ -15,7 +15,7 @@ type Sandbox interface {
 	UpdateAccount(*account.Account)
 
 	Validator(crypto.Address) *validator.Validator
-	MakeNewValidator(*bls.BLSPublicKey) *validator.Validator
+	MakeNewValidator(*bls.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
 	IsInCommittee(crypto.Address) bool
 
