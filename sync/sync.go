@@ -370,6 +370,10 @@ func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 		return false
 	}
 
+	if !p.HasPublicKey() {
+		return false
+	}
+
 	addr := p.PublicKey().Address()
 	return sync.state.IsInCommittee(addr)
 }

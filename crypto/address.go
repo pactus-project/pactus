@@ -135,7 +135,10 @@ func (addr Address) EqualsTo(right Address) bool {
 /// For tests
 func GenerateTestAddress() Address {
 	data := make([]byte, 20)
-	rand.Read(data)
+	_, err := rand.Read(data)
+	if err != nil {
+		panic(err)
+	}
 	addr, _ := AddressFromRawBytes(data)
 	return addr
 }

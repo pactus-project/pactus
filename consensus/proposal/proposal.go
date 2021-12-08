@@ -16,10 +16,10 @@ type Proposal struct {
 	data proposalData
 }
 type proposalData struct {
-	Height    int              `cbor:"1,keyasint"`
-	Round     int              `cbor:"2,keyasint"`
-	Block     *block.Block     `cbor:"3,keyasint"`
-	Signature crypto.Signature `cbor:"4,keyasint"`
+	Height    int               `cbor:"1,keyasint"`
+	Round     int               `cbor:"2,keyasint"`
+	Block     *block.Block      `cbor:"3,keyasint"`
+	Signature *bls.BLSSignature `cbor:"4,keyasint"`
 }
 
 func NewProposal(height int, round int, block *block.Block) *Proposal {
@@ -56,7 +56,7 @@ func (p *Proposal) SanityCheck() error {
 }
 
 func (p *Proposal) SetSignature(sig crypto.Signature) {
-	p.data.Signature = sig
+	p.data.Signature = sig.(*bls.BLSSignature)
 }
 
 // SetPublicKey is doing nothing and just satisfies SignableMsg interface
