@@ -29,7 +29,7 @@ struct Certificate {
 
 struct Block {
   header              @0 :Header;
-  lastCertificate     @1 :Certificate;
+  prevCertificate     @1 :Certificate;
   txs                 @2 :Txs;
 }
 

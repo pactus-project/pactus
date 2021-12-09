@@ -46,9 +46,9 @@ func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error 
 	cb, _ := res.NewBlock()
 	ch, _ := cb.NewHeader()
 	ctxs, _ := cb.NewTxs()
-	clc, _ := cb.NewLastCertificate()
+	clc, _ := cb.NewPrevCertificate()
 
-	// last commit
+	// previous certificate
 	if block.PrevCertificate() != nil {
 		if err := clc.SetBlockHash(block.PrevCertificate().BlockHash().RawBytes()); err != nil {
 			return err
