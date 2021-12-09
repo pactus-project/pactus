@@ -479,7 +479,8 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/zarbTransactionInfo"
-          }
+          },
+          "title": "TODO: prev certificate is missed"
         }
       }
     },

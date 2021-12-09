@@ -66,6 +66,7 @@ message BlockResponse {
   string hash = 1;
   google.protobuf.Timestamp block_time = 2;
   BlockInfo info = 3;
+  // TODO: prev certificate is missed
   repeated TransactionInfo tranactions = 5;
 }
 

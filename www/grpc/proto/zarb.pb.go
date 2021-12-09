@@ -506,10 +506,11 @@ type BlockResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hash        string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	BlockTime   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"`
-	Info        *BlockInfo             `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty"`
-	Tranactions []*TransactionInfo     `protobuf:"bytes,5,rep,name=tranactions,proto3" json:"tranactions,omitempty"`
+	Hash      string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	BlockTime *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"`
+	Info      *BlockInfo             `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty"`
+	// TODO: prev certificate is missed
+	Tranactions []*TransactionInfo `protobuf:"bytes,5,rep,name=tranactions,proto3" json:"tranactions,omitempty"`
 }
 
 func (x *BlockResponse) Reset() {
