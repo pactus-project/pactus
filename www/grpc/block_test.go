@@ -40,7 +40,7 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, h, b1.Hash())
 		assert.NotEmpty(t, res.Info)
-		assert.Equal(t, b1.LastCertificate().Signature().String(), res.Info.Signature)
+		assert.Equal(t, b1.PrevCertificate().Signature().String(), res.Info.Signature)
 		assert.Empty(t, res.Tranactions)
 	})
 
@@ -52,7 +52,7 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, h, b1.Hash())
 		assert.NotEmpty(t, res.Info)
-		assert.Equal(t, b1.LastCertificate().Signature().String(), res.Info.Signature)
+		assert.Equal(t, b1.PrevCertificate().Signature().String(), res.Info.Signature)
 		assert.NotEmpty(t, res.Tranactions)
 		assert.Equal(t, int(trxs[0].PayloadType()), int(res.Tranactions[0].Type)) //enums starting 1
 		assert.Equal(t, trxs[0].ID().String(), res.Tranactions[0].Id)

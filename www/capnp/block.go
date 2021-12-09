@@ -49,20 +49,20 @@ func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error 
 	clc, _ := cb.NewLastCertificate()
 
 	// last commit
-	if block.LastCertificate() != nil {
-		if err := clc.SetBlockHash(block.LastCertificate().BlockHash().RawBytes()); err != nil {
+	if block.PrevCertificate() != nil {
+		if err := clc.SetBlockHash(block.PrevCertificate().BlockHash().RawBytes()); err != nil {
 			return err
 		}
-		clc.SetRound(uint32(block.LastCertificate().Round()))
-		if err := clc.SetSignature(block.LastCertificate().Signature().RawBytes()); err != nil {
+		clc.SetRound(uint32(block.PrevCertificate().Round()))
+		if err := clc.SetSignature(block.PrevCertificate().Signature().RawBytes()); err != nil {
 			return err
 		}
-		committers, _ := clc.NewCommitters(int32(len(block.LastCertificate().Committers())))
-		for i, num := range block.LastCertificate().Committers() {
+		committers, _ := clc.NewCommitters(int32(len(block.PrevCertificate().Committers())))
+		for i, num := range block.PrevCertificate().Committers() {
 			committers.Set(i, int32(num))
 		}
-		absentees, _ := clc.NewAbsentees(int32(len(block.LastCertificate().Absentees())))
-		for i, num := range block.LastCertificate().Absentees() {
+		absentees, _ := clc.NewAbsentees(int32(len(block.PrevCertificate().Absentees())))
+		for i, num := range block.PrevCertificate().Absentees() {
 			absentees.Set(i, int32(num))
 		}
 	}
@@ -75,10 +75,10 @@ func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error 
 	if err := ch.SetStateHash(block.Header().StateHash().RawBytes()); err != nil {
 		return err
 	}
-	if err := ch.SetLastBlockHash(block.Header().LastBlockHash().RawBytes()); err != nil {
+	if err := ch.SetPrevBlockHash(block.Header().PrevBlockHash().RawBytes()); err != nil {
 		return err
 	}
-	if err := ch.SetLastCertificateHash(block.Header().LastCertificateHash().RawBytes()); err != nil {
+	if err := ch.SetPrevCertificateHash(block.Header().PrevCertificateHash().RawBytes()); err != nil {
 		return err
 	}
 	if err := ch.SetProposerAddress(block.Header().ProposerAddress().RawBytes()); err != nil {

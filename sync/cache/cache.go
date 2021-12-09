@@ -78,7 +78,7 @@ func (c *Cache) GetBlock(height int) *block.Block {
 
 func (c *Cache) AddBlock(height int, block *block.Block) {
 	c.cache.Add(blockKey(height), block)
-	c.AddCertificate(block.LastCertificate())
+	c.AddCertificate(block.PrevCertificate())
 }
 
 func (c *Cache) AddBlocks(height int, blocks []*block.Block) {

@@ -529,9 +529,9 @@ func TestInvalidBlockTime(t *testing.T) {
 		validBlock.Header().Version(),
 		validBlock.Header().Time().Add(30*time.Second),
 		validBlock.TxIDs(),
-		validBlock.Header().LastBlockHash(),
+		validBlock.Header().PrevBlockHash(),
 		validBlock.Header().StateHash(),
-		validBlock.LastCertificate(),
+		validBlock.PrevCertificate(),
 		validBlock.Header().SortitionSeed(),
 		validBlock.Header().ProposerAddress())
 

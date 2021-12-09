@@ -10,14 +10,14 @@ import (
 type HeartBeatPayload struct {
 	Height        int       `cbor:"1,keyasint"`
 	Round         int       `cbor:"2,keyasint"`
-	LastBlockHash hash.Hash `cbor:"3,keyasint"`
+	PrevBlockHash hash.Hash `cbor:"3,keyasint"`
 }
 
 func NewHeartBeatPayload(h, r int, hash hash.Hash) Payload {
 	return &HeartBeatPayload{
 		Height:        h,
 		Round:         r,
-		LastBlockHash: hash,
+		PrevBlockHash: hash,
 	}
 }
 

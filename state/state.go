@@ -331,8 +331,8 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
 	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
 	/// We should never have a fork in our blockchain. but if it happens, here we can catch it.
-	if !block.Header().LastBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
-		st.logger.Panic("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().LastBlockHash())
+	if !block.Header().PrevBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
+		st.logger.Panic("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().PrevBlockHash())
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 

@@ -205,10 +205,10 @@ func TestBlockValidation(t *testing.T) {
 	//
 	// Version   			(OK)
 	// UnixTime				(TestValidateBlockTime)
-	// LastBlockHash		(OK)
+	// PrevBlockHash		(OK)
 	// StateHash			(OK)
 	// TxIDsHash			(SanityCheck)
-	// LastCertificateHash	(OK)
+	// PrevCertificateHash	(OK)
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)
 	//

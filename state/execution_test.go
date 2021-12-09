@@ -40,7 +40,7 @@ func TestProposeBlock(t *testing.T) {
 	assert.NoError(t, tState1.txPool.AppendTx(trx2))
 
 	b2, c2 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
-	assert.Equal(t, b2.Header().LastBlockHash(), b1.Hash())
+	assert.Equal(t, b2.Header().PrevBlockHash(), b1.Hash())
 	assert.Equal(t, b2.TxIDs().IDs()[1:], []hash.Hash{trx1.ID(), trx2.ID()})
 	assert.NoError(t, tState1.CommitBlock(2, b2, c2))
 

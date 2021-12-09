@@ -58,23 +58,23 @@ func TestPublicKeyFromString(t *testing.T) {
 }
 
 func TestMarshalingEmptyPublicKey(t *testing.T) {
-	pb1 := PublicKey{}
+	pub1 := PublicKey{}
 
-	js, err := json.Marshal(pb1)
+	js, err := json.Marshal(pub1)
 	assert.NoError(t, err)
 	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
-	var pb2 PublicKey
-	err = json.Unmarshal(js, &pb2)
+	var pub2 PublicKey
+	err = json.Unmarshal(js, &pub2)
 	assert.Error(t, err)
 
-	bs, err := pb1.MarshalCBOR()
+	bs, err := pub1.MarshalCBOR()
 	assert.Error(t, err)
 
-	var pb3 PublicKey
-	err = pb3.UnmarshalCBOR(bs)
+	var pub3 PublicKey
+	err = pub3.UnmarshalCBOR(bs)
 	assert.Error(t, err)
 
-	assert.Equal(t, pb1.Address().String(), "zrb15y7u67dfcrsgsvtmrzwgseqlf2m8r2c44atckj")
+	assert.Equal(t, pub1.Address().String(), "zrb15y7u67dfcrsgsvtmrzwgseqlf2m8r2c44atckj")
 }
 
 func TestPublicKeyToAddress(t *testing.T) {

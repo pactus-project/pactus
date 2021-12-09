@@ -43,8 +43,8 @@ func TestCacheBlock(t *testing.T) {
 
 	assert.NotNil(t, tCache.GetBlock(1).Hash(), b1.Hash())
 	assert.NotNil(t, tCache.GetBlock(2).Hash(), b2.Hash())
-	assert.NotNil(t, tCache.GetCertificate(b1.Header().LastBlockHash()).Hash())
-	assert.NotNil(t, tCache.GetCertificate(b2.Header().LastBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash())
 	assert.Nil(t, tCache.GetBlock(4))
 }
 
@@ -56,8 +56,8 @@ func TestCacheBlocks(t *testing.T) {
 
 	tCache.AddBlocks(1, []*block.Block{b1, b2})
 
-	assert.NotNil(t, tCache.GetCertificate(b1.Header().LastBlockHash()).Hash())
-	assert.NotNil(t, tCache.GetCertificate(b2.Header().LastBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash())
 }
 
 func TestGetTransaction(t *testing.T) {

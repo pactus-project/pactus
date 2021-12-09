@@ -7,10 +7,10 @@ $Go.import("capnp");
 struct Header {
   version             @0 :Int32;
   time                @1 :Int64;
-  lastBlockHash       @2 :Data;
+  prevBlockHash       @2 :Data;
   stateHash           @3 :Data;
   txsHash             @4 :Data;
-  lastCertificateHash @5 :Data;
+  prevCertificateHash @5 :Data;
   sortitionSeed       @6 :Data;
   proposerAddress     @7 :Data;
 }

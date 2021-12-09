@@ -232,7 +232,7 @@ func (sb *Concrete) EnterCommittee(blockHash hash.Hash, addr crypto.Address) err
 	if err != nil {
 		return errors.Errorf(errors.ErrGeneric, "invalid block hash")
 	}
-	committers := b.LastCertificate().Committers()
+	committers := b.PrevCertificate().Committers()
 	for _, num := range committers {
 		if valS.Validator.Number() == num {
 			return errors.Errorf(errors.ErrGeneric, "this validator was in the committee in time of sending the sortition")
@@ -291,7 +291,7 @@ func (sb *Concrete) CurrentHeight() int {
 	return sb.lastHeight + 1
 }
 
-func (sb *Concrete) LastBlockHash() hash.Hash {
+func (sb *Concrete) PrevBlockHash() hash.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 

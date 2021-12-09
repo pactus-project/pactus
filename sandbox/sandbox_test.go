@@ -37,23 +37,23 @@ func setup(t *testing.T) {
 		tStore.SaveBlock(i+1, b)
 	}
 
-	pub1, priv1 := bls.GenerateTestKeyPair()
-	pub2, priv2 := bls.GenerateTestKeyPair()
-	pub3, priv3 := bls.GenerateTestKeyPair()
-	pub4, priv4 := bls.GenerateTestKeyPair()
-	pub5, priv5 := bls.GenerateTestKeyPair()
-	pub6, priv6 := bls.GenerateTestKeyPair()
-	pub7, priv7 := bls.GenerateTestKeyPair()
-	pub8, priv8 := bls.GenerateTestKeyPair()
+	pub1, prv1 := bls.GenerateTestKeyPair()
+	pub2, prv2 := bls.GenerateTestKeyPair()
+	pub3, prv3 := bls.GenerateTestKeyPair()
+	pub4, prv4 := bls.GenerateTestKeyPair()
+	pub5, prv5 := bls.GenerateTestKeyPair()
+	pub6, prv6 := bls.GenerateTestKeyPair()
+	pub7, prv7 := bls.GenerateTestKeyPair()
+	pub8, prv8 := bls.GenerateTestKeyPair()
 
-	tValSigners[0] = crypto.NewSigner(priv1)
-	tValSigners[1] = crypto.NewSigner(priv2)
-	tValSigners[2] = crypto.NewSigner(priv3)
-	tValSigners[3] = crypto.NewSigner(priv4)
-	tValSigners[4] = crypto.NewSigner(priv5)
-	tValSigners[5] = crypto.NewSigner(priv6)
-	tValSigners[6] = crypto.NewSigner(priv7)
-	tValSigners[7] = crypto.NewSigner(priv8)
+	tValSigners[0] = crypto.NewSigner(prv1)
+	tValSigners[1] = crypto.NewSigner(prv2)
+	tValSigners[2] = crypto.NewSigner(prv3)
+	tValSigners[3] = crypto.NewSigner(prv4)
+	tValSigners[4] = crypto.NewSigner(prv5)
+	tValSigners[5] = crypto.NewSigner(prv6)
+	tValSigners[6] = crypto.NewSigner(prv7)
+	tValSigners[7] = crypto.NewSigner(prv8)
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
@@ -176,7 +176,7 @@ func TestValidatorChange(t *testing.T) {
 func TestAddValidatorToCommittee(t *testing.T) {
 	setup(t)
 
-	stamp := tSandbox.LastBlockHash()
+	stamp := tSandbox.PrevBlockHash()
 	height := tSandbox.CurrentHeight()
 
 	t.Run("Add unknown validator to the committee, Should returns error", func(t *testing.T) {
@@ -213,7 +213,7 @@ func TestAddValidatorToCommittee(t *testing.T) {
 		tSandbox.params.CommitteeSize = 4
 
 		b, _ := tStore.Block(height - 3)
-		num := b.LastCertificate().Committers()[2]
+		num := b.PrevCertificate().Committers()[2]
 		pub, _ := bls.GenerateTestKeyPair()
 		val := validator.NewValidator(pub, num)
 		tStore.UpdateValidator(val)

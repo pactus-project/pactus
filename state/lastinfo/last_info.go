@@ -276,7 +276,7 @@ func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Co
 			}
 		}
 		curCommitters = cert.Committers()
-		cert = b.LastCertificate()
+		cert = b.PrevCertificate()
 	}
 
 	for i := len(params) - 1; i >= 0; i-- {

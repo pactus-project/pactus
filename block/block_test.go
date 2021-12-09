@@ -27,15 +27,15 @@ func TestBlockSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.LastBlockHash = hash.UndefHash
+	b.data.Header.data.PrevBlockHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.Header.data.LastCertificateHash = hash.UndefHash
+	b.data.Header.data.PrevCertificateHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.LastCertificate = GenerateTestCertificate(hash.UndefHash)
+	b.data.PrevCertificate = GenerateTestCertificate(hash.UndefHash)
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
@@ -43,7 +43,7 @@ func TestBlockSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
-	b.data.LastCertificate = nil
+	b.data.PrevCertificate = nil
 	assert.Error(t, b.SanityCheck())
 }
 
@@ -131,7 +131,7 @@ func TestSanityCheck(t *testing.T) {
 		}()
 
 		MakeBlock(1, util.Now(), tmp.TxIDs(),
-			tmp.Header().LastBlockHash(),
+			tmp.Header().PrevBlockHash(),
 			tmp.Header().StateHash(),
 			nil,
 			tmp.Header().SortitionSeed(),

@@ -60,10 +60,10 @@ func init() {
 }
 
 func setup(t *testing.T) {
-	_, priv1 := bls.GenerateTestKeyPair()
-	_, priv2 := bls.GenerateTestKeyPair()
-	aliceSigner := crypto.NewSigner(priv1)
-	bobSigner := crypto.NewSigner(priv2)
+	_, prv1 := bls.GenerateTestKeyPair()
+	_, prv2 := bls.GenerateTestKeyPair()
+	aliceSigner := crypto.NewSigner(prv1)
+	bobSigner := crypto.NewSigner(prv2)
 
 	committee, _ := committee.GenerateTestCommittee()
 	tAlicePeerID = util.RandomPeerID()
@@ -80,11 +80,11 @@ func setup(t *testing.T) {
 	tBobState.GenHash = tAliceState.GenHash
 
 	// Apply 20 blocks for both Alice and Bob
-	lastBlockHash := hash.Hash{}
+	prevBlockHash := hash.Hash{}
 	for i := 0; i < 21; i++ {
-		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
+		b, trxs := block.GenerateTestBlock(nil, &prevBlockHash)
 		c := block.GenerateTestCertificate(b.Hash())
-		lastBlockHash = b.Hash()
+		prevBlockHash = b.Hash()
 
 		tAliceState.AddBlock(i+1, b, trxs)
 		tAliceState.LastBlockCertificate = c
