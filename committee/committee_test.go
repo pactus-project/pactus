@@ -5,12 +5,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
 func TestContains(t *testing.T) {
 	committee, signers := GenerateTestCommittee()
-	nonExist, _, _ := crypto.GenerateTestKeyPair()
+	nonExist := crypto.GenerateTestAddress()
 
 	assert.True(t, committee.Contains(signers[0].Address()))
 	assert.False(t, committee.Contains(nonExist))
@@ -40,13 +41,13 @@ func TestInvalidProposerJoinAndLeave(t *testing.T) {
 }
 
 func TestProposerMove(t *testing.T) {
-	_, pub1, _ := crypto.GenerateTestKeyPair()
-	_, pub2, _ := crypto.GenerateTestKeyPair()
-	_, pub3, _ := crypto.GenerateTestKeyPair()
-	_, pub4, _ := crypto.GenerateTestKeyPair()
-	_, pub5, _ := crypto.GenerateTestKeyPair()
-	_, pub6, _ := crypto.GenerateTestKeyPair()
-	_, pub7, _ := crypto.GenerateTestKeyPair()
+	pub1, _ := bls.GenerateTestKeyPair()
+	pub2, _ := bls.GenerateTestKeyPair()
+	pub3, _ := bls.GenerateTestKeyPair()
+	pub4, _ := bls.GenerateTestKeyPair()
+	pub5, _ := bls.GenerateTestKeyPair()
+	pub6, _ := bls.GenerateTestKeyPair()
+	pub7, _ := bls.GenerateTestKeyPair()
 
 	val1 := validator.NewValidator(pub1, 1)
 	val2 := validator.NewValidator(pub2, 2)
@@ -81,13 +82,13 @@ func TestProposerMove(t *testing.T) {
 }
 
 func TestProposerJoin(t *testing.T) {
-	_, pub1, _ := crypto.GenerateTestKeyPair()
-	_, pub2, _ := crypto.GenerateTestKeyPair()
-	_, pub3, _ := crypto.GenerateTestKeyPair()
-	_, pub4, _ := crypto.GenerateTestKeyPair()
-	_, pub5, _ := crypto.GenerateTestKeyPair()
-	_, pub6, _ := crypto.GenerateTestKeyPair()
-	_, pub7, _ := crypto.GenerateTestKeyPair()
+	pub1, _ := bls.GenerateTestKeyPair()
+	pub2, _ := bls.GenerateTestKeyPair()
+	pub3, _ := bls.GenerateTestKeyPair()
+	pub4, _ := bls.GenerateTestKeyPair()
+	pub5, _ := bls.GenerateTestKeyPair()
+	pub6, _ := bls.GenerateTestKeyPair()
+	pub7, _ := bls.GenerateTestKeyPair()
 
 	val1 := validator.NewValidator(pub1, 1)
 	val2 := validator.NewValidator(pub2, 2)
@@ -136,19 +137,19 @@ func TestProposerJoin(t *testing.T) {
 }
 
 func TestProposerJoinAndLeave(t *testing.T) {
-	_, pub1, _ := crypto.GenerateTestKeyPair()
-	_, pub2, _ := crypto.GenerateTestKeyPair()
-	_, pub3, _ := crypto.GenerateTestKeyPair()
-	_, pub4, _ := crypto.GenerateTestKeyPair()
-	_, pub5, _ := crypto.GenerateTestKeyPair()
-	_, pub6, _ := crypto.GenerateTestKeyPair()
-	_, pub7, _ := crypto.GenerateTestKeyPair()
-	_, pub8, _ := crypto.GenerateTestKeyPair()
-	_, pub9, _ := crypto.GenerateTestKeyPair()
-	_, pubA, _ := crypto.GenerateTestKeyPair()
-	_, pubB, _ := crypto.GenerateTestKeyPair()
-	_, pubC, _ := crypto.GenerateTestKeyPair()
-	_, pubD, _ := crypto.GenerateTestKeyPair()
+	pub1, _ := bls.GenerateTestKeyPair()
+	pub2, _ := bls.GenerateTestKeyPair()
+	pub3, _ := bls.GenerateTestKeyPair()
+	pub4, _ := bls.GenerateTestKeyPair()
+	pub5, _ := bls.GenerateTestKeyPair()
+	pub6, _ := bls.GenerateTestKeyPair()
+	pub7, _ := bls.GenerateTestKeyPair()
+	pub8, _ := bls.GenerateTestKeyPair()
+	pub9, _ := bls.GenerateTestKeyPair()
+	pubA, _ := bls.GenerateTestKeyPair()
+	pubB, _ := bls.GenerateTestKeyPair()
+	pubC, _ := bls.GenerateTestKeyPair()
+	pubD, _ := bls.GenerateTestKeyPair()
 
 	val1 := validator.NewValidator(pub1, 1)
 	val2 := validator.NewValidator(pub2, 2)
@@ -296,7 +297,7 @@ func TestSortJoined(t *testing.T) {
 }
 
 func TestTotalPower(t *testing.T) {
-	_, pub, _ := crypto.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
 	val0 := validator.NewValidator(pub, 0) // Bootstrap validator
 	val1, _ := validator.GenerateTestValidator(0)
 	val2, _ := validator.GenerateTestValidator(1)

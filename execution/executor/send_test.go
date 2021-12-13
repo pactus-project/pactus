@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
@@ -30,15 +32,16 @@ func setup(t *testing.T) {
 	acc0.AddToBalance(tTotalCoin - 10000000000 - 5000000000)
 	tSandbox.UpdateAccount(acc0)
 
-	signer1 := crypto.GenerateTestSigner()
-	tValSigner = crypto.GenerateTestSigner()
+	signer1 := bls.GenerateTestSigner()
+	pub, prv := bls.GenerateTestKeyPair()
+	tValSigner = crypto.NewSigner(prv)
 
 	tAcc1 = account.NewAccount(signer1.Address(), 0)
 	tAcc1.AddToBalance(10000000000)
 	tSandbox.UpdateAccount(tAcc1)
 	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), int64(10000000000))
 
-	tVal1 = validator.NewValidator(tValSigner.PublicKey(), 0)
+	tVal1 = validator.NewValidator(pub, 0)
 	tVal1.AddToStake(5000000000)
 	tSandbox.UpdateValidator(tVal1)
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), int64(5000000000))
@@ -60,9 +63,9 @@ func TestExecuteSendTx(t *testing.T) {
 	setup(t)
 	exe := NewSendExecutor(true)
 
-	sender := crypto.GenerateTestSigner()
-	receiver := crypto.GenerateTestSigner()
-	stamp := crypto.GenerateTestHash()
+	sender := bls.GenerateTestSigner()
+	receiver := bls.GenerateTestSigner()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
@@ -122,10 +125,10 @@ func TestSendNonStrictMode(t *testing.T) {
 	setup(t)
 	exe1 := NewSendExecutor(false)
 
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
-	receiver1, _, _ := crypto.GenerateTestKeyPair()
-	receiver2, _, _ := crypto.GenerateTestKeyPair()
+	receiver1 := crypto.GenerateTestAddress()
+	receiver2 := crypto.GenerateTestAddress()
 
 	mintbase1 := tx.NewMintbaseTx(stamp, 101, receiver1, 5, "")
 	mintbase2 := tx.NewMintbaseTx(stamp, 101, receiver2, 5, "")

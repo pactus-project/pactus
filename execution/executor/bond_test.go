@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -13,12 +14,13 @@ func TestExecuteBondTx(t *testing.T) {
 	exe := NewBondExecutor(true)
 
 	bonder := tAcc1.Address()
-	addr, pub, _ := crypto.GenerateTestKeyPair()
-	stamp := crypto.GenerateTestHash()
+	pub, _ := bls.GenerateTestKeyPair()
+	addr := pub.Address()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 
 	t.Run("Should fail, Invalid bonder", func(t *testing.T) {
-		trx := tx.NewBondTx(stamp, 1, addr, pub, 1000, 1000, "invalid bonder")
+		trx := tx.NewBondTx(stamp, 1, pub.Address(), pub, 1000, 1000, "invalid bonder")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
@@ -54,7 +56,7 @@ func TestExecuteBondTx(t *testing.T) {
 	assert.Equal(t, tSandbox.Account(bonder).Balance(), int64(10000000000-2000))
 	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(1000))
 	assert.Equal(t, tSandbox.Validator(addr).LastBondingHeight(), 101)
-	tSandbox.AppendStampAndUpdateHeight(101, crypto.GenerateTestHash())
+	tSandbox.AppendStampAndUpdateHeight(101, hash.GenerateTestHash())
 
 	t.Run("Should be able to rebond if hasn't ever unbonded", func(t *testing.T) {
 		tSandbox.InCommittee = false
@@ -66,7 +68,7 @@ func TestExecuteBondTx(t *testing.T) {
 	assert.Equal(t, tSandbox.Validator(addr).Power(), int64(2000))
 	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(2000))
 	assert.Equal(t, tSandbox.Validator(addr).LastBondingHeight(), 102)
-	tSandbox.AppendStampAndUpdateHeight(102, crypto.GenerateTestHash())
+	tSandbox.AppendStampAndUpdateHeight(102, hash.GenerateTestHash())
 
 	t.Run("Shouldn't be able to rebond after unbonding", func(t *testing.T) {
 		tSandbox.InCommittee = false
@@ -95,10 +97,10 @@ func TestBondNonStrictMode(t *testing.T) {
 	exe1 := NewBondExecutor(false)
 
 	tSandbox.InCommittee = true
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(100, stamp)
 	bonder := tAcc1.Address()
-	_, pub, _ := crypto.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
 
 	mintbase1 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
 	mintbase2 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")

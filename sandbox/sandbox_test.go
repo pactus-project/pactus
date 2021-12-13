@@ -8,6 +8,8 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -35,23 +37,23 @@ func setup(t *testing.T) {
 		tStore.SaveBlock(i+1, b)
 	}
 
-	_, pub1, priv1 := crypto.GenerateTestKeyPair()
-	_, pub2, priv2 := crypto.GenerateTestKeyPair()
-	_, pub3, priv3 := crypto.GenerateTestKeyPair()
-	_, pub4, priv4 := crypto.GenerateTestKeyPair()
-	_, pub5, priv5 := crypto.GenerateTestKeyPair()
-	_, pub6, priv6 := crypto.GenerateTestKeyPair()
-	_, pub7, priv7 := crypto.GenerateTestKeyPair()
-	_, pub8, priv8 := crypto.GenerateTestKeyPair()
+	pub1, prv1 := bls.GenerateTestKeyPair()
+	pub2, prv2 := bls.GenerateTestKeyPair()
+	pub3, prv3 := bls.GenerateTestKeyPair()
+	pub4, prv4 := bls.GenerateTestKeyPair()
+	pub5, prv5 := bls.GenerateTestKeyPair()
+	pub6, prv6 := bls.GenerateTestKeyPair()
+	pub7, prv7 := bls.GenerateTestKeyPair()
+	pub8, prv8 := bls.GenerateTestKeyPair()
 
-	tValSigners[0] = crypto.NewSigner(priv1)
-	tValSigners[1] = crypto.NewSigner(priv2)
-	tValSigners[2] = crypto.NewSigner(priv3)
-	tValSigners[3] = crypto.NewSigner(priv4)
-	tValSigners[4] = crypto.NewSigner(priv5)
-	tValSigners[5] = crypto.NewSigner(priv6)
-	tValSigners[6] = crypto.NewSigner(priv7)
-	tValSigners[7] = crypto.NewSigner(priv8)
+	tValSigners[0] = crypto.NewSigner(prv1)
+	tValSigners[1] = crypto.NewSigner(prv2)
+	tValSigners[2] = crypto.NewSigner(prv3)
+	tValSigners[3] = crypto.NewSigner(prv4)
+	tValSigners[4] = crypto.NewSigner(prv5)
+	tValSigners[5] = crypto.NewSigner(prv6)
+	tValSigners[6] = crypto.NewSigner(prv7)
+	tValSigners[7] = crypto.NewSigner(prv8)
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
@@ -101,7 +103,7 @@ func TestAccountChange(t *testing.T) {
 	setup(t)
 
 	t.Run("Should returns nil for invalid address", func(t *testing.T) {
-		invAddr, _, _ := crypto.GenerateTestKeyPair()
+		invAddr := crypto.GenerateTestAddress()
 		assert.Nil(t, tSandbox.Account(invAddr))
 	})
 
@@ -121,7 +123,7 @@ func TestAccountChange(t *testing.T) {
 	})
 
 	t.Run("Make new account", func(t *testing.T) {
-		addr, _, _ := crypto.GenerateTestKeyPair()
+		addr := crypto.GenerateTestAddress()
 		acc2 := tSandbox.MakeNewAccount(addr)
 
 		acc2.IncSequence()
@@ -137,7 +139,7 @@ func TestValidatorChange(t *testing.T) {
 	setup(t)
 
 	t.Run("Should returns nil for invalid address", func(t *testing.T) {
-		invAddr, _, _ := crypto.GenerateTestKeyPair()
+		invAddr := crypto.GenerateTestAddress()
 		assert.Nil(t, tSandbox.Validator(invAddr))
 	})
 
@@ -159,7 +161,7 @@ func TestValidatorChange(t *testing.T) {
 	})
 
 	t.Run("Make new validator", func(t *testing.T) {
-		_, pub, _ := crypto.GenerateTestKeyPair()
+		pub, _ := bls.GenerateTestKeyPair()
 		val2 := tSandbox.MakeNewValidator(pub)
 
 		val2.IncSequence()
@@ -174,7 +176,7 @@ func TestValidatorChange(t *testing.T) {
 func TestAddValidatorToCommittee(t *testing.T) {
 	setup(t)
 
-	stamp := tSandbox.LastBlockHash()
+	stamp := tSandbox.PrevBlockHash()
 	height := tSandbox.CurrentHeight()
 
 	t.Run("Add unknown validator to the committee, Should returns error", func(t *testing.T) {
@@ -188,9 +190,9 @@ func TestAddValidatorToCommittee(t *testing.T) {
 	})
 
 	t.Run("Invalid block hash, Should returns error", func(t *testing.T) {
-		_, pub1, _ := crypto.GenerateTestKeyPair()
+		pub1, _ := bls.GenerateTestKeyPair()
 		val := tSandbox.MakeNewValidator(pub1)
-		assert.Error(t, tSandbox.EnterCommittee(crypto.GenerateTestHash(), val.Address()))
+		assert.Error(t, tSandbox.EnterCommittee(hash.GenerateTestHash(), val.Address()))
 	})
 
 	t.Run("More than 1/3 stake, Should returns error", func(t *testing.T) {
@@ -211,11 +213,11 @@ func TestAddValidatorToCommittee(t *testing.T) {
 		tSandbox.params.CommitteeSize = 4
 
 		b, _ := tStore.Block(height - 3)
-		num := b.LastCertificate().Committers()[2]
-		addr, pub, _ := crypto.GenerateTestKeyPair()
+		num := b.PrevCertificate().Committers()[2]
+		pub, _ := bls.GenerateTestKeyPair()
 		val := validator.NewValidator(pub, num)
 		tStore.UpdateValidator(val)
-		assert.Equal(t, tSandbox.Validator(addr), val)
+		assert.Equal(t, tSandbox.Validator(pub.Address()), val)
 
 		assert.Error(t, tSandbox.EnterCommittee(stamp, val.Address()))
 	})
@@ -249,13 +251,13 @@ func TestAddValidatorToCommittee(t *testing.T) {
 	t.Run("Update validator and add to committee", func(t *testing.T) {
 		tSandbox.params.CommitteeSize = 8
 
-		addr1, pub1, _ := crypto.GenerateTestKeyPair()
+		pub1, _ := bls.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub1)
 		assert.NoError(t, tSandbox.EnterCommittee(stamp, val1.Address()))
 		seq := val1.Sequence()
 		val1.IncSequence()
 		tSandbox.UpdateValidator(val1)
-		val := tSandbox.validators[addr1]
+		val := tSandbox.validators[pub1.Address()]
 		assert.True(t, val.JoinedCommittee)
 		assert.True(t, val.Updated)
 		assert.Equal(t, val.Validator.Sequence(), seq+1)
@@ -268,9 +270,9 @@ func TestTotalAccountCounter(t *testing.T) {
 	t.Run("Should update total account counter", func(t *testing.T) {
 		assert.Equal(t, tStore.TotalAccounts(), 1) // Sandbox has an account
 
-		addr, _, _ := crypto.GenerateTestKeyPair()
-		addr2, _, _ := crypto.GenerateTestKeyPair()
-		acc := tSandbox.MakeNewAccount(addr)
+		addr1 := crypto.GenerateTestAddress()
+		addr2 := crypto.GenerateTestAddress()
+		acc := tSandbox.MakeNewAccount(addr1)
 		assert.Equal(t, acc.Number(), 1)
 		acc2 := tSandbox.MakeNewAccount(addr2)
 		assert.Equal(t, acc2.Number(), 2)
@@ -284,8 +286,8 @@ func TestTotalValidatorCounter(t *testing.T) {
 	t.Run("Should update total validator counter", func(t *testing.T) {
 		assert.Equal(t, tStore.TotalValidators(), 8)
 
-		_, pub, _ := crypto.GenerateTestKeyPair()
-		_, pub2, _ := crypto.GenerateTestKeyPair()
+		pub, _ := bls.GenerateTestKeyPair()
+		pub2, _ := bls.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub)
 		val1.UpdateLastBondingHeight(tSandbox.CurrentHeight())
 		assert.Equal(t, val1.Number(), 8)
@@ -319,7 +321,7 @@ func TestCreateDuplicated(t *testing.T) {
 			}
 		}()
 		pub := tValSigners[3].PublicKey()
-		tSandbox.MakeNewValidator(pub)
+		tSandbox.MakeNewValidator(pub.(*bls.PublicKey))
 	})
 }
 
@@ -350,7 +352,8 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 func TestDeepCopy(t *testing.T) {
 	setup(t)
 
-	addr, pub, _ := crypto.GenerateTestKeyPair()
+	addr := crypto.GenerateTestAddress()
+	pub, _ := bls.GenerateTestKeyPair()
 	acc1 := tSandbox.MakeNewAccount(addr)
 	val1 := tSandbox.MakeNewValidator(pub)
 

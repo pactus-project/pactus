@@ -1,4 +1,4 @@
-package crypto
+package hash
 
 import (
 	"encoding/hex"
@@ -32,30 +32,30 @@ func TestHashMarshaling(t *testing.T) {
 }
 
 func TestHashFromBytes(t *testing.T) {
-	_, err := HashFromRawBytes(nil)
+	_, err := FromRawBytes(nil)
 	assert.Error(t, err)
 	hash1 := GenerateTestHash()
-	hash2, err := HashFromRawBytes(hash1.RawBytes())
+	hash2, err := FromRawBytes(hash1.RawBytes())
 	assert.NoError(t, err)
 	require.True(t, hash1.EqualsTo(hash2))
 
 	inv, _ := hex.DecodeString("0102")
-	_, err = HashFromRawBytes(inv)
+	_, err = FromRawBytes(inv)
 	assert.Error(t, err)
 }
 
 func TestHashFromString(t *testing.T) {
 	hash1 := GenerateTestHash()
-	hash2, err := HashFromString(hash1.String())
+	hash2, err := FromString(hash1.String())
 	assert.NoError(t, err)
 	require.True(t, hash1.EqualsTo(hash2))
 
-	_, err = HashFromString("inv")
+	_, err = FromString("inv")
 	assert.Error(t, err)
 }
 
 func TestUndefHash(t *testing.T) {
-	h, err := HashFromString("0000000000000000000000000000000000000000000000000000000000000000")
+	h, err := FromString("0000000000000000000000000000000000000000000000000000000000000000")
 	assert.NoError(t, err)
 	assert.True(t, h.IsUndef())
 	assert.Error(t, h.SanityCheck())
@@ -63,7 +63,7 @@ func TestUndefHash(t *testing.T) {
 }
 
 func TestEmptyHash(t *testing.T) {
-	expected, err := HashFromString("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8")
+	expected, err := FromString("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8")
 	assert.NoError(t, err)
 	var data = []byte{}
 	h := Hash256(data)

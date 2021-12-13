@@ -6,6 +6,8 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -15,10 +17,10 @@ type VoteSet struct {
 	round      int
 	voteType   vote.Type
 	validators []*validator.Validator
-	blockVotes map[crypto.Hash]*blockVotes
-	allVotes   map[crypto.Hash]*vote.Vote
+	blockVotes map[hash.Hash]*blockVotes
+	allVotes   map[hash.Hash]*vote.Vote
 	totalPower int64
-	quorumHash *crypto.Hash
+	quorumHash *hash.Hash
 }
 
 func NewVoteSet(height int, round int, voteType vote.Type, validators []*validator.Validator) *VoteSet {
@@ -33,8 +35,8 @@ func NewVoteSet(height int, round int, voteType vote.Type, validators []*validat
 		voteType:   voteType,
 		validators: validators,
 		totalPower: totalPower,
-		blockVotes: make(map[crypto.Hash]*blockVotes),
-		allVotes:   make(map[crypto.Hash]*vote.Vote),
+		blockVotes: make(map[hash.Hash]*blockVotes),
+		allVotes:   make(map[hash.Hash]*vote.Vote),
 	}
 }
 
@@ -63,7 +65,7 @@ func (vs *VoteSet) getValidatorByAddress(addr crypto.Address) *validator.Validat
 	return nil
 }
 
-func (vs *VoteSet) mustGetBlockVotes(blockhash crypto.Hash) *blockVotes {
+func (vs *VoteSet) mustGetBlockVotes(blockhash hash.Hash) *blockVotes {
 	bv, exists := vs.blockVotes[blockhash]
 	if !exists {
 		bv = newBlockVotes()
@@ -133,12 +135,12 @@ func (vs *VoteSet) hasOneThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 1 / 3)
 }
 
-func (vs *VoteSet) BlockHashHasOneThirdOfTotalPower(hash crypto.Hash) bool {
+func (vs *VoteSet) BlockHashHasOneThirdOfTotalPower(hash hash.Hash) bool {
 	blockVotes := vs.mustGetBlockVotes(hash)
 	return vs.hasOneThirdOfTotalPower(blockVotes.power)
 }
 
-func (vs *VoteSet) QuorumHash() *crypto.Hash {
+func (vs *VoteSet) QuorumHash() *hash.Hash {
 	return vs.quorumHash
 }
 
@@ -154,13 +156,13 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 	votesMap := vs.blockVotes[*blockHash].votes
 	committers := make([]int, len(vs.validators))
 	absentees := make([]int, 0)
-	sigs := make([]crypto.Signature, 0)
+	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vs.validators {
 		v := votesMap[val.Address()]
 
 		if v != nil {
-			sigs = append(sigs, *v.Signature())
+			sigs = append(sigs, v.Signature())
 		} else {
 			absentees = append(absentees, val.Number())
 		}
@@ -168,7 +170,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 		committers[i] = val.Number()
 	}
 
-	sig := crypto.Aggregate(sigs)
+	sig := bls.Aggregate(sigs)
 
 	return block.NewCertificate(*blockHash, vs.Round(), committers, absentees, sig)
 }

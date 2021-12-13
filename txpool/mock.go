@@ -1,7 +1,7 @@
 package txpool
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -58,7 +58,7 @@ func (m *MockTxPool) AppendTxAndBroadcast(t *tx.Tx) error {
 	return nil
 }
 
-func (m *MockTxPool) RemoveTx(id crypto.Hash) {
+func (m *MockTxPool) RemoveTx(id hash.Hash) {
 	// This pools is shared between different instances
 	// Lets keep txs then
 	//delete(m.txs, hash)

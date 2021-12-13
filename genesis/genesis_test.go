@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -48,7 +50,7 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, g.Accounts()[0].Address(), crypto.TreasuryAddress)
 	assert.Equal(t, g.Accounts()[0].Balance(), int64(2100000000000000))
 
-	expected, _ := crypto.HashFromString("a96c10618e92e5f0a02ad674da9918b1c0b17772bf263f2b331e1c539b4db357")
+	expected, _ := hash.FromString("a96c10618e92e5f0a02ad674da9918b1c0b17772bf263f2b331e1c539b4db357")
 	assert.Equal(t, g.Hash(), expected)
 }
 
@@ -56,8 +58,8 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	accs := []*account.Account{}
 	vals := []*validator.Validator{}
 	for i := 0; i < 10; i++ {
-		a, pub, _ := crypto.GenerateTestKeyPair()
-		acc := account.NewAccount(a, i)
+		pub, _ := bls.GenerateTestKeyPair()
+		acc := account.NewAccount(pub.Address(), i)
 		val := validator.NewValidator(pub, i)
 
 		accs = append(accs, acc)

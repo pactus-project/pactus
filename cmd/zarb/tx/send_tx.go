@@ -6,6 +6,7 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	grpcclient "github.com/zarbchain/zarb-go/www/grpc/client"
 )
@@ -65,7 +66,7 @@ func SendTx() func(c *cli.Cmd) {
 		c.Action = func() {
 
 			var err error
-			var stamp crypto.Hash
+			var stamp hash.Hash
 			var sender crypto.Address
 			var receiver crypto.Address
 			var seq int
@@ -141,7 +142,7 @@ func SendTx() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				stamp, err = crypto.HashFromString(*stampOpt)
+				stamp, err = hash.FromString(*stampOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't decode stamp from input: %v", err)
 					return

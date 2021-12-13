@@ -3,21 +3,21 @@ package payload
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type HeartBeatPayload struct {
-	Height        int         `cbor:"1,keyasint"`
-	Round         int         `cbor:"2,keyasint"`
-	LastBlockHash crypto.Hash `cbor:"3,keyasint"`
+	Height        int       `cbor:"1,keyasint"`
+	Round         int       `cbor:"2,keyasint"`
+	PrevBlockHash hash.Hash `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatPayload(h, r int, hash crypto.Hash) Payload {
+func NewHeartBeatPayload(h, r int, hash hash.Hash) Payload {
 	return &HeartBeatPayload{
 		Height:        h,
 		Round:         r,
-		LastBlockHash: hash,
+		PrevBlockHash: hash,
 	}
 }
 

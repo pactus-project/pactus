@@ -4,6 +4,8 @@ import (
 	"math/big"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -26,7 +28,7 @@ func (vrf *VRF) Evaluate(seed Seed, signer crypto.Signer, max int64) (index int6
 
 // Verify ensures the proof is valid
 func (vrf *VRF) Verify(seed Seed, public crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
-	proofSig, err := crypto.SignatureFromRawBytes(proof[:])
+	proofSig, err := bls.SignatureFromRawBytes(proof[:])
 	if err != nil {
 		return 0, false
 	}
@@ -42,7 +44,7 @@ func (vrf *VRF) Verify(seed Seed, public crypto.PublicKey, proof Proof, max int6
 }
 
 func (vrf *VRF) getIndex(proof Proof, max int64) int64 {
-	h := crypto.HashH(proof[:])
+	h := hash.CalcHash(proof[:])
 
 	rnd64 := util.SliceToInt64(h.RawBytes())
 	rnd64 = rnd64 & 0x7fffffffffffffff

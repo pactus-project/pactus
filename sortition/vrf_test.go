@@ -6,10 +6,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
 func TestVRF(t *testing.T) {
-	_, pk, pv := crypto.GenerateTestKeyPair()
+	pk, pv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(pv)
 	for i := 0; i < 100; i++ {
 		seed := GenerateRandomSeed()
@@ -32,7 +33,7 @@ func TestVRF(t *testing.T) {
 }
 
 func TestEntropy(t *testing.T) {
-	_, _, pv := crypto.GenerateTestKeyPair()
+	_, pv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(pv)
 
 	max := int64(100)

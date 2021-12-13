@@ -23,8 +23,8 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if bonderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve bonder account")
 	}
-	val := sb.Validator(pld.Validator.Address())
-	if e.strict && sb.IsInCommittee(pld.Validator.Address()) {
+	val := sb.Validator(pld.PublicKey.Address())
+	if e.strict && sb.IsInCommittee(pld.PublicKey.Address()) {
 		return errors.Errorf(errors.ErrInvalidTx, "validator is in committee right now")
 	}
 	if val != nil && val.UnbondingHeight() > 0 {
@@ -37,7 +37,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidTx, "insufficient balance")
 	}
 	if val == nil {
-		val = sb.MakeNewValidator(pld.Validator)
+		val = sb.MakeNewValidator(pld.PublicKey)
 	}
 	bonderAcc.IncSequence()
 	bonderAcc.SubtractFromBalance(pld.Stake + trx.Fee())

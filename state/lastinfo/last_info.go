@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/store"
@@ -32,7 +33,7 @@ type LastInfo struct {
 	store             store.Store
 	lastBlockHeight   int
 	lastSortitionSeed sortition.Seed
-	lastBlockHash     crypto.Hash
+	lastBlockHash     hash.Hash
 	lastCertificate   *block.Certificate
 	lastBlockTime     time.Time
 }
@@ -55,7 +56,7 @@ func (li *LastInfo) BlockHeight() int {
 	return li.lastBlockHeight
 }
 
-func (li *LastInfo) BlockHash() crypto.Hash {
+func (li *LastInfo) BlockHash() hash.Hash {
 	li.lk.RLock()
 	defer li.lk.RUnlock()
 
@@ -90,7 +91,7 @@ func (li *LastInfo) SetBlockHeight(lastBlockHeight int) {
 	li.lastBlockHeight = lastBlockHeight
 }
 
-func (li *LastInfo) SetBlockHash(lastBlockHash crypto.Hash) {
+func (li *LastInfo) SetBlockHash(lastBlockHash hash.Hash) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
@@ -214,7 +215,7 @@ func (li *LastInfo) makeCommittee(committeeSize int) (*committee.Committee, erro
 
 func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Committee) error {
 	type sortitionParam struct {
-		blockHash crypto.Hash
+		blockHash hash.Hash
 		seed      sortition.Seed
 		poolStake int64
 	}
@@ -271,11 +272,11 @@ func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Co
 			if trx.IsBondTx() {
 				pld := trx.Payload().(*payload.BondPayload)
 				totalStake -= pld.Stake
-				stakeChanged[pld.Validator.Address()] = stakeChanged[pld.Validator.Address()] - pld.Stake
+				stakeChanged[pld.PublicKey.Address()] = stakeChanged[pld.PublicKey.Address()] - pld.Stake
 			}
 		}
 		curCommitters = cert.Committers()
-		cert = b.LastCertificate()
+		cert = b.PrevCertificate()
 	}
 
 	for i := len(params) - 1; i >= 0; i-- {

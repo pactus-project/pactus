@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
@@ -25,7 +25,7 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		h, err := crypto.HashFromString(res.Hash)
+		h, err := hash.FromString(res.Hash)
 		assert.NoError(t, err)
 		assert.Equal(t, h, b1.Hash())
 		assert.Empty(t, res.Info)
@@ -36,11 +36,11 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		h, err := crypto.HashFromString(res.Hash)
+		h, err := hash.FromString(res.Hash)
 		assert.NoError(t, err)
 		assert.Equal(t, h, b1.Hash())
 		assert.NotEmpty(t, res.Info)
-		assert.Equal(t, b1.LastCertificate().Signature().String(), res.Info.Signature)
+		assert.Equal(t, b1.PrevCertificate().Signature().String(), res.Info.Signature)
 		assert.Empty(t, res.Tranactions)
 	})
 
@@ -48,11 +48,11 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_TRANSACTIONS})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		h, err := crypto.HashFromString(res.Hash)
+		h, err := hash.FromString(res.Hash)
 		assert.NoError(t, err)
 		assert.Equal(t, h, b1.Hash())
 		assert.NotEmpty(t, res.Info)
-		assert.Equal(t, b1.LastCertificate().Signature().String(), res.Info.Signature)
+		assert.Equal(t, b1.PrevCertificate().Signature().String(), res.Info.Signature)
 		assert.NotEmpty(t, res.Tranactions)
 		assert.Equal(t, int(trxs[0].PayloadType()), int(res.Tranactions[0].Type)) //enums starting 1
 		assert.Equal(t, trxs[0].ID().String(), res.Tranactions[0].Id)

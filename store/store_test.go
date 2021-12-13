@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -158,7 +158,7 @@ func TestRetrieveValidator(t *testing.T) {
 func TestIterateAccounts(t *testing.T) {
 	setup(t)
 
-	accs1 := []crypto.Hash{}
+	accs1 := []hash.Hash{}
 	for i := 0; i < 10; i++ {
 		acc, _ := account.GenerateTestAccount(i)
 		tStore.UpdateAccount(acc)
@@ -175,7 +175,7 @@ func TestIterateAccounts(t *testing.T) {
 	})
 	assert.True(t, stopped)
 
-	accs2 := []crypto.Hash{}
+	accs2 := []hash.Hash{}
 	tStore.IterateAccounts(func(acc *account.Account) bool {
 		accs2 = append(accs2, acc.Hash())
 		return false
@@ -187,7 +187,7 @@ func TestIterateAccounts(t *testing.T) {
 func TestIterateValidators(t *testing.T) {
 	setup(t)
 
-	vals1 := []crypto.Hash{}
+	vals1 := []hash.Hash{}
 	for i := 0; i < 10; i++ {
 		val, _ := validator.GenerateTestValidator(i)
 		tStore.UpdateValidator(val)
@@ -204,7 +204,7 @@ func TestIterateValidators(t *testing.T) {
 	})
 	assert.True(t, stopped)
 
-	vals2 := []crypto.Hash{}
+	vals2 := []hash.Hash{}
 	tStore.IterateValidators(func(val *validator.Validator) bool {
 		vals2 = append(vals2, val.Hash())
 		return false

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
@@ -53,7 +53,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		status := p.Status()
 		moniker, _ := p.Moniker()
 		pubStr, _ := p.PublicKey()
-		pub, _ := crypto.PublicKeyFromString(pubStr)
+		pub, _ := bls.PublicKeyFromString(pubStr)
 		ver, _ := p.NodeVersion()
 
 		peer.UpdateStatus(peerset.StatusCode(status))

@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/genesis"
@@ -153,7 +154,7 @@ func (st *state) Close() error {
 	return st.store.Close()
 }
 
-func (st *state) GenesisHash() crypto.Hash {
+func (st *state) GenesisHash() hash.Hash {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -167,7 +168,7 @@ func (st *state) LastBlockHeight() int {
 	return st.lastInfo.BlockHeight()
 }
 
-func (st *state) LastBlockHash() crypto.Hash {
+func (st *state) LastBlockHash() hash.Hash {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -272,7 +273,8 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	stateHash := st.stateHash()
 	timestamp := st.proposeNextBlockTime()
-	newSortitionSeed := st.lastInfo.SortitionSeed().Generate(st.signer)
+	seed := st.lastInfo.SortitionSeed()
+	newSortitionSeed := seed.Generate(st.signer)
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
@@ -329,8 +331,8 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
 	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
 	/// We should never have a fork in our blockchain. but if it happens, here we can catch it.
-	if !block.Header().LastBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
-		st.logger.Panic("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().LastBlockHash())
+	if !block.Header().PrevBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
+		st.logger.Panic("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().PrevBlockHash())
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
@@ -345,7 +347,8 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
 	// Validate sortition seed
-	if !block.Header().SortitionSeed().Validate(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
+	seed := block.Header().SortitionSeed()
+	if !seed.Validate(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed.")
 	}
 
@@ -585,7 +588,7 @@ func (st *state) Block(height int) *block.Block {
 	return b
 }
 
-func (st *state) BlockHeight(hash crypto.Hash) int {
+func (st *state) BlockHeight(hash hash.Hash) int {
 	h, err := st.store.BlockHeight(hash)
 	if err != nil {
 		st.logger.Trace("Error on retrieving block height", "err", err)

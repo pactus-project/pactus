@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
@@ -40,7 +40,7 @@ func TestGetTransaction(t *testing.T) {
 	})
 
 	t.Run("Should return nil value because transcation doesn't exist", func(t *testing.T) {
-		id := crypto.GenerateTestHash()
+		id := hash.GenerateTestHash()
 		res, err := client.GetTransaction(tCtx, &zarb.TransactionRequest{Id: id.String()})
 		assert.Error(t, err)
 		assert.Nil(t, res)

@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/www/capnp"
@@ -39,7 +40,7 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake, fee int64) error {
 	stamp := lastBlock().Hash()
 	seq := getSequence(sender.Address())
-	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), val, stake, fee, "")
+	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), val.(*bls.PublicKey), stake, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Encode()
@@ -61,35 +62,35 @@ func TestBondingTransactions(t *testing.T) {
 }
 
 func TestSendingTransactions(t *testing.T) {
-	aliceAddr, _, alicePriv := crypto.GenerateTestKeyPair()
-	bobAddr, _, bobPriv := crypto.GenerateTestKeyPair()
-	carolAddr, _, _ := crypto.GenerateTestKeyPair()
-	daveAddr, _, _ := crypto.GenerateTestKeyPair()
+	alicePub, alicePriv := bls.GenerateTestKeyPair()
+	bobPub, bobPriv := bls.GenerateTestKeyPair()
+	carolPub, _ := bls.GenerateTestKeyPair()
+	davePub, _ := bls.GenerateTestKeyPair()
 
 	aliceSigner := crypto.NewSigner(alicePriv)
 	bobSigner := crypto.NewSigner(bobPriv)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2], aliceAddr, 80000000, 80000))
+		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2], alicePub.Address(), 80000000, 80000))
 		incSequence(tSigners[tNodeIdx1].Address())
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		require.Error(t, broadcastSendTransaction(t, aliceSigner, bobAddr, 500000, 1))
+		require.Error(t, broadcastSendTransaction(t, aliceSigner, bobPub.Address(), 500000, 1))
 	})
 
 	t.Run("Alice tries double spending", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, aliceSigner, bobAddr, 50000000, 50000))
+		require.NoError(t, broadcastSendTransaction(t, aliceSigner, bobPub.Address(), 50000000, 50000))
 		incSequence(aliceSigner.Address())
 
-		require.Error(t, broadcastSendTransaction(t, aliceSigner, carolAddr, 50000000, 50000))
+		require.Error(t, broadcastSendTransaction(t, aliceSigner, carolPub.Address(), 50000000, 50000))
 	})
 
 	t.Run("Bob sends two transaction at once", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, bobSigner, carolAddr, 10, 1000))
+		require.NoError(t, broadcastSendTransaction(t, bobSigner, carolPub.Address(), 10, 1000))
 		incSequence(bobSigner.Address())
 
-		require.NoError(t, broadcastSendTransaction(t, bobSigner, daveAddr, 1, 1000))
+		require.NoError(t, broadcastSendTransaction(t, bobSigner, davePub.Address(), 1, 1000))
 		incSequence(bobSigner.Address())
 	})
 
@@ -110,10 +111,10 @@ func TestSendingTransactions(t *testing.T) {
 		waitForNewBlock()
 	}
 
-	aliceAcc := getAccount(t, aliceAddr)
-	bobAcc := getAccount(t, bobAddr)
-	carolAcc := getAccount(t, carolAddr)
-	daveAcc := getAccount(t, daveAddr)
+	aliceAcc := getAccount(t, alicePub.Address())
+	bobAcc := getAccount(t, bobPub.Address())
+	carolAcc := getAccount(t, carolPub.Address())
+	daveAcc := getAccount(t, davePub.Address())
 	require.NotNil(t, aliceAcc)
 	require.NotNil(t, bobAcc)
 	require.NotNil(t, carolAcc)

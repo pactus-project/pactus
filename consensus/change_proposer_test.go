@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestChangeProposer(t *testing.T) {
@@ -14,7 +14,7 @@ func TestChangeProposer(t *testing.T) {
 	tConsP.config.ChangeProposerTimeout = 100 * time.Millisecond
 	testEnterNewHeight(tConsP)
 
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
 }
 
 func TestGotoNewRound(t *testing.T) {
@@ -25,9 +25,9 @@ func TestGotoNewRound(t *testing.T) {
 	tConsP.config.ChangeProposerTimeout = 100 * time.Millisecond
 	testEnterNewHeight(tConsP)
 
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
 	checkHeightRound(t, tConsP, 2, 1)
 }

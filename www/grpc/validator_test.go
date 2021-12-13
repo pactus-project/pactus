@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/keystore/key"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/validator"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
@@ -12,9 +12,12 @@ import (
 func TestGetValidator(t *testing.T) {
 	conn, client := callServer(t)
 
-	k1, k2, k3 := key.GenerateRandomKey(), key.GenerateRandomKey(), key.GenerateRandomKey()
-	val1 := validator.NewValidator(k1.PublicKey(), 0)
-	val2 := validator.NewValidator(k2.PublicKey(), 1)
+	pub1, _ := bls.GenerateTestKeyPair()
+	pub2, _ := bls.GenerateTestKeyPair()
+	pub3, _ := bls.GenerateTestKeyPair()
+
+	val1 := validator.NewValidator(pub1, 0)
+	val2 := validator.NewValidator(pub2, 1)
 	tMockState.Store.UpdateValidator(val1)
 	tMockState.Store.UpdateValidator(val2)
 
@@ -28,7 +31,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: k3.Address().String(),
+			Address: pub3.Address().String(),
 		})
 
 		assert.Error(t, err)
@@ -36,7 +39,7 @@ func TestGetValidator(t *testing.T) {
 	})
 
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
-		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{Address: k1.Address().String()})
+		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{Address: pub1.Address().String()})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
@@ -49,9 +52,11 @@ func TestGetValidator(t *testing.T) {
 func TestGetValidatorByNumber(t *testing.T) {
 	conn, client := callServer(t)
 
-	k1, k2 := key.GenerateRandomKey(), key.GenerateRandomKey()
-	val1 := validator.NewValidator(k1.PublicKey(), 5)
-	val2 := validator.NewValidator(k2.PublicKey(), 6)
+	pub1, _ := bls.GenerateTestKeyPair()
+	pub2, _ := bls.GenerateTestKeyPair()
+
+	val1 := validator.NewValidator(pub1, 5)
+	val2 := validator.NewValidator(pub2, 6)
 	val2.UpdateLastBondingHeight(100)
 	tMockState.Store.UpdateValidator(val1)
 	tMockState.Store.UpdateValidator(val2)

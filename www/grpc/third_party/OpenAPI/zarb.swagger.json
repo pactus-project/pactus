@@ -352,14 +352,11 @@
     "protobufAny": {
       "type": "object",
       "properties": {
-        "typeUrl": {
+        "@type": {
           "type": "string"
-        },
-        "value": {
-          "type": "string",
-          "format": "byte"
         }
-      }
+      },
+      "additionalProperties": {}
     },
     "rpcStatus": {
       "type": "object",
@@ -423,7 +420,7 @@
           "type": "integer",
           "format": "int32"
         },
-        "lastBlockHash": {
+        "prevBlockHash": {
           "type": "string"
         },
         "stateHash": {
@@ -432,7 +429,7 @@
         "txIdsHash": {
           "type": "string"
         },
-        "lastCertificateHash": {
+        "prevCertificateHash": {
           "type": "string"
         },
         "sortitionSeed": {
@@ -482,7 +479,8 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/zarbTransactionInfo"
-          }
+          },
+          "title": "TODO: prev certificate is missed"
         }
       }
     },
@@ -583,7 +581,7 @@
         "id": {
           "type": "string"
         },
-        "Version": {
+        "version": {
           "type": "integer",
           "format": "int32"
         },
@@ -594,7 +592,7 @@
           "type": "string",
           "format": "int64"
         },
-        "Fee": {
+        "fee": {
           "type": "string",
           "format": "int64"
         },

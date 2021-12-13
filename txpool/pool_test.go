@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -28,7 +30,7 @@ func setup(t *testing.T) {
 	p, err := NewTxPool(TestConfig(), tCh)
 	assert.NoError(t, err)
 	p.SetNewSandboxAndRecheck(tSandbox)
-	tAcc1Signer = crypto.GenerateTestSigner()
+	tAcc1Signer = bls.GenerateTestSigner()
 	tAcc1Addr = tAcc1Signer.Address()
 	acc1 := account.NewAccount(tAcc1Addr, 0)
 	acc1.AddToBalance(10000000000)
@@ -59,7 +61,7 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 func TestAppendAndRemove(t *testing.T) {
 	setup(t)
 
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(88, stamp)
 	trx1 := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
@@ -79,7 +81,7 @@ func TestAppendInvalidTransaction(t *testing.T) {
 func TestPending(t *testing.T) {
 	setup(t)
 
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(88, stamp)
 	trx := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
@@ -101,14 +103,14 @@ func TestPending(t *testing.T) {
 	assert.NotNil(t, tPool.QueryTx(trx.ID()))
 	assert.True(t, tPool.pendings.Has(trx.ID()))
 
-	invID := crypto.GenerateTestHash()
+	invID := hash.GenerateTestHash()
 	assert.Nil(t, tPool.PendingTx(invID))
 }
 
 func TestGetAllTransaction(t *testing.T) {
 	setup(t)
 
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(10000, stamp)
 	trxs1 := make([]*tx.Tx, 10)
 
@@ -119,7 +121,7 @@ func TestGetAllTransaction(t *testing.T) {
 
 	t.Run("Fill up the pool and get all transactions", func(t *testing.T) {
 		for i := 0; i < len(trxs1); i++ {
-			a, _, _ := crypto.GenerateTestKeyPair()
+			a := crypto.GenerateTestAddress()
 			trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
 			tAcc1Signer.SignMsg(trx)
 			assert.NoError(t, tPool.AppendTx(trx))
@@ -135,7 +137,7 @@ func TestGetAllTransaction(t *testing.T) {
 	})
 
 	t.Run("Add one more transaction, when pool is full", func(t *testing.T) {
-		a, _, _ := crypto.GenerateTestKeyPair()
+		a := crypto.GenerateTestAddress()
 		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
 		tAcc1Signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
@@ -152,7 +154,7 @@ func TestGetAllTransaction(t *testing.T) {
 func TestAppendAndBroadcast(t *testing.T) {
 	setup(t)
 
-	stamp := crypto.GenerateTestHash()
+	stamp := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(88, stamp)
 	trx := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
 
@@ -166,11 +168,11 @@ func TestAppendAndBroadcast(t *testing.T) {
 func TestAddSubsidyTransactions(t *testing.T) {
 	setup(t)
 
-	stamp1 := crypto.GenerateTestHash()
-	stamp2 := crypto.GenerateTestHash()
+	stamp1 := hash.GenerateTestHash()
+	stamp2 := hash.GenerateTestHash()
 	tSandbox.AppendStampAndUpdateHeight(88, stamp1)
-	proposer1, _, _ := crypto.GenerateTestKeyPair()
-	proposer2, _, _ := crypto.GenerateTestKeyPair()
+	proposer1 := crypto.GenerateTestAddress()
+	proposer2 := crypto.GenerateTestAddress()
 	trx1 := tx.NewMintbaseTx(stamp1, 88, proposer1, 25000000, "subsidy-tx-1")
 	trx2 := tx.NewMintbaseTx(stamp1, 89, proposer1, 25000000, "subsidy-tx-1")
 	trx3 := tx.NewMintbaseTx(stamp1, 89, proposer2, 25000000, "subsidy-tx-2")

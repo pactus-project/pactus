@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
 type Key struct {
@@ -17,26 +18,26 @@ type keyData struct {
 }
 
 func GenerateRandomKey() *Key {
-	addr, pk, pv := crypto.RandomKeyPair()
+	pk, pv := bls.RandomKeyPair()
 	return &Key{
 		data: keyData{
 			PrivateKey: pv,
 			PublicKey:  pk,
-			Address:    addr,
+			Address:    pk.Address(),
 		},
 	}
 }
 
 func FromSeed(seed []byte) (*Key, error) {
-	priv, err := crypto.PrivateKeyFromSeed(seed)
+	prv, err := bls.PrivateKeyFromSeed(seed)
 	if err != nil {
 		return nil, err
 	}
 	return &Key{
 		data: keyData{
-			PrivateKey: priv,
-			PublicKey:  priv.PublicKey(),
-			Address:    priv.PublicKey().Address(),
+			PrivateKey: prv,
+			PublicKey:  prv.PublicKey(),
+			Address:    prv.PublicKey().Address(),
 		},
 	}, nil
 }

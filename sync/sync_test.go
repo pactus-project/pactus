@@ -13,6 +13,8 @@ import (
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
@@ -58,10 +60,10 @@ func init() {
 }
 
 func setup(t *testing.T) {
-	_, _, priv1 := crypto.GenerateTestKeyPair()
-	_, _, priv2 := crypto.GenerateTestKeyPair()
-	aliceSigner := crypto.NewSigner(priv1)
-	bobSigner := crypto.NewSigner(priv2)
+	_, prv1 := bls.GenerateTestKeyPair()
+	_, prv2 := bls.GenerateTestKeyPair()
+	aliceSigner := crypto.NewSigner(prv1)
+	bobSigner := crypto.NewSigner(prv2)
 
 	committee, _ := committee.GenerateTestCommittee()
 	tAlicePeerID = util.RandomPeerID()
@@ -78,11 +80,11 @@ func setup(t *testing.T) {
 	tBobState.GenHash = tAliceState.GenHash
 
 	// Apply 20 blocks for both Alice and Bob
-	lastBlockHash := crypto.Hash{}
+	prevBlockHash := hash.Hash{}
 	for i := 0; i < 21; i++ {
-		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
+		b, trxs := block.GenerateTestBlock(nil, &prevBlockHash)
 		c := block.GenerateTestCertificate(b.Hash())
-		lastBlockHash = b.Hash()
+		prevBlockHash = b.Hash()
 
 		tAliceState.AddBlock(i+1, b, trxs)
 		tAliceState.LastBlockCertificate = c
@@ -227,14 +229,14 @@ func disableHeartbeat(t *testing.T) {
 }
 
 func joinAliceToCommittee(t *testing.T) {
-	val := validator.NewValidator(tAliceSync.signer.PublicKey(), 4)
+	val := validator.NewValidator(tAliceSync.signer.PublicKey().(*bls.PublicKey), 4)
 	val.UpdateLastJoinedHeight(tAliceState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
 }
 
 func joinBobToCommittee(t *testing.T) {
-	val := validator.NewValidator(tBobSync.signer.PublicKey(), 5)
+	val := validator.NewValidator(tBobSync.signer.PublicKey().(*bls.PublicKey), 5)
 	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
@@ -257,7 +259,7 @@ func TestStop(t *testing.T) {
 func TestBroadcastInvalidMessage(t *testing.T) {
 	setup(t)
 	t.Run("Should not publish invalid messages", func(t *testing.T) {
-		pld := payload.NewHeartBeatPayload(-1, -1, crypto.GenerateTestHash())
+		pld := payload.NewHeartBeatPayload(-1, -1, hash.GenerateTestHash())
 		tAliceBroadcastCh <- pld
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHeartBeat)
 	})

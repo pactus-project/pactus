@@ -3,17 +3,17 @@ package simplemerkle
 import (
 	"math"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
-var hasher func([]byte) crypto.Hash
+var hasher func([]byte) hash.Hash
 
 func init() {
-	hasher = crypto.HashH
+	hasher = hash.CalcHash
 }
 
 type Tree struct {
-	merkles []*crypto.Hash
+	merkles []*hash.Hash
 }
 
 // nextPowerOfTwo returns the next highest power of two from a given number if
@@ -33,18 +33,18 @@ func nextPowerOfTwo(n int) int {
 // HashMerkleBranches takes two hashes, treated as the left and right tree
 // nodes, and returns the hash of their concatenation.  This is a helper
 // function used to aid in the generation of a merkle tree.
-func HashMerkleBranches(left *crypto.Hash, right *crypto.Hash) *crypto.Hash {
+func HashMerkleBranches(left *hash.Hash, right *hash.Hash) *hash.Hash {
 	// Concatenate the left and right nodes.
-	var hash [crypto.HashSize * 2]byte
-	copy(hash[:crypto.HashSize], left.RawBytes())
-	copy(hash[crypto.HashSize:], right.RawBytes())
+	var h [hash.HashSize * 2]byte
+	copy(h[:hash.HashSize], left.RawBytes())
+	copy(h[hash.HashSize:], right.RawBytes())
 
-	newHash := hasher(hash[:])
+	newHash := hasher(h[:])
 	return &newHash
 }
 
 func NewTreeFromSlices(slices [][]byte) *Tree {
-	hashes := make([]crypto.Hash, len(slices))
+	hashes := make([]hash.Hash, len(slices))
 	for i, b := range slices {
 		hashes[i] = hasher(b)
 	}
@@ -52,7 +52,7 @@ func NewTreeFromSlices(slices [][]byte) *Tree {
 	return NewTreeFromHashes(hashes)
 }
 
-func NewTreeFromHashes(hashes []crypto.Hash) *Tree {
+func NewTreeFromHashes(hashes []hash.Hash) *Tree {
 	if len(hashes) == 0 {
 		return nil
 	}
@@ -60,7 +60,7 @@ func NewTreeFromHashes(hashes []crypto.Hash) *Tree {
 	// tree as a linear array and create an array of that size.
 	nextPoT := nextPowerOfTwo(len(hashes))
 	arraySize := nextPoT*2 - 1
-	merkles := make([]*crypto.Hash, arraySize)
+	merkles := make([]*hash.Hash, arraySize)
 
 	for i := range hashes {
 		merkles[i] = &hashes[i]
@@ -93,15 +93,15 @@ func NewTreeFromHashes(hashes []crypto.Hash) *Tree {
 	return &Tree{merkles: merkles}
 }
 
-func (tree *Tree) Root() crypto.Hash {
+func (tree *Tree) Root() hash.Hash {
 	if tree == nil {
-		return crypto.UndefHash
+		return hash.UndefHash
 	}
 	h := tree.merkles[len(tree.merkles)-1]
 	if h != nil {
 		return *h
 	}
-	return crypto.UndefHash
+	return hash.UndefHash
 }
 
 func (tree *Tree) Depth() int {

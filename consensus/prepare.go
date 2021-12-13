@@ -3,7 +3,7 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 type prepareState struct {
@@ -32,7 +32,7 @@ func (s *prepareState) decide() {
 		// it sends a change-proposer vote, even if its timer has not expired;
 		// this prevents it from starting the change-proposer state too late.
 		voteset := s.log.ChangeProposerVoteSet(s.round)
-		if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
+		if voteset.BlockHashHasOneThirdOfTotalPower(hash.UndefHash) {
 			s.enterNewState(s.changeProposerState)
 		}
 	}

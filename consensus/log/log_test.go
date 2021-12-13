@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestMustGetRound(t *testing.T) {
@@ -34,10 +35,10 @@ func TestAddVotes(t *testing.T) {
 	err = log.AddVote(v1) // invalid signer
 	assert.Error(t, err)
 
-	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
+	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, hash.GenerateTestHash(), signers[0].Address())
 	signers[0].SignMsg(validVote)
 
-	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, crypto.GenerateTestHash(), signers[0].Address())
+	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, hash.GenerateTestHash(), signers[0].Address())
 	signers[0].SignMsg(duplicateVote)
 
 	err = log.AddVote(validVote)
@@ -76,7 +77,7 @@ func TestCanVote(t *testing.T) {
 	log := NewLog()
 	log.MoveToNewHeight(101, committee.Validators())
 
-	addr, _, _ := crypto.GenerateTestKeyPair()
+	addr := crypto.GenerateTestAddress()
 	assert.True(t, log.CanVote(signers[0].Address()))
 	assert.False(t, log.CanVote(addr))
 }

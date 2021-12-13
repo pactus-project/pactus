@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/param"
@@ -62,7 +63,8 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 			} else {
-				gen = makeLocalGenesis(valKey.PublicKey())
+				pub := valKey.PublicKey()
+				gen = makeLocalGenesis(pub.(*bls.PublicKey))
 				conf.Network.Name = "zarb-local"
 			}
 
@@ -87,7 +89,7 @@ func Init() func(c *cli.Cmd) {
 }
 
 // makeLocalGenesis makes genisis file for the local network
-func makeLocalGenesis(pub crypto.PublicKey) *genesis.Genesis {
+func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)

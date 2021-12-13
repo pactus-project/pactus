@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -22,7 +22,7 @@ func setup(t *testing.T) {
 }
 
 func TestKeys(t *testing.T) {
-	h, _ := crypto.HashFromString("75238478393bfea9e42a59c2cc52876da663ea9acf3873d0a096fd57d61797d4")
+	h, _ := hash.FromString("75238478393bfea9e42a59c2cc52876da663ea9acf3873d0a096fd57d61797d4")
 	assert.Equal(t, blockKey(1234), key{0x1, 0xd2, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0})
 	assert.Equal(t, certificateKey(h), key{0x2, 0x75, 0x23, 0x84, 0x78, 0x39, 0x3b, 0xfe, 0xa9, 0xe4, 0x2a, 0x59, 0xc2, 0xcc, 0x52, 0x87, 0x6d, 0xa6, 0x63, 0xea, 0x9a, 0xcf, 0x38, 0x73, 0xd0, 0xa0, 0x96, 0xfd, 0x57, 0xd6, 0x17, 0x97})
 	assert.Equal(t, txKey(h), key{0x3, 0x75, 0x23, 0x84, 0x78, 0x39, 0x3b, 0xfe, 0xa9, 0xe4, 0x2a, 0x59, 0xc2, 0xcc, 0x52, 0x87, 0x6d, 0xa6, 0x63, 0xea, 0x9a, 0xcf, 0x38, 0x73, 0xd0, 0xa0, 0x96, 0xfd, 0x57, 0xd6, 0x17, 0x97})
@@ -43,8 +43,8 @@ func TestCacheBlock(t *testing.T) {
 
 	assert.NotNil(t, tCache.GetBlock(1).Hash(), b1.Hash())
 	assert.NotNil(t, tCache.GetBlock(2).Hash(), b2.Hash())
-	assert.NotNil(t, tCache.GetCertificate(b1.Header().LastBlockHash()).Hash())
-	assert.NotNil(t, tCache.GetCertificate(b2.Header().LastBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash())
 	assert.Nil(t, tCache.GetBlock(4))
 }
 
@@ -56,8 +56,8 @@ func TestCacheBlocks(t *testing.T) {
 
 	tCache.AddBlocks(1, []*block.Block{b1, b2})
 
-	assert.NotNil(t, tCache.GetCertificate(b1.Header().LastBlockHash()).Hash())
-	assert.NotNil(t, tCache.GetCertificate(b2.Header().LastBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash())
+	assert.NotNil(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash())
 }
 
 func TestGetTransaction(t *testing.T) {

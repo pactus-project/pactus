@@ -36,19 +36,11 @@ func (s *signer) PublicKey() PublicKey {
 }
 
 func (s *signer) SignMsg(msg SignableMsg) {
-	bz := msg.SignBytes()
-	sig := s.privateKey.Sign(bz)
+	sig := s.SignData(msg.SignBytes())
 	msg.SetSignature(sig)
 	msg.SetPublicKey(s.publicKey)
 }
 
 func (s *signer) SignData(data []byte) Signature {
 	return s.privateKey.Sign(data)
-}
-
-// ---------
-// For tests
-func GenerateTestSigner() Signer {
-	_, _, priv := RandomKeyPair()
-	return NewSigner(priv)
 }

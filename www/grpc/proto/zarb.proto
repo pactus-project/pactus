@@ -9,43 +9,53 @@ option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
 package zarb;
 
 service Zarb {
-  rpc GetBlock(BlockRequest) returns(BlockResponse)                                         { option (google.api.http).get = "/api/block/height/{height}";}
-  rpc GetBlockHeight(BlockHeightRequest) returns(BlockHeightResponse)                       { option (google.api.http).get = "/api/block_height/{hash}";}
-  rpc GetTransaction(TransactionRequest) returns (TransactionResponse)                      { option (google.api.http).get = "/api/tranaction/id/{id}";}
-  rpc GetAccount(AccountRequest) returns (AccountResponse)                                  { option (google.api.http).get = "/api/account/address/{address}";}
-  rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse)                         { option (google.api.http).get = "/api/validators";}
-  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse)                            { option (google.api.http).get = "/api/validator/address/{address}";}
-  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse)            { option (google.api.http).get = "/api/validator/{number}";}
-  rpc GetBlockchainInfo(BlockchainInfoRequest) returns (BlockchainInfoResponse)             { option (google.api.http).get = "/api/blockchain";}
-  rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse)                      { option (google.api.http).get = "/api/network";}
-  rpc SendRawTransaction(SendRawTransactionRequest) returns(SendRawTransactionResponse)     { option (google.api.http).put = "/api/send_raw_transaction/{data}";};
+  rpc GetBlock(BlockRequest) returns (BlockResponse) {
+    option (google.api.http).get = "/api/block/height/{height}";
+  }
+  rpc GetBlockHeight(BlockHeightRequest) returns (BlockHeightResponse) {
+    option (google.api.http).get = "/api/block_height/{hash}";
+  }
+  rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
+    option (google.api.http).get = "/api/tranaction/id/{id}";
+  }
+  rpc GetAccount(AccountRequest) returns (AccountResponse) {
+    option (google.api.http).get = "/api/account/address/{address}";
+  }
+  rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse) {
+    option (google.api.http).get = "/api/validators";
+  }
+  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse) {
+    option (google.api.http).get = "/api/validator/address/{address}";
+  }
+  rpc GetValidatorByNumber(ValidatorByNumberRequest)
+      returns (ValidatorResponse) {
+    option (google.api.http).get = "/api/validator/{number}";
+  }
+  rpc GetBlockchainInfo(BlockchainInfoRequest)
+      returns (BlockchainInfoResponse) {
+    option (google.api.http).get = "/api/blockchain";
+  }
+  rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse) {
+    option (google.api.http).get = "/api/network";
+  }
+  rpc SendRawTransaction(SendRawTransactionRequest)
+      returns (SendRawTransactionResponse) {
+    option (google.api.http).put = "/api/send_raw_transaction/{data}";
+  };
 }
 
+message AccountRequest { string address = 1; }
 
-message AccountRequest {
-	string address = 1;
-}
-
-message AccountResponse {
-  AccountInfo account =1;
-}
+message AccountResponse { AccountInfo account = 1; }
 
 message ValidatorsRequest {}
 
-message ValidatorRequest {
-	string address = 1;
-}
-message ValidatorByNumberRequest {
-	int32 number = 1;
-}
+message ValidatorRequest { string address = 1; }
+message ValidatorByNumberRequest { int32 number = 1; }
 
-message ValidatorsResponse {
-  repeated ValidatorInfo validators = 1;
-}
+message ValidatorsResponse { repeated ValidatorInfo validators = 1; }
 
-message ValidatorResponse {
-  ValidatorInfo validator = 1;
-}
+message ValidatorResponse { ValidatorInfo validator = 1; }
 
 message BlockRequest {
   int64 height = 1;
@@ -55,53 +65,40 @@ message BlockRequest {
 message BlockResponse {
   string hash = 1;
   google.protobuf.Timestamp block_time = 2;
-  BlockInfo info=3;
-  repeated TransactionInfo tranactions=5;
+  BlockInfo info = 3;
+  // TODO: prev certificate is missed
+  repeated TransactionInfo tranactions = 5;
 }
 
-message BlockHeightRequest {
-  string hash = 1;
-}
+message BlockHeightRequest { string hash = 1; }
 
-message BlockHeightResponse {
-  int64 height=1;
-}
+message BlockHeightResponse { int64 height = 1; }
 
-message BlockchainInfoRequest {
-}
+message BlockchainInfoRequest {}
 
 message BlockchainInfoResponse {
-  int64 height=1;
-  string last_block_hash=2;
+  int64 height = 1;
+  string last_block_hash = 2;
 }
 
-message NetworkInfoRequest {
-}
+message NetworkInfoRequest {}
 
 message NetworkInfoResponse {
   string peer_id = 1;
   repeated PeerInfo peers = 2;
 }
 
-message TransactionRequest {
-  string id = 1;
-}
+message TransactionRequest { string id = 1; }
 
-message TransactionResponse {
-  TransactionInfo tranaction=1;
-}
+message TransactionResponse { TransactionInfo tranaction = 1; }
 
-message SendRawTransactionRequest {
-  string data = 1;
-}
+message SendRawTransactionRequest { string data = 1; }
 
-message SendRawTransactionResponse {
-  string id = 2;
-}
+message SendRawTransactionResponse { string id = 2; }
 
 // TODO: add unbond height
 // TODO: in32 -> int64
-message ValidatorInfo{
+message ValidatorInfo {
   string public_key = 1;
   int32 number = 2;
   int64 sequence = 3;
@@ -112,7 +109,7 @@ message ValidatorInfo{
   string address = 8;
 }
 
-message PeerInfo{
+message PeerInfo {
   string moniker = 1;
   bytes node_version = 2;
   string peer_id = 3;
@@ -124,7 +121,7 @@ message PeerInfo{
   int32 received_bytes = 9;
 }
 
-message AccountInfo{
+message AccountInfo {
   string address = 1;
   int32 number = 2;
   int64 sequence = 3;
@@ -133,41 +130,41 @@ message AccountInfo{
 
 message BlockInfo {
   int32 version = 1;
-  string last_block_hash = 2;
-  string state_hash=3;          
-  string tx_ids_hash=4;
-  string last_certificate_hash=5;
-  bytes sortition_seed=6;
-  string proposer_address=7;   
-  int64 round=8;  
-  repeated int32 committers=9;
-  repeated int32 absentees=10;
-  string signature=11;
+  string prev_block_hash = 2;
+  string state_hash = 3;
+  string tx_ids_hash = 4;
+  string prev_certificate_hash = 5;
+  bytes sortition_seed = 6;
+  string proposer_address = 7;
+  int64 round = 8;
+  repeated int32 committers = 9;
+  repeated int32 absentees = 10;
+  string signature = 11;
 }
 
-message TransactionInfo{
-  string id=1;    
-  int32 Version =2;  
-  string stamp=3;    
-  int64 sequence=4; 
-  int64 Fee =5;
-  PayloadType Type=6;
+message TransactionInfo {
+  string id = 1;
+  int32 version = 2;
+  string stamp = 3;
+  int64 sequence = 4;
+  int64 fee = 5;
+  PayloadType Type = 6;
   oneof Payload {
-    payloads.SEND_PAYLOAD send=30;
-    payloads.BOND_PAYLOAD bond=31;
-    payloads.SORTITION_PAYLOAD sortition=32;
+    payloads.SEND_PAYLOAD send = 30;
+    payloads.BOND_PAYLOAD bond = 31;
+    payloads.SORTITION_PAYLOAD sortition = 32;
   };
-  string memo=7;     
-  string public_key=8;
-  string signature=9;
+  string memo = 7;
+  string public_key = 8;
+  string signature = 9;
 }
 
 enum PayloadType {
-  UNKNOWN=0;
-  SEND_PAYLOAD=1;
-  BOND_PAYLOAD =2;
-  SORTITION_PAYLOAD=3;
-  UNBOND_PAYLOAD =4;
+  UNKNOWN = 0;
+  SEND_PAYLOAD = 1;
+  BOND_PAYLOAD = 2;
+  SORTITION_PAYLOAD = 3;
+  UNBOND_PAYLOAD = 4;
 }
 
 enum BlockVerbosity {

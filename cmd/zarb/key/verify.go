@@ -7,6 +7,7 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
 //Verify the signature of the signed message
@@ -49,12 +50,12 @@ func Verify() func(c *cli.Cmd) {
 			}
 
 			var sign crypto.Signature
-			publickey, err := crypto.PublicKeyFromString(*publicKeyArg)
+			publickey, err := bls.PublicKeyFromString(*publicKeyArg)
 			if err != nil {
 				cmd.PrintErrorMsg("%v", err)
 				return
 			}
-			sign, err = crypto.SignatureFromString(*signatureArg)
+			sign, err = bls.SignatureFromString(*signatureArg)
 			if err != nil {
 				cmd.PrintErrorMsg("%v", err)
 				return

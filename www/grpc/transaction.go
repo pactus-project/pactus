@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
@@ -13,7 +13,7 @@ import (
 )
 
 func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.TransactionRequest) (*zarb.TransactionResponse, error) {
-	id, err := crypto.HashFromString(request.Id)
+	id, err := hash.FromString(request.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid transaction ID: %v", err.Error())
 
@@ -85,7 +85,7 @@ func (zs *zarbServer) encodeTransaction(trx *tx.Tx) *zarb.TransactionInfo {
 		transaction.Payload = &zarb.TransactionInfo_Bond{
 			Bond: &zarb.BOND_PAYLOAD{
 				Bonder:    pld.Bonder.String(),
-				Validator: pld.Validator.String(),
+				Validator: pld.PublicKey.String(),
 				Stake:     pld.Stake,
 			},
 		}

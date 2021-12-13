@@ -2,15 +2,15 @@ package state
 
 import (
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func (st *state) accountsMerkleRootHash() crypto.Hash {
+func (st *state) accountsMerkleRootHash() hash.Hash {
 	total := st.store.TotalAccounts()
 
-	hashes := make([]crypto.Hash, total)
+	hashes := make([]hash.Hash, total)
 	st.store.IterateAccounts(func(acc *account.Account) (stop bool) {
 		if acc.Number() >= total {
 			panic("Account number is out of range")
@@ -27,9 +27,9 @@ func (st *state) accountsMerkleRootHash() crypto.Hash {
 	return tree.Root()
 }
 
-func (st *state) validatorsMerkleRootHash() crypto.Hash {
+func (st *state) validatorsMerkleRootHash() hash.Hash {
 	total := st.store.TotalValidators()
-	hashes := make([]crypto.Hash, total)
+	hashes := make([]hash.Hash, total)
 	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
 		if val.Number() >= total {
 			panic("Validator number is out of range")
@@ -45,7 +45,7 @@ func (st *state) validatorsMerkleRootHash() crypto.Hash {
 	return tree.Root()
 }
 
-func (st *state) stateHash() crypto.Hash {
+func (st *state) stateHash() hash.Hash {
 	accRootHash := st.accountsMerkleRootHash()
 	valRootHash := st.validatorsMerkleRootHash()
 
@@ -54,12 +54,12 @@ func (st *state) stateHash() crypto.Hash {
 	return *rootHash
 }
 
-func (st *state) calculateGenesisStateHashFromGenesisDoc() crypto.Hash {
+func (st *state) calculateGenesisStateHashFromGenesisDoc() hash.Hash {
 	accs := st.genDoc.Accounts()
 	vals := st.genDoc.Validators()
 
-	accHashes := make([]crypto.Hash, len(accs))
-	valHashes := make([]crypto.Hash, len(vals))
+	accHashes := make([]hash.Hash, len(accs))
+	valHashes := make([]hash.Hash, len(vals))
 	for i, acc := range accs {
 		accHashes[i] = acc.Hash()
 	}

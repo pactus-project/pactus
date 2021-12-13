@@ -6,6 +6,8 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	grpcclient "github.com/zarbchain/zarb-go/www/grpc/client"
 )
@@ -65,9 +67,9 @@ func BondTx() func(c *cli.Cmd) {
 		c.Action = func() {
 
 			var err error
-			var stamp crypto.Hash
+			var stamp hash.Hash
 			var bonder crypto.Address
-			var pub crypto.PublicKey
+			var pub *bls.PublicKey
 			var seq int
 			var stake int64
 			var fee int64
@@ -104,7 +106,7 @@ func BondTx() func(c *cli.Cmd) {
 				c.PrintHelp()
 				return
 			}
-			pub, err = crypto.PublicKeyFromString(*pubOpt)
+			pub, err = bls.PublicKeyFromString(*pubOpt)
 			if err != nil {
 				cmd.PrintErrorMsg("Validator's public key is wrong: %v", err)
 				return
@@ -139,14 +141,13 @@ func BondTx() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				stamp, err = crypto.HashFromString(*stampOpt)
+				stamp, err = hash.FromString(*stampOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't decode stamp from input: %v", err)
 					return
 				}
 			}
 
-			//fulfill transaction payload
 			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
 
 			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)

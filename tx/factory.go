@@ -2,11 +2,13 @@ package tx
 
 import (
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
-func NewMintbaseTx(stamp crypto.Hash, seq int, receiver crypto.Address, amount int64, memo string) *Tx {
+func NewMintbaseTx(stamp hash.Hash, seq int, receiver crypto.Address, amount int64, memo string) *Tx {
 	return NewSendTx(
 		stamp,
 		seq,
@@ -17,7 +19,7 @@ func NewMintbaseTx(stamp crypto.Hash, seq int, receiver crypto.Address, amount i
 		memo)
 }
 
-func NewSendTx(stamp crypto.Hash,
+func NewSendTx(stamp hash.Hash,
 	seq int,
 	sender, receiver crypto.Address,
 	amount, fee int64, memo string) *Tx {
@@ -38,10 +40,10 @@ func NewSendTx(stamp crypto.Hash,
 	}
 }
 
-func NewBondTx(stamp crypto.Hash,
+func NewBondTx(stamp hash.Hash,
 	seq int,
 	bonder crypto.Address,
-	val crypto.PublicKey,
+	val *bls.PublicKey,
 	stake, fee int64, memo string) *Tx {
 	return &Tx{
 		data: txData{
@@ -51,7 +53,7 @@ func NewBondTx(stamp crypto.Hash,
 			Type:     payload.PayloadTypeBond,
 			Payload: &payload.BondPayload{
 				Bonder:    bonder,
-				Validator: val,
+				PublicKey: val,
 				Stake:     stake,
 			},
 			Fee:  fee,
@@ -60,7 +62,7 @@ func NewBondTx(stamp crypto.Hash,
 	}
 }
 
-func NewUnbondTx(stamp crypto.Hash,
+func NewUnbondTx(stamp hash.Hash,
 	seq int,
 	val crypto.Address,
 	memo string) *Tx {
@@ -79,7 +81,7 @@ func NewUnbondTx(stamp crypto.Hash,
 	}
 }
 
-func NewWithdrawTx(stamp crypto.Hash,
+func NewWithdrawTx(stamp hash.Hash,
 	seq int,
 	val crypto.Address,
 	acc crypto.Address,
@@ -102,7 +104,7 @@ func NewWithdrawTx(stamp crypto.Hash,
 	}
 }
 
-func NewSortitionTx(stamp crypto.Hash,
+func NewSortitionTx(stamp hash.Hash,
 	seq int,
 	addr crypto.Address,
 	proof sortition.Proof) *Tx {

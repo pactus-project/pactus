@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestHeartBeatType(t *testing.T) {
@@ -14,19 +14,19 @@ func TestHeartBeatType(t *testing.T) {
 
 func TestHeartBeatPayload(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
-		p := NewHeartBeatPayload(-1, 0, crypto.GenerateTestHash())
+		p := NewHeartBeatPayload(-1, 0, hash.GenerateTestHash())
 
 		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
-		p := NewHeartBeatPayload(100, -1, crypto.GenerateTestHash())
+		p := NewHeartBeatPayload(100, -1, hash.GenerateTestHash())
 
 		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		p := NewHeartBeatPayload(100, 1, crypto.GenerateTestHash())
+		p := NewHeartBeatPayload(100, 1, hash.GenerateTestHash())
 
 		assert.NoError(t, p.SanityCheck())
 		assert.Contains(t, p.Fingerprint(), "100")

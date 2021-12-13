@@ -11,7 +11,7 @@ import (
 	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/node"
@@ -194,7 +194,7 @@ func retrievePrivateKey(workspace string, keyFileOpt, authOpt, privateKeyOpt *st
 		return kj, nil
 	case *privateKeyOpt != "":
 		// Creating KeyObject from Private Key
-		pv, err := crypto.PrivateKeyFromString(*privateKeyOpt)
+		pv, err := bls.PrivateKeyFromString(*privateKeyOpt)
 		if err != nil {
 			return nil, err
 		}

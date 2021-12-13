@@ -7,6 +7,8 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
@@ -14,10 +16,10 @@ type Proposal struct {
 	data proposalData
 }
 type proposalData struct {
-	Height    int               `cbor:"1,keyasint"`
-	Round     int               `cbor:"2,keyasint"`
-	Block     *block.Block      `cbor:"3,keyasint"`
-	Signature *crypto.Signature `cbor:"4,keyasint"`
+	Height    int            `cbor:"1,keyasint"`
+	Round     int            `cbor:"2,keyasint"`
+	Block     *block.Block   `cbor:"3,keyasint"`
+	Signature *bls.Signature `cbor:"4,keyasint"`
 }
 
 func NewProposal(height int, round int, block *block.Block) *Proposal {
@@ -29,10 +31,10 @@ func NewProposal(height int, round int, block *block.Block) *Proposal {
 		},
 	}
 }
-func (p *Proposal) Height() int                  { return p.data.Height }
-func (p *Proposal) Round() int                   { return p.data.Round }
-func (p *Proposal) Block() *block.Block          { return p.data.Block }
-func (p *Proposal) Signature() *crypto.Signature { return p.data.Signature }
+func (p *Proposal) Height() int                 { return p.data.Height }
+func (p *Proposal) Round() int                  { return p.data.Round }
+func (p *Proposal) Block() *block.Block         { return p.data.Block }
+func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
 
 func (p *Proposal) SanityCheck() error {
 	if err := p.data.Block.SanityCheck(); err != nil {
@@ -54,7 +56,7 @@ func (p *Proposal) SanityCheck() error {
 }
 
 func (p *Proposal) SetSignature(sig crypto.Signature) {
-	p.data.Signature = &sig
+	p.data.Signature = sig.(*bls.Signature)
 }
 
 // SetPublicKey is doing nothing and just satisfies SignableMsg interface
@@ -62,9 +64,9 @@ func (p *Proposal) SetPublicKey(crypto.PublicKey) {}
 
 func (p *Proposal) SignBytes() []byte {
 	type signProposal struct {
-		Height    int         `cbor:"1,keyasint"`
-		Round     int         `cbor:"2,keyasint"`
-		BlockHash crypto.Hash `cbor:"3,keyasint"`
+		Height    int       `cbor:"1,keyasint"`
+		Round     int       `cbor:"2,keyasint"`
+		BlockHash hash.Hash `cbor:"3,keyasint"`
 	}
 	bz, _ := cbor.Marshal(signProposal{
 		Height:    p.data.Height,
@@ -93,16 +95,16 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	if !pubKey.Address().EqualsTo(p.data.Block.Header().ProposerAddress()) {
 		return errors.Errorf(errors.ErrInvalidProposal, "invalid proposer")
 	}
-	if !pubKey.Verify(p.SignBytes(), *p.data.Signature) {
+	if !pubKey.Verify(p.SignBytes(), p.data.Signature) {
 		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
 	}
 	return nil
 }
-func (p *Proposal) Hash() crypto.Hash {
-	return crypto.HashH(p.SignBytes())
+func (p *Proposal) Hash() hash.Hash {
+	return hash.CalcHash(p.SignBytes())
 }
 
-func (p *Proposal) IsForBlock(hash crypto.Hash) bool {
+func (p *Proposal) IsForBlock(hash hash.Hash) bool {
 	return p.Block().HashesTo(hash)
 }
 
@@ -113,11 +115,11 @@ func (p Proposal) Fingerprint() string {
 
 // ---------
 // For tests
-func GenerateTestProposal(height, round int) (*Proposal, crypto.PrivateKey) {
-	addr, _, pv := crypto.GenerateTestKeyPair()
+func GenerateTestProposal(height, round int) (*Proposal, crypto.Signer) {
+	signer := bls.GenerateTestSigner()
+	addr := signer.Address()
 	b, _ := block.GenerateTestBlock(&addr, nil)
 	p := NewProposal(height, round, b)
-	sig := pv.Sign(p.SignBytes())
-	p.SetSignature(sig)
-	return p, pv
+	signer.SignMsg(p)
+	return p, signer
 }

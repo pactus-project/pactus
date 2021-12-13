@@ -6,16 +6,16 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestNilCertificateHash(t *testing.T) {
 	var cert Certificate
-	assert.Equal(t, cert.Hash(), crypto.UndefHash)
+	assert.Equal(t, cert.Hash(), hash.UndefHash)
 }
 
 func TestCertificateJSONMarshaling(t *testing.T) {
-	c1 := GenerateTestCertificate(crypto.UndefHash)
+	c1 := GenerateTestCertificate(hash.UndefHash)
 	bz, err := c1.MarshalJSON()
 	assert.NoError(t, err)
 	assert.NotNil(t, bz)
@@ -39,37 +39,37 @@ func TestCertificateMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
 
-	expected1 := crypto.HashH(d)
+	expected1 := hash.CalcHash(d)
 	assert.Equal(t, cert.Hash(), expected1)
 }
 
 func TestInvalidCertificate(t *testing.T) {
-	cert1 := GenerateTestCertificate(crypto.UndefHash)
+	cert1 := GenerateTestCertificate(hash.UndefHash)
 	assert.Error(t, cert1.SanityCheck())
 
-	c2 := GenerateTestCertificate(crypto.GenerateTestHash())
+	c2 := GenerateTestCertificate(hash.GenerateTestHash())
 	c2.data.Round = -1
 	assert.Error(t, c2.SanityCheck())
 
-	c3 := GenerateTestCertificate(crypto.GenerateTestHash())
+	c3 := GenerateTestCertificate(hash.GenerateTestHash())
 	c3.data.Committers = nil
 	assert.Error(t, c3.SanityCheck())
 
-	c4 := GenerateTestCertificate(crypto.GenerateTestHash())
+	c4 := GenerateTestCertificate(hash.GenerateTestHash())
 	c4.data.Absentees = nil
 	assert.Error(t, c4.SanityCheck())
 
-	c6 := GenerateTestCertificate(crypto.GenerateTestHash())
+	c6 := GenerateTestCertificate(hash.GenerateTestHash())
 	c6.data.Absentees = append(c6.data.Absentees, -1)
 	assert.Error(t, c6.SanityCheck())
 
-	c7 := GenerateTestCertificate(crypto.GenerateTestHash())
+	c7 := GenerateTestCertificate(hash.GenerateTestHash())
 	c7.data.Absentees = []int{2, 1}
 	assert.Error(t, c7.SanityCheck())
 }
 
 func TestCertificateersHash(t *testing.T) {
-	temp := GenerateTestCertificate(crypto.GenerateTestHash())
+	temp := GenerateTestCertificate(hash.GenerateTestHash())
 
 	cert1 := NewCertificate(temp.BlockHash(), temp.Round(), []int{10, 18, 2, 6}, []int{}, temp.Signature())
 	assert.Equal(t, cert1.Committers(), []int{10, 18, 2, 6})

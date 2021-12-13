@@ -7,7 +7,8 @@
 - Updating last bonding height for validators
 - Refactor Transactions in CMD
 - Add support for pprof
-- refactored gRPC
+- Refactored gRPC
+- Defining interface for crypto
 
 ## 0.9.4
 - Refactoring Consensus module

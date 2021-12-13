@@ -7,7 +7,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestVoteMarshaling(t *testing.T) {
@@ -29,26 +30,26 @@ func TestVoteMarshaling(t *testing.T) {
 }
 
 func TestVoteSignature(t *testing.T) {
-	h1 := crypto.GenerateTestHash()
-	addr1, pb1, pv1 := crypto.GenerateTestKeyPair()
-	addr2, pb2, pv2 := crypto.GenerateTestKeyPair()
+	h1 := hash.GenerateTestHash()
+	pb1, pv1 := bls.GenerateTestKeyPair()
+	pb2, pv2 := bls.GenerateTestKeyPair()
 
-	v1 := NewVote(VoteTypePrepare, 101, 5, h1, addr1)
-	v2 := NewVote(VoteTypePrepare, 101, 5, h1, addr2)
+	v1 := NewVote(VoteTypePrepare, 101, 5, h1, pb1.Address())
+	v2 := NewVote(VoteTypePrepare, 101, 5, h1, pb2.Address())
+
+	assert.Error(t, v1.Verify(pb1), "No signature")
 
 	sig1 := pv1.Sign(v1.SignBytes())
-	assert.Error(t, v1.Verify(pb1)) // No signature
+	v1.SetSignature(sig1)
+	assert.NoError(t, v1.Verify(pb1), "Ok")
 
 	sig2 := pv2.Sign(v2.SignBytes())
-	v1.SetSignature(sig1)
-	assert.NoError(t, v1.Verify(pb1))
-
 	v2.SetSignature(sig2)
-	assert.Error(t, v2.Verify(pb1)) // invalid public key
+	assert.Error(t, v2.Verify(pb1), "invalid public key")
 
 	sig3 := pv1.Sign(v2.SignBytes())
 	v2.SetSignature(sig3)
-	assert.Error(t, v2.Verify(pb2)) // invalid signature
+	assert.Error(t, v2.Verify(pb2), "invalid signature")
 }
 
 func TestVoteSanityCheck(t *testing.T) {

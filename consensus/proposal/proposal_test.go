@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestProposalMarshaling(t *testing.T) {
@@ -20,12 +21,12 @@ func TestProposalMarshaling(t *testing.T) {
 }
 
 func TestProposalSignature(t *testing.T) {
-	signer := crypto.GenerateTestSigner()
+	signer := bls.GenerateTestSigner()
 
 	p, pv := GenerateTestProposal(5, 5)
 	pb := pv.PublicKey()
 	assert.NoError(t, p.Verify(pb))
-	assert.False(t, p.IsForBlock(crypto.GenerateTestHash()))
+	assert.False(t, p.IsForBlock(hash.GenerateTestHash()))
 	assert.True(t, p.IsForBlock(p.Block().Hash()))
 
 	assert.Error(t, p.Verify(signer.PublicKey())) // invalid public key

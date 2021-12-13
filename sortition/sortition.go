@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 )
 
@@ -26,7 +27,7 @@ func NewSortition() *Sortition {
 	}
 }
 
-func (s *Sortition) SetParams(blockHash crypto.Hash, seed Seed, poolStake int64) {
+func (s *Sortition) SetParams(blockHash hash.Hash, seed Seed, poolStake int64) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -37,7 +38,7 @@ func (s *Sortition) SetParams(blockHash crypto.Hash, seed Seed, poolStake int64)
 	s.params.PushBack(blockHash, p)
 }
 
-func (s *Sortition) GetParams(blockHash crypto.Hash) (seed Seed, poolStake int64) {
+func (s *Sortition) GetParams(blockHash hash.Hash) (seed Seed, poolStake int64) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -49,7 +50,7 @@ func (s *Sortition) GetParams(blockHash crypto.Hash) (seed Seed, poolStake int64
 	return p.seed, p.stake
 }
 
-func (s *Sortition) EvaluateSortition(blockHash crypto.Hash, signer crypto.Signer, threshold int64) (bool, Proof) {
+func (s *Sortition) EvaluateSortition(blockHash hash.Hash, signer crypto.Signer, threshold int64) (bool, Proof) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -66,7 +67,7 @@ func (s *Sortition) EvaluateSortition(blockHash crypto.Hash, signer crypto.Signe
 	return false, Proof{}
 }
 
-func (s *Sortition) VerifyProof(blockHash crypto.Hash, proof Proof, public crypto.PublicKey, threshold int64) bool {
+func (s *Sortition) VerifyProof(blockHash hash.Hash, proof Proof, public crypto.PublicKey, threshold int64) bool {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -82,7 +83,7 @@ func (s *Sortition) VerifyProof(blockHash crypto.Hash, proof Proof, public crypt
 	return index < threshold
 }
 
-func (s *Sortition) getParam(hash crypto.Hash) *param {
+func (s *Sortition) getParam(hash hash.Hash) *param {
 	p, ok := s.params.Get(hash)
 	if !ok {
 		return nil

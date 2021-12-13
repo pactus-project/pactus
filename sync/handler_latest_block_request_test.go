@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -15,7 +15,7 @@ func TestSessionTimeout(t *testing.T) {
 	setup(t)
 
 	t.Run("An unknown peers claims has more blocks. Alice requests for more blocks. Alice doesn't get any response. Session should be closed", func(t *testing.T) {
-		_, pub, _ := crypto.GenerateTestKeyPair()
+		pub, _ := bls.GenerateTestKeyPair()
 		pld := payload.NewAleykPayload(tAlicePeerID, payload.ResponseCodeOK, "ok", "devil", pub, 6666, 0x1) // InitialBlockDownload:  true
 		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
 
@@ -41,7 +41,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		shouldPublishPayloadWithThisTypeAndResponseCode(t, tBobNet, payload.PayloadTypeLatestBlocksResponse, payload.ResponseCodeRejected)
 
 		t.Run("Bob handshakes with the new peer", func(t *testing.T) {
-			_, pub, _ := crypto.GenerateTestKeyPair()
+			pub, _ := bls.GenerateTestKeyPair()
 			pld := payload.NewSalamPayload("new-peer", pub, tBobState.GenHash, 0, 0)
 			tBobNet.ReceivingMessageFromOtherPeer(pid, pld)
 

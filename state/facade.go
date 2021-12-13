@@ -6,14 +6,15 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
 type Facade interface {
-	GenesisHash() crypto.Hash
+	GenesisHash() hash.Hash
 	LastBlockHeight() int
-	LastBlockHash() crypto.Hash
+	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
 	LastCertificate() *block.Certificate
 	BlockTime() time.Duration
@@ -33,7 +34,7 @@ type Facade interface {
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
 	Block(height int) *block.Block
-	BlockHeight(hash crypto.Hash) int
+	BlockHeight(hash hash.Hash) int
 	Account(addr crypto.Address) *account.Account
 	Validator(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int) *validator.Validator

@@ -1,11 +1,12 @@
 package sortition
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 type Seed [48]byte
@@ -30,16 +31,16 @@ func SeedFromRawBytes(data []byte) (Seed, error) {
 	return s, nil
 }
 
-func (s Seed) Generate(signer crypto.Signer) Seed {
-	hash := crypto.HashH(s[:])
+func (s *Seed) Generate(signer crypto.Signer) Seed {
+	hash := hash.CalcHash(s[:])
 	sig := signer.SignData(hash.RawBytes())
 	newSeed, _ := SeedFromRawBytes(sig.RawBytes())
 	return newSeed
 }
 
-func (s Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
-	sig, _ := crypto.SignatureFromRawBytes(s[:])
-	hash := crypto.HashH(prevSeed[:])
+func (s *Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
+	sig, _ := bls.SignatureFromRawBytes(s[:])
+	hash := hash.CalcHash(prevSeed[:])
 	return public.Verify(hash.RawBytes(), sig)
 }
 
@@ -57,10 +58,9 @@ func (s *Seed) UnmarshalText(text []byte) error {
 }
 
 func GenerateRandomSeed() Seed {
-	s := Seed{}
-	_, err := rand.Read(s[:])
-	if err != nil {
-		panic(err)
-	}
-	return s
+	h := hash.GenerateTestHash()
+	signer := bls.GenerateTestSigner()
+	sig := signer.SignData(h.RawBytes())
+	seed, _ := SeedFromRawBytes(sig.RawBytes())
+	return seed
 }

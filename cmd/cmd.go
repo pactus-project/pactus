@@ -12,6 +12,7 @@ import (
 
 	"github.com/peterh/liner"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/keystore/key"
 )
 
@@ -167,7 +168,7 @@ func PromptPrivateKey(promp string) (*key.Key, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read Private Key %v", err)
 	}
-	pv, err := crypto.PrivateKeyFromString(privatekey)
+	pv, err := bls.PrivateKeyFromString(privatekey)
 	if err != nil {
 		return nil, err
 	}

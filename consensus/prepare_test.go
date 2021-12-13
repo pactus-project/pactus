@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestPrepareQueryProposal(t *testing.T) {
@@ -16,7 +16,7 @@ func TestPrepareQueryProposal(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	// After receiving one vote, it should query for proposal (if don't have it yet)
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, crypto.GenerateTestHash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(), tIndexX)
 
 	shouldPublishQueryProposal(t, tConsP, 2, 0)
 }
@@ -29,11 +29,11 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 	testEnterNewHeight(tConsP)
 	p := makeProposal(t, 2, 0)
 
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, crypto.UndefHash, tIndexY)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
 	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
 }
 
 // We have four nodes: Nx, Ny, Nb, Np, which:
@@ -68,8 +68,8 @@ func TestByzantineVote1(t *testing.T) {
 
 	// =================================
 	// Np votes
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Byzantine vote
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	testAddVote(tConsP, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexB) // Byzantine vote
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
 	// Np is unable to progress
 
 	// =================================
@@ -83,7 +83,7 @@ func TestByzantineVote1(t *testing.T) {
 	for _, v := range tConsP.AllVotes() {
 		tConsX.AddVote(v)
 	}
-	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, hash.UndefHash)
 	checkHeightRoundWait(t, tConsX, h, r+1)
 
 	tConsP.SetProposal(p)
@@ -118,10 +118,10 @@ func TestByzantineVote2(t *testing.T) {
 
 	// =================================
 	// Nx votes
-	testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexY)
-	testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, crypto.UndefHash, tIndexB) // Nb sends change proposer vote to Nx, Ny
+	testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexY)
+	testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexB) // Nb sends change proposer vote to Nx, Ny
 
-	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, hash.UndefHash)
 	// Nx goes to the next round
 
 	testAddVote(tConsX, vote.VoteTypePrepare, h, r+1, p2.Block().Hash(), tIndexY)
@@ -140,7 +140,7 @@ func TestByzantineVote2(t *testing.T) {
 	for _, v := range tConsX.AllVotes() {
 		tConsP.AddVote(v)
 	}
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, crypto.UndefHash)
+	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
 	checkHeightRoundWait(t, tConsP, h, r+1)
 
 	for _, v := range tConsP.AllVotes() {

@@ -10,7 +10,7 @@ import (
 )
 
 func TestAddressMarshaling(t *testing.T) {
-	addr1, _, _ := GenerateTestKeyPair()
+	addr1 := GenerateTestAddress()
 	addr2 := new(Address)
 	addr3 := new(Address)
 	addr4 := new(Address)
@@ -35,7 +35,7 @@ func TestAddressMarshaling(t *testing.T) {
 func TestAddressFromBytes(t *testing.T) {
 	_, err := AddressFromRawBytes(nil)
 	assert.Error(t, err)
-	addr1, _, _ := GenerateTestKeyPair()
+	addr1 := GenerateTestAddress()
 	addr2, err := AddressFromRawBytes(addr1.RawBytes())
 	assert.NoError(t, err)
 	require.True(t, addr1.EqualsTo(addr2))
@@ -46,7 +46,7 @@ func TestAddressFromBytes(t *testing.T) {
 }
 
 func TestAddressFromString(t *testing.T) {
-	addr1, _, _ := GenerateTestKeyPair()
+	addr1 := GenerateTestAddress()
 	addr2, err := AddressFromString(addr1.String())
 	assert.NoError(t, err)
 	require.True(t, addr1.EqualsTo(addr2))

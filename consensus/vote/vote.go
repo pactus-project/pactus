@@ -5,6 +5,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
@@ -15,18 +17,18 @@ type Vote struct {
 }
 
 type voteData struct {
-	Type      Type              `cbor:"1,keyasint"`
-	Height    int               `cbor:"2,keyasint"`
-	Round     int               `cbor:"3,keyasint"`
-	BlockHash crypto.Hash       `cbor:"4,keyasint"`
-	Signer    crypto.Address    `cbor:"5,keyasint"`
-	Signature *crypto.Signature `cbor:"6,keyasint"`
+	Type      Type           `cbor:"1,keyasint"`
+	Height    int            `cbor:"2,keyasint"`
+	Round     int            `cbor:"3,keyasint"`
+	BlockHash hash.Hash      `cbor:"4,keyasint"`
+	Signer    crypto.Address `cbor:"5,keyasint"`
+	Signature *bls.Signature `cbor:"6,keyasint"`
 }
 
 type signVote struct {
-	BlockHash crypto.Hash `cbor:"1,keyasint"`
-	Round     int         `cbor:"2,keyasint"`
-	Tail      string      `cbor:"3,keyasint,omitempty"`
+	BlockHash hash.Hash `cbor:"1,keyasint"`
+	Round     int       `cbor:"2,keyasint"`
+	Tail      string    `cbor:"3,keyasint,omitempty"`
 }
 
 func (v *Vote) SignBytes() []byte {
@@ -47,7 +49,7 @@ func (v *Vote) SignBytes() []byte {
 	return bz
 }
 
-func NewVote(voteType Type, height int, round int, blockHash crypto.Hash, signer crypto.Address) *Vote {
+func NewVote(voteType Type, height int, round int, blockHash hash.Hash, signer crypto.Address) *Vote {
 	return &Vote{
 		data: voteData{
 			Type:      voteType,
@@ -59,15 +61,15 @@ func NewVote(voteType Type, height int, round int, blockHash crypto.Hash, signer
 	}
 }
 
-func (v *Vote) Type() Type                   { return v.data.Type }
-func (v *Vote) Height() int                  { return v.data.Height }
-func (v *Vote) Round() int                   { return v.data.Round }
-func (v *Vote) BlockHash() crypto.Hash       { return v.data.BlockHash }
-func (v *Vote) Signer() crypto.Address       { return v.data.Signer }
-func (v *Vote) Signature() *crypto.Signature { return v.data.Signature }
+func (v *Vote) Type() Type                { return v.data.Type }
+func (v *Vote) Height() int               { return v.data.Height }
+func (v *Vote) Round() int                { return v.data.Round }
+func (v *Vote) BlockHash() hash.Hash      { return v.data.BlockHash }
+func (v *Vote) Signer() crypto.Address    { return v.data.Signer }
+func (v *Vote) Signature() *bls.Signature { return v.data.Signature }
 
 func (v *Vote) SetSignature(sig crypto.Signature) {
-	v.data.Signature = &sig
+	v.data.Signature = sig.(*bls.Signature)
 }
 
 // SetPublicKey is doing nothing and just satisfies SignableMsg interface
@@ -81,19 +83,19 @@ func (v *Vote) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &v.data)
 }
 
-func (v *Vote) Hash() crypto.Hash {
+func (v *Vote) Hash() hash.Hash {
 	bz, _ := cbor.Marshal(v.data)
-	return crypto.HashH(bz)
+	return hash.CalcHash(bz)
 }
 
-func (v *Vote) Verify(pubKey crypto.PublicKey) error {
+func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
 	}
 	if !pubKey.Address().EqualsTo(v.Signer()) {
 		return errors.Errorf(errors.ErrInvalidVote, "invalid signer")
 	}
-	if !pubKey.Verify(v.SignBytes(), *v.Signature()) {
+	if !pubKey.Verify(v.SignBytes(), v.Signature()) {
 		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
 	}
 	return nil
@@ -134,12 +136,12 @@ func (v *Vote) Fingerprint() string {
 // ---------
 // For tests
 func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.Signer) {
-	s := crypto.GenerateTestSigner()
+	s := bls.GenerateTestSigner()
 	v := NewVote(
 		VoteTypePrecommit,
 		height,
 		round,
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		s.Address())
 	s.SignMsg(v)
 
@@ -147,12 +149,12 @@ func GenerateTestPrecommitVote(height, round int) (*Vote, crypto.Signer) {
 }
 
 func GenerateTestPrepareVote(height, round int) (*Vote, crypto.Signer) {
-	s := crypto.GenerateTestSigner()
+	s := bls.GenerateTestSigner()
 	v := NewVote(
 		VoteTypePrepare,
 		height,
 		round,
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		s.Address())
 	s.SignMsg(v)
 
@@ -160,12 +162,12 @@ func GenerateTestPrepareVote(height, round int) (*Vote, crypto.Signer) {
 }
 
 func GenerateTestChangeProposerVote(height, round int) (*Vote, crypto.Signer) {
-	s := crypto.GenerateTestSigner()
+	s := bls.GenerateTestSigner()
 	v := NewVote(
 		VoteTypeChangeProposer,
 		height,
 		round,
-		crypto.GenerateTestHash(),
+		hash.GenerateTestHash(),
 		s.Address())
 	s.SignMsg(v)
 

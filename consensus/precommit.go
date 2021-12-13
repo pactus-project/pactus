@@ -3,7 +3,7 @@ package consensus
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 type precommitState struct {
@@ -28,7 +28,7 @@ func (s *precommitState) decide() {
 		// Liveness on PBFT
 		// ...
 		voteset := s.log.ChangeProposerVoteSet(s.round)
-		if voteset.BlockHashHasOneThirdOfTotalPower(crypto.UndefHash) {
+		if voteset.BlockHashHasOneThirdOfTotalPower(hash.UndefHash) {
 			s.enterNewState(s.changeProposerState)
 		}
 	}

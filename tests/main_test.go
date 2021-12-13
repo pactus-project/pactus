@@ -11,6 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/param"
@@ -53,8 +54,8 @@ func TestMain(m *testing.M) {
 	tSequences = make(map[crypto.Address]int)
 
 	for i := 0; i < tTotalNodes; i++ {
-		addr, _, priv := crypto.GenerateTestKeyPair()
-		tSigners[i] = crypto.NewSigner(priv)
+		pub, prv := bls.GenerateTestKeyPair()
+		tSigners[i] = crypto.NewSigner(prv)
 		tConfigs[i] = config.DefaultConfig()
 
 		tConfigs[i].Store.Path = util.TempDirPath()
@@ -92,17 +93,17 @@ func TestMain(m *testing.M) {
 			}
 			f.Close()
 		}
-		fmt.Printf("Node %d address: %s\n", i+1, addr)
+		fmt.Printf("Node %d address: %s\n", i+1, pub.Address())
 	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 
 	vals := make([]*validator.Validator, 4)
-	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey(), 0)
-	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey(), 1)
-	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey(), 2)
-	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey(), 3)
+	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey().(*bls.PublicKey), 0)
+	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey().(*bls.PublicKey), 1)
+	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey().(*bls.PublicKey), 2)
+	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey().(*bls.PublicKey), 3)
 	params := param.DefaultParams()
 	params.BlockTimeInSecond = 2
 	params.CommitteeSize = tCommitteeSize
@@ -144,7 +145,7 @@ func TestMain(m *testing.M) {
 
 	// Check if sortition worked or not?
 	b := lastBlock()
-	committers := b.LastCertificate().Committers()
+	committers := b.PrevCertificate().Committers()
 	if len(committers) == 4 {
 		panic("Sortition didn't work")
 	}

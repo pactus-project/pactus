@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -11,7 +11,7 @@ import (
 )
 
 func (zs *zarbServer) GetBlockHeight(ctx context.Context, request *zarb.BlockHeightRequest) (*zarb.BlockHeightResponse, error) {
-	h, err := crypto.HashFromString(request.GetHash())
+	h, err := hash.FromString(request.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Hash provided is not Valid")
 	}
@@ -38,33 +38,34 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	//populate BLOCK_DATA
 	if request.Verbosity.Number() > 0 {
 
-		SortitionSeed, err := block.Header().SortitionSeed().MarshalText()
+		seed := block.Header().SortitionSeed()
+		SortitionSeed, err := seed.MarshalText()
 		if err != nil {
 			zs.logger.Error("couldn't marshal sortition seed: %v", err)
 		}
 
-		Committers := make([]int32, len(block.LastCertificate().Committers()))
-		for c := range block.LastCertificate().Committers() {
+		Committers := make([]int32, len(block.PrevCertificate().Committers()))
+		for c := range block.PrevCertificate().Committers() {
 			Committers = append(Committers, int32(c))
 		}
 
-		Absentees := make([]int32, len(block.LastCertificate().Absentees()))
-		for c := range block.LastCertificate().Absentees() {
+		Absentees := make([]int32, len(block.PrevCertificate().Absentees()))
+		for c := range block.PrevCertificate().Absentees() {
 			Absentees = append(Absentees, int32(c))
 		}
 
 		info = &zarb.BlockInfo{
 			Version:             int32(block.Header().Version()),
-			LastBlockHash:       block.LastCertificate().BlockHash().String(),
+			PrevBlockHash:       block.PrevCertificate().BlockHash().String(),
 			StateHash:           block.Header().StateHash().String(),
 			TxIdsHash:           block.TxIDs().Hash().String(),
-			LastCertificateHash: block.LastCertificate().Hash().String(),
+			PrevCertificateHash: block.PrevCertificate().Hash().String(),
 			SortitionSeed:       SortitionSeed,
 			ProposerAddress:     block.Header().ProposerAddress().String(),
-			Round:               int64(block.LastCertificate().Round()),
+			Round:               int64(block.PrevCertificate().Round()),
 			Committers:          Committers,
 			Absentees:           Absentees,
-			Signature:           block.LastCertificate().Signature().String(),
+			Signature:           block.PrevCertificate().Signature().String(),
 		}
 
 	}
