@@ -6,7 +6,6 @@ require (
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
 	github.com/btcsuite/btcutil v1.0.3-0.20201201144236-d63d9f2b44dd
 	github.com/davidlazar/go-crypto v0.0.0-20190912175916-7055855a373f // indirect
-	github.com/dchest/blake2b v1.0.0
 	github.com/fxamacker/cbor/v2 v2.2.0
 	github.com/golang/snappy v0.0.2-0.20190904063534-ff6b7dc882cf // indirect
 	github.com/google/btree v1.0.0
