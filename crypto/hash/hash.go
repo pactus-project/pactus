@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"golang.org/x/crypto/blake2b"
 	cbor "github.com/fxamacker/cbor/v2"
+	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/ripemd160"
 )
 
