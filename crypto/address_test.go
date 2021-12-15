@@ -89,7 +89,7 @@ func TestInvalidBech32(t *testing.T) {
 	assert.Equal(t, addr.Fingerprint(), "zc17mka0cw48")
 
 	// Invalid hrp
-	_, err = AddressFromString("sc17mka0cw484es5whq638xkm89msgzczmrpd86dv")
+	_, err = AddressFromString("sc17mka0cw484es5whq638xkm89msgzczmr75t2kv")
 	assert.Error(t, err)
 
 	// Invalid type

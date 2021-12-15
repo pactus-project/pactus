@@ -47,7 +47,7 @@ func TestMarshaling(t *testing.T) {
 }
 
 func TestMarshalingRawData(t *testing.T) {
-	bs, _ := hex.DecodeString("A401540C9819C4D4B1EDB7B70E6665287D4CE95401A37702191BD7031823041A007F5535")
+	bs, _ := hex.DecodeString("A40155010C9819C4D4B1EDB7B70E6665287D4CE95401A37702191BD7031823041A007F5535")
 	acc := new(Account)
 	err := acc.Decode(bs)
 	require.NoError(t, err)
@@ -55,7 +55,7 @@ func TestMarshalingRawData(t *testing.T) {
 	bs2, _ := acc.Encode()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
-	expected, _ := hash.FromString("8a010969c3bf76f764bcf6cf230b1fbc55e5c07b954dbf5595e59b854e97ce7c")
+	expected, _ := hash.FromString("aa7217e71fc4a66d82d6067c9241b23db9699d689989d9c117ea722313a36022")
 	assert.Equal(t, acc.Hash(), expected)
 }
 
