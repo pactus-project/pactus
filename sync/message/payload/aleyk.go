@@ -42,10 +42,7 @@ func (p *AleykPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
-	if err := p.PublicKey.SanityCheck(); err != nil {
-		return err
-	}
-	return nil
+	return p.PublicKey.SanityCheck()
 }
 
 func (p *AleykPayload) Type() Type {
