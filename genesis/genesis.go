@@ -142,9 +142,5 @@ func (gen *Genesis) SaveToFile(file string) error {
 	}
 
 	// write  dataContent to file
-	if err := util.WriteFile(file, json); err != nil {
-		return err
-	}
-
-	return nil
+	return util.WriteFile(file, json)
 }

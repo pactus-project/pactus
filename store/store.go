@@ -52,10 +52,7 @@ func NewStore(conf *Config) (Store, error) {
 }
 
 func (s *store) Close() error {
-	if err := s.db.Close(); err != nil {
-		return err
-	}
-	return nil
+	return s.db.Close()
 }
 
 func (s *store) SaveBlock(height int, block *block.Block) {
