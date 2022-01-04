@@ -128,6 +128,8 @@ func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 }
 
 func (pub *PublicKey) Address() crypto.Address {
-	addr, _ := crypto.AddressFromRawBytes(hash.Hash160(hash.Hash256(pub.RawBytes())))
+	data := hash.Hash160(hash.Hash256(pub.RawBytes()))
+	data = append([]byte{crypto.AddressTypeBLS}, data...)
+	addr, _ := crypto.AddressFromRawBytes(data)
 	return addr
 }

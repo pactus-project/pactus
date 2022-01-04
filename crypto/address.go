@@ -11,14 +11,18 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-// Address format
-// `zc` + type + data
-// type is 1 for schnorr signatures
+// Address format:
+// `zc` + type + data + checksum
+// type is 1 for BLS signatures
 
 const (
-	addressSize           = 20
+	AddressTypeBLS byte = 1
+)
+
+const (
+	addressSize           = 21
 	hrpAddress            = "zc"
-	treasuryAddressString = "0000000000000000000000000000000000000000"
+	treasuryAddressString = "000000000000000000000000000000000000000000"
 )
 
 var TreasuryAddress = Address{
@@ -47,6 +51,8 @@ func AddressFromString(text string) (Address, error) {
 	if hrp != hrpAddress {
 		return Address{}, fmt.Errorf("invalid hrp: %v", hrp)
 	}
+	// TODO: fix me, Get type from decode function DecodeToBase256
+	data = append([]byte{AddressTypeBLS}, data...)
 	return AddressFromRawBytes(data)
 
 }
@@ -74,7 +80,7 @@ func (addr Address) String() string {
 	if addr.EqualsTo(TreasuryAddress) {
 		return treasuryAddressString
 	}
-	str, err := bech32.EncodeFromBase256(hrpAddress, addr.data.Address[:])
+	str, err := bech32.EncodeFromBase256(hrpAddress, addr.data.Address[1:])
 	if err != nil {
 		panic(fmt.Sprintf("Invalid address. %v", err))
 	}
@@ -123,13 +129,16 @@ func (addr *Address) UnmarshalCBOR(bs []byte) error {
 
 func (addr *Address) SanityCheck() error {
 	if addr.EqualsTo(TreasuryAddress) {
-		return errors.Errorf(errors.ErrInvalidAddress, "")
+		return errors.Errorf(errors.ErrInvalidAddress, "Treasury address")
+	}
+	if addr.data.Address[0] != 1 {
+		return errors.Errorf(errors.ErrInvalidAddress, "Invalid type")
 	}
 	return nil
 }
 
-func (addr Address) Verify(pb PublicKey) bool {
-	return pb.Address().EqualsTo(addr)
+func (addr Address) Verify(pub PublicKey) bool {
+	return addr.EqualsTo(pub.Address())
 }
 
 func (addr Address) EqualsTo(right Address) bool {
@@ -143,6 +152,7 @@ func GenerateTestAddress() Address {
 	if err != nil {
 		panic(err)
 	}
+	data = append([]byte{1}, data...)
 	addr, _ := AddressFromRawBytes(data)
 	return addr
 }
