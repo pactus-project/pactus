@@ -11,7 +11,7 @@ all: install test
 devtools:
 	@echo "Installing devtools"
 	go install zombiezen.com/go/capnproto2/capnpc-go@v2.18.0
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.38.0
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.3.0
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.3.0
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.25.0
@@ -73,7 +73,6 @@ fmt: herumi
 		--enable=gofmt \
 		--enable=unconvert \
 		--enable=unparam \
-		--enable=revive \
 		--enable=asciicheck \
 		--enable=misspell \
 		--enable=gosec
