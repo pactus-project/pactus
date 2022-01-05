@@ -120,7 +120,7 @@ func (pub *PublicKey) SanityCheck() error {
 }
 
 func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) bool {
-	return sig.(*Signature).data.Signature.VerifyByte(pub.data.PublicKey, hash.Hash256(msg))
+	return sig.(*Signature).data.Signature.VerifyByte(pub.data.PublicKey, msg)
 }
 
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {

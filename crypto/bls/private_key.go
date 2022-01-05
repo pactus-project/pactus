@@ -8,7 +8,6 @@ import (
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 const PrivateKeySize = 32
@@ -130,7 +129,7 @@ func (pv *PrivateKey) SanityCheck() error {
 
 func (pv *PrivateKey) Sign(msg []byte) crypto.Signature {
 	sig := new(Signature)
-	sig.data.Signature = pv.data.SecretKey.SignByte(hash.Hash256(msg))
+	sig.data.Signature = pv.data.SecretKey.SignByte(msg)
 
 	return sig
 }

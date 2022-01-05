@@ -103,13 +103,13 @@ func TestVerifyingSignature(t *testing.T) {
 
 func TestSignature(t *testing.T) {
 	msg := []byte("zarb")
-	prv, err := PrivateKeyFromString("d0c6a560de2e60b6ac55386defefdf93b0c907290c2ad1b4dbd3338186bfdc68")
+	prv, err := PrivateKeyFromString("68dcbf868133d3dbb4d12a0c2907c9b093dfefef6d3855acb6602ede60a5c6d0")
 	assert.NoError(t, err)
-	pub, err := PublicKeyFromString("37bfe636693eac0b674ae6603442192ef0432ad84384f0cec8bea5f63c9f45c29bf085b8b9b7f069ae873ccefe61a50a59ad3fefd729af5d63e9cb2325a8f064ab2514b3f846dbfded53234800603a9e752422ad48b99f835bcd95df945aac93")
+	pub, err := PublicKeyFromString("af0f74917f5065af94727ae9541b0ddcfb5b828a9e016b02498f477ed37fb44d5d882495afb6fd4f9773e4ea9deee436030c4d61c6e3a1151585e1d838cae1444a438d089ce77e10c492a55f6908125c5be9b236a246e4082d08de564e111e65")
 	assert.NoError(t, err)
-	sig, err := SignatureFromString("76da6c523c4abac463aad1ead5b7a042f143e354c346f6921a4975cc16959559e9b738fa197ab4df123f580a553b1596")
+	sig, err := SignatureFromString("a2d06b33af2c9e7ca878da85a96b2c2346f4306d0473bdabc38be87c19dae5e67e08724a5220d0e372fb080bbd2fbde9")
 	assert.NoError(t, err)
-	addr, err := crypto.AddressFromString("zc17mka0cw484es5whq638xkm89msgzczmrmf7p27")
+	addr, err := crypto.AddressFromString("zc15x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr39g6klh")
 	assert.NoError(t, err)
 
 	sig1 := prv.Sign(msg)

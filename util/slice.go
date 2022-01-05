@@ -24,22 +24,22 @@ func SliceToInt(bs []byte) int {
 
 func UInt64ToSlice(n uint64) []byte {
 	bs := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bs, n)
+	binary.BigEndian.PutUint64(bs, n)
 	return bs
 }
 func Int64ToSlice(n int64) []byte {
 	bs := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bs, uint64(n))
+	binary.BigEndian.PutUint64(bs, uint64(n))
 	return bs
 }
 
 func SliceToUInt64(bs []byte) uint64 {
-	n := binary.LittleEndian.Uint64(bs)
+	n := binary.BigEndian.Uint64(bs)
 	return n
 }
 
 func SliceToInt64(bs []byte) int64 {
-	n := binary.LittleEndian.Uint64(bs)
+	n := binary.BigEndian.Uint64(bs)
 	return int64(n)
 }
 
