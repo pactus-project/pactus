@@ -6,7 +6,7 @@ import (
 
 	lp2phost "github.com/libp2p/go-libp2p-core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p-core/peer"
-	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery"
+	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery/mdns_legacy"
 )
 
 // DiscoveryInterval is how often we re-publish our mDNS records.

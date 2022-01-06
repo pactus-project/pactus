@@ -4,17 +4,15 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"sync"
 	syncer "sync"
 
 	lp2p "github.com/libp2p/go-libp2p"
-	lp2pcircuit "github.com/libp2p/go-libp2p-circuit"
 	lp2pcrypto "github.com/libp2p/go-libp2p-core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p-core/host"
 	lp2peer "github.com/libp2p/go-libp2p-core/peer"
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
-	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery"
+	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery/mdns_legacy"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
@@ -22,7 +20,7 @@ import (
 )
 
 type network struct {
-	lk sync.RWMutex
+	lk syncer.RWMutex
 
 	ctx            context.Context
 	config         *Config
@@ -97,9 +95,9 @@ func NewNetwork(conf *Config) (Network, error) {
 	}
 	if conf.EnableRelay {
 		opts = append(opts,
-			lp2p.EnableRelay(lp2pcircuit.OptHop))
+			lp2p.EnableRelay())
 	}
-	host, err := lp2p.New(ctx, opts...)
+	host, err := lp2p.New(opts...)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
