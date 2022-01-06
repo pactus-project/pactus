@@ -12,7 +12,7 @@ import (
 	lp2peer "github.com/libp2p/go-libp2p-core/peer"
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
-	lp2pdiscovery "github.com/libp2p/go-libp2p/p2p/discovery/mdns_legacy"
+	lp2pmdns "github.com/libp2p/go-libp2p/p2p/discovery/mdns"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
@@ -26,7 +26,7 @@ type network struct {
 	config         *Config
 	host           lp2phost.Host
 	wg             syncer.WaitGroup
-	mdns           lp2pdiscovery.Service
+	mdns           lp2pmdns.Service
 	kademlia       *lp2pdht.IpfsDHT
 	pubsub         *lp2pps.PubSub
 	generalTopic   *lp2pps.Topic
@@ -117,7 +117,7 @@ func NewNetwork(conf *Config) (Network, error) {
 	n.logger.Info("network started", "id", n.host.ID(), "address", conf.ListenAddress)
 
 	if conf.EnableMDNS {
-		mdns, err := n.setupMNSDiscovery(n.ctx, n.host)
+		mdns, err := n.setupMNSDiscovery(n.host)
 		if err != nil {
 			n.logger.Error("Unable to setup mDNS discovery", "err", err)
 		}
