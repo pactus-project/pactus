@@ -11,7 +11,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0
 	github.com/hashicorp/golang-lru v0.5.4
-	github.com/herumi/bls-go-binary v1.0.1-0.20200729052526-ef6a150a928b
+	github.com/herumi/bls-go-binary v1.0.1-0.20220103075647-4e46f4fe2af2
 	github.com/jawher/mow.cli v1.2.0
 	github.com/kr/text v0.2.0 // indirect
 	github.com/libp2p/go-libp2p v0.17.0

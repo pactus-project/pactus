@@ -17,7 +17,7 @@ func TestMarshaling(t *testing.T) {
 	assert.Equal(t, val1.PublicKey().Address(), val1.Address())
 	val1.AddToStake(1)
 	val1.IncSequence()
-	val1.UpdateLastJoinedHeight(100)
+	val1.UpdateLastJoinedHeight(50)
 
 	bs, err := val1.Encode()
 	require.NoError(t, err)
@@ -47,7 +47,7 @@ func TestMarshaling(t *testing.T) {
 }
 
 func TestMarshalingRawData(t *testing.T) {
-	bs, _ := hex.DecodeString("a7015860dff46fbce5ae1ba4837de551206176c0a74deb5dfca803228f570f7c9ba093ea109700559b72fe1d385492f0d5a10f17a4cec41eb2e552f51e1f7f48ab311d4e195b1563c1fcba8ee201173e4e6362cabedaccee541f9efc9c4140d9fb268102021901b4031902f7041a2af78f2105140618640700")
+	bs, _ := hex.DecodeString("a701586090bc71f9422cd2f7274f00bbf2bb74ad601593ddd093b4e879172c780d02e948021694c0c8c09d2e022d54c335f63ad813efedbbc6bdd7a8934b7743aa62e3bc2ffd2071e452eb802ef456acd79ec3313bec5da04233128087cad3dca185ed4c0219016f031902f7041a2af78f210514061864071832")
 	val := new(Validator)
 	err := val.Decode(bs)
 	require.NoError(t, err)
@@ -55,11 +55,11 @@ func TestMarshalingRawData(t *testing.T) {
 	assert.Equal(t, val.Sequence(), 759)
 	assert.Equal(t, val.LastBondingHeight(), 20)
 	assert.Equal(t, val.UnbondingHeight(), 100)
-	assert.Zero(t, val.LastJoinedHeight())
+	assert.Equal(t, val.LastJoinedHeight(), 50)
 	bs2, _ := val.Encode()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, val.Hash(), hash.CalcHash(bs))
-	expected, _ := hash.FromString("4ae73f2be07945e814e21b106d4a4cb27982f01179c85231074799745b63b92d")
+	expected, _ := hash.FromString("2d5e898cd60320512fa70c362b812e5dee0c42af6391d2cbfca32af4d5b1bbf5")
 	assert.Equal(t, val.Hash(), expected)
 }
 

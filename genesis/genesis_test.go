@@ -7,9 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -38,21 +36,21 @@ func TestMarshaling(t *testing.T) {
 	require.Equal(t, gen1.Hash(), gen3.Hash())
 }
 
-func TestGenesisTestNet(t *testing.T) {
-	g := Testnet()
-	assert.Equal(t, len(g.Validators()), 4)
-	assert.Equal(t, len(g.Accounts()), 1)
+// func TestGenesisTestNet(t *testing.T) {
+// 	g := Testnet()
+// 	assert.Equal(t, len(g.Validators()), 4)
+// 	assert.Equal(t, len(g.Accounts()), 1)
 
-	for _, v := range g.Validators() {
-		assert.Equal(t, v.Address(), v.PublicKey().Address())
-	}
+// 	for _, v := range g.Validators() {
+// 		assert.Equal(t, v.Address(), v.PublicKey().Address())
+// 	}
 
-	assert.Equal(t, g.Accounts()[0].Address(), crypto.TreasuryAddress)
-	assert.Equal(t, g.Accounts()[0].Balance(), int64(2100000000000000))
+// 	assert.Equal(t, g.Accounts()[0].Address(), crypto.TreasuryAddress)
+// 	assert.Equal(t, g.Accounts()[0].Balance(), int64(2100000000000000))
 
-	expected, _ := hash.FromString("4d22446ce560c591575b8205de52da0bd99757c9254bb248d1c9853208733c30")
-	assert.Equal(t, g.Hash(), expected)
-}
+// 	expected, _ := hash.FromString("4d22446ce560c591575b8205de52da0bd99757c9254bb248d1c9853208733c30")
+// 	assert.Equal(t, g.Hash(), expected)
+// }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	accs := []*account.Account{}
