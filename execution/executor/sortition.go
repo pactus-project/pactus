@@ -29,7 +29,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if sb.CurrentHeight()-val.LastBondingHeight() < 2*sb.CommitteeSize() {
 		return errors.Errorf(errors.ErrInvalidTx, "in bonding period")
 	}
-	_, hash := sb.LatestBlockInfo(trx.Stamp())
+	_, hash := sb.FindBlockInfoByStamp(trx.Stamp())
 	ok := sb.VerifySortition(hash, pld.Proof, val)
 	if !ok {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid proof or index")

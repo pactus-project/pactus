@@ -16,30 +16,30 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	addr := crypto.GenerateTestAddress()
 
-	stamp := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	hash100 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(100, hash100)
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewUnbondTx(stamp, 1, addr, "invalid validator")
+		trx := tx.NewUnbondTx(hash100.Stamp(), 1, addr, "invalid validator")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewUnbondTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+2, tVal1.Address(), "invalid sequence")
+		trx := tx.NewUnbondTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+2, tVal1.Address(), "invalid sequence")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
 		tSandbox.InCommittee = true
-		trx := tx.NewUnbondTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "inside committee")
+		trx := tx.NewUnbondTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "inside committee")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		tSandbox.InCommittee = false
-		trx := tx.NewUnbondTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")
+		trx := tx.NewUnbondTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
@@ -47,9 +47,9 @@ func TestExecuteUnbondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	t.Run("Should fail, Cann't unbond if unbonded already", func(t *testing.T) {
+	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
 		tSandbox.InCommittee = false
-		trx := tx.NewUnbondTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")
+		trx := tx.NewUnbondTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
@@ -66,13 +66,13 @@ func TestUnbondNonStrictMode(t *testing.T) {
 	exe1 := NewBondExecutor(false)
 
 	tSandbox.InCommittee = true
-	stamp := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	hash100 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(100, hash100)
 	bonder := tAcc1.Address()
 	pub, _ := bls.GenerateTestKeyPair()
 
-	mintbase1 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
-	mintbase2 := tx.NewBondTx(stamp, tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
+	mintbase1 := tx.NewBondTx(hash100.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
+	mintbase2 := tx.NewBondTx(hash100.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
 
 	assert.NoError(t, exe1.Execute(mintbase1, tSandbox))
 	assert.Error(t, exe1.Execute(mintbase2, tSandbox)) // Invalid sequence

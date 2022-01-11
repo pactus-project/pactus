@@ -61,9 +61,9 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 func TestAppendAndRemove(t *testing.T) {
 	setup(t)
 
-	stamp := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(88, stamp)
-	trx1 := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
+	hash88 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(88, hash88)
+	trx1 := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
 
 	assert.NoError(t, tPool.AppendTx(trx1))
 	assert.NoError(t, tPool.AppendTx(trx1))
@@ -81,9 +81,9 @@ func TestAppendInvalidTransaction(t *testing.T) {
 func TestPending(t *testing.T) {
 	setup(t)
 
-	stamp := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(88, stamp)
-	trx := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
+	hash88 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(88, hash88)
+	trx := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
 
 	// Increat the waiting time for testing
 	tPool.config.WaitingTimeout = 2 * time.Second
@@ -110,8 +110,8 @@ func TestPending(t *testing.T) {
 func TestGetAllTransaction(t *testing.T) {
 	setup(t)
 
-	stamp := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(10000, stamp)
+	hash10000 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(10000, hash10000)
 	trxs1 := make([]*tx.Tx, 10)
 
 	t.Run("pool is empty", func(t *testing.T) {
@@ -122,7 +122,7 @@ func TestGetAllTransaction(t *testing.T) {
 	t.Run("Fill up the pool and get all transactions", func(t *testing.T) {
 		for i := 0; i < len(trxs1); i++ {
 			a := crypto.GenerateTestAddress()
-			trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
+			trx := tx.NewSendTx(hash10000.Stamp(), tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
 			tAcc1Signer.SignMsg(trx)
 			assert.NoError(t, tPool.AppendTx(trx))
 			trxs1[i] = trx
@@ -138,7 +138,7 @@ func TestGetAllTransaction(t *testing.T) {
 
 	t.Run("Add one more transaction, when pool is full", func(t *testing.T) {
 		a := crypto.GenerateTestAddress()
-		trx := tx.NewSendTx(stamp, tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
+		trx := tx.NewSendTx(hash10000.Stamp(), tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
 		tAcc1Signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
 
@@ -154,9 +154,9 @@ func TestGetAllTransaction(t *testing.T) {
 func TestAppendAndBroadcast(t *testing.T) {
 	setup(t)
 
-	stamp := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(88, stamp)
-	trx := tx.NewMintbaseTx(stamp, 89, tAcc1Addr, 25000000, "subsidy-tx")
+	hash88 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(88, hash88)
+	trx := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
 
 	assert.NoError(t, tPool.AppendTxAndBroadcast(trx))
 	shouldPublishTransaction(t, trx.ID())
@@ -168,20 +168,20 @@ func TestAppendAndBroadcast(t *testing.T) {
 func TestAddSubsidyTransactions(t *testing.T) {
 	setup(t)
 
-	stamp1 := hash.GenerateTestHash()
-	stamp2 := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(88, stamp1)
+	hash88 := hash.GenerateTestHash()
+	hash89 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(88, hash88)
 	proposer1 := crypto.GenerateTestAddress()
 	proposer2 := crypto.GenerateTestAddress()
-	trx1 := tx.NewMintbaseTx(stamp1, 88, proposer1, 25000000, "subsidy-tx-1")
-	trx2 := tx.NewMintbaseTx(stamp1, 89, proposer1, 25000000, "subsidy-tx-1")
-	trx3 := tx.NewMintbaseTx(stamp1, 89, proposer2, 25000000, "subsidy-tx-2")
+	trx1 := tx.NewMintbaseTx(hash88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
+	trx2 := tx.NewMintbaseTx(hash88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
+	trx3 := tx.NewMintbaseTx(hash88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
 
-	assert.Error(t, tPool.AppendTx(trx1))
+	assert.Error(t, tPool.AppendTx(trx1), "Expired subsidy transaction")
 	assert.NoError(t, tPool.AppendTx(trx2))
 	assert.NoError(t, tPool.AppendTx(trx3))
 
-	tSandbox.AppendStampAndUpdateHeight(89, stamp2)
+	tSandbox.AppendNewBlock(89, hash89)
 
 	tPool.SetNewSandboxAndRecheck(sandbox.MockingSandbox())
 	assert.Zero(t, tPool.Size())

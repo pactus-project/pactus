@@ -114,6 +114,7 @@ func TestDecode(t *testing.T) {
 
 	expected2, _ := hash.FromString("f82c75379f1cf017299f722213236fc7b4711366f23dbf733025880baa1d05c5")
 	assert.Equal(t, b1.Hash(), expected2)
+	assert.Equal(t, b1.Stamp(), hash.Stamp{0xf8, 0x2c, 0x75, 0x37})
 
 	// hash TxIDs
 	merkleTree := simplemerkle.NewTreeFromHashes([]hash.Hash{b1.TxIDs().IDs()[0], b1.TxIDs().IDs()[1], b1.TxIDs().IDs()[2], b1.TxIDs().IDs()[3]})

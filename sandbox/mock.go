@@ -125,7 +125,7 @@ func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
 	return m.InCommittee
 }
 
-func (m *MockSandbox) LatestBlockInfo(stamp hash.Stamp) (int, hash.Hash) {
+func (m *MockSandbox) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
 	for h, i := range m.HashToHeight {
 		if h.Stamp().EqualsTo(stamp) {
 			return i, h

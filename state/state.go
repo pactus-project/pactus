@@ -13,6 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sandbox"
@@ -38,6 +39,7 @@ type state struct {
 	committee    *committee.Committee
 	sortition    *sortition.Sortition
 	lastInfo     *lastinfo.LastInfo
+	latestBlocks *linkedmap.LinkedMap
 	logger       *logger.Logger
 }
 
@@ -50,6 +52,7 @@ func LoadOrNewState(
 
 	var mintbaseAddr crypto.Address
 	if conf.MintbaseAddress != "" {
+		// TODO: write test for me
 		addr, err := crypto.AddressFromString(conf.MintbaseAddress)
 		if err != nil {
 			return nil, err
@@ -85,13 +88,30 @@ func LoadOrNewState(
 		}
 	}
 
+	// A cache of the latest block info
+	st.latestBlocks = linkedmap.NewLinkedMap(st.params.TransactionToLiveInterval)
+	last := st.lastInfo.BlockHeight()
+	first := st.lastInfo.BlockHeight() - st.params.TransactionToLiveInterval
+	if first < 1 {
+		// Adding genesis block info
+		st.latestBlocks.PushBack(hash.UndefHash.Stamp(), sandbox.NewBlockInfo(0, hash.UndefHash))
+		first = 1
+	}
+	for h := first; h <= last; h++ {
+		b, err := st.store.Block(h)
+		if err != nil {
+			return nil, err
+		}
+		st.latestBlocks.PushBack(b.Stamp(), sandbox.NewBlockInfo(h, b.Hash()))
+	}
+
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	return st, nil
 }
 
 func (st *state) concreteSandbox() *sandbox.Concrete {
-	return sandbox.NewSandbox(st.store, st.params, st.lastInfo.BlockHeight(), st.sortition, st.committee)
+	return sandbox.NewSandbox(st.store, st.params, st.latestBlocks, st.sortition, st.committee)
 }
 
 func (st *state) tryLoadLastInfo() error {
@@ -362,7 +382,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 	// -----------------------------------
 	// Commit block
-	st.lastInfo.SetBlockHeight(st.lastInfo.BlockHeight() + 1)
+	st.lastInfo.SetBlockHeight(height)
 	st.lastInfo.SetBlockHash(block.Hash())
 	st.lastInfo.SetBlockTime(block.Header().Time())
 	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
@@ -372,7 +392,9 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	// Commit and update the committee
 	st.commitSandbox(sb, cert.Round())
 
-	st.store.SaveBlock(st.lastInfo.BlockHeight(), block)
+	st.store.SaveBlock(height, block)
+
+	st.latestBlocks.PushBack(block.Stamp(), sandbox.NewBlockInfo(height, block.Hash()))
 
 	// Save txs and receipts
 	for _, trx := range trxs {

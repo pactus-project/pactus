@@ -103,7 +103,7 @@ func (h *Hash) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func (h *Hash) MarshalJSON() ([]byte, error) {
+func (h Hash) MarshalJSON() ([]byte, error) {
 	return json.Marshal(h.String())
 }
 

@@ -17,9 +17,16 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type blockInfo struct {
-	heigh int
-	hash  hash.Hash
+type BlockInfo struct {
+	height int
+	hash   hash.Hash
+}
+
+func NewBlockInfo(height int, hash hash.Hash) *BlockInfo {
+	return &BlockInfo{
+		height: height,
+		hash:   hash,
+	}
 }
 
 type Concrete struct {
@@ -32,7 +39,6 @@ type Concrete struct {
 	accounts         map[crypto.Address]*AccountStatus
 	validators       map[crypto.Address]*ValidatorStatus
 	params           param.Params
-	lastHeight       int
 	totalAccounts    int
 	totalValidators  int
 	totalStakeChange int64
@@ -49,18 +55,17 @@ type AccountStatus struct {
 	Updated bool
 }
 
-func NewSandbox(store store.Reader, params param.Params, lastHeight int, sortition *sortition.Sortition, committee committee.Reader) *Concrete {
+func NewSandbox(store store.Reader, params param.Params, latestBlocks *linkedmap.LinkedMap, sortition *sortition.Sortition, committee committee.Reader) *Concrete {
 	sb := &Concrete{
-		store:      store,
-		sortition:  sortition,
-		committee:  committee,
-		lastHeight: lastHeight,
-		params:     params,
+		store:     store,
+		sortition: sortition,
+		committee: committee,
+		params:    params,
 	}
 
 	sb.accounts = make(map[crypto.Address]*AccountStatus)
 	sb.validators = make(map[crypto.Address]*ValidatorStatus)
-	sb.latestBlocks = linkedmap.NewLinkedMap(params.TransactionToLiveInterval)
+	sb.latestBlocks = latestBlocks
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
 	sb.totalStakeChange = 0
@@ -210,8 +215,15 @@ func (sb *Concrete) EnterCommittee(blockHash hash.Hash, addr crypto.Address) err
 		return errors.Errorf(errors.ErrGeneric, "this validator has joined into committee before")
 	}
 
+	lastHeight := -1
+	_, val := sb.latestBlocks.Last()
+	if val == nil {
+		return errors.Errorf(errors.ErrGeneric, "Unable to retrieve last block info")
+	}
+	lastHeight = val.(*BlockInfo).height
+
 	if sb.committee.Size() >= sb.params.CommitteeSize {
-		oldestJoinedHeight := sb.lastHeight
+		oldestJoinedHeight := lastHeight
 		committeeStake := int64(0)
 		for _, v := range sb.committee.Validators() {
 			committeeStake += v.Stake()
@@ -219,7 +231,7 @@ func (sb *Concrete) EnterCommittee(blockHash hash.Hash, addr crypto.Address) err
 				oldestJoinedHeight = v.LastJoinedHeight()
 			}
 		}
-		if sb.lastHeight-oldestJoinedHeight < sb.params.CommitteeSize {
+		if lastHeight-oldestJoinedHeight < sb.params.CommitteeSize {
 			return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
 		}
 		joinedStake := int64(0)
@@ -296,15 +308,24 @@ func (sb *Concrete) CurrentHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.lastHeight + 1
+	_, val := sb.latestBlocks.Last()
+	if val != nil {
+		return val.(*BlockInfo).height + 1
+	}
+
+	return -1
 }
 
 func (sb *Concrete) PrevBlockHash() hash.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	b, _ := sb.store.Block(sb.lastHeight)
-	return b.Hash()
+	_, val := sb.latestBlocks.Last()
+	if val != nil {
+		return val.(*BlockInfo).hash
+	}
+
+	return hash.UndefHash
 }
 
 func (sb *Concrete) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
@@ -332,25 +353,14 @@ func (sb *Concrete) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
-func (sb *Concrete) AddNewBlock(height int, blockHash hash.Hash) {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	bi := &blockInfo{
-		heigh: height,
-		hash:  blockHash,
-	}
-	sb.latestBlocks.PushBack(blockHash.Stamp(), bi)
-}
-
-func (sb *Concrete) LatestBlockInfo(stamp hash.Stamp) (int, hash.Hash) {
+func (sb *Concrete) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	el, ok := sb.latestBlocks.Get(stamp)
+	val, ok := sb.latestBlocks.Get(stamp)
 	if ok {
-		bi := el.(*blockInfo)
-		return bi.heigh, bi.hash
+		bi := val.(*BlockInfo)
+		return bi.height, bi.hash
 	}
 
 	return -1, hash.UndefHash

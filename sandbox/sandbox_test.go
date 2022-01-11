@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -30,11 +31,15 @@ func init() {
 func setup(t *testing.T) {
 	var err error
 	tStore = store.MockingStore()
+	params := param.DefaultParams()
+	params.TransactionToLiveInterval = 64
+	latestBlocks := linkedmap.NewLinkedMap(params.TransactionToLiveInterval)
 
-	lastHeight := 21
+	lastHeight := 124
 	for i := 0; i <= lastHeight; i++ {
 		b, _ := block.GenerateTestBlock(nil, nil)
 		tStore.SaveBlock(i+1, b)
+		latestBlocks.PushBack(b.Stamp(), &BlockInfo{height: i + 1, hash: b.Hash()})
 	}
 
 	pub1, prv1 := bls.GenerateTestKeyPair()
@@ -90,8 +95,7 @@ func setup(t *testing.T) {
 	tCommittee, err = committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
-	params := param.DefaultParams()
-	tSandbox = NewSandbox(tStore, params, tStore.LastBlockHeight(), tSortitions, tCommittee)
+	tSandbox = NewSandbox(tStore, params, latestBlocks, tSortitions, tCommittee)
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
@@ -380,4 +384,23 @@ func TestDeepCopy(t *testing.T) {
 
 	assert.NotEqual(t, acc2.Hash(), acc3.Account.Hash())
 	assert.NotEqual(t, val2.Hash(), val3.Validator.Hash())
+}
+
+func TestFindBlockInfoByStamp(t *testing.T) {
+	setup(t)
+
+	height, _ := tSandbox.FindBlockInfoByStamp(hash.GenerateTestStamp())
+	assert.Equal(t, height, -1)
+
+	latestBlockHeight := tStore.LastBlockHeight()
+	latestBlock := tStore.Blocks[latestBlockHeight]
+	height, hash := tSandbox.FindBlockInfoByStamp(latestBlock.Stamp())
+	assert.Equal(t, height, latestBlockHeight)
+	assert.Equal(t, hash, latestBlock.Hash())
+
+	anotherBlockHeight := tStore.LastBlockHeight() - 14
+	anotherBlock := tStore.Blocks[anotherBlockHeight]
+	height, hash = tSandbox.FindBlockInfoByStamp(anotherBlock.Stamp())
+	assert.Equal(t, height, anotherBlockHeight)
+	assert.Equal(t, hash, anotherBlock.Hash())
 }

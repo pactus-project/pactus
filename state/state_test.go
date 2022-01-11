@@ -146,30 +146,26 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	setup(t)
 	moveToNextHeightForAllStates(t)
 
-	b, err := tState1.ProposeBlock(0)
+	b1, err := tState1.ProposeBlock(0)
 	assert.Error(t, err)
-	assert.Nil(t, b)
+	assert.Nil(t, b1)
 
-	trx := tx.NewSendTx(hash.UndefHash, 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "")
+	trx := tx.NewSendTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "")
 	tValSigner1.SignMsg(trx)
 	assert.NoError(t, tCommonTxPool.AppendTx(trx))
 
-	b, err = tState2.ProposeBlock(0)
+	b2, err := tState2.ProposeBlock(0)
 	assert.NoError(t, err)
-	assert.NotNil(t, b)
-	assert.Equal(t, b.TxIDs().Len(), 2)
-
-	err = tState1.ValidateBlock(b)
-	require.NoError(t, err)
+	assert.NotNil(t, b2)
+	assert.Equal(t, b2.TxIDs().Len(), 2)
+	require.NoError(t, tState1.ValidateBlock(b2))
 
 	// Propose and validate again
-	b, err = tState2.ProposeBlock(0)
+	b22, err := tState2.ProposeBlock(0)
 	assert.NoError(t, err)
-	assert.NotNil(t, b)
-	assert.Equal(t, b.TxIDs().Len(), 2)
-
-	err = tState1.ValidateBlock(b)
-	require.NoError(t, err)
+	assert.NotNil(t, b22)
+	assert.Equal(t, b22.TxIDs().Len(), 2)
+	require.NoError(t, tState1.ValidateBlock(b22))
 }
 
 func TestBlockSubsidyTx(t *testing.T) {
@@ -389,7 +385,7 @@ func TestSortition(t *testing.T) {
 	height := 1
 	for ; height < 12; height++ {
 		if height == 2 {
-			trx := tx.NewBondTx(hash.UndefHash, 1, tValSigner1.Address(), pub, 1000, 1000, "")
+			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub, 1000, 1000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
 		}
@@ -577,7 +573,7 @@ func TestLoadState(t *testing.T) {
 
 	// Add a bond transactions to change total stake
 	pub, _ := bls.GenerateTestKeyPair()
-	tx2 := tx.NewBondTx(hash.UndefHash, 1, tValSigner1.Address(), pub, 8888000, 8888, "")
+	tx2 := tx.NewBondTx(tState1.LastBlockHash().Stamp(), 1, tValSigner1.Address(), pub, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx2))
 
 	assert.NoError(t, tCommonTxPool.AppendTx(tx2))
