@@ -215,12 +215,11 @@ func (sb *Concrete) EnterCommittee(blockHash hash.Hash, addr crypto.Address) err
 		return errors.Errorf(errors.ErrGeneric, "this validator has joined into committee before")
 	}
 
-	lastHeight := -1
 	_, val := sb.latestBlocks.Last()
 	if val == nil {
 		return errors.Errorf(errors.ErrGeneric, "Unable to retrieve last block info")
 	}
-	lastHeight = val.(*BlockInfo).height
+	lastHeight := val.(*BlockInfo).height
 
 	if sb.committee.Size() >= sb.params.CommitteeSize {
 		oldestJoinedHeight := lastHeight
