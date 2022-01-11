@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -16,11 +17,17 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+type blockInfo struct {
+	heigh int
+	hash  hash.Hash
+}
+
 type Concrete struct {
 	lk sync.RWMutex
 
 	store            store.Reader
 	sortition        *sortition.Sortition
+	latestBlocks     *linkedmap.LinkedMap
 	committee        committee.Reader
 	accounts         map[crypto.Address]*AccountStatus
 	validators       map[crypto.Address]*ValidatorStatus
@@ -53,6 +60,7 @@ func NewSandbox(store store.Reader, params param.Params, lastHeight int, sortiti
 
 	sb.accounts = make(map[crypto.Address]*AccountStatus)
 	sb.validators = make(map[crypto.Address]*ValidatorStatus)
+	sb.latestBlocks = linkedmap.NewLinkedMap(params.TransactionToLiveInterval)
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
 	sb.totalStakeChange = 0
@@ -322,6 +330,30 @@ func (sb *Concrete) IterateValidators(consumer func(*ValidatorStatus)) {
 	for _, vs := range sb.validators {
 		consumer(vs)
 	}
+}
+
+func (sb *Concrete) AddNewBlock(height int, blockHash hash.Hash) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	bi := &blockInfo{
+		heigh: height,
+		hash:  blockHash,
+	}
+	sb.latestBlocks.PushBack(blockHash.Stamp(), bi)
+}
+
+func (sb *Concrete) LatestBlockInfo(stamp hash.Stamp) (int, hash.Hash) {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	el, ok := sb.latestBlocks.Get(stamp)
+	if ok {
+		bi := el.(*blockInfo)
+		return bi.heigh, bi.hash
+	}
+
+	return -1, hash.UndefHash
 }
 
 func (sb *Concrete) CommitteeSize() int {

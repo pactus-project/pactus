@@ -79,7 +79,7 @@ func (exe *Execution) checkMemo(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	curHeight := sb.CurrentHeight()
-	height := sb.BlockHeight(trx.Stamp())
+	height, _ := sb.LatestBlockInfo(trx.Stamp())
 	interval := sb.TransactionToLiveInterval()
 
 	if trx.IsMintbaseTx() {

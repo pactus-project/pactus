@@ -281,7 +281,6 @@ func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Co
 
 	for i := len(params) - 1; i >= 0; i-- {
 		p := params[i]
-		//fmt.Printf("param: %v, %x, %v\n", p.blockHash, p.seed, p.poolStake)
 		srt.SetParams(p.blockHash, p.seed, p.poolStake)
 	}
 

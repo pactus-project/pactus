@@ -29,7 +29,9 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if sb.CurrentHeight()-val.LastBondingHeight() < 2*sb.CommitteeSize() {
 		return errors.Errorf(errors.ErrInvalidTx, "in bonding period")
 	}
-	if !sb.VerifySortition(trx.Stamp(), pld.Proof, val) {
+	_, hash := sb.LatestBlockInfo(trx.Stamp())
+	ok := sb.VerifySortition(hash, pld.Proof, val)
+	if !ok {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid proof or index")
 	}
 	if e.strict {
@@ -39,7 +41,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 		}
 
-		if err := sb.EnterCommittee(trx.Stamp(), val.Address()); err != nil {
+		if err := sb.EnterCommittee(hash, val.Address()); err != nil {
 			return errors.Errorf(errors.ErrInvalidTx, err.Error())
 		}
 	}

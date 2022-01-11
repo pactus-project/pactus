@@ -79,21 +79,24 @@ func TestTxSanityCheck(t *testing.T) {
 func TestSubsidyTx(t *testing.T) {
 	pub, prv := bls.GenerateTestKeyPair()
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, pub.Address(), 2500, "subsidy")
+		stamp := hash.GenerateTestStamp()
+		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		assert.True(t, trx.IsMintbaseTx())
 		trx.data.Fee = 1
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, pub.Address(), 2500, "subsidy")
+		stamp := hash.GenerateTestStamp()
+		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := NewMintbaseTx(hash.GenerateTestHash(), 88, pub.Address(), 2500, "subsidy")
+		stamp := hash.GenerateTestStamp()
+		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		trx.SetPublicKey(pub)
 		assert.Error(t, trx.SanityCheck())
 	})
@@ -271,30 +274,30 @@ func TestSortitionDecodingAndHash(t *testing.T) {
 }
 
 func TestSendSignBytes(t *testing.T) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	signer := bls.GenerateTestSigner()
 	addr := crypto.GenerateTestAddress()
 
-	trx1 := NewSendTx(h, 1, signer.Address(), addr, 100, 10, "test send-tx")
+	trx1 := NewSendTx(stamp, 1, signer.Address(), addr, 100, 10, "test send-tx")
 	signer.SignMsg(trx1)
 
-	trx2 := NewSendTx(h, 1, signer.Address(), addr, 100, 10, "test send-tx")
-	trx3 := NewSendTx(h, 2, signer.Address(), addr, 100, 10, "test send-tx")
+	trx2 := NewSendTx(stamp, 1, signer.Address(), addr, 100, 10, "test send-tx")
+	trx3 := NewSendTx(stamp, 2, signer.Address(), addr, 100, 10, "test send-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
 }
 
 func TestBondSignBytes(t *testing.T) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	signer := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
 
-	trx1 := NewBondTx(h, 1, signer.Address(), pub, 100, 100, "test bond-tx")
+	trx1 := NewBondTx(stamp, 1, signer.Address(), pub, 100, 100, "test bond-tx")
 	signer.SignMsg(trx1)
 
-	trx2 := NewBondTx(h, 1, signer.Address(), pub, 100, 100, "test bond-tx")
-	trx3 := NewBondTx(h, 2, signer.Address(), pub, 100, 100, "test bond-tx")
+	trx2 := NewBondTx(stamp, 1, signer.Address(), pub, 100, 100, "test bond-tx")
+	trx3 := NewBondTx(stamp, 2, signer.Address(), pub, 100, 100, "test bond-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
@@ -302,14 +305,14 @@ func TestBondSignBytes(t *testing.T) {
 }
 
 func TestUnbondSignBytes(t *testing.T) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	signer := bls.GenerateTestSigner()
 
-	trx1 := NewUnbondTx(h, 1, signer.Address(), "test unbond-tx")
+	trx1 := NewUnbondTx(stamp, 1, signer.Address(), "test unbond-tx")
 	signer.SignMsg(trx1)
 
-	trx2 := NewUnbondTx(h, 1, signer.Address(), "test unbond-tx")
-	trx3 := NewUnbondTx(h, 2, signer.Address(), "test unbond-tx")
+	trx2 := NewUnbondTx(stamp, 1, signer.Address(), "test unbond-tx")
+	trx3 := NewUnbondTx(stamp, 2, signer.Address(), "test unbond-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
@@ -317,15 +320,15 @@ func TestUnbondSignBytes(t *testing.T) {
 
 }
 func TestWithdrawSignBytes(t *testing.T) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	signer := bls.GenerateTestSigner()
 	addr := crypto.GenerateTestAddress()
 
-	trx1 := NewWithdrawTx(h, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
+	trx1 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
 	signer.SignMsg(trx1)
 
-	trx2 := NewWithdrawTx(h, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
-	trx3 := NewWithdrawTx(h, 2, signer.Address(), addr, 1000, 1000, "test unbond-tx")
+	trx2 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, 1000, "test unbond-tx")
+	trx3 := NewWithdrawTx(stamp, 2, signer.Address(), addr, 1000, 1000, "test unbond-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
@@ -334,15 +337,15 @@ func TestWithdrawSignBytes(t *testing.T) {
 }
 
 func TestSortitionSignBytes(t *testing.T) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	signer := bls.GenerateTestSigner()
 	proof := sortition.GenerateRandomProof()
 
-	trx1 := NewSortitionTx(h, 1, signer.Address(), proof)
+	trx1 := NewSortitionTx(stamp, 1, signer.Address(), proof)
 	signer.SignMsg(trx1)
 
-	trx2 := NewSortitionTx(h, 1, signer.Address(), proof)
-	trx3 := NewSortitionTx(h, 2, signer.Address(), proof)
+	trx2 := NewSortitionTx(stamp, 1, signer.Address(), proof)
+	trx3 := NewSortitionTx(stamp, 2, signer.Address(), proof)
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())

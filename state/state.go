@@ -217,7 +217,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	if err != nil {
 		return nil
 	}
-	stamp := st.lastInfo.BlockHash()
+	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
 	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, st.params.BlockReward+fee, "")
 	return tx
@@ -426,7 +426,7 @@ func (st *state) evaluateSortition() bool {
 
 	ok, proof := st.sortition.EvaluateSortition(st.lastInfo.BlockHash(), st.signer, val.Stake())
 	if ok {
-		trx := tx.NewSortitionTx(st.lastInfo.BlockHash(), val.Sequence()+1, val.Address(), proof)
+		trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)
 
 		err := st.txPool.AppendTxAndBroadcast(trx)

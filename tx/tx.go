@@ -25,7 +25,7 @@ type Tx struct {
 
 type txData struct {
 	Version   int              `cbor:"1,keyasint"`
-	Stamp     hash.Hash        `cbor:"2,keyasint"`
+	Stamp     hash.Stamp       `cbor:"2,keyasint"`
 	Sequence  int              `cbor:"3,keyasint"`
 	Fee       int64            `cbor:"4,keyasint"`
 	Type      payload.Type     `cbor:"5,keyasint"`
@@ -36,7 +36,7 @@ type txData struct {
 }
 
 func (tx *Tx) Version() int                { return tx.data.Version }
-func (tx *Tx) Stamp() hash.Hash            { return tx.data.Stamp }
+func (tx *Tx) Stamp() hash.Stamp           { return tx.data.Stamp }
 func (tx *Tx) Sequence() int               { return tx.data.Sequence }
 func (tx *Tx) PayloadType() payload.Type   { return tx.data.Type }
 func (tx *Tx) Payload() payload.Payload    { return tx.data.Payload }
@@ -131,7 +131,7 @@ func (tx *Tx) checkSignature() error {
 
 type _txData struct {
 	Version   int             `cbor:"1,keyasint"`
-	Stamp     hash.Hash       `cbor:"2,keyasint"`
+	Stamp     hash.Stamp      `cbor:"2,keyasint"`
 	Sequence  int             `cbor:"3,keyasint"`
 	Fee       int64           `cbor:"4,keyasint"`
 	Type      payload.Type    `cbor:"5,keyasint"`
@@ -213,7 +213,7 @@ func (tx *Tx) Decode(bs []byte) error {
 func (tx *Tx) Fingerprint() string {
 	return fmt.Sprintf("{⌘ %v 🏵 %v %v}",
 		tx.ID().Fingerprint(),
-		tx.data.Stamp.Fingerprint(),
+		tx.data.Stamp.String(),
 		tx.data.Payload.Fingerprint())
 }
 
@@ -263,28 +263,28 @@ func (tx *Tx) IsFreeTx() bool {
 // ---------
 // For tests
 func GenerateTestSendTx() (*Tx, crypto.Signer) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewSendTx(h, 110, s.Address(), pub.Address(), 1000, 1000, "test send-tx")
+	tx := NewSendTx(stamp, 110, s.Address(), pub.Address(), 1000, 1000, "test send-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
 
 func GenerateTestBondTx() (*Tx, crypto.Signer) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewBondTx(h, 110, s.Address(), pub, 1000, 1000, "test bond-tx")
+	tx := NewBondTx(stamp, 110, s.Address(), pub, 1000, 1000, "test bond-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
 
 func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
-	h := hash.GenerateTestHash()
+	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	proof := sortition.GenerateRandomProof()
-	tx := NewSortitionTx(h, 110, s.Address(), proof)
+	tx := NewSortitionTx(stamp, 110, s.Address(), proof)
 	s.SignMsg(tx)
 	return tx, s
 }
