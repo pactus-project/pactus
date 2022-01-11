@@ -22,7 +22,7 @@ devtools:
 
 herumi:
 	@if [ ! -d $(HERUMI) ]; then \
-		git clone --recursive git://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static; \
+		git clone --recursive https://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static; \
 	fi
 
 
