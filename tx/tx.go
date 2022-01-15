@@ -130,19 +130,44 @@ func (tx *Tx) checkSignature() error {
 }
 
 type _txData struct {
-	Version   int             `cbor:"1,keyasint"`
-	Stamp     hash.Stamp      `cbor:"2,keyasint"`
-	Sequence  int             `cbor:"3,keyasint"`
-	Fee       int64           `cbor:"4,keyasint"`
-	Type      payload.Type    `cbor:"5,keyasint"`
-	Payload   cbor.RawMessage `cbor:"6,keyasint"`
-	Memo      string          `cbor:"7,keyasint,omitempty"`
-	PublicKey cbor.RawMessage `cbor:"20,keyasint,omitempty"`
-	Signature cbor.RawMessage `cbor:"21,keyasint,omitempty"`
+	Version   int          `cbor:"1,keyasint"`
+	Stamp     hash.Stamp   `cbor:"2,keyasint"`
+	Sequence  int          `cbor:"3,keyasint"`
+	Fee       int64        `cbor:"4,keyasint"`
+	Type      payload.Type `cbor:"5,keyasint"`
+	Payload   []byte       `cbor:"6,keyasint"`
+	Memo      string       `cbor:"7,keyasint,omitempty"`
+	PublicKey []byte       `cbor:"20,keyasint,omitempty"`
+	Signature []byte       `cbor:"21,keyasint,omitempty"`
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
-	return cbor.Marshal(tx.data)
+	_data := _txData{
+		Version:  tx.data.Version,
+		Stamp:    tx.data.Stamp,
+		Sequence: tx.data.Sequence,
+		Type:     tx.data.Type,
+		Fee:      tx.data.Fee,
+		Memo:     tx.data.Memo,
+	}
+	payloadData, err := cbor.Marshal(tx.data.Payload)
+	if err != nil {
+		return nil, err
+	}
+	_data.Payload = make([]byte, len(payloadData))
+	copy(_data.Payload, payloadData)
+
+	if tx.data.PublicKey != nil {
+		_data.PublicKey = make([]byte, bls.PublicKeySize)
+		copy(_data.PublicKey, tx.data.PublicKey.RawBytes())
+	}
+	if tx.data.Signature != nil {
+		_data.Signature = make([]byte, bls.SignatureSize)
+		copy(_data.Signature, tx.data.Signature.RawBytes())
+	}
+
+	return cbor.Marshal(_data)
+
 }
 
 func (tx *Tx) UnmarshalCBOR(bs []byte) error {
@@ -178,8 +203,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	tx.data.Memo = _data.Memo
 
 	if _data.PublicKey != nil {
-		publicKey := new(bls.PublicKey)
-		err = publicKey.UnmarshalCBOR(_data.PublicKey)
+		publicKey, err := bls.PublicKeyFromRawBytes(_data.PublicKey)
 		if err != nil {
 			return err
 		}
@@ -187,8 +211,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	}
 
 	if _data.Signature != nil {
-		signature := new(bls.Signature)
-		err = signature.UnmarshalCBOR(_data.Signature)
+		signature, err := bls.SignatureFromRawBytes(_data.Signature)
 		if err != nil {
 			return err
 		}
