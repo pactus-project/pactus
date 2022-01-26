@@ -14,17 +14,17 @@ var (
 	zclient zarb.ZarbClient
 )
 
-func GetStamp(rpcEndpoint string) (hash.Hash, error) {
+func GetStamp(rpcEndpoint string) (hash.Stamp, error) {
 	client, err := GetRPCClient(rpcEndpoint)
 	if err != nil {
-		return hash.Hash{}, err
+		return hash.Stamp{}, err
 	}
 
 	info, err := client.GetBlockchainInfo(context.Background(), &zarb.BlockchainInfoRequest{})
 	if err != nil {
-		return hash.Hash{}, err
+		return hash.Stamp{}, err
 	}
-	return hash.FromString(info.LastBlockHash)
+	return hash.StampFromString(info.LastBlockHash)
 }
 
 func GetSequence(rpcEndpoint string, addr crypto.Address) (int, error) {

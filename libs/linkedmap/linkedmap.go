@@ -47,6 +47,20 @@ func (lm *LinkedMap) PushBack(first interface{}, second interface{}) {
 	lm.prune()
 }
 
+func (lm *LinkedMap) PushFront(first interface{}, second interface{}) {
+	el, found := lm.hashmap[first]
+	if found {
+		// update the second
+		el.Value.(*Pair).Second = second
+		return
+	}
+
+	el = lm.list.PushFront(&Pair{first, second})
+	lm.hashmap[first] = el
+
+	lm.prune()
+}
+
 func (lm *LinkedMap) Get(first interface{}) (interface{}, bool) {
 	el, found := lm.hashmap[first]
 	if found {

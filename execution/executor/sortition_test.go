@@ -14,34 +14,34 @@ func TestExecuteSortitionTx(t *testing.T) {
 	setup(t)
 	exe := NewSortitionExecutor(true)
 
-	stamp40 := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(40, stamp40)
+	hash40 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(40, hash40)
 	proof1 := sortition.GenerateRandomProof()
 
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
-		trx := tx.NewSortitionTx(stamp40, 1, tValSigner.Address(), proof1)
+		trx := tx.NewSortitionTx(hash40.Stamp(), 1, tValSigner.Address(), proof1)
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	stamp41 := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(41, stamp41)
+	hash41 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(41, hash41)
 
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
 		addr := crypto.GenerateTestAddress()
-		trx := tx.NewSortitionTx(stamp41, 1, addr, proof1)
+		trx := tx.NewSortitionTx(hash41.Stamp(), 1, addr, proof1)
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSortitionTx(stamp41, 2, tValSigner.Address(), proof1)
+		trx := tx.NewSortitionTx(hash41.Stamp(), 2, tValSigner.Address(), proof1)
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
-		trx := tx.NewSortitionTx(stamp41, 1, tValSigner.Address(), proof1)
+		trx := tx.NewSortitionTx(hash41.Stamp(), 1, tValSigner.Address(), proof1)
 
 		// Check if can't join to committee
 		tSandbox.AcceptSortition = true
@@ -88,18 +88,18 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	setup(t)
 	exe1 := NewSortitionExecutor(false)
 
-	stamp100 := hash.GenerateTestHash()
-	stamp101 := hash.GenerateTestHash()
-	tSandbox.AppendStampAndUpdateHeight(100, stamp100)
-	tSandbox.AppendStampAndUpdateHeight(101, stamp101)
+	hash100 := hash.GenerateTestHash()
+	hash101 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(100, hash100)
+	tSandbox.AppendNewBlock(101, hash101)
 	proof1 := sortition.GenerateRandomProof()
 	proof2 := sortition.GenerateRandomProof()
 
 	tSandbox.AcceptSortition = true
 	tSandbox.WelcomeToCommittee = false
 
-	sortition1 := tx.NewSortitionTx(stamp100, 102, tValSigner.Address(), proof1)
-	sortition2 := tx.NewSortitionTx(stamp101, 102, tValSigner.Address(), proof2)
+	sortition1 := tx.NewSortitionTx(hash100.Stamp(), 102, tValSigner.Address(), proof1)
+	sortition2 := tx.NewSortitionTx(hash101.Stamp(), 102, tValSigner.Address(), proof2)
 
 	assert.NoError(t, exe1.Execute(sortition1, tSandbox))
 	assert.NoError(t, exe1.Execute(sortition2, tSandbox))

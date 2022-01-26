@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
-func NewMintbaseTx(stamp hash.Hash, seq int, receiver crypto.Address, amount int64, memo string) *Tx {
+func NewMintbaseTx(stamp hash.Stamp, seq int, receiver crypto.Address, amount int64, memo string) *Tx {
 	return NewSendTx(
 		stamp,
 		seq,
@@ -19,7 +19,7 @@ func NewMintbaseTx(stamp hash.Hash, seq int, receiver crypto.Address, amount int
 		memo)
 }
 
-func NewSendTx(stamp hash.Hash,
+func NewSendTx(stamp hash.Stamp,
 	seq int,
 	sender, receiver crypto.Address,
 	amount, fee int64, memo string) *Tx {
@@ -40,7 +40,7 @@ func NewSendTx(stamp hash.Hash,
 	}
 }
 
-func NewBondTx(stamp hash.Hash,
+func NewBondTx(stamp hash.Stamp,
 	seq int,
 	bonder crypto.Address,
 	val *bls.PublicKey,
@@ -62,7 +62,7 @@ func NewBondTx(stamp hash.Hash,
 	}
 }
 
-func NewUnbondTx(stamp hash.Hash,
+func NewUnbondTx(stamp hash.Stamp,
 	seq int,
 	val crypto.Address,
 	memo string) *Tx {
@@ -81,7 +81,7 @@ func NewUnbondTx(stamp hash.Hash,
 	}
 }
 
-func NewWithdrawTx(stamp hash.Hash,
+func NewWithdrawTx(stamp hash.Stamp,
 	seq int,
 	val crypto.Address,
 	acc crypto.Address,
@@ -104,7 +104,7 @@ func NewWithdrawTx(stamp hash.Hash,
 	}
 }
 
-func NewSortitionTx(stamp hash.Hash,
+func NewSortitionTx(stamp hash.Stamp,
 	seq int,
 	addr crypto.Address,
 	proof sortition.Proof) *Tx {

@@ -66,7 +66,7 @@ func SendTx() func(c *cli.Cmd) {
 		c.Action = func() {
 
 			var err error
-			var stamp hash.Hash
+			var stamp hash.Stamp
 			var sender crypto.Address
 			var receiver crypto.Address
 			var seq int
@@ -142,7 +142,7 @@ func SendTx() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				stamp, err = hash.FromString(*stampOpt)
+				stamp, err = hash.StampFromString(*stampOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't decode stamp from input: %v", err)
 					return

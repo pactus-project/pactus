@@ -22,6 +22,7 @@ type Sandbox interface {
 	VerifySortition(hash.Hash, sortition.Proof, *validator.Validator) bool
 	EnterCommittee(hash.Hash, crypto.Address) error
 
+	FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash)
 	CommitteeSize() int
 	UnbondInterval() int
 	CurrentHeight() int

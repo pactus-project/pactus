@@ -7,6 +7,23 @@ import (
 )
 
 func TestLinkedMap(t *testing.T) {
+	t.Run("First element on empty linkedmap", func(t *testing.T) {
+		lm := NewLinkedMap(4)
+		el := lm.FirstElement()
+		k, v := lm.First()
+		assert.Nil(t, el)
+		assert.Nil(t, k)
+		assert.Nil(t, v)
+	})
+
+	t.Run("Last element on empty linkedmap", func(t *testing.T) {
+		lm := NewLinkedMap(4)
+		el := lm.LastElement()
+		k, v := lm.Last()
+		assert.Nil(t, el)
+		assert.Nil(t, k)
+		assert.Nil(t, v)
+	})
 
 	t.Run("Should adds items", func(t *testing.T) {
 		lm := NewLinkedMap(4)
@@ -144,5 +161,21 @@ func TestLinkedMap(t *testing.T) {
 		lm.Remove(3)
 		el := lm.LastElement()
 		assert.Equal(t, el.Value, &Pair{2, "b"})
+	})
+
+	t.Run("Push front", func(t *testing.T) {
+		lm1 := NewLinkedMap(3)
+		lm2 := NewLinkedMap(3)
+
+		lm1.PushBack(1, "a")
+		lm1.PushBack(2, "b")
+		lm1.PushBack(3, "c")
+
+		lm2.PushFront(3, "c")
+		lm2.PushFront(2, "b")
+		lm2.PushFront(1, "a")
+
+		assert.Equal(t, lm1.LastElement().Value, lm2.LastElement().Value)
+		assert.Equal(t, lm1.FirstElement().Value, lm2.FirstElement().Value)
 	})
 }

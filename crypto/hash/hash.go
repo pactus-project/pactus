@@ -70,6 +70,12 @@ func (h Hash) RawBytes() []byte {
 	return h.data.Hash[:]
 }
 
+func (h Hash) Stamp() Stamp {
+	var stamp Stamp
+	copy(stamp[:], h.data.Hash[0:4])
+	return stamp
+}
+
 func (h Hash) Fingerprint() string {
 	return fmt.Sprintf("%X", h.data.Hash[:6])
 }
@@ -78,7 +84,7 @@ func (h Hash) IsUndef() bool {
 	return h.EqualsTo(UndefHash)
 }
 
-func (h Hash) MarshalText() ([]byte, error) {
+func (h *Hash) MarshalText() ([]byte, error) {
 	return []byte(h.String()), nil
 }
 
@@ -109,7 +115,7 @@ func (h *Hash) UnmarshalJSON(bz []byte) error {
 	return h.UnmarshalText([]byte(text))
 }
 
-func (h Hash) MarshalCBOR() ([]byte, error) {
+func (h *Hash) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(h.data.Hash)
 }
 
@@ -139,4 +145,8 @@ func GenerateTestHash() Hash {
 		return UndefHash
 	}
 	return CalcHash(p)
+}
+
+func GenerateTestStamp() Stamp {
+	return GenerateTestHash().Stamp()
 }

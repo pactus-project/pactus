@@ -67,7 +67,7 @@ func BondTx() func(c *cli.Cmd) {
 		c.Action = func() {
 
 			var err error
-			var stamp hash.Hash
+			var stamp hash.Stamp
 			var bonder crypto.Address
 			var pub *bls.PublicKey
 			var seq int
@@ -141,7 +141,7 @@ func BondTx() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				stamp, err = hash.FromString(*stampOpt)
+				stamp, err = hash.StampFromString(*stampOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't decode stamp from input: %v", err)
 					return

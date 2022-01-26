@@ -96,6 +96,10 @@ func (b *Block) Hash() hash.Hash {
 	return *b.memorizedHash
 }
 
+func (b *Block) Stamp() hash.Stamp {
+	return b.Hash().Stamp()
+}
+
 func (b *Block) HashesTo(hash hash.Hash) bool {
 	return b.Hash().EqualsTo(hash)
 }

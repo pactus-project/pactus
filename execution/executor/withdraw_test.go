@@ -14,48 +14,48 @@ func Test_WithdrawExecutor(t *testing.T) {
 	exe := NewWithdrawExecutor(true)
 
 	addr := crypto.GenerateTestAddress()
-	stamp := hash.GenerateTestHash()
+	hash100 := hash.GenerateTestHash()
 
-	tSandbox.AppendStampAndUpdateHeight(100, stamp)
+	tSandbox.AppendNewBlock(100, hash100)
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(stamp, 1, addr, tAcc1.Address(), 1000, 1000, "invalid validator")
+		trx := tx.NewWithdrawTx(hash100.Stamp(), 1, addr, tAcc1.Address(), 1000, 1000, "invalid validator")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+2, tVal1.Address(), tAcc1.Address(), 1000, 1000, "invalid sequence")
+		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+2, tVal1.Address(), tAcc1.Address(), 1000, 1000, "invalid sequence")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("should fail, stack amount secceded", func(t *testing.T) {
 		assert.Equal(t, int64(5000000000), tVal1.Stake())
-		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tAcc1.Address(), tAcc1.Address(), 5000000000, 1000, "need to unbond first")
+		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tAcc1.Address(), tAcc1.Address(), 5000000000, 1000, "need to unbond first")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
 		assert.Equal(t, 0, tVal1.UnbondingHeight())
-		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 1000, 1000, "need to unbond first")
+		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 1000, 1000, "need to unbond first")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.Equal(t, 0, tVal1.UnbondingHeight())
 		tVal1.UpdateUnbondingHeight(101)
-		stamp1 := hash.GenerateTestHash()
-		tSandbox.AppendStampAndUpdateHeight(201, stamp1)
+		hash201 := hash.GenerateTestHash()
+		tSandbox.AppendNewBlock(201, hash201)
 		assert.Equal(t, 101, tVal1.UnbondingHeight())
 
-		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 1000, 1000, "not passed unbonding interval")
+		trx := tx.NewWithdrawTx(hash201.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 1000, 1000, "not passed unbonding interval")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should pass", func(t *testing.T) {
-		stamp1 := hash.GenerateTestHash()
-		tSandbox.AppendStampAndUpdateHeight(tVal1.UnbondingHeight()+tSandbox.UnbondInterval(), stamp1)
+		hash_max := hash.GenerateTestHash()
+		tSandbox.AppendNewBlock(tVal1.UnbondingHeight()+tSandbox.UnbondInterval(), hash_max)
 		assert.Equal(t, 101, tVal1.UnbondingHeight())
 
-		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stack")
+		trx := tx.NewWithdrawTx(hash_max.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stack")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 		assert.Zero(t, tVal1.Stake())
@@ -63,7 +63,7 @@ func Test_WithdrawExecutor(t *testing.T) {
 
 	t.Run("Should fail, can't withdraw empty stack", func(t *testing.T) {
 		assert.Zero(t, tVal1.Stake())
-		trx := tx.NewWithdrawTx(stamp, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stack")
+		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stack")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 

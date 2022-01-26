@@ -18,7 +18,7 @@ var _ Sandbox = &MockSandbox{}
 type MockSandbox struct {
 	Accounts           map[crypto.Address]*account.Account
 	Validators         map[crypto.Address]*validator.Validator
-	Stamps             map[hash.Hash]int
+	HashToHeight       map[hash.Hash]int
 	CurHeight          int
 	Params             param.Params
 	TotalAccount       int
@@ -30,10 +30,10 @@ type MockSandbox struct {
 
 func MockingSandbox() *MockSandbox {
 	return &MockSandbox{
-		Accounts:   make(map[crypto.Address]*account.Account),
-		Validators: make(map[crypto.Address]*validator.Validator),
-		Stamps:     make(map[hash.Hash]int),
-		Params:     param.DefaultParams(),
+		Accounts:     make(map[crypto.Address]*account.Account),
+		Validators:   make(map[crypto.Address]*validator.Validator),
+		HashToHeight: make(map[hash.Hash]int),
+		Params:       param.DefaultParams(),
 	}
 }
 
@@ -81,7 +81,7 @@ func (m *MockSandbox) CurrentHeight() int {
 	return m.CurHeight
 }
 func (m *MockSandbox) BlockHeight(hash hash.Hash) int {
-	h, ok := m.Stamps[hash]
+	h, ok := m.HashToHeight[hash]
 	if !ok {
 		return -1
 	}
@@ -100,8 +100,8 @@ func (m *MockSandbox) MinFee() int64 {
 	return m.Params.MinimumFee
 }
 
-func (m *MockSandbox) AppendStampAndUpdateHeight(height int, stamp hash.Hash) {
-	m.Stamps[stamp] = height
+func (m *MockSandbox) AppendNewBlock(height int, hash hash.Hash) {
+	m.HashToHeight[hash] = height
 	m.CurHeight = height + 1
 }
 
@@ -123,4 +123,14 @@ func (m *MockSandbox) UnbondInterval() int {
 
 func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
 	return m.InCommittee
+}
+
+func (m *MockSandbox) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
+	for h, i := range m.HashToHeight {
+		if h.Stamp().EqualsTo(stamp) {
+			return i, h
+		}
+	}
+
+	return -1, hash.UndefHash
 }

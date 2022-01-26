@@ -66,7 +66,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 		c.Action = func() {
 
 			var err error
-			var stamp hash.Hash
+			var stamp hash.Stamp
 			var from crypto.Address
 			var to crypto.Address
 			var seq int
@@ -140,7 +140,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				stamp, err = hash.FromString(*stampOpt)
+				stamp, err = hash.StampFromString(*stampOpt)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't decode stamp from input: %v", err)
 					return
