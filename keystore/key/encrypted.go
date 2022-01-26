@@ -33,11 +33,11 @@ const (
 )
 
 type EncryptedKey struct {
-	Address    crypto.Address     `json:"address"`
-	Crypto     *cryptoJSON        `json:"crypto,omitempty"`
-	PrivateKey *crypto.PrivateKey `json:"privatekey,omitempty"`
-	Label      string             `json:"label,omitempty"`
-	Version    int                `json:"version"`
+	Address    crypto.Address  `json:"address"`
+	Crypto     *cryptoJSON     `json:"crypto,omitempty"`
+	PrivateKey *bls.PrivateKey `json:"privatekey,omitempty"`
+	Label      string          `json:"label,omitempty"`
+	Version    int             `json:"version"`
 }
 
 type cryptoJSON struct {
@@ -87,7 +87,7 @@ func (ek *EncryptedKey) Save(p string) error {
 // Decrypt decrypts the Key from a json blob and returns the plaintext of the private key
 func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	if ek.PrivateKey != nil {
-		return NewKey(ek.Address, *ek.PrivateKey)
+		return NewKey(ek.Address, ek.PrivateKey)
 	}
 	if ek.Crypto.Cipher != "aes-128-ctr" {
 		return nil, fmt.Errorf("cipher not supported: %v", ek.Crypto.Cipher)
@@ -167,7 +167,7 @@ func EncryptKey(key *Key, auth, label string) (*EncryptedKey, error) {
 		pv := key.PrivateKey()
 		return &EncryptedKey{
 			Address:    key.data.Address,
-			PrivateKey: &pv,
+			PrivateKey: pv.(*bls.PrivateKey),
 			Label:      label,
 			Version:    version,
 		}, nil

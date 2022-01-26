@@ -13,7 +13,7 @@ func (n *network) setupKademlia(ctx context.Context, host lp2phost.Host) (*lp2pd
 
 	opts := []lp2pdht.Option{
 		lp2pdht.Mode(lp2pdht.ModeAuto),
-		lp2pdht.ProtocolPrefix(lp2pcore.ProtocolID(fmt.Sprintf("/zarb/kad/%s", n.config.Name))),
+		lp2pdht.ProtocolPrefix(lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.config.Name))),
 	}
 
 	dht, err := lp2pdht.New(ctx, host, opts...)
