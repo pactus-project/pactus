@@ -182,6 +182,6 @@ func (n *network) Fingerprint() string {
 }
 
 func (n *network) joinTopic(name string) (*lp2pps.Topic, error) {
-	topic := fmt.Sprintf("/zarb/pubsub/%s/v1/%s", n.config.Name, name)
+	topic := fmt.Sprintf("/%s/pubsub/v1/%s", n.config.Name, name)
 	return n.pubsub.Join(topic)
 }
