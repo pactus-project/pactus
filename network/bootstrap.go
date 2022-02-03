@@ -35,9 +35,9 @@ type bootstrap struct {
 	logger *logger.Logger
 }
 
-// NewBootstrap returns a new Bootstrap that will attempt to keep connected
+// newBootstrap returns a new Bootstrap that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
-func NewBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing, conf *BootstrapConfig, logger *logger.Logger) *bootstrap {
+func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing, conf *BootstrapConfig, logger *logger.Logger) *bootstrap {
 	b := &bootstrap{
 		ctx:     ctx,
 		config:  conf,

@@ -171,18 +171,16 @@ func (n *network) BroadcastMessage(msg []byte, topicID TopicID) error {
 	n.logger.Debug("Publishing new message", "topic", topicID)
 	switch topicID {
 	case GeneralTopic:
-		if n.generalTopic != nil {
-			return n.gossip.BroadcastMessage(msg, n.generalTopic)
-		} else {
-			n.logger.Warn("Not subscribed to general topic")
+		if n.generalTopic == nil {
+			return errors.Errorf(errors.ErrNetwork, "Not subscribed to general topic")
 		}
+		return n.gossip.BroadcastMessage(msg, n.generalTopic)
 
 	case ConsensusTopic:
-		if n.consensusTopic != nil {
-			return n.gossip.BroadcastMessage(msg, n.consensusTopic)
-		} else {
-			n.logger.Warn("Not subscribed to consensus topic")
+		if n.consensusTopic == nil {
+			return errors.Errorf(errors.ErrNetwork, "Not subscribed to consensus topic")
 		}
+		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
 
 	default:
 		n.logger.Warn("Invalid topic")

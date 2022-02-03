@@ -28,9 +28,10 @@ func Test_WithdrawExecutor(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	t.Run("should fail, stack amount secceded", func(t *testing.T) {
+	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		assert.Equal(t, int64(5000000000), tVal1.Stake())
-		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tAcc1.Address(), tAcc1.Address(), 5000000000, 1000, "need to unbond first")
+		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), tVal1.Stake()+1, 0, "insufficient balance")
+
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
@@ -39,6 +40,7 @@ func Test_WithdrawExecutor(t *testing.T) {
 		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 1000, 1000, "need to unbond first")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
+
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.Equal(t, 0, tVal1.UnbondingHeight())
 		tVal1.UpdateUnbondingHeight(101)
@@ -50,20 +52,20 @@ func Test_WithdrawExecutor(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	t.Run("Should pass", func(t *testing.T) {
-		hash_max := hash.GenerateTestHash()
-		tSandbox.AppendNewBlock(tVal1.UnbondingHeight()+tSandbox.UnbondInterval(), hash_max)
+	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
+		hash := hash.GenerateTestHash()
+		tSandbox.AppendNewBlock(tVal1.UnbondingHeight()+tSandbox.UnbondInterval(), hash)
 		assert.Equal(t, 101, tVal1.UnbondingHeight())
 
-		trx := tx.NewWithdrawTx(hash_max.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stack")
+		trx := tx.NewWithdrawTx(hash.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stake")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 		assert.Zero(t, tVal1.Stake())
 	})
 
-	t.Run("Should fail, can't withdraw empty stack", func(t *testing.T) {
+	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
 		assert.Zero(t, tVal1.Stake())
-		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stack")
+		trx := tx.NewWithdrawTx(hash100.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "can't withdraw empty stake")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 

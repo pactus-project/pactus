@@ -29,7 +29,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.
 		return nil
 	}
 
-	bootstrap := NewBootstrap(ctx,
+	bootstrap := newBootstrap(ctx,
 		host, host.Network(), kademlia,
 		conf, logger)
 

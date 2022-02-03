@@ -73,6 +73,7 @@ fmt: herumi
 		--enable=gofmt \
 		--enable=unconvert \
 		--enable=unparam \
+		--enable=revive \
 		--enable=asciicheck \
 		--enable=misspell \
 		--enable=gosec
