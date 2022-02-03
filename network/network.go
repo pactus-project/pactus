@@ -168,7 +168,7 @@ func (n *network) SendMessage(msg []byte, pid lp2pcore.PeerID) error {
 }
 
 func (n *network) BroadcastMessage(msg []byte, topicID TopicID) error {
-	n.logger.Debug("Publishing new message", "topic", topicID.ToString())
+	n.logger.Debug("Publishing new message", "topic", topicID)
 	switch topicID {
 	case GeneralTopic:
 		if n.generalTopic != nil {

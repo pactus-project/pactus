@@ -17,7 +17,7 @@ func TestParsingProposalMessages(t *testing.T) {
 		p1, _ := proposal.GenerateTestProposal(consensusHeight, 0)
 		pld := payload.NewProposalPayload(p1)
 
-		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
 		assert.NotNil(t, tAliceSync.cache.GetProposal(consensusHeight, 0))
 		assert.NotNil(t, tAliceConsensus.RoundProposal(0))
 	})

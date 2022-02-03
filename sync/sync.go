@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
@@ -14,6 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
+	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/tx"
@@ -90,10 +92,8 @@ func NewSynchronizer(
 	handlers[payload.PayloadTypeQueryProposal] = newQueryProposalHandler(sync)
 	handlers[payload.PayloadTypeQueryTransactions] = newQueryTransactionsHandler(sync)
 	handlers[payload.PayloadTypeBlockAnnounce] = newBlockAnnounceHandler(sync)
-	handlers[payload.PayloadTypeDownloadRequest] = newDownloadRequestHandler(sync)
-	handlers[payload.PayloadTypeDownloadResponse] = newDownloadResponseHandler(sync)
-	handlers[payload.PayloadTypeLatestBlocksRequest] = newLatestBlocksRequestHandler(sync)
-	handlers[payload.PayloadTypeLatestBlocksResponse] = newLatestBlocksResponseHandler(sync)
+	handlers[payload.PayloadTypeBlocksRequest] = newBlocksRequestHandler(sync)
+	handlers[payload.PayloadTypeBlocksResponse] = newBlocksResponseHandler(sync)
 
 	sync.handlers = handlers
 
@@ -101,14 +101,9 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
-	if err := sync.network.JoinTopics(sync.onReceiveData); err != nil {
+	sync.network.SetCallback(sync.onReceiveData)
+	if err := sync.network.JoinGeneralTopic(); err != nil {
 		return err
-	}
-
-	if sync.config.InitialBlockDownload {
-		if err := sync.network.JoinDownloadTopic(); err != nil {
-			return err
-		}
 	}
 
 	go sync.broadcastLoop()
@@ -237,26 +232,23 @@ func (sync *synchronizer) updateBlokchain() {
 	ourHeight := sync.state.LastBlockHeight()
 	claimedHeight := sync.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight {
+		from := ourHeight
+		// Make sure we done have the start block inside cache
+		for sync.cache.HasBlockInCache(from + 1) {
+			from++
+		}
+
+		sync.logger.Info("We are not synced with the network.")
 		if claimedHeight > ourHeight+LatestBlockInterval {
-			sync.logger.Info("Need more blocks. Joining download topic")
-			// TODO:
-			// If peer doesn't respond, we should leave the topic
-			// A byzantine peer can send an invalid height, then all the nodes will join download topic.
-			// We should find a way to avoid it.
-			if err := sync.network.JoinDownloadTopic(); err != nil {
-				sync.logger.Info("We can't join download topic", "err", err)
-			} else {
-				sync.downloadBlocks()
-			}
+			sync.downloadBlocks(from)
 		} else {
-			sync.logger.Info("Need more blocks. Ask for the latest blocks")
-			sync.queryLatestBlocks()
+			sync.queryLatestBlocks(from)
 		}
 	}
 }
 
-func (sync *synchronizer) onReceiveData(data []byte, from peer.ID) {
-	msg := sync.firewall.OpenMessage(data, from)
+func (sync *synchronizer) onReceiveData(reader io.Reader, from peer.ID) {
+	msg := sync.firewall.OpenMessage(reader, from)
 	if msg == nil {
 		return
 	}
@@ -276,19 +268,45 @@ func (sync *synchronizer) onReceiveData(data []byte, from peer.ID) {
 	}
 }
 
-func (sync *synchronizer) broadcast(pld payload.Payload) {
+func (sync *synchronizer) prepareMessage(pld payload.Payload) *message.Message {
 	handler := sync.handlers[pld.Type()]
 	if handler == nil {
 		sync.logger.Warn("Invalid payload type: %v", pld.Type())
-		return
+		return nil
 	}
 	msg := handler.PrepareMessage(pld)
 	if msg != nil {
-		err := sync.network.PublishMessage(msg)
+		if err := msg.SanityCheck(); err != nil {
+			sync.logger.Error("Broadcasting an invalid message", "message", msg, "err", err)
+			return nil
+		}
+		return msg
+	}
+	return nil
+}
+
+func (sync *synchronizer) sendTo(pld payload.Payload, to peer.ID) {
+	msg := sync.prepareMessage(pld)
+	if msg != nil {
+		data, _ := msg.Encode()
+		err := sync.network.SendMessage(data, to)
 		if err != nil {
-			sync.logger.Error("Error on publishing message", "message", msg, "err", err)
+			sync.logger.Error("Error on sending message", "message", msg, "err", err)
 		} else {
-			sync.logger.Debug("Publishing new message", "message", msg)
+			sync.logger.Debug("Sending message to a peer", "message", msg, "to", to)
+		}
+	}
+}
+
+func (sync *synchronizer) broadcast(pld payload.Payload) {
+	msg := sync.prepareMessage(pld)
+	if msg != nil {
+		data, _ := msg.Encode()
+		err := sync.network.BroadcastMessage(data, pld.Type().TopicID())
+		if err != nil {
+			sync.logger.Error("Error on broadcasting message", "message", msg, "err", err)
+		} else {
+			sync.logger.Debug("Broadcasting new message", "message", msg)
 		}
 	}
 }
@@ -304,8 +322,8 @@ func (sync *synchronizer) Peers() []*peerset.Peer {
 // TODO:
 // maximum nodes to query block should be 8
 //
-func (sync *synchronizer) downloadBlocks() {
-	from := sync.state.LastBlockHeight()
+func (sync *synchronizer) downloadBlocks(from int) {
+
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
 		// TODO: write test for me
@@ -335,13 +353,13 @@ func (sync *synchronizer) downloadBlocks() {
 
 		sync.logger.Debug("Sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID()))
 		session := sync.peerSet.OpenSession(peer.PeerID())
-		pld := payload.NewDownloadRequestPayload(session.SessionID(), peer.PeerID(), from+1, to)
-		sync.broadcast(pld)
+		pld := payload.NewBlocksRequestPayload(session.SessionID(), from+1, to)
+		sync.sendTo(pld, peer.PeerID())
 		from = to
 	}
 }
 
-func (sync *synchronizer) queryLatestBlocks() {
+func (sync *synchronizer) queryLatestBlocks(from int) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
@@ -350,7 +368,6 @@ func (sync *synchronizer) queryLatestBlocks() {
 	}
 
 	// TODO: write test for me
-	from := sync.state.LastBlockHeight()
 	to := randPeer.Height()
 	if randPeer.Height() < from+1 {
 		return
@@ -358,9 +375,8 @@ func (sync *synchronizer) queryLatestBlocks() {
 
 	sync.logger.Debug("Querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID()))
 	session := sync.peerSet.OpenSession(randPeer.PeerID())
-	pld := payload.NewLatestBlocksRequestPayload(session.SessionID(), randPeer.PeerID(), from+1, to)
-	sync.broadcast(pld)
-
+	pld := payload.NewBlocksRequestPayload(session.SessionID(), from+1, to)
+	sync.sendTo(pld, randPeer.PeerID())
 }
 
 // peerIsInTheCommittee checks if the peer is a member of committee
@@ -461,10 +477,19 @@ func (sync *synchronizer) prepareTransactions(ids []tx.ID) []*tx.Tx {
 	return trxs
 }
 
-func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int, target peer.ID) {
-	if target != sync.network.SelfID() {
+func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code payload.ResponseCode) {
+	s := sync.peerSet.FindSession(sessionID)
+	if s == nil {
+		sync.logger.Debug("Session not found or closed", "session-id", sessionID)
 		return
 	}
+
+	if s.PeerID() != pid {
+		sync.logger.Debug("Peer ID is not known", "session-id", sessionID, "pid", pid)
+		return
+	}
+
+	s.SetLastResponseCode(code)
 
 	switch code {
 	case payload.ResponseCodeRejected:
@@ -491,10 +516,4 @@ func (sync *synchronizer) updateSession(code payload.ResponseCode, sessionID int
 		sync.synced()
 	}
 
-	s := sync.peerSet.FindSession(sessionID)
-	if s == nil {
-		sync.logger.Debug("Session not found or closed", "session-id", sessionID)
-	} else {
-		s.SetLastResponseCode(code)
-	}
 }

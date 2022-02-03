@@ -3,7 +3,6 @@ package bls
 import (
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/logger"
 )
 
 func init() {
@@ -27,7 +26,6 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	logger.Debug("bls gen=%x", gen.Serialize())
 	err = bls.SetGeneratorOfPublicKey(&gen)
 	if err != nil {
 		panic(err)

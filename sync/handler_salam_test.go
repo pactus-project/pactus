@@ -20,11 +20,13 @@ func TestParsingSalamMessages(t *testing.T) {
 		pub, _ := bls.GenerateTestKeyPair()
 		pld := payload.NewSalamPayload("bad-genesis", pub, invGenHash, 0, 0)
 		pid := util.RandomPeerID()
-		tAliceNet.ReceivingMessageFromOtherPeer(pid, pld)
+		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
 		peer := tAliceSync.peerSet.GetPeer(pid)
 		assert.Equal(t, peer.Status(), peerset.StatusCodeBanned)
-		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeAleyk, payload.ResponseCodeRejected)
+		msg := shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeAleyk)
+		assert.True(t, msg.Payload.(*payload.AleykPayload).PublicKey.EqualsTo(tAliceSync.signer.PublicKey()))
+		assert.Equal(t, msg.Payload.(*payload.AleykPayload).ResponseCode, payload.ResponseCodeRejected)
 	})
 
 	t.Run("Alice receives Salam message from a peer. Genesis hash is Ok. Alice should update the peer info", func(t *testing.T) {
@@ -32,11 +34,12 @@ func TestParsingSalamMessages(t *testing.T) {
 
 		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, 3, 0x1)
 		pid := util.RandomPeerID()
-		tAliceNet.ReceivingMessageFromOtherPeer(pid, pld)
+		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
 		peer := tAliceSync.peerSet.GetPeer(pid)
 		assert.Equal(t, peer.Status(), peerset.StatusCodeOK)
-		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeAleyk, payload.ResponseCodeOK)
+		msg := shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeAleyk)
+		assert.Equal(t, msg.Payload.(*payload.AleykPayload).ResponseCode, payload.ResponseCodeOK)
 		assert.Equal(t, tBobSync.peerSet.MaxClaimedHeight(), tAliceState.LastBlockHeight())
 
 		p := tAliceSync.peerSet.GetPeer(pid)
@@ -53,10 +56,11 @@ func TestParsingSalamMessages(t *testing.T) {
 		pub, _ := bls.GenerateTestKeyPair()
 		claimedHeight := tAliceState.LastBlockHeight() + 5
 		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, claimedHeight, 0)
-		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
 
-		shouldPublishPayloadWithThisTypeAndResponseCode(t, tAliceNet, payload.PayloadTypeAleyk, payload.ResponseCodeOK)
-		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeLatestBlocksRequest)
+		msg := shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeAleyk)
+		assert.Equal(t, msg.Payload.(*payload.AleykPayload).ResponseCode, payload.ResponseCodeOK)
+		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeBlocksRequest)
 		assert.Equal(t, tAliceSync.peerSet.MaxClaimedHeight(), claimedHeight)
 	})
 }

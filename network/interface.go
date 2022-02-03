@@ -14,7 +14,7 @@ const (
 	ConsensusTopic TopicID = 2
 )
 
-func (ti TopicID) ToString() string {
+func (ti TopicID) String() string {
 	switch ti {
 	case GeneralTopic:
 		return "General"

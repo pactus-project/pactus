@@ -2,6 +2,8 @@ package payload
 
 import (
 	"fmt"
+
+	"github.com/zarbchain/zarb-go/network"
 )
 
 type ResponseCode int
@@ -37,21 +39,40 @@ func (c ResponseCode) String() string {
 type Type int
 
 const (
-	PayloadTypeSalam                = Type(1) // Hello message
-	PayloadTypeAleyk                = Type(2) // Hello Ack message
-	PayloadTypeLatestBlocksRequest  = Type(3)
-	PayloadTypeLatestBlocksResponse = Type(4)
-	PayloadTypeQueryTransactions    = Type(5)
-	PayloadTypeTransactions         = Type(6)
-	PayloadTypeQueryProposal        = Type(7)
-	PayloadTypeProposal             = Type(8)
-	PayloadTypeHeartBeat            = Type(9)
-	PayloadTypeQueryVotes           = Type(10)
-	PayloadTypeVote                 = Type(11)
-	PayloadTypeBlockAnnounce        = Type(12)
-	PayloadTypeDownloadRequest      = Type(13)
-	PayloadTypeDownloadResponse     = Type(14)
+	PayloadTypeSalam             = Type(1) // Hello message
+	PayloadTypeAleyk             = Type(2) // Hello Ack message
+	PayloadTypeBlocksRequest     = Type(3)
+	PayloadTypeBlocksResponse    = Type(4)
+	PayloadTypeQueryTransactions = Type(5)
+	PayloadTypeTransactions      = Type(6)
+	PayloadTypeQueryProposal     = Type(7)
+	PayloadTypeProposal          = Type(8)
+	PayloadTypeHeartBeat         = Type(9)
+	PayloadTypeQueryVotes        = Type(10)
+	PayloadTypeVote              = Type(11)
+	PayloadTypeBlockAnnounce     = Type(12)
 )
+
+func (t Type) TopicID() network.TopicID {
+	switch t {
+	case PayloadTypeSalam,
+		PayloadTypeAleyk,
+		PayloadTypeHeartBeat,
+		PayloadTypeQueryTransactions,
+		PayloadTypeTransactions,
+		PayloadTypeBlockAnnounce:
+		return network.GeneralTopic
+
+	case PayloadTypeQueryProposal,
+		PayloadTypeProposal,
+		PayloadTypeQueryVotes,
+		PayloadTypeVote:
+		return network.ConsensusTopic
+
+	default:
+		panic("Invalid topic ID")
+	}
+}
 
 func (t Type) String() string {
 	switch t {
@@ -59,9 +80,9 @@ func (t Type) String() string {
 		return "salam"
 	case PayloadTypeAleyk:
 		return "aleyk"
-	case PayloadTypeLatestBlocksRequest:
+	case PayloadTypeBlocksRequest:
 		return "blocks-req"
-	case PayloadTypeLatestBlocksResponse:
+	case PayloadTypeBlocksResponse:
 		return "blocks-res"
 	case PayloadTypeQueryTransactions:
 		return "query-txs"
@@ -79,10 +100,6 @@ func (t Type) String() string {
 		return "vote"
 	case PayloadTypeBlockAnnounce:
 		return "block-announce"
-	case PayloadTypeDownloadRequest:
-		return "download-req"
-	case PayloadTypeDownloadResponse:
-		return "download-res"
 	}
 	return fmt.Sprintf("%d", t)
 }
@@ -93,10 +110,10 @@ func MakePayload(t Type) Payload {
 		return &SalamPayload{}
 	case PayloadTypeAleyk:
 		return &AleykPayload{}
-	case PayloadTypeLatestBlocksRequest:
-		return &LatestBlocksRequestPayload{}
-	case PayloadTypeLatestBlocksResponse:
-		return &LatestBlocksResponsePayload{}
+	case PayloadTypeBlocksRequest:
+		return &BlocksRequestPayload{}
+	case PayloadTypeBlocksResponse:
+		return &BlocksResponsePayload{}
 	case PayloadTypeQueryTransactions:
 		return &QueryTransactionsPayload{}
 	case PayloadTypeTransactions:
@@ -113,10 +130,6 @@ func MakePayload(t Type) Payload {
 		return &VotePayload{}
 	case PayloadTypeBlockAnnounce:
 		return &BlockAnnouncePayload{}
-	case PayloadTypeDownloadRequest:
-		return &DownloadRequestPayload{}
-	case PayloadTypeDownloadResponse:
-		return &DownloadResponsePayload{}
 	}
 
 	//

@@ -31,8 +31,8 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
 	})
 
-	t.Run("Bob should not process alice's message because she is not an active validator", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pldRound0)
+	t.Run("Bob should not process Alice's message because she is not an active validator", func(t *testing.T) {
+		simulatingReceiveingNewMessage(t, tBobSync, pldRound0, tAlicePeerID)
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
 	})
 
@@ -50,7 +50,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	t.Run("Bob should not send Alice the stale proposal", func(t *testing.T) {
 		// This case is importance for stability and performance of consensus
 
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pldRound0)
+		simulatingReceiveingNewMessage(t, tBobSync, pldRound0, tAlicePeerID)
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
 	})
 
@@ -60,7 +60,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	})
 
 	t.Run("Bob processes Alice's message", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pldRound1)
+		simulatingReceiveingNewMessage(t, tBobSync, pldRound1, tAlicePeerID)
 		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
 	})
 }
