@@ -138,7 +138,9 @@ func (sync *synchronizer) onStartingTimeout() {
 
 func (sync *synchronizer) synced() {
 	sync.logger.Debug("We are synced", "height", sync.state.LastBlockHeight())
-	sync.network.JoinConsensusTopic()
+	if err := sync.network.JoinConsensusTopic(); err != nil {
+		sync.logger.Error("Error on joining consensus topic", "err", err)
+	}
 	sync.consensus.MoveToNewHeight()
 }
 
