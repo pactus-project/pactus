@@ -215,7 +215,7 @@ func (n *network) JoinConsensusTopic() error {
 	if err != nil {
 		return err
 	}
-	n.generalTopic = topic
+	n.consensusTopic = topic
 	return nil
 }
 

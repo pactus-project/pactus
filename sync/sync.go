@@ -138,6 +138,7 @@ func (sync *synchronizer) onStartingTimeout() {
 
 func (sync *synchronizer) synced() {
 	sync.logger.Debug("We are synced", "height", sync.state.LastBlockHeight())
+	sync.network.JoinConsensusTopic()
 	sync.consensus.MoveToNewHeight()
 }
 

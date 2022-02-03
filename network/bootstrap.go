@@ -134,7 +134,7 @@ func (b *bootstrap) checkConnectivity() {
 			wg.Add(1)
 			go func(pi lp2ppeer.AddrInfo) {
 				if err := b.host.Connect(ctx, pi); err != nil {
-					b.logger.Error("got error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
+					b.logger.Error("Error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
 				}
 				wg.Done()
 			}(pinfo)

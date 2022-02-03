@@ -38,6 +38,8 @@ func setup(t *testing.T) {
 	tGoodPeerID = util.RandomPeerID()
 	tUnknownPeerID = util.RandomPeerID()
 
+	tNetwork.AddAnotherNetwork(network.MockingNetwork(tBadPeerID))
+
 	peerGood := tFirewall.peerSet.MustGetPeer(tGoodPeerID)
 	peerGood.UpdateStatus(peerset.StatusCodeOK)
 
@@ -66,6 +68,7 @@ func TestBanPeer(t *testing.T) {
 		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
 		d, _ := msg.Encode()
 
+		assert.False(t, tNetwork.IsClosed(tBadPeerID))
 		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
@@ -76,6 +79,7 @@ func TestBanPeer(t *testing.T) {
 		msg := message.NewMessage(tGoodPeerID, payload.NewQueryProposalPayload(100, 1))
 		d, _ := msg.Encode()
 
+		assert.False(t, tNetwork.IsClosed(tBadPeerID))
 		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
