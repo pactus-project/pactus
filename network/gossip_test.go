@@ -8,49 +8,46 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/logger"
 )
 
 func TestPubSub(t *testing.T) {
-	logger.InitLogger(logger.TestConfig())
+	setup(t)
 
-	net1, err := NewNetwork(TestConfig())
-	assert.NoError(t, err)
-	net2, err := NewNetwork(TestConfig())
-	assert.NoError(t, err)
+	assert.NoError(t, tNet1.Start())
+	assert.NoError(t, tNet2.Start())
 
 	received := make(chan bool)
 	msg := []byte("test")
 	cb := func(r io.Reader, id peer.ID) {
 		buf := make([]byte, 4)
 		_, err := r.Read(buf)
-		assert.Equal(t, id, net1.SelfID())
+		assert.Equal(t, id, tNet1.SelfID())
 		assert.Equal(t, buf, msg)
 		assert.NoError(t, err)
 		received <- true
 	}
-	go net2.SetCallback(cb)
+	go tNet2.SetCallback(cb)
 
-	assert.NoError(t, net1.JoinGeneralTopic())
-	assert.NoError(t, net2.JoinGeneralTopic())
-	assert.NoError(t, net1.JoinConsensusTopic())
+	assert.NoError(t, tNet1.JoinGeneralTopic())
+	assert.NoError(t, tNet2.JoinGeneralTopic())
+	assert.NoError(t, tNet1.JoinConsensusTopic())
 
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
+	assert.NoError(t, tNet1.Start())
+	assert.NoError(t, tNet2.Start())
 
 	for {
-		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
+		if tNet1.NumConnectedPeers() > 0 && tNet2.NumConnectedPeers() > 0 {
 			break
 		}
 	}
 
 	time.Sleep(1 * time.Second)
 
-	require.NoError(t, net1.BroadcastMessage([]byte("should not broadcasted"), ConsensusTopic))
-	require.NoError(t, net1.BroadcastMessage(msg, GeneralTopic))
+	require.NoError(t, tNet1.BroadcastMessage([]byte("should not broadcasted"), ConsensusTopic))
+	require.NoError(t, tNet1.BroadcastMessage(msg, GeneralTopic))
 
 	<-received
 
-	net1.Stop()
-	net2.Stop()
+	tNet1.Stop()
+	tNet2.Stop()
 }

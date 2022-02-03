@@ -4,69 +4,92 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestStoppingNetwork(t *testing.T) {
-	logger.InitLogger(logger.TestConfig())
+var (
+	tConf1   *Config
+	tConf2   *Config
+	tNet1    *network
+	tNet2    *network
+	tPeerID1 peer.ID
+)
 
-	net, err := NewNetwork(TestConfig())
+func init() {
+	logger.InitLogger(logger.TestConfig())
+	tConf1 = TestConfig()
+	tConf2 = TestConfig()
+
+	nodeKeyPath := util.TempFilePath()
+	nodeKey, _ := loadOrCreateKey(nodeKeyPath)
+	pid, _ := peer.IDFromPrivateKey(nodeKey)
+
+	tConf1.NodeKeyFile = nodeKeyPath
+	tPeerID1 = pid
+
+}
+
+func setup(t *testing.T) {
+	net1, err := NewNetwork(tConf1)
 	assert.NoError(t, err)
-	assert.NoError(t, net.Start())
-	net.Stop()
+
+	net2, err := NewNetwork(tConf2)
+	assert.NoError(t, err)
+
+	tNet1 = net1.(*network)
+	tNet2 = net2.(*network)
+}
+
+func TestStoppingNetwork(t *testing.T) {
+	setup(t)
+
+	assert.NoError(t, tNet1.Start())
+	assert.NoError(t, tNet2.Start())
+
+	tNet1.Stop()
+	tNet2.Stop()
 }
 
 func TestDHT(t *testing.T) {
-	logger.InitLogger(logger.TestConfig())
+	tConf1.EnableMDNS = false
+	tConf2.EnableMDNS = false
+	tConf1.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
+	tConf2.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tPeerID1)}
 
-	conf1 := TestConfig()
-	conf1.EnableMDNS = false
-	conf1.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
-	net1, err := NewNetwork(conf1)
-	assert.NoError(t, err)
-	assert.NoError(t, net1.Start())
+	setup(t)
 
-	conf2 := TestConfig()
-	conf2.EnableMDNS = false
-	conf2.Bootstrap.Addresses = append(conf2.Bootstrap.Addresses, fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", net1.SelfID()))
-	net2, err := NewNetwork(conf2)
-	require.NoError(t, err)
-	require.NoError(t, net2.Start())
+	assert.NoError(t, tNet1.Start())
+	assert.NoError(t, tNet2.Start())
 
 	for {
-		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
+		if tNet1.NumConnectedPeers() > 0 && tNet2.NumConnectedPeers() > 0 {
 			break
 		}
 	}
 
-	net1.Stop()
-	net2.Stop()
+	tNet1.Stop()
+	tNet2.Stop()
 }
 
 // TODO: Fix me
-
 // func TestDisconrecting(t *testing.T) {
-// 	logger.InitLogger(logger.TestConfig())
+// 	setup(t)
 
-// 	net1, err := NewNetwork(TestConfig())
-// 	assert.NoError(t, err)
-// 	assert.NoError(t, net1.Start())
-
-// 	net2, err := NewNetwork(TestConfig())
-// 	require.NoError(t, err)
-// 	require.NoError(t, net2.Start())
+// 	assert.NoError(t, tNet1.Start())
+// 	assert.NoError(t, tNet2.Start())
 
 // 	for {
-// 		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
+// 		if tNet1.NumConnectedPeers() > 0 && tNet2.NumConnectedPeers() > 0 {
 // 			break
 // 		}
 // 	}
 
-// 	net1.CloseConnection(net2.SelfID())
-// 	assert.Equal(t, net1.NumConnectedPeers(), 0)
+// 	tNet1.CloseConnection(tNet2.SelfID())
+// 	assert.Equal(t, tNet1.NumConnectedPeers(), 0)
 
-// 	net1.Stop()
-// 	net2.Stop()
+// 	tNet1.Stop()
+// 	tNet2.Stop()
 // }
