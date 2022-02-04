@@ -14,13 +14,12 @@ func TestDownloadBlocks(t *testing.T) {
 	setup(t)
 	disableHeartbeat(t)
 
-	// Clear alice store
+	// Reset state for Alice
 	tAliceSync.cache.Clear()
 	tAliceState.Store.Blocks = make(map[int]*block.Block)
 	tBobSync.peerSet.RemovePeer(tAlicePeerID)
 	p := tBobSync.peerSet.MustGetPeer(tAlicePeerID)
 	p.UpdateStatus(peerset.StatusCodeOK)
-	tAliceConsensus.Scheduled = false
 
 	joinBobToCommittee(t)
 	addMoreBlocksForBobAndAnnounceLastBlock(t, 79) // total blocks: 21+79 = 100
