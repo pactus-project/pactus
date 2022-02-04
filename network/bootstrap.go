@@ -29,9 +29,6 @@ type bootstrap struct {
 	dialer  lp2pnet.Dialer
 	routing lp2prouting.Routing
 
-	// Bookkeeping
-	ticker *time.Ticker
-
 	logger *logger.Logger
 }
 
@@ -60,16 +57,15 @@ func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2p
 
 // Start starts the Bootstrap bootstrapping. Cancel `ctx` or call Stop() to stop it.
 func (b *bootstrap) Start() {
-	b.ticker = time.NewTicker(b.config.Period)
-
 	go func() {
-		defer b.ticker.Stop()
+		ticker := time.NewTicker(b.config.Period)
+		defer ticker.Stop()
 
 		for {
 			select {
 			case <-b.ctx.Done():
 				return
-			case <-b.ticker.C:
+			case <-ticker.C:
 				b.checkConnectivity()
 			}
 		}

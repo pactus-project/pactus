@@ -11,11 +11,10 @@ import (
 )
 
 var (
-	tConf1   *Config
-	tConf2   *Config
-	tNet1    *network
-	tNet2    *network
-	tPeerID1 peer.ID
+	tConf1 *Config
+	tConf2 *Config
+	tNet1  *network
+	tNet2  *network
 )
 
 func init() {
@@ -23,13 +22,9 @@ func init() {
 	tConf1 = TestConfig()
 	tConf2 = TestConfig()
 
-	nodeKeyPath := util.TempFilePath()
-	nodeKey, _ := loadOrCreateKey(nodeKeyPath)
-	pid, _ := peer.IDFromPrivateKey(nodeKey)
-
-	tConf1.NodeKeyFile = nodeKeyPath
-	tPeerID1 = pid
-
+	netName := fmt.Sprintf("net_%v", util.RandInt(0))
+	tConf1.Name = netName
+	tConf2.Name = netName
 }
 
 func setup(t *testing.T) {
@@ -54,10 +49,15 @@ func TestStoppingNetwork(t *testing.T) {
 }
 
 func TestDHT(t *testing.T) {
+	nodeKeyPath := util.TempFilePath()
+	nodeKey, _ := loadOrCreateKey(nodeKeyPath)
+	pid, _ := peer.IDFromPrivateKey(nodeKey)
+	tConf1.NodeKeyFile = nodeKeyPath
+
 	tConf1.EnableMDNS = false
 	tConf2.EnableMDNS = false
 	tConf1.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
-	tConf2.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tPeerID1)}
+	tConf2.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", pid)}
 
 	setup(t)
 

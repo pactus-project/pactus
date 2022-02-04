@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/sasha-s/go-deadlock"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto/bls"
@@ -44,11 +43,6 @@ func Start() func(c *cli.Cmd) {
 			Name: "pprof",
 			Desc: "debug pprof server address(not recommended to expose to internet)",
 		})
-		deadlockOpt := c.Bool(cli.BoolOpt{
-			Name:  "disable-deadlock",
-			Desc:  "Disable deadlock detection mode",
-			Value: false,
-		})
 
 		c.LongDesc = "Starting the node from working directory"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
@@ -58,11 +52,6 @@ func Start() func(c *cli.Cmd) {
 			var err error
 			var keyObj *key.Key
 			var workspace string
-
-			if *deadlockOpt {
-				// Disable dead-lock detection
-				deadlock.Opts.Disable = true
-			}
 
 			workspace = *workingDirOpt
 			if workspace == "." {

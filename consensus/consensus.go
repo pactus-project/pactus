@@ -154,7 +154,7 @@ func (cs *consensus) MoveToNewHeight() {
 func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round int, target tickerTarget) {
 	ti := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
-	cs.logger.Debug("New timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
+	//cs.logger.Debug("New timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	go func() {
 		<-timer.C
