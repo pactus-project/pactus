@@ -23,7 +23,6 @@ type MockConsensus struct {
 func MockingConsensus(state *state.MockState) *MockConsensus {
 	return &MockConsensus{State: state}
 }
-
 func (m *MockConsensus) MoveToNewHeight() {
 	m.Lock.Lock()
 	defer m.Lock.Unlock()
