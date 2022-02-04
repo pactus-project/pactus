@@ -31,10 +31,10 @@ var (
 	tSigners []crypto.Signer
 	tTxPool  *txpool.MockTxPool
 	tGenDoc  *genesis.Genesis
-	tConsX   *consensus
-	tConsY   *consensus
-	tConsB   *consensus // Byzantine of offline
-	tConsP   *consensus // partitioned
+	tConsX   *consensus // Good connection
+	tConsY   *consensus // Good connection
+	tConsB   *consensus // Byzantine or offline
+	tConsP   *consensus // Partitioned
 )
 
 const (
@@ -103,10 +103,17 @@ func setup(t *testing.T) {
 	tConsB = consB.(*consensus)
 	tConsP = consP.(*consensus)
 
-	tConsX.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consX - %s: ", t.Name()), cons: tConsX})
-	tConsY.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consY - %s: ", t.Name()), cons: tConsY})
-	tConsB.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consB - %s: ", t.Name()), cons: tConsB})
-	tConsP.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("consP - %s: ", t.Name()), cons: tConsP})
+	// -------------------------------
+	// For better logging when testing
+	overrideLogger := func(cons *consensus, name string) {
+		cons.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
+	}
+
+	overrideLogger(tConsX, "consX")
+	overrideLogger(tConsY, "consY")
+	overrideLogger(tConsB, "consB")
+	overrideLogger(tConsP, "consP")
+	// -------------------------------
 
 	logger.Info("Setup finished, start running the test", "name", t.Name())
 }

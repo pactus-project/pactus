@@ -105,7 +105,6 @@ func setup(t *testing.T) {
 	)
 	assert.NoError(t, err)
 	tAliceSync = sync1.(*synchronizer)
-	tAliceSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("Alice - %s: ", t.Name()), sync: tAliceSync})
 
 	tBobSync = &synchronizer{ctx: context.Background()}
 	sync2, err := NewSynchronizer(tBobConfig,
@@ -117,10 +116,19 @@ func setup(t *testing.T) {
 	)
 	assert.NoError(t, err)
 	tBobSync = sync2.(*synchronizer)
-	tBobSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("Bob - %s: ", t.Name()), sync: tBobSync})
+
+	// -------------------------------
+	// For better logging when testing
+	overrideLogger := func(sync *synchronizer, name string) {
+		sync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("%s - %s: ", name, t.Name()), sync: sync})
+	}
+
+	overrideLogger(tAliceSync, "Alice")
+	overrideLogger(tBobSync, "Bob")
 
 	tAliceNet.AddAnotherNetwork(tBobNet)
 	tBobNet.AddAnotherNetwork(tAliceNet)
+	/// -------------------------------
 
 	assert.NoError(t, tAliceSync.Start())
 	assert.NoError(t, tBobSync.Start())

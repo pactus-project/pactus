@@ -131,64 +131,76 @@ func (l *Logger) withDefaultFields() *logrus.Entry {
 	return l.logger.WithFields(fields)
 }
 
+func (l *Logger) log(level logrus.Level, msg string, keyvals ...interface{}) {
+	if l.logger.IsLevelEnabled(level) {
+		l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Log(level, msg)
+	}
+}
+
 func (l *Logger) With(keyvals ...interface{}) *logrus.Entry {
 	fields := keyvalsToFields(keyvals...)
 	return l.logger.WithFields(fields)
 }
 
 func (l *Logger) Trace(msg string, keyvals ...interface{}) {
-	l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Trace(msg)
+	l.log(logrus.TraceLevel, msg, keyvals...)
 }
 
 func (l *Logger) Debug(msg string, keyvals ...interface{}) {
-	l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Debug(msg)
+	l.log(logrus.DebugLevel, msg, keyvals...)
 }
 
 func (l *Logger) Info(msg string, keyvals ...interface{}) {
-	l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Info(msg)
+	l.log(logrus.InfoLevel, msg, keyvals...)
 }
 
 func (l *Logger) Warn(msg string, keyvals ...interface{}) {
-	l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Warn(msg)
+	l.log(logrus.WarnLevel, msg, keyvals...)
 }
 
 func (l *Logger) Error(msg string, keyvals ...interface{}) {
-	l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Error(msg)
+	l.log(logrus.ErrorLevel, msg, keyvals...)
 }
 
 func (l *Logger) Fatal(msg string, keyvals ...interface{}) {
-	l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Fatal(msg)
+	l.log(logrus.FatalLevel, msg, keyvals...)
 }
 
 func (l *Logger) Panic(msg string, keyvals ...interface{}) {
-	l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Panic(msg)
+	l.log(logrus.PanicLevel, msg, keyvals...)
 }
 
 //---
+func log(level logrus.Level, msg string, keyvals ...interface{}) {
+	if logrus.IsLevelEnabled(level) {
+		logrus.WithFields(keyvalsToFields(keyvals...)).Log(level, msg)
+	}
+}
+
 func Trace(msg string, keyvals ...interface{}) {
-	logrus.WithFields(keyvalsToFields(keyvals...)).Trace(msg)
+	log(logrus.TraceLevel, msg, keyvals...)
 }
 
 func Debug(msg string, keyvals ...interface{}) {
-	logrus.WithFields(keyvalsToFields(keyvals...)).Debug(msg)
+	log(logrus.DebugLevel, msg, keyvals...)
 }
 
 func Info(msg string, keyvals ...interface{}) {
-	logrus.WithFields(keyvalsToFields(keyvals...)).Info(msg)
+	log(logrus.InfoLevel, msg, keyvals...)
 }
 
 func Warn(msg string, keyvals ...interface{}) {
-	logrus.WithFields(keyvalsToFields(keyvals...)).Warn(msg)
+	log(logrus.WarnLevel, msg, keyvals...)
 }
 
 func Error(msg string, keyvals ...interface{}) {
-	logrus.WithFields(keyvalsToFields(keyvals...)).Error(msg)
+	log(logrus.ErrorLevel, msg, keyvals...)
 }
 
 func Fatal(msg string, keyvals ...interface{}) {
-	logrus.WithFields(keyvalsToFields(keyvals...)).Fatal(msg)
+	log(logrus.FatalLevel, msg, keyvals...)
 }
 
 func Panic(msg string, keyvals ...interface{}) {
-	logrus.WithFields(keyvalsToFields(keyvals...)).Panic(msg)
+	log(logrus.PanicLevel, msg, keyvals...)
 }
