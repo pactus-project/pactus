@@ -85,9 +85,6 @@ func TestPending(t *testing.T) {
 	tSandbox.AppendNewBlock(88, hash88)
 	trx := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
 
-	// Increat the waiting time for testing
-	tPool.config.WaitingTimeout = 2 * time.Second
-
 	go func(ch chan payload.Payload) {
 		for {
 			pld := <-ch
