@@ -1,4 +1,10 @@
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 name: Deadlock and data race detection
 jobs:
   data-race:
@@ -10,11 +16,17 @@ jobs:
       with:
         go-version: 1.17.x
 
+    - name: Test with data race detection
+      run: make test_race
+
     - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Replace sync.RWMutux with deadlock.RWMutux
       run: find . -type f -name "*.go" -not -path '*/\.*' -exec sed -i -- 's/\t"sync"/\tsync "github.com\/sasha-s\/go-deadlock"/g' {} +
 
-    - name: Test with data race detection
-      run: make test_race
+    - name: Adding go-deadlock package
+      run: go get github.com/sasha-s/go-deadlock
+
+    - name: Test with deadlock detection
+      run: make test
