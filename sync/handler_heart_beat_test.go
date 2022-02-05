@@ -21,8 +21,8 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	joinAliceToCommittee(t)
 
 	t.Run("Alice is in committee", func(t *testing.T) {
-		aliceH, _ := tAliceConsensus.HeightRound()
-		v1, _ := vote.GenerateTestPrepareVote(aliceH, 0)
+		heightAlice, _ := tAliceConsensus.HeightRound()
+		v1, _ := vote.GenerateTestPrepareVote(heightAlice, 0)
 		tAliceConsensus.Votes = []*vote.Vote{v1}
 
 		tAliceSync.broadcastHeartBeat()
@@ -33,7 +33,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	t.Run("Bob processes Alice's HeartBeat but he is not in committee", func(t *testing.T) {
 		h, r := tBobConsensus.HeightRound()
 		pld := payload.NewHeartBeatPayload(h, r+2, hash.GenerateTestHash())
-		tBobNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		simulatingReceiveingNewMessage(t, tBobSync, pld, util.RandomPeerID())
 
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
 	})
@@ -43,7 +43,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	t.Run("Bob should query for votes", func(t *testing.T) {
 		h, r := tBobConsensus.HeightRound()
 		pld := payload.NewHeartBeatPayload(h, r+2, hash.GenerateTestHash())
-		tBobNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		simulatingReceiveingNewMessage(t, tBobSync, pld, util.RandomPeerID())
 
 		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
 	})
@@ -51,7 +51,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	t.Run("Bob should not query for votes", func(t *testing.T) {
 		h, r := tBobConsensus.HeightRound()
 		pld := payload.NewHeartBeatPayload(h, r+1, hash.GenerateTestHash())
-		tBobNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		simulatingReceiveingNewMessage(t, tBobSync, pld, util.RandomPeerID())
 
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
 	})

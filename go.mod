@@ -22,10 +22,8 @@ require (
 	github.com/multiformats/go-multiaddr v0.4.0
 	github.com/pelletier/go-toml v1.9.0
 	github.com/peterh/liner v1.2.1
-	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/rakyll/statik v0.1.7
-	github.com/sasha-s/go-deadlock v0.2.0
 	github.com/sirupsen/logrus v1.8.0
 	github.com/stretchr/testify v1.7.0
 	github.com/syndtr/goleveldb v1.0.1-0.20190923125748-758128399b1d

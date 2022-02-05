@@ -31,8 +31,8 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 		assert.NotNil(t, tAliceState.PendingTx(trx2.ID()))
 	})
 
-	t.Run("Bob should not process alice's message because she is not an active validator", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pld)
+	t.Run("Bob should not process Alice's message because she is not an active validator", func(t *testing.T) {
+		simulatingReceiveingNewMessage(t, tBobSync, pld, tAlicePeerID)
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeTransactions)
 	})
 
@@ -44,7 +44,7 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 	})
 
 	t.Run("Bob processes Alice's request", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pld)
+		simulatingReceiveingNewMessage(t, tBobSync, pld, tAlicePeerID)
 		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeTransactions)
 	})
 

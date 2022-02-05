@@ -61,6 +61,11 @@ func NewCache(size int, state state.Facade) (*Cache, error) {
 	}, nil
 }
 
+func (c *Cache) HasBlockInCache(height int) bool {
+	_, ok := c.cache.Get(blockKey(height))
+	return ok
+}
+
 func (c *Cache) GetBlock(height int) *block.Block {
 	i, ok := c.cache.Get(blockKey(height))
 	if ok {

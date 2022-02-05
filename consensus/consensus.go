@@ -63,7 +63,6 @@ func NewConsensus(
 
 	cs.height = -1
 	cs.round = -1
-	cs.MoveToNewHeight()
 
 	return cs, nil
 }

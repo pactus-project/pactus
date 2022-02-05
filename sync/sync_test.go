@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"testing"
@@ -18,6 +19,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -55,15 +57,15 @@ func init() {
 	tAliceConfig = TestConfig()
 	tBobConfig = TestConfig()
 
-	tAliceConfig.Moniker = "alice"
-	tBobConfig.Moniker = "bob"
+	tAliceConfig.Moniker = "Alice"
+	tBobConfig.Moniker = "Bob"
 }
 
 func setup(t *testing.T) {
 	_, prv1 := bls.GenerateTestKeyPair()
 	_, prv2 := bls.GenerateTestKeyPair()
-	aliceSigner := crypto.NewSigner(prv1)
-	bobSigner := crypto.NewSigner(prv2)
+	signer1 := crypto.NewSigner(prv1)
+	signer2 := crypto.NewSigner(prv2)
 
 	committee, _ := committee.GenerateTestCommittee()
 	tAlicePeerID = util.RandomPeerID()
@@ -94,31 +96,39 @@ func setup(t *testing.T) {
 	}
 
 	tAliceSync = &synchronizer{ctx: context.Background()}
-	aliceSync, err := NewSynchronizer(tAliceConfig,
-		aliceSigner,
+	sync1, err := NewSynchronizer(tAliceConfig,
+		signer1,
 		tAliceState,
 		tAliceConsensus,
 		tAliceNet,
 		tAliceBroadcastCh,
 	)
 	assert.NoError(t, err)
-	tAliceSync = aliceSync.(*synchronizer)
-	tAliceSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("Alice - %s: ", t.Name()), sync: tAliceSync})
+	tAliceSync = sync1.(*synchronizer)
 
 	tBobSync = &synchronizer{ctx: context.Background()}
-	bobSync, err := NewSynchronizer(tBobConfig,
-		bobSigner,
+	sync2, err := NewSynchronizer(tBobConfig,
+		signer2,
 		tBobState,
 		tBobConsensus,
 		tBobNet,
 		tBobBroadcastCh,
 	)
 	assert.NoError(t, err)
-	tBobSync = bobSync.(*synchronizer)
-	tBobSync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("Bob - %s: ", t.Name()), sync: tBobSync})
+	tBobSync = sync2.(*synchronizer)
 
-	tAliceNet.OtherNet = tBobNet
-	tBobNet.OtherNet = tAliceNet
+	// -------------------------------
+	// For better logging when testing
+	overrideLogger := func(sync *synchronizer, name string) {
+		sync.logger = logger.NewLogger("_sync", &OverrideFingerprint{name: fmt.Sprintf("%s - %s: ", name, t.Name()), sync: sync})
+	}
+
+	overrideLogger(tAliceSync, "Alice")
+	overrideLogger(tBobSync, "Bob")
+
+	tAliceNet.AddAnotherNetwork(tBobNet)
+	tBobNet.AddAnotherNetwork(tAliceNet)
+	/// -------------------------------
 
 	assert.NoError(t, tAliceSync.Start())
 	assert.NoError(t, tBobSync.Start())
@@ -134,49 +144,25 @@ func setup(t *testing.T) {
 	logger.Info("Setup finished, start running the test", "name", t.Name())
 }
 
-func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) {
+func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) *message.Message {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
 		select {
 		case <-timeout.C:
-			require.NoError(t, fmt.Errorf("ShouldPublishPayloadWithThisType %v: Timeout", payloadType))
-			return
-		case msg := <-net.BroadcastCh:
-			net.SendMessageToOthePeer(msg)
+			require.NoError(t, fmt.Errorf("ShouldPublishPayloadWithThisType %v: Timeout, test: %v", payloadType, t.Name()))
+			return nil
+		case b := <-net.BroadcastCh:
+			net.SendToOthers(b.Data, b.Target)
+			// Re-Decode again to check the payload type
+			msg := new(message.Message)
+			_, err := msg.Decode(bytes.NewReader(b.Data))
+			require.NoError(t, err)
+			assert.Equal(t, msg.Initiator, net.ID)
+
 			if msg.Payload.Type() == payloadType {
 				logger.Info("shouldPublishPayloadWithThisType", "msg", msg, "type", payloadType.String())
-				return
-			}
-		}
-	}
-}
-
-func shouldPublishPayloadWithThisTypeAndResponseCode(t *testing.T, net *network.MockNetwork, payloadType payload.Type, code payload.ResponseCode) {
-	timeout := time.NewTimer(2 * time.Second)
-
-	for {
-		select {
-		case <-timeout.C:
-			require.NoError(t, fmt.Errorf("ShouldPublishPayloadWithThisType %v: Timeout", payloadType))
-			return
-		case msg := <-net.BroadcastCh:
-			net.SendMessageToOthePeer(msg)
-			if msg.Payload.Type() == payloadType {
-				switch payloadType {
-				case payload.PayloadTypeAleyk:
-					pld := msg.Payload.(*payload.AleykPayload)
-					assert.Equal(t, pld.ResponseCode, code)
-
-				case payload.PayloadTypeDownloadResponse:
-					pld := msg.Payload.(*payload.DownloadResponsePayload)
-					assert.Equal(t, pld.ResponseCode, code)
-
-				case payload.PayloadTypeLatestBlocksResponse:
-					pld := msg.Payload.(*payload.LatestBlocksResponsePayload)
-					assert.Equal(t, pld.ResponseCode, code)
-				}
-				return
+				return msg
 			}
 		}
 	}
@@ -189,11 +175,22 @@ func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork,
 		select {
 		case <-timeout.C:
 			return
-		case msg := <-net.BroadcastCh:
-			net.SendMessageToOthePeer(msg)
+		case b := <-net.BroadcastCh:
+			net.SendToOthers(b.Data, b.Target)
+			// Re-Decode again to check the payload type
+			msg := new(message.Message)
+			_, err := msg.Decode(bytes.NewReader(b.Data))
+			require.NoError(t, err)
 			assert.NotEqual(t, msg.Payload.Type(), payloadType)
 		}
 	}
+}
+
+func simulatingReceiveingNewMessage(t *testing.T, sync *synchronizer, pld payload.Payload, from peer.ID) {
+	msg := message.NewMessage(from, pld)
+	data, err := msg.Encode()
+	assert.NoError(t, err)
+	sync.onReceiveData(bytes.NewReader(data), from)
 }
 
 func addMoreBlocksForBob(t *testing.T, count int) {

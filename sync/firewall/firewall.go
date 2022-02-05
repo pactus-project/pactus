@@ -1,7 +1,7 @@
 package firewall
 
 import (
-	"encoding/hex"
+	"io"
 
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
@@ -32,7 +32,7 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 	}
 }
 
-func (f *Firewall) OpenMessage(data []byte, from peer.ID) *message.Message {
+func (f *Firewall) OpenMessage(r io.Reader, from peer.ID) *message.Message {
 	peer := f.peerSet.MustGetPeer(from)
 	if f.shouldBanPeer(peer) {
 		f.logger.Warn("Firewall: Peer banned", "pid", util.FingerprintPeerID(from))
@@ -41,12 +41,12 @@ func (f *Firewall) OpenMessage(data []byte, from peer.ID) *message.Message {
 	}
 
 	peer.IncreaseReceivedMessage()
-	peer.IncreaseReceivedBytes(len(data))
-
 	msg := new(message.Message)
-	if err := msg.Decode(data); err != nil {
+	bytesRead, err := msg.Decode(r)
+	peer.IncreaseReceivedBytes(bytesRead)
+	if err != nil {
 		peer.IncreaseInvalidMessage()
-		f.logger.Debug("Error decoding message", "from", util.FingerprintPeerID(from), "data", hex.EncodeToString(data), "err", err)
+		f.logger.Debug("Error decoding message", "from", util.FingerprintPeerID(from), "err", err)
 
 		return nil
 	}

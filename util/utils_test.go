@@ -27,6 +27,9 @@ func TestSetFlags(t *testing.T) {
 	assert.Equal(t, flags, 0xa)
 	assert.True(t, IsFlagSet(flags, 0x2))
 	assert.False(t, IsFlagSet(flags, 0x4))
+	flags = UnsetFlag(flags, 0x2)
+	assert.False(t, IsFlagSet(flags, 0x2))
+	assert.Equal(t, flags, 0x8)
 }
 
 func TestRandomPeerID(t *testing.T) {
@@ -40,14 +43,10 @@ func TestRandInt(t *testing.T) {
 	assert.LessOrEqual(t, rnd1, 4)
 
 	rnd2 := RandInt(0)
-	assert.Equal(t, rnd2, 0)
+	assert.NotZero(t, rnd2)
 
 	rnd3 := RandInt(-1)
-	assert.Equal(t, rnd3, 0)
-
-	rnd4 := RandInt(1000)
-	rnd5 := RandInt(1000)
-	assert.NotEqual(t, rnd4, rnd5)
+	assert.NotZero(t, rnd3)
 }
 
 func TestRandInt64(t *testing.T) {
@@ -56,12 +55,8 @@ func TestRandInt64(t *testing.T) {
 	assert.LessOrEqual(t, rnd1, int64(4))
 
 	rnd2 := RandInt64(0)
-	assert.Equal(t, rnd2, int64(0))
+	assert.NotZero(t, rnd2)
 
 	rnd3 := RandInt64(-1)
-	assert.Equal(t, rnd3, int64(0))
-
-	rnd4 := RandInt64(1000)
-	rnd5 := RandInt64(1000)
-	assert.NotEqual(t, rnd4, rnd5)
+	assert.NotZero(t, rnd3)
 }

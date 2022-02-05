@@ -18,7 +18,7 @@ func TestParsingVoteMessages(t *testing.T) {
 		v1, _ := vote.GenerateTestPrecommitVote(consensusHeight, 0)
 		pld := payload.NewVotePayload(v1)
 
-		tAliceNet.ReceivingMessageFromOtherPeer(util.RandomPeerID(), pld)
+		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
 		assert.Equal(t, tAliceConsensus.Votes[0].Hash(), v1.Hash())
 	})
 }

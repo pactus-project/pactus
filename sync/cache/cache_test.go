@@ -41,11 +41,21 @@ func TestCacheBlock(t *testing.T) {
 
 	tCache.AddBlocks(2, []*block.Block{b2, b3})
 
+	assert.False(t, tCache.HasBlockInCache(1), "Block 1 is not cached")
+	assert.True(t, tCache.HasBlockInCache(2))
+	assert.True(t, tCache.HasBlockInCache(3))
+	assert.False(t, tCache.HasBlockInCache(4))
+
+	assert.NotNil(t, tCache.GetBlock(1))
+	assert.NotNil(t, tCache.GetBlock(2))
+	assert.NotNil(t, tCache.GetBlock(3))
+	assert.Nil(t, tCache.GetBlock(4))
+
 	assert.NotNil(t, tCache.GetBlock(1).Hash(), b1.Hash())
 	assert.NotNil(t, tCache.GetBlock(2).Hash(), b2.Hash())
 	assert.NotNil(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash())
 	assert.NotNil(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash())
-	assert.Nil(t, tCache.GetBlock(4))
+
 }
 
 func TestCacheBlocks(t *testing.T) {

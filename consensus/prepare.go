@@ -23,7 +23,7 @@ func (s *prepareState) decide() {
 	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
 	if prepareQH != nil {
-		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
+		s.logger.Debug("Prepare has quorum", "prepareQH", prepareQH)
 		s.enterNewState(s.precommitState)
 	} else {
 		// Liveness on PBFT

@@ -60,6 +60,8 @@ func (pool *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	}
 }
 
+/// AppendTx validates the transaction and add it into the transaction pool
+/// without broadcast it.
 func (pool *txPool) AppendTx(trx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
@@ -77,6 +79,8 @@ func (pool *txPool) AppendTx(trx *tx.Tx) error {
 	return nil
 }
 
+/// AppendTxAndBroadcast validates the transaction, add it into the transaction pool
+/// and broadcast it.
 func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
@@ -124,7 +128,8 @@ func (pool *txPool) RemoveTx(id tx.ID) {
 	pool.pendings.Remove(id)
 }
 
-// QueryTx returns immediately a transaction  if we have, otherwise nil
+/// PendingTx searches inside the transaction pool and returns the associated transaction.
+/// If transaction doesn't exist inside the pool, it returns nil.
 func (pool *txPool) PendingTx(id tx.ID) *tx.Tx {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
@@ -138,8 +143,8 @@ func (pool *txPool) PendingTx(id tx.ID) *tx.Tx {
 	return nil
 }
 
-// QueryTx returns immediately a transaction  if we have,
-// it queries from other nodes
+/// QueryTx searches inside the transaction pool and returns the associated transaction.
+/// If transaction doesn't exist inside the pool, it queries from other nodes.
 func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 	trx := pool.PendingTx(id)
 	if trx != nil {

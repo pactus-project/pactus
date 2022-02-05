@@ -7,13 +7,14 @@ import (
 )
 
 type Config struct {
-	Name             string           `toml:"" comment:"Name dispay network name."`
-	ListenAddress    []string         `toml:"" comment:"ListenAddress which support multiaddrs."`
+	Name             string           `toml:"" comment:"Name dispay network name ex. “zarb”."`
+	ListenAddress    []string         `toml:"" comment:"ListenAddress is binding address for public APIs and supports multi addresses."`
 	NodeKeyFile      string           `toml:"" comment:"NodeKeyFile contains the private key to use for node authentication in the p2p protocol."`
 	EnableNATService bool             `toml:"" comment:"EnableNATService NAT allows many machines to share a single public address."`
 	EnableRelay      bool             `toml:"" comment:"EnableRelay is a transport protocol that routes traffic between two peers over a third-party “relay” peer."`
-	EnableMDNS       bool             `toml:"" comment:"EnableMDNS is a protocol to discover local peers quickly and efficiently."`
+	EnableMdns       bool             `toml:"" comment:"EnableMDNS is a protocol to discover local peers quickly and efficiently."`
 	EnableKademlia   bool             `toml:"" comment:"EnableKademlia which is used a routing algorithm and it uses the dht routing table."`
+	EnablePing       bool             `toml:"" comment:"EnablePing which enables the ping service."`
 	Bootstrap        *BootstrapConfig `toml:"" comment:"Bootstrap comma separated list of peers to be added to the peer store on startup bootstrap peers."`
 }
 
@@ -32,8 +33,9 @@ func DefaultConfig() *Config {
 		NodeKeyFile:      "node_key",
 		EnableNATService: true,
 		EnableRelay:      true,
-		EnableMDNS:       true,
+		EnableMdns:       true,
 		EnableKademlia:   true,
+		EnablePing:       true,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    []string{},
 			MinThreshold: 8,
@@ -50,8 +52,9 @@ func TestConfig() *Config {
 		NodeKeyFile:      util.TempFilePath(),
 		EnableNATService: true,
 		EnableRelay:      true,
-		EnableMDNS:       true,
+		EnableMdns:       true,
 		EnableKademlia:   true,
+		EnablePing:       true,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    []string{},
 			MinThreshold: 4,

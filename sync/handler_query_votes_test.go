@@ -22,8 +22,8 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryVotes)
 	})
 
-	t.Run("Bob should not process alice's message because she is not an active validator", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pld)
+	t.Run("Bob should not process Alice's message because she is not an active validator", func(t *testing.T) {
+		simulatingReceiveingNewMessage(t, tBobSync, pld, tAlicePeerID)
 		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeVote)
 	})
 
@@ -35,7 +35,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	})
 
 	t.Run("Bob processes Alice's message", func(t *testing.T) {
-		tBobNet.ReceivingMessageFromOtherPeer(tAlicePeerID, pld)
+		simulatingReceiveingNewMessage(t, tBobSync, pld, tAlicePeerID)
 		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeVote)
 	})
 }

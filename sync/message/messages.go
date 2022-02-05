@@ -2,6 +2,7 @@ package message
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/libp2p/go-libp2p-core/peer"
@@ -84,23 +85,25 @@ func (m *Message) Encode() ([]byte, error) {
 	return cbor.Marshal(msg)
 }
 
-func (m *Message) Decode(bs []byte) error {
+func (m *Message) Decode(r io.Reader) (int, error) {
 	var msg _Message
-	err := cbor.Unmarshal(bs, &msg)
+	d := cbor.NewDecoder(r)
+	err := d.Decode(&msg)
+	bytesRead := d.NumBytesRead()
 	if err != nil {
-		return err
+		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
 	data := msg.Payload
 	pld := payload.MakePayload(msg.PayloadType)
 	if pld == nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
+		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
 	}
 
 	if util.IsFlagSet(msg.Flags, FlagCompressed) {
 		c, err := util.DecompressBuffer(msg.Payload)
 		if err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 		}
 		data = c
 	}
@@ -109,5 +112,5 @@ func (m *Message) Decode(bs []byte) error {
 	m.Flags = msg.Flags
 	m.Initiator = msg.Initiator
 	m.Payload = pld
-	return cbor.Unmarshal(data, pld)
+	return bytesRead, cbor.Unmarshal(data, pld)
 }

@@ -15,7 +15,7 @@ func TestParsingTransactionsMessages(t *testing.T) {
 	t.Run("Bob should add all transactions to cache", func(t *testing.T) {
 		trx1, _ := tx.GenerateTestBondTx()
 
-		// Alice send transaction to bob, bob should cache it
+		// Alice send transaction to Bob, Bob should cache it
 		pld := payload.NewTransactionsPayload([]*tx.Tx{trx1})
 		tAliceSync.broadcast(pld)
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeTransactions)
