@@ -98,8 +98,8 @@ func NewNetwork(conf *Config) (Network, error) {
 
 	n.logger = logger.NewLogger("_network", n)
 
-	if conf.EnableMDNS {
-		n.mdns = newMDNSService(ctx, n.host, n.logger)
+	if conf.EnableMdns {
+		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 
 	if conf.EnableKademlia {
@@ -163,11 +163,11 @@ func (n *network) SelfID() lp2peer.ID {
 	return n.host.ID()
 }
 
-func (n *network) SendMessage(msg []byte, pid lp2pcore.PeerID) error {
+func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 	return n.stream.SendRequest(msg, pid)
 }
 
-func (n *network) BroadcastMessage(msg []byte, topicID TopicID) error {
+func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	n.logger.Debug("Publishing new message", "topic", topicID)
 	switch topicID {
 	case GeneralTopic:

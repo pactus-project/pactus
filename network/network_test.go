@@ -47,8 +47,8 @@ func TestDHT(t *testing.T) {
 	pid, _ := peer.IDFromPrivateKey(nodeKey)
 	conf1.NodeKeyFile = nodeKeyPath
 
-	conf1.EnableMDNS = false
-	conf2.EnableMDNS = false
+	conf1.EnableMdns = false
+	conf2.EnableMdns = false
 	conf1.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
 	conf2.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", pid)}
 

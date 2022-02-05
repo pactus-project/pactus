@@ -20,7 +20,7 @@ func (handler *blocksResponseHandler) ParsPayload(p payload.Payload, initiator p
 	pld := p.(*payload.BlocksResponsePayload)
 	handler.logger.Trace("Parsing blocks response payload", "pld", pld)
 
-	if pld.IsRequestNotProcessed() {
+	if pld.IsRequestRejected() {
 		handler.logger.Warn("Blocks request is rejected", "pid", initiator, "response", pld.ResponseCode)
 	} else {
 		handler.cache.AddCertificate(pld.LastCertificate)

@@ -45,14 +45,14 @@ func (mock *MockNetwork) JoinConsensusTopic() error {
 func (mock *MockNetwork) SelfID() peer.ID {
 	return mock.ID
 }
-func (mock *MockNetwork) SendMessage(data []byte, pid lp2pcore.PeerID) error {
+func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
 	mock.BroadcastCh <- BroadcastData{
 		Data:   data,
 		Target: &pid,
 	}
 	return nil
 }
-func (mock *MockNetwork) BroadcastMessage(data []byte, tid TopicID) error {
+func (mock *MockNetwork) Broadcast(data []byte, tid TopicID) error {
 	mock.BroadcastCh <- BroadcastData{
 		Data:   data,
 		Target: nil, // Send to all

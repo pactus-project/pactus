@@ -68,7 +68,7 @@ func (p *BlocksResponsePayload) Fingerprint() string {
 	return fmt.Sprintf("{⚓ %d %s %v-%v}", p.SessionID, p.ResponseCode, p.From, p.To())
 }
 
-func (p *BlocksResponsePayload) IsRequestNotProcessed() bool {
+func (p *BlocksResponsePayload) IsRequestRejected() bool {
 	if p.ResponseCode == ResponseCodeBusy ||
 		p.ResponseCode == ResponseCodeRejected {
 		return true

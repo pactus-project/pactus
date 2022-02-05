@@ -13,7 +13,7 @@ func TestOneBlockShorter(t *testing.T) {
 	setup(t)
 	disableHeartbeat(t)
 
-	t.Run("Bob commits two blocks. Alice should ask for the lastest block.", func(t *testing.T) {
+	t.Run("Bob commits two blocks. Alice should request for the lastest block.", func(t *testing.T) {
 		joinBobToCommittee(t)
 		addMoreBlocksForBobAndAnnounceLastBlock(t, 2)
 		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlockAnnounce)

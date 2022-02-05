@@ -292,7 +292,7 @@ func (sync *synchronizer) sendTo(pld payload.Payload, to peer.ID) {
 	msg := sync.prepareMessage(pld)
 	if msg != nil {
 		data, _ := msg.Encode()
-		err := sync.network.SendMessage(data, to)
+		err := sync.network.SendTo(data, to)
 		if err != nil {
 			sync.logger.Error("Error on sending message", "message", msg, "err", err)
 		} else {
@@ -305,7 +305,7 @@ func (sync *synchronizer) broadcast(pld payload.Payload) {
 	msg := sync.prepareMessage(pld)
 	if msg != nil {
 		data, _ := msg.Encode()
-		err := sync.network.BroadcastMessage(data, pld.Type().TopicID())
+		err := sync.network.Broadcast(data, pld.Type().TopicID())
 		if err != nil {
 			sync.logger.Error("Error on broadcasting message", "message", msg, "err", err)
 		} else {

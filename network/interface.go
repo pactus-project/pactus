@@ -30,8 +30,8 @@ type Network interface {
 	Start() error
 	Stop()
 	SetCallback(CallbackFn)
-	BroadcastMessage([]byte, TopicID) error
-	SendMessage([]byte, lp2pcore.PeerID) error
+	Broadcast([]byte, TopicID) error
+	SendTo([]byte, lp2pcore.PeerID) error
 	JoinGeneralTopic() error
 	JoinConsensusTopic() error
 	CloseConnection(pid peer.ID)

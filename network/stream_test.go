@@ -38,7 +38,7 @@ func TestStream(t *testing.T) {
 	}
 
 	time.Sleep(1 * time.Second)
-	require.NoError(t, net1.SendMessage(msg, net2.SelfID()))
+	require.NoError(t, net1.SendTo(msg, net2.SelfID()))
 
 	<-received
 

@@ -43,8 +43,8 @@ func TestPubSub(t *testing.T) {
 
 	time.Sleep(1 * time.Second)
 
-	require.NoError(t, net1.BroadcastMessage([]byte("should not broadcasted"), ConsensusTopic))
-	require.NoError(t, net1.BroadcastMessage(msg, GeneralTopic))
+	require.NoError(t, net1.Broadcast([]byte("should not broadcasted"), ConsensusTopic))
+	require.NoError(t, net1.Broadcast(msg, GeneralTopic))
 
 	<-received
 
