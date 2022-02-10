@@ -21,7 +21,6 @@ type txPool struct {
 	checker     *execution.Execution
 	sandbox     sandbox.Sandbox
 	pendings    *linkedmap.LinkedMap
-	appendTxCh  chan *tx.Tx
 	broadcastCh chan payload.Payload
 	logger      *logger.Logger
 }
@@ -68,12 +67,6 @@ func (pool *txPool) AppendTx(trx *tx.Tx) error {
 
 	if err := pool.appendTx(trx); err != nil {
 		return err
-	}
-
-	if pool.appendTxCh != nil {
-		go func(_trx *tx.Tx) {
-			pool.appendTxCh <- _trx
-		}(trx)
 	}
 
 	return nil
@@ -151,41 +144,25 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		return trx
 	}
 
-	defer func() {
-		if pool.appendTxCh != nil {
-			close(pool.appendTxCh)
-			pool.appendTxCh = nil
-		}
-	}()
-
-	pool.lk.Lock()
 	pool.logger.Debug("Query transaction from nodes", "id", id)
-	pool.appendTxCh = make(chan *tx.Tx, 100)
-	pool.lk.Unlock()
 
 	pld := payload.NewQueryTransactionsPayload([]tx.ID{id})
 	pool.broadcastCh <- pld
 
-	timeout := time.NewTimer(pool.config.WaitingTimeout)
+	duration := time.Millisecond * 500
+	timeout := time.NewTicker(duration)
+	counter := 0
 
-	for {
-		select {
-		case <-timeout.C:
-			pool.lk.Lock()
-			pool.logger.Warn("no transaction received", "id", id, "timeout", pool.config.WaitingTimeout)
-			pool.lk.Unlock()
-
-			return nil
-		case trx := <-pool.appendTxCh:
-			pool.lk.Lock()
-			pool.logger.Debug("Transaction received", "id", id)
-			pool.lk.Unlock()
-
-			if trx.ID().EqualsTo(id) {
-				return trx
-			}
+	for i := 0; i < 4; i++ {
+		<-timeout.C
+		trx := pool.PendingTx(id)
+		if trx != nil {
+			return trx
 		}
 	}
+
+	pool.logger.Warn("Querying transaction failed", "id", id, "duration", duration*time.Duration(counter))
+	return nil
 }
 
 func (pool *txPool) AllTransactions() []*tx.Tx {
