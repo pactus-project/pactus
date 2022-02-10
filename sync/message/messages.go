@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
@@ -14,6 +13,7 @@ import (
 
 const LastVersion = 1
 const FlagCompressed = 0x1
+const FlagBroadcasted = 0x2
 
 type Message struct {
 	Version   int
@@ -35,9 +35,6 @@ func (m *Message) SanityCheck() error {
 	if err := m.Payload.SanityCheck(); err != nil {
 		return err
 	}
-	if m.Flags|FlagCompressed != FlagCompressed {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
-	}
 	if err := m.Initiator.Validate(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid initiator peer id: %v", err)
 	}
@@ -53,12 +50,11 @@ func (m *Message) CompressIt() {
 }
 
 type _Message struct {
-	Version     int               `cbor:"1,keyasint"`
-	Flags       int               `cbor:"2,keyasint"`
-	Initiator   peer.ID           `cbor:"3,keyasint"`
-	PayloadType payload.Type      `cbor:"4,keyasint"`
-	Payload     []byte            `cbor:"5,keyasint"`
-	Signature   *crypto.Signature `cbor:"6,keyasint,omitempty"`
+	Version     int          `cbor:"1,keyasint"`
+	Flags       int          `cbor:"2,keyasint"`
+	Initiator   peer.ID      `cbor:"3,keyasint"`
+	PayloadType payload.Type `cbor:"4,keyasint"`
+	Payload     []byte       `cbor:"5,keyasint"`
 }
 
 func (m *Message) Encode() ([]byte, error) {

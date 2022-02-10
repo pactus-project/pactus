@@ -178,28 +178,11 @@ func (sync *synchronizer) broadcastSalam() {
 	pld := payload.NewSalamPayload(
 		sync.config.Moniker,
 		sync.signer.PublicKey(),
-		sync.state.GenesisHash(),
+		sync.signer.SignData(sync.signer.PublicKey().RawBytes()),
 		sync.state.LastBlockHeight(),
-		flags)
+		flags, sync.state.GenesisHash())
 
 	sync.broadcast(pld)
-}
-
-func (sync *synchronizer) broadcastAleyk(target peer.ID, code payload.ResponseCode, resMsg string) {
-	flags := 0
-	if sync.config.InitialBlockDownload {
-		flags = util.SetFlag(flags, FlagInitialBlockDownload)
-	}
-	response := payload.NewAleykPayload(
-		target,
-		code,
-		resMsg,
-		sync.config.Moniker,
-		sync.signer.PublicKey(),
-		sync.state.LastBlockHeight(),
-		flags)
-
-	sync.broadcast(response)
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -304,6 +287,7 @@ func (sync *synchronizer) sendTo(pld payload.Payload, to peer.ID) {
 func (sync *synchronizer) broadcast(pld payload.Payload) {
 	msg := sync.prepareMessage(pld)
 	if msg != nil {
+		msg.Flags = util.SetFlag(msg.Flags, message.FlagBroadcasted)
 		data, _ := msg.Encode()
 		err := sync.network.Broadcast(data, pld.Type().TopicID())
 		if err != nil {

@@ -180,6 +180,12 @@ func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork,
 			// Re-Decode again to check the payload type
 			msg := new(message.Message)
 			_, err := msg.Decode(bytes.NewReader(b.Data))
+			// Check broadcaste flag
+			if b.Target == nil {
+				require.True(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
+			} else {
+				require.False(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
+			}
 			require.NoError(t, err)
 			assert.NotEqual(t, msg.Payload.Type(), payloadType)
 		}
