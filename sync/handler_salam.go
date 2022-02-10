@@ -35,7 +35,7 @@ func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 	peer.UpdateStatus(peerset.StatusCodeOK)
 	peer.UpdateMoniker(pld.Moniker)
 	peer.UpdateHeight(pld.Height)
-	peer.UpdateNodeVersion(pld.NodeVersion)
+	peer.UpdateAgent(pld.Agent)
 	peer.UpdatePublicKey(pld.PublicKey)
 	peer.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
 
@@ -51,4 +51,22 @@ func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 
 func (handler *salamHandler) PrepareMessage(p payload.Payload) *message.Message {
 	return message.NewMessage(handler.SelfID(), p)
+}
+
+func (handler *salamHandler) broadcastAleyk(target peer.ID, code payload.ResponseCode, resMsg string) {
+	flags := 0
+	if handler.config.InitialBlockDownload {
+		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+	}
+	response := payload.NewAleykPayload(
+		handler.config.Moniker,
+		handler.signer.PublicKey(),
+		handler.signer.SignData(handler.signer.PublicKey().RawBytes()),
+		handler.state.LastBlockHeight(),
+		flags,
+		target,
+		code,
+		resMsg)
+
+	handler.broadcast(response)
 }

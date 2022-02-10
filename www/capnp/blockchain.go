@@ -24,7 +24,7 @@ func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 		if err := p.SetMoniker(peer.Moniker()); err != nil {
 			return err
 		}
-		if err := p.SetNodeVersion(peer.NodeVersion()); err != nil {
+		if err := p.SetAgent(peer.Agent()); err != nil {
 			return err
 		}
 		if err := p.SetPeerID(string(peer.PeerID())); err != nil {

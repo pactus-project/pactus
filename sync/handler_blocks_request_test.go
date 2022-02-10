@@ -16,8 +16,9 @@ func TestSessionTimeout(t *testing.T) {
 	setup(t)
 
 	t.Run("An unknown peers claims has more blocks. Alice requests for more blocks. Alice doesn't get any response. Session should be closed", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
-		pld := payload.NewAleykPayload(tAlicePeerID, payload.ResponseCodeOK, "ok", "Oscar", pub, 6666, 0x1) // InitialBlockDownload: true
+		pub, prv := bls.GenerateTestKeyPair()
+		sig := prv.Sign(pub.RawBytes())
+		pld := payload.NewAleykPayload("Oscar", pub, sig, 6666, 0x1, tAlicePeerID, payload.ResponseCodeOK, "ok") // InitialBlockDownload: true
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
 
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeBlocksRequest)
@@ -61,8 +62,9 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		heightBob := tBobState.LastBlockHeight()
 
 		t.Run("Bob handshakes with the new peer", func(t *testing.T) {
-			pub, _ := bls.GenerateTestKeyPair()
-			pld := payload.NewSalamPayload("new-peer", pub, tBobState.GenHash, 0, 0)
+			pub, prv := bls.GenerateTestKeyPair()
+			sig := prv.Sign(pub.RawBytes())
+			pld := payload.NewSalamPayload("new-peer", pub, sig, 0, 0, tBobState.GenHash)
 			simulatingReceiveingNewMessage(t, tBobSync, pld, initiator)
 
 			shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeAleyk)

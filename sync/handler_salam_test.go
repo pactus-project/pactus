@@ -17,8 +17,9 @@ func TestParsingSalamMessages(t *testing.T) {
 
 	t.Run("Alice receives Salam message from a peer. Genesis hash is wrong. Alice should not handshake", func(t *testing.T) {
 		invGenHash := hash.GenerateTestHash()
-		pub, _ := bls.GenerateTestKeyPair()
-		pld := payload.NewSalamPayload("bad-genesis", pub, invGenHash, 0, 0)
+		pub, prv := bls.GenerateTestKeyPair()
+		sig := prv.Sign(pub.RawBytes())
+		pld := payload.NewSalamPayload("bad-genesis", pub, sig, 0, 0, invGenHash)
 		pid := util.RandomPeerID()
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
@@ -30,9 +31,10 @@ func TestParsingSalamMessages(t *testing.T) {
 	})
 
 	t.Run("Alice receives Salam message from a peer. Genesis hash is Ok. Alice should update the peer info", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
+		pub, prv := bls.GenerateTestKeyPair()
+		sig := prv.Sign(pub.RawBytes())
 
-		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, 3, 0x1)
+		pld := payload.NewSalamPayload("kitty", pub, sig, 3, 0x1, tAliceState.GenHash)
 		pid := util.RandomPeerID()
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
@@ -43,7 +45,7 @@ func TestParsingSalamMessages(t *testing.T) {
 		assert.Equal(t, tBobSync.peerSet.MaxClaimedHeight(), tAliceState.LastBlockHeight())
 
 		p := tAliceSync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.NodeVersion(), version.Version())
+		assert.Equal(t, p.Agent(), version.Agent())
 		assert.Equal(t, p.Moniker(), "kitty")
 		assert.True(t, pub.EqualsTo(p.PublicKey()))
 		assert.Equal(t, p.PeerID(), pid)
@@ -53,9 +55,10 @@ func TestParsingSalamMessages(t *testing.T) {
 
 	t.Run("Alice receives Salam message from a peer. Peer is ahead. Alice should request for blocks", func(t *testing.T) {
 		tAliceSync.peerSet.Clear()
-		pub, _ := bls.GenerateTestKeyPair()
+		pub, prv := bls.GenerateTestKeyPair()
+		sig := prv.Sign(pub.RawBytes())
 		claimedHeight := tAliceState.LastBlockHeight() + 5
-		pld := payload.NewSalamPayload("kitty", pub, tAliceState.GenHash, claimedHeight, 0)
+		pld := payload.NewSalamPayload("kitty", pub, sig, claimedHeight, 0, tAliceState.GenHash)
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
 
 		msg := shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeAleyk)

@@ -11,25 +11,27 @@ import (
 )
 
 type AleykPayload struct {
-	ResponseTarget  peer.ID        `cbor:"1,keyasint"`
-	ResponseCode    ResponseCode   `cbor:"2,keyasint"`
-	ResponseMessage string         `cbor:"3,keyasint"`
-	NodeVersion     string         `cbor:"4,keyasint"`
-	Moniker         string         `cbor:"5,keyasint"`
-	PublicKey       *bls.PublicKey `cbor:"6,keyasint"`
-	Height          int            `cbor:"7,keyasint"`
-	Flags           int            `cbor:"8,keyasint"`
+	Agent           string         `cbor:"1,keyasint"`
+	Moniker         string         `cbor:"2,keyasint"`
+	PublicKey       *bls.PublicKey `cbor:"3,keyasint"`
+	Signature       *bls.Signature `cbor:"4,keyasint"`
+	Height          int            `cbor:"5,keyasint"`
+	Flags           int            `cbor:"6,keyasint"`
+	ResponseTarget  peer.ID        `cbor:"7,keyasint"`
+	ResponseCode    ResponseCode   `cbor:"8,keyasint"`
+	ResponseMessage string         `cbor:"9,keyasint"`
 }
 
-func NewAleykPayload(target peer.ID, code ResponseCode, msg string, moniker string,
-	pub crypto.PublicKey, height int, flags int) Payload {
+func NewAleykPayload(moniker string, pub crypto.PublicKey, sig crypto.Signature,
+	height int, flags int, target peer.ID, code ResponseCode, msg string) Payload {
 	return &AleykPayload{
 		ResponseTarget:  target,
 		ResponseCode:    code,
 		ResponseMessage: msg,
-		NodeVersion:     version.Version(),
+		Agent:           version.Agent(),
 		Moniker:         moniker,
 		PublicKey:       pub.(*bls.PublicKey),
+		Signature:       sig.(*bls.Signature),
 		Height:          height,
 		Flags:           flags,
 	}
@@ -40,9 +42,12 @@ func (p *AleykPayload) SanityCheck() error {
 		return err
 	}
 	if p.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
-	return p.PublicKey.SanityCheck()
+	if !p.PublicKey.Verify(p.PublicKey.RawBytes(), p.Signature) {
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid signature")
+	}
+	return nil
 }
 
 func (p *AleykPayload) Type() Type {

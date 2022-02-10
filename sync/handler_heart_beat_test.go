@@ -48,7 +48,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
 	})
 
-	t.Run("Bob should not query for votes", func(t *testing.T) {
+	t.Run("Bob should not query for votes for previous round", func(t *testing.T) {
 		h, r := tBobConsensus.HeightRound()
 		pld := payload.NewHeartBeatPayload(h, r+1, hash.GenerateTestHash())
 		simulatingReceiveingNewMessage(t, tBobSync, pld, util.RandomPeerID())

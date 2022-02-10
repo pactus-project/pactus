@@ -11,21 +11,22 @@ import (
 )
 
 type SalamPayload struct {
-	NodeVersion string         `cbor:"1,keyasint"`
+	Agent       string         `cbor:"1,keyasint"`
 	Moniker     string         `cbor:"2,keyasint"`
 	PublicKey   *bls.PublicKey `cbor:"3,keyasint"`
-	GenesisHash hash.Hash      `cbor:"4,keyasint"`
+	Signature   *bls.Signature `cbor:"4,keyasint"`
 	Height      int            `cbor:"5,keyasint"`
 	Flags       int            `cbor:"6,keyasint"`
+	GenesisHash hash.Hash      `cbor:"7,keyasint"`
 }
 
-func NewSalamPayload(moniker string,
-	publicKey crypto.PublicKey, genesisHash hash.Hash,
-	height int, flags int) Payload {
+func NewSalamPayload(moniker string, pub crypto.PublicKey, sig crypto.Signature,
+	height int, flags int, genesisHash hash.Hash) Payload {
 	return &SalamPayload{
-		NodeVersion: version.Version(),
+		Agent:       version.Agent(),
 		Moniker:     moniker,
-		PublicKey:   publicKey.(*bls.PublicKey),
+		PublicKey:   pub.(*bls.PublicKey),
+		Signature:   sig.(*bls.Signature),
 		GenesisHash: genesisHash,
 		Height:      height,
 		Flags:       flags,
@@ -34,10 +35,10 @@ func NewSalamPayload(moniker string,
 
 func (p *SalamPayload) SanityCheck() error {
 	if p.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
-	if err := p.PublicKey.SanityCheck(); err != nil {
-		return err
+	if !p.PublicKey.Verify(p.PublicKey.RawBytes(), p.Signature) {
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid signature")
 	}
 	return nil
 }

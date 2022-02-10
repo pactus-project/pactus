@@ -13,10 +13,12 @@ import (
 func TestParsingAleykMessages(t *testing.T) {
 	setup(t)
 
+	pub, prv := bls.GenerateTestKeyPair()
+	sig := prv.Sign(pub.RawBytes())
+
 	t.Run("Alice receives Aleyk message from a Peer. Peer has less blocks than Alice", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
 		from := util.RandomPeerID()
-		pld := payload.NewAleykPayload(tAlicePeerID, payload.ResponseCodeOK, "Welcome", "kitty", pub, 1, 0)
+		pld := payload.NewAleykPayload("kitty", pub, sig, 1, 0, tAlicePeerID, payload.ResponseCodeOK, "Welcome")
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, from)
 
 		peer := tAliceSync.peerSet.GetPeer(from)
@@ -26,10 +28,9 @@ func TestParsingAleykMessages(t *testing.T) {
 
 	t.Run("Alice receives Aleyk message from a Peer. Peer has more blocks than Alice", func(t *testing.T) {
 		tAliceSync.peerSet.Clear()
-		pub, _ := bls.GenerateTestKeyPair()
 		from := util.RandomPeerID()
 		claimedHeight := tAliceState.LastBlockHeight() + 5
-		pld := payload.NewAleykPayload(tAlicePeerID, payload.ResponseCodeOK, "Welcome", "kitty", pub, claimedHeight, 0)
+		pld := payload.NewAleykPayload("kitty", pub, sig, claimedHeight, 0, tAlicePeerID, payload.ResponseCodeOK, "Welcome")
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, from)
 
 		peer := tAliceSync.peerSet.GetPeer(from)
@@ -38,9 +39,8 @@ func TestParsingAleykMessages(t *testing.T) {
 	})
 
 	t.Run("Alice receives not welcoming Aleyk message from a peer", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
 		from := util.RandomPeerID()
-		pld := payload.NewAleykPayload(tAlicePeerID, payload.ResponseCodeRejected, "Not Welcome!", "kitty", pub, 1, 0)
+		pld := payload.NewAleykPayload("kitty", pub, sig, 1, 0, tAlicePeerID, payload.ResponseCodeRejected, "Not Welcome!")
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, from)
 
 		peer := tAliceSync.peerSet.GetPeer(from)
@@ -48,19 +48,17 @@ func TestParsingAleykMessages(t *testing.T) {
 	})
 
 	t.Run("Alice receives Aleyk message from a peer but not targeted Alice", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
 		from := util.RandomPeerID()
-		pld := payload.NewAleykPayload(util.RandomPeerID(), payload.ResponseCodeOK, "Welcome", "kitty", pub, 1, 0)
+		pld := payload.NewAleykPayload("kitty", pub, sig, 1, 0, util.RandomPeerID(), payload.ResponseCodeOK, "Welcome")
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, from)
 
 		peer := tAliceSync.peerSet.GetPeer(from)
 		assert.Equal(t, peer.Status(), peerset.StatusCodeUnknown)
 	})
 
-	t.Run("Alice eavesdrops Aleyk messages", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
+	t.Run("Alice listens to Aleyk messages", func(t *testing.T) {
 		from := util.RandomPeerID()
-		pld := payload.NewAleykPayload(util.RandomPeerID(), payload.ResponseCodeRejected, "Not Welcome!", "kitty", pub, 1, 0)
+		pld := payload.NewAleykPayload("kitty", pub, sig, 1, 0, util.RandomPeerID(), payload.ResponseCodeRejected, "Not Welcome!")
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, from)
 
 		peer := tAliceSync.peerSet.GetPeer(from)

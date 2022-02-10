@@ -43,7 +43,7 @@ type Peer struct {
 type peerData struct {
 	Status               StatusCode
 	Moniker              string
-	NodeVersion          string
+	Agent                string
 	PeerID               peer.ID
 	Address              *crypto.Address
 	PublicKey            *bls.PublicKey
@@ -76,11 +76,11 @@ func (p *Peer) Moniker() string {
 	return p.data.Moniker
 }
 
-func (p *Peer) NodeVersion() string {
+func (p *Peer) Agent() string {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
 
-	return p.data.NodeVersion
+	return p.data.Agent
 }
 
 func (p *Peer) PeerID() peer.ID {
@@ -153,11 +153,11 @@ func (p *Peer) UpdateInitialBlockDownload(initialBlockDownload bool) {
 	p.data.InitialBlockDownload = initialBlockDownload
 }
 
-func (p *Peer) UpdateNodeVersion(version string) {
+func (p *Peer) UpdateAgent(version string) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.NodeVersion = version
+	p.data.Agent = version
 }
 
 func (p *Peer) HasPublicKey() bool {

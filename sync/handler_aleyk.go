@@ -35,7 +35,7 @@ func (handler *aleykHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 
 	peer.UpdateMoniker(pld.Moniker)
 	peer.UpdateHeight(pld.Height)
-	peer.UpdateNodeVersion(pld.NodeVersion)
+	peer.UpdateAgent(pld.Agent)
 	peer.UpdatePublicKey(pld.PublicKey)
 	peer.UpdateInitialBlockDownload(util.IsFlagSet(pld.Flags, FlagInitialBlockDownload))
 
