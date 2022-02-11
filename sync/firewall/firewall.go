@@ -32,54 +32,68 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 	}
 }
 
-func (f *Firewall) OpenMessage(r io.Reader, from peer.ID) *message.Message {
-	peer := f.peerSet.MustGetPeer(from)
-	if f.shouldBanPeer(peer) {
-		f.logger.Warn("firewall: from peer banned", "pid", util.FingerprintPeerID(from))
-		f.network.CloseConnection(from)
+func (f *Firewall) OpenMessage(r io.Reader, source peer.ID, from peer.ID) *message.Message {
+	sourcePeer := f.peerSet.MustGetPeer(source)
+	fromPeer := f.peerSet.MustGetPeer(from)
+	if from != source {
+		if f.peerIsBanned(sourcePeer) {
+			f.logger.Warn("firewall: source peer is banned", "source", util.FingerprintPeerID(source))
+			// If there is any connection to the source peer, close it
+			f.closeConnection(source)
+			return nil
+		}
+	}
+
+	if f.peerIsBanned(fromPeer) {
+		f.logger.Warn("firewall: from peer banned", "from", util.FingerprintPeerID(from))
+		f.closeConnection(from)
 		return nil
 	}
 
-	peer.IncreaseReceivedMessage()
-	msg := new(message.Message)
-	bytesRead, err := msg.Decode(r)
-	peer.IncreaseReceivedBytes(bytesRead)
+	msg, err := f.decodeMessage(r, sourcePeer)
 	if err != nil {
-		f.logger.Debug("error decoding message", "from", util.FingerprintPeerID(from), "err", err)
-		peer.IncreaseInvalidMessage()
+		f.logger.Debug("unable to decode the message", "from", util.FingerprintPeerID(from), "err", err)
 		return nil
 	}
 
-	if err := msg.SanityCheck(); err != nil {
-		f.logger.Debug("peer sent us invalid msg", "from", util.FingerprintPeerID(from), "msg", msg, "err", err)
-		peer.IncreaseInvalidMessage()
-		return nil
-	}
-
-	if err := f.checkMessage(msg, from); err != nil {
-		f.logger.Warn("firewall: message dropped", "err", err, "msg", msg)
-		f.network.CloseConnection(from)
-		peer.IncreaseInvalidMessage()
+	if err := f.checkMessage(msg, sourcePeer); err != nil {
+		f.logger.Warn("firewall: invalid message", "err", err, "msg", msg, "from", util.FingerprintPeerID(from))
+		f.closeConnection(from)
 		return nil
 	}
 
 	return msg
 }
 
-func (f *Firewall) checkMessage(msg *message.Message, from peer.ID) error {
-	if !f.config.Enabled {
-		return nil
+func (f *Firewall) decodeMessage(r io.Reader, source *peerset.Peer) (*message.Message, error) {
+	source.IncreaseReceivedMessage()
+	msg := new(message.Message)
+	bytesRead, err := msg.Decode(r)
+	source.IncreaseReceivedBytes(bytesRead)
+	if err != nil {
+		source.IncreaseInvalidMessage()
+		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
-	if msg.Initiator != from {
+	return msg, nil
+}
+
+func (f *Firewall) checkMessage(msg *message.Message, source *peerset.Peer) error {
+	if err := msg.SanityCheck(); err != nil {
+		source.IncreaseInvalidMessage()
+		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+	}
+
+	if msg.Initiator != source.PeerID() {
+		source.IncreaseInvalidMessage()
 		return errors.Errorf(errors.ErrInvalidMessage,
-			"source is not same as initiator. from: %v, initiator: %v", from, msg.Initiator)
+			"source is not same as initiator. source: %v, initiator: %v", source.PeerID(), msg.Initiator)
 	}
 
 	return nil
 }
 
-func (f *Firewall) shouldBanPeer(peer *peerset.Peer) bool {
+func (f *Firewall) peerIsBanned(peer *peerset.Peer) bool {
 	if !f.config.Enabled {
 		return false
 	}
@@ -89,4 +103,12 @@ func (f *Firewall) shouldBanPeer(peer *peerset.Peer) bool {
 		return true
 	}
 	return false
+}
+
+func (f *Firewall) closeConnection(pid peer.ID) {
+	if !f.config.Enabled {
+		return
+	}
+
+	f.network.CloseConnection(pid)
 }

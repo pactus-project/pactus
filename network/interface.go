@@ -25,8 +25,10 @@ func (ti TopicID) String() string {
 }
 
 /// CallbackFn is a call back function to receive data from the network.
-/// `from` is the ID of the peer that initiate the message.
-type CallbackFn func(reader io.Reader, from peer.ID)
+/// `source` is the ID of the peer that initiate the message and
+/// `from` is the ID of the peer that we received a message from.
+/// They are not necessarily the same, especially in a decentralized network.
+type CallbackFn func(reader io.Reader, source peer.ID, from peer.ID)
 
 type Network interface {
 	Start() error

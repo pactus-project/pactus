@@ -52,26 +52,41 @@ func setup(t *testing.T) {
 func TestInvalidMessagesCounter(t *testing.T) {
 	setup(t)
 
-	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader([]byte("bad")), tUnknownPeerID))
-	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(nil), tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader([]byte("bad")), tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(nil), tUnknownPeerID, tUnknownPeerID))
 
 	msg := message.NewMessage(tUnknownPeerID, payload.NewQueryProposalPayload(-1, 1))
 	d, _ := msg.Encode()
-	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID, tUnknownPeerID))
+
+	msg = message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(0, 1))
+	d, _ = msg.Encode()
+	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID, tUnknownPeerID))
 
 	peer := tFirewall.peerSet.GetPeer(tUnknownPeerID)
-	assert.Equal(t, peer.InvalidMessages(), 3)
+	assert.Equal(t, peer.InvalidMessages(), 4)
 }
 
 func TestBanPeer(t *testing.T) {
-	t.Run("Message from bad peer => should close the connection", func(t *testing.T) {
+	t.Run("Message source: unknown, from: bad => should close the connection", func(t *testing.T) {
+		setup(t)
+
+		msg := message.NewMessage(tUnknownPeerID, payload.NewQueryProposalPayload(100, 1))
+		d, _ := msg.Encode()
+
+		assert.False(t, tNetwork.IsClosed(tBadPeerID))
+		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID, tBadPeerID))
+		assert.True(t, tNetwork.IsClosed(tBadPeerID))
+	})
+
+	t.Run("Message source: bad, from: unknown => should close the connection", func(t *testing.T) {
 		setup(t)
 
 		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID))
+		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID, tUnknownPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
 
@@ -81,7 +96,7 @@ func TestBanPeer(t *testing.T) {
 		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
 		d, _ := msg.Encode()
 
-		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID))
+		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID, tUnknownPeerID))
 		assert.True(t, tNetwork.IsClosed(tUnknownPeerID))
 	})
 
@@ -92,7 +107,7 @@ func TestBanPeer(t *testing.T) {
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
-		assert.NotNil(t, tFirewall.OpenMessage(bytes.NewReader(d), tGoodPeerID))
+		assert.NotNil(t, tFirewall.OpenMessage(bytes.NewReader(d), tGoodPeerID, tGoodPeerID))
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
 	})
 }
@@ -100,9 +115,10 @@ func TestBanPeer(t *testing.T) {
 func TestDisabledFirewal(t *testing.T) {
 	setup(t)
 
-	msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(1, 0))
+	msg := message.NewMessage(tGoodPeerID, payload.NewQueryProposalPayload(-1, -1))
 	d, _ := msg.Encode()
 
 	tFirewall.config.Enabled = false
-	assert.NotNil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID))
+	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID, tBadPeerID))
+	assert.False(t, tNetwork.IsClosed(tBadPeerID))
 }

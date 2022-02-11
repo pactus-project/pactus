@@ -96,5 +96,5 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 	}
 
 	g.logger.Debug("Receiving new gossip message", "from", util.FingerprintPeerID(m.GetFrom()), "received from", util.FingerprintPeerID(m.ReceivedFrom))
-	g.callback(bytes.NewReader(m.Data), m.GetFrom())
+	g.callback(bytes.NewReader(m.Data), m.GetFrom(), m.ReceivedFrom)
 }

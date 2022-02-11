@@ -233,8 +233,8 @@ func (sync *synchronizer) updateBlokchain() {
 	}
 }
 
-func (sync *synchronizer) onReceiveData(reader io.Reader, from peer.ID) {
-	msg := sync.firewall.OpenMessage(reader, from)
+func (sync *synchronizer) onReceiveData(reader io.Reader, source peer.ID, from peer.ID) {
+	msg := sync.firewall.OpenMessage(reader, source, from)
 	if msg == nil {
 		return
 	}

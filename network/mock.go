@@ -62,7 +62,7 @@ func (mock *MockNetwork) Broadcast(data []byte, tid TopicID) error {
 func (mock *MockNetwork) SendToOthers(data []byte, target *peer.ID) {
 	for _, net := range mock.OtherNet {
 		if target == nil || net.ID == *target {
-			net.CallbackFn(bytes.NewReader(data), mock.ID)
+			net.CallbackFn(bytes.NewReader(data), mock.ID, mock.ID)
 		}
 	}
 }

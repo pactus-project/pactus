@@ -196,7 +196,7 @@ func simulatingReceiveingNewMessage(t *testing.T, sync *synchronizer, pld payloa
 	msg := message.NewMessage(from, pld)
 	data, err := msg.Encode()
 	assert.NoError(t, err)
-	sync.onReceiveData(bytes.NewReader(data), from)
+	sync.onReceiveData(bytes.NewReader(data), from, from)
 }
 
 func addMoreBlocksForBob(t *testing.T, count int) {

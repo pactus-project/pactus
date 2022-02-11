@@ -47,7 +47,7 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	reader := bufio.NewReader(stream)
 
 	s.logger.Debug("Receiving stream", "from", util.FingerprintPeerID(from))
-	s.callback(reader, from)
+	s.callback(reader, from, from)
 }
 
 func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
