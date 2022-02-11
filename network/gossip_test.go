@@ -18,12 +18,13 @@ func TestPubSub(t *testing.T) {
 
 	received := make(chan bool)
 	msg := []byte("test")
-	cb := func(r io.Reader, id peer.ID) {
+	cb := func(r io.Reader, from peer.ID) {
 		buf := make([]byte, 4)
 		_, err := r.Read(buf)
-		assert.Equal(t, id, net1.SelfID())
-		assert.Equal(t, buf, msg)
 		assert.NoError(t, err)
+		assert.Equal(t, from, net1.SelfID())
+		assert.Equal(t, buf, msg)
+
 		received <- true
 	}
 	go net2.SetCallback(cb)

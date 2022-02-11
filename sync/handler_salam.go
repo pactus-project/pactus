@@ -20,7 +20,7 @@ func newSalamHandler(sync *synchronizer) payloadHandler {
 
 func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.SalamPayload)
-	handler.logger.Trace("Parsing salam payload", "pld", pld)
+	handler.logger.Trace("Parsing Salam payload", "pld", pld)
 
 	peer := handler.peerSet.MustGetPeer(initiator)
 
