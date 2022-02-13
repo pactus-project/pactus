@@ -11,7 +11,7 @@ type TransactionsPayload struct {
 	Transactions []*tx.Tx `cbor:"1,keyasint"`
 }
 
-func NewTransactionsPayload(trxs []*tx.Tx) Payload {
+func NewTransactionsPayload(trxs []*tx.Tx) *TransactionsPayload {
 	return &TransactionsPayload{
 		Transactions: trxs,
 	}

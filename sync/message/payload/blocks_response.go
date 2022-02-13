@@ -21,7 +21,7 @@ type BlocksResponsePayload struct {
 }
 
 func NewBlocksResponsePayload(code ResponseCode, sid int, from int,
-	blocks []*block.Block, trxs []*tx.Tx, cert *block.Certificate) Payload {
+	blocks []*block.Block, trxs []*tx.Tx, cert *block.Certificate) *BlocksResponsePayload {
 	return &BlocksResponsePayload{
 		ResponseCode:    code,
 		SessionID:       sid,

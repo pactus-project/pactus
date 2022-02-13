@@ -141,7 +141,7 @@ func setup(t *testing.T) {
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
 
-	logger.Info("Setup finished, start running the test", "name", t.Name())
+	logger.Info("setup finished, start running the test", "name", t.Name())
 }
 
 func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) *message.Message {

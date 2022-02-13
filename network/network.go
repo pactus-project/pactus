@@ -75,7 +75,7 @@ func NewNetwork(conf *Config) (Network, error) {
 		lp2p.Identity(nodeKey),
 		lp2p.ListenAddrStrings(conf.ListenAddress...),
 		lp2p.Ping(conf.EnablePing),
-		lp2p.UserAgent("zarb-go-" + version.Version()),
+		lp2p.UserAgent(version.Agent()),
 	}
 
 	if conf.EnableRelay {

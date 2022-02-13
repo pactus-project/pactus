@@ -16,10 +16,11 @@ func TestSessionTimeout(t *testing.T) {
 	setup(t)
 
 	t.Run("An unknown peers claims has more blocks. Alice requests for more blocks. Alice doesn't get any response. Session should be closed", func(t *testing.T) {
-		pub, prv := bls.GenerateTestKeyPair()
-		sig := prv.Sign(pub.RawBytes())
-		pld := payload.NewAleykPayload("Oscar", pub, sig, 6666, 0x1, tAlicePeerID, payload.ResponseCodeOK, "ok") // InitialBlockDownload: true
-		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
+		signer := bls.GenerateTestSigner()
+		pid := util.RandomPeerID()
+		pld := payload.NewAleykPayload(pid, "Oscar", 6666, 0x1, tAlicePeerID, payload.ResponseCodeOK, "ok") // InitialBlockDownload: true
+		signer.SignMsg(pld)
+		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
 		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeBlocksRequest)
 
@@ -58,21 +59,21 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 	})
 
 	t.Run("Bob didn't set the InitialBlockDownload flag", func(t *testing.T) {
-		initiator := util.RandomPeerID()
+		pid := util.RandomPeerID()
 		heightBob := tBobState.LastBlockHeight()
 
 		t.Run("Bob handshakes with the new peer", func(t *testing.T) {
-			pub, prv := bls.GenerateTestKeyPair()
-			sig := prv.Sign(pub.RawBytes())
-			pld := payload.NewSalamPayload("new-peer", pub, sig, 0, 0, tBobState.GenHash)
-			simulatingReceiveingNewMessage(t, tBobSync, pld, initiator)
+			signer := bls.GenerateTestSigner()
+			pld := payload.NewSalamPayload(pid, "new-peer", 0, 0, tBobState.GenHash)
+			signer.SignMsg(pld)
+			simulatingReceiveingNewMessage(t, tBobSync, pld, pid)
 
 			shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeAleyk)
 		})
 
 		t.Run("Bob rejects request with more than `LatestBlockInterval`", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, 0, heightBob)
-			simulatingReceiveingNewMessage(t, tBobSync, pld, initiator)
+			simulatingReceiveingNewMessage(t, tBobSync, pld, pid)
 
 			msg := shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeRejected)
@@ -81,7 +82,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Bob accepts request within `LatestBlockInterval`", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, heightBob-5, heightBob)
-			simulatingReceiveingNewMessage(t, tBobSync, pld, initiator)
+			simulatingReceiveingNewMessage(t, tBobSync, pld, pid)
 
 			msg1 := shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg1.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeMoreBlocks)
@@ -96,7 +97,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Peer requests from Bob to send the blocks again, Bob should reject it.", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, heightBob-5, heightBob)
-			simulatingReceiveingNewMessage(t, tBobSync, pld, initiator)
+			simulatingReceiveingNewMessage(t, tBobSync, pld, pid)
 
 			msg := shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeRejected)
@@ -104,7 +105,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Bob doesn't have request blocks", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, 100, 105)
-			simulatingReceiveingNewMessage(t, tBobSync, pld, initiator)
+			simulatingReceiveingNewMessage(t, tBobSync, pld, pid)
 
 			msg := shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeSynced)

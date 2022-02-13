@@ -2,6 +2,7 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/peerset"
@@ -20,16 +21,19 @@ func newAleykHandler(sync *synchronizer) payloadHandler {
 
 func (handler *aleykHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.AleykPayload)
-	handler.logger.Trace("Parsing Aleyk payload", "pld", pld)
+	handler.logger.Trace("parsing Aleyk payload", "pld", pld)
 
 	peer := handler.peerSet.MustGetPeer(initiator)
 
+	if pld.PeerID != initiator {
+		peer.UpdateStatus(peerset.StatusCodeBanned)
+		return errors.Errorf(errors.ErrInvalidMessage, "Peer ID is not same as initiator for Aleyk message. expected: %v, got: %v",
+			pld.PeerID, initiator)
+	}
+
 	if pld.ResponseTarget == handler.SelfID() {
 		if pld.ResponseCode == payload.ResponseCodeOK {
-			peer.UpdateStatus(peerset.StatusCodeOK)
-		} else {
-			handler.logger.Warn("Our Salam is not welcomed!", "message", pld.ResponseMessage, "peer", util.FingerprintPeerID(initiator))
-			peer.UpdateStatus(peerset.StatusCodeBanned)
+			peer.UpdateStatus(peerset.StatusCodeGood)
 		}
 	}
 

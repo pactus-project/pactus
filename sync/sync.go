@@ -176,11 +176,11 @@ func (sync *synchronizer) broadcastSalam() {
 		flags = util.SetFlag(flags, FlagInitialBlockDownload)
 	}
 	pld := payload.NewSalamPayload(
+		sync.SelfID(),
 		sync.config.Moniker,
-		sync.signer.PublicKey(),
-		sync.signer.SignData(sync.signer.PublicKey().RawBytes()),
 		sync.state.LastBlockHeight(),
 		flags, sync.state.GenesisHash())
+	sync.signer.SignMsg(pld)
 
 	sync.broadcast(pld)
 }
@@ -325,7 +325,7 @@ func (sync *synchronizer) downloadBlocks(from int) {
 		}
 
 		// TODO: write test for me
-		if peer.Status() != peerset.StatusCodeOK {
+		if peer.Status() != peerset.StatusCodeGood {
 			continue
 		}
 
@@ -350,7 +350,7 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
-	if randPeer == nil || randPeer.Status() != peerset.StatusCodeOK {
+	if randPeer == nil || randPeer.Status() != peerset.StatusCodeGood {
 		return
 	}
 

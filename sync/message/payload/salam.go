@@ -3,6 +3,7 @@ package payload
 import (
 	"fmt"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -11,22 +12,22 @@ import (
 )
 
 type SalamPayload struct {
-	Agent       string         `cbor:"1,keyasint"`
-	Moniker     string         `cbor:"2,keyasint"`
-	PublicKey   *bls.PublicKey `cbor:"3,keyasint"`
-	Signature   *bls.Signature `cbor:"4,keyasint"`
-	Height      int            `cbor:"5,keyasint"`
-	Flags       int            `cbor:"6,keyasint"`
-	GenesisHash hash.Hash      `cbor:"7,keyasint"`
+	PeerID      peer.ID        `cbor:"1,keyasint"`
+	Agent       string         `cbor:"2,keyasint"`
+	Moniker     string         `cbor:"3,keyasint"`
+	PublicKey   *bls.PublicKey `cbor:"4,keyasint"`
+	Signature   *bls.Signature `cbor:"5,keyasint"`
+	Height      int            `cbor:"6,keyasint"`
+	Flags       int            `cbor:"7,keyasint"`
+	GenesisHash hash.Hash      `cbor:"8,keyasint"`
 }
 
-func NewSalamPayload(moniker string, pub crypto.PublicKey, sig crypto.Signature,
-	height int, flags int, genesisHash hash.Hash) Payload {
+func NewSalamPayload(pid peer.ID, moniker string,
+	height int, flags int, genesisHash hash.Hash) *SalamPayload {
 	return &SalamPayload{
+		PeerID:      pid,
 		Agent:       version.Agent(),
 		Moniker:     moniker,
-		PublicKey:   pub.(*bls.PublicKey),
-		Signature:   sig.(*bls.Signature),
 		GenesisHash: genesisHash,
 		Height:      height,
 		Flags:       flags,
@@ -37,10 +38,22 @@ func (p *SalamPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
-	if !p.PublicKey.Verify(p.PublicKey.RawBytes(), p.Signature) {
+	if !p.PublicKey.Verify(p.SignBytes(), p.Signature) {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid signature")
 	}
 	return nil
+}
+
+func (p *SalamPayload) SignBytes() []byte {
+	return []byte(fmt.Sprintf("%d:%s:%s", p.Type(), p.Agent, p.PeerID))
+}
+
+func (p *SalamPayload) SetSignature(sig crypto.Signature) {
+	p.Signature = sig.(*bls.Signature)
+}
+
+func (p *SalamPayload) SetPublicKey(pub crypto.PublicKey) {
+	p.PublicKey = pub.(*bls.PublicKey)
 }
 
 func (p *SalamPayload) Type() Type {

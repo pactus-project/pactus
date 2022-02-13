@@ -31,7 +31,7 @@ func (handler *blocksRequestHandler) ParsPayload(p payload.Payload, initiator pe
 	}
 
 	peer := handler.peerSet.MustGetPeer(initiator)
-	if peer.Status() != peerset.StatusCodeOK {
+	if peer.Status() != peerset.StatusCodeGood {
 		response := payload.NewBlocksResponsePayload(payload.ResponseCodeRejected, pld.SessionID, 0, nil, nil, nil)
 		handler.sendTo(response, initiator)
 

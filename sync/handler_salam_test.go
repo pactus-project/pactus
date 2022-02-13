@@ -17,10 +17,11 @@ func TestParsingSalamMessages(t *testing.T) {
 
 	t.Run("Alice receives Salam message from a peer. Genesis hash is wrong. Alice should not handshake", func(t *testing.T) {
 		invGenHash := hash.GenerateTestHash()
-		pub, prv := bls.GenerateTestKeyPair()
-		sig := prv.Sign(pub.RawBytes())
-		pld := payload.NewSalamPayload("bad-genesis", pub, sig, 0, 0, invGenHash)
+		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
+		pld := payload.NewSalamPayload(pid, "bad-genesis", 0, 0, invGenHash)
+		signer.SignMsg(pld)
+
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
 		peer := tAliceSync.peerSet.GetPeer(pid)
@@ -31,15 +32,15 @@ func TestParsingSalamMessages(t *testing.T) {
 	})
 
 	t.Run("Alice receives Salam message from a peer. Genesis hash is Ok. Alice should update the peer info", func(t *testing.T) {
-		pub, prv := bls.GenerateTestKeyPair()
-		sig := prv.Sign(pub.RawBytes())
-
-		pld := payload.NewSalamPayload("kitty", pub, sig, 3, 0x1, tAliceState.GenHash)
+		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
+		pld := payload.NewSalamPayload(pid, "kitty", 3, 0x1, tAliceState.GenHash)
+		signer.SignMsg(pld)
+
 		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
 		peer := tAliceSync.peerSet.GetPeer(pid)
-		assert.Equal(t, peer.Status(), peerset.StatusCodeOK)
+		assert.Equal(t, peer.Status(), peerset.StatusCodeGood)
 		msg := shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeAleyk)
 		assert.Equal(t, msg.Payload.(*payload.AleykPayload).ResponseCode, payload.ResponseCodeOK)
 		assert.Equal(t, tBobSync.peerSet.MaxClaimedHeight(), tAliceState.LastBlockHeight())
@@ -47,7 +48,7 @@ func TestParsingSalamMessages(t *testing.T) {
 		p := tAliceSync.peerSet.GetPeer(pid)
 		assert.Equal(t, p.Agent(), version.Agent())
 		assert.Equal(t, p.Moniker(), "kitty")
-		assert.True(t, pub.EqualsTo(p.PublicKey()))
+		assert.True(t, signer.PublicKey().EqualsTo(p.PublicKey()))
 		assert.Equal(t, p.PeerID(), pid)
 		assert.Equal(t, p.Height(), 3)
 		assert.Equal(t, p.InitialBlockDownload(), true)
@@ -55,11 +56,13 @@ func TestParsingSalamMessages(t *testing.T) {
 
 	t.Run("Alice receives Salam message from a peer. Peer is ahead. Alice should request for blocks", func(t *testing.T) {
 		tAliceSync.peerSet.Clear()
-		pub, prv := bls.GenerateTestKeyPair()
-		sig := prv.Sign(pub.RawBytes())
+		signer := bls.GenerateTestSigner()
 		claimedHeight := tAliceState.LastBlockHeight() + 5
-		pld := payload.NewSalamPayload("kitty", pub, sig, claimedHeight, 0, tAliceState.GenHash)
-		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
+		pid := util.RandomPeerID()
+		pld := payload.NewSalamPayload(pid, "kitty", claimedHeight, 0, tAliceState.GenHash)
+		signer.SignMsg(pld)
+
+		simulatingReceiveingNewMessage(t, tAliceSync, pld, pid)
 
 		msg := shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeAleyk)
 		assert.Equal(t, msg.Payload.(*payload.AleykPayload).ResponseCode, payload.ResponseCodeOK)

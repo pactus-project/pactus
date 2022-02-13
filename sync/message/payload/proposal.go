@@ -9,7 +9,7 @@ type ProposalPayload struct {
 	Proposal *proposal.Proposal `cbor:"1,keyasint"`
 }
 
-func NewProposalPayload(p *proposal.Proposal) Payload {
+func NewProposalPayload(p *proposal.Proposal) *ProposalPayload {
 	return &ProposalPayload{
 		Proposal: p,
 	}

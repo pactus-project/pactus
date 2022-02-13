@@ -43,7 +43,7 @@ func setup(t *testing.T) {
 	tNetwork.AddAnotherNetwork(network.MockingNetwork(tBadPeerID))
 
 	peerGood := tFirewall.peerSet.MustGetPeer(tGoodPeerID)
-	peerGood.UpdateStatus(peerset.StatusCodeOK)
+	peerGood.UpdateStatus(peerset.StatusCodeGood)
 
 	badGood := tFirewall.peerSet.MustGetPeer(tBadPeerID)
 	badGood.UpdateStatus(peerset.StatusCodeBanned)

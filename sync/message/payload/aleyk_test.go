@@ -16,32 +16,33 @@ func TestAleykType(t *testing.T) {
 func TestAleykPayload(t *testing.T) {
 	t.Run("Invalid target", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		sig := signer.SignData(signer.PublicKey().RawBytes())
-		p := NewAleykPayload("Oscar", signer.PublicKey(), sig, 100, 0, "", ResponseCodeRejected, "rejected")
+		p := NewAleykPayload(util.RandomPeerID(), "Oscar", 100, 0, "", ResponseCodeRejected, "rejected")
+		signer.SignMsg(p)
 
 		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		sig := signer.SignData(signer.PublicKey().RawBytes())
-		p := NewAleykPayload("Oscar", signer.PublicKey(), sig, -1, 0, util.RandomPeerID(), ResponseCodeRejected, "rejected")
+		p := NewAleykPayload(util.RandomPeerID(), "Oscar", -1, 0, util.RandomPeerID(), ResponseCodeRejected, "rejected")
+		signer.SignMsg(p)
 
 		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("Invalid signature", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		sig := signer.SignData(nil)
-		p := NewAleykPayload("Oscar", signer.PublicKey(), sig, -1, 0, util.RandomPeerID(), ResponseCodeRejected, "rejected")
+		p := NewAleykPayload(util.RandomPeerID(), "Oscar", 100, 0, util.RandomPeerID(), ResponseCodeRejected, "rejected")
+		signer.SignMsg(p)
 
+		p.PeerID = util.RandomPeerID()
 		assert.Error(t, p.SanityCheck())
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		sig := signer.SignData(signer.PublicKey().RawBytes())
-		p := NewAleykPayload("Alice", signer.PublicKey(), sig, 100, 0, util.RandomPeerID(), ResponseCodeRejected, "welcome")
+		p := NewAleykPayload(util.RandomPeerID(), "Alice", 100, 0, util.RandomPeerID(), ResponseCodeRejected, "welcome")
+		signer.SignMsg(p)
 
 		assert.NoError(t, p.SanityCheck())
 		assert.Contains(t, p.Fingerprint(), "Alice")

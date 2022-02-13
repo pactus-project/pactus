@@ -40,7 +40,7 @@ func TestDownloadBlocks(t *testing.T) {
 	tAliceState.Store.Blocks = make(map[int]*block.Block)
 	tBobSync.peerSet.RemovePeer(tAlicePeerID)
 	p := tBobSync.peerSet.MustGetPeer(tAlicePeerID)
-	p.UpdateStatus(peerset.StatusCodeOK)
+	p.UpdateStatus(peerset.StatusCodeGood)
 
 	joinBobToCommittee(t)
 	addMoreBlocksForBobAndAnnounceLastBlock(t, 79) // total blocks: 21+79 = 100

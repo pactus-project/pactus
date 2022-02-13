@@ -11,7 +11,7 @@ type QueryProposalPayload struct {
 	Round  int `cbor:"2,keyasint"`
 }
 
-func NewQueryProposalPayload(h, r int) Payload {
+func NewQueryProposalPayload(h, r int) *QueryProposalPayload {
 	return &QueryProposalPayload{
 		Height: h,
 		Round:  r,

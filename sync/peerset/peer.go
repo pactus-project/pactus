@@ -15,7 +15,7 @@ type StatusCode int
 
 const (
 	StatusCodeUnknown = StatusCode(-1)
-	StatusCodeOK      = StatusCode(0)
+	StatusCodeGood    = StatusCode(0)
 	StatusCodeBanned  = StatusCode(1)
 )
 
@@ -23,8 +23,8 @@ func (code StatusCode) String() string {
 	switch code {
 	case StatusCodeUnknown:
 		return "Unknown"
-	case StatusCodeOK:
-		return "Ok"
+	case StatusCodeGood:
+		return "Good"
 	case StatusCodeBanned:
 		return "Banned"
 	}

@@ -2,6 +2,7 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/sync/peerset"
@@ -20,19 +21,25 @@ func newSalamHandler(sync *synchronizer) payloadHandler {
 
 func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.SalamPayload)
-	handler.logger.Trace("Parsing Salam payload", "pld", pld)
+	handler.logger.Trace("parsing Salam payload", "pld", pld)
 
 	peer := handler.peerSet.MustGetPeer(initiator)
 
+	if pld.PeerID != initiator {
+		peer.UpdateStatus(peerset.StatusCodeBanned)
+		return errors.Errorf(errors.ErrInvalidMessage, "Peer ID is not same as initiator for Salam message. expected: %v, got: %v",
+			pld.PeerID, initiator)
+	}
+
 	if !pld.GenesisHash.EqualsTo(handler.state.GenesisHash()) {
-		handler.logger.Info("Received a message from different chain", "genesis_hash", pld.GenesisHash, "peer", util.FingerprintPeerID(initiator))
-		// Response to salam
+		handler.logger.Info("received a message from different chain", "genesis_hash", pld.GenesisHash, "peer", util.FingerprintPeerID(initiator))
+		// Response to Salam
 		peer.UpdateStatus(peerset.StatusCodeBanned)
 		handler.broadcastAleyk(initiator, payload.ResponseCodeRejected, "Invalid genesis hash")
 		return nil
 	}
 
-	peer.UpdateStatus(peerset.StatusCodeOK)
+	peer.UpdateStatus(peerset.StatusCodeGood)
 	peer.UpdateMoniker(pld.Moniker)
 	peer.UpdateHeight(pld.Height)
 	peer.UpdateAgent(pld.Agent)
@@ -41,7 +48,7 @@ func (handler *salamHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 
 	handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
 
-	// Response to salam
+	// Response to Salam
 	handler.broadcastAleyk(initiator, payload.ResponseCodeOK, "Welcome!")
 
 	handler.updateBlokchain()
@@ -58,15 +65,15 @@ func (handler *salamHandler) broadcastAleyk(target peer.ID, code payload.Respons
 	if handler.config.InitialBlockDownload {
 		flags = util.SetFlag(flags, FlagInitialBlockDownload)
 	}
-	response := payload.NewAleykPayload(
+	pld := payload.NewAleykPayload(
+		handler.SelfID(),
 		handler.config.Moniker,
-		handler.signer.PublicKey(),
-		handler.signer.SignData(handler.signer.PublicKey().RawBytes()),
 		handler.state.LastBlockHeight(),
 		flags,
 		target,
 		code,
 		resMsg)
 
-	handler.broadcast(response)
+	handler.signer.SignMsg(pld)
+	handler.broadcast(pld)
 }
