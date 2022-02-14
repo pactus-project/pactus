@@ -3,9 +3,11 @@ package network
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -21,11 +23,26 @@ func setup(t *testing.T, conf1 *Config, conf2 *Config) (*network, *network) {
 
 	net1, err := NewNetwork(conf1)
 	assert.NoError(t, err)
+	assert.NotNil(t, net1.EventChannel())
 
 	net2, err := NewNetwork(conf2)
 	assert.NoError(t, err)
 
 	return net1.(*network), net2.(*network)
+}
+
+func shouldReceiveEvent(t *testing.T, net *network) NetworkEvent {
+	timeout := time.NewTimer(2 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v", t.Name()))
+			return nil
+		case e := <-net.eventChannel:
+			return e
+		}
+	}
 }
 
 func TestStoppingNetwork(t *testing.T) {

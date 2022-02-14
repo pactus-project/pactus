@@ -1,7 +1,6 @@
 package network
 
 import (
-	"bytes"
 	"context"
 	syncer "sync"
 
@@ -13,17 +12,17 @@ import (
 )
 
 type gossipService struct {
-	ctx      context.Context
-	wg       syncer.WaitGroup
-	host     lp2phost.Host
-	pubsub   *lp2pps.PubSub
-	topics   []*lp2pps.Topic
-	subs     []*lp2pps.Subscription
-	callback CallbackFn
-	logger   *logger.Logger
+	ctx     context.Context
+	wg      syncer.WaitGroup
+	host    lp2phost.Host
+	pubsub  *lp2pps.PubSub
+	topics  []*lp2pps.Topic
+	subs    []*lp2pps.Subscription
+	eventCh chan NetworkEvent
+	logger  *logger.Logger
 }
 
-func newGossipService(ctx context.Context, host lp2phost.Host, logger *logger.Logger) *gossipService {
+func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan NetworkEvent, logger *logger.Logger) *gossipService {
 	pubsub, err := lp2pps.NewGossipSub(ctx, host)
 	if err != nil {
 		logger.Panic("Unable to start Gossip service: %v", err)
@@ -31,15 +30,13 @@ func newGossipService(ctx context.Context, host lp2phost.Host, logger *logger.Lo
 	}
 
 	return &gossipService{
-		ctx:    ctx,
-		host:   host,
-		pubsub: pubsub,
-		wg:     syncer.WaitGroup{},
-		logger: logger,
+		ctx:     ctx,
+		host:    host,
+		pubsub:  pubsub,
+		wg:      syncer.WaitGroup{},
+		eventCh: eventCh,
+		logger:  logger,
 	}
-}
-func (g *gossipService) SetCallback(cb CallbackFn) {
-	g.callback = cb
 }
 
 func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error {
@@ -96,5 +93,11 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 	}
 
 	g.logger.Debug("Receiving new gossip message", "from", util.FingerprintPeerID(m.GetFrom()), "received from", util.FingerprintPeerID(m.ReceivedFrom))
-	g.callback(bytes.NewReader(m.Data), m.GetFrom(), m.ReceivedFrom)
+	event := &GossipMessage{
+		Source: m.GetFrom(),
+		From:   m.ReceivedFrom,
+		Data:   m.Data,
+	}
+
+	g.eventCh <- event
 }

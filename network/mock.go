@@ -16,7 +16,7 @@ type BroadcastData struct {
 
 type MockNetwork struct {
 	BroadcastCh chan BroadcastData
-	CallbackFn  CallbackFn
+	EventCh     chan NetworkEvent
 	ID          peer.ID
 	OtherNet    []*MockNetwork
 }
@@ -24,6 +24,7 @@ type MockNetwork struct {
 func MockingNetwork(id peer.ID) *MockNetwork {
 	return &MockNetwork{
 		BroadcastCh: make(chan BroadcastData, 100),
+		EventCh:     make(chan NetworkEvent, 100),
 		OtherNet:    make([]*MockNetwork, 0),
 		ID:          id,
 	}
@@ -31,10 +32,11 @@ func MockingNetwork(id peer.ID) *MockNetwork {
 func (mock *MockNetwork) Start() error {
 	return nil
 }
-func (mock *MockNetwork) SetCallback(callbackFn CallbackFn) {
-	mock.CallbackFn = callbackFn
-}
 func (mock *MockNetwork) Stop() {
+}
+
+func (mock *MockNetwork) EventChannel() <-chan NetworkEvent {
+	return mock.EventCh
 }
 func (mock *MockNetwork) JoinGeneralTopic() error {
 	return nil
@@ -59,11 +61,25 @@ func (mock *MockNetwork) Broadcast(data []byte, tid TopicID) error {
 	}
 	return nil
 }
+
 func (mock *MockNetwork) SendToOthers(data []byte, target *peer.ID) {
 	for _, net := range mock.OtherNet {
-		if target == nil || net.ID == *target {
-			net.CallbackFn(bytes.NewReader(data), mock.ID, mock.ID)
+		var event NetworkEvent
+		if target == nil {
+			// Broadcast message
+			event = &GossipMessage{
+				Source: mock.ID,
+				From:   mock.ID,
+				Data:   data,
+			}
+		} else if net.ID == *target {
+			// direct message
+			event = &StreamMessage{
+				Source: mock.ID,
+				Reader: bytes.NewReader(data),
+			}
 		}
+		mock.EventCh <- event
 	}
 }
 func (mock *MockNetwork) CloseConnection(pid peer.ID) {

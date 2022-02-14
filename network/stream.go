@@ -17,15 +17,17 @@ type streamService struct {
 	ctx        context.Context
 	host       lp2phost.Host
 	protocolID lp2pcore.ProtocolID
-	callback   CallbackFn
+	eventCh    chan NetworkEvent
 	logger     *logger.Logger
 }
 
-func newStreamService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID, logger *logger.Logger) *streamService {
+func newStreamService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
+	eventCh chan NetworkEvent, logger *logger.Logger) *streamService {
 	s := &streamService{
 		ctx:        ctx,
 		host:       host,
 		protocolID: protocolID,
+		eventCh:    eventCh,
 		logger:     logger,
 	}
 
@@ -38,16 +40,17 @@ func (s *streamService) Start() {
 func (s *streamService) Stop() {
 }
 
-func (s *streamService) SetCallback(cb CallbackFn) {
-	s.callback = cb
-}
-
 func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	from := stream.Conn().RemotePeer()
 	reader := bufio.NewReader(stream)
 
 	s.logger.Debug("Receiving stream", "from", util.FingerprintPeerID(from))
-	s.callback(reader, from, from)
+	event := &StreamMessage{
+		Source: from,
+		Reader: reader,
+	}
+
+	s.eventCh <- event
 }
 
 func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {

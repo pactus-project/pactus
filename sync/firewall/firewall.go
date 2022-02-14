@@ -1,6 +1,7 @@
 package firewall
 
 import (
+	"bytes"
 	"io"
 
 	"github.com/libp2p/go-libp2p-core/peer"
@@ -32,46 +33,72 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 	}
 }
 
-func (f *Firewall) OpenMessage(r io.Reader, source peer.ID, from peer.ID) *message.Message {
-	sourcePeer := f.peerSet.MustGetPeer(source)
-	fromPeer := f.peerSet.MustGetPeer(from)
+func (f *Firewall) OpenGossipMessage(data []byte, source peer.ID, from peer.ID) *message.Message {
 	if from != source {
-		if f.peerIsBanned(sourcePeer) {
-			f.logger.Warn("firewall: source peer is banned", "source", util.FingerprintPeerID(source))
-			// If there is any connection to the source peer, close it
-			f.closeConnection(source)
+		fromPeer := f.peerSet.MustGetPeer(from)
+		if f.peerIsBanned(fromPeer) {
+			f.logger.Warn("firewall: from peer banned", "from", util.FingerprintPeerID(from))
+			f.closeConnection(from)
 			return nil
 		}
 	}
 
-	if f.peerIsBanned(fromPeer) {
-		f.logger.Warn("firewall: from peer banned", "from", util.FingerprintPeerID(from))
-		f.closeConnection(from)
-		return nil
-	}
-
-	msg, err := f.decodeMessage(r, sourcePeer)
+	msg, err := f.openMessage(bytes.NewReader(data), source)
 	if err != nil {
-		f.logger.Debug("unable to decode the message", "from", util.FingerprintPeerID(from), "err", err)
-		return nil
-	}
-
-	if err := f.checkMessage(msg, sourcePeer); err != nil {
-		f.logger.Warn("firewall: invalid message", "err", err, "msg", msg, "from", util.FingerprintPeerID(from))
+		f.logger.Warn("firewall: unable to open a gossip message", "err", err)
 		f.closeConnection(from)
 		return nil
 	}
+
+	// TODO: check if gossip flag is set
+	// TODO: check if payload is a gossip payload
 
 	return msg
 }
 
+func (f *Firewall) OpenStreamMessage(r io.Reader, from peer.ID) *message.Message {
+	msg, err := f.openMessage(r, from)
+	if err != nil {
+		f.logger.Warn("firewall: unable to open a stream message", "err", err)
+		f.closeConnection(from)
+		return nil
+	}
+
+	// TODO: check if gossip flag is NOT set
+	// TODO: check if payload is a stream payload
+
+	return msg
+}
+
+func (f *Firewall) openMessage(r io.Reader, source peer.ID) (*message.Message, error) {
+	peer := f.peerSet.MustGetPeer(source)
+	peer.IncreaseReceivedMessage()
+
+	if f.peerIsBanned(peer) {
+		// If there is any connection to the source peer, close it
+		f.closeConnection(source)
+		return nil, errors.Errorf(errors.ErrInvalidMessage, "Source peer is banned: %s", source)
+	}
+
+	msg, err := f.decodeMessage(r, peer)
+	if err != nil {
+		peer.IncreaseInvalidMessage()
+		return nil, err
+	}
+
+	if err := f.checkMessage(msg, peer); err != nil {
+		peer.IncreaseInvalidMessage()
+		return nil, err
+	}
+
+	return msg, nil
+}
+
 func (f *Firewall) decodeMessage(r io.Reader, source *peerset.Peer) (*message.Message, error) {
-	source.IncreaseReceivedMessage()
 	msg := new(message.Message)
 	bytesRead, err := msg.Decode(r)
 	source.IncreaseReceivedBytes(bytesRead)
 	if err != nil {
-		source.IncreaseInvalidMessage()
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
@@ -80,12 +107,10 @@ func (f *Firewall) decodeMessage(r io.Reader, source *peerset.Peer) (*message.Me
 
 func (f *Firewall) checkMessage(msg *message.Message, source *peerset.Peer) error {
 	if err := msg.SanityCheck(); err != nil {
-		source.IncreaseInvalidMessage()
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
 	if msg.Initiator != source.PeerID() {
-		source.IncreaseInvalidMessage()
 		return errors.Errorf(errors.ErrInvalidMessage,
 			"source is not same as initiator. source: %v, initiator: %v", source.PeerID(), msg.Initiator)
 	}

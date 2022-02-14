@@ -30,6 +30,7 @@ type network struct {
 	gossip         *gossipService
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
+	eventChannel   chan NetworkEvent
 	logger         *logger.Logger
 }
 
@@ -90,10 +91,11 @@ func NewNetwork(conf *Config) (Network, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	n := &network{
-		ctx:    ctx,
-		cancel: cancel,
-		config: conf,
-		host:   host,
+		ctx:          ctx,
+		cancel:       cancel,
+		config:       conf,
+		host:         host,
+		eventChannel: make(chan NetworkEvent, 100),
 	}
 
 	n.logger = logger.NewLogger("_network", n)
@@ -108,19 +110,17 @@ func NewNetwork(conf *Config) (Network, error) {
 	}
 
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.config.Name))
-	n.stream = newStreamService(ctx, host, streamProtocolID, n.logger)
+	n.stream = newStreamService(ctx, host, streamProtocolID, n.eventChannel, n.logger)
 
-	n.gossip = newGossipService(ctx, host, n.logger)
+	n.gossip = newGossipService(ctx, host, n.eventChannel, n.logger)
 
 	n.logger.Debug("Network setup", "id", n.host.ID(), "address", conf.ListenAddress)
 
 	return n, nil
 }
 
-func (n *network) SetCallback(callbackFn CallbackFn) {
-	n.logger.Debug("Callback set")
-	n.gossip.SetCallback(callbackFn)
-	n.stream.SetCallback(callbackFn)
+func (n *network) EventChannel() <-chan NetworkEvent {
+	return n.eventChannel
 }
 
 func (n *network) Start() error {
@@ -170,13 +170,13 @@ func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	n.logger.Debug("Publishing new message", "topic", topicID)
 	switch topicID {
-	case GeneralTopic:
+	case TopicIDGeneral:
 		if n.generalTopic == nil {
 			return errors.Errorf(errors.ErrNetwork, "Not subscribed to general topic")
 		}
 		return n.gossip.BroadcastMessage(msg, n.generalTopic)
 
-	case ConsensusTopic:
+	case TopicIDConsensus:
 		if n.consensusTopic == nil {
 			return errors.Errorf(errors.ErrNetwork, "Not subscribed to consensus topic")
 		}
