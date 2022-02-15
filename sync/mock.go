@@ -23,7 +23,7 @@ func MockingSync() *MockSync {
 	pub2, _ := bls.GenerateTestKeyPair()
 	p1 := ps.MustGetPeer(util.RandomPeerID())
 	p2 := ps.MustGetPeer(util.RandomPeerID())
-	p1.UpdateStatus(peerset.StatusCodeGood)
+	p1.UpdateStatus(peerset.StatusCodeKnown)
 	p2.UpdateStatus(peerset.StatusCodeBanned)
 	p1.UpdateMoniker("test-1")
 	p2.UpdateMoniker("test-2")

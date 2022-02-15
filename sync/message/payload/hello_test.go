@@ -9,15 +9,15 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestSalamType(t *testing.T) {
-	p := &SalamPayload{}
-	assert.Equal(t, p.Type(), PayloadTypeSalam)
+func TestHelloType(t *testing.T) {
+	p := &HelloPayload{}
+	assert.Equal(t, p.Type(), PayloadTypeHello)
 }
 
-func TestSalamPayload(t *testing.T) {
+func TestHelloPayload(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		p := NewSalamPayload(util.RandomPeerID(), "Oscar", -1, 0, hash.GenerateTestHash())
+		p := NewHelloPayload(util.RandomPeerID(), "Oscar", -1, 0, hash.GenerateTestHash())
 		signer.SignMsg(p)
 
 		assert.Error(t, p.SanityCheck())
@@ -25,7 +25,7 @@ func TestSalamPayload(t *testing.T) {
 
 	t.Run("Invalid signature", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		p := NewSalamPayload(util.RandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
+		p := NewHelloPayload(util.RandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
 		signer.SignMsg(p)
 
 		p.PeerID = util.RandomPeerID()
@@ -34,7 +34,7 @@ func TestSalamPayload(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		p := NewSalamPayload(util.RandomPeerID(), "Alice", 100, 0, hash.GenerateTestHash())
+		p := NewHelloPayload(util.RandomPeerID(), "Alice", 100, 0, hash.GenerateTestHash())
 		signer.SignMsg(p)
 
 		assert.NoError(t, p.SanityCheck())

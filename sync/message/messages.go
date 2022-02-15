@@ -15,7 +15,7 @@ const LastVersion = 1
 const FlagNetworkLibP2P = 0x01
 const FlagCompressed = 0x10
 const FlagBroadcasted = 0x20
-const FlagGreetingMessage = 0x40
+const FlagHelloMessage = 0x40
 
 type Message struct {
 	Version   int

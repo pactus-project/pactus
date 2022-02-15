@@ -11,7 +11,12 @@ import (
 	"github.com/zarbchain/zarb-go/version"
 )
 
-type SalamPayload struct {
+const (
+	FlagNeedResponse         = 0x1
+	FlagInitialBlockDownload = 0x2
+)
+
+type HelloPayload struct {
 	PeerID      peer.ID        `cbor:"1,keyasint"`
 	Agent       string         `cbor:"2,keyasint"`
 	Moniker     string         `cbor:"3,keyasint"`
@@ -22,9 +27,9 @@ type SalamPayload struct {
 	GenesisHash hash.Hash      `cbor:"8,keyasint"`
 }
 
-func NewSalamPayload(pid peer.ID, moniker string,
-	height int, flags int, genesisHash hash.Hash) *SalamPayload {
-	return &SalamPayload{
+func NewHelloPayload(pid peer.ID, moniker string,
+	height int, flags int, genesisHash hash.Hash) *HelloPayload {
+	return &HelloPayload{
 		PeerID:      pid,
 		Agent:       version.Agent(),
 		Moniker:     moniker,
@@ -34,7 +39,7 @@ func NewSalamPayload(pid peer.ID, moniker string,
 	}
 }
 
-func (p *SalamPayload) SanityCheck() error {
+func (p *HelloPayload) SanityCheck() error {
 	if p.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
@@ -44,22 +49,22 @@ func (p *SalamPayload) SanityCheck() error {
 	return nil
 }
 
-func (p *SalamPayload) SignBytes() []byte {
-	return []byte(fmt.Sprintf("%d:%s:%s", p.Type(), p.Agent, p.PeerID))
+func (p *HelloPayload) SignBytes() []byte {
+	return []byte(fmt.Sprintf("%s:%s:%s", p.Type(), p.Agent, p.PeerID))
 }
 
-func (p *SalamPayload) SetSignature(sig crypto.Signature) {
+func (p *HelloPayload) SetSignature(sig crypto.Signature) {
 	p.Signature = sig.(*bls.Signature)
 }
 
-func (p *SalamPayload) SetPublicKey(pub crypto.PublicKey) {
+func (p *HelloPayload) SetPublicKey(pub crypto.PublicKey) {
 	p.PublicKey = pub.(*bls.PublicKey)
 }
 
-func (p *SalamPayload) Type() Type {
-	return PayloadTypeSalam
+func (p *HelloPayload) Type() Type {
+	return PayloadTypeHello
 }
 
-func (p *SalamPayload) Fingerprint() string {
+func (p *HelloPayload) Fingerprint() string {
 	return fmt.Sprintf("{%s %v}", p.Moniker, p.Height)
 }

@@ -14,21 +14,24 @@ import (
 type StatusCode int
 
 const (
-	StatusCodeUnknown = StatusCode(-1)
-	StatusCodeGood    = StatusCode(0)
-	StatusCodeBanned  = StatusCode(1)
+	StatusCodeBanned  = StatusCode(-1)
+	StatusCodeUnknown = StatusCode(0)
+	StatusCodeKnown   = StatusCode(1)
+	StatusCodeTrusted = StatusCode(2)
 )
 
 func (code StatusCode) String() string {
 	switch code {
-	case StatusCodeUnknown:
-		return "Unknown"
-	case StatusCodeGood:
-		return "Good"
 	case StatusCodeBanned:
-		return "Banned"
+		return "banned"
+	case StatusCodeUnknown:
+		return "unknown"
+	case StatusCodeKnown:
+		return "known"
+	case StatusCodeTrusted:
+		return "trusted"
 	}
-	return "Invalid"
+	return "invalid"
 }
 
 func (code StatusCode) MarshalJSON() ([]byte, error) {
@@ -67,6 +70,13 @@ func (p *Peer) Status() StatusCode {
 	defer p.lk.RUnlock()
 
 	return p.data.Status
+}
+
+func (p *Peer) IsKnownOrTrusted() bool {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return p.data.Status == StatusCodeKnown || p.data.Status == StatusCodeTrusted
 }
 
 func (p *Peer) Moniker() string {

@@ -39,35 +39,33 @@ func (c ResponseCode) String() string {
 type Type int
 
 const (
-	PayloadTypeSalam             = Type(1) // Hello message
-	PayloadTypeAleyk             = Type(2) // Hello Ack message
-	PayloadTypeBlocksRequest     = Type(3)
-	PayloadTypeBlocksResponse    = Type(4)
-	PayloadTypeQueryTransactions = Type(5)
-	PayloadTypeTransactions      = Type(6)
-	PayloadTypeQueryProposal     = Type(7)
-	PayloadTypeProposal          = Type(8)
-	PayloadTypeHeartBeat         = Type(9)
-	PayloadTypeQueryVotes        = Type(10)
-	PayloadTypeVote              = Type(11)
-	PayloadTypeBlockAnnounce     = Type(12)
+	PayloadTypeHello             = Type(1)
+	PayloadTypeBlocksRequest     = Type(2)
+	PayloadTypeBlocksResponse    = Type(3)
+	PayloadTypeQueryTransactions = Type(4)
+	PayloadTypeTransactions      = Type(5)
+	PayloadTypeQueryProposal     = Type(6)
+	PayloadTypeProposal          = Type(7)
+	PayloadTypeHeartBeat         = Type(8)
+	PayloadTypeQueryVotes        = Type(9)
+	PayloadTypeVote              = Type(10)
+	PayloadTypeBlockAnnounce     = Type(11)
 )
 
 func (t Type) TopicID() network.TopicID {
 	switch t {
-	case PayloadTypeSalam,
-		PayloadTypeAleyk,
+	case PayloadTypeHello,
 		PayloadTypeHeartBeat,
 		PayloadTypeQueryTransactions,
 		PayloadTypeTransactions,
 		PayloadTypeBlockAnnounce:
-		return network.GeneralTopic
+		return network.TopicIDGeneral
 
 	case PayloadTypeQueryProposal,
 		PayloadTypeProposal,
 		PayloadTypeQueryVotes,
 		PayloadTypeVote:
-		return network.ConsensusTopic
+		return network.TopicIDConsensus
 
 	default:
 		panic("Invalid topic ID")
@@ -76,10 +74,8 @@ func (t Type) TopicID() network.TopicID {
 
 func (t Type) String() string {
 	switch t {
-	case PayloadTypeSalam:
-		return "salam"
-	case PayloadTypeAleyk:
-		return "aleyk"
+	case PayloadTypeHello:
+		return "hello"
 	case PayloadTypeBlocksRequest:
 		return "blocks-req"
 	case PayloadTypeBlocksResponse:
@@ -106,10 +102,8 @@ func (t Type) String() string {
 
 func MakePayload(t Type) Payload {
 	switch t {
-	case PayloadTypeSalam:
-		return &SalamPayload{}
-	case PayloadTypeAleyk:
-		return &AleykPayload{}
+	case PayloadTypeHello:
+		return &HelloPayload{}
 	case PayloadTypeBlocksRequest:
 		return &BlocksRequestPayload{}
 	case PayloadTypeBlocksResponse:

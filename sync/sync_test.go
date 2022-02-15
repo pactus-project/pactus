@@ -21,6 +21,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -133,11 +134,12 @@ func setup(t *testing.T) {
 	assert.NoError(t, tAliceSync.Start())
 	assert.NoError(t, tBobSync.Start())
 
-	shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeSalam)
-	shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeSalam)
+	shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHello)
+	shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeHello)
 
-	shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeAleyk)
-	shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeAleyk)
+	// Hello acknowledgments
+	shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHello)
+	shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeHello)
 
 	assert.Equal(t, tAliceState.LastBlockHeight(), tBobState.LastBlockHeight())
 
@@ -160,6 +162,23 @@ func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, pa
 			require.NoError(t, err)
 			assert.Equal(t, msg.Initiator, net.ID)
 
+			// -----------
+			// Check flags
+			require.True(t, util.IsFlagSet(msg.Flags, message.FlagNetworkLibP2P), "invalid flag: %v", msg)
+
+			if b.Target == nil {
+				require.True(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
+			} else {
+				require.False(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
+			}
+
+			if msg.Payload.Type() == payload.PayloadTypeHello {
+				require.True(t, util.IsFlagSet(msg.Flags, message.FlagHelloMessage), "invalid flag: %v", msg)
+			} else {
+				require.False(t, util.IsFlagSet(msg.Flags, message.FlagHelloMessage), "invalid flag: %v", msg)
+			}
+			// -----------
+
 			if msg.Payload.Type() == payloadType {
 				logger.Info("shouldPublishPayloadWithThisType", "msg", msg, "type", payloadType.String())
 				return msg
@@ -180,23 +199,15 @@ func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork,
 			// Re-Decode again to check the payload type
 			msg := new(message.Message)
 			_, err := msg.Decode(bytes.NewReader(b.Data))
-			// Check broadcaste flag
-			if b.Target == nil {
-				require.True(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
-			} else {
-				require.False(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
-			}
 			require.NoError(t, err)
 			assert.NotEqual(t, msg.Payload.Type(), payloadType)
 		}
 	}
 }
 
-func simulatingReceiveingNewMessage(t *testing.T, sync *synchronizer, pld payload.Payload, from peer.ID) {
+func simulatingReceiveingNewMessage(t *testing.T, sync *synchronizer, pld payload.Payload, from peer.ID) error {
 	msg := message.NewMessage(from, pld)
-	data, err := msg.Encode()
-	assert.NoError(t, err)
-	sync.onReceiveData(bytes.NewReader(data), from, from)
+	return sync.processIncomingMessage(msg)
 }
 
 func addMoreBlocksForBob(t *testing.T, count int) {
@@ -243,6 +254,11 @@ func joinBobToCommittee(t *testing.T) {
 	val.UpdateLastJoinedHeight(tBobState.LastBlockHeight())
 
 	assert.NoError(t, tAliceState.Committee.Update(0, []*validator.Validator{val}))
+}
+
+func checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
+	peer := tAliceSync.peerSet.GetPeer(pid)
+	require.Equal(t, peer.Status(), code)
 }
 
 func TestAccessors(t *testing.T) {

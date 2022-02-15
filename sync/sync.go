@@ -3,13 +3,13 @@ package sync
 import (
 	"context"
 	"fmt"
-	"io"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
@@ -24,11 +24,9 @@ import (
 
 // IMPORTANT NOTE
 //
-// Sync module is based on pulling, not pushing
-// Means if a node is shorter than the network, we don't send him anything
-// The node should request (pull) itself.
-
-const FlagInitialBlockDownload = 0x1
+// Sync module is based on pulling, not pushing.
+// Means: Network doesn't update the node (push),
+// The node itself should send request (pull).
 
 type synchronizer struct {
 	// Not: Synchronizer should not have any lock to prevent dead lock situation.
@@ -44,6 +42,7 @@ type synchronizer struct {
 	cache           *cache.Cache
 	handlers        map[payload.Type]payloadHandler
 	broadcastCh     <-chan payload.Payload
+	networkCh       <-chan network.NetworkEvent
 	network         network.Network
 	heartBeatTicker *time.Ticker
 	logger          *logger.Logger
@@ -64,6 +63,7 @@ func NewSynchronizer(
 		consensus:   consensus,
 		network:     net,
 		broadcastCh: broadcastCh,
+		networkCh:   net.EventChannel(),
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
@@ -81,8 +81,7 @@ func NewSynchronizer(
 
 	handlers := make(map[payload.Type]payloadHandler)
 
-	handlers[payload.PayloadTypeSalam] = newSalamHandler(sync)
-	handlers[payload.PayloadTypeAleyk] = newAleykHandler(sync)
+	handlers[payload.PayloadTypeHello] = newHelloHandler(sync)
 	handlers[payload.PayloadTypeHeartBeat] = newHeartBeatHandler(sync)
 	handlers[payload.PayloadTypeVote] = newVoteHandler(sync)
 	handlers[payload.PayloadTypeProposal] = newProposalHandler(sync)
@@ -101,11 +100,7 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
-	sync.network.SetCallback(sync.onReceiveData)
-	if err := sync.network.JoinGeneralTopic(); err != nil {
-		return err
-	}
-
+	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
 	sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimeout)
@@ -117,7 +112,7 @@ func (sync *synchronizer) Start() error {
 		sync.onStartingTimeout()
 	}()
 
-	sync.broadcastSalam()
+	sync.sayHello(true)
 
 	return nil
 }
@@ -170,12 +165,15 @@ func (sync *synchronizer) broadcastHeartBeat() {
 	sync.broadcast(pld)
 }
 
-func (sync *synchronizer) broadcastSalam() {
+func (sync *synchronizer) sayHello(needResponse bool) {
 	flags := 0
 	if sync.config.InitialBlockDownload {
-		flags = util.SetFlag(flags, FlagInitialBlockDownload)
+		flags = util.SetFlag(flags, payload.FlagInitialBlockDownload)
 	}
-	pld := payload.NewSalamPayload(
+	if needResponse {
+		flags = util.SetFlag(flags, payload.FlagNeedResponse)
+	}
+	pld := payload.NewHelloPayload(
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
@@ -196,6 +194,52 @@ func (sync *synchronizer) broadcastLoop() {
 		}
 	}
 }
+func (sync *synchronizer) receiveLoop() {
+	for {
+		select {
+		case <-sync.ctx.Done():
+			return
+
+		case e := <-sync.networkCh:
+			var msg *message.Message
+			switch e.Type() {
+			case network.EventTypeGossip:
+				ge := e.(*network.GossipMessage)
+				msg = sync.firewall.OpenGossipMessage(ge.Data, ge.Source, ge.From)
+
+			case network.EventTypeStream:
+				se := e.(*network.StreamMessage)
+				msg = sync.firewall.OpenStreamMessage(se.Reader, se.Source)
+			}
+
+			err := sync.processIncomingMessage(msg)
+			if err != nil {
+				sync.logger.Warn("error on parsing a message", "initiator", util.FingerprintPeerID(msg.Initiator), "message", msg, "err", err)
+				peer := sync.peerSet.MustGetPeer(msg.Initiator)
+				peer.IncreaseInvalidMessage()
+			}
+		}
+	}
+}
+
+func (sync *synchronizer) processIncomingMessage(msg *message.Message) error {
+	if msg == nil {
+		return nil
+	}
+
+	sync.logger.Debug("received a message", "initiator", util.FingerprintPeerID(msg.Initiator), "message", msg)
+	handler := sync.handlers[msg.Payload.Type()]
+	if handler == nil {
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid payload type: %v", msg.Payload.Type())
+	}
+
+	if err := handler.ParsPayload(msg.Payload, msg.Initiator); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (sync *synchronizer) Fingerprint() string {
 	return fmt.Sprintf("{☍ %d ⛃ %d ⇈ %d ↑ %d}",
 		sync.peerSet.Len(),
@@ -206,7 +250,7 @@ func (sync *synchronizer) Fingerprint() string {
 
 // updateBlokchain checks if the node height is shorter than the network or not.
 // If the node height is shorter than network more than two hours (720 blocks),
-// it should join the download topic and start downloading the blocks,
+// it should start downloading the blocks,
 // otherwise the node can request the latest blocks from the network.
 func (sync *synchronizer) updateBlokchain() {
 	// TODO: write test for me
@@ -233,27 +277,6 @@ func (sync *synchronizer) updateBlokchain() {
 	}
 }
 
-func (sync *synchronizer) onReceiveData(reader io.Reader, source peer.ID, from peer.ID) {
-	msg := sync.firewall.OpenMessage(reader, source, from)
-	if msg == nil {
-		return
-	}
-
-	sync.logger.Debug("Received a message", "from", util.FingerprintPeerID(from), "message", msg)
-	handler := sync.handlers[msg.Payload.Type()]
-	if handler == nil {
-		sync.logger.Error("Invalid payload type: %v", msg.Payload.Type())
-		return
-	}
-
-	if err := handler.ParsPayload(msg.Payload, msg.Initiator); err != nil {
-		peer := sync.peerSet.MustGetPeer(from)
-		peer.IncreaseInvalidMessage()
-		sync.logger.Warn("Error on parsing a message", "from", util.FingerprintPeerID(from), "message", msg, "err", err)
-		return
-	}
-}
-
 func (sync *synchronizer) prepareMessage(pld payload.Payload) *message.Message {
 	handler := sync.handlers[pld.Type()]
 	if handler == nil {
@@ -266,6 +289,10 @@ func (sync *synchronizer) prepareMessage(pld payload.Payload) *message.Message {
 			sync.logger.Error("Broadcasting an invalid message", "message", msg, "err", err)
 			return nil
 		}
+
+		// Message will be carried through LibP2P.
+		// In future we might support other libraries.
+		msg.Flags = util.SetFlag(msg.Flags, message.FlagNetworkLibP2P)
 		return msg
 	}
 	return nil
@@ -325,7 +352,7 @@ func (sync *synchronizer) downloadBlocks(from int) {
 		}
 
 		// TODO: write test for me
-		if peer.Status() != peerset.StatusCodeGood {
+		if peer.Status() != peerset.StatusCodeKnown {
 			continue
 		}
 
@@ -350,7 +377,7 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
-	if randPeer == nil || randPeer.Status() != peerset.StatusCodeGood {
+	if randPeer == nil || randPeer.Status() != peerset.StatusCodeKnown {
 		return
 	}
 
@@ -502,5 +529,4 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code payload
 		sync.peerSet.CloseSession(sessionID)
 		sync.synced()
 	}
-
 }
