@@ -42,7 +42,7 @@ type synchronizer struct {
 	cache           *cache.Cache
 	handlers        map[payload.Type]payloadHandler
 	broadcastCh     <-chan payload.Payload
-	networkCh       <-chan network.NetworkEvent
+	networkCh       <-chan network.Event
 	network         network.Network
 	heartBeatTicker *time.Ticker
 	logger          *logger.Logger
@@ -100,6 +100,10 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
+	if err := sync.network.JoinGeneralTopic(); err != nil {
+		return err
+	}
+
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 

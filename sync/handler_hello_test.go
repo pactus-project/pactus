@@ -24,7 +24,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer.SignMsg(pld)
 		assert.True(t, pld.PublicKey.EqualsTo(signer.PublicKey()))
 
-		assert.Error(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
 		checkPeerStatus(t, pid, peerset.StatusCodeBanned)
 	})
@@ -36,7 +36,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		pld := payload.NewHelloPayload(pid, "kitty", height, payload.FlagNeedResponse|payload.FlagInitialBlockDownload, tState.GenHash)
 		signer.SignMsg(pld)
 
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
 		assert.False(t, util.IsFlagSet(msg.Payload.(*payload.HelloPayload).Flags, payload.FlagNeedResponse))
@@ -58,7 +58,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		pld := payload.NewHelloPayload(pid, "kitty", 0, payload.FlagInitialBlockDownload, tState.GenHash)
 		signer.SignMsg(pld)
 
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 	})
@@ -71,7 +71,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		pld := payload.NewHelloPayload(pid, "kitty", claimedHeight, 0, tState.GenHash)
 		signer.SignMsg(pld)
 
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksRequest)
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 		assert.Equal(t, tSync.peerSet.MaxClaimedHeight(), claimedHeight)

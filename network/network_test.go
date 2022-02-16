@@ -31,7 +31,7 @@ func setup(t *testing.T, conf1 *Config, conf2 *Config) (*network, *network) {
 	return net1.(*network), net2.(*network)
 }
 
-func shouldReceiveEvent(t *testing.T, net *network) NetworkEvent {
+func shouldReceiveEvent(t *testing.T, net *network) Event {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {

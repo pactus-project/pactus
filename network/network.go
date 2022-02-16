@@ -30,7 +30,7 @@ type network struct {
 	gossip         *gossipService
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
-	eventChannel   chan NetworkEvent
+	eventChannel   chan Event
 	logger         *logger.Logger
 }
 
@@ -95,7 +95,7 @@ func NewNetwork(conf *Config) (Network, error) {
 		cancel:       cancel,
 		config:       conf,
 		host:         host,
-		eventChannel: make(chan NetworkEvent, 100),
+		eventChannel: make(chan Event, 100),
 	}
 
 	n.logger = logger.NewLogger("_network", n)
@@ -119,7 +119,7 @@ func NewNetwork(conf *Config) (Network, error) {
 	return n, nil
 }
 
-func (n *network) EventChannel() <-chan NetworkEvent {
+func (n *network) EventChannel() <-chan Event {
 	return n.eventChannel
 }
 

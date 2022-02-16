@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
@@ -24,14 +23,13 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 	pld := payload.NewQueryTransactionsPayload([]hash.Hash{trx1.ID(), trx2.ID(), trx3.ID()})
 
 	t.Run("Not in the committee, should not respond to the query transaction message", func(t *testing.T) {
-		assert.Error(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 	})
 
-	pub, _ := bls.GenerateTestKeyPair()
-	testAddPeerToCommittee(t, pub, pid)
+	testAddPeerToCommittee(t, pid, nil)
 
 	t.Run("In the committee, should respond to the query transaction message", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeTransactions)
 		assert.Len(t, msg.Payload.(*payload.TransactionsPayload).Transactions, 2)
@@ -39,7 +37,7 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 
 	t.Run("In the committee, but doesn't have the transaction", func(t *testing.T) {
 		pld := payload.NewQueryTransactionsPayload([]hash.Hash{hash.GenerateTestHash()})
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeTransactions)
 	})
@@ -59,7 +57,7 @@ func TestBroadcastingQueryTransactionsMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryTransactions)
 	})
 
-	testAddPeerToCommittee(t, tSync.signer.PublicKey(), tSync.SelfID())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 
 	t.Run("In the committee, should send query transaction message", func(t *testing.T) {
 		tSync.broadcast(pld)

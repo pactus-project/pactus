@@ -134,7 +134,7 @@ func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork,
 	}
 }
 
-func testReceiveingNewMessage(t *testing.T, sync *synchronizer, pld payload.Payload, from peer.ID) error {
+func testReceiveingNewMessage(sync *synchronizer, pld payload.Payload, from peer.ID) error {
 	msg := message.NewMessage(from, pld)
 	return sync.processIncomingMessage(msg)
 }
@@ -152,22 +152,25 @@ func testAddBlocks(t *testing.T, state *state.MockState, count int) {
 	assert.Equal(t, lastBlockHash, state.LastBlockHash())
 }
 
-func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, code peerset.StatusCode) *peerset.Peer {
+func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID) *peerset.Peer {
 	p := tSync.peerSet.MustGetPeer(pid)
+	require.NotNil(t, p)
 	p.UpdateMoniker("test")
 	p.UpdatePublicKey(pub)
-	p.UpdateStatus(code)
+	p.UpdateStatus(peerset.StatusCodeKnown)
 
 	return p
 }
 
-func testAddPeerToCommittee(t *testing.T, pub crypto.PublicKey, pid peer.ID) *peerset.Peer {
-	p := testAddPeer(t, pub, pid, peerset.StatusCodeKnown)
+func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
+	if pub == nil {
+		pub, _ = bls.GenerateTestKeyPair()
+	}
+	p := testAddPeer(t, pub, pid)
 	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt(0))
 	val.UpdateLastJoinedHeight(tState.LastBlockHeight())
 	assert.NoError(t, tState.Committee.Update(0, []*validator.Validator{val}))
-	require.True(t, tState.Committee.Contains(val.Address()))
-	return p
+	require.True(t, tState.Committee.Contains(p.Address()))
 }
 
 func checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {

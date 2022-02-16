@@ -16,16 +16,16 @@ type BroadcastData struct {
 
 type MockNetwork struct {
 	BroadcastCh chan BroadcastData
-	EventCh     chan NetworkEvent
+	EventCh     chan Event
 	ID          peer.ID
-	OtherNets    []*MockNetwork
+	OtherNets   []*MockNetwork
 }
 
 func MockingNetwork(id peer.ID) *MockNetwork {
 	return &MockNetwork{
 		BroadcastCh: make(chan BroadcastData, 100),
-		EventCh:     make(chan NetworkEvent, 100),
-		OtherNets:    make([]*MockNetwork, 0),
+		EventCh:     make(chan Event, 100),
+		OtherNets:   make([]*MockNetwork, 0),
 		ID:          id,
 	}
 }
@@ -35,7 +35,7 @@ func (mock *MockNetwork) Start() error {
 func (mock *MockNetwork) Stop() {
 }
 
-func (mock *MockNetwork) EventChannel() <-chan NetworkEvent {
+func (mock *MockNetwork) EventChannel() <-chan Event {
 	return mock.EventCh
 }
 func (mock *MockNetwork) JoinGeneralTopic() error {

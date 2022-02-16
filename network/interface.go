@@ -41,7 +41,7 @@ func (t EventType) String() string {
 	return "invalid"
 }
 
-type NetworkEvent interface {
+type Event interface {
 	Type() EventType
 }
 
@@ -72,7 +72,7 @@ func (*StreamMessage) Type() EventType {
 type Network interface {
 	Start() error
 	Stop()
-	EventChannel() <-chan NetworkEvent
+	EventChannel() <-chan Event
 	Broadcast([]byte, TopicID) error
 	SendTo([]byte, lp2pcore.PeerID) error
 	JoinGeneralTopic() error

@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -22,7 +21,7 @@ func TestSessionTimeout(t *testing.T) {
 		pld := payload.NewHelloPayload(pid, "Oscar", 6666, payload.FlagInitialBlockDownload, tState.GenHash)
 		signer.SignMsg(pld)
 
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksRequest)
 
@@ -42,7 +41,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 	t.Run("Reject request from unknown peers", func(t *testing.T) {
 		pld := payload.NewBlocksRequestPayload(sid, 100, 105)
-		assert.Error(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksResponse)
 		assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeRejected)
@@ -50,11 +49,11 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 	})
 
 	pub, _ := bls.GenerateTestKeyPair()
-	testAddPeer(t, pub, pid, peerset.StatusCodeKnown)
+	testAddPeer(t, pub, pid)
 
 	t.Run("Reject request with invalid range", func(t *testing.T) {
 		pld := payload.NewBlocksRequestPayload(sid, 0, 20)
-		assert.Error(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksResponse)
 		assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeRejected)
@@ -66,7 +65,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Reject requests with more than `LatestBlockInterval`", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, 0, heightBob)
-			assert.Error(t, testReceiveingNewMessage(t, tSync, pld, pid))
+			assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 
 			msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeRejected)
@@ -75,7 +74,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, heightBob-5, heightBob)
-			assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+			assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 			msg1 := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg1.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeMoreBlocks)
@@ -90,7 +89,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Peer requests to send the blocks again, It should be rejected", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, heightBob-1, heightBob)
-			assert.Error(t, testReceiveingNewMessage(t, tSync, pld, pid))
+			assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 
 			msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeRejected)
@@ -98,7 +97,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Peer doesn't have requested blocks", func(t *testing.T) {
 			pld := payload.NewBlocksRequestPayload(sid, 100, 105)
-			assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+			assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 			msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksResponse)
 			assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeSynced)
@@ -115,7 +114,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		s := tSync.peerSet.OpenSession(tNetwork.SelfID())
 		pld := payload.NewBlocksRequestPayload(s.SessionID(), 100, 105)
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksResponse)
 		assert.Equal(t, msg.Payload.(*payload.BlocksResponsePayload).ResponseCode, payload.ResponseCodeBusy)
 	})

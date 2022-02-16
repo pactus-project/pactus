@@ -12,11 +12,11 @@ import (
 func TestParsingTransactionsMessages(t *testing.T) {
 	setup(t)
 
-	t.Run("Parsing transation message", func(t *testing.T) {
+	t.Run("Parsing transaction message", func(t *testing.T) {
 		trx1, _ := tx.GenerateTestBondTx()
 		pld := payload.NewTransactionsPayload([]*tx.Tx{trx1})
 
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, util.RandomPeerID()))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, util.RandomPeerID()))
 
 		assert.NotNil(t, tSync.cache.GetTransaction(trx1.ID()))
 		assert.NotNil(t, tSync.state.PendingTx(trx1.ID()))

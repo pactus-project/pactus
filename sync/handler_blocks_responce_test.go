@@ -13,7 +13,6 @@ import (
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -27,19 +26,19 @@ func TestOneBlockShorter(t *testing.T) {
 	pid := util.RandomPeerID()
 
 	pub, _ := bls.GenerateTestKeyPair()
-	testAddPeer(t, pub, pid, peerset.StatusCodeKnown)
+	testAddPeer(t, pub, pid)
 	sid := tSync.peerSet.OpenSession(pid).SessionID()
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
 		pld := payload.NewBlocksResponsePayload(payload.ResponseCodeRejected, sid, 0, nil, nil, nil)
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
 	})
 
 	t.Run("Commit one block", func(t *testing.T) {
 		pld := payload.NewBlocksResponsePayload(payload.ResponseCodeSynced, sid, lastBlockheight+1, []*block.Block{b1}, trxs, c1)
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
 		assert.Equal(t, tState.LastBlockHeight(), lastBlockheight+1)

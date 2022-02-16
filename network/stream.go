@@ -17,12 +17,12 @@ type streamService struct {
 	ctx        context.Context
 	host       lp2phost.Host
 	protocolID lp2pcore.ProtocolID
-	eventCh    chan NetworkEvent
+	eventCh    chan Event
 	logger     *logger.Logger
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
-	eventCh chan NetworkEvent, logger *logger.Logger) *streamService {
+	eventCh chan Event, logger *logger.Logger) *streamService {
 	s := &streamService{
 		ctx:        ctx,
 		host:       host,

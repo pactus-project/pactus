@@ -7,7 +7,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -25,10 +24,10 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	pld := payload.NewBlockAnnouncePayload(lastBlockheight+2, b2, c2)
 
 	pub, _ := bls.GenerateTestKeyPair()
-	testAddPeer(t, pub, pid, peerset.StatusCodeKnown)
+	testAddPeer(t, pub, pid)
 
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		msg1 := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksRequest)
 		assert.Equal(t, msg1.Payload.(*payload.BlocksRequestPayload).From, lastBlockheight+1)
@@ -50,7 +49,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlockAnnounce)
 	})
 
-	testAddPeerToCommittee(t, tSync.signer.PublicKey(), tSync.SelfID())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 
 	t.Run("In the committee, should broadcast block announce message", func(t *testing.T) {
 		tSync.broadcast(pld)
