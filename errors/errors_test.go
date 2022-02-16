@@ -23,7 +23,7 @@ func TestMessages(t *testing.T) {
 	}
 }
 
-func TestDoubleCode(t *testing.T) {
+func TestErrorCode(t *testing.T) {
 	err1 := Error(ErrInsufficientFunds)
 	err2 := Errorf(ErrInvalidTx, err1.Error())
 	err3 := Errorf(ErrInvalidBlock, err1.Error())

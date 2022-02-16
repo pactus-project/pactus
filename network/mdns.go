@@ -27,7 +27,7 @@ func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.Logg
 		logger: logger,
 	}
 	// setup mDNS discovery to find local peers
-	mdns.service = lp2pmdns.NewMdnsService(host, "_p2p._udp", mdns)
+	mdns.service = lp2pmdns.NewMdnsService(host, "", mdns)
 
 	return mdns
 }
