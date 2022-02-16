@@ -40,16 +40,16 @@ type Type int
 
 const (
 	PayloadTypeHello             = Type(1)
-	PayloadTypeBlocksRequest     = Type(2)
-	PayloadTypeBlocksResponse    = Type(3)
-	PayloadTypeQueryTransactions = Type(4)
-	PayloadTypeTransactions      = Type(5)
-	PayloadTypeQueryProposal     = Type(6)
-	PayloadTypeProposal          = Type(7)
-	PayloadTypeHeartBeat         = Type(8)
-	PayloadTypeQueryVotes        = Type(9)
-	PayloadTypeVote              = Type(10)
-	PayloadTypeBlockAnnounce     = Type(11)
+	PayloadTypeHeartBeat         = Type(2)
+	PayloadTypeQueryTransactions = Type(3)
+	PayloadTypeTransactions      = Type(4)
+	PayloadTypeQueryProposal     = Type(5)
+	PayloadTypeProposal          = Type(6)
+	PayloadTypeQueryVotes        = Type(7)
+	PayloadTypeVote              = Type(8)
+	PayloadTypeBlockAnnounce     = Type(9)
+	PayloadTypeBlocksRequest     = Type(10)
+	PayloadTypeBlocksResponse    = Type(11)
 )
 
 func (t Type) TopicID() network.TopicID {
@@ -76,10 +76,8 @@ func (t Type) String() string {
 	switch t {
 	case PayloadTypeHello:
 		return "hello"
-	case PayloadTypeBlocksRequest:
-		return "blocks-req"
-	case PayloadTypeBlocksResponse:
-		return "blocks-res"
+	case PayloadTypeHeartBeat:
+		return "heart-beat"
 	case PayloadTypeQueryTransactions:
 		return "query-txs"
 	case PayloadTypeTransactions:
@@ -88,14 +86,16 @@ func (t Type) String() string {
 		return "query-proposal"
 	case PayloadTypeProposal:
 		return "proposal"
-	case PayloadTypeHeartBeat:
-		return "heart-beat"
 	case PayloadTypeQueryVotes:
 		return "query-votes"
 	case PayloadTypeVote:
 		return "vote"
 	case PayloadTypeBlockAnnounce:
 		return "block-announce"
+	case PayloadTypeBlocksRequest:
+		return "blocks-req"
+	case PayloadTypeBlocksResponse:
+		return "blocks-res"
 	}
 	return fmt.Sprintf("%d", t)
 }
@@ -104,10 +104,8 @@ func MakePayload(t Type) Payload {
 	switch t {
 	case PayloadTypeHello:
 		return &HelloPayload{}
-	case PayloadTypeBlocksRequest:
-		return &BlocksRequestPayload{}
-	case PayloadTypeBlocksResponse:
-		return &BlocksResponsePayload{}
+	case PayloadTypeHeartBeat:
+		return &HeartBeatPayload{}
 	case PayloadTypeQueryTransactions:
 		return &QueryTransactionsPayload{}
 	case PayloadTypeTransactions:
@@ -116,14 +114,16 @@ func MakePayload(t Type) Payload {
 		return &QueryProposalPayload{}
 	case PayloadTypeProposal:
 		return &ProposalPayload{}
-	case PayloadTypeHeartBeat:
-		return &HeartBeatPayload{}
 	case PayloadTypeQueryVotes:
 		return &QueryVotesPayload{}
 	case PayloadTypeVote:
 		return &VotePayload{}
 	case PayloadTypeBlockAnnounce:
 		return &BlockAnnouncePayload{}
+	case PayloadTypeBlocksRequest:
+		return &BlocksRequestPayload{}
+	case PayloadTypeBlocksResponse:
+		return &BlocksResponsePayload{}
 	}
 
 	//

@@ -117,8 +117,8 @@ func TestEqual(t *testing.T) {
 	assert.True(t, Equal([]int{}, nil))
 }
 
-func TestHasItem(t *testing.T) {
-	assert.True(t, HasItem([]int{1, 2, 3, 4}, 2))
-	assert.False(t, HasItem([]int{1, 2, 3, 4}, 5))
-	assert.False(t, HasItem([]int{}, 0))
+func TestContains(t *testing.T) {
+	assert.True(t, Contains([]int{1, 2, 3, 4}, 2))
+	assert.False(t, Contains([]int{1, 2, 3, 4}, 5))
+	assert.False(t, Contains([]int{}, 0))
 }

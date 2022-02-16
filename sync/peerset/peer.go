@@ -7,7 +7,6 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -48,8 +47,7 @@ type peerData struct {
 	Moniker              string
 	Agent                string
 	PeerID               peer.ID
-	Address              *crypto.Address
-	PublicKey            *bls.PublicKey
+	PublicKey            crypto.PublicKey
 	InitialBlockDownload bool
 	Height               int
 	ReceivedMessages     int
@@ -98,6 +96,13 @@ func (p *Peer) PeerID() peer.ID {
 	defer p.lk.RUnlock()
 
 	return p.data.PeerID
+}
+
+func (p *Peer) Address() crypto.Address {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return p.data.PublicKey.Address()
 }
 
 func (p *Peer) PublicKey() crypto.PublicKey {
@@ -170,20 +175,11 @@ func (p *Peer) UpdateAgent(version string) {
 	p.data.Agent = version
 }
 
-func (p *Peer) HasPublicKey() bool {
-	return p.data.PublicKey != nil
-}
-
 func (p *Peer) UpdatePublicKey(pub crypto.PublicKey) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	// TODO: write test for me
-	if err := pub.SanityCheck(); err == nil {
-		addr := pub.Address()
-		p.data.PublicKey = pub.(*bls.PublicKey)
-		p.data.Address = &addr
-	}
+	p.data.PublicKey = pub
 }
 
 func (p *Peer) UpdateHeight(height int) {

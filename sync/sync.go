@@ -56,7 +56,7 @@ func NewSynchronizer(
 	net network.Network,
 	broadcastCh <-chan payload.Payload) (Synchronizer, error) {
 	sync := &synchronizer{
-		ctx:         context.Background(),
+		ctx:         context.Background(), // TODO, set proper context
 		config:      conf,
 		signer:      signer,
 		state:       state,
@@ -337,7 +337,6 @@ func (sync *synchronizer) Peers() []*peerset.Peer {
 // maximum nodes to query block should be 8
 //
 func (sync *synchronizer) downloadBlocks(from int) {
-
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
 		// TODO: write test for me
@@ -377,7 +376,7 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
-	if randPeer == nil || randPeer.Status() != peerset.StatusCodeKnown {
+	if randPeer == nil || !randPeer.IsKnownOrTrusted() {
 		return
 	}
 
@@ -393,22 +392,21 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 	sync.sendTo(pld, randPeer.PeerID())
 }
 
-// peerIsInTheCommittee checks if the peer is a member of committee
+/// peerIsInTheCommittee checks if the peer is a member of committee
 func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 	p := sync.peerSet.GetPeer(id)
 	if p == nil {
 		return false
 	}
 
-	if !p.HasPublicKey() {
+	if !p.IsKnownOrTrusted() {
 		return false
 	}
 
-	addr := p.PublicKey().Address()
-	return sync.state.IsInCommittee(addr)
+	return sync.state.IsInCommittee(p.Address())
 }
 
-// weAreInTheCommittee checks if we are a member of committee
+/// weAreInTheCommittee checks if we are a member of committee
 func (sync *synchronizer) weAreInTheCommittee() bool {
 	return sync.state.IsInCommittee(sync.signer.PublicKey().Address())
 }
@@ -427,14 +425,14 @@ func (sync *synchronizer) tryCommitBlocks() {
 		for _, id := range b.TxIDs().IDs() {
 			if tx := sync.cache.GetTransaction(id); tx != nil {
 				if err := sync.state.AddPendingTx(tx); err != nil {
-					sync.logger.Trace("Error on appending pending transaction", "err", err)
+					sync.logger.Trace("Error on appending a transaction", "err", err)
 				}
 			}
 		}
 		sync.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
 		if err := sync.state.CommitBlock(ourHeight+1, b, c); err != nil {
 			sync.logger.Warn("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
-			// We will ask peers to send this block later ...
+			// We will ask network to re-send this block again ...
 			break
 		}
 	}

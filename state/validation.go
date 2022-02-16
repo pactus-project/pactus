@@ -45,7 +45,7 @@ func (st *state) checkCertificate(cert *block.Certificate) error {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"certificate has invalid committer: %x", num)
 		}
-		if !util.HasItem(cert.Absentees(), num) {
+		if !util.Contains(cert.Absentees(), num) {
 			pubs = append(pubs, val.PublicKey())
 			signersStake += val.Power()
 		}

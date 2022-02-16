@@ -23,7 +23,7 @@ func (handler *heartBeatHandler) ParsPayload(p payload.Payload, initiator peer.I
 	height, round := handler.consensus.HeightRound()
 
 	if pld.Height == height {
-		if pld.Round > round+1 {
+		if pld.Round > round {
 			if handler.weAreInTheCommittee() {
 				handler.logger.Info("Our consensus is shorter than this peer.", "ours", round, "peer", pld.Round)
 

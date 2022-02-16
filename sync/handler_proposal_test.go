@@ -12,13 +12,13 @@ import (
 func TestParsingProposalMessages(t *testing.T) {
 	setup(t)
 
-	t.Run("Alice receives a proposal. she sends it to consensus", func(t *testing.T) {
-		consensusHeight := tAliceState.LastBlockHeight() + 1
-		p1, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-		pld := payload.NewProposalPayload(p1)
+	t.Run("Parsing proposal message", func(t *testing.T) {
+		consensusHeight := tState.LastBlockHeight() + 1
+		prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
+		pld := payload.NewProposalPayload(prop)
 
-		assert.NoError(t, simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID()))
-		assert.NotNil(t, tAliceSync.cache.GetProposal(consensusHeight, 0))
-		assert.NotNil(t, tAliceConsensus.RoundProposal(0))
+		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, util.RandomPeerID()))
+		assert.NotNil(t, tSync.cache.GetProposal(consensusHeight, 0))
+		assert.NotNil(t, tConsensus.RoundProposal(0))
 	})
 }

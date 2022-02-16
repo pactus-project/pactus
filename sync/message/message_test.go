@@ -57,6 +57,7 @@ func TestMessageCompress(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, msg2.SanityCheck())
 	assert.NoError(t, msg3.SanityCheck())
+	assert.True(t, util.IsFlagSet(msg.Flags, FlagCompressed))
 }
 
 func TestDecodeVoteMessage(t *testing.T) {

@@ -4,30 +4,58 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/peerset"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingBlockAnnounceMessages(t *testing.T) {
 	setup(t)
 
-	t.Run("Bob should not broadcast block announce message because he is not in the committee", func(t *testing.T) {
-		addMoreBlocksForBobAndAnnounceLastBlock(t, 1)
+	lastBlockHash := tState.LastBlockHash()
+	lastBlockheight := tState.LastBlockHeight()
+	b1, _ := block.GenerateTestBlock(nil, &lastBlockHash)
+	lastBlockHash = b1.Hash()
+	b2, _ := block.GenerateTestBlock(nil, &lastBlockHash)
+	c2 := block.GenerateTestCertificate(b2.Hash())
 
-		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlockAnnounce)
+	pid := util.RandomPeerID()
+	pld := payload.NewBlockAnnouncePayload(lastBlockheight+2, b2, c2)
+
+	pub, _ := bls.GenerateTestKeyPair()
+	testAddPeer(t, pub, pid, peerset.StatusCodeKnown)
+
+	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
+		assert.NoError(t, testReceiveingNewMessage(t, tSync, pld, pid))
+
+		msg1 := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksRequest)
+		assert.Equal(t, msg1.Payload.(*payload.BlocksRequestPayload).From, lastBlockheight+1)
 	})
 
-	joinBobToCommittee(t)
+}
 
-	t.Run("Bob should broadcast block announce message because he is in the committee", func(t *testing.T) {
-		addMoreBlocksForBobAndAnnounceLastBlock(t, 1)
+func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
+	setup(t)
 
-		msg1 := shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeBlockAnnounce)
-		assert.Equal(t, msg1.Payload.(*payload.BlockAnnouncePayload).Height, tBobState.LastBlockHeight())
-		assert.Equal(t, msg1.Payload.(*payload.BlockAnnouncePayload).Block.Hash(), tBobState.LastBlockHash())
-		assert.Equal(t, msg1.Payload.(*payload.BlockAnnouncePayload).Certificate.BlockHash(), tBobState.LastBlockCertificate.BlockHash())
+	pld := payload.NewBlockAnnouncePayload(
+		tState.LastBlockHeight(),
+		tState.Block(tState.LastBlockHeight()),
+		tState.LastCertificate())
 
-		msg2 := shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeBlocksRequest)
-		assert.Equal(t, msg2.Payload.(*payload.BlocksRequestPayload).From, tBobState.LastBlockHeight()-1)
-		assert.Equal(t, msg2.Payload.(*payload.BlocksRequestPayload).To, tBobState.LastBlockHeight())
+	t.Run("Not in the committee, should not broadcast block announce message", func(t *testing.T) {
+		tSync.broadcast(pld)
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlockAnnounce)
+	})
+
+	testAddPeerToCommittee(t, tSync.signer.PublicKey(), tSync.SelfID())
+
+	t.Run("In the committee, should broadcast block announce message", func(t *testing.T) {
+		tSync.broadcast(pld)
+
+		msg1 := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlockAnnounce)
+		assert.Equal(t, msg1.Payload.(*payload.BlockAnnouncePayload).Height, pld.Height)
 	})
 }
