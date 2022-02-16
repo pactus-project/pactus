@@ -183,10 +183,8 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
 
 	default:
-		n.logger.Warn("Invalid topic")
+		return errors.Errorf(errors.ErrNetwork, "Invalid topic")
 	}
-
-	return nil
 }
 
 func (n *network) JoinGeneralTopic() error {
@@ -194,8 +192,7 @@ func (n *network) JoinGeneralTopic() error {
 		n.logger.Debug("Already subscribed to general topic")
 		return nil
 	}
-	name := fmt.Sprintf("/%s/topic/general/v1", n.config.Name)
-	topic, err := n.gossip.JoinTopic(name)
+	topic, err := n.gossip.JoinTopic(n.TopicName("general"))
 	if err != nil {
 		return err
 	}
@@ -208,13 +205,16 @@ func (n *network) JoinConsensusTopic() error {
 		n.logger.Debug("Already subscribed to consensus topic")
 		return nil
 	}
-	name := fmt.Sprintf("/%s/topic/consensus/v1", n.config.Name)
-	topic, err := n.gossip.JoinTopic(name)
+	topic, err := n.gossip.JoinTopic(n.TopicName("consensus"))
 	if err != nil {
 		return err
 	}
 	n.consensusTopic = topic
 	return nil
+}
+
+func (n *network) TopicName(topic string) string {
+	return fmt.Sprintf("/%s/topic/%s/v1", n.config.Name, topic)
 }
 
 func (n *network) CloseConnection(pid lp2peer.ID) {

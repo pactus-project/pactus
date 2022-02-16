@@ -2,39 +2,31 @@ package network
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPubSub(t *testing.T) {
-	net1, net2 := setup(t, TestConfig(), TestConfig())
+	msg := []byte("test-general-topic")
 
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
+	require.NoError(t, tNetwork1.Broadcast(msg, TopicIDGeneral))
 
-	assert.NoError(t, net1.JoinGeneralTopic())
-	assert.NoError(t, net2.JoinGeneralTopic())
-	assert.NoError(t, net1.JoinConsensusTopic())
-
-	for {
-		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
-			break
-		}
-	}
-
-	// TODO: Can we remove timer and run tests successfully?
-	time.Sleep(1 * time.Second)
-	msg := []byte("test")
-
-	require.NoError(t, net1.Broadcast([]byte("should not broadcasted"), TopicIDConsensus))
-	require.NoError(t, net1.Broadcast(msg, TopicIDGeneral))
-
-	e := shouldReceiveEvent(t, net2).(*GossipMessage)
-	assert.Equal(t, e.Source, net1.SelfID())
+	e := shouldReceiveEvent(t, tNetwork2).(*GossipMessage)
+	assert.Equal(t, e.Source, tNetwork1.SelfID())
 	assert.Equal(t, e.Data, msg)
+}
 
-	net1.Stop()
-	net2.Stop()
+func TestJoinTopic(t *testing.T) {
+	msg := []byte("test-consensus-topic")
+
+	require.Error(t, tNetwork1.Broadcast(msg, TopicIDConsensus))
+	require.NoError(t, tNetwork1.JoinConsensusTopic())
+	require.NoError(t, tNetwork1.Broadcast(msg, TopicIDConsensus))
+}
+
+func TestInvalidTopic(t *testing.T) {
+	msg := []byte("test-invalid-topic")
+
+	require.Error(t, tNetwork1.Broadcast(msg, -1))
 }
