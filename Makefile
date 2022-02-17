@@ -28,25 +28,25 @@ herumi:
 
 ########################################
 ### Building
-build: herumi
-	$(CGO_LDFLAGS) go build $(BUILD_LDFLAGS) ./cmd/zarb
+build:
+	go build $(BUILD_LDFLAGS) ./cmd/zarb
 
-install: herumi
-	$(CGO_LDFLAGS) go install $(BUILD_LDFLAGS) ./cmd/zarb
+install:
+	go install $(BUILD_LDFLAGS) ./cmd/zarb
 
 release: herumi
 	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarb
 
 ########################################
 ### Testing
-unit_test: herumi
-	$(CGO_LDFLAGS) go test $(PACKAGES)
+unit_test:
+	go test $(PACKAGES)
 
-test: herumi
-	$(CGO_LDFLAGS) go test ./... -covermode=atomic
+test:
+	go test ./... -covermode=atomic
 
-test_race: herumi
-	$(CGO_LDFLAGS) go test ./... --race
+test_race:
+	go test ./... --race
 
 ########################################
 ### Docker
