@@ -4,7 +4,6 @@ import (
 	"io"
 
 	lp2pcore "github.com/libp2p/go-libp2p-core"
-	"github.com/libp2p/go-libp2p-core/peer"
 )
 
 type TopicID int
@@ -50,8 +49,8 @@ type Event interface {
 /// `from` is the ID of the peer that we received a message from.
 /// They are not necessarily the same, especially in a decentralized network.
 type GossipMessage struct {
-	Source peer.ID
-	From   peer.ID
+	Source lp2pcore.PeerID
+	From   lp2pcore.PeerID
 	Data   []byte
 }
 
@@ -61,7 +60,7 @@ func (*GossipMessage) Type() EventType {
 
 /// `GossipMessage` represents message from stream module.
 type StreamMessage struct {
-	Source peer.ID
+	Source lp2pcore.PeerID
 	Reader io.Reader
 }
 
@@ -77,7 +76,7 @@ type Network interface {
 	SendTo([]byte, lp2pcore.PeerID) error
 	JoinGeneralTopic() error
 	JoinConsensusTopic() error
-	CloseConnection(pid peer.ID)
-	SelfID() peer.ID
+	CloseConnection(pid lp2pcore.PeerID)
+	SelfID() lp2pcore.PeerID
 	NumConnectedPeers() int
 }

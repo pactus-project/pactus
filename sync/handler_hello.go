@@ -32,10 +32,10 @@ func (handler *helloHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 	}
 
 	if !pld.GenesisHash.EqualsTo(handler.state.GenesisHash()) {
-		handler.logger.Info("received a message from different chain", "genesis_hash", pld.GenesisHash, "peer", util.FingerprintPeerID(initiator))
+
 		peer.UpdateStatus(peerset.StatusCodeBanned)
 		return errors.Errorf(errors.ErrInvalidMessage, "received a message from different chain, expected: %v, got: %v",
-			pld.GenesisHash, handler.state.GenesisHash())
+			handler.state.GenesisHash(), pld.GenesisHash, )
 	}
 
 	peer.UpdateStatus(peerset.StatusCodeKnown)
