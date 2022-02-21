@@ -254,7 +254,7 @@ func (cs *consensus) signAddVote(msgType vote.Type, hash hash.Hash) {
 
 	err := cs.log.AddVote(v)
 	if err != nil {
-		cs.logger.Error("error on adding our vote!", "err", err, "vote", v)
+		cs.logger.Error("error on adding our vote", "err", err, "vote", v)
 	} else {
 		cs.broadcastVote(v)
 	}

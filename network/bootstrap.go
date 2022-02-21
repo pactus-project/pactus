@@ -123,7 +123,7 @@ func (b *bootstrap) checkConnectivity() {
 
 			// Don't try to connect to an already connected peer.
 			if hasPID(connectedPeers, pinfo.ID) {
-				b.logger.Trace("already connected.", "peer", pinfo.String())
+				b.logger.Trace("already connected", "peer", pinfo.String())
 				continue
 			}
 

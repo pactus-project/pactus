@@ -46,14 +46,14 @@ func (s *precommitState) vote() {
 		// There is a consensus about a proposal which we don't have it yet.
 		// Ask peers for this proposal
 		s.queryProposal()
-		s.logger.Debug("no proposal yet.")
+		s.logger.Debug("no proposal yet")
 		return
 	}
 
 	if !roundProposal.IsForBlock(*prepareQH) {
 		s.log.SetRoundProposal(s.round, nil)
 		s.queryProposal()
-		s.logger.Error("proposal is invalid.", "proposal", roundProposal)
+		s.logger.Error("proposal is invalid", "proposal", roundProposal)
 		return
 	}
 

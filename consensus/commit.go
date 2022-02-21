@@ -29,7 +29,7 @@ func (s *commitState) decide() {
 	// It is impossible, but good to keep this check
 	if !roundProposal.IsForBlock(*precommitQH) {
 		s.log.SetRoundProposal(s.round, nil)
-		s.logger.Error("proposal is invalid.", "proposal", roundProposal)
+		s.logger.Error("proposal is invalid", "proposal", roundProposal)
 		return
 	}
 
