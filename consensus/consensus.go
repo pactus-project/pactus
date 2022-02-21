@@ -282,8 +282,8 @@ func (cs *consensus) announceNewBlock(h int, b *block.Block, c *block.Certificat
 
 // TODO: Improve the performance?
 func (cs *consensus) PickRandomVote() *vote.Vote {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
 
 	rndRound := util.RandInt(cs.round + 1)
 	votes := []*vote.Vote{}
