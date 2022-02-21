@@ -6,14 +6,18 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 const LastVersion = 1
-const FlagCompressed = 0x1
+const (
+	MsgFlagNetworkLibP2P = 0x01
+	MsgFlagCompressed    = 0x10
+	MsgFlagBroadcasted   = 0x20
+	MsgFlagHelloMessage  = 0x40
+)
 
 type Message struct {
 	Version   int
@@ -25,7 +29,7 @@ type Message struct {
 func NewMessage(initiator peer.ID, pld payload.Payload) *Message {
 	return &Message{
 		Version:   LastVersion,
-		Flags:     0,
+		Flags:     MsgFlagNetworkLibP2P,
 		Initiator: initiator,
 		Payload:   pld,
 	}
@@ -34,9 +38,6 @@ func NewMessage(initiator peer.ID, pld payload.Payload) *Message {
 func (m *Message) SanityCheck() error {
 	if err := m.Payload.SanityCheck(); err != nil {
 		return err
-	}
-	if m.Flags|FlagCompressed != FlagCompressed {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid flags")
 	}
 	if err := m.Initiator.Validate(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid initiator peer id: %v", err)
@@ -49,16 +50,15 @@ func (m *Message) Fingerprint() string {
 }
 
 func (m *Message) CompressIt() {
-	m.Flags = util.SetFlag(m.Flags, FlagCompressed)
+	m.Flags = util.SetFlag(m.Flags, MsgFlagCompressed)
 }
 
 type _Message struct {
-	Version     int               `cbor:"1,keyasint"`
-	Flags       int               `cbor:"2,keyasint"`
-	Initiator   peer.ID           `cbor:"3,keyasint"`
-	PayloadType payload.Type      `cbor:"4,keyasint"`
-	Payload     []byte            `cbor:"5,keyasint"`
-	Signature   *crypto.Signature `cbor:"6,keyasint,omitempty"`
+	Version     int          `cbor:"1,keyasint"`
+	Flags       int          `cbor:"2,keyasint"`
+	Initiator   peer.ID      `cbor:"3,keyasint"`
+	PayloadType payload.Type `cbor:"4,keyasint"`
+	Payload     []byte       `cbor:"5,keyasint"`
 }
 
 func (m *Message) Encode() ([]byte, error) {
@@ -67,7 +67,7 @@ func (m *Message) Encode() ([]byte, error) {
 		return nil, err
 	}
 
-	if util.IsFlagSet(m.Flags, FlagCompressed) {
+	if util.IsFlagSet(m.Flags, MsgFlagCompressed) {
 		c, err := util.CompressBuffer(data)
 		if err == nil {
 			data = c
@@ -100,7 +100,7 @@ func (m *Message) Decode(r io.Reader) (int, error) {
 		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
 	}
 
-	if util.IsFlagSet(msg.Flags, FlagCompressed) {
+	if util.IsFlagSet(msg.Flags, MsgFlagCompressed) {
 		c, err := util.DecompressBuffer(msg.Payload)
 		if err != nil {
 			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())

@@ -16,25 +16,27 @@ type BroadcastData struct {
 
 type MockNetwork struct {
 	BroadcastCh chan BroadcastData
-	CallbackFn  CallbackFn
+	EventCh     chan Event
 	ID          peer.ID
-	OtherNet    []*MockNetwork
+	OtherNets   []*MockNetwork
 }
 
 func MockingNetwork(id peer.ID) *MockNetwork {
 	return &MockNetwork{
 		BroadcastCh: make(chan BroadcastData, 100),
-		OtherNet:    make([]*MockNetwork, 0),
+		EventCh:     make(chan Event, 100),
+		OtherNets:   make([]*MockNetwork, 0),
 		ID:          id,
 	}
 }
 func (mock *MockNetwork) Start() error {
 	return nil
 }
-func (mock *MockNetwork) SetCallback(callbackFn CallbackFn) {
-	mock.CallbackFn = callbackFn
-}
 func (mock *MockNetwork) Stop() {
+}
+
+func (mock *MockNetwork) EventChannel() <-chan Event {
+	return mock.EventCh
 }
 func (mock *MockNetwork) JoinGeneralTopic() error {
 	return nil
@@ -59,22 +61,36 @@ func (mock *MockNetwork) Broadcast(data []byte, tid TopicID) error {
 	}
 	return nil
 }
+
 func (mock *MockNetwork) SendToOthers(data []byte, target *peer.ID) {
-	for _, net := range mock.OtherNet {
-		if target == nil || net.ID == *target {
-			net.CallbackFn(bytes.NewReader(data), mock.ID)
+	for _, net := range mock.OtherNets {
+		if target == nil {
+			// Broadcast message
+			event := &GossipMessage{
+				Source: mock.ID,
+				From:   mock.ID,
+				Data:   data,
+			}
+			net.EventCh <- event
+		} else if net.ID == *target {
+			// direct message
+			event := &StreamMessage{
+				Source: mock.ID,
+				Reader: bytes.NewReader(data),
+			}
+			net.EventCh <- event
 		}
 	}
 }
 func (mock *MockNetwork) CloseConnection(pid peer.ID) {
-	for i, net := range mock.OtherNet {
+	for i, net := range mock.OtherNets {
 		if net.ID == pid {
-			mock.OtherNet = append(mock.OtherNet[:i], mock.OtherNet[i+1:]...)
+			mock.OtherNets = append(mock.OtherNets[:i], mock.OtherNets[i+1:]...)
 		}
 	}
 }
 func (mock *MockNetwork) IsClosed(pid peer.ID) bool {
-	for _, net := range mock.OtherNet {
+	for _, net := range mock.OtherNets {
 		if net.ID == pid {
 			return false
 		}
@@ -82,8 +98,8 @@ func (mock *MockNetwork) IsClosed(pid peer.ID) bool {
 	return true
 }
 func (mock *MockNetwork) NumConnectedPeers() int {
-	return len(mock.OtherNet)
+	return len(mock.OtherNets)
 }
 func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
-	mock.OtherNet = append(mock.OtherNet, net)
+	mock.OtherNets = append(mock.OtherNets, net)
 }

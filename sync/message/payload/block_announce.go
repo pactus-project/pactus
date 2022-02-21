@@ -13,7 +13,7 @@ type BlockAnnouncePayload struct {
 	Certificate *block.Certificate `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnouncePayload(h int, b *block.Block, c *block.Certificate) Payload {
+func NewBlockAnnouncePayload(h int, b *block.Block, c *block.Certificate) *BlockAnnouncePayload {
 	return &BlockAnnouncePayload{
 		Height:      h,
 		Block:       b,

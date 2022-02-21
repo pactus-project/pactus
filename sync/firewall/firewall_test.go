@@ -38,10 +38,12 @@ func setup(t *testing.T) {
 	tGoodPeerID = util.RandomPeerID()
 	tUnknownPeerID = util.RandomPeerID()
 
+	tNetwork.AddAnotherNetwork(network.MockingNetwork(tGoodPeerID))
+	tNetwork.AddAnotherNetwork(network.MockingNetwork(tUnknownPeerID))
 	tNetwork.AddAnotherNetwork(network.MockingNetwork(tBadPeerID))
 
 	peerGood := tFirewall.peerSet.MustGetPeer(tGoodPeerID)
-	peerGood.UpdateStatus(peerset.StatusCodeOK)
+	peerGood.UpdateStatus(peerset.StatusCodeKnown)
 
 	badGood := tFirewall.peerSet.MustGetPeer(tBadPeerID)
 	badGood.UpdateStatus(peerset.StatusCodeBanned)
@@ -50,84 +52,98 @@ func setup(t *testing.T) {
 func TestInvalidMessagesCounter(t *testing.T) {
 	setup(t)
 
-	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader([]byte("bad")), tUnknownPeerID))
-	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(nil), tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenGossipMessage([]byte("bad"), tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenGossipMessage(nil, tUnknownPeerID, tUnknownPeerID))
 
 	msg := message.NewMessage(tUnknownPeerID, payload.NewQueryProposalPayload(-1, 1))
 	d, _ := msg.Encode()
-	assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
+
+	msg = message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(0, 1))
+	d, _ = msg.Encode()
+	assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
 
 	peer := tFirewall.peerSet.GetPeer(tUnknownPeerID)
-	assert.Equal(t, peer.InvalidMessages(), 3)
+	assert.Equal(t, peer.InvalidMessages(), 4)
 }
 
-func TestBanPeer(t *testing.T) {
-	t.Run("Message from bad peer, initiated from bad peer => should close the connection", func(t *testing.T) {
+func TestGossipMesage(t *testing.T) {
+	t.Run("Message source: unknown, from: bad => should close the connection", func(t *testing.T) {
+		setup(t)
+
+		msg := message.NewMessage(tUnknownPeerID, payload.NewQueryProposalPayload(100, 1))
+		d, _ := msg.Encode()
+
+		assert.False(t, tNetwork.IsClosed(tBadPeerID))
+		assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tBadPeerID))
+		assert.True(t, tNetwork.IsClosed(tBadPeerID))
+	})
+
+	t.Run("Message source: bad, from: unknown => should close the connection", func(t *testing.T) {
 		setup(t)
 
 		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID))
+		assert.Nil(t, tFirewall.OpenGossipMessage(d, tBadPeerID, tUnknownPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
 
-	t.Run("Message from bad peer, initiated from good peer => should close the connection", func(t *testing.T) {
+	t.Run("Message initiator is not the same as source => should close the connection", func(t *testing.T) {
+		setup(t)
+
+		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
+		d, _ := msg.Encode()
+
+		assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
+		assert.True(t, tNetwork.IsClosed(tUnknownPeerID))
+	})
+
+	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
 		setup(t)
 
 		msg := message.NewMessage(tGoodPeerID, payload.NewQueryProposalPayload(100, 1))
 		d, _ := msg.Encode()
 
-		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID))
-		assert.True(t, tNetwork.IsClosed(tBadPeerID))
-	})
-
-	t.Run("Message from unknown peer, initiated from bad peer => should NOT close the connection", func(t *testing.T) {
-		setup(t)
-
-		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
-		d, _ := msg.Encode()
-
-		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID))
-		assert.False(t, tNetwork.IsClosed(tBadPeerID))
+		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
+		assert.NotNil(t, tFirewall.OpenGossipMessage(d, tGoodPeerID, tGoodPeerID))
+		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
 	})
 }
 
-func TestDropMessage(t *testing.T) {
-	t.Run("Message initiated from bad peer => should drop them", func(t *testing.T) {
+func TestStreamMesage(t *testing.T) {
+
+	t.Run("Message source: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(1, 0))
+		msg := message.NewMessage(tBadPeerID, payload.NewBlocksRequestPayload(util.RandInt(0), 1, 100))
 		d, _ := msg.Encode()
 
-		assert.Nil(t, tFirewall.OpenMessage(bytes.NewReader(d), tGoodPeerID))
+		assert.False(t, tNetwork.IsClosed(tBadPeerID))
+		assert.Nil(t, tFirewall.OpenStreamMessage(bytes.NewReader(d), tBadPeerID))
+		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
 
-	t.Run("Message initiated from unknown peer", func(t *testing.T) {
+	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tUnknownPeerID, payload.NewQueryProposalPayload(1, 0))
+		msg := message.NewMessage(tGoodPeerID, payload.NewBlocksRequestPayload(util.RandInt(0), 1, 100))
 		d, _ := msg.Encode()
 
-		assert.NotNil(t, tFirewall.OpenMessage(bytes.NewReader(d), tGoodPeerID))
-	})
-
-	t.Run("Message initiated from good peer", func(t *testing.T) {
-		msg := message.NewMessage(tGoodPeerID, payload.NewQueryProposalPayload(1, 0))
-		d, _ := msg.Encode()
-
-		assert.NotNil(t, tFirewall.OpenMessage(bytes.NewReader(d), tUnknownPeerID))
+		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
+		assert.NotNil(t, tFirewall.OpenStreamMessage(bytes.NewReader(d), tGoodPeerID))
+		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
 	})
 }
 
 func TestDisabledFirewal(t *testing.T) {
 	setup(t)
 
-	msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(1, 0))
+	msg := message.NewMessage(tGoodPeerID, payload.NewQueryProposalPayload(-1, -1))
 	d, _ := msg.Encode()
 
 	tFirewall.config.Enabled = false
-	assert.NotNil(t, tFirewall.OpenMessage(bytes.NewReader(d), tBadPeerID))
+	assert.Nil(t, tFirewall.OpenGossipMessage(d, tBadPeerID, tBadPeerID))
+	assert.False(t, tNetwork.IsClosed(tBadPeerID))
 }

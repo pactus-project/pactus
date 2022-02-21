@@ -5,7 +5,6 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sync/message"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
-	"github.com/zarbchain/zarb-go/sync/peerset"
 )
 
 type blocksRequestHandler struct {
@@ -31,7 +30,7 @@ func (handler *blocksRequestHandler) ParsPayload(p payload.Payload, initiator pe
 	}
 
 	peer := handler.peerSet.MustGetPeer(initiator)
-	if peer.Status() != peerset.StatusCodeOK {
+	if !peer.IsKnownOrTrusted() {
 		response := payload.NewBlocksResponsePayload(payload.ResponseCodeRejected, pld.SessionID, 0, nil, nil, nil)
 		handler.sendTo(response, initiator)
 

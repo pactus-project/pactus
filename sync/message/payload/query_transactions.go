@@ -11,7 +11,7 @@ type QueryTransactionsPayload struct {
 	IDs []tx.ID `cbor:"1,keyasint"`
 }
 
-func NewQueryTransactionsPayload(ids []tx.ID) Payload {
+func NewQueryTransactionsPayload(ids []tx.ID) *QueryTransactionsPayload {
 	return &QueryTransactionsPayload{
 		IDs: ids,
 	}

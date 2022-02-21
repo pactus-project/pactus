@@ -111,7 +111,7 @@ message ValidatorInfo {
 
 message PeerInfo {
   string moniker = 1;
-  bytes node_version = 2;
+  string agent = 2;
   string peer_id = 3;
   string public_key = 4;
   bool initial_block_download = 5;

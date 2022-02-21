@@ -36,7 +36,6 @@ type Node struct {
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer) (*Node, error) {
-
 	// Init logger
 	logger.InitLogger(conf.Logger)
 

@@ -7,28 +7,30 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 type StatusCode int
 
 const (
-	StatusCodeUnknown = StatusCode(-1)
-	StatusCodeOK      = StatusCode(0)
-	StatusCodeBanned  = StatusCode(1)
+	StatusCodeBanned  = StatusCode(-1)
+	StatusCodeUnknown = StatusCode(0)
+	StatusCodeKnown   = StatusCode(1)
+	StatusCodeTrusted = StatusCode(2)
 )
 
 func (code StatusCode) String() string {
 	switch code {
-	case StatusCodeUnknown:
-		return "Unknown"
-	case StatusCodeOK:
-		return "Ok"
 	case StatusCodeBanned:
-		return "Banned"
+		return "banned"
+	case StatusCodeUnknown:
+		return "unknown"
+	case StatusCodeKnown:
+		return "known"
+	case StatusCodeTrusted:
+		return "trusted"
 	}
-	return "Invalid"
+	return "invalid"
 }
 
 func (code StatusCode) MarshalJSON() ([]byte, error) {
@@ -43,10 +45,9 @@ type Peer struct {
 type peerData struct {
 	Status               StatusCode
 	Moniker              string
-	NodeVersion          string
+	Agent                string
 	PeerID               peer.ID
-	Address              *crypto.Address
-	PublicKey            *bls.PublicKey
+	PublicKey            crypto.PublicKey
 	InitialBlockDownload bool
 	Height               int
 	ReceivedMessages     int
@@ -69,6 +70,13 @@ func (p *Peer) Status() StatusCode {
 	return p.data.Status
 }
 
+func (p *Peer) IsKnownOrTrusted() bool {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return p.data.Status == StatusCodeKnown || p.data.Status == StatusCodeTrusted
+}
+
 func (p *Peer) Moniker() string {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
@@ -76,11 +84,11 @@ func (p *Peer) Moniker() string {
 	return p.data.Moniker
 }
 
-func (p *Peer) NodeVersion() string {
+func (p *Peer) Agent() string {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
 
-	return p.data.NodeVersion
+	return p.data.Agent
 }
 
 func (p *Peer) PeerID() peer.ID {
@@ -88,6 +96,13 @@ func (p *Peer) PeerID() peer.ID {
 	defer p.lk.RUnlock()
 
 	return p.data.PeerID
+}
+
+func (p *Peer) Address() crypto.Address {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	return p.data.PublicKey.Address()
 }
 
 func (p *Peer) PublicKey() crypto.PublicKey {
@@ -153,27 +168,18 @@ func (p *Peer) UpdateInitialBlockDownload(initialBlockDownload bool) {
 	p.data.InitialBlockDownload = initialBlockDownload
 }
 
-func (p *Peer) UpdateNodeVersion(version string) {
+func (p *Peer) UpdateAgent(version string) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.NodeVersion = version
-}
-
-func (p *Peer) HasPublicKey() bool {
-	return p.data.PublicKey != nil
+	p.data.Agent = version
 }
 
 func (p *Peer) UpdatePublicKey(pub crypto.PublicKey) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	// TODO: write test for me
-	if err := pub.SanityCheck(); err == nil {
-		addr := pub.Address()
-		p.data.PublicKey = pub.(*bls.PublicKey)
-		p.data.Address = &addr
-	}
+	p.data.PublicKey = pub
 }
 
 func (p *Peer) UpdateHeight(height int) {

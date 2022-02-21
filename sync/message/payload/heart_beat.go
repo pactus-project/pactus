@@ -13,7 +13,7 @@ type HeartBeatPayload struct {
 	PrevBlockHash hash.Hash `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatPayload(h, r int, hash hash.Hash) Payload {
+func NewHeartBeatPayload(h, r int, hash hash.Hash) *HeartBeatPayload {
 	return &HeartBeatPayload{
 		Height:        h,
 		Round:         r,

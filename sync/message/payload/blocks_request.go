@@ -12,7 +12,7 @@ type BlocksRequestPayload struct {
 	To        int `cbor:"3,keyasint"`
 }
 
-func NewBlocksRequestPayload(sid int, from, to int) Payload {
+func NewBlocksRequestPayload(sid int, from, to int) *BlocksRequestPayload {
 	return &BlocksRequestPayload{
 		SessionID: sid,
 		From:      from,

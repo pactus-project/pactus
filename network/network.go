@@ -30,6 +30,7 @@ type network struct {
 	gossip         *gossipService
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
+	eventChannel   chan Event
 	logger         *logger.Logger
 }
 
@@ -75,7 +76,7 @@ func NewNetwork(conf *Config) (Network, error) {
 		lp2p.Identity(nodeKey),
 		lp2p.ListenAddrStrings(conf.ListenAddress...),
 		lp2p.Ping(conf.EnablePing),
-		lp2p.UserAgent("zarb-go-" + version.Version()),
+		lp2p.UserAgent(version.Agent()),
 	}
 
 	if conf.EnableRelay {
@@ -90,10 +91,11 @@ func NewNetwork(conf *Config) (Network, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	n := &network{
-		ctx:    ctx,
-		cancel: cancel,
-		config: conf,
-		host:   host,
+		ctx:          ctx,
+		cancel:       cancel,
+		config:       conf,
+		host:         host,
+		eventChannel: make(chan Event, 100),
 	}
 
 	n.logger = logger.NewLogger("_network", n)
@@ -108,19 +110,17 @@ func NewNetwork(conf *Config) (Network, error) {
 	}
 
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.config.Name))
-	n.stream = newStreamService(ctx, host, streamProtocolID, n.logger)
+	n.stream = newStreamService(ctx, host, streamProtocolID, n.eventChannel, n.logger)
 
-	n.gossip = newGossipService(ctx, host, n.logger)
+	n.gossip = newGossipService(ctx, host, n.eventChannel, n.logger)
 
 	n.logger.Debug("Network setup", "id", n.host.ID(), "address", conf.ListenAddress)
 
 	return n, nil
 }
 
-func (n *network) SetCallback(callbackFn CallbackFn) {
-	n.logger.Debug("Callback set")
-	n.gossip.SetCallback(callbackFn)
-	n.stream.SetCallback(callbackFn)
+func (n *network) EventChannel() <-chan Event {
+	return n.eventChannel
 }
 
 func (n *network) Start() error {
@@ -170,23 +170,21 @@ func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	n.logger.Debug("Publishing new message", "topic", topicID)
 	switch topicID {
-	case GeneralTopic:
+	case TopicIDGeneral:
 		if n.generalTopic == nil {
 			return errors.Errorf(errors.ErrNetwork, "Not subscribed to general topic")
 		}
 		return n.gossip.BroadcastMessage(msg, n.generalTopic)
 
-	case ConsensusTopic:
+	case TopicIDConsensus:
 		if n.consensusTopic == nil {
 			return errors.Errorf(errors.ErrNetwork, "Not subscribed to consensus topic")
 		}
 		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
 
 	default:
-		n.logger.Warn("Invalid topic")
+		return errors.Errorf(errors.ErrNetwork, "Invalid topic")
 	}
-
-	return nil
 }
 
 func (n *network) JoinGeneralTopic() error {
@@ -194,8 +192,7 @@ func (n *network) JoinGeneralTopic() error {
 		n.logger.Debug("Already subscribed to general topic")
 		return nil
 	}
-	name := fmt.Sprintf("/%s/topic/general/v1", n.config.Name)
-	topic, err := n.gossip.JoinTopic(name)
+	topic, err := n.gossip.JoinTopic(n.TopicName("general"))
 	if err != nil {
 		return err
 	}
@@ -208,13 +205,16 @@ func (n *network) JoinConsensusTopic() error {
 		n.logger.Debug("Already subscribed to consensus topic")
 		return nil
 	}
-	name := fmt.Sprintf("/%s/topic/consensus/v1", n.config.Name)
-	topic, err := n.gossip.JoinTopic(name)
+	topic, err := n.gossip.JoinTopic(n.TopicName("consensus"))
 	if err != nil {
 		return err
 	}
 	n.consensusTopic = topic
 	return nil
+}
+
+func (n *network) TopicName(topic string) string {
+	return fmt.Sprintf("/%s/topic/%s/v1", n.config.Name, topic)
 }
 
 func (n *network) CloseConnection(pid lp2peer.ID) {

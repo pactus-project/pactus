@@ -45,16 +45,16 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		p := NewBlocksResponsePayload(ResponseCodeBusy, 1, 0, nil, nil, nil)
 
 		assert.NoError(t, p.SanityCheck())
-		assert.Equal(t, p.(*BlocksResponsePayload).To(), 0)
-		assert.True(t, p.(*BlocksResponsePayload).IsRequestRejected())
+		assert.Equal(t, p.To(), 0)
+		assert.True(t, p.IsRequestRejected())
 	})
 
 	t.Run("rejected", func(t *testing.T) {
 		p := NewBlocksResponsePayload(ResponseCodeRejected, 1, 0, nil, nil, nil)
 
 		assert.NoError(t, p.SanityCheck())
-		assert.Equal(t, p.(*BlocksResponsePayload).To(), 0)
-		assert.True(t, p.(*BlocksResponsePayload).IsRequestRejected())
+		assert.Equal(t, p.To(), 0)
+		assert.True(t, p.IsRequestRejected())
 	})
 
 	t.Run("OK", func(t *testing.T) {
@@ -64,7 +64,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 
 		p := NewBlocksResponsePayload(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b1, b2}, trxs, nil)
 		assert.NoError(t, p.SanityCheck())
-		assert.Equal(t, p.(*BlocksResponsePayload).To(), 101)
-		assert.False(t, p.(*BlocksResponsePayload).IsRequestRejected())
+		assert.Equal(t, p.To(), 101)
+		assert.False(t, p.IsRequestRejected())
 	})
 }

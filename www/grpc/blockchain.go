@@ -24,12 +24,12 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkI
 		rps[i] = new(zarb.PeerInfo)
 		p := rps[i]
 
-		bs, err := cbor.Marshal(peer.NodeVersion())
+		bs, err := cbor.Marshal(peer.Agent())
 		if err != nil {
-			zs.logger.Error("Couldn't marshal peer version", "err", err)
+			zs.logger.Error("Couldn't marshal agent", "err", err)
 			continue
 		}
-		p.NodeVersion = bs
+		p.Agent = string(bs)
 
 		p.PeerId = peer.PeerID().String()
 		p.Moniker = peer.Moniker()

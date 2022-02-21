@@ -9,7 +9,7 @@ type VotePayload struct {
 	Vote *vote.Vote `cbor:"1,keyasint"`
 }
 
-func NewVotePayload(v *vote.Vote) Payload {
+func NewVotePayload(v *vote.Vote) *VotePayload {
 	return &VotePayload{
 		Vote: v,
 	}

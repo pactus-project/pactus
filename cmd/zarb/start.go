@@ -114,7 +114,7 @@ func Start() func(c *cli.Cmd) {
 			if mintbaseAddr == "" {
 				mintbaseAddr = validatorAddr.String()
 			}
-			cmd.PrintInfoMsg("You are running a zarb block chain node version: %v. Welcome! ", version.Version())
+			cmd.PrintInfoMsg("You are running a zarb block chain agent: %v. Welcome! ", version.Version())
 			cmd.PrintInfoMsg("Validator address: %v", validatorAddr)
 			cmd.PrintInfoMsg("Mintbase address : %v", mintbaseAddr)
 			cmd.PrintLine()

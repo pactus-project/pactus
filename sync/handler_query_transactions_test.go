@@ -7,49 +7,69 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingQueryTransactionsMessages(t *testing.T) {
 	setup(t)
-	disableHeartbeat(t)
 
 	trx1, _ := tx.GenerateTestBondTx()
 	trx2, _ := tx.GenerateTestSendTx()
 	trx3, _ := tx.GenerateTestSendTx()
-	trx4, _ := tx.GenerateTestSendTx()
 
-	// Alice has trx1 in her cache
-	tAliceSync.cache.AddTransaction(trx1)
-	tAliceSync.cache.AddTransaction(trx2)
-	tBobSync.cache.AddTransaction(trx3)
-	tBobSync.cache.AddTransaction(trx4)
-	pld := payload.NewQueryTransactionsPayload([]hash.Hash{trx2.ID(), trx3.ID(), trx4.ID()})
+	tSync.cache.AddTransaction(trx1)
+	tState.Store.SaveTransaction(trx2)
+	pid := util.RandomPeerID()
+	pld := payload.NewQueryTransactionsPayload([]hash.Hash{trx1.ID(), trx2.ID(), trx3.ID()})
 
-	t.Run("Alice should not send query transaction message because she is not an active validator", func(t *testing.T) {
-		tAliceBroadcastCh <- pld
-		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryTransactions)
-		assert.NotNil(t, tAliceState.PendingTx(trx2.ID()))
+	t.Run("Not in the committee, should not respond to the query transaction message", func(t *testing.T) {
+		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 	})
 
-	t.Run("Bob should not process Alice's message because she is not an active validator", func(t *testing.T) {
-		simulatingReceiveingNewMessage(t, tBobSync, pld, tAlicePeerID)
-		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeTransactions)
+	testAddPeerToCommittee(t, pid, nil)
+
+	t.Run("In the committee, should respond to the query transaction message", func(t *testing.T) {
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+
+		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeTransactions)
+		assert.Len(t, msg.Payload.(*payload.TransactionsPayload).Transactions, 2)
 	})
 
-	joinAliceToCommittee(t)
+	t.Run("In the committee, but doesn't have the transaction", func(t *testing.T) {
+		pld := payload.NewQueryTransactionsPayload([]hash.Hash{hash.GenerateTestHash()})
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
-	t.Run("Alice sends query transaction message", func(t *testing.T) {
-		tAliceBroadcastCh <- pld
-		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryTransactions)
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeTransactions)
+	})
+}
+
+func TestBroadcastingQueryTransactionsMessages(t *testing.T) {
+	setup(t)
+
+	trx1, _ := tx.GenerateTestBondTx()
+	trx2, _ := tx.GenerateTestBondTx()
+	tSync.cache.AddTransaction(trx1)
+	pld := payload.NewQueryTransactionsPayload([]hash.Hash{trx1.ID(), trx2.ID()})
+
+	t.Run("Not in the committee, should not send query transaction message", func(t *testing.T) {
+		tSync.broadcast(pld)
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryTransactions)
 	})
 
-	t.Run("Bob processes Alice's request", func(t *testing.T) {
-		simulatingReceiveingNewMessage(t, tBobSync, pld, tAlicePeerID)
-		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeTransactions)
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+
+	t.Run("In the committee, should send query transaction message", func(t *testing.T) {
+		tSync.broadcast(pld)
+
+		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryTransactions)
+		assert.NotContains(t, msg.Payload.(*payload.QueryTransactionsPayload).IDs, trx1.ID())
 	})
 
-	t.Run("Alice queries for a transaction, but she has it in her cache", func(t *testing.T) {
-		tAliceBroadcastCh <- payload.NewQueryTransactionsPayload([]hash.Hash{trx1.ID()})
-		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryTransactions)
+	t.Run("Transaction found inside the cache", func(t *testing.T) {
+		tSync.cache.AddTransaction(trx2)
+		tSync.broadcast(pld)
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryTransactions)
 	})
 }

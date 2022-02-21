@@ -11,14 +11,12 @@ import (
 
 func TestParsingVoteMessages(t *testing.T) {
 	setup(t)
-	disableHeartbeat(t)
 
-	t.Run("Alice receives a vote. she sends it to consensus", func(t *testing.T) {
-		consensusHeight := tAliceState.LastBlockHeight() + 1
-		v1, _ := vote.GenerateTestPrecommitVote(consensusHeight, 0)
-		pld := payload.NewVotePayload(v1)
+	t.Run("Parsing vote message", func(t *testing.T) {
+		v, _ := vote.GenerateTestPrecommitVote(1, 0)
+		pld := payload.NewVotePayload(v)
 
-		simulatingReceiveingNewMessage(t, tAliceSync, pld, util.RandomPeerID())
-		assert.Equal(t, tAliceConsensus.Votes[0].Hash(), v1.Hash())
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, util.RandomPeerID()))
+		assert.Equal(t, tConsensus.Votes[0].Hash(), v.Hash())
 	})
 }

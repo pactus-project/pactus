@@ -18,9 +18,6 @@ type mdnsService struct {
 	logger  *logger.Logger
 }
 
-// mdnsServiceName is used in our mDNS advertisements to discover other peers.
-const mdnsServiceName = "zarb-mdns"
-
 // newMdnsService creates an mDNS discovery service and attaches it to the libp2p Host.
 // This lets us automatically discover peers on the same LAN and connect to them.
 func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.Logger) *mdnsService {
@@ -30,7 +27,7 @@ func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.Logg
 		logger: logger,
 	}
 	// setup mDNS discovery to find local peers
-	mdns.service = lp2pmdns.NewMdnsService(host, mdnsServiceName, mdns)
+	mdns.service = lp2pmdns.NewMdnsService(host, "", mdns)
 
 	return mdns
 }

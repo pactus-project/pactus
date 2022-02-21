@@ -3,68 +3,100 @@ package network
 import (
 	"fmt"
 	"testing"
+	"time"
 
-	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/util"
+)
+
+var (
+	tConfig1  *Config
+	tConfig2  *Config
+	tNetwork1 *network
+	tNetwork2 *network
 )
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
-}
 
-func setup(t *testing.T, conf1 *Config, conf2 *Config) (*network, *network) {
-	netName := fmt.Sprintf("net_%v", util.RandInt(0))
-	conf1.Name = netName
-	conf2.Name = netName
+	tConfig1 = TestConfig()
+	tConfig2 = TestConfig()
+	tConfig1.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
 
-	net1, err := NewNetwork(conf1)
-	assert.NoError(t, err)
+	net1, _ := NewNetwork(tConfig1)
+	net2, _ := NewNetwork(tConfig2)
 
-	net2, err := NewNetwork(conf2)
-	assert.NoError(t, err)
+	tNetwork1 = net1.(*network)
+	tNetwork2 = net2.(*network)
 
-	return net1.(*network), net2.(*network)
-}
+	err := tNetwork1.Start()
+	if err != nil {
+		panic(err)
+	}
+	err = tNetwork2.Start()
+	if err != nil {
+		panic(err)
+	}
 
-func TestStoppingNetwork(t *testing.T) {
-	net1, net2 := setup(t, TestConfig(), TestConfig())
-
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
-
-	net1.Stop()
-	net2.Stop()
-}
-
-func TestDHT(t *testing.T) {
-	conf1 := TestConfig()
-	conf2 := TestConfig()
-
-	nodeKeyPath := util.TempFilePath()
-	nodeKey, _ := loadOrCreateKey(nodeKeyPath)
-	pid, _ := peer.IDFromPrivateKey(nodeKey)
-	conf1.NodeKeyFile = nodeKeyPath
-
-	conf1.EnableMdns = false
-	conf2.EnableMdns = false
-	conf1.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
-	conf2.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", pid)}
-
-	net1, net2 := setup(t, conf1, conf2)
-
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
+	err = tNetwork1.JoinGeneralTopic()
+	if err != nil {
+		panic(err)
+	}
+	err = tNetwork2.JoinGeneralTopic()
+	if err != nil {
+		panic(err)
+	}
 
 	for {
-		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
+		if tNetwork1.NumConnectedPeers() > 0 && tNetwork2.NumConnectedPeers() > 0 {
 			break
 		}
 	}
 
-	net1.Stop()
-	net2.Stop()
+	time.Sleep(1 * time.Second)
+}
+
+func shouldReceiveEvent(t *testing.T, net *network) Event {
+	timeout := time.NewTimer(2 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v", t.Name()))
+			return nil
+		case e := <-net.EventChannel():
+			return e
+		}
+	}
+}
+
+func TestStoppingNetwork(t *testing.T) {
+	net, err := NewNetwork(TestConfig())
+	assert.NoError(t, err)
+
+	assert.NoError(t, net.Start())
+	// Should stop without error
+	net.Stop()
+}
+
+func TestDHT(t *testing.T) {
+	conf := TestConfig()
+	conf.EnableMdns = false
+	conf.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tNetwork1.SelfID())}
+
+	net, err := NewNetwork(TestConfig())
+	assert.NoError(t, err)
+
+	assert.NoError(t, net.Start())
+
+	for {
+		if net.NumConnectedPeers() > 0 {
+			break
+		}
+	}
+
+	net.Stop()
 }
 
 // TODO: Fix me

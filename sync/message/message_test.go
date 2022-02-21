@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/vote"
@@ -15,19 +14,21 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-var tPeerID1 peer.ID
-var tPeerID2 peer.ID
-
-func init() {
-	tPeerID1 = util.RandomPeerID()
-	tPeerID2 = util.RandomPeerID()
-
+func TestNewMessage(t *testing.T) {
+	pid := util.RandomPeerID()
+	msg := NewMessage(pid, payload.NewQueryProposalPayload(100, 0))
+	assert.Equal(t, msg.Version, LastVersion)
+	assert.Equal(t, msg.Flags, MsgFlagNetworkLibP2P)
+	assert.Equal(t, msg.Initiator, pid)
 }
 
 func TestInvalidCBOR(t *testing.T) {
-	d, _ := hex.DecodeString("a40100030004010aa301")
-	m2 := new(Message)
-	_, err := m2.Decode(bytes.NewReader(d))
+	d1, _ := hex.DecodeString("000000000000000000")
+	d2, _ := hex.DecodeString("A5010002000342000004000540")
+	m := new(Message)
+	_, err := m.Decode(bytes.NewReader(d1))
+	assert.Error(t, err)
+	_, err = m.Decode(bytes.NewReader(d2))
 	assert.Error(t, err)
 }
 func TestMessageCompress(t *testing.T) {
@@ -39,7 +40,7 @@ func TestMessageCompress(t *testing.T) {
 		blocks = append(blocks, b)
 	}
 	pld := payload.NewBlocksResponsePayload(payload.ResponseCodeBusy, 1234, 888, blocks, trxs, nil)
-	msg := NewMessage(tPeerID1, pld)
+	msg := NewMessage(util.RandomPeerID(), pld)
 	bs0, err := msg.Encode()
 	assert.NoError(t, err)
 	msg.CompressIt()
@@ -56,12 +57,13 @@ func TestMessageCompress(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, msg2.SanityCheck())
 	assert.NoError(t, msg3.SanityCheck())
+	assert.True(t, util.IsFlagSet(msg.Flags, MsgFlagCompressed))
 }
 
 func TestDecodeVoteMessage(t *testing.T) {
 	v, _ := vote.GenerateTestPrecommitVote(88, 0)
 	pld := payload.NewVotePayload(v)
-	msg := NewMessage(tPeerID1, pld)
+	msg := NewMessage(util.RandomPeerID(), pld)
 	bs0, err := msg.Encode()
 	assert.NoError(t, err)
 	msg.CompressIt()
@@ -73,9 +75,9 @@ func TestDecodeVoteMessage(t *testing.T) {
 }
 
 func TestDecodeVoteCBOR(t *testing.T) {
-	d1, _ := hex.DecodeString("a50101020003582212206e58a3dbd9535701000000000000000000000000000000000000000000000000040b055877a101a6010202185803000458205ffca0da6582ee795bdb73a518797bd4f2ccde1f8692e2b2a5ba0dd60f576410055501c94b4b3489c5370ae23923c2325cd80eee749231065830a009f5f3ebe4fef05602813d099c539d13ba6ae209ecefe1ca72c55fd9b392ddb828d35a9d64abb3ca9694963e2d8338")
+	d1, _ := hex.DecodeString("a50101020003582212206e58a3dbd95357010000000000000000000000000000000000000000000000000408055877a101a6010202185803000458205ffca0da6582ee795bdb73a518797bd4f2ccde1f8692e2b2a5ba0dd60f576410055501c94b4b3489c5370ae23923c2325cd80eee749231065830a009f5f3ebe4fef05602813d099c539d13ba6ae209ecefe1ca72c55fd9b392ddb828d35a9d64abb3ca9694963e2d8338")
 	// Compressed
-	d2, _ := hex.DecodeString("a50101020103582212206e58a3dbd9535701000000000000000000000000000000000000000000000000040b0558931f8b08000000000000ff00770088ffa101a6010202185803000458205ffca0da6582ee795bdb73a518797bd4f2ccde1f8692e2b2a5ba0dd60f576410055501c94b4b3489c5370ae23923c2325cd80eee749231065830a009f5f3ebe4fef05602813d099c539d13ba6ae209ecefe1ca72c55fd9b392ddb828d35a9d64abb3ca9694963e2d8338010000ffffcf174a7977000000")
+	d2, _ := hex.DecodeString("a50101021003582212206e58a3dbd953570100000000000000000000000000000000000000000000000004080558931f8b08000000000000ff00770088ffa101a6010202185803000458205ffca0da6582ee795bdb73a518797bd4f2ccde1f8692e2b2a5ba0dd60f576410055501c94b4b3489c5370ae23923c2325cd80eee749231065830a009f5f3ebe4fef05602813d099c539d13ba6ae209ecefe1ca72c55fd9b392ddb828d35a9d64abb3ca9694963e2d8338010000ffffcf174a7977000000")
 	m1 := new(Message)
 	m2 := new(Message)
 	_, err := m1.Decode(bytes.NewReader(d1))

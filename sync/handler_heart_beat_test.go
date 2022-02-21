@@ -3,6 +3,7 @@ package sync
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
@@ -12,47 +13,58 @@ import (
 func TestParsingHeartbeatMessages(t *testing.T) {
 	setup(t)
 
-	t.Run("Alice is not in committee", func(t *testing.T) {
-		tAliceSync.broadcastHeartBeat()
-		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHeartBeat)
-		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeVote)
+	tConsensus.Round = 1
+	h, _ := tConsensus.HeightRound()
+	pid := util.RandomPeerID()
+	pld := payload.NewHeartBeatPayload(h, 2, hash.GenerateTestHash())
+
+	t.Run("Not in the committee, but processes hearbeat messages", func(t *testing.T) {
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
 	})
 
-	joinAliceToCommittee(t)
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 
-	t.Run("Alice is in committee", func(t *testing.T) {
-		heightAlice, _ := tAliceConsensus.HeightRound()
+	t.Run("In the committee, should query for votes", func(t *testing.T) {
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+
+		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
+	})
+
+	t.Run("Should not query for votes for previous round", func(t *testing.T) {
+		pld := payload.NewHeartBeatPayload(h, 0, hash.GenerateTestHash())
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
+	})
+
+	t.Run("Should not query for votes for same round", func(t *testing.T) {
+		pld := payload.NewHeartBeatPayload(h, 1, hash.GenerateTestHash())
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
+	})
+}
+
+func TestBroadcastingHeartbeatMessages(t *testing.T) {
+	setup(t)
+
+	t.Run("It is not in committee", func(t *testing.T) {
+		tSync.broadcastHeartBeat()
+		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHeartBeat)
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeVote)
+	})
+
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+
+	t.Run("It is in committee", func(t *testing.T) {
+		heightAlice, _ := tConsensus.HeightRound()
 		v1, _ := vote.GenerateTestPrepareVote(heightAlice, 0)
-		tAliceConsensus.Votes = []*vote.Vote{v1}
+		tConsensus.Votes = []*vote.Vote{v1}
 
-		tAliceSync.broadcastHeartBeat()
-		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeHeartBeat)
-		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeVote)
-	})
-
-	t.Run("Bob processes Alice's HeartBeat but he is not in committee", func(t *testing.T) {
-		h, r := tBobConsensus.HeightRound()
-		pld := payload.NewHeartBeatPayload(h, r+2, hash.GenerateTestHash())
-		simulatingReceiveingNewMessage(t, tBobSync, pld, util.RandomPeerID())
-
-		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
-	})
-
-	joinBobToCommittee(t)
-
-	t.Run("Bob should query for votes", func(t *testing.T) {
-		h, r := tBobConsensus.HeightRound()
-		pld := payload.NewHeartBeatPayload(h, r+2, hash.GenerateTestHash())
-		simulatingReceiveingNewMessage(t, tBobSync, pld, util.RandomPeerID())
-
-		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
-	})
-
-	t.Run("Bob should not query for votes", func(t *testing.T) {
-		h, r := tBobConsensus.HeightRound()
-		pld := payload.NewHeartBeatPayload(h, r+1, hash.GenerateTestHash())
-		simulatingReceiveingNewMessage(t, tBobSync, pld, util.RandomPeerID())
-
-		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeQueryVotes)
+		tSync.broadcastHeartBeat()
+		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHeartBeat)
+		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeVote)
 	})
 }

@@ -1,47 +1,20 @@
 package network
 
 import (
-	"io"
 	"testing"
-	"time"
 
-	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestStream(t *testing.T) {
-	net1, net2 := setup(t, TestConfig(), TestConfig())
+	msg := []byte("test-stream")
+	require.NoError(t, tNetwork1.SendTo(msg, tNetwork2.SelfID()))
 
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
-
-	received := make(chan bool)
-	msg := []byte("test")
-	cb := func(r io.Reader, id peer.ID) {
-		buf := make([]byte, 4)
-		_, err := r.Read(buf)
-		assert.Equal(t, id, net1.SelfID())
-		assert.Equal(t, buf, msg)
-		assert.NoError(t, err)
-		received <- true
-	}
-	go net2.SetCallback(cb)
-
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
-
-	for {
-		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
-			break
-		}
-	}
-
-	time.Sleep(1 * time.Second)
-	require.NoError(t, net1.SendTo(msg, net2.SelfID()))
-
-	<-received
-
-	net1.Stop()
-	net2.Stop()
+	e := shouldReceiveEvent(t, tNetwork2).(*StreamMessage)
+	buf := make([]byte, len(msg))
+	_, err := e.Reader.Read(buf)
+	assert.NoError(t, err)
+	assert.Equal(t, e.Source, tNetwork1.SelfID())
+	assert.Equal(t, buf, msg)
 }

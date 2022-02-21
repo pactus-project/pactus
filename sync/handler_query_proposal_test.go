@@ -3,64 +3,77 @@ package sync
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingQueryProposalMessages(t *testing.T) {
 	setup(t)
-	disableHeartbeat(t)
 
-	consensusHeight := tAliceState.LastBlockHeight() + 1
-	proposalRound0, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-	proposalRound1, _ := proposal.GenerateTestProposal(consensusHeight, 1)
+	consensusHeight := tState.LastBlockHeight() + 1
+	prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
+	pid := util.RandomPeerID()
+	pld := payload.NewQueryProposalPayload(consensusHeight, 0)
+	tConsensus.SetProposal(prop)
 
-	pldRound0 := payload.NewQueryProposalPayload(consensusHeight, 0)
-	pldRound1 := payload.NewQueryProposalPayload(consensusHeight, 1)
-
-	tBobConsensus.Round = 0
-	tBobConsensus.SetProposal(proposalRound0)
-
-	t.Run("Alice should not send query proposal message because she is not an active validator", func(t *testing.T) {
-		tAliceBroadcastCh <- pldRound0
-		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
+	t.Run("Not in the committee, should not respond to the query proposal message", func(t *testing.T) {
+		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
 	})
 
-	t.Run("Alice queries for a proposal, but she has it in her cache", func(t *testing.T) {
-		tAliceBroadcastCh <- payload.NewQueryProposalPayload(consensusHeight, 0)
-		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
+	testAddPeerToCommittee(t, pid, nil)
+
+	t.Run("In the committee, should respond to the query proposal message", func(t *testing.T) {
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+
+		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeProposal)
+		assert.Equal(t, msg.Payload.(*payload.ProposalPayload).Proposal.Hash(), prop.Hash())
 	})
 
-	t.Run("Bob should not process Alice's message because she is not an active validator", func(t *testing.T) {
-		simulatingReceiveingNewMessage(t, tBobSync, pldRound0, tAlicePeerID)
-		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
+	t.Run("In the committee, but doesn't have the proposal", func(t *testing.T) {
+		pld := payload.NewQueryProposalPayload(consensusHeight, 1)
+		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeProposal)
+	})
+}
+
+func TestBroadcastingQueryProposalMessages(t *testing.T) {
+	setup(t)
+
+	consensusHeight := tState.LastBlockHeight() + 1
+	pld := payload.NewQueryProposalPayload(consensusHeight, 0)
+
+	t.Run("Not in the committee, should not send query proposal message", func(t *testing.T) {
+		tSync.broadcast(pld)
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryProposal)
 	})
 
-	joinAliceToCommittee(t)
-	tBobConsensus.Round = 1
-	tBobConsensus.SetProposal(proposalRound1)
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 
-	t.Run("Alice should not query for proposal, because she has proposal in her cache", func(t *testing.T) {
-		tAliceSync.cache.AddProposal(proposalRound0)
+	t.Run("In the committee, should send query proposal message", func(t *testing.T) {
+		tSync.broadcast(pld)
 
-		tAliceBroadcastCh <- pldRound0
-		shouldNotPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
+		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryProposal)
 	})
 
-	t.Run("Bob should not send Alice the stale proposal", func(t *testing.T) {
-		// This case is importance for stability and performance of consensus
+	t.Run("Proposal set before", func(t *testing.T) {
+		prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
+		tConsensus.SetProposal(prop)
+		tSync.broadcast(pld)
 
-		simulatingReceiveingNewMessage(t, tBobSync, pldRound0, tAlicePeerID)
-		shouldNotPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryProposal)
 	})
 
-	t.Run("Alice should be able to send query proposal message because she is an active validator", func(t *testing.T) {
-		tAliceBroadcastCh <- pldRound1
-		shouldPublishPayloadWithThisType(t, tAliceNet, payload.PayloadTypeQueryProposal)
-	})
+	t.Run("Proposal found inside the cache", func(t *testing.T) {
+		prop, _ := proposal.GenerateTestProposal(consensusHeight, 1)
+		tSync.cache.AddProposal(prop)
 
-	t.Run("Bob processes Alice's message", func(t *testing.T) {
-		simulatingReceiveingNewMessage(t, tBobSync, pldRound1, tAlicePeerID)
-		shouldPublishPayloadWithThisType(t, tBobNet, payload.PayloadTypeProposal)
+		pld := payload.NewQueryProposalPayload(consensusHeight, 1)
+		tSync.broadcast(pld)
+
+		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryProposal)
 	})
 }

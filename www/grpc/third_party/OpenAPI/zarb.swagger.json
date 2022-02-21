@@ -352,11 +352,14 @@
     "protobufAny": {
       "type": "object",
       "properties": {
-        "@type": {
+        "typeUrl": {
           "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
         }
-      },
-      "additionalProperties": {}
+      }
     },
     "rpcStatus": {
       "type": "object",
@@ -536,9 +539,8 @@
         "moniker": {
           "type": "string"
         },
-        "nodeVersion": {
-          "type": "string",
-          "format": "byte"
+        "agent": {
+          "type": "string"
         },
         "peerId": {
           "type": "string"

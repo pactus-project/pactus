@@ -1,53 +1,32 @@
 package network
 
 import (
-	"io"
 	"testing"
-	"time"
 
-	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPubSub(t *testing.T) {
-	net1, net2 := setup(t, TestConfig(), TestConfig())
+	msg := []byte("test-general-topic")
 
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
+	require.NoError(t, tNetwork1.Broadcast(msg, TopicIDGeneral))
 
-	received := make(chan bool)
-	msg := []byte("test")
-	cb := func(r io.Reader, id peer.ID) {
-		buf := make([]byte, 4)
-		_, err := r.Read(buf)
-		assert.Equal(t, id, net1.SelfID())
-		assert.Equal(t, buf, msg)
-		assert.NoError(t, err)
-		received <- true
-	}
-	go net2.SetCallback(cb)
+	e := shouldReceiveEvent(t, tNetwork2).(*GossipMessage)
+	assert.Equal(t, e.Source, tNetwork1.SelfID())
+	assert.Equal(t, e.Data, msg)
+}
 
-	assert.NoError(t, net1.JoinGeneralTopic())
-	assert.NoError(t, net2.JoinGeneralTopic())
-	assert.NoError(t, net1.JoinConsensusTopic())
+func TestJoinTopic(t *testing.T) {
+	msg := []byte("test-consensus-topic")
 
-	assert.NoError(t, net1.Start())
-	assert.NoError(t, net2.Start())
+	require.Error(t, tNetwork1.Broadcast(msg, TopicIDConsensus))
+	require.NoError(t, tNetwork1.JoinConsensusTopic())
+	require.NoError(t, tNetwork1.Broadcast(msg, TopicIDConsensus))
+}
 
-	for {
-		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
-			break
-		}
-	}
+func TestInvalidTopic(t *testing.T) {
+	msg := []byte("test-invalid-topic")
 
-	time.Sleep(1 * time.Second)
-
-	require.NoError(t, net1.Broadcast([]byte("should not broadcasted"), ConsensusTopic))
-	require.NoError(t, net1.Broadcast(msg, GeneralTopic))
-
-	<-received
-
-	net1.Stop()
-	net2.Stop()
+	require.Error(t, tNetwork1.Broadcast(msg, -1))
 }

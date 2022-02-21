@@ -14,6 +14,10 @@ const (
 
 var build string
 
+func Agent() string {
+	return fmt.Sprintf("zarb-go/%s", Version())
+}
+
 func Version() string {
 	version := fmt.Sprintf("%d.%d.%d", major, minor, patch)
 
