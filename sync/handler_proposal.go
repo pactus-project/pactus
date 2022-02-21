@@ -18,7 +18,7 @@ func newProposalHandler(sync *synchronizer) payloadHandler {
 
 func (handler *proposalHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.ProposalPayload)
-	handler.logger.Trace("Parsing proposal payload", "pld", pld)
+	handler.logger.Trace("parsing proposal payload", "pld", pld)
 
 	handler.cache.AddProposal(pld.Proposal)
 	handler.consensus.SetProposal(pld.Proposal)

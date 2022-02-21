@@ -19,10 +19,10 @@ func newBlocksRequestHandler(sync *synchronizer) payloadHandler {
 
 func (handler *blocksRequestHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.BlocksRequestPayload)
-	handler.logger.Trace("Parsing blocks request payload", "pld", pld)
+	handler.logger.Trace("parsing blocks request payload", "pld", pld)
 
 	if handler.peerSet.NumberOfOpenSessions() > handler.config.MaximumOpenSessions {
-		handler.logger.Warn("We are busy", "pld", pld, "pid", initiator)
+		handler.logger.Warn("we are busy", "pld", pld, "pid", initiator)
 		response := payload.NewBlocksResponsePayload(payload.ResponseCodeBusy, pld.SessionID, 0, nil, nil, nil)
 		handler.sendTo(response, initiator)
 

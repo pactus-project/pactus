@@ -22,7 +22,7 @@ func (s *precommitState) decide() {
 	precommits := s.log.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
 	if precommitQH != nil {
-		s.logger.Debug("Precommit has quorum", "precommitQH", precommitQH)
+		s.logger.Debug("precommit has quorum", "precommitQH", precommitQH)
 		s.enterNewState(s.commitState)
 	} else {
 		// Liveness on PBFT
@@ -46,19 +46,19 @@ func (s *precommitState) vote() {
 		// There is a consensus about a proposal which we don't have it yet.
 		// Ask peers for this proposal
 		s.queryProposal()
-		s.logger.Debug("No proposal yet.")
+		s.logger.Debug("no proposal yet")
 		return
 	}
 
 	if !roundProposal.IsForBlock(*prepareQH) {
 		s.log.SetRoundProposal(s.round, nil)
 		s.queryProposal()
-		s.logger.Error("Proposal is invalid.", "proposal", roundProposal)
+		s.logger.Error("proposal is invalid", "proposal", roundProposal)
 		return
 	}
 
 	// Everything is good
-	s.logger.Info("Proposal approved", "proposal", roundProposal)
+	s.logger.Info("proposal approved", "proposal", roundProposal)
 	s.signAddVote(vote.VoteTypePrecommit, *prepareQH)
 	s.hasVoted = true
 }
@@ -82,7 +82,7 @@ func (s *precommitState) onTimedout(t *ticker) {
 	if t.Target == tickerTargetChangeProposer {
 		s.enterNewState(s.changeProposerState)
 	} else {
-		s.logger.Trace("Invalid ticker", "ticker", t)
+		s.logger.Trace("invalid ticker", "ticker", t)
 	}
 }
 

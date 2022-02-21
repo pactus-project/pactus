@@ -115,7 +115,7 @@ func setup(t *testing.T) {
 	overrideLogger(tConsP, "consP")
 	// -------------------------------
 
-	logger.Info("Setup finished, start running the test", "name", t.Name())
+	logger.Info("setup finished, start running the test", "name", t.Name())
 }
 
 func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {

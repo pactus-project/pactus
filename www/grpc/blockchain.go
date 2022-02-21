@@ -26,7 +26,7 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkI
 
 		bs, err := cbor.Marshal(peer.Agent())
 		if err != nil {
-			zs.logger.Error("Couldn't marshal agent", "err", err)
+			zs.logger.Error("couldn't marshal agent", "err", err)
 			continue
 		}
 		p.Agent = string(bs)

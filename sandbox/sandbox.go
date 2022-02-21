@@ -79,7 +79,7 @@ func (sb *Concrete) shouldPanicForDuplicatedAddress() {
 	//
 	// Try to make a new item which already exists in store.
 	//
-	logger.Panic("Duplicated address")
+	logger.Panic("duplicated address")
 }
 
 func (sb *Concrete) shouldPanicForUnknownAddress() {
@@ -89,7 +89,7 @@ func (sb *Concrete) shouldPanicForUnknownAddress() {
 	// We only update accounts or validators which we have them inside the sandbox.
 	// We must either make a new one (i.e. `MakeNewAccount`) or get it from store (i.e. `Account`) in advance.
 	//
-	logger.Panic("Unknown address")
+	logger.Panic("unknown address")
 }
 
 func (sb *Concrete) Account(addr crypto.Address) *account.Account {

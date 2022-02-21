@@ -52,7 +52,7 @@ func getBlockAt(height int) *block.Block {
 		}
 		return b
 	}
-	logger.Panic("get block timeout.", "height", height)
+	logger.Panic("get block timeout", "height", height)
 	return nil
 }
 

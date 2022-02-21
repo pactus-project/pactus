@@ -11,7 +11,7 @@ type changeProposerState struct {
 }
 
 func (s *changeProposerState) enter() {
-	s.logger.Info("Requesting for changing proposer", "proposer", s.proposer(s.round).Address())
+	s.logger.Info("requesting for changing proposer", "proposer", s.proposer(s.round).Address())
 	s.signAddVote(vote.VoteTypeChangeProposer, hash.UndefHash)
 
 	s.decide()

@@ -20,7 +20,7 @@ func newQueryTransactionsHandler(sync *synchronizer) payloadHandler {
 
 func (handler *queryTransactionsHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.QueryTransactionsPayload)
-	handler.logger.Trace("Parsing query transactions payload", "pld", pld)
+	handler.logger.Trace("parsing query transactions payload", "pld", pld)
 
 	if !handler.peerIsInTheCommittee(initiator) {
 		return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
@@ -42,7 +42,7 @@ func (handler *queryTransactionsHandler) PrepareMessage(p payload.Payload) *mess
 		trx := handler.cache.GetTransaction(id)
 		if trx != nil {
 			if err := handler.state.AddPendingTx(trx); err != nil {
-				handler.logger.Warn("Query for an invalid transaction", "tx", trx, "err", err)
+				handler.logger.Warn("query for an invalid transaction", "tx", trx, "err", err)
 			}
 		} else {
 			missed = append(missed, id)
@@ -50,7 +50,7 @@ func (handler *queryTransactionsHandler) PrepareMessage(p payload.Payload) *mess
 	}
 
 	if !handler.weAreInTheCommittee() {
-		handler.logger.Debug("Sending QueryTransactions ignored. We are not in the committee")
+		handler.logger.Debug("sending QueryTransactions ignored. We are not in the committee")
 		return nil
 	}
 

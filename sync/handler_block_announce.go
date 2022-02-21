@@ -18,7 +18,7 @@ func newBlockAnnounceHandler(sync *synchronizer) payloadHandler {
 
 func (handler *blockAnnounceHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.BlockAnnouncePayload)
-	handler.logger.Trace("Parsing block announce payload", "pld", pld)
+	handler.logger.Trace("parsing block announce payload", "pld", pld)
 
 	handler.cache.AddCertificate(pld.Certificate)
 	handler.cache.AddBlock(pld.Height, pld.Block)
@@ -36,7 +36,7 @@ func (handler *blockAnnounceHandler) ParsPayload(p payload.Payload, initiator pe
 
 func (handler *blockAnnounceHandler) PrepareMessage(p payload.Payload) *message.Message {
 	if !handler.weAreInTheCommittee() {
-		handler.logger.Debug("Sending BlockAnnounce ignored. We are not in the committee")
+		handler.logger.Debug("sending BlockAnnounce ignored. We are not in the committee")
 		return nil
 	}
 	msg := message.NewMessage(handler.SelfID(), p)

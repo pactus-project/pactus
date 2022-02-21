@@ -45,7 +45,7 @@ func (pool *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 
 	pool.sandbox = sb
 
-	pool.logger.Debug("Set new sandbox")
+	pool.logger.Debug("set new sandbox")
 
 	var next *list.Element
 	for e := pool.pendings.FirstElement(); e != nil; e = next {
@@ -53,7 +53,7 @@ func (pool *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
 
 		if err := pool.checkTx(trx); err != nil {
-			pool.logger.Debug("Invalid transaction after rechecking", "id", trx.ID())
+			pool.logger.Debug("invalid transaction after rechecking", "id", trx.ID())
 			pool.pendings.Remove(trx.ID())
 		}
 	}
@@ -92,7 +92,7 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 
 func (pool *txPool) appendTx(trx *tx.Tx) error {
 	if pool.pendings.Has(trx.ID()) {
-		pool.logger.Trace("Transaction is already in pool.", "id", trx.ID())
+		pool.logger.Trace("transaction is already in pool", "id", trx.ID())
 		return nil
 	}
 
@@ -101,14 +101,14 @@ func (pool *txPool) appendTx(trx *tx.Tx) error {
 	}
 
 	pool.pendings.PushBack(trx.ID(), trx)
-	pool.logger.Debug("Transaction appended into pool.", "tx", trx)
+	pool.logger.Debug("transaction appended into pool", "tx", trx)
 
 	return nil
 }
 
 func (pool *txPool) checkTx(trx *tx.Tx) error {
 	if err := pool.checker.Execute(trx, pool.sandbox); err != nil {
-		pool.logger.Debug("Invalid transaction", "tx", trx, "err", err)
+		pool.logger.Debug("invalid transaction", "tx", trx, "err", err)
 		return err
 	}
 	return nil
@@ -144,7 +144,7 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		return trx
 	}
 
-	pool.logger.Debug("Query transaction from nodes", "id", id)
+	pool.logger.Debug("querying transaction from the network", "id", id)
 
 	pld := payload.NewQueryTransactionsPayload([]tx.ID{id})
 	pool.broadcastCh <- pld
@@ -161,7 +161,7 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 		}
 	}
 
-	pool.logger.Warn("Querying transaction failed", "id", id, "duration", duration*time.Duration(counter))
+	pool.logger.Warn("querying transaction failed", "id", id, "duration", duration*time.Duration(counter))
 	return nil
 }
 

@@ -139,7 +139,7 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int, srt *sortition.Sortition)
 		lid.LastBlockHeight = oldlid.LastHeight
 		lid.LastCertificate = oldlid.LastCertificate
 	}
-	logger.Debug("Try to restore last state info", "height", lid.LastBlockHeight)
+	logger.Debug("try to restore last state info", "height", lid.LastBlockHeight)
 
 	b, err := li.store.Block(lid.LastBlockHeight)
 	if err != nil {

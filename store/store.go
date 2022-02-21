@@ -59,7 +59,7 @@ func (s *store) SaveBlock(height int, block *block.Block) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 	if err := s.blockStore.saveBlock(s.batch, height, block); err != nil {
-		logger.Panic("Error on saving block: %v", err)
+		logger.Panic("error on saving block: %v", err)
 	}
 }
 
@@ -82,7 +82,7 @@ func (s *store) SaveTransaction(trx *tx.Tx) {
 	defer s.lk.Unlock()
 
 	if err := s.txStore.saveTx(s.batch, trx); err != nil {
-		logger.Panic("Error on saving a transaction: %v", err)
+		logger.Panic("error on saving a transaction: %v", err)
 	}
 }
 
@@ -126,7 +126,7 @@ func (s *store) UpdateAccount(acc *account.Account) {
 	defer s.lk.Unlock()
 
 	if err := s.accountStore.updateAccount(s.batch, acc); err != nil {
-		logger.Panic("Error on updating an account: %v", err)
+		logger.Panic("error on updating an account: %v", err)
 	}
 }
 
@@ -170,7 +170,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	defer s.lk.Unlock()
 
 	if err := s.validatorStore.updateValidator(s.batch, acc); err != nil {
-		logger.Panic("Error on updating a validator: %v", err)
+		logger.Panic("error on updating a validator: %v", err)
 	}
 }
 

@@ -114,7 +114,7 @@ func NewNetwork(conf *Config) (Network, error) {
 
 	n.gossip = newGossipService(ctx, host, n.eventChannel, n.logger)
 
-	n.logger.Debug("Network setup", "id", n.host.ID(), "address", conf.ListenAddress)
+	n.logger.Debug("network setup", "id", n.host.ID(), "address", conf.ListenAddress)
 
 	return n, nil
 }
@@ -138,7 +138,7 @@ func (n *network) Start() error {
 	n.gossip.Start()
 	n.stream.Start()
 
-	n.logger.Info("Network started", "addr", n.host.Addrs())
+	n.logger.Info("network started", "addr", n.host.Addrs())
 	return nil
 }
 
@@ -155,7 +155,7 @@ func (n *network) Stop() {
 	n.stream.Stop()
 
 	if err := n.host.Close(); err != nil {
-		n.logger.Error("Unable to close the network", "err", err)
+		n.logger.Error("unable to close the network", "err", err)
 	}
 }
 
@@ -168,28 +168,28 @@ func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 }
 
 func (n *network) Broadcast(msg []byte, topicID TopicID) error {
-	n.logger.Debug("Publishing new message", "topic", topicID)
+	n.logger.Debug("publishing new message", "topic", topicID)
 	switch topicID {
 	case TopicIDGeneral:
 		if n.generalTopic == nil {
-			return errors.Errorf(errors.ErrNetwork, "Not subscribed to general topic")
+			return errors.Errorf(errors.ErrNetwork, "not subscribed to general topic")
 		}
 		return n.gossip.BroadcastMessage(msg, n.generalTopic)
 
 	case TopicIDConsensus:
 		if n.consensusTopic == nil {
-			return errors.Errorf(errors.ErrNetwork, "Not subscribed to consensus topic")
+			return errors.Errorf(errors.ErrNetwork, "not subscribed to consensus topic")
 		}
 		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
 
 	default:
-		return errors.Errorf(errors.ErrNetwork, "Invalid topic")
+		return errors.Errorf(errors.ErrNetwork, "invalid topic")
 	}
 }
 
 func (n *network) JoinGeneralTopic() error {
 	if n.generalTopic != nil {
-		n.logger.Debug("Already subscribed to general topic")
+		n.logger.Debug("already subscribed to general topic")
 		return nil
 	}
 	topic, err := n.gossip.JoinTopic(n.TopicName("general"))
@@ -202,7 +202,7 @@ func (n *network) JoinGeneralTopic() error {
 
 func (n *network) JoinConsensusTopic() error {
 	if n.consensusTopic != nil {
-		n.logger.Debug("Already subscribed to consensus topic")
+		n.logger.Debug("already subscribed to consensus topic")
 		return nil
 	}
 	topic, err := n.gossip.JoinTopic(n.TopicName("consensus"))
@@ -219,7 +219,7 @@ func (n *network) TopicName(topic string) string {
 
 func (n *network) CloseConnection(pid lp2peer.ID) {
 	if err := n.host.Network().ClosePeer(pid); err != nil {
-		n.logger.Warn("Unable to close connection", "peer", util.FingerprintPeerID(pid))
+		n.logger.Warn("unable to close connection", "peer", util.FingerprintPeerID(pid))
 	}
 }
 

@@ -73,7 +73,7 @@ func setup(t *testing.T) {
 	assert.NoError(t, tSync.Start())
 	shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
 
-	logger.Info("setup finished, start running the test", "name", t.Name())
+	logger.Info("setup finished, running the tests", "name", t.Name())
 }
 
 func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) *message.Message {
