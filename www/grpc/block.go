@@ -32,40 +32,44 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	}
 	hash := block.Hash().String()
 	timestamp := timestamppb.New(block.Header().Time())
-	info := &zarb.BlockInfo{}
+	header := &zarb.BlockHeaderInfo{}
 	tranactions := make([]*zarb.TransactionInfo, 0)
+	var prevCert *zarb.CertificateInfo
 
 	//populate BLOCK_DATA
 	if request.Verbosity.Number() > 0 {
-
 		seed := block.Header().SortitionSeed()
-		SortitionSeed, err := seed.MarshalText()
+
+		sortitionSeed, err := seed.MarshalText()
 		if err != nil {
 			zs.logger.Error("couldn't marshal sortition seed: %v", err)
 		}
+		cert := block.PrevCertificate()
+		if cert != nil {
+			committers := make([]int32, len(block.PrevCertificate().Committers()))
+			for c := range block.PrevCertificate().Committers() {
+				committers = append(committers, int32(c))
+			}
+			absentees := make([]int32, len(block.PrevCertificate().Absentees()))
+			for c := range block.PrevCertificate().Absentees() {
+				absentees = append(absentees, int32(c))
+			}
+			prevCert = &zarb.CertificateInfo{
+				Round:      int64(block.PrevCertificate().Round()),
+				Committers: committers,
+				Absentees:  absentees,
+				Signature:  block.PrevCertificate().Signature().String(),
+			}
 
-		Committers := make([]int32, len(block.PrevCertificate().Committers()))
-		for c := range block.PrevCertificate().Committers() {
-			Committers = append(Committers, int32(c))
 		}
-
-		Absentees := make([]int32, len(block.PrevCertificate().Absentees()))
-		for c := range block.PrevCertificate().Absentees() {
-			Absentees = append(Absentees, int32(c))
-		}
-
-		info = &zarb.BlockInfo{
+		header = &zarb.BlockHeaderInfo{
 			Version:             int32(block.Header().Version()),
-			PrevBlockHash:       block.PrevCertificate().BlockHash().String(),
+			PrevBlockHash:       block.Header().PrevBlockHash().String(),
 			StateHash:           block.Header().StateHash().String(),
 			TxIdsHash:           block.TxIDs().Hash().String(),
-			PrevCertificateHash: block.PrevCertificate().Hash().String(),
-			SortitionSeed:       SortitionSeed,
+			PrevCertificateHash: block.Header().PrevCertificateHash().String(),
+			SortitionSeed:       sortitionSeed,
 			ProposerAddress:     block.Header().ProposerAddress().String(),
-			Round:               int64(block.PrevCertificate().Round()),
-			Committers:          Committers,
-			Absentees:           Absentees,
-			Signature:           block.PrevCertificate().Signature().String(),
 		}
 
 	}
@@ -80,10 +84,11 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	}
 
 	res := &zarb.BlockResponse{
-		Hash:        hash,
-		BlockTime:   timestamp,
-		Info:        info,
-		Tranactions: tranactions,
+		Hash:                hash,
+		BlockTime:           timestamp,
+		Header:              header,
+		Tranactions:         tranactions,
+		PreviousCertificate: prevCert,
 	}
 
 	return res, nil
