@@ -51,7 +51,7 @@ test_race:
 ########################################
 ### Docker
 docker:
-	docker build --tag zarb -f ./containers/Dockerfile .
+	docker build --tag zarb .
 
 ########################################
 ### capnp and proto

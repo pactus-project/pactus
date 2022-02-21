@@ -2,7 +2,7 @@ FROM alpine:3.15 as builder
 
 RUN apk add --no-cache git go gmp-dev build-base g++ openssl-dev
 ADD . /zarb-go
-RUN cd /zarb-go && make herumi build
+RUN cd /zarb-go && make release
 
 ## Copy binary files from builder into second container
 FROM alpine:3.15
