@@ -35,7 +35,6 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 	tConfig.InitialBlockDownload = false
 	setup(t)
 
-	//	testAddMoreBlocks(t, 12)
 	sid := util.RandInt(100)
 	pid := util.RandomPeerID()
 

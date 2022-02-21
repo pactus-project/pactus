@@ -18,7 +18,7 @@ func TestNewMessage(t *testing.T) {
 	pid := util.RandomPeerID()
 	msg := NewMessage(pid, payload.NewQueryProposalPayload(100, 0))
 	assert.Equal(t, msg.Version, LastVersion)
-	assert.Equal(t, msg.Flags, FlagNetworkLibP2P)
+	assert.Equal(t, msg.Flags, MsgFlagNetworkLibP2P)
 	assert.Equal(t, msg.Initiator, pid)
 }
 
@@ -57,7 +57,7 @@ func TestMessageCompress(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, msg2.SanityCheck())
 	assert.NoError(t, msg3.SanityCheck())
-	assert.True(t, util.IsFlagSet(msg.Flags, FlagCompressed))
+	assert.True(t, util.IsFlagSet(msg.Flags, MsgFlagCompressed))
 }
 
 func TestDecodeVoteMessage(t *testing.T) {

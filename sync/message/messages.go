@@ -12,10 +12,12 @@ import (
 )
 
 const LastVersion = 1
-const FlagNetworkLibP2P = 0x01
-const FlagCompressed = 0x10
-const FlagBroadcasted = 0x20
-const FlagHelloMessage = 0x40
+const (
+	MsgFlagNetworkLibP2P = 0x01
+	MsgFlagCompressed    = 0x10
+	MsgFlagBroadcasted   = 0x20
+	MsgFlagHelloMessage  = 0x40
+)
 
 type Message struct {
 	Version   int
@@ -27,7 +29,7 @@ type Message struct {
 func NewMessage(initiator peer.ID, pld payload.Payload) *Message {
 	return &Message{
 		Version:   LastVersion,
-		Flags:     FlagNetworkLibP2P,
+		Flags:     MsgFlagNetworkLibP2P,
 		Initiator: initiator,
 		Payload:   pld,
 	}
@@ -48,7 +50,7 @@ func (m *Message) Fingerprint() string {
 }
 
 func (m *Message) CompressIt() {
-	m.Flags = util.SetFlag(m.Flags, FlagCompressed)
+	m.Flags = util.SetFlag(m.Flags, MsgFlagCompressed)
 }
 
 type _Message struct {
@@ -65,7 +67,7 @@ func (m *Message) Encode() ([]byte, error) {
 		return nil, err
 	}
 
-	if util.IsFlagSet(m.Flags, FlagCompressed) {
+	if util.IsFlagSet(m.Flags, MsgFlagCompressed) {
 		c, err := util.CompressBuffer(data)
 		if err == nil {
 			data = c
@@ -98,7 +100,7 @@ func (m *Message) Decode(r io.Reader) (int, error) {
 		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
 	}
 
-	if util.IsFlagSet(msg.Flags, FlagCompressed) {
+	if util.IsFlagSet(msg.Flags, MsgFlagCompressed) {
 		c, err := util.DecompressBuffer(msg.Payload)
 		if err != nil {
 			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())

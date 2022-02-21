@@ -35,7 +35,7 @@ func (handler *helloHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 
 		peer.UpdateStatus(peerset.StatusCodeBanned)
 		return errors.Errorf(errors.ErrInvalidMessage, "received a message from different chain, expected: %v, got: %v",
-			handler.state.GenesisHash(), pld.GenesisHash, )
+			handler.state.GenesisHash(), pld.GenesisHash)
 	}
 
 	peer.UpdateStatus(peerset.StatusCodeKnown)
@@ -48,7 +48,8 @@ func (handler *helloHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 	handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
 
 	if util.IsFlagSet(pld.Flags, payload.FlagNeedResponse) {
-		// TODO: Sends response if there is a direct connection between two peers.
+		// TODO: Sends response only if there is a direct connection between two peers.
+		// TODO: check if we have handshaked before. Ignore responding again
 		// Response to Hello
 		handler.sayHello(false)
 	}
@@ -60,6 +61,6 @@ func (handler *helloHandler) ParsPayload(p payload.Payload, initiator peer.ID) e
 
 func (handler *helloHandler) PrepareMessage(p payload.Payload) *message.Message {
 	msg := message.NewMessage(handler.SelfID(), p)
-	msg.Flags = util.SetFlag(msg.Flags, message.FlagHelloMessage)
+	msg.Flags = util.SetFlag(msg.Flags, message.MsgFlagHelloMessage)
 	return msg
 }

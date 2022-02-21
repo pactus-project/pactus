@@ -94,18 +94,18 @@ func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, pa
 
 			// -----------
 			// Check flags
-			require.True(t, util.IsFlagSet(msg.Flags, message.FlagNetworkLibP2P), "invalid flag: %v", msg)
+			require.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagNetworkLibP2P), "invalid flag: %v", msg)
 
 			if b.Target == nil {
-				require.True(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
+				require.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagBroadcasted), "invalid flag: %v", msg)
 			} else {
-				require.False(t, util.IsFlagSet(msg.Flags, message.FlagBroadcasted), "invalid flag: %v", msg)
+				require.False(t, util.IsFlagSet(msg.Flags, message.MsgFlagBroadcasted), "invalid flag: %v", msg)
 			}
 
 			if msg.Payload.Type() == payload.PayloadTypeHello {
-				require.True(t, util.IsFlagSet(msg.Flags, message.FlagHelloMessage), "invalid flag: %v", msg)
+				require.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagHelloMessage), "invalid flag: %v", msg)
 			} else {
-				require.False(t, util.IsFlagSet(msg.Flags, message.FlagHelloMessage), "invalid flag: %v", msg)
+				require.False(t, util.IsFlagSet(msg.Flags, message.MsgFlagHelloMessage), "invalid flag: %v", msg)
 			}
 			// -----------
 

@@ -26,20 +26,20 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 
 	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 
-	t.Run("Bob should query for votes", func(t *testing.T) {
+	t.Run("In the committee, should query for votes", func(t *testing.T) {
 		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
 	})
 
-	t.Run("Bob should not query for votes for previous round", func(t *testing.T) {
+	t.Run("Should not query for votes for previous round", func(t *testing.T) {
 		pld := payload.NewHeartBeatPayload(h, 0, hash.GenerateTestHash())
 		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 
 		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
 	})
 
-	t.Run("Bob should not query for votes for same round", func(t *testing.T) {
+	t.Run("Should not query for votes for same round", func(t *testing.T) {
 		pld := payload.NewHeartBeatPayload(h, 1, hash.GenerateTestHash())
 		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
 

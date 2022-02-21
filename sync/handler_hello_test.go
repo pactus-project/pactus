@@ -31,7 +31,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		height := 5
+		height := util.RandInt(0)
 		pid := util.RandomPeerID()
 		pld := payload.NewHelloPayload(pid, "kitty", height, payload.FlagNeedResponse|payload.FlagInitialBlockDownload, tState.GenHash)
 		signer.SignMsg(pld)
@@ -52,7 +52,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		assert.Equal(t, p.InitialBlockDownload(), true)
 	})
 
-	t.Run("Receiving receives Hello-ack message from a peer. It should not be acknowledged, but update the peer info", func(t *testing.T) {
+	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
 		pld := payload.NewHelloPayload(pid, "kitty", 0, payload.FlagInitialBlockDownload, tState.GenHash)
@@ -63,7 +63,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 	})
 
-	t.Run("Receiving receives Hello-ack message from a peer. Peer is ahead. It should request for blocks", func(t *testing.T) {
+	t.Run("Receiving Hello-ack message from a peer. Peer is ahead. It should request for blocks", func(t *testing.T) {
 		tSync.peerSet.Clear()
 		signer := bls.GenerateTestSigner()
 		claimedHeight := tState.LastBlockHeight() + 5
@@ -84,6 +84,6 @@ func TestBroadcastingHelloMessages(t *testing.T) {
 	tSync.sayHello(true)
 
 	msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
-	assert.True(t, util.IsFlagSet(msg.Flags, message.FlagHelloMessage))
+	assert.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagHelloMessage))
 	assert.True(t, util.IsFlagSet(msg.Payload.(*payload.HelloPayload).Flags, payload.FlagNeedResponse))
 }

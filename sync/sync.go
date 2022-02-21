@@ -296,7 +296,7 @@ func (sync *synchronizer) prepareMessage(pld payload.Payload) *message.Message {
 
 		// Message will be carried through LibP2P.
 		// In future we might support other libraries.
-		msg.Flags = util.SetFlag(msg.Flags, message.FlagNetworkLibP2P)
+		msg.Flags = util.SetFlag(msg.Flags, message.MsgFlagNetworkLibP2P)
 		return msg
 	}
 	return nil
@@ -318,7 +318,7 @@ func (sync *synchronizer) sendTo(pld payload.Payload, to peer.ID) {
 func (sync *synchronizer) broadcast(pld payload.Payload) {
 	msg := sync.prepareMessage(pld)
 	if msg != nil {
-		msg.Flags = util.SetFlag(msg.Flags, message.FlagBroadcasted)
+		msg.Flags = util.SetFlag(msg.Flags, message.MsgFlagBroadcasted)
 		data, _ := msg.Encode()
 		err := sync.network.Broadcast(data, pld.Type().TopicID())
 		if err != nil {

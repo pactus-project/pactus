@@ -12,7 +12,7 @@ import (
 func TestParsingTransactionsMessages(t *testing.T) {
 	setup(t)
 
-	t.Run("Parsing transaction message", func(t *testing.T) {
+	t.Run("Parsing transactions message", func(t *testing.T) {
 		trx1, _ := tx.GenerateTestBondTx()
 		pld := payload.NewTransactionsPayload([]*tx.Tx{trx1})
 
