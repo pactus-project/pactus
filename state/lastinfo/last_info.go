@@ -17,11 +17,6 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-type oldLastInfoData struct {
-	LastHeight      int
-	LastCertificate *block.Certificate
-}
-
 type lastInfoData struct {
 	LastBlockHeight int                `cbor:"1,keyasint"`
 	LastCertificate *block.Certificate `cbor:"2,keyasint"`
@@ -130,15 +125,6 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int, srt *sortition.Sortition)
 		return nil, err
 	}
 
-	if lid.LastBlockHeight == 0 {
-		oldlid := new(oldLastInfoData)
-		err := cbor.Unmarshal(bs, oldlid)
-		if err != nil {
-			return nil, err
-		}
-		lid.LastBlockHeight = oldlid.LastHeight
-		lid.LastCertificate = oldlid.LastCertificate
-	}
 	logger.Debug("try to restore last state info", "height", lid.LastBlockHeight)
 
 	b, err := li.store.Block(lid.LastBlockHeight)
@@ -152,7 +138,7 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int, srt *sortition.Sortition)
 	li.lastBlockHash = b.Hash()
 	li.lastBlockTime = b.Header().Time()
 
-	cmt, err := li.makeCommittee(committeeSize)
+	cmt, err := li.restoreCommittee(committeeSize)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +151,7 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int, srt *sortition.Sortition)
 	return cmt, nil
 }
 
-func (li *LastInfo) makeCommittee(committeeSize int) (*committee.Committee, error) {
+func (li *LastInfo) restoreCommittee(committeeSize int) (*committee.Committee, error) {
 	b, _ := li.store.Block(li.lastBlockHeight)
 
 	joinedVals := make([]*validator.Validator, 0)
@@ -187,6 +173,7 @@ func (li *LastInfo) makeCommittee(committeeSize int) (*committee.Committee, erro
 	}
 
 	proposerIndex := 0
+	curCommitteeSize := len(li.lastCertificate.Committers())
 	vals := make([]*validator.Validator, len(li.lastCertificate.Committers()))
 	for i, num := range li.lastCertificate.Committers() {
 		val, err := li.store.ValidatorByNumber(num)
@@ -199,7 +186,8 @@ func (li *LastInfo) makeCommittee(committeeSize int) (*committee.Committee, erro
 		vals[i] = val
 	}
 
-	proposerIndex = (proposerIndex + committeeSize - (li.lastCertificate.Round() % committeeSize)) % committeeSize
+	// First we create previous committee, the we update it to get the latest committee.
+	proposerIndex = (proposerIndex + curCommitteeSize - (li.lastCertificate.Round() % curCommitteeSize)) % curCommitteeSize
 	committee, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %v", err)
