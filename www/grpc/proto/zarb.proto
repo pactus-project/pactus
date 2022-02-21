@@ -65,8 +65,8 @@ message BlockRequest {
 message BlockResponse {
   string hash = 1;
   google.protobuf.Timestamp block_time = 2;
-  BlockInfo info = 3;
-  // TODO: prev certificate is missed
+  BlockHeaderInfo header = 3;
+  CertificateInfo previous_certificate = 4;
   repeated TransactionInfo tranactions = 5;
 }
 
@@ -128,7 +128,7 @@ message AccountInfo {
   int64 Balance = 4;
 }
 
-message BlockInfo {
+message BlockHeaderInfo {
   int32 version = 1;
   string prev_block_hash = 2;
   string state_hash = 3;
@@ -136,10 +136,13 @@ message BlockInfo {
   string prev_certificate_hash = 5;
   bytes sortition_seed = 6;
   string proposer_address = 7;
-  int64 round = 8;
-  repeated int32 committers = 9;
-  repeated int32 absentees = 10;
-  string signature = 11;
+}
+
+message CertificateInfo {
+  int64 round = 1;
+  repeated int32 committers = 2;
+  repeated int32 absentees = 3;
+  string signature = 4;
 }
 
 message TransactionInfo {

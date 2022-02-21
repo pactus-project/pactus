@@ -407,16 +407,7 @@
         }
       }
     },
-    "zarbBlockHeightResponse": {
-      "type": "object",
-      "properties": {
-        "height": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "zarbBlockInfo": {
+    "zarbBlockHeaderInfo": {
       "type": "object",
       "properties": {
         "version": {
@@ -441,27 +432,15 @@
         },
         "proposerAddress": {
           "type": "string"
-        },
-        "round": {
+        }
+      }
+    },
+    "zarbBlockHeightResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
           "type": "string",
           "format": "int64"
-        },
-        "committers": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "absentees": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "signature": {
-          "type": "string"
         }
       }
     },
@@ -475,15 +454,17 @@
           "type": "string",
           "format": "date-time"
         },
-        "info": {
-          "$ref": "#/definitions/zarbBlockInfo"
+        "header": {
+          "$ref": "#/definitions/zarbBlockHeaderInfo"
+        },
+        "previousCertificate": {
+          "$ref": "#/definitions/zarbCertificateInfo"
         },
         "tranactions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/zarbTransactionInfo"
-          },
-          "title": "TODO: prev certificate is missed"
+          }
         }
       }
     },
@@ -504,6 +485,32 @@
           "format": "int64"
         },
         "lastBlockHash": {
+          "type": "string"
+        }
+      }
+    },
+    "zarbCertificateInfo": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "string",
+          "format": "int64"
+        },
+        "committers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "absentees": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "signature": {
           "type": "string"
         }
       }

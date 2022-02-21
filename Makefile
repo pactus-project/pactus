@@ -66,9 +66,9 @@ proto:
 
 ########################################
 ### Formatting, linting, and vetting
-fmt: herumi
-	$(CGO_LDFLAGS) gofmt -s -w .
-	$(CGO_LDFLAGS) golangci-lint run -e "SA1019" \
+fmt:
+	gofmt -s -w .
+	golangci-lint run -e "SA1019" \
 		--timeout=5m0s \
 		--enable=gofmt \
 		--enable=unconvert \
