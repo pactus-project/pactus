@@ -259,7 +259,7 @@ func (sync *synchronizer) Fingerprint() string {
 func (sync *synchronizer) updateBlokchain() {
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
-		sync.logger.Debug("we have open seasson")
+		sync.logger.Debug("we have open session")
 		return
 	}
 
@@ -272,7 +272,7 @@ func (sync *synchronizer) updateBlokchain() {
 			from++
 		}
 
-		sync.logger.Info("we are not synced with the network.")
+		sync.logger.Info("start syncing with the network")
 		if claimedHeight > ourHeight+LatestBlockInterval {
 			sync.downloadBlocks(from)
 		} else {

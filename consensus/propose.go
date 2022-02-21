@@ -31,11 +31,11 @@ func (s *proposeState) decide() {
 func (s *proposeState) createProposal(height int, round int) {
 	block, err := s.state.ProposeBlock(round)
 	if err != nil {
-		s.logger.Error("we can't propose a block. Why?", "err", err)
+		s.logger.Error("unable to propose a block. Why?", "err", err)
 		return
 	}
 	if err := s.state.ValidateBlock(block); err != nil {
-		s.logger.Error("our block is invalid. Why?", "err", err)
+		s.logger.Error("proposed block is invalid. Why?", "err", err)
 		return
 	}
 
