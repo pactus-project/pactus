@@ -19,10 +19,10 @@ func (s *proposeState) enter() {
 func (s *proposeState) decide() {
 	proposer := s.proposer(s.round)
 	if proposer.Address().EqualsTo(s.signer.Address()) {
-		s.logger.Info("Our turn to propose", "proposer", proposer.Address())
+		s.logger.Info("our turn to propose", "proposer", proposer.Address())
 		s.createProposal(s.height, s.round)
 	} else {
-		s.logger.Debug("Not our turn to propose", "proposer", proposer.Address())
+		s.logger.Debug("not our turn to propose", "proposer", proposer.Address())
 	}
 
 	s.enterNewState(s.prepareState)
@@ -31,11 +31,11 @@ func (s *proposeState) decide() {
 func (s *proposeState) createProposal(height int, round int) {
 	block, err := s.state.ProposeBlock(round)
 	if err != nil {
-		s.logger.Error("We can't propose a block. Why?", "err", err)
+		s.logger.Error("we can't propose a block. Why?", "err", err)
 		return
 	}
 	if err := s.state.ValidateBlock(block); err != nil {
-		s.logger.Error("Our block is invalid. Why?", "err", err)
+		s.logger.Error("our block is invalid. Why?", "err", err)
 		return
 	}
 
@@ -43,7 +43,7 @@ func (s *proposeState) createProposal(height int, round int) {
 	s.signer.SignMsg(proposal)
 	s.doSetProposal(proposal)
 
-	s.logger.Info("Proposal signed and broadcasted", "proposal", proposal)
+	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
 
 	s.broadcastProposal(proposal)
 }

@@ -153,7 +153,7 @@ func (cs *consensus) MoveToNewHeight() {
 func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round int, target tickerTarget) {
 	ti := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
-	cs.logger.Debug("New timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
+	cs.logger.Debug("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	go func() {
 		<-timer.C
@@ -166,24 +166,24 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	defer cs.lk.Unlock()
 
 	if p.Height() != cs.height {
-		cs.logger.Trace("Invalid height", "proposal", p)
+		cs.logger.Trace("invalid height", "proposal", p)
 		return
 	}
 
 	roundProposal := cs.log.RoundProposal(p.Round())
 	if roundProposal != nil {
-		cs.logger.Trace("This round has proposal", "proposal", p)
+		cs.logger.Trace("this round has proposal", "proposal", p)
 		return
 	}
 
 	proposer := cs.proposer(p.Round())
 	if err := p.Verify(proposer.PublicKey()); err != nil {
-		cs.logger.Error("Proposal has invalid signature", "proposal", p, "err", err)
+		cs.logger.Error("proposal has invalid signature", "proposal", p, "err", err)
 		return
 	}
 
 	if err := cs.state.ValidateBlock(p.Block()); err != nil {
-		cs.logger.Warn("Invalid block", "proposal", p, "err", err)
+		cs.logger.Warn("invalid block", "proposal", p, "err", err)
 		return
 	}
 
@@ -191,7 +191,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 }
 
 func (cs *consensus) doSetProposal(p *proposal.Proposal) {
-	cs.logger.Info("Proposal set", "proposal", p)
+	cs.logger.Info("proposal set", "proposal", p)
 	cs.log.SetRoundProposal(p.Round(), p)
 }
 
@@ -199,11 +199,11 @@ func (cs *consensus) handleTimeout(t *ticker) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.logger.Trace("Handle ticker", "ticker", t)
+	cs.logger.Trace("handle ticker", "ticker", t)
 
 	// Old tickers might trigged now. Ignore them
 	if cs.height != t.Height || cs.round != t.Round {
-		cs.logger.Trace("Stale ticker", "ticker", t)
+		cs.logger.Trace("stale ticker", "ticker", t)
 		return
 	}
 
@@ -215,12 +215,12 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	defer cs.lk.Unlock()
 
 	if v.Height() != cs.height {
-		cs.logger.Trace("Vote has invalid height", "vote", v)
+		cs.logger.Trace("vote has invalid height", "vote", v)
 		return
 	}
 
 	if cs.log.HasVote(v.Hash()) {
-		cs.logger.Trace("Vote exists", "vote", v)
+		cs.logger.Trace("vote exists", "vote", v)
 		return
 	}
 
@@ -230,10 +230,10 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 func (cs *consensus) doAddVote(v *vote.Vote) {
 	err := cs.log.AddVote(v)
 	if err != nil {
-		cs.logger.Error("Error on adding a vote", "vote", v, "err", err)
+		cs.logger.Error("error on adding a vote", "vote", v, "err", err)
 	}
 
-	cs.logger.Debug("New vote added", "vote", v)
+	cs.logger.Debug("new vote added", "vote", v)
 }
 
 func (cs *consensus) proposer(round int) *validator.Validator {
@@ -243,18 +243,18 @@ func (cs *consensus) proposer(round int) *validator.Validator {
 func (cs *consensus) signAddVote(msgType vote.Type, hash hash.Hash) {
 	address := cs.signer.Address()
 	if !cs.log.CanVote(address) {
-		cs.logger.Trace("This node is not in committee", "addr", address)
+		cs.logger.Trace("this node is not in committee", "addr", address)
 		return
 	}
 
 	// Sign the vote
 	v := vote.NewVote(msgType, cs.height, cs.round, hash, address)
 	cs.signer.SignMsg(v)
-	cs.logger.Info("Our vote signed and broadcasted", "vote", v)
+	cs.logger.Info("our vote signed and broadcasted", "vote", v)
 
 	err := cs.log.AddVote(v)
 	if err != nil {
-		cs.logger.Error("Error on adding our vote!", "err", err, "vote", v)
+		cs.logger.Error("error on adding our vote!", "err", err, "vote", v)
 	} else {
 		cs.broadcastVote(v)
 	}

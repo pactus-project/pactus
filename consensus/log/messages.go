@@ -49,6 +49,6 @@ func (m *Messages) voteSet(voteType vote.Type) *voteset.VoteSet {
 		return m.changeProposerVotes
 	}
 
-	logger.Panic("Unexpected vote type %d", voteType)
+	logger.Panic("unexpected vote type %d", voteType)
 	return nil
 }

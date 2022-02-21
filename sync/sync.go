@@ -136,9 +136,9 @@ func (sync *synchronizer) onStartingTimeout() {
 }
 
 func (sync *synchronizer) synced() {
-	sync.logger.Debug("We are synced", "height", sync.state.LastBlockHeight())
+	sync.logger.Debug("we are synced", "height", sync.state.LastBlockHeight())
 	if err := sync.network.JoinConsensusTopic(); err != nil {
-		sync.logger.Error("Error on joining consensus topic", "err", err)
+		sync.logger.Error("error on joining consensus topic", "err", err)
 	}
 	sync.consensus.MoveToNewHeight()
 }
@@ -259,7 +259,7 @@ func (sync *synchronizer) Fingerprint() string {
 func (sync *synchronizer) updateBlokchain() {
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
-		sync.logger.Debug("We have open seasson")
+		sync.logger.Debug("we have open seasson")
 		return
 	}
 
@@ -272,7 +272,7 @@ func (sync *synchronizer) updateBlokchain() {
 			from++
 		}
 
-		sync.logger.Info("We are not synced with the network.")
+		sync.logger.Info("we are not synced with the network.")
 		if claimedHeight > ourHeight+LatestBlockInterval {
 			sync.downloadBlocks(from)
 		} else {
@@ -284,13 +284,13 @@ func (sync *synchronizer) updateBlokchain() {
 func (sync *synchronizer) prepareMessage(pld payload.Payload) *message.Message {
 	handler := sync.handlers[pld.Type()]
 	if handler == nil {
-		sync.logger.Warn("Invalid payload type: %v", pld.Type())
+		sync.logger.Warn("invalid payload type: %v", pld.Type())
 		return nil
 	}
 	msg := handler.PrepareMessage(pld)
 	if msg != nil {
 		if err := msg.SanityCheck(); err != nil {
-			sync.logger.Error("Broadcasting an invalid message", "message", msg, "err", err)
+			sync.logger.Error("broadcasting an invalid message", "message", msg, "err", err)
 			return nil
 		}
 
@@ -308,9 +308,9 @@ func (sync *synchronizer) sendTo(pld payload.Payload, to peer.ID) {
 		data, _ := msg.Encode()
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Error("Error on sending message", "message", msg, "err", err)
+			sync.logger.Error("error on sending message", "message", msg, "err", err)
 		} else {
-			sync.logger.Debug("Sending message to a peer", "message", msg, "to", to)
+			sync.logger.Debug("sending message to a peer", "message", msg, "to", to)
 		}
 	}
 }
@@ -322,9 +322,9 @@ func (sync *synchronizer) broadcast(pld payload.Payload) {
 		data, _ := msg.Encode()
 		err := sync.network.Broadcast(data, pld.Type().TopicID())
 		if err != nil {
-			sync.logger.Error("Error on broadcasting message", "message", msg, "err", err)
+			sync.logger.Error("error on broadcasting message", "message", msg, "err", err)
 		} else {
-			sync.logger.Debug("Broadcasting new message", "message", msg)
+			sync.logger.Debug("broadcasting new message", "message", msg)
 		}
 	}
 }
@@ -345,7 +345,7 @@ func (sync *synchronizer) downloadBlocks(from int) {
 	for _, peer := range l {
 		// TODO: write test for me
 		if sync.peerSet.NumberOfOpenSessions() > sync.config.MaximumOpenSessions {
-			sync.logger.Debug("We reached maximum number of open sessions")
+			sync.logger.Debug("we reached maximum number of open sessions")
 			break
 		}
 
@@ -368,7 +368,7 @@ func (sync *synchronizer) downloadBlocks(from int) {
 			to = peer.Height()
 		}
 
-		sync.logger.Debug("Sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID()))
+		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID()))
 		session := sync.peerSet.OpenSession(peer.PeerID())
 		pld := payload.NewBlocksRequestPayload(session.SessionID(), from+1, to)
 		sync.sendTo(pld, peer.PeerID())
@@ -390,7 +390,7 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 		return
 	}
 
-	sync.logger.Debug("Querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID()))
+	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID()))
 	session := sync.peerSet.OpenSession(randPeer.PeerID())
 	pld := payload.NewBlocksRequestPayload(session.SessionID(), from+1, to)
 	sync.sendTo(pld, randPeer.PeerID())
@@ -429,13 +429,13 @@ func (sync *synchronizer) tryCommitBlocks() {
 		for _, id := range b.TxIDs().IDs() {
 			if tx := sync.cache.GetTransaction(id); tx != nil {
 				if err := sync.state.AddPendingTx(tx); err != nil {
-					sync.logger.Trace("Error on appending a transaction", "err", err)
+					sync.logger.Trace("error on appending a transaction", "err", err)
 				}
 			}
 		}
-		sync.logger.Trace("Committing block", "height", ourHeight+1, "block", b)
+		sync.logger.Trace("committing block", "height", ourHeight+1, "block", b)
 		if err := sync.state.CommitBlock(ourHeight+1, b, c); err != nil {
-			sync.logger.Warn("Committing block failed", "block", b, "err", err, "height", ourHeight+1)
+			sync.logger.Warn("committing block failed", "block", b, "err", err, "height", ourHeight+1)
 			// We will ask network to re-send this block again ...
 			break
 		}
@@ -446,7 +446,7 @@ func (sync *synchronizer) prepareBlocksAndTransactions(from, count int) ([]*bloc
 	ourHeight := sync.state.LastBlockHeight()
 
 	if from > ourHeight {
-		sync.logger.Debug("We don't have block at this height", "height", from)
+		sync.logger.Debug("we don't have block at this height", "height", from)
 		return nil, nil
 	}
 
@@ -460,7 +460,7 @@ func (sync *synchronizer) prepareBlocksAndTransactions(from, count int) ([]*bloc
 	for h := from; h < from+count; h++ {
 		b := sync.cache.GetBlock(h)
 		if b == nil {
-			sync.logger.Warn("Unable to find a block", "height", h)
+			sync.logger.Warn("unable to find a block", "height", h)
 			return nil, nil
 		}
 		for _, id := range b.TxIDs().IDs() {
@@ -468,7 +468,7 @@ func (sync *synchronizer) prepareBlocksAndTransactions(from, count int) ([]*bloc
 			if trx != nil {
 				trxs = append(trxs, trx)
 			} else {
-				sync.logger.Debug("Unable to find a transaction", "id", id.Fingerprint())
+				sync.logger.Debug("unable to find a transaction", "id", id.Fingerprint())
 				return nil, nil
 			}
 		}
@@ -485,7 +485,7 @@ func (sync *synchronizer) prepareTransactions(ids []tx.ID) []*tx.Tx {
 	for _, id := range ids {
 		trx := sync.cache.GetTransaction(id)
 		if trx == nil {
-			sync.logger.Debug("Unable to find a transaction", "id", id.Fingerprint())
+			sync.logger.Debug("unable to find a transaction", "id", id.Fingerprint())
 			continue
 		}
 		trxs = append(trxs, trx)
@@ -496,12 +496,12 @@ func (sync *synchronizer) prepareTransactions(ids []tx.ID) []*tx.Tx {
 func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code payload.ResponseCode) {
 	s := sync.peerSet.FindSession(sessionID)
 	if s == nil {
-		sync.logger.Debug("Session not found or closed", "session-id", sessionID)
+		sync.logger.Debug("session not found or closed", "session-id", sessionID)
 		return
 	}
 
 	if s.PeerID() != pid {
-		sync.logger.Debug("Peer ID is not known", "session-id", sessionID, "pid", pid)
+		sync.logger.Debug("peer ID is not known", "session-id", sessionID, "pid", pid)
 		return
 	}
 
@@ -514,20 +514,20 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code payload
 		sync.updateBlokchain()
 
 	case payload.ResponseCodeBusy:
-		sync.logger.Debug("Peer is busy. close session", "session-id", sessionID)
+		sync.logger.Debug("peer is busy. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
 		sync.updateBlokchain()
 
 	case payload.ResponseCodeMoreBlocks:
-		sync.logger.Debug("Peer responding us. keep session open", "session-id", sessionID)
+		sync.logger.Debug("peer responding us. keep session open", "session-id", sessionID)
 
 	case payload.ResponseCodeNoMoreBlocks:
-		sync.logger.Debug("Peer has no more block. close session", "session-id", sessionID)
+		sync.logger.Debug("peer has no more block. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
 		sync.updateBlokchain()
 
 	case payload.ResponseCodeSynced:
-		sync.logger.Debug("Peer infomed us we are synced. close session", "session-id", sessionID)
+		sync.logger.Debug("peer infomed us we are synced. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
 		sync.synced()
 	}

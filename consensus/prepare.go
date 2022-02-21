@@ -23,7 +23,7 @@ func (s *prepareState) decide() {
 	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
 	if prepareQH != nil {
-		s.logger.Debug("Prepare has quorum", "prepareQH", prepareQH)
+		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
 		s.enterNewState(s.precommitState)
 	} else {
 		// Liveness on PBFT
@@ -46,12 +46,12 @@ func (s *prepareState) vote() {
 	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
 		s.queryProposal()
-		s.logger.Warn("No proposal yet.")
+		s.logger.Warn("no proposal yet.")
 		return
 	}
 
 	// Everything is good
-	s.logger.Info("Proposal approved", "proposal", roundProposal)
+	s.logger.Info("proposal approved", "proposal", roundProposal)
 	s.signAddVote(vote.VoteTypePrepare, roundProposal.Block().Hash())
 	s.hasVoted = true
 }
@@ -77,7 +77,7 @@ func (s *prepareState) onTimedout(t *ticker) {
 	} else if t.Target == tickerTargetChangeProposer {
 		s.enterNewState(s.changeProposerState)
 	} else {
-		s.logger.Trace("Invalid ticker", "ticker", t)
+		s.logger.Trace("invalid ticker", "ticker", t)
 	}
 }
 

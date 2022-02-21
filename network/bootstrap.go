@@ -46,7 +46,7 @@ func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2p
 
 	addresses, err := PeerAddrsToAddrInfo(conf.Addresses)
 	if err != nil {
-		b.logger.Panic("Couldn't parse bootstrap addresses", "err", err, "addresses", conf.Addresses)
+		b.logger.Panic("couldn't parse bootstrap addresses", "err", err, "addresses", conf.Addresses)
 	}
 
 	b.bootstrapPeers = addresses
@@ -82,7 +82,7 @@ func (b *bootstrap) Stop() {
 // a random subset of its bootstrap peers.
 func (b *bootstrap) checkConnectivity() {
 	currentPeers := b.dialer.Peers()
-	b.logger.Debug("Check connectivity", "peers", len(currentPeers))
+	b.logger.Debug("check connectivity", "peers", len(currentPeers))
 
 	// Let's check if some peers are disconnected
 	var connectedPeers []lp2ppeer.ID
@@ -91,53 +91,53 @@ func (b *bootstrap) checkConnectivity() {
 		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, p)
 		} else {
-			b.logger.Warn("Peer is not connected to us", "peer", p)
+			b.logger.Warn("peer is not connected to us", "peer", p)
 		}
 	}
 
 	if len(connectedPeers) > b.config.MaxThreshold {
-		b.logger.Debug("Peer count is about maximum threshold", "count", len(connectedPeers), "threshold", b.config.MaxThreshold)
+		b.logger.Debug("peer count is about maximum threshold", "count", len(connectedPeers), "threshold", b.config.MaxThreshold)
 		return
 	}
 
 	if len(connectedPeers) < b.config.MinThreshold {
-		b.logger.Debug("Peer count is less than minimum threshold", "count", len(connectedPeers), "threshold", b.config.MinThreshold)
+		b.logger.Debug("peer count is less than minimum threshold", "count", len(connectedPeers), "threshold", b.config.MinThreshold)
 
 		ctx, cancel := context.WithTimeout(b.ctx, time.Second*10)
 		var wg sync.WaitGroup
 		defer func() {
 			wg.Wait()
 
-			b.logger.Trace("Bootstrap Ipfs Routing")
+			b.logger.Trace("bootstrap Ipfs Routing")
 
 			err := b.bootstrapIpfsRouting()
 			if err != nil {
-				b.logger.Warn("Peer discovery may suffer.", "err", err)
+				b.logger.Warn("peer discovery may suffer", "err", err)
 			}
 
 			cancel()
 		}()
 
 		for _, pinfo := range b.bootstrapPeers {
-			b.logger.Trace("Try connecting to a bootstrap peer.", "peer", pinfo.String())
+			b.logger.Trace("try connecting to a bootstrap peer", "peer", pinfo.String())
 
 			// Don't try to connect to an already connected peer.
 			if hasPID(connectedPeers, pinfo.ID) {
-				b.logger.Trace("Already connected.", "peer", pinfo.String())
+				b.logger.Trace("already connected.", "peer", pinfo.String())
 				continue
 			}
 
 			wg.Add(1)
 			go func(pi lp2ppeer.AddrInfo) {
 				if err := b.host.Connect(ctx, pi); err != nil {
-					b.logger.Error("Error trying to connect to bootstrap node ", "info", pi, "err", err.Error())
+					b.logger.Error("error trying to connect to bootstrap node", "info", pi, "err", err.Error())
 				}
 				wg.Done()
 			}(pinfo)
 		}
 
 		peers := b.host.Peerstore().Peers()
-		b.logger.Debug("Peer store info", "peers", peers)
+		b.logger.Debug("peer store info", "peers", peers)
 	}
 }
 
@@ -153,7 +153,7 @@ func hasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
 func (b *bootstrap) bootstrapIpfsRouting() error {
 	dht, ok := b.routing.(*lp2pdht.IpfsDHT)
 	if !ok {
-		b.logger.Warn("No bootstrapping to do exit quietly.")
+		b.logger.Warn("no bootstrapping to do exit quietly.")
 		// No bootstrapping to do exit quietly.
 		return nil
 	}

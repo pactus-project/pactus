@@ -143,7 +143,7 @@ func (n *Node) Start() error {
 }
 
 func (n *Node) Stop() {
-	logger.Info("Stopping Node")
+	logger.Info("stopping Node")
 
 	n.consensus.Stop()
 	n.network.Stop()

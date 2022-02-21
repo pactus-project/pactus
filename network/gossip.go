@@ -25,7 +25,7 @@ type gossipService struct {
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event, logger *logger.Logger) *gossipService {
 	pubsub, err := lp2pps.NewGossipSub(ctx, host)
 	if err != nil {
-		logger.Panic("Unable to start Gossip service: %v", err)
+		logger.Panic("unable to start Gossip service: %v", err)
 		return nil
 	}
 
@@ -92,7 +92,7 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 		return
 	}
 
-	g.logger.Debug("Receiving new gossip message", "from", util.FingerprintPeerID(m.GetFrom()), "received from", util.FingerprintPeerID(m.ReceivedFrom))
+	g.logger.Debug("receiving new gossip message", "from", util.FingerprintPeerID(m.GetFrom()), "received from", util.FingerprintPeerID(m.ReceivedFrom))
 	event := &GossipMessage{
 		Source: m.GetFrom(),
 		From:   m.ReceivedFrom,

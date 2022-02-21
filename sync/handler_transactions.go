@@ -18,13 +18,13 @@ func newTransactionsHandler(sync *synchronizer) payloadHandler {
 
 func (handler *transactionsHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.TransactionsPayload)
-	handler.logger.Trace("Parsing transactions payload", "pld", pld)
+	handler.logger.Trace("parsing transactions payload", "pld", pld)
 
 	handler.cache.AddTransactions(pld.Transactions)
 
 	for _, trx := range pld.Transactions {
 		if err := handler.state.AddPendingTx(trx); err != nil {
-			handler.logger.Debug("Cannot append transaction", "tx", trx, "err", err)
+			handler.logger.Debug("cannot append transaction", "tx", trx, "err", err)
 
 			// TODO: set peer as bad peer?
 		}

@@ -18,10 +18,10 @@ func newBlocksResponseHandler(sync *synchronizer) payloadHandler {
 
 func (handler *blocksResponseHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.BlocksResponsePayload)
-	handler.logger.Trace("Parsing blocks response payload", "pld", pld)
+	handler.logger.Trace("parsing blocks response payload", "pld", pld)
 
 	if pld.IsRequestRejected() {
-		handler.logger.Warn("Blocks request is rejected", "pid", initiator, "response", pld.ResponseCode)
+		handler.logger.Warn("blocks request is rejected", "pid", initiator, "response", pld.ResponseCode)
 	} else {
 		handler.cache.AddCertificate(pld.LastCertificate)
 		handler.cache.AddBlocks(pld.From, pld.Blocks)

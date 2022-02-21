@@ -63,13 +63,13 @@ func (s *Server) StartServer(capnpServer string) error {
 		return err
 	}
 
-	s.logger.Info("Http started listening", "address", l.Addr().String())
+	s.logger.Info("http started listening", "address", l.Addr().String())
 	s.listener = l
 	go func() {
 		for {
 			err := http.Serve(l, nil)
 			if err != nil {
-				s.logger.Error("Error on a connection", "err", err)
+				s.logger.Error("error on a connection", "err", err)
 			}
 		}
 	}()
@@ -104,7 +104,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		s.logger.Error("Unable to walk through methods", "err", err)
+		s.logger.Error("unable to walk through methods", "err", err)
 		return
 	}
 
@@ -122,7 +122,7 @@ func (s *Server) writeJSON(w http.ResponseWriter, out interface{}) {
 	w.WriteHeader(http.StatusOK)
 	_, err = io.WriteString(w, string(j))
 	if err != nil {
-		s.logger.Error("Error on writing JSON string", "err", err)
+		s.logger.Error("error on writing JSON string", "err", err)
 	}
 }
 
@@ -134,7 +134,7 @@ func (s *Server) writePlainText(w http.ResponseWriter, out string) int {
 }
 
 func (s *Server) writeError(w http.ResponseWriter, err error) int {
-	s.logger.Error("An error occurred", "err", err)
+	s.logger.Error("an error occurred", "err", err)
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusBadRequest)

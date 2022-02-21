@@ -20,7 +20,7 @@ func (s *commitState) decide() {
 	// For any reason, we don't have proposal
 	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
-		s.logger.Warn("No proposal, send proposal request.")
+		s.logger.Warn("no proposal, send proposal request.")
 		s.queryProposal()
 		return
 	}
@@ -29,14 +29,14 @@ func (s *commitState) decide() {
 	// It is impossible, but good to keep this check
 	if !roundProposal.IsForBlock(*precommitQH) {
 		s.log.SetRoundProposal(s.round, nil)
-		s.logger.Error("Proposal is invalid.", "proposal", roundProposal)
+		s.logger.Error("proposal is invalid.", "proposal", roundProposal)
 		return
 	}
 
 	certBlock := roundProposal.Block()
 	cert := precommits.ToCertificate()
 	if cert == nil {
-		s.logger.Error("Invalid precommits", "precommitQH", precommitQH)
+		s.logger.Error("invalid precommits", "precommitQH", precommitQH)
 		return
 	}
 
@@ -45,7 +45,7 @@ func (s *commitState) decide() {
 		return
 	}
 
-	s.logger.Info("Block committed, Schedule new height", "precommitQH", precommitQH)
+	s.logger.Info("block committed, schedule new height", "precommitQH", precommitQH)
 	// Now we can broadcast the committed block
 	s.announceNewBlock(s.height, certBlock, cert)
 
@@ -63,7 +63,7 @@ func (s *commitState) onSetProposal(p *proposal.Proposal) {
 }
 
 func (s *commitState) onTimedout(t *ticker) {
-	s.logger.Debug("Invalid ticker", "ticker", t)
+	s.logger.Debug("invalid ticker", "ticker", t)
 }
 
 func (s *commitState) name() string {

@@ -51,14 +51,14 @@ func (s *Server) StartServer() error {
 
 	s.address = l.Addr().String()
 
-	s.logger.Info("Capnp started listening", "address", l.Addr())
+	s.logger.Info("capnp started listening", "address", l.Addr())
 	s.listener = l
 	go func() {
 		for {
 			// Wait for a connection.
 			conn, err := l.Accept()
 			if err != nil {
-				s.logger.Debug("Error on accepting a connection", "err", err)
+				s.logger.Debug("error on accepting a connection", "err", err)
 			} else {
 				//
 				go func(c net.Conn) {
@@ -66,7 +66,7 @@ func (s *Server) StartServer() error {
 					conn := rpc.NewConn(rpc.StreamTransport(c), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {
-						s.logger.Error("Error on  a connection", "err", err)
+						s.logger.Error("error on  a connection", "err", err)
 					}
 
 				}(conn)

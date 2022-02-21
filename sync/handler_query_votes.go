@@ -19,7 +19,7 @@ func newQueryVotesHandler(sync *synchronizer) payloadHandler {
 
 func (handler *queryVotesHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.QueryVotesPayload)
-	handler.logger.Trace("Parsing query votes payload", "pld", pld)
+	handler.logger.Trace("parsing query votes payload", "pld", pld)
 
 	height, _ := handler.consensus.HeightRound()
 	if pld.Height == height {
@@ -38,7 +38,7 @@ func (handler *queryVotesHandler) ParsPayload(p payload.Payload, initiator peer.
 
 func (handler *queryVotesHandler) PrepareMessage(p payload.Payload) *message.Message {
 	if !handler.weAreInTheCommittee() {
-		handler.logger.Debug("Sending QueryVotes ignored. We are not in the committee")
+		handler.logger.Debug("sending QueryVotes ignored. We are not in the committee")
 		return nil
 	}
 	msg := message.NewMessage(handler.SelfID(), p)

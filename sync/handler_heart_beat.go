@@ -18,22 +18,22 @@ func newHeartBeatHandler(sync *synchronizer) payloadHandler {
 
 func (handler *heartBeatHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
 	pld := p.(*payload.HeartBeatPayload)
-	handler.logger.Trace("Parsing heartbeat payload", "pld", pld)
+	handler.logger.Trace("parsing heartbeat payload", "pld", pld)
 
 	height, round := handler.consensus.HeightRound()
 
 	if pld.Height == height {
 		if pld.Round > round {
 			if handler.weAreInTheCommittee() {
-				handler.logger.Info("Our consensus is behind of this peer.", "ours", round, "peer", pld.Round)
+				handler.logger.Info("our consensus is behind of this peer", "ours", round, "peer", pld.Round)
 
 				query := payload.NewQueryVotesPayload(height, round)
 				handler.broadcast(query)
 			}
 		} else if pld.Round < round {
-			handler.logger.Trace("Our consensus is ahead of this peer.", "ours", round, "peer", pld.Round)
+			handler.logger.Trace("our consensus is ahead of this peer", "ours", round, "peer", pld.Round)
 		} else {
-			handler.logger.Trace("Our consensus is at the same round with this peer.", "ours", round, "peer", pld.Round)
+			handler.logger.Trace("our consensus is at the same round with this peer", "ours", round, "peer", pld.Round)
 		}
 	}
 

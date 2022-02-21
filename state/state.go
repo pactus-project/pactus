@@ -128,7 +128,7 @@ func (st *state) tryLoadLastInfo() error {
 		return fmt.Errorf("invalid genesis doc")
 	}
 
-	logger.Info("Try to load the last state info")
+	logger.Info("try to load the last state info")
 	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize, st.sortition)
 	if err != nil {
 		return err
@@ -223,7 +223,7 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 	// Check if certificate has more signers ...
 	if len(cert.Absentees()) < len(st.lastInfo.Certificate().Absentees()) {
 		if err := st.validateCertificateForPreviousHeight(cert); err != nil {
-			st.logger.Warn("Try to update last certificate, but it's invalid", "err", err)
+			st.logger.Warn("try to update last certificate, but it's invalid", "err", err)
 			return err
 		}
 		st.lastInfo.SetCertificate(cert)
@@ -263,13 +263,13 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		// All subsidy transactions (probably from invalid rounds)
 		// should be removed from the pool
 		if trx.IsMintbaseTx() {
-			st.logger.Debug("Found duplicated subsidy transaction", "tx", trx)
+			st.logger.Debug("found duplicated subsidy transaction", "tx", trx)
 			st.txPool.RemoveTx(trx.ID())
 			continue
 		}
 
 		if err := exe.Execute(trx, sb); err != nil {
-			st.logger.Debug("Found invalid transaction", "tx", trx, "err", err)
+			st.logger.Debug("found invalid transaction", "tx", trx, "err", err)
 			st.txPool.RemoveTx(trx.ID())
 		} else {
 			txIDs.Append(trx.ID())
@@ -282,11 +282,11 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	subsidyTx := st.createSubsidyTx(exe.AccumulatedFee())
 	if subsidyTx == nil {
-		st.logger.Error("Probably the node is shutting down.")
+		st.logger.Error("probably the node is shutting down.")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
 	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
-		st.logger.Error("Our subsidy transaction is invalid. Why?", "err", err)
+		st.logger.Error("our subsidy transaction is invalid. Why?", "err", err)
 		return nil, err
 	}
 	txIDs.Prepend(subsidyTx.ID())
@@ -338,7 +338,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	if height != st.lastInfo.BlockHeight()+1 {
 		/// Returning error here will cause so many error logs during syncing blockchain
 		/// Syncing is asynchronous job and we might receive blocks not in order
-		st.logger.Debug("Unexpected block height", "height", height)
+		st.logger.Debug("unexpected block height", "height", height)
 		return nil
 	}
 
@@ -352,7 +352,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
 	/// We should never have a fork in our blockchain. but if it happens, here we can catch it.
 	if !block.Header().PrevBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
-		st.logger.Panic("A possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().PrevBlockHash())
+		st.logger.Panic("a possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().PrevBlockHash())
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
@@ -403,10 +403,10 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	}
 
 	if err := st.store.WriteBatch(); err != nil {
-		st.logger.Panic("Unable to update state", "err", err)
+		st.logger.Panic("unable to update state", "err", err)
 	}
 
-	st.logger.Info("New block is committed", "block", block, "round", cert.Round())
+	st.logger.Info("new block is committed", "block", block, "round", cert.Round())
 
 	// -----------------------------------
 	// Update sortition params and evaluate sortition
@@ -414,7 +414,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 	// Evaluate sortition before updating the committee
 	if st.evaluateSortition() {
-		st.logger.Info("👏 This validator is chosen to be in the committee", "address", st.signer.Address())
+		st.logger.Info("👏 this validator is chosen to be in the committee", "address", st.signer.Address())
 	}
 
 	// -----------------------------------
@@ -453,10 +453,10 @@ func (st *state) evaluateSortition() bool {
 
 		err := st.txPool.AppendTxAndBroadcast(trx)
 		if err == nil {
-			st.logger.Debug("Sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
+			st.logger.Debug("sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
 			return true
 		}
-		st.logger.Error("Our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
+		st.logger.Error("our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
 	}
 
 	return false
@@ -473,7 +473,7 @@ func (st *state) commitSandbox(sb *sandbox.Concrete, round int) {
 	joined := make([]*validator.Validator, 0)
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.JoinedCommittee {
-			st.logger.Info("New validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
+			st.logger.Info("new validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
 
 			joined = append(joined, &vs.Validator)
 		}
@@ -483,7 +483,7 @@ func (st *state) commitSandbox(sb *sandbox.Concrete, round int) {
 		//
 		// We should panic here before updating the state
 		//
-		logger.Panic("An error occurred", "err", err)
+		logger.Panic("an error occurred", "err", err)
 	}
 
 	sb.IterateAccounts(func(as *sandbox.AccountStatus) {
@@ -572,7 +572,7 @@ func (st *state) proposeNextBlockTime() time.Time {
 
 	now := util.Now()
 	if now.After(timestamp.Add(1 * time.Second)) {
-		st.logger.Debug("It looks the last block had delay", "delay", now.Sub(timestamp))
+		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
 	}
 	return timestamp
@@ -597,7 +597,7 @@ func (st *state) IsProposer(addr crypto.Address, round int) bool {
 func (st *state) Transaction(id tx.ID) *tx.Tx {
 	tx, err := st.store.Transaction(id)
 	if err != nil {
-		st.logger.Error("Transaction Search in local store failed", "trx", id, "err", err)
+		st.logger.Error("transaction Search in local store failed", "trx", id, "err", err)
 	}
 	return tx
 }
@@ -605,7 +605,7 @@ func (st *state) Transaction(id tx.ID) *tx.Tx {
 func (st *state) Block(height int) *block.Block {
 	b, err := st.store.Block(height)
 	if err != nil {
-		st.logger.Trace("Error on retrieving block", "err", err)
+		st.logger.Trace("error on retrieving block", "err", err)
 	}
 	return b
 }
@@ -613,7 +613,7 @@ func (st *state) Block(height int) *block.Block {
 func (st *state) BlockHeight(hash hash.Hash) int {
 	h, err := st.store.BlockHeight(hash)
 	if err != nil {
-		st.logger.Trace("Error on retrieving block height", "err", err)
+		st.logger.Trace("error on retrieving block height", "err", err)
 	}
 	return h
 }
@@ -621,7 +621,7 @@ func (st *state) BlockHeight(hash hash.Hash) int {
 func (st *state) Account(addr crypto.Address) *account.Account {
 	acc, err := st.store.Account(addr)
 	if err != nil {
-		st.logger.Trace("Error on retrieving account", "err", err)
+		st.logger.Trace("error on retrieving account", "err", err)
 	}
 	return acc
 }
@@ -629,7 +629,7 @@ func (st *state) Account(addr crypto.Address) *account.Account {
 func (st *state) Validator(addr crypto.Address) *validator.Validator {
 	val, err := st.store.Validator(addr)
 	if err != nil {
-		st.logger.Trace("Error on retrieving validator", "err", err)
+		st.logger.Trace("error on retrieving validator", "err", err)
 	}
 	return val
 }
@@ -638,7 +638,7 @@ func (st *state) Validator(addr crypto.Address) *validator.Validator {
 func (st *state) ValidatorByNumber(n int) *validator.Validator {
 	val, err := st.store.ValidatorByNumber(n)
 	if err != nil {
-		st.logger.Trace("Error on retrieving validator", "err", err)
+		st.logger.Trace("error on retrieving validator", "err", err)
 	}
 	return val
 }

@@ -18,7 +18,7 @@ func (s *newHeightState) enter() {
 func (s *newHeightState) decide() {
 	sateHeight := s.state.LastBlockHeight()
 	if s.height == sateHeight+1 {
-		s.logger.Warn("Duplicated entry")
+		s.logger.Warn("duplicated entry")
 		return
 	}
 
@@ -26,13 +26,13 @@ func (s *newHeightState) decide() {
 	if s.height == sateHeight && s.round >= 0 {
 		vs := s.log.PrecommitVoteSet(s.round)
 		if vs == nil {
-			s.logger.Warn("Entering new height without certificate")
+			s.logger.Warn("entering new height without certificate")
 		} else {
 			// Update last certificate here, consensus had enough time to populate more votes
 			lastCert := vs.ToCertificate()
 			if lastCert != nil {
 				if err := s.state.UpdateLastCertificate(lastCert); err != nil {
-					s.logger.Warn("Updating last certificate failed", "err", err)
+					s.logger.Warn("updating last certificate failed", "err", err)
 				}
 			}
 		}
@@ -43,7 +43,7 @@ func (s *newHeightState) decide() {
 
 	s.height = sateHeight + 1
 	s.round = 0
-	s.logger.Info("Entering new height", "height", s.height)
+	s.logger.Info("entering new height", "height", s.height)
 
 	s.enterNewState(s.proposeState)
 }
@@ -57,7 +57,7 @@ func (s *newHeightState) onSetProposal(p *proposal.Proposal) {
 
 func (s *newHeightState) onTimedout(t *ticker) {
 	if t.Target != tickerTargetNewHeight {
-		s.logger.Debug("Invalid ticker", "ticker", t)
+		s.logger.Debug("invalid ticker", "ticker", t)
 		return
 	}
 	s.decide()
