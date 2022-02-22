@@ -9,47 +9,47 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
-type Seed [48]byte
+type VerifiableSeed [48]byte
 
-func SeedFromString(text string) (Seed, error) {
+func VerifiableSeedFromString(text string) (VerifiableSeed, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
-		return Seed{}, err
+		return VerifiableSeed{}, err
 	}
 
-	return SeedFromRawBytes(data)
+	return VerifiableSeedFromRawBytes(data)
 }
 
-func SeedFromRawBytes(data []byte) (Seed, error) {
+func VerifiableSeedFromRawBytes(data []byte) (VerifiableSeed, error) {
 	if len(data) != 48 {
-		return Seed{}, fmt.Errorf("invalid seed length")
+		return VerifiableSeed{}, fmt.Errorf("invalid seed length")
 	}
 
-	s := Seed{}
+	s := VerifiableSeed{}
 	copy(s[:], data)
 
 	return s, nil
 }
 
-func (s *Seed) Generate(signer crypto.Signer) Seed {
+func (s *VerifiableSeed) Generate(signer crypto.Signer) VerifiableSeed {
 	hash := hash.CalcHash(s[:])
 	sig := signer.SignData(hash.RawBytes())
-	newSeed, _ := SeedFromRawBytes(sig.RawBytes())
+	newSeed, _ := VerifiableSeedFromRawBytes(sig.RawBytes())
 	return newSeed
 }
 
-func (s *Seed) Validate(public crypto.PublicKey, prevSeed Seed) bool {
+func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed) bool {
 	sig, _ := bls.SignatureFromRawBytes(s[:])
 	hash := hash.CalcHash(prevSeed[:])
 	return public.Verify(hash.RawBytes(), sig)
 }
 
-func (s Seed) MarshalText() ([]byte, error) {
+func (s VerifiableSeed) MarshalText() ([]byte, error) {
 	return []byte(hex.EncodeToString(s[:])), nil
 }
 
-func (s *Seed) UnmarshalText(text []byte) error {
-	seed, err := SeedFromString(string(text))
+func (s *VerifiableSeed) UnmarshalText(text []byte) error {
+	seed, err := VerifiableSeedFromString(string(text))
 	if err != nil {
 		return err
 	}
@@ -57,10 +57,10 @@ func (s *Seed) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func GenerateRandomSeed() Seed {
+func GenerateRandomSeed() VerifiableSeed {
 	h := hash.GenerateTestHash()
 	signer := bls.GenerateTestSigner()
 	sig := signer.SignData(h.RawBytes())
-	seed, _ := SeedFromRawBytes(sig.RawBytes())
+	seed, _ := VerifiableSeedFromRawBytes(sig.RawBytes())
 	return seed
 }

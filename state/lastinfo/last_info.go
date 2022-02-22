@@ -32,7 +32,7 @@ type LastInfo struct {
 
 	store             store.Store
 	lastBlockHeight   int
-	lastSortitionSeed sortition.Seed
+	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
 	lastCertificate   *block.Certificate
 	lastBlockTime     time.Time
@@ -42,7 +42,7 @@ func NewLastInfo(store store.Store) *LastInfo {
 	return &LastInfo{store: store}
 }
 
-func (li *LastInfo) SortitionSeed() sortition.Seed {
+func (li *LastInfo) SortitionSeed() sortition.VerifiableSeed {
 	li.lk.RLock()
 	defer li.lk.RUnlock()
 
@@ -77,7 +77,7 @@ func (li *LastInfo) BlockTime() time.Time {
 	return li.lastBlockTime
 }
 
-func (li *LastInfo) SetSortitionSeed(lastSortitionSeed sortition.Seed) {
+func (li *LastInfo) SetSortitionSeed(lastSortitionSeed sortition.VerifiableSeed) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
@@ -216,7 +216,7 @@ func (li *LastInfo) makeCommittee(committeeSize int) (*committee.Committee, erro
 func (li *LastInfo) restoreSortition(srt *sortition.Sortition, cmt *committee.Committee) error {
 	type sortitionParam struct {
 		blockHash hash.Hash
-		seed      sortition.Seed
+		seed      sortition.VerifiableSeed
 		poolStake int64
 	}
 
