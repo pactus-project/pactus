@@ -1,4 +1,4 @@
-package payload
+package message
 
 import (
 	"testing"
@@ -8,23 +8,23 @@ import (
 )
 
 func TestProposalType(t *testing.T) {
-	p := &ProposalPayload{}
-	assert.Equal(t, p.Type(), PayloadTypeProposal)
+	m := &ProposalMessage{}
+	assert.Equal(t, m.Type(), MessageTypeProposal)
 }
 
-func TestProposalPayload(t *testing.T) {
+func TestProposalMessage(t *testing.T) {
 	t.Run("Invalid proposal", func(t *testing.T) {
 		proposal, _ := proposal.GenerateTestProposal(100, -1)
-		p := NewProposalPayload(proposal)
+		m := NewProposalMessage(proposal)
 
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, m.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		proposal, _ := proposal.GenerateTestProposal(100, 0)
-		p := NewProposalPayload(proposal)
+		m := NewProposalMessage(proposal)
 
-		assert.NoError(t, p.SanityCheck())
-		assert.Contains(t, p.Fingerprint(), "100")
+		assert.NoError(t, m.SanityCheck())
+		assert.Contains(t, m.Fingerprint(), "100")
 	})
 }

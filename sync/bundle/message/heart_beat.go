@@ -1,4 +1,4 @@
-package payload
+package message
 
 import (
 	"fmt"
@@ -7,34 +7,34 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 )
 
-type HeartBeatPayload struct {
+type HeartBeatMessage struct {
 	Height        int       `cbor:"1,keyasint"`
 	Round         int       `cbor:"2,keyasint"`
 	PrevBlockHash hash.Hash `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatPayload(h, r int, hash hash.Hash) *HeartBeatPayload {
-	return &HeartBeatPayload{
+func NewHeartBeatMessage(h, r int, hash hash.Hash) *HeartBeatMessage {
+	return &HeartBeatMessage{
 		Height:        h,
 		Round:         r,
 		PrevBlockHash: hash,
 	}
 }
 
-func (p *HeartBeatPayload) SanityCheck() error {
-	if p.Height <= 0 {
+func (m *HeartBeatMessage) SanityCheck() error {
+	if m.Height <= 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
-	if p.Round < 0 {
+	if m.Round < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid round")
 	}
 	return nil
 }
 
-func (p *HeartBeatPayload) Type() Type {
-	return PayloadTypeHeartBeat
+func (m *HeartBeatMessage) Type() Type {
+	return MessageTypeHeartBeat
 }
 
-func (p *HeartBeatPayload) Fingerprint() string {
-	return fmt.Sprintf("{%d/%d}", p.Height, p.Round)
+func (m *HeartBeatMessage) Fingerprint() string {
+	return fmt.Sprintf("{%d/%d}", m.Height, m.Round)
 }

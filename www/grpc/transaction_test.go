@@ -28,9 +28,9 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, tx1.Memo(), res.Tranaction.Memo)
 		assert.Equal(t, int64(tx1.Sequence()), res.Tranaction.Sequence)
 		assert.Equal(t, tx1.Signature().String(), res.Tranaction.Signature)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Amount, res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Amount)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Receiver.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Receiver)
+		assert.Equal(t, tx1.Payload().(*message.SendPayload).Amount, res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Amount)
+		assert.Equal(t, tx1.Payload().(*message.SendPayload).Sender.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)
+		assert.Equal(t, tx1.Payload().(*message.SendPayload).Receiver.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Receiver)
 	})
 
 	t.Run("Should return nil value because transcation id is invalid", func(t *testing.T) {

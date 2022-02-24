@@ -13,7 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -21,11 +21,11 @@ var tPool *txPool
 var tSandbox *sandbox.MockSandbox
 var tAcc1Addr crypto.Address
 var tAcc1Signer crypto.Signer
-var tCh chan payload.Payload
+var tCh chan message.Message
 
 func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
-	tCh = make(chan payload.Payload, 10)
+	tCh = make(chan message.Message, 10)
 	tSandbox = sandbox.MockingSandbox()
 	p, err := NewTxPool(TestConfig(), tCh)
 	assert.NoError(t, err)
@@ -49,8 +49,8 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 		case pld := <-tCh:
 			logger.Info("shouldPublishTransaction", "pld", pld)
 
-			if pld.Type() == payload.PayloadTypeTransactions {
-				pld := pld.(*payload.TransactionsPayload)
+			if pld.Type() == message.MessageTypeTransactions {
+				pld := pld.(*message.TransactionsMessage)
 				assert.Equal(t, pld.Transactions[0].ID(), id)
 				return
 			}
@@ -85,11 +85,11 @@ func TestPending(t *testing.T) {
 	tSandbox.AppendNewBlock(88, hash88)
 	trx := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
 
-	go func(ch chan payload.Payload) {
+	go func(ch chan message.Message) {
 		for {
 			pld := <-ch
 			fmt.Printf("Received a message payload: %v\n", pld.Fingerprint())
-			p := pld.(*payload.QueryTransactionsPayload)
+			p := pld.(*message.QueryTransactionsMessage)
 			if p.IDs[0].EqualsTo(trx.ID()) {
 				assert.NoError(t, tPool.AppendTx(trx))
 			}

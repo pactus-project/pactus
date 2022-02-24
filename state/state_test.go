@@ -175,7 +175,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	trx := tState1.createSubsidyTx(7)
 	assert.True(t, trx.IsMintbaseTx())
 	assert.Equal(t, trx.Payload().Value(), tState1.params.BlockReward+7)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
+	assert.Equal(t, trx.Payload().(*message.SendPayload).Receiver, tValSigner1.Address())
 
 	store := store.MockingStore()
 
@@ -192,7 +192,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
 	assert.NoError(t, err)
 	trx = st.(*state).createSubsidyTx(0)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
+	assert.Equal(t, trx.Payload().(*message.SendPayload).Receiver, addr)
 }
 
 func TestCommitBlocks(t *testing.T) {

@@ -2,27 +2,27 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type transactionsHandler struct {
 	*synchronizer
 }
 
-func newTransactionsHandler(sync *synchronizer) payloadHandler {
+func newTransactionsHandler(sync *synchronizer) messageHandler {
 	return &transactionsHandler{
 		sync,
 	}
 }
 
-func (handler *transactionsHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.TransactionsPayload)
-	handler.logger.Trace("parsing transactions payload", "pld", pld)
+func (handler *transactionsHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.TransactionsMessage)
+	handler.logger.Trace("parsing Transactions message", "msg", msg)
 
-	handler.cache.AddTransactions(pld.Transactions)
+	handler.cache.AddTransactions(msg.Transactions)
 
-	for _, trx := range pld.Transactions {
+	for _, trx := range msg.Transactions {
 		if err := handler.state.AddPendingTx(trx); err != nil {
 			handler.logger.Debug("cannot append transaction", "tx", trx, "err", err)
 
@@ -33,6 +33,6 @@ func (handler *transactionsHandler) ParsPayload(p payload.Payload, initiator pee
 	return nil
 }
 
-func (handler *transactionsHandler) PrepareMessage(p payload.Payload) *message.Message {
-	return message.NewMessage(handler.SelfID(), p)
+func (handler *transactionsHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+	return bundle.NewBundle(handler.SelfID(), m)
 }

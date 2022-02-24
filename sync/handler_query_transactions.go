@@ -4,41 +4,41 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type queryTransactionsHandler struct {
 	*synchronizer
 }
 
-func newQueryTransactionsHandler(sync *synchronizer) payloadHandler {
+func newQueryTransactionsHandler(sync *synchronizer) messageHandler {
 	return &queryTransactionsHandler{
 		sync,
 	}
 }
 
-func (handler *queryTransactionsHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.QueryTransactionsPayload)
-	handler.logger.Trace("parsing query transactions payload", "pld", pld)
+func (handler *queryTransactionsHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.QueryTransactionsMessage)
+	handler.logger.Trace("parsing QueryTransactions message", "msg", msg)
 
 	if !handler.peerIsInTheCommittee(initiator) {
 		return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
 	}
 
-	trxs := handler.prepareTransactions(pld.IDs)
+	trxs := handler.prepareTransactions(msg.IDs)
 	if len(trxs) > 0 {
-		response := payload.NewTransactionsPayload(trxs)
+		response := message.NewTransactionsMessage(trxs)
 		handler.broadcast(response)
 	}
 
 	return nil
 }
 
-func (handler *queryTransactionsHandler) PrepareMessage(p payload.Payload) *message.Message {
-	pld := p.(*payload.QueryTransactionsPayload)
+func (handler *queryTransactionsHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+	msg := m.(*message.QueryTransactionsMessage)
 	missed := []hash.Hash{}
-	for _, id := range pld.IDs {
+	for _, id := range msg.IDs {
 		trx := handler.cache.GetTransaction(id)
 		if trx != nil {
 			if err := handler.state.AddPendingTx(trx); err != nil {
@@ -57,6 +57,6 @@ func (handler *queryTransactionsHandler) PrepareMessage(p payload.Payload) *mess
 	if len(missed) == 0 {
 		return nil
 	}
-	pld.IDs = missed
-	return message.NewMessage(handler.SelfID(), p)
+	msg.IDs = missed
+	return bundle.NewBundle(handler.SelfID(), m)
 }

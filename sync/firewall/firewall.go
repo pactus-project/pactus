@@ -9,7 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/message"
+	"github.com/zarbchain/zarb-go/sync/bundle"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -33,7 +33,7 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 	}
 }
 
-func (f *Firewall) OpenGossipMessage(data []byte, source peer.ID, from peer.ID) *message.Message {
+func (f *Firewall) OpenGossipMessage(data []byte, source peer.ID, from peer.ID) *bundle.Bundle {
 	if from != source {
 		fromPeer := f.peerSet.MustGetPeer(from)
 		if f.peerIsBanned(fromPeer) {
@@ -56,7 +56,7 @@ func (f *Firewall) OpenGossipMessage(data []byte, source peer.ID, from peer.ID) 
 	return msg
 }
 
-func (f *Firewall) OpenStreamMessage(r io.Reader, from peer.ID) *message.Message {
+func (f *Firewall) OpenStreamMessage(r io.Reader, from peer.ID) *bundle.Bundle {
 	msg, err := f.openMessage(r, from)
 	if err != nil {
 		f.logger.Warn("firewall: unable to open a stream message", "err", err)
@@ -70,7 +70,7 @@ func (f *Firewall) OpenStreamMessage(r io.Reader, from peer.ID) *message.Message
 	return msg
 }
 
-func (f *Firewall) openMessage(r io.Reader, source peer.ID) (*message.Message, error) {
+func (f *Firewall) openMessage(r io.Reader, source peer.ID) (*bundle.Bundle, error) {
 	peer := f.peerSet.MustGetPeer(source)
 	peer.IncreaseReceivedMessage()
 
@@ -94,8 +94,8 @@ func (f *Firewall) openMessage(r io.Reader, source peer.ID) (*message.Message, e
 	return msg, nil
 }
 
-func (f *Firewall) decodeMessage(r io.Reader, source *peerset.Peer) (*message.Message, error) {
-	msg := new(message.Message)
+func (f *Firewall) decodeMessage(r io.Reader, source *peerset.Peer) (*bundle.Bundle, error) {
+	msg := new(bundle.Bundle)
 	bytesRead, err := msg.Decode(r)
 	source.IncreaseReceivedBytes(bytesRead)
 	if err != nil {
@@ -105,7 +105,7 @@ func (f *Firewall) decodeMessage(r io.Reader, source *peerset.Peer) (*message.Me
 	return msg, nil
 }
 
-func (f *Firewall) checkMessage(msg *message.Message, source *peerset.Peer) error {
+func (f *Firewall) checkMessage(msg *bundle.Bundle, source *peerset.Peer) error {
 	if err := msg.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}

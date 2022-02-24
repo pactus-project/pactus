@@ -2,39 +2,39 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type blocksResponseHandler struct {
 	*synchronizer
 }
 
-func newBlocksResponseHandler(sync *synchronizer) payloadHandler {
+func newBlocksResponseHandler(sync *synchronizer) messageHandler {
 	return &blocksResponseHandler{
 		sync,
 	}
 }
 
-func (handler *blocksResponseHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.BlocksResponsePayload)
-	handler.logger.Trace("parsing blocks response payload", "pld", pld)
+func (handler *blocksResponseHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.BlocksResponseMessage)
+	handler.logger.Trace("parsing BlocksResponse message", "msg", msg)
 
-	if pld.IsRequestRejected() {
-		handler.logger.Warn("blocks request is rejected", "pid", initiator, "response", pld.ResponseCode)
+	if msg.IsRequestRejected() {
+		handler.logger.Warn("blocks request is rejected", "pid", initiator, "response", msg.ResponseCode)
 	} else {
-		handler.cache.AddCertificate(pld.LastCertificate)
-		handler.cache.AddBlocks(pld.From, pld.Blocks)
-		handler.cache.AddTransactions(pld.Transactions)
+		handler.cache.AddCertificate(msg.LastCertificate)
+		handler.cache.AddBlocks(msg.From, msg.Blocks)
+		handler.cache.AddTransactions(msg.Transactions)
 		handler.tryCommitBlocks()
 	}
-	handler.updateSession(pld.SessionID, initiator, pld.ResponseCode)
+	handler.updateSession(msg.SessionID, initiator, msg.ResponseCode)
 
 	return nil
 }
 
-func (handler *blocksResponseHandler) PrepareMessage(p payload.Payload) *message.Message {
-	msg := message.NewMessage(handler.SelfID(), p)
+func (handler *blocksResponseHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+	msg := bundle.NewBundle(handler.SelfID(), m)
 	msg.CompressIt()
 
 	return msg

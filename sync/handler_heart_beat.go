@@ -2,48 +2,48 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type heartBeatHandler struct {
 	*synchronizer
 }
 
-func newHeartBeatHandler(sync *synchronizer) payloadHandler {
+func newHeartBeatHandler(sync *synchronizer) messageHandler {
 	return &heartBeatHandler{
 		sync,
 	}
 }
 
-func (handler *heartBeatHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.HeartBeatPayload)
-	handler.logger.Trace("parsing heartbeat payload", "pld", pld)
+func (handler *heartBeatHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.HeartBeatMessage)
+	handler.logger.Trace("parsing HeartBeat message", "msg", msg)
 
 	height, round := handler.consensus.HeightRound()
 
-	if pld.Height == height {
-		if pld.Round > round {
+	if msg.Height == height {
+		if msg.Round > round {
 			if handler.weAreInTheCommittee() {
-				handler.logger.Info("our consensus is behind of this peer", "ours", round, "peer", pld.Round)
+				handler.logger.Info("our consensus is behind of this peer", "ours", round, "peer", msg.Round)
 
-				query := payload.NewQueryVotesPayload(height, round)
+				query := message.NewQueryVotesMessage(height, round)
 				handler.broadcast(query)
 			}
-		} else if pld.Round < round {
-			handler.logger.Trace("our consensus is ahead of this peer", "ours", round, "peer", pld.Round)
+		} else if msg.Round < round {
+			handler.logger.Trace("our consensus is ahead of this peer", "ours", round, "peer", msg.Round)
 		} else {
-			handler.logger.Trace("our consensus is at the same round with this peer", "ours", round, "peer", pld.Round)
+			handler.logger.Trace("our consensus is at the same round with this peer", "ours", round, "peer", msg.Round)
 		}
 	}
 
 	peer := handler.peerSet.MustGetPeer(initiator)
-	peer.UpdateHeight(pld.Height - 1)
-	handler.peerSet.UpdateMaxClaimedHeight(pld.Height - 1)
+	peer.UpdateHeight(msg.Height - 1)
+	handler.peerSet.UpdateMaxClaimedHeight(msg.Height - 1)
 
 	return nil
 }
 
-func (handler *heartBeatHandler) PrepareMessage(p payload.Payload) *message.Message {
-	return message.NewMessage(handler.SelfID(), p)
+func (handler *heartBeatHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+	return bundle.NewBundle(handler.SelfID(), m)
 }

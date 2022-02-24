@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
@@ -20,12 +20,12 @@ func TestParsingHelloMessages(t *testing.T) {
 		invGenHash := hash.GenerateTestHash()
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		pld := payload.NewHelloPayload(pid, "bad-genesis", 0, payload.FlagNeedResponse, invGenHash)
-		signer.SignMsg(pld)
-		assert.True(t, pld.PublicKey.EqualsTo(signer.PublicKey()))
+		msg := message.NewHelloMessage(pid, "bad-genesis", 0, message.FlagNeedResponse, invGenHash)
+		signer.SignMsg(msg)
+		assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
-		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
-		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
+		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 		checkPeerStatus(t, pid, peerset.StatusCodeBanned)
 	})
 
@@ -33,13 +33,13 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		height := util.RandInt(0)
 		pid := util.RandomPeerID()
-		pld := payload.NewHelloPayload(pid, "kitty", height, payload.FlagNeedResponse|payload.FlagInitialBlockDownload, tState.GenHash)
-		signer.SignMsg(pld)
+		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNeedResponse|message.FlagInitialBlockDownload, tState.GenHash)
+		signer.SignMsg(msg)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
-		assert.False(t, util.IsFlagSet(msg.Payload.(*payload.HelloPayload).Flags, payload.FlagNeedResponse))
+		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
+		assert.False(t, util.IsFlagSet(bnd.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
 
 		// Check if the peer info is updated
 		p := tSync.peerSet.GetPeer(pid)
@@ -55,11 +55,11 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		pld := payload.NewHelloPayload(pid, "kitty", 0, payload.FlagInitialBlockDownload, tState.GenHash)
-		signer.SignMsg(pld)
+		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagInitialBlockDownload, tState.GenHash)
+		signer.SignMsg(msg)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
-		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 	})
 
@@ -68,11 +68,11 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		claimedHeight := tState.LastBlockHeight() + 5
 		pid := util.RandomPeerID()
-		pld := payload.NewHelloPayload(pid, "kitty", claimedHeight, 0, tState.GenHash)
-		signer.SignMsg(pld)
+		msg := message.NewHelloMessage(pid, "kitty", claimedHeight, 0, tState.GenHash)
+		signer.SignMsg(msg)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
-		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksRequest)
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 		assert.Equal(t, tSync.peerSet.MaxClaimedHeight(), claimedHeight)
 	})
@@ -83,7 +83,7 @@ func TestBroadcastingHelloMessages(t *testing.T) {
 
 	tSync.sayHello(true)
 
-	msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
-	assert.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagHelloMessage))
-	assert.True(t, util.IsFlagSet(msg.Payload.(*payload.HelloPayload).Flags, payload.FlagNeedResponse))
+	bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
+	assert.True(t, util.IsFlagSet(bnd.Flags, bundle.BundleFlagHelloMessage))
+	assert.True(t, util.IsFlagSet(bnd.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
 }

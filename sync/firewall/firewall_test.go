@@ -11,8 +11,8 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -55,11 +55,11 @@ func TestInvalidMessagesCounter(t *testing.T) {
 	assert.Nil(t, tFirewall.OpenGossipMessage([]byte("bad"), tUnknownPeerID, tUnknownPeerID))
 	assert.Nil(t, tFirewall.OpenGossipMessage(nil, tUnknownPeerID, tUnknownPeerID))
 
-	msg := message.NewMessage(tUnknownPeerID, payload.NewQueryProposalPayload(-1, 1))
+	msg := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(-1, 1))
 	d, _ := msg.Encode()
 	assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
 
-	msg = message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(0, 1))
+	msg = bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(0, 1))
 	d, _ = msg.Encode()
 	assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
 
@@ -71,7 +71,7 @@ func TestGossipMesage(t *testing.T) {
 	t.Run("Message source: unknown, from: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tUnknownPeerID, payload.NewQueryProposalPayload(100, 1))
+		msg := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(100, 1))
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
@@ -82,7 +82,7 @@ func TestGossipMesage(t *testing.T) {
 	t.Run("Message source: bad, from: unknown => should close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
+		msg := bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(100, 1))
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
@@ -93,7 +93,7 @@ func TestGossipMesage(t *testing.T) {
 	t.Run("Message initiator is not the same as source => should close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tBadPeerID, payload.NewQueryProposalPayload(100, 1))
+		msg := bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(100, 1))
 		d, _ := msg.Encode()
 
 		assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
@@ -103,7 +103,7 @@ func TestGossipMesage(t *testing.T) {
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tGoodPeerID, payload.NewQueryProposalPayload(100, 1))
+		msg := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(100, 1))
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
@@ -117,7 +117,7 @@ func TestStreamMesage(t *testing.T) {
 	t.Run("Message source: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tBadPeerID, payload.NewBlocksRequestPayload(util.RandInt(0), 1, 100))
+		msg := bundle.NewBundle(tBadPeerID, message.NewBlocksRequestMessage(util.RandInt(0), 1, 100))
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
@@ -128,7 +128,7 @@ func TestStreamMesage(t *testing.T) {
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
 		setup(t)
 
-		msg := message.NewMessage(tGoodPeerID, payload.NewBlocksRequestPayload(util.RandInt(0), 1, 100))
+		msg := bundle.NewBundle(tGoodPeerID, message.NewBlocksRequestMessage(util.RandInt(0), 1, 100))
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
@@ -140,7 +140,7 @@ func TestStreamMesage(t *testing.T) {
 func TestDisabledFirewal(t *testing.T) {
 	setup(t)
 
-	msg := message.NewMessage(tGoodPeerID, payload.NewQueryProposalPayload(-1, -1))
+	msg := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(-1, -1))
 	d, _ := msg.Encode()
 
 	tFirewall.config.Enabled = false

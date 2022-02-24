@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -15,9 +15,9 @@ func TestParsingProposalMessages(t *testing.T) {
 	t.Run("Parsing proposal message", func(t *testing.T) {
 		consensusHeight := tState.LastBlockHeight() + 1
 		prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-		pld := payload.NewProposalPayload(prop)
+		msg := message.NewProposalMessage(prop)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, util.RandomPeerID()))
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, util.RandomPeerID()))
 		assert.NotNil(t, tSync.cache.GetProposal(consensusHeight, 0))
 		assert.NotNil(t, tConsensus.RoundProposal(0))
 	})

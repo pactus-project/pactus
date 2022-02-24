@@ -12,7 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -30,15 +30,15 @@ func TestOneBlockShorter(t *testing.T) {
 	sid := tSync.peerSet.OpenSession(pid).SessionID()
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
-		pld := payload.NewBlocksResponsePayload(payload.ResponseCodeRejected, sid, 0, nil, nil, nil)
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid, 0, nil, nil, nil)
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
 	})
 
 	t.Run("Commit one block", func(t *testing.T) {
-		pld := payload.NewBlocksResponsePayload(payload.ResponseCodeSynced, sid, lastBlockheight+1, []*block.Block{b1}, trxs, c1)
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid, lastBlockheight+1, []*block.Block{b1}, trxs, c1)
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
 		assert.Equal(t, tState.LastBlockHeight(), lastBlockheight+1)
@@ -58,8 +58,8 @@ func TestSyncing(t *testing.T) {
 	stateBob := state.MockingState(committeeBob)
 	consensusAlice := consensus.MockingConsensus(stateAlice)
 	consensusBob := consensus.MockingConsensus(stateBob)
-	broadcastChAlice := make(chan payload.Payload, 1000)
-	broadcastChBob := make(chan payload.Payload, 1000)
+	broadcastChAlice := make(chan message.Message, 1000)
+	broadcastChBob := make(chan message.Message, 1000)
 	networkAlice := network.MockingNetwork(util.RandomPeerID())
 	networkBob := network.MockingNetwork(util.RandomPeerID())
 
@@ -103,36 +103,36 @@ func TestSyncing(t *testing.T) {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
-	shouldPublishPayloadWithThisType(t, networkAlice, payload.PayloadTypeHello)
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeHello)
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
 	// Hello-ack
-	shouldPublishPayloadWithThisType(t, networkAlice, payload.PayloadTypeHello)
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeHello)
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
 	assert.Len(t, syncAlice.Peers(), 1)
 	assert.Len(t, syncBob.Peers(), 1)
 
-	shouldPublishPayloadWithThisType(t, networkAlice, payload.PayloadTypeBlocksRequest)
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 1-10
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 11-20
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 21-30
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // NoMoreBlock
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 1-10
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 11-20
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 21-30
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
 
-	shouldPublishPayloadWithThisType(t, networkAlice, payload.PayloadTypeBlocksRequest)
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 31-40
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 41-50
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 51-60
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // NoMoreBlock
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 31-40
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 41-50
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 51-60
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
 
-	shouldPublishPayloadWithThisType(t, networkAlice, payload.PayloadTypeBlocksRequest)
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 61-70
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 71-80
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 81-90
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // NoMoreBlock
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 61-70
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 71-80
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 81-90
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
 
 	// Latest block requests
-	shouldPublishPayloadWithThisType(t, networkAlice, payload.PayloadTypeBlocksRequest)
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // 91-100
-	shouldPublishPayloadWithThisType(t, networkBob, payload.PayloadTypeBlocksResponse) // Synced
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 91-100
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // Synced
 }
