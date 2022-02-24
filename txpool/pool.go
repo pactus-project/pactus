@@ -79,8 +79,7 @@ func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	}
 
 	go func(t *tx.Tx) {
-		pld := message.NewTransactionsMessage([]*tx.Tx{t})
-		pool.broadcastCh <- pld
+		pool.broadcastCh <- message.NewTransactionsMessage([]*tx.Tx{t})
 	}(trx)
 
 	return nil
@@ -141,9 +140,7 @@ func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
 	}
 
 	pool.logger.Debug("querying transaction from the network", "id", id)
-
-	pld := message.NewQueryTransactionsMessage([]tx.ID{id})
-	pool.broadcastCh <- pld
+	pool.broadcastCh <- message.NewQueryTransactionsMessage([]tx.ID{id})
 
 	duration := time.Millisecond * 500
 	timeout := time.NewTicker(duration)

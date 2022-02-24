@@ -159,14 +159,14 @@ func (sync *synchronizer) broadcastHeartBeat() {
 	if sync.weAreInTheCommittee() {
 		v := sync.consensus.PickRandomVote()
 		if v != nil {
-			pld := message.NewVoteMessage(v)
-			sync.broadcast(pld)
+			msg := message.NewVoteMessage(v)
+			sync.broadcast(msg)
 		}
 	}
 
 	height, round := sync.consensus.HeightRound()
-	pld := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
-	sync.broadcast(pld)
+	msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
+	sync.broadcast(msg)
 }
 
 func (sync *synchronizer) sayHello(needResponse bool) {
@@ -177,14 +177,14 @@ func (sync *synchronizer) sayHello(needResponse bool) {
 	if needResponse {
 		flags = util.SetFlag(flags, message.FlagNeedResponse)
 	}
-	pld := message.NewHelloMessage(
+	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
 		flags, sync.state.GenesisHash())
-	sync.signer.SignMsg(pld)
+	sync.signer.SignMsg(msg)
 
-	sync.broadcast(pld)
+	sync.broadcast(msg)
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -193,8 +193,8 @@ func (sync *synchronizer) broadcastLoop() {
 		case <-sync.ctx.Done():
 			return
 
-		case pld := <-sync.broadcastCh:
-			sync.broadcast(pld)
+		case msg := <-sync.broadcastCh:
+			sync.broadcast(msg)
 		}
 	}
 }
@@ -205,39 +205,39 @@ func (sync *synchronizer) receiveLoop() {
 			return
 
 		case e := <-sync.networkCh:
-			var msg *bundle.Bundle
+			var bnd *bundle.Bundle
 			switch e.Type() {
 			case network.EventTypeGossip:
 				ge := e.(*network.GossipMessage)
-				msg = sync.firewall.OpenGossipMessage(ge.Data, ge.Source, ge.From)
+				bnd = sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
 
 			case network.EventTypeStream:
 				se := e.(*network.StreamMessage)
-				msg = sync.firewall.OpenStreamMessage(se.Reader, se.Source)
+				bnd = sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 			}
 
-			err := sync.processIncomingMessage(msg)
+			err := sync.processIncomingBundle(bnd)
 			if err != nil {
-				sync.logger.Warn("error on parsing a message", "initiator", util.FingerprintPeerID(msg.Initiator), "message", msg, "err", err)
-				peer := sync.peerSet.MustGetPeer(msg.Initiator)
-				peer.IncreaseInvalidMessage()
+				sync.logger.Warn("error on parsing a message", "initiator", util.FingerprintPeerID(bnd.Initiator), "message", bnd, "err", err)
+				peer := sync.peerSet.MustGetPeer(bnd.Initiator)
+				peer.IncreaseInvalidBundlesCounter()
 			}
 		}
 	}
 }
 
-func (sync *synchronizer) processIncomingMessage(bnd *bundle.Bundle) error {
+func (sync *synchronizer) processIncomingBundle(bnd *bundle.Bundle) error {
 	if bnd == nil {
 		return nil
 	}
 
 	sync.logger.Debug("received a message", "initiator", util.FingerprintPeerID(bnd.Initiator), "bundle", bnd)
-	handler := sync.handlers[bnd.Message.Type()]
-	if handler == nil {
+	h := sync.handlers[bnd.Message.Type()]
+	if h == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid message type: %v", bnd.Message.Type())
 	}
 
-	return handler.ParsMessage(bnd.Message, bnd.Initiator)
+	return h.ParsMessage(bnd.Message, bnd.Initiator)
 }
 
 func (sync *synchronizer) Fingerprint() string {
@@ -277,46 +277,46 @@ func (sync *synchronizer) updateBlokchain() {
 	}
 }
 
-func (sync *synchronizer) prepareMessage(pld message.Message) *bundle.Bundle {
-	handler := sync.handlers[pld.Type()]
-	if handler == nil {
-		sync.logger.Warn("invalid payload type: %v", pld.Type())
+func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
+	h := sync.handlers[msg.Type()]
+	if h == nil {
+		sync.logger.Warn("invalid message type: %v", msg.Type())
 		return nil
 	}
-	msg := handler.PrepareBundle(pld)
-	if msg != nil {
-		if err := msg.SanityCheck(); err != nil {
-			sync.logger.Error("broadcasting an invalid message", "message", msg, "err", err)
+	bnd := h.PrepareBundle(msg)
+	if bnd != nil {
+		if err := bnd.SanityCheck(); err != nil {
+			sync.logger.Error("broadcasting an invalid bundle", "bundle", bnd, "err", err)
 			return nil
 		}
 
 		// Bundles will be carried through LibP2P.
 		// In future we might support other libraries.
-		msg.Flags = util.SetFlag(msg.Flags, bundle.BundleFlagNetworkLibP2P)
-		return msg
+		bnd.Flags = util.SetFlag(bnd.Flags, bundle.BundleFlagNetworkLibP2P)
+		return bnd
 	}
 	return nil
 }
 
-func (sync *synchronizer) sendTo(pld message.Message, to peer.ID) {
-	msg := sync.prepareMessage(pld)
-	if msg != nil {
-		data, _ := msg.Encode()
+func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
+	bnd := sync.prepareBundle(msg)
+	if bnd != nil {
+		data, _ := bnd.Encode()
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Error("error on sending message", "message", msg, "err", err)
+			sync.logger.Error("error on sending message", "message", bnd, "err", err)
 		} else {
-			sync.logger.Debug("sending message to a peer", "message", msg, "to", to)
+			sync.logger.Debug("sending message to a peer", "message", bnd, "to", to)
 		}
 	}
 }
 
-func (sync *synchronizer) broadcast(pld message.Message) {
-	msg := sync.prepareMessage(pld)
-	if msg != nil {
-		msg.Flags = util.SetFlag(msg.Flags, bundle.BundleFlagBroadcasted)
-		data, _ := msg.Encode()
-		err := sync.network.Broadcast(data, pld.Type().TopicID())
+func (sync *synchronizer) broadcast(msg message.Message) {
+	bnd := sync.prepareBundle(msg)
+	if bnd != nil {
+		bnd.Flags = util.SetFlag(bnd.Flags, bundle.BundleFlagBroadcasted)
+		data, _ := bnd.Encode()
+		err := sync.network.Broadcast(data, msg.Type().TopicID())
 		if err != nil {
 			sync.logger.Error("error on broadcasting message", "message", msg, "err", err)
 		} else {
@@ -366,8 +366,8 @@ func (sync *synchronizer) downloadBlocks(from int) {
 
 		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID()))
 		session := sync.peerSet.OpenSession(peer.PeerID())
-		pld := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
-		sync.sendTo(pld, peer.PeerID())
+		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
+		sync.sendTo(msg, peer.PeerID())
 		from = to
 	}
 }
@@ -388,8 +388,8 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 
 	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID()))
 	session := sync.peerSet.OpenSession(randPeer.PeerID())
-	pld := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
-	sync.sendTo(pld, randPeer.PeerID())
+	msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
+	sync.sendTo(msg, randPeer.PeerID())
 }
 
 /// peerIsInTheCommittee checks if the peer is a member of committee

@@ -53,12 +53,12 @@ func (b *Bundle) CompressIt() {
 	b.Flags = util.SetFlag(b.Flags, BundleFlagCompressed)
 }
 
-type _Message struct {
+type _Bundle struct {
 	Version     int          `cbor:"1,keyasint"`
 	Flags       int          `cbor:"2,keyasint"`
 	Initiator   peer.ID      `cbor:"3,keyasint"`
 	MessageType message.Type `cbor:"4,keyasint"`
-	Message     []byte       `cbor:"5,keyasint"`
+	MessageData []byte       `cbor:"5,keyasint"`
 }
 
 func (b *Bundle) Encode() ([]byte, error) {
@@ -74,43 +74,43 @@ func (b *Bundle) Encode() ([]byte, error) {
 		}
 	}
 
-	msg := &_Message{
+	msg := &_Bundle{
 		Version:     b.Version,
 		Flags:       b.Flags,
 		Initiator:   b.Initiator,
 		MessageType: b.Message.Type(),
-		Message:     data,
+		MessageData: data,
 	}
 
 	return cbor.Marshal(msg)
 }
 
 func (b *Bundle) Decode(r io.Reader) (int, error) {
-	var msg _Message
+	var bnd _Bundle
 	d := cbor.NewDecoder(r)
-	err := d.Decode(&msg)
+	err := d.Decode(&bnd)
 	bytesRead := d.NumBytesRead()
 	if err != nil {
 		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
-	data := msg.Message
-	pld := message.MakeMessage(msg.MessageType)
-	if pld == nil {
-		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
+	data := bnd.MessageData
+	msg := message.MakeMessage(bnd.MessageType)
+	if msg == nil {
+		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid data")
 	}
 
-	if util.IsFlagSet(msg.Flags, BundleFlagCompressed) {
-		c, err := util.DecompressBuffer(msg.Message)
+	if util.IsFlagSet(bnd.Flags, BundleFlagCompressed) {
+		c, err := util.DecompressBuffer(bnd.MessageData)
 		if err != nil {
 			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 		}
 		data = c
 	}
 
-	b.Version = msg.Version
-	b.Flags = msg.Flags
-	b.Initiator = msg.Initiator
-	b.Message = pld
-	return bytesRead, cbor.Unmarshal(data, pld)
+	b.Version = bnd.Version
+	b.Flags = bnd.Flags
+	b.Initiator = bnd.Initiator
+	b.Message = msg
+	return bytesRead, cbor.Unmarshal(data, msg)
 }

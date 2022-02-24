@@ -261,23 +261,19 @@ func (cs *consensus) signAddVote(msgType vote.Type, hash hash.Hash) {
 }
 
 func (cs *consensus) queryProposal() {
-	pld := message.NewQueryProposalMessage(cs.height, cs.round)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewQueryProposalMessage(cs.height, cs.round)
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
-	pld := message.NewProposalMessage(p)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewProposalMessage(p)
 }
 
 func (cs *consensus) broadcastVote(v *vote.Vote) {
-	pld := message.NewVoteMessage(v)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewVoteMessage(v)
 }
 
 func (cs *consensus) announceNewBlock(h int, b *block.Block, c *block.Certificate) {
-	pld := message.NewBlockAnnounceMessage(h, b, c)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewBlockAnnounceMessage(h, b, c)
 }
 
 // TODO: Improve the performance?

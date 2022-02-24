@@ -50,8 +50,8 @@ type peerData struct {
 	PublicKey            crypto.PublicKey
 	InitialBlockDownload bool
 	Height               int
-	ReceivedMessages     int
-	InvalidMessages      int
+	ReceivedBundles      int
+	InvalidBundles       int
 	ReceivedBytes        int
 }
 
@@ -126,18 +126,18 @@ func (p *Peer) InitialBlockDownload() bool {
 	return p.data.InitialBlockDownload
 }
 
-func (p *Peer) ReceivedMessages() int {
+func (p *Peer) ReceivedBundles() int {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
 
-	return p.data.ReceivedMessages
+	return p.data.ReceivedBundles
 }
 
-func (p *Peer) InvalidMessages() int {
+func (p *Peer) InvalidBundles() int {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
 
-	return p.data.InvalidMessages
+	return p.data.InvalidBundles
 }
 
 func (p *Peer) ReceivedBytes() int {
@@ -189,46 +189,46 @@ func (p *Peer) UpdateHeight(height int) {
 	p.data.Height = height
 }
 
-func (p *Peer) IncreaseReceivedMessage() {
+func (p *Peer) IncreaseReceivedBundlesCounter() {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.ReceivedMessages++
+	p.data.ReceivedBundles++
 }
 
-func (p *Peer) IncreaseReceivedBytes(len int) {
+func (p *Peer) IncreaseInvalidBundlesCounter() {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.ReceivedBytes += len
+	p.data.InvalidBundles++
 }
 
-func (p *Peer) UpdateInvalidMessage(msg int) {
+func (p *Peer) IncreaseReceivedBytesCounter(c int) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.InvalidMessages = msg
+	p.data.ReceivedBytes += c
 }
 
-func (p *Peer) UpdateReceivedMessage(msg int) {
+func (p *Peer) UpdateInvalidBundlesCounter(n int) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.data.ReceivedMessages = msg
+	p.data.InvalidBundles = n
 }
 
-func (p *Peer) UpdateReceivedBytes(len int) {
+func (p *Peer) UpdateReceivedBundlesCounter(n int) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
+
+	p.data.ReceivedBundles = n
+}
+
+func (p *Peer) UpdateReceivedBytesCounter(len int) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
 	p.data.ReceivedBytes = len
-}
-
-func (p *Peer) IncreaseInvalidMessage() {
-	p.lk.Lock()
-	defer p.lk.Unlock()
-
-	p.data.InvalidMessages++
 }
 
 func (p *Peer) MarshalJSON() ([]byte, error) {

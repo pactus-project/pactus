@@ -49,22 +49,22 @@ func setup(t *testing.T) {
 	badGood.UpdateStatus(peerset.StatusCodeBanned)
 }
 
-func TestInvalidMessagesCounter(t *testing.T) {
+func TestInvalidBundlesCounter(t *testing.T) {
 	setup(t)
 
-	assert.Nil(t, tFirewall.OpenGossipMessage([]byte("bad"), tUnknownPeerID, tUnknownPeerID))
-	assert.Nil(t, tFirewall.OpenGossipMessage(nil, tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenGossipBundle([]byte("bad"), tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenGossipBundle(nil, tUnknownPeerID, tUnknownPeerID))
 
 	msg := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(-1, 1))
 	d, _ := msg.Encode()
-	assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
 
 	msg = bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(0, 1))
 	d, _ = msg.Encode()
-	assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
 
 	peer := tFirewall.peerSet.GetPeer(tUnknownPeerID)
-	assert.Equal(t, peer.InvalidMessages(), 4)
+	assert.Equal(t, peer.InvalidBundles(), 4)
 }
 
 func TestGossipMesage(t *testing.T) {
@@ -75,7 +75,7 @@ func TestGossipMesage(t *testing.T) {
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tBadPeerID))
+		assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tBadPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
 
@@ -86,7 +86,7 @@ func TestGossipMesage(t *testing.T) {
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenGossipMessage(d, tBadPeerID, tUnknownPeerID))
+		assert.Nil(t, tFirewall.OpenGossipBundle(d, tBadPeerID, tUnknownPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
 
@@ -96,7 +96,7 @@ func TestGossipMesage(t *testing.T) {
 		msg := bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(100, 1))
 		d, _ := msg.Encode()
 
-		assert.Nil(t, tFirewall.OpenGossipMessage(d, tUnknownPeerID, tUnknownPeerID))
+		assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
 		assert.True(t, tNetwork.IsClosed(tUnknownPeerID))
 	})
 
@@ -107,7 +107,7 @@ func TestGossipMesage(t *testing.T) {
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
-		assert.NotNil(t, tFirewall.OpenGossipMessage(d, tGoodPeerID, tGoodPeerID))
+		assert.NotNil(t, tFirewall.OpenGossipBundle(d, tGoodPeerID, tGoodPeerID))
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
 	})
 }
@@ -121,7 +121,7 @@ func TestStreamMesage(t *testing.T) {
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenStreamMessage(bytes.NewReader(d), tBadPeerID))
+		assert.Nil(t, tFirewall.OpenStreamBundle(bytes.NewReader(d), tBadPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
 
@@ -132,7 +132,7 @@ func TestStreamMesage(t *testing.T) {
 		d, _ := msg.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
-		assert.NotNil(t, tFirewall.OpenStreamMessage(bytes.NewReader(d), tGoodPeerID))
+		assert.NotNil(t, tFirewall.OpenStreamBundle(bytes.NewReader(d), tGoodPeerID))
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
 	})
 }
@@ -144,6 +144,6 @@ func TestDisabledFirewal(t *testing.T) {
 	d, _ := msg.Encode()
 
 	tFirewall.config.Enabled = false
-	assert.Nil(t, tFirewall.OpenGossipMessage(d, tBadPeerID, tBadPeerID))
+	assert.Nil(t, tFirewall.OpenGossipBundle(d, tBadPeerID, tBadPeerID))
 	assert.False(t, tNetwork.IsClosed(tBadPeerID))
 }

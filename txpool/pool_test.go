@@ -46,12 +46,12 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
-		case pld := <-tCh:
-			logger.Info("shouldPublishTransaction", "pld", pld)
+		case msg := <-tCh:
+			logger.Info("shouldPublishTransaction", "msg", msg)
 
-			if pld.Type() == message.MessageTypeTransactions {
-				pld := pld.(*message.TransactionsMessage)
-				assert.Equal(t, pld.Transactions[0].ID(), id)
+			if msg.Type() == message.MessageTypeTransactions {
+				m := msg.(*message.TransactionsMessage)
+				assert.Equal(t, m.Transactions[0].ID(), id)
 				return
 			}
 		}
@@ -87,10 +87,10 @@ func TestPending(t *testing.T) {
 
 	go func(ch chan message.Message) {
 		for {
-			pld := <-ch
-			fmt.Printf("Received a message payload: %v\n", pld.Fingerprint())
-			p := pld.(*message.QueryTransactionsMessage)
-			if p.IDs[0].EqualsTo(trx.ID()) {
+			msg := <-ch
+			fmt.Printf("Received a message: %v\n", msg.Fingerprint())
+			m := msg.(*message.QueryTransactionsMessage)
+			if m.IDs[0].EqualsTo(trx.ID()) {
 				assert.NoError(t, tPool.AppendTx(trx))
 			}
 		}
