@@ -1,5 +1,14 @@
-on: [push, pull_request]
-name: Test coverage
+name: Reporting test coverage
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
 jobs:
   coverage:
     runs-on: ubuntu-latest
