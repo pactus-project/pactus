@@ -34,7 +34,7 @@ func MockingSandbox() *MockSandbox {
 		Validators:      make(map[crypto.Address]*validator.Validator),
 		HashToHeight:    make(map[hash.Hash]int),
 		Params:          param.DefaultParams(),
-		AcceptSortition: true,
+		AcceptSortition: false,
 	}
 }
 

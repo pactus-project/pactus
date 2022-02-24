@@ -21,20 +21,20 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	bonderAcc := sb.Account(pld.Bonder)
 	if bonderAcc == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve bonder account")
+		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve bonder account")
 	}
 	if bonderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid sequence. Expected: %v, got: %v", bonderAcc.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", bonderAcc.Sequence()+1, trx.Sequence())
 	}
 	if e.strict && sb.IsInCommittee(pld.PublicKey.Address()) {
-		return errors.Errorf(errors.ErrInvalidTx, "validator is in committee right now")
+		return errors.Errorf(errors.ErrInvalidTx, "Validator is in committee right now")
 	}
 	val := sb.Validator(pld.PublicKey.Address())
 	if val != nil && val.UnbondingHeight() > 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "you cannot Rebond please generate new set of keys")
+		return errors.Errorf(errors.ErrInvalidTx, "You cannot Rebond please generate new set of keys")
 	}
 	if bonderAcc.Balance() < pld.Stake+trx.Fee() {
-		return errors.Errorf(errors.ErrInvalidTx, "insufficient balance")
+		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
 	}
 	if val == nil {
 		val = sb.MakeNewValidator(pld.PublicKey)
