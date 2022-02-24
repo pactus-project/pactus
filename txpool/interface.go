@@ -6,7 +6,7 @@ import (
 )
 
 type Reader interface {
-	AllTransactions() []*tx.Tx
+	PrepareBlockTransactions() []*tx.Tx
 	PendingTx(id tx.ID) *tx.Tx
 	QueryTx(id tx.ID) *tx.Tx
 	HasTx(id tx.ID) bool

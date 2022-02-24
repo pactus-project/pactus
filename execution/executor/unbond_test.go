@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 )
@@ -63,17 +62,15 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 func TestUnbondNonStrictMode(t *testing.T) {
 	setup(t)
-	exe1 := NewBondExecutor(false)
+	exe1 := NewUnbondExecutor(true)
+	exe2 := NewUnbondExecutor(false)
 
 	tSandbox.InCommittee = true
 	hash100 := hash.GenerateTestHash()
 	tSandbox.AppendNewBlock(100, hash100)
-	bonder := tAcc1.Address()
-	pub, _ := bls.GenerateTestKeyPair()
 
-	mintbase1 := tx.NewBondTx(hash100.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
-	mintbase2 := tx.NewBondTx(hash100.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
+	trx := tx.NewUnbondTx(hash100.Stamp(), tSandbox.ValSeq(tVal1.Address())+1, tVal1.Address(), "")
 
-	assert.NoError(t, exe1.Execute(mintbase1, tSandbox))
-	assert.Error(t, exe1.Execute(mintbase2, tSandbox)) // Invalid sequence
+	assert.Error(t, exe1.Execute(trx, tSandbox))
+	assert.NoError(t, exe2.Execute(trx, tSandbox))
 }

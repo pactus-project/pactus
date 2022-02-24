@@ -94,17 +94,16 @@ func TestExecuteBondTx(t *testing.T) {
 
 func TestBondNonStrictMode(t *testing.T) {
 	setup(t)
-	exe1 := NewBondExecutor(false)
+	exe1 := NewBondExecutor(true)
+	exe2 := NewBondExecutor(false)
 
 	tSandbox.InCommittee = true
 	hash100 := hash.GenerateTestHash()
 	tSandbox.AppendNewBlock(100, hash100)
-	bonder := tAcc1.Address()
 	pub, _ := bls.GenerateTestKeyPair()
 
-	mintbase1 := tx.NewBondTx(hash100.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
-	mintbase2 := tx.NewBondTx(hash100.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 1000, 1000, "")
+	trx := tx.NewBondTx(hash100.Stamp(), tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), pub, 1000, 1000, "")
 
-	assert.NoError(t, exe1.Execute(mintbase1, tSandbox))
-	assert.Error(t, exe1.Execute(mintbase2, tSandbox)) // Invalid sequence
+	assert.Error(t, exe1.Execute(trx, tSandbox))
+	assert.NoError(t, exe2.Execute(trx, tSandbox))
 }

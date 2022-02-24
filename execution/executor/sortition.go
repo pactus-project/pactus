@@ -36,7 +36,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 	if e.strict {
 		// A validator might produce more than one sortition transaction before entring into the committee
-		// In non-strict mode we don't check the sequence number and committee check
+		// In non-strict mode we don't check the sequence number
 		if val.Sequence()+1 != trx.Sequence() {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 		}

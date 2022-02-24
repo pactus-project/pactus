@@ -56,11 +56,14 @@ func Test_WithdrawExecutor(t *testing.T) {
 		hash := hash.GenerateTestHash()
 		tSandbox.AppendNewBlock(tVal1.UnbondingHeight()+tSandbox.UnbondInterval(), hash)
 		assert.Equal(t, 101, tVal1.UnbondingHeight())
+		addr := crypto.GenerateTestAddress()
 
-		trx := tx.NewWithdrawTx(hash.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), tAcc1.Address(), 4999999000, 1000, "should be able to empty stake")
+		trx := tx.NewWithdrawTx(hash.Stamp(), tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), addr, 4999999000, 1000, "should be able to empty stake")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
-		assert.Zero(t, tVal1.Stake())
+
+		assert.Zero(t, tSandbox.Validator(tVal1.Address()).Stake())
+		assert.Equal(t, tSandbox.Account(addr).Balance(), int64(4999999000))
 	})
 
 	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
@@ -70,8 +73,8 @@ func Test_WithdrawExecutor(t *testing.T) {
 	})
 
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), int64(0))
-	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Power(), int64(0)) //it shouldn't return 1 but it does
-	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), int64(14999999000))
+	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Power(), int64(0))
+	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), int64(10000000000))
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).UnbondingHeight(), 101)
 	assert.Equal(t, exe.Fee(), int64(1000))
 

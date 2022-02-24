@@ -34,6 +34,6 @@ func (p *SortitionPayload) SanityCheck() error {
 }
 
 func (p *SortitionPayload) Fingerprint() string {
-	return fmt.Sprintf("{Sortition: %v",
+	return fmt.Sprintf("{Sortition 🎯 %v",
 		p.Address.Fingerprint())
 }

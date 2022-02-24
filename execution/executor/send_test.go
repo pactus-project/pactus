@@ -123,18 +123,17 @@ func TestExecuteSendTx(t *testing.T) {
 
 func TestSendNonStrictMode(t *testing.T) {
 	setup(t)
-	exe1 := NewSendExecutor(false)
+	exe1 := NewSendExecutor(true)
+	exe2 := NewSendExecutor(false)
 
 	hash100 := hash.GenerateTestHash()
 	tSandbox.AppendNewBlock(100, hash100)
 	receiver1 := crypto.GenerateTestAddress()
-	receiver2 := crypto.GenerateTestAddress()
 
-	mintbase1 := tx.NewMintbaseTx(hash100.Stamp(), 101, receiver1, 5, "")
-	mintbase2 := tx.NewMintbaseTx(hash100.Stamp(), 101, receiver2, 5, "")
-	mintbase3 := tx.NewMintbaseTx(hash100.Stamp(), 102, receiver2, 5, "")
+	trx1 := tx.NewMintbaseTx(hash100.Stamp(), 101, receiver1, 5, "")
+	trx2 := tx.NewMintbaseTx(hash100.Stamp(), 102, receiver1, 5, "")
 
-	assert.NoError(t, exe1.Execute(mintbase1, tSandbox))
-	assert.NoError(t, exe1.Execute(mintbase2, tSandbox))
-	assert.Error(t, exe1.Execute(mintbase3, tSandbox)) // Invalid sequence
+	assert.Error(t, exe1.Execute(trx1, tSandbox)) // Invalid sequence
+	assert.NoError(t, exe2.Execute(trx1, tSandbox))
+	assert.Error(t, exe2.Execute(trx2, tSandbox)) // Invalid height
 }

@@ -64,6 +64,6 @@ func (m *MockTxPool) RemoveTx(id hash.Hash) {
 	//delete(m.txs, hash)
 }
 
-func (m *MockTxPool) AllTransactions() []*tx.Tx {
+func (m *MockTxPool) PrepareBlockTransactions() []*tx.Tx {
 	return m.Txs
 }
