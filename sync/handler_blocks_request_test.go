@@ -42,9 +42,9 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		msg := message.NewBlocksRequestMessage(sid, 100, 105)
 		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-		assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).From, 0)
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
+		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, 0)
 	})
 
 	pub, _ := bls.GenerateTestKeyPair()
@@ -54,9 +54,9 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		msg := message.NewBlocksRequestMessage(sid, 0, 20)
 		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-		assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).From, 0)
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
+		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, 0)
 	})
 
 	t.Run("InitialBlockDownload flag is not set", func(t *testing.T) {
@@ -66,9 +66,9 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 0, heightBob)
 			assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
 
-			bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-			assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-			assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).From, 0)
+			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, 0)
 		})
 
 		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {
@@ -90,16 +90,16 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, heightBob-1, heightBob)
 			assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
 
-			bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-			assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
+			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
 		t.Run("Peer doesn't have requested blocks", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 100, 105)
 			assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-			bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-			assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
+			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 		})
 	})
 
@@ -114,7 +114,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		s := tSync.peerSet.OpenSession(tNetwork.SelfID())
 		msg := message.NewBlocksRequestMessage(s.SessionID(), 100, 105)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-		assert.Equal(t, bnd.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeBusy)
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeBusy)
 	})
 }

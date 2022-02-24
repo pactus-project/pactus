@@ -38,8 +38,8 @@ func TestParsingHelloMessages(t *testing.T) {
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
-		assert.False(t, util.IsFlagSet(bnd.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
+		assert.False(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
 
 		// Check if the peer info is updated
 		p := tSync.peerSet.GetPeer(pid)
@@ -83,7 +83,7 @@ func TestBroadcastingHelloMessages(t *testing.T) {
 
 	tSync.sayHello(true)
 
-	bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
-	assert.True(t, util.IsFlagSet(bnd.Flags, bundle.BundleFlagHelloMessage))
-	assert.True(t, util.IsFlagSet(bnd.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
+	bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
+	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage))
+	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
 }

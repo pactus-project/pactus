@@ -27,8 +27,8 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	t.Run("In the committee, should respond to the query proposal message", func(t *testing.T) {
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
-		assert.Equal(t, bnd.Message.(*message.ProposalMessage).Proposal.Hash(), prop.Hash())
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
+		assert.Equal(t, bdl.Message.(*message.ProposalMessage).Proposal.Hash(), prop.Hash())
 	})
 
 	t.Run("In the committee, but doesn't have the proposal", func(t *testing.T) {

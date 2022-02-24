@@ -27,8 +27,8 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	t.Run("In the committee, should respond to the query vote message", func(t *testing.T) {
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
-		assert.Equal(t, bnd.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
+		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
 	})
 
 	t.Run("In the committee, but doesn't have the vote", func(t *testing.T) {

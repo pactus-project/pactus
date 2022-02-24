@@ -31,8 +31,8 @@ func TestParsingQueryTransactionsMessages(t *testing.T) {
 	t.Run("In the committee, should respond to the query transaction message", func(t *testing.T) {
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeTransactions)
-		assert.Len(t, bnd.Message.(*message.TransactionsMessage).Transactions, 2)
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeTransactions)
+		assert.Len(t, bdl.Message.(*message.TransactionsMessage).Transactions, 2)
 	})
 
 	t.Run("In the committee, but doesn't have the transaction", func(t *testing.T) {
@@ -62,8 +62,8 @@ func TestBroadcastingQueryTransactionsMessages(t *testing.T) {
 	t.Run("In the committee, should send query transaction message", func(t *testing.T) {
 		tSync.broadcast(msg)
 
-		bnd := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryTransactions)
-		assert.NotContains(t, bnd.Message.(*message.QueryTransactionsMessage).IDs, trx1.ID())
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryTransactions)
+		assert.NotContains(t, bdl.Message.(*message.QueryTransactionsMessage).IDs, trx1.ID())
 	})
 
 	t.Run("Transaction found inside the cache", func(t *testing.T) {

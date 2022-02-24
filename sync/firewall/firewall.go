@@ -43,7 +43,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 		}
 	}
 
-	bnd, err := f.openBundle(bytes.NewReader(data), source)
+	bdl, err := f.openBundle(bytes.NewReader(data), source)
 	if err != nil {
 		f.logger.Warn("firewall: unable to open a gossip bundle", "err", err)
 		f.closeConnection(from)
@@ -53,11 +53,11 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 	// TODO: check if gossip flag is set
 	// TODO: check if bundle is a gossip bundle
 
-	return bnd
+	return bdl
 }
 
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
-	bnd, err := f.openBundle(r, from)
+	bdl, err := f.openBundle(r, from)
 	if err != nil {
 		f.logger.Warn("firewall: unable to open a stream bundle", "err", err)
 		f.closeConnection(from)
@@ -67,7 +67,7 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	// TODO: check if gossip flag is NOT set
 	// TODO: check if bundle is a stream bundle
 
-	return bnd
+	return bdl
 }
 
 func (f *Firewall) openBundle(r io.Reader, source peer.ID) (*bundle.Bundle, error) {
@@ -80,39 +80,39 @@ func (f *Firewall) openBundle(r io.Reader, source peer.ID) (*bundle.Bundle, erro
 		return nil, errors.Errorf(errors.ErrInvalidMessage, "Source peer is banned: %s", source)
 	}
 
-	bnd, err := f.decodeBundle(r, peer)
+	bdl, err := f.decodeBundle(r, peer)
 	if err != nil {
 		peer.IncreaseInvalidBundlesCounter()
 		return nil, err
 	}
 
-	if err := f.checkBundle(bnd, peer); err != nil {
+	if err := f.checkBundle(bdl, peer); err != nil {
 		peer.IncreaseInvalidBundlesCounter()
 		return nil, err
 	}
 
-	return bnd, nil
+	return bdl, nil
 }
 
 func (f *Firewall) decodeBundle(r io.Reader, source *peerset.Peer) (*bundle.Bundle, error) {
-	bnd := new(bundle.Bundle)
-	bytesRead, err := bnd.Decode(r)
+	bdl := new(bundle.Bundle)
+	bytesRead, err := bdl.Decode(r)
 	source.IncreaseReceivedBytesCounter(bytesRead)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
-	return bnd, nil
+	return bdl, nil
 }
 
-func (f *Firewall) checkBundle(bnd *bundle.Bundle, source *peerset.Peer) error {
-	if err := bnd.SanityCheck(); err != nil {
+func (f *Firewall) checkBundle(bdl *bundle.Bundle, source *peerset.Peer) error {
+	if err := bdl.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
-	if bnd.Initiator != source.PeerID() {
+	if bdl.Initiator != source.PeerID() {
 		return errors.Errorf(errors.ErrInvalidMessage,
-			"source is not same as initiator. source: %v, initiator: %v", source.PeerID(), bnd.Initiator)
+			"source is not same as initiator. source: %v, initiator: %v", source.PeerID(), bdl.Initiator)
 	}
 
 	return nil

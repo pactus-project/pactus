@@ -86,31 +86,31 @@ func (b *Bundle) Encode() ([]byte, error) {
 }
 
 func (b *Bundle) Decode(r io.Reader) (int, error) {
-	var bnd _Bundle
+	var bdl _Bundle
 	d := cbor.NewDecoder(r)
-	err := d.Decode(&bnd)
+	err := d.Decode(&bdl)
 	bytesRead := d.NumBytesRead()
 	if err != nil {
 		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
-	data := bnd.MessageData
-	msg := message.MakeMessage(bnd.MessageType)
+	data := bdl.MessageData
+	msg := message.MakeMessage(bdl.MessageType)
 	if msg == nil {
 		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid data")
 	}
 
-	if util.IsFlagSet(bnd.Flags, BundleFlagCompressed) {
-		c, err := util.DecompressBuffer(bnd.MessageData)
+	if util.IsFlagSet(bdl.Flags, BundleFlagCompressed) {
+		c, err := util.DecompressBuffer(bdl.MessageData)
 		if err != nil {
 			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 		}
 		data = c
 	}
 
-	b.Version = bnd.Version
-	b.Flags = bnd.Flags
-	b.Initiator = bnd.Initiator
+	b.Version = bdl.Version
+	b.Flags = bdl.Flags
+	b.Initiator = bdl.Initiator
 	b.Message = msg
 	return bytesRead, cbor.Unmarshal(data, msg)
 }

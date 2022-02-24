@@ -87,31 +87,31 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 		case b := <-net.BroadcastCh:
 			net.SendToOthers(b.Data, b.Target)
 			// Decode message again to check the message type
-			bnd := new(bundle.Bundle)
-			_, err := bnd.Decode(bytes.NewReader(b.Data))
+			bdl := new(bundle.Bundle)
+			_, err := bdl.Decode(bytes.NewReader(b.Data))
 			require.NoError(t, err)
-			assert.Equal(t, bnd.Initiator, net.ID)
+			assert.Equal(t, bdl.Initiator, net.ID)
 
 			// -----------
 			// Check flags
-			require.True(t, util.IsFlagSet(bnd.Flags, bundle.BundleFlagNetworkLibP2P), "invalid flag: %v", bnd)
+			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkLibP2P), "invalid flag: %v", bdl)
 
 			if b.Target == nil {
-				require.True(t, util.IsFlagSet(bnd.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bnd)
+				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
 			} else {
-				require.False(t, util.IsFlagSet(bnd.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bnd)
+				require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
 			}
 
-			if bnd.Message.Type() == message.MessageTypeHello {
-				require.True(t, util.IsFlagSet(bnd.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bnd)
+			if bdl.Message.Type() == message.MessageTypeHello {
+				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bdl)
 			} else {
-				require.False(t, util.IsFlagSet(bnd.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bnd)
+				require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bdl)
 			}
 			// -----------
 
-			if bnd.Message.Type() == msgType {
-				logger.Info("shouldPublishMessageWithThisType", "bundle", bnd, "type", msgType.String())
-				return bnd
+			if bdl.Message.Type() == msgType {
+				logger.Info("shouldPublishMessageWithThisType", "bundle", bdl, "type", msgType.String())
+				return bdl
 			}
 		}
 	}
@@ -126,17 +126,17 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 			return
 		case b := <-net.BroadcastCh:
 			// Decode message again to check the message type
-			bnd := new(bundle.Bundle)
-			_, err := bnd.Decode(bytes.NewReader(b.Data))
+			bdl := new(bundle.Bundle)
+			_, err := bdl.Decode(bytes.NewReader(b.Data))
 			require.NoError(t, err)
-			assert.NotEqual(t, bnd.Message.Type(), msgType)
+			assert.NotEqual(t, bdl.Message.Type(), msgType)
 		}
 	}
 }
 
 func testReceiveingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
-	bnd := bundle.NewBundle(from, msg)
-	return sync.processIncomingBundle(bnd)
+	bdl := bundle.NewBundle(from, msg)
+	return sync.processIncomingBundle(bdl)
 }
 
 func testAddBlocks(t *testing.T, state *state.MockState, count int) {

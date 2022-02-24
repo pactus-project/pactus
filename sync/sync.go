@@ -205,39 +205,39 @@ func (sync *synchronizer) receiveLoop() {
 			return
 
 		case e := <-sync.networkCh:
-			var bnd *bundle.Bundle
+			var bdl *bundle.Bundle
 			switch e.Type() {
 			case network.EventTypeGossip:
 				ge := e.(*network.GossipMessage)
-				bnd = sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
+				bdl = sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
 
 			case network.EventTypeStream:
 				se := e.(*network.StreamMessage)
-				bnd = sync.firewall.OpenStreamBundle(se.Reader, se.Source)
+				bdl = sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 			}
 
-			err := sync.processIncomingBundle(bnd)
+			err := sync.processIncomingBundle(bdl)
 			if err != nil {
-				sync.logger.Warn("error on parsing a message", "initiator", util.FingerprintPeerID(bnd.Initiator), "message", bnd, "err", err)
-				peer := sync.peerSet.MustGetPeer(bnd.Initiator)
+				sync.logger.Warn("error on parsing a message", "initiator", util.FingerprintPeerID(bdl.Initiator), "message", bdl, "err", err)
+				peer := sync.peerSet.MustGetPeer(bdl.Initiator)
 				peer.IncreaseInvalidBundlesCounter()
 			}
 		}
 	}
 }
 
-func (sync *synchronizer) processIncomingBundle(bnd *bundle.Bundle) error {
-	if bnd == nil {
+func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
+	if bdl == nil {
 		return nil
 	}
 
-	sync.logger.Debug("received a message", "initiator", util.FingerprintPeerID(bnd.Initiator), "bundle", bnd)
-	h := sync.handlers[bnd.Message.Type()]
+	sync.logger.Debug("received a message", "initiator", util.FingerprintPeerID(bdl.Initiator), "bundle", bdl)
+	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid message type: %v", bnd.Message.Type())
+		return errors.Errorf(errors.ErrInvalidMessage, "Invalid message type: %v", bdl.Message.Type())
 	}
 
-	return h.ParsMessage(bnd.Message, bnd.Initiator)
+	return h.ParsMessage(bdl.Message, bdl.Initiator)
 }
 
 func (sync *synchronizer) Fingerprint() string {
@@ -283,39 +283,39 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 		sync.logger.Warn("invalid message type: %v", msg.Type())
 		return nil
 	}
-	bnd := h.PrepareBundle(msg)
-	if bnd != nil {
-		if err := bnd.SanityCheck(); err != nil {
-			sync.logger.Error("broadcasting an invalid bundle", "bundle", bnd, "err", err)
+	bdl := h.PrepareBundle(msg)
+	if bdl != nil {
+		if err := bdl.SanityCheck(); err != nil {
+			sync.logger.Error("broadcasting an invalid bundle", "bundle", bdl, "err", err)
 			return nil
 		}
 
 		// Bundles will be carried through LibP2P.
 		// In future we might support other libraries.
-		bnd.Flags = util.SetFlag(bnd.Flags, bundle.BundleFlagNetworkLibP2P)
-		return bnd
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkLibP2P)
+		return bdl
 	}
 	return nil
 }
 
 func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
-	bnd := sync.prepareBundle(msg)
-	if bnd != nil {
-		data, _ := bnd.Encode()
+	bdl := sync.prepareBundle(msg)
+	if bdl != nil {
+		data, _ := bdl.Encode()
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Error("error on sending message", "message", bnd, "err", err)
+			sync.logger.Error("error on sending message", "message", bdl, "err", err)
 		} else {
-			sync.logger.Debug("sending message to a peer", "message", bnd, "to", to)
+			sync.logger.Debug("sending message to a peer", "message", bdl, "to", to)
 		}
 	}
 }
 
 func (sync *synchronizer) broadcast(msg message.Message) {
-	bnd := sync.prepareBundle(msg)
-	if bnd != nil {
-		bnd.Flags = util.SetFlag(bnd.Flags, bundle.BundleFlagBroadcasted)
-		data, _ := bnd.Encode()
+	bdl := sync.prepareBundle(msg)
+	if bdl != nil {
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
+		data, _ := bdl.Encode()
 		err := sync.network.Broadcast(data, msg.Type().TopicID())
 		if err != nil {
 			sync.logger.Error("error on broadcasting message", "message", msg, "err", err)
