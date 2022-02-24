@@ -2,44 +2,44 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type blockAnnounceHandler struct {
 	*synchronizer
 }
 
-func newBlockAnnounceHandler(sync *synchronizer) payloadHandler {
+func newBlockAnnounceHandler(sync *synchronizer) messageHandler {
 	return &blockAnnounceHandler{
 		sync,
 	}
 }
 
-func (handler *blockAnnounceHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.BlockAnnouncePayload)
-	handler.logger.Trace("parsing block announce payload", "pld", pld)
+func (handler *blockAnnounceHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.BlockAnnounceMessage)
+	handler.logger.Trace("parsing BlockAnnounce message", "msg", msg)
 
-	handler.cache.AddCertificate(pld.Certificate)
-	handler.cache.AddBlock(pld.Height, pld.Block)
+	handler.cache.AddCertificate(msg.Certificate)
+	handler.cache.AddBlock(msg.Height, msg.Block)
 	handler.tryCommitBlocks()
 	handler.synced()
 
 	peer := handler.peerSet.MustGetPeer(initiator)
-	peer.UpdateHeight(pld.Height)
-	handler.peerSet.UpdateMaxClaimedHeight(pld.Height)
+	peer.UpdateHeight(msg.Height)
+	handler.peerSet.UpdateMaxClaimedHeight(msg.Height)
 
 	handler.updateBlokchain()
 
 	return nil
 }
 
-func (handler *blockAnnounceHandler) PrepareMessage(p payload.Payload) *message.Message {
+func (handler *blockAnnounceHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	if !handler.weAreInTheCommittee() {
 		handler.logger.Debug("sending BlockAnnounce ignored. We are not in the committee")
 		return nil
 	}
-	msg := message.NewMessage(handler.SelfID(), p)
+	msg := bundle.NewBundle(handler.SelfID(), m)
 
 	return msg
 }

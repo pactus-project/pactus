@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -16,26 +16,26 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	v1, _ := vote.GenerateTestPrecommitVote(consensusHeight, 0)
 	tConsensus.AddVote(v1)
 	pid := util.RandomPeerID()
-	pld := payload.NewQueryVotesPayload(consensusHeight, 1)
+	msg := message.NewQueryVotesMessage(consensusHeight, 1)
 
 	t.Run("Not in the committee, should not respond to the query vote message", func(t *testing.T) {
-		assert.Error(t, testReceiveingNewMessage(tSync, pld, pid))
+		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
 	})
 
 	testAddPeerToCommittee(t, pid, nil)
 
 	t.Run("In the committee, should respond to the query vote message", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		msg := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeVote)
-		assert.Equal(t, msg.Payload.(*payload.VotePayload).Vote.Hash(), v1.Hash())
+		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
+		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
 	})
 
 	t.Run("In the committee, but doesn't have the vote", func(t *testing.T) {
-		pld := payload.NewQueryVotesPayload(consensusHeight+1, 1)
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+		msg := message.NewQueryVotesMessage(consensusHeight+1, 1)
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeVote)
+		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
 	})
 }
 
@@ -43,18 +43,18 @@ func TestBroadcastingQueryVotesMessages(t *testing.T) {
 	setup(t)
 
 	consensusHeight := tState.LastBlockHeight() + 1
-	pld := payload.NewQueryVotesPayload(consensusHeight, 1)
+	msg := message.NewQueryVotesMessage(consensusHeight, 1)
 
 	t.Run("Not in the committee, should not send query vote message", func(t *testing.T) {
-		tSync.broadcast(pld)
+		tSync.broadcast(msg)
 
-		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
+		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})
 
 	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 	t.Run("In the committee, should send query vote message", func(t *testing.T) {
-		tSync.broadcast(pld)
+		tSync.broadcast(msg)
 
-		shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeQueryVotes)
+		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})
 }

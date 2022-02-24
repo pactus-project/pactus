@@ -2,29 +2,29 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type voteHandler struct {
 	*synchronizer
 }
 
-func newVoteHandler(sync *synchronizer) payloadHandler {
+func newVoteHandler(sync *synchronizer) messageHandler {
 	return &voteHandler{
 		sync,
 	}
 }
 
-func (handler *voteHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.VotePayload)
-	handler.logger.Trace("parsing vote payload", "pld", pld)
+func (handler *voteHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.VoteMessage)
+	handler.logger.Trace("parsing Vote message", "msg", msg)
 
-	handler.consensus.AddVote(pld.Vote)
+	handler.consensus.AddVote(msg.Vote)
 
 	return nil
 }
 
-func (handler *voteHandler) PrepareMessage(p payload.Payload) *message.Message {
-	return message.NewMessage(handler.SelfID(), p)
+func (handler *voteHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+	return bundle.NewBundle(handler.SelfID(), m)
 }

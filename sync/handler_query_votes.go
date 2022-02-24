@@ -3,32 +3,32 @@ package sync
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type queryVotesHandler struct {
 	*synchronizer
 }
 
-func newQueryVotesHandler(sync *synchronizer) payloadHandler {
+func newQueryVotesHandler(sync *synchronizer) messageHandler {
 	return &queryVotesHandler{
 		sync,
 	}
 }
 
-func (handler *queryVotesHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.QueryVotesPayload)
-	handler.logger.Trace("parsing query votes payload", "pld", pld)
+func (handler *queryVotesHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.QueryVotesMessage)
+	handler.logger.Trace("parsing QueryVotes message", "msg", msg)
 
 	height, _ := handler.consensus.HeightRound()
-	if pld.Height == height {
+	if msg.Height == height {
 		if !handler.peerIsInTheCommittee(initiator) {
 			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
 		}
 		v := handler.consensus.PickRandomVote()
 		if v != nil {
-			response := payload.NewVotePayload(v)
+			response := message.NewVoteMessage(v)
 			handler.broadcast(response)
 		}
 	}
@@ -36,12 +36,12 @@ func (handler *queryVotesHandler) ParsPayload(p payload.Payload, initiator peer.
 	return nil
 }
 
-func (handler *queryVotesHandler) PrepareMessage(p payload.Payload) *message.Message {
+func (handler *queryVotesHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	if !handler.weAreInTheCommittee() {
 		handler.logger.Debug("sending QueryVotes ignored. We are not in the committee")
 		return nil
 	}
-	msg := message.NewMessage(handler.SelfID(), p)
+	msg := bundle.NewBundle(handler.SelfID(), m)
 
 	return msg
 }

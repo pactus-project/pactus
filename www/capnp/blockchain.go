@@ -36,8 +36,8 @@ func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 		p.SetStatus(int32(peer.Status()))
 		p.SetInitialBlockDownload(peer.InitialBlockDownload())
 		p.SetHeight(int32(peer.Height()))
-		p.SetReceivedMessages(int32(peer.ReceivedMessages()))
-		p.SetInvalidMessages(int32(peer.InvalidMessages()))
+		p.SetReceivedMessages(int32(peer.ReceivedBundles()))
+		p.SetInvalidMessages(int32(peer.InvalidBundles()))
 		p.SetReceivedBytes(int32(peer.ReceivedBytes()))
 	}
 

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -21,16 +21,16 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	c2 := block.GenerateTestCertificate(b2.Hash())
 
 	pid := util.RandomPeerID()
-	pld := payload.NewBlockAnnouncePayload(lastBlockheight+2, b2, c2)
+	msg := message.NewBlockAnnounceMessage(lastBlockheight+2, b2, c2)
 
 	pub, _ := bls.GenerateTestKeyPair()
 	testAddPeer(t, pub, pid)
 
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(tSync, pld, pid))
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		msg1 := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlocksRequest)
-		assert.Equal(t, msg1.Payload.(*payload.BlocksRequestPayload).From, lastBlockheight+1)
+		msg1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
+		assert.Equal(t, msg1.Message.(*message.BlocksRequestMessage).From, lastBlockheight+1)
 	})
 
 }
@@ -38,23 +38,23 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	setup(t)
 
-	pld := payload.NewBlockAnnouncePayload(
+	msg := message.NewBlockAnnounceMessage(
 		tState.LastBlockHeight(),
 		tState.Block(tState.LastBlockHeight()),
 		tState.LastCertificate())
 
 	t.Run("Not in the committee, should not broadcast block announce message", func(t *testing.T) {
-		tSync.broadcast(pld)
+		tSync.broadcast(msg)
 
-		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlockAnnounce)
+		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlockAnnounce)
 	})
 
 	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 
 	t.Run("In the committee, should broadcast block announce message", func(t *testing.T) {
-		tSync.broadcast(pld)
+		tSync.broadcast(msg)
 
-		msg1 := shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeBlockAnnounce)
-		assert.Equal(t, msg1.Payload.(*payload.BlockAnnouncePayload).Height, pld.Height)
+		msg1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlockAnnounce)
+		assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Height, msg.Height)
 	})
 }

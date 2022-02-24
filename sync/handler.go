@@ -2,11 +2,11 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
-type payloadHandler interface {
-	ParsPayload(payload.Payload, peer.ID) error
-	PrepareMessage(payload.Payload) *message.Message
+type messageHandler interface {
+	ParsMessage(message.Message, peer.ID) error
+	PrepareBundle(message.Message) *bundle.Bundle
 }

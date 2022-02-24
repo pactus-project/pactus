@@ -1,4 +1,4 @@
-package payload
+package message
 
 import (
 	"testing"
@@ -9,33 +9,33 @@ import (
 )
 
 func TestBlockAnnounceType(t *testing.T) {
-	p := &BlockAnnouncePayload{}
-	assert.Equal(t, p.Type(), PayloadTypeBlockAnnounce)
+	m := &BlockAnnounceMessage{}
+	assert.Equal(t, m.Type(), MessageTypeBlockAnnounce)
 }
 
-func TestBlockAnnouncePayload(t *testing.T) {
+func TestBlockAnnounceMessage(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
 		b, _ := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
-		p := NewBlockAnnouncePayload(-1, b, c)
+		m := NewBlockAnnounceMessage(-1, b, c)
 
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, m.SanityCheck())
 	})
 
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b, _ := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(hash.UndefHash)
-		p := NewBlockAnnouncePayload(100, b, c)
+		m := NewBlockAnnounceMessage(100, b, c)
 
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, m.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		b, _ := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
-		p := NewBlockAnnouncePayload(100, b, c)
+		m := NewBlockAnnounceMessage(100, b, c)
 
-		assert.NoError(t, p.SanityCheck())
-		assert.Contains(t, p.Fingerprint(), "100")
+		assert.NoError(t, m.SanityCheck())
+		assert.Contains(t, m.Fingerprint(), "100")
 	})
 }

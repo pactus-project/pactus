@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -18,7 +18,7 @@ type Session struct {
 type sessionData struct {
 	SessionID        int
 	PeerID           peer.ID
-	LastResponseCode payload.ResponseCode
+	LastResponseCode message.ResponseCode
 	LastActivityAt   time.Time
 }
 
@@ -32,7 +32,7 @@ func newSession(id int, peerID peer.ID) *Session {
 	}
 }
 
-func (s *Session) SetLastResponseCode(code payload.ResponseCode) {
+func (s *Session) SetLastResponseCode(code message.ResponseCode) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 

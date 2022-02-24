@@ -1,4 +1,4 @@
-package payload
+package message
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 const LatestBlocksResponseCodeOK = 0
 const LatestBlocksResponseCodeNoMoreBlock = 1
 
-type BlocksResponsePayload struct {
+type BlocksResponseMessage struct {
 	ResponseCode    ResponseCode       `cbor:"1,keyasint"`
 	SessionID       int                `cbor:"2,keyasint"`
 	From            int                `cbor:"3,keyasint"`
@@ -20,9 +20,9 @@ type BlocksResponsePayload struct {
 	LastCertificate *block.Certificate `cbor:"6,keyasint"`
 }
 
-func NewBlocksResponsePayload(code ResponseCode, sid int, from int,
-	blocks []*block.Block, trxs []*tx.Tx, cert *block.Certificate) *BlocksResponsePayload {
-	return &BlocksResponsePayload{
+func NewBlocksResponseMessage(code ResponseCode, sid int, from int,
+	blocks []*block.Block, trxs []*tx.Tx, cert *block.Certificate) *BlocksResponseMessage {
+	return &BlocksResponseMessage{
 		ResponseCode:    code,
 		SessionID:       sid,
 		From:            from,
@@ -31,21 +31,21 @@ func NewBlocksResponsePayload(code ResponseCode, sid int, from int,
 		LastCertificate: cert,
 	}
 }
-func (p *BlocksResponsePayload) SanityCheck() error {
-	if p.From < 0 {
+func (m *BlocksResponseMessage) SanityCheck() error {
+	if m.From < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
 	}
-	for _, b := range p.Blocks {
+	for _, b := range m.Blocks {
 		if err := b.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "invalid block: %v", err)
 		}
 	}
-	if p.LastCertificate != nil {
-		if err := p.LastCertificate.SanityCheck(); err != nil {
+	if m.LastCertificate != nil {
+		if err := m.LastCertificate.SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidMessage, "invalid certificate: %v", err)
 		}
 	}
-	for _, trx := range p.Transactions {
+	for _, trx := range m.Transactions {
 		if err := trx.SanityCheck(); err != nil {
 			return err
 		}
@@ -53,24 +53,24 @@ func (p *BlocksResponsePayload) SanityCheck() error {
 	return nil
 }
 
-func (p *BlocksResponsePayload) Type() Type {
-	return PayloadTypeBlocksResponse
+func (m *BlocksResponseMessage) Type() Type {
+	return MessageTypeBlocksResponse
 }
 
-func (p *BlocksResponsePayload) To() int {
-	if len(p.Blocks) == 0 {
-		return p.From
+func (m *BlocksResponseMessage) To() int {
+	if len(m.Blocks) == 0 {
+		return m.From
 	}
-	return p.From + len(p.Blocks) - 1
+	return m.From + len(m.Blocks) - 1
 }
 
-func (p *BlocksResponsePayload) Fingerprint() string {
-	return fmt.Sprintf("{⚓ %d %s %v-%v}", p.SessionID, p.ResponseCode, p.From, p.To())
+func (m *BlocksResponseMessage) Fingerprint() string {
+	return fmt.Sprintf("{⚓ %d %s %v-%v}", m.SessionID, m.ResponseCode, m.From, m.To())
 }
 
-func (p *BlocksResponsePayload) IsRequestRejected() bool {
-	if p.ResponseCode == ResponseCodeBusy ||
-		p.ResponseCode == ResponseCodeRejected {
+func (m *BlocksResponseMessage) IsRequestRejected() bool {
+	if m.ResponseCode == ResponseCodeBusy ||
+		m.ResponseCode == ResponseCodeRejected {
 		return true
 	}
 

@@ -1,4 +1,4 @@
-package payload
+package message
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ const (
 	FlagInitialBlockDownload = 0x2
 )
 
-type HelloPayload struct {
+type HelloMessage struct {
 	PeerID      peer.ID        `cbor:"1,keyasint"`
 	Agent       string         `cbor:"2,keyasint"`
 	Moniker     string         `cbor:"3,keyasint"`
@@ -27,9 +27,9 @@ type HelloPayload struct {
 	GenesisHash hash.Hash      `cbor:"8,keyasint"`
 }
 
-func NewHelloPayload(pid peer.ID, moniker string,
-	height int, flags int, genesisHash hash.Hash) *HelloPayload {
-	return &HelloPayload{
+func NewHelloMessage(pid peer.ID, moniker string,
+	height int, flags int, genesisHash hash.Hash) *HelloMessage {
+	return &HelloMessage{
 		PeerID:      pid,
 		Agent:       version.Agent(),
 		Moniker:     moniker,
@@ -39,32 +39,32 @@ func NewHelloPayload(pid peer.ID, moniker string,
 	}
 }
 
-func (p *HelloPayload) SanityCheck() error {
-	if p.Height < 0 {
+func (m *HelloMessage) SanityCheck() error {
+	if m.Height < 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
-	if !p.PublicKey.Verify(p.SignBytes(), p.Signature) {
+	if !m.PublicKey.Verify(m.SignBytes(), m.Signature) {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid signature")
 	}
 	return nil
 }
 
-func (p *HelloPayload) SignBytes() []byte {
-	return []byte(fmt.Sprintf("%s:%s:%s", p.Type(), p.Agent, p.PeerID))
+func (m *HelloMessage) SignBytes() []byte {
+	return []byte(fmt.Sprintf("%s:%s:%s", m.Type(), m.Agent, m.PeerID))
 }
 
-func (p *HelloPayload) SetSignature(sig crypto.Signature) {
-	p.Signature = sig.(*bls.Signature)
+func (m *HelloMessage) SetSignature(sig crypto.Signature) {
+	m.Signature = sig.(*bls.Signature)
 }
 
-func (p *HelloPayload) SetPublicKey(pub crypto.PublicKey) {
-	p.PublicKey = pub.(*bls.PublicKey)
+func (m *HelloMessage) SetPublicKey(pub crypto.PublicKey) {
+	m.PublicKey = pub.(*bls.PublicKey)
 }
 
-func (p *HelloPayload) Type() Type {
-	return PayloadTypeHello
+func (m *HelloMessage) Type() Type {
+	return MessageTypeHello
 }
 
-func (p *HelloPayload) Fingerprint() string {
-	return fmt.Sprintf("{%s %v}", p.Moniker, p.Height)
+func (m *HelloMessage) Fingerprint() string {
+	return fmt.Sprintf("{%s %v}", m.Moniker, m.Height)
 }

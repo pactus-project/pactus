@@ -13,7 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -34,7 +34,7 @@ type consensus struct {
 	commitState         consState
 	currentState        consState
 	changeProposerState consState
-	broadcastCh         chan payload.Payload
+	broadcastCh         chan message.Message
 	logger              *logger.Logger
 }
 
@@ -42,7 +42,7 @@ func NewConsensus(
 	conf *Config,
 	state state.Facade,
 	signer crypto.Signer,
-	broadcastCh chan payload.Payload) (Consensus, error) {
+	broadcastCh chan message.Message) (Consensus, error) {
 	cs := &consensus{
 		config:      conf,
 		state:       state,
@@ -261,23 +261,19 @@ func (cs *consensus) signAddVote(msgType vote.Type, hash hash.Hash) {
 }
 
 func (cs *consensus) queryProposal() {
-	pld := payload.NewQueryProposalPayload(cs.height, cs.round)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewQueryProposalMessage(cs.height, cs.round)
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
-	pld := payload.NewProposalPayload(p)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewProposalMessage(p)
 }
 
 func (cs *consensus) broadcastVote(v *vote.Vote) {
-	pld := payload.NewVotePayload(v)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewVoteMessage(v)
 }
 
 func (cs *consensus) announceNewBlock(h int, b *block.Block, c *block.Certificate) {
-	pld := payload.NewBlockAnnouncePayload(h, b, c)
-	cs.broadcastCh <- pld
+	cs.broadcastCh <- message.NewBlockAnnounceMessage(h, b, c)
 }
 
 // TODO: Improve the performance?

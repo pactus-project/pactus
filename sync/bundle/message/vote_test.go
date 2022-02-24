@@ -1,4 +1,4 @@
-package payload
+package message
 
 import (
 	"testing"
@@ -8,23 +8,23 @@ import (
 )
 
 func TestVoteType(t *testing.T) {
-	p := &VotePayload{}
-	assert.Equal(t, p.Type(), PayloadTypeVote)
+	m := &VoteMessage{}
+	assert.Equal(t, m.Type(), MessageTypeVote)
 }
 
-func TestVotePayload(t *testing.T) {
+func TestVoteMessage(t *testing.T) {
 	t.Run("Invalid vote", func(t *testing.T) {
 		v, _ := vote.GenerateTestPrepareVote(100, -1)
-		p := NewVotePayload(v)
+		m := NewVoteMessage(v)
 
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, m.SanityCheck())
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		v, _ := vote.GenerateTestPrepareVote(100, 0)
-		p := NewVotePayload(v)
+		m := NewVoteMessage(v)
 
-		assert.NoError(t, p.SanityCheck())
-		assert.Contains(t, p.Fingerprint(), v.Fingerprint())
+		assert.NoError(t, m.SanityCheck())
+		assert.Contains(t, m.Fingerprint(), v.Fingerprint())
 	})
 }

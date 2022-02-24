@@ -124,11 +124,7 @@ func (conf *Config) SaveToFile(file string) error {
 	} else {
 		return errors.Errorf(errors.ErrInvalidConfig, "invalid suffix for the config file")
 	}
-	if err := util.WriteFile(file, dat); err != nil {
-		return err
-	}
-
-	return nil
+	return util.WriteFile(file, dat)
 }
 
 func (conf *Config) SanityCheck() error {
@@ -156,8 +152,5 @@ func (conf *Config) SanityCheck() error {
 	if err := conf.Capnp.SanityCheck(); err != nil {
 		return err
 	}
-	if err := conf.HTTP.SanityCheck(); err != nil {
-		return err
-	}
-	return nil
+	return conf.HTTP.SanityCheck()
 }

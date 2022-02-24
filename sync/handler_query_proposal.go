@@ -3,33 +3,33 @@ package sync
 import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 )
 
 type queryProposalHandler struct {
 	*synchronizer
 }
 
-func newQueryProposalHandler(sync *synchronizer) payloadHandler {
+func newQueryProposalHandler(sync *synchronizer) messageHandler {
 	return &queryProposalHandler{
 		sync,
 	}
 }
 
-func (handler *queryProposalHandler) ParsPayload(p payload.Payload, initiator peer.ID) error {
-	pld := p.(*payload.QueryProposalPayload)
-	handler.logger.Trace("parsing query proposal payload", "pld", pld)
+func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+	msg := m.(*message.QueryProposalMessage)
+	handler.logger.Trace("parsing QueryProposal message", "msg", msg)
 
 	height, round := handler.consensus.HeightRound()
-	if pld.Height == height && pld.Round == round {
+	if msg.Height == height && msg.Round == round {
 		if !handler.peerIsInTheCommittee(initiator) {
 			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
 		}
 
-		p := handler.consensus.RoundProposal(pld.Round)
+		p := handler.consensus.RoundProposal(msg.Round)
 		if p != nil {
-			response := payload.NewProposalPayload(p)
+			response := message.NewProposalMessage(p)
 			handler.broadcast(response)
 		}
 	}
@@ -37,20 +37,20 @@ func (handler *queryProposalHandler) ParsPayload(p payload.Payload, initiator pe
 	return nil
 }
 
-func (handler *queryProposalHandler) PrepareMessage(p payload.Payload) *message.Message {
-	pld := p.(*payload.QueryProposalPayload)
-	proposal := handler.consensus.RoundProposal(pld.Round)
+func (handler *queryProposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+	msg := m.(*message.QueryProposalMessage)
+	proposal := handler.consensus.RoundProposal(msg.Round)
 	if proposal == nil {
-		proposal = handler.cache.GetProposal(pld.Height, pld.Round)
+		proposal = handler.cache.GetProposal(msg.Height, msg.Round)
 		if proposal != nil {
 			// We have the proposal inside the cache
 			handler.consensus.SetProposal(proposal)
 		} else {
 			if handler.weAreInTheCommittee() {
-				msg := message.NewMessage(handler.SelfID(), p)
+				msg := bundle.NewBundle(handler.SelfID(), m)
 				return msg
 			}
-			handler.logger.Debug("not an active validator", "pld", pld)
+			handler.logger.Debug("not an active validator", "msg", msg)
 		}
 	}
 

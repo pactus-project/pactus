@@ -20,7 +20,7 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/util"
@@ -90,13 +90,13 @@ func setup(t *testing.T) {
 	stP, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool)
 	require.NoError(t, err)
 
-	consX, err := NewConsensus(TestConfig(), stX, tSigners[tIndexX], make(chan payload.Payload, 100))
+	consX, err := NewConsensus(TestConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
 	assert.NoError(t, err)
-	consY, err := NewConsensus(TestConfig(), stY, tSigners[tIndexY], make(chan payload.Payload, 100))
+	consY, err := NewConsensus(TestConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
 	assert.NoError(t, err)
-	consB, err := NewConsensus(TestConfig(), stB, tSigners[tIndexB], make(chan payload.Payload, 100))
+	consB, err := NewConsensus(TestConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
 	assert.NoError(t, err)
-	consP, err := NewConsensus(TestConfig(), stP, tSigners[tIndexP], make(chan payload.Payload, 100))
+	consP, err := NewConsensus(TestConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
 	assert.NoError(t, err)
 	tConsX = consX.(*consensus)
 	tConsY = consY.(*consensus)
@@ -126,12 +126,12 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
-		case pld := <-cons.broadcastCh:
-			logger.Info("shouldPublishBlockAnnounce", "pld", pld)
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishBlockAnnounce", "msg", msg)
 
-			if pld.Type() == payload.PayloadTypeBlockAnnounce {
-				p := pld.(*payload.BlockAnnouncePayload)
-				assert.Equal(t, p.Block.Hash(), hash)
+			if msg.Type() == message.MessageTypeBlockAnnounce {
+				m := msg.(*message.BlockAnnounceMessage)
+				assert.Equal(t, m.Block.Hash(), hash)
 				return
 			}
 		}
@@ -146,13 +146,13 @@ func shouldPublishProposal(t *testing.T, cons *consensus, height, round int) {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
-		case pld := <-cons.broadcastCh:
-			logger.Info("shouldPublishProposal", "pld", pld)
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishProposal", "msg", msg)
 
-			if pld.Type() == payload.PayloadTypeProposal {
-				p := pld.(*payload.ProposalPayload)
-				assert.Equal(t, p.Proposal.Height(), height)
-				assert.Equal(t, p.Proposal.Round(), round)
+			if msg.Type() == message.MessageTypeProposal {
+				m := msg.(*message.ProposalMessage)
+				assert.Equal(t, m.Proposal.Height(), height)
+				assert.Equal(t, m.Proposal.Round(), round)
 				return
 			}
 		}
@@ -167,13 +167,13 @@ func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
-		case pld := <-cons.broadcastCh:
-			logger.Info("shouldPublishQueryProposal", "pld", pld)
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishQueryProposal", "msg", msg)
 
-			if pld.Type() == payload.PayloadTypeQueryProposal {
-				p := pld.(*payload.QueryProposalPayload)
-				assert.Equal(t, p.Height, height)
-				assert.Equal(t, p.Round, round)
+			if msg.Type() == message.MessageTypeQueryProposal {
+				m := msg.(*message.QueryProposalMessage)
+				assert.Equal(t, m.Height, height)
+				assert.Equal(t, m.Round, round)
 				return
 			}
 		}
@@ -187,13 +187,13 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash h
 		select {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
-		case pld := <-cons.broadcastCh:
-			logger.Info("shouldPublishVote", "pld", pld)
+		case msg := <-cons.broadcastCh:
+			logger.Info("shouldPublishVote", "msg", msg)
 
-			if pld.Type() == payload.PayloadTypeVote {
-				p := pld.(*payload.VotePayload)
-				if p.Vote.Type() == voteType &&
-					p.Vote.BlockHash().EqualsTo(hash) {
+			if msg.Type() == message.MessageTypeVote {
+				m := msg.(*message.VoteMessage)
+				if m.Vote.Type() == voteType &&
+					m.Vote.BlockHash().EqualsTo(hash) {
 					return
 				}
 			}
@@ -309,7 +309,7 @@ func TestNotInCommittee(t *testing.T) {
 	store := store.MockingStore()
 
 	st, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, signer, store, tTxPool)
-	cons, err := NewConsensus(TestConfig(), st, signer, make(chan payload.Payload, 100))
+	cons, err := NewConsensus(TestConfig(), st, signer, make(chan message.Message, 100))
 	assert.NoError(t, err)
 
 	testEnterNewHeight(cons.(*consensus))

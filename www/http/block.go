@@ -48,10 +48,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
 	res := s.capnp.GetBlockHeight(s.ctx, func(p capnp.ZarbServer_getBlockHeight_Params) error {
 		vars := mux.Vars(r)
-		if err := p.SetHash([]byte(vars["hash"])); err != nil {
-			return err
-		}
-		return nil
+		return p.SetHash([]byte(vars["hash"]))
 	})
 
 	st, err := res.Struct()

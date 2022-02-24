@@ -63,9 +63,9 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		peer.UpdateMoniker(moniker)
 		peer.UpdateInitialBlockDownload(p.InitialBlockDownload())
 		peer.UpdateHeight(int(p.Height()))
-		peer.UpdateInvalidMessage(int(p.InvalidMessages()))
-		peer.UpdateReceivedMessage(int(p.ReceivedMessages()))
-		peer.UpdateReceivedBytes(int(p.ReceivedBytes()))
+		peer.UpdateInvalidBundlesCounter(int(p.InvalidMessages()))
+		peer.UpdateReceivedBundlesCounter(int(p.ReceivedMessages()))
+		peer.UpdateReceivedBytesCounter(int(p.ReceivedBytes()))
 
 		out.Peers[i] = peer
 	}

@@ -191,7 +191,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		p = &payload.SortitionPayload{}
 
 	default:
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid payload")
+		return errors.Errorf(errors.ErrInvalidTx, "invalid payload")
 	}
 
 	tx.data.Version = _data.Version

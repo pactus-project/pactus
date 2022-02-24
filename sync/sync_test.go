@@ -18,8 +18,8 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/message"
-	"github.com/zarbchain/zarb-go/sync/message/payload"
+	"github.com/zarbchain/zarb-go/sync/bundle"
+	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -31,7 +31,7 @@ var (
 	tConsensus   *consensus.MockConsensus
 	tNetwork     *network.MockNetwork
 	tSync        *synchronizer
-	tBroadcastCh chan payload.Payload
+	tBroadcastCh chan message.Message
 )
 
 type OverrideFingerprint struct {
@@ -55,7 +55,7 @@ func setup(t *testing.T) {
 	committee, _ := committee.GenerateTestCommittee()
 	tState = state.MockingState(committee)
 	tConsensus = consensus.MockingConsensus(tState)
-	tBroadcastCh = make(chan payload.Payload, 1000)
+	tBroadcastCh = make(chan message.Message, 1000)
 	tNetwork = network.MockingNetwork(util.RandomPeerID())
 
 	testAddBlocks(t, tState, 21)
@@ -71,53 +71,53 @@ func setup(t *testing.T) {
 	tSync = sync1.(*synchronizer)
 
 	assert.NoError(t, tSync.Start())
-	shouldPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHello)
+	shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
 }
 
-func shouldPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) *message.Message {
+func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) *bundle.Bundle {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
 		select {
 		case <-timeout.C:
-			require.NoError(t, fmt.Errorf("ShouldPublishPayloadWithThisType %v: Timeout, test: %v", payloadType, t.Name()))
+			require.NoError(t, fmt.Errorf("shouldPublishMessageWithThisType %v: Timeout, test: %v", msgType, t.Name()))
 			return nil
 		case b := <-net.BroadcastCh:
 			net.SendToOthers(b.Data, b.Target)
-			// Decode message again to check the payload type
-			msg := new(message.Message)
-			_, err := msg.Decode(bytes.NewReader(b.Data))
+			// Decode message again to check the message type
+			bdl := new(bundle.Bundle)
+			_, err := bdl.Decode(bytes.NewReader(b.Data))
 			require.NoError(t, err)
-			assert.Equal(t, msg.Initiator, net.ID)
+			assert.Equal(t, bdl.Initiator, net.ID)
 
 			// -----------
 			// Check flags
-			require.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagNetworkLibP2P), "invalid flag: %v", msg)
+			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkLibP2P), "invalid flag: %v", bdl)
 
 			if b.Target == nil {
-				require.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagBroadcasted), "invalid flag: %v", msg)
+				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
 			} else {
-				require.False(t, util.IsFlagSet(msg.Flags, message.MsgFlagBroadcasted), "invalid flag: %v", msg)
+				require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
 			}
 
-			if msg.Payload.Type() == payload.PayloadTypeHello {
-				require.True(t, util.IsFlagSet(msg.Flags, message.MsgFlagHelloMessage), "invalid flag: %v", msg)
+			if bdl.Message.Type() == message.MessageTypeHello {
+				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bdl)
 			} else {
-				require.False(t, util.IsFlagSet(msg.Flags, message.MsgFlagHelloMessage), "invalid flag: %v", msg)
+				require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bdl)
 			}
 			// -----------
 
-			if msg.Payload.Type() == payloadType {
-				logger.Info("shouldPublishPayloadWithThisType", "msg", msg, "type", payloadType.String())
-				return msg
+			if bdl.Message.Type() == msgType {
+				logger.Info("shouldPublishMessageWithThisType", "bundle", bdl, "type", msgType.String())
+				return bdl
 			}
 		}
 	}
 }
 
-func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork, payloadType payload.Type) {
+func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
 	timeout := time.NewTimer(300 * time.Millisecond)
 
 	for {
@@ -125,18 +125,18 @@ func shouldNotPublishPayloadWithThisType(t *testing.T, net *network.MockNetwork,
 		case <-timeout.C:
 			return
 		case b := <-net.BroadcastCh:
-			// Decode message again to check the payload type
-			msg := new(message.Message)
-			_, err := msg.Decode(bytes.NewReader(b.Data))
+			// Decode message again to check the message type
+			bdl := new(bundle.Bundle)
+			_, err := bdl.Decode(bytes.NewReader(b.Data))
 			require.NoError(t, err)
-			assert.NotEqual(t, msg.Payload.Type(), payloadType)
+			assert.NotEqual(t, bdl.Message.Type(), msgType)
 		}
 	}
 }
 
-func testReceiveingNewMessage(sync *synchronizer, pld payload.Payload, from peer.ID) error {
-	msg := message.NewMessage(from, pld)
-	return sync.processIncomingMessage(msg)
+func testReceiveingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
+	bdl := bundle.NewBundle(from, msg)
+	return sync.processIncomingBundle(bdl)
 }
 
 func testAddBlocks(t *testing.T, state *state.MockState, count int) {
@@ -187,8 +187,7 @@ func TestStop(t *testing.T) {
 func TestBroadcastInvalidMessage(t *testing.T) {
 	setup(t)
 	t.Run("Should not publish invalid messages", func(t *testing.T) {
-		pld := payload.NewHeartBeatPayload(-1, -1, hash.GenerateTestHash())
-		tBroadcastCh <- pld
-		shouldNotPublishPayloadWithThisType(t, tNetwork, payload.PayloadTypeHeartBeat)
+		tBroadcastCh <- message.NewHeartBeatMessage(-1, -1, hash.GenerateTestHash())
+		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHeartBeat)
 	})
 }
