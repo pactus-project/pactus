@@ -177,10 +177,10 @@ func (p *txPool) QueryTx(id tx.ID) *tx.Tx {
 }
 
 func (p *txPool) PrepareBlockTransactions() []*tx.Tx {
+	trxs := make([]*tx.Tx, 0, p.Size())
+
 	p.lk.RLock()
 	defer p.lk.RUnlock()
-
-	trxs := make([]*tx.Tx, 0, p.Size())
 
 	// Appending one sortition transaction
 	poolSortition := p.pools[payload.PayloadTypeSortition]
