@@ -17,7 +17,7 @@ func NewVRF() *VRF {
 }
 
 // Evaluate returns a random number between 0 and max with the proof
-func (vrf *VRF) Evaluate(seed Seed, signer crypto.Signer, max int64) (index int64, proof Proof) {
+func (vrf *VRF) Evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64, proof Proof) {
 	sig := signer.SignData(seed[:])
 
 	proof, _ = ProofFromRawBytes(sig.RawBytes())
@@ -27,7 +27,7 @@ func (vrf *VRF) Evaluate(seed Seed, signer crypto.Signer, max int64) (index int6
 }
 
 // Verify ensures the proof is valid
-func (vrf *VRF) Verify(seed Seed, public crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
+func (vrf *VRF) Verify(seed VerifiableSeed, public crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
 	proofSig, err := bls.SignatureFromRawBytes(proof[:])
 	if err != nil {
 		return 0, false

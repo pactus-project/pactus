@@ -9,7 +9,7 @@ import (
 )
 
 type param struct {
-	seed  Seed
+	seed  VerifiableSeed
 	stake int64
 }
 
@@ -27,7 +27,7 @@ func NewSortition() *Sortition {
 	}
 }
 
-func (s *Sortition) SetParams(blockHash hash.Hash, seed Seed, poolStake int64) {
+func (s *Sortition) SetParams(blockHash hash.Hash, seed VerifiableSeed, poolStake int64) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -38,7 +38,7 @@ func (s *Sortition) SetParams(blockHash hash.Hash, seed Seed, poolStake int64) {
 	s.params.PushBack(blockHash, p)
 }
 
-func (s *Sortition) GetParams(blockHash hash.Hash) (seed Seed, poolStake int64) {
+func (s *Sortition) GetParams(blockHash hash.Hash) (seed VerifiableSeed, poolStake int64) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 

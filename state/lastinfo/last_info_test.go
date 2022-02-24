@@ -31,7 +31,7 @@ func setup(t *testing.T) {
 	tLastInfo = NewLastInfo(tStore)
 	tSortition = sortition.NewSortition()
 
-	setSortitionParams := func(hash hash.Hash, seed sortition.Seed, committers []int) {
+	setSortitionParams := func(hash hash.Hash, seed sortition.VerifiableSeed, committers []int) {
 		totalStake := int64(0)
 		tStore.IterateValidators(func(v *validator.Validator) (stop bool) {
 			totalStake += v.Stake()

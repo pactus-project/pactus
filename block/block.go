@@ -30,7 +30,7 @@ type blockData struct {
 
 func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 	prevBlockHash, stateHash hash.Hash,
-	prevCertificate *Certificate, sortitionSeed sortition.Seed, proposer crypto.Address) *Block {
+	prevCertificate *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address) *Block {
 	txIDsHash := txIDs.Hash()
 	prevCertHash := hash.UndefHash
 	if prevCertificate != nil {
