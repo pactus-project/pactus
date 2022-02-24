@@ -237,11 +237,7 @@ func (sync *synchronizer) processIncomingMessage(bnd *bundle.Bundle) error {
 		return errors.Errorf(errors.ErrInvalidMessage, "Invalid message type: %v", bnd.Message.Type())
 	}
 
-	if err := handler.ParsMessage(bnd.Message, bnd.Initiator); err != nil {
-		return err
-	}
-
-	return nil
+	return handler.ParsMessage(bnd.Message, bnd.Initiator)
 }
 
 func (sync *synchronizer) Fingerprint() string {

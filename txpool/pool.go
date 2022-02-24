@@ -65,11 +65,7 @@ func (pool *txPool) AppendTx(trx *tx.Tx) error {
 	pool.lk.Lock()
 	defer pool.lk.Unlock()
 
-	if err := pool.appendTx(trx); err != nil {
-		return err
-	}
-
-	return nil
+	return pool.appendTx(trx)
 }
 
 /// AppendTxAndBroadcast validates the transaction, add it into the transaction pool

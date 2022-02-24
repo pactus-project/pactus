@@ -23,10 +23,7 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	if err := res.SetData(trxData); err != nil {
 		return err
 	}
-	if err := res.SetId(trx.ID().RawBytes()); err != nil {
-		return err
-	}
-	return nil
+	return res.SetId(trx.ID().RawBytes())
 }
 
 //Send the raw transaction

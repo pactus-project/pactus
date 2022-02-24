@@ -23,11 +23,7 @@ func (st *state) validateBlock(block *block.Block) error {
 			"state hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
 	}
 
-	if err := st.validateCertificateForPreviousHeight(block.PrevCertificate()); err != nil {
-		return err
-	}
-
-	return nil
+	return st.validateCertificateForPreviousHeight(block.PrevCertificate())
 }
 
 func (st *state) checkCertificate(cert *block.Certificate) error {

@@ -14,10 +14,7 @@ import (
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	b := s.capnp.GetTransaction(s.ctx, func(p capnp.ZarbServer_getTransaction_Params) error {
 		vars := mux.Vars(r)
-		if err := p.SetId([]byte(vars["hash"])); err != nil {
-			return err
-		}
-		return nil
+		return p.SetId([]byte(vars["hash"]))
 	})
 
 	t, err := b.Struct()
@@ -51,10 +48,7 @@ func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Reques
 		if err != nil {
 			return err
 		}
-		if err := p.SetRawTx(d); err != nil {
-			return err
-		}
-		return nil
+		return p.SetRawTx(d)
 	})
 
 	t, err := txRes.Struct()
