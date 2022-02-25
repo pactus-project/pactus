@@ -8,53 +8,47 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 var (
-	tConfig1  *Config
-	tConfig2  *Config
-	tNetwork1 *network
-	tNetwork2 *network
+	tSize     int
+	tNetworks []*network
 )
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
+	tSize = 5
 
-	tConfig1 = TestConfig()
-	tConfig2 = TestConfig()
-	tConfig1.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
+	tNetworks = make([]*network, 5)
 
-	net1, _ := NewNetwork(tConfig1)
-	net2, _ := NewNetwork(tConfig2)
+	util.TempFilePath()
 
-	tNetwork1 = net1.(*network)
-	tNetwork2 = net2.(*network)
+	for i := 0; i < tSize; i++ {
+		conf := TestConfig()
 
-	err := tNetwork1.Start()
-	if err != nil {
-		panic(err)
-	}
-	err = tNetwork2.Start()
-	if err != nil {
-		panic(err)
-	}
-
-	err = tNetwork1.JoinGeneralTopic()
-	if err != nil {
-		panic(err)
-	}
-	err = tNetwork2.JoinGeneralTopic()
-	if err != nil {
-		panic(err)
-	}
-
-	for {
-		if tNetwork1.NumConnectedPeers() > 0 && tNetwork2.NumConnectedPeers() > 0 {
-			break
+		if i == 0 {
+			// bootstrap node
+			conf.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
+			conf.NodeKeyFile = util.TempFilePath()
+		} else {
+			conf.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tNetworks[0].SelfID().String())}
 		}
+
+		net, _ := NewNetwork(conf)
+		if err := net.Start(); err != nil {
+			panic(err)
+		}
+
+		if err := net.JoinGeneralTopic(); err != nil {
+			panic(err)
+		}
+
+		tNetworks[i] = net.(*network)
+		time.Sleep(100 * time.Millisecond)
 	}
 
-	time.Sleep(1 * time.Second)
+	fmt.Println("Peers are connected")
 }
 
 func shouldReceiveEvent(t *testing.T, net *network) Event {
@@ -83,7 +77,7 @@ func TestStoppingNetwork(t *testing.T) {
 func TestDHT(t *testing.T) {
 	conf := TestConfig()
 	conf.EnableMdns = false
-	conf.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tNetwork1.SelfID())}
+	conf.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tNetworks[0].SelfID())}
 
 	net, err := NewNetwork(TestConfig())
 	assert.NoError(t, err)
@@ -100,7 +94,7 @@ func TestDHT(t *testing.T) {
 }
 
 // TODO: Fix me
-// func TestDisconrecting(t *testing.T) {
+// func TestDisconnecting(t *testing.T) {
 // 	net1, net2 := setup(t, TestConfig(), TestConfig())
 
 // 	assert.NoError(t, net1.Start())

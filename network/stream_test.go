@@ -9,12 +9,12 @@ import (
 
 func TestStream(t *testing.T) {
 	msg := []byte("test-stream")
-	require.NoError(t, tNetwork1.SendTo(msg, tNetwork2.SelfID()))
+	require.NoError(t, tNetworks[0].SendTo(msg, tNetworks[1].SelfID()))
 
-	e := shouldReceiveEvent(t, tNetwork2).(*StreamMessage)
+	e := shouldReceiveEvent(t, tNetworks[1]).(*StreamMessage)
 	buf := make([]byte, len(msg))
 	_, err := e.Reader.Read(buf)
 	assert.NoError(t, err)
-	assert.Equal(t, e.Source, tNetwork1.SelfID())
+	assert.Equal(t, e.Source, tNetworks[0].SelfID())
 	assert.Equal(t, buf, msg)
 }
