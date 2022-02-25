@@ -184,10 +184,9 @@ func (p *txPool) PrepareBlockTransactions() []*tx.Tx {
 
 	// Appending one sortition transaction
 	poolSortition := p.pools[payload.PayloadTypeSortition]
-	el := poolSortition.FirstElement()
-	if el != nil {
-		sortitionTrx := el.Value.(*linkedmap.Pair).Second.(*tx.Tx)
-		trxs = append(trxs, sortitionTrx)
+	for e := poolSortition.FirstElement(); e != nil; e = e.Next() {
+		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+		trxs = append(trxs, trx)
 	}
 
 	// Appending bond transactions
