@@ -258,7 +258,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	txIDs := block.NewTxIDs()
 
 	// Re-chaeck all transactions again, remove invalid ones
-	trxs := st.txPool.AllTransactions()
+	trxs := st.txPool.PrepareBlockTransactions()
 	for _, trx := range trxs {
 		// All subsidy transactions (probably from invalid rounds)
 		// should be removed from the pool

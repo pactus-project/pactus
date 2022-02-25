@@ -13,15 +13,16 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 var tPool *txPool
 var tSandbox *sandbox.MockSandbox
-var tAcc1Addr crypto.Address
-var tAcc1Signer crypto.Signer
 var tCh chan message.Message
+var tTestTx *tx.Tx
 
 func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
@@ -30,12 +31,11 @@ func setup(t *testing.T) {
 	p, err := NewTxPool(TestConfig(), tCh)
 	assert.NoError(t, err)
 	p.SetNewSandboxAndRecheck(tSandbox)
-	tAcc1Signer = bls.GenerateTestSigner()
-	tAcc1Addr = tAcc1Signer.Address()
-	acc1 := account.NewAccount(tAcc1Addr, 0)
-	acc1.AddToBalance(10000000000)
-	tSandbox.UpdateAccount(acc1)
 	tPool = p.(*txPool)
+
+	hash88 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(88, hash88)
+	tTestTx = tx.NewMintbaseTx(hash88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
 }
 
 func shouldPublishTransaction(t *testing.T, id tx.ID) {
@@ -61,14 +61,11 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 func TestAppendAndRemove(t *testing.T) {
 	setup(t)
 
-	hash88 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(88, hash88)
-	trx1 := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
-
-	assert.NoError(t, tPool.AppendTx(trx1))
-	assert.NoError(t, tPool.AppendTx(trx1))
-	tPool.RemoveTx(trx1.ID())
-	assert.False(t, tPool.HasTx(trx1.ID()))
+	assert.NoError(t, tPool.AppendTx(tTestTx))
+	// Appending the same transaction again, should not return any error
+	assert.NoError(t, tPool.AppendTx(tTestTx))
+	tPool.RemoveTx(tTestTx.ID())
+	assert.False(t, tPool.HasTx(tTestTx.ID()), "Transaction should be removed")
 }
 
 func TestAppendInvalidTransaction(t *testing.T) {
@@ -81,82 +78,126 @@ func TestAppendInvalidTransaction(t *testing.T) {
 func TestPending(t *testing.T) {
 	setup(t)
 
-	hash88 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(88, hash88)
-	trx := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
-
 	go func(ch chan message.Message) {
 		for {
 			msg := <-ch
 			fmt.Printf("Received a message: %v\n", msg.Fingerprint())
 			m := msg.(*message.QueryTransactionsMessage)
-			if m.IDs[0].EqualsTo(trx.ID()) {
-				assert.NoError(t, tPool.AppendTx(trx))
+			if m.IDs[0].EqualsTo(tTestTx.ID()) {
+				assert.NoError(t, tPool.AppendTx(tTestTx))
 			}
 		}
 	}(tCh)
 
-	assert.Nil(t, tPool.PendingTx(trx.ID()))
-	assert.NotNil(t, tPool.QueryTx(trx.ID()))
-	assert.True(t, tPool.pendings.Has(trx.ID()))
+	assert.Nil(t, tPool.PendingTx(tTestTx.ID()))
+	assert.NotNil(t, tPool.QueryTx(tTestTx.ID()))
+	assert.True(t, tPool.HasTx(tTestTx.ID()))
 
 	invID := hash.GenerateTestHash()
 	assert.Nil(t, tPool.PendingTx(invID))
 }
 
-func TestGetAllTransaction(t *testing.T) {
+// TestFullPool tests if the pool prunes the old transactions when it is full
+func TestFullPool(t *testing.T) {
 	setup(t)
 
 	hash10000 := hash.GenerateTestHash()
 	tSandbox.AppendNewBlock(10000, hash10000)
-	trxs1 := make([]*tx.Tx, 10)
+	trxs := make([]*tx.Tx, tPool.config.sendPoolSize()+1)
 
-	t.Run("pool is empty", func(t *testing.T) {
-		trxs0 := tPool.AllTransactions()
-		assert.Empty(t, trxs0)
-	})
+	signer := bls.GenerateTestSigner()
+	acc1 := account.NewAccount(signer.Address(), 0)
+	acc1.AddToBalance(10000000000)
+	tSandbox.UpdateAccount(acc1)
 
-	t.Run("Fill up the pool and get all transactions", func(t *testing.T) {
-		for i := 0; i < len(trxs1); i++ {
-			a := crypto.GenerateTestAddress()
-			trx := tx.NewSendTx(hash10000.Stamp(), tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
-			tAcc1Signer.SignMsg(trx)
-			assert.NoError(t, tPool.AppendTx(trx))
-			trxs1[i] = trx
-		}
+	// Make sure the pool is empty
+	assert.Equal(t, tPool.Size(), 0)
 
-		trxs2 := tPool.AllTransactions()
-		for i := 0; i < 10; i++ {
-			// Should be in same order
-			assert.Equal(t, trxs1[i].ID(), trxs2[i].ID())
-		}
-		assert.Equal(t, tPool.Size(), 10)
-	})
-
-	t.Run("Add one more transaction, when pool is full", func(t *testing.T) {
-		a := crypto.GenerateTestAddress()
-		trx := tx.NewSendTx(hash10000.Stamp(), tSandbox.AccSeq(tAcc1Addr)+1, tAcc1Addr, a, 1000, 1000, "ok")
-		tAcc1Signer.SignMsg(trx)
+	for i := 0; i < len(trxs); i++ {
+		trx := tx.NewSendTx(hash10000.Stamp(), tSandbox.AccSeq(signer.Address())+1, signer.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
+		signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
+		trxs[i] = trx
+	}
 
-		trxs3 := tPool.AllTransactions()
-		for i := 0; i < 9; i++ {
-			assert.Equal(t, trxs1[i+1].ID(), trxs3[i].ID())
-		}
-		assert.Equal(t, trx.ID(), trxs3[9].ID())
-		assert.Equal(t, tPool.Size(), 10)
-	})
+	assert.Nil(t, tPool.QueryTx(trxs[0].ID()))
+	assert.NotNil(t, tPool.QueryTx(trxs[1].ID()))
+	assert.Equal(t, tPool.Size(), tPool.config.sendPoolSize())
+}
+
+func TestEmptyPool(t *testing.T) {
+	setup(t)
+
+	assert.Empty(t, tPool.PrepareBlockTransactions(), "pool should be empty")
+}
+
+func TestPrepareBlockTransactions(t *testing.T) {
+	setup(t)
+
+	hash1000000 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(1000000, hash1000000)
+
+	acc1Signer := bls.GenerateTestSigner()
+	acc1 := account.NewAccount(acc1Signer.Address(), 0)
+	acc1.AddToBalance(10000000000)
+	tSandbox.UpdateAccount(acc1)
+
+	val1Signer := bls.GenerateTestSigner()
+	val1Pub := val1Signer.PublicKey().(*bls.PublicKey)
+	val1 := validator.NewValidator(val1Pub, 0)
+	val1.AddToStake(10000000000)
+	tSandbox.UpdateValidator(val1)
+
+	val2Signer := bls.GenerateTestSigner()
+	val2Pub := val2Signer.PublicKey().(*bls.PublicKey)
+	val2 := validator.NewValidator(val2Pub, 0)
+	val2.AddToStake(10000000000)
+	val2.UpdateUnbondingHeight(1)
+	tSandbox.UpdateValidator(val2)
+
+	val3Signer := bls.GenerateTestSigner()
+	val3Pub := val3Signer.PublicKey().(*bls.PublicKey)
+	val3 := validator.NewValidator(val3Pub, 0)
+	val3.AddToStake(10000000000)
+	tSandbox.UpdateValidator(val3)
+
+	sendTx := tx.NewSendTx(hash1000000.Stamp(), tSandbox.AccSeq(acc1.Address())+1, acc1.Address(), crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
+	acc1Signer.SignMsg(sendTx)
+
+	pub, _ := bls.GenerateTestKeyPair()
+	bondTx := tx.NewBondTx(hash1000000.Stamp(), tSandbox.AccSeq(acc1.Address())+2, acc1.Address(), pub, 1000, 1000, "bond-tx")
+	acc1Signer.SignMsg(bondTx)
+
+	unbondTx := tx.NewUnbondTx(hash1000000.Stamp(), tSandbox.ValSeq(val1.Address())+1, val1.Address(), "unbond-tx")
+	val1Signer.SignMsg(unbondTx)
+
+	withdrawTx := tx.NewWithdrawTx(hash1000000.Stamp(), tSandbox.ValSeq(val2.Address())+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
+	val2Signer.SignMsg(withdrawTx)
+
+	tSandbox.AcceptSortition = true
+	sortitionTx := tx.NewSortitionTx(hash1000000.Stamp(), tSandbox.ValSeq(val3.Address())+1, val3.Address(), sortition.GenerateRandomProof())
+	val3Signer.SignMsg(sortitionTx)
+
+	assert.NoError(t, tPool.AppendTx(sendTx))
+	assert.NoError(t, tPool.AppendTx(unbondTx))
+	assert.NoError(t, tPool.AppendTx(withdrawTx))
+	assert.NoError(t, tPool.AppendTx(bondTx))
+	assert.NoError(t, tPool.AppendTx(sortitionTx))
+
+	trxs := tPool.PrepareBlockTransactions()
+	assert.Len(t, trxs, 5)
+	assert.Equal(t, trxs[0].ID(), sortitionTx.ID())
+	assert.Equal(t, trxs[1].ID(), bondTx.ID())
+	assert.Equal(t, trxs[2].ID(), unbondTx.ID())
+	assert.Equal(t, trxs[3].ID(), withdrawTx.ID())
+	assert.Equal(t, trxs[4].ID(), sendTx.ID())
 }
 
 func TestAppendAndBroadcast(t *testing.T) {
 	setup(t)
 
-	hash88 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(88, hash88)
-	trx := tx.NewMintbaseTx(hash88.Stamp(), 89, tAcc1Addr, 25000000, "subsidy-tx")
-
-	assert.NoError(t, tPool.AppendTxAndBroadcast(trx))
-	shouldPublishTransaction(t, trx.ID())
+	assert.NoError(t, tPool.AppendTxAndBroadcast(tTestTx))
+	shouldPublishTransaction(t, tTestTx.ID())
 
 	invTrx, _ := tx.GenerateTestBondTx()
 	assert.Error(t, tPool.AppendTxAndBroadcast(invTrx))

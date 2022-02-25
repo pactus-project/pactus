@@ -30,10 +30,11 @@ type MockSandbox struct {
 
 func MockingSandbox() *MockSandbox {
 	return &MockSandbox{
-		Accounts:     make(map[crypto.Address]*account.Account),
-		Validators:   make(map[crypto.Address]*validator.Validator),
-		HashToHeight: make(map[hash.Hash]int),
-		Params:       param.DefaultParams(),
+		Accounts:        make(map[crypto.Address]*account.Account),
+		Validators:      make(map[crypto.Address]*validator.Validator),
+		HashToHeight:    make(map[hash.Hash]int),
+		Params:          param.DefaultParams(),
+		AcceptSortition: false,
 	}
 }
 
@@ -110,8 +111,16 @@ func (m *MockSandbox) AccSeq(a crypto.Address) int {
 		return acc.Sequence()
 	}
 
-	m.Accounts[a] = account.NewAccount(a, len(m.Accounts))
-	return 1
+	panic("invalid account address")
+}
+
+func (m *MockSandbox) ValSeq(a crypto.Address) int {
+	if val, ok := m.Validators[a]; ok {
+		return val.Sequence()
+	}
+
+	panic("invalid validator address")
+
 }
 
 func (m *MockSandbox) CommitteeSize() int {

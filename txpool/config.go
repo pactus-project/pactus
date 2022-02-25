@@ -1,11 +1,13 @@
 package txpool
 
 import (
+	"time"
+
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type Config struct {
-	MaxSize int `toml:"" comment:"Maximum number of unconfirmed transaction inside pool.Default is 2000"`
+	MaxSize int `toml:"" comment:"Maximum number of unconfirmed transaction inside pool. Default is 2000"`
 }
 
 func DefaultConfig() *Config {
@@ -16,7 +18,7 @@ func DefaultConfig() *Config {
 
 func TestConfig() *Config {
 	return &Config{
-		MaxSize: 10,
+		MaxSize: 20,
 	}
 }
 
@@ -26,4 +28,28 @@ func (conf *Config) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidConfig, "maxSize can't be negative or zero")
 	}
 	return nil
+}
+
+func (conf *Config) sortitionPoolSize() int {
+	return int(float32(conf.MaxSize) * 0.05)
+}
+
+func (conf *Config) bondPoolSize() int {
+	return int(float32(conf.MaxSize) * 0.05)
+}
+
+func (conf *Config) unbondPoolSize() int {
+	return int(float32(conf.MaxSize) * 0.05)
+}
+
+func (conf *Config) withdrawPoolSize() int {
+	return int(float32(conf.MaxSize) * 0.05)
+}
+
+func (conf *Config) sendPoolSize() int {
+	return int(float32(conf.MaxSize) * 0.8)
+}
+
+func (conf *Config) queryTimeout() time.Duration {
+	return time.Second * 2
 }

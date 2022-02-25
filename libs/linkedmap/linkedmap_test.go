@@ -7,25 +7,41 @@ import (
 )
 
 func TestLinkedMap(t *testing.T) {
-	t.Run("First element on empty linkedmap", func(t *testing.T) {
+	t.Run("Test FirstElement", func(t *testing.T) {
 		lm := NewLinkedMap(4)
-		el := lm.FirstElement()
 		k, v := lm.First()
-		assert.Nil(t, el)
+		assert.Nil(t, lm.FirstElement())
 		assert.Nil(t, k)
 		assert.Nil(t, v)
+
+		lm.PushFront(3, "c")
+		lm.PushFront(2, "b")
+		lm.PushFront(1, "a")
+
+		k, v = lm.First()
+		assert.Equal(t, lm.FirstElement().Value, &Pair{1, "a"})
+		assert.Equal(t, k, 1)
+		assert.Equal(t, v, "a")
 	})
 
-	t.Run("Last element on empty linkedmap", func(t *testing.T) {
+	t.Run("Test LastElement", func(t *testing.T) {
 		lm := NewLinkedMap(4)
-		el := lm.LastElement()
 		k, v := lm.Last()
-		assert.Nil(t, el)
+		assert.Nil(t, lm.LastElement())
 		assert.Nil(t, k)
 		assert.Nil(t, v)
+
+		lm.PushBack(1, "a")
+		lm.PushBack(2, "b")
+		lm.PushBack(3, "c")
+
+		k, v = lm.Last()
+		assert.Equal(t, lm.LastElement().Value, &Pair{3, "c"})
+		assert.Equal(t, k, 3)
+		assert.Equal(t, v, "c")
 	})
 
-	t.Run("Should adds items", func(t *testing.T) {
+	t.Run("Test Get", func(t *testing.T) {
 		lm := NewLinkedMap(4)
 
 		lm.PushBack(2, "b")
@@ -40,29 +56,29 @@ func TestLinkedMap(t *testing.T) {
 		assert.Equal(t, v, nil)
 	})
 
-	t.Run("Should removes item", func(t *testing.T) {
+	t.Run("Test Remove", func(t *testing.T) {
 		lm := NewLinkedMap(4)
 
 		lm.PushBack(0, "-")
 		lm.PushBack(2, "b")
 		lm.PushBack(1, "a")
-		lm.Remove(2)
-
-		v, ok := lm.Get(2)
-		assert.Equal(t, ok, false)
-		assert.Equal(t, v, nil)
-
+		assert.True(t, lm.Remove(2))
+		assert.False(t, lm.Remove(2))
 	})
 
 	t.Run("Should updates v", func(t *testing.T) {
 		lm := NewLinkedMap(4)
+		lm.PushBack(1, "a")
 
-		lm.PushBack(0xa, "a")
-		lm.PushBack(0xa, "A")
-
-		v, ok := lm.Get(0xa)
+		lm.PushBack(1, "b")
+		v, ok := lm.Get(1)
 		assert.Equal(t, ok, true)
-		assert.Equal(t, v, "A")
+		assert.Equal(t, v, "b")
+
+		lm.PushFront(1, "c")
+		v, ok = lm.Get(1)
+		assert.Equal(t, ok, true)
+		assert.Equal(t, v, "c")
 	})
 
 	t.Run("Should prunes oldest item", func(t *testing.T) {
@@ -106,36 +122,32 @@ func TestLinkedMap(t *testing.T) {
 		assert.Equal(t, v, nil)
 	})
 
-	t.Run("Should returns first", func(t *testing.T) {
+	t.Run("Test PushBack and prune", func(t *testing.T) {
 		lm := NewLinkedMap(3)
 
-		lm.PushBack(1, "a")
+		lm.PushBack(1, "a") // This item should be pruned
 		lm.PushBack(2, "b")
 		lm.PushBack(3, "c")
-		lm.PushBack(4, "d") // pruning happens here
-
-		el := lm.FirstElement()
-		assert.Equal(t, el.Value, &Pair{2, "b"})
+		lm.PushBack(4, "d")
 
 		k, v := lm.First()
+		assert.Equal(t, lm.FirstElement().Value, &Pair{2, "b"})
 		assert.Equal(t, k, 2)
 		assert.Equal(t, v, "b")
 	})
 
-	t.Run("Should returns last", func(t *testing.T) {
+	t.Run("Test PushFront and prune", func(t *testing.T) {
 		lm := NewLinkedMap(3)
 
-		lm.PushBack(1, "a")
-		lm.PushBack(2, "b")
-		lm.PushBack(3, "c")
-		lm.PushBack(4, "d") // pruning happens here
-
-		el := lm.LastElement()
-		assert.Equal(t, el.Value, &Pair{4, "d"})
+		lm.PushFront(1, "a")
+		lm.PushFront(2, "b")
+		lm.PushFront(3, "c")
+		lm.PushFront(4, "d") // This item should be pruned
 
 		k, v := lm.Last()
-		assert.Equal(t, k, 4)
-		assert.Equal(t, v, "d")
+		assert.Equal(t, lm.LastElement().Value, &Pair{1, "a"})
+		assert.Equal(t, k, 1)
+		assert.Equal(t, v, "a")
 	})
 
 	t.Run("Deletd first ", func(t *testing.T) {
@@ -147,8 +159,7 @@ func TestLinkedMap(t *testing.T) {
 
 		lm.Remove(1)
 
-		el := lm.FirstElement()
-		assert.Equal(t, el.Value, &Pair{2, "b"})
+		assert.Equal(t, lm.FirstElement().Value, &Pair{2, "b"})
 	})
 
 	t.Run("Delete last", func(t *testing.T) {
@@ -159,23 +170,44 @@ func TestLinkedMap(t *testing.T) {
 		lm.PushBack(3, "c")
 
 		lm.Remove(3)
-		el := lm.LastElement()
-		assert.Equal(t, el.Value, &Pair{2, "b"})
+		assert.Equal(t, lm.LastElement().Value, &Pair{2, "b"})
 	})
 
-	t.Run("Push front", func(t *testing.T) {
-		lm1 := NewLinkedMap(3)
-		lm2 := NewLinkedMap(3)
+	t.Run("Test Has function", func(t *testing.T) {
+		lm := NewLinkedMap(2)
 
-		lm1.PushBack(1, "a")
-		lm1.PushBack(2, "b")
-		lm1.PushBack(3, "c")
+		lm.PushBack(1, "a")
 
-		lm2.PushFront(3, "c")
-		lm2.PushFront(2, "b")
-		lm2.PushFront(1, "a")
-
-		assert.Equal(t, lm1.LastElement().Value, lm2.LastElement().Value)
-		assert.Equal(t, lm1.FirstElement().Value, lm2.FirstElement().Value)
+		assert.True(t, lm.Has(1))
+		assert.False(t, lm.Has(2))
 	})
+
+	t.Run("Test Clear", func(t *testing.T) {
+		lm := NewLinkedMap(2)
+
+		lm.PushBack(1, "a")
+		lm.Clear()
+		assert.True(t, lm.Empty())
+	})
+}
+
+func TestSortingLinkedMap(t *testing.T) {
+	lm := NewLinkedMap(6)
+
+	lessThan := func(left interface{}, right interface{}) bool {
+		return left.(string) < right.(string)
+	}
+	lm.SortList(lessThan)
+	assert.Nil(t, lm.FirstElement())
+
+	lm.PushBack(3, "c")
+	lm.PushBack(5, "e")
+	lm.PushBack(1, "a")
+	lm.PushBack(2, "b")
+	lm.PushBack(4, "d")
+
+	lm.SortList(lessThan)
+	assert.Equal(t, lm.FirstElement().Value, &Pair{1, "a"})
+	assert.Equal(t, lm.LastElement().Value, &Pair{5, "e"})
+	assert.Equal(t, lm.Size(), 5)
 }

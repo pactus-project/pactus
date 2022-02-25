@@ -97,12 +97,13 @@ func (lm *LinkedMap) FirstElement() *list.Element {
 	return lm.list.Front()
 }
 
-func (lm *LinkedMap) Remove(first interface{}) {
+func (lm *LinkedMap) Remove(first interface{}) bool {
 	el, found := lm.hashmap[first]
 	if found {
 		lm.list.Remove(el)
 		delete(lm.hashmap, el.Value.(*Pair).First)
 	}
+	return found
 }
 
 func (lm *LinkedMap) Empty() bool {
@@ -128,5 +129,26 @@ func (lm *LinkedMap) prune() {
 		key := front.Value.(*Pair).First
 		lm.list.Remove(front)
 		delete(lm.hashmap, key)
+	}
+}
+
+func (lm *LinkedMap) SortList(lessThan func(left interface{}, right interface{}) bool) {
+	index := lm.list.Front()
+	if index == nil {
+		return
+	}
+
+	for index != nil {
+		current := index.Next()
+		for current != nil {
+			if lessThan(current.Value.(*Pair).Second, index.Value.(*Pair).Second) {
+				lm.list.MoveBefore(current, index)
+				index = current
+				current = index
+			}
+			current = current.Next()
+		}
+
+		index = index.Next()
 	}
 }

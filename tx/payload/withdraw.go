@@ -37,7 +37,7 @@ func (p *WithdrawPayload) SanityCheck() error {
 }
 
 func (p *WithdrawPayload) Fingerprint() string {
-	return fmt.Sprintf("{WithdrawPayload: %v->%v 💸 %v",
+	return fmt.Sprintf("{WithdrawPayload 🧾 %v->%v %v",
 		p.From.Fingerprint(),
 		p.To.Fingerprint(),
 		p.Amount)

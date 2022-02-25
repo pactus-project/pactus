@@ -32,7 +32,7 @@ func (p *UnbondPayload) SanityCheck() error {
 }
 
 func (p *UnbondPayload) Fingerprint() string {
-	return fmt.Sprintf("{UnbondPayload: %v 🔓",
+	return fmt.Sprintf("{Unbond 🔓 %v",
 		p.Validator.Fingerprint(),
 	)
 }

@@ -41,7 +41,7 @@ func (p *BondPayload) SanityCheck() error {
 }
 
 func (p *BondPayload) Fingerprint() string {
-	return fmt.Sprintf("{Bond: %v->%v 🔐 %v",
+	return fmt.Sprintf("{Bond 🔐 %v->%v %v",
 		p.Bonder.Fingerprint(),
 		p.PublicKey.Address().Fingerprint(),
 		p.Stake)

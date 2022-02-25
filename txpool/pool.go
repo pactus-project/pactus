@@ -12,6 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
 type txPool struct {
@@ -20,7 +21,7 @@ type txPool struct {
 	config      *Config
 	checker     *execution.Execution
 	sandbox     sandbox.Sandbox
-	pendings    *linkedmap.LinkedMap
+	pools       map[payload.Type]*linkedmap.LinkedMap
 	broadcastCh chan message.Message
 	logger      *logger.Logger
 }
@@ -28,10 +29,19 @@ type txPool struct {
 func NewTxPool(
 	conf *Config,
 	broadcastCh chan message.Message) (TxPool, error) {
+
+	pendings := make(map[payload.Type]*linkedmap.LinkedMap)
+
+	pendings[payload.PayloadTypeSend] = linkedmap.NewLinkedMap(conf.sendPoolSize())
+	pendings[payload.PayloadTypeBond] = linkedmap.NewLinkedMap(conf.bondPoolSize())
+	pendings[payload.PayloadTypeUnbond] = linkedmap.NewLinkedMap(conf.unbondPoolSize())
+	pendings[payload.PayloadTypeWithdraw] = linkedmap.NewLinkedMap(conf.withdrawPoolSize())
+	pendings[payload.PayloadTypeSortition] = linkedmap.NewLinkedMap(conf.sortitionPoolSize())
+
 	pool := &txPool{
 		config:      conf,
 		checker:     execution.NewChecker(),
-		pendings:    linkedmap.NewLinkedMap(conf.MaxSize),
+		pools:       pendings,
 		broadcastCh: broadcastCh,
 	}
 
@@ -39,93 +49,101 @@ func NewTxPool(
 	return pool, nil
 }
 
-func (pool *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
-	pool.lk.Lock()
-	defer pool.lk.Unlock()
+func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
 
-	pool.sandbox = sb
-
-	pool.logger.Debug("set new sandbox")
+	p.sandbox = sb
+	p.logger.Debug("set new sandbox")
 
 	var next *list.Element
-	for e := pool.pendings.FirstElement(); e != nil; e = next {
-		next = e.Next()
-		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+	for _, pool := range p.pools {
+		for e := pool.FirstElement(); e != nil; e = next {
+			next = e.Next()
+			trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
 
-		if err := pool.checkTx(trx); err != nil {
-			pool.logger.Debug("invalid transaction after rechecking", "id", trx.ID())
-			pool.pendings.Remove(trx.ID())
+			if err := p.checkTx(trx); err != nil {
+				p.logger.Debug("invalid transaction after rechecking", "id", trx.ID())
+				pool.Remove(trx.ID())
+			}
 		}
 	}
 }
 
 /// AppendTx validates the transaction and add it into the transaction pool
 /// without broadcast it.
-func (pool *txPool) AppendTx(trx *tx.Tx) error {
-	pool.lk.Lock()
-	defer pool.lk.Unlock()
+func (p *txPool) AppendTx(trx *tx.Tx) error {
+	p.lk.Lock()
+	defer p.lk.Unlock()
 
-	return pool.appendTx(trx)
+	return p.appendTx(trx)
 }
 
 /// AppendTxAndBroadcast validates the transaction, add it into the transaction pool
 /// and broadcast it.
-func (pool *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
-	pool.lk.Lock()
-	defer pool.lk.Unlock()
+func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
+	p.lk.Lock()
+	defer p.lk.Unlock()
 
-	if err := pool.appendTx(trx); err != nil {
+	if err := p.appendTx(trx); err != nil {
 		return err
 	}
 
 	go func(t *tx.Tx) {
-		pool.broadcastCh <- message.NewTransactionsMessage([]*tx.Tx{t})
+		p.broadcastCh <- message.NewTransactionsMessage([]*tx.Tx{t})
 	}(trx)
 
 	return nil
 }
 
-func (pool *txPool) appendTx(trx *tx.Tx) error {
-	if pool.pendings.Has(trx.ID()) {
-		pool.logger.Trace("transaction is already in pool", "id", trx.ID())
+func (p *txPool) appendTx(trx *tx.Tx) error {
+	pool := p.pools[trx.Payload().Type()]
+	if pool.Has(trx.ID()) {
+		p.logger.Trace("transaction is already in pool", "id", trx.ID())
 		return nil
 	}
 
-	if err := pool.checkTx(trx); err != nil {
+	if err := p.checkTx(trx); err != nil {
 		return err
 	}
 
-	pool.pendings.PushBack(trx.ID(), trx)
-	pool.logger.Debug("transaction appended into pool", "tx", trx)
+	pool.PushBack(trx.ID(), trx)
+	p.logger.Debug("transaction appended into pool", "tx", trx)
 
 	return nil
 }
 
-func (pool *txPool) checkTx(trx *tx.Tx) error {
-	if err := pool.checker.Execute(trx, pool.sandbox); err != nil {
-		pool.logger.Debug("invalid transaction", "tx", trx, "err", err)
+func (p *txPool) checkTx(trx *tx.Tx) error {
+	if err := p.checker.Execute(trx, p.sandbox); err != nil {
+		p.logger.Debug("invalid transaction", "tx", trx, "err", err)
 		return err
 	}
 	return nil
 }
 
-func (pool *txPool) RemoveTx(id tx.ID) {
-	pool.lk.Lock()
-	defer pool.lk.Unlock()
+func (p *txPool) RemoveTx(id tx.ID) {
+	p.lk.Lock()
+	defer p.lk.Unlock()
 
-	pool.pendings.Remove(id)
+	for _, pool := range p.pools {
+		if pool.Remove(id) {
+			break
+		}
+	}
 }
 
 /// PendingTx searches inside the transaction pool and returns the associated transaction.
 /// If transaction doesn't exist inside the pool, it returns nil.
-func (pool *txPool) PendingTx(id tx.ID) *tx.Tx {
-	pool.lk.Lock()
-	defer pool.lk.Unlock()
+func (p *txPool) PendingTx(id tx.ID) *tx.Tx {
+	p.lk.Lock()
+	defer p.lk.Unlock()
 
-	val, found := pool.pendings.Get(id)
-	if found {
-		trx := val.(*tx.Tx)
-		return trx
+	for _, pool := range p.pools {
+		val, found := pool.Get(id)
+		if found {
+			trx := val.(*tx.Tx)
+			return trx
+		}
 	}
 
 	return nil
@@ -133,37 +151,68 @@ func (pool *txPool) PendingTx(id tx.ID) *tx.Tx {
 
 /// QueryTx searches inside the transaction pool and returns the associated transaction.
 /// If transaction doesn't exist inside the pool, it queries from other nodes.
-func (pool *txPool) QueryTx(id tx.ID) *tx.Tx {
-	trx := pool.PendingTx(id)
+func (p *txPool) QueryTx(id tx.ID) *tx.Tx {
+	trx := p.PendingTx(id)
 	if trx != nil {
 		return trx
 	}
 
-	pool.logger.Debug("querying transaction from the network", "id", id)
-	pool.broadcastCh <- message.NewQueryTransactionsMessage([]tx.ID{id})
+	p.logger.Debug("querying transaction from the network", "id", id)
+	p.broadcastCh <- message.NewQueryTransactionsMessage([]tx.ID{id})
 
-	duration := time.Millisecond * 500
+	attempts := 4
+	duration := p.config.queryTimeout() / 4
 	timeout := time.NewTicker(duration)
-	counter := 0
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i < attempts; i++ {
 		<-timeout.C
-		trx := pool.PendingTx(id)
+		trx := p.PendingTx(id)
 		if trx != nil {
 			return trx
 		}
 	}
 
-	pool.logger.Warn("querying transaction failed", "id", id, "duration", duration*time.Duration(counter))
+	p.logger.Warn("querying transaction failed", "id", id, "duration", p.config.queryTimeout())
 	return nil
 }
 
-func (pool *txPool) AllTransactions() []*tx.Tx {
-	pool.lk.RLock()
-	defer pool.lk.RUnlock()
+func (p *txPool) PrepareBlockTransactions() []*tx.Tx {
+	trxs := make([]*tx.Tx, 0, p.Size())
 
-	trxs := make([]*tx.Tx, 0, pool.pendings.Size())
-	for e := pool.pendings.FirstElement(); e != nil; e = e.Next() {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	// Appending one sortition transaction
+	poolSortition := p.pools[payload.PayloadTypeSortition]
+	for e := poolSortition.FirstElement(); e != nil; e = e.Next() {
+		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+		trxs = append(trxs, trx)
+	}
+
+	// Appending bond transactions
+	poolBond := p.pools[payload.PayloadTypeBond]
+	for e := poolBond.FirstElement(); e != nil; e = e.Next() {
+		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+		trxs = append(trxs, trx)
+	}
+
+	// Appending unbond transactions
+	poolUnbond := p.pools[payload.PayloadTypeUnbond]
+	for e := poolUnbond.FirstElement(); e != nil; e = e.Next() {
+		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+		trxs = append(trxs, trx)
+	}
+
+	// Appending withdraw transactions
+	poolWithdraw := p.pools[payload.PayloadTypeWithdraw]
+	for e := poolWithdraw.FirstElement(); e != nil; e = e.Next() {
+		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+		trxs = append(trxs, trx)
+	}
+
+	// Appending send transactions
+	poolSend := p.pools[payload.PayloadTypeSend]
+	for e := poolSend.FirstElement(); e != nil; e = e.Next() {
 		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
 		trxs = append(trxs, trx)
 	}
@@ -171,20 +220,36 @@ func (pool *txPool) AllTransactions() []*tx.Tx {
 	return trxs
 }
 
-func (pool *txPool) HasTx(id tx.ID) bool {
-	pool.lk.RLock()
-	defer pool.lk.RUnlock()
+func (p *txPool) HasTx(id tx.ID) bool {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
-	return pool.pendings.Has(id)
+	for _, pool := range p.pools {
+		if pool.Has(id) {
+			return true
+		}
+	}
+
+	return false
 }
 
-func (pool *txPool) Size() int {
-	pool.lk.RLock()
-	defer pool.lk.RUnlock()
+func (p *txPool) Size() int {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
 
-	return pool.pendings.Size()
+	size := 0
+	for _, pool := range p.pools {
+		size += pool.Size()
+	}
+	return size
 }
 
-func (pool *txPool) Fingerprint() string {
-	return fmt.Sprintf("{%v}", pool.pendings.Size())
+func (p *txPool) Fingerprint() string {
+	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
+		p.pools[payload.PayloadTypeSend].Size(),
+		p.pools[payload.PayloadTypeBond].Size(),
+		p.pools[payload.PayloadTypeUnbond].Size(),
+		p.pools[payload.PayloadTypeSortition].Size(),
+		p.pools[payload.PayloadTypeWithdraw].Size(),
+	)
 }

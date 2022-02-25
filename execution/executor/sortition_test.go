@@ -20,6 +20,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
 		trx := tx.NewSortitionTx(hash40.Stamp(), 1, tValSigner.Address(), proof1)
+		tSandbox.AcceptSortition = true
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
@@ -30,12 +31,14 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
 		addr := crypto.GenerateTestAddress()
 		trx := tx.NewSortitionTx(hash41.Stamp(), 1, addr, proof1)
+		tSandbox.AcceptSortition = true
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewSortitionTx(hash41.Stamp(), 2, tValSigner.Address(), proof1)
+		tSandbox.AcceptSortition = true
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
