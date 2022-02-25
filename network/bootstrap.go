@@ -154,7 +154,6 @@ func (b *bootstrap) bootstrapIpfsRouting() error {
 	dht, ok := b.routing.(*lp2pdht.IpfsDHT)
 	if !ok {
 		b.logger.Warn("no bootstrapping to do exit quietly.")
-		// No bootstrapping to do exit quietly.
 		return nil
 	}
 
