@@ -1,9 +1,10 @@
+name: Building Docker and Push to DockerHub
+
 on:
   push:
     branches:
       - main
 
-name: Building Docker and Push to DockerHub
 jobs:
   docker:
     runs-on: ubuntu-latest
