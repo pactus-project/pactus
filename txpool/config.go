@@ -18,7 +18,7 @@ func DefaultConfig() *Config {
 
 func TestConfig() *Config {
 	return &Config{
-		MaxSize: 20,
+		MaxSize: 100,
 	}
 }
 

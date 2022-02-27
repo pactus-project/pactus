@@ -184,6 +184,16 @@ func (p *txPool) PrepareBlockTransactions() []*tx.Tx {
 
 	// Appending one sortition transaction
 	poolSortition := p.pools[payload.PayloadTypeSortition]
+	poolSortition.SortList(func(left interface{}, right interface{}) bool {
+		trx1 := left.(*tx.Tx)
+		trx2 := right.(*tx.Tx)
+
+		h1, _ := p.sandbox.FindBlockInfoByStamp(trx1.Stamp())
+		h2, _ := p.sandbox.FindBlockInfoByStamp(trx2.Stamp())
+
+		return h1 > h2
+	})
+
 	for e := poolSortition.FirstElement(); e != nil; e = e.Next() {
 		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
 		trxs = append(trxs, trx)

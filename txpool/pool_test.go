@@ -179,8 +179,8 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3Signer.SignMsg(sortitionTx)
 
 	assert.NoError(t, tPool.AppendTx(sendTx))
-	assert.NoError(t, tPool.AppendTx(unbondTx))
 	assert.NoError(t, tPool.AppendTx(withdrawTx))
+	assert.NoError(t, tPool.AppendTx(unbondTx))
 	assert.NoError(t, tPool.AppendTx(bondTx))
 	assert.NoError(t, tPool.AppendTx(sortitionTx))
 
@@ -223,4 +223,47 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 	tPool.SetNewSandboxAndRecheck(sandbox.MockingSandbox())
 	assert.Zero(t, tPool.Size())
+}
+
+func TestSortingSortitions(t *testing.T) {
+	setup(t)
+
+	hash1000000 := hash.GenerateTestHash()
+	hash1000001 := hash.GenerateTestHash()
+	hash1000002 := hash.GenerateTestHash()
+	hash1000003 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(1000000, hash1000000)
+	tSandbox.AppendNewBlock(1000001, hash1000001)
+	tSandbox.AppendNewBlock(1000002, hash1000002)
+	tSandbox.AppendNewBlock(1000003, hash1000003)
+
+	val1Signer := bls.GenerateTestSigner()
+	val1Pub := val1Signer.PublicKey().(*bls.PublicKey)
+	val1 := validator.NewValidator(val1Pub, 0)
+	tSandbox.UpdateValidator(val1)
+
+	tSandbox.AcceptSortition = true
+	sortitionTx1 := tx.NewSortitionTx(hash1000000.Stamp(), tSandbox.ValSeq(val1.Address())+1, val1.Address(), sortition.GenerateRandomProof())
+	val1Signer.SignMsg(sortitionTx1)
+
+	sortitionTx2 := tx.NewSortitionTx(hash1000001.Stamp(), tSandbox.ValSeq(val1.Address())+1, val1.Address(), sortition.GenerateRandomProof())
+	val1Signer.SignMsg(sortitionTx2)
+
+	sortitionTx3 := tx.NewSortitionTx(hash1000002.Stamp(), tSandbox.ValSeq(val1.Address())+1, val1.Address(), sortition.GenerateRandomProof())
+	val1Signer.SignMsg(sortitionTx3)
+
+	sortitionTx4 := tx.NewSortitionTx(hash1000003.Stamp(), tSandbox.ValSeq(val1.Address())+1, val1.Address(), sortition.GenerateRandomProof())
+	val1Signer.SignMsg(sortitionTx4)
+
+	assert.NoError(t, tPool.AppendTx(sortitionTx2))
+	assert.NoError(t, tPool.AppendTx(sortitionTx4))
+	assert.NoError(t, tPool.AppendTx(sortitionTx1))
+	assert.NoError(t, tPool.AppendTx(sortitionTx3))
+
+	trxs := tPool.PrepareBlockTransactions()
+	assert.Equal(t, trxs[0].ID(), sortitionTx4.ID())
+	assert.Equal(t, trxs[1].ID(), sortitionTx3.ID())
+	assert.Equal(t, trxs[2].ID(), sortitionTx2.ID())
+	assert.Equal(t, trxs[3].ID(), sortitionTx1.ID())
+
 }
