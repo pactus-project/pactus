@@ -1,66 +1,57 @@
 package sortition
 
 import (
-	"math/big"
+	"fmt"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util"
 )
 
-type VRF struct {
+// evaluate returns a proof if random number is less than 1
+func evaluate(seed VerifiableSeed, signer crypto.Signer, coins, max int) (bool, Proof) {
+	sig := signer.SignData(seed).RawBytes()
+
+	for coin := 0; coin < coins; coin++ {
+		index, proof := getIndex(sig, coin+1, max)
+		if index == 0 {
+			return true, proof
+		}
+	}
+
+	return false, Proof{}
 }
 
-func NewVRF() *VRF {
-	return &VRF{}
+// getIndex returns a random number between 0 and totalCoins with the proof
+func getIndex(base []byte, coin, totalCoins int) (int, Proof) {
+	proof := NewProof(base, coin)
+	data, _ := cbor.Marshal(proof)
+	fmt.Printf("data: %x\n", data)
+	h := hash.Hash256(data)
+	fmt.Printf("hash: %x\n", h)
+
+	point := uint64(h[17]) | uint64(h[7])<<8 | uint64(h[8])<<16 | uint64(h[21])<<24
+	fmt.Printf("point: %x\n", point)
+	index := (uint64(totalCoins) * point) / uint64(0xffffffff)
+	fmt.Printf("index: %x\n", index)
+
+	return int(index), proof
 }
 
-// Evaluate returns a random number between 0 and max with the proof
-func (vrf *VRF) Evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64, proof Proof) {
-	sig := signer.SignData(seed[:])
-
-	proof, _ = ProofFromRawBytes(sig.RawBytes())
-	index = vrf.getIndex(proof, max)
-
-	return index, proof
-}
-
-// Verify ensures the proof is valid
-func (vrf *VRF) Verify(seed VerifiableSeed, public crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
-	proofSig, err := bls.SignatureFromRawBytes(proof[:])
+// verifyProof ensures the proof is valid
+func verifyProof(seed VerifiableSeed, public crypto.PublicKey, proof Proof, totalCoin int) bool {
+	proofSig, err := bls.SignatureFromRawBytes(proof.Base)
 	if err != nil {
-		return 0, false
+		return false
 	}
 
-	// Verify signature (proof)
+	// Verify signature (base)
 	if !public.Verify(seed[:], proofSig) {
-		return 0, false
+		return false
 	}
 
-	index = vrf.getIndex(proof, max)
+	index, _ := getIndex(proof.Base, proof.Coin, totalCoin)
 
-	return index, true
-}
-
-func (vrf *VRF) getIndex(proof Proof, max int64) int64 {
-	h := hash.CalcHash(proof[:])
-
-	rnd64 := util.SliceToInt64(h.RawBytes())
-	rnd64 = rnd64 & 0x7fffffffffffffff
-
-	// construct the numerator and denominator for normalizing the proof uint between [0, 1]
-	bigRnd := big.NewInt(rnd64)
-	bigMax := big.NewInt(max)
-
-	numerator := big.NewInt(0)
-	numerator = numerator.Mul(bigRnd, bigMax)
-
-	denominator := big.NewInt(util.MaxInt64)
-
-	// divide numerator and denominator to get the election ratio for this block height
-	index := big.NewInt(0)
-	index = index.Div(numerator, denominator)
-
-	return index.Int64()
+	return index == 0
 }

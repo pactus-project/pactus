@@ -9,7 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
-type VerifiableSeed [48]byte
+type VerifiableSeed []byte
 
 func VerifiableSeedFromString(text string) (VerifiableSeed, error) {
 	data, err := hex.DecodeString(text)
@@ -25,22 +25,19 @@ func VerifiableSeedFromRawBytes(data []byte) (VerifiableSeed, error) {
 		return VerifiableSeed{}, fmt.Errorf("invalid seed length")
 	}
 
-	s := VerifiableSeed{}
-	copy(s[:], data)
-
-	return s, nil
+	return VerifiableSeed(data), nil
 }
 
-func (s *VerifiableSeed) Generate(signer crypto.Signer) VerifiableSeed {
-	hash := hash.CalcHash(s[:])
+func (s VerifiableSeed) Generate(signer crypto.Signer) VerifiableSeed {
+	hash := hash.CalcHash(s)
 	sig := signer.SignData(hash.RawBytes())
 	newSeed, _ := VerifiableSeedFromRawBytes(sig.RawBytes())
 	return newSeed
 }
 
-func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed) bool {
-	sig, _ := bls.SignatureFromRawBytes(s[:])
-	hash := hash.CalcHash(prevSeed[:])
+func (s VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed) bool {
+	sig, _ := bls.SignatureFromRawBytes(s)
+	hash := hash.CalcHash(prevSeed)
 	return public.Verify(hash.RawBytes(), sig)
 }
 

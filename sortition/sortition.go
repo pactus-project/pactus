@@ -8,7 +8,9 @@ import (
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 )
 
-type param struct {
+const changeCoefficient = 100000000
+
+type blockParams struct {
 	seed  VerifiableSeed
 	stake int64
 }
@@ -17,28 +19,26 @@ type Sortition struct {
 	lk sync.RWMutex
 
 	params *linkedmap.LinkedMap
-	vrf    *VRF
 }
 
 func NewSortition() *Sortition {
 	return &Sortition{
-		vrf:    NewVRF(),
-		params: linkedmap.NewLinkedMap(7), // Sortitions are valid for 7 height
+		params: linkedmap.NewLinkedMap(30), // Sortitions are valid for 30 height
 	}
 }
 
-func (s *Sortition) SetParams(blockHash hash.Hash, seed VerifiableSeed, poolStake int64) {
+func (s *Sortition) SetParams(blockHash hash.Hash, seed VerifiableSeed, stake int64) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	p := &param{
+	p := &blockParams{
 		seed:  seed,
-		stake: poolStake,
+		stake: stake,
 	}
 	s.params.PushBack(blockHash, p)
 }
 
-func (s *Sortition) GetParams(blockHash hash.Hash) (seed VerifiableSeed, poolStake int64) {
+func (s *Sortition) GetParams(blockHash hash.Hash) (seed VerifiableSeed, stake int64) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -50,44 +50,35 @@ func (s *Sortition) GetParams(blockHash hash.Hash) (seed VerifiableSeed, poolSta
 	return p.seed, p.stake
 }
 
-func (s *Sortition) EvaluateSortition(blockHash hash.Hash, signer crypto.Signer, threshold int64) (bool, Proof) {
+func (s *Sortition) VerifyProof(blockHash hash.Hash, proof Proof, public crypto.PublicKey, stake int64) bool {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	p := s.getParam(blockHash)
-	if p == nil {
-		return false, Proof{}
+	if proof.Coin <= 0 || proof.Coin > stakeToCoin(stake) {
+		return false
 	}
-
-	index, proof := s.vrf.Evaluate(p.seed, signer, p.stake)
-	if index < threshold {
-		return true, proof
-	}
-
-	return false, Proof{}
-}
-
-func (s *Sortition) VerifyProof(blockHash hash.Hash, proof Proof, public crypto.PublicKey, threshold int64) bool {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
 
 	p := s.getParam(blockHash)
 	if p == nil {
 		return false
 	}
 
-	index, result := s.vrf.Verify(p.seed, public, proof, p.stake)
-	if !result {
-		return false
-	}
-	return index < threshold
+	return verifyProof(p.seed, public, proof, stakeToCoin(p.stake))
 }
 
-func (s *Sortition) getParam(hash hash.Hash) *param {
+func (s *Sortition) getParam(hash hash.Hash) *blockParams {
 	p, ok := s.params.Get(hash)
 	if !ok {
 		return nil
 	}
 
-	return p.(*param)
+	return p.(*blockParams)
+}
+
+func EvaluateSortition(blockSeed VerifiableSeed, signer crypto.Signer, validatorStake, totalStake int64) (bool, Proof) {
+	return evaluate(blockSeed, signer, stakeToCoin(validatorStake), stakeToCoin(totalStake))
+}
+
+func stakeToCoin(stake int64) int {
+	return int(stake / changeCoefficient)
 }

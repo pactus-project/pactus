@@ -2,50 +2,30 @@ package sortition
 
 import (
 	"crypto/rand"
-	"encoding/hex"
-	"fmt"
+
+	"github.com/zarbchain/zarb-go/util"
 )
 
-type Proof [48]byte
-
-func ProofFromString(text string) (Proof, error) {
-	data, err := hex.DecodeString(text)
-	if err != nil {
-		return Proof{}, err
-	}
-
-	return ProofFromRawBytes(data)
+type Proof struct {
+	Base []byte `cbor:"1,keyasint"`
+	Coin int    `cbor:"2,keyasint"`
 }
 
-func ProofFromRawBytes(data []byte) (Proof, error) {
-	if len(data) != 48 {
-		return Proof{}, fmt.Errorf("invalid proof length")
+func NewProof(base []byte, coin int) Proof {
+	return Proof{
+		Base: base,
+		Coin: coin,
 	}
-
-	p := Proof{}
-	copy(p[:], data)
-
-	return p, nil
-}
-
-func (p Proof) MarshalText() ([]byte, error) {
-	return []byte(hex.EncodeToString(p[:])), nil
-}
-
-func (p *Proof) UnmarshalText(text []byte) error {
-	proof, err := ProofFromString(string(text))
-	if err != nil {
-		return err
-	}
-	*p = proof
-	return nil
 }
 
 func GenerateRandomProof() Proof {
-	p := Proof{}
-	_, err := rand.Read(p[:])
+	p := Proof{
+		Base: util.RandomSlice(48),
+	}
+	_, err := rand.Read(p.Base[:])
 	if err != nil {
 		panic(err)
 	}
+	p.Coin = util.RandInt(21 * 1e6) // 21 milion coin
 	return p
 }
