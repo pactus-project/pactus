@@ -65,7 +65,7 @@ func RandInt64(max int64) int64 {
 
 /// RandomPeerID returns a random peer ID
 func RandomPeerID() peer.ID {
-	s := Int64ToSlice(RandInt64(MaxInt64))
+	s := RandomSlice(32)
 	id := [34]byte{0x12, 32}
 	copy(id[2:], s[:])
 	return peer.ID(id[:])

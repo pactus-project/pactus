@@ -75,8 +75,12 @@ func (s *Sortition) getParam(hash hash.Hash) *blockParams {
 	return p.(*blockParams)
 }
 
-func EvaluateSortition(blockSeed VerifiableSeed, signer crypto.Signer, validatorStake, totalStake int64) (bool, Proof) {
-	return evaluate(blockSeed, signer, stakeToCoin(validatorStake), stakeToCoin(totalStake))
+func (s *Sortition) EvaluateSortition(hash hash.Hash, signer crypto.Signer, validatorStake int64) (bool, Proof) {
+	params := s.getParam(hash)
+	if params == nil {
+		return false, Proof{}
+	}
+	return evaluate(params.seed, signer, stakeToCoin(validatorStake), stakeToCoin(params.stake))
 }
 
 func stakeToCoin(stake int64) int {

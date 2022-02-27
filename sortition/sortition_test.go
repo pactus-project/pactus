@@ -11,33 +11,28 @@ import (
 )
 
 func TestEvaluation(t *testing.T) {
-	signer := bls.GenerateTestSigner()
+	seed, _ := VerifiableSeedFromString("8d019192c24224e2cafccae3a61fb586b14323a6bc8f9e7df1d929333ff993933bea6f5b3af6de0374366c4719e43a1b")
+	prv, _ := bls.PrivateKeyFromString("39bc26dfcd0a5aec45cd2375122dffe46f713b6f93bc06c1fed759c251d4a13b")
+	signer := crypto.NewSigner(prv)
+	totalStake := int64(100 * changeCoefficient)
+	srt := NewSortition()
+	blockHash := hash.GenerateTestHash()
+	srt.SetParams(blockHash, seed, totalStake)
 
 	t.Run("Validator stake is zero", func(t *testing.T) {
-		seed := GenerateRandomSeed()
-
-		valStake := int64(100 * changeCoefficient)
-		ok, proof := EvaluateSortition(seed, signer, 0, valStake)
+		ok, proof := srt.EvaluateSortition(blockHash, signer, 0)
 		require.False(t, ok)
 		require.Empty(t, proof)
 	})
 
 	t.Run("Sortition ok", func(t *testing.T) {
-		seed, _ := VerifiableSeedFromString("8d019192c24224e2cafccae3a61fb586b14323a6bc8f9e7df1d929333ff993933bea6f5b3af6de0374366c4719e43a1b")
-		prv, _ := bls.PrivateKeyFromString("39bc26dfcd0a5aec45cd2375122dffe46f713b6f93bc06c1fed759c251d4a13b")
-		signer := crypto.NewSigner(prv)
-		totalStake := int64(100 * changeCoefficient)
-		s := NewSortition()
-		h := hash.GenerateTestHash()
-		s.SetParams(h, seed, totalStake)
-
-		ok, proof := EvaluateSortition(seed, signer, totalStake/21, totalStake)
+		ok, proof := srt.EvaluateSortition(blockHash, signer, totalStake/21)
 		require.True(t, ok)
 
-		require.True(t, s.VerifyProof(h, proof, signer.PublicKey(), totalStake/20))
-		require.False(t, s.VerifyProof(h, GenerateRandomProof(), signer.PublicKey(), totalStake/20))
-		require.False(t, s.VerifyProof(h, Proof{}, signer.PublicKey(), totalStake/20))
-		require.False(t, s.VerifyProof(hash.GenerateTestHash(), proof, signer.PublicKey(), totalStake/20))
+		require.True(t, srt.VerifyProof(blockHash, proof, signer.PublicKey(), totalStake/20))
+		require.False(t, srt.VerifyProof(blockHash, GenerateRandomProof(), signer.PublicKey(), totalStake/20))
+		require.False(t, srt.VerifyProof(blockHash, Proof{}, signer.PublicKey(), totalStake/20))
+		require.False(t, srt.VerifyProof(hash.GenerateTestHash(), proof, signer.PublicKey(), totalStake/20))
 	})
 }
 

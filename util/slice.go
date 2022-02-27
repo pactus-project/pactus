@@ -3,6 +3,7 @@ package util
 import (
 	"bytes"
 	"compress/gzip"
+	"crypto/rand"
 	"encoding/binary"
 	"io"
 )
@@ -121,4 +122,13 @@ func Equal(a, b []int) bool {
 		}
 	}
 	return true
+}
+
+func RandomSlice(size int) []byte {
+	s := make([]byte, size)
+	_, err := rand.Read(s)
+	if err != nil {
+		panic(err)
+	}
+	return s
 }

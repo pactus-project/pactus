@@ -413,9 +413,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.sortition.SetParams(block.Hash(), block.Header().SortitionSeed(), st.poolStake())
 
 	// Evaluate sortition before updating the committee
-	if st.evaluateSortition() {
-		st.logger.Info("👏 this validator is chosen to be in the committee", "address", st.signer.Address())
-	}
+	go st.evaluateSortition()
 
 	// -----------------------------------
 	// At this point we can assign new sandbox to tx pool
@@ -453,7 +451,9 @@ func (st *state) evaluateSortition() bool {
 
 		err := st.txPool.AppendTxAndBroadcast(trx)
 		if err == nil {
+			st.logger.Info("👏 this validator is chosen to be in the committee", "address", st.signer.Address())
 			st.logger.Debug("sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
+
 			return true
 		}
 		st.logger.Error("our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)

@@ -26,6 +26,6 @@ func GenerateRandomProof() Proof {
 	if err != nil {
 		panic(err)
 	}
-	p.Coin = util.RandInt(21 * 1e6) // 21 milion coin
+	p.Coin = util.RandInt(21 * 1e6) // 21 million coin
 	return p
 }

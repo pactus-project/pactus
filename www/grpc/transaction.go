@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
@@ -91,7 +92,7 @@ func (zs *zarbServer) encodeTransaction(trx *tx.Tx) *zarb.TransactionInfo {
 		}
 	case payload.PayloadTypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
-		proof, _ := pld.Proof.MarshalText()
+		proof, _ := json.Marshal(pld.Proof)
 		transaction.Payload = &zarb.TransactionInfo_Sortition{
 			Sortition: &zarb.SORTITION_PAYLOAD{
 				Address: pld.Address.String(),
