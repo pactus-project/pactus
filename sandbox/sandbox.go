@@ -38,6 +38,7 @@ type Concrete struct {
 	committee        committee.Reader
 	accounts         map[crypto.Address]*AccountStatus
 	validators       map[crypto.Address]*ValidatorStatus
+	joinedCommittee  *crypto.Address
 	params           param.Params
 	totalAccounts    int
 	totalValidators  int
@@ -45,9 +46,8 @@ type Concrete struct {
 }
 
 type ValidatorStatus struct {
-	Validator       validator.Validator
-	Updated         bool
-	JoinedCommittee bool
+	Validator validator.Validator
+	Updated   bool
 }
 
 type AccountStatus struct {
@@ -69,6 +69,7 @@ func NewSandbox(store store.Reader, params param.Params, latestBlocks *linkedmap
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
 	sb.totalStakeChange = 0
+	sb.joinedCommittee = nil
 
 	return sb
 }
@@ -198,28 +199,24 @@ func (sb *Concrete) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-func (sb *Concrete) EnterCommittee(blockHash hash.Hash, addr crypto.Address) error {
+func (sb *Concrete) EnterCommittee(addr crypto.Address) error {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
-
-	if sb.committee.Contains(addr) {
-		return errors.Errorf(errors.ErrGeneric, "this validator already is in the committee")
-	}
 
 	valS, ok := sb.validators[addr]
 	if !ok {
 		return errors.Errorf(errors.ErrGeneric, "unknown validator")
 	}
 
-	if valS.JoinedCommittee {
-		return errors.Errorf(errors.ErrGeneric, "this validator has joined into committee before")
+	if sb.joinedCommittee != nil {
+		return errors.Errorf(errors.ErrGeneric, "a validator has joined into committee before")
 	}
 
-	_, val := sb.latestBlocks.Last()
-	if val == nil {
+	_, lastBlockInfo := sb.latestBlocks.Last()
+	if lastBlockInfo == nil {
 		return errors.Errorf(errors.ErrGeneric, "Unable to retrieve last block info")
 	}
-	lastHeight := val.(*BlockInfo).height
+	lastHeight := lastBlockInfo.(*BlockInfo).height
 
 	if sb.committee.Size() >= sb.params.CommitteeSize {
 		oldestJoinedHeight := lastHeight
@@ -230,35 +227,13 @@ func (sb *Concrete) EnterCommittee(blockHash hash.Hash, addr crypto.Address) err
 				oldestJoinedHeight = v.LastJoinedHeight()
 			}
 		}
-		if lastHeight-oldestJoinedHeight < sb.params.CommitteeSize {
-			return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
-		}
-		joinedStake := int64(0)
-		for _, s := range sb.validators {
-			if s.JoinedCommittee {
-				joinedStake += s.Validator.Stake()
-			}
-		}
-
-		joinedStake += valS.Validator.Stake()
+		joinedStake := valS.Validator.Stake()
 		if joinedStake >= (committeeStake / 3) {
 			return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
 		}
 	}
 
-	h, _ := sb.store.BlockHeight(blockHash)
-	b, err := sb.store.Block(h)
-	if err != nil {
-		return errors.Errorf(errors.ErrGeneric, "invalid block hash")
-	}
-	committers := b.PrevCertificate().Committers()
-	for _, num := range committers {
-		if valS.Validator.Number() == num {
-			return errors.Errorf(errors.ErrGeneric, "this validator was in the committee in time of sending the sortition")
-		}
-	}
-
-	valS.JoinedCommittee = true
+	sb.joinedCommittee = &addr
 	return nil
 }
 

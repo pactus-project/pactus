@@ -32,7 +32,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	_, hash := sb.FindBlockInfoByStamp(trx.Stamp())
 	ok := sb.VerifySortition(hash, pld.Proof, val)
 	if !ok {
-		return errors.Errorf(errors.ErrInvalidTx, "Invalid proof or index")
+		return errors.Errorf(errors.ErrInvalidTx, "Sortition proof is invalid")
 	}
 	if e.strict {
 		// A validator might produce more than one sortition transaction before entring into the committee

@@ -23,7 +23,7 @@ type Sortition struct {
 
 func NewSortition() *Sortition {
 	return &Sortition{
-		params: linkedmap.NewLinkedMap(30), // Sortitions are valid for 30 height
+		params: linkedmap.NewLinkedMap(7), // Sortitions are valid for 7 height
 	}
 }
 
