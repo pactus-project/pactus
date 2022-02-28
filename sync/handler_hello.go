@@ -23,29 +23,25 @@ func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) e
 	msg := m.(*message.HelloMessage)
 	handler.logger.Trace("parsing Hello message", "msg", msg)
 
-	peer := handler.peerSet.MustGetPeer(initiator)
-
 	if msg.PeerID != initiator {
-		peer.UpdateStatus(peerset.StatusCodeBanned)
+		handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeBanned)
 		return errors.Errorf(errors.ErrInvalidMessage, "Peer ID is not same as initiator for Hello message. expected: %v, got: %v",
 			msg.PeerID, initiator)
 	}
 
 	if !msg.GenesisHash.EqualsTo(handler.state.GenesisHash()) {
-
-		peer.UpdateStatus(peerset.StatusCodeBanned)
-		return errors.Errorf(errors.ErrInvalidMessage, "received a message from different chain, expected: %v, got: %v",
+		handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeBanned)
+		return errors.Errorf(errors.ErrInvalidMessage, "Received a message from different chain, expected: %v, got: %v",
 			handler.state.GenesisHash(), msg.GenesisHash)
 	}
 
-	peer.UpdateStatus(peerset.StatusCodeKnown)
-	peer.UpdateMoniker(msg.Moniker)
-	peer.UpdateHeight(msg.Height)
-	peer.UpdateAgent(msg.Agent)
-	peer.UpdatePublicKey(msg.PublicKey)
-	peer.UpdateInitialBlockDownload(util.IsFlagSet(msg.Flags, message.FlagInitialBlockDownload))
-
-	handler.peerSet.UpdateMaxClaimedHeight(msg.Height)
+	handler.peerSet.UpdatePeer(initiator,
+		peerset.StatusCodeKnown,
+		msg.Moniker,
+		msg.Agent,
+		msg.Height,
+		msg.PublicKey,
+		util.IsFlagSet(msg.Flags, message.FlagNodeNetwork))
 
 	if util.IsFlagSet(msg.Flags, message.FlagNeedResponse) {
 		// TODO: Sends response only if there is a direct connection between two peers.

@@ -29,22 +29,22 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		return nil
 	}
 
-	peer := handler.peerSet.MustGetPeer(initiator)
+	peer := handler.peerSet.GetPeer(initiator)
 	if !peer.IsKnownOrTrusted() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil, nil)
 		handler.sendTo(response, initiator)
 
-		return errors.Errorf(errors.ErrInvalidMessage, "Peer status is %v", peer.Status())
+		return errors.Errorf(errors.ErrInvalidMessage, "Peer status is %v", peer.Status)
 	}
 
-	if peer.Height() > msg.From {
+	if peer.Height > msg.From {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil, nil)
 		handler.sendTo(response, initiator)
 
 		return errors.Errorf(errors.ErrInvalidMessage, "Peer request for blocks that already has: %v", msg.From)
 	}
 
-	if !handler.config.InitialBlockDownload {
+	if !handler.config.NodeNetwork {
 		ourHeight := handler.state.LastBlockHeight()
 		if msg.From < ourHeight-LatestBlockInterval {
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil, nil)
@@ -72,7 +72,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		}
 	}
 	// To avoid sending blocks again, we update height for this peer
-	peer.UpdateHeight(height - 1)
+	handler.peerSet.UpdateHeight(initiator, height-1)
 
 	if msg.To >= handler.state.LastBlockHeight() {
 		lastCertificate := handler.state.LastCertificate()

@@ -64,7 +64,7 @@ func TestSyncing(t *testing.T) {
 	networkBob := network.MockingNetwork(util.RandomPeerID())
 
 	LatestBlockInterval = 30
-	configBob.InitialBlockDownload = true
+	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 	stateBob.GenHash = stateAlice.GenHash

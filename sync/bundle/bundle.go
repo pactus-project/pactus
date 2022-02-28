@@ -46,7 +46,7 @@ func (b *Bundle) SanityCheck() error {
 }
 
 func (b *Bundle) Fingerprint() string {
-	return fmt.Sprintf("{%s: %s%s}", util.FingerprintPeerID(b.Initiator), b.Message.Type(), b.Message.Fingerprint())
+	return fmt.Sprintf("%s%s", b.Message.Type(), b.Message.Fingerprint())
 }
 
 func (b *Bundle) CompressIt() {

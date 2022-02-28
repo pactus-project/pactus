@@ -1,6 +1,5 @@
 package genesis
 
-
 import "encoding/json"
 
 const testnetJSON = `

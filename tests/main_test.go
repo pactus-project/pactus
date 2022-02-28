@@ -68,7 +68,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_pool"] = "error"
 		tConfigs[i].Sync.CacheSize = 1000
 		tConfigs[i].Sync.StartingTimeout = 0
-		tConfigs[i].Sync.InitialBlockDownload = false
+		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.NodeKeyFile = util.TempFilePath()
 		tConfigs[i].Network.ListenAddress = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
@@ -82,7 +82,7 @@ func TestMain(m *testing.M) {
 		sync.LatestBlockInterval = 10
 
 		if i == 0 {
-			tConfigs[i].Sync.InitialBlockDownload = true
+			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].Capnp.Enable = true
 			tConfigs[i].Capnp.Address = tCapnpAddress
 

@@ -32,6 +32,6 @@ type SendTranscationResult struct {
 }
 
 type NetworkResult struct {
-	ID    peer.ID
-	Peers []*peerset.Peer
+	SelfID peer.ID
+	Peers  []*peerset.Peer
 }

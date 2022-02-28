@@ -9,6 +9,6 @@ type Synchronizer interface {
 	Start() error
 	Stop()
 	SelfID() peer.ID
-	Peers() []*peerset.Peer
+	Peers() []peerset.Peer
 	Fingerprint() string
 }

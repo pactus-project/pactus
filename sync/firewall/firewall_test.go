@@ -42,11 +42,8 @@ func setup(t *testing.T) {
 	tNetwork.AddAnotherNetwork(network.MockingNetwork(tUnknownPeerID))
 	tNetwork.AddAnotherNetwork(network.MockingNetwork(tBadPeerID))
 
-	peerGood := tFirewall.peerSet.MustGetPeer(tGoodPeerID)
-	peerGood.UpdateStatus(peerset.StatusCodeKnown)
-
-	badGood := tFirewall.peerSet.MustGetPeer(tBadPeerID)
-	badGood.UpdateStatus(peerset.StatusCodeBanned)
+	tFirewall.peerSet.UpdateStatus(tGoodPeerID, peerset.StatusCodeKnown)
+	tFirewall.peerSet.UpdateStatus(tBadPeerID, peerset.StatusCodeBanned)
 }
 
 func TestInvalidBundlesCounter(t *testing.T) {
@@ -64,7 +61,7 @@ func TestInvalidBundlesCounter(t *testing.T) {
 	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
 
 	peer := tFirewall.peerSet.GetPeer(tUnknownPeerID)
-	assert.Equal(t, peer.InvalidBundles(), 4)
+	assert.Equal(t, peer.InvalidBundles, 4)
 }
 
 func TestGossipMesage(t *testing.T) {

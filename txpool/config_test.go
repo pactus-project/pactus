@@ -12,10 +12,10 @@ func TestDefaultConfigCheck(t *testing.T) {
 
 	assert.Equal(t,
 		c.sendPoolSize()+
-		c.bondPoolSize()+
-		c.unbondPoolSize()+
-		c.withdrawPoolSize()+
-		c.sortitionPoolSize(), c.MaxSize)
+			c.bondPoolSize()+
+			c.unbondPoolSize()+
+			c.withdrawPoolSize()+
+			c.sortitionPoolSize(), c.MaxSize)
 
 	c.MaxSize = 0
 	assert.Error(t, c.SanityCheck())

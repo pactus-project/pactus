@@ -30,7 +30,6 @@ func TestNetworkInfo(t *testing.T) {
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "Peers")
-	assert.Contains(t, w.Body.String(), "InitialBlockDownload")
 	assert.Contains(t, w.Body.String(), "ID")
 	//	fmt.Println(w.Body.String())
 }

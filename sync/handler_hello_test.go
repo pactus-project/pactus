@@ -16,6 +16,18 @@ import (
 func TestParsingHelloMessages(t *testing.T) {
 	setup(t)
 
+	t.Run("Receiving Hello message from a peer. Peer ID is not same as initiator.", func(t *testing.T) {
+		signer := bls.GenerateTestSigner()
+		pid := util.RandomPeerID()
+		initiator := util.RandomPeerID()
+		msg := message.NewHelloMessage(pid, "bad-genesis", 0, message.FlagNeedResponse, tState.GenHash)
+		signer.SignMsg(msg)
+		assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
+
+		assert.Error(t, testReceiveingNewMessage(tSync, msg, initiator))
+		assert.Equal(t, tSync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
+	})
+
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.", func(t *testing.T) {
 		invGenHash := hash.GenerateTestHash()
 		signer := bls.GenerateTestSigner()
@@ -33,7 +45,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		height := util.RandInt(0)
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNeedResponse|message.FlagInitialBlockDownload, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNeedResponse|message.FlagNodeNetwork, tState.GenHash)
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
@@ -43,19 +55,19 @@ func TestParsingHelloMessages(t *testing.T) {
 
 		// Check if the peer info is updated
 		p := tSync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.Status(), peerset.StatusCodeKnown)
-		assert.Equal(t, p.Agent(), version.Agent())
-		assert.Equal(t, p.Moniker(), "kitty")
-		assert.True(t, signer.PublicKey().EqualsTo(p.PublicKey()))
-		assert.Equal(t, p.PeerID(), pid)
-		assert.Equal(t, p.Height(), height)
-		assert.Equal(t, p.InitialBlockDownload(), true)
+		assert.Equal(t, p.Status, peerset.StatusCodeKnown)
+		assert.Equal(t, p.Agent, version.Agent())
+		assert.Equal(t, p.Moniker, "kitty")
+		assert.True(t, p.PublicKey.EqualsTo(signer.PublicKey()))
+		assert.Equal(t, p.PeerID, pid)
+		assert.Equal(t, p.Height, height)
+		assert.True(t, util.IsFlagSet(p.Flags, peerset.PeerFlagNodeNetwork))
 	})
 
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagInitialBlockDownload, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagNodeNetwork, tState.GenHash)
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))

@@ -11,25 +11,23 @@ import (
 func TestGetNetworkInfo(t *testing.T) {
 	conn, client := callServer(t)
 
-	t.Run("Should return Nodes PeerID as peerid", func(t *testing.T) {
+	t.Run("Should return node PeerID", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
-		// assert.Error(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, tMockSync.ID.String(), res.PeerId)
+		assert.Equal(t, tMockSync.SelfID(), res.SelfId)
 		assert.Equal(t, 2, len(res.Peers))
 	})
 
-	newPeer := tMockSync.AddPeer("newPeer", 12)
-
 	t.Run("Should return newly added Peer", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
-		// assert.Error(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res.Peers))
+		assert.Equal(t, 2, len(res.Peers))
 		for _, p := range res.Peers {
-			if p.Moniker == "newPeer" {
-				assert.Equal(t, newPeer.PeerID().String(), p.PeerId)
-				assert.Equal(t, int32(12), p.Height)
+			if p.Moniker == "test-1" {
+				assert.NotEmpty(t, p.PeerId)
+				assert.NotZero(t, p.Height)
 				return
 			}
 		}

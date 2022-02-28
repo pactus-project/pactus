@@ -36,7 +36,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	out := new(NetworkResult)
 
 	id, _ := st.PeerID()
-	out.ID, err = peer.Decode(id)
+	out.SelfID, err = peer.Decode(id)
 	if err != nil {
 		s.writeError(w, err)
 		return
@@ -56,16 +56,16 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		pub, _ := bls.PublicKeyFromString(pubStr)
 		ver, _ := p.Agent()
 
-		peer.UpdateStatus(peerset.StatusCode(status))
-		peer.UpdatePublicKey(pub)
-		peer.UpdateMoniker(moniker)
-		peer.UpdateAgent(ver)
-		peer.UpdateMoniker(moniker)
-		peer.UpdateInitialBlockDownload(p.InitialBlockDownload())
-		peer.UpdateHeight(int(p.Height()))
-		peer.UpdateInvalidBundlesCounter(int(p.InvalidMessages()))
-		peer.UpdateReceivedBundlesCounter(int(p.ReceivedMessages()))
-		peer.UpdateReceivedBytesCounter(int(p.ReceivedBytes()))
+		peer.PeerID = pid
+		peer.Status = peerset.StatusCode(status)
+		peer.PublicKey = *pub
+		peer.Agent = ver
+		peer.Moniker = moniker
+		peer.Height = int(p.Height())
+		peer.InvalidBundles = int(p.InvalidMessages())
+		peer.ReceivedBundles = int(p.ReceivedMessages())
+		peer.ReceivedBytes = int(p.ReceivedBytes())
+		peer.Flags = int(p.Flags())
 
 		out.Peers[i] = peer
 	}
