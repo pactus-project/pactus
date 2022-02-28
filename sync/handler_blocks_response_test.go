@@ -27,9 +27,17 @@ func TestOneBlockShorter(t *testing.T) {
 
 	pub, _ := bls.GenerateTestKeyPair()
 	testAddPeer(t, pub, pid)
-	sid := tSync.peerSet.OpenSession(pid).SessionID()
+
+	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
+		sid := tSync.peerSet.OpenSession(pid).SessionID()
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid, 0, nil, nil, nil)
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+
+		assert.Nil(t, tSync.peerSet.FindSession(sid))
+	})
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
+		sid := tSync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid, 0, nil, nil, nil)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
@@ -37,6 +45,7 @@ func TestOneBlockShorter(t *testing.T) {
 	})
 
 	t.Run("Commit one block", func(t *testing.T) {
+		sid := tSync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid, lastBlockheight+1, []*block.Block{b1}, trxs, c1)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 

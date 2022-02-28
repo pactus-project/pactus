@@ -492,7 +492,7 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	}
 
 	if s.PeerID() != pid {
-		sync.logger.Debug("peer ID is not known", "session-id", sessionID, "pid", pid)
+		sync.logger.Warn("peer ID is not known", "session-id", sessionID, "pid", pid)
 		return
 	}
 
