@@ -8,7 +8,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
@@ -16,6 +15,8 @@ import (
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/validator"
 )
+
+var _ Sandbox = &sandbox{}
 
 type BlockInfo struct {
 	height int
@@ -29,7 +30,7 @@ func NewBlockInfo(height int, hash hash.Hash) *BlockInfo {
 	}
 }
 
-type Concrete struct {
+type sandbox struct {
 	lk sync.RWMutex
 
 	store            store.Reader
@@ -55,8 +56,8 @@ type AccountStatus struct {
 	Updated bool
 }
 
-func NewSandbox(store store.Reader, params param.Params, latestBlocks *linkedmap.LinkedMap, sortition *sortition.Sortition, committee committee.Reader) *Concrete {
-	sb := &Concrete{
+func NewSandbox(store store.Reader, params param.Params, latestBlocks *linkedmap.LinkedMap, sortition *sortition.Sortition, committee committee.Reader) *sandbox {
+	sb := &sandbox{
 		store:     store,
 		sortition: sortition,
 		committee: committee,
@@ -74,7 +75,7 @@ func NewSandbox(store store.Reader, params param.Params, latestBlocks *linkedmap
 	return sb
 }
 
-func (sb *Concrete) shouldPanicForDuplicatedAddress() {
+func (sb *sandbox) shouldPanicForDuplicatedAddress() {
 	//
 	// Why we should panic here?
 	//
@@ -83,7 +84,7 @@ func (sb *Concrete) shouldPanicForDuplicatedAddress() {
 	logger.Panic("duplicated address")
 }
 
-func (sb *Concrete) shouldPanicForUnknownAddress() {
+func (sb *sandbox) shouldPanicForUnknownAddress() {
 	//
 	// Why we should panic here?
 	//
@@ -93,7 +94,7 @@ func (sb *Concrete) shouldPanicForUnknownAddress() {
 	logger.Panic("unknown address")
 }
 
-func (sb *Concrete) Account(addr crypto.Address) *account.Account {
+func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -114,7 +115,7 @@ func (sb *Concrete) Account(addr crypto.Address) *account.Account {
 
 	return acc
 }
-func (sb *Concrete) MakeNewAccount(addr crypto.Address) *account.Account {
+func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -131,7 +132,7 @@ func (sb *Concrete) MakeNewAccount(addr crypto.Address) *account.Account {
 	return acc
 }
 
-func (sb *Concrete) UpdateAccount(acc *account.Account) {
+func (sb *sandbox) UpdateAccount(acc *account.Account) {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -144,7 +145,7 @@ func (sb *Concrete) UpdateAccount(acc *account.Account) {
 	s.Updated = true
 }
 
-func (sb *Concrete) Validator(addr crypto.Address) *validator.Validator {
+func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -165,7 +166,7 @@ func (sb *Concrete) Validator(addr crypto.Address) *validator.Validator {
 	return val
 }
 
-func (sb *Concrete) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
+func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -183,7 +184,7 @@ func (sb *Concrete) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	return val
 }
 
-func (sb *Concrete) UpdateValidator(val *validator.Validator) {
+func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
@@ -199,70 +200,46 @@ func (sb *Concrete) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-func (sb *Concrete) EnterCommittee(addr crypto.Address) error {
+func (sb *sandbox) CommitteeStake() int64 {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	valS, ok := sb.validators[addr]
-	if !ok {
-		return errors.Errorf(errors.ErrGeneric, "unknown validator")
-	}
-
-	if sb.joinedCommittee != nil {
-		return errors.Errorf(errors.ErrGeneric, "a validator has joined into committee before")
-	}
-
-	_, lastBlockInfo := sb.latestBlocks.Last()
-	if lastBlockInfo == nil {
-		return errors.Errorf(errors.ErrGeneric, "Unable to retrieve last block info")
-	}
-	lastHeight := lastBlockInfo.(*BlockInfo).height
-
-	if sb.committee.Size() >= sb.params.CommitteeSize {
-		oldestJoinedHeight := lastHeight
-		committeeStake := int64(0)
-		for _, v := range sb.committee.Validators() {
-			committeeStake += v.Stake()
-			if v.LastJoinedHeight() < oldestJoinedHeight {
-				oldestJoinedHeight = v.LastJoinedHeight()
-			}
-		}
-		joinedStake := valS.Validator.Stake()
-		if joinedStake >= (committeeStake / 3) {
-			return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
-		}
-	}
-
-	sb.joinedCommittee = &addr
-	return nil
+	return 0
 }
 
-func (sb *Concrete) MaxMemoLength() int {
+func (sb *sandbox) JoinCommittee(addr crypto.Address) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	sb.joinedCommittee = &addr
+}
+
+func (sb *sandbox) MaxMemoLength() int {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
 	return sb.params.MaximumMemoLength
 }
 
-func (sb *Concrete) FeeFraction() float64 {
+func (sb *sandbox) FeeFraction() float64 {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
 	return sb.params.FeeFraction
 }
 
-func (sb *Concrete) MinFee() int64 {
+func (sb *sandbox) MinFee() int64 {
 	return sb.params.MinimumFee
 }
 
-func (sb *Concrete) TransactionToLiveInterval() int {
+func (sb *sandbox) TransactionToLiveInterval() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.TransactionToLiveInterval
 }
 
-func (sb *Concrete) BlockHeight(h hash.Hash) int {
+func (sb *sandbox) BlockHeight(h hash.Hash) int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -278,7 +255,7 @@ func (sb *Concrete) BlockHeight(h hash.Hash) int {
 	return height
 }
 
-func (sb *Concrete) CurrentHeight() int {
+func (sb *sandbox) CurrentHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -290,7 +267,7 @@ func (sb *Concrete) CurrentHeight() int {
 	return -1
 }
 
-func (sb *Concrete) PrevBlockHash() hash.Hash {
+func (sb *sandbox) PrevBlockHash() hash.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -302,14 +279,14 @@ func (sb *Concrete) PrevBlockHash() hash.Hash {
 	return hash.UndefHash
 }
 
-func (sb *Concrete) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
+func (sb *sandbox) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.sortition.VerifyProof(blockHash, proof, val.PublicKey(), val.Stake())
 }
 
-func (sb *Concrete) IterateAccounts(consumer func(*AccountStatus)) {
+func (sb *sandbox) IterateAccounts(consumer func(*AccountStatus)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -318,7 +295,7 @@ func (sb *Concrete) IterateAccounts(consumer func(*AccountStatus)) {
 	}
 }
 
-func (sb *Concrete) IterateValidators(consumer func(*ValidatorStatus)) {
+func (sb *sandbox) IterateValidators(consumer func(*ValidatorStatus)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -327,7 +304,7 @@ func (sb *Concrete) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
-func (sb *Concrete) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
+func (sb *sandbox) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -340,20 +317,44 @@ func (sb *Concrete) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
 	return -1, hash.UndefHash
 }
 
-func (sb *Concrete) CommitteeSize() int {
+func (sb *sandbox) CommitteeSize() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.CommitteeSize
 }
 
-func (sb *Concrete) UnbondInterval() int {
+func (sb *sandbox) UnbondInterval() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.UnbondInterval
 }
 
-func (sb *Concrete) IsInCommittee(addr crypto.Address) bool {
+func (sb *sandbox) BondInterval() int {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.params.UnbondInterval
+}
+
+func (sb *sandbox) IsInCommittee(addr crypto.Address) bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
 	return sb.committee.Contains(addr)
+}
+
+func (sb *sandbox) HasAnyValidatorJoinedCommittee() bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.joinedCommittee != nil
+}
+
+func (sb *sandbox) CommitteeHasFreeSeats() bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.committee.Size() < sb.params.CommitteeSize
 }

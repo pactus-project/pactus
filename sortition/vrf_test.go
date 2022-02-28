@@ -55,6 +55,29 @@ func TestRandomness(t *testing.T) {
 	assert.Greater(t, hits, 50)
 }
 
+func TestRandomness2(t *testing.T) {
+
+	c1 := 0
+
+	for i := 0; i < 100000; i++ {
+		r := util.RandInt(5000000)
+		if r < 50000 {
+			c1++
+		}
+	}
+
+	c2 := 0
+
+	for i := 0; i < 1000000; i++ {
+		r := util.RandInt(5000000)
+		if r < 5000 {
+			c2++
+		}
+	}
+
+	fmt.Printf("c1: %v, C2: %v\n", c1, c2)
+}
+
 // func TestGetIndex(t *testing.T) {
 // 	//  TotalStake: 1000000
 // 	vrf := NewVRF()

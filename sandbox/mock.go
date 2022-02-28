@@ -1,8 +1,6 @@
 package sandbox
 
 import (
-	"fmt"
-
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
@@ -69,11 +67,17 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = val
 
 }
-func (m *MockSandbox) EnterCommittee(hash hash.Hash, addr crypto.Address) error {
-	if !m.WelcomeToCommittee {
-		return fmt.Errorf("cannot enter to the committee")
-	}
-	return nil
+func (m *MockSandbox) HasAnyValidatorJoinedCommittee() bool {
+	return false
+}
+func (m *MockSandbox) CommitteeHasFreeSeats() bool {
+	return false
+}
+func (m *MockSandbox) CommitteeStake() int64 {
+	return 0
+}
+func (m *MockSandbox) JoinCommittee(addr crypto.Address) {
+
 }
 func (m *MockSandbox) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
 	return m.AcceptSortition
@@ -129,7 +133,9 @@ func (m *MockSandbox) CommitteeSize() int {
 func (m *MockSandbox) UnbondInterval() int {
 	return m.Params.UnbondInterval
 }
-
+func (m *MockSandbox) BondInterval() int {
+	return m.Params.UnbondInterval
+}
 func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
 	return m.InCommittee
 }

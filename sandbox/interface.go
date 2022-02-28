@@ -20,11 +20,15 @@ type Sandbox interface {
 	IsInCommittee(crypto.Address) bool
 
 	VerifySortition(hash.Hash, sortition.Proof, *validator.Validator) bool
-	EnterCommittee(hash.Hash, crypto.Address) error
+	HasAnyValidatorJoinedCommittee() bool
+	JoinCommittee(crypto.Address)
 
 	FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash)
+	CommitteeHasFreeSeats() bool
+	CommitteeStake() int64
 	CommitteeSize() int
 	UnbondInterval() int
+	BondInterval() int
 	CurrentHeight() int
 	BlockHeight(hash.Hash) int
 	TransactionToLiveInterval() int

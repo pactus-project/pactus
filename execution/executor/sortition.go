@@ -26,23 +26,35 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if val.Power() == 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Validator has no Power to be in committee")
 	}
-	if sb.CurrentHeight()-val.LastBondingHeight() < 2*sb.CommitteeSize() {
+	if sb.CurrentHeight()-val.LastBondingHeight() < sb.BondInterval() {
 		return errors.Errorf(errors.ErrInvalidTx, "In bonding period")
 	}
-	_, hash := sb.FindBlockInfoByStamp(trx.Stamp())
+	height, hash := sb.FindBlockInfoByStamp(trx.Stamp())
 	ok := sb.VerifySortition(hash, pld.Proof, val)
 	if !ok {
 		return errors.Errorf(errors.ErrInvalidTx, "Sortition proof is invalid")
 	}
-	if e.strict {
-		// A validator might produce more than one sortition transaction before entring into the committee
-		// In non-strict mode we don't check the sequence number
-		if val.Sequence()+1 != trx.Sequence() {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
-		}
 
-		if err := sb.EnterCommittee(hash, val.Address()); err != nil {
-			return errors.Errorf(errors.ErrInvalidTx, err.Error())
+	if val.Sequence()+1 != trx.Sequence() {
+		return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+	}
+
+	if val.LastJoinedHeight() > 0 && height < val.LastJoinedHeight() {
+		return errors.Errorf(errors.ErrInvalidTx, "Expired sortition. Last joined at: %v", val.LastJoinedHeight())
+	}
+
+	if sb.CommitteeHasFreeSeats() {
+		committeeStake := sb.CommitteeStake()
+		joinedStake := val.Stake()
+		if joinedStake >= (committeeStake / 3) {
+			return errors.Errorf(errors.ErrGeneric, "In each height less than 1/3 of stake can move")
+		}
+	}
+
+	if e.strict {
+		// There maybe more than one sortion transaction inside transaction pool
+		if sb.HasAnyValidatorJoinedCommittee() {
+			return errors.Errorf(errors.ErrGeneric, "a validator has joined into committee before")
 		}
 	}
 
@@ -50,6 +62,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	val.UpdateLastJoinedHeight(sb.CurrentHeight())
 
 	sb.UpdateValidator(val)
+	sb.JoinCommittee(val.Address())
 
 	return nil
 }

@@ -20,9 +20,9 @@ func NewSendExecutor(strict bool) *SendExecutor {
 func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.SendPayload)
 
-	// In not-restrict mode We accepts all subsidy transactions for the current height
-	// There might be more than one valid subsidy transaction per height
-	// Because There might be more than one proposal per height
+	// In not-restrict mode we accepts all subsidy transactions for the current height
+	// There might be more than one valid subsidy transaction per height,
+	// because There might be more than one proposal per height
 	if !e.strict && trx.IsMintbaseTx() {
 		if trx.Sequence() != sb.CurrentHeight() {
 			return errors.Errorf(errors.ErrInvalidTx,
