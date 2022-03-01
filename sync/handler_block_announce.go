@@ -25,10 +25,7 @@ func (handler *blockAnnounceHandler) ParsMessage(m message.Message, initiator pe
 	handler.tryCommitBlocks()
 	handler.synced()
 
-	peer := handler.peerSet.MustGetPeer(initiator)
-	peer.UpdateHeight(msg.Height)
-	handler.peerSet.UpdateMaxClaimedHeight(msg.Height)
-
+	handler.peerSet.UpdateHeight(initiator, msg.Height)
 	handler.updateBlokchain()
 
 	return nil

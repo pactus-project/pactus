@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -30,18 +31,24 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-func (ps *PeerSet) GetPeer(peerID peer.ID) *Peer {
+/// GetPeer returns a cloned peer
+func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.getPeer(peerID)
+	p := ps.getPeer(pid)
+	if p != nil {
+		return *p
+	}
+
+	return Peer{}
 }
 
-func (ps *PeerSet) OpenSession(peerID peer.ID) *Session {
+func (ps *PeerSet) OpenSession(pid peer.ID) *Session {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	s := newSession(ps.nextSessionID, peerID)
+	s := newSession(ps.nextSessionID, pid)
 	ps.sessions[s.SessionID()] = s
 	ps.nextSessionID++
 
@@ -94,13 +101,6 @@ func (ps *PeerSet) CloseSession(id int) {
 	delete(ps.sessions, id)
 }
 
-func (ps *PeerSet) getPeer(peerID peer.ID) *Peer {
-	if peer, ok := ps.peers[peerID]; ok {
-		return peer
-	}
-	return nil
-}
-
 func (ps *PeerSet) Len() int {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
@@ -120,26 +120,6 @@ func (ps *PeerSet) MaxClaimedHeight() int {
 	return ps.maxClaimedHeight
 }
 
-func (ps *PeerSet) UpdateMaxClaimedHeight(h int) {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
-
-	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, h)
-}
-
-func (ps *PeerSet) MustGetPeer(peerID peer.ID) *Peer {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
-
-	p := ps.getPeer(peerID)
-	if p == nil {
-		p = NewPeer(peerID)
-		ps.peers[peerID] = p
-	}
-	return p
-}
-
-// TODO: write test for me
 func (ps *PeerSet) Clear() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -149,27 +129,27 @@ func (ps *PeerSet) Clear() {
 	ps.maxClaimedHeight = 0
 }
 
-func (ps *PeerSet) RemovePeer(peerID peer.ID) {
+func (ps *PeerSet) RemovePeer(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	delete(ps.peers, peerID)
+	delete(ps.peers, pid)
 }
 
-func (ps *PeerSet) GetPeerList() []*Peer {
+func (ps *PeerSet) GetPeerList() []Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	l := make([]*Peer, len(ps.peers))
+	l := make([]Peer, len(ps.peers))
 	i := 0
 	for _, p := range ps.peers {
-		l[i] = p
+		l[i] = *p
 		i++
 	}
 	return l
 }
 
-func (ps *PeerSet) GetRandomPeer() *Peer {
+func (ps *PeerSet) GetRandomPeer() Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
@@ -177,9 +157,92 @@ func (ps *PeerSet) GetRandomPeer() *Peer {
 	for _, p := range ps.peers {
 		i--
 		if i <= 0 {
-			return p
+			return *p
 		}
 	}
 
+	return Peer{}
+}
+
+func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
+	if peer, ok := ps.peers[pid]; ok {
+		return peer
+	}
 	return nil
+}
+
+func (ps *PeerSet) mustGetPeer(pid peer.ID) *Peer {
+	p := ps.getPeer(pid)
+	if p == nil {
+		p = NewPeer(pid)
+		ps.peers[pid] = p
+	}
+	return p
+}
+
+func (ps *PeerSet) UpdatePeerInfo(
+	pid peer.ID,
+	status StatusCode,
+	moniker string,
+	agent string,
+	publicKey *bls.PublicKey,
+	nodeNetwork bool) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.Status = status
+	p.Moniker = moniker
+	p.Agent = agent
+	p.PublicKey = *publicKey
+	p.SetNodeNetworkFlag(nodeNetwork)
+}
+
+func (ps *PeerSet) UpdateHeight(pid peer.ID, height int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.Height = height
+	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, height)
+}
+
+func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.Status = status
+}
+
+func (ps *PeerSet) UpdateLastSeen(pid peer.ID) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.LastSeen = time.Now()
+}
+
+func (ps *PeerSet) IncreaseReceivedBundlesCounter(pid peer.ID) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.ReceivedBundles++
+}
+
+func (ps *PeerSet) IncreaseInvalidBundlesCounter(pid peer.ID) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.InvalidBundles++
+}
+
+func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, c int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.ReceivedBytes += c
 }

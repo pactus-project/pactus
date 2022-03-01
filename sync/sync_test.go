@@ -23,6 +23,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/version"
 )
 
 var (
@@ -152,30 +153,23 @@ func testAddBlocks(t *testing.T, state *state.MockState, count int) {
 	assert.Equal(t, lastBlockHash, state.LastBlockHash())
 }
 
-func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID) *peerset.Peer {
-	p := tSync.peerSet.MustGetPeer(pid)
-	require.NotNil(t, p)
-	p.UpdateMoniker("test")
-	p.UpdatePublicKey(pub)
-	p.UpdateStatus(peerset.StatusCodeKnown)
-
-	return p
+func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID) {
+	tSync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(), version.Agent(), pub.(*bls.PublicKey), false)
 }
 
 func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	if pub == nil {
 		pub, _ = bls.GenerateTestKeyPair()
 	}
-	p := testAddPeer(t, pub, pid)
+	testAddPeer(t, pub, pid)
 	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt(0))
 	val.UpdateLastJoinedHeight(tState.LastBlockHeight())
 	assert.NoError(t, tState.Committee.Update(0, []*validator.Validator{val}))
-	require.True(t, tState.Committee.Contains(p.Address()))
+	require.True(t, tState.Committee.Contains(pub.Address()))
 }
 
 func checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
-	peer := tSync.peerSet.GetPeer(pid)
-	require.Equal(t, peer.Status(), code)
+	require.Equal(t, tSync.peerSet.GetPeer(pid).Status, code)
 }
 
 func TestStop(t *testing.T) {

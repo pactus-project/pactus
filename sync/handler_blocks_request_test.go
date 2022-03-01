@@ -18,7 +18,7 @@ func TestSessionTimeout(t *testing.T) {
 	t.Run("An unknown peers claims to have more blocks. Session should be closed after timeout", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "Oscar", 6666, message.FlagInitialBlockDownload, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "Oscar", 6666, message.FlagNodeNetwork, tState.GenHash)
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
@@ -32,7 +32,7 @@ func TestSessionTimeout(t *testing.T) {
 }
 
 func TestLatestBlocksRequestMessages(t *testing.T) {
-	tConfig.InitialBlockDownload = false
+	tConfig.NodeNetwork = false
 	setup(t)
 
 	sid := util.RandInt(100)
@@ -59,7 +59,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, 0)
 	})
 
-	t.Run("InitialBlockDownload flag is not set", func(t *testing.T) {
+	t.Run("NodeNetwork flag is not set", func(t *testing.T) {
 		heightBob := tState.LastBlockHeight()
 
 		t.Run("Reject requests with more than `LatestBlockInterval`", func(t *testing.T) {

@@ -64,7 +64,7 @@ struct Peer {
   agent                 @2 :Text;
   peerID                @3 :Text;
   publicKey             @4 :Text;
-  initialBlockDownload  @5 :Bool;
+  flags                 @5 :Int32;
   height                @6 :Int32;
   receivedMessages      @7 :Int32;
   invalidMessages       @8 :Int32;

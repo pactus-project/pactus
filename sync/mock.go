@@ -21,33 +21,36 @@ func MockingSync() *MockSync {
 	ps := peerset.NewPeerSet(1 * time.Second)
 	pub1, _ := bls.GenerateTestKeyPair()
 	pub2, _ := bls.GenerateTestKeyPair()
-	p1 := ps.MustGetPeer(util.RandomPeerID())
-	p2 := ps.MustGetPeer(util.RandomPeerID())
-	p1.UpdateStatus(peerset.StatusCodeKnown)
-	p2.UpdateStatus(peerset.StatusCodeBanned)
-	p1.UpdateMoniker("test-1")
-	p2.UpdateMoniker("test-2")
-	p1.UpdatePublicKey(pub1)
-	p2.UpdatePublicKey(pub2)
-	p1.IncreaseInvalidBundlesCounter()
-	p1.IncreaseReceivedBytesCounter(100)
-	p1.IncreaseReceivedBundlesCounter()
-	p1.UpdateAgent(version.Version())
-	p2.UpdateAgent(version.Version())
-	p1.UpdateInitialBlockDownload(true)
-	p1.UpdateHeight(100)
+	pid1 := util.RandomPeerID()
+	pid2 := util.RandomPeerID()
+	ps.UpdatePeerInfo(
+		pid1,
+		peerset.StatusCodeKnown,
+		"test-1",
+		version.Agent(),
+		pub1,
+		true)
+	ps.UpdateHeight(pid1, util.RandInt(100000))
+
+	ps.UpdatePeerInfo(
+		pid2,
+		peerset.StatusCodeBanned,
+		"test-1",
+		version.Agent(),
+		pub2,
+		false)
+	ps.UpdateHeight(pid1, util.RandInt(100000))
+
 	return &MockSync{
 		ID:      util.RandomPeerID(),
 		PeerSet: ps,
 	}
-
 }
 
 func (m *MockSync) Start() error {
 	return nil
 }
 func (m *MockSync) Stop() {
-
 }
 func (m *MockSync) Fingerprint() string {
 	return ""
@@ -57,20 +60,6 @@ func (m *MockSync) SelfID() peer.ID {
 	return m.ID
 }
 
-func (m *MockSync) Peers() []*peerset.Peer {
+func (m *MockSync) Peers() []peerset.Peer {
 	return m.PeerSet.GetPeerList()
-}
-
-// AddPeer will add new peer to mocked PeerSet
-func (m *MockSync) AddPeer(name string, height int) *peerset.Peer {
-	newPeer := m.PeerSet.MustGetPeer(util.RandomPeerID())
-	pub1, _ := bls.GenerateTestKeyPair()
-	newPeer.UpdateMoniker(name)
-	newPeer.UpdatePublicKey(pub1)
-	newPeer.IncreaseInvalidBundlesCounter()
-	newPeer.IncreaseReceivedBytesCounter(height * 8)
-	newPeer.IncreaseReceivedBundlesCounter()
-	newPeer.UpdateAgent(version.Version())
-	newPeer.UpdateHeight(height)
-	return newPeer
 }

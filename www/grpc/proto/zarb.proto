@@ -84,7 +84,7 @@ message BlockchainInfoResponse {
 message NetworkInfoRequest {}
 
 message NetworkInfoResponse {
-  string peer_id = 1;
+  string self_id = 1;
   repeated PeerInfo peers = 2;
 }
 
@@ -112,9 +112,9 @@ message ValidatorInfo {
 message PeerInfo {
   string moniker = 1;
   string agent = 2;
-  string peer_id = 3;
+  bytes peer_id = 3;
   string public_key = 4;
-  bool initial_block_download = 5;
+  int32 flags = 5;
   int32 height = 6;
   int32 received_messages = 7;
   int32 invalid_messages = 8;

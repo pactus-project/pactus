@@ -61,5 +61,19 @@ func TestBlock(t *testing.T) {
 
 		assert.Equal(t, w.Code, 400)
 	})
+}
 
+func TestBlockHeight(t *testing.T) {
+	setup(t)
+
+	t.Run("Shall return the block height", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"hash": tMockState.LastBlockHash().String()})
+		tHTTPServer.GetBlockHeightHandler(w, r)
+
+		assert.Equal(t, w.Code, 200)
+		assert.Equal(t, w.Body.String(), "2")
+		//fmt.Println(w.Body)
+	})
 }

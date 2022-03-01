@@ -22,16 +22,16 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-// IMPORTANT NOTE
+// IMPORTANT NOTES
 //
-// Sync module is based on pulling, not pushing.
-// Means: Network doesn't update the node (push),
-// The node itself should send request (pull).
+// Sync module is based on pulling, not pushing. It means,
+// network doesn't update a node (push),
+// a node itself should update itself (pull).
+//
+// Synchronizer should not have any locks to prevent dead lock situations.
+// All submodules like state or consesnus should be thread safe.
 
 type synchronizer struct {
-	// Not: Synchronizer should not have any lock to prevent dead lock situation.
-	// Other modules like state or consesnus are thread safe
-
 	ctx             context.Context
 	config          *Config
 	signer          crypto.Signer
@@ -171,8 +171,8 @@ func (sync *synchronizer) broadcastHeartBeat() {
 
 func (sync *synchronizer) sayHello(needResponse bool) {
 	flags := 0
-	if sync.config.InitialBlockDownload {
-		flags = util.SetFlag(flags, message.FlagInitialBlockDownload)
+	if sync.config.NodeNetwork {
+		flags = util.SetFlag(flags, message.FlagNodeNetwork)
 	}
 	if needResponse {
 		flags = util.SetFlag(flags, message.FlagNeedResponse)
@@ -219,8 +219,7 @@ func (sync *synchronizer) receiveLoop() {
 			err := sync.processIncomingBundle(bdl)
 			if err != nil {
 				sync.logger.Warn("error on parsing a message", "initiator", util.FingerprintPeerID(bdl.Initiator), "message", bdl, "err", err)
-				peer := sync.peerSet.MustGetPeer(bdl.Initiator)
-				peer.IncreaseInvalidBundlesCounter()
+				sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 			}
 		}
 	}
@@ -250,7 +249,7 @@ func (sync *synchronizer) Fingerprint() string {
 
 // updateBlokchain checks if the node height is shorter than the network or not.
 // If the node height is shorter than network more than two hours (720 blocks),
-// it should start downloading the blocks,
+// it should start downloading the blocks from node networks,
 // otherwise the node can request the latest blocks from the network.
 func (sync *synchronizer) updateBlokchain() {
 	// TODO: write test for me
@@ -263,7 +262,7 @@ func (sync *synchronizer) updateBlokchain() {
 	claimedHeight := sync.peerSet.MaxClaimedHeight()
 	if claimedHeight > ourHeight {
 		from := ourHeight
-		// Make sure we done have the start block inside cache
+		// Make sure we have committed the latest blocks inside the cache
 		for sync.cache.HasBlockInCache(from + 1) {
 			from++
 		}
@@ -329,7 +328,7 @@ func (sync *synchronizer) SelfID() peer.ID {
 	return sync.network.SelfID()
 }
 
-func (sync *synchronizer) Peers() []*peerset.Peer {
+func (sync *synchronizer) Peers() []peerset.Peer {
 	return sync.peerSet.GetPeerList()
 }
 
@@ -346,28 +345,28 @@ func (sync *synchronizer) downloadBlocks(from int) {
 		}
 
 		// TODO: write test for me
-		if !peer.InitialBlockDownload() {
+		if !peer.IsNodeNetwork() {
 			continue
 		}
 
 		// TODO: write test for me
-		if peer.Status() != peerset.StatusCodeKnown {
+		if peer.Status != peerset.StatusCodeKnown {
 			continue
 		}
 
 		// TODO: write test for me
-		if peer.Height() < from+1 {
+		if peer.Height < from+1 {
 			continue
 		}
 		to := from + LatestBlockInterval
-		if to > peer.Height() {
-			to = peer.Height()
+		if to > peer.Height {
+			to = peer.Height
 		}
 
-		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID()))
-		session := sync.peerSet.OpenSession(peer.PeerID())
+		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID))
+		session := sync.peerSet.OpenSession(peer.PeerID)
 		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
-		sync.sendTo(msg, peer.PeerID())
+		sync.sendTo(msg, peer.PeerID)
 		from = to
 	}
 }
@@ -376,30 +375,26 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
-	if randPeer == nil || !randPeer.IsKnownOrTrusted() {
+	if !randPeer.IsKnownOrTrusty() {
 		return
 	}
 
 	// TODO: write test for me
-	to := randPeer.Height()
-	if randPeer.Height() < from+1 {
+	to := randPeer.Height
+	if randPeer.Height < from+1 {
 		return
 	}
 
-	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID()))
-	session := sync.peerSet.OpenSession(randPeer.PeerID())
+	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID))
+	session := sync.peerSet.OpenSession(randPeer.PeerID)
 	msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
-	sync.sendTo(msg, randPeer.PeerID())
+	sync.sendTo(msg, randPeer.PeerID)
 }
 
 /// peerIsInTheCommittee checks if the peer is a member of committee
 func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 	p := sync.peerSet.GetPeer(id)
-	if p == nil {
-		return false
-	}
-
-	if !p.IsKnownOrTrusted() {
+	if !p.IsKnownOrTrusty() {
 		return false
 	}
 
@@ -497,7 +492,7 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	}
 
 	if s.PeerID() != pid {
-		sync.logger.Debug("peer ID is not known", "session-id", sessionID, "pid", pid)
+		sync.logger.Warn("peer ID is not known", "session-id", sessionID, "pid", pid)
 		return
 	}
 

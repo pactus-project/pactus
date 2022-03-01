@@ -3,37 +3,41 @@ package grpc
 import (
 	"testing"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
 func TestGetNetworkInfo(t *testing.T) {
 	conn, client := callServer(t)
 
-	t.Run("Should return Nodes PeerID as peerid", func(t *testing.T) {
+	t.Run("Should return node PeerID", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
-		// assert.Error(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, tMockSync.ID.String(), res.PeerId)
+		assert.Equal(t, tMockSync.SelfID().String(), res.SelfId)
 		assert.Equal(t, 2, len(res.Peers))
 	})
 
-	newPeer := tMockSync.AddPeer("newPeer", 12)
-
-	t.Run("Should return newly added Peer", func(t *testing.T) {
+	t.Run("Should return peer info", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
-		// assert.Error(t, err)
+		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res.Peers))
+		assert.Equal(t, 2, len(res.Peers))
 		for _, p := range res.Peers {
-			if p.Moniker == "newPeer" {
-				assert.Equal(t, newPeer.PeerID().String(), p.PeerId)
-				assert.Equal(t, int32(12), p.Height)
-				return
+			if p.Moniker == "test-1" {
+				assert.NotEmpty(t, p.PeerId)
+				pid, _ := peer.IDFromBytes(p.PeerId)
+				pp := tMockSync.PeerSet.GetPeer(pid)
+				assert.Equal(t, p.Agent, pp.Agent)
+				assert.Equal(t, p.Moniker, pp.Moniker)
+				assert.Equal(t, p.Height, int32(pp.Height))
+				assert.Equal(t, p.PublicKey, pp.PublicKey.String())
+				break
 			}
 		}
-		t.Error("new Peer Not Found")
 	})
 
 	err := conn.Close()
@@ -49,12 +53,12 @@ func TestGetBlockchainInfo(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(0), res.Height)
-		assert.Equal(t, "0000000000000000000000000000000000000000000000000000000000000000", res.LastBlockHash)
+		assert.Equal(t, hash.UndefHash.String(), res.LastBlockHash)
 	})
 
 	b1, trxs := block.GenerateTestBlock(nil, nil)
 	tMockState.AddBlock(1, b1, trxs)
-	t.Run("Should return 1,for first block", func(t *testing.T) {
+	t.Run("Should return 1, for first block", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(1), res.Height)

@@ -24,25 +24,26 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkI
 		rps[i] = new(zarb.PeerInfo)
 		p := rps[i]
 
-		bs, err := cbor.Marshal(peer.Agent())
+		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
 			zs.logger.Error("couldn't marshal agent", "err", err)
 			continue
 		}
 		p.Agent = string(bs)
 
-		p.PeerId = peer.PeerID().String()
-		p.Moniker = peer.Moniker()
-		p.PublicKey = peer.PublicKey().String()
-		p.InitialBlockDownload = peer.InitialBlockDownload()
-		p.Height = int32(peer.Height())
-		p.ReceivedMessages = int32(peer.ReceivedBundles())
-		p.InvalidMessages = int32(peer.InvalidBundles())
-		p.ReceivedBytes = int32(peer.ReceivedBytes())
+		p.PeerId = []byte(peer.PeerID)
+		p.Moniker = peer.Moniker
+		p.Agent = peer.Agent
+		p.PublicKey = peer.PublicKey.String()
+		p.Flags = int32(peer.Flags)
+		p.Height = int32(peer.Height)
+		p.ReceivedMessages = int32(peer.ReceivedBundles)
+		p.InvalidMessages = int32(peer.InvalidBundles)
+		p.ReceivedBytes = int32(peer.ReceivedBytes)
 	}
 
 	return &zarb.NetworkInfoResponse{
-		PeerId: zs.sync.SelfID().String(),
+		SelfId: zs.sync.SelfID().String(),
 		Peers:  rps,
 	}, nil
 }

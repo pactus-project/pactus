@@ -37,9 +37,7 @@ func (handler *heartBeatHandler) ParsMessage(m message.Message, initiator peer.I
 		}
 	}
 
-	peer := handler.peerSet.MustGetPeer(initiator)
-	peer.UpdateHeight(msg.Height - 1)
-	handler.peerSet.UpdateMaxClaimedHeight(msg.Height - 1)
+	handler.peerSet.UpdateHeight(initiator, msg.Height-1)
 
 	return nil
 }

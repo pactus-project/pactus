@@ -518,7 +518,7 @@
     "zarbNetworkInfoResponse": {
       "type": "object",
       "properties": {
-        "peerId": {
+        "selfId": {
           "type": "string"
         },
         "peers": {
@@ -550,13 +550,15 @@
           "type": "string"
         },
         "peerId": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "publicKey": {
           "type": "string"
         },
-        "initialBlockDownload": {
-          "type": "boolean"
+        "flags": {
+          "type": "integer",
+          "format": "int32"
         },
         "height": {
           "type": "integer",
