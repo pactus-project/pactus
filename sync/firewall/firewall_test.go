@@ -144,3 +144,15 @@ func TestDisabledFirewal(t *testing.T) {
 	assert.Nil(t, tFirewall.OpenGossipBundle(d, tBadPeerID, tBadPeerID))
 	assert.False(t, tNetwork.IsClosed(tBadPeerID))
 }
+
+func TestUpdateLastSeen(t *testing.T) {
+	setup(t)
+
+	msg := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(100, 1))
+	d, _ := msg.Encode()
+	now := time.Now().UnixNano()
+	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tGoodPeerID))
+
+	assert.GreaterOrEqual(t, tFirewall.peerSet.GetPeer(tUnknownPeerID).LastSeen.UnixNano(), now)
+	assert.GreaterOrEqual(t, tFirewall.peerSet.GetPeer(tGoodPeerID).LastSeen.UnixNano(), now)
+}
