@@ -13,7 +13,7 @@ import (
 // TODO: write tests for me
 
 const (
-	PeerFlagNodeNetwork = 0x1
+	PeerFlagNodeNetwork = 0x01
 )
 
 type Peer struct {
@@ -43,8 +43,8 @@ func (p *Peer) Fingerprint() string {
 		p.Height)
 }
 
-func (p *Peer) IsKnownOrTrusted() bool {
-	return p.Status == StatusCodeKnown || p.Status == StatusCodeTrusted
+func (p *Peer) IsKnownOrTrusty() bool {
+	return p.Status == StatusCodeKnown || p.Status == StatusCodeTrusty
 }
 
 func (p *Peer) IsBanned() bool {

@@ -31,8 +31,9 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkI
 		}
 		p.Agent = string(bs)
 
-		p.PeerId = peer.PeerID.String()
+		p.PeerId = []byte(peer.PeerID)
 		p.Moniker = peer.Moniker
+		p.Agent = peer.Agent
 		p.PublicKey = peer.PublicKey.String()
 		p.Flags = int32(peer.Flags)
 		p.Height = int32(peer.Height)

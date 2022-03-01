@@ -30,7 +30,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 	}
 
 	peer := handler.peerSet.GetPeer(initiator)
-	if !peer.IsKnownOrTrusted() {
+	if !peer.IsKnownOrTrusty() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil, nil)
 		handler.sendTo(response, initiator)
 

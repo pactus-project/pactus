@@ -35,13 +35,13 @@ func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) e
 			handler.state.GenesisHash(), msg.GenesisHash)
 	}
 
-	handler.peerSet.UpdatePeer(initiator,
+	handler.peerSet.UpdatePeerInfo(initiator,
 		peerset.StatusCodeKnown,
 		msg.Moniker,
 		msg.Agent,
-		msg.Height,
 		msg.PublicKey,
 		util.IsFlagSet(msg.Flags, message.FlagNodeNetwork))
+	handler.peerSet.UpdateHeight(initiator, msg.Height)
 
 	if util.IsFlagSet(msg.Flags, message.FlagNeedResponse) {
 		// TODO: Sends response only if there is a direct connection between two peers.

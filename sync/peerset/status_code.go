@@ -8,7 +8,7 @@ const (
 	StatusCodeBanned  = StatusCode(-1)
 	StatusCodeUnknown = StatusCode(0)
 	StatusCodeKnown   = StatusCode(1)
-	StatusCodeTrusted = StatusCode(2)
+	StatusCodeTrusty  = StatusCode(2)
 )
 
 func (code StatusCode) String() string {
@@ -19,8 +19,8 @@ func (code StatusCode) String() string {
 		return "unknown"
 	case StatusCodeKnown:
 		return "known"
-	case StatusCodeTrusted:
-		return "trusted"
+	case StatusCodeTrusty:
+		return "trusty"
 	}
 	return "invalid"
 }

@@ -22,16 +22,16 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-// IMPORTANT NOTE
+// IMPORTANT NOTES
 //
-// Sync module is based on pulling, not pushing.
-// Means: Network doesn't update the node (push),
-// The node itself should send request (pull).
+// Sync module is based on pulling, not pushing. It means,
+// network doesn't update a node (push),
+// a node itself should update itself (pull).
+//
+// Synchronizer should not have any locks to prevent dead lock situations.
+// All submodules like state or consesnus should be thread safe.
 
 type synchronizer struct {
-	// Not: Synchronizer should not have any lock to prevent dead lock situation.
-	// Other modules like state or consesnus are thread safe
-
 	ctx             context.Context
 	config          *Config
 	signer          crypto.Signer
@@ -375,7 +375,7 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
-	if !randPeer.IsKnownOrTrusted() {
+	if !randPeer.IsKnownOrTrusty() {
 		return
 	}
 
@@ -394,7 +394,7 @@ func (sync *synchronizer) queryLatestBlocks(from int) {
 /// peerIsInTheCommittee checks if the peer is a member of committee
 func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 	p := sync.peerSet.GetPeer(id)
-	if !p.IsKnownOrTrusted() {
+	if !p.IsKnownOrTrusty() {
 		return false
 	}
 

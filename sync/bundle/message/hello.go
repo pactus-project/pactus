@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	FlagNeedResponse = 0x01
-	FlagNodeNetwork  = 0x10
+	FlagNodeNetwork  = 0x0001
+	FlagNeedResponse = 0x1000
 )
 
 type HelloMessage struct {

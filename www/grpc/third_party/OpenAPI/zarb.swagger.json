@@ -550,7 +550,8 @@
           "type": "string"
         },
         "peerId": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "publicKey": {
           "type": "string"

@@ -35,7 +35,7 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 
 func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *bundle.Bundle {
 	if from != source {
-		if f.peerIsBanned(from) {
+		if f.isPeerBanned(from) {
 			f.logger.Warn("firewall: from peer banned", "from", util.FingerprintPeerID(from))
 			f.closeConnection(from)
 			return nil
@@ -70,9 +70,10 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 }
 
 func (f *Firewall) openBundle(r io.Reader, source peer.ID) (*bundle.Bundle, error) {
+	
 	f.peerSet.IncreaseReceivedBundlesCounter(source)
 
-	if f.peerIsBanned(source) {
+	if f.isPeerBanned(source) {
 		// If there is any connection to the source peer, close it
 		f.closeConnection(source)
 		return nil, errors.Errorf(errors.ErrInvalidMessage, "Source peer is banned: %s", source)
@@ -116,7 +117,7 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
 	return nil
 }
 
-func (f *Firewall) peerIsBanned(pid peer.ID) bool {
+func (f *Firewall) isPeerBanned(pid peer.ID) bool {
 	if !f.config.Enabled {
 		return false
 	}

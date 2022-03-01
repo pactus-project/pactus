@@ -120,7 +120,6 @@ func (ps *PeerSet) MaxClaimedHeight() int {
 	return ps.maxClaimedHeight
 }
 
-// TODO: write test for me
 func (ps *PeerSet) Clear() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -130,11 +129,11 @@ func (ps *PeerSet) Clear() {
 	ps.maxClaimedHeight = 0
 }
 
-func (ps *PeerSet) RemovePeer(peerID peer.ID) {
+func (ps *PeerSet) RemovePeer(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	delete(ps.peers, peerID)
+	delete(ps.peers, pid)
 }
 
 func (ps *PeerSet) GetPeerList() []Peer {
@@ -165,28 +164,27 @@ func (ps *PeerSet) GetRandomPeer() Peer {
 	return Peer{}
 }
 
-func (ps *PeerSet) getPeer(peerID peer.ID) *Peer {
-	if peer, ok := ps.peers[peerID]; ok {
+func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
+	if peer, ok := ps.peers[pid]; ok {
 		return peer
 	}
 	return nil
 }
 
-func (ps *PeerSet) mustGetPeer(peerID peer.ID) *Peer {
-	p := ps.getPeer(peerID)
+func (ps *PeerSet) mustGetPeer(pid peer.ID) *Peer {
+	p := ps.getPeer(pid)
 	if p == nil {
-		p = NewPeer(peerID)
-		ps.peers[peerID] = p
+		p = NewPeer(pid)
+		ps.peers[pid] = p
 	}
 	return p
 }
 
-func (ps *PeerSet) UpdatePeer(
+func (ps *PeerSet) UpdatePeerInfo(
 	pid peer.ID,
 	status StatusCode,
 	moniker string,
 	agent string,
-	height int,
 	publicKey *bls.PublicKey,
 	nodeNetwork bool) {
 	ps.lk.Lock()
@@ -198,8 +196,6 @@ func (ps *PeerSet) UpdatePeer(
 	p.Agent = agent
 	p.PublicKey = *publicKey
 	p.SetNodeNetworkFlag(nodeNetwork)
-	p.Height = height
-	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, height)
 }
 
 func (ps *PeerSet) UpdateHeight(pid peer.ID, height int) {

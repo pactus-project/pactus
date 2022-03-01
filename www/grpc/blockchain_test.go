@@ -3,8 +3,10 @@ package grpc
 import (
 	"testing"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
@@ -19,7 +21,7 @@ func TestGetNetworkInfo(t *testing.T) {
 		assert.Equal(t, 2, len(res.Peers))
 	})
 
-	t.Run("Should return newly added Peer", func(t *testing.T) {
+	t.Run("Should return peer info", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
@@ -27,11 +29,15 @@ func TestGetNetworkInfo(t *testing.T) {
 		for _, p := range res.Peers {
 			if p.Moniker == "test-1" {
 				assert.NotEmpty(t, p.PeerId)
-				assert.NotZero(t, p.Height)
-				return
+				pid, _ := peer.IDFromBytes(p.PeerId)
+				pp := tMockSync.PeerSet.GetPeer(pid)
+				assert.Equal(t, p.Agent, pp.Agent)
+				assert.Equal(t, p.Moniker, pp.Moniker)
+				assert.Equal(t, p.Height, int32(pp.Height))
+				assert.Equal(t, p.PublicKey, pp.PublicKey.String())
+				break
 			}
 		}
-		t.Error("new Peer Not Found")
 	})
 
 	err := conn.Close()
@@ -47,12 +53,12 @@ func TestGetBlockchainInfo(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(0), res.Height)
-		assert.Equal(t, "0000000000000000000000000000000000000000000000000000000000000000", res.LastBlockHash)
+		assert.Equal(t, hash.UndefHash.String(), res.LastBlockHash)
 	})
 
 	b1, trxs := block.GenerateTestBlock(nil, nil)
 	tMockState.AddBlock(1, b1, trxs)
-	t.Run("Should return 1,for first block", func(t *testing.T) {
+	t.Run("Should return 1, for first block", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(1), res.Height)

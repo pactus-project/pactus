@@ -154,7 +154,7 @@ func testAddBlocks(t *testing.T, state *state.MockState, count int) {
 }
 
 func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID) {
-	tSync.peerSet.UpdatePeer(pid, peerset.StatusCodeKnown, t.Name(), version.Agent(), 0, pub.(*bls.PublicKey), false)
+	tSync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(), version.Agent(), pub.(*bls.PublicKey), false)
 }
 
 func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
