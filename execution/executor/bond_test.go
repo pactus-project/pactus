@@ -58,7 +58,7 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Equal(t, tSandbox.Account(bonder).Balance(), int64(tAcc1Balance-(100000+1000)))
+	assert.Equal(t, tSandbox.Account(bonder).Balance(), tAcc1Balance-(100000+1000))
 	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(100000))
 	assert.Equal(t, tSandbox.Validator(addr).LastBondingHeight(), tSandbox.CurHeight)
 	assert.Equal(t, exe.Fee(), int64(1000))
