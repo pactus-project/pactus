@@ -18,32 +18,32 @@ func TestExecuteBondTx(t *testing.T) {
 	addr := pub.Address()
 
 	t.Run("Should fail, Invalid bonder", func(t *testing.T) {
-		trx := tx.NewBondTx(tHash1000000.Stamp(), 1, pub.Address(), pub, 100000, 1000, "invalid bonder")
+		trx := tx.NewBondTx(tHash500000.Stamp(), 1, pub.Address(), pub, 100000, 1000, "invalid bonder")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewBondTx(tHash1000000.Stamp(), tSandbox.AccSeq(bonder)+2, bonder, pub, 100000, 1000, "invalid sequence")
+		trx := tx.NewBondTx(tHash500000.Stamp(), tSandbox.AccSeq(bonder)+2, bonder, pub, 100000, 1000, "invalid sequence")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Insufficient balance", func(t *testing.T) {
-		trx := tx.NewBondTx(tHash1000000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, tAcc1Balance+1, 10000000, "insufficient balance")
+		trx := tx.NewBondTx(tHash500000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, tAcc1Balance+1, 10000000, "insufficient balance")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
 		tSandbox.InCommittee = true
-		trx := tx.NewBondTx(tHash1000000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 100000, 1000, "inside committee")
+		trx := tx.NewBondTx(tHash500000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 100000, 1000, "inside committee")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		tSandbox.InCommittee = false
-		trx := tx.NewBondTx(tHash1000000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 100000, 1000, "ok")
+		trx := tx.NewBondTx(tHash500000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, 100000, 1000, "ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
@@ -53,7 +53,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Unbonded before", func(t *testing.T) {
 		tVal1.UpdateUnbondingHeight(tSandbox.CurHeight)
-		trx := tx.NewBondTx(tHash1000000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, tVal1.PublicKey(), 100000, 1000, "ok")
+		trx := tx.NewBondTx(tHash500000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, tVal1.PublicKey(), 100000, 1000, "ok")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})

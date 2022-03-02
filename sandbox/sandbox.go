@@ -384,7 +384,7 @@ func (sb *sandbox) BondInterval() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.params.CommitteeSize * 2
+	return sb.params.BondInterval
 }
 
 func (sb *sandbox) IsInCommittee(addr crypto.Address) bool {

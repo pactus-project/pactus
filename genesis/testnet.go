@@ -11,6 +11,7 @@ const testnetJSON = `
 	   "CommitteeSize":7,
 	   "BlockReward":100000000,
 	   "TransactionToLiveInterval":8640,
+	   "BondInterval":360,
 	   "UnbondInterval":181440,
 	   "MaximumTransactionPerBlock":1000,
 	   "MaximumMemoLength":1024,

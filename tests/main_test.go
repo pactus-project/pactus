@@ -106,6 +106,7 @@ func TestMain(m *testing.M) {
 	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey().(*bls.PublicKey), 3)
 	params := param.DefaultParams()
 	params.BlockTimeInSecond = 2
+	params.BondInterval = 8
 	params.CommitteeSize = tCommitteeSize
 	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)

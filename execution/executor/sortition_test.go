@@ -20,7 +20,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	tVal1.UpdateLastBondingHeight(tSandbox.CurHeight - tSandbox.BondInterval() + 1)
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
 
-		trx := tx.NewSortitionTx(tHash1000000.Stamp(), seq, tVal1.Address(), proof)
+		trx := tx.NewSortitionTx(tHash500000.Stamp(), seq, tVal1.Address(), proof)
 		tSandbox.AcceptSortition = true
 		tSandbox.WelcomeToCommittee = true
 
@@ -30,7 +30,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	tVal1.UpdateLastBondingHeight(tSandbox.CurHeight - tSandbox.BondInterval())
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
 		addr := crypto.GenerateTestAddress()
-		trx := tx.NewSortitionTx(tHash1000001.Stamp(), seq, addr, proof)
+		trx := tx.NewSortitionTx(tHash500001.Stamp(), seq, addr, proof)
 		tSandbox.AcceptSortition = true
 		tSandbox.WelcomeToCommittee = true
 
@@ -38,7 +38,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSortitionTx(tHash1000001.Stamp(), seq+1, tVal1.Address(), proof)
+		trx := tx.NewSortitionTx(tHash500001.Stamp(), seq+1, tVal1.Address(), proof)
 		tSandbox.AcceptSortition = true
 		tSandbox.WelcomeToCommittee = true
 
@@ -46,7 +46,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
-		trx := tx.NewSortitionTx(tHash1000001.Stamp(), seq, tVal1.Address(), proof)
+		trx := tx.NewSortitionTx(tHash500001.Stamp(), seq, tVal1.Address(), proof)
 
 		// Check if can't join to committee
 		tSandbox.AcceptSortition = true
@@ -93,11 +93,11 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	tSandbox.AcceptSortition = true
 	tSandbox.WelcomeToCommittee = false
 
-	sortition1 := tx.NewSortitionTx(tHash1000000.Stamp(), util.RandInt(100000), tVal1.Address(), proof1)
+	sortition1 := tx.NewSortitionTx(tHash500000.Stamp(), util.RandInt(100000), tVal1.Address(), proof1)
 	assert.Error(t, exe1.Execute(sortition1, tSandbox))
 	assert.NoError(t, exe2.Execute(sortition1, tSandbox))
 
-	sortition2 := tx.NewSortitionTx(tHash1000001.Stamp(), tVal1.Sequence()+1, tVal1.Address(), proof2)
+	sortition2 := tx.NewSortitionTx(tHash500001.Stamp(), tVal1.Sequence()+1, tVal1.Address(), proof2)
 	assert.Error(t, exe1.Execute(sortition2, tSandbox))
 	assert.NoError(t, exe2.Execute(sortition2, tSandbox))
 }

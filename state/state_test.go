@@ -380,6 +380,13 @@ func TestSortition(t *testing.T) {
 	assert.NoError(t, err)
 	st1 := st.(*state)
 
+	// 
+	tState1.params.BondInterval = 8
+	tState2.params.BondInterval = 8
+	tState3.params.BondInterval = 8
+	tState4.params.BondInterval = 8
+	st1.params.BondInterval = 8
+
 	assert.False(t, st1.evaluateSortition()) //  not a validator
 
 	height := 1
@@ -397,7 +404,7 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.evaluateSortition()) //  bonding period
 
-	// Certificate another block
+	// Certificate next block
 	b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
@@ -407,7 +414,7 @@ func TestSortition(t *testing.T) {
 	assert.False(t, tState1.committee.Contains(pub.Address())) // still not in the committee
 
 	// ---------------------------------------------
-	// Certificate another block, new validator should be in the committee now
+	// Certificate next block, new validator should be in the committee now
 	b, c = makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
@@ -423,7 +430,7 @@ func TestSortition(t *testing.T) {
 	st2 := state1.(*state)
 
 	// ---------------------------------------------
-	// Let's commit another block with new committee
+	// Let's commit another block with the new committee
 	b1, err := st1.ProposeBlock(3)
 	require.NoError(t, err)
 	require.NotNil(t, b1)
