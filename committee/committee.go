@@ -73,7 +73,7 @@ func (committee *Committee) Update(lastRound int, joined []*validator.Validator)
 
 	for _, v := range joined {
 		if committee.contains(v.Address()) {
-			return errors.Errorf(errors.ErrGeneric, "validator.Validator already is in the committee")
+			return errors.Errorf(errors.ErrGeneric, "Validator is already in the committee")
 		}
 	}
 

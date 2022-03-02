@@ -129,11 +129,12 @@ func (m *MockSandbox) CommitteeSize() int {
 func (m *MockSandbox) UnbondInterval() int {
 	return m.Params.UnbondInterval
 }
-
+func (m *MockSandbox) BondInterval() int {
+	return m.Params.CommitteeSize * 2
+}
 func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
 	return m.InCommittee
 }
-
 func (m *MockSandbox) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
 	for h, i := range m.HashToHeight {
 		if h.Stamp().EqualsTo(stamp) {
@@ -142,4 +143,11 @@ func (m *MockSandbox) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
 	}
 
 	return -1, hash.UndefHash
+}
+
+func (m *MockSandbox) IterateAccounts(consumer func(*AccountStatus)) {
+
+}
+func (m *MockSandbox) IterateValidators(consumer func(*ValidatorStatus)) {
+
 }

@@ -30,15 +30,16 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidTx, "Validator is in committee right now")
 	}
 	val := sb.Validator(pld.PublicKey.Address())
-	if val != nil && val.UnbondingHeight() > 0 {
+	if val == nil {
+		val = sb.MakeNewValidator(pld.PublicKey)
+	}
+	if val.UnbondingHeight() > 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "You cannot Rebond please generate new set of keys")
 	}
 	if bonderAcc.Balance() < pld.Stake+trx.Fee() {
 		return errors.Errorf(errors.ErrInvalidTx, "Insufficient balance")
 	}
-	if val == nil {
-		val = sb.MakeNewValidator(pld.PublicKey)
-	}
+
 	bonderAcc.IncSequence()
 	bonderAcc.SubtractFromBalance(pld.Stake + trx.Fee())
 	val.AddToStake(pld.Stake)

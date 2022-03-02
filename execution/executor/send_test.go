@@ -14,11 +14,16 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-var tSandbox *sandbox.MockSandbox
-var tVal1 *validator.Validator
-var tAcc1 *account.Account
-var tValSigner crypto.Signer
-var tTotalCoin int64
+var (
+	tSandbox     *sandbox.MockSandbox
+	tVal1        *validator.Validator
+	tAcc1        *account.Account
+	tTotalCoin   int64
+	tAcc1Balance int64
+	tVal1Stake   int64
+	tHash1000000 hash.Hash
+	tHash1000001 hash.Hash
+)
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
@@ -27,24 +32,31 @@ func init() {
 func setup(t *testing.T) {
 	tSandbox = sandbox.MockingSandbox()
 
-	tTotalCoin = 21 * 1e14
+	tTotalCoin = int64(21000000 * 1e8)
+	tAcc1Balance = int64(1000 * 1e8)
+	tVal1Stake = int64(5000 * 1e8)
+	treasuryAmt := tTotalCoin - (tAcc1Balance + tVal1Stake)
 	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc0.AddToBalance(tTotalCoin - 10000000000 - 5000000000)
+	acc0.AddToBalance(treasuryAmt)
 	tSandbox.UpdateAccount(acc0)
 
-	signer1 := bls.GenerateTestSigner()
-	pub, prv := bls.GenerateTestKeyPair()
-	tValSigner = crypto.NewSigner(prv)
-
-	tAcc1 = account.NewAccount(signer1.Address(), 0)
-	tAcc1.AddToBalance(10000000000)
+	addr := crypto.GenerateTestAddress()
+	tAcc1 = account.NewAccount(addr, 0)
+	tAcc1.AddToBalance(tAcc1Balance)
 	tSandbox.UpdateAccount(tAcc1)
-	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), int64(10000000000))
+	assert.Equal(t, tSandbox.Account(tAcc1.Address()).Balance(), tAcc1Balance)
 
+	pub, _ := bls.GenerateTestKeyPair()
 	tVal1 = validator.NewValidator(pub, 0)
-	tVal1.AddToStake(5000000000)
+	tVal1.AddToStake(tVal1Stake)
+	tVal1.UpdateLastBondingHeight(100001 - tSandbox.BondInterval()) // Check TestExecuteSortitionTx
 	tSandbox.UpdateValidator(tVal1)
-	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), int64(5000000000))
+	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), tVal1Stake)
+
+	tHash1000000 = hash.GenerateTestHash()
+	tHash1000001 = hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(1000000, tHash1000000)
+	tSandbox.AppendNewBlock(1000001, tHash1000001)
 
 }
 
@@ -65,39 +77,37 @@ func TestExecuteSendTx(t *testing.T) {
 
 	sender := bls.GenerateTestSigner()
 	receiver := bls.GenerateTestSigner()
-	hash100 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(100, hash100)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewSendTx(hash100.Stamp(), 1, sender.Address(), sender.Address(), 3000, 1000, "non-existing account")
+		trx := tx.NewSendTx(tHash1000000.Stamp(), 1, sender.Address(), sender.Address(), 3000, 1000, "non-existing account")
 		sender.SignMsg(trx)
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("ok. Create sender account", func(t *testing.T) {
-		trx := tx.NewSendTx(hash100.Stamp(), tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
+		trx := tx.NewSendTx(tHash1000000.Stamp(), tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSendTx(hash100.Stamp(), 2, sender.Address(), receiver.Address(), 1000, 1000, "invalid sequence")
+		trx := tx.NewSendTx(tHash1000000.Stamp(), 2, sender.Address(), receiver.Address(), 1000, 1000, "invalid sequence")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewSendTx(hash100.Stamp(), 1, sender.Address(), receiver.Address(), 2001, 1000, "insufficient balance")
+		trx := tx.NewSendTx(tHash1000000.Stamp(), 1, sender.Address(), receiver.Address(), 2001, 1000, "insufficient balance")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx1 := tx.NewSendTx(hash100.Stamp(), 1, sender.Address(), receiver.Address(), 700, 1000, "ok")
+		trx1 := tx.NewSendTx(tHash1000000.Stamp(), 1, sender.Address(), receiver.Address(), 700, 1000, "ok")
 		assert.NoError(t, exe.Execute(trx1, tSandbox))
 
-		trx2 := tx.NewSendTx(hash100.Stamp(), 2, sender.Address(), receiver.Address(), 300, 1000, "ok")
+		trx2 := tx.NewSendTx(tHash1000000.Stamp(), 2, sender.Address(), receiver.Address(), 300, 1000, "ok")
 		assert.NoError(t, exe.Execute(trx2, tSandbox))
 
 		// Replay transactions
@@ -108,7 +118,7 @@ func TestExecuteSendTx(t *testing.T) {
 	t.Run("Send to self", func(t *testing.T) {
 		self := tAcc1.Address()
 		bal := tSandbox.Account(self).Balance()
-		trx := tx.NewSendTx(hash100.Stamp(), tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok")
+		trx := tx.NewSendTx(tHash1000000.Stamp(), tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok")
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
 		assert.Equal(t, tSandbox.Account(self).Balance(), bal-1000) /// Fee should be deducted
@@ -126,14 +136,14 @@ func TestSendNonStrictMode(t *testing.T) {
 	exe1 := NewSendExecutor(true)
 	exe2 := NewSendExecutor(false)
 
-	hash100 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(100, hash100)
 	receiver1 := crypto.GenerateTestAddress()
 
-	trx1 := tx.NewMintbaseTx(hash100.Stamp(), 101, receiver1, 5, "")
-	trx2 := tx.NewMintbaseTx(hash100.Stamp(), 102, receiver1, 5, "")
-
+	trx1 := tx.NewMintbaseTx(tHash1000000.Stamp(), 1000002, receiver1, 1, "")
 	assert.Error(t, exe1.Execute(trx1, tSandbox)) // Invalid sequence
 	assert.NoError(t, exe2.Execute(trx1, tSandbox))
+
+	trx2 := tx.NewMintbaseTx(tHash1000000.Stamp(), 1000003, receiver1, 1, "")
+	assert.Error(t, exe1.Execute(trx2, tSandbox)) // Invalid height
 	assert.Error(t, exe2.Execute(trx2, tSandbox)) // Invalid height
+
 }

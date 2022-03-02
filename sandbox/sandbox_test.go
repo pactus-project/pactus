@@ -22,7 +22,7 @@ var tValSigners [9]crypto.Signer
 var tSortitions *sortition.Sortition
 var tCommittee *committee.Committee
 var tStore *store.MockStore
-var tSandbox *Concrete
+var tSandbox *sandbox
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
@@ -95,7 +95,7 @@ func setup(t *testing.T) {
 	tCommittee, err = committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
-	tSandbox = NewSandbox(tStore, params, latestBlocks, tSortitions, tCommittee)
+	tSandbox = NewSandbox(tStore, params, latestBlocks, tSortitions, tCommittee).(*sandbox)
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
