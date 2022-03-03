@@ -85,6 +85,12 @@ func TestExecuteSendTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
+	t.Run("Should fail, insufficient balance", func(t *testing.T) {
+		trx := tx.NewSendTx(tHash500000.Stamp(), tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), tAcc1Balance+1, 0, "insufficient balance")
+
+		assert.Error(t, exe.Execute(trx, tSandbox))
+	})
+
 	t.Run("ok. Create sender account", func(t *testing.T) {
 		trx := tx.NewSendTx(tHash500000.Stamp(), tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
 
@@ -93,12 +99,6 @@ func TestExecuteSendTx(t *testing.T) {
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewSendTx(tHash500000.Stamp(), 2, sender.Address(), receiver.Address(), 1000, 1000, "invalid sequence")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
-	})
-
-	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewSendTx(tHash500000.Stamp(), 1, sender.Address(), receiver.Address(), 2001, 1000, "insufficient balance")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})

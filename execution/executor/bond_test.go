@@ -29,7 +29,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Insufficient balance", func(t *testing.T) {
-		trx := tx.NewBondTx(tHash500000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, tAcc1Balance+1, 10000000, "insufficient balance")
+		trx := tx.NewBondTx(tHash500000.Stamp(), tSandbox.AccSeq(bonder)+1, bonder, pub, tAcc1Balance+1, 0, "insufficient balance")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
