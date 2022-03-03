@@ -63,6 +63,7 @@ func setup(t *testing.T) {
 	val4 := validator.NewValidator(tValSigner4.PublicKey().(*bls.PublicKey), 3)
 	params := param.DefaultParams()
 	params.CommitteeSize = 5
+	params.BondInterval = 10
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
 	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, store1, tCommonTxPool)
@@ -379,13 +380,6 @@ func TestSortition(t *testing.T) {
 	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, store, tCommonTxPool)
 	assert.NoError(t, err)
 	st1 := st.(*state)
-
-	// 
-	tState1.params.BondInterval = 8
-	tState2.params.BondInterval = 8
-	tState3.params.BondInterval = 8
-	tState4.params.BondInterval = 8
-	st1.params.BondInterval = 8
 
 	assert.False(t, st1.evaluateSortition()) //  not a validator
 
