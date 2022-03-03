@@ -194,10 +194,10 @@ func TestLinkedMap(t *testing.T) {
 func TestSortingLinkedMap(t *testing.T) {
 	lm := NewLinkedMap(6)
 
-	lessThan := func(left interface{}, right interface{}) bool {
+	cmp := func(left interface{}, right interface{}) bool {
 		return left.(string) < right.(string)
 	}
-	lm.SortList(lessThan)
+	lm.SortList(cmp)
 	assert.Nil(t, lm.FirstElement())
 
 	lm.PushBack(3, "c")
@@ -206,7 +206,7 @@ func TestSortingLinkedMap(t *testing.T) {
 	lm.PushBack(2, "b")
 	lm.PushBack(4, "d")
 
-	lm.SortList(lessThan)
+	lm.SortList(cmp)
 	assert.Equal(t, lm.FirstElement().Value, &Pair{1, "a"})
 	assert.Equal(t, lm.LastElement().Value, &Pair{5, "e"})
 	assert.Equal(t, lm.Size(), 5)

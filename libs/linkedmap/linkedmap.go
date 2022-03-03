@@ -132,7 +132,7 @@ func (lm *LinkedMap) prune() {
 	}
 }
 
-func (lm *LinkedMap) SortList(lessThan func(left interface{}, right interface{}) bool) {
+func (lm *LinkedMap) SortList(cmp func(left interface{}, right interface{}) bool) {
 	index := lm.list.Front()
 	if index == nil {
 		return
@@ -141,7 +141,7 @@ func (lm *LinkedMap) SortList(lessThan func(left interface{}, right interface{})
 	for index != nil {
 		current := index.Next()
 		for current != nil {
-			if lessThan(current.Value.(*Pair).Second, index.Value.(*Pair).Second) {
+			if cmp(current.Value.(*Pair).Second, index.Value.(*Pair).Second) {
 				lm.list.MoveBefore(current, index)
 				index = current
 				current = index

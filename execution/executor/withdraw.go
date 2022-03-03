@@ -19,35 +19,35 @@ func NewWithdrawExecutor(strict bool) *WithdrawExecutor {
 func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.WithdrawPayload)
 
-	withdrawingVal := sb.Validator(pld.From)
-	if withdrawingVal == nil {
+	val := sb.Validator(pld.From)
+	if val == nil {
 		return errors.Errorf(errors.ErrInvalidAddress, "Unable to retrieve validator account")
 	}
 
-	if withdrawingVal.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence, "Invalid sequence, Expected: %v, got: %v", withdrawingVal.Sequence()+1, trx.Sequence())
+	if val.Sequence()+1 != trx.Sequence() {
+		return errors.Errorf(errors.ErrInvalidSequence, "Invalid sequence, Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
-	if withdrawingVal.Stake() < pld.Amount+trx.Fee() {
+	if val.Stake() < pld.Amount+trx.Fee() {
 		return errors.Errorf(errors.ErrInsufficientFunds, "Insufficient balance")
 	}
-	if withdrawingVal.UnbondingHeight() == 0 {
+	if val.UnbondingHeight() == 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Need to unbond first")
 	}
-	if sb.CurrentHeight() < withdrawingVal.UnbondingHeight()+sb.UnbondInterval() {
-		return errors.Errorf(errors.ErrInvalidTx, "Hasn't passed unbonding period, Expected: %v, got: %v", withdrawingVal.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
+	if sb.CurrentHeight() < val.UnbondingHeight()+sb.UnbondInterval() {
+		return errors.Errorf(errors.ErrInvalidTx, "Hasn't passed unbonding period, Expected: %v, got: %v", val.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
 	}
 
-	depositAcc := sb.Account(pld.To)
-	if depositAcc == nil {
-		depositAcc = sb.MakeNewAccount(pld.To)
+	acc := sb.Account(pld.To)
+	if acc == nil {
+		acc = sb.MakeNewAccount(pld.To)
 	}
 
-	withdrawingVal.IncSequence()
-	withdrawingVal.AddToStake(-1 * (pld.Amount + trx.Fee()))
-	depositAcc.AddToBalance(pld.Amount)
+	val.IncSequence()
+	val.AddToStake(-1 * (pld.Amount + trx.Fee()))
+	acc.AddToBalance(pld.Amount)
 
-	sb.UpdateValidator(withdrawingVal)
-	sb.UpdateAccount(depositAcc)
+	sb.UpdateValidator(val)
+	sb.UpdateAccount(acc)
 
 	e.fee = trx.Fee()
 

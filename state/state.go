@@ -110,7 +110,7 @@ func LoadOrNewState(
 	return st, nil
 }
 
-func (st *state) concreteSandbox() *sandbox.Concrete {
+func (st *state) concreteSandbox() sandbox.Sandbox {
 	return sandbox.NewSandbox(st.store, st.params, st.latestBlocks, st.sortition, st.committee)
 }
 
@@ -436,7 +436,7 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
-	if st.lastInfo.BlockHeight()-val.LastBondingHeight() < 2*st.params.CommitteeSize {
+	if st.lastInfo.BlockHeight()-val.LastBondingHeight() < st.params.BondInterval {
 		// Bonding period
 		return false
 	}
@@ -469,7 +469,7 @@ func (st *state) Fingerprint() string {
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(sb *sandbox.Concrete, round int) {
+func (st *state) commitSandbox(sb sandbox.Sandbox, round int) {
 	joined := make([]*validator.Validator, 0)
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.JoinedCommittee {

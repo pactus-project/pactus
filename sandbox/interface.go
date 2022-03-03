@@ -25,10 +25,14 @@ type Sandbox interface {
 	FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash)
 	CommitteeSize() int
 	UnbondInterval() int
+	BondInterval() int
 	CurrentHeight() int
 	BlockHeight(hash.Hash) int
 	TransactionToLiveInterval() int
 	MaxMemoLength() int
 	FeeFraction() float64
 	MinFee() int64
+
+	IterateAccounts(consumer func(*AccountStatus))
+	IterateValidators(consumer func(*ValidatorStatus))
 }
