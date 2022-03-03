@@ -21,8 +21,8 @@ var (
 	tTotalCoin   int64
 	tAcc1Balance int64
 	tVal1Stake   int64
-	tHash500000  hash.Hash
-	tHash500001  hash.Hash
+	tStamp500000 hash.Stamp
+	tStamp500001 hash.Stamp
 )
 
 func init() {
@@ -53,11 +53,13 @@ func setup(t *testing.T) {
 	tSandbox.UpdateValidator(tVal1)
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), tVal1Stake)
 
-	tHash500000 = hash.GenerateTestHash()
-	tHash500001 = hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(500000, tHash500000)
-	tSandbox.AppendNewBlock(500001, tHash500001)
+	hash500000 := hash.GenerateTestHash()
+	hash500001 := hash.GenerateTestHash()
+	tSandbox.AppendNewBlock(500000, hash500000)
+	tSandbox.AppendNewBlock(500001, hash500001)
 
+	tStamp500000 = hash500000.Stamp()
+	tStamp500001 = hash500001.Stamp()
 }
 
 func checkTotalCoin(t *testing.T, fee int64) {
@@ -79,35 +81,35 @@ func TestExecuteSendTx(t *testing.T) {
 	receiver := bls.GenerateTestSigner()
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewSendTx(tHash500000.Stamp(), 1, sender.Address(), sender.Address(), 3000, 1000, "non-existing account")
+		trx := tx.NewSendTx(tStamp500000, 1, sender.Address(), sender.Address(), 3000, 1000, "non-existing account")
 		sender.SignMsg(trx)
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewSendTx(tHash500000.Stamp(), tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), tAcc1Balance+1, 0, "insufficient balance")
+		trx := tx.NewSendTx(tStamp500000, tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), tAcc1Balance+1, 0, "insufficient balance")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("ok. Create sender account", func(t *testing.T) {
-		trx := tx.NewSendTx(tHash500000.Stamp(), tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
+		trx := tx.NewSendTx(tStamp500000, tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSendTx(tHash500000.Stamp(), 2, sender.Address(), receiver.Address(), 1000, 1000, "invalid sequence")
+		trx := tx.NewSendTx(tStamp500000, 2, sender.Address(), receiver.Address(), 1000, 1000, "invalid sequence")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx1 := tx.NewSendTx(tHash500000.Stamp(), 1, sender.Address(), receiver.Address(), 700, 1000, "ok")
+		trx1 := tx.NewSendTx(tStamp500000, 1, sender.Address(), receiver.Address(), 700, 1000, "ok")
 		assert.NoError(t, exe.Execute(trx1, tSandbox))
 
-		trx2 := tx.NewSendTx(tHash500000.Stamp(), 2, sender.Address(), receiver.Address(), 300, 1000, "ok")
+		trx2 := tx.NewSendTx(tStamp500000, 2, sender.Address(), receiver.Address(), 300, 1000, "ok")
 		assert.NoError(t, exe.Execute(trx2, tSandbox))
 
 		// Replay transactions
@@ -118,7 +120,7 @@ func TestExecuteSendTx(t *testing.T) {
 	t.Run("Send to self", func(t *testing.T) {
 		self := tAcc1.Address()
 		bal := tSandbox.Account(self).Balance()
-		trx := tx.NewSendTx(tHash500000.Stamp(), tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok")
+		trx := tx.NewSendTx(tStamp500000, tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok")
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
 		assert.Equal(t, tSandbox.Account(self).Balance(), bal-1000) /// Fee should be deducted
@@ -138,11 +140,11 @@ func TestSendNonStrictMode(t *testing.T) {
 
 	receiver1 := crypto.GenerateTestAddress()
 
-	trx1 := tx.NewMintbaseTx(tHash500001.Stamp(), tSandbox.CurHeight, receiver1, 1, "")
+	trx1 := tx.NewMintbaseTx(tStamp500001, tSandbox.CurHeight, receiver1, 1, "")
 	assert.Error(t, exe1.Execute(trx1, tSandbox)) // Invalid sequence
 	assert.NoError(t, exe2.Execute(trx1, tSandbox))
 
-	trx2 := tx.NewMintbaseTx(tHash500001.Stamp(), tSandbox.CurHeight+1, receiver1, 1, "")
+	trx2 := tx.NewMintbaseTx(tStamp500001, tSandbox.CurHeight+1, receiver1, 1, "")
 	assert.Error(t, exe1.Execute(trx2, tSandbox)) // Invalid height
 	assert.Error(t, exe2.Execute(trx2, tSandbox)) // Invalid height
 
