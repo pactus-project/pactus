@@ -10,13 +10,13 @@ const testnetJSON = `
 	   "BlockTimeInSecond":10,
 	   "CommitteeSize":7,
 	   "BlockReward":100000000,
-	   "TransactionToLiveInterval":8640,
-	   "BondInterval":360,
-	   "UnbondInterval":181440,
+	   "TransactionToLiveInterval":2880,
+	   "BondInterval":120,
+	   "UnbondInterval":60480,
 	   "MaximumTransactionPerBlock":1000,
 	   "MaximumMemoLength":1024,
-	   "FeeFraction":0.001,
-	   "MinimumFee":1000
+	   "FeeFraction":0.0001,
+	   "MinimumFee":10000
 	},
 	"Accounts":[
 	   {

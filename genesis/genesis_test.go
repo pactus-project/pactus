@@ -49,9 +49,9 @@ func TestGenesisTestNet(t *testing.T) {
 
 	genTime, _ := time.Parse("2006-01-02", "2022-02-21")
 	assert.Equal(t, g.GenesisTime(), genTime)
-	assert.Equal(t, g.Params().BondInterval, 360)
+	assert.Equal(t, g.Params().BondInterval, 120)
 
-	expected, _ := hash.FromString("94da2f7516fd2d5a420affae5196bba5bfda5f72cc8684c074ed7202d5f303d4")
+	expected, _ := hash.FromString("6a74a365e405ed553380716fa3764a8c5ade4629a98e20b46c2878ee3a101052")
 	assert.Equal(t, g.Hash(), expected)
 }
 
