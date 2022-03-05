@@ -21,7 +21,7 @@ func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.Tx,
 			return nil, errors.Errorf(errors.ErrInvalidBlock,
 				"transaction not found: %s", ids[i])
 		}
-		// Only first transaction should be subsidy transaction
+		// The first transaction should be subsidy transaction
 		IsMintbaseTx := (i == 0)
 		if IsMintbaseTx {
 			if !trx.IsMintbaseTx() {

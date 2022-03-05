@@ -8,8 +8,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -22,28 +20,27 @@ var _ Sandbox = &sandbox{}
 type BlockInfo struct {
 	height int
 	hash   hash.Hash
+	seed   sortition.VerifiableSeed
 }
 
-func NewBlockInfo(height int, hash hash.Hash) *BlockInfo {
+func NewBlockInfo(height int, hash hash.Hash, seed sortition.VerifiableSeed) *BlockInfo {
 	return &BlockInfo{
 		height: height,
 		hash:   hash,
+		seed:   seed,
 	}
 }
 
 type sandbox struct {
 	lk sync.RWMutex
 
-	store            store.Reader
-	sortition        *sortition.Sortition
-	latestBlocks     *linkedmap.LinkedMap
-	committee        committee.Reader
-	accounts         map[crypto.Address]*AccountStatus
-	validators       map[crypto.Address]*ValidatorStatus
-	params           param.Params
-	totalAccounts    int
-	totalValidators  int
-	totalStakeChange int64
+	store           store.Reader
+	committee       committee.Reader
+	accounts        map[crypto.Address]*AccountStatus
+	validators      map[crypto.Address]*ValidatorStatus
+	params          param.Params
+	totalAccounts   int
+	totalValidators int
 }
 
 type ValidatorStatus struct {
@@ -57,20 +54,17 @@ type AccountStatus struct {
 	Updated bool
 }
 
-func NewSandbox(store store.Reader, params param.Params, latestBlocks *linkedmap.LinkedMap, sortition *sortition.Sortition, committee committee.Reader) Sandbox {
+func NewSandbox(store store.Reader, params param.Params, committee committee.Reader) Sandbox {
 	sb := &sandbox{
 		store:     store,
-		sortition: sortition,
 		committee: committee,
 		params:    params,
 	}
 
 	sb.accounts = make(map[crypto.Address]*AccountStatus)
 	sb.validators = make(map[crypto.Address]*ValidatorStatus)
-	sb.latestBlocks = latestBlocks
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
-	sb.totalStakeChange = 0
 
 	return sb
 }
@@ -194,75 +188,53 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 		sb.shouldPanicForUnknownAddress()
 	}
 
-	// shouldn't this be power??
-	sb.totalStakeChange += val.Stake() - s.Validator.Stake()
 	s.Validator = *val
 	s.Updated = true
 }
 
-func (sb *sandbox) EnterCommittee(blockHash hash.Hash, addr crypto.Address) error {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+// func (sb *sandbox) EnterCommittee(blockHash hash.Hash, addr crypto.Address) error {
+// 	sb.lk.Lock()
+// 	defer sb.lk.Unlock()
 
-	if sb.committee.Contains(addr) {
-		return errors.Errorf(errors.ErrGeneric, "this validator already is in the committee")
-	}
+// 	valS, ok := sb.validators[addr]
+// 	if !ok {
+// 		return errors.Errorf(errors.ErrGeneric, "unknown validator")
+// 	}
 
-	valS, ok := sb.validators[addr]
-	if !ok {
-		return errors.Errorf(errors.ErrGeneric, "unknown validator")
-	}
+// 	_, bi := sb.latestBlocks.Last()
+// 	if bi == nil {
+// 		return errors.Errorf(errors.ErrGeneric, "Unable to retrieve last block info")
+// 	}
+// 	lastHeight := bi.(*BlockInfo).height
 
-	if valS.JoinedCommittee {
-		return errors.Errorf(errors.ErrGeneric, "this validator has joined into committee before")
-	}
+// 	if sb.committee.Size() >= sb.params.CommitteeSize {
+// 		oldestJoinedHeight := lastHeight
+// 		committeeStake := int64(0)
+// 		for _, v := range sb.committee.Validators() {
+// 			committeeStake += v.Stake()
+// 			if v.LastJoinedHeight() < oldestJoinedHeight {
+// 				oldestJoinedHeight = v.LastJoinedHeight()
+// 			}
+// 		}
+// 		if lastHeight-oldestJoinedHeight < sb.params.CommitteeSize {
+// 			return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
+// 		}
+// 		joinedStake := int64(0)
+// 		for _, s := range sb.validators {
+// 			if s.JoinedCommittee {
+// 				joinedStake += s.Validator.Stake()
+// 			}
+// 		}
 
-	_, val := sb.latestBlocks.Last()
-	if val == nil {
-		return errors.Errorf(errors.ErrGeneric, "Unable to retrieve last block info")
-	}
-	lastHeight := val.(*BlockInfo).height
+// 		joinedStake += valS.Validator.Stake()
+// 		if joinedStake >= (committeeStake / 3) {
+// 			return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
+// 		}
+// 	}
 
-	if sb.committee.Size() >= sb.params.CommitteeSize {
-		oldestJoinedHeight := lastHeight
-		committeeStake := int64(0)
-		for _, v := range sb.committee.Validators() {
-			committeeStake += v.Stake()
-			if v.LastJoinedHeight() < oldestJoinedHeight {
-				oldestJoinedHeight = v.LastJoinedHeight()
-			}
-		}
-		if lastHeight-oldestJoinedHeight < sb.params.CommitteeSize {
-			return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
-		}
-		joinedStake := int64(0)
-		for _, s := range sb.validators {
-			if s.JoinedCommittee {
-				joinedStake += s.Validator.Stake()
-			}
-		}
-
-		joinedStake += valS.Validator.Stake()
-		if joinedStake >= (committeeStake / 3) {
-			return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
-		}
-	}
-
-	h, _ := sb.store.BlockHeight(blockHash)
-	b, err := sb.store.Block(h)
-	if err != nil {
-		return errors.Errorf(errors.ErrGeneric, "invalid block hash")
-	}
-	committers := b.PrevCertificate().Committers()
-	for _, num := range committers {
-		if valS.Validator.Number() == num {
-			return errors.Errorf(errors.ErrGeneric, "this validator was in the committee in time of sending the sortition")
-		}
-	}
-
-	valS.JoinedCommittee = true
-	return nil
-}
+// 	valS.JoinedCommittee = true
+// 	return nil
+// }
 
 func (sb *sandbox) MaxMemoLength() int {
 	sb.lk.Lock()
@@ -309,9 +281,9 @@ func (sb *sandbox) CurrentHeight() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	_, val := sb.latestBlocks.Last()
-	if val != nil {
-		return val.(*BlockInfo).height + 1
+	h, _, err := sb.store.LastCertificate()
+	if err != nil {
+		return h
 	}
 
 	return -1
@@ -321,19 +293,12 @@ func (sb *sandbox) PrevBlockHash() hash.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	_, val := sb.latestBlocks.Last()
-	if val != nil {
-		return val.(*BlockInfo).hash
+	_, cert, err := sb.store.LastCertificate()
+	if err != nil {
+		return cert.BlockHash()
 	}
 
 	return hash.UndefHash
-}
-
-func (sb *sandbox) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.sortition.VerifyProof(blockHash, proof, val.PublicKey(), val.Stake())
 }
 
 func (sb *sandbox) IterateAccounts(consumer func(*AccountStatus)) {
@@ -354,17 +319,11 @@ func (sb *sandbox) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
-func (sb *sandbox) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
+func (sb *sandbox) BlockHeightByStamp(stamp hash.Stamp) int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	val, ok := sb.latestBlocks.Get(stamp)
-	if ok {
-		bi := val.(*BlockInfo)
-		return bi.height, bi.hash
-	}
-
-	return -1, hash.UndefHash
+	return sb.store.BlockHeightByStamp(stamp)
 }
 
 func (sb *sandbox) CommitteeSize() int {
@@ -387,6 +346,19 @@ func (sb *sandbox) BondInterval() int {
 	return sb.params.BondInterval
 }
 
-func (sb *sandbox) IsInCommittee(addr crypto.Address) bool {
+func (sb *sandbox) ValidatorIsInCommittee(addr crypto.Address) bool {
 	return sb.committee.Contains(addr)
+}
+
+func (sb *sandbox) ValidatorWillJoinCommittee(addr crypto.Address) bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	for _, vs := range sb.validators {
+		if vs.Validator.Address().EqualsTo(addr) {
+			return vs.JoinedCommittee
+		}
+	}
+
+	return false
 }

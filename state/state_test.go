@@ -413,7 +413,7 @@ func TestSortition(t *testing.T) {
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
-	assert.False(t, st1.evaluateSortition()) // already in the committee
+	assert.True(t, st1.evaluateSortition()) // in the committee
 	assert.True(t, tState1.committee.Contains(tValSigner1.Address()))
 	assert.True(t, tState1.committee.Contains(pub.Address()))
 

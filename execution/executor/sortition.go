@@ -3,6 +3,7 @@ package executor
 import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sandbox"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
@@ -22,18 +23,29 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
 	}
-	// Power for parked validators is set to zero
+	if e.strict {
+		// A validator might produce more than one sortition transaction before entring into the committee
+		// In non-strict mode we don't check the sequence number
+		if val.Sequence()+1 != trx.Sequence() {
+			return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+		}
+	}
+	// Power for parked validators (unbonded) set to zero
 	if val.Power() == 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "Validator has no Power to be in committee")
 	}
 	if sb.CurrentHeight()-val.LastBondingHeight() < sb.BondInterval() {
-		return errors.Errorf(errors.ErrInvalidTx, "In bonding period")
+		return errors.Errorf(errors.ErrInvalidTx, "Validator has bonded at height %v", val.LastBondingHeight())
 	}
-	_, hash := sb.FindBlockInfoByStamp(trx.Stamp())
-	ok := sb.VerifySortition(hash, pld.Proof, val)
+	height := sb.BlockHeightByStamp(trx.Stamp())
+	block := sb.B
+	seed := sb.BlockSeedByStamp(trx.Stamp())
+	ok := sortition.VerifyProof(seed, pld.Proof, val.PublicKey(), val.Stake(), val.Stake())
 	if !ok {
 		return errors.Errorf(errors.ErrInvalidTx, "Sortition proof is invalid")
 	}
+
+	val.LastJoinedHeight()
 	if e.strict {
 		// A validator might produce more than one sortition transaction before entring into the committee
 		// In non-strict mode we don't check the sequence number

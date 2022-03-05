@@ -11,10 +11,12 @@ import (
 
 type VerifiableSeed [48]byte
 
+var UndefVerifiableSeed = [48]byte{0}
+
 func VerifiableSeedFromString(text string) (VerifiableSeed, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
-		return VerifiableSeed{}, err
+		return UndefVerifiableSeed, err
 	}
 
 	return VerifiableSeedFromRawBytes(data)
@@ -22,13 +24,17 @@ func VerifiableSeedFromString(text string) (VerifiableSeed, error) {
 
 func VerifiableSeedFromRawBytes(data []byte) (VerifiableSeed, error) {
 	if len(data) != 48 {
-		return VerifiableSeed{}, fmt.Errorf("invalid seed length")
+		return UndefVerifiableSeed, fmt.Errorf("invalid seed length")
 	}
 
-	s := VerifiableSeed{}
+	s := UndefVerifiableSeed
 	copy(s[:], data)
 
 	return s, nil
+}
+
+func (s VerifiableSeed) IsUndef() bool {
+	return s == UndefVerifiableSeed
 }
 
 func (s *VerifiableSeed) Generate(signer crypto.Signer) VerifiableSeed {

@@ -13,14 +13,31 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+// TODO: add cache for me
+
 var (
-	infoKey         = []byte{0x00}
+	lastCertKey     = []byte{0x00}
 	blockPrefix     = []byte{0x01}
 	blockHashPrefix = []byte{0x03}
 	accountPrefix   = []byte{0x05}
 	validatorPrefix = []byte{0x07}
 	txPrefix        = []byte{0x09}
 )
+
+func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
+	data, err := db.Get(key, nil)
+	if err != nil {
+		// Probably key doesn't exist in database
+		logger.Trace("database error", "err", err, "key", key)
+		return nil, err
+	}
+	return data, nil
+}
+
+type lastCertificate struct {
+	Height int                `cbor:"1,keyasint"`
+	Cert   *block.Certificate `cbor:"2,keyasint"`
+}
 
 type store struct {
 	lk sync.RWMutex
@@ -34,7 +51,7 @@ type store struct {
 	validatorStore *validatorStore
 }
 
-func NewStore(conf *Config) (Store, error) {
+func NewStore(conf *Config, stampToHeightCapacity int) (Store, error) {
 	db, err := leveldb.OpenFile(conf.StorePath(), nil)
 	if err != nil {
 		return nil, err
@@ -44,7 +61,7 @@ func NewStore(conf *Config) (Store, error) {
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db),
+		blockStore:     newBlockStore(db, stampToHeightCapacity),
 		txStore:        newTxStore(db),
 		accountStore:   newAccountStore(db),
 		validatorStore: newValidatorStore(db),
@@ -55,12 +72,11 @@ func (s *store) Close() error {
 	return s.db.Close()
 }
 
-func (s *store) SaveBlock(height int, block *block.Block) {
+func (s *store) SaveBlock(height int, block *block.Block, cert *block.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
-	if err := s.blockStore.saveBlock(s.batch, height, block); err != nil {
-		logger.Panic("error on saving block: %v", err)
-	}
+
+	s.blockStore.saveBlock(s.batch, height, block, cert)
 }
 
 func (s *store) Block(height int) (*block.Block, error) {
@@ -77,13 +93,18 @@ func (s *store) BlockHeight(hash hash.Hash) (int, error) {
 	return s.blockStore.blockHeight(hash)
 }
 
+func (s *store) BlockHeightByStamp(stamp hash.Stamp) int {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	return s.blockStore.blockHeightByStamp(stamp)
+}
+
 func (s *store) SaveTransaction(trx *tx.Tx) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	if err := s.txStore.saveTx(s.batch, trx); err != nil {
-		logger.Panic("error on saving a transaction: %v", err)
-	}
+	s.txStore.saveTx(s.batch, trx)
 }
 
 func (s *store) Transaction(hash hash.Hash) (*tx.Tx, error) {
@@ -125,9 +146,7 @@ func (s *store) UpdateAccount(acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	if err := s.accountStore.updateAccount(s.batch, acc); err != nil {
-		logger.Panic("error on updating an account: %v", err)
-	}
+	s.accountStore.updateAccount(s.batch, acc)
 }
 
 func (s *store) HasValidator(addr crypto.Address) bool {
@@ -169,24 +188,11 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	if err := s.validatorStore.updateValidator(s.batch, acc); err != nil {
-		logger.Panic("error on updating a validator: %v", err)
-	}
+	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) HasAnyBlock() bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
-
-	return s.blockStore.hasAnyBlock()
-}
-func (s *store) SaveLastInfo(info []byte) {
-	s.batch.Put(infoKey, info)
-}
-
-func (s *store) RestoreLastInfo() []byte {
-	info, _ := tryGet(s.db, infoKey)
-	return info
+func (s *store) LastCertificate() (int, *block.Certificate, error) {
+	return s.blockStore.lastCertificate()
 }
 
 func (s *store) WriteBatch() error {

@@ -39,6 +39,18 @@ func MockingState(committee *committee.Committee) *MockState {
 	}
 }
 
+func (m *MockState) CommitTestBlocks(num int) {
+	for i := 0; i < num; i++ {
+		b, txs := block.GenerateTestBlock(nil, nil)
+		cert := block.GenerateTestCertificate(b.Hash())
+
+		m.Store.SaveBlock(i+1, b, cert)
+		for _, tx := range txs {
+			m.Store.SaveTransaction(tx)
+		}
+	}
+}
+
 func (m *MockState) LastBlockHeight() int {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
@@ -92,7 +104,7 @@ func (m *MockState) CommitBlock(h int, b *block.Block, cert *block.Certificate) 
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
 		return fmt.Errorf("invalid block")
 	}
-	m.Store.SaveBlock(h, b)
+	m.Store.SaveBlock(h, b, cert)
 	m.LastBlockCertificate = cert
 	return nil
 }
@@ -107,22 +119,12 @@ func (m *MockState) ProposeBlock(round int) (*block.Block, error) {
 func (m *MockState) ValidateBlock(block *block.Block) error {
 	return nil
 }
-func (m *MockState) AddBlock(h int, b *block.Block, trxs []*tx.Tx) {
-	m.Lock.Lock()
-	defer m.Lock.Unlock()
-
-	m.Store.SaveBlock(h, b)
-
-	for _, t := range trxs {
-		m.Store.SaveTransaction(t)
-	}
-}
 func (m *MockState) CommitteeValidators() []*validator.Validator {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 	return m.Committee.Validators()
 }
-func (m *MockState) IsInCommittee(addr crypto.Address) bool {
+func (m *MockState) ValidatorIsInCommittee(addr crypto.Address) bool {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 	return m.Committee.Contains(addr)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -12,21 +13,33 @@ import (
 )
 
 var tStore *store
+var tLastHeight int
 
 func setup(t *testing.T) {
 	conf := TestConfig()
-	s, err := NewStore(conf)
-	assert.NoError(t, err)
+	s, err := NewStore(conf, 21)
+	require.NoError(t, err)
 
 	tStore = s.(*store)
+	tLastHeight = 10
+
+	for i := 0; i < tLastHeight; i++ {
+		b, txs := block.GenerateTestBlock(nil, nil)
+		c := block.GenerateTestCertificate(b.Hash())
+
+		tStore.SaveBlock(i+1, b, c)
+		for _, tx := range txs {
+			tStore.SaveTransaction(tx)
+		}
+		tStore.WriteBatch()
+	}
 }
 
 func TestReturnNilForNonExistingItems(t *testing.T) {
 	setup(t)
 
 	b, txs := block.GenerateTestBlock(nil, nil)
-	h := util.RandInt(10000)
-	block, err := tStore.Block(h)
+	block, err := tStore.Block(tLastHeight + 1)
 	assert.Error(t, err)
 	assert.Nil(t, block)
 
@@ -53,11 +66,9 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
 
 	b, trxs := block.GenerateTestBlock(nil, nil)
-	h := util.RandInt(10000)
-	assert.False(t, tStore.HasAnyBlock())
-	tStore.SaveBlock(h, b)
+	cert := block.GenerateTestCertificate(b.Hash())
+	tStore.SaveBlock(tLastHeight + 1, b, cert)
 	assert.NoError(t, tStore.WriteBatch())
-	assert.True(t, tStore.HasAnyBlock())
 
 	for _, trx := range trxs {
 		tStore.SaveTransaction(trx)
@@ -72,7 +83,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	bz1, _ := b.Encode()
 	bz2, _ := b2.Encode()
 	assert.Equal(t, bz1, bz2)
-	assert.Equal(t, h, h2)
+	assert.Equal(t, tLastHeight + 1, h2)
 
 	for _, trx := range trxs {
 		trx2, err := tStore.Transaction(trx.ID())
@@ -84,7 +95,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	// After closing db, we should not crash
 	assert.NoError(t, tStore.Close())
 	assert.Error(t, tStore.WriteBatch())
-	_, err = tStore.Block(h)
+	_, err = tStore.Block(tLastHeight + 1)
 	assert.Error(t, err)
 	_, err = tStore.Transaction(trxs[0].ID())
 	assert.Error(t, err)
@@ -213,12 +224,12 @@ func TestIterateValidators(t *testing.T) {
 	assert.ElementsMatch(t, vals1, vals2)
 }
 
-func TestReestoreLastInfo(t *testing.T) {
-	setup(t)
+// func TestReestoreLastInfo(t *testing.T) {
+// 	setup(t)
 
-	assert.Nil(t, tStore.RestoreLastInfo())
-	tStore.SaveLastInfo([]byte{1})
-	assert.Nil(t, tStore.RestoreLastInfo())
-	assert.NoError(t, tStore.WriteBatch())
-	assert.NotNil(t, tStore.RestoreLastInfo())
-}
+// 	assert.Nil(t, tStore.RestoreLastInfo())
+// 	tStore.SaveLastInfo([]byte{1})
+// 	assert.Nil(t, tStore.RestoreLastInfo())
+// 	assert.NoError(t, tStore.WriteBatch())
+// 	assert.NotNil(t, tStore.RestoreLastInfo())
+// }

@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -40,13 +39,7 @@ func setup(t *testing.T) {
 	tMockState = state.MockingState(committee)
 	tMockSync = sync.MockingSync()
 
-	b1, txs := block.GenerateTestBlock(nil, nil)
-	b2, _ := block.GenerateTestBlock(nil, nil)
-	tMockState.Store.SaveBlock(1, b1)
-	tMockState.Store.SaveBlock(2, b2)
-
-	tTxTestHash = txs[0].ID()
-	tMockState.Store.SaveTransaction(txs[0])
+	tMockState.CommitTestBlocks(10)
 
 	a, _ := account.GenerateTestAccount(888)
 	tAccTestAddr = a.Address()

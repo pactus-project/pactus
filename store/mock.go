@@ -16,7 +16,7 @@ type MockStore struct {
 	Accounts     map[crypto.Address]account.Account
 	Validators   map[crypto.Address]validator.Validator
 	Transactions map[hash.Hash]tx.Tx
-	LastInfo     []byte
+	LastCert     lastCertificate
 }
 
 func MockingStore() *MockStore {
@@ -123,19 +123,18 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(height int, block *block.Block) {
+func (m *MockStore) SaveBlock(height int, block *block.Block, cert *block.Certificate) {
 	m.Blocks[height] = block
+	m.LastCert.Height = height
+	m.LastCert.Cert = cert
 }
 
 func (m *MockStore) SaveTransaction(trx *tx.Tx) {
 	m.Transactions[trx.ID()] = *trx
 }
 
-func (m *MockStore) SaveLastInfo(info []byte) {
-	m.LastInfo = info
-}
-func (m *MockStore) RestoreLastInfo() []byte {
-	return m.LastInfo
+func (m *MockStore) LastCertificate() (int, *block.Certificate, error) {
+	return m.LastCert.Height, m.LastCert.Cert, nil
 }
 func (m *MockStore) WriteBatch() error {
 	return nil

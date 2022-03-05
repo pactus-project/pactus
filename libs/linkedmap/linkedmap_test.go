@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestLinkedMap(t *testing.T) {
@@ -210,4 +211,11 @@ func TestSortingLinkedMap(t *testing.T) {
 	assert.Equal(t, lm.FirstElement().Value, &Pair{1, "a"})
 	assert.Equal(t, lm.LastElement().Value, &Pair{5, "e"})
 	assert.Equal(t, lm.Size(), 5)
+}
+
+func TestCapacity(t *testing.T) {
+	capacity := util.RandInt(1000)
+	lm := NewLinkedMap(capacity)
+	assert.Equal(t, lm.Capacity(), capacity)
+
 }

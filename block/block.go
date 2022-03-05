@@ -72,12 +72,12 @@ func (b *Block) SanityCheck() error {
 			return err
 		}
 		if !b.Header().PrevCertificateHash().EqualsTo(b.PrevCertificate().Hash()) {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid Previous Certificate hash")
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous certificate hash")
 		}
 	} else {
-		// Check for genesis block
+		// Genesis block checks
 		if !b.Header().PrevCertificateHash().IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid Previous Certificate hash")
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous certificate hash")
 		}
 	}
 

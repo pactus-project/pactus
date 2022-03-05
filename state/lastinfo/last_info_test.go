@@ -1,7 +1,6 @@
 package lastinfo
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,40 +16,17 @@ import (
 )
 
 // The best way to test this module, is writing test code in `state.CommitBlock` function
-// And try to sync with the main net and restore state after each commit.
+// And try to sync with the mainnet (or testnet) and restore state after each commit.
 // The restored info should be exactly same as currect info.
 //
 // Testing this module is not easy ;(
 
 var tStore *store.MockStore
 var tLastInfo *LastInfo
-var tSortition *sortition.Sortition
 
 func setup(t *testing.T) {
 	tStore = store.MockingStore()
 	tLastInfo = NewLastInfo(tStore)
-	tSortition = sortition.NewSortition()
-
-	setSortitionParams := func(hash hash.Hash, seed sortition.VerifiableSeed, committers []int) {
-		totalStake := int64(0)
-		tStore.IterateValidators(func(v *validator.Validator) (stop bool) {
-			totalStake += v.Stake()
-			return false
-		})
-
-		committeeStake := int64(0)
-		for _, num := range committers {
-			v, err := tStore.ValidatorByNumber(num)
-			assert.NoError(t, err)
-			committeeStake += v.Stake()
-		}
-
-		poolStake := totalStake - committeeStake
-		fmt.Printf("hash: %v, total stake: %d, committee stake: %v, pool stake: %v\n",
-			hash.Fingerprint(), totalStake, committeeStake, poolStake)
-
-		tSortition.SetParams(hash, seed, poolStake)
-	}
 
 	pub0, _ := bls.GenerateTestKeyPair()
 	pub1, prv1 := bls.GenerateTestKeyPair()
@@ -83,17 +59,16 @@ func setup(t *testing.T) {
 	trx1, _ := tx.GenerateTestSendTx()
 	ids1 := block.NewTxIDs()
 	ids1.Append(trx1.ID())
-	seed1 := sortition.GenerateRandomSeed()
+	seed1 := sortition.UndefVerifiableSeed
 	block1 := block.MakeBlock(1, util.Now(), ids1,
 		hash.UndefHash,
 		hash.GenerateTestHash(),
 		nil, seed1, val1.Address())
 
 	cert1 := block.NewCertificate(block1.Hash(), 0, committers1, []int{}, sig)
-	tStore.SaveBlock(1, block1)
+	tStore.SaveBlock(1, block1, cert1)
 	tStore.SaveTransaction(trx1)
 	committers2 := []int{0, 1, 2, 3}
-	setSortitionParams(block1.Hash(), seed1, committers2)
 
 	// Block 2
 	val4 := validator.NewValidator(pub4, 4)
@@ -110,10 +85,8 @@ func setup(t *testing.T) {
 		cert1, seed2, val1.Address())
 
 	cert2 := block.NewCertificate(block2.Hash(), 0, committers2, []int{}, sig)
-	tStore.SaveBlock(2, block2)
+	tStore.SaveBlock(2, block2, cert2)
 	tStore.SaveTransaction(trx2)
-	committers3 := []int{0, 1, 2, 3}
-	setSortitionParams(block2.Hash(), seed2, committers3)
 
 	// Block 3
 	val5 := validator.NewValidator(pub5, 5)
@@ -140,12 +113,11 @@ func setup(t *testing.T) {
 		cert2, seed3, val1.Address())
 
 	cert3 := block.NewCertificate(block3.Hash(), 0, committers2, []int{}, sig)
-	tStore.SaveBlock(3, block3)
+	tStore.SaveBlock(3, block3, cert3)
 	tStore.SaveTransaction(trx31)
 	tStore.SaveTransaction(trx32)
 	tStore.SaveTransaction(trx33)
 	committers4 := []int{4, 1, 2, 3}
-	setSortitionParams(block3.Hash(), seed3, committers4)
 
 	// Block 4
 	val0.AddToStake(5000)
@@ -164,11 +136,10 @@ func setup(t *testing.T) {
 		cert3, seed4, val1.Address())
 
 	cert4 := block.NewCertificate(block4.Hash(), 0, committers4, []int{}, sig)
-	tStore.SaveBlock(4, block4)
+	tStore.SaveBlock(4, block4, cert4)
 	tStore.SaveTransaction(trx41)
 	tStore.SaveTransaction(trx42)
 	committers5 := []int{4, 6, 2, 3}
-	setSortitionParams(block4.Hash(), seed4, committers5)
 
 	// Block 5
 	val7 := validator.NewValidator(pub7, 7)
@@ -189,27 +160,23 @@ func setup(t *testing.T) {
 		cert4, seed5, val1.Address())
 
 	cert5 := block.NewCertificate(block5.Hash(), 0, committers5, []int{}, sig)
-	tStore.SaveBlock(5, block5)
+	tStore.SaveBlock(5, block5, cert5)
 	tStore.SaveTransaction(trx51)
 	tStore.SaveTransaction(trx52)
-	committers6 := []int{5, 4, 6, 3}
-	setSortitionParams(block5.Hash(), seed5, committers6)
 
 	tLastInfo.SetSortitionSeed(seed5)
 	tLastInfo.SetBlockHeight(5)
 	tLastInfo.SetBlockHash(block5.Hash())
 	tLastInfo.SetCertificate(cert5)
 	tLastInfo.SetBlockTime(block5.Header().Time())
-	tLastInfo.SaveLastInfo()
 }
 
 func TestRestore(t *testing.T) {
 	setup(t)
 
 	li := NewLastInfo(tStore)
-	srt := sortition.NewSortition()
 
-	cmt, err := li.RestoreLastInfo(4, srt)
+	cmt, err := li.RestoreLastInfo(4)
 	assert.NoError(t, err)
 
 	assert.Equal(t, tLastInfo.SortitionSeed(), li.SortitionSeed())
@@ -218,15 +185,6 @@ func TestRestore(t *testing.T) {
 	assert.Equal(t, tLastInfo.Certificate().Hash(), li.Certificate().Hash())
 	assert.Equal(t, tLastInfo.BlockTime(), li.BlockTime())
 	assert.Equal(t, cmt.Committers(), []int{5, 4, 6, 3})
-
-	for i := 1; i < 6; i++ {
-		b, _ := tStore.Block(i)
-		seed1, stake1 := srt.GetParams(b.Hash())
-		seed2, stake2 := tSortition.GetParams(b.Hash())
-
-		assert.Equal(t, seed1, seed2, "Invalid seed for block %v", i)
-		assert.Equal(t, stake1, stake2, "Invalid stake for block %v", i)
-	}
 }
 
 func TestRestoreFailed(t *testing.T) {
@@ -234,10 +192,9 @@ func TestRestoreFailed(t *testing.T) {
 		setup(t)
 
 		li := NewLastInfo(tStore)
-		srt := sortition.NewSortition()
 
 		tStore.Validators = make(map[crypto.Address]validator.Validator) // Reset Validators
-		_, err := li.RestoreLastInfo(4, srt)
+		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})
 
@@ -245,10 +202,9 @@ func TestRestoreFailed(t *testing.T) {
 		setup(t)
 
 		li := NewLastInfo(tStore)
-		srt := sortition.NewSortition()
 
 		tStore.Transactions = make(map[hash.Hash]tx.Tx) // Reset transactions
-		_, err := li.RestoreLastInfo(4, srt)
+		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})
 
@@ -256,10 +212,9 @@ func TestRestoreFailed(t *testing.T) {
 		setup(t)
 
 		li := NewLastInfo(tStore)
-		srt := sortition.NewSortition()
 
 		tStore.Blocks = make(map[int]*block.Block) // Reset Blocks
-		_, err := li.RestoreLastInfo(4, srt)
+		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})
 

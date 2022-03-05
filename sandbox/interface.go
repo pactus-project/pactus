@@ -17,12 +17,10 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
-	IsInCommittee(crypto.Address) bool
+	ValidatorIsInCommittee(crypto.Address) bool
 
-	VerifySortition(hash.Hash, sortition.Proof, *validator.Validator) bool
-	EnterCommittee(hash.Hash, crypto.Address) error
-
-	FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash)
+	BlockHeightByStamp(stamp hash.Stamp) int
+	BlockSeedByStamp(stamp hash.Stamp) sortition.VerifiableSeed
 	CommitteeSize() int
 	UnbondInterval() int
 	BondInterval() int

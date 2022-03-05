@@ -32,10 +32,19 @@ func TestBlockSanityCheck(t *testing.T) {
 
 	b, _ = GenerateTestBlock(nil, nil)
 	b.data.Header.data.PrevCertificateHash = hash.UndefHash
+	b.data.Header.data.PrevBlockHash = hash.UndefHash
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
+	b.data.Header.data.PrevCertificateHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
 	b.data.PrevCertificate = GenerateTestCertificate(hash.UndefHash)
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
+	b.data.PrevCertificate = GenerateTestCertificate(hash.GenerateTestHash())
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)

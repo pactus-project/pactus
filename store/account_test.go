@@ -8,43 +8,41 @@ import (
 )
 
 func TestAccountCounter(t *testing.T) {
-	store, _ := NewStore(TestConfig())
+	setup(t)
 
 	acc, _ := account.GenerateTestAccount(0)
 
 	t.Run("Update count after adding new account", func(t *testing.T) {
-		assert.Equal(t, store.TotalAccounts(), 0)
+		assert.Equal(t, tStore.TotalAccounts(), 0)
 
-		store.UpdateAccount(acc)
-		assert.NoError(t, store.WriteBatch())
-		assert.Equal(t, store.TotalAccounts(), 1)
+		tStore.UpdateAccount(acc)
+		assert.NoError(t, tStore.WriteBatch())
+		assert.Equal(t, tStore.TotalAccounts(), 1)
 	})
 
 	t.Run("Update account, should not increase counter", func(t *testing.T) {
 		acc.AddToBalance(1)
-		store.UpdateAccount(acc)
-		assert.NoError(t, store.WriteBatch())
-		assert.Equal(t, store.TotalAccounts(), 1)
+		tStore.UpdateAccount(acc)
+		assert.NoError(t, tStore.WriteBatch())
+		assert.Equal(t, tStore.TotalAccounts(), 1)
 	})
 }
 
 func TestAccountBatchSaving(t *testing.T) {
-
-	conf := TestConfig()
-	store, _ := NewStore(conf)
+	setup(t)
 
 	t.Run("Add 100 accounts", func(t *testing.T) {
 
 		for i := 0; i < 100; i++ {
 			acc, _ := account.GenerateTestAccount(i)
-			store.UpdateAccount(acc)
+			tStore.UpdateAccount(acc)
 		}
-		assert.NoError(t, store.WriteBatch())
-		assert.Equal(t, store.TotalAccounts(), 100)
+		assert.NoError(t, tStore.WriteBatch())
+		assert.Equal(t, tStore.TotalAccounts(), 100)
 	})
 	t.Run("Close and load db", func(t *testing.T) {
-		store.Close()
-		store, _ := NewStore(conf)
+		tStore.Close()
+		store, _ := NewStore(tStore.config, 21)
 		assert.Equal(t, store.TotalAccounts(), 100)
 	})
 }

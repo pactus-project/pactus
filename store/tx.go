@@ -3,6 +3,7 @@ package store
 import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -18,24 +19,17 @@ func newTxStore(db *leveldb.DB) *txStore {
 	}
 }
 
-func (ts *txStore) saveTx(batch *leveldb.Batch, trx *tx.Tx) error {
+func (ts *txStore) saveTx(batch *leveldb.Batch, trx *tx.Tx) {
 	data, err := cbor.Marshal(trx)
 	if err != nil {
-		return err
+		logger.Panic("unable to encode transaction: %v", err)
 	}
 	txKey := txKey(trx.ID())
 	batch.Put(txKey, data)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (ts *txStore) tx(id tx.ID) (*tx.Tx, error) {
-	txKey := txKey(id)
-	data, err := tryGet(ts.db, txKey)
+	data, err := tryGet(ts.db, txKey(id))
 	if err != nil {
 		return nil, err
 	}

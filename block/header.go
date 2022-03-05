@@ -66,9 +66,12 @@ func (h *Header) SanityCheck() error {
 	}
 
 	if h.data.PrevCertificateHash.IsUndef() {
-		// Check for genesis block
+		// Genesis block checks
 		if !h.data.PrevBlockHash.IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid Last Block hash")
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous block hash")
+		}
+		if !h.data.SortitionSeed.IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
 		}
 	} else {
 		if err := h.data.PrevBlockHash.SanityCheck(); err != nil {

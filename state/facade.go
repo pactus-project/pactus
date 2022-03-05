@@ -23,7 +23,7 @@ type Facade interface {
 	ValidateBlock(block *block.Block) error
 	CommitBlock(height int, block *block.Block, cert *block.Certificate) error
 	CommitteeValidators() []*validator.Validator
-	IsInCommittee(addr crypto.Address) bool
+	ValidatorIsInCommittee(addr crypto.Address) bool
 	Proposer(round int) *validator.Validator
 	IsProposer(addr crypto.Address, round int) bool
 	TotalStake() int64
