@@ -36,7 +36,7 @@ func TestBlockStore(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, b1.Hash(), b2.Hash())
 
-		h, cert, err := tStore.LastCertificate()
+		h, cert := tStore.LastCertificate()
 		assert.NoError(t, err)
 		assert.Equal(t, h, tLastHeight+1)
 		assert.Equal(t, cert.Hash(), c1.Hash())

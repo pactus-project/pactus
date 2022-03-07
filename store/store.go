@@ -191,7 +191,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) LastCertificate() (int, *block.Certificate, error) {
+func (s *store) LastCertificate() (int, *block.Certificate) {
 	return s.blockStore.lastCertificate()
 }
 

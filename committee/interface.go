@@ -18,5 +18,5 @@ type Reader interface {
 type Committee interface {
 	Reader
 
-	Update(lastRound int, joined []*validator.Validator) error
+	Update(lastRound int, joined []*validator.Validator)
 }

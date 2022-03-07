@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -55,15 +54,9 @@ func (c *committee) TotalPower() int64 {
 	return p
 }
 
-func (c *committee) Update(lastRound int, joined []*validator.Validator) error {
+func (c *committee) Update(lastRound int, joined []*validator.Validator) {
 	c.lk.Lock()
 	defer c.lk.Unlock()
-
-	for _, v := range joined {
-		if c.contains(v.Address()) {
-			return errors.Errorf(errors.ErrGeneric, "Validator is already in the committee")
-		}
-	}
 
 	sort.SliceStable(joined, func(i, j int) bool {
 		return joined[i].Number() < joined[j].Number()
@@ -71,11 +64,12 @@ func (c *committee) Update(lastRound int, joined []*validator.Validator) error {
 
 	// First update validator list
 	for _, val := range joined {
-		c.validatorList.InsertBefore(val, c.proposerPos)
+		if !c.contains(val.Address()) {
+			c.validatorList.InsertBefore(val, c.proposerPos)
+		}
 	}
 
 	// Now adjust the list
-
 	oldestFirst := make([]*list.Element, c.validatorList.Len())
 	i := 0
 	for e := c.validatorList.Front(); e != nil; e = e.Next() {
@@ -104,8 +98,6 @@ func (c *committee) Update(lastRound int, joined []*validator.Validator) error {
 		}
 		c.validatorList.Remove(oldestFirst[i])
 	}
-
-	return nil
 }
 
 func (c *committee) Validators() []*validator.Validator {
@@ -141,21 +133,6 @@ func (c *committee) contains(addr crypto.Address) bool {
 	})
 	return found
 }
-
-// func (c *committee) Validator(addr crypto.Address) *validator.Validator {
-// 	c.lk.Lock()
-// 	defer c.lk.Unlock()
-
-// 	var val *validator.Validator
-// 	c.iterate(func(v *validator.Validator) (stop bool) {
-// 		if v.Address().EqualsTo(addr) {
-// 			val = v
-// 			return true
-// 		}
-// 		return false
-// 	})
-// 	return val
-// }
 
 // IsProposer checks if the address is proposer for this run at the given round
 func (c *committee) IsProposer(addr crypto.Address, round int) bool {

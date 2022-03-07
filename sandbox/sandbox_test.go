@@ -26,17 +26,9 @@ func init() {
 }
 
 func setup(t *testing.T) {
-	var err error
 	tStore = store.MockingStore()
 	params := param.DefaultParams()
 	params.TransactionToLiveInterval = 64
-
-	lastHeight := 124
-	for i := 0; i <= lastHeight; i++ {
-		b, _ := block.GenerateTestBlock(nil, nil)
-		c := block.GenerateTestCertificate(b.Hash())
-		tStore.SaveBlock(i+1, b, c)
-	}
 
 	pub1, prv1 := bls.GenerateTestKeyPair()
 	pub2, prv2 := bls.GenerateTestKeyPair()
@@ -87,10 +79,21 @@ func setup(t *testing.T) {
 	tStore.UpdateValidator(val7)
 	tStore.UpdateValidator(val8)
 
+	var err error
 	tCommittee, err = committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
 	tSandbox = NewSandbox(tStore, params, tCommittee).(*sandbox)
+
+	assert.Equal(t, tSandbox.CurrentHeight(), 1)
+	lastHeight := 124
+	for i := 1; i < lastHeight; i++ {
+		b, _ := block.GenerateTestBlock(nil, nil)
+		c := block.GenerateTestCertificate(b.Hash())
+		tStore.SaveBlock(i, b, c)
+	}
+	assert.Equal(t, tSandbox.CurrentHeight(), 124)
+
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)

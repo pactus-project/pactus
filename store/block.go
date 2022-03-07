@@ -24,7 +24,7 @@ func newBlockStore(db *leveldb.DB, stampToHeightCapacity int) *blockStore {
 		stampToHeight: linkedmap.NewLinkedMap(stampToHeightCapacity),
 	}
 
-	height, _, _ := bs.lastCertificate()
+	height, _ := bs.lastCertificate()
 
 	// Add genesis block stamp
 	bs.stampToHeight.PushFront(hash.UndefHash.Stamp(), 0)
@@ -102,12 +102,13 @@ func (bs *blockStore) blockHeightByStamp(stamp hash.Stamp) int {
 	return -1
 }
 
-func (bs *blockStore) lastCertificate() (int, *block.Certificate, error) {
+func (bs *blockStore) lastCertificate() (int, *block.Certificate) {
 	data, _ := tryGet(bs.db, lastCertKey)
 	lc := new(lastCertificate)
 	err := cbor.Unmarshal(data, lc)
 	if err != nil {
-		return -1, nil, err
+		// Genesis block
+		return 0, nil
 	}
-	return lc.Height, lc.Cert, nil
+	return lc.Height, lc.Cert
 }

@@ -135,8 +135,11 @@ func (m *MockStore) SaveTransaction(trx *tx.Tx) {
 	m.Transactions[trx.ID()] = *trx
 }
 
-func (m *MockStore) LastCertificate() (int, *block.Certificate, error) {
-	return m.LastCert.Height, m.LastCert.Cert, nil
+func (m *MockStore) LastCertificate() (int, *block.Certificate) {
+	if m.LastCert.Cert == nil {
+		return 0, nil
+	}
+	return m.LastCert.Height, m.LastCert.Cert
 }
 func (m *MockStore) BlockHeightByStamp(stamp hash.Stamp) int {
 	if stamp == hash.UndefHash.Stamp() {

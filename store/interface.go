@@ -23,7 +23,7 @@ type Reader interface {
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(*account.Account) (stop bool))
 	TotalValidators() int
-	LastCertificate() (int, *block.Certificate, error)
+	LastCertificate() (int, *block.Certificate)
 }
 
 type Store interface {

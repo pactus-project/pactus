@@ -293,10 +293,7 @@ func (sb *sandbox) CurrentHeight() int {
 }
 
 func (sb *sandbox) currentHeight() int {
-	h, _, err := sb.store.LastCertificate()
-	if err != nil {
-		return -1
-	}
+	h, _ := sb.store.LastCertificate()
 
 	return h + 1
 }
@@ -305,8 +302,8 @@ func (sb *sandbox) PrevBlockHash() hash.Hash {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	_, cert, err := sb.store.LastCertificate()
-	if err != nil {
+	_, cert := sb.store.LastCertificate()
+	if cert != nil {
 		return cert.BlockHash()
 	}
 
