@@ -100,7 +100,7 @@ func (li *LastInfo) SetBlockTime(lastBlockTime time.Time) {
 	li.lastBlockTime = lastBlockTime
 }
 
-func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, error) {
+func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, error) {
 	height, cert, err := li.store.LastCertificate()
 	if err != nil {
 		return nil, err
@@ -127,7 +127,7 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (*committee.Committee, er
 	return cmt, nil
 }
 
-func (li *LastInfo) restoreCommittee(committeeSize int) (*committee.Committee, error) {
+func (li *LastInfo) restoreCommittee(committeeSize int) (committee.Committee, error) {
 	b, _ := li.store.Block(li.lastBlockHeight)
 
 	joinedVals := make([]*validator.Validator, 0)
@@ -148,7 +148,7 @@ func (li *LastInfo) restoreCommittee(committeeSize int) (*committee.Committee, e
 		}
 	}
 
-	proposerIndex := 0
+	proposerIndex := -1
 	curCommitteeSize := len(li.lastCertificate.Committers())
 	vals := make([]*validator.Validator, len(li.lastCertificate.Committers()))
 	for i, num := range li.lastCertificate.Committers() {
@@ -156,7 +156,7 @@ func (li *LastInfo) restoreCommittee(committeeSize int) (*committee.Committee, e
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
 		}
-		if b.Header().ProposerAddress() == val.Address() {
+		if b.Header().ProposerAddress().EqualsTo(val.Address()) {
 			proposerIndex = i
 		}
 		vals[i] = val

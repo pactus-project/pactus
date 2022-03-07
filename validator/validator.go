@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type Validator struct {
@@ -73,7 +74,7 @@ func (val *Validator) UpdateLastBondingHeight(height int) {
 	val.data.LastBondingHeight = height
 }
 
-// UpdateUnbondingHeight updates the UnbondingHeight validator requested unbonding it's stake
+// UpdateUnbondingHeight updates the unbonding height for the validator
 func (val *Validator) UpdateUnbondingHeight(height int) {
 	val.data.UnbondingHeight = height
 }
@@ -115,7 +116,7 @@ func (val Validator) Fingerprint() string {
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
 	pub, pv := bls.GenerateTestKeyPair()
 	val := NewValidator(pub, number)
-	val.data.Stake = 777777777
-	val.data.Sequence = 77
+	val.data.Stake = util.RandInt64(100 * 1e14)
+	val.data.Sequence = util.RandInt(100)
 	return val, crypto.NewSigner(pv)
 }

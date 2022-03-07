@@ -35,7 +35,7 @@ type state struct {
 	store        store.Store
 	params       param.Params
 	txPool       txpool.TxPool
-	committee    *committee.Committee
+	committee    committee.Committee
 	lastInfo     *lastinfo.LastInfo
 	logger       *logger.Logger
 }
@@ -125,11 +125,9 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		st.store.UpdateAccount(acc)
 	}
 
-	totalStake := int64(0)
 	vals := genDoc.Validators()
 	for _, val := range vals {
 		st.store.UpdateValidator(val)
-		totalStake += val.Stake()
 	}
 
 	err := st.store.WriteBatch()
@@ -415,17 +413,17 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
-	ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), st.signer, st.totalStake(), val.Stake())
+	ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), st.signer, st.totalPower(), val.Power())
 	if ok {
 		trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)
 
 		err := st.txPool.AppendTxAndBroadcast(trx)
 		if err == nil {
-			st.logger.Debug("sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
+			st.logger.Debug("sortition transaction broadcasted", "address", st.signer.Address(), "power", val.Power(), "tx", trx)
 			return true
 		}
-		st.logger.Error("our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
+		st.logger.Error("our sortition transaction is invalid. Why?", "address", st.signer.Address(), "power", val.Power(), "tx", trx, "err", err)
 	}
 
 	return false
@@ -441,8 +439,8 @@ func (st *state) Fingerprint() string {
 func (st *state) commitSandbox(sb sandbox.Sandbox, round int) {
 	joined := make([]*validator.Validator, 0)
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.JoinedCommittee {
-			st.logger.Info("new validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
+		if vs.Validator.LastJoinedHeight() == sb.CurrentHeight() {
+			st.logger.Info("new validator joined", "address", vs.Validator.Address(), "power", vs.Validator.Power())
 
 			joined = append(joined, &vs.Validator)
 		}
@@ -490,50 +488,33 @@ func (st *state) validateBlockTime(t time.Time) error {
 	return nil
 }
 
-func (st *state) TotalStake() int64 {
+func (st *state) TotalPower() int64 {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	return st.totalStake()
+	return st.totalPower()
 }
 
-func (st *state) CommitteeStake() int64 {
+func (st *state) CommitteePower() int64 {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	return st.committeeStake()
+	return st.committeePower()
 }
 
-func (st *state) PoolStake() int64 {
-	st.lk.Lock()
-	defer st.lk.Unlock()
-
-	return st.poolStake()
-}
-
-// TODO: Improve performance of remember total stake
-func (st *state) totalStake() int64 {
-	totalStake := int64(0)
+// TODO: Improve performance of remember total power
+// TODO: sandbox has the same logic.
+func (st *state) totalPower() int64 {
+	p := int64(0)
 	st.store.IterateValidators(func(val *validator.Validator) bool {
-		totalStake += val.Stake()
+		p += val.Power()
 		return false
 	})
-	return totalStake
+	return p
 }
 
-func (st *state) committeeStake() int64 {
-	return st.committee.TotalStake()
-}
-
-func (st *state) poolStake() int64 {
-	poolStake := int64(0)
-	st.store.IterateValidators(func(val *validator.Validator) bool {
-		if !st.committee.Contains(val.Address()) {
-			poolStake += val.Stake()
-		}
-		return false
-	})
-	return poolStake
+func (st *state) committeePower() int64 {
+	return st.committee.TotalPower()
 }
 
 func (st *state) proposeNextBlockTime() time.Time {
@@ -551,7 +532,7 @@ func (st *state) CommitteeValidators() []*validator.Validator {
 	return st.committee.Validators()
 }
 
-func (st *state) ValidatorIsInCommittee(addr crypto.Address) bool {
+func (st *state) IsInCommittee(addr crypto.Address) bool {
 	return st.committee.Contains(addr)
 }
 

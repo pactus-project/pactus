@@ -16,7 +16,7 @@ var tState *state.MockState
 
 func setup(t *testing.T) {
 	var err error
-	tState = state.MockingState(nil)
+	tState = state.MockingState()
 	tCache, err = NewCache(10, tState)
 	assert.NoError(t, err)
 }
@@ -36,7 +36,7 @@ func TestCacheBlock(t *testing.T) {
 	b2, _ := block.GenerateTestBlock(nil, nil)
 	b3, _ := block.GenerateTestBlock(nil, nil)
 
-	tState.Store.SaveBlock(1, b1)
+	tState.Store.SaveBlock(1, b1, block.GenerateTestCertificate(b1.Hash()))
 	tCache.AddBlock(2, b2)
 
 	tCache.AddBlocks(2, []*block.Block{b2, b3})

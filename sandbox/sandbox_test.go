@@ -10,7 +10,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/store"
@@ -18,7 +17,7 @@ import (
 )
 
 var tValSigners [9]crypto.Signer
-var tCommittee *committee.Committee
+var tCommittee committee.Committee
 var tStore *store.MockStore
 var tSandbox *sandbox
 
@@ -31,13 +30,12 @@ func setup(t *testing.T) {
 	tStore = store.MockingStore()
 	params := param.DefaultParams()
 	params.TransactionToLiveInterval = 64
-	latestBlocks := linkedmap.NewLinkedMap(params.TransactionToLiveInterval)
 
 	lastHeight := 124
 	for i := 0; i <= lastHeight; i++ {
 		b, _ := block.GenerateTestBlock(nil, nil)
-		tStore.SaveBlock(i+1, b)
-		latestBlocks.PushBack(b.Stamp(), NewBlockInfo(i+1, b.Hash(), b.Header().SortitionSeed()))
+		c := block.GenerateTestCertificate(b.Hash())
+		tStore.SaveBlock(i+1, b, c)
 	}
 
 	pub1, prv1 := bls.GenerateTestKeyPair()
@@ -92,7 +90,7 @@ func setup(t *testing.T) {
 	tCommittee, err = committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, tValSigners[0].Address())
 	assert.NoError(t, err)
 
-	tSandbox = NewSandbox(tStore, params, latestBlocks, tCommittee).(*sandbox)
+	tSandbox = NewSandbox(tStore, params, tCommittee).(*sandbox)
 	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
@@ -155,10 +153,8 @@ func TestValidatorChange(t *testing.T) {
 		val1a.AddToStake(val1a.Stake() + 1)
 
 		assert.False(t, tSandbox.validators[val1a.Address()].Updated)
-		assert.False(t, tSandbox.validators[val1a.Address()].JoinedCommittee)
 		tSandbox.UpdateValidator(val1a)
 		assert.True(t, tSandbox.validators[val1a.Address()].Updated)
-		assert.False(t, tSandbox.validators[val1a.Address()].JoinedCommittee)
 	})
 
 	t.Run("Make new validator", func(t *testing.T) {
@@ -387,7 +383,7 @@ func TestBlockHeightByStamp(t *testing.T) {
 	setup(t)
 
 	height := tSandbox.BlockHeightByStamp(hash.GenerateTestStamp())
-	assert.Equal(t, -1, tSandbox.BlockHeightByStamp(hash.GenerateTestStamp()))
+	assert.Equal(t, -1, height)
 
 	latestBlockHeight := tStore.LastBlockHeight()
 	latestBlock := tStore.Blocks[latestBlockHeight]

@@ -20,21 +20,21 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.Validator(tVal1.Address()).Sequence()+2, tVal1.Address(), "invalid sequence")
+		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+2, tVal1.Address(), "invalid sequence")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
 		tSandbox.InCommittee = true
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "inside committee")
+		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "inside committee")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		tSandbox.InCommittee = false
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")
+		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "Ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
@@ -44,7 +44,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
 		tSandbox.InCommittee = false
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.Validator(tVal1.Address()).Sequence()+1, tVal1.Address(), "Ok")
+		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "Ok")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
@@ -63,7 +63,7 @@ func TestUnbondNonStrictMode(t *testing.T) {
 
 	tSandbox.InCommittee = true
 
-	trx := tx.NewUnbondTx(tStamp500000, tSandbox.ValSeq(tVal1.Address())+1, tVal1.Address(), "")
+	trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "")
 
 	assert.Error(t, exe1.Execute(trx, tSandbox))
 	assert.NoError(t, exe2.Execute(trx, tSandbox))

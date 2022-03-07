@@ -11,6 +11,8 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+var _ Store = &MockStore{}
+
 type MockStore struct {
 	Blocks       map[int]*block.Block
 	Accounts     map[crypto.Address]account.Account
@@ -136,6 +138,19 @@ func (m *MockStore) SaveTransaction(trx *tx.Tx) {
 func (m *MockStore) LastCertificate() (int, *block.Certificate, error) {
 	return m.LastCert.Height, m.LastCert.Cert, nil
 }
+func (m *MockStore) BlockHeightByStamp(stamp hash.Stamp) int {
+	if stamp == hash.UndefHash.Stamp() {
+		return 0
+	}
+	for i, b := range m.Blocks {
+		if b.Stamp().EqualsTo(stamp) {
+			return i
+		}
+	}
+
+	return -1
+}
+
 func (m *MockStore) WriteBatch() error {
 	return nil
 }

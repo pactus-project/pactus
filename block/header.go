@@ -64,14 +64,14 @@ func (h *Header) SanityCheck() error {
 	if err := h.data.ProposerAddress.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
+	if h.data.SortitionSeed.IsUndef() {
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
+	}
 
 	if h.data.PrevCertificateHash.IsUndef() {
 		// Genesis block checks
 		if !h.data.PrevBlockHash.IsUndef() {
 			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous block hash")
-		}
-		if !h.data.SortitionSeed.IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
 		}
 	} else {
 		if err := h.data.PrevBlockHash.SanityCheck(); err != nil {

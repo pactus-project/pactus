@@ -7,7 +7,6 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
@@ -27,8 +26,7 @@ func setup(t *testing.T) {
 	logger.InitLogger(logger.TestConfig())
 	logger := logger.NewLogger("firewal", nil)
 	peerSet := peerset.NewPeerSet(3 * time.Second)
-	committee, _ := committee.GenerateTestCommittee()
-	state := state.MockingState(committee)
+	state := state.MockingState()
 	tNetwork = network.MockingNetwork(util.RandomPeerID())
 	conf := TestConfig()
 	conf.Enabled = true

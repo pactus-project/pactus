@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -53,13 +54,13 @@ func setup(t *testing.T) {
 	tSandbox.UpdateValidator(tVal1)
 	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), tVal1Stake)
 
-	hash500000 := hash.GenerateTestHash()
-	hash500001 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(500000, hash500000)
-	tSandbox.AppendNewBlock(500001, hash500001)
+	block500000, _ := block.GenerateTestBlock(nil, nil)
+	block500001, _ := block.GenerateTestBlock(nil, nil)
+	tSandbox.AppendTestBlock(500000, block500000)
+	tSandbox.AppendTestBlock(500001, block500001)
 
-	tStamp500000 = hash500000.Stamp()
-	tStamp500001 = hash500001.Stamp()
+	tStamp500000 = block500000.Stamp()
+	tStamp500001 = block500001.Stamp()
 }
 
 func checkTotalCoin(t *testing.T, fee int64) {
@@ -88,13 +89,13 @@ func TestExecuteSendTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewSendTx(tStamp500000, tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), tAcc1Balance+1, 0, "insufficient balance")
+		trx := tx.NewSendTx(tStamp500000, tSandbox.TestAccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), tAcc1Balance+1, 0, "insufficient balance")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("ok. Create sender account", func(t *testing.T) {
-		trx := tx.NewSendTx(tStamp500000, tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
+		trx := tx.NewSendTx(tStamp500000, tSandbox.TestAccSeq(tAcc1.Address())+1, tAcc1.Address(), sender.Address(), 3000, 1000, "ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 	})
@@ -120,7 +121,7 @@ func TestExecuteSendTx(t *testing.T) {
 	t.Run("Send to self", func(t *testing.T) {
 		self := tAcc1.Address()
 		bal := tSandbox.Account(self).Balance()
-		trx := tx.NewSendTx(tStamp500000, tSandbox.AccSeq(self)+1, self, self, 1000, 1000, "ok")
+		trx := tx.NewSendTx(tStamp500000, tSandbox.TestAccSeq(self)+1, self, self, 1000, 1000, "ok")
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
 		assert.Equal(t, tSandbox.Account(self).Balance(), bal-1000) /// Fee should be deducted

@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -33,9 +34,9 @@ func setup(t *testing.T) {
 	p.SetNewSandboxAndRecheck(tSandbox)
 	tPool = p.(*txPool)
 
-	hash88 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(88, hash88)
-	tTestTx = tx.NewMintbaseTx(hash88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
+	block88, _ := block.GenerateTestBlock(nil, nil)
+	tSandbox.AppendTestBlock(88, block88)
+	tTestTx = tx.NewMintbaseTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
 }
 
 func shouldPublishTransaction(t *testing.T, id tx.ID) {
@@ -101,8 +102,8 @@ func TestPending(t *testing.T) {
 func TestFullPool(t *testing.T) {
 	setup(t)
 
-	hash10000 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(10000, hash10000)
+	block10000, _ := block.GenerateTestBlock(nil, nil)
+	tSandbox.AppendTestBlock(10000, block10000)
 	trxs := make([]*tx.Tx, tPool.config.sendPoolSize()+1)
 
 	signer := bls.GenerateTestSigner()
@@ -114,7 +115,7 @@ func TestFullPool(t *testing.T) {
 	assert.Equal(t, tPool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewSendTx(hash10000.Stamp(), tSandbox.AccSeq(signer.Address())+1, signer.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
+		trx := tx.NewSendTx(block10000.Stamp(), tSandbox.TestAccSeq(signer.Address())+1, signer.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
 		trxs[i] = trx
@@ -134,8 +135,8 @@ func TestEmptyPool(t *testing.T) {
 func TestPrepareBlockTransactions(t *testing.T) {
 	setup(t)
 
-	hash1000000 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(1000000, hash1000000)
+	block1000000, _ := block.GenerateTestBlock(nil, nil)
+	tSandbox.AppendTestBlock(1000000, block1000000)
 
 	acc1Signer := bls.GenerateTestSigner()
 	acc1 := account.NewAccount(acc1Signer.Address(), 0)
@@ -161,20 +162,20 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	tSandbox.UpdateValidator(val3)
 
-	sendTx := tx.NewSendTx(hash1000000.Stamp(), tSandbox.AccSeq(acc1.Address())+1, acc1.Address(), crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
+	sendTx := tx.NewSendTx(block1000000.Stamp(), tSandbox.TestAccSeq(acc1.Address())+1, acc1.Address(), crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(sendTx)
 
 	pub, _ := bls.GenerateTestKeyPair()
-	bondTx := tx.NewBondTx(hash1000000.Stamp(), tSandbox.AccSeq(acc1.Address())+2, acc1.Address(), pub, 1000, 1000, "bond-tx")
+	bondTx := tx.NewBondTx(block1000000.Stamp(), tSandbox.TestAccSeq(acc1.Address())+2, acc1.Address(), pub, 1000, 1000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
-	unbondTx := tx.NewUnbondTx(hash1000000.Stamp(), tSandbox.ValSeq(val1.Address())+1, val1.Address(), "unbond-tx")
+	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), tSandbox.TestValSeq(val1.Address())+1, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(hash1000000.Stamp(), tSandbox.ValSeq(val2.Address())+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
+	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), tSandbox.TestValSeq(val2.Address())+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
-	sortitionTx := tx.NewSortitionTx(hash1000000.Stamp(), tSandbox.ValSeq(val3.Address())+1, val3.Address(), sortition.GenerateRandomProof())
+	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), tSandbox.TestValSeq(val3.Address())+1, val3.Address(), sortition.GenerateRandomProof())
 	val3Signer.SignMsg(sortitionTx)
 
 	assert.NoError(t, tPool.AppendTx(sendTx))
@@ -205,20 +206,20 @@ func TestAppendAndBroadcast(t *testing.T) {
 func TestAddSubsidyTransactions(t *testing.T) {
 	setup(t)
 
-	hash88 := hash.GenerateTestHash()
-	hash89 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(88, hash88)
+	block88, _ := block.GenerateTestBlock(nil, nil)
+	block89, _ := block.GenerateTestBlock(nil, nil)
+	tSandbox.AppendTestBlock(88, block88)
 	proposer1 := crypto.GenerateTestAddress()
 	proposer2 := crypto.GenerateTestAddress()
-	trx1 := tx.NewMintbaseTx(hash88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
-	trx2 := tx.NewMintbaseTx(hash88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
-	trx3 := tx.NewMintbaseTx(hash88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
+	trx1 := tx.NewMintbaseTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
+	trx2 := tx.NewMintbaseTx(block88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
+	trx3 := tx.NewMintbaseTx(block88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
 
 	assert.Error(t, tPool.AppendTx(trx1), "Expired subsidy transaction")
 	assert.NoError(t, tPool.AppendTx(trx2))
 	assert.NoError(t, tPool.AppendTx(trx3))
 
-	tSandbox.AppendNewBlock(89, hash89)
+	tSandbox.AppendTestBlock(89, block89)
 
 	tPool.SetNewSandboxAndRecheck(sandbox.MockingSandbox())
 	assert.Zero(t, tPool.Size())

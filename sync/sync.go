@@ -398,12 +398,12 @@ func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 		return false
 	}
 
-	return sync.state.ValidatorIsInCommittee(p.Address())
+	return sync.state.IsInCommittee(p.Address())
 }
 
 /// weAreInTheCommittee checks if we are a member of committee
 func (sync *synchronizer) weAreInTheCommittee() bool {
-	return sync.state.ValidatorIsInCommittee(sync.signer.PublicKey().Address())
+	return sync.state.IsInCommittee(sync.signer.PublicKey().Address())
 }
 
 func (sync *synchronizer) tryCommitBlocks() {

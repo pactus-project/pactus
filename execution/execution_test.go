@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -32,21 +33,20 @@ func TestExecution(t *testing.T) {
 	tSandbox.UpdateAccount(acc1)
 
 	rcvAddr := crypto.GenerateTestAddress()
-	hash1 := hash.GenerateTestHash()
-	hash2 := hash.GenerateTestHash()
-	hash3 := hash.GenerateTestHash()
-	hash8635 := hash.GenerateTestHash()
-	hash8640 := hash.GenerateTestHash()
-	hash8641 := hash.GenerateTestHash()
-	hash8642 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(0, hash.UndefHash)
-	tSandbox.AppendNewBlock(1, hash1)
-	tSandbox.AppendNewBlock(2, hash2)
-	tSandbox.AppendNewBlock(3, hash3)
-	tSandbox.AppendNewBlock(8635, hash8635)
-	tSandbox.AppendNewBlock(8640, hash8640)
-	tSandbox.AppendNewBlock(8641, hash8641)
-	tSandbox.AppendNewBlock(8642, hash8642)
+	block1, _ := block.GenerateTestBlock(nil, nil)
+	block2, _ := block.GenerateTestBlock(nil, nil)
+	block3, _ := block.GenerateTestBlock(nil, nil)
+	block8635, _ := block.GenerateTestBlock(nil, nil)
+	block8640, _ := block.GenerateTestBlock(nil, nil)
+	block8641, _ := block.GenerateTestBlock(nil, nil)
+	block8642, _ := block.GenerateTestBlock(nil, nil)
+	tSandbox.AppendTestBlock(1, block1)
+	tSandbox.AppendTestBlock(2, block2)
+	tSandbox.AppendTestBlock(3, block3)
+	tSandbox.AppendTestBlock(8635, block8635)
+	tSandbox.AppendTestBlock(8640, block8640)
+	tSandbox.AppendTestBlock(8641, block8641)
+	tSandbox.AppendTestBlock(8642, block8642)
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
 		trx, _ := tx.GenerateTestSendTx()
@@ -61,62 +61,62 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(hash1.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		trx := tx.NewSendTx(block1.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Good stamp", func(t *testing.T) {
-		trx := tx.NewSendTx(hash3.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "ok")
+		trx := tx.NewSendTx(block3.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "ok")
 		signer1.SignMsg(trx)
 		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Mintbase invalid stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewMintbaseTx(hash8641.Stamp(), 1, rcvAddr, 1000, "expired-stamp")
+		trx := tx.NewMintbaseTx(block8641.Stamp(), 1, rcvAddr, 1000, "expired-stamp")
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Mintbase stamp is ok", func(t *testing.T) {
-		trx := tx.NewMintbaseTx(hash8642.Stamp(), 1, rcvAddr, 1000, "ok")
+		trx := tx.NewMintbaseTx(block8642.Stamp(), 1, rcvAddr, 1000, "ok")
 		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Big memo, Should returns error", func(t *testing.T) {
 		bigMemo := strings.Repeat("a", 1025)
-		trx := tx.NewSendTx(hash8641.Stamp(), 2, addr1, rcvAddr, 1000, 1000, bigMemo)
+		trx := tx.NewSendTx(block8641.Stamp(), 2, addr1, rcvAddr, 1000, 1000, bigMemo)
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(hash2.Stamp(), 2, addr1, rcvAddr, 1000, 1, "invalid fee")
+		trx := tx.NewSendTx(block2.Stamp(), 2, addr1, rcvAddr, 1000, 1, "invalid fee")
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(hash2.Stamp(), 2, addr1, rcvAddr, 1000, 1001, "invalid fee")
+		trx := tx.NewSendTx(block2.Stamp(), 2, addr1, rcvAddr, 1000, 1001, "invalid fee")
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(hash2.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee")
+		trx := tx.NewSendTx(block2.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1001, "invalid fee")
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 		assert.Error(t, tExec.checkFee(trx, tSandbox))
 	})
 
 	t.Run("Sortition tx - Invalid stamp, Should returns error", func(t *testing.T) {
 		proof := sortition.GenerateRandomProof()
-		trx := tx.NewSortitionTx(hash8635.Stamp(), 1, addr1, proof)
+		trx := tx.NewSortitionTx(block8635.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Execution failed", func(t *testing.T) {
 		proof := sortition.GenerateRandomProof()
-		trx := tx.NewSortitionTx(hash8642.Stamp(), 1, addr1, proof)
+		trx := tx.NewSortitionTx(block8642.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
@@ -126,8 +126,8 @@ func TestChecker(t *testing.T) {
 	tChecker := NewChecker()
 	tSandbox := sandbox.MockingSandbox()
 
-	hash1000 := hash.GenerateTestHash()
-	tSandbox.AppendNewBlock(1000, hash1000)
+	block1000, _ := block.GenerateTestBlock(nil, nil)
+	tSandbox.AppendTestBlock(1000, block1000)
 
 	t.Run("Accept bond transaction for future blocks", func(t *testing.T) {
 		pub, _ := bls.GenerateTestKeyPair()
@@ -135,7 +135,7 @@ func TestChecker(t *testing.T) {
 		tSandbox.Accounts[acc.Address()] = acc
 
 		tSandbox.InCommittee = true
-		trx := tx.NewBondTx(hash1000.Stamp(), acc.Sequence()+1, acc.Address(), pub, 1000, 1000, "")
+		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, acc.Address(), pub, 1000, 1000, "")
 		signer.SignMsg(trx)
 		assert.NoError(t, tChecker.Execute(trx, tSandbox))
 	})

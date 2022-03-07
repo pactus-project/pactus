@@ -60,7 +60,7 @@ func TestRandomness(t *testing.T) {
 }
 
 func TestGetIndex(t *testing.T) {
-	//  TotalStake: 1000000
+	//  Total: 1000000
 
 	// proof: 1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03
 	// proofH: a7b8166584387f4ea76f9caa0969bd6b0bb8df4c3bb8e87f8b6e4dad62bf3359

@@ -17,15 +17,21 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
-	ValidatorIsInCommittee(crypto.Address) bool
+
+	TotalPower() int64
+	IsInCommittee(crypto.Address) bool
+	CommitteeAge() int
+	CommitteePower() int64
+	JoinedPower() int64
+	CommitteeHasFreeSeats() bool
 
 	BlockHeightByStamp(stamp hash.Stamp) int
 	BlockSeedByStamp(stamp hash.Stamp) sortition.VerifiableSeed
-	CommitteeSize() int
+
 	UnbondInterval() int
+	CommitteeSize() int
 	BondInterval() int
 	CurrentHeight() int
-	BlockHeight(hash.Hash) int
 	TransactionToLiveInterval() int
 	MaxMemoLength() int
 	FeeFraction() float64

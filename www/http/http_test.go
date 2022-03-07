@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
@@ -35,8 +34,7 @@ func setup(t *testing.T) {
 		return
 	}
 
-	committee, _ := committee.GenerateTestCommittee()
-	tMockState = state.MockingState(committee)
+	tMockState = state.MockingState()
 	tMockSync = sync.MockingSync()
 
 	tMockState.CommitTestBlocks(10)

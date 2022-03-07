@@ -37,7 +37,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if e.strict {
 		// In strict mode, bond transaction will be rejected if a validator is in committee.
 		// In non-strict mode, we accept it and keep it inside tx pool to process it in next blocks
-		if sb.ValidatorIsInCommittee(addr) {
+		if sb.IsInCommittee(addr) {
 			return errors.Errorf(errors.ErrInvalidTx, "Validator %v is in committee", addr)
 		}
 

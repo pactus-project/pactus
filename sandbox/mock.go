@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -67,14 +68,6 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurHeight
 }
-func (m *MockSandbox) BlockHeight(h hash.Hash) int {
-	for i, b := range m.Blocks {
-		if b.Hash().EqualsTo(h) {
-			return i
-		}
-	}
-	return -1
-}
 func (m *MockSandbox) TransactionToLiveInterval() int {
 	return m.Params.TransactionToLiveInterval
 }
@@ -88,12 +81,12 @@ func (m *MockSandbox) MinFee() int64 {
 	return m.Params.MinimumFee
 }
 
-func (m *MockSandbox) AppendNewBlock(height int, b *block.Block) {
+func (m *MockSandbox) AppendTestBlock(height int, b *block.Block) {
 	m.Blocks[height] = b
 	m.CurHeight = height + 1
 }
 
-func (m *MockSandbox) AccSeq(a crypto.Address) int {
+func (m *MockSandbox) TestAccSeq(a crypto.Address) int {
 	if acc, ok := m.Accounts[a]; ok {
 		return acc.Sequence()
 	}
@@ -101,7 +94,7 @@ func (m *MockSandbox) AccSeq(a crypto.Address) int {
 	panic("invalid account address")
 }
 
-func (m *MockSandbox) ValSeq(a crypto.Address) int {
+func (m *MockSandbox) TestValSeq(a crypto.Address) int {
 	if val, ok := m.Validators[a]; ok {
 		return val.Sequence()
 	}
@@ -119,8 +112,20 @@ func (m *MockSandbox) UnbondInterval() int {
 func (m *MockSandbox) BondInterval() int {
 	return m.Params.CommitteeSize * 2
 }
-func (m *MockSandbox) ValidatorIsInCommittee(crypto.Address) bool {
+func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
 	return m.InCommittee
+}
+func (m *MockSandbox) CommitteeAge() int {
+	return 0
+}
+func (m *MockSandbox) CommitteePower() int64 {
+	return 0
+}
+func (m *MockSandbox) JoinedPower() int64 {
+	return 0
+}
+func (m *MockSandbox) CommitteeHasFreeSeats() bool {
+	return false
 }
 func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int {
 	for i, b := range m.Blocks {
@@ -132,6 +137,22 @@ func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int {
 	return -1
 }
 
+func (m *MockSandbox) BlockSeedByStamp(stamp hash.Stamp) sortition.VerifiableSeed {
+	for _, b := range m.Blocks {
+		if b.Stamp().EqualsTo(stamp) {
+			return b.Header().SortitionSeed()
+		}
+	}
+
+	return sortition.UndefVerifiableSeed
+}
+func (m *MockSandbox) TotalPower() int64 {
+	p := int64(0)
+	for _, val := range m.Validators {
+		p += val.Power()
+	}
+	return p
+}
 func (m *MockSandbox) IterateAccounts(consumer func(*AccountStatus)) {
 
 }
