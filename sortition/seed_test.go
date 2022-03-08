@@ -33,3 +33,7 @@ func TestSeedMarshaling(t *testing.T) {
 	assert.NoError(t, json.Unmarshal(bz, &s2))
 	assert.Equal(t, s1, s2)
 }
+
+func TestIsUndef(t *testing.T) {
+	assert.True(t, UndefVerifiableSeed.IsUndef())
+}

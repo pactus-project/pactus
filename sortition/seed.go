@@ -11,7 +11,7 @@ import (
 
 type VerifiableSeed [48]byte
 
-var UndefVerifiableSeed = [48]byte{0}
+var UndefVerifiableSeed = VerifiableSeed{}
 
 func VerifiableSeedFromString(text string) (VerifiableSeed, error) {
 	data, err := hex.DecodeString(text)
