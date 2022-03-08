@@ -168,17 +168,6 @@ func (c *committee) Committers() []int {
 	c.lk.RLock()
 	defer c.lk.RUnlock()
 
-	return c.committers()
-}
-
-func (c *committee) Size() int {
-	c.lk.RLock()
-	defer c.lk.RUnlock()
-
-	return c.validatorList.Len()
-}
-
-func (c *committee) committers() []int {
 	committers := make([]int, c.validatorList.Len())
 	i := 0
 	c.iterate(func(v *validator.Validator) (stop bool) {
@@ -188,6 +177,13 @@ func (c *committee) committers() []int {
 	})
 
 	return committers
+}
+
+func (c *committee) Size() int {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
+	return c.validatorList.Len()
 }
 
 // iterate uses for easy iteration over validators in list
