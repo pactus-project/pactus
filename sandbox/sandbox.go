@@ -95,8 +95,8 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 	return acc
 }
 func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	if sb.store.HasAccount(addr) {
 		sb.shouldPanicForDuplicatedAddress()
@@ -112,8 +112,8 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 }
 
 func (sb *sandbox) UpdateAccount(acc *account.Account) {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	addr := acc.Address()
 	s, ok := sb.accounts[addr]
@@ -146,8 +146,8 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 }
 
 func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	addr := pub.Address()
 	if sb.store.HasValidator(addr) {
@@ -164,8 +164,8 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 }
 
 func (sb *sandbox) UpdateValidator(val *validator.Validator) {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	addr := val.Address()
 	s, ok := sb.validators[addr]
@@ -177,58 +177,16 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-// func (sb *sandbox) CommitteeAge() int {
-// 	sb.lk.Lock()
-// 	defer sb.lk.Unlock()
-
-// 	oldestJoinedHeight := sb.currentHeight()
-// 	for _, v := range sb.committee.Validators() {
-// 		if v.LastJoinedHeight() < oldestJoinedHeight {
-// 			oldestJoinedHeight = v.LastJoinedHeight()
-// 		}
-// 	}
-
-// 	return oldestJoinedHeight
-// }
-
-// func (sb *sandbox) CommitteePower() int64 {
-// 	sb.lk.Lock()
-// 	defer sb.lk.Unlock()
-
-// 	return sb.committee.TotalPower()
-// }
-
-// func (sb *sandbox) JoinedPower() int64 {
-// 	sb.lk.Lock()
-// 	defer sb.lk.Unlock()
-
-// 	joinedPower := int64(0)
-// 	for _, s := range sb.validators {
-// 		if s.Validator.LastJoinedHeight() == sb.currentHeight() {
-// 			joinedPower += s.Validator.Power()
-// 		}
-// 	}
-
-// 	return joinedPower
-// }
-
-// func (sb *sandbox) CommitteeHasFreeSeats() bool {
-// 	sb.lk.Lock()
-// 	defer sb.lk.Unlock()
-
-// 	return sb.committee.Size() < sb.params.CommitteeSize
-// }
-
 func (sb *sandbox) MaxMemoLength() int {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	return sb.params.MaximumMemoLength
 }
 
 func (sb *sandbox) FeeFraction() float64 {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
 
 	return sb.params.FeeFraction
 }
