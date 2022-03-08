@@ -177,88 +177,47 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-// func (sb *sandbox) EnterCommittee(blockHash hash.Hash, addr crypto.Address) error {
+// func (sb *sandbox) CommitteeAge() int {
 // 	sb.lk.Lock()
 // 	defer sb.lk.Unlock()
 
-// 	valS, ok := sb.validators[addr]
-// 	if !ok {
-// 		return errors.Errorf(errors.ErrGeneric, "unknown validator")
-// 	}
-
-// 	_, bi := sb.latestBlocks.Last()
-// 	if bi == nil {
-// 		return errors.Errorf(errors.ErrGeneric, "Unable to retrieve last block info")
-// 	}
-// 	lastHeight := bi.(*BlockInfo).height
-
-// 	if sb.committee.Size() >= sb.params.CommitteeSize {
-// 		oldestJoinedHeight := lastHeight
-// 		committeeStake := int64(0)
-// 		for _, v := range sb.committee.Validators() {
-// 			committeeStake += v.Stake()
-// 			if v.LastJoinedHeight() < oldestJoinedHeight {
-// 				oldestJoinedHeight = v.LastJoinedHeight()
-// 			}
-// 		}
-// 		if lastHeight-oldestJoinedHeight < sb.params.CommitteeSize {
-// 			return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
-// 		}
-// 		joinedStake := int64(0)
-// 		for _, s := range sb.validators {
-// 			if s.JoinedCommittee {
-// 				joinedStake += s.Validator.Stake()
-// 			}
-// 		}
-
-// 		joinedStake += valS.Validator.Stake()
-// 		if joinedStake >= (committeeStake / 3) {
-// 			return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
+// 	oldestJoinedHeight := sb.currentHeight()
+// 	for _, v := range sb.committee.Validators() {
+// 		if v.LastJoinedHeight() < oldestJoinedHeight {
+// 			oldestJoinedHeight = v.LastJoinedHeight()
 // 		}
 // 	}
 
-// 	valS.JoinedCommittee = true
-// 	return nil
+// 	return oldestJoinedHeight
 // }
 
-func (sb *sandbox) CommitteeAge() int {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+// func (sb *sandbox) CommitteePower() int64 {
+// 	sb.lk.Lock()
+// 	defer sb.lk.Unlock()
 
-	oldestJoinedHeight := sb.currentHeight()
-	for _, v := range sb.committee.Validators() {
-		if v.LastJoinedHeight() < oldestJoinedHeight {
-			oldestJoinedHeight = v.LastJoinedHeight()
-		}
-	}
+// 	return sb.committee.TotalPower()
+// }
 
-	return oldestJoinedHeight
-}
+// func (sb *sandbox) JoinedPower() int64 {
+// 	sb.lk.Lock()
+// 	defer sb.lk.Unlock()
 
-func (sb *sandbox) CommitteePower() int64 {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
+// 	joinedPower := int64(0)
+// 	for _, s := range sb.validators {
+// 		if s.Validator.LastJoinedHeight() == sb.currentHeight() {
+// 			joinedPower += s.Validator.Power()
+// 		}
+// 	}
 
-	return sb.committee.TotalPower()
-}
+// 	return joinedPower
+// }
 
-func (sb *sandbox) JoinedPower() int64 {
-	joinedPower := int64(0)
-	for _, s := range sb.validators {
-		if s.Validator.LastJoinedHeight() == sb.currentHeight() {
-			joinedPower += s.Validator.Power()
-		}
-	}
+// func (sb *sandbox) CommitteeHasFreeSeats() bool {
+// 	sb.lk.Lock()
+// 	defer sb.lk.Unlock()
 
-	return joinedPower
-}
-
-func (sb *sandbox) CommitteeHasFreeSeats() bool {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	return sb.committee.Size() < sb.params.CommitteeSize
-}
+// 	return sb.committee.Size() < sb.params.CommitteeSize
+// }
 
 func (sb *sandbox) MaxMemoLength() int {
 	sb.lk.Lock()
@@ -298,18 +257,6 @@ func (sb *sandbox) currentHeight() int {
 	return h + 1
 }
 
-func (sb *sandbox) PrevBlockHash() hash.Hash {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	_, cert := sb.store.LastCertificate()
-	if cert != nil {
-		return cert.BlockHash()
-	}
-
-	return hash.UndefHash
-}
-
 func (sb *sandbox) IterateAccounts(consumer func(*AccountStatus)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
@@ -335,18 +282,6 @@ func (sb *sandbox) BlockHeightByStamp(stamp hash.Stamp) int {
 	return sb.store.BlockHeightByStamp(stamp)
 }
 
-func (sb *sandbox) BlockSeedByStamp(stamp hash.Stamp) sortition.VerifiableSeed {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	height := sb.store.BlockHeightByStamp(stamp)
-	b, err := sb.store.Block(height)
-	if err != nil {
-		return sortition.UndefVerifiableSeed
-	}
-	return b.Header().SortitionSeed()
-}
-
 func (sb *sandbox) CommitteeSize() int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
@@ -367,21 +302,22 @@ func (sb *sandbox) BondInterval() int {
 	return sb.params.BondInterval
 }
 
-func (sb *sandbox) IsInCommittee(addr crypto.Address) bool {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.committee.Contains(addr)
+func (sb *sandbox) Committee() committee.Reader {
+	return sb.committee
 }
 
-func (sb *sandbox) TotalPower() int64 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
+	height := sb.store.BlockHeightByStamp(stamp)
+	b, err := sb.store.Block(height)
+	if err != nil {
+		return false
+	}
+	seed := b.Header().SortitionSeed()
 
-	p := int64(0)
+	total := int64(0) // TODO: we can get it from state
 	sb.store.IterateValidators(func(val *validator.Validator) bool {
-		p += val.Power()
+		total += val.Power()
 		return false
 	})
-	return p
+	return sortition.VerifyProof(seed, proof, val.PublicKey(), total, val.Power())
 }

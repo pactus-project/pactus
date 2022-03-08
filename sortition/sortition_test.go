@@ -72,6 +72,7 @@ func TestEvaluation(t *testing.T) {
 		require.True(t, ok)
 
 		require.True(t, VerifyProof(tSeed, tProof, tSigner.PublicKey(), total, total/10))
+		require.False(t, VerifyProof(tSeed, tProof, tSigner.PublicKey(), total, 0))
 		require.False(t, VerifyProof(tSeed, GenerateRandomProof(), tSigner.PublicKey(), total, total/10))
 		require.False(t, VerifyProof(tSeed, Proof{}, tSigner.PublicKey(), total, total/10))
 		require.False(t, VerifyProof(GenerateRandomSeed(), tProof, tSigner.PublicKey(), total, total/10))

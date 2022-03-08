@@ -54,6 +54,10 @@ func (val Validator) Power() int64 {
 	return val.data.Stake
 }
 
+func (val *Validator) SubtractFromStake(amt int64) {
+	val.data.Stake -= amt
+}
+
 // AddToStake increases the stake by bonding transaction
 func (val *Validator) AddToStake(amt int64) {
 	val.data.Stake += amt
@@ -116,7 +120,7 @@ func (val Validator) Fingerprint() string {
 func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
 	pub, pv := bls.GenerateTestKeyPair()
 	val := NewValidator(pub, number)
-	val.data.Stake = util.RandInt64(100 * 1e14)
+	val.data.Stake = util.RandInt64(100 * 1e8)
 	val.data.Sequence = util.RandInt(100)
 	return val, crypto.NewSigner(pv)
 }

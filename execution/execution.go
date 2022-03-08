@@ -30,7 +30,7 @@ func newExecution(strict bool) *Execution {
 		executors: execs,
 	}
 }
-func NewExecution() *Execution {
+func NewExecutor() *Execution {
 	return newExecution(true)
 }
 

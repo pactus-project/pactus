@@ -280,7 +280,7 @@ func (tx *Tx) IsWithdrawTx() bool {
 
 //IsFreeTx will return if trx's fee is 0
 func (tx *Tx) IsFreeTx() bool {
-	return tx.IsMintbaseTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
+	return tx.IsMintbaseTx() || tx.IsSortitionTx() || tx.IsUnbondTx() || tx.IsWithdrawTx()
 }
 
 // ---------

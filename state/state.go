@@ -231,7 +231,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	// Create new sandbox and execute transactions
 	sb := st.concreteSandbox()
-	exe := execution.NewExecution()
+	exe := execution.NewExecutor()
 
 	txIDs := block.NewTxIDs()
 
@@ -445,13 +445,7 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int) {
 			joined = append(joined, &vs.Validator)
 		}
 	})
-
-	if err := st.committee.Update(round, joined); err != nil {
-		//
-		// We should panic here before updating the state
-		//
-		logger.Panic("an error occurred", "err", err)
-	}
+	st.committee.Update(round, joined)
 
 	sb.IterateAccounts(func(as *sandbox.AccountStatus) {
 		if as.Updated {
@@ -502,6 +496,7 @@ func (st *state) CommitteePower() int64 {
 	return st.committeePower()
 }
 
+// TODO: add test for me when a validator is parked (unbonded)
 // TODO: Improve performance of remember total power
 // TODO: sandbox has the same logic.
 func (st *state) totalPower() int64 {

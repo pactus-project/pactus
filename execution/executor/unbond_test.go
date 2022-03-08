@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -12,45 +13,46 @@ func TestExecuteUnbondTx(t *testing.T) {
 	setup(t)
 	exe := NewUnbondExecutor(true)
 
-	addr := crypto.GenerateTestAddress()
+	// Let's create a validator first
+	pub, _ := bls.GenerateTestKeyPair()
+	val := tSandbox.MakeNewValidator(pub)
+	tSandbox.UpdateValidator(val)
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewUnbondTx(tStamp500000, 1, addr, "invalid validator")
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, crypto.GenerateTestAddress(), "invalid validator")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+2, tVal1.Address(), "invalid sequence")
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+2, pub.Address(), "invalid sequence")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
-		tSandbox.InCommittee = true
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "inside committee")
+		val := tSandbox.Committee().Proposer(0)
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, val.Address(), "inside committee")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		tSandbox.InCommittee = false
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "Ok")
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
-		// Replay
+		// Execute again, should fail
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
-		tSandbox.InCommittee = false
-		trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "Ok")
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
-	assert.Equal(t, tSandbox.Validator(tVal1.Address()).Stake(), tVal1Stake)
-	assert.Zero(t, tSandbox.Validator(tVal1.Address()).Power())
-	assert.Equal(t, tSandbox.Validator(tVal1.Address()).UnbondingHeight(), tSandbox.CurHeight)
+	assert.Zero(t, tSandbox.Validator(pub.Address()).Stake())
+	assert.Zero(t, tSandbox.Validator(pub.Address()).Power())
+	assert.Equal(t, tSandbox.Validator(pub.Address()).UnbondingHeight(), tSandbox.CurHeight)
 	assert.Zero(t, exe.Fee())
 
 	checkTotalCoin(t, 0)
@@ -61,10 +63,23 @@ func TestUnbondNonStrictMode(t *testing.T) {
 	exe1 := NewUnbondExecutor(true)
 	exe2 := NewUnbondExecutor(false)
 
-	tSandbox.InCommittee = true
-
-	trx := tx.NewUnbondTx(tStamp500000, tSandbox.TestValSeq(tVal1.Address())+1, tVal1.Address(), "")
+	val := tSandbox.Committee().Proposer(0)
+	trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, val.Address(), "")
 
 	assert.Error(t, exe1.Execute(trx, tSandbox))
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
+}
+
+func TestUnbondJoiningCommittee(t *testing.T) {
+	setup(t)
+	exe := NewUnbondExecutor(true)
+	pub, _ := bls.GenerateTestKeyPair()
+
+	val := tSandbox.MakeNewValidator(pub)
+	val.UpdateLastJoinedHeight(tSandbox.CurHeight)
+	tSandbox.UpdateValidator(val)
+
+	trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
+
+	assert.Error(t, exe.Execute(trx, tSandbox))
 }

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -198,15 +199,24 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 	}
 }
 
-// GenerateTestCommittee generates a validator committee for testing purpose
-func GenerateTestCommittee() (Committee, []crypto.Signer) {
-	val1, s1 := validator.GenerateTestValidator(0)
-	val2, s2 := validator.GenerateTestValidator(1)
-	val3, s3 := validator.GenerateTestValidator(2)
-	val4, s4 := validator.GenerateTestValidator(3)
+// GenerateTestCommittee generates a committee for testing purpose
+// All committee members have same power
+func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
+	signers := make([]crypto.Signer, num)
+	vals := make([]*validator.Validator, num)
+	h1 := util.RandInt(1000)
+	for i := 0; i < num; i++ {
+		val, s := validator.GenerateTestValidator(i)
+		signers[i] = s
+		vals[i] = val
 
-	signers := []crypto.Signer{s1, s2, s3, s4}
-	vals := []*validator.Validator{val1, val2, val3, val4}
-	committee, _ := NewCommittee(vals, 4, val1.Address())
+		val.UpdateLastBondingHeight(h1 + i)
+		val.UpdateLastJoinedHeight(h1 + 1000 + i)
+		//
+		val.SubtractFromStake(val.Stake())
+		val.AddToStake(1 * 10e8)
+	}
+
+	committee, _ := NewCommittee(vals, num, vals[0].Address())
 	return committee, signers
 }

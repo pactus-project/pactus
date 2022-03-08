@@ -391,7 +391,5 @@ func TestBlockHeightByStamp(t *testing.T) {
 	latestBlockHeight := tStore.LastBlockHeight()
 	latestBlock := tStore.Blocks[latestBlockHeight]
 	height = tSandbox.BlockHeightByStamp(latestBlock.Stamp())
-	seed := tSandbox.BlockSeedByStamp(latestBlock.Stamp())
 	assert.Equal(t, height, latestBlockHeight)
-	assert.Equal(t, seed, latestBlock.Header().SortitionSeed())
 }

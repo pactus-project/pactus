@@ -43,7 +43,7 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	val.IncSequence()
-	val.AddToStake(-1 * (pld.Amount + trx.Fee()))
+	val.SubtractFromStake(pld.Amount + trx.Fee())
 	acc.AddToBalance(pld.Amount)
 
 	sb.UpdateValidator(val)

@@ -154,7 +154,7 @@ func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	testAddPeer(t, pub, pid)
 	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt(0))
 	val.UpdateLastJoinedHeight(tState.LastBlockHeight())
-	assert.NoError(t, tState.Committee.Update(0, []*validator.Validator{val}))
+	tState.Committee.Update(0, []*validator.Validator{val})
 	require.True(t, tState.Committee.Contains(pub.Address()))
 }
 

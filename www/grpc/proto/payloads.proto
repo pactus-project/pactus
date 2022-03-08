@@ -10,7 +10,7 @@ message SEND_PAYLOAD {
 }
 
 message BOND_PAYLOAD {
-  string bonder = 1;
+  string sender = 1;
   string validator = 2;
   int64 stake = 3;
 }

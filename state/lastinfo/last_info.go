@@ -165,11 +165,7 @@ func (li *LastInfo) restoreCommittee(committeeSize int) (committee.Committee, er
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %v", err)
 	}
-
-	err = committee.Update(li.lastCertificate.Round(), joinedVals)
-	if err != nil {
-		return nil, fmt.Errorf("unable to update last committee: %v", err)
-	}
+	committee.Update(li.lastCertificate.Round(), joinedVals)
 
 	return committee, nil
 }

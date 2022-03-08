@@ -30,13 +30,13 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 	if e.strict {
 		// In strict mode, unbond transaction will be rejected if a validator is in committee.
-		// In non-restrict mode, we accept it and keep it inside tx pool to process it in next blocks
-		if sb.IsInCommittee(pld.Validator) {
+		// In non-restrict mode, we accept it and keep it inside tx pool to process it later
+		if sb.Committee().Contains(pld.Validator) {
 			return errors.Errorf(errors.ErrInvalidTx, "Validator %v is in committee", pld.Validator)
 		}
 
 		// In strict mode, a validator can not evaluate sortition after unbonding.
-		// In non-restrict mode, we accept it and keep it inside tx pool to process it in next blocks
+		// In non-restrict mode, we accept it and keep it inside tx pool to process it later
 		if val.LastJoinedHeight() == sb.CurrentHeight() {
 			return errors.Errorf(errors.ErrInvalidTx, "Validator %v will join committee", pld.Validator)
 		}

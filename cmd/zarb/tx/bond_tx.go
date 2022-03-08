@@ -24,14 +24,14 @@ func BondTx() func(c *cli.Cmd) {
 			Desc: "Transaction sequence number if not specified will query from RPC server",
 		})
 
-		bonderOpt := c.String(cli.StringOpt{
-			Name: "bonder",
-			Desc: "Bonder address",
+		senderOpt := c.String(cli.StringOpt{
+			Name: "sender",
+			Desc: "Sender account address",
 		})
 
 		pubOpt := c.String(cli.StringOpt{
 			Name: "pub",
-			Desc: "Validator's public key",
+			Desc: "Validator public key",
 		})
 
 		stakeOpt := c.Int(cli.IntOpt{
@@ -68,7 +68,7 @@ func BondTx() func(c *cli.Cmd) {
 
 			var err error
 			var stamp hash.Stamp
-			var bonder crypto.Address
+			var sender crypto.Address
 			var pub *bls.PublicKey
 			var seq int
 			var stake int64
@@ -90,14 +90,14 @@ func BondTx() func(c *cli.Cmd) {
 			}
 			fee = int64(*feeOpt)
 
-			if *bonderOpt == "" {
-				cmd.PrintWarnMsg("Bonder address is not defined.")
+			if *senderOpt == "" {
+				cmd.PrintWarnMsg("Sender address is not defined.")
 				c.PrintHelp()
 				return
 			}
-			bonder, err = crypto.AddressFromString(*bonderOpt)
+			sender, err = crypto.AddressFromString(*senderOpt)
 			if err != nil {
-				cmd.PrintErrorMsg("Bonder address is not valid: %v", err)
+				cmd.PrintErrorMsg("Sender address is not valid: %v", err)
 				return
 			}
 
@@ -128,7 +128,7 @@ func BondTx() func(c *cli.Cmd) {
 			if seqOpt != nil {
 				seq = *seqOpt
 			} else {
-				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), bonder)
+				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), sender)
 				if err != nil {
 					cmd.PrintErrorMsg("Couldn't retrieve sequence number from RPC Server: %v", err)
 					return
@@ -148,7 +148,7 @@ func BondTx() func(c *cli.Cmd) {
 				}
 			}
 
-			trx := tx.NewBondTx(stamp, seq, bonder, pub, stake, fee, *memoOpt)
+			trx := tx.NewBondTx(stamp, seq, sender, pub, stake, fee, *memoOpt)
 
 			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)
 		}

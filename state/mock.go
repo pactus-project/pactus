@@ -30,7 +30,7 @@ type MockState struct {
 }
 
 func MockingState() *MockState {
-	committee, _ := committee.GenerateTestCommittee()
+	committee, _ := committee.GenerateTestCommittee(21)
 	return &MockState{
 		GenHash:   hash.GenerateTestHash(),
 		Store:     store.MockingStore(),

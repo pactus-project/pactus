@@ -35,7 +35,7 @@ func setup(t *testing.T) {
 	tPool = p.(*txPool)
 
 	block88, _ := block.GenerateTestBlock(nil, nil)
-	tSandbox.AppendTestBlock(88, block88)
+	tSandbox.AddTestBlock(88, block88)
 	tTestTx = tx.NewMintbaseTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
 }
 
@@ -103,7 +103,7 @@ func TestFullPool(t *testing.T) {
 	setup(t)
 
 	block10000, _ := block.GenerateTestBlock(nil, nil)
-	tSandbox.AppendTestBlock(10000, block10000)
+	tSandbox.AddTestBlock(10000, block10000)
 	trxs := make([]*tx.Tx, tPool.config.sendPoolSize()+1)
 
 	signer := bls.GenerateTestSigner()
@@ -136,7 +136,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	setup(t)
 
 	block1000000, _ := block.GenerateTestBlock(nil, nil)
-	tSandbox.AppendTestBlock(1000000, block1000000)
+	tSandbox.AddTestBlock(1000000, block1000000)
 
 	acc1Signer := bls.GenerateTestSigner()
 	acc1 := account.NewAccount(acc1Signer.Address(), 0)
@@ -208,7 +208,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 	block88, _ := block.GenerateTestBlock(nil, nil)
 	block89, _ := block.GenerateTestBlock(nil, nil)
-	tSandbox.AppendTestBlock(88, block88)
+	tSandbox.AddTestBlock(88, block88)
 	proposer1 := crypto.GenerateTestAddress()
 	proposer2 := crypto.GenerateTestAddress()
 	trx1 := tx.NewMintbaseTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
@@ -219,7 +219,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	assert.NoError(t, tPool.AppendTx(trx2))
 	assert.NoError(t, tPool.AppendTx(trx3))
 
-	tSandbox.AppendTestBlock(89, block89)
+	tSandbox.AddTestBlock(89, block89)
 
 	tPool.SetNewSandboxAndRecheck(sandbox.MockingSandbox())
 	assert.Zero(t, tPool.Size())

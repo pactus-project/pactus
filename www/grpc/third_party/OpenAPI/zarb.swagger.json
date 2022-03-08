@@ -311,7 +311,7 @@
     "payloadsBOND_PAYLOAD": {
       "type": "object",
       "properties": {
-        "bonder": {
+        "sender": {
           "type": "string"
         },
         "validator": {
