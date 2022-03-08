@@ -43,23 +43,25 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		if sb.Committee().Size() >= sb.CommitteeSize() {
 			joiningNum := 0
 			joiningPower := int64(0)
+			committee := sb.Committee()
+			currentHeight := sb.CurrentHeight()
 			sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-				if vs.Validator.LastJoinedHeight() == sb.CurrentHeight() {
-					if !sb.Committee().Contains(vs.Validator.Address()) {
+				if vs.Validator.LastJoinedHeight() == currentHeight {
+					if !committee.Contains(vs.Validator.Address()) {
 						joiningPower += vs.Validator.Power()
 						joiningNum++
 					}
 				}
 			})
-			if !sb.Committee().Contains(val.Address()) {
+			if !committee.Contains(val.Address()) {
 				joiningPower += val.Power()
 				joiningNum++
 			}
-			if joiningPower >= (sb.Committee().TotalPower() / 3) {
+			if joiningPower >= (committee.TotalPower() / 3) {
 				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
 			}
 
-			vals := sb.Committee().Validators()
+			vals := committee.Validators()
 			sort.SliceStable(vals, func(i, j int) bool {
 				return vals[i].LastJoinedHeight() < vals[j].LastJoinedHeight()
 			})
@@ -67,17 +69,17 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			for i := 0; i < joiningNum; i++ {
 				leavingPower += vals[i].Power()
 			}
-			if leavingPower >= (sb.Committee().TotalPower() / 3) {
+			if leavingPower >= (committee.TotalPower() / 3) {
 				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
 			}
 
-			oldestJoinedHeight := sb.CurrentHeight()
-			for _, v := range sb.Committee().Validators() {
+			oldestJoinedHeight := currentHeight
+			for _, v := range committee.Validators() {
 				if v.LastJoinedHeight() < oldestJoinedHeight {
 					oldestJoinedHeight = v.LastJoinedHeight()
 				}
 			}
-			if sb.CurrentHeight()-oldestJoinedHeight < sb.CommitteeSize() {
+			if currentHeight-oldestJoinedHeight < sb.CommitteeSize() {
 				return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
 			}
 		}

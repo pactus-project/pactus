@@ -438,8 +438,9 @@ func (st *state) Fingerprint() string {
 
 func (st *state) commitSandbox(sb sandbox.Sandbox, round int) {
 	joined := make([]*validator.Validator, 0)
+	currentHeight := sb.CurrentHeight()
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.Validator.LastJoinedHeight() == sb.CurrentHeight() {
+		if vs.Validator.LastJoinedHeight() == currentHeight {
 			st.logger.Info("new validator joined", "address", vs.Validator.Address(), "power", vs.Validator.Power())
 
 			joined = append(joined, &vs.Validator)
