@@ -135,7 +135,7 @@ func (c *committee) contains(addr crypto.Address) bool {
 	return found
 }
 
-// IsProposer checks if the address is proposer for this run at the given round
+// IsProposer checks if the address is proposer for this height at this round
 func (c *committee) IsProposer(addr crypto.Address, round int) bool {
 	c.lk.Lock()
 	defer c.lk.Unlock()
@@ -144,7 +144,7 @@ func (c *committee) IsProposer(addr crypto.Address, round int) bool {
 	return p.Address().EqualsTo(addr)
 }
 
-// Proposer returns proposer info for this run at the given round
+// Proposer returns proposer info for this height at this round
 func (c *committee) Proposer(round int) *validator.Validator {
 	c.lk.Lock()
 	defer c.lk.Unlock()
