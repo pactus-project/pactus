@@ -72,7 +72,6 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int, block *block.B
 }
 
 func (bs *blockStore) block(height int) (*block.Block, error) {
-
 	data, err := tryGet(bs.db, blockKey(height))
 	if err != nil {
 		return nil, err
