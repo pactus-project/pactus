@@ -386,7 +386,7 @@ func TestSortition(t *testing.T) {
 	height := 1
 	for ; height <= 11; height++ {
 		if height == 2 {
-			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub, 1000, 1000, "")
+			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub, 10000000, 10000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
 		}
