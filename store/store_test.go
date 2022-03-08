@@ -217,13 +217,3 @@ func TestIterateValidators(t *testing.T) {
 
 	assert.ElementsMatch(t, vals1, vals2)
 }
-
-// func TestReestoreLastInfo(t *testing.T) {
-// 	setup(t)
-
-// 	assert.Nil(t, tStore.RestoreLastInfo())
-// 	tStore.SaveLastInfo([]byte{1})
-// 	assert.Nil(t, tStore.RestoreLastInfo())
-// 	assert.NoError(t, tStore.WriteBatch())
-// 	assert.NotNil(t, tStore.RestoreLastInfo())
-// }

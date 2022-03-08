@@ -264,6 +264,7 @@ func (sb *sandbox) Committee() committee.Reader {
 	return sb.committee
 }
 
+// TODO: write test for me
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
 	height := sb.store.BlockHeightByStamp(stamp)
 	b, err := sb.store.Block(height)
