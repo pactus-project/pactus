@@ -29,6 +29,7 @@ func setup(t *testing.T) {
 	tSandbox.AddTestBlock(500000, block500000)
 
 	tStamp500000 = block500000.Stamp()
+	assert.Equal(t, tSandbox.CurHeight, 500001)
 }
 
 func checkTotalCoin(t *testing.T, fee int64) {

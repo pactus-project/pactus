@@ -76,7 +76,7 @@ func TestGetBlockHieght(t *testing.T) {
 		b5, _ := tMockState.Store.Block(5)
 		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: b5.Hash().String()})
 		assert.NoError(t, err)
-		assert.Equal(t, int64(1), res.Height)
+		assert.Equal(t, int64(5), res.Height)
 	})
 
 	conn.Close()

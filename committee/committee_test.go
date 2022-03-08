@@ -18,7 +18,7 @@ func TestContains(t *testing.T) {
 }
 
 func TestProposer(t *testing.T) {
-	committee, signers := GenerateTestCommittee(21)
+	committee, signers := GenerateTestCommittee(4)
 
 	assert.Equal(t, committee.Proposer(0).Address(), signers[0].Address())
 	assert.Equal(t, committee.Proposer(3).Address(), signers[3].Address())

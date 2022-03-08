@@ -94,7 +94,13 @@ func (m *MockStore) TotalValidators() int {
 	return len(m.Validators)
 }
 func (m *MockStore) LastBlockHeight() int {
-	return len(m.Blocks)
+	h := 0
+	for i := range m.Blocks {
+		if i > h {
+			h = i
+		}
+	}
+	return h
 }
 
 func (m *MockStore) Close() error {

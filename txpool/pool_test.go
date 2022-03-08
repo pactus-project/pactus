@@ -115,7 +115,7 @@ func TestFullPool(t *testing.T) {
 	assert.Equal(t, tPool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewSendTx(block10000.Stamp(), tSandbox.TestAccSeq(signer.Address())+1, signer.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
+		trx := tx.NewSendTx(block10000.Stamp(), acc1.Sequence()+1, signer.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
 		trxs[i] = trx
@@ -162,20 +162,21 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	tSandbox.UpdateValidator(val3)
 
-	sendTx := tx.NewSendTx(block1000000.Stamp(), tSandbox.TestAccSeq(acc1.Address())+1, acc1.Address(), crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
+	sendTx := tx.NewSendTx(block1000000.Stamp(), acc1.Sequence()+1, acc1.Address(), crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(sendTx)
 
 	pub, _ := bls.GenerateTestKeyPair()
-	bondTx := tx.NewBondTx(block1000000.Stamp(), tSandbox.TestAccSeq(acc1.Address())+2, acc1.Address(), pub, 1000, 1000, "bond-tx")
+	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1.Address(), pub, 1000, 1000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
-	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), tSandbox.TestValSeq(val1.Address())+1, val1.Address(), "unbond-tx")
+	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), tSandbox.TestValSeq(val2.Address())+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
+	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 0, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
-	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), tSandbox.TestValSeq(val3.Address())+1, val3.Address(), sortition.GenerateRandomProof())
+	tSandbox.AcceptTestSortition = true
+	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(), sortition.GenerateRandomProof())
 	val3Signer.SignMsg(sortitionTx)
 
 	assert.NoError(t, tPool.AppendTx(sendTx))

@@ -29,6 +29,8 @@ func init() {
 	tMockSync = sync.MockingSync()
 	tCtx = context.Background()
 
+	tMockState.CommitTestBlocks(10)
+
 	s := grpc.NewServer()
 	server := &zarbServer{
 		state:  tMockState,

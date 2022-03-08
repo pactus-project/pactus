@@ -76,6 +76,7 @@ func setup(t *testing.T) {
 	lastCert := block.NewCertificate(lastBlock.Hash(), 0, committers, []int{}, sig.(*bls.Signature))
 	tStore.SaveBlock(lastHeight, lastBlock, lastCert)
 	tStore.SaveTransaction(trx)
+	assert.Equal(t, tStore.LastBlockHeight(), lastHeight)
 
 	tLastInfo.SetSortitionSeed(lastSeed)
 	tLastInfo.SetBlockHeight(lastHeight)

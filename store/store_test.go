@@ -31,7 +31,7 @@ func setup(t *testing.T) {
 		for _, tx := range txs {
 			tStore.SaveTransaction(tx)
 		}
-		tStore.WriteBatch()
+		assert.NoError(t, tStore.WriteBatch())
 	}
 }
 
@@ -67,7 +67,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 
 	b, trxs := block.GenerateTestBlock(nil, nil)
 	cert := block.GenerateTestCertificate(b.Hash())
-	tStore.SaveBlock(tLastHeight + 1, b, cert)
+	tStore.SaveBlock(tLastHeight+1, b, cert)
 	assert.NoError(t, tStore.WriteBatch())
 
 	for _, trx := range trxs {
@@ -83,7 +83,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	bz1, _ := b.Encode()
 	bz2, _ := b2.Encode()
 	assert.Equal(t, bz1, bz2)
-	assert.Equal(t, tLastHeight + 1, h2)
+	assert.Equal(t, tLastHeight+1, h2)
 
 	for _, trx := range trxs {
 		trx2, err := tStore.Transaction(trx.ID())
