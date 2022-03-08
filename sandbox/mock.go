@@ -1,9 +1,9 @@
 package sandbox
 
 import (
-	"fmt"
-
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -16,30 +16,50 @@ var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox
 type MockSandbox struct {
-	Accounts           map[crypto.Address]*account.Account
-	Validators         map[crypto.Address]*validator.Validator
-	HashToHeight       map[hash.Hash]int
-	CurHeight          int
-	Params             param.Params
-	TotalAccount       int
-	TotalValidator     int
-	AcceptSortition    bool
-	WelcomeToCommittee bool
-	InCommittee        bool
+	TestAccounts         map[crypto.Address]*account.Account
+	TestValidators       map[crypto.Address]*validator.Validator
+	TestBlocks           map[int]*block.Block
+	CurHeight            int
+	Params               param.Params
+	TotalAccount         int
+	TotalValidator       int
+	TestCommittee        committee.Committee
+	TestCommitteeSigners []crypto.Signer
+	AcceptTestSortition  bool
 }
 
 func MockingSandbox() *MockSandbox {
-	return &MockSandbox{
-		Accounts:        make(map[crypto.Address]*account.Account),
-		Validators:      make(map[crypto.Address]*validator.Validator),
-		HashToHeight:    make(map[hash.Hash]int),
-		Params:          param.DefaultParams(),
-		AcceptSortition: false,
+	committee, signers := committee.GenerateTestCommittee(7)
+
+	sb := &MockSandbox{
+		TestAccounts:         make(map[crypto.Address]*account.Account),
+		TestValidators:       make(map[crypto.Address]*validator.Validator),
+		TestBlocks:           make(map[int]*block.Block),
+		Params:               param.DefaultParams(),
+		TestCommittee:        committee,
+		TestCommitteeSigners: signers,
 	}
+
+	treasuryAmt := int64(21000000 * 1e8)
+
+	for i, val := range committee.Validators() {
+		acc := account.NewAccount(val.Address(), i+1)
+		acc.AddToBalance(100 * 1e8)
+		sb.UpdateAccount(acc)
+		sb.UpdateValidator(val)
+
+		treasuryAmt -= val.Stake()
+		treasuryAmt -= acc.Balance()
+	}
+	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc0.AddToBalance(treasuryAmt)
+	sb.UpdateAccount(acc0)
+
+	return sb
 }
 
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
-	acc, ok := m.Accounts[addr]
+	acc, ok := m.TestAccounts[addr]
 	if !ok {
 		return nil
 	}
@@ -51,10 +71,10 @@ func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	return a
 }
 func (m *MockSandbox) UpdateAccount(acc *account.Account) {
-	m.Accounts[acc.Address()] = acc
+	m.TestAccounts[acc.Address()] = acc
 }
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
-	val, ok := m.Validators[addr]
+	val, ok := m.TestValidators[addr]
 	if !ok {
 		return nil
 	}
@@ -66,27 +86,11 @@ func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator 
 	return v
 }
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
-	m.Validators[val.Address()] = val
+	m.TestValidators[val.Address()] = val
 
-}
-func (m *MockSandbox) EnterCommittee(hash hash.Hash, addr crypto.Address) error {
-	if !m.WelcomeToCommittee {
-		return fmt.Errorf("cannot enter to the committee")
-	}
-	return nil
-}
-func (m *MockSandbox) VerifySortition(blockHash hash.Hash, proof sortition.Proof, val *validator.Validator) bool {
-	return m.AcceptSortition
 }
 func (m *MockSandbox) CurrentHeight() int {
 	return m.CurHeight
-}
-func (m *MockSandbox) BlockHeight(hash hash.Hash) int {
-	h, ok := m.HashToHeight[hash]
-	if !ok {
-		return -1
-	}
-	return h
 }
 func (m *MockSandbox) TransactionToLiveInterval() int {
 	return m.Params.TransactionToLiveInterval
@@ -101,26 +105,23 @@ func (m *MockSandbox) MinFee() int64 {
 	return m.Params.MinimumFee
 }
 
-func (m *MockSandbox) AppendNewBlock(height int, hash hash.Hash) {
-	m.HashToHeight[hash] = height
+func (m *MockSandbox) AddTestBlock(height int, b *block.Block) {
+	m.TestBlocks[height] = b
 	m.CurHeight = height + 1
 }
 
-func (m *MockSandbox) AccSeq(a crypto.Address) int {
-	if acc, ok := m.Accounts[a]; ok {
-		return acc.Sequence()
+func (m *MockSandbox) RandomTestAcc() *account.Account {
+	for _, acc := range m.TestAccounts {
+		return acc
 	}
-
-	panic("invalid account address")
+	panic("no account in sandbox")
 }
 
-func (m *MockSandbox) ValSeq(a crypto.Address) int {
-	if val, ok := m.Validators[a]; ok {
-		return val.Sequence()
+func (m *MockSandbox) RandomTestVal() *validator.Validator {
+	for _, val := range m.TestValidators {
+		return val
 	}
-
-	panic("invalid validator address")
-
+	panic("no validator in sandbox")
 }
 
 func (m *MockSandbox) CommitteeSize() int {
@@ -132,22 +133,38 @@ func (m *MockSandbox) UnbondInterval() int {
 func (m *MockSandbox) BondInterval() int {
 	return m.Params.CommitteeSize * 2
 }
-func (m *MockSandbox) IsInCommittee(crypto.Address) bool {
-	return m.InCommittee
-}
-func (m *MockSandbox) FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash) {
-	for h, i := range m.HashToHeight {
-		if h.Stamp().EqualsTo(stamp) {
-			return i, h
+func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int {
+	for i, b := range m.TestBlocks {
+		if b.Stamp().EqualsTo(stamp) {
+			return i
 		}
 	}
 
-	return -1, hash.UndefHash
+	return -1
 }
-
 func (m *MockSandbox) IterateAccounts(consumer func(*AccountStatus)) {
-
+	for _, acc := range m.TestAccounts {
+		as := &AccountStatus{
+			Account: *acc,
+			Updated: true,
+		}
+		consumer(as)
+	}
 }
 func (m *MockSandbox) IterateValidators(consumer func(*ValidatorStatus)) {
+	for _, val := range m.TestValidators {
+		vs := &ValidatorStatus{
+			Validator: *val,
+			Updated:   true,
+		}
+		consumer(vs)
+	}
+}
 
+func (m *MockSandbox) Committee() committee.Reader {
+	return m.TestCommittee
+}
+
+func (m *MockSandbox) VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool {
+	return m.AcceptTestSortition
 }

@@ -201,10 +201,10 @@ func TestBondSanityCheck(t *testing.T) {
 		assert.Error(t, trx.SanityCheck())
 	})
 
-	t.Run("Invalid bonder", func(t *testing.T) {
+	t.Run("Invalid sender", func(t *testing.T) {
 		trx, signer := GenerateTestBondTx()
 		pld := trx.data.Payload.(*payload.BondPayload)
-		pld.Bonder = invAddr
+		pld.Sender = invAddr
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})

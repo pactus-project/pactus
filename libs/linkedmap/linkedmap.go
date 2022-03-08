@@ -110,6 +110,10 @@ func (lm *LinkedMap) Empty() bool {
 	return lm.Size() == 0
 }
 
+func (lm *LinkedMap) Capacity() int {
+	return lm.capacity
+}
+
 func (lm *LinkedMap) Size() int {
 	return lm.list.Len()
 }

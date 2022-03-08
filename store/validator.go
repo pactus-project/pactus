@@ -6,6 +6,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -76,7 +77,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 
 		val := new(validator.Validator)
 		if err := val.Decode(value); err != nil {
-			panic(err)
+			logger.Panic("unable to decode validator: %v", err)
 		}
 
 		stopped := consumer(val)
@@ -88,10 +89,10 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 	iter.Release()
 }
 
-func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) error {
+func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) {
 	data, err := val.Encode()
 	if err != nil {
-		return err
+		logger.Panic("unable to encode validator: %v", err)
 	}
 	if !vs.hasValidator(val.Address()) {
 		vs.total++
@@ -99,6 +100,4 @@ func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.V
 	vs.valMap[val.Number()] = val
 
 	batch.Put(validatorKey(val.Address()), data)
-
-	return nil
 }

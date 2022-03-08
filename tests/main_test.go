@@ -157,7 +157,7 @@ func TestMain(m *testing.M) {
 		tNodes[i].Stop()
 	}
 
-	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
+	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store, 0)
 	total := int64(0)
 	s.IterateAccounts(func(a *account.Account) bool {
 		total += a.Balance()

@@ -26,7 +26,7 @@ $ zarb tx send --seq=10 --sender=zrb1x8qy6v8lr0x5uxn0lp4aygxh44wtdrz6y82jxd --re
  ███████╗ ██║  ██║ ██║  ██║ ██████╔╝
  ╚══════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝
 
-Passphrase: 
+Passphrase:
 [WARN] Your transaction:
 {
    "Version": 1,
@@ -44,21 +44,21 @@ Passphrase:
    "Signature": "f7f9a5c54dc9ed6248732401b8d38ae6039264f8bfe3a5cc94b25c053d1d53fd6bc5e92c8874e123006b84c2fa38eb10"
 }
 
-This operation is "not reversible". Are you sure [yes/no]? 
+This operation is "not reversible". Are you sure [yes/no]?
 
 ```
 
 ```bash
 $ zarb tx send --seq=[Senders Sequance Number] --sender=[Senders Address] --receiver=[Recivers Address] -k=[Senders Key File Path] --amount=[Amount To Send] --stamp=[BlockChains Latest Blocks Hash] --fee=[Fee Willing To Pay For This Transaction ]
 
- ███████╗  █████╗  ██████╗  ██████╗ 
+ ███████╗  █████╗  ██████╗  ██████╗
  ╚══███╔╝ ██╔══██╗ ██╔══██╗ ██╔══██╗
    ███╔╝  ███████║ ██████╔╝ ██████╔╝
   ███╔╝   ██╔══██║ ██╔══██╗ ██╔══██╗
  ███████╗ ██║  ██║ ██║  ██║ ██████╔╝
- ╚══════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝ 
+ ╚══════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝
 
-Passphrase: 
+Passphrase:
 [WARN] Your transaction:
 {
    "Version": 1,
@@ -93,7 +93,7 @@ To create a bond transaction you use `zarb tx bond` command.
 
 Example:
 ```bash
-$ zarb tx bond --stake=[Amount of Stack To be Sent] --fee=[Fee Willing To Pay For This Transaction ] --bonder=[Address Of Account Will Pay For Stack And Fee, And Will Sign This Transaction] --pub=[Public Key of Validator To Bond Stack To] -k=[Senders Key File Path] -e [gRPC Endpoint Address]
+$ zarb tx bond --stake=[Amount of Stack To be Sent] --fee=[Fee Willing To Pay For This Transaction ] --sender=[Address Of Account Will Pay For Stack And Fee, And Will Sign This Transaction] --pub=[Public Key of Validator To Bond Stack To] -k=[Senders Key File Path] -e [gRPC Endpoint Address]
 
 
  ███████╗  █████╗  ██████╗  ██████╗
@@ -103,7 +103,7 @@ $ zarb tx bond --stake=[Amount of Stack To be Sent] --fee=[Fee Willing To Pay Fo
  ███████╗ ██║  ██║ ██║  ██║ ██████╔╝
  ╚══════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝
 
-Passphrase: 
+Passphrase:
 [WARN] Your transaction:
 {
    "Version": 1,
@@ -112,7 +112,7 @@ Passphrase:
    "Fee": 2500000,
    "Type": 2,
    "Payload": {
-      "Bonder": "zrb1h87hfkn3wa36xwypjz8aep3hu4ssdrt86chs3c",
+      "Sender": "zrb1h87hfkn3wa36xwypjz8aep3hu4ssdrt86chs3c",
       "Validator": "6df01b4b4f49b26692d83add4bf9a47c8a3[...snip...]7ba93c74595",
       "Stake": 2500000000
    },
@@ -124,16 +124,16 @@ Passphrase:
 This operation is "not reversible". Are you sure [yes/no]?
 ```
 ```bash
-$ zarb tx bond ---stake=[Amount of Stack To be Sent] --fee=[Fee Willing To Pay For This Transaction ] --bonder=[Address Of Account Will Pay For Stack And Fee, And Will Sign This Transaction] --pub=[Public Key of Validator To Bond Stack To] -k=[Senders Key File Path] --seq=[Senders Sequance Number] --stamp=[BlockChains Latest Blocks Hash]                                                                    
+$ zarb tx bond ---stake=[Amount of Stack To be Sent] --fee=[Fee Willing To Pay For This Transaction ] --sender=[Address Of Account Will Pay For Stack And Fee, And Will Sign This Transaction] --pub=[Public Key of Validator To Bond Stack To] -k=[Senders Key File Path] --seq=[Senders Sequance Number] --stamp=[BlockChains Latest Blocks Hash]
 
- ███████╗  █████╗  ██████╗  ██████╗ 
+ ███████╗  █████╗  ██████╗  ██████╗
  ╚══███╔╝ ██╔══██╗ ██╔══██╗ ██╔══██╗
    ███╔╝  ███████║ ██████╔╝ ██████╔╝
   ███╔╝   ██╔══██║ ██╔══██╗ ██╔══██╗
  ███████╗ ██║  ██║ ██║  ██║ ██████╔╝
- ╚══════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝ 
+ ╚══════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝
 
-Passphrase: 
+Passphrase:
 ←[33m[WARN] Your transaction:←[0m
 {
    "Version": 1,
@@ -142,7 +142,7 @@ Passphrase:
    "Fee": 2500000,
    "Type": 2,
    "Payload": {
-      "Bonder": "zrb1h87hfkn3wa36xwypjz8aep3hu4ssdrt86chs3c",
+      "Sender": "zrb1h87hfkn3wa36xwypjz8aep3hu4ssdrt86chs3c",
       "Validator": "6df01b4b4f49b[...snip...]c74595",
       "Stake": 2500000000
    },

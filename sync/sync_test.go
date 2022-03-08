@@ -9,8 +9,6 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
@@ -53,8 +51,7 @@ func init() {
 
 func setup(t *testing.T) {
 	signer := bls.GenerateTestSigner()
-	committee, _ := committee.GenerateTestCommittee()
-	tState = state.MockingState(committee)
+	tState = state.MockingState()
 	tConsensus = consensus.MockingConsensus(tState)
 	tBroadcastCh = make(chan message.Message, 1000)
 	tNetwork = network.MockingNetwork(util.RandomPeerID())
@@ -141,16 +138,9 @@ func testReceiveingNewMessage(sync *synchronizer, msg message.Message, from peer
 }
 
 func testAddBlocks(t *testing.T, state *state.MockState, count int) {
-	lastBlockHash := state.LastBlockHash()
-	for i := 0; i < count; i++ {
-		b, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
-		c := block.GenerateTestCertificate(b.Hash())
-		lastBlockHash = b.Hash()
-
-		state.AddBlock(state.LastBlockHeight()+1, b, trxs)
-		state.LastBlockCertificate = c
-	}
-	assert.Equal(t, lastBlockHash, state.LastBlockHash())
+	h := state.LastBlockHeight()
+	state.CommitTestBlocks(count)
+	assert.Equal(t, h+count, state.LastBlockHeight())
 }
 
 func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID) {
@@ -163,8 +153,9 @@ func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	}
 	testAddPeer(t, pub, pid)
 	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt(0))
-	val.UpdateLastJoinedHeight(tState.LastBlockHeight())
-	assert.NoError(t, tState.Committee.Update(0, []*validator.Validator{val}))
+	// This is not very accurate, there is no harm to do it for testing
+	val.UpdateLastJoinedHeight(tState.Committee.Proposer(0).LastJoinedHeight() + 1)
+	tState.Committee.Update(0, []*validator.Validator{val})
 	require.True(t, tState.Committee.Contains(pub.Address()))
 }
 

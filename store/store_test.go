@@ -4,8 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -15,34 +17,52 @@ var tStore *store
 
 func setup(t *testing.T) {
 	conf := TestConfig()
-	s, err := NewStore(conf)
-	assert.NoError(t, err)
+	s, err := NewStore(conf, 21)
+	require.NoError(t, err)
 
 	tStore = s.(*store)
+	SaveTestBlocks(t, 10)
+}
+
+func SaveTestBlocks(t *testing.T, num int) {
+	lastHeight, _ := tStore.LastCertificate()
+	for i := 0; i < num; i++ {
+		b, txs := block.GenerateTestBlock(nil, nil)
+		c := block.GenerateTestCertificate(b.Hash())
+
+		tStore.SaveBlock(lastHeight+i+1, b, c)
+		for _, tx := range txs {
+			tStore.SaveTransaction(tx)
+		}
+		assert.NoError(t, tStore.WriteBatch())
+	}
 }
 
 func TestReturnNilForNonExistingItems(t *testing.T) {
 	setup(t)
 
-	b, txs := block.GenerateTestBlock(nil, nil)
-	h := util.RandInt(10000)
-	block, err := tStore.Block(h)
+	lastHeight, _ := tStore.LastCertificate()
+	block, err := tStore.Block(lastHeight + 1)
 	assert.Error(t, err)
 	assert.Nil(t, block)
 
-	height, err := tStore.BlockHeight(b.Hash())
+	block, err = tStore.Block(0)
+	assert.Error(t, err)
+	assert.Nil(t, block)
+
+	height, err := tStore.BlockHeight(hash.GenerateTestHash())
 	assert.Error(t, err)
 	assert.Equal(t, height, -1)
 
-	tx, err := tStore.Transaction(txs[0].ID())
+	tx, err := tStore.Transaction(hash.GenerateTestHash())
 	assert.Error(t, err)
 	assert.Nil(t, tx)
 
-	acc, err := tStore.Account(b.Header().ProposerAddress())
+	acc, err := tStore.Account(crypto.GenerateTestAddress())
 	assert.Error(t, err)
 	assert.Nil(t, acc)
 
-	val, err := tStore.Validator(b.Header().ProposerAddress())
+	val, err := tStore.Validator(crypto.GenerateTestAddress())
 	assert.Error(t, err)
 	assert.Nil(t, val)
 
@@ -52,41 +72,26 @@ func TestReturnNilForNonExistingItems(t *testing.T) {
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
 
-	b, trxs := block.GenerateTestBlock(nil, nil)
-	h := util.RandInt(10000)
-	assert.False(t, tStore.HasAnyBlock())
-	tStore.SaveBlock(h, b)
-	assert.NoError(t, tStore.WriteBatch())
-	assert.True(t, tStore.HasAnyBlock())
+	height, cert := tStore.LastCertificate()
 
-	for _, trx := range trxs {
-		tStore.SaveTransaction(trx)
-		assert.NoError(t, tStore.WriteBatch())
-	}
-
-	h2, err := tStore.BlockHeight(b.Hash())
+	h2, err := tStore.BlockHeight(cert.BlockHash())
 	assert.NoError(t, err)
 	b2, err := tStore.Block(h2)
 	assert.NoError(t, err)
-	assert.Equal(t, b.Hash(), b2.Hash())
-	bz1, _ := b.Encode()
-	bz2, _ := b2.Encode()
-	assert.Equal(t, bz1, bz2)
-	assert.Equal(t, h, h2)
+	assert.Equal(t, cert.BlockHash(), b2.Hash())
+	assert.Equal(t, height, h2)
 
-	for _, trx := range trxs {
-		trx2, err := tStore.Transaction(trx.ID())
+	for _, id := range b2.TxIDs().IDs() {
+		trx2, err := tStore.Transaction(id)
 		assert.NoError(t, err)
 
-		assert.Equal(t, trx.ID(), trx2.ID())
+		assert.Equal(t, id, trx2.ID())
 	}
 
 	// After closing db, we should not crash
 	assert.NoError(t, tStore.Close())
 	assert.Error(t, tStore.WriteBatch())
-	_, err = tStore.Block(h)
-	assert.Error(t, err)
-	_, err = tStore.Transaction(trxs[0].ID())
+	_, err = tStore.Block(h2 + 1)
 	assert.Error(t, err)
 }
 
@@ -211,14 +216,4 @@ func TestIterateValidators(t *testing.T) {
 	})
 
 	assert.ElementsMatch(t, vals1, vals2)
-}
-
-func TestReestoreLastInfo(t *testing.T) {
-	setup(t)
-
-	assert.Nil(t, tStore.RestoreLastInfo())
-	tStore.SaveLastInfo([]byte{1})
-	assert.Nil(t, tStore.RestoreLastInfo())
-	assert.NoError(t, tStore.WriteBatch())
-	assert.NotNil(t, tStore.RestoreLastInfo())
 }

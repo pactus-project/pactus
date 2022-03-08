@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
@@ -12,22 +11,21 @@ import (
 func TestGetBlock(t *testing.T) {
 	conn, client := callServer(t)
 
+	tMockState.CommitTestBlocks(10)
+
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1000, Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
-	b1, trxs := block.GenerateTestBlock(nil, nil)
-	tMockState.AddBlock(1, b1, trxs)
-
 	t.Run("Should return an existing block hash", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 5, Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		h, err := hash.FromString(res.Hash)
 		assert.NoError(t, err)
-		assert.Equal(t, h, b1.Hash())
+		assert.NoError(t, h.SanityCheck())
 		assert.Empty(t, res.Header)
 		assert.Empty(t, res.Tranactions)
 	})
@@ -38,9 +36,8 @@ func TestGetBlock(t *testing.T) {
 		assert.NotNil(t, res)
 		h, err := hash.FromString(res.Hash)
 		assert.NoError(t, err)
-		assert.Equal(t, h, b1.Hash())
+		assert.NoError(t, h.SanityCheck())
 		assert.NotEmpty(t, res.Header)
-		assert.Equal(t, b1.PrevCertificate().Signature().String(), res.PreviousCertificate.Signature)
 		assert.Empty(t, res.Tranactions)
 	})
 
@@ -50,12 +47,9 @@ func TestGetBlock(t *testing.T) {
 		assert.NotNil(t, res)
 		h, err := hash.FromString(res.Hash)
 		assert.NoError(t, err)
-		assert.Equal(t, h, b1.Hash())
+		assert.NoError(t, h.SanityCheck())
 		assert.NotEmpty(t, res.Header)
-		assert.Equal(t, b1.PrevCertificate().Signature().String(), res.PreviousCertificate.Signature)
 		assert.NotEmpty(t, res.Tranactions)
-		assert.Equal(t, int(trxs[0].PayloadType()), int(res.Tranactions[0].Type)) //enums starting 1
-		assert.Equal(t, trxs[0].ID().String(), res.Tranactions[0].Id)
 	})
 
 	conn.Close()
@@ -71,19 +65,18 @@ func TestGetBlockHieght(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
-	b1, trxs := block.GenerateTestBlock(nil, nil)
 	t.Run("Should return NotFound for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: b1.Hash().String()})
+		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: hash.GenerateTestHash().String()})
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "No block found with the Hash provided")
 		assert.Nil(t, res)
 	})
 
-	tMockState.AddBlock(1, b1, trxs)
 	t.Run("Should return height of existing block", func(t *testing.T) {
-		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: b1.Hash().String()})
+		b5, _ := tMockState.Store.Block(5)
+		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: b5.Hash().String()})
 		assert.NoError(t, err)
-		assert.Equal(t, int64(1), res.Height)
+		assert.Equal(t, int64(5), res.Height)
 	})
 
 	conn.Close()

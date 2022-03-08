@@ -58,7 +58,7 @@ func setup(t *testing.T) {
 	conf.Levels["_consensus"] = "debug"
 	logger.InitLogger(conf)
 
-	_, tSigners = committee.GenerateTestCommittee()
+	_, tSigners = committee.GenerateTestCommittee(4)
 	tTxPool = txpool.MockingTxPool()
 
 	vals := make([]*validator.Validator, 4)

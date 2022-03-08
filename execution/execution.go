@@ -30,7 +30,7 @@ func newExecution(strict bool) *Execution {
 		executors: execs,
 	}
 }
-func NewExecution() *Execution {
+func NewExecutor() *Execution {
 	return newExecution(true)
 }
 
@@ -79,7 +79,7 @@ func (exe *Execution) checkMemo(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	curHeight := sb.CurrentHeight()
-	height, _ := sb.FindBlockInfoByStamp(trx.Stamp())
+	height := sb.BlockHeightByStamp(trx.Stamp())
 	interval := sb.TransactionToLiveInterval()
 
 	if trx.IsMintbaseTx() {

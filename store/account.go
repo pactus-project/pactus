@@ -5,6 +5,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb/util"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/logger"
 )
 
 type accountStore struct {
@@ -18,6 +19,7 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 	as := &accountStore{
 		db: db,
 	}
+	// TODO: better way to get total accout number?
 	total := 0
 	as.iterateAccounts(func(acc *account.Account) bool {
 		total++
@@ -59,7 +61,7 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 
 		acc := new(account.Account)
 		if err := acc.Decode(value); err != nil {
-			panic(err)
+			logger.Panic("unable to decode account: %v", err)
 		}
 
 		stopped := consumer(acc)
@@ -71,14 +73,13 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 	iter.Release()
 }
 
-func (as *accountStore) updateAccount(batch *leveldb.Batch, acc *account.Account) error {
+func (as *accountStore) updateAccount(batch *leveldb.Batch, acc *account.Account) {
 	data, err := acc.Encode()
 	if err != nil {
-		return err
+		logger.Panic("unable to encode account: %v", err)
 	}
 	if !as.hasAccount(acc.Address()) {
 		as.total++
 	}
 	batch.Put(accountKey(acc.Address()), data)
-	return nil
 }

@@ -384,9 +384,9 @@ func TestSortition(t *testing.T) {
 	assert.False(t, st1.evaluateSortition()) //  not a validator
 
 	height := 1
-	for ; height < 12; height++ {
+	for ; height <= 11; height++ {
 		if height == 2 {
-			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub, 1000, 1000, "")
+			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub, 10000000, 10000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
 		}
@@ -413,7 +413,7 @@ func TestSortition(t *testing.T) {
 	CommitBlockForAllStates(t, b, c)
 	require.NoError(t, st1.CommitBlock(height, b, c))
 
-	assert.False(t, st1.evaluateSortition()) // already in the committee
+	assert.True(t, st1.evaluateSortition()) // in the committee
 	assert.True(t, tState1.committee.Contains(tValSigner1.Address()))
 	assert.True(t, tState1.committee.Contains(pub.Address()))
 
@@ -572,7 +572,7 @@ func TestValidatorHelpers(t *testing.T) {
 func TestLoadState(t *testing.T) {
 	setup(t)
 
-	// Add a bond transactions to change total stake
+	// Add a bond transactions to change total power (stake)
 	pub, _ := bls.GenerateTestKeyPair()
 	tx2 := tx.NewBondTx(tState1.LastBlockHash().Stamp(), 1, tValSigner1.Address(), pub, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx2))
@@ -594,9 +594,8 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
 	assert.Equal(t, tState1.store.TotalValidators(), st2.(*state).store.TotalValidators())
 	assert.Equal(t, tState1.committee.Committers(), st2.(*state).committee.Committers())
-	assert.Equal(t, tState1.TotalStake(), st2.(*state).TotalStake())
-	assert.Equal(t, tState1.committeeStake(), st2.(*state).committeeStake())
-	assert.Equal(t, tState1.PoolStake(), st2.(*state).PoolStake())
+	assert.Equal(t, tState1.committee.TotalPower(), st2.(*state).committee.TotalPower())
+	assert.Equal(t, tState1.totalPower(), st2.(*state).totalPower())
 	assert.Equal(t, tState1.store.TotalAccounts(), 5)
 
 	require.NoError(t, st2.CommitBlock(6, b6, c6))

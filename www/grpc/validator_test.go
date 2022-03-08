@@ -99,7 +99,7 @@ func TestGetValidators(t *testing.T) {
 		res, err := client.GetValidators(tCtx, &zarb.ValidatorsRequest{})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, 4, len(res.GetValidators()))
+		assert.Equal(t, 21, len(res.GetValidators()))
 	})
 
 	err := conn.Close()

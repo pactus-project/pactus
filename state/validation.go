@@ -32,8 +32,8 @@ func (st *state) checkCertificate(cert *block.Certificate) error {
 	}
 
 	pubs := make([]*bls.PublicKey, 0, len(cert.Committers()))
-	totalStake := int64(0)
-	signersStake := int64(0)
+	committeePower := int64(0)
+	signedPower := int64(0)
 
 	for _, num := range cert.Committers() {
 		val, _ := st.store.ValidatorByNumber(num)
@@ -43,14 +43,14 @@ func (st *state) checkCertificate(cert *block.Certificate) error {
 		}
 		if !util.Contains(cert.Absentees(), num) {
 			pubs = append(pubs, val.PublicKey())
-			signersStake += val.Power()
+			signedPower += val.Power()
 		}
-		totalStake += val.Power()
+		committeePower += val.Power()
 	}
 
-	// Check if signers have 2/3+ of total stake
-	if signersStake <= totalStake*2/3 {
-		return errors.Errorf(errors.ErrInvalidBlock, "No quorom. Has %v, should be more than %v", signersStake, totalStake*2/3)
+	// Check if signers have 2/3+ of total power
+	if signedPower <= committeePower*2/3 {
+		return errors.Errorf(errors.ErrInvalidBlock, "No quorom. Has %v, should be more than %v", signedPower, committeePower*2/3)
 	}
 
 	// Check signature

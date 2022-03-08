@@ -9,47 +9,42 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-type VRF struct {
-}
-
-func NewVRF() *VRF {
-	return &VRF{}
-}
-
-// Evaluate returns a random number between 0 and max with the proof
-func (vrf *VRF) Evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64, proof Proof) {
-	sig := signer.SignData(seed[:])
+// evaluate returns a random number between 0 and max with the proof
+func evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64, proof Proof) {
+	signData := append(seed[:], signer.PublicKey().RawBytes()...)
+	sig := signer.SignData(signData)
 
 	proof, _ = ProofFromRawBytes(sig.RawBytes())
-	index = vrf.getIndex(proof, max)
+	index = getIndex(proof, max)
 
 	return index, proof
 }
 
-// Verify ensures the proof is valid
-func (vrf *VRF) Verify(seed VerifiableSeed, public crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
+// verify ensures the proof is valid
+func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
 	proofSig, err := bls.SignatureFromRawBytes(proof[:])
 	if err != nil {
 		return 0, false
 	}
 
 	// Verify signature (proof)
-	if !public.Verify(seed[:], proofSig) {
+	signData := append(seed[:], publicKey.RawBytes()...)
+	if !publicKey.Verify(signData, proofSig) {
 		return 0, false
 	}
 
-	index = vrf.getIndex(proof, max)
+	index = getIndex(proof, max)
 
 	return index, true
 }
 
-func (vrf *VRF) getIndex(proof Proof, max int64) int64 {
+func getIndex(proof Proof, max int64) int64 {
 	h := hash.CalcHash(proof[:])
 
 	rnd64 := util.SliceToInt64(h.RawBytes())
 	rnd64 = rnd64 & 0x7fffffffffffffff
 
-	// construct the numerator and denominator for normalizing the proof uint between [0, 1]
+	// construct the numerator and denominator for normalizing the proof uint
 	bigRnd := big.NewInt(rnd64)
 	bigMax := big.NewInt(max)
 

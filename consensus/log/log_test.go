@@ -12,7 +12,7 @@ import (
 )
 
 func TestMustGetRound(t *testing.T) {
-	committee, _ := committee.GenerateTestCommittee()
+	committee, _ := committee.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(101, committee.Validators())
 	log.MustGetRoundMessages(4)
@@ -23,7 +23,7 @@ func TestMustGetRound(t *testing.T) {
 }
 
 func TestAddVotes(t *testing.T) {
-	committee, signers := committee.GenerateTestCommittee()
+	committee, signers := committee.GenerateTestCommittee(4)
 
 	log := NewLog()
 	log.MoveToNewHeight(101, committee.Validators())
@@ -59,7 +59,7 @@ func TestAddVotes(t *testing.T) {
 }
 
 func TestSetRoundProposal(t *testing.T) {
-	committee, _ := committee.GenerateTestCommittee()
+	committee, _ := committee.GenerateTestCommittee(4)
 	prop, _ := proposal.GenerateTestProposal(101, 0)
 	log := NewLog()
 	log.MoveToNewHeight(101, committee.Validators())
@@ -73,7 +73,7 @@ func TestSetRoundProposal(t *testing.T) {
 }
 
 func TestCanVote(t *testing.T) {
-	committee, signers := committee.GenerateTestCommittee()
+	committee, signers := committee.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(101, committee.Validators())
 

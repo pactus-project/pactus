@@ -18,7 +18,8 @@ func TestTransaction(t *testing.T) {
 	t.Run("Shall return a transaction", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"hash": tTxTestHash.String()})
+		hash := tMockState.Store.Blocks[1].TxIDs().IDs()[0]
+		r = mux.SetURLVars(r, map[string]string{"id": hash.String()})
 		tHTTPServer.GetTransactionHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)

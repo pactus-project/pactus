@@ -5,8 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
+	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -32,10 +34,27 @@ func TestBlockSanityCheck(t *testing.T) {
 
 	b, _ = GenerateTestBlock(nil, nil)
 	b.data.Header.data.PrevCertificateHash = hash.UndefHash
+	b.data.Header.data.PrevBlockHash = hash.UndefHash
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
+	b.data.Header.data.SortitionSeed = sortition.UndefVerifiableSeed
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
+	b.data.Header.data.ProposerAddress = crypto.TreasuryAddress
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
+	b.data.Header.data.PrevCertificateHash = hash.UndefHash
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)
 	b.data.PrevCertificate = GenerateTestCertificate(hash.UndefHash)
+	assert.Error(t, b.SanityCheck())
+
+	b, _ = GenerateTestBlock(nil, nil)
+	b.data.PrevCertificate = GenerateTestCertificate(hash.GenerateTestHash())
 	assert.Error(t, b.SanityCheck())
 
 	b, _ = GenerateTestBlock(nil, nil)

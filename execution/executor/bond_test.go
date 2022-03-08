@@ -12,69 +12,88 @@ func TestExecuteBondTx(t *testing.T) {
 	setup(t)
 	exe := NewBondExecutor(true)
 
-	bonder := tAcc1.Address()
+	sender := tSandbox.RandomTestAcc()
+	senderBalance := sender.Balance()
 	pub, _ := bls.GenerateTestKeyPair()
-	addr := pub.Address()
+	fee, amt := randomAmountandFee(senderBalance)
 
-	t.Run("Should fail, Invalid bonder", func(t *testing.T) {
-		trx := tx.NewBondTx(tStamp500000, 1, pub.Address(), pub, 100000, 1000, "invalid bonder")
+	t.Run("Should fail, invalid sender", func(t *testing.T) {
+		trx := tx.NewBondTx(tStamp500000, 1, pub.Address(), pub, amt, fee, "invalid sender")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewBondTx(tStamp500000, tSandbox.AccSeq(bonder)+2, bonder, pub, 100000, 1000, "invalid sequence")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
-	})
-
-	t.Run("Should fail, Insufficient balance", func(t *testing.T) {
-		trx := tx.NewBondTx(tStamp500000, tSandbox.AccSeq(bonder)+1, bonder, pub, tAcc1Balance+1, 0, "insufficient balance")
+	t.Run("Should fail, invalid sequence", func(t *testing.T) {
+		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+2, sender.Address(), pub, amt, fee, "invalid sequence")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	t.Run("Should fail, Inside committee", func(t *testing.T) {
-		tSandbox.InCommittee = true
-		trx := tx.NewBondTx(tStamp500000, tSandbox.AccSeq(bonder)+1, bonder, pub, 100000, 1000, "inside committee")
+	t.Run("Should fail, insufficient balance", func(t *testing.T) {
+		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, senderBalance+1, 0, "insufficient balance")
+
+		assert.Error(t, exe.Execute(trx, tSandbox))
+	})
+
+	t.Run("Should fail, inside committee", func(t *testing.T) {
+		pub := tSandbox.Committee().Proposer(0).PublicKey()
+		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, amt, fee, "inside committee")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		tSandbox.InCommittee = false
-		trx := tx.NewBondTx(tStamp500000, tSandbox.AccSeq(bonder)+1, bonder, pub, 100000, 1000, "ok")
+		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, amt, fee, "ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
-		// Replay
+		// Execute again, should fail
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
 	t.Run("Unbonded before", func(t *testing.T) {
-		tVal1.UpdateUnbondingHeight(tSandbox.CurHeight)
-		trx := tx.NewBondTx(tStamp500000, tSandbox.AccSeq(bonder)+1, bonder, tVal1.PublicKey(), 100000, 1000, "ok")
+		val := tSandbox.Validator(pub.Address())
+		val.UpdateUnbondingHeight(tSandbox.CurHeight)
+		tSandbox.UpdateValidator(val)
+
+		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), val.PublicKey(), amt, fee, "unbonded before")
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Equal(t, tSandbox.Account(bonder).Balance(), tAcc1Balance-(100000+1000))
-	assert.Equal(t, tSandbox.Validator(addr).Stake(), int64(100000))
-	assert.Equal(t, tSandbox.Validator(addr).LastBondingHeight(), tSandbox.CurHeight)
-	assert.Equal(t, exe.Fee(), int64(1000))
+	assert.Equal(t, sender.Balance(), senderBalance-(amt+fee))
+	assert.Equal(t, tSandbox.Validator(pub.Address()).Stake(), amt)
+	assert.Equal(t, tSandbox.Validator(pub.Address()).LastBondingHeight(), tSandbox.CurHeight)
+	assert.Equal(t, exe.Fee(), fee)
 
-	checkTotalCoin(t, 1000)
+	checkTotalCoin(t, fee)
 }
 
 func TestBondNonStrictMode(t *testing.T) {
 	setup(t)
 	exe1 := NewBondExecutor(true)
 	exe2 := NewBondExecutor(false)
+	sender := tSandbox.RandomTestAcc()
 
-	tSandbox.InCommittee = true
-	pub, _ := bls.GenerateTestKeyPair()
-
-	trx := tx.NewBondTx(tStamp500001, tSandbox.AccSeq(tAcc1.Address())+1, tAcc1.Address(), pub, 1000, 1000, "")
+	pub := tSandbox.Committee().Proposer(0).PublicKey()
+	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, 1000, 1000, "")
 
 	assert.Error(t, exe1.Execute(trx, tSandbox))
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
+}
+
+func TestBondJoiningCommittee(t *testing.T) {
+	setup(t)
+	exe := NewBondExecutor(true)
+	sender := tSandbox.RandomTestAcc()
+	senderBalance := sender.Balance()
+	pub, _ := bls.GenerateTestKeyPair()
+	fee, amt := randomAmountandFee(senderBalance)
+
+	val := tSandbox.MakeNewValidator(pub)
+	val.UpdateLastJoinedHeight(tSandbox.CurHeight)
+	tSandbox.UpdateValidator(val)
+
+	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, amt, fee, "joining committee")
+
+	assert.Error(t, exe.Execute(trx, tSandbox))
 }

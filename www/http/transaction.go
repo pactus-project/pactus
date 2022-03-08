@@ -14,7 +14,7 @@ import (
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	b := s.capnp.GetTransaction(s.ctx, func(p capnp.ZarbServer_getTransaction_Params) error {
 		vars := mux.Vars(r)
-		return p.SetId([]byte(vars["hash"]))
+		return p.SetId([]byte(vars["id"]))
 	})
 
 	t, err := b.Struct()

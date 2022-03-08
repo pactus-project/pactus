@@ -11,8 +11,8 @@ import (
 
 type Reader interface {
 	Block(height int) (*block.Block, error)
-	HasAnyBlock() bool
 	BlockHeight(hash hash.Hash) (int, error)
+	BlockHeightByStamp(stamp hash.Stamp) int // It remembers only last stamps
 	Transaction(hash hash.Hash) (*tx.Tx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
@@ -23,17 +23,16 @@ type Reader interface {
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(*account.Account) (stop bool))
 	TotalValidators() int
-	RestoreLastInfo() []byte
+	LastCertificate() (int, *block.Certificate)
 }
 
 type Store interface {
 	Reader
 
 	UpdateAccount(acc *account.Account)
-	UpdateValidator(acc *validator.Validator)
-	SaveBlock(height int, block *block.Block)
+	UpdateValidator(val *validator.Validator)
+	SaveBlock(height int, block *block.Block, cert *block.Certificate)
 	SaveTransaction(trx *tx.Tx)
-	SaveLastInfo(info []byte)
 	WriteBatch() error
 	Close() error
 }

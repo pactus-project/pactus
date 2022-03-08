@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/logger"
@@ -61,10 +60,8 @@ func TestSyncing(t *testing.T) {
 	configBob := TestConfig()
 	signerAlice := bls.GenerateTestSigner()
 	signerBob := bls.GenerateTestSigner()
-	committeeAlice, _ := committee.GenerateTestCommittee()
-	committeeBob, _ := committee.GenerateTestCommittee()
-	stateAlice := state.MockingState(committeeAlice)
-	stateBob := state.MockingState(committeeBob)
+	stateAlice := state.MockingState()
+	stateBob := state.MockingState()
 	consensusAlice := consensus.MockingConsensus(stateAlice)
 	consensusBob := consensus.MockingConsensus(stateBob)
 	broadcastChAlice := make(chan message.Message, 1000)

@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // Account structure
@@ -84,7 +85,7 @@ func (acc Account) Fingerprint() string {
 func GenerateTestAccount(number int) (*Account, crypto.Signer) {
 	signer := bls.GenerateTestSigner()
 	acc := NewAccount(signer.Address(), number)
-	acc.data.Balance = 888888888
-	acc.data.Sequence = 88
+	acc.data.Balance = util.RandInt64(100 * 1e14)
+	acc.data.Sequence = util.RandInt(100)
 	return acc, signer
 }

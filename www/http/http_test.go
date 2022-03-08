@@ -8,10 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
@@ -25,7 +22,6 @@ var tCapnpServer *capnp.Server
 var tHTTPServer *Server
 var tAccTestAddr crypto.Address
 var tValTestAddr crypto.Address
-var tTxTestHash hash.Hash
 
 func init() {
 	logger.InitLogger(logger.TestConfig())
@@ -36,17 +32,10 @@ func setup(t *testing.T) {
 		return
 	}
 
-	committee, _ := committee.GenerateTestCommittee()
-	tMockState = state.MockingState(committee)
+	tMockState = state.MockingState()
 	tMockSync = sync.MockingSync()
 
-	b1, txs := block.GenerateTestBlock(nil, nil)
-	b2, _ := block.GenerateTestBlock(nil, nil)
-	tMockState.Store.SaveBlock(1, b1)
-	tMockState.Store.SaveBlock(2, b2)
-
-	tTxTestHash = txs[0].ID()
-	tMockState.Store.SaveTransaction(txs[0])
+	tMockState.CommitTestBlocks(10)
 
 	a, _ := account.GenerateTestAccount(888)
 	tAccTestAddr = a.Address()

@@ -12,7 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func setupCommittee(t *testing.T, stakes ...int64) (*committee.Committee, []crypto.Signer) {
+func setupCommittee(t *testing.T, stakes ...int64) (committee.Committee, []crypto.Signer) {
 	signers := []crypto.Signer{}
 	vals := []*validator.Validator{}
 	for i, s := range stakes {

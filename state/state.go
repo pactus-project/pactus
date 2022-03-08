@@ -13,7 +13,6 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/genesis"
-	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/sandbox"
@@ -36,10 +35,8 @@ type state struct {
 	store        store.Store
 	params       param.Params
 	txPool       txpool.TxPool
-	committee    *committee.Committee
-	sortition    *sortition.Sortition
+	committee    committee.Committee
 	lastInfo     *lastinfo.LastInfo
-	latestBlocks *linkedmap.LinkedMap
 	logger       *logger.Logger
 }
 
@@ -70,39 +67,22 @@ func LoadOrNewState(
 		signer:       signer,
 		store:        store,
 		mintbaseAddr: mintbaseAddr,
-		sortition:    sortition.NewSortition(),
 		lastInfo:     lastinfo.NewLastInfo(store),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
 
-	if store.HasAnyBlock() {
-		err := st.tryLoadLastInfo()
-		if err != nil {
-			return nil, err
-		}
-	} else {
+	if store.TotalAccounts() == 0 {
+		// We are at the genesis state
 		err := st.makeGenesisState(genDoc)
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	// A cache of the latest block info
-	st.latestBlocks = linkedmap.NewLinkedMap(st.params.TransactionToLiveInterval)
-	last := st.lastInfo.BlockHeight()
-	first := st.lastInfo.BlockHeight() - st.params.TransactionToLiveInterval
-	if first < 1 {
-		// Adding genesis block info
-		st.latestBlocks.PushBack(hash.UndefHash.Stamp(), sandbox.NewBlockInfo(0, hash.UndefHash))
-		first = 1
-	}
-	for h := first; h <= last; h++ {
-		b, err := st.store.Block(h)
+	} else {
+		err := st.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
-		st.latestBlocks.PushBack(b.Stamp(), sandbox.NewBlockInfo(h, b.Hash()))
 	}
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
@@ -111,7 +91,7 @@ func LoadOrNewState(
 }
 
 func (st *state) concreteSandbox() sandbox.Sandbox {
-	return sandbox.NewSandbox(st.store, st.params, st.latestBlocks, st.sortition, st.committee)
+	return sandbox.NewSandbox(st.store, st.params, st.committee)
 }
 
 func (st *state) tryLoadLastInfo() error {
@@ -129,7 +109,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 
 	logger.Info("try to load the last state info")
-	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize, st.sortition)
+	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize)
 	if err != nil {
 		return err
 	}
@@ -145,11 +125,9 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		st.store.UpdateAccount(acc)
 	}
 
-	totalStake := int64(0)
 	vals := genDoc.Validators()
 	for _, val := range vals {
 		st.store.UpdateValidator(val)
-		totalStake += val.Stake()
 	}
 
 	err := st.store.WriteBatch()
@@ -253,7 +231,7 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 
 	// Create new sandbox and execute transactions
 	sb := st.concreteSandbox()
-	exe := execution.NewExecution()
+	exe := execution.NewExecutor()
 
 	txIDs := block.NewTxIDs()
 
@@ -387,14 +365,11 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.lastInfo.SetBlockTime(block.Header().Time())
 	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
 	st.lastInfo.SetCertificate(cert)
-	st.lastInfo.SaveLastInfo()
 
 	// Commit and update the committee
 	st.commitSandbox(sb, cert.Round())
 
-	st.store.SaveBlock(height, block)
-
-	st.latestBlocks.PushBack(block.Stamp(), sandbox.NewBlockInfo(height, block.Hash()))
+	st.store.SaveBlock(height, block, cert)
 
 	// Save txs and receipts
 	for _, trx := range trxs {
@@ -409,9 +384,6 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	st.logger.Info("new block is committed", "block", block, "round", cert.Round())
 
 	// -----------------------------------
-	// Update sortition params and evaluate sortition
-	st.sortition.SetParams(block.Hash(), block.Header().SortitionSeed(), st.poolStake())
-
 	// Evaluate sortition before updating the committee
 	if st.evaluateSortition() {
 		st.logger.Info("👏 this validator is chosen to be in the committee", "address", st.signer.Address())
@@ -425,11 +397,6 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 }
 
 func (st *state) evaluateSortition() bool {
-	if st.committee.Contains(st.signer.Address()) {
-		// We are in the committee right now
-		return false
-	}
-
 	val, _ := st.store.Validator(st.signer.Address())
 	if val == nil {
 		// We are not a validator
@@ -446,17 +413,17 @@ func (st *state) evaluateSortition() bool {
 		return false
 	}
 
-	ok, proof := st.sortition.EvaluateSortition(st.lastInfo.BlockHash(), st.signer, val.Stake())
+	ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), st.signer, st.totalPower(), val.Power())
 	if ok {
 		trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
 		st.signer.SignMsg(trx)
 
 		err := st.txPool.AppendTxAndBroadcast(trx)
 		if err == nil {
-			st.logger.Debug("sortition transaction broadcasted", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx)
+			st.logger.Debug("sortition transaction broadcasted", "address", st.signer.Address(), "power", val.Power(), "tx", trx)
 			return true
 		}
-		st.logger.Error("our sortition transaction is invalid. Why?", "address", st.signer.Address(), "stake", val.Stake(), "tx", trx, "err", err)
+		st.logger.Error("our sortition transaction is invalid. Why?", "address", st.signer.Address(), "power", val.Power(), "tx", trx, "err", err)
 	}
 
 	return false
@@ -471,20 +438,15 @@ func (st *state) Fingerprint() string {
 
 func (st *state) commitSandbox(sb sandbox.Sandbox, round int) {
 	joined := make([]*validator.Validator, 0)
+	currentHeight := sb.CurrentHeight()
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.JoinedCommittee {
-			st.logger.Info("new validator joined", "address", vs.Validator.Address(), "stake", vs.Validator.Stake())
+		if vs.Validator.LastJoinedHeight() == currentHeight {
+			st.logger.Info("new validator joined", "address", vs.Validator.Address(), "power", vs.Validator.Power())
 
 			joined = append(joined, &vs.Validator)
 		}
 	})
-
-	if err := st.committee.Update(round, joined); err != nil {
-		//
-		// We should panic here before updating the state
-		//
-		logger.Panic("an error occurred", "err", err)
-	}
+	st.committee.Update(round, joined)
 
 	sb.IterateAccounts(func(as *sandbox.AccountStatus) {
 		if as.Updated {
@@ -521,50 +483,34 @@ func (st *state) validateBlockTime(t time.Time) error {
 	return nil
 }
 
-func (st *state) TotalStake() int64 {
+func (st *state) TotalPower() int64 {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	return st.totalStake()
+	return st.totalPower()
 }
 
-func (st *state) CommitteeStake() int64 {
+func (st *state) CommitteePower() int64 {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	return st.committeeStake()
+	return st.committeePower()
 }
 
-func (st *state) PoolStake() int64 {
-	st.lk.Lock()
-	defer st.lk.Unlock()
-
-	return st.poolStake()
-}
-
-// TODO: Improve performance of these calculations by two local variables: committeeStake and poolStake
-func (st *state) totalStake() int64 {
-	totalStake := int64(0)
+// TODO: add test for me when a validator is parked (unbonded)
+// TODO: Improve performance of remember total power
+// TODO: sandbox has the same logic.
+func (st *state) totalPower() int64 {
+	p := int64(0)
 	st.store.IterateValidators(func(val *validator.Validator) bool {
-		totalStake += val.Stake()
+		p += val.Power()
 		return false
 	})
-	return totalStake
+	return p
 }
 
-func (st *state) committeeStake() int64 {
-	return st.committee.TotalStake()
-}
-
-func (st *state) poolStake() int64 {
-	poolStake := int64(0)
-	st.store.IterateValidators(func(val *validator.Validator) bool {
-		if !st.committee.Contains(val.Address()) {
-			poolStake += val.Stake()
-		}
-		return false
-	})
-	return poolStake
+func (st *state) committeePower() int64 {
+	return st.committee.TotalPower()
 }
 
 func (st *state) proposeNextBlockTime() time.Time {

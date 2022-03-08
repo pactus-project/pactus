@@ -11,12 +11,14 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+var _ Store = &MockStore{}
+
 type MockStore struct {
 	Blocks       map[int]*block.Block
 	Accounts     map[crypto.Address]account.Account
 	Validators   map[crypto.Address]validator.Validator
 	Transactions map[hash.Hash]tx.Tx
-	LastInfo     []byte
+	LastCert     lastCertificate
 }
 
 func MockingStore() *MockStore {
@@ -92,7 +94,13 @@ func (m *MockStore) TotalValidators() int {
 	return len(m.Validators)
 }
 func (m *MockStore) LastBlockHeight() int {
-	return len(m.Blocks)
+	h := 0
+	for i := range m.Blocks {
+		if i > h {
+			h = i
+		}
+	}
+	return h
 }
 
 func (m *MockStore) Close() error {
@@ -123,20 +131,35 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(height int, block *block.Block) {
+func (m *MockStore) SaveBlock(height int, block *block.Block, cert *block.Certificate) {
 	m.Blocks[height] = block
+	m.LastCert.Height = height
+	m.LastCert.Cert = cert
 }
 
 func (m *MockStore) SaveTransaction(trx *tx.Tx) {
 	m.Transactions[trx.ID()] = *trx
 }
 
-func (m *MockStore) SaveLastInfo(info []byte) {
-	m.LastInfo = info
+func (m *MockStore) LastCertificate() (int, *block.Certificate) {
+	if m.LastCert.Cert == nil {
+		return 0, nil
+	}
+	return m.LastCert.Height, m.LastCert.Cert
 }
-func (m *MockStore) RestoreLastInfo() []byte {
-	return m.LastInfo
+func (m *MockStore) BlockHeightByStamp(stamp hash.Stamp) int {
+	if stamp == hash.UndefHash.Stamp() {
+		return 0
+	}
+	for i, b := range m.Blocks {
+		if b.Stamp().EqualsTo(stamp) {
+			return i
+		}
+	}
+
+	return -1
 }
+
 func (m *MockStore) WriteBatch() error {
 	return nil
 }

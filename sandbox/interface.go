@@ -2,6 +2,7 @@ package sandbox
 
 import (
 	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/committee"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -17,17 +18,15 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
-	IsInCommittee(crypto.Address) bool
 
-	VerifySortition(hash.Hash, sortition.Proof, *validator.Validator) bool
-	EnterCommittee(hash.Hash, crypto.Address) error
+	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
+	Committee() committee.Reader
+	BlockHeightByStamp(stamp hash.Stamp) int
 
-	FindBlockInfoByStamp(stamp hash.Stamp) (int, hash.Hash)
-	CommitteeSize() int
 	UnbondInterval() int
+	CommitteeSize() int
 	BondInterval() int
 	CurrentHeight() int
-	BlockHeight(hash.Hash) int
 	TransactionToLiveInterval() int
 	MaxMemoLength() int
 	FeeFraction() float64

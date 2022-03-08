@@ -26,7 +26,7 @@ func TestBlock(t *testing.T) {
 	t.Run("Shall return an error", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"height": "5"})
+		r = mux.SetURLVars(r, map[string]string{"height": "11"})
 		tHTTPServer.GetBlockHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
@@ -73,7 +73,7 @@ func TestBlockHeight(t *testing.T) {
 		tHTTPServer.GetBlockHeightHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
-		assert.Equal(t, w.Body.String(), "2")
+		assert.Equal(t, w.Body.String(), "10")
 		//fmt.Println(w.Body)
 	})
 }
