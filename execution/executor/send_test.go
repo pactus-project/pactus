@@ -44,7 +44,7 @@ func checkTotalCoin(t *testing.T, fee int64) {
 }
 
 func randomAmountandFee(max int64) (int64, int64) {
-	amt := util.RandInt64(max)
+	amt := util.RandInt64(max / 2)
 	fee := int64(float64(amt) * tSandbox.FeeFraction())
 	return amt, fee
 }
