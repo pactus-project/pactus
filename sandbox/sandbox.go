@@ -233,6 +233,13 @@ func (sb *sandbox) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
+func (sb *sandbox) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.store.BlockHashByStamp(stamp)
+}
+
 func (sb *sandbox) BlockHeightByStamp(stamp hash.Stamp) int {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
@@ -266,12 +273,12 @@ func (sb *sandbox) Committee() committee.Reader {
 
 // TODO: write test for me
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
-	height := sb.store.BlockHeightByStamp(stamp)
-	b, err := sb.store.Block(height)
+	hash := sb.store.BlockHashByStamp(stamp)
+	bi, err := sb.store.Block(hash)
 	if err != nil {
 		return false
 	}
-	seed := b.Header().SortitionSeed()
+	seed := bi.Block.Header().SortitionSeed()
 
 	total := int64(0) // TODO: we can get it from state
 	sb.store.IterateValidators(func(val *validator.Validator) bool {

@@ -32,8 +32,8 @@ type Facade interface {
 	PendingTx(id tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
-	Block(height int) *block.Block
-	BlockHeight(hash hash.Hash) int
+	Block(hash hash.Hash) *block.Block
+	BlockHash(height int) hash.Hash
 	Account(addr crypto.Address) *account.Account
 	Validator(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int) *validator.Validator

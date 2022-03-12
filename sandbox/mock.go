@@ -133,6 +133,15 @@ func (m *MockSandbox) UnbondInterval() int {
 func (m *MockSandbox) BondInterval() int {
 	return m.Params.CommitteeSize * 2
 }
+func (m *MockSandbox) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
+	for _, b := range m.TestBlocks {
+		if b.Stamp().EqualsTo(stamp) {
+			return b.Hash()
+		}
+	}
+
+	return hash.UndefHash
+}
 func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int {
 	for i, b := range m.TestBlocks {
 		if b.Stamp().EqualsTo(stamp) {
@@ -140,7 +149,7 @@ func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int {
 		}
 	}
 
-	return -1
+	return 0
 }
 func (m *MockSandbox) IterateAccounts(consumer func(*AccountStatus)) {
 	for _, acc := range m.TestAccounts {

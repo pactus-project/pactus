@@ -69,10 +69,10 @@ func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error 
 	// header
 	ch.SetVersion(int32(block.Header().Version()))
 	ch.SetTime(block.Header().Time().Unix())
-	if err := ch.SetTxsHash(block.Header().TxIDsHash().RawBytes()); err != nil {
+	if err := ch.SetTxsHash(block.Header().TxsRoot().RawBytes()); err != nil {
 		return err
 	}
-	if err := ch.SetStateHash(block.Header().StateHash().RawBytes()); err != nil {
+	if err := ch.SetStateHash(block.Header().StateRoot().RawBytes()); err != nil {
 		return err
 	}
 	if err := ch.SetPrevBlockHash(block.Header().PrevBlockHash().RawBytes()); err != nil {

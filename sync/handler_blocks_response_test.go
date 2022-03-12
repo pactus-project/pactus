@@ -20,7 +20,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	lastBlockHash := tState.LastBlockHash()
 	lastBlockheight := tState.LastBlockHeight()
-	b1, trxs := block.GenerateTestBlock(nil, &lastBlockHash)
+	b1 := block.GenerateTestBlock(nil, &lastBlockHash)
 	c1 := block.GenerateTestCertificate(b1.Hash())
 	pid := util.RandomPeerID()
 
@@ -29,7 +29,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid, 0, nil, nil, nil)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid, 0, nil,  nil)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
@@ -37,7 +37,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid, 0, nil, nil, nil)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid, 0, nil,  nil)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
@@ -45,7 +45,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Commit one block", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid, lastBlockheight+1, []*block.Block{b1}, trxs, c1)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid, lastBlockheight+1, []*block.Block{b1},  c1)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))

@@ -27,6 +27,13 @@ func TestValidatorCounter(t *testing.T) {
 		assert.NoError(t, tStore.WriteBatch())
 		assert.Equal(t, tStore.TotalValidators(), 1)
 	})
+
+	t.Run("Get validator", func(t *testing.T) {
+		assert.True(t, tStore.HasValidator(val.Address()))
+		val2, err := tStore.Validator(val.Address())
+		assert.NoError(t, err)
+		assert.Equal(t, val2.Hash(), val.Hash())
+	})
 }
 
 func TestValidatorBatchSaving(t *testing.T) {

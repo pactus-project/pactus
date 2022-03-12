@@ -105,16 +105,16 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, err
 
 	logger.Debug("try to restore last state info", "height", height)
 
-	b, err := li.store.Block(height)
+	bi, err := li.store.Block(cert.BlockHash())
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve block %v: %v", height, err)
 	}
 
 	li.lastBlockHeight = height
 	li.lastCertificate = cert
-	li.lastSortitionSeed = b.Header().SortitionSeed()
-	li.lastBlockHash = b.Hash()
-	li.lastBlockTime = b.Header().Time()
+	li.lastSortitionSeed = bi.Block.Header().SortitionSeed()
+	li.lastBlockHash = bi.Block.Hash()
+	li.lastBlockTime = bi.Block.Header().Time()
 
 	cmt, err := li.restoreCommittee(committeeSize)
 	if err != nil {
@@ -125,14 +125,10 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, err
 }
 
 func (li *LastInfo) restoreCommittee(committeeSize int) (committee.Committee, error) {
-	b, _ := li.store.Block(li.lastBlockHeight)
+	bi, _ := li.store.Block(li.lastBlockHash)
 
 	joinedVals := make([]*validator.Validator, 0)
-	for _, id := range b.TxIDs().IDs() {
-		trx, err := li.store.Transaction(id)
-		if err != nil {
-			return nil, fmt.Errorf("unable to retrieve transaction %s: %v", id, err)
-		}
+	for _, trx := range bi.Block.Transactions() {
 		// If there is any sortition transaction in last block,
 		// we should update last committee
 		if trx.IsSortitionTx() {
@@ -153,7 +149,7 @@ func (li *LastInfo) restoreCommittee(committeeSize int) (committee.Committee, er
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
 		}
-		if b.Header().ProposerAddress().EqualsTo(val.Address()) {
+		if bi.Block.Header().ProposerAddress().EqualsTo(val.Address()) {
 			proposerIndex = i
 		}
 		vals[i] = val

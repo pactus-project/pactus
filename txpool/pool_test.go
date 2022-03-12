@@ -11,7 +11,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -34,7 +33,7 @@ func setup(t *testing.T) {
 	p.SetNewSandboxAndRecheck(tSandbox)
 	tPool = p.(*txPool)
 
-	block88, _ := block.GenerateTestBlock(nil, nil)
+	block88 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(88, block88)
 	tTestTx = tx.NewMintbaseTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
 }
@@ -76,33 +75,11 @@ func TestAppendInvalidTransaction(t *testing.T) {
 	assert.Error(t, tPool.AppendTx(invalidTx))
 }
 
-func TestPending(t *testing.T) {
-	setup(t)
-
-	go func(ch chan message.Message) {
-		for {
-			msg := <-ch
-			fmt.Printf("Received a message: %v\n", msg.Fingerprint())
-			m := msg.(*message.QueryTransactionsMessage)
-			if m.IDs[0].EqualsTo(tTestTx.ID()) {
-				assert.NoError(t, tPool.AppendTx(tTestTx))
-			}
-		}
-	}(tCh)
-
-	assert.Nil(t, tPool.PendingTx(tTestTx.ID()))
-	assert.NotNil(t, tPool.QueryTx(tTestTx.ID()))
-	assert.True(t, tPool.HasTx(tTestTx.ID()))
-
-	invID := hash.GenerateTestHash()
-	assert.Nil(t, tPool.PendingTx(invID))
-}
-
 // TestFullPool tests if the pool prunes the old transactions when it is full
 func TestFullPool(t *testing.T) {
 	setup(t)
 
-	block10000, _ := block.GenerateTestBlock(nil, nil)
+	block10000 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(10000, block10000)
 	trxs := make([]*tx.Tx, tPool.config.sendPoolSize()+1)
 
@@ -121,8 +98,8 @@ func TestFullPool(t *testing.T) {
 		trxs[i] = trx
 	}
 
-	assert.Nil(t, tPool.QueryTx(trxs[0].ID()))
-	assert.NotNil(t, tPool.QueryTx(trxs[1].ID()))
+	assert.False(t, tPool.HasTx(trxs[0].ID()))
+	assert.True(t, tPool.HasTx(trxs[1].ID()))
 	assert.Equal(t, tPool.Size(), tPool.config.sendPoolSize())
 }
 
@@ -135,7 +112,7 @@ func TestEmptyPool(t *testing.T) {
 func TestPrepareBlockTransactions(t *testing.T) {
 	setup(t)
 
-	block1000000, _ := block.GenerateTestBlock(nil, nil)
+	block1000000 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(1000000, block1000000)
 
 	acc1Signer := bls.GenerateTestSigner()
@@ -172,7 +149,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 0, "withdraw-tx")
+	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	tSandbox.AcceptTestSortition = true
@@ -207,8 +184,8 @@ func TestAppendAndBroadcast(t *testing.T) {
 func TestAddSubsidyTransactions(t *testing.T) {
 	setup(t)
 
-	block88, _ := block.GenerateTestBlock(nil, nil)
-	block89, _ := block.GenerateTestBlock(nil, nil)
+	block88 := block.GenerateTestBlock(nil, nil)
+	block89 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(88, block88)
 	proposer1 := crypto.GenerateTestAddress()
 	proposer2 := crypto.GenerateTestAddress()

@@ -5,7 +5,6 @@ import (
 
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/tx"
 )
 
 const LatestBlocksResponseCodeOK = 0
@@ -16,18 +15,16 @@ type BlocksResponseMessage struct {
 	SessionID       int                `cbor:"2,keyasint"`
 	From            int                `cbor:"3,keyasint"`
 	Blocks          []*block.Block     `cbor:"4,keyasint"`
-	Transactions    []*tx.Tx           `cbor:"5,keyasint"`
 	LastCertificate *block.Certificate `cbor:"6,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, sid int, from int,
-	blocks []*block.Block, trxs []*tx.Tx, cert *block.Certificate) *BlocksResponseMessage {
+	blocks []*block.Block, cert *block.Certificate) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
 		ResponseCode:    code,
 		SessionID:       sid,
 		From:            from,
 		Blocks:          blocks,
-		Transactions:    trxs,
 		LastCertificate: cert,
 	}
 }
@@ -37,19 +34,15 @@ func (m *BlocksResponseMessage) SanityCheck() error {
 	}
 	for _, b := range m.Blocks {
 		if err := b.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, "invalid block: %v", err)
+			return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 		}
 	}
 	if m.LastCertificate != nil {
 		if err := m.LastCertificate.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, "invalid certificate: %v", err)
+			return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 		}
 	}
-	for _, trx := range m.Transactions {
-		if err := trx.SanityCheck(); err != nil {
-			return err
-		}
-	}
+
 	return nil
 }
 

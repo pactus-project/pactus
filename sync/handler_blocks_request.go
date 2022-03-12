@@ -23,7 +23,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 
 	if handler.peerSet.NumberOfOpenSessions() > handler.config.MaximumOpenSessions {
 		handler.logger.Warn("we are busy", "msg", msg, "pid", initiator)
-		response := message.NewBlocksResponseMessage(message.ResponseCodeBusy, msg.SessionID, 0, nil, nil, nil)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeBusy, msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 
 		return nil
@@ -31,14 +31,14 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 
 	peer := handler.peerSet.GetPeer(initiator)
 	if !peer.IsKnownOrTrusty() {
-		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil, nil)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 
 		return errors.Errorf(errors.ErrInvalidMessage, "Peer status is %v", peer.Status)
 	}
 
 	if peer.Height > msg.From {
-		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil, nil)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 
 		return errors.Errorf(errors.ErrInvalidMessage, "Peer request for blocks that already has: %v", msg.From)
@@ -47,7 +47,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 	if !handler.config.NodeNetwork {
 		ourHeight := handler.state.LastBlockHeight()
 		if msg.From < ourHeight-LatestBlockInterval {
-			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil, nil)
+			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil)
 			handler.sendTo(response, initiator)
 
 			return errors.Errorf(errors.ErrInvalidMessage, "the request height is not acceptable: %v", msg.From)
@@ -58,12 +58,12 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 
 	// Help peer to catch up
 	for {
-		blocks, trxs := handler.prepareBlocksAndTransactions(height, count)
+		blocks := handler.prepareBlocks(height, count)
 		if len(blocks) == 0 {
 			break
 		}
 
-		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, msg.SessionID, height, blocks, trxs, nil)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, msg.SessionID, height, blocks, nil)
 		handler.sendTo(response, initiator)
 
 		height += len(blocks)
@@ -76,10 +76,10 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 
 	if msg.To >= handler.state.LastBlockHeight() {
 		lastCertificate := handler.state.LastCertificate()
-		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced, msg.SessionID, handler.state.LastBlockHeight(), nil, nil, lastCertificate)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced, msg.SessionID, handler.state.LastBlockHeight(), nil, lastCertificate)
 		handler.sendTo(response, initiator)
 	} else {
-		response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks, msg.SessionID, 0, nil, nil, nil)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks, msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 	}
 

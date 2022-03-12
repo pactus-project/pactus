@@ -21,6 +21,7 @@ type Sandbox interface {
 
 	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
+	BlockHashByStamp(stamp hash.Stamp) hash.Hash
 	BlockHeightByStamp(stamp hash.Stamp) int
 
 	UnbondInterval() int

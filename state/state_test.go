@@ -158,14 +158,14 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	b2, err := tState2.ProposeBlock(0)
 	assert.NoError(t, err)
 	assert.NotNil(t, b2)
-	assert.Equal(t, b2.TxIDs().Len(), 2)
+	assert.Equal(t, b2.Transactions().Len(), 2)
 	require.NoError(t, tState1.ValidateBlock(b2))
 
 	// Propose and validate again
 	b22, err := tState2.ProposeBlock(0)
 	assert.NoError(t, err)
 	assert.NotNil(t, b22)
-	assert.Equal(t, b22.TxIDs().Len(), 2)
+	assert.Equal(t, b22.Transactions().Len(), 2)
 	require.NoError(t, tState1.ValidateBlock(b22))
 }
 
@@ -200,7 +200,7 @@ func TestCommitBlocks(t *testing.T) {
 	setup(t)
 
 	b1, c1 := makeBlockAndCertificate(t, 1, tValSigner1, tValSigner2, tValSigner3)
-	invBlock, _ := block.GenerateTestBlock(nil, nil)
+	invBlock := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, tState1.CommitBlock(1, invBlock, c1))
 	// No error here but block is ignored, because the height is invalid
 	assert.NoError(t, tState1.CommitBlock(2, b1, c1))
@@ -333,14 +333,14 @@ func TestBlockProposal(t *testing.T) {
 		b, err := tState3.ProposeBlock(1)
 		assert.NoError(t, err)
 		assert.NoError(t, tState1.ValidateBlock(b))
-		assert.Equal(t, b.TxIDs().Len(), 1)
+		assert.Equal(t, b.Transactions().Len(), 1)
 	})
 }
 
 func TestInvalidBlock(t *testing.T) {
 	setup(t)
 
-	b, _ := block.GenerateTestBlock(nil, nil)
+	b := block.GenerateTestBlock(nil, nil)
 	assert.Error(t, tState1.ValidateBlock(b))
 }
 
@@ -525,9 +525,9 @@ func TestInvalidBlockTime(t *testing.T) {
 	invalidBlock := block.MakeBlock(
 		validBlock.Header().Version(),
 		validBlock.Header().Time().Add(30*time.Second),
-		validBlock.TxIDs(),
+		validBlock.Transactions(),
 		validBlock.Header().PrevBlockHash(),
-		validBlock.Header().StateHash(),
+		validBlock.Header().StateRoot(),
 		validBlock.PrevCertificate(),
 		validBlock.Header().SortitionSeed(),
 		validBlock.Header().ProposerAddress())

@@ -37,7 +37,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	block500001, _ := block.GenerateTestBlock(nil, nil)
+	block500001 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(500001, block500001)
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
@@ -187,7 +187,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 
 	stamp := tStamp500000
 	for i := 0; i < 8; i = i + 2 {
-		b, _ := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		tSandbox.AddTestBlock(500001+(i/2), b)
 		stamp = b.Stamp()
 

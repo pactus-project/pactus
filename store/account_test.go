@@ -26,6 +26,13 @@ func TestAccountCounter(t *testing.T) {
 		assert.NoError(t, tStore.WriteBatch())
 		assert.Equal(t, tStore.TotalAccounts(), 1)
 	})
+
+	t.Run("Get account", func(t *testing.T) {
+		assert.True(t, tStore.HasAccount(acc.Address()))
+		acc2, err := tStore.Account(acc.Address())
+		assert.NoError(t, err)
+		assert.Equal(t, acc2.Hash(), acc.Hash())
+	})
 }
 
 func TestAccountBatchSaving(t *testing.T) {

@@ -16,23 +16,42 @@ import (
 type ID = hash.Hash
 
 type Tx struct {
-	// TODO: Memorizing ID is thread safe?
-	memorizedID   *ID
+	memorizedID   ID
 	sanityChecked bool
 
 	data txData
 }
 
+func NewTx(stamp hash.Stamp,
+	seq int,
+	pld payload.Payload,
+	fee int64, memo string) *Tx {
+	trx := &Tx{
+		data: txData{
+			Stamp:    stamp,
+			Sequence: seq,
+			Version:  1,
+			Type:     pld.Type(),
+			Payload:  pld,
+			Fee:      fee,
+			Memo:     memo,
+		},
+	}
+
+	trx.memorizedID = trx.calcID()
+	return trx
+}
+
 type txData struct {
-	Version   int              `cbor:"1,keyasint"`
-	Stamp     hash.Stamp       `cbor:"2,keyasint"`
-	Sequence  int              `cbor:"3,keyasint"`
-	Fee       int64            `cbor:"4,keyasint"`
-	Type      payload.Type     `cbor:"5,keyasint"`
-	Payload   payload.Payload  `cbor:"6,keyasint"`
-	Memo      string           `cbor:"7,keyasint,omitempty"`
-	PublicKey crypto.PublicKey `cbor:"20,keyasint,omitempty"`
-	Signature crypto.Signature `cbor:"21,keyasint,omitempty"`
+	Version   int
+	Stamp     hash.Stamp
+	Sequence  int
+	Fee       int64
+	Type      payload.Type
+	Payload   payload.Payload
+	Memo      string
+	PublicKey crypto.PublicKey
+	Signature crypto.Signature
 }
 
 func (tx *Tx) Version() int                { return tx.data.Version }
@@ -137,11 +156,19 @@ type _txData struct {
 	Type      payload.Type `cbor:"5,keyasint"`
 	Payload   []byte       `cbor:"6,keyasint"`
 	Memo      string       `cbor:"7,keyasint,omitempty"`
-	PublicKey []byte       `cbor:"20,keyasint,omitempty"`
-	Signature []byte       `cbor:"21,keyasint,omitempty"`
+	PublicKey []byte       `cbor:"8,keyasint,omitempty"`
+	Signature []byte       `cbor:"9,keyasint,omitempty"`
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
+	return tx.Encode()
+}
+
+func (tx *Tx) UnmarshalCBOR(bs []byte) error {
+	return tx.Decode(bs)
+}
+
+func (tx *Tx) Encode() ([]byte, error) {
 	_data := _txData{
 		Version:  tx.data.Version,
 		Stamp:    tx.data.Stamp,
@@ -167,10 +194,9 @@ func (tx *Tx) MarshalCBOR() ([]byte, error) {
 	}
 
 	return cbor.Marshal(_data)
-
 }
 
-func (tx *Tx) UnmarshalCBOR(bs []byte) error {
+func (tx *Tx) Decode(bs []byte) error {
 	var _data _txData
 	err := cbor.Unmarshal(bs, &_data)
 	if err != nil {
@@ -218,19 +244,16 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		tx.data.Signature = signature
 	}
 
-	return cbor.Unmarshal(_data.Payload, p)
+	if err := cbor.Unmarshal(_data.Payload, p); err != nil {
+		return err
+	}
+
+	tx.memorizedID = tx.calcID()
+	return nil
 }
 
 func (tx *Tx) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tx.data)
-}
-
-func (tx *Tx) Encode() ([]byte, error) {
-	return tx.MarshalCBOR()
-}
-
-func (tx *Tx) Decode(bs []byte) error {
-	return tx.UnmarshalCBOR(bs)
 }
 
 func (tx *Tx) Fingerprint() string {
@@ -244,17 +267,16 @@ func (tx Tx) SignBytes() []byte {
 	tx.data.PublicKey = nil
 	tx.data.Signature = nil
 
-	bz, _ := tx.MarshalCBOR()
+	bz, _ := tx.Encode()
 	return bz
 }
 
-func (tx *Tx) ID() ID {
-	if tx.memorizedID == nil {
-		id := hash.CalcHash(tx.SignBytes())
-		tx.memorizedID = &id
-	}
+func (tx *Tx) calcID() ID {
+	return hash.CalcHash(tx.SignBytes())
+}
 
-	return *tx.memorizedID
+func (tx *Tx) ID() ID {
+	return tx.memorizedID
 }
 
 func (tx *Tx) IsBondTx() bool {

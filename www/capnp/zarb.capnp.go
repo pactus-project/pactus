@@ -65,7 +65,7 @@ func (s Header) SetPrevBlockHash(v []byte) error {
 	return s.Struct.SetData(0, v)
 }
 
-func (s Header) StateHash() ([]byte, error) {
+func (s Header) StateRoot() ([]byte, error) {
 	p, err := s.Struct.Ptr(1)
 	return []byte(p.Data()), err
 }

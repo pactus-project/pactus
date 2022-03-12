@@ -105,7 +105,7 @@ func (p *Proposal) Hash() hash.Hash {
 }
 
 func (p *Proposal) IsForBlock(hash hash.Hash) bool {
-	return p.Block().HashesTo(hash)
+	return p.Block().Hash().EqualsTo(hash)
 }
 
 func (p Proposal) Fingerprint() string {
@@ -118,7 +118,7 @@ func (p Proposal) Fingerprint() string {
 func GenerateTestProposal(height, round int) (*Proposal, crypto.Signer) {
 	signer := bls.GenerateTestSigner()
 	addr := signer.Address()
-	b, _ := block.GenerateTestBlock(&addr, nil)
+	b := block.GenerateTestBlock(&addr, nil)
 	p := NewProposal(height, round, b)
 	signer.SignMsg(p)
 	return p, signer

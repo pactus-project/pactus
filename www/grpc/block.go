@@ -65,7 +65,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 		header = &zarb.BlockHeaderInfo{
 			Version:             int32(block.Header().Version()),
 			PrevBlockHash:       block.Header().PrevBlockHash().String(),
-			StateHash:           block.Header().StateHash().String(),
+			StateHash:           block.Header().StateRoot().String(),
 			TxIdsHash:           block.TxIDs().Hash().String(),
 			PrevCertificateHash: block.Header().PrevCertificateHash().String(),
 			SortitionSeed:       sortitionSeed,

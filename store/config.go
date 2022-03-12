@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	Path string `toml:"" comment:"Path contains database directory. Default is ./store.db"`
+	Path string `toml:"" comment:"Path specifies data directory. Default is ./data"`
 }
 
 func DefaultConfig() *Config {
@@ -21,8 +21,12 @@ func TestConfig() *Config {
 	}
 }
 
+func (conf *Config) DataPath() string {
+	return util.MakeAbs(conf.Path + "/data")
+}
+
 func (conf *Config) StorePath() string {
-	return util.MakeAbs(conf.Path + "/store.db")
+	return conf.DataPath() + "/store.db"
 }
 
 // SanityCheck is a basic checks for config

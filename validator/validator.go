@@ -92,7 +92,6 @@ func (val *Validator) Hash() hash.Hash {
 	return hash.CalcHash(bs)
 }
 
-///----  methods
 func (val Validator) Encode() ([]byte, error) {
 	return cbor.Marshal(val.data)
 }
@@ -103,10 +102,6 @@ func (val *Validator) Decode(bs []byte) error {
 
 func (val Validator) MarshalJSON() ([]byte, error) {
 	return json.Marshal(val.data)
-}
-
-func (val *Validator) UnmarshalJSON(bs []byte) error {
-	return json.Unmarshal(bs, &val.data)
 }
 
 func (val Validator) Fingerprint() string {

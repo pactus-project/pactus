@@ -1,6 +1,7 @@
 package txpool
 
 import (
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
@@ -49,21 +50,22 @@ func (m *MockTxPool) Fingerprint() string {
 	return ""
 }
 
-func (m *MockTxPool) AppendTx(t *tx.Tx) error {
-	m.Txs = append(m.Txs, t)
+func (m *MockTxPool) AppendTx(trx *tx.Tx) error {
+	m.Txs = append(m.Txs, trx)
 	return nil
 }
-func (m *MockTxPool) AppendTxAndBroadcast(t *tx.Tx) error {
-	m.Txs = append(m.Txs, t)
+func (m *MockTxPool) AppendTxAndBroadcast(trx *tx.Tx) error {
+	m.Txs = append(m.Txs, trx)
 	return nil
 }
 
 func (m *MockTxPool) RemoveTx(id hash.Hash) {
-	// This pools is shared between different instances
-	// Lets keep txs then
-	//delete(m.txs, hash)
+	// This test pools is shared between different test objects
+	//delete(m.Txs, id)
 }
 
-func (m *MockTxPool) PrepareBlockTransactions() []*tx.Tx {
-	return m.Txs
+func (m *MockTxPool) PrepareBlockTransactions() block.Txs {
+	txs := make([]*tx.Tx, m.Size())
+	copy(txs, m.Txs)
+	return txs
 }

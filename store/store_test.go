@@ -27,13 +27,10 @@ func setup(t *testing.T) {
 func SaveTestBlocks(t *testing.T, num int) {
 	lastHeight, _ := tStore.LastCertificate()
 	for i := 0; i < num; i++ {
-		b, txs := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
 
 		tStore.SaveBlock(lastHeight+i+1, b, c)
-		for _, tx := range txs {
-			tStore.SaveTransaction(tx)
-		}
 		assert.NoError(t, tStore.WriteBatch())
 	}
 }
@@ -42,17 +39,13 @@ func TestReturnNilForNonExistingItems(t *testing.T) {
 	setup(t)
 
 	lastHeight, _ := tStore.LastCertificate()
-	block, err := tStore.Block(lastHeight + 1)
+
+	assert.Equal(t, tStore.BlockHash(lastHeight+1), hash.UndefHash)
+	assert.Equal(t, tStore.BlockHash(0), hash.UndefHash)
+
+	block, err := tStore.Block(hash.GenerateTestHash())
 	assert.Error(t, err)
 	assert.Nil(t, block)
-
-	block, err = tStore.Block(0)
-	assert.Error(t, err)
-	assert.Nil(t, block)
-
-	height, err := tStore.BlockHeight(hash.GenerateTestHash())
-	assert.Error(t, err)
-	assert.Equal(t, height, -1)
 
 	tx, err := tStore.Transaction(hash.GenerateTestHash())
 	assert.Error(t, err)
@@ -68,31 +61,29 @@ func TestReturnNilForNonExistingItems(t *testing.T) {
 
 	assert.NoError(t, tStore.Close())
 }
-
-func TestRetrieveBlockAndTransactions(t *testing.T) {
+func TestWriteAndClosePeacefully(t *testing.T) {
 	setup(t)
-
-	height, cert := tStore.LastCertificate()
-
-	h2, err := tStore.BlockHeight(cert.BlockHash())
-	assert.NoError(t, err)
-	b2, err := tStore.Block(h2)
-	assert.NoError(t, err)
-	assert.Equal(t, cert.BlockHash(), b2.Hash())
-	assert.Equal(t, height, h2)
-
-	for _, id := range b2.TxIDs().IDs() {
-		trx2, err := tStore.Transaction(id)
-		assert.NoError(t, err)
-
-		assert.Equal(t, id, trx2.ID())
-	}
 
 	// After closing db, we should not crash
 	assert.NoError(t, tStore.Close())
 	assert.Error(t, tStore.WriteBatch())
-	_, err = tStore.Block(h2 + 1)
-	assert.Error(t, err)
+
+}
+func TestRetrieveBlockAndTransactions(t *testing.T) {
+	setup(t)
+
+	height, cert := tStore.LastCertificate()
+	bi, err := tStore.Block(cert.BlockHash())
+	assert.NoError(t, err)
+	assert.Equal(t, cert.BlockHash(), bi.Block.Hash())
+	assert.Equal(t, height, bi.Height)
+
+	for _, trx1 := range bi.Block.Transactions() {
+		trx2, err := tStore.Transaction(trx1.ID())
+		assert.NoError(t, err)
+
+		assert.Equal(t, trx1.ID(), trx2.ID())
+	}
 }
 
 func TestRetrieveAccount(t *testing.T) {
@@ -216,4 +207,49 @@ func TestIterateValidators(t *testing.T) {
 	})
 
 	assert.ElementsMatch(t, vals1, vals2)
+}
+
+func TestBlockHashByStamp(t *testing.T) {
+	setup(t)
+
+	assert.Equal(t, tStore.BlockHashByStamp(hash.UndefHash.Stamp()), hash.UndefHash)
+	assert.Equal(t, tStore.BlockHashByStamp(hash.GenerateTestStamp()), hash.UndefHash)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.GenerateTestStamp()), -1)
+
+	SaveTestBlocks(t, 12)
+	hash1 := tStore.BlockHash(1)
+	hash2 := tStore.BlockHash(2)
+	hash14 := tStore.BlockHash(14)
+	hash22 := tStore.BlockHash(22)
+	assert.Equal(t, tStore.BlockHashByStamp(hash.UndefHash.Stamp()), hash.UndefHash)
+	assert.Equal(t, tStore.BlockHashByStamp(hash1.Stamp()), hash.UndefHash)
+	assert.Equal(t, tStore.BlockHashByStamp(hash2.Stamp()), hash2)
+	assert.Equal(t, tStore.BlockHashByStamp(hash14.Stamp()), hash14)
+	assert.Equal(t, tStore.BlockHashByStamp(hash22.Stamp()), hash22)
+
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), -1)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash1.Stamp()), -1)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash2.Stamp()), 2)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash14.Stamp()), 14)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash22.Stamp()), 22)
+
+	// Reopen the store
+	tStore.Close()
+	s, _ := NewStore(tStore.config, 21)
+	tStore = s.(*store)
+	assert.Equal(t, s.BlockHashByStamp(hash.UndefHash.Stamp()), hash.UndefHash)
+	assert.Equal(t, s.BlockHashByStamp(hash1.Stamp()), hash.UndefHash)
+	assert.Equal(t, s.BlockHashByStamp(hash2.Stamp()), hash2)
+	assert.Equal(t, s.BlockHashByStamp(hash14.Stamp()), hash14)
+	assert.Equal(t, s.BlockHashByStamp(hash22.Stamp()), hash22)
+
+	assert.Equal(t, s.BlockHeightByStamp(hash.UndefHash.Stamp()), -1)
+	assert.Equal(t, s.BlockHeightByStamp(hash1.Stamp()), -1)
+	assert.Equal(t, s.BlockHeightByStamp(hash2.Stamp()), 2)
+	assert.Equal(t, s.BlockHeightByStamp(hash14.Stamp()), 14)
+	assert.Equal(t, s.BlockHeightByStamp(hash22.Stamp()), 22)
+
+	SaveTestBlocks(t, 1)
+	assert.Equal(t, s.BlockHashByStamp(hash2.Stamp()), hash.UndefHash)
 }

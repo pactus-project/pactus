@@ -12,4 +12,6 @@ func TestDefaultConfigCheck(t *testing.T) {
 
 	c.Path = "/tmp/zarb"
 	assert.NoError(t, c.SanityCheck())
+	assert.Equal(t, c.StorePath(), "/tmp/zarb/data/store.db")
+
 }

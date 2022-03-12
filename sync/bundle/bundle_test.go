@@ -10,7 +10,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -33,13 +32,11 @@ func TestInvalidCBOR(t *testing.T) {
 }
 func TestMessageCompress(t *testing.T) {
 	var blocks = []*block.Block{}
-	var trxs = []*tx.Tx{}
 	for i := 0; i < 10; i++ {
-		b, t := block.GenerateTestBlock(nil, nil)
-		trxs = append(trxs, t...)
+		b := block.GenerateTestBlock(nil, nil)
 		blocks = append(blocks, b)
 	}
-	msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, 1234, 888, blocks, trxs, nil)
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, 1234, 888, blocks, nil)
 	bdl := NewBundle(util.RandomPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)

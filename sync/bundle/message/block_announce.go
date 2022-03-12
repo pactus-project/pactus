@@ -26,10 +26,10 @@ func (m *BlockAnnounceMessage) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
 	}
 	if err := m.Block.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid block: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 	if err := m.Certificate.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid certificate: %v", err)
+		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
 	return nil

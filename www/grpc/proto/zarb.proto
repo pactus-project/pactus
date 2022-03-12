@@ -131,8 +131,8 @@ message AccountInfo {
 message BlockHeaderInfo {
   int32 version = 1;
   string prev_block_hash = 2;
-  string state_hash = 3;
-  string tx_ids_hash = 4;
+  string state_root = 3;
+  string transactions_root = 4;
   string prev_certificate_hash = 5;
   bytes sortition_seed = 6;
   string proposer_address = 7;

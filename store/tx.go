@@ -7,6 +7,11 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
+type txPos struct {
+	Height int `cbor:"1,keyasint"`
+	Index  int `cbor:"2,keyasint"`
+}
+
 func txKey(id tx.ID) []byte { return append(txPrefix, id.RawBytes()...) }
 
 type txStore struct {
@@ -19,27 +24,24 @@ func newTxStore(db *leveldb.DB) *txStore {
 	}
 }
 
-func (ts *txStore) saveTx(batch *leveldb.Batch, trx *tx.Tx) {
-	data, err := cbor.Marshal(trx)
+func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, pos *txPos) {
+	data, err := cbor.Marshal(pos)
 	if err != nil {
 		logger.Panic("unable to encode transaction: %v", err)
 	}
-	txKey := txKey(trx.ID())
+	txKey := txKey(id)
 	batch.Put(txKey, data)
 }
 
-func (ts *txStore) tx(id tx.ID) (*tx.Tx, error) {
+func (ts *txStore) tx(id tx.ID) (*txPos, error) {
 	data, err := tryGet(ts.db, txKey(id))
 	if err != nil {
 		return nil, err
 	}
-	trx := new(tx.Tx)
-	err = cbor.Unmarshal(data, trx)
+	pos := new(txPos)
+	err = cbor.Unmarshal(data, pos)
 	if err != nil {
 		return nil, err
 	}
-	if err := trx.SanityCheck(); err != nil {
-		return nil, err
-	}
-	return trx, nil
+	return pos, nil
 }

@@ -417,13 +417,6 @@ func (sync *synchronizer) tryCommitBlocks() {
 		if c == nil {
 			break
 		}
-		for _, id := range b.TxIDs().IDs() {
-			if tx := sync.cache.GetTransaction(id); tx != nil {
-				if err := sync.state.AddPendingTx(tx); err != nil {
-					sync.logger.Trace("error on appending a transaction", "err", err)
-				}
-			}
-		}
 		sync.logger.Trace("committing block", "height", ourHeight+1, "block", b)
 		if err := sync.state.CommitBlock(ourHeight+1, b, c); err != nil {
 			sync.logger.Warn("committing block failed", "block", b, "err", err, "height", ourHeight+1)
@@ -433,12 +426,12 @@ func (sync *synchronizer) tryCommitBlocks() {
 	}
 }
 
-func (sync *synchronizer) prepareBlocksAndTransactions(from, count int) ([]*block.Block, []*tx.Tx) {
+func (sync *synchronizer) prepareBlocks(from, count int) []*block.Block {
 	ourHeight := sync.state.LastBlockHeight()
 
 	if from > ourHeight {
 		sync.logger.Debug("we don't have block at this height", "height", from)
-		return nil, nil
+		return nil
 	}
 
 	if from+count > ourHeight {
@@ -446,28 +439,18 @@ func (sync *synchronizer) prepareBlocksAndTransactions(from, count int) ([]*bloc
 	}
 
 	blocks := make([]*block.Block, 0, count)
-	trxs := make([]*tx.Tx, 0)
 
 	for h := from; h < from+count; h++ {
 		b := sync.cache.GetBlock(h)
 		if b == nil {
 			sync.logger.Warn("unable to find a block", "height", h)
-			return nil, nil
-		}
-		for _, id := range b.TxIDs().IDs() {
-			trx := sync.cache.GetTransaction(id)
-			if trx != nil {
-				trxs = append(trxs, trx)
-			} else {
-				sync.logger.Debug("unable to find a transaction", "id", id.Fingerprint())
-				return nil, nil
-			}
+			return nil
 		}
 
 		blocks = append(blocks, b)
 	}
 
-	return blocks, trxs
+	return blocks
 }
 
 func (sync *synchronizer) prepareTransactions(ids []tx.ID) []*tx.Tx {

@@ -70,10 +70,6 @@ func (acc Account) MarshalJSON() ([]byte, error) {
 	return json.Marshal(acc.data)
 }
 
-func (acc *Account) UnmarshalJSON(bs []byte) error {
-	return json.Unmarshal(bs, &acc.data)
-}
-
 func (acc Account) Fingerprint() string {
 	return fmt.Sprintf("{ %s %d %v}",
 		acc.Address().Fingerprint(),

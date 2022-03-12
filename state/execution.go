@@ -9,44 +9,36 @@ import (
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.Tx, error) {
+func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 	exe := execution.NewExecutor()
 
-	ids := block.TxIDs().IDs()
-	trxs := make([]*tx.Tx, len(ids))
 	var mintbaseTrx *tx.Tx
-	for i := 0; i < len(ids); i++ {
-		trx := st.txPool.QueryTx(ids[i])
-		if trx == nil {
-			return nil, errors.Errorf(errors.ErrInvalidBlock,
-				"transaction not found: %s", ids[i])
-		}
+	for i, trx := range b.Transactions() {
 		// The first transaction should be subsidy transaction
 		IsMintbaseTx := (i == 0)
 		if IsMintbaseTx {
 			if !trx.IsMintbaseTx() {
-				return nil, errors.Errorf(errors.ErrInvalidTx,
+				return errors.Errorf(errors.ErrInvalidTx,
 					"first transaction should be a subsidy transaction")
 			}
 			mintbaseTrx = trx
 		} else {
 			if trx.IsMintbaseTx() {
-				return nil, errors.Errorf(errors.ErrInvalidTx,
+				return errors.Errorf(errors.ErrInvalidTx,
 					"duplicated subsidy transaction")
 			}
 		}
 
 		err := exe.Execute(trx, sb)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		trxs[i] = trx
 	}
 
 	accumulatedFee := exe.AccumulatedFee()
 	subsidyAmt := st.params.BlockReward + exe.AccumulatedFee()
 	if mintbaseTrx.Payload().Value() != subsidyAmt {
-		return nil, errors.Errorf(errors.ErrInvalidTx,
+		return errors.Errorf(errors.ErrInvalidTx,
 			"invalid subsidy amount. Expected %v, got %v", subsidyAmt, mintbaseTrx.Payload().Value())
 	}
 
@@ -55,5 +47,5 @@ func (st *state) executeBlock(block *block.Block, sb sandbox.Sandbox) ([]*tx.Tx,
 	acc.AddToBalance(accumulatedFee)
 	sb.UpdateAccount(acc)
 
-	return trxs, nil
+	return nil
 }

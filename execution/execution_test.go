@@ -33,13 +33,13 @@ func TestExecution(t *testing.T) {
 	tSandbox.UpdateAccount(acc1)
 
 	rcvAddr := crypto.GenerateTestAddress()
-	block1, _ := block.GenerateTestBlock(nil, nil)
-	block2, _ := block.GenerateTestBlock(nil, nil)
-	block3, _ := block.GenerateTestBlock(nil, nil)
-	block8635, _ := block.GenerateTestBlock(nil, nil)
-	block8640, _ := block.GenerateTestBlock(nil, nil)
-	block8641, _ := block.GenerateTestBlock(nil, nil)
-	block8642, _ := block.GenerateTestBlock(nil, nil)
+	block1 := block.GenerateTestBlock(nil, nil)
+	block2 := block.GenerateTestBlock(nil, nil)
+	block3 := block.GenerateTestBlock(nil, nil)
+	block8635 := block.GenerateTestBlock(nil, nil)
+	block8640 := block.GenerateTestBlock(nil, nil)
+	block8641 := block.GenerateTestBlock(nil, nil)
+	block8642 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(1, block1)
 	tSandbox.AddTestBlock(2, block2)
 	tSandbox.AddTestBlock(3, block3)
@@ -133,7 +133,7 @@ func TestChecker(t *testing.T) {
 	checker := NewChecker()
 	tSandbox := sandbox.MockingSandbox()
 
-	block1000, _ := block.GenerateTestBlock(nil, nil)
+	block1000 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(1000, block1000)
 
 	t.Run("Accept bond transaction for future blocks", func(t *testing.T) {

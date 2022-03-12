@@ -15,7 +15,7 @@ func TestBlockAnnounceType(t *testing.T) {
 
 func TestBlockAnnounceMessage(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
-		b, _ := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
 		m := NewBlockAnnounceMessage(-1, b, c)
 
@@ -23,7 +23,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	})
 
 	t.Run("Invalid certificate", func(t *testing.T) {
-		b, _ := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(hash.UndefHash)
 		m := NewBlockAnnounceMessage(100, b, c)
 
@@ -31,7 +31,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		b, _ := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
 		m := NewBlockAnnounceMessage(100, b, c)
 

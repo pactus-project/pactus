@@ -25,7 +25,7 @@ func init() {
 func setup(t *testing.T) {
 	tSandbox = sandbox.MockingSandbox()
 
-	block500000, _ := block.GenerateTestBlock(nil, nil)
+	block500000 := block.GenerateTestBlock(nil, nil)
 	tSandbox.AddTestBlock(500000, block500000)
 
 	tStamp500000 = block500000.Stamp()
