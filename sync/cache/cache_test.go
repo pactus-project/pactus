@@ -8,7 +8,6 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/tx"
 )
 
 var tCache *Cache
@@ -25,20 +24,17 @@ func TestKeys(t *testing.T) {
 	h, _ := hash.FromString("75238478393bfea9e42a59c2cc52876da663ea9acf3873d0a096fd57d61797d4")
 	assert.Equal(t, blockKey(1234), key{0x1, 0, 0, 0, 0, 0, 0, 0x4, 0xd2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
 	assert.Equal(t, certificateKey(h), key{0x2, 0x75, 0x23, 0x84, 0x78, 0x39, 0x3b, 0xfe, 0xa9, 0xe4, 0x2a, 0x59, 0xc2, 0xcc, 0x52, 0x87, 0x6d, 0xa6, 0x63, 0xea, 0x9a, 0xcf, 0x38, 0x73, 0xd0, 0xa0, 0x96, 0xfd, 0x57, 0xd6, 0x17, 0x97})
-	assert.Equal(t, txKey(h), key{0x3, 0x75, 0x23, 0x84, 0x78, 0x39, 0x3b, 0xfe, 0xa9, 0xe4, 0x2a, 0x59, 0xc2, 0xcc, 0x52, 0x87, 0x6d, 0xa6, 0x63, 0xea, 0x9a, 0xcf, 0x38, 0x73, 0xd0, 0xa0, 0x96, 0xfd, 0x57, 0xd6, 0x17, 0x97})
-	assert.Equal(t, proposalKey(1234, 3), key{0x4, 0, 0, 0, 0, 0, 0, 0x4, 0xd2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x3, 0, 0, 0, 0, 0, 0, 0, 0})
+	assert.Equal(t, proposalKey(1234, 3), key{0x3, 0, 0, 0, 0, 0, 0, 0x4, 0xd2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x3, 0, 0, 0, 0, 0, 0, 0, 0})
 }
 
-func TestCacheBlock(t *testing.T) {
+func TestCacheBlocks(t *testing.T) {
 	setup(t)
 
-	b1, _ := block.GenerateTestBlock(nil, nil)
-	b2, _ := block.GenerateTestBlock(nil, nil)
-	b3, _ := block.GenerateTestBlock(nil, nil)
+	b1 := block.GenerateTestBlock(nil, nil)
+	b2 := block.GenerateTestBlock(nil, nil)
+	b3 := block.GenerateTestBlock(nil, nil)
 
 	tState.Store.SaveBlock(1, b1, block.GenerateTestCertificate(b1.Hash()))
-	tCache.AddBlock(2, b2)
-
 	tCache.AddBlocks(2, []*block.Block{b2, b3})
 
 	assert.False(t, tCache.HasBlockInCache(1), "Block 1 is not cached")
@@ -51,43 +47,12 @@ func TestCacheBlock(t *testing.T) {
 	assert.NotNil(t, tCache.GetBlock(3))
 	assert.Nil(t, tCache.GetBlock(4))
 
-	assert.NotNil(t, tCache.GetBlock(1).Hash(), b1.Hash())
-	assert.NotNil(t, tCache.GetBlock(2).Hash(), b2.Hash())
-	assert.NotNil(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash())
-	assert.NotNil(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash())
+	assert.Equal(t, tCache.GetBlock(1).Hash(), b1.Hash())
+	assert.Equal(t, tCache.GetBlock(2).Hash(), b2.Hash())
+	assert.Equal(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash(), b1.PrevCertificate().Hash())
+	assert.Equal(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash(), b2.PrevCertificate().Hash())
+	assert.Nil(t, tCache.GetCertificate(hash.GenerateTestHash()))
 
-}
-
-func TestCacheBlocks(t *testing.T) {
-	setup(t)
-
-	b1, _ := block.GenerateTestBlock(nil, nil)
-	b2, _ := block.GenerateTestBlock(nil, nil)
-
-	tCache.AddBlocks(1, []*block.Block{b1, b2})
-
-	assert.NotNil(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash())
-	assert.NotNil(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash())
-}
-
-func TestGetTransaction(t *testing.T) {
-	setup(t)
-
-	trx1, _ := tx.GenerateTestSendTx()
-	trx2, _ := tx.GenerateTestSendTx()
-	trx3, _ := tx.GenerateTestSendTx()
-	trx4, _ := tx.GenerateTestSendTx()
-
-	tState.Store.SaveTransaction(trx1)
-	assert.NoError(t, tState.AddPendingTx(trx4))
-	tCache.AddTransaction(trx2)
-
-	assert.Equal(t, tCache.GetTransaction(trx1.ID()).ID(), trx1.ID())
-	assert.Equal(t, tCache.GetTransaction(trx2.ID()).ID(), trx2.ID())
-	assert.Equal(t, tCache.GetTransaction(trx4.ID()).ID(), trx4.ID())
-	assert.Nil(t, tCache.GetTransaction(trx3.ID()))
-	assert.NotNil(t, tCache.GetTransaction(trx1.ID()))
-	assert.NotNil(t, tCache.GetTransaction(trx4.ID()))
 }
 
 func TestCacheProposal(t *testing.T) {
@@ -107,12 +72,11 @@ func TestCacheProposal(t *testing.T) {
 func TestClearCache(t *testing.T) {
 	setup(t)
 
-	b, trxs := block.GenerateTestBlock(nil, nil)
+	b := block.GenerateTestBlock(nil, nil)
 
 	tCache.AddBlock(2, b)
-	tCache.AddTransactions(trxs)
 
-	assert.Equal(t, tCache.Len(), 6) // block + certificate + 4 transactions
+	assert.Equal(t, tCache.Len(), 2) // block + certificate
 	tCache.Clear()
 	assert.Equal(t, tCache.Len(), 0)
 	assert.Nil(t, tCache.GetBlock(2))
@@ -123,11 +87,11 @@ func TestCacheIsFull(t *testing.T) {
 
 	i := 0
 	for ; i < 10; i++ {
-		b, _ := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		tCache.AddBlock(i+1, b)
 	}
 
-	newBlock, _ := block.GenerateTestBlock(nil, nil)
+	newBlock := block.GenerateTestBlock(nil, nil)
 	tCache.AddBlock(i+1, newBlock)
 
 	assert.NotNil(t, tCache.GetBlock(i+1))

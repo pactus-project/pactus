@@ -6,15 +6,13 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 const (
 	blockPrefix       = 0x01
 	certificatePrefix = 0x02
-	txPrefix          = 0x03
-	proposalPrefix    = 0x04
+	proposalPrefix    = 0x03
 )
 
 type key [32]byte
@@ -29,12 +27,6 @@ func certificateKey(hash hash.Hash) key {
 	var k key
 	k[0] = certificatePrefix
 	copy(k[1:], hash.RawBytes())
-	return k
-}
-func txKey(id tx.ID) key {
-	var k key
-	k[0] = txPrefix
-	copy(k[1:], id.RawBytes())
 	return k
 }
 func proposalKey(height, round int) key {
@@ -72,10 +64,13 @@ func (c *Cache) GetBlock(height int) *block.Block {
 		return i.(*block.Block)
 	}
 
-	b := c.state.Block(height)
-	if b != nil {
-		c.AddBlock(height, b)
-		return b
+	h := c.state.BlockHash(height)
+	if h != hash.UndefHash {
+		b := c.state.Block(h)
+		if b != nil {
+			c.AddBlock(height, b)
+			return b
+		}
 	}
 
 	return nil
@@ -105,36 +100,6 @@ func (c *Cache) GetCertificate(blockhash hash.Hash) *block.Certificate {
 func (c *Cache) AddCertificate(cert *block.Certificate) {
 	if cert != nil {
 		c.cache.Add(certificateKey(cert.BlockHash()), cert)
-	}
-}
-
-func (c *Cache) GetTransaction(id tx.ID) *tx.Tx {
-	i, ok := c.cache.Get(txKey(id))
-	if ok {
-		return i.(*tx.Tx)
-	}
-
-	pendingTrx := c.state.PendingTx(id)
-	if pendingTrx != nil {
-		c.cache.Add(txKey(id), pendingTrx)
-		return pendingTrx
-	}
-
-	cacheTrx := c.state.Transaction(id)
-	if cacheTrx != nil {
-		c.cache.Add(txKey(id), cacheTrx)
-		return cacheTrx
-	}
-
-	return nil
-}
-func (c *Cache) AddTransaction(trx *tx.Tx) {
-	c.cache.Add(txKey(trx.ID()), trx)
-}
-
-func (c *Cache) AddTransactions(trxs []*tx.Tx) {
-	for _, trx := range trxs {
-		c.AddTransaction(trx)
 	}
 }
 

@@ -155,7 +155,7 @@ func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) *Bloc
 	header := NewHeader(1, util.Now(),
 		txs.Root(),
 		hash.GenerateTestHash(),
-		hash.GenerateTestHash(),
+		*prevBlockHash,
 		cert.Hash(),
 		sortitionSeed,
 		*proposer)
