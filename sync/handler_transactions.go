@@ -20,8 +20,6 @@ func (handler *transactionsHandler) ParsMessage(m message.Message, initiator pee
 	msg := m.(*message.TransactionsMessage)
 	handler.logger.Trace("parsing Transactions message", "msg", msg)
 
-	handler.cache.AddTransactions(msg.Transactions)
-
 	for _, trx := range msg.Transactions {
 		if err := handler.state.AddPendingTx(trx); err != nil {
 			handler.logger.Debug("cannot append transaction", "tx", trx, "err", err)

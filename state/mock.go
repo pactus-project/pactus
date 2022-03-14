@@ -52,6 +52,9 @@ func (m *MockState) GenesisHash() hash.Hash {
 	return m.GenHash
 }
 func (m *MockState) LastBlockHash() hash.Hash {
+	if m.Store.LastCert.Cert == nil {
+		return hash.UndefHash
+	}
 	return m.Store.LastCert.Cert.BlockHash()
 }
 func (m *MockState) LastBlockTime() time.Time {

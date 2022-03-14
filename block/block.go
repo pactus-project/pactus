@@ -19,17 +19,17 @@ type Block struct {
 }
 
 type blockData struct {
-	Header          Header       `cbor:"1,keyasint"`
-	PrevCertificate *Certificate `cbor:"2,keyasint"`
-	Transactions    Txs          `cbor:"3,keyasint"`
+	Header   Header       `cbor:"1,keyasint"`
+	PrevCert *Certificate `cbor:"2,keyasint"`
+	Txs      Txs          `cbor:"3,keyasint"`
 }
 
 func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
 	return &Block{
 		data: blockData{
-			Header:          header,
-			PrevCertificate: prevCert,
-			Transactions:    txs,
+			Header:   header,
+			PrevCert: prevCert,
+			Txs:      txs,
 		},
 	}
 }
@@ -53,8 +53,8 @@ func MakeBlock(version int, timestamp time.Time, txs Txs,
 }
 
 func (b *Block) Header() *Header               { return &b.data.Header }
-func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCertificate }
-func (b *Block) Transactions() Txs             { return b.data.Transactions }
+func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCert }
+func (b *Block) Transactions() Txs             { return b.data.Txs }
 
 func (b *Block) SanityCheck() error {
 	if err := b.Header().SanityCheck(); err != nil {
@@ -63,7 +63,7 @@ func (b *Block) SanityCheck() error {
 	if b.Transactions().Len() == 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "block at least should have one transaction")
 	}
-	if !b.Header().TxsRoot().EqualsTo(b.data.Transactions.Root()) {
+	if !b.Header().TxsRoot().EqualsTo(b.data.Txs.Root()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "transactions root is not matched")
 	}
 	if b.PrevCertificate() != nil {
@@ -102,7 +102,7 @@ func (b *Block) Fingerprint() string {
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
 		b.data.Header.StateRoot().Fingerprint(),
-		b.data.Transactions.Len(),
+		b.data.Txs.Len(),
 	)
 }
 func (b *Block) MarshalCBOR() ([]byte, error) {

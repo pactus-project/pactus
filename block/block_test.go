@@ -18,7 +18,7 @@ func TestSanityCheck(t *testing.T) {
 	assert.NoError(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
-	b.data.Transactions = Txs{}
+	b.data.Txs = Txs{}
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
@@ -51,7 +51,7 @@ func TestSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
-	b.data.PrevCertificate = GenerateTestCertificate(hash.UndefHash)
+	b.data.PrevCert = GenerateTestCertificate(hash.UndefHash)
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
@@ -59,7 +59,7 @@ func TestSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
-	b.data.PrevCertificate = GenerateTestCertificate(hash.GenerateTestHash())
+	b.data.PrevCert = GenerateTestCertificate(hash.GenerateTestHash())
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
@@ -67,12 +67,12 @@ func TestSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
-	b.data.PrevCertificate = nil
+	b.data.PrevCert = nil
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
 	invalidSigner := bls.GenerateTestSigner()
-	invalidSigner.SignMsg(b.data.Transactions[0])
+	invalidSigner.SignMsg(b.data.Txs[0])
 	assert.Error(t, b.SanityCheck())
 }
 

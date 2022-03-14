@@ -25,7 +25,6 @@ func (handler *blocksResponseHandler) ParsMessage(m message.Message, initiator p
 	} else {
 		handler.cache.AddCertificate(msg.LastCertificate)
 		handler.cache.AddBlocks(msg.From, msg.Blocks)
-		handler.cache.AddTransactions(msg.Transactions)
 		handler.tryCommitBlocks()
 	}
 	handler.updateSession(msg.SessionID, initiator, msg.ResponseCode)

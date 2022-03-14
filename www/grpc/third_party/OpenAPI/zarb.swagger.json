@@ -46,7 +46,7 @@
         ]
       }
     },
-    "/api/block/height/{height}": {
+    "/api/block/hash/{hash}": {
       "get": {
         "operationId": "Zarb_GetBlock",
         "responses": {
@@ -65,11 +65,11 @@
         },
         "parameters": [
           {
-            "name": "height",
+            "name": "hash",
             "in": "path",
             "required": true,
             "type": "string",
-            "format": "int64"
+            "format": "byte"
           },
           {
             "name": "verbosity",
@@ -89,14 +89,14 @@
         ]
       }
     },
-    "/api/block_height/{hash}": {
+    "/api/block_hash/{height}": {
       "get": {
-        "operationId": "Zarb_GetBlockHeight",
+        "operationId": "Zarb_GetBlockHash",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbBlockHeightResponse"
+              "$ref": "#/definitions/zarbBlockHashResponse"
             }
           },
           "default": {
@@ -108,10 +108,11 @@
         },
         "parameters": [
           {
-            "name": "hash",
+            "name": "height",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -407,6 +408,15 @@
         }
       }
     },
+    "zarbBlockHashResponse": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
     "zarbBlockHeaderInfo": {
       "type": "object",
       "properties": {
@@ -415,16 +425,20 @@
           "format": "int32"
         },
         "prevBlockHash": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
-        "stateHash": {
-          "type": "string"
+        "prevCertHash": {
+          "type": "string",
+          "format": "byte"
         },
-        "txIdsHash": {
-          "type": "string"
+        "stateRoot": {
+          "type": "string",
+          "format": "byte"
         },
-        "prevCertificateHash": {
-          "type": "string"
+        "txsRoot": {
+          "type": "string",
+          "format": "byte"
         },
         "sortitionSeed": {
           "type": "string",
@@ -435,20 +449,16 @@
         }
       }
     },
-    "zarbBlockHeightResponse": {
+    "zarbBlockResponse": {
       "type": "object",
       "properties": {
         "height": {
           "type": "string",
           "format": "int64"
-        }
-      }
-    },
-    "zarbBlockResponse": {
-      "type": "object",
-      "properties": {
+        },
         "hash": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "blockTime": {
           "type": "string",
@@ -457,10 +467,10 @@
         "header": {
           "$ref": "#/definitions/zarbBlockHeaderInfo"
         },
-        "previousCertificate": {
+        "prevCert": {
           "$ref": "#/definitions/zarbCertificateInfo"
         },
-        "tranactions": {
+        "txs": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/zarbTransactionInfo"

@@ -18,7 +18,6 @@ func TestParsingTransactionsMessages(t *testing.T) {
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, util.RandomPeerID()))
 
-		assert.NotNil(t, tSync.cache.GetTransaction(trx1.ID()))
 		assert.NotNil(t, tSync.state.PendingTx(trx1.ID()))
 	})
 }

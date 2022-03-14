@@ -14,11 +14,7 @@ import (
 func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
 		vars := mux.Vars(r)
-		height, err := strconv.Atoi(vars["height"])
-		if err != nil {
-			return err
-		}
-		p.SetHeight(uint64(height))
+		p.SetHash([]byte(vars["hash"]))
 		p.SetVerbosity(0)
 		return nil
 	}).Result()
@@ -28,7 +24,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, err)
 		return
 	}
-	d, _ := st.Data()
+	d, _ := st.HeaderData()
 	h, _ := st.Hash()
 	b := new(block.Block)
 	if err = b.Decode(d); err != nil {
@@ -46,9 +42,14 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlockHeight(s.ctx, func(p capnp.ZarbServer_getBlockHeight_Params) error {
+	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.ZarbServer_getBlockHash_Params) error {
 		vars := mux.Vars(r)
-		return p.SetHash([]byte(vars["hash"]))
+		height, err := strconv.Atoi(vars["height"])
+		if err != nil {
+			return err
+		}
+		p.SetHeight(uint64(height))
+		return nil
 	})
 
 	st, err := res.Struct()
@@ -57,7 +58,11 @@ func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	height := st.Result()
-
-	s.writePlainText(w, strconv.FormatUint(height, 10))
+	data, _ := st.Result()
+	hash, err := hash.FromRawBytes(data)
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+	s.writePlainText(w, hash.String())
 }

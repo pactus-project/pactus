@@ -18,7 +18,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
 	"github.com/zarbchain/zarb-go/sync/peerset"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -89,7 +88,6 @@ func NewSynchronizer(
 	handlers[message.MessageTypeHeartBeat] = newHeartBeatHandler(sync)
 	handlers[message.MessageTypeQueryVotes] = newQueryVotesHandler(sync)
 	handlers[message.MessageTypeQueryProposal] = newQueryProposalHandler(sync)
-	handlers[message.MessageTypeQueryTransactions] = newQueryTransactionsHandler(sync)
 	handlers[message.MessageTypeBlockAnnounce] = newBlockAnnounceHandler(sync)
 	handlers[message.MessageTypeBlocksRequest] = newBlocksRequestHandler(sync)
 	handlers[message.MessageTypeBlocksResponse] = newBlocksResponseHandler(sync)
@@ -451,20 +449,6 @@ func (sync *synchronizer) prepareBlocks(from, count int) []*block.Block {
 	}
 
 	return blocks
-}
-
-func (sync *synchronizer) prepareTransactions(ids []tx.ID) []*tx.Tx {
-	trxs := make([]*tx.Tx, 0, len(ids))
-
-	for _, id := range ids {
-		trx := sync.cache.GetTransaction(id)
-		if trx == nil {
-			sync.logger.Debug("unable to find a transaction", "id", id.Fingerprint())
-			continue
-		}
-		trxs = append(trxs, trx)
-	}
-	return trxs
 }
 
 func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message.ResponseCode) {
