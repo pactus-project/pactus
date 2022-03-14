@@ -11,13 +11,15 @@ import (
 func TestBlockchainInfo(t *testing.T) {
 	setup(t)
 
+	tMockState.CommitTestBlocks(10)
+
 	w := httptest.NewRecorder()
 	r := new(http.Request)
 
 	tHTTPServer.BlockchainHandler(w, r)
 
 	assert.Equal(t, w.Code, 200)
-	assert.Contains(t, w.Body.String(), "\"Height\": 10")
+	assert.Contains(t, w.Body.String(), "\"LastBlockHeight\": 10")
 }
 
 func TestNetworkInfo(t *testing.T) {

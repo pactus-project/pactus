@@ -16,7 +16,7 @@ func (zs *zarbServer) GetBlockHash(args ZarbServer_getBlockHash) error {
 
 func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	data, _ := args.Params.Hash()
-	h, err := hash.FromString(string(data))
+	h, err := hash.FromRawBytes(data)
 	if err != nil {
 		return err
 	}
@@ -28,8 +28,8 @@ func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 
 	res, _ := args.Results.NewResult()
 	// TODO: Get it from store
-	d, _ := b.Header().Encode()
-	if err := res.SetHeaderData(d); err != nil {
+	d, _ := b.Encode()
+	if err := res.SetData(d); err != nil {
 		return err
 	}
 	// TODO: Set height?? Get it from store

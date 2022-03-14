@@ -126,7 +126,10 @@ func (m *MockState) Transaction(id tx.ID) *tx.Tx {
 }
 func (m *MockState) Block(hash hash.Hash) *block.Block {
 	bi, _ := m.Store.Block(hash)
-	return bi.Block
+	if bi != nil {
+		return bi.Block
+	}
+	return nil
 }
 func (m *MockState) BlockHash(height int) hash.Hash {
 	return m.Store.BlockHash(height)

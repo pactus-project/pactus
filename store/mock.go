@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -15,18 +16,18 @@ var _ Store = &MockStore{}
 
 type MockStore struct {
 	Blocks       map[int]*block.Block
-	Accounts     map[crypto.Address]account.Account
-	Validators   map[crypto.Address]validator.Validator
-	Transactions map[hash.Hash]*tx.Tx
+	Accounts     map[crypto.Address]*account.Account
+	Validators   map[crypto.Address]*validator.Validator
+	Transactions map[tx.ID]*tx.Tx
 	LastCert     lastInfo
 }
 
 func MockingStore() *MockStore {
 	return &MockStore{
 		Blocks:       make(map[int]*block.Block),
-		Accounts:     make(map[crypto.Address]account.Account),
-		Validators:   make(map[crypto.Address]validator.Validator),
-		Transactions: make(map[hash.Hash]*tx.Tx),
+		Accounts:     make(map[crypto.Address]*account.Account),
+		Validators:   make(map[crypto.Address]*validator.Validator),
+		Transactions: make(map[tx.ID]*tx.Tx),
 	}
 }
 func (m *MockStore) Block(hash hash.Hash) (*StoreBlock, error) {
@@ -63,12 +64,12 @@ func (m *MockStore) HasAccount(addr crypto.Address) bool {
 func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 	a, ok := m.Accounts[addr]
 	if ok {
-		return &a, nil
+		return a, nil
 	}
 	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) UpdateAccount(acc *account.Account) {
-	m.Accounts[acc.Address()] = *acc
+	m.Accounts[acc.Address()] = acc
 }
 func (m *MockStore) TotalAccounts() int {
 	return len(m.Accounts)
@@ -80,20 +81,20 @@ func (m *MockStore) HasValidator(addr crypto.Address) bool {
 func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error) {
 	v, ok := m.Validators[addr]
 	if ok {
-		return &v, nil
+		return v, nil
 	}
 	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) ValidatorByNumber(num int) (*validator.Validator, error) {
 	for _, v := range m.Validators {
 		if v.Number() == num {
-			return &v, nil
+			return v, nil
 		}
 	}
 	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) UpdateValidator(val *validator.Validator) {
-	m.Validators[val.Address()] = *val
+	m.Validators[val.Address()] = val
 }
 func (m *MockStore) TotalValidators() int {
 	return len(m.Validators)
@@ -109,7 +110,7 @@ func (m *MockStore) HasAnyBlock() bool {
 func (m *MockStore) IterateAccounts(consumer func(*account.Account) (stop bool)) {
 	for _, a := range m.Accounts {
 		acc := a
-		stopped := consumer(&acc)
+		stopped := consumer(acc)
 		if stopped {
 			return
 		}
@@ -119,7 +120,7 @@ func (m *MockStore) IterateAccounts(consumer func(*account.Account) (stop bool))
 func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	for _, v := range m.Validators {
 		val := v
-		stopped := consumer(&val)
+		stopped := consumer(val)
 		if stopped {
 			return
 		}
@@ -159,7 +160,30 @@ func (m *MockStore) BlockHeightByStamp(stamp hash.Stamp) int {
 
 	return 0
 }
-
 func (m *MockStore) WriteBatch() error {
 	return nil
+}
+
+func (m *MockStore) AddTestValidator() *validator.Validator {
+	val, _ := validator.GenerateTestValidator(util.RandInt(100))
+	m.Validators[val.Address()] = val
+	return val
+}
+
+func (m *MockStore) AddTestAccount() *account.Account {
+	acc, _ := account.GenerateTestAccount(util.RandInt(100))
+	m.Accounts[acc.Address()] = acc
+	return acc
+}
+
+func (m *MockStore) AddTestBlock(height int) *block.Block {
+	b := block.GenerateTestBlock(nil, nil)
+	m.Blocks[height] = b
+	return b
+}
+
+func (m *MockStore) AddTestTransaction() *tx.Tx {
+	tx, _ := tx.GenerateTestSendTx()
+	m.Transactions[tx.ID()] = tx
+	return tx
 }

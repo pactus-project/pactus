@@ -14,7 +14,8 @@ import (
 func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
 		vars := mux.Vars(r)
-		p.SetHash([]byte(vars["hash"]))
+		h, _ := hash.FromString(vars["hash"])
+		p.SetHash(h.RawBytes())
 		p.SetVerbosity(0)
 		return nil
 	}).Result()
@@ -24,7 +25,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, err)
 		return
 	}
-	d, _ := st.HeaderData()
+	d, _ := st.Data()
 	h, _ := st.Hash()
 	b := new(block.Block)
 	if err = b.Decode(d); err != nil {

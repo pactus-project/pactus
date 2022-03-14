@@ -8,22 +8,34 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func TestAccount(t *testing.T) {
 	setup(t)
 
+	acc := tMockState.Store.AddTestAccount()
+
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": tAccTestAddr.String()})
+		r = mux.SetURLVars(r, map[string]string{"address": acc.Address().String()})
 		tHTTPServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return an error", func(t *testing.T) {
+	t.Run("Shall return nil, non exist", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"address": crypto.GenerateTestAddress().String()})
+		tHTTPServer.GetAccountHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
+	})
+
+	t.Run("Shall return an error, invalid address", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": "invalid-address"})
@@ -33,7 +45,7 @@ func TestAccount(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return an error", func(t *testing.T) {
+	t.Run("Shall return an error, empty address", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": ""})
@@ -43,7 +55,7 @@ func TestAccount(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return an error", func(t *testing.T) {
+	t.Run("Shall return an error, no address", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		tHTTPServer.GetAccountHandler(w, r)

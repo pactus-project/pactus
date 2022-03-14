@@ -30,14 +30,15 @@ struct Block {
 }
 
 struct BlockchainResult {
-  height             @0 :Int64;
+  lastBlockHeight     @0 :Int64;
+  lastBlockHash       @1 :Data;
 }
 
 struct BlockResult {
   height              @0 :Data;
   hash                @1 :Data;
   block               @2 :Block;
-  headerData          @3 :Data;
+  data                @3 :Data;
 }
 
 struct TransactionResult {
