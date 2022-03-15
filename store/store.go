@@ -114,7 +114,7 @@ func (s *store) SaveBlock(height int, block *block.Block, cert *block.Certificat
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.blockStore.saveBlock(s.batch, height, block, cert)
+	s.blockStore.saveBlock(s.batch, height, block)
 
 	for index, trx := range block.Transactions() {
 		pos := &txPos{
@@ -140,7 +140,7 @@ func (s *store) SaveBlock(height int, block *block.Block, cert *block.Certificat
 	s.appendStamp(block.Hash(), height)
 }
 
-func (s *store) Block(hash hash.Hash) (*StoreBlock, error) {
+func (s *store) Block(hash hash.Hash) (*StoredBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -174,7 +174,7 @@ func (s *store) Block(hash hash.Hash) (*StoreBlock, error) {
 		return nil, err
 	}
 
-	return &StoreBlock{
+	return &StoredBlock{
 		Block:      b,
 		Height:     bi.Height,
 		HeaderData: bi.HeaderData,

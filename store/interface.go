@@ -16,14 +16,14 @@ import (
 
 // TODO: How to undo or rollback at least for last 21 blocks
 
-type StoreBlock struct {
+type StoredBlock struct {
 	Height     int
 	Block      *block.Block
 	HeaderData []byte
 }
 
 type Reader interface {
-	Block(hash hash.Hash) (*StoreBlock, error)
+	Block(hash hash.Hash) (*StoredBlock, error)
 	BlockHash(height int) hash.Hash
 	BlockHashByStamp(stamp hash.Stamp) hash.Hash // It only remembers most recent stamps
 	BlockHeightByStamp(stamp hash.Stamp) int     // It only remembers most recent stamps

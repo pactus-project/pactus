@@ -30,13 +30,15 @@ func MockingStore() *MockStore {
 		Transactions: make(map[tx.ID]tx.Tx),
 	}
 }
-func (m *MockStore) Block(hash hash.Hash) (*StoreBlock, error) {
+func (m *MockStore) Block(hash hash.Hash) (*StoredBlock, error) {
 	for h, b := range m.Blocks {
 		d, _ := b.Header().Encode()
 		if b.Hash().EqualsTo(hash) {
-			return &StoreBlock{
+			block := new(block.Block)
+			*block = b
+			return &StoredBlock{
 				Height:     h,
-				Block:      &b,
+				Block:      block,
 				HeaderData: d,
 			}, nil
 		}

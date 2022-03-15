@@ -10,8 +10,7 @@ import (
 func (zs *zarbServer) GetBlockHash(args ZarbServer_getBlockHash) error {
 	height := args.Params.Height()
 	hash := zs.state.BlockHash(int(height))
-	args.Results.SetResult(hash.RawBytes())
-	return nil
+	return args.Results.SetResult(hash.RawBytes())
 }
 
 func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {

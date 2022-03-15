@@ -31,7 +31,7 @@ func newBlockStore(db *leveldb.DB) *blockStore {
 	}
 }
 
-func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int, block *block.Block, cert *block.Certificate) {
+func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int, block *block.Block) {
 	if height > 1 {
 		if !bs.hasBlock(height - 1) {
 			logger.Panic("previous block not found: %v", height)

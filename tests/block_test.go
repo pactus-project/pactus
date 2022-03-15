@@ -51,9 +51,8 @@ func getBlockAt(height int) *capnp.BlockResult {
 
 		blockRes := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
 			data, _ := hashRes.Result()
-			p.SetHash(data)
 			p.SetVerbosity(0)
-			return nil
+			return p.SetHash(data)
 		}).Result()
 
 		st, err := blockRes.Struct()

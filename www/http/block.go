@@ -15,9 +15,8 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
 		vars := mux.Vars(r)
 		h, _ := hash.FromString(vars["hash"])
-		p.SetHash(h.RawBytes())
 		p.SetVerbosity(0)
-		return nil
+		return p.SetHash(h.RawBytes())
 	}).Result()
 
 	st, err := res.Struct()
