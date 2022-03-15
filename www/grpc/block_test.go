@@ -46,7 +46,7 @@ func TestGetBlock(t *testing.T) {
 		assert.NotEmpty(t, res.Txs)
 	})
 
-	conn.Close()
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
 func TestGetBlockHash(t *testing.T) {
@@ -72,5 +72,5 @@ func TestGetBlockHash(t *testing.T) {
 		assert.Equal(t, b.Hash().RawBytes(), res.Hash)
 	})
 
-	conn.Close()
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }

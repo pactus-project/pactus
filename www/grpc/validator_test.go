@@ -41,8 +41,7 @@ func TestGetValidator(t *testing.T) {
 		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
 	})
 
-	err := conn.Close()
-	assert.Nil(t, err, "Error closing connection")
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
 func TestGetValidatorByNumber(t *testing.T) {
@@ -84,8 +83,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	})
 
-	err := conn.Close()
-	assert.Nil(t, err, "Error closing connection")
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
 func TestGetValidators(t *testing.T) {
@@ -98,6 +96,5 @@ func TestGetValidators(t *testing.T) {
 		assert.Equal(t, 21, len(res.GetValidators()))
 	})
 
-	err := conn.Close()
-	assert.Nil(t, err, "Error closing connection")
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }

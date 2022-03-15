@@ -39,6 +39,5 @@ func TestGetAccount(t *testing.T) {
 		assert.Equal(t, int(res.Account.Number), acc.Number())
 		assert.Equal(t, int(res.Account.Sequence), acc.Sequence())
 	})
-	conn.Close()
-
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }

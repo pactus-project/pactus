@@ -44,7 +44,7 @@ func TestGetTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-	conn.Close()
+	assert.Nil(t, conn.Close(), "Error closing connection")
 
 }
 
@@ -82,5 +82,5 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-	assert.NoError(t, conn.Close())
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }
