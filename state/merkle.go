@@ -1,8 +1,6 @@
 package state
 
 import (
-	"fmt"
-
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
@@ -21,7 +19,6 @@ func (st *state) accountsMerkleRoot() hash.Hash {
 			panic("Duplicated account number")
 		}
 		hashes[acc.Number()] = acc.Hash()
-		fmt.Printf("%v\n", acc)
 
 		return false
 	})
@@ -53,7 +50,6 @@ func (st *state) stateRoot() hash.Hash {
 	valRoot := st.validatorsMerkleRoot()
 
 	stateRoot := simplemerkle.HashMerkleBranches(&accRoot, &valRoot)
-	fmt.Printf("%x %x %x\n", accRoot.RawBytes(), valRoot.RawBytes(), stateRoot.RawBytes())
 	return *stateRoot
 }
 
