@@ -174,19 +174,22 @@ func (m *MockStore) WriteBatch() error {
 
 func (m *MockStore) AddTestValidator() *validator.Validator {
 	val, _ := validator.GenerateTestValidator(util.RandInt(100))
-	m.Validators[val.Address()] = *val
+	val.SubtractFromStake(val.Stake())
+	m.UpdateValidator(val)
 	return val
 }
 
 func (m *MockStore) AddTestAccount() *account.Account {
 	acc, _ := account.GenerateTestAccount(util.RandInt(100))
-	m.Accounts[acc.Address()] = *acc
+	acc.SubtractFromBalance(acc.Balance())
+	m.UpdateAccount(acc)
 	return acc
 }
 
 func (m *MockStore) AddTestBlock(height int) *block.Block {
 	b := block.GenerateTestBlock(nil, nil)
-	m.Blocks[height] = *b
+	cert := block.GenerateTestCertificate(b.Hash())
+	m.SaveBlock(height, b, cert)
 	return b
 }
 
@@ -194,4 +197,17 @@ func (m *MockStore) AddTestTransaction() *tx.Tx {
 	tx, _ := tx.GenerateTestSendTx()
 	m.Transactions[tx.ID()] = *tx
 	return tx
+}
+func (m *MockStore) RandomTestAcc() *account.Account {
+	for _, acc := range m.Accounts {
+		return &acc
+	}
+	panic("no account in sandbox")
+}
+
+func (m *MockStore) RandomTestVal() *validator.Validator {
+	for _, val := range m.Validators {
+		return &val
+	}
+	panic("no validator in sandbox")
 }

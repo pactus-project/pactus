@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/logger"
@@ -33,8 +32,7 @@ func setup(t *testing.T) {
 	p.SetNewSandboxAndRecheck(tSandbox)
 	tPool = p.(*txPool)
 
-	block88 := block.GenerateTestBlock(nil, nil)
-	tSandbox.AddTestBlock(88, block88)
+	block88 := tSandbox.TestStore.AddTestBlock(88)
 	tTestTx = tx.NewMintbaseTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
 }
 
@@ -79,20 +77,19 @@ func TestAppendInvalidTransaction(t *testing.T) {
 func TestFullPool(t *testing.T) {
 	setup(t)
 
-	block10000 := block.GenerateTestBlock(nil, nil)
-	tSandbox.AddTestBlock(10000, block10000)
+	block10000 := tSandbox.TestStore.AddTestBlock(10000)
 	trxs := make([]*tx.Tx, tPool.config.sendPoolSize()+1)
 
 	signer := bls.GenerateTestSigner()
-	acc1 := account.NewAccount(signer.Address(), 0)
-	acc1.AddToBalance(10000000000)
-	tSandbox.UpdateAccount(acc1)
+	acc := account.NewAccount(signer.Address(), 0)
+	acc.AddToBalance(10000000000)
+	tSandbox.UpdateAccount(acc)
 
 	// Make sure the pool is empty
 	assert.Equal(t, tPool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewSendTx(block10000.Stamp(), acc1.Sequence()+1, signer.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
+		trx := tx.NewSendTx(block10000.Stamp(), acc.Sequence()+i+1, acc.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
 		trxs[i] = trx
@@ -112,8 +109,7 @@ func TestEmptyPool(t *testing.T) {
 func TestPrepareBlockTransactions(t *testing.T) {
 	setup(t)
 
-	block1000000 := block.GenerateTestBlock(nil, nil)
-	tSandbox.AddTestBlock(1000000, block1000000)
+	block1000000 := tSandbox.TestStore.AddTestBlock(1000000)
 
 	acc1Signer := bls.GenerateTestSigner()
 	acc1 := account.NewAccount(acc1Signer.Address(), 0)
@@ -184,9 +180,7 @@ func TestAppendAndBroadcast(t *testing.T) {
 func TestAddSubsidyTransactions(t *testing.T) {
 	setup(t)
 
-	block88 := block.GenerateTestBlock(nil, nil)
-	block89 := block.GenerateTestBlock(nil, nil)
-	tSandbox.AddTestBlock(88, block88)
+	block88 := tSandbox.TestStore.AddTestBlock(88)
 	proposer1 := crypto.GenerateTestAddress()
 	proposer2 := crypto.GenerateTestAddress()
 	trx1 := tx.NewMintbaseTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
@@ -197,7 +191,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	assert.NoError(t, tPool.AppendTx(trx2))
 	assert.NoError(t, tPool.AppendTx(trx3))
 
-	tSandbox.AddTestBlock(89, block89)
+	tSandbox.TestStore.AddTestBlock(89)
 
 	tPool.SetNewSandboxAndRecheck(sandbox.MockingSandbox())
 	assert.Zero(t, tPool.Size())

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/tx"
@@ -18,8 +17,8 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	addr := crypto.GenerateTestAddress()
 	pub, _ := bls.GenerateTestKeyPair()
 	val := tSandbox.MakeNewValidator(pub)
-	acc := tSandbox.RandomTestAcc()
-	amt, _ := randomAmountandFee(acc.Balance())
+	acc := tSandbox.TestStore.RandomTestAcc()
+	amt, _ := randomAmountAndFee(acc.Balance())
 	val.AddToStake(amt)
 	acc.SubtractFromBalance(amt)
 	tSandbox.UpdateAccount(acc)
@@ -48,8 +47,8 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	val.UpdateUnbondingHeight(tSandbox.CurHeight - tSandbox.UnbondInterval() + 1)
-
+	val.UpdateUnbondingHeight(tSandbox.CurrentHeight() - tSandbox.UnbondInterval() + 1)
+	tSandbox.UpdateValidator(val)
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.NotZero(t, val.UnbondingHeight())
 
@@ -57,8 +56,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	block500001 := block.GenerateTestBlock(nil, nil)
-	tSandbox.AddTestBlock(500001, block500001)
+	tSandbox.TestStore.AddTestBlock(500001)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, "should be able to empty stake")

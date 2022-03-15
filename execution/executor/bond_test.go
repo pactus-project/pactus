@@ -12,10 +12,10 @@ func TestExecuteBondTx(t *testing.T) {
 	setup(t)
 	exe := NewBondExecutor(true)
 
-	sender := tSandbox.RandomTestAcc()
+	sender := tSandbox.TestStore.RandomTestAcc()
 	senderBalance := sender.Balance()
 	pub, _ := bls.GenerateTestKeyPair()
-	fee, amt := randomAmountandFee(senderBalance)
+	fee, amt := randomAmountAndFee(senderBalance)
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, 1, pub.Address(), pub, amt, fee, "invalid sender")
@@ -52,7 +52,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Unbonded before", func(t *testing.T) {
 		val := tSandbox.Validator(pub.Address())
-		val.UpdateUnbondingHeight(tSandbox.CurHeight)
+		val.UpdateUnbondingHeight(tSandbox.CurrentHeight())
 		tSandbox.UpdateValidator(val)
 
 		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), val.PublicKey(), amt, fee, "unbonded before")
@@ -60,9 +60,9 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Equal(t, sender.Balance(), senderBalance-(amt+fee))
+	assert.Equal(t, tSandbox.Account(sender.Address()).Balance(), senderBalance-(amt+fee))
 	assert.Equal(t, tSandbox.Validator(pub.Address()).Stake(), amt)
-	assert.Equal(t, tSandbox.Validator(pub.Address()).LastBondingHeight(), tSandbox.CurHeight)
+	assert.Equal(t, tSandbox.Validator(pub.Address()).LastBondingHeight(), tSandbox.CurrentHeight())
 	assert.Equal(t, exe.Fee(), fee)
 
 	checkTotalCoin(t, fee)
@@ -72,7 +72,7 @@ func TestBondNonStrictMode(t *testing.T) {
 	setup(t)
 	exe1 := NewBondExecutor(true)
 	exe2 := NewBondExecutor(false)
-	sender := tSandbox.RandomTestAcc()
+	sender := tSandbox.TestStore.RandomTestAcc()
 
 	pub := tSandbox.Committee().Proposer(0).PublicKey()
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, 1000, 1000, "")
@@ -84,13 +84,13 @@ func TestBondNonStrictMode(t *testing.T) {
 func TestBondJoiningCommittee(t *testing.T) {
 	setup(t)
 	exe := NewBondExecutor(true)
-	sender := tSandbox.RandomTestAcc()
+	sender := tSandbox.TestStore.RandomTestAcc()
 	senderBalance := sender.Balance()
 	pub, _ := bls.GenerateTestKeyPair()
-	fee, amt := randomAmountandFee(senderBalance)
+	fee, amt := randomAmountAndFee(senderBalance)
 
 	val := tSandbox.MakeNewValidator(pub)
-	val.UpdateLastJoinedHeight(tSandbox.CurHeight)
+	val.UpdateLastJoinedHeight(tSandbox.CurrentHeight())
 	tSandbox.UpdateValidator(val)
 
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, amt, fee, "joining committee")
