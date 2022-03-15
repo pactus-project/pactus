@@ -209,27 +209,27 @@ func TestBlockValidation(t *testing.T) {
 	txs := block.NewTxs()
 	txs.Append(trx)
 
-	b := block.MakeBlock(2, util.Now(), txs, invHash, tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
+	b := block.MakeBlock(2, util.Now(), txs, invHash, tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
 	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), invHash, tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateHash(), invCert, tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), invCert, tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
 	assert.Error(t, tState1.validateBlock(b))
 
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), invAddr)
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), invAddr)
 	assert.NoError(t, tState1.validateBlock(b))
 	c := makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), invSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), invSeed, tState2.signer.Address())
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 
 	seed := tState1.lastInfo.SortitionSeed()
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), seed.Generate(tState2.signer), tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), seed.Generate(tState2.signer), tState2.signer.Address())
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	assert.NoError(t, tState1.CommitBlock(2, b, c))

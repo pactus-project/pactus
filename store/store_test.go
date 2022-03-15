@@ -228,7 +228,7 @@ func TestBlockHashByStamp(t *testing.T) {
 	assert.Equal(t, tStore.BlockHashByStamp(hash14.Stamp()), hash14)
 	assert.Equal(t, tStore.BlockHashByStamp(hash22.Stamp()), hash22)
 
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), -1)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
 	assert.Equal(t, tStore.BlockHeightByStamp(hash1.Stamp()), -1)
 	assert.Equal(t, tStore.BlockHeightByStamp(hash2.Stamp()), 2)
 	assert.Equal(t, tStore.BlockHeightByStamp(hash14.Stamp()), 14)
@@ -244,7 +244,7 @@ func TestBlockHashByStamp(t *testing.T) {
 	assert.Equal(t, s.BlockHashByStamp(hash14.Stamp()), hash14)
 	assert.Equal(t, s.BlockHashByStamp(hash22.Stamp()), hash22)
 
-	assert.Equal(t, s.BlockHeightByStamp(hash.UndefHash.Stamp()), -1)
+	assert.Equal(t, s.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
 	assert.Equal(t, s.BlockHeightByStamp(hash1.Stamp()), -1)
 	assert.Equal(t, s.BlockHeightByStamp(hash2.Stamp()), 2)
 	assert.Equal(t, s.BlockHeightByStamp(hash14.Stamp()), 14)

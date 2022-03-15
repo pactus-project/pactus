@@ -105,7 +105,7 @@ func TestRestoreFailed(t *testing.T) {
 
 		li := NewLastInfo(tStore)
 
-		tStore.Validators = make(map[crypto.Address]*validator.Validator) // Reset Validators
+		tStore.Validators = make(map[crypto.Address]validator.Validator) // Reset Validators
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})
@@ -115,7 +115,7 @@ func TestRestoreFailed(t *testing.T) {
 
 		li := NewLastInfo(tStore)
 
-		tStore.Blocks = make(map[int]*block.Block) // Reset Blocks
+		tStore.Blocks = make(map[int]block.Block) // Reset Blocks
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})

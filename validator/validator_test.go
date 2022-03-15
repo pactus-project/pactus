@@ -35,10 +35,6 @@ func TestMarshaling(t *testing.T) {
 	js, err := json.Marshal(val1)
 	require.NoError(t, err)
 	fmt.Println(string(js))
-	val4 := new(Validator)
-	require.NoError(t, json.Unmarshal(js, val4))
-
-	assert.Equal(t, val3, val4)
 
 	/// should fail
 	val5 := new(Validator)

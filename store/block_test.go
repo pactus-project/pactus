@@ -62,6 +62,6 @@ func TestBlockHeightByStamp(t *testing.T) {
 
 	SaveTestBlocks(t, 11)
 	_, cert := tStore.LastCertificate()
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), -1)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
 	assert.Equal(t, tStore.BlockHeightByStamp(cert.BlockHash().Stamp()), 21)
 }

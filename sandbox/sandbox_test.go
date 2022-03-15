@@ -254,7 +254,7 @@ func TestDeepCopy(t *testing.T) {
 func TestBlockHeightByStamp(t *testing.T) {
 	setup(t)
 
-	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.GenerateTestStamp()), -1)
+	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.GenerateTestStamp()), 0)
 
 	height, cert := tStore.LastCertificate()
 	assert.Equal(t, tSandbox.BlockHeightByStamp(cert.BlockHash().Stamp()), height)

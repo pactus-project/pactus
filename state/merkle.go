@@ -1,13 +1,15 @@
 package state
 
 import (
+	"fmt"
+
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func (st *state) accountsMerkleRootHash() hash.Hash {
+func (st *state) accountsMerkleRoot() hash.Hash {
 	total := st.store.TotalAccounts()
 
 	hashes := make([]hash.Hash, total)
@@ -19,6 +21,7 @@ func (st *state) accountsMerkleRootHash() hash.Hash {
 			panic("Duplicated account number")
 		}
 		hashes[acc.Number()] = acc.Hash()
+		fmt.Printf("%v\n", acc)
 
 		return false
 	})
@@ -27,7 +30,7 @@ func (st *state) accountsMerkleRootHash() hash.Hash {
 	return tree.Root()
 }
 
-func (st *state) validatorsMerkleRootHash() hash.Hash {
+func (st *state) validatorsMerkleRoot() hash.Hash {
 	total := st.store.TotalValidators()
 	hashes := make([]hash.Hash, total)
 	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
@@ -45,13 +48,13 @@ func (st *state) validatorsMerkleRootHash() hash.Hash {
 	return tree.Root()
 }
 
-func (st *state) stateHash() hash.Hash {
-	accRootHash := st.accountsMerkleRootHash()
-	valRootHash := st.validatorsMerkleRootHash()
+func (st *state) stateRoot() hash.Hash {
+	accRoot := st.accountsMerkleRoot()
+	valRoot := st.validatorsMerkleRoot()
 
-	rootHash := simplemerkle.HashMerkleBranches(&accRootHash, &valRootHash)
-
-	return *rootHash
+	stateRoot := simplemerkle.HashMerkleBranches(&accRoot, &valRoot)
+	fmt.Printf("%x %x %x\n", accRoot.RawBytes(), valRoot.RawBytes(), stateRoot.RawBytes())
+	return *stateRoot
 }
 
 func (st *state) calculateGenesisStateHashFromGenesisDoc() hash.Hash {

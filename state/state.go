@@ -263,20 +263,16 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
 	txs.Prepend(subsidyTx)
-
-	stateHash := st.stateHash()
-	timestamp := st.proposeNextBlockTime()
 	seed := st.lastInfo.SortitionSeed()
-	newSortitionSeed := seed.Generate(st.signer)
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
-		timestamp,
+		st.proposeNextBlockTime(),
 		txs,
 		st.lastInfo.BlockHash(),
-		stateHash,
+		st.stateRoot(),
 		st.lastInfo.Certificate(),
-		newSortitionSeed,
+		seed.Generate(st.signer),
 		st.signer.Address())
 
 	return block, nil
@@ -544,6 +540,7 @@ func (st *state) Block(hash hash.Hash) *block.Block {
 	b, err := st.store.Block(hash)
 	if err != nil {
 		st.logger.Trace("error on retrieving block", "err", err)
+		return nil
 	}
 	return b.Block
 }

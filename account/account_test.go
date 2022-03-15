@@ -35,10 +35,6 @@ func TestMarshaling(t *testing.T) {
 	js, err := json.Marshal(acc1)
 	require.NoError(t, err)
 	fmt.Println(string(js))
-	acc4 := new(Account)
-	require.NoError(t, json.Unmarshal(js, acc4))
-
-	assert.Equal(t, acc3, acc4)
 
 	/// should fail
 	acc5 := new(Account)

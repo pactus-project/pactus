@@ -88,9 +88,6 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 
 	lastHeight, _ := s.LastCertificate()
 
-	// Add genesis block stamp
-	s.appendStamp(hash.UndefHash, 0)
-
 	for height := lastHeight - stampLookupCapacity; height <= lastHeight; height++ {
 		if height > 0 {
 			hash := s.BlockHash(height)
@@ -195,6 +192,10 @@ func (s *store) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
+	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
+		return hash.UndefHash
+	}
+
 	v, ok := s.stampLookup.Get(stamp)
 	if ok {
 		return v.(*hashPair).Hash
@@ -204,6 +205,10 @@ func (s *store) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
 func (s *store) BlockHeightByStamp(stamp hash.Stamp) int {
 	s.lk.Lock()
 	defer s.lk.Unlock()
+
+	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
+		return 0
+	}
 
 	v, ok := s.stampLookup.Get(stamp)
 	if ok {

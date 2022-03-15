@@ -1,6 +1,8 @@
 package executor
 
 import (
+	"fmt"
+
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sandbox"
@@ -56,6 +58,7 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	senderAcc.IncSequence()
 	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
 	receiverAcc.AddToBalance(pld.Amount)
+	fmt.Printf("amt: %v , %v\n", pld.Amount, trx.Fee())
 
 	sb.UpdateAccount(senderAcc)
 	sb.UpdateAccount(receiverAcc)
