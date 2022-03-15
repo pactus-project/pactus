@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/validator"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
@@ -12,18 +13,11 @@ import (
 func TestGetValidator(t *testing.T) {
 	conn, client := callServer(t)
 
-	pub1, _ := bls.GenerateTestKeyPair()
-	pub2, _ := bls.GenerateTestKeyPair()
-	pub3, _ := bls.GenerateTestKeyPair()
-
-	val1 := validator.NewValidator(pub1, 0)
-	val2 := validator.NewValidator(pub2, 1)
-	tMockState.Store.UpdateValidator(val1)
-	tMockState.Store.UpdateValidator(val2)
+	val1 := tMockState.Store.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: "Non existence address",
+			Address: nil,
 		})
 		assert.Error(t, err, "Error should be returned")
 		assert.Nil(t, res, "Response should be empty")
@@ -31,7 +25,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: pub3.Address().String(),
+			Address: crypto.GenerateTestAddress().RawBytes(),
 		})
 
 		assert.Error(t, err)
@@ -39,10 +33,12 @@ func TestGetValidator(t *testing.T) {
 	})
 
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
-		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{Address: pub1.Address().String()})
+		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
+			Address: val1.Address().RawBytes(),
+		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
 	})
 
 	err := conn.Close()
@@ -83,7 +79,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
 		assert.Equal(t, int32(val1.Number()), res.GetValidator().GetNumber())
 
 	})

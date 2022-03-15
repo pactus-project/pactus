@@ -11,72 +11,65 @@ import (
 func TestGetBlock(t *testing.T) {
 	conn, client := callServer(t)
 
-	tMockState.CommitTestBlocks(10)
+	b := tMockState.Store.AddTestBlock(100)
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1000, Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: hash.GenerateTestHash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return an existing block hash", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 5, Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		h, err := hash.FromString(res.Hash)
-		assert.NoError(t, err)
-		assert.NoError(t, h.SanityCheck())
+		//assert.Equal(t, res.Height, 100)
 		assert.Empty(t, res.Header)
-		assert.Empty(t, res.Tranactions)
+		assert.Empty(t, res.Txs)
 	})
 
 	t.Run("Should return json object with verbosity 1 ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		h, err := hash.FromString(res.Hash)
-		assert.NoError(t, err)
-		assert.NoError(t, h.SanityCheck())
+		//assert.Equal(t, res.Height, 100)
 		assert.NotEmpty(t, res.Header)
-		assert.Empty(t, res.Tranactions)
+		assert.Empty(t, res.Txs)
 	})
 
 	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Height: 1, Verbosity: zarb.BlockVerbosity_BLOCK_TRANSACTIONS})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_TRANSACTIONS})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		h, err := hash.FromString(res.Hash)
-		assert.NoError(t, err)
-		assert.NoError(t, h.SanityCheck())
+		//assert.Equal(t, res.Height, 100)
 		assert.NotEmpty(t, res.Header)
-		assert.NotEmpty(t, res.Tranactions)
+		assert.NotEmpty(t, res.Txs)
 	})
 
 	conn.Close()
 }
 
-func TestGetBlockHieght(t *testing.T) {
+func TestGetBlockHash(t *testing.T) {
 	conn, client := callServer(t)
 
-	t.Run("Should return InvalidArgument for invalid hash", func(t *testing.T) {
-		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: "NOt A  valid has"})
+	b := tMockState.Store.AddTestBlock(100)
+
+	t.Run("Should return error for invalid height", func(t *testing.T) {
+		res, err := client.GetBlockHash(tCtx, &zarb.BlockHashRequest{Height: -1})
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "Hash provided is not Valid")
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return NotFound for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: hash.GenerateTestHash().String()})
+	t.Run("Should return error for non existing block ", func(t *testing.T) {
+		res, err := client.GetBlockHash(tCtx, &zarb.BlockHashRequest{Height: 101})
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "No block found with the Hash provided")
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
-		b5, _ := tMockState.Store.Block(5)
-		res, err := client.GetBlockHeight(tCtx, &zarb.BlockHeightRequest{Hash: b5.Hash().String()})
+		res, err := client.GetBlockHash(tCtx, &zarb.BlockHashRequest{Height: 100})
 		assert.NoError(t, err)
-		assert.Equal(t, int64(5), res.Height)
+		assert.Equal(t, b.Hash().RawBytes(), res.Hash)
 	})
 
 	conn.Close()

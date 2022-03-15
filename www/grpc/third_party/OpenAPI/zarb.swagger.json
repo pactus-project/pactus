@@ -38,7 +38,8 @@
             "name": "address",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         ],
         "tags": [
@@ -246,7 +247,8 @@
             "name": "address",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         ],
         "tags": [
@@ -384,7 +386,8 @@
       "type": "object",
       "properties": {
         "address": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "number": {
           "type": "integer",
@@ -490,12 +493,13 @@
     "zarbBlockchainInfoResponse": {
       "type": "object",
       "properties": {
-        "height": {
+        "lastBlockHeight": {
           "type": "string",
           "format": "int64"
         },
         "lastBlockHash": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -529,7 +533,8 @@
       "type": "object",
       "properties": {
         "selfId": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "peers": {
           "type": "array",
@@ -564,7 +569,8 @@
           "format": "byte"
         },
         "publicKey": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "flags": {
           "type": "integer",
@@ -652,7 +658,8 @@
       "type": "object",
       "properties": {
         "publicKey": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "number": {
           "type": "integer",
@@ -679,7 +686,8 @@
           "format": "int32"
         },
         "address": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       },
       "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"

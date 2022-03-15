@@ -77,11 +77,12 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	//populate BLOCK_TRANSACTIONS
 	if request.Verbosity.Number() > 1 {
 		for _, trx := range block.Transactions() {
-			tranactions = append(tranactions, zs.encodeTransaction(trx))
+			tranactions = append(tranactions, transactionToProto(trx))
 		}
 	}
 
 	res := &zarb.BlockResponse{
+		// Height: , // TODO: fix me
 		Hash:      hash.RawBytes(),
 		BlockTime: timestamp,
 		Header:    header,

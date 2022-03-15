@@ -24,7 +24,7 @@ func GetStamp(rpcEndpoint string) (hash.Stamp, error) {
 	if err != nil {
 		return hash.Stamp{}, err
 	}
-	return hash.StampFromString(info.LastBlockHash)
+	return hash.StampFromString(string(info.LastBlockHash))
 }
 
 func GetSequence(rpcEndpoint string, addr crypto.Address) (int, error) {
@@ -33,7 +33,7 @@ func GetSequence(rpcEndpoint string, addr crypto.Address) (int, error) {
 		return 0, err
 	}
 
-	acc, err := client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.String()})
+	acc, err := client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.RawBytes()})
 	if err != nil {
 		return 0, err
 	}

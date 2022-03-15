@@ -13,9 +13,8 @@ import (
 
 func TestGetTransaction(t *testing.T) {
 	conn, client := callServer(t)
-	tx1, _ := tx.GenerateTestSendTx()
 
-	tMockState.Store.SaveTransaction(tx1)
+	tx1 := tMockState.Store.AddTestTransaction()
 
 	t.Run("Should return transaction", func(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &zarb.TransactionRequest{Id: tx1.ID().String()})

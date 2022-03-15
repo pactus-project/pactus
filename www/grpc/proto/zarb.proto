@@ -44,13 +44,13 @@ service Zarb {
   };
 }
 
-message AccountRequest { string address = 1; }
+message AccountRequest { bytes address = 1; }
 
 message AccountResponse { AccountInfo account = 1; }
 
 message ValidatorsRequest {}
 
-message ValidatorRequest { string address = 1; }
+message ValidatorRequest { bytes address = 1; }
 message ValidatorByNumberRequest { int32 number = 1; }
 
 message ValidatorsResponse { repeated ValidatorInfo validators = 1; }
@@ -78,14 +78,14 @@ message BlockHashResponse { bytes hash = 1; }
 message BlockchainInfoRequest {}
 
 message BlockchainInfoResponse {
-  int64 height = 1;
-  string last_block_hash = 2;
+  int64 last_block_height = 1;
+  bytes last_block_hash = 2;
 }
 
 message NetworkInfoRequest {}
 
 message NetworkInfoResponse {
-  string self_id = 1;
+  bytes self_id = 1;
   repeated PeerInfo peers = 2;
 }
 
@@ -100,21 +100,21 @@ message SendRawTransactionResponse { string id = 2; }
 // TODO: add unbond height
 // TODO: in32 -> int64
 message ValidatorInfo {
-  string public_key = 1;
+  bytes public_key = 1;
   int32 number = 2;
   int64 sequence = 3;
   int64 stake = 4;
   int32 last_bonding_height = 5;
   int32 last_joined_height = 6;
   int32 unbonding_height = 7;
-  string address = 8;
+  bytes address = 8;
 }
 
 message PeerInfo {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
-  string public_key = 4;
+  bytes public_key = 4;
   int32 flags = 5;
   int32 height = 6;
   int32 received_messages = 7;
@@ -123,7 +123,7 @@ message PeerInfo {
 }
 
 message AccountInfo {
-  string address = 1;
+  bytes address = 1;
   int32 number = 2;
   int64 sequence = 3;
   int64 Balance = 4;
