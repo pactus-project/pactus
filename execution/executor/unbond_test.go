@@ -52,7 +52,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 	assert.Zero(t, tSandbox.Validator(pub.Address()).Stake())
 	assert.Zero(t, tSandbox.Validator(pub.Address()).Power())
-	assert.Equal(t, tSandbox.Validator(pub.Address()).UnbondingHeight(), tSandbox.CurHeight)
+	assert.Equal(t, tSandbox.Validator(pub.Address()).UnbondingHeight(), tSandbox.CurrentHeight())
 	assert.Zero(t, exe.Fee())
 
 	checkTotalCoin(t, 0)
@@ -76,7 +76,7 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	pub, _ := bls.GenerateTestKeyPair()
 
 	val := tSandbox.MakeNewValidator(pub)
-	val.UpdateLastJoinedHeight(tSandbox.CurHeight)
+	val.UpdateLastJoinedHeight(tSandbox.CurrentHeight())
 	tSandbox.UpdateValidator(val)
 
 	trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")

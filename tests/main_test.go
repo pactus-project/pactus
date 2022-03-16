@@ -145,9 +145,10 @@ func TestMain(m *testing.M) {
 	}
 
 	// Check if sortition worked or not?
-	b := lastBlock()
-	committers := b.PrevCertificate().Committers()
-	if len(committers) == 4 {
+	b, _ := lastBlock().Block()
+	cert, _ := b.PrevCert()
+	committers, _ := cert.Committers()
+	if committers.Len() == 4 {
 		panic("Sortition didn't work")
 	}
 

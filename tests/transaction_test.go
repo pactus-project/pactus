@@ -28,7 +28,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 }
 
 func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
-	stamp := lastBlock().Stamp()
+	stamp := lastHash().Stamp()
 	seq := getSequence(sender.Address())
 	trx := tx.NewSendTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
 	sender.SignMsg(trx)
@@ -38,7 +38,7 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 }
 
 func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake, fee int64) error {
-	stamp := lastBlock().Stamp()
+	stamp := lastHash().Stamp()
 	seq := getSequence(sender.Address())
 	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), val.(*bls.PublicKey), stake, fee, "")
 	sender.SignMsg(trx)

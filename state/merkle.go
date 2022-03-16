@@ -7,7 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-func (st *state) accountsMerkleRootHash() hash.Hash {
+func (st *state) accountsMerkleRoot() hash.Hash {
 	total := st.store.TotalAccounts()
 
 	hashes := make([]hash.Hash, total)
@@ -27,7 +27,7 @@ func (st *state) accountsMerkleRootHash() hash.Hash {
 	return tree.Root()
 }
 
-func (st *state) validatorsMerkleRootHash() hash.Hash {
+func (st *state) validatorsMerkleRoot() hash.Hash {
 	total := st.store.TotalValidators()
 	hashes := make([]hash.Hash, total)
 	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
@@ -45,16 +45,15 @@ func (st *state) validatorsMerkleRootHash() hash.Hash {
 	return tree.Root()
 }
 
-func (st *state) stateHash() hash.Hash {
-	accRootHash := st.accountsMerkleRootHash()
-	valRootHash := st.validatorsMerkleRootHash()
+func (st *state) stateRoot() hash.Hash {
+	accRoot := st.accountsMerkleRoot()
+	valRoot := st.validatorsMerkleRoot()
 
-	rootHash := simplemerkle.HashMerkleBranches(&accRootHash, &valRootHash)
-
-	return *rootHash
+	stateRoot := simplemerkle.HashMerkleBranches(&accRoot, &valRoot)
+	return *stateRoot
 }
 
-func (st *state) calculateGenesisStateHashFromGenesisDoc() hash.Hash {
+func (st *state) calculateGenesisStateRootFromGenesisDoc() hash.Hash {
 	accs := st.genDoc.Accounts()
 	vals := st.genDoc.Validators()
 

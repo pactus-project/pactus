@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
@@ -24,7 +25,7 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 	}
 
 	return &zarb.TransactionResponse{
-		Tranaction: zs.encodeTransaction(trx),
+		Tranaction: transactionToProto(trx),
 	}, nil
 
 }
@@ -57,7 +58,7 @@ func (zs *zarbServer) SendRawTransaction(ctx context.Context, request *zarb.Send
 	}, nil
 }
 
-func (zs *zarbServer) encodeTransaction(trx *tx.Tx) *zarb.TransactionInfo {
+func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	transaction := &zarb.TransactionInfo{
 		Id:        trx.ID().String(),
 		Version:   int32(trx.Version()),
@@ -99,7 +100,7 @@ func (zs *zarbServer) encodeTransaction(trx *tx.Tx) *zarb.TransactionInfo {
 			},
 		}
 	default:
-		zs.logger.Error("payload type not defined", "Type", trx.PayloadType())
+		logger.Error("payload type not defined", "Type", trx.PayloadType())
 	}
 
 	return transaction

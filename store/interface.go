@@ -9,11 +9,25 @@ import (
 	"github.com/zarbchain/zarb-go/validator"
 )
 
+// TODO: store blocks inside flat files (to reduce the size of levelDB)
+// Bitcoin impl:
+// https://github.com/btcsuite/btcd/blob/0886f1e5c1fd28ad24aaca4dbccc5f4ab85e58ca/database/ffldb/blockio.go
+// https://bitcoindev.network/understanding-the-data/
+
+// TODO: How to undo or rollback at least for last 21 blocks
+
+type StoredBlock struct {
+	Height     int
+	Block      *block.Block
+	HeaderData []byte
+}
+
 type Reader interface {
-	Block(height int) (*block.Block, error)
-	BlockHeight(hash hash.Hash) (int, error)
-	BlockHeightByStamp(stamp hash.Stamp) int // It remembers only last stamps
-	Transaction(hash hash.Hash) (*tx.Tx, error)
+	Block(hash hash.Hash) (*StoredBlock, error)
+	BlockHash(height int) hash.Hash
+	BlockHashByStamp(stamp hash.Stamp) hash.Hash // It only remembers most recent stamps
+	BlockHeightByStamp(stamp hash.Stamp) int     // It only remembers most recent stamps
+	Transaction(id tx.ID) (*tx.Tx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int
@@ -32,7 +46,6 @@ type Store interface {
 	UpdateAccount(acc *account.Account)
 	UpdateValidator(val *validator.Validator)
 	SaveBlock(height int, block *block.Block, cert *block.Certificate)
-	SaveTransaction(trx *tx.Tx)
 	WriteBatch() error
 	Close() error
 }

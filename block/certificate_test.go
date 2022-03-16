@@ -4,21 +4,25 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 )
-
-func TestNilCertificateHash(t *testing.T) {
-	var cert Certificate
-	assert.Equal(t, cert.Hash(), hash.UndefHash)
-}
 
 func TestCertificateJSONMarshaling(t *testing.T) {
 	c1 := GenerateTestCertificate(hash.UndefHash)
 	bz, err := c1.MarshalJSON()
 	assert.NoError(t, err)
 	assert.NotNil(t, bz)
+}
+
+func TestCertificateSignBytes(t *testing.T) {
+	h := hash.GenerateTestHash()
+	c1 := GenerateTestCertificate(h)
+	bz := c1.SignBytes()
+	assert.Equal(t, bz, CertificateSignBytes(h, c1.Round()))
+	assert.NotEqual(t, bz, CertificateSignBytes(h, c1.Round()+1))
+	assert.NotEqual(t, bz, CertificateSignBytes(hash.GenerateTestHash(), c1.Round()))
 }
 
 func TestCertificateMarshaling(t *testing.T) {
@@ -32,15 +36,18 @@ func TestCertificateMarshaling(t *testing.T) {
 		}
 	*/
 	d, _ := hex.DecodeString("a50158203e29108301d725a3db2e79eae52bfa148cc52bf3de32026f034b37c84f0a2bc4020403840a120c1004811205583096f6eef7da613939caebba051f2c4bc362b35b931378b23de620f7dcc3dddd286165463a949efbf56c143673a3ba3eab")
-	cert := new(Certificate)
-	err := cbor.Unmarshal(d, cert)
-	assert.NoError(t, err)
-	d2, err := cbor.Marshal(cert)
+	cert1 := new(Certificate)
+	cert2 := new(Certificate)
+	assert.NoError(t, cert1.Decode(d))
+	d2, err := cert1.Encode()
 	assert.NoError(t, err)
 	assert.Equal(t, d, d2)
+	assert.NoError(t, cert2.Decode(d))
 
 	expected1 := hash.CalcHash(d)
-	assert.Equal(t, cert.Hash(), expected1)
+	assert.Equal(t, cert1.Hash(), expected1)
+	assert.Equal(t, cert1.Hash(), expected1)
+	assert.Equal(t, cert2.Hash(), expected1)
 }
 
 func TestInvalidCertificate(t *testing.T) {
@@ -66,6 +73,10 @@ func TestInvalidCertificate(t *testing.T) {
 	c7 := GenerateTestCertificate(hash.GenerateTestHash())
 	c7.data.Absentees = []int{2, 1}
 	assert.Error(t, c7.SanityCheck())
+
+	c8 := GenerateTestCertificate(hash.GenerateTestHash())
+	c8.data.Signature = &bls.Signature{}
+	assert.Error(t, c8.SanityCheck())
 }
 
 func TestCertificateersHash(t *testing.T) {

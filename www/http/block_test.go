@@ -8,52 +8,55 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestBlock(t *testing.T) {
 	setup(t)
 
+	b := tMockState.Store.AddTestBlock(100)
+
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"height": "2"})
+		r = mux.SetURLVars(r, map[string]string{"hash": b.Hash().String()})
 		tHTTPServer.GetBlockHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		//fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return an error", func(t *testing.T) {
+	t.Run("Shall return an error, non exists", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"height": "11"})
+		r = mux.SetURLVars(r, map[string]string{"hash": hash.GenerateTestHash().String()})
 		tHTTPServer.GetBlockHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		//fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return an error", func(t *testing.T) {
+	t.Run("Shall return an error, invalid hash", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"height": "-1"})
+		r = mux.SetURLVars(r, map[string]string{"hash": "abc"})
 		tHTTPServer.GetBlockHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
 	})
 
-	t.Run("Shall return an error", func(t *testing.T) {
+	t.Run("Shall return an error, empty hash", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"height": "abc"})
+		r = mux.SetURLVars(r, map[string]string{"hash": ""})
 		tHTTPServer.GetBlockHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
 	})
 
-	t.Run("Shall return an error", func(t *testing.T) {
+	t.Run("Shall return an error, no hash", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		tHTTPServer.GetBlockHandler(w, r)
@@ -63,17 +66,19 @@ func TestBlock(t *testing.T) {
 	})
 }
 
-func TestBlockHeight(t *testing.T) {
+func TestBlockHash(t *testing.T) {
 	setup(t)
 
-	t.Run("Shall return the block height", func(t *testing.T) {
+	b := tMockState.Store.AddTestBlock(100)
+
+	t.Run("Shall return the block hash", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"hash": tMockState.LastBlockHash().String()})
+		r = mux.SetURLVars(r, map[string]string{"height": "100"})
 		tHTTPServer.GetBlockHeightHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
-		assert.Equal(t, w.Body.String(), "10")
+		assert.Equal(t, w.Body.String(), b.Hash().String())
 		//fmt.Println(w.Body)
 	})
 }

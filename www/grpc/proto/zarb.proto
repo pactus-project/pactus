@@ -10,10 +10,10 @@ package zarb;
 
 service Zarb {
   rpc GetBlock(BlockRequest) returns (BlockResponse) {
-    option (google.api.http).get = "/api/block/height/{height}";
+    option (google.api.http).get = "/api/block/hash/{hash}";
   }
-  rpc GetBlockHeight(BlockHeightRequest) returns (BlockHeightResponse) {
-    option (google.api.http).get = "/api/block_height/{hash}";
+  rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse) {
+    option (google.api.http).get = "/api/block_hash/{height}";
   }
   rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
     option (google.api.http).get = "/api/tranaction/id/{id}";
@@ -44,13 +44,13 @@ service Zarb {
   };
 }
 
-message AccountRequest { string address = 1; }
+message AccountRequest { bytes address = 1; }
 
 message AccountResponse { AccountInfo account = 1; }
 
 message ValidatorsRequest {}
 
-message ValidatorRequest { string address = 1; }
+message ValidatorRequest { bytes address = 1; }
 message ValidatorByNumberRequest { int32 number = 1; }
 
 message ValidatorsResponse { repeated ValidatorInfo validators = 1; }
@@ -58,33 +58,34 @@ message ValidatorsResponse { repeated ValidatorInfo validators = 1; }
 message ValidatorResponse { ValidatorInfo validator = 1; }
 
 message BlockRequest {
-  int64 height = 1;
+  bytes hash = 1;
   BlockVerbosity verbosity = 2;
 }
 
 message BlockResponse {
-  string hash = 1;
-  google.protobuf.Timestamp block_time = 2;
-  BlockHeaderInfo header = 3;
-  CertificateInfo previous_certificate = 4;
-  repeated TransactionInfo tranactions = 5;
+  int64 height = 1;
+  bytes hash = 2;
+  google.protobuf.Timestamp block_time = 3;
+  BlockHeaderInfo header = 4;
+  CertificateInfo prev_cert = 5;
+  repeated TransactionInfo txs = 6;
 }
 
-message BlockHeightRequest { string hash = 1; }
+message BlockHashRequest { int64 height = 1; }
 
-message BlockHeightResponse { int64 height = 1; }
+message BlockHashResponse { bytes hash = 1; }
 
 message BlockchainInfoRequest {}
 
 message BlockchainInfoResponse {
-  int64 height = 1;
-  string last_block_hash = 2;
+  int64 last_block_height = 1;
+  bytes last_block_hash = 2;
 }
 
 message NetworkInfoRequest {}
 
 message NetworkInfoResponse {
-  string self_id = 1;
+  bytes self_id = 1;
   repeated PeerInfo peers = 2;
 }
 
@@ -99,21 +100,21 @@ message SendRawTransactionResponse { string id = 2; }
 // TODO: add unbond height
 // TODO: in32 -> int64
 message ValidatorInfo {
-  string public_key = 1;
+  bytes public_key = 1;
   int32 number = 2;
   int64 sequence = 3;
   int64 stake = 4;
   int32 last_bonding_height = 5;
   int32 last_joined_height = 6;
   int32 unbonding_height = 7;
-  string address = 8;
+  bytes address = 8;
 }
 
 message PeerInfo {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
-  string public_key = 4;
+  bytes public_key = 4;
   int32 flags = 5;
   int32 height = 6;
   int32 received_messages = 7;
@@ -122,7 +123,7 @@ message PeerInfo {
 }
 
 message AccountInfo {
-  string address = 1;
+  bytes address = 1;
   int32 number = 2;
   int64 sequence = 3;
   int64 Balance = 4;
@@ -130,10 +131,10 @@ message AccountInfo {
 
 message BlockHeaderInfo {
   int32 version = 1;
-  string prev_block_hash = 2;
-  string state_hash = 3;
-  string tx_ids_hash = 4;
-  string prev_certificate_hash = 5;
+  bytes prev_block_hash = 2;
+  bytes prev_cert_hash = 3;
+  bytes state_root = 4;
+  bytes txs_root = 5;
   bytes sortition_seed = 6;
   string proposer_address = 7;
 }

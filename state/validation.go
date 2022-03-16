@@ -18,9 +18,9 @@ func (st *state) validateBlock(block *block.Block) error {
 			"invalid version")
 	}
 
-	if !block.Header().StateHash().EqualsTo(st.stateHash()) {
+	if !block.Header().StateRoot().EqualsTo(st.stateRoot()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"state hash is not same as we expected. Expected %v, got %v", st.stateHash(), block.Header().StateHash())
+			"state root is not same as we expected. Expected %v, got %v", st.stateRoot(), block.Header().StateRoot())
 	}
 
 	return st.validateCertificateForPreviousHeight(block.PrevCertificate())

@@ -4,8 +4,8 @@ import (
 	"container/list"
 	"fmt"
 	"sync"
-	"time"
 
+	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
@@ -149,34 +149,7 @@ func (p *txPool) PendingTx(id tx.ID) *tx.Tx {
 	return nil
 }
 
-/// QueryTx searches inside the transaction pool and returns the associated transaction.
-/// If transaction doesn't exist inside the pool, it queries from other nodes.
-func (p *txPool) QueryTx(id tx.ID) *tx.Tx {
-	trx := p.PendingTx(id)
-	if trx != nil {
-		return trx
-	}
-
-	p.logger.Debug("querying transaction from the network", "id", id)
-	p.broadcastCh <- message.NewQueryTransactionsMessage([]tx.ID{id})
-
-	attempts := 4
-	duration := p.config.queryTimeout() / 4
-	timeout := time.NewTicker(duration)
-
-	for i := 0; i < attempts; i++ {
-		<-timeout.C
-		trx := p.PendingTx(id)
-		if trx != nil {
-			return trx
-		}
-	}
-
-	p.logger.Warn("querying transaction failed", "id", id, "duration", p.config.queryTimeout())
-	return nil
-}
-
-func (p *txPool) PrepareBlockTransactions() []*tx.Tx {
+func (p *txPool) PrepareBlockTransactions() block.Txs {
 	trxs := make([]*tx.Tx, 0, p.Size())
 
 	p.lk.RLock()

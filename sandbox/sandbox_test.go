@@ -46,7 +46,7 @@ func setup(t *testing.T) {
 	assert.Equal(t, tSandbox.CurrentHeight(), 1)
 	lastHeight := 124
 	for i := 1; i < lastHeight; i++ {
-		b, _ := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
 		tStore.SaveBlock(i, b, c)
 	}
@@ -254,11 +254,17 @@ func TestDeepCopy(t *testing.T) {
 func TestBlockHeightByStamp(t *testing.T) {
 	setup(t)
 
-	height := tSandbox.BlockHeightByStamp(hash.GenerateTestStamp())
-	assert.Equal(t, -1, height)
+	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.GenerateTestStamp()), 0)
 
-	latestBlockHeight := tStore.LastBlockHeight()
-	latestBlock := tStore.Blocks[latestBlockHeight]
-	height = tSandbox.BlockHeightByStamp(latestBlock.Stamp())
-	assert.Equal(t, height, latestBlockHeight)
+	height, cert := tStore.LastCertificate()
+	assert.Equal(t, tSandbox.BlockHeightByStamp(cert.BlockHash().Stamp()), height)
+}
+
+func TestBlockHashByStamp(t *testing.T) {
+	setup(t)
+
+	assert.True(t, tSandbox.BlockHashByStamp(hash.GenerateTestStamp()).IsUndef())
+
+	_, cert := tStore.LastCertificate()
+	assert.True(t, tSandbox.BlockHashByStamp(cert.BlockHash().Stamp()).EqualsTo(cert.BlockHash()))
 }

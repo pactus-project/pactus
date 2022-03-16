@@ -39,24 +39,22 @@ func (c ResponseCode) String() string {
 type Type int
 
 const (
-	MessageTypeHello             = Type(1)
-	MessageTypeHeartBeat         = Type(2)
-	MessageTypeQueryTransactions = Type(3)
-	MessageTypeTransactions      = Type(4)
-	MessageTypeQueryProposal     = Type(5)
-	MessageTypeProposal          = Type(6)
-	MessageTypeQueryVotes        = Type(7)
-	MessageTypeVote              = Type(8)
-	MessageTypeBlockAnnounce     = Type(9)
-	MessageTypeBlocksRequest     = Type(10)
-	MessageTypeBlocksResponse    = Type(11)
+	MessageTypeHello          = Type(1)
+	MessageTypeHeartBeat      = Type(2)
+	MessageTypeTransactions   = Type(3)
+	MessageTypeQueryProposal  = Type(4)
+	MessageTypeProposal       = Type(5)
+	MessageTypeQueryVotes     = Type(6)
+	MessageTypeVote           = Type(7)
+	MessageTypeBlockAnnounce  = Type(8)
+	MessageTypeBlocksRequest  = Type(9)
+	MessageTypeBlocksResponse = Type(10)
 )
 
 func (t Type) TopicID() network.TopicID {
 	switch t {
 	case MessageTypeHello,
 		MessageTypeHeartBeat,
-		MessageTypeQueryTransactions,
 		MessageTypeTransactions,
 		MessageTypeBlockAnnounce:
 		return network.TopicIDGeneral
@@ -78,8 +76,6 @@ func (t Type) String() string {
 		return "hello"
 	case MessageTypeHeartBeat:
 		return "heart-beat"
-	case MessageTypeQueryTransactions:
-		return "query-txs"
 	case MessageTypeTransactions:
 		return "txs"
 	case MessageTypeQueryProposal:
@@ -106,8 +102,6 @@ func MakeMessage(t Type) Message {
 		return &HelloMessage{}
 	case MessageTypeHeartBeat:
 		return &HeartBeatMessage{}
-	case MessageTypeQueryTransactions:
-		return &QueryTransactionsMessage{}
 	case MessageTypeTransactions:
 		return &TransactionsMessage{}
 	case MessageTypeQueryProposal:

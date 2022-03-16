@@ -23,7 +23,7 @@ func TestChangeAcc(t *testing.T) {
 	tState1.store.UpdateAccount(acc2)
 	tState1.store.UpdateAccount(acc3)
 	tState1.store.UpdateAccount(acc4)
-	root1 := tState1.accountsMerkleRootHash()
+	root1 := tState1.accountsMerkleRoot()
 
 	// Change an account
 	acc3.IncSequence()
@@ -32,7 +32,7 @@ func TestChangeAcc(t *testing.T) {
 	tState2.store.UpdateAccount(acc3)
 	tState2.store.UpdateAccount(acc1)
 	tState2.store.UpdateAccount(acc4)
-	root2 := tState2.accountsMerkleRootHash()
+	root2 := tState2.accountsMerkleRoot()
 
 	assert.NotEqual(t, root1, root2)
 }
@@ -51,7 +51,7 @@ func TestChangeVal(t *testing.T) {
 	tState1.store.UpdateValidator(val2)
 	tState1.store.UpdateValidator(val3)
 	tState1.store.UpdateValidator(val4)
-	root1 := tState1.validatorsMerkleRootHash()
+	root1 := tState1.validatorsMerkleRoot()
 
 	// Change a validtor
 	val3.IncSequence()
@@ -60,7 +60,7 @@ func TestChangeVal(t *testing.T) {
 	tState2.store.UpdateValidator(val3)
 	tState2.store.UpdateValidator(val1)
 	tState2.store.UpdateValidator(val4)
-	root2 := tState2.validatorsMerkleRootHash()
+	root2 := tState2.validatorsMerkleRoot()
 
 	assert.NotEqual(t, root1, root2)
 }
@@ -68,6 +68,6 @@ func TestChangeVal(t *testing.T) {
 func TestCalculatingGenesisState(t *testing.T) {
 	setup(t)
 
-	r := tState1.calculateGenesisStateHashFromGenesisDoc()
-	assert.Equal(t, tState1.stateHash(), r)
+	r := tState1.calculateGenesisStateRootFromGenesisDoc()
+	assert.Equal(t, tState1.stateRoot(), r)
 }

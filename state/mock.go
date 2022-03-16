@@ -39,28 +39,23 @@ func MockingState() *MockState {
 
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
-		b, txs := block.GenerateTestBlock(nil, nil)
+		b := block.GenerateTestBlock(nil, nil)
 		cert := block.GenerateTestCertificate(b.Hash())
 
 		m.Store.SaveBlock(i+1, b, cert)
-		for _, tx := range txs {
-			m.Store.SaveTransaction(tx)
-		}
 	}
 }
 func (m *MockState) LastBlockHeight() int {
-	return m.Store.LastBlockHeight()
+	return m.Store.LastCert.Height
 }
 func (m *MockState) GenesisHash() hash.Hash {
 	return m.GenHash
 }
 func (m *MockState) LastBlockHash() hash.Hash {
-	h := m.Store.LastBlockHeight()
-	if h > 0 {
-		b := m.Store.Blocks[m.Store.LastBlockHeight()]
-		return b.Hash()
+	if m.Store.LastCert.Cert == nil {
+		return hash.UndefHash
 	}
-	return hash.UndefHash
+	return m.Store.LastCert.Cert.BlockHash()
 }
 func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
@@ -79,7 +74,7 @@ func (m *MockState) Fingerprint() string {
 	return ""
 }
 func (m *MockState) CommitBlock(h int, b *block.Block, cert *block.Certificate) error {
-	if h != m.Store.LastBlockHeight()+1 {
+	if h != m.Store.LastCert.Height+1 {
 		return fmt.Errorf("invalid height")
 	}
 	if b.Hash().EqualsTo(m.InvalidBlockHash) {
@@ -93,7 +88,7 @@ func (m *MockState) Close() error {
 	return nil
 }
 func (m *MockState) ProposeBlock(round int) (*block.Block, error) {
-	b, _ := block.GenerateTestBlock(nil, nil)
+	b := block.GenerateTestBlock(nil, nil)
 	return b, nil
 }
 func (m *MockState) ValidateBlock(block *block.Block) error {
@@ -129,13 +124,15 @@ func (m *MockState) Transaction(id tx.ID) *tx.Tx {
 	tx, _ := m.Store.Transaction(id)
 	return tx
 }
-func (m *MockState) Block(height int) *block.Block {
-	b, _ := m.Store.Block(height)
-	return b
+func (m *MockState) Block(hash hash.Hash) *block.Block {
+	bi, _ := m.Store.Block(hash)
+	if bi != nil {
+		return bi.Block
+	}
+	return nil
 }
-func (m *MockState) BlockHeight(hash hash.Hash) int {
-	h, _ := m.Store.BlockHeight(hash)
-	return h
+func (m *MockState) BlockHash(height int) hash.Hash {
+	return m.Store.BlockHash(height)
 }
 func (m *MockState) Account(addr crypto.Address) *account.Account {
 	a, _ := m.Store.Account(addr)

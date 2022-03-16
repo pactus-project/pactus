@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ZarbClient interface {
 	GetBlock(ctx context.Context, in *BlockRequest, opts ...grpc.CallOption) (*BlockResponse, error)
-	GetBlockHeight(ctx context.Context, in *BlockHeightRequest, opts ...grpc.CallOption) (*BlockHeightResponse, error)
+	GetBlockHash(ctx context.Context, in *BlockHashRequest, opts ...grpc.CallOption) (*BlockHashResponse, error)
 	GetTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
 	GetAccount(ctx context.Context, in *AccountRequest, opts ...grpc.CallOption) (*AccountResponse, error)
 	GetValidators(ctx context.Context, in *ValidatorsRequest, opts ...grpc.CallOption) (*ValidatorsResponse, error)
@@ -47,9 +47,9 @@ func (c *zarbClient) GetBlock(ctx context.Context, in *BlockRequest, opts ...grp
 	return out, nil
 }
 
-func (c *zarbClient) GetBlockHeight(ctx context.Context, in *BlockHeightRequest, opts ...grpc.CallOption) (*BlockHeightResponse, error) {
-	out := new(BlockHeightResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Zarb/GetBlockHeight", in, out, opts...)
+func (c *zarbClient) GetBlockHash(ctx context.Context, in *BlockHashRequest, opts ...grpc.CallOption) (*BlockHashResponse, error) {
+	out := new(BlockHashResponse)
+	err := c.cc.Invoke(ctx, "/zarb.Zarb/GetBlockHash", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func (c *zarbClient) SendRawTransaction(ctx context.Context, in *SendRawTransact
 // for forward compatibility
 type ZarbServer interface {
 	GetBlock(context.Context, *BlockRequest) (*BlockResponse, error)
-	GetBlockHeight(context.Context, *BlockHeightRequest) (*BlockHeightResponse, error)
+	GetBlockHash(context.Context, *BlockHashRequest) (*BlockHashResponse, error)
 	GetTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error)
 	GetAccount(context.Context, *AccountRequest) (*AccountResponse, error)
 	GetValidators(context.Context, *ValidatorsRequest) (*ValidatorsResponse, error)
@@ -151,8 +151,8 @@ type UnimplementedZarbServer struct {
 func (UnimplementedZarbServer) GetBlock(context.Context, *BlockRequest) (*BlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
 }
-func (UnimplementedZarbServer) GetBlockHeight(context.Context, *BlockHeightRequest) (*BlockHeightResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeight not implemented")
+func (UnimplementedZarbServer) GetBlockHash(context.Context, *BlockHashRequest) (*BlockHashResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHash not implemented")
 }
 func (UnimplementedZarbServer) GetTransaction(context.Context, *TransactionRequest) (*TransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransaction not implemented")
@@ -208,20 +208,20 @@ func _Zarb_GetBlock_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Zarb_GetBlockHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BlockHeightRequest)
+func _Zarb_GetBlockHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockHashRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ZarbServer).GetBlockHeight(ctx, in)
+		return srv.(ZarbServer).GetBlockHash(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Zarb/GetBlockHeight",
+		FullMethod: "/zarb.Zarb/GetBlockHash",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ZarbServer).GetBlockHeight(ctx, req.(*BlockHeightRequest))
+		return srv.(ZarbServer).GetBlockHash(ctx, req.(*BlockHashRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -382,8 +382,8 @@ var Zarb_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Zarb_GetBlock_Handler,
 		},
 		{
-			MethodName: "GetBlockHeight",
-			Handler:    _Zarb_GetBlockHeight_Handler,
+			MethodName: "GetBlockHash",
+			Handler:    _Zarb_GetBlockHash_Handler,
 		},
 		{
 			MethodName: "GetTransaction",

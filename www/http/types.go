@@ -11,7 +11,8 @@ import (
 )
 
 type BlockchainResult struct {
-	Height int
+	LastBlockHeight int
+	LastBlockHash   hash.Hash
 }
 type BlockResult struct {
 	Hash  hash.Hash

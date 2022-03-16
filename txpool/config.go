@@ -1,8 +1,6 @@
 package txpool
 
 import (
-	"time"
-
 	"github.com/zarbchain/zarb-go/errors"
 )
 
@@ -48,8 +46,4 @@ func (conf *Config) withdrawPoolSize() int {
 
 func (conf *Config) sendPoolSize() int {
 	return int(float32(conf.MaxSize) * 0.8)
-}
-
-func (conf *Config) queryTimeout() time.Duration {
-	return time.Second * 2
 }

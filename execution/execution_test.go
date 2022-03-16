@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -33,20 +32,12 @@ func TestExecution(t *testing.T) {
 	tSandbox.UpdateAccount(acc1)
 
 	rcvAddr := crypto.GenerateTestAddress()
-	block1, _ := block.GenerateTestBlock(nil, nil)
-	block2, _ := block.GenerateTestBlock(nil, nil)
-	block3, _ := block.GenerateTestBlock(nil, nil)
-	block8635, _ := block.GenerateTestBlock(nil, nil)
-	block8640, _ := block.GenerateTestBlock(nil, nil)
-	block8641, _ := block.GenerateTestBlock(nil, nil)
-	block8642, _ := block.GenerateTestBlock(nil, nil)
-	tSandbox.AddTestBlock(1, block1)
-	tSandbox.AddTestBlock(2, block2)
-	tSandbox.AddTestBlock(3, block3)
-	tSandbox.AddTestBlock(8635, block8635)
-	tSandbox.AddTestBlock(8640, block8640)
-	tSandbox.AddTestBlock(8641, block8641)
-	tSandbox.AddTestBlock(8642, block8642)
+	block1 := tSandbox.TestStore.AddTestBlock(1)
+	block2 := tSandbox.TestStore.AddTestBlock(2)
+	block3 := tSandbox.TestStore.AddTestBlock(3)
+	block8635 := tSandbox.TestStore.AddTestBlock(8635)
+	block8641 := tSandbox.TestStore.AddTestBlock(8641)
+	block8642 := tSandbox.TestStore.AddTestBlock(8642)
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
 		trx, _ := tx.GenerateTestSendTx()
@@ -54,7 +45,7 @@ func TestExecution(t *testing.T) {
 		assert.Zero(t, tExec.AccumulatedFee())
 	})
 
-	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
+	t.Run("Genesis stamp (expired), Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(hash.UndefHash.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
@@ -66,13 +57,13 @@ func TestExecution(t *testing.T) {
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
-	t.Run("Good stamp", func(t *testing.T) {
+	t.Run("stamp is valid", func(t *testing.T) {
 		trx := tx.NewSendTx(block3.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "ok")
 		signer1.SignMsg(trx)
 		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
-	t.Run("Mintbase invalid stamp, Should returns error", func(t *testing.T) {
+	t.Run("Mintbase has an invalid stamp, Should returns error", func(t *testing.T) {
 		trx := tx.NewMintbaseTx(block8641.Stamp(), 1, rcvAddr, 1000, "expired-stamp")
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
@@ -113,7 +104,7 @@ func TestExecution(t *testing.T) {
 		assert.Error(t, tExec.checkFee(trx, tSandbox))
 	})
 
-	t.Run("Sortition tx - Invalid stamp, Should returns error", func(t *testing.T) {
+	t.Run("Sortition tx - Expired stamp, Should returns error", func(t *testing.T) {
 		proof := sortition.GenerateRandomProof()
 		trx := tx.NewSortitionTx(block8635.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
@@ -133,13 +124,12 @@ func TestChecker(t *testing.T) {
 	checker := NewChecker()
 	tSandbox := sandbox.MockingSandbox()
 
-	block1000, _ := block.GenerateTestBlock(nil, nil)
-	tSandbox.AddTestBlock(1000, block1000)
+	block1000 := tSandbox.TestStore.AddTestBlock(1000)
 
 	t.Run("Accept bond transaction for future blocks", func(t *testing.T) {
 		pub := tSandbox.Committee().Proposer(0).PublicKey()
 		acc, signer := account.GenerateTestAccount(1)
-		tSandbox.TestAccounts[acc.Address()] = acc
+		tSandbox.UpdateAccount(acc)
 
 		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, acc.Address(), pub, 1000, 1000, "")
 		signer.SignMsg(trx)

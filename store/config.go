@@ -1,12 +1,15 @@
 package store
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 type Config struct {
-	Path string `toml:"" comment:"Path contains database directory. Default is ./store.db"`
+	Path string `toml:"" comment:"Path specifies data directory. Default is ./data"`
 }
 
 func DefaultConfig() *Config {
@@ -21,8 +24,12 @@ func TestConfig() *Config {
 	}
 }
 
+func (conf *Config) DataPath() string {
+	return util.MakeAbs(fmt.Sprintf("%s%c%s", conf.Path, os.PathSeparator, "data"))
+}
+
 func (conf *Config) StorePath() string {
-	return util.MakeAbs(conf.Path + "/store.db")
+	return fmt.Sprintf("%s%c%s", conf.DataPath(), os.PathSeparator, "store.db")
 }
 
 // SanityCheck is a basic checks for config

@@ -65,45 +65,45 @@ func (s Header) SetPrevBlockHash(v []byte) error {
 	return s.Struct.SetData(0, v)
 }
 
-func (s Header) StateHash() ([]byte, error) {
+func (s Header) PrevCertHash() ([]byte, error) {
 	p, err := s.Struct.Ptr(1)
 	return []byte(p.Data()), err
 }
 
-func (s Header) HasStateHash() bool {
+func (s Header) HasPrevCertHash() bool {
 	p, err := s.Struct.Ptr(1)
 	return p.IsValid() || err != nil
 }
 
-func (s Header) SetStateHash(v []byte) error {
+func (s Header) SetPrevCertHash(v []byte) error {
 	return s.Struct.SetData(1, v)
 }
 
-func (s Header) TxsHash() ([]byte, error) {
+func (s Header) StateRoot() ([]byte, error) {
 	p, err := s.Struct.Ptr(2)
 	return []byte(p.Data()), err
 }
 
-func (s Header) HasTxsHash() bool {
+func (s Header) HasStateRoot() bool {
 	p, err := s.Struct.Ptr(2)
 	return p.IsValid() || err != nil
 }
 
-func (s Header) SetTxsHash(v []byte) error {
+func (s Header) SetStateRoot(v []byte) error {
 	return s.Struct.SetData(2, v)
 }
 
-func (s Header) PrevCertificateHash() ([]byte, error) {
+func (s Header) TxsRoot() ([]byte, error) {
 	p, err := s.Struct.Ptr(3)
 	return []byte(p.Data()), err
 }
 
-func (s Header) HasPrevCertificateHash() bool {
+func (s Header) HasTxsRoot() bool {
 	p, err := s.Struct.Ptr(3)
 	return p.IsValid() || err != nil
 }
 
-func (s Header) SetPrevCertificateHash(v []byte) error {
+func (s Header) SetTxsRoot(v []byte) error {
 	return s.Struct.SetData(3, v)
 }
 
@@ -159,82 +159,6 @@ type Header_Promise struct{ *capnp.Pipeline }
 func (p Header_Promise) Struct() (Header, error) {
 	s, err := p.Pipeline.Struct()
 	return Header{s}, err
-}
-
-type Txs struct{ capnp.Struct }
-
-// Txs_TypeID is the unique identifier for the type Txs.
-const Txs_TypeID = 0xc120e2adef2af529
-
-func NewTxs(s *capnp.Segment) (Txs, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Txs{st}, err
-}
-
-func NewRootTxs(s *capnp.Segment) (Txs, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return Txs{st}, err
-}
-
-func ReadRootTxs(msg *capnp.Message) (Txs, error) {
-	root, err := msg.RootPtr()
-	return Txs{root.Struct()}, err
-}
-
-func (s Txs) String() string {
-	str, _ := text.Marshal(0xc120e2adef2af529, s.Struct)
-	return str
-}
-
-func (s Txs) Hashes() (capnp.DataList, error) {
-	p, err := s.Struct.Ptr(0)
-	return capnp.DataList{List: p.List()}, err
-}
-
-func (s Txs) HasHashes() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
-}
-
-func (s Txs) SetHashes(v capnp.DataList) error {
-	return s.Struct.SetPtr(0, v.List.ToPtr())
-}
-
-// NewHashes sets the hashes field to a newly
-// allocated capnp.DataList, preferring placement in s's segment.
-func (s Txs) NewHashes(n int32) (capnp.DataList, error) {
-	l, err := capnp.NewDataList(s.Struct.Segment(), n)
-	if err != nil {
-		return capnp.DataList{}, err
-	}
-	err = s.Struct.SetPtr(0, l.List.ToPtr())
-	return l, err
-}
-
-// Txs_List is a list of Txs.
-type Txs_List struct{ capnp.List }
-
-// NewTxs creates a new list of Txs.
-func NewTxs_List(s *capnp.Segment, sz int32) (Txs_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return Txs_List{l}, err
-}
-
-func (s Txs_List) At(i int) Txs { return Txs{s.List.Struct(i)} }
-
-func (s Txs_List) Set(i int, v Txs) error { return s.List.SetStruct(i, v.Struct) }
-
-func (s Txs_List) String() string {
-	str, _ := text.MarshalList(0xc120e2adef2af529, s.List)
-	return str
-}
-
-// Txs_Promise is a wrapper for a Txs promised by a client call.
-type Txs_Promise struct{ *capnp.Pipeline }
-
-func (p Txs_Promise) Struct() (Txs, error) {
-	s, err := p.Pipeline.Struct()
-	return Txs{s}, err
 }
 
 type Certificate struct{ capnp.Struct }
@@ -424,23 +348,23 @@ func (s Block) NewHeader() (Header, error) {
 	return ss, err
 }
 
-func (s Block) PrevCertificate() (Certificate, error) {
+func (s Block) PrevCert() (Certificate, error) {
 	p, err := s.Struct.Ptr(1)
 	return Certificate{Struct: p.Struct()}, err
 }
 
-func (s Block) HasPrevCertificate() bool {
+func (s Block) HasPrevCert() bool {
 	p, err := s.Struct.Ptr(1)
 	return p.IsValid() || err != nil
 }
 
-func (s Block) SetPrevCertificate(v Certificate) error {
+func (s Block) SetPrevCert(v Certificate) error {
 	return s.Struct.SetPtr(1, v.Struct.ToPtr())
 }
 
-// NewPrevCertificate sets the prevCertificate field to a newly
+// NewPrevCert sets the prevCert field to a newly
 // allocated Certificate struct, preferring placement in s's segment.
-func (s Block) NewPrevCertificate() (Certificate, error) {
+func (s Block) NewPrevCert() (Certificate, error) {
 	ss, err := NewCertificate(s.Struct.Segment())
 	if err != nil {
 		return Certificate{}, err
@@ -449,9 +373,9 @@ func (s Block) NewPrevCertificate() (Certificate, error) {
 	return ss, err
 }
 
-func (s Block) Txs() (Txs, error) {
+func (s Block) Txs() (capnp.DataList, error) {
 	p, err := s.Struct.Ptr(2)
-	return Txs{Struct: p.Struct()}, err
+	return capnp.DataList{List: p.List()}, err
 }
 
 func (s Block) HasTxs() bool {
@@ -459,19 +383,19 @@ func (s Block) HasTxs() bool {
 	return p.IsValid() || err != nil
 }
 
-func (s Block) SetTxs(v Txs) error {
-	return s.Struct.SetPtr(2, v.Struct.ToPtr())
+func (s Block) SetTxs(v capnp.DataList) error {
+	return s.Struct.SetPtr(2, v.List.ToPtr())
 }
 
 // NewTxs sets the txs field to a newly
-// allocated Txs struct, preferring placement in s's segment.
-func (s Block) NewTxs() (Txs, error) {
-	ss, err := NewTxs(s.Struct.Segment())
+// allocated capnp.DataList, preferring placement in s's segment.
+func (s Block) NewTxs(n int32) (capnp.DataList, error) {
+	l, err := capnp.NewDataList(s.Struct.Segment(), n)
 	if err != nil {
-		return Txs{}, err
+		return capnp.DataList{}, err
 	}
-	err = s.Struct.SetPtr(2, ss.Struct.ToPtr())
-	return ss, err
+	err = s.Struct.SetPtr(2, l.List.ToPtr())
+	return l, err
 }
 
 // Block_List is a list of Block.
@@ -504,12 +428,8 @@ func (p Block_Promise) Header() Header_Promise {
 	return Header_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-func (p Block_Promise) PrevCertificate() Certificate_Promise {
+func (p Block_Promise) PrevCert() Certificate_Promise {
 	return Certificate_Promise{Pipeline: p.Pipeline.GetPipeline(1)}
-}
-
-func (p Block_Promise) Txs() Txs_Promise {
-	return Txs_Promise{Pipeline: p.Pipeline.GetPipeline(2)}
 }
 
 type BlockchainResult struct{ capnp.Struct }
@@ -518,12 +438,12 @@ type BlockchainResult struct{ capnp.Struct }
 const BlockchainResult_TypeID = 0xbd88d0eab3826ba9
 
 func NewBlockchainResult(s *capnp.Segment) (BlockchainResult, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0})
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return BlockchainResult{st}, err
 }
 
 func NewRootBlockchainResult(s *capnp.Segment) (BlockchainResult, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0})
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return BlockchainResult{st}, err
 }
 
@@ -537,12 +457,26 @@ func (s BlockchainResult) String() string {
 	return str
 }
 
-func (s BlockchainResult) Height() int64 {
+func (s BlockchainResult) LastBlockHeight() int64 {
 	return int64(s.Struct.Uint64(0))
 }
 
-func (s BlockchainResult) SetHeight(v int64) {
+func (s BlockchainResult) SetLastBlockHeight(v int64) {
 	s.Struct.SetUint64(0, uint64(v))
+}
+
+func (s BlockchainResult) LastBlockHash() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return []byte(p.Data()), err
+}
+
+func (s BlockchainResult) HasLastBlockHash() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s BlockchainResult) SetLastBlockHash(v []byte) error {
+	return s.Struct.SetData(0, v)
 }
 
 // BlockchainResult_List is a list of BlockchainResult.
@@ -550,7 +484,7 @@ type BlockchainResult_List struct{ capnp.List }
 
 // NewBlockchainResult creates a new list of BlockchainResult.
 func NewBlockchainResult_List(s *capnp.Segment, sz int32) (BlockchainResult_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0}, sz)
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
 	return BlockchainResult_List{l}, err
 }
 
@@ -579,12 +513,12 @@ type BlockResult struct{ capnp.Struct }
 const BlockResult_TypeID = 0x83143f06598cf9e8
 
 func NewBlockResult(s *capnp.Segment) (BlockResult, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 3})
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 4})
 	return BlockResult{st}, err
 }
 
 func NewRootBlockResult(s *capnp.Segment) (BlockResult, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 3})
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 4})
 	return BlockResult{st}, err
 }
 
@@ -598,31 +532,31 @@ func (s BlockResult) String() string {
 	return str
 }
 
-func (s BlockResult) Hash() ([]byte, error) {
+func (s BlockResult) Height() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
+	return []byte(p.Data()), err
+}
+
+func (s BlockResult) HasHeight() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s BlockResult) SetHeight(v []byte) error {
+	return s.Struct.SetData(0, v)
+}
+
+func (s BlockResult) Hash() ([]byte, error) {
+	p, err := s.Struct.Ptr(1)
 	return []byte(p.Data()), err
 }
 
 func (s BlockResult) HasHash() bool {
-	p, err := s.Struct.Ptr(0)
+	p, err := s.Struct.Ptr(1)
 	return p.IsValid() || err != nil
 }
 
 func (s BlockResult) SetHash(v []byte) error {
-	return s.Struct.SetData(0, v)
-}
-
-func (s BlockResult) Data() ([]byte, error) {
-	p, err := s.Struct.Ptr(1)
-	return []byte(p.Data()), err
-}
-
-func (s BlockResult) HasData() bool {
-	p, err := s.Struct.Ptr(1)
-	return p.IsValid() || err != nil
-}
-
-func (s BlockResult) SetData(v []byte) error {
 	return s.Struct.SetData(1, v)
 }
 
@@ -651,12 +585,26 @@ func (s BlockResult) NewBlock() (Block, error) {
 	return ss, err
 }
 
+func (s BlockResult) Data() ([]byte, error) {
+	p, err := s.Struct.Ptr(3)
+	return []byte(p.Data()), err
+}
+
+func (s BlockResult) HasData() bool {
+	p, err := s.Struct.Ptr(3)
+	return p.IsValid() || err != nil
+}
+
+func (s BlockResult) SetData(v []byte) error {
+	return s.Struct.SetData(3, v)
+}
+
 // BlockResult_List is a list of BlockResult.
 type BlockResult_List struct{ capnp.List }
 
 // NewBlockResult creates a new list of BlockResult.
 func NewBlockResult_List(s *capnp.Segment, sz int32) (BlockResult_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 3}, sz)
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 4}, sz)
 	return BlockResult_List{l}, err
 }
 
@@ -1277,14 +1225,14 @@ func (c ZarbServer) GetBlock(ctx context.Context, params func(ZarbServer_getBloc
 		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 16, PointerCount: 0}
+		call.ParamsSize = capnp.ObjectSize{DataSize: 8, PointerCount: 1}
 		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_getBlock_Params{Struct: s}) }
 	}
 	return ZarbServer_getBlock_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
 }
-func (c ZarbServer) GetBlockHeight(ctx context.Context, params func(ZarbServer_getBlockHeight_Params) error, opts ...capnp.CallOption) ZarbServer_getBlockHeight_Results_Promise {
+func (c ZarbServer) GetBlockHash(ctx context.Context, params func(ZarbServer_getBlockHash_Params) error, opts ...capnp.CallOption) ZarbServer_getBlockHash_Results_Promise {
 	if c.Client == nil {
-		return ZarbServer_getBlockHeight_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
+		return ZarbServer_getBlockHash_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
 	}
 	call := &capnp.Call{
 		Ctx: ctx,
@@ -1292,15 +1240,15 @@ func (c ZarbServer) GetBlockHeight(ctx context.Context, params func(ZarbServer_g
 			InterfaceID:   0xf906e2ae0dd37fe4,
 			MethodID:      1,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
-			MethodName:    "getBlockHeight",
+			MethodName:    "getBlockHash",
 		},
 		Options: capnp.NewCallOptions(opts),
 	}
 	if params != nil {
-		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 1}
-		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_getBlockHeight_Params{Struct: s}) }
+		call.ParamsSize = capnp.ObjectSize{DataSize: 8, PointerCount: 0}
+		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_getBlockHash_Params{Struct: s}) }
 	}
-	return ZarbServer_getBlockHeight_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+	return ZarbServer_getBlockHash_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
 }
 func (c ZarbServer) GetTransaction(ctx context.Context, params func(ZarbServer_getTransaction_Params) error, opts ...capnp.CallOption) ZarbServer_getTransaction_Results_Promise {
 	if c.Client == nil {
@@ -1426,7 +1374,7 @@ func (c ZarbServer) SendRawTransaction(ctx context.Context, params func(ZarbServ
 type ZarbServer_Server interface {
 	GetBlock(ZarbServer_getBlock) error
 
-	GetBlockHeight(ZarbServer_getBlockHeight) error
+	GetBlockHash(ZarbServer_getBlockHash) error
 
 	GetTransaction(ZarbServer_getTransaction) error
 
@@ -1470,13 +1418,13 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 			InterfaceID:   0xf906e2ae0dd37fe4,
 			MethodID:      1,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
-			MethodName:    "getBlockHeight",
+			MethodName:    "getBlockHash",
 		},
 		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
-			call := ZarbServer_getBlockHeight{c, opts, ZarbServer_getBlockHeight_Params{Struct: p}, ZarbServer_getBlockHeight_Results{Struct: r}}
-			return s.GetBlockHeight(call)
+			call := ZarbServer_getBlockHash{c, opts, ZarbServer_getBlockHash_Params{Struct: p}, ZarbServer_getBlockHash_Results{Struct: r}}
+			return s.GetBlockHash(call)
 		},
-		ResultsSize: capnp.ObjectSize{DataSize: 8, PointerCount: 0},
+		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
 	})
 
 	methods = append(methods, server.Method{
@@ -1574,12 +1522,12 @@ type ZarbServer_getBlock struct {
 	Results ZarbServer_getBlock_Results
 }
 
-// ZarbServer_getBlockHeight holds the arguments for a server call to ZarbServer.getBlockHeight.
-type ZarbServer_getBlockHeight struct {
+// ZarbServer_getBlockHash holds the arguments for a server call to ZarbServer.getBlockHash.
+type ZarbServer_getBlockHash struct {
 	Ctx     context.Context
 	Options capnp.CallOptions
-	Params  ZarbServer_getBlockHeight_Params
-	Results ZarbServer_getBlockHeight_Results
+	Params  ZarbServer_getBlockHash_Params
+	Results ZarbServer_getBlockHash_Results
 }
 
 // ZarbServer_getTransaction holds the arguments for a server call to ZarbServer.getTransaction.
@@ -1636,12 +1584,12 @@ type ZarbServer_getBlock_Params struct{ capnp.Struct }
 const ZarbServer_getBlock_Params_TypeID = 0x8df1c729f8d2ca00
 
 func NewZarbServer_getBlock_Params(s *capnp.Segment) (ZarbServer_getBlock_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 16, PointerCount: 0})
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return ZarbServer_getBlock_Params{st}, err
 }
 
 func NewRootZarbServer_getBlock_Params(s *capnp.Segment) (ZarbServer_getBlock_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 16, PointerCount: 0})
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
 	return ZarbServer_getBlock_Params{st}, err
 }
 
@@ -1655,20 +1603,26 @@ func (s ZarbServer_getBlock_Params) String() string {
 	return str
 }
 
-func (s ZarbServer_getBlock_Params) Height() uint64 {
-	return s.Struct.Uint64(0)
+func (s ZarbServer_getBlock_Params) Hash() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return []byte(p.Data()), err
 }
 
-func (s ZarbServer_getBlock_Params) SetHeight(v uint64) {
-	s.Struct.SetUint64(0, v)
+func (s ZarbServer_getBlock_Params) HasHash() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s ZarbServer_getBlock_Params) SetHash(v []byte) error {
+	return s.Struct.SetData(0, v)
 }
 
 func (s ZarbServer_getBlock_Params) Verbosity() int32 {
-	return int32(s.Struct.Uint32(8))
+	return int32(s.Struct.Uint32(0))
 }
 
 func (s ZarbServer_getBlock_Params) SetVerbosity(v int32) {
-	s.Struct.SetUint32(8, uint32(v))
+	s.Struct.SetUint32(0, uint32(v))
 }
 
 // ZarbServer_getBlock_Params_List is a list of ZarbServer_getBlock_Params.
@@ -1676,7 +1630,7 @@ type ZarbServer_getBlock_Params_List struct{ capnp.List }
 
 // NewZarbServer_getBlock_Params creates a new list of ZarbServer_getBlock_Params.
 func NewZarbServer_getBlock_Params_List(s *capnp.Segment, sz int32) (ZarbServer_getBlock_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 16, PointerCount: 0}, sz)
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
 	return ZarbServer_getBlock_Params_List{l}, err
 }
 
@@ -1785,136 +1739,136 @@ func (p ZarbServer_getBlock_Results_Promise) Result() BlockResult_Promise {
 	return BlockResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-type ZarbServer_getBlockHeight_Params struct{ capnp.Struct }
+type ZarbServer_getBlockHash_Params struct{ capnp.Struct }
 
-// ZarbServer_getBlockHeight_Params_TypeID is the unique identifier for the type ZarbServer_getBlockHeight_Params.
-const ZarbServer_getBlockHeight_Params_TypeID = 0x85252b1ec1c352d2
+// ZarbServer_getBlockHash_Params_TypeID is the unique identifier for the type ZarbServer_getBlockHash_Params.
+const ZarbServer_getBlockHash_Params_TypeID = 0x85252b1ec1c352d2
 
-func NewZarbServer_getBlockHeight_Params(s *capnp.Segment) (ZarbServer_getBlockHeight_Params, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return ZarbServer_getBlockHeight_Params{st}, err
+func NewZarbServer_getBlockHash_Params(s *capnp.Segment) (ZarbServer_getBlockHash_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0})
+	return ZarbServer_getBlockHash_Params{st}, err
 }
 
-func NewRootZarbServer_getBlockHeight_Params(s *capnp.Segment) (ZarbServer_getBlockHeight_Params, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
-	return ZarbServer_getBlockHeight_Params{st}, err
+func NewRootZarbServer_getBlockHash_Params(s *capnp.Segment) (ZarbServer_getBlockHash_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0})
+	return ZarbServer_getBlockHash_Params{st}, err
 }
 
-func ReadRootZarbServer_getBlockHeight_Params(msg *capnp.Message) (ZarbServer_getBlockHeight_Params, error) {
+func ReadRootZarbServer_getBlockHash_Params(msg *capnp.Message) (ZarbServer_getBlockHash_Params, error) {
 	root, err := msg.RootPtr()
-	return ZarbServer_getBlockHeight_Params{root.Struct()}, err
+	return ZarbServer_getBlockHash_Params{root.Struct()}, err
 }
 
-func (s ZarbServer_getBlockHeight_Params) String() string {
+func (s ZarbServer_getBlockHash_Params) String() string {
 	str, _ := text.Marshal(0x85252b1ec1c352d2, s.Struct)
 	return str
 }
 
-func (s ZarbServer_getBlockHeight_Params) Hash() ([]byte, error) {
-	p, err := s.Struct.Ptr(0)
-	return []byte(p.Data()), err
+func (s ZarbServer_getBlockHash_Params) Height() uint64 {
+	return s.Struct.Uint64(0)
 }
 
-func (s ZarbServer_getBlockHeight_Params) HasHash() bool {
-	p, err := s.Struct.Ptr(0)
-	return p.IsValid() || err != nil
+func (s ZarbServer_getBlockHash_Params) SetHeight(v uint64) {
+	s.Struct.SetUint64(0, v)
 }
 
-func (s ZarbServer_getBlockHeight_Params) SetHash(v []byte) error {
-	return s.Struct.SetData(0, v)
+// ZarbServer_getBlockHash_Params_List is a list of ZarbServer_getBlockHash_Params.
+type ZarbServer_getBlockHash_Params_List struct{ capnp.List }
+
+// NewZarbServer_getBlockHash_Params creates a new list of ZarbServer_getBlockHash_Params.
+func NewZarbServer_getBlockHash_Params_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockHash_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0}, sz)
+	return ZarbServer_getBlockHash_Params_List{l}, err
 }
 
-// ZarbServer_getBlockHeight_Params_List is a list of ZarbServer_getBlockHeight_Params.
-type ZarbServer_getBlockHeight_Params_List struct{ capnp.List }
-
-// NewZarbServer_getBlockHeight_Params creates a new list of ZarbServer_getBlockHeight_Params.
-func NewZarbServer_getBlockHeight_Params_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockHeight_Params_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
-	return ZarbServer_getBlockHeight_Params_List{l}, err
+func (s ZarbServer_getBlockHash_Params_List) At(i int) ZarbServer_getBlockHash_Params {
+	return ZarbServer_getBlockHash_Params{s.List.Struct(i)}
 }
 
-func (s ZarbServer_getBlockHeight_Params_List) At(i int) ZarbServer_getBlockHeight_Params {
-	return ZarbServer_getBlockHeight_Params{s.List.Struct(i)}
-}
-
-func (s ZarbServer_getBlockHeight_Params_List) Set(i int, v ZarbServer_getBlockHeight_Params) error {
+func (s ZarbServer_getBlockHash_Params_List) Set(i int, v ZarbServer_getBlockHash_Params) error {
 	return s.List.SetStruct(i, v.Struct)
 }
 
-func (s ZarbServer_getBlockHeight_Params_List) String() string {
+func (s ZarbServer_getBlockHash_Params_List) String() string {
 	str, _ := text.MarshalList(0x85252b1ec1c352d2, s.List)
 	return str
 }
 
-// ZarbServer_getBlockHeight_Params_Promise is a wrapper for a ZarbServer_getBlockHeight_Params promised by a client call.
-type ZarbServer_getBlockHeight_Params_Promise struct{ *capnp.Pipeline }
+// ZarbServer_getBlockHash_Params_Promise is a wrapper for a ZarbServer_getBlockHash_Params promised by a client call.
+type ZarbServer_getBlockHash_Params_Promise struct{ *capnp.Pipeline }
 
-func (p ZarbServer_getBlockHeight_Params_Promise) Struct() (ZarbServer_getBlockHeight_Params, error) {
+func (p ZarbServer_getBlockHash_Params_Promise) Struct() (ZarbServer_getBlockHash_Params, error) {
 	s, err := p.Pipeline.Struct()
-	return ZarbServer_getBlockHeight_Params{s}, err
+	return ZarbServer_getBlockHash_Params{s}, err
 }
 
-type ZarbServer_getBlockHeight_Results struct{ capnp.Struct }
+type ZarbServer_getBlockHash_Results struct{ capnp.Struct }
 
-// ZarbServer_getBlockHeight_Results_TypeID is the unique identifier for the type ZarbServer_getBlockHeight_Results.
-const ZarbServer_getBlockHeight_Results_TypeID = 0x946b1f715eac1308
+// ZarbServer_getBlockHash_Results_TypeID is the unique identifier for the type ZarbServer_getBlockHash_Results.
+const ZarbServer_getBlockHash_Results_TypeID = 0x946b1f715eac1308
 
-func NewZarbServer_getBlockHeight_Results(s *capnp.Segment) (ZarbServer_getBlockHeight_Results, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0})
-	return ZarbServer_getBlockHeight_Results{st}, err
+func NewZarbServer_getBlockHash_Results(s *capnp.Segment) (ZarbServer_getBlockHash_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getBlockHash_Results{st}, err
 }
 
-func NewRootZarbServer_getBlockHeight_Results(s *capnp.Segment) (ZarbServer_getBlockHeight_Results, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0})
-	return ZarbServer_getBlockHeight_Results{st}, err
+func NewRootZarbServer_getBlockHash_Results(s *capnp.Segment) (ZarbServer_getBlockHash_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getBlockHash_Results{st}, err
 }
 
-func ReadRootZarbServer_getBlockHeight_Results(msg *capnp.Message) (ZarbServer_getBlockHeight_Results, error) {
+func ReadRootZarbServer_getBlockHash_Results(msg *capnp.Message) (ZarbServer_getBlockHash_Results, error) {
 	root, err := msg.RootPtr()
-	return ZarbServer_getBlockHeight_Results{root.Struct()}, err
+	return ZarbServer_getBlockHash_Results{root.Struct()}, err
 }
 
-func (s ZarbServer_getBlockHeight_Results) String() string {
+func (s ZarbServer_getBlockHash_Results) String() string {
 	str, _ := text.Marshal(0x946b1f715eac1308, s.Struct)
 	return str
 }
 
-func (s ZarbServer_getBlockHeight_Results) Result() uint64 {
-	return s.Struct.Uint64(0)
+func (s ZarbServer_getBlockHash_Results) Result() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return []byte(p.Data()), err
 }
 
-func (s ZarbServer_getBlockHeight_Results) SetResult(v uint64) {
-	s.Struct.SetUint64(0, v)
+func (s ZarbServer_getBlockHash_Results) HasResult() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
 }
 
-// ZarbServer_getBlockHeight_Results_List is a list of ZarbServer_getBlockHeight_Results.
-type ZarbServer_getBlockHeight_Results_List struct{ capnp.List }
-
-// NewZarbServer_getBlockHeight_Results creates a new list of ZarbServer_getBlockHeight_Results.
-func NewZarbServer_getBlockHeight_Results_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockHeight_Results_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 0}, sz)
-	return ZarbServer_getBlockHeight_Results_List{l}, err
+func (s ZarbServer_getBlockHash_Results) SetResult(v []byte) error {
+	return s.Struct.SetData(0, v)
 }
 
-func (s ZarbServer_getBlockHeight_Results_List) At(i int) ZarbServer_getBlockHeight_Results {
-	return ZarbServer_getBlockHeight_Results{s.List.Struct(i)}
+// ZarbServer_getBlockHash_Results_List is a list of ZarbServer_getBlockHash_Results.
+type ZarbServer_getBlockHash_Results_List struct{ capnp.List }
+
+// NewZarbServer_getBlockHash_Results creates a new list of ZarbServer_getBlockHash_Results.
+func NewZarbServer_getBlockHash_Results_List(s *capnp.Segment, sz int32) (ZarbServer_getBlockHash_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return ZarbServer_getBlockHash_Results_List{l}, err
 }
 
-func (s ZarbServer_getBlockHeight_Results_List) Set(i int, v ZarbServer_getBlockHeight_Results) error {
+func (s ZarbServer_getBlockHash_Results_List) At(i int) ZarbServer_getBlockHash_Results {
+	return ZarbServer_getBlockHash_Results{s.List.Struct(i)}
+}
+
+func (s ZarbServer_getBlockHash_Results_List) Set(i int, v ZarbServer_getBlockHash_Results) error {
 	return s.List.SetStruct(i, v.Struct)
 }
 
-func (s ZarbServer_getBlockHeight_Results_List) String() string {
+func (s ZarbServer_getBlockHash_Results_List) String() string {
 	str, _ := text.MarshalList(0x946b1f715eac1308, s.List)
 	return str
 }
 
-// ZarbServer_getBlockHeight_Results_Promise is a wrapper for a ZarbServer_getBlockHeight_Results promised by a client call.
-type ZarbServer_getBlockHeight_Results_Promise struct{ *capnp.Pipeline }
+// ZarbServer_getBlockHash_Results_Promise is a wrapper for a ZarbServer_getBlockHash_Results promised by a client call.
+type ZarbServer_getBlockHash_Results_Promise struct{ *capnp.Pipeline }
 
-func (p ZarbServer_getBlockHeight_Results_Promise) Struct() (ZarbServer_getBlockHeight_Results, error) {
+func (p ZarbServer_getBlockHash_Results_Promise) Struct() (ZarbServer_getBlockHash_Results, error) {
 	s, err := p.Pipeline.Struct()
-	return ZarbServer_getBlockHeight_Results{s}, err
+	return ZarbServer_getBlockHash_Results{s}, err
 }
 
 type ZarbServer_getTransaction_Params struct{ capnp.Struct }
@@ -2831,142 +2785,142 @@ func (p ZarbServer_sendRawTransaction_Results_Promise) Result() SendTransactionR
 	return SendTransactionResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-const schema_84b56bd0975dfd33 = "x\xda\xacX}\x8c\x14g\x19\x7f\x9e\xf7\xdd\xd9\x8f\xbb" +
-	"\xbd\xdb\x9d\xce^\xda\x12\xe8\x1e\xe60\x80\xd0R\xae\xa4" +
-	"\x0dQ\x97\x9e\xb4\x1e-\xe8\xcd-\x1a{Zun\xf7" +
-	"\xe5n\xb9c\xf7\x98\x99\xbb\xa3(9\xbd\xda\x08X\xa8" +
-	"b\xb5\xb6\x11Rh\x8di+m\x8a\xa2=\"\xd1\x8b" +
-	"\xd5\x06\xd2\xa6\x14B,\x0d\xd4J\xa8\xb6M\x11\xd0\\" +
-	",QX\xf3\xbc\xb33;\xbb\xdc\x17\xc4\xffv\x9fy" +
-	"\xe6\xf9\xfc=\xbf\xe7\x9dw\x11\x06\x97\xb1[\x95b\x04" +
-	"@\xb7\x95`\xf1\xbd\x8b\x0f\xdf\x17L%\x1e\x04\xb5\x01" +
-	"\x8b\xcd\x97\xee\x7f\xecH\xcf\xfe\xef\x80\xc2C\x00\xcd\xef" +
-	"\x06jP\x1b\x0b\x84\x00\xb4\x0b\x81\x17\x00\x8b\x07\xce\x7f" +
-	"a\xed\xbb\x1f\\\xff \xa8\x8d\x08\xa0 )mQ\x8e" +
-	"\"\xa0\xb6SI\x01\x16\x8f\xb6\xffa\xf4\xa6O\xccy" +
-	"\xc8\xafpP\xd9G\x0a\xafI\x85\xdf<\xf2\xdc\xae\x85" +
-	"G6n\xf3+\x9cU\x0e\x90\xc2%R\xb8|\xf8\xe8" +
-	"G\xf3^\xb9\xb0MoD\x06@\xae\x9bg\x05\x87\xe9" +
-	"\xf1\xbc\xe0 `\xd1P\xd7\xbej\xfc\xf8\xb1\xed\x15\x11" +
-	"\x04\x9f \x85\xc7\x83\xe4\xe0\xfc\xb3?\x19\xda\x7f\xf2\xed" +
-	"\xed\xa07 \xf3%\x14\xa4,F\x82\xa7\xb5?\xd2\xaf" +
-	"\xe6\xd1\xe0+\x08X\\\xd4\xf1\x95c\xf7\xce\xfa\xd5#" +
-	"\x8e9\xe9ng\xf80B\xa0\x18\xd6~\xf1\xd5\xf5\xc9" +
-	"\x9eGAoD\xf7\xd1\x0f\xc22\xd0\xddar\xf4\xf2" +
-	"u\x1f\x8f\x0e\\\x9e\xbb\xdb\x1f\xc9hX\xd6\xe2\xb8T" +
-	"\xf8\xf2\xe0s\xe7z\xf1\xc5=~\x851\xc7\x82\x12!" +
-	"\x85\xeb\xdbj>}r\xd5\xc1\xa7\xaaJ/\x15\xe7D" +
-	"f\xa0\xb6$BA\xdf*\x95\x97G\x87\x0a\x97~\xf8" +
-	"\xaf\x97\xc6\xe9\x93\xa6G\xde\xd2\xee\x97\xba\xf7E\xa8M" +
-	"\xdd\xbf\xbe\x9c\x98y\xfb\xe0\xc1\xf1z:\x16Y\x8a\x9a" +
-	"RC\xcaXC\xca\xcf\xf4\x0c\xff\xf2\x83#\x9b\x0fR" +
-	"\xc1|\xdaN-j\x16\xa3\xb6W*?SCQ\xec" +
-	"|\xf4w\xcd_\xdb\xd5\xfd{\x7fN\x87j\xde\xa2\x9c" +
-	"NI\x85yc\xf3\xcf\xed=\xdd8:NN\xda\xa5" +
-	"\x9a\xc3Z\xa4\x96~)\xb5\xd4\xea\xb9\xd9\xef~\xd6\xea" +
-	"}\xcd)\xb0ckI\xed\x0e\xb2uW-\xf5\xfa\x9e" +
-	"\xf9\x7f\xda7\x12\xf8\xf3\xebU\x919\x9a?\xab\xed@" +
-	"mDZ\xdb/\xb5G:v\xcc1\xb6\xfe\xe5\x18\xf8" +
-	"\xed\xa9Q\x89\xbd\xd9Q\xd2H)\x9f\xef\xff\xfb\xeb#" +
-	"o\x93=\xee\xb3'\x01\xfe\xed\xe8Qm[T\xc2)" +
-	"z;\x03,\xee\x1a:\xd4\xd7\xf7\xb4\xfe\x8e\x0f\x1a'" +
-	"\xea\xf7\x114\x9e*~\xef\xf9m\xc33?\x1c\xafo" +
-	"\x87\xea\xe7\xa3v\xa2\x9e,\x1e\xaf\xa7\x82l\x9f\xf5\xb7" +
-	"\x9e\x7f\xaf<\xf1\x8f\x8a\xb0\xc6\xea\xf7H\x18\xc4(\xac" +
-	"o|\x7f\xcfl|\xf2\xc0\xb9*s\x8c\x14El\x06" +
-	"j\xfd12\xb7^*\xcf\xbc\xe9\xe7\xc3?m{o" +
-	"\xcc\xdf\x80S\xb1\xadd\xedl\x8c\xfc\x9d\x19:V\xf7" +
-	"\xfc\xe9\xe0EP\x1b|9\x026\xd7\xc5\x19j7\xc6" +
-	"\xe9\x85\x86x\x88i\x9b\xd4\x10@\xb1\xb6\xe1\xeb?z" +
-	"\xe1\xee\xbb/V\xd7X\xe6+\xd4\x1a\xd4\xfaI\xafy" +
-	"\xbd\x9a\xa4yiX\x19\xea\xf9\xe7\x1b-\xff\xf1\xbb\x7f" +
-	"\xf1\xbag\xc9\xfd\xe8u\xe4~pp\xf0\x96\x8c\xd1\x97" +
-	"\xe7}\xb7l4\xcc\xce\x9b\xe9w\xdf\xd2\x96\xdeB\xa6" +
-	"\xa7]X\xfd\xbd6@\x1b\xa2\x1e\xe5\x01\x80\x00\x02\xa8" +
-	"w\xcd\x07\xd0\x97q\xd4W2T\x11\x13T$u\x05" +
-	"\x09\x97s\xd4\xdb\x18\xaa\x8c%\x88\x0b\xd4U\x8b\x01\xf4" +
-	"V\x8e\xfaj\x86\xb1n\xc3\xea\xc6:`X\x07\x18\xcb" +
-	"\x1a\xb6\xe1\xfeIv\x92/\x8c\x97\x07\x06\x10\xe3\xbe\xc8" +
-	"\x82\x15\x91u\x18fgZ\x98\x03\xc2\xbc\xd9\x12\xf9l" +
-	"\xbb1\xb8\xda4\xf2\x96\x91\xb1s\x85|S\x9ba\x1a" +
-	"\xeb\xd0\xd2\x03^\xb8u\x14D\x98\xa3\x9e`\x984\x8d" +
-	"\xc1\xd5\x1b\\\xc7\x9e\x03e\"\x07]\xc2\x96\x85h\x15" +
-	"\xb9\xaen\xbb\xa9-I\xd6+\x8c\xcf/\x1b\xaf\xc8p" +
-	"Z\xb6?'\xec\xc1\x82\xd9\xb3\"\xbf\xa6\xd0\xd4\x9e\x92" +
-	"\xc5\xae0\xbe\xb4l<e\xca\xc7\x18/\x83\xaf\xaaJ" +
-	"S&\xe1\xd4\xc6\"\x93\xae\x87y\xe4\xa1\x89\xa3\xbe\x88" +
-	"Z\xc9\x9cV.l\x07\xd0\x17p\xd4\xef`\x98\xea\x96" +
-	"\x99c\x04\x18F\x00\x8b\x03\xc2\xec,X9\x1b\xf0\x01" +
-	"\x0c\x00\xc3\xc04\x03\xb83\x93)\xf4\xe7\xed&\x89(" +
-	">\x8d,=\xa6\xad\xca\x92U8i\x15F(+L" +
-	"\xc2g\xa3g\xf0\x8d\x16\x00\xfdU\x8e\xfa\x9b>|\x1e" +
-	"\xa7F\x1d\xe1\xa8\x9fd\x88%x\x9e0\x01\xf479" +
-	"\xeag\x18\xaa\x1c\x13\xc8\x01\xd4\xbfR\xf6\xefp\xd4?" +
-	"d\xa8\x06X\x02\x03\x00\xea\xfbd\xf2\x0cG\xfd<C" +
-	"U\xe1\x09T\x00\xd4\xb3{\x00\xf4\xf3\x1c\xf5\xff2T" +
-	"\x83\x81\x04\x06\x01\xd4\x8bd\xf3#\x8e\xe9\x002TC" +
-	"JB\xf2(\xe20@;rLG\x91\xe1\xd0\x800" +
-	"\xad\\!\xefV0f\xe7\xd6\x09T\x80\xa1\x02X\xec" +
-	"3\xc5\x00\xf5\x0b\x92=\xad~@Y\xb6a\x8bV\xc3" +
-	"\x02\xf4dC\xf6\x06\xabB\x87\xde\xfd\x8c0m\xcc\xad" +
-	"\xc9eH=Ta\xa1`\xda9;W\x80d>-" +
-	"D\xd6\xf7V\xa1\xaf`\x09\x13\xef\xccfMaYp" +
-	"\x05\x88\x83Sa+\xd3m\xe4\xf2\x12\xc7%\x90\xc1U" +
-	"\x0f\xd74\x07\xc0E\xe25\x84\xe6\xd0\x19N\x0d>o" +
-	"\xc1^\xc5\x88\xf9Ih\xda\xb3\xec\xad\xfd*G\x95\\" +
-	"\\\x1a\x1e\x0a\x9f\xf7\xda\x04\xf6\x09\x08\xc8\xcf\xaa\x13L" +
-	"LKo\x81gz\xaa\x08}\xe9x\x84>\\\xe6n" +
-	"\x8f\xd0\xf5\x8f\x01\xe8+9\xea_\x92\xd4`d\x85\x89" +
-	"\xf1\xf2\x01\xae\x94E5\x0a\x01\xe3\xe5\xad\xe5\xe8\x84\xec" +
-	"\x0d\x16\xc6\xcbg\x8fI\xf3\xf7\x956\xe5\xf4\xb0*\xfe" +
-	"\x19\xd3^H\x9d\xe5\xf8y.;\xee:*\xda%w" +
-	"\x10\xa2\x19\xad.\xe78kR\"\xac=\xe9E6A" +
-	"\xd7KT\xea\xce\xf9\xb5l\xb7i\xd3\xa7w\x10\x9b\x94" +
-	">Wo\xb0\x9c\xe5>\x8e\xb9&\x8a\xd8\xb0\xba\x85\x85" +
-	"\xf5\x80m\x1ce%\xea\xaf\x92\xef\xddu\xec[9-" +
-	"\xe5\x95\xe3\xf6\xca\xbfq\x86\x0c\x87\x84\xbc\xc2O\xb6r" +
-	"\x02\x15!\xa4E>\xeb\xab\x96o^\xc6\xdfx\x9e{" +
-	"\xc2\xcf\\\x8e\xfam\x0cSD\xb3\xfd\x96\xeb\xc9\x07\x92" +
-	"\xabf\x01\xf7\xb4\xe0s>c\xf2\xdc\xfd\xde&K\xbb" +
-	"\xb2\x8bmB\xa0\\\x81s]GZ\x04\x97\x02\xa4\x03" +
-	"\xb4p\xe2\xe8\xf9\xd2\xea\xb0\x05 \x1d&q\x82\xd6\x13" +
-	"C9\x16\x9a\x8a\x8b\x01\xd2Q\x92\xdf@r\xce\xe4." +
-	"\xd4\x1a\xa4\x998\xc9g\x92<\xc0\xe5:\xd4n\xc4v" +
-	"\x80\xf4\x0d$o\"\xb9\x82r#j\xb3\xa5\x9d\x99$" +
-	"\x9fK\xf2 \x93KQ\x9b#\xed4\x92|\x81\\\x8b" +
-	"\xdcY\x8b\xf3p+@z\x01\xc9\xef y8\x90\xc0" +
-	"0\x80\xb6\x84\xd6e\xfa6\x92/#yDI`\x04" +
-	"@\xfb\x14\x9a\x00\xe9O\x92\xbc\x15\xaf\xe8\xd5\xd0\xbaB" +
-	">\xd7#L\x8c\x02\xc3(`\xd2\xe8\x12y\xdb\xfd\x97" +
-	"\xea\x13\xc2\\\xb1\xdc\xfd[\xec\xeb\xef\xec\xcde\xee\x15" +
-	"T_\xf7\x855\xbdF\x97g\xce\x9dW\xb7\xf8\xa6\xc8" +
-	"\x88\xdc\x80\xc8\xe2*aYF\x97\xb0\x00\xbcg\xb9\xfc" +
-	"\x80\xd1\x9b\xcb\xaeB\xf7\xd1\x15oA\xb2\xe5\x01[X" +
-	"Wuh\xf2\x1f\x0fK`\x9a\x80\x86\xbeH\xde\x0d\xbb" +
-	"`\xb6\x8b\xd88,4\xe5\x8e\x98,\x0a\xcf6\x0ds" +
-	"\xa8\x0a\xd0\xff\xcfa\xaeL\xa9\x94\xfc\x94C\xec\x11\xfe" +
-	"\xc2\xc5\xa5)^\xce\xaa\x9b\x9d\xa4\xbf\x1e\x8f\xc5\xcb\x9f" +
-	"\x95\x80\xd3f4\xe7\x08\xed\xac\x1f\x0b`J\x06\xf6n" +
-	"i&]me\x1f\xe0\x1cb\x15\x00\xf7B\xc5\xf7\xe5" +
-	"x\xe1\x1e`\xea\xfb!,_\xd7\xa0{\xdb\xa1\x9e\xda" +
-	"\x08L=\x1eB\xe6}O\xa3{\x8f\xa1\x1e\xa2g\xa3" +
-	"!\xe4\xee\x97\xbb\xef6f\x7f\x070uo\x08\x03\xde" +
-	"\x07/\xba\xdf\x8a\xea\xee\xb5\xc0\xd4\xc7C\xa8x\xd7-" +
-	"\xe8^\x9e\xa8\xdbv\x00S\xb7\x840\xe8}o\xa3{" +
-	"E\xa4n\"\x7f\xfd!\x0cy\xf7N\xe8\xde?\xa8\xb9" +
-	"'\x80\xa9\"Ttk\x09\x00\xcb\xb0\xfc/\xe5\x1c\x03" +
-	"\x1d\x91\xa4QH9D\xea\x88\xe4F\x01\x9e/iH" +
-	"TB\x8cp\xe9\xb3\x82\xeea\x0f\x0b\x8eT\xa2\x08R" +
-	"\xce\x10-\xc3\xa2\xbbS\xd1\xe5iN\xf6\xdbp\xa2\xfe" +
-	"\xd01\xc6=\xc5\xc8\x0e%\xbc\xb6o\"\x9c\x7f\x93\xa3" +
-	"\xbe\xb9\x8c\xfd\x87\x08\x83\xdf\xe2\xa8?\\fWuK" +
-	"\x07\x80\xbe\x99\xa3\xfet\x99Z\xd5\xdd\xf4\xf6\x93\x1c\xf5" +
-	"\xdf\x96yU\x1d!\xe1K\x1c\xf5\x97\x19\x16\xe5Wq" +
-	"\xe5y?i\x16\xfa\xf3Y\x0c\x03\xc30`1SX" +
-	"\xb7.g\xdb\x02x\x19\xdc\x81\xd2\x926:-\x91\xb7" +
-	"\x85\x00\xbc\xe2\x91\x95\xeb\xca\x1bv\xbf\x09(\xae\x91\x08" +
-	"\xda\x85\x15\x9b\xd6\xf9\xd6\xbbwq\x86\xe0\x7f\x01\x00\x00" +
-	"\xff\xffT\x9f_X"
+const schema_84b56bd0975dfd33 = "x\xda\xb4X}\x8cT\xd5\x15?\xe7\xde\xf9\xdc\x0ff" +
+	"\x1eo6Z\x02\x0e4\xd0\x00\x05\x05V\xa3n\xa4\x03" +
+	"[j\x01\xa1\xdd7C\x9bv+\xadog.;\xc3" +
+	"\xee\xce\x9b\xbe\xf7v\x17i\xcd6kM\x91\xba\xd8P" +
+	"[\x8b)D\xd0\xc6\xa0U#-\xadKJZS\xad" +
+	"\xc1H\xe4#\xa4b\xc0\x8a\xb1\x15\x0c\xa9\xd2j*i" +
+	"a\x9as\xdf\xbc7o\x86\x05vm\xfa\xdf{\xe7\x9e" +
+	"\xfb;\xdf\xe7\xdc{\xa7\x87\x96\xb0\x85\xc1'\xa2\x00Z" +
+	")\x18*\x9f>\xff\xc0\xd7C\xa9\xc4\xbd\xa0\xb4`\xb9" +
+	"\xf5\xc2\xda\x87\x0f\xf5\xec\xfd>\x04\x03a\x80\xd6\xd1@" +
+	"\x03\xaa\x07\xe8S})\xf0.`y\xdf\x07_Y\xff" +
+	"\xd7\xf7\xae\xb9\x17\x94\xe9\x08\x10Db\xda\x16<\x82\x80" +
+	"\xea\xd3\xc1\x14`\xf9H\xfa\x8f/\\\xf7\xd9Y\xf7\x81" +
+	"6\x1d\x11@\xa2\x1c\x0c\xee\"\x86\x93\x92\xe1\xb7\x0f>" +
+	"\xb5c\xfe\xa1\x8d#~\x84\x0b\xc1}\xc4\xd0\x1cJ\x01" +
+	"^|\xe5\xc8\xc7s^>7\xe2\xecw\xd6\xe7\x87\x86" +
+	"i\xfd\xd6\xd0 `YW\xd6\xbf\xaa\xff\xf4\xe1-5" +
+	"*\x84\x1e!\x86\xdd\x04P\xfe\xe0\xc9\x9f\x0d\xed=\xf1" +
+	"\xe6\x16\xd0Z\x90\xf9,\x0a\x91\x19\x07Bo\xab\xc7\xe8" +
+	"\xab\xf5p\xe8e\x04,/\xe8\xbc\xf3\xe8\x1d\xd3~\xfd" +
+	"\xa0\x03'\xf5\xdd\x1dy\x05!P\x8e\xa8\xbf\xfc\xe6\xb7" +
+	"\x93=\x0f\xf9\x05m\x8f<)m\x8d\x90\xa0\x17'\x7f" +
+	"\xa6i\xe0\xe2\xec\x9d~\x86\x83\x11\xe9\x8cS\x92\xe1\x1b" +
+	"\x83O\xbd\xdf\x8b\xcf\xed\xf23`T\xda\xaaD\x89\xe1" +
+	"\x9a\x8e\x86\xcf\x9dX\xbd\xff\xb1:\xdfK\xc6\x85\xd1)" +
+	"\xa8.\x8d\x92\xd2\x8b%\xf3\xb2\xa6!\xe3\xc2\x8f\xff\xf9" +
+	"|\x1d3'\x8e\xb5\xd17\xd4\x82\xe4\x15\xd1g\x01\xcb" +
+	"\xf9\xdf\\LL\xbdyp\xff\x18\xbc\xadJC\x1b\xaa" +
+	"3\x1a\x88yZ\x031\xef\xee\x19\xfe\xd5{\x876\xed" +
+	"'\x87]\xa2\xc6h\xc3\"T\x0fH\xee\x97\x1a\xc8\xff" +
+	"\xdb\x1f\xfa}\xeb\xb7v\xe4\xff\xe07jN\xe3\x1bd" +
+	"\xd4\xe2F\x0a\xe0\xec\xdc\x0f\xbeh\xf5\x1e\xf4\x07pm" +
+	"\xe3VZ\xefk$\x80\x95s\xff\xb4g4\xf0\xe7\xd7" +
+	"\xc6\x14w\xb0\xb1\x13\xd5S\x8d$\xee\xa4\xe4\x1e\xed\xdc" +
+	":K\xdf\xfc\x97\xa3\xe0\xc7\xbb\xb5i\x0f\xe1\xadh\"" +
+	"\x8eT\xf0\xcb\xfd\xef\xbe6\xfa&\xe1\xf1\xba\x0cVw" +
+	"7\x1dQ\xf76\xd1\x9e\xe7\x9anf\x80\xe5\x1dC\x07" +
+	"J\xa5\xc7\xb5\xb7|\xf1\xc6\xd8\x1e\x8a\xf7c\xe5\x1f>" +
+	"32<\xf5\xecX\xc187i.\xaa\x18#\xc4\x0b" +
+	"\x93(\x18[\xa6\xfd\xad\xe7_\xab\x8e\xff\xbdF\xadi" +
+	"1\x99\xe8\xf3c\xa4\xd6w~\xb4k\x06>\xba\xef\xfd" +
+	":8F\x8c#\xb1)\xa8n\x97p\xdb$\xf3\xd4\xeb" +
+	"\x9e\x18\xfey\xc7\xe9\x8f\xfcN\x0d\xc67\x13ZK\x9c" +
+	"\xe4\xbd3t\xb4\xf9\x99\xb7C\xe7Ai\xf1\xd9\x08\xd8" +
+	"zS\x9c\xa1\xba4N\x1b\x16\xc7\xc3L\xfd\x85\x12\x06" +
+	"(7\xb6\xdc\xf5\x93go\xbf\xfd|\xbd\x8f\xa5\xbd#" +
+	"J\x03\xaa\xdb\x15Y8J\x92\x8a\xa0eU\xb8\xe7\x1f" +
+	"\x87\xdb\xff\xed\x17\x7f|\xb2L\xf53\x93I\xfc\xe0\xe0" +
+	"\xe0\x0dY\xbdT\xe4\xa5\x1b6\xeaf\xd7\xf5\xf4]j" +
+	"k\xef5\xb2=ia\xf5\xf7\xda\x00\x1d\x88Z\x9c\x07" +
+	"\x00\x02\x08\xa0\xe8m\x00\xda\x9d\x1c\xb5<C\x051A" +
+	"NR\xc4\\\x00\xed.\x8eZ/C\x85\xb1\x042\x00" +
+	"\xa5\xb0\x08@\xcbq\xd4J\x0c\x15\xce\x13\xc8\x01\x94>" +
+	"\xe2\xccs\xd4l\x86\xa9\xbc(t\xe7ml\x06\x86\xcd" +
+	"\x80\xb1\xbcn\xe5\xdd\x9fd\x17\xa9\x80\xf1jq\x00b" +
+	"\x1c0\x96\xd3m\xdde\xf2\xb4\x0f\xd5h\xdf\xa9\x9b]" +
+	"\x19a\x0e\x08\xf3zK\x14si}p\x8d\xa9\x17-" +
+	"=k\x17\x8c\xe2\xcc\x0e\xdd\xd4\xfb\xd0\xd2\x02\x9eI\xcd" +
+	"\xa4h\x84\xa3\x96`\x984\xf5\xc15\x1b.\x11\x10\xbc" +
+	"\x9c\x80naKg-\xd7\xad<A\x87\xf5\xbe\x1a\xe8" +
+	"\xb6*\xb4kn\x14\x18F\xc7\x89\xfd%a\x0f\x1af" +
+	"\xcf\x8a\xe2:cf:%\x03rYxS.c\xbc" +
+	"\x9a\xa0\x8e\xcb\xc6o\x84\xe3\x1b\x8b ]\x09s(^" +
+	"39j\x0b\x18\xba\xd1\x9e\x9f\x06\xd0\xe6q\xd4na" +
+	"\xb5A+\x0f\x08\xb3\xcb\xb0\x0a6\xe0\xdd\x18\x00\x86\x81" +
+	"qJ_\x9a\xcd\x1a\xfdE{\xa6L9>\x0e\x13\xbd" +
+	"\xfeZg\"\xab\x11\xb2\\\xe8\xe1\x9c0)\x81\xa7{" +
+	"\x80\x87\xdb\x01\xb4W9j\xaf\xfb\x12\xf8\x18\x99y\x88" +
+	"\xa3v\x82!V\xf2\xf7\xb8\x09\xa0\xbd\xceQ{\x87\xf2" +
+	"\x17\x9d\xfc=\xb5\x1e@{\x8b\xa3v\x96\xa1\x12`\x09" +
+	"\x0c\x00(g\xc8!\xa79j\x1f2T\x82<\x81A" +
+	"\x00\xe5\x1c\xc99\xcbQ\xfb\x98\xa1\x12\x0a$0\x04\xa0" +
+	"|D\x98\x1frL#C%\x1cLPA*\x17\x86" +
+	"\x01\xb4\xffp\xccD\x90\xe1\xd0\x800\xad\x82Qt\xfd" +
+	"\x17\xb3\x0b}\x02\x83\xc00\x08X.\x99b\x80B\x05" +
+	"I\x99q\x9e\xe3\x89\xfeya\xda\x10\xab![\xb6n" +
+	"\x8b\xb4a\x00zU6do\xb0\xd2\x86aWy\x0c" +
+	"\xd3.\xd8\x05\x03\x92\xc5\x8c\x109\x1f\xa4Q2,a" +
+	"\xe2\xd2\\\xce\x14\x96\x05\xe3\xaf:7\x9f\xb2y\xbdP" +
+	"\x94\xb9[I,\x98`A\xa5\x85\x15\x1bG\xca\xff\x0f" +
+	"\x8a9M\x0e\xaf\x9eq\xde,\x9d@Q\xf9\xdb\xce\xb8" +
+	"\xab\xd7\x9b\xf0u\x82j;t\xa5bH}\xdekS" +
+	"\x86\xfbp\xe7Vq\xc7\xee\x97\xac\xbe\xdb\xf3l\x0fa" +
+	"4y\x18_ \xdd\x96p\xd4V\xf9\xaad\xc5J\x00" +
+	"m9Gm\x8d\xaf\xcdk\x9f\x06\xd0V9\x03!\x95" +
+	"\x17zN\x98\x18\xaf\x9e\xd5*Vx\x09\x0a\x80\xf1\xea" +
+	"\x14sV\xc3\xf6\x06\x0b'\x01vp\x94\xaaN\xba\xac" +
+	"\xd9>\x8f\xa6\x9c\xd0\xd5\xa9=e,\xb5\xc9\x1f\xcb8" +
+	"j\x1d>\xb5WwU\xd4\xfe\x1aC^\xf0\xd2\xbe\xd6" +
+	"_vE\x1c\x84\xa9\"\xeb\xbd8\xc6\xcc\x94\x89\x95N" +
+	"z\x9a\xf9\x1a)\x15\xf9l\x8e\xda\x8d\xd5F\xba\x90\xba" +
+	"\xc1\x02\x8e\xdam\x0c\xcb\xbd\xba%\x93\x13{\x96\xcb9" +
+	"\x01^\xd1\xbb+\xf5E\xffI\xa6\xdf\xb8;\xacw\x98" +
+	"\x9b@\xbe\xbbm\xdc\x1d\xb1>\xeb\xdb\xaf<F\x86t" +
+	"\xa7\xc9\x8ck\x92\x04jT\xc8\x88b\xceg\xa1\xaf\"" +
+	"|\xe2\xdb\xc6\x10?\xa5\x1a\x90\x145\xca~\xcb\x95\xe4" +
+	"\xcb\x87\x09\xd7yGR\xb6:\xbf\xf0)W\xb6\xdd/" +
+	"\xedJf\xd7\x16m\x87\x10('\xdblW\x90\x1a\xc5" +
+	"6\x80L\x009f\xe2\xe8\xc9R\x9b\xb1\x1d \x13!" +
+	"r\x82\xc6\x0eCY\x01\xaa\x82\x8b\x002MD\xbf\x96" +
+	"\xe8\x9c\xc9\x11\xa7\xb6H\x988\xd1\xa7\x12=\xc0\xe5\x94" +
+	"S?\x85i\x80\xcc\xb5D\x9fI\xf4 \xcaA\xa7\xce" +
+	"\x908S\x89>\x9b\xe8!&g\x9d:K\xe2L'" +
+	"\xfa<9\xee\xb8\x1cw\xea\x1c\xdc\x0c\x90\x99G\xf4[" +
+	"\x88\x1e\x09$0\x02\xa0\xde\x84\xc3\x00\x99\x1b\x89\xbe\x84" +
+	"\xe8\xd1`\x02\xa3tIB\x13 s\x1b\xd1\x97\xe3%" +
+	"\xb1\x1a\xea3\x8a\x85\x1eab\x130l\x02L\xea\xdd" +
+	"\xa2h\xbb\x7f\xa9\x92\x10\xe6\x8ae\xeeo\xb9\xd4\xdf\xd5" +
+	"[\xc8\xde!\xc8\xbf\xee\x86u\xbdz\xb7\x07\xe7\x1e\xd2" +
+	"\\\xe7\x9b\"+\x0a\x03\"\x87\xab\x85e\xe9\xdd\xc2\x02" +
+	"\xf0\xd6\x0a\xc5\x01\xbd\xb7\x90[\x8d\xee\xd2%\xbb \xd9" +
+	"~\xb7-\xac\x09\x9d\x85\xfcG\xbeJ2]\xa6\xe3|" +
+	"\x95\xa4\xeb\xb6a\xa6E\xccm8\x13\x99\x02W\xd2\xc2" +
+	"\xc3\xf6\x0e\xb5\xff\xa7b\xae5\xa9b\xfcU\x8b\xd8\xeb" +
+	"\xed\xf3\x17U\xaax\x19\xab\x0fv\x92~\xbd\xb9\x12\xaf" +
+	"^'\x01k&\xcc\xd5\x8f\xc5\xce\xa4\xb1\x00\xae\xda5" +
+	"\xbd7\x97+\x0e\xef\xaa\x0cp\xce\xa6A\x00\xf7y\xc4" +
+	"wc<\xb7\x12\x98r&\x8c\xd5\xc7\x17t\x9f.\x94" +
+	"\x93\xeb\x81)\xc7\xc2\xc8\xbc{4\xba\x8f\x12\xca\x81\x8d" +
+	"\xc0\x94\x17\xc2\xc8\xdd\x1b\xbb\xefieo'0\xe5\xe9" +
+	"0\x06\xbc\x8b.\xbawDe'an\x0bc\xd0{" +
+	";A\xf7%D\x19\xd9\x0aL\xb9?\x8c!\xef\x9e\x8d" +
+	"\xee\x83\x8fr\x0f\xc9\xeb\x0fc\xd8{EB\xf7-A" +
+	")<\x02L\x11\xe1\xb2\xebK\x00X\x82\xd5?y\\" +
+	"u\x08\xb2\x89B\xcai\xa3\x0eI\xce\x13\xe0E\xdb\xf9" +
+	"\x959\x091\xcaJ\x1f\x06\xba\x8794\x1c\xaa\xcc!" +
+	"H9%\xb4\x04\xcb\xee\x14D\xb7Ks\xc2\xef\xc0\xcb" +
+	"E\x87\x8e)\x85u\x85\xacn\x0b\xe7\xf2\x9b\xf0\x82~" +
+	"\x0fe\xf9w9j\x9b\xaa\x99\x7f\x1fe\xe0\xf78j" +
+	"\x0fT{\xabr\x7f'\x80\xb6\x89\xa3\xf6x\xb5\xb1*" +
+	";i\xf7\xa3\x1c\xb5\xdfU\xbb\xaa2J\xc4\xe79j" +
+	"/2,wUN\xbe\x80\xd5\x8b\xb0i\xf4\x17s\x18" +
+	"\x01\x86\x11\xc0r\xd6\xe8\xeb+\xd8\xb6\x00^M\xed@" +
+	"\xe5\xc8\xa4wY\xa2h\x0b\x01x\xc9\x92U\xe8.\xea" +
+	"v\xbf\x09(>a\x1b\x18\xe7Q<^}mqJ" +
+	"\xe0\xbf\x01\x00\x00\xff\xff\x15\x99F="
 
 func init() {
 	schemas.Register(schema_84b56bd0975dfd33,
@@ -2986,7 +2940,6 @@ func init() {
 		0xbd77371c14feb668,
 		0xbd88d0eab3826ba9,
 		0xc0689e5f33bf949d,
-		0xc120e2adef2af529,
 		0xcd6c734787642800,
 		0xcfd704b9b2c62a4a,
 		0xd3df8a6125925ab9,

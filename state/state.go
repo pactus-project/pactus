@@ -99,12 +99,13 @@ func (st *state) tryLoadLastInfo() error {
 	//
 	// This check is not important because genesis state is committed.
 	// But it is good to have it to make sure genesis doc hasn't changed
-	genHash := st.calculateGenesisStateHashFromGenesisDoc()
-	blockOne, err := st.store.Block(1)
+	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
+	blockOneHash := st.store.BlockHash(1)
+	blockOneInfo, err := st.store.Block(blockOneHash)
 	if err != nil {
 		return err
 	}
-	if !genHash.EqualsTo(blockOne.Header().StateHash()) {
+	if !genStateRoot.EqualsTo(blockOneInfo.Block.Header().StateRoot()) {
 		return fmt.Errorf("invalid genesis doc")
 	}
 
@@ -233,55 +234,45 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 	sb := st.concreteSandbox()
 	exe := execution.NewExecutor()
 
-	txIDs := block.NewTxIDs()
-
-	// Re-chaeck all transactions again, remove invalid ones
-	trxs := st.txPool.PrepareBlockTransactions()
-	for _, trx := range trxs {
-		// All subsidy transactions (probably from invalid rounds)
-		// should be removed from the pool
-		if trx.IsMintbaseTx() {
-			st.logger.Debug("found duplicated subsidy transaction", "tx", trx)
-			st.txPool.RemoveTx(trx.ID())
+	// Re-chaeck all transactions strictly and remove invalid ones
+	txs := st.txPool.PrepareBlockTransactions()
+	for i := 0; i < txs.Len(); i++ {
+		// Only one subsidy transaction per block
+		if txs[i].IsMintbaseTx() {
+			st.logger.Error("found duplicated subsidy transaction", "tx", txs[i])
+			st.txPool.RemoveTx(txs[i].ID())
+			txs.Remove(i)
+			i--
 			continue
 		}
 
-		if err := exe.Execute(trx, sb); err != nil {
-			st.logger.Debug("found invalid transaction", "tx", trx, "err", err)
-			st.txPool.RemoveTx(trx.ID())
-		} else {
-			txIDs.Append(trx.ID())
-
-			if txIDs.Len() >= st.params.MaximumTransactionPerBlock {
-				break
-			}
+		if err := exe.Execute(txs[i], sb); err != nil {
+			st.logger.Debug("found invalid transaction", "tx", txs[i], "err", err)
+			txs.Remove(i)
+			i--
+		}
+		if txs.Len() >= st.params.MaximumTransactionPerBlock {
+			break
 		}
 	}
 
 	subsidyTx := st.createSubsidyTx(exe.AccumulatedFee())
 	if subsidyTx == nil {
-		st.logger.Error("probably the node is shutting down.")
+		// probably the node is shutting down.
+		st.logger.Error("no subsidy transaction")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
-	if err := st.txPool.AppendTxAndBroadcast(subsidyTx); err != nil {
-		st.logger.Error("our subsidy transaction is invalid. Why?", "err", err)
-		return nil, err
-	}
-	txIDs.Prepend(subsidyTx.ID())
-
-	stateHash := st.stateHash()
-	timestamp := st.proposeNextBlockTime()
+	txs.Prepend(subsidyTx)
 	seed := st.lastInfo.SortitionSeed()
-	newSortitionSeed := seed.Generate(st.signer)
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
-		timestamp,
-		txIDs,
+		st.proposeNextBlockTime(),
+		txs,
 		st.lastInfo.BlockHash(),
-		stateHash,
+		st.stateRoot(),
 		st.lastInfo.Certificate(),
-		newSortitionSeed,
+		seed.Generate(st.signer),
 		st.signer.Address())
 
 	return block, nil
@@ -301,8 +292,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	}
 
 	sb := st.concreteSandbox()
-	_, err := st.executeBlock(block, sb)
-	if err != nil {
+	if err := st.executeBlock(block, sb); err != nil {
 		return err
 	}
 
@@ -353,8 +343,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	// -----------------------------------
 	// Execute block
 	sb := st.concreteSandbox()
-	trxs, err := st.executeBlock(block, sb)
-	if err != nil {
+	if err := st.executeBlock(block, sb); err != nil {
 		return err
 	}
 
@@ -371,10 +360,9 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 
 	st.store.SaveBlock(height, block, cert)
 
-	// Save txs and receipts
-	for _, trx := range trxs {
+	// Remove transactions from pool
+	for _, trx := range block.Transactions() {
 		st.txPool.RemoveTx(trx.ID())
-		st.store.SaveTransaction(trx)
 	}
 
 	if err := st.store.WriteBatch(); err != nil {
@@ -548,20 +536,17 @@ func (st *state) Transaction(id tx.ID) *tx.Tx {
 	return tx
 }
 
-func (st *state) Block(height int) *block.Block {
-	b, err := st.store.Block(height)
+func (st *state) Block(hash hash.Hash) *block.Block {
+	b, err := st.store.Block(hash)
 	if err != nil {
 		st.logger.Trace("error on retrieving block", "err", err)
+		return nil
 	}
-	return b
+	return b.Block
 }
 
-func (st *state) BlockHeight(hash hash.Hash) int {
-	h, err := st.store.BlockHeight(hash)
-	if err != nil {
-		st.logger.Trace("error on retrieving block height", "err", err)
-	}
-	return h
+func (st *state) BlockHash(height int) hash.Hash {
+	return st.store.BlockHash(height)
 }
 
 func (st *state) Account(addr crypto.Address) *account.Account {

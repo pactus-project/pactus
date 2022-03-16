@@ -5,6 +5,7 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
@@ -19,8 +20,11 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, err)
 		return
 	}
+	data, _ := st.LastBlockHash()
+	h, _ := hash.FromRawBytes(data)
 	out := new(BlockchainResult)
-	out.Height = int(st.Height())
+	out.LastBlockHeight = int(st.LastBlockHeight())
+	out.LastBlockHash = h
 	s.writeJSON(w, out)
 }
 

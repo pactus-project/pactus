@@ -3,7 +3,6 @@ package block
 import (
 	"encoding/json"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
@@ -16,37 +15,37 @@ import (
 )
 
 type Block struct {
-	lk            sync.RWMutex
-	memorizedHash *hash.Hash
-
 	data blockData
 }
 
 type blockData struct {
-	Header          Header       `cbor:"1,keyasint"`
-	PrevCertificate *Certificate `cbor:"2,keyasint"`
-	TxIDs           TxIDs        `cbor:"3,keyasint"`
+	Header   Header       `cbor:"1,keyasint"`
+	PrevCert *Certificate `cbor:"2,keyasint"`
+	Txs      Txs          `cbor:"3,keyasint"`
 }
 
-func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
-	prevBlockHash, stateHash hash.Hash,
-	prevCertificate *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address) *Block {
-	txIDsHash := txIDs.Hash()
-	prevCertHash := hash.UndefHash
-	if prevCertificate != nil {
-		prevCertHash = prevCertificate.Hash()
-	}
-	header := NewHeader(version, timestamp,
-		txIDsHash, prevBlockHash, stateHash, prevCertHash, sortitionSeed, proposer)
-
-	b := &Block{
+func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
+	return &Block{
 		data: blockData{
-			Header:          header,
-			PrevCertificate: prevCertificate,
-			TxIDs:           txIDs,
+			Header:   header,
+			PrevCert: prevCert,
+			Txs:      txs,
 		},
 	}
+}
 
+func MakeBlock(version int, timestamp time.Time, txs Txs,
+	prevBlockHash, stateRoot hash.Hash,
+	prevCert *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address) *Block {
+	txsRoot := txs.Root()
+	prevCertHash := hash.UndefHash
+	if prevCert != nil {
+		prevCertHash = prevCert.Hash()
+	}
+	header := NewHeader(version, timestamp,
+		txsRoot, stateRoot, prevBlockHash, prevCertHash, sortitionSeed, proposer)
+
+	b := NewBlock(header, prevCert, txs)
 	if err := b.SanityCheck(); err != nil {
 		panic(err)
 	}
@@ -54,18 +53,18 @@ func MakeBlock(version int, timestamp time.Time, txIDs TxIDs,
 }
 
 func (b *Block) Header() *Header               { return &b.data.Header }
-func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCertificate }
-func (b *Block) TxIDs() TxIDs                  { return b.data.TxIDs }
+func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCert }
+func (b *Block) Transactions() Txs             { return b.data.Txs }
 
 func (b *Block) SanityCheck() error {
 	if err := b.Header().SanityCheck(); err != nil {
 		return err
 	}
-	if b.TxIDs().Len() == 0 {
+	if b.Transactions().Len() == 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "block at least should have one transaction")
 	}
-	if !b.Header().TxIDsHash().EqualsTo(b.data.TxIDs.Hash()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid Txs Hash")
+	if !b.Header().TxsRoot().EqualsTo(b.data.Txs.Root()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "transactions root is not matched")
 	}
 	if b.PrevCertificate() != nil {
 		if err := b.PrevCertificate().SanityCheck(); err != nil {
@@ -77,7 +76,13 @@ func (b *Block) SanityCheck() error {
 	} else {
 		// Genesis block checks
 		if !b.Header().PrevCertificateHash().IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous certificate hash")
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid genesis certificate hash")
+		}
+	}
+
+	for _, trx := range b.Transactions() {
+		if err := trx.SanityCheck(); err != nil {
+			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 		}
 	}
 
@@ -85,51 +90,34 @@ func (b *Block) SanityCheck() error {
 }
 
 func (b *Block) Hash() hash.Hash {
-	b.lk.Lock()
-	defer b.lk.Unlock()
-
-	if b.memorizedHash == nil {
-		h := b.data.Header.Hash()
-		b.memorizedHash = &h
-	}
-
-	return *b.memorizedHash
+	return b.Header().Hash()
 }
 
 func (b *Block) Stamp() hash.Stamp {
 	return b.Hash().Stamp()
 }
 
-func (b *Block) HashesTo(hash hash.Hash) bool {
-	return b.Hash().EqualsTo(hash)
-}
-
 func (b *Block) Fingerprint() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
 		b.Hash().Fingerprint(),
 		b.data.Header.ProposerAddress().Fingerprint(),
-		b.data.Header.StateHash().Fingerprint(),
-		b.data.TxIDs.Len(),
+		b.data.Header.StateRoot().Fingerprint(),
+		b.data.Txs.Len(),
 	)
 }
-
-func (b *Block) Encode() ([]byte, error) {
-	bs, err := cbor.Marshal(b.data)
-	if err != nil {
-		return nil, err
-	}
-	return bs, nil
-}
-
-func (b *Block) Decode(bs []byte) error {
-	return cbor.Unmarshal(bs, &b.data)
-}
-
 func (b *Block) MarshalCBOR() ([]byte, error) {
-	return cbor.Marshal(b.data)
+	return b.Encode()
 }
 
 func (b *Block) UnmarshalCBOR(bs []byte) error {
+	return b.Decode(bs)
+}
+
+func (b *Block) Encode() ([]byte, error) {
+	return cbor.Marshal(b.data)
+}
+
+func (b *Block) Decode(bs []byte) error {
 	return cbor.Unmarshal(bs, &b.data)
 }
 
@@ -139,26 +127,22 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 
 // ---------
 // For tests
-func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) (*Block, []*tx.Tx) {
+func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) *Block {
 	if proposer == nil {
 		addr := crypto.GenerateTestAddress()
 		proposer = &addr
 	}
-	txs := make([]*tx.Tx, 0)
+	txs := NewTxs()
 	tx1, _ := tx.GenerateTestSendTx()
 	tx2, _ := tx.GenerateTestSendTx()
 	tx3, _ := tx.GenerateTestSendTx()
 	tx4, _ := tx.GenerateTestSendTx()
 
-	txs = append(txs, tx1)
-	txs = append(txs, tx2)
-	txs = append(txs, tx3)
-	txs = append(txs, tx4)
+	txs.Append(tx1)
+	txs.Append(tx2)
+	txs.Append(tx3)
+	txs.Append(tx4)
 
-	ids := NewTxIDs()
-	for _, tx := range txs {
-		ids.Append(tx.ID())
-	}
 	if prevBlockHash == nil {
 		h := hash.GenerateTestHash()
 		prevBlockHash = &h
@@ -168,12 +152,13 @@ func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) (*Blo
 		cert = nil
 	}
 	sortitionSeed := sortition.GenerateRandomSeed()
-	block := MakeBlock(1, util.Now(), ids,
-		*prevBlockHash,
+	header := NewHeader(1, util.Now(),
+		txs.Root(),
 		hash.GenerateTestHash(),
-		cert,
+		*prevBlockHash,
+		cert.Hash(),
 		sortitionSeed,
 		*proposer)
 
-	return block, txs
+	return NewBlock(header, cert, txs)
 }

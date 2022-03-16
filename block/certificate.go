@@ -11,33 +11,37 @@ import (
 )
 
 type Certificate struct {
-	data certificateData
+	memorizedHash hash.Hash
+	data          certificateData
 }
 type certificateData struct {
-	BlockHash  hash.Hash     `cbor:"1,keyasint"`
-	Round      int           `cbor:"2,keyasint"`
-	Committers []int         `cbor:"3,keyasint"`
-	Absentees  []int         `cbor:"4,keyasint"`
-	Signature  bls.Signature `cbor:"5,keyasint"`
+	BlockHash  hash.Hash      `cbor:"1,keyasint"`
+	Round      int            `cbor:"2,keyasint"`
+	Committers []int          `cbor:"3,keyasint"`
+	Absentees  []int          `cbor:"4,keyasint"`
+	Signature  *bls.Signature `cbor:"5,keyasint"`
 }
 
 func NewCertificate(blockHash hash.Hash, round int, committers, absentees []int, signature *bls.Signature) *Certificate {
-	return &Certificate{
+	cert := &Certificate{
 		data: certificateData{
 			BlockHash:  blockHash,
 			Round:      round,
 			Committers: committers,
 			Absentees:  absentees,
-			Signature:  *signature,
+			Signature:  signature,
 		},
 	}
+
+	cert.memorizedHash = cert.calcHash()
+	return cert
 }
 
 func (cert *Certificate) BlockHash() hash.Hash      { return cert.data.BlockHash }
 func (cert *Certificate) Round() int                { return cert.data.Round }
 func (cert *Certificate) Committers() []int         { return cert.data.Committers }
 func (cert *Certificate) Absentees() []int          { return cert.data.Absentees }
-func (cert *Certificate) Signature() *bls.Signature { return &cert.data.Signature }
+func (cert *Certificate) Signature() *bls.Signature { return cert.data.Signature }
 
 func (cert *Certificate) SanityCheck() error {
 	if err := cert.BlockHash().SanityCheck(); err != nil {
@@ -63,20 +67,33 @@ func (cert *Certificate) SanityCheck() error {
 	return nil
 }
 
-func (cert *Certificate) Hash() hash.Hash {
-	bs, err := cert.MarshalCBOR()
-	if err != nil {
-		return hash.UndefHash
-	}
+func (cert *Certificate) calcHash() hash.Hash {
+	bs, _ := cert.Encode()
 	return hash.CalcHash(bs)
 }
 
+func (cert *Certificate) Hash() hash.Hash {
+	return cert.memorizedHash
+}
+
 func (cert *Certificate) MarshalCBOR() ([]byte, error) {
-	return cbor.Marshal(cert.data)
+	return cert.Encode()
 }
 
 func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
-	return cbor.Unmarshal(bs, &cert.data)
+	return cert.Decode(bs)
+}
+func (cert *Certificate) Encode() ([]byte, error) {
+	return cbor.Marshal(cert.data)
+}
+
+func (cert *Certificate) Decode(bs []byte) error {
+	if err := cbor.Unmarshal(bs, &cert.data); err != nil {
+		return err
+	}
+
+	cert.memorizedHash = cert.calcHash()
+	return nil
 }
 
 func (cert *Certificate) MarshalJSON() ([]byte, error) {

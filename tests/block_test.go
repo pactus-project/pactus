@@ -1,14 +1,26 @@
 package tests
 
 import (
-	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
+
+func lastHash() hash.Hash {
+	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
+		return nil
+	}).Result()
+	st, err := res.Struct()
+	if err != nil {
+		panic(err)
+	}
+
+	data, _ := st.LastBlockHash()
+	h, _ := hash.FromRawBytes(data)
+	return h
+}
 
 func lastHeight() int {
 	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
@@ -19,43 +31,38 @@ func lastHeight() int {
 		panic(err)
 	}
 
-	return int(st.Height())
+	return int(st.LastBlockHeight())
 }
 
 func waitForNewBlock() {
 	getBlockAt(lastHeight() + 1)
 }
 
-func lastBlock() *block.Block {
+func lastBlock() *capnp.BlockResult {
 	return getBlockAt(lastHeight())
 }
 
-func getBlockAt(height int) *block.Block {
+func getBlockAt(height int) *capnp.BlockResult {
 	for i := 0; i < 120; i++ {
-		res := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
+		hashRes, _ := tCapnpServer.GetBlockHash(tCtx, func(p capnp.ZarbServer_getBlockHash_Params) error {
 			p.SetHeight(uint64(height))
-			p.SetVerbosity(0)
 			return nil
+		}).Struct()
+
+		blockRes := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
+			data, _ := hashRes.Result()
+			p.SetVerbosity(0)
+			return p.SetHash(data)
 		}).Result()
 
-		st, err := res.Struct()
+		st, err := blockRes.Struct()
 		if err != nil {
 			time.Sleep(1 * time.Second)
 			continue
 		}
 
-		d, _ := st.Data()
-		b := new(block.Block)
-		err = b.Decode(d)
-		if err != nil {
-			panic(err)
-		}
-		return b
+		return &st
 	}
 	logger.Panic("get block timeout", "height", height)
 	return nil
-}
-
-func TestGetBlock(t *testing.T) {
-	require.NotNil(t, lastBlock())
 }

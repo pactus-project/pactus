@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 
+	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/crypto"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc/codes"
@@ -10,7 +11,7 @@ import (
 )
 
 func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountRequest) (*zarb.AccountResponse, error) {
-	addr, err := crypto.AddressFromString(request.Address)
+	addr, err := crypto.AddressFromRawBytes(request.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid address: %v", err)
 
@@ -20,13 +21,17 @@ func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountReque
 		return nil, status.Errorf(codes.InvalidArgument, "Account not found")
 	}
 	res := &zarb.AccountResponse{
-		Account: &zarb.AccountInfo{
-			Address:  acc.Address().String(),
-			Number:   int32(acc.Number()),
-			Sequence: int64(acc.Sequence()),
-			Balance:  acc.Balance(),
-		},
+		Account: accountToProto(acc),
 	}
 
 	return res, nil
+}
+
+func accountToProto(acc *account.Account) *zarb.AccountInfo {
+	return &zarb.AccountInfo{
+		Address:  acc.Address().RawBytes(),
+		Number:   int32(acc.Number()),
+		Sequence: int64(acc.Sequence()),
+		Balance:  acc.Balance(),
+	}
 }

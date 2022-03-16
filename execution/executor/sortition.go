@@ -58,7 +58,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 				joiningNum++
 			}
 			if joiningPower >= (committee.TotalPower() / 3) {
-				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
+				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can join")
 			}
 
 			vals := committee.Validators()
@@ -70,7 +70,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 				leavingPower += vals[i].Power()
 			}
 			if leavingPower >= (committee.TotalPower() / 3) {
-				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can be changed")
+				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can leave")
 			}
 
 			oldestJoinedHeight := currentHeight

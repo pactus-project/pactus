@@ -31,7 +31,8 @@ func setup(t *testing.T) {
 	pub1, _ := bls.GenerateTestKeyPair()
 	pub2, _ := bls.GenerateTestKeyPair()
 	pub3, _ := bls.GenerateTestKeyPair()
-	pub4, _ := bls.GenerateTestKeyPair()
+	pub4, prv4 := bls.GenerateTestKeyPair()
+	signer := crypto.NewSigner(prv4)
 
 	val0 := validator.NewValidator(pub0, 0)
 	val1 := validator.NewValidator(pub1, 1)
@@ -60,23 +61,20 @@ func setup(t *testing.T) {
 	// Last block
 	committers := []int{0, 1, 2, 3}
 	trx := tx.NewSortitionTx(hash.GenerateTestStamp(), 1, pub4.Address(), sortition.GenerateRandomProof())
-	ids := block.NewTxIDs()
-	ids.Append(trx.ID())
+	signer.SignMsg(trx)
 	prevHash := hash.GenerateTestHash()
 	prevCert := block.GenerateTestCertificate(prevHash)
 	lastHeight := util.RandInt(1000)
 	lastSeed := sortition.GenerateRandomSeed()
-	lastBlock := block.MakeBlock(1, util.Now(), ids,
+	lastBlock := block.MakeBlock(1, util.Now(), block.Txs{trx},
 		prevHash,
 		hash.GenerateTestHash(),
 		prevCert, lastSeed, val2.Address())
 
-	signer := bls.GenerateTestSigner()
-	sig := signer.SignData([]byte("dummy-dig"))
+	sig := signer.SignData([]byte("fatdog"))
 	lastCert := block.NewCertificate(lastBlock.Hash(), 0, committers, []int{}, sig.(*bls.Signature))
 	tStore.SaveBlock(lastHeight, lastBlock, lastCert)
-	tStore.SaveTransaction(trx)
-	assert.Equal(t, tStore.LastBlockHeight(), lastHeight)
+	assert.Equal(t, tStore.LastCert.Height, lastHeight)
 
 	tLastInfo.SetSortitionSeed(lastSeed)
 	tLastInfo.SetBlockHeight(lastHeight)
@@ -112,22 +110,12 @@ func TestRestoreFailed(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("Unable to get transaction from store", func(t *testing.T) {
-		setup(t)
-
-		li := NewLastInfo(tStore)
-
-		tStore.Transactions = make(map[hash.Hash]tx.Tx) // Reset transactions
-		_, err := li.RestoreLastInfo(4)
-		assert.Error(t, err)
-	})
-
 	t.Run("Unable to get block from store", func(t *testing.T) {
 		setup(t)
 
 		li := NewLastInfo(tStore)
 
-		tStore.Blocks = make(map[int]*block.Block) // Reset Blocks
+		tStore.Blocks = make(map[int]block.Block) // Reset Blocks
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})

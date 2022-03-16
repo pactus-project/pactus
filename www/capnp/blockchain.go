@@ -1,10 +1,9 @@
 package capnp
 
 func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
-	height := zs.state.LastBlockHeight()
 	res, _ := args.Results.NewResult()
-	res.SetHeight(int64(height))
-	return nil
+	res.SetLastBlockHeight(int64(zs.state.LastBlockHeight()))
+	return res.SetLastBlockHash(zs.state.LastBlockHash().RawBytes())
 }
 
 func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {

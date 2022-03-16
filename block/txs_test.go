@@ -5,31 +5,47 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
 func TestTxsMerkle(t *testing.T) {
-	b, txs := GenerateTestBlock(nil, nil)
+	txs := NewTxs()
+	trx1, _ := tx.GenerateTestSendTx()
+	trx2, _ := tx.GenerateTestSendTx()
+	txs.Append(trx1)
+	merkle := txs.Root()
+	assert.Equal(t, merkle, trx1.ID())
 
-	data := make([]tx.ID, len(txs))
-	for i, tx := range txs {
-		data[i] = tx.ID()
-	}
-	merkle := simplemerkle.NewTreeFromHashes(data)
-	assert.Equal(t, b.Header().TxIDsHash(), merkle.Root())
+	txs.Append(trx2)
+	merkle = txs.Root()
+	data := make([]byte, 64)
+	copy(data[:32], trx1.ID().RawBytes())
+	copy(data[32:], trx2.ID().RawBytes())
+	assert.Equal(t, merkle, hash.CalcHash(data))
 }
 
-func TestAppendAndPrepend(t *testing.T) {
-	ids := NewTxIDs()
-	h1 := hash.GenerateTestHash()
-	h2 := hash.GenerateTestHash()
-	h3 := hash.GenerateTestHash()
-	h4 := hash.GenerateTestHash()
-	ids.Append(h2)
-	ids.Append(h3)
-	ids.Prepend(h1)
-	ids.Append(h4)
+func TestAppendPrependRemove(t *testing.T) {
+	txs := NewTxs()
+	trx1, _ := tx.GenerateTestSendTx()
+	trx2, _ := tx.GenerateTestSendTx()
+	trx3, _ := tx.GenerateTestSendTx()
+	trx4, _ := tx.GenerateTestSendTx()
+	trx5, _ := tx.GenerateTestSendTx()
+	txs.Append(trx2)
+	txs.Append(trx3)
+	txs.Prepend(trx1)
+	txs.Append(trx5)
+	txs.Append(trx4)
+	txs.Remove(3)
 
-	assert.Equal(t, ids.data.IDs, []hash.Hash{h1, h2, h3, h4})
+	assert.Equal(t, txs, Txs{trx1, trx2, trx3, trx4})
+}
+
+func TestIsEmpty(t *testing.T) {
+	txs := NewTxs()
+	assert.True(t, txs.IsEmpty())
+
+	trx, _ := tx.GenerateTestSendTx()
+	txs.Append(trx)
+	assert.False(t, txs.IsEmpty())
 }

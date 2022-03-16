@@ -15,7 +15,7 @@ func TestGetNetworkInfo(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, tMockSync.SelfID().String(), res.SelfId)
+		assert.Equal(t, []byte(tMockSync.SelfID()), res.SelfId)
 		assert.Equal(t, 2, len(res.Peers))
 	})
 
@@ -32,28 +32,24 @@ func TestGetNetworkInfo(t *testing.T) {
 				assert.Equal(t, p.Agent, pp.Agent)
 				assert.Equal(t, p.Moniker, pp.Moniker)
 				assert.Equal(t, p.Height, int32(pp.Height))
-				assert.Equal(t, p.PublicKey, pp.PublicKey.String())
+				assert.Equal(t, p.PublicKey, pp.PublicKey.RawBytes())
 				break
 			}
 		}
 	})
 
-	err := conn.Close()
-
-	assert.Nil(t, err, "Error closing connection")
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
 func TestGetBlockchainInfo(t *testing.T) {
 	conn, client := callServer(t)
 
-	t.Run("Should return 10", func(t *testing.T) {
+	t.Run("Should return the last block height", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
-		assert.Equal(t, int64(10), res.Height)
+		assert.Equal(t, int64(tMockState.Store.LastCert.Height), res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 	})
 
-	err := conn.Close()
-
-	assert.Nil(t, err, "Error closing connection")
+	assert.Nil(t, conn.Close(), "Error closing connection")
 }

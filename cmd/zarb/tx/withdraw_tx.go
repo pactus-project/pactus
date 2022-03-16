@@ -38,11 +38,6 @@ func WithdrawTx() func(c *cli.Cmd) {
 			Desc: "The amount to be transferred",
 		})
 
-		feeOpt := c.Int(cli.IntOpt{
-			Name: "fee",
-			Desc: "Transaction fee",
-		})
-
 		memoOpt := c.String(cli.StringOpt{
 			Name:  "memo",
 			Desc:  "Transaction memo (Optional)",
@@ -71,7 +66,6 @@ func WithdrawTx() func(c *cli.Cmd) {
 			var to crypto.Address
 			var seq int
 			var amount int64
-			var fee int64
 			var auth string
 
 			// ---
@@ -81,13 +75,6 @@ func WithdrawTx() func(c *cli.Cmd) {
 				return
 			}
 			amount = int64(*amountOpt)
-
-			if *feeOpt == 0 {
-				cmd.PrintWarnMsg("Fee is not defined.")
-				c.PrintHelp()
-				return
-			}
-			fee = int64(*feeOpt)
 
 			if *fromOpt == "" {
 				cmd.PrintWarnMsg("Validator address is not defined.")
@@ -148,7 +135,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 			}
 
 			//fulfill transaction payload
-			trx := tx.NewWithdrawTx(stamp, seq, from, to, amount, fee, *memoOpt)
+			trx := tx.NewWithdrawTx(stamp, seq, from, to, amount, *memoOpt)
 
 			signAndPublish(trx, *keyFileOpt, auth, grpcOpt)
 		}

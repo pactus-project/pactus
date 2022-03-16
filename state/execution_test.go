@@ -7,7 +7,6 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -41,7 +40,8 @@ func TestProposeBlock(t *testing.T) {
 
 	b2, c2 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3)
 	assert.Equal(t, b2.Header().PrevBlockHash(), b1.Hash())
-	assert.Equal(t, b2.TxIDs().IDs()[1:], []hash.Hash{trx1.ID(), trx2.ID()})
+	assert.Equal(t, b2.Transactions()[1:], block.Txs{trx1, trx2})
+	assert.True(t, b2.Transactions()[0].IsMintbaseTx())
 	assert.NoError(t, tState1.CommitBlock(2, b2, c2))
 
 	assert.Equal(t, tState1.TotalPower(), int64(1004))
@@ -67,61 +67,55 @@ func TestExecuteBlock(t *testing.T) {
 	assert.NoError(t, tState1.txPool.AppendTx(validTx1))
 
 	t.Run("Subsidy tx is invalid", func(t *testing.T) {
-		txIDs := block.NewTxIDs()
-		txIDs.Append(invSubsidyTx.ID())
-		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
+		txs := block.NewTxs()
+		txs.Append(invSubsidyTx)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
 		sb := tState1.concreteSandbox()
-		_, err := tState1.executeBlock(invBlock, sb)
-		assert.Error(t, err)
+		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
 	t.Run("Has invalid tx", func(t *testing.T) {
-		txIDs := block.NewTxIDs()
-		txIDs.Append(validSubsidyTx.ID())
-		txIDs.Append(invSendTx.ID())
-		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
+		txs := block.NewTxs()
+		txs.Append(validSubsidyTx)
+		txs.Append(invSendTx)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
 		sb := tState1.concreteSandbox()
-		_, err := tState1.executeBlock(invBlock, sb)
-		assert.Error(t, err)
+		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
 	t.Run("Subsidy is not first tx", func(t *testing.T) {
-		txIDs := block.NewTxIDs()
-		txIDs.Append(validTx1.ID())
-		txIDs.Append(validSubsidyTx.ID())
-		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
+		txs := block.NewTxs()
+		txs.Append(validTx1)
+		txs.Append(validSubsidyTx)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
 		sb := tState1.concreteSandbox()
-		_, err := tState1.executeBlock(invBlock, sb)
-		assert.Error(t, err)
+		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
 	t.Run("Has no subsidy", func(t *testing.T) {
-		txIDs := block.NewTxIDs()
-		txIDs.Append(validTx1.ID())
-		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
+		txs := block.NewTxs()
+		txs.Append(validTx1)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
 		sb := tState1.concreteSandbox()
-		_, err := tState1.executeBlock(invBlock, sb)
-		assert.Error(t, err)
+		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
 	t.Run("Two subsidy transactions", func(t *testing.T) {
-		txIDs := block.NewTxIDs()
-		txIDs.Append(validSubsidyTx.ID())
-		txIDs.Append(validSubsidyTx.ID())
-		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
+		txs := block.NewTxs()
+		txs.Append(validSubsidyTx)
+		txs.Append(validSubsidyTx)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
 		sb := tState1.concreteSandbox()
-		_, err := tState1.executeBlock(invBlock, sb)
-		assert.Error(t, err)
+		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		txIDs := block.NewTxIDs()
-		txIDs.Append(validSubsidyTx.ID())
-		txIDs.Append(validTx1.ID())
-		invBlock := block.MakeBlock(1, util.Now(), txIDs, tState1.lastInfo.BlockHash(), tState1.stateHash(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
+		txs := block.NewTxs()
+		txs.Append(validSubsidyTx)
+		txs.Append(validTx1)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState1.signer.Address())
 		sb := tState1.concreteSandbox()
-		_, err := tState1.executeBlock(invBlock, sb)
-		assert.NoError(t, err)
+		assert.NoError(t, tState1.executeBlock(invBlock, sb))
 
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)

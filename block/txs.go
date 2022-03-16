@@ -1,70 +1,47 @@
 package block
 
 import (
-	"encoding/json"
-
-	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
-type TxIDs struct {
-	data txIDsData
+type Txs []*tx.Tx
+
+func NewTxs() Txs {
+	return make([]*tx.Tx, 0)
 }
 
-type txIDsData struct {
-	IDs []tx.ID `cbor:"1,keyasint"`
+func (txs *Txs) Append(trx *tx.Tx) {
+	*txs = append(*txs, trx)
 }
 
-func NewTxIDs() TxIDs {
-	return TxIDs{
-		data: txIDsData{
-			IDs: make([]tx.ID, 0),
-		},
+func (txs *Txs) Prepend(trx *tx.Tx) {
+	*txs = append(*txs, nil)
+	copy((*txs)[1:], (*txs)[0:])
+	(*txs)[0] = trx
+}
+
+func (txs *Txs) Remove(i int) {
+	// https://github.com/golang/go/wiki/SliceTricks#delete
+	copy((*txs)[i:], (*txs)[i+1:])
+	(*txs)[txs.Len()-1] = nil
+	*txs = (*txs)[:txs.Len()-1]
+}
+
+func (txs Txs) Root() hash.Hash {
+	hashes := make([]hash.Hash, txs.Len())
+	for i, trx := range txs {
+		hashes[i] = trx.ID()
 	}
-}
-
-func (txs *TxIDs) Append(id tx.ID) {
-	txs.data.IDs = append(txs.data.IDs, id)
-}
-
-func (txs *TxIDs) Prepend(id tx.ID) {
-	ids := make([]tx.ID, len(txs.data.IDs)+1)
-	ids[0] = id
-	copy(ids[1:], txs.data.IDs)
-	txs.data.IDs = ids
-}
-
-func (txs TxIDs) Hash() hash.Hash {
-	merkle := simplemerkle.NewTreeFromHashes(txs.data.IDs)
+	merkle := simplemerkle.NewTreeFromHashes(hashes)
 	return merkle.Root()
 }
 
-func (txs TxIDs) IDs() []tx.ID {
-	return txs.data.IDs
-}
-
-func (txs TxIDs) IsEmpty() bool {
+func (txs Txs) IsEmpty() bool {
 	return txs.Len() == 0
 }
 
-func (txs TxIDs) Len() int {
-	return len(txs.data.IDs)
-}
-
-func (txs *TxIDs) MarshalCBOR() ([]byte, error) {
-	return cbor.Marshal(txs.data)
-}
-
-func (txs *TxIDs) UnmarshalCBOR(bs []byte) error {
-	return cbor.Unmarshal(bs, &txs.data)
-}
-
-func (txs TxIDs) MarshalJSON() ([]byte, error) {
-	return json.Marshal(txs.data)
-}
-
-func (txs *TxIDs) UnmarshalJSON(bz []byte) error {
-	return json.Unmarshal(bz, &txs.data)
+func (txs Txs) Len() int {
+	return len(txs)
 }

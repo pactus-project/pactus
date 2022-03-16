@@ -56,7 +56,7 @@ func NewTreeFromHashes(hashes []hash.Hash) *Tree {
 	if len(hashes) == 0 {
 		return nil
 	}
-	// abcdww Calculate how many entries are required to hold the binary merkle
+	// Calculate how many entries are required to hold the binary merkle
 	// tree as a linear array and create an array of that size.
 	nextPoT := nextPowerOfTwo(len(hashes))
 	arraySize := nextPoT*2 - 1
