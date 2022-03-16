@@ -1,6 +1,9 @@
 package store
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -22,11 +25,11 @@ func TestConfig() *Config {
 }
 
 func (conf *Config) DataPath() string {
-	return util.MakeAbs(conf.Path + "/data")
+	return util.MakeAbs(fmt.Sprintf("%s%c%s", conf.Path, os.PathSeparator, "data"))
 }
 
 func (conf *Config) StorePath() string {
-	return conf.DataPath() + "/store.db"
+	return fmt.Sprintf("%s%c%s", conf.DataPath(), os.PathSeparator, "store.db")
 }
 
 // SanityCheck is a basic checks for config
