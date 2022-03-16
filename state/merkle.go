@@ -53,7 +53,7 @@ func (st *state) stateRoot() hash.Hash {
 	return *stateRoot
 }
 
-func (st *state) calculateGenesisStateHashFromGenesisDoc() hash.Hash {
+func (st *state) calculateGenesisStateRootFromGenesisDoc() hash.Hash {
 	accs := st.genDoc.Accounts()
 	vals := st.genDoc.Validators()
 

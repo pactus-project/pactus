@@ -20,8 +20,7 @@ func TestTransaction(t *testing.T) {
 	t.Run("Shall return a transaction", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		hash := testTx.ID()
-		r = mux.SetURLVars(r, map[string]string{"id": hash.String()})
+		r = mux.SetURLVars(r, map[string]string{"id": testTx.ID().String()})
 		tHTTPServer.GetTransactionHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)

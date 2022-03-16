@@ -68,6 +68,6 @@ func TestChangeVal(t *testing.T) {
 func TestCalculatingGenesisState(t *testing.T) {
 	setup(t)
 
-	r := tState1.calculateGenesisStateHashFromGenesisDoc()
+	r := tState1.calculateGenesisStateRootFromGenesisDoc()
 	assert.Equal(t, tState1.stateRoot(), r)
 }

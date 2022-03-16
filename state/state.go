@@ -99,7 +99,7 @@ func (st *state) tryLoadLastInfo() error {
 	//
 	// This check is not important because genesis state is committed.
 	// But it is good to have it to make sure genesis doc hasn't changed
-	genStateRoot := st.calculateGenesisStateHashFromGenesisDoc()
+	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
 	blockOneHash := st.store.BlockHash(1)
 	blockOneInfo, err := st.store.Block(blockOneHash)
 	if err != nil {
