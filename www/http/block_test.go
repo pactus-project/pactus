@@ -14,7 +14,7 @@ import (
 func TestBlock(t *testing.T) {
 	setup(t)
 
-	b := tMockState.Store.AddTestBlock(100)
+	b := tMockState.TestStore.AddTestBlock(100)
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -69,7 +69,7 @@ func TestBlock(t *testing.T) {
 func TestBlockHash(t *testing.T) {
 	setup(t)
 
-	b := tMockState.Store.AddTestBlock(100)
+	b := tMockState.TestStore.AddTestBlock(100)
 
 	t.Run("Shall return the block hash", func(t *testing.T) {
 		w := httptest.NewRecorder()

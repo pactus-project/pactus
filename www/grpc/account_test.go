@@ -10,7 +10,7 @@ import (
 
 func TestGetAccount(t *testing.T) {
 	conn, client := callServer(t)
-	acc := tMockState.Store.AddTestAccount()
+	acc := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx, &zarb.AccountRequest{

@@ -11,7 +11,7 @@ import (
 func TestGetBlock(t *testing.T) {
 	conn, client := callServer(t)
 
-	b := tMockState.Store.AddTestBlock(100)
+	b := tMockState.TestStore.AddTestBlock(100)
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: hash.GenerateTestHash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
@@ -52,7 +52,7 @@ func TestGetBlock(t *testing.T) {
 func TestGetBlockHash(t *testing.T) {
 	conn, client := callServer(t)
 
-	b := tMockState.Store.AddTestBlock(100)
+	b := tMockState.TestStore.AddTestBlock(100)
 
 	t.Run("Should return error for invalid height", func(t *testing.T) {
 		res, err := client.GetBlockHash(tCtx, &zarb.BlockHashRequest{Height: -1})

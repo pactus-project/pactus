@@ -34,7 +34,7 @@ func TestCacheBlocks(t *testing.T) {
 	b2 := block.GenerateTestBlock(nil, nil)
 	b3 := block.GenerateTestBlock(nil, nil)
 
-	tState.Store.SaveBlock(1, b1, block.GenerateTestCertificate(b1.Hash()))
+	tState.TestStore.SaveBlock(1, b1, block.GenerateTestCertificate(b1.Hash()))
 	tCache.AddBlocks(2, []*block.Block{b2, b3})
 
 	assert.False(t, tCache.HasBlockInCache(1), "Block 1 is not cached")

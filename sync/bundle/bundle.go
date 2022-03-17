@@ -12,10 +12,12 @@ import (
 )
 
 const (
-	BundleFlagNetworkLibP2P = 0x01
-	BundleFlagCompressed    = 0x10
-	BundleFlagBroadcasted   = 0x20
-	BundleFlagHelloMessage  = 0x40
+	BundleFlagNetworkMainnet = 0x0001
+	BundleFlagNetworkTestnet = 0x0002
+	BundleFlagCarrierLibP2P  = 0x0010
+	BundleFlagCompressed     = 0x0100
+	BundleFlagBroadcasted    = 0x0200
+	BundleFlagHelloMessage   = 0x0400
 )
 
 type Bundle struct {
@@ -26,7 +28,7 @@ type Bundle struct {
 
 func NewBundle(initiator peer.ID, msg message.Message) *Bundle {
 	return &Bundle{
-		Flags:     BundleFlagNetworkLibP2P,
+		Flags:     BundleFlagCarrierLibP2P | BundleFlagNetworkMainnet,
 		Initiator: initiator,
 		Message:   msg,
 	}

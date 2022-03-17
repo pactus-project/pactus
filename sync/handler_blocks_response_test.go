@@ -73,7 +73,7 @@ func TestSyncing(t *testing.T) {
 	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
-	stateBob.GenHash = stateAlice.GenHash
+	stateBob.TestGenHash = stateAlice.TestGenHash
 	testAddBlocks(t, stateBob, 100)
 
 	sync1, err := NewSynchronizer(configAlice,

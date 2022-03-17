@@ -13,7 +13,7 @@ import (
 func TestGetValidator(t *testing.T) {
 	conn, client := callServer(t)
 
-	val1 := tMockState.Store.AddTestValidator()
+	val1 := tMockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
@@ -53,8 +53,8 @@ func TestGetValidatorByNumber(t *testing.T) {
 	val1 := validator.NewValidator(pub1, 5)
 	val2 := validator.NewValidator(pub2, 6)
 	val2.UpdateLastBondingHeight(100)
-	tMockState.Store.UpdateValidator(val1)
-	tMockState.Store.UpdateValidator(val2)
+	tMockState.TestStore.UpdateValidator(val1)
+	tMockState.TestStore.UpdateValidator(val2)
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
