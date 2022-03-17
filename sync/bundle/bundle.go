@@ -11,7 +11,6 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-const LastVersion = 1
 const (
 	BundleFlagNetworkLibP2P = 0x01
 	BundleFlagCompressed    = 0x10
@@ -20,7 +19,6 @@ const (
 )
 
 type Bundle struct {
-	Version   int
 	Flags     int
 	Initiator peer.ID
 	Message   message.Message
@@ -28,7 +26,6 @@ type Bundle struct {
 
 func NewBundle(initiator peer.ID, msg message.Message) *Bundle {
 	return &Bundle{
-		Version:   LastVersion,
 		Flags:     BundleFlagNetworkLibP2P,
 		Initiator: initiator,
 		Message:   msg,
@@ -54,11 +51,10 @@ func (b *Bundle) CompressIt() {
 }
 
 type _Bundle struct {
-	Version     int          `cbor:"1,keyasint"`
-	Flags       int          `cbor:"2,keyasint"`
-	Initiator   peer.ID      `cbor:"3,keyasint"`
-	MessageType message.Type `cbor:"4,keyasint"`
-	MessageData []byte       `cbor:"5,keyasint"`
+	Flags       int          `cbor:"1,keyasint"`
+	Initiator   peer.ID      `cbor:"2,keyasint"`
+	MessageType message.Type `cbor:"3,keyasint"`
+	MessageData []byte       `cbor:"4,keyasint"`
 }
 
 func (b *Bundle) Encode() ([]byte, error) {
@@ -75,7 +71,6 @@ func (b *Bundle) Encode() ([]byte, error) {
 	}
 
 	msg := &_Bundle{
-		Version:     b.Version,
 		Flags:       b.Flags,
 		Initiator:   b.Initiator,
 		MessageType: b.Message.Type(),
@@ -108,7 +103,6 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 		data = c
 	}
 
-	b.Version = bdl.Version
 	b.Flags = bdl.Flags
 	b.Initiator = bdl.Initiator
 	b.Message = msg
