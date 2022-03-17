@@ -22,7 +22,7 @@ func TestNewMessage(t *testing.T) {
 
 func TestInvalidCBOR(t *testing.T) {
 	d1, _ := hex.DecodeString("000000000000000000")
-	d2, _ := hex.DecodeString("A501000242000003000440")
+	d2, _ := hex.DecodeString("A401000242000003000440")
 	m := new(Bundle)
 	_, err := m.Decode(bytes.NewReader(d1))
 	assert.Error(t, err)
