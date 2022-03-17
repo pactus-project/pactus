@@ -20,7 +20,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
 		initiator := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "bad-genesis", 0, message.FlagNeedResponse, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, tState.GenHash)
 		signer.SignMsg(msg)
 		assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
@@ -32,7 +32,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		invGenHash := hash.GenerateTestHash()
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "bad-genesis", 0, message.FlagNeedResponse, invGenHash)
+		msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, invGenHash)
 		signer.SignMsg(msg)
 		assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
@@ -45,13 +45,12 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		height := util.RandInt(0)
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNeedResponse|message.FlagNodeNetwork, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.GenHash)
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
-		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
-		assert.False(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
+		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 
 		// Check if the peer info is updated
 		p := tSync.peerSet.GetPeer(pid)
@@ -67,7 +66,7 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagNodeNetwork, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagHelloAck, tState.GenHash)
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
@@ -80,7 +79,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		claimedHeight := tState.LastBlockHeight() + 5
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", claimedHeight, 0, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, tState.GenHash)
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
@@ -97,5 +96,5 @@ func TestBroadcastingHelloMessages(t *testing.T) {
 
 	bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage))
-	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagNeedResponse))
+	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagHelloAck))
 }

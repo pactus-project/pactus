@@ -43,11 +43,11 @@ func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) e
 		util.IsFlagSet(msg.Flags, message.FlagNodeNetwork))
 	handler.peerSet.UpdateHeight(initiator, msg.Height)
 
-	if util.IsFlagSet(msg.Flags, message.FlagNeedResponse) {
+	if !util.IsFlagSet(msg.Flags, message.FlagHelloAck) {
 		// TODO: Sends response only if there is a direct connection between two peers.
 		// TODO: check if we have handshaked before. Ignore responding again
 		// Response to Hello
-		handler.sayHello(false)
+		handler.sayHello(true)
 	}
 
 	handler.updateBlokchain()
