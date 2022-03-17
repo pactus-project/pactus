@@ -129,10 +129,10 @@ func (addr *Address) UnmarshalCBOR(bs []byte) error {
 
 func (addr *Address) SanityCheck() error {
 	if addr.EqualsTo(TreasuryAddress) {
-		return errors.Errorf(errors.ErrInvalidAddress, "Treasury address")
+		return errors.Errorf(errors.ErrInvalidAddress, "treasury address is reserved")
 	}
 	if addr.data.Address[0] != 1 {
-		return errors.Errorf(errors.ErrInvalidAddress, "Invalid type")
+		return errors.Errorf(errors.ErrInvalidAddress, "invalid type")
 	}
 	return nil
 }

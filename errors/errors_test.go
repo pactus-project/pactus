@@ -31,7 +31,7 @@ func TestErrorCode(t *testing.T) {
 	assert.Equal(t, Code(err1), ErrInsufficientFunds)
 	assert.Equal(t, Code(err2), ErrInvalidTx)
 	assert.Equal(t, Code(err3), ErrInvalidBlock)
-	assert.Equal(t, "Insufficient funds", err1.Error())
-	assert.Equal(t, "Invalid transaction: Insufficient funds", err2.Error())
-	assert.Equal(t, "Invalid block: Insufficient funds", err3.Error())
+	assert.Equal(t, "insufficient funds", err1.Error())
+	assert.Equal(t, "invalid transaction: insufficient funds", err2.Error())
+	assert.Equal(t, "invalid block: insufficient funds", err3.Error())
 }

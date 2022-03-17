@@ -332,7 +332,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 	// Verify proposer
 	proposer := st.committee.Proposer(cert.Round())
 	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer. Expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer, expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
 	// Validate sortition seed
 	seed := block.Header().SortitionSeed()

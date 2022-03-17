@@ -26,22 +26,22 @@ const (
 )
 
 var messages = map[int]string{
-	ErrNone:              "No error",
-	ErrGeneric:           "Generic error",
-	ErrNetwork:           "Network error",
-	ErrInvalidBlock:      "Invalid block",
-	ErrInvalidAddress:    "Invalid address",
-	ErrInvalidPublicKey:  "Invalid public key",
-	ErrInvalidPrivateKey: "Invalid private key",
-	ErrInvalidSignature:  "Invalid signature",
-	ErrInvalidSequence:   "Invalid sequence",
-	ErrInvalidTx:         "Invalid transaction",
-	ErrInvalidProposal:   "Invalid proposal",
-	ErrInvalidVote:       "Invalid vote",
-	ErrInvalidMessage:    "Invalid message",
-	ErrInvalidConfig:     "Invalid config",
-	ErrDuplicateVote:     "Duplicate vote",
-	ErrInsufficientFunds: "Insufficient funds",
+	ErrNone:              "no error",
+	ErrGeneric:           "generic error",
+	ErrNetwork:           "network error",
+	ErrInvalidBlock:      "invalid block",
+	ErrInvalidAddress:    "invalid address",
+	ErrInvalidPublicKey:  "invalid public key",
+	ErrInvalidPrivateKey: "invalid private key",
+	ErrInvalidSignature:  "invalid signature",
+	ErrInvalidSequence:   "invalid sequence",
+	ErrInvalidTx:         "invalid transaction",
+	ErrInvalidProposal:   "invalid proposal",
+	ErrInvalidVote:       "invalid vote",
+	ErrInvalidMessage:    "invalid message",
+	ErrInvalidConfig:     "invalid config",
+	ErrDuplicateVote:     "duplicate vote",
+	ErrInsufficientFunds: "insufficient funds",
 }
 
 type withCode struct {

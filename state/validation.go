@@ -20,7 +20,7 @@ func (st *state) validateBlock(block *block.Block) error {
 
 	if !block.Header().StateRoot().EqualsTo(st.stateRoot()) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"state root is not same as we expected. Expected %v, got %v", st.stateRoot(), block.Header().StateRoot())
+			"state root is not same as we expected, expected %v, got %v", st.stateRoot(), block.Header().StateRoot())
 	}
 
 	return st.validateCertificateForPreviousHeight(block.PrevCertificate())
@@ -50,7 +50,7 @@ func (st *state) checkCertificate(cert *block.Certificate) error {
 
 	// Check if signers have 2/3+ of total power
 	if signedPower <= committeePower*2/3 {
-		return errors.Errorf(errors.ErrInvalidBlock, "No quorom. Has %v, should be more than %v", signedPower, committeePower*2/3)
+		return errors.Errorf(errors.ErrInvalidBlock, "accumulated power is %v, should be more than %v", signedPower, committeePower*2/3)
 	}
 
 	// Check signature
@@ -77,12 +77,12 @@ func (st *state) validateCertificateForPreviousHeight(cert *block.Certificate) e
 
 		if !cert.BlockHash().EqualsTo(st.lastInfo.BlockHash()) {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
+				"certificate has invalid block hash, expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
 		}
 
 		if cert.Round() != st.lastInfo.Certificate().Round() {
 			return errors.Errorf(errors.ErrInvalidBlock,
-				"certificate has invalid round. Expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
+				"certificate has invalid round, expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())
 		}
 
 		if !util.Equal(cert.Committers(), st.lastInfo.Certificate().Committers()) {
@@ -102,7 +102,7 @@ func (st *state) validateCertificate(cert *block.Certificate, blockHash hash.Has
 
 	if !cert.BlockHash().EqualsTo(blockHash) {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"certificate has invalid block hash. Expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
+			"certificate has invalid block hash, expected %v, got %v", st.lastInfo.BlockHash(), cert.BlockHash())
 	}
 
 	if !util.Equal(st.committee.Committers(), cert.Committers()) {

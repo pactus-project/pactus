@@ -22,23 +22,23 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	val := sb.Validator(pld.Address)
 	if val == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "Unable to retrieve validator")
+		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve validator")
 	}
 
 	if sb.CurrentHeight()-val.LastBondingHeight() < sb.BondInterval() {
-		return errors.Errorf(errors.ErrInvalidTx, "Validator has bonded at height %v", val.LastBondingHeight())
+		return errors.Errorf(errors.ErrInvalidTx, "validator has bonded at height %v", val.LastBondingHeight())
 	}
 	// Power for parked validators (unbonded) set to zero.
 	// So the proof is not valid, even they have enough stake.
 	ok := sb.VerifyProof(trx.Stamp(), pld.Proof, val)
 	if !ok {
-		return errors.Errorf(errors.ErrInvalidTx, "Sortition proof is invalid")
+		return errors.Errorf(errors.ErrInvalidTx, "sortition proof is invalid")
 	}
 	if e.strict {
 		// A validator might produce more than one sortition transaction before entring into the committee
 		// In non-strict mode we don't check the sequence number
 		if val.Sequence()+1 != trx.Sequence() {
-			return errors.Errorf(errors.ErrInvalidTx, "Invalid sequence. Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+			return errors.Errorf(errors.ErrInvalidTx, "invalid sequence, expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 		}
 		if sb.Committee().Size() >= sb.CommitteeSize() {
 			joiningNum := 0

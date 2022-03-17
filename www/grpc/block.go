@@ -14,7 +14,7 @@ func (zs *zarbServer) GetBlockHash(ctx context.Context, request *zarb.BlockHashR
 	height := request.GetHeight()
 	hash := zs.state.BlockHash(int(height))
 	if hash.IsUndef() {
-		return nil, status.Errorf(codes.NotFound, "No block found with this height")
+		return nil, status.Errorf(codes.NotFound, "block hash not found with this height")
 	}
 	return &zarb.BlockHashResponse{
 		Hash: hash.RawBytes(),
@@ -28,7 +28,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	}
 	block := zs.state.Block(hash)
 	if block == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Block not found")
+		return nil, status.Errorf(codes.InvalidArgument, "block not found")
 	}
 	timestamp := timestamppb.New(block.Header().Time())
 	header := &zarb.BlockHeaderInfo{}

@@ -190,5 +190,5 @@ func retrievePrivateKey(workspace string, keyFileOpt, authOpt, privateKeyOpt *st
 		return key.NewKey(pv.PublicKey().Address(), pv)
 	}
 
-	return nil, fmt.Errorf("Invalid input")
+	return nil, fmt.Errorf("invalid input")
 }
