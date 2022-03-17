@@ -114,7 +114,7 @@ func (sync *synchronizer) Start() error {
 		sync.onStartingTimeout()
 	}()
 
-	sync.sayHello(true)
+	sync.sayHello(false)
 
 	return nil
 }
@@ -167,13 +167,13 @@ func (sync *synchronizer) broadcastHeartBeat() {
 	sync.broadcast(msg)
 }
 
-func (sync *synchronizer) sayHello(needResponse bool) {
+func (sync *synchronizer) sayHello(helloAck bool) {
 	flags := 0
 	if sync.config.NodeNetwork {
 		flags = util.SetFlag(flags, message.FlagNodeNetwork)
 	}
-	if needResponse {
-		flags = util.SetFlag(flags, message.FlagNeedResponse)
+	if helloAck {
+		flags = util.SetFlag(flags, message.FlagHelloAck)
 	}
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
