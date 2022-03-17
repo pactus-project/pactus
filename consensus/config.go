@@ -30,13 +30,13 @@ func TestConfig() *Config {
 
 func (conf *Config) SanityCheck() error {
 	if conf.QueryProposalTimeout <= 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "QueryProposalTimeout can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "timeout for query proposal can't be negative")
 	}
 	if conf.ChangeProposerTimeout <= 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "ChangeProposerTimeout can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "timeout for change proposer can't be negative")
 	}
 	if conf.ChangeProposerDelta <= 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "ChangeProposerDelta can't be negative")
+		return errors.Errorf(errors.ErrInvalidConfig, "change proposer delta can't be negative")
 	}
 
 	return nil

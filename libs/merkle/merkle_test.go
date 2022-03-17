@@ -25,7 +25,7 @@ func TestMerkleTree(t *testing.T) {
 
 	tree1 := NewTreeFromHashes(hashes)
 	if tree1.Root().String() != "e6061997a9011668bcf216020aaad9cc7f5f34d5b6f78f1e63ef6257c1aa1f37" {
-		t.Errorf("Invalid merkle root")
+		t.Errorf("invalid merkle root")
 	}
 
 	tree2 := NewTreeFromSlices(slices)
@@ -44,7 +44,7 @@ func TestMerkleTreeDepth2(t *testing.T) {
 
 	tree1 := NewTreeFromHashes(hashes)
 	if tree1.Root().String() != "e6061997a9011668bcf216020aaad9cc7f5f34d5b6f78f1e63ef6257c1aa1f37" {
-		t.Errorf("Invalid merkle root")
+		t.Errorf("invalid merkle root")
 	}
 
 	tree2 := NewTreeFromSlices(slices)

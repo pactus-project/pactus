@@ -21,20 +21,20 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	val := sb.Validator(pld.From)
 	if val == nil {
-		return errors.Errorf(errors.ErrInvalidAddress, "Unable to retrieve validator account")
+		return errors.Errorf(errors.ErrInvalidAddress, "unable to retrieve validator account")
 	}
 
 	if val.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence, "Invalid sequence, Expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidSequence, "invalid sequence, expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
 	if val.Stake() < pld.Amount+trx.Fee() {
-		return errors.Errorf(errors.ErrInsufficientFunds, "Insufficient balance")
+		return errors.Errorf(errors.ErrInsufficientFunds, "insufficient balance")
 	}
 	if val.UnbondingHeight() == 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "Need to unbond first")
+		return errors.Errorf(errors.ErrInvalidTx, "need to unbond first")
 	}
 	if sb.CurrentHeight() < val.UnbondingHeight()+sb.UnbondInterval() {
-		return errors.Errorf(errors.ErrInvalidTx, "Hasn't passed unbonding period, Expected: %v, got: %v", val.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
+		return errors.Errorf(errors.ErrInvalidTx, "hasn't passed unbonding period, expected: %v, got: %v", val.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
 	}
 
 	acc := sb.Account(pld.To)

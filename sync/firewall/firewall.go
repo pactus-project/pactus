@@ -77,7 +77,7 @@ func (f *Firewall) openBundle(r io.Reader, source peer.ID) (*bundle.Bundle, erro
 	if f.isPeerBanned(source) {
 		// If there is any connection to the source peer, close it
 		f.closeConnection(source)
-		return nil, errors.Errorf(errors.ErrInvalidMessage, "Source peer is banned: %s", source)
+		return nil, errors.Errorf(errors.ErrInvalidMessage, "source peer is banned: %s", source)
 	}
 
 	bdl, err := f.decodeBundle(r, source)

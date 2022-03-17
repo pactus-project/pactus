@@ -20,12 +20,12 @@ func (t Type) IsValid() bool {
 func (t Type) String() string {
 	switch t {
 	case VoteTypePrepare:
-		return "Prepare"
+		return "prepare"
 	case VoteTypePrecommit:
-		return "Precommit"
+		return "precommit"
 	case VoteTypeChangeProposer:
-		return "ChangeProposer"
+		return "changeProposer"
 	default:
-		return ("Invalid vote type")
+		return ("invalid vote type")
 	}
 }

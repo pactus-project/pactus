@@ -48,13 +48,13 @@ func (cert *Certificate) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 	if cert.Round() < 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid Round")
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid Round")
 	}
 	if err := cert.Signature().SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 	if cert.Committers() == nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "Invalid committers")
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid committers")
 	}
 	if cert.data.Absentees == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid absentees")

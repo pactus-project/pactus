@@ -34,14 +34,14 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 
-		return errors.Errorf(errors.ErrInvalidMessage, "Peer status is %v", peer.Status)
+		return errors.Errorf(errors.ErrInvalidMessage, "peer status is %v", peer.Status)
 	}
 
 	if peer.Height > msg.From {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 
-		return errors.Errorf(errors.ErrInvalidMessage, "Peer request for blocks that already has: %v", msg.From)
+		return errors.Errorf(errors.ErrInvalidMessage, "peer request for blocks that already has: %v", msg.From)
 	}
 
 	if !handler.config.NodeNetwork {

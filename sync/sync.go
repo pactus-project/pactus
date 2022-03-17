@@ -231,7 +231,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 	sync.logger.Debug("received a message", "initiator", util.FingerprintPeerID(bdl.Initiator), "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "Invalid message type: %v", bdl.Message.Type())
+		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
 	}
 
 	return h.ParsMessage(bdl.Message, bdl.Initiator)
