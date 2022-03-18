@@ -28,7 +28,7 @@ type Bundle struct {
 
 func NewBundle(initiator peer.ID, msg message.Message) *Bundle {
 	return &Bundle{
-		Flags:     BundleFlagCarrierLibP2P | BundleFlagNetworkMainnet,
+		Flags:     0,
 		Initiator: initiator,
 		Message:   msg,
 	}

@@ -16,7 +16,7 @@ import (
 func TestNewMessage(t *testing.T) {
 	pid := util.RandomPeerID()
 	msg := NewBundle(pid, message.NewQueryProposalMessage(100, 0))
-	assert.Equal(t, msg.Flags, BundleFlagCarrierLibP2P|BundleFlagNetworkMainnet)
+	assert.Zero(t, msg.Flags)
 	assert.Equal(t, msg.Initiator, pid)
 }
 

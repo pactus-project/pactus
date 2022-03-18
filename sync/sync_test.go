@@ -135,6 +135,7 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 
 func testReceiveingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
 	bdl := bundle.NewBundle(from, msg)
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
 	return sync.processIncomingBundle(bdl)
 }
 
