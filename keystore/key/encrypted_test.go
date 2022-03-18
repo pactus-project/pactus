@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -12,13 +13,14 @@ func TestEncryption(t *testing.T) {
 	auth1 := "secret1"
 	auth2 := "secret2"
 	//Generates Private Key
-	k1 := GenerateRandomKey()
-	filePath := fmt.Sprintf("/tmp/%s.key", k1.Address().String())
+	_, prv := bls.GenerateTestKeyPair()
+	key := NewKey(prv)
+	filePath := fmt.Sprintf("/tmp/%s.key", key.Address().String())
 	//Encrypts the key json blob
-	err := EncryptKeyToFile(k1, filePath, auth1, "")
+	err := EncryptKeyToFile(key, filePath, auth1, "")
 	assert.NoError(t, err)
 	// Existing file
-	err = EncryptKeyToFile(k1, filePath, auth2, "")
+	err = EncryptKeyToFile(key, filePath, auth2, "")
 	assert.NoError(t, err)
 	// Invalid auth
 	_, err = DecryptKeyFile(filePath, auth1)
@@ -26,13 +28,13 @@ func TestEncryption(t *testing.T) {
 	// Decrypts Json Object
 	k2, err := DecryptKeyFile(filePath, auth2)
 	assert.NoError(t, err)
-	assert.Equal(t, k1, k2)
+	assert.Equal(t, key, k2)
 	// wrong password: should fails
 	k3, err := DecryptKeyFile(filePath, "Secret")
 	assert.Error(t, err)
 	assert.Nil(t, k3)
 	// invalid file path, should fails
-	filePath1 := fmt.Sprintf("/tmp/%s_invalid_path.key", k1.Address().String())
+	filePath1 := fmt.Sprintf("/tmp/%s_invalid_path.key", key.Address().String())
 	k4, err := DecryptKeyFile(filePath1, auth2)
 	fmt.Println(err)
 	assert.Error(t, err)
@@ -42,9 +44,10 @@ func TestEncryption(t *testing.T) {
 func TestEncryptionData(t *testing.T) {
 	auth := "secret"
 	//Generates
-	k1 := GenerateRandomKey()
+	_, prv := bls.GenerateTestKeyPair()
+	key := NewKey(prv)
 	//Encrypts the key json blob
-	ek, err := EncryptKey(k1, auth, "")
+	ek, err := EncryptKey(key, auth, "")
 	f := util.TempFilePath()
 	assert.NoError(t, ek.Save(f))
 
@@ -52,7 +55,7 @@ func TestEncryptionData(t *testing.T) {
 	//Decrypts Json Object
 	k2, err := ek.Decrypt(auth)
 	assert.NoError(t, err)
-	assert.Equal(t, k1, k2)
+	assert.Equal(t, key, k2)
 	// wrong password: should fails
 	k3, err := ek.Decrypt("Secret")
 	assert.Error(t, err)
@@ -90,17 +93,19 @@ func TestEncryptionData(t *testing.T) {
 }
 
 func TestNonEncryptied(t *testing.T) {
-	k1 := GenerateRandomKey()
-	ek, _ := EncryptKey(k1, "", "")
+	_, prv := bls.GenerateTestKeyPair()
+	key := NewKey(prv)
+	ek, _ := EncryptKey(key, "", "")
 	k2, _ := ek.Decrypt("")
-	assert.Equal(t, k1, k2)
+	assert.Equal(t, key, k2)
 }
 
 func TestCheckLabel(t *testing.T) {
-	k1 := GenerateRandomKey()
+	_, prv := bls.GenerateTestKeyPair()
+	key := NewKey(prv)
 	label := "zarb"
 	f := util.TempFilePath()
-	assert.NoError(t, EncryptKeyToFile(k1, f, "secret", label))
+	assert.NoError(t, EncryptKeyToFile(key, f, "secret", label))
 	ek, err := NewEncryptedKey(f)
 	assert.NoError(t, err)
 	assert.Equal(t, ek.Label, label)

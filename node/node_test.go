@@ -17,7 +17,7 @@ import (
 )
 
 func TestRunningNode(t *testing.T) {
-	pub, pv := bls.RandomKeyPair()
+	pub, pv := bls.GenerateTestKeyPair()
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(pub, 0)

@@ -1,8 +1,6 @@
 package key
 
 import (
-	"fmt"
-
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 )
@@ -15,17 +13,6 @@ type keyData struct {
 	Address    crypto.Address
 	PublicKey  crypto.PublicKey
 	PrivateKey crypto.PrivateKey
-}
-
-func GenerateRandomKey() *Key {
-	pk, pv := bls.RandomKeyPair()
-	return &Key{
-		data: keyData{
-			PrivateKey: pv,
-			PublicKey:  pk,
-			Address:    pk.Address(),
-		},
-	}
 }
 
 func FromSeed(seed []byte) (*Key, error) {
@@ -43,18 +30,14 @@ func FromSeed(seed []byte) (*Key, error) {
 }
 
 // NewKey Checks if the address is derived from the given private key
-func NewKey(addr crypto.Address, pv crypto.PrivateKey) (*Key, error) {
-	if !addr.Verify(pv.PublicKey()) {
-		return nil, fmt.Errorf("this address doesn't belong to this privatekey")
-	}
-
+func NewKey(pv crypto.PrivateKey) *Key {
 	return &Key{
 		data: keyData{
 			PrivateKey: pv,
 			PublicKey:  pv.PublicKey(),
-			Address:    addr,
+			Address:    pv.PublicKey().Address(),
 		},
-	}, nil
+	}
 }
 
 func (k *Key) Address() crypto.Address {

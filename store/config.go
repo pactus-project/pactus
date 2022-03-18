@@ -25,7 +25,7 @@ func TestConfig() *Config {
 }
 
 func (conf *Config) DataPath() string {
-	return util.MakeAbs(fmt.Sprintf("%s%c%s", conf.Path, os.PathSeparator, "data"))
+	return util.MakeAbs(conf.Path)
 }
 
 func (conf *Config) StorePath() string {

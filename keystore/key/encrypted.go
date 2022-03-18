@@ -87,7 +87,7 @@ func (ek *EncryptedKey) Save(p string) error {
 // Decrypt decrypts the Key from a json blob and returns the plaintext of the private key
 func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	if ek.PrivateKey != nil {
-		return NewKey(ek.Address, ek.PrivateKey)
+		return NewKey(ek.PrivateKey), nil
 	}
 	if ek.Crypto.Cipher != "aes-128-ctr" {
 		return nil, fmt.Errorf("cipher not supported: %v", ek.Crypto.Cipher)
@@ -120,7 +120,7 @@ func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewKey(ek.Address, pv)
+	return NewKey(pv), nil
 
 }
 
