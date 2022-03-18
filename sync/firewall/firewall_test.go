@@ -52,10 +52,12 @@ func TestInvalidBundlesCounter(t *testing.T) {
 	assert.Nil(t, tFirewall.OpenGossipBundle(nil, tUnknownPeerID, tUnknownPeerID))
 
 	bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(-1, 1))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ := bdl.Encode()
 	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
 
 	bdl = bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(0, 1))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ = bdl.Encode()
 	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
 
@@ -68,6 +70,7 @@ func TestGossipMesage(t *testing.T) {
 		setup(t)
 
 		bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
@@ -79,6 +82,7 @@ func TestGossipMesage(t *testing.T) {
 		setup(t)
 
 		bdl := bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
@@ -90,6 +94,7 @@ func TestGossipMesage(t *testing.T) {
 		setup(t)
 
 		bdl := bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
 		assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
@@ -100,6 +105,7 @@ func TestGossipMesage(t *testing.T) {
 		setup(t)
 
 		bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
@@ -114,6 +120,7 @@ func TestStreamMesage(t *testing.T) {
 		setup(t)
 
 		bdl := bundle.NewBundle(tBadPeerID, message.NewBlocksRequestMessage(util.RandInt(0), 1, 100))
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
@@ -125,6 +132,7 @@ func TestStreamMesage(t *testing.T) {
 		setup(t)
 
 		bdl := bundle.NewBundle(tGoodPeerID, message.NewBlocksRequestMessage(util.RandInt(0), 1, 100))
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
@@ -137,6 +145,7 @@ func TestDisabledFirewal(t *testing.T) {
 	setup(t)
 
 	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(-1, -1))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ := bdl.Encode()
 
 	tFirewall.config.Enabled = false
@@ -148,6 +157,7 @@ func TestUpdateLastSeen(t *testing.T) {
 	setup(t)
 
 	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(100, 1))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ := bdl.Encode()
 	now := time.Now().UnixNano()
 	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tGoodPeerID))
