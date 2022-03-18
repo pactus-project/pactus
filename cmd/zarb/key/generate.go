@@ -23,7 +23,7 @@ func Generate() func(c *cli.Cmd) {
 			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
 			label := cmd.PromptInput("Label: ")
 
-			entropy, _ := bip39.NewEntropy(128)
+			entropy, _ := bip39.NewEntropy(128) // TODO: entropy as new argument
 			mnemonic, _ := bip39.NewMnemonic(entropy)
 			seed := bip39.NewSeed(mnemonic, passphrase)
 			keyObj, err := key.FromSeed(seed)

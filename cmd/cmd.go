@@ -11,9 +11,6 @@ import (
 	"syscall"
 
 	"github.com/peterh/liner"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/keystore/key"
 )
 
 var ZARB = `
@@ -110,12 +107,6 @@ func (p *terminalPrompter) PromptConfirm(prompt string) (bool, error) {
 	return false, err
 }
 
-func CreateKey(pv crypto.PrivateKey) *key.Key {
-	addr := pv.PublicKey().Address()
-	key, _ := key.NewKey(addr, pv)
-	return key
-}
-
 // PromptPassphrase prompts the user for a passphrase. Set confirmation to true
 // to require the user to confirm the passphrase.
 func PromptPassphrase(prompt string, confirmation bool) string {
@@ -160,26 +151,6 @@ func PromptInputWithSuggestion(prompt, suggestion string) string {
 	return input
 }
 
-// PromptPrivateKey prompts the user to enter the private key,
-// validates the private key, displays the validator address and
-// starts the node after confirmation
-func PromptPrivateKey(promp string) (*key.Key, error) {
-	privatekey, err := Stdin.PromptInput(promp)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read Private Key %v", err)
-	}
-	pv, err := bls.PrivateKeyFromString(privatekey)
-	if err != nil {
-		return nil, err
-	}
-
-	// Creat key object
-	addr := pv.PublicKey().Address()
-	key, _ := key.NewKey(addr, pv)
-
-	return key, nil
-}
-
 func PrintDangerMsg(format string, a ...interface{}) {
 	format = fmt.Sprintf("\033[31m%s\033[0m\n", format)
 	fmt.Printf(format, a...)
@@ -196,7 +167,7 @@ func PrintSuccessMsg(format string, a ...interface{}) {
 }
 
 func PrintWarnMsg(format string, a ...interface{}) {
-	format = fmt.Sprintf("\033[33m[WARN] %s\033[0m\n", format) //Print warning msg with yellow color
+	format = fmt.Sprintf("\033[33m%s\033[0m\n", format) //Print warning msg with yellow color
 	fmt.Printf(format, a...)
 }
 
