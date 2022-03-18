@@ -61,7 +61,14 @@ func VerifyAggregated(aggregated *Signature, pubs []*PublicKey, msg []byte) bool
 	return aggregated.data.Signature.FastAggregateVerify(pubVec, msg)
 }
 
-func RandomKeyPair() (*PublicKey, *PrivateKey) {
+// ---------
+// For tests
+func GenerateTestSigner() crypto.Signer {
+	_, prv := GenerateTestKeyPair()
+	return crypto.NewSigner(prv)
+}
+
+func GenerateTestKeyPair() (*PublicKey, *PrivateKey) {
 	prv := new(PrivateKey)
 	prv.data.SecretKey = new(bls.SecretKey)
 	prv.data.SecretKey.SetByCSPRNG()
@@ -70,15 +77,4 @@ func RandomKeyPair() (*PublicKey, *PrivateKey) {
 	pub.data.PublicKey = prv.data.SecretKey.GetPublicKey()
 
 	return pub, prv
-}
-
-// ---------
-// For tests
-func GenerateTestSigner() crypto.Signer {
-	_, prv := RandomKeyPair()
-	return crypto.NewSigner(prv)
-}
-
-func GenerateTestKeyPair() (*PublicKey, *PrivateKey) {
-	return RandomKeyPair()
 }

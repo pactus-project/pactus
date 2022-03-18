@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
+	"github.com/tyler-smith/go-bip39"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/genesis"
-	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -44,11 +44,18 @@ func Init() func(c *cli.Cmd) {
 				return
 			}
 
-			// TODO: Show Mnemonics for validator key to user
 			// Generate key for the validator and save it to file system
-			valKey := key.GenerateRandomKey()
-			if err := key.EncryptKeyToFile(valKey, path+"/validator_key.json", "", ""); err != nil {
-				cmd.PrintErrorMsg("Failed to crate validator key: %v", err)
+			entropy, _ := bip39.NewEntropy(128)
+			mnemonic, _ := bip39.NewMnemonic(entropy)
+			seed := bip39.NewSeed(mnemonic, "")
+			prv, err := bls.PrivateKeyFromSeed(seed)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to create key from the seed: %v", err)
+				return
+			}
+			err = util.WriteFile(path+"/validator_key", []byte(prv.String()))
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to write key file: %v", err)
 				return
 			}
 
@@ -63,7 +70,7 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 			} else {
-				pub := valKey.PublicKey()
+				pub := prv.PublicKey()
 				gen = makeLocalGenesis(pub.(*bls.PublicKey))
 				conf.Network.Name = "zarb-local"
 			}
@@ -84,6 +91,9 @@ func Init() func(c *cli.Cmd) {
 
 			fmt.Println()
 			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", path)
+			cmd.PrintInfoMsg("You validator address is: %v", prv.PublicKey().Address())
+			cmd.PrintInfoMsg("mnemonic: \"" + mnemonic + "\"")
+			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
 		}
 	}
 }

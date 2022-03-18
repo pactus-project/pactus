@@ -10,9 +10,9 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/genesis"
-	"github.com/zarbchain/zarb-go/keystore/key"
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
@@ -33,11 +33,7 @@ func Start() func(c *cli.Cmd) {
 		})
 		keyFileOpt := c.String(cli.StringOpt{
 			Name: "k key-file",
-			Desc: "Path to the encrypted key file contains validator's private key",
-		})
-		authOpt := c.String(cli.StringOpt{
-			Name: "a auth",
-			Desc: "Passphrase of the key file",
+			Desc: "Path to the key file contains validator's private key",
 		})
 		pprofOpt := c.String(cli.StringOpt{
 			Name: "pprof",
@@ -50,7 +46,6 @@ func Start() func(c *cli.Cmd) {
 			configFile := "./config.toml"
 			genesisFile := "./genesis.json"
 			var err error
-			var keyObj *key.Key
 			var workspace string
 
 			workspace = *workingDirOpt
@@ -67,7 +62,7 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			keyObj, err = retrievePrivateKey(workspace, keyFileOpt, authOpt, privateKeyOpt)
+			signer, err := makeSigner(workspace, keyFileOpt, privateKeyOpt)
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! %v", err)
 				return
@@ -109,7 +104,7 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			validatorAddr := keyObj.Address()
+			validatorAddr := signer.Address()
 			mintbaseAddr := conf.State.MintbaseAddress
 			if mintbaseAddr == "" {
 				mintbaseAddr = validatorAddr.String()
@@ -119,7 +114,6 @@ func Start() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Mintbase address : %v", mintbaseAddr)
 			cmd.PrintLine()
 
-			signer := keyObj.ToSigner()
 			node, err := node.NewNode(gen, conf, signer)
 			if err != nil {
 				cmd.PrintErrorMsg("Could not initialize node. %v", err)
@@ -142,53 +136,37 @@ func Start() func(c *cli.Cmd) {
 	}
 }
 
-func retrievePrivateKey(workspace string, keyFileOpt, authOpt, privateKeyOpt *string) (*key.Key, error) {
-
+func makeSigner(workspace string, keyFileOpt, privateKeyOpt *string) (crypto.Signer, error) {
+	prvHex := ""
 	switch {
 	case *keyFileOpt == "" && *privateKeyOpt == "":
-		f := workspace + "/validator_key.json"
-		if util.PathExists(f) {
-			kj, err := key.DecryptKeyFile(f, "")
+		path := workspace + "/validator_key"
+		if util.PathExists(path) {
+			data, err := util.ReadFile(path)
 			if err != nil {
 				return nil, err
 			}
-			return kj, nil
+			prvHex = string(data)
+		} else {
+			// Creating KeyObject from Private Key
+			prvHex = cmd.PromptInput("Please enter the private key in hex format: ")
 		}
-		// Creating KeyObject from Private Key
-		kj, err := cmd.PromptPrivateKey("Please enter the privateKey for the validator: ")
-		if err != nil {
-			return nil, err
-		}
-		return kj, nil
 
-	case *keyFileOpt != "" && *authOpt != "":
+	case *keyFileOpt != "":
 		// Creating KeyObject from keystore
-		auth := *authOpt
-		kj, err := key.DecryptKeyFile(*keyFileOpt, auth)
+		data, err := util.ReadFile(*keyFileOpt)
 		if err != nil {
 			return nil, err
 		}
-		return kj, nil
-	case *keyFileOpt != "" && *authOpt == "":
-		// First try to open the file without password
-		kj, err := key.DecryptKeyFile(*keyFileOpt, "")
-		if err != nil {
-			// Creating KeyObject from keystore
-			auth := cmd.PromptPassphrase("Passphrase: ", false)
-			kj, err = key.DecryptKeyFile(*keyFileOpt, auth)
-			if err != nil {
-				return nil, err
-			}
-		}
-		return kj, nil
+		prvHex = string(data)
 	case *privateKeyOpt != "":
-		// Creating KeyObject from Private Key
-		pv, err := bls.PrivateKeyFromString(*privateKeyOpt)
-		if err != nil {
-			return nil, err
-		}
-		return key.NewKey(pv.PublicKey().Address(), pv)
+		prvHex = *privateKeyOpt
 	}
 
-	return nil, fmt.Errorf("invalid input")
+	prv, err := bls.PrivateKeyFromString(prvHex)
+	if err != nil {
+		return nil, err
+	}
+
+	return crypto.NewSigner(prv), nil
 }
