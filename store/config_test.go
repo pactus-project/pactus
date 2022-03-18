@@ -12,7 +12,7 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.NoError(t, c.SanityCheck())
 
 	if runtime.GOOS != "windows" {
-		c.Path = "/tmp/zarb"
+		c.Path = "/tmp/zarb/data"
 		assert.NoError(t, c.SanityCheck())
 		assert.Equal(t, c.StorePath(), "/tmp/zarb/data/store.db")
 	}
