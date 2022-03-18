@@ -32,8 +32,9 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	return PrivateKeyFromRawBytes(data)
 }
 
-// Based on https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-00#section-2.3
-//
+// PrivateKeyFromSeed generates a private key deterministically from
+// a secret octet string IKM.
+// Based on https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-02#section-2.3
 func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
 	// L is `ceil((3 * ceil(log2(r))) / 16) = 48`,
 	//    where `r` is the order of the BLS 12-381 curve
@@ -46,10 +47,9 @@ func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
 	}
 
 	salt := []byte("BLS-SIG-KEYGEN-SALT-")
-	key := append(ikm, 0)
 	L := 48
 	okm := make([]byte, L)
-	_, _ = hkdf.New(sha256.New, key, salt, []byte{0, byte(L)}).Read(okm)
+	_, _ = hkdf.New(sha256.New, append(ikm, 0), salt, []byte{0, byte(L)}).Read(okm)
 
 	// OS2IP: https://datatracker.ietf.org/doc/html/rfc8017#section-4.2
 	// OS2IP converts an octet string to a nonnegative integer.
