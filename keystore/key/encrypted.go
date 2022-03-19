@@ -12,7 +12,6 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
@@ -33,11 +32,11 @@ const (
 )
 
 type EncryptedKey struct {
-	Address    crypto.Address  `json:"address"`
-	Crypto     *cryptoJSON     `json:"crypto,omitempty"`
-	PrivateKey *bls.PrivateKey `json:"privatekey,omitempty"`
-	Label      string          `json:"label,omitempty"`
-	Version    int             `json:"version"`
+	Address    string      `json:"address"`
+	Crypto     *cryptoJSON `json:"crypto,omitempty"`
+	PrivateKey string      `json:"privatekey,omitempty"`
+	Label      string      `json:"label,omitempty"`
+	Version    int         `json:"version"`
 }
 
 type cryptoJSON struct {
@@ -86,8 +85,9 @@ func (ek *EncryptedKey) Save(p string) error {
 
 // Decrypt decrypts the Key from a json blob and returns the plaintext of the private key
 func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
-	if ek.PrivateKey != nil {
-		return NewKey(ek.PrivateKey), nil
+	if ek.PrivateKey != "" {
+		prv, _ := bls.PrivateKeyFromString(ek.PrivateKey)
+		return NewKey(prv), nil
 	}
 	if ek.Crypto.Cipher != "aes-128-ctr" {
 		return nil, fmt.Errorf("cipher not supported: %v", ek.Crypto.Cipher)
@@ -166,8 +166,8 @@ func EncryptKey(key *Key, auth, label string) (*EncryptedKey, error) {
 	if auth == "" {
 		pv := key.PrivateKey()
 		return &EncryptedKey{
-			Address:    key.data.Address,
-			PrivateKey: pv.(*bls.PrivateKey),
+			Address:    key.data.Address.String(),
+			PrivateKey: pv.String(),
 			Label:      label,
 			Version:    version,
 		}, nil
@@ -210,7 +210,7 @@ func EncryptKey(key *Key, auth, label string) (*EncryptedKey, error) {
 	}
 
 	return &EncryptedKey{
-		Address: key.data.Address,
+		Address: key.data.Address.String(),
 		Crypto:  cryptoStruct,
 		Label:   label,
 		Version: version,

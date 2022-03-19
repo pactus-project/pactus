@@ -137,7 +137,7 @@ func (tx *Tx) checkSignature() error {
 		if err := tx.Signature().SanityCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid signature")
 		}
-		if !tx.Payload().Signer().Verify(tx.PublicKey()) {
+		if !tx.PublicKey().VerifyAddress(tx.Payload().Signer()) {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid public key")
 		}
 		bs := tx.SignBytes()

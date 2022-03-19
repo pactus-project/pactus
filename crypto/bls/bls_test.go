@@ -69,55 +69,11 @@ func TestAggregationOnlyOneSignature(t *testing.T) {
 	msg1 := []byte("zarb")
 	sig1 := prv1.Sign(msg1).(*Signature)
 	agg1 := Aggregate([]*Signature{sig1})
-	assert.Equal(t, agg1.RawBytes(), sig1.RawBytes())
+
+	assert.True(t, agg1.EqualsTo(sig1))
 }
 
-func TestAggregateTheAggregated(t *testing.T) {
-	pub1, prv1 := GenerateTestKeyPair()
-	pub2, prv2 := GenerateTestKeyPair()
-	pub3, prv3 := GenerateTestKeyPair()
-
-	msg1 := []byte("zarb")
-
-	sig1 := prv1.Sign(msg1).(*Signature)
-	sig2 := prv2.Sign(msg1).(*Signature)
-	sig3 := prv3.Sign(msg1).(*Signature)
-
-	agg1 := Aggregate([]*Signature{sig1, sig2, sig3})
-	agg2 := Aggregate([]*Signature{sig1, sig2})
-	agg3 := Aggregate([]*Signature{agg2, sig3})
-
-	assert.Equal(t, agg1.RawBytes(), agg3.RawBytes())
-
-	pubs2 := []*PublicKey{pub1, pub2}
-	pubs3 := []*PublicKey{pub1, pub2, pub3}
-
-	assert.True(t, VerifyAggregated(agg3, pubs3, msg1))
-	assert.True(t, VerifyAggregated(agg2, pubs2, msg1))
-	assert.False(t, VerifyAggregated(agg3, pubs2, msg1))
-}
-
-func TestCrossAggregation(t *testing.T) {
-	pub1, prv1 := GenerateTestKeyPair()
-	pub2, prv2 := GenerateTestKeyPair()
-
-	msg1 := []byte("zarb")
-
-	sig1 := prv1.Sign(msg1).(*Signature)
-	sig2 := prv2.Sign(msg1).(*Signature)
-
-	agg1 := Aggregate([]*Signature{sig1, sig2})
-	agg2 := Aggregate([]*Signature{sig2, sig1})
-
-	assert.Equal(t, agg1.RawBytes(), agg2.RawBytes())
-
-	pubs1 := []*PublicKey{pub1, pub2}
-	pubs2 := []*PublicKey{pub2, pub1}
-
-	assert.True(t, VerifyAggregated(agg1, pubs2, msg1))
-	assert.True(t, VerifyAggregated(agg2, pubs1, msg1))
-}
-
+// TODO: should we check for duplication here?
 func TestDuplicatedAggregation(t *testing.T) {
 	pub1, prv1 := GenerateTestKeyPair()
 	pub2, prv2 := GenerateTestKeyPair()
@@ -128,21 +84,12 @@ func TestDuplicatedAggregation(t *testing.T) {
 	sig2 := prv2.Sign(msg1).(*Signature)
 
 	agg1 := Aggregate([]*Signature{sig1, sig2, sig1})
+	agg2 := Aggregate([]*Signature{sig1, sig2})
+	assert.False(t, agg1.EqualsTo(agg2))
 
 	pubs1 := []*PublicKey{pub1, pub2}
-
 	assert.False(t, VerifyAggregated(agg1, pubs1, msg1))
-}
 
-func TestZeroKeys(t *testing.T) {
-	prv, _ := PrivateKeyFromString("0000000000000000000000000000000000000000000000000000000000000000")
-	msg := []byte("test")
-	sig := prv.Sign(msg)
-	assert.False(t, prv.PublicKey().Verify(msg, sig))
-
-	_, err := PublicKeyFromString("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
-	assert.Error(t, err)
-	_, err = SignatureFromString("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
-	assert.Error(t, err)
-
+	pubs2 := []*PublicKey{pub1, pub2, pub1}
+	assert.True(t, VerifyAggregated(agg1, pubs2, msg1))
 }

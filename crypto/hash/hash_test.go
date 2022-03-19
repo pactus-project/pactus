@@ -2,7 +2,7 @@ package hash
 
 import (
 	"encoding/hex"
-	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,36 +12,17 @@ import (
 func TestHashMarshaling(t *testing.T) {
 	hash1 := GenerateTestHash()
 	hash2 := new(Hash)
-	hash3 := new(Hash)
-	hash4 := new(Hash)
 
-	js, err := json.Marshal(hash1)
+	bs, err := hash1.MarshalCBOR()
 	assert.NoError(t, err)
-	require.Error(t, hash2.UnmarshalJSON([]byte("bad")))
-	require.NoError(t, json.Unmarshal(js, hash2))
+	assert.NoError(t, hash2.UnmarshalCBOR(bs))
+	require.True(t, hash1.EqualsTo(*hash2))
+	assert.NoError(t, hash1.SanityCheck())
 
-	bs, err := hash2.MarshalCBOR()
+	js, err := hash1.MarshalJSON()
 	assert.NoError(t, err)
-	assert.NoError(t, hash3.UnmarshalCBOR(bs))
-
-	txt, err := hash2.MarshalText()
-	assert.NoError(t, err)
-	assert.NoError(t, hash4.UnmarshalText(txt))
-
-	require.True(t, hash1.EqualsTo(*hash4))
-}
-
-func TestHashFromBytes(t *testing.T) {
-	_, err := FromRawBytes(nil)
-	assert.Error(t, err)
-	hash1 := GenerateTestHash()
-	hash2, err := FromRawBytes(hash1.RawBytes())
-	assert.NoError(t, err)
-	require.True(t, hash1.EqualsTo(hash2))
-
-	inv, _ := hex.DecodeString("0102")
-	_, err = FromRawBytes(inv)
-	assert.Error(t, err)
+	assert.Contains(t, string(js), hash1.String())
+	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.Fingerprint())
 }
 
 func TestHashFromString(t *testing.T) {
@@ -50,24 +31,18 @@ func TestHashFromString(t *testing.T) {
 	assert.NoError(t, err)
 	require.True(t, hash1.EqualsTo(hash2))
 
+	_, err = FromString("")
+	assert.Error(t, err)
+
 	_, err = FromString("inv")
 	assert.Error(t, err)
-}
 
-func TestUndefHash(t *testing.T) {
-	h, err := FromString("0000000000000000000000000000000000000000000000000000000000000000")
-	assert.NoError(t, err)
-	assert.True(t, h.IsUndef())
-	assert.Error(t, h.SanityCheck())
-	assert.Equal(t, UndefHash.RawBytes(), h.RawBytes())
+	_, err = FromString("00")
+	assert.Error(t, err)
 }
-
-func TestEmptyHash(t *testing.T) {
-	expected, err := FromString("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8")
-	assert.NoError(t, err)
-	var data = []byte{}
-	h := Hash256(data)
-	assert.Equal(t, h, expected.RawBytes())
+func TestHashEmpty(t *testing.T) {
+	hash1 := Hash{}
+	assert.Error(t, hash1.SanityCheck())
 }
 
 func TestHash256(t *testing.T) {
@@ -86,4 +61,12 @@ func TestHash160(t *testing.T) {
 	h := Hash160(data)
 	expected, _ := hex.DecodeString("e93efc0c83176034cb828e39435eeecc07a29298")
 	assert.Equal(t, h, expected)
+}
+
+func TestHashSanityCheck(t *testing.T) {
+	h, err := FromString("0000000000000000000000000000000000000000000000000000000000000000")
+	assert.NoError(t, err)
+	assert.True(t, h.IsUndef())
+	assert.Error(t, h.SanityCheck())
+	assert.Equal(t, UndefHash.RawBytes(), h.RawBytes())
 }

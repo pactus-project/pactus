@@ -8,5 +8,6 @@ type PublicKey interface {
 	SanityCheck() error
 	Verify(msg []byte, sig Signature) bool
 	Address() Address
+	VerifyAddress(addr Address) bool
 	EqualsTo(right PublicKey) bool
 }

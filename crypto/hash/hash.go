@@ -1,12 +1,12 @@
 package hash
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
 	cbor "github.com/fxamacker/cbor/v2"
+	"github.com/zarbchain/zarb-go/util"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/ripemd160"
 )
@@ -84,35 +84,8 @@ func (h Hash) IsUndef() bool {
 	return h.EqualsTo(UndefHash)
 }
 
-func (h *Hash) MarshalText() ([]byte, error) {
-	return []byte(h.String()), nil
-}
-
-func (h *Hash) UnmarshalText(text []byte) error {
-	/// Unmarshal empty value
-	if len(text) == 0 {
-		return nil
-	}
-
-	hash, err := FromString(string(text))
-	if err != nil {
-		return err
-	}
-
-	*h = hash
-	return nil
-}
-
 func (h Hash) MarshalJSON() ([]byte, error) {
 	return json.Marshal(h.String())
-}
-
-func (h *Hash) UnmarshalJSON(bz []byte) error {
-	var text string
-	if err := json.Unmarshal(bz, &text); err != nil {
-		return err
-	}
-	return h.UnmarshalText([]byte(text))
 }
 
 func (h *Hash) MarshalCBOR() ([]byte, error) {
@@ -124,8 +97,8 @@ func (h *Hash) UnmarshalCBOR(bs []byte) error {
 }
 
 func (h Hash) SanityCheck() error {
-	if h.EqualsTo(UndefHash) {
-		return fmt.Errorf("Hash is not defined")
+	if h.IsUndef() {
+		return fmt.Errorf("hash is zero")
 	}
 
 	return nil
@@ -138,13 +111,7 @@ func (h Hash) EqualsTo(r Hash) bool {
 // ---------
 // For tests
 func GenerateTestHash() Hash {
-	p := make([]byte, 10)
-	random := rand.Reader
-	_, err := random.Read(p)
-	if err != nil {
-		return UndefHash
-	}
-	return CalcHash(p)
+	return CalcHash(util.IntToSlice(util.RandInt(999999999)))
 }
 
 func GenerateTestStamp() Stamp {

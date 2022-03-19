@@ -17,12 +17,12 @@ import (
 )
 
 type genAccount struct {
-	Address crypto.Address `cbor:"1,keyasint"`
-	Balance int64          `cbor:"2,keyasint"`
+	Address string `cbor:"1,keyasint"`
+	Balance int64  `cbor:"2,keyasint"`
 }
 
 type genValidator struct {
-	PublicKey *bls.PublicKey `cbor:"1,keyasint"`
+	PublicKey string `cbor:"1,keyasint"`
 }
 
 // Genesis is stored in the state database
@@ -56,7 +56,8 @@ func (gen *Genesis) Params() param.Params {
 func (gen *Genesis) Accounts() []*account.Account {
 	accs := make([]*account.Account, 0)
 	for i, genAcc := range gen.data.Accounts {
-		acc := account.NewAccount(genAcc.Address, i)
+		addr, _ := crypto.AddressFromString(genAcc.Address)
+		acc := account.NewAccount(addr, i)
 		acc.AddToBalance(genAcc.Balance)
 		accs = append(accs, acc)
 	}
@@ -67,7 +68,8 @@ func (gen *Genesis) Accounts() []*account.Account {
 func (gen *Genesis) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, 0, len(gen.data.Validators))
 	for i, genVal := range gen.data.Validators {
-		val := validator.NewValidator(genVal.PublicKey, i)
+		pub, _ := bls.PublicKeyFromString(genVal.PublicKey)
+		val := validator.NewValidator(pub, i)
 		vals = append(vals, val)
 	}
 
@@ -84,14 +86,14 @@ func (gen *Genesis) UnmarshalJSON(bs []byte) error {
 
 func makeGenesisAccount(acc *account.Account) genAccount {
 	return genAccount{
-		Address: acc.Address(),
+		Address: acc.Address().String(),
 		Balance: acc.Balance(),
 	}
 }
 
 func makeGenesisValidator(val *validator.Validator) genValidator {
 	return genValidator{
-		PublicKey: val.PublicKey(),
+		PublicKey: val.PublicKey().String(),
 	}
 }
 

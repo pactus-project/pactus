@@ -42,10 +42,6 @@ func PublicKeyFromRawBytes(data []byte) (*PublicKey, error) {
 	var pub PublicKey
 	pub.data.PublicKey = pk
 
-	if err := pub.SanityCheck(); err != nil {
-		return nil, err
-	}
-
 	return &pub, nil
 }
 
@@ -63,30 +59,8 @@ func (pub PublicKey) String() string {
 	return pub.data.PublicKey.SerializeToHexStr()
 }
 
-func (pub PublicKey) MarshalText() ([]byte, error) {
-	return []byte(pub.String()), nil
-}
-
-func (pub *PublicKey) UnmarshalText(text []byte) error {
-	p, err := PublicKeyFromString(string(text))
-	if err != nil {
-		return err
-	}
-
-	*pub = *p
-	return nil
-}
-
 func (pub *PublicKey) MarshalJSON() ([]byte, error) {
 	return json.Marshal(pub.String())
-}
-
-func (pub *PublicKey) UnmarshalJSON(bz []byte) error {
-	var text string
-	if err := json.Unmarshal(bz, &text); err != nil {
-		return err
-	}
-	return pub.UnmarshalText([]byte(text))
 }
 
 func (pub *PublicKey) MarshalCBOR() ([]byte, error) {
@@ -112,10 +86,10 @@ func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
 }
 
 func (pub *PublicKey) SanityCheck() error {
-	bs := pub.RawBytes()
-	if len(bs) != PublicKeySize {
-		return fmt.Errorf("public key should be %v bytes but it is %v bytes", PublicKeySize, len(bs))
+	if pub.data.PublicKey.IsZero() {
+		return fmt.Errorf("public key is zero")
 	}
+
 	return nil
 }
 
@@ -132,4 +106,8 @@ func (pub *PublicKey) Address() crypto.Address {
 	data = append([]byte{crypto.AddressTypeBLS}, data...)
 	addr, _ := crypto.AddressFromRawBytes(data)
 	return addr
+}
+
+func (pub *PublicKey) VerifyAddress(addr crypto.Address) bool {
+	return addr.EqualsTo(pub.Address())
 }
