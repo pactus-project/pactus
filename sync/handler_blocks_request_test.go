@@ -18,7 +18,7 @@ func TestSessionTimeout(t *testing.T) {
 	t.Run("An unknown peers claims to have more blocks. Session should be closed after timeout", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "Oscar", 6666, message.FlagNodeNetwork, tState.TestGenHash)
+		msg := message.NewHelloMessage(pid, "Oscar", 6666, message.FlagNodeNetwork, tState.GenesisHash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
