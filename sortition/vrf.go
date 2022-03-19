@@ -51,7 +51,7 @@ func getIndex(proof Proof, max int64) int64 {
 	numerator := big.NewInt(0)
 	numerator = numerator.Mul(bigRnd, bigMax)
 
-	denominator := big.NewInt(util.MaxInt64)
+	denominator := big.NewInt(util.MaxInt64) // 0x7FFFFFFFFFFFFFFF
 
 	// divide numerator and denominator to get the election ratio for this block height
 	index := big.NewInt(0)
