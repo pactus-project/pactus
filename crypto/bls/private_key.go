@@ -77,18 +77,18 @@ func PrivateKeyFromRawBytes(data []byte) (*PrivateKey, error) {
 	return &prv, nil
 }
 
-func (pv PrivateKey) RawBytes() []byte {
-	if pv.data.SecretKey == nil {
+func (prv PrivateKey) RawBytes() []byte {
+	if prv.data.SecretKey == nil {
 		return nil
 	}
-	return pv.data.SecretKey.Serialize()
+	return prv.data.SecretKey.Serialize()
 }
 
-func (pv PrivateKey) String() string {
-	if pv.data.SecretKey == nil {
+func (prv PrivateKey) String() string {
+	if prv.data.SecretKey == nil {
 		return ""
 	}
-	return pv.data.SecretKey.SerializeToHexStr()
+	return prv.data.SecretKey.SerializeToHexStr()
 }
 
 func (prv *PrivateKey) MarshalJSON() ([]byte, error) {
