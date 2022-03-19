@@ -84,7 +84,7 @@ func (h Hash) IsUndef() bool {
 	return h.EqualsTo(UndefHash)
 }
 
-func (h Hash) MarshalJSON() ([]byte, error) {
+func (h *Hash) MarshalJSON() ([]byte, error) {
 	return json.Marshal(h.String())
 }
 

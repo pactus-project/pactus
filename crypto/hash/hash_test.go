@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestHashMarshaling(t *testing.T) {
@@ -16,7 +15,7 @@ func TestHashMarshaling(t *testing.T) {
 	bs, err := hash1.MarshalCBOR()
 	assert.NoError(t, err)
 	assert.NoError(t, hash2.UnmarshalCBOR(bs))
-	require.True(t, hash1.EqualsTo(*hash2))
+	assert.True(t, hash1.EqualsTo(*hash2))
 	assert.NoError(t, hash1.SanityCheck())
 
 	js, err := hash1.MarshalJSON()
@@ -29,7 +28,7 @@ func TestHashFromString(t *testing.T) {
 	hash1 := GenerateTestHash()
 	hash2, err := FromString(hash1.String())
 	assert.NoError(t, err)
-	require.True(t, hash1.EqualsTo(hash2))
+	assert.True(t, hash1.EqualsTo(hash2))
 
 	_, err = FromString("")
 	assert.Error(t, err)
@@ -40,6 +39,7 @@ func TestHashFromString(t *testing.T) {
 	_, err = FromString("00")
 	assert.Error(t, err)
 }
+
 func TestHashEmpty(t *testing.T) {
 	hash1 := Hash{}
 	assert.Error(t, hash1.SanityCheck())
