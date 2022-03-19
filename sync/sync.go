@@ -289,7 +289,15 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 
 		// Bundles will be carried through LibP2P.
 		// In future we might support other libraries.
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkLibP2P)
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
+
+		if sync.state.Params().IsMainnet() {
+			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+		}
+
+		if sync.state.Params().IsTestnet() {
+			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
+		}
 		return bdl
 	}
 	return nil

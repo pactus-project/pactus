@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/validator"
 )
@@ -37,6 +38,7 @@ type Facade interface {
 	Account(addr crypto.Address) *account.Account
 	Validator(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int) *validator.Validator
+	Params() param.Params
 	Close() error
 	Fingerprint() string
 }

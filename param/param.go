@@ -32,6 +32,14 @@ func DefaultParams() Params {
 	}
 }
 
-func (p *Params) BlockTime() time.Duration {
+func (p Params) BlockTime() time.Duration {
 	return time.Duration(p.BlockTimeInSecond) * time.Second
+}
+
+func (p Params) IsMainnet() bool {
+	return p.BlockVersion == 1
+}
+
+func (p Params) IsTestnet() bool {
+	return p.BlockVersion == 1001
 }

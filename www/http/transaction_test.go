@@ -15,7 +15,7 @@ import (
 func TestTransaction(t *testing.T) {
 	setup(t)
 
-	testTx := tMockState.Store.AddTestTransaction()
+	testTx := tMockState.TestStore.AddTestTransaction()
 
 	t.Run("Shall return a transaction", func(t *testing.T) {
 		w := httptest.NewRecorder()

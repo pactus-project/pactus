@@ -582,3 +582,6 @@ func (st *state) AddPendingTx(trx *tx.Tx) error {
 func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	return st.txPool.AppendTxAndBroadcast(trx)
 }
+func (st *state) Params() param.Params {
+	return st.params
+}

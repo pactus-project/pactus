@@ -14,7 +14,7 @@ import (
 func TestValidator(t *testing.T) {
 	setup(t)
 
-	val := tMockState.Store.AddTestValidator()
+	val := tMockState.TestStore.AddTestValidator()
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()

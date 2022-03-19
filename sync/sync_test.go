@@ -92,7 +92,8 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 
 			// -----------
 			// Check flags
-			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkLibP2P), "invalid flag: %v", bdl)
+			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagCarrierLibP2P), "invalid flag: %v", bdl)
+			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 
 			if b.Target == nil {
 				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
@@ -134,6 +135,7 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 
 func testReceiveingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
 	bdl := bundle.NewBundle(from, msg)
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
 	return sync.processIncomingBundle(bdl)
 }
 
@@ -154,9 +156,9 @@ func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	testAddPeer(t, pub, pid)
 	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt(0))
 	// This is not very accurate, there is no harm to do it for testing
-	val.UpdateLastJoinedHeight(tState.Committee.Proposer(0).LastJoinedHeight() + 1)
-	tState.Committee.Update(0, []*validator.Validator{val})
-	require.True(t, tState.Committee.Contains(pub.Address()))
+	val.UpdateLastJoinedHeight(tState.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
+	tState.TestCommittee.Update(0, []*validator.Validator{val})
+	require.True(t, tState.TestCommittee.Contains(pub.Address()))
 }
 
 func checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
@@ -175,4 +177,13 @@ func TestBroadcastInvalidMessage(t *testing.T) {
 		tBroadcastCh <- message.NewHeartBeatMessage(-1, -1, hash.GenerateTestHash())
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHeartBeat)
 	})
+}
+
+func TestTestNetFlags(t *testing.T) {
+	setup(t)
+
+	tState.TestParams.BlockVersion = 1001
+	bdl := tSync.prepareBundle(message.NewHeartBeatMessage(1, 0, hash.GenerateTestHash()))
+	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
+	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }

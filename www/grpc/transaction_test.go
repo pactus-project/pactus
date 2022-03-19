@@ -14,7 +14,7 @@ import (
 func TestGetTransaction(t *testing.T) {
 	conn, client := callServer(t)
 
-	tx1 := tMockState.Store.AddTestTransaction()
+	tx1 := tMockState.TestStore.AddTestTransaction()
 
 	t.Run("Should return transaction", func(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &zarb.TransactionRequest{Id: tx1.ID().String()})
@@ -51,17 +51,17 @@ func TestGetTransaction(t *testing.T) {
 func TestSendRawTransaction(t *testing.T) {
 	conn, client := callServer(t)
 
-	t.Run("Should fail, Non decodable hex", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: "None Decodable hex"})
+	t.Run("Should fail, invalid raw data", func(t *testing.T) {
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: "invalid raw data"})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-	t.Run("Should fail, Non decodable data", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString([]byte("None Decodable data"))})
+	t.Run("Should fail, invalid cbor", func(t *testing.T) {
+		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: hex.EncodeToString([]byte("00000000"))})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-	t.Run("Should fail, Non verifable trx", func(t *testing.T) {
+	t.Run("Should fail, transaction with invalid signature", func(t *testing.T) {
 		trx, _ := tx.GenerateTestSendTx()
 		_, signer := tx.GenerateTestSendTx()
 		trx.SetSignature(signer.SignData(trx.SignBytes()))

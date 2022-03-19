@@ -20,7 +20,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
 		initiator := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, tState.GenesisHash())
 		signer.SignMsg(msg)
 		assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
@@ -45,7 +45,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		height := util.RandInt(0)
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.GenesisHash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
@@ -66,7 +66,7 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagHelloAck, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagHelloAck, tState.GenesisHash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
@@ -79,7 +79,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		claimedHeight := tState.LastBlockHeight() + 5
 		pid := util.RandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, tState.GenHash)
+		msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, tState.GenesisHash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))

@@ -10,6 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
@@ -20,20 +21,21 @@ import (
 var _ Facade = &MockState{}
 
 type MockState struct {
-	GenHash          hash.Hash
-	Store            *store.MockStore
-	TxPool           *txpool.MockTxPool
-	InvalidBlockHash hash.Hash
-	Committee        committee.Committee
+	TestGenHash   hash.Hash
+	TestStore     *store.MockStore
+	TestPool      *txpool.MockTxPool
+	TestCommittee committee.Committee
+	TestParams    param.Params
 }
 
 func MockingState() *MockState {
 	committee, _ := committee.GenerateTestCommittee(21)
 	return &MockState{
-		GenHash:   hash.GenerateTestHash(),
-		Store:     store.MockingStore(),
-		TxPool:    txpool.MockingTxPool(),
-		Committee: committee,
+		TestGenHash:   hash.GenerateTestHash(),
+		TestStore:     store.MockingStore(),
+		TestPool:      txpool.MockingTxPool(),
+		TestCommittee: committee,
+		TestParams:    param.DefaultParams(),
 	}
 }
 
@@ -42,45 +44,42 @@ func (m *MockState) CommitTestBlocks(num int) {
 		b := block.GenerateTestBlock(nil, nil)
 		cert := block.GenerateTestCertificate(b.Hash())
 
-		m.Store.SaveBlock(i+1, b, cert)
+		m.TestStore.SaveBlock(i+1, b, cert)
 	}
 }
 func (m *MockState) LastBlockHeight() int {
-	return m.Store.LastCert.Height
+	return m.TestStore.LastCert.Height
 }
 func (m *MockState) GenesisHash() hash.Hash {
-	return m.GenHash
+	return m.TestGenHash
 }
 func (m *MockState) LastBlockHash() hash.Hash {
-	if m.Store.LastCert.Cert == nil {
+	if m.TestStore.LastCert.Cert == nil {
 		return hash.UndefHash
 	}
-	return m.Store.LastCert.Cert.BlockHash()
+	return m.TestStore.LastCert.Cert.BlockHash()
 }
 func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
 }
 func (m *MockState) LastCertificate() *block.Certificate {
-	return m.Store.LastCert.Cert
+	return m.TestStore.LastCert.Cert
 }
 func (m *MockState) BlockTime() time.Duration {
 	return time.Second
 }
 func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
-	m.Store.LastCert.Cert = cert
+	m.TestStore.LastCert.Cert = cert
 	return nil
 }
 func (m *MockState) Fingerprint() string {
 	return ""
 }
 func (m *MockState) CommitBlock(h int, b *block.Block, cert *block.Certificate) error {
-	if h != m.Store.LastCert.Height+1 {
+	if h != m.TestStore.LastCert.Height+1 {
 		return fmt.Errorf("invalid height")
 	}
-	if b.Hash().EqualsTo(m.InvalidBlockHash) {
-		return fmt.Errorf("invalid block")
-	}
-	m.Store.SaveBlock(h, b, cert)
+	m.TestStore.SaveBlock(h, b, cert)
 	return nil
 }
 
@@ -95,22 +94,22 @@ func (m *MockState) ValidateBlock(block *block.Block) error {
 	return nil
 }
 func (m *MockState) CommitteeValidators() []*validator.Validator {
-	return m.Committee.Validators()
+	return m.TestCommittee.Validators()
 }
 func (m *MockState) IsInCommittee(addr crypto.Address) bool {
-	return m.Committee.Contains(addr)
+	return m.TestCommittee.Contains(addr)
 }
 func (m *MockState) Proposer(round int) *validator.Validator {
-	return m.Committee.Proposer(round)
+	return m.TestCommittee.Proposer(round)
 }
 func (m *MockState) IsProposer(addr crypto.Address, round int) bool {
-	return m.Committee.IsProposer(addr, round)
+	return m.TestCommittee.IsProposer(addr, round)
 }
 
 func (m *MockState) TotalPower() int64 {
 
 	p := int64(0)
-	m.Store.IterateValidators(func(val *validator.Validator) bool {
+	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
 		p += val.Power()
 		return false
 	})
@@ -118,47 +117,50 @@ func (m *MockState) TotalPower() int64 {
 }
 func (m *MockState) CommitteePower() int64 {
 
-	return m.Committee.TotalPower()
+	return m.TestCommittee.TotalPower()
 }
 func (m *MockState) Transaction(id tx.ID) *tx.Tx {
-	tx, _ := m.Store.Transaction(id)
+	tx, _ := m.TestStore.Transaction(id)
 	return tx
 }
 func (m *MockState) Block(hash hash.Hash) *block.Block {
-	bi, _ := m.Store.Block(hash)
+	bi, _ := m.TestStore.Block(hash)
 	if bi != nil {
 		return bi.Block
 	}
 	return nil
 }
 func (m *MockState) BlockHash(height int) hash.Hash {
-	return m.Store.BlockHash(height)
+	return m.TestStore.BlockHash(height)
 }
 func (m *MockState) Account(addr crypto.Address) *account.Account {
-	a, _ := m.Store.Account(addr)
+	a, _ := m.TestStore.Account(addr)
 	return a
 }
 func (m *MockState) Validator(addr crypto.Address) *validator.Validator {
-	v, _ := m.Store.Validator(addr)
+	v, _ := m.TestStore.Validator(addr)
 	return v
 }
 func (m *MockState) ValidatorByNumber(n int) *validator.Validator {
-	v, _ := m.Store.ValidatorByNumber(n)
+	v, _ := m.TestStore.ValidatorByNumber(n)
 	return v
 }
 func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
-	return m.TxPool.PendingTx(id)
+	return m.TestPool.PendingTx(id)
 }
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
-	if m.TxPool.HasTx(trx.ID()) {
+	if m.TestPool.HasTx(trx.ID()) {
 		return errors.Error(errors.ErrGeneric)
 	}
-	return m.TxPool.AppendTx(trx)
+	return m.TestPool.AppendTx(trx)
 }
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 
-	if m.TxPool.HasTx(trx.ID()) {
+	if m.TestPool.HasTx(trx.ID()) {
 		return errors.Error(errors.ErrGeneric)
 	}
-	return m.TxPool.AppendTxAndBroadcast(trx)
+	return m.TestPool.AppendTxAndBroadcast(trx)
+}
+func (m *MockState) Params() param.Params {
+	return m.TestParams
 }

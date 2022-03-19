@@ -47,7 +47,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 	t.Run("Should return the last block height", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
-		assert.Equal(t, int64(tMockState.Store.LastCert.Height), res.LastBlockHeight)
+		assert.Equal(t, int64(tMockState.TestStore.LastCert.Height), res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 	})
 

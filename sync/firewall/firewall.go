@@ -115,6 +115,20 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
 			"source is not same as initiator. source: %v, initiator: %v", pid, bdl.Initiator)
 	}
 
+	if f.state.Params().IsMainnet() {
+		if !util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet) {
+			return errors.Errorf(errors.ErrInvalidMessage,
+				"bundle is not for the mainnet")
+		}
+	}
+
+	if f.state.Params().IsTestnet() {
+		if !util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet) {
+			return errors.Errorf(errors.ErrInvalidMessage,
+				"bundle is not for the testnet")
+		}
+	}
+
 	return nil
 }
 

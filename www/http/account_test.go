@@ -14,7 +14,7 @@ import (
 func TestAccount(t *testing.T) {
 	setup(t)
 
-	acc := tMockState.Store.AddTestAccount()
+	acc := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
