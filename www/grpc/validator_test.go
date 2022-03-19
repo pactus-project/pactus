@@ -5,8 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/validator"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
@@ -47,18 +45,11 @@ func TestGetValidator(t *testing.T) {
 func TestGetValidatorByNumber(t *testing.T) {
 	conn, client := callServer(t)
 
-	pub1, _ := bls.GenerateTestKeyPair()
-	pub2, _ := bls.GenerateTestKeyPair()
-
-	val1 := validator.NewValidator(pub1, 5)
-	val2 := validator.NewValidator(pub2, 6)
-	val2.UpdateLastBondingHeight(100)
-	tMockState.TestStore.UpdateValidator(val1)
-	tMockState.TestStore.UpdateValidator(val2)
+	val1 := tMockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: -3,
+			Number: -1,
 		})
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -66,7 +57,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: 3,
+			Number: int32(val1.Number() + 1),
 		})
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -74,7 +65,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: 5,
+			Number: int32(val1.Number()),
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)

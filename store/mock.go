@@ -173,14 +173,14 @@ func (m *MockStore) WriteBatch() error {
 }
 
 func (m *MockStore) AddTestValidator() *validator.Validator {
-	val, _ := validator.GenerateTestValidator(util.RandInt(100))
+	val, _ := validator.GenerateTestValidator(util.RandInt(10000))
 	val.SubtractFromStake(val.Stake())
 	m.UpdateValidator(val)
 	return val
 }
 
 func (m *MockStore) AddTestAccount() *account.Account {
-	acc, _ := account.GenerateTestAccount(util.RandInt(100))
+	acc, _ := account.GenerateTestAccount(util.RandInt(10000))
 	acc.SubtractFromBalance(acc.Balance())
 	m.UpdateAccount(acc)
 	return acc
