@@ -72,14 +72,16 @@ func LoadOrNewState(
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
 
-	if store.TotalAccounts() == 0 {
-		// We are at the genesis state
-		err := st.makeGenesisState(genDoc)
+	// The first account is Treasury Account at the genesis time.
+	// So if we have more account, we are not in the genesis height anymore.
+	if store.TotalAccounts() > 1 {
+		err := st.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err := st.tryLoadLastInfo()
+		// We are at the genesis height
+		err := st.makeGenesisState(genDoc)
 		if err != nil {
 			return nil, err
 		}
