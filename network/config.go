@@ -59,7 +59,7 @@ func TestConfig() *Config {
 			Addresses:    []string{},
 			MinThreshold: 4,
 			MaxThreshold: 8,
-			Period:       1 * time.Minute,
+			Period:       1 * time.Second,
 		},
 	}
 }
