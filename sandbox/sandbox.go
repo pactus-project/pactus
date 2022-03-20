@@ -177,13 +177,6 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-func (sb *sandbox) MaxMemoLength() int {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.params.MaximumMemoLength
-}
-
 func (sb *sandbox) FeeFraction() float64 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()

@@ -253,7 +253,8 @@ func (st *state) ProposeBlock(round int) (*block.Block, error) {
 			txs.Remove(i)
 			i--
 		}
-		if txs.Len() >= st.params.MaximumTransactionPerBlock {
+		// Maximum 1000 transactions per block
+		if txs.Len() >= 1000 {
 			break
 		}
 	}

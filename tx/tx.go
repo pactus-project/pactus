@@ -12,6 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
+const maxMemoLength = 64
 
 type ID = hash.Hash
 
@@ -95,6 +96,9 @@ func (tx *Tx) SanityCheck() error {
 	}
 	if err := tx.Payload().SanityCheck(); err != nil {
 		return err
+	}
+	if len(tx.Memo()) > maxMemoLength {
+		return errors.Errorf(errors.ErrInvalidTx, "memo length exceeded")
 	}
 
 	tx.sanityChecked = true

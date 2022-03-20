@@ -52,7 +52,6 @@ func setup(t *testing.T) {
 	}
 	assert.Equal(t, tSandbox.CurrentHeight(), 124)
 
-	assert.Equal(t, tSandbox.MaxMemoLength(), params.MaximumMemoLength)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
 	assert.Equal(t, tSandbox.TransactionToLiveInterval(), params.TransactionToLiveInterval)

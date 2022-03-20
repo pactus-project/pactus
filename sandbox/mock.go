@@ -78,9 +78,6 @@ func (m *MockSandbox) CurrentHeight() int {
 func (m *MockSandbox) TransactionToLiveInterval() int {
 	return m.Params.TransactionToLiveInterval
 }
-func (m *MockSandbox) MaxMemoLength() int {
-	return m.Params.MaximumMemoLength
-}
 func (m *MockSandbox) FeeFraction() float64 {
 	return m.Params.FeeFraction
 }

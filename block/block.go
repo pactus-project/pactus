@@ -63,6 +63,9 @@ func (b *Block) SanityCheck() error {
 	if b.Transactions().Len() == 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "block at least should have one transaction")
 	}
+	if b.Transactions().Len() > 1000 {
+		return errors.Errorf(errors.ErrInvalidBlock, "block is full")
+	}
 	if !b.Header().TxsRoot().EqualsTo(b.data.Txs.Root()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "transactions root is not matched")
 	}
