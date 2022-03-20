@@ -88,35 +88,8 @@ func (addr Address) String() string {
 	return str
 }
 
-func (addr Address) MarshalText() ([]byte, error) {
-	return []byte(addr.String()), nil
-}
-
-func (addr *Address) UnmarshalText(text []byte) error {
-	/// Unmarshal empty value
-	if len(text) == 0 {
-		return nil
-	}
-
-	a, err := AddressFromString(string(text))
-	if err != nil {
-		return err
-	}
-
-	*addr = a
-	return nil
-}
-
 func (addr Address) MarshalJSON() ([]byte, error) {
 	return json.Marshal(addr.String())
-}
-
-func (addr *Address) UnmarshalJSON(bz []byte) error {
-	var text string
-	if err := json.Unmarshal(bz, &text); err != nil {
-		return err
-	}
-	return addr.UnmarshalText([]byte(text))
 }
 
 func (addr Address) MarshalCBOR() ([]byte, error) {
@@ -135,10 +108,6 @@ func (addr *Address) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidAddress, "invalid type")
 	}
 	return nil
-}
-
-func (addr Address) Verify(pub PublicKey) bool {
-	return addr.EqualsTo(pub.Address())
 }
 
 func (addr Address) EqualsTo(right Address) bool {

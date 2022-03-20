@@ -41,9 +41,6 @@ func SignatureFromRawBytes(data []byte) (crypto.Signature, error) {
 	var sig Signature
 	sig.data.Signature = s
 
-	if err := sig.SanityCheck(); err != nil {
-		return nil, err
-	}
 	return &sig, nil
 }
 
@@ -62,34 +59,8 @@ func (sig Signature) String() string {
 	return sig.data.Signature.SerializeToHexStr()
 }
 
-func (sig Signature) Fingerprint() string {
-	return hex.EncodeToString(sig.RawBytes()[:6])
-}
-
-func (sig Signature) MarshalText() ([]byte, error) {
-	return []byte(sig.String()), nil
-}
-
-func (sig *Signature) UnmarshalText(text []byte) error {
-	s, err := SignatureFromString(string(text))
-	if err != nil {
-		return err
-	}
-
-	*sig = *s.(*Signature)
-	return nil
-}
-
 func (sig Signature) MarshalJSON() ([]byte, error) {
 	return json.Marshal(sig.String())
-}
-
-func (sig *Signature) UnmarshalJSON(bz []byte) error {
-	var text string
-	if err := json.Unmarshal(bz, &text); err != nil {
-		return err
-	}
-	return sig.UnmarshalText([]byte(text))
 }
 
 func (sig *Signature) MarshalCBOR() ([]byte, error) {
@@ -114,10 +85,9 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 	return nil
 }
 
-func (sig Signature) SanityCheck() error {
-	bs := sig.RawBytes()
-	if len(bs) != SignatureSize {
-		return fmt.Errorf("signature should be %v bytes but it is %v bytes", SignatureSize, len(bs))
+func (sig *Signature) SanityCheck() error {
+	if sig.data.Signature.IsZero() {
+		return fmt.Errorf("signature is zero")
 	}
 
 	return nil

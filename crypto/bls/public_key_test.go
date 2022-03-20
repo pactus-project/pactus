@@ -2,76 +2,71 @@ package bls
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"strings"
 	"testing"
 
+	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPublicKeyMarshaling(t *testing.T) {
 	pub1, _ := GenerateTestKeyPair()
 	pub2 := new(PublicKey)
-	pub3 := new(PublicKey)
-	pub4 := new(PublicKey)
 
-	js, err := json.Marshal(pub1)
+	bs, err := pub1.MarshalCBOR()
 	assert.NoError(t, err)
-	require.Error(t, pub2.UnmarshalJSON([]byte("bad")))
-	require.NoError(t, json.Unmarshal(js, pub2))
+	assert.NoError(t, pub2.UnmarshalCBOR(bs))
+	assert.True(t, pub1.EqualsTo(pub2))
+	assert.NoError(t, pub1.SanityCheck())
 
-	bs, err := pub2.MarshalCBOR()
+	js, err := pub1.MarshalJSON()
 	assert.NoError(t, err)
-	assert.NoError(t, pub3.UnmarshalCBOR(bs))
-
-	txt, err := pub2.MarshalText()
-	assert.NoError(t, err)
-	assert.NoError(t, pub4.UnmarshalText(txt))
-
-	require.True(t, pub1.EqualsTo(pub4))
-	require.NoError(t, pub1.SanityCheck())
-}
-
-func TestPublicKeyFromBytes(t *testing.T) {
-	_, err := PublicKeyFromRawBytes(nil)
-	assert.Error(t, err)
-	pub1, _ := GenerateTestKeyPair()
-	pub2, err := PublicKeyFromRawBytes(pub1.RawBytes())
-	assert.NoError(t, err)
-	require.True(t, pub1.EqualsTo(pub2))
+	assert.Contains(t, string(js), pub1.String())
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", PublicKeySize))
-	_, err = PublicKeyFromRawBytes(inv)
-	assert.Error(t, err)
+	data, _ := cbor.Marshal(inv)
+	assert.Error(t, pub2.UnmarshalCBOR(data))
 }
 
 func TestPublicKeyFromString(t *testing.T) {
 	pub1, _ := GenerateTestKeyPair()
 	pub2, err := PublicKeyFromString(pub1.String())
 	assert.NoError(t, err)
-	require.True(t, pub1.EqualsTo(pub2))
+	assert.True(t, pub1.EqualsTo(pub2))
+
+	_, err = PublicKeyFromString("")
+	assert.Error(t, err)
 
 	_, err = PublicKeyFromString("inv")
 	assert.Error(t, err)
+
+	_, err = PublicKeyFromString("00")
+	assert.Error(t, err)
 }
 
-func TestMarshalingEmptyPublicKey(t *testing.T) {
+func TestPublicKeyEmpty(t *testing.T) {
 	pub1 := PublicKey{}
-
-	js, err := json.Marshal(pub1)
-	assert.NoError(t, err)
-	assert.Equal(t, js, []byte{0x22, 0x22}) // ""
-	var pub2 PublicKey
-	err = json.Unmarshal(js, &pub2)
-	assert.Error(t, err)
 
 	bs, err := pub1.MarshalCBOR()
 	assert.Error(t, err)
+	assert.Empty(t, pub1.String())
+	assert.Empty(t, pub1.RawBytes())
 
-	var pub3 PublicKey
-	err = pub3.UnmarshalCBOR(bs)
+	var pub2 PublicKey
+	err = pub2.UnmarshalCBOR(bs)
 	assert.Error(t, err)
+}
 
-	assert.Equal(t, pub1.Address().String(), "zc15y7u67dfcrsgsvtmrzwgseqlf2m8r2c4qs0v3g")
+func TestPublicKeySanityCheck(t *testing.T) {
+	pub, err := PublicKeyFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+	assert.NoError(t, err)
+	assert.Error(t, pub.SanityCheck())
+}
+
+func TestPublicKeyVerifyAddress(t *testing.T) {
+	pub1, _ := GenerateTestKeyPair()
+	pub2, _ := GenerateTestKeyPair()
+
+	assert.True(t, pub1.VerifyAddress(pub1.Address()))
+	assert.False(t, pub1.VerifyAddress(pub2.Address()))
 }

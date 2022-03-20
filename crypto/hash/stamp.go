@@ -2,6 +2,7 @@ package hash
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 )
 
@@ -20,6 +21,10 @@ func StampFromString(str string) (Stamp, error) {
 	var s Stamp
 	copy(s[:], data[:StampSize])
 	return s, nil
+}
+
+func (s *Stamp) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.String())
 }
 
 func (s Stamp) String() string {
