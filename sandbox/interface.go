@@ -29,7 +29,6 @@ type Sandbox interface {
 	BondInterval() int
 	CurrentHeight() int
 	TransactionToLiveInterval() int
-	MaxMemoLength() int
 	FeeFraction() float64
 	MinFee() int64
 

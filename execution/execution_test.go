@@ -1,7 +1,6 @@
 package execution
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -71,13 +70,6 @@ func TestExecution(t *testing.T) {
 	t.Run("Mintbase stamp is ok", func(t *testing.T) {
 		trx := tx.NewMintbaseTx(block8642.Stamp(), 1, rcvAddr, 1000, "ok")
 		assert.NoError(t, tExec.Execute(trx, tSandbox))
-	})
-
-	t.Run("Big memo, Should returns error", func(t *testing.T) {
-		bigMemo := strings.Repeat("a", 1025)
-		trx := tx.NewSendTx(block8641.Stamp(), 2, addr1, rcvAddr, 1000, 1000, bigMemo)
-		signer1.SignMsg(trx)
-		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {

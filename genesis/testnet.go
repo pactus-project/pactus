@@ -13,8 +13,6 @@ const testnetJSON = `
 	   "TransactionToLiveInterval":2880,
 	   "BondInterval":120,
 	   "UnbondInterval":60480,
-	   "MaximumTransactionPerBlock":1000,
-	   "MaximumMemoLength":1024,
 	   "FeeFraction":0.0001,
 	   "MinimumFee":10000
 	},

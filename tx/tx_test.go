@@ -3,6 +3,7 @@ package tx
 import (
 	"encoding/hex"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -78,6 +79,15 @@ func TestTxSanityCheck(t *testing.T) {
 		sb2 := tx.SignBytes()
 		assert.Equal(t, id1, id2)
 		assert.Equal(t, sb1, sb2)
+	})
+
+	t.Run("Big memo, Should returns error", func(t *testing.T) {
+		bigMemo := strings.Repeat("a", maxMemoLength+1)
+
+		tx, signer := GenerateTestSendTx()
+		tx.data.Memo = bigMemo
+		signer.SignMsg(tx)
+		assert.Error(t, tx.SanityCheck())
 	})
 }
 

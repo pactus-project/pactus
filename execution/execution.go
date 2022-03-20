@@ -45,9 +45,6 @@ func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if err := exe.checkStamp(trx, sb); err != nil {
 		return err
 	}
-	if err := exe.checkMemo(trx, sb); err != nil {
-		return err
-	}
 	if err := exe.checkFee(trx, sb); err != nil {
 		return err
 	}
@@ -68,13 +65,6 @@ func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 func (exe *Execution) AccumulatedFee() int64 {
 	return exe.accumulatedFee
-}
-
-func (exe *Execution) checkMemo(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if len(trx.Memo()) > sb.MaxMemoLength() {
-		return errors.Errorf(errors.ErrInvalidTx, "memo length exceeded")
-	}
-	return nil
 }
 
 func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
