@@ -14,12 +14,12 @@ require (
 	github.com/herumi/bls-go-binary v1.0.1-0.20220103075647-4e46f4fe2af2
 	github.com/jawher/mow.cli v1.2.0
 	github.com/kr/text v0.2.0 // indirect
-	github.com/libp2p/go-libp2p v0.17.0
-	github.com/libp2p/go-libp2p-core v0.13.0
+	github.com/libp2p/go-libp2p v0.18.0
+	github.com/libp2p/go-libp2p-core v0.14.0
 	github.com/libp2p/go-libp2p-kad-dht v0.15.0
-	github.com/libp2p/go-libp2p-pubsub v0.6.0
+	github.com/libp2p/go-libp2p-pubsub v0.6.1
 	github.com/mattn/go-runewidth v0.0.8 // indirect
-	github.com/multiformats/go-multiaddr v0.4.0
+	github.com/multiformats/go-multiaddr v0.5.0
 	github.com/pelletier/go-toml v1.9.0
 	github.com/peterh/liner v1.2.1
 	github.com/pkg/errors v0.9.1

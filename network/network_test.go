@@ -11,44 +11,38 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-var (
-	tSize     int
-	tNetworks []*network
-)
-
-func init() {
+func setup(t *testing.T, size int) []*network {
 	logger.InitLogger(logger.TestConfig())
-	tSize = 5
 
-	tNetworks = make([]*network, 5)
+	nets := make([]*network, size)
 
-	util.TempFilePath()
+	networkName := fmt.Sprintf("text-network-%d", util.RandInt(10000))
+	port := util.RandInt(9999) + 10000
 
-	for i := 0; i < tSize; i++ {
+	for i := 0; i < size; i++ {
 		conf := TestConfig()
+		conf.Name = networkName
 
+		bootstrapAddr := ""
 		if i == 0 {
 			// bootstrap node
-			conf.ListenAddress = []string{"/ip4/0.0.0.0/tcp/1347"}
-			conf.NodeKeyFile = util.TempFilePath()
+			conf.ListenAddress = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/%d", port)}
 		} else {
-			conf.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tNetworks[0].SelfID().String())}
+			bootstrapAddr = fmt.Sprintf("/ip4/0.0.0.0/tcp/%d/p2p/%s", port, nets[0].SelfID().String())
+			conf.Bootstrap.Addresses = []string{bootstrapAddr}
 		}
 
-		net, _ := NewNetwork(conf)
-		if err := net.Start(); err != nil {
-			panic(err)
-		}
+		net, err := NewNetwork(conf)
+		require.NoError(t, err)
+		require.NoError(t, net.Start())
+		require.NoError(t, net.JoinGeneralTopic())
 
-		if err := net.JoinGeneralTopic(); err != nil {
-			panic(err)
-		}
-
-		tNetworks[i] = net.(*network)
+		nets[i] = net.(*network)
 		time.Sleep(100 * time.Millisecond)
 	}
 
 	fmt.Println("Peers are connected")
+	return nets
 }
 
 func shouldReceiveEvent(t *testing.T, net *network) Event {
@@ -66,18 +60,19 @@ func shouldReceiveEvent(t *testing.T, net *network) Event {
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	net, err := NewNetwork(TestConfig())
-	assert.NoError(t, err)
+	size := 2
+	nets := setup(t, size)
 
-	assert.NoError(t, net.Start())
-	// Should stop without error
-	net.Stop()
+	for i := 0; i < size; i++ {
+		// Should stop without any error
+		nets[i].Stop()
+	}
 }
 
 func TestDHT(t *testing.T) {
-	conf := TestConfig()
+	nets := setup(t, 4)
+	conf := nets[1].config
 	conf.EnableMdns = false
-	conf.Bootstrap.Addresses = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/1347/p2p/%s", tNetworks[0].SelfID())}
 
 	net, err := NewNetwork(TestConfig())
 	assert.NoError(t, err)

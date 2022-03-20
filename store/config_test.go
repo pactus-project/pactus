@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestDefaultConfigCheck(t *testing.T) {
@@ -12,8 +13,8 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.NoError(t, c.SanityCheck())
 
 	if runtime.GOOS != "windows" {
-		c.Path = "/tmp/zarb/data"
+		c.Path = util.TempDirPath()
 		assert.NoError(t, c.SanityCheck())
-		assert.Equal(t, c.StorePath(), "/tmp/zarb/data/store.db")
+		assert.Equal(t, c.StorePath(), c.Path+"/store.db")
 	}
 }
