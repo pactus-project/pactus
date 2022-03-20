@@ -16,7 +16,8 @@ func TestExecuteSortitionTx(t *testing.T) {
 	setup(t)
 	exe := NewSortitionExecutor(true)
 
-	val := tSandbox.TestStore.RandomTestVal()
+	existingVal := tSandbox.TestStore.RandomTestVal()
+	val := tSandbox.TestStore.AddTestValidator()
 	proof := sortition.GenerateRandomProof()
 
 	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
@@ -50,6 +51,13 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
 		tSandbox.AcceptTestSortition = false
+
+		assert.Error(t, exe.Execute(trx, tSandbox))
+	})
+
+	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
+		trx := tx.NewSortitionTx(tStamp500000, existingVal.Sequence()+1, existingVal.Address(), proof)
+		tSandbox.AcceptTestSortition = true
 
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
@@ -166,6 +174,7 @@ func TestChangePower2(t *testing.T) {
 	assert.NoError(t, exe.Execute(trx4, tSandbox))
 }
 
+// TestOldestDidNotPropose tests if the oldest validator in the committee had chance to propose a block or not.
 func TestOldestDidNotPropose(t *testing.T) {
 	setup(t)
 

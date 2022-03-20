@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/validator"
 )
 
 type SortitionExecutor struct {
@@ -41,46 +42,14 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidTx, "invalid sequence, expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 		}
 		if sb.Committee().Size() >= sb.CommitteeSize() {
-			joiningNum := 0
-			joiningPower := int64(0)
-			committee := sb.Committee()
-			currentHeight := sb.CurrentHeight()
-			sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-				if vs.Validator.LastJoinedHeight() == currentHeight {
-					if !committee.Contains(vs.Validator.Address()) {
-						joiningPower += vs.Validator.Power()
-						joiningNum++
-					}
-				}
-			})
-			if !committee.Contains(val.Address()) {
-				joiningPower += val.Power()
-				joiningNum++
+			if err := e.joincommittee(sb, val); err != nil {
+				return err
 			}
-			if joiningPower >= (committee.TotalPower() / 3) {
-				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can join")
-			}
-
-			vals := committee.Validators()
-			sort.SliceStable(vals, func(i, j int) bool {
-				return vals[i].LastJoinedHeight() < vals[j].LastJoinedHeight()
-			})
-			leavingPower := int64(0)
-			for i := 0; i < joiningNum; i++ {
-				leavingPower += vals[i].Power()
-			}
-			if leavingPower >= (committee.TotalPower() / 3) {
-				return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can leave")
-			}
-
-			oldestJoinedHeight := currentHeight
-			for _, v := range committee.Validators() {
-				if v.LastJoinedHeight() < oldestJoinedHeight {
-					oldestJoinedHeight = v.LastJoinedHeight()
-				}
-			}
-			if currentHeight-oldestJoinedHeight < sb.CommitteeSize() {
-				return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
+		} else {
+			// Committee has free seats.
+			// Rejecting sortition transactions from existing committee members
+			if sb.Committee().Contains(val.Address()) {
+				return errors.Errorf(errors.ErrInvalidTx, "validator is in committee")
 			}
 		}
 	}
@@ -95,4 +64,52 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 func (e *SortitionExecutor) Fee() int64 {
 	return 0
+}
+
+func (e *SortitionExecutor) joincommittee(sb sandbox.Sandbox, val *validator.Validator) error {
+	joiningNum := 0
+	joiningPower := int64(0)
+	committee := sb.Committee()
+	currentHeight := sb.CurrentHeight()
+	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
+		if vs.Validator.LastJoinedHeight() == currentHeight {
+			if !committee.Contains(vs.Validator.Address()) {
+				joiningPower += vs.Validator.Power()
+				joiningNum++
+			}
+		}
+	})
+	if !committee.Contains(val.Address()) {
+		joiningPower += val.Power()
+		joiningNum++
+	}
+	if joiningPower >= (committee.TotalPower() / 3) {
+		return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can join")
+	}
+
+	vals := committee.Validators()
+	sort.SliceStable(vals, func(i, j int) bool {
+		return vals[i].LastJoinedHeight() < vals[j].LastJoinedHeight()
+	})
+	leavingPower := int64(0)
+	for i := 0; i < joiningNum; i++ {
+		leavingPower += vals[i].Power()
+	}
+	if leavingPower >= (committee.TotalPower() / 3) {
+		return errors.Errorf(errors.ErrGeneric, "in each height only 1/3 of stake can leave")
+	}
+
+	oldestJoinedHeight := currentHeight
+	for _, v := range committee.Validators() {
+		if v.LastJoinedHeight() < oldestJoinedHeight {
+			oldestJoinedHeight = v.LastJoinedHeight()
+		}
+	}
+
+	// If the oldest validator in the committee still hasn't propose a block yet, she stays in the committee.
+	// We assumes all blocks has committed in round 0, in future we can consider round parameter. It is backward compatible
+	if currentHeight-oldestJoinedHeight < sb.CommitteeSize() {
+		return errors.Errorf(errors.ErrGeneric, "oldest validator still didn't propose any block")
+	}
+	return nil
 }
