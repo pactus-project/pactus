@@ -28,7 +28,7 @@ func (s *Stamp) MarshalJSON() ([]byte, error) {
 }
 
 func (s Stamp) String() string {
-	return fmt.Sprintf("%X", s[:])
+	return hex.EncodeToString(s[:])
 }
 
 func (s Stamp) EqualsTo(r Stamp) bool {
