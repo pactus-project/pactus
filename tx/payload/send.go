@@ -2,15 +2,17 @@ package payload
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type SendPayload struct {
-	Sender   crypto.Address `cbor:"1,keyasint"`
-	Receiver crypto.Address `cbor:"2,keyasint"`
-	Amount   int64          `cbor:"3,keyasint"`
+	Sender   crypto.Address
+	Receiver crypto.Address
+	Amount   int64
 }
 
 func (p *SendPayload) Type() Type {
@@ -27,12 +29,33 @@ func (p *SendPayload) Value() int64 {
 
 func (p *SendPayload) SanityCheck() error {
 	if p.Amount < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid amount")
+		return errors.Errorf(errors.ErrInvalidAmount, "invalid amount")
 	}
 	if err := p.Receiver.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid receiver address")
+		return errors.Errorf(errors.ErrInvalidAddress, "invalid receiver address")
 	}
 
+	return nil
+}
+
+func (p *SendPayload) Encode(w io.Writer) error {
+	err := encoding.WriteElements(w, &p.Sender, &p.Receiver)
+	if err != nil {
+		return err
+	}
+	return encoding.WriteVarInt(w, uint64(p.Amount))
+}
+
+func (p *SendPayload) Decode(r io.Reader) error {
+	err := encoding.ReadElements(r, &p.Sender, &p.Receiver)
+	if err != nil {
+		return err
+	}
+	amount, err := encoding.ReadVarInt(r)
+	if err != nil {
+		return err
+	}
+	p.Amount = int64(amount)
 	return nil
 }
 

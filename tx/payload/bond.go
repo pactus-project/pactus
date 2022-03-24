@@ -2,16 +2,18 @@ package payload
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type BondPayload struct {
-	Sender    crypto.Address `cbor:"1,keyasint"`
-	PublicKey *bls.PublicKey `cbor:"2,keyasint"`
-	Stake     int64          `cbor:"3,keyasint"`
+	Sender    crypto.Address
+	PublicKey *bls.PublicKey
+	Stake     int64
 }
 
 func (p *BondPayload) Type() Type {
@@ -31,12 +33,42 @@ func (p *BondPayload) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid amount")
 	}
 	if err := p.Sender.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid sender address")
+		return errors.Errorf(errors.ErrInvalidAmount, "invalid sender address")
 	}
 	if err := p.PublicKey.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid receiver address")
+		return errors.Errorf(errors.ErrInvalidPublicKey, "invalid receiver public key")
 	}
 
+	return nil
+}
+
+func (p *BondPayload) Encode(w io.Writer) error {
+	err := encoding.WriteElement(w, &p.Sender)
+	if err != nil {
+		return err
+	}
+	err = p.PublicKey.Encode(w)
+	if err != nil {
+		return err
+	}
+	return encoding.WriteVarInt(w, uint64(p.Stake))
+}
+
+func (p *BondPayload) Decode(r io.Reader) error {
+	err := encoding.ReadElements(r, &p.Sender)
+	if err != nil {
+		return err
+	}
+	p.PublicKey = new(bls.PublicKey)
+	err = p.PublicKey.Decode(r)
+	if err != nil {
+		return err
+	}
+	stake, err := encoding.ReadVarInt(r)
+	if err != nil {
+		return err
+	}
+	p.Stake = int64(stake)
 	return nil
 }
 
