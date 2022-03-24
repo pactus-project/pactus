@@ -12,46 +12,38 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestMarshaling(t *testing.T) {
-	acc1, _ := GenerateTestAccount(util.RandInt(10000))
-	acc1.AddToBalance(1)
-	acc1.IncSequence()
-
-	bs, err := acc1.Encode()
-	fmt.Printf("%X\n", bs)
-	fmt.Printf("%X", acc1.Address().RawBytes())
+func TestFromBytes(t *testing.T) {
+	acc1, _ := GenerateTestAccount(util.RandInt32(10000))
+	bs, err := acc1.Bytes()
 	require.NoError(t, err)
-	acc2 := new(Account)
-	err = acc2.Decode(bs)
+	fmt.Printf("%X\n", bs)
+	acc2, err := AccountFromBytes(bs)
 	require.NoError(t, err)
 	assert.Equal(t, acc1, acc2)
+}
 
-	acc3 := new(Account)
-	err = acc3.Decode(bs)
-	require.NoError(t, err)
-	assert.Equal(t, acc2, acc3)
+func TestJSONMarshaling(t *testing.T) {
+	acc1, _ := GenerateTestAccount(util.RandInt32(10000))
 
-	/// test json marshaing/unmarshaling
 	js, err := json.Marshal(acc1)
 	require.NoError(t, err)
 	fmt.Println(string(js))
+}
 
-	/// should fail
-	acc5 := new(Account)
-	err = acc5.Decode([]byte("asdfghjkl"))
+func TestInvalidData(t *testing.T) {
+	_, err := AccountFromBytes([]byte("asdfghjkl"))
 	require.Error(t, err)
 }
 
 func TestMarshalingRawData(t *testing.T) {
-	bs, _ := hex.DecodeString("A40155010C9819C4D4B1EDB7B70E6665287D4CE95401A37702191BD7031823041A007F5535")
-	acc := new(Account)
-	err := acc.Decode(bs)
+	bs, _ := hex.DecodeString("01283993000F6484BF1E148B2B27CF11A602BBB2DC03000000020000000100000000000000")
+	acc, err := AccountFromBytes(bs)
 	require.NoError(t, err)
 	fmt.Println(acc)
-	bs2, _ := acc.Encode()
+	bs2, _ := acc.Bytes()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
-	expected, _ := hash.FromString("aa7217e71fc4a66d82d6067c9241b23db9699d689989d9c117ea722313a36022")
+	expected, _ := hash.FromString("0e950ffaf53de12c6ea2d17e8fef96c51937f5c48ab0e3cb9af6a8af4dcf290e")
 	assert.Equal(t, acc.Hash(), expected)
 }
 
@@ -60,7 +52,7 @@ func TestIncSequence(t *testing.T) {
 	seq := acc.Sequence()
 	acc.IncSequence()
 	assert.Equal(t, acc.Sequence(), seq+1)
-	assert.Equal(t, acc.Number(), 100)
+	assert.Equal(t, acc.Number(), int32(100))
 }
 
 func TestSubtractBalance(t *testing.T) {
