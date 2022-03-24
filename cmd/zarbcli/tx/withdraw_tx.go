@@ -64,7 +64,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 			var stamp hash.Stamp
 			var from crypto.Address
 			var to crypto.Address
-			var seq int
+			var seq int32
 			var amount int64
 			var auth string
 
@@ -110,9 +110,10 @@ func WithdrawTx() func(c *cli.Cmd) {
 				auth = *authOpt
 			}
 
+			// TODO: make me a function
 			//RPC
 			if seqOpt != nil {
-				seq = *seqOpt
+				seq = int32(*seqOpt)
 			} else {
 				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), from)
 				if err != nil {

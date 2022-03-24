@@ -24,7 +24,7 @@ func signAndPublish(trx *tx.Tx, keyfile, auth string, rpcEndpoint *string) {
 	cmd.PrintJSONObject(trx)
 	cmd.PrintLine()
 
-	signedTrx, _ := trx.Encode()
+	signedTrx, _ := trx.Bytes()
 
 	if rpcEndpoint == nil || *rpcEndpoint == "" {
 		//no endpoint specified just print the raw payload and leave
