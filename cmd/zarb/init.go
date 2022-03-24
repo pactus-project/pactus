@@ -65,8 +65,8 @@ func Init() func(c *cli.Cmd) {
 			if *testnetOpt {
 				gen = genesis.Testnet()
 
-				conf.Network.Name = "zarb-testnet"
-				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/1347/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
+				conf.Network.Name = "perdana-testnet"
+				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 			} else {
