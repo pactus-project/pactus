@@ -8,12 +8,12 @@ import (
 )
 
 func TestUtils(t *testing.T) {
-	assert.Equal(t, Min32(1, 1), 1)
-	assert.Equal(t, Min32(1, 2), 1)
-	assert.Equal(t, Min32(2, 1), 1)
-	assert.Equal(t, Max32(2, 2), 2)
-	assert.Equal(t, Max32(1, 2), 2)
-	assert.Equal(t, Max32(2, 1), 2)
+	assert.Equal(t, Min32(1, 1), int32(1))
+	assert.Equal(t, Min32(1, 2), int32(1))
+	assert.Equal(t, Min32(2, 1), int32(1))
+	assert.Equal(t, Max32(2, 2), int32(2))
+	assert.Equal(t, Max32(1, 2), int32(2))
+	assert.Equal(t, Max32(2, 1), int32(2))
 	assert.Equal(t, MaxUint32, uint32(0xffffffff))
 	assert.Equal(t, MaxUint64, uint64(0xffffffffffffffff))
 	assert.Equal(t, MaxInt32, int32(0x7fffffff))

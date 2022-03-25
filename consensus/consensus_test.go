@@ -138,7 +138,7 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
 	}
 }
 
-func shouldPublishProposal(t *testing.T, cons *consensus, height, round int) {
+func shouldPublishProposal(t *testing.T, cons *consensus, height int32, round int16) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {

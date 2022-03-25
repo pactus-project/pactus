@@ -126,8 +126,8 @@ func TestQuorum(t *testing.T) {
 	assert.NoError(t, vs.AddVote(v3))
 	cert1 := vs.ToCertificate()
 	assert.NotNil(t, cert1)
-	assert.Equal(t, cert1.Committers(), []int{0, 1, 2, 3})
-	assert.Equal(t, cert1.Absentees(), []int{3})
+	assert.Equal(t, cert1.Committers(), []int32{0, 1, 2, 3})
+	assert.Equal(t, cert1.Absentees(), []int32{3})
 
 	// Add one more vote
 	assert.NoError(t, vs.AddVote(v4))
@@ -137,8 +137,8 @@ func TestQuorum(t *testing.T) {
 
 	cert2 := vs.ToCertificate()
 	assert.NotNil(t, cert2)
-	assert.Equal(t, cert2.Committers(), []int{0, 1, 2, 3})
-	assert.Equal(t, cert2.Absentees(), []int{})
+	assert.Equal(t, cert2.Committers(), []int32{0, 1, 2, 3})
+	assert.Equal(t, cert2.Absentees(), []int32{})
 }
 
 func TestPower(t *testing.T) {

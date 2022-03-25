@@ -47,9 +47,11 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int32, block *block
 	if err != nil {
 		panic(err) // Should we panic?
 	}
-	err = block.PrevCertificate().Encode(w)
-	if err != nil {
-		panic(err) // Should we panic?
+	if block.PrevCertificate() != nil {
+		err = block.PrevCertificate().Encode(w)
+		if err != nil {
+			panic(err) // Should we panic?
+		}
 	}
 	err = encoding.WriteVarInt(w, uint64(block.Transactions().Len()))
 	if err != nil {
