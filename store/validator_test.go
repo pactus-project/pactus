@@ -11,13 +11,13 @@ import (
 
 func TestValidatorCounter(t *testing.T) {
 	setup(t)
-	val, _ := validator.GenerateTestValidator(util.RandInt(1000))
+	val, _ := validator.GenerateTestValidator(util.RandInt32(1000))
 
 	t.Run("Update count after adding new validator", func(t *testing.T) {
-		assert.Equal(t, tStore.TotalValidators(), 0)
+		assert.Zero(t, tStore.TotalValidators())
 		tStore.UpdateValidator(val)
 		assert.NoError(t, tStore.WriteBatch())
-		assert.Equal(t, tStore.TotalValidators(), 1)
+		assert.Equal(t, tStore.TotalValidators(), int32(1))
 	})
 
 	t.Run("Update validator, should not increase counter", func(t *testing.T) {
@@ -25,7 +25,7 @@ func TestValidatorCounter(t *testing.T) {
 
 		tStore.UpdateValidator(val)
 		assert.NoError(t, tStore.WriteBatch())
-		assert.Equal(t, tStore.TotalValidators(), 1)
+		assert.Equal(t, tStore.TotalValidators(), int32(1))
 	})
 
 	t.Run("Get validator", func(t *testing.T) {
@@ -41,17 +41,17 @@ func TestValidatorBatchSaving(t *testing.T) {
 
 	t.Run("Add 100 validators", func(t *testing.T) {
 		for i := 0; i < 100; i++ {
-			val, _ := validator.GenerateTestValidator(util.RandInt(1000))
+			val, _ := validator.GenerateTestValidator(int32(i))
 			tStore.UpdateValidator(val)
 			assert.NoError(t, tStore.WriteBatch())
 		}
 
-		assert.Equal(t, tStore.TotalValidators(), 100)
+		assert.Equal(t, tStore.TotalValidators(), int32(100))
 	})
 	t.Run("Close and load db", func(t *testing.T) {
 		tStore.Close()
 		store, _ := NewStore(tStore.config, 21)
-		assert.Equal(t, store.TotalValidators(), 100)
+		assert.Equal(t, store.TotalValidators(), int32(100))
 	})
 }
 
@@ -60,15 +60,15 @@ func TestValidatorByNumber(t *testing.T) {
 
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := 0; i < 10; i++ {
-			val, _ := validator.GenerateTestValidator(i)
+			val, _ := validator.GenerateTestValidator(int32(i))
 			tStore.UpdateValidator(val)
-			assert.NoError(t, tStore.WriteBatch())
 		}
+		assert.NoError(t, tStore.WriteBatch())
 
 		v, err := tStore.ValidatorByNumber(5)
 		assert.NoError(t, err)
 		require.NotNil(t, v)
-		assert.Equal(t, v.Number(), 5)
+		assert.Equal(t, v.Number(), int32(5))
 
 		v, err = tStore.ValidatorByNumber(11)
 		assert.Error(t, err)
@@ -82,7 +82,7 @@ func TestValidatorByNumber(t *testing.T) {
 		v, err := store.ValidatorByNumber(5)
 		assert.NoError(t, err)
 		require.NotNil(t, v)
-		assert.Equal(t, v.Number(), 5)
+		assert.Equal(t, v.Number(), int32(5))
 
 		v, err = tStore.ValidatorByNumber(11)
 		assert.Error(t, err)

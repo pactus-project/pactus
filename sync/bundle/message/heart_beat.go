@@ -8,12 +8,12 @@ import (
 )
 
 type HeartBeatMessage struct {
-	Height        int       `cbor:"1,keyasint"`
-	Round         int       `cbor:"2,keyasint"`
+	Height        int32     `cbor:"1,keyasint"`
+	Round         int16     `cbor:"2,keyasint"`
 	PrevBlockHash hash.Hash `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatMessage(h, r int, hash hash.Hash) *HeartBeatMessage {
+func NewHeartBeatMessage(h int32, r int16, hash hash.Hash) *HeartBeatMessage {
 	return &HeartBeatMessage{
 		Height:        h,
 		Round:         r,

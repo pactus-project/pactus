@@ -16,8 +16,8 @@ func TestCommitExecute(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	h := 4
-	r := 0
+	h := int32(4)
+	r := int16(0)
 	p1 := makeProposal(t, h, r)
 	trx := tx.NewSendTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
 	tSigners[0].SignMsg(trx)

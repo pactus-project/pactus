@@ -19,7 +19,7 @@ type PeerSet struct {
 	peers            map[peer.ID]*Peer
 	sessions         map[int]*Session
 	nextSessionID    int
-	maxClaimedHeight int
+	maxClaimedHeight int32
 	sessionTimeout   time.Duration
 }
 
@@ -113,7 +113,7 @@ func (ps *PeerSet) Len() int {
 // Note: This value might not be accurate
 // A bad peer can claim invalid height
 //
-func (ps *PeerSet) MaxClaimedHeight() int {
+func (ps *PeerSet) MaxClaimedHeight() int32 {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
@@ -153,7 +153,7 @@ func (ps *PeerSet) GetRandomPeer() Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	i := util.RandInt(len(ps.peers))
+	i := util.RandInt32(int32(len(ps.peers)))
 	for _, p := range ps.peers {
 		i--
 		if i <= 0 {
@@ -198,13 +198,13 @@ func (ps *PeerSet) UpdatePeerInfo(
 	p.SetNodeNetworkFlag(nodeNetwork)
 }
 
-func (ps *PeerSet) UpdateHeight(pid peer.ID, height int) {
+func (ps *PeerSet) UpdateHeight(pid peer.ID, height int32) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
 	p.Height = height
-	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, height)
+	ps.maxClaimedHeight = util.Max32(ps.maxClaimedHeight, height)
 }
 
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {

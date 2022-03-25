@@ -22,8 +22,8 @@ func getAccount(t *testing.T, addr crypto.Address) *account.Account {
 	}
 
 	d, _ := st.Data()
-	acc := new(account.Account)
-	assert.NoError(t, acc.Decode(d))
+	acc, err:= account.AccountFromBytes(d)
+	assert.NoError(t, err)
 	return acc
 }
 

@@ -49,16 +49,16 @@ func TestGenesisTestNet(t *testing.T) {
 
 	genTime, _ := time.Parse("2006-01-02", "2022-02-21")
 	assert.Equal(t, g.GenesisTime(), genTime)
-	assert.Equal(t, g.Params().BondInterval, 120)
+	assert.Equal(t, g.Params().BondInterval, int32(120))
 
-	expected, _ := hash.FromString("4e7211d15fb905a26afe8d7c7f7d80e84939dd466539470ef1902285a0c13ce7")
+	expected, _ := hash.FromString("683fa35c05d4aeb29f8a18752254432f629f839fa2b915a61b095db12ecbff1f")
 	assert.Equal(t, g.Hash(), expected)
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	accs := []*account.Account{}
 	vals := []*validator.Validator{}
-	for i := 0; i < 10; i++ {
+	for i := int32(0); i < 10; i++ {
 		pub, _ := bls.GenerateTestKeyPair()
 		acc := account.NewAccount(pub.Address(), i)
 		val := validator.NewValidator(pub, i)

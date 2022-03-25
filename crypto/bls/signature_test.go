@@ -14,7 +14,7 @@ import (
 
 func TestSignatureMarshaling(t *testing.T) {
 	_, prv := GenerateTestKeyPair()
-	sig1 := prv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+	sig1 := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
 	sig2 := new(Signature)
 
 	bs, err := sig1.MarshalCBOR()
@@ -34,7 +34,7 @@ func TestSignatureMarshaling(t *testing.T) {
 
 func TestSignatureFromString(t *testing.T) {
 	_, prv := GenerateTestKeyPair()
-	sig1 := prv.Sign(util.IntToSlice(util.RandInt(9999999999)))
+	sig1 := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
 	sig2, err := SignatureFromString(sig1.String())
 	assert.NoError(t, err)
 	assert.True(t, sig1.EqualsTo(sig2))

@@ -1,6 +1,7 @@
 package store
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -34,9 +35,11 @@ func TestBlockStore(t *testing.T) {
 	t.Run("Add block, batch write", func(t *testing.T) {
 		tStore.SaveBlock(lastHeight+1, b1, c1)
 		assert.NoError(t, tStore.WriteBatch())
-		bi, err := tStore.Block(b1.Hash())
+		sb, err := tStore.Block(b1.Hash())
 		assert.NoError(t, err)
-		assert.Equal(t, b1.Hash(), bi.Block.Hash())
+		d, _ := b1.Bytes()
+		assert.Equal(t, sb.height, lastHeight+1)
+		assert.True(t, bytes.Equal(sb.data, d))
 
 		h, cert := tStore.LastCertificate()
 		assert.NoError(t, err)
@@ -57,11 +60,11 @@ func TestBlockStore(t *testing.T) {
 func TestBlockHeightByStamp(t *testing.T) {
 	setup(t)
 
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.GenerateTestStamp()), -1)
+	assert.Zero(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()))
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.GenerateTestStamp()), int32(-1))
 
 	SaveTestBlocks(t, 11)
-	_, cert := tStore.LastCertificate()
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
-	assert.Equal(t, tStore.BlockHeightByStamp(cert.BlockHash().Stamp()), 21)
+
+	assert.Zero(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()))
+	assert.Equal(t, tStore.BlockHeightByStamp(tStore.BlockHash(15).Stamp()), int32(15))
 }

@@ -33,7 +33,7 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 	trx := tx.NewSendTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
 	sender.SignMsg(trx)
 
-	d, _ := trx.Encode()
+	d, _ := trx.Bytes()
 	return sendRawTx(t, d)
 }
 
@@ -43,7 +43,7 @@ func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.Pub
 	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), val.(*bls.PublicKey), stake, fee, "")
 	sender.SignMsg(trx)
 
-	d, _ := trx.Encode()
+	d, _ := trx.Bytes()
 	return sendRawTx(t, d)
 }
 

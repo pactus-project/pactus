@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,9 +13,9 @@ func TestHashMarshaling(t *testing.T) {
 	hash1 := GenerateTestHash()
 	hash2 := new(Hash)
 
-	bs, err := hash1.MarshalCBOR()
+	bs, err := cbor.Marshal(hash1)
 	assert.NoError(t, err)
-	assert.NoError(t, hash2.UnmarshalCBOR(bs))
+	assert.NoError(t, cbor.Unmarshal(bs, hash2))
 	assert.True(t, hash1.EqualsTo(*hash2))
 	assert.NoError(t, hash1.SanityCheck())
 
@@ -51,7 +52,7 @@ func TestHash256(t *testing.T) {
 	expected, _ := hex.DecodeString("12b38977f2d67f06f0c0cd54aaf7324cf4fee184398ea33d295e8d1543c2ee1a")
 	assert.Equal(t, h, expected)
 
-	hash, _ := FromRawBytes(h)
+	hash, _ := FromBytes(h)
 	stamp, _ := StampFromString("12b38977")
 	assert.Equal(t, hash.Stamp(), stamp)
 }

@@ -13,19 +13,19 @@ import (
 )
 
 func TestFromBytes(t *testing.T) {
-	acc1, _ := GenerateTestAccount(util.RandInt32(10000))
-	bs, err := acc1.Bytes()
+	acc, _ := GenerateTestAccount(util.RandInt32(10000))
+	bs, err := acc.Bytes()
 	require.NoError(t, err)
-	fmt.Printf("%X\n", bs)
+	require.Equal(t, acc.SerializeSize(), len(bs))
 	acc2, err := AccountFromBytes(bs)
 	require.NoError(t, err)
-	assert.Equal(t, acc1, acc2)
+	assert.Equal(t, acc, acc2)
 }
 
 func TestJSONMarshaling(t *testing.T) {
-	acc1, _ := GenerateTestAccount(util.RandInt32(10000))
+	acc, _ := GenerateTestAccount(util.RandInt32(10000))
 
-	js, err := json.Marshal(acc1)
+	js, err := json.Marshal(acc)
 	require.NoError(t, err)
 	fmt.Println(string(js))
 }
@@ -36,14 +36,14 @@ func TestInvalidData(t *testing.T) {
 }
 
 func TestMarshalingRawData(t *testing.T) {
-	bs, _ := hex.DecodeString("01283993000F6484BF1E148B2B27CF11A602BBB2DC03000000020000000100000000000000")
+	bs, _ := hex.DecodeString("01283993000F6484BF1E148B2B27CF11A602BBB2DC01000000020000000300000000000000")
 	acc, err := AccountFromBytes(bs)
 	require.NoError(t, err)
 	fmt.Println(acc)
 	bs2, _ := acc.Bytes()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
-	expected, _ := hash.FromString("0e950ffaf53de12c6ea2d17e8fef96c51937f5c48ab0e3cb9af6a8af4dcf290e")
+	expected, _ := hash.FromString("a56021e105f1fd644864d7813a131b68b1b447c4abf19a7a44df54deab5b7091")
 	assert.Equal(t, acc.Hash(), expected)
 }
 

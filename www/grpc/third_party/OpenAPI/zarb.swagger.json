@@ -112,8 +112,8 @@
             "name": "height",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "tags": [
@@ -394,8 +394,8 @@
           "format": "int32"
         },
         "sequence": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "Balance": {
           "type": "string",
@@ -431,15 +431,7 @@
           "type": "string",
           "format": "byte"
         },
-        "prevCertHash": {
-          "type": "string",
-          "format": "byte"
-        },
         "stateRoot": {
-          "type": "string",
-          "format": "byte"
-        },
-        "txsRoot": {
           "type": "string",
           "format": "byte"
         },
@@ -456,8 +448,8 @@
       "type": "object",
       "properties": {
         "height": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "hash": {
           "type": "string",
@@ -494,8 +486,8 @@
       "type": "object",
       "properties": {
         "lastBlockHeight": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "lastBlockHash": {
           "type": "string",
@@ -507,8 +499,8 @@
       "type": "object",
       "properties": {
         "round": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "committers": {
           "type": "array",
@@ -525,7 +517,8 @@
           }
         },
         "signature": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -606,18 +599,20 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "version": {
           "type": "integer",
           "format": "int32"
         },
         "stamp": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "sequence": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "fee": {
           "type": "string",
@@ -639,10 +634,12 @@
           "type": "string"
         },
         "publicKey": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "signature": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -666,8 +663,8 @@
           "format": "int32"
         },
         "sequence": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "stake": {
           "type": "string",

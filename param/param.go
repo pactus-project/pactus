@@ -3,13 +3,13 @@ package param
 import "time"
 
 type Params struct {
-	BlockVersion              int     `cbor:"1,keyasint"`
+	BlockVersion              uint8   `cbor:"1,keyasint"`
 	BlockTimeInSecond         int     `cbor:"2,keyasint"`
 	CommitteeSize             int     `cbor:"3,keyasint"`
 	BlockReward               int64   `cbor:"4,keyasint"`
-	TransactionToLiveInterval int     `cbor:"5,keyasint"`
-	BondInterval              int     `cbor:"6,keyasint"`
-	UnbondInterval            int     `cbor:"7,keyasint"`
+	TransactionToLiveInterval int32   `cbor:"5,keyasint"`
+	BondInterval              int32   `cbor:"6,keyasint"`
+	UnbondInterval            int32   `cbor:"7,keyasint"`
 	FeeFraction               float64 `cbor:"8,keyasint"`
 	MinimumFee                int64   `cbor:"9,keyasint"`
 }
@@ -37,5 +37,5 @@ func (p Params) IsMainnet() bool {
 }
 
 func (p Params) IsTestnet() bool {
-	return p.BlockVersion == 1001
+	return p.BlockVersion == 77
 }

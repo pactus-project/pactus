@@ -196,7 +196,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 
 	stamp := tStamp500000
 	for i := 0; i < 8; i = i + 2 {
-		b := tSandbox.TestStore.AddTestBlock(500001 + (i / 2))
+		b := tSandbox.TestStore.AddTestBlock(int32(500001 + (i / 2)))
 		stamp = b.Stamp()
 
 		trx1 := tx.NewSortitionTx(stamp, vals[i].Sequence()+1, vals[i].Address(), sortition.GenerateRandomProof())

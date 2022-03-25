@@ -49,14 +49,15 @@ func TestEncodingTx(t *testing.T) {
 		assert.Equal(t, tx.ID(), tx2.ID())
 		assert.True(t, tx.PublicKey().EqualsTo(tx2.PublicKey()))
 		assert.True(t, tx.Signature().EqualsTo(tx2.Signature()))
-
 	}
 }
 
-func TestEncodingTxID(t *testing.T) {
+func TestTxIDNoSignatory(t *testing.T) {
 	tx1, _ := GenerateTestSendTx()
 	tx2 := new(Tx)
 	*tx2 = *tx1
+	tx2.data.PublicKey = nil
+	tx2.data.Signature = nil
 	require.Equal(t, tx1.ID(), tx2.ID())
 }
 
@@ -251,18 +252,17 @@ func TestSortitionSanityCheck(t *testing.T) {
 
 }
 
-func TestSendDecodingAndHash(t *testing.T) {
-	d, _ := hex.DecodeString("58de01e8322049e705c1a5e5d8c3ee030101832cf04eef1f175b6087bd5f6cd0724167fdcbc00153b1f3c290a3684c3177de93f54008fa3e9af4518fe197fcbdc69f680c746573742073656e642d747887d5ca34275bbfd346799387a6c3de5c40f3d25216441ae287cb405407aeb4d91d25422098f48e88b7aaf378310e8260a805fc66e81ada1a35e7a452d860c1f860452d0a8f08af39e58776ddf8a39274dd7cb0e4eb3e73cc5435343761fbc2f7149144105f2b52b84d7428dbcee503a72b7633bf4bc333c972aed75dd1b36fdad0bdf19d7aa40e6b5a9714d9452a71af")
-	s, _ := hex.DecodeString("01e8322049e705c1a5e5d8c3ee030101832cf04eef1f175b6087bd5f6cd0724167fdcbc00153b1f3c290a3684c3177de93f54008fa3e9af4518fe197fcbdc69f680c746573742073656e642d7478")
-	h, _ := hash.FromString("54ec811e7dc64242e6d90094833f7f138d9db5c96fff327fba27a1b89a71d285")
-	trx := new(Tx)
-	err := trx.UnmarshalCBOR(d)
+func TestSignBytes(t *testing.T) {
+	d, _ := hex.DecodeString("01f10c077fcc04f5ef819fc9d6080101d3e45d249a39d806a1faec2fd85820db340b98e30168fc72a1a961933e694439b2e3c8751d27de5ad3b9c3dc91b9c9b59b010c746573742073656e642d7478b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a68d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e0611776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
+	h, _ := hash.FromString("2a04aef409194ff72e942346525428f6c030e2875be27205cb2ce46065ec543f")
+	trx, err := TxFromBytes(d)
 	assert.NoError(t, err)
-	d2, _ := trx.MarshalCBOR()
-	assert.Equal(t, d, d2)
-	assert.Equal(t, trx.SignBytes(), s)
+	assert.Equal(t, trx.SerializeSize(), len(d))
+
+	sb := d[:len(d)-bls.PublicKeySize-bls.SignatureSize]
+	assert.Equal(t, sb, trx.SignBytes())
 	assert.Equal(t, trx.ID(), h)
-	assert.Equal(t, trx.Payload().Type(), payload.PayloadTypeSend)
+	assert.Equal(t, trx.ID(), hash.CalcHash(sb))
 }
 
 func TestSendSignBytes(t *testing.T) {

@@ -116,7 +116,7 @@ func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	pv, err := bls.PrivateKeyFromRawBytes(plainText)
+	pv, err := bls.PrivateKeyFromBytes(plainText)
 	if err != nil {
 		return nil, err
 	}

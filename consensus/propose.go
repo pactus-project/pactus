@@ -28,7 +28,7 @@ func (s *proposeState) decide() {
 	s.enterNewState(s.prepareState)
 }
 
-func (s *proposeState) createProposal(height int, round int) {
+func (s *proposeState) createProposal(height int32, round int16) {
 	block, err := s.state.ProposeBlock(round)
 	if err != nil {
 		s.logger.Error("unable to propose a block. Why?", "err", err)

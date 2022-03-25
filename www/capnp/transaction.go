@@ -19,7 +19,7 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	}
 
 	res, _ := args.Results.NewResult()
-	trxData, _ := trx.Encode()
+	trxData, _ := trx.Bytes()
 	if err := res.SetData(trxData); err != nil {
 		return err
 	}
@@ -30,22 +30,21 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
 	rawTx, _ := args.Params.RawTx()
 
-	var tx tx.Tx
-
-	if err := tx.Decode(rawTx); err != nil {
+	trx, err := tx.TxFromBytes(rawTx)
+	if err != nil {
 		return err
 	}
 
-	if err := tx.SanityCheck(); err != nil {
+	if err := trx.SanityCheck(); err != nil {
 		return err
 	}
 
-	if err := zs.state.AddPendingTxAndBroadcast(&tx); err != nil {
+	if err := zs.state.AddPendingTxAndBroadcast(trx); err != nil {
 		return err
 	}
 
 	res, _ := args.Results.NewResult()
-	if err := res.SetId(tx.ID().RawBytes()); err != nil {
+	if err := res.SetId(trx.ID().RawBytes()); err != nil {
 		return err
 	}
 	res.SetStatus(0)

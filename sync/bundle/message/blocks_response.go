@@ -13,12 +13,12 @@ const LatestBlocksResponseCodeNoMoreBlock = 1
 type BlocksResponseMessage struct {
 	ResponseCode    ResponseCode       `cbor:"1,keyasint"`
 	SessionID       int                `cbor:"2,keyasint"`
-	From            int                `cbor:"3,keyasint"`
+	From            int32              `cbor:"3,keyasint"`
 	Blocks          []*block.Block     `cbor:"4,keyasint"`
 	LastCertificate *block.Certificate `cbor:"6,keyasint"`
 }
 
-func NewBlocksResponseMessage(code ResponseCode, sid int, from int,
+func NewBlocksResponseMessage(code ResponseCode, sid int, from int32,
 	blocks []*block.Block, cert *block.Certificate) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
 		ResponseCode:    code,
@@ -50,11 +50,11 @@ func (m *BlocksResponseMessage) Type() Type {
 	return MessageTypeBlocksResponse
 }
 
-func (m *BlocksResponseMessage) To() int {
+func (m *BlocksResponseMessage) To() int32 {
 	if len(m.Blocks) == 0 {
 		return m.From
 	}
-	return m.From + len(m.Blocks) - 1
+	return m.From + int32(len(m.Blocks)-1)
 }
 
 func (m *BlocksResponseMessage) Fingerprint() string {

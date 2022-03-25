@@ -14,7 +14,7 @@ func evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64
 	signData := append(seed[:], signer.PublicKey().RawBytes()...)
 	sig := signer.SignData(signData)
 
-	proof, _ = ProofFromRawBytes(sig.RawBytes())
+	proof, _ = ProofFromBytes(sig.RawBytes())
 	index = getIndex(proof, max)
 
 	return index, proof
@@ -22,7 +22,7 @@ func evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64
 
 // verify ensures the proof is valid
 func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
-	proofSig, err := bls.SignatureFromRawBytes(proof[:])
+	proofSig, err := bls.SignatureFromBytes(proof[:])
 	if err != nil {
 		return 0, false
 	}

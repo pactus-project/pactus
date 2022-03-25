@@ -57,7 +57,7 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 	hasher = func(data []byte) hash.Hash {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
-		h, _ := hash.FromRawBytes(second[:])
+		h, _ := hash.FromBytes(second[:])
 		return h
 
 	}
@@ -69,11 +69,11 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 	id3, _ := hex.DecodeString("C46E239AB7D28E2C019B6D66AD8FAE98A56EF1F21AEECB94D1B1718186F05963")
 	id4, _ := hex.DecodeString("1D0CB83721529A062D9675B98D6E5C587E4A770FC84ED00ABC5A5DE04568A6E9")
 
-	root, _ := hash.FromRawBytes(wantMerkle)
-	h1, _ := hash.FromRawBytes(id1)
-	h2, _ := hash.FromRawBytes(id2)
-	h3, _ := hash.FromRawBytes(id3)
-	h4, _ := hash.FromRawBytes(id4)
+	root, _ := hash.FromBytes(wantMerkle)
+	h1, _ := hash.FromBytes(id1)
+	h2, _ := hash.FromBytes(id2)
+	h3, _ := hash.FromBytes(id3)
+	h4, _ := hash.FromBytes(id4)
 
 	hashes := []hash.Hash{
 		h1,
@@ -92,7 +92,7 @@ func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
 	hasher = func(data []byte) hash.Hash {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
-		h, _ := hash.FromRawBytes(second[:])
+		h, _ := hash.FromBytes(second[:])
 		return h
 	}
 
@@ -112,7 +112,7 @@ func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
 	h12, _ := hash.FromString("23ad44934167cc712b358f2a097b7316ca2b3c2f34472017273969e7c7e5cdb4")
 	h13, _ := hash.FromString("c1dc3762c6a57757a9aa895b8229613d96f272f79d14c9854132b980eaa2a2c4")
 
-	root, _ := hash.FromRawBytes(wantMerkle)
+	root, _ := hash.FromBytes(wantMerkle)
 
 	hashes := []hash.Hash{
 		h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13,

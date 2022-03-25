@@ -63,7 +63,7 @@ func setup(t *testing.T) {
 
 	vals := make([]*validator.Validator, 4)
 	for i, s := range tSigners {
-		val := validator.NewValidator(s.PublicKey().(*bls.PublicKey), i)
+		val := validator.NewValidator(s.PublicKey().(*bls.PublicKey), int32(i))
 		vals[i] = val
 	}
 
@@ -159,7 +159,7 @@ func shouldPublishProposal(t *testing.T, cons *consensus, height, round int) {
 	}
 }
 
-func shouldPublishQueryProposal(t *testing.T, cons *consensus, height, round int) {
+func shouldPublishQueryProposal(t *testing.T, cons *consensus, height int32, round int16) {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -201,12 +201,12 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash h
 	}
 }
 
-func checkHeightRound(t *testing.T, cons *consensus, height, round int) {
+func checkHeightRound(t *testing.T, cons *consensus, height int32, round int16) {
 	assert.Equal(t, cons.Height(), height)
 	assert.Equal(t, cons.Round(), round)
 }
 
-func checkHeightRoundWait(t *testing.T, cons *consensus, height, round int) {
+func checkHeightRoundWait(t *testing.T, cons *consensus, height int32, round int16) {
 	for i := 0; i < 20; i++ {
 		if cons.Height() == height && cons.Round() == round {
 			break
@@ -219,8 +219,8 @@ func checkHeightRoundWait(t *testing.T, cons *consensus, height, round int) {
 
 func testAddVote(cons *consensus,
 	voteType vote.Type,
-	height int,
-	round int,
+	height int32,
+	round int16,
 	blockHash hash.Hash,
 	valID int) *vote.Vote {
 
@@ -260,7 +260,7 @@ func commitBlockForAllStates(t *testing.T) {
 	sig4 := tSigners[3].SignData(sb).(*bls.Signature)
 
 	sig := bls.Aggregate([]*bls.Signature{sig1, sig2, sig4})
-	cert := block.NewCertificate(p.Block().Hash(), 0, []int{0, 1, 2, 3}, []int{2}, sig)
+	cert := block.NewCertificate(0, []int32{0, 1, 2, 3}, []int32{2}, sig)
 
 	require.NotNil(t, cert)
 	err = tConsX.state.CommitBlock(height+1, p.Block(), cert)
@@ -273,9 +273,9 @@ func commitBlockForAllStates(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func makeProposal(t *testing.T, height, round int) *proposal.Proposal {
+func makeProposal(t *testing.T, height int32, round int16) *proposal.Proposal {
 	var p *proposal.Proposal
-	switch (height % 4) + round {
+	switch (height % 4) + int32(round) {
 	case 1:
 		pub, err := tConsX.state.ProposeBlock(round)
 		require.NoError(t, err)
@@ -390,8 +390,8 @@ func TestConsensusLateProposal1(t *testing.T) {
 
 	testEnterNewHeight(tConsB)
 
-	h := 2
-	r := 0
+	h := int32(2)
+	r := int16(0)
 	p := makeProposal(t, h, r)
 	require.NotNil(t, p)
 
@@ -495,8 +495,8 @@ func TestDuplicateProposal(t *testing.T) {
 
 	testEnterNewHeight(tConsX)
 
-	h := 4
-	r := 0
+	h := int32(4)
+	r := int16(0)
 	p1 := makeProposal(t, h, r)
 	trx := tx.NewSendTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
 	tSigners[0].SignMsg(trx)

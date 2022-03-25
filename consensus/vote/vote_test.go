@@ -1,14 +1,14 @@
 package vote
 
 import (
-	"encoding/hex"
-	"fmt"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/block"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestVoteMarshaling(t *testing.T) {
@@ -69,27 +69,25 @@ func TestVoteSanityCheck(t *testing.T) {
 }
 
 func TestSignBytes(t *testing.T) {
-	v1, _ := GenerateTestPrepareVote(10, 1)
-	v2, _ := GenerateTestPrecommitVote(10, 1)
+	signer := crypto.GenerateTestAddress()
+	blockHash := hash.GenerateTestHash()
+	height := util.RandInt32(100000)
+	round := util.RandInt16(10)
 
-	bz1 := v1.SignBytes()
-	bz2 := v2.SignBytes()
+	v1 := NewVote(VoteTypePrepare, height, round, blockHash, signer)
+	v2 := NewVote(VoteTypeChangeProposer, height, round, blockHash, signer)
+	v3 := NewVote(VoteTypePrecommit, height, round, blockHash, signer)
 
-	assert.Contains(t, string(bz1), "prepare")
-	assert.NotContains(t, string(bz2), "prepare")
-}
+	sb1 := v1.SignBytes()
+	sb2 := v2.SignBytes()
+	sb3 := v3.SignBytes()
+	sb4 := block.CertificateSignBytes(blockHash, round)
 
-func TestSignBytesMatchWithCommit(t *testing.T) {
-	// Find this data in commit tests
-	d, _ := hex.DecodeString("a20158201c8f67440c5d2fcaec3176cde966e8b46ec744c836f643612bec96eb6a83c1fe0206")
-	s := new(signVote)
-	assert.NoError(t, cbor.Unmarshal(d, s))
-	v := Vote{data: voteData{
-		Type:      VoteTypePrecommit,
-		Round:     s.Round,
-		BlockHash: s.BlockHash},
-	}
-
-	fmt.Printf("%x", v.SignBytes())
-	assert.Equal(t, v.SignBytes(), d)
+	assert.Contains(t, string(sb1), "prepare")
+	assert.Contains(t, string(sb2), "change-proposer")
+	assert.Equal(t, len(sb3), 34)
+	assert.NotEqual(t, sb1, sb2)
+	assert.NotEqual(t, sb1, sb3)
+	assert.NotEqual(t, sb2, sb3)
+	assert.Equal(t, sb3, sb4)
 }

@@ -42,6 +42,10 @@ func (p *BondPayload) SanityCheck() error {
 	return nil
 }
 
+func (p *BondPayload) SerializeSize() int {
+	return 69 + encoding.VarIntSerializeSize(uint64(p.Stake))
+}
+
 func (p *BondPayload) Encode(w io.Writer) error {
 	err := encoding.WriteElement(w, &p.Sender)
 	if err != nil {

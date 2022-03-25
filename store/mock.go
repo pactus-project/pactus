@@ -15,16 +15,17 @@ import (
 var _ Store = &MockStore{}
 
 type MockStore struct {
-	Blocks       map[int]block.Block
+	Blocks       map[int32]block.Block
 	Accounts     map[crypto.Address]account.Account
 	Validators   map[crypto.Address]validator.Validator
 	Transactions map[tx.ID]tx.Tx
-	LastCert     lastInfo
+	LastCert     *block.Certificate
+	LastHeight   int32
 }
 
 func MockingStore() *MockStore {
 	return &MockStore{
-		Blocks:       make(map[int]block.Block),
+		Blocks:       make(map[int32]block.Block),
 		Accounts:     make(map[crypto.Address]account.Account),
 		Validators:   make(map[crypto.Address]validator.Validator),
 		Transactions: make(map[tx.ID]tx.Tx),
@@ -32,20 +33,17 @@ func MockingStore() *MockStore {
 }
 func (m *MockStore) Block(hash hash.Hash) (*StoredBlock, error) {
 	for h, b := range m.Blocks {
-		d, _ := b.Header().Encode()
+		d, _ := b.Bytes()
 		if b.Hash().EqualsTo(hash) {
-			block := new(block.Block)
-			*block = b
 			return &StoredBlock{
-				Height:     h,
-				Block:      block,
-				HeaderData: d,
+				height: h,
+				data:   d,
 			}, nil
 		}
 	}
 	return nil, fmt.Errorf("not found")
 }
-func (m *MockStore) BlockHash(height int) hash.Hash {
+func (m *MockStore) BlockHash(height int32) hash.Hash {
 	b, ok := m.Blocks[height]
 	if ok {
 		return b.Hash()
@@ -73,8 +71,8 @@ func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 func (m *MockStore) UpdateAccount(acc *account.Account) {
 	m.Accounts[acc.Address()] = *acc
 }
-func (m *MockStore) TotalAccounts() int {
-	return len(m.Accounts)
+func (m *MockStore) TotalAccounts() int32 {
+	return int32(len(m.Accounts))
 }
 func (m *MockStore) HasValidator(addr crypto.Address) bool {
 	_, ok := m.Validators[addr]
@@ -87,7 +85,7 @@ func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error)
 	}
 	return nil, fmt.Errorf("not found")
 }
-func (m *MockStore) ValidatorByNumber(num int) (*validator.Validator, error) {
+func (m *MockStore) ValidatorByNumber(num int32) (*validator.Validator, error) {
 	for _, v := range m.Validators {
 		if v.Number() == num {
 			return &v, nil
@@ -98,8 +96,8 @@ func (m *MockStore) ValidatorByNumber(num int) (*validator.Validator, error) {
 func (m *MockStore) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = *val
 }
-func (m *MockStore) TotalValidators() int {
-	return len(m.Validators)
+func (m *MockStore) TotalValidators() int32 {
+	return int32(len(m.Validators))
 }
 func (m *MockStore) Close() error {
 	return nil
@@ -129,20 +127,20 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(height int, b *block.Block, cert *block.Certificate) {
+func (m *MockStore) SaveBlock(height int32, b *block.Block, cert *block.Certificate) {
 	m.Blocks[height] = *b
 	for _, trx := range b.Transactions() {
 		m.Transactions[trx.ID()] = *trx
 	}
-	m.LastCert.Height = height
-	m.LastCert.Cert = cert
+	m.LastHeight = height
+	m.LastCert = cert
 }
 
-func (m *MockStore) LastCertificate() (int, *block.Certificate) {
-	if m.LastCert.Cert == nil {
+func (m *MockStore) LastCertificate() (int32, *block.Certificate) {
+	if m.LastHeight == 0 {
 		return 0, nil
 	}
-	return m.LastCert.Height, m.LastCert.Cert
+	return m.LastHeight, m.LastCert
 }
 func (m *MockStore) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
@@ -156,7 +154,7 @@ func (m *MockStore) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
 
 	return hash.UndefHash
 }
-func (m *MockStore) BlockHeightByStamp(stamp hash.Stamp) int {
+func (m *MockStore) BlockHeightByStamp(stamp hash.Stamp) int32 {
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
 		return 0
 	}
@@ -173,20 +171,20 @@ func (m *MockStore) WriteBatch() error {
 }
 
 func (m *MockStore) AddTestValidator() *validator.Validator {
-	val, _ := validator.GenerateTestValidator(util.RandInt(10000))
+	val, _ := validator.GenerateTestValidator(util.RandInt32(10000))
 	val.SubtractFromStake(val.Stake())
 	m.UpdateValidator(val)
 	return val
 }
 
 func (m *MockStore) AddTestAccount() *account.Account {
-	acc, _ := account.GenerateTestAccount(util.RandInt(10000))
+	acc, _ := account.GenerateTestAccount(util.RandInt32(10000))
 	acc.SubtractFromBalance(acc.Balance())
 	m.UpdateAccount(acc)
 	return acc
 }
 
-func (m *MockStore) AddTestBlock(height int) *block.Block {
+func (m *MockStore) AddTestBlock(height int32) *block.Block {
 	b := block.GenerateTestBlock(nil, nil)
 	cert := block.GenerateTestCertificate(b.Hash())
 	m.SaveBlock(height, b, cert)

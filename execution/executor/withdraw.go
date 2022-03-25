@@ -21,14 +21,14 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	val := sb.Validator(pld.From)
 	if val == nil {
-		return errors.Errorf(errors.ErrInvalidAddress, "unable to retrieve validator account")
+		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve validator account")
 	}
 
 	if val.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence, "invalid sequence, expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidTx, "invalid sequence, expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
 	if val.Stake() < pld.Amount+trx.Fee() {
-		return errors.Errorf(errors.ErrInsufficientFunds, "insufficient balance")
+		return errors.Errorf(errors.ErrInvalidTx, "insufficient balance")
 	}
 	if val.UnbondingHeight() == 0 {
 		return errors.Errorf(errors.ErrInvalidTx, "need to unbond first")

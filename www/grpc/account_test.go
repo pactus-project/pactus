@@ -36,8 +36,8 @@ func TestGetAccount(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Account.Address, acc.Address().RawBytes())
 		assert.Equal(t, res.Account.Balance, acc.Balance())
-		assert.Equal(t, int(res.Account.Number), acc.Number())
-		assert.Equal(t, int(res.Account.Sequence), acc.Sequence())
+		assert.Equal(t, res.Account.Number, acc.Number())
+		assert.Equal(t, res.Account.Sequence, acc.Sequence())
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

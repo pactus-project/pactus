@@ -26,15 +26,15 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	d, _ := st.Data()
 	h, _ := st.Hash()
-	b := new(block.Block)
-	if err = b.Decode(d); err != nil {
+	b, err := block.BlockFromBytes(d)
+	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
 	out := new(BlockResult)
 	out.Block = b
-	out.Hash, _ = hash.FromRawBytes(h)
+	out.Hash, _ = hash.FromBytes(h)
 	out.Data = hex.EncodeToString(d)
 	out.Time = b.Header().Time()
 
@@ -48,7 +48,7 @@ func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		p.SetHeight(uint64(height))
+		p.SetHeight(int32(height))
 		return nil
 	})
 
@@ -59,7 +59,7 @@ func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data, _ := st.Result()
-	hash, err := hash.FromRawBytes(data)
+	hash, err := hash.FromBytes(data)
 	if err != nil {
 		s.writeError(w, err)
 		return

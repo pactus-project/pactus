@@ -10,7 +10,7 @@ import (
 )
 
 type Log struct {
-	height        int
+	height        int32
 	validators    []*validator.Validator
 	roundMessages []*Messages
 }
@@ -21,8 +21,8 @@ func NewLog() *Log {
 	}
 }
 
-func (log *Log) RoundMessages(round int) *Messages {
-	if round < len(log.roundMessages) {
+func (log *Log) RoundMessages(round int16) *Messages {
+	if round < int16(len(log.roundMessages)) {
 		return log.roundMessages[round]
 	}
 	return nil
@@ -37,8 +37,8 @@ func (log *Log) HasVote(h hash.Hash) bool {
 	return false
 }
 
-func (log *Log) MustGetRoundMessages(round int) *Messages {
-	for i := len(log.roundMessages); i <= round; i++ {
+func (log *Log) MustGetRoundMessages(round int16) *Messages {
+	for i := int16(len(log.roundMessages)); i <= round; i++ {
 		rv := &Messages{
 			prepareVotes:        voteset.NewVoteSet(log.height, i, vote.VoteTypePrepare, log.validators),
 			precommitVotes:      voteset.NewVoteSet(log.height, i, vote.VoteTypePrecommit, log.validators),
@@ -57,26 +57,26 @@ func (log *Log) AddVote(v *vote.Vote) error {
 	return m.addVote(v)
 }
 
-func (log *Log) PrepareVoteSet(round int) *voteset.VoteSet {
+func (log *Log) PrepareVoteSet(round int16) *voteset.VoteSet {
 	m := log.MustGetRoundMessages(round)
 	return m.voteSet(vote.VoteTypePrepare)
 }
 
-func (log *Log) PrecommitVoteSet(round int) *voteset.VoteSet {
+func (log *Log) PrecommitVoteSet(round int16) *voteset.VoteSet {
 	m := log.MustGetRoundMessages(round)
 	return m.voteSet(vote.VoteTypePrecommit)
 }
 
-func (log *Log) ChangeProposerVoteSet(round int) *voteset.VoteSet {
+func (log *Log) ChangeProposerVoteSet(round int16) *voteset.VoteSet {
 	m := log.MustGetRoundMessages(round)
 	return m.voteSet(vote.VoteTypeChangeProposer)
 }
 
-func (log *Log) HasRoundProposal(round int) bool {
+func (log *Log) HasRoundProposal(round int16) bool {
 	return log.RoundProposal(round) != nil
 }
 
-func (log *Log) RoundProposal(round int) *proposal.Proposal {
+func (log *Log) RoundProposal(round int16) *proposal.Proposal {
 	m := log.RoundMessages(round)
 	if m == nil {
 		return nil
@@ -84,12 +84,12 @@ func (log *Log) RoundProposal(round int) *proposal.Proposal {
 	return m.proposal
 }
 
-func (log *Log) SetRoundProposal(round int, proposal *proposal.Proposal) {
+func (log *Log) SetRoundProposal(round int16, proposal *proposal.Proposal) {
 	m := log.MustGetRoundMessages(round)
 	m.proposal = proposal
 }
 
-func (log *Log) MoveToNewHeight(height int, validators []*validator.Validator) {
+func (log *Log) MoveToNewHeight(height int32, validators []*validator.Validator) {
 	log.height = height
 	log.roundMessages = make([]*Messages, 0)
 	log.validators = validators

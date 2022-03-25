@@ -41,24 +41,22 @@ func Aggregate(sigs []*Signature) *Signature {
 	signatures := make([]bls.Sign, len(sigs))
 
 	for i, s := range sigs {
-		signatures[i] = *s.data.Signature
+		signatures[i] = *s.signature
 	}
 
 	aggregated.Aggregate(signatures)
 
 	return &Signature{
-		data: signatureData{
-			Signature: aggregated,
-		},
+		signature: aggregated,
 	}
 }
 
 func VerifyAggregated(aggregated *Signature, pubs []*PublicKey, msg []byte) bool {
 	pubVec := make([]bls.PublicKey, len(pubs))
 	for i, p := range pubs {
-		pubVec[i] = *p.data.PublicKey
+		pubVec[i] = *p.publicKey
 	}
-	return aggregated.data.Signature.FastAggregateVerify(pubVec, msg)
+	return aggregated.signature.FastAggregateVerify(pubVec, msg)
 }
 
 // ---------
@@ -70,11 +68,11 @@ func GenerateTestSigner() crypto.Signer {
 
 func GenerateTestKeyPair() (*PublicKey, *PrivateKey) {
 	prv := new(PrivateKey)
-	prv.data.SecretKey = new(bls.SecretKey)
-	prv.data.SecretKey.SetByCSPRNG()
+	prv.secretKey = new(bls.SecretKey)
+	prv.secretKey.SetByCSPRNG()
 
 	pub := new(PublicKey)
-	pub.data.PublicKey = prv.data.SecretKey.GetPublicKey()
+	pub.publicKey = prv.secretKey.GetPublicKey()
 
 	return pub, prv
 }

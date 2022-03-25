@@ -30,7 +30,7 @@ func SaveTestBlocks(t *testing.T, num int) {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
 
-		tStore.SaveBlock(lastHeight+i+1, b, c)
+		tStore.SaveBlock(lastHeight+int32(i+1), b, c)
 		assert.NoError(t, tStore.WriteBatch())
 	}
 }
@@ -72,24 +72,16 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
 
-	height, cert := tStore.LastCertificate()
-	bi, err := tStore.Block(cert.BlockHash())
+	height, _ := tStore.LastCertificate()
+	bs, err := tStore.Block(tStore.BlockHash(height))
 	assert.NoError(t, err)
-	assert.Equal(t, cert.BlockHash(), bi.Block.Hash())
-	assert.Equal(t, height, bi.Height)
-
-	for _, trx1 := range bi.Block.Transactions() {
-		trx2, err := tStore.Transaction(trx1.ID())
-		assert.NoError(t, err)
-
-		assert.Equal(t, trx1.ID(), trx2.ID())
-	}
+	assert.Equal(t, height, bs.Height())
 }
 
 func TestRetrieveAccount(t *testing.T) {
 	setup(t)
 
-	acc, _ := account.GenerateTestAccount(util.RandInt(10000))
+	acc, _ := account.GenerateTestAccount(util.RandInt32(10000))
 
 	t.Run("Add account, should able to retrieve", func(t *testing.T) {
 		assert.False(t, tStore.HasAccount(acc.Address()))
@@ -109,7 +101,7 @@ func TestRetrieveAccount(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, acc, acc2)
 	})
-	assert.Equal(t, tStore.TotalAccounts(), 1)
+	assert.Equal(t, tStore.TotalAccounts(), int32(1))
 
 	// Should not crash
 	assert.NoError(t, tStore.Close())
@@ -121,7 +113,7 @@ func TestRetrieveAccount(t *testing.T) {
 func TestRetrieveValidator(t *testing.T) {
 	setup(t)
 
-	val, _ := validator.GenerateTestValidator(util.RandInt(1000))
+	val, _ := validator.GenerateTestValidator(util.RandInt32(1000))
 
 	t.Run("Add validator, should able to retrieve", func(t *testing.T) {
 		assert.False(t, tStore.HasValidator(val.Address()))
@@ -142,7 +134,7 @@ func TestRetrieveValidator(t *testing.T) {
 		assert.Equal(t, val.Hash(), val2.Hash())
 	})
 
-	assert.Equal(t, tStore.TotalValidators(), 1)
+	assert.Equal(t, tStore.TotalValidators(), int32(1))
 	val2, _ := tStore.ValidatorByNumber(val.Number())
 	assert.Equal(t, val.Hash(), val2.Hash())
 
@@ -156,7 +148,7 @@ func TestIterateAccounts(t *testing.T) {
 
 	accs1 := []hash.Hash{}
 	for i := 0; i < 10; i++ {
-		acc, _ := account.GenerateTestAccount(i)
+		acc, _ := account.GenerateTestAccount(int32(i))
 		tStore.UpdateAccount(acc)
 		assert.NoError(t, tStore.WriteBatch())
 		accs1 = append(accs1, acc.Hash())
@@ -185,7 +177,7 @@ func TestIterateValidators(t *testing.T) {
 
 	vals1 := []hash.Hash{}
 	for i := 0; i < 10; i++ {
-		val, _ := validator.GenerateTestValidator(i)
+		val, _ := validator.GenerateTestValidator(int32(i))
 		tStore.UpdateValidator(val)
 		assert.NoError(t, tStore.WriteBatch())
 		vals1 = append(vals1, val.Hash())
@@ -214,8 +206,8 @@ func TestBlockHashByStamp(t *testing.T) {
 
 	assert.Equal(t, tStore.BlockHashByStamp(hash.UndefHash.Stamp()), hash.UndefHash)
 	assert.Equal(t, tStore.BlockHashByStamp(hash.GenerateTestStamp()), hash.UndefHash)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.GenerateTestStamp()), -1)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), int32(0))
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.GenerateTestStamp()), int32(-1))
 
 	SaveTestBlocks(t, 12)
 	hash1 := tStore.BlockHash(1)
@@ -228,11 +220,11 @@ func TestBlockHashByStamp(t *testing.T) {
 	assert.Equal(t, tStore.BlockHashByStamp(hash14.Stamp()), hash14)
 	assert.Equal(t, tStore.BlockHashByStamp(hash22.Stamp()), hash22)
 
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash1.Stamp()), -1)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash2.Stamp()), 2)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash14.Stamp()), 14)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash22.Stamp()), 22)
+	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), int32(0))
+	assert.Equal(t, tStore.BlockHeightByStamp(hash1.Stamp()), int32(-1))
+	assert.Equal(t, tStore.BlockHeightByStamp(hash2.Stamp()), int32(2))
+	assert.Equal(t, tStore.BlockHeightByStamp(hash14.Stamp()), int32(14))
+	assert.Equal(t, tStore.BlockHeightByStamp(hash22.Stamp()), int32(22))
 
 	// Reopen the store
 	tStore.Close()
@@ -244,11 +236,11 @@ func TestBlockHashByStamp(t *testing.T) {
 	assert.Equal(t, s.BlockHashByStamp(hash14.Stamp()), hash14)
 	assert.Equal(t, s.BlockHashByStamp(hash22.Stamp()), hash22)
 
-	assert.Equal(t, s.BlockHeightByStamp(hash.UndefHash.Stamp()), 0)
-	assert.Equal(t, s.BlockHeightByStamp(hash1.Stamp()), -1)
-	assert.Equal(t, s.BlockHeightByStamp(hash2.Stamp()), 2)
-	assert.Equal(t, s.BlockHeightByStamp(hash14.Stamp()), 14)
-	assert.Equal(t, s.BlockHeightByStamp(hash22.Stamp()), 22)
+	assert.Equal(t, s.BlockHeightByStamp(hash.UndefHash.Stamp()), int32(0))
+	assert.Equal(t, s.BlockHeightByStamp(hash1.Stamp()), int32(-1))
+	assert.Equal(t, s.BlockHeightByStamp(hash2.Stamp()), int32(2))
+	assert.Equal(t, s.BlockHeightByStamp(hash14.Stamp()), int32(14))
+	assert.Equal(t, s.BlockHeightByStamp(hash22.Stamp()), int32(22))
 
 	SaveTestBlocks(t, 1)
 	assert.Equal(t, s.BlockHashByStamp(hash2.Stamp()), hash.UndefHash)

@@ -214,7 +214,7 @@ func TestSortingLinkedMap(t *testing.T) {
 }
 
 func TestCapacity(t *testing.T) {
-	capacity := util.RandInt(1000)
+	capacity := int(util.RandInt32(1000))
 	lm := NewLinkedMap(capacity)
 	assert.Equal(t, lm.Capacity(), capacity)
 

@@ -74,6 +74,9 @@ func TestElementWire(t *testing.T) {
 		{int8(-128), []byte{0x80}},
 		{int8(127), []byte{0x7f}},
 		{uint8(1), []byte{0x01}},
+		{int16(-32256), []byte{0x00, 0x82}},
+		{int16(127), []byte{0x7f, 0x00}},
+		{uint16(65535), []byte{0xff, 0xff}},
 		{int32(-1), []byte{0xff, 0xff, 0xff, 0xff}},
 		{int32(1), []byte{0x01, 0x00, 0x00, 0x00}},
 		{uint32(256), []byte{0x00, 0x01, 0x00, 0x00}},
@@ -263,6 +266,8 @@ func TestVarStringWire(t *testing.T) {
 				val, test.out)
 			continue
 		}
+
+		assert.Equal(t, VarStringSerializeSize(test.in), len(test.buf))
 	}
 }
 
@@ -380,6 +385,8 @@ func TestVarBytesWire(t *testing.T) {
 				val, test.buf)
 			continue
 		}
+
+		assert.Equal(t, VarBytesSerializeSize(test.in), len(test.buf))
 	}
 }
 

@@ -32,23 +32,11 @@ func TestCertificateValidation(t *testing.T) {
 	nextBlock, _ := tState2.ProposeBlock(0)
 	nextBlockHash := nextBlock.Hash()
 
-	t.Run("SanityCheck fails, should return error", func(t *testing.T) {
-		committers := tState2.committee.Committers()
-		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
-		sig1 := tValSigner1.SignData(signBytes).(*bls.Signature)
-		sig2 := tValSigner2.SignData(signBytes).(*bls.Signature)
-		sig4 := tValSigner4.SignData(signBytes).(*bls.Signature)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := block.NewCertificate(hash.UndefHash, 0, committers, []int{2}, aggSig)
-
-		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
-	})
-
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
 		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		aggSig := signer5.SignData(signBytes).(*bls.Signature)
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -60,7 +48,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -73,7 +61,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -86,7 +74,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := block.NewCertificate(invBlockHash, 0, committers, []int{2}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -99,7 +87,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{2}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -110,7 +98,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2})
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2, 3}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{2, 3}, aggSig)
 
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -122,7 +110,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{2}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{2}, aggSig)
 
 		assert.NoError(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
@@ -137,7 +125,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig4 := tValSigner4.SignData(signBytes)
 		sig5 := signer5.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4, sig5})
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{}, aggSig)
 
 		assert.Error(t, tState1.UpdateLastCertificate(cert))
 	})
@@ -151,7 +139,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig3 := tValSigner3.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-		cert := block.NewCertificate(invBlockHash, 0, committers, []int{}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{}, aggSig)
 
 		assert.Error(t, tState1.UpdateLastCertificate(cert))
 	})
@@ -164,7 +152,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig3 := tValSigner3.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-		cert := block.NewCertificate(nextBlockHash, 1, committers, []int{}, aggSig)
+		cert := block.NewCertificate(1, committers, []int32{}, aggSig)
 
 		assert.Error(t, tState1.UpdateLastCertificate(cert))
 	})
@@ -177,7 +165,7 @@ func TestCertificateValidation(t *testing.T) {
 		sig3 := tValSigner3.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-		cert := block.NewCertificate(nextBlockHash, 0, committers, []int{}, aggSig)
+		cert := block.NewCertificate(0, committers, []int32{}, aggSig)
 
 		assert.NoError(t, tState1.UpdateLastCertificate(cert))
 	})

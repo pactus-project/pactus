@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/sync/firewall"
 )
 
-var LatestBlockInterval = 720 // 720 blocks is about two hours
+var LatestBlockInterval = int32(720) // 720 blocks is about two hours
 
 type Config struct {
 	Moniker             string           `toml:"" comment:"Moniker A custom human readable name for this node."`
@@ -14,7 +14,7 @@ type Config struct {
 	HeartBeatTimeout    time.Duration    `toml:"" comment:"HeartBeatTimeout timeout for broadcasting heartbeat message to network."`
 	SessionTimeout      time.Duration    `toml:"" comment:"SessionTimeout timeout for session of node."`
 	NodeNetwork         bool             `toml:"" comment:"NodeNetwork means that the node is capable of serving the complete block chain."`
-	BlockPerMessage     int              `toml:"" comment:"BlockPerMessage the number of blocks per message. Default is 120."`
+	BlockPerMessage     int32            `toml:"" comment:"BlockPerMessage the number of blocks per message. Default is 120."`
 	MaximumOpenSessions int              `toml:"" comment:"MaximumOpenSessions number of open session. Default is 8"`
 	CacheSize           int              `toml:"" comment:"CacheSize is the total capacity of the cache"`
 	Firewall            *firewall.Config `toml:"" comment:"Settings for firewall"`

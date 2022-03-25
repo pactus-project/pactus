@@ -55,7 +55,7 @@ func (c *committee) TotalPower() int64 {
 	return p
 }
 
-func (c *committee) Update(lastRound int32, joined []*validator.Validator) {
+func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 
@@ -136,7 +136,7 @@ func (c *committee) contains(addr crypto.Address) bool {
 }
 
 // IsProposer checks if the address is proposer for this height at this round
-func (c *committee) IsProposer(addr crypto.Address, round int32) bool {
+func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 
@@ -145,14 +145,14 @@ func (c *committee) IsProposer(addr crypto.Address, round int32) bool {
 }
 
 // Proposer returns proposer info for this height at this round
-func (c *committee) Proposer(round int32) *validator.Validator {
+func (c *committee) Proposer(round int16) *validator.Validator {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 
 	return c.proposer(round)
 }
 
-func (c *committee) proposer(round int32) *validator.Validator {
+func (c *committee) proposer(round int16) *validator.Validator {
 	pos := c.proposerPos
 	for i := 0; i < int(round); i++ {
 		pos = pos.Next()

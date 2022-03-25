@@ -142,7 +142,7 @@ func testReceiveingNewMessage(sync *synchronizer, msg message.Message, from peer
 func testAddBlocks(t *testing.T, state *state.MockState, count int) {
 	h := state.LastBlockHeight()
 	state.CommitTestBlocks(count)
-	assert.Equal(t, h+count, state.LastBlockHeight())
+	assert.Equal(t, h+int32(count), state.LastBlockHeight())
 }
 
 func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID) {
@@ -154,7 +154,7 @@ func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 		pub, _ = bls.GenerateTestKeyPair()
 	}
 	testAddPeer(t, pub, pid)
-	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt(0))
+	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt32(0))
 	// This is not very accurate, there is no harm to do it for testing
 	val.UpdateLastJoinedHeight(tState.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
 	tState.TestCommittee.Update(0, []*validator.Validator{val})
@@ -182,7 +182,7 @@ func TestBroadcastInvalidMessage(t *testing.T) {
 func TestTestNetFlags(t *testing.T) {
 	setup(t)
 
-	tState.TestParams.BlockVersion = 1001
+	tState.TestParams.BlockVersion = 77
 	bdl := tSync.prepareBundle(message.NewHeartBeatMessage(1, 0, hash.GenerateTestHash()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)

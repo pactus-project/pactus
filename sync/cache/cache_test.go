@@ -21,18 +21,19 @@ func setup(t *testing.T) {
 }
 
 func TestKeys(t *testing.T) {
-	h, _ := hash.FromString("75238478393bfea9e42a59c2cc52876da663ea9acf3873d0a096fd57d61797d4")
-	assert.Equal(t, blockKey(1234), key{0x1, 0, 0, 0, 0, 0, 0, 0x4, 0xd2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-	assert.Equal(t, certificateKey(h), key{0x2, 0x75, 0x23, 0x84, 0x78, 0x39, 0x3b, 0xfe, 0xa9, 0xe4, 0x2a, 0x59, 0xc2, 0xcc, 0x52, 0x87, 0x6d, 0xa6, 0x63, 0xea, 0x9a, 0xcf, 0x38, 0x73, 0xd0, 0xa0, 0x96, 0xfd, 0x57, 0xd6, 0x17, 0x97})
-	assert.Equal(t, proposalKey(1234, 3), key{0x3, 0, 0, 0, 0, 0, 0, 0x4, 0xd2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x3, 0, 0, 0, 0, 0, 0, 0, 0})
+	assert.Equal(t, blockKey(1234), key{0x1, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+	assert.Equal(t, certificateKey(1234), key{0x2, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+	assert.Equal(t, proposalKey(1234, 3), key{0x3, 0xd2, 0x4, 0, 0, 0x3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
 }
 
 func TestCacheBlocks(t *testing.T) {
 	setup(t)
 
-	b1 := block.GenerateTestBlock(nil, nil)
-	b2 := block.GenerateTestBlock(nil, nil)
-	b3 := block.GenerateTestBlock(nil, nil)
+	b1 := block.GenerateTestBlock(nil, &hash.UndefHash)
+	h1 := b1.Hash()
+	b2 := block.GenerateTestBlock(nil, &h1)
+	h2 := b2.Hash()
+	b3 := block.GenerateTestBlock(nil, &h2)
 
 	tState.TestStore.SaveBlock(1, b1, block.GenerateTestCertificate(b1.Hash()))
 	tCache.AddBlocks(2, []*block.Block{b2, b3})
@@ -49,10 +50,10 @@ func TestCacheBlocks(t *testing.T) {
 
 	assert.Equal(t, tCache.GetBlock(1).Hash(), b1.Hash())
 	assert.Equal(t, tCache.GetBlock(2).Hash(), b2.Hash())
-	assert.Equal(t, tCache.GetCertificate(b1.Header().PrevBlockHash()).Hash(), b1.PrevCertificate().Hash())
-	assert.Equal(t, tCache.GetCertificate(b2.Header().PrevBlockHash()).Hash(), b2.PrevCertificate().Hash())
-	assert.Nil(t, tCache.GetCertificate(hash.GenerateTestHash()))
-
+	assert.Nil(t, tCache.GetCertificate(0))
+	assert.Equal(t, tCache.GetCertificate(1).Hash(), b2.PrevCertificate().Hash())
+	assert.Equal(t, tCache.GetCertificate(2).Hash(), b3.PrevCertificate().Hash())
+	assert.Nil(t, tCache.GetCertificate(4))
 }
 
 func TestCacheProposal(t *testing.T) {
@@ -85,7 +86,7 @@ func TestClearCache(t *testing.T) {
 func TestCacheIsFull(t *testing.T) {
 	setup(t)
 
-	i := 0
+	i := int32(0)
 	for ; i < 10; i++ {
 		b := block.GenerateTestBlock(nil, nil)
 		tCache.AddBlock(i+1, b)

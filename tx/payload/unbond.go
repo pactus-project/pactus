@@ -33,6 +33,10 @@ func (p *UnbondPayload) SanityCheck() error {
 	return nil
 }
 
+func (p *UnbondPayload) SerializeSize() int {
+	return 21
+}
+
 func (p *UnbondPayload) Encode(w io.Writer) error {
 	return encoding.WriteElements(w, &p.Validator)
 }

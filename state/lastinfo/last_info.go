@@ -19,7 +19,7 @@ type LastInfo struct {
 	lk sync.RWMutex
 
 	store             store.Store
-	lastBlockHeight   int
+	lastBlockHeight   int32
 	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
 	lastCertificate   *block.Certificate
@@ -37,7 +37,7 @@ func (li *LastInfo) SortitionSeed() sortition.VerifiableSeed {
 	return li.lastSortitionSeed
 }
 
-func (li *LastInfo) BlockHeight() int {
+func (li *LastInfo) BlockHeight() int32 {
 	li.lk.RLock()
 	defer li.lk.RUnlock()
 
@@ -72,7 +72,7 @@ func (li *LastInfo) SetSortitionSeed(lastSortitionSeed sortition.VerifiableSeed)
 	li.lastSortitionSeed = lastSortitionSeed
 }
 
-func (li *LastInfo) SetBlockHeight(lastBlockHeight int) {
+func (li *LastInfo) SetBlockHeight(lastBlockHeight int32) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
@@ -105,18 +105,21 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, err
 
 	logger.Debug("try to restore last state info", "height", height)
 
-	bi, err := li.store.Block(cert.BlockHash())
+	h := li.store.BlockHash(height)
+	bi, err := li.store.Block(h)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve block %v: %v", height, err)
 	}
 
+	b, _ := bi.ToFullBlock()
+
 	li.lastBlockHeight = height
 	li.lastCertificate = cert
-	li.lastSortitionSeed = bi.Block.Header().SortitionSeed()
-	li.lastBlockHash = bi.Block.Hash()
-	li.lastBlockTime = bi.Block.Header().Time()
+	li.lastSortitionSeed = b.Header().SortitionSeed()
+	li.lastBlockHash = b.Hash()
+	li.lastBlockTime = b.Header().Time()
 
-	cmt, err := li.restoreCommittee(committeeSize)
+	cmt, err := li.restoreCommittee(b, committeeSize)
 	if err != nil {
 		return nil, err
 	}
@@ -124,11 +127,9 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, err
 	return cmt, nil
 }
 
-func (li *LastInfo) restoreCommittee(committeeSize int) (committee.Committee, error) {
-	bi, _ := li.store.Block(li.lastBlockHash)
-
+func (li *LastInfo) restoreCommittee(b *block.Block, committeeSize int) (committee.Committee, error) {
 	joinedVals := make([]*validator.Validator, 0)
-	for _, trx := range bi.Block.Transactions() {
+	for _, trx := range b.Transactions() {
 		// If there is any sortition transaction in last block,
 		// we should update last committee
 		if trx.IsSortitionTx() {
@@ -149,14 +150,14 @@ func (li *LastInfo) restoreCommittee(committeeSize int) (committee.Committee, er
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
 		}
-		if bi.Block.Header().ProposerAddress().EqualsTo(val.Address()) {
+		if b.Header().ProposerAddress().EqualsTo(val.Address()) {
 			proposerIndex = i
 		}
 		vals[i] = val
 	}
 
-	// First we create previous committee, the we update it to get the latest committee.
-	proposerIndex = (proposerIndex + curCommitteeSize - (li.lastCertificate.Round() % curCommitteeSize)) % curCommitteeSize
+	// First we restore previous committee, then we update it to get the latest committee.
+	proposerIndex = (proposerIndex + curCommitteeSize - (int(li.lastCertificate.Round()) % curCommitteeSize)) % curCommitteeSize
 	committee, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %v", err)

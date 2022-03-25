@@ -9,13 +9,13 @@ import (
 
 func (zs *zarbServer) GetBlockHash(args ZarbServer_getBlockHash) error {
 	height := args.Params.Height()
-	hash := zs.state.BlockHash(int(height))
+	hash := zs.state.BlockHash(height)
 	return args.Results.SetResult(hash.RawBytes())
 }
 
 func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	data, _ := args.Params.Hash()
-	h, err := hash.FromRawBytes(data)
+	h, err := hash.FromBytes(data)
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 
 	res, _ := args.Results.NewResult()
 	// TODO: Get it from store
-	d, _ := b.Encode()
+	d, _ := b.Bytes()
 	if err := res.SetData(d); err != nil {
 		return err
 	}
@@ -51,10 +51,7 @@ func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
 
 	// previous certificate
 	if b.PrevCertificate() != nil {
-		if err := clc.SetBlockHash(b.PrevCertificate().BlockHash().RawBytes()); err != nil {
-			return err
-		}
-		clc.SetRound(uint32(b.PrevCertificate().Round()))
+		clc.SetRound(b.PrevCertificate().Round())
 		if err := clc.SetSignature(b.PrevCertificate().Signature().RawBytes()); err != nil {
 			return err
 		}
@@ -68,18 +65,12 @@ func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
 		}
 	}
 	// header
-	ch.SetVersion(int32(b.Header().Version()))
-	ch.SetTime(b.Header().Time().Unix())
-	if err := ch.SetTxsRoot(b.Header().TxsRoot().RawBytes()); err != nil {
-		return err
-	}
+	ch.SetVersion(b.Header().Version())
+	ch.SetTime(int32(b.Header().Time().Unix()))
 	if err := ch.SetStateRoot(b.Header().StateRoot().RawBytes()); err != nil {
 		return err
 	}
 	if err := ch.SetPrevBlockHash(b.Header().PrevBlockHash().RawBytes()); err != nil {
-		return err
-	}
-	if err := ch.SetPrevCertHash(b.Header().PrevCertificateHash().RawBytes()); err != nil {
 		return err
 	}
 	if err := ch.SetProposerAddress(b.Header().ProposerAddress().RawBytes()); err != nil {
@@ -87,7 +78,7 @@ func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
 	}
 	// Transactions
 	for i, trx := range b.Transactions() {
-		d, _ := trx.Encode()
+		d, _ := trx.Bytes()
 		if err := ctxs.Set(i, d); err != nil {
 			return err
 		}

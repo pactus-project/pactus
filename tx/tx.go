@@ -57,6 +57,16 @@ func NewTx(stamp hash.Stamp,
 
 	return trx
 }
+
+func TxFromBytes(bs []byte) (*Tx, error) {
+	tx := new(Tx)
+	r := bytes.NewReader(bs)
+	if err := tx.Decode(r); err != nil {
+		return nil, err
+	}
+	return tx, nil
+}
+
 func (tx *Tx) Version() uint8              { return tx.data.Version }
 func (tx *Tx) Stamp() hash.Stamp           { return tx.data.Stamp }
 func (tx *Tx) Sequence() int32             { return tx.data.Sequence }
@@ -150,6 +160,18 @@ func (tx *Tx) checkSignature() error {
 	return nil
 }
 
+// Bytes returns the serialized bytes for the Transaction.
+func (tx *Tx) Bytes() ([]byte, error) {
+
+	w := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
+	err := tx.Encode(w)
+	if err != nil {
+		return nil, err
+	}
+
+	return w.Bytes(), nil
+}
+
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
 	if err := tx.Encode(buf); err != nil {
@@ -171,7 +193,15 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 // TODO:
 // SerializeSize returns the number of bytes it would take to serialize the transaction
 func (tx *Tx) SerializeSize() int {
-	return 0
+	n := 150 +
+		encoding.VarIntSerializeSize(uint64(tx.Sequence())) +
+		encoding.VarIntSerializeSize(uint64(tx.Fee())) +
+		encoding.VarStringSerializeSize(tx.Memo())
+	if tx.Payload() != nil {
+		n += tx.Payload().SerializeSize()
+	}
+
+	return n
 }
 
 func (tx *Tx) Encode(w io.Writer) error {

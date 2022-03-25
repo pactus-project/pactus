@@ -14,10 +14,10 @@ func ProofFromString(text string) (Proof, error) {
 		return Proof{}, err
 	}
 
-	return ProofFromRawBytes(data)
+	return ProofFromBytes(data)
 }
 
-func ProofFromRawBytes(data []byte) (Proof, error) {
+func ProofFromBytes(data []byte) (Proof, error) {
 	if len(data) != 48 {
 		return Proof{}, fmt.Errorf("invalid proof length")
 	}

@@ -7,8 +7,6 @@ import (
 	"fmt"
 
 	"github.com/btcsuite/btcutil/bech32"
-	cbor "github.com/fxamacker/cbor/v2"
-	"github.com/zarbchain/zarb-go/errors"
 )
 
 // Address format:
@@ -20,24 +18,14 @@ const (
 )
 
 const (
-	addressSize           = 21
+	AddressSize           = 21
 	hrpAddress            = "zc"
 	treasuryAddressString = "000000000000000000000000000000000000000000"
 )
 
-var TreasuryAddress = Address{
-	data: addressData{
-		Address: [addressSize]byte{0},
-	},
-}
+var TreasuryAddress = Address{0}
 
-type Address struct {
-	data addressData
-}
-
-type addressData struct {
-	Address [addressSize]byte
-}
+type Address [AddressSize]byte
 
 func AddressFromString(text string) (Address, error) {
 	if text == treasuryAddressString {
@@ -53,23 +41,23 @@ func AddressFromString(text string) (Address, error) {
 	}
 	// TODO: fix me, Get type from decode function DecodeToBase256
 	data = append([]byte{AddressTypeBLS}, data...)
-	return AddressFromRawBytes(data)
+	return AddressFromBytes(data)
 
 }
 
-func AddressFromRawBytes(bs []byte) (Address, error) {
-	if len(bs) != addressSize {
-		return Address{}, fmt.Errorf("address should be %d bytes, but it is %v bytes", addressSize, len(bs))
+func AddressFromBytes(bs []byte) (Address, error) {
+	if len(bs) != AddressSize {
+		return Address{}, fmt.Errorf("address should be %d bytes, but it is %v bytes", AddressSize, len(bs))
 	}
 
 	var addr Address
-	copy(addr.data.Address[:], bs[:])
+	copy(addr[:], bs[:])
 
 	return addr, nil
 }
 
 func (addr Address) RawBytes() []byte {
-	return addr.data.Address[:]
+	return addr[:]
 }
 
 func (addr Address) Fingerprint() string {
@@ -80,7 +68,7 @@ func (addr Address) String() string {
 	if addr.EqualsTo(TreasuryAddress) {
 		return treasuryAddressString
 	}
-	str, err := bech32.EncodeFromBase256(hrpAddress, addr.data.Address[1:])
+	str, err := bech32.EncodeFromBase256(hrpAddress, addr[1:])
 	if err != nil {
 		panic(fmt.Sprintf("Invalid address. %v", err))
 	}
@@ -92,20 +80,12 @@ func (addr Address) MarshalJSON() ([]byte, error) {
 	return json.Marshal(addr.String())
 }
 
-func (addr Address) MarshalCBOR() ([]byte, error) {
-	return cbor.Marshal(addr.data.Address)
-}
-
-func (addr *Address) UnmarshalCBOR(bs []byte) error {
-	return cbor.Unmarshal(bs, &addr.data.Address)
-}
-
 func (addr *Address) SanityCheck() error {
 	if addr.EqualsTo(TreasuryAddress) {
-		return errors.Errorf(errors.ErrInvalidAddress, "treasury address is reserved")
+		return fmt.Errorf("treasury address is reserved")
 	}
-	if addr.data.Address[0] != 1 {
-		return errors.Errorf(errors.ErrInvalidAddress, "invalid type")
+	if addr[0] != 1 {
+		return fmt.Errorf("invalid type")
 	}
 	return nil
 }
@@ -122,6 +102,6 @@ func GenerateTestAddress() Address {
 		panic(err)
 	}
 	data = append([]byte{1}, data...)
-	addr, _ := AddressFromRawBytes(data)
+	addr, _ := AddressFromBytes(data)
 	return addr
 }

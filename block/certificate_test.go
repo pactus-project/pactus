@@ -54,6 +54,10 @@ func TestInvalidCertificate(t *testing.T) {
 	assert.Error(t, cert.SanityCheck())
 
 	cert = GenerateTestCertificate(hash.GenerateTestHash())
+	cert.data.Round = -1
+	assert.Error(t, cert.SanityCheck())
+
+	cert = GenerateTestCertificate(hash.GenerateTestHash())
 	cert.data.Absentees = nil
 	assert.Error(t, cert.SanityCheck())
 

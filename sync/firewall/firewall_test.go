@@ -119,7 +119,7 @@ func TestStreamMesage(t *testing.T) {
 	t.Run("Message source: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 
-		bdl := bundle.NewBundle(tBadPeerID, message.NewBlocksRequestMessage(util.RandInt(0), 1, 100))
+		bdl := bundle.NewBundle(tBadPeerID, message.NewBlocksRequestMessage(int(util.RandInt32(0)), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
@@ -131,7 +131,7 @@ func TestStreamMesage(t *testing.T) {
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
 		setup(t)
 
-		bdl := bundle.NewBundle(tGoodPeerID, message.NewBlocksRequestMessage(util.RandInt(0), 1, 100))
+		bdl := bundle.NewBundle(tGoodPeerID, message.NewBlocksRequestMessage(int(util.RandInt32(0)), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		d, _ := bdl.Encode()
 
@@ -173,6 +173,6 @@ func TestNetworkFlags(t *testing.T) {
 	bdl.Flags = util.UnsetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	assert.Error(t, tFirewall.checkBundle(bdl, tGoodPeerID))
 
-	tState.TestParams.BlockVersion = 1001
+	tState.TestParams.BlockVersion = 77
 	assert.Error(t, tFirewall.checkBundle(bdl, tGoodPeerID))
 }

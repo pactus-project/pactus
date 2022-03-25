@@ -11,7 +11,7 @@ import (
 func TestStream(t *testing.T) {
 	size := 4
 	nets := setup(t, size)
-	i := util.RandInt(size-1) + 1
+	i := util.RandInt32(int32(size-1)) + 1
 	msg := []byte("test-stream")
 	require.NoError(t, nets[0].SendTo(msg, nets[i].SelfID()))
 

@@ -35,7 +35,7 @@ func setup(t *testing.T) {
 
 	tStore.UpdateAccount(acc)
 	for i, val := range committee.Validators() {
-		acc := account.NewAccount(val.Address(), i+1)
+		acc := account.NewAccount(val.Address(), int32(i+1))
 		tStore.UpdateValidator(val)
 		tStore.UpdateAccount(acc)
 	}
@@ -43,14 +43,14 @@ func setup(t *testing.T) {
 	tSigners = signers
 	tSandbox = NewSandbox(tStore, params, committee).(*sandbox)
 
-	assert.Equal(t, tSandbox.CurrentHeight(), 1)
+	assert.Equal(t, tSandbox.CurrentHeight(), int32(1))
 	lastHeight := 124
 	for i := 1; i < lastHeight; i++ {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
-		tStore.SaveBlock(i, b, c)
+		tStore.SaveBlock(int32(i), b, c)
 	}
-	assert.Equal(t, tSandbox.CurrentHeight(), 124)
+	assert.Equal(t, tSandbox.CurrentHeight(), int32(124))
 
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
@@ -136,14 +136,14 @@ func TestTotalAccountCounter(t *testing.T) {
 	setup(t)
 
 	t.Run("Should update total account counter", func(t *testing.T) {
-		assert.Equal(t, tStore.TotalAccounts(), len(tSigners)+1)
+		assert.Equal(t, tStore.TotalAccounts(), int32(len(tSigners)+1))
 
 		addr1 := crypto.GenerateTestAddress()
 		addr2 := crypto.GenerateTestAddress()
 		acc := tSandbox.MakeNewAccount(addr1)
-		assert.Equal(t, acc.Number(), tSandbox.Committee().Size()+1)
+		assert.Equal(t, acc.Number(), int32(tSandbox.Committee().Size()+1))
 		acc2 := tSandbox.MakeNewAccount(addr2)
-		assert.Equal(t, acc2.Number(), tSandbox.Committee().Size()+2)
+		assert.Equal(t, acc2.Number(), int32(tSandbox.Committee().Size()+2))
 		assert.Equal(t, acc2.Balance(), int64(0))
 	})
 }
@@ -152,18 +152,18 @@ func TestTotalValidatorCounter(t *testing.T) {
 	setup(t)
 
 	t.Run("Should update total validator counter", func(t *testing.T) {
-		assert.Equal(t, tStore.TotalValidators(), tSandbox.Committee().Size())
+		assert.Equal(t, tStore.TotalValidators(), int32(tSandbox.Committee().Size()))
 
 		pub, _ := bls.GenerateTestKeyPair()
 		pub2, _ := bls.GenerateTestKeyPair()
 		val1 := tSandbox.MakeNewValidator(pub)
 		val1.UpdateLastBondingHeight(tSandbox.CurrentHeight())
-		assert.Equal(t, val1.Number(), tSandbox.Committee().Size())
+		assert.Equal(t, val1.Number(), int32(tSandbox.Committee().Size()))
 		assert.Equal(t, val1.LastBondingHeight(), tSandbox.CurrentHeight())
 
 		val2 := tSandbox.MakeNewValidator(pub2)
 		val2.UpdateLastBondingHeight(tSandbox.CurrentHeight() + 1)
-		assert.Equal(t, val2.Number(), tSandbox.Committee().Size()+1)
+		assert.Equal(t, val2.Number(), int32(tSandbox.Committee().Size()+1))
 		assert.Equal(t, val2.LastBondingHeight(), tSandbox.CurrentHeight()+1)
 		assert.Equal(t, val2.Stake(), int64(0))
 	})
@@ -253,10 +253,11 @@ func TestDeepCopy(t *testing.T) {
 func TestBlockHeightByStamp(t *testing.T) {
 	setup(t)
 
-	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.GenerateTestStamp()), 0)
+	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.GenerateTestStamp()), int32(0))
 
-	height, cert := tStore.LastCertificate()
-	assert.Equal(t, tSandbox.BlockHeightByStamp(cert.BlockHash().Stamp()), height)
+	height, _ := tStore.LastCertificate()
+	hash := tSandbox.store.BlockHash(height)
+	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.Stamp()), height)
 }
 
 func TestBlockHashByStamp(t *testing.T) {
@@ -264,6 +265,7 @@ func TestBlockHashByStamp(t *testing.T) {
 
 	assert.True(t, tSandbox.BlockHashByStamp(hash.GenerateTestStamp()).IsUndef())
 
-	_, cert := tStore.LastCertificate()
-	assert.True(t, tSandbox.BlockHashByStamp(cert.BlockHash().Stamp()).EqualsTo(cert.BlockHash()))
+	height, _ := tStore.LastCertificate()
+	hash := tSandbox.store.BlockHash(height)
+	assert.True(t, tSandbox.BlockHashByStamp(hash.Stamp()).EqualsTo(hash))
 }

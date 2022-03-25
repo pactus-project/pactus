@@ -62,7 +62,7 @@ func (h *Header) SanityCheck() error {
 
 // SerializeSize returns the number of bytes it would take to serialize the header
 func (h *Header) SerializeSize() int {
-	return 138 // 5 + (2 * hash.HashSize) + 48 + 21
+	return 138 // 5 + (2 * 32) + 48 + 21
 }
 
 // Encode encodes the receiver to w.
@@ -78,12 +78,12 @@ func (h *Header) Encode(w io.Writer) error {
 
 func (h *Header) Decode(r io.Reader) error {
 	return encoding.ReadElements(r,
-		h.data.Version,
-		h.data.UnixTime,
-		h.data.PrevBlockHash,
-		h.data.StateRoot,
-		h.data.SortitionSeed,
-		h.data.ProposerAddress)
+		&h.data.Version,
+		&h.data.UnixTime,
+		&h.data.PrevBlockHash,
+		&h.data.StateRoot,
+		&h.data.SortitionSeed,
+		&h.data.ProposerAddress)
 }
 
 func (h Header) MarshalJSON() ([]byte, error) {

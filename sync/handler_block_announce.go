@@ -20,7 +20,7 @@ func (handler *blockAnnounceHandler) ParsMessage(m message.Message, initiator pe
 	msg := m.(*message.BlockAnnounceMessage)
 	handler.logger.Trace("parsing BlockAnnounce message", "msg", msg)
 
-	handler.cache.AddCertificate(msg.Certificate)
+	handler.cache.AddCertificate(msg.Height, msg.Certificate)
 	handler.cache.AddBlock(msg.Height, msg.Block)
 	handler.tryCommitBlocks()
 	handler.synced()

@@ -341,7 +341,7 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 // TODO:
 // maximum nodes to query block should be 8
 //
-func (sync *synchronizer) downloadBlocks(from int) {
+func (sync *synchronizer) downloadBlocks(from int32) {
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
 		// TODO: write test for me
@@ -377,7 +377,7 @@ func (sync *synchronizer) downloadBlocks(from int) {
 	}
 }
 
-func (sync *synchronizer) queryLatestBlocks(from int) {
+func (sync *synchronizer) queryLatestBlocks(from int32) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
@@ -419,7 +419,7 @@ func (sync *synchronizer) tryCommitBlocks() {
 		if b == nil {
 			break
 		}
-		c := sync.cache.GetCertificate(b.Hash())
+		c := sync.cache.GetCertificate(ourHeight + 1)
 		if c == nil {
 			break
 		}
@@ -432,7 +432,7 @@ func (sync *synchronizer) tryCommitBlocks() {
 	}
 }
 
-func (sync *synchronizer) prepareBlocks(from, count int) []*block.Block {
+func (sync *synchronizer) prepareBlocks(from int32, count int32) []*block.Block {
 	ourHeight := sync.state.LastBlockHeight()
 
 	if from > ourHeight {

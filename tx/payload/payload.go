@@ -37,6 +37,7 @@ type Payload interface {
 	Signer() crypto.Address
 	Value() int64
 	Type() Type
+	SerializeSize() int
 	Encode(io.Writer) error
 	Decode(io.Reader) error
 	SanityCheck() error

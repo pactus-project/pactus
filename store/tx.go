@@ -1,15 +1,17 @@
 package store
 
 import (
-	"github.com/fxamacker/cbor/v2"
+	"bytes"
+
 	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
 type txPos struct {
-	Height int `cbor:"1,keyasint"`
-	Index  int `cbor:"2,keyasint"`
+	Hash   hash.Hash
+	Offset int32
 }
 
 func txKey(id tx.ID) []byte { return append(txPrefix, id.RawBytes()...) }
@@ -25,12 +27,14 @@ func newTxStore(db *leveldb.DB) *txStore {
 }
 
 func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, pos *txPos) {
-	data, err := cbor.Marshal(pos)
+	w := bytes.NewBuffer(make([]byte, 0, 32+4))
+	err := encoding.WriteElements(w, &pos.Hash, &pos.Offset)
 	if err != nil {
-		logger.Panic("unable to encode transaction: %v", err)
+		panic(err)
 	}
+
 	txKey := txKey(id)
-	batch.Put(txKey, data)
+	batch.Put(txKey, w.Bytes())
 }
 
 func (ts *txStore) tx(id tx.ID) (*txPos, error) {
@@ -38,8 +42,9 @@ func (ts *txStore) tx(id tx.ID) (*txPos, error) {
 	if err != nil {
 		return nil, err
 	}
+	r := bytes.NewReader(data)
 	pos := new(txPos)
-	err = cbor.Unmarshal(data, pos)
+	err = encoding.ReadElements(r, &pos.Hash, &pos.Offset)
 	if err != nil {
 		return nil, err
 	}

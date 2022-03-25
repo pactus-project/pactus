@@ -16,13 +16,13 @@ type Certificate struct {
 	data certificateData
 }
 type certificateData struct {
-	Round      int32
+	Round      int16
 	Committers []int32
 	Absentees  []int32
 	Signature  *bls.Signature
 }
 
-func NewCertificate(round int32, committers, absentees []int32, signature *bls.Signature) *Certificate {
+func NewCertificate(round int16, committers, absentees []int32, signature *bls.Signature) *Certificate {
 	cert := &Certificate{
 		data: certificateData{
 			Round:      round,
@@ -35,19 +35,25 @@ func NewCertificate(round int32, committers, absentees []int32, signature *bls.S
 	return cert
 }
 
-func (cert *Certificate) Round() int32              { return cert.data.Round }
+func (cert *Certificate) Round() int16              { return cert.data.Round }
 func (cert *Certificate) Committers() []int32       { return cert.data.Committers }
 func (cert *Certificate) Absentees() []int32        { return cert.data.Absentees }
 func (cert *Certificate) Signature() *bls.Signature { return cert.data.Signature }
 
 func (cert *Certificate) SanityCheck() error {
+	if cert.Round() < 0 {
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid Round")
+	}
+	if cert.Signature() == nil {
+		return errors.Errorf(errors.ErrInvalidBlock, "certificate without signature")
+	}
 	if err := cert.Signature().SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 	}
 	if cert.Committers() == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid committers")
 	}
-	if cert.data.Absentees == nil {
+	if cert.Absentees() == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid absentees")
 	}
 	signedBy := util.Subtracts(cert.Committers(), cert.Absentees())
@@ -59,7 +65,7 @@ func (cert *Certificate) SanityCheck() error {
 }
 
 func (cert *Certificate) Hash() hash.Hash {
-	w := &bytes.Buffer{}
+	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
 	cert.Encode(w)
 	return hash.CalcHash(w.Bytes())
 }
@@ -102,9 +108,10 @@ func (cert *Certificate) Encode(w io.Writer) error {
 			return err
 		}
 	}
-	if err := encoding.WriteElement(w, cert.data.Signature); err != nil {
+	if err := cert.data.Signature.Encode(w); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -118,7 +125,7 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	committers := make([]int32, 0, lenCommitters)
+	committers := make([]int32, lenCommitters)
 	for i := 0; i < int(lenCommitters); i++ {
 		n, err := encoding.ReadVarInt(r)
 		if err != nil {
@@ -131,8 +138,8 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	absentees := make([]int32, 0, lenAbsentees)
-	for i := 0; i < int(lenCommitters); i++ {
+	absentees := make([]int32, lenAbsentees)
+	for i := 0; i < int(lenAbsentees); i++ {
 		n, err := encoding.ReadVarInt(r)
 		if err != nil {
 			return err
@@ -144,11 +151,11 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	}
 
 	sig := new(bls.Signature)
-	if err := encoding.ReadElement(r, sig); err != nil {
+	if err := sig.Decode(r); err != nil {
 		return err
 	}
 
-	cert.data.Round = int32(round)
+	cert.data.Round = int16(round)
 	cert.data.Committers = committers
 	cert.data.Absentees = absentees
 	cert.data.Signature = sig
@@ -160,9 +167,9 @@ func (cert *Certificate) MarshalJSON() ([]byte, error) {
 	return json.Marshal(cert.data)
 }
 
-func CertificateSignBytes(blockHash hash.Hash, round int32) []byte {
+func CertificateSignBytes(blockHash hash.Hash, round int16) []byte {
 	sb := blockHash.RawBytes()
-	sb = append(sb, util.Int32ToSlice(round)...)
+	sb = append(sb, util.Int16ToSlice(round)...)
 
 	return sb
 }
@@ -184,7 +191,7 @@ func GenerateTestCertificate(blockHash hash.Hash) *Certificate {
 	c3 := util.RandInt32(1000)
 	c4 := util.RandInt32(1000)
 	return NewCertificate(
-		util.RandInt32(10),
+		util.RandInt16(10),
 		[]int32{c1, c2, c3, c4},
 		[]int32{c2},
 		sig)

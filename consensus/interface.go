@@ -8,9 +8,9 @@ import (
 type Reader interface {
 	PickRandomVote() *vote.Vote
 	AllVotes() []*vote.Vote
-	RoundVotes(round int) []*vote.Vote
-	RoundProposal(round int) *proposal.Proposal
-	HeightRound() (int, int)
+	RoundVotes(round int16) []*vote.Vote
+	RoundProposal(round int16) *proposal.Proposal
+	HeightRound() (int32, int16)
 	Fingerprint() string
 }
 

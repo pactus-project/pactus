@@ -15,7 +15,7 @@ func TestPubSub(t *testing.T) {
 
 	require.NoError(t, nets[0].Broadcast(msg, TopicIDGeneral))
 
-	i := util.RandInt(size-1) + 1
+	i := util.RandInt32(int32(size-1)) + 1
 	e := shouldReceiveEvent(t, nets[i]).(*GossipMessage)
 	assert.Equal(t, e.Source, nets[0].SelfID())
 	assert.Equal(t, e.Data, msg)

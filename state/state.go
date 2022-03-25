@@ -107,7 +107,8 @@ func (st *state) tryLoadLastInfo() error {
 	if err != nil {
 		return err
 	}
-	if !genStateRoot.EqualsTo(blockOneInfo.Block.Header().StateRoot()) {
+	blockOne, _ := blockOneInfo.ToFullBlock()
+	if !genStateRoot.EqualsTo(blockOne.Header().StateRoot()) {
 		return fmt.Errorf("invalid genesis doc")
 	}
 
@@ -162,7 +163,7 @@ func (st *state) GenesisHash() hash.Hash {
 	return st.genDoc.Hash()
 }
 
-func (st *state) LastBlockHeight() int {
+func (st *state) LastBlockHeight() int32 {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -203,7 +204,7 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 
 	// Check if certificate has more signers ...
 	if len(cert.Absentees()) < len(st.lastInfo.Certificate().Absentees()) {
-		if err := st.validateCertificateForPreviousHeight(cert); err != nil {
+		if err := st.validateCertificateForPreviousHeight(st.lastInfo.BlockHash(), cert); err != nil {
 			st.logger.Warn("try to update last certificate, but it's invalid", "err", err)
 			return err
 		}
@@ -224,12 +225,12 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	return tx
 }
 
-func (st *state) ProposeBlock(round int) (*block.Block, error) {
+func (st *state) ProposeBlock(round int16) (*block.Block, error) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	if !st.committee.IsProposer(st.signer.Address(), round) {
-		return nil, errors.Errorf(errors.ErrInvalidAddress, "we are not propser for this round")
+		return nil, errors.Errorf(errors.ErrGeneric, "we are not propser for this round")
 	}
 
 	// Create new sandbox and execute transactions
@@ -302,7 +303,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	return nil
 }
 
-func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certificate) error {
+func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -313,7 +314,7 @@ func (st *state) CommitBlock(height int, block *block.Block, cert *block.Certifi
 		return nil
 	}
 
-	err := st.validateCertificate(cert, block.Hash())
+	err := st.validateCertificate(block.Hash(), cert)
 	if err != nil {
 		return err
 	}
@@ -427,7 +428,7 @@ func (st *state) Fingerprint() string {
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(sb sandbox.Sandbox, round int) {
+func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 	joined := make([]*validator.Validator, 0)
 	currentHeight := sb.CurrentHeight()
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
@@ -523,11 +524,11 @@ func (st *state) IsInCommittee(addr crypto.Address) bool {
 	return st.committee.Contains(addr)
 }
 
-func (st *state) Proposer(round int) *validator.Validator {
+func (st *state) Proposer(round int16) *validator.Validator {
 	return st.committee.Proposer(round)
 }
 
-func (st *state) IsProposer(addr crypto.Address, round int) bool {
+func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 	return st.committee.IsProposer(addr, round)
 }
 
@@ -540,15 +541,16 @@ func (st *state) Transaction(id tx.ID) *tx.Tx {
 }
 
 func (st *state) Block(hash hash.Hash) *block.Block {
-	b, err := st.store.Block(hash)
+	bi, err := st.store.Block(hash)
 	if err != nil {
 		st.logger.Trace("error on retrieving block", "err", err)
 		return nil
 	}
-	return b.Block
+	b, _ := bi.ToFullBlock()
+	return b
 }
 
-func (st *state) BlockHash(height int) hash.Hash {
+func (st *state) BlockHash(height int32) hash.Hash {
 	return st.store.BlockHash(height)
 }
 
@@ -569,7 +571,7 @@ func (st *state) Validator(addr crypto.Address) *validator.Validator {
 }
 
 // ValidatorByNumber returns validator data based on validator number
-func (st *state) ValidatorByNumber(n int) *validator.Validator {
+func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	val, err := st.store.ValidatorByNumber(n)
 	if err != nil {
 		st.logger.Trace("error on retrieving validator", "err", err)

@@ -22,8 +22,8 @@ func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
 	}
 
 	d, _ := st.Data()
-	val := new(validator.Validator)
-	assert.NoError(t, val.Decode(d))
+	val, err := validator.ValidatorFromBytes(d)
+	assert.NoError(t, err)
 	return val
 }
 

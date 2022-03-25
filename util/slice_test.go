@@ -7,33 +7,84 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSliceToInt(t *testing.T) {
-	i1 := -1
-	s := IntToSlice(i1)
-	i2 := SliceToInt(s)
-	assert.Equal(t, i1, i2)
-}
+func TestSliceToInt16(t *testing.T) {
+	tests := []struct {
+		in    int16
+		slice []byte
+	}{
+		{int16(MinInt16), []byte{0x00, 0x80}},
+		{int16(-128), []byte{0x80, 0xff}},
+		{int16(-1), []byte{0xff, 0xff}},
+		{int16(0), []byte{0x00, 0x00}},
+		{int16(1), []byte{0x01, 0x00}},
+		{int16(256), []byte{0x00, 0x01}},
+		{int16(MaxInt16), []byte{0xff, 0x7f}},
+	}
 
-func TestSliceToUInt(t *testing.T) {
-	i1 := uint(0)
-	i1--
-	s := UIntToSlice(i1)
-	i2 := SliceToUInt(s)
-	assert.Equal(t, i1, i2)
+	for _, test := range tests {
+		s1 := Uint16ToSlice(uint16(test.in))
+		s2 := Int16ToSlice(test.in)
+		assert.Equal(t, s1, s2)
+		assert.Equal(t, s1, test.slice)
+
+		v1 := SliceToInt16(test.slice)
+		v2 := SliceToUint16(test.slice)
+		assert.Equal(t, v1, int16(v2))
+		assert.Equal(t, v1, test.in)
+	}
+}
+func TestSliceToInt32(t *testing.T) {
+	tests := []struct {
+		in    int32
+		slice []byte
+	}{
+		{int32(MinInt32), []byte{0x00, 0x00, 0x00, 0x80}},
+		{int32(-128), []byte{0x80, 0xff, 0xff, 0xff}},
+		{int32(-1), []byte{0xff, 0xff, 0xff, 0xff}},
+		{int32(0), []byte{0x00, 0x00, 0x00, 0x00}},
+		{int32(1), []byte{0x01, 0x00, 0x00, 0x00}},
+		{int32(256), []byte{0x00, 0x01, 0x00, 0x00}},
+		{int32(MaxInt32), []byte{0xff, 0xff, 0xff, 0x7f}},
+	}
+
+	for _, test := range tests {
+		s1 := Uint32ToSlice(uint32(test.in))
+		s2 := Int32ToSlice(test.in)
+		assert.Equal(t, s1, s2)
+		assert.Equal(t, s1, test.slice)
+
+		v1 := SliceToInt32(test.slice)
+		v2 := SliceToUint32(test.slice)
+		assert.Equal(t, v1, int32(v2))
+		assert.Equal(t, v1, test.in)
+	}
 }
 
 func TestSliceToInt64(t *testing.T) {
-	i1 := MaxInt64
-	s := Int64ToSlice(i1)
-	i2 := SliceToInt64(s)
-	assert.Equal(t, i1, i2)
-}
+	tests := []struct {
+		in    int64
+		slice []byte
+	}{
+		{int64(MinInt64), []byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80}},
+		{int64(-128), []byte{0x80, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}},
+		{int64(-1), []byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}},
+		{int64(0), []byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+		{int64(1), []byte{0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+		{int64(256), []byte{0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+		{int64(MaxInt64), []byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f}},
+	}
 
-func TestSliceToUInt64(t *testing.T) {
-	i1 := MaxUint64
-	s := UInt64ToSlice(i1)
-	i2 := SliceToUInt64(s)
-	assert.Equal(t, i1, i2)
+	for _, test := range tests {
+		s1 := Uint64ToSlice(uint64(test.in))
+		s2 := Int64ToSlice(test.in)
+		assert.Equal(t, s1, s2)
+		assert.Equal(t, s1, test.slice)
+
+		v1 := SliceToInt64(test.slice)
+		v2 := SliceToUint64(test.slice)
+		assert.Equal(t, v1, int64(v2))
+		assert.Equal(t, v1, test.in)
+	}
 }
 
 func TestCompress(t *testing.T) {
@@ -55,70 +106,70 @@ func TestDecompress(t *testing.T) {
 
 func TestSubtractAndSubset(t *testing.T) {
 	t.Run("Case 1", func(t *testing.T) {
-		s1 := []int{1, 2, 3, 4}
-		s2 := []int{1, 2, 3}
+		s1 := []int32{1, 2, 3, 4}
+		s2 := []int32{1, 2, 3}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int{4})
+		assert.Equal(t, s3, []int32{4})
 	})
 
 	t.Run("Case 2", func(t *testing.T) {
-		s1 := []int{1, 2, 3, 4}
-		s2 := []int{2, 3, 5}
+		s1 := []int32{1, 2, 3, 4}
+		s2 := []int32{2, 3, 5}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int{1, 4})
+		assert.Equal(t, s3, []int32{1, 4})
 	})
 
 	t.Run("Case 3", func(t *testing.T) {
-		s1 := []int{1, 2, 3, 4}
-		s2 := []int{}
+		s1 := []int32{1, 2, 3, 4}
+		s2 := []int32{}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int{1, 2, 3, 4})
+		assert.Equal(t, s3, []int32{1, 2, 3, 4})
 	})
 
 	t.Run("Case 4", func(t *testing.T) {
-		s1 := []int{}
-		s2 := []int{1, 2, 3, 4}
+		s1 := []int32{}
+		s2 := []int32{1, 2, 3, 4}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int{})
+		assert.Equal(t, s3, []int32{})
 	})
 
 	t.Run("Case 5", func(t *testing.T) {
-		s1 := []int{1, 2, 3, 4}
-		s2 := []int{1, 2, 3, 4}
+		s1 := []int32{1, 2, 3, 4}
+		s2 := []int32{1, 2, 3, 4}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int{})
+		assert.Equal(t, s3, []int32{})
 	})
 
 	t.Run("Case 6", func(t *testing.T) {
-		s1 := []int{1, 3, 5}
-		s2 := []int{1, 2, 3, 4, 5}
+		s1 := []int32{1, 3, 5}
+		s2 := []int32{1, 2, 3, 4, 5}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int{})
+		assert.Equal(t, s3, []int32{})
 	})
 
 	t.Run("Case 7", func(t *testing.T) {
-		s1 := []int{1, 2, 3, 4}
+		s1 := []int32{1, 2, 3, 4}
 		s3 := Subtracts(s1, nil)
 		assert.Equal(t, s3, s1)
 	})
 
 	t.Run("Case 8", func(t *testing.T) {
-		s2 := []int{1, 2, 3, 4}
+		s2 := []int32{1, 2, 3, 4}
 		s3 := Subtracts(nil, s2)
-		assert.Equal(t, s3, []int{})
+		assert.Equal(t, s3, []int32{})
 	})
 }
 
 func TestEqual(t *testing.T) {
-	assert.True(t, Equal([]int{1, 2, 3}, []int{1, 2, 3}))
-	assert.False(t, Equal([]int{1, 2, 3}, []int{1, 3, 2}))
-	assert.False(t, Equal([]int{1, 2, 3}, []int{1, 2, 3, 4}))
-	assert.True(t, Equal([]int{}, []int{}))
-	assert.True(t, Equal([]int{}, nil))
+	assert.True(t, Equal([]int32{1, 2, 3}, []int32{1, 2, 3}))
+	assert.False(t, Equal([]int32{1, 2, 3}, []int32{1, 3, 2}))
+	assert.False(t, Equal([]int32{1, 2, 3}, []int32{1, 2, 3, 4}))
+	assert.True(t, Equal([]int32{}, []int32{}))
+	assert.True(t, Equal([]int32{}, nil))
 }
 
 func TestContains(t *testing.T) {
-	assert.True(t, Contains([]int{1, 2, 3, 4}, 2))
-	assert.False(t, Contains([]int{1, 2, 3, 4}, 5))
-	assert.False(t, Contains([]int{}, 0))
+	assert.True(t, Contains([]int32{1, 2, 3, 4}, 2))
+	assert.False(t, Contains([]int32{1, 2, 3, 4}, 5))
+	assert.False(t, Contains([]int32{}, 0))
 }

@@ -7,11 +7,11 @@ import (
 )
 
 type QueryVotesMessage struct {
-	Height int `cbor:"1,keyasint"`
-	Round  int `cbor:"2,keyasint"`
+	Height int32 `cbor:"1,keyasint"`
+	Round  int16 `cbor:"2,keyasint"`
 }
 
-func NewQueryVotesMessage(h, r int) *QueryVotesMessage {
+func NewQueryVotesMessage(h int32, r int16) *QueryVotesMessage {
 	return &QueryVotesMessage{
 		Height: h,
 		Round:  r,

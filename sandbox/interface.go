@@ -22,13 +22,13 @@ type Sandbox interface {
 	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
 	BlockHashByStamp(stamp hash.Stamp) hash.Hash
-	BlockHeightByStamp(stamp hash.Stamp) int
+	BlockHeightByStamp(stamp hash.Stamp) int32
 
-	UnbondInterval() int
+	UnbondInterval() int32
 	CommitteeSize() int
-	BondInterval() int
-	CurrentHeight() int
-	TransactionToLiveInterval() int
+	BondInterval() int32
+	CurrentHeight() int32
+	TransactionToLiveInterval() int32
 	FeeFraction() float64
 	MinFee() int64
 

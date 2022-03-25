@@ -7,6 +7,7 @@ import (
 	"io"
 	"time"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/encoding"
@@ -36,6 +37,16 @@ func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
 			Txs:      txs,
 		},
 	}
+}
+
+func BlockFromBytes(data []byte) (*Block, error) {
+	b := new(Block)
+	r := bytes.NewReader(data)
+	if err := b.Decode(r); err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
 
 func MakeBlock(version uint8, timestamp time.Time, txs Txs,
@@ -95,7 +106,10 @@ func (b *Block) Hash() hash.Hash {
 
 	w := &bytes.Buffer{}
 	b.data.Header.Encode(w)
-	w.Write(b.data.PrevCert.Hash().RawBytes())
+	// Genesis block has no certificate
+	if b.data.PrevCert != nil {
+		w.Write(b.data.PrevCert.Hash().RawBytes())
+	}
 	w.Write(b.data.Txs.Root().RawBytes())
 	w.Write(util.Int32ToSlice(int32(b.data.Txs.Len())))
 
@@ -117,13 +131,33 @@ func (b *Block) Fingerprint() string {
 	)
 }
 
+func (b *Block) MarshalCBOR() ([]byte, error) {
+	buf := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
+	if err := b.Encode(buf); err != nil {
+		return nil, err
+	}
+	return cbor.Marshal(buf.Bytes())
+}
+
+func (b *Block) UnmarshalCBOR(bs []byte) error {
+	data := make([]byte, 0, b.SerializeSize())
+	err := cbor.Unmarshal(bs, &data)
+	if err != nil {
+		return err
+	}
+	buf := bytes.NewBuffer(data)
+	return b.Decode(buf)
+}
+
 // Encode encodes the receiver to w.
 func (b *Block) Encode(w io.Writer) error {
 	if err := b.data.Header.Encode(w); err != nil {
 		return err
 	}
-	if err := b.data.PrevCert.Encode(w); err != nil {
-		return err
+	if b.data.PrevCert != nil {
+		if err := b.data.PrevCert.Encode(w); err != nil {
+			return err
+		}
 	}
 	encoding.WriteVarInt(w, uint64(b.data.Txs.Len()))
 	for _, tx := range b.Transactions() {
@@ -138,27 +172,36 @@ func (b *Block) Decode(r io.Reader) error {
 	if err := b.data.Header.Decode(r); err != nil {
 		return err
 	}
-	if err := b.data.PrevCert.Decode(r); err != nil {
-		return err
+	if !b.data.Header.PrevBlockHash().IsUndef() {
+		b.data.PrevCert = new(Certificate)
+		if err := b.data.PrevCert.Decode(r); err != nil {
+			return err
+		}
 	}
 	len, err := encoding.ReadVarInt(r)
 	if err != nil {
 		return err
 	}
 	b.data.Txs = make([]*tx.Tx, len)
-	for _, tx := range b.Transactions() {
+	for i := 0; i < int(len); i++ {
+		tx := new(tx.Tx)
 		if err := tx.Decode(r); err != nil {
 			return err
 		}
+		b.data.Txs[i] = tx
 	}
 	return nil
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block
 func (b *Block) SerializeSize() int {
-	n := b.Header().SerializeSize() +
-		b.PrevCertificate().SerializeSize()
+	n := b.Header().SerializeSize()
 
+	if b.PrevCertificate() != nil {
+		n += b.PrevCertificate().SerializeSize()
+	}
+
+	n += encoding.VarIntSerializeSize(uint64(b.Transactions().Len()))
 	for _, tx := range b.Transactions() {
 		n += tx.SerializeSize()
 	}

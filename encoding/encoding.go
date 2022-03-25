@@ -7,7 +7,6 @@ import (
 	"io"
 
 	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
@@ -60,58 +59,55 @@ func (l binaryFreeList) Return(buf []byte) {
 }
 
 // Uint8 reads a single byte from the provided reader using a buffer from the
-// free list and returns it as a uint8.
-func (l binaryFreeList) Uint8(r io.Reader) (uint8, error) {
+// free list.
+func (l binaryFreeList) Uint8(r io.Reader, val *uint8) error {
 	buf := l.Borrow()[:1]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
-		return 0, err
+		return err
 	}
-	rv := buf[0]
+	*val = buf[0]
 	l.Return(buf)
-	return rv, nil
+	return nil
 }
 
 // Uint16 reads two bytes from the provided reader using a buffer from the
-// free list, converts it to a number using the provided byte order, and returns
-// the resulting uint16.
-func (l binaryFreeList) Uint16(r io.Reader) (uint16, error) {
+// free list, converts it to a number in little endian byte order.
+func (l binaryFreeList) Uint16(r io.Reader, val *uint16) error {
 	buf := l.Borrow()[:2]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
-		return 0, err
+		return err
 	}
-	rv := binary.LittleEndian.Uint16(buf)
+	*val = binary.LittleEndian.Uint16(buf)
 	l.Return(buf)
-	return rv, nil
+	return nil
 }
 
 // Uint32 reads four bytes from the provided reader using a buffer from the
-// free list, converts it to a number using the provided byte order, and returns
-// the resulting uint32.
-func (l binaryFreeList) Uint32(r io.Reader) (uint32, error) {
+// free list, converts it to a number in little endian byte order.
+func (l binaryFreeList) Uint32(r io.Reader, val *uint32) error {
 	buf := l.Borrow()[:4]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
-		return 0, err
+		return err
 	}
-	rv := binary.LittleEndian.Uint32(buf)
+	*val = binary.LittleEndian.Uint32(buf)
 	l.Return(buf)
-	return rv, nil
+	return nil
 }
 
 // Uint64 reads eight bytes from the provided reader using a buffer from the
-// free list, converts it to a number using the provided byte order, and returns
-// the resulting uint64.
-func (l binaryFreeList) Uint64(r io.Reader) (uint64, error) {
+// free list, converts it to a number in little endian byte order..
+func (l binaryFreeList) Uint64(r io.Reader, val *uint64) error {
 	buf := l.Borrow()[:8]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
-		return 0, err
+		return err
 	}
-	rv := binary.LittleEndian.Uint64(buf)
+	*val = binary.LittleEndian.Uint64(buf)
 	l.Return(buf)
-	return rv, nil
+	return nil
 }
 
 // PutUint8 copies the provided uint8 into a buffer from the free list and
@@ -166,106 +162,45 @@ var binarySerializer binaryFreeList = make(chan []byte, binaryFreeListMaxItems)
 func ReadElement(r io.Reader, element interface{}) error {
 	// Attempt to read the element based on the concrete type via fast
 	// type assertions first.
+	var err error
 	switch e := element.(type) {
 	case *int8:
-		rv, err := binarySerializer.Uint8(r)
-		if err != nil {
-			return err
-		}
+		rv := uint8(0)
+		err = binarySerializer.Uint8(r, &rv)
 		*e = int8(rv)
-		return nil
-
 	case *uint8:
-		rv, err := binarySerializer.Uint8(r)
-		if err != nil {
-			return err
-		}
-		*e = rv
-		return nil
-
+		err = binarySerializer.Uint8(r, e)
+	case *int16:
+		rv := uint16(0)
+		err = binarySerializer.Uint16(r, &rv)
+		*e = int16(rv)
+	case *uint16:
+		err = binarySerializer.Uint16(r, e)
 	case *int32:
-		rv, err := binarySerializer.Uint32(r)
-		if err != nil {
-			return err
-		}
+		rv := uint32(0)
+		err = binarySerializer.Uint32(r, &rv)
 		*e = int32(rv)
-		return nil
-
 	case *uint32:
-		rv, err := binarySerializer.Uint32(r)
-		if err != nil {
-			return err
-		}
-		*e = rv
-		return nil
-
+		err = binarySerializer.Uint32(r, e)
 	case *int64:
-		rv, err := binarySerializer.Uint64(r)
-		if err != nil {
-			return err
-		}
+		rv := uint64(0)
+		err = binarySerializer.Uint64(r, &rv)
 		*e = int64(rv)
-		return nil
-
 	case *uint64:
-		rv, err := binarySerializer.Uint64(r)
-		if err != nil {
-			return err
-		}
-		*e = rv
-		return nil
-
+		err = binarySerializer.Uint64(r, e)
 	case *hash.Stamp:
-		_, err := io.ReadFull(r, e[:])
-		if err != nil {
-			return err
-		}
-		return nil
-
+		_, err = io.ReadFull(r, e[:])
 	case *hash.Hash:
-		_, err := io.ReadFull(r, e[:])
-		if err != nil {
-			return err
-		}
-		return nil
-
+		_, err = io.ReadFull(r, e[:])
 	case *crypto.Address:
-		_, err := io.ReadFull(r, e[:])
-		if err != nil {
-			return err
-		}
-		return nil
-
-	case *bls.Signature:
-		bytes := make([]byte, bls.SignatureSize)
-		_, err := r.Read(bytes)
-		if err != nil {
-			return err
-		}
-		sig, err := bls.SignatureFromRawBytes(bytes)
-		if err != nil {
-			return err
-		}
-		*e = *sig
-		return nil
-
-	case *bls.PublicKey:
-		bytes := make([]byte, bls.PublicKeySize)
-		_, err := r.Read(bytes)
-		if err != nil {
-			return err
-		}
-		pub, err := bls.PublicKeyFromRawBytes(bytes)
-		if err != nil {
-			return err
-		}
-		*e = *pub
-		return nil
+		_, err = io.ReadFull(r, e[:])
+	default:
+		// Fall back to the slower binary.Read if a fast path was not available
+		// above.
+		err = binary.Read(r, binary.LittleEndian, element)
 	}
 
-	// Fall back to the slower binary.Read if a fast path was not available
-	// above.
-	return binary.Read(r, binary.LittleEndian, element)
+	return err
 }
 
 // readElements reads multiple items from r.  It is equivalent to multiple
@@ -282,92 +217,40 @@ func ReadElements(r io.Reader, elements ...interface{}) error {
 
 // writeElement writes the little endian representation of element to w.
 func WriteElement(w io.Writer, element interface{}) error {
+
 	// Attempt to write the element based on the concrete type via fast
 	// type assertions first.
+	var err error
 	switch e := element.(type) {
 	case int8:
-		err := binarySerializer.PutUint8(w, uint8(e))
-		if err != nil {
-			return err
-		}
-		return nil
-
+		err = binarySerializer.PutUint8(w, uint8(e))
 	case uint8:
-		err := binarySerializer.PutUint8(w, e)
-		if err != nil {
-			return err
-		}
-		return nil
-
+		err = binarySerializer.PutUint8(w, e)
+	case int16:
+		err = binarySerializer.PutUint16(w, uint16(e))
+	case uint16:
+		err = binarySerializer.PutUint16(w, e)
 	case int32:
-		err := binarySerializer.PutUint32(w, uint32(e))
-		if err != nil {
-			return err
-		}
-		return nil
-
+		err = binarySerializer.PutUint32(w, uint32(e))
 	case uint32:
-		err := binarySerializer.PutUint32(w, e)
-		if err != nil {
-			return err
-		}
-		return nil
-
+		err = binarySerializer.PutUint32(w, e)
 	case int64:
-		err := binarySerializer.PutUint64(w, uint64(e))
-		if err != nil {
-			return err
-		}
-		return nil
-
+		err = binarySerializer.PutUint64(w, uint64(e))
 	case uint64:
-		err := binarySerializer.PutUint64(w, e)
-		if err != nil {
-			return err
-		}
-		return nil
-
+		err = binarySerializer.PutUint64(w, e)
 	case *hash.Stamp:
-		_, err := w.Write(e[:])
-		if err != nil {
-			return err
-		}
-		return nil
-
+		_, err = w.Write(e[:])
 	case *hash.Hash:
-		_, err := w.Write(e[:])
-		if err != nil {
-			return err
-		}
-		return nil
-
+		_, err = w.Write(e[:])
 	case *crypto.Address:
-		_, err := w.Write(e[:])
-		if err != nil {
-			return err
-		}
-		return nil
-
-	case *bls.Signature:
-		bytes := e.RawBytes()
-		_, err := w.Write(bytes)
-		if err != nil {
-			return err
-		}
-		return nil
-
-	case *bls.PublicKey:
-		bytes := e.RawBytes()
-		_, err := w.Write(bytes)
-		if err != nil {
-			return err
-		}
-		return nil
+		_, err = w.Write(e[:])
+	default:
+		// Fall back to the slower binary.Write if a fast path was not available
+		// above.
+		err = binary.Write(w, binary.LittleEndian, element)
 	}
 
-	// Fall back to the slower binary.Write if a fast path was not available
-	// above.
-	return binary.Write(w, binary.LittleEndian, element)
+	return err
 }
 
 // writeElements writes multiple items to w.  It is equivalent to multiple
@@ -387,21 +270,22 @@ func ReadVarInt(r io.Reader) (uint64, error) {
 	bits := 64
 	write := uint64(0)
 	for shift := 0; ; shift += 7 {
-		byte, err := binarySerializer.Uint8(r)
+		b := uint8(0)
+		err := binarySerializer.Uint8(r, &b)
 		if err != nil {
 			return 0, err
 		}
-		if shift+7 >= bits && byte >= 1<<(bits-shift) {
+		if shift+7 >= bits && b >= 1<<(bits-shift) {
 			return uint64(0), ErrOverflow
 		}
-		if byte == 0 && shift != 0 {
+		if b == 0 && shift != 0 {
 			return uint64(0), ErrNonCanonical
 		}
 
-		write |= uint64(byte&0x7f) << shift // Does the actually placing into write, stripping the first bit
+		write |= uint64(b&0x7f) << shift // Does the actually placing into write, stripping the first bit
 
 		// If there is no next
-		if (byte & 0x80) == 0 {
+		if (b & 0x80) == 0 {
 			break
 		}
 	}
@@ -426,26 +310,38 @@ func WriteVarInt(w io.Writer, val uint64) error {
 // VarIntSerializeSize returns the number of bytes it would take to serialize
 // val as a variable length integer.
 func VarIntSerializeSize(val uint64) int {
-	if val == 0xffffffffffffffff {
+	if val >= 0x8000000000000000 {
 		return 10
-	} else if val >= 0x1ffffffffffffff {
+	} else if val >= 0x100000000000000 {
 		return 9
-	} else if val >= 0x3ffffffffffff {
+	} else if val >= 0x2000000000000 {
 		return 8
-	} else if val >= 0x7ffffffffff {
+	} else if val >= 0x40000000000 {
 		return 7
-	} else if val >= 0xfffffffff {
+	} else if val >= 0x800000000 {
 		return 6
-	} else if val >= 0x1ffffff {
+	} else if val >= 0x10000000 {
 		return 5
-	} else if val >= 0x3fffff {
+	} else if val >= 0x200000 {
 		return 4
-	} else if val >= 0x7fff {
+	} else if val >= 0x3fff {
 		return 3
-	} else if val >= 0xff {
+	} else if val >= 0x80 {
 		return 2
 	}
 	return 1
+}
+
+// VarStringSerializeSize returns the number of bytes it would take to serialize
+// val as a string.
+func VarStringSerializeSize(str string) int {
+	return VarIntSerializeSize(uint64(len(str))) + len(str)
+}
+
+// VarBytesSerializeSize returns the number of bytes it would take to serialize
+// val as a byte array.
+func VarBytesSerializeSize(bytes []byte) int {
+	return VarIntSerializeSize(uint64(len(bytes))) + len(bytes)
 }
 
 // ReadVarString reads a variable length string from r and returns it as a Go

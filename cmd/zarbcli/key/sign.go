@@ -55,7 +55,7 @@ func Sign() func(c *cli.Cmd) {
 					cmd.PrintErrorMsg("Invalid input: %v", err)
 					return
 				}
-				trx, err = tx.TxFromRawBytes(bz)
+				trx, err = tx.TxFromBytes(bz)
 				if err != nil {
 					cmd.PrintErrorMsg("Invalid transaction: %v", err)
 					return

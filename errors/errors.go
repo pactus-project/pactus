@@ -9,6 +9,7 @@ const (
 	ErrGeneric
 	ErrNetwork
 	ErrInvalidBlock
+	ErrInvalidAmount
 	ErrInvalidAddress
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
@@ -30,6 +31,7 @@ var messages = map[int]string{
 	ErrGeneric:           "generic error",
 	ErrNetwork:           "network error",
 	ErrInvalidBlock:      "invalid block",
+	ErrInvalidAmount:     "invalid amount",
 	ErrInvalidAddress:    "invalid address",
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",

@@ -23,6 +23,10 @@ func StampFromString(str string) (Stamp, error) {
 	return s, nil
 }
 
+func (s Stamp) RawBytes() []byte {
+	return s[:]
+}
+
 func (s *Stamp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s.String())
 }

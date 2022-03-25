@@ -38,6 +38,10 @@ func (p *SendPayload) SanityCheck() error {
 	return nil
 }
 
+func (p *SendPayload) SerializeSize() int {
+	return 42 + encoding.VarIntSerializeSize(uint64(p.Amount))
+}
+
 func (p *SendPayload) Encode(w io.Writer) error {
 	err := encoding.WriteElements(w, &p.Sender, &p.Receiver)
 	if err != nil {

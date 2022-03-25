@@ -74,14 +74,17 @@ func (acc *Account) Hash() hash.Hash {
 	}
 	return hash.CalcHash(bs)
 }
+func (acc *Account) SerializeSize() int {
+	return 37 // 21+4+4+8
+}
 
 func (acc *Account) Bytes() ([]byte, error) {
-	w := &bytes.Buffer{}
+	w := bytes.NewBuffer(make([]byte, 0, acc.SerializeSize()))
 	err := encoding.WriteElements(w,
 		&acc.data.Address,
-		&acc.data.Number,
-		&acc.data.Sequence,
-		&acc.data.Balance)
+		acc.data.Number,
+		acc.data.Sequence,
+		acc.data.Balance)
 	if err != nil {
 		return nil, err
 	}

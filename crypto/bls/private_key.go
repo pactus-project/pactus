@@ -16,11 +16,7 @@ import (
 const PrivateKeySize = 32
 
 type PrivateKey struct {
-	data privateKeyData
-}
-
-type privateKeyData struct {
-	SecretKey *bls.SecretKey
+	secretKey *bls.SecretKey
 }
 
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
@@ -29,7 +25,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 		return nil, err
 	}
 
-	return PrivateKeyFromRawBytes(data)
+	return PrivateKeyFromBytes(data)
 }
 
 // PrivateKeyFromSeed generates a private key deterministically from
@@ -59,10 +55,10 @@ func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
 	buf := [32]byte{}
 	x.FillBytes(buf[:])
 
-	return PrivateKeyFromRawBytes(buf[:])
+	return PrivateKeyFromBytes(buf[:])
 }
 
-func PrivateKeyFromRawBytes(data []byte) (*PrivateKey, error) {
+func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
 		return nil, fmt.Errorf("invalid private key")
 	}
@@ -72,23 +68,23 @@ func PrivateKeyFromRawBytes(data []byte) (*PrivateKey, error) {
 	}
 
 	var prv PrivateKey
-	prv.data.SecretKey = sc
+	prv.secretKey = sc
 
 	return &prv, nil
 }
 
 func (prv PrivateKey) RawBytes() []byte {
-	if prv.data.SecretKey == nil {
+	if prv.secretKey == nil {
 		return nil
 	}
-	return prv.data.SecretKey.Serialize()
+	return prv.secretKey.Serialize()
 }
 
 func (prv PrivateKey) String() string {
-	if prv.data.SecretKey == nil {
+	if prv.secretKey == nil {
 		return ""
 	}
-	return prv.data.SecretKey.SerializeToHexStr()
+	return prv.secretKey.SerializeToHexStr()
 }
 
 func (prv *PrivateKey) MarshalJSON() ([]byte, error) {
@@ -96,7 +92,7 @@ func (prv *PrivateKey) MarshalJSON() ([]byte, error) {
 }
 
 func (prv *PrivateKey) MarshalCBOR() ([]byte, error) {
-	if prv.data.SecretKey == nil {
+	if prv.secretKey == nil {
 		return nil, fmt.Errorf("invalid private key")
 	}
 	return cbor.Marshal(prv.RawBytes())
@@ -108,7 +104,7 @@ func (prv *PrivateKey) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	p, err := PrivateKeyFromRawBytes(data)
+	p, err := PrivateKeyFromBytes(data)
 	if err != nil {
 		return err
 	}
@@ -118,7 +114,7 @@ func (prv *PrivateKey) UnmarshalCBOR(bs []byte) error {
 }
 
 func (prv *PrivateKey) SanityCheck() error {
-	if prv.data.SecretKey.IsZero() {
+	if prv.secretKey.IsZero() {
 		return fmt.Errorf("private key is zero")
 	}
 	return nil
@@ -126,18 +122,18 @@ func (prv *PrivateKey) SanityCheck() error {
 
 func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
 	sig := new(Signature)
-	sig.data.Signature = prv.data.SecretKey.SignByte(msg)
+	sig.signature = prv.secretKey.SignByte(msg)
 
 	return sig
 }
 
 func (prv *PrivateKey) PublicKey() crypto.PublicKey {
 	pb := new(PublicKey)
-	pb.data.PublicKey = prv.data.SecretKey.GetPublicKey()
+	pb.publicKey = prv.secretKey.GetPublicKey()
 
 	return pb
 }
 
 func (prv *PrivateKey) EqualsTo(right crypto.PrivateKey) bool {
-	return prv.data.SecretKey.IsEqual(right.(*PrivateKey).data.SecretKey)
+	return prv.secretKey.IsEqual(right.(*PrivateKey).secretKey)
 }

@@ -23,8 +23,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, _ := a.Result()
 	d, _ := res.Data()
-	acc := new(account.Account)
-	err = acc.Decode(d)
+	acc, err := account.AccountFromBytes(d)
 	if err != nil {
 		s.writeError(w, err)
 		return

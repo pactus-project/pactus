@@ -50,7 +50,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	store, err := store.NewStore(conf.Store, genDoc.Params().TransactionToLiveInterval)
+	store, err := store.NewStore(conf.Store, int(genDoc.Params().TransactionToLiveInterval))
 	if err != nil {
 		return nil, err
 	}

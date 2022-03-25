@@ -130,12 +130,12 @@ func (val *Validator) Bytes() ([]byte, error) {
 	}
 
 	err := encoding.WriteElements(w,
-		&val.data.Number,
-		&val.data.Sequence,
-		&val.data.Stake,
-		&val.data.LastBondingHeight,
-		&val.data.UnbondingHeight,
-		&val.data.LastJoinedHeight)
+		val.data.Number,
+		val.data.Sequence,
+		val.data.Stake,
+		val.data.LastBondingHeight,
+		val.data.UnbondingHeight,
+		val.data.LastJoinedHeight)
 	if err != nil {
 		return nil, err
 	}

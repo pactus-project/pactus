@@ -11,7 +11,7 @@ import (
 )
 
 func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountRequest) (*zarb.AccountResponse, error) {
-	addr, err := crypto.AddressFromRawBytes(request.Address)
+	addr, err := crypto.AddressFromBytes(request.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
 
@@ -30,8 +30,8 @@ func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountReque
 func accountToProto(acc *account.Account) *zarb.AccountInfo {
 	return &zarb.AccountInfo{
 		Address:  acc.Address().RawBytes(),
-		Number:   int32(acc.Number()),
-		Sequence: int64(acc.Sequence()),
+		Number:   acc.Number(),
+		Sequence: acc.Sequence(),
 		Balance:  acc.Balance(),
 	}
 }
