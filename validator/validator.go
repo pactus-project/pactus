@@ -1,13 +1,14 @@
 package validator
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -16,16 +17,16 @@ type Validator struct {
 }
 
 type validatorData struct {
-	PublicKey         *bls.PublicKey `cbor:"1,keyasint"`
-	Number            int            `cbor:"2,keyasint"`
-	Sequence          int            `cbor:"3,keyasint"`
-	Stake             int64          `cbor:"4,keyasint"`
-	LastBondingHeight int            `cbor:"5,keyasint"`
-	UnbondingHeight   int            `cbor:"6,keyasint"`
-	LastJoinedHeight  int            `cbor:"7,keyasint"`
+	PublicKey         *bls.PublicKey
+	Number            int32
+	Sequence          int32
+	Stake             int64
+	LastBondingHeight int32
+	UnbondingHeight   int32
+	LastJoinedHeight  int32
 }
 
-func NewValidator(publicKey *bls.PublicKey, number int) *Validator {
+func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	val := &Validator{
 		data: validatorData{
 			PublicKey: publicKey,
@@ -35,14 +36,39 @@ func NewValidator(publicKey *bls.PublicKey, number int) *Validator {
 	return val
 }
 
+func ValidatorFromBytes(data []byte) (*Validator, error) {
+	acc := new(Validator)
+	r := bytes.NewReader(data)
+
+	acc.data.PublicKey = new(bls.PublicKey)
+	if err := acc.data.PublicKey.Decode(r); err != nil {
+		return nil, err
+	}
+
+	err := encoding.ReadElements(r,
+		&acc.data.Number,
+		&acc.data.Sequence,
+		&acc.data.Stake,
+		&acc.data.LastBondingHeight,
+		&acc.data.UnbondingHeight,
+		&acc.data.LastJoinedHeight,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return acc, nil
+}
+
 func (val *Validator) PublicKey() *bls.PublicKey { return val.data.PublicKey }
 func (val *Validator) Address() crypto.Address   { return val.data.PublicKey.Address() }
-func (val *Validator) Number() int               { return val.data.Number }
-func (val *Validator) Sequence() int             { return val.data.Sequence }
+func (val *Validator) Number() int32             { return val.data.Number }
+func (val *Validator) Sequence() int32           { return val.data.Sequence }
 func (val *Validator) Stake() int64              { return val.data.Stake }
-func (val *Validator) LastBondingHeight() int    { return val.data.LastBondingHeight }
-func (val *Validator) UnbondingHeight() int      { return val.data.UnbondingHeight }
-func (val *Validator) LastJoinedHeight() int     { return val.data.LastJoinedHeight }
+func (val *Validator) LastBondingHeight() int32  { return val.data.LastBondingHeight }
+func (val *Validator) UnbondingHeight() int32    { return val.data.UnbondingHeight }
+func (val *Validator) LastJoinedHeight() int32   { return val.data.LastJoinedHeight }
 
 func (val Validator) Power() int64 {
 	//if the validator requested to unbond ignore stake
@@ -69,35 +95,52 @@ func (val *Validator) IncSequence() {
 }
 
 // UpdateLastJoinedHeight updates the last height that this validator joined the committee
-func (val *Validator) UpdateLastJoinedHeight(height int) {
+func (val *Validator) UpdateLastJoinedHeight(height int32) {
 	val.data.LastJoinedHeight = height
 }
 
 // UpdateLastBondingHeight updates the last height that this validator bonded some stakes
-func (val *Validator) UpdateLastBondingHeight(height int) {
+func (val *Validator) UpdateLastBondingHeight(height int32) {
 	val.data.LastBondingHeight = height
 }
 
 // UpdateUnbondingHeight updates the unbonding height for the validator
-func (val *Validator) UpdateUnbondingHeight(height int) {
+func (val *Validator) UpdateUnbondingHeight(height int32) {
 	val.data.UnbondingHeight = height
 }
 
 // Hash return the hash of this validator
 func (val *Validator) Hash() hash.Hash {
-	bs, err := val.Encode()
+	bs, err := val.Bytes()
 	if err != nil {
 		panic(err)
 	}
 	return hash.CalcHash(bs)
 }
 
-func (val Validator) Encode() ([]byte, error) {
-	return cbor.Marshal(val.data)
+func (val *Validator) SerializeSize() int {
+	return 124 // 96+4+4+8+4+4+4
 }
 
-func (val *Validator) Decode(bs []byte) error {
-	return cbor.Unmarshal(bs, &val.data)
+func (val *Validator) Bytes() ([]byte, error) {
+	w := bytes.NewBuffer(make([]byte, 0, val.SerializeSize()))
+
+	if err := val.data.PublicKey.Encode(w); err != nil {
+		return nil, err
+	}
+
+	err := encoding.WriteElements(w,
+		&val.data.Number,
+		&val.data.Sequence,
+		&val.data.Stake,
+		&val.data.LastBondingHeight,
+		&val.data.UnbondingHeight,
+		&val.data.LastJoinedHeight)
+	if err != nil {
+		return nil, err
+	}
+
+	return w.Bytes(), nil
 }
 
 func (val Validator) MarshalJSON() ([]byte, error) {
@@ -112,10 +155,10 @@ func (val Validator) Fingerprint() string {
 }
 
 // GenerateTestValidator generates a validator for testing purpose
-func GenerateTestValidator(number int) (*Validator, crypto.Signer) {
+func GenerateTestValidator(number int32) (*Validator, crypto.Signer) {
 	pub, pv := bls.GenerateTestKeyPair()
 	val := NewValidator(pub, number)
 	val.data.Stake = util.RandInt64(100 * 1e8)
-	val.data.Sequence = util.RandInt(100)
+	val.data.Sequence = util.RandInt32(100)
 	return val, crypto.NewSigner(pv)
 }

@@ -55,7 +55,7 @@ func (c *committee) TotalPower() int64 {
 	return p
 }
 
-func (c *committee) Update(lastRound int, joined []*validator.Validator) {
+func (c *committee) Update(lastRound int32, joined []*validator.Validator) {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 
@@ -82,7 +82,7 @@ func (c *committee) Update(lastRound int, joined []*validator.Validator) {
 		return oldestFirst[i].Value.(*validator.Validator).LastJoinedHeight() < oldestFirst[j].Value.(*validator.Validator).LastJoinedHeight()
 	})
 
-	for i := 0; i <= lastRound; i++ {
+	for i := 0; i <= int(lastRound); i++ {
 		c.proposerPos = c.proposerPos.Next()
 		if c.proposerPos == nil {
 			c.proposerPos = c.validatorList.Front()
@@ -136,7 +136,7 @@ func (c *committee) contains(addr crypto.Address) bool {
 }
 
 // IsProposer checks if the address is proposer for this height at this round
-func (c *committee) IsProposer(addr crypto.Address, round int) bool {
+func (c *committee) IsProposer(addr crypto.Address, round int32) bool {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 
@@ -145,16 +145,16 @@ func (c *committee) IsProposer(addr crypto.Address, round int) bool {
 }
 
 // Proposer returns proposer info for this height at this round
-func (c *committee) Proposer(round int) *validator.Validator {
+func (c *committee) Proposer(round int32) *validator.Validator {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 
 	return c.proposer(round)
 }
 
-func (c *committee) proposer(round int) *validator.Validator {
+func (c *committee) proposer(round int32) *validator.Validator {
 	pos := c.proposerPos
-	for i := 0; i < round; i++ {
+	for i := 0; i < int(round); i++ {
 		pos = pos.Next()
 		if pos == nil {
 			pos = c.validatorList.Front()
@@ -164,11 +164,11 @@ func (c *committee) proposer(round int) *validator.Validator {
 	return pos.Value.(*validator.Validator)
 }
 
-func (c *committee) Committers() []int {
+func (c *committee) Committers() []int32 {
 	c.lk.RLock()
 	defer c.lk.RUnlock()
 
-	committers := make([]int, c.validatorList.Len())
+	committers := make([]int32, c.validatorList.Len())
 	i := 0
 	c.iterate(func(v *validator.Validator) (stop bool) {
 		committers[i] = v.Number()
@@ -200,8 +200,8 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
 	signers := make([]crypto.Signer, num)
 	vals := make([]*validator.Validator, num)
-	h1 := util.RandInt(1000)
-	for i := 0; i < num; i++ {
+	h1 := util.RandInt32(100000)
+	for i := int32(0); i < int32(num); i++ {
 		val, s := validator.GenerateTestValidator(i)
 		signers[i] = s
 		vals[i] = val
