@@ -2,7 +2,6 @@ package tx
 
 import (
 	"encoding/hex"
-	"fmt"
 	"strings"
 	"testing"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 // TODO: write more tests, and check the error codes
@@ -25,7 +25,41 @@ func TestJSONMarshaling(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestCBORMarshaling(t *testing.T) {
+	tx1, _ := GenerateTestSendTx()
+	bz, err := cbor.Marshal(tx1)
+	assert.NoError(t, err)
+	tx2 := new(Tx)
+	assert.NoError(t, cbor.Unmarshal(bz, tx2))
+	assert.Equal(t, tx1.ID(), tx2.ID())
+
+	assert.Error(t, cbor.Unmarshal([]byte{1}, tx2))
+}
+
 func TestEncodingTx(t *testing.T) {
+	tx1, _ := GenerateTestSendTx()
+	len := tx1.SerializeSize()
+
+	for i := 0; i < len; i++ {
+		w := util.NewFixedWriter(i)
+		assert.Error(t, tx1.Encode(w), "encode test %v failed", i)
+	}
+	w := util.NewFixedWriter(len)
+	assert.NoError(t, tx1.Encode(w))
+
+	for i := 0; i < len; i++ {
+		tx2 := new(Tx)
+		r := util.NewFixedReader(i, w.Bytes())
+		assert.Error(t, tx2.Decode(r), "decode test %v failed", i)
+	}
+
+	tx2 := new(Tx)
+	r := util.NewFixedReader(len, w.Bytes())
+	assert.NoError(t, tx2.Decode(r))
+	assert.Equal(t, tx1.ID(), tx2.ID())
+}
+
+func TestTxFromBytes(t *testing.T) {
 	tx1, _ := GenerateTestSendTx()
 	tx2, _ := GenerateTestBondTx()
 	tx3, _ := GenerateTestUnbondTx()
@@ -36,11 +70,9 @@ func TestEncodingTx(t *testing.T) {
 	for _, tx := range tests {
 		assert.NoError(t, tx.SanityCheck())
 
-		bz, err := cbor.Marshal(tx)
-		fmt.Printf("%x\n", bz)
+		bz, err := tx.Bytes()
 		assert.NoError(t, err)
-		tx2 := new(Tx)
-		assert.NoError(t, cbor.Unmarshal(bz, tx2))
+		tx2, err := TxFromBytes(bz)
 		assert.Equal(t, tx.Version(), tx2.Version())
 		assert.Equal(t, tx.Stamp(), tx2.Stamp())
 		assert.Equal(t, tx.Sequence(), tx2.Sequence())
@@ -53,6 +85,9 @@ func TestEncodingTx(t *testing.T) {
 		assert.True(t, tx.PublicKey().EqualsTo(tx2.PublicKey()))
 		assert.True(t, tx.Signature().EqualsTo(tx2.Signature()))
 	}
+
+	_, err := TxFromBytes([]byte{1})
+	assert.Error(t, err)
 }
 
 func TestTxIDNoSignatory(t *testing.T) {
@@ -62,35 +97,31 @@ func TestTxIDNoSignatory(t *testing.T) {
 	tx2.data.PublicKey = nil
 	tx2.data.Signature = nil
 	require.Equal(t, tx1.ID(), tx2.ID())
+	require.Equal(t, tx1.SignBytes(), tx2.SignBytes())
 }
 
 func TestTxSanityCheck(t *testing.T) {
 	t.Run("Invalid sequence", func(t *testing.T) {
-		tx, signer := GenerateTestSendTx()
-		tx.data.Sequence = -1
-		signer.SignMsg(tx)
-		err := tx.SanityCheck()
+		trx, _ := GenerateTestSendTx()
+		trx.data.Sequence = -1
+		err := trx.SanityCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
-	})
-	t.Run("Transaction ID should be same for signed and unsigned transactions", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		id1 := tx.ID()
-		sb1 := tx.SignBytes()
-		tx.data.PublicKey = nil
-		tx.data.Signature = nil
-		id2 := tx.ID()
-		sb2 := tx.SignBytes()
-		assert.Equal(t, id1, id2)
-		assert.Equal(t, sb1, sb2)
 	})
 
 	t.Run("Big memo, Should returns error", func(t *testing.T) {
 		bigMemo := strings.Repeat("a", maxMemoLength+1)
 
-		tx, signer := GenerateTestSendTx()
-		tx.data.Memo = bigMemo
-		signer.SignMsg(tx)
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.Memo = bigMemo
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidMemo)
+	})
+
+	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.Payload.(*payload.SendPayload).Sender[0] = 0x2
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 }
 
@@ -127,54 +158,71 @@ func TestSubsidyTx(t *testing.T) {
 		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
-		assert.Error(t, trx.SanityCheck())
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
 		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		trx.SetPublicKey(pub)
-		assert.Error(t, trx.SanityCheck())
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 }
 
 func TestInvalidSignature(t *testing.T) {
 	t.Run("Good", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		assert.NoError(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		assert.NoError(t, trx.SanityCheck())
 	})
 
 	t.Run("No signature", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		tx.data.Signature = nil
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.Signature = nil
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("No public key", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		tx.data.PublicKey = nil
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.PublicKey = nil
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
 	pbInv, pvInv := bls.GenerateTestKeyPair()
 	t.Run("Invalid signature", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		sig := pvInv.Sign(tx.SignBytes())
-		tx.SetSignature(sig)
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		sig := pvInv.Sign(trx.SignBytes())
+		trx.SetSignature(sig)
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Invalid public key", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		tx.SetPublicKey(pbInv)
-		assert.Error(t, tx.SanityCheck())
-
+		trx, _ := GenerateTestSendTx()
+		trx.SetPublicKey(pbInv)
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		tx.data.Memo = "Hello"
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.Memo = "Hello"
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Zero signature", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.Signature, _ = bls.SignatureFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Zero public key", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.PublicKey, _ = bls.PublicKeyFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		assert.Error(t, trx.SanityCheck())
 	})
 }
 

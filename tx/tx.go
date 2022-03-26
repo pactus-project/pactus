@@ -102,14 +102,14 @@ func (tx *Tx) SanityCheck() error {
 	if err := tx.checkFee(); err != nil {
 		return err
 	}
-	if err := tx.checkSignature(); err != nil {
-		return err
-	}
 	if err := tx.Payload().SanityCheck(); err != nil {
 		return err
 	}
 	if len(tx.Memo()) > maxMemoLength {
-		return errors.Errorf(errors.ErrInvalidTx, "memo length exceeded")
+		return errors.Error(errors.ErrInvalidMemo)
+	}
+	if err := tx.checkSignature(); err != nil {
+		return err
 	}
 
 	tx.sanityChecked = true
@@ -137,7 +137,7 @@ func (tx *Tx) checkSignature() error {
 			return errors.Errorf(errors.ErrInvalidPublicKey, "subsidy transaction should not have public key")
 		}
 		if tx.Signature() != nil {
-			return errors.Errorf(errors.ErrInvalidPublicKey, "subsidy transaction should not have signature")
+			return errors.Errorf(errors.ErrInvalidSignature, "subsidy transaction should not have signature")
 		}
 	} else {
 		if tx.PublicKey() == nil {

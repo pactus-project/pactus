@@ -17,6 +17,7 @@ const (
 	ErrInvalidSignature
 	ErrInvalidSequence
 	ErrInvalidTx
+	ErrInvalidMemo
 	ErrInvalidProof
 	ErrInvalidHeight
 	ErrInvalidProposal
@@ -42,6 +43,7 @@ var messages = map[int]string{
 	ErrInvalidSignature:  "invalid signature",
 	ErrInvalidSequence:   "invalid sequence",
 	ErrInvalidTx:         "invalid transaction",
+	ErrInvalidMemo:         "invalid memo",
 	ErrInvalidProof:      "invalid proof",
 	ErrInvalidHeight:     "invalid height",
 	ErrInvalidProposal:   "invalid proposal",
