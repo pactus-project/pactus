@@ -10,12 +10,15 @@ const (
 	ErrNetwork
 	ErrInvalidBlock
 	ErrInvalidAmount
+	ErrInvalidFee
 	ErrInvalidAddress
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
 	ErrInvalidSequence
 	ErrInvalidTx
+	ErrInvalidProof
+	ErrInvalidHeight
 	ErrInvalidProposal
 	ErrInvalidVote
 	ErrInvalidMessage
@@ -32,12 +35,15 @@ var messages = map[int]string{
 	ErrNetwork:           "network error",
 	ErrInvalidBlock:      "invalid block",
 	ErrInvalidAmount:     "invalid amount",
+	ErrInvalidFee:        "invalid fee",
 	ErrInvalidAddress:    "invalid address",
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
 	ErrInvalidSequence:   "invalid sequence",
 	ErrInvalidTx:         "invalid transaction",
+	ErrInvalidProof:      "invalid proof",
+	ErrInvalidHeight:     "invalid height",
 	ErrInvalidProposal:   "invalid proposal",
 	ErrInvalidVote:       "invalid vote",
 	ErrInvalidMessage:    "invalid message",

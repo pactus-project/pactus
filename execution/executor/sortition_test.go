@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
@@ -25,8 +26,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, 1, crypto.GenerateTestAddress(), proof)
 		tSandbox.AcceptTestSortition = true
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
 	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval() + 1)
@@ -35,8 +35,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
 		tSandbox.AcceptTestSortition = true
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
 	tSandbox.TestStore.AddTestBlock(500001)
@@ -44,22 +43,19 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+2, val.Address(), proof)
 		tSandbox.AcceptTestSortition = true
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
 		tSandbox.AcceptTestSortition = false
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidProof)
 	})
 
 	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, existingVal.Sequence()+1, existingVal.Address(), proof)
 		tSandbox.AcceptTestSortition = true
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -19,26 +20,34 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, 1, pub.Address(), pub, amt, fee, "invalid sender")
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, invalid sequence", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+2, sender.Address(), pub, amt, fee, "invalid sequence")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, senderBalance+1, 0, "insufficient balance")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInsufficientFunds)
 	})
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		pub := tSandbox.Committee().Proposer(0).PublicKey()
 		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, amt, fee, "inside committee")
 
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidTx)
+	})
+
+	t.Run("Unbonded before", func(t *testing.T) {
+		pub, _ := bls.GenerateTestKeyPair()
+		val := tSandbox.MakeNewValidator(pub)
+		val.UpdateUnbondingHeight(tSandbox.CurrentHeight())
+		tSandbox.UpdateValidator(val)
+
+		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, amt, fee, "unbonded before")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -47,16 +56,6 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
 		// Execute again, should fail
-		assert.Error(t, exe.Execute(trx, tSandbox))
-	})
-
-	t.Run("Unbonded before", func(t *testing.T) {
-		val := tSandbox.Validator(pub.Address())
-		val.UpdateUnbondingHeight(tSandbox.CurrentHeight())
-		tSandbox.UpdateValidator(val)
-
-		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), val.PublicKey(), amt, fee, "unbonded before")
-
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
@@ -94,6 +93,5 @@ func TestBondJoiningCommittee(t *testing.T) {
 	tSandbox.UpdateValidator(val)
 
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(), pub, amt, fee, "joining committee")
-
-	assert.Error(t, exe.Execute(trx, tSandbox))
+	assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 }

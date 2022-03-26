@@ -21,10 +21,10 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	senderAcc := sb.Account(pld.Sender)
 	if senderAcc == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve sender account")
+		return errors.Errorf(errors.ErrInvalidAddress, "unable to retrieve sender account")
 	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid sequence, expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidSequence, "expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
 	addr := pld.PublicKey.Address()
 	val := sb.Validator(addr)
@@ -32,7 +32,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		val = sb.MakeNewValidator(pld.PublicKey)
 	}
 	if val.UnbondingHeight() > 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "validator has unbonded at height %v", val.UnbondingHeight())
+		return errors.Errorf(errors.ErrInvalidHeight, "validator has unbonded at height %v", val.UnbondingHeight())
 	}
 	if e.strict {
 		// In strict mode, bond transaction will be rejected if a validator is in committee.
@@ -44,11 +44,11 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		// In strict mode, a validator can not evaluate sortition during bonding perion.
 		// In non-strict mode, we accept it and keep it inside tx pool to process it later
 		if val.LastJoinedHeight() == sb.CurrentHeight() {
-			return errors.Errorf(errors.ErrInvalidTx, "validator %v will join committee in the next height", addr)
+			return errors.Errorf(errors.ErrInvalidHeight, "validator %v will join committee in the next height", addr)
 		}
 	}
 	if senderAcc.Balance() < pld.Stake+trx.Fee() {
-		return errors.Errorf(errors.ErrInvalidTx, "insufficient balance")
+		return errors.Error(errors.ErrInsufficientFunds)
 	}
 
 	senderAcc.IncSequence()
