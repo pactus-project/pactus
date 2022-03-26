@@ -52,7 +52,7 @@ func getIndex(proof Proof, max uint64) uint64 {
 	bigRnd.SetUint64(rnd64)
 	bigMax.SetUint64(max)
 	denominator.SetUint64(util.MaxUint64)
-	
+
 	numerator = numerator.Mul(bigRnd, bigMax)
 
 	// divide numerator and denominator to get the election ratio for this block height

@@ -38,7 +38,7 @@ func GetSequence(rpcEndpoint string, addr crypto.Address) (int32, error) {
 		return 0, err
 	}
 
-	return int32(acc.Account.Sequence) + 1, nil
+	return acc.Account.Sequence + 1, nil
 }
 
 func SendTx(rpcEndpoint string, payload []byte) (string, error) {

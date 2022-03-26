@@ -39,7 +39,8 @@ func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
 	}
 }
 
-func BlockFromBytes(data []byte) (*Block, error) {
+/// FromBytes constructs a new block from byte array
+func FromBytes(data []byte) (*Block, error) {
 	b := new(Block)
 	r := bytes.NewReader(data)
 	if err := b.Decode(r); err != nil {
@@ -105,7 +106,9 @@ func (b *Block) Hash() hash.Hash {
 	}
 
 	w := &bytes.Buffer{}
-	b.data.Header.Encode(w)
+	if err := b.data.Header.Encode(w); err != nil {
+		return hash.UndefHash
+	}
 	// Genesis block has no certificate
 	if b.data.PrevCert != nil {
 		w.Write(b.data.PrevCert.Hash().Bytes())
@@ -159,7 +162,9 @@ func (b *Block) Encode(w io.Writer) error {
 			return err
 		}
 	}
-	encoding.WriteVarInt(w, uint64(b.data.Txs.Len()))
+	if err := encoding.WriteVarInt(w, uint64(b.data.Txs.Len())); err != nil {
+		return err
+	}
 	for _, tx := range b.Transactions() {
 		if err := tx.Encode(w); err != nil {
 			return err

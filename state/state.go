@@ -341,7 +341,7 @@ func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certi
 	// Validate sortition seed
 	seed := block.Header().SortitionSeed()
 	if !seed.Verify(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed.")
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
 	}
 
 	// -----------------------------------

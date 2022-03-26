@@ -25,7 +25,7 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, tx1.Stamp().Bytes(), res.Tranaction.Stamp)
 		assert.Equal(t, tx1.Fee(), res.Tranaction.Fee)
 		assert.Equal(t, tx1.Memo(), res.Tranaction.Memo)
-		assert.Equal(t, int32(tx1.Sequence()), res.Tranaction.Sequence)
+		assert.Equal(t, tx1.Sequence(), res.Tranaction.Sequence)
 		assert.Equal(t, tx1.Signature().Bytes(), res.Tranaction.Signature)
 		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Amount, res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Amount)
 		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)

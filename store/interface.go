@@ -26,7 +26,7 @@ func (s *StoredBlock) Height() int32 {
 }
 
 func (s *StoredBlock) ToFullBlock() (*block.Block, error) {
-	b, err := block.BlockFromBytes(s.data)
+	b, err := block.FromBytes(s.data)
 	if err != nil {
 		return nil, err
 	}

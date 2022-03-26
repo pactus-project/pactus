@@ -43,7 +43,7 @@ var messages = map[int]string{
 	ErrInvalidSignature:  "invalid signature",
 	ErrInvalidSequence:   "invalid sequence",
 	ErrInvalidTx:         "invalid transaction",
-	ErrInvalidMemo:         "invalid memo",
+	ErrInvalidMemo:       "invalid memo",
 	ErrInvalidProof:      "invalid proof",
 	ErrInvalidHeight:     "invalid height",
 	ErrInvalidProposal:   "invalid proposal",

@@ -51,7 +51,7 @@ func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, 
 		return nil, err
 	}
 
-	val, err := validator.ValidatorFromBytes(data)
+	val, err := validator.FromBytes(data)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 		// key := iter.Key()
 		value := iter.Value()
 
-		val, err := validator.ValidatorFromBytes(value)
+		val, err := validator.FromBytes(value)
 		if err != nil {
 			logger.Panic("unable to decode validator: %v", err)
 		}

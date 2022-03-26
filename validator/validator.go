@@ -37,8 +37,8 @@ func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	return val
 }
 
-// ValidatorFromBytes constructs a new validator from byte array
-func ValidatorFromBytes(data []byte) (*Validator, error) {
+// FromBytes constructs a new validator from byte array
+func FromBytes(data []byte) (*Validator, error) {
 	acc := new(Validator)
 	r := bytes.NewReader(data)
 

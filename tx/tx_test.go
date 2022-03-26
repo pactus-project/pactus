@@ -74,7 +74,8 @@ func TestTxFromBytes(t *testing.T) {
 
 		bz, err := tx.Bytes()
 		assert.NoError(t, err)
-		tx2, err := TxFromBytes(bz)
+		tx2, err := FromBytes(bz)
+		assert.NoError(t, err)
 		assert.Equal(t, tx.Version(), tx2.Version())
 		assert.Equal(t, tx.Stamp(), tx2.Stamp())
 		assert.Equal(t, tx.Sequence(), tx2.Sequence())
@@ -88,7 +89,7 @@ func TestTxFromBytes(t *testing.T) {
 		assert.True(t, tx.Signature().EqualsTo(tx2.Signature()))
 	}
 
-	_, err := TxFromBytes([]byte{1})
+	_, err := FromBytes([]byte{1})
 	assert.Error(t, err)
 }
 
@@ -312,7 +313,7 @@ func TestSortitionSanityCheck(t *testing.T) {
 func TestSignBytes(t *testing.T) {
 	d, _ := hex.DecodeString("01f10c077fcc04f5ef819fc9d6080101d3e45d249a39d806a1faec2fd85820db340b98e30168fc72a1a961933e694439b2e3c8751d27de5ad3b9c3dc91b9c9b59b010c746573742073656e642d7478b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a68d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e0611776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
 	h, _ := hash.FromString("2a04aef409194ff72e942346525428f6c030e2875be27205cb2ce46065ec543f")
-	trx, err := TxFromBytes(d)
+	trx, err := FromBytes(d)
 	assert.NoError(t, err)
 	assert.Equal(t, trx.SerializeSize(), len(d))
 

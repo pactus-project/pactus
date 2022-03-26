@@ -22,7 +22,7 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, _ := a.Result()
 	d, _ := res.Data()
-	val, err := validator.ValidatorFromBytes(d)
+	val, err := validator.FromBytes(d)
 	if err != nil {
 		s.writeError(w, err)
 		return

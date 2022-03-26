@@ -16,11 +16,11 @@ func TestFromBytes(t *testing.T) {
 	bs, err := acc.Bytes()
 	require.NoError(t, err)
 	require.Equal(t, acc.SerializeSize(), len(bs))
-	acc2, err := AccountFromBytes(bs)
+	acc2, err := FromBytes(bs)
 	require.NoError(t, err)
 	assert.Equal(t, acc, acc2)
 
-	_, err = AccountFromBytes([]byte("asdfghjkl"))
+	_, err = FromBytes([]byte("asdfghjkl"))
 	require.Error(t, err)
 }
 
@@ -39,7 +39,7 @@ func TestDecoding(t *testing.T) {
 		0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, // balance
 	}
 
-	acc, err := AccountFromBytes(bs)
+	acc, err := FromBytes(bs)
 	require.NoError(t, err)
 	bs2, _ := acc.Bytes()
 	assert.Equal(t, bs, bs2)

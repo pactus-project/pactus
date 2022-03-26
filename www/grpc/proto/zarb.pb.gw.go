@@ -479,12 +479,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetBlock")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetBlock", runtime.WithHTTPPathPattern("/api/block/hash/{hash}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetBlock_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetBlock_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -502,12 +503,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetBlockHash")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetBlockHash", runtime.WithHTTPPathPattern("/api/block_hash/{height}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetBlockHash_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetBlockHash_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -525,12 +527,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetTransaction")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetTransaction", runtime.WithHTTPPathPattern("/api/tranaction/id/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetTransaction_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetTransaction_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -548,12 +551,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetAccount")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetAccount", runtime.WithHTTPPathPattern("/api/account/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetAccount_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetAccount_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -571,12 +575,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetValidators")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetValidators", runtime.WithHTTPPathPattern("/api/validators"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetValidators_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetValidators_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -594,12 +599,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetValidator")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetValidator", runtime.WithHTTPPathPattern("/api/validator/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetValidator_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetValidator_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -617,12 +623,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetValidatorByNumber")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetValidatorByNumber", runtime.WithHTTPPathPattern("/api/validator/{number}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetValidatorByNumber_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetValidatorByNumber_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -640,12 +647,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetBlockchainInfo")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetBlockchainInfo", runtime.WithHTTPPathPattern("/api/blockchain"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetBlockchainInfo_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetBlockchainInfo_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -663,12 +671,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetNetworkInfo")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/GetNetworkInfo", runtime.WithHTTPPathPattern("/api/network"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_GetNetworkInfo_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_GetNetworkInfo_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -686,12 +695,13 @@ func RegisterZarbHandlerServer(ctx context.Context, mux *runtime.ServeMux, serve
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/SendRawTransaction")
+		var err error
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Zarb/SendRawTransaction", runtime.WithHTTPPathPattern("/api/send_raw_transaction/{data}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Zarb_SendRawTransaction_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Zarb_SendRawTransaction_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -748,12 +758,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetBlock")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetBlock", runtime.WithHTTPPathPattern("/api/block/hash/{hash}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetBlock_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetBlock_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -768,12 +779,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetBlockHash")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetBlockHash", runtime.WithHTTPPathPattern("/api/block_hash/{height}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetBlockHash_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetBlockHash_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -788,12 +800,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetTransaction")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetTransaction", runtime.WithHTTPPathPattern("/api/tranaction/id/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetTransaction_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetTransaction_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -808,12 +821,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetAccount")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetAccount", runtime.WithHTTPPathPattern("/api/account/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetAccount_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetAccount_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -828,12 +842,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetValidators")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetValidators", runtime.WithHTTPPathPattern("/api/validators"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetValidators_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetValidators_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -848,12 +863,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetValidator")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetValidator", runtime.WithHTTPPathPattern("/api/validator/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetValidator_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetValidator_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -868,12 +884,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetValidatorByNumber")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetValidatorByNumber", runtime.WithHTTPPathPattern("/api/validator/{number}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetValidatorByNumber_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetValidatorByNumber_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -888,12 +905,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetBlockchainInfo")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetBlockchainInfo", runtime.WithHTTPPathPattern("/api/blockchain"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetBlockchainInfo_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetBlockchainInfo_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -908,12 +926,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetNetworkInfo")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/GetNetworkInfo", runtime.WithHTTPPathPattern("/api/network"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_GetNetworkInfo_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_GetNetworkInfo_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
@@ -928,12 +947,13 @@ func RegisterZarbHandlerClient(ctx context.Context, mux *runtime.ServeMux, clien
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/SendRawTransaction")
+		var err error
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Zarb/SendRawTransaction", runtime.WithHTTPPathPattern("/api/send_raw_transaction/{data}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Zarb_SendRawTransaction_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Zarb_SendRawTransaction_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)

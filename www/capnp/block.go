@@ -57,11 +57,11 @@ func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
 		}
 		committers, _ := clc.NewCommitters(int32(len(b.PrevCertificate().Committers())))
 		for i, num := range b.PrevCertificate().Committers() {
-			committers.Set(i, int32(num))
+			committers.Set(i, num)
 		}
 		absentees, _ := clc.NewAbsentees(int32(len(b.PrevCertificate().Absentees())))
 		for i, num := range b.PrevCertificate().Absentees() {
-			absentees.Set(i, int32(num))
+			absentees.Set(i, num)
 		}
 	}
 	// header

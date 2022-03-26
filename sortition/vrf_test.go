@@ -54,7 +54,7 @@ func TestRandomUint64(t *testing.T) {
 		seed, _ := VerifiableSeedFromBytes(sig.Bytes())
 
 		nonce, _ := evaluate(seed, signer, util.MaxUint64)
-		if uint64(nonce) < watermark {
+		if nonce < watermark {
 			numHits++
 		}
 		if numHits > maxHits {

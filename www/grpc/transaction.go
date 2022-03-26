@@ -35,7 +35,7 @@ func (zs *zarbServer) SendRawTransaction(ctx context.Context, request *zarb.Send
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %s", err.Error())
 	}
-	trx, err := tx.TxFromBytes(data)
+	trx, err := tx.FromBytes(data)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %s", err.Error())
 	}

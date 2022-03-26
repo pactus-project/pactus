@@ -30,7 +30,7 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
 	rawTx, _ := args.Params.RawTx()
 
-	trx, err := tx.TxFromBytes(rawTx)
+	trx, err := tx.FromBytes(rawTx)
 	if err != nil {
 		return err
 	}

@@ -34,8 +34,8 @@ func NewAccount(addr crypto.Address, number int32) *Account {
 	}
 }
 
-// AccountFromBytes constructs a new account from byte array
-func AccountFromBytes(data []byte) (*Account, error) {
+// FromBytes constructs a new account from byte array
+func FromBytes(data []byte) (*Account, error) {
 	acc := new(Account)
 	r := bytes.NewReader(data)
 	err := encoding.ReadElements(r,

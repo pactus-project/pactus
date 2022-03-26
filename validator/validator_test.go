@@ -20,7 +20,7 @@ func TestFromBytes(t *testing.T) {
 	bs, err := val.Bytes()
 	require.NoError(t, err)
 	require.Equal(t, val.SerializeSize(), len(bs))
-	val2, err := ValidatorFromBytes(bs)
+	val2, err := FromBytes(bs)
 	require.NoError(t, err)
 	assert.Equal(t, val.Address(), val2.Address())
 	assert.Equal(t, val.Sequence(), val2.Sequence())
@@ -30,11 +30,11 @@ func TestFromBytes(t *testing.T) {
 	assert.Equal(t, val.LastJoinedHeight(), val2.LastJoinedHeight())
 	assert.Equal(t, val.UnbondingHeight(), val2.UnbondingHeight())
 
-	_, err = ValidatorFromBytes([]byte("asdfghjkl"))
+	_, err = FromBytes([]byte("asdfghjkl"))
 	require.Error(t, err)
 
 	bs = bs[:len(bs)-1]
-	_, err = ValidatorFromBytes(bs)
+	_, err = FromBytes(bs)
 	require.Error(t, err)
 }
 
@@ -47,7 +47,7 @@ func TestJSONMarshaling(t *testing.T) {
 
 func TestDecoding(t *testing.T) {
 	bs, _ := hex.DecodeString("95167c2a0d86ec360407bce89b304616e1d0f83dbc200642abea8405e1838312fb8290b1230ebe4369cf1b7f556906c610ae92bcee544a1af79e259996e368b14851a1f8844274690b10df983bc2776ab10cc37e49e175bc7ae17ac919b8c34c01000000020000000300000000000000040000000500000006000000")
-	val, err := ValidatorFromBytes(bs)
+	val, err := FromBytes(bs)
 	require.NoError(t, err)
 	bs2, _ := val.Bytes()
 	assert.Equal(t, bs, bs2)

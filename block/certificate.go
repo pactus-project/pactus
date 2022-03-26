@@ -66,7 +66,9 @@ func (cert *Certificate) SanityCheck() error {
 
 func (cert *Certificate) Hash() hash.Hash {
 	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
-	cert.Encode(w)
+	if err := cert.Encode(w); err != nil {
+		return hash.UndefHash
+	}
 	return hash.CalcHash(w.Bytes())
 }
 

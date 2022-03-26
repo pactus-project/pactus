@@ -26,7 +26,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	res, _ := t.Result()
 	data, _ := res.Data()
 	fmt.Printf("%x\n", data)
-	trx, err := tx.TxFromBytes(data)
+	trx, err := tx.FromBytes(data)
 	if err != nil {
 		s.writeError(w, err)
 		return

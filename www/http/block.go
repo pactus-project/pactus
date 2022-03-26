@@ -26,7 +26,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	d, _ := st.Data()
 	h, _ := st.Hash()
-	b, err := block.BlockFromBytes(d)
+	b, err := block.FromBytes(d)
 	if err != nil {
 		s.writeError(w, err)
 		return
@@ -44,7 +44,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
 	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.ZarbServer_getBlockHash_Params) error {
 		vars := mux.Vars(r)
-		height, err := strconv.Atoi(vars["height"])
+		height, err := strconv.ParseInt(vars["height"], 10, 32)
 		if err != nil {
 			return err
 		}

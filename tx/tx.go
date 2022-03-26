@@ -58,7 +58,8 @@ func NewTx(stamp hash.Stamp,
 	return trx
 }
 
-func TxFromBytes(bs []byte) (*Tx, error) {
+/// FromBytes constructs a new transaction from byte array
+func FromBytes(bs []byte) (*Tx, error) {
 	tx := new(Tx)
 	r := bytes.NewReader(bs)
 	if err := tx.Decode(r); err != nil {

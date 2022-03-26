@@ -22,7 +22,7 @@ func getAccount(t *testing.T, addr crypto.Address) *account.Account {
 	}
 
 	d, _ := st.Data()
-	acc, err := account.AccountFromBytes(d)
+	acc, err := account.FromBytes(d)
 	assert.NoError(t, err)
 	return acc
 }
