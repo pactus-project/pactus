@@ -1,13 +1,12 @@
 package account
 
 import (
-	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -20,31 +19,35 @@ func TestFromBytes(t *testing.T) {
 	acc2, err := AccountFromBytes(bs)
 	require.NoError(t, err)
 	assert.Equal(t, acc, acc2)
+
+	_, err = AccountFromBytes([]byte("asdfghjkl"))
+	require.Error(t, err)
 }
 
 func TestJSONMarshaling(t *testing.T) {
 	acc, _ := GenerateTestAccount(util.RandInt32(10000))
-
-	js, err := json.Marshal(acc)
+	_, err := json.Marshal(acc)
 	require.NoError(t, err)
-	fmt.Println(string(js))
-}
-
-func TestInvalidData(t *testing.T) {
-	_, err := AccountFromBytes([]byte("asdfghjkl"))
-	require.Error(t, err)
 }
 
 func TestMarshalingRawData(t *testing.T) {
-	bs, _ := hex.DecodeString("01283993000F6484BF1E148B2B27CF11A602BBB2DC01000000020000000300000000000000")
+	bs := []byte{
+		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
+		0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, // address
+		0x1, 0x0, 0x0, 0x0, // number
+		0x2, 0x0, 0x0, 0x0, // sequence
+		0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, // balance
+	}
+
 	acc, err := AccountFromBytes(bs)
 	require.NoError(t, err)
-	fmt.Println(acc)
 	bs2, _ := acc.Bytes()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
-	expected, _ := hash.FromString("a56021e105f1fd644864d7813a131b68b1b447c4abf19a7a44df54deab5b7091")
+	expected, _ := hash.FromString("33a4208262903cd1f274e760f495eca8e56b7fcc61feec0a8e6dcd0d2e57cafc")
 	assert.Equal(t, acc.Hash(), expected)
+	addr, _ := crypto.AddressFromBytes(bs[:21])
+	assert.Equal(t, acc.Address(), addr)
 }
 
 func TestIncSequence(t *testing.T) {
@@ -55,7 +58,15 @@ func TestIncSequence(t *testing.T) {
 	assert.Equal(t, acc.Number(), int32(100))
 }
 
-func TestSubtractBalance(t *testing.T) {
+func TestAddToBalance(t *testing.T) {
+	acc, _ := GenerateTestAccount(100)
+	bal := acc.Balance()
+	acc.AddToBalance(1)
+	assert.Equal(t, acc.Balance(), bal+1)
+
+}
+
+func TestSubtractFromBalance(t *testing.T) {
 	acc, _ := GenerateTestAccount(100)
 	bal := acc.Balance()
 	acc.SubtractFromBalance(1)

@@ -26,6 +26,7 @@ type validatorData struct {
 	LastJoinedHeight  int32
 }
 
+// NewValidator constructs a new validator object
 func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	val := &Validator{
 		data: validatorData{
@@ -36,6 +37,7 @@ func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	return val
 }
 
+// ValidatorFromBytes constructs a new validator from byte array
 func ValidatorFromBytes(data []byte) (*Validator, error) {
 	acc := new(Validator)
 	r := bytes.NewReader(data)
