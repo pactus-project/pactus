@@ -9,6 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -85,11 +86,13 @@ func TestDuplicateVote(t *testing.T) {
 	assert.NoError(t, vs.AddVote(correctVote)) // ok
 	assert.Equal(t, vs.Len(), 1)               // correctVote
 
-	assert.Error(t, vs.AddVote(duplicatedVote1)) // rejected
-	assert.Equal(t, vs.Len(), 2)                 // correctVote + duplicatedVote1
+	err := vs.AddVote(duplicatedVote1)
+	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote) // duplicated vote
+	assert.Equal(t, vs.Len(), 2)                               // correctVote + duplicatedVote1
 
-	assert.Error(t, vs.AddVote(duplicatedVote2)) // rejected
-	assert.Equal(t, vs.Len(), 3)                 // correctVote + duplicatedVote1 + duplicatedVote2
+	err = vs.AddVote(duplicatedVote2)
+	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote) // duplicated vote
+	assert.Equal(t, vs.Len(), 3)                               // correctVote + duplicatedVote1 + duplicatedVote2
 
 	assert.Error(t, vs.AddVote(correctVote)) // added before
 	assert.Equal(t, vs.Len(), 3)             // correctVote + duplicatedVote1 + duplicatedVote2

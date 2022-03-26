@@ -112,7 +112,7 @@ func (vs *VoteSet) AddVote(v *vote.Vote) error {
 				//
 				// We report an error
 				//
-				return errors.Error(errors.ErrInvalidVote)
+				return errors.Error(errors.ErrDuplicateVote)
 			}
 		}
 	}
