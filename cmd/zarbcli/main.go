@@ -4,15 +4,13 @@ import (
 	"os"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/zarbchain/zarb-go/cmd/zarb/key"
-	"github.com/zarbchain/zarb-go/cmd/zarb/tx"
+	"github.com/zarbchain/zarb-go/cmd/zarbcli/key"
+	"github.com/zarbchain/zarb-go/cmd/zarbcli/tx"
 )
 
-func zarb() *cli.Cli {
-	app := cli.App("zarb", "Zarb blockchain node")
+func zarbcli() *cli.Cli {
+	app := cli.App("zarbcli", "Zarb blockchain node (client)")
 
-	app.Command("init", "Initialize the zarb blockchain", Init())
-	app.Command("start", "Start the zarb blockchain", Start())
 	app.Command("key", "Create zarb key file for signing messages", func(k *cli.Cmd) {
 		k.Command("generate", "Generate a new key", key.Generate())
 		k.Command("recover", "Recover a key from the seed", key.Recover())
@@ -27,12 +25,11 @@ func zarb() *cli.Cli {
 		k.Command("unbond", "Create, sign and publish an unbond transaction", tx.UnbondTx())
 		k.Command("withdraw", "Create, sign and publish a withdraw transaction", tx.WithdrawTx())
 	})
-	app.Command("version", "Print the zarb version", Version())
 	return app
 }
 
 func main() {
-	if err := zarb().Run(os.Args); err != nil {
+	if err := zarbcli().Run(os.Args); err != nil {
 		panic(err)
 	}
 }
