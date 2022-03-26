@@ -13,7 +13,7 @@ type accountStore struct {
 	total int32
 }
 
-func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.RawBytes()...) }
+func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
 
 func newAccountStore(db *leveldb.DB) *accountStore {
 	as := &accountStore{

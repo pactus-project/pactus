@@ -29,7 +29,7 @@ func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountReque
 
 func accountToProto(acc *account.Account) *zarb.AccountInfo {
 	return &zarb.AccountInfo{
-		Address:  acc.Address().RawBytes(),
+		Address:  acc.Address().Bytes(),
 		Number:   acc.Number(),
 		Sequence: acc.Sequence(),
 		Balance:  acc.Balance(),

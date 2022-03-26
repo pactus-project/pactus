@@ -23,7 +23,7 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	if err := res.SetData(trxData); err != nil {
 		return err
 	}
-	return res.SetId(trx.ID().RawBytes())
+	return res.SetId(trx.ID().Bytes())
 }
 
 //Send the raw transaction
@@ -44,7 +44,7 @@ func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) err
 	}
 
 	res, _ := args.Results.NewResult()
-	if err := res.SetId(trx.ID().RawBytes()); err != nil {
+	if err := res.SetId(trx.ID().Bytes()); err != nil {
 		return err
 	}
 	res.SetStatus(0)

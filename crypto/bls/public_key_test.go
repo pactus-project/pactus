@@ -69,7 +69,7 @@ func TestPublicKeyEmpty(t *testing.T) {
 	bs, err := pub1.MarshalCBOR()
 	assert.Error(t, err)
 	assert.Empty(t, pub1.String())
-	assert.Empty(t, pub1.RawBytes())
+	assert.Empty(t, pub1.Bytes())
 
 	var pub2 PublicKey
 	err = pub2.UnmarshalCBOR(bs)

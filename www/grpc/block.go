@@ -17,7 +17,7 @@ func (zs *zarbServer) GetBlockHash(ctx context.Context, request *zarb.BlockHashR
 		return nil, status.Errorf(codes.NotFound, "block hash not found with this height")
 	}
 	return &zarb.BlockHashResponse{
-		Hash: hash.RawBytes(),
+		Hash: hash.Bytes(),
 	}, nil
 }
 
@@ -57,14 +57,14 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 				Round:      int32(block.PrevCertificate().Round()),
 				Committers: committers,
 				Absentees:  absentees,
-				Signature:  block.PrevCertificate().Signature().RawBytes(),
+				Signature:  block.PrevCertificate().Signature().Bytes(),
 			}
 
 		}
 		header = &zarb.BlockHeaderInfo{
 			Version:         int32(block.Header().Version()),
-			PrevBlockHash:   block.Header().PrevBlockHash().RawBytes(),
-			StateRoot:       block.Header().StateRoot().RawBytes(),
+			PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
+			StateRoot:       block.Header().StateRoot().Bytes(),
 			SortitionSeed:   sortitionSeed,
 			ProposerAddress: block.Header().ProposerAddress().String(),
 		}
@@ -81,7 +81,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 
 	res := &zarb.BlockResponse{
 		// Height: , // TODO: fix me
-		Hash:      hash.RawBytes(),
+		Hash:      hash.Bytes(),
 		BlockTime: timestamp,
 		Header:    header,
 		Txs:       tranactions,

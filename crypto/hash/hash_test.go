@@ -67,5 +67,5 @@ func TestHashSanityCheck(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, h.IsUndef())
 	assert.Error(t, h.SanityCheck())
-	assert.Equal(t, UndefHash.RawBytes(), h.RawBytes())
+	assert.Equal(t, UndefHash.Bytes(), h.Bytes())
 }

@@ -43,7 +43,7 @@ func TestTreasuryAddress(t *testing.T) {
 	assert.Equal(t, TreasuryAddress.String(), treasuryAddressString)
 	expected, err := AddressFromString(treasuryAddressString)
 	assert.NoError(t, err)
-	assert.Equal(t, TreasuryAddress.RawBytes(), expected.RawBytes())
+	assert.Equal(t, TreasuryAddress.Bytes(), expected.Bytes())
 }
 
 func TestInvalidBech32(t *testing.T) {

@@ -181,7 +181,7 @@ func EncryptKey(key *Key, auth, label string) (*EncryptedKey, error) {
 	}
 
 	encryptKey := derivedKey[:16]
-	keyBytes := key.PrivateKey().RawBytes()
+	keyBytes := key.PrivateKey().Bytes()
 
 	iv := getEntropyCSPRNG(aes.BlockSize) // 16
 	cipherText, err := aesCTRXOR(encryptKey, keyBytes, iv)

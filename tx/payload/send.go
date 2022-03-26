@@ -28,8 +28,8 @@ func (p *SendPayload) Value() int64 {
 }
 
 func (p *SendPayload) SanityCheck() error {
-	if p.Amount < 0 {
-		return errors.Errorf(errors.ErrInvalidAmount, "invalid amount")
+	if err := p.Sender.SanityCheck(); err != nil {
+		return errors.Errorf(errors.ErrInvalidAddress, "invalid sender address")
 	}
 	if err := p.Receiver.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidAddress, "invalid receiver address")

@@ -23,7 +23,7 @@ func StampFromString(str string) (Stamp, error) {
 	return s, nil
 }
 
-func (s Stamp) RawBytes() []byte {
+func (s Stamp) Bytes() []byte {
 	return s[:]
 }
 

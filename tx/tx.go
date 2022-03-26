@@ -94,7 +94,10 @@ func (tx *Tx) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid version")
 	}
 	if tx.Sequence() < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid sequence")
+		return errors.Error(errors.ErrInvalidSequence)
+	}
+	if tx.Payload().Value() < 0 || tx.Payload().Value() > 21*1e14 {
+		return errors.Error(errors.ErrInvalidAmount)
 	}
 	if err := tx.checkFee(); err != nil {
 		return err
@@ -117,11 +120,11 @@ func (tx *Tx) SanityCheck() error {
 func (tx *Tx) checkFee() error {
 	if tx.IsFreeTx() {
 		if tx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "fee should set to zero")
+			return errors.Errorf(errors.ErrInvalidFee, "fee should set to zero")
 		}
 	} else {
 		if tx.Fee() <= 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "fee is invalid")
+			return errors.Errorf(errors.ErrInvalidFee, "fee should not be negative")
 		}
 	}
 
@@ -131,30 +134,30 @@ func (tx *Tx) checkFee() error {
 func (tx *Tx) checkSignature() error {
 	if tx.IsMintbaseTx() {
 		if tx.PublicKey() != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "subsidy transaction should not have public key")
+			return errors.Errorf(errors.ErrInvalidPublicKey, "subsidy transaction should not have public key")
 		}
 		if tx.Signature() != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "subsidy transaction should not have signature")
+			return errors.Errorf(errors.ErrInvalidPublicKey, "subsidy transaction should not have signature")
 		}
 	} else {
 		if tx.PublicKey() == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "no public key")
+			return errors.Errorf(errors.ErrInvalidPublicKey, "no public key")
 		}
 		if tx.Signature() == nil {
-			return errors.Errorf(errors.ErrInvalidTx, "no signature")
+			return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 		}
 		if err := tx.PublicKey().SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "invalid pubic key")
+			return errors.Error(errors.ErrInvalidPublicKey)
 		}
 		if err := tx.Signature().SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidTx, "invalid signature")
+			return errors.Error(errors.ErrInvalidSignature)
 		}
 		if !tx.PublicKey().VerifyAddress(tx.Payload().Signer()) {
-			return errors.Errorf(errors.ErrInvalidTx, "invalid public key")
+			return errors.Error(errors.ErrInvalidPublicKey)
 		}
 		bs := tx.SignBytes()
 		if !tx.PublicKey().Verify(bs, tx.Signature()) {
-			return errors.Errorf(errors.ErrInvalidTx, "invalid signature")
+			return errors.Error(errors.ErrInvalidSignature)
 		}
 	}
 	return nil
@@ -162,7 +165,6 @@ func (tx *Tx) checkSignature() error {
 
 // Bytes returns the serialized bytes for the Transaction.
 func (tx *Tx) Bytes() ([]byte, error) {
-
 	w := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
 	err := tx.Encode(w)
 	if err != nil {
@@ -380,7 +382,7 @@ func (tx *Tx) IsWithdrawTx() bool {
 
 //IsFreeTx will return if trx's fee is 0
 func (tx *Tx) IsFreeTx() bool {
-	return tx.IsMintbaseTx() || tx.IsSortitionTx() || tx.IsUnbondTx() || tx.IsWithdrawTx()
+	return tx.IsMintbaseTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
 }
 
 // ---------
@@ -389,7 +391,7 @@ func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewSendTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(), util.RandInt64(1000*1e14), util.RandInt64(1*1e14), "test send-tx")
+	tx := NewSendTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(), util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test send-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
@@ -398,7 +400,7 @@ func GenerateTestBondTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewBondTx(stamp, util.RandInt32(1000), s.Address(), pub, util.RandInt64(1000*1e14), util.RandInt64(1*1e14), "test bond-tx")
+	tx := NewBondTx(stamp, util.RandInt32(1000), s.Address(), pub, util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test bond-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
@@ -423,7 +425,7 @@ func GenerateTestUnbondTx() (*Tx, crypto.Signer) {
 func GenerateTestWithdrawTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
-	tx := NewWithdrawTx(stamp, util.RandInt32(1000), s.Address(), crypto.GenerateTestAddress(), util.RandInt64(1000*1e14), "test withdraw-tx")
+	tx := NewWithdrawTx(stamp, util.RandInt32(1000), s.Address(), crypto.GenerateTestAddress(), util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test withdraw-tx")
 	s.SignMsg(tx)
 	return tx, s
 }

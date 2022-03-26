@@ -73,7 +73,7 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	return &prv, nil
 }
 
-func (prv PrivateKey) RawBytes() []byte {
+func (prv PrivateKey) Bytes() []byte {
 	if prv.secretKey == nil {
 		return nil
 	}
@@ -95,7 +95,7 @@ func (prv *PrivateKey) MarshalCBOR() ([]byte, error) {
 	if prv.secretKey == nil {
 		return nil, fmt.Errorf("invalid private key")
 	}
-	return cbor.Marshal(prv.RawBytes())
+	return cbor.Marshal(prv.Bytes())
 }
 
 func (prv *PrivateKey) UnmarshalCBOR(bs []byte) error {

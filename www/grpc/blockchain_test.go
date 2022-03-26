@@ -32,7 +32,7 @@ func TestGetNetworkInfo(t *testing.T) {
 				assert.Equal(t, p.Agent, pp.Agent)
 				assert.Equal(t, p.Moniker, pp.Moniker)
 				assert.Equal(t, p.Height, pp.Height)
-				assert.Equal(t, p.PublicKey, pp.PublicKey.RawBytes())
+				assert.Equal(t, p.PublicKey, pp.PublicKey.Bytes())
 				break
 			}
 		}

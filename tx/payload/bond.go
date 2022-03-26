@@ -29,11 +29,8 @@ func (p *BondPayload) Value() int64 {
 }
 
 func (p *BondPayload) SanityCheck() error {
-	if p.Stake < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid amount")
-	}
 	if err := p.Sender.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidAmount, "invalid sender address")
+		return errors.Errorf(errors.ErrInvalidAddress, "invalid sender address")
 	}
 	if err := p.PublicKey.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidPublicKey, "invalid receiver public key")

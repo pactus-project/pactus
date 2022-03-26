@@ -63,7 +63,7 @@ func (h Hash) String() string {
 	return hex.EncodeToString(h[:])
 }
 
-func (h Hash) RawBytes() []byte {
+func (h Hash) Bytes() []byte {
 	return h[:]
 }
 

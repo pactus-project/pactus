@@ -168,7 +168,7 @@ func (cert *Certificate) MarshalJSON() ([]byte, error) {
 }
 
 func CertificateSignBytes(blockHash hash.Hash, round int16) []byte {
-	sb := blockHash.RawBytes()
+	sb := blockHash.Bytes()
 	sb = append(sb, util.Int16ToSlice(round)...)
 
 	return sb
@@ -180,16 +180,16 @@ func GenerateTestCertificate(blockHash hash.Hash) *Certificate {
 	_, priv4 := bls.GenerateTestKeyPair()
 
 	sigs := []*bls.Signature{
-		priv2.Sign(blockHash.RawBytes()).(*bls.Signature),
-		priv3.Sign(blockHash.RawBytes()).(*bls.Signature),
-		priv4.Sign(blockHash.RawBytes()).(*bls.Signature),
+		priv2.Sign(blockHash.Bytes()).(*bls.Signature),
+		priv3.Sign(blockHash.Bytes()).(*bls.Signature),
+		priv4.Sign(blockHash.Bytes()).(*bls.Signature),
 	}
 	sig := bls.Aggregate(sigs)
 
-	c1 := util.RandInt32(1000)
-	c2 := util.RandInt32(1000)
-	c3 := util.RandInt32(1000)
-	c4 := util.RandInt32(1000)
+	c1 := util.RandInt32(10)
+	c2 := util.RandInt32(10) + 10
+	c3 := util.RandInt32(10) + 20
+	c4 := util.RandInt32(10) + 30
 	return NewCertificate(
 		util.RandInt16(10),
 		[]int32{c1, c2, c3, c4},

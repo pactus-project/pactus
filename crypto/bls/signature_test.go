@@ -75,7 +75,7 @@ func TestSignatureEmpty(t *testing.T) {
 	bs, err := sig1.MarshalCBOR()
 	assert.Error(t, err)
 	assert.Empty(t, sig1.String())
-	assert.Empty(t, sig1.RawBytes())
+	assert.Empty(t, sig1.Bytes())
 
 	sig3 := new(Signature)
 	err = sig3.UnmarshalCBOR(bs)
@@ -90,9 +90,9 @@ func TestVerifyingSignature(t *testing.T) {
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 
-	fmt.Printf("%x\n", pb1.RawBytes())
-	fmt.Printf("%x\n", pv1.RawBytes())
-	fmt.Printf("%x\n", sig1.RawBytes())
+	fmt.Printf("%x\n", pb1.Bytes())
+	fmt.Printf("%x\n", pv1.Bytes())
+	fmt.Printf("%x\n", sig1.Bytes())
 
 	assert.NotEqual(t, sig1, sig2)
 	assert.True(t, pb1.Verify(msg, sig1))
@@ -110,7 +110,7 @@ func TestSigning(t *testing.T) {
 	addr, _ := crypto.AddressFromString("zc15x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr39g6klh")
 
 	sig1 := prv.Sign(msg)
-	assert.Equal(t, sig1.RawBytes(), sig.RawBytes())
+	assert.Equal(t, sig1.Bytes(), sig.Bytes())
 	assert.True(t, pub.Verify(msg, sig))
 	assert.Equal(t, pub.Address(), addr)
 }

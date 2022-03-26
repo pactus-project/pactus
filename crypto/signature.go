@@ -3,7 +3,7 @@ package crypto
 import "io"
 
 type Signature interface {
-	RawBytes() []byte
+	Bytes() []byte
 	String() string
 	MarshalJSON() ([]byte, error) // TODO: remove me
 	MarshalCBOR() ([]byte, error)

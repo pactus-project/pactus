@@ -19,8 +19,8 @@ func TestTxsMerkle(t *testing.T) {
 	txs.Append(trx2)
 	merkle = txs.Root()
 	data := make([]byte, 64)
-	copy(data[:32], trx1.ID().RawBytes())
-	copy(data[32:], trx2.ID().RawBytes())
+	copy(data[:32], trx1.ID().Bytes())
+	copy(data[32:], trx2.ID().Bytes())
 	assert.Equal(t, merkle, hash.CalcHash(data))
 }
 

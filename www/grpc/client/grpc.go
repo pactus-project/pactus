@@ -33,7 +33,7 @@ func GetSequence(rpcEndpoint string, addr crypto.Address) (int32, error) {
 		return 0, err
 	}
 
-	acc, err := client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.RawBytes()})
+	acc, err := client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.Bytes()})
 	if err != nil {
 		return 0, err
 	}

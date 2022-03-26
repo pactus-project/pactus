@@ -50,7 +50,7 @@ func TestPrivateKeyEmpty(t *testing.T) {
 	bs, err := prv1.MarshalCBOR()
 	assert.Error(t, err)
 	assert.Empty(t, prv1.String())
-	assert.Empty(t, prv1.RawBytes())
+	assert.Empty(t, prv1.Bytes())
 
 	var prv2 PrivateKey
 	err = prv2.UnmarshalCBOR(bs)
@@ -63,7 +63,7 @@ func TestPrivateKeyFromSeed(t *testing.T) {
 	seed := [32]byte{}
 	prv, err := PrivateKeyFromSeed(seed[:])
 	assert.NoError(t, err)
-	assert.Equal(t, prv.RawBytes(), []byte{74, 53, 59, 227, 218, 192, 145, 160, 167, 230, 64, 98, 3, 114, 245, 225, 226, 228, 64, 23, 23, 193, 231, 156, 172, 111, 251, 168, 246, 144, 86, 4})
+	assert.Equal(t, prv.Bytes(), []byte{74, 53, 59, 227, 218, 192, 145, 160, 167, 230, 64, 98, 3, 114, 245, 225, 226, 228, 64, 23, 23, 193, 231, 156, 172, 111, 251, 168, 246, 144, 86, 4})
 }
 
 func TestPrivateKeySanityCheck(t *testing.T) {

@@ -12,9 +12,12 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
+
+// TODO: write more tests, and check the error codes
 
 func TestJSONMarshaling(t *testing.T) {
 	tx, _ := GenerateTestSendTx()
@@ -66,7 +69,8 @@ func TestTxSanityCheck(t *testing.T) {
 		tx, signer := GenerateTestSendTx()
 		tx.data.Sequence = -1
 		signer.SignMsg(tx)
-		assert.Error(t, tx.SanityCheck())
+		err := tx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
 	})
 	t.Run("Transaction ID should be same for signed and unsigned transactions", func(t *testing.T) {
 		tx, _ := GenerateTestSendTx()
@@ -90,15 +94,33 @@ func TestTxSanityCheck(t *testing.T) {
 	})
 }
 
-func TestSubsidyTx(t *testing.T) {
-	pub, prv := bls.GenerateTestKeyPair()
+func TestInvalidFee(t *testing.T) {
 	t.Run("Invalid fee", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
-		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
+		trx := NewMintbaseTx(stamp, 88, crypto.GenerateTestAddress(), 2500, "subsidy")
 		assert.True(t, trx.IsMintbaseTx())
 		trx.data.Fee = 1
-		assert.Error(t, trx.SanityCheck())
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
+
+	t.Run("Invalid send fee", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.Fee = 0
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
+	})
+
+	t.Run("Invalid sortition fee", func(t *testing.T) {
+		trx, _ := GenerateTestSortitionTx()
+		trx.data.Fee = 1
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
+	})
+}
+
+func TestSubsidyTx(t *testing.T) {
+	pub, prv := bls.GenerateTestKeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
@@ -173,25 +195,10 @@ func TestSendSanityCheck(t *testing.T) {
 		assert.Error(t, trx.SanityCheck())
 	})
 
-	t.Run("Invalid fee", func(t *testing.T) {
-		trx, signer := GenerateTestSendTx()
-		trx.data.Fee = 0
-		signer.SignMsg(trx)
-		assert.Error(t, trx.SanityCheck())
-	})
-
 	t.Run("Invalid sender", func(t *testing.T) {
 		trx, signer := GenerateTestSendTx()
 		pld := trx.data.Payload.(*payload.SendPayload)
 		pld.Sender = invAddr
-		signer.SignMsg(trx)
-		assert.Error(t, trx.SanityCheck())
-	})
-
-	t.Run("Invalid receiver", func(t *testing.T) {
-		trx, signer := GenerateTestSendTx()
-		pld := trx.data.Payload.(*payload.SendPayload)
-		pld.Receiver = crypto.TreasuryAddress
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
@@ -239,13 +246,6 @@ func TestSortitionSanityCheck(t *testing.T) {
 		trx, signer := GenerateTestSortitionTx()
 		pld := trx.data.Payload.(*payload.SortitionPayload)
 		pld.Address = invAddr
-		signer.SignMsg(trx)
-		assert.Error(t, trx.SanityCheck())
-	})
-
-	t.Run("Invalid fee", func(t *testing.T) {
-		trx, signer := GenerateTestSortitionTx()
-		trx.data.Fee = 1
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
@@ -316,11 +316,11 @@ func TestWithdrawSignBytes(t *testing.T) {
 	signer := bls.GenerateTestSigner()
 	addr := crypto.GenerateTestAddress()
 
-	trx1 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, "test unbond-tx")
+	trx1 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, 1000, "test withdraw-tx")
 	signer.SignMsg(trx1)
 
-	trx2 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, "test unbond-tx")
-	trx3 := NewWithdrawTx(stamp, 2, signer.Address(), addr, 1000, "test unbond-tx")
+	trx2 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, 1000, "test withdraw-tx")
+	trx3 := NewWithdrawTx(stamp, 2, signer.Address(), addr, 1000, 1000, "test withdraw-tx")
 
 	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
 	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())

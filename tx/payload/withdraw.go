@@ -28,9 +28,6 @@ func (p *WithdrawPayload) Value() int64 {
 }
 
 func (p *WithdrawPayload) SanityCheck() error {
-	if p.Amount < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid amount")
-	}
 	if err := p.To.SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid receiver address")
 	}

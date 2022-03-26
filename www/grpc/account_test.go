@@ -22,7 +22,7 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx, &zarb.AccountRequest{
-			Address: crypto.GenerateTestAddress().RawBytes(),
+			Address: crypto.GenerateTestAddress().Bytes(),
 		})
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -30,11 +30,11 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return account details", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx, &zarb.AccountRequest{
-			Address: acc.Address().RawBytes(),
+			Address: acc.Address().Bytes(),
 		})
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.Account.Address, acc.Address().RawBytes())
+		assert.Equal(t, res.Account.Address, acc.Address().Bytes())
 		assert.Equal(t, res.Account.Balance, acc.Balance())
 		assert.Equal(t, res.Account.Number, acc.Number())
 		assert.Equal(t, res.Account.Sequence, acc.Sequence())

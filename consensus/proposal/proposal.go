@@ -64,7 +64,7 @@ func (p *Proposal) SetSignature(sig crypto.Signature) {
 func (p *Proposal) SetPublicKey(crypto.PublicKey) {}
 
 func (p *Proposal) SignBytes() []byte {
-	sb := p.Block().Hash().RawBytes()
+	sb := p.Block().Hash().Bytes()
 	sb = append(sb, util.Int32ToSlice(p.Height())...)
 	sb = append(sb, util.Int16ToSlice(p.Round())...)
 

@@ -14,7 +14,7 @@ type txPos struct {
 	Offset int32
 }
 
-func txKey(id tx.ID) []byte { return append(txPrefix, id.RawBytes()...) }
+func txKey(id tx.ID) []byte { return append(txPrefix, id.Bytes()...) }
 
 type txStore struct {
 	db *leveldb.DB

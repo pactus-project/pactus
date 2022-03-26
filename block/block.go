@@ -108,9 +108,9 @@ func (b *Block) Hash() hash.Hash {
 	b.data.Header.Encode(w)
 	// Genesis block has no certificate
 	if b.data.PrevCert != nil {
-		w.Write(b.data.PrevCert.Hash().RawBytes())
+		w.Write(b.data.PrevCert.Hash().Bytes())
 	}
-	w.Write(b.data.Txs.Root().RawBytes())
+	w.Write(b.data.Txs.Root().Bytes())
 	w.Write(util.Int32ToSlice(int32(b.data.Txs.Len())))
 
 	h := hash.CalcHash(w.Bytes())

@@ -36,8 +36,8 @@ func nextPowerOfTwo(n int) int {
 func HashMerkleBranches(left *hash.Hash, right *hash.Hash) *hash.Hash {
 	// Concatenate the left and right nodes.
 	var h [hash.HashSize * 2]byte
-	copy(h[:hash.HashSize], left.RawBytes())
-	copy(h[hash.HashSize:], right.RawBytes())
+	copy(h[:hash.HashSize], left.Bytes())
+	copy(h[hash.HashSize:], right.Bytes())
 
 	newHash := hasher(h[:])
 	return &newHash

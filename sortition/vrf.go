@@ -11,10 +11,10 @@ import (
 
 // evaluate returns a random number between 0 and max with the proof
 func evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64, proof Proof) {
-	signData := append(seed[:], signer.PublicKey().RawBytes()...)
+	signData := append(seed[:], signer.PublicKey().Bytes()...)
 	sig := signer.SignData(signData)
 
-	proof, _ = ProofFromBytes(sig.RawBytes())
+	proof, _ = ProofFromBytes(sig.Bytes())
 	index = getIndex(proof, max)
 
 	return index, proof
@@ -28,7 +28,7 @@ func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max in
 	}
 
 	// Verify signature (proof)
-	signData := append(seed[:], publicKey.RawBytes()...)
+	signData := append(seed[:], publicKey.Bytes()...)
 	if !publicKey.Verify(signData, proofSig) {
 		return 0, false
 	}
@@ -41,7 +41,7 @@ func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max in
 func getIndex(proof Proof, max int64) int64 {
 	h := hash.CalcHash(proof[:])
 
-	rnd64 := util.SliceToInt64(h.RawBytes())
+	rnd64 := util.SliceToInt64(h.Bytes())
 	rnd64 = rnd64 & 0x7fffffffffffffff
 
 	// construct the numerator and denominator for normalizing the proof uint

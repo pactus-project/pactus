@@ -16,7 +16,7 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		h, _ := hash.FromString(vars["hash"])
 		p.SetVerbosity(0)
-		return p.SetHash(h.RawBytes())
+		return p.SetHash(h.Bytes())
 	}).Result()
 
 	st, err := res.Struct()

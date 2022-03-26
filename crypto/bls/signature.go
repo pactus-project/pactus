@@ -43,7 +43,7 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 	return &sig, nil
 }
 
-func (sig Signature) RawBytes() []byte {
+func (sig Signature) Bytes() []byte {
 	if sig.signature == nil {
 		return nil
 	}
@@ -66,7 +66,7 @@ func (sig *Signature) MarshalCBOR() ([]byte, error) {
 	if sig.signature == nil {
 		return nil, fmt.Errorf("invalid signature")
 	}
-	return cbor.Marshal(sig.RawBytes())
+	return cbor.Marshal(sig.Bytes())
 }
 
 func (sig *Signature) UnmarshalCBOR(bs []byte) error {
@@ -79,7 +79,7 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 }
 
 func (sig *Signature) Encode(w io.Writer) error {
-	return encoding.WriteElements(w, sig.RawBytes())
+	return encoding.WriteElements(w, sig.Bytes())
 }
 
 func (sig *Signature) Decode(r io.Reader) error {

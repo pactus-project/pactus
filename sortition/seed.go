@@ -35,8 +35,8 @@ func VerifiableSeedFromBytes(data []byte) (VerifiableSeed, error) {
 
 func (s *VerifiableSeed) Generate(signer crypto.Signer) VerifiableSeed {
 	hash := hash.CalcHash(s[:])
-	sig := signer.SignData(hash.RawBytes())
-	newSeed, _ := VerifiableSeedFromBytes(sig.RawBytes())
+	sig := signer.SignData(hash.Bytes())
+	newSeed, _ := VerifiableSeedFromBytes(sig.Bytes())
 	return newSeed
 }
 
@@ -49,7 +49,7 @@ func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed
 		return false
 	}
 	hash := hash.CalcHash(prevSeed[:])
-	return public.Verify(hash.RawBytes(), sig)
+	return public.Verify(hash.Bytes(), sig)
 }
 
 func (s VerifiableSeed) MarshalText() ([]byte, error) {
@@ -68,7 +68,7 @@ func (s *VerifiableSeed) UnmarshalText(text []byte) error {
 func GenerateRandomSeed() VerifiableSeed {
 	h := hash.GenerateTestHash()
 	signer := bls.GenerateTestSigner()
-	sig := signer.SignData(h.RawBytes())
-	seed, _ := VerifiableSeedFromBytes(sig.RawBytes())
+	sig := signer.SignData(h.Bytes())
+	seed, _ := VerifiableSeedFromBytes(sig.Bytes())
 	return seed
 }

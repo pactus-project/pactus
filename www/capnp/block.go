@@ -10,7 +10,7 @@ import (
 func (zs *zarbServer) GetBlockHash(args ZarbServer_getBlockHash) error {
 	height := args.Params.Height()
 	hash := zs.state.BlockHash(height)
-	return args.Results.SetResult(hash.RawBytes())
+	return args.Results.SetResult(hash.Bytes())
 }
 
 func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
@@ -32,7 +32,7 @@ func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 		return err
 	}
 	// TODO: Set height?? Get it from store
-	if err := res.SetHash(b.Hash().RawBytes()); err != nil {
+	if err := res.SetHash(b.Hash().Bytes()); err != nil {
 		return err
 	}
 	if v == 1 {
@@ -52,7 +52,7 @@ func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
 	// previous certificate
 	if b.PrevCertificate() != nil {
 		clc.SetRound(b.PrevCertificate().Round())
-		if err := clc.SetSignature(b.PrevCertificate().Signature().RawBytes()); err != nil {
+		if err := clc.SetSignature(b.PrevCertificate().Signature().Bytes()); err != nil {
 			return err
 		}
 		committers, _ := clc.NewCommitters(int32(len(b.PrevCertificate().Committers())))
@@ -67,13 +67,13 @@ func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
 	// header
 	ch.SetVersion(b.Header().Version())
 	ch.SetTime(int32(b.Header().Time().Unix()))
-	if err := ch.SetStateRoot(b.Header().StateRoot().RawBytes()); err != nil {
+	if err := ch.SetStateRoot(b.Header().StateRoot().Bytes()); err != nil {
 		return err
 	}
-	if err := ch.SetPrevBlockHash(b.Header().PrevBlockHash().RawBytes()); err != nil {
+	if err := ch.SetPrevBlockHash(b.Header().PrevBlockHash().Bytes()); err != nil {
 		return err
 	}
-	if err := ch.SetProposerAddress(b.Header().ProposerAddress().RawBytes()); err != nil {
+	if err := ch.SetProposerAddress(b.Header().ProposerAddress().Bytes()); err != nil {
 		return err
 	}
 	// Transactions

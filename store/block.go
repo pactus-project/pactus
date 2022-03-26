@@ -11,7 +11,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func blockKey(hash hash.Hash) []byte { return append(blockPrefix, hash.RawBytes()...) }
+func blockKey(hash hash.Hash) []byte { return append(blockPrefix, hash.Bytes()...) }
 func blockHeightKey(height int32) []byte {
 	return append(blockHeightPrefix, util.Int32ToSlice(height)...)
 }
@@ -71,7 +71,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int32, block *block
 	blockHeightKey := blockHeightKey(height)
 
 	batch.Put(blockKey, w.Bytes())
-	batch.Put(blockHeightKey, block.Hash().RawBytes())
+	batch.Put(blockHeightKey, block.Hash().Bytes())
 
 	return txsPos
 }

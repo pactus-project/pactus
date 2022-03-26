@@ -16,7 +16,7 @@ type validatorStore struct {
 	total  int32
 }
 
-func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.RawBytes()...) }
+func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.Bytes()...) }
 
 func newValidatorStore(db *leveldb.DB) *validatorStore {
 	vs := &validatorStore{

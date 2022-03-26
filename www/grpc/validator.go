@@ -52,8 +52,8 @@ func (zs *zarbServer) GetValidators(ctx context.Context, request *zarb.Validator
 
 func validatorToProto(val *validator.Validator) *zarb.ValidatorInfo {
 	return &zarb.ValidatorInfo{
-		PublicKey:         val.PublicKey().RawBytes(),
-		Address:           val.Address().RawBytes(),
+		PublicKey:         val.PublicKey().Bytes(),
+		Address:           val.Address().Bytes(),
 		Number:            val.Number(),
 		Sequence:          val.Sequence(),
 		Stake:             val.Stake(),

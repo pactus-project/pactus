@@ -58,14 +58,14 @@ func NewWithdrawTx(stamp hash.Stamp,
 	seq int32,
 	val crypto.Address,
 	acc crypto.Address,
-	amount int64,
+	amount, fee int64,
 	memo string) *Tx {
 	pld := &payload.WithdrawPayload{
 		From:   val,
 		To:     acc,
 		Amount: amount,
 	}
-	return NewTx(stamp, seq, pld, 0, memo)
+	return NewTx(stamp, seq, pld, fee, memo)
 }
 
 func NewSortitionTx(stamp hash.Stamp,

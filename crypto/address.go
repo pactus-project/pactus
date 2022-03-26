@@ -56,7 +56,7 @@ func AddressFromBytes(bs []byte) (Address, error) {
 	return addr, nil
 }
 
-func (addr Address) RawBytes() []byte {
+func (addr Address) Bytes() []byte {
 	return addr[:]
 }
 
@@ -88,7 +88,7 @@ func (addr *Address) SanityCheck() error {
 }
 
 func (addr Address) EqualsTo(right Address) bool {
-	return bytes.Equal(addr.RawBytes(), right.RawBytes())
+	return bytes.Equal(addr.Bytes(), right.Bytes())
 }
 
 /// For tests

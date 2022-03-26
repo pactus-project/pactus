@@ -8,7 +8,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	simplemerkle "github.com/zarbchain/zarb-go/libs/merkle"
@@ -32,7 +31,7 @@ func TestSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
-	b.data.Header.data.ProposerAddress = crypto.TreasuryAddress
+	b.data.Header.data.ProposerAddress[0] = 0x2
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
@@ -97,8 +96,8 @@ func TestBlockHash(t *testing.T) {
 	txRoot := simplemerkle.NewTreeFromHashes(txHashes).Root()
 
 	hashData := headerData
-	hashData = append(hashData, certHash.RawBytes()...)
-	hashData = append(hashData, txRoot.RawBytes()...)
+	hashData = append(hashData, certHash.Bytes()...)
+	hashData = append(hashData, txRoot.Bytes()...)
 	hashData = append(hashData, util.Int32ToSlice(int32(b.Transactions().Len()))...)
 
 	expected1 := hash.CalcHash(hashData)

@@ -145,7 +145,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, "withdraw-tx")
+	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	tSandbox.AcceptTestSortition = true

@@ -22,7 +22,7 @@ func getAccount(t *testing.T, addr crypto.Address) *account.Account {
 	}
 
 	d, _ := st.Data()
-	acc, err:= account.AccountFromBytes(d)
+	acc, err := account.AccountFromBytes(d)
 	assert.NoError(t, err)
 	return acc
 }
@@ -30,5 +30,5 @@ func getAccount(t *testing.T, addr crypto.Address) *account.Account {
 func TestGetAccount(t *testing.T) {
 	acc := getAccount(t, crypto.TreasuryAddress)
 	require.NotNil(t, acc)
-	assert.Equal(t, acc.Number(), 0)
+	assert.Equal(t, acc.Number(), int32(0))
 }

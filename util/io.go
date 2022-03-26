@@ -119,7 +119,7 @@ type FixedWriter struct {
 	pos int
 }
 
-// Write writes the contents of p to w.  When the contents of p would cause
+// Write writes the contents of p to w. When the contents of p would cause
 // the writer to exceed the maximum allowed size of the fixed writer,
 // io.ErrShortWrite is returned and the writer is left unchanged.
 //

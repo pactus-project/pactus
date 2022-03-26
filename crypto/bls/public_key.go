@@ -44,7 +44,7 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	return &pub, nil
 }
 
-func (pub PublicKey) RawBytes() []byte {
+func (pub PublicKey) Bytes() []byte {
 	if pub.publicKey == nil {
 		return nil
 	}
@@ -66,7 +66,7 @@ func (pub *PublicKey) MarshalCBOR() ([]byte, error) {
 	if pub.publicKey == nil {
 		return nil, fmt.Errorf("invalid public key")
 	}
-	return cbor.Marshal(pub.RawBytes())
+	return cbor.Marshal(pub.Bytes())
 }
 
 func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
@@ -79,7 +79,7 @@ func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
 }
 
 func (pub *PublicKey) Encode(w io.Writer) error {
-	return encoding.WriteElements(w, pub.RawBytes())
+	return encoding.WriteElements(w, pub.Bytes())
 }
 
 func (pub *PublicKey) Decode(r io.Reader) error {
@@ -114,7 +114,7 @@ func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 }
 
 func (pub *PublicKey) Address() crypto.Address {
-	data := hash.Hash160(hash.Hash256(pub.RawBytes()))
+	data := hash.Hash160(hash.Hash256(pub.Bytes()))
 	data = append([]byte{crypto.AddressTypeBLS}, data...)
 	addr, _ := crypto.AddressFromBytes(data)
 	return addr
