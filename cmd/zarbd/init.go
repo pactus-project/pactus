@@ -20,7 +20,6 @@ import (
 // Init initializes a node for zarb blockchain
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		c.Hidden = true
 
 		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
