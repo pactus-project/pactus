@@ -12,12 +12,9 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx/payload"
 	"github.com/zarbchain/zarb-go/util"
 )
-
-// TODO: write more tests, and check the error codes
 
 func TestJSONMarshaling(t *testing.T) {
 	tx, _ := GenerateTestSendTx()
@@ -60,12 +57,17 @@ func TestEncodingTx(t *testing.T) {
 }
 
 func TestTxFromBytes(t *testing.T) {
-	tx1, _ := GenerateTestSendTx()
-	tx2, _ := GenerateTestBondTx()
-	tx3, _ := GenerateTestUnbondTx()
-	tx4, _ := GenerateTestWithdrawTx()
-	tx5, _ := GenerateTestSortitionTx()
-	tests := []*Tx{tx1, tx2, tx3, tx4, tx5}
+	trx1, _ := GenerateTestSendTx()
+	trx2, _ := GenerateTestBondTx()
+	trx3, _ := GenerateTestUnbondTx()
+	trx4, _ := GenerateTestWithdrawTx()
+	trx5, _ := GenerateTestSortitionTx()
+	tests := []*Tx{trx1, trx2, trx3, trx4, trx5}
+	assert.True(t, trx1.IsSendTx())
+	assert.True(t, trx2.IsBondTx())
+	assert.True(t, trx3.IsUnbondTx())
+	assert.True(t, trx4.IsWithdrawTx())
+	assert.True(t, trx5.IsSortitionTx())
 
 	for _, tx := range tests {
 		assert.NoError(t, tx.SanityCheck())
@@ -311,83 +313,4 @@ func TestSignBytes(t *testing.T) {
 	assert.Equal(t, sb, trx.SignBytes())
 	assert.Equal(t, trx.ID(), h)
 	assert.Equal(t, trx.ID(), hash.CalcHash(sb))
-}
-
-func TestSendSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	addr := crypto.GenerateTestAddress()
-
-	trx1 := NewSendTx(stamp, 1, signer.Address(), addr, 100, 10, "test send-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewSendTx(stamp, 1, signer.Address(), addr, 100, 10, "test send-tx")
-	trx3 := NewSendTx(stamp, 2, signer.Address(), addr, 100, 10, "test send-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-}
-
-func TestBondSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	pub, _ := bls.GenerateTestKeyPair()
-
-	trx1 := NewBondTx(stamp, 1, signer.Address(), pub, 100, 100, "test bond-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewBondTx(stamp, 1, signer.Address(), pub, 100, 100, "test bond-tx")
-	trx3 := NewBondTx(stamp, 2, signer.Address(), pub, 100, 100, "test bond-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsBondTx())
-}
-
-func TestUnbondSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-
-	trx1 := NewUnbondTx(stamp, 1, signer.Address(), "test unbond-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewUnbondTx(stamp, 1, signer.Address(), "test unbond-tx")
-	trx3 := NewUnbondTx(stamp, 2, signer.Address(), "test unbond-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsUnbondTx())
-
-}
-func TestWithdrawSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	addr := crypto.GenerateTestAddress()
-
-	trx1 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, 1000, "test withdraw-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, 1000, "test withdraw-tx")
-	trx3 := NewWithdrawTx(stamp, 2, signer.Address(), addr, 1000, 1000, "test withdraw-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsWithdrawTx())
-
-}
-
-func TestSortitionSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	proof := sortition.GenerateRandomProof()
-
-	trx1 := NewSortitionTx(stamp, 1, signer.Address(), proof)
-	signer.SignMsg(trx1)
-
-	trx2 := NewSortitionTx(stamp, 1, signer.Address(), proof)
-	trx3 := NewSortitionTx(stamp, 2, signer.Address(), proof)
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsSortitionTx())
 }

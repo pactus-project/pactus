@@ -1,9 +1,7 @@
 package block
 
 import (
-	"bytes"
 	"encoding/hex"
-	"fmt"
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
@@ -35,9 +33,6 @@ func TestSanityCheck(t *testing.T) {
 	assert.Error(t, b.SanityCheck())
 
 	b = GenerateTestBlock(nil, nil)
-	buf := bytes.Buffer{}
-	b.Encode(&buf)
-	fmt.Printf("%s", hex.EncodeToString(buf.Bytes()))
 	b.data.PrevCert = nil
 	assert.Error(t, b.SanityCheck())
 
@@ -65,6 +60,9 @@ func TestCBORMarshaling(t *testing.T) {
 	assert.Equal(t, b1.Hash(), b2.Hash())
 	assert.Equal(t, b1.Header().Time(), b2.Header().Time())
 	assert.Equal(t, b1.Header().Version(), b2.Header().Version())
+
+	err = cbor.Unmarshal([]byte{1}, &b2)
+	assert.Error(t, err)
 }
 
 func TestJSONMarshaling(t *testing.T) {
@@ -73,6 +71,43 @@ func TestJSONMarshaling(t *testing.T) {
 	bz, err := b1.MarshalJSON()
 	assert.NoError(t, err)
 	assert.NotNil(t, bz)
+}
+
+func TestEncodingBlock(t *testing.T) {
+	blk := GenerateTestBlock(nil, nil)
+	len := blk.SerializeSize()
+
+	for i := 0; i < len; i++ {
+		w := util.NewFixedWriter(i)
+		assert.Error(t, blk.Encode(w), "encode test %v failed", i)
+	}
+	w := util.NewFixedWriter(len)
+	assert.NoError(t, blk.Encode(w))
+
+	for i := 0; i < len; i++ {
+		blk2 := new(Block)
+		r := util.NewFixedReader(i, w.Bytes())
+		assert.Error(t, blk2.Decode(r), "decode test %v failed", i)
+	}
+
+	blk2 := new(Block)
+	r := util.NewFixedReader(len, w.Bytes())
+	assert.NoError(t, blk2.Decode(r))
+	assert.Equal(t, blk.Hash(), blk2.Hash())
+	assert.Equal(t, blk.Header(), blk2.Header())
+}
+
+func TestTxFromBytes(t *testing.T) {
+	blk := GenerateTestBlock(nil, nil)
+	bs, _ := blk.Bytes()
+	_, err := BlockFromBytes(bs)
+	assert.NoError(t, err)
+	assert.Equal(t, blk.memorizedData, bs)
+	_, err = blk.Bytes()
+	assert.NoError(t, err)
+
+	_, err = BlockFromBytes([]byte{1})
+	assert.Error(t, err)
 }
 
 func TestBlockHash(t *testing.T) {

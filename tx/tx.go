@@ -192,7 +192,6 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	return tx.Decode(buf)
 }
 
-// TODO:
 // SerializeSize returns the number of bytes it would take to serialize the transaction
 func (tx *Tx) SerializeSize() int {
 	n := 150 +
@@ -357,6 +356,11 @@ func (tx *Tx) ID() ID {
 	id := hash.CalcHash(tx.SignBytes())
 	tx.memorizedID = &id
 	return id
+}
+
+func (tx *Tx) IsSendTx() bool {
+	return tx.Payload().Type() == payload.PayloadTypeSend &&
+		!tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
 func (tx *Tx) IsBondTx() bool {

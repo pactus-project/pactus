@@ -45,7 +45,7 @@ func (cert *Certificate) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid Round")
 	}
 	if cert.Signature() == nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "certificate without signature")
+		return errors.Error(errors.ErrInvalidSignature)
 	}
 	if err := cert.Signature().SanityCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, err.Error())
