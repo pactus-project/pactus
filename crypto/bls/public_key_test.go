@@ -7,9 +7,10 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestPublicKeyMarshaling(t *testing.T) {
+func TestPublicKeyCBORMarshaling(t *testing.T) {
 	pub1, _ := GenerateTestKeyPair()
 	pub2 := new(PublicKey)
 
@@ -19,13 +20,31 @@ func TestPublicKeyMarshaling(t *testing.T) {
 	assert.True(t, pub1.EqualsTo(pub2))
 	assert.NoError(t, pub1.SanityCheck())
 
-	js, err := pub1.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Contains(t, string(js), pub1.String())
-
 	inv, _ := hex.DecodeString(strings.Repeat("ff", PublicKeySize))
 	data, _ := cbor.Marshal(inv)
 	assert.Error(t, pub2.UnmarshalCBOR(data))
+}
+
+func TestPublicKeyJSONMarshaling(t *testing.T) {
+	pub, _ := GenerateTestKeyPair()
+	js, err := pub.MarshalJSON()
+	assert.NoError(t, err)
+	assert.Contains(t, string(js), pub.String())
+}
+
+func TestPublicKeyEncoding(t *testing.T) {
+	pub, _ := GenerateTestKeyPair()
+	w1 := util.NewFixedWriter(20)
+	assert.Error(t, pub.Encode(w1))
+
+	w2 := util.NewFixedWriter(PublicKeySize)
+	assert.NoError(t, pub.Encode(w2))
+
+	r1 := util.NewFixedReader(20, w2.Bytes())
+	assert.Error(t, pub.Decode(r1))
+
+	r2 := util.NewFixedReader(PublicKeySize, w2.Bytes())
+	assert.NoError(t, pub.Decode(r2))
 }
 
 func TestPublicKeyFromString(t *testing.T) {

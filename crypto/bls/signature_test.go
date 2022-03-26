@@ -12,7 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestSignatureMarshaling(t *testing.T) {
+func TestSignatureCBORMarshaling(t *testing.T) {
 	_, prv := GenerateTestKeyPair()
 	sig1 := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
 	sig2 := new(Signature)
@@ -23,13 +23,33 @@ func TestSignatureMarshaling(t *testing.T) {
 	assert.True(t, sig1.EqualsTo(sig2))
 	assert.NoError(t, sig1.SanityCheck())
 
-	js, err := sig1.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Contains(t, string(js), sig1.String())
-
-	inv, _ := hex.DecodeString(strings.Repeat("ff", PublicKeySize))
+	inv, _ := hex.DecodeString(strings.Repeat("ff", SignatureSize))
 	data, _ := cbor.Marshal(inv)
 	assert.Error(t, sig2.UnmarshalCBOR(data))
+}
+
+func TestSignatureJSONMarshaling(t *testing.T) {
+	_, prv := GenerateTestKeyPair()
+	sig := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
+	js, err := sig.MarshalJSON()
+	assert.NoError(t, err)
+	assert.Contains(t, string(js), sig.String())
+}
+
+func TestSignatureEncoding(t *testing.T) {
+	_, prv := GenerateTestKeyPair()
+	sig := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
+	w1 := util.NewFixedWriter(20)
+	assert.Error(t, sig.Encode(w1))
+
+	w2 := util.NewFixedWriter(SignatureSize)
+	assert.NoError(t, sig.Encode(w2))
+
+	r1 := util.NewFixedReader(20, w2.Bytes())
+	assert.Error(t, sig.Decode(r1))
+
+	r2 := util.NewFixedReader(SignatureSize, w2.Bytes())
+	assert.NoError(t, sig.Decode(r2))
 }
 
 func TestSignatureFromString(t *testing.T) {

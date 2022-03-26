@@ -78,7 +78,6 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 	return sig.Decode(bytes.NewReader(data))
 }
 
-// TODO: write test for me
 func (sig *Signature) Encode(w io.Writer) error {
 	return encoding.WriteElements(w, sig.RawBytes())
 }

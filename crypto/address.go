@@ -81,10 +81,7 @@ func (addr Address) MarshalJSON() ([]byte, error) {
 }
 
 func (addr *Address) SanityCheck() error {
-	if addr.EqualsTo(TreasuryAddress) {
-		return fmt.Errorf("treasury address is reserved")
-	}
-	if addr[0] != 1 {
+	if addr[0] != 0 && addr[0] != 1 {
 		return fmt.Errorf("invalid type")
 	}
 	return nil

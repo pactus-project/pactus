@@ -44,7 +44,7 @@ func TestAddressFromString(t *testing.T) {
 }
 
 func TestAddressEmpty(t *testing.T) {
-	addr1 := Address{}
+	addr1 := Address{0x2}
 	assert.Error(t, addr1.SanityCheck())
 }
 
