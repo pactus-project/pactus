@@ -2,6 +2,7 @@ package state
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/zarbchain/zarb-go/account"
@@ -21,6 +22,9 @@ import (
 var _ Facade = &MockState{}
 
 type MockState struct {
+	// This locks prevents the Data Race in tests
+	lk sync.RWMutex
+
 	TestGenHash   hash.Hash
 	TestStore     *store.MockStore
 	TestPool      *txpool.MockTxPool
@@ -48,18 +52,27 @@ func (m *MockState) CommitTestBlocks(num int) {
 	}
 }
 func (m *MockState) LastBlockHeight() int32 {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	return m.TestStore.LastHeight
 }
 func (m *MockState) GenesisHash() hash.Hash {
 	return m.TestGenHash
 }
 func (m *MockState) LastBlockHash() hash.Hash {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	return m.TestStore.BlockHash(m.TestStore.LastHeight)
 }
 func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
 }
 func (m *MockState) LastCertificate() *block.Certificate {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	return m.TestStore.LastCert
 }
 func (m *MockState) BlockTime() time.Duration {
@@ -73,6 +86,9 @@ func (m *MockState) Fingerprint() string {
 	return ""
 }
 func (m *MockState) CommitBlock(h int32, b *block.Block, cert *block.Certificate) error {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	if h != m.TestStore.LastHeight+1 {
 		return fmt.Errorf("invalid height")
 	}
@@ -117,10 +133,16 @@ func (m *MockState) CommitteePower() int64 {
 	return m.TestCommittee.TotalPower()
 }
 func (m *MockState) Transaction(id tx.ID) *tx.Tx {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	tx, _ := m.TestStore.Transaction(id)
 	return tx
 }
 func (m *MockState) Block(hash hash.Hash) *block.Block {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	bi, _ := m.TestStore.Block(hash)
 	if bi != nil {
 		b, _ := bi.ToFullBlock()
@@ -129,6 +151,9 @@ func (m *MockState) Block(hash hash.Hash) *block.Block {
 	return nil
 }
 func (m *MockState) BlockHash(height int32) hash.Hash {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	return m.TestStore.BlockHash(height)
 }
 func (m *MockState) Account(addr crypto.Address) *account.Account {
