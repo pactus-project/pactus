@@ -34,8 +34,14 @@ func lastHeight() int32 {
 	return st.LastBlockHeight()
 }
 
-func waitForNewBlock() {
-	getBlockAt(lastHeight() + 1)
+func waitForNewBlock(num int32) {
+	height := lastHeight() + num
+	for {
+		if lastHeight() > height {
+			break
+		}
+		time.Sleep(2 * time.Second)
+	}
 }
 
 func lastBlock() *capnp.BlockResult {
