@@ -244,6 +244,13 @@ func TestSendSanityCheck(t *testing.T) {
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
+	t.Run("Invalid amount", func(t *testing.T) {
+		trx, signer := GenerateTestSendTx()
+		pld := trx.data.Payload.(*payload.SendPayload)
+		pld.Amount = 21*1e14 + 1
+		signer.SignMsg(trx)
+		assert.Error(t, trx.SanityCheck())
+	})
 
 	t.Run("Invalid sender", func(t *testing.T) {
 		trx, signer := GenerateTestSendTx()

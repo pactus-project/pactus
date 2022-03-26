@@ -10,7 +10,7 @@ import (
 )
 
 // evaluate returns a random number between 0 and max with the proof
-func evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64, proof Proof) {
+func evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (index uint64, proof Proof) {
 	signData := append(seed[:], signer.PublicKey().Bytes()...)
 	sig := signer.SignData(signData)
 
@@ -21,7 +21,7 @@ func evaluate(seed VerifiableSeed, signer crypto.Signer, max int64) (index int64
 }
 
 // verify ensures the proof is valid
-func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max int64) (index int64, result bool) {
+func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max uint64) (index uint64, result bool) {
 	proofSig, err := bls.SignatureFromBytes(proof[:])
 	if err != nil {
 		return 0, false
@@ -38,24 +38,26 @@ func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max in
 	return index, true
 }
 
-func getIndex(proof Proof, max int64) int64 {
+func getIndex(proof Proof, max uint64) uint64 {
 	h := hash.CalcHash(proof[:])
 
-	rnd64 := util.SliceToInt64(h.Bytes())
-	rnd64 = rnd64 & 0x7fffffffffffffff
+	rnd64 := util.SliceToUint64(h.Bytes())
 
 	// construct the numerator and denominator for normalizing the proof uint
-	bigRnd := big.NewInt(rnd64)
-	bigMax := big.NewInt(max)
+	bigRnd := &big.Int{}
+	bigMax := &big.Int{}
+	denominator := &big.Int{}
+	numerator := &big.Int{}
 
-	numerator := big.NewInt(0)
+	bigRnd.SetUint64(rnd64)
+	bigMax.SetUint64(max)
+	denominator.SetUint64(util.MaxUint64)
+	
 	numerator = numerator.Mul(bigRnd, bigMax)
-
-	denominator := big.NewInt(util.MaxInt64) // 0x7FFFFFFFFFFFFFFF
 
 	// divide numerator and denominator to get the election ratio for this block height
 	index := big.NewInt(0)
 	index = index.Div(numerator, denominator)
 
-	return index.Int64()
+	return index.Uint64()
 }
