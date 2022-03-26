@@ -39,19 +39,19 @@ func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
 
 func (p *Proposal) SanityCheck() error {
 	if err := p.data.Block.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidProposal, err.Error())
+		return err
 	}
 	if p.data.Height <= 0 {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid round")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if p.data.Round < 0 {
 		return errors.Errorf(errors.ErrInvalidProposal, "invalid round")
 	}
 	if p.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
+		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
 	if p.data.Signature.SanityCheck() != nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
+		return errors.Error(errors.ErrInvalidSignature)
 	}
 	return nil
 }
@@ -88,10 +88,10 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
 	}
 	if !pubKey.Address().EqualsTo(p.data.Block.Header().ProposerAddress()) {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid proposer")
+		return errors.Errorf(errors.ErrInvalidPublicKey, "invalid proposer")
 	}
 	if !pubKey.Verify(p.SignBytes(), p.data.Signature) {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
+		return errors.Errorf(errors.ErrInvalidSignature, "invalid signature")
 	}
 	return nil
 }
