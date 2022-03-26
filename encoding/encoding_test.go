@@ -14,53 +14,6 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-// import (
-// 	"bytes"
-// 	"fmt"
-// 	"io"
-// 	"reflect"
-// 	"strings"
-// 	"testing"
-
-// 	"github.com/btcsuite/btcd/chaincfg/chainhash"
-// 	"github.com/davecgh/go-spew/spew"
-// )
-
-// // mainNetGenesisHash is the hash of the first block in the block chain for the
-// // main network (genesis block).
-// var mainNetGenesisHash = chainhash.Hash([chainhash.HashSize]byte{ // Make go vet happy.
-// 	0x6f, 0xe2, 0x8c, 0x0a, 0xb6, 0xf1, 0xb3, 0x72,
-// 	0xc1, 0xa6, 0xa2, 0x46, 0xae, 0x63, 0xf7, 0x4f,
-// 	0x93, 0x1e, 0x83, 0x65, 0xe1, 0x5a, 0x08, 0x9c,
-// 	0x68, 0xd6, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00,
-// })
-
-// // mainNetGenesisMerkleRoot is the hash of the first transaction in the genesis
-// // block for the main network.
-// var mainNetGenesisMerkleRoot = chainhash.Hash([chainhash.HashSize]byte{ // Make go vet happy.
-// 	0x3b, 0xa3, 0xed, 0xfd, 0x7a, 0x7b, 0x12, 0xb2,
-// 	0x7a, 0xc7, 0x2c, 0x3e, 0x67, 0x76, 0x8f, 0x61,
-// 	0x7f, 0xc8, 0x1b, 0xc3, 0x88, 0x8a, 0x51, 0x32,
-// 	0x3a, 0x9f, 0xb8, 0xaa, 0x4b, 0x1e, 0x5e, 0x4a,
-// })
-
-// // fakeRandReader implements the io.Reader interface and is used to force
-// // errors in the RandomUint64 function.
-// type fakeRandReader struct {
-// 	n   int
-// 	err error
-// }
-
-// // Read returns the fake reader error and the lesser of the fake reader value
-// // and the length of p.
-// func (r *fakeRandReader) Read(p []byte) (int, error) {
-// 	n := r.n
-// 	if n > len(p) {
-// 		n = len(p)
-// 	}
-// 	return n, r.err
-// }
-
 // TestElementWire tests wire encode and decode for various element types.  This
 // is mainly to test the "fast" paths in readElement and writeElement which use
 // type assertions to avoid reflection when possible.
@@ -198,11 +151,9 @@ func TestElementWireErrors(t *testing.T) {
 		// Encode to wire format.
 		w := util.NewFixedWriter(test.max)
 		err := WriteElement(w, test.in)
-		if err != test.writeErr {
-			t.Errorf("writeElement #%d wrong error got: %v, want: %v",
-				i, err, test.writeErr)
-			continue
-		}
+		assert.ErrorIs(t, err, test.writeErr,
+			"writeElement #%d wrong error got: %v, want: %v",
+			i, err, test.writeErr)
 
 		// Decode from wire format.
 		r := util.NewFixedReader(test.max, nil)
@@ -211,11 +162,9 @@ func TestElementWireErrors(t *testing.T) {
 			val = reflect.New(reflect.TypeOf(test.in)).Interface()
 		}
 		err = ReadElement(r, val)
-		if err != test.readErr {
-			t.Errorf("readElement #%d wrong error got: %v, want: %v",
-				i, err, test.readErr)
-			continue
-		}
+		assert.ErrorIs(t, err, test.readErr,
+			"readElement #%d wrong error got: %v, want: %v",
+			i, err, test.readErr)
 	}
 }
 

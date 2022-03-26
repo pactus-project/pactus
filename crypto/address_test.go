@@ -2,30 +2,21 @@ package crypto
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-// func TestAddressMarshaling(t *testing.T) {
-// 	addr1 := GenerateTestAddress()
-// 	addr2 := new(Address)
+func TestAddressJSONMarshaling(t *testing.T) {
+	addr1 := GenerateTestAddress()
 
-// 	bs, err := addr1.MarshalCBOR()
-// 	assert.NoError(t, err)
-// 	assert.NoError(t, addr2.UnmarshalCBOR(bs))
-// 	require.True(t, addr1.EqualsTo(*addr2))
-// 	require.NoError(t, addr1.SanityCheck())
-
-// 	js, err := json.Marshal(addr1)
-// 	assert.NoError(t, err)
-// 	assert.Contains(t, string(js), addr1.String())
-// 	assert.Contains(t, addr1.String(), addr1.Fingerprint())
-
-// 	_, err = AddressFromBytes([]byte{})
-// 	assert.Error(t, err)
-// }
+	js, err := json.Marshal(addr1)
+	assert.NoError(t, err)
+	assert.Contains(t, string(js), addr1.String())
+	assert.Contains(t, addr1.String(), addr1.Fingerprint())
+}
 
 func TestAddressFromString(t *testing.T) {
 	addr1 := GenerateTestAddress()
@@ -38,14 +29,14 @@ func TestAddressFromString(t *testing.T) {
 
 	_, err = AddressFromString("inv")
 	assert.Error(t, err)
-
-	_, err = AddressFromString("00")
-	assert.Error(t, err)
 }
 
 func TestAddressEmpty(t *testing.T) {
-	addr1 := Address{0x2}
-	assert.Error(t, addr1.SanityCheck())
+	_, err := AddressFromBytes(nil)
+	assert.Error(t, err)
+
+	_, err = AddressFromBytes([]byte{1})
+	assert.Error(t, err)
 }
 
 func TestTreasuryAddress(t *testing.T) {
@@ -79,4 +70,6 @@ func TestAddressSanityCheck(t *testing.T) {
 	addr1, err := AddressFromBytes(inv)
 	assert.NoError(t, err)
 	assert.Error(t, addr1.SanityCheck(), "invalid address type")
+	addr1[0] = 1
+	assert.NoError(t, addr1.SanityCheck())
 }

@@ -5,19 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHashMarshaling(t *testing.T) {
 	hash1 := GenerateTestHash()
-	hash2 := new(Hash)
-
-	bs, err := cbor.Marshal(hash1)
-	assert.NoError(t, err)
-	assert.NoError(t, cbor.Unmarshal(bs, hash2))
-	assert.True(t, hash1.EqualsTo(*hash2))
-	assert.NoError(t, hash1.SanityCheck())
 
 	js, err := hash1.MarshalJSON()
 	assert.NoError(t, err)
@@ -44,6 +36,12 @@ func TestHashFromString(t *testing.T) {
 func TestHashEmpty(t *testing.T) {
 	hash1 := Hash{}
 	assert.Error(t, hash1.SanityCheck())
+
+	_, err := FromBytes(nil)
+	assert.Error(t, err)
+
+	_, err = FromBytes([]byte{1})
+	assert.Error(t, err)
 }
 
 func TestHash256(t *testing.T) {
