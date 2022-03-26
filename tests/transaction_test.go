@@ -107,7 +107,7 @@ func TestSendingTransactions(t *testing.T) {
 	})
 
 	// Make sure all transactions are confirmed
-	waitForNewBlock(8)
+	waitForNewBlocks(8)
 
 	accAlice := getAccount(t, pubAlice.Address())
 	accBob := getAccount(t, pubBob.Address())

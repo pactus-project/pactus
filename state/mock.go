@@ -86,8 +86,8 @@ func (m *MockState) Fingerprint() string {
 	return ""
 }
 func (m *MockState) CommitBlock(h int32, b *block.Block, cert *block.Certificate) error {
-	m.lk.RLock()
-	defer m.lk.RUnlock()
+	m.lk.Lock()
+	defer m.lk.Unlock()
 
 	if h != m.TestStore.LastHeight+1 {
 		return fmt.Errorf("invalid height")

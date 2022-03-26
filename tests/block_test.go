@@ -34,9 +34,9 @@ func lastHeight() int32 {
 	return st.LastBlockHeight()
 }
 
-func waitForNewBlock(num int32) {
+func waitForNewBlocks(num int32) {
 	height := lastHeight() + num
-	for {
+	for i := int32(0); i < num; i++ {
 		if lastHeight() > height {
 			break
 		}

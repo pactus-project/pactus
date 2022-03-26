@@ -124,7 +124,7 @@ func TestMain(m *testing.M) {
 	tCapnpServer = capnp.ZarbServer{Client: conn.Bootstrap(tCtx)}
 
 	// Wait for some blocks
-	waitForNewBlock(4)
+	waitForNewBlocks(4)
 
 	fmt.Println("Running tests")
 	exitCode := m.Run()
@@ -138,7 +138,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// Commit more blocks, then new nodes can catch up and send sortition transactions
-	waitForNewBlock(20)
+	waitForNewBlocks(20)
 
 	// Check if sortition worked or not?
 	b, _ := lastBlock().Block()
