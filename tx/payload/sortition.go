@@ -29,7 +29,7 @@ func (p *SortitionPayload) Value() int64 {
 
 func (p *SortitionPayload) SanityCheck() error {
 	if err := p.Address.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid address")
+		return errors.Error(errors.ErrInvalidAddress)
 	}
 
 	return nil

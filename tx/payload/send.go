@@ -29,10 +29,10 @@ func (p *SendPayload) Value() int64 {
 
 func (p *SendPayload) SanityCheck() error {
 	if err := p.Sender.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidAddress, "invalid sender address")
+		return errors.Error(errors.ErrInvalidAddress)
 	}
 	if err := p.Receiver.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidAddress, "invalid receiver address")
+		return errors.Error(errors.ErrInvalidAddress)
 	}
 
 	return nil
