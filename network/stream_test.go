@@ -9,7 +9,7 @@ import (
 )
 
 func TestStream(t *testing.T) {
-	size := 4
+	size := 6
 	nets := setup(t, size)
 	i := util.RandInt32(int32(size-1)) + 1
 	msg := []byte("test-stream")
