@@ -20,14 +20,13 @@ func TestBlocksResponseMessage(t *testing.T) {
 		assert.Error(t, m.SanityCheck())
 	})
 
-	// TODO: fix me (encode first, replace round number to negative, decode again)
-	// t.Run("Invalid certificate", func(t *testing.T) {
-	// 	b := block.GenerateTestBlock(nil, nil)
-	// 	cert := block.GenerateTestCertificate(hash.UndefHash)
-	// 	m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b}, cert)
+	t.Run("Invalid certificate", func(t *testing.T) {
+		b := block.GenerateTestBlock(nil, nil)
+		c := block.NewCertificate(-1, nil, nil, nil)
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b}, c)
 
-	// 	assert.Error(t, m.SanityCheck())
-	// })
+		assert.Error(t, m.SanityCheck())
+	})
 
 	t.Run("OK", func(t *testing.T) {
 		b1 := block.GenerateTestBlock(nil, nil)
