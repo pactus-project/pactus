@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -49,9 +48,7 @@ func TestRandomUint64(t *testing.T) {
 
 	numHits := 0
 	for i := 0; i < tries; i++ {
-		h := hash.GenerateTestHash()
-		sig := signer.SignData(h.Bytes())
-		seed, _ := VerifiableSeedFromBytes(sig.Bytes())
+		seed := GenerateRandomSeed()
 
 		nonce, _ := evaluate(seed, signer, util.MaxUint64)
 		if nonce < watermark {

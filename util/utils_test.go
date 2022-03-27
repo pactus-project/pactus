@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -78,33 +77,4 @@ func TestRandUint64(t *testing.T) {
 
 	rnd2 := RandUint64(0)
 	assert.NotZero(t, rnd2)
-}
-
-// TestRandomUint64 exercises the randomness of the random number generator on
-// the system by ensuring the probability of the generated numbers.  If the RNG
-// is evenly distributed as a proper cryptographic RNG should be, there really
-// should only be 1 number < 2^56 in 2^8 tries for a 64-bit number.  However,
-// use a higher number of 5 to really ensure the test doesn't fail unless the
-// RNG is just horrendous.
-func TestRandomUint64(t *testing.T) {
-	tries := 1 << 8              // 2^8
-	watermark := uint64(1 << 56) // 2^56
-	maxHits := 5
-	badRNG := "The random number generator on this system is clearly " +
-		"terrible since we got %d values less than %d in %d runs " +
-		"when only %d was expected"
-
-	numHits := 0
-	for i := 0; i < tries; i++ {
-		nonce := RandUint64(MaxUint64)
-		if nonce < watermark {
-			numHits++
-		}
-		if numHits > maxHits {
-			str := fmt.Sprintf(badRNG, numHits, watermark, tries, maxHits)
-			t.Errorf("Random Uint64 iteration %d failed - %v %v", i,
-				str, numHits)
-			return
-		}
-	}
 }
