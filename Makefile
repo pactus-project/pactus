@@ -29,10 +29,12 @@ herumi:
 ########################################
 ### Building
 build:
-	go build $(BUILD_LDFLAGS) ./cmd/zarb
+	go build $(BUILD_LDFLAGS) -o ./build/zarbd ./cmd/zarbd
+	go build $(BUILD_LDFLAGS) -o ./build/zarbcli ./cmd/zarbcli
 
 install:
-	go install $(BUILD_LDFLAGS) ./cmd/zarb
+	go install $(BUILD_LDFLAGS) ./cmd/zarbd
+	go install $(BUILD_LDFLAGS) ./cmd/zarbcli
 
 release: herumi
 	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarb
