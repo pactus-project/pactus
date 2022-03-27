@@ -13,6 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/store"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
@@ -34,8 +35,11 @@ func setup(t *testing.T) {
 	acc.AddToBalance(21 * 1e14)
 
 	tStore.UpdateAccount(acc)
-	for i, val := range committee.Validators() {
-		acc := account.NewAccount(val.Address(), int32(i+1))
+	for _, val := range committee.Validators() {
+		// For testing purpose we create some test accounts here
+		// Account number is validator number plus one.
+		// Since account #0 is Treasury account, so it makes scene.
+		acc := account.NewAccount(val.Address(), val.Number()+1)
 		tStore.UpdateValidator(val)
 		tStore.UpdateAccount(acc)
 	}
@@ -44,14 +48,13 @@ func setup(t *testing.T) {
 	tSandbox = NewSandbox(tStore, params, committee).(*sandbox)
 
 	assert.Equal(t, tSandbox.CurrentHeight(), int32(1))
-	lastHeight := 124
-	for i := 1; i < lastHeight; i++ {
+	lastHeight := util.RandInt32(144) + 21
+	for i := int32(1); i < lastHeight; i++ {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
-		tStore.SaveBlock(int32(i), b, c)
+		tStore.SaveBlock(i, b, c)
 	}
-	assert.Equal(t, tSandbox.CurrentHeight(), int32(124))
-
+	assert.Equal(t, tSandbox.CurrentHeight(), lastHeight)
 	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
 	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
 	assert.Equal(t, tSandbox.TransactionToLiveInterval(), params.TransactionToLiveInterval)
