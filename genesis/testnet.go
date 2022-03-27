@@ -6,7 +6,7 @@ const testnetJSON = `
 {
 	"GenesisTime":"2022-02-21T00:00:00Z",
 	"Params":{
-	   "BlockVersion":77,
+	   "BlockVersion":63,
 	   "BlockTimeInSecond":10,
 	   "CommitteeSize":7,
 	   "BlockReward":100000000,

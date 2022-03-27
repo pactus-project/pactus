@@ -182,7 +182,7 @@ func TestBroadcastInvalidMessage(t *testing.T) {
 func TestTestNetFlags(t *testing.T) {
 	setup(t)
 
-	tState.TestParams.BlockVersion = 77
+	tState.TestParams.BlockVersion = 0x3f
 	bdl := tSync.prepareBundle(message.NewHeartBeatMessage(1, 0, hash.GenerateTestHash()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)

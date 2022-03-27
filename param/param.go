@@ -33,9 +33,9 @@ func (p Params) BlockTime() time.Duration {
 }
 
 func (p Params) IsMainnet() bool {
-	return p.BlockVersion == 1
+	return p.BlockVersion == 0x01
 }
 
 func (p Params) IsTestnet() bool {
-	return p.BlockVersion == 77
+	return p.BlockVersion == 0x3f // 63
 }

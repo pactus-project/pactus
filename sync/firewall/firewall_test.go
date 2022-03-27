@@ -173,6 +173,6 @@ func TestNetworkFlags(t *testing.T) {
 	bdl.Flags = util.UnsetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	assert.Error(t, tFirewall.checkBundle(bdl, tGoodPeerID))
 
-	tState.TestParams.BlockVersion = 77
+	tState.TestParams.BlockVersion = 0x3f
 	assert.Error(t, tFirewall.checkBundle(bdl, tGoodPeerID))
 }
