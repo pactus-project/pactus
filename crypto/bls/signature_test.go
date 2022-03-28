@@ -2,7 +2,6 @@ package bls
 
 import (
 	"encoding/hex"
-	"fmt"
 	"strings"
 	"testing"
 
@@ -90,10 +89,6 @@ func TestVerifyingSignature(t *testing.T) {
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 
-	fmt.Printf("%x\n", pb1.Bytes())
-	fmt.Printf("%x\n", pv1.Bytes())
-	fmt.Printf("%x\n", sig1.Bytes())
-
 	assert.NotEqual(t, sig1, sig2)
 	assert.True(t, pb1.Verify(msg, sig1))
 	assert.True(t, pb2.Verify(msg, sig2))
@@ -106,7 +101,7 @@ func TestSigning(t *testing.T) {
 	msg := []byte("zarb")
 	prv, _ := PrivateKeyFromString("68dcbf868133d3dbb4d12a0c2907c9b093dfefef6d3855acb6602ede60a5c6d0")
 	pub, _ := PublicKeyFromString("af0f74917f5065af94727ae9541b0ddcfb5b828a9e016b02498f477ed37fb44d5d882495afb6fd4f9773e4ea9deee436030c4d61c6e3a1151585e1d838cae1444a438d089ce77e10c492a55f6908125c5be9b236a246e4082d08de564e111e65")
-	sig, _ := SignatureFromString("a2d06b33af2c9e7ca878da85a96b2c2346f4306d0473bdabc38be87c19dae5e67e08724a5220d0e372fb080bbd2fbde9")
+	sig, _ := SignatureFromString("ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
 	addr, _ := crypto.AddressFromString("zc15x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr39g6klh")
 
 	sig1 := prv.Sign(msg)

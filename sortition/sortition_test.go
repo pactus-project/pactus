@@ -16,12 +16,11 @@ func TestEvaluation(t *testing.T) {
 	prv, err := bls.PrivateKeyFromString("0f09c13c87597d8e37a4070b9ee5f79cbda01404fdaadc2e8ea67b22531a568f")
 	assert.NoError(t, err)
 	signer := crypto.NewSigner(prv)
-	seed, _ := VerifiableSeedFromString("90a3f39f4f15e89c312d9c88213acfeb8a5bfe196e39062b731a785d8ec651cf6a69a6c540e2bf03e71c55fb27c364fc")
-	proof, _ := ProofFromString("b3020232051fa07763fdad6558619d3b54b0a38f1f69416ab6568bc88345ce08f372876b1d99df188e3fafa03ccfeb72")
+	seed, _ := VerifiableSeedFromString("b63179137423ab2da8279d7aa3726d7ad05ae7d3ab3f744db0a9a719d12a720e72dc1d1e9222360243007f2f4adf7009")
+	proof, _ := ProofFromString("8034f4738cbb57a9e64943239973350d29c3a303d63afa1c60c28462f87b558adb8cf4ade28fdc9262bd4407f13b4ca4")
 
 	t.Run("Total stake is zero", func(t *testing.T) {
-		seed := GenerateRandomSeed()
-		threshold := util.RandInt64(1 * 10e14)
+		threshold := util.RandInt64(1 * 1e14)
 		ok, proof := EvaluateSortition(seed, signer, 0, threshold)
 		require.True(t, ok)
 		ok = VerifyProof(seed, proof, signer.PublicKey(), 0, threshold)
@@ -29,16 +28,14 @@ func TestEvaluation(t *testing.T) {
 	})
 
 	t.Run("Total stake is not zero, but validator stake is zero", func(t *testing.T) {
-		seed := GenerateRandomSeed()
-		total := util.RandInt64(1 * 10e14)
+		total := util.RandInt64(1 * 1e14)
 
 		ok, _ := EvaluateSortition(seed, signer, total, 0)
 		require.False(t, ok)
 	})
 
 	t.Run("Invalid proof (Infinity public key)", func(t *testing.T) {
-		seed := GenerateRandomSeed()
-		total := util.RandInt64(1 * 10e14)
+		total := util.RandInt64(1 * 1e14)
 
 		pub, _ := bls.PublicKeyFromString("c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 		proof, _ := ProofFromString("c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
@@ -47,8 +44,7 @@ func TestEvaluation(t *testing.T) {
 	})
 
 	t.Run("Invalid proof (Zero proof)", func(t *testing.T) {
-		seed := GenerateRandomSeed()
-		total := util.RandInt64(1 * 10e14)
+		total := util.RandInt64(1 * 1e14)
 
 		pub, _ := bls.GenerateTestKeyPair()
 		proof, _ := ProofFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
@@ -56,14 +52,14 @@ func TestEvaluation(t *testing.T) {
 		require.False(t, VerifyProof(seed, proof, pub, total, total))
 	})
 
-	t.Run("Sortition ok", func(t *testing.T) {
-		total := int64(1 * 1e9)
+	t.Run("OK!", func(t *testing.T) {
+		total := int64(1 * 1e14)
 
 		ok, proof2 := EvaluateSortition(seed, signer, total, total/100)
 		require.True(t, ok)
 		require.Equal(t, proof, proof2)
 
-		require.True(t, VerifyProof(seed, proof, signer.PublicKey(), total, total/10))
+		require.True(t, VerifyProof(seed, proof, signer.PublicKey(), total, total/100))
 		require.False(t, VerifyProof(seed, proof, signer.PublicKey(), total, 0))
 		require.False(t, VerifyProof(seed, GenerateRandomProof(), signer.PublicKey(), total, total/10))
 		require.False(t, VerifyProof(seed, Proof{}, signer.PublicKey(), total, total/10))

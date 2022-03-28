@@ -10,7 +10,7 @@ func TestAggregation(t *testing.T) {
 	msg := []byte("zarb")
 	prv1, _ := PrivateKeyFromString("68dcbf868133d3dbb4d12a0c2907c9b093dfefef6d3855acb6602ede60a5c6d0")
 	prv2, _ := PrivateKeyFromString("6f185f534fc39a8729a3ad2240f167a8f337d50f6893d0c81fa358fc59bd9fa8")
-	agg, _ := SignatureFromString("959ad0810024121fc3d537053b33963bde9d372b2c940d262c53aeec876170ed91a6a42b24f95fae1d526c788047efbe")
+	agg, _ := SignatureFromString("a390ffec7061827b7e89193a26841dd9e3537b5db0af55661b624e8b93b855e9f65278850002ea72fb3098e674220eca")
 	sig1 := prv1.Sign(msg).(*Signature)
 	sig2 := prv2.Sign(msg).(*Signature)
 	assert.True(t, Aggregate([]*Signature{sig1, sig2}).EqualsTo(agg))

@@ -44,7 +44,7 @@ release: herumi
 unit_test:
 	go test $(PACKAGES)
 
-test:
+test: 
 	go test ./... -covermode=atomic
 
 test_race:
