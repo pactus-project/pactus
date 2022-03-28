@@ -61,8 +61,8 @@ func NewConsensus(
 	cs.commitState = &commitState{cs}
 	cs.changeProposerState = &changeProposerState{cs}
 
-	cs.height = -1
-	cs.round = -1
+	cs.height = 0
+	cs.round = 0
 
 	return cs, nil
 }
