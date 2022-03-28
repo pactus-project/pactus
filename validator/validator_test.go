@@ -2,7 +2,6 @@ package validator
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -36,13 +35,6 @@ func TestFromBytes(t *testing.T) {
 	bs = bs[:len(bs)-1]
 	_, err = FromBytes(bs)
 	require.Error(t, err)
-}
-
-func TestJSONMarshaling(t *testing.T) {
-	val, _ := GenerateTestValidator(util.RandInt32(10000))
-
-	_, err := json.Marshal(val)
-	require.NoError(t, err)
 }
 
 func TestDecoding(t *testing.T) {

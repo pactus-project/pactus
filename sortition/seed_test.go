@@ -1,7 +1,6 @@
 package sortition
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,13 +26,4 @@ func TestValidate(t *testing.T) {
 	assert.False(t, seed2.Verify(signer.PublicKey(), GenerateRandomSeed()))
 	assert.False(t, seed3.Verify(signer.PublicKey(), seed1))
 	assert.False(t, seed4.Verify(signer.PublicKey(), seed1))
-}
-
-func TestSeedMarshaling(t *testing.T) {
-	s1 := GenerateRandomSeed()
-	bz, err := json.Marshal(s1)
-	assert.NoError(t, err)
-	var s2 VerifiableSeed
-	assert.NoError(t, json.Unmarshal(bz, &s2))
-	assert.Equal(t, s1, s2)
 }

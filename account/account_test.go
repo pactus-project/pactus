@@ -1,7 +1,6 @@
 package account
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,12 +21,6 @@ func TestFromBytes(t *testing.T) {
 
 	_, err = FromBytes([]byte("asdfghjkl"))
 	require.Error(t, err)
-}
-
-func TestJSONMarshaling(t *testing.T) {
-	acc, _ := GenerateTestAccount(util.RandInt32(10000))
-	_, err := json.Marshal(acc)
-	require.NoError(t, err)
 }
 
 func TestDecoding(t *testing.T) {

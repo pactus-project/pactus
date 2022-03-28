@@ -21,16 +21,16 @@ func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request)
 	st, _ := res.Struct()
 	data, _ := st.Result()
 	h, _ := hash.FromBytes(data)
-	s.blockByHash(w, r, h)
+	s.blockByHash(w, h)
 }
 
 func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	h, _ := hash.FromString(vars["hash"])
-	s.blockByHash(w, r, h)
+	s.blockByHash(w, h)
 }
 
-func (s *Server) blockByHash(w http.ResponseWriter, r *http.Request, blockHash hash.Hash) {
+func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
 	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
 		p.SetVerbosity(0)
 		return p.SetHash(blockHash.Bytes())
