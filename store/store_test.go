@@ -76,6 +76,12 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	bs, err := tStore.Block(tStore.BlockHash(height))
 	assert.NoError(t, err)
 	assert.Equal(t, height, bs.Height())
+	b, _ := bs.ToFullBlock()
+	for _, trx := range b.Transactions() {
+		trx2, err := tStore.Transaction(trx.ID())
+		assert.NoError(t, err)
+		assert.Equal(t, trx2.ID(), trx.ID())
+	}
 }
 
 func TestRetrieveAccount(t *testing.T) {
