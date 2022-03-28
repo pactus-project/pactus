@@ -129,3 +129,19 @@ func UnsetFlag(flags, mask int) int {
 func IsFlagSet(flags, mask int) bool {
 	return flags&mask == mask
 }
+
+// OS2IP converts an octet string to a nonnegative integer.
+// OS2IP: https://datatracker.ietf.org/doc/html/rfc8017#section-4.2
+func OS2IP(os []byte) *big.Int {
+	return new(big.Int).SetBytes(os)
+}
+
+/// I2OSP converts a nonnegative integer to an octet string of a specified length.
+/// https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
+func IS2OP(x *big.Int, xLen int) []byte {
+	if x.Sign() == -1 {
+		return nil
+	}
+	buf := make([]byte, xLen)
+	return x.FillBytes(buf)
+}

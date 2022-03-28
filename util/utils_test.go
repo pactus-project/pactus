@@ -1,6 +1,7 @@
 package util
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -77,4 +78,22 @@ func TestRandUint64(t *testing.T) {
 
 	rnd2 := RandUint64(0)
 	assert.NotZero(t, rnd2)
+}
+
+func TestI2OSP(t *testing.T) {
+	assert.Nil(t, IS2OP(big.NewInt(int64(-1)), 2))
+
+	assert.Equal(t, IS2OP(big.NewInt(int64(0)), 2), []byte{0, 0})
+	assert.Equal(t, IS2OP(big.NewInt(int64(1)), 2), []byte{0, 1})
+	assert.Equal(t, IS2OP(big.NewInt(int64(255)), 2), []byte{0, 255})
+	assert.Equal(t, IS2OP(big.NewInt(int64(256)), 2), []byte{1, 0})
+	assert.Equal(t, IS2OP(big.NewInt(int64(65535)), 2), []byte{255, 255})
+}
+
+func TestIS2OP(t *testing.T) {
+	assert.Equal(t, OS2IP([]byte{0, 0}).Int64(), int64(0))
+	assert.Equal(t, OS2IP([]byte{0, 1}).Int64(), int64(1))
+	assert.Equal(t, OS2IP([]byte{0, 255}).Int64(), int64(255))
+	assert.Equal(t, OS2IP([]byte{1, 0}).Int64(), int64(256))
+	assert.Equal(t, OS2IP([]byte{255, 255}).Int64(), int64(65535))
 }

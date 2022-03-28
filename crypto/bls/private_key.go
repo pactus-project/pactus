@@ -10,6 +10,7 @@ import (
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util"
 	"golang.org/x/crypto/hkdf"
 )
 
@@ -30,7 +31,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 
 // PrivateKeyFromSeed generates a private key deterministically from
 // a secret octet string IKM.
-// Based on https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-02#section-2.3
+// Based on https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-2.3
 func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
 	// L is `ceil((3 * ceil(log2(r))) / 16) = 48`,
 	//    where `r` is the order of the BLS 12-381 curve
@@ -43,19 +44,23 @@ func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
 	}
 
 	salt := []byte("BLS-SIG-KEYGEN-SALT-")
-	L := 48
-	okm := make([]byte, L)
-	_, _ = hkdf.New(sha256.New, append(ikm, 0), salt, []byte{0, byte(L)}).Read(okm)
+	x := big.NewInt(0)
+	for x.Sign() == 0 {
+		h := sha256.Sum256(salt)
+		salt = h[:]
+		L := int64(48)
+		okm := make([]byte, L)
+		keyInfo := []byte{}
+		prk := hkdf.Extract(sha256.New, append(ikm, util.IS2OP(big.NewInt(0), 1)...), salt[:])
+		reader := hkdf.Expand(sha256.New, prk, append(keyInfo, util.IS2OP(big.NewInt(L), 2)...))
+		_, _ = reader.Read(okm)
 
-	// OS2IP: https://datatracker.ietf.org/doc/html/rfc8017#section-4.2
-	// OS2IP converts an octet string to a nonnegative integer.
+		r, _ := new(big.Int).SetString("73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001", 16)
+		x = new(big.Int).Mod(util.OS2IP(okm), r)
+	}
 
-	r, _ := new(big.Int).SetString("73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001", 16)
-	x := new(big.Int).Mod(new(big.Int).SetBytes(okm), r)
-	buf := [32]byte{}
-	x.FillBytes(buf[:])
-
-	return PrivateKeyFromBytes(buf[:])
+	sk := x.Bytes()
+	return PrivateKeyFromBytes(sk)
 }
 
 func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
