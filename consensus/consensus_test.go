@@ -422,6 +422,8 @@ func TestConsensusInvalidVote(t *testing.T) {
 func TestPickRandomVote(t *testing.T) {
 	setup(t)
 
+	assert.Nil(t, tConsP.PickRandomVote())
+
 	testEnterNewHeight(tConsP)
 	assert.Nil(t, tConsP.PickRandomVote())
 
