@@ -9,7 +9,7 @@ import (
 )
 
 func TestPubSub(t *testing.T) {
-	size := 6
+	size := 8
 	nets := setup(t, size)
 	msg := []byte("test-general-topic")
 

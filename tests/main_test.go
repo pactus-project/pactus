@@ -124,7 +124,7 @@ func TestMain(m *testing.M) {
 	tCapnpServer = capnp.ZarbServer{Client: conn.Bootstrap(tCtx)}
 
 	// Wait for some blocks
-	waitForNewBlocks(4)
+	waitForNewBlocks(8)
 
 	fmt.Println("Running tests")
 	exitCode := m.Run()
