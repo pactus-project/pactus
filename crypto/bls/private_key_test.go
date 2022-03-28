@@ -19,10 +19,6 @@ func TestPrivateKeyMarshaling(t *testing.T) {
 	assert.True(t, prv1.EqualsTo(prv2))
 	assert.NoError(t, prv1.SanityCheck())
 
-	js, err := prv1.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Contains(t, string(js), prv1.String())
-
 	inv, _ := hex.DecodeString(strings.Repeat("ff", PrivateKeySize))
 	data, _ := cbor.Marshal(inv)
 	assert.Error(t, prv2.UnmarshalCBOR(data))

@@ -52,19 +52,6 @@ func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed
 	return public.Verify(hash.Bytes(), sig) == nil
 }
 
-func (s VerifiableSeed) MarshalText() ([]byte, error) {
-	return []byte(hex.EncodeToString(s[:])), nil
-}
-
-func (s *VerifiableSeed) UnmarshalText(text []byte) error {
-	seed, err := VerifiableSeedFromString(string(text))
-	if err != nil {
-		return err
-	}
-	*s = seed
-	return nil
-}
-
 func GenerateRandomSeed() VerifiableSeed {
 	h := hash.GenerateTestHash()
 	signer := bls.GenerateTestSigner()

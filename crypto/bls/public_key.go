@@ -3,7 +3,6 @@ package bls
 import (
 	"bytes"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"io"
 
@@ -57,10 +56,6 @@ func (pub PublicKey) String() string {
 		return ""
 	}
 	return pub.publicKey.SerializeToHexStr()
-}
-
-func (pub *PublicKey) MarshalJSON() ([]byte, error) {
-	return json.Marshal(pub.String())
 }
 
 func (pub *PublicKey) MarshalCBOR() ([]byte, error) {

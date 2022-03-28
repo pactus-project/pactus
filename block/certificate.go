@@ -2,7 +2,6 @@ package block
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 
 	"github.com/fxamacker/cbor/v2"
@@ -182,10 +181,6 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	cert.data.Signature = sig
 
 	return nil
-}
-
-func (cert *Certificate) MarshalJSON() ([]byte, error) {
-	return json.Marshal(cert.data)
 }
 
 func CertificateSignBytes(blockHash hash.Hash, round int16) []byte {

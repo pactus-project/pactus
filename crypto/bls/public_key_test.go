@@ -26,13 +26,6 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 	assert.Error(t, pub2.UnmarshalCBOR(data))
 }
 
-func TestPublicKeyJSONMarshaling(t *testing.T) {
-	pub, _ := GenerateTestKeyPair()
-	js, err := pub.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Contains(t, string(js), pub.String())
-}
-
 func TestPublicKeyEncoding(t *testing.T) {
 	pub, _ := GenerateTestKeyPair()
 	w1 := util.NewFixedWriter(20)

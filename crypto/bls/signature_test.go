@@ -28,14 +28,6 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 	assert.Error(t, sig2.UnmarshalCBOR(data))
 }
 
-func TestSignatureJSONMarshaling(t *testing.T) {
-	_, prv := GenerateTestKeyPair()
-	sig := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
-	js, err := sig.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Contains(t, string(js), sig.String())
-}
-
 func TestSignatureEncoding(t *testing.T) {
 	_, prv := GenerateTestKeyPair()
 	sig := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))

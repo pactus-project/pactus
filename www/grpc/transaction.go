@@ -77,8 +77,8 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 		pld := trx.Payload().(*payload.SendPayload)
 		transaction.Payload = &zarb.TransactionInfo_Send{
 			Send: &zarb.SEND_PAYLOAD{
-				Sender:   pld.Sender.String(),
-				Receiver: pld.Receiver.String(),
+				Sender:   pld.Sender.Bytes(),
+				Receiver: pld.Receiver.Bytes(),
 				Amount:   pld.Amount,
 			},
 		}
@@ -86,18 +86,17 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 		pld := trx.Payload().(*payload.BondPayload)
 		transaction.Payload = &zarb.TransactionInfo_Bond{
 			Bond: &zarb.BOND_PAYLOAD{
-				Sender:    pld.Sender.String(),
-				Validator: pld.PublicKey.String(),
+				Sender:    pld.Sender.Bytes(),
+				Validator: pld.PublicKey.Bytes(),
 				Stake:     pld.Stake,
 			},
 		}
 	case payload.PayloadTypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
-		proof, _ := pld.Proof.MarshalText()
 		transaction.Payload = &zarb.TransactionInfo_Sortition{
 			Sortition: &zarb.SORTITION_PAYLOAD{
-				Address: pld.Address.String(),
-				Proof:   string(proof),
+				Address: pld.Address.Bytes(),
+				Proof:   pld.Proof[:],
 			},
 		}
 	default:
