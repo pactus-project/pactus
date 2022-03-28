@@ -30,7 +30,7 @@ var tCapnpAddress = "0.0.0.0:1337"
 var tGenDoc *genesis.Genesis
 var tCapnpServer capnp.ZarbServer
 var tCtx context.Context
-var tSequences map[crypto.Address]int
+var tSequences map[crypto.Address]int32
 
 const tNodeIdx1 = 0
 const tNodeIdx2 = 1
@@ -43,7 +43,7 @@ func incSequence(addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
 }
 
-func getSequence(addr crypto.Address) int {
+func getSequence(addr crypto.Address) int32 {
 	return tSequences[addr]
 }
 
@@ -51,7 +51,7 @@ func TestMain(m *testing.M) {
 	tSigners = make([]crypto.Signer, tTotalNodes)
 	tConfigs = make([]*config.Config, tTotalNodes)
 	tNodes = make([]*node.Node, tTotalNodes)
-	tSequences = make(map[crypto.Address]int)
+	tSequences = make(map[crypto.Address]int32)
 
 	for i := 0; i < tTotalNodes; i++ {
 		pub, prv := bls.GenerateTestKeyPair()
@@ -124,9 +124,7 @@ func TestMain(m *testing.M) {
 	tCapnpServer = capnp.ZarbServer{Client: conn.Bootstrap(tCtx)}
 
 	// Wait for some blocks
-	for i := 0; i < 10; i++ {
-		waitForNewBlock()
-	}
+	waitForNewBlocks(8)
 
 	fmt.Println("Running tests")
 	exitCode := m.Run()
@@ -140,9 +138,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// Commit more blocks, then new nodes can catch up and send sortition transactions
-	for i := 0; i < 40; i++ {
-		waitForNewBlock()
-	}
+	waitForNewBlocks(20)
 
 	// Check if sortition worked or not?
 	b, _ := lastBlock().Block()

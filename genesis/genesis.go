@@ -57,7 +57,7 @@ func (gen *Genesis) Accounts() []*account.Account {
 	accs := make([]*account.Account, 0)
 	for i, genAcc := range gen.data.Accounts {
 		addr, _ := crypto.AddressFromString(genAcc.Address)
-		acc := account.NewAccount(addr, i)
+		acc := account.NewAccount(addr, int32(i))
 		acc.AddToBalance(genAcc.Balance)
 		accs = append(accs, acc)
 	}
@@ -69,7 +69,7 @@ func (gen *Genesis) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, 0, len(gen.data.Validators))
 	for i, genVal := range gen.data.Validators {
 		pub, _ := bls.PublicKeyFromString(genVal.PublicKey)
-		val := validator.NewValidator(pub, i)
+		val := validator.NewValidator(pub, int32(i))
 		vals = append(vals, val)
 	}
 

@@ -59,12 +59,12 @@ func setup(t *testing.T) {
 	tStore.UpdateValidator(val4)
 
 	// Last block
-	committers := []int{0, 1, 2, 3}
+	committers := []int32{0, 1, 2, 3}
 	trx := tx.NewSortitionTx(hash.GenerateTestStamp(), 1, pub4.Address(), sortition.GenerateRandomProof())
 	signer.SignMsg(trx)
 	prevHash := hash.GenerateTestHash()
 	prevCert := block.GenerateTestCertificate(prevHash)
-	lastHeight := util.RandInt(1000)
+	lastHeight := util.RandInt32(100000)
 	lastSeed := sortition.GenerateRandomSeed()
 	lastBlock := block.MakeBlock(1, util.Now(), block.Txs{trx},
 		prevHash,
@@ -72,9 +72,9 @@ func setup(t *testing.T) {
 		prevCert, lastSeed, val2.Address())
 
 	sig := signer.SignData([]byte("fatdog"))
-	lastCert := block.NewCertificate(lastBlock.Hash(), 0, committers, []int{}, sig.(*bls.Signature))
+	lastCert := block.NewCertificate(0, committers, []int32{}, sig.(*bls.Signature))
 	tStore.SaveBlock(lastHeight, lastBlock, lastCert)
-	assert.Equal(t, tStore.LastCert.Height, lastHeight)
+	assert.Equal(t, tStore.LastHeight, lastHeight)
 
 	tLastInfo.SetSortitionSeed(lastSeed)
 	tLastInfo.SetBlockHeight(lastHeight)
@@ -96,7 +96,7 @@ func TestRestoreCommittee(t *testing.T) {
 	assert.Equal(t, tLastInfo.BlockHash(), li.BlockHash())
 	assert.Equal(t, tLastInfo.Certificate().Hash(), li.Certificate().Hash())
 	assert.Equal(t, tLastInfo.BlockTime(), li.BlockTime())
-	assert.Equal(t, cmt.Committers(), []int{1, 4, 2, 3})
+	assert.Equal(t, cmt.Committers(), []int32{1, 4, 2, 3})
 }
 
 func TestRestoreFailed(t *testing.T) {
@@ -115,7 +115,7 @@ func TestRestoreFailed(t *testing.T) {
 
 		li := NewLastInfo(tStore)
 
-		tStore.Blocks = make(map[int]block.Block) // Reset Blocks
+		tStore.Blocks = make(map[int32]block.Block) // Reset Blocks
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})

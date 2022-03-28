@@ -31,43 +31,42 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 }
 
 func (zs *zarbServer) SendRawTransaction(ctx context.Context, request *zarb.SendRawTransactionRequest) (*zarb.SendRawTransactionResponse, error) {
-	var tx tx.Tx
-
-	hexDecoded, err := hex.DecodeString(request.Data)
+	data, err := hex.DecodeString(request.Data)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %s", err.Error())
 	}
-	if err := tx.Decode(hexDecoded); err != nil {
+	trx, err := tx.FromBytes(data)
+	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %s", err.Error())
 	}
 
-	if err := tx.SanityCheck(); err != nil {
+	if err := trx.SanityCheck(); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't verify transaction: %s", err.Error())
 	}
 
-	if err := zs.state.AddPendingTxAndBroadcast(&tx); err != nil {
+	if err := zs.state.AddPendingTxAndBroadcast(trx); err != nil {
 		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %s", err.Error())
 	}
 
 	return &zarb.SendRawTransactionResponse{
-		Id: tx.ID().String(),
+		Id: trx.ID().String(),
 	}, nil
 }
 
 func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	transaction := &zarb.TransactionInfo{
-		Id:        trx.ID().String(),
+		Id:        trx.ID().Bytes(),
 		Version:   int32(trx.Version()),
-		Stamp:     trx.Stamp().String(),
-		Sequence:  int64(trx.Sequence()),
+		Stamp:     trx.Stamp().Bytes(),
+		Sequence:  trx.Sequence(),
 		Fee:       trx.Fee(),
-		Type:      zarb.PayloadType(trx.PayloadType()),
+		Type:      zarb.PayloadType(trx.Payload().Type()),
 		Memo:      trx.Memo(),
-		PublicKey: trx.PublicKey().String(),
-		Signature: trx.Signature().String(),
+		PublicKey: trx.PublicKey().Bytes(),
+		Signature: trx.Signature().Bytes(),
 	}
 
-	switch trx.PayloadType() {
+	switch trx.Payload().Type() {
 	case payload.PayloadTypeSend:
 		pld := trx.Payload().(*payload.SendPayload)
 		transaction.Payload = &zarb.TransactionInfo_Send{
@@ -96,7 +95,7 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 			},
 		}
 	default:
-		logger.Error("payload type not defined", "Type", trx.PayloadType())
+		logger.Error("payload type not defined", "Type", trx.Payload().Type())
 	}
 
 	return transaction

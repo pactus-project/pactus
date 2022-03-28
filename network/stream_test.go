@@ -5,17 +5,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestStream(t *testing.T) {
-	size := 4
+	size := 6
 	nets := setup(t, size)
-	i := util.RandInt(size-1) + 1
 	msg := []byte("test-stream")
-	require.NoError(t, nets[0].SendTo(msg, nets[i].SelfID()))
+	require.NoError(t, nets[0].SendTo(msg, nets[1].SelfID()))
 
-	e := shouldReceiveEvent(t, nets[i]).(*StreamMessage)
+	e := shouldReceiveEvent(t, nets[1]).(*StreamMessage)
 	buf := make([]byte, len(msg))
 	_, err := e.Reader.Read(buf)
 	assert.NoError(t, err)

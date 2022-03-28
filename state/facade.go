@@ -14,19 +14,19 @@ import (
 
 type Facade interface {
 	GenesisHash() hash.Hash
-	LastBlockHeight() int
+	LastBlockHeight() int32
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
 	LastCertificate() *block.Certificate
 	BlockTime() time.Duration
 	UpdateLastCertificate(lastCertificate *block.Certificate) error
-	ProposeBlock(round int) (*block.Block, error)
+	ProposeBlock(round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error
-	CommitBlock(height int, block *block.Block, cert *block.Certificate) error
+	CommitBlock(height int32, block *block.Block, cert *block.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	IsInCommittee(addr crypto.Address) bool
-	Proposer(round int) *validator.Validator
-	IsProposer(addr crypto.Address, round int) bool
+	Proposer(round int16) *validator.Validator
+	IsProposer(addr crypto.Address, round int16) bool
 	TotalPower() int64
 	CommitteePower() int64
 	Transaction(id tx.ID) *tx.Tx
@@ -34,10 +34,10 @@ type Facade interface {
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
 	Block(hash hash.Hash) *block.Block // TODO: return store block (including block header data)
-	BlockHash(height int) hash.Hash
+	BlockHash(height int32) hash.Hash
 	Account(addr crypto.Address) *account.Account
 	Validator(addr crypto.Address) *validator.Validator
-	ValidatorByNumber(number int) *validator.Validator
+	ValidatorByNumber(number int32) *validator.Validator
 	Params() param.Params
 	Close() error
 	Fingerprint() string

@@ -10,17 +10,17 @@ import (
 
 type accountStore struct {
 	db    *leveldb.DB
-	total int
+	total int32
 }
 
-func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.RawBytes()...) }
+func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
 
 func newAccountStore(db *leveldb.DB) *accountStore {
 	as := &accountStore{
 		db: db,
 	}
 	// TODO: better way to get total accout number?
-	total := 0
+	total := int32(0)
 	as.iterateAccounts(func(acc *account.Account) bool {
 		total++
 		return false
@@ -44,8 +44,8 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 		return nil, err
 	}
 
-	acc := new(account.Account)
-	if err := acc.Decode(bs); err != nil {
+	acc, err := account.FromBytes(bs)
+	if err != nil {
 		return nil, err
 	}
 
@@ -59,8 +59,8 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 		//key := iter.Key()
 		value := iter.Value()
 
-		acc := new(account.Account)
-		if err := acc.Decode(value); err != nil {
+		acc, err := account.FromBytes(value)
+		if err != nil {
 			logger.Panic("unable to decode account: %v", err)
 		}
 
@@ -74,7 +74,7 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 }
 
 func (as *accountStore) updateAccount(batch *leveldb.Batch, acc *account.Account) {
-	data, err := acc.Encode()
+	data, err := acc.Bytes()
 	if err != nil {
 		logger.Panic("unable to encode account: %v", err)
 	}

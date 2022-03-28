@@ -21,7 +21,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data, _ := st.LastBlockHash()
-	h, _ := hash.FromRawBytes(data)
+	h, _ := hash.FromBytes(data)
 	out := new(BlockchainResult)
 	out.LastBlockHeight = int(st.LastBlockHeight())
 	out.LastBlockHash = h
@@ -65,7 +65,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		peer.PublicKey = *pub
 		peer.Agent = ver
 		peer.Moniker = moniker
-		peer.Height = int(p.Height())
+		peer.Height = p.Height()
 		peer.InvalidBundles = int(p.InvalidMessages())
 		peer.ReceivedBundles = int(p.ReceivedMessages())
 		peer.ReceivedBytes = int(p.ReceivedBytes())

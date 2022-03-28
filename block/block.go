@@ -1,13 +1,16 @@
 package block
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
@@ -15,13 +18,15 @@ import (
 )
 
 type Block struct {
-	data blockData
+	memorizedHash *hash.Hash
+	memorizedData []byte
+	data          blockData
 }
 
 type blockData struct {
-	Header   Header       `cbor:"1,keyasint"`
-	PrevCert *Certificate `cbor:"2,keyasint"`
-	Txs      Txs          `cbor:"3,keyasint"`
+	Header   Header
+	PrevCert *Certificate
+	Txs      Txs
 }
 
 func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
@@ -34,16 +39,22 @@ func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
 	}
 }
 
-func MakeBlock(version int, timestamp time.Time, txs Txs,
+/// FromBytes constructs a new block from byte array
+func FromBytes(data []byte) (*Block, error) {
+	b := new(Block)
+	r := bytes.NewReader(data)
+	if err := b.Decode(r); err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+func MakeBlock(version uint8, timestamp time.Time, txs Txs,
 	prevBlockHash, stateRoot hash.Hash,
 	prevCert *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address) *Block {
-	txsRoot := txs.Root()
-	prevCertHash := hash.UndefHash
-	if prevCert != nil {
-		prevCertHash = prevCert.Hash()
-	}
 	header := NewHeader(version, timestamp,
-		txsRoot, stateRoot, prevBlockHash, prevCertHash, sortitionSeed, proposer)
+		stateRoot, prevBlockHash, sortitionSeed, proposer)
 
 	b := NewBlock(header, prevCert, txs)
 	if err := b.SanityCheck(); err != nil {
@@ -66,20 +77,17 @@ func (b *Block) SanityCheck() error {
 	if b.Transactions().Len() > 1000 {
 		return errors.Errorf(errors.ErrInvalidBlock, "block is full")
 	}
-	if !b.Header().TxsRoot().EqualsTo(b.data.Txs.Root()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "transactions root is not matched")
-	}
 	if b.PrevCertificate() != nil {
 		if err := b.PrevCertificate().SanityCheck(); err != nil {
 			return err
 		}
-		if !b.Header().PrevCertificateHash().EqualsTo(b.PrevCertificate().Hash()) {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous certificate hash")
+		if err := b.Header().PrevBlockHash().SanityCheck(); err != nil {
+			return err
 		}
 	} else {
 		// Genesis block checks
-		if !b.Header().PrevCertificateHash().IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid genesis certificate hash")
+		if !b.Header().PrevBlockHash().IsUndef() {
+			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous block hash")
 		}
 	}
 
@@ -93,7 +101,24 @@ func (b *Block) SanityCheck() error {
 }
 
 func (b *Block) Hash() hash.Hash {
-	return b.Header().Hash()
+	if b.memorizedHash != nil {
+		return *b.memorizedHash
+	}
+
+	w := &bytes.Buffer{}
+	if err := b.data.Header.Encode(w); err != nil {
+		return hash.UndefHash
+	}
+	// Genesis block has no certificate
+	if b.data.PrevCert != nil {
+		w.Write(b.data.PrevCert.Hash().Bytes())
+	}
+	w.Write(b.data.Txs.Root().Bytes())
+	w.Write(util.Int32ToSlice(int32(b.data.Txs.Len())))
+
+	h := hash.CalcHash(w.Bytes())
+	b.memorizedHash = &h
+	return h
 }
 
 func (b *Block) Stamp() hash.Stamp {
@@ -108,20 +133,103 @@ func (b *Block) Fingerprint() string {
 		b.data.Txs.Len(),
 	)
 }
+
 func (b *Block) MarshalCBOR() ([]byte, error) {
-	return b.Encode()
+	buf := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
+	if err := b.Encode(buf); err != nil {
+		return nil, err
+	}
+	return cbor.Marshal(buf.Bytes())
 }
 
 func (b *Block) UnmarshalCBOR(bs []byte) error {
-	return b.Decode(bs)
+	data := make([]byte, 0, b.SerializeSize())
+	err := cbor.Unmarshal(bs, &data)
+	if err != nil {
+		return err
+	}
+	buf := bytes.NewBuffer(data)
+	return b.Decode(buf)
 }
 
-func (b *Block) Encode() ([]byte, error) {
-	return cbor.Marshal(b.data)
+// Encode encodes the receiver to w.
+func (b *Block) Encode(w io.Writer) error {
+	if err := b.data.Header.Encode(w); err != nil {
+		return err
+	}
+	if b.data.PrevCert != nil {
+		if err := b.data.PrevCert.Encode(w); err != nil {
+			return err
+		}
+	}
+	if err := encoding.WriteVarInt(w, uint64(b.data.Txs.Len())); err != nil {
+		return err
+	}
+	for _, tx := range b.Transactions() {
+		if err := tx.Encode(w); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-func (b *Block) Decode(bs []byte) error {
-	return cbor.Unmarshal(bs, &b.data)
+func (b *Block) Decode(r io.Reader) error {
+	if err := b.data.Header.Decode(r); err != nil {
+		return err
+	}
+	if !b.data.Header.PrevBlockHash().IsUndef() {
+		b.data.PrevCert = new(Certificate)
+		if err := b.data.PrevCert.Decode(r); err != nil {
+			return err
+		}
+	}
+	len, err := encoding.ReadVarInt(r)
+	if err != nil {
+		return err
+	}
+	b.data.Txs = make([]*tx.Tx, len)
+	for i := 0; i < int(len); i++ {
+		tx := new(tx.Tx)
+		if err := tx.Decode(r); err != nil {
+			return err
+		}
+		b.data.Txs[i] = tx
+	}
+	return nil
+}
+
+// SerializeSize returns the number of bytes it would take to serialize the block
+func (b *Block) SerializeSize() int {
+	n := b.Header().SerializeSize()
+
+	if b.PrevCertificate() != nil {
+		n += b.PrevCertificate().SerializeSize()
+	}
+
+	n += encoding.VarIntSerializeSize(uint64(b.Transactions().Len()))
+	for _, tx := range b.Transactions() {
+		n += tx.SerializeSize()
+	}
+	return n
+}
+
+// Bytes returns the serialized bytes for the Block. It caches the
+// result so subsequent calls are more efficient.
+func (b *Block) Bytes() ([]byte, error) {
+	// Return the cached serialized bytes if it has already been generated.
+	if len(b.memorizedData) != 0 {
+		return b.memorizedData, nil
+	}
+
+	w := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
+	err := b.Encode(w)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cache the serialized bytes and return them.
+	b.memorizedData = w.Bytes()
+	return b.memorizedData, nil
 }
 
 func (b *Block) MarshalJSON() ([]byte, error) {
@@ -156,10 +264,8 @@ func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) *Bloc
 	}
 	sortitionSeed := sortition.GenerateRandomSeed()
 	header := NewHeader(1, util.Now(),
-		txs.Root(),
 		hash.GenerateTestHash(),
 		*prevBlockHash,
-		cert.Hash(),
 		sortitionSeed,
 		*proposer)
 

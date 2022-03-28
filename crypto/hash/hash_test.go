@@ -10,13 +10,6 @@ import (
 
 func TestHashMarshaling(t *testing.T) {
 	hash1 := GenerateTestHash()
-	hash2 := new(Hash)
-
-	bs, err := hash1.MarshalCBOR()
-	assert.NoError(t, err)
-	assert.NoError(t, hash2.UnmarshalCBOR(bs))
-	assert.True(t, hash1.EqualsTo(*hash2))
-	assert.NoError(t, hash1.SanityCheck())
 
 	js, err := hash1.MarshalJSON()
 	assert.NoError(t, err)
@@ -43,6 +36,12 @@ func TestHashFromString(t *testing.T) {
 func TestHashEmpty(t *testing.T) {
 	hash1 := Hash{}
 	assert.Error(t, hash1.SanityCheck())
+
+	_, err := FromBytes(nil)
+	assert.Error(t, err)
+
+	_, err = FromBytes([]byte{1})
+	assert.Error(t, err)
 }
 
 func TestHash256(t *testing.T) {
@@ -51,7 +50,7 @@ func TestHash256(t *testing.T) {
 	expected, _ := hex.DecodeString("12b38977f2d67f06f0c0cd54aaf7324cf4fee184398ea33d295e8d1543c2ee1a")
 	assert.Equal(t, h, expected)
 
-	hash, _ := FromRawBytes(h)
+	hash, _ := FromBytes(h)
 	stamp, _ := StampFromString("12b38977")
 	assert.Equal(t, hash.Stamp(), stamp)
 }
@@ -68,5 +67,5 @@ func TestHashSanityCheck(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, h.IsUndef())
 	assert.Error(t, h.SanityCheck())
-	assert.Equal(t, UndefHash.RawBytes(), h.RawBytes())
+	assert.Equal(t, UndefHash.Bytes(), h.Bytes())
 }

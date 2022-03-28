@@ -23,7 +23,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: crypto.GenerateTestAddress().RawBytes(),
+			Address: crypto.GenerateTestAddress().Bytes(),
 		})
 
 		assert.Error(t, err)
@@ -32,11 +32,11 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: val1.Address().RawBytes(),
+			Address: val1.Address().Bytes(),
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.PublicKey().Bytes(), res.GetValidator().PublicKey)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
@@ -57,7 +57,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: int32(val1.Number() + 1),
+			Number: val1.Number() + 1,
 		})
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -65,12 +65,12 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx, &zarb.ValidatorByNumberRequest{
-			Number: int32(val1.Number()),
+			Number: val1.Number(),
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().RawBytes(), res.GetValidator().PublicKey)
-		assert.Equal(t, int32(val1.Number()), res.GetValidator().GetNumber())
+		assert.Equal(t, val1.PublicKey().Bytes(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.Number(), res.GetValidator().GetNumber())
 
 	})
 

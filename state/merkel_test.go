@@ -12,7 +12,7 @@ import (
 func TestChangeAcc(t *testing.T) {
 	setup(t)
 
-	require.Equal(t, tState1.store.TotalAccounts(), 1)
+	require.Equal(t, tState1.store.TotalAccounts(), int32(1))
 
 	acc1, _ := account.GenerateTestAccount(1)
 	acc2, _ := account.GenerateTestAccount(2)
@@ -40,7 +40,7 @@ func TestChangeAcc(t *testing.T) {
 func TestChangeVal(t *testing.T) {
 	setup(t)
 
-	require.Equal(t, tState1.store.TotalValidators(), 4)
+	require.Equal(t, tState1.store.TotalValidators(), int32(4))
 
 	val1, _ := validator.GenerateTestValidator(4)
 	val2, _ := validator.GenerateTestValidator(5)

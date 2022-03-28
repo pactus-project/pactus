@@ -1,10 +1,15 @@
 package crypto
 
+import "io"
+
 type PublicKey interface {
-	RawBytes() []byte
+	Bytes() []byte
 	String() string
-	MarshalJSON() ([]byte, error)
+	MarshalJSON() ([]byte, error) // TODO: remove me
 	MarshalCBOR() ([]byte, error)
+	UnmarshalCBOR([]byte) error
+	Encode(io.Writer) error
+	Decode(io.Reader) error
 	SanityCheck() error
 	Verify(msg []byte, sig Signature) bool
 	Address() Address

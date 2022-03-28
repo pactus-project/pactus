@@ -33,7 +33,7 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 	trx := tx.NewSendTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
 	sender.SignMsg(trx)
 
-	d, _ := trx.Encode()
+	d, _ := trx.Bytes()
 	return sendRawTx(t, d)
 }
 
@@ -43,7 +43,7 @@ func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.Pub
 	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), val.(*bls.PublicKey), stake, fee, "")
 	sender.SignMsg(trx)
 
-	d, _ := trx.Encode()
+	d, _ := trx.Bytes()
 	return sendRawTx(t, d)
 }
 
@@ -106,10 +106,8 @@ func TestSendingTransactions(t *testing.T) {
 		}
 	})
 
-	// Make sure all transaction confirmed
-	for i := 0; i < 10; i++ {
-		waitForNewBlock()
-	}
+	// Make sure all transactions are confirmed
+	waitForNewBlocks(8)
 
 	accAlice := getAccount(t, pubAlice.Address())
 	accBob := getAccount(t, pubBob.Address())

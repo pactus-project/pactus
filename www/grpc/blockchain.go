@@ -11,8 +11,8 @@ func (zs *zarbServer) GetBlockchainInfo(ctx context.Context, request *zarb.Block
 	height := zs.state.LastBlockHeight()
 
 	return &zarb.BlockchainInfoResponse{
-		LastBlockHeight: int64(height),
-		LastBlockHash:   zs.state.LastBlockHash().RawBytes(),
+		LastBlockHeight: height,
+		LastBlockHash:   zs.state.LastBlockHash().Bytes(),
 	}, nil
 }
 func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkInfoRequest) (*zarb.NetworkInfoResponse, error) {
@@ -34,9 +34,9 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkI
 		p.PeerId = []byte(peer.PeerID)
 		p.Moniker = peer.Moniker
 		p.Agent = peer.Agent
-		p.PublicKey = peer.PublicKey.RawBytes()
+		p.PublicKey = peer.PublicKey.Bytes()
 		p.Flags = int32(peer.Flags)
-		p.Height = int32(peer.Height)
+		p.Height = peer.Height
 		p.ReceivedMessages = int32(peer.ReceivedBundles)
 		p.InvalidMessages = int32(peer.InvalidBundles)
 		p.ReceivedBytes = int32(peer.ReceivedBytes)

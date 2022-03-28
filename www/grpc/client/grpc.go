@@ -27,18 +27,18 @@ func GetStamp(rpcEndpoint string) (hash.Stamp, error) {
 	return hash.StampFromString(string(info.LastBlockHash))
 }
 
-func GetSequence(rpcEndpoint string, addr crypto.Address) (int, error) {
+func GetSequence(rpcEndpoint string, addr crypto.Address) (int32, error) {
 	client, err := GetRPCClient(rpcEndpoint)
 	if err != nil {
 		return 0, err
 	}
 
-	acc, err := client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.RawBytes()})
+	acc, err := client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.Bytes()})
 	if err != nil {
 		return 0, err
 	}
 
-	return int(acc.Account.Sequence) + 1, nil
+	return acc.Account.Sequence + 1, nil
 }
 
 func SendTx(rpcEndpoint string, payload []byte) (string, error) {

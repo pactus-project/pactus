@@ -25,7 +25,7 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		// There might be more than one valid subsidy transaction per height,
 		// because There might be more than one proposal per height.
 		if trx.Sequence() != sb.CurrentHeight() {
-			return errors.Errorf(errors.ErrInvalidTx,
+			return errors.Errorf(errors.ErrInvalidSequence,
 				"subsidy transaction is not for current height, expected :%d, got: %d",
 				sb.CurrentHeight(), trx.Sequence())
 		}
@@ -35,7 +35,7 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	senderAcc := sb.Account(pld.Sender)
 	if senderAcc == nil {
-		return errors.Errorf(errors.ErrInvalidTx, "unable to retrieve sender account")
+		return errors.Errorf(errors.ErrInvalidAddress, "unable to retrieve sender account")
 	}
 	var receiverAcc *account.Account
 	if pld.Receiver.EqualsTo(pld.Sender) {
@@ -47,10 +47,10 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	}
 	if senderAcc.Balance() < pld.Amount+trx.Fee() {
-		return errors.Errorf(errors.ErrInvalidTx, "insufficient balance")
+		return errors.Error(errors.ErrInsufficientFunds)
 	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid sequence, expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidSequence, "expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
 
 	senderAcc.IncSequence()

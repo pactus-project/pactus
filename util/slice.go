@@ -7,40 +7,65 @@ import (
 	"io"
 )
 
-func UIntToSlice(n uint) []byte {
-	return UInt64ToSlice(uint64(n))
-}
-func IntToSlice(n int) []byte {
-	return Int64ToSlice(int64(n))
-}
-
-func SliceToUInt(bs []byte) uint {
-	return uint(SliceToUInt64(bs))
-}
-
-func SliceToInt(bs []byte) int {
-	return int(SliceToInt64(bs))
-}
-
-func UInt64ToSlice(n uint64) []byte {
-	bs := make([]byte, 8)
-	binary.BigEndian.PutUint64(bs, n)
+func Uint16ToSlice(n uint16) []byte {
+	bs := make([]byte, 2)
+	binary.LittleEndian.PutUint16(bs, n)
 	return bs
 }
+
+func Int16ToSlice(n int16) []byte {
+	return Uint16ToSlice(uint16(n))
+}
+
+func SliceToUint16(bs []byte) uint16 {
+	if len(bs) != 2 {
+		panic("invalid data")
+	}
+	return binary.LittleEndian.Uint16(bs)
+}
+
+func SliceToInt16(bs []byte) int16 {
+	return int16(SliceToUint16(bs))
+}
+
+func Uint32ToSlice(n uint32) []byte {
+	bs := make([]byte, 4)
+	binary.LittleEndian.PutUint32(bs, n)
+	return bs
+}
+
+func Int32ToSlice(n int32) []byte {
+	return Uint32ToSlice(uint32(n))
+}
+
+func SliceToUint32(bs []byte) uint32 {
+	if len(bs) != 4 {
+		panic("invalid data")
+	}
+	return binary.LittleEndian.Uint32(bs)
+}
+
+func SliceToInt32(bs []byte) int32 {
+	return int32(SliceToUint32(bs))
+}
+
+func Uint64ToSlice(n uint64) []byte {
+	bs := make([]byte, 8)
+	binary.LittleEndian.PutUint64(bs, n)
+	return bs
+}
+
 func Int64ToSlice(n int64) []byte {
-	bs := make([]byte, 8)
-	binary.BigEndian.PutUint64(bs, uint64(n))
-	return bs
+	return Uint64ToSlice(uint64(n))
 }
 
-func SliceToUInt64(bs []byte) uint64 {
-	n := binary.BigEndian.Uint64(bs)
+func SliceToUint64(bs []byte) uint64 {
+	n := binary.LittleEndian.Uint64(bs)
 	return n
 }
 
 func SliceToInt64(bs []byte) int64 {
-	n := binary.BigEndian.Uint64(bs)
-	return int64(n)
+	return int64(SliceToUint64(bs))
 }
 
 func CompressBuffer(s []byte) ([]byte, error) {
@@ -77,8 +102,8 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 ///  [1,2,3,4] - [2,4] = [1,3]
 ///  [1,2,3,4] - [4,2] = [1,3]
 ///  [1,2,3,4] - [4,5] = [1,2,3]
-func Subtracts(slice1 []int, slice2 []int) []int {
-	sub := []int{}
+func Subtracts(slice1 []int32, slice2 []int32) []int32 {
+	sub := []int32{}
 	if slice2 == nil {
 		return slice1
 	}
@@ -100,7 +125,7 @@ func Subtracts(slice1 []int, slice2 []int) []int {
 }
 
 /// Contains checks whether the given slice has a specific item.
-func Contains(slice []int, item int) bool {
+func Contains(slice []int32, item int32) bool {
 	for _, i := range slice {
 		if i == item {
 			return true
@@ -111,7 +136,7 @@ func Contains(slice []int, item int) bool {
 
 /// Equal tells whether a and b contain the same elements.
 /// A nil argument is equivalent to an empty slice.
-func Equal(a, b []int) bool {
+func Equal(a, b []int32) bool {
 	if len(a) != len(b) {
 		return false
 	}

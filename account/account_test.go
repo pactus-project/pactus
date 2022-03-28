@@ -1,58 +1,53 @@
 package account
 
 import (
-	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestMarshaling(t *testing.T) {
-	acc1, _ := GenerateTestAccount(util.RandInt(10000))
-	acc1.AddToBalance(1)
-	acc1.IncSequence()
-
-	bs, err := acc1.Encode()
-	fmt.Printf("%X\n", bs)
-	fmt.Printf("%X", acc1.Address().RawBytes())
+func TestFromBytes(t *testing.T) {
+	acc, _ := GenerateTestAccount(util.RandInt32(10000))
+	bs, err := acc.Bytes()
 	require.NoError(t, err)
-	acc2 := new(Account)
-	err = acc2.Decode(bs)
+	require.Equal(t, acc.SerializeSize(), len(bs))
+	acc2, err := FromBytes(bs)
 	require.NoError(t, err)
-	assert.Equal(t, acc1, acc2)
+	assert.Equal(t, acc, acc2)
 
-	acc3 := new(Account)
-	err = acc3.Decode(bs)
-	require.NoError(t, err)
-	assert.Equal(t, acc2, acc3)
-
-	/// test json marshaing/unmarshaling
-	js, err := json.Marshal(acc1)
-	require.NoError(t, err)
-	fmt.Println(string(js))
-
-	/// should fail
-	acc5 := new(Account)
-	err = acc5.Decode([]byte("asdfghjkl"))
+	_, err = FromBytes([]byte("asdfghjkl"))
 	require.Error(t, err)
 }
 
-func TestMarshalingRawData(t *testing.T) {
-	bs, _ := hex.DecodeString("A40155010C9819C4D4B1EDB7B70E6665287D4CE95401A37702191BD7031823041A007F5535")
-	acc := new(Account)
-	err := acc.Decode(bs)
+func TestJSONMarshaling(t *testing.T) {
+	acc, _ := GenerateTestAccount(util.RandInt32(10000))
+	_, err := json.Marshal(acc)
 	require.NoError(t, err)
-	fmt.Println(acc)
-	bs2, _ := acc.Encode()
+}
+
+func TestDecoding(t *testing.T) {
+	bs := []byte{
+		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
+		0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, // address
+		0x1, 0x0, 0x0, 0x0, // number
+		0x2, 0x0, 0x0, 0x0, // sequence
+		0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, // balance
+	}
+
+	acc, err := FromBytes(bs)
+	require.NoError(t, err)
+	bs2, _ := acc.Bytes()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
-	expected, _ := hash.FromString("aa7217e71fc4a66d82d6067c9241b23db9699d689989d9c117ea722313a36022")
+	expected, _ := hash.FromString("33a4208262903cd1f274e760f495eca8e56b7fcc61feec0a8e6dcd0d2e57cafc")
 	assert.Equal(t, acc.Hash(), expected)
+	addr, _ := crypto.AddressFromBytes(bs[:21])
+	assert.Equal(t, acc.Address(), addr)
 }
 
 func TestIncSequence(t *testing.T) {
@@ -60,10 +55,18 @@ func TestIncSequence(t *testing.T) {
 	seq := acc.Sequence()
 	acc.IncSequence()
 	assert.Equal(t, acc.Sequence(), seq+1)
-	assert.Equal(t, acc.Number(), 100)
+	assert.Equal(t, acc.Number(), int32(100))
 }
 
-func TestSubtractBalance(t *testing.T) {
+func TestAddToBalance(t *testing.T) {
+	acc, _ := GenerateTestAccount(100)
+	bal := acc.Balance()
+	acc.AddToBalance(1)
+	assert.Equal(t, acc.Balance(), bal+1)
+
+}
+
+func TestSubtractFromBalance(t *testing.T) {
 	acc, _ := GenerateTestAccount(100)
 	bal := acc.Balance()
 	acc.SubtractFromBalance(1)

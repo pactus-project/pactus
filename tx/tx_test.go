@@ -2,17 +2,18 @@ package tx
 
 import (
 	"encoding/hex"
-	"fmt"
 	"strings"
 	"testing"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/sortition"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestJSONMarshaling(t *testing.T) {
@@ -21,141 +22,210 @@ func TestJSONMarshaling(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestSendEncodingTx(t *testing.T) {
+func TestCBORMarshaling(t *testing.T) {
 	tx1, _ := GenerateTestSendTx()
-	bz, err := tx1.MarshalCBOR()
-	require.NoError(t, err)
-	var tx2 Tx
-	require.NoError(t, tx2.UnmarshalCBOR(bz))
-	require.Equal(t, tx1.ID(), tx2.ID())
-	require.Equal(t, tx1.ID(), tx1.calcID())
+	bz, err := cbor.Marshal(tx1)
+	assert.NoError(t, err)
+	tx2 := new(Tx)
+	assert.NoError(t, cbor.Unmarshal(bz, tx2))
+	assert.Equal(t, tx1.ID(), tx2.ID())
+
+	assert.Error(t, cbor.Unmarshal([]byte{1}, tx2))
 }
 
-func TestBondEncodingTx(t *testing.T) {
-	tx1, _ := GenerateTestBondTx()
-	bz, err := tx1.Encode()
-	require.NoError(t, err)
-	var tx2 Tx
-	require.NoError(t, tx2.Decode(bz))
-	require.Equal(t, tx1.ID(), tx2.ID())
-	require.Equal(t, tx1.ID(), tx1.calcID())
+func TestEncodingTx(t *testing.T) {
+	tx1, _ := GenerateTestSendTx()
+	len := tx1.SerializeSize()
+
+	for i := 0; i < len; i++ {
+		w := util.NewFixedWriter(i)
+		assert.Error(t, tx1.Encode(w), "encode test %v failed", i)
+	}
+	w := util.NewFixedWriter(len)
+	assert.NoError(t, tx1.Encode(w))
+
+	for i := 0; i < len; i++ {
+		tx2 := new(Tx)
+		r := util.NewFixedReader(i, w.Bytes())
+		assert.Error(t, tx2.Decode(r), "decode test %v failed", i)
+	}
+
+	tx2 := new(Tx)
+	r := util.NewFixedReader(len, w.Bytes())
+	assert.NoError(t, tx2.Decode(r))
+	assert.Equal(t, tx1.ID(), tx2.ID())
 }
 
-func TestEncodingTxNoSig(t *testing.T) {
-	tx, _ := GenerateTestSendTx()
-	bz, _ := tx.Encode()
-	fmt.Printf("%x\n", bz)
-	tx.data.Signature = nil
-	tx.data.PublicKey = nil
-	bz, err := tx.Encode()
-	require.NoError(t, err)
-	var tx2 Tx
-	require.NoError(t, tx2.Decode(bz))
-	require.Equal(t, tx.ID(), tx2.ID())
+func TestTxFromBytes(t *testing.T) {
+	trx1, _ := GenerateTestSendTx()
+	trx2, _ := GenerateTestBondTx()
+	trx3, _ := GenerateTestUnbondTx()
+	trx4, _ := GenerateTestWithdrawTx()
+	trx5, _ := GenerateTestSortitionTx()
+	tests := []*Tx{trx1, trx2, trx3, trx4, trx5}
+	assert.True(t, trx1.IsSendTx())
+	assert.True(t, trx2.IsBondTx())
+	assert.True(t, trx3.IsUnbondTx())
+	assert.True(t, trx4.IsWithdrawTx())
+	assert.True(t, trx5.IsSortitionTx())
+
+	for _, tx := range tests {
+		assert.NoError(t, tx.SanityCheck())
+
+		bz, err := tx.Bytes()
+		assert.NoError(t, err)
+		tx2, err := FromBytes(bz)
+		assert.NoError(t, err)
+		assert.Equal(t, tx.Version(), tx2.Version())
+		assert.Equal(t, tx.Stamp(), tx2.Stamp())
+		assert.Equal(t, tx.Sequence(), tx2.Sequence())
+		assert.Equal(t, tx.Payload().Value(), tx2.Payload().Value())
+		assert.Equal(t, tx.Payload().Signer(), tx2.Payload().Signer())
+		assert.Equal(t, tx.Payload().Type(), tx2.Payload().Type())
+		assert.Equal(t, tx.Fee(), tx2.Fee())
+		assert.Equal(t, tx.Memo(), tx2.Memo())
+		assert.Equal(t, tx.ID(), tx2.ID())
+		assert.True(t, tx.PublicKey().EqualsTo(tx2.PublicKey()))
+		assert.True(t, tx.Signature().EqualsTo(tx2.Signature()))
+	}
+
+	_, err := FromBytes([]byte{1})
+	assert.Error(t, err)
+}
+
+func TestTxIDNoSignatory(t *testing.T) {
+	tx1, _ := GenerateTestSendTx()
+	tx2 := new(Tx)
+	*tx2 = *tx1
+	tx2.data.PublicKey = nil
+	tx2.data.Signature = nil
+	require.Equal(t, tx1.ID(), tx2.ID())
+	require.Equal(t, tx1.SignBytes(), tx2.SignBytes())
 }
 
 func TestTxSanityCheck(t *testing.T) {
 	t.Run("Invalid sequence", func(t *testing.T) {
-		tx, signer := GenerateTestSendTx()
-		tx.data.Sequence = -1
-		signer.SignMsg(tx)
-		assert.Error(t, tx.SanityCheck())
-	})
-
-	t.Run("Invalid payload type", func(t *testing.T) {
-		tx, signer := GenerateTestSendTx()
-		tx.data.Type = 2
-		signer.SignMsg(tx)
-		assert.Error(t, tx.SanityCheck())
-	})
-
-	t.Run("Transaction ID should be same for signed and unsigned transactions", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		id1 := tx.ID()
-		sb1 := tx.SignBytes()
-		tx.data.PublicKey = nil
-		tx.data.Signature = nil
-		id2 := tx.ID()
-		sb2 := tx.SignBytes()
-		assert.Equal(t, id1, id2)
-		assert.Equal(t, sb1, sb2)
+		trx, _ := GenerateTestSendTx()
+		trx.data.Sequence = -1
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Big memo, Should returns error", func(t *testing.T) {
 		bigMemo := strings.Repeat("a", maxMemoLength+1)
 
-		tx, signer := GenerateTestSendTx()
-		tx.data.Memo = bigMemo
-		signer.SignMsg(tx)
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.Memo = bigMemo
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidMemo)
+	})
+
+	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.Payload.(*payload.SendPayload).Sender[0] = 0x2
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+	})
+}
+
+func TestInvalidFee(t *testing.T) {
+	t.Run("Invalid fee", func(t *testing.T) {
+		stamp := hash.GenerateTestStamp()
+		trx := NewMintbaseTx(stamp, 88, crypto.GenerateTestAddress(), 2500, "subsidy")
+		assert.True(t, trx.IsMintbaseTx())
+		trx.data.Fee = 1
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
+	})
+
+	t.Run("Invalid send fee", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.Fee = 0
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
+	})
+
+	t.Run("Invalid sortition fee", func(t *testing.T) {
+		trx, _ := GenerateTestSortitionTx()
+		trx.data.Fee = 1
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
 }
 
 func TestSubsidyTx(t *testing.T) {
 	pub, prv := bls.GenerateTestKeyPair()
-	t.Run("Invalid fee", func(t *testing.T) {
-		stamp := hash.GenerateTestStamp()
-		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
-		assert.True(t, trx.IsMintbaseTx())
-		trx.data.Fee = 1
-		assert.Error(t, trx.SanityCheck())
-	})
 
 	t.Run("Has signature", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
 		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
-		assert.Error(t, trx.SanityCheck())
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
 		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		trx.SetPublicKey(pub)
-		assert.Error(t, trx.SanityCheck())
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 }
 
 func TestInvalidSignature(t *testing.T) {
 	t.Run("Good", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		assert.NoError(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		assert.NoError(t, trx.SanityCheck())
 	})
 
 	t.Run("No signature", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		tx.data.Signature = nil
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.Signature = nil
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("No public key", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		tx.data.PublicKey = nil
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.PublicKey = nil
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
 	pbInv, pvInv := bls.GenerateTestKeyPair()
 	t.Run("Invalid signature", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		sig := pvInv.Sign(tx.SignBytes())
-		tx.SetSignature(sig)
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		sig := pvInv.Sign(trx.SignBytes())
+		trx.SetSignature(sig)
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Invalid public key", func(t *testing.T) {
-		tx, _ := GenerateTestSendTx()
-		tx.SetPublicKey(pbInv)
-		assert.Error(t, tx.SanityCheck())
-
+		trx, _ := GenerateTestSendTx()
+		trx.SetPublicKey(pbInv)
+		err := trx.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
-		tx, signer := GenerateTestSendTx()
-		var tx2 = new(Tx)
-		tx2.data.Memo = "Hello"
-		tx.SetSignature(signer.SignData(tx2.SignBytes()))
-		assert.Error(t, tx.SanityCheck())
+		trx, _ := GenerateTestSendTx()
+		trx.data.Memo = "Hello"
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Zero signature", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.Signature, _ = bls.SignatureFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		assert.Error(t, trx.SanityCheck())
+	})
+
+	t.Run("Zero public key", func(t *testing.T) {
+		trx, _ := GenerateTestSendTx()
+		trx.data.PublicKey, _ = bls.PublicKeyFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		assert.Error(t, trx.SanityCheck())
 	})
 }
 
@@ -163,6 +233,8 @@ func TestSendSanityCheck(t *testing.T) {
 	invAddr := crypto.GenerateTestAddress()
 	t.Run("Ok", func(t *testing.T) {
 		trx, _ := GenerateTestSendTx()
+		assert.NoError(t, trx.SanityCheck())
+		assert.True(t, trx.sanityChecked)
 		assert.NoError(t, trx.SanityCheck())
 	})
 
@@ -173,10 +245,10 @@ func TestSendSanityCheck(t *testing.T) {
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
-
-	t.Run("Invalid fee", func(t *testing.T) {
+	t.Run("Invalid amount", func(t *testing.T) {
 		trx, signer := GenerateTestSendTx()
-		trx.data.Fee = 0
+		pld := trx.data.Payload.(*payload.SendPayload)
+		pld.Amount = 21*1e14 + 1
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
@@ -188,14 +260,6 @@ func TestSendSanityCheck(t *testing.T) {
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
-
-	t.Run("Invalid receiver", func(t *testing.T) {
-		trx, signer := GenerateTestSendTx()
-		pld := trx.data.Payload.(*payload.SendPayload)
-		pld.Receiver = crypto.TreasuryAddress
-		signer.SignMsg(trx)
-		assert.Error(t, trx.SanityCheck())
-	})
 }
 
 func TestBondSanityCheck(t *testing.T) {
@@ -203,6 +267,13 @@ func TestBondSanityCheck(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		trx, _ := GenerateTestBondTx()
 		assert.NoError(t, trx.SanityCheck())
+	})
+
+	t.Run("Invalid version", func(t *testing.T) {
+		trx, signer := GenerateTestBondTx()
+		trx.data.Version = 2
+		signer.SignMsg(trx)
+		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Invalid stake", func(t *testing.T) {
@@ -237,132 +308,17 @@ func TestSortitionSanityCheck(t *testing.T) {
 		assert.Error(t, trx.SanityCheck())
 	})
 
-	t.Run("Invalid fee", func(t *testing.T) {
-		trx, signer := GenerateTestSortitionTx()
-		trx.data.Fee = 1
-		signer.SignMsg(trx)
-		assert.Error(t, trx.SanityCheck())
-	})
-
 }
 
-func TestSendDecodingAndHash(t *testing.T) {
-	d, _ := hex.DecodeString("a901010244e4f59ccd03186e041903e80501065833a3015501d75c059a4157d78f9b86741164037392de0fa53102550194f782f332649a4234b79216277e0b1594836313031903e8076c746573742073656e642d7478085860a4de42541ddeebfa6c4c8f008d2a64e6a2c8069096a5ad2fd807089a2f3ca8b71554365a01a2a3d5eee73f814b2aaeee0a49496e9222bc5cb4e9ffec219b4dca5091844ac1752286a524ca89928187ea60d0bdd6f10047d06f204bac5c215967095830b1c1b312df0ac1877c8daeb35eaf53c5008fb1de9654c698bab851b73d8730204c5c93c13c7d5d6b29ee439d1bdb7118")
-	s, _ := hex.DecodeString("a701010244e4f59ccd03186e041903e80501065833a3015501d75c059a4157d78f9b86741164037392de0fa53102550194f782f332649a4234b79216277e0b1594836313031903e8076c746573742073656e642d7478")
-	h, _ := hash.FromString("2177a8040c435ee56601f1fb2c4b9fd97adc581a153e8e8ffed80ff3b0743e57")
-	var trx Tx
-	err := trx.Decode(d)
+func TestSignBytes(t *testing.T) {
+	d, _ := hex.DecodeString("01f10c077fcc04f5ef819fc9d6080101d3e45d249a39d806a1faec2fd85820db340b98e30168fc72a1a961933e694439b2e3c8751d27de5ad3b9c3dc91b9c9b59b010c746573742073656e642d7478b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a68d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e0611776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
+	h, _ := hash.FromString("2a04aef409194ff72e942346525428f6c030e2875be27205cb2ce46065ec543f")
+	trx, err := FromBytes(d)
 	assert.NoError(t, err)
-	d2, _ := trx.Encode()
-	assert.Equal(t, d, d2)
-	assert.Equal(t, trx.SignBytes(), s)
+	assert.Equal(t, trx.SerializeSize(), len(d))
+
+	sb := d[:len(d)-bls.PublicKeySize-bls.SignatureSize]
+	assert.Equal(t, sb, trx.SignBytes())
 	assert.Equal(t, trx.ID(), h)
-	assert.Equal(t, trx.PayloadType(), payload.PayloadTypeSend)
-}
-
-func TestBondDecodingAndHash(t *testing.T) {
-	d, _ := hex.DecodeString("a90101024483c5d2eb03186e041903e8050206587fa30155010a59687ee8bfc4f2784a46cbc6426676aa5d456f025860a8b2e5841d1ae408ac460fa97350457603588d619db0cb515f933387745107317a1f2d25b24ace665010adf0c21310030b685c773c59a19092cb5780ba2b755aceee2b1478fe64c0a807d7d271ba0c3cc559df951773928bcb61cc8bd67332a9031903e8076c7465737420626f6e642d7478085860b6c76ad57056d913059710eb74d6dce8e446d782cd2d30fdc774be910333cfd10bd954eba4c08bcefdf5bc11857735e00504188cc1bf5e08e5e11ee7688d55096c326af829da00b449311ca1b754cb0575a1da45b3f2737150e24e4810ea077c0958308e3d6c3ee4a39f7c3d7ce3dcd170442604b9c203e70d836886533a43fec733cf3b5068664dbae0e965bdbfcdb25c9c0a")
-	s, _ := hex.DecodeString("a70101024483c5d2eb03186e041903e8050206587fa30155010a59687ee8bfc4f2784a46cbc6426676aa5d456f025860a8b2e5841d1ae408ac460fa97350457603588d619db0cb515f933387745107317a1f2d25b24ace665010adf0c21310030b685c773c59a19092cb5780ba2b755aceee2b1478fe64c0a807d7d271ba0c3cc559df951773928bcb61cc8bd67332a9031903e8076c7465737420626f6e642d7478")
-	h, _ := hash.FromString("ff433a1704dbbb35caaeaffc8a000b4cea721974471a9edbe94a2607865246f8")
-	var trx Tx
-	err := trx.Decode(d)
-	assert.NoError(t, err)
-	d2, _ := trx.Encode()
-	assert.Equal(t, d, d2)
-	assert.Equal(t, trx.SignBytes(), s)
-	assert.Equal(t, trx.ID(), h)
-	assert.Equal(t, trx.PayloadType(), payload.PayloadTypeBond)
-}
-
-func TestSortitionDecodingAndHash(t *testing.T) {
-	d, _ := hex.DecodeString("a801010244d712c7f503186e0400050306584ba2015501ccb2131a6465585355e952ed8fe1760b4c2dc3620258306c35ee9c9b5827cffc0623fcc312febf3745eb4a351517a66dbe88c0f11dd25e83456c0ee57b14553f466747d76a7b3e085860a48b996abd267241980aa238b4ef4da7ce39896694b78710c493ef50eb0a8730672a4857a77532c65118e95f08f1671c06cab68e66f390d2b19aa3f7ad471662f30a87a146392e96b5636eaeb444fcfd320f7a46c767a1e7000cf452b212d468095830a8e667bbc8d9a53934c314ecc5c3ae3e2aab6684c7ddd7df60b2d4d27a37fa62d806fccf7d665385e6cd1c4e425be94d")
-	s, _ := hex.DecodeString("a601010244d712c7f503186e0400050306584ba2015501ccb2131a6465585355e952ed8fe1760b4c2dc3620258306c35ee9c9b5827cffc0623fcc312febf3745eb4a351517a66dbe88c0f11dd25e83456c0ee57b14553f466747d76a7b3e")
-	h, _ := hash.FromString("a7525eea0411c6c60d83b90b79777c4192a8648bdd7a7bda0c1ea710c6a426c3")
-	var trx Tx
-	err := trx.Decode(d)
-	assert.NoError(t, err)
-	d2, _ := trx.Encode()
-	assert.Equal(t, d, d2)
-	assert.Equal(t, trx.SignBytes(), s)
-	assert.Equal(t, trx.ID(), h)
-	assert.Equal(t, trx.PayloadType(), payload.PayloadTypeSortition)
-}
-
-func TestSendSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	addr := crypto.GenerateTestAddress()
-
-	trx1 := NewSendTx(stamp, 1, signer.Address(), addr, 100, 10, "test send-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewSendTx(stamp, 1, signer.Address(), addr, 100, 10, "test send-tx")
-	trx3 := NewSendTx(stamp, 2, signer.Address(), addr, 100, 10, "test send-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-}
-
-func TestBondSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	pub, _ := bls.GenerateTestKeyPair()
-
-	trx1 := NewBondTx(stamp, 1, signer.Address(), pub, 100, 100, "test bond-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewBondTx(stamp, 1, signer.Address(), pub, 100, 100, "test bond-tx")
-	trx3 := NewBondTx(stamp, 2, signer.Address(), pub, 100, 100, "test bond-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsBondTx())
-}
-
-func TestUnbondSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-
-	trx1 := NewUnbondTx(stamp, 1, signer.Address(), "test unbond-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewUnbondTx(stamp, 1, signer.Address(), "test unbond-tx")
-	trx3 := NewUnbondTx(stamp, 2, signer.Address(), "test unbond-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsUnbondTx())
-
-}
-func TestWithdrawSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	addr := crypto.GenerateTestAddress()
-
-	trx1 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, "test unbond-tx")
-	signer.SignMsg(trx1)
-
-	trx2 := NewWithdrawTx(stamp, 1, signer.Address(), addr, 1000, "test unbond-tx")
-	trx3 := NewWithdrawTx(stamp, 2, signer.Address(), addr, 1000, "test unbond-tx")
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsWithdrawTx())
-
-}
-
-func TestSortitionSignBytes(t *testing.T) {
-	stamp := hash.GenerateTestStamp()
-	signer := bls.GenerateTestSigner()
-	proof := sortition.GenerateRandomProof()
-
-	trx1 := NewSortitionTx(stamp, 1, signer.Address(), proof)
-	signer.SignMsg(trx1)
-
-	trx2 := NewSortitionTx(stamp, 1, signer.Address(), proof)
-	trx3 := NewSortitionTx(stamp, 2, signer.Address(), proof)
-
-	assert.Equal(t, trx1.SignBytes(), trx2.SignBytes())
-	assert.NotEqual(t, trx1.SignBytes(), trx3.SignBytes())
-	assert.True(t, trx1.IsSortitionTx())
+	assert.Equal(t, trx.ID(), hash.CalcHash(sb))
 }

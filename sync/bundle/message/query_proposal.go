@@ -7,11 +7,11 @@ import (
 )
 
 type QueryProposalMessage struct {
-	Height int `cbor:"1,keyasint"`
-	Round  int `cbor:"2,keyasint"`
+	Height int32 `cbor:"1,keyasint"`
+	Round  int16 `cbor:"2,keyasint"`
 }
 
-func NewQueryProposalMessage(h, r int) *QueryProposalMessage {
+func NewQueryProposalMessage(h int32, r int16) *QueryProposalMessage {
 	return &QueryProposalMessage{
 		Height: h,
 		Round:  r,

@@ -2,15 +2,17 @@ package payload
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sortition"
 )
 
 type SortitionPayload struct {
-	Address crypto.Address  `cbor:"1,keyasint"`
-	Proof   sortition.Proof `cbor:"2,keyasint"`
+	Address crypto.Address
+	Proof   sortition.Proof
 }
 
 func (p *SortitionPayload) Type() Type {
@@ -27,10 +29,22 @@ func (p *SortitionPayload) Value() int64 {
 
 func (p *SortitionPayload) SanityCheck() error {
 	if err := p.Address.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid address")
+		return errors.Error(errors.ErrInvalidAddress)
 	}
 
 	return nil
+}
+
+func (p *SortitionPayload) SerializeSize() int {
+	return 69 //48+21
+}
+
+func (p *SortitionPayload) Encode(w io.Writer) error {
+	return encoding.WriteElements(w, &p.Address, &p.Proof)
+}
+
+func (p *SortitionPayload) Decode(r io.Reader) error {
+	return encoding.ReadElements(r, &p.Address, &p.Proof)
 }
 
 func (p *SortitionPayload) Fingerprint() string {

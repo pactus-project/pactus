@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
@@ -57,20 +58,17 @@ func TestExecuteSendTx(t *testing.T) {
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
 		trx := tx.NewSendTx(tStamp500000, 1, crypto.GenerateTestAddress(), receiver, amt, fee, "non-existing account")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewSendTx(tStamp500000, sender.Sequence()+1, sender.Address(), receiver, senderBalance+1, 0, "insufficient balance")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInsufficientFunds)
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewSendTx(tStamp500000, sender.Sequence()+2, sender.Address(), receiver, amt, fee, "invalid sequence")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -111,11 +109,11 @@ func TestSendNonStrictMode(t *testing.T) {
 	receiver1 := crypto.GenerateTestAddress()
 
 	trx1 := tx.NewMintbaseTx(tStamp500000, tSandbox.CurrentHeight(), receiver1, 1, "")
-	assert.Error(t, exe1.Execute(trx1, tSandbox)) // Invalid sequence
+	assert.Equal(t, errors.Code(exe1.Execute(trx1, tSandbox)), errors.ErrInvalidSequence)
 	assert.NoError(t, exe2.Execute(trx1, tSandbox))
 
 	trx2 := tx.NewMintbaseTx(tStamp500000, tSandbox.CurrentHeight()+1, receiver1, 1, "")
-	assert.Error(t, exe1.Execute(trx2, tSandbox)) // Invalid height
-	assert.Error(t, exe2.Execute(trx2, tSandbox)) // Invalid height
+	assert.Equal(t, errors.Code(exe1.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
+	assert.Equal(t, errors.Code(exe2.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
 
 }

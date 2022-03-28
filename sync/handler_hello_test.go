@@ -43,7 +43,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		height := util.RandInt(0)
+		height := util.RandInt32(0)
 		pid := util.RandomPeerID()
 		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.GenesisHash())
 		signer.SignMsg(msg)

@@ -13,8 +13,8 @@ import (
 )
 
 type VoteSet struct {
-	height     int
-	round      int
+	height     int32
+	round      int16
 	voteType   vote.Type
 	validators []*validator.Validator
 	blockVotes map[hash.Hash]*blockVotes
@@ -23,7 +23,7 @@ type VoteSet struct {
 	quorumHash *hash.Hash
 }
 
-func NewVoteSet(height int, round int, voteType vote.Type, validators []*validator.Validator) *VoteSet {
+func NewVoteSet(height int32, round int16, voteType vote.Type, validators []*validator.Validator) *VoteSet {
 	totalPower := int64(0)
 	for _, val := range validators {
 		totalPower += val.Power()
@@ -41,8 +41,8 @@ func NewVoteSet(height int, round int, voteType vote.Type, validators []*validat
 }
 
 func (vs *VoteSet) Type() vote.Type { return vs.voteType }
-func (vs *VoteSet) Height() int     { return vs.height }
-func (vs *VoteSet) Round() int      { return vs.round }
+func (vs *VoteSet) Height() int32   { return vs.height }
+func (vs *VoteSet) Round() int16    { return vs.round }
 
 func (vs *VoteSet) Len() int {
 	return len(vs.allVotes)
@@ -154,8 +154,8 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 	}
 
 	votesMap := vs.blockVotes[*blockHash].votes
-	committers := make([]int, len(vs.validators))
-	absentees := make([]int, 0)
+	committers := make([]int32, len(vs.validators))
+	absentees := make([]int32, 0)
 	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vs.validators {
@@ -172,7 +172,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 
 	sig := bls.Aggregate(sigs)
 
-	return block.NewCertificate(*blockHash, vs.Round(), committers, absentees, sig)
+	return block.NewCertificate(vs.Round(), committers, absentees, sig)
 }
 
 func (vs *VoteSet) Fingerprint() string {

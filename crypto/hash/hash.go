@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/util"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/ripemd160"
@@ -13,15 +12,9 @@ import (
 
 const HashSize = 32
 
-type Hash struct {
-	data hashData
-}
+type Hash [HashSize]byte
 
-type hashData struct {
-	Hash [HashSize]byte
-}
-
-var UndefHash = Hash{data: hashData{Hash: [HashSize]byte{0}}}
+var UndefHash = Hash{0}
 
 func Hash256(data []byte) []byte {
 	h := blake2b.Sum256(data)
@@ -41,43 +34,47 @@ func Hash160(data []byte) []byte {
 }
 
 func FromString(str string) (Hash, error) {
-	b, err := hex.DecodeString(str)
+	data, err := hex.DecodeString(str)
 	if err != nil {
 		return Hash{}, err
 	}
-	return FromRawBytes(b)
+	if len(data) != HashSize {
+		return Hash{}, fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(data))
+	}
+
+	return FromBytes(data)
 }
 
-func FromRawBytes(data []byte) (Hash, error) {
+func FromBytes(data []byte) (Hash, error) {
 	if len(data) != HashSize {
 		return Hash{}, fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(data))
 	}
 	var h Hash
-	copy(h.data.Hash[:], data[:HashSize])
+	copy(h[:], data[:HashSize])
 	return h, nil
 }
 
 func CalcHash(data []byte) Hash {
-	h, _ := FromRawBytes(Hash256(data))
+	h, _ := FromBytes(Hash256(data))
 	return h
 }
 
 func (h Hash) String() string {
-	return hex.EncodeToString(h.data.Hash[:])
+	return hex.EncodeToString(h[:])
 }
 
-func (h Hash) RawBytes() []byte {
-	return h.data.Hash[:]
+func (h Hash) Bytes() []byte {
+	return h[:]
 }
 
 func (h Hash) Stamp() Stamp {
 	var stamp Stamp
-	copy(stamp[:], h.data.Hash[0:4])
+	copy(stamp[:], h[0:4])
 	return stamp
 }
 
 func (h Hash) Fingerprint() string {
-	return fmt.Sprintf("%X", h.data.Hash[:6])
+	return fmt.Sprintf("%X", h[:6])
 }
 
 func (h Hash) IsUndef() bool {
@@ -86,14 +83,6 @@ func (h Hash) IsUndef() bool {
 
 func (h *Hash) MarshalJSON() ([]byte, error) {
 	return json.Marshal(h.String())
-}
-
-func (h *Hash) MarshalCBOR() ([]byte, error) {
-	return cbor.Marshal(h.data.Hash)
-}
-
-func (h *Hash) UnmarshalCBOR(bs []byte) error {
-	return cbor.Unmarshal(bs, &h.data.Hash)
 }
 
 func (h Hash) SanityCheck() error {
@@ -105,13 +94,13 @@ func (h Hash) SanityCheck() error {
 }
 
 func (h Hash) EqualsTo(r Hash) bool {
-	return h.data.Hash == r.data.Hash
+	return h == r
 }
 
 // ---------
 // For tests
 func GenerateTestHash() Hash {
-	return CalcHash(util.IntToSlice(util.RandInt(999999999)))
+	return CalcHash(util.Uint64ToSlice(util.RandUint64(0)))
 }
 
 func GenerateTestStamp() Stamp {

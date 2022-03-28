@@ -14,13 +14,13 @@ func TestGetBlock(t *testing.T) {
 	b := tMockState.TestStore.AddTestBlock(100)
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: hash.GenerateTestHash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: hash.GenerateTestHash().Bytes(), Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return an existing block hash", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: zarb.BlockVerbosity_BLOCK_HASH})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		//assert.Equal(t, res.Height, 100)
@@ -29,7 +29,7 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return json object with verbosity 1 ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		//assert.Equal(t, res.Height, 100)
@@ -38,7 +38,7 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().RawBytes(), Verbosity: zarb.BlockVerbosity_BLOCK_TRANSACTIONS})
+		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: zarb.BlockVerbosity_BLOCK_TRANSACTIONS})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		//assert.Equal(t, res.Height, 100)
@@ -69,7 +69,7 @@ func TestGetBlockHash(t *testing.T) {
 	t.Run("Should return height of existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(tCtx, &zarb.BlockHashRequest{Height: 100})
 		assert.NoError(t, err)
-		assert.Equal(t, b.Hash().RawBytes(), res.Hash)
+		assert.Equal(t, b.Hash().Bytes(), res.Hash)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

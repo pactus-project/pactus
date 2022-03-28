@@ -1,36 +1,35 @@
 package bls
 
 import (
+	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/encoding"
 )
 
 const PublicKeySize = 96
 
 type PublicKey struct {
-	data publicKeyData
-}
-
-type publicKeyData struct {
-	PublicKey *bls.PublicKey
+	publicKey *bls.PublicKey
 }
 
 func PublicKeyFromString(text string) (*PublicKey, error) {
-	data, err := hex.DecodeString(text) // from bech32 string
+	data, err := hex.DecodeString(text)
 	if err != nil {
 		return nil, err
 	}
 
-	return PublicKeyFromRawBytes(data)
+	return PublicKeyFromBytes(data)
 }
 
-func PublicKeyFromRawBytes(data []byte) (*PublicKey, error) {
+func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	if len(data) != PublicKeySize {
 		return nil, fmt.Errorf("invalid public key")
 	}
@@ -40,23 +39,23 @@ func PublicKeyFromRawBytes(data []byte) (*PublicKey, error) {
 	}
 
 	var pub PublicKey
-	pub.data.PublicKey = pk
+	pub.publicKey = pk
 
 	return &pub, nil
 }
 
-func (pub PublicKey) RawBytes() []byte {
-	if pub.data.PublicKey == nil {
+func (pub PublicKey) Bytes() []byte {
+	if pub.publicKey == nil {
 		return nil
 	}
-	return pub.data.PublicKey.Serialize()
+	return pub.publicKey.Serialize()
 }
 
 func (pub PublicKey) String() string {
-	if pub.data.PublicKey == nil {
+	if pub.publicKey == nil {
 		return ""
 	}
-	return pub.data.PublicKey.SerializeToHexStr()
+	return pub.publicKey.SerializeToHexStr()
 }
 
 func (pub *PublicKey) MarshalJSON() ([]byte, error) {
@@ -64,10 +63,10 @@ func (pub *PublicKey) MarshalJSON() ([]byte, error) {
 }
 
 func (pub *PublicKey) MarshalCBOR() ([]byte, error) {
-	if pub.data.PublicKey == nil {
+	if pub.publicKey == nil {
 		return nil, fmt.Errorf("invalid public key")
 	}
-	return cbor.Marshal(pub.RawBytes())
+	return cbor.Marshal(pub.Bytes())
 }
 
 func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
@@ -76,17 +75,30 @@ func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	p, err := PublicKeyFromRawBytes(data)
+	return pub.Decode(bytes.NewReader(data))
+}
+
+func (pub *PublicKey) Encode(w io.Writer) error {
+	return encoding.WriteElements(w, pub.Bytes())
+}
+
+func (pub *PublicKey) Decode(r io.Reader) error {
+	data := make([]byte, PublicKeySize)
+	err := encoding.ReadElements(r, data)
 	if err != nil {
 		return err
 	}
 
+	p, err := PublicKeyFromBytes(data)
+	if err != nil {
+		return err
+	}
 	*pub = *p
 	return nil
 }
 
 func (pub *PublicKey) SanityCheck() error {
-	if pub.data.PublicKey.IsZero() {
+	if pub.publicKey.IsZero() {
 		return fmt.Errorf("public key is zero")
 	}
 
@@ -94,17 +106,17 @@ func (pub *PublicKey) SanityCheck() error {
 }
 
 func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) bool {
-	return sig.(*Signature).data.Signature.VerifyByte(pub.data.PublicKey, msg)
+	return sig.(*Signature).signature.VerifyByte(pub.publicKey, msg)
 }
 
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
-	return pub.data.PublicKey.IsEqual(right.(*PublicKey).data.PublicKey)
+	return pub.publicKey.IsEqual(right.(*PublicKey).publicKey)
 }
 
 func (pub *PublicKey) Address() crypto.Address {
-	data := hash.Hash160(hash.Hash256(pub.RawBytes()))
+	data := hash.Hash160(hash.Hash256(pub.Bytes()))
 	data = append([]byte{crypto.AddressTypeBLS}, data...)
-	addr, _ := crypto.AddressFromRawBytes(data)
+	addr, _ := crypto.AddressFromBytes(data)
 	return addr
 }
 

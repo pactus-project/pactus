@@ -81,7 +81,7 @@ func isNil(i interface{}) bool {
 		return true
 	}
 	switch reflect.TypeOf(i).Kind() {
-	case reflect.Ptr, reflect.Map, reflect.Array, reflect.Chan, reflect.Slice:
+	case reflect.Ptr:
 		return reflect.ValueOf(i).IsNil()
 	}
 	return false

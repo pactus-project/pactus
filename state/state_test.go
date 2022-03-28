@@ -81,7 +81,7 @@ func setup(t *testing.T) {
 	tState4, _ = st4.(*state)
 }
 
-func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) (*block.Block, *block.Certificate) {
+func makeBlockAndCertificate(t *testing.T, round int16, signers ...crypto.Signer) (*block.Block, *block.Certificate) {
 	var st *state
 	if tState1.committee.IsProposer(tState1.signer.Address(), round) {
 		st = tState1
@@ -100,13 +100,13 @@ func makeBlockAndCertificate(t *testing.T, round int, signers ...crypto.Signer) 
 	return b, c
 }
 
-func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int, signers ...crypto.Signer) *block.Certificate {
+func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16, signers ...crypto.Signer) *block.Certificate {
 	assert.NotZero(t, len(signers))
 
 	sigs := make([]*bls.Signature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)
-	committers := []int{0, 1, 2, 3}
-	signedBy := []int{}
+	committers := []int32{0, 1, 2, 3}
+	signedBy := []int32{}
 
 	for i, s := range signers {
 		if s.Address().EqualsTo(tValSigner1.Address()) {
@@ -128,7 +128,7 @@ func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int, signer
 	}
 
 	absentees := util.Subtracts(committers, signedBy)
-	return block.NewCertificate(blockHash, round, committers, absentees, bls.Aggregate(sigs))
+	return block.NewCertificate(round, committers, absentees, bls.Aggregate(sigs))
 }
 
 func CommitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {
@@ -209,7 +209,7 @@ func TestCommitBlocks(t *testing.T) {
 	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())
 	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
 	assert.Equal(t, tState1.LastCertificate().Hash(), c1.Hash())
-	assert.Equal(t, tState1.LastBlockHeight(), 1)
+	assert.Equal(t, tState1.LastBlockHeight(), int32(1))
 	assert.Equal(t, tState1.GenesisHash(), tState2.GenesisHash())
 }
 
@@ -383,7 +383,7 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.evaluateSortition()) //  not a validator
 
-	height := 1
+	height := int32(1)
 	for ; height <= 11; height++ {
 		if height == 2 {
 			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub, 10000000, 10000, "")
@@ -436,7 +436,7 @@ func TestSortition(t *testing.T) {
 	sigs[1] = tValSigner3.SignData(sb).(*bls.Signature)
 	sigs[2] = tValSigner4.SignData(sb).(*bls.Signature)
 	sigs[3] = signer.SignData(sb).(*bls.Signature)
-	c1 := block.NewCertificate(b1.Hash(), 3, []int{4, 0, 1, 2, 3}, []int{0}, bls.Aggregate(sigs))
+	c1 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.Aggregate(sigs))
 
 	height++
 	assert.NoError(t, st2.CommitBlock(height, b1, c1))
@@ -555,7 +555,7 @@ func TestValidatorHelpers(t *testing.T) {
 	t.Run("Should return validator for valid committee Validator Address", func(t *testing.T) {
 		existingValidator := tState4.Validator(tValSigner1.Address())
 		assert.NotNil(t, existingValidator)
-		assert.Equal(t, 0, existingValidator.Number())
+		assert.Zero(t, existingValidator.Number())
 	})
 
 	t.Run("Should return validator for corresponding Validator number", func(t *testing.T) {
@@ -596,7 +596,7 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, tState1.committee.Committers(), st2.(*state).committee.Committers())
 	assert.Equal(t, tState1.committee.TotalPower(), st2.(*state).committee.TotalPower())
 	assert.Equal(t, tState1.totalPower(), st2.(*state).totalPower())
-	assert.Equal(t, tState1.store.TotalAccounts(), 5)
+	assert.Equal(t, tState1.store.TotalAccounts(), int32(5))
 
 	require.NoError(t, st2.CommitBlock(6, b6, c6))
 	require.NoError(t, tState2.CommitBlock(6, b6, c6))

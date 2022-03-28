@@ -24,10 +24,9 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, _ := t.Result()
-	trxData, _ := res.Data()
-	fmt.Printf("%x\n", trxData)
-	trx := new(tx.Tx)
-	err = trx.Decode(trxData)
+	data, _ := res.Data()
+	fmt.Printf("%x\n", data)
+	trx, err := tx.FromBytes(data)
 	if err != nil {
 		s.writeError(w, err)
 		return
@@ -36,7 +35,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	out := new(TransactionResult)
 	out.ID = trx.ID()
 	out.Tx = *trx
-	out.Data = hex.EncodeToString(trxData)
+	out.Data = hex.EncodeToString(data)
 
 	s.writeJSON(w, out)
 }
@@ -65,7 +64,7 @@ func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Reques
 		s.writeError(w, err)
 		return
 	}
-	out.ID, err = hash.FromRawBytes(txID)
+	out.ID, err = hash.FromBytes(txID)
 	if err != nil {
 		s.writeError(w, err)
 		return

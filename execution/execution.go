@@ -49,9 +49,9 @@ func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return err
 	}
 
-	e, ok := exe.executors[trx.PayloadType()]
+	e, ok := exe.executors[trx.Payload().Type()]
 	if !ok {
-		return errors.Errorf(errors.ErrInvalidTx, "unknown transaction type: %v", trx.PayloadType())
+		return errors.Errorf(errors.ErrInvalidTx, "unknown transaction type: %v", trx.Payload().Type())
 	}
 
 	if err := e.Execute(trx, sb); err != nil {

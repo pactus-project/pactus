@@ -19,10 +19,10 @@ func VerifiableSeedFromString(text string) (VerifiableSeed, error) {
 		return UndefVerifiableSeed, err
 	}
 
-	return VerifiableSeedFromRawBytes(data)
+	return VerifiableSeedFromBytes(data)
 }
 
-func VerifiableSeedFromRawBytes(data []byte) (VerifiableSeed, error) {
+func VerifiableSeedFromBytes(data []byte) (VerifiableSeed, error) {
 	if len(data) != 48 {
 		return UndefVerifiableSeed, fmt.Errorf("invalid seed length")
 	}
@@ -33,21 +33,23 @@ func VerifiableSeedFromRawBytes(data []byte) (VerifiableSeed, error) {
 	return s, nil
 }
 
-func (s VerifiableSeed) IsUndef() bool {
-	return s == UndefVerifiableSeed
-}
-
 func (s *VerifiableSeed) Generate(signer crypto.Signer) VerifiableSeed {
 	hash := hash.CalcHash(s[:])
-	sig := signer.SignData(hash.RawBytes())
-	newSeed, _ := VerifiableSeedFromRawBytes(sig.RawBytes())
+	sig := signer.SignData(hash.Bytes())
+	newSeed, _ := VerifiableSeedFromBytes(sig.Bytes())
 	return newSeed
 }
 
 func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed) bool {
-	sig, _ := bls.SignatureFromRawBytes(s[:])
+	sig, err := bls.SignatureFromBytes(s[:])
+	if err != nil {
+		return false
+	}
+	if err := sig.SanityCheck(); err != nil {
+		return false
+	}
 	hash := hash.CalcHash(prevSeed[:])
-	return public.Verify(hash.RawBytes(), sig)
+	return public.Verify(hash.Bytes(), sig)
 }
 
 func (s VerifiableSeed) MarshalText() ([]byte, error) {
@@ -66,7 +68,7 @@ func (s *VerifiableSeed) UnmarshalText(text []byte) error {
 func GenerateRandomSeed() VerifiableSeed {
 	h := hash.GenerateTestHash()
 	signer := bls.GenerateTestSigner()
-	sig := signer.SignData(h.RawBytes())
-	seed, _ := VerifiableSeedFromRawBytes(sig.RawBytes())
+	sig := signer.SignData(h.Bytes())
+	seed, _ := VerifiableSeedFromBytes(sig.Bytes())
 	return seed
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestBlockAnnounceType(t *testing.T) {
@@ -24,7 +23,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := block.GenerateTestBlock(nil, nil)
-		c := block.GenerateTestCertificate(hash.UndefHash)
+		c := block.NewCertificate(-1, nil, nil, nil)
 		m := NewBlockAnnounceMessage(100, b, c)
 
 		assert.Error(t, m.SanityCheck())

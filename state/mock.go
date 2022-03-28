@@ -2,6 +2,7 @@ package state
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/zarbchain/zarb-go/account"
@@ -21,6 +22,9 @@ import (
 var _ Facade = &MockState{}
 
 type MockState struct {
+	// This locks prevents the Data Race in tests
+	lk sync.RWMutex
+
 	TestGenHash   hash.Hash
 	TestStore     *store.MockStore
 	TestPool      *txpool.MockTxPool
@@ -44,39 +48,48 @@ func (m *MockState) CommitTestBlocks(num int) {
 		b := block.GenerateTestBlock(nil, nil)
 		cert := block.GenerateTestCertificate(b.Hash())
 
-		m.TestStore.SaveBlock(i+1, b, cert)
+		m.TestStore.SaveBlock(int32(i+1), b, cert)
 	}
 }
-func (m *MockState) LastBlockHeight() int {
-	return m.TestStore.LastCert.Height
+func (m *MockState) LastBlockHeight() int32 {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	return m.TestStore.LastHeight
 }
 func (m *MockState) GenesisHash() hash.Hash {
 	return m.TestGenHash
 }
 func (m *MockState) LastBlockHash() hash.Hash {
-	if m.TestStore.LastCert.Cert == nil {
-		return hash.UndefHash
-	}
-	return m.TestStore.LastCert.Cert.BlockHash()
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	return m.TestStore.BlockHash(m.TestStore.LastHeight)
 }
 func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
 }
 func (m *MockState) LastCertificate() *block.Certificate {
-	return m.TestStore.LastCert.Cert
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	return m.TestStore.LastCert
 }
 func (m *MockState) BlockTime() time.Duration {
 	return time.Second
 }
 func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
-	m.TestStore.LastCert.Cert = cert
+	m.TestStore.LastCert = cert
 	return nil
 }
 func (m *MockState) Fingerprint() string {
 	return ""
 }
-func (m *MockState) CommitBlock(h int, b *block.Block, cert *block.Certificate) error {
-	if h != m.TestStore.LastCert.Height+1 {
+func (m *MockState) CommitBlock(h int32, b *block.Block, cert *block.Certificate) error {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
+	if h != m.TestStore.LastHeight+1 {
 		return fmt.Errorf("invalid height")
 	}
 	m.TestStore.SaveBlock(h, b, cert)
@@ -86,7 +99,7 @@ func (m *MockState) CommitBlock(h int, b *block.Block, cert *block.Certificate) 
 func (m *MockState) Close() error {
 	return nil
 }
-func (m *MockState) ProposeBlock(round int) (*block.Block, error) {
+func (m *MockState) ProposeBlock(round int16) (*block.Block, error) {
 	b := block.GenerateTestBlock(nil, nil)
 	return b, nil
 }
@@ -99,10 +112,10 @@ func (m *MockState) CommitteeValidators() []*validator.Validator {
 func (m *MockState) IsInCommittee(addr crypto.Address) bool {
 	return m.TestCommittee.Contains(addr)
 }
-func (m *MockState) Proposer(round int) *validator.Validator {
+func (m *MockState) Proposer(round int16) *validator.Validator {
 	return m.TestCommittee.Proposer(round)
 }
-func (m *MockState) IsProposer(addr crypto.Address, round int) bool {
+func (m *MockState) IsProposer(addr crypto.Address, round int16) bool {
 	return m.TestCommittee.IsProposer(addr, round)
 }
 
@@ -120,17 +133,27 @@ func (m *MockState) CommitteePower() int64 {
 	return m.TestCommittee.TotalPower()
 }
 func (m *MockState) Transaction(id tx.ID) *tx.Tx {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	tx, _ := m.TestStore.Transaction(id)
 	return tx
 }
 func (m *MockState) Block(hash hash.Hash) *block.Block {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	bi, _ := m.TestStore.Block(hash)
 	if bi != nil {
-		return bi.Block
+		b, _ := bi.ToFullBlock()
+		return b
 	}
 	return nil
 }
-func (m *MockState) BlockHash(height int) hash.Hash {
+func (m *MockState) BlockHash(height int32) hash.Hash {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	return m.TestStore.BlockHash(height)
 }
 func (m *MockState) Account(addr crypto.Address) *account.Account {
@@ -141,7 +164,7 @@ func (m *MockState) Validator(addr crypto.Address) *validator.Validator {
 	v, _ := m.TestStore.Validator(addr)
 	return v
 }
-func (m *MockState) ValidatorByNumber(n int) *validator.Validator {
+func (m *MockState) ValidatorByNumber(n int32) *validator.Validator {
 	v, _ := m.TestStore.ValidatorByNumber(n)
 	return v
 }

@@ -1,35 +1,34 @@
 package bls
 
 import (
+	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/encoding"
 )
 
 const SignatureSize = 48
 
 type Signature struct {
-	data signatureData
+	signature *bls.Sign
 }
 
-type signatureData struct {
-	Signature *bls.Sign
-}
-
-func SignatureFromString(text string) (crypto.Signature, error) {
+func SignatureFromString(text string) (*Signature, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
 		return nil, err
 	}
 
-	return SignatureFromRawBytes(data)
+	return SignatureFromBytes(data)
 }
 
-func SignatureFromRawBytes(data []byte) (crypto.Signature, error) {
+func SignatureFromBytes(data []byte) (*Signature, error) {
 	if len(data) != SignatureSize {
 		return nil, fmt.Errorf("invalid signature")
 	}
@@ -39,24 +38,24 @@ func SignatureFromRawBytes(data []byte) (crypto.Signature, error) {
 	}
 
 	var sig Signature
-	sig.data.Signature = s
+	sig.signature = s
 
 	return &sig, nil
 }
 
-func (sig Signature) RawBytes() []byte {
-	if sig.data.Signature == nil {
+func (sig Signature) Bytes() []byte {
+	if sig.signature == nil {
 		return nil
 	}
 
-	return sig.data.Signature.Serialize()
+	return sig.signature.Serialize()
 }
 
 func (sig Signature) String() string {
-	if sig.data.Signature == nil {
+	if sig.signature == nil {
 		return ""
 	}
-	return sig.data.Signature.SerializeToHexStr()
+	return sig.signature.SerializeToHexStr()
 }
 
 func (sig Signature) MarshalJSON() ([]byte, error) {
@@ -64,10 +63,10 @@ func (sig Signature) MarshalJSON() ([]byte, error) {
 }
 
 func (sig *Signature) MarshalCBOR() ([]byte, error) {
-	if sig.data.Signature == nil {
+	if sig.signature == nil {
 		return nil, fmt.Errorf("invalid signature")
 	}
-	return cbor.Marshal(sig.RawBytes())
+	return cbor.Marshal(sig.Bytes())
 }
 
 func (sig *Signature) UnmarshalCBOR(bs []byte) error {
@@ -76,17 +75,30 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	s, err := SignatureFromRawBytes(data)
+	return sig.Decode(bytes.NewReader(data))
+}
+
+func (sig *Signature) Encode(w io.Writer) error {
+	return encoding.WriteElements(w, sig.Bytes())
+}
+
+func (sig *Signature) Decode(r io.Reader) error {
+	data := make([]byte, SignatureSize)
+	err := encoding.ReadElements(r, data)
 	if err != nil {
 		return err
 	}
 
-	*sig = *s.(*Signature)
+	p, err := SignatureFromBytes(data)
+	if err != nil {
+		return err
+	}
+	*sig = *p
 	return nil
 }
 
 func (sig *Signature) SanityCheck() error {
-	if sig.data.Signature.IsZero() {
+	if sig.signature.IsZero() {
 		return fmt.Errorf("signature is zero")
 	}
 
@@ -94,5 +106,5 @@ func (sig *Signature) SanityCheck() error {
 }
 
 func (sig Signature) EqualsTo(right crypto.Signature) bool {
-	return sig.data.Signature.IsEqual(right.(*Signature).data.Signature)
+	return sig.signature.IsEqual(right.(*Signature).signature)
 }

@@ -2,11 +2,12 @@ package payload
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
-type Type int
+type Type uint8
 
 const (
 	PayloadTypeSend      = Type(1)
@@ -36,6 +37,9 @@ type Payload interface {
 	Signer() crypto.Address
 	Value() int64
 	Type() Type
+	SerializeSize() int
+	Encode(io.Writer) error
+	Decode(io.Reader) error
 	SanityCheck() error
 	Fingerprint() string
 }

@@ -8,12 +8,12 @@ import (
 )
 
 type BlockAnnounceMessage struct {
-	Height      int                `cbor:"1,keyasint"`
+	Height      int32              `cbor:"1,keyasint"`
 	Block       *block.Block       `cbor:"2,keyasint"`
 	Certificate *block.Certificate `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnounceMessage(h int, b *block.Block, c *block.Certificate) *BlockAnnounceMessage {
+func NewBlockAnnounceMessage(h int32, b *block.Block, c *block.Certificate) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Height:      h,
 		Block:       b,

@@ -42,7 +42,7 @@ func (conf *Config) SanityCheck() error {
 	return nil
 }
 
-func (conf *Config) CalculateChangeProposerTimeout(round int) time.Duration {
+func (conf *Config) CalculateChangeProposerTimeout(round int16) time.Duration {
 	return time.Duration(
 		conf.ChangeProposerTimeout.Milliseconds()+conf.ChangeProposerDelta.Milliseconds()*int64(round),
 	) * time.Millisecond

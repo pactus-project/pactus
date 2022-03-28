@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestLatestBlocksResponseType(t *testing.T) {
@@ -23,8 +22,8 @@ func TestBlocksResponseMessage(t *testing.T) {
 
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := block.GenerateTestBlock(nil, nil)
-		cert := block.GenerateTestCertificate(hash.UndefHash)
-		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b}, cert)
+		c := block.NewCertificate(-1, nil, nil, nil)
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b}, c)
 
 		assert.Error(t, m.SanityCheck())
 	})
@@ -44,7 +43,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeBusy, 1, 0, nil, nil)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Equal(t, m.To(), 0)
+		assert.Equal(t, m.To(), int32(0))
 		assert.True(t, m.IsRequestRejected())
 	})
 
@@ -52,7 +51,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeRejected, 1, 0, nil, nil)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Equal(t, m.To(), 0)
+		assert.Equal(t, m.To(), int32(0))
 		assert.True(t, m.IsRequestRejected())
 	})
 
@@ -62,7 +61,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b1, b2}, nil)
 		assert.NoError(t, m.SanityCheck())
-		assert.Equal(t, m.To(), 101)
+		assert.Equal(t, m.To(), int32(101))
 		assert.False(t, m.IsRequestRejected())
 	})
 }

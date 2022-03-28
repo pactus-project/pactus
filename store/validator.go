@@ -12,19 +12,19 @@ import (
 
 type validatorStore struct {
 	db     *leveldb.DB
-	valMap map[int]*validator.Validator
-	total  int
+	valMap map[int32]*validator.Validator
+	total  int32
 }
 
-func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.RawBytes()...) }
+func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.Bytes()...) }
 
 func newValidatorStore(db *leveldb.DB) *validatorStore {
 	vs := &validatorStore{
 		db: db,
 	}
 
-	total := 0
-	valMap := make(map[int]*validator.Validator)
+	total := int32(0)
+	valMap := make(map[int32]*validator.Validator)
 	vs.iterateValidators(func(val *validator.Validator) bool {
 		valMap[val.Number()] = val
 		total++
@@ -51,15 +51,15 @@ func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, 
 		return nil, err
 	}
 
-	val := new(validator.Validator)
-	if err := val.Decode(data); err != nil {
+	val, err := validator.FromBytes(data)
+	if err != nil {
 		return nil, err
 	}
 
 	return val, nil
 }
 
-func (vs *validatorStore) validatorByNumber(num int) (*validator.Validator, error) {
+func (vs *validatorStore) validatorByNumber(num int32) (*validator.Validator, error) {
 	val, ok := vs.valMap[num]
 	if ok {
 		return val, nil
@@ -75,8 +75,8 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 		// key := iter.Key()
 		value := iter.Value()
 
-		val := new(validator.Validator)
-		if err := val.Decode(value); err != nil {
+		val, err := validator.FromBytes(value)
+		if err != nil {
 			logger.Panic("unable to decode validator: %v", err)
 		}
 
@@ -90,7 +90,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 }
 
 func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) {
-	data, err := val.Encode()
+	data, err := val.Bytes()
 	if err != nil {
 		logger.Panic("unable to encode validator: %v", err)
 	}

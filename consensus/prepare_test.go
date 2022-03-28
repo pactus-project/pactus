@@ -47,8 +47,8 @@ func TestByzantineVote1(t *testing.T) {
 
 	commitBlockForAllStates(t)
 
-	h := 2
-	r := 0
+	h := int32(2)
+	r := int16(0)
 	p := makeProposal(t, h, r)
 
 	testEnterNewHeight(tConsX)
@@ -101,8 +101,8 @@ func TestByzantineVote2(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	h := 4
-	r := 0
+	h := int32(4)
+	r := int16(0)
 	p1 := makeProposal(t, h, r)
 	p2 := makeProposal(t, h, r+1)
 

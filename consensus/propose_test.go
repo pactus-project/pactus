@@ -78,8 +78,8 @@ func TestNetworkLagging(t *testing.T) {
 
 	testEnterNewHeight(tConsP)
 
-	h := 1
-	r := 0
+	h := int32(1)
+	r := int16(0)
 	p := makeProposal(t, h, r)
 	// We don't receive proposal on time
 	// tConsP.SetProposal(p)

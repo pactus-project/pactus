@@ -89,7 +89,7 @@ func TestFullPool(t *testing.T) {
 	assert.Equal(t, tPool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewSendTx(block10000.Stamp(), acc.Sequence()+i+1, acc.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
+		trx := tx.NewSendTx(block10000.Stamp(), acc.Sequence()+int32(i+1), acc.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
 		trxs[i] = trx
@@ -145,7 +145,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, "withdraw-tx")
+	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	tSandbox.AcceptTestSortition = true

@@ -63,7 +63,7 @@ message BlockRequest {
 }
 
 message BlockResponse {
-  int64 height = 1;
+  int32 height = 1;
   bytes hash = 2;
   google.protobuf.Timestamp block_time = 3;
   BlockHeaderInfo header = 4;
@@ -71,14 +71,14 @@ message BlockResponse {
   repeated TransactionInfo txs = 6;
 }
 
-message BlockHashRequest { int64 height = 1; }
+message BlockHashRequest { int32 height = 1; }
 
 message BlockHashResponse { bytes hash = 1; }
 
 message BlockchainInfoRequest {}
 
 message BlockchainInfoResponse {
-  int64 last_block_height = 1;
+  int32 last_block_height = 1;
   bytes last_block_hash = 2;
 }
 
@@ -102,7 +102,7 @@ message SendRawTransactionResponse { string id = 2; }
 message ValidatorInfo {
   bytes public_key = 1;
   int32 number = 2;
-  int64 sequence = 3;
+  int32 sequence = 3;
   int64 stake = 4;
   int32 last_bonding_height = 5;
   int32 last_joined_height = 6;
@@ -125,32 +125,30 @@ message PeerInfo {
 message AccountInfo {
   bytes address = 1;
   int32 number = 2;
-  int64 sequence = 3;
+  int32 sequence = 3;
   int64 Balance = 4;
 }
 
 message BlockHeaderInfo {
   int32 version = 1;
   bytes prev_block_hash = 2;
-  bytes prev_cert_hash = 3;
-  bytes state_root = 4;
-  bytes txs_root = 5;
-  bytes sortition_seed = 6;
-  string proposer_address = 7;
+  bytes state_root = 3;
+  bytes sortition_seed = 4;
+  string proposer_address = 5;
 }
 
 message CertificateInfo {
-  int64 round = 1;
+  int32 round = 1;
   repeated int32 committers = 2;
   repeated int32 absentees = 3;
-  string signature = 4;
+  bytes signature = 4;
 }
 
 message TransactionInfo {
-  string id = 1;
+  bytes id = 1;
   int32 version = 2;
-  string stamp = 3;
-  int64 sequence = 4;
+  bytes stamp = 3;
+  int32 sequence = 4;
   int64 fee = 5;
   PayloadType Type = 6;
   oneof Payload {
@@ -159,8 +157,8 @@ message TransactionInfo {
     payloads.SORTITION_PAYLOAD sortition = 32;
   };
   string memo = 7;
-  string public_key = 8;
-  string signature = 9;
+  bytes public_key = 8;
+  bytes signature = 9;
 }
 
 enum PayloadType {

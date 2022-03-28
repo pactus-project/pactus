@@ -25,8 +25,8 @@ type sandbox struct {
 	accounts        map[crypto.Address]*AccountStatus
 	validators      map[crypto.Address]*ValidatorStatus
 	params          param.Params
-	totalAccounts   int
-	totalValidators int
+	totalAccounts   int32
+	totalValidators int32
 }
 
 type ValidatorStatus struct {
@@ -188,21 +188,21 @@ func (sb *sandbox) MinFee() int64 {
 	return sb.params.MinimumFee
 }
 
-func (sb *sandbox) TransactionToLiveInterval() int {
+func (sb *sandbox) TransactionToLiveInterval() int32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.TransactionToLiveInterval
 }
 
-func (sb *sandbox) CurrentHeight() int {
+func (sb *sandbox) CurrentHeight() int32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.currentHeight()
 }
 
-func (sb *sandbox) currentHeight() int {
+func (sb *sandbox) currentHeight() int32 {
 	h, _ := sb.store.LastCertificate()
 
 	return h + 1
@@ -233,7 +233,7 @@ func (sb *sandbox) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
 	return sb.store.BlockHashByStamp(stamp)
 }
 
-func (sb *sandbox) BlockHeightByStamp(stamp hash.Stamp) int {
+func (sb *sandbox) BlockHeightByStamp(stamp hash.Stamp) int32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -247,13 +247,13 @@ func (sb *sandbox) CommitteeSize() int {
 	return sb.params.CommitteeSize
 }
 
-func (sb *sandbox) UnbondInterval() int {
+func (sb *sandbox) UnbondInterval() int32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.UnbondInterval
 }
-func (sb *sandbox) BondInterval() int {
+func (sb *sandbox) BondInterval() int32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -271,7 +271,8 @@ func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *val
 	if err != nil {
 		return false
 	}
-	seed := bi.Block.Header().SortitionSeed()
+	b, _ := bi.ToFullBlock()
+	seed := b.Header().SortitionSeed()
 
 	total := int64(0) // TODO: we can get it from state
 	sb.store.IterateValidators(func(val *validator.Validator) bool {

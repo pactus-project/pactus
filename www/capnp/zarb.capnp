@@ -5,22 +5,19 @@ $Go.import("capnp");
 
 
 struct Header {
-  version             @0 :Int32;
-  time                @1 :Int64;
+  version             @0 :UInt8;
+  time                @1 :Int32;
   prevBlockHash       @2 :Data;
-  prevCertHash        @3 :Data;
-  stateRoot           @4 :Data;
-  txsRoot             @5 :Data;
-  sortitionSeed       @6 :Data;
-  proposerAddress     @7 :Data;
+  stateRoot           @3 :Data;
+  sortitionSeed       @4 :Data;
+  proposerAddress     @5 :Data;
 }
 
 struct Certificate {
-  blockHash           @0 :Data;
-  round               @1 :UInt32;
-  committers          @2 :List(Int32);
-  absentees           @3 :List(Int32);
-  signature           @4 :Data;
+  round               @0 :Int16;
+  committers          @1 :List(Int32);
+  absentees           @2 :List(Int32);
+  signature           @3 :Data;
 }
 
 struct Block {
@@ -30,7 +27,7 @@ struct Block {
 }
 
 struct BlockchainResult {
-  lastBlockHeight     @0 :Int64;
+  lastBlockHeight     @0 :Int32;
   lastBlockHash       @1 :Data;
 }
 
@@ -80,7 +77,7 @@ struct SendTransactionResult {
 
 interface ZarbServer {
   getBlock             @0 (hash: Data, verbosity: Int32)          -> (result :BlockResult);
-  getBlockHash         @1 (height: UInt64)                        -> (result :Data);
+  getBlockHash         @1 (height: Int32)                         -> (result :Data);
   getTransaction       @2 (id: Data, verbosity: Int32)            -> (result :TransactionResult);
   getAccount           @3 (address: Data, verbosity: Int32)       -> (result :AccountResult);
   getValidator         @4 (address: Data, verbosity: Int32)       -> (result :ValidatorResult);

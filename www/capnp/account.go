@@ -17,7 +17,7 @@ func (zs zarbServer) GetAccount(args ZarbServer_getAccount) error {
 		return fmt.Errorf("account not found")
 	}
 
-	d, _ := acc.Encode()
+	d, _ := acc.Bytes()
 	res, _ := args.Results.NewResult()
 	return res.SetData(d)
 }

@@ -53,7 +53,7 @@ func UnbondTx() func(c *cli.Cmd) {
 			var err error
 			var stamp hash.Stamp
 			var validator crypto.Address
-			var seq int
+			var seq int32
 			var auth string
 
 			// ---
@@ -82,7 +82,7 @@ func UnbondTx() func(c *cli.Cmd) {
 
 			//RPC
 			if seqOpt != nil {
-				seq = *seqOpt
+				seq = int32(*seqOpt)
 			} else {
 				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), validator)
 				if err != nil {

@@ -55,8 +55,7 @@ func Sign() func(c *cli.Cmd) {
 					cmd.PrintErrorMsg("Invalid input: %v", err)
 					return
 				}
-				trx = new(tx.Tx)
-				err = trx.Decode(bz)
+				trx, err = tx.FromBytes(bz)
 				if err != nil {
 					cmd.PrintErrorMsg("Invalid transaction: %v", err)
 					return
@@ -88,7 +87,7 @@ func Sign() func(c *cli.Cmd) {
 
 			if trx != nil {
 				key.ToSigner().SignMsg(trx)
-				bz, _ := trx.Encode()
+				bz, _ := trx.Bytes()
 
 				fmt.Println()
 				cmd.PrintInfoMsg("Signed raw transaction:\n%x", bz)

@@ -116,7 +116,7 @@ func (ek *EncryptedKey) Decrypt(auth string) (*Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	pv, err := bls.PrivateKeyFromRawBytes(plainText)
+	pv, err := bls.PrivateKeyFromBytes(plainText)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func EncryptKey(key *Key, auth, label string) (*EncryptedKey, error) {
 	}
 
 	encryptKey := derivedKey[:16]
-	keyBytes := key.PrivateKey().RawBytes()
+	keyBytes := key.PrivateKey().Bytes()
 
 	iv := getEntropyCSPRNG(aes.BlockSize) // 16
 	cipherText, err := aesCTRXOR(encryptKey, keyBytes, iv)

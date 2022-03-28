@@ -70,7 +70,7 @@ func BondTx() func(c *cli.Cmd) {
 			var stamp hash.Stamp
 			var sender crypto.Address
 			var pub *bls.PublicKey
-			var seq int
+			var seq int32
 			var stake int64
 			var fee int64
 			var auth string
@@ -126,7 +126,7 @@ func BondTx() func(c *cli.Cmd) {
 
 			//RPC
 			if seqOpt != nil {
-				seq = *seqOpt
+				seq = int32(*seqOpt)
 			} else {
 				seq, err = grpcclient.GetSequence(promptRPCEndpoint(grpcOpt), sender)
 				if err != nil {

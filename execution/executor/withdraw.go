@@ -25,16 +25,16 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	if val.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence, "invalid sequence, expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidSequence, "expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
 	if val.Stake() < pld.Amount+trx.Fee() {
-		return errors.Errorf(errors.ErrInsufficientFunds, "insufficient balance")
+		return errors.Error(errors.ErrInsufficientFunds)
 	}
 	if val.UnbondingHeight() == 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "need to unbond first")
+		return errors.Errorf(errors.ErrInvalidHeight, "need to unbond first")
 	}
 	if sb.CurrentHeight() < val.UnbondingHeight()+sb.UnbondInterval() {
-		return errors.Errorf(errors.ErrInvalidTx, "hasn't passed unbonding period, expected: %v, got: %v", val.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
+		return errors.Errorf(errors.ErrInvalidHeight, "hasn't passed unbonding period, expected: %v, got: %v", val.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
 	}
 
 	acc := sb.Account(pld.To)

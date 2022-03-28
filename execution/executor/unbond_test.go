@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -20,20 +21,28 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
 		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, crypto.GenerateTestAddress(), "invalid validator")
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+2, pub.Address(), "invalid sequence")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
 		val := tSandbox.Committee().Proposer(0)
 		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, val.Address(), "inside committee")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidTx)
+	})
 
-		assert.Error(t, exe.Execute(trx, tSandbox))
+	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
+		pub, _ := bls.GenerateTestKeyPair()
+		val := tSandbox.MakeNewValidator(pub)
+		val.UpdateUnbondingHeight(tSandbox.CurrentHeight())
+		tSandbox.UpdateValidator(val)
+
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -45,11 +54,6 @@ func TestExecuteUnbondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
-		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
-	})
 	assert.Zero(t, tSandbox.Validator(pub.Address()).Stake())
 	assert.Zero(t, tSandbox.Validator(pub.Address()).Power())
 	assert.Equal(t, tSandbox.Validator(pub.Address()).UnbondingHeight(), tSandbox.CurrentHeight())
@@ -80,6 +84,5 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	tSandbox.UpdateValidator(val)
 
 	trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
-
-	assert.Error(t, exe.Execute(trx, tSandbox))
+	assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 }

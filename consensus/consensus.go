@@ -25,8 +25,8 @@ type consensus struct {
 	log                 *log.Log
 	signer              crypto.Signer
 	state               state.Facade
-	height              int
-	round               int
+	height              int32
+	round               int16
 	newHeightState      consState
 	proposeState        consState
 	prepareState        consState
@@ -78,28 +78,28 @@ func (cs *consensus) Fingerprint() string {
 	return fmt.Sprintf("{%d/%d/%s}", cs.height, cs.round, cs.currentState.name())
 }
 
-func (cs *consensus) HeightRound() (int, int) {
+func (cs *consensus) HeightRound() (int32, int16) {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
 	return cs.height, cs.round
 }
 
-func (cs *consensus) Height() int {
+func (cs *consensus) Height() int32 {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
 	return cs.height
 }
 
-func (cs *consensus) Round() int {
+func (cs *consensus) Round() int16 {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
 	return cs.round
 }
 
-func (cs *consensus) RoundProposal(round int) *proposal.Proposal {
+func (cs *consensus) RoundProposal(round int16) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -110,13 +110,13 @@ func (cs *consensus) AllVotes() []*vote.Vote {
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
-	for r := 0; r <= cs.round; r++ {
+	for r := int16(0); r <= cs.round; r++ {
 		m := cs.log.MustGetRoundMessages(r)
 		votes = append(votes, m.AllVotes()...)
 	}
 	return votes
 }
-func (cs *consensus) RoundVotes(round int) []*vote.Vote {
+func (cs *consensus) RoundVotes(round int16) []*vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -150,7 +150,7 @@ func (cs *consensus) MoveToNewHeight() {
 	}
 }
 
-func (cs *consensus) scheduleTimeout(duration time.Duration, height int, round int, target tickerTarget) {
+func (cs *consensus) scheduleTimeout(duration time.Duration, height int32, round int16, target tickerTarget) {
 	ti := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
 	cs.logger.Debug("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
@@ -236,7 +236,7 @@ func (cs *consensus) doAddVote(v *vote.Vote) {
 	cs.logger.Debug("new vote added", "vote", v)
 }
 
-func (cs *consensus) proposer(round int) *validator.Validator {
+func (cs *consensus) proposer(round int16) *validator.Validator {
 	return cs.state.Proposer(round)
 }
 
@@ -272,7 +272,7 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 	cs.broadcastCh <- message.NewVoteMessage(v)
 }
 
-func (cs *consensus) announceNewBlock(h int, b *block.Block, c *block.Certificate) {
+func (cs *consensus) announceNewBlock(h int32, b *block.Block, c *block.Certificate) {
 	cs.broadcastCh <- message.NewBlockAnnounceMessage(h, b, c)
 }
 
@@ -281,7 +281,7 @@ func (cs *consensus) PickRandomVote() *vote.Vote {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	rndRound := util.RandInt(cs.round + 1)
+	rndRound := util.RandInt16(cs.round + 1)
 	votes := []*vote.Vote{}
 	if rndRound == cs.round {
 		m := cs.log.MustGetRoundMessages(rndRound)
@@ -294,5 +294,5 @@ func (cs *consensus) PickRandomVote() *vote.Vote {
 	if len(votes) == 0 {
 		return nil
 	}
-	return votes[util.RandInt(len(votes))]
+	return votes[util.RandInt32(int32(len(votes)))]
 }

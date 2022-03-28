@@ -1,13 +1,14 @@
 package account
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -17,14 +18,14 @@ type Account struct {
 }
 
 type accountData struct {
-	Address  crypto.Address `cbor:"1,keyasint"`
-	Number   int            `cbor:"2,keyasint"`
-	Sequence int            `cbor:"3,keyasint"`
-	Balance  int64          `cbor:"4,keyasint"`
+	Address  crypto.Address
+	Number   int32
+	Sequence int32
+	Balance  int64
 }
 
 // NewAccount constructs a new account object
-func NewAccount(addr crypto.Address, number int) *Account {
+func NewAccount(addr crypto.Address, number int32) *Account {
 	return &Account{
 		data: accountData{
 			Address: addr,
@@ -33,9 +34,26 @@ func NewAccount(addr crypto.Address, number int) *Account {
 	}
 }
 
+// FromBytes constructs a new account from byte array
+func FromBytes(data []byte) (*Account, error) {
+	acc := new(Account)
+	r := bytes.NewReader(data)
+	err := encoding.ReadElements(r,
+		&acc.data.Address,
+		&acc.data.Number,
+		&acc.data.Sequence,
+		&acc.data.Balance)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return acc, nil
+}
+
 func (acc Account) Address() crypto.Address { return acc.data.Address }
-func (acc Account) Number() int             { return acc.data.Number }
-func (acc Account) Sequence() int           { return acc.data.Sequence }
+func (acc Account) Number() int32           { return acc.data.Number }
+func (acc Account) Sequence() int32         { return acc.data.Sequence }
 func (acc Account) Balance() int64          { return acc.data.Balance }
 
 func (acc *Account) SubtractFromBalance(amt int64) {
@@ -51,19 +69,28 @@ func (acc *Account) IncSequence() {
 }
 
 func (acc *Account) Hash() hash.Hash {
-	bs, err := acc.Encode()
+	bs, err := acc.Bytes()
 	if err != nil {
 		panic(err)
 	}
 	return hash.CalcHash(bs)
 }
-
-func (acc *Account) Encode() ([]byte, error) {
-	return cbor.Marshal(acc.data)
+func (acc *Account) SerializeSize() int {
+	return 37 // 21+4+4+8
 }
 
-func (acc *Account) Decode(bs []byte) error {
-	return cbor.Unmarshal(bs, &acc.data)
+func (acc *Account) Bytes() ([]byte, error) {
+	w := bytes.NewBuffer(make([]byte, 0, acc.SerializeSize()))
+	err := encoding.WriteElements(w,
+		&acc.data.Address,
+		acc.data.Number,
+		acc.data.Sequence,
+		acc.data.Balance)
+	if err != nil {
+		return nil, err
+	}
+
+	return w.Bytes(), nil
 }
 
 func (acc Account) MarshalJSON() ([]byte, error) {
@@ -78,10 +105,10 @@ func (acc Account) Fingerprint() string {
 }
 
 // GenerateTestAccount generates an account for testing purpose
-func GenerateTestAccount(number int) (*Account, crypto.Signer) {
+func GenerateTestAccount(number int32) (*Account, crypto.Signer) {
 	signer := bls.GenerateTestSigner()
 	acc := NewAccount(signer.Address(), number)
 	acc.data.Balance = util.RandInt64(100 * 1e14)
-	acc.data.Sequence = util.RandInt(100)
+	acc.data.Sequence = util.RandInt32(1000)
 	return acc, signer
 }

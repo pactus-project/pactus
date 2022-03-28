@@ -36,7 +36,7 @@ func MockingSandbox() *MockSandbox {
 	treasuryAmt := int64(21000000 * 1e8)
 
 	for i, val := range committee.Validators() {
-		acc := account.NewAccount(val.Address(), i+1)
+		acc := account.NewAccount(val.Address(), int32(i+1))
 		acc.AddToBalance(100 * 1e8)
 		sb.UpdateAccount(acc)
 		sb.UpdateValidator(val)
@@ -72,10 +72,10 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.TestStore.UpdateValidator(val)
 
 }
-func (m *MockSandbox) CurrentHeight() int {
-	return m.TestStore.LastCert.Height + 1
+func (m *MockSandbox) CurrentHeight() int32 {
+	return m.TestStore.LastHeight + 1
 }
-func (m *MockSandbox) TransactionToLiveInterval() int {
+func (m *MockSandbox) TransactionToLiveInterval() int32 {
 	return m.Params.TransactionToLiveInterval
 }
 func (m *MockSandbox) FeeFraction() float64 {
@@ -88,16 +88,16 @@ func (m *MockSandbox) MinFee() int64 {
 func (m *MockSandbox) CommitteeSize() int {
 	return m.Params.CommitteeSize
 }
-func (m *MockSandbox) UnbondInterval() int {
+func (m *MockSandbox) UnbondInterval() int32 {
 	return m.Params.UnbondInterval
 }
-func (m *MockSandbox) BondInterval() int {
-	return m.Params.CommitteeSize * 2
+func (m *MockSandbox) BondInterval() int32 {
+	return m.Params.BondInterval
 }
 func (m *MockSandbox) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
 	return m.TestStore.BlockHashByStamp(stamp)
 }
-func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int {
+func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int32 {
 	return m.TestStore.BlockHeightByStamp(stamp)
 }
 func (m *MockSandbox) IterateAccounts(consumer func(*AccountStatus)) {

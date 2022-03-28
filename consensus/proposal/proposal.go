@@ -10,19 +10,20 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type Proposal struct {
 	data proposalData
 }
 type proposalData struct {
-	Height    int            `cbor:"1,keyasint"`
-	Round     int            `cbor:"2,keyasint"`
+	Height    int32          `cbor:"1,keyasint"`
+	Round     int16          `cbor:"2,keyasint"`
 	Block     *block.Block   `cbor:"3,keyasint"`
 	Signature *bls.Signature `cbor:"4,keyasint"`
 }
 
-func NewProposal(height int, round int, block *block.Block) *Proposal {
+func NewProposal(height int32, round int16, block *block.Block) *Proposal {
 	return &Proposal{
 		data: proposalData{
 			Height: height,
@@ -31,26 +32,26 @@ func NewProposal(height int, round int, block *block.Block) *Proposal {
 		},
 	}
 }
-func (p *Proposal) Height() int                 { return p.data.Height }
-func (p *Proposal) Round() int                  { return p.data.Round }
+func (p *Proposal) Height() int32               { return p.data.Height }
+func (p *Proposal) Round() int16                { return p.data.Round }
 func (p *Proposal) Block() *block.Block         { return p.data.Block }
 func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
 
 func (p *Proposal) SanityCheck() error {
 	if err := p.data.Block.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidProposal, err.Error())
+		return err
 	}
 	if p.data.Height <= 0 {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid round")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if p.data.Round < 0 {
 		return errors.Errorf(errors.ErrInvalidProposal, "invalid round")
 	}
 	if p.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
+		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
 	if p.data.Signature.SanityCheck() != nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
+		return errors.Error(errors.ErrInvalidSignature)
 	}
 	return nil
 }
@@ -63,17 +64,11 @@ func (p *Proposal) SetSignature(sig crypto.Signature) {
 func (p *Proposal) SetPublicKey(crypto.PublicKey) {}
 
 func (p *Proposal) SignBytes() []byte {
-	type signProposal struct {
-		Height    int       `cbor:"1,keyasint"`
-		Round     int       `cbor:"2,keyasint"`
-		BlockHash hash.Hash `cbor:"3,keyasint"`
-	}
-	bz, _ := cbor.Marshal(signProposal{
-		Height:    p.data.Height,
-		Round:     p.data.Round,
-		BlockHash: p.data.Block.Hash(),
-	})
-	return bz
+	sb := p.Block().Hash().Bytes()
+	sb = append(sb, util.Int32ToSlice(p.Height())...)
+	sb = append(sb, util.Int16ToSlice(p.Round())...)
+
+	return sb
 }
 
 func (p *Proposal) MarshalCBOR() ([]byte, error) {
@@ -93,10 +88,10 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
 	}
 	if !pubKey.Address().EqualsTo(p.data.Block.Header().ProposerAddress()) {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid proposer")
+		return errors.Errorf(errors.ErrInvalidPublicKey, "invalid proposer")
 	}
 	if !pubKey.Verify(p.SignBytes(), p.data.Signature) {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
+		return errors.Errorf(errors.ErrInvalidSignature, "invalid signature")
 	}
 	return nil
 }
@@ -115,7 +110,7 @@ func (p Proposal) Fingerprint() string {
 
 // ---------
 // For tests
-func GenerateTestProposal(height, round int) (*Proposal, crypto.Signer) {
+func GenerateTestProposal(height int32, round int16) (*Proposal, crypto.Signer) {
 	signer := bls.GenerateTestSigner()
 	addr := signer.Address()
 	b := block.GenerateTestBlock(&addr, nil)

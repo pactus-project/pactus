@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -18,33 +19,32 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	pub, _ := bls.GenerateTestKeyPair()
 	val := tSandbox.MakeNewValidator(pub)
 	acc := tSandbox.TestStore.RandomTestAcc()
-	amt, _ := randomAmountAndFee(acc.Balance())
-	val.AddToStake(amt)
-	acc.SubtractFromBalance(amt)
+	amt, fee := randomAmountAndFee(acc.Balance())
+	val.AddToStake(amt + fee)
+	acc.SubtractFromBalance(amt + fee)
 	tSandbox.UpdateAccount(acc)
 	tSandbox.UpdateValidator(val)
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, 1, crypto.GenerateTestAddress(), addr, amt, "invalid validator")
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		trx := tx.NewWithdrawTx(tStamp500000, 1, crypto.GenerateTestAddress(), addr, amt, fee, "invalid validator")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+2, val.Address(), addr, amt, "invalid sequence")
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+2, val.Address(), addr, amt, fee, "invalid sequence")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt+1, "insufficient balance")
-
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt+1, fee, "insufficient balance")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInsufficientFunds)
 	})
 
 	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
 		assert.Zero(t, val.UnbondingHeight())
 
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, "need to unbond first")
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, fee, "need to unbond first")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
 	val.UpdateUnbondingHeight(tSandbox.CurrentHeight() - tSandbox.UnbondInterval() + 1)
@@ -52,14 +52,14 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.NotZero(t, val.UnbondingHeight())
 
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, "not passed unbonding interval")
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, fee, "not passed unbonding interval")
+		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
 	tSandbox.TestStore.AddTestBlock(500001)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, "should be able to empty stake")
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, fee, "should be able to empty stake")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
@@ -68,16 +68,16 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, 1, "can't withdraw empty stake")
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, 1, fee, "can't withdraw empty stake")
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Zero(t, exe.Fee())
+	assert.Equal(t, exe.Fee(), fee)
 	assert.Zero(t, tSandbox.Validator(val.Address()).Stake())
 	assert.Equal(t, tSandbox.Account(addr).Balance(), amt)
 	assert.Equal(t, tSandbox.Validator(val.Address()).Stake(), int64(0))
 	assert.Equal(t, tSandbox.Validator(val.Address()).Power(), int64(0))
 	assert.Equal(t, tSandbox.Account(addr).Balance(), amt)
 
-	checkTotalCoin(t, 0)
+	checkTotalCoin(t, fee)
 }

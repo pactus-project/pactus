@@ -7,12 +7,12 @@ import (
 )
 
 type BlocksRequestMessage struct {
-	SessionID int `cbor:"1,keyasint"`
-	From      int `cbor:"2,keyasint"`
-	To        int `cbor:"3,keyasint"`
+	SessionID int   `cbor:"1,keyasint"`
+	From      int32 `cbor:"2,keyasint"`
+	To        int32 `cbor:"3,keyasint"`
 }
 
-func NewBlocksRequestMessage(sid int, from, to int) *BlocksRequestMessage {
+func NewBlocksRequestMessage(sid int, from, to int32) *BlocksRequestMessage {
 	return &BlocksRequestMessage{
 		SessionID: sid,
 		From:      from,

@@ -22,13 +22,13 @@ func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
 	}
 
 	d, _ := st.Data()
-	val := new(validator.Validator)
-	assert.NoError(t, val.Decode(d))
+	val, err := validator.FromBytes(d)
+	assert.NoError(t, err)
 	return val
 }
 
 func TestGetValidator(t *testing.T) {
 	val := getValidator(t, tSigners[tNodeIdx2].Address())
 	require.NotNil(t, val)
-	assert.Equal(t, val.Number(), 1)
+	assert.Equal(t, val.Number(), int32(1))
 }

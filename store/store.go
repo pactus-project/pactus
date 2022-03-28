@@ -1,23 +1,25 @@
 package store
 
 import (
+	"bytes"
 	"fmt"
 	"sync"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/libs/linkedmap"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
 )
 
-const lasteStoreVersion = 1
+const lasteStoreVersion = int32(1)
 
 // TODO: add cache for me
 
@@ -41,15 +43,8 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 }
 
 type hashPair struct {
-	Height int       `cbor:"1,keyasint"`
-	Hash   hash.Hash `cbor:"2,keyasint"`
-}
-
-type lastInfo struct {
-	// Version keeps the store version and helps us to upgrade the store, if needed
-	Version int                `cbor:"1,keyasint"`
-	Height  int                `cbor:"2,keyasint"`
-	Cert    *block.Certificate `cbor:"3,keyasint"`
+	Height int32
+	Hash   hash.Hash
 }
 
 type store struct {
@@ -88,7 +83,7 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 
 	lastHeight, _ := s.LastCertificate()
 
-	for height := lastHeight - stampLookupCapacity; height <= lastHeight; height++ {
+	for height := lastHeight - int32(stampLookupCapacity); height <= lastHeight; height++ {
 		if height > 0 {
 			hash := s.BlockHash(height)
 			s.appendStamp(hash, height)
@@ -102,7 +97,7 @@ func (s *store) Close() error {
 	return s.db.Close()
 }
 
-func (s *store) appendStamp(hash hash.Hash, height int) {
+func (s *store) appendStamp(hash hash.Hash, height int32) {
 	pair := &hashPair{
 		Height: height,
 		Hash:   hash,
@@ -110,31 +105,28 @@ func (s *store) appendStamp(hash hash.Hash, height int) {
 	s.stampLookup.PushBack(hash.Stamp(), pair)
 }
 
-func (s *store) SaveBlock(height int, block *block.Block, cert *block.Certificate) {
+func (s *store) SaveBlock(height int32, block *block.Block, cert *block.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.blockStore.saveBlock(s.batch, height, block)
+	txsPos := s.blockStore.saveBlock(s.batch, height, block)
 
-	for index, trx := range block.Transactions() {
-		pos := &txPos{
-			Height: height,
-			Index:  index,
-		}
-		s.txStore.saveTx(s.batch, trx.ID(), pos)
+	for i, trx := range block.Transactions() {
+		s.txStore.saveTx(s.batch, trx.ID(), &txsPos[i])
 	}
 
 	// Save last certificate
-	lc := lastInfo{
-		Version: lasteStoreVersion,
-		Height:  height,
-		Cert:    cert,
-	}
-	lastCertData, err := cbor.Marshal(lc)
+	w := bytes.NewBuffer(make([]byte, 0, 8+cert.SerializeSize()))
+	err := encoding.WriteElements(w, lasteStoreVersion, height)
 	if err != nil {
-		logger.Panic("unable to encode last certificate: %v", err)
+		panic(err)
 	}
-	s.batch.Put(lastInfoKey, lastCertData)
+	err = cert.Encode(w)
+	if err != nil {
+		panic(err)
+	}
+
+	s.batch.Put(lastInfoKey, w.Bytes())
 
 	// Update stamp to height lookup
 	s.appendStamp(block.Hash(), height)
@@ -144,44 +136,18 @@ func (s *store) Block(hash hash.Hash) (*StoredBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	bi, err := s.blockStore.block(hash)
+	data, err := s.blockStore.block(hash)
 	if err != nil {
 		return nil, err
 	}
 
-	header := new(block.Header)
-	if err := header.Decode(bi.HeaderData); err != nil {
-		return nil, err
-	}
-	var cert *block.Certificate
-	if bi.PrevCertData != nil {
-		cert = new(block.Certificate)
-		if err := cert.Decode(bi.PrevCertData); err != nil {
-			return nil, err
-		}
-	}
-	txs := make([]*tx.Tx, len(bi.TransactionsData))
-	for i, d := range bi.TransactionsData {
-		tx := new(tx.Tx)
-		if err := tx.Decode(d); err != nil {
-			return nil, err
-		}
-		txs[i] = tx
-	}
-
-	b := block.NewBlock(*header, cert, txs)
-	if err := b.SanityCheck(); err != nil {
-		return nil, err
-	}
-
 	return &StoredBlock{
-		Block:      b,
-		Height:     bi.Height,
-		HeaderData: bi.HeaderData,
+		height: util.SliceToInt32(data[:4]),
+		data:   data[4:],
 	}, nil
 }
 
-func (s *store) BlockHash(height int) hash.Hash {
+func (s *store) BlockHash(height int32) hash.Hash {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -202,7 +168,7 @@ func (s *store) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
 	}
 	return hash.UndefHash
 }
-func (s *store) BlockHeightByStamp(stamp hash.Stamp) int {
+func (s *store) BlockHeightByStamp(stamp hash.Stamp) int32 {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -225,23 +191,23 @@ func (s *store) Transaction(id tx.ID) (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
-	blockHash := s.blockStore.BlockHash(pos.Height)
-	block, err := s.blockStore.block(blockHash)
+	data, err := s.blockStore.block(pos.Hash)
 	if err != nil {
 		return nil, err
 	}
-	if pos.Index >= len(block.TransactionsData) {
-		return nil, fmt.Errorf("index is out of range") // TODO: Shall we panic here?
+	if pos.Offset >= int32(len(data)) {
+		return nil, fmt.Errorf("offset is out of range") // TODO: Shall we panic here?
 	}
-	tx := new(tx.Tx)
-	err = tx.Decode(block.TransactionsData[pos.Index])
+	r := bytes.NewReader(data[pos.Offset:])
+	trx := new(tx.Tx)
+	err = trx.Decode(r)
 	if err != nil {
 		return nil, err
 	}
-	if tx.ID() != id {
+	if trx.ID() != id {
 		return nil, fmt.Errorf("transaction id is not matched") // TODO: Shall we panic here?
 	}
-	return tx, nil
+	return trx, nil
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {
@@ -258,7 +224,7 @@ func (s *store) Account(addr crypto.Address) (*account.Account, error) {
 	return s.accountStore.account(addr)
 }
 
-func (s *store) TotalAccounts() int {
+func (s *store) TotalAccounts() int32 {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -293,14 +259,14 @@ func (s *store) Validator(addr crypto.Address) (*validator.Validator, error) {
 	return s.validatorStore.validator(addr)
 }
 
-func (s *store) ValidatorByNumber(num int) (*validator.Validator, error) {
+func (s *store) ValidatorByNumber(num int32) (*validator.Validator, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.validatorStore.validatorByNumber(num)
 }
 
-func (s *store) TotalValidators() int {
+func (s *store) TotalValidators() int32 {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -321,7 +287,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) LastCertificate() (int, *block.Certificate) {
+func (s *store) LastCertificate() (int32, *block.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -330,13 +296,19 @@ func (s *store) LastCertificate() (int, *block.Certificate) {
 		// Genesis block
 		return 0, nil
 	}
-	lc := new(lastInfo)
-	err := cbor.Unmarshal(data, lc)
+	r := bytes.NewReader(data)
+	version := int32(0)
+	height := int32(0)
+	cert := new(block.Certificate)
+	err := encoding.ReadElements(r, &version, &height)
 	if err != nil {
-		// TODO: should panic here?
 		return -1, nil
 	}
-	return lc.Height, lc.Cert
+	err = cert.Decode(r)
+	if err != nil {
+		return -1, nil
+	}
+	return height, cert
 
 }
 

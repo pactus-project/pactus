@@ -31,8 +31,8 @@ func TestGetNetworkInfo(t *testing.T) {
 				pp := tMockSync.PeerSet.GetPeer(pid)
 				assert.Equal(t, p.Agent, pp.Agent)
 				assert.Equal(t, p.Moniker, pp.Moniker)
-				assert.Equal(t, p.Height, int32(pp.Height))
-				assert.Equal(t, p.PublicKey, pp.PublicKey.RawBytes())
+				assert.Equal(t, p.Height, pp.Height)
+				assert.Equal(t, p.PublicKey, pp.PublicKey.Bytes())
 				break
 			}
 		}
@@ -47,7 +47,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 	t.Run("Should return the last block height", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &zarb.BlockchainInfoRequest{})
 		assert.NoError(t, err)
-		assert.Equal(t, int64(tMockState.TestStore.LastCert.Height), res.LastBlockHeight)
+		assert.Equal(t, tMockState.TestStore.LastHeight, res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 	})
 

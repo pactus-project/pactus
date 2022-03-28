@@ -12,17 +12,17 @@ import (
 
 func (zs *zarbServer) GetBlockHash(ctx context.Context, request *zarb.BlockHashRequest) (*zarb.BlockHashResponse, error) {
 	height := request.GetHeight()
-	hash := zs.state.BlockHash(int(height))
+	hash := zs.state.BlockHash(height)
 	if hash.IsUndef() {
 		return nil, status.Errorf(codes.NotFound, "block hash not found with this height")
 	}
 	return &zarb.BlockHashResponse{
-		Hash: hash.RawBytes(),
+		Hash: hash.Bytes(),
 	}, nil
 }
 
 func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) (*zarb.BlockResponse, error) {
-	hash, err := hash.FromRawBytes(request.GetHash())
+	hash, err := hash.FromBytes(request.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "provided hash is not Valid")
 	}
@@ -54,19 +54,17 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 				absentees = append(absentees, int32(c))
 			}
 			prevCert = &zarb.CertificateInfo{
-				Round:      int64(block.PrevCertificate().Round()),
+				Round:      int32(block.PrevCertificate().Round()),
 				Committers: committers,
 				Absentees:  absentees,
-				Signature:  block.PrevCertificate().Signature().String(),
+				Signature:  block.PrevCertificate().Signature().Bytes(),
 			}
 
 		}
 		header = &zarb.BlockHeaderInfo{
 			Version:         int32(block.Header().Version()),
-			PrevBlockHash:   block.Header().PrevBlockHash().RawBytes(),
-			StateRoot:       block.Header().StateRoot().RawBytes(),
-			TxsRoot:         block.Header().TxsRoot().RawBytes(),
-			PrevCertHash:    block.Header().PrevCertificateHash().RawBytes(),
+			PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
+			StateRoot:       block.Header().StateRoot().Bytes(),
 			SortitionSeed:   sortitionSeed,
 			ProposerAddress: block.Header().ProposerAddress().String(),
 		}
@@ -83,7 +81,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 
 	res := &zarb.BlockResponse{
 		// Height: , // TODO: fix me
-		Hash:      hash.RawBytes(),
+		Hash:      hash.Bytes(),
 		BlockTime: timestamp,
 		Header:    header,
 		Txs:       tranactions,

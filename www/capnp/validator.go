@@ -17,7 +17,7 @@ func (zs *zarbServer) GetValidator(b ZarbServer_getValidator) error {
 		return fmt.Errorf("validator not found")
 	}
 
-	d, _ := val.Encode()
+	d, _ := val.Bytes()
 	res, _ := b.Results.NewResult()
 	return res.SetData(d)
 }

@@ -17,7 +17,7 @@ type MockConsensus struct {
 	Proposal  *proposal.Proposal
 	Scheduled bool
 	State     *state.MockState
-	Round     int
+	Round     int16
 }
 
 func MockingConsensus(state *state.MockState) *MockConsensus {
@@ -44,7 +44,7 @@ func (m *MockConsensus) AllVotes() []*vote.Vote {
 	defer m.Lock.RUnlock()
 	return m.Votes
 }
-func (m *MockConsensus) RoundVotes(round int) []*vote.Vote {
+func (m *MockConsensus) RoundVotes(round int16) []*vote.Vote {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 
@@ -62,7 +62,7 @@ func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 
 	m.Proposal = p
 }
-func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
+func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 
@@ -71,7 +71,7 @@ func (m *MockConsensus) RoundProposal(round int) *proposal.Proposal {
 	}
 	return m.Proposal
 }
-func (m *MockConsensus) HeightRound() (int, int) {
+func (m *MockConsensus) HeightRound() (int32, int16) {
 	m.Lock.RLock()
 	defer m.Lock.RUnlock()
 
@@ -87,6 +87,6 @@ func (m *MockConsensus) PickRandomVote() *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}
-	r := util.RandInt(len(m.Votes))
+	r := util.RandInt32(int32(len(m.Votes)))
 	return m.Votes[r]
 }

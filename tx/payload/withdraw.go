@@ -2,15 +2,17 @@ package payload
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/encoding"
 	"github.com/zarbchain/zarb-go/errors"
 )
 
 type WithdrawPayload struct {
-	From   crypto.Address `cbor:"1,keyasint"` // withdraw from validator address
-	To     crypto.Address `cbor:"2,keyasint"` // deposit to account address
-	Amount int64          `cbor:"3,keyasint"` // amount to deposit
+	From   crypto.Address // withdraw from validator address
+	To     crypto.Address // deposit to account address
+	Amount int64          // amount to deposit
 }
 
 func (p *WithdrawPayload) Type() Type {
@@ -26,13 +28,38 @@ func (p *WithdrawPayload) Value() int64 {
 }
 
 func (p *WithdrawPayload) SanityCheck() error {
-	if p.Amount < 0 {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid amount")
+	if err := p.From.SanityCheck(); err != nil {
+		return errors.Error(errors.ErrInvalidAddress)
 	}
 	if err := p.To.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid receiver address")
+		return errors.Error(errors.ErrInvalidAddress)
 	}
 
+	return nil
+}
+
+func (p *WithdrawPayload) SerializeSize() int {
+	return 42 + encoding.VarIntSerializeSize(uint64(p.Amount))
+}
+
+func (p *WithdrawPayload) Encode(w io.Writer) error {
+	err := encoding.WriteElements(w, &p.From, &p.To)
+	if err != nil {
+		return err
+	}
+	return encoding.WriteVarInt(w, uint64(p.Amount))
+}
+
+func (p *WithdrawPayload) Decode(r io.Reader) error {
+	err := encoding.ReadElements(r, &p.From, &p.To)
+	if err != nil {
+		return err
+	}
+	amount, err := encoding.ReadVarInt(r)
+	if err != nil {
+		return err
+	}
+	p.Amount = int64(amount)
 	return nil
 }
 
