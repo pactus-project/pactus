@@ -19,7 +19,7 @@ cd zarb-go
 make
 ```
 
-Run `zarb version` to make sure Zarb is properly compiled and installed in your machine.
+Run `zarbd version` to make sure Zarb is properly compiled and installed in your machine.
 
 ## Running Zarb
 
@@ -30,8 +30,8 @@ To join the TestNet, first you need to create a working directory
 and then start the node:
 
 ```bash
-zarb init  -w=<working_dir> --testnet
-zarb start -w=<working_dir>
+zarbd init  -w=<working_dir> --testnet
+zarbd start -w=<working_dir>
 ```
 
 ### Local net
@@ -39,8 +39,8 @@ zarb start -w=<working_dir>
 You can create a local node with one validator to test Zerb in your machine:
 
  ```bash
- zarb init -w=<working_dir>
- zarb start -w=<working_dir>
+ zarbd init -w=<working_dir>
+ zarbd start -w=<working_dir>
  ```
 
 ## Usage of Docker
@@ -54,16 +54,16 @@ Pull the docker from docker hub.
 docker pull zarb/zarb
 ```
 
-Let's create a worksapce at `~/zarb/testnet` for the testnet:
+Let's create a workspace at `~/zarb/testnet` for the testnet:
 
 ```bash
-docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb init -w /zarb --testnet
+docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarbd init -w /zarbd --testnet
 ```
 
 Now we can run the zarb and join the testnet:
 
 ```bash
-docker run -it -v ~/zarb/testnet:/zarb -p 8080:8080 --name zarb-testnet zarb/zarb start -w /zarb
+docker run -it -v ~/zarb/testnet:/zarb -p 8080:8080 --name zarb-testnet zarb/zarbd start -w /zarb
 ```
 
 check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
