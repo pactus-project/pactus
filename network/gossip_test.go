@@ -5,18 +5,16 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestPubSub(t *testing.T) {
-	size := 8
+	size := 6
 	nets := setup(t, size)
 	msg := []byte("test-general-topic")
 
 	require.NoError(t, nets[0].Broadcast(msg, TopicIDGeneral))
 
-	i := util.RandInt32(int32(size-1)) + 1
-	e := shouldReceiveEvent(t, nets[i]).(*GossipMessage)
+	e := shouldReceiveEvent(t, nets[1]).(*GossipMessage)
 	assert.Equal(t, e.Source, nets[0].SelfID())
 	assert.Equal(t, e.Data, msg)
 }
