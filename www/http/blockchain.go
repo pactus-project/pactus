@@ -23,8 +23,8 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	data, _ := st.LastBlockHash()
 	h, _ := hash.FromBytes(data)
 	out := new(BlockchainResult)
-	out.LastBlockHeight = int(st.LastBlockHeight())
-	out.LastBlockHash = h
+	out.LastBlockHeight = st.LastBlockHeight()
+	out.LastBlockHash = h.String()
 	s.writeJSON(w, out)
 }
 

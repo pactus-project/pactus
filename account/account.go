@@ -2,7 +2,6 @@ package account
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
@@ -91,10 +90,6 @@ func (acc *Account) Bytes() ([]byte, error) {
 	}
 
 	return w.Bytes(), nil
-}
-
-func (acc Account) MarshalJSON() ([]byte, error) {
-	return json.Marshal(acc.data)
 }
 
 func (acc Account) Fingerprint() string {

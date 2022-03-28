@@ -20,7 +20,17 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": b.Hash().String()})
-		tHTTPServer.GetBlockHandler(w, r)
+		tHTTPServer.GetBlockByHashHandler(w, r)
+
+		assert.Equal(t, w.Code, 200)
+		assert.Contains(t, w.Body.String(), b.Hash().String())
+	})
+
+	t.Run("Shall return a block", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"height": "100"})
+		tHTTPServer.GetBlockByHeightHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		//fmt.Println(w.Body)
@@ -30,7 +40,7 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": hash.GenerateTestHash().String()})
-		tHTTPServer.GetBlockHandler(w, r)
+		tHTTPServer.GetBlockByHashHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		//fmt.Println(w.Body)
@@ -40,7 +50,7 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": "abc"})
-		tHTTPServer.GetBlockHandler(w, r)
+		tHTTPServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
@@ -50,7 +60,7 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": ""})
-		tHTTPServer.GetBlockHandler(w, r)
+		tHTTPServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
@@ -59,7 +69,7 @@ func TestBlock(t *testing.T) {
 	t.Run("Shall return an error, no hash", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		tHTTPServer.GetBlockHandler(w, r)
+		tHTTPServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
@@ -75,7 +85,7 @@ func TestBlockHash(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"height": "100"})
-		tHTTPServer.GetBlockHeightHandler(w, r)
+		tHTTPServer.GetBlockHashHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		assert.Equal(t, w.Body.String(), b.Hash().String())

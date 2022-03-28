@@ -65,14 +65,6 @@ func TestCBORMarshaling(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestJSONMarshaling(t *testing.T) {
-	b1 := GenerateTestBlock(nil, nil)
-
-	bz, err := b1.MarshalJSON()
-	assert.NoError(t, err)
-	assert.NotNil(t, bz)
-}
-
 func TestEncodingBlock(t *testing.T) {
 	blk := GenerateTestBlock(nil, nil)
 	len := blk.SerializeSize()

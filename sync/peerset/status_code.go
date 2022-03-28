@@ -1,7 +1,5 @@
 package peerset
 
-import "encoding/json"
-
 type StatusCode int
 
 const (
@@ -23,8 +21,4 @@ func (code StatusCode) String() string {
 		return "trusty"
 	}
 	return "invalid"
-}
-
-func (code StatusCode) MarshalJSON() ([]byte, error) {
-	return json.Marshal(code.String())
 }

@@ -1,7 +1,6 @@
 package proposal
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
@@ -77,10 +76,6 @@ func (p *Proposal) MarshalCBOR() ([]byte, error) {
 
 func (p *Proposal) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &p.data)
-}
-
-func (p Proposal) MarshalJSON() ([]byte, error) {
-	return json.Marshal(p.data)
 }
 
 func (p *Proposal) Verify(pubKey crypto.PublicKey) error {

@@ -32,12 +32,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	out := new(TransactionResult)
-	out.ID = trx.ID()
-	out.Tx = *trx
-	out.Data = hex.EncodeToString(data)
-
-	s.writeJSON(w, out)
+	s.writeJSON(w, txToResult(trx))
 }
 
 func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Request) {

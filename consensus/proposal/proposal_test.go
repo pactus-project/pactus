@@ -17,9 +17,6 @@ func TestProposalMarshaling(t *testing.T) {
 	var p2 Proposal
 	err = p2.UnmarshalCBOR(bz1)
 	assert.NoError(t, err)
-	bz2, err := p2.MarshalJSON()
-	assert.NoError(t, err)
-	assert.NotNil(t, bz2)
 }
 
 func TestProposalSignBytes(t *testing.T) {

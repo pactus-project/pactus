@@ -3,7 +3,6 @@ package bls
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -90,10 +89,6 @@ func (prv PrivateKey) String() string {
 		return ""
 	}
 	return prv.secretKey.SerializeToHexStr()
-}
-
-func (prv *PrivateKey) MarshalJSON() ([]byte, error) {
-	return json.Marshal(prv.String())
 }
 
 func (prv *PrivateKey) MarshalCBOR() ([]byte, error) {

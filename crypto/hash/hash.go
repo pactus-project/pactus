@@ -2,7 +2,6 @@ package hash
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/util"
@@ -79,10 +78,6 @@ func (h Hash) Fingerprint() string {
 
 func (h Hash) IsUndef() bool {
 	return h.EqualsTo(UndefHash)
-}
-
-func (h *Hash) MarshalJSON() ([]byte, error) {
-	return json.Marshal(h.String())
 }
 
 func (h Hash) SanityCheck() error {

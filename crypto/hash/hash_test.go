@@ -8,18 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHashMarshaling(t *testing.T) {
-	hash1 := GenerateTestHash()
-
-	js, err := hash1.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Contains(t, string(js), hash1.String())
-	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.Fingerprint())
-}
-
 func TestHashFromString(t *testing.T) {
 	hash1 := GenerateTestHash()
 	hash2, err := FromString(hash1.String())
+	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.Fingerprint())
 	assert.NoError(t, err)
 	assert.True(t, hash1.EqualsTo(hash2))
 

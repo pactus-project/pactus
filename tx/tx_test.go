@@ -16,12 +16,6 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func TestJSONMarshaling(t *testing.T) {
-	tx, _ := GenerateTestSendTx()
-	_, err := tx.MarshalJSON()
-	require.NoError(t, err)
-}
-
 func TestCBORMarshaling(t *testing.T) {
 	tx1, _ := GenerateTestSendTx()
 	bz, err := cbor.Marshal(tx1)

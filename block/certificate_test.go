@@ -8,13 +8,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
-func TestCertificateJSONMarshaling(t *testing.T) {
-	c1 := GenerateTestCertificate(hash.UndefHash)
-	bz, err := c1.MarshalJSON()
-	assert.NoError(t, err)
-	assert.NotNil(t, bz)
-}
-
 func TestCertificateSignBytes(t *testing.T) {
 	h := hash.GenerateTestHash()
 	c1 := GenerateTestCertificate(h)

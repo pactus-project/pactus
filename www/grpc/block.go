@@ -39,10 +39,6 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	if request.Verbosity.Number() > 0 {
 		seed := block.Header().SortitionSeed()
 
-		sortitionSeed, err := seed.MarshalText()
-		if err != nil {
-			zs.logger.Error("couldn't marshal sortition seed: %v", err)
-		}
 		cert := block.PrevCertificate()
 		if cert != nil {
 			committers := make([]int32, len(block.PrevCertificate().Committers()))
@@ -65,7 +61,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 			Version:         int32(block.Header().Version()),
 			PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
 			StateRoot:       block.Header().StateRoot().Bytes(),
-			SortitionSeed:   sortitionSeed,
+			SortitionSeed:   seed[:],
 			ProposerAddress: block.Header().ProposerAddress().String(),
 		}
 

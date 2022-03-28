@@ -2,21 +2,11 @@ package crypto
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestAddressJSONMarshaling(t *testing.T) {
-	addr1 := GenerateTestAddress()
-
-	js, err := json.Marshal(addr1)
-	assert.NoError(t, err)
-	assert.Contains(t, string(js), addr1.String())
-	assert.Contains(t, addr1.String(), addr1.Fingerprint())
-}
 
 func TestAddressFromString(t *testing.T) {
 	addr1 := GenerateTestAddress()
@@ -29,6 +19,7 @@ func TestAddressFromString(t *testing.T) {
 
 	_, err = AddressFromString("inv")
 	assert.Error(t, err)
+	assert.Contains(t, addr1.String(), addr1.Fingerprint())
 }
 
 func TestAddressEmpty(t *testing.T) {

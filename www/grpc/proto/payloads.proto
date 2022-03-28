@@ -4,18 +4,18 @@ option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
 package payloads;
 
 message SEND_PAYLOAD {
-  string sender = 1;
-  string receiver = 2;
+  bytes sender = 1;
+  bytes receiver = 2;
   int64 amount = 3;
 }
 
 message BOND_PAYLOAD {
-  string sender = 1;
-  string validator = 2;
+  bytes sender = 1;
+  bytes validator = 2;
   int64 stake = 3;
 }
 
 message SORTITION_PAYLOAD {
-  string address = 1;
-  string proof = 2;
+  bytes address = 1;
+  bytes proof = 2;
 }

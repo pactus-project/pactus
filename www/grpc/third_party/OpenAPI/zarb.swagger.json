@@ -315,10 +315,12 @@
       "type": "object",
       "properties": {
         "sender": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "validator": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "stake": {
           "type": "string",
@@ -330,10 +332,12 @@
       "type": "object",
       "properties": {
         "sender": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "receiver": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "amount": {
           "type": "string",
@@ -345,10 +349,12 @@
       "type": "object",
       "properties": {
         "address": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         },
         "proof": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       }
     },

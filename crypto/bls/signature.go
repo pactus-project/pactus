@@ -3,7 +3,6 @@ package bls
 import (
 	"bytes"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"io"
 
@@ -56,10 +55,6 @@ func (sig Signature) String() string {
 		return ""
 	}
 	return sig.signature.SerializeToHexStr()
-}
-
-func (sig Signature) MarshalJSON() ([]byte, error) {
-	return json.Marshal(sig.String())
 }
 
 func (sig *Signature) MarshalCBOR() ([]byte, error) {
