@@ -8,5 +8,5 @@ todo
 .herumi
 dist/
 .releaser.yml
-./zarb*
-zarb
+zarbd
+zarbcli

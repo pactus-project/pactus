@@ -37,7 +37,8 @@ install:
 	go install $(BUILD_LDFLAGS) ./cmd/zarbcli
 
 release: herumi
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarb
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarbd
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarbcli
 
 ########################################
 ### Testing
