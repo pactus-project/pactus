@@ -1,14 +1,14 @@
 package wallet
 
 type vault struct {
-	Seed        seed          `json:"seed"`
-	Addresses   []address     `json:"addresses"`
-	ImportedKey []importedKey `json:"imported_keys"`
+	Addresses []address `json:"addresses"`
+	Seed      seed      `json:"seed"`
+	Keystore  keystore  `json:"keystore"`
 }
 
 type seed struct {
-	Function string `json:"function"`
-	Seed     string `json:"seed"`
+	Function string    `json:"function"`
+	Seed     encrypted `json:"seed"`
 }
 
 type address struct {
@@ -17,6 +17,6 @@ type address struct {
 	KeyInfo string `json:"key_info"`
 }
 
-type importedKey struct {
-	Prv string `json:"label"`
+type keystore struct {
+	Prv []string `json:"prv"`
 }

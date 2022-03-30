@@ -96,7 +96,7 @@ func TestPrivateKeyFromSeed(t *testing.T) {
 
 	for i, test := range tests {
 		ikm, _ := hex.DecodeString(test.ikm)
-		prv, err := PrivateKeyFromSeed(ikm)
+		prv, err := PrivateKeyFromSeed(ikm, nil)
 		if test.sk == "Err" {
 			assert.Error(t, err, "test #i failed", i)
 		} else {

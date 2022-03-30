@@ -3,15 +3,19 @@ package wallet
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"hash/crc32"
 	"io/ioutil"
 	"time"
+
+	"github.com/tyler-smith/go-bip39"
 )
 
 type Wallet interface {
 	SaveToFile(path string) error
-	
 }
+
+///"use_encryption": true,
 
 type wallet struct {
 	Version   uint32    `json:"version"`
@@ -22,20 +26,43 @@ type wallet struct {
 
 /// cipher text
 type encrypted struct {
-	Method  string `json:"method,omitempty"`
-	Params  params `json:"params,omitempty"`
-	Message string `json:"message"`
+	Method     string `json:"method,omitempty"`
+	Params     params `json:"params,omitempty"`
+	CipherText string `json:"ct"`
 }
 
 /// GenerateWallet generates an empty wallet and save the seed string
-func GenerateWallet(seed string, passphrase string) (Wallet, error) {
+func GenerateWallet(passphrase string) (Wallet, error) {
 	w := &wallet{
 		Version:   1,
 		CreatedAt: time.Now(),
 	}
 
 	e := w.encrypter(passphrase)
-	w.Vault = e.encrypt("test", passphrase)
+
+	entropy, err := bip39.NewEntropy(128)
+	exitOnErr(err)
+	mnemonic, err := bip39.NewMnemonic(entropy)
+	exitOnErr(err)
+
+	v := &vault{
+		Seed: seed{
+			Function: "BIP_39",
+			Seed:     e.encrypt(mnemonic, passphrase),
+		},
+	}
+
+	// v.Addresses = make
+	// ikm, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
+	// exitOnErr(err)
+	// for i := 0; i < 21; i++ {
+	// 	prv, err := bls.PrivateKeyFromSeed(ikm, util.Uint32ToSlice(uint32(i)))
+	// 	exitOnErr(err)
+	// }
+
+	//prv, err := bls.PrivateKeyFromSeed(seed, nil)
+
+	w.Vault = encryptInterface(e, v, passphrase)
 
 	return w, nil
 }
@@ -52,6 +79,8 @@ func (w *wallet) SaveToFile(path string) error {
 
 	bs, err := json.Marshal(w)
 	exitOnErr(err)
+
+	fmt.Printf("%s", bs)
 
 	return ioutil.WriteFile(path, bs, 0600)
 }

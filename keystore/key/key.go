@@ -16,7 +16,7 @@ type keyData struct {
 }
 
 func FromSeed(seed []byte) (*Key, error) {
-	prv, err := bls.PrivateKeyFromSeed(seed)
+	prv, err := bls.PrivateKeyFromSeed(seed, nil)
 	if err != nil {
 		return nil, err
 	}
