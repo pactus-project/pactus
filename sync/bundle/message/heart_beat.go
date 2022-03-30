@@ -23,10 +23,10 @@ func NewHeartBeatMessage(h int32, r int16, hash hash.Hash) *HeartBeatMessage {
 
 func (m *HeartBeatMessage) SanityCheck() error {
 	if m.Height <= 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if m.Round < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid round")
+		return errors.Error(errors.ErrInvalidRound)
 	}
 	return nil
 }

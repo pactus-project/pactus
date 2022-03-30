@@ -207,7 +207,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx, _ := GenerateTestSendTx()
 		trx.SetPublicKey(pbInv)
 		err := trx.SanityCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {

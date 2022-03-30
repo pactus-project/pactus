@@ -22,10 +22,10 @@ func NewBlocksRequestMessage(sid int, from, to int32) *BlocksRequestMessage {
 
 func (m *BlocksRequestMessage) SanityCheck() error {
 	if m.From < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if m.From > m.To {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid range")
+		return errors.Errorf(errors.ErrInvalidHeight, "invalid range")
 	}
 	return nil
 }

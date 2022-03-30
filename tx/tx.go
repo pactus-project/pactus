@@ -153,11 +153,11 @@ func (tx *Tx) checkSignature() error {
 		if err := tx.Signature().SanityCheck(); err != nil {
 			return errors.Error(errors.ErrInvalidSignature)
 		}
-		if !tx.PublicKey().VerifyAddress(tx.Payload().Signer()) {
-			return errors.Error(errors.ErrInvalidPublicKey)
+		if err := tx.PublicKey().VerifyAddress(tx.Payload().Signer()); err != nil {
+			return err
 		}
 		bs := tx.SignBytes()
-		if !tx.PublicKey().Verify(bs, tx.Signature()) {
+		if err := tx.PublicKey().Verify(bs, tx.Signature()); err != nil {
 			return errors.Error(errors.ErrInvalidSignature)
 		}
 	}

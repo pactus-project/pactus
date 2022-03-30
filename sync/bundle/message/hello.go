@@ -41,10 +41,10 @@ func NewHelloMessage(pid peer.ID, moniker string,
 
 func (m *HelloMessage) SanityCheck() error {
 	if m.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
-	if !m.PublicKey.Verify(m.SignBytes(), m.Signature) {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid signature")
+	if err := m.PublicKey.Verify(m.SignBytes(), m.Signature); err != nil {
+		return err
 	}
 	return nil
 }

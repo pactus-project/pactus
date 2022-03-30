@@ -2,7 +2,6 @@ package message
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/errors"
 )
 
 type VoteMessage struct {
@@ -17,7 +16,7 @@ func NewVoteMessage(v *vote.Vote) *VoteMessage {
 
 func (m *VoteMessage) SanityCheck() error {
 	if err := m.Vote.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+		return err
 	}
 	return nil
 }
