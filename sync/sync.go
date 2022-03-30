@@ -212,6 +212,9 @@ func (sync *synchronizer) receiveLoop() {
 			case network.EventTypeStream:
 				se := e.(*network.StreamMessage)
 				bdl = sync.firewall.OpenStreamBundle(se.Reader, se.Source)
+				if err := se.Reader.Close(); err != nil {
+					sync.logger.Warn("error on closign stream", "err", err)
+				}
 			}
 
 			err := sync.processIncomingBundle(bdl)

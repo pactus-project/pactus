@@ -55,23 +55,23 @@ func (zs *zarbServer) SendRawTransaction(ctx context.Context, request *zarb.Send
 
 func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	transaction := &zarb.TransactionInfo{
-		Id:        trx.ID().Bytes(),
-		Version:   int32(trx.Version()),
-		Stamp:     trx.Stamp().Bytes(),
-		Sequence:  trx.Sequence(),
-		Fee:       trx.Fee(),
-		Type:      zarb.PayloadType(trx.Payload().Type()),
-		Memo:      trx.Memo(),
+		Id:       trx.ID().Bytes(),
+		Version:  int32(trx.Version()),
+		Stamp:    trx.Stamp().Bytes(),
+		Sequence: trx.Sequence(),
+		Fee:      trx.Fee(),
+		Type:     zarb.PayloadType(trx.Payload().Type()),
+		Memo:     trx.Memo(),
 	}
 
-	if trx.PublicKey() !=nil{
+	if trx.PublicKey() != nil {
 		transaction.PublicKey = trx.PublicKey().Bytes()
 	}
 
-	if trx.Signature() !=nil{
+	if trx.Signature() != nil {
 		transaction.Signature = trx.Signature().Bytes()
 	}
-	
+
 	switch trx.Payload().Type() {
 	case payload.PayloadTypeSend:
 		pld := trx.Payload().(*payload.SendPayload)

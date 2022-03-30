@@ -61,7 +61,7 @@ func (*GossipMessage) Type() EventType {
 /// `GossipMessage` represents message from stream module.
 type StreamMessage struct {
 	Source lp2pcore.PeerID
-	Reader io.Reader
+	Reader io.ReadCloser
 }
 
 func (*StreamMessage) Type() EventType {
