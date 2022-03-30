@@ -28,13 +28,15 @@ func TestGetBlock(t *testing.T) {
 		assert.Empty(t, res.Txs)
 	})
 
-	t.Run("Should return json object with verbosity 1 ", func(t *testing.T) {
+	t.Run("Should return object with verbosity 1 ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &zarb.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: zarb.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		//assert.Equal(t, res.Height, 100)
 		assert.NotEmpty(t, res.Header)
 		assert.Empty(t, res.Txs)
+		assert.Equal(t, res.PrevCert.Committers, b.PrevCertificate().Committers())
+		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
 	})
 
 	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {

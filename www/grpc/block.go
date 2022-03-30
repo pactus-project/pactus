@@ -32,7 +32,6 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 	}
 	timestamp := timestamppb.New(block.Header().Time())
 	header := &zarb.BlockHeaderInfo{}
-	tranactions := make([]*zarb.TransactionInfo, 0)
 	var prevCert *zarb.CertificateInfo
 
 	//populate BLOCK_DATA
@@ -46,12 +45,12 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 		cert := block.PrevCertificate()
 		if cert != nil {
 			committers := make([]int32, len(block.PrevCertificate().Committers()))
-			for c := range block.PrevCertificate().Committers() {
-				committers = append(committers, int32(c))
+			for i, n := range block.PrevCertificate().Committers() {
+				committers[i] = n
 			}
 			absentees := make([]int32, len(block.PrevCertificate().Absentees()))
-			for c := range block.PrevCertificate().Absentees() {
-				absentees = append(absentees, int32(c))
+			for i, n := range block.PrevCertificate().Absentees() {
+				absentees[i] = n
 			}
 			prevCert = &zarb.CertificateInfo{
 				Round:      int32(block.PrevCertificate().Round()),
@@ -73,6 +72,7 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 
 	//TODO: Cache for better performance
 	//populate BLOCK_TRANSACTIONS
+	tranactions := make([]*zarb.TransactionInfo, 0, block.Transactions().Len())
 	if request.Verbosity.Number() > 1 {
 		for _, trx := range block.Transactions() {
 			tranactions = append(tranactions, transactionToProto(trx))
