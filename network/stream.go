@@ -1,7 +1,6 @@
 package network
 
 import (
-	"bufio"
 	"context"
 
 	lp2pcore "github.com/libp2p/go-libp2p-core"
@@ -42,12 +41,11 @@ func (s *streamService) Stop() {
 
 func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	from := stream.Conn().RemotePeer()
-	reader := bufio.NewReader(stream)
 
 	s.logger.Debug("receiving stream", "from", util.FingerprintPeerID(from))
 	event := &StreamMessage{
 		Source: from,
-		Reader: reader,
+		Reader: stream,
 	}
 
 	s.eventCh <- event
@@ -68,6 +66,10 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	}
 
 	_, err = stream.Write(msg)
+	if err != nil {
+		return errors.Errorf(errors.ErrNetwork, err.Error())
+	}
+	err = stream.CloseWrite()
 	if err != nil {
 		return errors.Errorf(errors.ErrNetwork, err.Error())
 	}
