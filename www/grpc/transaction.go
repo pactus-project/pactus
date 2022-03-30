@@ -62,10 +62,16 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 		Fee:       trx.Fee(),
 		Type:      zarb.PayloadType(trx.Payload().Type()),
 		Memo:      trx.Memo(),
-		PublicKey: trx.PublicKey().Bytes(),
-		Signature: trx.Signature().Bytes(),
 	}
 
+	if trx.PublicKey() !=nil{
+		transaction.PublicKey = trx.PublicKey().Bytes()
+	}
+
+	if trx.Signature() !=nil{
+		transaction.Signature = trx.Signature().Bytes()
+	}
+	
 	switch trx.Payload().Type() {
 	case payload.PayloadTypeSend:
 		pld := trx.Payload().(*payload.SendPayload)
