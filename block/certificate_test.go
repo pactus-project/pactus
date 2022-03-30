@@ -3,6 +3,7 @@ package block
 import (
 	"testing"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -13,6 +14,23 @@ func TestCertificateJSONMarshaling(t *testing.T) {
 	bz, err := c1.MarshalJSON()
 	assert.NoError(t, err)
 	assert.NotNil(t, bz)
+}
+
+func TestCertificateCBORMarshaling(t *testing.T) {
+	c1 := GenerateTestCertificate(hash.GenerateTestHash())
+
+	bz1, err := cbor.Marshal(c1)
+	assert.NoError(t, err)
+	var c2 Certificate
+	err = cbor.Unmarshal(bz1, &c2)
+	assert.NoError(t, err)
+	assert.NoError(t, c2.SanityCheck())
+	assert.Equal(t, c1.Hash(), c1.Hash())
+
+	assert.Equal(t, c1.Hash(), c2.Hash())
+
+	err = cbor.Unmarshal([]byte{1}, &c2)
+	assert.Error(t, err)
 }
 
 func TestCertificateSignBytes(t *testing.T) {

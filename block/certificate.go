@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/encoding"
@@ -87,6 +88,24 @@ func (cert *Certificate) SerializeSize() int {
 		sz += encoding.VarIntSerializeSize(uint64(n))
 	}
 	return sz
+}
+
+func (cert *Certificate) MarshalCBOR() ([]byte, error) {
+	buf := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
+	if err := cert.Encode(buf); err != nil {
+		return nil, err
+	}
+	return cbor.Marshal(buf.Bytes())
+}
+
+func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
+	data := make([]byte, 0, cert.SerializeSize())
+	err := cbor.Unmarshal(bs, &data)
+	if err != nil {
+		return err
+	}
+	buf := bytes.NewBuffer(data)
+	return cert.Decode(buf)
 }
 
 // Encode encodes the receiver to w.
