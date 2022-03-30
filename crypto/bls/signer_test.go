@@ -29,7 +29,7 @@ func TestSignable(t *testing.T) {
 
 	assert.True(t, s.Address().EqualsTo(s.PublicKey().Address()))
 	assert.True(t, signable.pub.EqualsTo(s.PublicKey()))
-	assert.True(t, signable.pub.Verify(signable.SignBytes(), signable.sig))
+	assert.NoError(t, signable.pub.Verify(signable.SignBytes(), signable.sig))
 
 	assert.True(t, s.SignData([]byte("zarb")).EqualsTo(signable.sig))
 
