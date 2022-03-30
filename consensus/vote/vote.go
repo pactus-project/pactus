@@ -82,13 +82,10 @@ func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
 	}
-	if !pubKey.Address().EqualsTo(v.Signer()) {
-		return errors.Errorf(errors.ErrInvalidVote, "invalid signer")
+	if err := pubKey.VerifyAddress(v.Signer()); err != nil {
+		return err
 	}
-	if !pubKey.Verify(v.SignBytes(), v.Signature()) {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid signature")
-	}
-	return nil
+	return pubKey.Verify(v.SignBytes(), v.Signature())
 }
 
 func (v *Vote) SanityCheck() error {
@@ -96,19 +93,19 @@ func (v *Vote) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidVote, "invalid vote type")
 	}
 	if v.data.Height <= 0 {
-		return errors.Errorf(errors.ErrInvalidVote, "invalid height")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if v.data.Round < 0 {
-		return errors.Errorf(errors.ErrInvalidVote, "invalid round")
+		return errors.Error(errors.ErrInvalidRound)
 	}
-	if v.data.Signer.SanityCheck() != nil {
-		return errors.Errorf(errors.ErrInvalidVote, "invalid signer")
+	if err := v.data.Signer.SanityCheck(); err != nil {
+		return err
 	}
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
 	}
-	if v.Signature().SanityCheck() != nil {
-		return errors.Errorf(errors.ErrInvalidVote, "invalid signature")
+	if err := v.Signature().SanityCheck(); err != nil {
+		return err
 	}
 	return nil
 }

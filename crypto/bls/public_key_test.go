@@ -7,6 +7,7 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -86,6 +87,6 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 	pub1, _ := GenerateTestKeyPair()
 	pub2, _ := GenerateTestKeyPair()
 
-	assert.True(t, pub1.VerifyAddress(pub1.Address()))
-	assert.False(t, pub1.VerifyAddress(pub2.Address()))
+	assert.NoError(t, pub1.VerifyAddress(pub1.Address()))
+	assert.Equal(t, errors.Code(pub1.VerifyAddress(pub2.Address())), errors.ErrInvalidAddress)
 }

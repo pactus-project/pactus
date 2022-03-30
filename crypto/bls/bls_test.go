@@ -41,14 +41,14 @@ func TestAggregationFailed(t *testing.T) {
 	pubs3 := []*PublicKey{pub1, pub2}
 	pubs4 := []*PublicKey{pub3, pub2, pub1}
 
-	assert.True(t, pub1.Verify(msg1, sig1))
-	assert.True(t, pub2.Verify(msg1, sig2))
-	assert.True(t, pub3.Verify(msg1, sig3))
-	assert.False(t, pub2.Verify(msg1, sig1))
-	assert.False(t, pub3.Verify(msg1, sig1))
-	assert.False(t, pub1.Verify(msg1, agg1))
-	assert.False(t, pub2.Verify(msg1, agg1))
-	assert.False(t, pub3.Verify(msg1, agg1))
+	assert.NoError(t, pub1.Verify(msg1, sig1))
+	assert.NoError(t, pub2.Verify(msg1, sig2))
+	assert.NoError(t, pub3.Verify(msg1, sig3))
+	assert.Error(t, pub2.Verify(msg1, sig1))
+	assert.Error(t, pub3.Verify(msg1, sig1))
+	assert.Error(t, pub1.Verify(msg1, agg1))
+	assert.Error(t, pub2.Verify(msg1, agg1))
+	assert.Error(t, pub3.Verify(msg1, agg1))
 
 	assert.True(t, VerifyAggregated(agg1, pubs1, msg1))
 	assert.False(t, VerifyAggregated(agg1, pubs1, msg2))

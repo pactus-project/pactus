@@ -20,10 +20,10 @@ func NewQueryVotesMessage(h int32, r int16) *QueryVotesMessage {
 
 func (m *QueryVotesMessage) SanityCheck() error {
 	if m.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if m.Round < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Round")
+		return errors.Error(errors.ErrInvalidRound)
 	}
 	return nil
 }

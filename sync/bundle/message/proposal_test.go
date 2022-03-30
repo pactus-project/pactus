@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 func TestProposalType(t *testing.T) {
@@ -17,7 +18,7 @@ func TestProposalMessage(t *testing.T) {
 		proposal, _ := proposal.GenerateTestProposal(100, -1)
 		m := NewProposalMessage(proposal)
 
-		assert.Error(t, m.SanityCheck())
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
 	})
 
 	t.Run("OK", func(t *testing.T) {

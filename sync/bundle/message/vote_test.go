@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 func TestVoteType(t *testing.T) {
@@ -17,7 +18,7 @@ func TestVoteMessage(t *testing.T) {
 		v, _ := vote.GenerateTestPrepareVote(100, -1)
 		m := NewVoteMessage(v)
 
-		assert.Error(t, m.SanityCheck())
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
 	})
 
 	t.Run("OK", func(t *testing.T) {

@@ -12,6 +12,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/encoding"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 const PublicKeySize = 96
@@ -105,8 +106,11 @@ func (pub *PublicKey) SanityCheck() error {
 	return nil
 }
 
-func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) bool {
-	return sig.(*Signature).signature.VerifyByte(pub.publicKey, msg)
+func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
+	if !sig.(*Signature).signature.VerifyByte(pub.publicKey, msg) {
+		return errors.Error(errors.ErrInvalidSignature)
+	}
+	return nil
 }
 
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
@@ -120,6 +124,9 @@ func (pub *PublicKey) Address() crypto.Address {
 	return addr
 }
 
-func (pub *PublicKey) VerifyAddress(addr crypto.Address) bool {
-	return addr.EqualsTo(pub.Address())
+func (pub *PublicKey) VerifyAddress(addr crypto.Address) error {
+	if !addr.EqualsTo(pub.Address()) {
+		return errors.Error(errors.ErrInvalidAddress)
+	}
+	return nil
 }

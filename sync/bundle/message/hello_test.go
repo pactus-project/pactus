@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -20,7 +21,7 @@ func TestHelloMessage(t *testing.T) {
 		m := NewHelloMessage(util.RandomPeerID(), "Oscar", -1, 0, hash.GenerateTestHash())
 		signer.SignMsg(m)
 
-		assert.Error(t, m.SanityCheck())
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Invalid signature", func(t *testing.T) {
@@ -29,7 +30,7 @@ func TestHelloMessage(t *testing.T) {
 		signer.SignMsg(m)
 
 		m.PeerID = util.RandomPeerID()
-		assert.Error(t, m.SanityCheck())
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Ok", func(t *testing.T) {

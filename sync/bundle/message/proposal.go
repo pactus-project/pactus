@@ -2,7 +2,6 @@ package message
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/errors"
 )
 
 type ProposalMessage struct {
@@ -17,7 +16,7 @@ func NewProposalMessage(p *proposal.Proposal) *ProposalMessage {
 
 func (m *ProposalMessage) SanityCheck() error {
 	if err := m.Proposal.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+		return err
 	}
 
 	return nil
