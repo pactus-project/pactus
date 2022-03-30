@@ -30,16 +30,16 @@ func NewBlocksResponseMessage(code ResponseCode, sid int, from int32,
 }
 func (m *BlocksResponseMessage) SanityCheck() error {
 	if m.From < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid Height")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	for _, b := range m.Blocks {
 		if err := b.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+			return err
 		}
 	}
 	if m.LastCertificate != nil {
 		if err := m.LastCertificate.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+			return err
 		}
 	}
 

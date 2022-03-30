@@ -11,8 +11,8 @@ type PublicKey interface {
 	Encode(io.Writer) error
 	Decode(io.Reader) error
 	SanityCheck() error
-	Verify(msg []byte, sig Signature) bool
 	Address() Address
-	VerifyAddress(addr Address) bool
+	Verify(msg []byte, sig Signature) error
+	VerifyAddress(addr Address) error
 	EqualsTo(right PublicKey) bool
 }

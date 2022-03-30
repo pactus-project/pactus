@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
@@ -16,7 +17,7 @@ func TestTransactionsMessage(t *testing.T) {
 	t.Run("No transactions", func(t *testing.T) {
 		m := NewTransactionsMessage(nil)
 
-		assert.Error(t, m.SanityCheck())
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidMessage)
 	})
 
 	t.Run("OK", func(t *testing.T) {

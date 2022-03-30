@@ -42,7 +42,7 @@ func TestProposalSignature(t *testing.T) {
 	assert.True(t, p.IsForBlock(p.Block().Hash()))
 
 	err := p.Verify(signer.PublicKey())
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+	assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 
 	signer.SignMsg(p)
 	err = p.Verify(pub)

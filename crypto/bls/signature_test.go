@@ -8,6 +8,7 @@ import (
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
 
@@ -90,11 +91,11 @@ func TestVerifyingSignature(t *testing.T) {
 	sig2 := pv2.Sign(msg)
 
 	assert.NotEqual(t, sig1, sig2)
-	assert.True(t, pb1.Verify(msg, sig1))
-	assert.True(t, pb2.Verify(msg, sig2))
-	assert.False(t, pb1.Verify(msg, sig2))
-	assert.False(t, pb2.Verify(msg, sig1))
-	assert.False(t, pb1.Verify(msg[1:], sig1))
+	assert.NoError(t, pb1.Verify(msg, sig1))
+	assert.NoError(t, pb2.Verify(msg, sig2))
+	assert.Equal(t, errors.Code(pb1.Verify(msg, sig2)), errors.ErrInvalidSignature)
+	assert.Equal(t, errors.Code(pb2.Verify(msg, sig1)), errors.ErrInvalidSignature)
+	assert.Equal(t, errors.Code(pb1.Verify(msg[1:], sig1)), errors.ErrInvalidSignature)
 }
 
 func TestSigning(t *testing.T) {
@@ -106,7 +107,7 @@ func TestSigning(t *testing.T) {
 
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig1.Bytes(), sig.Bytes())
-	assert.True(t, pub.Verify(msg, sig))
+	assert.NoError(t, pub.Verify(msg, sig))
 	assert.Equal(t, pub.Address(), addr)
 }
 

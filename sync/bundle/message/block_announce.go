@@ -23,13 +23,13 @@ func NewBlockAnnounceMessage(h int32, b *block.Block, c *block.Certificate) *Blo
 
 func (m *BlockAnnounceMessage) SanityCheck() error {
 	if m.Height < 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid height")
+		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if err := m.Block.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+		return err
 	}
 	if err := m.Certificate.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
+		return err
 	}
 
 	return nil

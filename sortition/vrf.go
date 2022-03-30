@@ -29,7 +29,7 @@ func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max ui
 
 	// Verify signature (proof)
 	signData := append(seed[:], publicKey.Bytes()...)
-	if !publicKey.Verify(signData, proofSig) {
+	if err := publicKey.Verify(signData, proofSig); err != nil {
 		return 0, false
 	}
 

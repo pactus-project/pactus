@@ -49,7 +49,7 @@ func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed
 		return false
 	}
 	hash := hash.CalcHash(prevSeed[:])
-	return public.Verify(hash.Bytes(), sig)
+	return public.Verify(hash.Bytes(), sig) == nil
 }
 
 func (s VerifiableSeed) MarshalText() ([]byte, error) {

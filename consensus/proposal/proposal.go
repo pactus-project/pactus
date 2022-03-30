@@ -45,7 +45,7 @@ func (p *Proposal) SanityCheck() error {
 		return errors.Error(errors.ErrInvalidHeight)
 	}
 	if p.data.Round < 0 {
-		return errors.Errorf(errors.ErrInvalidProposal, "invalid round")
+		return errors.Error(errors.ErrInvalidRound)
 	}
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
@@ -87,13 +87,10 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
 	}
-	if !pubKey.Address().EqualsTo(p.data.Block.Header().ProposerAddress()) {
-		return errors.Errorf(errors.ErrInvalidPublicKey, "invalid proposer")
+	if err := pubKey.VerifyAddress(p.data.Block.Header().ProposerAddress()); err != nil {
+		return err
 	}
-	if !pubKey.Verify(p.SignBytes(), p.data.Signature) {
-		return errors.Errorf(errors.ErrInvalidSignature, "invalid signature")
-	}
-	return nil
+	return pubKey.Verify(p.SignBytes(), p.data.Signature)
 }
 func (p *Proposal) Hash() hash.Hash {
 	return hash.CalcHash(p.SignBytes())

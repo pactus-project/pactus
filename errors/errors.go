@@ -20,6 +20,7 @@ const (
 	ErrInvalidMemo
 	ErrInvalidProof
 	ErrInvalidHeight
+	ErrInvalidRound
 	ErrInvalidProposal
 	ErrInvalidVote
 	ErrInvalidMessage
@@ -46,6 +47,7 @@ var messages = map[int]string{
 	ErrInvalidMemo:       "invalid memo",
 	ErrInvalidProof:      "invalid proof",
 	ErrInvalidHeight:     "invalid height",
+	ErrInvalidRound:      "invalid round",
 	ErrInvalidProposal:   "invalid proposal",
 	ErrInvalidVote:       "invalid vote",
 	ErrInvalidMessage:    "invalid message",
