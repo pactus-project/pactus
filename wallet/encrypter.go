@@ -2,9 +2,16 @@ package wallet
 
 import "encoding/json"
 
+/// cipher text
+type encrypted struct {
+	Method     string `json:"method,omitempty"`
+	Params     params `json:"params,omitempty"`
+	CipherText string `json:"ct"`
+}
+
 type encrypter interface {
-	encrypt(message, passphrase string) encrypted
-	decrypt(ct encrypted, passphrase string) (string, error)
+	encrypt(message string) encrypted
+	decrypt(ct encrypted) (string, error)
 }
 
 type nopeEncrypter struct{}
@@ -13,27 +20,34 @@ func newNopeEncrypter() encrypter {
 	return &nopeEncrypter{}
 }
 
-func (e *nopeEncrypter) encrypt(message, passphrase string) encrypted {
+func (e *nopeEncrypter) encrypt(message string) encrypted {
 	return encrypted{
 		CipherText: message,
 	}
 }
 
-func (e *nopeEncrypter) decrypt(ct encrypted, passphrase string) (string, error) {
+func (e *nopeEncrypter) decrypt(ct encrypted) (string, error) {
 	return ct.CipherText, nil
 }
 
-func encryptInterface(e encrypter, i interface{}, passphrase string) encrypted {
+func encryptInterface(e encrypter, i interface{}) encrypted {
 	d, err := json.Marshal(i)
 	exitOnErr(err)
-	return e.encrypt(string(d), passphrase)
+	return e.encrypt(string(d))
 }
-func decryptInterface(e encrypter, ct encrypted, passphrase string, i interface{}) error {
-	s, err := e.decrypt(ct, passphrase)
+func decryptInterface(e encrypter, ct encrypted, i interface{}) error {
+	s, err := e.decrypt(ct)
 	if err != nil {
 		return err
 	}
 	err = json.Unmarshal([]byte(s), i)
 	exitOnErr(err)
 	return nil
+}
+
+func newEncrypter(passphrase string) encrypter {
+	if len(passphrase) == 0 {
+		return newNopeEncrypter()
+	}
+	return newArgon2Encrypter(passphrase)
 }

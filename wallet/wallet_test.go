@@ -8,7 +8,7 @@ import (
 )
 
 func TestSaveToFile(t *testing.T) {
-	w, err := GenerateWallet("pass")
+	w, err := NewWallet(util.TempFilePath(), "1")
 	assert.NoError(t, err)
-	assert.NoError(t, w.SaveToFile(util.TempFilePath()))
+	assert.NoError(t, w.SaveToFile())
 }

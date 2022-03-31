@@ -25,7 +25,6 @@ func aesCrypt(message []byte, iv, cipherKey []byte) []byte {
 
 /// sha256Checksum calculates the checksum of the given slices base on SHA-256
 func sha256Checksum(data ...[]byte) []byte {
-	// Generate the checksum
 	h := sha256.New()
 	for _, d := range data {
 		_, err := h.Write(d)

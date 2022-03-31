@@ -7,6 +7,9 @@ import (
 
 type params map[string]string
 
+func newParams() params {
+	return make(map[string]string)
+}
 func (p params) setUint8(key string, val uint8) {
 	p.setUint32(key, uint32(val))
 }
@@ -17,6 +20,10 @@ func (p params) setUint32(key string, val uint32) {
 
 func (p params) setBytes(key string, val []byte) {
 	p[key] = base64.StdEncoding.EncodeToString([]byte(val))
+}
+
+func (p params) setString(key string, val string) {
+	p[key] = val
 }
 
 func (p params) getUint8(key string) uint8 {
@@ -32,4 +39,8 @@ func (p params) getBytes(key string) []byte {
 	val, err := base64.StdEncoding.DecodeString(p[key])
 	exitOnErr(err)
 	return val
+}
+
+func (p params) getString(key string) string {
+	return p[key]
 }

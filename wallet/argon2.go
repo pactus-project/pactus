@@ -8,12 +8,17 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
-type argon2Encrypter struct{}
-
-func newArgon2Encrypter() encrypter {
-	return &argon2Encrypter{}
+type argon2Encrypter struct {
+	// TODO: memory safety
+	passphrase string
 }
-func (e *argon2Encrypter) encrypt(message, passphrase string) encrypted {
+
+func newArgon2Encrypter(passphrase string) encrypter {
+	return &argon2Encrypter{
+		passphrase: passphrase,
+	}
+}
+func (e *argon2Encrypter) encrypt(message string) encrypted {
 	// Random salt
 	salt := make([]byte, 16)
 	_, err := rand.Read(salt)
@@ -25,7 +30,7 @@ func (e *argon2Encrypter) encrypt(message, passphrase string) encrypted {
 	memory := uint32(2 ^ 21)
 	parallelism := uint8(4)
 
-	cipherKey := e.cipherKey(passphrase, salt, iterations, memory, parallelism)
+	cipherKey := e.cipherKey(e.passphrase, salt, iterations, memory, parallelism)
 
 	// Using salt for Initialization Vector (IV)
 	iv := salt
@@ -34,7 +39,8 @@ func (e *argon2Encrypter) encrypt(message, passphrase string) encrypted {
 	// Generate the checksum
 	checksum := sha256Checksum(cipherKey[16:32], d)
 
-	params := params{}
+	params := newParams()
+	params.setUint32("iterations", iterations)
 	params.setUint32("iterations", iterations)
 	params.setUint32("memory", memory)
 	params.setUint8("parallelism", parallelism)
@@ -50,14 +56,14 @@ func (e *argon2Encrypter) encrypt(message, passphrase string) encrypted {
 	}
 }
 
-func (e *argon2Encrypter) decrypt(ct encrypted, passphrase string) (string, error) {
+func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
 	salt := ct.Params.getBytes("salt")
 	checksum := ct.Params.getBytes("checksum")
 	iterations := ct.Params.getUint32("iterations")
 	memory := ct.Params.getUint32("memory")
 	parallelism := ct.Params.getUint8("parallelism")
 
-	cipherKey := e.cipherKey(passphrase, salt, iterations, memory, parallelism)
+	cipherKey := e.cipherKey(e.passphrase, salt, iterations, memory, parallelism)
 	d, err := base64.StdEncoding.DecodeString(ct.CipherText)
 	exitOnErr(err)
 
