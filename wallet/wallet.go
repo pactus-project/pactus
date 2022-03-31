@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
 type Wallet struct {
@@ -41,6 +44,14 @@ func (w *Wallet) SaveToFile() error {
 	fmt.Printf("%s", bs)
 
 	return ioutil.WriteFile(w.path, bs, 0600)
+}
+
+func (w *Wallet) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
+	return w.store.PrivateKey(passphrase, addr)
+}
+
+func (w *Wallet) Addresses(passphrase string) []crypto.Address {
+	return w.store.Addresses(passphrase)
 }
 
 func (w *Wallet) ReadFromFile(path string) error {

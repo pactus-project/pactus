@@ -3,7 +3,9 @@ package wallet
 import (
 	"crypto/hmac"
 	"crypto/sha512"
+	"errors"
 
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
@@ -38,31 +40,20 @@ func newVault(passphrase string) *vault {
 }
 func (v *vault) deriveNewKey(passphrase string) address {
 	deriveSeed := []byte{}
-	var prv *bls.PrivateKey
 	for {
-		prv, deriveSeed = v.deriveKey(passphrase, deriveSeed)
+		prv, nextDeriveSeed := v.deriveKey(passphrase, deriveSeed)
 
-		// Make sure it is a new address
-		exists := false
-		for _, addr := range v.Addresses {
-
-			if addr.Address != prv.PublicKey().Address().String() {
-				exists = true
-			}
+		if !v.Contains(prv.PublicKey().Address()) {
+			a := address{}
+			a.Address = prv.PublicKey().Address().String()
+			a.Params = newParams()
+			a.Params.setBytes("seed", deriveSeed)
+			a.Method = "BLS_HMAC_HKDF_SEED"
+			v.Addresses = append(v.Addresses, a)
+			return a
 		}
-
-		if !exists {
-			break
-		}
+		deriveSeed = nextDeriveSeed
 	}
-
-	a := address{}
-	a.Address = prv.PublicKey().Address().String()
-	a.Params = newParams()
-	a.Params.setBytes("seed", deriveSeed)
-	a.Method = "BLS_HMAC_HKDF_SEED"
-	v.Addresses = append(v.Addresses, a)
-	return a
 }
 
 /// Notes:
@@ -97,4 +88,29 @@ func (v *vault) deriveKey(passphrase string, deriveSeed []byte) (*bls.PrivateKey
 	exitOnErr(err)
 
 	return prv, nextDeriveSeed
+}
+
+func (v *vault) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
+	for _, a := range v.Addresses {
+		if a.Address == addr {
+			seed := a.Params.getBytes("seed")
+			prv, _ := v.deriveKey(passphrase, seed)
+			return prv, nil
+		}
+	}
+
+	return nil, errors.New("address not found")
+}
+
+func (v *vault) Contains(addr crypto.Address) bool {
+	return v.GetAddressInfo(addr) != nil
+}
+
+func (v *vault) GetAddressInfo(addr crypto.Address) *address {
+	for _, a := range v.Addresses {
+		if a.Address == addr.String() {
+			return &a
+		}
+	}
+	return nil
 }

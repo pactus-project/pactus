@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"hash/crc32"
 	"time"
-)
 
-///"use_encryption": true,
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+)
 
 type store struct {
 	Version   int       `json:"version"`
@@ -37,4 +38,35 @@ func (s *store) calcVaultCRC() uint32 {
 	d, err := json.Marshal(s.Vault)
 	exitOnErr(err)
 	return crc32.ChecksumIEEE(d)
+}
+
+func (s *store) Addresses(passphrase string) []crypto.Address {
+	e := newEncrypter(passphrase)
+	js, err := e.decrypt(s.Vault)
+	exitOnErr(err)
+	v := new(vault)
+
+	err = json.Unmarshal([]byte(js), v)
+	exitOnErr(err)
+
+	addrs := make([]crypto.Address, len(v.Addresses))
+	for i, a := range v.Addresses {
+		addr, err := crypto.AddressFromString(a.Address)
+		exitOnErr(err)
+		addrs[i] = addr
+	}
+
+	return addrs
+}
+
+func (s *store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
+	e := newEncrypter(passphrase)
+	js, err := e.decrypt(s.Vault)
+	exitOnErr(err)
+	v := new(vault)
+
+	err = json.Unmarshal([]byte(js), v)
+	exitOnErr(err)
+
+	return v.PrivateKey(passphrase, addr)
 }

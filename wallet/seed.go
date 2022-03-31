@@ -8,7 +8,7 @@ import (
 type seed struct {
 	Method    string    `json:"Method"`
 	Seed      encrypted `json:"seed"`
-	ParentKey string    `json:"parent_key"` // No Master!
+	ParentKey string    `json:"parent_key"` 
 }
 
 func newSeed(passphrase string) seed {
