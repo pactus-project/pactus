@@ -6,9 +6,24 @@ import (
 )
 
 type seed struct {
-	Method    string    `json:"Method"`
-	Seed      encrypted `json:"seed"`
-	ParentKey string    `json:"parent_key"` 
+	Method     string    `json:"Method"`
+	ParentSeed encrypted `json:"seed"`
+	ParentKey  encrypted `json:"xprv"`
+}
+
+func recoverSeed(mnemonic string) seed {
+	ikm, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
+	exitOnErr(err)
+
+	parentKey, err := bls.PrivateKeyFromSeed(ikm, nil)
+
+	s := seed{
+		Method:     "BIP-39",
+		ParentSeed: newNopeEncrypter().encrypt(mnemonic),
+		ParentKey:  newNopeEncrypter().encrypt(parentKey.String()),
+	}
+
+	return s
 }
 
 func newSeed(passphrase string) seed {
@@ -21,17 +36,16 @@ func newSeed(passphrase string) seed {
 
 	parentKey, err := bls.PrivateKeyFromSeed(ikm, nil)
 
-	e := newEncrypter(passphrase)
 	s := seed{
-		Method:    "BIP-39",
-		Seed:      e.encrypt(mnemonic),
-		ParentKey: parentKey.String(),
+		Method:     "BIP-39",
+		ParentSeed: newEncrypter(passphrase).encrypt(mnemonic),
+		ParentKey:  newEncrypter(passphrase).encrypt(parentKey.String()),
 	}
 
 	return s
 }
 
-func (s *seed) hashedSeed(passphrase string) []byte {
+func (s *seed) parentSeed(passphrase string) []byte {
 	h, err := bip39.NewSeedWithErrorChecking(s.mnemonic(passphrase), "")
 	exitOnErr(err)
 
@@ -39,15 +53,15 @@ func (s *seed) hashedSeed(passphrase string) []byte {
 }
 
 func (s *seed) mnemonic(passphrase string) string {
-	e := newEncrypter(passphrase)
-	m, err := e.decrypt(s.Seed)
+	m, err := newEncrypter(passphrase).decrypt(s.ParentSeed)
 	exitOnErr(err)
 
 	return m
 }
 
-func (s *seed) parentKey() *bls.PrivateKey {
-	prv, err := bls.PrivateKeyFromString(s.ParentKey)
+func (s *seed) parentKey(passphrase string) *bls.PrivateKey {
+	m, err := newEncrypter(passphrase).decrypt(s.ParentKey)
+	prv, err := bls.PrivateKeyFromString(m)
 	exitOnErr(err)
 
 	return prv

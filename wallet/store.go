@@ -15,7 +15,18 @@ type store struct {
 	Network   int       `json:"network"`
 	Encrypted bool      `json:"encrypted"`
 	VaultCRC  uint32    `json:"crc"`
-	Vault     encrypted `json:"vault"`
+	Vault     *vault    `json:"vault"`
+}
+
+func recoverStore(mnemonic string, net int) (*store, error) {
+	w := &store{
+		Version:   1,
+		CreatedAt: time.Now(),
+		Network:   net,
+		Encrypted: false,
+		Vault:     recoverVault(mnemonic),
+	}
+	return w, nil
 }
 
 func newStore(passphrase string, net int) (*store, error) {
@@ -24,13 +35,8 @@ func newStore(passphrase string, net int) (*store, error) {
 		CreatedAt: time.Now(),
 		Network:   net,
 		Encrypted: len(passphrase) > 0,
+		Vault:     newVault(passphrase),
 	}
-
-	v := newVault(passphrase)
-
-	e := newEncrypter(passphrase)
-	w.Vault = encryptInterface(e, v)
-
 	return w, nil
 }
 
@@ -41,16 +47,9 @@ func (s *store) calcVaultCRC() uint32 {
 }
 
 func (s *store) Addresses(passphrase string) []crypto.Address {
-	e := newEncrypter(passphrase)
-	js, err := e.decrypt(s.Vault)
-	exitOnErr(err)
-	v := new(vault)
 
-	err = json.Unmarshal([]byte(js), v)
-	exitOnErr(err)
-
-	addrs := make([]crypto.Address, len(v.Addresses))
-	for i, a := range v.Addresses {
+	addrs := make([]crypto.Address, len(s.Vault.Addresses))
+	for i, a := range s.Vault.Addresses {
 		addr, err := crypto.AddressFromString(a.Address)
 		exitOnErr(err)
 		addrs[i] = addr
@@ -60,13 +59,6 @@ func (s *store) Addresses(passphrase string) []crypto.Address {
 }
 
 func (s *store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
-	e := newEncrypter(passphrase)
-	js, err := e.decrypt(s.Vault)
-	exitOnErr(err)
-	v := new(vault)
 
-	err = json.Unmarshal([]byte(js), v)
-	exitOnErr(err)
-
-	return v.PrivateKey(passphrase, addr)
+	return s.Vault.PrivateKey(passphrase, addr)
 }

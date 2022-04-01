@@ -15,6 +15,7 @@ func TestEncryptDecrypt(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, msg1, msg2)
 
+	
 	e2 := newArgon2Encrypter("invalid_password")
 	_, err = e2.decrypt(ct)
 	assert.Error(t, err)

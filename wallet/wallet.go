@@ -3,7 +3,6 @@ package wallet
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 
 	"github.com/zarbchain/zarb-go/crypto"
@@ -13,6 +12,25 @@ import (
 type Wallet struct {
 	path  string
 	store *store
+}
+
+func RecoverWallet(path, mnemonic string) (*Wallet, error) {
+	store, err := recoverStore(mnemonic, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	w := &Wallet{
+		store: store,
+		path:  path,
+	}
+
+	err = w.SaveToFile()
+	if err != nil {
+		return nil, err
+	}
+
+	return w, nil
 }
 
 /// NewWallet generates an empty wallet and save the seed string
@@ -41,13 +59,15 @@ func (w *Wallet) SaveToFile() error {
 	bs, err := json.Marshal(w.store)
 	exitOnErr(err)
 
-	fmt.Printf("%s", bs)
-
 	return ioutil.WriteFile(w.path, bs, 0600)
 }
 
 func (w *Wallet) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 	return w.store.PrivateKey(passphrase, addr)
+}
+
+func (w *Wallet) Mnemonic(passphrase string) string {
+	return w.store.Vault.Seed.mnemonic(passphrase)
 }
 
 func (w *Wallet) Addresses(passphrase string) []crypto.Address {

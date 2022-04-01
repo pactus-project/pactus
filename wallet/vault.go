@@ -25,6 +25,20 @@ type keystore struct {
 	Prv []encrypted `json:"prv"`
 }
 
+func recoverVault(mnemonic string) *vault {
+	s := recoverSeed(mnemonic)
+
+	v := &vault{
+		Seed: s,
+	}
+
+	for i := 0; i < 21; i++ {
+		v.deriveNewKey("")
+	}
+
+	return v
+}
+
 func newVault(passphrase string) *vault {
 	s := newSeed(passphrase)
 
@@ -38,6 +52,7 @@ func newVault(passphrase string) *vault {
 
 	return v
 }
+
 func (v *vault) deriveNewKey(passphrase string) address {
 	deriveSeed := []byte{}
 	for {
@@ -66,8 +81,8 @@ func (v *vault) deriveNewKey(passphrase string) address {
 
 func (v *vault) deriveKey(passphrase string, deriveSeed []byte) (*bls.PrivateKey, []byte) {
 	keyInfo := []byte{} // TODO, update for testnet
-	hashedSeed := v.Seed.hashedSeed(passphrase)
-	parnetKey := v.Seed.parentKey()
+	parentSeed := v.Seed.parentSeed(passphrase)
+	parnetKey := v.Seed.parentKey(passphrase)
 
 	/// To derive a new key, we need these variables:
 	///    1- Parent Key
@@ -76,7 +91,7 @@ func (v *vault) deriveKey(passphrase string, deriveSeed []byte) (*bls.PrivateKey
 	///
 
 	hmac512 := hmac.New(sha512.New, parnetKey.Bytes())
-	_, err := hmac512.Write(hashedSeed[:]) /// Note #6
+	_, err := hmac512.Write(parentSeed[:]) /// Note #6
 	exitOnErr(err)
 	_, err = hmac512.Write(deriveSeed[:])
 	exitOnErr(err)

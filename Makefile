@@ -31,21 +31,24 @@ herumi:
 build:
 	go build $(BUILD_LDFLAGS) -o ./build/zarbd ./cmd/zarbd
 	go build $(BUILD_LDFLAGS) -o ./build/zarbcli ./cmd/zarbcli
+	go build $(BUILD_LDFLAGS) -o ./build/zarb-wallet ./cmd/wallet
 
 install:
 	go install $(BUILD_LDFLAGS) ./cmd/zarbd
 	go install $(BUILD_LDFLAGS) ./cmd/zarbcli
+	go install $(BUILD_LDFLAGS) ./cmd/zarb-wallet
 
 release: herumi
 	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarbd
 	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarbcli
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarb-wallet
 
 ########################################
 ### Testing
 unit_test:
 	go test $(PACKAGES)
 
-test: 
+test:
 	go test ./... -covermode=atomic
 
 test_race:

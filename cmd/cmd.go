@@ -212,6 +212,10 @@ func ZarbHomeDir() string {
 	return home
 }
 
+func ZarbWalletsDir() string {
+	return ZarbHomeDir() + "wallets/"
+}
+
 func ZarbKeystoreDir() string {
 	return ZarbHomeDir() + "keystore/"
 }

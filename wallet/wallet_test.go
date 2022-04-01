@@ -19,14 +19,30 @@ func setup(t *testing.T) {
 	tWallet = w
 }
 
+func TestRecoverWallet(t *testing.T) {
+	setup(t)
+
+	mnemonic := tWallet.Mnemonic(tPassphrase)
+	recovered, err := RecoverWallet(util.TempFilePath(), mnemonic)
+	assert.NoError(t, err)
+
+	assert.Equal(t, tWallet.store.Vault.Seed.parentKey(tPassphrase).Bytes(), recovered.store.Vault.Seed.parentKey("").Bytes())
+}
+
 func TestGetPrivateKey(t *testing.T) {
 	setup(t)
 
 	addrs := tWallet.Addresses(tPassphrase)
-	prv, err := tWallet.PrivateKey(tPassphrase, addrs[0].String())
-	assert.NoError(t, err)
-	assert.Equal(t, prv.PublicKey().Address().String(), addrs[0].String())
+	for _, addr := range addrs {
+		prv, err := tWallet.PrivateKey(tPassphrase, addr.String())
+		assert.NoError(t, err)
+		assert.Equal(t, prv.PublicKey().Address().String(), addr.String())
+	}
+}
 
-	_, err = tWallet.PrivateKey(tPassphrase, crypto.GenerateTestAddress().String())
+func TestInvalidAddress(t *testing.T) {
+	setup(t)
+
+	_, err := tWallet.PrivateKey(tPassphrase, crypto.GenerateTestAddress().String())
 	assert.Error(t, err)
 }
