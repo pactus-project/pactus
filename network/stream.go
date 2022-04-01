@@ -69,7 +69,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	if err != nil {
 		return errors.Errorf(errors.ErrNetwork, err.Error())
 	}
-	err = stream.CloseWrite()
+	err = stream.Close()
 	if err != nil {
 		return errors.Errorf(errors.ErrNetwork, err.Error())
 	}
