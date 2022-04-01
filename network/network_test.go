@@ -73,8 +73,9 @@ func TestDHT(t *testing.T) {
 	nets := setup(t, 4)
 	conf := nets[1].config
 	conf.EnableMdns = false
+	conf.EnableRelay = false
 
-	net, err := NewNetwork(TestConfig())
+	net, err := NewNetwork(conf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
