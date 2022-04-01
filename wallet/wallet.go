@@ -14,6 +14,28 @@ type Wallet struct {
 	store *store
 }
 
+/// OpenWallet generates an empty wallet and save the seed string
+func OpenWallet(path string) (*Wallet, error) {
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	s := new(store)
+	err = json.Unmarshal(data, s)
+	exitOnErr(err)
+
+	if s.VaultCRC != s.calcVaultCRC() {
+		exitOnErr(errors.New("invalid CRC"))
+	}
+
+	return &Wallet{
+		store: s,
+		path:  path,
+	}, nil
+}
+
+/// Recover recovers a wallet from mnemonic (seed phrase)
 func RecoverWallet(path, mnemonic string) (*Wallet, error) {
 	store, err := recoverStore(mnemonic, 0)
 	if err != nil {
@@ -53,6 +75,10 @@ func NewWallet(path, passphrase string) (*Wallet, error) {
 	return w, nil
 }
 
+func (w *Wallet) IsEncrypted() bool {
+	return w.store.Encrypted
+}
+
 func (w *Wallet) SaveToFile() error {
 	w.store.VaultCRC = w.store.calcVaultCRC()
 
@@ -70,8 +96,8 @@ func (w *Wallet) Mnemonic(passphrase string) string {
 	return w.store.Vault.Seed.mnemonic(passphrase)
 }
 
-func (w *Wallet) Addresses(passphrase string) []crypto.Address {
-	return w.store.Addresses(passphrase)
+func (w *Wallet) Addresses() []crypto.Address {
+	return w.store.Addresses()
 }
 
 func (w *Wallet) ReadFromFile(path string) error {

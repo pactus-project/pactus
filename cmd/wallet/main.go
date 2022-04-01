@@ -19,7 +19,9 @@ func main() {
 	})
 
 	app.Command("generate", "Generate a new key", Generate())
-	app.Command("recover", "Recover waller from mnemonic (seed phrase) a new key", Recover())
+	app.Command("recover", "Recover waller from mnemonic (seed phrase)", Recover())
+	app.Command("list_addresses", "List wallet addresses", Addresses())
+	app.Command("get_privkey", "Get private key of address", GetPrivateKey())
 
 	app.Run(os.Args)
 }

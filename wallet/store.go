@@ -46,8 +46,7 @@ func (s *store) calcVaultCRC() uint32 {
 	return crc32.ChecksumIEEE(d)
 }
 
-func (s *store) Addresses(passphrase string) []crypto.Address {
-
+func (s *store) Addresses() []crypto.Address {
 	addrs := make([]crypto.Address, len(s.Vault.Addresses))
 	for i, a := range s.Vault.Addresses {
 		addr, err := crypto.AddressFromString(a.Address)

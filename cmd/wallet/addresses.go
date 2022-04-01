@@ -8,19 +8,20 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-/// Recover recovers a wallet from mnemonic (seed phrase)
-func Recover() func(c *cli.Cmd) {
+/// Addresses lists the wallet addresses
+func Addresses() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			mnemonic := cmd.PromptInput("Mnemonic: ")
-
-			fmt.Println()
-
-			_, err := wallet.RecoverWallet(*path, mnemonic)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
+			}
+
+			addrs := wallet.Addresses()
+			for _, addr := range addrs {
+				cmd.PrintInfoMsg("%s", addr.String())
 			}
 
 		}

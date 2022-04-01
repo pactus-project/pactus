@@ -18,6 +18,12 @@ func setup(t *testing.T) {
 
 	tWallet = w
 }
+func TestOpenWallet(t *testing.T) {
+	setup(t)
+
+	_, err := OpenWallet(tWallet.path)
+	assert.NoError(t, err)
+}
 
 func TestRecoverWallet(t *testing.T) {
 	setup(t)
@@ -32,7 +38,7 @@ func TestRecoverWallet(t *testing.T) {
 func TestGetPrivateKey(t *testing.T) {
 	setup(t)
 
-	addrs := tWallet.Addresses(tPassphrase)
+	addrs := tWallet.Addresses()
 	for _, addr := range addrs {
 		prv, err := tWallet.PrivateKey(tPassphrase, addr.String())
 		assert.NoError(t, err)
