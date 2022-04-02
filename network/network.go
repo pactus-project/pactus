@@ -79,9 +79,18 @@ func NewNetwork(conf *Config) (Network, error) {
 		lp2p.UserAgent(version.Agent()),
 	}
 
+	if conf.EnableNATService {
+		opts = append(opts,
+			lp2p.EnableNATService(),
+			lp2p.NATPortMap())
+	}
+
 	if conf.EnableRelay {
 		opts = append(opts,
 			lp2p.EnableRelay())
+	} else {
+		opts = append(opts,
+			lp2p.DisableRelay())
 	}
 	host, err := lp2p.New(opts...)
 	if err != nil {
