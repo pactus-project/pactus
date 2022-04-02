@@ -1,7 +1,9 @@
 package wallet
 
 import (
+	"bytes"
 	"crypto/hmac"
+	"crypto/sha256"
 	"crypto/sha512"
 	"errors"
 
@@ -32,9 +34,7 @@ func recoverVault(mnemonic string) *vault {
 		Seed: s,
 	}
 
-	for i := 0; i < 21; i++ {
-		v.deriveNewKey("")
-	}
+	v.generateStartKeys("", 21)
 
 	return v
 }
@@ -46,28 +46,38 @@ func newVault(passphrase string) *vault {
 		Seed: s,
 	}
 
-	for i := 0; i < 21; i++ {
-		v.deriveNewKey(passphrase)
-	}
+	v.generateStartKeys(passphrase, 21)
 
 	return v
 }
 
-func (v *vault) deriveNewKey(passphrase string) address {
-	deriveSeed := []byte{}
-	for {
-		prv, nextDeriveSeed := v.deriveKey(passphrase, deriveSeed)
+func (v *vault) deriveNewKeySeed(passphrase string) []byte {
+	data := []byte{0}
+	parentSeed := v.Seed.parentSeed(passphrase)
+	hmacKey := sha256.Sum256(parentSeed)
 
-		if !v.Contains(prv.PublicKey().Address()) {
-			a := address{}
-			a.Address = prv.PublicKey().Address().String()
-			a.Params = newParams()
-			a.Params.setBytes("seed", deriveSeed)
-			a.Method = "BLS_HMAC_HKDF_SEED"
-			v.Addresses = append(v.Addresses, a)
-			return a
+	checkKeySeed := func(seed []byte) bool {
+		for _, a := range v.Addresses {
+			if bytes.Equal(a.Params.getBytes("seed"), seed) {
+				return true
+			}
 		}
-		deriveSeed = nextDeriveSeed
+		return false
+	}
+
+	for {
+		hmac512 := hmac.New(sha512.New, hmacKey[:])
+		_, err := hmac512.Write(data[:])
+		exitOnErr(err)
+		hash512 := hmac512.Sum(nil)
+		keySeed := hash512[:32]
+		nextData := hash512[32:]
+
+		if !checkKeySeed(keySeed) {
+			return keySeed
+		}
+
+		data = nextData
 	}
 }
 
@@ -79,42 +89,49 @@ func (v *vault) deriveNewKey(passphrase string) address {
 /// 5- Child key should be recovered from parnet key, hash seed and a derive seed
 /// 6- If mater key is exposed, non of the child keys can be derived without knowing the seed hash.
 
-func (v *vault) deriveKey(passphrase string, deriveSeed []byte) (*bls.PrivateKey, []byte) {
+func (v *vault) derivePrivayeKey(passphrase string, keySeed []byte) *bls.PrivateKey {
 	keyInfo := []byte{} // TODO, update for testnet
-	parentSeed := v.Seed.parentSeed(passphrase)
 	parnetKey := v.Seed.parentKey(passphrase)
 
-	/// To derive a new key, we need these variables:
-	///    1- Parent Key
-	///    2- mnemonic's seed hash
-	///    2- Derive seed.
-	///
+	// To derive a new key, we need:
+	//    1- Parent Key
+	//    2- Key seed.
+	//
 
 	hmac512 := hmac.New(sha512.New, parnetKey.Bytes())
-	_, err := hmac512.Write(parentSeed[:]) /// Note #6
+	_, err := hmac512.Write(keySeed) /// Note #6
 	exitOnErr(err)
-	_, err = hmac512.Write(deriveSeed[:])
-	exitOnErr(err)
-	hash512 := hmac512.Sum(nil)
-	ikm := hash512[:32]
-	nextDeriveSeed := hash512[32:]
+	ikm := hmac512.Sum(nil)
 
 	prv, err := bls.PrivateKeyFromSeed(ikm, keyInfo)
 	exitOnErr(err)
 
-	return prv, nextDeriveSeed
+	return prv
 }
 
 func (v *vault) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 	for _, a := range v.Addresses {
 		if a.Address == addr {
 			seed := a.Params.getBytes("seed")
-			prv, _ := v.deriveKey(passphrase, seed)
+			prv := v.derivePrivayeKey(passphrase, seed)
 			return prv, nil
 		}
 	}
 
 	return nil, errors.New("address not found")
+}
+func (v *vault) generateStartKeys(passphrase string, count int) {
+	for i := 0; i < count; i++ {
+		seed := v.deriveNewKeySeed(passphrase)
+		prv := v.derivePrivayeKey(passphrase, seed)
+
+		a := address{}
+		a.Address = prv.PublicKey().Address().String()
+		a.Params = newParams()
+		a.Params.setBytes("seed", seed)
+		a.Method = "BLS_KDF_CHAIN"
+		v.Addresses = append(v.Addresses, a)
+	}
 }
 
 func (v *vault) Contains(addr crypto.Address) bool {

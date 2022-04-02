@@ -58,7 +58,8 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 		x = new(big.Int).Mod(util.OS2IP(okm), r)
 	}
 
-	sk := x.Bytes()
+	skBytes := make([]byte, 32)
+	sk := x.FillBytes(skBytes)
 	return PrivateKeyFromBytes(sk)
 }
 
