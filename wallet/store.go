@@ -18,7 +18,7 @@ type store struct {
 	Vault     *vault    `json:"vault"`
 }
 
-func recoverStore(mnemonic string, net int) (*store, error) {
+func recoverStore(mnemonic string, net int) *store {
 	w := &store{
 		Version:   1,
 		CreatedAt: time.Now(),
@@ -26,10 +26,10 @@ func recoverStore(mnemonic string, net int) (*store, error) {
 		Encrypted: false,
 		Vault:     recoverVault(mnemonic),
 	}
-	return w, nil
+	return w
 }
 
-func newStore(passphrase string, net int) (*store, error) {
+func newStore(passphrase string, net int) *store {
 	w := &store{
 		Version:   1,
 		CreatedAt: time.Now(),
@@ -37,7 +37,7 @@ func newStore(passphrase string, net int) (*store, error) {
 		Encrypted: len(passphrase) > 0,
 		Vault:     newVault(passphrase),
 	}
-	return w, nil
+	return w
 }
 
 func (s *store) calcVaultCRC() uint32 {

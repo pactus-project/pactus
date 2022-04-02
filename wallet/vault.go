@@ -58,7 +58,7 @@ func (v *vault) deriveNewKeySeed(passphrase string) []byte {
 
 	checkKeySeed := func(seed []byte) bool {
 		for _, a := range v.Addresses {
-			if bytes.Equal(a.Params.getBytes("seed"), seed) {
+			if bytes.Equal(a.Params.GetBytes("seed"), seed) {
 				return true
 			}
 		}
@@ -81,13 +81,9 @@ func (v *vault) deriveNewKeySeed(passphrase string) []byte {
 	}
 }
 
-/// Notes:
-/// 1- Derive a parnet key based entropy seed. Entropy seed will be used for wallet recovery
-/// 2- Deriving Child keys should be deterministic
-/// 3- Exposing any child key, should not expose parnet key or any other child keys
-/// 4- Not saving child keys inside wallet.
-/// 5- Child key should be recovered from parnet key, hash seed and a derive seed
-/// 6- If mater key is exposed, non of the child keys can be derived without knowing the seed hash.
+/// Note:
+/// 1- Deriving Child key seeds from parent seed
+/// 2- Exposing any child key, should not expose parnet key or any other child keys
 
 func (v *vault) derivePrivayeKey(passphrase string, keySeed []byte) *bls.PrivateKey {
 	keyInfo := []byte{} // TODO, update for testnet
@@ -112,7 +108,7 @@ func (v *vault) derivePrivayeKey(passphrase string, keySeed []byte) *bls.Private
 func (v *vault) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 	for _, a := range v.Addresses {
 		if a.Address == addr {
-			seed := a.Params.getBytes("seed")
+			seed := a.Params.GetBytes("seed")
 			prv := v.derivePrivayeKey(passphrase, seed)
 			return prv, nil
 		}
@@ -128,7 +124,7 @@ func (v *vault) generateStartKeys(passphrase string, count int) {
 		a := address{}
 		a.Address = prv.PublicKey().Address().String()
 		a.Params = newParams()
-		a.Params.setBytes("seed", seed)
+		a.Params.SetBytes("seed", seed)
 		a.Method = "BLS_KDF_CHAIN"
 		v.Addresses = append(v.Addresses, a)
 	}

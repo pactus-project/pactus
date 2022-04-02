@@ -37,17 +37,14 @@ func OpenWallet(path string) (*Wallet, error) {
 
 /// Recover recovers a wallet from mnemonic (seed phrase)
 func RecoverWallet(path, mnemonic string) (*Wallet, error) {
-	store, err := recoverStore(mnemonic, 0)
-	if err != nil {
-		return nil, err
-	}
+	store := recoverStore(mnemonic, 0)
 
 	w := &Wallet{
 		store: store,
 		path:  path,
 	}
 
-	err = w.SaveToFile()
+	err := w.SaveToFile()
 	if err != nil {
 		return nil, err
 	}
@@ -57,17 +54,13 @@ func RecoverWallet(path, mnemonic string) (*Wallet, error) {
 
 /// NewWallet generates an empty wallet and save the seed string
 func NewWallet(path, passphrase string) (*Wallet, error) {
-	store, err := newStore(passphrase, 0)
-	if err != nil {
-		return nil, err
-	}
-
+	store := newStore(passphrase, 0)
 	w := &Wallet{
 		store: store,
 		path:  path,
 	}
 
-	err = w.SaveToFile()
+	err := w.SaveToFile()
 	if err != nil {
 		return nil, err
 	}
@@ -98,20 +91,4 @@ func (w *Wallet) Mnemonic(passphrase string) string {
 
 func (w *Wallet) Addresses() []crypto.Address {
 	return w.store.Addresses()
-}
-
-func (w *Wallet) ReadFromFile(path string) error {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(data, w)
-	exitOnErr(err)
-
-	if w.store.VaultCRC != w.store.calcVaultCRC() {
-		exitOnErr(errors.New("invalid CRC"))
-	}
-
-	return nil
 }

@@ -40,12 +40,12 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 	checksum := sha256Checksum(cipherKey[16:32], d)
 
 	params := newParams()
-	params.setUint32("iterations", iterations)
-	params.setUint32("iterations", iterations)
-	params.setUint32("memory", memory)
-	params.setUint8("parallelism", parallelism)
-	params.setBytes("salt", salt)
-	params.setBytes("checksum", checksum)
+	params.SetUint32("iterations", iterations)
+	params.SetUint32("iterations", iterations)
+	params.SetUint32("memory", memory)
+	params.SetUint8("parallelism", parallelism)
+	params.SetBytes("salt", salt)
+	params.SetBytes("checksum", checksum)
 
 	cipherText := base64.StdEncoding.EncodeToString(d)
 
@@ -57,11 +57,11 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 }
 
 func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
-	salt := ct.Params.getBytes("salt")
-	checksum := ct.Params.getBytes("checksum")
-	iterations := ct.Params.getUint32("iterations")
-	memory := ct.Params.getUint32("memory")
-	parallelism := ct.Params.getUint8("parallelism")
+	salt := ct.Params.GetBytes("salt")
+	checksum := ct.Params.GetBytes("checksum")
+	iterations := ct.Params.GetUint32("iterations")
+	memory := ct.Params.GetUint32("memory")
+	parallelism := ct.Params.GetUint8("parallelism")
 
 	cipherKey := e.cipherKey(e.passphrase, salt, iterations, memory, parallelism)
 	d, err := base64.StdEncoding.DecodeString(ct.CipherText)

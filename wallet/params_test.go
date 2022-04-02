@@ -17,8 +17,8 @@ func TestParamsUint8(t *testing.T) {
 
 	p := params{}
 	for _, test := range tests {
-		p.setUint8(test.key, test.val)
-		assert.Equal(t, test.val, p.getUint8(test.key))
+		p.SetUint8(test.key, test.val)
+		assert.Equal(t, test.val, p.GetUint8(test.key))
 	}
 }
 
@@ -33,8 +33,8 @@ func TestParamsUint32(t *testing.T) {
 
 	p := params{}
 	for _, test := range tests {
-		p.setUint32(test.key, test.val)
-		assert.Equal(t, test.val, p.getUint32(test.key))
+		p.SetUint32(test.key, test.val)
+		assert.Equal(t, test.val, p.GetUint32(test.key))
 	}
 }
 
@@ -49,7 +49,7 @@ func TestParamsBytes(t *testing.T) {
 
 	p := params{}
 	for _, test := range tests {
-		p.setBytes(test.key, test.val)
-		assert.Equal(t, test.val, p.getBytes(test.key))
+		p.SetBytes(test.key, test.val)
+		assert.Equal(t, test.val, p.GetBytes(test.key))
 	}
 }

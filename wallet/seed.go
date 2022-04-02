@@ -16,6 +16,7 @@ func recoverSeed(mnemonic string) seed {
 	exitOnErr(err)
 
 	parentKey, err := bls.PrivateKeyFromSeed(ikm, nil)
+	exitOnErr(err)
 
 	s := seed{
 		Method:     "BIP-39",
@@ -35,6 +36,7 @@ func newSeed(passphrase string) seed {
 	exitOnErr(err)
 
 	parentKey, err := bls.PrivateKeyFromSeed(ikm, nil)
+	exitOnErr(err)
 
 	s := seed{
 		Method:     "BIP-39",
@@ -61,6 +63,8 @@ func (s *seed) mnemonic(passphrase string) string {
 
 func (s *seed) parentKey(passphrase string) *bls.PrivateKey {
 	m, err := newEncrypter(passphrase).decrypt(s.ParentKey)
+	exitOnErr(err)
+
 	prv, err := bls.PrivateKeyFromString(m)
 	exitOnErr(err)
 
