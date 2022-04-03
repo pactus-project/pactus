@@ -19,7 +19,7 @@ func newQueryProposalHandler(sync *synchronizer) messageHandler {
 
 func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.QueryProposalMessage)
-	handler.logger.Trace("parsing QueryProposal message", "msg", msg)
+	handler.logger.Trace("parsing QueryProposal message", "message", msg)
 
 	height, round := handler.consensus.HeightRound()
 	if msg.Height == height && msg.Round == round {
@@ -50,7 +50,7 @@ func (handler *queryProposalHandler) PrepareBundle(m message.Message) *bundle.Bu
 				msg := bundle.NewBundle(handler.SelfID(), m)
 				return msg
 			}
-			handler.logger.Debug("not an active validator", "msg", msg)
+			handler.logger.Debug("not an active validator", "message", msg)
 		}
 	}
 

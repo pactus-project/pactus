@@ -21,7 +21,7 @@ func newHelloHandler(sync *synchronizer) messageHandler {
 
 func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.HelloMessage)
-	handler.logger.Trace("parsing Hello message", "msg", msg)
+	handler.logger.Trace("parsing Hello message", "message", msg)
 
 	if msg.PeerID != initiator {
 		handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeBanned)

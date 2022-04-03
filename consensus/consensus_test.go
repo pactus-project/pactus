@@ -127,7 +127,7 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishBlockAnnounce", "msg", msg)
+			logger.Info("shouldPublishBlockAnnounce", "message", msg)
 
 			if msg.Type() == message.MessageTypeBlockAnnounce {
 				m := msg.(*message.BlockAnnounceMessage)
@@ -147,7 +147,7 @@ func shouldPublishProposal(t *testing.T, cons *consensus, height int32, round in
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishProposal", "msg", msg)
+			logger.Info("shouldPublishProposal", "message", msg)
 
 			if msg.Type() == message.MessageTypeProposal {
 				m := msg.(*message.ProposalMessage)
@@ -168,7 +168,7 @@ func shouldPublishQueryProposal(t *testing.T, cons *consensus, height int32, rou
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishQueryProposal", "msg", msg)
+			logger.Info("shouldPublishQueryProposal", "message", msg)
 
 			if msg.Type() == message.MessageTypeQueryProposal {
 				m := msg.(*message.QueryProposalMessage)
@@ -188,7 +188,7 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash h
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 		case msg := <-cons.broadcastCh:
-			logger.Info("shouldPublishVote", "msg", msg)
+			logger.Info("shouldPublishVote", "message", msg)
 
 			if msg.Type() == message.MessageTypeVote {
 				m := msg.(*message.VoteMessage)

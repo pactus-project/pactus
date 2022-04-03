@@ -18,7 +18,7 @@ func newBlocksResponseHandler(sync *synchronizer) messageHandler {
 
 func (handler *blocksResponseHandler) ParsMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.BlocksResponseMessage)
-	handler.logger.Trace("parsing BlocksResponse message", "msg", msg)
+	handler.logger.Trace("parsing BlocksResponse message", "message", msg)
 
 	if msg.IsRequestRejected() {
 		handler.logger.Warn("blocks request is rejected", "pid", initiator, "response", msg.ResponseCode)

@@ -19,10 +19,10 @@ func newBlocksRequestHandler(sync *synchronizer) messageHandler {
 
 func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.BlocksRequestMessage)
-	handler.logger.Trace("parsing BlocksRequest message", "msg", msg)
+	handler.logger.Trace("parsing BlocksRequest message", "message", msg)
 
 	if handler.peerSet.NumberOfOpenSessions() > handler.config.MaximumOpenSessions {
-		handler.logger.Warn("we are busy", "msg", msg, "pid", initiator)
+		handler.logger.Warn("we are busy", "message", msg, "pid", initiator)
 		response := message.NewBlocksResponseMessage(message.ResponseCodeBusy, msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 

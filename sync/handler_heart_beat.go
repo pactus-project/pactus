@@ -18,7 +18,7 @@ func newHeartBeatHandler(sync *synchronizer) messageHandler {
 
 func (handler *heartBeatHandler) ParsMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.HeartBeatMessage)
-	handler.logger.Trace("parsing HeartBeat message", "msg", msg)
+	handler.logger.Trace("parsing HeartBeat message", "message", msg)
 
 	height, round := handler.consensus.HeightRound()
 
