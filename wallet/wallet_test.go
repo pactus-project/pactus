@@ -13,7 +13,7 @@ var tWallet *Wallet
 var tPassphrase string
 
 func setup(t *testing.T) {
-	tPassphrase = "super_secret_password"
+	tPassphrase = ""
 	w, err := NewWallet(util.TempFilePath(), tPassphrase)
 	assert.NoError(t, err)
 

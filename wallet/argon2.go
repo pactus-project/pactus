@@ -26,7 +26,7 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 	// Parameters are set based on the spec recommendation
 	// Read more here https://datatracker.ietf.org/doc/html/rfc9106#section-4
 	iterations := uint32(1)
-	memory := uint32(2 ^ 21)
+	memory := uint32(2 * 1024 * 1024)
 	parallelism := uint8(4)
 
 	cipherKey := e.cipherKey(e.passphrase, salt, iterations, memory, parallelism)
@@ -39,7 +39,6 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 	checksum := sha256Checksum(cipherKey[16:32], d)
 
 	params := newParams()
-	params.SetUint32("iterations", iterations)
 	params.SetUint32("iterations", iterations)
 	params.SetUint32("memory", memory)
 	params.SetUint8("parallelism", parallelism)
