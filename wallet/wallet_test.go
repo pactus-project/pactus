@@ -35,7 +35,7 @@ func TestRecoverWallet(t *testing.T) {
 	assert.NoError(t, err)
 
 	reopenWallet(t)
-	assert.Equal(t, tWallet.store.ParentKey(tPassphrase).Bytes(), recovered.store.ParentKey("").Bytes())
+	assert.Equal(t, tWallet.store.ParentKey(tPassphrase), recovered.store.ParentKey(""))
 }
 
 func TestGetPrivateKey(t *testing.T) {

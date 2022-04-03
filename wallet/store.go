@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"crypto/sha512"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"hash/crc32"
@@ -120,9 +121,8 @@ func (s *Store) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
 	return nil
 }
 
-func (s *Store) deriveNewKeySeed(passphrase string) []byte {
+func (s *Store) deriveNewKeySeed(parentSeed []byte) []byte {
 	data := []byte{0}
-	parentSeed := s.ParentSeed(passphrase)
 	hmacKey := sha256.Sum256(parentSeed)
 
 	checkKeySeed := func(seed []byte) bool {
@@ -154,16 +154,15 @@ func (s *Store) deriveNewKeySeed(passphrase string) []byte {
 /// 1- Deriving Child key seeds from parent seed
 /// 2- Exposing any child key, should not expose parnet key or any other child keys
 
-func (s *Store) derivePrivayeKey(passphrase string, keySeed []byte) *bls.PrivateKey {
+func (s *Store) derivePrivayeKey(parentKey, keySeed []byte) *bls.PrivateKey {
 	keyInfo := []byte{} // TODO, update for testnet
-	parnetKey := s.ParentKey(passphrase)
 
 	// To derive a new key, we need:
 	//    1- Parent Key
 	//    2- Key seed.
 	//
 
-	hmac512 := hmac.New(sha512.New, parnetKey.Bytes())
+	hmac512 := hmac.New(sha512.New, parentKey)
 	_, err := hmac512.Write(keySeed) /// Note #6
 	exitOnErr(err)
 	ikm := hmac512.Sum(nil)
@@ -191,7 +190,8 @@ func (s *Store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 			case "BLS_KDF_CHAIN":
 				{
 					seed := a.Params.GetBytes("seed")
-					prv := s.derivePrivayeKey(passphrase, seed)
+					parnetKey := s.ParentKey(passphrase)
+					prv := s.derivePrivayeKey(parnetKey, seed)
 					return prv, nil
 				}
 			}
@@ -202,9 +202,11 @@ func (s *Store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 }
 
 func (s *Store) generateStartKeys(passphrase string, count int) {
+	parentSeed := s.ParentSeed(passphrase)
+	parnetKey := s.ParentKey(passphrase)
 	for i := 0; i < count; i++ {
-		seed := s.deriveNewKeySeed(passphrase)
-		prv := s.derivePrivayeKey(passphrase, seed)
+		seed := s.deriveNewKeySeed(parentSeed)
+		prv := s.derivePrivayeKey(parnetKey, seed)
 
 		a := address{}
 		a.Address = prv.PublicKey().Address().String()
@@ -242,11 +244,11 @@ func (s *Store) Mnemonic(passphrase string) string {
 	return m
 }
 
-func (s *Store) ParentKey(passphrase string) *bls.PrivateKey {
+func (s *Store) ParentKey(passphrase string) []byte {
 	m, err := newEncrypter(passphrase).decrypt(s.Vault.Seed.ParentKey)
 	exitOnErr(err)
 
-	prv, err := bls.PrivateKeyFromString(m)
+	prv, err := hex.DecodeString(m)
 	exitOnErr(err)
 
 	return prv
