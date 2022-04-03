@@ -12,22 +12,26 @@ type argon2Encrypter struct {
 	passphrase string
 }
 
-func newArgon2Encrypter(passphrase string) encrypter {
+func newArgon2Encrypter(passphrase string) *argon2Encrypter {
 	return &argon2Encrypter{
 		passphrase: passphrase,
 	}
 }
 func (e *argon2Encrypter) encrypt(message string) encrypted {
-	// Random salt
-	salt := make([]byte, 16)
-	_, err := rand.Read(salt)
-	exitOnErr(err)
-
 	// Parameters are set based on the spec recommendation
 	// Read more here https://datatracker.ietf.org/doc/html/rfc9106#section-4
 	iterations := uint32(1)
 	memory := uint32(2 * 1024 * 1024)
 	parallelism := uint8(4)
+
+	return e.encryptWithParams(message, iterations, memory, parallelism)
+}
+
+func (e *argon2Encrypter) encryptWithParams(message string, iterations, memory uint32, parallelism uint8) encrypted {
+	// Random salt
+	salt := make([]byte, 16)
+	_, err := rand.Read(salt)
+	exitOnErr(err)
 
 	cipherKey := e.cipherKey(e.passphrase, salt, iterations, memory, parallelism)
 
