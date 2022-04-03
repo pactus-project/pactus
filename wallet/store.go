@@ -15,7 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
-type store struct {
+type Store struct {
 	Version   int       `json:"version"`
 	CreatedAt time.Time `json:"created_at"`
 	Network   int       `json:"network"`
@@ -46,11 +46,11 @@ type keystore struct {
 	Prv []encrypted `json:"prv"`
 }
 
-func RecoverStore(mnemonic string, net int) *store {
+func RecoverStore(mnemonic string, net int) *Store {
 	return createStoreFromMnemonic("", mnemonic, 1)
 }
 
-func NewStore(passphrase string, net int) *store {
+func NewStore(passphrase string, net int) *Store {
 	entropy, err := bip39.NewEntropy(128)
 	exitOnErr(err)
 	mnemonic, err := bip39.NewMnemonic(entropy)
@@ -58,7 +58,7 @@ func NewStore(passphrase string, net int) *store {
 	return createStoreFromMnemonic(passphrase, mnemonic, 1)
 }
 
-func createStoreFromMnemonic(passphrase string, mnemonic string, net int) *store {
+func createStoreFromMnemonic(passphrase string, mnemonic string, net int) *Store {
 	ikm, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	exitOnErr(err)
 	parentKey, err := bls.PrivateKeyFromSeed(ikm, nil)
@@ -66,7 +66,7 @@ func createStoreFromMnemonic(passphrase string, mnemonic string, net int) *store
 
 	e := newEncrypter(passphrase)
 
-	s := &store{
+	s := &Store{
 		Version:   1,
 		CreatedAt: time.Now(),
 		Network:   net,
@@ -84,13 +84,13 @@ func createStoreFromMnemonic(passphrase string, mnemonic string, net int) *store
 	return s
 }
 
-func (s *store) calcVaultCRC() uint32 {
+func (s *Store) calcVaultCRC() uint32 {
 	d, err := json.Marshal(s.Vault)
 	exitOnErr(err)
 	return crc32.ChecksumIEEE(d)
 }
 
-func (s *store) Addresses() []crypto.Address {
+func (s *Store) Addresses() []crypto.Address {
 	addrs := make([]crypto.Address, len(s.Vault.Addresses))
 	for i, a := range s.Vault.Addresses {
 		addr, err := crypto.AddressFromString(a.Address)
@@ -101,7 +101,7 @@ func (s *store) Addresses() []crypto.Address {
 	return addrs
 }
 
-func (s *store) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
+func (s *Store) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
 	if s.Contains(prv.PublicKey().Address()) {
 		return errors.New("address already exists")
 	}
@@ -120,7 +120,7 @@ func (s *store) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
 	return nil
 }
 
-func (s *store) deriveNewKeySeed(passphrase string) []byte {
+func (s *Store) deriveNewKeySeed(passphrase string) []byte {
 	data := []byte{0}
 	parentSeed := s.ParentSeed(passphrase)
 	hmacKey := sha256.Sum256(parentSeed)
@@ -154,7 +154,7 @@ func (s *store) deriveNewKeySeed(passphrase string) []byte {
 /// 1- Deriving Child key seeds from parent seed
 /// 2- Exposing any child key, should not expose parnet key or any other child keys
 
-func (s *store) derivePrivayeKey(passphrase string, keySeed []byte) *bls.PrivateKey {
+func (s *Store) derivePrivayeKey(passphrase string, keySeed []byte) *bls.PrivateKey {
 	keyInfo := []byte{} // TODO, update for testnet
 	parnetKey := s.ParentKey(passphrase)
 
@@ -174,7 +174,7 @@ func (s *store) derivePrivayeKey(passphrase string, keySeed []byte) *bls.Private
 	return prv
 }
 
-func (s *store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
+func (s *Store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 	for _, a := range s.Vault.Addresses {
 		if a.Address == addr {
 			switch a.Method {
@@ -201,7 +201,7 @@ func (s *store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 	return nil, errors.New("address not found")
 }
 
-func (s *store) generateStartKeys(passphrase string, count int) {
+func (s *Store) generateStartKeys(passphrase string, count int) {
 	for i := 0; i < count; i++ {
 		seed := s.deriveNewKeySeed(passphrase)
 		prv := s.derivePrivayeKey(passphrase, seed)
@@ -215,11 +215,11 @@ func (s *store) generateStartKeys(passphrase string, count int) {
 	}
 }
 
-func (s *store) Contains(addr crypto.Address) bool {
-	return s.GetAddressInfo(addr) != nil
+func (s *Store) Contains(addr crypto.Address) bool {
+	return s.getAddressInfo(addr) != nil
 }
 
-func (s *store) GetAddressInfo(addr crypto.Address) *address {
+func (s *Store) getAddressInfo(addr crypto.Address) *address {
 	for _, a := range s.Vault.Addresses {
 		if a.Address == addr.String() {
 			return &a
@@ -228,21 +228,21 @@ func (s *store) GetAddressInfo(addr crypto.Address) *address {
 	return nil
 }
 
-func (s *store) ParentSeed(passphrase string) []byte {
+func (s *Store) ParentSeed(passphrase string) []byte {
 	h, err := bip39.NewSeedWithErrorChecking(s.Mnemonic(passphrase), "")
 	exitOnErr(err)
 
 	return h
 }
 
-func (s *store) Mnemonic(passphrase string) string {
+func (s *Store) Mnemonic(passphrase string) string {
 	m, err := newEncrypter(passphrase).decrypt(s.Vault.Seed.ParentSeed)
 	exitOnErr(err)
 
 	return m
 }
 
-func (s *store) ParentKey(passphrase string) *bls.PrivateKey {
+func (s *Store) ParentKey(passphrase string) *bls.PrivateKey {
 	m, err := newEncrypter(passphrase).decrypt(s.Vault.Seed.ParentKey)
 	exitOnErr(err)
 

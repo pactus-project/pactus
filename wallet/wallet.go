@@ -11,7 +11,7 @@ import (
 
 type Wallet struct {
 	path  string
-	store *store
+	store *Store
 }
 
 /// OpenWallet generates an empty wallet and save the seed string
@@ -21,7 +21,7 @@ func OpenWallet(path string) (*Wallet, error) {
 		return nil, err
 	}
 
-	s := new(store)
+	s := new(Store)
 	err = json.Unmarshal(data, s)
 	exitOnErr(err)
 

@@ -10,7 +10,7 @@ type params map[string]string
 func newParams() params {
 	return make(map[string]string)
 }
-func (p params) SetUint8(key string, val uint8)  {
+func (p params) SetUint8(key string, val uint8) {
 	p.SetUint32(key, uint32(val))
 }
 
