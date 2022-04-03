@@ -6,6 +6,7 @@ import (
 
 	lp2pcore "github.com/libp2p/go-libp2p-core"
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/zarbchain/zarb-go/util"
 )
 
 var _ Network = &MockNetwork{}
@@ -103,4 +104,12 @@ func (mock *MockNetwork) NumConnectedPeers() int {
 }
 func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
 	mock.OtherNets = append(mock.OtherNets, net)
+}
+
+/// TestRandomPeerID returns a random peer ID
+func TestRandomPeerID() peer.ID {
+	s := util.Uint64ToSlice(util.RandUint64(0))
+	id := [34]byte{0x12, 32}
+	copy(id[2:], s[:])
+	return peer.ID(id[:])
 }

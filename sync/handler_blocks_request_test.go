@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -17,7 +18,7 @@ func TestSessionTimeout(t *testing.T) {
 
 	t.Run("An unknown peers claims to have more blocks. Session should be closed after timeout", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		pid := util.RandomPeerID()
+		pid := network.TestRandomPeerID()
 		msg := message.NewHelloMessage(pid, "Oscar", 6666, message.FlagNodeNetwork, tState.GenesisHash())
 		signer.SignMsg(msg)
 
@@ -36,7 +37,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 	setup(t)
 
 	sid := int(util.RandInt32(100))
-	pid := util.RandomPeerID()
+	pid := network.TestRandomPeerID()
 
 	t.Run("Reject request from unknown peers", func(t *testing.T) {
 		msg := message.NewBlocksRequestMessage(sid, 100, 105)
@@ -104,11 +105,11 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 	})
 
 	t.Run("Peer is busy", func(t *testing.T) {
-		tSync.peerSet.OpenSession(util.RandomPeerID())
-		tSync.peerSet.OpenSession(util.RandomPeerID())
-		tSync.peerSet.OpenSession(util.RandomPeerID())
-		tSync.peerSet.OpenSession(util.RandomPeerID())
-		tSync.peerSet.OpenSession(util.RandomPeerID())
+		tSync.peerSet.OpenSession(network.TestRandomPeerID())
+		tSync.peerSet.OpenSession(network.TestRandomPeerID())
+		tSync.peerSet.OpenSession(network.TestRandomPeerID())
+		tSync.peerSet.OpenSession(network.TestRandomPeerID())
+		tSync.peerSet.OpenSession(network.TestRandomPeerID())
 		require.Equal(t, tSync.peerSet.NumberOfOpenSessions(), 5)
 
 		s := tSync.peerSet.OpenSession(tNetwork.SelfID())

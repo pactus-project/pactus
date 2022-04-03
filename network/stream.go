@@ -9,7 +9,6 @@ import (
 	lp2peer "github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type streamService struct {
@@ -42,7 +41,7 @@ func (s *streamService) Stop() {
 func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	from := stream.Conn().RemotePeer()
 
-	s.logger.Debug("receiving stream", "from", util.FingerprintPeerID(from))
+	s.logger.Debug("receiving stream", "from", from)
 	event := &StreamMessage{
 		Source: from,
 		Reader: stream,
@@ -52,7 +51,7 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 }
 
 func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
-	s.logger.Debug("sending stream", "to", util.FingerprintPeerID(pid))
+	s.logger.Debug("sending stream", "to", pid)
 	_, err := s.host.Peerstore().SupportsProtocols(pid, string(s.protocolID))
 	if err != nil {
 		return errors.Errorf(errors.ErrNetwork, err.Error())

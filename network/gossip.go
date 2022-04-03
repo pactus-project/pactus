@@ -8,7 +8,6 @@ import (
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type gossipService struct {
@@ -92,7 +91,7 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 		return
 	}
 
-	g.logger.Debug("receiving new gossip message", "from", util.FingerprintPeerID(m.GetFrom()), "received from", util.FingerprintPeerID(m.ReceivedFrom))
+	g.logger.Debug("receiving new gossip message", "from", m.GetFrom(), "received from", m.ReceivedFrom)
 	event := &GossipMessage{
 		Source: m.GetFrom(),
 		From:   m.ReceivedFrom,

@@ -1,7 +1,6 @@
 package peerset
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -59,13 +58,4 @@ func (s *Session) LastActivityAt() time.Time {
 	defer s.lk.RUnlock()
 
 	return s.data.LastActivityAt
-}
-
-func (s *Session) Fingerprint() string {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
-
-	return fmt.Sprintf("{id %d %v}",
-		s.data.SessionID,
-		util.FingerprintPeerID(s.data.PeerID))
 }

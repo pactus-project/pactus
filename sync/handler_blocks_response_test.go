@@ -12,7 +12,6 @@ import (
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestOneBlockShorter(t *testing.T) {
@@ -22,7 +21,7 @@ func TestOneBlockShorter(t *testing.T) {
 	lastBlockheight := tState.LastBlockHeight()
 	b1 := block.GenerateTestBlock(nil, &lastBlockHash)
 	c1 := block.GenerateTestCertificate(b1.Hash())
-	pid := util.RandomPeerID()
+	pid := network.TestRandomPeerID()
 
 	pub, _ := bls.GenerateTestKeyPair()
 	testAddPeer(t, pub, pid)
@@ -66,8 +65,8 @@ func TestSyncing(t *testing.T) {
 	consensusBob := consensus.MockingConsensus(stateBob)
 	broadcastChAlice := make(chan message.Message, 1000)
 	broadcastChBob := make(chan message.Message, 1000)
-	networkAlice := network.MockingNetwork(util.RandomPeerID())
-	networkBob := network.MockingNetwork(util.RandomPeerID())
+	networkAlice := network.MockingNetwork(network.TestRandomPeerID())
+	networkBob := network.MockingNetwork(network.TestRandomPeerID())
 
 	LatestBlockInterval = 30
 	configBob.NodeNetwork = true

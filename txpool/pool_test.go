@@ -45,7 +45,7 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
 		case msg := <-tCh:
-			logger.Info("shouldPublishTransaction", "msg", msg)
+			logger.Info("shouldPublishTransaction", "message", msg)
 
 			if msg.Type() == message.MessageTypeTransactions {
 				m := msg.(*message.TransactionsMessage)

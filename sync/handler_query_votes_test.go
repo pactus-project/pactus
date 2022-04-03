@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingQueryVotesMessages(t *testing.T) {
@@ -15,7 +15,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	consensusHeight := tState.LastBlockHeight() + 1
 	v1, _ := vote.GenerateTestPrecommitVote(consensusHeight, 0)
 	tConsensus.AddVote(v1)
-	pid := util.RandomPeerID()
+	pid := network.TestRandomPeerID()
 	msg := message.NewQueryVotesMessage(consensusHeight, 1)
 
 	t.Run("Not in the committee, should not respond to the query vote message", func(t *testing.T) {

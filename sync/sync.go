@@ -219,7 +219,7 @@ func (sync *synchronizer) receiveLoop() {
 
 			err := sync.processIncomingBundle(bdl)
 			if err != nil {
-				sync.logger.Warn("error on parsing a message", "initiator", util.FingerprintPeerID(bdl.Initiator), "message", bdl, "err", err)
+				sync.logger.Warn("error on parsing a bundle", "initiator", bdl.Initiator, "bundle", bdl, "err", err)
 				sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 			}
 		}
@@ -231,7 +231,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 		return nil
 	}
 
-	sync.logger.Debug("received a message", "initiator", util.FingerprintPeerID(bdl.Initiator), "bundle", bdl)
+	sync.logger.Debug("received a bundle", "initiator", bdl.Initiator, "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
@@ -312,9 +312,9 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 		data, _ := bdl.Encode()
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Error("error on sending message", "message", bdl, "err", err)
+			sync.logger.Error("error on sending bundle", "bundle", bdl, "err", err)
 		} else {
-			sync.logger.Debug("sending message to a peer", "message", bdl, "to", to)
+			sync.logger.Debug("sending bundle to a peer", "bundle", bdl, "to", to)
 		}
 	}
 }
@@ -326,9 +326,9 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		data, _ := bdl.Encode()
 		err := sync.network.Broadcast(data, msg.Type().TopicID())
 		if err != nil {
-			sync.logger.Error("error on broadcasting message", "message", msg, "err", err)
+			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "err", err)
 		} else {
-			sync.logger.Debug("broadcasting new message", "message", msg)
+			sync.logger.Debug("broadcasting new bundle", "bundle", bdl)
 		}
 	}
 }
@@ -372,7 +372,7 @@ func (sync *synchronizer) downloadBlocks(from int32) {
 			to = peer.Height
 		}
 
-		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", util.FingerprintPeerID(peer.PeerID))
+		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", peer.PeerID)
 		session := sync.peerSet.OpenSession(peer.PeerID)
 		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
 		sync.sendTo(msg, peer.PeerID)
@@ -394,7 +394,7 @@ func (sync *synchronizer) queryLatestBlocks(from int32) {
 		return
 	}
 
-	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", util.FingerprintPeerID(randPeer.PeerID))
+	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", randPeer.PeerID)
 	session := sync.peerSet.OpenSession(randPeer.PeerID)
 	msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
 	sync.sendTo(msg, randPeer.PeerID)

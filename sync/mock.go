@@ -5,6 +5,7 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
@@ -21,8 +22,8 @@ func MockingSync() *MockSync {
 	ps := peerset.NewPeerSet(1 * time.Second)
 	pub1, _ := bls.GenerateTestKeyPair()
 	pub2, _ := bls.GenerateTestKeyPair()
-	pid1 := util.RandomPeerID()
-	pid2 := util.RandomPeerID()
+	pid1 := network.TestRandomPeerID()
+	pid2 := network.TestRandomPeerID()
 	ps.UpdatePeerInfo(
 		pid1,
 		peerset.StatusCodeKnown,
@@ -42,7 +43,7 @@ func MockingSync() *MockSync {
 	ps.UpdateHeight(pid1, util.RandInt32(100000))
 
 	return &MockSync{
-		ID:      util.RandomPeerID(),
+		ID:      network.TestRandomPeerID(),
 		PeerSet: ps,
 	}
 }
