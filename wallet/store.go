@@ -48,7 +48,7 @@ type keystore struct {
 }
 
 func RecoverStore(mnemonic string, net int) *Store {
-	return createStoreFromMnemonic("", mnemonic, 1)
+	return createStoreFromMnemonic("", mnemonic, net)
 }
 
 func NewStore(passphrase string, net int) *Store {
@@ -56,7 +56,7 @@ func NewStore(passphrase string, net int) *Store {
 	exitOnErr(err)
 	mnemonic, err := bip39.NewMnemonic(entropy)
 	exitOnErr(err)
-	return createStoreFromMnemonic(passphrase, mnemonic, 1)
+	return createStoreFromMnemonic(passphrase, mnemonic, net)
 }
 
 func createStoreFromMnemonic(passphrase string, mnemonic string, net int) *Store {
@@ -65,7 +65,7 @@ func createStoreFromMnemonic(passphrase string, mnemonic string, net int) *Store
 	parentKey, err := bls.PrivateKeyFromSeed(ikm, nil)
 	exitOnErr(err)
 
-	e := newEncrypter(passphrase)
+	e := newEncrypter(passphrase, net)
 
 	s := &Store{
 		Version:   1,
@@ -107,7 +107,7 @@ func (s *Store) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
 		return errors.New("address already exists")
 	}
 
-	e := newEncrypter(passphrase)
+	e := newEncrypter(passphrase, s.Network)
 	s.Vault.Keystore.Prv = append(s.Vault.Keystore.Prv, e.encrypt(prv.String()))
 
 	p := newParams()
@@ -179,7 +179,7 @@ func (s *Store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 			switch a.Method {
 			case "IMPORTED":
 				{
-					e := newEncrypter(passphrase)
+					e := newEncrypter(passphrase, s.Network)
 					index := a.Params.GetUint32("index")
 					prvStr, err := e.decrypt(s.Vault.Keystore.Prv[index])
 					exitOnErr(err)
@@ -238,14 +238,14 @@ func (s *Store) ParentSeed(passphrase string) []byte {
 }
 
 func (s *Store) Mnemonic(passphrase string) string {
-	m, err := newEncrypter(passphrase).decrypt(s.Vault.Seed.ParentSeed)
+	m, err := newEncrypter(passphrase, s.Network).decrypt(s.Vault.Seed.ParentSeed)
 	exitOnErr(err)
 
 	return m
 }
 
 func (s *Store) ParentKey(passphrase string) []byte {
-	m, err := newEncrypter(passphrase).decrypt(s.Vault.Seed.ParentKey)
+	m, err := newEncrypter(passphrase, s.Network).decrypt(s.Vault.Seed.ParentKey)
 	exitOnErr(err)
 
 	prv, err := hex.DecodeString(m)

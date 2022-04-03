@@ -36,8 +36,8 @@ func OpenWallet(path string) (*Wallet, error) {
 }
 
 /// Recover recovers a wallet from mnemonic (seed phrase)
-func RecoverWallet(path, mnemonic string) (*Wallet, error) {
-	store := RecoverStore(mnemonic, 0)
+func RecoverWallet(path, mnemonic string, net int) (*Wallet, error) {
+	store := RecoverStore(mnemonic, net)
 
 	w := &Wallet{
 		store: store,
@@ -53,8 +53,8 @@ func RecoverWallet(path, mnemonic string) (*Wallet, error) {
 }
 
 /// NewWallet generates an empty wallet and save the seed string
-func NewWallet(path, passphrase string) (*Wallet, error) {
-	store := NewStore(passphrase, 0)
+func NewWallet(path, passphrase string, net int) (*Wallet, error) {
+	store := NewStore(passphrase, net)
 	w := &Wallet{
 		store: store,
 		path:  path,

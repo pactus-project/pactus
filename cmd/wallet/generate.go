@@ -17,7 +17,7 @@ func Generate() func(c *cli.Cmd) {
 
 			fmt.Println()
 
-			wallet, err := wallet.NewWallet(*path, passphrase)
+			wallet, err := wallet.NewWallet(*path, passphrase, 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

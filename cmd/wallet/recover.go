@@ -17,7 +17,7 @@ func Recover() func(c *cli.Cmd) {
 
 			fmt.Println()
 
-			_, err := wallet.RecoverWallet(*path, mnemonic)
+			_, err := wallet.RecoverWallet(*path, mnemonic, 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

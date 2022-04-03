@@ -14,7 +14,7 @@ var tPassphrase string
 
 func setup(t *testing.T) {
 	tPassphrase = ""
-	w, err := NewWallet(util.TempFilePath(), tPassphrase)
+	w, err := NewWallet(util.TempFilePath(), tPassphrase, 2) // 2 for testing
 	assert.NoError(t, err)
 
 	tWallet = w
@@ -31,7 +31,7 @@ func TestRecoverWallet(t *testing.T) {
 	setup(t)
 
 	mnemonic := tWallet.Mnemonic(tPassphrase)
-	recovered, err := RecoverWallet(util.TempFilePath(), mnemonic)
+	recovered, err := RecoverWallet(util.TempFilePath(), mnemonic, 2)
 	assert.NoError(t, err)
 
 	reopenWallet(t)
