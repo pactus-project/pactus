@@ -8,6 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/network"
 )
 
 func TestHelloType(t *testing.T) {
@@ -18,7 +19,7 @@ func TestHelloType(t *testing.T) {
 func TestHelloMessage(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(peer.ID("oscar-peer-id"), "Oscar", -1, 0, hash.GenerateTestHash())
+		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", -1, 0, hash.GenerateTestHash())
 		signer.SignMsg(m)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
@@ -27,7 +28,7 @@ func TestHelloMessage(t *testing.T) {
 	t.Run("Invalid signature", func(t *testing.T) {
 		signer1 := bls.GenerateTestSigner()
 		signer2 := bls.GenerateTestSigner()
-		m := NewHelloMessage(peer.ID("oscar-peer-id"), "Oscar", 100, 0, hash.GenerateTestHash())
+		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
 		signer1.SignMsg(m)
 		m.SetPublicKey(signer2.PublicKey())
 
@@ -36,7 +37,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(peer.ID("alice-peer-id"), "Alice", 100, 0, hash.GenerateTestHash())
+		m := NewHelloMessage(network.TestRandomPeerID(), "Alice", 100, 0, hash.GenerateTestHash())
 		signer.SignMsg(m)
 
 		assert.NoError(t, m.SanityCheck())
