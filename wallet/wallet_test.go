@@ -19,11 +19,12 @@ func setup(t *testing.T) {
 
 	tWallet = w
 }
-func TestOpenWallet(t *testing.T) {
-	setup(t)
 
-	_, err := OpenWallet(tWallet.path)
+func reopenWallet(t *testing.T) {
+	w, err := OpenWallet(tWallet.path)
 	assert.NoError(t, err)
+
+	tWallet = w
 }
 
 func TestRecoverWallet(t *testing.T) {
@@ -33,6 +34,7 @@ func TestRecoverWallet(t *testing.T) {
 	recovered, err := RecoverWallet(util.TempFilePath(), mnemonic)
 	assert.NoError(t, err)
 
+	reopenWallet(t)
 	assert.Equal(t, tWallet.store.ParentKey(tPassphrase).Bytes(), recovered.store.ParentKey("").Bytes())
 }
 
@@ -59,11 +61,14 @@ func TestImportPrivateKey(t *testing.T) {
 	setup(t)
 
 	_, prv1 := bls.GenerateTestKeyPair()
-	err := tWallet.ImportPrivateKey(tPassphrase, prv1)
-	assert.NoError(t, err)
+	assert.NoError(t, tWallet.ImportPrivateKey(tPassphrase, prv1))
+	reopenWallet(t)
+
 	assert.True(t, tWallet.store.Contains(prv1.PublicKey().Address()))
 	prv2, err := tWallet.PrivateKey(tPassphrase, prv1.PublicKey().Address().String())
 	assert.NoError(t, err)
 	assert.Equal(t, prv1.Bytes(), prv2.Bytes())
 
+	// Import again
+	assert.Error(t, tWallet.ImportPrivateKey(tPassphrase, prv1))
 }

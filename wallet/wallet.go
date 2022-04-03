@@ -82,7 +82,11 @@ func (w *Wallet) SaveToFile() error {
 }
 
 func (w *Wallet) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
-	return w.store.ImportPrivateKey(passphrase, prv)
+	err := w.store.ImportPrivateKey(passphrase, prv)
+	if err != nil {
+		return err
+	}
+	return w.SaveToFile()
 }
 
 func (w *Wallet) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
