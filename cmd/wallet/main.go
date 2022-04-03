@@ -22,6 +22,7 @@ func main() {
 	app.Command("recover", "Recover waller from mnemonic (seed phrase)", Recover())
 	app.Command("list_addresses", "List wallet addresses", Addresses())
 	app.Command("get_privkey", "Get private key of address", GetPrivateKey())
+	app.Command("import_privkey", "Import a private key", ImportPrivateKey())
 
 	if err := app.Run(os.Args); err != nil {
 		panic(err)

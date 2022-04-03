@@ -9,7 +9,6 @@ import (
 )
 
 type argon2Encrypter struct {
-	// TODO: memory safety
 	passphrase string
 }
 

@@ -37,7 +37,7 @@ func OpenWallet(path string) (*Wallet, error) {
 
 /// Recover recovers a wallet from mnemonic (seed phrase)
 func RecoverWallet(path, mnemonic string) (*Wallet, error) {
-	store := recoverStore(mnemonic, 0)
+	store := RecoverStore(mnemonic, 0)
 
 	w := &Wallet{
 		store: store,
@@ -54,7 +54,7 @@ func RecoverWallet(path, mnemonic string) (*Wallet, error) {
 
 /// NewWallet generates an empty wallet and save the seed string
 func NewWallet(path, passphrase string) (*Wallet, error) {
-	store := newStore(passphrase, 0)
+	store := NewStore(passphrase, 0)
 	w := &Wallet{
 		store: store,
 		path:  path,
@@ -81,12 +81,16 @@ func (w *Wallet) SaveToFile() error {
 	return ioutil.WriteFile(w.path, bs, 0600)
 }
 
+func (w *Wallet) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
+	return w.store.ImportPrivateKey(passphrase, prv)
+}
+
 func (w *Wallet) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 	return w.store.PrivateKey(passphrase, addr)
 }
 
 func (w *Wallet) Mnemonic(passphrase string) string {
-	return w.store.Vault.Seed.mnemonic(passphrase)
+	return w.store.Mnemonic(passphrase)
 }
 
 func (w *Wallet) Addresses() []crypto.Address {
