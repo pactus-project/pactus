@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingQueryProposalMessages(t *testing.T) {
@@ -14,7 +14,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 
 	consensusHeight := tState.LastBlockHeight() + 1
 	prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-	pid := util.RandomPeerID()
+	pid := network.TestRandomPeerID()
 	msg := message.NewQueryProposalMessage(consensusHeight, 0)
 	tConsensus.SetProposal(prop)
 

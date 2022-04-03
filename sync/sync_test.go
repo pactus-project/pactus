@@ -54,7 +54,7 @@ func setup(t *testing.T) {
 	tState = state.MockingState()
 	tConsensus = consensus.MockingConsensus(tState)
 	tBroadcastCh = make(chan message.Message, 1000)
-	tNetwork = network.MockingNetwork(util.RandomPeerID())
+	tNetwork = network.MockingNetwork(network.TestRandomPeerID())
 
 	testAddBlocks(t, tState, 21)
 

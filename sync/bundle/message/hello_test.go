@@ -3,11 +3,11 @@ package message
 import (
 	"testing"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestHelloType(t *testing.T) {
@@ -18,24 +18,25 @@ func TestHelloType(t *testing.T) {
 func TestHelloMessage(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(util.RandomPeerID(), "Oscar", -1, 0, hash.GenerateTestHash())
+		m := NewHelloMessage(peer.ID("oscar-peer-id"), "Oscar", -1, 0, hash.GenerateTestHash())
 		signer.SignMsg(m)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Invalid signature", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(util.RandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
-		signer.SignMsg(m)
+		signer1 := bls.GenerateTestSigner()
+		signer2 := bls.GenerateTestSigner()
+		m := NewHelloMessage(peer.ID("oscar-peer-id"), "Oscar", 100, 0, hash.GenerateTestHash())
+		signer1.SignMsg(m)
+		m.SetPublicKey(signer2.PublicKey())
 
-		m.PeerID = util.RandomPeerID()
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(util.RandomPeerID(), "Alice", 100, 0, hash.GenerateTestHash())
+		m := NewHelloMessage(peer.ID("alice-peer-id"), "Alice", 100, 0, hash.GenerateTestHash())
 		signer.SignMsg(m)
 
 		assert.NoError(t, m.SanityCheck())

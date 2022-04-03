@@ -37,7 +37,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 	if from != source {
 		f.peerSet.UpdateLastSeen(from)
 		if f.isPeerBanned(from) {
-			f.logger.Warn("firewall: from peer banned", "from", util.FingerprintPeerID(from))
+			f.logger.Warn("firewall: from peer banned", "from", from)
 			f.closeConnection(from)
 			return nil
 		}

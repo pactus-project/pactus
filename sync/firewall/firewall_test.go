@@ -28,14 +28,14 @@ func setup(t *testing.T) {
 	logger := logger.NewLogger("firewal", nil)
 	peerSet := peerset.NewPeerSet(3 * time.Second)
 	tState = state.MockingState()
-	tNetwork = network.MockingNetwork(util.RandomPeerID())
+	tNetwork = network.MockingNetwork(network.TestRandomPeerID())
 	conf := TestConfig()
 	conf.Enabled = true
 	tFirewall = NewFirewall(conf, tNetwork, peerSet, tState, logger)
 	assert.NotNil(t, tFirewall)
-	tBadPeerID = util.RandomPeerID()
-	tGoodPeerID = util.RandomPeerID()
-	tUnknownPeerID = util.RandomPeerID()
+	tBadPeerID = network.TestRandomPeerID()
+	tGoodPeerID = network.TestRandomPeerID()
+	tUnknownPeerID = network.TestRandomPeerID()
 
 	tNetwork.AddAnotherNetwork(network.MockingNetwork(tGoodPeerID))
 	tNetwork.AddAnotherNetwork(network.MockingNetwork(tUnknownPeerID))

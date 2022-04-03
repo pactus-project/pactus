@@ -1,7 +1,6 @@
 package peerset
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
@@ -35,12 +34,6 @@ func NewPeer(peerID peer.ID) *Peer {
 		Status: StatusCodeUnknown,
 		PeerID: peerID,
 	}
-}
-
-func (p *Peer) Fingerprint() string {
-	return fmt.Sprintf("{%v %v}",
-		util.FingerprintPeerID(p.PeerID),
-		p.Height)
 }
 
 func (p *Peer) IsKnownOrTrusty() bool {

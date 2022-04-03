@@ -219,7 +219,7 @@ func (n *network) TopicName(topic string) string {
 
 func (n *network) CloseConnection(pid lp2peer.ID) {
 	if err := n.host.Network().ClosePeer(pid); err != nil {
-		n.logger.Warn("unable to close connection", "peer", util.FingerprintPeerID(pid))
+		n.logger.Warn("unable to close connection", "peer", pid)
 	}
 }
 

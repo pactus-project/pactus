@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingBlockAnnounceMessages(t *testing.T) {
@@ -20,7 +20,7 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	b2 := block.GenerateTestBlock(nil, &lastBlockHash)
 	c2 := block.GenerateTestCertificate(b2.Hash())
 
-	pid := util.RandomPeerID()
+	pid := network.TestRandomPeerID()
 	msg := message.NewBlockAnnounceMessage(lastBlockheight+2, b2, c2)
 
 	pub, _ := bls.GenerateTestKeyPair()

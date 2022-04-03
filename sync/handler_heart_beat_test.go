@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingHeartbeatMessages(t *testing.T) {
@@ -15,7 +15,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 
 	tConsensus.Round = 1
 	h, _ := tConsensus.HeightRound()
-	pid := util.RandomPeerID()
+	pid := network.TestRandomPeerID()
 	msg := message.NewHeartBeatMessage(h, 2, hash.GenerateTestHash())
 
 	t.Run("Not in the committee, but processes hearbeat messages", func(t *testing.T) {

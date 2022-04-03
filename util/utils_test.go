@@ -36,11 +36,6 @@ func TestSetFlags(t *testing.T) {
 	assert.Equal(t, flags, 0x8)
 }
 
-func TestRandomPeerID(t *testing.T) {
-	id := RandomPeerID()
-	assert.NoError(t, id.Validate())
-}
-
 func TestRandUint16(t *testing.T) {
 	rnd := RandUint16(4)
 	assert.GreaterOrEqual(t, rnd, uint16(0))

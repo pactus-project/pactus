@@ -2,10 +2,7 @@ package util
 
 import (
 	crand "crypto/rand"
-	"fmt"
 	"math/big"
-
-	"github.com/libp2p/go-libp2p-core/peer"
 )
 
 const MaxUint16 = ^uint16(0)
@@ -96,21 +93,6 @@ func RandUint64(max uint64) uint64 {
 	bigMax.SetUint64(max)
 	bigRnd, _ := crand.Int(crand.Reader, bigMax)
 	return bigRnd.Uint64()
-}
-
-/// RandomPeerID returns a random peer ID
-func RandomPeerID() peer.ID {
-	s := Uint64ToSlice(RandUint64(MaxUint64))
-	id := [34]byte{0x12, 32}
-	copy(id[2:], s[:])
-	return peer.ID(id[:])
-
-}
-
-/// FingerprintPeerID returns a pretty and short string for the given peer ID
-func FingerprintPeerID(id peer.ID) string {
-	pid := id.Pretty()
-	return fmt.Sprintf("%s*%s", pid[:2], pid[len(pid)-6:])
 }
 
 /// SetFlag applies mask to the flags

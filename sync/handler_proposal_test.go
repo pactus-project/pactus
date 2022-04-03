@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/proposal"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestParsingProposalMessages(t *testing.T) {
@@ -17,7 +17,7 @@ func TestParsingProposalMessages(t *testing.T) {
 		prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
 		msg := message.NewProposalMessage(prop)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, util.RandomPeerID()))
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, network.TestRandomPeerID()))
 		assert.NotNil(t, tSync.cache.GetProposal(consensusHeight, 0))
 		assert.NotNil(t, tConsensus.RoundProposal(0))
 	})

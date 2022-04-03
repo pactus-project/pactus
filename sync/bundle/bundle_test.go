@@ -9,12 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestNewMessage(t *testing.T) {
-	pid := util.RandomPeerID()
+	pid := network.TestRandomPeerID()
 	msg := NewBundle(pid, message.NewQueryProposalMessage(100, 0))
 	assert.Zero(t, msg.Flags)
 	assert.Equal(t, msg.Initiator, pid)
@@ -36,7 +37,7 @@ func TestMessageCompress(t *testing.T) {
 		blocks = append(blocks, b)
 	}
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, 1234, 888, blocks, nil)
-	bdl := NewBundle(util.RandomPeerID(), msg)
+	bdl := NewBundle(network.TestRandomPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)
 	bdl.CompressIt()
@@ -59,7 +60,7 @@ func TestMessageCompress(t *testing.T) {
 func TestDecodeVoteMessage(t *testing.T) {
 	v, _ := vote.GenerateTestPrecommitVote(88, 0)
 	msg := message.NewVoteMessage(v)
-	bdl := NewBundle(util.RandomPeerID(), msg)
+	bdl := NewBundle(network.TestRandomPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)
 	bdl.CompressIt()
