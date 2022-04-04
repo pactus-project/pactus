@@ -32,7 +32,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 // PrivateKeyFromSeed generates a private key deterministically from
 // a secret octet string IKM.
 // Based on https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-2.3
-func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
+func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 	// L is `ceil((3 * ceil(log2(r))) / 16) = 48`,
 	//    where `r` is the order of the BLS 12-381 curve
 	//    r: 0x73eda753 299d7d48 3339d808 09a1d805 53bda402 fffe5bfe ffffffff 00000001
@@ -50,7 +50,6 @@ func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
 		salt = h[:]
 		L := int64(48)
 		okm := make([]byte, L)
-		keyInfo := []byte{}
 		prk := hkdf.Extract(sha256.New, append(ikm, util.IS2OP(big.NewInt(0), 1)...), salt[:])
 		reader := hkdf.Expand(sha256.New, prk, append(keyInfo, util.IS2OP(big.NewInt(L), 2)...))
 		_, _ = reader.Read(okm)
@@ -59,7 +58,8 @@ func PrivateKeyFromSeed(ikm []byte) (*PrivateKey, error) {
 		x = new(big.Int).Mod(util.OS2IP(okm), r)
 	}
 
-	sk := x.Bytes()
+	sk := make([]byte, 32)
+	x.FillBytes(sk)
 	return PrivateKeyFromBytes(sk)
 }
 
