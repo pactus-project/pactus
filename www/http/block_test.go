@@ -88,7 +88,7 @@ func TestBlockHash(t *testing.T) {
 		tHTTPServer.GetBlockHashHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
-		assert.Equal(t, w.Body.String(), b.Hash().String())
+		assert.Contains(t, w.Body.String(), b.Hash().String())
 		//fmt.Println(w.Body)
 	})
 }

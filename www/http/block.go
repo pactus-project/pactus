@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/hex"
 	"net/http"
 	"strconv"
 
@@ -49,23 +48,31 @@ func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
 	}
 
 	seed := b.Header().SortitionSeed()
-	out := new(BlockResult)
-	out.Header = BlockHeaderResult{
-		Version:         b.Header().Version(),
-		UnixTime:        uint32(b.Header().Time().Unix()),
-		PrevBlockHash:   b.Header().PrevBlockHash().String(),
-		StateRoot:       b.Header().StateRoot().String(),
-		SortitionSeed:   hex.EncodeToString(seed[:]),
-		ProposerAddress: b.Header().ProposerAddress().String(),
-	}
-	for _, trx := range b.Transactions() {
-		out.Txs = append(out.Txs, txToResult(trx))
-	}
-	out.Hash = b.Hash().String()
-	out.Data = hex.EncodeToString(d)
-	out.Time = b.Header().Time()
 
-	s.writeJSON(w, out)
+	tm := newTableMaker()
+	tm.addRowString("Time", b.Header().Time().String())
+	tm.addRowBytes("Hash", b.Hash().Bytes())
+	tm.addRowBytes("Data", d)
+	tm.addRowString("--- Header", "---")
+	tm.addRowInt("    Version", int(b.Header().Version()))
+	tm.addRowInt("    UnixTime", int(b.Header().Time().Unix()))
+	tm.addRowBytes("    PrevBlockHash", b.Header().PrevBlockHash().Bytes())
+	tm.addRowBytes("    StateRoot", b.Header().StateRoot().Bytes())
+	tm.addRowBytes("    SortitionSeed", seed[:])
+	tm.addRowString("    ProposerAddress", b.Header().ProposerAddress().String())
+	tm.addRowString("--- PrevCertificate", "---")
+	tm.addRowBytes("    Hash", b.PrevCertificate().Hash().Bytes())
+	tm.addRowInt("    Round", int(b.PrevCertificate().Round()))
+	tm.addRowInts("    Committers", b.PrevCertificate().Committers())
+	tm.addRowInts("    Committers", b.PrevCertificate().Absentees())
+	tm.addRowBytes("    Signature", b.PrevCertificate().Signature().Bytes())
+	tm.addRowString("--- Transactions", "---")
+	for i, trx := range b.Transactions() {
+		tm.addRowInt("------ Transaction #i", i+1)
+		txToTable(trx, tm)
+	}
+
+	s.writeHTML(w, tm.html())
 }
 
 func (s *Server) GetBlockHashHandler(w http.ResponseWriter, r *http.Request) {
@@ -91,5 +98,7 @@ func (s *Server) GetBlockHashHandler(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, err)
 		return
 	}
-	s.writePlainText(w, hash.String())
+	tm := newTableMaker()
+	tm.addRowBytes("Hash", hash.Bytes())
+	s.writeHTML(w, tm.html())
 }
