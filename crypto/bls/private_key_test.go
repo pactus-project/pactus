@@ -74,6 +74,10 @@ func TestPrivateKeyFromSeed(t *testing.T) {
 			"0000000000000000000000000000000000000000000000000000000000000000",
 			"4d129a19df86a0f5345bad4cc6f249ec2a819ccc3386895beb4f7d98b3db6235",
 		},
+		{
+			"2b1eb88002e83a622792d0b96d4f0695e328f49fdd32480ec0cf39c2c76463af",
+			"0000f678e80740072a4a7fe8c7344db88a00ccc7db36aa51fa51f9c68e561584",
+		},
 		/// The test vectors from EIP-2333
 		/// https://github.com/ethereum/EIPs/blob/784107449bd83a9327b54f82aba96de28d72b89a/EIPS/eip-2333.md#test-cases
 		{
@@ -96,7 +100,7 @@ func TestPrivateKeyFromSeed(t *testing.T) {
 
 	for i, test := range tests {
 		ikm, _ := hex.DecodeString(test.ikm)
-		prv, err := PrivateKeyFromSeed(ikm)
+		prv, err := PrivateKeyFromSeed(ikm, nil)
 		if test.sk == "Err" {
 			assert.Error(t, err, "test #i failed", i)
 		} else {

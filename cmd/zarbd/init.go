@@ -47,7 +47,7 @@ func Init() func(c *cli.Cmd) {
 			entropy, _ := bip39.NewEntropy(128)
 			mnemonic, _ := bip39.NewMnemonic(entropy)
 			seed := bip39.NewSeed(mnemonic, "")
-			prv, err := bls.PrivateKeyFromSeed(seed)
+			prv, err := bls.PrivateKeyFromSeed(seed, nil)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create key from the seed: %v", err)
 				return
