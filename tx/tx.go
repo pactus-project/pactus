@@ -2,7 +2,6 @@ package tx
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 
@@ -328,10 +327,6 @@ func (tx *Tx) Decode(r io.Reader) error {
 	}
 
 	return nil
-}
-
-func (tx *Tx) MarshalJSON() ([]byte, error) {
-	return json.Marshal(tx.data)
 }
 
 func (tx *Tx) Fingerprint() string {

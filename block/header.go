@@ -1,7 +1,6 @@
 package block
 
 import (
-	"encoding/json"
 	"io"
 	"time"
 
@@ -84,8 +83,4 @@ func (h *Header) Decode(r io.Reader) error {
 		&h.data.StateRoot,
 		&h.data.SortitionSeed,
 		&h.data.ProposerAddress)
-}
-
-func (h Header) MarshalJSON() ([]byte, error) {
-	return json.Marshal(h.data)
 }

@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/hex"
 	"net/http"
 	"strconv"
 
@@ -11,12 +10,29 @@ import (
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
-func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
+func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
+	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.ZarbServer_getBlockHash_Params) error {
 		vars := mux.Vars(r)
-		h, _ := hash.FromString(vars["hash"])
+		height, _ := strconv.ParseInt(vars["height"], 10, 32)
+		p.SetHeight(int32(height))
+		return nil
+	})
+	st, _ := res.Struct()
+	data, _ := st.Result()
+	h, _ := hash.FromBytes(data)
+	s.blockByHash(w, h)
+}
+
+func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	h, _ := hash.FromString(vars["hash"])
+	s.blockByHash(w, h)
+}
+
+func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
+	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
 		p.SetVerbosity(0)
-		return p.SetHash(h.Bytes())
+		return p.SetHash(blockHash.Bytes())
 	}).Result()
 
 	st, err := res.Struct()
@@ -25,23 +41,41 @@ func (s *Server) GetBlockHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	d, _ := st.Data()
-	h, _ := st.Hash()
 	b, err := block.FromBytes(d)
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
-	out := new(BlockResult)
-	out.Block = b
-	out.Hash, _ = hash.FromBytes(h)
-	out.Data = hex.EncodeToString(d)
-	out.Time = b.Header().Time()
+	seed := b.Header().SortitionSeed()
 
-	s.writeJSON(w, out)
+	tm := newTableMaker()
+	tm.addRowString("Time", b.Header().Time().String())
+	tm.addRowBytes("Hash", b.Hash().Bytes())
+	tm.addRowBytes("Data", d)
+	tm.addRowString("--- Header", "---")
+	tm.addRowInt("Version", int(b.Header().Version()))
+	tm.addRowInt("UnixTime", int(b.Header().Time().Unix()))
+	tm.addRowBlockHash("PrevBlockHash", b.Header().PrevBlockHash().Bytes())
+	tm.addRowBytes("StateRoot", b.Header().StateRoot().Bytes())
+	tm.addRowBytes("SortitionSeed", seed[:])
+	tm.addRowAccAddress("ProposerAddress", b.Header().ProposerAddress().String())
+	tm.addRowString("--- PrevCertificate", "---")
+	tm.addRowBytes("Hash", b.PrevCertificate().Hash().Bytes())
+	tm.addRowInt("Round", int(b.PrevCertificate().Round()))
+	tm.addRowInts("Committers", b.PrevCertificate().Committers())
+	tm.addRowInts("Absentees", b.PrevCertificate().Absentees())
+	tm.addRowBytes("Signature", b.PrevCertificate().Signature().Bytes())
+	tm.addRowString("--- Transactions", "---")
+	for i, trx := range b.Transactions() {
+		tm.addRowInt("Transaction #", i+1)
+		txToTable(trx, tm)
+	}
+
+	s.writeHTML(w, tm.html())
 }
 
-func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) GetBlockHashHandler(w http.ResponseWriter, r *http.Request) {
 	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.ZarbServer_getBlockHash_Params) error {
 		vars := mux.Vars(r)
 		height, err := strconv.ParseInt(vars["height"], 10, 32)
@@ -64,5 +98,7 @@ func (s *Server) GetBlockHeightHandler(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, err)
 		return
 	}
-	s.writePlainText(w, hash.String())
+	tm := newTableMaker()
+	tm.addRowBytes("Hash", hash.Bytes())
+	s.writeHTML(w, tm.html())
 }

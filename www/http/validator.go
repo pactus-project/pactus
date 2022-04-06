@@ -28,5 +28,14 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.writeJSON(w, val)
+	tm := newTableMaker()
+	tm.addRowString("Public Key", val.PublicKey().String())
+	tm.addRowValAddress("Address", val.Address().String())
+	tm.addRowInt("Number", int(val.Number()))
+	tm.addRowInt("Sequence", int(val.Sequence()))
+	tm.addRowInt("Stake", int(val.Stake()))
+	tm.addRowBytes("Hash", val.Hash().Bytes())
+	tm.addRowBytes("Data", d)
+
+	s.writeHTML(w, tm.html())
 }

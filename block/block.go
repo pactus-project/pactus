@@ -2,7 +2,6 @@ package block
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"time"
@@ -230,10 +229,6 @@ func (b *Block) Bytes() ([]byte, error) {
 	// Cache the serialized bytes and return them.
 	b.memorizedData = w.Bytes()
 	return b.memorizedData, nil
-}
-
-func (b *Block) MarshalJSON() ([]byte, error) {
-	return json.Marshal(b.data)
 }
 
 // ---------

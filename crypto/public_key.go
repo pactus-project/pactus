@@ -5,7 +5,6 @@ import "io"
 type PublicKey interface {
 	Bytes() []byte
 	String() string
-	MarshalJSON() ([]byte, error) // TODO: remove me
 	MarshalCBOR() ([]byte, error)
 	UnmarshalCBOR([]byte) error
 	Encode(io.Writer) error

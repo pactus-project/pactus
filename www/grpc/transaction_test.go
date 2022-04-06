@@ -29,8 +29,8 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, tx1.Signature().Bytes(), res.Tranaction.Signature)
 		assert.Equal(t, tx1.PublicKey().Bytes(), res.Tranaction.PublicKey)
 		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Amount, res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Amount)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Receiver.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Receiver)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.Bytes(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Receiver.Bytes(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Receiver)
 	})
 
 	t.Run("Should return nil value because transcation id is invalid", func(t *testing.T) {

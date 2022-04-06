@@ -3,7 +3,6 @@ package http
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net"
@@ -49,12 +48,12 @@ func (s *Server) StartServer(capnpServer string) error {
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
 	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)
-	s.router.HandleFunc("/block/height/{height}", s.GetBlockHandler)
-	s.router.HandleFunc("/block_height/hash/{hash}", s.GetBlockHeightHandler)
-	s.router.HandleFunc("/transaction/id/{hash}", s.GetTransactionHandler)
+	s.router.HandleFunc("/block/hash/{hash}", s.GetBlockByHashHandler)
+	s.router.HandleFunc("/block/height/{height}", s.GetBlockByHeightHandler)
+	s.router.HandleFunc("/block_hash/height/{height}", s.GetBlockHashHandler)
+	s.router.HandleFunc("/transaction/id/{id}", s.GetTransactionHandler)
 	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
-	s.router.HandleFunc("/send_raw_transaction/{data}", s.SendRawTransactionHandler)
 	s.router.HandleFunc("/network", s.NetworkHandler)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
@@ -109,28 +108,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	buf.WriteString("</body></html>")
-
 	s.writeHTML(w, buf.String())
-}
-
-func (s *Server) writeJSON(w http.ResponseWriter, out interface{}) {
-	j, err := json.MarshalIndent(out, "", "  ")
-	if err != nil {
-		s.writeError(w, err)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, err = io.WriteString(w, string(j))
-	if err != nil {
-		s.logger.Error("error on writing JSON string", "err", err)
-	}
-}
-
-func (s *Server) writePlainText(w http.ResponseWriter, out string) int {
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	n, _ := io.WriteString(w, out)
-	return n
 }
 
 func (s *Server) writeError(w http.ResponseWriter, err error) int {
@@ -147,4 +125,48 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	w.WriteHeader(http.StatusOK)
 	n, _ := io.WriteString(w, html)
 	return n
+}
+
+type tableMaker struct {
+	w *bytes.Buffer
+}
+
+func newTableMaker() *tableMaker {
+	t := &tableMaker{
+		w: bytes.NewBufferString("<table>"),
+	}
+	return t
+}
+
+func (t *tableMaker) addRowBlockHash(key string, val []byte) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/block/hash/%x\">%x</a></td></tr>", key, val, val))
+}
+func (t *tableMaker) addRowAccAddress(key, val string) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/account/address/%s\">%s</a></td></tr>", key, val, val))
+}
+func (t *tableMaker) addRowValAddress(key, val string) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val))
+}
+func (t *tableMaker) addRowTxID(key string, val []byte) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/transaction/id/%x\">%x</a></td></tr>", key, val, val))
+}
+func (t *tableMaker) addRowString(key, val string) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, val))
+}
+func (t *tableMaker) addRowInt(key string, val int) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d</td></tr>", key, val))
+}
+func (t *tableMaker) addRowInts(key string, vals []int32) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>", key))
+	for _, n := range vals {
+		t.w.WriteString(fmt.Sprintf("%d, ", n))
+	}
+	t.w.WriteString("</td></tr>")
+}
+func (t *tableMaker) addRowBytes(key string, val []byte) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%x</td></tr>", key, val))
+}
+func (t *tableMaker) html() string {
+	t.w.WriteString("</table>")
+	return t.w.String()
 }

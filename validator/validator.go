@@ -2,7 +2,6 @@ package validator
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
@@ -143,10 +142,6 @@ func (val *Validator) Bytes() ([]byte, error) {
 	}
 
 	return w.Bytes(), nil
-}
-
-func (val Validator) MarshalJSON() ([]byte, error) {
-	return json.Marshal(val.data)
 }
 
 func (val Validator) Fingerprint() string {

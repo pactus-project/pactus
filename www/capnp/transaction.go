@@ -8,8 +8,8 @@ import (
 )
 
 func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
-	s, _ := args.Params.Id()
-	h, err := hash.FromString(string(s))
+	data, _ := args.Params.Id()
+	h, err := hash.FromBytes(data)
 	if err != nil {
 		return fmt.Errorf("invalid transaction id: %s", err)
 	}

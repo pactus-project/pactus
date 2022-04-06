@@ -19,7 +19,7 @@ func TestBlockchainInfo(t *testing.T) {
 	tHTTPServer.BlockchainHandler(w, r)
 
 	assert.Equal(t, w.Code, 200)
-	assert.Contains(t, w.Body.String(), "\"LastBlockHeight\": 10")
+	assert.Contains(t, w.Body.String(), "10")
 }
 
 func TestNetworkInfo(t *testing.T) {

@@ -3,7 +3,6 @@ package crypto
 import (
 	"bytes"
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
 
 	"github.com/btcsuite/btcutil/bech32"
@@ -74,10 +73,6 @@ func (addr Address) String() string {
 	}
 
 	return str
-}
-
-func (addr Address) MarshalJSON() ([]byte, error) {
-	return json.Marshal(addr.String())
 }
 
 func (addr *Address) SanityCheck() error {

@@ -6,15 +6,19 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/tx/payload"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	b := s.capnp.GetTransaction(s.ctx, func(p capnp.ZarbServer_getTransaction_Params) error {
 		vars := mux.Vars(r)
-		return p.SetId([]byte(vars["id"]))
+		id, err := hex.DecodeString(vars["id"])
+		if err != nil {
+			return err
+		}
+		return p.SetId(id)
 	})
 
 	t, err := b.Struct()
@@ -31,45 +35,45 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, err)
 		return
 	}
+	tm := newTableMaker()
+	txToTable(trx, tm)
+	s.writeHTML(w, tm.html())
 
-	out := new(TransactionResult)
-	out.ID = trx.ID()
-	out.Tx = *trx
-	out.Data = hex.EncodeToString(data)
-
-	s.writeJSON(w, out)
 }
 
-func (s *Server) SendRawTransactionHandler(w http.ResponseWriter, r *http.Request) {
-	txRes := s.capnp.SendRawTransaction(s.ctx, func(p capnp.ZarbServer_sendRawTransaction_Params) error {
-		vars := mux.Vars(r)
-		d, err := hex.DecodeString(vars["data"])
-		if err != nil {
-			return err
-		}
-		return p.SetRawTx(d)
-	})
+func txToTable(trx *tx.Tx, tm *tableMaker) {
+	d, _ := trx.Bytes()
 
-	t, err := txRes.Struct()
-	if err != nil {
-		s.writeError(w, err)
-		return
+	tm.addRowTxID("ID", trx.ID().Bytes())
+	tm.addRowBytes("Data", d)
+	tm.addRowInt("Version", int(trx.Version()))
+	tm.addRowBytes("Stamp", trx.Stamp().Bytes())
+	tm.addRowInt("Sequence", int(trx.Sequence()))
+	tm.addRowInt("Fee", int(trx.Fee()))
+	tm.addRowString("Memo", trx.Memo())
+	switch trx.Payload().Type() {
+	case payload.PayloadTypeBond:
+		tm.addRowString("Payload type", "Bond")
+		tm.addRowAccAddress("Sender", trx.Payload().(*payload.BondPayload).Sender.String())
+		tm.addRowValAddress("Validator address", trx.Payload().(*payload.BondPayload).PublicKey.Address().String())
+		tm.addRowBytes("Validator PublicKey", trx.Payload().(*payload.BondPayload).PublicKey.Bytes())
+		tm.addRowInt("Stake", int(trx.Payload().(*payload.BondPayload).Stake))
+
+	case payload.PayloadTypeSend:
+		tm.addRowString("Payload type", "Send")
+		tm.addRowAccAddress("Sender", trx.Payload().(*payload.SendPayload).Sender.String())
+		tm.addRowAccAddress("Receiver", trx.Payload().(*payload.SendPayload).Receiver.String())
+		tm.addRowInt("Amount", int(trx.Payload().(*payload.SendPayload).Amount))
+
+	case payload.PayloadTypeSortition:
+		tm.addRowString("Payload type", "Sortition")
+		tm.addRowValAddress("Address", trx.Payload().(*payload.SortitionPayload).Address.String())
+		tm.addRowBytes("Proof", trx.Payload().(*payload.SortitionPayload).Proof[:])
 	}
-
-	res, _ := t.Result()
-
-	out := new(SendTranscationResult)
-	txID, err := res.Id()
-	if err != nil {
-		s.writeError(w, err)
-		return
+	if trx.PublicKey() != nil {
+		tm.addRowBytes("PublicKey", trx.PublicKey().Bytes())
 	}
-	out.ID, err = hash.FromBytes(txID)
-	if err != nil {
-		s.writeError(w, err)
-		return
+	if trx.Signature() != nil {
+		tm.addRowBytes("Signature", trx.Signature().Bytes())
 	}
-	out.Status = int(res.Status())
-
-	s.writeJSON(w, out)
 }
