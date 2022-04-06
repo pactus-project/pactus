@@ -9,4 +9,3 @@ todo
 dist/
 .releaser.yml
 zarbd
-zarbcli

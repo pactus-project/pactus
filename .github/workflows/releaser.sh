@@ -9,7 +9,7 @@ make release
 
 if [[ "$OS" == "mingw"* ]]; then
     OS="windows"
-    7z a zarb-windows-$TAG-$MACH.zip zarbd.exe zarbcli.exe
+    7z a zarb-windows-$TAG-$MACH.zip zarbd.exe
 else
-    tar -czvf zarb-$OS-$TAG-$MACH.tar.gz ./zarbd ./zarbcli
+    tar -czvf zarb-$OS-$TAG-$MACH.tar.gz ./zarbd
 fi

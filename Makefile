@@ -30,22 +30,19 @@ herumi:
 ### Building
 build:
 	go build $(BUILD_LDFLAGS) -o ./build/zarbd ./cmd/zarbd
-	go build $(BUILD_LDFLAGS) -o ./build/zarbcli ./cmd/zarbcli
 
 install:
 	go install $(BUILD_LDFLAGS) ./cmd/zarbd
-	go install $(BUILD_LDFLAGS) ./cmd/zarbcli
 
 release: herumi
 	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarbd
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarbcli
 
 ########################################
 ### Testing
 unit_test:
 	go test $(PACKAGES)
 
-test: 
+test:
 	go test ./... -covermode=atomic
 
 test_race:
