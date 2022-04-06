@@ -29,13 +29,10 @@ herumi:
 ########################################
 ### Building
 build:
-	go build $(BUILD_LDFLAGS) -o ./build/zarbd ./cmd/zarbd
-
-install:
-	go install $(BUILD_LDFLAGS) ./cmd/zarbd
+	go build $(BUILD_LDFLAGS) -o ./build/zarb-daemon ./cmd/daemon
 
 release: herumi
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/zarbd
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./build/zarb-daemon ./cmd/daemon
 
 ########################################
 ### Testing
