@@ -18,7 +18,7 @@ devtools:
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	go install github.com/bufbuild/buf/cmd/buf@v1.3
 	go install github.com/rakyll/statik@v0.1
-
+	go install github.com/gordonklaus/ineffassign@latest
 
 herumi:
 	@if [ ! -d $(HERUMI) ]; then \
@@ -76,7 +76,13 @@ fmt:
 		--enable=revive \
 		--enable=asciicheck \
 		--enable=misspell \
-		--enable=gosec
+		--enable=asciicheck \
+		--enable=decorder \
+		--enable=depguard \
+		--enable=nilerr \
+		--enable=gosec \
+		--enable=gocyclo
+	ineffassign ./...
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
