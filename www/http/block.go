@@ -60,12 +60,14 @@ func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
 	tm.addRowBytes("StateRoot", b.Header().StateRoot().Bytes())
 	tm.addRowBytes("SortitionSeed", seed[:])
 	tm.addRowAccAddress("ProposerAddress", b.Header().ProposerAddress().String())
-	tm.addRowString("--- PrevCertificate", "---")
-	tm.addRowBytes("Hash", b.PrevCertificate().Hash().Bytes())
-	tm.addRowInt("Round", int(b.PrevCertificate().Round()))
-	tm.addRowInts("Committers", b.PrevCertificate().Committers())
-	tm.addRowInts("Absentees", b.PrevCertificate().Absentees())
-	tm.addRowBytes("Signature", b.PrevCertificate().Signature().Bytes())
+	if b.PrevCertificate() != nil {
+		tm.addRowString("--- PrevCertificate", "---")
+		tm.addRowBytes("Hash", b.PrevCertificate().Hash().Bytes())
+		tm.addRowInt("Round", int(b.PrevCertificate().Round()))
+		tm.addRowInts("Committers", b.PrevCertificate().Committers())
+		tm.addRowInts("Absentees", b.PrevCertificate().Absentees())
+		tm.addRowBytes("Signature", b.PrevCertificate().Signature().Bytes())
+	}
 	tm.addRowString("--- Transactions", "---")
 	for i, trx := range b.Transactions() {
 		tm.addRowInt("Transaction #", i+1)
