@@ -30,7 +30,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tm := newTableMaker()
-	tm.addRowString("Address", acc.Address().String())
+	tm.addRowAccAddress("Address", acc.Address().String())
 	tm.addRowInt("Number", int(acc.Number()))
 	tm.addRowInt("Sequence", int(acc.Sequence()))
 	tm.addRowInt("Balance", int(acc.Balance()))

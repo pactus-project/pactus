@@ -51,7 +51,7 @@ func (s *Server) StartServer(capnpServer string) error {
 	s.router.HandleFunc("/block/hash/{hash}", s.GetBlockByHashHandler)
 	s.router.HandleFunc("/block/height/{height}", s.GetBlockByHeightHandler)
 	s.router.HandleFunc("/block_hash/height/{height}", s.GetBlockHashHandler)
-	s.router.HandleFunc("/transaction/id/{hash}", s.GetTransactionHandler)
+	s.router.HandleFunc("/transaction/id/{id}", s.GetTransactionHandler)
 	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	s.router.HandleFunc("/network", s.NetworkHandler)
@@ -138,6 +138,18 @@ func newTableMaker() *tableMaker {
 	return t
 }
 
+func (t *tableMaker) addRowBlockHash(key string, val []byte) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/block/hash/%x\">%x</a></td></tr>", key, val, val))
+}
+func (t *tableMaker) addRowAccAddress(key, val string) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/account/address/%s\">%s</a></td></tr>", key, val, val))
+}
+func (t *tableMaker) addRowValAddress(key, val string) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val))
+}
+func (t *tableMaker) addRowTxID(key string, val []byte) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/transaction/id/%x\">%x</a></td></tr>", key, val, val))
+}
 func (t *tableMaker) addRowString(key, val string) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, val))
 }

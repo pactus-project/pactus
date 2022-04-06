@@ -30,7 +30,7 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 
 	tm := newTableMaker()
 	tm.addRowString("Public Key", val.PublicKey().String())
-	tm.addRowString("Address", val.Address().String())
+	tm.addRowValAddress("Address", val.Address().String())
 	tm.addRowInt("Number", int(val.Number()))
 	tm.addRowInt("Sequence", int(val.Sequence()))
 	tm.addRowInt("Stake", int(val.Stake()))
