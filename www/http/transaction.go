@@ -50,7 +50,7 @@ func txToTable(trx *tx.Tx, tm *tableMaker) {
 	tm.addRowBytes("Stamp", trx.Stamp().Bytes())
 	tm.addRowInt("Sequence", int(trx.Sequence()))
 	tm.addRowInt("Fee", int(trx.Fee()))
-	tm.addRowString("Fee", trx.Memo())
+	tm.addRowString("Memo", trx.Memo())
 	switch trx.Payload().Type() {
 	case payload.PayloadTypeBond:
 		tm.addRowString("Payload type", "Bond")
