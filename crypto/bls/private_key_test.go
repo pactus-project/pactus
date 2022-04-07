@@ -5,24 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestPrivateKeyMarshaling(t *testing.T) {
-	_, prv1 := GenerateTestKeyPair()
-	prv2 := new(PrivateKey)
-
-	bs, err := prv1.MarshalCBOR()
-	assert.NoError(t, err)
-	assert.NoError(t, prv2.UnmarshalCBOR(bs))
-	assert.True(t, prv1.EqualsTo(prv2))
-	assert.NoError(t, prv1.SanityCheck())
-
-	inv, _ := hex.DecodeString(strings.Repeat("ff", PrivateKeySize))
-	data, _ := cbor.Marshal(inv)
-	assert.Error(t, prv2.UnmarshalCBOR(data))
-}
 
 func TestPrivateKeyFromString(t *testing.T) {
 	_, prv1 := GenerateTestKeyPair()
@@ -40,16 +24,15 @@ func TestPrivateKeyFromString(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestPrivateKeyEmpty(t *testing.T) {
-	prv1 := &PrivateKey{}
+func TestPrivateKeyFromBytes(t *testing.T) {
+	_, prv1 := GenerateTestKeyPair()
+	prv2, err := PrivateKeyFromBytes(prv1.Bytes())
+	assert.NoError(t, err)
+	assert.True(t, prv1.EqualsTo(prv2))
+	assert.NoError(t, prv1.SanityCheck())
 
-	bs, err := prv1.MarshalCBOR()
-	assert.Error(t, err)
-	assert.Empty(t, prv1.String())
-	assert.Empty(t, prv1.Bytes())
-
-	var prv2 PrivateKey
-	err = prv2.UnmarshalCBOR(bs)
+	inv, _ := hex.DecodeString(strings.Repeat("ff", PrivateKeySize))
+	_, err = PrivateKeyFromBytes(inv)
 	assert.Error(t, err)
 }
 

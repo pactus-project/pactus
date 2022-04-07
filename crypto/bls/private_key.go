@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math/big"
 
-	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
@@ -16,7 +15,7 @@ import (
 const PrivateKeySize = 32
 
 type PrivateKey struct {
-	secretKey *bls.SecretKey
+	secretKey bls.SecretKey
 }
 
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
@@ -72,45 +71,17 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	}
 
 	var prv PrivateKey
-	prv.secretKey = sc
+	prv.secretKey = *sc
 
 	return &prv, nil
 }
 
 func (prv PrivateKey) Bytes() []byte {
-	if prv.secretKey == nil {
-		return nil
-	}
 	return prv.secretKey.Serialize()
 }
 
 func (prv PrivateKey) String() string {
-	if prv.secretKey == nil {
-		return ""
-	}
 	return prv.secretKey.SerializeToHexStr()
-}
-
-func (prv *PrivateKey) MarshalCBOR() ([]byte, error) {
-	if prv.secretKey == nil {
-		return nil, fmt.Errorf("invalid private key")
-	}
-	return cbor.Marshal(prv.Bytes())
-}
-
-func (prv *PrivateKey) UnmarshalCBOR(bs []byte) error {
-	var data []byte
-	if err := cbor.Unmarshal(bs, &data); err != nil {
-		return err
-	}
-
-	p, err := PrivateKeyFromBytes(data)
-	if err != nil {
-		return err
-	}
-
-	*prv = *p
-	return nil
 }
 
 func (prv *PrivateKey) SanityCheck() error {
@@ -122,18 +93,18 @@ func (prv *PrivateKey) SanityCheck() error {
 
 func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
 	sig := new(Signature)
-	sig.signature = prv.secretKey.SignByte(msg)
+	sig.signature = *prv.secretKey.SignByte(msg)
 
 	return sig
 }
 
 func (prv *PrivateKey) PublicKey() crypto.PublicKey {
-	pb := new(PublicKey)
-	pb.publicKey = prv.secretKey.GetPublicKey()
-
-	return pb
+	pub := prv.secretKey.GetPublicKey()
+	return &PublicKey{
+		publicKey: *pub,
+	}
 }
 
 func (prv *PrivateKey) EqualsTo(right crypto.PrivateKey) bool {
-	return prv.secretKey.IsEqual(right.(*PrivateKey).secretKey)
+	return prv.secretKey.IsEqual(&right.(*PrivateKey).secretKey)
 }

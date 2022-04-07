@@ -28,16 +28,15 @@ import (
 type state struct {
 	lk sync.RWMutex
 
-	config       *Config
-	signer       crypto.Signer
-	mintbaseAddr crypto.Address
-	genDoc       *genesis.Genesis
-	store        store.Store
-	params       param.Params
-	txPool       txpool.TxPool
-	committee    committee.Committee
-	lastInfo     *lastinfo.LastInfo
-	logger       *logger.Logger
+	config    *Config
+	signer    crypto.Signer
+	genDoc    *genesis.Genesis
+	store     store.Store
+	params    param.Params
+	txPool    txpool.TxPool
+	committee committee.Committee
+	lastInfo  *lastinfo.LastInfo
+	logger    *logger.Logger
 }
 
 func LoadOrNewState(
@@ -47,27 +46,14 @@ func LoadOrNewState(
 	store store.Store,
 	txPool txpool.TxPool) (Facade, error) {
 
-	var mintbaseAddr crypto.Address
-	if conf.MintbaseAddress != "" {
-		// TODO: write test for me
-		addr, err := crypto.AddressFromString(conf.MintbaseAddress)
-		if err != nil {
-			return nil, err
-		}
-		mintbaseAddr = addr
-	} else {
-		mintbaseAddr = signer.Address()
-	}
-
 	st := &state{
-		config:       conf,
-		genDoc:       genDoc,
-		txPool:       txPool,
-		params:       genDoc.Params(),
-		signer:       signer,
-		store:        store,
-		mintbaseAddr: mintbaseAddr,
-		lastInfo:     lastinfo.NewLastInfo(store),
+		config:   conf,
+		genDoc:   genDoc,
+		txPool:   txPool,
+		params:   genDoc.Params(),
+		signer:   signer,
+		store:    store,
+		lastInfo: lastinfo.NewLastInfo(store),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -219,9 +205,19 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	if err != nil {
 		return nil
 	}
+	// Block rewards goes to the mintbase address
+	// If it is set inside config, we use that address
+	// otherwise, it will be the signer address
+	var mintbaseAddr crypto.Address
+	if st.config.MintbaseAddress != "" {
+		addr, _ := crypto.AddressFromString(st.config.MintbaseAddress)
+		mintbaseAddr = addr
+	} else {
+		mintbaseAddr = st.signer.Address()
+	}
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
-	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, st.params.BlockReward+fee, "")
+	tx := tx.NewMintbaseTx(stamp, seq, mintbaseAddr, st.params.BlockReward+fee, "")
 	return tx
 }
 

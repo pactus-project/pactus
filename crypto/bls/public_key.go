@@ -17,7 +17,7 @@ import (
 const PublicKeySize = 96
 
 type PublicKey struct {
-	publicKey *bls.PublicKey
+	publicKey bls.PublicKey
 }
 
 func PublicKeyFromString(text string) (*PublicKey, error) {
@@ -39,29 +39,20 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	}
 
 	var pub PublicKey
-	pub.publicKey = pk
+	pub.publicKey = *pk
 
 	return &pub, nil
 }
 
 func (pub PublicKey) Bytes() []byte {
-	if pub.publicKey == nil {
-		return nil
-	}
 	return pub.publicKey.Serialize()
 }
 
 func (pub PublicKey) String() string {
-	if pub.publicKey == nil {
-		return ""
-	}
 	return pub.publicKey.SerializeToHexStr()
 }
 
 func (pub *PublicKey) MarshalCBOR() ([]byte, error) {
-	if pub.publicKey == nil {
-		return nil, fmt.Errorf("invalid public key")
-	}
 	return cbor.Marshal(pub.Bytes())
 }
 
@@ -102,14 +93,17 @@ func (pub *PublicKey) SanityCheck() error {
 }
 
 func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
-	if !sig.(*Signature).signature.VerifyByte(pub.publicKey, msg) {
+	if sig == nil {
+		return errors.Error(errors.ErrInvalidSignature)
+	}
+	if !sig.(*Signature).signature.VerifyByte(&pub.publicKey, msg) {
 		return errors.Error(errors.ErrInvalidSignature)
 	}
 	return nil
 }
 
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
-	return pub.publicKey.IsEqual(right.(*PublicKey).publicKey)
+	return pub.publicKey.IsEqual(&right.(*PublicKey).publicKey)
 }
 
 func (pub *PublicKey) Address() crypto.Address {

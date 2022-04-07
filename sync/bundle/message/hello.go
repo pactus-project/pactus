@@ -43,6 +43,12 @@ func (m *HelloMessage) SanityCheck() error {
 	if m.Height < 0 {
 		return errors.Error(errors.ErrInvalidHeight)
 	}
+	if m.Signature == nil {
+		return errors.Error(errors.ErrInvalidSignature)
+	}
+	if m.PublicKey == nil {
+		return errors.Error(errors.ErrInvalidPublicKey)
+	}
 	if err := m.PublicKey.Verify(m.SignBytes(), m.Signature); err != nil {
 		return err
 	}

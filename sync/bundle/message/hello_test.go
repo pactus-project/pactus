@@ -34,6 +34,24 @@ func TestHelloMessage(t *testing.T) {
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
 	})
 
+	t.Run("Signature is nil", func(t *testing.T) {
+		signer := bls.GenerateTestSigner()
+		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
+		signer.SignMsg(m)
+		m.Signature = nil
+
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
+	})
+
+	t.Run("PublicKey is nil", func(t *testing.T) {
+		signer := bls.GenerateTestSigner()
+		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
+		signer.SignMsg(m)
+		m.PublicKey = nil
+
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidPublicKey)
+	})
+
 	t.Run("Ok", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		m := NewHelloMessage(network.TestRandomPeerID(), "Alice", 100, 0, hash.GenerateTestHash())

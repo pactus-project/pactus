@@ -15,7 +15,7 @@ import (
 const SignatureSize = 48
 
 type Signature struct {
-	signature *bls.Sign
+	signature bls.Sign
 }
 
 func SignatureFromString(text string) (*Signature, error) {
@@ -37,30 +37,20 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 	}
 
 	var sig Signature
-	sig.signature = s
+	sig.signature = *s
 
 	return &sig, nil
 }
 
 func (sig Signature) Bytes() []byte {
-	if sig.signature == nil {
-		return nil
-	}
-
 	return sig.signature.Serialize()
 }
 
 func (sig Signature) String() string {
-	if sig.signature == nil {
-		return ""
-	}
 	return sig.signature.SerializeToHexStr()
 }
 
 func (sig *Signature) MarshalCBOR() ([]byte, error) {
-	if sig.signature == nil {
-		return nil, fmt.Errorf("invalid signature")
-	}
 	return cbor.Marshal(sig.Bytes())
 }
 
@@ -101,5 +91,5 @@ func (sig *Signature) SanityCheck() error {
 }
 
 func (sig Signature) EqualsTo(right crypto.Signature) bool {
-	return sig.signature.IsEqual(right.(*Signature).signature)
+	return sig.signature.IsEqual(&right.(*Signature).signature)
 }

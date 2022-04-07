@@ -7,6 +7,7 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -20,6 +21,8 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 	assert.NoError(t, pub2.UnmarshalCBOR(bs))
 	assert.True(t, pub1.EqualsTo(pub2))
 	assert.NoError(t, pub1.SanityCheck())
+
+	assert.Error(t, pub2.UnmarshalCBOR([]byte("abcd")))
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", PublicKeySize))
 	data, _ := cbor.Marshal(inv)
@@ -61,13 +64,13 @@ func TestPublicKeyEmpty(t *testing.T) {
 	pub1 := PublicKey{}
 
 	bs, err := pub1.MarshalCBOR()
-	assert.Error(t, err)
-	assert.Empty(t, pub1.String())
-	assert.Empty(t, pub1.Bytes())
+	assert.NoError(t, err)
+	assert.Error(t, pub1.SanityCheck())
 
 	var pub2 PublicKey
 	err = pub2.UnmarshalCBOR(bs)
-	assert.Error(t, err)
+	assert.NoError(t, err)
+	assert.Error(t, pub2.SanityCheck())
 }
 
 func TestPublicKeySanityCheck(t *testing.T) {
@@ -82,4 +85,25 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 
 	assert.NoError(t, pub1.VerifyAddress(pub1.Address()))
 	assert.Equal(t, errors.Code(pub1.VerifyAddress(pub2.Address())), errors.ErrInvalidAddress)
+}
+
+func TestNilPublicKey(t *testing.T) {
+	pub := &PublicKey{}
+	assert.Error(t, pub.VerifyAddress(crypto.GenerateTestAddress()))
+	assert.Error(t, pub.Verify(nil, nil))
+	assert.Error(t, pub.Verify(nil, &Signature{}))
+}
+
+func TestNilSignature(t *testing.T) {
+	pub, _ := GenerateTestKeyPair()
+	assert.Error(t, pub.Verify(nil, nil))
+	assert.Error(t, pub.Verify(nil, &Signature{}))
+}
+
+func TestInfinitySignature(t *testing.T) {
+	pub, err := PublicKeyFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+	assert.NoError(t, err)
+	sig, err := SignatureFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+	assert.NoError(t, err)
+	assert.Error(t, pub.Verify(nil, sig))
 }

@@ -60,8 +60,7 @@ func TestInvalidCertificate(t *testing.T) {
 	assert.Error(t, cert.SanityCheck())
 
 	cert = GenerateTestCertificate(hash.GenerateTestHash())
-	sig, _ := bls.SignatureFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
-	cert.data.Signature = sig
+	cert.data.Signature = &bls.Signature{}
 	assert.Error(t, cert.SanityCheck())
 }
 

@@ -23,6 +23,8 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 	assert.True(t, sig1.EqualsTo(sig2))
 	assert.NoError(t, sig1.SanityCheck())
 
+	assert.Error(t, sig2.UnmarshalCBOR([]byte("abcd")))
+
 	inv, _ := hex.DecodeString(strings.Repeat("ff", SignatureSize))
 	data, _ := cbor.Marshal(inv)
 	assert.Error(t, sig2.UnmarshalCBOR(data))
@@ -65,13 +67,13 @@ func TestSignatureEmpty(t *testing.T) {
 	sig1 := Signature{}
 
 	bs, err := sig1.MarshalCBOR()
-	assert.Error(t, err)
-	assert.Empty(t, sig1.String())
-	assert.Empty(t, sig1.Bytes())
+	assert.NoError(t, err)
+	assert.Error(t, sig1.SanityCheck())
 
-	sig3 := new(Signature)
-	err = sig3.UnmarshalCBOR(bs)
-	assert.Error(t, err)
+	sig2 := new(Signature)
+	err = sig2.UnmarshalCBOR(bs)
+	assert.NoError(t, err)
+	assert.Error(t, sig2.SanityCheck())
 }
 
 func TestVerifyingSignature(t *testing.T) {

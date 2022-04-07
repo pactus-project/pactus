@@ -212,13 +212,13 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Zero signature", func(t *testing.T) {
 		trx, _ := GenerateTestSendTx()
-		trx.data.Signature, _ = bls.SignatureFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		trx.data.Signature = &bls.Signature{}
 		assert.Error(t, trx.SanityCheck())
 	})
 
 	t.Run("Zero public key", func(t *testing.T) {
 		trx, _ := GenerateTestSendTx()
-		trx.data.PublicKey, _ = bls.PublicKeyFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		trx.data.PublicKey = &bls.PublicKey{}
 		assert.Error(t, trx.SanityCheck())
 	})
 }
