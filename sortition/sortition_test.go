@@ -12,7 +12,7 @@ import (
 )
 
 func TestEvaluation(t *testing.T) {
-	prv, err := bls.PrivateKeyFromString("prv1qy8snsfusavhmr3h5srsh8h977wtmgq5qn764hpw36n8kgjnrftg73284uu")
+	prv, err := bls.PrivateKeyFromString("PRV1QY8SNSFUSAVHMR3H5SRSH8H977WTMGQ5QN764HPW36N8KGJNRFTG73284UU")
 	assert.NoError(t, err)
 	signer := crypto.NewSigner(prv)
 	seed, _ := VerifiableSeedFromString("b63179137423ab2da8279d7aa3726d7ad05ae7d3ab3f744db0a9a719d12a720e72dc1d1e9222360243007f2f4adf7009")

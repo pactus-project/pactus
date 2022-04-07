@@ -9,7 +9,7 @@ import (
 
 func TestSigning(t *testing.T) {
 	msg := []byte("zarb")
-	prv, _ := PrivateKeyFromString("prv1q95de0uxsyea8ka56y4qc2g8excf8hl0aakns4dvkeszahnq5hrdq3kqewf")
+	prv, _ := PrivateKeyFromString("PRV1Q95DE0UXSYEA8KA56Y4QC2G8EXCF8HL0AAKNS4DVKESZAHNQ5HRDQ3KQEWF")
 	pub, _ := PublicKeyFromString("af0f74917f5065af94727ae9541b0ddcfb5b828a9e016b02498f477ed37fb44d5d882495afb6fd4f9773e4ea9deee436030c4d61c6e3a1151585e1d838cae1444a438d089ce77e10c492a55f6908125c5be9b236a246e4082d08de564e111e65")
 	sig, _ := SignatureFromString("ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
 	addr, _ := crypto.AddressFromString("zc1qxset4l7ewjvvd5r9uwmpngw59xmdkuvwy7va0tl")
@@ -22,8 +22,8 @@ func TestSigning(t *testing.T) {
 
 func TestAggregation(t *testing.T) {
 	msg := []byte("zarb")
-	prv1, _ := PrivateKeyFromString("prv1q95de0uxsyea8ka56y4qc2g8excf8hl0aakns4dvkeszahnq5hrdq3kqewf")
-	prv2, _ := PrivateKeyFromString("prv1q9h3sh6nflpe4pef5wkjys83v750xd74pa5f85xgr7343lzehk06s57mecw")
+	prv1, _ := PrivateKeyFromString("PRV1Q95DE0UXSYEA8KA56Y4QC2G8EXCF8HL0AAKNS4DVKESZAHNQ5HRDQ3KQEWF")
+	prv2, _ := PrivateKeyFromString("PRV1Q9H3SH6NFLPE4PEF5WKJYS83V750XD74PA5F85XGR7343LZEHK06S57MECW")
 	agg, _ := SignatureFromString("a390ffec7061827b7e89193a26841dd9e3537b5db0af55661b624e8b93b855e9f65278850002ea72fb3098e674220eca")
 	sig1 := prv1.Sign(msg).(*Signature)
 	sig2 := prv2.Sign(msg).(*Signature)

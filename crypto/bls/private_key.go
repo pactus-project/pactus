@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/btcsuite/btcutil/bech32"
 	"github.com/herumi/bls-go-binary/bls"
@@ -94,7 +95,7 @@ func (prv PrivateKey) String() string {
 		panic(err.Error())
 	}
 
-	return str
+	return strings.ToUpper(str)
 }
 
 func (prv *PrivateKey) SanityCheck() error {
