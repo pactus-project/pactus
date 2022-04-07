@@ -7,11 +7,11 @@ RUN cd /zarb-go && make release
 ## Copy binary files from builder into second container
 FROM alpine:3.15
 
-COPY --from=builder /zarb-go/zarbd /usr/bin
+COPY --from=builder /zarb-go/build/zarb-daemon /usr/bin
 
 ENV WORKING_DIR "/zarb"
 
 VOLUME $WORKING_DIR
 WORKDIR $WORKING_DIR
 
-ENTRYPOINT ["zarbd"]
+ENTRYPOINT ["zarb-daemon"]
