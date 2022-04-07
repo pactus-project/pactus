@@ -8,7 +8,7 @@ import (
 
 func (zs zarbServer) GetAccount(args ZarbServer_getAccount) error {
 	s, _ := args.Params.Address()
-	addr, err := crypto.AddressFromString(string(s))
+	addr, err := crypto.AddressFromString(s)
 	if err != nil {
 		return fmt.Errorf("invalid address: %s", err)
 	}

@@ -11,7 +11,7 @@ import (
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 	b := s.capnp.GetValidator(s.ctx, func(p capnp.ZarbServer_getValidator_Params) error {
 		vars := mux.Vars(r)
-		return p.SetAddress([]byte(vars["address"]))
+		return p.SetAddress(vars["address"])
 	})
 
 	a, err := b.Struct()

@@ -10,7 +10,7 @@ struct Header {
   prevBlockHash       @2 :Data;
   stateRoot           @3 :Data;
   sortitionSeed       @4 :Data;
-  proposerAddress     @5 :Data;
+  proposerAddress     @5 :Text;
 }
 
 struct Certificate {
@@ -80,8 +80,8 @@ interface ZarbServer {
   getBlock             @0 (hash: Data, verbosity: Int32)          -> (result :BlockResult);
   getBlockHash         @1 (height: Int32)                         -> (result :Data);
   getTransaction       @2 (id: Data, verbosity: Int32)            -> (result :TransactionResult);
-  getAccount           @3 (address: Data, verbosity: Int32)       -> (result :AccountResult);
-  getValidator         @4 (address: Data, verbosity: Int32)       -> (result :ValidatorResult);
+  getAccount           @3 (address: Text, verbosity: Int32)       -> (result :AccountResult);
+  getValidator         @4 (address: Text, verbosity: Int32)       -> (result :ValidatorResult);
   getBlockchainInfo    @5 ()                                      -> (result :BlockchainResult);
   getNetworkInfo       @6 ()                                      -> (result :NetworkResult);
   sendRawTransaction   @7 (rawTx: Data)                           -> (result :SendTransactionResult);

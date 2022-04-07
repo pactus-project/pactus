@@ -12,7 +12,7 @@ import (
 func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	b := s.capnp.GetAccount(s.ctx, func(p capnp.ZarbServer_getAccount_Params) error {
 		vars := mux.Vars(r)
-		return p.SetAddress([]byte(vars["address"]))
+		return p.SetAddress(vars["address"])
 	})
 
 	a, err := b.Struct()

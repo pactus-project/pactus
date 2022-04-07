@@ -2,7 +2,6 @@ package account
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
@@ -90,13 +89,6 @@ func (acc *Account) Bytes() ([]byte, error) {
 	}
 
 	return w.Bytes(), nil
-}
-
-func (acc Account) Fingerprint() string {
-	return fmt.Sprintf("{ %s %d %v}",
-		acc.Address().Fingerprint(),
-		acc.Sequence(),
-		acc.Balance())
 }
 
 // GenerateTestAccount generates an account for testing purpose

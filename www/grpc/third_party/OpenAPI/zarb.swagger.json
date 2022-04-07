@@ -38,8 +38,7 @@
             "name": "address",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           }
         ],
         "tags": [
@@ -247,8 +246,7 @@
             "name": "address",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           }
         ],
         "tags": [
@@ -315,8 +313,7 @@
       "type": "object",
       "properties": {
         "sender": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "validator": {
           "type": "string",
@@ -332,12 +329,10 @@
       "type": "object",
       "properties": {
         "sender": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "receiver": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "amount": {
           "type": "string",
@@ -349,8 +344,7 @@
       "type": "object",
       "properties": {
         "address": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "proof": {
           "type": "string",
@@ -389,8 +383,7 @@
       "type": "object",
       "properties": {
         "address": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "number": {
           "type": "integer",
@@ -686,8 +679,7 @@
           "format": "int32"
         },
         "address": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         }
       },
       "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"

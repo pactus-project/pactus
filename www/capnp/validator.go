@@ -8,7 +8,7 @@ import (
 
 func (zs *zarbServer) GetValidator(b ZarbServer_getValidator) error {
 	s, _ := b.Params.Address()
-	addr, err := crypto.AddressFromString(string(s))
+	addr, err := crypto.AddressFromString(s)
 	if err != nil {
 		return fmt.Errorf("invalid address: %s", err)
 	}

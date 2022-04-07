@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -39,8 +38,7 @@ func TestDecoding(t *testing.T) {
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
 	expected, _ := hash.FromString("33a4208262903cd1f274e760f495eca8e56b7fcc61feec0a8e6dcd0d2e57cafc")
 	assert.Equal(t, acc.Hash(), expected)
-	addr, _ := crypto.AddressFromBytes(bs[:21])
-	assert.Equal(t, acc.Address(), addr)
+	assert.Equal(t, acc.Address().Bytes(), bs[:21])
 }
 
 func TestIncSequence(t *testing.T) {

@@ -3,17 +3,16 @@ package crypto
 import (
 	"bytes"
 	"crypto/rand"
-	"fmt"
 
 	"github.com/btcsuite/btcutil/bech32"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 // Address format:
-// `zc` + type + data + checksum
-// type is 1 for BLS signatures
+// `zc1` + type + data + checksum
 
 const (
-	AddressTypeBLS byte = 1
+	SignatureTypeBLS byte = 1
 )
 
 const (
@@ -33,24 +32,16 @@ func AddressFromString(text string) (Address, error) {
 
 	hrp, data, err := bech32.DecodeToBase256(text)
 	if err != nil {
-		return Address{}, err
+		return Address{}, errors.Errorf(errors.ErrInvalidAddress, err.Error())
 	}
 	if hrp != hrpAddress {
-		return Address{}, fmt.Errorf("invalid hrp: %v", hrp)
+		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "invalid hrp: %v", hrp)
 	}
-	// TODO: fix me, Get type from decode function DecodeToBase256
-	data = append([]byte{AddressTypeBLS}, data...)
-	return AddressFromBytes(data)
-
-}
-
-func AddressFromBytes(bs []byte) (Address, error) {
-	if len(bs) != AddressSize {
-		return Address{}, fmt.Errorf("address should be %d bytes, but it is %v bytes", AddressSize, len(bs))
+	if len(data) != AddressSize {
+		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "address should be %d bytes, but it is %v bytes", AddressSize, len(data))
 	}
-
 	var addr Address
-	copy(addr[:], bs[:])
+	copy(addr[:], data[:])
 
 	return addr, nil
 }
@@ -67,9 +58,9 @@ func (addr Address) String() string {
 	if addr.EqualsTo(TreasuryAddress) {
 		return treasuryAddressString
 	}
-	str, err := bech32.EncodeFromBase256(hrpAddress, addr[1:])
+	str, err := bech32.EncodeFromBase256(hrpAddress, addr.Bytes())
 	if err != nil {
-		panic(fmt.Sprintf("Invalid address. %v", err))
+		panic(err.Error())
 	}
 
 	return str
@@ -77,7 +68,7 @@ func (addr Address) String() string {
 
 func (addr *Address) SanityCheck() error {
 	if addr[0] != 0 && addr[0] != 1 {
-		return fmt.Errorf("invalid type")
+		return errors.Errorf(errors.ErrInvalidAddress, "invalid type")
 	}
 	return nil
 }
@@ -94,6 +85,7 @@ func GenerateTestAddress() Address {
 		panic(err)
 	}
 	data = append([]byte{1}, data...)
-	addr, _ := AddressFromBytes(data)
+	var addr Address
+	copy(addr[:], data[:])
 	return addr
 }

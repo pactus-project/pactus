@@ -23,7 +23,7 @@ type PublicKey struct {
 func PublicKeyFromString(text string) (*PublicKey, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidPublicKey, err.Error())
 	}
 
 	return PublicKeyFromBytes(data)
@@ -31,11 +31,11 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 
 func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	if len(data) != PublicKeySize {
-		return nil, fmt.Errorf("invalid public key")
+		return nil, errors.Errorf(errors.ErrInvalidPublicKey, "public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
 	}
 	pk := new(bls.PublicKey)
 	if err := pk.Deserialize(data); err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidPublicKey, err.Error())
 	}
 
 	var pub PublicKey
@@ -108,8 +108,9 @@ func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 
 func (pub *PublicKey) Address() crypto.Address {
 	data := hash.Hash160(hash.Hash256(pub.Bytes()))
-	data = append([]byte{crypto.AddressTypeBLS}, data...)
-	addr, _ := crypto.AddressFromBytes(data)
+	data = append([]byte{crypto.SignatureTypeBLS}, data...)
+	var addr crypto.Address
+	copy(addr[:], data[:])
 	return addr
 }
 

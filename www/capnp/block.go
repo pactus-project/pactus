@@ -73,7 +73,7 @@ func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
 	if err := ch.SetPrevBlockHash(b.Header().PrevBlockHash().Bytes()); err != nil {
 		return err
 	}
-	if err := ch.SetProposerAddress(b.Header().ProposerAddress().Bytes()); err != nil {
+	if err := ch.SetProposerAddress(b.Header().ProposerAddress().String()); err != nil {
 		return err
 	}
 	// Transactions

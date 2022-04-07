@@ -53,8 +53,7 @@ func TestSendDecoding(t *testing.T) {
 	assert.NoError(t, pld.Encode(w))
 	assert.Equal(t, len(w.Bytes()), pld.SerializeSize())
 
-	addr, _ := crypto.AddressFromBytes(bs[:21])
-	assert.Equal(t, pld.Signer(), addr)
+	assert.Equal(t, pld.Signer().Bytes(), bs[:21])
 	assert.Equal(t, pld.Value(), int64(0x80))
 
 	// covering fingerprint

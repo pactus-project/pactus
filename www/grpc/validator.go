@@ -24,7 +24,7 @@ func (zs *zarbServer) GetValidatorByNumber(ctx context.Context, request *zarb.Va
 }
 
 func (zs *zarbServer) GetValidator(ctx context.Context, request *zarb.ValidatorRequest) (*zarb.ValidatorResponse, error) {
-	addr, err := crypto.AddressFromBytes(request.Address)
+	addr, err := crypto.AddressFromString(request.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid validator address: %s", err.Error())
 	}
@@ -53,7 +53,7 @@ func (zs *zarbServer) GetValidators(ctx context.Context, request *zarb.Validator
 func validatorToProto(val *validator.Validator) *zarb.ValidatorInfo {
 	return &zarb.ValidatorInfo{
 		PublicKey:         val.PublicKey().Bytes(),
-		Address:           val.Address().Bytes(),
+		Address:           val.Address().String(),
 		Number:            val.Number(),
 		Sequence:          val.Sequence(),
 		Stake:             val.Stake(),

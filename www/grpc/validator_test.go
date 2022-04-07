@@ -15,7 +15,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: nil,
+			Address: "",
 		})
 		assert.Error(t, err, "Error should be returned")
 		assert.Nil(t, res, "Response should be empty")
@@ -23,7 +23,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: crypto.GenerateTestAddress().Bytes(),
+			Address: crypto.GenerateTestAddress().String(),
 		})
 
 		assert.Error(t, err)
@@ -32,7 +32,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx, &zarb.ValidatorRequest{
-			Address: val1.Address().Bytes(),
+			Address: val1.Address().String(),
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)

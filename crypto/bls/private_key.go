@@ -2,29 +2,39 @@ package bls
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"math/big"
 
+	"github.com/btcsuite/btcutil/bech32"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 	"golang.org/x/crypto/hkdf"
 )
 
-const PrivateKeySize = 32
+const (
+	PrivateKeySize = 32
+	hrpPrivateKey  = "prv"
+)
 
 type PrivateKey struct {
 	secretKey bls.SecretKey
 }
 
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
-	data, err := hex.DecodeString(text)
+	hrp, data, err := bech32.DecodeToBase256(text)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
+	}
+	if hrp != hrpPrivateKey {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid hrp: %v", hrp)
+	}
+	if data[0] != crypto.SignatureTypeBLS {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid type")
 	}
 
-	return PrivateKeyFromBytes(data)
+	return privateKeyFromBytes(data[1:])
 }
 
 // PrivateKeyFromSeed generates a private key deterministically from
@@ -58,16 +68,16 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 
 	sk := make([]byte, 32)
 	x.FillBytes(sk)
-	return PrivateKeyFromBytes(sk)
+	return privateKeyFromBytes(sk)
 }
 
-func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
+func privateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
-		return nil, fmt.Errorf("invalid private key")
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
 	}
 	sc := new(bls.SecretKey)
 	if err := sc.Deserialize(data); err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
 	}
 
 	var prv PrivateKey
@@ -76,12 +86,15 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	return &prv, nil
 }
 
-func (prv PrivateKey) Bytes() []byte {
-	return prv.secretKey.Serialize()
-}
-
 func (prv PrivateKey) String() string {
-	return prv.secretKey.SerializeToHexStr()
+	data := prv.secretKey.Serialize()
+	data = append([]byte{crypto.SignatureTypeBLS}, data...)
+	str, err := bech32.EncodeFromBase256(hrpPrivateKey, data)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return str
 }
 
 func (prv *PrivateKey) SanityCheck() error {

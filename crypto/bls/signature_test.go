@@ -7,7 +7,6 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
 )
@@ -46,36 +45,6 @@ func TestSignatureEncoding(t *testing.T) {
 	assert.NoError(t, sig.Decode(r2))
 }
 
-func TestSignatureFromString(t *testing.T) {
-	_, prv := GenerateTestKeyPair()
-	sig1 := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
-	sig2, err := SignatureFromString(sig1.String())
-	assert.NoError(t, err)
-	assert.True(t, sig1.EqualsTo(sig2))
-
-	_, err = SignatureFromString("")
-	assert.Error(t, err)
-
-	_, err = SignatureFromString("inv")
-	assert.Error(t, err)
-
-	_, err = SignatureFromString("00")
-	assert.Error(t, err)
-}
-
-func TestSignatureEmpty(t *testing.T) {
-	sig1 := Signature{}
-
-	bs, err := sig1.MarshalCBOR()
-	assert.NoError(t, err)
-	assert.Error(t, sig1.SanityCheck())
-
-	sig2 := new(Signature)
-	err = sig2.UnmarshalCBOR(bs)
-	assert.NoError(t, err)
-	assert.Error(t, sig2.SanityCheck())
-}
-
 func TestVerifyingSignature(t *testing.T) {
 	msg := []byte("zarb")
 
@@ -92,21 +61,61 @@ func TestVerifyingSignature(t *testing.T) {
 	assert.Equal(t, errors.Code(pb1.Verify(msg[1:], sig1)), errors.ErrInvalidSignature)
 }
 
-func TestSigning(t *testing.T) {
-	msg := []byte("zarb")
-	prv, _ := PrivateKeyFromString("68dcbf868133d3dbb4d12a0c2907c9b093dfefef6d3855acb6602ede60a5c6d0")
-	pub, _ := PublicKeyFromString("af0f74917f5065af94727ae9541b0ddcfb5b828a9e016b02498f477ed37fb44d5d882495afb6fd4f9773e4ea9deee436030c4d61c6e3a1151585e1d838cae1444a438d089ce77e10c492a55f6908125c5be9b236a246e4082d08de564e111e65")
-	sig, _ := SignatureFromString("ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
-	addr, _ := crypto.AddressFromString("zc15x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr39g6klh")
+func TestSignatureBytes(t *testing.T) {
+	tests := []struct {
+		name      string
+		encoded   string
+		bytes     []byte
+		decodable bool
+		valid     bool
+	}{
+		{"invalid input",
+			"inv",
+			nil,
+			false, false},
+		{"nil signature",
+			"",
+			nil,
+			false, false},
+		{"invalid length",
+			"00",
+			nil,
+			false, false},
+		{"zero signature",
+			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+			nil,
+			false, false},
+		{"invalid signature",
+			"fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+			nil,
+			false, false},
+		{"infinite signature",
+			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+			[]byte{0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+			true, false,
+		},
+		{"valid signature",
+			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
+			[]byte{0xad, 0x0f, 0x88, 0xce, 0xc8, 0x15, 0xe9, 0xb8, 0xaf, 0x3f, 0x01, 0x36, 0x29, 0x7c, 0xb2, 0x42,
+				0xed, 0x8b, 0x63, 0x69, 0xaf, 0x72, 0x3f, 0xbd, 0xac, 0x07, 0x7f, 0xa9, 0x27, 0xf5, 0x78, 0x0d,
+				0xb7, 0xdf, 0x47, 0xc7, 0x7f, 0xb5, 0x3f, 0x3a, 0x22, 0x32, 0x46, 0x73, 0xf0, 0x00, 0xc7, 0x92},
+			true, true,
+		},
+	}
 
-	sig1 := prv.Sign(msg)
-	assert.Equal(t, sig1.Bytes(), sig.Bytes())
-	assert.NoError(t, pub.Verify(msg, sig))
-	assert.Equal(t, pub.Address(), addr)
-}
+	for _, test := range tests {
+		sig, err := SignatureFromString(test.encoded)
+		if test.decodable {
+			assert.NoError(t, err, "test %v. unexpected error", test.name)
+			assert.Equal(t, sig.SanityCheck() == nil, test.valid, "test %v. sanity check failed", test.name)
+			assert.Equal(t, sig.Bytes(), test.bytes, "test %v. invalid bytes", test.name)
+			assert.Equal(t, sig.String(), test.encoded, "test %v. invalid encoded", test.name)
 
-func TestSignatureSanityCheck(t *testing.T) {
-	sig, err := SignatureFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
-	assert.NoError(t, err)
-	assert.Error(t, sig.SanityCheck())
+		} else {
+			assert.Error(t, err, "test %v. should failed", test.name)
+			assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
+		}
+	}
 }

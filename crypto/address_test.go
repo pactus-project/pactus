@@ -1,33 +1,15 @@
 package crypto
 
 import (
-	"encoding/hex"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
-func TestAddressFromString(t *testing.T) {
+func TestFingerprint(t *testing.T) {
 	addr1 := GenerateTestAddress()
-	prv2, err := AddressFromString(addr1.String())
-	assert.NoError(t, err)
-	assert.True(t, addr1.EqualsTo(prv2))
-
-	_, err = AddressFromString("")
-	assert.Error(t, err)
-
-	_, err = AddressFromString("inv")
-	assert.Error(t, err)
 	assert.Contains(t, addr1.String(), addr1.Fingerprint())
-}
-
-func TestAddressEmpty(t *testing.T) {
-	_, err := AddressFromBytes(nil)
-	assert.Error(t, err)
-
-	_, err = AddressFromBytes([]byte{1})
-	assert.Error(t, err)
 }
 
 func TestTreasuryAddress(t *testing.T) {
@@ -37,30 +19,80 @@ func TestTreasuryAddress(t *testing.T) {
 	assert.Equal(t, TreasuryAddress.Bytes(), expected.Bytes())
 }
 
-func TestInvalidBech32(t *testing.T) {
-	// ok
-	addr, err := AddressFromString("zc17mka0cw484es5whq638xkm89msgzczmrmf7p27")
-	assert.NoError(t, err)
-	assert.Equal(t, addr.Fingerprint(), "zc17mka0cw48")
+func TestInvalidStrings(t *testing.T) {
+	randomAddr := GenerateTestAddress()
+	tests := []struct {
+		name      string
+		encoded   string
+		decodable bool
+		valid     bool
+		result    *Address
+	}{
+		{
+			"empty address",
+			"",
+			false, false,
+			nil,
+		},
+		{
+			"invalid character",
+			"inv",
+			false, false,
+			nil,
+		},
+		{
+			"invalid hrp",
+			"sc1qxlq6p2aqdnqxcads964v062uvr3yv4gju4xjq38",
+			false, false,
+			nil,
+		},
+		{
+			"invalid checksum",
+			"zc1q97u0p0m98uv96hrqddvc2z5r34t5my6454m4svw",
+			false, false,
+			nil,
+		},
+		{
+			"invalid length",
+			"zc1q97u0p0m98uv96hrqddvc2z5r34t5my65pamyq",
+			false, false,
+			nil,
+		},
+		{
+			"invalid type",
+			"zc1qf7u0p0m98uv96hrqddvc2z5r34t5my645678lzn",
+			true, false,
+			&Address{0x2, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3, 0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
+		},
+		{
+			"valid address in uppercase format",
+			"ZC1Q97U0P0M98UV96HRQDDVC2Z5R34T5MY6454M4SVU",
+			true, true,
+			&Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3, 0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
+		},
+		{
+			"valid address",
+			"zc1q97u0p0m98uv96hrqddvc2z5r34t5my6454m4svu",
+			true, true,
+			&Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3, 0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
+		},
+		{
+			"random address",
+			randomAddr.String(),
+			true, true,
+			&randomAddr,
+		},
+	}
+	for _, test := range tests {
+		addr, err := AddressFromString(test.encoded)
+		if test.decodable {
+			assert.NoError(t, err, "test %v. unexpected error", test.name)
+			assert.Equal(t, addr, *test.result, "test %v. unexpected result", test.name)
+			assert.Equal(t, addr.SanityCheck() == nil, test.valid, "test %v. sanity check failed", test.name)
 
-	// Invalid hrp
-	_, err = AddressFromString("sc17mka0cw484es5whq638xkm89msgzczmr75t2kv")
-	assert.Error(t, err)
-
-	// Invalid type
-	_, err = AddressFromString("zc27mka0cw484es5whq638xkm89msgzczmrpd86dv")
-	assert.Error(t, err)
-
-	// Invalid checksum
-	_, err = AddressFromString("zc17mka0cw484es5whq638xkm89msgzczmrwy64dz")
-	assert.Error(t, err)
-}
-
-func TestAddressSanityCheck(t *testing.T) {
-	inv, _ := hex.DecodeString(strings.Repeat("ff", AddressSize))
-	addr1, err := AddressFromBytes(inv)
-	assert.NoError(t, err)
-	assert.Error(t, addr1.SanityCheck(), "invalid address type")
-	addr1[0] = 1
-	assert.NoError(t, addr1.SanityCheck())
+		} else {
+			assert.Error(t, err, "test %v. should failed", test.name)
+			assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		}
+	}
 }
