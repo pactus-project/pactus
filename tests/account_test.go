@@ -12,7 +12,7 @@ import (
 
 func getAccount(t *testing.T, addr crypto.Address) *account.Account {
 	res := tCapnpServer.GetAccount(tCtx, func(p capnp.ZarbServer_getAccount_Params) error {
-		assert.NoError(t, p.SetAddress([]byte(addr.String())))
+		assert.NoError(t, p.SetAddress(addr.String()))
 		return nil
 	}).Result()
 

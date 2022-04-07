@@ -44,13 +44,13 @@ service Zarb {
   };
 }
 
-message AccountRequest { bytes address = 1; }
+message AccountRequest { string address = 1; }
 
 message AccountResponse { AccountInfo account = 1; }
 
 message ValidatorsRequest {}
 
-message ValidatorRequest { bytes address = 1; }
+message ValidatorRequest { string address = 1; }
 message ValidatorByNumberRequest { int32 number = 1; }
 
 message ValidatorsResponse { repeated ValidatorInfo validators = 1; }
@@ -107,7 +107,7 @@ message ValidatorInfo {
   int32 last_bonding_height = 5;
   int32 last_joined_height = 6;
   int32 unbonding_height = 7;
-  bytes address = 8;
+  string address = 8;
 }
 
 message PeerInfo {
@@ -123,7 +123,7 @@ message PeerInfo {
 }
 
 message AccountInfo {
-  bytes address = 1;
+  string address = 1;
   int32 number = 2;
   int32 sequence = 3;
   int64 Balance = 4;

@@ -180,12 +180,6 @@ func TestBlockSubsidyTx(t *testing.T) {
 
 	store := store.MockingStore()
 
-	// With ivalid mintbase address in config
-	tState1.config.MintbaseAddress = "invalid"
-	tState1.Close()
-	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
-	assert.Error(t, err)
-
 	// With mintbase address in config
 	addr := crypto.GenerateTestAddress()
 	tState1.config.MintbaseAddress = addr.String()

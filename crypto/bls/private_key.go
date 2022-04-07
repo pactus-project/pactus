@@ -2,30 +2,62 @@ package bls
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"math/big"
+	"strings"
 
-	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/libs/bech32m"
 	"github.com/zarbchain/zarb-go/util"
 	"golang.org/x/crypto/hkdf"
 )
 
-const PrivateKeySize = 32
+const (
+	PrivateKeySize = 32
+	hrpPrivateKey  = "secret"
+)
 
 type PrivateKey struct {
-	secretKey *bls.SecretKey
+	secretKey bls.SecretKey
 }
 
+/// PrivateKeyFromString decodes the string encoding of a BLS private key
+/// and returns the private key if text is a valid encoding for BLS private key.
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
-	data, err := hex.DecodeString(text)
+	// Decode the bech32m encoded private key.
+	hrp, data, err := bech32m.Decode(text)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
 	}
 
-	return PrivateKeyFromBytes(data)
+	// Check if hrp is valid
+	if hrp != hrpPrivateKey {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid hrp: %v", hrp)
+	}
+
+	// The first byte of the decoded private key is the signature type, it must
+	// exist.
+	if len(data) < 1 {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "no private key type")
+	}
+
+	// ...and should be 1 for BLS signature.
+	sigType := data[0]
+	if sigType != crypto.SignatureTypeBLS {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid private key type: %v", sigType)
+	}
+
+	// The remaining characters of the private key returned are grouped into
+	// words of 5 bits. In order to restore the original program
+	// bytes, we'll need to regroup into 8 bit words.
+	regrouped, err := bech32m.ConvertBits(data[1:], 5, 8, false)
+	if err != nil {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
+	}
+
+	return privateKeyFromBytes(regrouped)
 }
 
 // PrivateKeyFromSeed generates a private key deterministically from
@@ -59,58 +91,48 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 
 	sk := make([]byte, 32)
 	x.FillBytes(sk)
-	return PrivateKeyFromBytes(sk)
+	return privateKeyFromBytes(sk)
 }
 
-func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
+/// privateKeyFromBytes constructs a BLS private key from the raw bytes.
+/// This method in unexported and should not be called from the outside.
+func privateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
-		return nil, fmt.Errorf("invalid private key")
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
 	}
 	sc := new(bls.SecretKey)
 	if err := sc.Deserialize(data); err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
 	}
 
 	var prv PrivateKey
-	prv.secretKey = sc
+	prv.secretKey = *sc
 
 	return &prv, nil
 }
 
-func (prv PrivateKey) Bytes() []byte {
-	if prv.secretKey == nil {
-		return nil
-	}
-	return prv.secretKey.Serialize()
-}
-
+/// String returns a human-readable string for the BLS private key.
 func (prv PrivateKey) String() string {
-	if prv.secretKey == nil {
-		return ""
-	}
-	return prv.secretKey.SerializeToHexStr()
-}
+	data := prv.secretKey.Serialize()
 
-func (prv *PrivateKey) MarshalCBOR() ([]byte, error) {
-	if prv.secretKey == nil {
-		return nil, fmt.Errorf("invalid private key")
-	}
-	return cbor.Marshal(prv.Bytes())
-}
-
-func (prv *PrivateKey) UnmarshalCBOR(bs []byte) error {
-	var data []byte
-	if err := cbor.Unmarshal(bs, &data); err != nil {
-		return err
-	}
-
-	p, err := PrivateKeyFromBytes(data)
+	// Group the private key bytes into 5 bit groups, as this is what is used to
+	// encode each character in the private key string.
+	converted, err := bech32m.ConvertBits(data, 8, 5, true)
 	if err != nil {
-		return err
+		panic(err.Error())
 	}
 
-	*prv = *p
-	return nil
+	// Concatenate the type of the private key which is 1 for BLS and program,
+	// and encode the resulting bytes using bech32m encoding.
+	combined := make([]byte, len(converted)+1)
+	combined[0] = crypto.SignatureTypeBLS
+	copy(combined[1:], converted)
+	str, err := bech32m.Encode(hrpPrivateKey, combined)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return strings.ToUpper(str)
 }
 
 func (prv *PrivateKey) SanityCheck() error {
@@ -122,18 +144,18 @@ func (prv *PrivateKey) SanityCheck() error {
 
 func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
 	sig := new(Signature)
-	sig.signature = prv.secretKey.SignByte(msg)
+	sig.signature = *prv.secretKey.SignByte(msg)
 
 	return sig
 }
 
 func (prv *PrivateKey) PublicKey() crypto.PublicKey {
-	pb := new(PublicKey)
-	pb.publicKey = prv.secretKey.GetPublicKey()
-
-	return pb
+	pub := prv.secretKey.GetPublicKey()
+	return &PublicKey{
+		publicKey: *pub,
+	}
 }
 
 func (prv *PrivateKey) EqualsTo(right crypto.PrivateKey) bool {
-	return prv.secretKey.IsEqual(right.(*PrivateKey).secretKey)
+	return prv.secretKey.IsEqual(&right.(*PrivateKey).secretKey)
 }

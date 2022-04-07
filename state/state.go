@@ -47,13 +47,12 @@ func LoadOrNewState(
 	store store.Store,
 	txPool txpool.TxPool) (Facade, error) {
 
+	// Block rewards goes to the mintbase address
+	// If it is set inside config, we use that address
+	// otherwise, it will be the signer address
 	var mintbaseAddr crypto.Address
 	if conf.MintbaseAddress != "" {
-		// TODO: write test for me
-		addr, err := crypto.AddressFromString(conf.MintbaseAddress)
-		if err != nil {
-			return nil, err
-		}
+		addr, _ := crypto.AddressFromString(conf.MintbaseAddress)
 		mintbaseAddr = addr
 	} else {
 		mintbaseAddr = signer.Address()
@@ -219,6 +218,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	if err != nil {
 		return nil
 	}
+
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
 	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, st.params.BlockReward+fee, "")

@@ -12,7 +12,7 @@ import (
 
 func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
 	res := tCapnpServer.GetValidator(tCtx, func(p capnp.ZarbServer_getValidator_Params) error {
-		assert.NoError(t, p.SetAddress([]byte(addr.String())))
+		assert.NoError(t, p.SetAddress(addr.String()))
 		return nil
 	}).Result()
 

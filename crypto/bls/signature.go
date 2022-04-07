@@ -3,25 +3,25 @@ package bls
 import (
 	"bytes"
 	"encoding/hex"
-	"fmt"
 	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/encoding"
+	"github.com/zarbchain/zarb-go/errors"
 )
 
 const SignatureSize = 48
 
 type Signature struct {
-	signature *bls.Sign
+	signature bls.Sign
 }
 
 func SignatureFromString(text string) (*Signature, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidSignature, err.Error())
 	}
 
 	return SignatureFromBytes(data)
@@ -29,38 +29,28 @@ func SignatureFromString(text string) (*Signature, error) {
 
 func SignatureFromBytes(data []byte) (*Signature, error) {
 	if len(data) != SignatureSize {
-		return nil, fmt.Errorf("invalid signature")
+		return nil, errors.Errorf(errors.ErrInvalidSignature, "signature should be %d bytes, but it is %v bytes", SignatureSize, len(data))
 	}
 	s := new(bls.Sign)
 	if err := s.Deserialize(data); err != nil {
-		return nil, err
+		return nil, errors.Errorf(errors.ErrInvalidSignature, err.Error())
 	}
 
 	var sig Signature
-	sig.signature = s
+	sig.signature = *s
 
 	return &sig, nil
 }
 
 func (sig Signature) Bytes() []byte {
-	if sig.signature == nil {
-		return nil
-	}
-
 	return sig.signature.Serialize()
 }
 
 func (sig Signature) String() string {
-	if sig.signature == nil {
-		return ""
-	}
 	return sig.signature.SerializeToHexStr()
 }
 
 func (sig *Signature) MarshalCBOR() ([]byte, error) {
-	if sig.signature == nil {
-		return nil, fmt.Errorf("invalid signature")
-	}
 	return cbor.Marshal(sig.Bytes())
 }
 
@@ -94,12 +84,12 @@ func (sig *Signature) Decode(r io.Reader) error {
 
 func (sig *Signature) SanityCheck() error {
 	if sig.signature.IsZero() {
-		return fmt.Errorf("signature is zero")
+		return errors.Errorf(errors.ErrInvalidSignature, "signature is zero")
 	}
 
 	return nil
 }
 
 func (sig Signature) EqualsTo(right crypto.Signature) bool {
-	return sig.signature.IsEqual(right.(*Signature).signature)
+	return sig.signature.IsEqual(&right.(*Signature).signature)
 }

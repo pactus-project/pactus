@@ -2,7 +2,6 @@ package validator
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
@@ -142,13 +141,6 @@ func (val *Validator) Bytes() ([]byte, error) {
 	}
 
 	return w.Bytes(), nil
-}
-
-func (val Validator) Fingerprint() string {
-	return fmt.Sprintf("{%s %d %v}",
-		val.Address().Fingerprint(),
-		val.Sequence(),
-		val.Stake())
 }
 
 // GenerateTestValidator generates a validator for testing purpose
