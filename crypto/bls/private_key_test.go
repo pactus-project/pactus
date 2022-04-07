@@ -159,7 +159,7 @@ func TestPrivateKeyFromSeed(t *testing.T) {
 			assert.Error(t, err, "test %v failed", i)
 		} else {
 			assert.NoError(t, err, "test %v failed", i)
-			assert.Equal(t, prv.secretKey.SerializeToHexStr(), test.sk, "test %v failed", i)
+			assert.Equal(t, hex.EncodeToString(prv.Bytes()), test.sk, "test %v failed", i)
 			assert.Equal(t, prv.String(), test.bech32, "test %v failed", i)
 		}
 	}
