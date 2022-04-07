@@ -3,7 +3,6 @@ module github.com/zarbchain/zarb-go
 go 1.15
 
 require (
-	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce
 	github.com/fxamacker/cbor/v2 v2.2.0
 	github.com/golang/snappy v0.0.2-0.20190904063534-ff6b7dc882cf // indirect
 	github.com/google/btree v1.0.0

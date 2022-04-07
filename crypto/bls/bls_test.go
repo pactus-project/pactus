@@ -9,10 +9,10 @@ import (
 
 func TestSigning(t *testing.T) {
 	msg := []byte("zarb")
-	prv, _ := PrivateKeyFromString("PRV1Q95DE0UXSYEA8KA56Y4QC2G8EXCF8HL0AAKNS4DVKESZAHNQ5HRDQ3KQEWF")
+	prv, _ := PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
 	pub, _ := PublicKeyFromString("af0f74917f5065af94727ae9541b0ddcfb5b828a9e016b02498f477ed37fb44d5d882495afb6fd4f9773e4ea9deee436030c4d61c6e3a1151585e1d838cae1444a438d089ce77e10c492a55f6908125c5be9b236a246e4082d08de564e111e65")
 	sig, _ := SignatureFromString("ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
-	addr, _ := crypto.AddressFromString("zc1qxset4l7ewjvvd5r9uwmpngw59xmdkuvwy7va0tl")
+	addr, _ := crypto.AddressFromString("zc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3ku6ptk")
 
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig1.Bytes(), sig.Bytes())
@@ -22,8 +22,8 @@ func TestSigning(t *testing.T) {
 
 func TestAggregation(t *testing.T) {
 	msg := []byte("zarb")
-	prv1, _ := PrivateKeyFromString("PRV1Q95DE0UXSYEA8KA56Y4QC2G8EXCF8HL0AAKNS4DVKESZAHNQ5HRDQ3KQEWF")
-	prv2, _ := PrivateKeyFromString("PRV1Q9H3SH6NFLPE4PEF5WKJYS83V750XD74PA5F85XGR7343LZEHK06S57MECW")
+	prv1, _ := PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
+	prv2, _ := PrivateKeyFromString("SECRET1PDUV97560CWDGW2DR453YPUT84REN04G0DZFAPJQL5DV0CKDAN75QCJEV6F")
 	agg, _ := SignatureFromString("a390ffec7061827b7e89193a26841dd9e3537b5db0af55661b624e8b93b855e9f65278850002ea72fb3098e674220eca")
 	sig1 := prv1.Sign(msg).(*Signature)
 	sig2 := prv2.Sign(msg).(*Signature)
