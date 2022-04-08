@@ -45,11 +45,29 @@ func TestParamsBytes(t *testing.T) {
 	}{
 		{"k1", []byte{0, 0}},
 		{"k2", []byte{0xff, 0xff}},
+		{"k2", []byte{}},
 	}
 
 	p := params{}
 	for _, test := range tests {
 		p.SetBytes(test.key, test.val)
 		assert.Equal(t, test.val, p.GetBytes(test.key))
+	}
+}
+
+func TestParamsString(t *testing.T) {
+	tests := []struct {
+		key string
+		val string
+	}{
+		{"k1", "foo"},
+		{"k2", "bar"},
+		{"k3", "bar"},
+	}
+
+	p := params{}
+	for _, test := range tests {
+		p.SetString(test.key, test.val)
+		assert.Equal(t, test.val, p.GetString(test.key))
 	}
 }

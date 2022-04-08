@@ -10,22 +10,22 @@ import (
 	"google.golang.org/grpc"
 )
 
-type GrpcClient struct {
+type grpcClient struct {
 	client zarb.ZarbClient
 }
 
-func MewGRPCClient(rpcEndpoint string) (*GrpcClient, error) {
+func gewGRPCClient(rpcEndpoint string) (*grpcClient, error) {
 	conn, err := grpc.Dial(rpcEndpoint, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
 
-	return &GrpcClient{
+	return &grpcClient{
 		client: zarb.NewZarbClient(conn),
 	}, nil
 }
 
-func (c *GrpcClient) GetStamp() (hash.Stamp, error) {
+func (c *grpcClient) getStamp() (hash.Stamp, error) {
 	info, err := c.client.GetBlockchainInfo(context.Background(), &zarb.BlockchainInfoRequest{})
 	if err != nil {
 		return hash.Stamp{}, err
@@ -34,7 +34,7 @@ func (c *GrpcClient) GetStamp() (hash.Stamp, error) {
 	return h.Stamp(), nil
 }
 
-func (c *GrpcClient) GetAccountBalance(addr crypto.Address) (int64, error) {
+func (c *grpcClient) getAccountBalance(addr crypto.Address) (int64, error) {
 	acc, err := c.client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
@@ -43,7 +43,7 @@ func (c *GrpcClient) GetAccountBalance(addr crypto.Address) (int64, error) {
 	return acc.Account.Balance, nil
 }
 
-func (c *GrpcClient) GetAccountSequence(addr crypto.Address) (int32, error) {
+func (c *grpcClient) getAccountSequence(addr crypto.Address) (int32, error) {
 	acc, err := c.client.GetAccount(context.Background(), &zarb.AccountRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
@@ -52,7 +52,7 @@ func (c *GrpcClient) GetAccountSequence(addr crypto.Address) (int32, error) {
 	return acc.Account.Sequence + 1, nil
 }
 
-func (c *GrpcClient) GetValidatorSequence(addr crypto.Address) (int32, error) {
+func (c *grpcClient) GetValidatorSequence(addr crypto.Address) (int32, error) {
 	val, err := c.client.GetValidator(context.Background(), &zarb.ValidatorRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
@@ -61,7 +61,7 @@ func (c *GrpcClient) GetValidatorSequence(addr crypto.Address) (int32, error) {
 	return val.Validator.Sequence + 1, nil
 }
 
-func (c *GrpcClient) GetValidatorStake(addr crypto.Address) (int64, error) {
+func (c *grpcClient) getValidatorStake(addr crypto.Address) (int64, error) {
 	val, err := c.client.GetValidator(context.Background(), &zarb.ValidatorRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
@@ -70,7 +70,7 @@ func (c *GrpcClient) GetValidatorStake(addr crypto.Address) (int64, error) {
 	return val.Validator.Stake, nil
 }
 
-func (c *GrpcClient) SendTx(payload []byte) (string, error) {
+func (c *grpcClient) sendTx(payload []byte) (string, error) {
 	res, err := c.client.SendRawTransaction(context.Background(), &zarb.SendRawTransactionRequest{
 		Data: hex.EncodeToString(payload),
 	})

@@ -162,9 +162,9 @@ func (s *Store) newKeySeed(passphrase string) ([]byte, error) {
 	}
 }
 
-/// Note:
-/// 1- Deriving Child key seeds from parent seed
-/// 2- Exposing any child key, should not expose parent key or any other child keys
+// Note:
+// 1- Deriving Child key seeds from parent seed
+// 2- Exposing any child key, should not expose parent key or any other child keys
 
 func (s *Store) derivePrivateKey(passphrase string, keySeed []byte) (*bls.PrivateKey, error) {
 	parentKey, err := s.parentKey(passphrase)

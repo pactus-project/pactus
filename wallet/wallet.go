@@ -38,7 +38,7 @@ var (
 type Wallet struct {
 	path   string
 	store  *Store
-	client *GrpcClient
+	client *grpcClient
 }
 
 type serverInfo struct {
@@ -153,7 +153,7 @@ func (w *Wallet) connectToRandomServer() error {
 	for i := 0; i < 3; i++ {
 		n := util.RandInt32(int32(len(netServers)))
 		serverInfo := netServers[n]
-		client, err := MewGRPCClient(serverInfo.IP)
+		client, err := gewGRPCClient(serverInfo.IP)
 		if err == nil {
 			w.client = client
 			return nil
@@ -211,9 +211,9 @@ func (w *Wallet) GetBalance(addrStr string) (int64, int64, error) {
 		return 0, 0, err
 	}
 
-	balance, _ := w.client.GetAccountBalance(addr)
+	balance, _ := w.client.getAccountBalance(addr)
 	//exitOnErr(err)
-	stake, _ := w.client.GetValidatorStake(addr)
+	stake, _ := w.client.getValidatorStake(addr)
 	//exitOnErr(err)
 
 	return balance, stake, nil
@@ -243,7 +243,8 @@ func (w *Wallet) Addresses() map[string]string {
 	return w.store.Addresses()
 }
 
-/// MakeBondTx creates a new bond transaction based on the given parameters
+//
+// MakeBondTx creates a new bond transaction based on the given parameters
 func (w *Wallet) MakeBondTx(stampStr, seqStr, senderStr, valPubStr, stakeStr, feeStr, memo string) (*tx.Tx, error) {
 	sender, err := crypto.AddressFromString(senderStr)
 	if err != nil {
@@ -274,7 +275,7 @@ func (w *Wallet) MakeBondTx(stampStr, seqStr, senderStr, valPubStr, stakeStr, fe
 	return tx, nil
 }
 
-/// MakeUnbondTx creates a new unbond transaction based on the given parameters
+// MakeUnbondTx creates a new unbond transaction based on the given parameters
 func (w *Wallet) MakeUnbondTx(stampStr, seqStr, addrStr, memo string) (*tx.Tx, error) {
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
@@ -293,7 +294,8 @@ func (w *Wallet) MakeUnbondTx(stampStr, seqStr, addrStr, memo string) (*tx.Tx, e
 	return tx, nil
 }
 
-/// MakeWithdrawTx creates a new unbond transaction based on the given parameters
+// TODO: write tests for me by mocking grpc server
+// MakeWithdrawTx creates a new unbond transaction based on the given parameters
 func (w *Wallet) MakeWithdrawTx(stampStr, seqStr, valAddrStr, accAddrStr, amountStr, feeStr, memo string) (*tx.Tx, error) {
 	valAddr, err := crypto.AddressFromString(valAddrStr)
 	if err != nil {
@@ -324,7 +326,7 @@ func (w *Wallet) MakeWithdrawTx(stampStr, seqStr, valAddrStr, accAddrStr, amount
 	return tx, nil
 }
 
-/// MakeSendTx creates a new send transaction based on the given parameters
+// MakeSendTx creates a new send transaction based on the given parameters
 func (w *Wallet) MakeSendTx(stampStr, seqStr, senderStr, receiverStr, amountStr, feeStr, memo string) (*tx.Tx, error) {
 	sender, err := crypto.AddressFromString(senderStr)
 	if err != nil {
@@ -365,7 +367,7 @@ func (w *Wallet) parsAccSeq(signer crypto.Address, seqStr string) (int32, error)
 		return int32(seq), nil
 	}
 
-	return w.client.GetAccountSequence(signer)
+	return w.client.getAccountSequence(signer)
 }
 
 func (w *Wallet) parsFee(amount int64, feeStr string) (int64, error) {
@@ -404,7 +406,7 @@ func (w *Wallet) parsStamp(stampStr string) (hash.Stamp, error) {
 		}
 		return stamp, nil
 	}
-	return w.client.GetStamp()
+	return w.client.getStamp()
 }
 
 func (w *Wallet) SignAndBroadcast(passphrase string, tx *tx.Tx) (string, error) {
@@ -420,7 +422,5 @@ func (w *Wallet) SignAndBroadcast(passphrase string, tx *tx.Tx) (string, error) 
 		return "", err
 	}
 
-	//fmt.Printf("%x", b)
-
-	return w.client.SendTx(b)
+	return w.client.sendTx(b)
 }

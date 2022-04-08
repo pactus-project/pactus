@@ -174,3 +174,7 @@ func TestImportPrivateKey(t *testing.T) {
 	// Import again
 	assert.Error(t, tWallet.ImportPrivateKey(tPassphrase, prv1.String()))
 }
+
+func TestMakeSendTx(t *testing.T) {
+	setup(t)
+}
