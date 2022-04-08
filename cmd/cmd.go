@@ -100,7 +100,7 @@ func (p *terminalPrompter) PromptInput(prompt string) (string, error) {
 // PromptConfirm displays the given prompt to the user and requests a boolean
 // choice to be made, returning that choice.
 func (p *terminalPrompter) PromptConfirm(prompt string) (bool, error) {
-	input, err := p.Prompt(prompt + " [y/N] ")
+	input, err := p.PromptInput(prompt + " [y/N] ")
 	if len(input) > 0 && strings.ToUpper(input[:1]) == "Y" {
 		return true, nil
 	}
@@ -131,6 +131,16 @@ func PromptPassphrase(prompt string, confirmation bool) string {
 	return passphrase
 }
 
+// PromptConfirm prompts user to confirm the operation
+func PromptConfirm(prompt string) bool {
+	input, err := Stdin.PromptConfirm(prompt)
+	if err != nil {
+		PrintErrorMsg("Failed to read input: %v", err)
+		os.Exit(1)
+	}
+	return input
+}
+
 // Promptlabel prompts for an input string
 func PromptInput(prompt string) string {
 	input, err := Stdin.PromptInput(prompt)
@@ -152,22 +162,30 @@ func PromptInputWithSuggestion(prompt, suggestion string) string {
 }
 
 func PrintDangerMsg(format string, a ...interface{}) {
-	format = fmt.Sprintf("\033[31m%s\033[0m\n", format)
+	if liner.TerminalSupported() {
+		format = fmt.Sprintf("\033[31m%s\033[0m\n", format)
+	}
 	fmt.Printf(format, a...)
 }
 
 func PrintErrorMsg(format string, a ...interface{}) {
-	format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m\n", format) //Print error msg with red color
+	if liner.TerminalSupported() {
+		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m\n", format) //Print error msg with red color
+	}
 	fmt.Printf(format, a...)
 }
 
 func PrintSuccessMsg(format string, a ...interface{}) {
-	format = fmt.Sprintf("\033[32m%s\033[0m\n", format) //Print successful msg with green color
+	if liner.TerminalSupported() {
+		format = fmt.Sprintf("\033[32m%s\033[0m\n", format) //Print successful msg with green color
+	}
 	fmt.Printf(format, a...)
 }
 
 func PrintWarnMsg(format string, a ...interface{}) {
-	format = fmt.Sprintf("\033[33m%s\033[0m\n", format) //Print warning msg with yellow color
+	if liner.TerminalSupported() {
+		format = fmt.Sprintf("\033[33m%s\033[0m\n", format) //Print warning msg with yellow color
+	}
 	fmt.Printf(format, a...)
 }
 
@@ -212,8 +230,8 @@ func ZarbHomeDir() string {
 	return home
 }
 
-func ZarbKeystoreDir() string {
-	return ZarbHomeDir() + "keystore/"
+func ZarbWalletsDir() string {
+	return ZarbHomeDir() + "wallets/"
 }
 
 // TrapSignal traps SIGINT and SIGTERM and terminates the server correctly.

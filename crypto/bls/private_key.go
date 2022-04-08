@@ -23,8 +23,8 @@ type PrivateKey struct {
 	secretKey bls.SecretKey
 }
 
-/// PrivateKeyFromString decodes the string encoding of a BLS private key
-/// and returns the private key if text is a valid encoding for BLS private key.
+// PrivateKeyFromString decodes the string encoding of a BLS private key
+// and returns the private key if text is a valid encoding for BLS private key.
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	// Decode the bech32m encoded private key.
 	hrp, data, err := bech32m.Decode(text)
@@ -94,8 +94,8 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 	return privateKeyFromBytes(sk)
 }
 
-/// privateKeyFromBytes constructs a BLS private key from the raw bytes.
-/// This method in unexported and should not be called from the outside.
+// privateKeyFromBytes constructs a BLS private key from the raw bytes.
+// This method in unexported and should not be called from the outside.
 func privateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
@@ -111,7 +111,7 @@ func privateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	return &prv, nil
 }
 
-/// String returns a human-readable string for the BLS private key.
+// String returns a human-readable string for the BLS private key.
 func (prv PrivateKey) String() string {
 	data := prv.secretKey.Serialize()
 
@@ -133,6 +133,11 @@ func (prv PrivateKey) String() string {
 	}
 
 	return strings.ToUpper(str)
+}
+
+// Bytes return the raw bytes of the private key.
+func (prv PrivateKey) Bytes() []byte {
+	return prv.secretKey.Serialize()
 }
 
 func (prv *PrivateKey) SanityCheck() error {
