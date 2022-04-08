@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/tyler-smith/go-bip39"
 	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/config"
@@ -15,6 +15,7 @@ import (
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/wallet"
 )
 
 // Init initializes a node for zarb blockchain
@@ -35,26 +36,54 @@ func Init() func(c *cli.Cmd) {
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-
 			path, _ := filepath.Abs(*workingDirOpt)
-
 			if !util.IsDirNotExistsOrEmpty(path) {
 				cmd.PrintErrorMsg("The workspace directory is not empty: %v", path)
 				return
 			}
 
-			// Generate key for the validator and save it to file system
-			entropy, _ := bip39.NewEntropy(128)
-			mnemonic, _ := bip39.NewMnemonic(entropy)
-			seed := bip39.NewSeed(mnemonic, "")
-			prv, err := bls.PrivateKeyFromSeed(seed, nil)
+			cmd.PrintInfoMsg("Creating wallet...")
+			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
+			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
+			walletPath := path + "/wallets/deafult_wallet"
+			w, err := wallet.CreateWallet(walletPath, passphrase, 0)
 			if err != nil {
-				cmd.PrintErrorMsg("Failed to create key from the seed: %v", err)
+				cmd.PrintErrorMsg("Failed to create wallet: ", err)
 				return
 			}
-			err = util.WriteFile(path+"/validator_key", []byte(prv.String()))
+			mnemonic, err := w.Mnemonic(passphrase)
 			if err != nil {
-				cmd.PrintErrorMsg("Failed to write key file: %v", err)
+				cmd.PrintErrorMsg("Failed to get mnemonic: ", err)
+				return
+			}
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Wallet created. Here is wallet seed:")
+			cmd.PrintInfoMsg("\"" + mnemonic + "\"")
+			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
+			cmd.PrintLine()
+			confirmed := cmd.PromptConfirm("Do you want to continue?")
+			if !confirmed {
+				return
+			}
+			valAddrStr, err := w.NewAddress(passphrase, "Validator address")
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to create validator address: ", err)
+				return
+			}
+			mintbaseAddrStr, err := w.NewAddress(passphrase, "Mintbase address")
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to create mintbase address: ", err)
+				return
+			}
+			valPrvStr, err := w.PrivateKey(passphrase, valAddrStr)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to create validator address: ", err)
+				return
+			}
+
+			err = util.WriteFile(path+"/validator_key", []byte(valPrvStr))
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to write validator_key file: %v", err)
 				return
 			}
 
@@ -63,15 +92,16 @@ func Init() func(c *cli.Cmd) {
 
 			if *testnetOpt {
 				gen = genesis.Testnet()
+				name, _ := os.Hostname()
 
 				conf.Network.Name = "perdana-testnet"
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
+				conf.State.MintbaseAddress = mintbaseAddrStr
+				conf.Sync.Moniker = name
 			} else {
-				pub := prv.PublicKey()
-				gen = makeLocalGenesis(pub.(*bls.PublicKey))
-				conf.Network.Name = "zarb-local"
+				return
 			}
 
 			// Save genesis file to file system
@@ -90,9 +120,11 @@ func Init() func(c *cli.Cmd) {
 
 			fmt.Println()
 			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", path)
-			cmd.PrintInfoMsg("You validator address is: %v", prv.PublicKey().Address())
-			cmd.PrintInfoMsg("mnemonic: \"" + mnemonic + "\"")
-			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
+			cmd.PrintInfoMsg("You validator address is: %v", valAddrStr)
+			cmd.PrintInfoMsg("You mintbase address is: %v", mintbaseAddrStr)
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("To run your node run this command:")
+			cmd.PrintInfoMsg("./zarb-daemon start -w %v", path)
 		}
 	}
 }
