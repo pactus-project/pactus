@@ -8,6 +8,14 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
+// Parameters are set based on the spec recommendation
+// Read more here https://datatracker.ietf.org/doc/html/rfc9106#section-4
+var (
+	iterations  = uint32(1)
+	memory      = uint32(2 * 1024 * 1024)
+	parallelism = uint8(4)
+)
+
 type argon2Encrypter struct {
 	passphrase string
 }
@@ -18,16 +26,6 @@ func newArgon2Encrypter(passphrase string) *argon2Encrypter {
 	}
 }
 func (e *argon2Encrypter) encrypt(message string) encrypted {
-	// Parameters are set based on the spec recommendation
-	// Read more here https://datatracker.ietf.org/doc/html/rfc9106#section-4
-	iterations := uint32(1)
-	memory := uint32(2 * 1024 * 1024)
-	parallelism := uint8(4)
-
-	return e.encryptWithParams(message, iterations, memory, parallelism)
-}
-
-func (e *argon2Encrypter) encryptWithParams(message string, iterations, memory uint32, parallelism uint8) encrypted {
 	// Random salt
 	salt := make([]byte, 16)
 	_, err := rand.Read(salt)
