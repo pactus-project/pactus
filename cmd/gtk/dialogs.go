@@ -1,8 +1,14 @@
 package main
 
 import (
+	_ "embed"
+
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/zarbchain/zarb-go/wallet"
 )
+
+//go:embed ui/password_dialog.ui
+var uiPasswordDialog []byte
 
 func showInfoDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
@@ -23,51 +29,68 @@ func errorCheck(err error) {
 	}
 }
 
-// func showErrDialog(parent widgets.QWidget_ITF, msg string) {
-// 	widgets.QMessageBox_Critical(
-// 		parent,
-// 		"error",
-// 		msg,
-// 		widgets.QMessageBox__Ok,
-// 		widgets.QMessageBox__NoButton)
-// }
+func getWalletPassword(parent *gtk.Widget, wallet *wallet.Wallet) (string, bool) {
+	if !wallet.IsEncrypted() {
+		return "", true
+	}
 
-// func getWalletPassword(parent widgets.QWidget_ITF, wallet *wallet.Wallet) (string, bool) {
-// 	if !wallet.IsEncrypted() {
-// 		return "", true
-// 	}
+	gtk.Init(nil)
 
-// 	// ok := new(bool)
-// 	// password := widgets.QInputDialog_GetText(parent,
-// 	// 	"Enter password",
-// 	// 	"Please enter your wallet password:",
-// 	// 	widgets.QLineEdit__Password,
-// 	// 	"",
-// 	// 	ok,
-// 	// 	core.Qt__Dialog,
-// 	// 	core.Qt__ImhNone)
+	var ok = new(bool)
+	var password = new(string)
+	var dlg *gtk.Dialog
 
-// 	ok := new(bool)
-// 	password := new(string)
+	builder, err := gtk.BuilderNewFromString(string(uiPasswordDialog))
+	errorCheck(err)
 
-// 	dialog := widgets.NewQInputDialog(parent, core.Qt__Tool)
-// 	dialog.SetWindowTitle("Enter password")
-// 	dialog.SetLabelText("Please enter your wallet password:")
-// 	dialog.SetTextEchoMode(widgets.QLineEdit__Password)
-// 	dialog.SetInputMethodHints(core.Qt__ImhNone)
+	onOk := func() {
+		obj, err := builder.GetObject("password_entry")
+		errorCheck(err)
 
-// 	dialog.ConnectAccept(func() {
-// 		*password = dialog.TextValue()
-// 		*ok = true
-// 		dialog.AcceptDefault()
-// 	})
+		passwordEntry, err := isEntry(obj)
+		errorCheck(err)
 
-// 	dialog.ConnectReject(func() {
-// 		*ok = false
-// 		dialog.RejectDefault()
-// 	})
+		pwd, err := passwordEntry.GetText()
+		errorCheck(err)
 
-// 	dialog.Exec()
+		*password = pwd
+		*ok = true
 
-// 	return *password, *ok
-// }
+		dlg.Close()
+		// TODO
+		gtk.MainQuit()
+	}
+
+	onCancel := func() {
+		*ok = false
+		dlg.Close()
+
+		// TODO
+		gtk.MainQuit()
+	}
+
+	// Map the handlers to callback functions, and connect the signals
+	// to the Builder.
+	signals := map[string]interface{}{
+		"on_ok":     onOk,
+		"on_cancel": onCancel,
+	}
+	builder.ConnectSignals(signals)
+
+	// Get the object with the id of "password_dialog".
+	obj, err := builder.GetObject("password_dialog")
+	errorCheck(err)
+
+	// Verify that the object is a pointer to a gtk.Dialog.
+	dlg, err = isDialog(obj)
+	errorCheck(err)
+
+	dlg.SetModal(true)
+
+	// Show the dialog
+	dlg.Show()
+
+	gtk.Main()
+
+	return *password, *ok
+}

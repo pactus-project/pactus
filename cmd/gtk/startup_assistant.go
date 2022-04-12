@@ -29,7 +29,9 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-func startupWizard() bool {
+func startupAssistant() bool {
+	gtk.Init(nil)
+
 	successful := false
 	createPage := func(assistant *gtk.Assistant, content gtk.IWidget, name, title, subject, desc string) *gtk.Widget {
 		page, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 20)
