@@ -14,7 +14,7 @@ func Recover() func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			mnemonic := cmd.PromptInput("Seed: ")
-			w, err := wallet.RecoverWallet(*path, mnemonic, 0)
+			w, err := wallet.FromMnemonic(*path, mnemonic, "", 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -23,6 +23,7 @@ func Recover() func(c *cli.Cmd) {
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Wallet recovered successfully at: %s", w.Path())
 			cmd.PrintWarnMsg("Never share your private key.")
+			cmd.PrintWarnMsg("Don't forget to set a password for your wallet.")
 		}
 	}
 }

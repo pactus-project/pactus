@@ -3,7 +3,6 @@ package wallet
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"errors"
 
 	"golang.org/x/crypto/argon2"
 )
@@ -57,6 +56,10 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 }
 
 func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
+	if ct.Method != "ARGON2ID_AES-256-CTR_SHA256" {
+		return "", ErrInvalidPassword
+	}
+
 	salt := ct.Params.GetBytes("salt")
 	mac := ct.Params.GetBytes("mac")
 	iterations := ct.Params.GetUint32("iterations")
@@ -70,7 +73,7 @@ func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
 	// Using MAC to heck if the password is correct
 	// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
 	if !safeCmp(mac, sha256MAC(cipherKey[16:32], d)) {
-		return "", errors.New("invalid checksum")
+		return "", ErrInvalidPassword
 	}
 
 	text := aesCrypt(d, salt, cipherKey)

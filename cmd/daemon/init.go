@@ -43,21 +43,9 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintInfoMsg("Creating wallet...")
-			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
-			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
-			walletPath := path + "/wallets/default_wallet"
-			w, err := wallet.CreateWallet(walletPath, passphrase, 0)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to create wallet: ", err)
-				return
-			}
-			mnemonic, err := w.Mnemonic(passphrase)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to get mnemonic: ", err)
-				return
-			}
+			mnemonic := wallet.GenerateMnemonic()
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Wallet created. Here is wallet seed:")
+			cmd.PrintInfoMsg("Your wallet seed:")
 			cmd.PrintInfoMsg("\"" + mnemonic + "\"")
 			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
 			cmd.PrintLine()
@@ -65,17 +53,29 @@ func Init() func(c *cli.Cmd) {
 			if !confirmed {
 				return
 			}
-			valAddrStr, err := w.NewAddress(passphrase, "Validator address")
+
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
+			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
+			walletPath := path + "/wallets/deafult_wallet"
+			// To make process faster, update password later
+			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", 0)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to create wallet: ", err)
+				return
+			}
+			cmd.PrintInfoMsg("Wallet created successfully")
+			valAddrStr, err := wallet.NewAddress(passphrase, "Validator address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create validator address: ", err)
 				return
 			}
-			mintbaseAddrStr, err := w.NewAddress(passphrase, "Mintbase address")
+			mintbaseAddrStr, err := wallet.NewAddress(passphrase, "Mintbase address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create mintbase address: ", err)
 				return
 			}
-			valPrvStr, err := w.PrivateKey(passphrase, valAddrStr)
+			valPrvStr, err := wallet.PrivateKey(passphrase, valAddrStr)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to get validator private key: ", err)
 				return
@@ -85,6 +85,12 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("Failed to write validator_key file: %v", err)
 				return
 			}
+			wallet.UpdatePassword("", passphrase)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to update passphrase: ", err)
+				return
+			}
+			cmd.PrintLine()
 
 			valPrv, err := bls.PrivateKeyFromString(valPrvStr)
 			if err != nil {

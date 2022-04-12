@@ -6,12 +6,12 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"hash/crc32"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/tyler-smith/go-bip39"
-	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
@@ -26,9 +26,9 @@ type Store struct {
 }
 
 type vault struct {
-	Addresses []address `json:"addresses"`
-	Seed      seed      `json:"seed"`
-	Keystore  keystore  `json:"keystore"`
+	Addresses []address   `json:"addresses"`
+	Seed      seed        `json:"seed"`
+	Keystore  []encrypted `json:"keystore"`
 }
 
 type address struct {
@@ -41,26 +41,10 @@ type address struct {
 type seed struct {
 	Method     string    `json:"method"`
 	ParentSeed encrypted `json:"seed"`
-	ParentKey  encrypted `json:"prv"`
+	ParentKey  encrypted `json:"key"`
 }
 
-type keystore struct {
-	Prv []encrypted `json:"prv"`
-}
-
-func RecoverStore(mnemonic string, net int) (*Store, error) {
-	return createStoreFromMnemonic("", mnemonic, net)
-}
-
-func NewStore(passphrase string, net int) (*Store, error) {
-	entropy, err := bip39.NewEntropy(128)
-	exitOnErr(err)
-	mnemonic, err := bip39.NewMnemonic(entropy)
-	exitOnErr(err)
-	return createStoreFromMnemonic(passphrase, mnemonic, net)
-}
-
-func createStoreFromMnemonic(passphrase string, mnemonic string, net int) (*Store, error) {
+func CreateStoreFromMnemonic(mnemonic, passphrase string, net int) (*Store, error) {
 	keyInfo := []byte{} // TODO, update for testnet
 	parentSeed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	if err != nil {
@@ -94,30 +78,63 @@ func (s *Store) calcVaultCRC() uint32 {
 	return crc32.ChecksumIEEE(d)
 }
 
-func (s *Store) Addresses() map[string]string {
-	addrs := make(map[string]string)
-	for _, a := range s.Vault.Addresses {
-		addrs[a.Address] = a.Label
+func (s *Store) UpdatePassword(oldPassphrase, newPassphrase string) error {
+	oldEncrypter := newEncrypter(oldPassphrase, s.Network)
+	newEncrypter := newEncrypter(newPassphrase, s.Network)
+
+	// Updating parent seed
+	parentSeed, err := oldEncrypter.decrypt(s.Vault.Seed.ParentSeed)
+	if err != nil {
+		return err
+	}
+	s.Vault.Seed.ParentSeed = newEncrypter.encrypt(parentSeed)
+
+	// Updating parent key
+	parentKey, err := oldEncrypter.decrypt(s.Vault.Seed.ParentKey)
+	exitOnErr(err)
+	s.Vault.Seed.ParentKey = newEncrypter.encrypt(parentKey)
+
+	// Updating private keys
+	for i, prv := range s.Vault.Keystore {
+		key, err := oldEncrypter.decrypt(prv)
+		exitOnErr(err)
+
+		s.Vault.Keystore[i] = newEncrypter.encrypt(key)
+	}
+	s.Encrypted = len(newPassphrase) > 0
+	return nil
+}
+
+func (s *Store) Addresses() []AddressInfo {
+	addrs := make([]AddressInfo, len(s.Vault.Addresses))
+	for i, a := range s.Vault.Addresses {
+		addrs[i].Address = a.Address
+		addrs[i].Label = a.Label
+		addrs[i].Imported = (a.Method == "IMPORTED")
 	}
 
 	return addrs
 }
 
+func (s *Store) AddressCount() int {
+	return len(s.Vault.Addresses)
+}
+
 func (s *Store) ImportPrivateKey(passphrase string, prv *bls.PrivateKey) error {
-	/// Decrypt parnet key to make sure the passphrase is correct
+	/// Decrypt parent key to make sure the passphrase is correct
 	_, err := s.parentKey(passphrase)
 	if err != nil {
 		return err
 	}
-	if s.Contains(prv.PublicKey().Address()) {
+	if s.Contains(prv.PublicKey().Address().String()) {
 		return ErrAddressExists
 	}
 
 	e := newEncrypter(passphrase, s.Network)
-	s.Vault.Keystore.Prv = append(s.Vault.Keystore.Prv, e.encrypt(prv.String()))
+	s.Vault.Keystore = append(s.Vault.Keystore, e.encrypt(prv.String()))
 
 	p := newParams()
-	p.SetUint32("index", uint32(len(s.Vault.Keystore.Prv)-1))
+	p.SetUint32("index", uint32(len(s.Vault.Keystore)-1))
 	s.Vault.Addresses = append(s.Vault.Addresses, address{
 		Method:  "IMPORTED",
 		Address: prv.PublicKey().Address().String(),
@@ -166,12 +183,7 @@ func (s *Store) newKeySeed(passphrase string) ([]byte, error) {
 // 1- Deriving Child key seeds from parent seed
 // 2- Exposing any child key, should not expose parent key or any other child keys
 
-func (s *Store) derivePrivateKey(passphrase string, keySeed []byte) (*bls.PrivateKey, error) {
-	parentKey, err := s.parentKey(passphrase)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *Store) derivePrivateKey(parentKey []byte, keySeed []byte) *bls.PrivateKey {
 	keyInfo := []byte{} // TODO, update for testnet
 
 	// To derive a new key, we need:
@@ -180,40 +192,55 @@ func (s *Store) derivePrivateKey(passphrase string, keySeed []byte) (*bls.Privat
 	//
 
 	hmac512 := hmac.New(sha512.New, parentKey)
-	_, err = hmac512.Write(keySeed)
+	_, err := hmac512.Write(keySeed)
 	exitOnErr(err)
 	ikm := hmac512.Sum(nil)
 
 	prv, err := bls.PrivateKeyFromSeed(ikm, keyInfo)
 	exitOnErr(err)
 
-	return prv, nil
+	return prv
 }
 
 func (s *Store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 	for _, a := range s.Vault.Addresses {
 		if a.Address == addr {
+			var prv *bls.PrivateKey
 			switch a.Method {
 			case "IMPORTED":
 				{
-					e := newEncrypter(passphrase, s.Network)
+					e, err := s.makeEncrypter(passphrase)
+					if err != nil {
+						return nil, err
+					}
 					index := a.Params.GetUint32("index")
-					prvStr, err := e.decrypt(s.Vault.Keystore.Prv[index])
+					prvStr, err := e.decrypt(s.Vault.Keystore[index])
+					if err != nil {
+						return nil, err
+					}
+					prv, err = bls.PrivateKeyFromString(prvStr)
 					exitOnErr(err)
-					prv, err := bls.PrivateKeyFromString(prvStr)
-					exitOnErr(err)
-					return prv, nil
 				}
 			case "KDF-CHAIN":
 				{
 					seed := a.Params.GetBytes("seed")
-					return s.derivePrivateKey(passphrase, seed)
+					parentKey, err := s.parentKey(passphrase)
+					if err != nil {
+						return nil, err
+					}
+					prv = s.derivePrivateKey(parentKey, seed)
 				}
 			}
+
+			if prv.PublicKey().Address().String() != addr {
+				// If you see tis error, please report it
+				exitOnErr(fmt.Errorf("invalid private key for given address"))
+			}
+			return prv, nil
 		}
 	}
 
-	return nil, ErrAddressNotFound
+	return nil, NewErrAddressNotFound(addr)
 }
 
 func (s *Store) NewAddress(passphrase, label string) (string, error) {
@@ -221,10 +248,10 @@ func (s *Store) NewAddress(passphrase, label string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	prv, err := s.derivePrivateKey(passphrase, keySeed)
-	if err != nil {
-		return "", err
-	}
+	parentKey, err := s.parentKey(passphrase)
+	exitOnErr(err) // Password has been checked in previous line
+
+	prv := s.derivePrivateKey(parentKey, keySeed)
 
 	params := newParams()
 	params.SetBytes("seed", keySeed)
@@ -240,13 +267,13 @@ func (s *Store) NewAddress(passphrase, label string) (string, error) {
 	return a.Address, nil
 }
 
-func (s *Store) Contains(addr crypto.Address) bool {
+func (s *Store) Contains(addr string) bool {
 	return s.getAddressInfo(addr) != nil
 }
 
-func (s *Store) getAddressInfo(addr crypto.Address) *address {
+func (s *Store) getAddressInfo(addr string) *address {
 	for _, a := range s.Vault.Addresses {
-		if a.Address == addr.String() {
+		if a.Address == addr {
 			return &a
 		}
 	}
@@ -254,11 +281,19 @@ func (s *Store) getAddressInfo(addr crypto.Address) *address {
 }
 
 func (s *Store) Mnemonic(passphrase string) (string, error) {
-	return newEncrypter(passphrase, s.Network).decrypt(s.Vault.Seed.ParentSeed)
+	e, err := s.makeEncrypter(passphrase)
+	if err != nil {
+		return "", err
+	}
+	return e.decrypt(s.Vault.Seed.ParentSeed)
 }
 
 func (s *Store) parentKey(passphrase string) ([]byte, error) {
-	m, err := newEncrypter(passphrase, s.Network).decrypt(s.Vault.Seed.ParentKey)
+	e, err := s.makeEncrypter(passphrase)
+	if err != nil {
+		return nil, err
+	}
+	m, err := e.decrypt(s.Vault.Seed.ParentKey)
 	if err != nil {
 		return nil, err
 	}
@@ -266,4 +301,16 @@ func (s *Store) parentKey(passphrase string) ([]byte, error) {
 	exitOnErr(err)
 
 	return parentKey, nil
+}
+
+func (s *Store) makeEncrypter(passphrase string) (encrypter, error) {
+	if s.Encrypted && len(passphrase) != 0 {
+		return newArgon2Encrypter(passphrase), nil
+	}
+
+	if !s.Encrypted && len(passphrase) == 0 {
+		return newNopeEncrypter(), nil
+	}
+
+	return nil, ErrInvalidPassword
 }

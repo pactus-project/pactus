@@ -14,7 +14,6 @@ func init() {
 }
 
 func TestEncryptDecrypt(t *testing.T) {
-
 	e := newArgon2Encrypter("super_secret_passsword")
 	msg1 := "hello_world"
 	ct := e.encrypt(msg1)

@@ -20,11 +20,16 @@ func newNopeEncrypter() encrypter {
 
 func (e *nopeEncrypter) encrypt(message string) encrypted {
 	return encrypted{
+		Method:     "",
+		Params:     newParams(),
 		CipherText: message,
 	}
 }
 
 func (e *nopeEncrypter) decrypt(ct encrypted) (string, error) {
+	if ct.Method != "" {
+		return "", ErrInvalidPassword
+	}
 	return ct.CipherText, nil
 }
 

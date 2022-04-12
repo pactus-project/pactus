@@ -31,10 +31,19 @@ herumi:
 build:
 	go build $(BUILD_LDFLAGS) -o ./build/zarb-daemon ./cmd/daemon
 	go build $(BUILD_LDFLAGS) -o ./build/zarb-wallet ./cmd/wallet
+	go build $(BUILD_LDFLAGS) -o ./build/zarb-gui ./cmd/gtk
 
 release: herumi
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./zarb-daemon ./cmd/daemon
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./zarb-wallet ./cmd/wallet
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/daemon
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/wallet
+
+
+build_gui:
+	go build $(BUILD_LDFLAGS) -o ./build/zarb-gui ./cmd/gtk
+
+release_gui: herumi
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) ./cmd/gtk
+
 
 ########################################
 ### Testing

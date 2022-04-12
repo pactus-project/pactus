@@ -14,13 +14,8 @@ func Generate() func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
-			w, err := wallet.CreateWallet(*path, passphrase, 0)
-			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
-			}
-
-			mnemonic, err := w.Mnemonic(passphrase)
+			mnemonic := wallet.GenerateMnemonic()
+			w, err := wallet.FromMnemonic(*path, mnemonic, passphrase, 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

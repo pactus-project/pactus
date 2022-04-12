@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/tyler-smith/go-bip39"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -13,27 +14,11 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-var (
-	/// ErrWalletExits describes an error in which there is a wallet
-	/// exists in the given path
-	ErrWalletExits = errors.New("wallet exists")
-
-	/// ErrWalletExits describes an error in which the wallet CRC is
-	/// invalid
-	ErrInvalidCRC = errors.New("invalid CRC")
-
-	/// ErrWalletExits describes an error in which the network is not
-	/// valid
-	ErrInvalidNetwork = errors.New("invalid network")
-
-	/// ErrWalletExits describes an error in which the address doesn't
-	/// exist in wallet
-	ErrAddressNotFound = errors.New("address not found")
-
-	/// ErrWalletExits describes an error in which the address already
-	/// exist in wallet
-	ErrAddressExists = errors.New("address already exists")
-)
+type AddressInfo struct {
+	Address  string
+	Label    string
+	Imported bool
+}
 
 type Wallet struct {
 	path   string
@@ -49,6 +34,14 @@ type servers = map[string][]serverInfo
 
 //go:embed servers.json
 var serversJSON []byte
+
+func GenerateMnemonic() string {
+	entropy, err := bip39.NewEntropy(128)
+	exitOnErr(err)
+	mnemonic, err := bip39.NewMnemonic(entropy)
+	exitOnErr(err)
+	return mnemonic
+}
 
 /// OpenWallet generates an empty wallet and save the seed string
 func OpenWallet(path string) (*Wallet, error) {
@@ -68,50 +61,17 @@ func OpenWallet(path string) (*Wallet, error) {
 	return newWallet(path, s, true)
 }
 
-/// Recover recovers a wallet from mnemonic (seed phrase)
-func RecoverWallet(path, mnemonic string, net int) (*Wallet, error) {
+/// FromMnemonic creates a wallet from mnemonic (seed phrase)
+func FromMnemonic(path, mnemonic, passphrase string, net int) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
-		return nil, ErrWalletExits
+		return nil, NewErrWalletExits(path)
 	}
-	s, err := RecoverStore(mnemonic, net)
+	s, err := CreateStoreFromMnemonic(mnemonic, passphrase, net)
 	if err != nil {
 		return nil, err
 	}
-	w, err := newWallet(path, s, false)
-	if err != nil {
-		return nil, err
-	}
-
-	err = w.saveToFile()
-	if err != nil {
-		return nil, err
-	}
-
-	return w, nil
-}
-
-/// CreateWallet generates an empty wallet and save the seed string
-func CreateWallet(path, passphrase string, net int) (*Wallet, error) {
-	path = util.MakeAbs(path)
-	if util.PathExists(path) {
-		return nil, ErrWalletExits
-	}
-	s, err := NewStore(passphrase, net)
-	if err != nil {
-		return nil, err
-	}
-	w, err := newWallet(path, s, false)
-	if err != nil {
-		return nil, err
-	}
-
-	err = w.saveToFile()
-	if err != nil {
-		return nil, err
-	}
-
-	return w, nil
+	return newWallet(path, s, false)
 }
 
 func newWallet(path string, store *Store, online bool) (*Wallet, error) {
@@ -126,6 +86,9 @@ func newWallet(path string, store *Store, online bool) (*Wallet, error) {
 	}
 
 	return w, nil
+}
+func (w *Wallet) UpdatePassword(old, new string) error {
+	return w.store.UpdatePassword(old, new)
 }
 
 func (w *Wallet) connectToRandomServer() error {
@@ -171,7 +134,7 @@ func (w *Wallet) IsEncrypted() bool {
 	return w.store.Encrypted
 }
 
-func (w *Wallet) saveToFile() error {
+func (w *Wallet) Save() error {
 	w.store.VaultCRC = w.store.calcVaultCRC()
 
 	bs, err := json.MarshalIndent(w.store, "  ", "  ")
@@ -185,19 +148,11 @@ func (w *Wallet) ImportPrivateKey(passphrase string, prvStr string) error {
 	if err != nil {
 		return err
 	}
-	err = w.store.ImportPrivateKey(passphrase, prv)
-	if err != nil {
-		return err
-	}
-	return w.saveToFile()
+	return w.store.ImportPrivateKey(passphrase, prv)
 }
 
 func (w *Wallet) NewAddress(passphrase, label string) (string, error) {
 	addr, err := w.store.NewAddress(passphrase, label)
-	if err != nil {
-		return "", err
-	}
-	err = w.saveToFile()
 	if err != nil {
 		return "", err
 	}
@@ -224,6 +179,7 @@ func (w *Wallet) PrivateKey(passphrase, addr string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return prv.String(), nil
 }
 
@@ -232,6 +188,7 @@ func (w *Wallet) PublicKey(passphrase, addr string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return prv.PublicKey().String(), nil
 }
 
@@ -239,8 +196,17 @@ func (w *Wallet) Mnemonic(passphrase string) (string, error) {
 	return w.store.Mnemonic(passphrase)
 }
 
-func (w *Wallet) Addresses() map[string]string {
+func (w *Wallet) Contains(addr string) bool {
+	return w.store.Contains(addr)
+}
+
+func (w *Wallet) Addresses() []AddressInfo {
 	return w.store.Addresses()
+}
+
+// AddressCount returns the number of addresses inside the wallet
+func (w *Wallet) AddressCount() int {
+	return w.store.AddressCount()
 }
 
 //

@@ -15,7 +15,7 @@ func main() {
 	path = app.String(cli.StringOpt{
 		Name:  "w wallet file",
 		Desc:  "a path to the wallet file",
-		Value: cmd.ZarbWalletsDir() + "default_wallet",
+		Value: cmd.ZarbDefaultWalletPath(cmd.ZarbHomeDir()),
 	})
 
 	app.Command("create", "Create a new wallet", Generate())
