@@ -9,7 +9,7 @@ make release
 
 if [[ "$OS" == "mingw"* ]]; then
     OS="windows"
-    7z a zarb-windows-$TAG-$MACH.zip zarb-daemon.exe
+    7z a zarb-windows-$TAG-$MACH.zip zarb-daemon.exe zarb-wallet.exe
 else
-    tar -czvf zarb-$OS-$TAG-$MACH.tar.gz ./zarb-daemon
+    tar -czvf zarb-$OS-$TAG-$MACH.tar.gz zarb-daemon zarb-wallet
 fi

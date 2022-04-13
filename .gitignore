@@ -1,6 +1,5 @@
 build/
 .idea
-vendor
 .DS_Store
 .vscode
 todo
@@ -8,3 +7,4 @@ todo
 .herumi
 dist/
 .releaser.yml
+zarb-*

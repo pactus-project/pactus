@@ -45,7 +45,7 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Creating wallet...")
 			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
 			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
-			walletPath := path + "/wallets/deafult_wallet"
+			walletPath := path + "/wallets/default_wallet"
 			w, err := wallet.CreateWallet(walletPath, passphrase, 0)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create wallet: ", err)
@@ -77,13 +77,18 @@ func Init() func(c *cli.Cmd) {
 			}
 			valPrvStr, err := w.PrivateKey(passphrase, valAddrStr)
 			if err != nil {
-				cmd.PrintErrorMsg("Failed to create validator address: ", err)
+				cmd.PrintErrorMsg("Failed to get validator private key: ", err)
 				return
 			}
-
 			err = util.WriteFile(path+"/validator_key", []byte(valPrvStr))
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to write validator_key file: %v", err)
+				return
+			}
+
+			valPrv, err := bls.PrivateKeyFromString(valPrvStr)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to create validator private key: ", err)
 				return
 			}
 
@@ -101,7 +106,8 @@ func Init() func(c *cli.Cmd) {
 				conf.State.MintbaseAddress = mintbaseAddrStr
 				conf.Sync.Moniker = name
 			} else {
-				return
+				gen = makeLocalGenesis(valPrv.PublicKey().(*bls.PublicKey))
+				conf.Network.Name = "local-test"
 			}
 
 			// Save genesis file to file system
