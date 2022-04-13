@@ -33,8 +33,8 @@ build:
 	go build $(BUILD_LDFLAGS) -o ./build/zarb-wallet ./cmd/wallet
 
 release: herumi
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./build/zarb-daemon ./cmd/daemon
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./build/zarb-wallet ./cmd/wallet
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./zarb-daemon ./cmd/daemon
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./zarb-wallet ./cmd/wallet
 
 ########################################
 ### Testing
