@@ -29,7 +29,7 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-func startupAssistant() bool {
+func startupAssistant(workspace string) bool {
 	gtk.Init(nil)
 
 	successful := false
@@ -298,7 +298,7 @@ Now you are ready to start the node!`
 
 		case pageFinalName:
 			{
-				defaultWallet, err := wallet.FromMnemonic(cmd.ZarbDefaultWalletPath(*workingDir), mnemonic, "", 0)
+				defaultWallet, err := wallet.FromMnemonic(cmd.ZarbDefaultWalletPath(workspace), mnemonic, "", 0)
 				errorCheck(err)
 				valAddr, err := defaultWallet.NewAddress("", "Validator address")
 				errorCheck(err)
@@ -316,9 +316,9 @@ Now you are ready to start the node!`
 				errorCheck(err)
 
 				successful = true
-				nodeInfo := fmt.Sprintf("Working directory: %s\n\n", *workingDir)
-				nodeInfo += fmt.Sprintf("Validator address:\n %s\n\n", valAddr)
-				nodeInfo += fmt.Sprintf("Reward address:\n %s\n", rewardAddr)
+				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", *workingDir)
+				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
+				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 
 				setTextViewcontent(NodeInfoTextView, nodeInfo)
 			}

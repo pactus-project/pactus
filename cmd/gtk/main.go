@@ -2,10 +2,10 @@ package main
 
 import (
 	_ "embed"
-	"errors"
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gotk3/gotk3/glib"
@@ -33,102 +33,43 @@ func init() {
 func main() {
 	flag.Parse()
 
+	var err error
+	*workingDir, err = filepath.Abs(*workingDir)
+	if err != nil {
+		cmd.PrintErrorMsg("Aborted! %v", err)
+		return
+	}
+
+	// If node is not initialized yet
 	if util.IsDirNotExistsOrEmpty(*workingDir) {
-		if !startupAssistant() {
+		if !startupAssistant(*workingDir) {
 			return
 		}
 	}
 
-	// Create a new application.
+	// Create a new app.
 	// When using GtkApplication, it is not necessary to call gtk_init() manually.
-	application, err := gtk.ApplicationNew(appId, glib.APPLICATION_FLAGS_NONE)
-	errorCheck(err)
-
-	time.Sleep(1 * time.Second)
-
-	path := cmd.ZarbDefaultWalletPath(*workingDir)
-	wallet, err := wallet.OpenWallet(path)
-	errorCheck(err)
-
-	password, ok := getWalletPassword(nil, wallet)
-	if !ok {
-		showInfoDialog(nil, "Canceled!")
-		return
-	}
-	_, err = startingNode(wallet, password)
+	app, err := gtk.ApplicationNew(appId, glib.APPLICATION_FLAGS_NONE)
 	errorCheck(err)
 
 	// Connect function to application startup event, this is not required.
-	application.Connect("startup", func() {
+	app.Connect("startup", func() {
 		log.Println("application startup")
+		start(app)
 	})
 
 	// Connect function to application activate event
-	application.Connect("activate", func() {
+	app.Connect("activate", func() {
 		log.Println("application activate")
-
-		// Get the GtkBuilder UI definition in the glade file.
-		builder, err := gtk.BuilderNewFromString(string(uiMainWindow))
-		errorCheck(err)
-
-		// Map the handlers to callback functions, and connect the signals
-		// to the Builder.
-		signals := map[string]interface{}{
-			"on_main_window_destroy": onMainWindowDestroy,
-		}
-		builder.ConnectSignals(signals)
-
-		// Get the object with the id of "main_window".
-		obj, err := builder.GetObject("main_window")
-		errorCheck(err)
-
-		// Verify that the object is a pointer to a gtk.Window.
-		win, err := isWindow(obj)
-		errorCheck(err)
-
-		// Show the Window and all of its components.
-		win.Show()
-		application.AddWindow(win)
 	})
 
 	// Connect function to application shutdown event, this is not required.
-	application.Connect("shutdown", func() {
+	app.Connect("shutdown", func() {
 		log.Println("application shutdown")
 	})
 
 	// Launch the application
-	os.Exit(application.Run(nil))
-}
-
-func isWindow(obj glib.IObject) (*gtk.Window, error) {
-	// Make type assertion (as per gtk.go).
-	if win, ok := obj.(*gtk.Window); ok {
-		return win, nil
-	}
-	return nil, errors.New("not a *gtk.Window")
-}
-
-func isDialog(obj glib.IObject) (*gtk.Dialog, error) {
-	// Make type assertion (as per gtk.go).
-	if dlg, ok := obj.(*gtk.Dialog); ok {
-		return dlg, nil
-	}
-	return nil, errors.New("not a *gtk.Dialog")
-}
-
-func isEntry(obj glib.IObject) (*gtk.Entry, error) {
-	// Make type assertion (as per gtk.go).
-	if dlg, ok := obj.(*gtk.Entry); ok {
-		return dlg, nil
-	}
-	return nil, errors.New("not a *gtk.Entry")
-}
-
-// onMainWindowDestory is the callback that is linked to the
-// on_main_window_destroy handler. It is not required to map this,
-// and is here to simply demo how to hook-up custom callbacks.
-func onMainWindowDestroy() {
-	log.Println("onMainWindowDestroy")
+	os.Exit(app.Run(nil))
 }
 
 func startingNode(wallet *wallet.Wallet, password string) (*node.Node, error) {
@@ -159,4 +100,48 @@ func startingNode(wallet *wallet.Wallet, password string) (*node.Node, error) {
 	}
 
 	return node, nil
+}
+
+func start(app *gtk.Application) {
+
+	// change working directory
+	if err := os.Chdir(*workingDir); err != nil {
+		log.Println("Aborted! Unable to changes working directory. " + err.Error())
+		return
+	}
+
+	time.Sleep(1 * time.Second)
+
+	path := cmd.ZarbDefaultWalletPath(*workingDir)
+	wallet, err := wallet.OpenWallet(path)
+	errorCheck(err)
+
+	password, ok := getWalletPassword(nil, wallet)
+	if !ok {
+		showInfoDialog(nil, "Canceled!")
+		return
+	}
+	_, err = startingNode(wallet, password)
+	errorCheck(err)
+
+	// Get the GtkBuilder UI definition in the glade file.
+	builder, err := gtk.BuilderNewFromString(string(uiMainWindow))
+	errorCheck(err)
+
+	// Map the handlers to callback functions, and connect the signals
+	// to the Builder.
+	signals := map[string]interface{}{}
+	builder.ConnectSignals(signals)
+
+	// Get the object with the id of "main_window".
+	obj, err := builder.GetObject("main_window")
+	errorCheck(err)
+
+	// Verify that the object is a pointer to a gtk.Window.
+	win, err := isApplicationWindow(obj)
+	errorCheck(err)
+
+	// Show the Window and all of its components.
+	win.Show()
+	app.AddWindow(win)
 }

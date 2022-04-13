@@ -2,9 +2,10 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkWindow" id="main_window">
-    <property name="name">Main Window</property>
+  <object class="GtkApplicationWindow" id="main_window">
     <property name="can-focus">False</property>
+    <property name="default-width">600</property>
+    <property name="default-height">440</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -207,7 +208,7 @@
                   <placeholder/>
                 </child>
                 <child>
-                  <object class="GtkListBox">
+                  <object class="GtkListBox" id="addresses_list_box">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                   </object>
@@ -220,6 +221,9 @@
                 <child>
                   <placeholder/>
                 </child>
+                <child>
+                  <placeholder/>
+                </child>
               </object>
               <packing>
                 <property name="menu-label">aaaaa</property>
@@ -227,7 +231,7 @@
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="addresses_tab_label">
+              <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">Addresses</property>
@@ -249,9 +253,6 @@
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>
