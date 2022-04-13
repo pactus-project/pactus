@@ -7,9 +7,21 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
+func showInfoDialog(msg string) {
+	dlg := gtk.MessageDialogNew(nil, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
+	dlg.Run()
+	dlg.Destroy()
+}
+
+func showErrorDialog(msg string) {
+	dlg := gtk.MessageDialogNew(nil, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
+	dlg.Run()
+	dlg.Destroy()
+}
+
 func errorCheck(err error) {
 	if err != nil {
-		showErrorDialog(nil, err.Error())
+		showErrorDialog(err.Error())
 		gtk.MainQuit()
 	}
 }
@@ -27,6 +39,13 @@ func isDialog(obj glib.IObject) (*gtk.Dialog, error) {
 	return nil, errors.New("not a *gtk.Dialog")
 }
 
+func isAboutDialog(obj glib.IObject) (*gtk.AboutDialog, error) {
+	if dlg, ok := obj.(*gtk.AboutDialog); ok {
+		return dlg, nil
+	}
+	return nil, errors.New("not a *gtk.AboutDialog")
+}
+
 func isEntry(obj glib.IObject) (*gtk.Entry, error) {
 	if dlg, ok := obj.(*gtk.Entry); ok {
 		return dlg, nil
@@ -39,4 +58,11 @@ func isTreeView(obj glib.IObject) (*gtk.TreeView, error) {
 		return dlg, nil
 	}
 	return nil, errors.New("not a *gtk.TreeView")
+}
+
+func isBox(obj glib.IObject) (*gtk.Box, error) {
+	if dlg, ok := obj.(*gtk.Box); ok {
+		return dlg, nil
+	}
+	return nil, errors.New("not a *gtk.Box")
 }

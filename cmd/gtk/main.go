@@ -113,7 +113,7 @@ func start(app *gtk.Application) {
 
 	password, ok := getWalletPassword(nil, wallet)
 	if !ok {
-		showInfoDialog(nil, "Canceled!")
+		showInfoDialog("Canceled!")
 		return
 	}
 	_, err = startingNode(wallet, password)
@@ -132,7 +132,7 @@ func start(app *gtk.Application) {
 	win.Show()
 
 	walletModel.rebuildModel()
-	win.SetAddressesModel(walletModel.ToTreeModel())
+	win.SetWalletModel(walletModel)
 
 	app.AddWindow(win)
 }

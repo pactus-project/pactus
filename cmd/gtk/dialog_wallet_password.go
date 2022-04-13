@@ -7,22 +7,10 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-//go:embed ui/password_dialog.ui
+//go:embed assets/ui/dialog_password.ui
 var uiPasswordDialog []byte
 
-func showInfoDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
-	dlg.Run()
-	dlg.Destroy()
-}
-
-func showErrorDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
-	dlg.Run()
-	dlg.Destroy()
-}
-
-func getWalletPassword(parent *gtk.Widget, wallet *wallet.Wallet) (string, bool) {
+func getWalletPassword(parent gtk.IWidget, wallet *wallet.Wallet) (string, bool) {
 	password := ""
 	if !wallet.IsEncrypted() {
 		return password, true
