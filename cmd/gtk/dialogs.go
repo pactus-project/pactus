@@ -32,28 +32,35 @@ func getWalletPassword(parent *gtk.Widget, wallet *wallet.Wallet) (string, bool)
 	errorCheck(err)
 
 	// Get the object with the id of "password_dialog".
-	obj, err := builder.GetObject("password_dialog")
+	objDlg, err := builder.GetObject("password_dialog")
 	errorCheck(err)
 
 	// Verify that the object is a pointer to a gtk.Dialog.
-	dlg, err := isDialog(obj)
+	dlg, err := isDialog(objDlg)
 	errorCheck(err)
 
+	objEntry, err := builder.GetObject("password_entry")
+	errorCheck(err)
+
+	passwordEntry, err := isEntry(objEntry)
+	errorCheck(err)
+
+	password, err = passwordEntry.GetText()
+	errorCheck(err)
+
+	ok := false
 	onOk := func() {
-		obj, err := builder.GetObject("password_entry")
-		errorCheck(err)
-
-		passwordEntry, err := isEntry(obj)
-		errorCheck(err)
-
 		password, err = passwordEntry.GetText()
 		errorCheck(err)
 
+		ok = true
 		dlg.Close()
+		dlg.Destroy()
 	}
 
 	onCancel := func() {
 		dlg.Close()
+		dlg.Destroy()
 	}
 
 	// Map the handlers to callback functions, and connect the signals
@@ -67,7 +74,7 @@ func getWalletPassword(parent *gtk.Widget, wallet *wallet.Wallet) (string, bool)
 	dlg.SetModal(true)
 
 	// Show the dialog
-	code := dlg.Run()
+	dlg.Run()
 
-	return password, code == gtk.RESPONSE_ACCEPT
+	return password, ok
 }

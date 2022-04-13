@@ -216,6 +216,41 @@
                         <child internal-child="selection">
                           <object class="GtkTreeSelection" id="addresses_select"/>
                         </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="addresses_column_no">
+                            <property name="resizable">True</property>
+                            <property name="title" translatable="yes">No</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="addresses_column_address">
+                            <property name="resizable">True</property>
+                            <property name="title" translatable="yes">Address</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="addresses_column_label">
+                            <property name="resizable">True</property>
+                            <property name="title" translatable="yes">Label</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="addresses_column_balance">
+                            <property name="resizable">True</property>
+                            <property name="title" translatable="yes">Balance</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="addresses_column_stake">
+                            <property name="resizable">True</property>
+                            <property name="title" translatable="yes">Stake</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn">
+                            <property name="title" translatable="yes">column</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

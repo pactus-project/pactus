@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "embed"
 	"flag"
 	"log"
 	"os"
@@ -21,9 +20,6 @@ import (
 )
 
 var workingDir *string
-
-//go:embed ui/main_window.ui
-var uiMainWindow []byte
 
 const appId = "com.github.zarb"
 
@@ -55,12 +51,12 @@ func main() {
 	// Connect function to application startup event, this is not required.
 	app.Connect("startup", func() {
 		log.Println("application startup")
-		start(app)
 	})
 
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
+		start(app)
 	})
 
 	// Connect function to application shutdown event, this is not required.
@@ -103,7 +99,6 @@ func startingNode(wallet *wallet.Wallet, password string) (*node.Node, error) {
 }
 
 func start(app *gtk.Application) {
-
 	// change working directory
 	if err := os.Chdir(*workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
@@ -123,25 +118,21 @@ func start(app *gtk.Application) {
 	}
 	_, err = startingNode(wallet, password)
 	errorCheck(err)
+	// No showing the main window
+	if err != nil {
+		return
+	}
 
-	// Get the GtkBuilder UI definition in the glade file.
-	builder, err := gtk.BuilderNewFromString(string(uiMainWindow))
-	errorCheck(err)
+	walletModel := newWalletModel(wallet)
 
-	// Map the handlers to callback functions, and connect the signals
-	// to the Builder.
-	signals := map[string]interface{}{}
-	builder.ConnectSignals(signals)
-
-	// Get the object with the id of "main_window".
-	obj, err := builder.GetObject("main_window")
-	errorCheck(err)
-
-	// Verify that the object is a pointer to a gtk.Window.
-	win, err := isApplicationWindow(obj)
-	errorCheck(err)
+	// building main window
+	win := buildMainWindow()
 
 	// Show the Window and all of its components.
 	win.Show()
+
+	walletModel.rebuildModel()
+	win.SetAddressesModel(walletModel.ToTreeModel())
+
 	app.AddWindow(win)
 }
