@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"os/user"
+	"path"
 	"strings"
 	"syscall"
 
@@ -224,14 +225,22 @@ func ZarbHomeDir() string {
 		if usr.HomeDir == "/root" {
 			home = "/zarb/"
 		} else {
-			home = usr.HomeDir + "/zarb/"
+			home = path.Join(usr.HomeDir, "zarb")
 		}
 	}
 	return home
 }
 
-func ZarbWalletsDir() string {
-	return ZarbHomeDir() + "wallets/"
+func ZarbDefaultWalletPath(home string) string {
+	return path.Join(home, "wallets"+string(os.PathSeparator)+"default_wallet")
+}
+
+func ZarbGenesisPath(home string) string {
+	return path.Join(home, "genesis.json")
+}
+
+func ZarbConfigPath(home string) string {
+	return path.Join(home, "config.toml")
 }
 
 // TrapSignal traps SIGINT and SIGTERM and terminates the server correctly.

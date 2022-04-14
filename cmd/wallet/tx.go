@@ -30,13 +30,13 @@ func SendTx() func(c *cli.Cmd) {
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := w.MakeSendTx(*stampOpt, *seqOpt, *fromArg, *toArg, *amountArg, *feeOpt, *memoOpt)
+			trx, err := wallet.MakeSendTx(*stampOpt, *seqOpt, *fromArg, *toArg, *amountArg, *feeOpt, *memoOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -48,7 +48,7 @@ func SendTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("To: %s", *toArg)
 			cmd.PrintInfoMsg("Amount: %s", *amountArg)
 
-			signAndPublishTx(w, trx)
+			signAndPublishTx(wallet, trx)
 		}
 	}
 }
@@ -73,13 +73,13 @@ func BondTx() func(c *cli.Cmd) {
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := w.MakeBondTx(*stampOpt, *seqOpt, *senderArg, *pubArg, *stakeArg, *feeOpt, *memoOpt)
+			trx, err := wallet.MakeBondTx(*stampOpt, *seqOpt, *senderArg, *pubArg, *stakeArg, *feeOpt, *memoOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -91,7 +91,7 @@ func BondTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Validator: %s", trx.Payload().(*payload.BondPayload).PublicKey.Address())
 			cmd.PrintInfoMsg("Stake: %s", *stakeArg)
 
-			signAndPublishTx(w, trx)
+			signAndPublishTx(wallet, trx)
 		}
 	}
 }
@@ -106,13 +106,13 @@ func UnbondTx() func(c *cli.Cmd) {
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := w.MakeUnbondTx(*stampOpt, *seqOpt, *valArg, *memoOpt)
+			trx, err := wallet.MakeUnbondTx(*stampOpt, *seqOpt, *valArg, *memoOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -122,7 +122,7 @@ func UnbondTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign and broadcast an Unbond transition to the network:")
 			cmd.PrintInfoMsg("Validator: %s", *valArg)
 
-			signAndPublishTx(w, trx)
+			signAndPublishTx(wallet, trx)
 
 		}
 	}
@@ -148,13 +148,13 @@ func WithdrawTx() func(c *cli.Cmd) {
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := w.MakeWithdrawTx(*stampOpt, *seqOpt, *fromArg, *toArg, *amountArg, *feeOpt, *memoOpt)
+			trx, err := wallet.MakeWithdrawTx(*stampOpt, *seqOpt, *fromArg, *toArg, *amountArg, *feeOpt, *memoOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -166,7 +166,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Account: %s", *toArg)
 			cmd.PrintInfoMsg("Amount: %s", *amountArg)
 
-			signAndPublishTx(w, trx)
+			signAndPublishTx(wallet, trx)
 		}
 	}
 }
@@ -195,15 +195,15 @@ func addCommonTxOptions(c *cli.Cmd) (*string, *string, *string, *string) {
 	return stampOpt, seqOpt, memoOpt, feeOpt
 }
 
-func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx) {
+func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx) {
 	cmd.PrintWarnMsg("THIS ACTION IS NOT REVERSIBLE")
 	confirmed := cmd.PromptConfirm("Do you want to continue? ")
 	if !confirmed {
 		return
 	}
 
-	passphrase := getPassphrase(w)
-	res, err := w.SignAndBroadcast(passphrase, trx)
+	passphrase := getPassphrase(wallet)
+	res, err := wallet.SignAndBroadcast(passphrase, trx)
 	if err != nil {
 		cmd.PrintDangerMsg(err.Error())
 		return
@@ -211,9 +211,9 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx) {
 	cmd.PrintInfoMsg(res)
 }
 
-func getPassphrase(w *wallet.Wallet) string {
+func getPassphrase(wallet *wallet.Wallet) string {
 	passphrase := ""
-	if w.IsEncrypted() {
+	if wallet.IsEncrypted() {
 		passphrase = cmd.PromptPassphrase("Wallet password: ", false)
 	}
 	return passphrase

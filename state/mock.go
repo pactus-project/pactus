@@ -156,11 +156,11 @@ func (m *MockState) BlockHash(height int32) hash.Hash {
 
 	return m.TestStore.BlockHash(height)
 }
-func (m *MockState) Account(addr crypto.Address) *account.Account {
+func (m *MockState) AccountByAddress(addr crypto.Address) *account.Account {
 	a, _ := m.TestStore.Account(addr)
 	return a
 }
-func (m *MockState) Validator(addr crypto.Address) *validator.Validator {
+func (m *MockState) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	v, _ := m.TestStore.Validator(addr)
 	return v
 }
@@ -186,4 +186,10 @@ func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 }
 func (m *MockState) Params() param.Params {
 	return m.TestParams
+}
+func (m *MockState) MintbaseAddress() crypto.Address {
+	return crypto.GenerateTestAddress()
+}
+func (m *MockState) ValidatorAddress() crypto.Address {
+	return crypto.GenerateTestAddress()
 }

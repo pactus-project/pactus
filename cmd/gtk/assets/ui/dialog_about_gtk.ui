@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.38.2 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkAboutDialog" id="id_dialog_about_gtk">
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">About GTK</property>
+    <property name="type-hint">dialog</property>
+    <property name="program-name">GTK</property>
+    <property name="version">Gtk – 3.0</property>
+    <property name="comments" translatable="yes">GTK is a free and open-source cross-platform widget toolkit for creating graphical user interfaces. It is licensed under the terms of the GNU Lesser General Public License, allowing both free and proprietary software to use it. It is one of the most popular toolkits for the Wayland and X11 windowing systems.
+</property>
+    <property name="website">https://www.gtk.org/</property>
+    <property name="website-label" translatable="yes">GTK</property>
+    <property name="logo-icon-name">icon_gtk</property>
+    <property name="license-type">lgpl-2-1</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

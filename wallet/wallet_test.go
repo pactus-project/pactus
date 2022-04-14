@@ -16,50 +16,33 @@ var tWallet *Wallet
 var tPassphrase string
 
 func setup(t *testing.T) {
-	passphrase := ""
+	passphrase := "super_secret_password"
 	path := util.TempFilePath()
-	w, err := CreateWallet(path, passphrase, 0) // 2 for testing
+	mnemonic := GenerateMnemonic()
+	w, err := FromMnemonic(path, mnemonic, "", 0)
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
 	assert.Equal(t, w.Path(), path)
 
 	// create some test addresses
-	_, err = w.NewAddress(passphrase, "addr-1")
+	_, err = w.NewAddress("", "addr-1")
 	assert.NoError(t, err)
-	_, err = w.NewAddress(passphrase, "addr-2")
+	_, err = w.NewAddress("", "addr-2")
 	assert.NoError(t, err)
-	_, err = w.NewAddress(passphrase, "addr-3")
+	_, err = w.NewAddress("", "addr-3")
 	assert.NoError(t, err)
 
+	// Create some keys
+	_, prv1 := bls.GenerateTestKeyPair()
+	_, prv2 := bls.GenerateTestKeyPair()
+
+	assert.NoError(t, w.ImportPrivateKey("", prv1.String()))
+	assert.NoError(t, w.ImportPrivateKey("", prv2.String()))
+
+	assert.NoError(t, w.UpdatePassword("", passphrase))
+	assert.True(t, w.IsEncrypted())
 	tPassphrase = passphrase
 	tWallet = w
-}
-
-func reopenWallet(t *testing.T) {
-	w, err := OpenWallet(tWallet.path)
-	assert.NoError(t, err)
-	assert.Equal(t, tWallet.store.UUID, w.store.UUID, "UUID is changed")
-	tWallet = w
-}
-
-func TestCreateWallet(t *testing.T) {
-	setup(t)
-
-	t.Run("Wallet exists", func(t *testing.T) {
-		_, err := CreateWallet(tWallet.path, "", 0)
-		assert.Error(t, err)
-	})
-
-	t.Run("Invalid network", func(t *testing.T) {
-		_, err := CreateWallet(util.TempFilePath(), "", 3)
-		assert.Error(t, err)
-	})
-
-	t.Run("OK", func(t *testing.T) {
-		w, err := CreateWallet(util.TempFilePath(), "super_secret_password", 0)
-		assert.NoError(t, err)
-		assert.True(t, w.IsEncrypted())
-	})
 }
 
 func TestOpenWallet(t *testing.T) {
@@ -108,50 +91,95 @@ func TestRecoverWallet(t *testing.T) {
 	setup(t)
 
 	mnemonic, _ := tWallet.Mnemonic(tPassphrase)
+	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
-		_, err := RecoverWallet(tWallet.path, mnemonic, 0)
+		// Save the test wallet first then
+		// try to recover a wallet at the same place
+		assert.NoError(t, tWallet.Save())
+
+		_, err := FromMnemonic(tWallet.path, mnemonic, password, 0)
 		assert.Error(t, err)
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := RecoverWallet(util.TempFilePath(), "invali mnemonic phrase seed", 0)
+		_, err := FromMnemonic(util.TempFilePath(), "invali mnemonic phrase seed", password, 0)
 		assert.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		recovered, err := RecoverWallet(util.TempFilePath(), mnemonic, 0)
+		path := util.TempFilePath()
+		recovered, err := FromMnemonic(path, mnemonic, password, 0)
 		assert.NoError(t, err)
 
-		reopenWallet(t)
-		_, err = recovered.NewAddress("", "addr-1")
+		addr1, err := recovered.NewAddress("", "addr-1")
 		assert.NoError(t, err)
-		_, err = recovered.NewAddress("", "addr-2")
+		addr2, err := recovered.NewAddress("", "addr-2")
 		assert.NoError(t, err)
-		_, err = recovered.NewAddress("", "addr-3")
+		addr3, err := recovered.NewAddress("", "addr-3")
 		assert.NoError(t, err)
 
-		assert.Equal(t, tWallet.Addresses(), recovered.Addresses())
-		assert.Equal(t, tWallet.store.VaultCRC, recovered.store.VaultCRC)
+		assert.NoFileExists(t, path)
+		assert.NoError(t, recovered.Save())
+
+		assert.FileExists(t, path)
+		assert.True(t, tWallet.Contains(addr1))
+		assert.True(t, tWallet.Contains(addr2))
+		assert.True(t, tWallet.Contains(addr3))
 	})
 }
 
 func TestGetPrivateKey(t *testing.T) {
 	setup(t)
 
-	addrs := tWallet.Addresses()
-	assert.NotEmpty(t, addrs)
-	for addr := range addrs {
-		prvStr, err := tWallet.PrivateKey(tPassphrase, addr)
-		assert.NoError(t, err)
-		pubStr, err := tWallet.PublicKey(tPassphrase, addr)
-		assert.NoError(t, err)
-		prv, _ := bls.PrivateKeyFromString(prvStr)
-		pub, _ := bls.PublicKeyFromString(pubStr)
-		assert.True(t, prv.PublicKey().EqualsTo(pub))
-		assert.Equal(t, pub.Address().String(), addr)
-	}
+	_, prv := bls.GenerateTestKeyPair()
+	assert.NoError(t, tWallet.ImportPrivateKey(tPassphrase, prv.String()))
+
+	t.Run("Check all private keys", func(t *testing.T) {
+		addrs := tWallet.Addresses()
+		assert.NotEmpty(t, addrs)
+		for _, addr := range addrs {
+			prvStr, err := tWallet.PrivateKey(tPassphrase, addr.Address)
+			assert.NoError(t, err)
+			pubStr, err := tWallet.PublicKey(tPassphrase, addr.Address)
+			assert.NoError(t, err)
+			prv, _ := bls.PrivateKeyFromString(prvStr)
+			pub, _ := bls.PublicKeyFromString(pubStr)
+			assert.True(t, prv.PublicKey().EqualsTo(pub))
+			assert.Equal(t, pub.Address().String(), addr.Address)
+		}
+	})
+
+	t.Run("Empty password", func(t *testing.T) {
+		addrs := tWallet.Addresses()
+		assert.NotEmpty(t, addrs)
+		for _, addr := range addrs {
+			_, err := tWallet.PrivateKey("", addr.Address)
+			assert.Error(t, err)
+			_, err = tWallet.PublicKey("", addr.Address)
+			assert.Error(t, err)
+		}
+	})
+
+	t.Run("Invalid password", func(t *testing.T) {
+		addrs := tWallet.Addresses()
+		assert.NotEmpty(t, addrs)
+		for _, addr := range addrs {
+			_, err := tWallet.PrivateKey("wrong_password", addr.Address)
+			assert.Error(t, err)
+			_, err = tWallet.PublicKey("wrong_password", addr.Address)
+			assert.Error(t, err)
+		}
+	})
 }
 
+func TestSaveWallet(t *testing.T) {
+	setup(t)
+
+	t.Run("Invalid path", func(t *testing.T) {
+		tWallet.path = "/"
+		assert.Error(t, tWallet.Save())
+	})
+}
 func TestInvalidAddress(t *testing.T) {
 	setup(t)
 
@@ -164,15 +192,38 @@ func TestImportPrivateKey(t *testing.T) {
 
 	_, prv1 := bls.GenerateTestKeyPair()
 	assert.NoError(t, tWallet.ImportPrivateKey(tPassphrase, prv1.String()))
-	reopenWallet(t)
 
-	assert.True(t, tWallet.store.Contains(prv1.PublicKey().Address()))
+	assert.True(t, tWallet.store.Contains(prv1.PublicKey().Address().String()))
 	prv2, err := tWallet.PrivateKey(tPassphrase, prv1.PublicKey().Address().String())
 	assert.NoError(t, err)
 	assert.Equal(t, prv1.String(), prv2)
 
 	// Import again
 	assert.Error(t, tWallet.ImportPrivateKey(tPassphrase, prv1.String()))
+}
+
+func TestUpdatePassphrase(t *testing.T) {
+	setup(t)
+
+	addrs := tWallet.Addresses()
+	newPassphrase := "new-passphrase"
+	invalidPassphrase := "invalid-passphrase"
+	assert.Error(t, tWallet.UpdatePassword("", newPassphrase))
+	assert.Error(t, tWallet.UpdatePassword(invalidPassphrase, newPassphrase))
+	assert.NoError(t, tWallet.UpdatePassword(tPassphrase, newPassphrase))
+	assert.True(t, tWallet.IsEncrypted())
+	for _, addr := range addrs {
+		assert.True(t, tWallet.Contains(addr.Address))
+	}
+
+	assert.Error(t, tWallet.UpdatePassword(invalidPassphrase, newPassphrase))
+	assert.NoError(t, tWallet.UpdatePassword(newPassphrase, ""))
+	assert.False(t, tWallet.IsEncrypted())
+	for _, addr := range addrs {
+		assert.True(t, tWallet.Contains(addr.Address))
+	}
+
+	assert.Error(t, tWallet.UpdatePassword(invalidPassphrase, newPassphrase))
 }
 
 func TestMakeSendTx(t *testing.T) {

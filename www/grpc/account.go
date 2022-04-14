@@ -16,7 +16,7 @@ func (zs *zarbServer) GetAccount(ctx context.Context, request *zarb.AccountReque
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
 
 	}
-	acc := zs.state.Account(addr)
+	acc := zs.state.AccountByAddress(addr)
 	if acc == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "account not found")
 	}

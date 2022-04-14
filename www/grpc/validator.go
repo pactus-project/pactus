@@ -28,7 +28,7 @@ func (zs *zarbServer) GetValidator(ctx context.Context, request *zarb.ValidatorR
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid validator address: %s", err.Error())
 	}
-	val := zs.state.Validator(addr)
+	val := zs.state.ValidatorByAddress(addr)
 	if val == nil {
 		return nil, status.Errorf(codes.NotFound, "validator not found")
 	}

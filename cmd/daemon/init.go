@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
@@ -36,28 +35,16 @@ func Init() func(c *cli.Cmd) {
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			path, _ := filepath.Abs(*workingDirOpt)
-			if !util.IsDirNotExistsOrEmpty(path) {
-				cmd.PrintErrorMsg("The workspace directory is not empty: %v", path)
+			workspacePath, _ := filepath.Abs(*workingDirOpt)
+			if !util.IsDirNotExistsOrEmpty(workspacePath) {
+				cmd.PrintErrorMsg("The workspace directory is not empty: %v", workspacePath)
 				return
 			}
 
 			cmd.PrintInfoMsg("Creating wallet...")
-			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
-			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
-			walletPath := path + "/wallets/default_wallet"
-			w, err := wallet.CreateWallet(walletPath, passphrase, 0)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to create wallet: ", err)
-				return
-			}
-			mnemonic, err := w.Mnemonic(passphrase)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to get mnemonic: ", err)
-				return
-			}
+			mnemonic := wallet.GenerateMnemonic()
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Wallet created. Here is wallet seed:")
+			cmd.PrintInfoMsg("Your wallet seed:")
 			cmd.PrintInfoMsg("\"" + mnemonic + "\"")
 			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
 			cmd.PrintLine()
@@ -65,26 +52,45 @@ func Init() func(c *cli.Cmd) {
 			if !confirmed {
 				return
 			}
-			valAddrStr, err := w.NewAddress(passphrase, "Validator address")
+
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
+			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
+			walletPath := cmd.ZarbDefaultWalletPath(workspacePath)
+			// To make process faster, we update the password
+			// after creating the addresses
+			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", 0)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to create wallet: ", err)
+				return
+			}
+			cmd.PrintInfoMsg("Wallet created successfully")
+			valAddrStr, err := wallet.NewAddress("", "Validator address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create validator address: ", err)
 				return
 			}
-			mintbaseAddrStr, err := w.NewAddress(passphrase, "Mintbase address")
+			mintbaseAddrStr, err := wallet.NewAddress("", "Mintbase address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create mintbase address: ", err)
 				return
 			}
-			valPrvStr, err := w.PrivateKey(passphrase, valAddrStr)
+			valPrvStr, err := wallet.PrivateKey("", valAddrStr)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to get validator private key: ", err)
 				return
 			}
-			err = util.WriteFile(path+"/validator_key", []byte(valPrvStr))
+			err = util.WriteFile(workspacePath+"/validator_key", []byte(valPrvStr))
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to write validator_key file: %v", err)
 				return
 			}
+			err = wallet.UpdatePassword("", passphrase)
+			if err != nil {
+				cmd.PrintErrorMsg("Failed to update passphrase: ", err)
+				return
+			}
+			cmd.PrintLine()
 
 			valPrv, err := bls.PrivateKeyFromString(valPrvStr)
 			if err != nil {
@@ -97,40 +103,38 @@ func Init() func(c *cli.Cmd) {
 
 			if *testnetOpt {
 				gen = genesis.Testnet()
-				name, _ := os.Hostname()
 
 				conf.Network.Name = "perdana-testnet"
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 				conf.State.MintbaseAddress = mintbaseAddrStr
-				conf.Sync.Moniker = name
 			} else {
 				gen = makeLocalGenesis(valPrv.PublicKey().(*bls.PublicKey))
 				conf.Network.Name = "local-test"
 			}
 
 			// Save genesis file to file system
-			genFile := path + "/genesis.json"
+			genFile := cmd.ZarbGenesisPath(workspacePath)
 			if err := gen.SaveToFile(genFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
 				return
 			}
 
 			// Save config file to file system
-			confFile := path + "/config.toml"
+			confFile := cmd.ZarbConfigPath(workspacePath)
 			if err := conf.SaveToFile(confFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write config file: %v", err)
 				return
 			}
 
 			fmt.Println()
-			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", path)
+			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", workspacePath)
 			cmd.PrintInfoMsg("You validator address is: %v", valAddrStr)
 			cmd.PrintInfoMsg("You mintbase address is: %v", mintbaseAddrStr)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("To run your node run this command:")
-			cmd.PrintInfoMsg("./zarb-daemon start -w %v", path)
+			cmd.PrintInfoMsg("./zarb-daemon start -w %v", workspacePath)
 		}
 	}
 }

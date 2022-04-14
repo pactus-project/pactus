@@ -12,7 +12,7 @@ func (zs zarbServer) GetAccount(args ZarbServer_getAccount) error {
 	if err != nil {
 		return fmt.Errorf("invalid address: %s", err)
 	}
-	acc := zs.state.Account(addr)
+	acc := zs.state.AccountByAddress(addr)
 	if acc == nil {
 		return fmt.Errorf("account not found")
 	}

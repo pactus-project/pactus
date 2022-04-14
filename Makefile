@@ -4,6 +4,10 @@ CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++ -g -O2"
 BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
 RELEASE_LDFLAGS= -ldflags "-s -w"
 
+ifneq (,$(filter $(OS),Windows_NT MINGW64))
+EXE = .exe
+endif
+
 all: install test
 
 ########################################
@@ -25,16 +29,22 @@ herumi:
 		git clone --recursive https://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static; \
 	fi
 
-
 ########################################
 ### Building
 build:
-	go build $(BUILD_LDFLAGS) -o ./build/zarb-daemon ./cmd/daemon
-	go build $(BUILD_LDFLAGS) -o ./build/zarb-wallet ./cmd/wallet
+	go build $(BUILD_LDFLAGS) -o ./build/zarb-daemon$(EXE) ./cmd/daemon
+	go build $(BUILD_LDFLAGS) -o ./build/zarb-wallet$(EXE) ./cmd/wallet
 
 release: herumi
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./zarb-daemon ./cmd/daemon
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./zarb-wallet ./cmd/wallet
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./build/zarb-daemon$(EXE) ./cmd/daemon
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./build/zarb-wallet$(EXE) ./cmd/wallet
+
+build_gui:
+	go build $(BUILD_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
+
+release_gui: herumi
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
+
 
 ########################################
 ### Testing

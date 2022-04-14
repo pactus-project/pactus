@@ -35,10 +35,18 @@ type Facade interface {
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
 	Block(hash hash.Hash) *block.Block // TODO: return store block (including block header data)
 	BlockHash(height int32) hash.Hash
-	Account(addr crypto.Address) *account.Account
-	Validator(addr crypto.Address) *validator.Validator
+	AccountByAddress(addr crypto.Address) *account.Account
+	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator
 	Params() param.Params
+	// MintbaseAddress returns the rewards address that is associated to this node.
+	// Mintbase address can be set through the config file,
+	// and if it is not set, it will be the same as validator address
+	MintbaseAddress() crypto.Address
+
+	// ValidatorAddress return the validator address that is associated to this node
+	// Validator address is different from the Mintbase address.
+	ValidatorAddress() crypto.Address
 	Close() error
 	Fingerprint() string
 }

@@ -177,6 +177,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.True(t, trx.IsMintbaseTx())
 	assert.Equal(t, trx.Payload().Value(), tState1.params.BlockReward+7)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
+	assert.Equal(t, tState1.MintbaseAddress(), tState1.ValidatorAddress())
 
 	store := store.MockingStore()
 
@@ -188,6 +189,8 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.NoError(t, err)
 	trx = st.(*state).createSubsidyTx(0)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
+	assert.Equal(t, st.MintbaseAddress(), addr, "Validator address should be changed")
+	assert.Equal(t, st.ValidatorAddress(), tState1.ValidatorAddress(), "Validator address should not be changed")
 }
 
 func TestCommitBlocks(t *testing.T) {
@@ -218,7 +221,7 @@ func TestCommitSandbox(t *testing.T) {
 		newAcc.AddToBalance(1)
 		tState1.commitSandbox(sb, 0)
 
-		assert.True(t, tState1.store.HasAccount(addr))
+		assert.NotNil(t, tState1.AccountByAddress(addr))
 	})
 
 	t.Run("Add new validator", func(t *testing.T) {
@@ -243,7 +246,7 @@ func TestCommitSandbox(t *testing.T) {
 		sb.UpdateAccount(acc)
 		tState1.commitSandbox(sb, 0)
 
-		acc1, _ := tState1.store.Account(crypto.TreasuryAddress)
+		acc1 := tState1.AccountByAddress(crypto.TreasuryAddress)
 		assert.Equal(t, acc1.Balance(), acc.Balance())
 	})
 
@@ -536,18 +539,18 @@ func TestValidatorHelpers(t *testing.T) {
 
 	t.Run("Should return nil for NonExisting Validator Address", func(t *testing.T) {
 		_, prv5 := bls.GenerateTestKeyPair()
-		nonExistenceValidator := tState1.Validator(prv5.PublicKey().Address())
+		nonExistenceValidator := tState1.ValidatorByAddress(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 1 returned Non nil For nonExisting validator")
-		nonExistenceValidator = tState2.Validator(prv5.PublicKey().Address())
+		nonExistenceValidator = tState2.ValidatorByAddress(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 2 returned Non nil For nonExisting validator")
-		nonExistenceValidator = tState3.Validator(prv5.PublicKey().Address())
+		nonExistenceValidator = tState3.ValidatorByAddress(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 3 returned Non nil For nonExisting validator")
-		nonExistenceValidator = tState4.Validator(prv5.PublicKey().Address())
+		nonExistenceValidator = tState4.ValidatorByAddress(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 4 returned Non nil For nonExisting validator")
 	})
 
 	t.Run("Should return validator for valid committee Validator Address", func(t *testing.T) {
-		existingValidator := tState4.Validator(tValSigner1.Address())
+		existingValidator := tState4.ValidatorByAddress(tValSigner1.Address())
 		assert.NotNil(t, existingValidator)
 		assert.Zero(t, existingValidator.Number())
 	})

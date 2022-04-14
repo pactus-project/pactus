@@ -16,7 +16,7 @@ func setup(t *testing.T, size int) []*network {
 
 	nets := make([]*network, size)
 
-	networkName := fmt.Sprintf("text-network-%d", util.RandInt32(10000))
+	networkName := fmt.Sprintf("test-network-%d", util.RandInt32(10000))
 	port := util.RandInt32(9999) + 10000
 
 	for i := 0; i < size; i++ {
