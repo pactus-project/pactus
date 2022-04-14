@@ -82,7 +82,7 @@ jobs:
         install:
           git
           make
-          7z
+          p7zip
           mingw-w64-x86_64-gtk3
           mingw-w64-x86_64-glib2
           mingw-w64-x86_64-go
