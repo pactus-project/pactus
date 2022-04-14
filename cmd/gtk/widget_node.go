@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -73,6 +74,8 @@ func (wn *widgetNode) timeout() bool {
 
 	percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
 	wn.progressBarSynced.SetFraction(percentage)
+	wn.progressBarSynced.SetText(fmt.Sprintf("%s %%",
+		strconv.FormatFloat(percentage*100, 'f', 2, 64)))
 
 	blocksLeft := nowUnix - lastBlockTimeUnix/10
 	wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
