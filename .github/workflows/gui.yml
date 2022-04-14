@@ -57,6 +57,7 @@ jobs:
         install:
           git
           mingw-w64-x86_64-gtk3
+          mingw-w64-x86_64-lib2
           mingw-w64-x86_64-toolchain
           mingw-w64-x86_64-go
           mingw-w64-x86_64-pkg-config
@@ -72,4 +73,4 @@ jobs:
         echo 'export PATH=/c/Program\ Files/Git/bin:$PATH' >> ~/.bashrc
         source ~/.bashrc
         sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc # This fixes a bug in pkgconfig
-        GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui.exe ./cmd/gtk
+        GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui.exe ./cmd/gtk
