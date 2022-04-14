@@ -39,7 +39,7 @@ func main() {
 	}
 
 	// If node is not initialized yet
-	if util.IsDirNotExistsOrEmpty(workspacePath) {
+	if !util.PathExists(cmd.ZarbDefaultWalletPath(workspacePath)) {
 		if !startupAssistant(workspacePath) {
 			return
 		}
