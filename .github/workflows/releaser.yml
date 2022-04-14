@@ -25,9 +25,8 @@ jobs:
 
     - name: Archive binaries
       run: |
-        cd build
         VER=`git describe --abbrev=0 --tags`
-        tar -czvf zarb-$VER-linux-x86_64.tar.gz ./zarb-daemon ./zarb-wallet ./zarb-gui
+        cd build && tar -czvf zarb-$VER-linux-x86_64.tar.gz ./zarb-daemon ./zarb-wallet ./zarb-gui
 
     - name: Publish
       uses: softprops/action-gh-release@v1
@@ -55,9 +54,8 @@ jobs:
 
     - name: Archive binaries
       run: |
-        cd build
         VER=`git describe --abbrev=0 --tags`
-        tar -czvf zarb-$VER-darwin-x86_64.tar.gz ./zarb-daemon ./zarb-wallet ./zarb-gui
+        cd build && tar -czvf zarb-$VER-darwin-x86_64.tar.gz ./zarb-daemon ./zarb-wallet ./zarb-gui
 
     - name: Publish
       uses: softprops/action-gh-release@v1
@@ -98,9 +96,8 @@ jobs:
 
     - name: Archive binaries
       run: |
-        cd build
         VER=`git describe --abbrev=0 --tags`
-        7z a zarb-$VER-windows-x86_64.zip zarb-daemon.exe zarb-wallet.exe zarb-gui.exe
+        cd build && 7z a zarb-$VER-windows-x86_64.zip zarb-daemon.exe zarb-wallet.exe zarb-gui.exe
 
     - name: Publish
       uses: softprops/action-gh-release@v1
