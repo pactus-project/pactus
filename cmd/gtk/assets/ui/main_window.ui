@@ -33,12 +33,11 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem">
+                      <object class="GtkMenuItem">
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="use-underline">True</property>
-                        <property name="use-stock">True</property>
                         <signal name="activate" handler="on_quit" swapped="no"/>
                       </object>
                     </child>
@@ -66,12 +65,11 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem">
+                      <object class="GtkMenuItem">
                         <property name="label">About _GTK</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="use-underline">True</property>
-                        <property name="use-stock">False</property>
                         <signal name="activate" handler="on_about_gtk" swapped="no"/>
                       </object>
                     </child>

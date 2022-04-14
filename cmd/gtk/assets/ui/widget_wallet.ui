@@ -225,7 +225,6 @@
                     <property name="is-important">True</property>
                     <property name="label" translatable="yes">_New Address</property>
                     <property name="use-underline">True</property>
-                    <property name="stock-id">gtk-new</property>
                     <signal name="clicked" handler="on_new_address" swapped="no"/>
                   </object>
                   <packing>
