@@ -41,9 +41,9 @@ jobs:
         go-version: 1.18
 
     - name: Build the binary
-      run: go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
+      run: GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
 
-  build-win:
+  build-windows:
     runs-on: windows-latest
     defaults:
       run:
@@ -53,9 +53,9 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: git mingw-w64-x86_64-gtk3 mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gcc
+        install: GOOS=darwin GOARCH=amd64 git mingw-w64-x86_64-gtk3 mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gcc
 
     - uses: actions/checkout@v3
 
     - name: Build Windows binary
-      run: go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui.exe ./cmd/gtk
+      run: GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui.exe ./cmd/gtk
