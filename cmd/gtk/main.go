@@ -21,7 +21,7 @@ import (
 
 var workingDir *string
 
-const appId = "com.github.zarb"
+const appID = "com.github.zarb"
 
 func init() {
 	workingDir = flag.String("working-dir", cmd.ZarbHomeDir(), "working directory")
@@ -45,7 +45,7 @@ func main() {
 
 	// Create a new app.
 	// When using GtkApplication, it is not necessary to call gtk_init() manually.
-	app, err := gtk.ApplicationNew(appId, glib.APPLICATION_FLAGS_NONE)
+	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_FLAGS_NONE)
 	errorCheck(err)
 
 	// Connect function to application startup event, this is not required.

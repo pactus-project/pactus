@@ -43,11 +43,11 @@ func (model *walletModel) rebuildModel() {
 		iter := model.listStore.Append()
 		err := model.listStore.Set(iter,
 			[]int{
-				ID_ADDRESSES_COLUMN_NO,
-				ID_ADDRESSES_COLUMN_ADDRESS,
-				ID_ADDRESSES_COLUMN_LABEL,
-				ID_ADDRESSES_COLUMN_BALANCE,
-				ID_ADDRESSES_COLUMN_STAKE},
+				IDAddressesColumnNo,
+				IDAddressesColumnAddress,
+				IDAddressesColumnLabel,
+				IDAddressesColumnBalance,
+				IDAddressesColumnStake},
 			[]interface{}{
 				no + 1,
 				addr.Address,
@@ -70,11 +70,11 @@ func (model *walletModel) createAddress(password string) {
 	iter := model.listStore.Append()
 	err = model.listStore.Set(iter,
 		[]int{
-			ID_ADDRESSES_COLUMN_NO,
-			ID_ADDRESSES_COLUMN_ADDRESS,
-			ID_ADDRESSES_COLUMN_LABEL,
-			ID_ADDRESSES_COLUMN_BALANCE,
-			ID_ADDRESSES_COLUMN_STAKE},
+			IDAddressesColumnNo,
+			IDAddressesColumnAddress,
+			IDAddressesColumnLabel,
+			IDAddressesColumnBalance,
+			IDAddressesColumnStake},
 		[]interface{}{
 			model.wallet.AddressCount() + 1,
 			address,
@@ -84,5 +84,6 @@ func (model *walletModel) createAddress(password string) {
 		})
 	errorCheck(err)
 
-	model.wallet.Save()
+	err = model.wallet.Save()
+	errorCheck(err)
 }

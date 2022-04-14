@@ -223,7 +223,7 @@ To make sure that you have properly saved your seed, please retype it here.`
 	pagePasswordName := "page_password"
 	pagePasswordTitle := "Wallet password"
 	pagePasswordSubject := "Enter password for your wallet:"
-	pagePasswordDesc := "Please choose a strong password for your wallet."
+	pagePsswrdDesc := "Please choose a strong password for your wallet."
 
 	pagePassword = createPage(
 		assistant,
@@ -231,7 +231,7 @@ To make sure that you have properly saved your seed, please retype it here.`
 		pagePasswordName,
 		pagePasswordTitle,
 		pagePasswordSubject,
-		pagePasswordDesc)
+		pagePsswrdDesc)
 
 	// --- pageFinal
 	NodeInfoTextView, err := gtk.TextViewNew()
@@ -318,7 +318,7 @@ Now you are ready to start the node!`
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 				conf.State.MintbaseAddress = rewardAddr
-				conf.SaveToFile(cmd.ZarbConfigPath(workspace))
+				err = conf.SaveToFile(cmd.ZarbConfigPath(workspace))
 				errorCheck(err)
 
 				successful = true

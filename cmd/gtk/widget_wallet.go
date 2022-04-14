@@ -19,11 +19,11 @@ var uiWidgetWallet []byte
 
 // IDs to access the tree view columns by
 const (
-	ID_ADDRESSES_COLUMN_NO = iota
-	ID_ADDRESSES_COLUMN_ADDRESS
-	ID_ADDRESSES_COLUMN_LABEL
-	ID_ADDRESSES_COLUMN_BALANCE
-	ID_ADDRESSES_COLUMN_STAKE
+	IDAddressesColumnNo = iota
+	IDAddressesColumnAddress
+	IDAddressesColumnLabel
+	IDAddressesColumnBalance
+	IDAddressesColumnStake
 )
 
 // Add a column to the tree view (during the initialization of the tree view)
@@ -61,11 +61,11 @@ func buildWidgetWallet(model *walletModel) *widgetWallet {
 		labelEncrypted.SetText("No")
 	}
 
-	colNo := createColumn("No", ID_ADDRESSES_COLUMN_NO)
-	colAddress := createColumn("Address", ID_ADDRESSES_COLUMN_ADDRESS)
-	colLabel := createColumn("Label", ID_ADDRESSES_COLUMN_LABEL)
-	colBalance := createColumn("Balance", ID_ADDRESSES_COLUMN_BALANCE)
-	colStake := createColumn("Stake", ID_ADDRESSES_COLUMN_STAKE)
+	colNo := createColumn("No", IDAddressesColumnNo)
+	colAddress := createColumn("Address", IDAddressesColumnAddress)
+	colLabel := createColumn("Label", IDAddressesColumnLabel)
+	colBalance := createColumn("Balance", IDAddressesColumnBalance)
+	colStake := createColumn("Stake", IDAddressesColumnStake)
 
 	treeView.AppendColumn(colNo)
 	treeView.AppendColumn(colAddress)

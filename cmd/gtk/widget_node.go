@@ -72,10 +72,10 @@ func (wn *widgetNode) timeout() bool {
 	genTimeUnix := wn.genesisTime.Unix()
 
 	percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
-	wn.progressBarSynced.SetFraction(float64(percentage))
+	wn.progressBarSynced.SetFraction(percentage)
 
 	blocksLeft := nowUnix - lastBlockTimeUnix/10
-	wn.labelBlocksLeft.SetText(strconv.FormatInt(int64(blocksLeft), 10))
+	wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
 
 	return true
 }

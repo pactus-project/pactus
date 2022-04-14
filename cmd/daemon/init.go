@@ -84,7 +84,7 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("Failed to write validator_key file: %v", err)
 				return
 			}
-			wallet.UpdatePassword("", passphrase)
+			err = wallet.UpdatePassword("", passphrase)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to update passphrase: ", err)
 				return
