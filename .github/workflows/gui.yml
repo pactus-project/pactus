@@ -36,7 +36,7 @@ jobs:
       uses: msys2/setup-msys2@v2
 
     - name: Setup gtk3 on Windows
-     if: matrix.os == 'windows-latest'
+      if: matrix.os == 'windows-latest'
       shell: msys2 {0}
       run: |
           mingw64
