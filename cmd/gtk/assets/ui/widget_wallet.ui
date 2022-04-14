@@ -90,13 +90,14 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="id_wallet_name">
+                      <object class="GtkLabel" id="id_label_wallet_name">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
+                        <property name="selectable">True</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -104,13 +105,14 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="id_wallet_location">
+                      <object class="GtkLabel" id="id_label_wallet_location">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
+                        <property name="selectable">True</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -118,7 +120,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="id_wallet_encrypted">
+                      <object class="GtkLabel" id="id_label_wallet_encrypted">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -165,7 +167,16 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkFixed">
+                <property name="width-request">32</property>
+                <property name="height-request">32</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">2</property>
+              </packing>
             </child>
             <child>
               <placeholder/>

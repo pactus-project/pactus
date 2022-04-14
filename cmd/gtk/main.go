@@ -30,15 +30,15 @@ func main() {
 	flag.Parse()
 
 	var err error
-	*workingDir, err = filepath.Abs(*workingDir)
+	workspacePath, err := filepath.Abs(*workingDir)
 	if err != nil {
 		cmd.PrintErrorMsg("Aborted! %v", err)
 		return
 	}
 
 	// If node is not initialized yet
-	if util.IsDirNotExistsOrEmpty(*workingDir) {
-		if !startupAssistant(*workingDir) {
+	if util.IsDirNotExistsOrEmpty(workspacePath) {
+		if !startupAssistant(workspacePath) {
 			return
 		}
 	}
@@ -56,7 +56,7 @@ func main() {
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
-		start(app)
+		start(workspacePath, app)
 	})
 
 	// Connect function to application shutdown event, this is not required.
@@ -68,46 +68,51 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-func startingNode(wallet *wallet.Wallet, password string) (*node.Node, error) {
+func startingNode(workspacePath string, wallet *wallet.Wallet, password string) (*node.Node, *time.Time, error) {
 	addresses := wallet.Addresses()
 	valPrvKeyStr, err := wallet.PrivateKey(password, addresses[0].Address)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	prv, err := bls.PrivateKeyFromString(valPrvKeyStr)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	signer := crypto.NewSigner(prv)
 
-	gen, err := genesis.LoadFromFile(cmd.ZarbGenesisPath(*workingDir))
+	gen, err := genesis.LoadFromFile(cmd.ZarbGenesisPath(workspacePath))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	conf := config.DefaultConfig()
+	conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workspacePath))
+	if err != nil {
+		return nil, nil, err
+	}
 	node, err := node.NewNode(gen, conf, signer)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
+	//TODO: log to file
 
 	err = node.Start()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return node, nil
+	genTime := gen.GenesisTime()
+	return node, &genTime, nil
 }
 
-func start(app *gtk.Application) {
+func start(workspacePath string, app *gtk.Application) {
 	// change working directory
-	if err := os.Chdir(*workingDir); err != nil {
+	if err := os.Chdir(workspacePath); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
 		return
 	}
 
 	time.Sleep(1 * time.Second)
 
-	path := cmd.ZarbDefaultWalletPath(*workingDir)
+	path := cmd.ZarbDefaultWalletPath(workspacePath)
 	wallet, err := wallet.OpenWallet(path)
 	errorCheck(err)
 
@@ -116,17 +121,19 @@ func start(app *gtk.Application) {
 		showInfoDialog("Canceled!")
 		return
 	}
-	_, err = startingNode(wallet, password)
+	node, genTime, err := startingNode(workspacePath, wallet, password)
 	errorCheck(err)
+
 	// No showing the main window
 	if err != nil {
 		return
 	}
 
+	nodeModel := newNodeModel(node)
 	walletModel := newWalletModel(wallet)
 
 	// building main window
-	win := buildMainWindow(walletModel)
+	win := buildMainWindow(nodeModel, walletModel, *genTime)
 
 	// Show the Window and all of its components.
 	win.Show()

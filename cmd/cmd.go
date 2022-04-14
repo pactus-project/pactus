@@ -232,11 +232,15 @@ func ZarbHomeDir() string {
 }
 
 func ZarbDefaultWalletPath(home string) string {
-	return path.Join(home, "wallet"+string(os.PathSeparator)+"default_wallet")
+	return path.Join(home, "wallets"+string(os.PathSeparator)+"default_wallet")
 }
 
 func ZarbGenesisPath(home string) string {
 	return path.Join(home, "genesis.json")
+}
+
+func ZarbConfigPath(home string) string {
+	return path.Join(home, "config.toml")
 }
 
 // TrapSignal traps SIGINT and SIGTERM and terminates the server correctly.

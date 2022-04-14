@@ -49,16 +49,16 @@ func buildWidgetWallet(model *walletModel) *widgetWallet {
 
 	box := getBoxObj(builder, "id_box_wallet")
 	treeView := getTreeViewObj(builder, "id_treeview_addresses")
-	nameLabel := getLabelObj(builder, "id_wallet_name")
-	nameLocation := getLabelObj(builder, "id_wallet_location")
-	nameEncrypted := getLabelObj(builder, "id_wallet_encrypted")
+	labelName := getLabelObj(builder, "id_label_wallet_name")
+	labelLocation := getLabelObj(builder, "id_label_wallet_location")
+	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
 
-	nameLabel.SetText(model.wallet.Name())
-	nameLocation.SetText(model.wallet.Path())
+	labelName.SetText(model.wallet.Name())
+	labelLocation.SetText(model.wallet.Path())
 	if model.wallet.IsEncrypted() {
-		nameEncrypted.SetText("Yes")
+		labelEncrypted.SetText("Yes")
 	} else {
-		nameEncrypted.SetText("No")
+		labelEncrypted.SetText("No")
 	}
 
 	colNo := createColumn("No", ID_ADDRESSES_COLUMN_NO)

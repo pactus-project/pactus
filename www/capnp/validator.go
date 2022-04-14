@@ -12,7 +12,7 @@ func (zs *zarbServer) GetValidator(b ZarbServer_getValidator) error {
 	if err != nil {
 		return fmt.Errorf("invalid address: %s", err)
 	}
-	val := zs.state.Validator(addr)
+	val := zs.state.ValidatorByAddress(addr)
 	if val == nil {
 		return fmt.Errorf("validator not found")
 	}

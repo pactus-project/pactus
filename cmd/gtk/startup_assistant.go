@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os/user"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/config"
 	"github.com/zarbchain/zarb-go/genesis"
 	"github.com/zarbchain/zarb-go/wallet"
 )
@@ -68,10 +70,6 @@ func startupAssistant(workspace string) bool {
 
 		return page.ToWidget()
 	}
-
-	// var walletPassword string
-	// var walletSeed string
-	// var defaultWallet *wallet.Wallet
 
 	assistant, err := gtk.AssistantNew()
 	errorCheck(err)
@@ -312,11 +310,27 @@ Now you are ready to start the node!`
 				errorCheck(err)
 				err = defaultWallet.Save()
 				errorCheck(err)
-				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(*workingDir))
+				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(workspace))
+				errorCheck(err)
+
+				username := ""
+				user, err := user.Current()
+				if err == nil {
+					username = user.Username
+				}
+
+				conf := config.DefaultConfig()
+				conf.Network.Name = "perdana-testnet"
+				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
+				conf.Network.Bootstrap.MinThreshold = 4
+				conf.Network.Bootstrap.MaxThreshold = 8
+				conf.State.MintbaseAddress = rewardAddr
+				conf.Sync.Moniker = username
+				conf.SaveToFile(cmd.ZarbConfigPath(workspace))
 				errorCheck(err)
 
 				successful = true
-				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", *workingDir)
+				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workspace)
 				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
 				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 

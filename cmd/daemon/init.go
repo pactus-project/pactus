@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"os/user"
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
@@ -36,9 +36,9 @@ func Init() func(c *cli.Cmd) {
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			path, _ := filepath.Abs(*workingDirOpt)
-			if !util.IsDirNotExistsOrEmpty(path) {
-				cmd.PrintErrorMsg("The workspace directory is not empty: %v", path)
+			workspacePath, _ := filepath.Abs(*workingDirOpt)
+			if !util.IsDirNotExistsOrEmpty(workspacePath) {
+				cmd.PrintErrorMsg("The workspace directory is not empty: %v", workspacePath)
 				return
 			}
 
@@ -57,7 +57,7 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
 			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
-			walletPath := path + "/wallets/deafult_wallet"
+			walletPath := cmd.ZarbDefaultWalletPath(workspacePath)
 			// To make process faster, update password later
 			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", 0)
 			if err != nil {
@@ -80,7 +80,7 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("Failed to get validator private key: ", err)
 				return
 			}
-			err = util.WriteFile(path+"/validator_key", []byte(valPrvStr))
+			err = util.WriteFile(workspacePath+"/validator_key", []byte(valPrvStr))
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to write validator_key file: %v", err)
 				return
@@ -103,40 +103,44 @@ func Init() func(c *cli.Cmd) {
 
 			if *testnetOpt {
 				gen = genesis.Testnet()
-				name, _ := os.Hostname()
+				username := ""
+				user, err := user.Current()
+				if err == nil {
+					username = user.Username
+				}
 
 				conf.Network.Name = "perdana-testnet"
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 				conf.State.MintbaseAddress = mintbaseAddrStr
-				conf.Sync.Moniker = name
+				conf.Sync.Moniker = username
 			} else {
 				gen = makeLocalGenesis(valPrv.PublicKey().(*bls.PublicKey))
 				conf.Network.Name = "local-test"
 			}
 
 			// Save genesis file to file system
-			genFile := path + "/genesis.json"
+			genFile := cmd.ZarbGenesisPath(workspacePath)
 			if err := gen.SaveToFile(genFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
 				return
 			}
 
 			// Save config file to file system
-			confFile := path + "/config.toml"
+			confFile := cmd.ZarbConfigPath(workspacePath)
 			if err := conf.SaveToFile(confFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write config file: %v", err)
 				return
 			}
 
 			fmt.Println()
-			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", path)
+			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", workspacePath)
 			cmd.PrintInfoMsg("You validator address is: %v", valAddrStr)
 			cmd.PrintInfoMsg("You mintbase address is: %v", mintbaseAddrStr)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("To run your node run this command:")
-			cmd.PrintInfoMsg("./zarb-daemon start -w %v", path)
+			cmd.PrintInfoMsg("./zarb-daemon start -w %v", workspacePath)
 		}
 	}
 }

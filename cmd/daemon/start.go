@@ -46,21 +46,8 @@ func Start() func(c *cli.Cmd) {
 			configFile := "./config.toml"
 			genesisFile := "./genesis.json"
 			var err error
-			var workspace string
 
-			workspace = *workingDirOpt
-			if workspace == "." {
-				if !util.PathExists(genesisFile) {
-					cmd.PrintErrorMsg("Aborted! No genesis file")
-					return
-				}
-			}
-
-			workspace, err = filepath.Abs(workspace)
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! %v", err)
-				return
-			}
+			workspace, _ := filepath.Abs(*workingDirOpt)
 
 			signer, err := makeSigner(workspace, keyFileOpt, privateKeyOpt)
 			if err != nil {

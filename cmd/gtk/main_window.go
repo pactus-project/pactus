@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"time"
 
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -16,7 +17,7 @@ type mainWindow struct {
 	widgetWallet *widgetWallet
 }
 
-func buildMainWindow(walletModel *walletModel) *mainWindow {
+func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel, genesisTime time.Time) *mainWindow {
 	// Get the GtkBuilder UI definition in the glade file.
 	builder, err := gtk.BuilderNewFromString(string(uiMainWindow))
 	errorCheck(err)
@@ -25,7 +26,7 @@ func buildMainWindow(walletModel *walletModel) *mainWindow {
 	boxNode := getBoxObj(builder, "id_box_node")
 	boxDefaultWallet := getBoxObj(builder, "id_box_default_wallet")
 
-	widgetNode := buildWidgetNode()
+	widgetNode := buildWidgetNode(nodeModel, genesisTime)
 	widgetWallet := buildWidgetWallet(walletModel)
 
 	boxNode.Add(widgetNode)

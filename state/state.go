@@ -28,16 +28,16 @@ import (
 type state struct {
 	lk sync.RWMutex
 
-	config       *Config
-	signer       crypto.Signer
-	mintbaseAddr crypto.Address
-	genDoc       *genesis.Genesis
-	store        store.Store
-	params       param.Params
-	txPool       txpool.TxPool
-	committee    committee.Committee
-	lastInfo     *lastinfo.LastInfo
-	logger       *logger.Logger
+	config         *Config
+	signer         crypto.Signer
+	mintbaseAddres crypto.Address
+	genDoc         *genesis.Genesis
+	store          store.Store
+	params         param.Params
+	txPool         txpool.TxPool
+	committee      committee.Committee
+	lastInfo       *lastinfo.LastInfo
+	logger         *logger.Logger
 }
 
 func LoadOrNewState(
@@ -59,14 +59,14 @@ func LoadOrNewState(
 	}
 
 	st := &state{
-		config:       conf,
-		genDoc:       genDoc,
-		txPool:       txPool,
-		params:       genDoc.Params(),
-		signer:       signer,
-		store:        store,
-		mintbaseAddr: mintbaseAddr,
-		lastInfo:     lastinfo.NewLastInfo(store),
+		config:         conf,
+		genDoc:         genDoc,
+		txPool:         txPool,
+		params:         genDoc.Params(),
+		signer:         signer,
+		store:          store,
+		mintbaseAddres: mintbaseAddr,
+		lastInfo:       lastinfo.NewLastInfo(store),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -221,7 +221,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
-	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddr, st.params.BlockReward+fee, "")
+	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddres, st.params.BlockReward+fee, "")
 	return tx
 }
 
@@ -554,7 +554,7 @@ func (st *state) BlockHash(height int32) hash.Hash {
 	return st.store.BlockHash(height)
 }
 
-func (st *state) Account(addr crypto.Address) *account.Account {
+func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 	acc, err := st.store.Account(addr)
 	if err != nil {
 		st.logger.Trace("error on retrieving account", "err", err)
@@ -562,7 +562,7 @@ func (st *state) Account(addr crypto.Address) *account.Account {
 	return acc
 }
 
-func (st *state) Validator(addr crypto.Address) *validator.Validator {
+func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	val, err := st.store.Validator(addr)
 	if err != nil {
 		st.logger.Trace("error on retrieving validator", "err", err)
@@ -589,4 +589,10 @@ func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 }
 func (st *state) Params() param.Params {
 	return st.params
+}
+func (st *state) MintbaseAddress() crypto.Address {
+	return st.mintbaseAddres
+}
+func (st *state) ValidatorAddress() crypto.Address {
+	return st.signer.Address()
 }
