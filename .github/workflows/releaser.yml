@@ -95,7 +95,7 @@ jobs:
           mingw-w64-x86_64-pkg-config
           glib2-devel
 
-    - name: Build GUI binary
+    - name: Build binaries
       run: |
         # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
         sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc

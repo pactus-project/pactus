@@ -13,14 +13,14 @@ func AllAddresses() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
 			cmd.PrintLine()
-			addrs := w.Addresses()
+			addrs := wallet.Addresses()
 			for addr, label := range addrs {
 				cmd.PrintInfoMsg("%s %s", addr, label)
 			}
@@ -34,14 +34,20 @@ func NewAddress() func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			label := cmd.PromptInput("Label: ")
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			passphrase := getPassphrase(w)
-			addr, err := w.NewAddress(passphrase, label)
+			passphrase := getPassphrase(wallet)
+			addr, err := wallet.NewAddress(passphrase, label)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			err = wallet.Save()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -63,14 +69,14 @@ func GetBalance() func(c *cli.Cmd) {
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
 			cmd.PrintLine()
-			balance, stake, err := w.GetBalance(*addrArg)
+			balance, stake, err := wallet.GetBalance(*addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -90,14 +96,14 @@ func GetPrivateKey() func(c *cli.Cmd) {
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			passphrase := getPassphrase(w)
-			prv, err := w.PrivateKey(passphrase, *addrArg)
+			passphrase := getPassphrase(wallet)
+			prv, err := wallet.PrivateKey(passphrase, *addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -119,14 +125,14 @@ func GetPublicKey() func(c *cli.Cmd) {
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			passphrase := getPassphrase(w)
-			pub, err := w.PublicKey(passphrase, *addrArg)
+			passphrase := getPassphrase(wallet)
+			pub, err := wallet.PublicKey(passphrase, *addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -145,14 +151,14 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 		c.Action = func() {
 			prv := cmd.PromptInput("Private Key: ")
 
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			passphrase := getPassphrase(w)
-			err = w.ImportPrivateKey(passphrase, prv)
+			passphrase := getPassphrase(wallet)
+			err = wallet.ImportPrivateKey(passphrase, prv)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

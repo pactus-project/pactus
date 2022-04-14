@@ -68,7 +68,7 @@ jobs:
 
     - uses: actions/checkout@v3
 
-    - name: Build Windows binary
+    - name: Build the binary
       run: |
         # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
         sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc

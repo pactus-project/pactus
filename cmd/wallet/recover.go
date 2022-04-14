@@ -14,14 +14,20 @@ func Recover() func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			mnemonic := cmd.PromptInput("Seed: ")
-			w, err := wallet.FromMnemonic(*path, mnemonic, "", 0)
+			wallet, err := wallet.FromMnemonic(*path, mnemonic, "", 0)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			err = wallet.Save()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Wallet recovered successfully at: %s", w.Path())
+			cmd.PrintInfoMsg("Wallet recovered successfully at: %s", wallet.Path())
 			cmd.PrintWarnMsg("Never share your private key.")
 			cmd.PrintWarnMsg("Don't forget to set a password for your wallet.")
 		}
@@ -33,14 +39,14 @@ func GetSeed() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			passphrase := getPassphrase(w)
-			mnemonic, err := w.Mnemonic(passphrase)
+			passphrase := getPassphrase(wallet)
+			mnemonic, err := wallet.Mnemonic(passphrase)
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)

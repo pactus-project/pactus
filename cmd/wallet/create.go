@@ -15,14 +15,20 @@ func Generate() func(c *cli.Cmd) {
 		c.Action = func() {
 			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
 			mnemonic := wallet.GenerateMnemonic()
-			w, err := wallet.FromMnemonic(*path, mnemonic, passphrase, 0)
+			wallet, err := wallet.FromMnemonic(*path, mnemonic, passphrase, 0)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			err = wallet.Save()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
 			cmd.PrintLine()
-			cmd.PrintSuccessMsg("Wallet created successfully at: %s", w.Path())
+			cmd.PrintSuccessMsg("Wallet created successfully at: %s", wallet.Path())
 			cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)
 			cmd.PrintWarnMsg("Please keep your seed in a safe place; if you lose it, you will not be able to restore your wallet.")
 		}
