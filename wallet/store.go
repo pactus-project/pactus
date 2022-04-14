@@ -6,7 +6,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"hash/crc32"
 	"time"
 
@@ -233,8 +233,8 @@ func (s *Store) PrivateKey(passphrase, addr string) (*bls.PrivateKey, error) {
 			}
 
 			if prv.PublicKey().Address().String() != addr {
-				// If you see tis error, please report it
-				exitOnErr(fmt.Errorf("invalid private key for given address"))
+				// If you see this error, please report it
+				exitOnErr(errors.New("invalid private key for given address"))
 			}
 			return prv, nil
 		}

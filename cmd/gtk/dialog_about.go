@@ -18,6 +18,6 @@ func showAboutDialog(parent gtk.IWidget) {
 	dlg := getAboutDialogObj(builder, "id_dialog_about")
 
 	dlg.SetModal(true)
-	// Show the dialog
+
 	dlg.Show()
 }

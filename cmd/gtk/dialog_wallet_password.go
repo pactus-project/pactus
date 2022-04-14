@@ -52,7 +52,6 @@ func getWalletPassword(parent gtk.IWidget, wallet *wallet.Wallet) (string, bool)
 
 	dlg.SetModal(true)
 
-	// Show the dialog
 	dlg.Run()
 
 	return password, ok

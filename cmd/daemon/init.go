@@ -57,7 +57,8 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
 			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
 			walletPath := cmd.ZarbDefaultWalletPath(workspacePath)
-			// To make process faster, update password later
+			// To make process faster, we update the password
+			// after creating the addresses
 			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", 0)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create wallet: ", err)

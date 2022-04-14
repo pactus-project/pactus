@@ -6,16 +6,13 @@ import (
 )
 
 var (
-	// ErrInvalidCRC describes an error in which the wallet CRC is
-	// invalid
+	// ErrInvalidCRC describes an error in which the wallet CRC is invalid
 	ErrInvalidCRC = errors.New("invalid CRC")
 
-	// ErrInvalidNetwork describes an error in which the network is not
-	// valid
+	// ErrInvalidNetwork describes an error in which the network is invalid
 	ErrInvalidNetwork = errors.New("invalid network")
 
-	// ErrInvalidPassword describes an error in which the password is
-	// invalid
+	// ErrInvalidPassword describes an error in which the password is invalid
 	ErrInvalidPassword = errors.New("invalid password")
 
 	// ErrAddressExists describes an error in which the address already

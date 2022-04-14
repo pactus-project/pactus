@@ -27,6 +27,6 @@ func showAboutGTKDialog(parent gtk.IWidget) {
 	dlg.SetLogo(pixbuf)
 
 	dlg.SetModal(true)
-	// Show the dialog
+
 	dlg.Show()
 }
