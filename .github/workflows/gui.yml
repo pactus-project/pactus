@@ -57,4 +57,4 @@ jobs:
     - name: Build gui
       if: matrix.os == 'windows-latest'
       shell: msys2 {0}
-      run: make build_gui
+      run: mingw32-make build_gui
