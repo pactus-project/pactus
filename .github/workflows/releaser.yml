@@ -2,16 +2,8 @@ name: Releaser
 
 on:
   push:
-    branches:
-      - main
-
-  pull_request:
-    branches:
-      - main
-# on:
-#   push:
-#     tags:
-#       - v*
+    tags:
+      - v*
 
 jobs:
   ########################################
