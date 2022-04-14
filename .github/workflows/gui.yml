@@ -49,10 +49,6 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18
 
     - uses: msys2/setup-msys2@v2
       with:
@@ -62,6 +58,9 @@ jobs:
           git
           mingw-w64-x86_64-gtk3
           mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-go
+          mingw-w64-x86_64-pkg-config
+          mingw-w64-x86_64-gcc
           base-devel
           glib2-devel
 
