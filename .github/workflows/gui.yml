@@ -23,9 +23,8 @@ jobs:
       with:
         go-version: 1.18
 
-    # Remove glib_2_66 tag later. Related to this issue: https://github.com/gotk3/gotk3/issues/838
     - name: Build the binary
-      run: go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui ./cmd/gtk
+      run: go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
 
   build-macos:
     runs-on: macos-latest
