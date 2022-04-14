@@ -97,9 +97,9 @@ jobs:
         VER=`git describe --abbrev=0 --tags`
         7z a zarb-$VER-windows-x86_64.zip zarb-daemon.exe zarb-wallet.exe zarb-gui.exe
 
-      - name: Publish
-        uses: softprops/action-gh-release@v1
-        with:
-          files: zarb-*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: zarb-*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
