@@ -64,17 +64,17 @@ func Init() func(c *cli.Cmd) {
 				return
 			}
 			cmd.PrintInfoMsg("Wallet created successfully")
-			valAddrStr, err := wallet.NewAddress(passphrase, "Validator address")
+			valAddrStr, err := wallet.NewAddress("", "Validator address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create validator address: ", err)
 				return
 			}
-			mintbaseAddrStr, err := wallet.NewAddress(passphrase, "Mintbase address")
+			mintbaseAddrStr, err := wallet.NewAddress("", "Mintbase address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create mintbase address: ", err)
 				return
 			}
-			valPrvStr, err := wallet.PrivateKey(passphrase, valAddrStr)
+			valPrvStr, err := wallet.PrivateKey("", valAddrStr)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to get validator private key: ", err)
 				return
