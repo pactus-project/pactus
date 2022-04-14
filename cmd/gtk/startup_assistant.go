@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os/user"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/zarbchain/zarb-go/cmd"
@@ -313,19 +312,12 @@ Now you are ready to start the node!`
 				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(workspace))
 				errorCheck(err)
 
-				username := ""
-				user, err := user.Current()
-				if err == nil {
-					username = user.Username
-				}
-
 				conf := config.DefaultConfig()
 				conf.Network.Name = "perdana-testnet"
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 				conf.State.MintbaseAddress = rewardAddr
-				conf.Sync.Moniker = username
 				conf.SaveToFile(cmd.ZarbConfigPath(workspace))
 				errorCheck(err)
 

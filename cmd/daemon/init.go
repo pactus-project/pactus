@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os/user"
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
@@ -103,18 +102,12 @@ func Init() func(c *cli.Cmd) {
 
 			if *testnetOpt {
 				gen = genesis.Testnet()
-				username := ""
-				user, err := user.Current()
-				if err == nil {
-					username = user.Username
-				}
 
 				conf.Network.Name = "perdana-testnet"
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 				conf.State.MintbaseAddress = mintbaseAddrStr
-				conf.Sync.Moniker = username
 			} else {
 				gen = makeLocalGenesis(valPrv.PublicKey().(*bls.PublicKey))
 				conf.Network.Name = "local-test"
