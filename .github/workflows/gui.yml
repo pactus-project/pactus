@@ -34,11 +34,11 @@ jobs:
     - name: Install MSYS2 on Windows
       if: matrix.os == 'windows-latest'
       uses: msys2/setup-msys2@v2
+      with:
+        msystem: mingw64
 
     - name: Setup gtk3 on Windows
       if: matrix.os == 'windows-latest'
-      with:
-        msystem: MSYS
       shell: msys2 {0}
       sys: |
           mingw64
