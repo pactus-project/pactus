@@ -58,10 +58,7 @@ jobs:
           git
           mingw-w64-x86_64-gtk3
           mingw-w64-x86_64-glib2
-          mingw-w64-x86_64-toolchain
           mingw-w64-x86_64-go
-          mingw-w64-x86_64-pkg-config
-          base-devel
           glib2-devel
 
     - uses: actions/checkout@v3
