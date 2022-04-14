@@ -44,7 +44,7 @@ jobs:
       run: go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
 
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
@@ -61,7 +61,6 @@ jobs:
           mingw-w64-x86_64-toolchain
           mingw-w64-x86_64-go
           mingw-w64-x86_64-pkg-config
-          mingw-w64-x86_64-gcc
           base-devel
           glib2-devel
 
@@ -69,8 +68,4 @@ jobs:
 
     - name: Build Windows binary
       run: |
-        echo 'export PATH=/c/Go/bin:$PATH' >> ~/.bashrc
-        echo 'export PATH=/c/Program\ Files/Git/bin:$PATH' >> ~/.bashrc
-        source ~/.bashrc
-        sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc # This fixes a bug in pkgconfig
         go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui.exe ./cmd/gtk
