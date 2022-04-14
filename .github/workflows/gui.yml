@@ -65,4 +65,6 @@ jobs:
 
     - name: Build Windows binary
       run: |
+        # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
+        sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
         go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui.exe ./cmd/gtk
