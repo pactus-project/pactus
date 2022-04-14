@@ -43,7 +43,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # TODO: We can merge all together
     - name: Build gui
+      if: matrix.os == 'ubuntu-latest'
       # Uncomment this line later. Related to this issue: https://github.com/gotk3/gotk3/issues/838
       # run: make build_gui
       run: go build -tags glib_2_66,gtk  -o ./build/zarb-gui$(EXE) ./cmd/gtk
+
+    - name: Build gui
+      if: matrix.os == 'macos-latest'
+      run: make build_gui
+
+    - name: Build gui
+      if: matrix.os == 'windows-latest'
+      shell: msys2 {0}
+        run: make build_gui
