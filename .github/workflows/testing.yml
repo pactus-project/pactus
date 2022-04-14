@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - name: Create release archive
-        run: bash ./.github/workflows/releaser.sh
+      run: bash ./.github/workflows/releaser.sh
 
     - name: Install Go
       uses: actions/setup-go@v2
