@@ -53,7 +53,7 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: git mingw-w64-x86_64-gtk3 mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gcc
+        install: git mingw-w64-x86_64-gtk3 mingw-w64-x86_64-glib2 mingw-w64-x86_64-cairo mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gcc
 
     - uses: actions/checkout@v3
 
