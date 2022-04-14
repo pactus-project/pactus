@@ -25,7 +25,7 @@ jobs:
 
     # Remove glib_2_66 tag later. Related to this issue: https://github.com/gotk3/gotk3/issues/838
     - name: Build the binary
-      run: GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui ./cmd/gtk
+      go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui ./cmd/gtk
 
   build-macos:
     runs-on: macos-latest
@@ -41,7 +41,7 @@ jobs:
         go-version: 1.18
 
     - name: Build the binary
-      run: GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
+      go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
 
   build-windows:
     runs-on: windows-latest
@@ -73,4 +73,4 @@ jobs:
         echo 'export PATH=/c/Program\ Files/Git/bin:$PATH' >> ~/.bashrc
         source ~/.bashrc
         sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc # This fixes a bug in pkgconfig
-        GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui.exe ./cmd/gtk
+        go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui.exe ./cmd/gtk
