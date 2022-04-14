@@ -44,4 +44,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build gui
-      run: make build_gui
+      # Uncomment this line later. Related to this issue: https://github.com/gotk3/gotk3/issues/838
+      # run: make build_gui
+      run: go build -tags glib_2_66,gtk  -o ./build/zarb-gui$(EXE) ./cmd/gtk
