@@ -22,20 +22,28 @@ jobs:
       with:
         go-version: 1.18.x
 
-    - name: Install GTK3
-      run:   |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-          sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
-        elif [ "$RUNNER_OS" == "MacOS" ]; then
-          brew install gobject-introspection gtk+3 adwaita-icon-theme
-        elif [ "$RUNNER_OS" == "Windows" ]; then
+    - name: Install GTK3 on Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
+
+    - name: Install GTK3 on MacOS
+      if: matrix.os == 'macos-latest'
+      run: brew install gobject-introspection gtk+3 adwaita-icon-theme
+
+    # Install gtk3 on windows
+    - name: Install GTK3 on Windows
+      if: matrix.os == 'windows-latest'
+      uses: msys2/setup-msys2@v2
+
+    - name: Setup gtk3 on Windows
+      shell: msys2 {0}
+      run: |
           mingw64
           pacman -S mingw-w64-x86_64-gtk3 mingw-w64-x86_64-toolchain base-devel glib2-devel
           echo 'export PATH=/c/Go/bin:$PATH' >> ~/.bashrc
           echo 'export PATH=/c/Program\ Files/Git/bin:$PATH' >> ~/.bashrc
           source ~/.bashrc
           sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc # This fixes a bug in pkgconfig
-        fi
 
     - name: Checkout code
       uses: actions/checkout@v2
