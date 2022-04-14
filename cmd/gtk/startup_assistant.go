@@ -147,7 +147,7 @@ This seed will allow you to recover your wallet in case of computer failure.
 	seedConfirmTextView.SetSizeRequest(0, 80)
 
 	seedConfirmTextView.Connect("paste_clipboard", func(textView *gtk.TextView) {
-		showInfoDialog(assistant, "Opps, no copy paste!")
+		showInfoDialog("Opps, no copy paste!")
 		seedConfirmTextView.StopEmission("paste_clipboard")
 	})
 
