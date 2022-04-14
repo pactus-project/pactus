@@ -9,22 +9,22 @@ make release
 
 ## Releasing GUI app
 if [[ "$OS" == "Linux" ]]; then
-sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
-go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui ./cmd/gtk
-else if  [[ "$OS" == "Darwin" ]]; then
-brew install gobject-introspection gtk+3 adwaita-icon-theme
-go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
-else if  [[ "$OS" == "mingw"* ]]; then
-pacman -Sy --noconfirm git \
-    mingw-w64-x86_64-gtk3 \
-    mingw-w64-x86_64-toolchain \
-    mingw-w64-x86_64-go \
-    mingw-w64-x86_64-pkg-config \
-    mingw-w64-x86_64-gcc \
-    base-devel \
-    glib2-devel
+    sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
+    go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui ./cmd/gtk
+elif [[ "$OS" == "Darwin" ]]; then
+    brew install gobject-introspection gtk+3 adwaita-icon-theme
+    go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
+elif [[ "$OS" == "mingw"* ]]; then
+    pacman -Sy --noconfirm git \
+        mingw-w64-x86_64-gtk3 \
+        mingw-w64-x86_64-toolchain \
+        mingw-w64-x86_64-go \
+        mingw-w64-x86_64-pkg-config \
+        mingw-w64-x86_64-gcc \
+        base-devel \
+        glib2-devel
 
-go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui.exe ./cmd/gtk
+    go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui.exe ./cmd/gtk
 fi
 
 if [[ "$OS" == "mingw"* ]]; then
