@@ -8,10 +8,10 @@ TAG=`git describe --abbrev=0 --tags`
 make release
 
 ## Releasing GUI app
-if [[ "$OS" == "Linux" ]]; then
+if [[ "$OS" == "linux" ]]; then
     sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
     go build -ldflags "-s -w" -tags glib_2_66,gtk -o ./build/zarb-gui ./cmd/gtk
-elif [[ "$OS" == "Darwin" ]]; then
+elif [[ "$OS" == "darwin" ]]; then
     brew install gobject-introspection gtk+3 adwaita-icon-theme
     go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
 elif [[ "$OS" == "mingw"* ]]; then
