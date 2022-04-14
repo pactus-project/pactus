@@ -87,6 +87,11 @@ func newWallet(path string, store *Store, online bool) (*Wallet, error) {
 
 	return w, nil
 }
+
+func (w *Wallet) Name() string {
+	return "Default wallet"
+}
+
 func (w *Wallet) UpdatePassword(old, new string) error {
 	return w.store.UpdatePassword(old, new)
 }

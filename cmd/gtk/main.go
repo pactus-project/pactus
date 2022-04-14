@@ -126,13 +126,12 @@ func start(app *gtk.Application) {
 	walletModel := newWalletModel(wallet)
 
 	// building main window
-	win := buildMainWindow()
+	win := buildMainWindow(walletModel)
 
 	// Show the Window and all of its components.
 	win.Show()
 
 	walletModel.rebuildModel()
-	win.SetWalletModel(walletModel)
 
 	app.AddWindow(win)
 }

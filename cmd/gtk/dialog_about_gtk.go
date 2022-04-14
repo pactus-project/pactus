@@ -17,11 +17,7 @@ func showAboutGTKDialog(parent gtk.IWidget) {
 	builder, err := gtk.BuilderNewFromString(string(uiAboutGtkDialog))
 	errorCheck(err)
 
-	objDlg, err := builder.GetObject("id_dialog_about_gtk")
-	errorCheck(err)
-
-	dlg, err := isAboutDialog(objDlg)
-	errorCheck(err)
+	dlg := getAboutDialogObj(builder, "id_dialog_about_gtk")
 
 	pixbuf, err := gdk.PixbufNewFromDataOnly(imgGtkIcon)
 	errorCheck(err)

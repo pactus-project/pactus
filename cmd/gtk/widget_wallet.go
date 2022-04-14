@@ -43,21 +43,23 @@ func createColumn(title string, id int) *gtk.TreeViewColumn {
 	return column
 }
 
-func buildWidgetWallet() *widgetWallet {
+func buildWidgetWallet(model *walletModel) *widgetWallet {
 	builder, err := gtk.BuilderNewFromString(string(uiWidgetWallet))
 	errorCheck(err)
 
-	objBox, err := builder.GetObject("id_box_wallet")
-	errorCheck(err)
+	box := getBoxObj(builder, "id_box_wallet")
+	treeView := getTreeViewObj(builder, "id_treeview_addresses")
+	nameLabel := getLabelObj(builder, "id_wallet_name")
+	nameLocation := getLabelObj(builder, "id_wallet_location")
+	nameEncrypted := getLabelObj(builder, "id_wallet_encrypted")
 
-	box, err := isBox(objBox)
-	errorCheck(err)
-
-	objTreeView, err := builder.GetObject("id_treeview_addresses")
-	errorCheck(err)
-
-	treeView, err := isTreeView(objTreeView)
-	errorCheck(err)
+	nameLabel.SetText(model.wallet.Name())
+	nameLocation.SetText(model.wallet.Path())
+	if model.wallet.IsEncrypted() {
+		nameEncrypted.SetText("Yes")
+	} else {
+		nameEncrypted.SetText("No")
+	}
 
 	colNo := createColumn("No", ID_ADDRESSES_COLUMN_NO)
 	colAddress := createColumn("Address", ID_ADDRESSES_COLUMN_ADDRESS)
@@ -70,10 +72,12 @@ func buildWidgetWallet() *widgetWallet {
 	treeView.AppendColumn(colLabel)
 	treeView.AppendColumn(colBalance)
 	treeView.AppendColumn(colStake)
+	treeView.SetModel(model.ToTreeModel())
 
 	w := &widgetWallet{
 		Box:      box,
 		treeView: treeView,
+		model:    model,
 	}
 
 	signals := map[string]interface{}{
@@ -92,9 +96,4 @@ func (ww *widgetWallet) onNewAddress() {
 
 	ww.model.createAddress(password)
 
-}
-
-func (ww *widgetWallet) SetModel(model *walletModel) {
-	ww.model = model
-	ww.treeView.SetModel(model.ToTreeModel())
 }

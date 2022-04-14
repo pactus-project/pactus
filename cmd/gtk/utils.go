@@ -1,8 +1,6 @@
 package main
 
 import (
-	"errors"
-
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -25,44 +23,37 @@ func errorCheck(err error) {
 		gtk.MainQuit()
 	}
 }
-func isApplicationWindow(obj glib.IObject) (*gtk.ApplicationWindow, error) {
-	if win, ok := obj.(*gtk.ApplicationWindow); ok {
-		return win, nil
-	}
-	return nil, errors.New("not a *gtk.ApplicationNew")
+
+func getObj(builder *gtk.Builder, name string) glib.IObject {
+	obj, err := builder.GetObject(name)
+	errorCheck(err)
+	return obj
 }
 
-func isDialog(obj glib.IObject) (*gtk.Dialog, error) {
-	if dlg, ok := obj.(*gtk.Dialog); ok {
-		return dlg, nil
-	}
-	return nil, errors.New("not a *gtk.Dialog")
+func getApplicationWindowObj(builder *gtk.Builder, name string) *gtk.ApplicationWindow {
+	return getObj(builder, name).(*gtk.ApplicationWindow)
 }
 
-func isAboutDialog(obj glib.IObject) (*gtk.AboutDialog, error) {
-	if dlg, ok := obj.(*gtk.AboutDialog); ok {
-		return dlg, nil
-	}
-	return nil, errors.New("not a *gtk.AboutDialog")
+func getDialogObj(builder *gtk.Builder, name string) *gtk.Dialog {
+	return getObj(builder, name).(*gtk.Dialog)
 }
 
-func isEntry(obj glib.IObject) (*gtk.Entry, error) {
-	if dlg, ok := obj.(*gtk.Entry); ok {
-		return dlg, nil
-	}
-	return nil, errors.New("not a *gtk.Entry")
+func getAboutDialogObj(builder *gtk.Builder, name string) *gtk.AboutDialog {
+	return getObj(builder, name).(*gtk.AboutDialog)
 }
 
-func isTreeView(obj glib.IObject) (*gtk.TreeView, error) {
-	if dlg, ok := obj.(*gtk.TreeView); ok {
-		return dlg, nil
-	}
-	return nil, errors.New("not a *gtk.TreeView")
+func getEntryObj(builder *gtk.Builder, name string) *gtk.Entry {
+	return getObj(builder, name).(*gtk.Entry)
 }
 
-func isBox(obj glib.IObject) (*gtk.Box, error) {
-	if dlg, ok := obj.(*gtk.Box); ok {
-		return dlg, nil
-	}
-	return nil, errors.New("not a *gtk.Box")
+func getTreeViewObj(builder *gtk.Builder, name string) *gtk.TreeView {
+	return getObj(builder, name).(*gtk.TreeView)
+}
+
+func getBoxObj(builder *gtk.Builder, name string) *gtk.Box {
+	return getObj(builder, name).(*gtk.Box)
+}
+
+func getLabelObj(builder *gtk.Builder, name string) *gtk.Label {
+	return getObj(builder, name).(*gtk.Label)
 }

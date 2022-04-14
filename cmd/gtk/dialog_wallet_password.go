@@ -19,19 +19,8 @@ func getWalletPassword(parent gtk.IWidget, wallet *wallet.Wallet) (string, bool)
 	builder, err := gtk.BuilderNewFromString(string(uiPasswordDialog))
 	errorCheck(err)
 
-	// Get the object with the id of "password_dialog".
-	objDlg, err := builder.GetObject("password_dialog")
-	errorCheck(err)
-
-	// Verify that the object is a pointer to a gtk.Dialog.
-	dlg, err := isDialog(objDlg)
-	errorCheck(err)
-
-	objEntry, err := builder.GetObject("password_entry")
-	errorCheck(err)
-
-	passwordEntry, err := isEntry(objEntry)
-	errorCheck(err)
+	dlg := getAboutDialogObj(builder, "password_dialog")
+	passwordEntry := getEntryObj(builder, "password_entry")
 
 	password, err = passwordEntry.GetText()
 	errorCheck(err)

@@ -17,11 +17,7 @@ func buildWidgetNode() *widgetNode {
 	builder, err := gtk.BuilderNewFromString(string(uiWidgetNode))
 	errorCheck(err)
 
-	objBox, err := builder.GetObject("id_box_node")
-	errorCheck(err)
-
-	box, err := isBox(objBox)
-	errorCheck(err)
+	box := getBoxObj(builder, "id_box_node")
 
 	w := &widgetNode{
 		Box: box,

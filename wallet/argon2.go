@@ -70,7 +70,7 @@ func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
 	d, err := base64.StdEncoding.DecodeString(ct.CipherText)
 	exitOnErr(err)
 
-	// Using MAC to heck if the password is correct
+	// Using MAC to check if the password is correct
 	// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
 	if !safeCmp(mac, sha256MAC(cipherKey[16:32], d)) {
 		return "", ErrInvalidPassword

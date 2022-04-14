@@ -16,31 +16,17 @@ type mainWindow struct {
 	widgetWallet *widgetWallet
 }
 
-func buildMainWindow() *mainWindow {
+func buildMainWindow(walletModel *walletModel) *mainWindow {
 	// Get the GtkBuilder UI definition in the glade file.
 	builder, err := gtk.BuilderNewFromString(string(uiMainWindow))
 	errorCheck(err)
 
-	objMainWindow, err := builder.GetObject("id_main_window")
-	errorCheck(err)
-
-	appWindow, err := isApplicationWindow(objMainWindow)
-	errorCheck(err)
-
-	objBoxNode, err := builder.GetObject("id_box_node")
-	errorCheck(err)
-
-	boxNode, err := isBox(objBoxNode)
-	errorCheck(err)
-
-	objBoxDefaultWallet, err := builder.GetObject("id_box_default_wallet")
-	errorCheck(err)
-
-	boxDefaultWallet, err := isBox(objBoxDefaultWallet)
-	errorCheck(err)
+	appWindow := getApplicationWindowObj(builder, "id_main_window")
+	boxNode := getBoxObj(builder, "id_box_node")
+	boxDefaultWallet := getBoxObj(builder, "id_box_default_wallet")
 
 	widgetNode := buildWidgetNode()
-	widgetWallet := buildWidgetWallet()
+	widgetWallet := buildWidgetWallet(walletModel)
 
 	boxNode.Add(widgetNode)
 	boxDefaultWallet.Add(widgetWallet)
@@ -61,10 +47,6 @@ func buildMainWindow() *mainWindow {
 	builder.ConnectSignals(signals)
 
 	return mw
-}
-
-func (mw *mainWindow) SetWalletModel(model *walletModel) {
-	mw.widgetWallet.SetModel(model)
 }
 
 func (mw *mainWindow) onQuit() {
