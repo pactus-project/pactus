@@ -4,7 +4,7 @@ CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++ -g -O2"
 BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
 RELEASE_LDFLAGS= -ldflags "-s -w"
 
-ifneq (,$(filter $(OS),Windows_NT MINGW*))
+ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
 endif
 
