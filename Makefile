@@ -5,16 +5,8 @@ BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-
 RELEASE_LDFLAGS= -ldflags "-s -w"
 
 ifeq ($(OS),Windows_NT)
-	OS := Windows
-else
-	OS := $(shell uname)
+EXE = .exe
 endif
-
-ifeq ($(detected_OS),Windows)
-	EXE += .exe
-endif
-
-
 
 all: install test
 
@@ -48,10 +40,10 @@ release: herumi
 	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./build/zarb-wallet$(EXE) ./cmd/wallet
 
 build_gui:
-	go build $(BUILD_LDFLAGS) -o ./build/zarb-gui$(EXE) ./cmd/gtk
+	go build $(BUILD_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
 
 release_gui: herumi
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -o ./build/zarb-gui$(EXE) ./cmd/gtk
+	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
 
 
 ########################################

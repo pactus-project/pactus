@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/gotk3/gotk3 v0.6.1
+	github.com/gotk3/gotk3 v0.6.2-0.20211227203914-9ce84f11b1a9
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/herumi/bls-go-binary v1.0.1-0.20220328013147-ab19a9ee50c7
