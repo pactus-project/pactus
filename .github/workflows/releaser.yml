@@ -1,31 +1,101 @@
 name: Releaser
 
-on:
-  push:
-    tags:
-      - v*
+# on:
+#   push:
+#     tags:
+#       - v*
 
 jobs:
-  releaser:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-
+  ########################################
+  build-linux:
+    runs-on: ubuntu-latest
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.18.x
+    - uses: actions/checkout@v3
 
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Install Dependencies
+      run: sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
 
-      - name: Create release archive
-        run: bash ./.github/workflows/releaser.sh
+    - name: Install Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
 
-      - name: Print list of files
-        run: ls
+    - name: Build binaries
+      run: make release release_gui
+
+    - name: Archive binaries
+      run: |
+        VER=`git describe --abbrev=0 --tags`
+        tar -czvf zarb-$VER-linux-x86_64.tar.gz ./build/zarb-daemon ./build/zarb-wallet ./build/zarb-gui
+
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: zarb-*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: brew install gobject-introspection gtk+3 adwaita-icon-theme
+
+    - name: Install Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    - name: Build binaries
+      run: make release release_gui
+
+    - name: Archive binaries
+      run: |
+        VER=`git describe --abbrev=0 --tags`
+        tar -czvf zarb-$VER-darwin-x86_64.tar.gz ./build/zarb-daemon ./build/zarb-wallet ./build/zarb-gui
+
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: zarb-*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install:
+          git
+          mingw-w64-x86_64-gtk3
+          mingw-w64-x86_64-glib2
+          mingw-w64-x86_64-go
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-pkg-config
+          glib2-devel
+
+    - name: Build GUI binary
+      run: |
+        # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
+        sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
+        run: make release release_gui
+
+    - name: Archive binaries
+      run: |
+        VER=`git describe --abbrev=0 --tags`
+        7z a zarb-$VER-windows-x86_64.zip zarb-daemon.exe zarb-wallet.exe zarb-gui.exe
 
       - name: Publish
         uses: softprops/action-gh-release@v1
