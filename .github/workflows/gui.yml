@@ -60,6 +60,7 @@ jobs:
           mingw-w64-x86_64-glib2
           mingw-w64-x86_64-go
           mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-pkg-config
           glib2-devel
 
     - uses: actions/checkout@v3
