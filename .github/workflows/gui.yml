@@ -24,7 +24,7 @@ jobs:
         go-version: 1.18
 
     - name: Build the binary
-      run: go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
+      run: make release_gui
 
   build-macos:
     runs-on: macos-latest
@@ -40,7 +40,7 @@ jobs:
         go-version: 1.18
 
     - name: Build the binary
-      run: go build -ldflags "-s -w" -tags gtk -o ./build/zarb-gui ./cmd/gtk
+      run: make release_gui
 
   build-windows:
     runs-on: windows-latest
