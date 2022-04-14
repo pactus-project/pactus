@@ -1,5 +1,9 @@
 name: Releaser
 
+on:
+  push:
+    branches:
+      - main
 # on:
 #   push:
 #     tags:
