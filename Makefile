@@ -3,6 +3,7 @@ HERUMI= $(shell pwd)/.herumi
 CGO_LDFLAGS=CGO_LDFLAGS="-L$(HERUMI)/bls/lib -lbls384_256 -lm -lstdc++ -g -O2"
 BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
 RELEASE_LDFLAGS= -ldflags "-s -w"
+RELEASE_GUI_LDFLAGS= -ldflags "-s -w -H windowsgui"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
@@ -43,7 +44,7 @@ build_gui:
 	go build $(BUILD_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
 
 release_gui: herumi
-	$(CGO_LDFLAGS) go build $(RELEASE_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
+	$(CGO_LDFLAGS) go build $(RELEASE_GUI_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
 
 
 ########################################

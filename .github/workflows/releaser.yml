@@ -94,14 +94,130 @@ jobs:
         sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
         make release release_gui
 
-    - name: Archive binaries
+    - name: Bundle dependencies
       run: |
-        VER=`git describe --abbrev=0 --tags`
-        cd build && 7z a zarb-$VER-windows-x86_64.zip zarb-daemon.exe zarb-wallet.exe zarb-gui.exe
+        echo "Getting workspace path."
+        export GUI_DIR="$(pwd)/build/zarb-gui"
+        mkdir -R $GUI_DIR
+
+        echo "Changing working directory to MSYS2 MINGW64."
+        cd "/C/msys2/msys64/mingw64"
+
+        echo "Copying DLLs and EXEs."
+        cd ./bin
+        cp \
+          "gdbus.exe" \
+          "gspawn-win64-helper.exe" \
+          "gspawn-win64-helper-console.exe" \
+          "libatk-1.0-0.dll" \
+          "libatkmm-1.6-1.dll" \
+          "libbrotlicommon.dll" \
+          "libbrotlidec.dll" \
+          "libbz2-1.dll" \
+          "libcairo-2.dll" \
+          "libcairo-gobject-2.dll" \
+          "libcairomm-1.0-1.dll" \
+          "libdatrie-1.dll" \
+          "libdeflate.dll" \
+          "libepoxy-0.dll" \
+          "libexpat-1.dll" \
+          "libffi-7.dll" \
+          "libfftw3f-3.dll" \
+          "libfontconfig-1.dll" \
+          "libfreetype-6.dll" \
+          "libfribidi-0.dll" \
+          "libgcc_s_seh-1.dll" \
+          "libgdk_pixbuf-2.0-0.dll" \
+          "libgdk-3-0.dll" \
+          "libgdkmm-3.0-1.dll" \
+          "libgio-2.0-0.dll" \
+          "libgiomm-2.4-1.dll" \
+          "libglib-2.0-0.dll" \
+          "libglibmm-2.4-1.dll" \
+          "libgmodule-2.0-0.dll" \
+          "libgobject-2.0-0.dll" \
+          "libgomp-1.dll" \
+          "libgraphite2.dll" \
+          "libgtk-3-0.dll" \
+          "libgtkmm-3.0-1.dll" \
+          "libharfbuzz-0.dll" \
+          "libiconv-2.dll" \
+          "libintl-8.dll" \
+          "libjbig-0.dll" \
+          "libjpeg-8.dll" \
+          "liblcms2-2.dll" \
+          "liblensfun.dll" \
+          "libLerc.dll" \
+          "liblzma-5.dll" \
+          "libpango-1.0-0.dll" \
+          "libpangocairo-1.0-0.dll" \
+          "libpangoft2-1.0-0.dll" \
+          "libpangomm-1.4-1.dll" \
+          "libpangowin32-1.0-0.dll" \
+          "libpcre-1.dll" \
+          "libpixman-1-0.dll" \
+          "libpng16-16.dll" \
+          "librsvg-2-2.dll" \
+          "libsigc-2.0-0.dll" \
+          "libstdc++-6.dll" \
+          "libsystre-0.dll" \
+          "libthai-0.dll" \
+          "libtiff-5.dll" \
+          "libtre-5.dll" \
+          "libwebp-7.dll" \
+          "libwinpthread-1.dll" \
+          "libxml2-2.dll" \
+          "libzstd.dll" \
+          "zlib1.dll" \
+          "${GUI_DIR}"
+        cd -
+
+        echo "Copying Adwaita theme."
+        mkdir -p "${GUI_DIR}/share/icons/Adwaita"
+        cd 'share/icons/Adwaita/'
+        mkdir -p "${GUI_DIR}/share/icons/Adwaita/scalable"
+        cp -r \
+          "scalable/actions" \
+          "scalable/devices" \
+          "scalable/mimetypes" \
+          "scalable/places" \
+          "scalable/status" \
+          "scalable/ui" \
+          "${GUI_DIR}/share/icons/Adwaita/scalable"
+        cp 'index.theme' "${GUI_DIR}/share/icons/Adwaita"
+        mkdir -p "${GUI_DIR}/share/icons/Adwaita/cursors"
+        cp -r \
+          "cursors/plus.cur" \
+          "cursors/sb_h_double_arrow.cur" \
+          "cursors/sb_left_arrow.cur" \
+          "cursors/sb_right_arrow.cur" \
+          "cursors/sb_v_double_arrow.cur" \
+          "${GUI_DIR}/share/icons/Adwaita/cursors"
+        cd -
+
+        echo "Copying GDK pixbuf."
+        mkdir -p "${GUI_DIR}/lib"
+        cp -r 'lib/gdk-pixbuf-2.0' "${GUI_DIR}/lib/gdk-pixbuf-2.0"
+
+        echo "Copying GLib schemas."
+        mkdir -p "${GUI_DIR}/share/glib-2.0/schemas"
+        cp 'share/glib-2.0/schemas/gschemas.compiled' "${GUI_DIR}/share/glib-2.0/schemas"
+
+        echo "Creating GTK settings.ini."
+        mkdir -p "${GUI_DIR}/share/gtk-3.0/"
+        echo '[Settings] gtk-button-images=1' > "${GUI_DIR}/share/gtk-3.0/settings.ini"
+
+    - name: Archive bundle
+      shell: cmd
+      run: |
+        cp ./build/zarb-gui.exe ${GUI_DIR}
+        VER=$(echo `git describe --abbrev=0 --tags` | sed 's/^.//') # "v1.2.3" -> "1.2.3"
+        mv ./build zarb-$VER
+        7z a zarb-$VER-windows-x86_64.zip zarb-$VER/*
 
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
-        files: build/zarb-*.zip
+        files: zarb-*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
