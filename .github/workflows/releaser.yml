@@ -98,7 +98,7 @@ jobs:
       run: |
         echo "Getting workspace path."
         export GUI_DIR="$(pwd)/build/zarb-gui"
-        mkdir -R $GUI_DIR
+        mkdir $GUI_DIR
 
         echo "Changing working directory to MSYS2 MINGW64."
         cd "/C/msys2/msys64/mingw64"
