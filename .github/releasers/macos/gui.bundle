@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="no"?>
+<app-bundle>
+  <meta>
+    <prefix name="default">/usr/local</prefix>
+    <prefix name="bundle">${env:GUI_BUNDLE}</prefix>
+    <destination overwrite="yes">${env:ROOT_DIR}</destination>
+    <gtk>gtk+-3.0</gtk>
+  </meta>
+  <plist>${prefix:bundle}/Info.plist</plist>
+  <main-binary>${prefix:bundle}/zarb-gui</main-binary>
+
+  <binary>
+    ${prefix}/lib/gdk-pixbuf-2.0/${pkg:gdk-pixbuf-2.0:gdk_pixbuf_binary_version}/loaders/*.so
+  </binary>
+
+  </app-bundle>
