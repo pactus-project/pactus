@@ -18,6 +18,7 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/bundle"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
+	"github.com/zarbchain/zarb-go/sync/firewall"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/validator"
@@ -42,10 +43,23 @@ func (o *OverrideFingerprint) Fingerprint() string {
 	return o.name + o.sync.Fingerprint()
 }
 
+func testConfig() *Config {
+	return &Config{
+		Moniker:             "test",
+		StartingTimeout:     0,
+		HeartBeatTimeout:    time.Second * 1,
+		SessionTimeout:      time.Second * 1,
+		NodeNetwork:         true,
+		BlockPerMessage:     10,
+		MaximumOpenSessions: 4,
+		CacheSize:           1000,
+		Firewall:            firewall.DefaultConfig(),
+	}
+}
+
 func init() {
 	LatestBlockInterval = 20
-	logger.InitLogger(logger.TestConfig())
-	tConfig = TestConfig()
+	tConfig = testConfig()
 	tConfig.Moniker = "Alice"
 }
 

@@ -70,9 +70,9 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("Failed to create validator address: ", err)
 				return
 			}
-			mintbaseAddrStr, err := wallet.NewAddress("", "Mintbase address")
+			rewardAddrStr, err := wallet.NewAddress("", "Reward address")
 			if err != nil {
-				cmd.PrintErrorMsg("Failed to create mintbase address: ", err)
+				cmd.PrintErrorMsg("Failed to create reward address: ", err)
 				return
 			}
 			valPrvStr, err := wallet.PrivateKey("", valAddrStr)
@@ -108,7 +108,7 @@ func Init() func(c *cli.Cmd) {
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
-				conf.State.MintbaseAddress = mintbaseAddrStr
+				conf.State.RewardAddress = rewardAddrStr
 			} else {
 				gen = makeLocalGenesis(valPrv.PublicKey().(*bls.PublicKey))
 				conf.Network.Name = "local-test"
@@ -131,7 +131,7 @@ func Init() func(c *cli.Cmd) {
 			fmt.Println()
 			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", workspacePath)
 			cmd.PrintInfoMsg("You validator address is: %v", valAddrStr)
-			cmd.PrintInfoMsg("You mintbase address is: %v", mintbaseAddrStr)
+			cmd.PrintInfoMsg("You reward address is: %v", rewardAddrStr)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("To run your node run this command:")
 			cmd.PrintInfoMsg("./zarb-daemon start -w %v", workspacePath)

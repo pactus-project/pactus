@@ -23,6 +23,10 @@ func TestRunningNode(t *testing.T) {
 	val := validator.NewValidator(pub, 0)
 	gen := genesis.MakeGenesis(util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfig()
+	conf.Network.ListenAddress=[]string{"/ip4/0.0.0.0/tcp/0"}
+	conf.GRPC.Enable = false
+	conf.Capnp.Enable = false
+	conf.HTTP.Enable = false
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.NodeKeyFile = util.TempFilePath()
 

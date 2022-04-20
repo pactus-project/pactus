@@ -39,13 +39,13 @@ type Facade interface {
 	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator
 	Params() param.Params
-	// MintbaseAddress returns the rewards address that is associated to this node.
-	// Mintbase address can be set through the config file,
+	// RewardAddress returns the rewards address that is associated to this node.
+	// Reward address can be set through the config file,
 	// and if it is not set, it will be the same as validator address
-	MintbaseAddress() crypto.Address
+	RewardAddress() crypto.Address
 
 	// ValidatorAddress return the validator address that is associated to this node
-	// Validator address is different from the Mintbase address.
+	// Validator address is different from the reward address.
 	ValidatorAddress() crypto.Address
 	Close() error
 	Fingerprint() string

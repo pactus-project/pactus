@@ -7,20 +7,36 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
 )
 
-func setup(t *testing.T, size int) []*network {
-	logger.InitLogger(logger.TestConfig())
+func testConfig() *Config {
+	return &Config{
+		Name:             "test-network",
+		ListenAddress:    []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
+		NodeKeyFile:      util.TempFilePath(),
+		EnableNATService: false,
+		EnableRelay:      false,
+		EnableMdns:       true,
+		EnableKademlia:   true,
+		EnablePing:       false,
+		Bootstrap: &BootstrapConfig{
+			Addresses:    []string{},
+			MinThreshold: 4,
+			MaxThreshold: 8,
+			Period:       1 * time.Second,
+		},
+	}
+}
 
+func setup(t *testing.T, size int) []*network {
 	nets := make([]*network, size)
 
 	networkName := fmt.Sprintf("test-network-%d", util.RandInt32(10000))
 	port := util.RandInt32(9999) + 10000
 
 	for i := 0; i < size; i++ {
-		conf := TestConfig()
+		conf := testConfig()
 		conf.Name = networkName
 
 		bootstrapAddr := ""
@@ -73,7 +89,6 @@ func TestDHT(t *testing.T) {
 	nets := setup(t, 4)
 	conf := nets[1].config
 	conf.EnableMdns = false
-	conf.EnableRelay = false
 
 	net, err := NewNetwork(conf)
 	assert.NoError(t, err)
@@ -91,20 +106,20 @@ func TestDHT(t *testing.T) {
 
 // TODO: Fix me
 // func TestDisconnecting(t *testing.T) {
-// 	net1, net2 := setup(t, TestConfig(), TestConfig())
+// 	nets := setup(t, 2)
 
-// 	assert.NoError(t, net1.Start())
-// 	assert.NoError(t, net2.Start())
+// 	assert.NoError(t, nets[0].Start())
+// 	assert.NoError(t, nets[1].Start())
 
 // 	for {
-// 		if net1.NumConnectedPeers() > 0 && net2.NumConnectedPeers() > 0 {
+// 		if nets[0].NumConnectedPeers() > 0 && nets[1].NumConnectedPeers() > 0 {
 // 			break
 // 		}
 // 	}
 
-// 	net1.CloseConnection(net2.SelfID())
-// 	assert.Equal(t, net1.NumConnectedPeers(), 0)
+// 	nets[0].CloseConnection(nets[1].SelfID())
+// 	assert.Equal(t, nets[0].NumConnectedPeers(), 0)
 
-// 	net1.Stop()
-// 	net2.Stop()
+// 	nets[0].Stop()
+// 	nets[1].Stop()
 // }

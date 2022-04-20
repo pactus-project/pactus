@@ -12,18 +12,18 @@ import (
 func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 	exe := execution.NewExecutor()
 
-	var mintbaseTrx *tx.Tx
+	var subsidyTrx *tx.Tx
 	for i, trx := range b.Transactions() {
 		// The first transaction should be subsidy transaction
-		IsMintbaseTx := (i == 0)
-		if IsMintbaseTx {
-			if !trx.IsMintbaseTx() {
+		isSubsidyTx := (i == 0)
+		if isSubsidyTx {
+			if !trx.IsSubsidyTx() {
 				return errors.Errorf(errors.ErrInvalidTx,
 					"first transaction should be a subsidy transaction")
 			}
-			mintbaseTrx = trx
+			subsidyTrx = trx
 		} else {
-			if trx.IsMintbaseTx() {
+			if trx.IsSubsidyTx() {
 				return errors.Errorf(errors.ErrInvalidTx,
 					"duplicated subsidy transaction")
 			}
@@ -37,9 +37,9 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 
 	accumulatedFee := exe.AccumulatedFee()
 	subsidyAmt := st.params.BlockReward + exe.AccumulatedFee()
-	if mintbaseTrx.Payload().Value() != subsidyAmt {
+	if subsidyTrx.Payload().Value() != subsidyAmt {
 		return errors.Errorf(errors.ErrInvalidTx,
-			"invalid subsidy amount, expected %v, got %v", subsidyAmt, mintbaseTrx.Payload().Value())
+			"invalid subsidy amount, expected %v, got %v", subsidyAmt, subsidyTrx.Payload().Value())
 	}
 
 	// Claim accumulated fees

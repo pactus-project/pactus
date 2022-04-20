@@ -14,12 +14,6 @@ func DefaultConfig() *Config {
 	}
 }
 
-func TestConfig() *Config {
-	return &Config{
-		MaxSize: 20,
-	}
-}
-
 // SanityCheck is a basic checks for config
 func (conf *Config) SanityCheck() error {
 	if conf.MaxSize == 0 {

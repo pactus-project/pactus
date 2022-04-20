@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/tx/payload"
 )
 
-func NewMintbaseTx(stamp hash.Stamp, seq int32, receiver crypto.Address, amount int64, memo string) *Tx {
+func NewSubsidyTx(stamp hash.Stamp, seq int32, receiver crypto.Address, amount int64, memo string) *Tx {
 	return NewSendTx(
 		stamp,
 		seq,

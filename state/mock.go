@@ -187,7 +187,7 @@ func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 func (m *MockState) Params() param.Params {
 	return m.TestParams
 }
-func (m *MockState) MintbaseAddress() crypto.Address {
+func (m *MockState) RewardAddress() crypto.Address {
 	return crypto.GenerateTestAddress()
 }
 func (m *MockState) ValidatorAddress() crypto.Address {

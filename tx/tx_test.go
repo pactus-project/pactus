@@ -125,8 +125,8 @@ func TestTxSanityCheck(t *testing.T) {
 func TestInvalidFee(t *testing.T) {
 	t.Run("Invalid fee", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
-		trx := NewMintbaseTx(stamp, 88, crypto.GenerateTestAddress(), 2500, "subsidy")
-		assert.True(t, trx.IsMintbaseTx())
+		trx := NewSubsidyTx(stamp, 88, crypto.GenerateTestAddress(), 2500, "subsidy")
+		assert.True(t, trx.IsSubsidyTx())
 		trx.data.Fee = 1
 		err := trx.SanityCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
@@ -152,7 +152,7 @@ func TestSubsidyTx(t *testing.T) {
 
 	t.Run("Has signature", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
-		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
+		trx := NewSubsidyTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 		err := trx.SanityCheck()
@@ -161,7 +161,7 @@ func TestSubsidyTx(t *testing.T) {
 
 	t.Run("Has public key", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
-		trx := NewMintbaseTx(stamp, 88, pub.Address(), 2500, "subsidy")
+		trx := NewSubsidyTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		trx.SetPublicKey(pub)
 		err := trx.SanityCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)

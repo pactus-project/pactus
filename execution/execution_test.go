@@ -8,15 +8,12 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
 	"github.com/zarbchain/zarb-go/tx"
 )
 
 func TestExecution(t *testing.T) {
-	logger.InitLogger(logger.TestConfig())
-
 	tSandbox := sandbox.MockingSandbox()
 	tExec := NewExecutor()
 
@@ -62,13 +59,13 @@ func TestExecution(t *testing.T) {
 		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
-	t.Run("Mintbase has an invalid stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewMintbaseTx(block8641.Stamp(), 1, rcvAddr, 1000, "expired-stamp")
+	t.Run("Subsidy transaction has an invalid stamp, Should returns error", func(t *testing.T) {
+		trx := tx.NewSubsidyTx(block8641.Stamp(), 1, rcvAddr, 1000, "expired-stamp")
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
-	t.Run("Mintbase stamp is ok", func(t *testing.T) {
-		trx := tx.NewMintbaseTx(block8642.Stamp(), 1, rcvAddr, 1000, "ok")
+	t.Run("Subsidy stamp is ok", func(t *testing.T) {
+		trx := tx.NewSubsidyTx(block8642.Stamp(), 1, rcvAddr, 1000, "ok")
 		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
@@ -84,13 +81,13 @@ func TestExecution(t *testing.T) {
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
-	t.Run("Invalid fee (mintbase), Should returns error", func(t *testing.T) {
+	t.Run("Invalid fee (subsidy tx), Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(block2.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1, "invalid fee")
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 		assert.Error(t, tExec.checkFee(trx, tSandbox))
 	})
 
-	t.Run("Invalid fee (send), Should returns error", func(t *testing.T) {
+	t.Run("Invalid fee (send tx), Should returns error", func(t *testing.T) {
 		trx := tx.NewSendTx(block2.Stamp(), 2, addr1, rcvAddr, 1000, 0, "invalid fee")
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 		assert.Error(t, tExec.checkFee(trx, tSandbox))

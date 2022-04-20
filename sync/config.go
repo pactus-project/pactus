@@ -33,20 +33,6 @@ func DefaultConfig() *Config {
 	}
 }
 
-func TestConfig() *Config {
-	return &Config{
-		Moniker:             "test",
-		StartingTimeout:     0,
-		HeartBeatTimeout:    time.Second * 1,
-		SessionTimeout:      time.Second * 1,
-		NodeNetwork:         true,
-		BlockPerMessage:     10,
-		MaximumOpenSessions: 4,
-		CacheSize:           1000,
-		Firewall:            firewall.TestConfig(),
-	}
-}
-
 // SanityCheck is a basic checks for config
 func (conf *Config) SanityCheck() error {
 	return nil

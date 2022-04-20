@@ -1,6 +1,3 @@
-//go:build !debug
-// +build !debug
-
 package logger
 
 import (
@@ -30,6 +27,32 @@ type Logger struct {
 	obj    interface{}
 }
 
+func getLoggersInst() *loggers {
+	if loggersInst == nil {
+		// Only during tests the loggersInst is nil
+
+		conf := &Config{
+			Levels:    make(map[string]string),
+			Colorfull: true,
+		}
+		conf.Levels["default"] = "debug"
+		conf.Levels["_network"] = "debug"
+		conf.Levels["_consensus"] = "debug"
+		conf.Levels["_state"] = "debug"
+		conf.Levels["_sync"] = "debug"
+		conf.Levels["_pool"] = "debug"
+		conf.Levels["_capnp"] = "debug"
+		conf.Levels["_http"] = "debug"
+		conf.Levels["_grpc"] = "debug"
+		loggersInst = &loggers{
+			config:  conf,
+			loggers: make(map[string]*Logger),
+		}
+	}
+
+	return loggersInst
+}
+
 func InitLogger(conf *Config) {
 	if loggersInst == nil {
 		loggersInst = &loggers{
@@ -55,16 +78,15 @@ func NewLogger(name string, obj interface{}) *Logger {
 		name:   name,
 		obj:    obj,
 	}
-	if loggersInst.config.Colorfull {
+	if getLoggersInst().config.Colorfull {
 		l.logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
-
 	} else {
 		l.logger.SetFormatter(&logrus.TextFormatter{DisableColors: true})
 	}
 
-	lvl := loggersInst.config.Levels[name]
+	lvl := getLoggersInst().config.Levels[name]
 	if lvl == "" {
-		lvl = loggersInst.config.Levels["default"]
+		lvl = getLoggersInst().config.Levels["default"]
 	}
 
 	level, err := logrus.ParseLevel(lvl)
@@ -72,7 +94,7 @@ func NewLogger(name string, obj interface{}) *Logger {
 		l.SetLevel(level)
 	}
 
-	loggersInst.loggers[name] = l
+	getLoggersInst().loggers[name] = l
 	return l
 }
 

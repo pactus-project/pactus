@@ -2,17 +2,15 @@ package network
 
 import (
 	"time"
-
-	"github.com/zarbchain/zarb-go/util"
 )
 
 type Config struct {
-	Name             string           `toml:"" comment:"Name dispay network name ex. “zarb”."`
-	ListenAddress    []string         `toml:"" comment:"ListenAddress is binding address for public APIs and supports multi addresses."`
+	Name             string           `toml:"" comment:"Name is the name of the network. For the mainnet it should set to “zarb”."`
+	ListenAddress    []string         `toml:"" comment:"ListenAddress is the binding address for network APIs and supports multi addresses."`
 	NodeKeyFile      string           `toml:"" comment:"NodeKeyFile contains the private key to use for node authentication in the p2p protocol."`
-	EnableNATService bool             `toml:"" comment:"EnableNATService NAT allows many machines to share a single public address."`
-	EnableRelay      bool             `toml:"" comment:"EnableRelay is a transport protocol that routes traffic between two peers over a third-party “relay” peer."`
-	EnableMdns       bool             `toml:"" comment:"EnableMDNS is a protocol to discover local peers quickly and efficiently."`
+	EnableNATService bool             `toml:"" comment:"EnableNATService allows many machines to share a single public address.\nDefault is true."`
+	EnableRelay      bool             `toml:"" comment:"EnableRelay is a transport protocol that routes traffic between two peers over a third-party “relay” peer.\nDefault is true."`
+	EnableMdns       bool             `toml:"" comment:"EnableMDNS is a protocol to discover local peers quickly and efficiently.\nDefault is false."`
 	EnableKademlia   bool             `toml:"" comment:"EnableKademlia which is used a routing algorithm and it uses the dht routing table."`
 	EnablePing       bool             `toml:"" comment:"EnablePing which enables the ping service."`
 	Bootstrap        *BootstrapConfig `toml:"" comment:"Bootstrap comma separated list of peers to be added to the peer store on startup bootstrap peers."`
@@ -33,7 +31,7 @@ func DefaultConfig() *Config {
 		NodeKeyFile:      "node_key",
 		EnableNATService: true,
 		EnableRelay:      true,
-		EnableMdns:       true,
+		EnableMdns:       false,
 		EnableKademlia:   true,
 		EnablePing:       true,
 		Bootstrap: &BootstrapConfig{
@@ -41,25 +39,6 @@ func DefaultConfig() *Config {
 			MinThreshold: 8,
 			MaxThreshold: 16,
 			Period:       1 * time.Minute,
-		},
-	}
-}
-
-func TestConfig() *Config {
-	return &Config{
-		Name:             "zarb-testnet",
-		ListenAddress:    []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
-		NodeKeyFile:      util.TempFilePath(),
-		EnableNATService: true,
-		EnableRelay:      true,
-		EnableMdns:       true,
-		EnableKademlia:   true,
-		EnablePing:       true,
-		Bootstrap: &BootstrapConfig{
-			Addresses:    []string{},
-			MinThreshold: 4,
-			MaxThreshold: 8,
-			Period:       1 * time.Second,
 		},
 	}
 }

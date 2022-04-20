@@ -20,8 +20,6 @@ var tListener *bufconn.Listener
 var tCtx context.Context
 
 func init() {
-	logger.InitLogger(logger.TestConfig())
-
 	const bufSize = 1024 * 1024
 
 	tListener = bufconn.Listen(bufSize)

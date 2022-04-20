@@ -40,7 +40,7 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) *widgetNode {
 	errorCheck(err)
 	labelLocation.SetText(cwd)
 	labelValidatoAddress.SetText(model.node.State().ValidatorAddress().String())
-	labelRewardAddress.SetText(model.node.State().MintbaseAddress().String())
+	labelRewardAddress.SetText(model.node.State().RewardAddress().String())
 
 	w := &widgetNode{
 		Box:                  box,

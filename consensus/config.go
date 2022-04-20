@@ -20,14 +20,6 @@ func DefaultConfig() *Config {
 	}
 }
 
-func TestConfig() *Config {
-	return &Config{
-		QueryProposalTimeout:  200 * time.Millisecond,
-		ChangeProposerTimeout: 1 * time.Second,
-		ChangeProposerDelta:   200 * time.Millisecond,
-	}
-}
-
 func (conf *Config) SanityCheck() error {
 	if conf.QueryProposalTimeout <= 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout for query proposal can't be negative")

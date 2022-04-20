@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/www/capnp"
@@ -18,10 +17,6 @@ var tMockSync *sync.MockSync
 var tCapnpServer *capnp.Server
 var tHTTPServer *Server
 
-func init() {
-	logger.InitLogger(logger.TestConfig())
-}
-
 func setup(t *testing.T) {
 	if tHTTPServer != nil {
 		return
@@ -30,12 +25,21 @@ func setup(t *testing.T) {
 	tMockState = state.MockingState()
 	tMockSync = sync.MockingSync()
 
+	capnpConf := &capnp.Config{
+		Enable:  true,
+		Address: "[::]:0",
+	}
+	httpConf := &Config{
+		Enable:  true,
+		Address: "[::]:0",
+	}
+
 	var err error
-	tCapnpServer, err = capnp.NewServer(capnp.TestConfig(), tMockState, tMockSync)
+	tCapnpServer, err = capnp.NewServer(capnpConf, tMockState, tMockSync)
 	assert.NoError(t, err)
 	assert.NoError(t, tCapnpServer.StartServer())
 
-	tHTTPServer, err = NewServer(TestConfig())
+	tHTTPServer, err = NewServer(httpConf)
 	assert.NoError(t, err)
 	assert.NoError(t, tHTTPServer.StartServer(tCapnpServer.Address()))
 }
