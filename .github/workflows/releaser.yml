@@ -32,12 +32,12 @@ jobs:
 
   ########################################
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
     - uses: actions/checkout@v3
 
     - name: Install Dependencies
-      run: brew install gobject-introspection gtk+3 adwaita-icon-theme
+      run: brew install gtk+3 librsvg create-dmg
 
     - name: Install Go
       uses: actions/setup-go@v3
@@ -47,12 +47,14 @@ jobs:
     - name: Create release files
       run: bash ./.github/releasers/releaser_macos.sh
 
-    #- name: Publish
-    #  uses: softprops/action-gh-release@v1
-    #  with:
-    #    files: zarb-*tar.gz
-    #  env:
-    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          zarb-*.dmg
+          zarb-*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
   build-windows:
