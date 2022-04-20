@@ -24,16 +24,15 @@ var tCh chan message.Message
 var tTestTx *tx.Tx
 
 func setup(t *testing.T) {
-	logger.InitLogger(logger.TestConfig())
 	tCh = make(chan message.Message, 10)
 	tSandbox = sandbox.MockingSandbox()
-	p, err := NewTxPool(TestConfig(), tCh)
+	p, err := NewTxPool(DefaultConfig(), tCh)
 	assert.NoError(t, err)
 	p.SetNewSandboxAndRecheck(tSandbox)
 	tPool = p.(*txPool)
 
 	block88 := tSandbox.TestStore.AddTestBlock(88)
-	tTestTx = tx.NewMintbaseTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
+	tTestTx = tx.NewSubsidyTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
 }
 
 func shouldPublishTransaction(t *testing.T, id tx.ID) {
@@ -183,9 +182,9 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	block88 := tSandbox.TestStore.AddTestBlock(88)
 	proposer1 := crypto.GenerateTestAddress()
 	proposer2 := crypto.GenerateTestAddress()
-	trx1 := tx.NewMintbaseTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
-	trx2 := tx.NewMintbaseTx(block88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
-	trx3 := tx.NewMintbaseTx(block88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
+	trx1 := tx.NewSubsidyTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
+	trx2 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
+	trx3 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
 
 	assert.Error(t, tPool.AppendTx(trx1), "Expired subsidy transaction")
 	assert.NoError(t, tPool.AppendTx(trx2))

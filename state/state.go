@@ -28,16 +28,16 @@ import (
 type state struct {
 	lk sync.RWMutex
 
-	config         *Config
-	signer         crypto.Signer
-	mintbaseAddres crypto.Address
-	genDoc         *genesis.Genesis
-	store          store.Store
-	params         param.Params
-	txPool         txpool.TxPool
-	committee      committee.Committee
-	lastInfo       *lastinfo.LastInfo
-	logger         *logger.Logger
+	config       *Config
+	signer       crypto.Signer
+	rewardAddres crypto.Address
+	genDoc       *genesis.Genesis
+	store        store.Store
+	params       param.Params
+	txPool       txpool.TxPool
+	committee    committee.Committee
+	lastInfo     *lastinfo.LastInfo
+	logger       *logger.Logger
 }
 
 func LoadOrNewState(
@@ -47,26 +47,26 @@ func LoadOrNewState(
 	store store.Store,
 	txPool txpool.TxPool) (Facade, error) {
 
-	// Block rewards goes to the mintbase address
+	// Block rewards goes to the reward address
 	// If it is set inside config, we use that address
 	// otherwise, it will be the signer address
-	var mintbaseAddr crypto.Address
-	if conf.MintbaseAddress != "" {
-		addr, _ := crypto.AddressFromString(conf.MintbaseAddress)
-		mintbaseAddr = addr
+	var rewardAddr crypto.Address
+	if conf.RewardAddress != "" {
+		addr, _ := crypto.AddressFromString(conf.RewardAddress)
+		rewardAddr = addr
 	} else {
-		mintbaseAddr = signer.Address()
+		rewardAddr = signer.Address()
 	}
 
 	st := &state{
-		config:         conf,
-		genDoc:         genDoc,
-		txPool:         txPool,
-		params:         genDoc.Params(),
-		signer:         signer,
-		store:          store,
-		mintbaseAddres: mintbaseAddr,
-		lastInfo:       lastinfo.NewLastInfo(store),
+		config:       conf,
+		genDoc:       genDoc,
+		txPool:       txPool,
+		params:       genDoc.Params(),
+		signer:       signer,
+		store:        store,
+		rewardAddres: rewardAddr,
+		lastInfo:     lastinfo.NewLastInfo(store),
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -221,7 +221,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
-	tx := tx.NewMintbaseTx(stamp, seq, st.mintbaseAddres, st.params.BlockReward+fee, "")
+	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddres, st.params.BlockReward+fee, "")
 	return tx
 }
 
@@ -241,7 +241,7 @@ func (st *state) ProposeBlock(round int16) (*block.Block, error) {
 	txs := st.txPool.PrepareBlockTransactions()
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per block
-		if txs[i].IsMintbaseTx() {
+		if txs[i].IsSubsidyTx() {
 			st.logger.Error("found duplicated subsidy transaction", "tx", txs[i])
 			st.txPool.RemoveTx(txs[i].ID())
 			txs.Remove(i)
@@ -590,8 +590,8 @@ func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 func (st *state) Params() param.Params {
 	return st.params
 }
-func (st *state) MintbaseAddress() crypto.Address {
-	return st.mintbaseAddres
+func (st *state) RewardAddress() crypto.Address {
+	return st.rewardAddres
 }
 func (st *state) ValidatorAddress() crypto.Address {
 	return st.signer.Address()

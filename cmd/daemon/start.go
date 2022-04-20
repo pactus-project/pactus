@@ -92,13 +92,13 @@ func Start() func(c *cli.Cmd) {
 			}
 
 			validatorAddr := signer.Address()
-			mintbaseAddr := conf.State.MintbaseAddress
-			if mintbaseAddr == "" {
-				mintbaseAddr = validatorAddr.String()
+			rewardAddr := conf.State.RewardAddress
+			if rewardAddr == "" {
+				rewardAddr = validatorAddr.String()
 			}
 			cmd.PrintInfoMsg("You are running a zarb block chain agent: %v. Welcome! ", version.Version())
 			cmd.PrintInfoMsg("Validator address: %v", validatorAddr)
-			cmd.PrintInfoMsg("Mintbase address : %v", mintbaseAddr)
+			cmd.PrintInfoMsg("Reward address : %v", rewardAddr)
 			cmd.PrintLine()
 
 			node, err := node.NewNode(gen, conf, signer)

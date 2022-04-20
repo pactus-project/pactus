@@ -51,23 +51,6 @@ func DefaultConfig() *Config {
 	return conf
 }
 
-func TestConfig() *Config {
-	conf := &Config{
-		State:     state.TestConfig(),
-		Store:     store.TestConfig(),
-		TxPool:    txpool.TestConfig(),
-		Consensus: consensus.TestConfig(),
-		Network:   network.TestConfig(),
-		Sync:      sync.TestConfig(),
-		Logger:    logger.TestConfig(),
-		Capnp:     capnp.TestConfig(),
-		HTTP:      http.TestConfig(),
-		GRPC:      grpc.TestConfig(),
-	}
-
-	return conf
-}
-
 func FromTOML(t string) (*Config, error) {
 	conf := DefaultConfig()
 

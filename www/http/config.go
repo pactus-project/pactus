@@ -12,13 +12,6 @@ func DefaultConfig() *Config {
 	}
 }
 
-func TestConfig() *Config {
-	return &Config{
-		Enable:  true,
-		Address: "[::]:0",
-	}
-}
-
 // SanityCheck is a basic checks for config
 func (conf *Config) SanityCheck() error {
 	return nil

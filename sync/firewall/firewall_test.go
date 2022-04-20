@@ -24,12 +24,11 @@ var tNetwork *network.MockNetwork
 var tState *state.MockState
 
 func setup(t *testing.T) {
-	logger.InitLogger(logger.TestConfig())
 	logger := logger.NewLogger("firewal", nil)
 	peerSet := peerset.NewPeerSet(3 * time.Second)
 	tState = state.MockingState()
 	tNetwork = network.MockingNetwork(network.TestRandomPeerID())
-	conf := TestConfig()
+	conf := DefaultConfig()
 	conf.Enabled = true
 	tFirewall = NewFirewall(conf, tNetwork, peerSet, tState, logger)
 	assert.NotNil(t, tFirewall)

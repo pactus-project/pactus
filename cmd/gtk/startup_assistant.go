@@ -319,7 +319,7 @@ Now you are ready to start the node!`
 				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
-				conf.State.MintbaseAddress = rewardAddr
+				conf.State.RewardAddress = rewardAddr
 				err = conf.SaveToFile(cmd.ZarbConfigPath(workspace))
 				errorCheck(err)
 

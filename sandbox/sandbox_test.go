@@ -10,7 +10,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/util"
@@ -20,10 +19,6 @@ import (
 var tSigners []crypto.Signer
 var tStore *store.MockStore
 var tSandbox *sandbox
-
-func init() {
-	logger.InitLogger(logger.TestConfig())
-}
 
 func setup(t *testing.T) {
 	tStore = store.MockingStore()

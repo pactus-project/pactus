@@ -55,8 +55,8 @@ func TestOneBlockShorter(t *testing.T) {
 // TestSyncing is an important test and try to test syncing process between two test nodes (Alice and Bob).
 // In the real situation, more nodes are involved, but the procedure is almost the same.
 func TestSyncing(t *testing.T) {
-	configAlice := TestConfig()
-	configBob := TestConfig()
+	configAlice := testConfig()
+	configBob := testConfig()
 	signerAlice := bls.GenerateTestSigner()
 	signerBob := bls.GenerateTestSigner()
 	stateAlice := state.MockingState()

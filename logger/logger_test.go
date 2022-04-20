@@ -82,7 +82,7 @@ func TestObjLogger(t *testing.T) {
 
 func TestLogger(t *testing.T) {
 	loggersInst = nil
-	c := TestConfig()
+	c := DefaultConfig()
 	c.Colorfull = true
 	InitLogger(c)
 
@@ -102,7 +102,7 @@ func TestLogger(t *testing.T) {
 	assert.Contains(t, out, "010203")
 	assert.Contains(t, out, "<MISSING VALUE>")
 	assert.NotContains(t, out, "TRACE")
-	assert.Contains(t, out, "DEBU")
+	assert.NotContains(t, out, "DEBU")
 	assert.Contains(t, out, "INFO")
 	assert.Contains(t, out, "WARN")
 	assert.Contains(t, out, "ERR")

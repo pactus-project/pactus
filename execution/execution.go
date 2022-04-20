@@ -72,7 +72,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	height := sb.BlockHeightByStamp(trx.Stamp())
 	interval := sb.TransactionToLiveInterval()
 
-	if trx.IsMintbaseTx() {
+	if trx.IsSubsidyTx() {
 		interval = 1
 	} else if trx.IsSortitionTx() {
 		interval = 7

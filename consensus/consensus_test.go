@@ -49,15 +49,19 @@ type OverrideFingerprint struct {
 	name string
 }
 
+func testConfig() *Config {
+	return &Config{
+		QueryProposalTimeout:  200 * time.Millisecond,
+		ChangeProposerTimeout: 1 * time.Second,
+		ChangeProposerDelta:   200 * time.Millisecond,
+	}
+}
+
 func (o *OverrideFingerprint) Fingerprint() string {
 	return o.name + o.cons.Fingerprint()
 }
 
 func setup(t *testing.T) {
-	conf := logger.TestConfig()
-	conf.Levels["_consensus"] = "debug"
-	logger.InitLogger(conf)
-
 	_, tSigners = committee.GenerateTestCommittee(4)
 	tTxPool = txpool.MockingTxPool()
 
@@ -81,22 +85,22 @@ func setup(t *testing.T) {
 	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height.
 	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
 	tGenDoc = genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
-	stX, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)
+	stX, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)
 	require.NoError(t, err)
-	stY, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool)
+	stY, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool)
 	require.NoError(t, err)
-	stB, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexB], store3, tTxPool)
+	stB, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexB], store3, tTxPool)
 	require.NoError(t, err)
-	stP, err := state.LoadOrNewState(state.TestConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool)
+	stP, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool)
 	require.NoError(t, err)
 
-	consX, err := NewConsensus(TestConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
+	consX, err := NewConsensus(testConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
 	assert.NoError(t, err)
-	consY, err := NewConsensus(TestConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
+	consY, err := NewConsensus(testConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
 	assert.NoError(t, err)
-	consB, err := NewConsensus(TestConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
+	consB, err := NewConsensus(testConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
 	assert.NoError(t, err)
-	consP, err := NewConsensus(TestConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
+	consP, err := NewConsensus(testConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
 	assert.NoError(t, err)
 	tConsX = consX.(*consensus)
 	tConsY = consY.(*consensus)
@@ -308,8 +312,8 @@ func TestNotInCommittee(t *testing.T) {
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
 
-	st, _ := state.LoadOrNewState(state.TestConfig(), tGenDoc, signer, store, tTxPool)
-	cons, err := NewConsensus(TestConfig(), st, signer, make(chan message.Message, 100))
+	st, _ := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, signer, store, tTxPool)
+	cons, err := NewConsensus(testConfig(), st, signer, make(chan message.Message, 100))
 	assert.NoError(t, err)
 
 	testEnterNewHeight(cons.(*consensus))

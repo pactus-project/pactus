@@ -132,7 +132,7 @@ func (tx *Tx) checkFee() error {
 }
 
 func (tx *Tx) checkSignature() error {
-	if tx.IsMintbaseTx() {
+	if tx.IsSubsidyTx() {
 		if tx.PublicKey() != nil {
 			return errors.Errorf(errors.ErrInvalidPublicKey, "subsidy transaction should not have public key")
 		}
@@ -310,7 +310,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	if !tx.IsMintbaseTx() {
+	if !tx.IsSubsidyTx() {
 		sig := new(bls.Signature)
 		err = sig.Decode(r)
 		if err != nil {
@@ -363,7 +363,7 @@ func (tx *Tx) IsBondTx() bool {
 	return tx.Payload().Type() == payload.PayloadTypeBond
 }
 
-func (tx *Tx) IsMintbaseTx() bool {
+func (tx *Tx) IsSubsidyTx() bool {
 	return tx.Payload().Type() == payload.PayloadTypeSend &&
 		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
@@ -382,7 +382,7 @@ func (tx *Tx) IsWithdrawTx() bool {
 
 //IsFreeTx will return if trx's fee is 0
 func (tx *Tx) IsFreeTx() bool {
-	return tx.IsMintbaseTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
+	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
 }
 
 // ---------

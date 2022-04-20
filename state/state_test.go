@@ -13,7 +13,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/genesis"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/tx"
@@ -35,8 +34,6 @@ var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
 func setup(t *testing.T) {
-	logger.InitLogger(logger.TestConfig())
-
 	_, prv1 := bls.GenerateTestKeyPair()
 	_, prv2 := bls.GenerateTestKeyPair()
 	_, prv3 := bls.GenerateTestKeyPair()
@@ -66,13 +63,13 @@ func setup(t *testing.T) {
 	params.BondInterval = 10
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
-	st1, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner1, store1, tCommonTxPool)
+	st1, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner1, store1, tCommonTxPool)
 	require.NoError(t, err)
-	st2, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner2, store2, tCommonTxPool)
+	st2, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner2, store2, tCommonTxPool)
 	require.NoError(t, err)
-	st3, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner3, store3, tCommonTxPool)
+	st3, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner3, store3, tCommonTxPool)
 	require.NoError(t, err)
-	st4, err := LoadOrNewState(TestConfig(), gnDoc, tValSigner4, store4, tCommonTxPool)
+	st4, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner4, store4, tCommonTxPool)
 	require.NoError(t, err)
 
 	tState1, _ = st1.(*state)
@@ -172,24 +169,24 @@ func TestProposeBlockAndValidation(t *testing.T) {
 func TestBlockSubsidyTx(t *testing.T) {
 	setup(t)
 
-	// Without mintbase address in config
+	// Without reward address in config
 	trx := tState1.createSubsidyTx(7)
-	assert.True(t, trx.IsMintbaseTx())
+	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), tState1.params.BlockReward+7)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
-	assert.Equal(t, tState1.MintbaseAddress(), tState1.ValidatorAddress())
+	assert.Equal(t, tState1.RewardAddress(), tState1.ValidatorAddress())
 
 	store := store.MockingStore()
 
-	// With mintbase address in config
+	// With reward address in config
 	addr := crypto.GenerateTestAddress()
-	tState1.config.MintbaseAddress = addr.String()
+	tState1.config.RewardAddress = addr.String()
 	tState1.Close()
 	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
 	assert.NoError(t, err)
 	trx = st.(*state).createSubsidyTx(0)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
-	assert.Equal(t, st.MintbaseAddress(), addr, "Validator address should be changed")
+	assert.Equal(t, st.RewardAddress(), addr, "Validator address should be changed")
 	assert.Equal(t, st.ValidatorAddress(), tState1.ValidatorAddress(), "Validator address should not be changed")
 }
 
@@ -374,7 +371,7 @@ func TestSortition(t *testing.T) {
 	pub, prv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
-	st, err := LoadOrNewState(TestConfig(), tState1.genDoc, signer, store, tCommonTxPool)
+	st, err := LoadOrNewState(DefaultConfig(), tState1.genDoc, signer, store, tCommonTxPool)
 	assert.NoError(t, err)
 	st1 := st.(*state)
 
@@ -422,22 +419,25 @@ func TestSortition(t *testing.T) {
 
 	// ---------------------------------------------
 	// Let's commit another block with the new committee
-	b1, err := st1.ProposeBlock(3)
+	b14, err := st1.ProposeBlock(3)
 	require.NoError(t, err)
-	require.NotNil(t, b1)
+	require.NotNil(t, b14)
 
 	sigs := make([]*bls.Signature, 4)
-	sb := block.CertificateSignBytes(b1.Hash(), 3)
+	sb := block.CertificateSignBytes(b14.Hash(), 3)
 
 	sigs[0] = tValSigner2.SignData(sb).(*bls.Signature)
 	sigs[1] = tValSigner3.SignData(sb).(*bls.Signature)
 	sigs[2] = tValSigner4.SignData(sb).(*bls.Signature)
 	sigs[3] = signer.SignData(sb).(*bls.Signature)
-	c1 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.Aggregate(sigs))
+	c14 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.Aggregate(sigs))
 
 	height++
-	assert.NoError(t, st2.CommitBlock(height, b1, c1))
-	assert.NoError(t, tState2.CommitBlock(height, b1, c1))
+	assert.NoError(t, st2.CommitBlock(height, b14, c14))
+	assert.NoError(t, tState1.CommitBlock(height, b14, c14))
+	assert.NoError(t, tState2.CommitBlock(height, b14, c14))
+	assert.NoError(t, tState3.CommitBlock(height, b14, c14))
+	assert.NoError(t, tState4.CommitBlock(height, b14, c14))
 }
 
 func TestValidateBlockTime(t *testing.T) {

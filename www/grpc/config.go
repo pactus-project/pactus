@@ -17,15 +17,3 @@ func DefaultConfig() *Config {
 		},
 	}
 }
-
-func TestConfig() *Config {
-	return &Config{
-		Enable:  true,
-		Address: "[::]:0",
-		Gateway: GatewayConfig{
-			Enable:     true,
-			Address:    "[::]:0",
-			EnableCORS: false,
-		},
-	}
-}

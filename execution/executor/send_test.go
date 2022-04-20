@@ -7,7 +7,6 @@ import (
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
@@ -17,10 +16,6 @@ var (
 	tSandbox     *sandbox.MockSandbox
 	tStamp500000 hash.Stamp
 )
-
-func init() {
-	logger.InitLogger(logger.TestConfig())
-}
 
 func setup(t *testing.T) {
 	tSandbox = sandbox.MockingSandbox()
@@ -108,11 +103,11 @@ func TestSendNonStrictMode(t *testing.T) {
 
 	receiver1 := crypto.GenerateTestAddress()
 
-	trx1 := tx.NewMintbaseTx(tStamp500000, tSandbox.CurrentHeight(), receiver1, 1, "")
+	trx1 := tx.NewSubsidyTx(tStamp500000, tSandbox.CurrentHeight(), receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx1, tSandbox)), errors.ErrInvalidSequence)
 	assert.NoError(t, exe2.Execute(trx1, tSandbox))
 
-	trx2 := tx.NewMintbaseTx(tStamp500000, tSandbox.CurrentHeight()+1, receiver1, 1, "")
+	trx2 := tx.NewSubsidyTx(tStamp500000, tSandbox.CurrentHeight()+1, receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
 	assert.Equal(t, errors.Code(exe2.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
 
