@@ -4,6 +4,8 @@ package main
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/zarbchain/zarb-go/cmd"
@@ -156,6 +158,9 @@ This seed will allow you to recover your wallet in case of computer failure.
 	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
 		mnemonic1 := getTextViewcontent(seedTextView)
 		mnemonic2 := getTextViewcontent(seedConfirmTextView)
+		space := regexp.MustCompile(`\s+`)
+		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
+		mnemonic2 = strings.TrimSpace(mnemonic2)
 		if mnemonic1 == mnemonic2 {
 			assistant.SetPageComplete(pageSeedConfirm, true)
 		} else {
