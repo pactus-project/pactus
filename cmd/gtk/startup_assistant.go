@@ -297,11 +297,12 @@ Now you are ready to start the node!`
 
 		case pageFinalName:
 			{
-				defaultWallet, err := wallet.FromMnemonic(cmd.ZarbDefaultWalletPath(workspace), mnemonic, "", 0)
+				defaultWallet, err := wallet.FromMnemonic(
+					cmd.ZarbDefaultWalletPath(workspace), mnemonic, "", "Default wallet", 0)
 				errorCheck(err)
-				valAddr, err := defaultWallet.NewAddress("", "Validator address")
+				valAddr, err := defaultWallet.MakeNewAddress("", "Validator address")
 				errorCheck(err)
-				rewardAddr, err := defaultWallet.NewAddress("", "Reward address")
+				rewardAddr, err := defaultWallet.MakeNewAddress("", "Reward address")
 				errorCheck(err)
 
 				// To make process faster we set password after generating addresses

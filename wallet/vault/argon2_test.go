@@ -1,4 +1,4 @@
-package wallet
+package vault
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ func init() {
 	parallelism = uint8(3)
 }
 
-func TestEncryptDecrypt(t *testing.T) {
+func TestEncrypt(t *testing.T) {
 	e := newArgon2Encrypter("super_secret_passsword")
 	msg1 := "hello_world"
 	ct := e.encrypt(msg1)
@@ -26,6 +26,10 @@ func TestEncryptDecrypt(t *testing.T) {
 	assert.Equal(t, ct.Params.GetUint8("parallelism"), parallelism)
 
 	e2 := newArgon2Encrypter("invalid_password")
+	_, err = e2.decrypt(ct)
+	assert.Error(t, err)
+
+	ct.Method = "unknown-method"
 	_, err = e2.decrypt(ct)
 	assert.Error(t, err)
 }

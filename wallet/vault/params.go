@@ -1,4 +1,4 @@
-package wallet
+package vault
 
 import (
 	"encoding/base64"
@@ -15,7 +15,7 @@ func (p params) SetUint8(key string, val uint8) {
 }
 
 func (p params) SetUint32(key string, val uint32) {
-	p[key] = strconv.FormatInt(int64(val), 10)
+	p[key] = strconv.FormatUint(uint64(val), 10)
 }
 
 func (p params) SetBytes(key string, val []byte) {

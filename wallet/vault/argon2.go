@@ -1,4 +1,4 @@
-package wallet
+package vault
 
 import (
 	"crypto/rand"
@@ -16,12 +16,12 @@ var (
 )
 
 type argon2Encrypter struct {
-	passphrase string
+	password string
 }
 
-func newArgon2Encrypter(passphrase string) *argon2Encrypter {
+func newArgon2Encrypter(password string) *argon2Encrypter {
 	return &argon2Encrypter{
-		passphrase: passphrase,
+		password: password,
 	}
 }
 func (e *argon2Encrypter) encrypt(message string) encrypted {
@@ -30,7 +30,7 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 	_, err := rand.Read(salt)
 	exitOnErr(err)
 
-	cipherKey := e.cipherKey(e.passphrase, salt, iterations, memory, parallelism)
+	cipherKey := e.cipherKey(e.password, salt, iterations, memory, parallelism)
 
 	// Using salt for Initialization Vector (IV)
 	iv := salt
@@ -66,7 +66,7 @@ func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
 	memory := ct.Params.GetUint32("memory")
 	parallelism := ct.Params.GetUint8("parallelism")
 
-	cipherKey := e.cipherKey(e.passphrase, salt, iterations, memory, parallelism)
+	cipherKey := e.cipherKey(e.password, salt, iterations, memory, parallelism)
 	d, err := base64.StdEncoding.DecodeString(ct.CipherText)
 	exitOnErr(err)
 
@@ -80,7 +80,7 @@ func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
 	return string(text), nil
 }
 
-func (e *argon2Encrypter) cipherKey(passphrase string, salt []byte, iterations, memory uint32, parallelism uint8) []byte {
+func (e *argon2Encrypter) cipherKey(password string, salt []byte, iterations, memory uint32, parallelism uint8) []byte {
 	// Argon2 currently has three modes: data-dependent Argon2d, data-independent Argon2i, and a mix of the two, Argon2id.
-	return argon2.IDKey([]byte(passphrase), salt, iterations, memory, parallelism, 32)
+	return argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, 32)
 }

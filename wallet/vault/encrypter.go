@@ -1,4 +1,4 @@
-package wallet
+package vault
 
 /// cipher text
 type encrypted struct {
@@ -33,9 +33,9 @@ func (e *nopeEncrypter) decrypt(ct encrypted) (string, error) {
 	return ct.CipherText, nil
 }
 
-func newEncrypter(passphrase string, net int) encrypter {
-	if len(passphrase) == 0 {
+func newEncrypter(password string) encrypter {
+	if len(password) == 0 {
 		return newNopeEncrypter()
 	}
-	return newArgon2Encrypter(passphrase)
+	return newArgon2Encrypter(password)
 }

@@ -54,23 +54,23 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Please enter a passphrase for wallet")
-			passphrase := cmd.PromptPassphrase("Passphrase: ", true)
+			cmd.PrintInfoMsg("Please enter a password for wallet")
+			password := cmd.PromptPassword("Password: ", true)
 			walletPath := cmd.ZarbDefaultWalletPath(workspacePath)
 			// To make process faster, we update the password
 			// after creating the addresses
-			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", 0)
+			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", "Default wallet", 0)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create wallet: ", err)
 				return
 			}
 			cmd.PrintInfoMsg("Wallet created successfully")
-			valAddrStr, err := wallet.NewAddress("", "Validator address")
+			valAddrStr, err := wallet.MakeNewAddress("", "Validator address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create validator address: ", err)
 				return
 			}
-			rewardAddrStr, err := wallet.NewAddress("", "Reward address")
+			rewardAddrStr, err := wallet.MakeNewAddress("", "Reward address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create reward address: ", err)
 				return
@@ -85,9 +85,9 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("Failed to write validator_key file: %v", err)
 				return
 			}
-			err = wallet.UpdatePassword("", passphrase)
+			err = wallet.UpdatePassword("", password)
 			if err != nil {
-				cmd.PrintErrorMsg("Failed to update passphrase: ", err)
+				cmd.PrintErrorMsg("Failed to update password: ", err)
 				return
 			}
 			cmd.PrintLine()

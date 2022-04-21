@@ -202,8 +202,8 @@ func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx) {
 		return
 	}
 
-	passphrase := getPassphrase(wallet)
-	res, err := wallet.SignAndBroadcast(passphrase, trx)
+	password := getPassword(wallet)
+	res, err := wallet.SignAndBroadcast(password, trx)
 	if err != nil {
 		cmd.PrintDangerMsg(err.Error())
 		return
@@ -211,10 +211,10 @@ func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx) {
 	cmd.PrintInfoMsg(res)
 }
 
-func getPassphrase(wallet *wallet.Wallet) string {
-	passphrase := ""
+func getPassword(wallet *wallet.Wallet) string {
+	password := ""
 	if wallet.IsEncrypted() {
-		passphrase = cmd.PromptPassphrase("Wallet password: ", false)
+		password = cmd.PromptPassword("Wallet password: ", false)
 	}
-	return passphrase
+	return password
 }

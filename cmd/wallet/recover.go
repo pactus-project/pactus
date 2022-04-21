@@ -14,7 +14,7 @@ func Recover() func(c *cli.Cmd) {
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			mnemonic := cmd.PromptInput("Seed: ")
-			wallet, err := wallet.FromMnemonic(*path, mnemonic, "", 0)
+			wallet, err := wallet.FromMnemonic(*path, mnemonic, "", "Recovered wallet", 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -45,8 +45,8 @@ func GetSeed() func(c *cli.Cmd) {
 				return
 			}
 
-			passphrase := getPassphrase(wallet)
-			mnemonic, err := wallet.Mnemonic(passphrase)
+			password := getPassword(wallet)
+			mnemonic, err := wallet.Mnemonic(password)
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)

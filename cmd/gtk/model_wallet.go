@@ -29,15 +29,14 @@ func (model *walletModel) ToTreeModel() *gtk.TreeModel {
 }
 
 func (model *walletModel) rebuildModel() {
-	addrs := model.wallet.Addresses()
 
 	model.listStore.Clear()
-	for no, addr := range addrs {
-		label := addr.Label
-		if addr.Imported {
+	for no, info := range model.wallet.AddressInfos() {
+		label := info.Label
+		if info.Imported {
 			label += "(Imported)"
 		}
-		balance, stake, _ := model.wallet.GetBalance(addr.Address)
+		balance, stake, _ := model.wallet.GetBalance(info.Address)
 		//errorCheck(err)
 		balanceStr := strconv.FormatInt(balance, 10)
 		stakeStr := strconv.FormatInt(stake, 10)
@@ -52,7 +51,7 @@ func (model *walletModel) rebuildModel() {
 				IDAddressesColumnStake},
 			[]interface{}{
 				no + 1,
-				addr.Address,
+				info.Address,
 				label,
 				balanceStr,
 				stakeStr,
@@ -63,7 +62,7 @@ func (model *walletModel) rebuildModel() {
 }
 
 func (model *walletModel) createAddress(password string) {
-	address, err := model.wallet.NewAddress(password, "")
+	address, err := model.wallet.MakeNewAddress(password, "")
 	if err != nil {
 		showErrorDialog(err.Error())
 		return

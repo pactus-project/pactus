@@ -71,7 +71,7 @@ func main() {
 }
 
 func startingNode(workspacePath string, wallet *wallet.Wallet, password string) (*node.Node, *time.Time, error) {
-	addresses := wallet.Addresses()
+	addresses := wallet.AddressInfos()
 	valPrvKeyStr, err := wallet.PrivateKey(password, addresses[0].Address)
 	if err != nil {
 		return nil, nil, err
