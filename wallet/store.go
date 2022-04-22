@@ -24,8 +24,8 @@ func (s *store) calcVaultCRC() uint32 {
 	return crc32.ChecksumIEEE(d)
 }
 
-func (s *store) UpdatePassword(oldPassphrase, newPassphrase string) error {
-	return s.Vault.UpdatePassword(oldPassphrase, newPassphrase)
+func (s *store) UpdatePassword(oldPassword, newPassword string) error {
+	return s.Vault.UpdatePassword(oldPassword, newPassword)
 }
 
 func (s *store) IsEncrypted() bool {
@@ -41,26 +41,26 @@ func (s *store) AddressCount() int {
 	return s.Vault.AddressCount()
 }
 
-func (s *store) ImportPrivateKey(passphrase string, prvStr string) error {
-	return s.Vault.ImportPrivateKey(passphrase, prvStr)
+func (s *store) ImportPrivateKey(password string, prvStr string) error {
+	return s.Vault.ImportPrivateKey(password, prvStr)
 }
 
-func (s *store) PrivateKey(passphrase, addr string) (string, error) {
-	return s.Vault.PrivateKey(passphrase, addr)
+func (s *store) PrivateKey(password, addr string) (string, error) {
+	return s.Vault.PrivateKey(password, addr)
 }
 
-func (s *store) PublicKey(passphrase, addr string) (string, error) {
-	return s.Vault.PublicKey(passphrase, addr)
+func (s *store) PublicKey(password, addr string) (string, error) {
+	return s.Vault.PublicKey(password, addr)
 }
 
-func (s *store) MakeNewAddress(passphrase, label string) (string, error) {
-	return s.Vault.MakeNewAddress(passphrase, label)
+func (s *store) MakeNewAddress(password, label string) (string, error) {
+	return s.Vault.MakeNewAddress(password, label)
 }
 
 func (s *store) Contains(addr string) bool {
 	return s.Vault.Contains(addr)
 }
 
-func (s *store) Mnemonic(passphrase string) (string, error) {
-	return s.Vault.Mnemonic(passphrase)
+func (s *store) Mnemonic(password string) (string, error) {
+	return s.Vault.Mnemonic(password)
 }

@@ -58,12 +58,12 @@ func OpenWallet(path string) (*Wallet, error) {
 }
 
 /// FromMnemonic creates a wallet from mnemonic (seed phrase)
-func FromMnemonic(path, mnemonic, name, passphrase string, net int) (*Wallet, error) {
+func FromMnemonic(path, mnemonic, name, password string, net int) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
-	vault, err := vault.CreateVaultFromMnemonic(mnemonic, passphrase, net)
+	vault, err := vault.CreateVaultFromMnemonic(mnemonic, password, net)
 	if err != nil {
 		return nil, err
 	}
@@ -333,8 +333,8 @@ func (w *Wallet) parsStamp(stampStr string) (hash.Stamp, error) {
 	return w.client.getStamp()
 }
 
-func (w *Wallet) SignAndBroadcast(passphrase string, tx *tx.Tx) (string, error) {
-	prvStr, err := w.PrivateKey(passphrase, tx.Payload().Signer().String())
+func (w *Wallet) SignAndBroadcast(password string, tx *tx.Tx) (string, error) {
+	prvStr, err := w.PrivateKey(password, tx.Payload().Signer().String())
 	if err != nil {
 		return "", err
 	}

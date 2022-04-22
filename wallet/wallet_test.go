@@ -11,7 +11,7 @@ import (
 )
 
 var tWallet *Wallet
-var tPassphrase string
+var tPassword string
 
 func setup(t *testing.T) {
 	tPassword := ""
@@ -66,7 +66,7 @@ func TestOpenWallet(t *testing.T) {
 func TestRecoverWallet(t *testing.T) {
 	setup(t)
 
-	mnemonic, _ := tWallet.Mnemonic(tPassphrase)
+	mnemonic, _ := tWallet.Mnemonic(tPassword)
 	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
 		// Save the test wallet first then
@@ -110,7 +110,7 @@ func TestSaveWallet(t *testing.T) {
 func TestInvalidAddress(t *testing.T) {
 	setup(t)
 
-	_, err := tWallet.PrivateKey(tPassphrase, crypto.GenerateTestAddress().String())
+	_, err := tWallet.PrivateKey(tPassword, crypto.GenerateTestAddress().String())
 	assert.Error(t, err)
 }
 
@@ -118,11 +118,11 @@ func TestImportPrivateKey(t *testing.T) {
 	setup(t)
 
 	_, prv := bls.GenerateTestKeyPair()
-	assert.NoError(t, tWallet.ImportPrivateKey(tPassphrase, prv.String()))
+	assert.NoError(t, tWallet.ImportPrivateKey(tPassword, prv.String()))
 
 	addr := prv.PublicKey().Address().String()
 	assert.True(t, tWallet.Contains(addr))
-	pub, err := tWallet.PublicKey(tPassphrase, addr)
+	pub, err := tWallet.PublicKey(tPassword, addr)
 	assert.NoError(t, err)
 	assert.Equal(t, pub, prv.PublicKey().String())
 }
