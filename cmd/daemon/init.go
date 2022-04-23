@@ -134,7 +134,7 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You validator address is: %v", valAddrStr)
 			cmd.PrintInfoMsg("You reward address is: %v", rewardAddrStr)
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("You can start the node by runing this command:")
+			cmd.PrintInfoMsg("You can start the node by running this command:")
 			cmd.PrintInfoMsg("./zarb-daemon start -w %v", workingDir)
 		}
 	}
