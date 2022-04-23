@@ -34,7 +34,7 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-func startupAssistant(workspace string) bool {
+func startupAssistant(workingDir string) bool {
 	gtk.Init(nil)
 
 	successful := false
@@ -303,7 +303,10 @@ Now you are ready to start the node!`
 		case pageFinalName:
 			{
 				defaultWallet, err := wallet.FromMnemonic(
-					cmd.ZarbDefaultWalletPath(workspace), mnemonic, "", "Default wallet", 0)
+					cmd.ZarbDefaultWalletPath(workingDir),
+					mnemonic,
+					"",
+					0)
 				errorCheck(err)
 				valAddr, err := defaultWallet.MakeNewAddress("", "Validator address")
 				errorCheck(err)
@@ -317,7 +320,7 @@ Now you are ready to start the node!`
 				errorCheck(err)
 				err = defaultWallet.Save()
 				errorCheck(err)
-				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(workspace))
+				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(workingDir))
 				errorCheck(err)
 
 				conf := config.DefaultConfig()
@@ -326,11 +329,11 @@ Now you are ready to start the node!`
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 				conf.State.RewardAddress = rewardAddr
-				err = conf.SaveToFile(cmd.ZarbConfigPath(workspace))
+				err = conf.SaveToFile(cmd.ZarbConfigPath(workingDir))
 				errorCheck(err)
 
 				successful = true
-				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workspace)
+				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workingDir)
 				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
 				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 

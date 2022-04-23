@@ -58,7 +58,7 @@ func OpenWallet(path string) (*Wallet, error) {
 }
 
 /// FromMnemonic creates a wallet from mnemonic (seed phrase)
-func FromMnemonic(path, mnemonic, name, password string, net int) (*Wallet, error) {
+func FromMnemonic(path, mnemonic, password string, net int) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
@@ -70,7 +70,6 @@ func FromMnemonic(path, mnemonic, name, password string, net int) (*Wallet, erro
 	store := &store{
 		Version:   1,
 		UUID:      uuid.New(),
-		Name:      name,
 		CreatedAt: time.Now().Round(time.Second).UTC(),
 		Network:   net,
 		Vault:     vault,
@@ -91,10 +90,6 @@ func newWallet(path string, store *store, online bool) (*Wallet, error) {
 	}
 
 	return w, nil
-}
-
-func (w *Wallet) Name() string {
-	return w.store.Name
 }
 
 func (w *Wallet) UpdatePassword(old, new string) error {

@@ -11,7 +11,6 @@ import (
 
 type store struct {
 	Version   int          `json:"version"`
-	Name      string       `json:"name"`
 	UUID      uuid.UUID    `json:"uuid"`
 	CreatedAt time.Time    `json:"created_at"`
 	Network   int          `json:"network"`

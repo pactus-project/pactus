@@ -20,7 +20,7 @@ func (conf *Config) SanityCheck() error {
 	if conf.RewardAddress != "" {
 		_, err := crypto.AddressFromString(conf.RewardAddress)
 		if err != nil {
-			return errors.Errorf(errors.ErrInvalidConfig, "invalid reward address: %s", err.Error())
+			return errors.Errorf(errors.ErrInvalidConfig, "invalid reward address: %v", err.Error())
 		}
 	}
 	return nil

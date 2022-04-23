@@ -32,7 +32,7 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) *widgetNode {
 	errorCheck(err)
 
 	box := getBoxObj(builder, "id_box_node")
-	labelLocation := getLabelObj(builder, "id_label_workspace_location")
+	labelLocation := getLabelObj(builder, "id_label_working_directory")
 	labelValidatoAddress := getLabelObj(builder, "id_label_validator_address")
 	labelRewardAddress := getLabelObj(builder, "id_label_reward_address")
 

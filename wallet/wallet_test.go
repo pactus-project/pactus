@@ -17,11 +17,10 @@ func setup(t *testing.T) {
 	tPassword := ""
 	path := util.TempFilePath()
 	mnemonic := GenerateMnemonic()
-	w, err := FromMnemonic(path, mnemonic, "test-wallet", tPassword, 0)
+	w, err := FromMnemonic(path, mnemonic, tPassword, 0)
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
 	assert.Equal(t, w.Path(), path)
-	assert.Equal(t, w.Name(), "test-wallet")
 
 	// create some test addresses
 	_, err = w.MakeNewAddress("", "addr-1")
@@ -73,19 +72,19 @@ func TestRecoverWallet(t *testing.T) {
 		// try to recover a wallet at the same place
 		assert.NoError(t, tWallet.Save())
 
-		_, err := FromMnemonic(tWallet.path, mnemonic, "recovered", password, 0)
+		_, err := FromMnemonic(tWallet.path, mnemonic, password, 0)
 		assert.Equal(t, err.Error(), NewErrWalletExits(tWallet.path).Error())
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
 		_, err := FromMnemonic(util.TempFilePath(),
-			"invali mnemonic phrase seed", "recovered", password, 0)
+			"invali mnemonic phrase seed", password, 0)
 		assert.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		path := util.TempFilePath()
-		recovered, err := FromMnemonic(path, mnemonic, "recovered", password, 0)
+		recovered, err := FromMnemonic(path, mnemonic, password, 0)
 		assert.NoError(t, err)
 
 		addr1, err := recovered.MakeNewAddress("", "addr-1")

@@ -6,6 +6,7 @@ import (
 	_ "net/http/pprof" // #nosec
 	"os"
 	"path/filepath"
+	"strings"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
@@ -16,15 +17,15 @@ import (
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
+	"github.com/zarbchain/zarb-go/wallet"
 )
 
 //Start starts the zarb node
 func Start() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-
 		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
-			Desc:  "Working directory of the configuration and genesis files",
+			Desc:  "Working directory to read node configuration and genesis files",
 			Value: ".",
 		})
 		privateKeyOpt := c.String(cli.StringOpt{
@@ -43,20 +44,9 @@ func Start() func(c *cli.Cmd) {
 		c.LongDesc = "Starting the node from working directory"
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
-			configFile := "./config.toml"
-			genesisFile := "./genesis.json"
-			var err error
-
-			workspace, _ := filepath.Abs(*workingDirOpt)
-
-			signer, err := makeSigner(workspace, keyFileOpt, privateKeyOpt)
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! %v", err)
-				return
-			}
-
+			workingDir, _ := filepath.Abs(*workingDirOpt)
 			// change working directory
-			if err := os.Chdir(workspace); err != nil {
+			if err := os.Chdir(workingDir); err != nil {
 				cmd.PrintErrorMsg("Aborted! Unable to changes working directory. %v", err)
 				return
 			}
@@ -74,13 +64,13 @@ func Start() func(c *cli.Cmd) {
 				}()
 			}
 
-			gen, err := genesis.LoadFromFile(genesisFile)
+			gen, err := genesis.LoadFromFile(cmd.ZarbGenesisPath(workingDir))
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! Could not obtain genesis. %v", err)
 				return
 			}
 
-			conf, err := config.LoadFromFile(configFile)
+			conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! Could not obtain config. %v", err)
 				return
@@ -91,12 +81,18 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
+			signer, err := makeSigner(workingDir, keyFileOpt, privateKeyOpt)
+			if err != nil {
+				cmd.PrintErrorMsg("Aborted! %v", err)
+				return
+			}
+
 			validatorAddr := signer.Address()
 			rewardAddr := conf.State.RewardAddress
 			if rewardAddr == "" {
 				rewardAddr = validatorAddr.String()
 			}
-			cmd.PrintInfoMsg("You are running a zarb block chain agent: %v. Welcome! ", version.Version())
+			cmd.PrintInfoMsg("You are running a zarb block chain version: %s. Welcome! ", version.Version())
 			cmd.PrintInfoMsg("Validator address: %v", validatorAddr)
 			cmd.PrintInfoMsg("Reward address : %v", rewardAddr)
 			cmd.PrintLine()
@@ -123,20 +119,45 @@ func Start() func(c *cli.Cmd) {
 	}
 }
 
-func makeSigner(workspace string, keyFileOpt, privateKeyOpt *string) (crypto.Signer, error) {
-	prvHex := ""
+// makeSigner makes a signer object from the validator private key.
+// Private key obtains in this order:
+// 1- From key file option (--key-file <path>)
+// 2- From private key option (--private-key <secret>)
+// 3- From 'validator_key' file insied the working directory
+// 4- From the first address of the default_wallet
+func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Signer, error) {
+	prvStr := ""
 	switch {
 	case *keyFileOpt == "" && *privateKeyOpt == "":
-		path := workspace + "/validator_key"
-		if util.PathExists(path) {
-			data, err := util.ReadFile(path)
+		keyPath := workingDir + "/validator_key"
+		walletPath := cmd.ZarbDefaultWalletPath(workingDir)
+		if util.PathExists(keyPath) {
+			data, err := util.ReadFile(keyPath)
 			if err != nil {
 				return nil, err
 			}
-			prvHex = string(data)
+			prvStr = strings.TrimSpace(string(data))
+		} else if util.PathExists(walletPath) {
+			wallet, err := wallet.OpenWallet(walletPath)
+			if err != nil {
+				return nil, err
+			}
+			addrInfos := wallet.AddressInfos()
+			if len(addrInfos) == 0 {
+				return nil, fmt.Errorf("validator address is not defined")
+			}
+			password := ""
+			if wallet.IsEncrypted() {
+				password = cmd.PromptPassword("Wallet password: ", false)
+			}
+			valPrvKeyStr, err := wallet.PrivateKey(password, addrInfos[0].Address)
+			if err != nil {
+				return nil, err
+			}
+			prvStr = valPrvKeyStr
 		} else {
 			// Creating KeyObject from Private Key
-			prvHex = cmd.PromptInput("Please enter the private key in hex format: ")
+			prvStr = cmd.PromptInput("Please enter the validator private key: ")
 		}
 
 	case *keyFileOpt != "":
@@ -145,12 +166,13 @@ func makeSigner(workspace string, keyFileOpt, privateKeyOpt *string) (crypto.Sig
 		if err != nil {
 			return nil, err
 		}
-		prvHex = string(data)
+		prvStr = strings.TrimSpace(string(data))
+
 	case *privateKeyOpt != "":
-		prvHex = *privateKeyOpt
+		prvStr = *privateKeyOpt
 	}
 
-	prv, err := bls.PrivateKeyFromString(prvHex)
+	prv, err := bls.PrivateKeyFromString(prvStr)
 	if err != nil {
 		return nil, err
 	}

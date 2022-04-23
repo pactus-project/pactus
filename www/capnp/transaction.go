@@ -11,7 +11,7 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	data, _ := args.Params.Id()
 	h, err := hash.FromBytes(data)
 	if err != nil {
-		return fmt.Errorf("invalid transaction id: %s", err)
+		return fmt.Errorf("invalid transaction id: %v", err)
 	}
 	trx := zs.state.Transaction(h)
 	if trx == nil {

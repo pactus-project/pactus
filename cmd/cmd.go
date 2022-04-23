@@ -202,7 +202,7 @@ func PrintJSONData(data []byte) {
 	var out bytes.Buffer
 	err := json.Indent(&out, data, "", "   ")
 	if err != nil {
-		PrintErrorMsg("json.Indent error: %s", err)
+		PrintErrorMsg("json.Indent error: %v", err)
 		return
 	}
 	PrintInfoMsg(out.String())
@@ -211,7 +211,7 @@ func PrintJSONData(data []byte) {
 func PrintJSONObject(obj interface{}) {
 	data, err := json.Marshal(obj)
 	if err != nil {
-		PrintErrorMsg("json.Marshal error: %s", err)
+		PrintErrorMsg("json.Marshal error: %v", err)
 		return
 	}
 	PrintJSONData(data)
