@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"errors"
+	"path"
 	"strconv"
 	"time"
 
@@ -90,6 +91,9 @@ func newWallet(path string, store *store, online bool) (*Wallet, error) {
 	}
 
 	return w, nil
+}
+func (w *Wallet) Name() string {
+	return path.Base(w.path)
 }
 
 func (w *Wallet) UpdatePassword(old, new string) error {
