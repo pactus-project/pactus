@@ -1,6 +1,7 @@
 package vault
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -47,6 +48,9 @@ func TestAddressInfo(t *testing.T) {
 	for i, info := range infos {
 		if tVault.Addresses[i].Method == "IMPORTED" {
 			assert.True(t, info.Imported)
+		} else {
+			assert.Equal(t, info.Label, fmt.Sprintf("addr-%v", i+1))
+			assert.False(t, info.Imported)
 		}
 	}
 }
@@ -59,7 +63,7 @@ func TestMakeNewAddress(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidPassword)
 	})
 
-	t.Run("No", func(t *testing.T) {
+	t.Run("No password", func(t *testing.T) {
 		_, err := tVault.MakeNewAddress("", "label")
 		assert.ErrorIs(t, err, ErrInvalidPassword)
 	})
@@ -107,7 +111,7 @@ func TestGetPrivateKey(t *testing.T) {
 		assert.Equal(t, err.Error(), NewErrAddressNotFound(addr.String()).Error())
 	})
 
-	t.Run("Empty password", func(t *testing.T) {
+	t.Run("No password", func(t *testing.T) {
 		for _, info := range tVault.Addresses {
 			_, err := tVault.PrivateKey("", info.Address)
 			assert.ErrorIs(t, err, ErrInvalidPassword)
@@ -144,7 +148,7 @@ func TestImportPrivateKey(t *testing.T) {
 
 	t.Run("Reimporting private key", func(t *testing.T) {
 		addr := ""
-		// Ket first key (address)
+		// Get first key (address)
 		for _, info := range tVault.Addresses {
 			addr = info.Address
 			break

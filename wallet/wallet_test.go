@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"encoding/json"
+	"path"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,12 +16,13 @@ var tPassword string
 
 func setup(t *testing.T) {
 	tPassword := ""
-	path := util.TempFilePath()
+	walletPath := util.TempFilePath()
 	mnemonic := GenerateMnemonic()
-	w, err := FromMnemonic(path, mnemonic, tPassword, 0)
+	w, err := FromMnemonic(walletPath, mnemonic, tPassword, 0)
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
-	assert.Equal(t, w.Path(), path)
+	assert.Equal(t, w.Path(), walletPath)
+	assert.Equal(t, w.Name(), path.Base(walletPath))
 
 	// create some test addresses
 	_, err = w.MakeNewAddress("", "addr-1")
