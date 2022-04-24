@@ -8,15 +8,26 @@ import (
 )
 
 func TestStream(t *testing.T) {
-	size := 6
-	nets := setup(t, size)
 	msg := []byte("test-stream")
-	require.NoError(t, nets[0].SendTo(msg, nets[1].SelfID()))
+	require.NoError(t, tNetworks[0].SendTo(msg, tNetworks[2].SelfID()))
 
-	e := shouldReceiveEvent(t, nets[1]).(*StreamMessage)
-	buf := make([]byte, len(msg))
-	_, err := e.Reader.Read(buf)
-	assert.NoError(t, err)
-	assert.Equal(t, e.Source, nets[0].SelfID())
-	assert.Equal(t, buf, msg)
+	for {
+		e := shouldReceiveEvent(t, tNetworks[2])
+		if e.Type() == EventTypeStream {
+			stream := e.(*StreamMessage)
+			buf := make([]byte, len(msg))
+			_, err := stream.Reader.Read(buf)
+			assert.NoError(t, err)
+			assert.Equal(t, stream.Source, tNetworks[0].SelfID())
+			assert.Equal(t, buf, msg)
+			break
+		}
+	}
+
+}
+
+func TestCloseConnection(t *testing.T) {
+	tNetworks[2].CloseConnection(tNetworks[3].SelfID())
+	msg := []byte("test-stream")
+	require.Error(t, tNetworks[2].SendTo(msg, tNetworks[3].SelfID()), "connection should be closed")
 }

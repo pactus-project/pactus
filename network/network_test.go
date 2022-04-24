@@ -10,6 +10,12 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
+var (
+	tNetworksSize   int
+	tNetworks       []*network
+	tBootstrapAddrs []string
+)
+
 func testConfig() *Config {
 	return &Config{
 		Name:             "test-network",
@@ -21,7 +27,7 @@ func testConfig() *Config {
 		EnableKademlia:   true,
 		EnablePing:       false,
 		Bootstrap: &BootstrapConfig{
-			Addresses:    []string{},
+			Addresses:    tBootstrapAddrs,
 			MinThreshold: 4,
 			MaxThreshold: 8,
 			Period:       1 * time.Second,
@@ -29,68 +35,90 @@ func testConfig() *Config {
 	}
 }
 
-func setup(t *testing.T, size int) []*network {
-	nets := make([]*network, size)
+func init() {
+	tNetworksSize = 8
+	tNetworks = make([]*network, tNetworksSize)
 
-	networkName := fmt.Sprintf("test-network-%d", util.RandInt32(10000))
 	port := util.RandInt32(9999) + 10000
 
-	for i := 0; i < size; i++ {
+	for i := 0; i < tNetworksSize; i++ {
 		conf := testConfig()
-		conf.Name = networkName
-
-		bootstrapAddr := ""
 		if i == 0 {
 			// bootstrap node
-			conf.ListenAddress = []string{fmt.Sprintf("/ip4/0.0.0.0/tcp/%d", port)}
-		} else {
-			bootstrapAddr = fmt.Sprintf("/ip4/0.0.0.0/tcp/%d/p2p/%s", port, nets[0].SelfID().String())
-			conf.Bootstrap.Addresses = []string{bootstrapAddr}
+			conf.ListenAddress = []string{
+				fmt.Sprintf("/ip4/0.0.0.0/tcp/%v", port),
+				fmt.Sprintf("/ip6/::/tcp/%v", port),
+			}
 		}
 
 		net, err := NewNetwork(conf)
-		require.NoError(t, err)
-		require.NoError(t, net.Start())
-		require.NoError(t, net.JoinGeneralTopic())
+		if err != nil {
+			panic(err)
+		}
+		err = net.Start()
+		if err != nil {
+			panic(err)
+		}
+		err = net.JoinGeneralTopic()
+		if err != nil {
+			panic(err)
+		}
 
-		nets[i] = net.(*network)
+		if i == 0 {
+			tBootstrapAddrs = []string{
+				fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", port, net.SelfID().String()),
+				fmt.Sprintf("/ip6/::1/tcp/%v/p2p/%v", port, net.SelfID().String()),
+			}
+		}
+
+		tNetworks[i] = net.(*network)
 		time.Sleep(100 * time.Millisecond)
+
+		fmt.Printf("peer %v id:%v\n", i, net.SelfID().String())
 	}
 
+	time.Sleep(1000 * time.Millisecond)
+
 	fmt.Println("Peers are connected")
-	return nets
 }
 
 func shouldReceiveEvent(t *testing.T, net *network) Event {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
+		net.logger.Debug("network connections", "NumConnectedPeers", net.NumConnectedPeers())
 		select {
 		case <-timeout.C:
-			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v", t.Name()))
+			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v id:%s", t.Name(), net.SelfID().String()))
 			return nil
 		case e := <-net.EventChannel():
+			net.logger.Debug("received an event", "event", e, "id", net.SelfID().String())
 			return e
 		}
 	}
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	size := 2
-	nets := setup(t, size)
+	net, err := NewNetwork(testConfig())
+	assert.NoError(t, err)
 
-	for i := 0; i < size; i++ {
-		// Should stop without any error
-		nets[i].Stop()
-	}
+	assert.NoError(t, net.Start())
+	assert.NoError(t, net.JoinGeneralTopic())
+
+	// Should stop peacefully
+	net.Stop()
 }
 
 func TestDHT(t *testing.T) {
-	nets := setup(t, 4)
-	conf := nets[1].config
+	conf := testConfig()
 	conf.EnableMdns = false
-
 	net, err := NewNetwork(conf)
+	assert.NoError(t, err)
+
+	assert.NoError(t, net.Start())
+	assert.NoError(t, net.JoinGeneralTopic())
+
+	net, err = NewNetwork(conf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
@@ -103,23 +131,3 @@ func TestDHT(t *testing.T) {
 
 	net.Stop()
 }
-
-// TODO: Fix me
-// func TestDisconnecting(t *testing.T) {
-// 	nets := setup(t, 2)
-
-// 	assert.NoError(t, nets[0].Start())
-// 	assert.NoError(t, nets[1].Start())
-
-// 	for {
-// 		if nets[0].NumConnectedPeers() > 0 && nets[1].NumConnectedPeers() > 0 {
-// 			break
-// 		}
-// 	}
-
-// 	nets[0].CloseConnection(nets[1].SelfID())
-// 	assert.Equal(t, nets[0].NumConnectedPeers(), 0)
-
-// 	nets[0].Stop()
-// 	nets[1].Stop()
-// }
