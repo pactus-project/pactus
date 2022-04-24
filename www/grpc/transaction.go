@@ -33,19 +33,19 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 func (zs *zarbServer) SendRawTransaction(ctx context.Context, request *zarb.SendRawTransactionRequest) (*zarb.SendRawTransactionResponse, error) {
 	data, err := hex.DecodeString(request.Data)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %s", err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
 	trx, err := tx.FromBytes(data)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %s", err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
 
 	if err := trx.SanityCheck(); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "couldn't verify transaction: %s", err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, "couldn't verify transaction: %v", err.Error())
 	}
 
 	if err := zs.state.AddPendingTxAndBroadcast(trx); err != nil {
-		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %s", err.Error())
+		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %v", err.Error())
 	}
 
 	return &zarb.SendRawTransactionResponse{

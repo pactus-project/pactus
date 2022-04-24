@@ -108,28 +108,28 @@ func (p *terminalPrompter) PromptConfirm(prompt string) (bool, error) {
 	return false, err
 }
 
-// PromptPassphrase prompts the user for a passphrase. Set confirmation to true
-// to require the user to confirm the passphrase.
-func PromptPassphrase(prompt string, confirmation bool) string {
-	passphrase, err := Stdin.PromptPassword(prompt)
+// PromptPassword prompts the user for a password. Set confirmation to true
+// to require the user to confirm the password.
+func PromptPassword(prompt string, confirmation bool) string {
+	password, err := Stdin.PromptPassword(prompt)
 	if err != nil {
-		PrintErrorMsg("Failed to read passphrase: %v", err)
+		PrintErrorMsg("Failed to read password: %v", err)
 		os.Exit(1)
 	}
 
 	if confirmation {
-		confirm, err := Stdin.PromptPassword("Repeat passphrase: ")
+		confirm, err := Stdin.PromptPassword("Repeat password: ")
 		if err != nil {
-			PrintErrorMsg("Failed to read passphrase confirmation: %v", err)
+			PrintErrorMsg("Failed to read password confirmation: %v", err)
 			os.Exit(1)
 		}
-		if passphrase != confirm {
-			PrintErrorMsg("Passphrases do not match")
+		if password != confirm {
+			PrintErrorMsg("passwords do not match")
 			os.Exit(1)
 		}
 	}
 
-	return passphrase
+	return password
 }
 
 // PromptConfirm prompts user to confirm the operation
@@ -202,7 +202,7 @@ func PrintJSONData(data []byte) {
 	var out bytes.Buffer
 	err := json.Indent(&out, data, "", "   ")
 	if err != nil {
-		PrintErrorMsg("json.Indent error: %s", err)
+		PrintErrorMsg("json.Indent error: %v", err)
 		return
 	}
 	PrintInfoMsg(out.String())
@@ -211,7 +211,7 @@ func PrintJSONData(data []byte) {
 func PrintJSONObject(obj interface{}) {
 	data, err := json.Marshal(obj)
 	if err != nil {
-		PrintErrorMsg("json.Marshal error: %s", err)
+		PrintErrorMsg("json.Marshal error: %v", err)
 		return
 	}
 	PrintJSONData(data)

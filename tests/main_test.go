@@ -114,7 +114,7 @@ func TestMain(m *testing.M) {
 	for i := 0; i < tCommitteeSize; i++ {
 		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
 		if err := tNodes[i].Start(); err != nil {
-			panic(fmt.Sprintf("Error on starting the node: %v", err.Error()))
+			panic(fmt.Sprintf("Error on starting the node: %v", err))
 		}
 	}
 
@@ -133,7 +133,7 @@ func TestMain(m *testing.M) {
 	for i := tCommitteeSize; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
 		if err := tNodes[i].Start(); err != nil {
-			panic(fmt.Sprintf("Error on starting the node: %v", err.Error()))
+			panic(fmt.Sprintf("Error on starting the node: %v", err))
 		}
 	}
 

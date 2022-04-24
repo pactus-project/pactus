@@ -70,7 +70,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">Workspace:</property>
+                        <property name="label" translatable="yes">Working directory:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -108,7 +108,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="id_label_workspace_location">
+                      <object class="GtkLabel" id="id_label_working_directory">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>

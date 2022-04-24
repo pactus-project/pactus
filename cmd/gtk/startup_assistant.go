@@ -4,6 +4,8 @@ package main
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/zarbchain/zarb-go/cmd"
@@ -32,7 +34,7 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-func startupAssistant(workspace string) bool {
+func startupAssistant(workingDir string) bool {
 	gtk.Init(nil)
 
 	successful := false
@@ -156,6 +158,9 @@ This seed will allow you to recover your wallet in case of computer failure.
 	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
 		mnemonic1 := getTextViewcontent(seedTextView)
 		mnemonic2 := getTextViewcontent(seedConfirmTextView)
+		space := regexp.MustCompile(`\s+`)
+		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
+		mnemonic2 = strings.TrimSpace(mnemonic2)
 		if mnemonic1 == mnemonic2 {
 			assistant.SetPageComplete(pageSeedConfirm, true)
 		} else {
@@ -297,11 +302,15 @@ Now you are ready to start the node!`
 
 		case pageFinalName:
 			{
-				defaultWallet, err := wallet.FromMnemonic(cmd.ZarbDefaultWalletPath(workspace), mnemonic, "", 0)
+				defaultWallet, err := wallet.FromMnemonic(
+					cmd.ZarbDefaultWalletPath(workingDir),
+					mnemonic,
+					"",
+					0)
 				errorCheck(err)
-				valAddr, err := defaultWallet.NewAddress("", "Validator address")
+				valAddr, err := defaultWallet.MakeNewAddress("", "Validator address")
 				errorCheck(err)
-				rewardAddr, err := defaultWallet.NewAddress("", "Reward address")
+				rewardAddr, err := defaultWallet.MakeNewAddress("", "Reward address")
 				errorCheck(err)
 
 				// To make process faster we set password after generating addresses
@@ -311,7 +320,7 @@ Now you are ready to start the node!`
 				errorCheck(err)
 				err = defaultWallet.Save()
 				errorCheck(err)
-				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(workspace))
+				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(workingDir))
 				errorCheck(err)
 
 				conf := config.DefaultConfig()
@@ -320,11 +329,11 @@ Now you are ready to start the node!`
 				conf.Network.Bootstrap.MinThreshold = 4
 				conf.Network.Bootstrap.MaxThreshold = 8
 				conf.State.RewardAddress = rewardAddr
-				err = conf.SaveToFile(cmd.ZarbConfigPath(workspace))
+				err = conf.SaveToFile(cmd.ZarbConfigPath(workingDir))
 				errorCheck(err)
 
 				successful = true
-				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workspace)
+				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workingDir)
 				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
 				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 

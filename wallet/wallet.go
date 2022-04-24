@@ -4,25 +4,23 @@ import (
 	_ "embed"
 	"encoding/json"
 	"errors"
+	"path"
 	"strconv"
+	"time"
 
-	"github.com/tyler-smith/go-bip39"
+	"github.com/google/uuid"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/bls"
 	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/wallet/vault"
 )
 
-type AddressInfo struct {
-	Address  string
-	Label    string
-	Imported bool
-}
-
 type Wallet struct {
+	*store
+
 	path   string
-	store  *Store
 	client *grpcClient
 }
 
@@ -32,49 +30,56 @@ type serverInfo struct {
 }
 type servers = map[string][]serverInfo
 
+// GenerateMnemonic is a wrapper for `vault.GenerateMnemonic`
+func GenerateMnemonic() string {
+	return vault.GenerateMnemonic()
+}
+
 //go:embed servers.json
 var serversJSON []byte
 
-func GenerateMnemonic() string {
-	entropy, err := bip39.NewEntropy(128)
-	exitOnErr(err)
-	mnemonic, err := bip39.NewMnemonic(entropy)
-	exitOnErr(err)
-	return mnemonic
-}
-
-/// OpenWallet generates an empty wallet and save the seed string
+/// OpenWallet tries to open a wallet at given path
 func OpenWallet(path string) (*Wallet, error) {
 	data, err := util.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	s := new(Store)
-	err = json.Unmarshal(data, s)
-	exitOnErr(err)
-
-	if s.VaultCRC != s.calcVaultCRC() {
-		exitOnErr(ErrInvalidCRC)
+	store := new(store)
+	err = json.Unmarshal(data, store)
+	if err != nil {
+		return nil, err
 	}
 
-	return newWallet(path, s, true)
+	if store.VaultCRC != store.calcVaultCRC() {
+		return nil, ErrInvalidCRC
+	}
+
+	return newWallet(path, store, true)
 }
 
 /// FromMnemonic creates a wallet from mnemonic (seed phrase)
-func FromMnemonic(path, mnemonic, passphrase string, net int) (*Wallet, error) {
+func FromMnemonic(path, mnemonic, password string, net int) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
-	s, err := CreateStoreFromMnemonic(mnemonic, passphrase, net)
+	vault, err := vault.CreateVaultFromMnemonic(mnemonic, password, net)
 	if err != nil {
 		return nil, err
 	}
-	return newWallet(path, s, false)
+	store := &store{
+		Version:   1,
+		UUID:      uuid.New(),
+		CreatedAt: time.Now().Round(time.Second).UTC(),
+		Network:   net,
+		Vault:     vault,
+	}
+
+	return newWallet(path, store, false)
 }
 
-func newWallet(path string, store *Store, online bool) (*Wallet, error) {
+func newWallet(path string, store *store, online bool) (*Wallet, error) {
 	w := &Wallet{
 		store: store,
 		path:  path,
@@ -87,9 +92,8 @@ func newWallet(path string, store *Store, online bool) (*Wallet, error) {
 
 	return w, nil
 }
-
 func (w *Wallet) Name() string {
-	return "Default wallet"
+	return path.Base(w.path)
 }
 
 func (w *Wallet) UpdatePassword(old, new string) error {
@@ -99,7 +103,9 @@ func (w *Wallet) UpdatePassword(old, new string) error {
 func (w *Wallet) connectToRandomServer() error {
 	serversInfo := servers{}
 	err := json.Unmarshal(serversJSON, &serversInfo)
-	exitOnErr(err)
+	if err != nil {
+		return err
+	}
 
 	var netServers []serverInfo
 	switch w.store.Network {
@@ -135,34 +141,15 @@ func (w *Wallet) Path() string {
 	return w.path
 }
 
-func (w *Wallet) IsEncrypted() bool {
-	return w.store.Encrypted
-}
-
 func (w *Wallet) Save() error {
 	w.store.VaultCRC = w.store.calcVaultCRC()
 
 	bs, err := json.MarshalIndent(w.store, "  ", "  ")
-	exitOnErr(err)
-
-	return util.WriteFile(w.path, bs)
-}
-
-func (w *Wallet) ImportPrivateKey(passphrase string, prvStr string) error {
-	prv, err := bls.PrivateKeyFromString(prvStr)
 	if err != nil {
 		return err
 	}
-	return w.store.ImportPrivateKey(passphrase, prv)
-}
 
-func (w *Wallet) NewAddress(passphrase, label string) (string, error) {
-	addr, err := w.store.NewAddress(passphrase, label)
-	if err != nil {
-		return "", err
-	}
-
-	return addr, nil
+	return util.WriteFile(w.path, bs)
 }
 
 func (w *Wallet) GetBalance(addrStr string) (int64, int64, error) {
@@ -177,41 +164,6 @@ func (w *Wallet) GetBalance(addrStr string) (int64, int64, error) {
 	//exitOnErr(err)
 
 	return balance, stake, nil
-}
-
-func (w *Wallet) PrivateKey(passphrase, addr string) (string, error) {
-	prv, err := w.store.PrivateKey(passphrase, addr)
-	if err != nil {
-		return "", err
-	}
-
-	return prv.String(), nil
-}
-
-func (w *Wallet) PublicKey(passphrase, addr string) (string, error) {
-	prv, err := w.store.PrivateKey(passphrase, addr)
-	if err != nil {
-		return "", err
-	}
-
-	return prv.PublicKey().String(), nil
-}
-
-func (w *Wallet) Mnemonic(passphrase string) (string, error) {
-	return w.store.Mnemonic(passphrase)
-}
-
-func (w *Wallet) Contains(addr string) bool {
-	return w.store.Contains(addr)
-}
-
-func (w *Wallet) Addresses() []AddressInfo {
-	return w.store.Addresses()
-}
-
-// AddressCount returns the number of addresses inside the wallet
-func (w *Wallet) AddressCount() int {
-	return w.store.AddressCount()
 }
 
 //
@@ -380,8 +332,13 @@ func (w *Wallet) parsStamp(stampStr string) (hash.Stamp, error) {
 	return w.client.getStamp()
 }
 
-func (w *Wallet) SignAndBroadcast(passphrase string, tx *tx.Tx) (string, error) {
-	prv, err := w.store.PrivateKey(passphrase, tx.Payload().Signer().String())
+func (w *Wallet) SignAndBroadcast(password string, tx *tx.Tx) (string, error) {
+	prvStr, err := w.PrivateKey(password, tx.Payload().Signer().String())
+	if err != nil {
+		return "", err
+	}
+
+	prv, err := bls.PrivateKeyFromString(prvStr)
 	if err != nil {
 		return "", err
 	}

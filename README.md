@@ -54,7 +54,7 @@ Pull the docker from docker hub.
 docker pull zarb/zarb
 ```
 
-Let's create a workspace at `~/zarb/testnet` for the testnet:
+Let's create a working directory at `~/zarb/testnet` for the testnet:
 
 ```bash
 docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb-daemon init -w /zarb-daemon --testnet

@@ -45,8 +45,8 @@ func GetSeed() func(c *cli.Cmd) {
 				return
 			}
 
-			passphrase := getPassphrase(wallet)
-			mnemonic, err := wallet.Mnemonic(passphrase)
+			password := getPassword(wallet)
+			mnemonic, err := wallet.Mnemonic(password)
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)
