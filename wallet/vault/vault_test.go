@@ -15,7 +15,7 @@ var tPassword string
 func setup(t *testing.T) {
 	password := "super_secret_password"
 	mnemonic := GenerateMnemonic()
-	vault, err := CreateVaultFromMnemonic(mnemonic, "", 0)
+	vault, err := CreateVaultFromMnemonic(mnemonic, "")
 	assert.NoError(t, err)
 	assert.False(t, vault.IsEncrypted())
 
@@ -76,12 +76,12 @@ func TestRecover(t *testing.T) {
 	password := ""
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := CreateVaultFromMnemonic("invali mnemonic phrase seed", password, 0)
+		_, err := CreateVaultFromMnemonic("invali mnemonic phrase seed", password)
 		assert.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		recovered, err := CreateVaultFromMnemonic(mnemonic, password, 0)
+		recovered, err := CreateVaultFromMnemonic(mnemonic, password)
 		assert.NoError(t, err)
 
 		addr1, err := recovered.MakeNewAddress("", "addr-1")

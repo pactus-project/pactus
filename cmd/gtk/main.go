@@ -22,12 +22,16 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-var workingDirOpt *string
+var (
+	workingDirOpt *string
+	testnetOpt    *bool
+)
 
-const appID = "com.github.zarb"
+const appID = "com.github.zarbchain.zarb-go.zarb-gui"
 
 func init() {
 	workingDirOpt = flag.String("working-dir", cmd.ZarbHomeDir(), "working directory")
+	testnetOpt = flag.Bool("testnet", true, "working directory") // TODO: make it false after mainnet launch
 }
 func main() {
 	flag.Parse()
@@ -41,7 +45,7 @@ func main() {
 
 	// If node is not initialized yet
 	if !util.PathExists(cmd.ZarbDefaultWalletPath(workingDir)) {
-		if !startupAssistant(workingDir) {
+		if !startupAssistant(workingDir, *testnetOpt) {
 			return
 		}
 	}
@@ -72,6 +76,19 @@ func main() {
 }
 
 func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*node.Node, *time.Time, error) {
+	gen, err := genesis.LoadFromFile(cmd.ZarbGenesisPath(workingDir))
+	if err != nil {
+		return nil, nil, err
+	}
+	if gen.Params().IsTestnet() {
+		crypto.DefaultHRP = "tzc"
+	}
+
+	conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))
+	if err != nil {
+		return nil, nil, err
+	}
+
 	addrInfos := wallet.AddressInfos()
 	if len(addrInfos) == 0 {
 		return nil, nil, fmt.Errorf("validator address is not defined")
@@ -86,14 +103,6 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 	}
 	signer := crypto.NewSigner(prv)
 
-	gen, err := genesis.LoadFromFile(cmd.ZarbGenesisPath(workingDir))
-	if err != nil {
-		return nil, nil, err
-	}
-	conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))
-	if err != nil {
-		return nil, nil, err
-	}
 	node, err := node.NewNode(gen, conf, signer)
 	if err != nil {
 		return nil, nil, err

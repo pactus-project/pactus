@@ -60,7 +60,11 @@ func Init() func(c *cli.Cmd) {
 
 			// To make process faster, we update the password
 			// after creating the addresses
-			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", 0)
+			network := wallet.NetworkMainNet
+			if *testnetOpt {
+				network = wallet.NetworkTestNet
+			}
+			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", network)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create wallet: %v", err)
 				return

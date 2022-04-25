@@ -70,6 +70,10 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
+			if gen.Params().IsTestnet() {
+				crypto.DefaultHRP = "tzc"
+			}
+
 			conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! Could not obtain config. %v", err)

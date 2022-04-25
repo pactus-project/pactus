@@ -9,7 +9,7 @@ import (
 )
 
 // Address format:
-// `zc1` + type + data + checksum
+// hrp + `1` + type + data + checksum
 
 const (
 	SignatureTypeBLS byte = 1
@@ -17,11 +17,11 @@ const (
 
 const (
 	AddressSize           = 21
-	hrpAddress            = "zc"
 	treasuryAddressString = "000000000000000000000000000000000000000000"
 )
 
 var TreasuryAddress = Address{0}
+var DefaultHRP = "zc"
 
 type Address [AddressSize]byte
 
@@ -39,7 +39,7 @@ func AddressFromString(text string) (Address, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != hrpAddress {
+	if hrp != DefaultHRP {
 		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "invalid hrp: %v", hrp)
 	}
 
@@ -103,7 +103,7 @@ func (addr Address) String() string {
 	combined := make([]byte, len(converted)+1)
 	combined[0] = addr[0]
 	copy(combined[1:], converted)
-	str, err := bech32m.Encode(hrpAddress, combined)
+	str, err := bech32m.Encode(DefaultHRP, combined)
 	if err != nil {
 		panic(err.Error())
 	}
