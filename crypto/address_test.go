@@ -59,12 +59,6 @@ func TestToString(t *testing.T) {
 			nil,
 		},
 		{
-			"no hrp",
-			"1p0hrct7eflrpw4ccrttxzs4qud2axex4dg8xaf5",
-			false,
-			nil,
-		},
-		{
 			"invalid length",
 			"zc1p0hrct7eflrpw4ccrttxzs4qud2axexsaf9kwn",
 			false,
