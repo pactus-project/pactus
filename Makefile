@@ -33,6 +33,7 @@ build:
 	go build $(BUILD_LDFLAGS) -o ./build/zarb-daemon$(EXE) ./cmd/daemon
 	go build $(BUILD_LDFLAGS) -o ./build/zarb-wallet$(EXE) ./cmd/wallet
 
+
 build_gui:
 	go build $(BUILD_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
 
