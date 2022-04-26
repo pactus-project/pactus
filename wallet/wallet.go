@@ -17,6 +17,13 @@ import (
 	"github.com/zarbchain/zarb-go/wallet/vault"
 )
 
+type Network uint8
+
+const (
+	NetworkMainNet = Network(0)
+	NetworkTestNet = Network(1)
+)
+
 type Wallet struct {
 	*store
 
@@ -59,12 +66,12 @@ func OpenWallet(path string) (*Wallet, error) {
 }
 
 /// FromMnemonic creates a wallet from mnemonic (seed phrase)
-func FromMnemonic(path, mnemonic, password string, net int) (*Wallet, error) {
+func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
-	vault, err := vault.CreateVaultFromMnemonic(mnemonic, password, net)
+	vault, err := vault.CreateVaultFromMnemonic(mnemonic, password)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +87,10 @@ func FromMnemonic(path, mnemonic, password string, net int) (*Wallet, error) {
 }
 
 func newWallet(path string, store *store, online bool) (*Wallet, error) {
+	if store.Network == NetworkTestNet {
+		crypto.DefaultHRP = "tzc"
+	}
+
 	w := &Wallet{
 		store: store,
 		path:  path,
@@ -109,11 +120,11 @@ func (w *Wallet) connectToRandomServer() error {
 
 	var netServers []serverInfo
 	switch w.store.Network {
-	case 0:
+	case NetworkMainNet:
 		{ // mainnet
 			netServers = serversInfo["mainnet"]
 		}
-	case 1:
+	case NetworkTestNet:
 		{ // testnet
 			netServers = serversInfo["testnet"]
 		}

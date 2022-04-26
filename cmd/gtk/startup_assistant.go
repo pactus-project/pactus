@@ -34,7 +34,7 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-func startupAssistant(workingDir string) bool {
+func startupAssistant(workingDir string, testnet bool) bool {
 	gtk.Init(nil)
 
 	successful := false
@@ -302,11 +302,15 @@ Now you are ready to start the node!`
 
 		case pageFinalName:
 			{
+				network := wallet.NetworkMainNet
+				if testnet {
+					network = wallet.NetworkTestNet
+				}
 				defaultWallet, err := wallet.FromMnemonic(
 					cmd.ZarbDefaultWalletPath(workingDir),
 					mnemonic,
 					"",
-					0)
+					network)
 				errorCheck(err)
 				valAddr, err := defaultWallet.MakeNewAddress("", "Validator address")
 				errorCheck(err)

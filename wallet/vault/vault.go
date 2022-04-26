@@ -47,7 +47,7 @@ func GenerateMnemonic() string {
 	return mnemonic
 }
 
-func CreateVaultFromMnemonic(mnemonic, password string, net int) (*Vault, error) {
+func CreateVaultFromMnemonic(mnemonic, password string) (*Vault, error) {
 	keyInfo := []byte{} // TODO, update for testnet
 	parentSeed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	if err != nil {
