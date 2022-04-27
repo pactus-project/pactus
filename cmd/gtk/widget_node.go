@@ -79,7 +79,7 @@ func (wn *widgetNode) timeout() bool {
 	wn.progressBarSynced.SetText(fmt.Sprintf("%s %%",
 		strconv.FormatFloat(percentage*100, 'f', 2, 64)))
 
-	blocksLeft := nowUnix - lastBlockTimeUnix/10
+	blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
 	wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
 
 	return true
