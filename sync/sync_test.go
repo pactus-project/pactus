@@ -45,15 +45,15 @@ func (o *OverrideFingerprint) Fingerprint() string {
 
 func testConfig() *Config {
 	return &Config{
-		Moniker:             "test",
-		StartingTimeout:     0,
-		HeartBeatTimeout:    time.Second * 1,
-		SessionTimeout:      time.Second * 1,
-		NodeNetwork:         true,
-		BlockPerMessage:     10,
-		MaxOpenSessions: 4,
-		CacheSize:           1000,
-		Firewall:            firewall.DefaultConfig(),
+		Moniker:          "test",
+		StartingTimeout:  0,
+		HeartBeatTimeout: time.Second * 1,
+		SessionTimeout:   time.Second * 1,
+		NodeNetwork:      true,
+		BlockPerMessage:  10,
+		MaxOpenSessions:  4,
+		CacheSize:        1000,
+		Firewall:         firewall.DefaultConfig(),
 	}
 }
 

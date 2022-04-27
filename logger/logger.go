@@ -32,7 +32,7 @@ func getLoggersInst() *loggers {
 		// Only during tests the loggersInst is nil
 
 		conf := &Config{
-			Levels:    make(map[string]string),
+			Levels:   make(map[string]string),
 			Colorful: true,
 		}
 		conf.Levels["default"] = "debug"

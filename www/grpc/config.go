@@ -12,7 +12,7 @@ func DefaultConfig() *Config {
 		Listen: "",
 		Gateway: GatewayConfig{
 			Enable:     false,
-			Listen:    "",
+			Listen:     "",
 			EnableCORS: false,
 		},
 	}

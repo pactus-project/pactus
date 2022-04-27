@@ -9,7 +9,6 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-
 func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	rewardAddr := crypto.GenerateTestAddress()
@@ -54,7 +53,7 @@ func TestLoadFromFile(t *testing.T) {
 	_, err := LoadFromFile(path)
 	assert.Error(t, err, "not exists")
 
-	util.WriteFile(path, []byte(`foo = "bar"`))
+	assert.NoError(t, util.WriteFile(path, []byte(`foo = "bar"`)))
 	_, err = LoadFromFile(path)
 	assert.Error(t, err, "unknown field")
 }
