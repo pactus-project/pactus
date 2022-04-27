@@ -31,6 +31,11 @@ func Init() func(c *cli.Cmd) {
 			Desc:  "Initialize working directory for joining the testnet",
 			Value: false,
 		})
+		localnetOpt := c.Bool(cli.BoolOpt{
+			Name:  "localnet",
+			Desc:  "Initialize working directory for localnet (for developers)",
+			Value: false,
+		})
 
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
 		c.Before = func() { fmt.Println(cmd.ZARB) }
@@ -82,17 +87,17 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			var gen *genesis.Genesis
-			conf := config.DefaultConfig()
+			confFile := cmd.ZarbConfigPath(workingDir)
 
 			if *testnetOpt {
 				gen = genesis.Testnet()
 
-				conf.Network.Name = "perdana-testnet"
-				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
-				conf.Network.Bootstrap.MinThreshold = 4
-				conf.Network.Bootstrap.MaxThreshold = 8
-				conf.State.RewardAddress = rewardAddrStr
-			} else {
+				// Save config for testnet
+				if err := config.SaveTestnetConfig(confFile, rewardAddrStr); err != nil {
+					cmd.PrintErrorMsg("Failed to write config file: %v", err)
+					return
+				}
+			} else if *localnetOpt {
 				valPubStr, err := wallet.PublicKey("", valAddrStr)
 				if err != nil {
 					cmd.PrintErrorMsg("Failed to get validator public key: %v", err)
@@ -105,20 +110,27 @@ func Init() func(c *cli.Cmd) {
 				}
 
 				gen = makeLocalGenesis(valPub)
-				conf.Network.Name = "local-test"
+
+				// Save config for localnet
+				if err := config.SaveLocalnetConfig(confFile, rewardAddrStr); err != nil {
+					cmd.PrintErrorMsg("Failed to write config file: %v", err)
+					return
+				}
+			} else {
+				panic("not yet!")
+				// gen = genesis.Mainnet()
+
+				// // Save config for mainnet
+				// if err := config.SaveMainnetConfig(confFile, rewardAddrStr); err != nil {
+				// 	cmd.PrintErrorMsg("Failed to write config file: %v", err)
+				// 	return
+				// }
 			}
 
-			// Save genesis file to file system
+			// Save genesis file
 			genFile := cmd.ZarbGenesisPath(workingDir)
 			if err := gen.SaveToFile(genFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
-				return
-			}
-
-			// Save config file to file system
-			confFile := cmd.ZarbConfigPath(workingDir)
-			if err := conf.SaveToFile(confFile); err != nil {
-				cmd.PrintErrorMsg("Failed to write config file: %v", err)
 				return
 			}
 
@@ -127,6 +139,8 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("Failed to update wallet password: %v", err)
 				return
 			}
+
+			// Save wallet
 			err = wallet.Save()
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to save wallet: %v", err)

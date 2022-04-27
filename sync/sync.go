@@ -348,7 +348,7 @@ func (sync *synchronizer) downloadBlocks(from int32) {
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
 		// TODO: write test for me
-		if sync.peerSet.NumberOfOpenSessions() > sync.config.MaximumOpenSessions {
+		if sync.peerSet.NumberOfOpenSessions() > sync.config.MaxOpenSessions {
 			sync.logger.Debug("we reached maximum number of open sessions")
 			break
 		}

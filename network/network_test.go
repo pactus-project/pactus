@@ -19,12 +19,12 @@ var (
 func testConfig() *Config {
 	return &Config{
 		Name:             "test-network",
-		ListenAddress:    []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
-		NodeKeyFile:      util.TempFilePath(),
-		EnableNATService: false,
+		Listens:    []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
+		NodeKey:      util.TempFilePath(),
+		EnableNAT: false,
 		EnableRelay:      false,
 		EnableMdns:       true,
-		EnableKademlia:   true,
+		EnableDHT:   true,
 		EnablePing:       false,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    tBootstrapAddrs,
@@ -45,7 +45,7 @@ func init() {
 		conf := testConfig()
 		if i == 0 {
 			// bootstrap node
-			conf.ListenAddress = []string{
+			conf.Listens = []string{
 				fmt.Sprintf("/ip4/0.0.0.0/tcp/%v", port),
 				fmt.Sprintf("/ip6/::/tcp/%v", port),
 			}

@@ -57,7 +57,7 @@ func TestNilFingerprint(t *testing.T) {
 func TestObjLogger(t *testing.T) {
 	loggersInst = nil
 	c := DefaultConfig()
-	c.Colorfull = false
+	c.Colorful = false
 	InitLogger(c)
 
 	l := NewLogger("test", Foo{})
@@ -83,7 +83,7 @@ func TestObjLogger(t *testing.T) {
 func TestLogger(t *testing.T) {
 	loggersInst = nil
 	c := DefaultConfig()
-	c.Colorfull = true
+	c.Colorful = true
 	InitLogger(c)
 
 	var buf bytes.Buffer

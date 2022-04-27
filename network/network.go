@@ -67,19 +67,19 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 }
 
 func NewNetwork(conf *Config) (Network, error) {
-	nodeKey, err := loadOrCreateKey(conf.NodeKeyFile)
+	nodeKey, err := loadOrCreateKey(conf.NodeKey)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
 	opts := []lp2p.Option{
 		lp2p.Identity(nodeKey),
-		lp2p.ListenAddrStrings(conf.ListenAddress...),
+		lp2p.ListenAddrStrings(conf.Listens...),
 		lp2p.Ping(conf.EnablePing),
 		lp2p.UserAgent(version.Agent()),
 	}
 
-	if conf.EnableNATService {
+	if conf.EnableNAT {
 		opts = append(opts,
 			lp2p.EnableNATService(),
 			lp2p.NATPortMap())
@@ -113,7 +113,7 @@ func NewNetwork(conf *Config) (Network, error) {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 
-	if conf.EnableKademlia {
+	if conf.EnableDHT {
 		kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.config.Name))
 		n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, n.logger)
 	}
@@ -123,7 +123,7 @@ func NewNetwork(conf *Config) (Network, error) {
 
 	n.gossip = newGossipService(ctx, host, n.eventChannel, n.logger)
 
-	n.logger.Debug("network setup", "id", n.host.ID(), "address", conf.ListenAddress)
+	n.logger.Debug("network setup", "id", n.host.ID(), "address", conf.Listens)
 
 	return n, nil
 }

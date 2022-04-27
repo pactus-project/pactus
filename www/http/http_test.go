@@ -27,11 +27,11 @@ func setup(t *testing.T) {
 
 	capnpConf := &capnp.Config{
 		Enable:  true,
-		Address: "[::]:0",
+		Listen: "[::]:0",
 	}
 	httpConf := &Config{
 		Enable:  true,
-		Address: "[::]:0",
+		Listen: "[::]:0",
 	}
 
 	var err error
