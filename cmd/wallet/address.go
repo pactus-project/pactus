@@ -66,7 +66,7 @@ func NewAddress() func(c *cli.Cmd) {
 func GetBalance() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := c.String(cli.StringArg{
-			Name: "ADDR",
+			Name: "ADDRESS",
 			Desc: "address string",
 		})
 
@@ -93,7 +93,7 @@ func GetBalance() func(c *cli.Cmd) {
 func GetPrivateKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := c.String(cli.StringArg{
-			Name: "ADDR",
+			Name: "ADDRESS",
 			Desc: "address string",
 		})
 
@@ -122,7 +122,7 @@ func GetPrivateKey() func(c *cli.Cmd) {
 func GetPublicKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := c.String(cli.StringArg{
-			Name: "ADDR",
+			Name: "ADDRESS",
 			Desc: "address string",
 		})
 

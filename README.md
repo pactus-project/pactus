@@ -8,81 +8,16 @@
 
 *Zarb blockchain* (https://zarb.network)
 
-## Compiling the code
+A full node implementation of Zarb blockchain in Go.
 
-You need to make sure you have installed [Go1.18 or higher](https://golang.org/).
-Follow these steps to compile and build Zarb blockchain:
+## Install
 
-```bash
-git clone https://github.com/zarbchain/zarb-go.git
-cd zarb-go
-make
-```
-
-Run `zarb-daemon version` to make sure Zarb is properly compiled and installed in your machine.
-
-## Running Zarb
-
-
-### Testnet
-
-To join the TestNet, first you need to create a working directory
-and then start the node:
-
-```bash
-zarb-daemon init  -w=<working_dir> --testnet
-zarb-daemon start -w=<working_dir>
-```
-
-### Local net
-
-You can create a local node with one validator to test Zerb in your machine:
-
- ```bash
- zarb-daemon init -w=<working_dir>
- zarb-daemon start -w=<working_dir>
- ```
-
-## Usage of Docker
-
-You can run the Zarb using docker file.
-Please make sure you have installed [docker](https://docs.docker.com/engine/install/) in your machine.
-
-Pull the docker from docker hub.
-
-```bash
-docker pull zarb/zarb
-```
-
-Let's create a working directory at `~/zarb/testnet` for the testnet:
-
-```bash
-docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb-daemon init -w /zarb-daemon --testnet
-```
-
-Now we can run the zarb and join the testnet:
-
-```bash
-docker run -it -v ~/zarb/testnet:/zarb -p 8080:8080 --name zarb-testnet zarb/zarb-daemon start -w /zarb
-```
-
-check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
-
-Also you can stop/start docker:
-```
-docker stop zarb-testnet
-docker start zarb-testnet
-```
-
-Or check the logs:
-```
-docker logs zarb-testnet --tail 1000 -f
-```
+Please check [INSTALL](./INSTALL.md) document to build and run zarb blockchain.
 
 ## Contribution
 
- Any ideas are welcome. Feel free to submit any issues or pull requests.
+Any ideas are welcome. Feel free to submit any issues or pull requests.
 
 ## License
 
-The Zarb blockchain is under MIT license.
+The Zarb blockchain is under [MIT](https://opensource.org/licenses/MIT) license.
