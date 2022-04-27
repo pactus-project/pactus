@@ -18,7 +18,7 @@ func setup(t *testing.T) {
 	tPassword := ""
 	walletPath := util.TempFilePath()
 	mnemonic := GenerateMnemonic()
-	w, err := FromMnemonic(walletPath, mnemonic, tPassword, 0)
+	w, err := FromMnemonic(walletPath, mnemonic, tPassword, NetworkMainNet)
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
 	assert.Equal(t, w.Path(), walletPath)
@@ -111,7 +111,8 @@ func TestSaveWallet(t *testing.T) {
 func TestInvalidAddress(t *testing.T) {
 	setup(t)
 
-	_, err := tWallet.PrivateKey(tPassword, crypto.GenerateTestAddress().String())
+	addr := crypto.GenerateTestAddress().String()
+	_, err := tWallet.PrivateKey(tPassword, addr)
 	assert.Error(t, err)
 }
 
@@ -127,7 +128,28 @@ func TestImportPrivateKey(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, pub, prv.PublicKey().String())
 }
+func TestTestKeyInfo(t *testing.T) {
+	mnemonic := GenerateMnemonic()
+	w1, err := FromMnemonic(util.TempFilePath(), mnemonic, tPassword,
+		NetworkMainNet)
+	assert.NoError(t, err)
+	addrStr1, _ := w1.MakeNewAddress("", "")
+	prvStr1, _ := w1.PrivateKey("", addrStr1)
+	prv1, _ := bls.PrivateKeyFromString(prvStr1)
+
+	w2, err := FromMnemonic(util.TempFilePath(), mnemonic, tPassword,
+		NetworkTestNet)
+	assert.NoError(t, err)
+	addrStr2, _ := w2.MakeNewAddress("", "")
+	prvStr2, _ := w2.PrivateKey("", addrStr2)
+	prv2, _ := bls.PrivateKeyFromString(prvStr2)
+
+	assert.NotEqual(t, prv1.Bytes(), prv2.Bytes(),
+		"Should generate different private key for the testnet")
+}
 
 func TestMakeSendTx(t *testing.T) {
 	setup(t)
+
+	//TODO
 }

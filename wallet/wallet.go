@@ -71,7 +71,11 @@ func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
-	vault, err := vault.CreateVaultFromMnemonic(mnemonic, password)
+	keyInfo := []byte{}
+	if net == NetworkTestNet {
+		keyInfo = []byte{1}
+	}
+	vault, err := vault.CreateVaultFromMnemonic(mnemonic, password, keyInfo)
 	if err != nil {
 		return nil, err
 	}
