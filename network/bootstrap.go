@@ -110,7 +110,7 @@ func (b *bootstrap) checkConnectivity() {
 
 			b.logger.Trace("bootstrap Ipfs Routing")
 
-			err := b.bootstrapIpfsRouting()
+			err := b.expand()
 			if err != nil {
 				b.logger.Warn("peer discovery may suffer", "err", err)
 			}
@@ -150,7 +150,7 @@ func hasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
 	return false
 }
 
-func (b *bootstrap) bootstrapIpfsRouting() error {
+func (b *bootstrap) expand() error {
 	dht, ok := b.routing.(*lp2pdht.IpfsDHT)
 	if !ok {
 		b.logger.Warn("no bootstrapping to do exit quietly.")

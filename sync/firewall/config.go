@@ -1,7 +1,7 @@
 package firewall
 
 type Config struct {
-	Enabled bool
+	Enabled bool `toml:"enable"`
 }
 
 func DefaultConfig() *Config {

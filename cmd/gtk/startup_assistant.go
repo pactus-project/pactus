@@ -317,25 +317,45 @@ Now you are ready to start the node!`
 				rewardAddr, err := defaultWallet.MakeNewAddress("", "Reward address")
 				errorCheck(err)
 
+				var gen *genesis.Genesis
+				confFile := cmd.ZarbConfigPath(workingDir)
+
+				if testnet {
+					gen = genesis.Testnet()
+
+					// Save config for testnet
+					if err := config.SaveTestnetConfig(confFile, rewardAddr); err != nil {
+						cmd.PrintErrorMsg("Failed to write config file: %v", err)
+						return
+					}
+				} else {
+					panic("not yet!")
+					// gen = genesis.Mainnet()
+
+					// // Save config for mainnet
+					// if err := config.SaveMainnetConfig(confFile, rewardAddr); err != nil {
+					// 	cmd.PrintErrorMsg("Failed to write config file: %v", err)
+					// 	return
+					// }
+				}
+
+				// Save genesis file
+				genFile := cmd.ZarbGenesisPath(workingDir)
+				err = gen.SaveToFile(genFile)
+				errorCheck(err)
+
 				// To make process faster we set password after generating addresses
 				walletPassword, err := passwordEntry.GetText()
 				errorCheck(err)
+
 				err = defaultWallet.UpdatePassword("", walletPassword)
 				errorCheck(err)
+
+				// Save wallet
 				err = defaultWallet.Save()
 				errorCheck(err)
-				err = genesis.Testnet().SaveToFile(cmd.ZarbGenesisPath(workingDir))
-				errorCheck(err)
 
-				conf := config.DefaultConfig()
-				conf.Network.Name = "perdana-testnet"
-				conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
-				conf.Network.Bootstrap.MinThreshold = 4
-				conf.Network.Bootstrap.MaxThreshold = 8
-				conf.State.RewardAddress = rewardAddr
-				err = conf.SaveToFile(cmd.ZarbConfigPath(workingDir))
-				errorCheck(err)
-
+				// Done! showing the node information
 				successful = true
 				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workingDir)
 				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)

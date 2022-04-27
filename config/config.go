@@ -2,13 +2,13 @@ package config
 
 import (
 	"bytes"
-	"encoding/json"
+	_ "embed"
+	"fmt"
 	"io/ioutil"
 	"strings"
 
 	toml "github.com/pelletier/go-toml"
 	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
@@ -21,93 +21,114 @@ import (
 	"github.com/zarbchain/zarb-go/www/http"
 )
 
+//go:embed example_config.toml
+var exampleConfigBytes []byte
+
 type Config struct {
-	State     *state.Config     `toml:"" comment:"State contains the state of the blockchain."`
-	Store     *store.Config     `toml:"" comment:"Store which write and store the blockchin data using golevel db. "`
-	TxPool    *txpool.Config    `toml:"" comment:"TxPool is pool of unconfirmed transaction."`
-	Consensus *consensus.Config `toml:"" comment:"Consensus configuration."`
-	Network   *network.Config   `toml:"" comment:"Network contains all details of network configuration. Zarb uses lip2p protocol."`
-	Logger    *logger.Config    `toml:"" comment:"Logger contains Output level for logging."`
-	Sync      *sync.Config      `toml:"" comment:"Sync is used for peer to peer connection and synchronizing blockchain and it also contains monkier and its details."`
-	Capnp     *capnp.Config     `toml:"" comment:"Cap’n Proto is an insanely fast data interchange format and capability-based RPC system."`
-	HTTP      *http.Config      `toml:"" comment:"Http configuration."`
-	GRPC      *grpc.Config      `toml:"" comment:"GRPC configuration."`
+	State     *state.Config     `toml:"state"`
+	Store     *store.Config     `toml:"store"`
+	Network   *network.Config   `toml:"network"`
+	Sync      *sync.Config      `toml:"sync"`
+	TxPool    *txpool.Config    `toml:"tx_pool"`
+	Consensus *consensus.Config `toml:"consensus"`
+	Logger    *logger.Config    `toml:"logger"`
+	GRPC      *grpc.Config      `toml:"grpc"`
+	Capnp     *capnp.Config     `toml:"capnp"`
+	HTTP      *http.Config      `toml:"http"`
 }
 
 func DefaultConfig() *Config {
 	conf := &Config{
 		State:     state.DefaultConfig(),
 		Store:     store.DefaultConfig(),
-		TxPool:    txpool.DefaultConfig(),
-		Consensus: consensus.DefaultConfig(),
 		Network:   network.DefaultConfig(),
 		Sync:      sync.DefaultConfig(),
+		TxPool:    txpool.DefaultConfig(),
+		Consensus: consensus.DefaultConfig(),
 		Logger:    logger.DefaultConfig(),
+		GRPC:      grpc.DefaultConfig(),
 		Capnp:     capnp.DefaultConfig(),
 		HTTP:      http.DefaultConfig(),
-		GRPC:      grpc.DefaultConfig(),
 	}
 
 	return conf
 }
 
-func FromTOML(t string) (*Config, error) {
-	conf := DefaultConfig()
+func SaveMainnetConfig(path, rewardAddr string) error {
+	exampleConfig := string(exampleConfigBytes)
 
-	if err := toml.Unmarshal([]byte(t), conf); err != nil {
-		return nil, err
-	}
-	return conf, nil
+	exampleConfig = strings.Replace(exampleConfig, "## reward_address = \"\"",
+		fmt.Sprintf("  reward_address = \"%s\"", rewardAddr), 1)
+
+	return util.WriteFile(path, []byte(exampleConfig))
 }
 
-func (conf *Config) ToTOML() ([]byte, error) {
+func SaveTestnetConfig(path, rewardAddr string) error {
+	conf := DefaultConfig()
+	conf.Network.Name = "zarb-testnet"
+	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}
+	conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
+	conf.Network.Bootstrap.MinThreshold = 4
+	conf.Network.Bootstrap.MaxThreshold = 8
+	conf.GRPC.Enable = true
+	conf.GRPC.Listen = "[::]:9090"
+	conf.GRPC.Gateway.Enable = true
+	conf.GRPC.Gateway.Listen = "[::]:80"
+	conf.Capnp.Enable = true
+	conf.Capnp.Listen = "[::]:37621"
+	conf.HTTP.Enable = true
+	conf.HTTP.Listen = "[::]:8080"
+	conf.State.RewardAddress = rewardAddr
+
+	return util.WriteFile(path, conf.toTOML())
+}
+
+func SaveLocalnetConfig(path, rewardAddr string) error {
+	conf := DefaultConfig()
+	conf.Network.Name = "zarb-localnet"
+	conf.Network.Listens = []string{}
+	conf.Network.Bootstrap.Addresses = []string{}
+	conf.Network.Bootstrap.MinThreshold = 4
+	conf.Network.Bootstrap.MaxThreshold = 8
+	conf.GRPC.Enable = true
+	conf.GRPC.Listen = "[::]:9090"
+	conf.GRPC.Gateway.Enable = true
+	conf.GRPC.Gateway.Listen = "[::]:8080"
+	conf.Capnp.Enable = true
+	conf.Capnp.Listen = "[::]:37621"
+	conf.HTTP.Enable = true
+	conf.HTTP.Listen = "[::]:8081"
+	conf.State.RewardAddress = rewardAddr
+
+	return util.WriteFile(path, conf.toTOML())
+}
+
+func (conf *Config) toTOML() []byte {
 	buf := new(bytes.Buffer)
 	encoder := toml.NewEncoder(buf)
+	encoder.Order(toml.OrderPreserve)
 	err := encoder.Encode(conf)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
-	return buf.Bytes(), nil
-}
-
-func FromJSON(t string) (*Config, error) {
-	conf := DefaultConfig()
-	if err := json.Unmarshal([]byte(t), conf); err != nil {
-		return nil, err
-	}
-	return conf, nil
-}
-
-func (conf *Config) ToJSON() ([]byte, error) {
-	return json.MarshalIndent(conf, "", "  ")
+	return buf.Bytes()
 }
 
 func LoadFromFile(file string) (*Config, error) {
-	dat, err := ioutil.ReadFile(file)
+	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}
 
-	if strings.HasSuffix(file, "toml") {
-		return FromTOML(string(dat))
-	} else if strings.HasSuffix(file, "json") {
-		return FromJSON(string(dat))
+	conf := DefaultConfig()
+	buf := bytes.NewBuffer(data)
+	decoder := toml.NewDecoder(buf)
+	decoder.Strict(true)
+	if err := decoder.Decode(conf); err != nil {
+		return nil, err
 	}
-
-	return nil, errors.Errorf(errors.ErrInvalidConfig, "invalid suffix for the config file")
-}
-
-func (conf *Config) SaveToFile(file string) error {
-	var dat []byte
-	if strings.HasSuffix(file, "toml") {
-		dat, _ = conf.ToTOML()
-	} else if strings.HasSuffix(file, "json") {
-		dat, _ = conf.ToJSON()
-	} else {
-		return errors.Errorf(errors.ErrInvalidConfig, "invalid suffix for the config file")
-	}
-	return util.WriteFile(file, dat)
+	return conf, nil
 }
 
 func (conf *Config) SanityCheck() error {

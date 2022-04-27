@@ -7,7 +7,7 @@ import (
 
 // Config holds the configuration of the state
 type Config struct {
-	RewardAddress string `toml:"" comment:"RewardsAddress is the address for collecting the rewards.\nIf it is empty the validator address will be used for collecting the rewards.\nDefault is empty."`
+	RewardAddress string `toml:"reward_address"`
 }
 
 // DefaultConfig instantiates the default configuration for the state

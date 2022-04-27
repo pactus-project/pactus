@@ -5,7 +5,7 @@ import (
 )
 
 type Config struct {
-	MaxSize int `toml:"" comment:"Maximum number of unconfirmed transaction inside pool. Default is 2000"`
+	MaxSize int `toml:"max_size"`
 }
 
 func DefaultConfig() *Config {

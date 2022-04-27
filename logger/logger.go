@@ -32,8 +32,8 @@ func getLoggersInst() *loggers {
 		// Only during tests the loggersInst is nil
 
 		conf := &Config{
-			Levels:    make(map[string]string),
-			Colorfull: true,
+			Levels:   make(map[string]string),
+			Colorful: true,
 		}
 		conf.Levels["default"] = "debug"
 		conf.Levels["_network"] = "debug"
@@ -59,7 +59,7 @@ func InitLogger(conf *Config) {
 			config:  conf,
 			loggers: make(map[string]*Logger),
 		}
-		if conf.Colorfull {
+		if conf.Colorful {
 			logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
 		} else {
 			logrus.SetFormatter(&logrus.TextFormatter{DisableColors: true})
@@ -78,7 +78,7 @@ func NewLogger(name string, obj interface{}) *Logger {
 		name:   name,
 		obj:    obj,
 	}
-	if getLoggersInst().config.Colorfull {
+	if getLoggersInst().config.Colorful {
 		l.logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
 	} else {
 		l.logger.SetFormatter(&logrus.TextFormatter{DisableColors: true})

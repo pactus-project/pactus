@@ -77,7 +77,7 @@ func (gen *Genesis) Validators() []*validator.Validator {
 }
 
 func (gen Genesis) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&gen.data)
+	return json.MarshalIndent(&gen.data, "  ", "  ")
 }
 
 func (gen *Genesis) UnmarshalJSON(bs []byte) error {

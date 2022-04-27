@@ -1,18 +1,18 @@
 package grpc
 
 type Config struct {
-	Enable  bool          `toml:""   comment:"Enable gRPC servers for client communication."`
-	Address string        `toml:""  comment:"Address to listen for incoming connections for gRPC.Default port is 9090."`
-	Gateway GatewayConfig `toml:""  comment:"Gateway  server which translates a RESTful HTTP API into gRPC."`
+	Enable  bool          `toml:"enable"`
+	Listen  string        `toml:"listen"`
+	Gateway GatewayConfig `toml:"gateway"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Enable:  true,
-		Address: "[::]:9090",
+		Enable: false,
+		Listen: "",
 		Gateway: GatewayConfig{
-			Enable:     true,
-			Address:    "[::]:8080",
+			Enable:     false,
+			Listen:     "",
 			EnableCORS: false,
 		},
 	}

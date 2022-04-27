@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	Path string `toml:"" comment:"Path specifies data directory. Default is ./data"`
+	Path string `toml:"path"`
 }
 
 func DefaultConfig() *Config {

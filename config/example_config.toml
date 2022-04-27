@@ -1,0 +1,199 @@
+
+# state contains configuration of state module.
+[state]
+
+  # reward_address is the address for collecting the rewards. If it is empty the
+  # validator address will be used for collecting the rewards.
+  # Default is your reward address.
+ ## reward_address = ""
+
+# store contains configuration of store module.
+[store]
+
+  # Path specifies the data directory.
+  # Default is data
+ ## path = "data"
+
+# network contains configuration of network module.
+[network]
+
+  # name is the name of the network. For the mainnet it should be set to “zarb”.
+ ## name = "zarb"
+
+  # listens is the binding address for network APIs and supports multi addresses.
+ ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888"]
+
+  # node_key is the private key filename to use for node authentication
+  # and encryption in the p2p protocol.
+ ## node_key = "node_key"
+
+  # enable_dht indicates whether Kademlia DHT should be enabled or not.
+  # Default is true.
+ ## enable_dht = true
+
+  # enable_nat indicates whether NAT service should be enabled or not.
+  # NAT service allows many machines to share a single public address.
+  # Default is true.
+ ## enable_nat = true
+
+  # EnableRelay indicates whether relay service  should be enabled or not.
+  # Relay service is a transport protocol that routes traffic between two peers
+  # over a third-party “relay” peer.
+  # Default is true.
+ ## enable_relay = true
+
+  # enable_ping indicates whether Ping service should be enabled or not.
+  # Default is true.
+ ## enable_ping = true
+
+  # enable_mdns indicates whether MDNS should be enabled or not.
+  # MDNS is a protocol to discover local peers quickly and efficiently.
+  # Default is false.
+ ## enable_mdns = false
+
+  # bootstrap is a configuration for bootstrapping the node.
+  [network.bootstrap]
+
+    # addresses is the list of peers addresses needed for peer discovery.
+   ## addresses = ["/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
+
+    # min_threshold is the number of connections it attempts to maintain.
+    # Default is 8
+   ## min_threshold = 8
+
+    # max_threshold is the threshold of maximum number of connections.
+    # Default is 16
+   ## max_threshold = 16
+
+    # period periodically checks to see if the threshold is maintained.
+    # Default is 1 minute
+   ## period = "1m0s"
+
+# sync contains configuration of sync module.
+[sync]
+
+  # moniker A custom human readable name for this node.
+ ## moniker = ""
+
+  # starting_timeout is time taken for starting the sync module.
+  # Default is 3 seconds
+ ## starting_timeout = "3s"
+
+  # heartbeat_timeout is a timeout for broadcasting a heartbeat message to network.
+  # Default is 5 seconds
+ ## heartbeat_timeout = "5s"
+
+  # session_timeout is a timeout for a session to be opened.
+  # Default is 30 seconds
+ ## session_timeout = "30s"
+
+  # max_open_sessions is the maximum number of open sessions.
+  # Default is 8
+ ## max_open_sessions = 8
+
+  # block_per_message the number of blocks per message.
+  # Default is 60.
+ ## block_per_message = 60
+
+  # cache_size is the total capacity of the cache pool.
+  # Default is 50000
+ ## cache_size = 50000
+
+  # node_network means that the node is capable of serving the complete
+  # blockchain.
+  # Default is true
+ ## node_network = true
+
+  # sync contains configuration of sync firewall.
+  [sync.firewall]
+    # enable indicates that firewall should be enable or not.
+    # Default is false
+   ## enable = false
+
+# Sync contains configuration of the transaction pool module.
+[tx_pool]
+
+  # max_size indicates the maximum number of unconfirmed transactions inside pool.
+  # Default is 2000
+ ## max_size = 2000
+
+# consensus contains configuration for consensus module.
+[consensus]
+
+  # change_proposer_timeout which describes how long should wait for a proposal in
+  # each round before requesting for changing the proposer.
+  # Default is 6 seconds.
+ ## change_proposer_timeout = "6s"
+
+  # change_proposer_delta which increases change_proposer_timeout with each round.
+  # Default is 2 seconds.
+ ## change_proposer_delta = "2s"
+
+  # query_proposal_timeout which is a timeout to query proposal from the network
+  # if proposal does not exist yet.
+  # Default is 1 second.
+ ## query_proposal_timeout = "1s"
+
+# logger contains configuration for logger
+[logger]
+  # colorful indicates whether log can be colorful or not.
+  # Default is true.
+ ## colorful = true
+
+  # levels contains the level of logger per module.
+  [logger.levels]
+   ## _capnp = "error"
+   ## _consensus = "info"
+   ## _grpc = "error"
+   ## _http = "error"
+   ## _network = "error"
+   ## _pool = "error"
+   ## _state = "info"
+   ## _sync = "warning"
+   ## default = "info"
+
+# grpc contains configuration of the gRRC module.
+[grpc]
+
+  # Enable indicates whether gRPC service should be enabled or not.
+  # Default is false
+ ## enable = false
+
+  # address to listen for incoming connections for gRPC server.
+ ## listen = ""
+
+  # gateway server which translates a RESTful HTTP API into gRPC.
+  [grpc.gateway]
+
+    # enable indicates whether gRPCGateway service should be enabled or not.
+    # Default is false
+   ## enable = false
+
+    # address to listen for incoming connections for gRPCGateway server.
+   ## listen = ""
+
+    # enable_cors indicates whether Cross-Origin Request Sharing (CORS)
+    # protection should be enabled or not.
+    # Default is false
+   ## enable_cors = false
+
+# capnp contains configuration of Capnp module. Cap’n Proto is an insanely fast
+# data interchange format and capability-based RPC system.
+[capnp]
+
+  # enable indicates whether Cap'n service should be enabled or not.
+  # Default is false
+ ## enable = false
+
+  # address to listen for incoming connections for Cap’n server.
+ ## listen = ""
+
+# http configuration.
+[http]
+
+  # enable indicates whether HTTP service should be enabled or not.
+  # Default is false
+ ## enable = false
+
+  # address to listen for incoming connections for HTTP server.
+ ## listen = ""

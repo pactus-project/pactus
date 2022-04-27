@@ -1,14 +1,14 @@
 package capnp
 
 type Config struct {
-	Enable  bool   `toml:"" comment:"Enable Cap'n Proto servers for client communication."`
-	Address string `toml:"" comment:"Address to listen for incoming connections for Cap’n proto. Default port is 37621."`
+	Enable bool   `toml:"enable"`
+	Listen string `toml:"listen"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Enable:  false,
-		Address: "[::]:37621",
+		Enable: false,
+		Listen: "",
 	}
 }
 

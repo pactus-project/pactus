@@ -26,12 +26,12 @@ func setup(t *testing.T) {
 	tMockSync = sync.MockingSync()
 
 	capnpConf := &capnp.Config{
-		Enable:  true,
-		Address: "[::]:0",
+		Enable: true,
+		Listen: "[::]:0",
 	}
 	httpConf := &Config{
-		Enable:  true,
-		Address: "[::]:0",
+		Enable: true,
+		Listen: "[::]:0",
 	}
 
 	var err error

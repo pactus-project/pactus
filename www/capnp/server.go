@@ -44,7 +44,7 @@ func (s *Server) StartServer() error {
 		return nil
 	}
 
-	l, err := net.Listen("tcp", s.config.Address)
+	l, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}

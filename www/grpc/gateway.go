@@ -16,9 +16,9 @@ import (
 )
 
 type GatewayConfig struct {
-	Enable     bool   `toml:"Enable" comment:"Enable gRPCGateway servers for client communication."`
-	Address    string `toml:"Address"  comment:"Address to listen for incoming connections for gRPCGateway.Default port is 8080."`
-	EnableCORS bool
+	Enable     bool   `toml:"enable"`
+	Listen     string `toml:"listen"`
+	EnableCORS bool   `toml:"enable_cors"`
 }
 
 // getOpenAPIHandler serves an OpenAPI UI.
@@ -44,7 +44,7 @@ func (s *Server) startGateway() error {
 
 	conn, err := grpc.DialContext(
 		s.ctx,
-		s.config.Address,
+		s.config.Listen,
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 	)
@@ -64,7 +64,7 @@ func (s *Server) startGateway() error {
 	}
 
 	gwServer := &http.Server{
-		Addr: s.config.Gateway.Address,
+		Addr: s.config.Gateway.Listen,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if strings.HasPrefix(r.URL.Path, "/api") {
 				gwmux.ServeHTTP(w, r)

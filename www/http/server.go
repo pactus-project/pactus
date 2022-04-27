@@ -57,7 +57,7 @@ func (s *Server) StartServer(capnpServer string) error {
 	s.router.HandleFunc("/network", s.NetworkHandler)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
-	l, err := net.Listen("tcp", s.config.Address)
+	l, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}

@@ -53,7 +53,7 @@ func (s *Server) StartServer() error {
 	}
 	zarb.RegisterZarbServer(grpc, server)
 
-	listener, err := net.Listen("tcp", s.config.Address)
+	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}
