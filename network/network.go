@@ -11,9 +11,9 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p-core/host"
 	lp2peer "github.com/libp2p/go-libp2p-core/peer"
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/zarbchain/zarb-go/util/logger"
 	"github.com/zarbchain/zarb-go/version"
 )
 

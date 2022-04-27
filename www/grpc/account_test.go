@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/types/crypto"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 

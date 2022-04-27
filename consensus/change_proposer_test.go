@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
 )
 
 func TestChangeProposer(t *testing.T) {

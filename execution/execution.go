@@ -1,12 +1,12 @@
 package execution
 
 import (
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/execution/executor"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/tx/payload"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type Executor interface {

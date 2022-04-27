@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/zarbchain/zarb-go/types/validator"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 func TestValidatorCounter(t *testing.T) {

@@ -7,16 +7,16 @@ import (
 
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
-	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/encoding"
-	"github.com/zarbchain/zarb-go/libs/linkedmap"
-	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/types/account"
+	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/validator"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/util/encoding"
+	"github.com/zarbchain/zarb-go/util/linkedmap"
+	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 const lasteStoreVersion = int32(1)

@@ -10,7 +10,7 @@ import (
 	lp2ppeer "github.com/libp2p/go-libp2p-core/peer"
 	lp2prouting "github.com/libp2p/go-libp2p-core/routing"
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
-	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 // bootstrap attempts to keep the p2p host connected to the network

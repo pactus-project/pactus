@@ -4,9 +4,9 @@ import (
 	"context"
 	"net"
 
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
+	"github.com/zarbchain/zarb-go/util/logger"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 

@@ -3,7 +3,7 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/types/crypto"
 )
 
 func (zs zarbServer) GetAccount(args ZarbServer_getAccount) error {

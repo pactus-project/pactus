@@ -6,7 +6,7 @@ import (
 	lp2pcore "github.com/libp2p/go-libp2p-core"
 	lp2phost "github.com/libp2p/go-libp2p-core/host"
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
-	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 type dhtService struct {

@@ -5,15 +5,15 @@ import (
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/zarbchain/zarb-go/account"
 	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/config"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/genesis"
-	"github.com/zarbchain/zarb-go/param"
+	"github.com/zarbchain/zarb-go/node/config"
+	"github.com/zarbchain/zarb-go/types/account"
+	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/types/crypto/bls"
+	"github.com/zarbchain/zarb-go/types/genesis"
+	"github.com/zarbchain/zarb-go/types/param"
+	"github.com/zarbchain/zarb-go/types/validator"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 

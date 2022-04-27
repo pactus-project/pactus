@@ -3,11 +3,11 @@ package executor
 import (
 	"sort"
 
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/tx/payload"
-	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/tx/payload"
+	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type SortitionExecutor struct {

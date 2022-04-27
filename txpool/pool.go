@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/execution"
-	"github.com/zarbchain/zarb-go/libs/linkedmap"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/tx/payload"
+	"github.com/zarbchain/zarb-go/util/linkedmap"
+	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 type txPool struct {

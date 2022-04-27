@@ -3,8 +3,8 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
 )
 
 func (zs *zarbServer) GetBlockHash(args ZarbServer_getBlockHash) error {

@@ -6,9 +6,9 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/types/validator"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
 )
 
 var _ Committee = &committee{}

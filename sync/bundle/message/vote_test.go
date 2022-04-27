@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/consensus/vote"
-	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestVoteType(t *testing.T) {
