@@ -75,9 +75,9 @@ func TestExampleConfig(t *testing.T) {
 
 	exampleToml = strings.ReplaceAll(exampleToml, "##", "")
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
+	exampleToml = strings.ReplaceAll(exampleToml, "\r\n\r\n", "\n") // Windows
 	defaultToml = strings.ReplaceAll(defaultToml, "\n\n", "\n")
-	defaultToml = strings.ReplaceAll(exampleToml, "\r\n\r\n", "\n")
-
+	
 	// fmt.Println(defaultToml)
 	// fmt.Println(exampleToml)
 	assert.Equal(t, defaultToml, exampleToml)
