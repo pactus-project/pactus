@@ -70,9 +70,9 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.StartingTimeout = 0
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
+		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.NodeKey = util.TempFilePath()
-		tConfigs[i].Network.Listens = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", 32125+i)}
-		tConfigs[i].Network.Bootstrap.Addresses = []string{"/ip4/127.0.0.1/tcp/32125/p2p/12D3KooWCKKGMMGDhqRUZh6MnH2to6XUN9N2YPof4LrNNMe5Mbek"}
+		tConfigs[i].Network.Listens = []string{"/ip4/127.0.0.1/tcp/0"}
 		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3
 		tConfigs[i].HTTP.Enable = false
@@ -85,13 +85,6 @@ func TestMain(m *testing.M) {
 			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].Capnp.Enable = true
 			tConfigs[i].Capnp.Listen = tCapnpAddress
-
-			f, _ := os.Create(tConfigs[i].Network.NodeKey)
-			_, err := f.WriteString("08011240f22591817d8803e32525db7fc5cb9949d77c402e20867a6cac6b3ffb3dc643fb2521ef3c844a12eee79c275f19958999aeebb173496b67ea4a40f5d34b0a1355")
-			if err != nil {
-				panic(err)
-			}
-			f.Close()
 		}
 		fmt.Printf("Node %d address: %s\n", i+1, pub.Address())
 	}
