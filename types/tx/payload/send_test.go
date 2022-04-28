@@ -15,19 +15,7 @@ func TestSendType(t *testing.T) {
 	assert.Equal(t, pld.Type(), PayloadTypeSend)
 }
 
-func TestSendSanityCheck(t *testing.T) {
-	invAddr := crypto.Address{0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	pld := SendPayload{
-		Sender:   invAddr,
-		Receiver: invAddr,
-		Amount:   1,
-	}
-	assert.Equal(t, errors.Code(pld.SanityCheck()), errors.ErrInvalidAddress)
-	pld.Sender = crypto.GenerateTestAddress()
-	assert.Equal(t, errors.Code(pld.SanityCheck()), errors.ErrInvalidAddress)
-	pld.Receiver = crypto.GenerateTestAddress()
-	assert.NoError(t, pld.SanityCheck())
-}
+
 
 func TestSendDecoding(t *testing.T) {
 	tests := []struct {

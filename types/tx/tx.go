@@ -391,7 +391,8 @@ func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewSendTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(), util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test send-tx")
+	tx := NewSendTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(),
+		util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test send-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
@@ -400,7 +401,8 @@ func GenerateTestBondTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewBondTx(stamp, util.RandInt32(1000), s.Address(), pub, util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test bond-tx")
+	tx := NewBondTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(),
+		pub, util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test bond-tx")
 	s.SignMsg(tx)
 	return tx, s
 }

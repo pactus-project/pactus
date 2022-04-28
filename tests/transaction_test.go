@@ -37,10 +37,10 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 	return sendRawTx(t, d)
 }
 
-func broadcastBondTransaction(t *testing.T, sender crypto.Signer, val crypto.PublicKey, stake, fee int64) error {
+func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.PublicKey, stake, fee int64) error {
 	stamp := lastHash().Stamp()
 	seq := getSequence(sender.Address())
-	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), val.(*bls.PublicKey), stake, fee, "")
+	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), pub.Address(), pub.(*bls.PublicKey), stake, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Bytes()

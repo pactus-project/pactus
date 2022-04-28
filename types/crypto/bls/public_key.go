@@ -3,7 +3,6 @@ package bls
 import (
 	"bytes"
 	"encoding/hex"
-	"fmt"
 	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
@@ -86,7 +85,7 @@ func (pub *PublicKey) Decode(r io.Reader) error {
 
 func (pub *PublicKey) SanityCheck() error {
 	if pub.publicKey.IsZero() {
-		return fmt.Errorf("public key is zero")
+		return errors.Errorf(errors.ErrInvalidPublicKey, "public key is zero")
 	}
 
 	return nil
