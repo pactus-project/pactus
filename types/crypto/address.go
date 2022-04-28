@@ -12,7 +12,8 @@ import (
 // hrp + `1` + type + data + checksum
 
 const (
-	SignatureTypeBLS byte = 1
+	SignatureTypeTreasury byte = 0
+	SignatureTypeBLS      byte = 1
 )
 
 const (
@@ -25,8 +26,8 @@ var DefaultHRP = "zc"
 
 type Address [AddressSize]byte
 
-/// AddressFromString decodes the string encoding of an address and returns
-/// the Address if text is a valid encoding for a known address type.
+// AddressFromString decodes the string encoding of an address and returns
+// the Address if text is a valid encoding for a known address type.
 func AddressFromString(text string) (Address, error) {
 	if text == treasuryAddressString {
 		return TreasuryAddress, nil
@@ -80,12 +81,12 @@ func (addr Address) Bytes() []byte {
 	return addr[:]
 }
 
-/// Fingerprint returns a short string for the address useful for logger.
+// Fingerprint returns a short string for the address useful for logger.
 func (addr Address) Fingerprint() string {
 	return addr.String()[0:12]
 }
 
-/// String returns a human-readable string for the address.
+// String returns a human-readable string for the address.
 func (addr Address) String() string {
 	if addr.EqualsTo(TreasuryAddress) {
 		return treasuryAddressString
@@ -126,7 +127,7 @@ func (addr Address) EqualsTo(right Address) bool {
 	return bytes.Equal(addr.Bytes(), right.Bytes())
 }
 
-/// For tests
+// For tests
 func GenerateTestAddress() Address {
 	data := make([]byte, 20)
 	_, err := rand.Read(data)

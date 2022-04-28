@@ -107,3 +107,7 @@ func (e *withCode) Error() string {
 func (e *withCode) Code() int {
 	return e.code
 }
+
+func (e *withCode) Is(target error) bool {
+	return e.code == Code(target)
+}

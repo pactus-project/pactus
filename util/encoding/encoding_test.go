@@ -306,7 +306,7 @@ func TestVarBytesEncodingErrors(t *testing.T) {
 
 // TestVarBytesOverflowErrors performs tests to ensure deserializing variable
 // length byte arrays intentionally crafted to use large values for the array
-// length are handled properly.  This could otherwise potentially be used as an
+// length are handled properly. This could otherwise potentially be used as an
 // attack vector.
 func TestVarBytesOverflowErrors(t *testing.T) {
 	tests := []struct {
@@ -325,6 +325,9 @@ func TestVarBytesOverflowErrors(t *testing.T) {
 
 }
 
+// TestVarInt performs tests to ensure deserializing variable integers are
+// handled properly. This could otherwise potentially be used as an attack
+// vector.
 func TestVarInt(t *testing.T) {
 	tests := []struct {
 		in  uint64 // Value to encode
@@ -345,6 +348,8 @@ func TestVarInt(t *testing.T) {
 		{uint64(0xff00000000), []byte{0x80, 0x80, 0x80, 0x80, 0xf0, 0x1f}},
 		{uint64(0xffffffff), []byte{0xff, 0xff, 0xff, 0xff, 0x0f}},
 		{uint64(0x100000000), []byte{0x80, 0x80, 0x80, 0x80, 0x10}},
+		{uint64(0x7ffffffff), []byte{0xff, 0xff, 0xff, 0xff, 0x7f}},
+		{uint64(0x800000000), []byte{0x80, 0x80, 0x80, 0x80, 0x80, 0x1}},
 	}
 	for i, test := range tests {
 		var buf bytes.Buffer
