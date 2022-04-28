@@ -214,11 +214,7 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 }
 
 func (st *state) createSubsidyTx(fee int64) *tx.Tx {
-	acc, err := st.store.Account(crypto.TreasuryAddress)
-	if err != nil {
-		return nil
-	}
-
+	acc, _ := st.store.Account(crypto.TreasuryAddress)
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
 	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddres, st.params.BlockReward+fee, "")

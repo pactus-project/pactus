@@ -324,7 +324,7 @@ func VarIntSerializeSize(val uint64) int {
 		return 5
 	} else if val >= 0x200000 {
 		return 4
-	} else if val >= 0x3fff {
+	} else if val >= 0x4000 {
 		return 3
 	} else if val >= 0x80 {
 		return 2

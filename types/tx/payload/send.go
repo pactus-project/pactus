@@ -6,7 +6,6 @@ import (
 
 	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/util/encoding"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type SendPayload struct {
@@ -29,21 +28,36 @@ func (p *SendPayload) Value() int64 {
 
 func (p *SendPayload) SanityCheck() error {
 	if err := p.Sender.SanityCheck(); err != nil {
-		return errors.Error(errors.ErrInvalidAddress)
+		return err
 	}
 	if err := p.Receiver.SanityCheck(); err != nil {
-		return errors.Error(errors.ErrInvalidAddress)
+		return err
 	}
 
 	return nil
 }
 
 func (p *SendPayload) SerializeSize() int {
+	if p.Sender.EqualsTo(crypto.TreasuryAddress) {
+		return 22 + encoding.VarIntSerializeSize(uint64(p.Amount))
+	}
 	return 42 + encoding.VarIntSerializeSize(uint64(p.Amount))
 }
 
 func (p *SendPayload) Encode(w io.Writer) error {
-	err := encoding.WriteElements(w, &p.Sender, &p.Receiver)
+	if p.Sender.EqualsTo(crypto.TreasuryAddress) {
+		err := encoding.WriteElement(w, uint8(0))
+		if err != nil {
+			return err
+		}
+	} else {
+		err := encoding.WriteElement(w, &p.Sender)
+		if err != nil {
+			return err
+		}
+	}
+
+	err := encoding.WriteElement(w, &p.Receiver)
 	if err != nil {
 		return err
 	}
@@ -51,7 +65,23 @@ func (p *SendPayload) Encode(w io.Writer) error {
 }
 
 func (p *SendPayload) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &p.Sender, &p.Receiver)
+	var sigType uint8
+	err := encoding.ReadElement(r, &sigType)
+	if err != nil {
+		return err
+	}
+
+	if sigType == crypto.SignatureTypeTreasury {
+		p.Sender = crypto.TreasuryAddress
+	} else {
+		p.Sender[0] = sigType
+
+		err := encoding.ReadElement(r, p.Sender[1:])
+		if err != nil {
+			return err
+		}
+	}
+	err = encoding.ReadElement(r, &p.Receiver)
 	if err != nil {
 		return err
 	}
