@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type Config struct {

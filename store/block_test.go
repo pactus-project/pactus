@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
 )
 
 func TestBlockStore(t *testing.T) {

@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type QueryVotesMessage struct {

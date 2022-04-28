@@ -4,8 +4,8 @@ import (
 	"github.com/zarbchain/zarb-go/consensus/proposal"
 	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/consensus/voteset"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 type Messages struct {

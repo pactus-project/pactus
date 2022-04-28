@@ -5,9 +5,9 @@ import (
 
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/logger"
-	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 type validatorStore struct {

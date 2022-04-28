@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/types/crypto/bls"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestExecuteBondTx(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestQueryProposalType(t *testing.T) {

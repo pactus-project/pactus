@@ -5,18 +5,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/committee"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/param"
 	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/tx"
 	"github.com/zarbchain/zarb-go/txpool"
+	"github.com/zarbchain/zarb-go/types/account"
+	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/param"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/validator"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/validator"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 var _ Facade = &MockState{}

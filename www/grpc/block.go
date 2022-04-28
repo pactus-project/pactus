@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

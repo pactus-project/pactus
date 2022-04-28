@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/tx/payload"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 

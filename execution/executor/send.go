@@ -1,11 +1,11 @@
 package executor
 
 import (
-	"github.com/zarbchain/zarb-go/account"
-	"github.com/zarbchain/zarb-go/errors"
 	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/types/account"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/tx/payload"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type SendExecutor struct {

@@ -1,7 +1,7 @@
 package txpool
 
 import (
-	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type Config struct {

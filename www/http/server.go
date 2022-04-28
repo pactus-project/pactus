@@ -11,7 +11,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/logger"
+	"github.com/zarbchain/zarb-go/util/logger"
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"zombiezen.com/go/capnproto2/rpc"
 )

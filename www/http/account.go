@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/account"
+	"github.com/zarbchain/zarb-go/types/account"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 

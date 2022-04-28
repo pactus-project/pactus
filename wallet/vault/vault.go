@@ -8,8 +8,8 @@ import (
 	"errors"
 
 	"github.com/tyler-smith/go-bip39"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/types/crypto/bls"
 )
 
 type AddressInfo struct {

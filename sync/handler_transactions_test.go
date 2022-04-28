@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/tx"
+	"github.com/zarbchain/zarb-go/types/tx"
 )
 
 func TestParsingTransactionsMessages(t *testing.T) {

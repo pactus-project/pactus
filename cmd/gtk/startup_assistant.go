@@ -9,8 +9,8 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/config"
-	"github.com/zarbchain/zarb-go/genesis"
+	"github.com/zarbchain/zarb-go/node/config"
+	"github.com/zarbchain/zarb-go/types/genesis"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 

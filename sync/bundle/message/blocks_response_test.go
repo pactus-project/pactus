@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/block"
-	"github.com/zarbchain/zarb-go/errors"
+	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestLatestBlocksResponseType(t *testing.T) {

@@ -6,11 +6,7 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/zarbchain/zarb-go/block"
 	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/errors"
-	"github.com/zarbchain/zarb-go/logger"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/bundle"
@@ -18,7 +14,11 @@ import (
 	"github.com/zarbchain/zarb-go/sync/cache"
 	"github.com/zarbchain/zarb-go/sync/firewall"
 	"github.com/zarbchain/zarb-go/sync/peerset"
+	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 // IMPORTANT NOTES

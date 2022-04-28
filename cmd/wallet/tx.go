@@ -5,8 +5,8 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/tx/payload"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 

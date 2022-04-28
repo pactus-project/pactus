@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/tx"
-	"github.com/zarbchain/zarb-go/tx/payload"
+	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/types/tx/payload"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
