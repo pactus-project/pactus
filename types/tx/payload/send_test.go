@@ -15,8 +15,6 @@ func TestSendType(t *testing.T) {
 	assert.Equal(t, pld.Type(), PayloadTypeSend)
 }
 
-
-
 func TestSendDecoding(t *testing.T) {
 	tests := []struct {
 		raw       []byte

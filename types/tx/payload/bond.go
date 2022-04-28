@@ -63,6 +63,9 @@ func (p *BondPayload) Encode(w io.Writer) error {
 	}
 	if p.PublicKey != nil {
 		err := encoding.WriteElements(w, uint8(bls.PublicKeySize))
+		if err != nil {
+			return err
+		}
 		err = p.PublicKey.Encode(w)
 		if err != nil {
 			return err
@@ -83,6 +86,9 @@ func (p *BondPayload) Decode(r io.Reader) error {
 		return err
 	}
 	pubKeySize, err := encoding.ReadVarInt(r)
+	if err != nil {
+		return err
+	}
 	if pubKeySize == bls.PublicKeySize {
 		p.PublicKey = new(bls.PublicKey)
 		err = p.PublicKey.Decode(r)
