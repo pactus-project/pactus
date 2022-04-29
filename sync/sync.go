@@ -312,7 +312,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 		data, _ := bdl.Encode()
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Error("error on sending bundle", "bundle", bdl, "err", err)
+			sync.logger.Error("error on sending bundle", "bundle", bdl, "err", err, "to", to)
 		} else {
 			sync.logger.Debug("sending bundle to a peer", "bundle", bdl, "to", to)
 		}

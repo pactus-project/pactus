@@ -45,7 +45,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		s.writeError(w, err)
 		return
 	}
-	tm.addRowBytes("Node ID", []byte(selfID))
+	tm.addRowString("Peer ID", selfID.String())
 	tm.addRowString("Peers", "---")
 
 	pl, _ := st.Peers()
@@ -60,12 +60,13 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		lastSeen := time.Unix(int64(p.LastSeen()), 0)
 		agent, _ := p.Agent()
 
-		tm.addRowInt("Peer #", i+1)
-		tm.addRowBytes("PeerID", []byte(pid))
+		tm.addRowInt("-- Peer #", i+1)
+		tm.addRowString("PeerID", pid.String())
 		tm.addRowString("Status", peerset.StatusCode(status).String())
 		if pubStr != "" {
 			pub, _ := bls.PublicKeyFromString(pubStr)
-			tm.addRowBytes("PublicKey", pub.Bytes())
+			tm.addRowString("PublicKey", pub.String())
+			tm.addRowValAddress("Address", pub.Address().String())
 		} else {
 			tm.addRowString("PublicKey", "")
 		}
