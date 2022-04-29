@@ -16,7 +16,9 @@ import (
 var tStore *store
 
 func setup(t *testing.T) {
-	conf := TestConfig()
+	conf := &Config{
+		Path: util.TempDirPath(),
+	}
 	s, err := NewStore(conf, 21)
 	require.NoError(t, err)
 

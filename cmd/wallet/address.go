@@ -167,6 +167,12 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 				return
 			}
 
+			err = wallet.Save()
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
 			cmd.PrintLine()
 			cmd.PrintSuccessMsg("Private Key imported")
 		}

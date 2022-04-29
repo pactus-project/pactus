@@ -18,12 +18,6 @@ func DefaultConfig() *Config {
 	}
 }
 
-func TestConfig() *Config {
-	return &Config{
-		Path: util.TempDirPath(),
-	}
-}
-
 func (conf *Config) DataPath() string {
 	return util.MakeAbs(conf.Path)
 }

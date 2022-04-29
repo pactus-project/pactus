@@ -11,11 +11,22 @@ import (
 // Generate creates a new wallet
 func Generate() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
+		testnetOpt := c.Bool(cli.BoolOpt{
+			Name:  "testnet",
+			Desc:  "creating wallet for testnet",
+			Value: false,
+		})
+
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
 			password := cmd.PromptPassword("Password: ", true)
 			mnemonic := wallet.GenerateMnemonic()
-			wallet, err := wallet.FromMnemonic(*path, mnemonic, password, 0)
+
+			network := wallet.NetworkMainNet
+			if *testnetOpt {
+				network = wallet.NetworkTestNet
+			}
+			wallet, err := wallet.FromMnemonic(*path, mnemonic, password, network)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
