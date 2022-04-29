@@ -6,7 +6,6 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
@@ -55,14 +54,14 @@ func SendTx() func(c *cli.Cmd) {
 
 func BondTx() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		senderArg := c.String(cli.StringArg{
+		fromArg := c.String(cli.StringArg{
 			Name: "FROM",
 			Desc: "sender account address",
 		})
 
-		pubArg := c.String(cli.StringArg{
+		toArg := c.String(cli.StringArg{
 			Name: "TO",
-			Desc: "validator public key",
+			Desc: "receiver validator address",
 		})
 
 		stakeArg := c.String(cli.StringArg{
@@ -70,6 +69,11 @@ func BondTx() func(c *cli.Cmd) {
 			Desc: "stake amount",
 		})
 		stampOpt, seqOpt, memoOpt, feeOpt := addCommonTxOptions(c)
+
+		pubKeyOpt := c.String(cli.StringOpt{
+			Name: "pubkey",
+			Desc: "validator public key",
+		})
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
@@ -79,7 +83,8 @@ func BondTx() func(c *cli.Cmd) {
 				return
 			}
 
-			trx, err := wallet.MakeBondTx(*stampOpt, *seqOpt, *senderArg, *pubArg, *stakeArg, *feeOpt, *memoOpt)
+			trx, err := wallet.MakeBondTx(*stampOpt, *seqOpt, *fromArg, *toArg,
+				*pubKeyOpt, *stakeArg, *feeOpt, *memoOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -87,8 +92,8 @@ func BondTx() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign and broadcast a bond transition to the network.")
-			cmd.PrintInfoMsg("Account: %s", *senderArg)
-			cmd.PrintInfoMsg("Validator: %s", trx.Payload().(*payload.BondPayload).PublicKey.Address())
+			cmd.PrintInfoMsg("Account: %s", *fromArg)
+			cmd.PrintInfoMsg("Validator: %s", *toArg)
 			cmd.PrintInfoMsg("Stake: %s", *stakeArg)
 
 			signAndPublishTx(wallet, trx)

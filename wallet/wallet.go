@@ -183,14 +183,22 @@ func (w *Wallet) GetBalance(addrStr string) (int64, int64, error) {
 
 //
 // MakeBondTx creates a new bond transaction based on the given parameters
-func (w *Wallet) MakeBondTx(stampStr, seqStr, senderStr, valPubStr, stakeStr, feeStr, memo string) (*tx.Tx, error) {
+func (w *Wallet) MakeBondTx(stampStr, seqStr, senderStr, receiverStr, valPubStr,
+	stakeStr, feeStr, memo string) (*tx.Tx, error) {
 	sender, err := crypto.AddressFromString(senderStr)
 	if err != nil {
 		return nil, err
 	}
-	valPub, err := bls.PublicKeyFromString(valPubStr)
+	receiver, err := crypto.AddressFromString(receiverStr)
 	if err != nil {
 		return nil, err
+	}
+	var valPub *bls.PublicKey
+	if valPubStr != "" {
+		valPub, err = bls.PublicKeyFromString(valPubStr)
+		if err != nil {
+			return nil, err
+		}
 	}
 	stake, err := strconv.ParseInt(stakeStr, 10, 64)
 	if err != nil {
@@ -209,7 +217,7 @@ func (w *Wallet) MakeBondTx(stampStr, seqStr, senderStr, valPubStr, stakeStr, fe
 		return nil, err
 	}
 
-	tx := tx.NewBondTx(stamp, seq, sender, valPub.Address(), valPub, stake, fee, memo)
+	tx := tx.NewBondTx(stamp, seq, sender, receiver, valPub, stake, fee, memo)
 	return tx, nil
 }
 
