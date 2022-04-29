@@ -380,7 +380,7 @@ func TestSortition(t *testing.T) {
 	height := int32(1)
 	for ; height <= 11; height++ {
 		if height == 2 {
-			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub, 10000000, 10000, "")
+			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub.Address(), pub, 10000000, 10000, "")
 			tValSigner1.SignMsg(trx)
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
 		}
@@ -571,7 +571,7 @@ func TestLoadState(t *testing.T) {
 
 	// Add a bond transactions to change total power (stake)
 	pub, _ := bls.GenerateTestKeyPair()
-	tx2 := tx.NewBondTx(tState1.LastBlockHash().Stamp(), 1, tValSigner1.Address(), pub, 8888000, 8888, "")
+	tx2 := tx.NewBondTx(tState1.LastBlockHash().Stamp(), 1, tValSigner1.Address(), pub.Address(), pub, 8888000, 8888, "")
 	tValSigner1.SignMsg((tx2))
 
 	assert.NoError(t, tCommonTxPool.AppendTx(tx2))

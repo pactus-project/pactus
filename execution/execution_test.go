@@ -48,7 +48,8 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(block1.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		trx := tx.NewSendTx(block1.Stamp(), 1, addr1, rcvAddr, 1000, 1000,
+			"expired-stamp")
 		signer1.SignMsg(trx)
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
@@ -59,8 +60,9 @@ func TestExecution(t *testing.T) {
 		assert.NoError(t, tExec.Execute(trx, tSandbox))
 	})
 
-	t.Run("Subsidy transaction has an invalid stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(block8641.Stamp(), 1, rcvAddr, 1000, "expired-stamp")
+	t.Run("Subsidy transaction has an invalid stamp", func(t *testing.T) {
+		trx := tx.NewSubsidyTx(block8641.Stamp(), 1, rcvAddr, 1000,
+			"expired-stamp")
 		assert.Error(t, tExec.Execute(trx, tSandbox))
 	})
 
@@ -120,7 +122,7 @@ func TestChecker(t *testing.T) {
 		acc, signer := account.GenerateTestAccount(1)
 		tSandbox.UpdateAccount(acc)
 
-		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, acc.Address(), pub, 1000, 1000, "")
+		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, acc.Address(), pub.Address(), pub, 1000, 1000, "")
 		signer.SignMsg(trx)
 		assert.Error(t, executor.Execute(trx, tSandbox))
 		assert.NoError(t, checker.Execute(trx, tSandbox))

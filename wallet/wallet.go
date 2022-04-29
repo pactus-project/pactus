@@ -209,7 +209,7 @@ func (w *Wallet) MakeBondTx(stampStr, seqStr, senderStr, valPubStr, stakeStr, fe
 		return nil, err
 	}
 
-	tx := tx.NewBondTx(stamp, seq, sender, valPub, stake, fee, memo)
+	tx := tx.NewBondTx(stamp, seq, sender, valPub.Address(), valPub, stake, fee, memo)
 	return tx, nil
 }
 

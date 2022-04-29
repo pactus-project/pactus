@@ -138,7 +138,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	acc1Signer.SignMsg(sendTx)
 
 	pub, _ := bls.GenerateTestKeyPair()
-	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1.Address(), pub, 1000, 1000, "bond-tx")
+	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1.Address(), pub.Address(), pub, 1000, 1000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
 	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")

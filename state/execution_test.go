@@ -28,7 +28,7 @@ func TestProposeBlock(t *testing.T) {
 	trx1 := tx.NewSendTx(b1.Stamp(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
 	tValSigner1.SignMsg(trx1)
 
-	trx2 := tx.NewBondTx(b1.Stamp(), 2, tValSigner1.Address(), pub, 1000, 1000, "")
+	trx2 := tx.NewBondTx(b1.Stamp(), 2, tValSigner1.Address(), pub.Address(), pub, 1000, 1000, "")
 	tValSigner1.SignMsg(trx2)
 
 	assert.NoError(t, tState1.txPool.AppendTx(invSendTx))

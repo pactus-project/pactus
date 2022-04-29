@@ -21,30 +21,42 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	senderAcc := sb.Account(pld.Sender)
 	if senderAcc == nil {
-		return errors.Errorf(errors.ErrInvalidAddress, "unable to retrieve sender account")
+		return errors.Errorf(errors.ErrInvalidAddress,
+			"unable to retrieve sender account")
 	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence, "expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidSequence,
+			"expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
-	addr := pld.PublicKey.Address()
-	val := sb.Validator(addr)
+	val := sb.Validator(pld.Receiver)
 	if val == nil {
+		if pld.PublicKey == nil {
+			return errors.Errorf(errors.ErrInvalidPublicKey,
+				"public key is not set")
+		}
 		val = sb.MakeNewValidator(pld.PublicKey)
 	}
 	if val.UnbondingHeight() > 0 {
-		return errors.Errorf(errors.ErrInvalidHeight, "validator has unbonded at height %v", val.UnbondingHeight())
+		return errors.Errorf(errors.ErrInvalidHeight,
+			"validator has unbonded at height %v", val.UnbondingHeight())
 	}
 	if e.strict {
-		// In strict mode, bond transaction will be rejected if a validator is in committee.
-		// In non-strict mode, we accept it and keep it inside tx pool to process it later
-		if sb.Committee().Contains(addr) {
-			return errors.Errorf(errors.ErrInvalidTx, "validator %v is in committee", addr)
+		// In strict mode, bond transaction will be rejected if a validator is
+		// in committee.
+		// In non-strict mode, we accept it and keep it inside tx pool to
+		// process it later
+		if sb.Committee().Contains(pld.Receiver) {
+			return errors.Errorf(errors.ErrInvalidTx,
+				"validator %v is in committee", pld.Receiver)
 		}
 
-		// In strict mode, a validator can not evaluate sortition during bonding perion.
-		// In non-strict mode, we accept it and keep it inside tx pool to process it later
+		// In strict mode, a validator can not evaluate sortition during bonding
+		// perion.
+		// In non-strict mode, we accept it and keep it inside tx pool to
+		// process it later
 		if val.LastJoinedHeight() == sb.CurrentHeight() {
-			return errors.Errorf(errors.ErrInvalidHeight, "validator %v will join committee in the next height", addr)
+			return errors.Errorf(errors.ErrInvalidHeight,
+				"validator %v joins committee in the next height", pld.Receiver)
 		}
 	}
 	if senderAcc.Balance() < pld.Stake+trx.Fee() {
