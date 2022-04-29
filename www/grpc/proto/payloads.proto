@@ -11,7 +11,7 @@ message SEND_PAYLOAD {
 
 message BOND_PAYLOAD {
   string sender = 1;
-  bytes validator = 2;
+  string receiver = 2;
   int64 stake = 3;
 }
 

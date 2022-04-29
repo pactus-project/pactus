@@ -315,9 +315,8 @@
         "sender": {
           "type": "string"
         },
-        "validator": {
-          "type": "string",
-          "format": "byte"
+        "receiver": {
+          "type": "string"
         },
         "stake": {
           "type": "string",
