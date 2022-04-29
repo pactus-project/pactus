@@ -19,7 +19,10 @@ func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error
 	for i, val := range vals {
 		v := cv.At(i)
 		d, _ := val.Bytes()
-		v.SetData(d)
+		err = v.SetData(d)
+		if err != nil {
+			return err
+		}
 	}
 	c.SetTotalPower(power)
 
