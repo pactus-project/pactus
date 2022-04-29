@@ -22,7 +22,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v3
       with:
-        images: zarb/zarb-go
+        images: zarb/zarb
 
     - name: Build and push
       uses: docker/build-push-action@v2
