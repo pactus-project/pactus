@@ -65,8 +65,11 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 
 	// First update validator list
 	for _, val := range joined {
-		if !c.contains(val.Address()) {
+		committeeVal := c.find(val.Address())
+		if committeeVal == nil {
 			c.validatorList.InsertBefore(val, c.proposerPos)
+		} else {
+			*committeeVal = *val
 		}
 	}
 
@@ -120,14 +123,14 @@ func (c *committee) Contains(addr crypto.Address) bool {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 
-	return c.contains(addr)
+	return c.find(addr) != nil
 }
 
-func (c *committee) contains(addr crypto.Address) bool {
-	found := false
+func (c *committee) find(addr crypto.Address) *validator.Validator {
+	var found *validator.Validator
 	c.iterate(func(v *validator.Validator) (stop bool) {
 		if v.Address().EqualsTo(addr) {
-			found = true
+			found = v
 			return true
 		}
 		return false

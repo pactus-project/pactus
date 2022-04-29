@@ -9,6 +9,16 @@ import (
 	"github.com/zarbchain/zarb-go/types/validator"
 )
 
+func copyValidator(val *validator.Validator) *validator.Validator {
+	copy := validator.NewValidator(val.PublicKey(), val.Number())
+	copy.UpdateLastBondingHeight(val.LastBondingHeight())
+	copy.UpdateLastJoinedHeight(val.LastJoinedHeight())
+	copy.UpdateUnbondingHeight(val.UnbondingHeight())
+
+	// Stake can't be changes as long as validator is inside committee
+	// Check Bond executor
+	return copy
+}
 func TestContains(t *testing.T) {
 	committee, signers := GenerateTestCommittee(21)
 	nonExist := crypto.GenerateTestAddress()
@@ -111,15 +121,17 @@ func TestProposerJoin(t *testing.T) {
 
 	// Height 1000
 	// Val1 is in the committee
-	val2.UpdateLastJoinedHeight(1000)
-	committee.Update(0, []*validator.Validator{val2})
+	val2Copy := copyValidator(val2)
+	val2Copy.UpdateLastJoinedHeight(1000)
+	committee.Update(0, []*validator.Validator{val2Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{1, 2, 3, 4})
 	assert.Equal(t, committee.Size(), 4)
 
 	// Height 1001
-	val5.UpdateLastJoinedHeight(1001)
-	committee.Update(0, []*validator.Validator{val5})
+	val5Copy := copyValidator(val5)
+	val5Copy.UpdateLastJoinedHeight(1001)
+	committee.Update(0, []*validator.Validator{val5Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(4))
 	assert.Equal(t, committee.Committers(), []int32{1, 5, 2, 3, 4})
@@ -131,10 +143,13 @@ func TestProposerJoin(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(5))
 
 	// Height 1003
-	val3.UpdateLastJoinedHeight(1003)
-	val6.UpdateLastJoinedHeight(1003)
-	val7.UpdateLastJoinedHeight(1003)
-	committee.Update(1, []*validator.Validator{val7, val3, val6})
+	val3Copy := copyValidator(val3)
+	val6Copy := copyValidator(val6)
+	val7Copy := copyValidator(val7)
+	val3Copy.UpdateLastJoinedHeight(1003)
+	val6Copy.UpdateLastJoinedHeight(1003)
+	val7Copy.UpdateLastJoinedHeight(1003)
+	committee.Update(1, []*validator.Validator{val7Copy, val3Copy, val6Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{6, 7, 1, 5, 2, 3, 4})
 	assert.Equal(t, committee.Size(), 7)
@@ -208,53 +223,65 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	//
 
 	// Height 1001
-	val8.UpdateLastJoinedHeight(1001)
-	committee.Update(0, []*validator.Validator{val8})
+	val8Copy := copyValidator(val8)
+	val8Copy.UpdateLastJoinedHeight(1001)
+	committee.Update(0, []*validator.Validator{val8Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(3))
 	assert.Equal(t, committee.Proposer(2).Number(), int32(4))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 4, 5, 6, 7})
 
 	// Height 1002
-	val3.UpdateLastJoinedHeight(1002)
-	committee.Update(3, []*validator.Validator{val3})
+	val3Copy := copyValidator(val3)
+	val3Copy.UpdateLastJoinedHeight(1002)
+	committee.Update(3, []*validator.Validator{val3Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
 
 	// Height 1003
-	val2.UpdateLastJoinedHeight(1003)
-	val9.UpdateLastJoinedHeight(1003)
-	committee.Update(0, []*validator.Validator{val9, val2})
+	val2Copy := copyValidator(val2)
+	val9Copy := copyValidator(val9)
+	val2Copy.UpdateLastJoinedHeight(1003)
+	val9Copy.UpdateLastJoinedHeight(1003)
+	committee.Update(0, []*validator.Validator{val9Copy, val2Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(7))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(8))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 5, 9, 6, 7})
 
 	// Height 1004
-	valA.UpdateLastJoinedHeight(1004)
-	committee.Update(1, []*validator.Validator{valA})
+	valACopy := copyValidator(valA)
+	valACopy.UpdateLastJoinedHeight(1004)
+	committee.Update(1, []*validator.Validator{valACopy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 9, 6, 10, 7})
 
 	// Height 1005
-	valB.UpdateLastJoinedHeight(1005)
-	valC.UpdateLastJoinedHeight(1005)
-	committee.Update(0, []*validator.Validator{valC, valB})
+	valBCopy := copyValidator(valB)
+	valCCopy := copyValidator(valC)
+	valBCopy.UpdateLastJoinedHeight(1005)
+	valCCopy.UpdateLastJoinedHeight(1005)
+	committee.Update(0, []*validator.Validator{valCCopy, valBCopy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(9))
 	assert.Equal(t, committee.Proposer(2).Number(), int32(10))
 	assert.Equal(t, committee.Committers(), []int32{8, 11, 12, 2, 3, 9, 10})
 
 	// Height 1006
-	val1.UpdateLastJoinedHeight(1006)
-	committee.Update(2, []*validator.Validator{val1})
+	val1Copy := copyValidator(val1)
+	val1Copy.UpdateLastJoinedHeight(1006)
+	committee.Update(2, []*validator.Validator{val1Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(11))
 	assert.Equal(t, committee.Committers(), []int32{11, 12, 2, 1, 3, 9, 10})
 
 	// Height 1007
-	val2.UpdateLastJoinedHeight(1007)
-	val3.UpdateLastJoinedHeight(1007)
-	val5.UpdateLastJoinedHeight(1007)
-	val6.UpdateLastJoinedHeight(1007)
-	committee.Update(4, []*validator.Validator{val2, val3, val5, val6})
+	val2Copy = copyValidator(val2)
+	val3Copy = copyValidator(val3)
+	val5Copy := copyValidator(val5)
+	val6Copy := copyValidator(val6)
+	val2Copy.UpdateLastJoinedHeight(1007)
+	val3Copy.UpdateLastJoinedHeight(1007)
+	val5Copy.UpdateLastJoinedHeight(1007)
+	val6Copy.UpdateLastJoinedHeight(1007)
+	committee.Update(4, []*validator.Validator{val2Copy, val3Copy, val5Copy, val6Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(5))
 	assert.Equal(t, committee.Committers(), []int32{5, 6, 11, 12, 2, 1, 3})
 }
@@ -276,7 +303,7 @@ func TestIsProposer(t *testing.T) {
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4})
 }
 
-func TestCommittee(t *testing.T) {
+func TestCommitters(t *testing.T) {
 	val1, _ := validator.GenerateTestValidator(0)
 	val2, _ := validator.GenerateTestValidator(1)
 	val3, _ := validator.GenerateTestValidator(2)
