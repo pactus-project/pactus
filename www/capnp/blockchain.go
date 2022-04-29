@@ -4,7 +4,8 @@ func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error
 	res, _ := args.Results.NewResult()
 	res.SetLastBlockHeight(zs.state.LastBlockHeight())
 
-	power := zs.state.CommitteePower()
+	committeePower := zs.state.CommitteePower()
+	totalPower := zs.state.TotalPower()
 	vals := zs.state.CommitteeValidators()
 
 	c, err := res.NewCommittee()
@@ -16,6 +17,8 @@ func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error
 	if err != nil {
 		return err
 	}
+	c.SetCommitteePower(committeePower)
+	c.SetTotalPower(totalPower)
 	for i, val := range vals {
 		v := cv.At(i)
 		d, _ := val.Bytes()
@@ -24,7 +27,6 @@ func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error
 			return err
 		}
 	}
-	c.SetTotalPower(power)
 
 	return res.SetLastBlockHash(zs.state.LastBlockHash().Bytes())
 }

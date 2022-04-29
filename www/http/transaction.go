@@ -52,17 +52,17 @@ func txToTable(trx *tx.Tx, tm *tableMaker) {
 	tm.addRowInt("Fee", int(trx.Fee()))
 	tm.addRowString("Memo", trx.Memo())
 	switch trx.Payload().Type() {
-	case payload.PayloadTypeBond:
-		tm.addRowString("Payload type", "Bond")
-		tm.addRowAccAddress("Sender", trx.Payload().(*payload.BondPayload).Sender.String())
-		tm.addRowValAddress("Receiver", trx.Payload().(*payload.BondPayload).Receiver.String())
-		tm.addRowInt("Stake", int(trx.Payload().(*payload.BondPayload).Stake))
-
 	case payload.PayloadTypeSend:
 		tm.addRowString("Payload type", "Send")
 		tm.addRowAccAddress("Sender", trx.Payload().(*payload.SendPayload).Sender.String())
 		tm.addRowAccAddress("Receiver", trx.Payload().(*payload.SendPayload).Receiver.String())
-		tm.addRowInt("Amount", int(trx.Payload().(*payload.SendPayload).Amount))
+		tm.addRowAmount("Amount", trx.Payload().(*payload.SendPayload).Amount)
+
+	case payload.PayloadTypeBond:
+		tm.addRowString("Payload type", "Bond")
+		tm.addRowAccAddress("Sender", trx.Payload().(*payload.BondPayload).Sender.String())
+		tm.addRowValAddress("Receiver", trx.Payload().(*payload.BondPayload).Receiver.String())
+		tm.addRowAmount("Stake", trx.Payload().(*payload.BondPayload).Stake)
 
 	case payload.PayloadTypeSortition:
 		tm.addRowString("Payload type", "Sortition")

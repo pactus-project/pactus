@@ -55,7 +55,8 @@ struct ValidatorResult {
 
 struct Committee {
   totalPower          @0 :Int64;
-  validators          @1 :List(ValidatorResult);
+  committeePower      @1 :Int64;
+  validators          @2 :List(ValidatorResult);
 }
 
 struct Peer {

@@ -33,7 +33,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowAccAddress("Address", acc.Address().String())
 	tm.addRowInt("Number", int(acc.Number()))
 	tm.addRowInt("Sequence", int(acc.Sequence()))
-	tm.addRowInt("Balance", int(acc.Balance()))
+	tm.addRowAmount("Balance", acc.Balance())
 	tm.addRowBytes("Hash", acc.Hash().Bytes())
 	tm.addRowBytes("Data", d)
 

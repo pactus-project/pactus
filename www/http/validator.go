@@ -33,7 +33,7 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowValAddress("Address", val.Address().String())
 	tm.addRowInt("Number", int(val.Number()))
 	tm.addRowInt("Sequence", int(val.Sequence()))
-	tm.addRowInt("Stake", int(val.Stake()))
+	tm.addRowAmount("Stake", val.Stake())
 	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight()))
 	tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight()))
 	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight()))

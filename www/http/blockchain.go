@@ -30,16 +30,17 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowBlockHash("Hash", hash)
 	tm.addRowInt("Height", int(st.LastBlockHeight()))
 	tm.addRowString("--- Committee", "---")
-	tm.addRowInt("Total Power", int(c.TotalPower()))
+	tm.addRowAmount("Total Power", c.TotalPower())
+	tm.addRowAmount("Committee Power", c.CommitteePower())
 	for i := 0; i < cv.Len(); i++ {
 		v := cv.At(i)
 		d, _ := v.Data()
 		val, _ := validator.FromBytes(d)
 		tm.addRowInt("--- Validator", i)
 		tm.addRowValAddress("Address", val.Address().String())
-		tm.addRowInt("Stake", int(val.Stake()))
-		tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight()))
+		tm.addRowAmount("Stake", val.Stake())
 		tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight()))
+		tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight()))
 	}
 
 	s.writeHTML(w, tm.html())

@@ -153,6 +153,10 @@ func (t *tableMaker) addRowTxID(key string, val []byte) {
 func (t *tableMaker) addRowString(key, val string) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, val))
 }
+func (t *tableMaker) addRowAmount(key string, val int64) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d.%d</td></tr>",
+		key, val/100000000, val%10000000))
+}
 func (t *tableMaker) addRowInt(key string, val int) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d</td></tr>", key, val))
 }
