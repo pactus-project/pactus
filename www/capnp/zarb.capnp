@@ -29,6 +29,7 @@ struct Block {
 struct BlockchainResult {
   lastBlockHeight     @0 :Int32;
   lastBlockHash       @1 :Data;
+  committee           @2 :Committee;
 }
 
 struct BlockResult {
@@ -52,18 +53,23 @@ struct ValidatorResult {
   data                @0 :Data;
 }
 
+struct Committee {
+  totalPower          @0 :Int64;
+  validators          @1 :List(ValidatorResult);
+}
+
 struct Peer {
-  status                @0 :Int32;
-  moniker               @1 :Text;
-  agent                 @2 :Text;
-  peerID                @3 :Text;
-  publicKey             @4 :Text;
-  lastSeen              @5 :Int32;
-  flags                 @6 :Int32;
-  height                @7 :Int32;
-  receivedMessages      @8 :Int32;
-  invalidMessages       @9 :Int32;
-  receivedBytes         @10 :Int32;
+  status              @0 :Int32;
+  moniker             @1 :Text;
+  agent               @2 :Text;
+  peerID              @3 :Text;
+  publicKey           @4 :Text;
+  lastSeen            @5 :Int32;
+  flags               @6 :Int32;
+  height              @7 :Int32;
+  receivedMessages    @8 :Int32;
+  invalidMessages     @9 :Int32;
+  receivedBytes       @10 :Int32;
 }
 
 struct NetworkResult {
@@ -77,13 +83,13 @@ struct SendTransactionResult {
 }
 
 interface ZarbServer {
-  getBlock             @0 (hash: Data, verbosity: Int32)          -> (result :BlockResult);
-  getBlockHash         @1 (height: Int32)                         -> (result :Data);
-  getTransaction       @2 (id: Data, verbosity: Int32)            -> (result :TransactionResult);
-  getAccount           @3 (address: Text, verbosity: Int32)       -> (result :AccountResult);
-  getValidator         @4 (address: Text, verbosity: Int32)       -> (result :ValidatorResult);
-  getBlockchainInfo    @5 ()                                      -> (result :BlockchainResult);
-  getNetworkInfo       @6 ()                                      -> (result :NetworkResult);
-  sendRawTransaction   @7 (rawTx: Data)                           -> (result :SendTransactionResult);
+  getBlock            @0 (hash: Data, verbosity: Int32)          -> (result :BlockResult);
+  getBlockHash        @1 (height: Int32)                         -> (result :Data);
+  getTransaction      @2 (id: Data, verbosity: Int32)            -> (result :TransactionResult);
+  getAccount          @3 (address: Text, verbosity: Int32)       -> (result :AccountResult);
+  getValidator        @4 (address: Text, verbosity: Int32)       -> (result :ValidatorResult);
+  getBlockchainInfo   @5 ()                                      -> (result :BlockchainResult);
+  getNetworkInfo      @6 ()                                      -> (result :NetworkResult);
+  sendRawTransaction  @7 (rawTx: Data)                           -> (result :SendTransactionResult);
 }
 

@@ -539,7 +539,7 @@ func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 func (st *state) Transaction(id tx.ID) *tx.Tx {
 	tx, err := st.store.Transaction(id)
 	if err != nil {
-		st.logger.Error("searching transaction in local store failed", "id", id, "err", err)
+		st.logger.Trace("searching transaction in local store failed", "id", id, "err", err)
 	}
 	return tx
 }

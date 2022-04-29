@@ -7,6 +7,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
+	"github.com/zarbchain/zarb-go/types/validator"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
@@ -22,9 +23,25 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	hash, _ := st.LastBlockHash()
 
+	c, _ := st.Committee()
+	cv, _ := c.Validators()
+
 	tm := newTableMaker()
 	tm.addRowBlockHash("Hash", hash)
 	tm.addRowInt("Height", int(st.LastBlockHeight()))
+	tm.addRowString("--- Committee", "---")
+	tm.addRowInt("Total Power", int(c.TotalPower()))
+	for i := 0; i < cv.Len(); i++ {
+		v := cv.At(i)
+		d, _ := v.Data()
+		val, _ := validator.FromBytes(d)
+		tm.addRowInt("--- Validator", i)
+		tm.addRowValAddress("Address", val.Address().String())
+		tm.addRowInt("Stake", int(val.Stake()))
+		tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight()))
+		tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight()))
+	}
+
 	s.writeHTML(w, tm.html())
 }
 

@@ -3,6 +3,26 @@ package capnp
 func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
 	res, _ := args.Results.NewResult()
 	res.SetLastBlockHeight(zs.state.LastBlockHeight())
+
+	power := zs.state.CommitteePower()
+	vals := zs.state.CommitteeValidators()
+
+	c, err := res.NewCommittee()
+	if err != nil {
+		return err
+	}
+
+	cv, err := c.NewValidators(int32(len(vals)))
+	if err != nil {
+		return err
+	}
+	for i, val := range vals {
+		v := cv.At(i)
+		d, _ := val.Bytes()
+		v.SetData(d)
+	}
+	c.SetTotalPower(power)
+
 	return res.SetLastBlockHash(zs.state.LastBlockHash().Bytes())
 }
 

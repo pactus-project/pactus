@@ -55,8 +55,7 @@ func txToTable(trx *tx.Tx, tm *tableMaker) {
 	case payload.PayloadTypeBond:
 		tm.addRowString("Payload type", "Bond")
 		tm.addRowAccAddress("Sender", trx.Payload().(*payload.BondPayload).Sender.String())
-		tm.addRowValAddress("Validator address", trx.Payload().(*payload.BondPayload).PublicKey.Address().String())
-		tm.addRowBytes("Validator PublicKey", trx.Payload().(*payload.BondPayload).PublicKey.Bytes())
+		tm.addRowValAddress("Receiver", trx.Payload().(*payload.BondPayload).Receiver.String())
 		tm.addRowInt("Stake", int(trx.Payload().(*payload.BondPayload).Stake))
 
 	case payload.PayloadTypeSend:
