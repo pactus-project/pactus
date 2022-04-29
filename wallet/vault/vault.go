@@ -27,18 +27,31 @@ type Vault struct {
 
 type addressInfo struct {
 	Method  string `json:"method"`
+	Params  params `json:"params"`
 	Address string `json:"address"`
 	Label   string `json:"label"`
-	Params  params `json:"params"`
 }
 
 type seed struct {
 	Method     string    `json:"method"`
 	ParentSeed encrypted `json:"seed"`
-	ParentKey  encrypted `json:"key"`
+	ParentKey  encrypted `json:"bls_key"`
 }
 
-// GenerateMnemonic generates a new mnemonic (seed phrase based on BIP-32)
+const (
+	nameParamIndex = "index"
+	nameParamSeed  = "seed"
+
+	nameFuncBIP39       = "BIP_39"
+	nameFuncBLS         = "BLS"
+	nameFuncKDFChain    = "KDF_CHAIN"
+	nameFuncImported    = "IMPORTED"
+	nameFuncBLSKDFChain = nameFuncBLS + "-" + nameFuncKDFChain
+	nameFuncBLSImported = nameFuncBLS + "-" + nameFuncImported
+)
+
+// GenerateMnemonic generates a new mnemonic (seed phrase) based on BIP-39
+// https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
 func GenerateMnemonic() string {
 	entropy, err := bip39.NewEntropy(128)
 	exitOnErr(err)
@@ -59,7 +72,7 @@ func CreateVaultFromMnemonic(mnemonic, password string, keyInfo []byte) (*Vault,
 	return &Vault{
 		Encrypted: len(password) > 0,
 		Seed: seed{
-			Method:     "BIP-39",
+			Method:     nameFuncBIP39,
 			ParentSeed: e.encrypt(mnemonic),
 			ParentKey:  e.encrypt(base64.StdEncoding.EncodeToString(parentKey.Bytes())),
 		},
@@ -103,7 +116,7 @@ func (v *Vault) AddressInfos() []AddressInfo {
 		addrs = append(addrs, AddressInfo{
 			Address:  info.Address,
 			Label:    info.Label,
-			Imported: (info.Method == "IMPORTED"),
+			Imported: (info.Method == nameFuncBLSImported),
 		})
 	}
 
@@ -137,28 +150,24 @@ func (v *Vault) ImportPrivateKey(password string, prvStr string) error {
 	v.Keystore = append(v.Keystore, e.encrypt(prv.String()))
 
 	p := newParams()
-	p.SetUint32("index", uint32(len(v.Keystore)-1))
+	p.SetUint32(nameParamIndex, uint32(len(v.Keystore)-1))
 	v.Addresses = append(v.Addresses, addressInfo{
-		Method:  "IMPORTED",
+		Method:  nameFuncBLSImported,
 		Address: addr,
 		Params:  p,
 	})
 	return nil
 }
 
-func (v *Vault) newKeySeed(password string) ([]byte, error) {
-	mnemonic, err := v.Mnemonic(password)
-	if err != nil {
-		return nil, err
-	}
+func (v *Vault) newKeySeed(mnemonic string) []byte {
 	parentSeed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	exitOnErr(err)
-	data := []byte{0}
+	data := []byte{crypto.SignatureTypeBLS}
 	hmacKey := sha256.Sum256(parentSeed)
 
 	checkKeySeed := func(seed []byte) bool {
 		for _, a := range v.Addresses {
-			if safeCmp(seed, a.Params.GetBytes("seed")) {
+			if safeCmp(seed, a.Params.GetBytes(nameParamSeed)) {
 				return true
 			}
 		}
@@ -174,31 +183,20 @@ func (v *Vault) newKeySeed(password string) ([]byte, error) {
 		nextData := hash512[32:]
 
 		if !checkKeySeed(keySeed) {
-			return keySeed, nil
+			return keySeed
 		}
 
 		data = nextData
 	}
 }
 
-// Note:
-// 1- Deriving Child key seeds from parent seed
-// 2- Exposing any child key, should not expose parent key or any other child keys
-
 func (v *Vault) derivePrivateKey(parentKey []byte, keySeed []byte) *bls.PrivateKey {
-	keyInfo := []byte{} // TODO, update for testnet
-
-	// To derive a new key, we need:
-	//    1- Parent Key
-	//    2- Key seed.
-	//
-
 	hmac512 := hmac.New(sha512.New, parentKey)
 	_, err := hmac512.Write(keySeed)
 	exitOnErr(err)
 	ikm := hmac512.Sum(nil)
 
-	prv, err := bls.PrivateKeyFromSeed(ikm, keyInfo)
+	prv, err := bls.PrivateKeyFromSeed(ikm, nil)
 	exitOnErr(err)
 
 	return prv
@@ -212,13 +210,13 @@ func (v *Vault) getPrivateKey(password, addr string) (crypto.PrivateKey, error) 
 
 	var prv crypto.PrivateKey
 	switch info.Method {
-	case "IMPORTED":
+	case nameFuncBLSImported:
 		{
 			e, err := v.makeEncrypter(password)
 			if err != nil {
 				return nil, err
 			}
-			index := info.Params.GetUint32("index")
+			index := info.Params.GetUint32(nameParamIndex)
 			prvStr, err := e.decrypt(v.Keystore[index])
 			if err != nil {
 				return nil, err
@@ -226,15 +224,18 @@ func (v *Vault) getPrivateKey(password, addr string) (crypto.PrivateKey, error) 
 			prv, err = bls.PrivateKeyFromString(prvStr)
 			exitOnErr(err)
 		}
-	case "KDF-CHAIN":
+	case nameFuncBLSKDFChain:
 		{
-			seed := info.Params.GetBytes("seed")
+			seed := info.Params.GetBytes(nameParamSeed)
 			parentKey, err := v.parentKey(password)
 			if err != nil {
 				return nil, err
 			}
 			prv = v.derivePrivateKey(parentKey, seed)
 		}
+
+	default:
+		return nil, NewErrUnknownMethod(info.Method)
 	}
 
 	if prv.PublicKey().Address().String() != addr {
@@ -261,20 +262,25 @@ func (v *Vault) PublicKey(password, addr string) (string, error) {
 }
 
 func (v *Vault) MakeNewAddress(password, label string) (string, error) {
-	keySeed, err := v.newKeySeed(password)
+	// Create a key seed
+	mnemonic, err := v.Mnemonic(password)
 	if err != nil {
 		return "", err
 	}
-	parentKey, err := v.parentKey(password)
-	exitOnErr(err) // Password has been checked in previous line
+	keySeed := v.newKeySeed(mnemonic)
 
+	// Generate the private key
+	parentKey, err := v.parentKey(password)
+	exitOnErr(err) // Password has been checked above
 	prv := v.derivePrivateKey(parentKey, keySeed)
+
+	// Address string from private key
 	addr := prv.PublicKey().Address().String()
 	params := newParams()
-	params.SetBytes("seed", keySeed)
+	params.SetBytes(nameParamSeed, keySeed)
 
 	v.Addresses = append(v.Addresses, addressInfo{
-		Method:  "KDF-CHAIN",
+		Method:  nameFuncBLSKDFChain,
 		Address: addr,
 		Label:   label,
 		Params:  params,
@@ -298,6 +304,9 @@ func (v *Vault) Contains(addr string) bool {
 }
 
 func (v *Vault) Mnemonic(password string) (string, error) {
+	if v.Seed.Method != nameFuncBIP39 {
+		return "", NewErrUnknownMethod(v.Seed.Method)
+	}
 	e, err := v.makeEncrypter(password)
 	if err != nil {
 		return "", err

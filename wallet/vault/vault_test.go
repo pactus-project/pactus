@@ -46,11 +46,13 @@ func TestAddressInfo(t *testing.T) {
 	assert.Equal(t, tVault.AddressCount(), 5)
 	infos := tVault.AddressInfos()
 	for i, info := range infos {
-		if tVault.Addresses[i].Method == "IMPORTED" {
+		if tVault.Addresses[i].Method == "BLS-IMPORTED" {
 			assert.True(t, info.Imported)
-		} else {
+		} else if tVault.Addresses[i].Method == "BLS-KDF_CHAIN" {
 			assert.Equal(t, info.Label, fmt.Sprintf("addr-%v", i+1))
 			assert.False(t, info.Imported)
+		} else {
+			assert.Fail(t, "invalid method")
 		}
 	}
 }
@@ -108,7 +110,7 @@ func TestGetPrivateKey(t *testing.T) {
 	t.Run("Unknown adddress", func(t *testing.T) {
 		addr := crypto.GenerateTestAddress()
 		_, err := tVault.PrivateKey(tPassword, addr.String())
-		assert.Equal(t, err.Error(), NewErrAddressNotFound(addr.String()).Error())
+		assert.ErrorIs(t, err, NewErrAddressNotFound(addr.String()))
 	})
 
 	t.Run("No password", func(t *testing.T) {
@@ -140,6 +142,12 @@ func TestGetPrivateKey(t *testing.T) {
 			assert.True(t, prv.PublicKey().EqualsTo(pub))
 			assert.Equal(t, pub.Address().String(), info.Address)
 		}
+	})
+
+	t.Run("Invalid method", func(t *testing.T) {
+		tVault.Addresses[0].Method = "UNKNOWN"
+		_, err := tVault.PrivateKey(tPassword, tVault.Addresses[0].Address)
+		assert.ErrorIs(t, err, NewErrUnknownMethod("UNKNOWN"))
 	})
 }
 
@@ -179,6 +187,8 @@ func TestImportPrivateKey(t *testing.T) {
 }
 
 func TestGetMnemonic(t *testing.T) {
+	setup(t)
+
 	t.Run("Invalid password", func(t *testing.T) {
 		_, err := tVault.Mnemonic("invalid-password")
 		assert.ErrorIs(t, err, ErrInvalidPassword)
@@ -192,7 +202,13 @@ func TestGetMnemonic(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		_, err := tVault.Mnemonic(tPassword)
 		assert.NoError(t, err)
+		assert.Equal(t, tVault.Seed.Method, "BIP_39")
+	})
 
+	t.Run("Invalid method", func(t *testing.T) {
+		tVault.Seed.Method = "UNKNOWN"
+		_, err := tVault.Mnemonic(tPassword)
+		assert.EqualError(t, err, NewErrUnknownMethod("UNKNOWN").Error())
 	})
 }
 

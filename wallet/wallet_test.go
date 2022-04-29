@@ -75,7 +75,7 @@ func TestRecoverWallet(t *testing.T) {
 		assert.NoError(t, tWallet.Save())
 
 		_, err := FromMnemonic(tWallet.path, mnemonic, password, 0)
-		assert.Equal(t, err.Error(), NewErrWalletExits(tWallet.path).Error())
+		assert.ErrorIs(t, err, NewErrWalletExits(tWallet.path))
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
