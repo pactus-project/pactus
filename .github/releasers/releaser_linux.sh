@@ -18,7 +18,7 @@ echo "Building the binaries"
 
 cd ${ROOT_DIR}
 make herumi
-export CGO_LDFLAGS="-L.herumi/bls/lib -lbls384_256 -lm -lstdc++ -g -O2"
+export CGO_LDFLAGS="-L.herumi/bls/lib -lbls384_256 -lm -g -O2"
 go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-daemon ./cmd/daemon
 go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-wallet ./cmd/wallet
 go build -ldflags "-s -w" -tags gtk -o ${BUILD_DIR}/zarb-gui ./cmd/gtk
