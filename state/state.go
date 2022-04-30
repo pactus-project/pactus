@@ -119,6 +119,8 @@ func (st *state) tryLoadLastInfo() error {
 
 	st.committee = committee
 
+	st.logger.Debug("last info", "committers", committee.Committers(), "state_root", st.stateRoot().Fingerprint())
+
 	return nil
 }
 
