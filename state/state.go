@@ -214,7 +214,13 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 }
 
 func (st *state) createSubsidyTx(fee int64) *tx.Tx {
-	acc, _ := st.store.Account(crypto.TreasuryAddress)
+	acc, err := st.store.Account(crypto.TreasuryAddress)
+	if err != nil {
+		// TODO: This can happen when a node is shutting down
+		// We can prevent it by using global context.
+		// Then we can close state before closing store.
+		return nil
+	}
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
 	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddres, st.params.BlockReward+fee, "")
