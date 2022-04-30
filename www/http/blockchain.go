@@ -36,7 +36,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 		v := cv.At(i)
 		d, _ := v.Data()
 		val, _ := validator.FromBytes(d)
-		tm.addRowInt("--- Validator", i)
+		tm.addRowInt("--- Validator", i+1)
 		tm.addRowValAddress("Address", val.Address().String())
 		tm.addRowAmount("Stake", val.Stake())
 		tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight()))
