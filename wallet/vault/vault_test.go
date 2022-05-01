@@ -247,3 +247,21 @@ func TestUpdatePassword(t *testing.T) {
 		}
 	})
 }
+
+func TestSetLabel(t *testing.T) {
+	setup(t)
+
+	t.Run("Set label for unknown address", func(t *testing.T) {
+		invAddr := crypto.GenerateTestAddress().String()
+		err := tVault.SetLabel(invAddr, "lbl")
+		assert.ErrorIs(t, err, NewErrAddressNotFound(invAddr))
+		assert.Equal(t, tVault.Label(invAddr), "")
+	})
+
+	t.Run("Update label", func(t *testing.T) {
+		testAddr := tVault.Addresses[0].Address
+		err := tVault.SetLabel(testAddr, "i have label")
+		assert.NoError(t, err)
+		assert.Equal(t, tVault.Label(testAddr), "i have label")
+	})
+}

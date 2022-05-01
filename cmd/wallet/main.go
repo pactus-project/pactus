@@ -25,6 +25,7 @@ func main() {
 		k.Command("new", "Creating a new address", NewAddress())
 		k.Command("all", "Show all addresses", AllAddresses())
 		k.Command("balance", "Show the balance of an address", GetBalance())
+		k.Command("setlabel", "Set label for the an address", SetLabel())
 		k.Command("pubkey", "Get public key of an address", GetPublicKey())
 		k.Command("privkey", "Get private key of an address", GetPrivateKey())
 		k.Command("import", "Import a private key into wallet", ImportPrivateKey())

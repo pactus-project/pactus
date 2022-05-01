@@ -120,9 +120,9 @@ func (v *Vault) Label(addr string) string {
 }
 
 func (v *Vault) SetLabel(addr, label string) error {
-	for _, info := range v.Addresses {
-		if info.Address == addr {
-			info.Label = label
+	for i := range v.Addresses {
+		if v.Addresses[i].Address == addr {
+			v.Addresses[i].Label = label
 			return nil
 		}
 	}
