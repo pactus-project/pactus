@@ -65,10 +65,7 @@ func NewAddress() func(c *cli.Cmd) {
 /// GetBalance shows the balance of an address
 func GetBalance() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		addrArg := c.String(cli.StringArg{
-			Name: "ADDRESS",
-			Desc: "address string",
-		})
+		addrArg := addAddressArg(c)
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
@@ -79,7 +76,7 @@ func GetBalance() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			balance, stake, err := wallet.GetBalance(*addrArg)
+			balance, stake, err := wallet.Balance(*addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -92,10 +89,7 @@ func GetBalance() func(c *cli.Cmd) {
 // GetPrivateKey returns the private key of an address
 func GetPrivateKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		addrArg := c.String(cli.StringArg{
-			Name: "ADDRESS",
-			Desc: "address string",
-		})
+		addrArg := addAddressArg(c)
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
@@ -121,10 +115,7 @@ func GetPrivateKey() func(c *cli.Cmd) {
 // GetPrivateKey returns the public key of an address
 func GetPublicKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		addrArg := c.String(cli.StringArg{
-			Name: "ADDRESS",
-			Desc: "address string",
-		})
+		addrArg := addAddressArg(c)
 
 		c.Before = func() { fmt.Println(cmd.ZARB) }
 		c.Action = func() {
@@ -177,4 +168,47 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 			cmd.PrintSuccessMsg("Private Key imported")
 		}
 	}
+}
+
+// SetLabel set label for the address
+func SetLabel() func(c *cli.Cmd) {
+	return func(c *cli.Cmd) {
+		addrArg := addAddressArg(c)
+
+		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Action = func() {
+			wallet, err := wallet.OpenWallet(*path)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			oldLabel := wallet.Label(*addrArg)
+			newLabel := cmd.PromptInputWithSuggestion("Label: ", oldLabel)
+
+			err = wallet.SetLabel(*addrArg, newLabel)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			err = wallet.Save()
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			cmd.PrintLine()
+			cmd.PrintSuccessMsg("Label set successfully")
+		}
+	}
+}
+
+func addAddressArg(c *cli.Cmd) *string {
+	addrArg := c.String(cli.StringArg{
+		Name: "ADDRESS",
+		Desc: "address string",
+	})
+
+	return addrArg
 }
