@@ -53,13 +53,9 @@ func OpenWallet(path string) (*Wallet, error) {
 	}
 
 	store := new(store)
-	err = json.Unmarshal(data, store)
+	err = store.UnmarshalJSON(data)
 	if err != nil {
 		return nil, err
-	}
-
-	if store.VaultCRC != store.calcVaultCRC() {
-		return nil, ErrInvalidCRC
 	}
 
 	return newWallet(path, store, true)
@@ -80,18 +76,20 @@ func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error)
 		return nil, err
 	}
 	store := &store{
-		Version:   1,
-		UUID:      uuid.New(),
-		CreatedAt: time.Now().Round(time.Second).UTC(),
-		Network:   net,
-		Vault:     vault,
+		data: storeData{
+			Version:   1,
+			UUID:      uuid.New(),
+			CreatedAt: time.Now().Round(time.Second).UTC(),
+			Network:   net,
+			Vault:     vault,
+		},
 	}
 
 	return newWallet(path, store, false)
 }
 
 func newWallet(path string, store *store, online bool) (*Wallet, error) {
-	if store.Network == NetworkTestNet {
+	if store.data.Network == NetworkTestNet {
 		crypto.DefaultHRP = "tzc"
 	}
 
@@ -123,7 +121,7 @@ func (w *Wallet) connectToRandomServer() error {
 	}
 
 	var netServers []serverInfo
-	switch w.store.Network {
+	switch w.store.data.Network {
 	case NetworkMainNet:
 		{ // mainnet
 			netServers = serversInfo["mainnet"]
@@ -157,9 +155,7 @@ func (w *Wallet) Path() string {
 }
 
 func (w *Wallet) Save() error {
-	w.store.VaultCRC = w.store.calcVaultCRC()
-
-	bs, err := json.MarshalIndent(w.store, "  ", "  ")
+	bs, err := w.store.MarshalJSON()
 	if err != nil {
 		return err
 	}
@@ -167,7 +163,8 @@ func (w *Wallet) Save() error {
 	return util.WriteFile(w.path, bs)
 }
 
-func (w *Wallet) GetBalance(addrStr string) (int64, int64, error) {
+// SetLabel returns balance and stake amount of addrStr
+func (w *Wallet) Balance(addrStr string) (int64, int64, error) {
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
 		return 0, 0, err
@@ -181,7 +178,6 @@ func (w *Wallet) GetBalance(addrStr string) (int64, int64, error) {
 	return balance, stake, nil
 }
 
-//
 // MakeBondTx creates a new bond transaction based on the given parameters
 func (w *Wallet) MakeBondTx(stampStr, seqStr, senderStr, receiverStr, valPubStr,
 	stakeStr, feeStr, memo string) (*tx.Tx, error) {

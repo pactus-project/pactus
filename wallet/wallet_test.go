@@ -48,8 +48,8 @@ func TestOpenWallet(t *testing.T) {
 	})
 
 	t.Run("Invalid crc", func(t *testing.T) {
-		tWallet.store.VaultCRC = 0
-		bs, _ := json.Marshal(tWallet.store)
+		tWallet.store.data.VaultCRC = 0
+		bs, _ := json.Marshal(tWallet.store.data)
 		assert.NoError(t, util.WriteFile(tWallet.path, bs))
 
 		_, err := OpenWallet(tWallet.path)

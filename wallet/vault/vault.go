@@ -109,6 +109,27 @@ func (v *Vault) UpdatePassword(oldPassword, newPassword string) error {
 	return nil
 }
 
+func (v *Vault) Label(addr string) string {
+	for _, info := range v.Addresses {
+		if info.Address == addr {
+			return info.Label
+		}
+	}
+
+	return ""
+}
+
+func (v *Vault) SetLabel(addr, label string) error {
+	for _, info := range v.Addresses {
+		if info.Address == addr {
+			info.Label = label
+			return nil
+		}
+	}
+
+	return NewErrAddressNotFound(addr)
+}
+
 func (v *Vault) AddressInfos() []AddressInfo {
 	addrs := make([]AddressInfo, 0, len(v.Addresses))
 
