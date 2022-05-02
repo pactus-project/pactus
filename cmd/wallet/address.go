@@ -11,7 +11,19 @@ import (
 /// AllAddresses lists all the wallet addresses
 func AllAddresses() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		balanceOpt := c.Bool(cli.BoolOpt{
+			Name:  "balance",
+			Desc:  "show account balance",
+			Value: false,
+		})
+
+		stakeOpt := c.Bool(cli.BoolOpt{
+			Name:  "stake",
+			Desc:  "show validator stake",
+			Value: false,
+		})
+
+		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
@@ -21,11 +33,24 @@ func AllAddresses() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			for _, info := range wallet.AddressInfos() {
-				label := info.Label
-				if info.Imported {
-					label += " (Imported)"
+				line := info.Address + "\t"
+
+				if *balanceOpt {
+					balance, _ := wallet.Balance(info.Address)
+					line += fmt.Sprintf("%v\t", changeToCoin(balance))
 				}
-				cmd.PrintInfoMsg("%s %s", info.Address, label)
+
+				if *stakeOpt {
+					stake, _ := wallet.Stake(info.Address)
+					line += fmt.Sprintf("%v\t", changeToCoin(stake))
+				}
+
+				line += info.Label
+				if info.Imported {
+					line += " (Imported)"
+				}
+
+				cmd.PrintInfoMsg(line)
 			}
 		}
 	}
@@ -34,16 +59,18 @@ func AllAddresses() func(c *cli.Cmd) {
 /// NewAddress creates a new address
 func NewAddress() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		passOpt := addPasswordOption(c)
+
+		c.Before = func() {}
 		c.Action = func() {
-			label := cmd.PromptInput("Label: ")
+			label := cmd.PromptInput("Label")
 			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			password := getPassword(wallet)
+			password := getPassword(wallet, *passOpt)
 			addr, err := wallet.MakeNewAddress(password, label)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
@@ -65,12 +92,9 @@ func NewAddress() func(c *cli.Cmd) {
 /// GetBalance shows the balance of an address
 func GetBalance() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		addrArg := c.String(cli.StringArg{
-			Name: "ADDRESS",
-			Desc: "address string",
-		})
+		addrArg := addAddressArg(c)
 
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
@@ -79,12 +103,14 @@ func GetBalance() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			balance, stake, err := wallet.GetBalance(*addrArg)
+			balance, err := wallet.Balance(*addrArg)
+			stake, err := wallet.Stake(*addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
-			cmd.PrintInfoMsg("balance: %v, stake: %v", balance, stake)
+			cmd.PrintInfoMsg("%s\tbalance: %v\tstake: %v\t%s",
+				changeToCoin(balance), changeToCoin(stake))
 		}
 	}
 }
@@ -92,12 +118,10 @@ func GetBalance() func(c *cli.Cmd) {
 // GetPrivateKey returns the private key of an address
 func GetPrivateKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		addrArg := c.String(cli.StringArg{
-			Name: "ADDRESS",
-			Desc: "address string",
-		})
+		addrArg := addAddressArg(c)
+		passOpt := addPasswordOption(c)
 
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
@@ -105,7 +129,7 @@ func GetPrivateKey() func(c *cli.Cmd) {
 				return
 			}
 
-			password := getPassword(wallet)
+			password := getPassword(wallet, *passOpt)
 			prv, err := wallet.PrivateKey(password, *addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
@@ -121,12 +145,10 @@ func GetPrivateKey() func(c *cli.Cmd) {
 // GetPrivateKey returns the public key of an address
 func GetPublicKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		addrArg := c.String(cli.StringArg{
-			Name: "ADDRESS",
-			Desc: "address string",
-		})
+		addrArg := addAddressArg(c)
+		passOpt := addPasswordOption(c)
 
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
@@ -134,7 +156,7 @@ func GetPublicKey() func(c *cli.Cmd) {
 				return
 			}
 
-			password := getPassword(wallet)
+			password := getPassword(wallet, *passOpt)
 			pub, err := wallet.PublicKey(password, *addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
@@ -150,9 +172,11 @@ func GetPublicKey() func(c *cli.Cmd) {
 // ImportPrivateKey imports a private key into the wallet
 func ImportPrivateKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		passOpt := addPasswordOption(c)
+
+		c.Before = func() {}
 		c.Action = func() {
-			prv := cmd.PromptInput("Private Key: ")
+			prv := cmd.PromptInput("Private Key")
 
 			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
@@ -160,8 +184,14 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 				return
 			}
 
-			password := getPassword(wallet)
+			password := getPassword(wallet, *passOpt)
 			err = wallet.ImportPrivateKey(password, prv)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			err = wallet.Save()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -171,4 +201,47 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 			cmd.PrintSuccessMsg("Private Key imported")
 		}
 	}
+}
+
+// SetLabel set label for the address
+func SetLabel() func(c *cli.Cmd) {
+	return func(c *cli.Cmd) {
+		addrArg := addAddressArg(c)
+
+		c.Before = func() {}
+		c.Action = func() {
+			wallet, err := wallet.OpenWallet(*path)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			oldLabel := wallet.Label(*addrArg)
+			newLabel := cmd.PromptInputWithSuggestion("Label", oldLabel)
+
+			err = wallet.SetLabel(*addrArg, newLabel)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			err = wallet.Save()
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			cmd.PrintLine()
+			cmd.PrintSuccessMsg("Label set successfully")
+		}
+	}
+}
+
+func addAddressArg(c *cli.Cmd) *string {
+	addrArg := c.String(cli.StringArg{
+		Name: "ADDRESS",
+		Desc: "address string",
+	})
+
+	return addrArg
 }

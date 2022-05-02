@@ -3,6 +3,7 @@ package vault
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 
 	"golang.org/x/crypto/argon2"
 )
@@ -16,11 +17,28 @@ var (
 )
 
 type argon2Encrypter struct {
+	method   string
 	password string
 }
 
+const (
+	nameParamIterations  = "iterations"
+	nameParamMemory      = "memory"
+	nameParamParallelism = "parallelism"
+	nameParamSalt        = "salt"
+	nameParamMAC         = "mac"
+
+	nameFuncArgon2ID  = "ARGON2ID"
+	nameFuncAES256CTR = "AES_256_CTR"
+	nameFuncSHA256    = "SHA256"
+)
+
 func newArgon2Encrypter(password string) *argon2Encrypter {
+	method := fmt.Sprintf("%s-%s-%s",
+		nameFuncArgon2ID, nameFuncAES256CTR, nameFuncSHA256)
+
 	return &argon2Encrypter{
+		method:   method,
 		password: password,
 	}
 }
@@ -40,31 +58,31 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 	mac := sha256MAC(cipherKey[16:32], d)
 
 	params := newParams()
-	params.SetUint32("iterations", iterations)
-	params.SetUint32("memory", memory)
-	params.SetUint8("parallelism", parallelism)
-	params.SetBytes("salt", salt)
-	params.SetBytes("mac", mac)
+	params.SetUint32(nameParamIterations, iterations)
+	params.SetUint32(nameParamMemory, memory)
+	params.SetUint8(nameParamParallelism, parallelism)
+	params.SetBytes(nameParamSalt, salt)
+	params.SetBytes(nameParamMAC, mac)
 
 	cipherText := base64.StdEncoding.EncodeToString(d)
 
 	return encrypted{
-		Method:     "ARGON2ID_AES-256-CTR_SHA256",
+		Method:     e.method,
 		Params:     params,
 		CipherText: cipherText,
 	}
 }
 
 func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
-	if ct.Method != "ARGON2ID_AES-256-CTR_SHA256" {
-		return "", ErrInvalidPassword
+	if ct.Method != e.method {
+		return "", NewErrUnknownMethod(ct.Method)
 	}
 
-	salt := ct.Params.GetBytes("salt")
-	mac := ct.Params.GetBytes("mac")
-	iterations := ct.Params.GetUint32("iterations")
-	memory := ct.Params.GetUint32("memory")
-	parallelism := ct.Params.GetUint8("parallelism")
+	iterations := ct.Params.GetUint32(nameParamIterations)
+	memory := ct.Params.GetUint32(nameParamMemory)
+	parallelism := ct.Params.GetUint8(nameParamParallelism)
+	salt := ct.Params.GetBytes(nameParamSalt)
+	mac := ct.Params.GetBytes(nameParamMAC)
 
 	cipherKey := e.cipherKey(e.password, salt, iterations, memory, parallelism)
 	d, err := base64.StdEncoding.DecodeString(ct.CipherText)

@@ -48,8 +48,8 @@ func TestOpenWallet(t *testing.T) {
 	})
 
 	t.Run("Invalid crc", func(t *testing.T) {
-		tWallet.store.VaultCRC = 0
-		bs, _ := json.Marshal(tWallet.store)
+		tWallet.store.data.VaultCRC = 0
+		bs, _ := json.Marshal(tWallet.store.data)
 		assert.NoError(t, util.WriteFile(tWallet.path, bs))
 
 		_, err := OpenWallet(tWallet.path)
@@ -75,7 +75,7 @@ func TestRecoverWallet(t *testing.T) {
 		assert.NoError(t, tWallet.Save())
 
 		_, err := FromMnemonic(tWallet.path, mnemonic, password, 0)
-		assert.Equal(t, err.Error(), NewErrWalletExits(tWallet.path).Error())
+		assert.ErrorIs(t, err, NewErrWalletExits(tWallet.path))
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {

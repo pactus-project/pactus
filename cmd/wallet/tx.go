@@ -1,12 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
@@ -22,21 +19,30 @@ func SendTx() func(c *cli.Cmd) {
 			Desc: "receiver address",
 		})
 
-		amountArg := c.String(cli.StringArg{
+		amtArg := c.Float64(cli.Float64Arg{
 			Name: "AMOUNT",
 			Desc: "the amount to be transferred",
 		})
-		stampOpt, seqOpt, memoOpt, feeOpt := addCommonTxOptions(c)
+		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
+		passOpt := addPasswordOption(c)
 
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := wallet.MakeSendTx(*stampOpt, *seqOpt, *fromArg, *toArg, *amountArg, *feeOpt, *memoOpt)
+			opts := []wallet.TxOption{
+				wallet.OptionStamp(*stampOpt),
+				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionSequence(int32(*seqOpt)),
+				wallet.OptionMemo(*memoOpt),
+			}
+
+			trx, err := w.MakeSendTx(*fromArg, *toArg, coinToChange(*amtArg),
+				opts...)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -46,40 +52,56 @@ func SendTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign and broadcast a Send transition to the network:")
 			cmd.PrintInfoMsg("From: %s", *fromArg)
 			cmd.PrintInfoMsg("To: %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %s", *amountArg)
+			cmd.PrintInfoMsg("Amount: %s (%s)", *amtArg, coinToChange(*amtArg))
+			cmd.PrintInfoMsg("Fee: %s (%s)", changeToCoin(trx.Fee()), trx.Fee())
 
-			signAndPublishTx(wallet, trx)
+			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
 	}
 }
 
 func BondTx() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		senderArg := c.String(cli.StringArg{
+		fromArg := c.String(cli.StringArg{
 			Name: "FROM",
 			Desc: "sender account address",
 		})
 
-		pubArg := c.String(cli.StringArg{
+		toArg := c.String(cli.StringArg{
 			Name: "TO",
-			Desc: "validator public key",
+			Desc: "receiver validator address",
 		})
 
-		stakeArg := c.String(cli.StringArg{
+		amtArg := c.Float64(cli.Float64Arg{
 			Name: "STAKE",
 			Desc: "stake amount",
 		})
-		stampOpt, seqOpt, memoOpt, feeOpt := addCommonTxOptions(c)
 
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		pubKeyOpt := c.String(cli.StringOpt{
+			Name: "pub",
+			Desc: "validator public key",
+		})
+
+		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
+		passOpt := addPasswordOption(c)
+
+		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := wallet.MakeBondTx(*stampOpt, *seqOpt, *senderArg, *pubArg, *stakeArg, *feeOpt, *memoOpt)
+			opts := []wallet.TxOption{
+				wallet.OptionStamp(*stampOpt),
+				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionSequence(int32(*seqOpt)),
+				wallet.OptionMemo(*memoOpt),
+			}
+
+			trx, err := w.MakeBondTx(*fromArg, *toArg, *pubKeyOpt,
+				coinToChange(*amtArg), opts...)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -87,32 +109,41 @@ func BondTx() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign and broadcast a bond transition to the network.")
-			cmd.PrintInfoMsg("Account: %s", *senderArg)
-			cmd.PrintInfoMsg("Validator: %s", trx.Payload().(*payload.BondPayload).PublicKey.Address())
-			cmd.PrintInfoMsg("Stake: %s", *stakeArg)
+			cmd.PrintInfoMsg("Account: %s", *fromArg)
+			cmd.PrintInfoMsg("Validator: %s", *toArg)
+			cmd.PrintInfoMsg("Amount: %v (%v)", *amtArg, coinToChange(*amtArg))
+			cmd.PrintInfoMsg("Fee: %v (%v)", changeToCoin(trx.Fee()), trx.Fee())
 
-			signAndPublishTx(wallet, trx)
+			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
 	}
 }
 
 func UnbondTx() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		valArg := c.String(cli.StringArg{
+		fromArg := c.String(cli.StringArg{
 			Name: "ADDR",
 			Desc: "validator's address",
 		})
-		stampOpt, seqOpt, memoOpt, _ := addCommonTxOptions(c)
+		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
+		passOpt := addPasswordOption(c)
 
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := wallet.MakeUnbondTx(*stampOpt, *seqOpt, *valArg, *memoOpt)
+			opts := []wallet.TxOption{
+				wallet.OptionStamp(*stampOpt),
+				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionSequence(int32(*seqOpt)),
+				wallet.OptionMemo(*memoOpt),
+			}
+
+			trx, err := w.MakeUnbondTx(*fromArg, opts...)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -120,9 +151,9 @@ func UnbondTx() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign and broadcast an Unbond transition to the network:")
-			cmd.PrintInfoMsg("Validator: %s", *valArg)
+			cmd.PrintInfoMsg("Validator: %s", *fromArg)
 
-			signAndPublishTx(wallet, trx)
+			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 
 		}
 	}
@@ -140,21 +171,30 @@ func WithdrawTx() func(c *cli.Cmd) {
 			Desc: "deposit to account address",
 		})
 
-		amountArg := c.String(cli.StringArg{
+		amtArg := c.Float64(cli.Float64Arg{
 			Name: "AMOUNT",
 			Desc: "the amount to be transferred",
 		})
-		stampOpt, seqOpt, memoOpt, feeOpt := addCommonTxOptions(c)
+		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
+		passOpt := addPasswordOption(c)
 
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*path)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
 
-			trx, err := wallet.MakeWithdrawTx(*stampOpt, *seqOpt, *fromArg, *toArg, *amountArg, *feeOpt, *memoOpt)
+			opts := []wallet.TxOption{
+				wallet.OptionStamp(*stampOpt),
+				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionSequence(int32(*seqOpt)),
+				wallet.OptionMemo(*memoOpt),
+			}
+
+			trx, err := w.MakeWithdrawTx(*fromArg, *toArg,
+				coinToChange(*amtArg), opts...)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -164,45 +204,54 @@ func WithdrawTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign and broadcast a Withdraw transition to the network.")
 			cmd.PrintInfoMsg("Validator: %s", *fromArg)
 			cmd.PrintInfoMsg("Account: %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %s", *amountArg)
+			cmd.PrintInfoMsg("Amount: %s", *amtArg)
 
-			signAndPublishTx(wallet, trx)
+			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
 	}
 }
 
-func addCommonTxOptions(c *cli.Cmd) (*string, *string, *string, *string) {
+func addCommonTxOptions(c *cli.Cmd) (*string, *int, *float64, *string, *bool) {
 	stampOpt := c.String(cli.StringOpt{
-		Name: "stamp",
-		Desc: "transaction stamp, if not specified will query from gRPC server",
+		Name:  "stamp",
+		Desc:  "transaction stamp, if not specified will query from gRPC server",
+		Value: "",
 	})
-
-	seqOpt := c.String(cli.StringOpt{
-		Name: "seq",
-		Desc: "transaction sequence, if not specified will query from gRPC server",
+	seqOpt := c.Int(cli.IntOpt{
+		Name:  "seq",
+		Desc:  "transaction sequence, if not specified will query from gRPC server",
+		Value: 0,
+	})
+	feeOpt := c.Float64(cli.Float64Opt{
+		Name:  "fee",
+		Desc:  "transaction fee, if not specified will calculate automatically",
+		Value: 0,
 	})
 	memoOpt := c.String(cli.StringOpt{
 		Name:  "memo",
 		Desc:  "transaction memo, maximum should be 64 character (optional)",
 		Value: "",
 	})
-	feeOpt := c.String(cli.StringOpt{
-		Name:  "fee",
-		Desc:  "transaction fee, if not specified will calculate automatically",
-		Value: "",
+	noConfirmOpt := c.Bool(cli.BoolOpt{
+		Name:  "no-confirm",
+		Desc:  "no confirmation question (optional)",
+		Value: false,
 	})
 
-	return stampOpt, seqOpt, memoOpt, feeOpt
+	return stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt
 }
 
-func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx) {
-	cmd.PrintWarnMsg("THIS ACTION IS NOT REVERSIBLE")
-	confirmed := cmd.PromptConfirm("Do you want to continue? ")
-	if !confirmed {
-		return
+func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx, noConfirm bool,
+	pass string) {
+	if !noConfirm {
+		cmd.PrintWarnMsg("THIS ACTION IS NOT REVERSIBLE")
+		confirmed := cmd.PromptConfirm("Do you want to continue")
+		if !confirmed {
+			return
+		}
 	}
 
-	password := getPassword(wallet)
+	password := getPassword(wallet, pass)
 	res, err := wallet.SignAndBroadcast(password, trx)
 	if err != nil {
 		cmd.PrintDangerMsg(err.Error())
@@ -211,10 +260,10 @@ func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx) {
 	cmd.PrintInfoMsg(res)
 }
 
-func getPassword(wallet *wallet.Wallet) string {
-	password := ""
-	if wallet.IsEncrypted() {
-		password = cmd.PromptPassword("Wallet password: ", false)
+func getPassword(wallet *wallet.Wallet, passOpt string) string {
+	password := passOpt
+	if wallet.IsEncrypted() && password == "" {
+		password = cmd.PromptPassword("Wallet password", false)
 	}
 	return password
 }

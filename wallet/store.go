@@ -10,6 +10,10 @@ import (
 )
 
 type store struct {
+	data storeData
+}
+
+type storeData struct {
 	Version   int          `json:"version"`
 	UUID      uuid.UUID    `json:"uuid"`
 	CreatedAt time.Time    `json:"created_at"`
@@ -18,48 +22,76 @@ type store struct {
 	Vault     *vault.Vault `json:"vault"`
 }
 
+func (s *store) MarshalJSON() ([]byte, error) {
+	s.data.VaultCRC = s.calcVaultCRC()
+	return json.MarshalIndent(&s.data, "  ", "  ")
+}
+
+func (s *store) UnmarshalJSON(bs []byte) error {
+	err := json.Unmarshal(bs, &s.data)
+	if err != nil {
+		return err
+	}
+
+	if s.data.VaultCRC != s.calcVaultCRC() {
+		return ErrInvalidCRC
+	}
+
+	return nil
+}
+
 func (s *store) calcVaultCRC() uint32 {
-	d, _ := json.Marshal(s.Vault)
+	d, _ := json.Marshal(s.data.Vault)
 	return crc32.ChecksumIEEE(d)
 }
 
 func (s *store) UpdatePassword(oldPassword, newPassword string) error {
-	return s.Vault.UpdatePassword(oldPassword, newPassword)
+	return s.data.Vault.UpdatePassword(oldPassword, newPassword)
 }
 
 func (s *store) IsEncrypted() bool {
-	return s.Vault.IsEncrypted()
+	return s.data.Vault.IsEncrypted()
 }
 
 func (s *store) AddressInfos() []vault.AddressInfo {
-	return s.Vault.AddressInfos()
+	return s.data.Vault.AddressInfos()
 }
 
 // AddressCount returns the number of addresses inside the wallet
 func (s *store) AddressCount() int {
-	return s.Vault.AddressCount()
+	return s.data.Vault.AddressCount()
 }
 
 func (s *store) ImportPrivateKey(password string, prvStr string) error {
-	return s.Vault.ImportPrivateKey(password, prvStr)
+	return s.data.Vault.ImportPrivateKey(password, prvStr)
 }
 
 func (s *store) PrivateKey(password, addr string) (string, error) {
-	return s.Vault.PrivateKey(password, addr)
+	return s.data.Vault.PrivateKey(password, addr)
 }
 
 func (s *store) PublicKey(password, addr string) (string, error) {
-	return s.Vault.PublicKey(password, addr)
+	return s.data.Vault.PublicKey(password, addr)
 }
 
 func (s *store) MakeNewAddress(password, label string) (string, error) {
-	return s.Vault.MakeNewAddress(password, label)
+	return s.data.Vault.MakeNewAddress(password, label)
 }
 
 func (s *store) Contains(addr string) bool {
-	return s.Vault.Contains(addr)
+	return s.data.Vault.Contains(addr)
 }
 
 func (s *store) Mnemonic(password string) (string, error) {
-	return s.Vault.Mnemonic(password)
+	return s.data.Vault.Mnemonic(password)
+}
+
+// SetLabel returns label of addrStr
+func (s *store) Label(addrStr string) string {
+	return s.data.Vault.Label(addrStr)
+}
+
+// SetLabel sets label for addr
+func (s *store) SetLabel(addrStr, label string) error {
+	return s.data.Vault.SetLabel(addrStr, label)
 }

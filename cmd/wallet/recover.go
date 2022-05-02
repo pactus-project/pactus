@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/wallet"
@@ -11,9 +9,9 @@ import (
 /// Recover recovers a wallet from mnemonic (seed phrase)
 func Recover() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() {}
 		c.Action = func() {
-			mnemonic := cmd.PromptInput("Seed: ")
+			mnemonic := cmd.PromptInput("Seed")
 			wallet, err := wallet.FromMnemonic(*path, mnemonic, "", 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
@@ -37,7 +35,9 @@ func Recover() func(c *cli.Cmd) {
 /// GetSeed prints the seed phrase (mnemonics)
 func GetSeed() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		passOpt := addPasswordOption(c)
+
+		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := wallet.OpenWallet(*path)
 			if err != nil {
@@ -45,7 +45,7 @@ func GetSeed() func(c *cli.Cmd) {
 				return
 			}
 
-			password := getPassword(wallet)
+			password := getPassword(wallet, *passOpt)
 			mnemonic, err := wallet.Mnemonic(password)
 
 			cmd.PrintLine()

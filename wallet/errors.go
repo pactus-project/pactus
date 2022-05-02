@@ -19,10 +19,10 @@ type ErrWalletExits struct {
 	Path string
 }
 
-func NewErrWalletExits(path string) *ErrWalletExits {
-	return &ErrWalletExits{Path: path}
+func NewErrWalletExits(path string) error {
+	return ErrWalletExits{Path: path}
 }
 
-func (e *ErrWalletExits) Error() string {
+func (e ErrWalletExits) Error() string {
 	return fmt.Sprintf("a wallet exists at: %s", e.Path)
 }
