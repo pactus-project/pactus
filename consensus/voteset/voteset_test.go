@@ -5,11 +5,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/committee"
-	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/util/errors"
 )
 

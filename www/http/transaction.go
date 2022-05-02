@@ -52,23 +52,32 @@ func txToTable(trx *tx.Tx, tm *tableMaker) {
 	tm.addRowInt("Fee", int(trx.Fee()))
 	tm.addRowString("Memo", trx.Memo())
 	switch trx.Payload().Type() {
-	case payload.PayloadTypeBond:
-		tm.addRowString("Payload type", "Bond")
-		tm.addRowAccAddress("Sender", trx.Payload().(*payload.BondPayload).Sender.String())
-		tm.addRowValAddress("Validator address", trx.Payload().(*payload.BondPayload).PublicKey.Address().String())
-		tm.addRowBytes("Validator PublicKey", trx.Payload().(*payload.BondPayload).PublicKey.Bytes())
-		tm.addRowInt("Stake", int(trx.Payload().(*payload.BondPayload).Stake))
-
 	case payload.PayloadTypeSend:
 		tm.addRowString("Payload type", "Send")
 		tm.addRowAccAddress("Sender", trx.Payload().(*payload.SendPayload).Sender.String())
 		tm.addRowAccAddress("Receiver", trx.Payload().(*payload.SendPayload).Receiver.String())
-		tm.addRowInt("Amount", int(trx.Payload().(*payload.SendPayload).Amount))
+		tm.addRowAmount("Amount", trx.Payload().(*payload.SendPayload).Amount)
+
+	case payload.PayloadTypeBond:
+		tm.addRowString("Payload type", "Bond")
+		tm.addRowAccAddress("Sender", trx.Payload().(*payload.BondPayload).Sender.String())
+		tm.addRowValAddress("Receiver", trx.Payload().(*payload.BondPayload).Receiver.String())
+		tm.addRowAmount("Stake", trx.Payload().(*payload.BondPayload).Stake)
 
 	case payload.PayloadTypeSortition:
 		tm.addRowString("Payload type", "Sortition")
 		tm.addRowValAddress("Address", trx.Payload().(*payload.SortitionPayload).Address.String())
 		tm.addRowBytes("Proof", trx.Payload().(*payload.SortitionPayload).Proof[:])
+
+	case payload.PayloadTypeUnbond:
+		tm.addRowString("Payload type", "Unbond")
+		tm.addRowValAddress("Validator", trx.Payload().(*payload.UnbondPayload).Validator.String())
+
+	case payload.PayloadTypeWithdraw:
+		tm.addRowString("Payload type", "Withdraw")
+		tm.addRowValAddress("Sender", trx.Payload().(*payload.WithdrawPayload).From.String())
+		tm.addRowAccAddress("Receiver", trx.Payload().(*payload.WithdrawPayload).To.String())
+		tm.addRowAmount("Amount", trx.Payload().(*payload.WithdrawPayload).Amount)
 	}
 	if trx.PublicKey() != nil {
 		tm.addRowBytes("PublicKey", trx.PublicKey().Bytes())

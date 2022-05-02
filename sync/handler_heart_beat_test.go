@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestParsingHeartbeatMessages(t *testing.T) {

@@ -59,7 +59,7 @@ func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
 	tm.addRowBlockHash("PrevBlockHash", b.Header().PrevBlockHash().Bytes())
 	tm.addRowBytes("StateRoot", b.Header().StateRoot().Bytes())
 	tm.addRowBytes("SortitionSeed", seed[:])
-	tm.addRowAccAddress("ProposerAddress", b.Header().ProposerAddress().String())
+	tm.addRowValAddress("ProposerAddress", b.Header().ProposerAddress().String())
 	if b.PrevCertificate() != nil {
 		tm.addRowString("--- PrevCertificate", "---")
 		tm.addRowBytes("Hash", b.PrevCertificate().Hash().Bytes())

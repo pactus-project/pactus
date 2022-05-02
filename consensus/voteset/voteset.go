@@ -3,12 +3,12 @@ package voteset
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/types/block"
 	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/util/errors"
 )
 

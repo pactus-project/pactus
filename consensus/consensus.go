@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/zarbchain/zarb-go/consensus/log"
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/types/block"
 	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/proposal"
 	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/logger"
 )

@@ -86,9 +86,9 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 		pld := trx.Payload().(*payload.BondPayload)
 		transaction.Payload = &zarb.TransactionInfo_Bond{
 			Bond: &zarb.BOND_PAYLOAD{
-				Sender:    pld.Sender.String(),
-				Validator: pld.PublicKey.Bytes(),
-				Stake:     pld.Stake,
+				Sender:   pld.Sender.String(),
+				Receiver: pld.Receiver.String(),
+				Stake:    pld.Stake,
 			},
 		}
 	case payload.PayloadTypeSortition:
