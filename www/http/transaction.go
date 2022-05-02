@@ -68,6 +68,16 @@ func txToTable(trx *tx.Tx, tm *tableMaker) {
 		tm.addRowString("Payload type", "Sortition")
 		tm.addRowValAddress("Address", trx.Payload().(*payload.SortitionPayload).Address.String())
 		tm.addRowBytes("Proof", trx.Payload().(*payload.SortitionPayload).Proof[:])
+
+	case payload.PayloadTypeUnbond:
+		tm.addRowString("Payload type", "Unbond")
+		tm.addRowValAddress("Validator", trx.Payload().(*payload.UnbondPayload).Validator.String())
+
+	case payload.PayloadTypeWithdraw:
+		tm.addRowString("Payload type", "Withdraw")
+		tm.addRowValAddress("Sender", trx.Payload().(*payload.WithdrawPayload).From.String())
+		tm.addRowAccAddress("Receiver", trx.Payload().(*payload.WithdrawPayload).To.String())
+		tm.addRowAmount("Amount", trx.Payload().(*payload.WithdrawPayload).Amount)
 	}
 	if trx.PublicKey() != nil {
 		tm.addRowBytes("PublicKey", trx.PublicKey().Bytes())
