@@ -1,12 +1,12 @@
 package log
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/consensus/voteset"
 	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/proposal"
 	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 type Log struct {

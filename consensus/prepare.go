@@ -1,9 +1,9 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/proposal"
+	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 type prepareState struct {
