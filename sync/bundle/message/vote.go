@@ -1,7 +1,7 @@
 package message
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 type VoteMessage struct {

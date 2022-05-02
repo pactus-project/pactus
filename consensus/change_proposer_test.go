@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zarbchain/zarb-go/consensus/vote"
+	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
 )
 

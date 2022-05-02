@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/zarbchain/zarb-go/types/proposal"
+	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestProposeBlock(t *testing.T) {

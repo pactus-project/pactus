@@ -3,9 +3,9 @@ package consensus
 import (
 	"sync"
 
-	"github.com/zarbchain/zarb-go/consensus/proposal"
-	"github.com/zarbchain/zarb-go/consensus/vote"
 	"github.com/zarbchain/zarb-go/state"
+	"github.com/zarbchain/zarb-go/types/proposal"
+	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/util"
 )
 
