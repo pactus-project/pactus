@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/wallet"
@@ -11,7 +13,13 @@ func AllAddresses() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		balanceOpt := c.Bool(cli.BoolOpt{
 			Name:  "balance",
-			Desc:  "show balance",
+			Desc:  "show account balance",
+			Value: false,
+		})
+
+		stakeOpt := c.Bool(cli.BoolOpt{
+			Name:  "stake",
+			Desc:  "show validator stake",
 			Value: false,
 		})
 
@@ -25,21 +33,24 @@ func AllAddresses() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			for _, info := range wallet.AddressInfos() {
-				label := info.Label
-				if info.Imported {
-					label += " (Imported)"
-				}
+				line := info.Address + "\t"
+
 				if *balanceOpt {
 					balance, _ := wallet.Balance(info.Address)
-					stake, _ := wallet.Stake(info.Address)
-					cmd.PrintInfoMsg("%s\tbalance: %v\tstake: %v\t%s",
-						info.Address, changeToCoin(balance),
-						changeToCoin(stake), label)
-				} else {
-					cmd.PrintInfoMsg("%s\t%s", info.Address, label)
-
+					line += fmt.Sprintf("%v\t", changeToCoin(balance))
 				}
 
+				if *stakeOpt {
+					stake, _ := wallet.Stake(info.Address)
+					line += fmt.Sprintf("%v\t", changeToCoin(stake))
+				}
+
+				line += info.Label
+				if info.Imported {
+					line += " (Imported)"
+				}
+
+				cmd.PrintInfoMsg(line)
 			}
 		}
 	}

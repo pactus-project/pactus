@@ -199,7 +199,7 @@ func (w *Wallet) MakeSendTx(sender, receiver string, amount int64,
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setToAddress(sender)
+	err = maker.setToAddress(receiver)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +220,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setToAddress(sender)
+	err = maker.setToAddress(receiver)
 	if err != nil {
 		return nil, err
 	}
@@ -263,7 +263,7 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setToAddress(sender)
+	err = maker.setToAddress(receiver)
 	if err != nil {
 		return nil, err
 	}

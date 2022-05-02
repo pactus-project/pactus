@@ -78,7 +78,7 @@ func BondTx() func(c *cli.Cmd) {
 		})
 
 		pubKeyOpt := c.String(cli.StringOpt{
-			Name: "pubkey",
+			Name: "pub",
 			Desc: "validator public key",
 		})
 
