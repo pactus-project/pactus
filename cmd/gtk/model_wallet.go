@@ -29,7 +29,6 @@ func (model *walletModel) ToTreeModel() *gtk.TreeModel {
 }
 
 func (model *walletModel) rebuildModel() {
-
 	model.listStore.Clear()
 	for no, info := range model.wallet.AddressInfos() {
 		label := info.Label

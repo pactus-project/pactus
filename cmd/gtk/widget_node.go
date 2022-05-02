@@ -63,7 +63,6 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) *widgetNode {
 }
 
 func (wn *widgetNode) timeout() bool {
-
 	lastBlockTime := wn.model.node.State().LastBlockTime()
 	lastBlockHeight := wn.model.node.State().LastBlockHeight()
 	wn.labelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04 MST"))

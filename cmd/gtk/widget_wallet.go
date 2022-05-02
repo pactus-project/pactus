@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"log"
 
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -87,6 +88,8 @@ func buildWidgetWallet(model *walletModel) *widgetWallet {
 	}
 	builder.ConnectSignals(signals)
 
+	glib.TimeoutAdd(10000, w.timeout)
+
 	return w
 }
 
@@ -97,5 +100,10 @@ func (ww *widgetWallet) onNewAddress() {
 	}
 
 	ww.model.createAddress(password)
+}
+
+func (wn *widgetWallet) timeout() bool {
+	wn.model.rebuildModel()
+	return true
 
 }
