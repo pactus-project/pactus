@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/proposal"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
+	"github.com/zarbchain/zarb-go/types/proposal"
 )
 
 func TestParsingProposalMessages(t *testing.T) {
