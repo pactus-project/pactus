@@ -152,7 +152,7 @@ func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Si
 			}
 			password := ""
 			if wallet.IsEncrypted() {
-				password = cmd.PromptPassword("Wallet password: ", false)
+				password = cmd.PromptPassword("Wallet password", false)
 			}
 			valPrvKeyStr, err := wallet.PrivateKey(password, addrInfos[0].Address)
 			if err != nil {
@@ -161,7 +161,7 @@ func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Si
 			prvStr = valPrvKeyStr
 		} else {
 			// Creating KeyObject from Private Key
-			prvStr = cmd.PromptInput("Please enter the validator private key: ")
+			prvStr = cmd.PromptInput("Please enter the validator private key")
 		}
 
 	case *keyFileOpt != "":

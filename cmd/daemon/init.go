@@ -53,14 +53,14 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("\"" + mnemonic + "\"")
 			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
 			cmd.PrintLine()
-			confirmed := cmd.PromptConfirm("Do you want to continue?")
+			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
 			}
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Please enter a password for wallet")
-			password := cmd.PromptPassword("Password: ", true)
+			password := cmd.PromptPassword("Password", true)
 			walletPath := cmd.ZarbDefaultWalletPath(workingDir)
 
 			// To make process faster, we update the password

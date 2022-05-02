@@ -7,7 +7,25 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 )
 
+const changeFactor = float64(100000000)
+
+func coinToChange(coin float64) int64 {
+	return int64(coin * changeFactor)
+}
+
+func changeToCoin(change int64) float64 {
+	return float64(change) / changeFactor
+}
+
 var path *string
+
+func addPasswordOption(c *cli.Cmd) *string {
+	return c.String(cli.StringOpt{
+		Name:  "password",
+		Desc:  "provide wallet password as a parameter instead of interactively",
+		Value: "",
+	})
+}
 
 func main() {
 	app := cli.App("zarb-wallet", "Zarb wallet")
@@ -21,6 +39,7 @@ func main() {
 	app.Command("create", "Create a new wallet", Generate())
 	app.Command("recover", "Recover waller from the seed phrase (mnemonic)", Recover())
 	app.Command("seed", "Show secret seed phrase (mnemonic) that can be used to recover this wallet", GetSeed())
+	app.Command("password", "Change wallet password", ChangePassword())
 	app.Command("address", "Manage address book", func(k *cli.Cmd) {
 		k.Command("new", "Creating a new address", NewAddress())
 		k.Command("all", "Show all addresses", AllAddresses())

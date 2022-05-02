@@ -36,7 +36,8 @@ func (model *walletModel) rebuildModel() {
 		if info.Imported {
 			label += "(Imported)"
 		}
-		balance, stake, _ := model.wallet.GetBalance(info.Address)
+		balance, _ := model.wallet.Balance(info.Address)
+		stake, _ := model.wallet.Balance(info.Address)
 		//errorCheck(err)
 		balanceStr := strconv.FormatInt(balance, 10)
 		stakeStr := strconv.FormatInt(stake, 10)
