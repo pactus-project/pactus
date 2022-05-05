@@ -18,3 +18,9 @@ linters-settings:
     # If true, multiple global `type`, `const` and `var` declarations are allowed.
     # Default: true (disabled)
     disable-dec-num-check: true
+
+  gocyclo:
+    # Minimal code complexity to report.
+    # Default: 30 (but we recommend 10-20)
+    min-complexity: 12
+

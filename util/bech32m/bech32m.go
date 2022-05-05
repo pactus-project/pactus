@@ -44,6 +44,7 @@ func toBytes(chars string) ([]byte, error) {
 // 32), otherwise the results are undefined.
 //
 // For more details on the polymod calculation, please refer to BIP 173.
+//gocyclo:ignore
 func bech32Polymod(hrp string, values, checksum []byte) int {
 	chk := 1
 
@@ -163,6 +164,7 @@ func bech32VerifyChecksum(hrp string, data []byte) bool {
 //
 // Note that the returned data is 5-bit (base32) encoded and the human-readable
 // part will be lowercase.
+//gocyclo:ignore
 func DecodeNoLimit(bech string) (string, []byte, error) {
 	// The minimum allowed size of a bech32 string is 8 characters, since it
 	// needs a non-empty HRP, a separator, and a 6 character checksum.
@@ -281,6 +283,7 @@ func Encode(hrp string, data []byte) (string, error) {
 
 // ConvertBits converts a byte slice where each byte is encoding fromBits bits,
 // to a byte slice where each byte is encoding toBits bits.
+//gocyclo:ignore
 func ConvertBits(data []byte, fromBits, toBits uint8, pad bool) ([]byte, error) {
 	if fromBits < 1 || fromBits > 8 || toBits < 1 || toBits > 8 {
 		return nil, ErrInvalidBitGroups{}

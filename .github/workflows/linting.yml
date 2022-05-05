@@ -28,4 +28,4 @@ jobs:
       run: make devtools
 
     - name: Formatting and linting the project
-      run: make fmt
+      run: make check

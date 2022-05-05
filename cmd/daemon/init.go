@@ -18,6 +18,7 @@ import (
 )
 
 // Init initializes a node for zarb blockchain
+//gocyclo:ignore
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 

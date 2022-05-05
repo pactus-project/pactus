@@ -87,57 +87,18 @@ func (m *txMaker) setToAddress(addr string) error {
 }
 
 func (m *txMaker) build() (*tx.Tx, error) {
-	if m.stamp == nil {
-		stamp, err := m.client.getStamp()
-		if err != nil {
-			return nil, err
-		}
-		m.stamp = &stamp
+
+	err := m.checkStamp()
+	if err != nil {
+		return nil, err
 	}
 
-	if m.seq == 0 {
-		switch m.typ {
-		case payload.PayloadTypeSend,
-			payload.PayloadTypeBond:
-			{
-				seq, err := m.client.getAccountSequence(*m.from)
-				if err != nil {
-					return nil, err
-				}
-				m.seq = seq
-			}
-
-		case payload.PayloadTypeUnbond,
-			payload.PayloadTypeWithdraw:
-			{
-				seq, err := m.client.GetValidatorSequence(*m.from)
-				if err != nil {
-					return nil, err
-				}
-				m.seq = seq
-			}
-		}
+	err = m.checkSequence()
+	if err != nil {
+		return nil, err
 	}
 
-	if m.fee == 0 {
-		switch m.typ {
-		case payload.PayloadTypeSend,
-			payload.PayloadTypeBond,
-			payload.PayloadTypeWithdraw:
-			{
-				fee := m.amount / 10000
-				if fee < 10000 {
-					fee = 10000
-				}
-				m.fee = fee
-			}
-
-		case payload.PayloadTypeUnbond:
-			{
-				m.fee = 0
-			}
-		}
-	}
+	m.checkFee()
 
 	var trx *tx.Tx
 	switch m.typ {
@@ -163,4 +124,65 @@ func (m *txMaker) build() (*tx.Tx, error) {
 	}
 
 	return trx, nil
+}
+
+func (m *txMaker) checkStamp() error {
+	if m.stamp == nil {
+		stamp, err := m.client.getStamp()
+		if err != nil {
+			return err
+		}
+		m.stamp = &stamp
+	}
+
+	return nil
+}
+
+func (m *txMaker) checkSequence() error {
+	if m.seq == 0 {
+		switch m.typ {
+		case payload.PayloadTypeSend,
+			payload.PayloadTypeBond:
+			{
+				seq, err := m.client.getAccountSequence(*m.from)
+				if err != nil {
+					return err
+				}
+				m.seq = seq
+			}
+
+		case payload.PayloadTypeUnbond,
+			payload.PayloadTypeWithdraw:
+			{
+				seq, err := m.client.GetValidatorSequence(*m.from)
+				if err != nil {
+					return err
+				}
+				m.seq = seq
+			}
+		}
+	}
+	return nil
+}
+
+func (m *txMaker) checkFee() {
+	if m.fee == 0 {
+		switch m.typ {
+		case payload.PayloadTypeSend,
+			payload.PayloadTypeBond,
+			payload.PayloadTypeWithdraw:
+			{
+				fee := m.amount / 10000
+				if fee < 10000 {
+					fee = 10000
+				}
+				m.fee = fee
+			}
+
+		case payload.PayloadTypeUnbond:
+			{
+				m.fee = 0
+			}
+		}
+	}
 }
