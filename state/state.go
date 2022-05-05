@@ -46,7 +46,6 @@ func LoadOrNewState(
 	signer crypto.Signer,
 	store store.Store,
 	txPool txpool.TxPool) (Facade, error) {
-
 	// Block rewards goes to the reward address
 	// If it is set inside config, we use that address
 	// otherwise, it will be the signer address

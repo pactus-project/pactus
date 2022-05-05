@@ -122,7 +122,6 @@ func TestPublicKeyBytes(t *testing.T) {
 			assert.Equal(t, pub.SanityCheck() == nil, test.valid, "test %v. sanity check failed", test.name)
 			assert.Equal(t, pub.Bytes(), test.bytes, "test %v. invalid bytes", test.name)
 			assert.Equal(t, pub.String(), test.encoded, "test %v. invalid encoded", test.name)
-
 		} else {
 			assert.Error(t, err, "test %v. should failed", test.name)
 			assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)

@@ -32,7 +32,6 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 		msg1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
 		assert.Equal(t, msg1.Message.(*message.BlocksRequestMessage).From, lastBlockheight+1)
 	})
-
 }
 
 func TestBroadcastingBlockAnnounceMessages(t *testing.T) {

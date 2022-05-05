@@ -208,7 +208,6 @@ func TestCommitBlocks(t *testing.T) {
 }
 
 func TestCommitSandbox(t *testing.T) {
-
 	t.Run("Add new account", func(t *testing.T) {
 		setup(t)
 
@@ -531,7 +530,6 @@ func TestInvalidBlockTime(t *testing.T) {
 
 	assert.NoError(t, tState1.ValidateBlock(validBlock))
 	assert.Error(t, tState1.ValidateBlock(invalidBlock))
-
 }
 
 func TestValidatorHelpers(t *testing.T) {

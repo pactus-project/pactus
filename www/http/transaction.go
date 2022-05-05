@@ -38,7 +38,6 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	tm := newTableMaker()
 	txToTable(trx, tm)
 	s.writeHTML(w, tm.html())
-
 }
 
 func txToTable(trx *tx.Tx, tm *tableMaker) {

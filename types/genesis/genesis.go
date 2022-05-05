@@ -97,10 +97,8 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 	}
 }
 
-func MakeGenesis(genesisTime time.Time,
-	accounts []*account.Account,
+func MakeGenesis(genesisTime time.Time, accounts []*account.Account,
 	validators []*validator.Validator, params param.Params) *Genesis {
-
 	genAccs := make([]genAccount, 0, len(accounts))
 	for _, acc := range accounts {
 		genAcc := makeGenesisAccount(acc)

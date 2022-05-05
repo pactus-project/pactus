@@ -32,5 +32,4 @@ func TestSignable(t *testing.T) {
 	assert.NoError(t, signable.pub.Verify(signable.SignBytes(), signable.sig))
 
 	assert.True(t, s.SignData([]byte("zarb")).EqualsTo(signable.sig))
-
 }

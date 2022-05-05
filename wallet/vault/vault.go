@@ -79,7 +79,6 @@ func CreateVaultFromMnemonic(mnemonic, password string, keyInfo []byte) (*Vault,
 		Keystore:  make([]encrypted, 0),
 		Addresses: make([]addressInfo, 0),
 	}, nil
-
 }
 
 func (v *Vault) UpdatePassword(oldPassword, newPassword string) error {

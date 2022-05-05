@@ -522,7 +522,6 @@ func TestConvertBitsFailures(t *testing.T) {
 				tc.err, err)
 		}
 	}
-
 }
 
 // BenchmarkConvertBitsDown benchmarks the speed and memory allocation behavior

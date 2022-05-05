@@ -26,10 +26,7 @@ type txPool struct {
 	logger      *logger.Logger
 }
 
-func NewTxPool(
-	conf *Config,
-	broadcastCh chan message.Message) TxPool {
-
+func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pendings := make(map[payload.Type]*linkedmap.LinkedMap)
 
 	pendings[payload.PayloadTypeSend] = linkedmap.NewLinkedMap(conf.sendPoolSize())

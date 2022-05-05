@@ -33,5 +33,4 @@ func TestTransaction(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
-
 }

@@ -54,7 +54,6 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 				Absentees:  absentees,
 				Signature:  block.PrevCertificate().Signature().Bytes(),
 			}
-
 		}
 		header = &zarb.BlockHeaderInfo{
 			Version:         int32(block.Header().Version()),
@@ -63,7 +62,6 @@ func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) 
 			SortitionSeed:   seed[:],
 			ProposerAddress: block.Header().ProposerAddress().String(),
 		}
-
 	}
 
 	//TODO: Cache for better performance

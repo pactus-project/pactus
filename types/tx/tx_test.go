@@ -301,7 +301,6 @@ func TestSortitionSanityCheck(t *testing.T) {
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
-
 }
 
 func TestSignBytes(t *testing.T) {

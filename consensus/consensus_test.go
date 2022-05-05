@@ -217,13 +217,8 @@ func checkHeightRoundWait(t *testing.T, cons *consensus, height int32, round int
 	checkHeightRound(t, cons, height, round)
 }
 
-func testAddVote(cons *consensus,
-	voteType vote.Type,
-	height int32,
-	round int16,
-	blockHash hash.Hash,
-	valID int) *vote.Vote {
-
+func testAddVote(cons *consensus, voteType vote.Type, height int32, round int16,
+	blockHash hash.Hash, valID int) *vote.Vote {
 	v := vote.NewVote(voteType, height, round, blockHash, tSigners[valID].Address())
 	tSigners[valID].SignMsg(v)
 

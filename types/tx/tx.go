@@ -38,11 +38,8 @@ type txData struct {
 	Signature crypto.Signature
 }
 
-func NewTx(stamp hash.Stamp,
-	seq int32,
-	pld payload.Payload,
-	fee int64, memo string) *Tx {
-
+func NewTx(stamp hash.Stamp, seq int32, pld payload.Payload, fee int64,
+	memo string) *Tx {
 	trx := &Tx{
 		data: txData{
 			Stamp:    stamp,

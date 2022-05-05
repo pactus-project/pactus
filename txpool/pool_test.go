@@ -33,7 +33,6 @@ func setup(t *testing.T) {
 
 	block88 := tSandbox.TestStore.AddTestBlock(88)
 	tTestTx = tx.NewSubsidyTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
-
 }
 
 func shouldPublishTransaction(t *testing.T, id tx.ID) {

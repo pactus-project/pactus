@@ -68,7 +68,6 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 		if stopped {
 			return
 		}
-
 	}
 	iter.Release()
 }

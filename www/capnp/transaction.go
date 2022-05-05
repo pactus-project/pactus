@@ -49,5 +49,4 @@ func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) err
 	}
 	res.SetStatus(0)
 	return nil
-
 }

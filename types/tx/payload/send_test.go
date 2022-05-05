@@ -165,6 +165,5 @@ func TestSendDecoding(t *testing.T) {
 				assert.Equal(t, pld.Value(), test.value)
 			}
 		}
-
 	}
 }

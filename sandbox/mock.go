@@ -70,7 +70,6 @@ func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator 
 }
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.TestStore.UpdateValidator(val)
-
 }
 func (m *MockSandbox) CurrentHeight() int32 {
 	return m.TestStore.LastHeight + 1

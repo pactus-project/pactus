@@ -309,7 +309,6 @@ func (s *store) LastCertificate() (int32, *block.Certificate) {
 		return -1, nil
 	}
 	return height, cert
-
 }
 
 func (s *store) WriteBatch() error {

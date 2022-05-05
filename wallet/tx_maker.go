@@ -87,7 +87,6 @@ func (m *txMaker) setToAddress(addr string) error {
 }
 
 func (m *txMaker) build() (*tx.Tx, error) {
-
 	err := m.checkStamp()
 	if err != nil {
 		return nil, err

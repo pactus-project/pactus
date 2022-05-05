@@ -120,7 +120,6 @@ func (m *MockState) IsProposer(addr crypto.Address, round int16) bool {
 }
 
 func (m *MockState) TotalPower() int64 {
-
 	p := int64(0)
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
 		p += val.Power()
@@ -129,7 +128,6 @@ func (m *MockState) TotalPower() int64 {
 	return p
 }
 func (m *MockState) CommitteePower() int64 {
-
 	return m.TestCommittee.TotalPower()
 }
 func (m *MockState) Transaction(id tx.ID) *tx.Tx {
@@ -178,7 +176,6 @@ func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	return m.TestPool.AppendTx(trx)
 }
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
-
 	if m.TestPool.HasTx(trx.ID()) {
 		return errors.Error(errors.ErrGeneric)
 	}

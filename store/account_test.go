@@ -40,7 +40,6 @@ func TestAccountBatchSaving(t *testing.T) {
 	setup(t)
 
 	t.Run("Add 100 accounts", func(t *testing.T) {
-
 		for i := 0; i < 100; i++ {
 			acc, _ := account.GenerateTestAccount(int32(i))
 			tStore.UpdateAccount(acc)

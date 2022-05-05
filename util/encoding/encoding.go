@@ -218,7 +218,6 @@ func ReadElements(r io.Reader, elements ...interface{}) error {
 
 // writeElement writes the little endian representation of element to w.
 func WriteElement(w io.Writer, element interface{}) error {
-
 	// Attempt to write the element based on the concrete type via fast
 	// type assertions first.
 	var err error

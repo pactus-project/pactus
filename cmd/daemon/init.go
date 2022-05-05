@@ -21,7 +21,6 @@ import (
 //gocyclo:ignore
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-
 		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
 			Desc:  "Working directory to save node configuration and genesis files.",

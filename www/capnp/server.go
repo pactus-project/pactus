@@ -68,7 +68,6 @@ func (s *Server) StartServer() error {
 					if err != nil {
 						s.logger.Error("error on  a connection", "err", err)
 					}
-
 				}(conn)
 			}
 

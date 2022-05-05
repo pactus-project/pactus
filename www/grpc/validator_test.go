@@ -71,7 +71,6 @@ func TestGetValidatorByNumber(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().Bytes(), res.GetValidator().PublicKey)
 		assert.Equal(t, val1.Number(), res.GetValidator().GetNumber())
-
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

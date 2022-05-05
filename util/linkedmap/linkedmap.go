@@ -67,7 +67,6 @@ func (lm *LinkedMap) Get(first interface{}) (interface{}, bool) {
 	el, found := lm.hashmap[first]
 	if found {
 		return el.Value.(*Pair).Second, true
-
 	}
 	return nil, false
 }

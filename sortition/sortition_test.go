@@ -64,7 +64,6 @@ func TestEvaluation(t *testing.T) {
 		require.False(t, VerifyProof(seed, Proof{}, signer.PublicKey(), total, total/10))
 		require.False(t, VerifyProof(GenerateRandomSeed(), proof, signer.PublicKey(), total, total/10))
 	})
-
 }
 
 func TestSortitionMedian(t *testing.T) {

@@ -110,5 +110,4 @@ func TestSendNonStrictMode(t *testing.T) {
 	trx2 := tx.NewSubsidyTx(tStamp500000, tSandbox.CurrentHeight()+1, receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
 	assert.Equal(t, errors.Code(exe2.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
-
 }
