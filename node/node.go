@@ -45,10 +45,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	}
 	broadcastCh := make(chan message.Message, 100)
 
-	txPool, err := txpool.NewTxPool(conf.TxPool, broadcastCh)
-	if err != nil {
-		return nil, err
-	}
+	txPool := txpool.NewTxPool(conf.TxPool, broadcastCh)
 
 	store, err := store.NewStore(conf.Store, int(genDoc.Params().TransactionToLiveInterval))
 	if err != nil {
@@ -60,30 +57,16 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	consensus, err := consensus.NewConsensus(conf.Consensus, state, signer, broadcastCh)
-	if err != nil {
-		return nil, err
-	}
+	consensus := consensus.NewConsensus(conf.Consensus, state, signer, broadcastCh)
 
 	sync, err := sync.NewSynchronizer(conf.Sync, signer, state, consensus, network, broadcastCh)
 	if err != nil {
 		return nil, err
 	}
 
-	capnp, err := capnp.NewServer(conf.Capnp, state, sync)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not create Capnproto server")
-	}
-
-	http, err := http.NewServer(conf.HTTP)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not create http server")
-	}
-
-	grpc, err := grpc.NewServer(conf.GRPC, state, sync)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not create grpc server")
-	}
+	capnp := capnp.NewServer(conf.Capnp, state, sync)
+	http := http.NewServer(conf.HTTP)
+	grpc := grpc.NewServer(conf.GRPC, state, sync)
 
 	node := &Node{
 		config:     conf,

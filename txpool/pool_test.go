@@ -26,13 +26,14 @@ var tTestTx *tx.Tx
 func setup(t *testing.T) {
 	tCh = make(chan message.Message, 10)
 	tSandbox = sandbox.MockingSandbox()
-	p, err := NewTxPool(DefaultConfig(), tCh)
-	assert.NoError(t, err)
+	p := NewTxPool(DefaultConfig(), tCh)
 	p.SetNewSandboxAndRecheck(tSandbox)
 	tPool = p.(*txPool)
+	assert.NotNil(t, tPool)
 
 	block88 := tSandbox.TestStore.AddTestBlock(88)
 	tTestTx = tx.NewSubsidyTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
+
 }
 
 func shouldPublishTransaction(t *testing.T, id tx.ID) {

@@ -15,20 +15,22 @@ type walletModel struct {
 	listStore *gtk.ListStore
 }
 
-func newWalletModel(wallet *wallet.Wallet) *walletModel {
+func newWalletModel(wallet *wallet.Wallet) (*walletModel, error) {
 	listStore, err := gtk.ListStoreNew(glib.TYPE_INT, glib.TYPE_STRING, glib.TYPE_STRING, glib.TYPE_STRING, glib.TYPE_STRING)
-	errorCheck(err)
+	if err != nil {
+		return nil, err
+	}
 	return &walletModel{
 		wallet:    wallet,
 		listStore: listStore,
-	}
+	}, nil
 }
 
 func (model *walletModel) ToTreeModel() *gtk.TreeModel {
 	return model.listStore.ToTreeModel()
 }
 
-func (model *walletModel) rebuildModel() {
+func (model *walletModel) rebuildModel() error {
 	model.listStore.Clear()
 	for no, info := range model.wallet.AddressInfos() {
 		label := info.Label
@@ -37,7 +39,7 @@ func (model *walletModel) rebuildModel() {
 		}
 		balance, _ := model.wallet.Balance(info.Address)
 		stake, _ := model.wallet.Balance(info.Address)
-		//errorCheck(err)
+		//errorCheck(parent, err)
 		balanceStr := strconv.FormatInt(balance, 10)
 		stakeStr := strconv.FormatInt(stake, 10)
 
@@ -57,15 +59,18 @@ func (model *walletModel) rebuildModel() {
 				stakeStr,
 			})
 
-		errorCheck(err)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (model *walletModel) createAddress(password string) {
+func (model *walletModel) createAddress(password string) error {
 	address, err := model.wallet.MakeNewAddress(password, "")
 	if err != nil {
-		showErrorDialog(err.Error())
-		return
+		return err
 	}
 
 	iter := model.listStore.Append()
@@ -83,8 +88,14 @@ func (model *walletModel) createAddress(password string) {
 			"0",
 			"0",
 		})
-	errorCheck(err)
+	if err != nil {
+		return err
+	}
 
 	err = model.wallet.Save()
-	errorCheck(err)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

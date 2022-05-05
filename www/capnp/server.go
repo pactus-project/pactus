@@ -26,14 +26,14 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) (*Server, error) {
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) *Server {
 	return &Server{
 		ctx:    context.Background(),
 		state:  state,
 		sync:   sync,
 		config: conf,
 		logger: logger.NewLogger("_capnp", nil),
-	}, nil
+	}
 }
 func (s *Server) Address() string {
 	return s.address

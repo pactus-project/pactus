@@ -25,12 +25,12 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config) (*Server, error) {
+func NewServer(conf *Config) *Server {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
 		logger: logger.NewLogger("_http", nil),
-	}, nil
+	}
 }
 
 func (s *Server) StartServer(capnpServer string) error {

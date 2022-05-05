@@ -104,6 +104,10 @@ func GetBalance() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			balance, err := wallet.Balance(*addrArg)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
 			stake, err := wallet.Stake(*addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())

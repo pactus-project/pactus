@@ -28,7 +28,7 @@ type txPool struct {
 
 func NewTxPool(
 	conf *Config,
-	broadcastCh chan message.Message) (TxPool, error) {
+	broadcastCh chan message.Message) TxPool {
 
 	pendings := make(map[payload.Type]*linkedmap.LinkedMap)
 
@@ -46,7 +46,7 @@ func NewTxPool(
 	}
 
 	pool.logger = logger.NewLogger("_pool", pool)
-	return pool, nil
+	return pool
 }
 
 func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {

@@ -4,12 +4,13 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
+	"github.com/zarbchain/zarb-go/network"
 	"io/ioutil"
 	"strings"
 
 	toml "github.com/pelletier/go-toml"
 	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/network"
+
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/store"
 	"github.com/zarbchain/zarb-go/sync"

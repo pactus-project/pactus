@@ -15,14 +15,14 @@ var uiAboutGtkDialog []byte
 //go:embed assets/images/gtk.svg
 var imgGtkIcon []byte
 
-func showAboutGTKDialog(parent gtk.IWidget) {
+func showAboutGTKDialog(parent gtk.IWindow) {
 	builder, err := gtk.BuilderNewFromString(string(uiAboutGtkDialog))
-	errorCheck(err)
+	errorCheck(parent, err)
 
 	dlg := getAboutDialogObj(builder, "id_dialog_about_gtk")
 
 	pixbuf, err := gdk.PixbufNewFromDataOnly(imgGtkIcon)
-	errorCheck(err)
+	errorCheck(parent, err)
 
 	dlg.SetLogo(pixbuf)
 

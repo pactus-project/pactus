@@ -14,17 +14,23 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-func getTextViewcontent(tv *gtk.TextView) string {
+func getTextViewcontent(tv *gtk.TextView) (string, error) {
 	buf, _ := tv.GetBuffer()
 	startIter, endIter := buf.GetBounds()
-	content, _ := buf.GetText(startIter, endIter, true)
-	return content
+	content, err := buf.GetText(startIter, endIter, true)
+	if err != nil {
+		return "", err
+	}
+	return content, nil
 }
 
-func setTextViewcontent(tv *gtk.TextView, content string) {
+func setTextViewcontent(tv *gtk.TextView, content string) error {
 	buf, err := tv.GetBuffer()
-	errorCheck(err)
+	if err != nil {
+		return err
+	}
 	buf.SetText(content)
+	return err
 }
 
 func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
@@ -40,17 +46,17 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	successful := false
 	createPage := func(assistant *gtk.Assistant, content gtk.IWidget, name, title, subject, desc string) *gtk.Widget {
 		page, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 20)
-		errorCheck(err)
+		errorCheck(assistant, err)
 		page.SetHExpand(true)
 		titleLabel, err := gtk.LabelNew(title)
-		errorCheck(err)
+		errorCheck(assistant, err)
 		setMargin(titleLabel, 0, 20, 0, 0)
 		frame, err := gtk.FrameNew(subject)
-		errorCheck(err)
+		errorCheck(assistant, err)
 		frame.SetHExpand(true)
 
 		descLabel, err := gtk.LabelNew("")
-		errorCheck(err)
+		errorCheck(assistant, err)
 		descLabel.SetUseMarkup(true)
 		descLabel.SetMarkup(desc)
 		descLabel.SetVExpand(true)
@@ -60,7 +66,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 		frame.Add(content)
 
 		box, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
-		errorCheck(err)
+		errorCheck(assistant, err)
 		box.Add(frame)
 		box.Add(descLabel)
 
@@ -75,7 +81,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	}
 
 	assistant, err := gtk.AssistantNew()
-	errorCheck(err)
+	errorCheck(assistant, err)
 
 	assistant.SetDefaultSize(600, 400)
 	assistant.SetTitle("Zarb - Init Wizard")
@@ -88,13 +94,13 @@ func startupAssistant(workingDir string, testnet bool) bool {
 
 	// --- PageMode
 	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from the scratch")
-	errorCheck(err)
+	errorCheck(assistant, err)
 	recoverWalletRadio, err := gtk.RadioButtonNewWithLabelFromWidget(newWalletRadio, "Restore a wallet from the seed phrase")
-	errorCheck(err)
+	errorCheck(assistant, err)
 	recoverWalletRadio.SetSensitive(false)
 
 	radioBox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	errorCheck(err)
+	errorCheck(assistant, err)
 	radioBox.Add(newWalletRadio)
 	setMargin(newWalletRadio, 6, 6, 6, 6)
 	radioBox.Add(recoverWalletRadio)
@@ -114,7 +120,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 
 	// --- pageSeed
 	seedTextView, err := gtk.TextViewNew()
-	errorCheck(err)
+	errorCheck(assistant, err)
 	setMargin(seedTextView, 6, 6, 6, 6)
 	seedTextView.SetWrapMode(gtk.WRAP_WORD)
 	seedTextView.SetEditable(false)
@@ -141,7 +147,7 @@ This seed will allow you to recover your wallet in case of computer failure.
 
 	// --- pageSeedConfirm
 	seedConfirmTextView, err := gtk.TextViewNew()
-	errorCheck(err)
+	errorCheck(assistant, err)
 	setMargin(seedConfirmTextView, 6, 6, 6, 6)
 	seedConfirmTextView.SetWrapMode(gtk.WRAP_WORD)
 	seedConfirmTextView.SetEditable(true)
@@ -149,15 +155,17 @@ This seed will allow you to recover your wallet in case of computer failure.
 	seedConfirmTextView.SetSizeRequest(0, 80)
 
 	seedConfirmTextView.Connect("paste_clipboard", func(textView *gtk.TextView) {
-		showInfoDialog("Opps, no copy paste!")
+		showInfoDialog(assistant, "Opps, no copy paste!")
 		seedConfirmTextView.StopEmission("paste_clipboard")
 	})
 
 	seedConfirmTextBuffer, err := seedConfirmTextView.GetBuffer()
-	errorCheck(err)
+	errorCheck(assistant, err)
 	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
-		mnemonic1 := getTextViewcontent(seedTextView)
-		mnemonic2 := getTextViewcontent(seedConfirmTextView)
+		mnemonic1, err := getTextViewcontent(seedTextView)
+		errorCheck(assistant, err)
+		mnemonic2, err := getTextViewcontent(seedConfirmTextView)
+		errorCheck(assistant, err)
 		space := regexp.MustCompile(`\s+`)
 		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
 		mnemonic2 = strings.TrimSpace(mnemonic2)
@@ -184,25 +192,25 @@ To make sure that you have properly saved your seed, please retype it here.`
 
 	// --- PagePassword
 	passwordEntry, err := gtk.EntryNew()
-	errorCheck(err)
+	errorCheck(assistant, err)
 	setMargin(passwordEntry, 6, 6, 6, 6)
 	passwordEntry.SetVisibility(false)
 	passwordLabel, err := gtk.LabelNew("Password: ")
-	errorCheck(err)
+	errorCheck(assistant, err)
 	passwordLabel.SetHAlign(gtk.ALIGN_START)
 	setMargin(passwordLabel, 6, 6, 6, 6)
 
 	passwordConfirmEntry, err := gtk.EntryNew()
-	errorCheck(err)
+	errorCheck(assistant, err)
 	setMargin(passwordConfirmEntry, 6, 6, 6, 6)
 	passwordConfirmEntry.SetVisibility(false)
 	confirmationLineLabel, err := gtk.LabelNew("Confirmation: ")
-	errorCheck(err)
+	errorCheck(assistant, err)
 	confirmationLineLabel.SetHAlign(gtk.ALIGN_START)
 	setMargin(confirmationLineLabel, 6, 6, 6, 6)
 
 	grid, err := gtk.GridNew()
-	errorCheck(err)
+	errorCheck(assistant, err)
 	grid.Add(passwordLabel)
 	grid.Attach(passwordEntry, 1, 0, 1, 1)
 	grid.AttachNextTo(confirmationLineLabel, passwordLabel, gtk.POS_BOTTOM, 1, 1)
@@ -210,9 +218,9 @@ To make sure that you have properly saved your seed, please retype it here.`
 
 	validatePassword := func() {
 		pass1, err := passwordEntry.GetText()
-		errorCheck(err)
+		errorCheck(assistant, err)
 		pass2, err := passwordConfirmEntry.GetText()
-		errorCheck(err)
+		errorCheck(assistant, err)
 		if pass1 == pass2 {
 			assistant.SetPageComplete(pagePassword, true)
 		} else {
@@ -242,7 +250,7 @@ To make sure that you have properly saved your seed, please retype it here.`
 
 	// --- pageFinal
 	NodeInfoTextView, err := gtk.TextViewNew()
-	errorCheck(err)
+	errorCheck(assistant, err)
 	setMargin(NodeInfoTextView, 6, 6, 6, 6)
 	NodeInfoTextView.SetWrapMode(gtk.WRAP_WORD)
 	NodeInfoTextView.SetEditable(false)
@@ -278,7 +286,7 @@ Now you are ready to start the node!`
 
 	assistant.Connect("prepare", func(assistant *gtk.Assistant, page *gtk.Widget) {
 		name, err := page.GetName()
-		errorCheck(err)
+		errorCheck(assistant, err)
 		fmt.Printf("%v - %v\n", assistant.GetCurrentPage(), name)
 		switch name {
 		case pageModeName:
@@ -287,8 +295,12 @@ Now you are ready to start the node!`
 			}
 		case pageSeedName:
 			{
-				if getTextViewcontent(seedTextView) == "" {
-					setTextViewcontent(seedTextView, mnemonic)
+				text, _ := getTextViewcontent(seedTextView)
+				if text == "" {
+					err := setTextViewcontent(seedTextView, mnemonic)
+					if err != nil {
+						errorCheck(assistant, err)
+					}
 				}
 				assistant.SetPageComplete(pageSeed, true)
 			}
@@ -311,11 +323,11 @@ Now you are ready to start the node!`
 					mnemonic,
 					"",
 					network)
-				errorCheck(err)
+				errorCheck(assistant, err)
 				valAddr, err := defaultWallet.MakeNewAddress("", "Validator address")
-				errorCheck(err)
+				errorCheck(assistant, err)
 				rewardAddr, err := defaultWallet.MakeNewAddress("", "Reward address")
-				errorCheck(err)
+				errorCheck(assistant, err)
 
 				var gen *genesis.Genesis
 				confFile := cmd.ZarbConfigPath(workingDir)
@@ -342,18 +354,18 @@ Now you are ready to start the node!`
 				// Save genesis file
 				genFile := cmd.ZarbGenesisPath(workingDir)
 				err = gen.SaveToFile(genFile)
-				errorCheck(err)
+				errorCheck(assistant, err)
 
 				// To make process faster we set password after generating addresses
 				walletPassword, err := passwordEntry.GetText()
-				errorCheck(err)
+				errorCheck(assistant, err)
 
 				err = defaultWallet.UpdatePassword("", walletPassword)
-				errorCheck(err)
+				errorCheck(assistant, err)
 
 				// Save wallet
 				err = defaultWallet.Save()
-				errorCheck(err)
+				errorCheck(assistant, err)
 
 				// Done! showing the node information
 				successful = true
@@ -361,7 +373,8 @@ Now you are ready to start the node!`
 				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
 				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 
-				setTextViewcontent(NodeInfoTextView, nodeInfo)
+				err = setTextViewcontent(NodeInfoTextView, nodeInfo)
+				errorCheck(assistant, err)
 			}
 		}
 	})

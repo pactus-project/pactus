@@ -94,14 +94,10 @@ func setup(t *testing.T) {
 	stP, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool)
 	require.NoError(t, err)
 
-	consX, err := NewConsensus(testConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
-	assert.NoError(t, err)
-	consY, err := NewConsensus(testConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
-	assert.NoError(t, err)
-	consB, err := NewConsensus(testConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
-	assert.NoError(t, err)
-	consP, err := NewConsensus(testConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
-	assert.NoError(t, err)
+	consX := NewConsensus(testConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
+	consY := NewConsensus(testConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
+	consB := NewConsensus(testConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
+	consP := NewConsensus(testConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
 	tConsX = consX.(*consensus)
 	tConsY = consY.(*consensus)
 	tConsB = consB.(*consensus)
@@ -313,8 +309,7 @@ func TestNotInCommittee(t *testing.T) {
 	store := store.MockingStore()
 
 	st, _ := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, signer, store, tTxPool)
-	cons, err := NewConsensus(testConfig(), st, signer, make(chan message.Message, 100))
-	assert.NoError(t, err)
+	cons := NewConsensus(testConfig(), st, signer, make(chan message.Message, 100))
 
 	testEnterNewHeight(cons.(*consensus))
 

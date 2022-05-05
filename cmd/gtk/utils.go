@@ -7,28 +7,28 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-func showInfoDialog(msg string) {
-	dlg := gtk.MessageDialogNew(nil, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
+func showInfoDialog(parent gtk.IWindow, msg string) {
+	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
 	dlg.Run()
 	dlg.Destroy()
 }
 
-func showErrorDialog(msg string) {
-	dlg := gtk.MessageDialogNew(nil, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
+func showErrorDialog(parent gtk.IWindow, msg string) {
+	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
 	dlg.Run()
 	dlg.Destroy()
 }
 
-func errorCheck(err error) {
+func errorCheck(parent gtk.IWindow, err error) {
 	if err != nil {
-		showErrorDialog(err.Error())
+		showErrorDialog(parent, err.Error())
 		gtk.MainQuit()
 	}
 }
 
 func getObj(builder *gtk.Builder, name string) glib.IObject {
 	obj, err := builder.GetObject(name)
-	errorCheck(err)
+	errorCheck(nil, err)
 	return obj
 }
 

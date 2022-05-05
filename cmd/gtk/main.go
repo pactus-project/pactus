@@ -53,7 +53,7 @@ func main() {
 	// Create a new app.
 	// When using GtkApplication, it is not necessary to call gtk_init() manually.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_FLAGS_NONE)
-	errorCheck(err)
+	errorCheck(nil, err)
 
 	// Connect function to application startup event, this is not required.
 	app.Connect("startup", func() {
@@ -63,7 +63,7 @@ func main() {
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
-		start(workingDir, app)
+		start(nil, workingDir, app)
 	})
 
 	// Connect function to application shutdown event, this is not required.
@@ -118,7 +118,7 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 	return node, &genTime, nil
 }
 
-func start(workingDir string, app *gtk.Application) {
+func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
@@ -129,24 +129,27 @@ func start(workingDir string, app *gtk.Application) {
 
 	path := cmd.ZarbDefaultWalletPath(workingDir)
 	wallet, err := wallet.OpenWallet(path)
-	errorCheck(err)
+	errorCheck(parent, err)
 
 	password, ok := getWalletPassword(nil, wallet)
 	if !ok {
-		showInfoDialog("Canceled!")
+		showInfoDialog(parent, "Canceled!")
 		return
 	}
 	// TODO: Get genTime from the node or state
 	node, genTime, err := startingNode(workingDir, wallet, password)
-	errorCheck(err)
+	errorCheck(parent, err)
 
+	// TODO
 	// No showing the main window
 	if err != nil {
 		return
 	}
 
 	nodeModel := newNodeModel(node)
-	walletModel := newWalletModel(wallet)
+
+	walletModel, err := newWalletModel(wallet)
+	errorCheck(parent, err)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel, *genTime)
@@ -154,7 +157,8 @@ func start(workingDir string, app *gtk.Application) {
 	// Show the Window and all of its components.
 	win.Show()
 
-	walletModel.rebuildModel()
+	err = walletModel.rebuildModel()
+	errorCheck(parent, err)
 
 	app.AddWindow(win)
 }

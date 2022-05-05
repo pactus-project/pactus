@@ -46,9 +46,11 @@ func createColumn(title string, id int) *gtk.TreeViewColumn {
 	return column
 }
 
-func buildWidgetWallet(model *walletModel) *widgetWallet {
+func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	builder, err := gtk.BuilderNewFromString(string(uiWidgetWallet))
-	errorCheck(err)
+	if err != nil {
+		return nil, err
+	}
 
 	box := getBoxObj(builder, "id_box_wallet")
 	treeView := getTreeViewObj(builder, "id_treeview_addresses")
@@ -90,7 +92,7 @@ func buildWidgetWallet(model *walletModel) *widgetWallet {
 
 	glib.TimeoutAdd(10000, w.timeout)
 
-	return w
+	return w, nil
 }
 
 func (ww *widgetWallet) onNewAddress() {
@@ -99,11 +101,14 @@ func (ww *widgetWallet) onNewAddress() {
 		return
 	}
 
-	ww.model.createAddress(password)
+	err := ww.model.createAddress(password)
+	errorCheck(nil, err)
 }
 
 func (wn *widgetWallet) timeout() bool {
-	wn.model.rebuildModel()
+	err := wn.model.rebuildModel()
+	if err != nil {
+		errorCheck(nil, err)
+	}
 	return true
-
 }

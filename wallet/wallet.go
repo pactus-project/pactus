@@ -57,7 +57,7 @@ func OpenWallet(path string) (*Wallet, error) {
 		return nil, err
 	}
 
-	return newWallet(path, store, true)
+	return newWallet(path, store)
 }
 
 /// FromMnemonic creates a wallet from mnemonic (seed phrase)
@@ -84,10 +84,10 @@ func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error)
 		},
 	}
 
-	return newWallet(path, store, false)
+	return newWallet(path, store)
 }
 
-func newWallet(path string, store *store, online bool) (*Wallet, error) {
+func newWallet(path string, store *store) (*Wallet, error) {
 	if store.data.Network == NetworkTestNet {
 		crypto.DefaultHRP = "tzc"
 	}

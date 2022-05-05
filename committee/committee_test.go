@@ -323,8 +323,10 @@ func TestSortJoined(t *testing.T) {
 	val6, _ := validator.GenerateTestValidator(5)
 	val7, _ := validator.GenerateTestValidator(6)
 
-	committee1, _ := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
-	committee2, _ := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
+	committee1, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
+	assert.NoError(t, err)
+	committee2, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
+	assert.NoError(t, err)
 
 	committee1.Update(0, []*validator.Validator{val5, val6, val7})
 	committee2.Update(0, []*validator.Validator{val7, val5, val6})
