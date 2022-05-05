@@ -10,7 +10,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-// IDs to access the tree view columns by
+// IDs to access the tree view columns.
 const (
 	IDAddressesColumnNo = iota
 	IDAddressesColumnAddress
@@ -29,7 +29,7 @@ type widgetWallet struct {
 	model    *walletModel
 }
 
-// Add a column to the tree view (during the initialization of the tree view)
+// Add a column to the tree view (during the initialization of the tree view).
 func createColumn(title string, id int) *gtk.TreeViewColumn {
 	cellRenderer, err := gtk.CellRendererTextNew()
 	if err != nil {
