@@ -27,6 +27,13 @@ import (
 	"github.com/zarbchain/zarb-go/util/logger"
 )
 
+const (
+	tIndexX = 0
+	tIndexY = 1
+	tIndexB = 2
+	tIndexP = 3
+)
+
 var (
 	tSigners []crypto.Signer
 	tTxPool  *txpool.MockTxPool
@@ -35,13 +42,6 @@ var (
 	tConsY   *consensus // Good connection
 	tConsB   *consensus // Byzantine or offline
 	tConsP   *consensus // Partitioned
-)
-
-const (
-	tIndexX = 0
-	tIndexY = 1
-	tIndexB = 2
-	tIndexP = 3
 )
 
 type OverrideFingerprint struct {

@@ -23,6 +23,9 @@ const (
 	NetworkTestNet = Network(1)
 )
 
+//go:embed servers.json
+var serversJSON []byte
+
 type Wallet struct {
 	*store
 
@@ -40,9 +43,6 @@ type servers = map[string][]serverInfo
 func GenerateMnemonic() string {
 	return vault.GenerateMnemonic()
 }
-
-//go:embed servers.json
-var serversJSON []byte
 
 /// OpenWallet tries to open a wallet at given path
 func OpenWallet(path string) (*Wallet, error) {

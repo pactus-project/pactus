@@ -16,25 +16,6 @@ var (
 	tBootstrapAddrs []string
 )
 
-func testConfig() *Config {
-	return &Config{
-		Name:        "test-network",
-		Listens:     []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
-		NodeKey:     util.TempFilePath(),
-		EnableNAT:   false,
-		EnableRelay: false,
-		EnableMdns:  true,
-		EnableDHT:   true,
-		EnablePing:  false,
-		Bootstrap: &BootstrapConfig{
-			Addresses:    tBootstrapAddrs,
-			MinThreshold: 4,
-			MaxThreshold: 8,
-			Period:       1 * time.Second,
-		},
-	}
-}
-
 func init() {
 	tNetworksSize = 8
 	tNetworks = make([]*network, tNetworksSize)
@@ -80,6 +61,25 @@ func init() {
 	time.Sleep(1000 * time.Millisecond)
 
 	fmt.Println("Peers are connected")
+}
+
+func testConfig() *Config {
+	return &Config{
+		Name:        "test-network",
+		Listens:     []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
+		NodeKey:     util.TempFilePath(),
+		EnableNAT:   false,
+		EnableRelay: false,
+		EnableMdns:  true,
+		EnableDHT:   true,
+		EnablePing:  false,
+		Bootstrap: &BootstrapConfig{
+			Addresses:    tBootstrapAddrs,
+			MinThreshold: 4,
+			MaxThreshold: 8,
+			Period:       1 * time.Second,
+		},
+	}
 }
 
 func shouldReceiveEvent(t *testing.T, net *network) Event {

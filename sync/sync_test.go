@@ -39,6 +39,12 @@ type OverrideFingerprint struct {
 	name string
 }
 
+func init() {
+	LatestBlockInterval = 20
+	tConfig = testConfig()
+	tConfig.Moniker = "Alice"
+}
+
 func (o *OverrideFingerprint) Fingerprint() string {
 	return o.name + o.sync.Fingerprint()
 }
@@ -55,12 +61,6 @@ func testConfig() *Config {
 		CacheSize:        1000,
 		Firewall:         firewall.DefaultConfig(),
 	}
-}
-
-func init() {
-	LatestBlockInterval = 20
-	tConfig = testConfig()
-	tConfig.Moniker = "Alice"
 }
 
 func setup(t *testing.T) {

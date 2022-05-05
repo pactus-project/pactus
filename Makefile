@@ -20,7 +20,6 @@ devtools:
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	go install github.com/bufbuild/buf/cmd/buf@v1.3
 	go install github.com/rakyll/statik@v0.1
-	go install github.com/gordonklaus/ineffassign@latest
 
 herumi:
 	@if [ ! -d $(HERUMI) ]; then \
@@ -67,21 +66,21 @@ proto:
 ### Formatting, linting, and vetting
 fmt:
 	gofmt -s -w .
-	golangci-lint run -e "SA1019" \
-		--timeout=5m0s \
+
+# TODO: Addd revive to make sure all exported function has comment.
+check:
+	golangci-lint run --build-tags "${BUILD_TAG}" -e "SA1019" \
+		--timeout=20m0s \
 		--enable=gofmt \
 		--enable=unconvert \
 		--enable=unparam \
-		--enable=revive \
-		--enable=asciicheck \
+		--enable=asciicheck\
 		--enable=misspell \
-		--enable=asciicheck \
 		--enable=decorder \
 		--enable=depguard \
 		--enable=nilerr \
 		--enable=gosec \
 		--enable=gocyclo
-	ineffassign ./...
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
@@ -89,4 +88,4 @@ fmt:
 .PHONY: build build_gui
 .PHONY: test unit_test test_race
 .PHONY: devtools herumi capnp proto
-.PHONY: fmt docker
+.PHONY: fmt check docker

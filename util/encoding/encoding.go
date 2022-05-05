@@ -10,17 +10,18 @@ import (
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
 )
 
-// MaxPayloadSize is the maximum bytes a message can be regardless of other
-// individual limits imposed by messages themselves.
-const MaxPayloadSize = (1024 * 1024 * 32) // 32MB
-
-var ErrOverflow = errors.New("Overflow")
-var ErrNonCanonical = errors.New("NonCanonical")
-
 const (
+	// MaxPayloadSize is the maximum bytes a message can be regardless of other
+	// individual limits imposed by messages themselves.
+	MaxPayloadSize = (1024 * 1024 * 32) // 32MB
 	// binaryFreeListMaxItems is the number of buffers to keep in the free
 	// list to use for binary serialization and deserialization.
 	binaryFreeListMaxItems = 1024
+)
+
+var (
+	ErrOverflow     = errors.New("Overflow")
+	ErrNonCanonical = errors.New("NonCanonical")
 )
 
 // binaryFreeList defines a concurrent safe free list of byte slices (up to the

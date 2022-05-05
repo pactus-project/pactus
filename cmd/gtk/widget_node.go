@@ -13,6 +13,9 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
+//go:embed assets/ui/widget_node.ui
+var uiWidgetNode []byte
+
 type widgetNode struct {
 	*gtk.Box
 
@@ -23,9 +26,6 @@ type widgetNode struct {
 	labelBlocksLeft      *gtk.Label
 	progressBarSynced    *gtk.ProgressBar
 }
-
-//go:embed assets/ui/widget_node.ui
-var uiWidgetNode []byte
 
 func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, error) {
 	builder, err := gtk.BuilderNewFromString(string(uiWidgetNode))

@@ -9,14 +9,16 @@ import (
 	"strings"
 )
 
-// ChecksumConst is a type that represents the currently defined bech32
-// checksum constants.
-const ChecksumConst = int(0x2bc830a3)
+const (
+	// ChecksumConst is a type that represents the currently defined bech32
+	// checksum constants.
+	ChecksumConst = int(0x2bc830a3)
 
-// charset is the set of characters used in the data section of bech32 strings.
-// Note that this is ordered, such that for a given charset[i], i is the binary
-// value of the character.
-const charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+	// charset is the set of characters used in the data section of bech32 strings.
+	// Note that this is ordered, such that for a given charset[i], i is the binary
+	// value of the character.
+	charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+)
 
 // gen encodes the generator polynomial for the bech32 BCH checksum.
 var gen = []int{0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3}

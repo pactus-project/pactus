@@ -22,12 +22,12 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
+const appID = "com.github.zarbchain.zarb-go.zarb-gui"
+
 var (
 	workingDirOpt *string
 	testnetOpt    *bool
 )
-
-const appID = "com.github.zarbchain.zarb-go.zarb-gui"
 
 func init() {
 	workingDirOpt = flag.String("working-dir", cmd.ZarbHomeDir(), "working directory")

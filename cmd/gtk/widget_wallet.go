@@ -10,16 +10,6 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-type widgetWallet struct {
-	*gtk.Box
-
-	treeView *gtk.TreeView
-	model    *walletModel
-}
-
-//go:embed assets/ui/widget_wallet.ui
-var uiWidgetWallet []byte
-
 // IDs to access the tree view columns by
 const (
 	IDAddressesColumnNo = iota
@@ -28,6 +18,16 @@ const (
 	IDAddressesColumnBalance
 	IDAddressesColumnStake
 )
+
+//go:embed assets/ui/widget_wallet.ui
+var uiWidgetWallet []byte
+
+type widgetWallet struct {
+	*gtk.Box
+
+	treeView *gtk.TreeView
+	model    *walletModel
+}
 
 // Add a column to the tree view (during the initialization of the tree view)
 func createColumn(title string, id int) *gtk.TreeViewColumn {

@@ -27,6 +27,9 @@ jobs:
     - name: Build the binary
       run: make build_gui
 
+    - name: Lint check
+      run: BUILD_TAG=gtk make check
+
   ########################################
   build-macos:
     runs-on: macos-latest
