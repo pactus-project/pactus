@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
-// GetAccountHandler returns a handler to get account by address
+// GetAccountHandler returns a handler to get account by address.
 func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	b := s.capnp.GetAccount(s.ctx, func(p capnp.ZarbServer_getAccount_Params) error {
 		vars := mux.Vars(r)

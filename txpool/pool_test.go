@@ -73,7 +73,7 @@ func TestAppendInvalidTransaction(t *testing.T) {
 	assert.Error(t, tPool.AppendTx(invalidTx))
 }
 
-// TestFullPool tests if the pool prunes the old transactions when it is full
+// TestFullPool tests if the pool prunes the old transactions when it is full.
 func TestFullPool(t *testing.T) {
 	setup(t)
 

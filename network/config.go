@@ -16,7 +16,7 @@ type Config struct {
 	Bootstrap   *BootstrapConfig `toml:"bootstrap"`
 }
 
-// BootstrapConfig holds all configuration options related to bootstrap nodes
+// BootstrapConfig holds all configuration options related to bootstrap nodes.
 type BootstrapConfig struct {
 	Addresses    []string      `toml:"addresses"`
 	MinThreshold int           `toml:"min_threshold"`
@@ -43,7 +43,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// SanityCheck is a basic checks for config
+// SanityCheck is a basic checks for config.
 func (conf *Config) SanityCheck() error {
 	return nil
 }

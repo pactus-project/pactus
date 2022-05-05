@@ -264,7 +264,8 @@ func (sb *sandbox) Committee() committee.Reader {
 	return sb.committee
 }
 
-// TODO: write test for me
+// TODO: write test for me.
+// VerifyProof verifies proof of a sortition transaction.
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
 	hash := sb.store.BlockHashByStamp(stamp)
 	bi, err := sb.store.Block(hash)

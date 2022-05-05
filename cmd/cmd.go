@@ -25,7 +25,7 @@ var ZARB = `
 `
 
 // terminalSupported returns true if the current terminal supports
-// line editing features
+// line editing features.
 func terminalSupported() bool {
 	bad := map[string]bool{"": true, "dumb": true, "cons25": true}
 	return !bad[strings.ToLower(os.Getenv("TERM"))]
@@ -68,7 +68,7 @@ func PromptPassword(label string, confirmation bool) string {
 	return password
 }
 
-// PromptConfirm prompts user to confirm the operation
+// PromptConfirm prompts user to confirm the operation.
 func PromptConfirm(label string) bool {
 	prompt := promptui.Prompt{
 		Label:     label,
@@ -76,7 +76,7 @@ func PromptConfirm(label string) bool {
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		if err != promptui.ErrAbort {
+		if errors.Is(err, promptui.ErrAbort) {
 			PrintErrorMsg("prompt error: %v", err)
 		}
 		os.Exit(1)
@@ -88,7 +88,7 @@ func PromptConfirm(label string) bool {
 	return false
 }
 
-// Promptlabel prompts for an input string
+// Promptlabel prompts for an input string.
 func PromptInput(label string) string {
 	prompt := promptui.Prompt{
 		Label: label,
@@ -101,7 +101,7 @@ func PromptInput(label string) string {
 	return result
 }
 
-// Promptlabel prompts for an input string with a suggestion
+// Promptlabel prompts for an input string with a suggestion.
 func PromptInputWithSuggestion(label, suggestion string) string {
 	prompt := promptui.Prompt{
 		Label:   label,

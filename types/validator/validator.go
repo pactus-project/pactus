@@ -24,7 +24,7 @@ type validatorData struct {
 	LastJoinedHeight  int32
 }
 
-// NewValidator constructs a new validator object
+// NewValidator constructs a new validator object.
 func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	val := &Validator{
 		data: validatorData{
@@ -35,7 +35,7 @@ func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	return val
 }
 
-// FromBytes constructs a new validator from byte array
+// FromBytes constructs a new validator from byte array.
 func FromBytes(data []byte) (*Validator, error) {
 	acc := new(Validator)
 	r := bytes.NewReader(data)
@@ -84,32 +84,32 @@ func (val *Validator) SubtractFromStake(amt int64) {
 	val.data.Stake -= amt
 }
 
-// AddToStake increases the stake by bonding transaction
+// AddToStake increases the stake by bonding transaction.
 func (val *Validator) AddToStake(amt int64) {
 	val.data.Stake += amt
 }
 
-// IncSequence increases the sequence anytime this validator signs a transaction
+// IncSequence increases the sequence anytime this validator signs a transaction.
 func (val *Validator) IncSequence() {
 	val.data.Sequence++
 }
 
-// UpdateLastJoinedHeight updates the last height that this validator joined the committee
+// UpdateLastJoinedHeight updates the last height that this validator joined the committee.
 func (val *Validator) UpdateLastJoinedHeight(height int32) {
 	val.data.LastJoinedHeight = height
 }
 
-// UpdateLastBondingHeight updates the last height that this validator bonded some stakes
+// UpdateLastBondingHeight updates the last height that this validator bonded some stakes.
 func (val *Validator) UpdateLastBondingHeight(height int32) {
 	val.data.LastBondingHeight = height
 }
 
-// UpdateUnbondingHeight updates the unbonding height for the validator
+// UpdateUnbondingHeight updates the unbonding height for the validator.
 func (val *Validator) UpdateUnbondingHeight(height int32) {
 	val.data.UnbondingHeight = height
 }
 
-// Hash return the hash of this validator
+// Hash return the hash of this validator.
 func (val *Validator) Hash() hash.Hash {
 	bs, err := val.Bytes()
 	if err != nil {
@@ -143,7 +143,7 @@ func (val *Validator) Bytes() ([]byte, error) {
 	return w.Bytes(), nil
 }
 
-// GenerateTestValidator generates a validator for testing purpose
+// GenerateTestValidator generates a validator for testing purpose.
 func GenerateTestValidator(number int32) (*Validator, crypto.Signer) {
 	pub, pv := bls.GenerateTestKeyPair()
 	val := NewValidator(pub, number)

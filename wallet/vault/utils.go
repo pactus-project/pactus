@@ -23,7 +23,7 @@ func aesCrypt(message []byte, iv, cipherKey []byte) []byte {
 	return cipherMsg
 }
 
-// sha256MAC calculates the 4 bytes MAC of the given slices base on SHA-256
+// sha256MAC calculates the 4 bytes MAC of the given slices base on SHA-256.
 func sha256MAC(data ...[]byte) []byte {
 	h := sha256.New()
 	for _, d := range data {
@@ -36,7 +36,7 @@ func sha256MAC(data ...[]byte) []byte {
 
 // safeCmp compares two slices with constant time.
 // Note that we are using the subtle.ConstantTimeCompare() function for this
-// to help prevent timing attacks
+// to help prevent timing attacks.
 func safeCmp(s1, s2 []byte) bool {
 	return subtle.ConstantTimeCompare(s1, s2) == 1
 }

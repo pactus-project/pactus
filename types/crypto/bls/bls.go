@@ -66,13 +66,13 @@ func VerifyAggregated(aggregated *Signature, pubs []*PublicKey, msg []byte) bool
 	return aggregated.signature.FastAggregateVerify(pubVec, msg)
 }
 
-// ---------
-// For tests
+// GenerateTestSigner generates a signer for testing.
 func GenerateTestSigner() crypto.Signer {
 	_, prv := GenerateTestKeyPair()
 	return crypto.NewSigner(prv)
 }
 
+// GenerateTestKeyPair generates a key pair for testing.
 func GenerateTestKeyPair() (*PublicKey, *PrivateKey) {
 	prv := new(PrivateKey)
 	prv.secretKey.SetByCSPRNG()

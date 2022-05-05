@@ -96,12 +96,14 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 	return res.Bytes(), nil
 }
 
-/// Subtracts subtracts slice2 from slice1 in order
-/// Examples:
-///  [1,2,3,4] - [1,2] = [3,4]
-///  [1,2,3,4] - [2,4] = [1,3]
-///  [1,2,3,4] - [4,2] = [1,3]
-///  [1,2,3,4] - [4,5] = [1,2,3]
+// Subtracts subtracts slice2 from slice1 in order.
+// Examples:
+//
+//  [1,2,3,4] - [1,2] = [3,4]
+//  [1,2,3,4] - [2,4] = [1,3]
+//  [1,2,3,4] - [4,2] = [1,3]
+//  [1,2,3,4] - [4,5] = [1,2,3]
+//.
 func Subtracts(slice1 []int32, slice2 []int32) []int32 {
 	sub := []int32{}
 	if slice2 == nil {
@@ -124,7 +126,7 @@ func Subtracts(slice1 []int32, slice2 []int32) []int32 {
 	return sub
 }
 
-/// Contains checks whether the given slice has a specific item.
+// Contains checks whether the given slice has a specific item.
 func Contains(slice []int32, item int32) bool {
 	for _, i := range slice {
 		if i == item {
@@ -134,8 +136,8 @@ func Contains(slice []int32, item int32) bool {
 	return false
 }
 
-/// Equal tells whether a and b contain the same elements.
-/// A nil argument is equivalent to an empty slice.
+// Equal tells whether a and b contain the same elements.
+// A nil argument is equivalent to an empty slice.
 func Equal(a, b []int32) bool {
 	if len(a) != len(b) {
 		return false

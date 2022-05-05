@@ -24,7 +24,7 @@ func DefaultConfig() *Config {
 	return conf
 }
 
-// SanityCheck is a basic checks for config
+// SanityCheck is a basic checks for config.
 func (conf *Config) SanityCheck() error {
 	return nil
 }

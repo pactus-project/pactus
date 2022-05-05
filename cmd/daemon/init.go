@@ -159,7 +159,7 @@ func Init() func(c *cli.Cmd) {
 	}
 }
 
-// makeLocalGenesis makes genisis file for the local network
+// makeLocalGenesis makes genisis file for the local network.
 func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)

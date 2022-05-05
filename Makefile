@@ -80,6 +80,7 @@ check:
 		--enable=depguard \
 		--enable=nilerr \
 		--enable=gosec \
+		--enable=godot  \
 		--enable=gocyclo
 
 # To avoid unintended conflicts with file names, always add to .PHONY

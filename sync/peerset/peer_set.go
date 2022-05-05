@@ -31,7 +31,7 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-/// GetPeer returns a cloned peer
+// GetPeer returns a cloned peer of the given.
 func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
@@ -108,10 +108,10 @@ func (ps *PeerSet) Len() int {
 	return len(ps.peers)
 }
 
-// MaxClaimedHeight returns the maximum calimed height
+// MaxClaimedHeight returns the maximum calimed height.
 //
-// Note: This value might not be accurate
-// A bad peer can claim invalid height
+// Note: This value might not be accurate.
+// A bad peer can claim invalid height.
 //
 func (ps *PeerSet) MaxClaimedHeight() int32 {
 	ps.lk.RLock()

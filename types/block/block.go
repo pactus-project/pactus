@@ -38,7 +38,7 @@ func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
 	}
 }
 
-/// FromBytes constructs a new block from byte array
+// FromBytes constructs a new block from byte array.
 func FromBytes(data []byte) (*Block, error) {
 	b := new(Block)
 	r := bytes.NewReader(data)
@@ -197,7 +197,7 @@ func (b *Block) Decode(r io.Reader) error {
 	return nil
 }
 
-// SerializeSize returns the number of bytes it would take to serialize the block
+// SerializeSize returns the number of bytes it would take to serialize the block.
 func (b *Block) SerializeSize() int {
 	n := b.Header().SerializeSize()
 
@@ -231,8 +231,7 @@ func (b *Block) Bytes() ([]byte, error) {
 	return b.memorizedData, nil
 }
 
-// ---------
-// For tests
+// GenerateTestBlock generates a block vote for testing.
 func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) *Block {
 	if proposer == nil {
 		addr := crypto.GenerateTestAddress()

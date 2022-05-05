@@ -233,7 +233,7 @@ func testAddVote(cons *consensus,
 }
 
 // testEnterNewHeight helps tests to enter new height safely
-// without scheduling new height. It boosts the test speed
+// without scheduling new height. It boosts the test speed.
 func testEnterNewHeight(cons *consensus) {
 	cons.lk.Lock()
 	cons.enterNewState(cons.newHeightState)
@@ -241,7 +241,7 @@ func testEnterNewHeight(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-// testEnterNextRound helps tests to enter next round safely
+// testEnterNextRound helps tests to enter next round safely.
 func testEnterNextRound(cons *consensus) {
 	cons.lk.Lock()
 	cons.round++

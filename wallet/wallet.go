@@ -39,12 +39,12 @@ type serverInfo struct {
 }
 type servers = map[string][]serverInfo
 
-// GenerateMnemonic is a wrapper for `vault.GenerateMnemonic`
+// GenerateMnemonic is a wrapper for `vault.GenerateMnemonic.
 func GenerateMnemonic() string {
 	return vault.GenerateMnemonic()
 }
 
-/// OpenWallet tries to open a wallet at given path
+// OpenWallet tries to open a wallet at given path.
 func OpenWallet(path string) (*Wallet, error) {
 	data, err := util.ReadFile(path)
 	if err != nil {
@@ -60,7 +60,7 @@ func OpenWallet(path string) (*Wallet, error) {
 	return newWallet(path, store)
 }
 
-/// FromMnemonic creates a wallet from mnemonic (seed phrase)
+// FromMnemonic creates a wallet from mnemonic (seed phrase).
 func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
@@ -162,7 +162,7 @@ func (w *Wallet) Save() error {
 	return util.WriteFile(w.path, bs)
 }
 
-// Balance returns the account balance amount
+// Balance returns the account balance amount.
 func (w *Wallet) Balance(addrStr string) (int64, error) {
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
@@ -175,7 +175,7 @@ func (w *Wallet) Balance(addrStr string) (int64, error) {
 	return balance, nil
 }
 
-// Stake returns the validator stake amount
+// Stake returns the validator stake amount.
 func (w *Wallet) Stake(addrStr string) (int64, error) {
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
@@ -188,7 +188,7 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 	return stake, nil
 }
 
-// MakeSendTx creates a new send transaction based on the given parameters
+// MakeSendTx creates a new send transaction based on the given parameters.
 func (w *Wallet) MakeSendTx(sender, receiver string, amount int64,
 	options ...TxOption) (*tx.Tx, error) {
 	maker, err := newTxMaker(w.client, options...)
@@ -209,7 +209,7 @@ func (w *Wallet) MakeSendTx(sender, receiver string, amount int64,
 	return maker.build()
 }
 
-// MakeBondTx creates a new bond transaction based on the given parameters
+// MakeBondTx creates a new bond transaction based on the given parameters.
 func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 	options ...TxOption) (*tx.Tx, error) {
 	maker, err := newTxMaker(w.client, options...)
@@ -236,7 +236,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 	return maker.build()
 }
 
-// MakeUnbondTx creates a new unbond transaction based on the given parameters
+// MakeUnbondTx creates a new unbond transaction based on the given parameters.
 func (w *Wallet) MakeUnbondTx(addr string, options ...TxOption) (*tx.Tx, error) {
 	maker, err := newTxMaker(w.client, options...)
 	if err != nil {
@@ -252,7 +252,8 @@ func (w *Wallet) MakeUnbondTx(addr string, options ...TxOption) (*tx.Tx, error) 
 }
 
 // TODO: write tests for me by mocking grpc server
-// MakeWithdrawTx creates a new unbond transaction based on the given parameters
+// MakeWithdrawTx creates a new withdraw transaction based on the given
+// parameters.
 func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 	options ...TxOption) (*tx.Tx, error) {
 	maker, err := newTxMaker(w.client, options...)

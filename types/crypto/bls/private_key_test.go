@@ -128,8 +128,8 @@ func TestPrivateKeyFromSeed(t *testing.T) {
 			"0000f678e80740072a4a7fe8c7344db88a00ccc7db36aa51fa51f9c68e561584",
 			"SECRET1PQQQ0V78GQAQQW2J20L5VWDZDHZ9QPNX8MVM2550628UUDRJKZKZQ833GWW",
 		},
-		/// The test vectors from EIP-2333
-		/// https://github.com/ethereum/EIPs/blob/784107449bd83a9327b54f82aba96de28d72b89a/EIPS/eip-2333.md#test-cases
+		// The test vectors from EIP-2333
+		// https://github.com/ethereum/EIPs/blob/784107449bd83a9327b54f82aba96de28d72b89a/EIPS/eip-2333.md#test-cases
 		{
 			"c55257c360c07c72029aebc1b53c05ed0362ada38ead3e3e9efa3708e53495531f09a6987599d18264c1e1c92f2cf141630c7a3c4ab7c81b2f001698e7463b04",
 			"0d7359d57963ab8fbbde1852dcf553fedbc31f464d80ee7d40ae683122b45070",

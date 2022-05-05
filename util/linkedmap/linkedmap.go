@@ -4,11 +4,12 @@ import (
 	"container/list"
 )
 
+// TODO: should be thread safe or not?
+
 type Pair struct {
 	First, Second interface{}
 }
 
-// TODO: should be thread safe
 type LinkedMap struct {
 	list     *list.List
 	hashmap  map[interface{}]*list.Element

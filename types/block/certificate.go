@@ -72,7 +72,7 @@ func (cert *Certificate) Hash() hash.Hash {
 	return hash.CalcHash(w.Bytes())
 }
 
-// SerializeSize returns the number of bytes it would take to serialize the block
+// SerializeSize returns the number of bytes it would take to serialize the block.
 func (cert *Certificate) SerializeSize() int {
 	sz := encoding.VarIntSerializeSize(uint64(cert.Round())) +
 		encoding.VarIntSerializeSize(uint64(len(cert.Committers()))) +

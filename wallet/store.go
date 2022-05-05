@@ -57,7 +57,7 @@ func (s *store) AddressInfos() []vault.AddressInfo {
 	return s.data.Vault.AddressInfos()
 }
 
-// AddressCount returns the number of addresses inside the wallet
+// AddressCount returns the number of addresses inside the wallet.
 func (s *store) AddressCount() int {
 	return s.data.Vault.AddressCount()
 }
@@ -86,12 +86,12 @@ func (s *store) Mnemonic(password string) (string, error) {
 	return s.data.Vault.Mnemonic(password)
 }
 
-// SetLabel returns label of addrStr
-func (s *store) Label(addrStr string) string {
-	return s.data.Vault.Label(addrStr)
+// Label returns label of addr.
+func (s *store) Label(addr string) string {
+	return s.data.Vault.Label(addr)
 }
 
-// SetLabel sets label for addr
-func (s *store) SetLabel(addrStr, label string) error {
-	return s.data.Vault.SetLabel(addrStr, label)
+// SetLabel sets label for addr.
+func (s *store) SetLabel(addr, label string) error {
+	return s.data.Vault.SetLabel(addr, label)
 }

@@ -14,7 +14,7 @@ import (
 
 var _ Sandbox = &MockSandbox{}
 
-// MockSandbox is a testing mock for sandbox
+// MockSandbox is a testing mock for sandbox.
 type MockSandbox struct {
 	Params               param.Params
 	TestStore            *store.MockStore

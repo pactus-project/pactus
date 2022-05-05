@@ -44,10 +44,10 @@ type Event interface {
 	Type() EventType
 }
 
-/// `GossipMessage` represents message from PubSub module.
-/// `source` is the ID of the peer that initiate the message and
-/// `from` is the ID of the peer that we received a message from.
-/// They are not necessarily the same, especially in a decentralized network.
+// `GossipMessage` represents message from PubSub module.
+// `source` is the ID of the peer that initiate the message and
+// `from` is the ID of the peer that we received a message from.
+// They are not necessarily the same, especially in a decentralized network.
 type GossipMessage struct {
 	Source lp2pcore.PeerID
 	From   lp2pcore.PeerID
@@ -58,7 +58,7 @@ func (*GossipMessage) Type() EventType {
 	return EventTypeGossip
 }
 
-/// `GossipMessage` represents message from stream module.
+// `GossipMessage` represents message from stream module.
 type StreamMessage struct {
 	Source lp2pcore.PeerID
 	Reader io.ReadCloser

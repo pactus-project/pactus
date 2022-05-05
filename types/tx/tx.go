@@ -57,7 +57,7 @@ func NewTx(stamp hash.Stamp,
 	return trx
 }
 
-/// FromBytes constructs a new transaction from byte array
+// FromBytes constructs a new transaction from byte array.
 func FromBytes(bs []byte) (*Tx, error) {
 	tx := new(Tx)
 	r := bytes.NewReader(bs)
@@ -192,7 +192,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	return tx.Decode(buf)
 }
 
-// SerializeSize returns the number of bytes it would take to serialize the transaction
+// SerializeSize returns the number of bytes it would take to serialize the transaction.
 func (tx *Tx) SerializeSize() int {
 	n := 150 +
 		encoding.VarIntSerializeSize(uint64(tx.Sequence())) +
@@ -380,13 +380,12 @@ func (tx *Tx) IsWithdrawTx() bool {
 	return tx.Payload().Type() == payload.PayloadTypeWithdraw
 }
 
-//IsFreeTx will return if trx's fee is 0
+// IsFreeTx will checks if transaction fee is 0.
 func (tx *Tx) IsFreeTx() bool {
 	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
 }
 
-// ---------
-// For tests
+// GenerateTestSendTx generates a send transaction for testing.
 func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
@@ -397,6 +396,7 @@ func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	return tx, s
 }
 
+// GenerateTestSendTx generates a bond transaction for testing.
 func GenerateTestBondTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
@@ -407,6 +407,7 @@ func GenerateTestBondTx() (*Tx, crypto.Signer) {
 	return tx, s
 }
 
+// GenerateTestSendTx generates a sortition transaction for testing.
 func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
@@ -416,6 +417,7 @@ func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
 	return tx, s
 }
 
+// GenerateTestSendTx generates an unbond transaction for testing.
 func GenerateTestUnbondTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
@@ -424,6 +426,7 @@ func GenerateTestUnbondTx() (*Tx, crypto.Signer) {
 	return tx, s
 }
 
+// GenerateTestSendTx generates a withdraw transaction for testing.
 func GenerateTestWithdrawTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()

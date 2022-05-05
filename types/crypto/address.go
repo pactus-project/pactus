@@ -127,7 +127,7 @@ func (addr Address) EqualsTo(right Address) bool {
 	return bytes.Equal(addr.Bytes(), right.Bytes())
 }
 
-// For tests
+// GenerateTestAddress generates a address for testing.
 func GenerateTestAddress() Address {
 	data := make([]byte, 20)
 	_, err := rand.Read(data)

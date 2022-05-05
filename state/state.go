@@ -312,8 +312,8 @@ func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certi
 	defer st.lk.Unlock()
 
 	if height != st.lastInfo.BlockHeight()+1 {
-		/// Returning error here will cause so many error logs during syncing blockchain
-		/// Syncing is asynchronous job and we might receive blocks not in order
+		// Returning error here will cause so many error logs during syncing blockchain
+		// Syncing is asynchronous job and we might receive blocks not in order
 		st.logger.Debug("unexpected block height", "height", height)
 		return nil
 	}
@@ -323,10 +323,10 @@ func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certi
 		return err
 	}
 
-	/// There are two modules that can commit a block: Consensus and Syncer.
-	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
-	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
-	/// We should never have a fork in our blockchain. but if it happens, here we can catch it.
+	// There are two modules that can commit a block: Consensus and Syncer.
+	// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
+	// In the other side, Syncer module receives new blocks from the network and tries to commit them.
+	// We should never have a fork in our blockchain. but if it happens, here we can catch it.
 	if !block.Header().PrevBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
 		st.logger.Panic("a possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().PrevBlockHash())
 		return errors.Error(errors.ErrInvalidBlock)
@@ -574,7 +574,7 @@ func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	return val
 }
 
-// ValidatorByNumber returns validator data based on validator number
+// ValidatorByNumber returns validator data based on validator number.
 func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	val, err := st.store.ValidatorByNumber(n)
 	if err != nil {

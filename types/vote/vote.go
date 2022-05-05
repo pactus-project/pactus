@@ -62,7 +62,7 @@ func (v *Vote) SetSignature(sig crypto.Signature) {
 	v.data.Signature = sig.(*bls.Signature)
 }
 
-// SetPublicKey is doing nothing and just satisfies SignableMsg interface
+// SetPublicKey is doing nothing and just satisfies SignableMsg interface.
 func (v *Vote) SetPublicKey(crypto.PublicKey) {}
 
 func (v *Vote) MarshalCBOR() ([]byte, error) {
@@ -120,8 +120,7 @@ func (v *Vote) Fingerprint() string {
 	)
 }
 
-// ---------
-// For tests
+// GenerateTestPrecommitVote generates a precommit vote for testing.
 func GenerateTestPrecommitVote(height int32, round int16) (*Vote, crypto.Signer) {
 	s := bls.GenerateTestSigner()
 	v := NewVote(
@@ -135,6 +134,7 @@ func GenerateTestPrecommitVote(height int32, round int16) (*Vote, crypto.Signer)
 	return v, s
 }
 
+// GenerateTestPrepareVote generates a prepare vote for testing.
 func GenerateTestPrepareVote(height int32, round int16) (*Vote, crypto.Signer) {
 	s := bls.GenerateTestSigner()
 	v := NewVote(
@@ -148,6 +148,7 @@ func GenerateTestPrepareVote(height int32, round int16) (*Vote, crypto.Signer) {
 	return v, s
 }
 
+// GenerateTestChangeProposerVote generates a proposer-change vote for testing.
 func GenerateTestChangeProposerVote(height int32, round int16) (*Vote, crypto.Signer) {
 	s := bls.GenerateTestSigner()
 	v := NewVote(

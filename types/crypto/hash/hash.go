@@ -92,8 +92,7 @@ func (h Hash) EqualsTo(r Hash) bool {
 	return h == r
 }
 
-// ---------
-// For tests
+// GenerateTestHash generates a hash for testing.
 func GenerateTestHash() Hash {
 	return CalcHash(util.Uint64ToSlice(util.RandUint64(0)))
 }

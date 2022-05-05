@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-// Generate creates a new wallet
+// Generate creates a new wallet.
 func Generate() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		testnetOpt := c.Bool(cli.BoolOpt{
@@ -44,7 +44,7 @@ func Generate() func(c *cli.Cmd) {
 	}
 }
 
-// ChangePassword updates the wallet password
+// ChangePassword updates the wallet password.
 func ChangePassword() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		passOpt := addPasswordOption(c)

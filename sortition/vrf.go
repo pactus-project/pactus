@@ -9,7 +9,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 )
 
-// evaluate returns a random number between 0 and max with the proof
+// evaluate returns a random number between 0 and max with the proof.
 func evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (index uint64, proof Proof) {
 	signData := append(seed[:], signer.PublicKey().Bytes()...)
 	sig := signer.SignData(signData)
@@ -20,7 +20,7 @@ func evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (index uint
 	return index, proof
 }
 
-// verify ensures the proof is valid
+// verify ensures the proof is valid.
 func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max uint64) (index uint64, result bool) {
 	proofSig, err := bls.SignatureFromBytes(proof[:])
 	if err != nil {

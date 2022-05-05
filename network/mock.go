@@ -106,7 +106,7 @@ func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
 	mock.OtherNets = append(mock.OtherNets, net)
 }
 
-/// TestRandomPeerID returns a random peer ID
+// TestRandomPeerID returns a random peer ID.
 func TestRandomPeerID() peer.ID {
 	s := util.Uint64ToSlice(util.RandUint64(0))
 	id := [34]byte{0x12, 32}

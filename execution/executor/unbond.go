@@ -49,7 +49,7 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-//Fee will return unbond execution fee
+// Fee will return unbond execution fee.
 func (e *UnbondExecutor) Fee() int64 {
 	return 0
 }

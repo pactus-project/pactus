@@ -92,7 +92,7 @@ func TestSendToSelf(t *testing.T) {
 	trx := tx.NewSendTx(tStamp500000, sender.Sequence()+1, sender.Address(), sender.Address(), amt, fee, "ok")
 	assert.NoError(t, exe.Execute(trx, tSandbox))
 
-	assert.Equal(t, tSandbox.Account(self).Balance(), senderBalance-fee) /// Fee should be deducted
+	assert.Equal(t, tSandbox.Account(self).Balance(), senderBalance-fee) // Fee should be deducted
 	assert.Equal(t, exe.Fee(), fee)
 }
 

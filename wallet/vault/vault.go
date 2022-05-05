@@ -161,7 +161,7 @@ func (v *Vault) ImportPrivateKey(password string, prvStr string) error {
 	if v.Contains(addr) {
 		return ErrAddressExists
 	}
-	/// Decrypt parent key to make sure the password is correct
+	// Decrypt parent key to make sure the password is correct
 	_, err = v.parentKey(password)
 	if err != nil {
 		return err

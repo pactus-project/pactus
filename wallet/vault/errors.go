@@ -6,16 +6,16 @@ import (
 )
 
 var (
-	// ErrInvalidPassword describes an error in which the password is invalid
+	// ErrInvalidPassword describes an error in which the password is invalid.
 	ErrInvalidPassword = errors.New("invalid password")
 
 	// ErrAddressExists describes an error in which the address already exist
-	// in wallet
+	// in wallet.
 	ErrAddressExists = errors.New("address already exists")
 )
 
 // ErrAddressNotFound describes an error in which the address doesn't exist
-// in wallet
+// in wallet.
 type ErrAddressNotFound struct {
 	addr string
 }
@@ -28,7 +28,7 @@ func (e ErrAddressNotFound) Error() string {
 	return fmt.Sprintf("address not found: %s", e.addr)
 }
 
-// ErrUnknownMethod describes an error in which the method is not known
+// ErrUnknownMethod describes an error in which the method is not known.
 type ErrUnknownMethod struct {
 	name string
 }

@@ -9,10 +9,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
-	"google.golang.org/grpc"
-
-	// Static files
 	_ "github.com/zarbchain/zarb-go/www/grpc/statik"
+	"google.golang.org/grpc"
 )
 
 type GatewayConfig struct {
