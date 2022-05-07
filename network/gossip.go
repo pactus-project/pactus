@@ -21,7 +21,8 @@ type gossipService struct {
 	logger  *logger.Logger
 }
 
-func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event, logger *logger.Logger) *gossipService {
+func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
+	logger *logger.Logger) *gossipService {
 	pubsub, err := lp2pps.NewGossipSub(ctx, host)
 	if err != nil {
 		logger.Panic("unable to start Gossip service: %v", err)

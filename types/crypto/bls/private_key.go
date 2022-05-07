@@ -98,7 +98,8 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 // This method in unexported and should not be called from the outside.
 func privateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
+			"private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
 	}
 	sc := new(bls.SecretKey)
 	if err := sc.Deserialize(data); err != nil {

@@ -50,7 +50,8 @@ func (st *state) checkCertificate(blockHash hash.Hash, cert *block.Certificate) 
 
 	// Check if signers have 2/3+ of total power
 	if signedPower <= committeePower*2/3 {
-		return errors.Errorf(errors.ErrInvalidBlock, "accumulated power is %v, should be more than %v", signedPower, committeePower*2/3)
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"accumulated power is %v, should be more than %v", signedPower, committeePower*2/3)
 	}
 
 	// Check signature

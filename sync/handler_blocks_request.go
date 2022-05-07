@@ -63,7 +63,8 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 			break
 		}
 
-		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, msg.SessionID, height, blocks, nil)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
+			msg.SessionID, height, blocks, nil)
 		handler.sendTo(response, initiator)
 
 		height += int32(len(blocks))
@@ -76,10 +77,12 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 
 	if msg.To >= handler.state.LastBlockHeight() {
 		lastCertificate := handler.state.LastCertificate()
-		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced, msg.SessionID, handler.state.LastBlockHeight(), nil, lastCertificate)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced,
+			msg.SessionID, handler.state.LastBlockHeight(), nil, lastCertificate)
 		handler.sendTo(response, initiator)
 	} else {
-		response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks, msg.SessionID, 0, nil, nil)
+		response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,
+			msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator)
 	}
 

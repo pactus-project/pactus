@@ -21,7 +21,8 @@ type committee struct {
 	proposerPos   *list.Element
 }
 
-func NewCommittee(validators []*validator.Validator, committeeSize int, proposerAddress crypto.Address) (Committee, error) {
+func NewCommittee(validators []*validator.Validator, committeeSize int,
+	proposerAddress crypto.Address) (Committee, error) {
 	validatorList := list.New()
 	var proposerPos *list.Element
 
@@ -82,7 +83,8 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 
 	sort.SliceStable(oldestFirst, func(i, j int) bool {
-		return oldestFirst[i].Value.(*validator.Validator).LastJoinedHeight() < oldestFirst[j].Value.(*validator.Validator).LastJoinedHeight()
+		return oldestFirst[i].Value.(*validator.Validator).LastJoinedHeight() <
+			oldestFirst[j].Value.(*validator.Validator).LastJoinedHeight()
 	})
 
 	for i := 0; i <= int(lastRound); i++ {

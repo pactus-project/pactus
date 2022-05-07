@@ -23,7 +23,8 @@ type Firewall struct {
 	logger  *logger.Logger
 }
 
-func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, state state.Facade, logger *logger.Logger) *Firewall {
+func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, state state.Facade,
+	logger *logger.Logger) *Firewall {
 	return &Firewall{
 		config:  conf,
 		network: net,

@@ -427,7 +427,8 @@ func GenerateTestUnbondTx() (*Tx, crypto.Signer) {
 func GenerateTestWithdrawTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
-	tx := NewWithdrawTx(stamp, util.RandInt32(1000), s.Address(), crypto.GenerateTestAddress(), util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test withdraw-tx")
+	tx := NewWithdrawTx(stamp, util.RandInt32(1000), s.Address(), crypto.GenerateTestAddress(),
+		util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test withdraw-tx")
 	s.SignMsg(tx)
 	return tx, s
 }

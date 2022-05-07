@@ -17,7 +17,8 @@ type dhtService struct {
 	logger    *logger.Logger
 }
 
-func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID, conf *BootstrapConfig, logger *logger.Logger) *dhtService {
+func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
+	conf *BootstrapConfig, logger *logger.Logger) *dhtService {
 	opts := []lp2pdht.Option{
 		lp2pdht.Mode(lp2pdht.ModeAuto),
 		lp2pdht.ProtocolPrefix(protocolID),

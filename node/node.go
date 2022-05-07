@@ -89,7 +89,8 @@ func (n *Node) Start() error {
 	now := util.Now()
 	genTime := n.genesisDoc.GenesisTime()
 	if genTime.After(now) {
-		logger.Info("💤 Genesis time is in the future. Sleeping until then...", "duration", genTime.Sub(now), "genesis_hash", n.genesisDoc.Hash())
+		logger.Info("💤 Genesis time is in the future. Sleeping until then...",
+			"duration", genTime.Sub(now), "genesis_hash", n.genesisDoc.Hash())
 		time.Sleep(genTime.Sub(now) - 1*time.Second)
 	}
 

@@ -10,7 +10,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (zs *zarbServer) GetBlockHash(ctx context.Context, request *zarb.BlockHashRequest) (*zarb.BlockHashResponse, error) {
+func (zs *zarbServer) GetBlockHash(ctx context.Context,
+	request *zarb.BlockHashRequest) (*zarb.BlockHashResponse, error) {
 	height := request.GetHeight()
 	hash := zs.state.BlockHash(height)
 	if hash.IsUndef() {
@@ -21,7 +22,8 @@ func (zs *zarbServer) GetBlockHash(ctx context.Context, request *zarb.BlockHashR
 	}, nil
 }
 
-func (zs *zarbServer) GetBlock(ctx context.Context, request *zarb.BlockRequest) (*zarb.BlockResponse, error) {
+func (zs *zarbServer) GetBlock(ctx context.Context,
+	request *zarb.BlockRequest) (*zarb.BlockResponse, error) {
 	hash, err := hash.FromBytes(request.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "provided hash is not Valid")

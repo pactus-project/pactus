@@ -66,7 +66,8 @@ func AddressFromString(text string) (Address, error) {
 
 	// The regrouped data must be 20 bytes.
 	if len(regrouped) != 20 {
-		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "address should be %d bytes, but it is %v bytes", AddressSize, len(data)+1)
+		return Address{}, errors.Errorf(errors.ErrInvalidAddress,
+			"address should be %d bytes, but it is %v bytes", AddressSize, len(data)+1)
 	}
 
 	var addr Address

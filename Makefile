@@ -69,7 +69,9 @@ fmt:
 
 # TODO: Addd revive to make sure all exported function has comment.
 check:
-	golangci-lint run --build-tags "${BUILD_TAG}" -e "SA1019" \
+	golangci-lint run \
+		--build-tags "${BUILD_TAG}" \
+		-e "SA1019" \
 		--timeout=20m0s \
 		--enable=gofmt \
 		--enable=unconvert \
@@ -81,8 +83,13 @@ check:
 		--enable=nilerr \
 		--enable=gosec \
 		--enable=godot \
-		--enable=whitespace \
+		--enable=goimports \
 		--enable=gocyclo
+
+	golangci-lint run \
+		--skip-files ".*test.*" \
+		--build-tags "${BUILD_TAG}" \
+		--enable=lll \
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.

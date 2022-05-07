@@ -157,7 +157,8 @@ func (li *LastInfo) restoreCommittee(b *block.Block, committeeSize int) (committ
 	}
 
 	// First we restore previous committee, then we update it to get the latest committee.
-	proposerIndex = (proposerIndex + curCommitteeSize - (int(li.lastCertificate.Round()) % curCommitteeSize)) % curCommitteeSize
+	proposerIndex = (proposerIndex + curCommitteeSize -
+		(int(li.lastCertificate.Round()) % curCommitteeSize)) % curCommitteeSize
 	committee, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %v", err)

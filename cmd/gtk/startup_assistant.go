@@ -96,7 +96,8 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	// --- PageMode
 	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from the scratch")
 	errorCheck(assistant, err)
-	recoverWalletRadio, err := gtk.RadioButtonNewWithLabelFromWidget(newWalletRadio, "Restore a wallet from the seed phrase")
+	recoverWalletRadio, err := gtk.RadioButtonNewWithLabelFromWidget(newWalletRadio,
+		"Restore a wallet from the seed phrase")
 	errorCheck(assistant, err)
 	recoverWalletRadio.SetSensitive(false)
 

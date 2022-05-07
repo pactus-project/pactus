@@ -16,7 +16,8 @@ type walletModel struct {
 }
 
 func newWalletModel(wallet *wallet.Wallet) (*walletModel, error) {
-	listStore, err := gtk.ListStoreNew(glib.TYPE_INT, glib.TYPE_STRING, glib.TYPE_STRING, glib.TYPE_STRING, glib.TYPE_STRING)
+	listStore, err := gtk.ListStoreNew(glib.TYPE_INT, glib.TYPE_STRING, glib.TYPE_STRING,
+		glib.TYPE_STRING, glib.TYPE_STRING)
 	if err != nil {
 		return nil, err
 	}

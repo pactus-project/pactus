@@ -7,7 +7,8 @@ import (
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
-func (zs *zarbServer) GetBlockchainInfo(ctx context.Context, request *zarb.BlockchainInfoRequest) (*zarb.BlockchainInfoResponse, error) {
+func (zs *zarbServer) GetBlockchainInfo(ctx context.Context,
+	request *zarb.BlockchainInfoRequest) (*zarb.BlockchainInfoResponse, error) {
 	height := zs.state.LastBlockHeight()
 
 	return &zarb.BlockchainInfoResponse{
@@ -15,7 +16,8 @@ func (zs *zarbServer) GetBlockchainInfo(ctx context.Context, request *zarb.Block
 		LastBlockHash:   zs.state.LastBlockHash().Bytes(),
 	}, nil
 }
-func (zs *zarbServer) GetNetworkInfo(ctx context.Context, request *zarb.NetworkInfoRequest) (*zarb.NetworkInfoResponse, error) {
+func (zs *zarbServer) GetNetworkInfo(ctx context.Context,
+	request *zarb.NetworkInfoRequest) (*zarb.NetworkInfoResponse, error) {
 	// Create response peers
 	rps := make([]*zarb.PeerInfo, int32(len(zs.sync.Peers())))
 
