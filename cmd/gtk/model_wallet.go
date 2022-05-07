@@ -42,7 +42,6 @@ func (model *walletModel) rebuildModel() error {
 		}
 		balance, _ := model.wallet.Balance(info.Address)
 		stake, _ := model.wallet.Balance(info.Address)
-		//errorCheck(parent, err)
 		balanceStr := strconv.FormatInt(balance, 10)
 		stakeStr := strconv.FormatInt(stake, 10)
 
