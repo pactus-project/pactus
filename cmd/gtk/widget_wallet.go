@@ -105,8 +105,8 @@ func (ww *widgetWallet) onNewAddress() {
 	errorCheck(nil, err)
 }
 
-func (wn *widgetWallet) timeout() bool {
-	err := wn.model.rebuildModel()
+func (ww *widgetWallet) timeout() bool {
+	err := ww.model.rebuildModel()
 	if err != nil {
 		errorCheck(nil, err)
 	}

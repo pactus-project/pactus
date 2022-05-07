@@ -9,7 +9,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
-	_ "github.com/zarbchain/zarb-go/www/grpc/statik"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

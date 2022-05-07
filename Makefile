@@ -67,7 +67,6 @@ proto:
 fmt:
 	gofmt -s -w .
 
-# TODO: Addd revive to make sure all exported function has comment.
 check:
 	golangci-lint run \
 		--build-tags "${BUILD_TAG}" \
@@ -76,8 +75,9 @@ check:
 		--enable=gofmt \
 		--enable=unconvert \
 		--enable=unparam \
-		--enable=asciicheck\
+		--enable=asciicheck \
 		--enable=misspell \
+		--enable=revive \
 		--enable=decorder \
 		--enable=depguard \
 		--enable=nilerr \
