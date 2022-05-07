@@ -125,10 +125,11 @@ func Start() func(c *cli.Cmd) {
 
 // makeSigner makes a signer object from the validator private key.
 // Private key obtains in this order:
-// 1- From key file option (--key-file <path>).
-// 2- From private key option (--private-key <secret>).
-// 3- From 'validator_key' file insied the working directory.
-// 4- From the first address of the default_wallet.
+// 1- From key file option (--key-file <path>)
+// 2- From private key option (--private-key <secret>)
+// 3- From 'validator_key' file insied the working directory
+// 4- From the first address of the default_wallet
+// If none of them, it asks user to enter the private key.
 func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Signer, error) {
 	prvStr := ""
 	switch {

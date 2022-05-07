@@ -148,9 +148,7 @@ func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
 	}
 
 	nodeModel := newNodeModel(node)
-
-	walletModel, err := newWalletModel(wallet)
-	errorCheck(parent, err)
+	walletModel := newWalletModel(wallet)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel, *genTime)

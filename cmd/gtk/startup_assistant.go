@@ -14,23 +14,24 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-func getTextViewcontent(tv *gtk.TextView) (string, error) {
+func getTextViewContent(tv *gtk.TextView) string {
 	buf, _ := tv.GetBuffer()
 	startIter, endIter := buf.GetBounds()
 	content, err := buf.GetText(startIter, endIter, true)
 	if err != nil {
-		return "", err
+		// TODO: Log error
+		return ""
 	}
-	return content, nil
+	return content
 }
 
-func setTextViewcontent(tv *gtk.TextView, content string) error {
+func setTextViewContent(tv *gtk.TextView, content string) {
 	buf, err := tv.GetBuffer()
 	if err != nil {
-		return err
+		// TODO: Log error
+		return
 	}
 	buf.SetText(content)
-	return err
 }
 
 func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
@@ -163,10 +164,8 @@ This seed will allow you to recover your wallet in case of computer failure.
 	seedConfirmTextBuffer, err := seedConfirmTextView.GetBuffer()
 	errorCheck(assistant, err)
 	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
-		mnemonic1, err := getTextViewcontent(seedTextView)
-		errorCheck(assistant, err)
-		mnemonic2, err := getTextViewcontent(seedConfirmTextView)
-		errorCheck(assistant, err)
+		mnemonic1 := getTextViewContent(seedTextView)
+		mnemonic2 := getTextViewContent(seedConfirmTextView)
 		space := regexp.MustCompile(`\s+`)
 		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
 		mnemonic2 = strings.TrimSpace(mnemonic2)
@@ -296,12 +295,9 @@ Now you are ready to start the node!`
 			}
 		case pageSeedName:
 			{
-				text, _ := getTextViewcontent(seedTextView)
+				text := getTextViewContent(seedTextView)
 				if text == "" {
-					err := setTextViewcontent(seedTextView, mnemonic)
-					if err != nil {
-						errorCheck(assistant, err)
-					}
+					setTextViewContent(seedTextView, mnemonic)
 				}
 				assistant.SetPageComplete(pageSeed, true)
 			}
@@ -374,8 +370,7 @@ Now you are ready to start the node!`
 				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
 				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 
-				err = setTextViewcontent(NodeInfoTextView, nodeInfo)
-				errorCheck(assistant, err)
+				setTextViewContent(NodeInfoTextView, nodeInfo)
 			}
 		}
 	})

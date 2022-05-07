@@ -15,16 +15,18 @@ type walletModel struct {
 	listStore *gtk.ListStore
 }
 
-func newWalletModel(wallet *wallet.Wallet) (*walletModel, error) {
-	listStore, err := gtk.ListStoreNew(glib.TYPE_INT, glib.TYPE_STRING, glib.TYPE_STRING,
-		glib.TYPE_STRING, glib.TYPE_STRING)
-	if err != nil {
-		return nil, err
-	}
+func newWalletModel(wallet *wallet.Wallet) *walletModel {
+	listStore, _ := gtk.ListStoreNew(
+		glib.TYPE_INT,    // Column no
+		glib.TYPE_STRING, // Address
+		glib.TYPE_STRING, // Label
+		glib.TYPE_STRING, // balance
+		glib.TYPE_STRING) // Stake
+
 	return &walletModel{
 		wallet:    wallet,
 		listStore: listStore,
-	}, nil
+	}
 }
 
 func (model *walletModel) ToTreeModel() *gtk.TreeModel {

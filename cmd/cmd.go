@@ -76,7 +76,7 @@ func PromptConfirm(label string) bool {
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		if errors.Is(err, promptui.ErrAbort) {
+		if err != promptui.ErrAbort {
 			PrintErrorMsg("prompt error: %v", err)
 		}
 		os.Exit(1)

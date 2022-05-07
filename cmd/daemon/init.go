@@ -17,7 +17,7 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-// Init initializes a node for zarb blockchain
+// Init initializes a node for zarb blockchain.
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
