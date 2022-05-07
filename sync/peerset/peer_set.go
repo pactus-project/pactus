@@ -31,7 +31,7 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-// GetPeer returns a cloned peer of the given.
+// GetPeer finds a peer by id and returns a copy of the peer object.
 func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()

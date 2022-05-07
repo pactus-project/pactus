@@ -341,8 +341,7 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 	return sync.peerSet.GetPeerList()
 }
 
-// downloadBlocks starts downloading blocks from the network
-// maximum nodes to query block should be 8.
+// downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from int32) {
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {

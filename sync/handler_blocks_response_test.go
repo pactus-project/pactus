@@ -38,7 +38,7 @@ func TestOneBlockShorter(t *testing.T) {
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid,
-			 0, nil, nil)
+			0, nil, nil)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
