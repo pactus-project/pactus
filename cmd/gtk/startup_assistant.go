@@ -40,7 +40,6 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-//gocyclo:ignore
 func startupAssistant(workingDir string, testnet bool) bool {
 	gtk.Init(nil)
 
