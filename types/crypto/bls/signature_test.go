@@ -112,7 +112,6 @@ func TestSignatureBytes(t *testing.T) {
 			assert.Equal(t, sig.SanityCheck() == nil, test.valid, "test %v. sanity check failed", test.name)
 			assert.Equal(t, sig.Bytes(), test.bytes, "test %v. invalid bytes", test.name)
 			assert.Equal(t, sig.String(), test.encoded, "test %v. invalid encoded", test.name)
-
 		} else {
 			assert.Error(t, err, "test %v. should failed", test.name)
 			assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)

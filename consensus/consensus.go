@@ -42,7 +42,7 @@ func NewConsensus(
 	conf *Config,
 	state state.Facade,
 	signer crypto.Signer,
-	broadcastCh chan message.Message) (Consensus, error) {
+	broadcastCh chan message.Message) Consensus {
 	cs := &consensus{
 		config:      conf,
 		state:       state,
@@ -64,7 +64,7 @@ func NewConsensus(
 	cs.height = 0
 	cs.round = 0
 
-	return cs, nil
+	return cs
 }
 
 func (cs *consensus) Start() error {

@@ -54,7 +54,6 @@ func TestAddToBalance(t *testing.T) {
 	bal := acc.Balance()
 	acc.AddToBalance(1)
 	assert.Equal(t, acc.Balance(), bal+1)
-
 }
 
 func TestSubtractFromBalance(t *testing.T) {
@@ -62,5 +61,4 @@ func TestSubtractFromBalance(t *testing.T) {
 	bal := acc.Balance()
 	acc.SubtractFromBalance(1)
 	assert.Equal(t, acc.Balance(), bal-1)
-
 }

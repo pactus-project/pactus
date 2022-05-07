@@ -341,9 +341,7 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 	return sync.peerSet.GetPeerList()
 }
 
-// TODO:
-// maximum nodes to query block should be 8
-//
+// downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from int32) {
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
@@ -400,7 +398,7 @@ func (sync *synchronizer) queryLatestBlocks(from int32) {
 	sync.sendTo(msg, randPeer.PeerID)
 }
 
-/// peerIsInTheCommittee checks if the peer is a member of committee
+// peerIsInTheCommittee checks if the peer is a member of committee.
 func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 	p := sync.peerSet.GetPeer(id)
 	if !p.IsKnownOrTrusty() {
@@ -410,7 +408,7 @@ func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 	return sync.state.IsInCommittee(p.Address())
 }
 
-/// weAreInTheCommittee checks if we are a member of committee
+// weAreInTheCommittee checks if we are a member of committee.
 func (sync *synchronizer) weAreInTheCommittee() bool {
 	return sync.state.IsInCommittee(sync.signer.PublicKey().Address())
 }

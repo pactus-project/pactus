@@ -69,7 +69,6 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 	// After closing db, we should not crash
 	assert.NoError(t, tStore.Close())
 	assert.Error(t, tStore.WriteBatch())
-
 }
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
@@ -115,7 +114,6 @@ func TestRetrieveAccount(t *testing.T) {
 	assert.NoError(t, tStore.Close())
 	_, err := tStore.Account(acc.Address())
 	assert.Error(t, err)
-
 }
 
 func TestRetrieveValidator(t *testing.T) {

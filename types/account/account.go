@@ -10,7 +10,7 @@ import (
 	"github.com/zarbchain/zarb-go/util/encoding"
 )
 
-// Account structure
+// Account represents a structure for an account information.
 type Account struct {
 	data accountData
 }
@@ -22,7 +22,7 @@ type accountData struct {
 	Balance  int64
 }
 
-// NewAccount constructs a new account object
+// NewAccount constructs a new account object.
 func NewAccount(addr crypto.Address, number int32) *Account {
 	return &Account{
 		data: accountData{
@@ -32,7 +32,7 @@ func NewAccount(addr crypto.Address, number int32) *Account {
 	}
 }
 
-// FromBytes constructs a new account from byte array
+// FromBytes constructs a new account from byte array.
 func FromBytes(data []byte) (*Account, error) {
 	acc := new(Account)
 	r := bytes.NewReader(data)
@@ -91,7 +91,7 @@ func (acc *Account) Bytes() ([]byte, error) {
 	return w.Bytes(), nil
 }
 
-// GenerateTestAccount generates an account for testing purpose
+// GenerateTestAccount generates an account for testing purpose.
 func GenerateTestAccount(number int32) (*Account, crypto.Signer) {
 	signer := bls.GenerateTestSigner()
 	acc := NewAccount(signer.Address(), number)

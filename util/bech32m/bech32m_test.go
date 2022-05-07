@@ -176,7 +176,7 @@ func TestMixedCaseEncode(t *testing.T) {
 }
 
 // TestCanDecodeUnlimtedBech32 tests whether decoding a large bech32 string works
-// when using the DecodeNoLimit version
+// when using the DecodeNoLimit version.
 func TestCanDecodeUnlimtedBech32(t *testing.T) {
 	input := "11qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqp2krp0"
 
@@ -521,7 +521,6 @@ func TestConvertBitsFailures(t *testing.T) {
 				tc.err, err)
 		}
 	}
-
 }
 
 // BenchmarkConvertBitsDown benchmarks the speed and memory allocation behavior

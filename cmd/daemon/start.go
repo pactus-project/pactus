@@ -20,7 +20,7 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-//Start starts the zarb node
+//Start starts the zarb node.
 func Start() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
@@ -129,6 +129,7 @@ func Start() func(c *cli.Cmd) {
 // 2- From private key option (--private-key <secret>)
 // 3- From 'validator_key' file insied the working directory
 // 4- From the first address of the default_wallet
+// If none of them, it asks user to enter the private key.
 func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Signer, error) {
 	prvStr := ""
 	switch {
@@ -142,23 +143,11 @@ func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Si
 			}
 			prvStr = strings.TrimSpace(string(data))
 		} else if util.PathExists(walletPath) {
-			wallet, err := wallet.OpenWallet(walletPath)
+			valKeyWallet, err := getValidatorKeyFromWallet(walletPath)
 			if err != nil {
 				return nil, err
 			}
-			addrInfos := wallet.AddressInfos()
-			if len(addrInfos) == 0 {
-				return nil, fmt.Errorf("validator address is not defined")
-			}
-			password := ""
-			if wallet.IsEncrypted() {
-				password = cmd.PromptPassword("Wallet password", false)
-			}
-			valPrvKeyStr, err := wallet.PrivateKey(password, addrInfos[0].Address)
-			if err != nil {
-				return nil, err
-			}
-			prvStr = valPrvKeyStr
+			prvStr = valKeyWallet
 		} else {
 			// Creating KeyObject from Private Key
 			prvStr = cmd.PromptInput("Please enter the validator private key")
@@ -182,4 +171,25 @@ func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Si
 	}
 
 	return crypto.NewSigner(prv), nil
+}
+
+func getValidatorKeyFromWallet(walletPath string) (string, error) {
+	wallet, err := wallet.OpenWallet(walletPath)
+	if err != nil {
+		return "", err
+	}
+	addrInfos := wallet.AddressInfos()
+	if len(addrInfos) == 0 {
+		return "", fmt.Errorf("validator address is not defined")
+	}
+	password := ""
+	if wallet.IsEncrypted() {
+		password = cmd.PromptPassword("Wallet password", false)
+	}
+	prvKey, err := wallet.PrivateKey(password, addrInfos[0].Address)
+	if err != nil {
+		return "", err
+	}
+
+	return prvKey, nil
 }

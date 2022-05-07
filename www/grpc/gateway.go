@@ -10,9 +10,7 @@ import (
 	"github.com/rakyll/statik/fs"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc"
-
-	// Static files
-	_ "github.com/zarbchain/zarb-go/www/grpc/statik"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type GatewayConfig struct {
@@ -22,7 +20,7 @@ type GatewayConfig struct {
 }
 
 // getOpenAPIHandler serves an OpenAPI UI.
-// Adapted from https://github.com/philips/grpc-gateway-example/blob/a269bcb5931ca92be0ceae6130ac27ae89582ecc/cmd/serve.go#L63
+// https://github.com/philips/grpc-gateway-example/blob/master/cmd/serve.go
 func (s *Server) getOpenAPIHandler() (http.Handler, error) {
 	err := mime.AddExtensionType(".svg", "image/svg+xml")
 	if err != nil {
@@ -45,7 +43,7 @@ func (s *Server) startGateway() error {
 	conn, err := grpc.DialContext(
 		s.ctx,
 		s.config.Listen,
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	)
 	if err != nil {

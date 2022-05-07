@@ -1,6 +1,7 @@
 package vault
 
-/// cipher text
+// encrypted keeps the cipher text and the method parameters for the
+// chiper algorithm.
 type encrypted struct {
 	Method     string `json:"method,omitempty"`
 	Params     params `json:"params,omitempty"`

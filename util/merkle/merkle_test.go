@@ -59,7 +59,6 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 		second := sha256.Sum256(first[:])
 		h, _ := hash.FromBytes(second[:])
 		return h
-
 	}
 
 	// Block 100000 in bitcoin
@@ -88,7 +87,6 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 }
 
 func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
-
 	hasher = func(data []byte) hash.Hash {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
@@ -129,5 +127,4 @@ func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
 
 	root2 := HashMerkleBranches(&left, &right)
 	assert.True(t, root.EqualsTo(*root2))
-
 }

@@ -30,7 +30,8 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 
 func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	if len(data) != PublicKeySize {
-		return nil, errors.Errorf(errors.ErrInvalidPublicKey, "public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
+		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
+			"public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
 	}
 	pk := new(bls.PublicKey)
 	if err := pk.Deserialize(data); err != nil {

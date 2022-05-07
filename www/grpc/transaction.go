@@ -13,11 +13,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.TransactionRequest) (*zarb.TransactionResponse, error) {
+func (zs *zarbServer) GetTransaction(ctx context.Context,
+	request *zarb.TransactionRequest) (*zarb.TransactionResponse, error) {
 	id, err := hash.FromString(request.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
-
 	}
 	trx := zs.state.Transaction(id)
 	if trx == nil {
@@ -27,10 +27,10 @@ func (zs *zarbServer) GetTransaction(ctx context.Context, request *zarb.Transact
 	return &zarb.TransactionResponse{
 		Tranaction: transactionToProto(trx),
 	}, nil
-
 }
 
-func (zs *zarbServer) SendRawTransaction(ctx context.Context, request *zarb.SendRawTransactionRequest) (*zarb.SendRawTransactionResponse, error) {
+func (zs *zarbServer) SendRawTransaction(ctx context.Context,
+	request *zarb.SendRawTransactionRequest) (*zarb.SendRawTransactionResponse, error) {
 	data, err := hex.DecodeString(request.Data)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())

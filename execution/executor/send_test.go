@@ -92,7 +92,7 @@ func TestSendToSelf(t *testing.T) {
 	trx := tx.NewSendTx(tStamp500000, sender.Sequence()+1, sender.Address(), sender.Address(), amt, fee, "ok")
 	assert.NoError(t, exe.Execute(trx, tSandbox))
 
-	assert.Equal(t, tSandbox.Account(self).Balance(), senderBalance-fee) /// Fee should be deducted
+	assert.Equal(t, tSandbox.Account(self).Balance(), senderBalance-fee) // Fee should be deducted
 	assert.Equal(t, exe.Fee(), fee)
 }
 
@@ -110,5 +110,4 @@ func TestSendNonStrictMode(t *testing.T) {
 	trx2 := tx.NewSubsidyTx(tStamp500000, tSandbox.CurrentHeight()+1, receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
 	assert.Equal(t, errors.Code(exe2.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
-
 }

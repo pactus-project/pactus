@@ -29,15 +29,14 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) (*Server, error) {
-
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) *Server {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
 		state:  state,
 		sync:   sync,
 		logger: logger.NewLogger("_grpc", nil),
-	}, nil
+	}
 }
 
 func (s *Server) StartServer() error {

@@ -25,7 +25,7 @@ var ZARB = `
 `
 
 // terminalSupported returns true if the current terminal supports
-// line editing features
+// line editing features.
 func terminalSupported() bool {
 	bad := map[string]bool{"": true, "dumb": true, "cons25": true}
 	return !bad[strings.ToLower(os.Getenv("TERM"))]
@@ -68,7 +68,7 @@ func PromptPassword(label string, confirmation bool) string {
 	return password
 }
 
-// PromptConfirm prompts user to confirm the operation
+// PromptConfirm prompts user to confirm the operation.
 func PromptConfirm(label string) bool {
 	prompt := promptui.Prompt{
 		Label:     label,
@@ -88,7 +88,7 @@ func PromptConfirm(label string) bool {
 	return false
 }
 
-// Promptlabel prompts for an input string
+// Promptlabel prompts for an input string.
 func PromptInput(label string) string {
 	prompt := promptui.Prompt{
 		Label: label,
@@ -101,7 +101,7 @@ func PromptInput(label string) string {
 	return result
 }
 
-// Promptlabel prompts for an input string with a suggestion
+// Promptlabel prompts for an input string with a suggestion.
 func PromptInputWithSuggestion(label, suggestion string) string {
 	prompt := promptui.Prompt{
 		Label:   label,
@@ -124,21 +124,24 @@ func PrintDangerMsg(format string, a ...interface{}) {
 
 func PrintErrorMsg(format string, a ...interface{}) {
 	if terminalSupported() {
-		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m\n", format) //Print error msg with red color
+		// Print error msg with red color
+		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m\n", format)
 	}
 	fmt.Printf(format, a...)
 }
 
 func PrintSuccessMsg(format string, a ...interface{}) {
 	if terminalSupported() {
-		format = fmt.Sprintf("\033[32m%s\033[0m\n", format) //Print successful msg with green color
+		// Print successful msg with green color
+		format = fmt.Sprintf("\033[32m%s\033[0m\n", format)
 	}
 	fmt.Printf(format, a...)
 }
 
 func PrintWarnMsg(format string, a ...interface{}) {
 	if terminalSupported() {
-		format = fmt.Sprintf("\033[33m%s\033[0m\n", format) //Print warning msg with yellow color
+		// Print warning msg with yellow color
+		format = fmt.Sprintf("\033[33m%s\033[0m\n", format)
 	}
 	fmt.Printf(format, a...)
 }

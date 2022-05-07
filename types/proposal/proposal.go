@@ -59,7 +59,7 @@ func (p *Proposal) SetSignature(sig crypto.Signature) {
 	p.data.Signature = sig.(*bls.Signature)
 }
 
-// SetPublicKey is doing nothing and just satisfies SignableMsg interface
+// SetPublicKey is doing nothing and just satisfies SignableMsg interface.
 func (p *Proposal) SetPublicKey(crypto.PublicKey) {}
 
 func (p *Proposal) SignBytes() []byte {
@@ -100,8 +100,7 @@ func (p Proposal) Fingerprint() string {
 	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.Fingerprint())
 }
 
-// ---------
-// For tests
+// GenerateTestProposal generates a bond transaction for testing.
 func GenerateTestProposal(height int32, round int16) (*Proposal, crypto.Signer) {
 	signer := bls.GenerateTestSigner()
 	addr := signer.Address()

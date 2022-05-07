@@ -154,7 +154,6 @@ func UnbondTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Validator: %s", *fromArg)
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
-
 		}
 	}
 }

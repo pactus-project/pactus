@@ -34,13 +34,10 @@ func setup(t *testing.T) {
 		Listen: "[::]:0",
 	}
 
-	var err error
-	tCapnpServer, err = capnp.NewServer(capnpConf, tMockState, tMockSync)
-	assert.NoError(t, err)
+	tCapnpServer = capnp.NewServer(capnpConf, tMockState, tMockSync)
 	assert.NoError(t, tCapnpServer.StartServer())
 
-	tHTTPServer, err = NewServer(httpConf)
-	assert.NoError(t, err)
+	tHTTPServer = NewServer(httpConf)
 	assert.NoError(t, tHTTPServer.StartServer(tCapnpServer.Address()))
 }
 

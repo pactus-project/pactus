@@ -217,5 +217,4 @@ func TestCapacity(t *testing.T) {
 	capacity := int(util.RandInt32(1000))
 	lm := NewLinkedMap(capacity)
 	assert.Equal(t, lm.Capacity(), capacity)
-
 }

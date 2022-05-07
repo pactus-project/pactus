@@ -95,7 +95,6 @@ func TestToString(t *testing.T) {
 			assert.NoError(t, err, "test %v. unexpected error", test.name)
 			assert.Equal(t, addr, *test.result, "test %v. unexpected result", test.name)
 			assert.Equal(t, addr.String(), strings.ToLower(test.encoded), "test %v. encoded failed", test.name)
-
 		} else {
 			assert.Error(t, err, "test %v. should failed", test.name)
 			assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)

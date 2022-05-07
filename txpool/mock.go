@@ -9,7 +9,7 @@ import (
 
 var _ TxPool = &MockTxPool{}
 
-// MockTxPool is a testing mock
+// MockTxPool is a testing mock.
 type MockTxPool struct {
 	Txs []*tx.Tx
 }

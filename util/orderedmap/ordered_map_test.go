@@ -32,7 +32,8 @@ func TestSimple(t *testing.T) {
 func TestIterEmpty(t *testing.T) {
 	om := NewMap(nil)
 	om.Iter(func(key, value interface{}) (more bool) {
-		panic("Iterating empty map.")
+		assert.Fail(t, "Iterating empty map.")
+		return false
 	})
 }
 

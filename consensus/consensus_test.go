@@ -27,6 +27,13 @@ import (
 	"github.com/zarbchain/zarb-go/util/logger"
 )
 
+const (
+	tIndexX = 0
+	tIndexY = 1
+	tIndexB = 2
+	tIndexP = 3
+)
+
 var (
 	tSigners []crypto.Signer
 	tTxPool  *txpool.MockTxPool
@@ -35,13 +42,6 @@ var (
 	tConsY   *consensus // Good connection
 	tConsB   *consensus // Byzantine or offline
 	tConsP   *consensus // Partitioned
-)
-
-const (
-	tIndexX = 0
-	tIndexY = 1
-	tIndexB = 2
-	tIndexP = 3
 )
 
 type OverrideFingerprint struct {
@@ -94,14 +94,10 @@ func setup(t *testing.T) {
 	stP, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool)
 	require.NoError(t, err)
 
-	consX, err := NewConsensus(testConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
-	assert.NoError(t, err)
-	consY, err := NewConsensus(testConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
-	assert.NoError(t, err)
-	consB, err := NewConsensus(testConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
-	assert.NoError(t, err)
-	consP, err := NewConsensus(testConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
-	assert.NoError(t, err)
+	consX := NewConsensus(testConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
+	consY := NewConsensus(testConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
+	consB := NewConsensus(testConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
+	consP := NewConsensus(testConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
 	tConsX = consX.(*consensus)
 	tConsY = consY.(*consensus)
 	tConsB = consB.(*consensus)
@@ -221,13 +217,8 @@ func checkHeightRoundWait(t *testing.T, cons *consensus, height int32, round int
 	checkHeightRound(t, cons, height, round)
 }
 
-func testAddVote(cons *consensus,
-	voteType vote.Type,
-	height int32,
-	round int16,
-	blockHash hash.Hash,
-	valID int) *vote.Vote {
-
+func testAddVote(cons *consensus, voteType vote.Type, height int32, round int16,
+	blockHash hash.Hash, valID int) *vote.Vote {
 	v := vote.NewVote(voteType, height, round, blockHash, tSigners[valID].Address())
 	tSigners[valID].SignMsg(v)
 
@@ -237,7 +228,7 @@ func testAddVote(cons *consensus,
 }
 
 // testEnterNewHeight helps tests to enter new height safely
-// without scheduling new height. It boosts the test speed
+// without scheduling new height. It boosts the test speed.
 func testEnterNewHeight(cons *consensus) {
 	cons.lk.Lock()
 	cons.enterNewState(cons.newHeightState)
@@ -245,7 +236,7 @@ func testEnterNewHeight(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-// testEnterNextRound helps tests to enter next round safely
+// testEnterNextRound helps tests to enter next round safely.
 func testEnterNextRound(cons *consensus) {
 	cons.lk.Lock()
 	cons.round++
@@ -313,8 +304,7 @@ func TestNotInCommittee(t *testing.T) {
 	store := store.MockingStore()
 
 	st, _ := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, signer, store, tTxPool)
-	cons, err := NewConsensus(testConfig(), st, signer, make(chan message.Message, 100))
-	assert.NoError(t, err)
+	cons := NewConsensus(testConfig(), st, signer, make(chan message.Message, 100))
 
 	testEnterNewHeight(cons.(*consensus))
 

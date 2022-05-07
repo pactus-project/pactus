@@ -119,5 +119,4 @@ func TestRestoreFailed(t *testing.T) {
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})
-
 }

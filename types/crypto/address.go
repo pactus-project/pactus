@@ -66,7 +66,8 @@ func AddressFromString(text string) (Address, error) {
 
 	// The regrouped data must be 20 bytes.
 	if len(regrouped) != 20 {
-		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "address should be %d bytes, but it is %v bytes", AddressSize, len(data)+1)
+		return Address{}, errors.Errorf(errors.ErrInvalidAddress,
+			"address should be %d bytes, but it is %v bytes", AddressSize, len(data)+1)
 	}
 
 	var addr Address
@@ -127,7 +128,7 @@ func (addr Address) EqualsTo(right Address) bool {
 	return bytes.Equal(addr.Bytes(), right.Bytes())
 }
 
-// For tests
+// GenerateTestAddress generates a address for testing.
 func GenerateTestAddress() Address {
 	data := make([]byte, 20)
 	_, err := rand.Read(data)

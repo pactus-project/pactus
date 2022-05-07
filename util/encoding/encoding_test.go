@@ -322,7 +322,6 @@ func TestVarBytesOverflowErrors(t *testing.T) {
 		_, err := ReadVarBytes(rbuf)
 		assert.Contains(t, err.Error(), "variable length byte array is too long", "ReadVarString #%d", i)
 	}
-
 }
 
 // TestVarInt performs tests to ensure deserializing variable integers are

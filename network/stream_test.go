@@ -23,7 +23,6 @@ func TestStream(t *testing.T) {
 			break
 		}
 	}
-
 }
 
 func TestCloseConnection(t *testing.T) {

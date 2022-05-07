@@ -26,7 +26,7 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 	return res.SetId(trx.ID().Bytes())
 }
 
-//Send the raw transaction
+// Send broadcasts a raw transaction.
 func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
 	rawTx, _ := args.Params.RawTx()
 
@@ -49,5 +49,4 @@ func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) err
 	}
 	res.SetStatus(0)
 	return nil
-
 }

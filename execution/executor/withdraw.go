@@ -34,7 +34,9 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidHeight, "need to unbond first")
 	}
 	if sb.CurrentHeight() < val.UnbondingHeight()+sb.UnbondInterval() {
-		return errors.Errorf(errors.ErrInvalidHeight, "hasn't passed unbonding period, expected: %v, got: %v", val.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
+		return errors.Errorf(errors.ErrInvalidHeight,
+			"hasn't passed unbonding period, expected: %v, got: %v",
+			val.UnbondingHeight()+sb.UnbondInterval(), sb.CurrentHeight())
 	}
 
 	acc := sb.Account(pld.To)

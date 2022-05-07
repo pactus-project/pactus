@@ -12,15 +12,14 @@ all: build test
 ### Tools needed for development
 devtools:
 	@echo "Installing devtools"
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install zombiezen.com/go/capnproto2/capnpc-go@v2.18
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.10
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.10
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	go install github.com/bufbuild/buf/cmd/buf@v1.3
 	go install github.com/rakyll/statik@v0.1
-	go install github.com/gordonklaus/ineffassign@latest
 
 herumi:
 	@if [ ! -d $(HERUMI) ]; then \
@@ -67,21 +66,26 @@ proto:
 ### Formatting, linting, and vetting
 fmt:
 	gofmt -s -w .
-	golangci-lint run -e "SA1019" \
-		--timeout=5m0s \
+
+check:
+	golangci-lint run \
+		--build-tags "${BUILD_TAG}" \
+		-e "SA1019" \
+		--timeout=20m0s \
 		--enable=gofmt \
 		--enable=unconvert \
 		--enable=unparam \
-		--enable=revive \
 		--enable=asciicheck \
 		--enable=misspell \
-		--enable=asciicheck \
+		--enable=revive \
 		--enable=decorder \
 		--enable=depguard \
 		--enable=nilerr \
 		--enable=gosec \
-		--enable=gocyclo
-	ineffassign ./...
+		--enable=godot \
+		--enable=exportloopref \
+		--enable=whitespace \
+		--enable=goimports
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
@@ -89,4 +93,4 @@ fmt:
 .PHONY: build build_gui
 .PHONY: test unit_test test_race
 .PHONY: devtools herumi capnp proto
-.PHONY: fmt docker
+.PHONY: fmt check docker

@@ -84,7 +84,6 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 		if stopped {
 			return
 		}
-
 	}
 	iter.Release()
 }

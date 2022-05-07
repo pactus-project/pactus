@@ -74,7 +74,6 @@ func TestAddToStake(t *testing.T) {
 	stake := val.Stake()
 	val.AddToStake(1)
 	assert.Equal(t, val.Stake(), stake+1)
-
 }
 
 func TestSubtractFromStake(t *testing.T) {

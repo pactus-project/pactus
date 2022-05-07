@@ -14,7 +14,7 @@ import (
 
 var _ Sandbox = &MockSandbox{}
 
-// MockSandbox is a testing mock for sandbox
+// MockSandbox is a testing mock for sandbox.
 type MockSandbox struct {
 	Params               param.Params
 	TestStore            *store.MockStore
@@ -70,7 +70,6 @@ func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator 
 }
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.TestStore.UpdateValidator(val)
-
 }
 func (m *MockSandbox) CurrentHeight() int32 {
 	return m.TestStore.LastHeight + 1

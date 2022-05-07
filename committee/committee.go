@@ -21,7 +21,8 @@ type committee struct {
 	proposerPos   *list.Element
 }
 
-func NewCommittee(validators []*validator.Validator, committeeSize int, proposerAddress crypto.Address) (Committee, error) {
+func NewCommittee(validators []*validator.Validator, committeeSize int,
+	proposerAddress crypto.Address) (Committee, error) {
 	validatorList := list.New()
 	var proposerPos *list.Element
 
@@ -82,7 +83,8 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 
 	sort.SliceStable(oldestFirst, func(i, j int) bool {
-		return oldestFirst[i].Value.(*validator.Validator).LastJoinedHeight() < oldestFirst[j].Value.(*validator.Validator).LastJoinedHeight()
+		return oldestFirst[i].Value.(*validator.Validator).LastJoinedHeight() <
+			oldestFirst[j].Value.(*validator.Validator).LastJoinedHeight()
 	})
 
 	for i := 0; i <= int(lastRound); i++ {
@@ -138,7 +140,7 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 	return found
 }
 
-// IsProposer checks if the address is proposer for this height at this round
+// IsProposer checks if the address is proposer for this height at this round.
 func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 	c.lk.Lock()
 	defer c.lk.Unlock()
@@ -147,7 +149,7 @@ func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 	return p.Address().EqualsTo(addr)
 }
 
-// Proposer returns proposer info for this height at this round
+// Proposer returns proposer info for this height at this round.
 func (c *committee) Proposer(round int16) *validator.Validator {
 	c.lk.Lock()
 	defer c.lk.Unlock()
@@ -189,7 +191,7 @@ func (c *committee) Size() int {
 	return c.validatorList.Len()
 }
 
-// iterate uses for easy iteration over validators in list
+// iterate uses for easy iteration over validators in list.
 func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 	for e := c.validatorList.Front(); e != nil; e = e.Next() {
 		if consumer(e.Value.(*validator.Validator)) {
@@ -198,8 +200,8 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 	}
 }
 
-// GenerateTestCommittee generates a committee for testing purpose
-// All committee members have same power
+// GenerateTestCommittee generates a committee for testing purpose.
+// All committee members have same power.
 func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
 	signers := make([]crypto.Signer, num)
 	vals := make([]*validator.Validator, num)

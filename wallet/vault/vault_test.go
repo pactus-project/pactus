@@ -233,7 +233,6 @@ func TestUpdatePassword(t *testing.T) {
 			pub, _ := tVault.PublicKey(newPassword, info.Address)
 			assert.Contains(t, pubs, pub)
 		}
-
 	})
 
 	t.Run("Set empty password for the vault", func(t *testing.T) {

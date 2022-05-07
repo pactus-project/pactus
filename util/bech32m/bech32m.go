@@ -300,7 +300,6 @@ func ConvertBits(data []byte, fromBits, toBits uint8, pad bool) ([]byte, error) 
 	filledBits := uint8(0)
 
 	for _, b := range data {
-
 		// Discard unused bits.
 		b = b << (8 - fromBits)
 

@@ -17,10 +17,9 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-// Init initializes a node for zarb blockchain
+// Init initializes a node for zarb blockchain.
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-
 		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
 			Desc:  "Working directory to save node configuration and genesis files.",
@@ -158,7 +157,7 @@ func Init() func(c *cli.Cmd) {
 	}
 }
 
-// makeLocalGenesis makes genisis file for the local network
+// makeLocalGenesis makes genisis file for the local network.
 func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)

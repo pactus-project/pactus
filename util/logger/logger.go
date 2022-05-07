@@ -192,7 +192,6 @@ func (l *Logger) Panic(msg string, keyvals ...interface{}) {
 	l.log(logrus.PanicLevel, msg, keyvals...)
 }
 
-//---
 func log(level logrus.Level, msg string, keyvals ...interface{}) {
 	if logrus.IsLevelEnabled(level) {
 		logrus.WithFields(keyvalsToFields(keyvals...)).Log(level, msg)

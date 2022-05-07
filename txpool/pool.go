@@ -26,10 +26,7 @@ type txPool struct {
 	logger      *logger.Logger
 }
 
-func NewTxPool(
-	conf *Config,
-	broadcastCh chan message.Message) (TxPool, error) {
-
+func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pendings := make(map[payload.Type]*linkedmap.LinkedMap)
 
 	pendings[payload.PayloadTypeSend] = linkedmap.NewLinkedMap(conf.sendPoolSize())
@@ -46,7 +43,7 @@ func NewTxPool(
 	}
 
 	pool.logger = logger.NewLogger("_pool", pool)
-	return pool, nil
+	return pool
 }
 
 func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
@@ -70,8 +67,8 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	}
 }
 
-/// AppendTx validates the transaction and add it into the transaction pool
-/// without broadcast it.
+// AppendTx validates the transaction and add it into the transaction pool
+// without broadcast it.
 func (p *txPool) AppendTx(trx *tx.Tx) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -79,8 +76,8 @@ func (p *txPool) AppendTx(trx *tx.Tx) error {
 	return p.appendTx(trx)
 }
 
-/// AppendTxAndBroadcast validates the transaction, add it into the transaction pool
-/// and broadcast it.
+// AppendTxAndBroadcast validates the transaction, add it into the transaction pool
+// and broadcast it.
 func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -132,8 +129,8 @@ func (p *txPool) RemoveTx(id tx.ID) {
 	}
 }
 
-/// PendingTx searches inside the transaction pool and returns the associated transaction.
-/// If transaction doesn't exist inside the pool, it returns nil.
+// PendingTx searches inside the transaction pool and returns the associated transaction.
+// If transaction doesn't exist inside the pool, it returns nil.
 func (p *txPool) PendingTx(id tx.ID) *tx.Tx {
 	p.lk.Lock()
 	defer p.lk.Unlock()

@@ -5,17 +5,17 @@ import (
 	"github.com/zarbchain/zarb-go/util/errors"
 )
 
-// Config holds the configuration of the state
+// Config holds the configuration of the state.
 type Config struct {
 	RewardAddress string `toml:"reward_address"`
 }
 
-// DefaultConfig instantiates the default configuration for the state
+// DefaultConfig instantiates the default configuration for the state.
 func DefaultConfig() *Config {
 	return &Config{}
 }
 
-// SanityCheck is a basic checks for config
+// SanityCheck is a basic checks for config.
 func (conf *Config) SanityCheck() error {
 	if conf.RewardAddress != "" {
 		_, err := crypto.AddressFromString(conf.RewardAddress)

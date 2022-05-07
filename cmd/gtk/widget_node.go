@@ -13,6 +13,9 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
+//go:embed assets/ui/widget_node.ui
+var uiWidgetNode []byte
+
 type widgetNode struct {
 	*gtk.Box
 
@@ -24,12 +27,11 @@ type widgetNode struct {
 	progressBarSynced    *gtk.ProgressBar
 }
 
-//go:embed assets/ui/widget_node.ui
-var uiWidgetNode []byte
-
-func buildWidgetNode(model *nodeModel, genesisTime time.Time) *widgetNode {
+func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, error) {
 	builder, err := gtk.BuilderNewFromString(string(uiWidgetNode))
-	errorCheck(err)
+	if err != nil {
+		return nil, err
+	}
 
 	box := getBoxObj(builder, "id_box_node")
 	labelLocation := getLabelObj(builder, "id_label_working_directory")
@@ -37,7 +39,9 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) *widgetNode {
 	labelRewardAddress := getLabelObj(builder, "id_label_reward_address")
 
 	cwd, err := os.Getwd()
-	errorCheck(err)
+	if err != nil {
+		return nil, err
+	}
 	labelLocation.SetText(cwd)
 	labelValidatoAddress.SetText(model.node.State().ValidatorAddress().String())
 	labelRewardAddress.SetText(model.node.State().RewardAddress().String())
@@ -59,7 +63,7 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) *widgetNode {
 
 	// Update widget for the first time
 	w.timeout()
-	return w
+	return w, nil
 }
 
 func (wn *widgetNode) timeout() bool {

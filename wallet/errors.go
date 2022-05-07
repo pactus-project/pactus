@@ -6,15 +6,15 @@ import (
 )
 
 var (
-	// ErrInvalidCRC describes an error in which the wallet CRC is invalid
+	// ErrInvalidCRC describes an error in which the wallet CRC is invalid.
 	ErrInvalidCRC = errors.New("invalid CRC")
 
-	// ErrInvalidNetwork describes an error in which the network is invalid
+	// ErrInvalidNetwork describes an error in which the network is invalid.
 	ErrInvalidNetwork = errors.New("invalid network")
 )
 
 // ErrWalletExits describes an error in which a wallet exists in the
-// given path
+// given path.
 type ErrWalletExits struct {
 	Path string
 }

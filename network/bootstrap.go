@@ -34,7 +34,8 @@ type bootstrap struct {
 
 // newBootstrap returns a new Bootstrap that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
-func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing, conf *BootstrapConfig, logger *logger.Logger) *bootstrap {
+func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing,
+	conf *BootstrapConfig, logger *logger.Logger) *bootstrap {
 	b := &bootstrap{
 		ctx:     ctx,
 		config:  conf,
@@ -96,12 +97,16 @@ func (b *bootstrap) checkConnectivity() {
 	}
 
 	if len(connectedPeers) > b.config.MaxThreshold {
-		b.logger.Debug("peer count is about maximum threshold", "count", len(connectedPeers), "threshold", b.config.MaxThreshold)
+		b.logger.Debug("peer count is about maximum threshold",
+			"count", len(connectedPeers),
+			"threshold", b.config.MaxThreshold)
 		return
 	}
 
 	if len(connectedPeers) < b.config.MinThreshold {
-		b.logger.Debug("peer count is less than minimum threshold", "count", len(connectedPeers), "threshold", b.config.MinThreshold)
+		b.logger.Debug("peer count is less than minimum threshold",
+			"count", len(connectedPeers),
+			"threshold", b.config.MinThreshold)
 
 		ctx, cancel := context.WithTimeout(b.ctx, time.Second*10)
 		var wg sync.WaitGroup

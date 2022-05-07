@@ -99,6 +99,9 @@ func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
 }
 
 func (e *argon2Encrypter) cipherKey(password string, salt []byte, iterations, memory uint32, parallelism uint8) []byte {
-	// Argon2 currently has three modes: data-dependent Argon2d, data-independent Argon2i, and a mix of the two, Argon2id.
+	// Argon2 currently has three modes:
+	// - data-dependent Argon2d,
+	// - data-independent Argon2i,
+	// - a mix of the two, Argon2id.
 	return argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, 32)
 }

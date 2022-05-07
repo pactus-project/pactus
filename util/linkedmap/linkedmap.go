@@ -4,11 +4,12 @@ import (
 	"container/list"
 )
 
+// TODO: should be thread safe or not?
+
 type Pair struct {
 	First, Second interface{}
 }
 
-// TODO: should be thread safe
 type LinkedMap struct {
 	list     *list.List
 	hashmap  map[interface{}]*list.Element
@@ -66,7 +67,6 @@ func (lm *LinkedMap) Get(first interface{}) (interface{}, bool) {
 	el, found := lm.hashmap[first]
 	if found {
 		return el.Value.(*Pair).Second, true
-
 	}
 	return nil, false
 }

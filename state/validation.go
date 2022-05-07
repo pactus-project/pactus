@@ -50,7 +50,8 @@ func (st *state) checkCertificate(blockHash hash.Hash, cert *block.Certificate) 
 
 	// Check if signers have 2/3+ of total power
 	if signedPower <= committeePower*2/3 {
-		return errors.Errorf(errors.ErrInvalidBlock, "accumulated power is %v, should be more than %v", signedPower, committeePower*2/3)
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"accumulated power is %v, should be more than %v", signedPower, committeePower*2/3)
 	}
 
 	// Check signature
@@ -63,7 +64,7 @@ func (st *state) checkCertificate(blockHash hash.Hash, cert *block.Certificate) 
 	return nil
 }
 
-// validateCertificateForPreviousHeight validates certificate for the previous height
+// validateCertificateForPreviousHeight validates certificate for the previous height.
 func (st *state) validateCertificateForPreviousHeight(blockHash hash.Hash, cert *block.Certificate) error {
 	if cert == nil {
 		if !st.lastInfo.BlockHash().IsUndef() {
@@ -94,7 +95,7 @@ func (st *state) validateCertificateForPreviousHeight(blockHash hash.Hash, cert 
 	return nil
 }
 
-// validateCertificate validates certificate for the current height
+// validateCertificate validates certificate for the current height.
 func (st *state) validateCertificate(blockHash hash.Hash, cert *block.Certificate) error {
 	if err := st.checkCertificate(blockHash, cert); err != nil {
 		return err

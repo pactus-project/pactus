@@ -46,7 +46,6 @@ func LoadOrNewState(
 	signer crypto.Signer,
 	store store.Store,
 	txPool txpool.TxPool) (Facade, error) {
-
 	// Block rewards goes to the reward address
 	// If it is set inside config, we use that address
 	// otherwise, it will be the signer address
@@ -312,8 +311,8 @@ func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certi
 	defer st.lk.Unlock()
 
 	if height != st.lastInfo.BlockHeight()+1 {
-		/// Returning error here will cause so many error logs during syncing blockchain
-		/// Syncing is asynchronous job and we might receive blocks not in order
+		// Returning error here will cause so many error logs during syncing blockchain
+		// Syncing is asynchronous job and we might receive blocks not in order
 		st.logger.Debug("unexpected block height", "height", height)
 		return nil
 	}
@@ -323,12 +322,17 @@ func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certi
 		return err
 	}
 
-	/// There are two modules that can commit a block: Consensus and Syncer.
-	/// Consensus engine is ours, we have full control over that and we know when and why a block should be committed.
-	/// In the other side, Syncer module receives new blocks from the network and tries to commit them.
-	/// We should never have a fork in our blockchain. but if it happens, here we can catch it.
+	// There are two modules that can commit a block: Consensus and Syncer.
+	// Consensus engine is ours, we have full control over that and we know when
+	// and why a block should be committed.
+	// On the other hand, Syncer module receives new blocks from the network and
+	// tries to commit them.
+	// We should never have a fork in our blockchain.
+	// But if it happens, here we can catch it.
 	if !block.Header().PrevBlockHash().EqualsTo(st.lastInfo.BlockHash()) {
-		st.logger.Panic("a possible fork is detected", "our hash", st.lastInfo.BlockHash(), "block hash", block.Header().PrevBlockHash())
+		st.logger.Panic("a possible fork is detected",
+			"our hash", st.lastInfo.BlockHash(),
+			"block hash", block.Header().PrevBlockHash())
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
@@ -340,7 +344,8 @@ func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certi
 	// Verify proposer
 	proposer := st.committee.Proposer(cert.Round())
 	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer, expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"invalid proposer, expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}
 	// Validate sortition seed
 	seed := block.Header().SortitionSeed()
@@ -416,10 +421,12 @@ func (st *state) evaluateSortition() bool {
 
 		err := st.txPool.AppendTxAndBroadcast(trx)
 		if err == nil {
-			st.logger.Debug("sortition transaction broadcasted", "address", st.signer.Address(), "power", val.Power(), "tx", trx)
+			st.logger.Debug("sortition transaction broadcasted",
+				"address", st.signer.Address(), "power", val.Power(), "tx", trx)
 			return true
 		}
-		st.logger.Error("our sortition transaction is invalid. Why?", "address", st.signer.Address(), "power", val.Power(), "tx", trx, "err", err)
+		st.logger.Error("our sortition transaction is invalid. Why?",
+			"address", st.signer.Address(), "power", val.Power(), "tx", trx, "err", err)
 	}
 
 	return false
@@ -470,10 +477,12 @@ func (st *state) validateBlockTime(t time.Time) error {
 	proposeTime := st.proposeNextBlockTime()
 	threshold := st.params.BlockTime()
 	if t.Before(proposeTime.Add(-threshold)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is less than threshold (%s)", t.String(), proposeTime.String())
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is less than threshold (%s)",
+			t.String(), proposeTime.String())
 	}
 	if t.After(proposeTime.Add(threshold)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)", t.String(), proposeTime.String())
+		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)",
+			t.String(), proposeTime.String())
 	}
 
 	return nil
@@ -574,7 +583,7 @@ func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	return val
 }
 
-// ValidatorByNumber returns validator data based on validator number
+// ValidatorByNumber returns validator data based on validator number.
 func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	val, err := st.store.ValidatorByNumber(n)
 	if err != nil {

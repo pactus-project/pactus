@@ -6,31 +6,32 @@ import (
 	_ "embed"
 
 	"github.com/gotk3/gotk3/gtk"
+
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
 //go:embed assets/ui/dialog_password.ui
 var uiPasswordDialog []byte
 
-func getWalletPassword(parent gtk.IWidget, wallet *wallet.Wallet) (string, bool) {
+func getWalletPassword(parent gtk.IWindow, wallet *wallet.Wallet) (string, bool) {
 	password := ""
 	if !wallet.IsEncrypted() {
 		return password, true
 	}
 
 	builder, err := gtk.BuilderNewFromString(string(uiPasswordDialog))
-	errorCheck(err)
+	errorCheck(parent, err)
 
 	dlg := getDialogObj(builder, "id_dialog_password")
 	passwordEntry := getEntryObj(builder, "id_entry_password")
 
 	password, err = passwordEntry.GetText()
-	errorCheck(err)
+	errorCheck(parent, err)
 
 	ok := false
 	onOk := func() {
 		password, err = passwordEntry.GetText()
-		errorCheck(err)
+		errorCheck(parent, err)
 
 		ok = true
 		dlg.Close()

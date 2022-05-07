@@ -29,7 +29,8 @@ func SignatureFromString(text string) (*Signature, error) {
 
 func SignatureFromBytes(data []byte) (*Signature, error) {
 	if len(data) != SignatureSize {
-		return nil, errors.Errorf(errors.ErrInvalidSignature, "signature should be %d bytes, but it is %v bytes", SignatureSize, len(data))
+		return nil, errors.Errorf(errors.ErrInvalidSignature,
+			"signature should be %d bytes, but it is %v bytes", SignatureSize, len(data))
 	}
 	s := new(bls.Sign)
 	if err := s.Deserialize(data); err != nil {

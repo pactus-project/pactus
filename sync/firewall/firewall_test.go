@@ -114,7 +114,6 @@ func TestGossipMesage(t *testing.T) {
 }
 
 func TestStreamMesage(t *testing.T) {
-
 	t.Run("Message source: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 

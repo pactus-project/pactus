@@ -87,14 +87,46 @@ func (m *txMaker) setToAddress(addr string) error {
 }
 
 func (m *txMaker) build() (*tx.Tx, error) {
+	err := m.checkStamp()
+	if err != nil {
+		return nil, err
+	}
+
+	err = m.checkSequence()
+	if err != nil {
+		return nil, err
+	}
+
+	m.checkFee()
+
+	var trx *tx.Tx
+	switch m.typ {
+	case payload.PayloadTypeSend:
+		trx = tx.NewSendTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
+	case payload.PayloadTypeBond:
+		trx = tx.NewBondTx(*m.stamp, m.seq, *m.from, *m.to, m.pub, m.amount, m.fee, m.memo)
+	case payload.PayloadTypeUnbond:
+		trx = tx.NewUnbondTx(*m.stamp, m.seq, *m.from, m.memo)
+	case payload.PayloadTypeWithdraw:
+		trx = tx.NewWithdrawTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
+	}
+
+	return trx, nil
+}
+
+func (m *txMaker) checkStamp() error {
 	if m.stamp == nil {
 		stamp, err := m.client.getStamp()
 		if err != nil {
-			return nil, err
+			return err
 		}
 		m.stamp = &stamp
 	}
 
+	return nil
+}
+
+func (m *txMaker) checkSequence() error {
 	if m.seq == 0 {
 		switch m.typ {
 		case payload.PayloadTypeSend,
@@ -102,7 +134,7 @@ func (m *txMaker) build() (*tx.Tx, error) {
 			{
 				seq, err := m.client.getAccountSequence(*m.from)
 				if err != nil {
-					return nil, err
+					return err
 				}
 				m.seq = seq
 			}
@@ -112,13 +144,16 @@ func (m *txMaker) build() (*tx.Tx, error) {
 			{
 				seq, err := m.client.GetValidatorSequence(*m.from)
 				if err != nil {
-					return nil, err
+					return err
 				}
 				m.seq = seq
 			}
 		}
 	}
+	return nil
+}
 
+func (m *txMaker) checkFee() {
 	if m.fee == 0 {
 		switch m.typ {
 		case payload.PayloadTypeSend,
@@ -138,29 +173,4 @@ func (m *txMaker) build() (*tx.Tx, error) {
 			}
 		}
 	}
-
-	var trx *tx.Tx
-	switch m.typ {
-	case payload.PayloadTypeSend:
-		{
-			trx = tx.NewSendTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee,
-				m.memo)
-		}
-	case payload.PayloadTypeBond:
-		{
-			trx = tx.NewBondTx(*m.stamp, m.seq, *m.from, *m.to, m.pub, m.amount,
-				m.fee, m.memo)
-		}
-	case payload.PayloadTypeUnbond:
-		{
-			trx = tx.NewUnbondTx(*m.stamp, m.seq, *m.from, m.memo)
-		}
-	case payload.PayloadTypeWithdraw:
-		{
-			trx = tx.NewWithdrawTx(*m.stamp, m.seq, *m.from, *m.to, m.amount,
-				m.fee, m.memo)
-		}
-	}
-
-	return trx, nil
 }

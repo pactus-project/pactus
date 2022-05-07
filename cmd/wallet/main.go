@@ -44,9 +44,9 @@ func main() {
 		k.Command("new", "Creating a new address", NewAddress())
 		k.Command("all", "Show all addresses", AllAddresses())
 		k.Command("label", "Set label for the an address", SetLabel())
-		k.Command("balance", "Show the balance of an address", GetBalance())
-		k.Command("pub", "Show the public key of an address", GetPublicKey())
-		k.Command("priv", "Show the private key of an address", GetPrivateKey())
+		k.Command("balance", "Show the balance of an address", Balance())
+		k.Command("pub", "Show the public key of an address", PublicKey())
+		k.Command("priv", "Show the private key of an address", PrivateKey())
 		k.Command("import", "Import a private key into wallet", ImportPrivateKey())
 	})
 	app.Command("tx", "Create, sign and publish a transaction", func(k *cli.Cmd) {

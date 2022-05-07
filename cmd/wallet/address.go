@@ -8,7 +8,7 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-/// AllAddresses lists all the wallet addresses
+// AllAddresses lists all the wallet addresses.
 func AllAddresses() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		balanceOpt := c.Bool(cli.BoolOpt{
@@ -56,7 +56,7 @@ func AllAddresses() func(c *cli.Cmd) {
 	}
 }
 
-/// NewAddress creates a new address
+// NewAddress creates a new address.
 func NewAddress() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		passOpt := addPasswordOption(c)
@@ -89,8 +89,8 @@ func NewAddress() func(c *cli.Cmd) {
 	}
 }
 
-/// GetBalance shows the balance of an address
-func GetBalance() func(c *cli.Cmd) {
+// Balance shows the balance of an address.
+func Balance() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := addAddressArg(c)
 
@@ -104,6 +104,10 @@ func GetBalance() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			balance, err := wallet.Balance(*addrArg)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
 			stake, err := wallet.Stake(*addrArg)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
@@ -115,8 +119,8 @@ func GetBalance() func(c *cli.Cmd) {
 	}
 }
 
-// GetPrivateKey returns the private key of an address
-func GetPrivateKey() func(c *cli.Cmd) {
+// PrivateKey returns the private key of an address.
+func PrivateKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := addAddressArg(c)
 		passOpt := addPasswordOption(c)
@@ -142,8 +146,8 @@ func GetPrivateKey() func(c *cli.Cmd) {
 	}
 }
 
-// GetPrivateKey returns the public key of an address
-func GetPublicKey() func(c *cli.Cmd) {
+// GetPrivateKey returns the public key of an address.
+func PublicKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := addAddressArg(c)
 		passOpt := addPasswordOption(c)
@@ -169,7 +173,7 @@ func GetPublicKey() func(c *cli.Cmd) {
 	}
 }
 
-// ImportPrivateKey imports a private key into the wallet
+// ImportPrivateKey imports a private key into the wallet.
 func ImportPrivateKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		passOpt := addPasswordOption(c)
@@ -203,7 +207,7 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 	}
 }
 
-// SetLabel set label for the address
+// SetLabel set label for the address.
 func SetLabel() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := addAddressArg(c)

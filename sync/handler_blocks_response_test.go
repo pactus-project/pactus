@@ -28,7 +28,8 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid, 0, nil, nil)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid,
+			0, nil, nil)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
@@ -36,7 +37,8 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid, 0, nil, nil)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid,
+			0, nil, nil)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
@@ -44,7 +46,8 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Commit one block", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid, lastBlockheight+1, []*block.Block{b1}, c1)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid,
+			lastBlockheight+1, []*block.Block{b1}, c1)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
@@ -52,8 +55,9 @@ func TestOneBlockShorter(t *testing.T) {
 	})
 }
 
-// TestSyncing is an important test and try to test syncing process between two test nodes (Alice and Bob).
-// In the real situation, more nodes are involved, but the procedure is almost the same.
+// TestSyncing is an important test and try to test syncing process between two
+// test nodes (Alice and Bob). In the real situation, more nodes are involved,
+// but the procedure is almost the same.
 func TestSyncing(t *testing.T) {
 	configAlice := testConfig()
 	configBob := testConfig()

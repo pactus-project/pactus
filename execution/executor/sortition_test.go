@@ -32,7 +32,6 @@ func TestExecuteSortitionTx(t *testing.T) {
 	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval() + 1)
 	tSandbox.UpdateValidator(val)
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
-
 		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
 		tSandbox.AcceptTestSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)

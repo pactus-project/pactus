@@ -6,7 +6,7 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-/// Recover recovers a wallet from mnemonic (seed phrase)
+// Recover recovers a wallet from mnemonic (seed phrase).
 func Recover() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		c.Before = func() {}
@@ -32,7 +32,7 @@ func Recover() func(c *cli.Cmd) {
 	}
 }
 
-/// GetSeed prints the seed phrase (mnemonics)
+// GetSeed prints the seed phrase (mnemonics).
 func GetSeed() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		passOpt := addPasswordOption(c)
@@ -47,6 +47,10 @@ func GetSeed() func(c *cli.Cmd) {
 
 			password := getPassword(wallet, *passOpt)
 			mnemonic, err := wallet.Mnemonic(password)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)

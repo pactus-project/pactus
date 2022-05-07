@@ -12,5 +12,4 @@ type nodeModel struct {
 
 func newNodeModel(node *node.Node) *nodeModel {
 	return &nodeModel{node: node}
-
 }

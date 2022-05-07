@@ -25,7 +25,7 @@ type genValidator struct {
 	PublicKey string `cbor:"1,keyasint"`
 }
 
-// Genesis is stored in the state database
+// Genesis is stored in the state database.
 type Genesis struct {
 	data genesisData
 }
@@ -97,10 +97,8 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 	}
 }
 
-func MakeGenesis(genesisTime time.Time,
-	accounts []*account.Account,
+func MakeGenesis(genesisTime time.Time, accounts []*account.Account,
 	validators []*validator.Validator, params param.Params) *Genesis {
-
 	genAccs := make([]genAccount, 0, len(accounts))
 	for _, acc := range accounts {
 		genAcc := makeGenesisAccount(acc)
@@ -123,7 +121,7 @@ func MakeGenesis(genesisTime time.Time,
 	}
 }
 
-// LoadFromFile loads genesis object from a JSON file
+// LoadFromFile loads genesis object from a JSON file.
 func LoadFromFile(file string) (*Genesis, error) {
 	dat, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -136,7 +134,7 @@ func LoadFromFile(file string) (*Genesis, error) {
 	return &gen, nil
 }
 
-// SaveToFile saves the genesis info a JSON file
+// SaveToFile saves the genesis info a JSON file.
 func (gen *Genesis) SaveToFile(file string) error {
 	json, err := gen.MarshalJSON()
 	if err != nil {

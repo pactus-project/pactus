@@ -31,10 +31,8 @@ func (h *Header) PrevBlockHash() hash.Hash                { return h.data.PrevBl
 func (h *Header) SortitionSeed() sortition.VerifiableSeed { return h.data.SortitionSeed }
 func (h *Header) ProposerAddress() crypto.Address         { return h.data.ProposerAddress }
 
-func NewHeader(version uint8, time time.Time,
-	stateRoot, prevBlockHash hash.Hash,
+func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash,
 	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address) Header {
-
 	h := Header{
 		data: headerData{
 			Version:         version,
@@ -59,7 +57,7 @@ func (h *Header) SanityCheck() error {
 	return nil
 }
 
-// SerializeSize returns the number of bytes it would take to serialize the header
+// SerializeSize returns the number of bytes it would take to serialize the header.
 func (h *Header) SerializeSize() int {
 	return 138 // 5 + (2 * 32) + 48 + 21
 }

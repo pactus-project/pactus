@@ -79,7 +79,6 @@ func CreateVaultFromMnemonic(mnemonic, password string, keyInfo []byte) (*Vault,
 		Keystore:  make([]encrypted, 0),
 		Addresses: make([]addressInfo, 0),
 	}, nil
-
 }
 
 func (v *Vault) UpdatePassword(oldPassword, newPassword string) error {
@@ -161,7 +160,7 @@ func (v *Vault) ImportPrivateKey(password string, prvStr string) error {
 	if v.Contains(addr) {
 		return ErrAddressExists
 	}
-	/// Decrypt parent key to make sure the password is correct
+	// Decrypt parent key to make sure the password is correct
 	_, err = v.parentKey(password)
 	if err != nil {
 		return err
