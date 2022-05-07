@@ -83,13 +83,7 @@ check:
 		--enable=nilerr \
 		--enable=gosec \
 		--enable=godot \
-		--enable=goimports \
-		--enable=gocyclo
-
-	golangci-lint run \
-		--skip-files ".*test.*" \
-		--build-tags "${BUILD_TAG}" \
-		--enable=lll \
+		--enable=goimports
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
