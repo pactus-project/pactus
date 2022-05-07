@@ -207,7 +207,6 @@ func TestCanDecodeUnlimtedBech32(t *testing.T) {
 // data produces the expected results when using EncodeFromBase256 and
 // DecodeToBase256.  It includes tests for proper handling of case
 // manipulations.
-//gocyclo:ignore
 func TestBech32Base256(t *testing.T) {
 	tests := []struct {
 		name    string // test name

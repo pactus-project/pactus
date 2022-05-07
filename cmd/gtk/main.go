@@ -33,6 +33,7 @@ func init() {
 	workingDirOpt = flag.String("working-dir", cmd.ZarbHomeDir(), "working directory")
 	testnetOpt = flag.Bool("testnet", true, "working directory") // TODO: make it false after mainnet launch
 }
+
 func main() {
 	flag.Parse()
 

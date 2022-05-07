@@ -35,6 +35,7 @@ func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) *Server
 		logger: logger.NewLogger("_capnp", nil),
 	}
 }
+
 func (s *Server) Address() string {
 	return s.address
 }

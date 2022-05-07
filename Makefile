@@ -12,8 +12,8 @@ all: build test
 ### Tools needed for development
 devtools:
 	@echo "Installing devtools"
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install zombiezen.com/go/capnproto2/capnpc-go@v2.18
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.10
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.10
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
@@ -83,6 +83,8 @@ check:
 		--enable=nilerr \
 		--enable=gosec \
 		--enable=godot \
+		--enable=exportloopref \
+		--enable=whitespace \
 		--enable=goimports
 
 # To avoid unintended conflicts with file names, always add to .PHONY

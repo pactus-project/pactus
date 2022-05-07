@@ -124,21 +124,24 @@ func PrintDangerMsg(format string, a ...interface{}) {
 
 func PrintErrorMsg(format string, a ...interface{}) {
 	if terminalSupported() {
-		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m\n", format) //Print error msg with red color
+		// Print error msg with red color
+		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m\n", format)
 	}
 	fmt.Printf(format, a...)
 }
 
 func PrintSuccessMsg(format string, a ...interface{}) {
 	if terminalSupported() {
-		format = fmt.Sprintf("\033[32m%s\033[0m\n", format) //Print successful msg with green color
+		// Print successful msg with green color
+		format = fmt.Sprintf("\033[32m%s\033[0m\n", format)
 	}
 	fmt.Printf(format, a...)
 }
 
 func PrintWarnMsg(format string, a ...interface{}) {
 	if terminalSupported() {
-		format = fmt.Sprintf("\033[33m%s\033[0m\n", format) //Print warning msg with yellow color
+		// Print warning msg with yellow color
+		format = fmt.Sprintf("\033[33m%s\033[0m\n", format)
 	}
 	fmt.Printf(format, a...)
 }
