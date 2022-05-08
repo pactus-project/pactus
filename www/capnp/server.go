@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 
+	"github.com/zarbchain/zarb-go/consensus"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/util/logger"
@@ -11,28 +12,32 @@ import (
 )
 
 type zarbServer struct {
-	state  state.Facade
-	sync   sync.Synchronizer
-	logger *logger.Logger
+	state     state.Facade
+	sync      sync.Synchronizer
+	consensus consensus.Reader
+	logger    *logger.Logger
 }
 
 type Server struct {
-	ctx      context.Context
-	config   *Config
-	address  string
-	listener net.Listener
-	state    state.Facade
-	sync     sync.Synchronizer
-	logger   *logger.Logger
+	ctx       context.Context
+	config    *Config
+	address   string
+	listener  net.Listener
+	state     state.Facade
+	sync      sync.Synchronizer
+	consensus consensus.Reader
+	logger    *logger.Logger
 }
 
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) *Server {
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
+	consensus consensus.Reader) *Server {
 	return &Server{
-		ctx:    context.Background(),
-		state:  state,
-		sync:   sync,
-		config: conf,
-		logger: logger.NewLogger("_capnp", nil),
+		ctx:       context.Background(),
+		state:     state,
+		sync:      sync,
+		consensus: consensus,
+		config:    conf,
+		logger:    logger.NewLogger("_capnp", nil),
 	}
 }
 
@@ -63,7 +68,8 @@ func (s *Server) StartServer() error {
 			} else {
 				//
 				go func(c net.Conn) {
-					s2c := ZarbServer_ServerToClient(&zarbServer{s.state, s.sync, s.logger})
+					s2c := ZarbServer_ServerToClient(
+						&zarbServer{s.state, s.sync, s.consensus, s.logger})
 					conn := rpc.NewConn(rpc.StreamTransport(c), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {

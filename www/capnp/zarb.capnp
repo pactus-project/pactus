@@ -26,7 +26,7 @@ struct Block {
   txs                 @2 :List(Data);
 }
 
-struct BlockchainResult {
+struct BlockchainInfoResult {
   lastBlockHeight     @0 :Int32;
   lastBlockHash       @1 :Data;
   committee           @2 :Committee;
@@ -73,9 +73,22 @@ struct Peer {
   receivedBytes       @10 :Int32;
 }
 
-struct NetworkResult {
+struct NetworkInfoResult {
   peerID              @0 :Text;
   peers               @1 :List(Peer);
+}
+
+struct Vote {
+  type                @0 :Int8;
+  voter               @1 :Text;
+  blockHash           @2 :Data;
+  round               @3 :Int16;
+}
+
+struct ConsensusInfoResult {
+  height              @0 :Int32;
+  round               @1 :Int16;
+  votes               @2 :List(Vote);
 }
 
 struct SendTransactionResult {
@@ -84,13 +97,14 @@ struct SendTransactionResult {
 }
 
 interface ZarbServer {
-  getBlock            @0 (hash: Data, verbosity: Int32)          -> (result :BlockResult);
-  getBlockHash        @1 (height: Int32)                         -> (result :Data);
-  getTransaction      @2 (id: Data, verbosity: Int32)            -> (result :TransactionResult);
-  getAccount          @3 (address: Text, verbosity: Int32)       -> (result :AccountResult);
-  getValidator        @4 (address: Text, verbosity: Int32)       -> (result :ValidatorResult);
-  getBlockchainInfo   @5 ()                                      -> (result :BlockchainResult);
-  getNetworkInfo      @6 ()                                      -> (result :NetworkResult);
-  sendRawTransaction  @7 (rawTx: Data)                           -> (result :SendTransactionResult);
+  getBlock            @0 (hash: Data, verbosity: Int32)     -> (result :BlockResult);
+  getBlockHash        @1 (height: Int32)                    -> (result :Data);
+  getTransaction      @2 (id: Data, verbosity: Int32)       -> (result :TransactionResult);
+  getAccount          @3 (address: Text, verbosity: Int32)  -> (result :AccountResult);
+  getValidator        @4 (address: Text, verbosity: Int32)  -> (result :ValidatorResult);
+  getBlockchainInfo   @5 ()                                 -> (result :BlockchainInfoResult);
+  getNetworkInfo      @6 ()                                 -> (result :NetworkInfoResult);
+  getConsensusInfo    @7 ()                                 -> (result :ConsensusInfoResult);
+  sendRawTransaction  @8 (rawTx: Data)                      -> (result :SendTransactionResult);
 }
 

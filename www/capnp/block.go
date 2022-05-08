@@ -43,43 +43,48 @@ func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	return nil
 }
 
-func (zs zarbServer) ToVerboseBlock(b *block.Block, res *BlockResult) error {
-	cb, _ := res.NewBlock()
-	ch, _ := cb.NewHeader()
-	ctxs, _ := cb.NewTxs(int32(b.Transactions().Len()))
-	clc, _ := cb.NewPrevCert()
+func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error {
+	capBlock, _ := res.NewBlock()
+	capHeader, _ := capBlock.NewHeader()
+	capTrxs, _ := capBlock.NewTxs(int32(block.Transactions().Len()))
+	capPrevCert, _ := capBlock.NewPrevCert()
 
 	// previous certificate
-	if b.PrevCertificate() != nil {
-		clc.SetRound(b.PrevCertificate().Round())
-		if err := clc.SetSignature(b.PrevCertificate().Signature().Bytes()); err != nil {
+	if block.PrevCertificate() != nil {
+		capPrevCert.SetRound(block.PrevCertificate().Round())
+		if err := capPrevCert.SetSignature(block.PrevCertificate().Signature().Bytes()); err != nil {
 			return err
 		}
-		committers, _ := clc.NewCommitters(int32(len(b.PrevCertificate().Committers())))
-		for i, num := range b.PrevCertificate().Committers() {
-			committers.Set(i, num)
+		capCommitters, _ := capPrevCert.NewCommitters(
+			int32(len(block.PrevCertificate().Committers())))
+		for i, num := range block.PrevCertificate().Committers() {
+			capCommitters.Set(i, num)
 		}
-		absentees, _ := clc.NewAbsentees(int32(len(b.PrevCertificate().Absentees())))
-		for i, num := range b.PrevCertificate().Absentees() {
-			absentees.Set(i, num)
+		capAbsentees, _ := capPrevCert.NewAbsentees(
+			int32(len(block.PrevCertificate().Absentees())))
+		for i, num := range block.PrevCertificate().Absentees() {
+			capAbsentees.Set(i, num)
 		}
 	}
 	// header
-	ch.SetVersion(b.Header().Version())
-	ch.SetTime(int32(b.Header().Time().Unix()))
-	if err := ch.SetStateRoot(b.Header().StateRoot().Bytes()); err != nil {
+	capHeader.SetVersion(block.Header().Version())
+	capHeader.SetTime(int32(block.Header().Time().Unix()))
+	err := capHeader.SetStateRoot(block.Header().StateRoot().Bytes())
+	if err != nil {
 		return err
 	}
-	if err := ch.SetPrevBlockHash(b.Header().PrevBlockHash().Bytes()); err != nil {
+	err = capHeader.SetPrevBlockHash(block.Header().PrevBlockHash().Bytes())
+	if err != nil {
 		return err
 	}
-	if err := ch.SetProposerAddress(b.Header().ProposerAddress().String()); err != nil {
+	err = capHeader.SetProposerAddress(block.Header().ProposerAddress().String())
+	if err != nil {
 		return err
 	}
 	// Transactions
-	for i, trx := range b.Transactions() {
+	for i, trx := range block.Transactions() {
 		d, _ := trx.Bytes()
-		if err := ctxs.Set(i, d); err != nil {
+		if err := capTrxs.Set(i, d); err != nil {
 			return err
 		}
 	}

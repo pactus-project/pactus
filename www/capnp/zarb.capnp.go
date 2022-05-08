@@ -395,70 +395,70 @@ func (p Block_Promise) PrevCert() Certificate_Promise {
 	return Certificate_Promise{Pipeline: p.Pipeline.GetPipeline(1)}
 }
 
-type BlockchainResult struct{ capnp.Struct }
+type BlockchainInfoResult struct{ capnp.Struct }
 
-// BlockchainResult_TypeID is the unique identifier for the type BlockchainResult.
-const BlockchainResult_TypeID = 0xbd88d0eab3826ba9
+// BlockchainInfoResult_TypeID is the unique identifier for the type BlockchainInfoResult.
+const BlockchainInfoResult_TypeID = 0xae39f74773bfa089
 
-func NewBlockchainResult(s *capnp.Segment) (BlockchainResult, error) {
+func NewBlockchainInfoResult(s *capnp.Segment) (BlockchainInfoResult, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
-	return BlockchainResult{st}, err
+	return BlockchainInfoResult{st}, err
 }
 
-func NewRootBlockchainResult(s *capnp.Segment) (BlockchainResult, error) {
+func NewRootBlockchainInfoResult(s *capnp.Segment) (BlockchainInfoResult, error) {
 	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
-	return BlockchainResult{st}, err
+	return BlockchainInfoResult{st}, err
 }
 
-func ReadRootBlockchainResult(msg *capnp.Message) (BlockchainResult, error) {
+func ReadRootBlockchainInfoResult(msg *capnp.Message) (BlockchainInfoResult, error) {
 	root, err := msg.RootPtr()
-	return BlockchainResult{root.Struct()}, err
+	return BlockchainInfoResult{root.Struct()}, err
 }
 
-func (s BlockchainResult) String() string {
-	str, _ := text.Marshal(0xbd88d0eab3826ba9, s.Struct)
+func (s BlockchainInfoResult) String() string {
+	str, _ := text.Marshal(0xae39f74773bfa089, s.Struct)
 	return str
 }
 
-func (s BlockchainResult) LastBlockHeight() int32 {
+func (s BlockchainInfoResult) LastBlockHeight() int32 {
 	return int32(s.Struct.Uint32(0))
 }
 
-func (s BlockchainResult) SetLastBlockHeight(v int32) {
+func (s BlockchainInfoResult) SetLastBlockHeight(v int32) {
 	s.Struct.SetUint32(0, uint32(v))
 }
 
-func (s BlockchainResult) LastBlockHash() ([]byte, error) {
+func (s BlockchainInfoResult) LastBlockHash() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return []byte(p.Data()), err
 }
 
-func (s BlockchainResult) HasLastBlockHash() bool {
+func (s BlockchainInfoResult) HasLastBlockHash() bool {
 	p, err := s.Struct.Ptr(0)
 	return p.IsValid() || err != nil
 }
 
-func (s BlockchainResult) SetLastBlockHash(v []byte) error {
+func (s BlockchainInfoResult) SetLastBlockHash(v []byte) error {
 	return s.Struct.SetData(0, v)
 }
 
-func (s BlockchainResult) Committee() (Committee, error) {
+func (s BlockchainInfoResult) Committee() (Committee, error) {
 	p, err := s.Struct.Ptr(1)
 	return Committee{Struct: p.Struct()}, err
 }
 
-func (s BlockchainResult) HasCommittee() bool {
+func (s BlockchainInfoResult) HasCommittee() bool {
 	p, err := s.Struct.Ptr(1)
 	return p.IsValid() || err != nil
 }
 
-func (s BlockchainResult) SetCommittee(v Committee) error {
+func (s BlockchainInfoResult) SetCommittee(v Committee) error {
 	return s.Struct.SetPtr(1, v.Struct.ToPtr())
 }
 
 // NewCommittee sets the committee field to a newly
 // allocated Committee struct, preferring placement in s's segment.
-func (s BlockchainResult) NewCommittee() (Committee, error) {
+func (s BlockchainInfoResult) NewCommittee() (Committee, error) {
 	ss, err := NewCommittee(s.Struct.Segment())
 	if err != nil {
 		return Committee{}, err
@@ -467,35 +467,37 @@ func (s BlockchainResult) NewCommittee() (Committee, error) {
 	return ss, err
 }
 
-// BlockchainResult_List is a list of BlockchainResult.
-type BlockchainResult_List struct{ capnp.List }
+// BlockchainInfoResult_List is a list of BlockchainInfoResult.
+type BlockchainInfoResult_List struct{ capnp.List }
 
-// NewBlockchainResult creates a new list of BlockchainResult.
-func NewBlockchainResult_List(s *capnp.Segment, sz int32) (BlockchainResult_List, error) {
+// NewBlockchainInfoResult creates a new list of BlockchainInfoResult.
+func NewBlockchainInfoResult_List(s *capnp.Segment, sz int32) (BlockchainInfoResult_List, error) {
 	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2}, sz)
-	return BlockchainResult_List{l}, err
+	return BlockchainInfoResult_List{l}, err
 }
 
-func (s BlockchainResult_List) At(i int) BlockchainResult { return BlockchainResult{s.List.Struct(i)} }
+func (s BlockchainInfoResult_List) At(i int) BlockchainInfoResult {
+	return BlockchainInfoResult{s.List.Struct(i)}
+}
 
-func (s BlockchainResult_List) Set(i int, v BlockchainResult) error {
+func (s BlockchainInfoResult_List) Set(i int, v BlockchainInfoResult) error {
 	return s.List.SetStruct(i, v.Struct)
 }
 
-func (s BlockchainResult_List) String() string {
-	str, _ := text.MarshalList(0xbd88d0eab3826ba9, s.List)
+func (s BlockchainInfoResult_List) String() string {
+	str, _ := text.MarshalList(0xae39f74773bfa089, s.List)
 	return str
 }
 
-// BlockchainResult_Promise is a wrapper for a BlockchainResult promised by a client call.
-type BlockchainResult_Promise struct{ *capnp.Pipeline }
+// BlockchainInfoResult_Promise is a wrapper for a BlockchainInfoResult promised by a client call.
+type BlockchainInfoResult_Promise struct{ *capnp.Pipeline }
 
-func (p BlockchainResult_Promise) Struct() (BlockchainResult, error) {
+func (p BlockchainInfoResult_Promise) Struct() (BlockchainInfoResult, error) {
 	s, err := p.Pipeline.Struct()
-	return BlockchainResult{s}, err
+	return BlockchainInfoResult{s}, err
 }
 
-func (p BlockchainResult_Promise) Committee() Committee_Promise {
+func (p BlockchainInfoResult_Promise) Committee() Committee_Promise {
 	return Committee_Promise{Pipeline: p.Pipeline.GetPipeline(1)}
 }
 
@@ -1125,67 +1127,67 @@ func (p Peer_Promise) Struct() (Peer, error) {
 	return Peer{s}, err
 }
 
-type NetworkResult struct{ capnp.Struct }
+type NetworkInfoResult struct{ capnp.Struct }
 
-// NetworkResult_TypeID is the unique identifier for the type NetworkResult.
-const NetworkResult_TypeID = 0xefbaa00121a2907b
+// NetworkInfoResult_TypeID is the unique identifier for the type NetworkInfoResult.
+const NetworkInfoResult_TypeID = 0x9770d1aea1bdc9cb
 
-func NewNetworkResult(s *capnp.Segment) (NetworkResult, error) {
+func NewNetworkInfoResult(s *capnp.Segment) (NetworkInfoResult, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 2})
-	return NetworkResult{st}, err
+	return NetworkInfoResult{st}, err
 }
 
-func NewRootNetworkResult(s *capnp.Segment) (NetworkResult, error) {
+func NewRootNetworkInfoResult(s *capnp.Segment) (NetworkInfoResult, error) {
 	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 2})
-	return NetworkResult{st}, err
+	return NetworkInfoResult{st}, err
 }
 
-func ReadRootNetworkResult(msg *capnp.Message) (NetworkResult, error) {
+func ReadRootNetworkInfoResult(msg *capnp.Message) (NetworkInfoResult, error) {
 	root, err := msg.RootPtr()
-	return NetworkResult{root.Struct()}, err
+	return NetworkInfoResult{root.Struct()}, err
 }
 
-func (s NetworkResult) String() string {
-	str, _ := text.Marshal(0xefbaa00121a2907b, s.Struct)
+func (s NetworkInfoResult) String() string {
+	str, _ := text.Marshal(0x9770d1aea1bdc9cb, s.Struct)
 	return str
 }
 
-func (s NetworkResult) PeerID() (string, error) {
+func (s NetworkInfoResult) PeerID() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
 }
 
-func (s NetworkResult) HasPeerID() bool {
+func (s NetworkInfoResult) HasPeerID() bool {
 	p, err := s.Struct.Ptr(0)
 	return p.IsValid() || err != nil
 }
 
-func (s NetworkResult) PeerIDBytes() ([]byte, error) {
+func (s NetworkInfoResult) PeerIDBytes() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.TextBytes(), err
 }
 
-func (s NetworkResult) SetPeerID(v string) error {
+func (s NetworkInfoResult) SetPeerID(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
-func (s NetworkResult) Peers() (Peer_List, error) {
+func (s NetworkInfoResult) Peers() (Peer_List, error) {
 	p, err := s.Struct.Ptr(1)
 	return Peer_List{List: p.List()}, err
 }
 
-func (s NetworkResult) HasPeers() bool {
+func (s NetworkInfoResult) HasPeers() bool {
 	p, err := s.Struct.Ptr(1)
 	return p.IsValid() || err != nil
 }
 
-func (s NetworkResult) SetPeers(v Peer_List) error {
+func (s NetworkInfoResult) SetPeers(v Peer_List) error {
 	return s.Struct.SetPtr(1, v.List.ToPtr())
 }
 
 // NewPeers sets the peers field to a newly
 // allocated Peer_List, preferring placement in s's segment.
-func (s NetworkResult) NewPeers(n int32) (Peer_List, error) {
+func (s NetworkInfoResult) NewPeers(n int32) (Peer_List, error) {
 	l, err := NewPeer_List(s.Struct.Segment(), n)
 	if err != nil {
 		return Peer_List{}, err
@@ -1194,30 +1196,230 @@ func (s NetworkResult) NewPeers(n int32) (Peer_List, error) {
 	return l, err
 }
 
-// NetworkResult_List is a list of NetworkResult.
-type NetworkResult_List struct{ capnp.List }
+// NetworkInfoResult_List is a list of NetworkInfoResult.
+type NetworkInfoResult_List struct{ capnp.List }
 
-// NewNetworkResult creates a new list of NetworkResult.
-func NewNetworkResult_List(s *capnp.Segment, sz int32) (NetworkResult_List, error) {
+// NewNetworkInfoResult creates a new list of NetworkInfoResult.
+func NewNetworkInfoResult_List(s *capnp.Segment, sz int32) (NetworkInfoResult_List, error) {
 	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 2}, sz)
-	return NetworkResult_List{l}, err
+	return NetworkInfoResult_List{l}, err
 }
 
-func (s NetworkResult_List) At(i int) NetworkResult { return NetworkResult{s.List.Struct(i)} }
+func (s NetworkInfoResult_List) At(i int) NetworkInfoResult {
+	return NetworkInfoResult{s.List.Struct(i)}
+}
 
-func (s NetworkResult_List) Set(i int, v NetworkResult) error { return s.List.SetStruct(i, v.Struct) }
+func (s NetworkInfoResult_List) Set(i int, v NetworkInfoResult) error {
+	return s.List.SetStruct(i, v.Struct)
+}
 
-func (s NetworkResult_List) String() string {
-	str, _ := text.MarshalList(0xefbaa00121a2907b, s.List)
+func (s NetworkInfoResult_List) String() string {
+	str, _ := text.MarshalList(0x9770d1aea1bdc9cb, s.List)
 	return str
 }
 
-// NetworkResult_Promise is a wrapper for a NetworkResult promised by a client call.
-type NetworkResult_Promise struct{ *capnp.Pipeline }
+// NetworkInfoResult_Promise is a wrapper for a NetworkInfoResult promised by a client call.
+type NetworkInfoResult_Promise struct{ *capnp.Pipeline }
 
-func (p NetworkResult_Promise) Struct() (NetworkResult, error) {
+func (p NetworkInfoResult_Promise) Struct() (NetworkInfoResult, error) {
 	s, err := p.Pipeline.Struct()
-	return NetworkResult{s}, err
+	return NetworkInfoResult{s}, err
+}
+
+type Vote struct{ capnp.Struct }
+
+// Vote_TypeID is the unique identifier for the type Vote.
+const Vote_TypeID = 0xab9a904927908aff
+
+func NewVote(s *capnp.Segment) (Vote, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
+	return Vote{st}, err
+}
+
+func NewRootVote(s *capnp.Segment) (Vote, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
+	return Vote{st}, err
+}
+
+func ReadRootVote(msg *capnp.Message) (Vote, error) {
+	root, err := msg.RootPtr()
+	return Vote{root.Struct()}, err
+}
+
+func (s Vote) String() string {
+	str, _ := text.Marshal(0xab9a904927908aff, s.Struct)
+	return str
+}
+
+func (s Vote) Type() int8 {
+	return int8(s.Struct.Uint8(0))
+}
+
+func (s Vote) SetType(v int8) {
+	s.Struct.SetUint8(0, uint8(v))
+}
+
+func (s Vote) Voter() (string, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.Text(), err
+}
+
+func (s Vote) HasVoter() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s Vote) VoterBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.TextBytes(), err
+}
+
+func (s Vote) SetVoter(v string) error {
+	return s.Struct.SetText(0, v)
+}
+
+func (s Vote) BlockHash() ([]byte, error) {
+	p, err := s.Struct.Ptr(1)
+	return []byte(p.Data()), err
+}
+
+func (s Vote) HasBlockHash() bool {
+	p, err := s.Struct.Ptr(1)
+	return p.IsValid() || err != nil
+}
+
+func (s Vote) SetBlockHash(v []byte) error {
+	return s.Struct.SetData(1, v)
+}
+
+func (s Vote) Round() int16 {
+	return int16(s.Struct.Uint16(2))
+}
+
+func (s Vote) SetRound(v int16) {
+	s.Struct.SetUint16(2, uint16(v))
+}
+
+// Vote_List is a list of Vote.
+type Vote_List struct{ capnp.List }
+
+// NewVote creates a new list of Vote.
+func NewVote_List(s *capnp.Segment, sz int32) (Vote_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2}, sz)
+	return Vote_List{l}, err
+}
+
+func (s Vote_List) At(i int) Vote { return Vote{s.List.Struct(i)} }
+
+func (s Vote_List) Set(i int, v Vote) error { return s.List.SetStruct(i, v.Struct) }
+
+func (s Vote_List) String() string {
+	str, _ := text.MarshalList(0xab9a904927908aff, s.List)
+	return str
+}
+
+// Vote_Promise is a wrapper for a Vote promised by a client call.
+type Vote_Promise struct{ *capnp.Pipeline }
+
+func (p Vote_Promise) Struct() (Vote, error) {
+	s, err := p.Pipeline.Struct()
+	return Vote{s}, err
+}
+
+type ConsensusInfoResult struct{ capnp.Struct }
+
+// ConsensusInfoResult_TypeID is the unique identifier for the type ConsensusInfoResult.
+const ConsensusInfoResult_TypeID = 0xddf1212e9514d1f1
+
+func NewConsensusInfoResult(s *capnp.Segment) (ConsensusInfoResult, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
+	return ConsensusInfoResult{st}, err
+}
+
+func NewRootConsensusInfoResult(s *capnp.Segment) (ConsensusInfoResult, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
+	return ConsensusInfoResult{st}, err
+}
+
+func ReadRootConsensusInfoResult(msg *capnp.Message) (ConsensusInfoResult, error) {
+	root, err := msg.RootPtr()
+	return ConsensusInfoResult{root.Struct()}, err
+}
+
+func (s ConsensusInfoResult) String() string {
+	str, _ := text.Marshal(0xddf1212e9514d1f1, s.Struct)
+	return str
+}
+
+func (s ConsensusInfoResult) Height() int32 {
+	return int32(s.Struct.Uint32(0))
+}
+
+func (s ConsensusInfoResult) SetHeight(v int32) {
+	s.Struct.SetUint32(0, uint32(v))
+}
+
+func (s ConsensusInfoResult) Round() int16 {
+	return int16(s.Struct.Uint16(4))
+}
+
+func (s ConsensusInfoResult) SetRound(v int16) {
+	s.Struct.SetUint16(4, uint16(v))
+}
+
+func (s ConsensusInfoResult) Votes() (Vote_List, error) {
+	p, err := s.Struct.Ptr(0)
+	return Vote_List{List: p.List()}, err
+}
+
+func (s ConsensusInfoResult) HasVotes() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s ConsensusInfoResult) SetVotes(v Vote_List) error {
+	return s.Struct.SetPtr(0, v.List.ToPtr())
+}
+
+// NewVotes sets the votes field to a newly
+// allocated Vote_List, preferring placement in s's segment.
+func (s ConsensusInfoResult) NewVotes(n int32) (Vote_List, error) {
+	l, err := NewVote_List(s.Struct.Segment(), n)
+	if err != nil {
+		return Vote_List{}, err
+	}
+	err = s.Struct.SetPtr(0, l.List.ToPtr())
+	return l, err
+}
+
+// ConsensusInfoResult_List is a list of ConsensusInfoResult.
+type ConsensusInfoResult_List struct{ capnp.List }
+
+// NewConsensusInfoResult creates a new list of ConsensusInfoResult.
+func NewConsensusInfoResult_List(s *capnp.Segment, sz int32) (ConsensusInfoResult_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
+	return ConsensusInfoResult_List{l}, err
+}
+
+func (s ConsensusInfoResult_List) At(i int) ConsensusInfoResult {
+	return ConsensusInfoResult{s.List.Struct(i)}
+}
+
+func (s ConsensusInfoResult_List) Set(i int, v ConsensusInfoResult) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ConsensusInfoResult_List) String() string {
+	str, _ := text.MarshalList(0xddf1212e9514d1f1, s.List)
+	return str
+}
+
+// ConsensusInfoResult_Promise is a wrapper for a ConsensusInfoResult promised by a client call.
+type ConsensusInfoResult_Promise struct{ *capnp.Pipeline }
+
+func (p ConsensusInfoResult_Promise) Struct() (ConsensusInfoResult, error) {
+	s, err := p.Pipeline.Struct()
+	return ConsensusInfoResult{s}, err
 }
 
 type SendTransactionResult struct{ capnp.Struct }
@@ -1442,6 +1644,26 @@ func (c ZarbServer) GetNetworkInfo(ctx context.Context, params func(ZarbServer_g
 	}
 	return ZarbServer_getNetworkInfo_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
 }
+func (c ZarbServer) GetConsensusInfo(ctx context.Context, params func(ZarbServer_getConsensusInfo_Params) error, opts ...capnp.CallOption) ZarbServer_getConsensusInfo_Results_Promise {
+	if c.Client == nil {
+		return ZarbServer_getConsensusInfo_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
+	}
+	call := &capnp.Call{
+		Ctx: ctx,
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      7,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "getConsensusInfo",
+		},
+		Options: capnp.NewCallOptions(opts),
+	}
+	if params != nil {
+		call.ParamsSize = capnp.ObjectSize{DataSize: 0, PointerCount: 0}
+		call.ParamsFunc = func(s capnp.Struct) error { return params(ZarbServer_getConsensusInfo_Params{Struct: s}) }
+	}
+	return ZarbServer_getConsensusInfo_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+}
 func (c ZarbServer) SendRawTransaction(ctx context.Context, params func(ZarbServer_sendRawTransaction_Params) error, opts ...capnp.CallOption) ZarbServer_sendRawTransaction_Results_Promise {
 	if c.Client == nil {
 		return ZarbServer_sendRawTransaction_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
@@ -1450,7 +1672,7 @@ func (c ZarbServer) SendRawTransaction(ctx context.Context, params func(ZarbServ
 		Ctx: ctx,
 		Method: capnp.Method{
 			InterfaceID:   0xf906e2ae0dd37fe4,
-			MethodID:      7,
+			MethodID:      8,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "sendRawTransaction",
 		},
@@ -1478,6 +1700,8 @@ type ZarbServer_Server interface {
 
 	GetNetworkInfo(ZarbServer_getNetworkInfo) error
 
+	GetConsensusInfo(ZarbServer_getConsensusInfo) error
+
 	SendRawTransaction(ZarbServer_sendRawTransaction) error
 }
 
@@ -1488,7 +1712,7 @@ func ZarbServer_ServerToClient(s ZarbServer_Server) ZarbServer {
 
 func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.Method {
 	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 8)
+		methods = make([]server.Method, 0, 9)
 	}
 
 	methods = append(methods, server.Method{
@@ -1594,6 +1818,20 @@ func ZarbServer_Methods(methods []server.Method, s ZarbServer_Server) []server.M
 			InterfaceID:   0xf906e2ae0dd37fe4,
 			MethodID:      7,
 			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
+			MethodName:    "getConsensusInfo",
+		},
+		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
+			call := ZarbServer_getConsensusInfo{c, opts, ZarbServer_getConsensusInfo_Params{Struct: p}, ZarbServer_getConsensusInfo_Results{Struct: r}}
+			return s.GetConsensusInfo(call)
+		},
+		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
+	})
+
+	methods = append(methods, server.Method{
+		Method: capnp.Method{
+			InterfaceID:   0xf906e2ae0dd37fe4,
+			MethodID:      8,
+			InterfaceName: "www/capnp/zarb.capnp:ZarbServer",
 			MethodName:    "sendRawTransaction",
 		},
 		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
@@ -1660,6 +1898,14 @@ type ZarbServer_getNetworkInfo struct {
 	Options capnp.CallOptions
 	Params  ZarbServer_getNetworkInfo_Params
 	Results ZarbServer_getNetworkInfo_Results
+}
+
+// ZarbServer_getConsensusInfo holds the arguments for a server call to ZarbServer.getConsensusInfo.
+type ZarbServer_getConsensusInfo struct {
+	Ctx     context.Context
+	Options capnp.CallOptions
+	Params  ZarbServer_getConsensusInfo_Params
+	Results ZarbServer_getConsensusInfo_Results
 }
 
 // ZarbServer_sendRawTransaction holds the arguments for a server call to ZarbServer.sendRawTransaction.
@@ -2536,9 +2782,9 @@ func (s ZarbServer_getBlockchainInfo_Results) String() string {
 	return str
 }
 
-func (s ZarbServer_getBlockchainInfo_Results) Result() (BlockchainResult, error) {
+func (s ZarbServer_getBlockchainInfo_Results) Result() (BlockchainInfoResult, error) {
 	p, err := s.Struct.Ptr(0)
-	return BlockchainResult{Struct: p.Struct()}, err
+	return BlockchainInfoResult{Struct: p.Struct()}, err
 }
 
 func (s ZarbServer_getBlockchainInfo_Results) HasResult() bool {
@@ -2546,16 +2792,16 @@ func (s ZarbServer_getBlockchainInfo_Results) HasResult() bool {
 	return p.IsValid() || err != nil
 }
 
-func (s ZarbServer_getBlockchainInfo_Results) SetResult(v BlockchainResult) error {
+func (s ZarbServer_getBlockchainInfo_Results) SetResult(v BlockchainInfoResult) error {
 	return s.Struct.SetPtr(0, v.Struct.ToPtr())
 }
 
 // NewResult sets the result field to a newly
-// allocated BlockchainResult struct, preferring placement in s's segment.
-func (s ZarbServer_getBlockchainInfo_Results) NewResult() (BlockchainResult, error) {
-	ss, err := NewBlockchainResult(s.Struct.Segment())
+// allocated BlockchainInfoResult struct, preferring placement in s's segment.
+func (s ZarbServer_getBlockchainInfo_Results) NewResult() (BlockchainInfoResult, error) {
+	ss, err := NewBlockchainInfoResult(s.Struct.Segment())
 	if err != nil {
-		return BlockchainResult{}, err
+		return BlockchainInfoResult{}, err
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
@@ -2591,8 +2837,8 @@ func (p ZarbServer_getBlockchainInfo_Results_Promise) Struct() (ZarbServer_getBl
 	return ZarbServer_getBlockchainInfo_Results{s}, err
 }
 
-func (p ZarbServer_getBlockchainInfo_Results_Promise) Result() BlockchainResult_Promise {
-	return BlockchainResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p ZarbServer_getBlockchainInfo_Results_Promise) Result() BlockchainInfoResult_Promise {
+	return BlockchainInfoResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
 type ZarbServer_getNetworkInfo_Params struct{ capnp.Struct }
@@ -2675,9 +2921,9 @@ func (s ZarbServer_getNetworkInfo_Results) String() string {
 	return str
 }
 
-func (s ZarbServer_getNetworkInfo_Results) Result() (NetworkResult, error) {
+func (s ZarbServer_getNetworkInfo_Results) Result() (NetworkInfoResult, error) {
 	p, err := s.Struct.Ptr(0)
-	return NetworkResult{Struct: p.Struct()}, err
+	return NetworkInfoResult{Struct: p.Struct()}, err
 }
 
 func (s ZarbServer_getNetworkInfo_Results) HasResult() bool {
@@ -2685,16 +2931,16 @@ func (s ZarbServer_getNetworkInfo_Results) HasResult() bool {
 	return p.IsValid() || err != nil
 }
 
-func (s ZarbServer_getNetworkInfo_Results) SetResult(v NetworkResult) error {
+func (s ZarbServer_getNetworkInfo_Results) SetResult(v NetworkInfoResult) error {
 	return s.Struct.SetPtr(0, v.Struct.ToPtr())
 }
 
 // NewResult sets the result field to a newly
-// allocated NetworkResult struct, preferring placement in s's segment.
-func (s ZarbServer_getNetworkInfo_Results) NewResult() (NetworkResult, error) {
-	ss, err := NewNetworkResult(s.Struct.Segment())
+// allocated NetworkInfoResult struct, preferring placement in s's segment.
+func (s ZarbServer_getNetworkInfo_Results) NewResult() (NetworkInfoResult, error) {
+	ss, err := NewNetworkInfoResult(s.Struct.Segment())
 	if err != nil {
-		return NetworkResult{}, err
+		return NetworkInfoResult{}, err
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
@@ -2730,14 +2976,153 @@ func (p ZarbServer_getNetworkInfo_Results_Promise) Struct() (ZarbServer_getNetwo
 	return ZarbServer_getNetworkInfo_Results{s}, err
 }
 
-func (p ZarbServer_getNetworkInfo_Results_Promise) Result() NetworkResult_Promise {
-	return NetworkResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p ZarbServer_getNetworkInfo_Results_Promise) Result() NetworkInfoResult_Promise {
+	return NetworkInfoResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+}
+
+type ZarbServer_getConsensusInfo_Params struct{ capnp.Struct }
+
+// ZarbServer_getConsensusInfo_Params_TypeID is the unique identifier for the type ZarbServer_getConsensusInfo_Params.
+const ZarbServer_getConsensusInfo_Params_TypeID = 0x8317eae56a55f0ba
+
+func NewZarbServer_getConsensusInfo_Params(s *capnp.Segment) (ZarbServer_getConsensusInfo_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return ZarbServer_getConsensusInfo_Params{st}, err
+}
+
+func NewRootZarbServer_getConsensusInfo_Params(s *capnp.Segment) (ZarbServer_getConsensusInfo_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0})
+	return ZarbServer_getConsensusInfo_Params{st}, err
+}
+
+func ReadRootZarbServer_getConsensusInfo_Params(msg *capnp.Message) (ZarbServer_getConsensusInfo_Params, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_getConsensusInfo_Params{root.Struct()}, err
+}
+
+func (s ZarbServer_getConsensusInfo_Params) String() string {
+	str, _ := text.Marshal(0x8317eae56a55f0ba, s.Struct)
+	return str
+}
+
+// ZarbServer_getConsensusInfo_Params_List is a list of ZarbServer_getConsensusInfo_Params.
+type ZarbServer_getConsensusInfo_Params_List struct{ capnp.List }
+
+// NewZarbServer_getConsensusInfo_Params creates a new list of ZarbServer_getConsensusInfo_Params.
+func NewZarbServer_getConsensusInfo_Params_List(s *capnp.Segment, sz int32) (ZarbServer_getConsensusInfo_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 0}, sz)
+	return ZarbServer_getConsensusInfo_Params_List{l}, err
+}
+
+func (s ZarbServer_getConsensusInfo_Params_List) At(i int) ZarbServer_getConsensusInfo_Params {
+	return ZarbServer_getConsensusInfo_Params{s.List.Struct(i)}
+}
+
+func (s ZarbServer_getConsensusInfo_Params_List) Set(i int, v ZarbServer_getConsensusInfo_Params) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_getConsensusInfo_Params_List) String() string {
+	str, _ := text.MarshalList(0x8317eae56a55f0ba, s.List)
+	return str
+}
+
+// ZarbServer_getConsensusInfo_Params_Promise is a wrapper for a ZarbServer_getConsensusInfo_Params promised by a client call.
+type ZarbServer_getConsensusInfo_Params_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_getConsensusInfo_Params_Promise) Struct() (ZarbServer_getConsensusInfo_Params, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_getConsensusInfo_Params{s}, err
+}
+
+type ZarbServer_getConsensusInfo_Results struct{ capnp.Struct }
+
+// ZarbServer_getConsensusInfo_Results_TypeID is the unique identifier for the type ZarbServer_getConsensusInfo_Results.
+const ZarbServer_getConsensusInfo_Results_TypeID = 0xc0689e5f33bf949d
+
+func NewZarbServer_getConsensusInfo_Results(s *capnp.Segment) (ZarbServer_getConsensusInfo_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getConsensusInfo_Results{st}, err
+}
+
+func NewRootZarbServer_getConsensusInfo_Results(s *capnp.Segment) (ZarbServer_getConsensusInfo_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return ZarbServer_getConsensusInfo_Results{st}, err
+}
+
+func ReadRootZarbServer_getConsensusInfo_Results(msg *capnp.Message) (ZarbServer_getConsensusInfo_Results, error) {
+	root, err := msg.RootPtr()
+	return ZarbServer_getConsensusInfo_Results{root.Struct()}, err
+}
+
+func (s ZarbServer_getConsensusInfo_Results) String() string {
+	str, _ := text.Marshal(0xc0689e5f33bf949d, s.Struct)
+	return str
+}
+
+func (s ZarbServer_getConsensusInfo_Results) Result() (ConsensusInfoResult, error) {
+	p, err := s.Struct.Ptr(0)
+	return ConsensusInfoResult{Struct: p.Struct()}, err
+}
+
+func (s ZarbServer_getConsensusInfo_Results) HasResult() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s ZarbServer_getConsensusInfo_Results) SetResult(v ConsensusInfoResult) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
+}
+
+// NewResult sets the result field to a newly
+// allocated ConsensusInfoResult struct, preferring placement in s's segment.
+func (s ZarbServer_getConsensusInfo_Results) NewResult() (ConsensusInfoResult, error) {
+	ss, err := NewConsensusInfoResult(s.Struct.Segment())
+	if err != nil {
+		return ConsensusInfoResult{}, err
+	}
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
+}
+
+// ZarbServer_getConsensusInfo_Results_List is a list of ZarbServer_getConsensusInfo_Results.
+type ZarbServer_getConsensusInfo_Results_List struct{ capnp.List }
+
+// NewZarbServer_getConsensusInfo_Results creates a new list of ZarbServer_getConsensusInfo_Results.
+func NewZarbServer_getConsensusInfo_Results_List(s *capnp.Segment, sz int32) (ZarbServer_getConsensusInfo_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return ZarbServer_getConsensusInfo_Results_List{l}, err
+}
+
+func (s ZarbServer_getConsensusInfo_Results_List) At(i int) ZarbServer_getConsensusInfo_Results {
+	return ZarbServer_getConsensusInfo_Results{s.List.Struct(i)}
+}
+
+func (s ZarbServer_getConsensusInfo_Results_List) Set(i int, v ZarbServer_getConsensusInfo_Results) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s ZarbServer_getConsensusInfo_Results_List) String() string {
+	str, _ := text.MarshalList(0xc0689e5f33bf949d, s.List)
+	return str
+}
+
+// ZarbServer_getConsensusInfo_Results_Promise is a wrapper for a ZarbServer_getConsensusInfo_Results promised by a client call.
+type ZarbServer_getConsensusInfo_Results_Promise struct{ *capnp.Pipeline }
+
+func (p ZarbServer_getConsensusInfo_Results_Promise) Struct() (ZarbServer_getConsensusInfo_Results, error) {
+	s, err := p.Pipeline.Struct()
+	return ZarbServer_getConsensusInfo_Results{s}, err
+}
+
+func (p ZarbServer_getConsensusInfo_Results_Promise) Result() ConsensusInfoResult_Promise {
+	return ConsensusInfoResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
 type ZarbServer_sendRawTransaction_Params struct{ capnp.Struct }
 
 // ZarbServer_sendRawTransaction_Params_TypeID is the unique identifier for the type ZarbServer_sendRawTransaction_Params.
-const ZarbServer_sendRawTransaction_Params_TypeID = 0x8317eae56a55f0ba
+const ZarbServer_sendRawTransaction_Params_TypeID = 0xfe238774e8fa0fd9
 
 func NewZarbServer_sendRawTransaction_Params(s *capnp.Segment) (ZarbServer_sendRawTransaction_Params, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -2755,7 +3140,7 @@ func ReadRootZarbServer_sendRawTransaction_Params(msg *capnp.Message) (ZarbServe
 }
 
 func (s ZarbServer_sendRawTransaction_Params) String() string {
-	str, _ := text.Marshal(0x8317eae56a55f0ba, s.Struct)
+	str, _ := text.Marshal(0xfe238774e8fa0fd9, s.Struct)
 	return str
 }
 
@@ -2791,7 +3176,7 @@ func (s ZarbServer_sendRawTransaction_Params_List) Set(i int, v ZarbServer_sendR
 }
 
 func (s ZarbServer_sendRawTransaction_Params_List) String() string {
-	str, _ := text.MarshalList(0x8317eae56a55f0ba, s.List)
+	str, _ := text.MarshalList(0xfe238774e8fa0fd9, s.List)
 	return str
 }
 
@@ -2806,7 +3191,7 @@ func (p ZarbServer_sendRawTransaction_Params_Promise) Struct() (ZarbServer_sendR
 type ZarbServer_sendRawTransaction_Results struct{ capnp.Struct }
 
 // ZarbServer_sendRawTransaction_Results_TypeID is the unique identifier for the type ZarbServer_sendRawTransaction_Results.
-const ZarbServer_sendRawTransaction_Results_TypeID = 0xc0689e5f33bf949d
+const ZarbServer_sendRawTransaction_Results_TypeID = 0x9090e4cdf26bda5a
 
 func NewZarbServer_sendRawTransaction_Results(s *capnp.Segment) (ZarbServer_sendRawTransaction_Results, error) {
 	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
@@ -2824,7 +3209,7 @@ func ReadRootZarbServer_sendRawTransaction_Results(msg *capnp.Message) (ZarbServ
 }
 
 func (s ZarbServer_sendRawTransaction_Results) String() string {
-	str, _ := text.Marshal(0xc0689e5f33bf949d, s.Struct)
+	str, _ := text.Marshal(0x9090e4cdf26bda5a, s.Struct)
 	return str
 }
 
@@ -2871,7 +3256,7 @@ func (s ZarbServer_sendRawTransaction_Results_List) Set(i int, v ZarbServer_send
 }
 
 func (s ZarbServer_sendRawTransaction_Results_List) String() string {
-	str, _ := text.MarshalList(0xc0689e5f33bf949d, s.List)
+	str, _ := text.MarshalList(0x9090e4cdf26bda5a, s.List)
 	return str
 }
 
@@ -2887,145 +3272,160 @@ func (p ZarbServer_sendRawTransaction_Results_Promise) Result() SendTransactionR
 	return SendTransactionResult_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-const schema_84b56bd0975dfd33 = "x\xda\xb4X}\x8cTW\x15?\xe7\xdd\xf9\xda\xaf\xce" +
-	"<\xdelj\x09\xedP\x03\x06\x10Z\xbe\xaau\xa3\xce" +
-	"vK+PV\xe7\xcd\x80\x96\x15\x94\xb73\x97\x9da" +
-	"g\xe7\x8d\xef\xbd\xdd)(Y\xb3H\x14t\xa9E\xb0" +
-	"\xb4\x11\x02\xb4\x89\xf6\xc3V\xb0T \x12%V\x0d\x8d" +
-	"\xa6\x14BLk[\xb5\x11[\x1a\xb1\xa5\x86(\x1a\x18" +
-	"s\xee\xcc\xfb\x98\xd9\x0fv\x9b\xf8\xdf\xcc\xb9\xe7\xfd\xce" +
-	"\xc7\xfd\x9ds\xee\xbd\xf3?\x16h\x97\x16\xf8\xcb\x0d\x00" +
-	"\xaa\xe5\x0f\x94\xdf\xbe\xf2\x9d\xd5\x81xt\x0b\xc8\xadX" +
-	"^tu\xed\xc3\xa7{\x8f|\x03\xfc\xbe \xc0\xa2\xf3" +
-	"\xbeFT.\xd3O\xe5\x92\xef-\xc0\xf2\xf1\xf7Vm" +
-	"8\xff\xce\x8d[@\x9e\x8e\x00~$\xa5_\xfb\xcf " +
-	"\xa0\xf2\x8a?\x0eX>\x93\xfc\xd5\xc9[>:s+" +
-	"\xa8\xd3\x11\x01\x04\xca\x15\xffARh\x08\x90\xc2\xcf\x1e" +
-	"|j\xdf\xbc\xd3\x9b\x86\xbd\x08\xb3\x03\xc7I\xe1\x13\xa4" +
-	"p\xed\xc53\xff\x9e\xfd\xdbK\xc3\x95\xef+\xeb\xab\x03" +
-	"C\xb4\xce\x03%\xc0\xb2&o\xf8\x9d\xf6\xfd\x87w\xd4" +
-	"\xb8\x10x\x94\x14\xce\x09\x0b\xef=\xb9g\xf0\xc8ko" +
-	"\xec\x00\xb5\x15\xeb#R.\x07\xdeT0H\xdf\\\x0d" +
-	"|\x01\x01\xcb\xf3\xbb\xd6\x9c\xbd\xef\xe6\xe7\x1e\xac\xc0\x09" +
-	"\x7fW\x87^D\xf0\x95C\xca\xd3_\xfaJ\xacw\x97" +
-	"\xd7Pg\xe8I2\xb46D\x86^\x98\xf2\x91\xe6\x81" +
-	"k\xb3\x0ex\x156\x87D2\x1e\x12\x0a_,=\xf5" +
-	"n\x1e\x0f\x1d\xf4*\x1c\x0a\x89XO\x0a\x85\x1b\x13\x8d" +
-	"\x9f~\xad\xf3\xc4cu\xb9\x17\x8a\x7f\x09ME\xe5R" +
-	"\x88\x9c\xbe(\x94\xd7<\xff\xc7-\xef\xb7\xec=Jq" +
-	"Iu\xdaJK\xc3\x7f\x94\x9b\x1a\xe8Wk\xc3\xb3\x80" +
-	"\xe5%\xcd\x83\xfa\xd5\xef\xfd\xf3h\x1d2#\x8dS\x0d" +
-	"\xaf*\xe7\x84\xee\xcbB7\xfb\xfc\xb5\xe8\xb4\x8f\x97N" +
-	"\x8c\xa2\xbbhsc\x1b*\xc3\x8d\xa4\xbc\xad\x91\x94\x9f" +
-	"\xe8\x1d\xfa\xe9;\xa7\xbfu\xa2>\xbb\x12i\xcflZ" +
-	"\x88\xca\x1dM\xa4\xbd\xa0\x89\xb4\xf7\xee\xfa\xc5\xa2/\xef" +
-	"\xcb\xfe\xd2\x9b\x81sM\xafR\x06.4\xd1n\xcf\xca" +
-	"|\xf33f\xfe\xf7\xde\xddnh\xdeI\xeb75\xd3" +
-	"n/\x9f\xf3\x9b\xc3\xc7|\x7fx\xa9\xde\x9c\xd0\xdc\xd8" +
-	"\xdc\x85\xcap\xb3pNh\x1f\xeb\xda9S\xdb\xfe\xa7" +
-	"\xb3\xe0\xc5;\xdf|\x98\xf0.\x0b\x8d\xb8\xffs\xfdo" +
-	"\xbdt\xec\x0d\xc2\xf3\xd5\x93cU\xcb\x19Ek\xa1o" +
-	"\xd6\xb6\xe8\x12`y\xdf\xe0\xa9b\xf1q\xf5\xcf\x1er" +
-	"\\\x0c\x1f&r<V\xfe\xf63\xc3C\xd3\xfe>\xda" +
-	"\xce\xbd\x1e\x9e\x83\xca\xc50!^\x08\xd3\xce\xed\xb8\xf9" +
-	"o\xbd\xffZ\xf1\xca?j\xdcj\x88\x88\xaa\xb8)B" +
-	"n}\xf5\xbb\x07o\xc5\xfd\xc7\xdf\xad\x83\x13I\xdd\x18" +
-	"\x99\x8a\xca\xb6\x08\xc1m\x15\xca\xd3n\xf9\xe1\xd0\x0f\x12" +
-	"o_\xf6&\xf5Rd;\xa1\xa1L\xf6\xfe:x\xb6" +
-	"\xe5\x997\x03W@ne.\x1a\xe0\xa2[e\x09\x95" +
-	"y\xb2\xa899()\x0fM\x09\x02\x94\x9bZ\xd7\xed" +
-	"~\xf6\xde{\xaf\xd4\xe7X\x10`\xe3\x94FT\xb6M" +
-	"\x11\xd6\xa7P\x0bh]\x11\xec}\xff\xe5\x8e\xffz\xad" +
-	"oUDY\xecV\xc8z\xa9T\xba=\xad\x15\x0b\xac" +
-	"x\xfb&\xcd\xe8\xbe\x8d~\x17\xdb:\xf2z\xba7\xc9" +
-	"\xcd\xfe\xbc\x05\x90@T#\xcc\x07\xe0C\x00Yk\x03" +
-	"P\xd70T\xb3\x12\xca\x88Q\xca\x91\xcc\xe7\x00\xa8\xeb" +
-	"\x18\xaay\x09eI\x8a\xa2\x04 \xe7\x16\x02\xa8\x19\x86" +
-	"jQB\x99\xb1(2\x00\xb9\x8f4\xb3\x0cUK\xc2" +
-	"x\x96\xe7z\xb2\x16\xb6\x80\x84-\x80\xe1\xacff\xed" +
-	"?\xb1nr\x01#nm\x00b\x040\x9c\xd1,\xcd" +
-	"Vr\xbc\x0f\xd4x\xdf\xa5\x19\xdd)n\x0cp\xe36" +
-	"\x93\x172I\xad\xb4\xd2\xd0\x0a\xa6\x96\xb6rzaF" +
-	"B3\xb4>4U\x9f\x13R\x0b9\x1ab\xa8F%" +
-	"\x8c\x19Zi\xe5\x03#\x0c\xf8\xc72\xd0\xc3-\x91\xac" +
-	"\xa5\x9a\x99%\xe8\xa0\xd6W\x03\xdd\xe6B\xdb\xe1\xfa@" +
-	"B\xdf\x04\xb1?\xcb\xad\x92n\xf4.+\xac\xd7g$" +
-	"\xe3bC\xc6\x847\xc42F\\~VR6\xf1 " +
-	"*\xb91\x09\xd2\xb60\x9b\xf6k\x06Cu\xbe\x84\xf6" +
-	"n\xcfK\x02\xa8s\x19\xaawJ\xb5\x9bV\x1e\xe0F" +
-	"\xb7n\xe6,\xc0\x8d\x93\x0a\xf3\xaetZ\xef/X3" +
-	"\x04\xe5\xd8\x04Btzq]\x88R\x8d\x91\xa5\\\x0b" +
-	"f\xb8A\x04\xfe\x90\x03\xf8H\x07\x80\xba\x8b\xa1\xba\xdf" +
-	"C\xe0\xbd\x14\xe6\x1e\x86\xea\xe3\x12b\x95\xbf\x07\x0c\x00" +
-	"u?C\xf5i\xe2/V\xf8\xfb\x04\xc5\xfe#\x86\xea" +
-	"s\x12\xca>)\x8a>\x00\xf9\x10i\xfe\x84\xa1\xfas" +
-	"\x09e?\x8b\xa2\x1f@>6\x04\xa0\x1ee\xa8\xbe " +
-	"\xe1\xe0\x007\xcc\x9c^\xc0\x00H\x18\x00\x0c[\xb9>" +
-	"\xeed\xa8h\xf0\x01\xca?\xc4\x04\x8d\x9cl\x9a\x96f" +
-	"\xf1\xa4\xae\x03Z\xaeL7\xac\x9c\x95\xd3!VHq" +
-	"\x9eq\xe4EC/\xea&7\xf0\xaeL\xc6\xe0\xa6\x09" +
-	"\xd8\x0c\x126O\xa4F\xec\xddOg\xb5\\A0\xad" +
-	"J\x03\x98$\xfd\x93\xdc\x0cO\x80\xa0\x13.\xde\x91\x8e" +
-	"UZ\x12^\x9f\x1f\xce\xe0\x9bD\x09x\x9b\xc4\x84k" +
-	"\xcd\x19\xc7u\x86j\xfbi\x95\xdf\xe4>\xcb[\xc4G" +
-	"\x0f\xee\x1c\x17w\xf4\xeeVK\xea\xbb\xf5\xbex_\xce" +
-	"\xb28'\x9cf\x07\xe7\x9e.\x00u\x09C5\xe1\xe1" +
-	"u\xe7&\x00u\x05C\xf5~\x97\xd7\xabHqe\xa5" +
-	"/\x97-\xdd\xd2\xf2\x09\xbd\x04\x8c\x1b\xe8\x07\x09\xfd\x80" +
-	"\xe5\xb4\xde',@\x9c'\xf4\x92ga@\xcb\xe72" +
-	"\x9a\xa5\x033L\xbc\x010\xc1\x10#\xeex\x05$\xe1" +
-	"\x18~w\xe4u\x96\xee\xad\xf3\x99r\xda\xceP]\xe1" +
-	"\xf1y\xd9r\x00u)Cu\xa5g\x98\xa8\x1f\xae\x06" +
-	"\x92\x15\x8dT\xcbp\x03#\xee\xe9\xb1\x9a}\xaa\xa4\xbb" +
-	"\xb9a\x01\x00F\xdcQYY\x0dZ\x0f8NS\x8a" +
-	"o\x18s\xbb<L\x88W(W\xe7\xf6\xd4\xd1\xdc\x9e" +
-	"\xe3\xc9\xbf\xedvg\xb7\x9b\x7f\x96s\xca\xb5v\x9f\xad" +
-	"\xaa9\x08R\x8b\xa8\xdf\xfdQ&\xb3(\x88dl4" +
-	"\xcf\x86\\'\x1c\x0e\x18\xae\x0f\xb2\x84U\x12$\xab$" +
-	"X'a9\xaf\x99\xa2\xd2\xb0w\xa9\x18Q\xe0\xb4&" +
-	"{\xa5\xbe59\x0cA\x8e\x11\xf7\xb0[W\x04\x93\x19" +
-	"\xcb\x13n\xfd\xce!s\x12\xa5m\xcf\x17{\xf6{\xe6" +
-	"[\xc7\xf8\xf3mP\xab\xf4S\xa7\x9d\x8e7\xe2|5" +
-	".\xa4x!\xe3\x89\xd0S\xfc\x1e\xf3m\xa3\x98'v" +
-	"\xcdb\xa8.\x960N3\xa0\xdf\xb4-y(4\xe9" +
-	"\x96\x96\x88\x89\xae\xee5>u\xfc\xd8\xbd\xd6\xc6\x0b\xbb" +
-	"\xb6\xce\x13\x9c\xa3\x18\xb9smC\xcaLl\x03HM" +
-	"G\x86\xa9\xb9\xe8\xd8Rfc\x07@j\x06\x89\xe7\xa3" +
-	"\xcbMe\x1e.\x04H\xcd\"\xf9b\x923I\xcc^" +
-	"e\x81\x80\x99K\xf2;I\xeecb\xfc*w`\x12" +
-	" \xb5\x98\xe4\xed$\xf7\xa3\x98\xc0\xca\xa7p9@\xea" +
-	"\x93$_J\xf2\x80\x14\xc5\x00\x80r\x8f\xc0o'\xf9" +
-	"\x0a\x92\x07YT\\\xcb\x96\x09\xfc%$O\x90<\xe4" +
-	"\x8bb\x08@\xe9\xc4\xed\x00\xa9\x04\xc9\xd7\x90\xbc\xc1\x1f" +
-	"\xc5\x06\x00e5\x0e\x01\xa4\xee'y\x86\xe4\x8d\x81(" +
-	"6\x02(\x1a\x1a\x00\xa9u$\xcf\xe3\x88=\x1c\xec\xd3" +
-	"\x0b\xb9^n\xd8\x8c\x8ai=\xbc`\xd9\xff\xe2E\xce" +
-	"\x8deK\x1c\xba\x15\xfb\xbb\xf3\xb9\xf4}\x9c\xf2n\xcb" +
-	"\xa8(S\x9c\x17\xa8\xcbUAc\xeb\xf3Z\x8fc\xa2" +
-	"\xfe\xa4i\xf04\xcf\x0d\xf0\x0cvr\xd3\xd4z\xb8\xe9" +
-	"~X\xce\x15DS\xefD{i\xc4W\x10\xeb\xd8h" +
-	"q\xf3\x03\x9f[\xab\xc4\x1b\xa3\xa1}\xbe:R\x8c$" +
-	"\x0f\xdb\xfdl2\xc3q</\x1cl\xe7d\xfe\x7f*" +
-	"\xfc\xda\x90\xaa\xc1_\xb7\xe0\x9d\xd11oa\xb5\xe2\x97" +
-	"H\xf5\x04\x88\xd1_\xcf\xacu\xae\xc4u\xb3\xf6\xfag" +
-	"\xfb\xca 3\x01\xae\xdba\x9dG\xa6q\xcf4\xae\x0d" +
-	"qC\x9c\xce\xfc\x00\xf6{\x90\xe7\xd6{i9H\xf2" +
-	"\x85 \xba\xafMh\xbf\xd5\xc8\xafo\x00I>\x17D" +
-	"\xc9y\x0b@\xfb\x15F>\xb5\x09$\xf9d\x10\x99\xfd" +
-	"\xea\xe0yK:\xd2\x05\x92\xfc\xe3 \xfa\x9c\xcb:\xda" +
-	"\x17]\xf9\x00a>\x12D\xbf\xf3X\x84\xf6\xd3\x8f<" +
-	"\xbc\x13$y[\x10\x03\xce[\x01\xda/\\\xf2f\xb2" +
-	"\xd7\x1f\xc4\xa0\xf3l\x86\xf6{\x88\x9c{\x14$\x99\x07" +
-	"\xcbv.\x01\xa0\x1d\xdd\x7fa\x1a\x8d\x15\x81h\xb8\x10" +
-	"\xaf\xb4\xdc\x8aH\xcc\x1e`\x05\xab\xf2Wp\x12\xc2\xc4" +
-	"J\x0f\x06\xdag\\\xd4+R\xc1!\x88WJ\xa8\x1d" +
-	"\xcb\xf6\xc4D\xbb\xa33\xc2O\xe0X\xbbC\xa7\xa0\xdc" +
-	"\xfa\\Z\xb3\xf8\x88\x1b\xfcB\xf7\x06\xef\\\xe0\xbb\xaa" +
-	"w\xf5\xaf{\xce\x08\x9b\xa9\x1c\xbe\xc6P\xdd\xe36a" +
-	"yw\xd2\xbd>\xc5\x0c\xbd\xbf\x90A\x06\x122\xef\xa1" +
-	"\xc0s:\xf4U\x0fZZ\xb7\xc9\x0b\x16\xe7\x80#\x96" +
-	"\xcc\\OA\xb3\xfa\x0d:K|\xb0\xea\x9e\xe0\xc5\xa3" +
-	"\xf6\xa4\x1a\x01\xfc_\x00\x00\x00\xff\xff\xe6\xaa\x7f\xc3"
+const schema_84b56bd0975dfd33 = "x\xda\xb4X{pTg\x15?\xe7\xde\xdd\xbd\xd9\xbc" +
+	"vo\xee\xa6U\xa6mZ\x05\x85HZH\xda\xb1\xcd" +
+	"X\x97\xa6\xb4<Jt\xef.\xd46R\xcbM\xf6#" +
+	"Y\xb2\xd9\xbb\xbd\xf7n\x02\x8c\x9d(\x94\xe9\x80B\x11" +
+	"A\x90\x11\x86\xf41J\xa9\xd42m%\x1d\x99\x8a\x16" +
+	"\x1dP\xa6\x05\xc6q\xc0Zm\xa7Xt|48L" +
+	"\xa5\x0e\xacs\xbe\xdd\xfb\xd8M\x08\x093\xfe\xb7{\xee" +
+	"\xf9\xce\xeb;\xe7w\xcewfUJs\x84\xd9\xfeG" +
+	"\xab\x00\xd4'\xfc\x81\xfc\xb9\x8b\xdf~8\x10\x8d\xac\x05" +
+	"\xb9\x1e\xf3-\x97\x1e\xd9\xfeV\xef+O\x80\xdf'\x01" +
+	"\xb4l\xf3W\xa2\xf2\x9c_\x02P\x86\xfc\x1f\x00\xe6_" +
+	"\xfbp\xc9\x8a\xb3\x7f\xbb~-\xc87#\x00\xe7\xc9\x05" +
+	"~\x81\xe0\xcb\x9f\x8c\xff\xf2\xf0M\x9f\x9b\xb6\x0e\xd4\x9b" +
+	"\xd1\xfe\xc4\x02O#\xa0\x92\x0bD\x01\xf3?}j\xdf" +
+	"\xee\xa6\xb7Vo,\x1c\xf5#\x97\x1fx\x8d\x18\x9e#" +
+	"\x86\xcb\xc7N\xfeg\xc6\xafG6\x16\xce\x17\xbe\x1f\x09" +
+	"\xac\xa1\xef'\x02\x03\x80yM^\xf1[\xed{\xdb7" +
+	"y\x05\xcc\x96v\x12\xc3=\x12i\xf8\xf0\xf9\x1d\x83\xaf" +
+	"\xbc\xfd\xce&P\xeb\xb1\xdc\x15E\x93\xdeS\xfa$:" +
+	"\x93\x92\xbe\x82\x80\xf9Y\x1dKO=p\xe3\xcbOy" +
+	"\\9Rq\x8c\\\xe98\xd3{\xfe\xf8\xfb\x9b7{" +
+	"\x15\x0dW\x9c!E\xc7+HQ\x85\xf2\xc2\xd7\x1ek" +
+	"\xe8\xdd\xeae\xf8G\xc5\xf3\xc4p\x893\xfc\xe6\xe8\xa1" +
+	"\xa1\xfd'\xb2\xdb\xcbb*\x10\xe3\x8d\xc1VT\x9a\x82" +
+	"d\xd3\x8c \xf9\xf5F\xddg\xaa\xfb/O\x1f*\x09" +
+	"L\xf0$I\xdb\x1b$i_\x1d\xd8\xf7\xaf4\xbe\xf4" +
+	"\xb4\x97\xe1h\x90G\xee4g\xb8>V\xf9\xc5\xb7\xdb" +
+	"\x0f=S\xa6\x8e3^\x0cNA%XI\xea\xfc\x95" +
+	"\xc4\x9c\xdf\xb0\xf9\xb3\x0b6\xef\xdcW\x1e%2N\x99" +
+	"VyR\x99\xcd\x99\x9b*\xe9\xbe\xd7\xefy\xdd\x9c\xf7" +
+	"\xd1]\xfb\xc7bn\xf1W\xc5Q\xf9d\x15q\xd7W" +
+	"\xbd\x08\x98_\xfa\xea\x1f\xd6\x9e\xaf\xd9u\x90\xb8\x852" +
+	"C\x94\xe1\xaa\x8f\x95#\x9c\xf90g\x9e[=\xa8_" +
+	"\xfa\xee\xbf\x0f\x96\x19-\x12G\xae\xfa\x8c\xf2\xcdj\xfa" +
+	"\xf5x5\xf1\xf6\xbcz9r\xc3\xe7\x07\x0e\x8d\xc1\xdb" +
+	"2\xa3\xa6\x15\x95\xbbj\x88\xf9\x8e\x1ab\xde\xb5\xf5\xf5" +
+	"\x96Gw\xf7\xfc\xdc\x1b\xae\x135\xc7(\\gk(" +
+	"\xd1\xa6'\x9f\x9cg\xa6\x8f{\x13\xcd_\xbb\x85\xbe\xd7" +
+	"\xd7\xd2\x85,l\xfc\xd5\x81a\xdf\xef\xdf,w\x9as" +
+	"\xe6j;PY_K\xea\xd6q\xee\xe1\x8e-\xd3\xb4" +
+	"\x0d\x7f:\x05^y\xef\xd6\x1e y#\x9cc\xe4D" +
+	"d\xdb\xad\xb7\x8c\xfcqLyjh!*,\xc4S" +
+	"4D\xe6G\xfd_\xce}\xf0\xe6\xf0;\xc4\xed+\xcf" +
+	"\xe2`\xf8\xa4R\x1f\xa6srX\x17\x00\xf3\xbb\x07\x8f" +
+	"f\xb3\xcf\xaa\x7f\xf6d\xf1P\xdd\x01\xca\xe2g\xf2\xdf" +
+	"\xda\xbfq\xcd\x0d\x7f\x1f+)\xbeS\xd7\x88\xcaP\x1d" +
+	"I\xdcUGI\xb1\xe9\xc6\xbf\xf4~\xb4\xe8\xf4?K" +
+	"\x9c8T\xc7\xcb\xf7x\x1d9q\xc3M?\\\xf3\x83" +
+	"\xd8\xb9\x0b\xde\xa86)\x1b\x88\xe1n\x85D\xbc?x" +
+	"\xaaf\xff{\x81\x8b \xd7\x8b\xae>\xc0\x96G\x14\x01" +
+	"\x95\x94\xc2\x01A\x99'(\x97\"\x12@\xbe\xaa~\xd9" +
+	"\xb6\x17\xef\xbf\xffbyP\xf8\x9d\x9e\x8dT\xa2r\x81" +
+	"\xf8\x94\x91\x08\xe5a\xfd\"\xa9\xf7\xfc\x89\xb6\xffz\xb5" +
+	"\x8f\xd4\xf3\x8a\xc3\xebH\xfb\xe9\xd0\xc7\xe7\xac'?}" +
+	"\xd9\xcbp\xcbu\xbc\x88\xee\xe0\x0c\x03\x03\x03\xb7ui" +
+	"\xd9\x8c\x98\xbdm\xb5ft\xdeJ\xbf\xb3\xadmi\xbd" +
+	"\xab7\xce\xcc\\\xda\x02\x88!\xaaa\xd1\x07\xe0C\x00" +
+	"Yk\x05P\x97\x8a\xa8\xf6\x08(#F(.2k" +
+	"\x04P\x97\x89\xa8\xa6\x05\x94\x05!\x82\x02\x80\x9cj\x06" +
+	"P\x93\"\xaaY\x01eQ\x8c\xa0\x08 \xf7\x11g\x8f" +
+	"\x88\xaa%`\xb4\x87\xa5\xba{,\xac\x01\x01k\x00C" +
+	"=\x9a\xd9c\xffi\xe8$\x130\xec\xd6\x03 \x86\x01" +
+	"CI\xcd\xd2l&\xc7\xfa\xea\x12\xeb;4\xa33\xc1" +
+	"\x8c~f\xdc\xda\xcd\xac{\xf5\x8c\xc92f\xce\\\x90" +
+	"Y\xaeO\x8di\x86\xd6g\x82}p\x9cs<\x06\xf3" +
+	"5\xb3\x87\xceHZ\x9f\xa9\xfa\x9c \xd4P\x10*D" +
+	"T#\xae\x17>\x10\xd0\xe7\xb1\xc9?\x8e\xec/1k" +
+	"@7z\xb9E\xf1(\x8f\xf3\x15\xc5\x1b\xfc3\x86]" +
+	"\xf4,DbB\x8a\xb8\x13\xb6\xd3j\x85\xa3a\x06]" +
+	"\xc3T\x11\xd5Y\x02\xda\x97\xd8\x14\x07Pg\x8a\xa8\xde" +
+	")\x94\xdeE\xbe\x9f\x19\x9d\xba\x99\xb2\x00WM\xca\xcd" +
+	"{\xba\xba\xf4\\\xc6\x9a\xca3I\x9c\x80\x8b\x0eb\x97" +
+	"\xb9(\x94(\x99\xcf4)\xc9\x0c\xca\xcbO8\x02\xbf" +
+	"\xdf\x06\xa0n\x15Q\xdd\xe3\xc9\xcb]\xe4\xe6\x0e\x11\xd5" +
+	"g\x05\xc4bZ\x0e\x19\x00\xea\x1e\x11\xd5\x17(-\xb1" +
+	"\x90\x96{\xc9\xf7\x1f\x89\xa8\xbe,\xa0\xec\x13\"\xe8\x03" +
+	"\x90_\"\xce\x9f\x88\xa8\xfeL@\xd9/F\xd0\x0f " +
+	"\x0f\xaf\x01P\x0f\x8a\xa8\xbe!\xe0`?3\xcc\x94\x9e" +
+	"\xc1\x00\x08\x18\x00\x0cY\xa9>\xe6D(k\xb0~\x8a" +
+	"?4\xf04r\xa2iZ\x9a\xc5\xe2\xba\x0eh\xb94" +
+	"\xdd\xb0RVJ\x87\x86L\x82\xb1\xa4C\xcf\x1azV" +
+	"7\x99\x81\xf7$\x93\x063M\xc0j\x10\xb0\xda\x13\x9a" +
+	"\xc0\xd5n\xbf\xabGKe\xbc\xb9\x0fW?k\xb2L" +
+	"2\xae\x0d,6\xb4\x8c\xa9uY)=3\xf1;t" +
+	"\xda\xc4d\xd3\x94\xd7Z\x9c\x99\xa1\x09TC9\x00\x94" +
+	"\xc2\x97\xa7\xbc\xa2\x05\x14\xa3\\\xf1d\x7f\xab\x9b\xfdN" +
+	"\xae4\x11\\M\x17Q\x9d+`4\xcb\x98\xb1`\xae" +
+	"\x1d\xec\x06\xfakb-`LD\x0c\xbb\xbd\x08\x90\x88" +
+	"\xd7r\x17\x05\xb3\xf0\xea\xe1tF\x8dI\x84\xb3\xe4\xde" +
+	"&\x0a/\xce0Q\xa6\xa84\xb4\xc5\x92&\xf3\xc5B" +
+	"X=r\x1b]\xb9c\xe3ti\x1d?\xa8[\xc8\xca" +
+	"\xbaK\xa3\xdb]\x9c\xe6\xd2\xecm.Xl.q\xb7" +
+	"\x8f8U\xfc\x18q\xa6ETW\x0a\x18\xb2Ve\x19" +
+	"\x0a \xa0\x00\xd8\xd0\xaf[\xccpj\xa7\xb3\x98n\x80" +
+	"n\xbf1\xf4\\&\x89\"\x08(z\x0c\xf6\x8dn\x8b" +
+	"\xce\x1d\xf2+D\x1e\x83j\xc7\x81\xfb\x08\x1e\xe6\x8a\xa8" +
+	"\xc6\\\x07\xda\x09G\x16\x89\xa8>\xe4q`\x099\xb0" +
+	"XDu\x99\x80\xf9\xb4f\xf2\x04\xc1\xde\xf9\xbc\x99\x80" +
+	"\x03\"\xf6\x97r\x10\xe9\xd2\xfb\xfaR\x96\xc5\x00\x19\x86" +
+	"\xdd\x09s\\\xdc\xbcW\xef\x8b\xf2C\xac\xcc\xe6\x0e\xd7" +
+	"f\xa7\x1c\xdaW\xbbF\xdb\xd0\xb9\xa4\xa3hsV\xc0" +
+	"\xbc\xa5[Z:\xa6\x0f\x80\xc8\x0c\xf4\x83\x80~\xafY" +
+	"Q\x16\xd3\x07<\x1f\xfa\xb5t*\xa9Y:\x88\xdeB" +
+	"r\x86\xb1\xb2B\x12\xca\xc3.v\xf5\x96\xd9L9<" +
+	"GDu\x91\xc7\xe6\x05\x0b\x01\xd4\xf9\"\xaa\x8b=c" +
+	"\x88\xfa\xa9\xa2#=\xbcWkIf`\xd8}\x14\x15" +
+	"#F`}/3,\x00\xc0\xb0;\x85\x15\xbeJ\xd6" +
+	"J\xc7h\xba\x80\xda+\x96\x87\xa7\xf2<\xc8\xe31{" +
+	"\xcaXf7z\xe2o\x9b\xdd\xde\xe9\xc6_L9\x1d" +
+	"\xa1\xb4\xae\xac\xa2:\x90\xa8\x0b\x95W[`\xc2SQ" +
+	"\xc1T\x13\xe0\xaa(\xe1\x0c\xed\x93\x80#{\x0c\xe0\xfd" +
+	"\x07M/\x10\xb7\x8d?\x86\x0cj\x85\xb6\xe7T\xeex" +
+	"\x93Hi\xad&X&\xe9\xb9\x0d\x0f`\x8d\xdd\x07\x1c" +
+	"\xf5S\x8am\xe0v\x01\xa3\xd4\xaas\xa6\xad\xc9s\x0d" +
+	"\x93\x86\xe1X\x03o\xbe^\xe5S\xc6\xf7\xdd\xabm\xe2" +
+	"n\x97\xdc\xabw\x82\xbfR\xe9\x08\xc5\x1cl\xf6\xe0\x96" +
+	"\x9d\x82\xcd\xc5rJ\x8e\x9arK\xe1\x92\xc3\xab\xa7\xac" +
+	"\x9d\xb7\xf4\xb8e\x1dc\x0c\xf9\x107\xd36M\x99\x86" +
+	"\xad\x00\x89\x9bQ\xc4\xc4Lt\xc2\xa2\xcc\xc06\x80\xc4" +
+	"T\"\xcfB\x17C\x95&l\x06HL'\xfa\xedD" +
+	"\x17\x05\xde\x07\x94\xd9\\\xccL\xa2\xdfIt\x9f\xc8\x07" +
+	":\xe5\x0e\x8c\x03$n'\xfa\x1c\xa2\xfb\x91\xcft\xca" +
+	"\xdd\xb8\x10 \xf1\x05\xa2\xcf'z@\x88`\x00@\xb9" +
+	"\x8f\xcb\x9fC\xf4ED\x97\xc4\x08\x7f\xb3/\xe0\xf2\xe7" +
+	"\x12=F\xf4\x0a_\x04+\x00\x94v\xdc\x00\x90\x88\x11" +
+	"})\xd1\x83\xfe\x08\x06\x01\x94\x87q\x0d@\xe2!\xa2" +
+	"'\x89^\x19\x88`%\xbdl\xd1\x00H,#z\x1a" +
+	"G\xa5\xdb`\x9f\x9eI\xf5\xbam\xabA\xebf\x19\xcb" +
+	"\xfeW6\xa2\xe4\xb3\xb9\xcet\xaa\xeb\x01F)b\xd3" +
+	"\xa8y$\x18\xcb\x10\xa8\xd9\x17\xb7<\xadu;*\xca" +
+	"\xdf.\x06\xebb\xa9~\x96\xc4vf\x9aZ73\xdd" +
+	"\x83\xf9T\x86cx;\xda\x9fF\x9d\x82\x86\xb6U\x94" +
+	"\x07\xd7\xfa\x12*\xd6\xc8\x15\xa0\xf5\xc1b\x071\xe2," +
+	"d\x03\xebdf\x8f\xf1\xacpd;o\xbd\xff\x13F" +
+	"]\xfd\xad6q(v6\x94\xe3\x0el\xae\x0e\x0e\x03" +
+	"SE?\x80\xbdSt\xb7\x17\x8a\x8c\x0bAP\x82(" +
+	"!:;K\xb4\x17z\xf2\xa5\x15 \xc8\x17$\x14\x9c" +
+	"\xb5\x0e\xda\xdb7\xf9\xaf\xabA\x90\xdf\x95P\xb4\x17H" +
+	"\x9e\x8d\xe4\xef:@\x90\x8fK\xe8s6)h\xaf," +
+	"\xe4\xc3$sXB\xbf\xb3rD{\xe5'\xffx\x0b" +
+	"\x08\xf2^\x09\x03\xce\"\x07\xed=\xa9\xbc\x8b\xf4m\x93" +
+	"Pr\xb6\xaeh\xaf\xb6\xe4\xf5\x1b@\x90\xd7IX\xe1" +
+	",>\xd0\xdeZ\xca\xabv\x82 \xe7\xa4\xbc\x1di\x00" +
+	"\x98\x83\xee\xbf\x10\x8dW\x05\x02\xc7m\x88\x16\x90\xbb@" +
+	"\xe2-\x0c\xc4\x8cU\xf8\xcb\xf3\x05B\x941\x1e\x19h" +
+	"\x8f\x86\xa8\x17\xa8<\xb9!ZH\xef\x02\x89\xe33\xda" +
+	"\x00\xcdM\xb0\x1f[h\xb7\x0b\x91\xb4\xc6\xf0J7J" +
+	"cJjy\xaaK\xb3\xd8\xa8\xe5L\xf3\x18\xe3sG" +
+	"q\x0d\xf3\x0d\xcf\xf4\xf98%\xf0\xd7ETw\xb8\xb0" +
+	")o\x8b\xbbO\xe8\xb2y\xd8\x99\xeb<\xe3\x9b\xaf8" +
+	"\x09i\x9d&\xcbX\x8c\x01\x8e\xfad\xa6\xba3\x9a\x95" +
+	"3hJ\xbd\xb6z\x9c\xe0{\xb0t\x94\x0cOd\x08" +
+	"\x1a\xe3\x8dk\x0f(\x1e]\xcd\xae\xae\x06C\x1bX\xbc" +
+	"\xd2\xf6\xe3\x7f\x01\x00\x00\xff\xff\x18@>b"
 
 func init() {
 	schemas.Register(schema_84b56bd0975dfd33,
@@ -3037,25 +3437,29 @@ func init() {
 		0x8e979661cc6a1161,
 		0x8ededcb57f98aaf0,
 		0x8fb41d4bd35c5a30,
+		0x9090e4cdf26bda5a,
 		0x946b1f715eac1308,
+		0x9770d1aea1bdc9cb,
 		0xa128fe760c2612c4,
 		0xa2b1016cefab775b,
 		0xa3bd4ddc3e0a5017,
+		0xab9a904927908aff,
+		0xae39f74773bfa089,
 		0xb89d0df283dbb65c,
 		0xb8f393fd6f7f0c44,
 		0xbd77371c14feb668,
-		0xbd88d0eab3826ba9,
 		0xc0689e5f33bf949d,
 		0xcd6c734787642800,
 		0xcfd704b9b2c62a4a,
 		0xd3df8a6125925ab9,
+		0xddf1212e9514d1f1,
 		0xdeb9cfe7754f053f,
 		0xe051a47070c97f9e,
 		0xec1c828dae8bffa3,
 		0xeed94cf76be61d8e,
-		0xefbaa00121a2907b,
 		0xf5e8509c82a71e1c,
 		0xf906e2ae0dd37fe4,
 		0xf94646af9560150b,
-		0xfb42d1f26b074c15)
+		0xfb42d1f26b074c15,
+		0xfe238774e8fa0fd9)
 }
