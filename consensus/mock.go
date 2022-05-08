@@ -54,12 +54,6 @@ func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
 	}
 	return m.Proposal
 }
-func (m *MockConsensus) QueryProposal(round int16) *proposal.Proposal {
-	if m.Proposal == nil || m.Proposal.Round() != round {
-		return nil
-	}
-	return m.Proposal
-}
 func (m *MockConsensus) HeightRound() (int32, int16) {
 	return m.State.LastBlockHeight() + 1, m.Round
 }

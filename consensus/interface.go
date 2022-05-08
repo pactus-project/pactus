@@ -10,7 +10,6 @@ type Reader interface {
 	AllVotes() []*vote.Vote
 	RoundVotes(round int16) []*vote.Vote
 	RoundProposal(round int16) *proposal.Proposal
-	QueryProposal(round int16) *proposal.Proposal
 	HeightRound() (int32, int16)
 	Fingerprint() string
 }

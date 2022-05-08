@@ -18,6 +18,8 @@ func (s *prepareState) enter() {
 	queryProposalTimeout := changeProperTimeout / 2
 	s.scheduleTimeout(queryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
 	s.scheduleTimeout(changeProperTimeout, s.height, s.round, tickerTargetChangeProposer)
+
+	s.decide()
 }
 
 func (s *prepareState) decide() {
@@ -48,7 +50,6 @@ func (s *prepareState) vote() {
 
 	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
-		s.queryProposal()
 		s.logger.Warn("no proposal yet.")
 		return
 	}
@@ -80,7 +81,7 @@ func (s *prepareState) onTimedout(t *ticker) {
 	} else if t.Target == tickerTargetChangeProposer {
 		s.enterNewState(s.changeProposerState)
 	} else {
-		s.logger.Trace("invalid ticker", "ticker", t)
+		s.logger.Debug("invalid ticker", "ticker", t)
 	}
 }
 

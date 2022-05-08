@@ -85,34 +85,9 @@ func (cs *consensus) HeightRound() (int32, int16) {
 	return cs.height, cs.round
 }
 
-func (cs *consensus) Height() int32 {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	return cs.height
-}
-
-func (cs *consensus) Round() int16 {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	return cs.round
-}
-
 func (cs *consensus) RoundProposal(round int16) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
-
-	return cs.log.RoundProposal(round)
-}
-
-func (cs *consensus) QueryProposal(round int16) *proposal.Proposal {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	if round != cs.round {
-		return nil
-	}
 
 	return cs.log.RoundProposal(round)
 }
@@ -179,6 +154,11 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 	if p.Height() != cs.height {
 		cs.logger.Trace("invalid height", "proposal", p)
+		return
+	}
+
+	if p.Round() < cs.round {
+		cs.logger.Trace("expired round", "proposal", p)
 		return
 	}
 

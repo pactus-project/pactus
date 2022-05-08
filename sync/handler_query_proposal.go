@@ -26,7 +26,7 @@ func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator pe
 		if !handler.peerIsInTheCommittee(initiator) {
 			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
 		}
-		p := handler.consensus.QueryProposal(msg.Round)
+		p := handler.consensus.RoundProposal(msg.Round)
 		if p != nil {
 			response := message.NewProposalMessage(p)
 			handler.broadcast(response)

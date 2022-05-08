@@ -74,11 +74,11 @@ func TestConsensusHeightIsShorterThanState(t *testing.T) {
 	tConsP.SetProposal(p)
 
 	// --------------------------------
-	// Syncer commits a block
+	// Commit a block
 	commitBlockForAllStates(t)
 	// --------------------------------
 
-	// Consensus tries to add more votes and commit the block which is committed by syncer before.
+	// Consensus tries to add more votes and commit the block which is committed before.
 	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexX)
 	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexY)
 	testAddVote(tConsP, vote.VoteTypePrecommit, 1, 0, p.Block().Hash(), tIndexP)

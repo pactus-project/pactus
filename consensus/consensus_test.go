@@ -202,13 +202,15 @@ func shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash h
 }
 
 func checkHeightRound(t *testing.T, cons *consensus, height int32, round int16) {
-	assert.Equal(t, cons.Height(), height)
-	assert.Equal(t, cons.Round(), round)
+	h, r := cons.HeightRound()
+	assert.Equal(t, h, height)
+	assert.Equal(t, r, round)
 }
 
 func checkHeightRoundWait(t *testing.T, cons *consensus, height int32, round int16) {
 	for i := 0; i < 20; i++ {
-		if cons.Height() == height && cons.Round() == round {
+		h, r := cons.HeightRound()
+		if h == height && r == round {
 			break
 		}
 		time.Sleep(200 * time.Millisecond)
@@ -309,7 +311,8 @@ func TestNotInCommittee(t *testing.T) {
 	testEnterNewHeight(cons.(*consensus))
 
 	cons.(*consensus).signAddVote(vote.VoteTypePrepare, hash.GenerateTestHash())
-	assert.Zero(t, len(cons.RoundVotes(0)))
+	assert.Empty(t, cons.RoundVotes(0))
+	assert.Nil(t, cons.RoundVotes(1))
 }
 
 func TestRoundVotes(t *testing.T) {
@@ -463,10 +466,10 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 	testEnterNewHeight(tConsP)
 	testEnterNextRound(tConsP)
 
-	// Keep proposal for previous round, but don't change the state
+	// It should ignore proposal for previous rounds
 	tConsP.SetProposal(p)
 
-	assert.Equal(t, tConsP.RoundProposal(0).Hash(), p.Hash())
+	assert.Nil(t, tConsP.RoundProposal(0))
 	checkHeightRoundWait(t, tConsP, 1, 1)
 }
 

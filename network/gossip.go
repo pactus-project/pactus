@@ -2,7 +2,7 @@ package network
 
 import (
 	"context"
-	syncer "sync"
+	"sync"
 
 	lp2phost "github.com/libp2p/go-libp2p-core/host"
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
@@ -12,7 +12,7 @@ import (
 
 type gossipService struct {
 	ctx     context.Context
-	wg      syncer.WaitGroup
+	wg      sync.WaitGroup
 	host    lp2phost.Host
 	pubsub  *lp2pps.PubSub
 	topics  []*lp2pps.Topic
@@ -33,7 +33,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 		ctx:     ctx,
 		host:    host,
 		pubsub:  pubsub,
-		wg:      syncer.WaitGroup{},
+		wg:      sync.WaitGroup{},
 		eventCh: eventCh,
 		logger:  logger,
 	}
