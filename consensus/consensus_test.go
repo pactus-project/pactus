@@ -51,7 +51,6 @@ type OverrideFingerprint struct {
 
 func testConfig() *Config {
 	return &Config{
-		QueryProposalTimeout:  200 * time.Millisecond,
 		ChangeProposerTimeout: 1 * time.Second,
 		ChangeProposerDelta:   200 * time.Millisecond,
 	}
@@ -106,7 +105,8 @@ func setup(t *testing.T) {
 	// -------------------------------
 	// For better logging when testing
 	overrideLogger := func(cons *consensus, name string) {
-		cons.logger = logger.NewLogger("_consensus", &OverrideFingerprint{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
+		cons.logger = logger.NewLogger("_consensus",
+			&OverrideFingerprint{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
 	}
 
 	overrideLogger(tConsX, "consX")
@@ -451,7 +451,8 @@ func TestPickRandomVote(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		rndVote := tConsP.PickRandomVote()
 		assert.NotNil(t, rndVote)
-		assert.Equal(t, rndVote.Type(), vote.VoteTypeChangeProposer, "Should only pick Change Proposer votes")
+		assert.Equal(t, rndVote.Type(), vote.VoteTypeChangeProposer,
+			"Should only pick Change Proposer votes")
 	}
 }
 
@@ -465,7 +466,7 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 	// Keep proposal for previous round, but don't change the state
 	tConsP.SetProposal(p)
 
-	assert.NotNil(t, tConsP.RoundProposal(0), 0)
+	assert.Equal(t, tConsP.RoundProposal(0).Hash(), p.Hash())
 	checkHeightRoundWait(t, tConsP, 1, 1)
 }
 
@@ -478,7 +479,7 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	tConsP.SetProposal(p)
-	assert.Nil(t, tConsP.RoundProposal(0), 0)
+	assert.Nil(t, tConsP.RoundProposal(0))
 	checkHeightRoundWait(t, tConsP, 2, 0)
 }
 
@@ -494,7 +495,8 @@ func TestDuplicateProposal(t *testing.T) {
 	h := int32(4)
 	r := int16(0)
 	p1 := makeProposal(t, h, r)
-	trx := tx.NewSendTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(), tSigners[1].Address(), 1000, 1000, "proposal changer")
+	trx := tx.NewSendTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(),
+		tSigners[1].Address(), 1000, 1000, "proposal changer")
 	tSigners[0].SignMsg(trx)
 	assert.NoError(t, tTxPool.AppendTx(trx))
 	p2 := makeProposal(t, h, r)

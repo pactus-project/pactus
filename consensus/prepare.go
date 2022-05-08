@@ -14,7 +14,10 @@ type prepareState struct {
 func (s *prepareState) enter() {
 	s.hasVoted = false
 
-	s.scheduleTimeout(s.config.QueryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
+	changeProperTimeout := s.config.CalculateChangeProposerTimeout(s.round)
+	queryProposalTimeout := changeProperTimeout / 2
+	s.scheduleTimeout(queryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
+	s.scheduleTimeout(changeProperTimeout, s.height, s.round, tickerTargetChangeProposer)
 }
 
 func (s *prepareState) decide() {

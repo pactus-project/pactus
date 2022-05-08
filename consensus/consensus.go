@@ -105,6 +105,20 @@ func (cs *consensus) RoundProposal(round int16) *proposal.Proposal {
 
 	return cs.log.RoundProposal(round)
 }
+
+func (cs *consensus) QueryProposal(round int16) *proposal.Proposal {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	if round != cs.round {
+		return nil
+	}
+
+	//if cs.currentState
+
+	return cs.log.RoundProposal(round)
+}
+
 func (cs *consensus) AllVotes() []*vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()

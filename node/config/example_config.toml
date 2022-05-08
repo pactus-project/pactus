@@ -129,11 +129,6 @@
   # Default is 2 seconds.
  ## change_proposer_delta = "2s"
 
-  # query_proposal_timeout which is a timeout to query proposal from the network
-  # if proposal does not exist yet.
-  # Default is 1 second.
- ## query_proposal_timeout = "1s"
-
 # logger contains configuration for logger
 [logger]
   # colorful indicates whether log can be colorful or not.

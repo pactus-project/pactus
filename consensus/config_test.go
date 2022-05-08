@@ -12,7 +12,6 @@ func TestDefaultConfigCheck(t *testing.T) {
 	c2 := DefaultConfig()
 	c3 := DefaultConfig()
 	c4 := DefaultConfig()
-	c5 := DefaultConfig()
 	assert.NoError(t, c1.SanityCheck())
 
 	c2.ChangeProposerDelta = 0 * time.Second
@@ -23,9 +22,6 @@ func TestDefaultConfigCheck(t *testing.T) {
 
 	c4.ChangeProposerTimeout = -1 * time.Second
 	assert.Error(t, c4.SanityCheck())
-
-	c5.QueryProposalTimeout = -1 * time.Second
-	assert.Error(t, c5.SanityCheck())
 }
 
 func TestCalculateChangeProposerTimeout(t *testing.T) {
