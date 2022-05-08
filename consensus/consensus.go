@@ -114,8 +114,6 @@ func (cs *consensus) QueryProposal(round int16) *proposal.Proposal {
 		return nil
 	}
 
-	//if cs.currentState
-
 	return cs.log.RoundProposal(round)
 }
 
