@@ -322,10 +322,10 @@ func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certi
 		return err
 	}
 
-	// There are two modules that can commit a block: Consensus and Syncer.
+	// There are two modules that can commit a block: Consensus and Sync.
 	// Consensus engine is ours, we have full control over that and we know when
 	// and why a block should be committed.
-	// On the other hand, Syncer module receives new blocks from the network and
+	// On the other hand, Sync module receives new blocks from the network and
 	// tries to commit them.
 	// We should never have a fork in our blockchain.
 	// But if it happens, here we can catch it.

@@ -41,7 +41,7 @@ func (handler *queryVotesHandler) PrepareBundle(m message.Message) *bundle.Bundl
 		handler.logger.Debug("sending QueryVotes ignored. We are not in the committee")
 		return nil
 	}
-	msg := bundle.NewBundle(handler.SelfID(), m)
+	bdl := bundle.NewBundle(handler.SelfID(), m)
 
-	return msg
+	return bdl
 }

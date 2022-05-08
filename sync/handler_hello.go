@@ -58,7 +58,7 @@ func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) e
 }
 
 func (handler *helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	msg := bundle.NewBundle(handler.SelfID(), m)
-	msg.Flags = util.SetFlag(msg.Flags, bundle.BundleFlagHelloMessage)
-	return msg
+	bdl := bundle.NewBundle(handler.SelfID(), m)
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagHelloMessage)
+	return bdl
 }

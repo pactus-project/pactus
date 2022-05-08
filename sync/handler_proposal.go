@@ -20,7 +20,6 @@ func (handler *proposalHandler) ParsMessage(m message.Message, initiator peer.ID
 	msg := m.(*message.ProposalMessage)
 	handler.logger.Trace("parsing Proposal message", "message", msg)
 
-	handler.cache.AddProposal(msg.Proposal)
 	handler.consensus.SetProposal(msg.Proposal)
 
 	return nil

@@ -9,21 +9,16 @@ import (
 type Config struct {
 	ChangeProposerTimeout time.Duration `toml:"change_proposer_timeout"`
 	ChangeProposerDelta   time.Duration `toml:"change_proposer_delta"`
-	QueryProposalTimeout  time.Duration `toml:"query_proposal_timeout"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		QueryProposalTimeout:  1 * time.Second,
 		ChangeProposerTimeout: 6 * time.Second,
 		ChangeProposerDelta:   2 * time.Second,
 	}
 }
 
 func (conf *Config) SanityCheck() error {
-	if conf.QueryProposalTimeout <= 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "timeout for query proposal can't be negative")
-	}
 	if conf.ChangeProposerTimeout <= 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout for change proposer can't be negative")
 	}

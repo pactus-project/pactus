@@ -36,7 +36,7 @@ func (handler *blockAnnounceHandler) PrepareBundle(m message.Message) *bundle.Bu
 		handler.logger.Debug("sending BlockAnnounce ignored. We are not in the committee")
 		return nil
 	}
-	msg := bundle.NewBundle(handler.SelfID(), m)
+	bdl := bundle.NewBundle(handler.SelfID(), m)
 
-	return msg
+	return bdl
 }

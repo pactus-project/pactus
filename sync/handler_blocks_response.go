@@ -33,8 +33,8 @@ func (handler *blocksResponseHandler) ParsMessage(m message.Message, initiator p
 }
 
 func (handler *blocksResponseHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	msg := bundle.NewBundle(handler.SelfID(), m)
-	msg.CompressIt()
+	bdl := bundle.NewBundle(handler.SelfID(), m)
+	bdl.CompressIt()
 
-	return msg
+	return bdl
 }

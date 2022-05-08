@@ -21,12 +21,11 @@ func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator pe
 	msg := m.(*message.QueryProposalMessage)
 	handler.logger.Trace("parsing QueryProposal message", "message", msg)
 
-	height, round := handler.consensus.HeightRound()
-	if msg.Height == height && msg.Round == round {
+	height, _ := handler.consensus.HeightRound()
+	if msg.Height == height {
 		if !handler.peerIsInTheCommittee(initiator) {
 			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
 		}
-
 		p := handler.consensus.RoundProposal(msg.Round)
 		if p != nil {
 			response := message.NewProposalMessage(p)
@@ -38,21 +37,11 @@ func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator pe
 }
 
 func (handler *queryProposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	msg := m.(*message.QueryProposalMessage)
-	proposal := handler.consensus.RoundProposal(msg.Round)
-	if proposal == nil {
-		proposal = handler.cache.GetProposal(msg.Height, msg.Round)
-		if proposal != nil {
-			// We have the proposal inside the cache
-			handler.consensus.SetProposal(proposal)
-		} else {
-			if handler.weAreInTheCommittee() {
-				msg := bundle.NewBundle(handler.SelfID(), m)
-				return msg
-			}
-			handler.logger.Debug("not an active validator", "message", msg)
-		}
+	if !handler.weAreInTheCommittee() {
+		handler.logger.Debug("sending QueryProposal ignored. We are not in the committee")
+		return nil
 	}
+	bdl := bundle.NewBundle(handler.SelfID(), m)
 
-	return nil
+	return bdl
 }

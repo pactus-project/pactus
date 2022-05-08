@@ -15,16 +15,24 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	consensusHeight := tState.LastBlockHeight() + 1
 	prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
 	pid := network.TestRandomPeerID()
-	msg := message.NewQueryProposalMessage(consensusHeight, 0)
 	tConsensus.SetProposal(prop)
 
 	t.Run("Not in the committee, should not respond to the query proposal message", func(t *testing.T) {
+		msg := message.NewQueryProposalMessage(consensusHeight, 0)
+
 		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
 	})
 
 	testAddPeerToCommittee(t, pid, nil)
 
+	t.Run("In the committee, but not the same height", func(t *testing.T) {
+		msg := message.NewQueryProposalMessage(consensusHeight+1, 0)
+		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+
+		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
+	})
 	t.Run("In the committee, should respond to the query proposal message", func(t *testing.T) {
+		msg := message.NewQueryProposalMessage(consensusHeight, 0)
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
 
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
@@ -57,23 +65,5 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 		tSync.broadcast(msg)
 
 		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
-	})
-
-	t.Run("Proposal set before", func(t *testing.T) {
-		prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-		tConsensus.SetProposal(prop)
-		tSync.broadcast(msg)
-
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
-	})
-
-	t.Run("Proposal found inside the cache", func(t *testing.T) {
-		prop, _ := proposal.GenerateTestProposal(consensusHeight, 1)
-		tSync.cache.AddProposal(prop)
-
-		msg := message.NewQueryProposalMessage(consensusHeight, 1)
-		tSync.broadcast(msg)
-
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
 	})
 }

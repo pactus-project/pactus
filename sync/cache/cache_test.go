@@ -7,7 +7,6 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/types/block"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/proposal"
 )
 
 var tCache *Cache
@@ -23,7 +22,6 @@ func setup(t *testing.T) {
 func TestKeys(t *testing.T) {
 	assert.Equal(t, blockKey(1234), key{0x1, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
 	assert.Equal(t, certificateKey(1234), key{0x2, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-	assert.Equal(t, proposalKey(1234, 3), key{0x3, 0xd2, 0x4, 0, 0, 0x3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
 }
 
 func TestCacheBlocks(t *testing.T) {
@@ -54,20 +52,6 @@ func TestCacheBlocks(t *testing.T) {
 	assert.Equal(t, tCache.GetCertificate(1).Hash(), b2.PrevCertificate().Hash())
 	assert.Equal(t, tCache.GetCertificate(2).Hash(), b3.PrevCertificate().Hash())
 	assert.Nil(t, tCache.GetCertificate(4))
-}
-
-func TestCacheProposal(t *testing.T) {
-	setup(t)
-
-	p1, _ := proposal.GenerateTestProposal(100, 0)
-	p2, _ := proposal.GenerateTestProposal(101, 1)
-
-	tCache.AddProposal(p1)
-	tCache.AddProposal(p2)
-
-	assert.Equal(t, tCache.GetProposal(100, 0).Hash(), p1.Hash())
-	assert.Equal(t, tCache.GetProposal(101, 1).Hash(), p2.Hash())
-	assert.Nil(t, tCache.GetProposal(100, 1))
 }
 
 func TestClearCache(t *testing.T) {
