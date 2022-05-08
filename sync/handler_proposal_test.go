@@ -18,7 +18,6 @@ func TestParsingProposalMessages(t *testing.T) {
 		msg := message.NewProposalMessage(prop)
 
 		assert.NoError(t, testReceiveingNewMessage(tSync, msg, network.TestRandomPeerID()))
-		assert.NotNil(t, tSync.cache.GetProposal(consensusHeight, 0))
 		assert.NotNil(t, tConsensus.RoundProposal(0))
 	})
 }

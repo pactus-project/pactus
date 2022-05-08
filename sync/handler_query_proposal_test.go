@@ -58,22 +58,4 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 
 		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
 	})
-
-	t.Run("Proposal set before", func(t *testing.T) {
-		prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-		tConsensus.SetProposal(prop)
-		tSync.broadcast(msg)
-
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
-	})
-
-	t.Run("Proposal found inside the cache", func(t *testing.T) {
-		prop, _ := proposal.GenerateTestProposal(consensusHeight, 1)
-		tSync.cache.AddProposal(prop)
-
-		msg := message.NewQueryProposalMessage(consensusHeight, 1)
-		tSync.broadcast(msg)
-
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
-	})
 }

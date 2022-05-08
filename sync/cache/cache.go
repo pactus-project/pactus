@@ -5,14 +5,12 @@ import (
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/types/block"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/proposal"
 	"github.com/zarbchain/zarb-go/util"
 )
 
 const (
 	blockPrefix       = 0x01
 	certificatePrefix = 0x02
-	proposalPrefix    = 0x03
 )
 
 type key [32]byte
@@ -28,13 +26,6 @@ func certificateKey(height int32) key {
 	var k key
 	k[0] = certificatePrefix
 	copy(k[1:], util.Int32ToSlice(height))
-	return k
-}
-func proposalKey(height int32, round int16) key {
-	var k key
-	k[0] = proposalPrefix
-	copy(k[1:], util.Int32ToSlice(height))
-	copy(k[5:], util.Int16ToSlice(round))
 	return k
 }
 
@@ -104,18 +95,6 @@ func (c *Cache) AddCertificate(height int32, cert *block.Certificate) {
 	}
 }
 
-func (c *Cache) GetProposal(height int32, round int16) *proposal.Proposal {
-	i, ok := c.cache.Get(proposalKey(height, round))
-	if ok {
-		return i.(*proposal.Proposal)
-	}
-
-	return nil
-}
-
-func (c *Cache) AddProposal(p *proposal.Proposal) {
-	c.cache.Add(proposalKey(p.Height(), p.Round()), p)
-}
 func (c *Cache) Len() int {
 	return c.cache.Len()
 }

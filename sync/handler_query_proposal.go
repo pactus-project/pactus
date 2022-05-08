@@ -38,21 +38,11 @@ func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator pe
 }
 
 func (handler *queryProposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	msg := m.(*message.QueryProposalMessage)
-	proposal := handler.consensus.RoundProposal(msg.Round)
-	if proposal == nil {
-		proposal = handler.cache.GetProposal(msg.Height, msg.Round)
-		if proposal != nil {
-			// We have the proposal inside the cache
-			handler.consensus.SetProposal(proposal)
-		} else {
-			if handler.weAreInTheCommittee() {
-				msg := bundle.NewBundle(handler.SelfID(), m)
-				return msg
-			}
-			handler.logger.Debug("not an active validator", "message", msg)
-		}
+	if !handler.weAreInTheCommittee() {
+		handler.logger.Debug("sending QueryProposal ignored. We are not in the committee")
+		return nil
 	}
+	bdl := bundle.NewBundle(handler.SelfID(), m)
 
-	return nil
+	return bdl
 }
