@@ -30,12 +30,12 @@ const (
 
 	nameFuncArgon2ID  = "ARGON2ID"
 	nameFuncAES256CTR = "AES_256_CTR"
-	nameFuncSHA256    = "SHA256"
+	nameFuncMACv1     = "MACV1"
 )
 
 func newArgon2Encrypter(password string) *argon2Encrypter {
 	method := fmt.Sprintf("%s-%s-%s",
-		nameFuncArgon2ID, nameFuncAES256CTR, nameFuncSHA256)
+		nameFuncArgon2ID, nameFuncAES256CTR, nameFuncMACv1)
 
 	return &argon2Encrypter{
 		method:   method,
@@ -54,8 +54,8 @@ func (e *argon2Encrypter) encrypt(message string) encrypted {
 	iv := salt
 	d := aesCrypt([]byte(message), iv, cipherKey)
 
-	// Generate the mac
-	mac := sha256MAC(cipherKey[16:32], d)
+	// Calculate the MAC
+	mac := calcMACv1(cipherKey[16:32], d)
 
 	params := newParams()
 	params.SetUint32(nameParamIterations, iterations)
@@ -90,7 +90,7 @@ func (e *argon2Encrypter) decrypt(ct encrypted) (string, error) {
 
 	// Using MAC to check if the password is correct
 	// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
-	if !safeCmp(mac, sha256MAC(cipherKey[16:32], d)) {
+	if !safeCmp(mac, calcMACv1(cipherKey[16:32], d)) {
 		return "", ErrInvalidPassword
 	}
 

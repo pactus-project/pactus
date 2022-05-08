@@ -23,8 +23,8 @@ func aesCrypt(message []byte, iv, cipherKey []byte) []byte {
 	return cipherMsg
 }
 
-// sha256MAC calculates the 4 bytes MAC of the given slices base on SHA-256.
-func sha256MAC(data ...[]byte) []byte {
+// calcMACv1 calculates the 4 bytes MAC of the given slices base on SHA-256.
+func calcMACv1(data ...[]byte) []byte {
 	h := sha256.New()
 	for _, d := range data {
 		_, err := h.Write(d)
