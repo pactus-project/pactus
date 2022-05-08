@@ -2,6 +2,8 @@ name: Building Docker and Push to DockerHub
 
 on:
   push:
+    tags:
+      - v*
     branches:
       - main
 
