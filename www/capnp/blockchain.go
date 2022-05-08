@@ -38,12 +38,12 @@ func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
 	if err != nil {
 		return err
 	}
-	pl, err := res.NewPeers(int32(len(zs.sync.Peers())))
+	capPeers, err := res.NewPeers(int32(len(zs.sync.Peers())))
 	if err != nil {
 		return err
 	}
 	for i, peer := range zs.sync.Peers() {
-		p := pl.At(i)
+		p := capPeers.At(i)
 
 		if err := p.SetMoniker(peer.Moniker); err != nil {
 			return err

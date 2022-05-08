@@ -11,6 +11,9 @@ import (
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	// Static files
+	_ "github.com/zarbchain/zarb-go/www/grpc/statik"
 )
 
 type GatewayConfig struct {
@@ -50,8 +53,8 @@ func (s *Server) startGateway() error {
 		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
-	gwmux := runtime.NewServeMux()
-	err = zarb.RegisterZarbHandler(s.ctx, gwmux, conn)
+	gwMux := runtime.NewServeMux()
+	err = zarb.RegisterZarbHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
@@ -65,7 +68,7 @@ func (s *Server) startGateway() error {
 		Addr: s.config.Gateway.Listen,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if strings.HasPrefix(r.URL.Path, "/api") {
-				gwmux.ServeHTTP(w, r)
+				gwMux.ServeHTTP(w, r)
 				return
 			}
 			oa.ServeHTTP(w, r)

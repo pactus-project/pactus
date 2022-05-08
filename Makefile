@@ -82,7 +82,6 @@ check:
 		--enable=depguard \
 		--enable=nilerr \
 		--enable=gosec \
-		--enable=godot \
 		--enable=exportloopref \
 		--enable=whitespace \
 		--enable=goimports
