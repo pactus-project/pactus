@@ -17,7 +17,7 @@ func TestEncrypt(t *testing.T) {
 	e := newArgon2Encrypter("super_secret_passsword")
 	msg1 := "hello_world"
 	ct := e.encrypt(msg1)
-	assert.Equal(t, ct.Method, "ARGON2ID-AES_256_CTR-SHA256")
+	assert.Equal(t, ct.Method, "ARGON2ID-AES_256_CTR-MACV1")
 	msg2, err := e.decrypt(ct)
 	assert.NoError(t, err)
 	assert.Equal(t, msg1, msg2)
