@@ -476,10 +476,6 @@ func (st *state) validateBlockTime(t time.Time) error {
 	}
 	proposeTime := st.proposeNextBlockTime()
 	threshold := st.params.BlockTime()
-	if t.Before(proposeTime.Add(-threshold)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is less than threshold (%s)",
-			t.String(), proposeTime.String())
-	}
 	if t.After(proposeTime.Add(threshold)) {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)",
 			t.String(), proposeTime.String())

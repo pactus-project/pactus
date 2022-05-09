@@ -472,10 +472,6 @@ func TestValidateBlockTime(t *testing.T) {
 		// Before or same as the last block time
 		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(-10*time.Second)))
 		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime()))
-		assert.Error(t, tState1.validateBlockTime(tState1.lastInfo.BlockTime().Add(+10*time.Second)))
-
-		// less than threshold
-		assert.Error(t, tState1.validateBlockTime(roundedNow.Add(-20*time.Second)))
 
 		// Ok
 		assert.NoError(t, tState1.validateBlockTime(roundedNow.Add(-10*time.Second)))
