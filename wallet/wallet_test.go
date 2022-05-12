@@ -38,12 +38,12 @@ func TestOpenWallet(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		assert.NoError(t, tWallet.Save())
-		_, err := OpenWallet(tWallet.path)
+		_, err := OpenWallet(tWallet.path, true)
 		assert.NoError(t, err)
 	})
 
 	t.Run("Invalid wallet path", func(t *testing.T) {
-		_, err := OpenWallet(util.TempFilePath())
+		_, err := OpenWallet(util.TempFilePath(), true)
 		assert.Error(t, err)
 	})
 
@@ -52,14 +52,14 @@ func TestOpenWallet(t *testing.T) {
 		bs, _ := json.Marshal(tWallet.store.data)
 		assert.NoError(t, util.WriteFile(tWallet.path, bs))
 
-		_, err := OpenWallet(tWallet.path)
+		_, err := OpenWallet(tWallet.path, true)
 		assert.ErrorIs(t, err, ErrInvalidCRC)
 	})
 
 	t.Run("Invalid json", func(t *testing.T) {
 		assert.NoError(t, util.WriteFile(tWallet.path, []byte("invalid_json")))
 
-		_, err := OpenWallet(tWallet.path)
+		_, err := OpenWallet(tWallet.path, true)
 		assert.Error(t, err)
 	})
 }

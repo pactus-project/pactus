@@ -28,7 +28,7 @@ func SendTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -49,11 +49,11 @@ func SendTx() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign and broadcast a Send transition to the network:")
-			cmd.PrintInfoMsg("From: %s", *fromArg)
-			cmd.PrintInfoMsg("To: %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %s (%s)", *amtArg, coinToChange(*amtArg))
-			cmd.PrintInfoMsg("Fee: %s (%s)", changeToCoin(trx.Fee()), trx.Fee())
+			cmd.PrintInfoMsg("You are going to sign this \033[1mSend\033[0m transition:")
+			cmd.PrintInfoMsg("From  : %s", *fromArg)
+			cmd.PrintInfoMsg("To    : %s", *toArg)
+			cmd.PrintInfoMsg("Amount: %v (%v)", *amtArg, coinToChange(*amtArg))
+			cmd.PrintInfoMsg("Fee   : %v (%v)", changeToCoin(trx.Fee()), trx.Fee())
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -87,7 +87,7 @@ func BondTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -108,11 +108,11 @@ func BondTx() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign and broadcast a bond transition to the network.")
-			cmd.PrintInfoMsg("Account: %s", *fromArg)
+			cmd.PrintInfoMsg("You are going to sign this \033[1mBond\033[0m transition:")
+			cmd.PrintInfoMsg("Account  : %s", *fromArg)
 			cmd.PrintInfoMsg("Validator: %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %v (%v)", *amtArg, coinToChange(*amtArg))
-			cmd.PrintInfoMsg("Fee: %v (%v)", changeToCoin(trx.Fee()), trx.Fee())
+			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, coinToChange(*amtArg))
+			cmd.PrintInfoMsg("Fee      : %v (%v)", changeToCoin(trx.Fee()), trx.Fee())
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -130,7 +130,7 @@ func UnbondTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -150,7 +150,7 @@ func UnbondTx() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign and broadcast an Unbond transition to the network:")
+			cmd.PrintInfoMsg("You are going to sign this \033[1mUnbond\033[0m transition:")
 			cmd.PrintInfoMsg("Validator: %s", *fromArg)
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
@@ -179,7 +179,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*path)
+			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -200,10 +200,10 @@ func WithdrawTx() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign and broadcast a Withdraw transition to the network.")
+			cmd.PrintInfoMsg("You are going to sign this \033[1mWithdraw\033[0m transition:")
 			cmd.PrintInfoMsg("Validator: %s", *fromArg)
-			cmd.PrintInfoMsg("Account: %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %s", *amtArg)
+			cmd.PrintInfoMsg("Account  : %s", *toArg)
+			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, coinToChange(*amtArg))
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -240,23 +240,35 @@ func addCommonTxOptions(c *cli.Cmd) (*string, *int, *float64, *string, *bool) {
 	return stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt
 }
 
-func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx, noConfirm bool,
-	pass string) {
-	if !noConfirm {
-		cmd.PrintWarnMsg("THIS ACTION IS NOT REVERSIBLE")
-		confirmed := cmd.PromptConfirm("Do you want to continue")
-		if !confirmed {
-			return
-		}
-	}
-
+func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {
+	cmd.PrintLine()
 	password := getPassword(wallet, pass)
-	res, err := wallet.SignAndBroadcast(password, trx)
+	err := wallet.SignTransaction(password, trx)
 	if err != nil {
 		cmd.PrintDangerMsg(err.Error())
 		return
 	}
-	cmd.PrintInfoMsg(res)
+
+	bs, _ := trx.Bytes()
+	cmd.PrintInfoMsg("Signed transaction data: %x", bs)
+	cmd.PrintLine()
+
+	if !wallet.IsOffline() {
+		if !noConfirm {
+			cmd.PrintInfoMsg("You are going to broadcast the signed transition:")
+			cmd.PrintWarnMsg("THIS ACTION IS NOT REVERSIBLE")
+			confirmed := cmd.PromptConfirm("Do you want to continue")
+			if !confirmed {
+				return
+			}
+		}
+		res, err := wallet.BroadcastTransaction(trx)
+		if err != nil {
+			cmd.PrintDangerMsg(err.Error())
+			return
+		}
+		cmd.PrintInfoMsg("Transaction hash: %s", res)
+	}
 }
 
 func getPassword(wallet *wallet.Wallet, passOpt string) string {

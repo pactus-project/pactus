@@ -25,7 +25,7 @@ func AllAddresses() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -64,7 +64,7 @@ func NewAddress() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			label := cmd.PromptInput("Label")
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -96,7 +96,7 @@ func Balance() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -127,7 +127,7 @@ func PrivateKey() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -154,7 +154,7 @@ func PublicKey() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -182,7 +182,7 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 		c.Action = func() {
 			prv := cmd.PromptInput("Private Key")
 
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -214,7 +214,7 @@ func SetLabel() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

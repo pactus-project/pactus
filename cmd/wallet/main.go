@@ -17,7 +17,8 @@ func changeToCoin(change int64) float64 {
 	return float64(change) / changeFactor
 }
 
-var path *string
+var pathOpt *string
+var offlineOpt *bool
 
 func addPasswordOption(c *cli.Cmd) *string {
 	return c.String(cli.StringOpt{
@@ -30,10 +31,16 @@ func addPasswordOption(c *cli.Cmd) *string {
 func main() {
 	app := cli.App("zarb-wallet", "Zarb wallet")
 
-	path = app.String(cli.StringOpt{
+	pathOpt = app.String(cli.StringOpt{
 		Name:  "w wallet file",
 		Desc:  "a path to the wallet file",
 		Value: cmd.ZarbDefaultWalletPath(cmd.ZarbHomeDir()),
+	})
+
+	offlineOpt = app.Bool(cli.BoolOpt{
+		Name:  "offline",
+		Desc:  "offline mode",
+		Value: false,
 	})
 
 	app.Command("create", "Create a new wallet", Generate())

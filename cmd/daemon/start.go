@@ -174,7 +174,7 @@ func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Si
 }
 
 func getValidatorKeyFromWallet(walletPath string) (string, error) {
-	wallet, err := wallet.OpenWallet(walletPath)
+	wallet, err := wallet.OpenWallet(walletPath, true)
 	if err != nil {
 		return "", err
 	}

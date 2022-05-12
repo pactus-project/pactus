@@ -11,6 +11,9 @@ var (
 
 	// ErrInvalidNetwork describes an error in which the network is invalid.
 	ErrInvalidNetwork = errors.New("invalid network")
+
+	// ErrOffline describes an error in which the wallet is offline.
+	ErrOffline = errors.New("wallet is in offline mode")
 )
 
 // ErrWalletExits describes an error in which a wallet exists in the
