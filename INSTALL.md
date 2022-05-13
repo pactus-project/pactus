@@ -134,13 +134,13 @@ docker pull zarb/zarb
 Let's create a working directory at `~/zarb/testnet` for the testnet:
 
 ```bash
-docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb-daemon init -w /zarb-daemon --testnet
+docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb init -w /zarb --testnet
 ```
 
 Now we can run the zarb and join the testnet:
 
 ```bash
-docker run -it -v ~/zarb/testnet:/zarb -p 8080:8080 -p 21777:21777 --name zarb-testnet zarb/zarb-daemon start -w /zarb
+docker run -it -v ~/zarb/testnet:/zarb -p 8080:8080 -p 21777:21777 --name zarb-testnet zarb/zarb start -w /zarb
 ```
 
 check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
