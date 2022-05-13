@@ -17,14 +17,14 @@ var (
 	imgGtkIcon []byte
 )
 
-func showAboutGTKDialog(parent gtk.IWindow) {
+func showAboutGTKDialog() {
 	builder, err := gtk.BuilderNewFromString(string(uiAboutGtkDialog))
-	errorCheck(parent, err)
+	fatalErrorCheck(err)
 
 	dlg := getAboutDialogObj(builder, "id_dialog_about_gtk")
 
 	pixbuf, err := gdk.PixbufNewFromDataOnly(imgGtkIcon)
-	errorCheck(parent, err)
+	fatalErrorCheck(err)
 
 	dlg.SetLogo(pixbuf)
 

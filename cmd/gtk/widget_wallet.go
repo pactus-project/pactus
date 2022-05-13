@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"log"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -32,14 +33,10 @@ type widgetWallet struct {
 // Add a column to the tree view (during the initialization of the tree view).
 func createColumn(title string, id int) *gtk.TreeViewColumn {
 	cellRenderer, err := gtk.CellRendererTextNew()
-	if err != nil {
-		log.Fatal("Unable to create text cell renderer:", err)
-	}
+	fatalErrorCheck(err)
 
 	column, err := gtk.TreeViewColumnNewWithAttribute(title, cellRenderer, "text", id)
-	if err != nil {
-		log.Fatal("Unable to create cell column:", err)
-	}
+	fatalErrorCheck(err)
 
 	column.SetResizable(true)
 
@@ -85,6 +82,31 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 		model:    model,
 	}
 
+	menu, err := gtk.MenuNew()
+	fatalErrorCheck(err)
+
+	item, err := gtk.MenuItemNewWithLabel("Update _Label")
+	fatalErrorCheck(err)
+
+	item.SetUseUnderline(true)
+	item.Show()
+	item.Connect("activate", func(item *gtk.MenuItem) bool {
+		w.onUpdateLabel()
+		return false
+	})
+	menu.Append(item)
+
+	treeView.Connect("button-press-event",
+		func(treeView *gtk.TreeView, event *gdk.Event) bool {
+			eventButton := gdk.EventButtonNewFromEvent(event)
+			if eventButton.Type() == gdk.EVENT_BUTTON_PRESS &&
+				eventButton.Button() == gdk.BUTTON_SECONDARY {
+				menu.PopupAtPointer(event)
+			}
+
+			return false
+		})
+
 	signals := map[string]interface{}{
 		"on_new_address": w.onNewAddress,
 	}
@@ -96,19 +118,47 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 }
 
 func (ww *widgetWallet) onNewAddress() {
-	password, ok := getWalletPassword(nil, ww.model.wallet)
+	password, ok := getWalletPassword(ww.model.wallet)
 	if !ok {
 		return
 	}
 
 	err := ww.model.createAddress(password)
-	errorCheck(nil, err)
+	fatalErrorCheck(err)
 }
 
 func (ww *widgetWallet) timeout() bool {
 	err := ww.model.rebuildModel()
-	if err != nil {
-		errorCheck(nil, err)
-	}
+	fatalErrorCheck(err)
+
 	return true
+}
+
+func (ww *widgetWallet) onUpdateLabel() {
+	selection, err := ww.treeView.GetSelection()
+	fatalErrorCheck(err)
+
+	if selection != nil {
+		model, iter, ok := selection.GetSelected()
+		if ok {
+			path, err := model.(*gtk.TreeModel).GetValue(iter, IDAddressesColumnAddress)
+			fatalErrorCheck(err)
+
+			s, _ := path.GetString()
+			log.Printf("treeSelectionChangedCB: selected path: %s\n", s)
+
+			oldLabel := ww.model.wallet.Label(s)
+			newLabel, ok := getAddressLabel(oldLabel)
+			if ok {
+				err := ww.model.wallet.SetLabel(s, newLabel)
+				fatalErrorCheck(err)
+
+				err = ww.model.wallet.Save()
+				fatalErrorCheck(err)
+
+				err = ww.model.rebuildModel()
+				fatalErrorCheck(err)
+			}
+		}
+	}
 }

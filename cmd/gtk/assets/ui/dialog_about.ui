@@ -10,7 +10,6 @@
     <property name="comments" translatable="yes">&lt;TODO&gt;</property>
     <property name="website">https://github.com/zarbchain/zarb-go</property>
     <property name="website-label" translatable="yes">Zarb</property>
-    <property name="logo-icon-name"/>
     <property name="license-type">mit-x11</property>
     <child internal-child="vbox">
       <object class="GtkBox">

@@ -22,16 +22,17 @@ type mainWindow struct {
 func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel, genesisTime time.Time) *mainWindow {
 	// Get the GtkBuilder UI definition in the glade file.
 	builder, err := gtk.BuilderNewFromString(string(uiMainWindow))
-	errorCheck(nil, err)
+	fatalErrorCheck(err)
 
 	appWindow := getApplicationWindowObj(builder, "id_main_window")
 	boxNode := getBoxObj(builder, "id_box_node")
 	boxDefaultWallet := getBoxObj(builder, "id_box_default_wallet")
 
 	widgetNode, err := buildWidgetNode(nodeModel, genesisTime)
-	errorCheck(appWindow, err)
+	fatalErrorCheck(err)
+
 	widgetWallet, err := buildWidgetWallet(walletModel)
-	errorCheck(appWindow, err)
+	fatalErrorCheck(err)
 
 	boxNode.Add(widgetNode)
 	boxDefaultWallet.Add(widgetWallet)
@@ -59,9 +60,9 @@ func (mw *mainWindow) onQuit() {
 }
 
 func (mw *mainWindow) onAboutGtk() {
-	showAboutGTKDialog(mw)
+	showAboutGTKDialog()
 }
 
 func (mw *mainWindow) onAbout() {
-	showAboutDialog(mw)
+	showAboutDialog()
 }

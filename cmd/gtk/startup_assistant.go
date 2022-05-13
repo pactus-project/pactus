@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -47,17 +48,21 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	successful := false
 	createPage := func(assistant *gtk.Assistant, content gtk.IWidget, name, title, subject, desc string) *gtk.Widget {
 		page, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 20)
-		errorCheck(assistant, err)
+		fatalErrorCheck(err)
+
 		page.SetHExpand(true)
 		titleLabel, err := gtk.LabelNew(title)
-		errorCheck(assistant, err)
+		fatalErrorCheck(err)
+
 		setMargin(titleLabel, 0, 20, 0, 0)
 		frame, err := gtk.FrameNew(subject)
-		errorCheck(assistant, err)
+		fatalErrorCheck(err)
+
 		frame.SetHExpand(true)
 
 		descLabel, err := gtk.LabelNew("")
-		errorCheck(assistant, err)
+		fatalErrorCheck(err)
+
 		descLabel.SetUseMarkup(true)
 		descLabel.SetMarkup(desc)
 		descLabel.SetVExpand(true)
@@ -67,7 +72,8 @@ func startupAssistant(workingDir string, testnet bool) bool {
 		frame.Add(content)
 
 		box, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
-		errorCheck(assistant, err)
+		fatalErrorCheck(err)
+
 		box.Add(frame)
 		box.Add(descLabel)
 
@@ -82,7 +88,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	}
 
 	assistant, err := gtk.AssistantNew()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
 
 	assistant.SetDefaultSize(600, 400)
 	assistant.SetTitle("Zarb - Init Wizard")
@@ -95,14 +101,17 @@ func startupAssistant(workingDir string, testnet bool) bool {
 
 	// --- PageMode
 	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from the scratch")
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	recoverWalletRadio, err := gtk.RadioButtonNewWithLabelFromWidget(newWalletRadio,
 		"Restore a wallet from the seed phrase")
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	recoverWalletRadio.SetSensitive(false)
 
 	radioBox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	radioBox.Add(newWalletRadio)
 	setMargin(newWalletRadio, 6, 6, 6, 6)
 	radioBox.Add(recoverWalletRadio)
@@ -122,7 +131,8 @@ func startupAssistant(workingDir string, testnet bool) bool {
 
 	// --- pageSeed
 	seedTextView, err := gtk.TextViewNew()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	setMargin(seedTextView, 6, 6, 6, 6)
 	seedTextView.SetWrapMode(gtk.WRAP_WORD)
 	seedTextView.SetEditable(false)
@@ -149,7 +159,8 @@ This seed will allow you to recover your wallet in case of computer failure.
 
 	// --- pageSeedConfirm
 	seedConfirmTextView, err := gtk.TextViewNew()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	setMargin(seedConfirmTextView, 6, 6, 6, 6)
 	seedConfirmTextView.SetWrapMode(gtk.WRAP_WORD)
 	seedConfirmTextView.SetEditable(true)
@@ -162,7 +173,8 @@ This seed will allow you to recover your wallet in case of computer failure.
 	})
 
 	seedConfirmTextBuffer, err := seedConfirmTextView.GetBuffer()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
 		mnemonic1 := getTextViewContent(seedTextView)
 		mnemonic2 := getTextViewContent(seedConfirmTextView)
@@ -192,25 +204,30 @@ To make sure that you have properly saved your seed, please retype it here.`
 
 	// --- PagePassword
 	passwordEntry, err := gtk.EntryNew()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	setMargin(passwordEntry, 6, 6, 6, 6)
 	passwordEntry.SetVisibility(false)
 	passwordLabel, err := gtk.LabelNew("Password: ")
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	passwordLabel.SetHAlign(gtk.ALIGN_START)
 	setMargin(passwordLabel, 6, 6, 6, 6)
 
 	passwordConfirmEntry, err := gtk.EntryNew()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	setMargin(passwordConfirmEntry, 6, 6, 6, 6)
 	passwordConfirmEntry.SetVisibility(false)
 	confirmationLineLabel, err := gtk.LabelNew("Confirmation: ")
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	confirmationLineLabel.SetHAlign(gtk.ALIGN_START)
 	setMargin(confirmationLineLabel, 6, 6, 6, 6)
 
 	grid, err := gtk.GridNew()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	grid.Add(passwordLabel)
 	grid.Attach(passwordEntry, 1, 0, 1, 1)
 	grid.AttachNextTo(confirmationLineLabel, passwordLabel, gtk.POS_BOTTOM, 1, 1)
@@ -218,9 +235,11 @@ To make sure that you have properly saved your seed, please retype it here.`
 
 	validatePassword := func() {
 		pass1, err := passwordEntry.GetText()
-		errorCheck(assistant, err)
+		fatalErrorCheck(err)
+
 		pass2, err := passwordConfirmEntry.GetText()
-		errorCheck(assistant, err)
+		fatalErrorCheck(err)
+
 		if pass1 == pass2 {
 			assistant.SetPageComplete(pagePassword, true)
 		} else {
@@ -250,7 +269,8 @@ To make sure that you have properly saved your seed, please retype it here.`
 
 	// --- pageFinal
 	NodeInfoTextView, err := gtk.TextViewNew()
-	errorCheck(assistant, err)
+	fatalErrorCheck(err)
+
 	setMargin(NodeInfoTextView, 6, 6, 6, 6)
 	NodeInfoTextView.SetWrapMode(gtk.WRAP_WORD)
 	NodeInfoTextView.SetEditable(false)
@@ -286,8 +306,9 @@ Now you are ready to start the node!`
 
 	assistant.Connect("prepare", func(assistant *gtk.Assistant, page *gtk.Widget) {
 		name, err := page.GetName()
-		errorCheck(assistant, err)
-		fmt.Printf("%v - %v\n", assistant.GetCurrentPage(), name)
+		fatalErrorCheck(err)
+
+		log.Printf("%v - %v\n", assistant.GetCurrentPage(), name)
 		switch name {
 		case pageModeName:
 			{
@@ -320,11 +341,13 @@ Now you are ready to start the node!`
 					mnemonic,
 					"",
 					network)
-				errorCheck(assistant, err)
+				fatalErrorCheck(err)
+
 				valAddr, err := defaultWallet.MakeNewAddress("", "Validator address")
-				errorCheck(assistant, err)
+				fatalErrorCheck(err)
+
 				rewardAddr, err := defaultWallet.MakeNewAddress("", "Reward address")
-				errorCheck(assistant, err)
+				fatalErrorCheck(err)
 
 				var gen *genesis.Genesis
 				confFile := cmd.ZarbConfigPath(workingDir)
@@ -351,18 +374,18 @@ Now you are ready to start the node!`
 				// Save genesis file
 				genFile := cmd.ZarbGenesisPath(workingDir)
 				err = gen.SaveToFile(genFile)
-				errorCheck(assistant, err)
+				fatalErrorCheck(err)
 
 				// To make process faster we set password after generating addresses
 				walletPassword, err := passwordEntry.GetText()
-				errorCheck(assistant, err)
+				fatalErrorCheck(err)
 
 				err = defaultWallet.UpdatePassword("", walletPassword)
-				errorCheck(assistant, err)
+				fatalErrorCheck(err)
 
 				// Save wallet
 				err = defaultWallet.Save()
-				errorCheck(assistant, err)
+				fatalErrorCheck(err)
 
 				// Done! showing the node information
 				successful = true
