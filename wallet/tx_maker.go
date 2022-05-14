@@ -116,6 +116,10 @@ func (m *txMaker) build() (*tx.Tx, error) {
 
 func (m *txMaker) checkStamp() error {
 	if m.stamp == nil {
+		if m.client == nil {
+			return ErrOffline
+		}
+
 		stamp, err := m.client.getStamp()
 		if err != nil {
 			return err
@@ -128,6 +132,10 @@ func (m *txMaker) checkStamp() error {
 
 func (m *txMaker) checkSequence() error {
 	if m.seq == 0 {
+		if m.client == nil {
+			return ErrOffline
+		}
+
 		switch m.typ {
 		case payload.PayloadTypeSend,
 			payload.PayloadTypeBond:

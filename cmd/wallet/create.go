@@ -24,7 +24,7 @@ func Generate() func(c *cli.Cmd) {
 			if *testnetOpt {
 				network = wallet.NetworkTestNet
 			}
-			wallet, err := wallet.FromMnemonic(*path, mnemonic, password, network)
+			wallet, err := wallet.FromMnemonic(*pathOpt, mnemonic, password, network)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -51,7 +51,7 @@ func ChangePassword() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

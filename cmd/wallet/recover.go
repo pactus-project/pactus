@@ -12,7 +12,7 @@ func Recover() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			mnemonic := cmd.PromptInput("Seed")
-			wallet, err := wallet.FromMnemonic(*path, mnemonic, "", 0)
+			wallet, err := wallet.FromMnemonic(*pathOpt, mnemonic, "", 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -39,7 +39,7 @@ func GetSeed() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*path)
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

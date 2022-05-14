@@ -129,7 +129,7 @@ func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
 	time.Sleep(1 * time.Second)
 
 	path := cmd.ZarbDefaultWalletPath(workingDir)
-	wallet, err := wallet.OpenWallet(path)
+	wallet, err := wallet.OpenWallet(path, false)
 	errorCheck(parent, err)
 
 	password, ok := getWalletPassword(nil, wallet)

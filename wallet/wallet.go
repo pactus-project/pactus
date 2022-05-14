@@ -45,7 +45,7 @@ func GenerateMnemonic() string {
 }
 
 // OpenWallet tries to open a wallet at given path.
-func OpenWallet(path string) (*Wallet, error) {
+func OpenWallet(path string, offline bool) (*Wallet, error) {
 	data, err := util.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func OpenWallet(path string) (*Wallet, error) {
 		return nil, err
 	}
 
-	return newWallet(path, store)
+	return newWallet(path, store, offline)
 }
 
 // FromMnemonic creates a wallet from mnemonic (seed phrase).
@@ -84,10 +84,10 @@ func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error)
 		},
 	}
 
-	return newWallet(path, store)
+	return newWallet(path, store, true)
 }
 
-func newWallet(path string, store *store) (*Wallet, error) {
+func newWallet(path string, store *store, offline bool) (*Wallet, error) {
 	if store.data.Network == NetworkTestNet {
 		crypto.DefaultHRP = "tzc"
 	}
@@ -97,15 +97,22 @@ func newWallet(path string, store *store) (*Wallet, error) {
 		path:  path,
 	}
 
-	err := w.connectToRandomServer()
-	if err != nil {
-		return nil, err
+	if !offline {
+		err := w.connectToRandomServer()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return w, nil
 }
+
 func (w *Wallet) Name() string {
 	return path.Base(w.path)
+}
+
+func (w *Wallet) IsOffline() bool {
+	return w.client == nil
 }
 
 func (w *Wallet) UpdatePassword(old, new string) error {
@@ -169,8 +176,11 @@ func (w *Wallet) Balance(addrStr string) (int64, error) {
 		return 0, err
 	}
 
+	if w.client == nil {
+		return 0, ErrOffline
+	}
+
 	balance, _ := w.client.getAccountBalance(addr)
-	//exitOnErr(err)
 
 	return balance, nil
 }
@@ -182,8 +192,11 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 		return 0, err
 	}
 
+	if w.client == nil {
+		return 0, ErrOffline
+	}
+
 	stake, _ := w.client.getValidatorStake(addr)
-	//exitOnErr(err)
 
 	return stake, nil
 }
@@ -274,23 +287,30 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 	return maker.build()
 }
 
-func (w *Wallet) SignAndBroadcast(password string, tx *tx.Tx) (string, error) {
-	prvStr, err := w.PrivateKey(password, tx.Payload().Signer().String())
+func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
+	prvStr, err := w.PrivateKey(password, trx.Payload().Signer().String())
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	prv, err := bls.PrivateKeyFromString(prvStr)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	signer := crypto.NewSigner(prv)
-	signer.SignMsg(tx)
-	b, err := tx.Bytes()
+	signer.SignMsg(trx)
 	if err != nil {
-		return "", err
+		return err
+	}
+	return nil
+}
+
+func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
+	if w.client == nil {
+		return "", ErrOffline
 	}
 
+	b, _ := trx.Bytes()
 	return w.client.sendTx(b)
 }
