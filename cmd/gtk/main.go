@@ -54,7 +54,7 @@ func main() {
 	// Create a new app.
 	// When using GtkApplication, it is not necessary to call gtk_init() manually.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_FLAGS_NONE)
-	errorCheck(nil, err)
+	fatalErrorCheck(err)
 
 	// Connect function to application startup event, this is not required.
 	app.Connect("startup", func() {
@@ -130,16 +130,16 @@ func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
 
 	path := cmd.ZarbDefaultWalletPath(workingDir)
 	wallet, err := wallet.OpenWallet(path, false)
-	errorCheck(parent, err)
+	fatalErrorCheck(err)
 
-	password, ok := getWalletPassword(nil, wallet)
+	password, ok := getWalletPassword(wallet)
 	if !ok {
 		showInfoDialog(parent, "Canceled!")
 		return
 	}
 	// TODO: Get genTime from the node or state
 	node, genTime, err := startingNode(workingDir, wallet, password)
-	errorCheck(parent, err)
+	fatalErrorCheck(err)
 
 	// TODO
 	// No showing the main window
@@ -157,7 +157,7 @@ func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
 	win.Show()
 
 	err = walletModel.rebuildModel()
-	errorCheck(parent, err)
+	fatalErrorCheck(err)
 
 	app.AddWindow(win)
 }

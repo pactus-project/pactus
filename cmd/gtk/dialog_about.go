@@ -11,9 +11,9 @@ import (
 //go:embed assets/ui/dialog_about.ui
 var uiAboutDialog []byte
 
-func showAboutDialog(parent gtk.IWindow) {
+func showAboutDialog() {
 	builder, err := gtk.BuilderNewFromString(string(uiAboutDialog))
-	errorCheck(parent, err)
+	fatalErrorCheck(err)
 
 	dlg := getAboutDialogObj(builder, "id_dialog_about")
 

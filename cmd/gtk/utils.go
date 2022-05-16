@@ -3,6 +3,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -19,16 +21,16 @@ func showErrorDialog(parent gtk.IWindow, msg string) {
 	dlg.Destroy()
 }
 
-func errorCheck(parent gtk.IWindow, err error) {
+func fatalErrorCheck(err error) {
 	if err != nil {
-		showErrorDialog(parent, err.Error())
-		gtk.MainQuit()
+		showErrorDialog(nil, err.Error())
+		log.Fatal(err.Error())
 	}
 }
 
 func getObj(builder *gtk.Builder, name string) glib.IObject {
 	obj, err := builder.GetObject(name)
-	errorCheck(nil, err)
+	fatalErrorCheck(err)
 	return obj
 }
 
