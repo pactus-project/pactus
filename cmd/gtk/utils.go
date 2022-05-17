@@ -62,6 +62,10 @@ func getLabelObj(builder *gtk.Builder, name string) *gtk.Label {
 	return getObj(builder, name).(*gtk.Label)
 }
 
+func getToolButtonObj(builder *gtk.Builder, name string) *gtk.ToolButton {
+	return getObj(builder, name).(*gtk.ToolButton)
+}
+
 func getProgressBarObj(builder *gtk.Builder, name string) *gtk.ProgressBar {
 	return getObj(builder, name).(*gtk.ProgressBar)
 }
