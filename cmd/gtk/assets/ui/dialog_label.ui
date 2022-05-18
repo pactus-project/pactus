@@ -22,11 +22,12 @@
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="id_button_cancel">
-                <property name="label">Cancel</property>
+                <property name="label">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="focus-on-click">False</property>
                 <property name="receives-default">False</property>
+                <property name="use-underline">True</property>
                 <property name="always-show-image">True</property>
                 <signal name="activate" handler="on_cancel" swapped="no"/>
                 <signal name="clicked" handler="on_cancel" swapped="no"/>
@@ -39,13 +40,14 @@
             </child>
             <child>
               <object class="GtkButton" id="id_button_ok">
-                <property name="label">Ok</property>
+                <property name="label">_Ok</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="focus-on-click">False</property>
                 <property name="can-default">True</property>
                 <property name="has-default">True</property>
                 <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
                 <property name="always-show-image">True</property>
                 <signal name="activate" handler="on_ok" swapped="no"/>
                 <signal name="clicked" handler="on_ok" swapped="no"/>

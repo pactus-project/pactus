@@ -54,9 +54,8 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	labelName := getLabelObj(builder, "id_label_wallet_name")
 	labelLocation := getLabelObj(builder, "id_label_wallet_location")
 	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
-	buttonNewAddress := getToolButtonObj(builder, "id_button_new_address")
 
-	buttonNewAddress.SetIconWidget(addIcon())
+	getToolButtonObj(builder, "id_button_new_address").SetIconWidget(AddIcon())
 
 	labelName.SetText(model.wallet.Name())
 	labelLocation.SetText(model.wallet.Path())
