@@ -10,14 +10,23 @@ import (
 )
 
 var (
-	//go:embed assets/images/add.svg
-	imgAddIcon []byte
+	//go:embed assets/icons/add.svg
+	iconAdd []byte
 
-	//go:embed assets/images/ok.svg
-	imgOkIcon []byte
+	//go:embed assets/icons/ok.svg
+	iconOK []byte
 
-	//go:embed assets/images/cancel.svg
-	imgCancelIcon []byte
+	//go:embed assets/icons/cancel.svg
+	iconCancel []byte
+
+	//go:embed assets/icons/password.svg
+	iconPassword []byte
+
+	//go:embed assets/icons/seed.svg
+	iconSeed []byte
+
+	//go:embed assets/icons/close.svg
+	iconClose []byte
 )
 
 func pixbufToIcon16(pixbuf *gdk.Pixbuf) *gtk.Image {
@@ -31,16 +40,31 @@ func pixbufToIcon16(pixbuf *gdk.Pixbuf) *gtk.Image {
 }
 
 func AddIcon() *gtk.Image {
-	pixbuf, _ := gdk.PixbufNewFromDataOnly(imgAddIcon)
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconAdd)
 	return pixbufToIcon16(pixbuf)
 }
 
 func OkIcon() *gtk.Image {
-	pixbuf, _ := gdk.PixbufNewFromDataOnly(imgOkIcon)
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconOK)
 	return pixbufToIcon16(pixbuf)
 }
 
 func CancelIcon() *gtk.Image {
-	pixbuf, _ := gdk.PixbufNewFromDataOnly(imgCancelIcon)
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconCancel)
+	return pixbufToIcon16(pixbuf)
+}
+
+func CloseIcon() *gtk.Image {
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconClose)
+	return pixbufToIcon16(pixbuf)
+}
+
+func PasswordIcon() *gtk.Image {
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconPassword)
+	return pixbufToIcon16(pixbuf)
+}
+
+func SeedIcon() *gtk.Image {
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconSeed)
 	return pixbufToIcon16(pixbuf)
 }

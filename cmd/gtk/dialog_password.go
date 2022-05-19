@@ -53,5 +53,8 @@ func getWalletPassword(wallet *wallet.Wallet) (string, bool) {
 
 	dlg.Run()
 
+	// Destroy dialog after closing dialog
+	dlg.Destroy()
+
 	return password, ok
 }

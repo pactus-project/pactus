@@ -248,6 +248,38 @@
                     <property name="use-underline">True</property>
                     <signal name="clicked" handler="on_new_address" swapped="no"/>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="id_button_change_password">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Change the wallet password</property>
+                    <property name="label" translatable="yes">Change _password</property>
+                    <property name="use-underline">True</property>
+                    <signal name="clicked" handler="on_change_password" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="id_button_show_seed">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Show the wallet seed</property>
+                    <property name="label" translatable="yes">_Seed</property>
+                    <property name="use-underline">True</property>
+                    <signal name="clicked" handler="on_show_seed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
                 </child>
               </object>
               <packing>

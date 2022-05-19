@@ -15,6 +15,12 @@ func showInfoDialog(parent gtk.IWindow, msg string) {
 	dlg.Destroy()
 }
 
+func showWarningDialog(parent gtk.IWindow, msg string) {
+	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "%s", msg)
+	dlg.Run()
+	dlg.Destroy()
+}
+
 func showErrorDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
 	dlg.Run()
@@ -54,6 +60,10 @@ func getTreeViewObj(builder *gtk.Builder, name string) *gtk.TreeView {
 	return getObj(builder, name).(*gtk.TreeView)
 }
 
+func getTextViewObj(builder *gtk.Builder, name string) *gtk.TextView {
+	return getObj(builder, name).(*gtk.TextView)
+}
+
 func getBoxObj(builder *gtk.Builder, name string) *gtk.Box {
 	return getObj(builder, name).(*gtk.Box)
 }
@@ -70,6 +80,30 @@ func getButtonObj(builder *gtk.Builder, name string) *gtk.Button {
 	return getObj(builder, name).(*gtk.Button)
 }
 
+func getImageObj(builder *gtk.Builder, name string) *gtk.Image {
+	return getObj(builder, name).(*gtk.Image)
+}
+
 func getProgressBarObj(builder *gtk.Builder, name string) *gtk.ProgressBar {
 	return getObj(builder, name).(*gtk.ProgressBar)
+}
+
+func getTextViewContent(tv *gtk.TextView) string {
+	buf, _ := tv.GetBuffer()
+	startIter, endIter := buf.GetBounds()
+	content, err := buf.GetText(startIter, endIter, true)
+	if err != nil {
+		// TODO: Log error
+		return ""
+	}
+	return content
+}
+
+func setTextViewContent(tv *gtk.TextView, content string) {
+	buf, err := tv.GetBuffer()
+	if err != nil {
+		// TODO: Log error
+		return
+	}
+	buf.SetText(content)
 }

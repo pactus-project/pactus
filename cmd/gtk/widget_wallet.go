@@ -56,6 +56,8 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
 
 	getToolButtonObj(builder, "id_button_new_address").SetIconWidget(AddIcon())
+	getToolButtonObj(builder, "id_button_change_password").SetIconWidget(PasswordIcon())
+	getToolButtonObj(builder, "id_button_show_seed").SetIconWidget(SeedIcon())
 
 	labelName.SetText(model.wallet.Name())
 	labelLocation.SetText(model.wallet.Path())
@@ -110,7 +112,9 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 		})
 
 	signals := map[string]interface{}{
-		"on_new_address": w.onNewAddress,
+		"on_new_address":     w.onNewAddress,
+		"on_change_password": w.onChangePassword,
+		"on_show_seed":       w.onShowSeed,
 	}
 	builder.ConnectSignals(signals)
 
@@ -126,7 +130,28 @@ func (ww *widgetWallet) onNewAddress() {
 	}
 
 	err := ww.model.createAddress(password)
-	fatalErrorCheck(err)
+	if err != nil {
+		showErrorDialog(nil, err.Error())
+	}
+}
+
+func (ww *widgetWallet) onChangePassword() {
+	changePassword(ww.model.wallet)
+}
+
+func (ww *widgetWallet) onShowSeed() {
+	password, ok := getWalletPassword(ww.model.wallet)
+	if !ok {
+		return
+	}
+
+	seed, err := ww.model.wallet.Mnemonic(password)
+	if err != nil {
+		showErrorDialog(nil, err.Error())
+		return
+	}
+
+	showSeed(seed)
 }
 
 func (ww *widgetWallet) timeout() bool {
