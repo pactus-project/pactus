@@ -33,12 +33,11 @@ func TestAddVote(t *testing.T) {
 
 	h1 := hash.GenerateTestHash()
 	invSigner := bls.GenerateTestSigner()
-	vs := NewVoteSet(100, 5, vote.VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(5, vote.VoteTypePrecommit, committee.Validators())
 
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 100, 5, h1, invSigner.Address())
 	v2 := vote.NewVote(vote.VoteTypePrecommit, 100, 5, h1, signers[0].Address())
-	v3 := vote.NewVote(vote.VoteTypePrecommit, 101, 5, h1, signers[1].Address())
-	v4 := vote.NewVote(vote.VoteTypePrecommit, 100, 6, h1, signers[2].Address())
+	v3 := vote.NewVote(vote.VoteTypePrecommit, 100, 6, h1, signers[2].Address())
 
 	invSigner.SignMsg(v1)
 	err := vs.AddVote(v1)
@@ -57,12 +56,8 @@ func TestAddVote(t *testing.T) {
 	err = vs.AddVote(v2)
 	assert.NoError(t, err) // ok
 
-	signers[1].SignMsg(v3)
+	signers[2].SignMsg(v3)
 	err = vs.AddVote(v3)
-	assert.Error(t, err) // invalid height
-
-	signers[2].SignMsg(v4)
-	err = vs.AddVote(v4)
 	assert.Error(t, err) // invalid round
 }
 
@@ -72,7 +67,7 @@ func TestDuplicateVote(t *testing.T) {
 	h1 := hash.GenerateTestHash()
 	h2 := hash.GenerateTestHash()
 	h3 := hash.GenerateTestHash()
-	vs := NewVoteSet(1, 0, vote.VoteTypePrepare, committee.Validators())
+	vs := NewVoteSet(0, vote.VoteTypePrepare, committee.Validators())
 
 	correctVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[0].Address())
 	duplicatedVote1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, h2, signers[0].Address())
@@ -109,7 +104,7 @@ func TestDuplicateVote(t *testing.T) {
 func TestQuorum(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(0, vote.VoteTypePrecommit, committee.Validators())
 	h1 := hash.GenerateTestHash()
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
@@ -147,7 +142,7 @@ func TestQuorum(t *testing.T) {
 func TestPower(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, vote.VoteTypePrecommit, committee.Validators())
+	vs := NewVoteSet(0, vote.VoteTypePrecommit, committee.Validators())
 
 	h1 := hash.GenerateTestHash()
 	h2 := hash.GenerateTestHash()
@@ -184,7 +179,7 @@ func TestPower(t *testing.T) {
 func TestAllVotes(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
 
-	vs := NewVoteSet(1, 0, vote.VoteTypeChangeProposer, committee.Validators())
+	vs := NewVoteSet(0, vote.VoteTypeChangeProposer, committee.Validators())
 
 	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[0].Address())
 	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[1].Address())
@@ -211,7 +206,7 @@ func TestAllVotes(t *testing.T) {
 func TestOneThirdPower(t *testing.T) {
 	committee, signers := setupCommittee(t, 1000, 1000, 1500, 1500)
 
-	vs := NewVoteSet(1, 0, vote.VoteTypeChangeProposer, committee.Validators())
+	vs := NewVoteSet(0, vote.VoteTypeChangeProposer, committee.Validators())
 
 	v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[0].Address())
 	v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, signers[1].Address())

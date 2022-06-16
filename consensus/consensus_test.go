@@ -411,9 +411,15 @@ func TestConsensusInvalidVote(t *testing.T) {
 
 	testEnterNewHeight(tConsX)
 
-	v, _ := vote.GenerateTestPrecommitVote(1, 0)
-	tConsX.AddVote(v)
-	assert.False(t, tConsX.HasVote(v.Hash()))
+	v1, _ := vote.GenerateTestPrecommitVote(1, 0)
+	v2 := vote.NewVote(vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(),
+		tSigners[tIndexB].Address())
+	tSigners[tIndexB].SignMsg(v2)
+
+	tConsX.AddVote(v1)
+	tConsX.AddVote(v2)
+	assert.False(t, tConsX.HasVote(v1.Hash()))
+	assert.False(t, tConsX.HasVote(v2.Hash()))
 }
 
 func TestPickRandomVote(t *testing.T) {

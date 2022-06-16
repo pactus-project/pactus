@@ -13,7 +13,6 @@ import (
 )
 
 type VoteSet struct {
-	height     int32
 	round      int16
 	voteType   vote.Type
 	validators []*validator.Validator
@@ -23,14 +22,13 @@ type VoteSet struct {
 	quorumHash *hash.Hash
 }
 
-func NewVoteSet(height int32, round int16, voteType vote.Type, validators []*validator.Validator) *VoteSet {
+func NewVoteSet(round int16, voteType vote.Type, validators []*validator.Validator) *VoteSet {
 	totalPower := int64(0)
 	for _, val := range validators {
 		totalPower += val.Power()
 	}
 
 	return &VoteSet{
-		height:     height,
 		round:      round,
 		voteType:   voteType,
 		validators: validators,
@@ -41,7 +39,6 @@ func NewVoteSet(height int32, round int16, voteType vote.Type, validators []*val
 }
 
 func (vs *VoteSet) Type() vote.Type { return vs.voteType }
-func (vs *VoteSet) Height() int32   { return vs.height }
 func (vs *VoteSet) Round() int16    { return vs.round }
 
 func (vs *VoteSet) Len() int {
@@ -75,12 +72,11 @@ func (vs *VoteSet) mustGetBlockVotes(blockhash hash.Hash) *blockVotes {
 }
 
 func (vs *VoteSet) AddVote(v *vote.Vote) error {
-	if (v.Height() != vs.Height()) ||
-		(v.Round() != vs.Round()) ||
+	if (v.Round() != vs.Round()) ||
 		(v.Type() != vs.Type()) {
-		return errors.Errorf(errors.ErrInvalidVote, "expected %d/%d/%s, but got %d/%d/%s",
-			vs.Height(), vs.Round(), vs.Type(),
-			v.Height(), v.Round(), v.Type())
+		return errors.Errorf(errors.ErrInvalidVote, "expected %d/%s, but got %d/%s",
+			vs.Round(), vs.Type(),
+			v.Round(), v.Type())
 	}
 
 	signer := v.Signer()
@@ -176,5 +172,5 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 }
 
 func (vs *VoteSet) Fingerprint() string {
-	return fmt.Sprintf("{%v/%v/%s SUM:%v}", vs.height, vs.round, vs.voteType, vs.Len())
+	return fmt.Sprintf("{%v/%s SUM:%v}", vs.round, vs.voteType, vs.Len())
 }

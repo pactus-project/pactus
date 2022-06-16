@@ -220,6 +220,10 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 }
 
 func (cs *consensus) doAddVote(v *vote.Vote) {
+	if v.Height() != cs.height {
+		cs.logger.Debug("vote from invalid height", "vote", v)
+		return
+	}
 	err := cs.log.AddVote(v)
 	if err != nil {
 		cs.logger.Error("error on adding a vote", "vote", v, "err", err)

@@ -39,7 +39,7 @@ func (s *newHeightState) decide() {
 	}
 
 	vals := s.state.CommitteeValidators()
-	s.log.MoveToNewHeight(sateHeight+1, vals)
+	s.log.MoveToNewHeight(vals)
 
 	s.height = sateHeight + 1
 	s.round = 0
