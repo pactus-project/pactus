@@ -120,8 +120,8 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 }
 
 func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
-	theme, _ := gtk.IconThemeGetDefault()
-	theme.AddResourcePath("icons")
+	//theme, _ := gtk.IconThemeGetDefault()
+	//theme.AddResourcePath("icons")
 
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
