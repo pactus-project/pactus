@@ -70,10 +70,8 @@ GetProposal(height, round) ==
 HasProposal(height, round) ==
     Cardinality(GetProposal(height, round)) > 0
 
-
-ClearLog ==
-    log' = {msg \in log: (msg.type = "BLOCK-ANNOUNCE")}
-
+IsCommitted(height) ==
+    Cardinality(SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> height])) > 0
 
 \* SendProposal is used to broadcase proposal into the network
 SendProposal(index) ==
@@ -116,19 +114,20 @@ SendChangeProposerRequest(index) ==
 
 \*
 AnnounceBlock(index)  ==
-    SendMsg([
+    log' = {msg \in log: (msg.type = "BLOCK-ANNOUNCE") \/ msg.height > states[index].height } \cup {[
         type    |-> "BLOCK-ANNOUNCE",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> index
-        ])
+        index   |-> -1
+        ]}
 
 
 NewHeight(index) ==
     /\ states[index].name = "new-height"
     /\ states' = [states EXCEPT
         ![index].name = "propose",
-        ![index].height = states[index].height + 1]
+        ![index].height = states[index].height + 1,
+        ![index].round = 0]
     /\ UNCHANGED <<log>>
 
 
@@ -156,7 +155,7 @@ Prepare(index) ==
 Precommit(index) ==
     /\ states[index].name = "precommit"
     /\ SendPrecommitVote(index)
-    /\ IF HasPrecommitQuorum(index)
+    /\ IF HasPrecommitQuorum(index) /\ ~HasOneThirdOfChangeProposer(index)
        THEN states' = [states EXCEPT ![index].name = "commit"]
        ELSE states' = states
 
@@ -182,12 +181,13 @@ Sync(index) ==
     LET
         blocks == SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height])
     IN
-        /\ IF Cardinality(blocks) > 0
-           THEN states' = [states EXCEPT
-                ![index].name = "new-height",
-                ![index].proposerIndex = ((CHOOSE b \in blocks: TRUE).round + 1) % NumValidators]
-           ELSE states' = states
-        /\ UNCHANGED <<log>>
+        /\ Cardinality(blocks) > 0
+        /\ states' = [states EXCEPT
+            ![index].name = "propose",
+            ![index].height = states[index].height + 1,
+            ![index].round = 0,
+            ![index].proposerIndex = ((CHOOSE b \in blocks: TRUE).round + 1) % NumValidators]
+        /\ log' = log
 
 
 Init ==
@@ -201,11 +201,8 @@ Init ==
 
 Next ==
     \E index \in 0..NumValidators-1:
-        IF
-           /\ Cardinality(SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height])) > 0
-        THEN Sync(index)
-        ELSE
-           CASE states[index].name = "new-height"      -> NewHeight(index)
+        \/ Sync(index)
+        \/ CASE states[index].name = "new-height"      -> NewHeight(index)
              [] states[index].name = "propose"         -> Propose(index)
              [] states[index].name = "prepare"         -> Prepare(index)
              [] states[index].name = "precommit"       -> Precommit(index)
@@ -219,15 +216,19 @@ Spec ==
 
 
 TypeOK ==
-    /\ \E index \in 0..NumValidators-1:
+    /\ \A index \in 0..NumValidators-1:
         /\ states[index].name \in {"new-height", "propose", "prepare",
             "precommit", "commit", "change-proposer"}
-        /\ states[index].height < 3
-        /\ states[index].round < 3
-        /\ states[index].name = "propose" => Cardinality(SubsetOfMsgs([index |-> index, height |-> states[index].height, round |-> states[index].round])) = 0
-        /\ states[index].name = "precommit" => HasPrepareQuorum(index)
-        /\ states[index].name = "commit" => HasPrecommitQuorum(index)
-        /\ \E round \in 0..states[index].round:
+        /\ states[index].name = "propose" =>
+            \/ IsCommitted(states[index].height)
+            \/ Cardinality(SubsetOfMsgs([index |-> index, height |-> states[index].height, round |-> states[index].round])) = 0
+        /\ states[index].name = "precommit" =>
+            \/ IsCommitted(states[index].height)
+            \/ HasPrepareQuorum(index)
+        /\ states[index].name = "commit" =>
+            \/ IsCommitted(states[index].height)
+            \/ HasPrecommitQuorum(index)
+        /\ \A round \in 0..states[index].round:
             /\ Cardinality(GetProposal(states[index].height, round)) <= 1 \* not more than two proposals per round
             /\ round > 0 => HasChangeProposerQuorum(index)
 
