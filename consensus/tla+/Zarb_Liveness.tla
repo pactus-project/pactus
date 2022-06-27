@@ -1,4 +1,4 @@
--------------------------------- MODULE Liveness --------------------------------
+-------------------------------- MODULE Zarb_Liveness --------------------------------
 EXTENDS Zarb
 
 CONSTANT MaxHeight
@@ -12,6 +12,5 @@ Success == <>(IsCommitted(MaxHeight))
 
 LiveSpec ==
     /\ Spec /\ SF_vars(Next)
-
 
 =============================================================================
