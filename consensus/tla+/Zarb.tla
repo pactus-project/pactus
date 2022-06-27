@@ -142,8 +142,8 @@ Propose(index) ==
 Prepare(index) ==
     /\ states[index].name = "prepare"
     /\ IF /\ HasProposal(states[index].height, states[index].round)
-          /\ ~HasOneThirdOfChangeProposer(index)
-          \/ states[index].round < MaxRound
+            /\ ~HasOneThirdOfChangeProposer(index)
+          \/ states[index].round >= MaxRound
        THEN /\ SendPrepareVote(index)
             /\ IF HasPrepareQuorum(index)
                THEN states' = [states EXCEPT ![index].name = "precommit"]
@@ -219,18 +219,16 @@ TypeOK ==
     /\ \A index \in 0..NumValidators-1:
         /\ states[index].name \in {"new-height", "propose", "prepare",
             "precommit", "commit", "change-proposer"}
-        /\ states[index].name = "propose" =>
-            \/ IsCommitted(states[index].height)
-            \/ Cardinality(SubsetOfMsgs([index |-> index, height |-> states[index].height, round |-> states[index].round])) = 0
-        /\ states[index].name = "precommit" =>
-            \/ IsCommitted(states[index].height)
-            \/ HasPrepareQuorum(index)
-        /\ states[index].name = "commit" =>
-            \/ IsCommitted(states[index].height)
-            \/ HasPrecommitQuorum(index)
-        /\ \A round \in 0..states[index].round:
-            /\ Cardinality(GetProposal(states[index].height, round)) <= 1 \* not more than two proposals per round
-            /\ round > 0 => HasChangeProposerQuorum(index)
+        /\ ~IsCommitted(states[index].height) =>
+            /\ states[index].name = "propose" =>
+                \/ Cardinality(SubsetOfMsgs([index |-> index, round |-> states[index].round])) = 0
+            /\ states[index].name = "precommit" =>
+                \/ HasPrepareQuorum(index)
+            /\ states[index].name = "commit" =>
+                \/ HasPrecommitQuorum(index)
+            /\ \A round \in 0..states[index].round:
+                /\ Cardinality(GetProposal(states[index].height, round)) <= 1 \* not more than two proposals per round
+                /\ round > 0 => Cardinality(SubsetOfMsgs([type |-> "CHANGE-PROPOSER", round |-> round - 1])) >= QuorumCnt
 
 
 
