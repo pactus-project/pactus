@@ -234,7 +234,7 @@ func testAddVote(cons *consensus, voteType vote.Type, height int32, round int16,
 func testEnterNewHeight(cons *consensus) {
 	cons.lk.Lock()
 	cons.enterNewState(cons.newHeightState)
-	cons.currentState.onTimedout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
+	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
 	cons.lk.Unlock()
 }
 

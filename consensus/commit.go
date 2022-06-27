@@ -62,8 +62,8 @@ func (s *commitState) onSetProposal(p *proposal.Proposal) {
 	s.decide()
 }
 
-func (s *commitState) onTimedout(t *ticker) {
-	s.logger.Debug("invalid ticker", "ticker", t)
+func (s *commitState) onTimeout(t *ticker) {
+	// Ignore timeouts
 }
 
 func (s *commitState) name() string {

@@ -78,8 +78,8 @@ func (s *precommitState) onSetProposal(p *proposal.Proposal) {
 	}
 }
 
-func (s *precommitState) onTimedout(t *ticker) {
-	s.logger.Debug("invalid ticker", "ticker", t)
+func (s *precommitState) onTimeout(t *ticker) {
+	// Ignore timeouts
 }
 
 func (s *precommitState) name() string {

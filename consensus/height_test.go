@@ -16,10 +16,10 @@ func TestNewHeightTimedout(t *testing.T) {
 	s := &newHeightState{tConsX}
 
 	// Invalid target
-	s.onTimedout(&ticker{Height: 2, Target: 3})
+	s.onTimeout(&ticker{Height: 2, Target: 3})
 	checkHeightRound(t, tConsX, 1, 0)
 
-	s.onTimedout(&ticker{Height: 2, Target: tickerTargetNewHeight})
+	s.onTimeout(&ticker{Height: 2, Target: tickerTargetNewHeight})
 	checkHeightRound(t, tConsX, 2, 0)
 }
 

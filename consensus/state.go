@@ -9,6 +9,6 @@ type consState interface {
 	enter()
 	onSetProposal(p *proposal.Proposal)
 	onAddVote(v *vote.Vote)
-	onTimedout(t *ticker)
+	onTimeout(t *ticker)
 	name() string
 }

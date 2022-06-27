@@ -53,7 +53,7 @@ func (s *proposeState) onSetProposal(p *proposal.Proposal) {
 	panic("Unreachable")
 }
 
-func (s *proposeState) onTimedout(t *ticker) {
+func (s *proposeState) onTimeout(t *ticker) {
 	panic("Unreachable")
 }
 func (s *proposeState) name() string {

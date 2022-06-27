@@ -199,7 +199,7 @@ func (cs *consensus) handleTimeout(t *ticker) {
 		return
 	}
 
-	cs.currentState.onTimedout(t)
+	cs.currentState.onTimeout(t)
 }
 
 func (cs *consensus) AddVote(v *vote.Vote) {

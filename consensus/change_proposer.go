@@ -40,7 +40,7 @@ func (s *changeProposerState) onSetProposal(p *proposal.Proposal) {
 	// Ignore proposals
 }
 
-func (s *changeProposerState) onTimedout(t *ticker) {
+func (s *changeProposerState) onTimeout(t *ticker) {
 	// Ignore timeouts
 }
 
