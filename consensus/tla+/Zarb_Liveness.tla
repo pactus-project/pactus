@@ -8,10 +8,9 @@ CONSTANT MaxHeight
 (***************************************************************************)
 (* Liveness: A node eventually moves to a new height.                      *)
 (***************************************************************************)
-Success == <>(IsCommitted(MaxHeight))
+LiveSpec == Spec /\ SF_vars(Next)
 
-LiveSpec ==
-    /\ Spec /\ SF_vars(Next)
+Success == <>(IsCommitted(MaxHeight))
 
 Constraint == ~IsCommitted(MaxHeight)
 =============================================================================

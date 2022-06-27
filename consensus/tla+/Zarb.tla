@@ -61,9 +61,6 @@ HasOneThirdOfChangeProposer(index) ==
         height |-> states[index].height,
         round  |-> states[index].round])) >= OneThird
 
-SendMsg(msg) ==
-    log' = log \cup {msg}
-
 GetProposal(height, round) ==
     SubsetOfMsgs([type |-> "PROPOSAL", height |-> height, round |-> round])
 
@@ -75,41 +72,41 @@ IsCommitted(height) ==
 
 \* SendProposal is used to broadcase proposal into the network
 SendProposal(index) ==
-    SendMsg([
+    log' = log \cup {[
         type    |-> "PROPOSAL",
         height  |-> states[index].height,
         round   |-> states[index].round,
         index   |-> index
-        ])
+        ]}
 
 \*
 SendPrepareVote(index) ==
-    SendMsg([
+    log' = log \cup {[
         type    |-> "PREPARE",
         height  |-> states[index].height,
         round   |-> states[index].round,
         index   |-> index
-        ])
+        ]}
 
 \*
 SendPrecommitVote(index) ==
-    SendMsg([
+    log' = log \cup {[
         type    |-> "PRECOMMIT",
         height  |-> states[index].height,
         round   |-> states[index].round,
         index   |-> index
-        ])
+        ]}
 
 
 
 \*
 SendChangeProposerRequest(index) ==
-    SendMsg([
+    log' = log \cup {[
         type    |-> "CHANGE-PROPOSER",
         height  |-> states[index].height,
         round   |-> states[index].round,
         index   |-> index
-        ])
+        ]}
 
 
 \*
@@ -142,7 +139,7 @@ Propose(index) ==
 Prepare(index) ==
     /\ states[index].name = "prepare"
     /\ IF /\ HasProposal(states[index].height, states[index].round)
-            /\ ~HasOneThirdOfChangeProposer(index)
+          /\ ~HasOneThirdOfChangeProposer(index)
           \/ states[index].round >= MaxRound
        THEN /\ SendPrepareVote(index)
             /\ IF HasPrepareQuorum(index)
@@ -221,7 +218,7 @@ TypeOK ==
             "precommit", "commit", "change-proposer"}
         /\ ~IsCommitted(states[index].height) =>
             /\ states[index].name = "propose" =>
-                \/ Cardinality(SubsetOfMsgs([index |-> index, round |-> states[index].round])) = 0
+                \/ Cardinality(SubsetOfMsgs([index |-> index, height |-> states[index].height, round |-> states[index].round])) = 0
             /\ states[index].name = "precommit" =>
                 \/ HasPrepareQuorum(index)
             /\ states[index].name = "commit" =>

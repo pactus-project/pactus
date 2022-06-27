@@ -2,3 +2,5 @@
 *.out
 *.toolbox
 states
+*.tex
+*.dvi
