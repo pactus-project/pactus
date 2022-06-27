@@ -13,4 +13,5 @@ Success == <>(IsCommitted(MaxHeight))
 LiveSpec ==
     /\ Spec /\ SF_vars(Next)
 
+Constraint == ~IsCommitted(MaxHeight)
 =============================================================================

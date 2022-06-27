@@ -202,12 +202,12 @@ Init ==
 Next ==
     \E index \in 0..NumValidators-1:
         \/ Sync(index)
-        \/ CASE states[index].name = "new-height"      -> NewHeight(index)
-             [] states[index].name = "propose"         -> Propose(index)
-             [] states[index].name = "prepare"         -> Prepare(index)
-             [] states[index].name = "precommit"       -> Precommit(index)
-             [] states[index].name = "commit"          -> Commit(index)
-             [] states[index].name = "change-proposer" -> ChangeProposer(index)
+        \/ NewHeight(index)
+        \/ Propose(index)
+        \/ Prepare(index)
+        \/ Precommit(index)
+        \/ Commit(index)
+        \/ ChangeProposer(index)
 
 \* The specification must start with the initial state and transition according
 \* to Next.
