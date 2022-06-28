@@ -322,13 +322,13 @@ func TestRoundVotes(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	t.Run("Ignore votes from invalid height", func(t *testing.T) {
-		v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
+		v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v1)
 
-		v2 := vote.NewVote(vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
+		v2 := vote.NewVote(vote.VoteTypeChangeProposer, 2, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v2)
 
-		v3 := vote.NewVote(vote.VoteTypePrepare, 3, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
+		v3 := vote.NewVote(vote.VoteTypeChangeProposer, 3, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v3)
 
 		tConsP.AddVote(v1)
