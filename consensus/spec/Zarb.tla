@@ -1,27 +1,35 @@
 -------------------------------- MODULE Zarb --------------------------------
+(***************************************************************************)
+(* The specification of the Zarb consensus algorithm                       *)
+(* Zarb consensus algorithm based on Practical Byzantine Fault Tolerant  . *)
+(* For more information check here:                                        *)
+(* `^\url{https://zarb.network/learn/consensus/consensus-mechanism.html}^' *)
+(***************************************************************************)
 EXTENDS Integers, Sequences, FiniteSets, TLC
 
 CONSTANT
     \* The total number of faulty nodes
     NumFaulty,
+    \* The maximum number of round per height.
+    \* this is to restrict the allowed behaviours that TLC scans through.
     MaxRound
-
-NumValidators == (3 * NumFaulty) + 1
-QuorumCnt == (2 * NumFaulty) + 1
-OneThird == NumFaulty + 1
 
 ASSUME
     /\ NumFaulty >= 1
-
-
 
 VARIABLES
     log,
     states
 
+\* Total number of replicas that is `3f+1' where `f' is number of faulty nodes.
+Replicas == (3 * NumFaulty) + 1
+\* 2/3 of total replicas that is `2f+1'
+QuorumCnt == (2 * NumFaulty) + 1
+\* 1/3 of total replicas that is `f+1'
+OneThird == NumFaulty + 1
 
+\* A tuple with all variables in the spec (for ease of use in temporal conditions)
 vars == <<states, log>>
-
 
 -----------------------------------------------------------------------------
 (***************************************************************************)
@@ -32,23 +40,25 @@ SubsetOfMsgs(params) ==
     {msg \in log: \A field \in DOMAIN params: msg[field] = params[field]}
 
 
-\* In Zarb isProposer is chosen based on the time a validator was joined the network
-\* here we assume the validators joined sequentially
+\* IsProposer checks if the replica is the proposer for this round
 IsProposer(index) ==
-    (states[index].round + states[index].proposerIndex) % NumValidators = index
+    (states[index].round + states[index].proposerIndex) % Replicas = index
 
+\* HasPrepareQuorum checks if there is a quorum of the PREPARE votes in each round.
 HasPrepareQuorum(index) ==
     Cardinality(SubsetOfMsgs([
         type   |-> "PREPARE",
         height |-> states[index].height,
         round  |-> states[index].round])) >= QuorumCnt
 
+\* HasPrecommitQuorum checks if there is a quorum of the PRECOMMIT votes in each round.
 HasPrecommitQuorum(index) ==
     Cardinality(SubsetOfMsgs([
         type   |-> "PRECOMMIT",
         height |-> states[index].height,
         round  |-> states[index].round])) >= QuorumCnt
 
+\* HasChangeProposerQuorum checks if there is a quorum of the CHANGE-PROPOSER votes in each round.
 HasChangeProposerQuorum(index) ==
     Cardinality(SubsetOfMsgs([
         type   |-> "CHANGE-PROPOSER",
@@ -70,7 +80,12 @@ HasProposal(height, round) ==
 IsCommitted(height) ==
     Cardinality(SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> height])) > 0
 
-\* SendProposal is used to broadcase proposal into the network
+-----------------------------------------------------------------------------
+(***************************************************************************)
+(* Network functions                                                       *)
+(***************************************************************************)
+
+\* SendProposal is used to broadcast the PROPOSAL into the network.
 SendProposal(index) ==
     log' = log \cup {[
         type    |-> "PROPOSAL",
@@ -79,7 +94,7 @@ SendProposal(index) ==
         index   |-> index
         ]}
 
-\*
+\* SendPrepareVote is used to broadcast PREPARE votes into the network.
 SendPrepareVote(index) ==
     log' = log \cup {[
         type    |-> "PREPARE",
@@ -88,7 +103,7 @@ SendPrepareVote(index) ==
         index   |-> index
         ]}
 
-\*
+\* SendPrecommitVote is used to broadcast PRECOMMIT votes into the network.
 SendPrecommitVote(index) ==
     log' = log \cup {[
         type    |-> "PRECOMMIT",
@@ -99,7 +114,7 @@ SendPrecommitVote(index) ==
 
 
 
-\*
+\* SendChangeProposerRequest is used to broadcast CHANGE-PROPOSER votes into the network.
 SendChangeProposerRequest(index) ==
     log' = log \cup {[
         type    |-> "CHANGE-PROPOSER",
@@ -109,7 +124,7 @@ SendChangeProposerRequest(index) ==
         ]}
 
 
-\*
+\* AnnounceBlock announces the block for the current height and clears the logs.
 AnnounceBlock(index)  ==
     log' = {msg \in log: (msg.type = "BLOCK-ANNOUNCE") \/ msg.height > states[index].height } \cup {[
         type    |-> "BLOCK-ANNOUNCE",
@@ -118,7 +133,12 @@ AnnounceBlock(index)  ==
         index   |-> -1
         ]}
 
+-----------------------------------------------------------------------------
+(***************************************************************************)
+(* States functions                                                        *)
+(***************************************************************************)
 
+\* NewHeight state
 NewHeight(index) ==
     /\ states[index].name = "new-height"
     /\ states' = [states EXCEPT
@@ -128,6 +148,7 @@ NewHeight(index) ==
     /\ UNCHANGED <<log>>
 
 
+\* Propose state
 Propose(index) ==
     /\ states[index].name = "propose"
     /\ IF IsProposer(index)
@@ -136,6 +157,7 @@ Propose(index) ==
     /\ states' = [states EXCEPT ![index].name = "prepare"]
 
 
+\* Prepare state
 Prepare(index) ==
     /\ states[index].name = "prepare"
     /\ IF /\ HasProposal(states[index].height, states[index].round)
@@ -149,6 +171,7 @@ Prepare(index) ==
             /\ states' = [states EXCEPT ![index].name = "change-proposer"]
 
 
+\* Precommit state
 Precommit(index) ==
     /\ states[index].name = "precommit"
     /\ SendPrecommitVote(index)
@@ -157,13 +180,15 @@ Precommit(index) ==
        ELSE states' = states
 
 
+\* Commit state
 Commit(index) ==
     /\ states[index].name = "commit"
     /\ AnnounceBlock(index)
     /\ states' = [states EXCEPT
         ![index].name = "new-height",
-        ![index].proposerIndex = (states[index].round + 1) % NumValidators]
+        ![index].proposerIndex = (states[index].round + 1) % Replicas]
 
+\* ChangeProposer state
 ChangeProposer(index) ==
     /\ states[index].name = "change-proposer"
     /\ IF HasChangeProposerQuorum(index)
@@ -183,13 +208,14 @@ Sync(index) ==
             ![index].name = "propose",
             ![index].height = states[index].height + 1,
             ![index].round = 0,
-            ![index].proposerIndex = ((CHOOSE b \in blocks: TRUE).round + 1) % NumValidators]
+            ![index].proposerIndex = ((CHOOSE b \in blocks: TRUE).round + 1) % Replicas]
         /\ log' = log
 
+-----------------------------------------------------------------------------
 
 Init ==
     /\ log = {}
-    /\ states = [index \in 0..NumValidators-1 |-> [
+    /\ states = [index \in 0..Replicas-1 |-> [
         name            |-> "new-height",
         height          |-> 0,
         round           |-> 0,
@@ -197,7 +223,7 @@ Init ==
        ]]
 
 Next ==
-    \E index \in 0..NumValidators-1:
+    \E index \in 0..Replicas-1:
         \/ Sync(index)
         \/ NewHeight(index)
         \/ Propose(index)
@@ -206,14 +232,14 @@ Next ==
         \/ Commit(index)
         \/ ChangeProposer(index)
 
-\* The specification must start with the initial state and transition according
-\* to Next.
 Spec ==
     Init /\ [][Next]_vars
 
-
+(***************************************************************************)
+(* TypeOK is the type-correctness invariant.                               *)
+(***************************************************************************)
 TypeOK ==
-    /\ \A index \in 0..NumValidators-1:
+    /\ \A index \in 0..Replicas-1:
         /\ states[index].name \in {"new-height", "propose", "prepare",
             "precommit", "commit", "change-proposer"}
         /\ ~IsCommitted(states[index].height) =>
@@ -226,8 +252,6 @@ TypeOK ==
             /\ \A round \in 0..states[index].round:
                 /\ Cardinality(GetProposal(states[index].height, round)) <= 1 \* not more than two proposals per round
                 /\ round > 0 => Cardinality(SubsetOfMsgs([type |-> "CHANGE-PROPOSER", round |-> round - 1])) >= QuorumCnt
-
-
 
 
 =============================================================================
