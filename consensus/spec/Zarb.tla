@@ -1,7 +1,7 @@
 -------------------------------- MODULE Zarb --------------------------------
 (***************************************************************************)
-(* The specification of the Zarb consensus algorithm                       *)
-(* Zarb consensus algorithm based on Practical Byzantine Fault Tolerant  . *)
+(* The specification of the Zarb consensus algorithm based on              *)
+(* Practical Byzantine Fault Tolerant.                                     *)
 (* For more information check here:                                        *)
 (* `^\url{https://zarb.network/learn/consensus/consensus-mechanism.html}^' *)
 (***************************************************************************)
@@ -85,44 +85,44 @@ IsCommitted(height) ==
 (* Network functions                                                       *)
 (***************************************************************************)
 
+\* SendMsg broadcasts the message iff the current height is not committed yet.
+SendMsg(msg) ==
+    IF ~IsCommitted(msg.height)
+    THEN log' = log \cup {msg}
+    ELSE log' = log
+    
+
 \* SendProposal is used to broadcast the PROPOSAL into the network.
 SendProposal(index) ==
-    log' = log \cup {[
+    SendMsg([
         type    |-> "PROPOSAL",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> index
-        ]}
+        index   |-> index])
 
 \* SendPrepareVote is used to broadcast PREPARE votes into the network.
 SendPrepareVote(index) ==
-    log' = log \cup {[
+    SendMsg([
         type    |-> "PREPARE",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> index
-        ]}
+        index   |-> index])
 
 \* SendPrecommitVote is used to broadcast PRECOMMIT votes into the network.
 SendPrecommitVote(index) ==
-    log' = log \cup {[
+    SendMsg([
         type    |-> "PRECOMMIT",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> index
-        ]}
-
-
+        index   |-> index])
 
 \* SendChangeProposerRequest is used to broadcast CHANGE-PROPOSER votes into the network.
 SendChangeProposerRequest(index) ==
-    log' = log \cup {[
+    SendMsg([
         type    |-> "CHANGE-PROPOSER",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> index
-        ]}
-
+        index   |-> index])
 
 \* AnnounceBlock announces the block for the current height and clears the logs.
 AnnounceBlock(index)  ==
@@ -130,8 +130,7 @@ AnnounceBlock(index)  ==
         type    |-> "BLOCK-ANNOUNCE",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> -1
-        ]}
+        index   |-> -1]}
 
 -----------------------------------------------------------------------------
 (***************************************************************************)
@@ -198,7 +197,8 @@ ChangeProposer(index) ==
        ELSE states' = states
     /\ UNCHANGED <<log>>
 
-
+\* Sync checks the log for the committed blocks at the current height. 
+\* If such a block exists, it commits and moves to the next height.
 Sync(index) ==
     LET
         blocks == SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height])
@@ -219,8 +219,7 @@ Init ==
         name            |-> "new-height",
         height          |-> 0,
         round           |-> 0,
-        proposerIndex   |-> 0
-       ]]
+        proposerIndex   |-> 0]]
 
 Next ==
     \E index \in 0..Replicas-1:
@@ -243,12 +242,14 @@ TypeOK ==
         /\ states[index].name \in {"new-height", "propose", "prepare",
             "precommit", "commit", "change-proposer"}
         /\ ~IsCommitted(states[index].height) =>
+            /\ states[index].name = "new-height" /\ states[index].height > 1 =>
+                IsCommitted(states[index].height - 1)
             /\ states[index].name = "propose" =>
-                \/ Cardinality(SubsetOfMsgs([index |-> index, height |-> states[index].height, round |-> states[index].round])) = 0
+                Cardinality(SubsetOfMsgs([index |-> index, height |-> states[index].height, round |-> states[index].round])) = 0
             /\ states[index].name = "precommit" =>
-                \/ HasPrepareQuorum(index)
+                HasPrepareQuorum(index)
             /\ states[index].name = "commit" =>
-                \/ HasPrecommitQuorum(index)
+                HasPrecommitQuorum(index)
             /\ \A round \in 0..states[index].round:
                 /\ Cardinality(GetProposal(states[index].height, round)) <= 1 \* not more than two proposals per round
                 /\ round > 0 => Cardinality(SubsetOfMsgs([type |-> "CHANGE-PROPOSER", round |-> round - 1])) >= QuorumCnt
