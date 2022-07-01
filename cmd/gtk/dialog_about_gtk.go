@@ -14,7 +14,7 @@ var (
 	uiAboutGtkDialog []byte
 
 	//go:embed assets/images/gtk.svg
-	imgGtkIcon []byte
+	imageGtk []byte
 )
 
 func showAboutGTKDialog() {
@@ -23,7 +23,7 @@ func showAboutGTKDialog() {
 
 	dlg := getAboutDialogObj(builder, "id_dialog_about_gtk")
 
-	pixbuf, err := gdk.PixbufNewFromDataOnly(imgGtkIcon)
+	pixbuf, err := gdk.PixbufNewFromDataOnly(imageGtk)
 	fatalErrorCheck(err)
 
 	dlg.SetLogo(pixbuf)

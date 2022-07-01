@@ -19,6 +19,9 @@ func getAddressLabel(oldLabel string) (string, bool) {
 	labelEntry := getEntryObj(builder, "id_entry_label")
 	labelEntry.SetText(oldLabel)
 
+	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
+	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
+
 	newLabel := ""
 	ok := false
 	onOk := func() {

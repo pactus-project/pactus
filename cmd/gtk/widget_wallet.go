@@ -55,6 +55,10 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	labelLocation := getLabelObj(builder, "id_label_wallet_location")
 	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
 
+	getToolButtonObj(builder, "id_button_new_address").SetIconWidget(AddIcon())
+	getToolButtonObj(builder, "id_button_change_password").SetIconWidget(PasswordIcon())
+	getToolButtonObj(builder, "id_button_show_seed").SetIconWidget(SeedIcon())
+
 	labelName.SetText(model.wallet.Name())
 	labelLocation.SetText(model.wallet.Path())
 	if model.wallet.IsEncrypted() {
@@ -108,7 +112,9 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 		})
 
 	signals := map[string]interface{}{
-		"on_new_address": w.onNewAddress,
+		"on_new_address":     w.onNewAddress,
+		"on_change_password": w.onChangePassword,
+		"on_show_seed":       w.onShowSeed,
 	}
 	builder.ConnectSignals(signals)
 
@@ -124,7 +130,28 @@ func (ww *widgetWallet) onNewAddress() {
 	}
 
 	err := ww.model.createAddress(password)
-	fatalErrorCheck(err)
+	if err != nil {
+		showErrorDialog(nil, err.Error())
+	}
+}
+
+func (ww *widgetWallet) onChangePassword() {
+	changePassword(ww.model.wallet)
+}
+
+func (ww *widgetWallet) onShowSeed() {
+	password, ok := getWalletPassword(ww.model.wallet)
+	if !ok {
+		return
+	}
+
+	seed, err := ww.model.wallet.Mnemonic(password)
+	if err != nil {
+		showErrorDialog(nil, err.Error())
+		return
+	}
+
+	showSeed(seed)
 }
 
 func (ww *widgetWallet) timeout() bool {
@@ -135,6 +162,24 @@ func (ww *widgetWallet) timeout() bool {
 }
 
 func (ww *widgetWallet) onUpdateLabel() {
+	addr := ww.getSelectedAddress()
+	if addr != "" {
+		oldLabel := ww.model.wallet.Label(addr)
+		newLabel, ok := getAddressLabel(oldLabel)
+		if ok {
+			err := ww.model.wallet.SetLabel(addr, newLabel)
+			fatalErrorCheck(err)
+
+			err = ww.model.wallet.Save()
+			fatalErrorCheck(err)
+
+			err = ww.model.rebuildModel()
+			fatalErrorCheck(err)
+		}
+	}
+}
+
+func (ww *widgetWallet) getSelectedAddress() string {
 	selection, err := ww.treeView.GetSelection()
 	fatalErrorCheck(err)
 
@@ -144,21 +189,12 @@ func (ww *widgetWallet) onUpdateLabel() {
 			path, err := model.(*gtk.TreeModel).GetValue(iter, IDAddressesColumnAddress)
 			fatalErrorCheck(err)
 
-			s, _ := path.GetString()
-			log.Printf("treeSelectionChangedCB: selected path: %s\n", s)
+			addr, err := path.GetString()
+			fatalErrorCheck(err)
+			log.Printf("treeSelectionChangedCB: selected path: %s\n", addr)
 
-			oldLabel := ww.model.wallet.Label(s)
-			newLabel, ok := getAddressLabel(oldLabel)
-			if ok {
-				err := ww.model.wallet.SetLabel(s, newLabel)
-				fatalErrorCheck(err)
-
-				err = ww.model.wallet.Save()
-				fatalErrorCheck(err)
-
-				err = ww.model.rebuildModel()
-				fatalErrorCheck(err)
-			}
+			return addr
 		}
 	}
+	return ""
 }

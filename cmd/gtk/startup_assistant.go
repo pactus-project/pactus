@@ -15,26 +15,6 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-func getTextViewContent(tv *gtk.TextView) string {
-	buf, _ := tv.GetBuffer()
-	startIter, endIter := buf.GetBounds()
-	content, err := buf.GetText(startIter, endIter, true)
-	if err != nil {
-		// TODO: Log error
-		return ""
-	}
-	return content
-}
-
-func setTextViewContent(tv *gtk.TextView, content string) {
-	buf, err := tv.GetBuffer()
-	if err != nil {
-		// TODO: Log error
-		return
-	}
-	buf.SetText(content)
-}
-
 func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginTop(top)
 	widget.ToWidget().SetMarginBottom(bottom)
@@ -51,33 +31,33 @@ func startupAssistant(workingDir string, testnet bool) bool {
 		fatalErrorCheck(err)
 
 		page.SetHExpand(true)
-		titleLabel, err := gtk.LabelNew(title)
+		labelTitle, err := gtk.LabelNew(title)
 		fatalErrorCheck(err)
 
-		setMargin(titleLabel, 0, 20, 0, 0)
+		setMargin(labelTitle, 0, 20, 0, 0)
 		frame, err := gtk.FrameNew(subject)
 		fatalErrorCheck(err)
 
 		frame.SetHExpand(true)
 
-		descLabel, err := gtk.LabelNew("")
+		labelDesc, err := gtk.LabelNew("")
 		fatalErrorCheck(err)
 
-		descLabel.SetUseMarkup(true)
-		descLabel.SetMarkup(desc)
-		descLabel.SetVExpand(true)
-		descLabel.SetVAlign(gtk.ALIGN_END)
-		descLabel.SetHAlign(gtk.ALIGN_START)
-		setMargin(descLabel, 0, 0, 0, 0)
+		labelDesc.SetUseMarkup(true)
+		labelDesc.SetMarkup(desc)
+		labelDesc.SetVExpand(true)
+		labelDesc.SetVAlign(gtk.ALIGN_END)
+		labelDesc.SetHAlign(gtk.ALIGN_START)
+		setMargin(labelDesc, 0, 0, 0, 0)
 		frame.Add(content)
 
 		box, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
 		fatalErrorCheck(err)
 
 		box.Add(frame)
-		box.Add(descLabel)
+		box.Add(labelDesc)
 
-		page.Add(titleLabel)
+		page.Add(labelTitle)
 		page.Add(box)
 
 		page.SetName(name)
@@ -130,14 +110,14 @@ func startupAssistant(workingDir string, testnet bool) bool {
 		pageModeDesc)
 
 	// --- pageSeed
-	seedTextView, err := gtk.TextViewNew()
+	textViewSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
-	setMargin(seedTextView, 6, 6, 6, 6)
-	seedTextView.SetWrapMode(gtk.WRAP_WORD)
-	seedTextView.SetEditable(false)
-	seedTextView.SetMonospace(true)
-	seedTextView.SetSizeRequest(0, 80)
+	setMargin(textViewSeed, 6, 6, 6, 6)
+	textViewSeed.SetWrapMode(gtk.WRAP_WORD)
+	textViewSeed.SetEditable(false)
+	textViewSeed.SetMonospace(true)
+	textViewSeed.SetSizeRequest(0, 80)
 
 	pageSeedName := "page_seed"
 	pageSeedTitle := "Wallet seed"
@@ -151,33 +131,33 @@ This seed will allow you to recover your wallet in case of computer failure.
 
 	pageSeed = createPage(
 		assistant,
-		seedTextView,
+		textViewSeed,
 		pageSeedName,
 		pageSeedTitle,
 		pageSeedSubject,
 		pageSeedDesc)
 
 	// --- pageSeedConfirm
-	seedConfirmTextView, err := gtk.TextViewNew()
+	textViewConfirmSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
-	setMargin(seedConfirmTextView, 6, 6, 6, 6)
-	seedConfirmTextView.SetWrapMode(gtk.WRAP_WORD)
-	seedConfirmTextView.SetEditable(true)
-	seedConfirmTextView.SetMonospace(true)
-	seedConfirmTextView.SetSizeRequest(0, 80)
+	setMargin(textViewConfirmSeed, 6, 6, 6, 6)
+	textViewConfirmSeed.SetWrapMode(gtk.WRAP_WORD)
+	textViewConfirmSeed.SetEditable(true)
+	textViewConfirmSeed.SetMonospace(true)
+	textViewConfirmSeed.SetSizeRequest(0, 80)
 
-	seedConfirmTextView.Connect("paste_clipboard", func(textView *gtk.TextView) {
+	textViewConfirmSeed.Connect("paste_clipboard", func(textView *gtk.TextView) {
 		showInfoDialog(assistant, "Opps, no copy paste!")
-		seedConfirmTextView.StopEmission("paste_clipboard")
+		textViewConfirmSeed.StopEmission("paste_clipboard")
 	})
 
-	seedConfirmTextBuffer, err := seedConfirmTextView.GetBuffer()
+	seedConfirmTextBuffer, err := textViewConfirmSeed.GetBuffer()
 	fatalErrorCheck(err)
 
 	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
-		mnemonic1 := getTextViewContent(seedTextView)
-		mnemonic2 := getTextViewContent(seedConfirmTextView)
+		mnemonic1 := getTextViewContent(textViewSeed)
+		mnemonic2 := getTextViewContent(textViewConfirmSeed)
 		space := regexp.MustCompile(`\s+`)
 		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
 		mnemonic2 = strings.TrimSpace(mnemonic2)
@@ -196,48 +176,48 @@ To make sure that you have properly saved your seed, please retype it here.`
 
 	pageSeedConfirm = createPage(
 		assistant,
-		seedConfirmTextView,
+		textViewConfirmSeed,
 		pageSeedConfirmName,
 		pageSeedConfirmTitle,
 		pageSeedConfirmSubject,
 		pageSeedConfirmDesc)
 
 	// --- PagePassword
-	passwordEntry, err := gtk.EntryNew()
+	entryPassword, err := gtk.EntryNew()
 	fatalErrorCheck(err)
 
-	setMargin(passwordEntry, 6, 6, 6, 6)
-	passwordEntry.SetVisibility(false)
-	passwordLabel, err := gtk.LabelNew("Password: ")
+	setMargin(entryPassword, 6, 6, 6, 6)
+	entryPassword.SetVisibility(false)
+	labelConfirmPassword, err := gtk.LabelNew("Password: ")
 	fatalErrorCheck(err)
 
-	passwordLabel.SetHAlign(gtk.ALIGN_START)
-	setMargin(passwordLabel, 6, 6, 6, 6)
+	labelConfirmPassword.SetHAlign(gtk.ALIGN_START)
+	setMargin(labelConfirmPassword, 6, 6, 6, 6)
 
-	passwordConfirmEntry, err := gtk.EntryNew()
+	entryConfirmPassword, err := gtk.EntryNew()
 	fatalErrorCheck(err)
 
-	setMargin(passwordConfirmEntry, 6, 6, 6, 6)
-	passwordConfirmEntry.SetVisibility(false)
-	confirmationLineLabel, err := gtk.LabelNew("Confirmation: ")
+	setMargin(entryConfirmPassword, 6, 6, 6, 6)
+	entryConfirmPassword.SetVisibility(false)
+	labelConfirmation, err := gtk.LabelNew("Confirmation: ")
 	fatalErrorCheck(err)
 
-	confirmationLineLabel.SetHAlign(gtk.ALIGN_START)
-	setMargin(confirmationLineLabel, 6, 6, 6, 6)
+	labelConfirmation.SetHAlign(gtk.ALIGN_START)
+	setMargin(labelConfirmation, 6, 6, 6, 6)
 
 	grid, err := gtk.GridNew()
 	fatalErrorCheck(err)
 
-	grid.Add(passwordLabel)
-	grid.Attach(passwordEntry, 1, 0, 1, 1)
-	grid.AttachNextTo(confirmationLineLabel, passwordLabel, gtk.POS_BOTTOM, 1, 1)
-	grid.AttachNextTo(passwordConfirmEntry, passwordEntry, gtk.POS_BOTTOM, 1, 1)
+	grid.Add(labelConfirmPassword)
+	grid.Attach(entryPassword, 1, 0, 1, 1)
+	grid.AttachNextTo(labelConfirmation, labelConfirmPassword, gtk.POS_BOTTOM, 1, 1)
+	grid.AttachNextTo(entryConfirmPassword, entryPassword, gtk.POS_BOTTOM, 1, 1)
 
 	validatePassword := func() {
-		pass1, err := passwordEntry.GetText()
+		pass1, err := entryPassword.GetText()
 		fatalErrorCheck(err)
 
-		pass2, err := passwordConfirmEntry.GetText()
+		pass2, err := entryConfirmPassword.GetText()
 		fatalErrorCheck(err)
 
 		if pass1 == pass2 {
@@ -246,11 +226,11 @@ To make sure that you have properly saved your seed, please retype it here.`
 			assistant.SetPageComplete(pagePassword, false)
 		}
 	}
-	passwordEntry.Connect("changed", func(entry *gtk.Entry) {
+	entryPassword.Connect("changed", func(entry *gtk.Entry) {
 		validatePassword()
 	})
 
-	passwordConfirmEntry.Connect("changed", func(entry *gtk.Entry) {
+	entryConfirmPassword.Connect("changed", func(entry *gtk.Entry) {
 		validatePassword()
 	})
 
@@ -268,14 +248,14 @@ To make sure that you have properly saved your seed, please retype it here.`
 		pagePsswrdDesc)
 
 	// --- pageFinal
-	NodeInfoTextView, err := gtk.TextViewNew()
+	textViewNodeInfo, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
-	setMargin(NodeInfoTextView, 6, 6, 6, 6)
-	NodeInfoTextView.SetWrapMode(gtk.WRAP_WORD)
-	NodeInfoTextView.SetEditable(false)
-	NodeInfoTextView.SetMonospace(true)
-	NodeInfoTextView.SetSizeRequest(0, 160)
+	setMargin(textViewNodeInfo, 6, 6, 6, 6)
+	textViewNodeInfo.SetWrapMode(gtk.WRAP_WORD)
+	textViewNodeInfo.SetEditable(false)
+	textViewNodeInfo.SetMonospace(true)
+	textViewNodeInfo.SetSizeRequest(0, 160)
 
 	pageFinalName := "page_final"
 	pageFinalTitle := "Run the node"
@@ -285,7 +265,7 @@ Now you are ready to start the node!`
 
 	pageFinal = createPage(
 		assistant,
-		NodeInfoTextView,
+		textViewNodeInfo,
 		pageFinalName,
 		pageFinalTitle,
 		pageFinalSubject,
@@ -316,9 +296,9 @@ Now you are ready to start the node!`
 			}
 		case pageSeedName:
 			{
-				text := getTextViewContent(seedTextView)
+				text := getTextViewContent(textViewSeed)
 				if text == "" {
-					setTextViewContent(seedTextView, mnemonic)
+					setTextViewContent(textViewSeed, mnemonic)
 				}
 				assistant.SetPageComplete(pageSeed, true)
 			}
@@ -377,7 +357,7 @@ Now you are ready to start the node!`
 				fatalErrorCheck(err)
 
 				// To make process faster we set password after generating addresses
-				walletPassword, err := passwordEntry.GetText()
+				walletPassword, err := entryPassword.GetText()
 				fatalErrorCheck(err)
 
 				err = defaultWallet.UpdatePassword("", walletPassword)
@@ -393,7 +373,7 @@ Now you are ready to start the node!`
 				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
 				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 
-				setTextViewContent(NodeInfoTextView, nodeInfo)
+				setTextViewContent(textViewNodeInfo, nodeInfo)
 			}
 		}
 	})

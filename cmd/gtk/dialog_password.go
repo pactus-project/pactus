@@ -25,6 +25,9 @@ func getWalletPassword(wallet *wallet.Wallet) (string, bool) {
 	dlg := getDialogObj(builder, "id_dialog_password")
 	passwordEntry := getEntryObj(builder, "id_entry_password")
 
+	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
+	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
+
 	ok := false
 	onOk := func() {
 		password, err = passwordEntry.GetText()
@@ -49,6 +52,9 @@ func getWalletPassword(wallet *wallet.Wallet) (string, bool) {
 	dlg.SetModal(true)
 
 	dlg.Run()
+
+	// Destroy dialog after closing dialog
+	dlg.Destroy()
 
 	return password, ok
 }
