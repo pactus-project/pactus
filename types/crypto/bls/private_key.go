@@ -57,7 +57,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
 	}
 
-	return privateKeyFromBytes(regrouped)
+	return PrivateKeyFromBytes(regrouped)
 }
 
 // PrivateKeyFromSeed generates a private key deterministically from
@@ -91,12 +91,12 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 
 	sk := make([]byte, 32)
 	x.FillBytes(sk)
-	return privateKeyFromBytes(sk)
+	return PrivateKeyFromBytes(sk)
 }
 
-// privateKeyFromBytes constructs a BLS private key from the raw bytes.
+// PrivateKeyFromBytes constructs a BLS private key from the raw bytes.
 // This method in unexported and should not be called from the outside.
-func privateKeyFromBytes(data []byte) (*PrivateKey, error) {
+func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
 			"private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
