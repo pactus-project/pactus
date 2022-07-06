@@ -111,9 +111,8 @@ type ExtendedKey struct {
 // convenience method used to create a populated struct. This function should
 // only be used by applications that need to create custom ExtendedKeys. All
 // other applications should just use NewMaster, Derive, or Neuter.
-func NewExtendedKey(key, chainCode []byte, depth uint8,
-	childNum uint32, isPrivate bool) *ExtendedKey {
-
+func NewExtendedKey(key, chainCode []byte, depth uint8, childNum uint32,
+	isPrivate bool) *ExtendedKey {
 	// NOTE: The pubKey field is intentionally left nil so it is only
 	// computed and memoized as required.
 	return &ExtendedKey{
@@ -145,7 +144,10 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 	if len(k.pubKey) == 0 {
 		privKey := new(herumi.Fr)
 		pubPoint := new(herumi.G2)
-		privKey.Deserialize(k.key)
+		err := privKey.Deserialize(k.key)
+		if err != nil {
+			panic(err)
+		}
 
 		herumi.G2Mul(pubPoint, &g2Gen, privKey)
 		k.pubKey = pubPoint.Serialize()
@@ -286,20 +288,16 @@ func (k *ExtendedKey) Derive(i uint32) (*ExtendedKey, error) {
 		reduced.Mod(sum, &curveOrder)
 		childKey = reduced.Bytes()
 
-		// Strip leading zeroes from childKey, to match the expectation
-		// as the old big.Int usage in this area of the codebase.
-		for len(childKey) > 0 && childKey[0] == 0x00 {
-			panic("what is this for?")
-			childKey = childKey[1:]
-		}
-
 		isPrivate = true
 	} else {
 		// Case #3.
 		// Calculate the corresponding intermediate public key for the
 		// intermediate private key: ilJ = ilScalar*G
 		ilScalar := new(herumi.Fr)
-		ilScalar.SetLittleEndian(il)
+		err := ilScalar.SetLittleEndian(il)
+		if err != nil {
+			return nil, err
+		}
 
 		ilPoint := new(herumi.G2)
 
@@ -314,7 +312,7 @@ func (k *ExtendedKey) Derive(i uint32) (*ExtendedKey, error) {
 		// public key.
 
 		pubKey := new(herumi.G2)
-		err := pubKey.Deserialize(k.key)
+		err = pubKey.Deserialize(k.key)
 		if err != nil {
 			return nil, err
 		}

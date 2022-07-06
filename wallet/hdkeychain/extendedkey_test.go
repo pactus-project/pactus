@@ -62,7 +62,6 @@ func TestNonHardenedDerivation(t *testing.T) {
 	extKey2, _ := NewMaster(testSeed)
 	neuterKey, _ := extKey2.Neuter()
 	for i, test := range tests {
-
 		for _, childNum := range test.path {
 			var err error
 			extKey, err = extKey.Derive(childNum)
@@ -142,7 +141,6 @@ func TestHardenedDerivation(t *testing.T) {
 
 	extKey, _ := NewMaster(testSeed)
 	for i, test := range tests {
-
 		for _, childNum := range test.path {
 			var err error
 			extKey, err = extKey.Derive(childNum)
