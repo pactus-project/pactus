@@ -44,7 +44,7 @@ func TestPrivateKeyToString(t *testing.T) {
 		},
 		{
 			"invalid hrp",
-			"NOTSECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQ7E8ACD",
+			"XXX1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQ7E8ACD",
 			false, false,
 			nil,
 		},
@@ -93,7 +93,7 @@ func TestPrivateKeyToString(t *testing.T) {
 			assert.NoError(t, err, "test %v. unexpected error", test.name)
 			assert.Equal(t, prv.SanityCheck() == nil, test.valid, "test %v. sanity check failed", test.name)
 
-			prv2, _ := privateKeyFromBytes(test.result)
+			prv2, _ := PrivateKeyFromBytes(test.result)
 			assert.True(t, prv.EqualsTo(prv2))
 		} else {
 			assert.Error(t, err, "test %v. should failed", test.name)

@@ -36,7 +36,7 @@ func TestEvaluation(t *testing.T) {
 	t.Run("Invalid proof (Infinity public key)", func(t *testing.T) {
 		total := util.RandInt64(1 * 1e14)
 
-		pub, _ := bls.PublicKeyFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		pub, _ := bls.PublicKeyFromString("public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9")
 		proof, _ := ProofFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 
 		require.False(t, VerifyProof(seed, proof, pub, total, total))
