@@ -39,7 +39,7 @@ func (s *newHeightState) decide() {
 	}
 
 	vals := s.state.CommitteeValidators()
-	s.log.MoveToNewHeight(sateHeight+1, vals)
+	s.log.MoveToNewHeight(vals)
 
 	s.height = sateHeight + 1
 	s.round = 0
@@ -55,7 +55,7 @@ func (s *newHeightState) onAddVote(v *vote.Vote) {
 func (s *newHeightState) onSetProposal(p *proposal.Proposal) {
 }
 
-func (s *newHeightState) onTimedout(t *ticker) {
+func (s *newHeightState) onTimeout(t *ticker) {
 	if t.Target != tickerTargetNewHeight {
 		s.logger.Debug("invalid ticker", "ticker", t)
 		return

@@ -10,7 +10,6 @@ import (
 )
 
 type Log struct {
-	height        int32
 	validators    []*validator.Validator
 	roundMessages []*Messages
 }
@@ -40,9 +39,9 @@ func (log *Log) HasVote(h hash.Hash) bool {
 func (log *Log) MustGetRoundMessages(round int16) *Messages {
 	for i := int16(len(log.roundMessages)); i <= round; i++ {
 		rv := &Messages{
-			prepareVotes:        voteset.NewVoteSet(log.height, i, vote.VoteTypePrepare, log.validators),
-			precommitVotes:      voteset.NewVoteSet(log.height, i, vote.VoteTypePrecommit, log.validators),
-			changeProposerVotes: voteset.NewVoteSet(log.height, i, vote.VoteTypeChangeProposer, log.validators),
+			prepareVotes:        voteset.NewVoteSet(i, vote.VoteTypePrepare, log.validators),
+			precommitVotes:      voteset.NewVoteSet(i, vote.VoteTypePrecommit, log.validators),
+			changeProposerVotes: voteset.NewVoteSet(i, vote.VoteTypeChangeProposer, log.validators),
 		}
 
 		// extendind votes slice
@@ -89,8 +88,7 @@ func (log *Log) SetRoundProposal(round int16, proposal *proposal.Proposal) {
 	m.proposal = proposal
 }
 
-func (log *Log) MoveToNewHeight(height int32, validators []*validator.Validator) {
-	log.height = height
+func (log *Log) MoveToNewHeight(validators []*validator.Validator) {
 	log.roundMessages = make([]*Messages, 0)
 	log.validators = validators
 }

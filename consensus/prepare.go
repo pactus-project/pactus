@@ -74,7 +74,7 @@ func (s *prepareState) onSetProposal(p *proposal.Proposal) {
 	}
 }
 
-func (s *prepareState) onTimedout(t *ticker) {
+func (s *prepareState) onTimeout(t *ticker) {
 	if t.Target == tickerTargetQueryProposal {
 		s.queryProposal()
 		s.decide()

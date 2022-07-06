@@ -234,7 +234,7 @@ func testAddVote(cons *consensus, voteType vote.Type, height int32, round int16,
 func testEnterNewHeight(cons *consensus) {
 	cons.lk.Lock()
 	cons.enterNewState(cons.newHeightState)
-	cons.currentState.onTimedout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
+	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
 	cons.lk.Unlock()
 }
 
@@ -322,13 +322,13 @@ func TestRoundVotes(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	t.Run("Ignore votes from invalid height", func(t *testing.T) {
-		v1 := vote.NewVote(vote.VoteTypePrepare, 1, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
+		v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v1)
 
-		v2 := vote.NewVote(vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
+		v2 := vote.NewVote(vote.VoteTypeChangeProposer, 2, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v2)
 
-		v3 := vote.NewVote(vote.VoteTypePrepare, 3, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
+		v3 := vote.NewVote(vote.VoteTypeChangeProposer, 3, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
 		tSigners[tIndexX].SignMsg(v3)
 
 		tConsP.AddVote(v1)
@@ -411,9 +411,15 @@ func TestConsensusInvalidVote(t *testing.T) {
 
 	testEnterNewHeight(tConsX)
 
-	v, _ := vote.GenerateTestPrecommitVote(1, 0)
-	tConsX.AddVote(v)
-	assert.False(t, tConsX.HasVote(v.Hash()))
+	v1, _ := vote.GenerateTestPrecommitVote(1, 0)
+	v2 := vote.NewVote(vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(),
+		tSigners[tIndexB].Address())
+	tSigners[tIndexB].SignMsg(v2)
+
+	tConsX.AddVote(v1)
+	tConsX.AddVote(v2)
+	assert.False(t, tConsX.HasVote(v1.Hash()))
+	assert.False(t, tConsX.HasVote(v2.Hash()))
 }
 
 func TestPickRandomVote(t *testing.T) {

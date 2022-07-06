@@ -14,7 +14,7 @@ import (
 func TestMustGetRound(t *testing.T) {
 	committee, _ := committee.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(101, committee.Validators())
+	log.MoveToNewHeight(committee.Validators())
 	log.MustGetRoundMessages(4)
 	assert.Nil(t, log.RoundMessages(5))
 	assert.NotNil(t, log.RoundMessages(1))
@@ -26,7 +26,7 @@ func TestAddVotes(t *testing.T) {
 	committee, signers := committee.GenerateTestCommittee(4)
 
 	log := NewLog()
-	log.MoveToNewHeight(101, committee.Validators())
+	log.MoveToNewHeight(committee.Validators())
 	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
 	err := log.AddVote(invalidVote) // invalid height
 	assert.Error(t, err)
@@ -62,7 +62,7 @@ func TestSetRoundProposal(t *testing.T) {
 	committee, _ := committee.GenerateTestCommittee(4)
 	prop, _ := proposal.GenerateTestProposal(101, 0)
 	log := NewLog()
-	log.MoveToNewHeight(101, committee.Validators())
+	log.MoveToNewHeight(committee.Validators())
 	log.SetRoundProposal(4, prop)
 	assert.False(t, log.HasRoundProposal(0))
 	assert.True(t, log.HasRoundProposal(4))
@@ -75,7 +75,7 @@ func TestSetRoundProposal(t *testing.T) {
 func TestCanVote(t *testing.T) {
 	committee, signers := committee.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(101, committee.Validators())
+	log.MoveToNewHeight(committee.Validators())
 
 	addr := crypto.GenerateTestAddress()
 	assert.True(t, log.CanVote(signers[0].Address()))
