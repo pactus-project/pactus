@@ -73,14 +73,14 @@ var (
 
 	// ErrInvalidChild describes an error in which the child at a specific
 	// index is invalid due to the derived key falling outside of the valid
-	// range for secp256k1 private keys.  This error indicates the caller
+	// range for BLS private keys.  This error indicates the caller
 	// should simply ignore the invalid child extended key at this index and
 	// increment to the next index.
 	ErrInvalidChild = errors.New("the extended key at this index is invalid")
 
 	// ErrUnusableSeed describes an error in which the provided seed is not
 	// usable due to the derived key falling outside of the valid range for
-	// secp256k1 private keys.  This error indicates the caller must choose
+	// BLS private keys.  This error indicates the caller must choose
 	// another seed.
 	ErrUnusableSeed = errors.New("unusable seed")
 
@@ -95,8 +95,7 @@ var (
 var masterKey = []byte("Zarb seed")
 
 // ExtendedKey houses all the information needed to support a hierarchical
-// deterministic extended key.  See the package overview documentation for
-// more details on how to use extended keys.
+// deterministic extended key.
 type ExtendedKey struct {
 	key       []byte // This will be the pubkey for extended pub keys
 	pubKey    []byte // This will only be set for extended priv keys
@@ -107,10 +106,8 @@ type ExtendedKey struct {
 }
 
 // NewExtendedKey returns a new instance of an extended key with the given
-// fields.  No error checking is performed here as it's only intended to be a
-// convenience method used to create a populated struct. This function should
-// only be used by applications that need to create custom ExtendedKeys. All
-// other applications should just use NewMaster, Derive, or Neuter.
+// fields. No error checking is performed here as it's only intended to be a
+// convenience method used to create a populated struct.
 func NewExtendedKey(key, chainCode []byte, depth uint8, childNum uint32,
 	isPrivate bool) *ExtendedKey {
 	// NOTE: The pubKey field is intentionally left nil so it is only
@@ -205,40 +202,45 @@ func (k *ExtendedKey) Derive(i uint32) (*ExtendedKey, error) {
 	// 3) Public extended key -> Non-hardened child public extended key
 	// 4) Public extended key -> Hardened child public extended key (INVALID!)
 
-	// Case #4 is invalid, so error out early.
-	// A hardened child extended key may not be created from a public
-	// extended key.
 	isChildHardened := i >= HardenedKeyStart
-	if !k.isPrivate && isChildHardened {
-		return nil, ErrDeriveHardFromPublic
+
+	if k.depth > 0 {
+		isParentHardened := k.childNum >= HardenedKeyStart
+		// In case we try to extend a non-hardened child key from hardened or vice versa.
+		if isChildHardened && !isParentHardened ||
+			!isChildHardened && isParentHardened {
+
+			return nil, ErrInvalidChild
+		}
 	}
 
 	// The data used to derive the child key depends on whether or not the
-	// child is hardened per [BIP32].
+	// child is hardened.
 	//
 	// For hardened children:
-	//   0x00 || ser256(parentKey) || ser32(i)
+	//   data (36 bytes) = parent_private_key (32 bytes)  || index (4 bytes)
 	//
 	// For normal children:
-	//   serP(parentPubKey) || ser32(i)
-	keyLen := 33
-	data := make([]byte, keyLen+4)
+	//   data (100 bytes) = parent_public_key (96 bytes)  || index (4 bytes)
+	data := make([]byte, 0, 100)
 	if isChildHardened {
 		// Case #1.
 		// When the child is a hardened child, the key is known to be a
-		// private key due to the above early return.  Pad it with a
-		// leading zero as required by [BIP32] for deriving the child.
-		// Additionally, right align it if it's shorter than 32 bytes.
-		offset := 33 - len(k.key)
-		copy(data[offset:], k.key)
+		// private key due to the above early return.
+		if len(k.key) != 32 {
+			panic("invalid key")
+		}
+		data = append(data, k.key...)
 	} else {
 		// Case #2 or #3.
 		// This is either a public or private extended key, but in
 		// either case, the data which is used to derive the child key
-		// starts with the secp256k1 compressed public key bytes.
+		// starts with the BLS public key bytes.
 		copy(data, k.pubKeyBytes())
 	}
-	binary.BigEndian.PutUint32(data[keyLen:], i)
+	bs := make([]byte, 4)
+	binary.BigEndian.PutUint32(bs, i)
+	data = append(data, bs...)
 
 	// Take the HMAC-SHA512 of the current key's chain code and the derived
 	// data:
@@ -253,80 +255,77 @@ func (k *ExtendedKey) Derive(i uint32) (*ExtendedKey, error) {
 	il := ilr[:len(ilr)/2]
 	childChainCode := ilr[len(ilr)/2:]
 
-	// Both derived public or private keys rely on treating the left 32-byte
-	// sequence calculated above (Il) as a 256-bit integer that must be
-	// within the valid range for a secp256k1 private key.  There is a small
-	// chance (< 1 in 2^127) this condition will not hold, and in that case,
-	// a child extended key can't be created for this index and the caller
-	// should simply increment to the next index.
-	ilNum := new(big.Int)
-	ilNum.SetBytes(il)
+	derivedPrivKey, err := bls.PrivateKeyFromSeed(il, nil)
+	if err != nil {
+		return nil, err
+	}
 
-	// The algorithm used to derive the child key depends on whether or not
-	// a private or public child is being derived.
-	//
-	// For private children:
-	//   childKey = parse256(Il) + parentKey
-	//
-	// For public children:
-	//   childKey = serP(point(parse256(Il)) + parentKey)
-	var isPrivate bool
 	var childKey []byte
-	if k.isPrivate {
-		// Case #1 or #2.
-		// Add the parent private key to the intermediate private key to
-		// derive the final child key.
-		//
-		// childKey = parse256(Il) + parenKey
-		keyNum := new(big.Int)
-		keyNum.SetBytes(k.key)
+	if isChildHardened {
+		if k.isPrivate {
+			// Case #1
+			// Use BLS KeyGen for generating new private key
 
-		sum := new(big.Int)
-		sum.Add(ilNum, keyNum)
+			childKey = derivedPrivKey.Bytes()
 
-		reduced := new(big.Int)
-		reduced.Mod(sum, &curveOrder)
-		childKey = reduced.Bytes()
-
-		isPrivate = true
+		} else {
+			// Case #4
+			// A hardened child extended key may not be created from a public
+			// extended key.
+			return nil, ErrDeriveHardFromPublic
+		}
 	} else {
-		// Case #3.
-		// Calculate the corresponding intermediate public key for the
-		// intermediate private key: ilJ = ilScalar*G
-		ilScalar := new(herumi.Fr)
-		err := ilScalar.SetLittleEndian(il)
-		if err != nil {
-			return nil, err
+		if k.isPrivate {
+			// Case #2
+
+			scalar1 := new(herumi.Fr)
+			scalar2 := new(herumi.Fr)
+			scalarAdd := new(herumi.Fr)
+
+			scalar1.Deserialize(k.key)
+			scalar2.Deserialize(derivedPrivKey.Bytes())
+
+			herumi.FrAdd(scalarAdd, scalar1, scalar2)
+
+			childKey = scalarAdd.Serialize()
+		} else {
+			// Case #3.
+			// Calculate the corresponding intermediate public key for the
+			// intermediate private key
+			ilScalar := new(herumi.Fr)
+			err := ilScalar.Deserialize(derivedPrivKey.Bytes())
+			if err != nil {
+				return nil, err
+			}
+
+			ilPoint := new(herumi.G2)
+			herumi.G2Mul(ilPoint, &g2Gen, ilScalar)
+
+			if (ilPoint.X.IsZero() && ilPoint.Y.IsZero()) || ilPoint.Z.IsZero() {
+				return nil, ErrInvalidChild
+			}
+
+			// Convert the serialized compressed parent public key into X
+			// and Y coordinates so it can be added to the intermediate
+			// public key.
+
+			pubKey := new(herumi.G2)
+			err = pubKey.Deserialize(k.key)
+			if err != nil {
+				return nil, err
+			}
+
+			// Convert the public key to jacobian coordinates, as that's
+			// what our main add/double methods use.
+			childPubKey := new(herumi.G2)
+			herumi.G2Add(childPubKey, pubKey, ilPoint)
+
+			childKey = childPubKey.Serialize()
 		}
-
-		ilPoint := new(herumi.G2)
-
-		herumi.G2Mul(ilPoint, &g2Gen, ilScalar)
-
-		if (ilPoint.X.IsZero() && ilPoint.Y.IsZero()) || ilPoint.Z.IsZero() {
-			return nil, ErrInvalidChild
-		}
-
-		// Convert the serialized compressed parent public key into X
-		// and Y coordinates so it can be added to the intermediate
-		// public key.
-
-		pubKey := new(herumi.G2)
-		err = pubKey.Deserialize(k.key)
-		if err != nil {
-			return nil, err
-		}
-
-		// Convert the public key to jacobian coordinates, as that's
-		// what our main add/double methods use.
-		childPubKey := new(herumi.G2)
-		herumi.G2Add(childPubKey, pubKey, ilPoint)
-
-		childKey = childPubKey.Serialize()
 	}
 
 	return NewExtendedKey(childKey, childChainCode,
-		k.depth+1, i, isPrivate), nil
+		k.depth+1, i, k.isPrivate), nil
 }
 
 // ChildNum returns the index at which the child extended key was derived.
@@ -394,21 +393,23 @@ func NewMaster(seed []byte) (*ExtendedKey, error) {
 	}
 
 	// First take the HMAC-SHA512 of the master key and the seed data:
-	//   I = HMAC-SHA512(Key = "Bitcoin seed", Data = S)
+	//   I = HMAC-SHA512(Key = "Zarb seed", Data = S)
 	hmac512 := hmac.New(sha512.New, masterKey)
 	_, _ = hmac512.Write(seed)
 	lr := hmac512.Sum(nil)
 
 	// Split "I" into two 32-byte sequences Il and Ir where:
-	//   Il = master secret key
+	//   Il = master ikm
 	//   Ir = master chain code
-	secretKey := lr[:len(lr)/2]
+	ikm := lr[:len(lr)/2]
 	chainCode := lr[len(lr)/2:]
 
-	reduced := new(big.Int).SetBytes(secretKey)
-	reduced.Mod(reduced, &curveOrder)
+	privKey, err := bls.PrivateKeyFromSeed(ikm, nil)
+	if err != nil {
+		return nil, err
+	}
 
-	return NewExtendedKey(reduced.Bytes(), chainCode, 0, 0, true), nil
+	return NewExtendedKey(privKey.Bytes(), chainCode, 0, 0, true), nil
 }
 
 // GenerateSeed returns a cryptographically secure random seed that can be used
