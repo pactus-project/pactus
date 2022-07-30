@@ -5,6 +5,7 @@ import (
 	"mime"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rakyll/statik/fs"
@@ -65,7 +66,8 @@ func (s *Server) startGateway() error {
 	}
 
 	gwServer := &http.Server{
-		Addr: s.config.Gateway.Listen,
+		Addr:              s.config.Gateway.Listen,
+		ReadHeaderTimeout: 3 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if strings.HasPrefix(r.URL.Path, "/api") {
 				gwMux.ServeHTTP(w, r)
