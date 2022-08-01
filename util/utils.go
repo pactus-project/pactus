@@ -2,7 +2,9 @@ package util
 
 import (
 	crand "crypto/rand"
+	"fmt"
 	"math/big"
+	"os"
 )
 
 const MaxUint16 = ^uint16(0)
@@ -126,4 +128,14 @@ func IS2OP(x *big.Int, xLen int) []byte {
 	}
 	buf := make([]byte, xLen)
 	return x.FillBytes(buf)
+}
+
+// ExitOnErr exit the software immediately if an error happens.
+// Panics are not safe because panics print a stack trace,
+// which may not be relevant to the error at all.
+func ExitOnErr(e error) {
+	if e != nil {
+		fmt.Println(e.Error())
+		os.Exit(1)
+	}
 }
