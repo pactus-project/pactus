@@ -74,12 +74,12 @@ func Init() func(c *cli.Cmd) {
 				return
 			}
 			cmd.PrintInfoMsg("Wallet created successfully")
-			valAddrStr, err := wallet.MakeNewAddress("", "Validator address")
+			valAddrStr, err := wallet.DeriveNewAddress("", "Validator address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create validator address: %v", err)
 				return
 			}
-			rewardAddrStr, err := wallet.MakeNewAddress("", "Reward address")
+			rewardAddrStr, err := wallet.DeriveNewAddress("", "Reward address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create reward address: %v", err)
 				return

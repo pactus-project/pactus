@@ -71,7 +71,7 @@ func NewAddress() func(c *cli.Cmd) {
 			}
 
 			password := getPassword(wallet, *passOpt)
-			addr, err := wallet.MakeNewAddress(password, label)
+			addr, err := wallet.DeriveNewAddress(password, label)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

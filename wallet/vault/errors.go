@@ -6,12 +6,19 @@ import (
 )
 
 var (
-	// ErrInvalidPassword describes an error in which the password is invalid.
-	ErrInvalidPassword = errors.New("invalid password")
-
 	// ErrAddressExists describes an error in which the address already exist
 	// in wallet.
 	ErrAddressExists = errors.New("address already exists")
+
+	// ErrInvalidPath describes an error in which the key path is invalid
+	ErrInvalidPath = errors.New("the key path is invalid")
+
+	// ErrNeuterHardened describes an error in which the user try to neuter
+	// a hardened wallet
+	ErrNeuterHardened = errors.New("hardened wallet can't be neutered")
+
+	// ErrNeutered describes an error in which the wallet is neutered.
+	ErrNeutered = errors.New("wallet is neutered")
 )
 
 // ErrAddressNotFound describes an error in which the address doesn't exist
@@ -26,17 +33,4 @@ func NewErrAddressNotFound(addr string) error {
 
 func (e ErrAddressNotFound) Error() string {
 	return fmt.Sprintf("address not found: %s", e.addr)
-}
-
-// ErrUnknownMethod describes an error in which the method is not known.
-type ErrUnknownMethod struct {
-	name string
-}
-
-func NewErrUnknownMethod(name string) error {
-	return ErrUnknownMethod{name: name}
-}
-
-func (e ErrUnknownMethod) Error() string {
-	return fmt.Sprintf("unknown method: %s", e.name)
 }

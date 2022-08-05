@@ -323,10 +323,10 @@ Now you are ready to start the node!`
 					network)
 				fatalErrorCheck(err)
 
-				valAddr, err := defaultWallet.MakeNewAddress("", "Validator address")
+				valAddr, err := defaultWallet.DeriveNewAddress("", "Validator address")
 				fatalErrorCheck(err)
 
-				rewardAddr, err := defaultWallet.MakeNewAddress("", "Reward address")
+				rewardAddr, err := defaultWallet.DeriveNewAddress("", "Reward address")
 				fatalErrorCheck(err)
 
 				var gen *genesis.Genesis

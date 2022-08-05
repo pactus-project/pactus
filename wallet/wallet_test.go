@@ -25,9 +25,9 @@ func setup(t *testing.T) {
 	assert.Equal(t, w.Name(), path.Base(walletPath))
 
 	// create some test addresses
-	_, err = w.MakeNewAddress("", "addr-1")
+	_, err = w.DeriveNewAddress("", "addr-1")
 	assert.NoError(t, err)
-	_, err = w.MakeNewAddress("", "addr-2")
+	_, err = w.DeriveNewAddress("", "addr-2")
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
 	tWallet = w
@@ -89,7 +89,7 @@ func TestRecoverWallet(t *testing.T) {
 		recovered, err := FromMnemonic(path, mnemonic, password, 0)
 		assert.NoError(t, err)
 
-		addr1, err := recovered.MakeNewAddress("", "addr-1")
+		addr1, err := recovered.DeriveNewAddress("", "addr-1")
 		assert.NoError(t, err)
 
 		assert.NoFileExists(t, path)
@@ -133,14 +133,14 @@ func TestTestKeyInfo(t *testing.T) {
 	w1, err := FromMnemonic(util.TempFilePath(), mnemonic, tPassword,
 		NetworkMainNet)
 	assert.NoError(t, err)
-	addrStr1, _ := w1.MakeNewAddress("", "")
+	addrStr1, _ := w1.DeriveNewAddress("", "")
 	prvStr1, _ := w1.PrivateKey("", addrStr1)
 	prv1, _ := bls.PrivateKeyFromString(prvStr1)
 
 	w2, err := FromMnemonic(util.TempFilePath(), mnemonic, tPassword,
 		NetworkTestNet)
 	assert.NoError(t, err)
-	addrStr2, _ := w2.MakeNewAddress("", "")
+	addrStr2, _ := w2.DeriveNewAddress("", "")
 	prvStr2, _ := w2.PrivateKey("", addrStr2)
 	prv2, _ := bls.PrivateKeyFromString(prvStr2)
 

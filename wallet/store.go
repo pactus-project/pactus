@@ -74,8 +74,8 @@ func (s *store) PublicKey(password, addr string) (string, error) {
 	return s.data.Vault.PublicKey(password, addr)
 }
 
-func (s *store) MakeNewAddress(password, label string) (string, error) {
-	return s.data.Vault.MakeNewAddress(password, label)
+func (s *store) DeriveNewAddress(password, label string) (string, error) {
+	return s.data.Vault.DeriveNewAddress(password, label)
 }
 
 func (s *store) Contains(addr string) bool {

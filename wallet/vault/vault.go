@@ -1,318 +1,348 @@
 package vault
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"crypto/sha512"
-	"encoding/base64"
-	"errors"
-
 	"github.com/tyler-smith/go-bip39"
-	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
+	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/wallet/encrypter"
+	"github.com/zarbchain/zarb-go/wallet/hdkeychain"
 )
+
+//
+// Deterministic Account Hierarchy
+//
+// Specification
+//
+// We define the following 4 levels in BIP32 path:
+//
+// m / purpose' / coin_type' / account / use
+//
+// Where:
+//   Apostrophe in the path indicates that BIP32 hardened derivation is used.
+//   `m` Denotes the master node (or root) of the tree
+//   `/` Separates the tree into depths, thus i / j signifies that j is a child of i
+//   `purpose` is set to 12381 which is the name of the new curve (BLS12-381).
+//   `coin_type` is set 21888 for Mainnet, 21777 for Testnet
+//   `account` is a field that provides the ability for a user to have distinct sets of keys.
+//   `use` is set to zero for now.
+//
+// References:
+// BIP-44: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+// EIP-2334: https://eips.ethereum.org/EIPS/eip-2334
 
 type AddressInfo struct {
 	Address  string
+	Pub      string
 	Label    string
+	Path     string
 	Imported bool
+	// for ;oca; use only
+	importedIndex int
 }
+
+const PurposeBLS12381 = uint32(12381)
 
 type Vault struct {
-	Encrypted bool          `json:"encrypted"`
-	Seed      seed          `json:"seed"`
-	Keystore  []encrypted   `json:"keystore"`
-	Addresses []addressInfo `json:"addresses"`
+	Encrypter    encrypter.Encrypter `json:"encrypter"` //
+	Keystore     keystore            `json:"keystore"`  //
+	ImportedKeys []imported          `json:"imported"`  // Imported private keys
+	Labels       map[string]string   `json:"labels"`    //
 }
 
-type addressInfo struct {
-	Method  string `json:"method"`
-	Params  params `json:"params"`
-	Address string `json:"address"`
-	Label   string `json:"label"`
+type imported struct {
+	Addr string `json:"addr"` // Address
+	Pub  string `json:"pub"`  // Public key
+	Prv  string `json:"prv"`  // Private key (encrypted)
 }
 
-type seed struct {
-	Method     string    `json:"method"`
-	ParentSeed encrypted `json:"seed"`
-	ParentKey  encrypted `json:"bls_key"`
+type keystore struct {
+	CoinType uint32             `json:"coin_type"`      // Coin type: 21888 for Mainnet, 21777 for Testnet
+	Mnemonic string             `json:"seed,omitempty"` // Seed phrase or mnemonic (encrypted)
+	Purposes map[uint32]purpose `json:"purpose"`        // Purposes: 12381 for BLS signature
 }
 
-const (
-	nameParamIndex = "index"
-	nameParamSeed  = "seed"
-
-	nameFuncBIP39       = "BIP_39"
-	nameFuncBLS         = "BLS"
-	nameFuncKDFChain    = "KDF_CHAIN"
-	nameFuncImported    = "IMPORTED"
-	nameFuncBLSKDFChain = nameFuncBLS + "-" + nameFuncKDFChain
-	nameFuncBLSImported = nameFuncBLS + "-" + nameFuncImported
-)
-
-// GenerateMnemonic generates a new mnemonic (seed phrase) based on BIP-39
-// https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
-func GenerateMnemonic() string {
-	entropy, err := bip39.NewEntropy(128)
-	exitOnErr(err)
-	mnemonic, err := bip39.NewMnemonic(entropy)
-	exitOnErr(err)
-	return mnemonic
+type purpose struct {
+	XPub      string   `json:"xpub"`      // Extended public key
+	Addresses []string `json:"addresses"` // Derived addresses
 }
 
-func CreateVaultFromMnemonic(mnemonic, password string, keyInfo []byte) (*Vault, error) {
-	parentSeed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
+func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
+	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	if err != nil {
 		return nil, err
 	}
-	parentKey, err := bls.PrivateKeyFromSeed(parentSeed, keyInfo)
-	exitOnErr(err)
+	masterKey, err := hdkeychain.NewMaster(seed)
+	if err != nil {
+		return nil, err
+	}
+	encrypter := encrypter.NopeEncrypter()
 
-	e := newEncrypter(password)
+	purposeKey, err := masterKey.DerivePath([]uint32{
+		12381 + hdkeychain.HardenedKeyStart,
+		coinType + hdkeychain.HardenedKeyStart})
+
+	blsPurpose := purpose{
+		XPub:      purposeKey.BLSPublicKey().String(),
+		Addresses: make([]string, 20),
+	}
+	for i, _ := range blsPurpose.Addresses {
+		ext, err := purposeKey.DerivePath([]uint32{uint32(i), 0})
+		if err != nil {
+			return nil, err
+		}
+
+		blsPurpose.Addresses[i] = ext.Address().String()
+	}
+
 	return &Vault{
-		Encrypted: len(password) > 0,
-		Seed: seed{
-			Method:     nameFuncBIP39,
-			ParentSeed: e.encrypt(mnemonic),
-			ParentKey:  e.encrypt(base64.StdEncoding.EncodeToString(parentKey.Bytes())),
+		Encrypter: encrypter,
+		Keystore: keystore{
+			CoinType: coinType,
+			Mnemonic: mnemonic,
+			Purposes: map[uint32]purpose{
+				PurposeBLS12381: blsPurpose,
+			},
 		},
-		Keystore:  make([]encrypted, 0),
-		Addresses: make([]addressInfo, 0),
+		Labels:       map[string]string{},
+		ImportedKeys: []imported{},
 	}, nil
 }
 
-func (v *Vault) UpdatePassword(oldPassword, newPassword string) error {
-	oldEncrypter := newEncrypter(oldPassword)
-	newEncrypter := newEncrypter(newPassword)
+func (v *Vault) Neuter() *Vault {
+	blsPurpose := v.Keystore.Purposes[PurposeBLS12381]
+	blsPurposeClone := purpose{
+		XPub:      blsPurpose.XPub,
+		Addresses: make([]string, len(blsPurpose.Addresses)),
+	}
+	for i, addr := range blsPurpose.Addresses {
+		blsPurposeClone.Addresses[i] = addr
+	}
 
-	// Updating parent seed
-	parentSeed, err := oldEncrypter.decrypt(v.Seed.ParentSeed)
+	neutered := &Vault{
+		Encrypter: encrypter.NopeEncrypter(),
+		Keystore: keystore{
+			CoinType: v.Keystore.CoinType,
+			Purposes: map[uint32]purpose{
+				PurposeBLS12381: blsPurposeClone,
+			},
+		},
+		Labels:       map[string]string{},
+		ImportedKeys: []imported{},
+	}
+	return neutered
+}
+
+func (v *Vault) IsNeutered() bool {
+	return v.Keystore.Mnemonic == ""
+}
+
+func (v *Vault) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
+	if v.IsNeutered() {
+		return ErrNeutered
+	}
+
+	oldEncrypter := v.Encrypter
+	newEncrypter := encrypter.NopeEncrypter()
+	if newPassword != "" {
+		newEncrypter = encrypter.DefaultEncrypter(opts...)
+	}
+
+	// Updating mnemonic
+	mnemonic, err := oldEncrypter.Decrypt(v.Keystore.Mnemonic, oldPassword)
 	if err != nil {
 		return err
 	}
-	v.Seed.ParentSeed = newEncrypter.encrypt(parentSeed)
+	v.Keystore.Mnemonic, err = newEncrypter.Encrypt(mnemonic, newPassword)
+	util.ExitOnErr(err)
 
-	// Updating parent key
-	parentKey, err := oldEncrypter.decrypt(v.Seed.ParentKey)
-	exitOnErr(err)
-	v.Seed.ParentKey = newEncrypter.encrypt(parentKey)
+	// Updating imported private keys
+	for i, key := range v.ImportedKeys {
+		prv, err := oldEncrypter.Decrypt(key.Prv, oldPassword)
+		util.ExitOnErr(err)
 
-	// Updating private keys
-	for i, prv := range v.Keystore {
-		key, err := oldEncrypter.decrypt(prv)
-		exitOnErr(err)
-
-		v.Keystore[i] = newEncrypter.encrypt(key)
+		v.ImportedKeys[i].Prv, err = newEncrypter.Encrypt(prv, newPassword)
+		util.ExitOnErr(err)
 	}
-	v.Encrypted = len(newPassword) > 0
+	v.Encrypter = newEncrypter
 	return nil
 }
 
 func (v *Vault) Label(addr string) string {
-	for _, info := range v.Addresses {
-		if info.Address == addr {
-			return info.Label
-		}
+	lbl, ok := v.Labels[addr]
+	if !ok {
+		return ""
 	}
-
-	return ""
+	return lbl
 }
 
 func (v *Vault) SetLabel(addr, label string) error {
-	for i := range v.Addresses {
-		if v.Addresses[i].Address == addr {
-			v.Addresses[i].Label = label
-			return nil
+	_, ok := v.Labels[addr]
+	if !ok {
+		return NewErrAddressNotFound(addr)
+	}
+
+	v.Labels[addr] = label
+	return nil
+}
+
+func (v *Vault) AddressLabels() []AddressInfo {
+	addrs := make([]AddressInfo, 0, v.AddressCount())
+
+	for _, p := range v.Keystore.Purposes {
+		for _, a := range p.Addresses {
+			addrs = append(addrs, AddressInfo{
+				Address:  a,
+				Label:    v.Label(a),
+				Imported: false,
+			})
 		}
 	}
 
-	return NewErrAddressNotFound(addr)
-}
-
-func (v *Vault) AddressInfos() []AddressInfo {
-	addrs := make([]AddressInfo, 0, len(v.Addresses))
-
-	for _, info := range v.Addresses {
+	for _, i := range v.ImportedKeys {
 		addrs = append(addrs, AddressInfo{
-			Address:  info.Address,
-			Label:    info.Label,
-			Imported: (info.Method == nameFuncBLSImported),
+			Address:  i.Addr,
+			Label:    v.Label(i.Addr),
+			Imported: true,
 		})
 	}
-
 	return addrs
 }
 
 func (v *Vault) IsEncrypted() bool {
-	return v.Encrypted
+	return v.Encrypter.IsEncrypted()
 }
 
 func (v *Vault) AddressCount() int {
-	return len(v.Addresses)
+	count := len(v.ImportedKeys)
+	for _, p := range v.Keystore.Purposes {
+		count += len(p.Addresses)
+	}
+	return count
 }
 
 func (v *Vault) ImportPrivateKey(password string, prvStr string) error {
+	if v.IsNeutered() {
+		return ErrNeutered
+	}
+
 	prv, err := bls.PrivateKeyFromString(prvStr)
 	if err != nil {
 		return err
 	}
+
 	addr := prv.PublicKey().Address().String()
 	if v.Contains(addr) {
 		return ErrAddressExists
 	}
-	// Decrypt parent key to make sure the password is correct
-	_, err = v.parentKey(password)
+	// Decrypt seed to make sure the password is correct
+	_, err = v.Mnemonic(password)
 	if err != nil {
 		return err
 	}
 
-	e := newEncrypter(password)
-	v.Keystore = append(v.Keystore, e.encrypt(prv.String()))
-
-	p := newParams()
-	p.SetUint32(nameParamIndex, uint32(len(v.Keystore)-1))
-	v.Addresses = append(v.Addresses, addressInfo{
-		Method:  nameFuncBLSImported,
-		Address: addr,
-		Params:  p,
+	encPrv, err := v.Encrypter.Encrypt(prv.String(), password)
+	if err != nil {
+		return err
+	}
+	v.ImportedKeys = append(v.ImportedKeys, imported{
+		Prv:  encPrv,
+		Pub:  prv.PublicKey().String(),
+		Addr: prv.PublicKey().Address().String(),
 	})
+
 	return nil
 }
 
-func (v *Vault) newKeySeed(mnemonic string) []byte {
-	parentSeed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
-	exitOnErr(err)
-	data := []byte{crypto.SignatureTypeBLS}
-	hmacKey := sha256.Sum256(parentSeed)
-
-	checkKeySeed := func(seed []byte) bool {
-		for _, a := range v.Addresses {
-			if safeCmp(seed, a.Params.GetBytes(nameParamSeed)) {
-				return true
-			}
-		}
-		return false
-	}
-
-	for {
-		hmac512 := hmac.New(sha512.New, hmacKey[:])
-		_, err := hmac512.Write(data[:])
-		exitOnErr(err)
-		hash512 := hmac512.Sum(nil)
-		keySeed := hash512[:32]
-		nextData := hash512[32:]
-
-		if !checkKeySeed(keySeed) {
-			return keySeed
-		}
-
-		data = nextData
-	}
-}
-
-func (v *Vault) derivePrivateKey(parentKey []byte, keySeed []byte) *bls.PrivateKey {
-	hmac512 := hmac.New(sha512.New, parentKey)
-	_, err := hmac512.Write(keySeed)
-	exitOnErr(err)
-	ikm := hmac512.Sum(nil)
-
-	prv, err := bls.PrivateKeyFromSeed(ikm, nil)
-	exitOnErr(err)
-
-	return prv
-}
-
-func (v *Vault) getPrivateKey(password, addr string) (crypto.PrivateKey, error) {
-	info := v.getAddressInfo(addr)
-	if info == nil {
-		return nil, NewErrAddressNotFound(addr)
-	}
-
-	var prv crypto.PrivateKey
-	switch info.Method {
-	case nameFuncBLSImported:
-		{
-			e, err := v.makeEncrypter(password)
-			if err != nil {
-				return nil, err
-			}
-			index := info.Params.GetUint32(nameParamIndex)
-			prvStr, err := e.decrypt(v.Keystore[index])
-			if err != nil {
-				return nil, err
-			}
-			prv, err = bls.PrivateKeyFromString(prvStr)
-			exitOnErr(err)
-		}
-	case nameFuncBLSKDFChain:
-		{
-			seed := info.Params.GetBytes(nameParamSeed)
-			parentKey, err := v.parentKey(password)
-			if err != nil {
-				return nil, err
-			}
-			prv = v.derivePrivateKey(parentKey, seed)
-		}
-
-	default:
-		return nil, NewErrUnknownMethod(info.Method)
-	}
-
-	if prv.PublicKey().Address().String() != addr {
-		// If you see this error, please report it
-		exitOnErr(errors.New("invalid private key for given address"))
-	}
-	return prv, nil
-}
-
 func (v *Vault) PrivateKey(password, addr string) (string, error) {
-	prv, err := v.getPrivateKey(password, addr)
-	if err != nil {
-		return "", err
+	info := v.GetAddressInfo(addr)
+	if info == nil {
+		return "", NewErrAddressNotFound(addr)
 	}
-	return prv.String(), nil
+
+	if info.Imported {
+		ct := v.ImportedKeys[info.importedIndex].Prv
+		prv, err := v.Encrypter.Decrypt(ct, password)
+		if err != nil {
+			return "", err
+		}
+		return prv, nil
+	} else {
+		mnemonic, err := v.Mnemonic(password)
+		if err != nil {
+			return "", err
+		}
+		seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
+		if err != nil {
+			return "", err
+		}
+		masterKey, err := hdkeychain.NewMaster(seed)
+		if err != nil {
+			return "", err
+		}
+		path, _ := stringToDerivePath(info.Path)
+		ext, err := masterKey.DerivePath(path)
+		if err != nil {
+			return "", err
+		}
+		prv, err := ext.BLSPrivateKey()
+		if err != nil {
+			return "", err
+		}
+		return prv.String(), nil
+	}
 }
 
-func (v *Vault) PublicKey(password, addr string) (string, error) {
-	prv, err := v.getPrivateKey(password, addr)
-	if err != nil {
-		return "", err
+func (v *Vault) DeriveNewAddress(password, label string, purpose uint32) (string, error) {
+	p, ok := v.Keystore.Purposes[purpose]
+	if ok {
+		ext, err := hdkeychain.NewKeyFromString(p.XPub)
+		if err != nil {
+			return "", err
+		}
+		index := uint32(len(p.Addresses))
+		ext, err = ext.DerivePath([]uint32{index, 0})
+		if err != nil {
+			return "", err
+		}
+		return ext.Address().String(), nil
 	}
-	return prv.PublicKey().String(), nil
+
+	return "", nil
 }
 
-func (v *Vault) MakeNewAddress(password, label string) (string, error) {
-	// Create a key seed
-	mnemonic, err := v.Mnemonic(password)
-	if err != nil {
-		return "", err
+func (v *Vault) GetAddressInfo(addr string) *AddressInfo {
+	for _, p := range v.Keystore.Purposes {
+		for i, a := range p.Addresses {
+			if a == addr {
+				pubKey, err := hdkeychain.NewKeyFromString(p.XPub)
+				if err != nil {
+					return nil
+				}
+				ext, err := pubKey.DerivePath([]uint32{uint32(i), 0})
+				if err != nil {
+					return nil
+				}
+
+				return &AddressInfo{
+					Address: addr,
+					Label:   v.Label(addr),
+					Pub:     ext.BLSPublicKey().String(),
+					Path:    derivePathToString(ext.Path()),
+				}
+			}
+		}
 	}
-	keySeed := v.newKeySeed(mnemonic)
 
-	// Generate the private key
-	parentKey, err := v.parentKey(password)
-	exitOnErr(err) // Password has been checked above
-	prv := v.derivePrivateKey(parentKey, keySeed)
-
-	// Address string from private key
-	addr := prv.PublicKey().Address().String()
-	params := newParams()
-	params.SetBytes(nameParamSeed, keySeed)
-
-	v.Addresses = append(v.Addresses, addressInfo{
-		Method:  nameFuncBLSKDFChain,
-		Address: addr,
-		Label:   label,
-		Params:  params,
-	})
-
-	return addr, nil
-}
-
-func (v *Vault) getAddressInfo(addr string) *addressInfo {
-	for _, info := range v.Addresses {
-		if info.Address == addr {
-			return &info
+	for i, k := range v.ImportedKeys {
+		if k.Addr == addr {
+			return &AddressInfo{
+				Address:       addr,
+				Label:         v.Label(addr),
+				Pub:           k.Pub,
+				Path:          "",
+				Imported:      true,
+				importedIndex: i,
+			}
 		}
 	}
 
@@ -320,43 +350,13 @@ func (v *Vault) getAddressInfo(addr string) *addressInfo {
 }
 
 func (v *Vault) Contains(addr string) bool {
-	return v.getAddressInfo(addr) != nil
+	return v.GetAddressInfo(addr) != nil
 }
 
 func (v *Vault) Mnemonic(password string) (string, error) {
-	if v.Seed.Method != nameFuncBIP39 {
-		return "", NewErrUnknownMethod(v.Seed.Method)
-	}
-	e, err := v.makeEncrypter(password)
+	dec, err := v.Encrypter.Decrypt(v.Keystore.Mnemonic, password)
 	if err != nil {
 		return "", err
 	}
-	return e.decrypt(v.Seed.ParentSeed)
-}
-
-func (v *Vault) parentKey(password string) ([]byte, error) {
-	e, err := v.makeEncrypter(password)
-	if err != nil {
-		return nil, err
-	}
-	m, err := e.decrypt(v.Seed.ParentKey)
-	if err != nil {
-		return nil, err
-	}
-	parentKey, err := base64.StdEncoding.DecodeString(m)
-	exitOnErr(err)
-
-	return parentKey, nil
-}
-
-func (v *Vault) makeEncrypter(password string) (encrypter, error) {
-	if v.Encrypted && len(password) != 0 {
-		return newArgon2Encrypter(password), nil
-	}
-
-	if !v.Encrypted && len(password) == 0 {
-		return newNopeEncrypter(), nil
-	}
-
-	return nil, ErrInvalidPassword
+	return dec, nil
 }

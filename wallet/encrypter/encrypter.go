@@ -14,12 +14,40 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
+// Parameters are set based on the spec recommendation
+// Read more here https://datatracker.ietf.org/doc/html/rfc9106#section-4
+type argon2dParameters struct {
+	iterations  uint32
+	memory      uint32
+	parallelism uint8
+}
+
+type Option func(p *argon2dParameters)
+
+func OptionIteration(iterations uint32) func(p *argon2dParameters) {
+	return func(p *argon2dParameters) {
+		p.iterations = iterations
+	}
+}
+
+func OptionMemory(memory uint32) func(p *argon2dParameters) {
+	return func(p *argon2dParameters) {
+		p.memory = memory
+	}
+}
+
+func OptionParallelism(parallelism uint8) func(p *argon2dParameters) {
+	return func(p *argon2dParameters) {
+		p.parallelism = parallelism
+	}
+}
+
 const (
 	nameParamIterations  = "iterations"
 	nameParamMemory      = "memory"
 	nameParamParallelism = "parallelism"
 
-	nameFuncNope      = "NOPE"
+	nameFuncNope      = ""
 	nameFuncArgon2ID  = "ARGON2ID"
 	nameFuncAES256CTR = "AES_256_CTR"
 	nameFuncMACv1     = "MACV1"
@@ -34,41 +62,50 @@ var (
 // encrypter keeps the the method and parameters for the cipher algorithm.
 type Encrypter struct {
 	Method string `json:"method,omitempty"`
-	Params params `json:"params"`
+	Params params `json:"params,omitempty"`
 }
 
-// NewNopeEncrypter creates new instance of `Encrypter` that has no encryptions method.
-// The cipher message is same as original message.
-func NewNopeEncrypter() *Encrypter {
-	return &Encrypter{
+// NopeEncrypter creates a nope encrypter instance.
+//
+// The nope encrypter doesn't encrypt the message and the cipher message is same
+// as original message.
+func NopeEncrypter() Encrypter {
+	return Encrypter{
 		Method: nameFuncNope,
 		Params: nil,
 	}
 }
 
-// NewDefaultEncrypter creates new instance of `Encrypter` that has use Argon2ID as
-// password hasher and AES_256_CTR as encryption algorithm.
-func NewDefaultEncrypter() *Encrypter {
+// DefaultEncrypter creates a default encrypter instance.
+//
+// The default encrypter uses Argon2ID as password hasher and AES_256_CTR as
+// encryption algorithm.
+func DefaultEncrypter(opts ...Option) Encrypter {
+	argon2dParameters := &argon2dParameters{
+		iterations:  uint32(1),
+		memory:      uint32(2 * 1024 * 1024),
+		parallelism: uint8(4),
+	}
+	for _, opt := range opts {
+		opt(argon2dParameters)
+	}
+
 	method := fmt.Sprintf("%s-%s-%s",
 		nameFuncArgon2ID, nameFuncAES256CTR, nameFuncMACv1)
 
-	// Parameters are set based on the spec recommendation
-	// Read more here https://datatracker.ietf.org/doc/html/rfc9106#section-4
-	var (
-		iterations  = uint32(1)
-		memory      = uint32(2 * 1024 * 1024)
-		parallelism = uint8(4)
-	)
-
 	params := newParams()
-	params.SetUint32(nameParamIterations, iterations)
-	params.SetUint32(nameParamMemory, memory)
-	params.SetUint8(nameParamParallelism, parallelism)
+	params.SetUint32(nameParamIterations, argon2dParameters.iterations)
+	params.SetUint32(nameParamMemory, argon2dParameters.memory)
+	params.SetUint8(nameParamParallelism, argon2dParameters.parallelism)
 
-	return &Encrypter{
+	return Encrypter{
 		Method: method,
 		Params: params,
 	}
+}
+
+func (e *Encrypter) IsEncrypted() bool {
+	return e.Method != nameFuncNope
 }
 
 // Encrypt encrypts the `message` using give `password` and returns the cipher message
@@ -135,7 +172,6 @@ func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 				default:
 					return "", ErrMethodNotSupported
 				}
-
 			}
 		default:
 			return "", ErrMethodNotSupported
@@ -167,7 +203,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 	data, err := base64.StdEncoding.DecodeString(cipher)
 	util.ExitOnErr(err)
 
-	var text = ""
+	text := ""
 	// Minimum length of data should be 20 (16 salt + 4 bytes mac)
 	if len(data) < 20 {
 		return "", ErrInvalidCipher
@@ -204,7 +240,6 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 				default:
 					return "", ErrMethodNotSupported
 				}
-
 			}
 		default:
 			return "", ErrMethodNotSupported

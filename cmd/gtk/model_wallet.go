@@ -70,7 +70,7 @@ func (model *walletModel) rebuildModel() error {
 }
 
 func (model *walletModel) createAddress(password string) error {
-	address, err := model.wallet.MakeNewAddress(password, "")
+	address, err := model.wallet.DeriveNewAddress(password, "")
 	if err != nil {
 		return err
 	}

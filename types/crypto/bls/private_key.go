@@ -27,7 +27,7 @@ type PrivateKey struct {
 // and returns the private key if text is a valid encoding for BLS private key.
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	// Decode the bech32m encoded private key.
-	hrp, data, err := bech32m.Decode(text)
+	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(text)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
 	}
@@ -37,27 +37,11 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid hrp: %v", hrp)
 	}
 
-	// The first byte of the decoded private key is the signature type, it must
-	// exist.
-	if len(data) < 1 {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "no private key type")
+	if typ != crypto.SignatureTypeBLS {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid private key type: %v", typ)
 	}
 
-	// ...and should be 1 for BLS signature.
-	sigType := data[0]
-	if sigType != crypto.SignatureTypeBLS {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid private key type: %v", sigType)
-	}
-
-	// The remaining characters of the private key returned are grouped into
-	// words of 5 bits. In order to restore the original program
-	// bytes, we'll need to regroup into 8 bit words.
-	regrouped, err := bech32m.ConvertBits(data[1:], 5, 8, false)
-	if err != nil {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
-	}
-
-	return PrivateKeyFromBytes(regrouped)
+	return PrivateKeyFromBytes(data)
 }
 
 // PrivateKeyFromSeed generates a private key deterministically from
@@ -74,15 +58,24 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 		return nil, fmt.Errorf("ikm is too short")
 	}
 
+	secret := make([]byte, 0, len(ikm)+1)
+	secret = append(secret, ikm...)
+	secret = append(secret, util.IS2OP(big.NewInt(0), 1)...)
+
+	L := int64(48)
+	pseudorandomKey := make([]byte, 0, len(keyInfo)+2)
+	pseudorandomKey = append(pseudorandomKey, keyInfo...)
+	pseudorandomKey = append(pseudorandomKey, util.IS2OP(big.NewInt(L), 2)...)
+
 	salt := []byte("BLS-SIG-KEYGEN-SALT-")
 	x := big.NewInt(0)
 	for x.Sign() == 0 {
 		h := sha256.Sum256(salt)
 		salt = h[:]
-		L := int64(48)
+
 		okm := make([]byte, L)
-		prk := hkdf.Extract(sha256.New, append(ikm, util.IS2OP(big.NewInt(0), 1)...), salt[:])
-		reader := hkdf.Expand(sha256.New, prk, append(keyInfo, util.IS2OP(big.NewInt(L), 2)...))
+		prk := hkdf.Extract(sha256.New, secret, salt[:])
+		reader := hkdf.Expand(sha256.New, prk, pseudorandomKey)
 		_, _ = reader.Read(okm)
 
 		r, _ := new(big.Int).SetString("73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001", 16)
@@ -116,19 +109,10 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 func (prv PrivateKey) String() string {
 	data := prv.secretKey.Serialize()
 
-	// Group the private key bytes into 5 bit groups, as this is what is used to
-	// encode each character in the private key string.
-	converted, err := bech32m.ConvertBits(data, 8, 5, true)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// Concatenate the type of the private key which is 1 for BLS and program,
-	// and encode the resulting bytes using bech32m encoding.
-	combined := make([]byte, len(converted)+1)
-	combined[0] = crypto.SignatureTypeBLS
-	copy(combined[1:], converted)
-	str, err := bech32m.Encode(hrpPrivateKey, combined)
+	str, err := bech32m.EncodeFromBase256WithType(
+		hrpPrivateKey,
+		crypto.SignatureTypeBLS,
+		data)
 	if err != nil {
 		panic(err.Error())
 	}
