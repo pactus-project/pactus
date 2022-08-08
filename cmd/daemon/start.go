@@ -191,5 +191,5 @@ func getValidatorKeyFromWallet(walletPath string) (string, error) {
 		return "", err
 	}
 
-	return prvKey, nil
+	return prvKey.String(), nil
 }

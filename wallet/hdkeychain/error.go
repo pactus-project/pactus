@@ -16,13 +16,6 @@ var (
 	ErrNotPrivExtKey = errors.New("unable to create private keys from a " +
 		"public extended key")
 
-	/////////// // ErrInvalidChild describes an error in which the child at a specific
-	/////////// // index is invalid due to the derived key falling outside of the valid
-	/////////// // range for BLS private keys.  This error indicates the caller
-	/////////// // should simply ignore the invalid child extended key at this index and
-	/////////// // increment to the next index.
-	/////////// ErrInvalidChild = errors.New("the extended key at this index is invalid")
-
 	// ErrUnusableSeed describes an error in which the provided seed is not
 	// usable due to the derived key falling outside of the valid range for
 	// BLS private keys.  This error indicates the caller must choose
@@ -37,4 +30,7 @@ var (
 	// ErrInvalidKeyData describes an error in which the provided key is
 	// not valid.
 	ErrInvalidKeyData = errors.New("key data is invalid")
+
+	// ErrInvalidPath describes an error in which the key path is invalid
+	ErrInvalidPath = errors.New("the key path is invalid")
 )

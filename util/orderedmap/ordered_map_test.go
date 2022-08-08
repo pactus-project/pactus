@@ -54,7 +54,7 @@ func TestGetMinMax(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, min, 1)
 
-	max, ok := om.MinKey()
+	max, ok := om.MaxKey()
 	assert.True(t, ok)
-	assert.Equal(t, max, 1)
+	assert.Equal(t, max, 5)
 }

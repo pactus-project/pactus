@@ -5,6 +5,7 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
@@ -59,8 +60,6 @@ func AllAddresses() func(c *cli.Cmd) {
 // NewAddress creates a new address.
 func NewAddress() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		passOpt := addPasswordOption(c)
-
 		c.Before = func() {}
 		c.Action = func() {
 			label := cmd.PromptInput("Label")
@@ -70,8 +69,7 @@ func NewAddress() func(c *cli.Cmd) {
 				return
 			}
 
-			password := getPassword(wallet, *passOpt)
-			addr, err := wallet.DeriveNewAddress(password, label)
+			addr, err := wallet.DeriveNewAddress(label)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -146,32 +144,32 @@ func PrivateKey() func(c *cli.Cmd) {
 	}
 }
 
-// GetPrivateKey returns the public key of an address.
-func PublicKey() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		addrArg := addAddressArg(c)
-		passOpt := addPasswordOption(c)
+// // PublicKey returns the public key of an address.
+// func PublicKey() func(c *cli.Cmd) {
+// 	return func(c *cli.Cmd) {
+// 		addrArg := addAddressArg(c)
+// 		passOpt := addPasswordOption(c)
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
-			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
-			}
+// 		c.Before = func() {}
+// 		c.Action = func() {
+// 			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+// 			if err != nil {
+// 				cmd.PrintDangerMsg(err.Error())
+// 				return
+// 			}
 
-			password := getPassword(wallet, *passOpt)
-			pub, err := wallet.PublicKey(password, *addrArg)
-			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
-			}
+// 			password := getPassword(wallet, *passOpt)
+// 			pub, err := wallet.PublicKey(password, *addrArg)
+// 			if err != nil {
+// 				cmd.PrintDangerMsg(err.Error())
+// 				return
+// 			}
 
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("Public Key: \"%v\"", pub)
-		}
-	}
-}
+// 			cmd.PrintLine()
+// 			cmd.PrintInfoMsg("Public Key: \"%v\"", pub)
+// 		}
+// 	}
+// }
 
 // ImportPrivateKey imports a private key into the wallet.
 func ImportPrivateKey() func(c *cli.Cmd) {
@@ -180,9 +178,15 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			prv := cmd.PromptInput("Private Key")
+			prvStr := cmd.PromptInput("Private Key")
 
 			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			prv, err := bls.PrivateKeyFromString(prvStr)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

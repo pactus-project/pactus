@@ -75,14 +75,14 @@ const (
 type ExtendedKey struct {
 	key       []byte // This will be the bytes of extended public or private key
 	chainCode []byte
-	path      []uint32
+	path      Path
 	isPrivate bool
 }
 
 // newExtendedKey returns a new instance of an extended key with the given
 // fields. No error checking is performed here as it's only intended to be a
 // convenience method used to create a populated struct.
-func newExtendedKey(key, chainCode []byte, path []uint32, isPrivate bool) *ExtendedKey {
+func newExtendedKey(key, chainCode []byte, path Path, isPrivate bool) *ExtendedKey {
 	// NOTE: The pubKey field is intentionally left nil so it is only
 	// computed and memoized as required.
 	return &ExtendedKey{
@@ -122,7 +122,7 @@ func (k *ExtendedKey) IsPrivate() bool {
 
 // Derive returns a derived child extended key from this master key at the
 // given path.
-func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
+func (k *ExtendedKey) DerivePath(path Path) (*ExtendedKey, error) {
 	ext := k
 	var err error
 	for _, index := range path {
@@ -274,7 +274,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		}
 	}
 
-	newPath := make([]uint32, 0, len(k.path)+1)
+	newPath := make(Path, 0, len(k.path)+1)
 	copy(newPath, k.path)
 	newPath = append(k.path, index)
 	return newExtendedKey(childKey, childChainCode,
@@ -285,7 +285,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 //
 // Path with values between 0 and 2^31-1 are normal child keys,
 // and those values between 2^31 and 2^32-1 are hardened keys.
-func (k *ExtendedKey) Path() []uint32 {
+func (k *ExtendedKey) Path() Path {
 	return k.path
 }
 
@@ -377,7 +377,7 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 	}
 
 	r := bytes.NewReader(data)
-	path := []uint32{}
+	path := Path{}
 	pathLen := byte(0)
 	err = encoding.ReadElement(r, &pathLen)
 	if err != nil {
@@ -466,7 +466,7 @@ func NewMaster(seed []byte) (*ExtendedKey, error) {
 		return nil, err
 	}
 
-	return newExtendedKey(privKey.Bytes(), chainCode, []uint32{}, true), nil
+	return newExtendedKey(privKey.Bytes(), chainCode, Path{}, true), nil
 }
 
 // GenerateSeed returns a cryptographically secure random seed that can be used

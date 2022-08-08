@@ -2,6 +2,7 @@ package vault
 
 import (
 	"github.com/tyler-smith/go-bip39"
+	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/wallet/encrypter"
@@ -18,26 +19,25 @@ import (
 // m / purpose' / coin_type' / account / use
 //
 // Where:
-//   Apostrophe in the path indicates that BIP32 hardened derivation is used.
+//   `'` Apostrophe in the path indicates that BIP32 hardened derivation is used.
 //   `m` Denotes the master node (or root) of the tree
 //   `/` Separates the tree into depths, thus i / j signifies that j is a child of i
 //   `purpose` is set to 12381 which is the name of the new curve (BLS12-381).
 //   `coin_type` is set 21888 for Mainnet, 21777 for Testnet
 //   `account` is a field that provides the ability for a user to have distinct sets of keys.
-//   `use` is set to zero for now.
+//   `use` is set to zero.
 //
 // References:
 // BIP-44: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 // EIP-2334: https://eips.ethereum.org/EIPS/eip-2334
 
 type AddressInfo struct {
-	Address  string
-	Pub      string
-	Label    string
-	Path     string
-	Imported bool
-	// for ;oca; use only
-	importedIndex int
+	Address       string
+	Label         string
+	Pub           crypto.PublicKey
+	Path          hdkeychain.Path
+	Imported      bool
+	ImportedIndex int
 }
 
 const PurposeBLS12381 = uint32(12381)
@@ -50,15 +50,15 @@ type Vault struct {
 }
 
 type imported struct {
-	Addr string `json:"addr"` // Address
-	Pub  string `json:"pub"`  // Public key
-	Prv  string `json:"prv"`  // Private key (encrypted)
+	Addr string `json:"address"` // Address
+	Pub  string `json:"pub"`     // Public key
+	Prv  string `json:"prv"`     // Private key (encrypted)
 }
 
 type keystore struct {
-	CoinType uint32             `json:"coin_type"`      // Coin type: 21888 for Mainnet, 21777 for Testnet
-	Mnemonic string             `json:"seed,omitempty"` // Seed phrase or mnemonic (encrypted)
-	Purposes map[uint32]purpose `json:"purpose"`        // Purposes: 12381 for BLS signature
+	CoinType uint32              `json:"coin_type"`      // Coin type: 21888 for Mainnet, 21777 for Testnet
+	Mnemonic string              `json:"seed,omitempty"` // Seed phrase or mnemonic (encrypted)
+	Purposes map[uint32]*purpose `json:"purpose"`        // Purposes: 12381 for BLS signature
 }
 
 type purpose struct {
@@ -81,11 +81,15 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 		12381 + hdkeychain.HardenedKeyStart,
 		coinType + hdkeychain.HardenedKeyStart})
 
-	blsPurpose := purpose{
-		XPub:      purposeKey.BLSPublicKey().String(),
-		Addresses: make([]string, 20),
+	if err != nil {
+		return nil, err
 	}
-	for i, _ := range blsPurpose.Addresses {
+
+	blsPurpose := &purpose{
+		XPub:      purposeKey.Neuter().String(),
+		Addresses: make([]string, 21),
+	}
+	for i := range blsPurpose.Addresses {
 		ext, err := purposeKey.DerivePath([]uint32{uint32(i), 0})
 		if err != nil {
 			return nil, err
@@ -99,7 +103,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 		Keystore: keystore{
 			CoinType: coinType,
 			Mnemonic: mnemonic,
-			Purposes: map[uint32]purpose{
+			Purposes: map[uint32]*purpose{
 				PurposeBLS12381: blsPurpose,
 			},
 		},
@@ -110,7 +114,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 
 func (v *Vault) Neuter() *Vault {
 	blsPurpose := v.Keystore.Purposes[PurposeBLS12381]
-	blsPurposeClone := purpose{
+	blsPurposeClone := &purpose{
 		XPub:      blsPurpose.XPub,
 		Addresses: make([]string, len(blsPurpose.Addresses)),
 	}
@@ -122,13 +126,14 @@ func (v *Vault) Neuter() *Vault {
 		Encrypter: encrypter.NopeEncrypter(),
 		Keystore: keystore{
 			CoinType: v.Keystore.CoinType,
-			Purposes: map[uint32]purpose{
+			Purposes: map[uint32]*purpose{
 				PurposeBLS12381: blsPurposeClone,
 			},
 		},
 		Labels:       map[string]string{},
 		ImportedKeys: []imported{},
 	}
+
 	return neutered
 }
 
@@ -176,8 +181,7 @@ func (v *Vault) Label(addr string) string {
 }
 
 func (v *Vault) SetLabel(addr, label string) error {
-	_, ok := v.Labels[addr]
-	if !ok {
+	if !v.Contains(addr) {
 		return NewErrAddressNotFound(addr)
 	}
 
@@ -220,14 +224,9 @@ func (v *Vault) AddressCount() int {
 	return count
 }
 
-func (v *Vault) ImportPrivateKey(password string, prvStr string) error {
+func (v *Vault) ImportPrivateKey(password string, prv crypto.PrivateKey) error {
 	if v.IsNeutered() {
 		return ErrNeutered
-	}
-
-	prv, err := bls.PrivateKeyFromString(prvStr)
-	if err != nil {
-		return err
 	}
 
 	addr := prv.PublicKey().Address().String()
@@ -235,7 +234,7 @@ func (v *Vault) ImportPrivateKey(password string, prvStr string) error {
 		return ErrAddressExists
 	}
 	// Decrypt seed to make sure the password is correct
-	_, err = v.Mnemonic(password)
+	_, err := v.Mnemonic(password)
 	if err != nil {
 		return err
 	}
@@ -253,46 +252,53 @@ func (v *Vault) ImportPrivateKey(password string, prvStr string) error {
 	return nil
 }
 
-func (v *Vault) PrivateKey(password, addr string) (string, error) {
+func (v *Vault) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
+	if v.IsNeutered() {
+		return nil, ErrNeutered
+	}
+
 	info := v.GetAddressInfo(addr)
 	if info == nil {
-		return "", NewErrAddressNotFound(addr)
+		return nil, NewErrAddressNotFound(addr)
 	}
 
 	if info.Imported {
-		ct := v.ImportedKeys[info.importedIndex].Prv
-		prv, err := v.Encrypter.Decrypt(ct, password)
+		ct := v.ImportedKeys[info.ImportedIndex].Prv
+		prvStr, err := v.Encrypter.Decrypt(ct, password)
 		if err != nil {
-			return "", err
+			return nil, err
+		}
+		prv, err := bls.PrivateKeyFromString(prvStr)
+		if err != nil {
+			return nil, err
 		}
 		return prv, nil
 	} else {
 		mnemonic, err := v.Mnemonic(password)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		masterKey, err := hdkeychain.NewMaster(seed)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		path, _ := stringToDerivePath(info.Path)
-		ext, err := masterKey.DerivePath(path)
+		ext, err := masterKey.DerivePath(info.Path)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		prv, err := ext.BLSPrivateKey()
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		return prv.String(), nil
+		return prv, nil
 	}
 }
 
-func (v *Vault) DeriveNewAddress(password, label string, purpose uint32) (string, error) {
+func (v *Vault) DeriveNewAddress(label string, purpose uint32) (string, error) {
 	p, ok := v.Keystore.Purposes[purpose]
 	if ok {
 		ext, err := hdkeychain.NewKeyFromString(p.XPub)
@@ -304,10 +310,13 @@ func (v *Vault) DeriveNewAddress(password, label string, purpose uint32) (string
 		if err != nil {
 			return "", err
 		}
-		return ext.Address().String(), nil
+		addr := ext.Address().String()
+		p.Addresses = append(p.Addresses, addr)
+		v.Labels[addr] = label
+		return addr, nil
 	}
 
-	return "", nil
+	return "", ErrInvalidPath
 }
 
 func (v *Vault) GetAddressInfo(addr string) *AddressInfo {
@@ -315,19 +324,16 @@ func (v *Vault) GetAddressInfo(addr string) *AddressInfo {
 		for i, a := range p.Addresses {
 			if a == addr {
 				pubKey, err := hdkeychain.NewKeyFromString(p.XPub)
-				if err != nil {
-					return nil
-				}
+				util.ExitOnErr(err)
+
 				ext, err := pubKey.DerivePath([]uint32{uint32(i), 0})
-				if err != nil {
-					return nil
-				}
+				util.ExitOnErr(err)
 
 				return &AddressInfo{
 					Address: addr,
 					Label:   v.Label(addr),
-					Pub:     ext.BLSPublicKey().String(),
-					Path:    derivePathToString(ext.Path()),
+					Pub:     ext.BLSPublicKey(),
+					Path:    ext.Path(),
 				}
 			}
 		}
@@ -335,13 +341,14 @@ func (v *Vault) GetAddressInfo(addr string) *AddressInfo {
 
 	for i, k := range v.ImportedKeys {
 		if k.Addr == addr {
+			pub, _ := bls.PublicKeyFromString(k.Pub)
 			return &AddressInfo{
 				Address:       addr,
 				Label:         v.Label(addr),
-				Pub:           k.Pub,
-				Path:          "",
+				Pub:           pub,
+				Path:          hdkeychain.NewPath(),
 				Imported:      true,
-				importedIndex: i,
+				ImportedIndex: i,
 			}
 		}
 	}
@@ -354,6 +361,9 @@ func (v *Vault) Contains(addr string) bool {
 }
 
 func (v *Vault) Mnemonic(password string) (string, error) {
+	if v.IsNeutered() {
+		return "", ErrNeutered
+	}
 	dec, err := v.Encrypter.Decrypt(v.Keystore.Mnemonic, password)
 	if err != nil {
 		return "", err

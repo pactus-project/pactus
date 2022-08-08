@@ -13,10 +13,6 @@ var (
 	// ErrInvalidPath describes an error in which the key path is invalid
 	ErrInvalidPath = errors.New("the key path is invalid")
 
-	// ErrNeuterHardened describes an error in which the user try to neuter
-	// a hardened wallet
-	ErrNeuterHardened = errors.New("hardened wallet can't be neutered")
-
 	// ErrNeutered describes an error in which the wallet is neutered.
 	ErrNeutered = errors.New("wallet is neutered")
 )

@@ -52,7 +52,7 @@ func main() {
 		k.Command("all", "Show all addresses", AllAddresses())
 		k.Command("label", "Set label for the an address", SetLabel())
 		k.Command("balance", "Show the balance of an address", Balance())
-		k.Command("pub", "Show the public key of an address", PublicKey())
+	//	k.Command("pub", "Show the public key of an address", PublicKey())
 		k.Command("priv", "Show the private key of an address", PrivateKey())
 		k.Command("import", "Import a private key into wallet", ImportPrivateKey())
 	})
