@@ -21,7 +21,7 @@ func (p params) SetUint32(key string, val uint32) {
 }
 
 func (p params) SetUint64(key string, val uint64) {
-	p[key] = strconv.FormatUint(uint64(val), 10)
+	p[key] = strconv.FormatUint(val, 10)
 }
 
 func (p params) SetBytes(key string, val []byte) {

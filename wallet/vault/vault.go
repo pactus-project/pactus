@@ -118,9 +118,7 @@ func (v *Vault) Neuter() *Vault {
 		XPub:      blsPurpose.XPub,
 		Addresses: make([]string, len(blsPurpose.Addresses)),
 	}
-	for i, addr := range blsPurpose.Addresses {
-		blsPurposeClone.Addresses[i] = addr
-	}
+	copy(blsPurposeClone.Addresses, blsPurpose.Addresses)
 
 	neutered := &Vault{
 		Encrypter: encrypter.NopeEncrypter(),
@@ -273,29 +271,29 @@ func (v *Vault) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 			return nil, err
 		}
 		return prv, nil
-	} else {
-		mnemonic, err := v.Mnemonic(password)
-		if err != nil {
-			return nil, err
-		}
-		seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
-		if err != nil {
-			return nil, err
-		}
-		masterKey, err := hdkeychain.NewMaster(seed)
-		if err != nil {
-			return nil, err
-		}
-		ext, err := masterKey.DerivePath(info.Path)
-		if err != nil {
-			return nil, err
-		}
-		prv, err := ext.BLSPrivateKey()
-		if err != nil {
-			return nil, err
-		}
-		return prv, nil
 	}
+
+	mnemonic, err := v.Mnemonic(password)
+	if err != nil {
+		return nil, err
+	}
+	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
+	if err != nil {
+		return nil, err
+	}
+	masterKey, err := hdkeychain.NewMaster(seed)
+	if err != nil {
+		return nil, err
+	}
+	ext, err := masterKey.DerivePath(info.Path)
+	if err != nil {
+		return nil, err
+	}
+	prv, err := ext.BLSPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+	return prv, nil
 }
 
 func (v *Vault) DeriveNewAddress(label string, purpose uint32) (string, error) {

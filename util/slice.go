@@ -151,7 +151,7 @@ func Equal(a, b []int32) bool {
 	return true
 }
 
-	// SafeCmp compares two slices with constant time.
+// SafeCmp compares two slices with constant time.
 // Note that we are using the subtle.ConstantTimeCompare() function for this
 // to help prevent timing attacks.
 func SafeCmp(s1, s2 []byte) bool {

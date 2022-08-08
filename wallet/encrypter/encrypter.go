@@ -249,7 +249,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 		return "", ErrMethodNotSupported
 	}
 
-	return string(text), nil
+	return text, nil
 }
 
 // aesCrypt encrypts/decrypts a message using AES-256-CTR and

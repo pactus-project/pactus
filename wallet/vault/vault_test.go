@@ -35,7 +35,8 @@ func testVault(t *testing.T) *Vault {
 		encrypter.OptionParallelism(1),
 	}
 
-	vault.UpdatePassword("", tPassword, opts...)
+	err = vault.UpdatePassword("", tPassword, opts...)
+	assert.NoError(t, err)
 	assert.True(t, vault.IsEncrypted())
 	return vault
 }
@@ -58,6 +59,8 @@ func TestAddressInfo(t *testing.T) {
 			assert.Equal(t, info.ImportedIndex, importedIndex)
 			importedIndex++
 		}
+		assert.Equal(t, info.Pub.Address().String(), info.Address)
+		assert.Equal(t, info.Address, i.Address)
 	}
 
 	// Neutered
@@ -109,57 +112,35 @@ func TestRecover(t *testing.T) {
 	})
 }
 
-// func TestGetPrivateKey(t *testing.T) {
-// 	setup(t)
+func TestGetPrivateKey(t *testing.T) {
+	vault := testVault(t)
 
-// 	assert.NotEmpty(t, tVault.Addresses)
+	t.Run("Unknown address", func(t *testing.T) {
+		addr := crypto.GenerateTestAddress()
+		_, err := vault.PrivateKey(tPassword, addr.String())
+		assert.ErrorIs(t, err, NewErrAddressNotFound(addr.String()))
+	})
 
-// 	_, prv := bls.GenerateTestKeyPair()
-// 	assert.NoError(t, tVault.ImportPrivateKey(tPassword, prv.String()))
+	t.Run("No password", func(t *testing.T) {
+		addr := vault.AddressLabels()[0].Address
+		_, err := vault.PrivateKey("", addr)
+		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
 
-// 	t.Run("Unknown adddress", func(t *testing.T) {
-// 		addr := crypto.GenerateTestAddress()
-// 		_, err := tVault.PrivateKey(tPassword, addr.String())
-// 		assert.ErrorIs(t, err, NewErrAddressNotFound(addr.String()))
-// 	})
+	t.Run("Invalid password", func(t *testing.T) {
+		addr := vault.AddressLabels()[0].Address
+		_, err := vault.PrivateKey("wrong_password", addr)
+		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
 
-// 	t.Run("No password", func(t *testing.T) {
-// 		for _, info := range tVault.Addresses {
-// 			_, err := tVault.PrivateKey("", info.Address)
-// 			assert.ErrorIs(t, err, ErrInvalidPassword)
-// 			_, err = tVault.PublicKey("", info.Address)
-// 			assert.ErrorIs(t, err, ErrInvalidPassword)
-// 		}
-// 	})
-
-// 	t.Run("Invalid password", func(t *testing.T) {
-// 		for _, info := range tVault.Addresses {
-// 			_, err := tVault.PrivateKey("wrong_password", info.Address)
-// 			assert.ErrorIs(t, err, ErrInvalidPassword)
-// 			_, err = tVault.PublicKey("wrong_password", info.Address)
-// 			assert.ErrorIs(t, err, ErrInvalidPassword)
-// 		}
-// 	})
-
-// 	t.Run("Check all the private keys", func(t *testing.T) {
-// 		for _, info := range tVault.Addresses {
-// 			prvStr, err := tVault.PrivateKey(tPassword, info.Address)
-// 			assert.NoError(t, err)
-// 			pubStr, err := tVault.PublicKey(tPassword, info.Address)
-// 			assert.NoError(t, err)
-// 			prv, _ := bls.PrivateKeyFromString(prvStr)
-// 			pub, _ := bls.PublicKeyFromString(pubStr)
-// 			assert.True(t, prv.PublicKey().EqualsTo(pub))
-// 			assert.Equal(t, pub.Address().String(), info.Address)
-// 		}
-// 	})
-
-// 	t.Run("Invalid method", func(t *testing.T) {
-// 		tVault.Addresses[0].Method = "UNKNOWN"
-// 		_, err := tVault.PrivateKey(tPassword, tVault.Addresses[0].Address)
-// 		assert.ErrorIs(t, err, NewErrUnknownMethod("UNKNOWN"))
-// 	})
-// }
+	t.Run("Check all the private keys", func(t *testing.T) {
+		for _, info := range vault.AddressLabels() {
+			prv, err := vault.PrivateKey(tPassword, info.Address)
+			assert.NoError(t, err)
+			assert.Equal(t, prv.PublicKey().Address().String(), info.Address)
+		}
+	})
+}
 
 func TestImportPrivateKey(t *testing.T) {
 	vault := testVault(t)
