@@ -1,52 +1,58 @@
 package vault
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/sha256"
-	"crypto/subtle"
 	"fmt"
-	"os"
+	"strconv"
+	"strings"
+
+	"github.com/tyler-smith/go-bip39"
+	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/wallet/hdkeychain"
 )
 
-// aesCrypt encrypts/decrypts a message using AES-256-CTR and
-// returns the encoded/decoded bytes.
-func aesCrypt(message []byte, iv, cipherKey []byte) []byte {
-	// Generate the cipher message
-	cipherMsg := make([]byte, len(message))
-	aesCipher, err := aes.NewCipher(cipherKey)
-	exitOnErr(err)
-
-	stream := cipher.NewCTR(aesCipher, iv)
-	stream.XORKeyStream(cipherMsg, message)
-
-	return cipherMsg
+func derivePathToString(path []uint32) string {
+	str := "m"
+	for _, i := range path {
+		if i >= hdkeychain.HardenedKeyStart {
+			str += fmt.Sprintf("/%d'", i-hdkeychain.HardenedKeyStart)
+		} else {
+			str += fmt.Sprintf("/%d", i)
+		}
+	}
+	return str
 }
 
-// calcMACv1 calculates the 4 bytes MAC of the given slices base on SHA-256.
-func calcMACv1(data ...[]byte) []byte {
-	h := sha256.New()
-	for _, d := range data {
-		_, err := h.Write(d)
-		exitOnErr(err)
+func stringToDerivePath(str string) ([]uint32, error) {
+	sub := strings.Split(str, "/")
+	if sub[0] != "m" {
+		return nil, ErrInvalidPath
+	}
+	path := []uint32{}
+	for i := 1; i < len(sub); i++ {
+		indexStr := sub[i]
+		added := uint32(0)
+		if indexStr[len(indexStr)-1] == '\'' {
+			added = hdkeychain.HardenedKeyStart
+			indexStr = indexStr[:len(indexStr)-1]
+		}
+		val, err := strconv.ParseInt(indexStr, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+		path = append(path, uint32(val)+added)
 	}
 
-	return h.Sum(nil)[:4]
+	return path, nil
 }
 
-// safeCmp compares two slices with constant time.
-// Note that we are using the subtle.ConstantTimeCompare() function for this
-// to help prevent timing attacks.
-func safeCmp(s1, s2 []byte) bool {
-	return subtle.ConstantTimeCompare(s1, s2) == 1
-}
+// GenerateMnemonic generates a new mnemonic (seed phrase) based on BIP-39
+// https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
+func GenerateMnemonic() string {
+	entropy, err := bip39.NewEntropy(128)
+	util.ExitOnErr(err)
 
-// exitOnErr exit the software immediately if an error happens.
-// Panics are not safe because panics print a stack trace,
-// which may not be relevant to the error at all.
-func exitOnErr(e error) {
-	if e != nil {
-		fmt.Println(e.Error())
-		os.Exit(1)
-	}
+	mnemonic, err := bip39.NewMnemonic(entropy)
+	util.ExitOnErr(err)
+
+	return mnemonic
 }

@@ -178,7 +178,7 @@ func getValidatorKeyFromWallet(walletPath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	addrInfos := wallet.AddressInfos()
+	addrInfos := wallet.AddressLabels()
 	if len(addrInfos) == 0 {
 		return "", fmt.Errorf("validator address is not defined")
 	}
@@ -191,5 +191,5 @@ func getValidatorKeyFromWallet(walletPath string) (string, error) {
 		return "", err
 	}
 
-	return prvKey, nil
+	return prvKey.String(), nil
 }

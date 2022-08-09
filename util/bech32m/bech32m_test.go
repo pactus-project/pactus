@@ -566,3 +566,79 @@ func BenchmarkConvertBitsUp(b *testing.B) {
 		}
 	}
 }
+
+// TestEncodeFromBase256WithType tests for the expected behavior of
+// EncodeFromBase256WithType function.
+func TestEncodeFromBase256WithType(t *testing.T) {
+	tests := []struct {
+		hrp           string
+		typ           byte
+		input         string
+		expectedBech  string
+		expectedError error
+	}{
+		{"A", 0, "", "a1qy52hkn", nil},
+		{"AbC", 1, "1234", "abc1pzg6qgtt0h8", nil},
+		{"", 1, "abcd", "1p40xsjtqww4", nil},
+		{"", 32, "1", "", ErrInvalidDataByte(32)},
+	}
+
+	for i, tc := range tests {
+		data, _ := hex.DecodeString(tc.input)
+		enc, err := EncodeFromBase256WithType(tc.hrp, tc.typ, data)
+		if tc.expectedError != err {
+			t.Errorf("%d: (%v) expected encoding error "+
+				"instead got %v", i, tc.expectedError,
+				err)
+			continue
+		}
+
+		if enc != tc.expectedBech {
+			t.Errorf("%d: mismatched encoding -- got %q, want %q", i,
+				enc, tc.expectedBech)
+		}
+	}
+}
+
+// TestDecodeToBase256WithTypeNoLimit tests for the expected behavior of
+// DecodeToBase256WithTypeNoLimit function.
+func TestDecodeToBase256WithTypeNoLimit(t *testing.T) {
+	tests := []struct {
+		bech          string
+		expectedHRP   string
+		expectedTyp   byte
+		expectedData  string
+		expectedError error
+	}{
+		{"a1qy52hkn", "a", 0, "", nil},
+		{"abc1pzg6qgtt0h8", "abc", 1, "1234", nil},
+		{"1p40xsjtqww4", "", 0, "", ErrInvalidSeparatorIndex(0)},
+		{"a1lqfn3a", "", 0, "", ErrInvalidLength(0)},
+	}
+
+	for i, tc := range tests {
+		hrp, typ, data, err := DecodeToBase256WithTypeNoLimit(tc.bech)
+		if tc.expectedError != err {
+			t.Errorf("%d: (%v) expected encoding error "+
+				"instead got %v", i, tc.expectedError,
+				err)
+			continue
+		}
+
+		if hrp != tc.expectedHRP {
+			t.Errorf("%d: mismatched HRP -- got %q, want %q", i,
+				hrp, tc.expectedHRP)
+		}
+
+		if typ != tc.expectedTyp {
+			t.Errorf("%d: mismatched Type -- got %q, want %q", i,
+				typ, tc.expectedTyp)
+		}
+
+		expectedData, _ := hex.DecodeString(tc.expectedData)
+		if !bytes.Equal(expectedData, data) {
+			t.Errorf("%d: mismatched HRP -- got \"%x\", want %q", i,
+				data, tc.expectedData)
+		}
+	}
+}

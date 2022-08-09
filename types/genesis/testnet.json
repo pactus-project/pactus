@@ -19,16 +19,16 @@
     ],
     "Validators": [
         {
-            "PublicKey": "af5db675ec83d0c87d33cd033ef7561b3a8e175bcd6ed5dddb72da85f11ce17b7442bc41ab842d2dd1769b2108e1b79d0bb3be03dae1c9ae658948a9206a0a8b147ff5c1847b290d27b6cfb3585ad737cac21362c41fd02b20a1a58c99a1ff67"
+            "PublicKey": "public1p4awmva0vs0gvslfne5pnaa6krvagu96me4hdthwmwtdgtuguu9ahgs4ugx4cgtfd69mfkggguxme6zanhcpa4cwf4ejcjj9fyp4q4zc50l6urprm9yxj0dk0kdv944ehetppxckyrlgzkg9p5kxfng0lvu2ul2th"
         },
         {
-            "PublicKey": "85956a2b952b5434c94767169b2b0c9d029e195fa6030ef802aca34d39d27988f56919f9fac1d7196c88bb3ad34eafdd08b2cf7ff5c1241a3f16507a8a35423cf990b63abfb5372f46990e5994e17329111bcfc5510cd74a57b654f6ea49f27e"
+            "PublicKey": "public1psk2k52u49d2rfj28vutfk2cvn5pfux2l5cpsa7qz4j356wwj0xy026gel8avr4cedjytkwknf6ha6z9jealltsfyrgl3v5r63g65y08ejzmr40a4xuh5dxgwtx2wzuefzydul323pnt554ak2nmw5j0j0cd49wks"
         },
         {
-            "PublicKey": "85a2aef96a1c983ed245b9f45dc0b9fe9614dbe27e021c9ddeeb5a8e06ab1e2b75420de1d88dc6634a067b7cd8af15a40d000fc786e4c753f91026fc6e643f6482a6fde6a571381ade5fe03429c2e57af5dfc52d8740b97d40c140ccb5325e78"
+            "PublicKey": "public1psk32a7t2rjvra5j9h869ms9el6tpfklz0cppe8w7addgup4trc4h2ssdu8vgm3nrfgr8klxc4u26grgqplrcdex820u3qfhudejr7eyz5m77dft38qdduhlqxs5u9et67h0u2tv8gzuh6sxpgrxt2vj70q54tp9f"
         },
         {
-            "PublicKey": "92fccbd7654deaec256b6e048c331198adc7ad9256677f50195d3150d191d60ae936cb506520370b3734de64162976f20fa0a4e6e540c0b1532f0f0d6e6b0021372e52fb1408379a7d12c474744d868a6b304c8a466ec252fa7bb3b8b77c7183"
+            "PublicKey": "public1pjt7vh4m9fh4wcfttdczgcvc3nzku0tvj2enh75qet5c4p5v36c9wjdkt2pjjqdctxu6dueqk99m0yraq5nnw2sxqk9fj7rcdde4sqgfh9ef0k9qgx7d86ykyw36ymp52dvcyezjxdmp997nmkwutwlr3svhs5k47"
         }
     ]
 }

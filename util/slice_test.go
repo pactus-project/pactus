@@ -173,3 +173,8 @@ func TestContains(t *testing.T) {
 	assert.False(t, Contains([]int32{1, 2, 3, 4}, 5))
 	assert.False(t, Contains([]int32{}, 0))
 }
+
+func TestSafeCmp(t *testing.T) {
+	assert.True(t, SafeCmp([]byte{1, 2, 3}, []byte{1, 2, 3}))
+	assert.False(t, SafeCmp([]byte{1, 2, 3, 3}, []byte{1, 2, 3}))
+}

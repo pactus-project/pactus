@@ -155,9 +155,7 @@ func bech32VerifyChecksum(hrp string, data []byte) bool {
 
 // DecodeNoLimit decodes a bech32 encoded string, returning the human-readable
 // part and the data part excluding the checksum.  This function does NOT
-// validate against the BIP-173 maximum length allowed for bech32 strings and
-// is meant for use in custom applications (such as lightning network payment
-// requests), NOT on-chain addresses.
+// validate against the BIP-173 maximum length allowed for bech32 strings.
 //
 // Note that the returned data is 5-bit (base32) encoded and the human-readable
 // part will be lowercase.
@@ -378,4 +376,60 @@ func DecodeToBase256(bech string) (string, []byte, error) {
 		return "", nil, err
 	}
 	return hrp, converted, nil
+}
+
+// EncodeFromBase256WithType converts a base256-encoded byte slice into a
+// base32-encoded byte slice and, concatenates the given type at the beginning
+// and then encodes it into a bech32 string with the given human-readable part (HRP).
+//
+// The HRP will be converted to lowercase if needed since mixed cased encodings
+// are not permitted and lowercase is used for checksum purposes. The maximum
+// size of type byte is 5 bits.
+func EncodeFromBase256WithType(hrp string, typ byte, data []byte) (string, error) {
+	// Group the data bytes into 5 bit groups, as this is what is used to
+	// encode each character in the bech32 string.
+	converted, err := ConvertBits(data, 8, 5, true)
+	if err != nil {
+		return "", err
+	}
+
+	// Concatenate the type and encode the resulting bytes using bech32m encoding.
+	combined := make([]byte, len(converted)+1)
+	combined[0] = typ
+	copy(combined[1:], converted)
+	str, err := Encode(hrp, combined)
+	if err != nil {
+		return "", err
+	}
+
+	return str, nil
+}
+
+// DecodeToBase256WithTypeNoLimit decodes a bech32-encoded string into its associated
+// human-readable part (HRP), type byte and base32-encoded data, converts that data
+// to a base256-encoded byte slice.
+//
+// This function does NOT validate against the BIP-173 maximum length allowed
+// for bech32 strings.
+func DecodeToBase256WithTypeNoLimit(bech string) (string, byte, []byte, error) {
+	// Decode the bech32m encoded string.
+	hrp, data, err := DecodeNoLimit(bech)
+	if err != nil {
+		return "", 0, nil, err
+	}
+
+	// The first byte of the decoded data is the type, it must exist.
+	if len(data) < 1 {
+		return "", 0, nil, ErrInvalidLength(0)
+	}
+
+	// The remaining characters of the data are grouped into
+	// words of 5 bits. In order to restore the original program
+	// bytes, we'll need to regroup into 8 bit words.
+	regrouped, err := ConvertBits(data[1:], 5, 8, false)
+	if err != nil {
+		return "", 0, nil, err
+	}
+
+	return hrp, data[0], regrouped, nil
 }

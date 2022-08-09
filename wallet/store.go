@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/wallet/vault"
 )
 
@@ -53,8 +54,12 @@ func (s *store) IsEncrypted() bool {
 	return s.data.Vault.IsEncrypted()
 }
 
-func (s *store) AddressInfos() []vault.AddressInfo {
-	return s.data.Vault.AddressInfos()
+func (s *store) AddressInfo(addr string) *vault.AddressInfo {
+	return s.data.Vault.AddressInfo(addr)
+}
+
+func (s *store) AddressLabels() []vault.AddressInfo {
+	return s.data.Vault.AddressLabels()
 }
 
 // AddressCount returns the number of addresses inside the wallet.
@@ -62,20 +67,16 @@ func (s *store) AddressCount() int {
 	return s.data.Vault.AddressCount()
 }
 
-func (s *store) ImportPrivateKey(password string, prvStr string) error {
-	return s.data.Vault.ImportPrivateKey(password, prvStr)
+func (s *store) ImportPrivateKey(password string, prv crypto.PrivateKey) error {
+	return s.data.Vault.ImportPrivateKey(password, prv)
 }
 
-func (s *store) PrivateKey(password, addr string) (string, error) {
+func (s *store) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 	return s.data.Vault.PrivateKey(password, addr)
 }
 
-func (s *store) PublicKey(password, addr string) (string, error) {
-	return s.data.Vault.PublicKey(password, addr)
-}
-
-func (s *store) MakeNewAddress(password, label string) (string, error) {
-	return s.data.Vault.MakeNewAddress(password, label)
+func (s *store) DeriveNewAddress(label string) (string, error) {
+	return s.data.Vault.DeriveNewAddress(label, vault.PurposeBLS12381)
 }
 
 func (s *store) Contains(addr string) bool {

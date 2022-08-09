@@ -16,7 +16,6 @@ import (
 	"github.com/zarbchain/zarb-go/node"
 	"github.com/zarbchain/zarb-go/node/config"
 	"github.com/zarbchain/zarb-go/types/crypto"
-	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/types/genesis"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/wallet"
@@ -90,15 +89,11 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 		return nil, nil, err
 	}
 
-	addrInfos := wallet.AddressInfos()
+	addrInfos := wallet.AddressLabels()
 	if len(addrInfos) == 0 {
 		return nil, nil, fmt.Errorf("validator address is not defined")
 	}
-	valPrvKeyStr, err := wallet.PrivateKey(password, addrInfos[0].Address)
-	if err != nil {
-		return nil, nil, err
-	}
-	prv, err := bls.PrivateKeyFromString(valPrvKeyStr)
+	prv, err := wallet.PrivateKey(password, addrInfos[0].Address)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -1,8 +1,10 @@
-package vault
+package encrypter
 
 import (
 	"encoding/base64"
 	"strconv"
+
+	"github.com/zarbchain/zarb-go/util"
 )
 
 type params map[string]string
@@ -11,11 +13,15 @@ func newParams() params {
 	return make(map[string]string)
 }
 func (p params) SetUint8(key string, val uint8) {
-	p.SetUint32(key, uint32(val))
+	p.SetUint64(key, uint64(val))
 }
 
 func (p params) SetUint32(key string, val uint32) {
-	p[key] = strconv.FormatUint(uint64(val), 10)
+	p.SetUint64(key, uint64(val))
+}
+
+func (p params) SetUint64(key string, val uint64) {
+	p[key] = strconv.FormatUint(val, 10)
 }
 
 func (p params) SetBytes(key string, val []byte) {
@@ -27,17 +33,22 @@ func (p params) SetString(key string, val string) {
 }
 
 func (p params) GetUint8(key string) uint8 {
-	return uint8(p.GetUint32(key))
+	return uint8(p.GetUint64(key))
 }
+
 func (p params) GetUint32(key string) uint32 {
-	val, err := strconv.ParseUint(p[key], 10, 32)
-	exitOnErr(err)
-	return uint32(val)
+	return uint32(p.GetUint64(key))
+}
+
+func (p params) GetUint64(key string) uint64 {
+	val, err := strconv.ParseUint(p[key], 10, 64)
+	util.ExitOnErr(err)
+	return val
 }
 
 func (p params) GetBytes(key string) []byte {
 	val, err := base64.StdEncoding.DecodeString(p[key])
-	exitOnErr(err)
+	util.ExitOnErr(err)
 	return val
 }
 

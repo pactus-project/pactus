@@ -66,11 +66,15 @@ func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
-	keyInfo := []byte{}
+	coinType := uint32(21888)
 	if net == NetworkTestNet {
-		keyInfo = []byte{1}
+		coinType = uint32(21777)
 	}
-	vault, err := vault.CreateVaultFromMnemonic(mnemonic, password, keyInfo)
+	vault, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
+	if err != nil {
+		return nil, err
+	}
+	err = vault.UpdatePassword("", password)
 	if err != nil {
 		return nil, err
 	}
@@ -288,12 +292,7 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 }
 
 func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
-	prvStr, err := w.PrivateKey(password, trx.Payload().Signer().String())
-	if err != nil {
-		return err
-	}
-
-	prv, err := bls.PrivateKeyFromString(prvStr)
+	prv, err := w.PrivateKey(password, trx.Payload().Signer().String())
 	if err != nil {
 		return err
 	}

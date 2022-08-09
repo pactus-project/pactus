@@ -5,6 +5,7 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
@@ -32,7 +33,7 @@ func AllAddresses() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			for _, info := range wallet.AddressInfos() {
+			for _, info := range wallet.AddressLabels() {
 				line := info.Address + "\t"
 
 				if *balanceOpt {
@@ -59,8 +60,6 @@ func AllAddresses() func(c *cli.Cmd) {
 // NewAddress creates a new address.
 func NewAddress() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
-		passOpt := addPasswordOption(c)
-
 		c.Before = func() {}
 		c.Action = func() {
 			label := cmd.PromptInput("Label")
@@ -70,8 +69,7 @@ func NewAddress() func(c *cli.Cmd) {
 				return
 			}
 
-			password := getPassword(wallet, *passOpt)
-			addr, err := wallet.MakeNewAddress(password, label)
+			addr, err := wallet.DeriveNewAddress(label)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -146,11 +144,10 @@ func PrivateKey() func(c *cli.Cmd) {
 	}
 }
 
-// GetPrivateKey returns the public key of an address.
+// PublicKey returns the public key of an address.
 func PublicKey() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := addAddressArg(c)
-		passOpt := addPasswordOption(c)
 
 		c.Before = func() {}
 		c.Action = func() {
@@ -160,15 +157,17 @@ func PublicKey() func(c *cli.Cmd) {
 				return
 			}
 
-			password := getPassword(wallet, *passOpt)
-			pub, err := wallet.PublicKey(password, *addrArg)
-			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
+			info := wallet.AddressInfo(*addrArg)
+			if info == nil {
+				cmd.PrintDangerMsg("Address not found")
 				return
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Public Key: \"%v\"", pub)
+			cmd.PrintInfoMsg("Public Key: \"%v\"", info.Pub.String())
+			if !info.Imported {
+				cmd.PrintInfoMsg("Path: \"%v\"", info.Path.String())
+			}
 		}
 	}
 }
@@ -180,9 +179,15 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			prv := cmd.PromptInput("Private Key")
+			prvStr := cmd.PromptInput("Private Key")
 
 			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
+
+			prv, err := bls.PrivateKeyFromString(prvStr)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

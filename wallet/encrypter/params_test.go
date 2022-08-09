@@ -1,4 +1,4 @@
-package vault
+package encrypter
 
 import (
 	"testing"
@@ -35,6 +35,22 @@ func TestParamsUint32(t *testing.T) {
 	for _, test := range tests {
 		p.SetUint32(test.key, test.val)
 		assert.Equal(t, test.val, p.GetUint32(test.key))
+	}
+}
+
+func TestParamsUint64(t *testing.T) {
+	tests := []struct {
+		key string
+		val uint64
+	}{
+		{"k1", uint64(0)},
+		{"k2", uint64(0xFFFFFFFFFFFFFFFF)},
+	}
+
+	p := params{}
+	for _, test := range tests {
+		p.SetUint64(test.key, test.val)
+		assert.Equal(t, test.val, p.GetUint64(test.key))
 	}
 }
 

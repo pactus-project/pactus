@@ -74,12 +74,12 @@ func Init() func(c *cli.Cmd) {
 				return
 			}
 			cmd.PrintInfoMsg("Wallet created successfully")
-			valAddrStr, err := wallet.MakeNewAddress("", "Validator address")
+			valAddrStr, err := wallet.DeriveNewAddress("Validator address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create validator address: %v", err)
 				return
 			}
-			rewardAddrStr, err := wallet.MakeNewAddress("", "Reward address")
+			rewardAddrStr, err := wallet.DeriveNewAddress("Reward address")
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create reward address: %v", err)
 				return
@@ -97,17 +97,12 @@ func Init() func(c *cli.Cmd) {
 					return
 				}
 			} else if *localnetOpt {
-				valPubStr, err := wallet.PublicKey("", valAddrStr)
-				if err != nil {
-					cmd.PrintErrorMsg("Failed to get validator public key: %v", err)
+				info := wallet.AddressInfo(valAddrStr)
+				if info == nil {
+					cmd.PrintErrorMsg("Failed to get validator public key")
 					return
 				}
-				valPub, err := bls.PublicKeyFromString(valPubStr)
-				if err != nil {
-					cmd.PrintErrorMsg("Failed to create validator public key: %v", err)
-					return
-				}
-
+				valPub := info.Pub.(*bls.PublicKey)
 				gen = makeLocalGenesis(valPub)
 
 				// Save config for localnet
