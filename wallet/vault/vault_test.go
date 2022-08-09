@@ -26,6 +26,14 @@ func testVault(t *testing.T) *Vault {
 		assert.False(t, key.IsPrivate())
 	}
 
+	// Create some test address
+	_, err = vault.DeriveNewAddress("addr-1", PurposeBLS12381)
+	assert.NoError(t, err)
+	_, err = vault.DeriveNewAddress("addr-2", PurposeBLS12381)
+	assert.NoError(t, err)
+	_, err = vault.DeriveNewAddress("addr-3", PurposeBLS12381)
+	assert.NoError(t, err)
+
 	assert.NoError(t, vault.ImportPrivateKey("", importedPrv))
 	assert.False(t, vault.IsEncrypted())
 
@@ -44,12 +52,12 @@ func testVault(t *testing.T) *Vault {
 func TestAddressInfo(t *testing.T) {
 	vault := testVault(t)
 
-	assert.Equal(t, vault.AddressCount(), 22)
+	assert.Equal(t, vault.AddressCount(), 4)
 	infos := vault.AddressLabels()
 	blsIndex := 0
 	importedIndex := 0
 	for _, i := range infos {
-		info := vault.GetAddressInfo(i.Address)
+		info := vault.AddressInfo(i.Address)
 		assert.Equal(t, info.Address, info.Address)
 		if !info.Imported {
 			assert.Equal(t, info.Path.String(), fmt.Sprintf("m/12381'/21888'/%d/0", blsIndex))
@@ -65,11 +73,11 @@ func TestAddressInfo(t *testing.T) {
 
 	// Neutered
 	neutered := vault.Neuter()
-	assert.Equal(t, neutered.AddressCount(), 21)
+	assert.Equal(t, neutered.AddressCount(), 3)
 	infos = neutered.AddressLabels()
 	blsIndex = 0
 	for _, i := range infos {
-		info := vault.GetAddressInfo(i.Address)
+		info := vault.AddressInfo(i.Address)
 		assert.Equal(t, info.Address, info.Address)
 		if !info.Imported {
 			assert.Equal(t, info.Path.String(), fmt.Sprintf("m/12381'/21888'/%d/0", blsIndex))
@@ -106,6 +114,14 @@ func TestRecover(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		recovered, err := CreateVaultFromMnemonic(mnemonic, 21888)
+		assert.NoError(t, err)
+
+		// Recover addresses
+		_, err = recovered.DeriveNewAddress("addr-1", PurposeBLS12381)
+		assert.NoError(t, err)
+		_, err = recovered.DeriveNewAddress("addr-2", PurposeBLS12381)
+		assert.NoError(t, err)
+		_, err = recovered.DeriveNewAddress("addr-3", PurposeBLS12381)
 		assert.NoError(t, err)
 
 		assert.Equal(t, recovered.Keystore.Purposes, vault.Keystore.Purposes)
@@ -193,7 +209,7 @@ func TestUpdatePassword(t *testing.T) {
 
 	infos := make([]*AddressInfo, 0, vault.AddressCount())
 	for _, info := range vault.AddressLabels() {
-		info := vault.GetAddressInfo(info.Address)
+		info := vault.AddressInfo(info.Address)
 		infos = append(infos, info)
 	}
 
@@ -212,7 +228,7 @@ func TestUpdatePassword(t *testing.T) {
 		assert.NoError(t, vault.UpdatePassword(tPassword, newPassword, opts...))
 		assert.True(t, vault.IsEncrypted())
 		for _, info := range infos {
-			assert.Equal(t, info, vault.GetAddressInfo(info.Address))
+			assert.Equal(t, info, vault.AddressInfo(info.Address))
 		}
 	})
 
@@ -222,7 +238,7 @@ func TestUpdatePassword(t *testing.T) {
 		assert.NoError(t, vault.UpdatePassword(newPassword, ""))
 		assert.False(t, vault.IsEncrypted())
 		for _, info := range infos {
-			assert.Equal(t, info, vault.GetAddressInfo(info.Address))
+			assert.Equal(t, info, vault.AddressInfo(info.Address))
 		}
 	})
 }

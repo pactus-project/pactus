@@ -35,7 +35,7 @@ func (model *walletModel) ToTreeModel() *gtk.TreeModel {
 
 func (model *walletModel) rebuildModel() error {
 	model.listStore.Clear()
-	for no, info := range model.wallet.AddressInfos() {
+	for no, info := range model.wallet.AddressLabels() {
 		label := info.Label
 		if info.Imported {
 			label += "(Imported)"
@@ -69,7 +69,7 @@ func (model *walletModel) rebuildModel() error {
 	return nil
 }
 
-func (model *walletModel) createAddress(password string) error {
+func (model *walletModel) createAddress() error {
 	address, err := model.wallet.DeriveNewAddress("")
 	if err != nil {
 		return err

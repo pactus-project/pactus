@@ -33,7 +33,7 @@ func AllAddresses() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			for _, info := range wallet.AddressInfos() {
+			for _, info := range wallet.AddressLabels() {
 				line := info.Address + "\t"
 
 				if *balanceOpt {
@@ -144,32 +144,33 @@ func PrivateKey() func(c *cli.Cmd) {
 	}
 }
 
-// // PublicKey returns the public key of an address.
-// func PublicKey() func(c *cli.Cmd) {
-// 	return func(c *cli.Cmd) {
-// 		addrArg := addAddressArg(c)
-// 		passOpt := addPasswordOption(c)
+// PublicKey returns the public key of an address.
+func PublicKey() func(c *cli.Cmd) {
+	return func(c *cli.Cmd) {
+		addrArg := addAddressArg(c)
 
-// 		c.Before = func() {}
-// 		c.Action = func() {
-// 			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
-// 			if err != nil {
-// 				cmd.PrintDangerMsg(err.Error())
-// 				return
-// 			}
+		c.Before = func() {}
+		c.Action = func() {
+			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			if err != nil {
+				cmd.PrintDangerMsg(err.Error())
+				return
+			}
 
-// 			password := getPassword(wallet, *passOpt)
-// 			pub, err := wallet.PublicKey(password, *addrArg)
-// 			if err != nil {
-// 				cmd.PrintDangerMsg(err.Error())
-// 				return
-// 			}
+			info := wallet.AddressInfo(*addrArg)
+			if info == nil {
+				cmd.PrintDangerMsg("Address not found")
+				return
+			}
 
-// 			cmd.PrintLine()
-// 			cmd.PrintInfoMsg("Public Key: \"%v\"", pub)
-// 		}
-// 	}
-// }
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Public Key: \"%v\"", info.Pub.String())
+			if !info.Imported {
+				cmd.PrintInfoMsg("Path: \"%v\"", info.Path.String())
+			}
+		}
+	}
+}
 
 // ImportPrivateKey imports a private key into the wallet.
 func ImportPrivateKey() func(c *cli.Cmd) {

@@ -63,9 +63,9 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 	secret = append(secret, util.IS2OP(big.NewInt(0), 1)...)
 
 	L := int64(48)
-	pseudorandomKey := make([]byte, 0, len(keyInfo)+2)
-	pseudorandomKey = append(pseudorandomKey, keyInfo...)
-	pseudorandomKey = append(pseudorandomKey, util.IS2OP(big.NewInt(L), 2)...)
+	pseudoRandomKey := make([]byte, 0, len(keyInfo)+2)
+	pseudoRandomKey = append(pseudoRandomKey, keyInfo...)
+	pseudoRandomKey = append(pseudoRandomKey, util.IS2OP(big.NewInt(L), 2)...)
 
 	salt := []byte("BLS-SIG-KEYGEN-SALT-")
 	x := big.NewInt(0)
@@ -75,7 +75,7 @@ func PrivateKeyFromSeed(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 
 		okm := make([]byte, L)
 		prk := hkdf.Extract(sha256.New, secret, salt[:])
-		reader := hkdf.Expand(sha256.New, prk, pseudorandomKey)
+		reader := hkdf.Expand(sha256.New, prk, pseudoRandomKey)
 		_, _ = reader.Read(okm)
 
 		r, _ := new(big.Int).SetString("73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001", 16)

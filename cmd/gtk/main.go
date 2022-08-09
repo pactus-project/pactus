@@ -89,7 +89,7 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 		return nil, nil, err
 	}
 
-	addrInfos := wallet.AddressInfos()
+	addrInfos := wallet.AddressLabels()
 	if len(addrInfos) == 0 {
 		return nil, nil, fmt.Errorf("validator address is not defined")
 	}

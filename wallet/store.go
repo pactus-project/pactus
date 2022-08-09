@@ -55,10 +55,10 @@ func (s *store) IsEncrypted() bool {
 }
 
 func (s *store) AddressInfo(addr string) *vault.AddressInfo {
-	return s.data.Vault.GetAddressInfo(addr)
+	return s.data.Vault.AddressInfo(addr)
 }
 
-func (s *store) AddressInfos() []vault.AddressInfo {
+func (s *store) AddressLabels() []vault.AddressInfo {
 	return s.data.Vault.AddressLabels()
 }
 

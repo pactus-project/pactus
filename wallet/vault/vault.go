@@ -87,15 +87,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 
 	blsPurpose := &purpose{
 		XPub:      purposeKey.Neuter().String(),
-		Addresses: make([]string, 21),
-	}
-	for i := range blsPurpose.Addresses {
-		ext, err := purposeKey.DerivePath([]uint32{uint32(i), 0})
-		if err != nil {
-			return nil, err
-		}
-
-		blsPurpose.Addresses[i] = ext.Address().String()
+		Addresses: []string{},
 	}
 
 	return &Vault{
@@ -255,7 +247,7 @@ func (v *Vault) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 		return nil, ErrNeutered
 	}
 
-	info := v.GetAddressInfo(addr)
+	info := v.AddressInfo(addr)
 	if info == nil {
 		return nil, NewErrAddressNotFound(addr)
 	}
@@ -317,7 +309,7 @@ func (v *Vault) DeriveNewAddress(label string, purpose uint32) (string, error) {
 	return "", ErrInvalidPath
 }
 
-func (v *Vault) GetAddressInfo(addr string) *AddressInfo {
+func (v *Vault) AddressInfo(addr string) *AddressInfo {
 	for _, p := range v.Keystore.Purposes {
 		for i, a := range p.Addresses {
 			if a == addr {
@@ -355,7 +347,7 @@ func (v *Vault) GetAddressInfo(addr string) *AddressInfo {
 }
 
 func (v *Vault) Contains(addr string) bool {
-	return v.GetAddressInfo(addr) != nil
+	return v.AddressInfo(addr) != nil
 }
 
 func (v *Vault) Mnemonic(password string) (string, error) {

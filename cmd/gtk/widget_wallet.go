@@ -124,12 +124,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 }
 
 func (ww *widgetWallet) onNewAddress() {
-	password, ok := getWalletPassword(ww.model.wallet)
-	if !ok {
-		return
-	}
-
-	err := ww.model.createAddress(password)
+	err := ww.model.createAddress()
 	if err != nil {
 		showErrorDialog(nil, err.Error())
 	}
