@@ -62,12 +62,6 @@ const (
 	// MaxSeedBytes is the maximum number of bytes allowed for a seed to
 	// a master node.
 	MaxSeedBytes = 64 // 512 bits
-
-	// Human Readable Part (HRP) for extended public key
-	hrpExtPubKey = "xpublic"
-
-	// Human Readable Part (HRP) for extended public key
-	hrpExtPrvKey = "xsecret"
 )
 
 // ExtendedKey houses all the information needed to support a hierarchical
@@ -351,9 +345,9 @@ func (k *ExtendedKey) String() string {
 	err = encoding.WriteElement(w, k.key)
 	util.ExitOnErr(err)
 
-	hrp := hrpExtPubKey
+	hrp := crypto.XPublicKeyHRP
 	if k.isPrivate {
-		hrp = hrpExtPrvKey
+		hrp = crypto.XPrivateKeyHRP
 	}
 
 	str, err := bech32m.EncodeFromBase256WithType(hrp, crypto.SignatureTypeBLS, w.Bytes())
@@ -392,7 +386,7 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 	}
 
 	switch hrp {
-	case hrpExtPrvKey:
+	case crypto.XPrivateKeyHRP:
 		if r.Len() != 64 {
 			return nil, ErrInvalidKeyData
 		}
@@ -411,7 +405,7 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 
 		return newExtendedKey(key[:], chainCode[:], path, true), nil
 
-	case hrpExtPubKey:
+	case crypto.XPublicKeyHRP:
 		if r.Len() != 128 {
 			return nil, ErrInvalidKeyData
 		}

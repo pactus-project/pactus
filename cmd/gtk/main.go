@@ -81,7 +81,11 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 		return nil, nil, err
 	}
 	if gen.Params().IsTestnet() {
-		crypto.DefaultHRP = "tzc"
+		crypto.AddressHRP = "tzc"
+		crypto.PublicKeyHRP = "tpublic"
+		crypto.PrivateKeyHRP = "tsecret"
+		crypto.XPublicKeyHRP = "txpublic"
+		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
 	conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))

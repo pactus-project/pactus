@@ -71,7 +71,11 @@ func Start() func(c *cli.Cmd) {
 			}
 
 			if gen.Params().IsTestnet() {
-				crypto.DefaultHRP = "tzc"
+				crypto.AddressHRP = "tzc"
+				crypto.PublicKeyHRP = "tpublic"
+				crypto.PrivateKeyHRP = "tsecret"
+				crypto.XPublicKeyHRP = "txpublic"
+				crypto.XPrivateKeyHRP = "txsecret"
 			}
 
 			conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))

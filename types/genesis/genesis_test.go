@@ -51,7 +51,7 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, g.GenesisTime(), genTime)
 	assert.Equal(t, g.Params().BondInterval, int32(120))
 
-	expected, _ := hash.FromString("278237cc8f13bcb86ae2ec70964d6a31a9ef6a4d68ad9cacae1d8fbd02c91f31")
+	expected, _ := hash.FromString("8ef2cbbe472d8d55961b7fb310be48c7c70d7dfc81a90c673cd73576ba04b513")
 	assert.Equal(t, g.Hash(), expected)
 }
 

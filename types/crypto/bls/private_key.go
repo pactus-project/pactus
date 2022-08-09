@@ -14,10 +14,7 @@ import (
 	"golang.org/x/crypto/hkdf"
 )
 
-const (
-	PrivateKeySize = 32
-	hrpPrivateKey  = "secret"
-)
+const PrivateKeySize = 32
 
 type PrivateKey struct {
 	secretKey bls.SecretKey
@@ -33,7 +30,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != hrpPrivateKey {
+	if hrp != crypto.PrivateKeyHRP {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid hrp: %v", hrp)
 	}
 
@@ -110,7 +107,7 @@ func (prv PrivateKey) String() string {
 	data := prv.secretKey.Serialize()
 
 	str, err := bech32m.EncodeFromBase256WithType(
-		hrpPrivateKey,
+		crypto.PrivateKeyHRP,
 		crypto.SignatureTypeBLS,
 		data)
 	if err != nil {
