@@ -22,7 +22,6 @@ const (
 )
 
 var TreasuryAddress = Address{0}
-var DefaultHRP = "zc"
 
 type Address [AddressSize]byte
 
@@ -40,7 +39,7 @@ func AddressFromString(text string) (Address, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != DefaultHRP {
+	if hrp != AddressHRP {
 		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "invalid hrp: %v", hrp)
 	}
 
@@ -78,7 +77,7 @@ func (addr Address) String() string {
 	}
 
 	str, err := bech32m.EncodeFromBase256WithType(
-		DefaultHRP,
+		AddressHRP,
 		SignatureTypeBLS,
 		addr[1:])
 	if err != nil {

@@ -2,6 +2,7 @@ package bls
 
 import (
 	"encoding/hex"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -30,6 +31,8 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 }
 
 func TestPublicKeyEncoding(t *testing.T) {
+	_, err := PublicKeyFromString("tpublic1pjt7vh4m9fh4wcfttdczgcvc3nzku0tvj2enh75qet5c4p5v36c9wjdkt2pjjqdctxu6dueqk99m0yraq5nnw2sxqk9fj7rcdde4sqgfh9ef0k9qgx7d86ykyw36ymp52dvcyezjxdmp997nmkwutwlr3svvu7aq9")
+	fmt.Println(err.Error())
 	pub, _ := GenerateTestKeyPair()
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, pub.Encode(w1))

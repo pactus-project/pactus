@@ -13,10 +13,7 @@ import (
 	"github.com/zarbchain/zarb-go/util/errors"
 )
 
-const (
-	PublicKeySize = 96
-	hrpPublicKey  = "public"
-)
+const PublicKeySize = 96
 
 type PublicKey struct {
 	publicKey bls.PublicKey
@@ -32,7 +29,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != hrpPublicKey {
+	if hrp != crypto.PublicKeyHRP {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey, "invalid hrp: %v", hrp)
 	}
 
@@ -68,7 +65,7 @@ func (pub *PublicKey) String() string {
 	data := pub.publicKey.Serialize()
 
 	str, err := bech32m.EncodeFromBase256WithType(
-		hrpPublicKey,
+		crypto.PublicKeyHRP,
 		crypto.SignatureTypeBLS,
 		data)
 	if err != nil {

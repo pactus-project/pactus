@@ -66,6 +66,20 @@ func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
+
+	store := &store{
+		data: storeData{
+			Version:   1,
+			UUID:      uuid.New(),
+			CreatedAt: time.Now().Round(time.Second).UTC(),
+			Network:   net,
+			Vault:     nil,
+		},
+	}
+	wallet, err := newWallet(path, store, true)
+	if err != nil {
+		return nil, err
+	}
 	coinType := uint32(21888)
 	if net == NetworkTestNet {
 		coinType = uint32(21777)
@@ -78,22 +92,18 @@ func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error)
 	if err != nil {
 		return nil, err
 	}
-	store := &store{
-		data: storeData{
-			Version:   1,
-			UUID:      uuid.New(),
-			CreatedAt: time.Now().Round(time.Second).UTC(),
-			Network:   net,
-			Vault:     vault,
-		},
-	}
+	wallet.store.data.Vault = vault
 
-	return newWallet(path, store, true)
+	return wallet, nil
 }
 
 func newWallet(path string, store *store, offline bool) (*Wallet, error) {
 	if store.data.Network == NetworkTestNet {
-		crypto.DefaultHRP = "tzc"
+		crypto.AddressHRP = "tzc"
+		crypto.PublicKeyHRP = "tpublic"
+		crypto.PrivateKeyHRP = "tsecret"
+		crypto.XPublicKeyHRP = "txpublic"
+		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
 	w := &Wallet{

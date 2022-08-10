@@ -19,16 +19,16 @@
     ],
     "Validators": [
         {
-            "PublicKey": "public1p4awmva0vs0gvslfne5pnaa6krvagu96me4hdthwmwtdgtuguu9ahgs4ugx4cgtfd69mfkggguxme6zanhcpa4cwf4ejcjj9fyp4q4zc50l6urprm9yxj0dk0kdv944ehetppxckyrlgzkg9p5kxfng0lvu2ul2th"
+            "PublicKey": "tpublic1p4awmva0vs0gvslfne5pnaa6krvagu96me4hdthwmwtdgtuguu9ahgs4ugx4cgtfd69mfkggguxme6zanhcpa4cwf4ejcjj9fyp4q4zc50l6urprm9yxj0dk0kdv944ehetppxckyrlgzkg9p5kxfng0lvu3s4p7v"
         },
         {
-            "PublicKey": "public1psk2k52u49d2rfj28vutfk2cvn5pfux2l5cpsa7qz4j356wwj0xy026gel8avr4cedjytkwknf6ha6z9jealltsfyrgl3v5r63g65y08ejzmr40a4xuh5dxgwtx2wzuefzydul323pnt554ak2nmw5j0j0cd49wks"
+            "PublicKey": "tpublic1psk2k52u49d2rfj28vutfk2cvn5pfux2l5cpsa7qz4j356wwj0xy026gel8avr4cedjytkwknf6ha6z9jealltsfyrgl3v5r63g65y08ejzmr40a4xuh5dxgwtx2wzuefzydul323pnt554ak2nmw5j0j0cke09rt"
         },
         {
-            "PublicKey": "public1psk32a7t2rjvra5j9h869ms9el6tpfklz0cppe8w7addgup4trc4h2ssdu8vgm3nrfgr8klxc4u26grgqplrcdex820u3qfhudejr7eyz5m77dft38qdduhlqxs5u9et67h0u2tv8gzuh6sxpgrxt2vj70q54tp9f"
+            "PublicKey": "tpublic1psk32a7t2rjvra5j9h869ms9el6tpfklz0cppe8w7addgup4trc4h2ssdu8vgm3nrfgr8klxc4u26grgqplrcdex820u3qfhudejr7eyz5m77dft38qdduhlqxs5u9et67h0u2tv8gzuh6sxpgrxt2vj70q0ep2sj"
         },
         {
-            "PublicKey": "public1pjt7vh4m9fh4wcfttdczgcvc3nzku0tvj2enh75qet5c4p5v36c9wjdkt2pjjqdctxu6dueqk99m0yraq5nnw2sxqk9fj7rcdde4sqgfh9ef0k9qgx7d86ykyw36ymp52dvcyezjxdmp997nmkwutwlr3svhs5k47"
+            "PublicKey": "tpublic1pjt7vh4m9fh4wcfttdczgcvc3nzku0tvj2enh75qet5c4p5v36c9wjdkt2pjjqdctxu6dueqk99m0yraq5nnw2sxqk9fj7rcdde4sqgfh9ef0k9qgx7d86ykyw36ymp52dvcyezjxdmp997nmkwutwlr3svvu7aq9"
         }
     ]
 }
