@@ -89,6 +89,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	menu, err := gtk.MenuNew()
 	fatalErrorCheck(err)
 
+	// Update label menu item
 	item, err := gtk.MenuItemNewWithLabel("Update _Label")
 	fatalErrorCheck(err)
 
@@ -96,6 +97,18 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.Show()
 	item.Connect("activate", func(item *gtk.MenuItem) bool {
 		w.onUpdateLabel()
+		return false
+	})
+	menu.Append(item)
+
+	// Address details menu item
+	item, err = gtk.MenuItemNewWithLabel("_Details")
+	fatalErrorCheck(err)
+
+	item.SetUseUnderline(true)
+	item.Show()
+	item.Connect("activate", func(item *gtk.MenuItem) bool {
+		w.onShowDetails()
 		return false
 	})
 	menu.Append(item)
@@ -171,6 +184,13 @@ func (ww *widgetWallet) onUpdateLabel() {
 			err = ww.model.rebuildModel()
 			fatalErrorCheck(err)
 		}
+	}
+}
+
+func (ww *widgetWallet) onShowDetails() {
+	addr := ww.getSelectedAddress()
+	if addr != "" {
+		showAddressDetails(ww.model.wallet, addr)
 	}
 }
 

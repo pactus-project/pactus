@@ -10,18 +10,18 @@ import (
 )
 
 var (
-	//go:embed assets/ui/dialog_show_seed.ui
-	uiShowSeedDialog []byte
+	//go:embed assets/ui/dialog_wallet_show_seed.ui
+	uiWalletShowSeedDialog []byte
 
 	//go:embed assets/images/seed.svg
 	imageSeed []byte
 )
 
 func showSeed(seed string) {
-	builder, err := gtk.BuilderNewFromString(string(uiShowSeedDialog))
+	builder, err := gtk.BuilderNewFromString(string(uiWalletShowSeedDialog))
 	fatalErrorCheck(err)
 
-	dlg := getDialogObj(builder, "id_dialog_show_seed")
+	dlg := getDialogObj(builder, "id_dialog_wallet_show_seed")
 	textViewSeed := getTextViewObj(builder, "id_textview_seed")
 	setTextViewContent(textViewSeed, seed)
 

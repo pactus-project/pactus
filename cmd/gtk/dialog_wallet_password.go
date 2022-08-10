@@ -6,26 +6,31 @@ import (
 	_ "embed"
 
 	"github.com/gotk3/gotk3/gtk"
+
+	"github.com/zarbchain/zarb-go/wallet"
 )
 
-//go:embed assets/ui/dialog_label.ui
-var uiLabelDialog []byte
+//go:embed assets/ui/dialog_wallet_password.ui
+var uiPasswordDialog []byte
 
-func getAddressLabel(oldLabel string) (string, bool) {
-	builder, err := gtk.BuilderNewFromString(string(uiLabelDialog))
+func getWalletPassword(wallet *wallet.Wallet) (string, bool) {
+	password := ""
+	if !wallet.IsEncrypted() {
+		return password, true
+	}
+
+	builder, err := gtk.BuilderNewFromString(string(uiPasswordDialog))
 	fatalErrorCheck(err)
 
-	dlg := getDialogObj(builder, "id_dialog_label")
-	labelEntry := getEntryObj(builder, "id_entry_label")
-	labelEntry.SetText(oldLabel)
+	dlg := getDialogObj(builder, "id_dialog_wallet_password")
+	passwordEntry := getEntryObj(builder, "id_entry_password")
 
 	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 
-	newLabel := ""
 	ok := false
 	onOk := func() {
-		newLabel, err = labelEntry.GetText()
+		password, err = passwordEntry.GetText()
 		fatalErrorCheck(err)
 
 		ok = true
@@ -48,5 +53,8 @@ func getAddressLabel(oldLabel string) (string, bool) {
 
 	dlg.Run()
 
-	return newLabel, ok
+	// Destroy dialog after closing dialog
+	dlg.Destroy()
+
+	return password, ok
 }
