@@ -42,7 +42,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install Dependencies
-      run: brew install gobject-introspection gtk+3 adwaita-icon-theme
+      run: brew install jpeg gobject-introspection gtk+3 adwaita-icon-theme
 
     - name: Install Go
       uses: actions/setup-go@v3
