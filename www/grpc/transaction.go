@@ -65,7 +65,7 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	}
 
 	if trx.PublicKey() != nil {
-		transaction.PublicKey = trx.PublicKey().Bytes()
+		transaction.PublicKey = trx.PublicKey().String()
 	}
 
 	if trx.Signature() != nil {
