@@ -45,7 +45,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, int32(0))
+		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 	})
 
 	pub, _ := bls.GenerateTestKeyPair()
@@ -57,7 +57,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, int32(0))
+		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 	})
 
 	t.Run("NodeNetwork flag is not set", func(t *testing.T) {
@@ -69,7 +69,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, int32(0))
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
 
 		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {

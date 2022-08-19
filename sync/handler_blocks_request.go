@@ -71,7 +71,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 			msg.SessionID, height, blocks, nil)
 		handler.sendTo(response, initiator)
 
-		height += int32(len(blocks))
+		height += uint32(len(blocks))
 		if height >= msg.To {
 			break
 		}

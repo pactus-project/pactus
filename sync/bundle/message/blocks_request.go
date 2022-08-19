@@ -7,12 +7,12 @@ import (
 )
 
 type BlocksRequestMessage struct {
-	SessionID int   `cbor:"1,keyasint"`
-	From      int32 `cbor:"2,keyasint"`
-	To        int32 `cbor:"3,keyasint"`
+	SessionID int    `cbor:"1,keyasint"`
+	From      uint32 `cbor:"2,keyasint"`
+	To        uint32 `cbor:"3,keyasint"`
 }
 
-func NewBlocksRequestMessage(sid int, from, to int32) *BlocksRequestMessage {
+func NewBlocksRequestMessage(sid int, from, to uint32) *BlocksRequestMessage {
 	return &BlocksRequestMessage{
 		SessionID: sid,
 		From:      from,
@@ -21,9 +21,6 @@ func NewBlocksRequestMessage(sid int, from, to int32) *BlocksRequestMessage {
 }
 
 func (m *BlocksRequestMessage) SanityCheck() error {
-	if m.From < 0 {
-		return errors.Error(errors.ErrInvalidHeight)
-	}
 	if m.From > m.To {
 		return errors.Errorf(errors.ErrInvalidHeight, "invalid range")
 	}

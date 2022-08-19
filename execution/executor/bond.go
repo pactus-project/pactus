@@ -41,19 +41,19 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			"validator has unbonded at height %v", val.UnbondingHeight())
 	}
 	if e.strict {
-		// In strict mode, bond transaction will be rejected if a validator is
+		// In strict mode, bond transactions will be rejected if a validator is
 		// in committee.
-		// In non-strict mode, we accept it and keep it inside tx pool to
-		// process it later
+		// In non-strict mode, we accept it and keep it inside the tx pool to
+		// process it later.
 		if sb.Committee().Contains(pld.Receiver) {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v is in committee", pld.Receiver)
 		}
 
-		// In strict mode, a validator can not evaluate sortition during bonding
-		// perion.
-		// In non-strict mode, we accept it and keep it inside tx pool to
-		// process it later
+		// In strict mode, a validator can not evaluate sortition during the
+		// bonding period.
+		// In non-strict mode, we accept it and keep it inside the tx pool to
+		// process it later.
 		if val.LastJoinedHeight() == sb.CurrentHeight() {
 			return errors.Errorf(errors.ErrInvalidHeight,
 				"validator %v joins committee in the next height", pld.Receiver)

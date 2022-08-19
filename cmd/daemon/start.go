@@ -20,7 +20,7 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-//Start starts the zarb node.
+// Start starts the zarb node.
 func Start() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{

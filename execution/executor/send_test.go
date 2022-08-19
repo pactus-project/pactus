@@ -103,11 +103,11 @@ func TestSendNonStrictMode(t *testing.T) {
 
 	receiver1 := crypto.GenerateTestAddress()
 
-	trx1 := tx.NewSubsidyTx(tStamp500000, tSandbox.CurrentHeight(), receiver1, 1, "")
+	trx1 := tx.NewSubsidyTx(tStamp500000, int32(tSandbox.CurrentHeight()), receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx1, tSandbox)), errors.ErrInvalidSequence)
 	assert.NoError(t, exe2.Execute(trx1, tSandbox))
 
-	trx2 := tx.NewSubsidyTx(tStamp500000, tSandbox.CurrentHeight()+1, receiver1, 1, "")
+	trx2 := tx.NewSubsidyTx(tStamp500000, int32(tSandbox.CurrentHeight()+1), receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
 	assert.Equal(t, errors.Code(exe2.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
 }

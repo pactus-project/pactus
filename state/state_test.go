@@ -203,7 +203,7 @@ func TestCommitBlocks(t *testing.T) {
 	assert.Equal(t, tState1.LastBlockHash(), b1.Hash())
 	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
 	assert.Equal(t, tState1.LastCertificate().Hash(), c1.Hash())
-	assert.Equal(t, tState1.LastBlockHeight(), int32(1))
+	assert.Equal(t, tState1.LastBlockHeight(), uint32(1))
 	assert.Equal(t, tState1.GenesisHash(), tState2.GenesisHash())
 }
 
@@ -376,7 +376,7 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, st1.evaluateSortition()) //  not a validator
 
-	height := int32(1)
+	height := uint32(1)
 	for ; height <= 11; height++ {
 		if height == 2 {
 			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub.Address(), pub, 10000000, 10000, "")

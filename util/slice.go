@@ -100,11 +100,12 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 // Subtracts subtracts slice2 from slice1 in order.
 // Examples:
 //
-//  [1,2,3,4] - [1,2] = [3,4]
-//  [1,2,3,4] - [2,4] = [1,3]
-//  [1,2,3,4] - [4,2] = [1,3]
-//  [1,2,3,4] - [4,5] = [1,2,3]
-//.
+//	[1,2,3,4] - [1,2] = [3,4]
+//	[1,2,3,4] - [2,4] = [1,3]
+//	[1,2,3,4] - [4,2] = [1,3]
+//	[1,2,3,4] - [4,5] = [1,2,3]
+//
+// .
 func Subtracts(slice1 []int32, slice2 []int32) []int32 {
 	sub := []int32{}
 	if slice2 == nil {

@@ -7,9 +7,9 @@ type Params struct {
 	BlockTimeInSecond         int     `cbor:"2,keyasint"`
 	CommitteeSize             int     `cbor:"3,keyasint"`
 	BlockReward               int64   `cbor:"4,keyasint"`
-	TransactionToLiveInterval int32   `cbor:"5,keyasint"`
-	BondInterval              int32   `cbor:"6,keyasint"`
-	UnbondInterval            int32   `cbor:"7,keyasint"`
+	TransactionToLiveInterval uint32  `cbor:"5,keyasint"`
+	BondInterval              uint32  `cbor:"6,keyasint"`
+	UnbondInterval            uint32  `cbor:"7,keyasint"`
 	FeeFraction               float64 `cbor:"8,keyasint"`
 	MinimumFee                int64   `cbor:"9,keyasint"`
 }

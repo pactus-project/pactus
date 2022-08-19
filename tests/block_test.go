@@ -22,7 +22,7 @@ func lastHash() hash.Hash {
 	return h
 }
 
-func lastHeight() int32 {
+func lastHeight() uint32 {
 	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
 		return nil
 	}).Result()
@@ -34,9 +34,9 @@ func lastHeight() int32 {
 	return st.LastBlockHeight()
 }
 
-func waitForNewBlocks(num int32) {
+func waitForNewBlocks(num uint32) {
 	height := lastHeight() + num
-	for i := int32(0); i < num; i++ {
+	for i := uint32(0); i < num; i++ {
 		if lastHeight() > height {
 			break
 		}
@@ -48,7 +48,7 @@ func lastBlock() *capnp.BlockResult {
 	return getBlockAt(lastHeight())
 }
 
-func getBlockAt(height int32) *capnp.BlockResult {
+func getBlockAt(height uint32) *capnp.BlockResult {
 	for i := 0; i < 120; i++ {
 		hashRes, _ := tCapnpServer.GetBlockHash(tCtx, func(p capnp.ZarbServer_getBlockHash_Params) error {
 			p.SetHeight(height)

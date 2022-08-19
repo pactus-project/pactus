@@ -38,6 +38,22 @@ func Min32(a, b int32) int32 {
 	return b
 }
 
+// MaxU32 returns the biggest of two 32-bits unsigned numbers.
+func MaxU32(a, b uint32) uint32 {
+	if a < b {
+		return b
+	}
+	return a
+}
+
+// MinU32 returns the smallest of two 32-bits unsigned numbers.
+func MinU32(a, b uint32) uint32 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 // Min64 returns the smallest of two 64-bits numbers.
 func Min64(a, b int64) int64 {
 	if a < b {

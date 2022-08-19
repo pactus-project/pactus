@@ -28,7 +28,7 @@ func (rs tickerTarget) String() string {
 
 type ticker struct {
 	Duration time.Duration
-	Height   int32
+	Height   uint32
 	Round    int16
 	Target   tickerTarget
 }

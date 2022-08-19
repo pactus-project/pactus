@@ -110,7 +110,7 @@ func (e *SortitionExecutor) joincommittee(sb sandbox.Sandbox, val *validator.Val
 	// she stays in the committee.
 	// We assumes all blocks has committed in round 0, in future we can consider
 	// round parameter. It is backward compatible
-	if currentHeight-oldestJoinedHeight < int32(sb.CommitteeSize()) {
+	if currentHeight-oldestJoinedHeight < uint32(sb.CommitteeSize()) {
 		return errors.Errorf(errors.ErrInvalidTx, "oldest validator still didn't propose any block")
 	}
 	return nil

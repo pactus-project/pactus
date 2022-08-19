@@ -64,7 +64,7 @@ func setup(t *testing.T) {
 	signer.SignMsg(trx)
 	prevHash := hash.GenerateTestHash()
 	prevCert := block.GenerateTestCertificate(prevHash)
-	lastHeight := util.RandInt32(100000)
+	lastHeight := util.RandUint32(100000)
 	lastSeed := sortition.GenerateRandomSeed()
 	lastBlock := block.MakeBlock(1, util.Now(), block.Txs{trx},
 		prevHash,
@@ -115,7 +115,7 @@ func TestRestoreFailed(t *testing.T) {
 
 		li := NewLastInfo(tStore)
 
-		tStore.Blocks = make(map[int32]block.Block) // Reset Blocks
+		tStore.Blocks = make(map[uint32]block.Block) // Reset Blocks
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})

@@ -163,7 +163,7 @@ func (st *state) GenesisHash() hash.Hash {
 	return st.genDoc.Hash()
 }
 
-func (st *state) LastBlockHeight() int32 {
+func (st *state) LastBlockHeight() uint32 {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -306,7 +306,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	return nil
 }
 
-func (st *state) CommitBlock(height int32, block *block.Block, cert *block.Certificate) error {
+func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -559,7 +559,7 @@ func (st *state) Block(hash hash.Hash) *block.Block {
 	return b
 }
 
-func (st *state) BlockHash(height int32) hash.Hash {
+func (st *state) BlockHash(height uint32) hash.Hash {
 	return st.store.BlockHash(height)
 }
 

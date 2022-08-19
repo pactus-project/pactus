@@ -71,10 +71,10 @@ func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator 
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.TestStore.UpdateValidator(val)
 }
-func (m *MockSandbox) CurrentHeight() int32 {
+func (m *MockSandbox) CurrentHeight() uint32 {
 	return m.TestStore.LastHeight + 1
 }
-func (m *MockSandbox) TransactionToLiveInterval() int32 {
+func (m *MockSandbox) TransactionToLiveInterval() uint32 {
 	return m.Params.TransactionToLiveInterval
 }
 func (m *MockSandbox) FeeFraction() float64 {
@@ -87,17 +87,17 @@ func (m *MockSandbox) MinFee() int64 {
 func (m *MockSandbox) CommitteeSize() int {
 	return m.Params.CommitteeSize
 }
-func (m *MockSandbox) UnbondInterval() int32 {
+func (m *MockSandbox) UnbondInterval() uint32 {
 	return m.Params.UnbondInterval
 }
-func (m *MockSandbox) BondInterval() int32 {
+func (m *MockSandbox) BondInterval() uint32 {
 	return m.Params.BondInterval
 }
-func (m *MockSandbox) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
-	return m.TestStore.BlockHashByStamp(stamp)
+func (m *MockSandbox) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
+	return m.TestStore.FindBlockHashByStamp(stamp)
 }
-func (m *MockSandbox) BlockHeightByStamp(stamp hash.Stamp) int32 {
-	return m.TestStore.BlockHeightByStamp(stamp)
+func (m *MockSandbox) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
+	return m.TestStore.FindBlockHeightByStamp(stamp)
 }
 func (m *MockSandbox) IterateAccounts(consumer func(*AccountStatus)) {
 	m.TestStore.IterateAccounts(func(acc *account.Account) bool {

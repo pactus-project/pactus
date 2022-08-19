@@ -156,7 +156,7 @@ func testReceiveingNewMessage(sync *synchronizer, msg message.Message, from peer
 func testAddBlocks(t *testing.T, state *state.MockState, count int) {
 	h := state.LastBlockHeight()
 	state.CommitTestBlocks(count)
-	assert.Equal(t, h+int32(count), state.LastBlockHeight())
+	assert.Equal(t, h+uint32(count), state.LastBlockHeight())
 }
 
 func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID) {
@@ -188,7 +188,7 @@ func TestStop(t *testing.T) {
 func TestBroadcastInvalidMessage(t *testing.T) {
 	setup(t)
 	t.Run("Should not publish invalid messages", func(t *testing.T) {
-		tBroadcastCh <- message.NewHeartBeatMessage(-1, -1, hash.GenerateTestHash())
+		tBroadcastCh <- message.NewHeartBeatMessage(0, -1, hash.GenerateTestHash())
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHeartBeat)
 	})
 }

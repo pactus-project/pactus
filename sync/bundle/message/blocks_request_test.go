@@ -13,12 +13,6 @@ func TestLatestBlocksRequestType(t *testing.T) {
 }
 
 func TestBlocksRequestMessage(t *testing.T) {
-	t.Run("Invalid from", func(t *testing.T) {
-		m := NewBlocksRequestMessage(1, -100, 200)
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
-	})
-
 	t.Run("Invalid range", func(t *testing.T) {
 		m := NewBlocksRequestMessage(1, 200, 100)
 

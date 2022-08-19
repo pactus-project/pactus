@@ -50,7 +50,7 @@ func TestByzantineVote1(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	h := int32(3)
+	h := uint32(3)
 	r := int16(0)
 	p := makeProposal(t, h, r)
 
@@ -123,7 +123,7 @@ func TestByzantineVote2(t *testing.T) {
 	commitBlockForAllStates(t)
 	commitBlockForAllStates(t)
 
-	h := int32(3)
+	h := uint32(3)
 	r := int16(0)
 	p := makeProposal(t, h, r)
 

@@ -16,6 +16,7 @@ type Executor interface {
 type Execution struct {
 	executors      map[payload.Type]Executor
 	accumulatedFee int64
+	strict         bool
 }
 
 func newExecution(strict bool) *Execution {
@@ -28,6 +29,7 @@ func newExecution(strict bool) *Execution {
 
 	return &Execution{
 		executors: execs,
+		strict:    strict,
 	}
 }
 func NewExecutor() *Execution {
@@ -42,9 +44,16 @@ func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if err := trx.SanityCheck(); err != nil {
 		return err
 	}
-	if err := exe.checkStamp(trx, sb); err != nil {
-		return err
+	if trx.IsLockTime() {
+		if err := exe.checkLockTime(trx, sb); err != nil {
+			return err
+		}
+	} else {
+		if err := exe.checkStamp(trx, sb); err != nil {
+			return err
+		}
 	}
+
 	if err := exe.checkFee(trx, sb); err != nil {
 		return err
 	}
@@ -67,9 +76,31 @@ func (exe *Execution) AccumulatedFee() int64 {
 	return exe.accumulatedFee
 }
 
+func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
+	curHeight := sb.CurrentHeight()
+	lockTimeHeight := trx.LockTime()
+	interval := sb.TransactionToLiveInterval()
+
+	if trx.IsSubsidyTx() || trx.IsSortitionTx() {
+		return errors.Errorf(errors.ErrInvalidTx, "invalid lock time")
+	}
+
+	if curHeight > lockTimeHeight+interval {
+		return errors.Errorf(errors.ErrInvalidTx, "expired lock time")
+	}
+
+	if curHeight < lockTimeHeight {
+		if exe.strict {
+			return errors.Errorf(errors.ErrInvalidTx, "unfinalized transaction")
+		}
+	}
+
+	return nil
+}
+
 func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	curHeight := sb.CurrentHeight()
-	height := sb.BlockHeightByStamp(trx.Stamp())
+	height, ok := sb.FindBlockHeightByStamp(trx.Stamp())
 	interval := sb.TransactionToLiveInterval()
 
 	if trx.IsSubsidyTx() {
@@ -78,7 +109,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 		interval = 7
 	}
 
-	if height == -1 || curHeight-height > interval {
+	if !ok || curHeight-height > interval {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid stamp")
 	}
 

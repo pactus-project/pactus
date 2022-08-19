@@ -13,12 +13,6 @@ func TestQueryVotesType(t *testing.T) {
 }
 
 func TestQueryVotesMessage(t *testing.T) {
-	t.Run("Invalid height", func(t *testing.T) {
-		m := NewQueryVotesMessage(-1, 0)
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
-	})
-
 	t.Run("Invalid round", func(t *testing.T) {
 		m := NewQueryVotesMessage(0, -1)
 

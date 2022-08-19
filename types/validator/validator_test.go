@@ -13,9 +13,9 @@ import (
 
 func TestFromBytes(t *testing.T) {
 	val, _ := GenerateTestValidator(util.RandInt32(1000000))
-	val.UpdateLastBondingHeight(util.RandInt32(1000000))
-	val.UpdateLastJoinedHeight(util.RandInt32(1000000))
-	val.UpdateUnbondingHeight(util.RandInt32(1000000))
+	val.UpdateLastBondingHeight(util.RandUint32(1000000))
+	val.UpdateLastJoinedHeight(util.RandUint32(1000000))
+	val.UpdateUnbondingHeight(util.RandUint32(1000000))
 	bs, err := val.Bytes()
 	require.NoError(t, err)
 	require.Equal(t, val.SerializeSize(), len(bs))

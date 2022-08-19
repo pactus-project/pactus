@@ -14,14 +14,6 @@ func TestBlockAnnounceType(t *testing.T) {
 }
 
 func TestBlockAnnounceMessage(t *testing.T) {
-	t.Run("Invalid height", func(t *testing.T) {
-		b := block.GenerateTestBlock(nil, nil)
-		c := block.GenerateTestCertificate(b.Hash())
-		m := NewBlockAnnounceMessage(-1, b, c)
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
-	})
-
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.NewCertificate(-1, nil, nil, nil)

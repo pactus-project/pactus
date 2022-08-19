@@ -50,7 +50,7 @@ func TestUpdateCertificate(t *testing.T) {
 	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexY)
 	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexB)
 
-	assert.Equal(t, tConsX.state.LastBlockHeight(), int32(2))
+	assert.Equal(t, tConsX.state.LastBlockHeight(), uint32(2))
 
 	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexP)
 	testAddVote(tConsX, vote.VoteTypePrecommit, 2, 0, p.Block().Hash(), tIndexP)

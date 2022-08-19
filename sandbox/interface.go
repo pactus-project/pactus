@@ -21,14 +21,14 @@ type Sandbox interface {
 
 	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
-	BlockHashByStamp(stamp hash.Stamp) hash.Hash
-	BlockHeightByStamp(stamp hash.Stamp) int32
+	FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool)
+	FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool)
 
-	UnbondInterval() int32
 	CommitteeSize() int
-	BondInterval() int32
-	CurrentHeight() int32
-	TransactionToLiveInterval() int32
+	BondInterval() uint32
+	UnbondInterval() uint32
+	CurrentHeight() uint32
+	TransactionToLiveInterval() uint32
 	FeeFraction() float64
 	MinFee() int64
 

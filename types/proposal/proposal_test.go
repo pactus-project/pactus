@@ -20,9 +20,9 @@ func TestProposalMarshaling(t *testing.T) {
 }
 
 func TestProposalSignBytes(t *testing.T) {
-	p, _ := GenerateTestProposal(util.RandInt32(100000), util.RandInt16(10))
+	p, _ := GenerateTestProposal(util.RandUint32(100000), util.RandInt16(10))
 	sb := p.Block().Hash().Bytes()
-	sb = append(sb, util.Int32ToSlice(p.Height())...)
+	sb = append(sb, util.Uint32ToSlice(p.Height())...)
 	sb = append(sb, util.Int16ToSlice(p.Round())...)
 
 	assert.Equal(t, sb, p.SignBytes())
@@ -32,7 +32,7 @@ func TestProposalSignBytes(t *testing.T) {
 func TestProposalSignature(t *testing.T) {
 	signer := bls.GenerateTestSigner()
 
-	p, prv := GenerateTestProposal(util.RandInt32(100000), util.RandInt16(10))
+	p, prv := GenerateTestProposal(util.RandUint32(100000), util.RandInt16(10))
 	pub := prv.PublicKey()
 	assert.NoError(t, p.Verify(pub))
 	assert.False(t, p.IsForBlock(hash.GenerateTestHash()))

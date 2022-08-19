@@ -43,7 +43,7 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 }
 
 type hashPair struct {
-	Height int32
+	Height uint32
 	Hash   hash.Hash
 }
 
@@ -82,8 +82,7 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 	}
 
 	lastHeight, _ := s.LastCertificate()
-
-	for height := lastHeight - int32(stampLookupCapacity); height <= lastHeight; height++ {
+	for height := lastHeight - uint32(stampLookupCapacity); height <= lastHeight; height++ {
 		if height > 0 {
 			hash := s.BlockHash(height)
 			s.appendStamp(hash, height)
@@ -97,7 +96,7 @@ func (s *store) Close() error {
 	return s.db.Close()
 }
 
-func (s *store) appendStamp(hash hash.Hash, height int32) {
+func (s *store) appendStamp(hash hash.Hash, height uint32) {
 	pair := &hashPair{
 		Height: height,
 		Hash:   hash,
@@ -105,7 +104,7 @@ func (s *store) appendStamp(hash hash.Hash, height int32) {
 	s.stampLookup.PushBack(hash.Stamp(), pair)
 }
 
-func (s *store) SaveBlock(height int32, block *block.Block, cert *block.Certificate) {
+func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -142,45 +141,46 @@ func (s *store) Block(hash hash.Hash) (*StoredBlock, error) {
 	}
 
 	return &StoredBlock{
-		height: util.SliceToInt32(data[:4]),
+		height: util.SliceToUint32(data[:4]),
 		data:   data[4:],
 	}, nil
 }
 
-func (s *store) BlockHash(height int32) hash.Hash {
+func (s *store) BlockHash(height uint32) hash.Hash {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.BlockHash(height)
 }
 
-func (s *store) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
+func (s *store) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return hash.UndefHash
+		return hash.UndefHash, true
 	}
 
 	v, ok := s.stampLookup.Get(stamp)
 	if ok {
-		return v.(*hashPair).Hash
+		return v.(*hashPair).Hash, true
 	}
-	return hash.UndefHash
+	return hash.UndefHash, false
 }
-func (s *store) BlockHeightByStamp(stamp hash.Stamp) int32 {
+
+func (s *store) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return 0
+		return 0, true
 	}
 
 	v, ok := s.stampLookup.Get(stamp)
 	if ok {
-		return v.(*hashPair).Height
+		return v.(*hashPair).Height, true
 	}
-	return -1
+	return 0, false
 }
 
 func (s *store) Transaction(id tx.ID) (*tx.Tx, error) {
@@ -287,7 +287,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) LastCertificate() (int32, *block.Certificate) {
+func (s *store) LastCertificate() (uint32, *block.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -298,15 +298,15 @@ func (s *store) LastCertificate() (int32, *block.Certificate) {
 	}
 	r := bytes.NewReader(data)
 	version := int32(0)
-	height := int32(0)
+	height := uint32(0)
 	cert := new(block.Certificate)
 	err := encoding.ReadElements(r, &version, &height)
 	if err != nil {
-		return -1, nil
+		return 0, nil
 	}
 	err = cert.Decode(r)
 	if err != nil {
-		return -1, nil
+		return 0, nil
 	}
 	return height, cert
 }
