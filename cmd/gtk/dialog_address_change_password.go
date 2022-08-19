@@ -10,14 +10,14 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-//go:embed assets/ui/dialog_change_password.ui
-var uiChangePasswordDialog []byte
+//go:embed assets/ui/dialog_wallet_change_password.ui
+var uiWalletChangePasswordDialog []byte
 
 func changePassword(wallet *wallet.Wallet) {
-	builder, err := gtk.BuilderNewFromString(string(uiChangePasswordDialog))
+	builder, err := gtk.BuilderNewFromString(string(uiWalletChangePasswordDialog))
 	fatalErrorCheck(err)
 
-	dlg := getDialogObj(builder, "id_dialog_change_password")
+	dlg := getDialogObj(builder, "id_dialog_wallet_change_password")
 	oldPasswordEntry := getEntryObj(builder, "id_entry_old_password")
 	oldPasswordLabel := getLabelObj(builder, "id_label_old_password")
 	newPasswordEntry := getEntryObj(builder, "id_entry_new_password")
