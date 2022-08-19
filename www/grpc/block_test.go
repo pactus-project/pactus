@@ -56,12 +56,6 @@ func TestGetBlockHash(t *testing.T) {
 
 	b := tMockState.TestStore.AddTestBlock(100)
 
-	t.Run("Should return error for invalid height", func(t *testing.T) {
-		res, err := client.GetBlockHash(tCtx, &zarb.BlockHashRequest{Height: -1})
-		assert.Error(t, err)
-		assert.Nil(t, res)
-	})
-
 	t.Run("Should return error for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlockHash(tCtx, &zarb.BlockHashRequest{Height: 101})
 		assert.Error(t, err)

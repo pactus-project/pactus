@@ -13,12 +13,6 @@ func TestQueryProposalType(t *testing.T) {
 }
 
 func TestQueryProposalMessage(t *testing.T) {
-	t.Run("Invalid height", func(t *testing.T) {
-		m := NewQueryProposalMessage(-1, 0)
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
-	})
-
 	t.Run("Invalid round", func(t *testing.T) {
 		m := NewQueryProposalMessage(0, -1)
 

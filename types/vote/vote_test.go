@@ -71,7 +71,7 @@ func TestVoteSanityCheck(t *testing.T) {
 func TestSignBytes(t *testing.T) {
 	signer := crypto.GenerateTestAddress()
 	blockHash := hash.GenerateTestHash()
-	height := util.RandInt32(100000)
+	height := util.RandUint32(100000)
 	round := util.RandInt16(10)
 
 	v1 := NewVote(VoteTypePrepare, height, round, blockHash, signer)

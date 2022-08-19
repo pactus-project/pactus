@@ -19,7 +19,7 @@ type Vote struct {
 
 type voteData struct {
 	Type      Type           `cbor:"1,keyasint"`
-	Height    int32          `cbor:"2,keyasint"`
+	Height    uint32         `cbor:"2,keyasint"`
 	Round     int16          `cbor:"3,keyasint"`
 	BlockHash hash.Hash      `cbor:"4,keyasint"`
 	Signer    crypto.Address `cbor:"5,keyasint"`
@@ -39,7 +39,7 @@ func (v *Vote) SignBytes() []byte {
 	return sb
 }
 
-func NewVote(voteType Type, height int32, round int16, blockHash hash.Hash, signer crypto.Address) *Vote {
+func NewVote(voteType Type, height uint32, round int16, blockHash hash.Hash, signer crypto.Address) *Vote {
 	return &Vote{
 		data: voteData{
 			Type:      voteType,
@@ -52,7 +52,7 @@ func NewVote(voteType Type, height int32, round int16, blockHash hash.Hash, sign
 }
 
 func (v *Vote) Type() Type                { return v.data.Type }
-func (v *Vote) Height() int32             { return v.data.Height }
+func (v *Vote) Height() uint32            { return v.data.Height }
 func (v *Vote) Round() int16              { return v.data.Round }
 func (v *Vote) BlockHash() hash.Hash      { return v.data.BlockHash }
 func (v *Vote) Signer() crypto.Address    { return v.data.Signer }
@@ -121,7 +121,7 @@ func (v *Vote) Fingerprint() string {
 }
 
 // GenerateTestPrecommitVote generates a precommit vote for testing.
-func GenerateTestPrecommitVote(height int32, round int16) (*Vote, crypto.Signer) {
+func GenerateTestPrecommitVote(height uint32, round int16) (*Vote, crypto.Signer) {
 	s := bls.GenerateTestSigner()
 	v := NewVote(
 		VoteTypePrecommit,
@@ -135,7 +135,7 @@ func GenerateTestPrecommitVote(height int32, round int16) (*Vote, crypto.Signer)
 }
 
 // GenerateTestPrepareVote generates a prepare vote for testing.
-func GenerateTestPrepareVote(height int32, round int16) (*Vote, crypto.Signer) {
+func GenerateTestPrepareVote(height uint32, round int16) (*Vote, crypto.Signer) {
 	s := bls.GenerateTestSigner()
 	v := NewVote(
 		VoteTypePrepare,
@@ -149,7 +149,7 @@ func GenerateTestPrepareVote(height int32, round int16) (*Vote, crypto.Signer) {
 }
 
 // GenerateTestChangeProposerVote generates a proposer-change vote for testing.
-func GenerateTestChangeProposerVote(height int32, round int16) (*Vote, crypto.Signer) {
+func GenerateTestChangeProposerVote(height uint32, round int16) (*Vote, crypto.Signer) {
 	s := bls.GenerateTestSigner()
 	v := NewVote(
 		VoteTypeChangeProposer,

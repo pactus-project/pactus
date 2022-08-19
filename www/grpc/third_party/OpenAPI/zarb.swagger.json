@@ -112,7 +112,7 @@
             "in": "path",
             "required": true,
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           }
         ],
         "tags": [
@@ -444,7 +444,7 @@
       "properties": {
         "height": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "hash": {
           "type": "string",
@@ -482,7 +482,7 @@
       "properties": {
         "lastBlockHeight": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "lastBlockHash": {
           "type": "string",
@@ -566,7 +566,7 @@
         },
         "height": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "receivedMessages": {
           "type": "integer",
@@ -667,21 +667,20 @@
         },
         "lastBondingHeight": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "lastJoinedHeight": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "unbondingHeight": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "address": {
           "type": "string"
         }
-      },
-      "title": "TODO: add unbond height\nTODO: in32 -\u003e int64"
+      }
     },
     "zarbValidatorResponse": {
       "type": "object",

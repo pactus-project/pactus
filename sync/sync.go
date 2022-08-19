@@ -342,7 +342,7 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 }
 
 // downloadBlocks starts downloading blocks from the network.
-func (sync *synchronizer) downloadBlocks(from int32) {
+func (sync *synchronizer) downloadBlocks(from uint32) {
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
 		// TODO: write test for me
@@ -378,7 +378,7 @@ func (sync *synchronizer) downloadBlocks(from int32) {
 	}
 }
 
-func (sync *synchronizer) queryLatestBlocks(from int32) {
+func (sync *synchronizer) queryLatestBlocks(from uint32) {
 	randPeer := sync.peerSet.GetRandomPeer()
 
 	// TODO: write test for me
@@ -433,7 +433,7 @@ func (sync *synchronizer) tryCommitBlocks() {
 	}
 }
 
-func (sync *synchronizer) prepareBlocks(from int32, count int32) []*block.Block {
+func (sync *synchronizer) prepareBlocks(from uint32, count uint32) []*block.Block {
 	ourHeight := sync.state.LastBlockHeight()
 
 	if from > ourHeight {

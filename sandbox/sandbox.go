@@ -188,21 +188,21 @@ func (sb *sandbox) MinFee() int64 {
 	return sb.params.MinimumFee
 }
 
-func (sb *sandbox) TransactionToLiveInterval() int32 {
+func (sb *sandbox) TransactionToLiveInterval() uint32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.TransactionToLiveInterval
 }
 
-func (sb *sandbox) CurrentHeight() int32 {
+func (sb *sandbox) CurrentHeight() uint32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.currentHeight()
 }
 
-func (sb *sandbox) currentHeight() int32 {
+func (sb *sandbox) currentHeight() uint32 {
 	h, _ := sb.store.LastCertificate()
 
 	return h + 1
@@ -226,18 +226,18 @@ func (sb *sandbox) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
-func (sb *sandbox) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
+func (sb *sandbox) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.store.BlockHashByStamp(stamp)
+	return sb.store.FindBlockHashByStamp(stamp)
 }
 
-func (sb *sandbox) BlockHeightByStamp(stamp hash.Stamp) int32 {
+func (sb *sandbox) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.store.BlockHeightByStamp(stamp)
+	return sb.store.FindBlockHeightByStamp(stamp)
 }
 
 func (sb *sandbox) CommitteeSize() int {
@@ -247,13 +247,13 @@ func (sb *sandbox) CommitteeSize() int {
 	return sb.params.CommitteeSize
 }
 
-func (sb *sandbox) UnbondInterval() int32 {
+func (sb *sandbox) UnbondInterval() uint32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	return sb.params.UnbondInterval
 }
-func (sb *sandbox) BondInterval() int32 {
+func (sb *sandbox) BondInterval() uint32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -267,7 +267,10 @@ func (sb *sandbox) Committee() committee.Reader {
 // TODO: write test for me.
 // VerifyProof verifies proof of a sortition transaction.
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
-	hash := sb.store.BlockHashByStamp(stamp)
+	hash, ok := sb.store.FindBlockHashByStamp(stamp)
+	if !ok {
+		return false
+	}
 	bi, err := sb.store.Block(hash)
 	if err != nil {
 		return false

@@ -4,16 +4,15 @@ import (
 	"fmt"
 
 	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 type BlockAnnounceMessage struct {
-	Height      int32              `cbor:"1,keyasint"`
+	Height      uint32             `cbor:"1,keyasint"`
 	Block       *block.Block       `cbor:"2,keyasint"`
 	Certificate *block.Certificate `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnounceMessage(h int32, b *block.Block, c *block.Certificate) *BlockAnnounceMessage {
+func NewBlockAnnounceMessage(h uint32, b *block.Block, c *block.Certificate) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Height:      h,
 		Block:       b,
@@ -22,9 +21,6 @@ func NewBlockAnnounceMessage(h int32, b *block.Block, c *block.Certificate) *Blo
 }
 
 func (m *BlockAnnounceMessage) SanityCheck() error {
-	if m.Height < 0 {
-		return errors.Error(errors.ErrInvalidHeight)
-	}
 	if err := m.Block.SanityCheck(); err != nil {
 		return err
 	}

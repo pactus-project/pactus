@@ -48,10 +48,10 @@ func (m *MockState) CommitTestBlocks(num int) {
 		b := block.GenerateTestBlock(nil, nil)
 		cert := block.GenerateTestCertificate(b.Hash())
 
-		m.TestStore.SaveBlock(int32(i+1), b, cert)
+		m.TestStore.SaveBlock(uint32(i+1), b, cert)
 	}
 }
-func (m *MockState) LastBlockHeight() int32 {
+func (m *MockState) LastBlockHeight() uint32 {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -85,7 +85,7 @@ func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
 func (m *MockState) Fingerprint() string {
 	return ""
 }
-func (m *MockState) CommitBlock(h int32, b *block.Block, cert *block.Certificate) error {
+func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *block.Certificate) error {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
@@ -148,7 +148,7 @@ func (m *MockState) Block(hash hash.Hash) *block.Block {
 	}
 	return nil
 }
-func (m *MockState) BlockHash(height int32) hash.Hash {
+func (m *MockState) BlockHash(height uint32) hash.Hash {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 

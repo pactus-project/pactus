@@ -12,8 +12,8 @@ import (
 )
 
 func blockKey(hash hash.Hash) []byte { return append(blockPrefix, hash.Bytes()...) }
-func blockHeightKey(height int32) []byte {
-	return append(blockHeightPrefix, util.Int32ToSlice(height)...)
+func blockHeightKey(height uint32) []byte {
+	return append(blockHeightPrefix, util.Uint32ToSlice(height)...)
 }
 
 type blockStore struct {
@@ -26,7 +26,7 @@ func newBlockStore(db *leveldb.DB) *blockStore {
 	}
 }
 
-func (bs *blockStore) saveBlock(batch *leveldb.Batch, height int32, block *block.Block) []txPos {
+func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, block *block.Block) []txPos {
 	if height > 1 {
 		if !bs.hasBlock(height - 1) {
 			logger.Panic("previous block not found: %v", height)
@@ -85,7 +85,7 @@ func (bs *blockStore) block(h hash.Hash) ([]byte, error) {
 	return data, nil
 }
 
-func (bs *blockStore) BlockHash(height int32) hash.Hash {
+func (bs *blockStore) BlockHash(height uint32) hash.Hash {
 	// TODO: we can use flat file (height to hash) to reduce the size of level_db
 	data, err := tryGet(bs.db, blockHeightKey(height))
 	if err != nil {
@@ -95,7 +95,7 @@ func (bs *blockStore) BlockHash(height int32) hash.Hash {
 	return h
 }
 
-func (bs *blockStore) hasBlock(height int32) bool {
+func (bs *blockStore) hasBlock(height uint32) bool {
 	has, err := bs.db.Has(blockHeightKey(height), nil)
 	if err != nil {
 		return false

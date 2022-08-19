@@ -7,11 +7,11 @@ import (
 )
 
 type QueryProposalMessage struct {
-	Height int32 `cbor:"1,keyasint"`
-	Round  int16 `cbor:"2,keyasint"`
+	Height uint32 `cbor:"1,keyasint"`
+	Round  int16  `cbor:"2,keyasint"`
 }
 
-func NewQueryProposalMessage(h int32, r int16) *QueryProposalMessage {
+func NewQueryProposalMessage(h uint32, r int16) *QueryProposalMessage {
 	return &QueryProposalMessage{
 		Height: h,
 		Round:  r,
@@ -19,9 +19,6 @@ func NewQueryProposalMessage(h int32, r int16) *QueryProposalMessage {
 }
 
 func (m *QueryProposalMessage) SanityCheck() error {
-	if m.Height < 0 {
-		return errors.Error(errors.ErrInvalidHeight)
-	}
 	if m.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}

@@ -14,13 +14,6 @@ func TestLatestBlocksResponseType(t *testing.T) {
 }
 
 func TestBlocksResponseMessage(t *testing.T) {
-	t.Run("Invalid from", func(t *testing.T) {
-		b := block.GenerateTestBlock(nil, nil)
-		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, -1, []*block.Block{b}, nil)
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
-	})
-
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.NewCertificate(-1, nil, nil, nil)
@@ -44,7 +37,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeBusy, 1, 0, nil, nil)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Equal(t, m.To(), int32(0))
+		assert.Equal(t, m.To(), uint32(0))
 		assert.True(t, m.IsRequestRejected())
 	})
 
@@ -52,7 +45,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeRejected, 1, 0, nil, nil)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Equal(t, m.To(), int32(0))
+		assert.Equal(t, m.To(), uint32(0))
 		assert.True(t, m.IsRequestRejected())
 	})
 
@@ -62,7 +55,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b1, b2}, nil)
 		assert.NoError(t, m.SanityCheck())
-		assert.Equal(t, m.To(), int32(101))
+		assert.Equal(t, m.To(), uint32(101))
 		assert.False(t, m.IsRequestRejected())
 	})
 }

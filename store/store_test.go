@@ -32,7 +32,7 @@ func SaveTestBlocks(t *testing.T, num int) {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
 
-		tStore.SaveBlock(lastHeight+int32(i+1), b, c)
+		tStore.SaveBlock(lastHeight+uint32(i+1), b, c)
 		assert.NoError(t, tStore.WriteBatch())
 	}
 }
@@ -210,44 +210,74 @@ func TestIterateValidators(t *testing.T) {
 func TestBlockHashByStamp(t *testing.T) {
 	setup(t)
 
-	assert.Equal(t, tStore.BlockHashByStamp(hash.UndefHash.Stamp()), hash.UndefHash)
-	assert.Equal(t, tStore.BlockHashByStamp(hash.GenerateTestStamp()), hash.UndefHash)
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), int32(0))
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.GenerateTestStamp()), int32(-1))
+	h, ok := tStore.FindBlockHashByStamp(hash.UndefHash.Stamp())
+	assert.Equal(t, h, hash.UndefHash)
+	assert.True(t, ok)
+
+	h, ok = tStore.FindBlockHashByStamp(hash.GenerateTestStamp())
+	assert.Equal(t, h, hash.UndefHash)
+	assert.False(t, ok)
+
+	height, ok := tStore.FindBlockHeightByStamp(hash.UndefHash.Stamp())
+	assert.Zero(t, height)
+	assert.True(t, ok)
+
+	height, ok = tStore.FindBlockHeightByStamp(hash.GenerateTestStamp())
+	assert.Zero(t, height)
+	assert.False(t, ok)
 
 	SaveTestBlocks(t, 12)
 	hash1 := tStore.BlockHash(1)
 	hash2 := tStore.BlockHash(2)
 	hash14 := tStore.BlockHash(14)
 	hash22 := tStore.BlockHash(22)
-	assert.Equal(t, tStore.BlockHashByStamp(hash.UndefHash.Stamp()), hash.UndefHash)
-	assert.Equal(t, tStore.BlockHashByStamp(hash1.Stamp()), hash.UndefHash)
-	assert.Equal(t, tStore.BlockHashByStamp(hash2.Stamp()), hash2)
-	assert.Equal(t, tStore.BlockHashByStamp(hash14.Stamp()), hash14)
-	assert.Equal(t, tStore.BlockHashByStamp(hash22.Stamp()), hash22)
 
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()), int32(0))
-	assert.Equal(t, tStore.BlockHeightByStamp(hash1.Stamp()), int32(-1))
-	assert.Equal(t, tStore.BlockHeightByStamp(hash2.Stamp()), int32(2))
-	assert.Equal(t, tStore.BlockHeightByStamp(hash14.Stamp()), int32(14))
-	assert.Equal(t, tStore.BlockHeightByStamp(hash22.Stamp()), int32(22))
+	check := func(s Store) {
+		h, ok = s.FindBlockHashByStamp(hash.UndefHash.Stamp())
+		assert.Equal(t, h, hash.UndefHash)
+		assert.True(t, ok)
+
+		h, ok = s.FindBlockHashByStamp(hash1.Stamp())
+		assert.Equal(t, h, hash.UndefHash)
+		assert.False(t, ok)
+
+		h, ok = s.FindBlockHashByStamp(hash2.Stamp())
+		assert.Equal(t, h, hash2)
+		assert.True(t, ok)
+
+		h, ok = s.FindBlockHashByStamp(hash14.Stamp())
+		assert.Equal(t, h, hash14)
+		assert.True(t, ok)
+
+		h, ok = s.FindBlockHashByStamp(hash22.Stamp())
+		assert.Equal(t, h, hash22)
+		assert.True(t, ok)
+
+		height, ok = s.FindBlockHeightByStamp(hash.UndefHash.Stamp())
+		assert.Zero(t, height)
+		assert.True(t, ok)
+
+		height, ok = s.FindBlockHeightByStamp(hash1.Stamp())
+		assert.Zero(t, height)
+		assert.False(t, ok)
+
+		height, ok = s.FindBlockHeightByStamp(hash2.Stamp())
+		assert.Equal(t, height, uint32(2))
+		assert.True(t, ok)
+
+		height, ok = s.FindBlockHeightByStamp(hash14.Stamp())
+		assert.Equal(t, height, uint32(14))
+		assert.True(t, ok)
+
+		height, ok = s.FindBlockHeightByStamp(hash22.Stamp())
+		assert.Equal(t, height, uint32(22))
+		assert.True(t, ok)
+	}
+
+	check(tStore)
 
 	// Reopen the store
 	tStore.Close()
 	s, _ := NewStore(tStore.config, 21)
-	tStore = s.(*store)
-	assert.Equal(t, s.BlockHashByStamp(hash.UndefHash.Stamp()), hash.UndefHash)
-	assert.Equal(t, s.BlockHashByStamp(hash1.Stamp()), hash.UndefHash)
-	assert.Equal(t, s.BlockHashByStamp(hash2.Stamp()), hash2)
-	assert.Equal(t, s.BlockHashByStamp(hash14.Stamp()), hash14)
-	assert.Equal(t, s.BlockHashByStamp(hash22.Stamp()), hash22)
-
-	assert.Equal(t, s.BlockHeightByStamp(hash.UndefHash.Stamp()), int32(0))
-	assert.Equal(t, s.BlockHeightByStamp(hash1.Stamp()), int32(-1))
-	assert.Equal(t, s.BlockHeightByStamp(hash2.Stamp()), int32(2))
-	assert.Equal(t, s.BlockHeightByStamp(hash14.Stamp()), int32(14))
-	assert.Equal(t, s.BlockHeightByStamp(hash22.Stamp()), int32(22))
-
-	SaveTestBlocks(t, 1)
-	assert.Equal(t, s.BlockHashByStamp(hash2.Stamp()), hash.UndefHash)
+	check(s)
 }

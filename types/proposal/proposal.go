@@ -16,13 +16,13 @@ type Proposal struct {
 	data proposalData
 }
 type proposalData struct {
-	Height    int32          `cbor:"1,keyasint"`
+	Height    uint32         `cbor:"1,keyasint"`
 	Round     int16          `cbor:"2,keyasint"`
 	Block     *block.Block   `cbor:"3,keyasint"`
 	Signature *bls.Signature `cbor:"4,keyasint"`
 }
 
-func NewProposal(height int32, round int16, block *block.Block) *Proposal {
+func NewProposal(height uint32, round int16, block *block.Block) *Proposal {
 	return &Proposal{
 		data: proposalData{
 			Height: height,
@@ -31,7 +31,7 @@ func NewProposal(height int32, round int16, block *block.Block) *Proposal {
 		},
 	}
 }
-func (p *Proposal) Height() int32               { return p.data.Height }
+func (p *Proposal) Height() uint32              { return p.data.Height }
 func (p *Proposal) Round() int16                { return p.data.Round }
 func (p *Proposal) Block() *block.Block         { return p.data.Block }
 func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
@@ -64,7 +64,7 @@ func (p *Proposal) SetPublicKey(crypto.PublicKey) {}
 
 func (p *Proposal) SignBytes() []byte {
 	sb := p.Block().Hash().Bytes()
-	sb = append(sb, util.Int32ToSlice(p.Height())...)
+	sb = append(sb, util.Uint32ToSlice(p.Height())...)
 	sb = append(sb, util.Int16ToSlice(p.Round())...)
 
 	return sb
@@ -101,7 +101,7 @@ func (p Proposal) Fingerprint() string {
 }
 
 // GenerateTestProposal generates a bond transaction for testing.
-func GenerateTestProposal(height int32, round int16) (*Proposal, crypto.Signer) {
+func GenerateTestProposal(height uint32, round int16) (*Proposal, crypto.Signer) {
 	signer := bls.GenerateTestSigner()
 	addr := signer.Address()
 	b := block.GenerateTestBlock(&addr, nil)

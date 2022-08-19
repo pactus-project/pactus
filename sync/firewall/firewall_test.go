@@ -50,7 +50,7 @@ func TestInvalidBundlesCounter(t *testing.T) {
 	assert.Nil(t, tFirewall.OpenGossipBundle([]byte("bad"), tUnknownPeerID, tUnknownPeerID))
 	assert.Nil(t, tFirewall.OpenGossipBundle(nil, tUnknownPeerID, tUnknownPeerID))
 
-	bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(-1, 1))
+	bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(0, -1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ := bdl.Encode()
 	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
@@ -142,7 +142,7 @@ func TestStreamMesage(t *testing.T) {
 func TestDisabledFirewal(t *testing.T) {
 	setup(t)
 
-	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(-1, -1))
+	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(0, -1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ := bdl.Encode()
 

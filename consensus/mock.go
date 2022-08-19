@@ -54,7 +54,7 @@ func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
 	}
 	return m.Proposal
 }
-func (m *MockConsensus) HeightRound() (int32, int16) {
+func (m *MockConsensus) HeightRound() (uint32, int16) {
 	return m.State.LastBlockHeight() + 1, m.Round
 }
 func (m *MockConsensus) Fingerprint() string {

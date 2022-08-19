@@ -16,14 +16,6 @@ func TestHelloType(t *testing.T) {
 }
 
 func TestHelloMessage(t *testing.T) {
-	t.Run("Invalid height", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", -1, 0, hash.GenerateTestHash())
-		signer.SignMsg(m)
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
-	})
-
 	t.Run("Invalid signature", func(t *testing.T) {
 		signer1 := bls.GenerateTestSigner()
 		signer2 := bls.GenerateTestSigner()

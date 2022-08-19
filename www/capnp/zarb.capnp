@@ -27,13 +27,13 @@ struct Block {
 }
 
 struct BlockchainInfoResult {
-  lastBlockHeight     @0 :Int32;
+  lastBlockHeight     @0 :UInt32;
   lastBlockHash       @1 :Data;
   committee           @2 :Committee;
 }
 
 struct BlockResult {
-  height              @0 :Data;
+  height              @0 :UInt32;
   hash                @1 :Data;
   block               @2 :Block;
   data                @3 :Data;
@@ -67,7 +67,7 @@ struct Peer {
   publicKey           @4 :Text;
   lastSeen            @5 :Int32;
   flags               @6 :Int32;
-  height              @7 :Int32;
+  height              @7 :UInt32;
   receivedMessages    @8 :Int32;
   invalidMessages     @9 :Int32;
   receivedBytes       @10 :Int32;
@@ -86,7 +86,7 @@ struct Vote {
 }
 
 struct ConsensusInfoResult {
-  height              @0 :Int32;
+  height              @0 :UInt32;
   round               @1 :Int16;
   votes               @2 :List(Vote);
 }
@@ -98,7 +98,7 @@ struct SendTransactionResult {
 
 interface ZarbServer {
   getBlock            @0 (hash: Data, verbosity: Int32)     -> (result :BlockResult);
-  getBlockHash        @1 (height: Int32)                    -> (result :Data);
+  getBlockHash        @1 (height: UInt32)                   -> (result :Data);
   getTransaction      @2 (id: Data, verbosity: Int32)       -> (result :TransactionResult);
   getAccount          @3 (address: Text, verbosity: Int32)  -> (result :AccountResult);
   getValidator        @4 (address: Text, verbosity: Int32)  -> (result :ValidatorResult);

@@ -22,13 +22,13 @@ type HelloMessage struct {
 	Moniker     string         `cbor:"3,keyasint"`
 	PublicKey   *bls.PublicKey `cbor:"4,keyasint"`
 	Signature   *bls.Signature `cbor:"5,keyasint"`
-	Height      int32          `cbor:"6,keyasint"`
+	Height      uint32         `cbor:"6,keyasint"`
 	Flags       int            `cbor:"7,keyasint"`
 	GenesisHash hash.Hash      `cbor:"8,keyasint"`
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	height int32, flags int, genesisHash hash.Hash) *HelloMessage {
+	height uint32, flags int, genesisHash hash.Hash) *HelloMessage {
 	return &HelloMessage{
 		PeerID:      pid,
 		Agent:       version.Agent(),
@@ -40,9 +40,6 @@ func NewHelloMessage(pid peer.ID, moniker string,
 }
 
 func (m *HelloMessage) SanityCheck() error {
-	if m.Height < 0 {
-		return errors.Error(errors.ErrInvalidHeight)
-	}
 	if m.Signature == nil {
 		return errors.Error(errors.ErrInvalidSignature)
 	}

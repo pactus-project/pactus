@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 )
 
 func TestBlockStore(t *testing.T) {
@@ -55,16 +54,4 @@ func TestBlockStore(t *testing.T) {
 		}()
 		tStore.SaveBlock(lastHeight, b1, c1)
 	})
-}
-
-func TestBlockHeightByStamp(t *testing.T) {
-	setup(t)
-
-	assert.Zero(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()))
-	assert.Equal(t, tStore.BlockHeightByStamp(hash.GenerateTestStamp()), int32(-1))
-
-	SaveTestBlocks(t, 11)
-
-	assert.Zero(t, tStore.BlockHeightByStamp(hash.UndefHash.Stamp()))
-	assert.Equal(t, tStore.BlockHeightByStamp(tStore.BlockHash(15).Stamp()), int32(15))
 }

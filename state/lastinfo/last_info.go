@@ -19,7 +19,7 @@ type LastInfo struct {
 	lk sync.RWMutex
 
 	store             store.Store
-	lastBlockHeight   int32
+	lastBlockHeight   uint32
 	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
 	lastCertificate   *block.Certificate
@@ -37,7 +37,7 @@ func (li *LastInfo) SortitionSeed() sortition.VerifiableSeed {
 	return li.lastSortitionSeed
 }
 
-func (li *LastInfo) BlockHeight() int32 {
+func (li *LastInfo) BlockHeight() uint32 {
 	li.lk.RLock()
 	defer li.lk.RUnlock()
 
@@ -72,7 +72,7 @@ func (li *LastInfo) SetSortitionSeed(lastSortitionSeed sortition.VerifiableSeed)
 	li.lastSortitionSeed = lastSortitionSeed
 }
 
-func (li *LastInfo) SetBlockHeight(lastBlockHeight int32) {
+func (li *LastInfo) SetBlockHeight(lastBlockHeight uint32) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 

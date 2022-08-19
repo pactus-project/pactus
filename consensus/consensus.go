@@ -25,7 +25,7 @@ type consensus struct {
 	log                 *log.Log
 	signer              crypto.Signer
 	state               state.Facade
-	height              int32
+	height              uint32
 	round               int16
 	newHeightState      consState
 	proposeState        consState
@@ -78,7 +78,7 @@ func (cs *consensus) Fingerprint() string {
 	return fmt.Sprintf("{%d/%d/%s}", cs.height, cs.round, cs.currentState.name())
 }
 
-func (cs *consensus) HeightRound() (int32, int16) {
+func (cs *consensus) HeightRound() (uint32, int16) {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -137,7 +137,7 @@ func (cs *consensus) MoveToNewHeight() {
 	}
 }
 
-func (cs *consensus) scheduleTimeout(duration time.Duration, height int32, round int16, target tickerTarget) {
+func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
 	ti := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
 	cs.logger.Debug("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
@@ -264,7 +264,7 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 	cs.broadcastCh <- message.NewVoteMessage(v)
 }
 
-func (cs *consensus) announceNewBlock(h int32, b *block.Block, c *block.Certificate) {
+func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *block.Certificate) {
 	cs.broadcastCh <- message.NewBlockAnnounceMessage(h, b, c)
 }
 

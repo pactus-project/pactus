@@ -14,6 +14,14 @@ func TestUtils(t *testing.T) {
 	assert.Equal(t, Max32(2, 2), int32(2))
 	assert.Equal(t, Max32(1, 2), int32(2))
 	assert.Equal(t, Max32(2, 1), int32(2))
+
+	assert.Equal(t, MinU32(1, 1), uint32(1))
+	assert.Equal(t, MinU32(1, 2), uint32(1))
+	assert.Equal(t, MinU32(2, 1), uint32(1))
+	assert.Equal(t, MaxU32(2, 2), uint32(2))
+	assert.Equal(t, MaxU32(1, 2), uint32(2))
+	assert.Equal(t, MaxU32(2, 1), uint32(2))
+
 	assert.Equal(t, MaxUint32, uint32(0xffffffff))
 	assert.Equal(t, MaxUint64, uint64(0xffffffffffffffff))
 	assert.Equal(t, MaxInt32, int32(0x7fffffff))

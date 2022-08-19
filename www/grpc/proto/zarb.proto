@@ -63,7 +63,7 @@ message BlockRequest {
 }
 
 message BlockResponse {
-  int32 height = 1;
+  uint32 height = 1;
   bytes hash = 2;
   google.protobuf.Timestamp block_time = 3;
   BlockHeaderInfo header = 4;
@@ -71,14 +71,14 @@ message BlockResponse {
   repeated TransactionInfo txs = 6;
 }
 
-message BlockHashRequest { int32 height = 1; }
+message BlockHashRequest { uint32 height = 1; }
 
 message BlockHashResponse { bytes hash = 1; }
 
 message BlockchainInfoRequest {}
 
 message BlockchainInfoResponse {
-  int32 last_block_height = 1;
+  uint32 last_block_height = 1;
   bytes last_block_hash = 2;
 }
 
@@ -97,16 +97,14 @@ message SendRawTransactionRequest { string data = 1; }
 
 message SendRawTransactionResponse { string id = 2; }
 
-// TODO: add unbond height
-// TODO: in32 -> int64
 message ValidatorInfo {
   bytes public_key = 1;
   int32 number = 2;
   int32 sequence = 3;
   int64 stake = 4;
-  int32 last_bonding_height = 5;
-  int32 last_joined_height = 6;
-  int32 unbonding_height = 7;
+  uint32 last_bonding_height = 5;
+  uint32 last_joined_height = 6;
+  uint32 unbonding_height = 7;
   string address = 8;
 }
 
@@ -116,7 +114,7 @@ message PeerInfo {
   bytes peer_id = 3;
   bytes public_key = 4;
   int32 flags = 5;
-  int32 height = 6;
+  uint32 height = 6;
   int32 received_messages = 7;
   int32 invalid_messages = 8;
   int32 received_bytes = 9;

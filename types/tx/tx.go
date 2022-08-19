@@ -16,6 +16,9 @@ import (
 	"github.com/zarbchain/zarb-go/util/errors"
 )
 
+const versionLatest = 0x01
+const flagLocktime = 0x80
+
 const maxMemoLength = 64
 
 type ID = hash.Hash
@@ -28,8 +31,17 @@ type Tx struct {
 }
 
 type txData struct {
+	// Version format
+	//  7             0
+	// +-+-+-+-+-+-+-+-+
+	// |L|R|R|R|VERSION|
+	// +-+-+-+-+-+-+-+-+
+	// L: Lock Time transacion
+	// R: Reserved bit
+	//
 	Version   uint8
 	Stamp     hash.Stamp
+	LockTime  uint32
 	Sequence  int32
 	Fee       int64
 	Payload   payload.Payload
@@ -44,7 +56,23 @@ func NewTx(stamp hash.Stamp, seq int32, pld payload.Payload, fee int64,
 		data: txData{
 			Stamp:    stamp,
 			Sequence: seq,
-			Version:  1,
+			Version:  versionLatest,
+			Payload:  pld,
+			Fee:      fee,
+			Memo:     memo,
+		},
+	}
+
+	return trx
+}
+
+func NewLockTimeTx(lockTime uint32, seq int32, pld payload.Payload, fee int64,
+	memo string) *Tx {
+	trx := &Tx{
+		data: txData{
+			LockTime: lockTime,
+			Sequence: seq,
+			Version:  versionLatest | flagLocktime,
 			Payload:  pld,
 			Fee:      fee,
 			Memo:     memo,
@@ -64,14 +92,49 @@ func FromBytes(bs []byte) (*Tx, error) {
 	return tx, nil
 }
 
-func (tx *Tx) Version() uint8              { return tx.data.Version }
-func (tx *Tx) Stamp() hash.Stamp           { return tx.data.Stamp }
-func (tx *Tx) Sequence() int32             { return tx.data.Sequence }
-func (tx *Tx) Payload() payload.Payload    { return tx.data.Payload }
-func (tx *Tx) Fee() int64                  { return tx.data.Fee }
-func (tx *Tx) Memo() string                { return tx.data.Memo }
-func (tx *Tx) PublicKey() crypto.PublicKey { return tx.data.PublicKey }
-func (tx *Tx) Signature() crypto.Signature { return tx.data.Signature }
+func (tx *Tx) Version() uint8 {
+	return tx.data.Version & 0x0f
+}
+
+func (tx *Tx) Stamp() hash.Stamp {
+	return tx.data.Stamp
+}
+
+func (tx *Tx) Sequence() int32 {
+	return tx.data.Sequence
+}
+
+func (tx *Tx) Payload() payload.Payload {
+	return tx.data.Payload
+}
+
+func (tx *Tx) Fee() int64 {
+	return tx.data.Fee
+}
+
+func (tx *Tx) Memo() string {
+	return tx.data.Memo
+}
+
+func (tx *Tx) PublicKey() crypto.PublicKey {
+	return tx.data.PublicKey
+}
+
+func (tx *Tx) Signature() crypto.Signature {
+	return tx.data.Signature
+}
+
+func (tx *Tx) LockTime() uint32 {
+	return tx.data.LockTime
+}
+
+func (tx *Tx) IsStamped() bool {
+	return tx.data.Version&flagLocktime == 0x00
+}
+
+func (tx *Tx) IsLockTime() bool {
+	return tx.data.Version&flagLocktime == flagLocktime
+}
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.sanityChecked = false
@@ -87,7 +150,7 @@ func (tx *Tx) SanityCheck() error {
 	if tx.sanityChecked {
 		return nil
 	}
-	if tx.Version() != 1 {
+	if tx.Version() != versionLatest {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid version")
 	}
 	if tx.Sequence() < 0 {

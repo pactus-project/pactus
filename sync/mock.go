@@ -31,7 +31,7 @@ func MockingSync() *MockSync {
 		version.Agent(),
 		pub1,
 		true)
-	ps.UpdateHeight(pid1, util.RandInt32(100000))
+	ps.UpdateHeight(pid1, util.RandUint32(100000))
 
 	ps.UpdatePeerInfo(
 		pid2,
@@ -40,7 +40,7 @@ func MockingSync() *MockSync {
 		version.Agent(),
 		pub2,
 		false)
-	ps.UpdateHeight(pid1, util.RandInt32(100000))
+	ps.UpdateHeight(pid1, util.RandUint32(100000))
 
 	return &MockSync{
 		ID:      network.TestRandomPeerID(),

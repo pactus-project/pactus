@@ -17,11 +17,11 @@ import (
 // TODO: How to undo or rollback at least for last 21 blocks
 
 type StoredBlock struct {
-	height int32
+	height uint32
 	data   []byte
 }
 
-func (s *StoredBlock) Height() int32 {
+func (s *StoredBlock) Height() uint32 {
 	return s.height
 }
 
@@ -35,9 +35,11 @@ func (s *StoredBlock) ToFullBlock() (*block.Block, error) {
 
 type Reader interface {
 	Block(hash hash.Hash) (*StoredBlock, error)
-	BlockHash(height int32) hash.Hash
-	BlockHashByStamp(stamp hash.Stamp) hash.Hash // It only remembers most recent stamps
-	BlockHeightByStamp(stamp hash.Stamp) int32   // It only remembers most recent stamps
+	BlockHash(height uint32) hash.Hash
+	// It only remembers most recent stamps
+	FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool)
+	// It only remembers most recent stamps
+	FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool)
 	Transaction(id tx.ID) (*tx.Tx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
@@ -48,7 +50,7 @@ type Reader interface {
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(*account.Account) (stop bool))
 	TotalValidators() int32
-	LastCertificate() (int32, *block.Certificate)
+	LastCertificate() (uint32, *block.Certificate)
 }
 
 type Store interface {
@@ -56,7 +58,7 @@ type Store interface {
 
 	UpdateAccount(acc *account.Account)
 	UpdateValidator(val *validator.Validator)
-	SaveBlock(height int32, block *block.Block, cert *block.Certificate)
+	SaveBlock(height uint32, block *block.Block, cert *block.Certificate)
 	WriteBatch() error
 	Close() error
 }

@@ -205,14 +205,14 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
 	signers := make([]crypto.Signer, num)
 	vals := make([]*validator.Validator, num)
-	h1 := util.RandInt32(100000)
+	h1 := util.RandUint32(100000)
 	for i := int32(0); i < int32(num); i++ {
 		val, s := validator.GenerateTestValidator(i)
 		signers[i] = s
 		vals[i] = val
 
-		val.UpdateLastBondingHeight(h1 + i)
-		val.UpdateLastJoinedHeight(h1 + 1000 + i)
+		val.UpdateLastBondingHeight(h1 + uint32(i))
+		val.UpdateLastJoinedHeight(h1 + 1000 + uint32(i))
 		//
 		val.SubtractFromStake(val.Stake())
 		val.AddToStake(1 * 10e8)

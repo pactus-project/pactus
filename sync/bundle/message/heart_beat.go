@@ -8,12 +8,12 @@ import (
 )
 
 type HeartBeatMessage struct {
-	Height        int32     `cbor:"1,keyasint"`
+	Height        uint32    `cbor:"1,keyasint"`
 	Round         int16     `cbor:"2,keyasint"`
 	PrevBlockHash hash.Hash `cbor:"3,keyasint"`
 }
 
-func NewHeartBeatMessage(h int32, r int16, hash hash.Hash) *HeartBeatMessage {
+func NewHeartBeatMessage(h uint32, r int16, hash hash.Hash) *HeartBeatMessage {
 	return &HeartBeatMessage{
 		Height:        h,
 		Round:         r,
@@ -22,9 +22,6 @@ func NewHeartBeatMessage(h int32, r int16, hash hash.Hash) *HeartBeatMessage {
 }
 
 func (m *HeartBeatMessage) SanityCheck() error {
-	if m.Height <= 0 {
-		return errors.Error(errors.ErrInvalidHeight)
-	}
 	if m.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}

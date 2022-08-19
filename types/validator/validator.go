@@ -19,9 +19,9 @@ type validatorData struct {
 	Number            int32
 	Sequence          int32
 	Stake             int64
-	LastBondingHeight int32
-	UnbondingHeight   int32
-	LastJoinedHeight  int32
+	LastBondingHeight uint32
+	UnbondingHeight   uint32
+	LastJoinedHeight  uint32
 }
 
 // NewValidator constructs a new validator object.
@@ -66,9 +66,21 @@ func (val *Validator) Address() crypto.Address   { return val.data.PublicKey.Add
 func (val *Validator) Number() int32             { return val.data.Number }
 func (val *Validator) Sequence() int32           { return val.data.Sequence }
 func (val *Validator) Stake() int64              { return val.data.Stake }
-func (val *Validator) LastBondingHeight() int32  { return val.data.LastBondingHeight }
-func (val *Validator) UnbondingHeight() int32    { return val.data.UnbondingHeight }
-func (val *Validator) LastJoinedHeight() int32   { return val.data.LastJoinedHeight }
+
+// LastBondingHeight returns the last height in which validator bonded stake
+func (val *Validator) LastBondingHeight() uint32 {
+	return val.data.LastBondingHeight
+}
+
+// UnbondingHeight returns the last height in which validator unbonded stake
+func (val *Validator) UnbondingHeight() uint32 {
+	return val.data.UnbondingHeight
+}
+
+// LastJoinedHeight returns the last height in which validator joined into the committee
+func (val *Validator) LastJoinedHeight() uint32 {
+	return val.data.LastJoinedHeight
+}
 
 func (val Validator) Power() int64 {
 	//if the validator requested to unbond ignore stake
@@ -95,17 +107,17 @@ func (val *Validator) IncSequence() {
 }
 
 // UpdateLastJoinedHeight updates the last height that this validator joined the committee.
-func (val *Validator) UpdateLastJoinedHeight(height int32) {
+func (val *Validator) UpdateLastJoinedHeight(height uint32) {
 	val.data.LastJoinedHeight = height
 }
 
 // UpdateLastBondingHeight updates the last height that this validator bonded some stakes.
-func (val *Validator) UpdateLastBondingHeight(height int32) {
+func (val *Validator) UpdateLastBondingHeight(height uint32) {
 	val.data.LastBondingHeight = height
 }
 
 // UpdateUnbondingHeight updates the unbonding height for the validator.
-func (val *Validator) UpdateUnbondingHeight(height int32) {
+func (val *Validator) UpdateUnbondingHeight(height uint32) {
 	val.data.UnbondingHeight = height
 }
 

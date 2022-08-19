@@ -15,17 +15,17 @@ import (
 var _ Store = &MockStore{}
 
 type MockStore struct {
-	Blocks       map[int32]block.Block
+	Blocks       map[uint32]block.Block
 	Accounts     map[crypto.Address]account.Account
 	Validators   map[crypto.Address]validator.Validator
 	Transactions map[tx.ID]tx.Tx
 	LastCert     *block.Certificate
-	LastHeight   int32
+	LastHeight   uint32
 }
 
 func MockingStore() *MockStore {
 	return &MockStore{
-		Blocks:       make(map[int32]block.Block),
+		Blocks:       make(map[uint32]block.Block),
 		Accounts:     make(map[crypto.Address]account.Account),
 		Validators:   make(map[crypto.Address]validator.Validator),
 		Transactions: make(map[tx.ID]tx.Tx),
@@ -43,7 +43,7 @@ func (m *MockStore) Block(hash hash.Hash) (*StoredBlock, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
-func (m *MockStore) BlockHash(height int32) hash.Hash {
+func (m *MockStore) BlockHash(height uint32) hash.Hash {
 	b, ok := m.Blocks[height]
 	if ok {
 		return b.Hash()
@@ -127,7 +127,7 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(height int32, b *block.Block, cert *block.Certificate) {
+func (m *MockStore) SaveBlock(height uint32, b *block.Block, cert *block.Certificate) {
 	m.Blocks[height] = *b
 	for _, trx := range b.Transactions() {
 		m.Transactions[trx.ID()] = *trx
@@ -136,35 +136,35 @@ func (m *MockStore) SaveBlock(height int32, b *block.Block, cert *block.Certific
 	m.LastCert = cert
 }
 
-func (m *MockStore) LastCertificate() (int32, *block.Certificate) {
+func (m *MockStore) LastCertificate() (uint32, *block.Certificate) {
 	if m.LastHeight == 0 {
 		return 0, nil
 	}
 	return m.LastHeight, m.LastCert
 }
-func (m *MockStore) BlockHashByStamp(stamp hash.Stamp) hash.Hash {
+func (m *MockStore) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return hash.UndefHash
+		return hash.UndefHash, true
 	}
 	for _, b := range m.Blocks {
 		if b.Stamp().EqualsTo(stamp) {
-			return b.Hash()
+			return b.Hash(), true
 		}
 	}
 
-	return hash.UndefHash
+	return hash.UndefHash, false
 }
-func (m *MockStore) BlockHeightByStamp(stamp hash.Stamp) int32 {
+func (m *MockStore) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return 0
+		return 0, true
 	}
 	for i, b := range m.Blocks {
 		if b.Stamp().EqualsTo(stamp) {
-			return i
+			return i, true
 		}
 	}
 
-	return 0
+	return 0, false
 }
 func (m *MockStore) WriteBatch() error {
 	return nil
@@ -184,7 +184,7 @@ func (m *MockStore) AddTestAccount() *account.Account {
 	return acc
 }
 
-func (m *MockStore) AddTestBlock(height int32) *block.Block {
+func (m *MockStore) AddTestBlock(height uint32) *block.Block {
 	b := block.GenerateTestBlock(nil, nil)
 	cert := block.GenerateTestCertificate(b.Hash())
 	m.SaveBlock(height, b, cert)

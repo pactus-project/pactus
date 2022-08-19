@@ -14,7 +14,7 @@ import (
 
 type Facade interface {
 	GenesisHash() hash.Hash
-	LastBlockHeight() int32
+	LastBlockHeight() uint32
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
 	LastCertificate() *block.Certificate
@@ -22,7 +22,7 @@ type Facade interface {
 	UpdateLastCertificate(lastCertificate *block.Certificate) error
 	ProposeBlock(round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error
-	CommitBlock(height int32, block *block.Block, cert *block.Certificate) error
+	CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int16) *validator.Validator
@@ -34,7 +34,7 @@ type Facade interface {
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
 	Block(hash hash.Hash) *block.Block // TODO: return store block (including block header data)
-	BlockHash(height int32) hash.Hash
+	BlockHash(height uint32) hash.Hash
 	AccountByAddress(addr crypto.Address) *account.Account
 	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator

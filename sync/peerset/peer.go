@@ -23,7 +23,7 @@ type Peer struct {
 	PublicKey       bls.PublicKey
 	Flags           int
 	LastSeen        time.Time
-	Height          int32
+	Height          uint32
 	ReceivedBundles int
 	InvalidBundles  int
 	ReceivedBytes   int

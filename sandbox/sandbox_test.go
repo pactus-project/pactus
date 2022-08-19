@@ -42,9 +42,9 @@ func setup(t *testing.T) {
 	tSigners = signers
 	tSandbox = NewSandbox(tStore, params, committee).(*sandbox)
 
-	assert.Equal(t, tSandbox.CurrentHeight(), int32(1))
-	lastHeight := util.RandInt32(144) + 21
-	for i := int32(1); i < lastHeight; i++ {
+	assert.Equal(t, tSandbox.CurrentHeight(), uint32(1))
+	lastHeight := util.RandUint32(144) + 21
+	for i := uint32(1); i < lastHeight; i++ {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.GenerateTestCertificate(b.Hash())
 		tStore.SaveBlock(i, b, c)
@@ -251,19 +251,27 @@ func TestDeepCopy(t *testing.T) {
 func TestBlockHeightByStamp(t *testing.T) {
 	setup(t)
 
-	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.GenerateTestStamp()), int32(0))
+	height, ok := tSandbox.FindBlockHeightByStamp(hash.GenerateTestStamp())
+	assert.Zero(t, height)
+	assert.False(t, ok)
 
-	height, _ := tStore.LastCertificate()
-	hash := tSandbox.store.BlockHash(height)
-	assert.Equal(t, tSandbox.BlockHeightByStamp(hash.Stamp()), height)
+	lastHeight, _ := tStore.LastCertificate()
+	lastHash := tSandbox.store.BlockHash(lastHeight)
+	height, ok = tSandbox.FindBlockHeightByStamp(lastHash.Stamp())
+	assert.Equal(t, height, lastHeight)
+	assert.True(t, ok)
 }
 
 func TestBlockHashByStamp(t *testing.T) {
 	setup(t)
 
-	assert.True(t, tSandbox.BlockHashByStamp(hash.GenerateTestStamp()).IsUndef())
+	h, ok := tSandbox.FindBlockHashByStamp(hash.GenerateTestStamp())
+	assert.True(t, h.IsUndef())
+	assert.False(t, ok)
 
-	height, _ := tStore.LastCertificate()
-	hash := tSandbox.store.BlockHash(height)
-	assert.True(t, tSandbox.BlockHashByStamp(hash.Stamp()).EqualsTo(hash))
+	lastHeight, _ := tStore.LastCertificate()
+	lastHash := tSandbox.store.BlockHash(lastHeight)
+	h, ok = tSandbox.FindBlockHashByStamp(lastHash.Stamp())
+	assert.True(t, h.EqualsTo(lastHash))
+	assert.True(t, ok)
 }
