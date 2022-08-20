@@ -23,6 +23,7 @@ import (
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/errors"
 	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/zarbchain/zarb-go/www/zmq/event"
 )
 
 type state struct {
@@ -30,7 +31,7 @@ type state struct {
 
 	config       *Config
 	signer       crypto.Signer
-	rewardAddres crypto.Address
+	rewardAddress crypto.Address
 	genDoc       *genesis.Genesis
 	store        store.Store
 	params       param.Params
@@ -38,6 +39,7 @@ type state struct {
 	committee    committee.Committee
 	lastInfo     *lastinfo.LastInfo
 	logger       *logger.Logger
+	eventCh      chan event.Event
 }
 
 func LoadOrNewState(
@@ -45,7 +47,7 @@ func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
 	store store.Store,
-	txPool txpool.TxPool) (Facade, error) {
+	txPool txpool.TxPool,eventCh chan event.Event) (Facade, error) {
 	// Block rewards goes to the reward address
 	// If it is set inside config, we use that address
 	// otherwise, it will be the signer address
@@ -64,8 +66,9 @@ func LoadOrNewState(
 		params:       genDoc.Params(),
 		signer:       signer,
 		store:        store,
-		rewardAddres: rewardAddr,
+		rewardAddress: rewardAddr,
 		lastInfo:     lastinfo.NewLastInfo(store),
+		eventCh:       eventCh,
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -224,7 +227,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	}
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
-	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddres, st.params.BlockReward+fee, "")
+	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddress, st.params.BlockReward+fee, "")
 	return tx
 }
 
@@ -393,7 +396,9 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 	// -----------------------------------
 	// At this point we can assign new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
-
+	// -----------------------------------
+    // Publishing the events to the zmq
+    st.publishEvents(height,block)
 	return nil
 }
 
@@ -600,8 +605,19 @@ func (st *state) Params() param.Params {
 	return st.params
 }
 func (st *state) RewardAddress() crypto.Address {
-	return st.rewardAddres
+	return st.rewardAddress
 }
 func (st *state) ValidatorAddress() crypto.Address {
 	return st.signer.Address()
+}
+
+func (st *state) publishEvents(height uint32, block *block.Block)  {
+	if st.eventCh == nil {
+		return
+	}
+   e := event.Event{
+		Topic:"block",
+		Body: block.Hash().Bytes(),
+	}
+	st.eventCh <- e
 }

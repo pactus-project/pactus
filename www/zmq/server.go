@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/zarbchain/zarb-go/www/zmq/event"
 	zmq "github.com/zeromq/goczmq"
 )
 
@@ -16,12 +17,14 @@ type Server struct {
 	router   *mux.Router
 	listener net.Listener
 	logger   *logger.Logger
+	eventCh <-chan event.Event
 }
-func NewServer(conf *Config) *Server {
+func NewServer(conf *Config, eventCh<-chan event.Event) *Server {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
 		logger: logger.NewLogger("_zmq", nil),
+		eventCh: eventCh,
 	}
 }
 
@@ -46,7 +49,7 @@ func (s *Server) StartServer() error {
 		defer router.Destroy()
 		log.Println("router created and bound")
 	}()
-
+	go s.eventLoop()
 	return nil
 }
 func (s *Server) StopServer() {
@@ -54,5 +57,17 @@ func (s *Server) StopServer() {
 
 	if s.listener != nil {
 		s.listener.Close()
+	}
+}
+
+func (s *Server) eventLoop() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case msg := <-s.eventCh:
+			log.Println("event emitted", msg)	
+		}
 	}
 }
