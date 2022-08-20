@@ -19,6 +19,7 @@ import (
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/grpc"
 	"github.com/zarbchain/zarb-go/www/http"
+	"github.com/zarbchain/zarb-go/www/zmq"
 )
 
 //go:embed example_config.toml
@@ -35,6 +36,7 @@ type Config struct {
 	GRPC      *grpc.Config      `toml:"grpc"`
 	Capnp     *capnp.Config     `toml:"capnp"`
 	HTTP      *http.Config      `toml:"http"`
+	Zmq       *zmq.Config       `toml:"zmq"`
 }
 
 func DefaultConfig() *Config {
@@ -49,6 +51,7 @@ func DefaultConfig() *Config {
 		GRPC:      grpc.DefaultConfig(),
 		Capnp:     capnp.DefaultConfig(),
 		HTTP:      http.DefaultConfig(),
+		Zmq:       zmq.DefaultConfig(),
 	}
 
 	return conf

@@ -19,6 +19,7 @@ import (
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/grpc"
 	"github.com/zarbchain/zarb-go/www/http"
+	"github.com/zarbchain/zarb-go/www/zmq"
 )
 
 type Node struct {
@@ -33,6 +34,7 @@ type Node struct {
 	capnp      *capnp.Server
 	http       *http.Server
 	grpc       *grpc.Server
+	zmq        *zmq.Server
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer) (*Node, error) {
@@ -67,6 +69,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	capnp := capnp.NewServer(conf.Capnp, state, sync, consensus)
 	http := http.NewServer(conf.HTTP)
 	grpc := grpc.NewServer(conf.GRPC, state, sync)
+	zmq := zmq.NewServer(conf.Zmq, state, sync)
 
 	node := &Node{
 		config:     conf,
@@ -80,6 +83,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		capnp:      capnp,
 		http:       http,
 		grpc:       grpc,
+		zmq:        zmq,
 	}
 
 	return node, nil
@@ -119,6 +123,10 @@ func (n *Node) Start() error {
 	}
 
 	err = n.grpc.StartServer()
+	if err != nil {
+		return errors.Wrap(err, "could not start grpc server")
+	}
+	err = n.zmq.StartServer()
 	if err != nil {
 		return errors.Wrap(err, "could not start grpc server")
 	}

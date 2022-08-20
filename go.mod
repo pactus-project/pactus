@@ -25,6 +25,7 @@ require (
 	github.com/stretchr/testify v1.8.0
 	github.com/syndtr/goleveldb v1.0.0
 	github.com/tyler-smith/go-bip39 v1.1.0
+	github.com/zeromq/goczmq v4.1.0+incompatible
 	golang.org/x/crypto v0.0.0-20220824171710-5757bc0c5503
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234
 	google.golang.org/genproto v0.0.0-20220822174746-9e6da59bd2fc
