@@ -36,7 +36,7 @@ func TestGetValidator(t *testing.T) {
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().Bytes(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
@@ -69,7 +69,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().Bytes(), res.GetValidator().PublicKey)
+		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 		assert.Equal(t, val1.Number(), res.GetValidator().GetNumber())
 	})
 

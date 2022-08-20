@@ -98,7 +98,7 @@ message SendRawTransactionRequest { string data = 1; }
 message SendRawTransactionResponse { string id = 2; }
 
 message ValidatorInfo {
-  bytes public_key = 1;
+  string public_key = 1;
   int32 number = 2;
   int32 sequence = 3;
   int64 stake = 4;
@@ -112,7 +112,7 @@ message PeerInfo {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
-  bytes public_key = 4;
+  string public_key = 4;
   int32 flags = 5;
   uint32 height = 6;
   int32 received_messages = 7;
@@ -155,7 +155,7 @@ message TransactionInfo {
     payloads.SORTITION_PAYLOAD sortition = 32;
   };
   string memo = 7;
-  bytes public_key = 8;
+  string public_key = 8;
   bytes signature = 9;
 }
 

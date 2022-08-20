@@ -36,7 +36,7 @@ func (zs *zarbServer) GetNetworkInfo(ctx context.Context,
 		p.PeerId = []byte(peer.PeerID)
 		p.Moniker = peer.Moniker
 		p.Agent = peer.Agent
-		p.PublicKey = peer.PublicKey.Bytes()
+		p.PublicKey = peer.PublicKey.String()
 		p.Flags = int32(peer.Flags)
 		p.Height = peer.Height
 		p.ReceivedMessages = int32(peer.ReceivedBundles)

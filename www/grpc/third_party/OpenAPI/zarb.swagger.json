@@ -557,8 +557,7 @@
           "format": "byte"
         },
         "publicKey": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "flags": {
           "type": "integer",
@@ -629,8 +628,7 @@
           "type": "string"
         },
         "publicKey": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "signature": {
           "type": "string",
@@ -650,8 +648,7 @@
       "type": "object",
       "properties": {
         "publicKey": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "number": {
           "type": "integer",
