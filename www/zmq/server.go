@@ -2,63 +2,56 @@ package zmq
 
 import (
 	"context"
+	"log"
 	"net"
 
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync"
+	"github.com/gorilla/mux"
 	"github.com/zarbchain/zarb-go/util/logger"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
-	"github.com/zeromq/goczmq"
+	zmq "github.com/zeromq/goczmq"
 )
-
-type zarbServer struct {
-	zarb.UnimplementedZarbServer
-	state  state.Facade
-	sync   sync.Synchronizer
-	logger *logger.Logger
-}
 
 type Server struct {
 	ctx      context.Context
 	config   *Config
+	router   *mux.Router
 	listener net.Listener
-	zmq      *goczmq.Sock
-	state    state.Facade
-	sync     sync.Synchronizer
 	logger   *logger.Logger
 }
-
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) *Server {
+func NewServer(conf *Config) *Server {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
-		state:  state,
-		sync:   sync,
-		logger: logger.NewLogger("_zeromq", nil),
+		logger: logger.NewLogger("_zmq", nil),
 	}
+}
+
+func (s *Server) Address() string {
+	return s.listener.Addr().String()
 }
 
 func (s *Server) StartServer() error {
 	if !s.config.Enable {
 		return nil
 	}
-
-	listener, err := net.Listen("tcp", s.config.Listen)
+	con, err := net.Dial("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}
-
-	s.listener = listener
+	s.logger.Info("zmq started listening", "address", con)
 	go func() {
-		if err := s.zmq.Connect(listener.Addr().String()); err != nil {
-			s.logger.Error("error on grpc serve", "err", err)
+		router,err := zmq.NewRouter(con.LocalAddr().String());
+		if  err != nil {
+			s.logger.Error("error on zmq serve", "err", err)
 		}
+		defer router.Destroy()
+		log.Println("router created and bound")
 	}()
 
 	return nil
 }
 func (s *Server) StopServer() {
 	s.ctx.Done()
+
 	if s.listener != nil {
 		s.listener.Close()
 	}

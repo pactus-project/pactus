@@ -69,7 +69,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	capnp := capnp.NewServer(conf.Capnp, state, sync, consensus)
 	http := http.NewServer(conf.HTTP)
 	grpc := grpc.NewServer(conf.GRPC, state, sync)
-	zmq := zmq.NewServer(conf.Zmq, state, sync)
+	zmq := zmq.NewServer(conf.Zmq)
 
 	node := &Node{
 		config:     conf,
@@ -128,7 +128,7 @@ func (n *Node) Start() error {
 	}
 	err = n.zmq.StartServer()
 	if err != nil {
-		return errors.Wrap(err, "could not start grpc server")
+		return errors.Wrap(err, "could not start zmq server")
 	}
 
 	return nil

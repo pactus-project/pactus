@@ -8,6 +8,11 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Enable: false,
-		Listen: "127.0.0.1:2700",
+		Listen: "",
 	}
+}
+
+// SanityCheck is a basic checks for config.
+func (conf *Config) SanityCheck() error {
+	return nil
 }

@@ -27,6 +27,7 @@ func TestRunningNode(t *testing.T) {
 	conf.GRPC.Enable = false
 	conf.Capnp.Enable = false
 	conf.HTTP.Enable = false
+	conf.Zmq.Enable = false
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.NodeKey = util.TempFilePath()
 

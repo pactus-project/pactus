@@ -159,5 +159,8 @@ func (conf *Config) SanityCheck() error {
 	if err := conf.Capnp.SanityCheck(); err != nil {
 		return err
 	}
+	if err := conf.Zmq.SanityCheck(); err != nil {
+		return err
+	}
 	return conf.HTTP.SanityCheck()
 }
