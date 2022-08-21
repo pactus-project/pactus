@@ -36,13 +36,13 @@ func (s *Server) StartServer() error {
 	if !s.config.Enable {
 		return nil
 	}
-	con, err := net.Dial("tcp", s.config.Listen)
+	con, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}
 	s.logger.Info("zmq started listening", "address", con)
 	go func() {
-		router,err := zmq.NewRouter(con.LocalAddr().String());
+		router,err := zmq.NewRouter(con.Addr().String());
 		if  err != nil {
 			s.logger.Error("error on zmq serve", "err", err)
 		}
