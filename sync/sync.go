@@ -128,7 +128,7 @@ func (sync *synchronizer) onStartingTimeout() {
 	ourHeight := sync.state.LastBlockHeight()
 	networkHeight := sync.peerSet.MaxClaimedHeight()
 
-	if ourHeight >= networkHeight-1 {
+	if ourHeight >= networkHeight {
 		sync.synced()
 	}
 }

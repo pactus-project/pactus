@@ -62,7 +62,10 @@ func TestExecuteUnbondTx(t *testing.T) {
 	checkTotalCoin(t, 0)
 }
 
-func TestUnbondNonStrictMode(t *testing.T) {
+// TestUnbondInsideCommittee checks if a validator inside the committee tries to
+// unbond the stake.
+// In non-strict mode it should be accepted.
+func TestUnbondInsideCommittee(t *testing.T) {
 	setup(t)
 	exe1 := NewUnbondExecutor(true)
 	exe2 := NewUnbondExecutor(false)
@@ -74,9 +77,13 @@ func TestUnbondNonStrictMode(t *testing.T) {
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
 }
 
+// TestUnbondJoiningCommittee checks if a validator tries to unbond after
+// evaluating sortuition.
+// In non-strict mode it should be accepted.
 func TestUnbondJoiningCommittee(t *testing.T) {
 	setup(t)
-	exe := NewUnbondExecutor(true)
+	exe1 := NewUnbondExecutor(true)
+	exe2 := NewUnbondExecutor(false)
 	pub, _ := bls.GenerateTestKeyPair()
 
 	val := tSandbox.MakeNewValidator(pub)
@@ -84,5 +91,6 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	tSandbox.UpdateValidator(val)
 
 	trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
-	assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
+	assert.Error(t, exe1.Execute(trx, tSandbox))
+	assert.NoError(t, exe2.Execute(trx, tSandbox))
 }

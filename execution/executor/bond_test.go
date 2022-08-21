@@ -17,7 +17,7 @@ func TestExecuteBondTx(t *testing.T) {
 	sender := tSandbox.TestStore.RandomTestAcc()
 	senderBalance := sender.Balance()
 	pub, _ := bls.GenerateTestKeyPair()
-	fee, amt := randomAmountAndFee(senderBalance)
+	fee, amt := randomAmountAndFee(senderBalance / 2)
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, 1, crypto.GenerateTestAddress(),
@@ -48,7 +48,7 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
-	t.Run("Unbonded before", func(t *testing.T) {
+	t.Run("Should fail, unbonded before", func(t *testing.T) {
 		pub, _ := bls.GenerateTestKeyPair()
 		val := tSandbox.MakeNewValidator(pub)
 		val.UpdateUnbondingHeight(tSandbox.CurrentHeight())
@@ -60,9 +60,9 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
-	t.Run("public key is not set", func(t *testing.T) {
+	t.Run("Should fail, public key is not set", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
-			pub.Address(), nil, amt, fee, "ok")
+			pub.Address(), nil, amt, fee, "no public key")
 
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
@@ -88,23 +88,34 @@ func TestExecuteBondTx(t *testing.T) {
 	checkTotalCoin(t, fee)
 }
 
-func TestBondNonStrictMode(t *testing.T) {
+// TestBondInsideCommittee checks if a validator inside the committee tries to
+// increase the stake.
+// In non-strict mode it should be accepted.
+func TestBondInsideCommittee(t *testing.T) {
 	setup(t)
+
 	exe1 := NewBondExecutor(true)
 	exe2 := NewBondExecutor(false)
 	sender := tSandbox.TestStore.RandomTestAcc()
+	senderBalance := sender.Balance()
+	fee, amt := randomAmountAndFee(senderBalance)
 
 	pub := tSandbox.Committee().Proposer(0).PublicKey()
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
-		pub.Address(), pub, 1000, 1000, "")
+		pub.Address(), pub, amt, fee, "inside committee")
 
 	assert.Error(t, exe1.Execute(trx, tSandbox))
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
 }
 
+// TestBondJoiningCommittee checks if a validator tries to increase stake after
+// evaluating sortuition.
+// In non-strict mode it should be accepted.
 func TestBondJoiningCommittee(t *testing.T) {
 	setup(t)
-	exe := NewBondExecutor(true)
+
+	exe1 := NewBondExecutor(true)
+	exe2 := NewBondExecutor(false)
 	sender := tSandbox.TestStore.RandomTestAcc()
 	senderBalance := sender.Balance()
 	pub, _ := bls.GenerateTestKeyPair()
@@ -116,6 +127,26 @@ func TestBondJoiningCommittee(t *testing.T) {
 
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
 		pub.Address(), pub, amt, fee, "joining committee")
-	err := exe.Execute(trx, tSandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+
+	assert.Error(t, exe1.Execute(trx, tSandbox))
+	assert.NoError(t, exe2.Execute(trx, tSandbox))
+}
+
+// TestStakeExceeded checks if the validator's stake exceeded the MaximumStake
+// parameter.
+func TestStakeExceeded(t *testing.T) {
+	setup(t)
+
+	exe := NewBondExecutor(true)
+	amt := tSandbox.TestParams.MaximumStake + 1
+	fee := int64(float64(amt) * tSandbox.Params().FeeFraction)
+	sender := tSandbox.TestStore.RandomTestAcc()
+	sender.AddToBalance(tSandbox.TestParams.MaximumStake)
+	tSandbox.UpdateAccount(sender)
+	pub, _ := bls.GenerateTestKeyPair()
+
+	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
+		pub.Address(), pub, amt, fee, "stake wxceeded")
+
+	assert.Error(t, exe.Execute(trx, tSandbox))
 }

@@ -79,7 +79,7 @@ func (exe *Execution) AccumulatedFee() int64 {
 func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 	curHeight := sb.CurrentHeight()
 	lockTimeHeight := trx.LockTime()
-	interval := sb.TransactionToLiveInterval()
+	interval := sb.Params().TransactionToLiveInterval
 
 	if trx.IsSubsidyTx() || trx.IsSortitionTx() {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid lock time")
@@ -101,7 +101,7 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	curHeight := sb.CurrentHeight()
 	height, ok := sb.FindBlockHeightByStamp(trx.Stamp())
-	interval := sb.TransactionToLiveInterval()
+	interval := sb.Params().TransactionToLiveInterval
 
 	if trx.IsSubsidyTx() {
 		interval = 1
@@ -122,8 +122,9 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong, expected: 0, got: %v", trx.Fee())
 		}
 	} else {
-		fee := int64(float64(trx.Payload().Value()) * sb.FeeFraction())
-		fee = util.Max64(fee, sb.MinFee())
+		params := sb.Params()
+		fee := int64(float64(trx.Payload().Value()) * params.FeeFraction)
+		fee = util.Max64(fee, params.MinimumFee)
 		if trx.Fee() != fee {
 			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong, expected: %v, got: %v", fee, trx.Fee())
 		}

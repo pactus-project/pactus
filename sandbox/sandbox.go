@@ -177,22 +177,8 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	s.Updated = true
 }
 
-func (sb *sandbox) FeeFraction() float64 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.params.FeeFraction
-}
-
-func (sb *sandbox) MinFee() int64 {
-	return sb.params.MinimumFee
-}
-
-func (sb *sandbox) TransactionToLiveInterval() uint32 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.params.TransactionToLiveInterval
+func (sb *sandbox) Params() param.Params {
+	return sb.params
 }
 
 func (sb *sandbox) CurrentHeight() uint32 {
@@ -238,26 +224,6 @@ func (sb *sandbox) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
 	defer sb.lk.RUnlock()
 
 	return sb.store.FindBlockHeightByStamp(stamp)
-}
-
-func (sb *sandbox) CommitteeSize() int {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.params.CommitteeSize
-}
-
-func (sb *sandbox) UnbondInterval() uint32 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.params.UnbondInterval
-}
-func (sb *sandbox) BondInterval() uint32 {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.params.BondInterval
 }
 
 func (sb *sandbox) Committee() committee.Reader {

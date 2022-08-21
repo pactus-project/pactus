@@ -9,7 +9,8 @@
         "BondInterval": 120,
         "UnbondInterval": 60480,
         "FeeFraction": 0.0001,
-        "MinimumFee": 10000
+        "MinimumFee": 10000,
+        "MaximumStake": 1238100000000
     },
     "Accounts": [
         {

@@ -35,7 +35,8 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	senderAcc := sb.Account(pld.Sender)
 	if senderAcc == nil {
-		return errors.Errorf(errors.ErrInvalidAddress, "unable to retrieve sender account")
+		return errors.Errorf(errors.ErrInvalidAddress,
+			"unable to retrieve sender account")
 	}
 	var receiverAcc *account.Account
 	if pld.Receiver.EqualsTo(pld.Sender) {
@@ -50,7 +51,8 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Error(errors.ErrInsufficientFunds)
 	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence, "expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
+		return errors.Errorf(errors.ErrInvalidSequence,
+			"expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
 
 	senderAcc.IncSequence()

@@ -7,6 +7,7 @@ import (
 	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/param"
 	"github.com/zarbchain/zarb-go/types/validator"
 )
 
@@ -24,13 +25,8 @@ type Sandbox interface {
 	FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool)
 	FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool)
 
-	CommitteeSize() int
-	BondInterval() uint32
-	UnbondInterval() uint32
+	Params() param.Params
 	CurrentHeight() uint32
-	TransactionToLiveInterval() uint32
-	FeeFraction() float64
-	MinFee() int64
 
 	IterateAccounts(consumer func(*AccountStatus))
 	IterateValidators(consumer func(*ValidatorStatus))

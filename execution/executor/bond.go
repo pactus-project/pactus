@@ -44,23 +44,27 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		// In strict mode, bond transactions will be rejected if a validator is
 		// in committee.
 		// In non-strict mode, we accept it and keep it inside the tx pool to
-		// process it later.
+		// process it when validator leaves the committee.
 		if sb.Committee().Contains(pld.Receiver) {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v is in committee", pld.Receiver)
 		}
 
-		// In strict mode, a validator can not evaluate sortition during the
-		// bonding period.
+		// In strict mode, bond transactions will be rejected if a validator is
+		// going to be in committee for the next height.
 		// In non-strict mode, we accept it and keep it inside the tx pool to
-		// process it later.
+		// process it when validator leaves the committee.
 		if val.LastJoinedHeight() == sb.CurrentHeight() {
-			return errors.Errorf(errors.ErrInvalidHeight,
+			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v joins committee in the next height", pld.Receiver)
 		}
 	}
 	if senderAcc.Balance() < pld.Stake+trx.Fee() {
 		return errors.Error(errors.ErrInsufficientFunds)
+	}
+	if val.Stake()+pld.Stake > sb.Params().MaximumStake {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"validator's stake can't be more than %v", sb.Params().MaximumStake)
 	}
 
 	senderAcc.IncSequence()
