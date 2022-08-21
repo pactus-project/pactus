@@ -82,11 +82,13 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 	}
 
 	lastHeight, _ := s.LastCertificate()
-	for height := lastHeight - uint32(stampLookupCapacity); height <= lastHeight; height++ {
-		if height > 0 {
-			hash := s.BlockHash(height)
-			s.appendStamp(hash, height)
-		}
+	height := uint32(0)
+	if lastHeight > uint32(stampLookupCapacity) {
+		height = lastHeight - uint32(stampLookupCapacity)
+	}
+	for ; height <= lastHeight; height++ {
+		hash := s.BlockHash(height)
+		s.appendStamp(hash, height)
 	}
 
 	return s, nil
