@@ -193,10 +193,10 @@ func getValidatorKeyFromWallet(walletPath string) (string, error) {
 	if len(addrInfos) == 0 {
 		return "", fmt.Errorf("validator address is not defined")
 	}
-	password := ""
-	if wallet.IsEncrypted() {
-		password = cmd.PromptPassword("Wallet password", false)
-	}
+	password := "1234"
+	// if wallet.IsEncrypted() {
+	// 	password = cmd.PromptPassword("Wallet password", false)
+	// }
 	prvKey, err := wallet.PrivateKey(password, addrInfos[0].Address)
 	if err != nil {
 		return "", err

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/gorilla/mux"
 	"github.com/zarbchain/zarb-go/util/logger"
 	"github.com/zarbchain/zarb-go/www/zmq/event"
@@ -66,8 +67,12 @@ func (s *Server) eventLoop() {
 		case <-s.ctx.Done():
 			return
 
-		case msg := <-s.eventCh:
-			log.Println("event emitted", msg)	
+		case e := <-s.eventCh:
+			log.Println("publisher event emitted", e)
+			bs,_ := cbor.Marshal(e)
+			log.Println("bytes event emitted", bs)
+		
+			// s.router.N
 		}
 	}
 }

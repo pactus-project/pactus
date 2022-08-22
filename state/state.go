@@ -615,9 +615,6 @@ func (st *state) publishEvents(height uint32, block *block.Block)  {
 	if st.eventCh == nil {
 		return
 	}
-   e := event.Event{
-		Topic:"block",
-		Body: block.Hash().Bytes(),
-	}
-	st.eventCh <- e
+    blockEvent :=  event.CreateBlockEvent(block.Hash(), height) 
+	st.eventCh <- blockEvent
 }
