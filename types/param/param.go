@@ -12,6 +12,7 @@ type Params struct {
 	UnbondInterval            uint32  `cbor:"7,keyasint"`
 	FeeFraction               float64 `cbor:"8,keyasint"`
 	MinimumFee                int64   `cbor:"9,keyasint"`
+	MaximumStake              int64   `cbor:"10,keyasint"`
 }
 
 func DefaultParams() Params {
@@ -25,6 +26,7 @@ func DefaultParams() Params {
 		UnbondInterval:            181440, // 21 days
 		FeeFraction:               0.001,
 		MinimumFee:                1000,
+		MaximumStake:              1238100000000,
 	}
 }
 

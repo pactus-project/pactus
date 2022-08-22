@@ -21,7 +21,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	val := tSandbox.TestStore.AddTestValidator()
 	proof := sortition.GenerateRandomProof()
 
-	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
+	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 	tSandbox.UpdateValidator(val)
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, 1, crypto.GenerateTestAddress(), proof)
@@ -29,7 +29,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
-	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval() + 1)
+	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval + 1)
 	tSandbox.UpdateValidator(val)
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
@@ -96,21 +96,21 @@ func TestChangePower1(t *testing.T) {
 	amt1 := tSandbox.Committee().TotalPower() / 3
 	val1 := tSandbox.MakeNewValidator(pub1)
 	val1.AddToStake(amt1 - 1)
-	val1.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
+	val1.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 	tSandbox.UpdateValidator(val1)
 	proof1 := sortition.GenerateRandomProof()
 
 	pub2, _ := bls.GenerateTestKeyPair()
 	val2 := tSandbox.MakeNewValidator(pub2)
 	val2.AddToStake(2)
-	val2.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
+	val2.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 	tSandbox.UpdateValidator(val2)
 	proof2 := sortition.GenerateRandomProof()
 
 	val3 := tSandbox.Committee().Validators()[0]
 	proof3 := sortition.GenerateRandomProof()
 
-	tSandbox.Params.CommitteeSize = 4
+	tSandbox.TestParams.CommitteeSize = 4
 	tSandbox.AcceptTestSortition = true
 	trx1 := tx.NewSortitionTx(tStamp500000, val1.Sequence()+1, val1.Address(), proof1)
 	assert.NoError(t, exe.Execute(trx1, tSandbox))
@@ -132,28 +132,28 @@ func TestChangePower2(t *testing.T) {
 	pub1, _ := bls.GenerateTestKeyPair()
 	val1 := tSandbox.MakeNewValidator(pub1)
 	val1.AddToStake(1)
-	val1.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
+	val1.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 	tSandbox.UpdateValidator(val1)
 	proof1 := sortition.GenerateRandomProof()
 
 	pub2, _ := bls.GenerateTestKeyPair()
 	val2 := tSandbox.MakeNewValidator(pub2)
 	val2.AddToStake(1)
-	val2.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
+	val2.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 	tSandbox.UpdateValidator(val2)
 	proof2 := sortition.GenerateRandomProof()
 
 	pub3, _ := bls.GenerateTestKeyPair()
 	val3 := tSandbox.MakeNewValidator(pub3)
 	val3.AddToStake(1)
-	val3.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
+	val3.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 	tSandbox.UpdateValidator(val3)
 	proof3 := sortition.GenerateRandomProof()
 
 	val4 := tSandbox.Committee().Validators()[0]
 	proof4 := sortition.GenerateRandomProof()
 
-	tSandbox.Params.CommitteeSize = 7
+	tSandbox.TestParams.CommitteeSize = 7
 	tSandbox.AcceptTestSortition = true
 	trx1 := tx.NewSortitionTx(tStamp500000, val1.Sequence()+1, val1.Address(), proof1)
 	assert.NoError(t, exe.Execute(trx1, tSandbox))
@@ -169,7 +169,8 @@ func TestChangePower2(t *testing.T) {
 	assert.NoError(t, exe.Execute(trx4, tSandbox))
 }
 
-// TestOldestDidNotPropose tests if the oldest validator in the committee had chance to propose a block or not.
+// TestOldestDidNotPropose tests if the oldest validator in the committee had
+// chance to propose a block or not.
 func TestOldestDidNotPropose(t *testing.T) {
 	setup(t)
 
@@ -181,12 +182,12 @@ func TestOldestDidNotPropose(t *testing.T) {
 		pub, _ := bls.GenerateTestKeyPair()
 		val := tSandbox.MakeNewValidator(pub)
 		val.AddToStake(1 * 10e8)
-		val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.BondInterval())
+		val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 		tSandbox.UpdateValidator(val)
 		vals[i] = val
 	}
 
-	tSandbox.Params.CommitteeSize = 7
+	tSandbox.TestParams.CommitteeSize = 7
 	tSandbox.AcceptTestSortition = true
 
 	stamp := tStamp500000

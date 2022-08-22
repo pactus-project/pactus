@@ -16,7 +16,7 @@ var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox.
 type MockSandbox struct {
-	Params               param.Params
+	TestParams           param.Params
 	TestStore            *store.MockStore
 	TestCommittee        committee.Committee
 	TestCommitteeSigners []crypto.Signer
@@ -27,7 +27,7 @@ func MockingSandbox() *MockSandbox {
 	committee, signers := committee.GenerateTestCommittee(7)
 
 	sb := &MockSandbox{
-		Params:               param.DefaultParams(),
+		TestParams:           param.DefaultParams(),
 		TestStore:            store.MockingStore(),
 		TestCommittee:        committee,
 		TestCommitteeSigners: signers,
@@ -74,24 +74,8 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 func (m *MockSandbox) CurrentHeight() uint32 {
 	return m.TestStore.LastHeight + 1
 }
-func (m *MockSandbox) TransactionToLiveInterval() uint32 {
-	return m.Params.TransactionToLiveInterval
-}
-func (m *MockSandbox) FeeFraction() float64 {
-	return m.Params.FeeFraction
-}
-func (m *MockSandbox) MinFee() int64 {
-	return m.Params.MinimumFee
-}
-
-func (m *MockSandbox) CommitteeSize() int {
-	return m.Params.CommitteeSize
-}
-func (m *MockSandbox) UnbondInterval() uint32 {
-	return m.Params.UnbondInterval
-}
-func (m *MockSandbox) BondInterval() uint32 {
-	return m.Params.BondInterval
+func (m *MockSandbox) Params() param.Params {
+	return m.TestParams
 }
 func (m *MockSandbox) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
 	return m.TestStore.FindBlockHashByStamp(stamp)

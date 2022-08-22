@@ -133,7 +133,7 @@ func TestLockTime(t *testing.T) {
 	checker := NewChecker()
 	sb := sandbox.MockingSandbox()
 
-	curHeight := 2 * sb.Params.TransactionToLiveInterval
+	curHeight := 2 * sb.TestParams.TransactionToLiveInterval
 	sb.TestStore.AddTestBlock(curHeight)
 
 	t.Run("Should reject sortition transaxtions with lock time", func(t *testing.T) {
@@ -176,8 +176,8 @@ func TestLockTime(t *testing.T) {
 			Amount:   1234,
 		}
 
-		trx := tx.NewLockTimeTx(curHeight-sb.Params.TransactionToLiveInterval, 1,
-			pld, sb.Params.MinimumFee, "")
+		trx := tx.NewLockTimeTx(curHeight-sb.TestParams.TransactionToLiveInterval, 1,
+			pld, sb.TestParams.MinimumFee, "")
 		signer.SignMsg(trx)
 		err := executor.Execute(trx, sb)
 		assert.Error(t, err)
@@ -195,8 +195,8 @@ func TestLockTime(t *testing.T) {
 			Amount:   1234,
 		}
 
-		trx1 := tx.NewLockTimeTx(curHeight+sb.Params.TransactionToLiveInterval, 1,
-			pld, sb.Params.MinimumFee, "")
+		trx1 := tx.NewLockTimeTx(curHeight+sb.TestParams.TransactionToLiveInterval, 1,
+			pld, sb.TestParams.MinimumFee, "")
 		signer.SignMsg(trx1)
 		err := executor.Execute(trx1, sb)
 		assert.Error(t, err)

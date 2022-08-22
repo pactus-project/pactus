@@ -50,12 +50,7 @@ func setup(t *testing.T) {
 		tStore.SaveBlock(i, b, c)
 	}
 	assert.Equal(t, tSandbox.CurrentHeight(), lastHeight)
-	assert.Equal(t, tSandbox.FeeFraction(), params.FeeFraction)
-	assert.Equal(t, tSandbox.MinFee(), params.MinimumFee)
-	assert.Equal(t, tSandbox.TransactionToLiveInterval(), params.TransactionToLiveInterval)
-	assert.Equal(t, tSandbox.CommitteeSize(), params.CommitteeSize)
-	assert.Equal(t, tSandbox.BondInterval(), params.BondInterval)
-	assert.Equal(t, tSandbox.UnbondInterval(), params.UnbondInterval)
+	assert.Equal(t, tSandbox.Params(), params)
 }
 
 func TestAccountChange(t *testing.T) {

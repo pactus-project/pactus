@@ -47,7 +47,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
-	val.UpdateUnbondingHeight(tSandbox.CurrentHeight() - tSandbox.UnbondInterval() + 1)
+	val.UpdateUnbondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().UnbondInterval + 1)
 	tSandbox.UpdateValidator(val)
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.NotZero(t, val.UnbondingHeight())
