@@ -27,6 +27,13 @@ func showErrorDialog(parent gtk.IWindow, msg string) {
 	dlg.Destroy()
 }
 
+func errorCheck(err error) {
+	if err != nil {
+		showErrorDialog(nil, err.Error())
+		log.Print(err.Error())
+	}
+}
+
 func fatalErrorCheck(err error) {
 	if err != nil {
 		showErrorDialog(nil, err.Error())
