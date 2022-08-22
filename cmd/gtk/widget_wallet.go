@@ -89,7 +89,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	menu, err := gtk.MenuNew()
 	fatalErrorCheck(err)
 
-	// Update label menu item
+	// "Update label" menu item
 	item, err := gtk.MenuItemNewWithLabel("Update _Label")
 	fatalErrorCheck(err)
 
@@ -101,7 +101,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	})
 	menu.Append(item)
 
-	// Address details menu item
+	// "Address details" menu item
 	item, err = gtk.MenuItemNewWithLabel("_Details")
 	fatalErrorCheck(err)
 
@@ -109,6 +109,18 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.Show()
 	item.Connect("activate", func(item *gtk.MenuItem) bool {
 		w.onShowDetails()
+		return false
+	})
+	menu.Append(item)
+
+	// "Private key" menu item
+	item, err = gtk.MenuItemNewWithLabel("_Private key")
+	fatalErrorCheck(err)
+
+	item.SetUseUnderline(true)
+	item.Show()
+	item.Connect("activate", func(item *gtk.MenuItem) bool {
+		w.onShowPrivateKey()
 		return false
 	})
 	menu.Append(item)
@@ -138,9 +150,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 
 func (ww *widgetWallet) onNewAddress() {
 	err := ww.model.createAddress()
-	if err != nil {
-		showErrorDialog(nil, err.Error())
-	}
+	errorCheck(err)
 }
 
 func (ww *widgetWallet) onChangePassword() {
@@ -154,10 +164,7 @@ func (ww *widgetWallet) onShowSeed() {
 	}
 
 	seed, err := ww.model.wallet.Mnemonic(password)
-	if err != nil {
-		showErrorDialog(nil, err.Error())
-		return
-	}
+	errorCheck(err)
 
 	showSeed(seed)
 }
@@ -191,6 +198,13 @@ func (ww *widgetWallet) onShowDetails() {
 	addr := ww.getSelectedAddress()
 	if addr != "" {
 		showAddressDetails(ww.model.wallet, addr)
+	}
+}
+
+func (ww *widgetWallet) onShowPrivateKey() {
+	addr := ww.getSelectedAddress()
+	if addr != "" {
+		showAddressPrivateKey(ww.model.wallet, addr)
 	}
 }
 
