@@ -259,6 +259,15 @@ func TestSetLabel(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, vault.Label(testAddr), "i have label")
 	})
+
+	t.Run("Remove label", func(t *testing.T) {
+		testAddr := vault.AddressLabels()[0].Address
+		err := vault.SetLabel(testAddr, "")
+		assert.NoError(t, err)
+		assert.Empty(t, vault.Label(testAddr))
+		_, ok := vault.Labels[testAddr]
+		assert.False(t, ok)
+	})
 }
 
 func TestNeuter(t *testing.T) {

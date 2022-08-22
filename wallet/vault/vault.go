@@ -175,7 +175,11 @@ func (v *Vault) SetLabel(addr, label string) error {
 		return NewErrAddressNotFound(addr)
 	}
 
-	v.Labels[addr] = label
+	if label == "" {
+		delete(v.Labels, addr)
+	} else {
+		v.Labels[addr] = label
+	}
 	return nil
 }
 
