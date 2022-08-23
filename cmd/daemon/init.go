@@ -28,7 +28,7 @@ func Init() func(c *cli.Cmd) {
 		testnetOpt := c.Bool(cli.BoolOpt{
 			Name:  "testnet",
 			Desc:  "Initialize working directory for joining the testnet",
-			Value: false,
+			Value: true, // TODO: make it false after mainnet launch
 		})
 		localnetOpt := c.Bool(cli.BoolOpt{
 			Name:  "localnet",

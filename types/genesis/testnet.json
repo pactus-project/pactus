@@ -1,5 +1,5 @@
 {
-    "GenesisTime": "2022-02-21T00:00:00Z",
+    "GenesisTime": "2022-08-21T00:00:00Z",
     "Params": {
         "BlockVersion": 63,
         "BlockTimeInSecond": 10,
@@ -20,16 +20,16 @@
     ],
     "Validators": [
         {
-            "PublicKey": "tpublic1p4awmva0vs0gvslfne5pnaa6krvagu96me4hdthwmwtdgtuguu9ahgs4ugx4cgtfd69mfkggguxme6zanhcpa4cwf4ejcjj9fyp4q4zc50l6urprm9yxj0dk0kdv944ehetppxckyrlgzkg9p5kxfng0lvu3s4p7v"
+            "PublicKey": "tpublic1p4cvxsn6nfs9kdh8ufahmahdau75ajsmjuypt2z3fd5thh3qmcakvkugr56hnse0xdjn6nqan7mq8qzlaxzp5t6jkch8054ztt308ljnrs6432t3f54aef92xqgy5fafuvjzxdhum9faemwzdk6ulw3d2evn696hz"
         },
         {
-            "PublicKey": "tpublic1psk2k52u49d2rfj28vutfk2cvn5pfux2l5cpsa7qz4j356wwj0xy026gel8avr4cedjytkwknf6ha6z9jealltsfyrgl3v5r63g65y08ejzmr40a4xuh5dxgwtx2wzuefzydul323pnt554ak2nmw5j0j0cke09rt"
+            "PublicKey": "tpublic1p3evn3phque6ekgyukgcku8pt9z7489ke4nuz0nxz4ky87gu890rkpr4098qfjhcakhrthr63xdwyyql2ug6w87rcaulch3l32ffzsyg59ycw6ekcwe9n5f5462g8uu6v3zhjy50upfzxh5fvmgmwxzzzhs4l28u7"
         },
         {
-            "PublicKey": "tpublic1psk32a7t2rjvra5j9h869ms9el6tpfklz0cppe8w7addgup4trc4h2ssdu8vgm3nrfgr8klxc4u26grgqplrcdex820u3qfhudejr7eyz5m77dft38qdduhlqxs5u9et67h0u2tv8gzuh6sxpgrxt2vj70q0ep2sj"
+            "PublicKey": "tpublic1psv73laq3jqy8lwsk4wz2dqja60avl5hs2656n42lv0qd85hzsr8tlzrh3pc4myllatalhnwc5cxj2zaz87c0czgtgfhe60l9uya6yt5drnum6c7rxv7v0fe7dtvwj98m0vpd829gactzjc2cezcplrnf75ukrgdf"
         },
         {
-            "PublicKey": "tpublic1pjt7vh4m9fh4wcfttdczgcvc3nzku0tvj2enh75qet5c4p5v36c9wjdkt2pjjqdctxu6dueqk99m0yraq5nnw2sxqk9fj7rcdde4sqgfh9ef0k9qgx7d86ykyw36ymp52dvcyezjxdmp997nmkwutwlr3svvu7aq9"
+            "PublicKey": "tpublic1p5qp6jrmyyajqfp9c2yv4geagh8y35p0cr4ue00s7rzlrswd0q0g3yqsazd8lv3x8ewh87xft585kkxgmjrnhe27mn56syglw7xm757ten2q6z7rlu8lvdyy69syrka4e86dwgxgz5hl8canz328ge97k0cypsrcd"
         }
     ]
 }
