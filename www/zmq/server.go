@@ -2,29 +2,28 @@ package zmq
 
 import (
 	"context"
-	"log"
+	"encoding/json"
 	"net"
 
-	"github.com/fxamacker/cbor/v2"
-	"github.com/gorilla/mux"
+	zmq "github.com/pebbe/zmq4"
 	"github.com/zarbchain/zarb-go/util/logger"
 	"github.com/zarbchain/zarb-go/www/zmq/event"
-	zmq "github.com/zeromq/goczmq"
 )
 
 type Server struct {
-	ctx      context.Context
-	config   *Config
-	router   *mux.Router
-	listener net.Listener
-	logger   *logger.Logger
-	eventCh <-chan event.Event
+	ctx       context.Context
+	config    *Config
+	publisher *zmq.Socket
+	listener  net.Listener
+	logger    *logger.Logger
+	eventCh   <-chan event.Event
 }
-func NewServer(conf *Config, eventCh<-chan event.Event) *Server {
+
+func NewServer(conf *Config, eventCh <-chan event.Event) *Server {
 	return &Server{
-		ctx:    context.Background(),
-		config: conf,
-		logger: logger.NewLogger("_zmq", nil),
+		ctx:     context.Background(),
+		config:  conf,
+		logger:  logger.NewLogger("_zmq", nil),
 		eventCh: eventCh,
 	}
 }
@@ -37,20 +36,22 @@ func (s *Server) StartServer() error {
 	if !s.config.Enable {
 		return nil
 	}
-	con, err := net.Listen("tcp", s.config.Listen)
-	if err != nil {
-		return err
-	}
-	s.logger.Info("zmq started listening", "address", con)
 	go func() {
-		router,err := zmq.NewRouter(con.Addr().String());
-		if  err != nil {
-			s.logger.Error("error on zmq serve", "err", err)
+		ctx, err := zmq.NewContext()
+		if err != nil {
+			s.logger.Error("error on zmq context", "err", err)
 		}
-		defer router.Destroy()
-		log.Println("router created and bound")
+		publisher, err := ctx.NewSocket(zmq.PUB)
+		if err != nil {
+			s.logger.Error("error on creating new socket", "err", err)
+		}
+		err = publisher.Bind("tcp://*:5555")
+		if err != nil {
+			s.logger.Error("error on zmq publisher binding", "err", err)
+		}
+		s.publisher = publisher
+		go s.eventLoop()
 	}()
-	go s.eventLoop()
 	return nil
 }
 func (s *Server) StopServer() {
@@ -68,11 +69,11 @@ func (s *Server) eventLoop() {
 			return
 
 		case e := <-s.eventCh:
-			log.Println("publisher event emitted", e)
-			bs,_ := cbor.Marshal(e)
-			log.Println("bytes event emitted", bs)
-		
-			// s.router.N
+			bs, _ := json.Marshal(e)
+			_, err := s.publisher.Send(string(bs), 0)
+			if err != nil {
+				s.logger.Error("error on emitting event", "err", err)
+			}
 		}
 	}
 }

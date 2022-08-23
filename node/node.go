@@ -56,7 +56,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(conf.State, genDoc, signer, store, txPool,eventCh)
+	state, err := state.LoadOrNewState(conf.State, genDoc, signer, store, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	capnp := capnp.NewServer(conf.Capnp, state, sync, consensus)
 	http := http.NewServer(conf.HTTP)
 	grpc := grpc.NewServer(conf.GRPC, state, sync)
-	zmq := zmq.NewServer(conf.Zmq,eventCh)
+	zmq := zmq.NewServer(conf.Zmq, eventCh)
 
 	node := &Node{
 		config:     conf,

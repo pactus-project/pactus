@@ -29,17 +29,17 @@ import (
 type state struct {
 	lk sync.RWMutex
 
-	config       *Config
-	signer       crypto.Signer
+	config        *Config
+	signer        crypto.Signer
 	rewardAddress crypto.Address
-	genDoc       *genesis.Genesis
-	store        store.Store
-	params       param.Params
-	txPool       txpool.TxPool
-	committee    committee.Committee
-	lastInfo     *lastinfo.LastInfo
-	logger       *logger.Logger
-	eventCh      chan event.Event
+	genDoc        *genesis.Genesis
+	store         store.Store
+	params        param.Params
+	txPool        txpool.TxPool
+	committee     committee.Committee
+	lastInfo      *lastinfo.LastInfo
+	logger        *logger.Logger
+	eventCh       chan event.Event
 }
 
 func LoadOrNewState(
@@ -47,7 +47,7 @@ func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
 	store store.Store,
-	txPool txpool.TxPool,eventCh chan event.Event) (Facade, error) {
+	txPool txpool.TxPool, eventCh chan event.Event) (Facade, error) {
 	// Block rewards goes to the reward address
 	// If it is set inside config, we use that address
 	// otherwise, it will be the signer address
@@ -60,14 +60,14 @@ func LoadOrNewState(
 	}
 
 	st := &state{
-		config:       conf,
-		genDoc:       genDoc,
-		txPool:       txPool,
-		params:       genDoc.Params(),
-		signer:       signer,
-		store:        store,
+		config:        conf,
+		genDoc:        genDoc,
+		txPool:        txPool,
+		params:        genDoc.Params(),
+		signer:        signer,
+		store:         store,
 		rewardAddress: rewardAddr,
-		lastInfo:     lastinfo.NewLastInfo(store),
+		lastInfo:      lastinfo.NewLastInfo(store),
 		eventCh:       eventCh,
 	}
 	st.logger = logger.NewLogger("_state", st)
@@ -397,8 +397,8 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 	// At this point we can assign new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 	// -----------------------------------
-    // Publishing the events to the zmq
-    st.publishEvents(height,block)
+	// Publishing the events to the zmq
+	st.publishEvents(height, block)
 	return nil
 }
 
@@ -611,10 +611,10 @@ func (st *state) ValidatorAddress() crypto.Address {
 	return st.signer.Address()
 }
 
-func (st *state) publishEvents(height uint32, block *block.Block)  {
+func (st *state) publishEvents(height uint32, block *block.Block) {
 	if st.eventCh == nil {
 		return
 	}
-    blockEvent :=  event.CreateBlockEvent(block.Hash(), height) 
+	blockEvent := event.CreateBlockEvent(block.Hash(), height)
 	st.eventCh <- blockEvent
 }
