@@ -1,6 +1,6 @@
 FROM alpine:3.15 as builder
 
-RUN apk add --no-cache git go gmp-dev build-base g++ openssl-dev
+RUN apk add --no-cache git go gmp-dev build-base g++ openssl-dev libzmq
 ADD . /zarb-go
 
 # Building herumi && zarb-daemon

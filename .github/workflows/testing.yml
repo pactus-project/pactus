@@ -17,13 +17,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
     - name: Install Go
       uses: actions/setup-go@v2
       with:
         go-version: [1.18, 1.19]
 
-    - name: Unit tests
-      run: make unit_test
+      - name: Unit tests
+        run: make unit_test

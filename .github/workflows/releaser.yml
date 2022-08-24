@@ -10,53 +10,53 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Install Dependencies
-      run: |
-        sudo apt update
-        sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev libzmq
 
     - name: Install Go
       uses: actions/setup-go@v3
       with:
         go-version: 1.9
 
-    - name: Create release files
-      run: bash ./.github/releasers/releaser_linux.sh
+      - name: Create release files
+        run: bash ./.github/releasers/releaser_linux.sh
 
-    - name: Publish
-      uses: softprops/action-gh-release@v1
-      with:
-        files: zarb-*.tar.gz
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: zarb-*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
   build-macos:
     runs-on: macos-10.15
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Install Dependencies
-      run: brew install gtk+3 librsvg create-dmg
+      - name: Install Dependencies
+        run: brew install gtk+3 librsvg create-dmg
 
     - name: Install Go
       uses: actions/setup-go@v3
       with:
         go-version: 1.19
 
-    - name: Create release files
-      run: bash ./.github/releasers/releaser_macos.sh
+      - name: Create release files
+        run: bash ./.github/releasers/releaser_macos.sh
 
-    - name: Publish
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          zarb-*.dmg
-          zarb-*.tar.gz
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            zarb-*.dmg
+            zarb-*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
   build-windows:
@@ -65,31 +65,30 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install:
-          git
-          make
-          p7zip
-          mingw-w64-x86_64-gtk3
-          mingw-w64-x86_64-glib2
-          mingw-w64-x86_64-go
-          mingw-w64-x86_64-gcc
-          mingw-w64-x86_64-pkg-config
-          glib2-devel
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: git
+            make
+            p7zip
+            mingw-w64-x86_64-gtk3
+            mingw-w64-x86_64-glib2
+            mingw-w64-x86_64-go
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-pkg-config
+            glib2-devel
 
-    - name: Create release files
-      run: bash ./.github/releasers/releaser_windows.sh
+      - name: Create release files
+        run: bash ./.github/releasers/releaser_windows.sh
 
-    - name: Publish
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          zarb-*.zip
-          zarb-*installer.exe
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            zarb-*.zip
+            zarb-*installer.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
