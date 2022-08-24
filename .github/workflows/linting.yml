@@ -25,7 +25,7 @@ jobs:
       - name: Installing libzmq
         run: |
           sudo apt update
-          sudo apt install libzmq
+          sudo apt-get install libzmq-dev
 
       - name: Installing golangci-lint
         run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest

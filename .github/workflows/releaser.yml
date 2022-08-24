@@ -15,7 +15,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev libzmq
+          sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev libzmq-dev
 
     - name: Install Go
       uses: actions/setup-go@v3
