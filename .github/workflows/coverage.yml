@@ -25,7 +25,7 @@ jobs:
       - name: Installing libzmq
       run: |
         sudo apt update
-        sudo apt install limbzq
+        sudo apt install libzmq
 
       - name: Test with coverage
         run: go test -gcflags=-l -coverprofile=coverage.txt -covermode=atomic ./...
