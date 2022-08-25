@@ -1,7 +1,7 @@
 package network
 
 import (
-	lp2ppeer "github.com/libp2p/go-libp2p-core/peer"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 )
 

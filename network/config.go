@@ -32,7 +32,7 @@ func DefaultConfig() *Config {
 		id   string
 	}{
 		{
-			ip:   "172.104.169.94",
+			ip:   "172.104.46.145",
 			port: "21777",
 			id:   "12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		},
@@ -46,7 +46,7 @@ func DefaultConfig() *Config {
 
 	return &Config{
 		Name:        "zarb",
-		Listens:     []string{"/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888"},
+		Listens:     []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
 		NodeKey:     "node_key",
 		EnableNAT:   true,
 		EnableRelay: true,

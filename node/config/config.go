@@ -67,7 +67,7 @@ func SaveTestnetConfig(path, rewardAddr string) error {
 	conf := DefaultConfig()
 	conf.Network.Name = "zarb-testnet"
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}
-	conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
+	conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 	conf.Network.Bootstrap.MinThreshold = 4
 	conf.Network.Bootstrap.MaxThreshold = 8
 	conf.GRPC.Enable = true

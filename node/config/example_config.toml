@@ -21,7 +21,7 @@
  ## name = "zarb"
 
   # listens is the binding address for network APIs and supports multi addresses.
- ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888"]
+ ## listens = ["/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"]
 
   # node_key is the private key filename to use for node authentication
   # and encryption in the p2p protocol.
@@ -55,7 +55,7 @@
   [network.bootstrap]
 
     # addresses is the list of peers addresses needed for peer discovery.
-   ## addresses = ["/ip4/172.104.169.94/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
+   ## addresses = ["/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
 
     # min_threshold is the number of connections it attempts to maintain.
     # Default is 8

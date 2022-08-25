@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"io/ioutil"
 
-	lp2pcore "github.com/libp2p/go-libp2p-core"
-	"github.com/libp2p/go-libp2p-core/peer"
+	lp2pcore "github.com/libp2p/go-libp2p/core"
+	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/zarbchain/zarb-go/util"
 )
 
