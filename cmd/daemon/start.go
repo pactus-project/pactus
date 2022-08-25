@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
@@ -54,10 +55,16 @@ func Start() func(c *cli.Cmd) {
 			// separate pprof handlers from DefaultServeMux.
 			pprofMux := http.DefaultServeMux
 			http.DefaultServeMux = http.NewServeMux()
+
 			if *pprofOpt != "" {
 				cmd.PrintWarnMsg("Starting Debug pprof server on: %v", *pprofOpt)
+				server := &http.Server{
+					Addr:              *pprofOpt,
+					ReadHeaderTimeout: 3 * time.Second,
+					Handler:           pprofMux,
+				}
 				go func() {
-					err := http.ListenAndServe(*pprofOpt, pprofMux)
+					err := server.ListenAndServe()
 					if err != nil {
 						cmd.PrintErrorMsg("Could not initialize pprof server. %v", err)
 					}
