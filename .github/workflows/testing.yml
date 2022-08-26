@@ -33,6 +33,7 @@ jobs:
           sudo apt install libzmq3-dev -y
 
       - name: Set up MinGW
+        if: matrix.os == 'windows-latest'
         uses: egor-tensin/setup-mingw@v2
         with:
           platform: x64
