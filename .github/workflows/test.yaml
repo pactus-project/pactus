@@ -1,0 +1,38 @@
+name: test_1
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test_1:
+    strategy:
+      matrix:
+        os: [windows-latest]
+        go: ["1.18", "1.19"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Installing dependencies on Windows
+        run: |
+          git clone https://github.com/zeromq/libzmq.git
+          cd libzmq
+          sh configure —prefix=C:/zeromq
+          make
+          make install
+
+      - name: Unit tests
+        run: make unit_test
