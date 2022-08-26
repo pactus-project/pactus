@@ -34,11 +34,11 @@ jobs:
 
       - name: Installing dependencies on Windows
         if: matrix.os == 'windows-latest'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          update: true
-          install: mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-ccache mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-protobuf-c mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound git
+        run: |
+          git clone https://github.com/zeromq/libzmq.git
+          cd libzmq
+          ./autogen.sh
+          make && make install
 
       - name: Installing dependencies on Macos
         if: matrix.os == 'macos-latest'
