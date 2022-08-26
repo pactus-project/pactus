@@ -21,7 +21,7 @@ jobs:
       - name: Installing libzmq
         run: |
           sudo apt update
-          sudo apt-get install libzmq-dev
+          sudo apt-get install -y libzmq3-dev
 
       - name: Test with data race detection
         run: make test_race
