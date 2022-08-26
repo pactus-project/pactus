@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -65,9 +66,15 @@ func (s *Server) StartServer(capnpServer string) error {
 
 	s.logger.Info("http started listening", "address", l.Addr().String())
 	s.listener = l
+
+	server := &http.Server{
+		Addr:              l.Addr().String(),
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
 	go func() {
 		for {
-			err := http.Serve(l, nil)
+			err := server.Serve(l)
 			if err != nil {
 				s.logger.Error("error on a connection", "err", err)
 			}

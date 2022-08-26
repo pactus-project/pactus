@@ -3,7 +3,7 @@ package grpc
 import (
 	"testing"
 
-	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/stretchr/testify/assert"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )

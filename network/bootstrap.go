@@ -5,11 +5,11 @@ import (
 	sync "sync"
 	"time"
 
-	lp2phost "github.com/libp2p/go-libp2p-core/host"
-	lp2pnet "github.com/libp2p/go-libp2p-core/network"
-	lp2ppeer "github.com/libp2p/go-libp2p-core/peer"
-	lp2prouting "github.com/libp2p/go-libp2p-core/routing"
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
+	lp2phost "github.com/libp2p/go-libp2p/core/host"
+	lp2pnet "github.com/libp2p/go-libp2p/core/network"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	lp2prouting "github.com/libp2p/go-libp2p/core/routing"
 	"github.com/zarbchain/zarb-go/util/logger"
 )
 

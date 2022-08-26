@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/zarbchain/zarb-go/sync/peerset"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
 	"github.com/zarbchain/zarb-go/types/validator"
@@ -71,7 +71,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		p := pl.At(i)
 
 		id, _ := p.PeerID()
-		pid, _ := peer.IDFromString(id)
+		//pid, _ := peer.IDFromString(id)
 		status := p.Status()
 		moniker, _ := p.Moniker()
 		pubStr, _ := p.PublicKey()
@@ -79,7 +79,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		agent, _ := p.Agent()
 
 		tm.addRowInt("-- Peer #", i+1)
-		tm.addRowString("PeerID", pid.String())
+		//tm.addRowString("PeerID", pid.String())
+		tm.addRowString("PeerID", id)
 		tm.addRowString("Status", peerset.StatusCode(status).String())
 		if pubStr != "" {
 			pub, _ := bls.PublicKeyFromString(pubStr)

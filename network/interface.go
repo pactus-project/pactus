@@ -3,7 +3,7 @@ package network
 import (
 	"io"
 
-	lp2pcore "github.com/libp2p/go-libp2p-core"
+	lp2pcore "github.com/libp2p/go-libp2p/core"
 )
 
 type TopicID int
