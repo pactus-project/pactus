@@ -37,7 +37,7 @@ jobs:
         run: |
           git clone https://github.com/zeromq/libzmq.git
           cd libzmq
-          make install
+          make && make install
 
       - name: Installing dependencies on Macos
         if: matrix.os == 'macos-latest'
