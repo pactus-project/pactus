@@ -37,6 +37,7 @@ jobs:
         run: |
           git clone https://github.com/zeromq/libzmq.git
           cd libzmq
+          pwd
           ./autogen.sh
           make && make install
 
