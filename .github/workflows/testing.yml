@@ -32,20 +32,14 @@ jobs:
           sudo apt update
           sudo apt install libzmq3-dev -y
 
-      - name: Set up MinGW
-        if: matrix.os == 'windows-latest'
-        uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
-
       - name: Installing dependencies on Windows
         if: matrix.os == 'windows-latest'
         run: |
-          git clone https://github.com/zeromq/libzmq.git
-          cd libzmq
-          pwd
-          ./autogen.sh
-          make && make install
+          make
+          mingw-w64-x86_64-gtk3
+          mingw-w64-x86_64-glib2
+          mingw-w64-x86_64-zeromq
+          mingw-w64-x86_64-libsodium
 
       - name: Installing dependencies on Macos
         if: matrix.os == 'macos-latest'
