@@ -26,9 +26,23 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: Installing dependencies
+      - name: Installing dependencies on Linux
+        if: matrix.os == 'ubuntu-latest'
         run: |
-          pip install zmq
+          sudo apt update
+          sudo apt install libzmq3-dev -y
+
+      - name: Installing dependencies on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          git clone git://github.com/zeromq/libzmq.git
+          cd libzmq
+          make install
+
+      - name: Installing dependencies on Macos
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install zmq
 
       - name: Unit tests
         run: make unit_test
