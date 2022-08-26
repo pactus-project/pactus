@@ -26,10 +26,9 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: Installing libzmq
+      - name: Installing dependencies
         run: |
-          sudo apt update
-          sudo apt-get install libzmq3-dev -y
+          pip install zmq
 
       - name: Unit tests
         run: make unit_test
