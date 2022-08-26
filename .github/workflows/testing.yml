@@ -36,7 +36,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           git clone https://github.com/zeromq/libzmq.git
-          cd C:\src\libzmq
+          git clone https://github.com/jedisct1/libsodium --branch stable
+          cd C:/libzmq
           sh configure —prefix=C:/zeromq
           make
           make install
