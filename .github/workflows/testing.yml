@@ -37,6 +37,7 @@ jobs:
         run: |
           git clone https://github.com/zeromq/libzmq.git
           cd libzmq
+          sh configure —prefix=C:/zeromq 
           make && make install
 
       - name: Installing dependencies on Macos
