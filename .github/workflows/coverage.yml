@@ -14,18 +14,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.19
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
 
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Installing libzmq
-      run: |
-        sudo apt update
-        sudo apt-get install -y libzmq3-dev
+        run: |
+          sudo apt update
+          sudo apt-get install -y libzmq3-dev
 
       - name: Test with coverage
         run: go test -gcflags=-l -coverprofile=coverage.txt -covermode=atomic ./...
