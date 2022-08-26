@@ -35,7 +35,7 @@ jobs:
       - name: Installing dependencies on Windows
         if: matrix.os == 'windows-latest'
         run: |
-          git clone git://github.com/zeromq/libzmq.git
+          git clone https://github.com/zeromq/libzmq.git
           cd libzmq
           make install
 
