@@ -35,11 +35,11 @@ jobs:
       - name: Installing dependencies on Windows
         if: matrix.os == 'windows-latest'
         run: |
+          git clone https://github.com/zeromq/libzmq.git
+          cd C:\src\libzmq
+          sh configure —prefix=C:/zeromq
           make
-          mingw-w64-x86_64-gtk3
-          mingw-w64-x86_64-glib2
-          mingw-w64-x86_64-zeromq
-          mingw-w64-x86_64-libsodium
+          make install
 
       - name: Installing dependencies on Macos
         if: matrix.os == 'macos-latest'
