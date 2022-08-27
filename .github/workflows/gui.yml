@@ -77,7 +77,7 @@ jobs:
           glib2-devel
 
     - name: Print go version
-      run: whereis libffi-8.dll
+      run: go version
 
     - name: Build the binary
       run: |
