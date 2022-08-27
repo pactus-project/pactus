@@ -3,9 +3,7 @@ package nanomsg
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net"
-	"os"
 
 	"github.com/zarbchain/zarb-go/util/logger"
 	"github.com/zarbchain/zarb-go/www/nanomsg/event"
@@ -39,10 +37,10 @@ func (s *Server) StartServer() error {
 		var publisher mangos.Socket
 		var err error
 		if publisher, err = pub.NewSocket(); err != nil {
-			die("can't get new pub socket: %s", err)
+			s.logger.Error("error on nanomsg creating new socket", "err", err)
 		}
 		if err = publisher.Listen(s.config.Listen); err != nil {
-			die("can't listen on pub socket: %s", err.Error())
+			s.logger.Error("error on nanomsg publisher binding", "err", err)
 		}
 		s.publisher = publisher
 		go s.eventLoop()
@@ -50,16 +48,11 @@ func (s *Server) StartServer() error {
 	return nil
 }
 
-func (s *Server) StopServer(format string, v ...interface{}) {
+func (s *Server) StopServer() {
 	s.ctx.Done()
 	if s.listener != nil {
 		s.listener.Close()
 	}
-}
-
-func die(format string, v ...interface{}) {
-	fmt.Fprintln(os.Stderr, fmt.Sprintf(format, v...))
-	os.Exit(1)
 }
 
 func (s *Server) eventLoop() {
