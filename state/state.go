@@ -39,7 +39,7 @@ type state struct {
 	committee    committee.Committee
 	lastInfo     *lastinfo.LastInfo
 	logger       *logger.Logger
-	eventCh       chan event.Event
+	eventCh      chan event.Event
 }
 
 func LoadOrNewState(
@@ -47,7 +47,7 @@ func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	signer crypto.Signer,
 	store store.Store,
-	txPool txpool.TxPool,eventCh chan event.Event) (Facade, error) {
+	txPool txpool.TxPool, eventCh chan event.Event) (Facade, error) {
 	// Block rewards goes to the reward address
 	// If it is set inside config, we use that address
 	// otherwise, it will be the signer address
@@ -68,7 +68,7 @@ func LoadOrNewState(
 		store:        store,
 		rewardAddres: rewardAddr,
 		lastInfo:     lastinfo.NewLastInfo(store),
-		eventCh:       eventCh,
+		eventCh:      eventCh,
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -613,7 +613,7 @@ func (st *state) ValidatorAddress() crypto.Address {
 	return st.signer.Address()
 }
 
-//publish new block and height events to nanomsg service
+// publish new block and height events to nanomsg service
 func (st *state) publishEvents(height uint32, block *block.Block) {
 	if st.eventCh == nil {
 		return

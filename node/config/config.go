@@ -51,7 +51,7 @@ func DefaultConfig() *Config {
 		GRPC:      grpc.DefaultConfig(),
 		Capnp:     capnp.DefaultConfig(),
 		HTTP:      http.DefaultConfig(),
-		Nanomsg:      nanomsg.DefaultConfig(),
+		Nanomsg:   nanomsg.DefaultConfig(),
 	}
 
 	return conf
@@ -167,5 +167,4 @@ func (conf *Config) SanityCheck() error {
 		return err
 	}
 	return conf.HTTP.SanityCheck()
-
 }
