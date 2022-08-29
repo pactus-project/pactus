@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/tyler-smith/go-bip39"
+	"github.com/zarbchain/zarb-go/types/crypto/bls/hdkeychain"
 	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/wallet/hdkeychain"
 )
 
 func derivePathToString(path []uint32) string {

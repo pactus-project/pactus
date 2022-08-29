@@ -4,9 +4,9 @@ import (
 	"github.com/tyler-smith/go-bip39"
 	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/crypto/bls"
+	"github.com/zarbchain/zarb-go/types/crypto/bls/hdkeychain"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/wallet/encrypter"
-	"github.com/zarbchain/zarb-go/wallet/hdkeychain"
 )
 
 //
@@ -71,7 +71,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	if err != nil {
 		return nil, err
 	}
-	masterKey, err := hdkeychain.NewMaster(seed)
+	masterKey, err := hdkeychain.NewMaster(seed, false)
 	if err != nil {
 		return nil, err
 	}
@@ -277,7 +277,7 @@ func (v *Vault) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 	if err != nil {
 		return nil, err
 	}
-	masterKey, err := hdkeychain.NewMaster(seed)
+	masterKey, err := hdkeychain.NewMaster(seed, false)
 	if err != nil {
 		return nil, err
 	}
@@ -285,11 +285,10 @@ func (v *Vault) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 	if err != nil {
 		return nil, err
 	}
-	prv, err := ext.BLSPrivateKey()
-	if err != nil {
-		return nil, err
-	}
-	return prv, nil
+	prvBytes, err := ext.RawPrivateKey()
+	util.ExitOnErr(err)
+
+	return bls.PrivateKeyFromBytes(prvBytes)
 }
 
 func (v *Vault) DeriveNewAddress(label string, purpose uint32) (string, error) {
@@ -304,7 +303,11 @@ func (v *Vault) DeriveNewAddress(label string, purpose uint32) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		addr := ext.Address().String()
+
+		blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
+		util.ExitOnErr(err)
+
+		addr := blsPubKey.Address().String()
 		p.Addresses = append(p.Addresses, addr)
 		v.Labels[addr] = label
 		return addr, nil
@@ -317,16 +320,19 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 	for _, p := range v.Keystore.Purposes {
 		for i, a := range p.Addresses {
 			if a == addr {
-				pubKey, err := hdkeychain.NewKeyFromString(p.XPub)
+				xPubKey, err := hdkeychain.NewKeyFromString(p.XPub)
 				util.ExitOnErr(err)
 
-				ext, err := pubKey.DerivePath([]uint32{uint32(i), 0})
+				ext, err := xPubKey.DerivePath([]uint32{uint32(i), 0})
+				util.ExitOnErr(err)
+
+				blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
 				util.ExitOnErr(err)
 
 				return &AddressInfo{
 					Address: addr,
 					Label:   v.Label(addr),
-					Pub:     ext.BLSPublicKey(),
+					Pub:     blsPubKey,
 					Path:    ext.Path(),
 				}
 			}

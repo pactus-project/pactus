@@ -158,3 +158,11 @@ func Equal(a, b []int32) bool {
 func SafeCmp(s1, s2 []byte) bool {
 	return subtle.ConstantTimeCompare(s1, s2) == 1
 }
+
+// Reverse replace the contents of a slice with the same elements but in
+// reverse order.
+func Reverse[S ~[]E, E any](s S) {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+}

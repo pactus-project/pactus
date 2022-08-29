@@ -178,3 +178,20 @@ func TestSafeCmp(t *testing.T) {
 	assert.True(t, SafeCmp([]byte{1, 2, 3}, []byte{1, 2, 3}))
 	assert.False(t, SafeCmp([]byte{1, 2, 3, 3}, []byte{1, 2, 3}))
 }
+
+func TestReverse(t *testing.T) {
+	tests := []struct {
+		slice    []byte
+		reversed []byte
+	}{
+		{[]byte{}, []byte{}},
+		{[]byte{0}, []byte{0}},
+		{[]byte{1, 2, 3}, []byte{3, 2, 1}},
+		{[]byte{1, 2}, []byte{2, 1}},
+	}
+
+	for _, test := range tests {
+		Reverse(test.slice)
+		assert.Equal(t, test.slice, test.reversed)
+	}
+}
