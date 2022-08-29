@@ -76,8 +76,6 @@ type ExtendedKey struct {
 // fields. No error checking is performed here as it's only intended to be a
 // convenience method used to create a populated struct.
 func newExtendedKey(key, chainCode []byte, path Path, isPrivate bool, pubOnG1 bool) *ExtendedKey {
-	// NOTE: The pubKey field is intentionally left nil so it is only
-	// computed and memoized as required.
 	return &ExtendedKey{
 		key:       key,
 		chainCode: chainCode,
@@ -87,14 +85,12 @@ func newExtendedKey(key, chainCode []byte, path Path, isPrivate bool, pubOnG1 bo
 	}
 }
 
-// pubKeyBytes returns bytes for the serialized compressed public key associated
-// with this extended key in an efficient manner including memoization as
-// necessary.
+// pubKeyBytes returns bytes for the serialized public key associated with this
+// extended key.
 //
 // When the extended key is already a public key, the key is simply returned as
 // is since it's already in the correct form.  However, when the extended key is
-// a private key, the public key will be calculated and memoized so future
-// accesses can simply return the cached result.
+// a private key, the public key will be calculated.
 func (k *ExtendedKey) pubKeyBytes() []byte {
 	// Just return the key if it's already an extended public key.
 	if !k.isPrivate {
@@ -149,7 +145,7 @@ func (k *ExtendedKey) DerivePath(path Path) (*ExtendedKey, error) {
 //
 // When this extended key is a private extended key (as determined by the IsPrivate
 // function), a private extended key will be derived. Otherwise, the derived
-// extended key will be also be a public extended key.
+// extended key will be a public extended key.
 //
 // When the index is greater to or equal than the HardenedKeyStart constant, the
 // derived extended key will be a hardened extended key.  It is only possible to
@@ -225,17 +221,11 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	ilr := hmac512.Sum(nil)
 
 	// Split "I" into two 32-byte sequences Il and Ir where:
-	//   Il = intermediate key used to derive the child private key
+	//   Il = intermediate key used to derive the child
 	//   Ir = child chain code
 	il := ilr[:len(ilr)/2]
 	childChainCode := ilr[len(ilr)/2:]
 
-	// Both derived public or private keys rely on treating the left 32-byte
-	// sequence calculated above (Il) as a 256-bit integer that must be
-	// within the valid range for a BLS private key.  There is a small
-	// chance this condition will not hold, and in that case,
-	// a child extended key can't be created for this index and the caller
-	// should simply increment to the next index.
 	ilNum := new(herumi.Fr)
 	if err := ilNum.SetBigEndianMod(il); err != nil {
 		return nil, ErrInvalidKeyData
@@ -255,7 +245,6 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		}
 
 		childKeyNum := new(herumi.Fr)
-
 		herumi.FrAdd(childKeyNum, keyNum, ilNum)
 
 		if childKeyNum.IsZero() {
@@ -319,7 +308,7 @@ func (k *ExtendedKey) Path() Path {
 	return k.path
 }
 
-// BLSPrivateKey converts the extended key to a BLS private key and returns it.
+// RawPrivateKey returns the raw bytes of the private key.
 // As you might imagine this is only possible if the extended key is a private
 // extended key (as determined by the IsPrivate function).  The ErrNotPrivExtKey
 // error will be returned if this function is called on a public extended key.
@@ -331,7 +320,7 @@ func (k *ExtendedKey) RawPrivateKey() ([]byte, error) {
 	return k.key, nil
 }
 
-// BLSPublicKey converts the extended key to a BLS public key and returns it.
+// RawPublicKey returns the raw bytes of the public key.
 func (k *ExtendedKey) RawPublicKey() []byte {
 	return k.pubKeyBytes()
 }
@@ -358,7 +347,7 @@ func (k *ExtendedKey) Neuter() *ExtendedKey {
 		k.path, false, k.pubOnG1)
 }
 
-// String returns the extended key as a human-readable string.
+// String returns the extended key as a bech32-encoded string.
 func (k *ExtendedKey) String() string {
 	// The serialized format is:
 	// path (variant) || chain code (32) || pubkey length (1 byte) || key data (32, 48 or 96)
@@ -404,8 +393,7 @@ func (k *ExtendedKey) String() string {
 	return str
 }
 
-// NewKeyFromString returns a new extended key instance from a base58-encoded
-// extended key.
+// NewKeyFromString returns a new extended key instance from a bech32-encoded string.
 func NewKeyFromString(key string) (*ExtendedKey, error) {
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(strings.ToLower(key))
 	if err != nil {
@@ -490,11 +478,12 @@ func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 	lr := hmac512.Sum(nil)
 
 	// Split "I" into two 32-byte sequences Il and Ir where:
-	//   Il = master ikm
+	//   Il = master IKM
 	//   Ir = master chain code
 	ikm := lr[:len(lr)/2]
 	chainCode := lr[len(lr)/2:]
 
+	// Using BLS KeyGen to generate the master private key from the IKM.
 	privKey, err := bls.KeyGen(ikm, nil)
 	if err != nil {
 		return nil, err
