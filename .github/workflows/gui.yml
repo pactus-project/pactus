@@ -60,6 +60,8 @@ jobs:
         shell: msys2 {0}
     steps:
 
+    - uses: actions/checkout@v3
+
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
@@ -67,14 +69,15 @@ jobs:
         install:
           git
           make
+          mingw-w64-x86_64-go
           mingw-w64-x86_64-gtk3
           mingw-w64-x86_64-glib2
-          mingw-w64-x86_64-go
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-pkg-config
           glib2-devel
 
-    - uses: actions/checkout@v3
+    - name: Print go version
+      run: go version
 
     - name: Build the binary
       run: |

@@ -20,7 +20,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.9
+        go-version: 1.18
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_linux.sh
@@ -75,12 +75,12 @@ jobs:
           git
           make
           p7zip
+          glib2-devel
+          mingw-w64-x86_64-go
           mingw-w64-x86_64-gtk3
           mingw-w64-x86_64-glib2
-          mingw-w64-x86_64-go
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-pkg-config
-          glib2-devel
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_windows.sh

@@ -50,7 +50,7 @@ cp \
   "libdeflate.dll" \
   "libepoxy-0.dll" \
   "libexpat-1.dll" \
-  "libffi-7.dll" \
+  "libffi-8.dll" \
   "libfontconfig-1.dll" \
   "libfreetype-6.dll" \
   "libfribidi-0.dll" \
