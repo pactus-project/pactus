@@ -19,6 +19,8 @@ import (
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/grpc"
 	"github.com/zarbchain/zarb-go/www/http"
+	"github.com/zarbchain/zarb-go/www/nanomsg"
+	"github.com/zarbchain/zarb-go/www/nanomsg/event"
 )
 
 type Node struct {
@@ -33,6 +35,7 @@ type Node struct {
 	capnp      *capnp.Server
 	http       *http.Server
 	grpc       *grpc.Server
+	nanomsg    *nanomsg.Server
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer) (*Node, error) {
@@ -43,23 +46,24 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	if err != nil {
 		return nil, err
 	}
-	broadcastCh := make(chan message.Message, 100)
+	messageCh := make(chan message.Message, 100)
+	eventCh := make(chan event.Event, 100)
 
-	txPool := txpool.NewTxPool(conf.TxPool, broadcastCh)
+	txPool := txpool.NewTxPool(conf.TxPool, messageCh)
 
 	store, err := store.NewStore(conf.Store, int(genDoc.Params().TransactionToLiveInterval))
 	if err != nil {
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(conf.State, genDoc, signer, store, txPool)
+	state, err := state.LoadOrNewState(conf.State, genDoc, signer, store, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}
 
-	consensus := consensus.NewConsensus(conf.Consensus, state, signer, broadcastCh)
+	consensus := consensus.NewConsensus(conf.Consensus, state, signer, messageCh)
 
-	sync, err := sync.NewSynchronizer(conf.Sync, signer, state, consensus, network, broadcastCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, signer, state, consensus, network, messageCh)
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +71,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	capnp := capnp.NewServer(conf.Capnp, state, sync, consensus)
 	http := http.NewServer(conf.HTTP)
 	grpc := grpc.NewServer(conf.GRPC, state, sync)
+	nanomsg := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
 		config:     conf,
@@ -80,6 +85,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		capnp:      capnp,
 		http:       http,
 		grpc:       grpc,
+		nanomsg:    nanomsg,
 	}
 
 	return node, nil
@@ -123,6 +129,11 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start grpc server")
 	}
 
+	err = n.nanomsg.StartServer()
+	if err != nil {
+		return errors.Wrap(err, "could not start nanomsg server")
+	}
+
 	return nil
 }
 
@@ -137,6 +148,7 @@ func (n *Node) Stop() {
 	n.http.StopServer()
 	n.capnp.StopServer()
 	n.grpc.StopServer()
+	n.nanomsg.StopServer()
 }
 
 func (n *Node) Consensus() consensus.Reader {

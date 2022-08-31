@@ -192,3 +192,12 @@
 
   # address to listen for incoming connections for HTTP server.
  ## listen = ""
+# Nanomsg configuration.
+[nanomsg]
+
+  # enable indicates whether ZMQ service should be enabled or not.
+  # Default is false
+ ## enable = false
+
+  # address to listen for incoming connections for ZMQ server.
+ ## listen = ""
