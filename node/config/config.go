@@ -19,6 +19,7 @@ import (
 	"github.com/zarbchain/zarb-go/www/capnp"
 	"github.com/zarbchain/zarb-go/www/grpc"
 	"github.com/zarbchain/zarb-go/www/http"
+	"github.com/zarbchain/zarb-go/www/nanomsg"
 )
 
 //go:embed example_config.toml
@@ -35,6 +36,7 @@ type Config struct {
 	GRPC      *grpc.Config      `toml:"grpc"`
 	Capnp     *capnp.Config     `toml:"capnp"`
 	HTTP      *http.Config      `toml:"http"`
+	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
 }
 
 func DefaultConfig() *Config {
@@ -49,6 +51,7 @@ func DefaultConfig() *Config {
 		GRPC:      grpc.DefaultConfig(),
 		Capnp:     capnp.DefaultConfig(),
 		HTTP:      http.DefaultConfig(),
+		Nanomsg:   nanomsg.DefaultConfig(),
 	}
 
 	return conf
@@ -79,6 +82,8 @@ func SaveTestnetConfig(path, rewardAddr string) error {
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:8080"
 	conf.State.RewardAddress = rewardAddr
+	conf.Nanomsg.Enable = true
+	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
 
 	return util.WriteFile(path, conf.toTOML())
 }
@@ -99,6 +104,8 @@ func SaveLocalnetConfig(path, rewardAddr string) error {
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:8081"
 	conf.State.RewardAddress = rewardAddr
+	conf.Nanomsg.Enable = true
+	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
 
 	return util.WriteFile(path, conf.toTOML())
 }
@@ -154,6 +161,9 @@ func (conf *Config) SanityCheck() error {
 		return err
 	}
 	if err := conf.Capnp.SanityCheck(); err != nil {
+		return err
+	}
+	if err := conf.Nanomsg.SanityCheck(); err != nil {
 		return err
 	}
 	return conf.HTTP.SanityCheck()

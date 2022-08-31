@@ -84,13 +84,13 @@ func setup(t *testing.T) {
 	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height.
 	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
 	tGenDoc = genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
-	stX, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool)
+	stX, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool, nil)
 	require.NoError(t, err)
-	stY, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool)
+	stY, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool, nil)
 	require.NoError(t, err)
-	stB, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexB], store3, tTxPool)
+	stB, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexB], store3, tTxPool, nil)
 	require.NoError(t, err)
-	stP, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool)
+	stP, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool, nil)
 	require.NoError(t, err)
 
 	consX := NewConsensus(testConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
@@ -305,7 +305,7 @@ func TestNotInCommittee(t *testing.T) {
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
 
-	st, _ := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, signer, store, tTxPool)
+	st, _ := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, signer, store, tTxPool, nil)
 	cons := NewConsensus(testConfig(), st, signer, make(chan message.Message, 100))
 
 	testEnterNewHeight(cons.(*consensus))

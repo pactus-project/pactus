@@ -63,13 +63,13 @@ func setup(t *testing.T) {
 	params.BondInterval = 10
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
-	st1, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner1, store1, tCommonTxPool)
+	st1, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner1, store1, tCommonTxPool, nil)
 	require.NoError(t, err)
-	st2, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner2, store2, tCommonTxPool)
+	st2, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner2, store2, tCommonTxPool, nil)
 	require.NoError(t, err)
-	st3, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner3, store3, tCommonTxPool)
+	st3, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner3, store3, tCommonTxPool, nil)
 	require.NoError(t, err)
-	st4, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner4, store4, tCommonTxPool)
+	st4, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner4, store4, tCommonTxPool, nil)
 	require.NoError(t, err)
 
 	tState1, _ = st1.(*state)
@@ -182,7 +182,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	addr := crypto.GenerateTestAddress()
 	tState1.config.RewardAddress = addr.String()
 	tState1.Close()
-	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
+	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool, nil)
 	assert.NoError(t, err)
 	trx = st.(*state).createSubsidyTx(0)
 	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
@@ -370,7 +370,7 @@ func TestSortition(t *testing.T) {
 	pub, prv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
-	st, err := LoadOrNewState(DefaultConfig(), tState1.genDoc, signer, store, tCommonTxPool)
+	st, err := LoadOrNewState(DefaultConfig(), tState1.genDoc, signer, store, tCommonTxPool, nil)
 	assert.NoError(t, err)
 	st1 := st.(*state)
 
@@ -413,7 +413,7 @@ func TestSortition(t *testing.T) {
 	// ---------------------------------------------
 	// Let's save and load tState1
 	tState1.Close()
-	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool)
+	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool, nil)
 	st2 := state1.(*state)
 
 	// ---------------------------------------------
@@ -579,7 +579,7 @@ func TestLoadState(t *testing.T) {
 	b6, c6 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
 	// Load last state info
-	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, tCommonTxPool)
+	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, tCommonTxPool, nil)
 	require.NoError(t, err)
 
 	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
@@ -602,7 +602,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 		moveToNextHeightForAllStates(t)
 	}
 
-	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())
+	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, txpool.MockingTxPool(), nil)
 	require.NoError(t, err)
 
 	// Load last state info after modifying genesis
@@ -611,7 +611,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	val := validator.NewValidator(tValSigner1.PublicKey().(*bls.PublicKey), 0)
 	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 
-	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool())
+	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool(), nil)
 	require.Error(t, err)
 }
 

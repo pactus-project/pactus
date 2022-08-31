@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/wallet/hdkeychain"
+	"github.com/zarbchain/zarb-go/types/crypto/bls/hdkeychain"
 )
 
 func TestPathToString(t *testing.T) {
