@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func strToHash(str string) hash.Hash {

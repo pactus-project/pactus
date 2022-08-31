@@ -8,7 +8,7 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/errors"
 )

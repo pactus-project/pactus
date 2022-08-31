@@ -3,7 +3,7 @@ package simplemerkle
 import (
 	"math"
 
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 var hasher func([]byte) hash.Hash

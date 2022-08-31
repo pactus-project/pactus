@@ -3,7 +3,7 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func (zs *zarbServer) GetValidator(b ZarbServer_getValidator) error {

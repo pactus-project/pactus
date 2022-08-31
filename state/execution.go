@@ -1,10 +1,10 @@
 package state
 
 import (
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/tx"
 	"github.com/zarbchain/zarb-go/util/errors"
 )

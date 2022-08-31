@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/crypto"
-	"github.com/zarbchain/zarb-go/types/crypto/bls"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/param"
 	"github.com/zarbchain/zarb-go/types/validator"
 	"github.com/zarbchain/zarb-go/util"

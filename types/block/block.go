@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/sortition"
-	"github.com/zarbchain/zarb-go/types/crypto"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/tx"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/encoding"

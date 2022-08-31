@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util/encoding"
 	"github.com/zarbchain/zarb-go/util/errors"
 )

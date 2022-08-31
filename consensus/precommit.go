@@ -1,7 +1,7 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/proposal"
 	"github.com/zarbchain/zarb-go/types/vote"
 )

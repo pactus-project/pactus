@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/sync/bundle"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/sync/peerset"
-	"github.com/zarbchain/zarb-go/types/crypto/bls"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/version"
 )

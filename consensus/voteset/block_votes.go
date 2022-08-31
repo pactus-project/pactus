@@ -1,7 +1,7 @@
 package voteset
 
 import (
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/util/logger"
 )

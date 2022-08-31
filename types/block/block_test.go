@@ -6,8 +6,8 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/crypto/bls"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 	simplemerkle "github.com/zarbchain/zarb-go/util/merkle"
 )

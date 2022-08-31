@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/types/validator"
 	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc/codes"
