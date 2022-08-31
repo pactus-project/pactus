@@ -2,7 +2,7 @@ package log
 
 import (
 	"github.com/zarbchain/zarb-go/consensus/voteset"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/proposal"
 	"github.com/zarbchain/zarb-go/types/vote"
 	"github.com/zarbchain/zarb-go/util/logger"

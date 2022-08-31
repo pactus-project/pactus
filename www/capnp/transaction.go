@@ -3,7 +3,7 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/tx"
 )
 

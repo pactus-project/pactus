@@ -2,9 +2,9 @@ package cache
 
 import (
 	lru "github.com/hashicorp/golang-lru"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 )
 

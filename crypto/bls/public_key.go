@@ -6,8 +6,8 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/types/crypto"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util/bech32m"
 	"github.com/zarbchain/zarb-go/util/encoding"
 	"github.com/zarbchain/zarb-go/util/errors"

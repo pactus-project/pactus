@@ -5,6 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/zarbchain/zarb-go/consensus"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/network"
 	"github.com/zarbchain/zarb-go/node/config"
 	"github.com/zarbchain/zarb-go/state"
@@ -12,7 +13,6 @@ import (
 	"github.com/zarbchain/zarb-go/sync"
 	"github.com/zarbchain/zarb-go/sync/bundle/message"
 	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/types/crypto"
 	"github.com/zarbchain/zarb-go/types/genesis"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/logger"

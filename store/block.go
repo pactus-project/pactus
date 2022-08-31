@@ -4,8 +4,8 @@ import (
 	"bytes"
 
 	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/encoding"
 	"github.com/zarbchain/zarb-go/util/logger"

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/bech32m"
 	"github.com/zarbchain/zarb-go/util/errors"

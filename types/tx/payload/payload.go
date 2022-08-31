@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type Type uint8

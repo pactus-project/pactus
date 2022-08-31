@@ -2,7 +2,7 @@ package bls
 
 import (
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/types/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func init() {

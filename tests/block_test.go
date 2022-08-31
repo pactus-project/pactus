@@ -3,7 +3,7 @@ package tests
 import (
 	"time"
 
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/util/logger"
 	"github.com/zarbchain/zarb-go/www/capnp"
 )

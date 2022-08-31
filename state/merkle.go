@@ -1,8 +1,8 @@
 package state
 
 import (
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/validator"
 	simplemerkle "github.com/zarbchain/zarb-go/util/merkle"
 )

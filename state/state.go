@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/zarbchain/zarb-go/committee"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
 	"github.com/zarbchain/zarb-go/execution"
 	"github.com/zarbchain/zarb-go/sandbox"
 	"github.com/zarbchain/zarb-go/sortition"
@@ -14,8 +16,6 @@ import (
 	"github.com/zarbchain/zarb-go/txpool"
 	"github.com/zarbchain/zarb-go/types/account"
 	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/crypto"
-	"github.com/zarbchain/zarb-go/types/crypto/hash"
 	"github.com/zarbchain/zarb-go/types/genesis"
 	"github.com/zarbchain/zarb-go/types/param"
 	"github.com/zarbchain/zarb-go/types/tx"
