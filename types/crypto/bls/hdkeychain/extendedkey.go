@@ -20,32 +20,30 @@ import (
 	"github.com/zarbchain/zarb-go/util/encoding"
 )
 
-// Public key Generator for BLS12-381 curve used in Zarb
+// G1 Generator for BLS12-381 curve
+var g1Gen herumi.G1
+
+// G2 Generator for BLS12-381 curve
 var g2Gen herumi.G2
 
 func init() {
-	err := g2Gen.SetString(`
+	err := g1Gen.SetString(`
 	1
-	24aa2b2f08f0a91260805272dc51051c6e47ad4fa403b02b4510b647ae3d1770bac0326a805bbefd48056c8c121bdb8
+	17f1d3a73197d7942695638c4fa9ac0fc3688c4f9774b905a14e3a3f171bac586c55e83ff97a1aeffb3af00adb22c6bb
+	08b3f481e3aaa0f1a09e30ed741d8ae4fcf5e095d5d00af600db18cb2c04b3edd03cc744a2888ae40caa232946c5e7e1`, 16)
+	if err != nil {
+		panic(err)
+	}
+
+	err = g2Gen.SetString(`
+	1
+	024aa2b2f08f0a91260805272dc51051c6e47ad4fa403b02b4510b647ae3d1770bac0326a805bbefd48056c8c121bdb8
 	13e02b6052719f607dacd3a088274f65596bd0d09920b61ab5da61bbdc7f5049334cf11213945d57e5ac7d055d042b7e
-	ce5d527727d6e118cc9cdc6da2e351aadfd9baa8cbdd3a76d429a695160d12c923ac9cc3baca289e193548608b82801
-	606c4a02ea734cc32acd2b02bc28b99cb3e287e85a763af267492ab572e99ab3f370d275cec1da1aaa9075ff05f79be`, 16)
-
+	0ce5d527727d6e118cc9cdc6da2e351aadfd9baa8cbdd3a76d429a695160d12c923ac9cc3baca289e193548608b82801
+	0606c4a02ea734cc32acd2b02bc28b99cb3e287e85a763af267492ab572e99ab3f370d275cec1da1aaa9075ff05f79be`, 16)
 	if err != nil {
 		panic(err)
 	}
-}
-
-func pubKeyBytesFromPrvKeyBytes(key []byte) []byte {
-	privKey := new(herumi.Fr)
-	pubPoint := new(herumi.G2)
-	err := privKey.Deserialize(key)
-	if err != nil {
-		panic(err)
-	}
-
-	herumi.G2Mul(pubPoint, &g2Gen, privKey)
-	return pubPoint.Serialize()
 }
 
 const (
@@ -71,38 +69,53 @@ type ExtendedKey struct {
 	chainCode []byte
 	path      Path
 	isPrivate bool
+	pubOnG1   bool
 }
 
 // newExtendedKey returns a new instance of an extended key with the given
 // fields. No error checking is performed here as it's only intended to be a
 // convenience method used to create a populated struct.
-func newExtendedKey(key, chainCode []byte, path Path, isPrivate bool) *ExtendedKey {
-	// NOTE: The pubKey field is intentionally left nil so it is only
-	// computed and memoized as required.
+func newExtendedKey(key, chainCode []byte, path Path, isPrivate bool, pubOnG1 bool) *ExtendedKey {
 	return &ExtendedKey{
 		key:       key,
 		chainCode: chainCode,
 		path:      path,
 		isPrivate: isPrivate,
+		pubOnG1:   pubOnG1,
 	}
 }
 
-// pubKeyBytes returns bytes for the serialized compressed public key associated
-// with this extended key in an efficient manner including memoization as
-// necessary.
+// pubKeyBytes returns bytes for the serialized public key associated with this
+// extended key.
 //
 // When the extended key is already a public key, the key is simply returned as
 // is since it's already in the correct form.  However, when the extended key is
-// a private key, the public key will be calculated and memoized so future
-// accesses can simply return the cached result.
+// a private key, the public key will be calculated.
 func (k *ExtendedKey) pubKeyBytes() []byte {
 	// Just return the key if it's already an extended public key.
 	if !k.isPrivate {
 		return k.key
 	}
+	privKey := new(herumi.Fr)
+	if k.pubOnG1 {
+		pub := new(herumi.G1)
+		err := privKey.Deserialize(k.key)
+		if err != nil {
+			panic(err)
+		}
 
-	// This is a private extended key, so calculate the public.
-	return pubKeyBytesFromPrvKeyBytes(k.key)
+		herumi.G1Mul(pub, &g1Gen, privKey)
+		return pub.Serialize()
+	}
+
+	pub := new(herumi.G2)
+	err := privKey.Deserialize(k.key)
+	if err != nil {
+		panic(err)
+	}
+
+	herumi.G2Mul(pub, &g2Gen, privKey)
+	return pub.Serialize()
 }
 
 // IsPrivate returns whether or not the extended key is a private extended key.
@@ -132,7 +145,7 @@ func (k *ExtendedKey) DerivePath(path Path) (*ExtendedKey, error) {
 //
 // When this extended key is a private extended key (as determined by the IsPrivate
 // function), a private extended key will be derived. Otherwise, the derived
-// extended key will be also be a public extended key.
+// extended key will be a public extended key.
 //
 // When the index is greater to or equal than the HardenedKeyStart constant, the
 // derived extended key will be a hardened extended key.  It is only possible to
@@ -161,7 +174,8 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	//   data (36 bytes) = parent_private_key (32 bytes)  || index (4 bytes)
 	//
 	// For normal children:
-	//   data (100 bytes) = parent_public_key (96 bytes)  || index (4 bytes)
+	//   data (52 bytes)  = parent_public_key_g1 (48 bytes)  || index (4 bytes)
+	//   data (100 bytes) = parent_public_key_g2 (96 bytes)  || index (4 bytes)
 	data := make([]byte, 0, 100)
 	if isChildHardened {
 		// Case #1 and #4.
@@ -188,7 +202,10 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		// either case, the data which is used to derive the child key
 		// starts with the BLS public key bytes.
 		data = append(data, k.pubKeyBytes()...)
-		if len(data) != 96 {
+		if k.pubOnG1 && len(data) != 48 {
+			return nil, ErrInvalidKeyData
+		}
+		if !k.pubOnG1 && len(data) != 96 {
 			return nil, ErrInvalidKeyData
 		}
 	}
@@ -204,66 +221,74 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	ilr := hmac512.Sum(nil)
 
 	// Split "I" into two 32-byte sequences Il and Ir where:
-	//   Il = intermediate key used to derive the child private key
+	//   Il = intermediate key used to derive the child
 	//   Ir = child chain code
-	ikm := ilr[:len(ilr)/2]
+	il := ilr[:len(ilr)/2]
 	childChainCode := ilr[len(ilr)/2:]
 
-	derivedPrivKey, err := bls.PrivateKeyFromSeed(ikm, nil)
-	if err != nil {
-		return nil, err
+	ilNum := new(herumi.Fr)
+	if err := ilNum.SetBigEndianMod(il); err != nil {
+		return nil, ErrInvalidKeyData
 	}
 
 	var childKey []byte
-	if isChildHardened {
-		// Case #1
-		// Corresponding private key is same as intermediate private key
+	if k.isPrivate {
+		// Case #1 or #2.
+		// Add the parent private key to the intermediate private key to
+		// derive the final child key.
+		//
+		// childKey = parse256(Il) + parenKey
 
-		childKey = derivedPrivKey.Bytes()
+		keyNum := new(herumi.Fr)
+		if err := keyNum.SetBigEndianMod(k.key); err != nil {
+			return nil, ErrInvalidKeyData
+		}
+
+		childKeyNum := new(herumi.Fr)
+		herumi.FrAdd(childKeyNum, keyNum, ilNum)
+
+		if childKeyNum.IsZero() {
+			return nil, ErrInvalidKeyData
+		}
+		childKey = childKeyNum.Serialize()
 	} else {
-		if k.isPrivate {
-			// Case #2
-			// Calculate the corresponding private key for the
-			// intermediate private key
+		// Case #3.
+		// Calculate the corresponding intermediate public key for the
+		// intermediate private key
 
-			scalar1 := new(herumi.Fr)
-			scalar2 := new(herumi.Fr)
-			scalarAdd := new(herumi.Fr)
+		if k.pubOnG1 {
+			// Public key is in G1 subgroup
+			ilPoint := new(herumi.G1)
+			herumi.G1Mul(ilPoint, &g1Gen, ilNum)
 
-			if err := scalar1.Deserialize(k.key); err != nil {
-				return nil, ErrInvalidKeyData
-			}
-			if err := scalar2.Deserialize(derivedPrivKey.Bytes()); err != nil {
-				// impossible
-				return nil, ErrInvalidKeyData
-			}
-
-			herumi.FrAdd(scalarAdd, scalar1, scalar2)
-
-			childKey = scalarAdd.Serialize()
-		} else {
-			// Case #3.
-			// Calculate the corresponding public key for the
-			// intermediate private key
-
-			ilScalar := new(herumi.Fr)
-			err := ilScalar.Deserialize(derivedPrivKey.Bytes())
+			pubKey := new(herumi.G1)
+			err := pubKey.Deserialize(k.key)
 			if err != nil {
-				// impossible
 				return nil, err
 			}
+			childPubKey := new(herumi.G1)
+			herumi.G1Add(childPubKey, pubKey, ilPoint)
 
+			if childPubKey.IsZero() {
+				return nil, ErrInvalidKeyData
+			}
+			childKey = childPubKey.Serialize()
+		} else {
+			// Public key is in G2 subgroup
 			ilPoint := new(herumi.G2)
-			herumi.G2Mul(ilPoint, &g2Gen, ilScalar)
+			herumi.G2Mul(ilPoint, &g2Gen, ilNum)
 
 			pubKey := new(herumi.G2)
-			err = pubKey.Deserialize(k.key)
+			err := pubKey.Deserialize(k.key)
 			if err != nil {
 				return nil, err
 			}
 			childPubKey := new(herumi.G2)
 			herumi.G2Add(childPubKey, pubKey, ilPoint)
 
+			if childPubKey.IsZero() {
+				return nil, ErrInvalidKeyData
+			}
 			childKey = childPubKey.Serialize()
 		}
 	}
@@ -272,7 +297,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	copy(newPath, k.path)
 	newPath = append(k.path, index)
 	return newExtendedKey(childKey, childChainCode,
-		newPath, k.isPrivate), nil
+		newPath, k.isPrivate, k.pubOnG1), nil
 }
 
 // Path returns the path of derived key.
@@ -283,27 +308,21 @@ func (k *ExtendedKey) Path() Path {
 	return k.path
 }
 
-// BLSPrivateKey converts the extended key to a BLS private key and returns it.
+// RawPrivateKey returns the raw bytes of the private key.
 // As you might imagine this is only possible if the extended key is a private
 // extended key (as determined by the IsPrivate function).  The ErrNotPrivExtKey
 // error will be returned if this function is called on a public extended key.
-func (k *ExtendedKey) BLSPrivateKey() (*bls.PrivateKey, error) {
+func (k *ExtendedKey) RawPrivateKey() ([]byte, error) {
 	if !k.isPrivate {
 		return nil, ErrNotPrivExtKey
 	}
 
-	return bls.PrivateKeyFromBytes(k.key)
+	return k.key, nil
 }
 
-// BLSPublicKey converts the extended key to a BLS public key and returns it.
-func (k *ExtendedKey) BLSPublicKey() *bls.PublicKey {
-	pub, _ := bls.PublicKeyFromBytes(k.pubKeyBytes())
-	return pub
-}
-
-// Address converts the extended key to address
-func (k *ExtendedKey) Address() crypto.Address {
-	return k.BLSPublicKey().Address()
+// RawPublicKey returns the raw bytes of the public key.
+func (k *ExtendedKey) RawPublicKey() []byte {
+	return k.pubKeyBytes()
 }
 
 // Neuter returns a new extended public key from this extended private key.  The
@@ -324,14 +343,14 @@ func (k *ExtendedKey) Neuter() *ExtendedKey {
 	// key will simply be the pubkey of the current extended private key.
 	//
 	// This is the function N((k,c)) -> (K, c) from [BIP32].
-	return newExtendedKey(pubKeyBytesFromPrvKeyBytes(k.key), k.chainCode,
-		k.path, false)
+	return newExtendedKey(k.pubKeyBytes(), k.chainCode,
+		k.path, false, k.pubOnG1)
 }
 
-// String returns the extended key as a human-readable string.
+// String returns the extended key as a bech32-encoded string.
 func (k *ExtendedKey) String() string {
 	// The serialized format is:
-	// path (variant) || chain code (32) || key data (32 or 96)
+	// path (variant) || chain code (32) || pubkey length (1 byte) || key data (32, 48 or 96)
 	w := bytes.NewBuffer(make([]byte, 0))
 	err := encoding.WriteElement(w, byte(len(k.path)))
 	util.ExitOnErr(err)
@@ -342,12 +361,24 @@ func (k *ExtendedKey) String() string {
 	}
 	err = encoding.WriteElement(w, k.chainCode)
 	util.ExitOnErr(err)
-	err = encoding.WriteElement(w, k.key)
-	util.ExitOnErr(err)
 
 	hrp := crypto.XPublicKeyHRP
 	if k.isPrivate {
 		hrp = crypto.XPrivateKeyHRP
+
+		pubKeyLen := byte(96)
+		if k.pubOnG1 {
+			pubKeyLen = 48
+		}
+
+		err := encoding.WriteElement(w, pubKeyLen)
+		util.ExitOnErr(err)
+
+		err = encoding.WriteElement(w, k.key)
+		util.ExitOnErr(err)
+	} else {
+		err = encoding.WriteVarBytes(w, k.key)
+		util.ExitOnErr(err)
 	}
 
 	str, err := bech32m.EncodeFromBase256WithType(hrp, crypto.SignatureTypeBLS, w.Bytes())
@@ -362,12 +393,15 @@ func (k *ExtendedKey) String() string {
 	return str
 }
 
-// NewKeyFromString returns a new extended key instance from a base58-encoded
-// extended key.
+// NewKeyFromString returns a new extended key instance from a bech32-encoded string.
 func NewKeyFromString(key string) (*ExtendedKey, error) {
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(strings.ToLower(key))
 	if err != nil {
 		return nil, err
+	}
+
+	if typ != crypto.SignatureTypeBLS {
+		return nil, ErrInvalidKeyData
 	}
 
 	r := bytes.NewReader(data)
@@ -387,7 +421,7 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 
 	switch hrp {
 	case crypto.XPrivateKeyHRP:
-		if r.Len() != 64 {
+		if r.Len() != 65 {
 			return nil, ErrInvalidKeyData
 		}
 		chainCode := make([]byte, 32)
@@ -396,33 +430,28 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 		err := encoding.ReadElement(r, chainCode)
 		util.ExitOnErr(err)
 
+		pubKeyLen, _ := encoding.ReadVarInt(r)
+
 		err = encoding.ReadElement(r, key)
 		util.ExitOnErr(err)
 
-		if typ != crypto.SignatureTypeBLS {
-			return nil, ErrInvalidKeyData
-		}
-
-		return newExtendedKey(key[:], chainCode[:], path, true), nil
+		pubOnG1 := pubKeyLen == 48
+		return newExtendedKey(key[:], chainCode[:], path, true, pubOnG1), nil
 
 	case crypto.XPublicKeyHRP:
-		if r.Len() != 128 {
+		if r.Len() != 64 && r.Len() != 81 && r.Len() != 129 {
 			return nil, ErrInvalidKeyData
 		}
 		chainCode := make([]byte, 32)
-		key := make([]byte, 96)
 
 		err := encoding.ReadElement(r, chainCode)
 		util.ExitOnErr(err)
 
-		err = encoding.ReadElement(r, key)
+		key, err := encoding.ReadVarBytes(r)
 		util.ExitOnErr(err)
 
-		if typ != crypto.SignatureTypeBLS {
-			return nil, ErrInvalidKeyData
-		}
-
-		return newExtendedKey(key[:], chainCode[:], path, false), nil
+		pubOnG1 := len(key) == 48
+		return newExtendedKey(key[:], chainCode[:], path, false, pubOnG1), nil
 
 	default:
 		return nil, ErrInvalidKeyData
@@ -432,7 +461,7 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 // NewMaster creates a new master node for use in creating a hierarchical
 // deterministic key chain.  The seed must be between 128 and 512 bits and
 // should be generated by a cryptographically secure random generation source.
-func NewMaster(seed []byte) (*ExtendedKey, error) {
+func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 	// Per [BIP32], the seed must be in range [MinSeedBytes, MaxSeedBytes].
 	if len(seed) < MinSeedBytes || len(seed) > MaxSeedBytes {
 		return nil, ErrInvalidSeedLen
@@ -449,17 +478,18 @@ func NewMaster(seed []byte) (*ExtendedKey, error) {
 	lr := hmac512.Sum(nil)
 
 	// Split "I" into two 32-byte sequences Il and Ir where:
-	//   Il = master ikm
+	//   Il = master IKM
 	//   Ir = master chain code
 	ikm := lr[:len(lr)/2]
 	chainCode := lr[len(lr)/2:]
 
-	privKey, err := bls.PrivateKeyFromSeed(ikm, nil)
+	// Using BLS KeyGen to generate the master private key from the IKM.
+	privKey, err := bls.KeyGen(ikm, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return newExtendedKey(privKey.Bytes(), chainCode, Path{}, true), nil
+	return newExtendedKey(privKey.Bytes(), chainCode, Path{}, true, pubOnG1), nil
 }
 
 // GenerateSeed returns a cryptographically secure random seed that can be used
