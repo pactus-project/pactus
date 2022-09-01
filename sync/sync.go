@@ -107,7 +107,7 @@ func (sync *synchronizer) Start() error {
 
 	if sync.config.HeartBeatTimeout > 0 {
 		sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimeout)
-		go sync.heartBeatTickerLoop() //do not sync is heartbeat time is zero
+		go sync.heartBeatTickerLoop()
 	}
 
 	timer := time.NewTimer(sync.config.StartingTimeout)
@@ -123,7 +123,7 @@ func (sync *synchronizer) Start() error {
 
 func (sync *synchronizer) Stop() {
 	sync.ctx.Done()
-	if sync.config.HeartBeatTimeout > 0 { //this is to prevent calling Stop on a null heartBeatTicker
+	if sync.heartBeatTicker != nil {
 		sync.heartBeatTicker.Stop()
 	}
 }

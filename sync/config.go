@@ -23,7 +23,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		StartingTimeout:  time.Second * 3,
-		HeartBeatTimeout: time.Second * 5, //set this value to zero if you want to disable heart beat
+		HeartBeatTimeout: time.Second * 5,
 		SessionTimeout:   time.Second * 30,
 		NodeNetwork:      true,
 		BlockPerMessage:  60,
