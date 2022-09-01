@@ -8,6 +8,9 @@ import (
 
 var LatestBlockInterval = uint32(720) // 720 blocks is about two hours
 
+// IMPORTANT NOTE:
+// Config - if HeartBeatTimeout duration is set to zero, the HeartBeat for sync will be disabled.
+
 type Config struct {
 	Moniker          string           `toml:"moniker"`
 	StartingTimeout  time.Duration    `toml:"starting_timeout"`
@@ -23,7 +26,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		StartingTimeout:  time.Second * 3,
-		HeartBeatTimeout: time.Second * 5,
+		HeartBeatTimeout: time.Second * 5, //set this value to zero if you want to disable heart beat
 		SessionTimeout:   time.Second * 30,
 		NodeNetwork:      true,
 		BlockPerMessage:  60,

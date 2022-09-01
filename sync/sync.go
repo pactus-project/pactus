@@ -105,8 +105,10 @@ func (sync *synchronizer) Start() error {
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
-	sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimeout)
-	go sync.heartBeatTickerLoop()
+	if sync.config.HeartBeatTimeout > 0 {
+		sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimeout)
+		go sync.heartBeatTickerLoop() //do not sync is heartbeat time is zero
+	}
 
 	timer := time.NewTimer(sync.config.StartingTimeout)
 	go func() {
@@ -121,7 +123,9 @@ func (sync *synchronizer) Start() error {
 
 func (sync *synchronizer) Stop() {
 	sync.ctx.Done()
-	sync.heartBeatTicker.Stop()
+	if sync.config.HeartBeatTimeout > 0 { //this is to prevent calling Stop on a null heartBeatTicker
+		sync.heartBeatTicker.Stop()
+	}
 }
 
 func (sync *synchronizer) onStartingTimeout() {
