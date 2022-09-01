@@ -81,6 +81,7 @@
 
   # heartbeat_timeout is a timeout for broadcasting a heartbeat message to network.
   # Default is 5 seconds
+  # Set the value to zero e.g heartbeat_timeout = "0s"  to disable hearbeat broadcasing
  ## heartbeat_timeout = "5s"
 
   # session_timeout is a timeout for a session to be opened.

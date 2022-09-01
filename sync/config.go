@@ -8,9 +8,6 @@ import (
 
 var LatestBlockInterval = uint32(720) // 720 blocks is about two hours
 
-// IMPORTANT NOTE:
-// Config - if HeartBeatTimeout duration is set to zero, the HeartBeat for sync will be disabled.
-
 type Config struct {
 	Moniker          string           `toml:"moniker"`
 	StartingTimeout  time.Duration    `toml:"starting_timeout"`
