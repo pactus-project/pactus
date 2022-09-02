@@ -10,8 +10,6 @@
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
-        <property name="margin-left">8</property>
-        <property name="margin-right">8</property>
         <property name="margin-start">8</property>
         <property name="margin-end">8</property>
         <property name="margin-top">4</property>

@@ -7,16 +7,6 @@ import (
 	"github.com/zarbchain/zarb-go/cmd"
 )
 
-const changeFactor = float64(100000000)
-
-func coinToChange(coin float64) int64 {
-	return int64(coin * changeFactor)
-}
-
-func changeToCoin(change int64) float64 {
-	return float64(change) / changeFactor
-}
-
 var pathOpt *string
 var offlineOpt *bool
 

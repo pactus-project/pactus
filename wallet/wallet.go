@@ -323,3 +323,8 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	b, _ := trx.Bytes()
 	return w.client.sendTx(b)
 }
+
+// TODO: query fee from grpc client
+func (w *Wallet) CalculateFee(amount int64) int64 {
+	return util.Max64(amount/10000, 10000)
+}

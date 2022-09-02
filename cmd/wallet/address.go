@@ -6,6 +6,7 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
@@ -38,12 +39,12 @@ func AllAddresses() func(c *cli.Cmd) {
 
 				if *balanceOpt {
 					balance, _ := wallet.Balance(info.Address)
-					line += fmt.Sprintf("%v\t", changeToCoin(balance))
+					line += fmt.Sprintf("%v\t", util.ChangeToCoin(balance))
 				}
 
 				if *stakeOpt {
 					stake, _ := wallet.Stake(info.Address)
-					line += fmt.Sprintf("%v\t", changeToCoin(stake))
+					line += fmt.Sprintf("%v\t", util.ChangeToCoin(stake))
 				}
 
 				line += info.Label
@@ -112,7 +113,7 @@ func Balance() func(c *cli.Cmd) {
 				return
 			}
 			cmd.PrintInfoMsg("%s\tbalance: %v\tstake: %v\t%s",
-				changeToCoin(balance), changeToCoin(stake))
+				util.ChangeToCoin(balance), util.ChangeToCoin(stake))
 		}
 	}
 }
@@ -207,7 +208,8 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintSuccessMsg("Private Key imported")
+			cmd.PrintSuccessMsg("Private Key imported. Address: %v",
+				prv.PublicKey().Address())
 		}
 	}
 }

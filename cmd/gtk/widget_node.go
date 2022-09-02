@@ -35,7 +35,7 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 
 	box := getBoxObj(builder, "id_box_node")
 	labelLocation := getLabelObj(builder, "id_label_working_directory")
-	labelValidatoAddress := getLabelObj(builder, "id_label_validator_address")
+	labelValidatorAddress := getLabelObj(builder, "id_label_validator_address")
 	labelRewardAddress := getLabelObj(builder, "id_label_reward_address")
 
 	cwd, err := os.Getwd()
@@ -43,7 +43,7 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 		return nil, err
 	}
 	labelLocation.SetText(cwd)
-	labelValidatoAddress.SetText(model.node.State().ValidatorAddress().String())
+	labelValidatorAddress.SetText(model.node.State().ValidatorAddress().String())
 	labelRewardAddress.SetText(model.node.State().RewardAddress().String())
 
 	w := &widgetNode{
@@ -69,7 +69,7 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 func (wn *widgetNode) timeout() bool {
 	lastBlockTime := wn.model.node.State().LastBlockTime()
 	lastBlockHeight := wn.model.node.State().LastBlockHeight()
-	wn.labelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04 MST"))
+	wn.labelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
 	wn.labelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
 	// TODO move this logic to state

@@ -10,10 +10,10 @@ import (
 )
 
 //go:embed assets/ui/dialog_address_private_key.ui
-var uiAddressDetailsPrivateKey []byte
+var uiAddressPrivateKeyDialog []byte
 
 func showAddressPrivateKey(wallet *wallet.Wallet, addr string) {
-	builder, err := gtk.BuilderNewFromString(string(uiAddressDetailsPrivateKey))
+	builder, err := gtk.BuilderNewFromString(string(uiAddressPrivateKeyDialog))
 	fatalErrorCheck(err)
 
 	password, ok := getWalletPassword(wallet)

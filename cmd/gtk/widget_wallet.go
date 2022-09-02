@@ -4,7 +4,6 @@ package main
 
 import (
 	_ "embed"
-	"log"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -220,7 +219,6 @@ func (ww *widgetWallet) getSelectedAddress() string {
 
 			addr, err := path.GetString()
 			fatalErrorCheck(err)
-			log.Printf("treeSelectionChangedCB: selected path: %s\n", addr)
 
 			return addr
 		}
