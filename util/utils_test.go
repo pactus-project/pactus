@@ -2,6 +2,7 @@ package util
 
 import (
 	"math/big"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -99,4 +100,35 @@ func TestIS2OP(t *testing.T) {
 	assert.Equal(t, OS2IP([]byte{0, 255}).Int64(), int64(255))
 	assert.Equal(t, OS2IP([]byte{1, 0}).Int64(), int64(256))
 	assert.Equal(t, OS2IP([]byte{255, 255}).Int64(), int64(65535))
+}
+
+func TestCoinToChangeConversion(t *testing.T) {
+	tests := []struct {
+		amount  string
+		coin    float64
+		change  int64
+		str     string
+		parsErr error
+	}{
+		{"0", 0, 0, "0.00000000", nil},
+		{"1", 1, 100000000, "1.00000000", nil},
+		{"123.123", 123.123, 12312300000, "123.12300000", nil},
+		{"123.00000123", 123.00000123, 12300000123, "123.00000123", nil},
+		{"-123.00000123", -123.00000123, -12300000123, "-123.00000123", nil},
+		{"0123.00000123", 123.00000123, 12300000123, "123.00000123", nil},
+		{"+123.00000123", 123.00000123, 12300000123, "123.00000123", nil},
+		{"123.000001234", 123.00000123, 12300000123, "123.00000123", nil},
+		{"1coin", 0, 0, "0.00000000", strconv.ErrSyntax},
+	}
+	for _, test := range tests {
+		change, err := StringToChange(test.amount)
+		if test.parsErr == nil {
+			assert.NoError(t, err)
+			assert.Equal(t, change, test.change)
+			assert.Equal(t, ChangeToCoin(change), test.coin)
+			assert.Equal(t, ChangeToString(change), test.str)
+		} else {
+			assert.ErrorIs(t, err, test.parsErr)
+		}
+	}
 }

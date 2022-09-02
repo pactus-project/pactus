@@ -4,6 +4,7 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/zarbchain/zarb-go/cmd"
 	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
@@ -36,12 +37,12 @@ func SendTx() func(c *cli.Cmd) {
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionFee(util.CoinToChange(*feeOpt)),
 				wallet.OptionSequence(int32(*seqOpt)),
 				wallet.OptionMemo(*memoOpt),
 			}
 
-			trx, err := w.MakeSendTx(*fromArg, *toArg, coinToChange(*amtArg),
+			trx, err := w.MakeSendTx(*fromArg, *toArg, util.CoinToChange(*amtArg),
 				opts...)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
@@ -52,8 +53,8 @@ func SendTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign this \033[1mSend\033[0m transition:")
 			cmd.PrintInfoMsg("From  : %s", *fromArg)
 			cmd.PrintInfoMsg("To    : %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %v (%v)", *amtArg, coinToChange(*amtArg))
-			cmd.PrintInfoMsg("Fee   : %v (%v)", changeToCoin(trx.Fee()), trx.Fee())
+			cmd.PrintInfoMsg("Amount: %v (%v)", *amtArg, util.CoinToChange(*amtArg))
+			cmd.PrintInfoMsg("Fee   : %v (%v)", util.ChangeToCoin(trx.Fee()), trx.Fee())
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -95,13 +96,13 @@ func BondTx() func(c *cli.Cmd) {
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionFee(util.CoinToChange(*feeOpt)),
 				wallet.OptionSequence(int32(*seqOpt)),
 				wallet.OptionMemo(*memoOpt),
 			}
 
 			trx, err := w.MakeBondTx(*fromArg, *toArg, *pubKeyOpt,
-				coinToChange(*amtArg), opts...)
+				util.CoinToChange(*amtArg), opts...)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -111,8 +112,8 @@ func BondTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign this \033[1mBond\033[0m transition:")
 			cmd.PrintInfoMsg("Account  : %s", *fromArg)
 			cmd.PrintInfoMsg("Validator: %s", *toArg)
-			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, coinToChange(*amtArg))
-			cmd.PrintInfoMsg("Fee      : %v (%v)", changeToCoin(trx.Fee()), trx.Fee())
+			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, util.CoinToChange(*amtArg))
+			cmd.PrintInfoMsg("Fee      : %v (%v)", util.ChangeToCoin(trx.Fee()), trx.Fee())
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -138,7 +139,7 @@ func UnbondTx() func(c *cli.Cmd) {
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionFee(util.CoinToChange(*feeOpt)),
 				wallet.OptionSequence(int32(*seqOpt)),
 				wallet.OptionMemo(*memoOpt),
 			}
@@ -187,13 +188,13 @@ func WithdrawTx() func(c *cli.Cmd) {
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(coinToChange(*feeOpt)),
+				wallet.OptionFee(util.CoinToChange(*feeOpt)),
 				wallet.OptionSequence(int32(*seqOpt)),
 				wallet.OptionMemo(*memoOpt),
 			}
 
 			trx, err := w.MakeWithdrawTx(*fromArg, *toArg,
-				coinToChange(*amtArg), opts...)
+				util.CoinToChange(*amtArg), opts...)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -203,7 +204,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign this \033[1mWithdraw\033[0m transition:")
 			cmd.PrintInfoMsg("Validator: %s", *fromArg)
 			cmd.PrintInfoMsg("Account  : %s", *toArg)
-			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, coinToChange(*amtArg))
+			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, util.CoinToChange(*amtArg))
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}

@@ -3,10 +3,9 @@
 package main
 
 import (
-	"strconv"
-
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
@@ -41,9 +40,9 @@ func (model *walletModel) rebuildModel() error {
 			label += "(Imported)"
 		}
 		balance, _ := model.wallet.Balance(info.Address)
-		stake, _ := model.wallet.Balance(info.Address)
-		balanceStr := strconv.FormatInt(balance, 10)
-		stakeStr := strconv.FormatInt(stake, 10)
+		stake, _ := model.wallet.Stake(info.Address)
+		balanceStr := util.ChangeToString(balance)
+		stakeStr := util.ChangeToString(stake)
 
 		iter := model.listStore.Append()
 		err := model.listStore.Set(iter,

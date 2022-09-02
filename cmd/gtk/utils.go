@@ -9,20 +9,31 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
+func showQuestionDialog(parent gtk.IWindow, msg string) bool {
+	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "")
+	dlg.SetMarkup(msg)
+	res := dlg.Run()
+	dlg.Destroy()
+	return res == gtk.RESPONSE_YES
+}
+
 func showInfoDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
+	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "")
+	dlg.SetMarkup(msg)
 	dlg.Run()
 	dlg.Destroy()
 }
 
 func showWarningDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "%s", msg)
+	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "")
+	dlg.SetMarkup(msg)
 	dlg.Run()
 	dlg.Destroy()
 }
 
 func showErrorDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
+	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "")
+	dlg.SetMarkup(msg)
 	dlg.Run()
 	dlg.Destroy()
 }
@@ -57,6 +68,10 @@ func getDialogObj(builder *gtk.Builder, name string) *gtk.Dialog {
 
 func getAboutDialogObj(builder *gtk.Builder, name string) *gtk.AboutDialog {
 	return getObj(builder, name).(*gtk.AboutDialog)
+}
+
+func getComboBoxTextObj(builder *gtk.Builder, name string) *gtk.ComboBoxText {
+	return getObj(builder, name).(*gtk.ComboBoxText)
 }
 
 func getEntryObj(builder *gtk.Builder, name string) *gtk.Entry {

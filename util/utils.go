@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"os"
+	"strconv"
 )
 
 const MaxUint16 = ^uint16(0)
@@ -154,4 +155,27 @@ func ExitOnErr(e error) {
 		fmt.Println(e.Error())
 		os.Exit(1)
 	}
+}
+
+const changeFactor = float64(100000000)
+
+func CoinToChange(coin float64) int64 {
+	return int64(coin * changeFactor)
+}
+
+func ChangeToCoin(change int64) float64 {
+	return float64(change) / changeFactor
+}
+
+func StringToChange(amount string) (int64, error) {
+	coin, err := strconv.ParseFloat(amount, 64)
+	if err != nil {
+		return 0, err
+	}
+	return CoinToChange(coin), nil
+}
+
+func ChangeToString(change int64) string {
+	coin := ChangeToCoin(change)
+	return strconv.FormatFloat(coin, 'f', 8, 64)
 }

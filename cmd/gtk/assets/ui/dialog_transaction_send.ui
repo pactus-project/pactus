@@ -2,9 +2,10 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkDialog" id="id_dialog_address_private_key">
+  <object class="GtkDialog" id="id_dialog_transaction_send">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Private key</property>
+    <property name="title" translatable="yes">Broadcasting Send transaction</property>
+    <property name="modal">True</property>
     <property name="default-width">480</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -21,8 +22,8 @@
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="id_button_close">
-                <property name="label">_Close</property>
+              <object class="GtkButton" id="id_button_cancel">
+                <property name="label">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="focus-on-click">False</property>
@@ -31,8 +32,28 @@
                 <property name="receives-default">True</property>
                 <property name="use-underline">True</property>
                 <property name="always-show-image">True</property>
-                <signal name="activate" handler="on_close" swapped="no"/>
-                <signal name="clicked" handler="on_close" swapped="no"/>
+                <signal name="activate" handler="on_cancel" swapped="no"/>
+                <signal name="clicked" handler="on_cancel" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="id_button_send">
+                <property name="label">_Send</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
+                <property name="always-show-image">True</property>
+                <signal name="activate" handler="on_send" swapped="no"/>
+                <signal name="clicked" handler="on_send" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -58,7 +79,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Address:</property>
+                <property name="label" translatable="yes">Sender:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -67,13 +88,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="id_entry_address">
+              <object class="GtkComboBoxText" id="id_combo_sender">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="editable">False</property>
-                <property name="width-chars">32</property>
-                <property name="caps-lock-warning">False</property>
+                <property name="can-focus">False</property>
+                <signal name="changed" handler="on_sender_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -82,11 +100,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="id_label_balance">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Private Key:</property>
+                <property name="use-markup">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -95,13 +113,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="id_entry_private_key">
+              <object class="GtkLabel">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="editable">False</property>
-                <property name="width-chars">32</property>
-                <property name="caps-lock-warning">False</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Receiver:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -110,17 +126,59 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkEntry" id="id_entry_receiver">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">
-⚠️ Keep your private key secure.
-</property>
+                <property name="can-focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="width-chars">32</property>
+                <property name="caps-lock-warning">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Amount:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="id_entry_amount">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="width-chars">32</property>
+                <property name="caps-lock-warning">False</property>
+                <property name="input-purpose">number</property>
+                <signal name="changed" handler="on_amount_changed" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_payable">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="use-markup">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">7</property>
               </packing>
             </child>
           </object>
@@ -134,7 +192,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-7">id_button_close</action-widget>
+      <action-widget response="-6">id_button_cancel</action-widget>
+      <action-widget response="-10">id_button_send</action-widget>
     </action-widgets>
   </object>
 </interface>

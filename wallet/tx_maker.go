@@ -168,6 +168,7 @@ func (m *txMaker) checkFee() {
 			payload.PayloadTypeBond,
 			payload.PayloadTypeWithdraw:
 			{
+				// TODO: query fee from grpc client
 				fee := m.amount / 10000
 				if fee < 10000 {
 					fee = 10000
