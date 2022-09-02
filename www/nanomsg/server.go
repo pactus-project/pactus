@@ -1,14 +1,18 @@
 package nanomsg
 
 import (
+	"bytes"
 	"context"
-	"encoding/json"
 	"net"
 
+	"github.com/zarbchain/zarb-go/util/encoding"
 	"github.com/zarbchain/zarb-go/util/logger"
 	"github.com/zarbchain/zarb-go/www/nanomsg/event"
 	mangos "go.nanomsg.org/mangos/v3"
 	"go.nanomsg.org/mangos/v3/protocol/pub"
+
+	// register nano ports transports
+	_ "go.nanomsg.org/mangos/v3/transport/all"
 )
 
 type Server struct {
@@ -18,6 +22,7 @@ type Server struct {
 	listener  net.Listener
 	logger    *logger.Logger
 	eventCh   <-chan event.Event
+	seqNum    uint32
 }
 
 func NewServer(conf *Config, eventCh <-chan event.Event) *Server {
@@ -26,6 +31,7 @@ func NewServer(conf *Config, eventCh <-chan event.Event) *Server {
 		config:  conf,
 		logger:  logger.NewLogger("_nonomsg", nil),
 		eventCh: eventCh,
+		seqNum:  0,
 	}
 }
 
@@ -62,11 +68,18 @@ func (s *Server) eventLoop() {
 			return
 
 		case e := <-s.eventCh:
-			bs, _ := json.Marshal(e)
-			err := s.publisher.Send((bs))
+			w := bytes.NewBuffer(e)
+			err := encoding.WriteElement(w, s.seqNum)
+			if err != nil {
+				s.logger.Error("error on encoding event", "err", err)
+				return
+			}
+			err = s.publisher.Send(w.Bytes())
 			if err != nil {
 				s.logger.Error("error on emitting event", "err", err)
+				return
 			}
+			s.seqNum++
 		}
 	}
 }

@@ -196,9 +196,9 @@
 # Nanomsg configuration.
 [nanomsg]
 
-  # enable indicates whether ZMQ service should be enabled or not.
+  # enable indicates whether nanomsg service should be enabled or not.
   # Default is false
  ## enable = false
 
-  # address to listen for incoming connections for ZMQ server.
+  # address to listen for incoming connections for nanomsg server.
  ## listen = ""
