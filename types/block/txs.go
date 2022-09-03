@@ -45,3 +45,7 @@ func (txs Txs) IsEmpty() bool {
 func (txs Txs) Len() int {
 	return len(txs)
 }
+
+func (txs Txs) Get(i int) *tx.Tx {
+	return txs[i]
+}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/types/tx"
 	"github.com/zarbchain/zarb-go/util/encoding"
 	"github.com/zarbchain/zarb-go/util/logger"
 )
@@ -21,7 +22,20 @@ func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 	w := bytes.NewBuffer(buf)
 	err := encoding.WriteElements(w, TopicNewBlock, blockHash, height)
 	if err != nil {
-		logger.Error("error on encoding event", "err", err)
+		logger.Error("error on encoding event in block", "err", err)
+	}
+	return w.Bytes()
+}
+
+// CreateBlockEvent creates an event when the new block is committed.
+// The block event structure is like :
+// <topic_id><tx_hash><height><sequence_number>
+func CreateNewTransactionEvent(txHash tx.ID, height uint32) Event {
+	buf := make([]byte, 0, 42)
+	w := bytes.NewBuffer(buf)
+	err := encoding.WriteElements(w, TopicNewTransaction, txHash, height)
+	if err != nil {
+		logger.Error("error on encoding event in transaction event", "err", err)
 	}
 	return w.Bytes()
 }
