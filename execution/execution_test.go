@@ -121,7 +121,7 @@ func TestChecker(t *testing.T) {
 		valPub := sb.TestCommitteeSigners[0].PublicKey()
 
 		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, acc.Address(),
-			valPub.Address(), valPub.(*bls.PublicKey), 1000, 1000, "")
+			valPub.Address(), nil, 1000, 1000, "")
 		signer.SignMsg(trx)
 		assert.Error(t, executor.Execute(trx, sb))
 		assert.NoError(t, checker.Execute(trx, sb))
@@ -136,7 +136,7 @@ func TestLockTime(t *testing.T) {
 	curHeight := 2 * sb.TestParams.TransactionToLiveInterval
 	sb.TestStore.AddTestBlock(curHeight)
 
-	t.Run("Should reject sortition transaxtions with lock time", func(t *testing.T) {
+	t.Run("Should reject sortition transactions with lock time", func(t *testing.T) {
 		pub, prv := bls.GenerateTestKeyPair()
 		signer := crypto.NewSigner(prv)
 		val := sb.MakeNewValidator(pub)
@@ -153,7 +153,7 @@ func TestLockTime(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("Should reject subsidy transaxtions with lock time", func(t *testing.T) {
+	t.Run("Should reject subsidy transactions with lock time", func(t *testing.T) {
 		pld := &payload.SendPayload{
 			Sender:   crypto.TreasuryAddress,
 			Receiver: crypto.GenerateTestAddress(),
@@ -164,7 +164,7 @@ func TestLockTime(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("Should reject expired transaxtions", func(t *testing.T) {
+	t.Run("Should reject expired transactions", func(t *testing.T) {
 		pub, prv := bls.GenerateTestKeyPair()
 		signer := crypto.NewSigner(prv)
 		acc := sb.MakeNewAccount(pub.Address())

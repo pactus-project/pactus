@@ -43,7 +43,7 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		pub := tSandbox.Committee().Proposer(0).PublicKey()
 		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
-			pub.Address(), pub, amt, fee, "inside committee")
+			pub.Address(), nil, amt, fee, "inside committee")
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
@@ -55,7 +55,7 @@ func TestExecuteBondTx(t *testing.T) {
 		tSandbox.UpdateValidator(val)
 
 		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
-			pub.Address(), pub, amt, fee, "unbonded before")
+			pub.Address(), nil, amt, fee, "unbonded before")
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
@@ -76,6 +76,14 @@ func TestExecuteBondTx(t *testing.T) {
 
 		// Execute again, should fail
 		assert.Error(t, exe.Execute(trx, tSandbox))
+	})
+
+	t.Run("Should fail, public key set for second bond", func(t *testing.T) {
+		trx := tx.NewBondTx(tStamp500000, sender.Sequence()+2, sender.Address(),
+			pub.Address(), pub, amt, fee, "with public key")
+
+		err := exe.Execute(trx, tSandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
 	assert.Equal(t, tSandbox.Account(sender.Address()).Balance(),
@@ -102,7 +110,7 @@ func TestBondInsideCommittee(t *testing.T) {
 
 	pub := tSandbox.Committee().Proposer(0).PublicKey()
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
-		pub.Address(), pub, amt, fee, "inside committee")
+		pub.Address(), nil, amt, fee, "inside committee")
 
 	assert.Error(t, exe1.Execute(trx, tSandbox))
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
@@ -126,7 +134,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	tSandbox.UpdateValidator(val)
 
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
-		pub.Address(), pub, amt, fee, "joining committee")
+		pub.Address(), nil, amt, fee, "joining committee")
 
 	assert.Error(t, exe1.Execute(trx, tSandbox))
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
