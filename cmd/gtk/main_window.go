@@ -50,6 +50,7 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel, genesisTime
 		"on_about":            mw.onAbout,
 		"on_quit":             mw.onQuit,
 		"on_transaction_send": mw.OnTransactionSend,
+		"on_transaction_bond": mw.OnTransactionBond,
 	}
 	builder.ConnectSignals(signals)
 
@@ -70,4 +71,8 @@ func (mw *mainWindow) onAbout() {
 
 func (mw *mainWindow) OnTransactionSend() {
 	broadcastTransactionSend(mw.widgetWallet.model.wallet)
+}
+
+func (mw *mainWindow) OnTransactionBond() {
+	broadcastTransactionBond(mw.widgetWallet.model.wallet)
 }

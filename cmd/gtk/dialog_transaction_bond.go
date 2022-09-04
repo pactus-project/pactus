@@ -11,18 +11,19 @@ import (
 	"github.com/zarbchain/zarb-go/wallet"
 )
 
-//go:embed assets/ui/dialog_transaction_send.ui
-var uiTransactionSendDialog []byte
+//go:embed assets/ui/dialog_transaction_bond.ui
+var uiTransactionBondDialog []byte
 
-func broadcastTransactionSend(wallet *wallet.Wallet) {
-	builder, err := gtk.BuilderNewFromString(string(uiTransactionSendDialog))
+func broadcastTransactionBond(wallet *wallet.Wallet) {
+	builder, err := gtk.BuilderNewFromString(string(uiTransactionBondDialog))
 	fatalErrorCheck(err)
 
-	dlg := getDialogObj(builder, "id_dialog_transaction_send")
+	dlg := getDialogObj(builder, "id_dialog_transaction_bond")
 
 	senderEntry := getComboBoxTextObj(builder, "id_combo_sender")
 	balanceLabel := getLabelObj(builder, "id_label_balance")
 	receiverEntry := getEntryObj(builder, "id_entry_receiver")
+	publicKeyEntry := getEntryObj(builder, "id_entry_public_key")
 	amountEntry := getEntryObj(builder, "id_entry_amount")
 	payableLabel := getLabelObj(builder, "id_label_payable")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
@@ -54,6 +55,7 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 	onSend := func() {
 		sender := senderEntry.GetActiveID()
 		receiver, _ := receiverEntry.GetText()
+		publicKey, _ := publicKeyEntry.GetText()
 		amountStr, _ := amountEntry.GetText()
 
 		amount, err := util.StringToChange(amountStr)
@@ -62,7 +64,7 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 			return
 		}
 
-		trx, err := wallet.MakeSendTx(sender, receiver, amount)
+		trx, err := wallet.MakeBondTx(sender, receiver, publicKey, amount)
 		if err != nil {
 			errorCheck(err)
 			return
