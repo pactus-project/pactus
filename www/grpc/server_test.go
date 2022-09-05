@@ -43,10 +43,15 @@ func init() {
 		state:  tMockState,
 		logger: logger,
 	}
+	walletServer := &walletServer{
+		logger: logger,
+	}
 
 	pactus.RegisterBlockchainServer(s, blockchainServer)
 	pactus.RegisterNetworkServer(s, networkServer)
 	pactus.RegisterTransactionServer(s, transactionServer)
+	pactus.RegisterWalletServer(s, walletServer)
+
 	go func() {
 		if err := s.Serve(tListener); err != nil {
 			log.Fatalf("Server exited with error: %v", err)
@@ -80,4 +85,12 @@ func callTransactionServer(t *testing.T) (*grpc.ClientConn, pactus.TransactionCl
 		t.Fatalf("Failed to dial transaction server: %v", err)
 	}
 	return conn, pactus.NewTransactionClient(conn)
+}
+
+func callWalletSerer(t *testing.T) (*grpc.ClientConn, zarb.WalletClient) {
+	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("Failed to dial wallet server: %v", err)
+	}
+	return conn, zarb.NewWalletClient(conn)
 }

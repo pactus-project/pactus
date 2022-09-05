@@ -46,7 +46,7 @@
         ]
       }
     },
-    "/v1/blockchain/block/hash/{hash}": {
+    "/v1/blockchain/block/hash/{hash}/verbosity/verbosity": {
       "get": {
         "operationId": "Blockchain_GetBlock",
         "responses": {

@@ -17,7 +17,7 @@ var tPassword string
 func setup(t *testing.T) {
 	tPassword := ""
 	walletPath := util.TempFilePath()
-	mnemonic := GenerateMnemonic()
+	mnemonic := GenerateMnemonic(128)
 	w, err := FromMnemonic(walletPath, mnemonic, tPassword, NetworkMainNet)
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
@@ -122,7 +122,7 @@ func TestImportPrivateKey(t *testing.T) {
 }
 
 func TestTestKeyInfo(t *testing.T) {
-	mnemonic := GenerateMnemonic()
+	mnemonic := GenerateMnemonic(128)
 	w1, err := FromMnemonic(util.TempFilePath(), mnemonic, tPassword,
 		NetworkMainNet)
 	assert.NoError(t, err)

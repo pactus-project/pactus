@@ -15,10 +15,16 @@ func Generate() func(c *cli.Cmd) {
 			Value: false,
 		})
 
+		entropyOpt := c.Int(cli.IntOpt{
+			Name:  "entropy",
+			Desc:  "Entropy bit length",
+			Value: 128,
+		})
+
 		c.Before = func() {}
 		c.Action = func() {
 			password := cmd.PromptPassword("Password", true)
-			mnemonic := wallet.GenerateMnemonic()
+			mnemonic := wallet.GenerateMnemonic(*entropyOpt)
 
 			network := wallet.NetworkMainNet
 			if *testnetOpt {

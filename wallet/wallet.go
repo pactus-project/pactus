@@ -40,8 +40,8 @@ type serverInfo struct {
 type servers = map[string][]serverInfo
 
 // GenerateMnemonic is a wrapper for `vault.GenerateMnemonic.
-func GenerateMnemonic() string {
-	return vault.GenerateMnemonic()
+func GenerateMnemonic(entropy int) string {
+	return vault.GenerateMnemonic(entropy)
 }
 
 // OpenWallet tries to open a wallet at given path.

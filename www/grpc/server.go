@@ -49,9 +49,14 @@ func (s *Server) StartServer() error {
 		sync:   s.sync,
 		logger: s.logger,
 	}
+	walletServer := &walletServer{
+		wallet: nil,
+		logger: s.logger,
+	}
 	pactus.RegisterBlockchainServer(grpc, blockchainServer)
 	pactus.RegisterTransactionServer(grpc, transactionServer)
 	pactus.RegisterNetworkServer(grpc, networkServer)
+	pactus.RegisterWalletServer(grpc, walletServer)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {

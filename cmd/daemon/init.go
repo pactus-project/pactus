@@ -46,7 +46,7 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintInfoMsg("Creating wallet...")
-			mnemonic := wallet.GenerateMnemonic()
+			mnemonic := wallet.GenerateMnemonic(128)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Your wallet seed:")
 			cmd.PrintInfoMsg("\"" + mnemonic + "\"")

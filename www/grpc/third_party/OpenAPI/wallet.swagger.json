@@ -4,14 +4,65 @@
     "title": "wallet.proto",
     "version": "version not set"
   },
+  "tags": [
+    {
+      "name": "Wallet"
+    }
+  ],
   "consumes": [
     "application/json"
   ],
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/v1/wallet/mnemonic/language/{language}/entropy/{entropy}": {
+      "get": {
+        "operationId": "Wallet_GenerateMnemonic",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGenerateMnemonicResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "language",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "entropy",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    }
+  },
   "definitions": {
+    "pactusGenerateMnemonicResponse": {
+      "type": "object",
+      "properties": {
+        "mnemonic": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {

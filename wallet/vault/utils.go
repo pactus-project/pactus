@@ -47,8 +47,8 @@ func stringToDerivePath(str string) ([]uint32, error) {
 
 // GenerateMnemonic generates a new mnemonic (seed phrase) based on BIP-39
 // https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
-func GenerateMnemonic() string {
-	entropy, err := bip39.NewEntropy(128)
+func GenerateMnemonic(bitSize int) string {
+	entropy, err := bip39.NewEntropy(bitSize)
 	util.ExitOnErr(err)
 
 	mnemonic, err := bip39.NewMnemonic(entropy)
