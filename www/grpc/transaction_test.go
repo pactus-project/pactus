@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetTransaction(t *testing.T) {
-	conn, client := callServer(t)
+	conn, client := callTransactionServer(t)
 
 	tx1 := tMockState.TestStore.AddTestTransaction()
 
@@ -20,26 +20,26 @@ func TestGetTransaction(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &zarb.TransactionRequest{Id: tx1.ID().String()})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.NotEmpty(t, res.Tranaction)
-		assert.Equal(t, tx1.ID().Bytes(), res.Tranaction.Id)
-		assert.Equal(t, tx1.Stamp().Bytes(), res.Tranaction.Stamp)
-		assert.Equal(t, tx1.Fee(), res.Tranaction.Fee)
-		assert.Equal(t, tx1.Memo(), res.Tranaction.Memo)
-		assert.Equal(t, tx1.Sequence(), res.Tranaction.Sequence)
-		assert.Equal(t, tx1.Signature().Bytes(), res.Tranaction.Signature)
-		assert.Equal(t, tx1.PublicKey().String(), res.Tranaction.PublicKey)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Amount, res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Amount)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Receiver.String(), res.Tranaction.Payload.(*zarb.TransactionInfo_Send).Send.Receiver)
+		assert.NotEmpty(t, res.Transaction)
+		assert.Equal(t, tx1.ID().Bytes(), res.Transaction.Id)
+		assert.Equal(t, tx1.Stamp().Bytes(), res.Transaction.Stamp)
+		assert.Equal(t, tx1.Fee(), res.Transaction.Fee)
+		assert.Equal(t, tx1.Memo(), res.Transaction.Memo)
+		assert.Equal(t, tx1.Sequence(), res.Transaction.Sequence)
+		assert.Equal(t, tx1.Signature().Bytes(), res.Transaction.Signature)
+		assert.Equal(t, tx1.PublicKey().String(), res.Transaction.PublicKey)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Amount, res.Transaction.Payload.(*zarb.TransactionInfo_Send).Send.Amount)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.String(), res.Transaction.Payload.(*zarb.TransactionInfo_Send).Send.Sender)
+		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Receiver.String(), res.Transaction.Payload.(*zarb.TransactionInfo_Send).Send.Receiver)
 	})
 
-	t.Run("Should return nil value because transcation id is invalid", func(t *testing.T) {
+	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &zarb.TransactionRequest{Id: "invalid_id"})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return nil value because transcation doesn't exist", func(t *testing.T) {
+	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
 		id := hash.GenerateTestHash()
 		res, err := client.GetTransaction(tCtx, &zarb.TransactionRequest{Id: id.String()})
 		assert.Error(t, err)
@@ -49,7 +49,7 @@ func TestGetTransaction(t *testing.T) {
 }
 
 func TestSendRawTransaction(t *testing.T) {
-	conn, client := callServer(t)
+	conn, client := callTransactionServer(t)
 
 	t.Run("Should fail, invalid raw data", func(t *testing.T) {
 		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: "invalid raw data"})

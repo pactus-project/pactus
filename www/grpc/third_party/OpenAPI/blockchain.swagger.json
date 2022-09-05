@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "zarb.proto",
+    "title": "blockchain.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "Zarb"
+      "name": "Blockchain"
     }
   ],
   "consumes": [
@@ -16,9 +16,9 @@
     "application/json"
   ],
   "paths": {
-    "/api/account/address/{address}": {
+    "/v1/blockchain/account/address/{address}": {
       "get": {
-        "operationId": "Zarb_GetAccount",
+        "operationId": "Blockchain_GetAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -42,13 +42,13 @@
           }
         ],
         "tags": [
-          "Zarb"
+          "Blockchain"
         ]
       }
     },
-    "/api/block/hash/{hash}": {
+    "/v1/blockchain/block/hash/{hash}": {
       "get": {
-        "operationId": "Zarb_GetBlock",
+        "operationId": "Blockchain_GetBlock",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -85,13 +85,13 @@
           }
         ],
         "tags": [
-          "Zarb"
+          "Blockchain"
         ]
       }
     },
-    "/api/block_hash/{height}": {
+    "/v1/blockchain/block_hash/{height}": {
       "get": {
-        "operationId": "Zarb_GetBlockHash",
+        "operationId": "Blockchain_GetBlockHash",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -116,13 +116,13 @@
           }
         ],
         "tags": [
-          "Zarb"
+          "Blockchain"
         ]
       }
     },
-    "/api/blockchain": {
+    "/v1/blockchain/info": {
       "get": {
-        "operationId": "Zarb_GetBlockchainInfo",
+        "operationId": "Blockchain_GetBlockchainInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -138,95 +138,13 @@
           }
         },
         "tags": [
-          "Zarb"
+          "Blockchain"
         ]
       }
     },
-    "/api/network": {
+    "/v1/blockchain/validator/address/{address}": {
       "get": {
-        "operationId": "Zarb_GetNetworkInfo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/zarbNetworkInfoResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "Zarb"
-        ]
-      }
-    },
-    "/api/send_raw_transaction/{data}": {
-      "put": {
-        "operationId": "Zarb_SendRawTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/zarbSendRawTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "data",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Zarb"
-        ]
-      }
-    },
-    "/api/tranaction/id/{id}": {
-      "get": {
-        "operationId": "Zarb_GetTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/zarbTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Zarb"
-        ]
-      }
-    },
-    "/api/validator/address/{address}": {
-      "get": {
-        "operationId": "Zarb_GetValidator",
+        "operationId": "Blockchain_GetValidator",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -250,13 +168,13 @@
           }
         ],
         "tags": [
-          "Zarb"
+          "Blockchain"
         ]
       }
     },
-    "/api/validator/{number}": {
+    "/v1/blockchain/validator/{number}": {
       "get": {
-        "operationId": "Zarb_GetValidatorByNumber",
+        "operationId": "Blockchain_GetValidatorByNumber",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -281,13 +199,13 @@
           }
         ],
         "tags": [
-          "Zarb"
+          "Blockchain"
         ]
       }
     },
-    "/api/validators": {
+    "/v1/blockchain/validators": {
       "get": {
-        "operationId": "Zarb_GetValidators",
+        "operationId": "Blockchain_GetValidators",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -303,54 +221,12 @@
           }
         },
         "tags": [
-          "Zarb"
+          "Blockchain"
         ]
       }
     }
   },
   "definitions": {
-    "payloadsBOND_PAYLOAD": {
-      "type": "object",
-      "properties": {
-        "sender": {
-          "type": "string"
-        },
-        "receiver": {
-          "type": "string"
-        },
-        "stake": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "payloadsSEND_PAYLOAD": {
-      "type": "object",
-      "properties": {
-        "sender": {
-          "type": "string"
-        },
-        "receiver": {
-          "type": "string"
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "payloadsSORTITION_PAYLOAD": {
-      "type": "object",
-      "properties": {
-        "address": {
-          "type": "string"
-        },
-        "proof": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -517,18 +393,45 @@
         }
       }
     },
-    "zarbNetworkInfoResponse": {
+    "zarbPayloadBond": {
       "type": "object",
       "properties": {
-        "selfId": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "zarbPayloadSend": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "zarbPayloadSortition": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "proof": {
           "type": "string",
           "format": "byte"
-        },
-        "peers": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/zarbPeerInfo"
-          }
         }
       }
     },
@@ -542,52 +445,6 @@
         "UNBOND_PAYLOAD"
       ],
       "default": "UNKNOWN"
-    },
-    "zarbPeerInfo": {
-      "type": "object",
-      "properties": {
-        "moniker": {
-          "type": "string"
-        },
-        "agent": {
-          "type": "string"
-        },
-        "peerId": {
-          "type": "string",
-          "format": "byte"
-        },
-        "publicKey": {
-          "type": "string"
-        },
-        "flags": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "height": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "receivedMessages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "invalidMessages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "receivedBytes": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "zarbSendRawTransactionResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
     },
     "zarbTransactionInfo": {
       "type": "object",
@@ -616,13 +473,13 @@
           "$ref": "#/definitions/zarbPayloadType"
         },
         "send": {
-          "$ref": "#/definitions/payloadsSEND_PAYLOAD"
+          "$ref": "#/definitions/zarbPayloadSend"
         },
         "bond": {
-          "$ref": "#/definitions/payloadsBOND_PAYLOAD"
+          "$ref": "#/definitions/zarbPayloadBond"
         },
         "sortition": {
-          "$ref": "#/definitions/payloadsSORTITION_PAYLOAD"
+          "$ref": "#/definitions/zarbPayloadSortition"
         },
         "memo": {
           "type": "string"
@@ -633,14 +490,6 @@
         "signature": {
           "type": "string",
           "format": "byte"
-        }
-      }
-    },
-    "zarbTransactionResponse": {
-      "type": "object",
-      "properties": {
-        "tranaction": {
-          "$ref": "#/definitions/zarbTransactionInfo"
         }
       }
     },

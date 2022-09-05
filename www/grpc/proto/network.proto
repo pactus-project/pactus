@@ -1,0 +1,33 @@
+syntax = 'proto3';
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+
+package zarb;
+
+service Network {
+  rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse) {
+    option (google.api.http).get = "/v1/network/info";
+  }
+}
+
+message NetworkInfoRequest {}
+
+message NetworkInfoResponse {
+  bytes self_id = 1;
+  repeated PeerInfo peers = 2;
+}
+
+message PeerInfo {
+  string moniker = 1;
+  string agent = 2;
+  bytes peer_id = 3;
+  string public_key = 4;
+  int32 flags = 5;
+  uint32 height = 6;
+  int32 received_messages = 7;
+  int32 invalid_messages = 8;
+  int32 received_bytes = 9;
+}

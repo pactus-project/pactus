@@ -55,7 +55,15 @@ func (s *Server) startGateway() error {
 	}
 
 	gwMux := runtime.NewServeMux()
-	err = zarb.RegisterZarbHandler(s.ctx, gwMux, conn)
+	err = zarb.RegisterBlockchainHandler(s.ctx, gwMux, conn)
+	if err != nil {
+		return err
+	}
+	err = zarb.RegisterTransactionHandler(s.ctx, gwMux, conn)
+	if err != nil {
+		return err
+	}
+	err = zarb.RegisterNetworkHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
@@ -69,7 +77,7 @@ func (s *Server) startGateway() error {
 		Addr:              s.config.Gateway.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.HasPrefix(r.URL.Path, "/api") {
+			if strings.HasPrefix(r.URL.Path, "/v1") {
 				gwMux.ServeHTTP(w, r)
 				return
 			}
@@ -92,7 +100,7 @@ func preflightHandler(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
 }
 
-// allowCORS allows Cross Origin Resoruce Sharing from any origin.
+// allowCORS allows Cross Origin Resource Sharing from any origin.
 // Don't do this without consideration in production systems.
 func allowCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

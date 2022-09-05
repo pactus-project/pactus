@@ -1,0 +1,68 @@
+syntax = 'proto3';
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+
+package zarb;
+
+service Transaction {
+  rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
+    option (google.api.http).get = "/v1/tranaction/id/{id}";
+  }
+  rpc SendRawTransaction(SendRawTransactionRequest)
+      returns (SendRawTransactionResponse) {
+    option (google.api.http).put = "/v1/tranaction/send_raw_transaction/{data}";
+  };
+}
+
+message TransactionRequest { string id = 1; }
+
+message TransactionResponse { TransactionInfo tranaction = 1; }
+
+message SendRawTransactionRequest { string data = 1; }
+
+message SendRawTransactionResponse { string id = 2; }
+
+message PayloadSend {
+  string sender = 1;
+  string receiver = 2;
+  int64 amount = 3;
+}
+
+message PayloadBond {
+  string sender = 1;
+  string receiver = 2;
+  int64 stake = 3;
+}
+
+message PayloadSortition {
+  string address = 1;
+  bytes proof = 2;
+}
+
+message TransactionInfo {
+  bytes id = 1;
+  int32 version = 2;
+  bytes stamp = 3;
+  int32 sequence = 4;
+  int64 fee = 5;
+  PayloadType Type = 6;
+  oneof Payload {
+    PayloadSend send = 30;
+    PayloadBond bond = 31;
+    PayloadSortition sortition = 32;
+  };
+  string memo = 7;
+  string public_key = 8;
+  bytes signature = 9;
+}
+
+enum PayloadType {
+  UNKNOWN = 0;
+  SEND_PAYLOAD = 1;
+  BOND_PAYLOAD = 2;
+  SORTITION_PAYLOAD = 3;
+  UNBOND_PAYLOAD = 4;
+}

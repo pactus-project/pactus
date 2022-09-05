@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 
 	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/state"
 	"github.com/zarbchain/zarb-go/types/tx"
 	"github.com/zarbchain/zarb-go/types/tx/payload"
 	"github.com/zarbchain/zarb-go/util/logger"
@@ -13,7 +14,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (zs *zarbServer) GetTransaction(ctx context.Context,
+type transactionServer struct {
+	state  state.Facade
+	logger *logger.Logger
+}
+
+func (zs *transactionServer) GetTransaction(ctx context.Context,
 	request *zarb.TransactionRequest) (*zarb.TransactionResponse, error) {
 	id, err := hash.FromString(request.Id)
 	if err != nil {
@@ -25,11 +31,11 @@ func (zs *zarbServer) GetTransaction(ctx context.Context,
 	}
 
 	return &zarb.TransactionResponse{
-		Tranaction: transactionToProto(trx),
+		Transaction: transactionToProto(trx),
 	}, nil
 }
 
-func (zs *zarbServer) SendRawTransaction(ctx context.Context,
+func (zs *transactionServer) SendRawTransaction(ctx context.Context,
 	request *zarb.SendRawTransactionRequest) (*zarb.SendRawTransactionResponse, error) {
 	data, err := hex.DecodeString(request.Data)
 	if err != nil {
@@ -76,7 +82,7 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	case payload.PayloadTypeSend:
 		pld := trx.Payload().(*payload.SendPayload)
 		transaction.Payload = &zarb.TransactionInfo_Send{
-			Send: &zarb.SEND_PAYLOAD{
+			Send: &zarb.PayloadSend{
 				Sender:   pld.Sender.String(),
 				Receiver: pld.Receiver.String(),
 				Amount:   pld.Amount,
@@ -85,7 +91,7 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	case payload.PayloadTypeBond:
 		pld := trx.Payload().(*payload.BondPayload)
 		transaction.Payload = &zarb.TransactionInfo_Bond{
-			Bond: &zarb.BOND_PAYLOAD{
+			Bond: &zarb.PayloadBond{
 				Sender:   pld.Sender.String(),
 				Receiver: pld.Receiver.String(),
 				Stake:    pld.Stake,
@@ -94,7 +100,7 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	case payload.PayloadTypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
 		transaction.Payload = &zarb.TransactionInfo_Sortition{
-			Sortition: &zarb.SORTITION_PAYLOAD{
+			Sortition: &zarb.PayloadSortition{
 				Address: pld.Address.String(),
 				Proof:   pld.Proof[:],
 			},

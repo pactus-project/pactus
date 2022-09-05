@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"context"
-	"encoding/hex"
 
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/crypto/hash"
@@ -11,7 +10,7 @@ import (
 )
 
 type grpcClient struct {
-	client zarb.ZarbClient
+	client zarb.BlockchainClient
 }
 
 func gewGRPCClient(rpcEndpoint string) (*grpcClient, error) {
@@ -21,7 +20,7 @@ func gewGRPCClient(rpcEndpoint string) (*grpcClient, error) {
 	}
 
 	return &grpcClient{
-		client: zarb.NewZarbClient(conn),
+		client: zarb.NewBlockchainClient(conn),
 	}, nil
 }
 
@@ -71,13 +70,14 @@ func (c *grpcClient) getValidatorStake(addr crypto.Address) (int64, error) {
 }
 
 func (c *grpcClient) sendTx(payload []byte) (string, error) {
-	res, err := c.client.SendRawTransaction(context.Background(), &zarb.SendRawTransactionRequest{
-		Data: hex.EncodeToString(payload),
-	})
+	// res, err := c.client.SendRawTransaction(context.Background(), &zarb.SendRawTransactionRequest{
+	// 	Data: hex.EncodeToString(payload),
+	// })
 
-	if err != nil {
-		return "", err
-	}
+	// if err != nil {
+	// 	return "", err
+	// }
 
-	return res.Id, nil
+	// return res.Id, nil
+	return "", nil
 }

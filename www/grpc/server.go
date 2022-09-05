@@ -11,14 +11,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-type zarbServer struct {
-	zarb.UnimplementedZarbServer
-
-	state  state.Facade
-	sync   sync.Synchronizer
-	logger *logger.Logger
-}
-
 type Server struct {
 	ctx      context.Context
 	config   *Config
@@ -45,12 +37,21 @@ func (s *Server) StartServer() error {
 	}
 
 	grpc := grpc.NewServer()
-	server := &zarbServer{
+	blockchainServer := &blockchainServer{
 		state:  s.state,
+		logger: s.logger,
+	}
+	transactionServer := &transactionServer{
+		state:  s.state,
+		logger: s.logger,
+	}
+	networkServer := &networkServer{
 		sync:   s.sync,
 		logger: s.logger,
 	}
-	zarb.RegisterZarbServer(grpc, server)
+	zarb.RegisterBlockchainServer(grpc, blockchainServer)
+	zarb.RegisterTransactionServer(grpc, transactionServer)
+	zarb.RegisterNetworkServer(grpc, networkServer)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
