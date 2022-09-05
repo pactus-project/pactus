@@ -129,7 +129,7 @@ type TransactionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Tranaction *TransactionInfo `protobuf:"bytes,1,opt,name=tranaction,proto3" json:"tranaction,omitempty"`
+	Transaction *TransactionInfo `protobuf:"bytes,1,opt,name=tranaction,proto3" json:"tranaction,omitempty"`
 }
 
 func (x *TransactionResponse) Reset() {
@@ -166,7 +166,7 @@ func (*TransactionResponse) Descriptor() ([]byte, []int) {
 
 func (x *TransactionResponse) GetTranaction() *TransactionInfo {
 	if x != nil {
-		return x.Tranaction
+		return x.Transaction
 	}
 	return nil
 }

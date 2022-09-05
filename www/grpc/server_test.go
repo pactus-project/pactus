@@ -39,9 +39,14 @@ func init() {
 		sync:   tMockSync,
 		logger: logger,
 	}
+	transactionServer := &transactionServer{
+		state:  tMockState,
+		logger: logger,
+	}
 
 	zarb.RegisterBlockchainServer(s, blockchainServer)
 	zarb.RegisterNetworkServer(s, networkServer)
+	zarb.RegisterTransactionServer(s, transactionServer)
 	go func() {
 		if err := s.Serve(tListener); err != nil {
 			log.Fatalf("Server exited with error: %v", err)
@@ -56,7 +61,7 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 func callBlockchainServer(t *testing.T) (*grpc.ClientConn, zarb.BlockchainClient) {
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
-		t.Fatalf("Failed to dial bufnet: %v", err)
+		t.Fatalf("Failed to dial blockchain server: %v", err)
 	}
 	return conn, zarb.NewBlockchainClient(conn)
 }
@@ -64,7 +69,7 @@ func callBlockchainServer(t *testing.T) (*grpc.ClientConn, zarb.BlockchainClient
 func callNetworkServer(t *testing.T) (*grpc.ClientConn, zarb.NetworkClient) {
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
-		t.Fatalf("Failed to dial bufnet: %v", err)
+		t.Fatalf("Failed to dial network server: %v", err)
 	}
 	return conn, zarb.NewNetworkClient(conn)
 }
@@ -72,7 +77,7 @@ func callNetworkServer(t *testing.T) (*grpc.ClientConn, zarb.NetworkClient) {
 func callTransactionServer(t *testing.T) (*grpc.ClientConn, zarb.TransactionClient) {
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
-		t.Fatalf("Failed to dial bufnet: %v", err)
+		t.Fatalf("Failed to dial transaction server: %v", err)
 	}
 	return conn, zarb.NewTransactionClient(conn)
 }

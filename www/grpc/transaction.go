@@ -31,7 +31,7 @@ func (zs *transactionServer) GetTransaction(ctx context.Context,
 	}
 
 	return &zarb.TransactionResponse{
-		Tranaction: transactionToProto(trx),
+		Transaction: transactionToProto(trx),
 	}, nil
 }
 

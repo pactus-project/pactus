@@ -100,7 +100,7 @@ func preflightHandler(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
 }
 
-// allowCORS allows Cross Origin Resoruce Sharing from any origin.
+// allowCORS allows Cross Origin Resource Sharing from any origin.
 // Don't do this without consideration in production systems.
 func allowCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
