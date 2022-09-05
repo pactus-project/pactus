@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/account/address/{address}": {
+    "/v1/blockchain/account/address/{address}": {
       "get": {
         "operationId": "Blockchain_GetAccount",
         "responses": {
@@ -46,7 +46,7 @@
         ]
       }
     },
-    "/api/block/hash/{hash}": {
+    "/v1/blockchain/block/hash/{hash}": {
       "get": {
         "operationId": "Blockchain_GetBlock",
         "responses": {
@@ -89,7 +89,7 @@
         ]
       }
     },
-    "/api/block_hash/{height}": {
+    "/v1/blockchain/block_hash/{height}": {
       "get": {
         "operationId": "Blockchain_GetBlockHash",
         "responses": {
@@ -120,7 +120,7 @@
         ]
       }
     },
-    "/api/blockchain": {
+    "/v1/blockchain/info": {
       "get": {
         "operationId": "Blockchain_GetBlockchainInfo",
         "responses": {
@@ -142,7 +142,7 @@
         ]
       }
     },
-    "/api/validator/address/{address}": {
+    "/v1/blockchain/validator/address/{address}": {
       "get": {
         "operationId": "Blockchain_GetValidator",
         "responses": {
@@ -172,7 +172,7 @@
         ]
       }
     },
-    "/api/validator/{number}": {
+    "/v1/blockchain/validator/{number}": {
       "get": {
         "operationId": "Blockchain_GetValidatorByNumber",
         "responses": {
@@ -203,7 +203,7 @@
         ]
       }
     },
-    "/api/validators": {
+    "/v1/blockchain/validators": {
       "get": {
         "operationId": "Blockchain_GetValidators",
         "responses": {

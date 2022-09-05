@@ -62,7 +62,7 @@ proto:
 		--path ./proto/blockchain.proto \
 		--path ./proto/network.proto \
 		--path ./proto/transaction.proto \
-		--path ./proto/wallet.proto \
+		--path ./proto/wallet.proto
 
 	# Generate static assets for OpenAPI UI
 	cd www/grpc/ && statik -m -f -src third_party/OpenAPI/

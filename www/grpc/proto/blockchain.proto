@@ -10,27 +10,27 @@ package zarb;
 
 service Blockchain {
   rpc GetBlock(BlockRequest) returns (BlockResponse) {
-    option (google.api.http).get = "/api/block/hash/{hash}";
+    option (google.api.http).get = "/v1/blockchain/block/hash/{hash}";
   }
   rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse) {
-    option (google.api.http).get = "/api/block_hash/{height}";
+    option (google.api.http).get = "/v1/blockchain/block_hash/{height}";
   }
   rpc GetAccount(AccountRequest) returns (AccountResponse) {
-    option (google.api.http).get = "/api/account/address/{address}";
+    option (google.api.http).get = "/v1/blockchain/account/address/{address}";
   }
   rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse) {
-    option (google.api.http).get = "/api/validators";
+    option (google.api.http).get = "/v1/blockchain/validators";
   }
   rpc GetValidator(ValidatorRequest) returns (ValidatorResponse) {
-    option (google.api.http).get = "/api/validator/address/{address}";
+    option (google.api.http).get = "/v1/blockchain/validator/address/{address}";
   }
   rpc GetValidatorByNumber(ValidatorByNumberRequest)
       returns (ValidatorResponse) {
-    option (google.api.http).get = "/api/validator/{number}";
+    option (google.api.http).get = "/v1/blockchain/validator/{number}";
   }
   rpc GetBlockchainInfo(BlockchainInfoRequest)
       returns (BlockchainInfoResponse) {
-    option (google.api.http).get = "/api/blockchain";
+    option (google.api.http).get = "/v1/blockchain/info";
   }
 }
 

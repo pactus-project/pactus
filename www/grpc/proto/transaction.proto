@@ -9,11 +9,11 @@ package zarb;
 
 service Transaction {
   rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
-    option (google.api.http).get = "/api/tranaction/id/{id}";
+    option (google.api.http).get = "/v1/tranaction/id/{id}";
   }
   rpc SendRawTransaction(SendRawTransactionRequest)
       returns (SendRawTransactionResponse) {
-    option (google.api.http).put = "/api/send_raw_transaction/{data}";
+    option (google.api.http).put = "/v1/tranaction/send_raw_transaction/{data}";
   };
 }
 

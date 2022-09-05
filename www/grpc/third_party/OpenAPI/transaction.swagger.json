@@ -16,37 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/send_raw_transaction/{data}": {
-      "put": {
-        "operationId": "Transaction_SendRawTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/zarbSendRawTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "data",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
-    "/api/tranaction/id/{id}": {
+    "/v1/tranaction/id/{id}": {
       "get": {
         "operationId": "Transaction_GetTransaction",
         "responses": {
@@ -66,6 +36,36 @@
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/v1/tranaction/send_raw_transaction/{data}": {
+      "put": {
+        "operationId": "Transaction_SendRawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbSendRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data",
             "in": "path",
             "required": true,
             "type": "string"

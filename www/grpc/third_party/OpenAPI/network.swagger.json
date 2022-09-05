@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/network": {
+    "/v1/network/info": {
       "get": {
         "operationId": "Network_GetNetworkInfo",
         "responses": {

@@ -77,7 +77,7 @@ func (s *Server) startGateway() error {
 		Addr:              s.config.Gateway.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.HasPrefix(r.URL.Path, "/api") {
+			if strings.HasPrefix(r.URL.Path, "/v1") {
 				gwMux.ServeHTTP(w, r)
 				return
 			}

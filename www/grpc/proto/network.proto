@@ -9,7 +9,7 @@ package zarb;
 
 service Network {
   rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse) {
-    option (google.api.http).get = "/api/network";
+    option (google.api.http).get = "/v1/network/info";
   }
 }
 
