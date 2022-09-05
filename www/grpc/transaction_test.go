@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetTransaction(t *testing.T) {
-	conn, client := callServer(t)
+	conn, client := callTransactionServer(t)
 
 	tx1 := tMockState.TestStore.AddTestTransaction()
 
@@ -49,7 +49,7 @@ func TestGetTransaction(t *testing.T) {
 }
 
 func TestSendRawTransaction(t *testing.T) {
-	conn, client := callServer(t)
+	conn, client := callTransactionServer(t)
 
 	t.Run("Should fail, invalid raw data", func(t *testing.T) {
 		res, err := client.SendRawTransaction(tCtx, &zarb.SendRawTransactionRequest{Data: "invalid raw data"})

@@ -55,7 +55,15 @@ func (s *Server) startGateway() error {
 	}
 
 	gwMux := runtime.NewServeMux()
-	err = zarb.RegisterZarbHandler(s.ctx, gwMux, conn)
+	err = zarb.RegisterBlockchainHandler(s.ctx, gwMux, conn)
+	if err != nil {
+		return err
+	}
+	err = zarb.RegisterTransactionHandler(s.ctx, gwMux, conn)
+	if err != nil {
+		return err
+	}
+	err = zarb.RegisterNetworkHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}

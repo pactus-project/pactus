@@ -1,0 +1,12 @@
+syntax = 'proto3';
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+
+package zarb;
+
+service Wallet {
+
+}

@@ -1,0 +1,551 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "blockchain.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Blockchain"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/account/address/{address}": {
+      "get": {
+        "operationId": "Blockchain_GetAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbAccountResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/api/block/hash/{hash}": {
+      "get": {
+        "operationId": "Blockchain_GetBlock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbBlockResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "verbosity",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "BLOCK_HASH",
+              "BLOCK_INFO",
+              "BLOCK_TRANSACTIONS"
+            ],
+            "default": "BLOCK_HASH"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/api/block_hash/{height}": {
+      "get": {
+        "operationId": "Blockchain_GetBlockHash",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbBlockHashResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/api/blockchain": {
+      "get": {
+        "operationId": "Blockchain_GetBlockchainInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbBlockchainInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/api/validator/address/{address}": {
+      "get": {
+        "operationId": "Blockchain_GetValidator",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbValidatorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/api/validator/{number}": {
+      "get": {
+        "operationId": "Blockchain_GetValidatorByNumber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbValidatorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/api/validators": {
+      "get": {
+        "operationId": "Blockchain_GetValidators",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbValidatorsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "zarbAccountInfo": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Balance": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "zarbAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/zarbAccountInfo"
+        }
+      }
+    },
+    "zarbBlockHashResponse": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "zarbBlockHeaderInfo": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "prevBlockHash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "stateRoot": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sortitionSeed": {
+          "type": "string",
+          "format": "byte"
+        },
+        "proposerAddress": {
+          "type": "string"
+        }
+      }
+    },
+    "zarbBlockResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "blockTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "header": {
+          "$ref": "#/definitions/zarbBlockHeaderInfo"
+        },
+        "prevCert": {
+          "$ref": "#/definitions/zarbCertificateInfo"
+        },
+        "txs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zarbTransactionInfo"
+          }
+        }
+      }
+    },
+    "zarbBlockVerbosity": {
+      "type": "string",
+      "enum": [
+        "BLOCK_HASH",
+        "BLOCK_INFO",
+        "BLOCK_TRANSACTIONS"
+      ],
+      "default": "BLOCK_HASH"
+    },
+    "zarbBlockchainInfoResponse": {
+      "type": "object",
+      "properties": {
+        "lastBlockHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lastBlockHash": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "zarbCertificateInfo": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "committers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "absentees": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "signature": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "zarbPayloadBond": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "zarbPayloadSend": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "zarbPayloadSortition": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "zarbPayloadType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "SEND_PAYLOAD",
+        "BOND_PAYLOAD",
+        "SORTITION_PAYLOAD",
+        "UNBOND_PAYLOAD"
+      ],
+      "default": "UNKNOWN"
+    },
+    "zarbTransactionInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "byte"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stamp": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Type": {
+          "$ref": "#/definitions/zarbPayloadType"
+        },
+        "send": {
+          "$ref": "#/definitions/zarbPayloadSend"
+        },
+        "bond": {
+          "$ref": "#/definitions/zarbPayloadBond"
+        },
+        "sortition": {
+          "$ref": "#/definitions/zarbPayloadSortition"
+        },
+        "memo": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "zarbValidatorInfo": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        },
+        "lastBondingHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lastJoinedHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unbondingHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "zarbValidatorResponse": {
+      "type": "object",
+      "properties": {
+        "validator": {
+          "$ref": "#/definitions/zarbValidatorInfo"
+        }
+      }
+    },
+    "zarbValidatorsResponse": {
+      "type": "object",
+      "properties": {
+        "validators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zarbValidatorInfo"
+          }
+        }
+      }
+    }
+  }
+}

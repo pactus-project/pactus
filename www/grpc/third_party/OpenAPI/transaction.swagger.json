@@ -1,0 +1,225 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "transaction.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Transaction"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/send_raw_transaction/{data}": {
+      "put": {
+        "operationId": "Transaction_SendRawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbSendRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/api/tranaction/id/{id}": {
+      "get": {
+        "operationId": "Transaction_GetTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/zarbTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "zarbPayloadBond": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "zarbPayloadSend": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "zarbPayloadSortition": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "zarbPayloadType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "SEND_PAYLOAD",
+        "BOND_PAYLOAD",
+        "SORTITION_PAYLOAD",
+        "UNBOND_PAYLOAD"
+      ],
+      "default": "UNKNOWN"
+    },
+    "zarbSendRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "zarbTransactionInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "byte"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stamp": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Type": {
+          "$ref": "#/definitions/zarbPayloadType"
+        },
+        "send": {
+          "$ref": "#/definitions/zarbPayloadSend"
+        },
+        "bond": {
+          "$ref": "#/definitions/zarbPayloadBond"
+        },
+        "sortition": {
+          "$ref": "#/definitions/zarbPayloadSortition"
+        },
+        "memo": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "zarbTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "tranaction": {
+          "$ref": "#/definitions/zarbTransactionInfo"
+        }
+      }
+    }
+  }
+}
