@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -106,4 +107,25 @@ func TestDuplicatedAggregation(t *testing.T) {
 
 	pubs2 := []*PublicKey{pub1, pub2, pub1}
 	assert.True(t, VerifyAggregated(agg1, pubs2, msg1))
+}
+
+func TestHashToCurve(t *testing.T) {
+	tests := []struct {
+		msg      []byte
+		domain   []byte
+		expected []byte
+	}{
+		{
+			[]byte(""),
+			[]byte("QUUX-V01-CS02-with-BLS12381G1_XMD:SHA-256_SSWU_RO_"),
+			util.Hex2Bytes("052926add2207b76ca4fa57a8734416c8dc95e24501772c814278700eed6d1e4e8cf62d9c09db0fac349612b759e79a1" +
+				"08ba738453bfed09cb546dbb0783dbb3a5f1f566ed67bb6be0e8c67e2e81a4cc68ee29813bb7994998f3eae0c9c6a265"),
+		},
+	}
+
+	for _, test := range tests {
+		p, _ := g1.HashToCurve(test.msg, test.domain)
+		expectedPoint, _ := g1.FromBytes(test.expected)
+		assert.Equal(t, p, expectedPoint)
+	}
 }

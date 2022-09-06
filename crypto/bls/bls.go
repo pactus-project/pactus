@@ -2,8 +2,13 @@ package bls
 
 import (
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/zarbchain/zarb-go/crypto"
 )
+
+var g1 = bls12381.NewG1()
+var g2 = bls12381.NewG2()
+
+var dst = []byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")
 
 func init() {
 	err := bls.Init(bls.BLS12_381)
@@ -49,8 +54,8 @@ func init() {
 }
 
 func Aggregate(sigs []*Signature) *Signature {
-	aggregated := new(bls.Sign)
-	signatures := make([]bls.Sign, len(sigs))
+	// aggregated := new(bls.Sign)
+	// signatures := make([]bls.Sign, len(sigs))
 
 	for i, s := range sigs {
 		signatures[i] = s.signature
@@ -58,17 +63,16 @@ func Aggregate(sigs []*Signature) *Signature {
 
 	aggregated.Aggregate(signatures)
 
-	return &Signature{
-		signature: *aggregated,
-	}
+	return nil
 }
 
 func VerifyAggregated(aggregated *Signature, pubs []*PublicKey, msg []byte) bool {
-	pubVec := make([]bls.PublicKey, len(pubs))
-	for i, p := range pubs {
-		pubVec[i] = p.publicKey
-	}
-	return aggregated.signature.FastAggregateVerify(pubVec, msg)
+	// pubVec := make([]bls.PublicKey, len(pubs))
+	// for i, p := range pubs {
+	// 	pubVec[i] = p.publicKey
+	// }
+	// return aggregated.signature.FastAggregateVerify(pubVec, msg)
+	return false
 }
 
 // GenerateTestSigner generates a signer for testing.

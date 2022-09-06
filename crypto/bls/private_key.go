@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/bech32m"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/util/bech32m"
+	"github.com/zarbchain/zarb-go/util/errors"
 	"golang.org/x/crypto/hkdf"
 )
 
@@ -130,10 +130,17 @@ func (prv *PrivateKey) SanityCheck() error {
 }
 
 func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
-	sig := new(Signature)
-	sig.signature = *prv.secretKey.SignByte(msg)
+	q, err := g1.HashToCurve(msg, dst)
+	if err != nil {
+		panic(err)
+	}
+	prv.secretKey.Serialize()
+	fr := bls12381.NewFr()
+	fr2 := fr.FromBytes(prv.Bytes())
 
-	return sig
+	s := g1.MulScalar(g1.New(), q, fr2)
+
+	return &Signature{pointG1: s}
 }
 
 func (prv *PrivateKey) PublicKey() crypto.PublicKey {

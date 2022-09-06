@@ -7,15 +7,15 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/util/encoding"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 const SignatureSize = 48
 
 type Signature struct {
-	signature bls.Sign
+	pointG1 *bls12381.PointG1
 }
 
 func SignatureFromString(text string) (*Signature, error) {
@@ -32,23 +32,20 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 		return nil, errors.Errorf(errors.ErrInvalidSignature,
 			"signature should be %d bytes, but it is %v bytes", SignatureSize, len(data))
 	}
-	s := new(bls.Sign)
-	if err := s.Deserialize(data); err != nil {
+	pointG1, err := g1.FromCompressed(data)
+	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidSignature, err.Error())
 	}
 
-	var sig Signature
-	sig.signature = *s
-
-	return &sig, nil
+	return &Signature{pointG1: pointG1}, nil
 }
 
-func (sig Signature) Bytes() []byte {
-	return sig.signature.Serialize()
+func (sig *Signature) Bytes() []byte {
+	return g1.ToCompressed(sig.pointG1)
 }
 
-func (sig Signature) String() string {
-	return sig.signature.SerializeToHexStr()
+func (sig *Signature) String() string {
+	return hex.EncodeToString(sig.Bytes())
 }
 
 func (sig *Signature) MarshalCBOR() ([]byte, error) {
@@ -84,7 +81,7 @@ func (sig *Signature) Decode(r io.Reader) error {
 }
 
 func (sig *Signature) SanityCheck() error {
-	if sig.signature.IsZero() {
+	if g1.IsZero(sig.pointG1) {
 		return errors.Errorf(errors.ErrInvalidSignature, "signature is zero")
 	}
 
@@ -92,5 +89,5 @@ func (sig *Signature) SanityCheck() error {
 }
 
 func (sig Signature) EqualsTo(right crypto.Signature) bool {
-	return sig.signature.IsEqual(&right.(*Signature).signature)
+	return g1.Equal(sig.pointG1, right.(*Signature).pointG1)
 }
