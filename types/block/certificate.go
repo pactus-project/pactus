@@ -47,9 +47,6 @@ func (cert *Certificate) SanityCheck() error {
 	if cert.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
-	if err := cert.Signature().SanityCheck(); err != nil {
-		return err
-	}
 	if cert.Committers() == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid committers")
 	}

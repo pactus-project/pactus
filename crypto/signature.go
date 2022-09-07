@@ -9,6 +9,5 @@ type Signature interface {
 	UnmarshalCBOR([]byte) error
 	Encode(io.Writer) error
 	Decode(io.Reader) error
-	SanityCheck() error
 	EqualsTo(right Signature) bool
 }

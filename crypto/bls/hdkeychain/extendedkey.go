@@ -13,38 +13,15 @@ import (
 	"strings"
 
 	herumi "github.com/herumi/bls-go-binary/bls"
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/bech32m"
-	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/bls"
+	"github.com/zarbchain/zarb-go/util"
+	"github.com/zarbchain/zarb-go/util/bech32m"
+	"github.com/zarbchain/zarb-go/util/encoding"
 )
 
-// G1 Generator for BLS12-381 curve
-var g1Gen herumi.G1
-
-// G2 Generator for BLS12-381 curve
-var g2Gen herumi.G2
-
-func init() {
-	err := g1Gen.SetString(`
-	1
-	17f1d3a73197d7942695638c4fa9ac0fc3688c4f9774b905a14e3a3f171bac586c55e83ff97a1aeffb3af00adb22c6bb
-	08b3f481e3aaa0f1a09e30ed741d8ae4fcf5e095d5d00af600db18cb2c04b3edd03cc744a2888ae40caa232946c5e7e1`, 16)
-	if err != nil {
-		panic(err)
-	}
-
-	err = g2Gen.SetString(`
-	1
-	024aa2b2f08f0a91260805272dc51051c6e47ad4fa403b02b4510b647ae3d1770bac0326a805bbefd48056c8c121bdb8
-	13e02b6052719f607dacd3a088274f65596bd0d09920b61ab5da61bbdc7f5049334cf11213945d57e5ac7d055d042b7e
-	0ce5d527727d6e118cc9cdc6da2e351aadfd9baa8cbdd3a76d429a695160d12c923ac9cc3baca289e193548608b82801
-	0606c4a02ea734cc32acd2b02bc28b99cb3e287e85a763af267492ab572e99ab3f370d275cec1da1aaa9075ff05f79be`, 16)
-	if err != nil {
-		panic(err)
-	}
-}
+var g1 = bls12381.NewG1()
+var g2 = bls12381.NewG2()
 
 const (
 	// HardenedKeyStart is the index at which a hardened key starts.  Each
@@ -96,26 +73,17 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 	if !k.isPrivate {
 		return k.key
 	}
-	privKey := new(herumi.Fr)
+	privKey := bls12381.NewFr()
+	privKey.FromBytes(k.key)
 	if k.pubOnG1 {
-		pub := new(herumi.G1)
-		err := privKey.Deserialize(k.key)
-		if err != nil {
-			panic(err)
-		}
-
-		herumi.G1Mul(pub, &g1Gen, privKey)
-		return pub.Serialize()
+		pub := new(bls12381.PointG1)
+		g1.MulScalar(pub, g1.One(), privKey)
+		return g1.ToCompressed(pub)
 	}
 
-	pub := new(herumi.G2)
-	err := privKey.Deserialize(k.key)
-	if err != nil {
-		panic(err)
-	}
-
-	herumi.G2Mul(pub, &g2Gen, privKey)
-	return pub.Serialize()
+	pub := new(bls12381.PointG2)
+	g2.MulScalar(pub, g2.One(), privKey)
+	return g2.ToCompressed(pub)
 }
 
 // IsPrivate returns whether or not the extended key is a private extended key.
@@ -226,10 +194,8 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	il := ilr[:len(ilr)/2]
 	childChainCode := ilr[len(ilr)/2:]
 
-	ilNum := new(herumi.Fr)
-	if err := ilNum.SetBigEndianMod(il); err != nil {
-		return nil, ErrInvalidKeyData
-	}
+	ilNum := new(bls12381.Fr)
+	ilNum.FromBytes(il)
 
 	var childKey []byte
 	if k.isPrivate {
@@ -239,18 +205,16 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		//
 		// childKey = parse256(Il) + parenKey
 
-		keyNum := new(herumi.Fr)
-		if err := keyNum.SetBigEndianMod(k.key); err != nil {
-			return nil, ErrInvalidKeyData
-		}
+		keyNum := new(bls12381.Fr)
+		keyNum.FromBytes(k.key)
 
-		childKeyNum := new(herumi.Fr)
-		herumi.FrAdd(childKeyNum, keyNum, ilNum)
+		childKeyNum := bls12381.NewFr()
+		childKeyNum.Add(keyNum, ilNum)
 
 		if childKeyNum.IsZero() {
 			return nil, ErrInvalidKeyData
 		}
-		childKey = childKeyNum.Serialize()
+		childKey = childKeyNum.ToBytes()
 	} else {
 		// Case #3.
 		// Calculate the corresponding intermediate public key for the
@@ -258,38 +222,37 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 
 		if k.pubOnG1 {
 			// Public key is in G1 subgroup
-			ilPoint := new(herumi.G1)
-			herumi.G1Mul(ilPoint, &g1Gen, ilNum)
+			ilPoint := new(bls12381.PointG1)
+			g1 := bls12381.NewG1()
+			g1.MulScalar(ilPoint, g1.One(), ilNum)
 
-			pubKey := new(herumi.G1)
-			err := pubKey.Deserialize(k.key)
+			pubKey, err := g1.FromCompressed(k.key)
 			if err != nil {
 				return nil, err
 			}
-			childPubKey := new(herumi.G1)
-			herumi.G1Add(childPubKey, pubKey, ilPoint)
+			childPubKey := new(bls12381.PointG1)
+			g1.Add(childPubKey, pubKey, ilPoint)
 
-			if childPubKey.IsZero() {
+			if g1.IsZero(childPubKey) {
 				return nil, ErrInvalidKeyData
 			}
-			childKey = childPubKey.Serialize()
+			childKey = g1.ToCompressed(childPubKey)
 		} else {
 			// Public key is in G2 subgroup
-			ilPoint := new(herumi.G2)
-			herumi.G2Mul(ilPoint, &g2Gen, ilNum)
+			ilPoint := new(bls12381.PointG2)
+			g2.MulScalar(ilPoint, g2.One(), ilNum)
 
-			pubKey := new(herumi.G2)
-			err := pubKey.Deserialize(k.key)
+			pubKey, err := g2.FromCompressed(k.key)
 			if err != nil {
 				return nil, err
 			}
-			childPubKey := new(herumi.G2)
-			herumi.G2Add(childPubKey, pubKey, ilPoint)
+			childPubKey := new(bls12381.PointG2)
+			g2.Add(childPubKey, pubKey, ilPoint)
 
-			if childPubKey.IsZero() {
+			if g2.IsZero(childPubKey) {
 				return nil, ErrInvalidKeyData
 			}
-			childKey = childPubKey.Serialize()
+			childKey = g2.ToCompressed(childPubKey)
 		}
 	}
 

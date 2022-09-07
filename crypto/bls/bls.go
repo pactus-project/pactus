@@ -2,28 +2,27 @@ package bls
 
 import (
 	"github.com/herumi/bls-go-binary/bls"
+	bls12381 "github.com/kilic/bls12-381"
 	"github.com/zarbchain/zarb-go/crypto"
 )
 
 var g1 = bls12381.NewG1()
 var g2 = bls12381.NewG2()
 
+// set Ciphersuite for Basic mode
+// https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-4.2.1
 var dst = []byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")
 
-func init() {
-	err := bls.Init(bls.BLS12_381)
-	if err != nil {
-		panic(err)
+func Aggregate(sigs []*Signature) *Signature {
+	if len(sigs) == 0 {
+		return nil
 	}
-
-	// use serialization mode compatible with ETH
-	bls.SetETHserialization(true)
-
-	// set Ciphersuite for Basic mode
-	// https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-4.1
-	err = bls.SetDstG1("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")
-	if err != nil {
-		panic(err)
+	aggPointG1 := sigs[0].pointG1
+	for i := 1; i < len(sigs); i++ {
+		g1.Add(
+			&aggPointG1,
+			&aggPointG1,
+			&sigs[i].pointG1)
 	}
 
 	err = bls.SetMapToMode(bls.IRTF)
@@ -57,22 +56,21 @@ func Aggregate(sigs []*Signature) *Signature {
 	// aggregated := new(bls.Sign)
 	// signatures := make([]bls.Sign, len(sigs))
 
-	for i, s := range sigs {
-		signatures[i] = s.signature
-	}
+	// for i, s := range sigs {
+	// 	signatures[i] = s.signature
+	// }
 
-	aggregated.Aggregate(signatures)
+	// aggregated.Aggregate(signatures)
+
+	// return &Signature{
+	// 	signature: *aggregated,
+	// }
 
 	return nil
 }
 
-func VerifyAggregated(aggregated *Signature, pubs []*PublicKey, msg []byte) bool {
-	// pubVec := make([]bls.PublicKey, len(pubs))
-	// for i, p := range pubs {
-	// 	pubVec[i] = p.publicKey
-	// }
-	// return aggregated.signature.FastAggregateVerify(pubVec, msg)
-	return false
+	aggPub := PublicKey{pointG2: aggPointG2}
+	return aggPub.Verify(msg, sig) == nil
 }
 
 // GenerateTestSigner generates a signer for testing.
@@ -83,11 +81,13 @@ func GenerateTestSigner() crypto.Signer {
 
 // GenerateTestKeyPair generates a key pair for testing.
 func GenerateTestKeyPair() (*PublicKey, *PrivateKey) {
-	prv := new(PrivateKey)
-	prv.secretKey.SetByCSPRNG()
-
-	pub := new(PublicKey)
-	pub.publicKey = *prv.secretKey.GetPublicKey()
+	buf := make([]byte, PrivateKeySize)
+	_, err := rand.Read(buf)
+	if err != nil {
+		panic(err)
+	}
+	prv, _ := PrivateKeyFromBytes(buf)
+	pub := prv.PublicKey().(*PublicKey)
 
 	return pub, prv
 }

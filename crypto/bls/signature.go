@@ -15,7 +15,7 @@ import (
 const SignatureSize = 48
 
 type Signature struct {
-	pointG1 *bls12381.PointG1
+	pointG1 bls12381.PointG1
 }
 
 func SignatureFromString(text string) (*Signature, error) {
@@ -27,6 +27,7 @@ func SignatureFromString(text string) (*Signature, error) {
 	return SignatureFromBytes(data)
 }
 
+// SignatureFromBytes constructs a BLS signature from the raw bytes.
 func SignatureFromBytes(data []byte) (*Signature, error) {
 	if len(data) != SignatureSize {
 		return nil, errors.Errorf(errors.ErrInvalidSignature,
@@ -36,12 +37,16 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidSignature, err.Error())
 	}
+	if g1.IsZero(pointG1) {
+		return nil, errors.Errorf(errors.ErrInvalidSignature,
+			"signature is zero")
+	}
 
-	return &Signature{pointG1: pointG1}, nil
+	return &Signature{pointG1: *pointG1}, nil
 }
 
 func (sig *Signature) Bytes() []byte {
-	return g1.ToCompressed(sig.pointG1)
+	return g1.ToCompressed(&sig.pointG1)
 }
 
 func (sig *Signature) String() string {
@@ -80,14 +85,6 @@ func (sig *Signature) Decode(r io.Reader) error {
 	return nil
 }
 
-func (sig *Signature) SanityCheck() error {
-	if g1.IsZero(sig.pointG1) {
-		return errors.Errorf(errors.ErrInvalidSignature, "signature is zero")
-	}
-
-	return nil
-}
-
 func (sig Signature) EqualsTo(right crypto.Signature) bool {
-	return g1.Equal(sig.pointG1, right.(*Signature).pointG1)
+	return g1.Equal(&sig.pointG1, &right.(*Signature).pointG1)
 }

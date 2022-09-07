@@ -6,7 +6,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/herumi/bls-go-binary/bls"
+	bls12381 "github.com/kilic/bls12-381"
 	"github.com/zarbchain/zarb-go/crypto"
 	"github.com/zarbchain/zarb-go/util"
 	"github.com/zarbchain/zarb-go/util/bech32m"
@@ -17,7 +17,7 @@ import (
 const PrivateKeySize = 32
 
 type PrivateKey struct {
-	secretKey bls.SecretKey
+	fr bls12381.Fr
 }
 
 // PrivateKeyFromString decodes the string encoding of a BLS private key
@@ -31,11 +31,13 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 
 	// Check if hrp is valid
 	if hrp != crypto.PrivateKeyHRP {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid hrp: %v", hrp)
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
+			"invalid hrp: %v", hrp)
 	}
 
 	if typ != crypto.SignatureTypeBLS {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, "invalid private key type: %v", typ)
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
+			"invalid private key type: %v", typ)
 	}
 
 	return PrivateKeyFromBytes(data)
@@ -75,7 +77,7 @@ func KeyGen(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 		reader := hkdf.Expand(sha256.New, prk, pseudoRandomKey)
 		_, _ = reader.Read(okm)
 
-		r, _ := new(big.Int).SetString("73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001", 16)
+		r := g1.Q()
 		x = new(big.Int).Mod(util.OS2IP(okm), r)
 	}
 
@@ -85,71 +87,55 @@ func KeyGen(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 }
 
 // PrivateKeyFromBytes constructs a BLS private key from the raw bytes.
-// This method in unexported and should not be called from the outside.
 func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
 			"private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
 	}
-	sc := new(bls.SecretKey)
-	if err := sc.Deserialize(data); err != nil {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
+
+	fr := bls12381.NewFr()
+	fr.FromBytes(data)
+	if fr.IsZero() {
+		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
+			"private key is zero")
 	}
 
-	var prv PrivateKey
-	prv.secretKey = *sc
-
-	return &prv, nil
+	return &PrivateKey{fr: *fr}, nil
 }
 
 // String returns a human-readable string for the BLS private key.
-func (prv PrivateKey) String() string {
-	data := prv.secretKey.Serialize()
-
-	str, err := bech32m.EncodeFromBase256WithType(
+func (prv *PrivateKey) String() string {
+	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PrivateKeyHRP,
 		crypto.SignatureTypeBLS,
-		data)
-	if err != nil {
-		panic(err.Error())
-	}
+		prv.Bytes())
 
 	return strings.ToUpper(str)
 }
 
 // Bytes return the raw bytes of the private key.
-func (prv PrivateKey) Bytes() []byte {
-	return prv.secretKey.Serialize()
+func (prv *PrivateKey) Bytes() []byte {
+	return prv.fr.ToBytes()
 }
 
-func (prv *PrivateKey) SanityCheck() error {
-	if prv.secretKey.IsZero() {
-		return fmt.Errorf("private key is zero")
-	}
-	return nil
-}
-
+// Sign calculates the signature from the private key and given message.
+// It's defined in section 2.6 of the spec: CoreSign
 func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
 	q, err := g1.HashToCurve(msg, dst)
 	if err != nil {
 		panic(err)
 	}
-	prv.secretKey.Serialize()
-	fr := bls12381.NewFr()
-	fr2 := fr.FromBytes(prv.Bytes())
-
-	s := g1.MulScalar(g1.New(), q, fr2)
-
-	return &Signature{pointG1: s}
+	s := g1.MulScalar(g1.New(), q, &prv.fr)
+	return &Signature{pointG1: *s}
 }
 
 func (prv *PrivateKey) PublicKey() crypto.PublicKey {
-	pub := prv.secretKey.GetPublicKey()
+	pointG2 := g2.MulScalar(g2.New(), g2.One(), &prv.fr)
 	return &PublicKey{
-		publicKey: *pub,
+		pointG2: *pointG2,
 	}
 }
 
 func (prv *PrivateKey) EqualsTo(right crypto.PrivateKey) bool {
-	return prv.secretKey.IsEqual(&right.(*PrivateKey).secretKey)
+	return prv.fr.Equal(&right.(*PrivateKey).fr)
 }

@@ -6,17 +6,17 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/util/bech32m"
-	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/zarbchain/zarb-go/util/bech32m"
+	"github.com/zarbchain/zarb-go/util/encoding"
+	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 const PublicKeySize = 96
 
 type PublicKey struct {
-	publicKey bls.PublicKey
+	pointG2 bls12381.PointG2
 }
 
 // PublicKeyFromString decodes the string encoding of a BLS public key
@@ -40,37 +40,35 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 	return PublicKeyFromBytes(data)
 }
 
+// PublicKeyFromBytes constructs a BLS public key from the raw bytes.
 func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	if len(data) != PublicKeySize {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
 			"public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
 	}
-	pk := new(bls.PublicKey)
-	if err := pk.Deserialize(data); err != nil {
+
+	pointG2, err := g2.FromCompressed(data)
+	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey, err.Error())
 	}
+	if g2.IsZero(pointG2) {
+		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
+			"public key is zero")
+	}
 
-	var pub PublicKey
-	pub.publicKey = *pk
-
-	return &pub, nil
+	return &PublicKey{pointG2: *pointG2}, nil
 }
 
-func (pub PublicKey) Bytes() []byte {
-	return pub.publicKey.Serialize()
+func (pub *PublicKey) Bytes() []byte {
+	return g2.ToCompressed(&pub.pointG2)
 }
 
 // String returns a human-readable string for the BLS public key.
 func (pub *PublicKey) String() string {
-	data := pub.publicKey.Serialize()
-
-	str, err := bech32m.EncodeFromBase256WithType(
+	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PublicKeyHRP,
 		crypto.SignatureTypeBLS,
-		data)
-	if err != nil {
-		panic(err.Error())
-	}
+		pub.Bytes())
 
 	return str
 }
@@ -107,26 +105,34 @@ func (pub *PublicKey) Decode(r io.Reader) error {
 	return nil
 }
 
-func (pub *PublicKey) SanityCheck() error {
-	if pub.publicKey.IsZero() {
-		return errors.Errorf(errors.ErrInvalidPublicKey, "public key is zero")
+// The Verify checks that a signature is valid for the given message and public key.
+// It's defined in section 2.6 of the spec: CoreVerify
+func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
+	if sig == nil {
+		return errors.Error(errors.ErrInvalidSignature)
+	}
+	r := sig.(*Signature)
+	if g1.IsZero(&r.pointG1) {
+		return errors.Errorf(errors.ErrInvalidSignature,
+			"signature is zero")
+	}
+	q, err := g1.HashToCurve(msg, dst)
+	if err != nil {
+		panic(err)
 	}
 
-	return nil
-}
+	eng := bls12381.NewEngine()
+	eng.AddPair(q, &pub.pointG2)
+	eng.AddPairInv(&r.pointG1, &bls12381.G2One)
 
-func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
-	// if sig == nil {
-	// 	return errors.Error(errors.ErrInvalidSignature)
-	// }
-	// if !sig.(*Signature).signature.VerifyByte(&pub.publicKey, msg) {
-	// 	return errors.Error(errors.ErrInvalidSignature)
-	// }
+	if !eng.Check() {
+		return errors.Error(errors.ErrInvalidSignature)
+	}
 	return nil
 }
 
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
-	return pub.publicKey.IsEqual(&right.(*PublicKey).publicKey)
+	return g2.Equal(&pub.pointG2, &right.(*PublicKey).pointG2)
 }
 
 func (pub *PublicKey) Address() crypto.Address {

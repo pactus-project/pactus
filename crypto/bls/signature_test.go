@@ -20,7 +20,6 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, sig2.UnmarshalCBOR(bs))
 	assert.True(t, sig1.EqualsTo(sig2))
-	assert.NoError(t, sig1.SanityCheck())
 
 	assert.Error(t, sig2.UnmarshalCBOR([]byte("abcd")))
 
@@ -63,57 +62,56 @@ func TestVerifyingSignature(t *testing.T) {
 
 func TestSignatureBytes(t *testing.T) {
 	tests := []struct {
-		name      string
-		encoded   string
-		bytes     []byte
-		decodable bool
-		valid     bool
+		name    string
+		encoded string
+		bytes   []byte
+		valid   bool
 	}{
 		{"invalid input",
 			"inv",
-			nil,
-			false, false},
+			nil, false,
+		},
 		{"nil signature",
 			"",
-			nil,
-			false, false},
+			nil, false,
+		},
 		{"invalid length",
 			"00",
-			nil,
-			false, false},
+			nil, false,
+		},
 		{"zero signature",
 			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-			nil,
-			false, false},
+			nil, false,
+		},
 		{"invalid signature",
 			"fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-			nil,
-			false, false},
+			nil, false,
+		},
 		{"infinite signature",
 			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-			[]byte{0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-			true, false,
+			nil, false,
 		},
 		{"valid signature",
 			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
 			[]byte{0xad, 0x0f, 0x88, 0xce, 0xc8, 0x15, 0xe9, 0xb8, 0xaf, 0x3f, 0x01, 0x36, 0x29, 0x7c, 0xb2, 0x42,
 				0xed, 0x8b, 0x63, 0x69, 0xaf, 0x72, 0x3f, 0xbd, 0xac, 0x07, 0x7f, 0xa9, 0x27, 0xf5, 0x78, 0x0d,
 				0xb7, 0xdf, 0x47, 0xc7, 0x7f, 0xb5, 0x3f, 0x3a, 0x22, 0x32, 0x46, 0x73, 0xf0, 0x00, 0xc7, 0x92},
-			true, true,
+			true,
 		},
 	}
 
 	for _, test := range tests {
 		sig, err := SignatureFromString(test.encoded)
-		if test.decodable {
-			assert.NoError(t, err, "test %v. unexpected error", test.name)
-			assert.Equal(t, sig.SanityCheck() == nil, test.valid, "test %v. sanity check failed", test.name)
-			assert.Equal(t, sig.Bytes(), test.bytes, "test %v. invalid bytes", test.name)
-			assert.Equal(t, sig.String(), test.encoded, "test %v. invalid encoded", test.name)
+		if test.valid {
+			assert.NoError(t, err,
+				"test '%v'. unexpected error", test.name)
+			assert.Equal(t, sig.Bytes(), test.bytes,
+				"test '%v'. invalid bytes", test.name)
+			assert.Equal(t, sig.String(), test.encoded,
+				"test '%v'. invalid encoded", test.name)
 		} else {
-			assert.Error(t, err, "test %v. should failed", test.name)
+			assert.Error(t, err,
+				"test '%v'. should return error", test.name)
 			assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 		}
 	}

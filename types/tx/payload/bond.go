@@ -37,10 +37,6 @@ func (p *BondPayload) SanityCheck() error {
 		return err
 	}
 	if p.PublicKey != nil {
-		if err := p.PublicKey.SanityCheck(); err != nil {
-			return err
-		}
-
 		if err := p.PublicKey.VerifyAddress(p.Receiver); err != nil {
 			return err
 		}

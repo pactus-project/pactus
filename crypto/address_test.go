@@ -92,11 +92,15 @@ func TestToString(t *testing.T) {
 	for _, test := range tests {
 		addr, err := AddressFromString(test.encoded)
 		if test.decodable {
-			assert.NoError(t, err, "test %v. unexpected error", test.name)
-			assert.Equal(t, addr, *test.result, "test %v. unexpected result", test.name)
-			assert.Equal(t, addr.String(), strings.ToLower(test.encoded), "test %v. encoded failed", test.name)
+			assert.NoError(t, err,
+				"test '%v' failed. unexpected error", test.name)
+			assert.Equal(t, addr, *test.result,
+				"test '%v' failed.. unexpected result", test.name)
+			assert.Equal(t, addr.String(), strings.ToLower(test.encoded),
+				"test '%v' failed.. encoded failed", test.name)
 		} else {
-			assert.Error(t, err, "test %v. should failed", test.name)
+			assert.Error(t, err,
+				"test '%v failed.. should return error", test.name)
 			assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 		}
 	}
@@ -135,9 +139,11 @@ func TestAddressSanityCheck(t *testing.T) {
 		copy(addr[:], data)
 
 		if test.invalid {
-			assert.Error(t, addr.SanityCheck(), "test %v. expected error", test.name)
+			assert.Error(t, addr.SanityCheck(),
+				"test '%v'. expected error", test.name)
 		} else {
-			assert.NoError(t, addr.SanityCheck(), "test %v. unexpected error", test.name)
+			assert.NoError(t, addr.SanityCheck(),
+				"test '%v'. unexpected error", test.name)
 		}
 	}
 }

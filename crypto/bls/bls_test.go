@@ -109,23 +109,42 @@ func TestDuplicatedAggregation(t *testing.T) {
 	assert.True(t, VerifyAggregated(agg1, pubs2, msg1))
 }
 
+// TestHashToCurve ensures that the hash-to-curve function in kilic/bls12-381
+// works as intended and is compatible with the spec.
+// test vectors can be found here:
+// https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hash-to-curve-16#appendix-J.9.1
 func TestHashToCurve(t *testing.T) {
+	domain := []byte("QUUX-V01-CS02-with-BLS12381G1_XMD:SHA-256_SSWU_RO_")
 	tests := []struct {
 		msg      []byte
-		domain   []byte
 		expected []byte
 	}{
 		{
 			[]byte(""),
-			[]byte("QUUX-V01-CS02-with-BLS12381G1_XMD:SHA-256_SSWU_RO_"),
 			util.Hex2Bytes("052926add2207b76ca4fa57a8734416c8dc95e24501772c814278700eed6d1e4e8cf62d9c09db0fac349612b759e79a1" +
 				"08ba738453bfed09cb546dbb0783dbb3a5f1f566ed67bb6be0e8c67e2e81a4cc68ee29813bb7994998f3eae0c9c6a265"),
 		},
+		{
+			[]byte("abc"),
+			util.Hex2Bytes("03567bc5ef9c690c2ab2ecdf6a96ef1c139cc0b2f284dca0a9a7943388a49a3aee664ba5379a7655d3c68900be2f6903" +
+				"0b9c15f3fe6e5cf4211f346271d7b01c8f3b28be689c8429c85b67af215533311f0b8dfaaa154fa6b88176c229f2885d"),
+		},
+		{
+			[]byte("abcdef0123456789"),
+			util.Hex2Bytes("11e0b079dea29a68f0383ee94fed1b940995272407e3bb916bbf268c263ddd57a6a27200a784cbc248e84f357ce82d98" +
+				"03a87ae2caf14e8ee52e51fa2ed8eefe80f02457004ba4d486d6aa1f517c0889501dc7413753f9599b099ebcbbd2d709"),
+		},
+		{
+			[]byte("q128_qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"),
+			util.Hex2Bytes("15f68eaa693b95ccb85215dc65fa81038d69629f70aeee0d0f677cf22285e7bf58d7cb86eefe8f2e9bc3f8cb84fac488" +
+				"1807a1d50c29f430b8cafc4f8638dfeeadf51211e1602a5f184443076715f91bb90a48ba1e370edce6ae1062f5e6dd38"),
+		},
 	}
 
-	for _, test := range tests {
-		p, _ := g1.HashToCurve(test.msg, test.domain)
+	for i, test := range tests {
+		mappedPoint, _ := g1.HashToCurve(test.msg, domain)
 		expectedPoint, _ := g1.FromBytes(test.expected)
-		assert.Equal(t, p, expectedPoint)
+		assert.Equal(t, mappedPoint, expectedPoint,
+			"test '%v' failed. not equal", i)
 	}
 }

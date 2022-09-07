@@ -49,9 +49,6 @@ func (p *Proposal) SanityCheck() error {
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
-	if p.data.Signature.SanityCheck() != nil {
-		return errors.Error(errors.ErrInvalidSignature)
-	}
 	return nil
 }
 
