@@ -1,5 +1,4 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests')
-HERUMI= $(shell pwd)/.herumi
 BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
