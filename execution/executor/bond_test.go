@@ -117,7 +117,7 @@ func TestBondInsideCommittee(t *testing.T) {
 }
 
 // TestBondJoiningCommittee checks if a validator tries to increase stake after
-// evaluating sortuition.
+// evaluating sortition.
 // In non-strict mode it should be accepted.
 func TestBondJoiningCommittee(t *testing.T) {
 	setup(t)
@@ -154,7 +154,7 @@ func TestStakeExceeded(t *testing.T) {
 	pub, _ := bls.GenerateTestKeyPair()
 
 	trx := tx.NewBondTx(tStamp500000, sender.Sequence()+1, sender.Address(),
-		pub.Address(), pub, amt, fee, "stake wxceeded")
+		pub.Address(), pub, amt, fee, "stake exceeded")
 
 	assert.Error(t, exe.Execute(trx, tSandbox))
 }

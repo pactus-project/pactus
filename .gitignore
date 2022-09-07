@@ -4,7 +4,6 @@ build/
 .vscode
 todo
 *.local.*
-.herumi
 dist/
 .releaser.yml
 pactus-*

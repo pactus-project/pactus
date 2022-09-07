@@ -11,8 +11,8 @@ require (
 	github.com/gotk3/gotk3 v0.6.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
 	github.com/hashicorp/golang-lru v0.5.4
-	github.com/herumi/bls-go-binary v1.0.1-0.20220328013147-ab19a9ee50c7
 	github.com/jawher/mow.cli v1.2.0
+	github.com/kilic/bls12-381 v0.1.0
 	github.com/libp2p/go-libp2p v0.22.0
 	github.com/libp2p/go-libp2p-kad-dht v0.17.1-0.20220819144506-26ecb028d38d
 	github.com/libp2p/go-libp2p-pubsub v0.7.1-0.20220820074541-5b158cba4fcc
@@ -72,7 +72,6 @@ require (
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
 	github.com/jbenet/go-temp-err-catcher v0.1.0 // indirect
 	github.com/jbenet/goprocess v0.1.4 // indirect
-	github.com/kilic/bls12-381 v0.1.0 // indirect
 	github.com/klauspost/compress v1.15.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.1.0 // indirect
 	github.com/koron/go-ssdp v0.0.3 // indirect

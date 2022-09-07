@@ -20,9 +20,6 @@ import (
 	"github.com/zarbchain/zarb-go/util/encoding"
 )
 
-var g1 = bls12381.NewG1()
-var g2 = bls12381.NewG2()
-
 const (
 	// HardenedKeyStart is the index at which a hardened key starts.  Each
 	// extended key has 2^31 normal child keys and 2^31 hardened child keys.
@@ -73,6 +70,8 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 	if !k.isPrivate {
 		return k.key
 	}
+	g1 := bls12381.NewG1()
+
 	privKey := bls12381.NewFr()
 	privKey.FromBytes(k.key)
 	if k.pubOnG1 {
@@ -80,6 +79,8 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 		g1.MulScalar(pub, g1.One(), privKey)
 		return g1.ToCompressed(pub)
 	}
+
+	g2 := bls12381.NewG2()
 
 	pub := new(bls12381.PointG2)
 	g2.MulScalar(pub, g2.One(), privKey)
@@ -221,9 +222,10 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		// intermediate private key
 
 		if k.pubOnG1 {
+			g1 := bls12381.NewG1()
+
 			// Public key is in G1 subgroup
 			ilPoint := new(bls12381.PointG1)
-			g1 := bls12381.NewG1()
 			g1.MulScalar(ilPoint, g1.One(), ilNum)
 
 			pubKey, err := g1.FromCompressed(k.key)
@@ -238,6 +240,8 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			}
 			childKey = g1.ToCompressed(childPubKey)
 		} else {
+			g2 := bls12381.NewG2()
+
 			// Public key is in G2 subgroup
 			ilPoint := new(bls12381.PointG2)
 			g2.MulScalar(ilPoint, g2.One(), ilNum)

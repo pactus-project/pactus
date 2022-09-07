@@ -46,6 +46,7 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
 			"public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
 	}
+	g2 := bls12381.NewG2()
 
 	pointG2, err := g2.FromCompressed(data)
 	if err != nil {
@@ -60,6 +61,8 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 }
 
 func (pub *PublicKey) Bytes() []byte {
+	g2 := bls12381.NewG2()
+
 	return g2.ToCompressed(&pub.pointG2)
 }
 
@@ -111,6 +114,8 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if sig == nil {
 		return errors.Error(errors.ErrInvalidSignature)
 	}
+	g1 := bls12381.NewG1()
+
 	r := sig.(*Signature)
 	if g1.IsZero(&r.pointG1) {
 		return errors.Errorf(errors.ErrInvalidSignature,
@@ -132,6 +137,8 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 }
 
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
+	g2 := bls12381.NewG2()
+
 	return g2.Equal(&pub.pointG2, &right.(*PublicKey).pointG2)
 }
 

@@ -1,6 +1,6 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests')
 HERUMI= $(shell pwd)/.herumi
-BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git rev-parse --short=8 HEAD`"
+BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
@@ -20,11 +20,6 @@ devtools:
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	go install github.com/bufbuild/buf/cmd/buf@v1.3
 	go install github.com/rakyll/statik@v0.1
-
-herumi:
-	@if [ ! -d $(HERUMI) ]; then \
-		git clone --recursive https://github.com/herumi/bls.git $(HERUMI)/bls && cd $(HERUMI)/bls && make minimized_static; \
-	fi
 
 ########################################
 ### Building
@@ -96,5 +91,5 @@ check:
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 .PHONY: build build_gui
 .PHONY: test unit_test test_race
-.PHONY: devtools herumi capnp proto
+.PHONY: devtools capnp proto
 .PHONY: fmt check docker

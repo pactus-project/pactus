@@ -33,6 +33,8 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 		return nil, errors.Errorf(errors.ErrInvalidSignature,
 			"signature should be %d bytes, but it is %v bytes", SignatureSize, len(data))
 	}
+	g1 := bls12381.NewG1()
+
 	pointG1, err := g1.FromCompressed(data)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidSignature, err.Error())
@@ -46,6 +48,8 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 }
 
 func (sig *Signature) Bytes() []byte {
+	g1 := bls12381.NewG1()
+
 	return g1.ToCompressed(&sig.pointG1)
 }
 
@@ -86,5 +90,7 @@ func (sig *Signature) Decode(r io.Reader) error {
 }
 
 func (sig Signature) EqualsTo(right crypto.Signature) bool {
+	g1 := bls12381.NewG1()
+
 	return g1.Equal(&sig.pointG1, &right.(*Signature).pointG1)
 }

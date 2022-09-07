@@ -3,6 +3,7 @@ package bls
 import (
 	"testing"
 
+	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
@@ -141,6 +142,7 @@ func TestHashToCurve(t *testing.T) {
 		},
 	}
 
+	g1 := bls12381.NewG1()
 	for i, test := range tests {
 		mappedPoint, _ := g1.HashToCurve(test.msg, domain)
 		expectedPoint, _ := g1.FromBytes(test.expected)
