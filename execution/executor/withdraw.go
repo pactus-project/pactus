@@ -1,10 +1,10 @@
 package executor
 
 import (
-	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type WithdrawExecutor struct {

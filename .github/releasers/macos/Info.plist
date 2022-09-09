@@ -5,18 +5,18 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIdentifier</key>
-    <string>com.github.zarbchain.zarb-go.zarb-gui</string>
+    <string>com.github.pactus-project.pactus.pactus-gui</string>
     <key>CFBundleExecutable</key>
-    <string>zarb-gui</string>
+    <string>pactus-gui</string>
     <key>CFBundleName</key>
-    <string>zarb-gui</string>
+    <string>pactus-gui</string>
     <key>CFBundleShortVersionString</key>
     <string>%SHORTVERSION%</string>
     <key>CFBundleVersion</key>
     <string>%VERSION%</string>
 <!--
     <key>CFBundleIconFile</key>
-    <string>zarb.icns</string>
+    <string>pactus.icns</string>
 -->
     <key>CFBundleSignature</key>
     <string>????</string>

@@ -7,8 +7,8 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_transaction_send.ui

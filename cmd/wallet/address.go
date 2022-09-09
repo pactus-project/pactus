@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 // AllAddresses lists all the wallet addresses.

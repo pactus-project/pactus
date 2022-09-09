@@ -3,9 +3,9 @@ syntax = 'proto3';
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 
-package zarb;
+package pactus;
 
 service Network {
   rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse) {

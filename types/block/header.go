@@ -4,11 +4,11 @@ import (
 	"io"
 	"time"
 
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/sortition"
-	"github.com/zarbchain/zarb-go/util/encoding"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Header struct {

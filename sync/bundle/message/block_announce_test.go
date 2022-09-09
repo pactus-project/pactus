@@ -3,9 +3,9 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestBlockAnnounceType(t *testing.T) {

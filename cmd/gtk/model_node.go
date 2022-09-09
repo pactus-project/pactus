@@ -3,7 +3,7 @@
 package main
 
 import (
-	"github.com/zarbchain/zarb-go/node"
+	"github.com/pactus-project/pactus/node"
 )
 
 type nodeModel struct {

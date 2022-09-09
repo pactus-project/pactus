@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/util"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util"
 )
 
 // TODO:

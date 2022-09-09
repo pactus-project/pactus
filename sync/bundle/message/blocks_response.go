@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/pactus-project/pactus/types/block"
 )
 
 const LatestBlocksResponseCodeOK = 0

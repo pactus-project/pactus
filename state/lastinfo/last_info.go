@@ -5,14 +5,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zarbchain/zarb-go/committee"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/sortition"
-	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/committee"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type LastInfo struct {

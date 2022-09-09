@@ -3,9 +3,9 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestHeartBeatType(t *testing.T) {

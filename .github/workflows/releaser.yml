@@ -28,7 +28,7 @@ jobs:
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
-        files: zarb-*.tar.gz
+        files: pactus-*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -53,8 +53,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          zarb-*.dmg
-          zarb-*.tar.gz
+          pactus-*.dmg
+          pactus-*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -89,7 +89,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          zarb-*.zip
-          zarb-*installer.exe
+          pactus-*.zip
+          pactus-*installer.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

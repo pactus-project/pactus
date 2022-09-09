@@ -3,11 +3,11 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestHelloType(t *testing.T) {

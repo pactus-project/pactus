@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/vote"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/vote"
 )
 
 func TestPrepareQueryProposal(t *testing.T) {

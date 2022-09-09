@@ -3,11 +3,11 @@ package sync
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestParsingHeartbeatMessages(t *testing.T) {

@@ -3,9 +3,9 @@ package block
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/tx"
 )
 
 func TestTxsMerkle(t *testing.T) {

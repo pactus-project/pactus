@@ -3,8 +3,8 @@ package bls
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
 )
 
 type testSignableMsg struct {

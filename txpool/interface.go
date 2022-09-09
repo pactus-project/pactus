@@ -1,9 +1,9 @@
 package txpool
 
 import (
-	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/tx"
 )
 
 type Reader interface {

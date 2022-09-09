@@ -3,23 +3,23 @@ syntax = 'proto3';
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 
-package zarb;
+package pactus;
 
 service Transaction {
   rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
-    option (google.api.http).get = "/v1/tranaction/id/{id}";
+    option (google.api.http).get = "/v1/transaction/id/{id}";
   }
   rpc SendRawTransaction(SendRawTransactionRequest)
       returns (SendRawTransactionResponse) {
-    option (google.api.http).put = "/v1/tranaction/send_raw_transaction/{data}";
+    option (google.api.http).put = "/v1/transaction/send_raw_transaction/{data}";
   };
 }
 
 message TransactionRequest { string id = 1; }
 
-message TransactionResponse { TransactionInfo tranaction = 1; }
+message TransactionResponse { TransactionInfo transaction = 1; }
 
 message SendRawTransactionRequest { string data = 1; }
 

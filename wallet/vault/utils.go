@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	"github.com/pactus-project/pactus/util"
 	"github.com/tyler-smith/go-bip39"
-	"github.com/zarbchain/zarb-go/crypto/bls/hdkeychain"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func derivePathToString(path []uint32) string {

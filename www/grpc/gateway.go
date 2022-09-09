@@ -8,13 +8,13 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"github.com/rakyll/statik/fs"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	// Static files
-	_ "github.com/zarbchain/zarb-go/www/grpc/statik"
+	_ "github.com/pactus-project/pactus/www/grpc/statik"
 )
 
 type GatewayConfig struct {
@@ -55,15 +55,15 @@ func (s *Server) startGateway() error {
 	}
 
 	gwMux := runtime.NewServeMux()
-	err = zarb.RegisterBlockchainHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterBlockchainHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
-	err = zarb.RegisterTransactionHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterTransactionHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
-	err = zarb.RegisterNetworkHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterNetworkHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}

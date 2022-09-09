@@ -15,14 +15,7 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-var ZARB = `
- ███████╗  █████╗  ██████╗  ██████╗
- ╚══███╔╝ ██╔══██╗ ██╔══██╗ ██╔══██╗
-   ███╔╝  ███████║ ██████╔╝ ██████╔╝
-  ███╔╝   ██╔══██║ ██╔══██╗ ██╔══██╗
- ███████╗ ██║  ██║ ██║  ██║ ██████╔╝
- ╚══════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═════╝
-`
+var Pactus = ``
 
 // terminalSupported returns true if the current terminal supports
 // line editing features.
@@ -173,29 +166,29 @@ func PrintJSONObject(obj interface{}) {
 	PrintJSONData(data)
 }
 
-func ZarbHomeDir() string {
+func PactusHomeDir() string {
 	home := ""
 	usr, err := user.Current()
 	if err == nil {
 		// Running as root, probably inside docker
 		if usr.HomeDir == "/root" {
-			home = "/zarb/"
+			home = "/pactus/"
 		} else {
-			home = path.Join(usr.HomeDir, "zarb")
+			home = path.Join(usr.HomeDir, "pactus")
 		}
 	}
 	return home
 }
 
-func ZarbDefaultWalletPath(home string) string {
+func PactusDefaultWalletPath(home string) string {
 	return path.Join(home, "wallets"+string(os.PathSeparator)+"default_wallet")
 }
 
-func ZarbGenesisPath(home string) string {
+func PactusGenesisPath(home string) string {
 	return path.Join(home, "genesis.json")
 }
 
-func ZarbConfigPath(home string) string {
+func PactusConfigPath(home string) string {
 	return path.Join(home, "config.toml")
 }
 

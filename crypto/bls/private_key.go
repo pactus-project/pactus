@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/bech32m"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/bech32m"
+	"github.com/pactus-project/pactus/util/errors"
 	"golang.org/x/crypto/hkdf"
 )
 

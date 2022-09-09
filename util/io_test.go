@@ -23,7 +23,7 @@ func TestEmptyPath(t *testing.T) {
 	assert.True(t, IsDirEmpty(p))
 
 	f := TempFilePath()
-	d := []byte("zarb")
+	d := []byte("pactus")
 	assert.NoError(t, WriteFile(f, d))
 	o, err := ReadFile(f)
 	assert.NoError(t, err)
@@ -88,5 +88,5 @@ func TestIsValidPath(t *testing.T) {
 	}
 	assert.False(t, IsValidDirPath("./io_test.go"))
 	assert.True(t, IsValidDirPath("/tmp"))
-	assert.True(t, IsValidDirPath("/tmp/zarb"))
+	assert.True(t, IsValidDirPath("/tmp/pactus"))
 }

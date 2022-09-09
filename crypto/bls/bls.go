@@ -2,7 +2,7 @@ package bls
 
 import (
 	"github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/pactus-project/pactus/crypto"
 )
 
 func init() {

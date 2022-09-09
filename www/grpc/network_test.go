@@ -4,15 +4,15 @@ import (
 	"testing"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"github.com/stretchr/testify/assert"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
 )
 
 func TestGetNetworkInfo(t *testing.T) {
 	conn, client := callNetworkServer(t)
 
 	t.Run("Should return node PeerID", func(t *testing.T) {
-		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
+		res, err := client.GetNetworkInfo(tCtx, &pactus.NetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
 		assert.Equal(t, []byte(tMockSync.SelfID()), res.SelfId)
@@ -20,7 +20,7 @@ func TestGetNetworkInfo(t *testing.T) {
 	})
 
 	t.Run("Should return peer info", func(t *testing.T) {
-		res, err := client.GetNetworkInfo(tCtx, &zarb.NetworkInfoRequest{})
+		res, err := client.GetNetworkInfo(tCtx, &pactus.NetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res.Peers))

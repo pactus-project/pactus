@@ -3,8 +3,8 @@ package consensus
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestNewHeightTimedout(t *testing.T) {

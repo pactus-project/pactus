@@ -24,7 +24,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v3
       with:
-        images: zarb/zarb
+        images: pactus/pactus
 
     - name: Build and push
       uses: docker/build-push-action@v2

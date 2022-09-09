@@ -10,18 +10,18 @@ import (
 	"time"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/node"
-	"github.com/zarbchain/zarb-go/node/config"
-	"github.com/zarbchain/zarb-go/types/genesis"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/version"
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/node"
+	"github.com/pactus-project/pactus/node/config"
+	"github.com/pactus-project/pactus/types/genesis"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/version"
+	"github.com/pactus-project/pactus/wallet"
 )
 
-// Start starts the zarb node.
+// Start starts the pactus node.
 func Start() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
@@ -43,7 +43,7 @@ func Start() func(c *cli.Cmd) {
 		})
 
 		c.LongDesc = "Starting the node from working directory"
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() { fmt.Println(cmd.Pactus) }
 		c.Action = func() {
 			workingDir, _ := filepath.Abs(*workingDirOpt)
 			// change working directory
@@ -71,7 +71,7 @@ func Start() func(c *cli.Cmd) {
 				}()
 			}
 
-			gen, err := genesis.LoadFromFile(cmd.ZarbGenesisPath(workingDir))
+			gen, err := genesis.LoadFromFile(cmd.PactusGenesisPath(workingDir))
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! Could not obtain genesis. %v", err)
 				return
@@ -85,7 +85,7 @@ func Start() func(c *cli.Cmd) {
 				crypto.XPrivateKeyHRP = "txsecret"
 			}
 
-			conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))
+			conf, err := config.LoadFromFile(cmd.PactusConfigPath(workingDir))
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! Could not obtain config. %v", err)
 				return
@@ -107,7 +107,7 @@ func Start() func(c *cli.Cmd) {
 			if rewardAddr == "" {
 				rewardAddr = validatorAddr.String()
 			}
-			cmd.PrintInfoMsg("You are running a zarb block chain version: %s. Welcome! ", version.Version())
+			cmd.PrintInfoMsg("You are running a pactus block chain version: %s. Welcome! ", version.Version())
 			cmd.PrintInfoMsg("Validator address: %v", validatorAddr)
 			cmd.PrintInfoMsg("Reward address : %v", rewardAddr)
 			cmd.PrintLine()
@@ -146,7 +146,7 @@ func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Si
 	switch {
 	case *keyFileOpt == "" && *privateKeyOpt == "":
 		keyPath := workingDir + "/validator_key"
-		walletPath := cmd.ZarbDefaultWalletPath(workingDir)
+		walletPath := cmd.PactusDefaultWalletPath(workingDir)
 		if util.PathExists(keyPath) {
 			data, err := util.ReadFile(keyPath)
 			if err != nil {

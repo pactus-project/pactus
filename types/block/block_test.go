@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util"
+	simplemerkle "github.com/pactus-project/pactus/util/merkle"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util"
-	simplemerkle "github.com/zarbchain/zarb-go/util/merkle"
 )
 
 func TestSanityCheck(t *testing.T) {

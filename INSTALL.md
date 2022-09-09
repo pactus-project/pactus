@@ -1,4 +1,4 @@
-# Installing Zarb
+# Installing Pactus
 
 ## Requirements
 
@@ -9,20 +9,20 @@ If you want to install GUI application, make sure you have install
 
 ## Compiling the code
 
-Follow these steps to compile and build Zarb:
+Follow these steps to compile and build Pactus:
 
 ```bash
-git clone https://github.com/zarbchain/zarb-go.git
-cd zarb-go
+git clone https://github.com/pactus-project/pactus.git
+cd pactus
 make build
 ```
 
-This will be compile `zarb-daemon` and `zarb-wallet` in your machine.
-Make sure Zarb is properly compiled and installed in your machine:
+This will be compile `pactus-daemon` and `pactus-wallet` in your machine.
+Make sure Pactus is properly compiled and installed in your machine:
 
 ```
 cd build
-./zarb-daemon version
+./pactus-daemon version
 ```
 
 If you want to compile the GUI application run this command in the root folder:
@@ -40,14 +40,14 @@ make test
 This may takes several minutes to finish.
 
 
-## What is zarb-daemon
+## What is pactus-daemon
 
-`zarb-daemon` is a full node implementation of Zarb blockchain.
-You can use `zarb-daemon` to run a full node on Zarb blockchain.
+`pactus-daemon` is a full node implementation of Pactus blockchain.
+You can use `pactus-daemon` to run a full node on Pactus blockchain.
 
 ```bash
-./zarb-daemon init  -w=<working_dir>
-./zarb-daemon start -w=<working_dir>
+./pactus-daemon init  -w=<working_dir>
+./pactus-daemon start -w=<working_dir>
 ```
 
 ### Testnet
@@ -56,23 +56,23 @@ To join the TestNet, first you need to create a working directory
 and then start the node:
 
 ```bash
-./zarb-daemon init  -w=<working_dir> --testnet
-./zarb-daemon start -w=<working_dir>
+./pactus-daemon init  -w=<working_dir> --testnet
+./pactus-daemon start -w=<working_dir>
 ```
 
 ### Local net
 
-You can create a local node with one validator to test Zarb in your machine:
+You can create a local node with one validator to test Pactus in your machine:
 
  ```bash
- ./zarb-daemon init -w=<working_dir> --localnet
- ./zarb-daemon start -w=<working_dir>
+ ./pactus-daemon init -w=<working_dir> --localnet
+ ./pactus-daemon start -w=<working_dir>
  ```
 
-## What is zarb-wallet
+## What is pactus-wallet
 
-Zarb wallet is a native wallet in Zarb blockchain and let user to easily manage
-their accounts on Zarb blockchain.
+Pactus wallet is a native wallet in Pactus blockchain and let user to easily manage
+their accounts on Pactus blockchain.
 
 ### Getting started
 
@@ -80,67 +80,67 @@ To create a new wallet run this command. The wallet will be encrypted by the
 provided password.
 
 ```bash
-./zarb-wallet -w=<wallet_path> create
+./pactus-wallet -w=<wallet_path> create
 ```
 
 You can create new address like this:
 
 ```bash
-./zarb-wallet -w=<wallet_path> address new
+./pactus-wallet -w=<wallet_path> address new
 ```
 
 List of addresses are available by this command:
 
 ```bash
-./zarb-wallet -w=<wallet_path> address balance all
+./pactus-wallet -w=<wallet_path> address balance all
 ```
 
 You can check the balance:
 
 ```bash
-./zarb-wallet -w=<wallet_path> address balance <ADDRESS>
+./pactus-wallet -w=<wallet_path> address balance <ADDRESS>
 ```
 
 To publish a transactions use tx subcommand:
 
 ```bash
-./zarb-wallet -w=<wallet_path> tx
+./pactus-wallet -w=<wallet_path> tx
 ```
 
 For example, to publish a bond transaction:
 
 ```bash
-./zarb-wallet -w=<wallet_path> tx bond <FROM> <TO> <STAKE>
+./pactus-wallet -w=<wallet_path> tx bond <FROM> <TO> <STAKE>
 ```
 
 You can recover a wallet if you have the seed phrase.
 
 ```bash
-./zarb-wallet -w=<wallet_path> recover
+./pactus-wallet -w=<wallet_path> recover
 ```
 
 
 ## Usage of Docker
 
-You can run the Zarb using docker file. Please make sure you have installed
+You can run the Pactus using docker file. Please make sure you have installed
 [docker](https://docs.docker.com/engine/install/) in your machine.
 
 Pull the docker from docker hub.
 
 ```bash
-docker pull zarb/zarb
+docker pull pactus/pactus
 ```
 
-Let's create a working directory at `~/zarb/testnet` for the testnet:
+Let's create a working directory at `~/pactus/testnet` for the testnet:
 
 ```bash
-docker run -it --rm -v ~/zarb/testnet:/zarb zarb/zarb init -w /zarb --testnet
+docker run -it --rm -v ~/pactus/testnet:/pactus pactus/pactus init -w /pactus --testnet
 ```
 
-Now we can run the zarb and join the testnet:
+Now we can run the pactus and join the testnet:
 
 ```bash
-docker run -it -v ~/zarb/testnet:/zarb -p 8080:8080 -p 21777:21777 --name zarb-testnet zarb/zarb start -w /zarb
+docker run -it -v ~/pactus/testnet:/pactus -p 8080:8080 -p 21777:21777 --name pactus-testnet pactus/pactus start -w /pactus
 ```
 
 check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
@@ -148,11 +148,11 @@ check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
 Also you can stop/start docker:
 
 ```
-docker stop zarb-testnet
-docker start zarb-testnet
+docker stop pactus-testnet
+docker start pactus-testnet
 ```
 
 Or check the logs:
 ```
-docker logs zarb-testnet --tail 1000 -f
+docker logs pactus-testnet --tail 1000 -f
 ```

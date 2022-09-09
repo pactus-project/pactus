@@ -3,13 +3,13 @@ package grpc
 import (
 	"context"
 
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/util/logger"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/logger"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -21,29 +21,29 @@ type blockchainServer struct {
 }
 
 func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
-	request *zarb.BlockchainInfoRequest) (*zarb.BlockchainInfoResponse, error) {
+	request *pactus.BlockchainInfoRequest) (*pactus.BlockchainInfoResponse, error) {
 	height := s.state.LastBlockHeight()
 
-	return &zarb.BlockchainInfoResponse{
+	return &pactus.BlockchainInfoResponse{
 		LastBlockHeight: height,
 		LastBlockHash:   s.state.LastBlockHash().Bytes(),
 	}, nil
 }
 
 func (s *blockchainServer) GetBlockHash(ctx context.Context,
-	request *zarb.BlockHashRequest) (*zarb.BlockHashResponse, error) {
+	request *pactus.BlockHashRequest) (*pactus.BlockHashResponse, error) {
 	height := request.GetHeight()
 	hash := s.state.BlockHash(height)
 	if hash.IsUndef() {
 		return nil, status.Errorf(codes.NotFound, "block hash not found with this height")
 	}
-	return &zarb.BlockHashResponse{
+	return &pactus.BlockHashResponse{
 		Hash: hash.Bytes(),
 	}, nil
 }
 
 func (s *blockchainServer) GetBlock(ctx context.Context,
-	request *zarb.BlockRequest) (*zarb.BlockResponse, error) {
+	request *pactus.BlockRequest) (*pactus.BlockResponse, error) {
 	hash, err := hash.FromBytes(request.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "provided hash is not Valid")
@@ -53,8 +53,8 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "block not found")
 	}
 	timestamp := timestamppb.New(block.Header().Time())
-	header := &zarb.BlockHeaderInfo{}
-	var prevCert *zarb.CertificateInfo
+	header := &pactus.BlockHeaderInfo{}
+	var prevCert *pactus.CertificateInfo
 
 	if request.Verbosity.Number() > 0 {
 		seed := block.Header().SortitionSeed()
@@ -69,14 +69,14 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 			for i, n := range block.PrevCertificate().Absentees() {
 				absentees[i] = n
 			}
-			prevCert = &zarb.CertificateInfo{
+			prevCert = &pactus.CertificateInfo{
 				Round:      int32(block.PrevCertificate().Round()),
 				Committers: committers,
 				Absentees:  absentees,
 				Signature:  block.PrevCertificate().Signature().Bytes(),
 			}
 		}
-		header = &zarb.BlockHeaderInfo{
+		header = &pactus.BlockHeaderInfo{
 			Version:         int32(block.Header().Version()),
 			PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
 			StateRoot:       block.Header().StateRoot().Bytes(),
@@ -86,14 +86,14 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 	}
 
 	// TODO: Cache for better performance
-	trxs := make([]*zarb.TransactionInfo, 0, block.Transactions().Len())
+	trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 	if request.Verbosity.Number() > 1 {
 		for _, trx := range block.Transactions() {
 			trxs = append(trxs, transactionToProto(trx))
 		}
 	}
 
-	res := &zarb.BlockResponse{
+	res := &pactus.BlockResponse{
 		// Height: , // TODO: fix me
 		Hash:      hash.Bytes(),
 		BlockTime: timestamp,
@@ -106,7 +106,7 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 }
 
 func (s *blockchainServer) GetAccount(ctx context.Context,
-	request *zarb.AccountRequest) (*zarb.AccountResponse, error) {
+	request *pactus.AccountRequest) (*pactus.AccountResponse, error) {
 	addr, err := crypto.AddressFromString(request.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
@@ -115,7 +115,7 @@ func (s *blockchainServer) GetAccount(ctx context.Context,
 	if acc == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "account not found")
 	}
-	res := &zarb.AccountResponse{
+	res := &pactus.AccountResponse{
 		Account: accountToProto(acc),
 	}
 
@@ -123,7 +123,7 @@ func (s *blockchainServer) GetAccount(ctx context.Context,
 }
 
 func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
-	request *zarb.ValidatorByNumberRequest) (*zarb.ValidatorResponse, error) {
+	request *pactus.ValidatorByNumberRequest) (*pactus.ValidatorResponse, error) {
 	val := s.state.ValidatorByNumber(request.Number)
 	if val == nil {
 		return nil, status.Errorf(codes.NotFound, "validator not found")
@@ -131,13 +131,13 @@ func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
 
 	// TODO: make a function
 	// proto validator from native validator
-	return &zarb.ValidatorResponse{
+	return &pactus.ValidatorResponse{
 		Validator: validatorToProto(val),
 	}, nil
 }
 
 func (s *blockchainServer) GetValidator(ctx context.Context,
-	request *zarb.ValidatorRequest) (*zarb.ValidatorResponse, error) {
+	request *pactus.ValidatorRequest) (*pactus.ValidatorResponse, error) {
 	addr, err := crypto.AddressFromString(request.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid validator address: %v", err.Error())
@@ -149,23 +149,23 @@ func (s *blockchainServer) GetValidator(ctx context.Context,
 
 	// TODO: make a function
 	// proto validator from native validator
-	return &zarb.ValidatorResponse{
+	return &pactus.ValidatorResponse{
 		Validator: validatorToProto(val),
 	}, nil
 }
 
 func (s *blockchainServer) GetValidators(ctx context.Context,
-	request *zarb.ValidatorsRequest) (*zarb.ValidatorsResponse, error) {
+	request *pactus.ValidatorsRequest) (*pactus.ValidatorsResponse, error) {
 	validators := s.state.CommitteeValidators()
-	validatorsResp := make([]*zarb.ValidatorInfo, 0)
+	validatorsResp := make([]*pactus.ValidatorInfo, 0)
 	for _, val := range validators {
 		validatorsResp = append(validatorsResp, validatorToProto(val))
 	}
-	return &zarb.ValidatorsResponse{Validators: validatorsResp}, nil
+	return &pactus.ValidatorsResponse{Validators: validatorsResp}, nil
 }
 
-func validatorToProto(val *validator.Validator) *zarb.ValidatorInfo {
-	return &zarb.ValidatorInfo{
+func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
+	return &pactus.ValidatorInfo{
 		PublicKey:         val.PublicKey().String(),
 		Address:           val.Address().String(),
 		Number:            val.Number(),
@@ -177,8 +177,8 @@ func validatorToProto(val *validator.Validator) *zarb.ValidatorInfo {
 	}
 }
 
-func accountToProto(acc *account.Account) *zarb.AccountInfo {
-	return &zarb.AccountInfo{
+func accountToProto(acc *account.Account) *pactus.AccountInfo {
+	return &pactus.AccountInfo{
 		Address:  acc.Address().String(),
 		Number:   acc.Number(),
 		Sequence: acc.Sequence(),

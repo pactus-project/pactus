@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: blockchain.proto
 
-package zarb
+package pactus
 
 import (
 	context "context"
@@ -41,7 +41,7 @@ func NewBlockchainClient(cc grpc.ClientConnInterface) BlockchainClient {
 
 func (c *blockchainClient) GetBlock(ctx context.Context, in *BlockRequest, opts ...grpc.CallOption) (*BlockResponse, error) {
 	out := new(BlockResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Blockchain/GetBlock", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetBlock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *blockchainClient) GetBlock(ctx context.Context, in *BlockRequest, opts 
 
 func (c *blockchainClient) GetBlockHash(ctx context.Context, in *BlockHashRequest, opts ...grpc.CallOption) (*BlockHashResponse, error) {
 	out := new(BlockHashResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Blockchain/GetBlockHash", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetBlockHash", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (c *blockchainClient) GetBlockHash(ctx context.Context, in *BlockHashReques
 
 func (c *blockchainClient) GetAccount(ctx context.Context, in *AccountRequest, opts ...grpc.CallOption) (*AccountResponse, error) {
 	out := new(AccountResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Blockchain/GetAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (c *blockchainClient) GetAccount(ctx context.Context, in *AccountRequest, o
 
 func (c *blockchainClient) GetValidators(ctx context.Context, in *ValidatorsRequest, opts ...grpc.CallOption) (*ValidatorsResponse, error) {
 	out := new(ValidatorsResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Blockchain/GetValidators", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetValidators", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (c *blockchainClient) GetValidators(ctx context.Context, in *ValidatorsRequ
 
 func (c *blockchainClient) GetValidator(ctx context.Context, in *ValidatorRequest, opts ...grpc.CallOption) (*ValidatorResponse, error) {
 	out := new(ValidatorResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Blockchain/GetValidator", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetValidator", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (c *blockchainClient) GetValidator(ctx context.Context, in *ValidatorReques
 
 func (c *blockchainClient) GetValidatorByNumber(ctx context.Context, in *ValidatorByNumberRequest, opts ...grpc.CallOption) (*ValidatorResponse, error) {
 	out := new(ValidatorResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Blockchain/GetValidatorByNumber", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetValidatorByNumber", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (c *blockchainClient) GetValidatorByNumber(ctx context.Context, in *Validat
 
 func (c *blockchainClient) GetBlockchainInfo(ctx context.Context, in *BlockchainInfoRequest, opts ...grpc.CallOption) (*BlockchainInfoResponse, error) {
 	out := new(BlockchainInfoResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Blockchain/GetBlockchainInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetBlockchainInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func _Blockchain_GetBlock_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Blockchain/GetBlock",
+		FullMethod: "/pactus.Blockchain/GetBlock",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetBlock(ctx, req.(*BlockRequest))
@@ -180,7 +180,7 @@ func _Blockchain_GetBlockHash_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Blockchain/GetBlockHash",
+		FullMethod: "/pactus.Blockchain/GetBlockHash",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetBlockHash(ctx, req.(*BlockHashRequest))
@@ -198,7 +198,7 @@ func _Blockchain_GetAccount_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Blockchain/GetAccount",
+		FullMethod: "/pactus.Blockchain/GetAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetAccount(ctx, req.(*AccountRequest))
@@ -216,7 +216,7 @@ func _Blockchain_GetValidators_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Blockchain/GetValidators",
+		FullMethod: "/pactus.Blockchain/GetValidators",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetValidators(ctx, req.(*ValidatorsRequest))
@@ -234,7 +234,7 @@ func _Blockchain_GetValidator_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Blockchain/GetValidator",
+		FullMethod: "/pactus.Blockchain/GetValidator",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetValidator(ctx, req.(*ValidatorRequest))
@@ -252,7 +252,7 @@ func _Blockchain_GetValidatorByNumber_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Blockchain/GetValidatorByNumber",
+		FullMethod: "/pactus.Blockchain/GetValidatorByNumber",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetValidatorByNumber(ctx, req.(*ValidatorByNumberRequest))
@@ -270,7 +270,7 @@ func _Blockchain_GetBlockchainInfo_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Blockchain/GetBlockchainInfo",
+		FullMethod: "/pactus.Blockchain/GetBlockchainInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetBlockchainInfo(ctx, req.(*BlockchainInfoRequest))
@@ -282,7 +282,7 @@ func _Blockchain_GetBlockchainInfo_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Blockchain_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "zarb.Blockchain",
+	ServiceName: "pactus.Blockchain",
 	HandlerType: (*BlockchainServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

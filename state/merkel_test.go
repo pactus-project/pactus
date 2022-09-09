@@ -3,10 +3,10 @@ package state
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/validator"
 )
 
 func TestChangeAcc(t *testing.T) {

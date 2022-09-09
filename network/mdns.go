@@ -7,8 +7,8 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2pmdns "github.com/libp2p/go-libp2p/p2p/discovery/mdns"
-	"github.com/zarbchain/zarb-go/util/errors"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type mdnsService struct {

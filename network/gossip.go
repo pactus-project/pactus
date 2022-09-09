@@ -6,8 +6,8 @@ import (
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
-	"github.com/zarbchain/zarb-go/util/errors"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type gossipService struct {

@@ -5,11 +5,11 @@ import (
 	"io"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/encoding"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Certificate struct {

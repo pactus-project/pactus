@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbNetworkInfoResponse"
+              "$ref": "#/definitions/pactusNetworkInfoResponse"
             }
           },
           "default": {
@@ -40,34 +40,7 @@
     }
   },
   "definitions": {
-    "protobufAny": {
-      "type": "object",
-      "properties": {
-        "@type": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": {}
-    },
-    "rpcStatus": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string"
-        },
-        "details": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufAny"
-          }
-        }
-      }
-    },
-    "zarbNetworkInfoResponse": {
+    "pactusNetworkInfoResponse": {
       "type": "object",
       "properties": {
         "selfId": {
@@ -77,12 +50,12 @@
         "peers": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/zarbPeerInfo"
+            "$ref": "#/definitions/pactusPeerInfo"
           }
         }
       }
     },
-    "zarbPeerInfo": {
+    "pactusPeerInfo": {
       "type": "object",
       "properties": {
         "moniker": {
@@ -117,6 +90,33 @@
         "receivedBytes": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
         }
       }
     }

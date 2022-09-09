@@ -4,7 +4,7 @@ Thank you for considering to help out with the source code! We welcome
 contributions from anyone on the internet, and are grateful for even the
 smallest of fixes!
 
-If you'd like to contribute to zarb, please fork, fix, commit and send a
+If you'd like to contribute to Pactus, please fork, fix, commit and send a
 pull request for the maintainers to review and merge into the main code base. If
 you wish to submit more complex changes though, please check up with the core
 devs first on [our discord channel](https://discord.gg/zPqWqV85ch) to
@@ -31,11 +31,11 @@ punctuation
 
 Before you submit a feature request, please check and make sure that it isn't
 possible through some other means. Please check our
-[documentation page](https://zarb.network/guide/learn-index.html) for more info
+[documentation page](https://pactus.org/guide/learn-index.html) for more info
 and help.
 
 ## Configuration, dependencies, and tests
 
-Please see the [Developers' Guide](https://zarb.network/dev/dev-index.html)
+Please see the [Developers' Guide](https://pactus.org/dev/dev-index.html)
 for more details on configuring your environment, managing project dependencies
 and testing procedures.

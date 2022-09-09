@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/www/capnp"
 )
 
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.capnp.GetValidator(s.ctx, func(p capnp.ZarbServer_getValidator_Params) error {
+	b := s.capnp.GetValidator(s.ctx, func(p capnp.PactusServer_getValidator_Params) error {
 		vars := mux.Vars(r)
 		return p.SetAddress(vars["address"])
 	})

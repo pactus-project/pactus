@@ -15,7 +15,7 @@ const (
 var build string
 
 func Agent() string {
-	return fmt.Sprintf("zarb-go/%s", Version())
+	return fmt.Sprintf("pactus/%s", Version())
 }
 
 func Version() string {

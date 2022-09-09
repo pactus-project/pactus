@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/tranaction/id/{id}": {
+    "/v1/transaction/id/{id}": {
       "get": {
         "operationId": "Transaction_GetTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbTransactionResponse"
+              "$ref": "#/definitions/pactusTransactionResponse"
             }
           },
           "default": {
@@ -46,14 +46,14 @@
         ]
       }
     },
-    "/v1/tranaction/send_raw_transaction/{data}": {
+    "/v1/transaction/send_raw_transaction/{data}": {
       "put": {
         "operationId": "Transaction_SendRawTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbSendRawTransactionResponse"
+              "$ref": "#/definitions/pactusSendRawTransactionResponse"
             }
           },
           "default": {
@@ -78,6 +78,122 @@
     }
   },
   "definitions": {
+    "pactusPayloadBond": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pactusPayloadSend": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pactusPayloadSortition": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusPayloadType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "SEND_PAYLOAD",
+        "BOND_PAYLOAD",
+        "SORTITION_PAYLOAD",
+        "UNBOND_PAYLOAD"
+      ],
+      "default": "UNKNOWN"
+    },
+    "pactusSendRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "pactusTransactionInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "byte"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stamp": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Type": {
+          "$ref": "#/definitions/pactusPayloadType"
+        },
+        "send": {
+          "$ref": "#/definitions/pactusPayloadSend"
+        },
+        "bond": {
+          "$ref": "#/definitions/pactusPayloadBond"
+        },
+        "sortition": {
+          "$ref": "#/definitions/pactusPayloadSortition"
+        },
+        "memo": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/pactusTransactionInfo"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -102,122 +218,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "zarbPayloadBond": {
-      "type": "object",
-      "properties": {
-        "sender": {
-          "type": "string"
-        },
-        "receiver": {
-          "type": "string"
-        },
-        "stake": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "zarbPayloadSend": {
-      "type": "object",
-      "properties": {
-        "sender": {
-          "type": "string"
-        },
-        "receiver": {
-          "type": "string"
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "zarbPayloadSortition": {
-      "type": "object",
-      "properties": {
-        "address": {
-          "type": "string"
-        },
-        "proof": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
-    "zarbPayloadType": {
-      "type": "string",
-      "enum": [
-        "UNKNOWN",
-        "SEND_PAYLOAD",
-        "BOND_PAYLOAD",
-        "SORTITION_PAYLOAD",
-        "UNBOND_PAYLOAD"
-      ],
-      "default": "UNKNOWN"
-    },
-    "zarbSendRawTransactionResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "zarbTransactionInfo": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "byte"
-        },
-        "version": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "stamp": {
-          "type": "string",
-          "format": "byte"
-        },
-        "sequence": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "fee": {
-          "type": "string",
-          "format": "int64"
-        },
-        "Type": {
-          "$ref": "#/definitions/zarbPayloadType"
-        },
-        "send": {
-          "$ref": "#/definitions/zarbPayloadSend"
-        },
-        "bond": {
-          "$ref": "#/definitions/zarbPayloadBond"
-        },
-        "sortition": {
-          "$ref": "#/definitions/zarbPayloadSortition"
-        },
-        "memo": {
-          "type": "string"
-        },
-        "publicKey": {
-          "type": "string"
-        },
-        "signature": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
-    "zarbTransactionResponse": {
-      "type": "object",
-      "properties": {
-        "tranaction": {
-          "$ref": "#/definitions/zarbTransactionInfo"
         }
       }
     }

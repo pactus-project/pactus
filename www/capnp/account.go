@@ -3,10 +3,10 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/pactus-project/pactus/crypto"
 )
 
-func (zs zarbServer) GetAccount(args ZarbServer_getAccount) error {
+func (zs pactusServer) GetAccount(args PactusServer_getAccount) error {
 	capAddr, _ := args.Params.Address()
 	addr, err := crypto.AddressFromString(capAddr)
 	if err != nil {

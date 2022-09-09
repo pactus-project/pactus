@@ -1,8 +1,8 @@
 package committee
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/validator"
 )
 
 type Reader interface {

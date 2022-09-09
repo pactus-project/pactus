@@ -3,17 +3,17 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/block"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/block"
 )
 
-func (zs *zarbServer) GetBlockHash(args ZarbServer_getBlockHash) error {
+func (zs *pactusServer) GetBlockHash(args PactusServer_getBlockHash) error {
 	height := args.Params.Height()
 	hash := zs.state.BlockHash(height)
 	return args.Results.SetResult(hash.Bytes())
 }
 
-func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
+func (zs *pactusServer) GetBlock(args PactusServer_getBlock) error {
 	data, _ := args.Params.Hash()
 	h, err := hash.FromBytes(data)
 	if err != nil {
@@ -43,7 +43,7 @@ func (zs *zarbServer) GetBlock(args ZarbServer_getBlock) error {
 	return nil
 }
 
-func (zs zarbServer) ToVerboseBlock(block *block.Block, res *BlockResult) error {
+func (zs pactusServer) ToVerboseBlock(block *block.Block, res *BlockResult) error {
 	capBlock, _ := res.NewBlock()
 	capHeader, _ := capBlock.NewHeader()
 	capTrxs, _ := capBlock.NewTxs(int32(block.Transactions().Len()))

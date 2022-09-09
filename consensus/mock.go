@@ -3,10 +3,10 @@ package consensus
 import (
 	"sync"
 
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/vote"
-	"github.com/zarbchain/zarb-go/util"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util"
 )
 
 var _ Consensus = &MockConsensus{}

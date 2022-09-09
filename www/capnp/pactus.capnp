@@ -96,7 +96,7 @@ struct SendTransactionResult {
   id                  @1 :Data;
 }
 
-interface ZarbServer {
+interface PactusServer {
   getBlock            @0 (hash: Data, verbosity: Int32)     -> (result :BlockResult);
   getBlockHash        @1 (height: UInt32)                   -> (result :Data);
   getTransaction      @2 (id: Data, verbosity: Int32)       -> (result :TransactionResult);

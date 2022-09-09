@@ -3,13 +3,13 @@ package tests
 import (
 	"time"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util/logger"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/www/capnp"
 )
 
 func lastHash() hash.Hash {
-	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
+	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.PactusServer_getBlockchainInfo_Params) error {
 		return nil
 	}).Result()
 	st, err := res.Struct()
@@ -23,7 +23,7 @@ func lastHash() hash.Hash {
 }
 
 func lastHeight() uint32 {
-	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
+	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.PactusServer_getBlockchainInfo_Params) error {
 		return nil
 	}).Result()
 	st, err := res.Struct()
@@ -50,12 +50,12 @@ func lastBlock() *capnp.BlockResult {
 
 func getBlockAt(height uint32) *capnp.BlockResult {
 	for i := 0; i < 120; i++ {
-		hashRes, _ := tCapnpServer.GetBlockHash(tCtx, func(p capnp.ZarbServer_getBlockHash_Params) error {
+		hashRes, _ := tCapnpServer.GetBlockHash(tCtx, func(p capnp.PactusServer_getBlockHash_Params) error {
 			p.SetHeight(height)
 			return nil
 		}).Struct()
 
-		blockRes := tCapnpServer.GetBlock(tCtx, func(p capnp.ZarbServer_getBlock_Params) error {
+		blockRes := tCapnpServer.GetBlock(tCtx, func(p capnp.PactusServer_getBlock_Params) error {
 			data, _ := hashRes.Result()
 			p.SetVerbosity(0)
 			return p.SetHash(data)

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/util/encoding"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 type BondPayload struct {

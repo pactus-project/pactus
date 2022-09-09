@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: transaction.proto
 
-package zarb
+package pactus
 
 import (
 	context "context"
@@ -36,7 +36,7 @@ func NewTransactionClient(cc grpc.ClientConnInterface) TransactionClient {
 
 func (c *transactionClient) GetTransaction(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	out := new(TransactionResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Transaction/GetTransaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Transaction/GetTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *transactionClient) GetTransaction(ctx context.Context, in *TransactionR
 
 func (c *transactionClient) SendRawTransaction(ctx context.Context, in *SendRawTransactionRequest, opts ...grpc.CallOption) (*SendRawTransactionResponse, error) {
 	out := new(SendRawTransactionResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Transaction/SendRawTransaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Transaction/SendRawTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func _Transaction_GetTransaction_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Transaction/GetTransaction",
+		FullMethod: "/pactus.Transaction/GetTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionServer).GetTransaction(ctx, req.(*TransactionRequest))
@@ -110,7 +110,7 @@ func _Transaction_SendRawTransaction_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Transaction/SendRawTransaction",
+		FullMethod: "/pactus.Transaction/SendRawTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionServer).SendRawTransaction(ctx, req.(*SendRawTransactionRequest))
@@ -122,7 +122,7 @@ func _Transaction_SendRawTransaction_Handler(srv interface{}, ctx context.Contex
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Transaction_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "zarb.Transaction",
+	ServiceName: "pactus.Transaction",
 	HandlerType: (*TransactionServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

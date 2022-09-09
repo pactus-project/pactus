@@ -5,13 +5,13 @@ import (
 	"io"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/bundle"
-	"github.com/zarbchain/zarb-go/sync/peerset"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/errors"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync/bundle"
+	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 // Firewall check packets before passing them to sync module.

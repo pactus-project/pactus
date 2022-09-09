@@ -6,7 +6,7 @@ import (
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/util"
+	"github.com/pactus-project/pactus/util"
 )
 
 var _ Network = &MockNetwork{}

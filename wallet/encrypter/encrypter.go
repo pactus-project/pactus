@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zarbchain/zarb-go/util"
+	"github.com/pactus-project/pactus/util"
 	"golang.org/x/crypto/argon2"
 )
 

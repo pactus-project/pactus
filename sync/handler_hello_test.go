@@ -3,15 +3,15 @@ package sync
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/sync/bundle"
+	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/sync/bundle"
-	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/sync/peerset"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/version"
 )
 
 func TestParsingHelloMessages(t *testing.T) {

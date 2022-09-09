@@ -3,9 +3,9 @@ package event
 import (
 	"bytes"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util/encoding"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 const TopicNewBlock = uint16(0x0101)

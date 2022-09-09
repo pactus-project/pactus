@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: wallet.proto
 
-package zarb
+package pactus
 
 import (
 	grpc "google.golang.org/grpc"
@@ -54,7 +54,7 @@ func RegisterWalletServer(s grpc.ServiceRegistrar, srv WalletServer) {
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Wallet_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "zarb.Wallet",
+	ServiceName: "pactus.Wallet",
 	HandlerType: (*WalletServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams:     []grpc.StreamDesc{},

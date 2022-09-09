@@ -5,7 +5,7 @@ set -e
 ROOT_DIR="$(pwd)"
 VERSION="$(echo `git -C ${ROOT_DIR} describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
 BUILD_DIR="${ROOT_DIR}/build"
-PACKAGE_NAME="zarb-${VERSION}"
+PACKAGE_NAME="pactus-${VERSION}"
 PACKAGE_DIR="${ROOT_DIR}/${PACKAGE_NAME}"
 
 echo "VERSION: $VERSION"
@@ -21,13 +21,13 @@ sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
 
 make herumi
 export CGO_LDFLAGS="-L.herumi/bls/lib -lbls384_256 -lm -g -O2"
-go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-daemon.exe ./cmd/daemon
-go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-wallet.exe ./cmd/wallet
-go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/zarb-gui.exe ./cmd/gtk
+go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-daemon.exe ./cmd/daemon
+go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-wallet.exe ./cmd/wallet
+go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/pactus-gui.exe ./cmd/gtk
 
 # Copying the neccesary libraries
 echo "Creating GUI directory"
-GUI_DIR="${PACKAGE_DIR}/zarb-gui/"
+GUI_DIR="${PACKAGE_DIR}/pactus-gui/"
 mkdir ${GUI_DIR}
 
 echo "Changing working directory to MSYS2 MINGW64."
@@ -130,9 +130,9 @@ echo '[Settings] gtk-button-images=1' > "${GUI_DIR}/share/gtk-3.0/settings.ini"
 # Moving binaries to package directory
 cd ${ROOT_DIR}
 echo "Moving binaries"
-mv ${BUILD_DIR}/zarb-gui.exe     ${PACKAGE_DIR}/zarb-gui/zarb-gui.exe
-mv ${BUILD_DIR}/zarb-wallet.exe  ${PACKAGE_DIR}/zarb-wallet.exe
-mv ${BUILD_DIR}/zarb-daemon.exe  ${PACKAGE_DIR}/zarb-daemon.exe
+mv ${BUILD_DIR}/pactus-gui.exe     ${PACKAGE_DIR}/pactus-gui/pactus-gui.exe
+mv ${BUILD_DIR}/pactus-wallet.exe  ${PACKAGE_DIR}/pactus-wallet.exe
+mv ${BUILD_DIR}/pactus-daemon.exe  ${PACKAGE_DIR}/pactus-daemon.exe
 
 echo "Archiving the package"
 7z a ${ROOT_DIR}/${PACKAGE_NAME}-windows-x86_64.zip ${PACKAGE_DIR}
@@ -140,14 +140,14 @@ echo "Archiving the package"
 echo "Creating installer"
 echo "
 [Setup]
-Appname=Zarb
+Appname=Pactus
 AppVersion=${VERSION}
-DefaultDirName={autopf64}/Zarb
-DefaultGroupName=Zarb
+DefaultDirName={autopf64}/Pactus
+DefaultGroupName=Pactus
 [Files]
 Source:${PACKAGE_NAME}/*; DestDir:{app}; Flags: recursesubdirs
 [Icons]
-Name:{group}\\Zarb GUI; Filename:{app}\\zarb-gui\\zarb-gui.exe;" >> ${ROOT_DIR}/inno.iss
+Name:{group}\\Pactus GUI; Filename:{app}\\pactus-gui\\pactus-gui.exe;" >> ${ROOT_DIR}/inno.iss
 
 cd ${ROOT_DIR}
 INNO_DIR=$(cygpath -w -s "/c/Program Files (x86)/Inno Setup 6")

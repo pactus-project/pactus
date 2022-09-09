@@ -1,8 +1,8 @@
 package state
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 // Config holds the configuration of the state.

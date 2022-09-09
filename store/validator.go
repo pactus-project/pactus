@@ -3,11 +3,11 @@ package store
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/util/logger"
 )
 
 type validatorStore struct {

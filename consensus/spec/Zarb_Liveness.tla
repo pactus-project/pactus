@@ -1,5 +1,5 @@
--------------------------------- MODULE Zarb_Liveness --------------------------------
-EXTENDS Zarb
+-------------------------------- MODULE Pactus_Liveness --------------------------------
+EXTENDS Pactus
 
 CONSTANT MaxHeight
 

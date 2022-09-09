@@ -7,8 +7,8 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peer "github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/util/errors"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type streamService struct {

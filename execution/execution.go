@@ -1,12 +1,12 @@
 package execution
 
 import (
-	"github.com/zarbchain/zarb-go/execution/executor"
-	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/execution/executor"
+	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Executor interface {

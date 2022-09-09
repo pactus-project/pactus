@@ -1,11 +1,11 @@
 package log
 
 import (
-	"github.com/zarbchain/zarb-go/consensus/voteset"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/vote"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/consensus/voteset"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type Messages struct {
