@@ -35,6 +35,11 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 				"public key is not set")
 		}
 		val = sb.MakeNewValidator(pld.PublicKey)
+	} else {
+		if pld.PublicKey != nil {
+			return errors.Errorf(errors.ErrInvalidPublicKey,
+				"public key set")
+		}
 	}
 	if val.UnbondingHeight() > 0 {
 		return errors.Errorf(errors.ErrInvalidHeight,
