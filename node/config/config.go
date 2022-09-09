@@ -7,19 +7,19 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/www/capnp"
+	"github.com/pactus-project/pactus/www/grpc"
+	"github.com/pactus-project/pactus/www/http"
+	"github.com/pactus-project/pactus/www/nanomsg"
 	toml "github.com/pelletier/go-toml"
-	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/txpool"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/logger"
-	"github.com/zarbchain/zarb-go/www/capnp"
-	"github.com/zarbchain/zarb-go/www/grpc"
-	"github.com/zarbchain/zarb-go/www/http"
-	"github.com/zarbchain/zarb-go/www/nanomsg"
 )
 
 //go:embed example_config.toml
@@ -68,7 +68,7 @@ func SaveMainnetConfig(path, rewardAddr string) error {
 
 func SaveTestnetConfig(path, rewardAddr string) error {
 	conf := DefaultConfig()
-	conf.Network.Name = "zarb-testnet"
+	conf.Network.Name = "pactus-testnet"
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}
 	conf.Network.Bootstrap.Addresses = []string{"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
 	conf.Network.Bootstrap.MinThreshold = 4
@@ -90,7 +90,7 @@ func SaveTestnetConfig(path, rewardAddr string) error {
 
 func SaveLocalnetConfig(path, rewardAddr string) error {
 	conf := DefaultConfig()
-	conf.Network.Name = "zarb-localnet"
+	conf.Network.Name = "pactus-localnet"
 	conf.Network.Listens = []string{}
 	conf.Network.Bootstrap.Addresses = []string{}
 	conf.Network.Bootstrap.MinThreshold = 4

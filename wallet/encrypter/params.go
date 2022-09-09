@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"strconv"
 
-	"github.com/zarbchain/zarb-go/util"
+	"github.com/pactus-project/pactus/util"
 )
 
 type params map[string]string

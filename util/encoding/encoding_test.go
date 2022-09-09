@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 // TestElementEncoding tests encode and decode for various element types.  This

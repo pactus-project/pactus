@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: network.proto
 
-package zarb
+package pactus
 
 import (
 	context "context"
@@ -35,7 +35,7 @@ func NewNetworkClient(cc grpc.ClientConnInterface) NetworkClient {
 
 func (c *networkClient) GetNetworkInfo(ctx context.Context, in *NetworkInfoRequest, opts ...grpc.CallOption) (*NetworkInfoResponse, error) {
 	out := new(NetworkInfoResponse)
-	err := c.cc.Invoke(ctx, "/zarb.Network/GetNetworkInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Network/GetNetworkInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func _Network_GetNetworkInfo_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zarb.Network/GetNetworkInfo",
+		FullMethod: "/pactus.Network/GetNetworkInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NetworkServer).GetNetworkInfo(ctx, req.(*NetworkInfoRequest))
@@ -90,7 +90,7 @@ func _Network_GetNetworkInfo_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Network_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "zarb.Network",
+	ServiceName: "pactus.Network",
 	HandlerType: (*NetworkServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

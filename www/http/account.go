@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/www/capnp"
 )
 
 // GetAccountHandler returns a handler to get account by address.
 func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.capnp.GetAccount(s.ctx, func(p capnp.ZarbServer_getAccount_Params) error {
+	b := s.capnp.GetAccount(s.ctx, func(p capnp.PactusServer_getAccount_Params) error {
 		vars := mux.Vars(r)
 		return p.SetAddress(vars["address"])
 	})

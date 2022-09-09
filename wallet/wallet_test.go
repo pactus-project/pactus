@@ -5,10 +5,10 @@ import (
 	"path"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 var tWallet *Wallet

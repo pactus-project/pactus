@@ -11,10 +11,10 @@ import (
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2peer "github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/errors"
-	"github.com/zarbchain/zarb-go/util/logger"
-	"github.com/zarbchain/zarb-go/version"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/version"
 )
 
 var _ Network = &network{}

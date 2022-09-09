@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
 )
 
 func TestValidator(t *testing.T) {

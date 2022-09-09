@@ -1,6 +1,6 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests')
 HERUMI= $(shell pwd)/.herumi
-BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
+BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git rev-parse --short=8 HEAD`"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
@@ -29,11 +29,11 @@ herumi:
 ########################################
 ### Building
 build:
-	go build $(BUILD_LDFLAGS) -o ./build/zarb-daemon$(EXE) ./cmd/daemon
-	go build $(BUILD_LDFLAGS) -o ./build/zarb-wallet$(EXE) ./cmd/wallet
+	go build $(BUILD_LDFLAGS) -o ./build/pactus-daemon$(EXE) ./cmd/daemon
+	go build $(BUILD_LDFLAGS) -o ./build/pactus-wallet$(EXE) ./cmd/wallet
 
 build_gui:
-	go build $(BUILD_LDFLAGS) -tags gtk -o ./build/zarb-gui$(EXE) ./cmd/gtk
+	go build $(BUILD_LDFLAGS) -tags gtk -o ./build/pactus-gui$(EXE) ./cmd/gtk
 
 ########################################
 ### Testing
@@ -49,13 +49,13 @@ test_race:
 ########################################
 ### Docker
 docker:
-	docker build --tag zarb .
+	docker build --tag pactus .
 
 ########################################
 ### capnp and proto
 capnp:
 	capnp compile \
-		-ogo ./www/capnp/zarb.capnp
+		-ogo ./www/capnp/pactus.capnp
 
 proto:
 	cd www/grpc/ && buf generate \

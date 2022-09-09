@@ -7,7 +7,7 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_wallet_password.ui

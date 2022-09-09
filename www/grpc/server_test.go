@@ -6,10 +6,10 @@ import (
 	"net"
 	"testing"
 
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/util/logger"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/util/logger"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 )
@@ -44,9 +44,9 @@ func init() {
 		logger: logger,
 	}
 
-	zarb.RegisterBlockchainServer(s, blockchainServer)
-	zarb.RegisterNetworkServer(s, networkServer)
-	zarb.RegisterTransactionServer(s, transactionServer)
+	pactus.RegisterBlockchainServer(s, blockchainServer)
+	pactus.RegisterNetworkServer(s, networkServer)
+	pactus.RegisterTransactionServer(s, transactionServer)
 	go func() {
 		if err := s.Serve(tListener); err != nil {
 			log.Fatalf("Server exited with error: %v", err)
@@ -58,26 +58,26 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 	return tListener.Dial()
 }
 
-func callBlockchainServer(t *testing.T) (*grpc.ClientConn, zarb.BlockchainClient) {
+func callBlockchainServer(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("Failed to dial blockchain server: %v", err)
 	}
-	return conn, zarb.NewBlockchainClient(conn)
+	return conn, pactus.NewBlockchainClient(conn)
 }
 
-func callNetworkServer(t *testing.T) (*grpc.ClientConn, zarb.NetworkClient) {
+func callNetworkServer(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("Failed to dial network server: %v", err)
 	}
-	return conn, zarb.NewNetworkClient(conn)
+	return conn, pactus.NewNetworkClient(conn)
 }
 
-func callTransactionServer(t *testing.T) (*grpc.ClientConn, zarb.TransactionClient) {
+func callTransactionServer(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("Failed to dial transaction server: %v", err)
 	}
-	return conn, zarb.NewTransactionClient(conn)
+	return conn, pactus.NewTransactionClient(conn)
 }

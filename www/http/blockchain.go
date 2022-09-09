@@ -5,14 +5,14 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/sync/peerset"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/www/capnp"
 )
 
 func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlockchainInfo(s.ctx, func(p capnp.ZarbServer_getBlockchainInfo_Params) error {
+	res := s.capnp.GetBlockchainInfo(s.ctx, func(p capnp.PactusServer_getBlockchainInfo_Params) error {
 		return nil
 	}).Result()
 
@@ -47,7 +47,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetNetworkInfo(s.ctx, func(p capnp.ZarbServer_getNetworkInfo_Params) error {
+	res := s.capnp.GetNetworkInfo(s.ctx, func(p capnp.PactusServer_getNetworkInfo_Params) error {
 		return nil
 	}).Result()
 	st, err := res.Struct()

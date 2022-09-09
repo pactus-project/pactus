@@ -2,9 +2,9 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/sync/bundle"
-	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/sync/bundle"
+	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type queryVotesHandler struct {

@@ -1,11 +1,11 @@
 package tx
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/sortition"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 func NewSubsidyTx(stamp hash.Stamp, seq int32,

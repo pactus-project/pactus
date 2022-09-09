@@ -3,11 +3,11 @@ package capnp
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/tx"
 )
 
-func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
+func (zs *pactusServer) GetTransaction(args PactusServer_getTransaction) error {
 	data, _ := args.Params.Id()
 	h, err := hash.FromBytes(data)
 	if err != nil {
@@ -27,7 +27,7 @@ func (zs *zarbServer) GetTransaction(args ZarbServer_getTransaction) error {
 }
 
 // Send broadcasts a raw transaction.
-func (zs *zarbServer) SendRawTransaction(args ZarbServer_sendRawTransaction) error {
+func (zs *pactusServer) SendRawTransaction(args PactusServer_sendRawTransaction) error {
 	rawTx, _ := args.Params.RawTx()
 
 	trx, err := tx.FromBytes(rawTx)

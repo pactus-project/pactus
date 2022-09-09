@@ -1,7 +1,7 @@
 # HTTP
 
 This directory contains required files for HTTP service.
-HTTP modules has no direct connection with Zarb blockchain.
+HTTP modules has no direct connection with Pactus blockchain.
 It gets information through [Capnp](../capnp) APIs.
 
 

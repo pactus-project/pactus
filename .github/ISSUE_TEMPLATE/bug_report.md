@@ -6,7 +6,7 @@ labels: ''
 ---
 
 <!--
-Thank you in advance for helping us to improve Zarb!
+Thank you in advance for helping us to improve Pactus!
 
 Please read through the template below and answer all relevant questions.
 Your additional work here is greatly appreciated and will help us respond as quickly as possible.
@@ -35,5 +35,5 @@ Your additional work here is greatly appreciated and will help us respond as qui
 ### Environment
 
 - **Operation System: **
-- **Zarb Version: **
+- **Pactus Version: **
 - **Go Version**

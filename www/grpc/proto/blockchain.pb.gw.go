@@ -2,11 +2,11 @@
 // source: blockchain.proto
 
 /*
-Package zarb is a reverse proxy.
+Package pactus is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package zarb
+package pactus
 
 import (
 	"context"
@@ -358,7 +358,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/block/hash/{hash}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/block/hash/{hash}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -382,7 +382,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hash/{height}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hash/{height}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -406,7 +406,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/account/address/{address}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/account/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -430,7 +430,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Blockchain/GetValidators", runtime.WithHTTPPathPattern("/v1/blockchain/validators"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetValidators", runtime.WithHTTPPathPattern("/v1/blockchain/validators"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -454,7 +454,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validator/address/{address}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validator/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -478,7 +478,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validator/{number}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validator/{number}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -502,7 +502,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/zarb.Blockchain/GetBlockchainInfo", runtime.WithHTTPPathPattern("/v1/blockchain/info"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlockchainInfo", runtime.WithHTTPPathPattern("/v1/blockchain/info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -565,7 +565,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/block/hash/{hash}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/block/hash/{hash}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -586,7 +586,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hash/{height}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hash/{height}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -607,7 +607,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/account/address/{address}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/account/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -628,7 +628,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Blockchain/GetValidators", runtime.WithHTTPPathPattern("/v1/blockchain/validators"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetValidators", runtime.WithHTTPPathPattern("/v1/blockchain/validators"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -649,7 +649,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validator/address/{address}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validator/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -670,7 +670,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validator/{number}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validator/{number}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -691,7 +691,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/zarb.Blockchain/GetBlockchainInfo", runtime.WithHTTPPathPattern("/v1/blockchain/info"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlockchainInfo", runtime.WithHTTPPathPattern("/v1/blockchain/info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

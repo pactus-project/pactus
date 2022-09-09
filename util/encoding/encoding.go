@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
 )
 
 const (

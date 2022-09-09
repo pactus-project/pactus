@@ -3,7 +3,7 @@ package consensus
 import (
 	"time"
 
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Config struct {

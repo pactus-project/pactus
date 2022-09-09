@@ -3,8 +3,8 @@ package message
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type HeartBeatMessage struct {

@@ -45,7 +45,7 @@ func DefaultConfig() *Config {
 	}
 
 	return &Config{
-		Name:        "zarb",
+		Name:        "pactus",
 		Listens:     []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
 		NodeKey:     "node_key",
 		EnableNAT:   true,

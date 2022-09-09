@@ -3,11 +3,11 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestExecuteBondTx(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestBlock(t *testing.T) {

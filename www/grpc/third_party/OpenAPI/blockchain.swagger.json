@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbAccountResponse"
+              "$ref": "#/definitions/pactusAccountResponse"
             }
           },
           "default": {
@@ -53,7 +53,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbBlockResponse"
+              "$ref": "#/definitions/pactusBlockResponse"
             }
           },
           "default": {
@@ -96,7 +96,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbBlockHashResponse"
+              "$ref": "#/definitions/pactusBlockHashResponse"
             }
           },
           "default": {
@@ -127,7 +127,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbBlockchainInfoResponse"
+              "$ref": "#/definitions/pactusBlockchainInfoResponse"
             }
           },
           "default": {
@@ -149,7 +149,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbValidatorResponse"
+              "$ref": "#/definitions/pactusValidatorResponse"
             }
           },
           "default": {
@@ -179,7 +179,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbValidatorResponse"
+              "$ref": "#/definitions/pactusValidatorResponse"
             }
           },
           "default": {
@@ -210,7 +210,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/zarbValidatorsResponse"
+              "$ref": "#/definitions/pactusValidatorsResponse"
             }
           },
           "default": {
@@ -227,34 +227,7 @@
     }
   },
   "definitions": {
-    "protobufAny": {
-      "type": "object",
-      "properties": {
-        "@type": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": {}
-    },
-    "rpcStatus": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string"
-        },
-        "details": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufAny"
-          }
-        }
-      }
-    },
-    "zarbAccountInfo": {
+    "pactusAccountInfo": {
       "type": "object",
       "properties": {
         "address": {
@@ -274,15 +247,15 @@
         }
       }
     },
-    "zarbAccountResponse": {
+    "pactusAccountResponse": {
       "type": "object",
       "properties": {
         "account": {
-          "$ref": "#/definitions/zarbAccountInfo"
+          "$ref": "#/definitions/pactusAccountInfo"
         }
       }
     },
-    "zarbBlockHashResponse": {
+    "pactusBlockHashResponse": {
       "type": "object",
       "properties": {
         "hash": {
@@ -291,7 +264,7 @@
         }
       }
     },
-    "zarbBlockHeaderInfo": {
+    "pactusBlockHeaderInfo": {
       "type": "object",
       "properties": {
         "version": {
@@ -315,7 +288,7 @@
         }
       }
     },
-    "zarbBlockResponse": {
+    "pactusBlockResponse": {
       "type": "object",
       "properties": {
         "height": {
@@ -331,20 +304,20 @@
           "format": "date-time"
         },
         "header": {
-          "$ref": "#/definitions/zarbBlockHeaderInfo"
+          "$ref": "#/definitions/pactusBlockHeaderInfo"
         },
         "prevCert": {
-          "$ref": "#/definitions/zarbCertificateInfo"
+          "$ref": "#/definitions/pactusCertificateInfo"
         },
         "txs": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/zarbTransactionInfo"
+            "$ref": "#/definitions/pactusTransactionInfo"
           }
         }
       }
     },
-    "zarbBlockVerbosity": {
+    "pactusBlockVerbosity": {
       "type": "string",
       "enum": [
         "BLOCK_HASH",
@@ -353,7 +326,7 @@
       ],
       "default": "BLOCK_HASH"
     },
-    "zarbBlockchainInfoResponse": {
+    "pactusBlockchainInfoResponse": {
       "type": "object",
       "properties": {
         "lastBlockHeight": {
@@ -366,7 +339,7 @@
         }
       }
     },
-    "zarbCertificateInfo": {
+    "pactusCertificateInfo": {
       "type": "object",
       "properties": {
         "round": {
@@ -393,7 +366,7 @@
         }
       }
     },
-    "zarbPayloadBond": {
+    "pactusPayloadBond": {
       "type": "object",
       "properties": {
         "sender": {
@@ -408,7 +381,7 @@
         }
       }
     },
-    "zarbPayloadSend": {
+    "pactusPayloadSend": {
       "type": "object",
       "properties": {
         "sender": {
@@ -423,7 +396,7 @@
         }
       }
     },
-    "zarbPayloadSortition": {
+    "pactusPayloadSortition": {
       "type": "object",
       "properties": {
         "address": {
@@ -435,7 +408,7 @@
         }
       }
     },
-    "zarbPayloadType": {
+    "pactusPayloadType": {
       "type": "string",
       "enum": [
         "UNKNOWN",
@@ -446,7 +419,7 @@
       ],
       "default": "UNKNOWN"
     },
-    "zarbTransactionInfo": {
+    "pactusTransactionInfo": {
       "type": "object",
       "properties": {
         "id": {
@@ -470,16 +443,16 @@
           "format": "int64"
         },
         "Type": {
-          "$ref": "#/definitions/zarbPayloadType"
+          "$ref": "#/definitions/pactusPayloadType"
         },
         "send": {
-          "$ref": "#/definitions/zarbPayloadSend"
+          "$ref": "#/definitions/pactusPayloadSend"
         },
         "bond": {
-          "$ref": "#/definitions/zarbPayloadBond"
+          "$ref": "#/definitions/pactusPayloadBond"
         },
         "sortition": {
-          "$ref": "#/definitions/zarbPayloadSortition"
+          "$ref": "#/definitions/pactusPayloadSortition"
         },
         "memo": {
           "type": "string"
@@ -493,7 +466,7 @@
         }
       }
     },
-    "zarbValidatorInfo": {
+    "pactusValidatorInfo": {
       "type": "object",
       "properties": {
         "publicKey": {
@@ -528,21 +501,48 @@
         }
       }
     },
-    "zarbValidatorResponse": {
+    "pactusValidatorResponse": {
       "type": "object",
       "properties": {
         "validator": {
-          "$ref": "#/definitions/zarbValidatorInfo"
+          "$ref": "#/definitions/pactusValidatorInfo"
         }
       }
     },
-    "zarbValidatorsResponse": {
+    "pactusValidatorsResponse": {
       "type": "object",
       "properties": {
         "validators": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/zarbValidatorInfo"
+            "$ref": "#/definitions/pactusValidatorInfo"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
           }
         }
       }

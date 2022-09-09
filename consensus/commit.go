@@ -1,8 +1,8 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/vote"
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
 )
 
 type commitState struct {

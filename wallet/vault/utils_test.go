@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls/hdkeychain"
 )
 
 func TestPathToString(t *testing.T) {

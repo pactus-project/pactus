@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/bls/hdkeychain"
-	"github.com/zarbchain/zarb-go/wallet/encrypter"
 )
 
 const tPassword = "super_secret_password"

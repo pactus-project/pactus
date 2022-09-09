@@ -1,10 +1,10 @@
 package txpool
 
 import (
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/sandbox"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/tx"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/tx"
 )
 
 var _ TxPool = &MockTxPool{}

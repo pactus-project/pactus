@@ -1,9 +1,9 @@
--------------------------------- MODULE Zarb --------------------------------
+-------------------------------- MODULE Pactus --------------------------------
 (***************************************************************************)
-(* The specification of the Zarb consensus algorithm based on              *)
+(* The specification of the Pactus consensus algorithm based on              *)
 (* Practical Byzantine Fault Tolerant.                                     *)
 (* For more information check here:                                        *)
-(* `^\url{https://zarb.network/learn/consensus/consensus-mechanism.html}^' *)
+(* `^\url{https://pactus.org/learn/consensus/consensus-mechanism.html}^' *)
 (***************************************************************************)
 EXTENDS Integers, Sequences, FiniteSets, TLC
 

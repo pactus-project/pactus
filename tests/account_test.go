@@ -3,15 +3,15 @@ package tests
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/www/capnp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func getAccount(t *testing.T, addr crypto.Address) *account.Account {
-	res := tCapnpServer.GetAccount(tCtx, func(p capnp.ZarbServer_getAccount_Params) error {
+	res := tCapnpServer.GetAccount(tCtx, func(p capnp.PactusServer_getAccount_Params) error {
 		assert.NoError(t, p.SetAddress(addr.String()))
 		return nil
 	}).Result()

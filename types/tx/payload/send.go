@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util/encoding"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 type SendPayload struct {

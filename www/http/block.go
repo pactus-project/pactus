@@ -5,13 +5,13 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/www/capnp"
 )
 
 func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.ZarbServer_getBlockHash_Params) error {
+	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.PactusServer_getBlockHash_Params) error {
 		vars := mux.Vars(r)
 		height, _ := strconv.ParseInt(vars["height"], 10, 32)
 		p.SetHeight(uint32(height))
@@ -30,7 +30,7 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
-	res := s.capnp.GetBlock(s.ctx, func(p capnp.ZarbServer_getBlock_Params) error {
+	res := s.capnp.GetBlock(s.ctx, func(p capnp.PactusServer_getBlock_Params) error {
 		p.SetVerbosity(0)
 		return p.SetHash(blockHash.Bytes())
 	}).Result()
@@ -78,7 +78,7 @@ func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
 }
 
 func (s *Server) GetBlockHashHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.ZarbServer_getBlockHash_Params) error {
+	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.PactusServer_getBlockHash_Params) error {
 		vars := mux.Vars(r)
 		height, err := strconv.ParseInt(vars["height"], 10, 32)
 		if err != nil {

@@ -3,7 +3,7 @@ package sync
 import (
 	"time"
 
-	"github.com/zarbchain/zarb-go/sync/firewall"
+	"github.com/pactus-project/pactus/sync/firewall"
 )
 
 var LatestBlockInterval = uint32(720) // 720 blocks is about two hours

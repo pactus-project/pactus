@@ -12,8 +12,8 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/util/logger"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/www/capnp"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 
@@ -21,7 +21,7 @@ type Server struct {
 	ctx      context.Context
 	config   *Config
 	router   *mux.Router
-	capnp    capnp.ZarbServer
+	capnp    capnp.PactusServer
 	listener net.Listener
 	logger   *logger.Logger
 }
@@ -45,7 +45,7 @@ func (s *Server) StartServer(capnpServer string) error {
 	}
 
 	conn := rpc.NewConn(rpc.StreamTransport(c))
-	s.capnp = capnp.ZarbServer{Client: conn.Bootstrap(s.ctx)}
+	s.capnp = capnp.PactusServer{Client: conn.Bootstrap(s.ctx)}
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
 	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)

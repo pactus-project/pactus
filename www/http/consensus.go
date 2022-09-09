@@ -3,12 +3,12 @@ package http
 import (
 	"net/http"
 
-	"github.com/zarbchain/zarb-go/types/vote"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/www/capnp"
 )
 
 func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetConsensusInfo(s.ctx, func(p capnp.ZarbServer_getConsensusInfo_Params) error {
+	res := s.capnp.GetConsensusInfo(s.ctx, func(p capnp.PactusServer_getConsensusInfo_Params) error {
 		return nil
 	}).Result()
 	st, err := res.Struct()

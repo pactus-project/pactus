@@ -1,6 +1,6 @@
 package capnp
 
-func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error {
+func (zs *pactusServer) GetBlockchainInfo(args PactusServer_getBlockchainInfo) error {
 	res, _ := args.Results.NewResult()
 	res.SetLastBlockHeight(zs.state.LastBlockHeight())
 
@@ -31,7 +31,7 @@ func (zs *zarbServer) GetBlockchainInfo(args ZarbServer_getBlockchainInfo) error
 	return res.SetLastBlockHash(zs.state.LastBlockHash().Bytes())
 }
 
-func (zs *zarbServer) GetNetworkInfo(args ZarbServer_getNetworkInfo) error {
+func (zs *pactusServer) GetNetworkInfo(args PactusServer_getNetworkInfo) error {
 	res, _ := args.Results.NewResult()
 
 	err := res.SetPeerID(zs.sync.SelfID().String())

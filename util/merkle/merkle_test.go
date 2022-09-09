@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func strToHash(str string) hash.Hash {

@@ -5,25 +5,25 @@ import (
 	"path/filepath"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/node/config"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/genesis"
-	"github.com/zarbchain/zarb-go/types/param"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/node/config"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/genesis"
+	"github.com/pactus-project/pactus/types/param"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet"
 )
 
-// Init initializes a node for zarb blockchain.
+// Init initializes a node for pactus blockchain.
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
 			Desc:  "Working directory to save node configuration and genesis files.",
-			Value: cmd.ZarbHomeDir(),
+			Value: cmd.PactusHomeDir(),
 		})
 		testnetOpt := c.Bool(cli.BoolOpt{
 			Name:  "testnet",
@@ -37,7 +37,7 @@ func Init() func(c *cli.Cmd) {
 		})
 
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
-		c.Before = func() { fmt.Println(cmd.ZARB) }
+		c.Before = func() { fmt.Println(cmd.Pactus) }
 		c.Action = func() {
 			workingDir, _ := filepath.Abs(*workingDirOpt)
 			if !util.IsDirNotExistsOrEmpty(workingDir) {
@@ -60,7 +60,7 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Please enter a password for wallet")
 			password := cmd.PromptPassword("Password", true)
-			walletPath := cmd.ZarbDefaultWalletPath(workingDir)
+			walletPath := cmd.PactusDefaultWalletPath(workingDir)
 
 			// To make process faster, we update the password
 			// after creating the addresses
@@ -86,7 +86,7 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			var gen *genesis.Genesis
-			confFile := cmd.ZarbConfigPath(workingDir)
+			confFile := cmd.PactusConfigPath(workingDir)
 
 			if *testnetOpt {
 				gen = genesis.Testnet()
@@ -122,7 +122,7 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			// Save genesis file
-			genFile := cmd.ZarbGenesisPath(workingDir)
+			genFile := cmd.PactusGenesisPath(workingDir)
 			if err := gen.SaveToFile(genFile); err != nil {
 				cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
 				return
@@ -142,12 +142,12 @@ func Init() func(c *cli.Cmd) {
 			}
 			cmd.PrintLine()
 
-			cmd.PrintSuccessMsg("A zarb node is successfully initialized at %v", workingDir)
+			cmd.PrintSuccessMsg("A pactus node is successfully initialized at %v", workingDir)
 			cmd.PrintInfoMsg("You validator address is: %v", valAddrStr)
 			cmd.PrintInfoMsg("You reward address is: %v", rewardAddrStr)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You can start the node by running this command:")
-			cmd.PrintInfoMsg("./zarb-daemon start -w %v", workingDir)
+			cmd.PrintInfoMsg("./pactus-daemon start -w %v", workingDir)
 		}
 	}
 }

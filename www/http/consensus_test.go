@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestConsensusInfo(t *testing.T) {

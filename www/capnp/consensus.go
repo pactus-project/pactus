@@ -1,6 +1,6 @@
 package capnp
 
-func (zs *zarbServer) GetConsensusInfo(args ZarbServer_getConsensusInfo) error {
+func (zs *pactusServer) GetConsensusInfo(args PactusServer_getConsensusInfo) error {
 	height, round := zs.consensus.HeightRound()
 	votes := zs.consensus.AllVotes()
 	res, _ := args.Results.NewResult()

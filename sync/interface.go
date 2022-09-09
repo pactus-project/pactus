@@ -2,7 +2,7 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/zarbchain/zarb-go/sync/peerset"
+	"github.com/pactus-project/pactus/sync/peerset"
 )
 
 type Synchronizer interface {

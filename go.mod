@@ -1,4 +1,4 @@
-module github.com/zarbchain/zarb-go
+module github.com/pactus-project/pactus
 
 go 1.19
 

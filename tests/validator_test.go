@@ -3,15 +3,15 @@ package tests
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/www/capnp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
-	res := tCapnpServer.GetValidator(tCtx, func(p capnp.ZarbServer_getValidator_Params) error {
+	res := tCapnpServer.GetValidator(tCtx, func(p capnp.PactusServer_getValidator_Params) error {
 		assert.NoError(t, p.SetAddress(addr.String()))
 		return nil
 	}).Result()

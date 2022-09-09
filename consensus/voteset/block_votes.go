@@ -1,9 +1,9 @@
 package voteset
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/types/vote"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type blockVotes struct {

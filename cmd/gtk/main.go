@@ -12,16 +12,16 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/node"
-	"github.com/zarbchain/zarb-go/node/config"
-	"github.com/zarbchain/zarb-go/types/genesis"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/node"
+	"github.com/pactus-project/pactus/node/config"
+	"github.com/pactus-project/pactus/types/genesis"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet"
 )
 
-const appID = "com.github.zarbchain.zarb-go.zarb-gui"
+const appID = "com.github.pactus-project.pactus.pactus-gui"
 
 var (
 	workingDirOpt *string
@@ -29,7 +29,7 @@ var (
 )
 
 func init() {
-	workingDirOpt = flag.String("working-dir", cmd.ZarbHomeDir(), "working directory")
+	workingDirOpt = flag.String("working-dir", cmd.PactusHomeDir(), "working directory")
 	testnetOpt = flag.Bool("testnet", true, "working directory") // TODO: make it false after mainnet launch
 }
 
@@ -44,7 +44,7 @@ func main() {
 	}
 
 	// If node is not initialized yet
-	if !util.PathExists(cmd.ZarbDefaultWalletPath(workingDir)) {
+	if !util.PathExists(cmd.PactusDefaultWalletPath(workingDir)) {
 		if !startupAssistant(workingDir, *testnetOpt) {
 			return
 		}
@@ -76,7 +76,7 @@ func main() {
 }
 
 func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*node.Node, *time.Time, error) {
-	gen, err := genesis.LoadFromFile(cmd.ZarbGenesisPath(workingDir))
+	gen, err := genesis.LoadFromFile(cmd.PactusGenesisPath(workingDir))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -88,7 +88,7 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
-	conf, err := config.LoadFromFile(cmd.ZarbConfigPath(workingDir))
+	conf, err := config.LoadFromFile(cmd.PactusConfigPath(workingDir))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -130,7 +130,7 @@ func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
 
 	time.Sleep(1 * time.Second)
 
-	path := cmd.ZarbDefaultWalletPath(workingDir)
+	path := cmd.PactusDefaultWalletPath(workingDir)
 	wallet, err := wallet.OpenWallet(path, false)
 	fatalErrorCheck(err)
 

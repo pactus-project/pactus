@@ -1,9 +1,9 @@
 package block
 
 import (
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/tx"
-	simplemerkle "github.com/zarbchain/zarb-go/util/merkle"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/tx"
+	simplemerkle "github.com/pactus-project/pactus/util/merkle"
 )
 
 type Txs []*tx.Tx

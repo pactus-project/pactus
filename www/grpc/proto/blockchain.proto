@@ -4,9 +4,9 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "transaction.proto";
 
-option go_package = "github.com/zarbchain/zarb-go/www/grpc/zarb";
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 
-package zarb;
+package pactus;
 
 service Blockchain {
   rpc GetBlock(BlockRequest) returns (BlockResponse) {

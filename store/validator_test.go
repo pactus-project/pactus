@@ -3,10 +3,10 @@ package store
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestValidatorCounter(t *testing.T) {

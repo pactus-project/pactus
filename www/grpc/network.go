@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/util/logger"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
+	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/util/logger"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 )
 
 type networkServer struct {
@@ -15,13 +15,13 @@ type networkServer struct {
 }
 
 func (s *networkServer) GetNetworkInfo(ctx context.Context,
-	request *zarb.NetworkInfoRequest) (*zarb.NetworkInfoResponse, error) {
+	request *pactus.NetworkInfoRequest) (*pactus.NetworkInfoResponse, error) {
 	// Create response peers
-	rps := make([]*zarb.PeerInfo, int32(len(s.sync.Peers())))
+	rps := make([]*pactus.PeerInfo, int32(len(s.sync.Peers())))
 
 	// cast to response peers from synced peers
 	for i, peer := range s.sync.Peers() {
-		rps[i] = new(zarb.PeerInfo)
+		rps[i] = new(pactus.PeerInfo)
 		p := rps[i]
 
 		bs, err := cbor.Marshal(peer.Agent)
@@ -42,7 +42,7 @@ func (s *networkServer) GetNetworkInfo(ctx context.Context,
 		p.ReceivedBytes = int32(peer.ReceivedBytes)
 	}
 
-	return &zarb.NetworkInfoResponse{
+	return &pactus.NetworkInfoResponse{
 		SelfId: []byte(s.sync.SelfID()),
 		Peers:  rps,
 	}, nil

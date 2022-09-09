@@ -3,10 +3,10 @@ package sync
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/types/proposal"
 )
 
 func TestParsingQueryProposalMessages(t *testing.T) {

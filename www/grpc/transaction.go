@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/hex"
 
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
-	"github.com/zarbchain/zarb-go/util/logger"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/logger"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -20,7 +20,7 @@ type transactionServer struct {
 }
 
 func (zs *transactionServer) GetTransaction(ctx context.Context,
-	request *zarb.TransactionRequest) (*zarb.TransactionResponse, error) {
+	request *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
 	id, err := hash.FromString(request.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
@@ -30,13 +30,13 @@ func (zs *transactionServer) GetTransaction(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 
-	return &zarb.TransactionResponse{
+	return &pactus.TransactionResponse{
 		Transaction: transactionToProto(trx),
 	}, nil
 }
 
 func (zs *transactionServer) SendRawTransaction(ctx context.Context,
-	request *zarb.SendRawTransactionRequest) (*zarb.SendRawTransactionResponse, error) {
+	request *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
 	data, err := hex.DecodeString(request.Data)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
@@ -54,19 +54,19 @@ func (zs *transactionServer) SendRawTransaction(ctx context.Context,
 		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %v", err.Error())
 	}
 
-	return &zarb.SendRawTransactionResponse{
+	return &pactus.SendRawTransactionResponse{
 		Id: trx.ID().String(),
 	}, nil
 }
 
-func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
-	transaction := &zarb.TransactionInfo{
+func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
+	transaction := &pactus.TransactionInfo{
 		Id:       trx.ID().Bytes(),
 		Version:  int32(trx.Version()),
 		Stamp:    trx.Stamp().Bytes(),
 		Sequence: trx.Sequence(),
 		Fee:      trx.Fee(),
-		Type:     zarb.PayloadType(trx.Payload().Type()),
+		Type:     pactus.PayloadType(trx.Payload().Type()),
 		Memo:     trx.Memo(),
 	}
 
@@ -81,8 +81,8 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 	switch trx.Payload().Type() {
 	case payload.PayloadTypeSend:
 		pld := trx.Payload().(*payload.SendPayload)
-		transaction.Payload = &zarb.TransactionInfo_Send{
-			Send: &zarb.PayloadSend{
+		transaction.Payload = &pactus.TransactionInfo_Send{
+			Send: &pactus.PayloadSend{
 				Sender:   pld.Sender.String(),
 				Receiver: pld.Receiver.String(),
 				Amount:   pld.Amount,
@@ -90,8 +90,8 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 		}
 	case payload.PayloadTypeBond:
 		pld := trx.Payload().(*payload.BondPayload)
-		transaction.Payload = &zarb.TransactionInfo_Bond{
-			Bond: &zarb.PayloadBond{
+		transaction.Payload = &pactus.TransactionInfo_Bond{
+			Bond: &pactus.PayloadBond{
 				Sender:   pld.Sender.String(),
 				Receiver: pld.Receiver.String(),
 				Stake:    pld.Stake,
@@ -99,8 +99,8 @@ func transactionToProto(trx *tx.Tx) *zarb.TransactionInfo {
 		}
 	case payload.PayloadTypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
-		transaction.Payload = &zarb.TransactionInfo_Sortition{
-			Sortition: &zarb.PayloadSortition{
+		transaction.Payload = &pactus.TransactionInfo_Sortition{
+			Sortition: &pactus.PayloadSortition{
 				Address: pld.Address.String(),
 				Proof:   pld.Proof[:],
 			},

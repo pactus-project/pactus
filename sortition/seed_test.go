@@ -3,8 +3,8 @@ package sortition
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
 )
 
 func TestSeedFromString(t *testing.T) {

@@ -5,17 +5,17 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zarbchain/zarb-go/consensus/log"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/types/vote"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/consensus/log"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type consensus struct {

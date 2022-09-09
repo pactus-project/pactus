@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/www/capnp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 func sendRawTx(t *testing.T, raw []byte) error {
-	res := tCapnpServer.SendRawTransaction(tCtx, func(p capnp.ZarbServer_sendRawTransaction_Params) error {
+	res := tCapnpServer.SendRawTransaction(tCtx, func(p capnp.PactusServer_sendRawTransaction_Params) error {
 		assert.NoError(t, p.SetRawTx(raw))
 		return nil
 	}).Result()

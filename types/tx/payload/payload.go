@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/pactus-project/pactus/crypto"
 )
 
 type Type uint8

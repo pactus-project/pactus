@@ -4,10 +4,10 @@ import (
 	"context"
 	"net"
 
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/util/logger"
-	zarb "github.com/zarbchain/zarb-go/www/grpc/proto"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/util/logger"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"google.golang.org/grpc"
 )
 
@@ -49,9 +49,9 @@ func (s *Server) StartServer() error {
 		sync:   s.sync,
 		logger: s.logger,
 	}
-	zarb.RegisterBlockchainServer(grpc, blockchainServer)
-	zarb.RegisterTransactionServer(grpc, transactionServer)
-	zarb.RegisterNetworkServer(grpc, networkServer)
+	pactus.RegisterBlockchainServer(grpc, blockchainServer)
+	pactus.RegisterTransactionServer(grpc, transactionServer)
+	pactus.RegisterNetworkServer(grpc, networkServer)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {

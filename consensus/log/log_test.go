@@ -3,12 +3,12 @@ package log
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/committee"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/committee"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestMustGetRound(t *testing.T) {

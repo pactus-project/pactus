@@ -3,8 +3,8 @@ package linkedmap
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestLinkedMap(t *testing.T) {

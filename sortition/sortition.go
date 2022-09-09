@@ -1,7 +1,7 @@
 package sortition
 
 import (
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/pactus-project/pactus/crypto"
 )
 
 func EvaluateSortition(seed VerifiableSeed, signer crypto.Signer, total, threshold int64) (bool, Proof) {

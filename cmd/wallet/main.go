@@ -4,7 +4,7 @@ import (
 	"os"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/zarbchain/zarb-go/cmd"
+	"github.com/pactus-project/pactus/cmd"
 )
 
 var pathOpt *string
@@ -19,12 +19,12 @@ func addPasswordOption(c *cli.Cmd) *string {
 }
 
 func main() {
-	app := cli.App("zarb-wallet", "Zarb wallet")
+	app := cli.App("pactus-wallet", "Pactus wallet")
 
 	pathOpt = app.String(cli.StringOpt{
 		Name:  "w wallet file",
 		Desc:  "a path to the wallet file",
-		Value: cmd.ZarbDefaultWalletPath(cmd.ZarbHomeDir()),
+		Value: cmd.PactusDefaultWalletPath(cmd.PactusHomeDir()),
 	})
 
 	offlineOpt = app.Bool(cli.BoolOpt{

@@ -1,11 +1,11 @@
 package state
 
 import (
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 func (st *state) validateBlock(block *block.Block) error {

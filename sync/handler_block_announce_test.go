@@ -3,11 +3,11 @@ package sync
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/network"
-	"github.com/zarbchain/zarb-go/sync/bundle/message"
-	"github.com/zarbchain/zarb-go/types/block"
 )
 
 func TestParsingBlockAnnounceMessages(t *testing.T) {

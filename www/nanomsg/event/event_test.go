@@ -3,8 +3,8 @@ package event
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestCreateBlockEvent(t *testing.T) {

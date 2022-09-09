@@ -3,10 +3,10 @@ package consensus
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestCommitExecute(t *testing.T) {

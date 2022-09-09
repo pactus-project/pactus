@@ -1,9 +1,9 @@
 package consensus
 
 import (
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/vote"
-	"github.com/zarbchain/zarb-go/util"
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util"
 )
 
 type newHeightState struct {

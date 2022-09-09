@@ -1,7 +1,7 @@
 package message
 
 import (
-	"github.com/zarbchain/zarb-go/types/proposal"
+	"github.com/pactus-project/pactus/types/proposal"
 )
 
 type ProposalMessage struct {

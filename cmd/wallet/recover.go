@@ -2,8 +2,8 @@ package main
 
 import (
 	cli "github.com/jawher/mow.cli"
-	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 // Recover recovers a wallet from mnemonic (seed phrase).

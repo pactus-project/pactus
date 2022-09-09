@@ -6,11 +6,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/www/capnp"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/www/capnp"
 )
 
 var tMockState *state.MockState

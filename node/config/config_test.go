@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestSaveMainnetConfig(t *testing.T) {
@@ -19,7 +19,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 
 	assert.NoError(t, conf.SanityCheck())
 	assert.Equal(t, conf.State.RewardAddress, rewardAddr.String())
-	assert.Equal(t, conf.Network.Name, "zarb")
+	assert.Equal(t, conf.Network.Name, "pactus")
 }
 
 func TestSaveTestnetConfig(t *testing.T) {
@@ -32,7 +32,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 
 	assert.NoError(t, conf.SanityCheck())
 	assert.Equal(t, conf.State.RewardAddress, rewardAddr.String())
-	assert.Equal(t, conf.Network.Name, "zarb-testnet")
+	assert.Equal(t, conf.Network.Name, "pactus-testnet")
 }
 
 func TestSaveLocalnetConfig(t *testing.T) {
@@ -45,7 +45,7 @@ func TestSaveLocalnetConfig(t *testing.T) {
 
 	assert.NoError(t, conf.SanityCheck())
 	assert.Equal(t, conf.State.RewardAddress, rewardAddr.String())
-	assert.Equal(t, conf.Network.Name, "zarb-localnet")
+	assert.Equal(t, conf.Network.Name, "pactus-localnet")
 }
 
 func TestLoadFromFile(t *testing.T) {

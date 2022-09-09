@@ -5,9 +5,9 @@ import (
 	"io"
 	"testing"
 
+	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/zarbchain/zarb-go/util/bech32m"
 )
 
 // TestNonHardenedDerivation tests derive private key and public key in

@@ -6,13 +6,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/types/tx/payload"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/www/capnp"
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.capnp.GetTransaction(s.ctx, func(p capnp.ZarbServer_getTransaction_Params) error {
+	b := s.capnp.GetTransaction(s.ctx, func(p capnp.PactusServer_getTransaction_Params) error {
 		vars := mux.Vars(r)
 		id, err := hex.DecodeString(vars["id"])
 		if err != nil {

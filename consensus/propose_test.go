@@ -3,10 +3,10 @@ package consensus
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/block"
-	"github.com/zarbchain/zarb-go/types/proposal"
-	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestProposeBlock(t *testing.T) {

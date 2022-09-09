@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/vote"
 )
 
 func TestChangeProposer(t *testing.T) {

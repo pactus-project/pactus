@@ -4,14 +4,14 @@ import (
 	"context"
 	"net"
 
-	"github.com/zarbchain/zarb-go/consensus"
-	"github.com/zarbchain/zarb-go/state"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/util/logger"
+	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/util/logger"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 
-type zarbServer struct {
+type pactusServer struct {
 	state     state.Facade
 	sync      sync.Synchronizer
 	consensus consensus.Reader
@@ -68,8 +68,8 @@ func (s *Server) StartServer() error {
 			} else {
 				//
 				go func(c net.Conn) {
-					s2c := ZarbServer_ServerToClient(
-						&zarbServer{s.state, s.sync, s.consensus, s.logger})
+					s2c := PactusServer_ServerToClient(
+						&pactusServer{s.state, s.sync, s.consensus, s.logger})
 					conn := rpc.NewConn(rpc.StreamTransport(c), rpc.MainInterface(s2c.Client))
 					err := conn.Wait()
 					if err != nil {

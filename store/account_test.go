@@ -3,9 +3,9 @@ package store
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/util"
 )
 
 func TestAccountCounter(t *testing.T) {

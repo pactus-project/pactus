@@ -1,10 +1,10 @@
 package state
 
 import (
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/validator"
-	simplemerkle "github.com/zarbchain/zarb-go/util/merkle"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/validator"
+	simplemerkle "github.com/pactus-project/pactus/util/merkle"
 )
 
 func (st *state) accountsMerkleRoot() hash.Hash {

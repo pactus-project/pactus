@@ -8,18 +8,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/node"
-	"github.com/zarbchain/zarb-go/node/config"
-	"github.com/zarbchain/zarb-go/store"
-	"github.com/zarbchain/zarb-go/sync"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/genesis"
-	"github.com/zarbchain/zarb-go/types/param"
-	"github.com/zarbchain/zarb-go/types/validator"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/www/capnp"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/node"
+	"github.com/pactus-project/pactus/node/config"
+	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/genesis"
+	"github.com/pactus-project/pactus/types/param"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/www/capnp"
 	"zombiezen.com/go/capnproto2/rpc"
 )
 
@@ -28,7 +28,7 @@ var tConfigs []*config.Config
 var tNodes []*node.Node
 var tCapnpAddress = "0.0.0.0:1337"
 var tGenDoc *genesis.Genesis
-var tCapnpServer capnp.ZarbServer
+var tCapnpServer capnp.PactusServer
 var tCtx context.Context
 var tSequences map[crypto.Address]int32
 
@@ -114,7 +114,7 @@ func TestMain(m *testing.M) {
 	c, _ := net.Dial("tcp", tCapnpAddress)
 	tCtx = context.Background()
 	conn := rpc.NewConn(rpc.StreamTransport(c))
-	tCapnpServer = capnp.ZarbServer{Client: conn.Bootstrap(tCtx)}
+	tCapnpServer = capnp.PactusServer{Client: conn.Bootstrap(tCtx)}
 
 	// Wait for some blocks
 	waitForNewBlocks(8)

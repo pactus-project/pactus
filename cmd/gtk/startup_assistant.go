@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/zarbchain/zarb-go/cmd"
-	"github.com/zarbchain/zarb-go/node/config"
-	"github.com/zarbchain/zarb-go/types/genesis"
-	"github.com/zarbchain/zarb-go/wallet"
+	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/node/config"
+	"github.com/pactus-project/pactus/types/genesis"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
@@ -71,7 +71,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	fatalErrorCheck(err)
 
 	assistant.SetDefaultSize(600, 400)
-	assistant.SetTitle("Zarb - Init Wizard")
+	assistant.SetTitle("Pactus - Init Wizard")
 
 	var pageMode *gtk.Widget
 	var pagePassword *gtk.Widget
@@ -317,7 +317,7 @@ Now you are ready to start the node!`
 					network = wallet.NetworkTestNet
 				}
 				defaultWallet, err := wallet.FromMnemonic(
-					cmd.ZarbDefaultWalletPath(workingDir),
+					cmd.PactusDefaultWalletPath(workingDir),
 					mnemonic,
 					"",
 					network)
@@ -330,7 +330,7 @@ Now you are ready to start the node!`
 				fatalErrorCheck(err)
 
 				var gen *genesis.Genesis
-				confFile := cmd.ZarbConfigPath(workingDir)
+				confFile := cmd.PactusConfigPath(workingDir)
 
 				if testnet {
 					gen = genesis.Testnet()
@@ -352,7 +352,7 @@ Now you are ready to start the node!`
 				}
 
 				// Save genesis file
-				genFile := cmd.ZarbGenesisPath(workingDir)
+				genFile := cmd.PactusGenesisPath(workingDir)
 				err = gen.SaveToFile(genFile)
 				fatalErrorCheck(err)
 

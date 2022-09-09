@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/network"
+	"github.com/pactus-project/pactus/network"
 )
 
 type ResponseCode int

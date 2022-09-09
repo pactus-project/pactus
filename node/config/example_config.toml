@@ -17,8 +17,8 @@
 # network contains configuration of network module.
 [network]
 
-  # name is the name of the network. For the mainnet it should be set to “zarb”.
- ## name = "zarb"
+  # name is the name of the network. For the mainnet it should be set to “pactus”.
+ ## name = "pactus"
 
   # listens is the binding address for network APIs and supports multi addresses.
  ## listens = ["/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"]

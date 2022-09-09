@@ -1,14 +1,14 @@
 package sandbox
 
 import (
-	"github.com/zarbchain/zarb-go/committee"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
-	"github.com/zarbchain/zarb-go/sortition"
-	"github.com/zarbchain/zarb-go/types/account"
-	"github.com/zarbchain/zarb-go/types/param"
-	"github.com/zarbchain/zarb-go/types/validator"
+	"github.com/pactus-project/pactus/committee"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/param"
+	"github.com/pactus-project/pactus/types/validator"
 )
 
 type Sandbox interface {

@@ -5,9 +5,9 @@ import (
 	"context"
 	"net"
 
-	"github.com/zarbchain/zarb-go/util/encoding"
-	"github.com/zarbchain/zarb-go/util/logger"
-	"github.com/zarbchain/zarb-go/www/nanomsg/event"
+	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/www/nanomsg/event"
 	mangos "go.nanomsg.org/mangos/v3"
 	"go.nanomsg.org/mangos/v3/protocol/pub"
 

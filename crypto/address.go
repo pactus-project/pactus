@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"crypto/rand"
 
-	"github.com/zarbchain/zarb-go/util/bech32m"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/util/bech32m"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 // Address format:

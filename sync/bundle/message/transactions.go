@@ -3,8 +3,8 @@ package message
 import (
 	"fmt"
 
-	"github.com/zarbchain/zarb-go/types/tx"
-	"github.com/zarbchain/zarb-go/util/errors"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type TransactionsMessage struct {

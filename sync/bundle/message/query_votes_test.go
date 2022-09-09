@@ -3,8 +3,8 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestQueryVotesType(t *testing.T) {

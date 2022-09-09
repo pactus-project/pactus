@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/herumi/bls-go-binary/bls"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/util/errors"
 )
 
 func TestPrivateKeyToString(t *testing.T) {
