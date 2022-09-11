@@ -4,10 +4,12 @@ import (
 	"context"
 	"log"
 	"net"
+	"os"
 	"testing"
 
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"google.golang.org/grpc"
@@ -20,6 +22,12 @@ var tListener *bufconn.Listener
 var tCtx context.Context
 
 func init() {
+	// for saving test wallets in temp directory
+	err := os.Chdir(util.TempDirPath())
+	if err != nil {
+		panic(err)
+	}
+
 	const bufSize = 1024 * 1024
 
 	tListener = bufconn.Listen(bufSize)
@@ -87,10 +95,10 @@ func callTransactionServer(t *testing.T) (*grpc.ClientConn, pactus.TransactionCl
 	return conn, pactus.NewTransactionClient(conn)
 }
 
-func callWalletSerer(t *testing.T) (*grpc.ClientConn, zarb.WalletClient) {
+func callWalletSerer(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("Failed to dial wallet server: %v", err)
 	}
-	return conn, zarb.NewWalletClient(conn)
+	return conn, pactus.NewWalletClient(conn)
 }

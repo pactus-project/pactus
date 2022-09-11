@@ -316,7 +316,7 @@ Now you are ready to start the node!`
 				if testnet {
 					network = wallet.NetworkTestNet
 				}
-				defaultWallet, err := wallet.FromMnemonic(
+				defaultWallet, err := wallet.Create(
 					cmd.PactusDefaultWalletPath(workingDir),
 					mnemonic,
 					"",

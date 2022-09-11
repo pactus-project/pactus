@@ -30,7 +30,7 @@ func Generate() func(c *cli.Cmd) {
 			if *testnetOpt {
 				network = wallet.NetworkTestNet
 			}
-			wallet, err := wallet.FromMnemonic(*pathOpt, mnemonic, password, network)
+			wallet, err := wallet.Create(*pathOpt, mnemonic, password, network)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

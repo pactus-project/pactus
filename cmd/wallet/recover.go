@@ -12,7 +12,7 @@ func Recover() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			mnemonic := cmd.PromptInput("Seed")
-			wallet, err := wallet.FromMnemonic(*pathOpt, mnemonic, "", 0)
+			wallet, err := wallet.Create(*pathOpt, mnemonic, "", 0)
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

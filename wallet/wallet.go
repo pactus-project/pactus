@@ -60,8 +60,9 @@ func OpenWallet(path string, offline bool) (*Wallet, error) {
 	return newWallet(path, store, offline)
 }
 
-// FromMnemonic creates a wallet from mnemonic (seed phrase).
-func FromMnemonic(path, mnemonic, password string, net Network) (*Wallet, error) {
+// Create creates a wallet from mnemonic (seed phrase) and save it at the
+// given path.
+func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
