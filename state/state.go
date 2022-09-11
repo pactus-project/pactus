@@ -620,4 +620,10 @@ func (st *state) publishEvents(height uint32, block *block.Block) {
 	}
 	blockEvent := event.CreateBlockEvent(block.Hash(), height)
 	st.eventCh <- blockEvent
+
+	for i := 1; i < block.Transactions().Len(); i++ {
+		tx := block.Transactions().Get(i)
+		TxEvent := event.CreateNewTransactionEvent(tx.ID(), height)
+		st.eventCh <- TxEvent
+	}
 }

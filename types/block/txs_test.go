@@ -49,3 +49,12 @@ func TestIsEmpty(t *testing.T) {
 	txs.Append(trx)
 	assert.False(t, txs.IsEmpty())
 }
+
+func TestGetTransaction(t *testing.T) {
+	txs := NewTxs()
+	trx1, _ := tx.GenerateTestSendTx()
+	trx2, _ := tx.GenerateTestSendTx()
+	txs.Append(trx1)
+	txs.Append(trx2)
+	assert.Equal(t, trx1, txs.Get(0))
+}
