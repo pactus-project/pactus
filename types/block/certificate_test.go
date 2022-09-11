@@ -4,11 +4,8 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/stretchr/testify/assert"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/crypto/hash"
 )
 
 func TestCertificateCBORMarshaling(t *testing.T) {

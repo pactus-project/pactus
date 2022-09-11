@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/herumi/bls-go-binary/bls"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,12 +35,12 @@ func TestPrivateKeyToString(t *testing.T) {
 			false, false,
 			nil,
 		},
-		// {
-		// 	"invalid private key",
-		// 	"SECRET1PLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLSJGV7U3",
-		// 	false, false,
-		// 	nil,
-		// },
+		{
+			"zero private key",
+			"SECRET1PQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQSK004X",
+			false, false,
+			nil,
+		},
 		{
 			"invalid hrp",
 			"XXX1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQMUUMJT",

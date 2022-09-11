@@ -12,12 +12,12 @@ import (
 	"encoding/binary"
 	"strings"
 
-	herumi "github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/crypto/bls"
-	"github.com/zarbchain/zarb-go/util"
-	"github.com/zarbchain/zarb-go/util/bech32m"
-	"github.com/zarbchain/zarb-go/util/encoding"
+	bls12381 "github.com/kilic/bls12-381"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/bech32m"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 const (

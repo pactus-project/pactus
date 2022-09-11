@@ -6,10 +6,10 @@ import (
 	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
-	"github.com/herumi/bls-go-binary/bls"
-	"github.com/zarbchain/zarb-go/crypto"
-	"github.com/zarbchain/zarb-go/util/encoding"
-	"github.com/zarbchain/zarb-go/util/errors"
+	bls12381 "github.com/kilic/bls12-381"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 const SignatureSize = 48

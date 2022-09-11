@@ -1,9 +1,10 @@
 package bls
 
 import (
-	"github.com/herumi/bls-go-binary/bls"
+	"crypto/rand"
+
 	bls12381 "github.com/kilic/bls12-381"
-	"github.com/zarbchain/zarb-go/crypto"
+	"github.com/pactus-project/pactus/crypto"
 )
 
 // set Ciphersuite for Basic mode
@@ -32,6 +33,7 @@ func VerifyAggregated(sig *Signature, pubs []*PublicKey, msg []byte) bool {
 	if len(pubs) == 0 {
 		return false
 	}
+	g2 := bls12381.NewG2()
 	aggPointG2 := pubs[0].pointG2
 	for i := 1; i < len(pubs); i++ {
 		if g2.IsZero(&pubs[i].pointG2) {
