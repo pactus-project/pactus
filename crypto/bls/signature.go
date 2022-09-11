@@ -50,7 +50,7 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 func (sig *Signature) Bytes() []byte {
 	g1 := bls12381.NewG1()
 
-	return g1.ToCompressed(&sig.pointG1)
+	return g1.ToCompressed(sig.point())
 }
 
 func (sig *Signature) String() string {
@@ -89,8 +89,13 @@ func (sig *Signature) Decode(r io.Reader) error {
 	return nil
 }
 
-func (sig Signature) EqualsTo(right crypto.Signature) bool {
+func (sig *Signature) EqualsTo(right crypto.Signature) bool {
 	g1 := bls12381.NewG1()
 
-	return g1.Equal(&sig.pointG1, &right.(*Signature).pointG1)
+	return g1.Equal(sig.point(), right.(*Signature).point())
+}
+
+// clonePoint clones the pointG1 to make sure it remains intact.
+func (sig *Signature) point() *bls12381.PointG1 {
+	return bls12381.NewG1().New().Set(&sig.pointG1)
 }

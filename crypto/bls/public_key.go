@@ -63,7 +63,7 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 func (pub *PublicKey) Bytes() []byte {
 	g2 := bls12381.NewG2()
 
-	return g2.ToCompressed(&pub.pointG2)
+	return g2.ToCompressed(pub.point())
 }
 
 // String returns a human-readable string for the BLS public key.
@@ -125,10 +125,11 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if err != nil {
 		panic(err)
 	}
+	g2one := bls12381.NewG2().New().Set(&bls12381.G2One)
 
 	eng := bls12381.NewEngine()
-	eng.AddPair(q, &pub.pointG2)
-	eng.AddPairInv(&r.pointG1, &bls12381.G2One)
+	eng.AddPair(q, pub.point())
+	eng.AddPairInv(&r.pointG1, g2one)
 
 	if !eng.Check() {
 		return errors.Error(errors.ErrInvalidSignature)
@@ -139,7 +140,7 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 	g2 := bls12381.NewG2()
 
-	return g2.Equal(&pub.pointG2, &right.(*PublicKey).pointG2)
+	return g2.Equal(pub.point(), right.(*PublicKey).point())
 }
 
 func (pub *PublicKey) Address() crypto.Address {
@@ -155,4 +156,9 @@ func (pub *PublicKey) VerifyAddress(addr crypto.Address) error {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
 	return nil
+}
+
+// clonePoint clones the pointG2 to make sure it remains intact.
+func (pub *PublicKey) point() *bls12381.PointG2 {
+	return bls12381.NewG2().New().Set(&pub.pointG2)
 }
