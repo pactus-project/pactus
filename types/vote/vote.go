@@ -104,9 +104,6 @@ func (v *Vote) SanityCheck() error {
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
 	}
-	if err := v.Signature().SanityCheck(); err != nil {
-		return err
-	}
 	return nil
 }
 

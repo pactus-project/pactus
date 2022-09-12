@@ -6,7 +6,7 @@ import (
 	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
-	"github.com/herumi/bls-go-binary/bls"
+	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/errors"
@@ -15,7 +15,7 @@ import (
 const SignatureSize = 48
 
 type Signature struct {
-	signature bls.Sign
+	pointG1 bls12381.PointG1
 }
 
 func SignatureFromString(text string) (*Signature, error) {
@@ -27,28 +27,34 @@ func SignatureFromString(text string) (*Signature, error) {
 	return SignatureFromBytes(data)
 }
 
+// SignatureFromBytes constructs a BLS signature from the raw bytes.
 func SignatureFromBytes(data []byte) (*Signature, error) {
 	if len(data) != SignatureSize {
 		return nil, errors.Errorf(errors.ErrInvalidSignature,
 			"signature should be %d bytes, but it is %v bytes", SignatureSize, len(data))
 	}
-	s := new(bls.Sign)
-	if err := s.Deserialize(data); err != nil {
+	g1 := bls12381.NewG1()
+
+	pointG1, err := g1.FromCompressed(data)
+	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidSignature, err.Error())
 	}
+	if g1.IsZero(pointG1) {
+		return nil, errors.Errorf(errors.ErrInvalidSignature,
+			"signature is zero")
+	}
 
-	var sig Signature
-	sig.signature = *s
-
-	return &sig, nil
+	return &Signature{pointG1: *pointG1}, nil
 }
 
-func (sig Signature) Bytes() []byte {
-	return sig.signature.Serialize()
+func (sig *Signature) Bytes() []byte {
+	g1 := bls12381.NewG1()
+
+	return g1.ToCompressed(sig.point())
 }
 
-func (sig Signature) String() string {
-	return sig.signature.SerializeToHexStr()
+func (sig *Signature) String() string {
+	return hex.EncodeToString(sig.Bytes())
 }
 
 func (sig *Signature) MarshalCBOR() ([]byte, error) {
@@ -83,14 +89,13 @@ func (sig *Signature) Decode(r io.Reader) error {
 	return nil
 }
 
-func (sig *Signature) SanityCheck() error {
-	if sig.signature.IsZero() {
-		return errors.Errorf(errors.ErrInvalidSignature, "signature is zero")
-	}
+func (sig *Signature) EqualsTo(right crypto.Signature) bool {
+	g1 := bls12381.NewG1()
 
-	return nil
+	return g1.Equal(sig.point(), right.(*Signature).point())
 }
 
-func (sig Signature) EqualsTo(right crypto.Signature) bool {
-	return sig.signature.IsEqual(&right.(*Signature).signature)
+// clonePoint clones the pointG1 to make sure it remains intact.
+func (sig *Signature) point() *bls12381.PointG1 {
+	return bls12381.NewG1().New().Set(&sig.pointG1)
 }

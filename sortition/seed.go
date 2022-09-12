@@ -45,9 +45,6 @@ func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed
 	if err != nil {
 		return false
 	}
-	if err := sig.SanityCheck(); err != nil {
-		return false
-	}
 	hash := hash.CalcHash(prevSeed[:])
 	return public.Verify(hash.Bytes(), sig) == nil
 }

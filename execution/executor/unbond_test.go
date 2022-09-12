@@ -78,7 +78,7 @@ func TestUnbondInsideCommittee(t *testing.T) {
 }
 
 // TestUnbondJoiningCommittee checks if a validator tries to unbond after
-// evaluating sortuition.
+// evaluating sortition.
 // In non-strict mode it should be accepted.
 func TestUnbondJoiningCommittee(t *testing.T) {
 	setup(t)

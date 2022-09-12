@@ -206,12 +206,6 @@ func (tx *Tx) checkSignature() error {
 		if tx.Signature() == nil {
 			return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 		}
-		if err := tx.PublicKey().SanityCheck(); err != nil {
-			return errors.Error(errors.ErrInvalidPublicKey)
-		}
-		if err := tx.Signature().SanityCheck(); err != nil {
-			return errors.Error(errors.ErrInvalidSignature)
-		}
 		if err := tx.PublicKey().VerifyAddress(tx.Payload().Signer()); err != nil {
 			return err
 		}

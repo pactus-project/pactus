@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/herumi/bls-go-binary/bls"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
 )
@@ -37,14 +36,14 @@ func TestPrivateKeyToString(t *testing.T) {
 			nil,
 		},
 		{
-			"invalid private key",
-			"SECRET1PLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLSJGV7U3",
+			"zero private key",
+			"SECRET1PQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQSK004X",
 			false, false,
 			nil,
 		},
 		{
 			"invalid hrp",
-			"XXX1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQ7E8ACD",
+			"XXX1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQMUUMJT",
 			false, false,
 			nil,
 		},
@@ -84,20 +83,21 @@ func TestPrivateKeyToString(t *testing.T) {
 			"random private key",
 			randomPrv.String(),
 			true, true,
-			randomPrv.secretKey.Serialize(),
+			randomPrv.Bytes(),
 		},
 	}
 	for _, test := range tests {
 		prv, err := PrivateKeyFromString(test.encoded)
 		if test.decodable {
-			assert.NoError(t, err, "test %v. unexpected error", test.name)
-			assert.Equal(t, prv.SanityCheck() == nil, test.valid, "test %v. sanity check failed", test.name)
-
+			assert.NoError(t, err,
+				"test '%v' failed. unexpected error", test.name)
 			prv2, _ := PrivateKeyFromBytes(test.result)
-			assert.True(t, prv.EqualsTo(prv2))
+			assert.True(t, prv.EqualsTo(prv2),
+				"test '%v' failed. not equal", test.name)
 		} else {
-			assert.Error(t, err, "test %v. should failed", test.name)
-			assert.Equal(t, errors.Code(err), errors.ErrInvalidPrivateKey)
+			assert.Error(t, err, "test '%v' failed. should return error", test.name)
+			assert.Equal(t, errors.Code(err), errors.ErrInvalidPrivateKey,
+				"test '%v' failed. should return error", test.name)
 		}
 	}
 }
@@ -148,22 +148,24 @@ func TestKeyGen(t *testing.T) {
 		ikm, _ := hex.DecodeString(test.ikm)
 		prv, err := KeyGen(ikm, nil)
 		if test.sk == "Err" {
-			assert.Error(t, err, "test %v failed", i)
+			assert.Error(t, err,
+				"test '%v' failed. no error", i)
 		} else {
-			assert.NoError(t, err, "test %v failed", i)
+			assert.NoError(t, err,
+				"test'%v' failed. has error", i)
 			assert.Equal(t, hex.EncodeToString(prv.Bytes()), test.sk,
-				"test %v failed", i)
+				"test '%v' failed. not equal", i)
 		}
 	}
 }
 
-func TestPrivateKeySanityCheck(t *testing.T) {
-	sc := new(bls.SecretKey)
-	err := sc.DeserializeHexStr("0000000000000000000000000000000000000000000000000000000000000000")
-	assert.NoError(t, err)
-	prv := PrivateKey{
-		secretKey: *sc,
-	}
-	assert.NoError(t, err)
-	assert.Error(t, prv.SanityCheck())
-}
+// func TestPrivateKeySanityCheck(t *testing.T) {
+// 	sc := new(bls.SecretKey)
+// 	err := sc.DeserializeHexStr("0000000000000000000000000000000000000000000000000000000000000000")
+// 	assert.NoError(t, err)
+// 	prv := PrivateKey{
+// 		secretKey: *sc,
+// 	}
+// 	assert.NoError(t, err)
+// 	assert.Error(t, prv.SanityCheck())
+// }

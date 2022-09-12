@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/stretchr/testify/assert"
 )
@@ -58,13 +57,9 @@ func TestInvalidCertificate(t *testing.T) {
 	cert = GenerateTestCertificate(hash.GenerateTestHash())
 	cert.data.Signature = nil
 	assert.Error(t, cert.SanityCheck())
-
-	cert = GenerateTestCertificate(hash.GenerateTestHash())
-	cert.data.Signature = &bls.Signature{}
-	assert.Error(t, cert.SanityCheck())
 }
 
-func TestCertificateersHash(t *testing.T) {
+func TestCertificateHash(t *testing.T) {
 	temp := GenerateTestCertificate(hash.GenerateTestHash())
 
 	cert1 := NewCertificate(temp.Round(), []int32{10, 18, 2, 6}, []int32{}, temp.Signature())

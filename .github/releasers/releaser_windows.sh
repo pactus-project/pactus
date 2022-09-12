@@ -21,9 +21,9 @@ sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
 
 make herumi
 export CGO_LDFLAGS="-L.herumi/bls/lib -lbls384_256 -lm -g -O2"
-go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-daemon.exe ./cmd/daemon
-go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-wallet.exe ./cmd/wallet
-go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/pactus-gui.exe ./cmd/gtk
+go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-daemon.exe ./cmd/daemon
+go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-wallet.exe ./cmd/wallet
+go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/zarb-gui.exe ./cmd/gtk
 
 # Copying the neccesary libraries
 echo "Creating GUI directory"
