@@ -46,7 +46,7 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintInfoMsg("Creating wallet...")
-			mnemonic := wallet.GenerateMnemonic()
+			mnemonic := wallet.GenerateMnemonic(128)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Your wallet seed:")
 			cmd.PrintInfoMsg("\"" + mnemonic + "\"")
@@ -68,7 +68,7 @@ func Init() func(c *cli.Cmd) {
 			if *testnetOpt {
 				network = wallet.NetworkTestNet
 			}
-			wallet, err := wallet.FromMnemonic(walletPath, mnemonic, "", network)
+			wallet, err := wallet.Create(walletPath, mnemonic, "", network)
 			if err != nil {
 				cmd.PrintErrorMsg("Failed to create wallet: %v", err)
 				return

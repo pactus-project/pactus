@@ -10,7 +10,7 @@ package pactus;
 
 service Blockchain {
   rpc GetBlock(BlockRequest) returns (BlockResponse) {
-    option (google.api.http).get = "/v1/blockchain/block/hash/{hash}";
+    option (google.api.http).get = "/v1/blockchain/block/hash/{hash}/verbosity/verbosity";
   }
   rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse) {
     option (google.api.http).get = "/v1/blockchain/block_hash/{height}";

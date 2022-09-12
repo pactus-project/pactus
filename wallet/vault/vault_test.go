@@ -14,7 +14,7 @@ import (
 
 const tPassword = "super_secret_password"
 
-var mnemonic = GenerateMnemonic()
+var mnemonic = GenerateMnemonic(128)
 var _, importedPrv = bls.GenerateTestKeyPair()
 
 // testVault return an instances of vault fo testing

@@ -282,7 +282,7 @@ Now you are ready to start the node!`
 		gtk.MainQuit()
 	})
 
-	mnemonic := wallet.GenerateMnemonic()
+	mnemonic := wallet.GenerateMnemonic(128)
 
 	assistant.Connect("prepare", func(assistant *gtk.Assistant, page *gtk.Widget) {
 		name, err := page.GetName()
@@ -316,7 +316,7 @@ Now you are ready to start the node!`
 				if testnet {
 					network = wallet.NetworkTestNet
 				}
-				defaultWallet, err := wallet.FromMnemonic(
+				defaultWallet, err := wallet.Create(
 					cmd.PactusDefaultWalletPath(workingDir),
 					mnemonic,
 					"",

@@ -4,10 +4,12 @@ import (
 	"context"
 	"log"
 	"net"
+	"os"
 	"testing"
 
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"google.golang.org/grpc"
@@ -20,6 +22,12 @@ var tListener *bufconn.Listener
 var tCtx context.Context
 
 func init() {
+	// for saving test wallets in temp directory
+	err := os.Chdir(util.TempDirPath())
+	if err != nil {
+		panic(err)
+	}
+
 	const bufSize = 1024 * 1024
 
 	tListener = bufconn.Listen(bufSize)
@@ -43,10 +51,15 @@ func init() {
 		state:  tMockState,
 		logger: logger,
 	}
+	walletServer := &walletServer{
+		logger: logger,
+	}
 
 	pactus.RegisterBlockchainServer(s, blockchainServer)
 	pactus.RegisterNetworkServer(s, networkServer)
 	pactus.RegisterTransactionServer(s, transactionServer)
+	pactus.RegisterWalletServer(s, walletServer)
+
 	go func() {
 		if err := s.Serve(tListener); err != nil {
 			log.Fatalf("Server exited with error: %v", err)
@@ -80,4 +93,12 @@ func callTransactionServer(t *testing.T) (*grpc.ClientConn, pactus.TransactionCl
 		t.Fatalf("Failed to dial transaction server: %v", err)
 	}
 	return conn, pactus.NewTransactionClient(conn)
+}
+
+func callWalletSerer(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
+	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("Failed to dial wallet server: %v", err)
+	}
+	return conn, pactus.NewWalletClient(conn)
 }

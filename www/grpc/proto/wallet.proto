@@ -8,5 +8,29 @@ option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 package pactus;
 
 service Wallet {
+  rpc GenerateMnemonic(GenerateMnemonicRequest)
+      returns (GenerateMnemonicResponse) {
+    option (google.api.http).get =
+        "/v1/wallet/mnemonic/entropy/{entropy}/language/{language}";
+  }
 
+  rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse) {
+    option (google.api.http).get =
+        "/v1/wallet/create/name/{name}/mnemonic/{mnemonic}/language/{language}/password/{password}";
+  }
 }
+message GenerateMnemonicRequest {
+  int32 entropy = 1;
+  string language = 2;
+}
+
+message GenerateMnemonicResponse { string mnemonic = 1; }
+
+message CreateWalletRequest {
+  string name = 1;
+  string mnemonic = 2;
+  string language = 3;
+  string password = 4;
+}
+
+message CreateWalletResponse {}

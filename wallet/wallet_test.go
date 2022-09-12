@@ -17,8 +17,8 @@ var tPassword string
 func setup(t *testing.T) {
 	tPassword := ""
 	walletPath := util.TempFilePath()
-	mnemonic := GenerateMnemonic()
-	w, err := FromMnemonic(walletPath, mnemonic, tPassword, NetworkMainNet)
+	mnemonic := GenerateMnemonic(128)
+	w, err := Create(walletPath, mnemonic, tPassword, NetworkMainNet)
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
 	assert.Equal(t, w.Path(), walletPath)
@@ -69,19 +69,19 @@ func TestRecoverWallet(t *testing.T) {
 		// try to recover a wallet at the same place
 		assert.NoError(t, tWallet.Save())
 
-		_, err := FromMnemonic(tWallet.path, mnemonic, password, 0)
+		_, err := Create(tWallet.path, mnemonic, password, 0)
 		assert.ErrorIs(t, err, NewErrWalletExits(tWallet.path))
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := FromMnemonic(util.TempFilePath(),
+		_, err := Create(util.TempFilePath(),
 			"invali mnemonic phrase seed", password, 0)
 		assert.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		path := util.TempFilePath()
-		recovered, err := FromMnemonic(path, mnemonic, password, NetworkMainNet)
+		recovered, err := Create(path, mnemonic, password, NetworkMainNet)
 		assert.NoError(t, err)
 
 		addr1, err := recovered.DeriveNewAddress("addr-1")
@@ -122,14 +122,14 @@ func TestImportPrivateKey(t *testing.T) {
 }
 
 func TestTestKeyInfo(t *testing.T) {
-	mnemonic := GenerateMnemonic()
-	w1, err := FromMnemonic(util.TempFilePath(), mnemonic, tPassword,
+	mnemonic := GenerateMnemonic(128)
+	w1, err := Create(util.TempFilePath(), mnemonic, tPassword,
 		NetworkMainNet)
 	assert.NoError(t, err)
 	addrStr1, _ := w1.DeriveNewAddress("")
 	prv1, _ := w1.PrivateKey("", addrStr1)
 
-	w2, err := FromMnemonic(util.TempFilePath(), mnemonic, tPassword,
+	w2, err := Create(util.TempFilePath(), mnemonic, tPassword,
 		NetworkTestNet)
 	assert.NoError(t, err)
 	addrStr2, _ := w2.DeriveNewAddress("")

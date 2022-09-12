@@ -7,7 +7,10 @@
 package pactus
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WalletClient interface {
+	GenerateMnemonic(ctx context.Context, in *GenerateMnemonicRequest, opts ...grpc.CallOption) (*GenerateMnemonicResponse, error)
+	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error)
 }
 
 type walletClient struct {
@@ -29,14 +34,41 @@ func NewWalletClient(cc grpc.ClientConnInterface) WalletClient {
 	return &walletClient{cc}
 }
 
+func (c *walletClient) GenerateMnemonic(ctx context.Context, in *GenerateMnemonicRequest, opts ...grpc.CallOption) (*GenerateMnemonicResponse, error) {
+	out := new(GenerateMnemonicResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/GenerateMnemonic", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error) {
+	out := new(CreateWalletResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/CreateWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
 type WalletServer interface {
+	GenerateMnemonic(context.Context, *GenerateMnemonicRequest) (*GenerateMnemonicResponse, error)
+	CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have forward compatible implementations.
 type UnimplementedWalletServer struct {
+}
+
+func (UnimplementedWalletServer) GenerateMnemonic(context.Context, *GenerateMnemonicRequest) (*GenerateMnemonicResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateMnemonic not implemented")
+}
+func (UnimplementedWalletServer) CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateWallet not implemented")
 }
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
@@ -50,13 +82,58 @@ func RegisterWalletServer(s grpc.ServiceRegistrar, srv WalletServer) {
 	s.RegisterService(&Wallet_ServiceDesc, srv)
 }
 
+func _Wallet_GenerateMnemonic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateMnemonicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GenerateMnemonic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/GenerateMnemonic",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GenerateMnemonic(ctx, req.(*GenerateMnemonicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_CreateWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).CreateWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/CreateWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).CreateWallet(ctx, req.(*CreateWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Wallet_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pactus.Wallet",
 	HandlerType: (*WalletServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "wallet.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GenerateMnemonic",
+			Handler:    _Wallet_GenerateMnemonic_Handler,
+		},
+		{
+			MethodName: "CreateWallet",
+			Handler:    _Wallet_CreateWallet_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "wallet.proto",
 }
