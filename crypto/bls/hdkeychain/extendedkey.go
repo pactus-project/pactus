@@ -436,7 +436,7 @@ func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 
 	// masterKey is the master key used along with a random seed used to generate
 	// the master node in the hierarchical tree.
-	var masterKey = []byte("Zarb seed")
+	var masterKey = []byte("BLS12381-HD-KEYCHAIN")
 
 	// First take the HMAC-SHA512 of the master key and the seed data:
 	//   I = HMAC-SHA512(Key = "Zarb seed", Data = S)
