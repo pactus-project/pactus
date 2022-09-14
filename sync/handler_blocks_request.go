@@ -77,6 +77,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		}
 	}
 	// To avoid sending blocks again, we update height for this peer
+	// Height is always greater than zeo.
 	handler.peerSet.UpdateHeight(initiator, height-1)
 
 	if msg.To >= handler.state.LastBlockHeight() {

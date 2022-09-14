@@ -202,7 +202,7 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32) {
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.Height = height
+	p.Height = util.MaxU32(p.Height, height)
 	ps.maxClaimedHeight = util.MaxU32(ps.maxClaimedHeight, height)
 }
 

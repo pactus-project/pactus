@@ -21,6 +21,9 @@ func NewBlocksRequestMessage(sid int, from, to uint32) *BlocksRequestMessage {
 }
 
 func (m *BlocksRequestMessage) SanityCheck() error {
+	if m.From == 0 {
+		return errors.Errorf(errors.ErrInvalidHeight, "invalid height")
+	}
 	if m.From > m.To {
 		return errors.Errorf(errors.ErrInvalidHeight, "invalid range")
 	}

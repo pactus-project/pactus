@@ -14,6 +14,11 @@ func TestHeartBeatType(t *testing.T) {
 }
 
 func TestHeartBeatMessage(t *testing.T) {
+	t.Run("Invalid height", func(t *testing.T) {
+		m := NewHeartBeatMessage(0, 0, hash.GenerateTestHash())
+
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
+	})
 	t.Run("Invalid round", func(t *testing.T) {
 		m := NewHeartBeatMessage(100, -1, hash.GenerateTestHash())
 

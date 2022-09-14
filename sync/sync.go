@@ -167,8 +167,10 @@ func (sync *synchronizer) broadcastHeartBeat() {
 	}
 
 	height, round := sync.consensus.HeightRound()
-	msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
-	sync.broadcast(msg)
+	if height > 0 {
+		msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
+		sync.broadcast(msg)
+	}
 }
 
 func (sync *synchronizer) sayHello(helloAck bool) {
