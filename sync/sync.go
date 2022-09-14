@@ -420,22 +420,23 @@ func (sync *synchronizer) weAreInTheCommittee() bool {
 }
 
 func (sync *synchronizer) tryCommitBlocks() {
+	height := sync.state.LastBlockHeight() + 1
 	for {
-		ourHeight := sync.state.LastBlockHeight()
-		b := sync.cache.GetBlock(ourHeight + 1)
+		b := sync.cache.GetBlock(height)
 		if b == nil {
 			break
 		}
-		c := sync.cache.GetCertificate(ourHeight + 1)
+		c := sync.cache.GetCertificate(height)
 		if c == nil {
 			break
 		}
-		sync.logger.Trace("committing block", "height", ourHeight+1, "block", b)
-		if err := sync.state.CommitBlock(ourHeight+1, b, c); err != nil {
-			sync.logger.Warn("committing block failed", "block", b, "err", err, "height", ourHeight+1)
+		sync.logger.Trace("committing block", "height", height, "block", b)
+		if err := sync.state.CommitBlock(height, b, c); err != nil {
+			sync.logger.Warn("committing block failed", "block", b, "err", err, "height", height)
 			// We will ask network to re-send this block again ...
 			break
 		}
+		height = height + 1
 	}
 }
 
