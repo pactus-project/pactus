@@ -7,7 +7,35 @@ on:
 
 jobs:
   ########################################
-  build-linux:
+  build-cli:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        sudo apt update
+        sudo apt install zip
+
+    - name: Install Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Create release files
+      run: bash ./.github/releasers/releaser_cli.sh
+
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          pactus-*.zip
+          pactus-*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
+  build-gui-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -20,10 +48,10 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.18
+        go-version: 1.19
 
     - name: Create release files
-      run: bash ./.github/releasers/releaser_linux.sh
+      run: bash ./.github/releasers/releaser_gui_linux.sh
 
     - name: Publish
       uses: softprops/action-gh-release@v1
@@ -33,7 +61,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
-  build-macos:
+  build-gui-macos:
     runs-on: macos-10.15
     steps:
     - uses: actions/checkout@v3
@@ -47,7 +75,7 @@ jobs:
         go-version: 1.19
 
     - name: Create release files
-      run: bash ./.github/releasers/releaser_macos.sh
+      run: bash ./.github/releasers/releaser_gui_macos.sh
 
     - name: Publish
       uses: softprops/action-gh-release@v1
@@ -59,7 +87,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
-  build-windows:
+  build-gui-windows:
     runs-on: windows-latest
     defaults:
       run:
@@ -83,7 +111,7 @@ jobs:
           mingw-w64-x86_64-pkg-config
 
     - name: Create release files
-      run: bash ./.github/releasers/releaser_windows.sh
+      run: bash ./.github/releasers/releaser_gui_windows.sh
 
     - name: Publish
       uses: softprops/action-gh-release@v1

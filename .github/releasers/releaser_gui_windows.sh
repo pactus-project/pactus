@@ -1,16 +1,14 @@
 #!/bin/bash
 
+# Set –e is used within the Bash to stop execution instantly as a query exits
+# while having a non-zero status.
 set -e
 
 ROOT_DIR="$(pwd)"
 VERSION="$(echo `git -C ${ROOT_DIR} describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
 BUILD_DIR="${ROOT_DIR}/build"
-PACKAGE_NAME="pactus-${VERSION}"
+PACKAGE_NAME="pactus-gui_${VERSION}"
 PACKAGE_DIR="${ROOT_DIR}/${PACKAGE_NAME}"
-
-echo "VERSION: $VERSION"
-echo "ROOT_DIR: $ROOT_DIR"
-echo "PACKAGE_DIR: $PACKAGE_DIR"
 
 mkdir ${PACKAGE_DIR}
 
@@ -19,9 +17,9 @@ echo "Building the binaries"
 # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
 sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
 
-go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-daemon.exe ./cmd/daemon
-go build -ldflags "-s -w" -o ${BUILD_DIR}/zarb-wallet.exe ./cmd/wallet
-go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/zarb-gui.exe ./cmd/gtk
+go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-daemon.exe ./cmd/daemon
+go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-wallet.exe ./cmd/wallet
+go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/pactus-gui.exe ./cmd/gtk
 
 # Copying the neccesary libraries
 echo "Creating GUI directory"
@@ -132,8 +130,9 @@ mv ${BUILD_DIR}/pactus-gui.exe     ${PACKAGE_DIR}/pactus-gui/pactus-gui.exe
 mv ${BUILD_DIR}/pactus-wallet.exe  ${PACKAGE_DIR}/pactus-wallet.exe
 mv ${BUILD_DIR}/pactus-daemon.exe  ${PACKAGE_DIR}/pactus-daemon.exe
 
+
 echo "Archiving the package"
-7z a ${ROOT_DIR}/${PACKAGE_NAME}-windows-x86_64.zip ${PACKAGE_DIR}
+7z a ${ROOT_DIR}/${PACKAGE_NAME}_windows_amd64.zip ${PACKAGE_DIR}
 
 echo "Creating installer"
 echo "
@@ -150,5 +149,4 @@ Name:{group}\\Pactus GUI; Filename:{app}\\pactus-gui\\pactus-gui.exe;" >> ${ROOT
 cd ${ROOT_DIR}
 INNO_DIR=$(cygpath -w -s "/c/Program Files (x86)/Inno Setup 6")
 ${INNO_DIR}/ISCC.exe ${ROOT_DIR}/inno.iss
-mv Output/mysetup.exe ${ROOT_DIR}/${PACKAGE_NAME}-windows-x86_64-installer.exe
-
+mv Output/mysetup.exe ${ROOT_DIR}/${PACKAGE_NAME}_windows_amd64_installer.exe
