@@ -30,12 +30,12 @@ func certificateKey(height uint32) key {
 }
 
 type Cache struct {
-	cache *lru.ARCCache // it's thread safe
+	cache *lru.Cache // it's thread safe
 	state state.Facade
 }
 
 func NewCache(size int, state state.Facade) (*Cache, error) {
-	c, err := lru.NewARC(size)
+	c, err := lru.New(size)
 	if err != nil {
 		return nil, err
 	}

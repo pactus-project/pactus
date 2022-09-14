@@ -45,10 +45,11 @@ func MockingState() *MockState {
 
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
-		b := block.GenerateTestBlock(nil, nil)
+		lastHash := m.LastBlockHash()
+		b := block.GenerateTestBlock(nil, &lastHash)
 		cert := block.GenerateTestCertificate(b.Hash())
 
-		m.TestStore.SaveBlock(uint32(i+1), b, cert)
+		m.TestStore.SaveBlock(m.LastBlockHeight()+1, b, cert)
 	}
 }
 func (m *MockState) LastBlockHeight() uint32 {
