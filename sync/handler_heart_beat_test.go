@@ -2,6 +2,7 @@ package sync
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/network"
@@ -48,6 +49,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 }
 
 func TestBroadcastingHeartbeatMessages(t *testing.T) {
+	tConfig.HeartBeatTimeout = 1 * time.Second
 	setup(t)
 
 	t.Run("It is not in committee", func(t *testing.T) {
