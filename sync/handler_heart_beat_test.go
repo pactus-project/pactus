@@ -19,7 +19,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	msg := message.NewHeartBeatMessage(h, 2, hash.GenerateTestHash())
 
 	t.Run("Not in the committee, but processes hearbeat messages", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})
@@ -27,21 +27,21 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
 
 	t.Run("In the committee, should query for votes", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})
 
 	t.Run("Should not query for votes for previous round", func(t *testing.T) {
 		msg := message.NewHeartBeatMessage(h, 0, hash.GenerateTestHash())
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})
 
 	t.Run("Should not query for votes for same round", func(t *testing.T) {
 		msg := message.NewHeartBeatMessage(h, 1, hash.GenerateTestHash())
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})

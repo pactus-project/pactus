@@ -236,7 +236,7 @@ func (st *state) ProposeBlock(round int16) (*block.Block, error) {
 	defer st.lk.Unlock()
 
 	if !st.committee.IsProposer(st.signer.Address(), round) {
-		return nil, errors.Errorf(errors.ErrGeneric, "we are not propser for this round")
+		return nil, errors.Errorf(errors.ErrGeneric, "we are not proposer for this round")
 	}
 
 	// Create new sandbox and execute transactions

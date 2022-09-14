@@ -17,7 +17,7 @@ import (
 )
 
 const versionLatest = 0x01
-const flagLocktime = 0x80
+const flagLockTime = 0x80
 
 const maxMemoLength = 64
 
@@ -72,7 +72,7 @@ func NewLockTimeTx(lockTime uint32, seq int32, pld payload.Payload, fee int64,
 		data: txData{
 			LockTime: lockTime,
 			Sequence: seq,
-			Version:  versionLatest | flagLocktime,
+			Version:  versionLatest | flagLockTime,
 			Payload:  pld,
 			Fee:      fee,
 			Memo:     memo,
@@ -129,11 +129,11 @@ func (tx *Tx) LockTime() uint32 {
 }
 
 func (tx *Tx) IsStamped() bool {
-	return tx.data.Version&flagLocktime == 0x00
+	return tx.data.Version&flagLockTime == 0x00
 }
 
 func (tx *Tx) IsLockTime() bool {
-	return tx.data.Version&flagLocktime == flagLocktime
+	return tx.data.Version&flagLockTime == flagLockTime
 }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {

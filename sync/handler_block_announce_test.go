@@ -14,23 +14,23 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	setup(t)
 
 	lastBlockHash := tState.LastBlockHash()
-	lastBlockheight := tState.LastBlockHeight()
+	lastBlockHeight := tState.LastBlockHeight()
 	b1 := block.GenerateTestBlock(nil, &lastBlockHash)
 	lastBlockHash = b1.Hash()
 	b2 := block.GenerateTestBlock(nil, &lastBlockHash)
 	c2 := block.GenerateTestCertificate(b2.Hash())
 
 	pid := network.TestRandomPeerID()
-	msg := message.NewBlockAnnounceMessage(lastBlockheight+2, b2, c2)
+	msg := message.NewBlockAnnounceMessage(lastBlockHeight+2, b2, c2)
 
 	pub, _ := bls.GenerateTestKeyPair()
 	testAddPeer(t, pub, pid)
 
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		msg1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
-		assert.Equal(t, msg1.Message.(*message.BlocksRequestMessage).From, lastBlockheight+1)
+		assert.Equal(t, msg1.Message.(*message.BlocksRequestMessage).From, lastBlockHeight+1)
 	})
 }
 

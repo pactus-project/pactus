@@ -24,7 +24,7 @@ func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator pe
 	height, _ := handler.consensus.HeightRound()
 	if msg.Height == height {
 		if !handler.peerIsInTheCommittee(initiator) {
-			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the commmittee")
+			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the committee")
 		}
 		p := handler.consensus.RoundProposal(msg.Round)
 		if p != nil {
