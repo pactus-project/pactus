@@ -78,7 +78,7 @@ func Start() func(c *cli.Cmd) {
 			}
 
 			if gen.Params().IsTestnet() {
-				crypto.AddressHRP = "tzc"
+				crypto.AddressHRP = "tpc"
 				crypto.PublicKeyHRP = "tpublic"
 				crypto.PrivateKeyHRP = "tsecret"
 				crypto.XPublicKeyHRP = "txpublic"

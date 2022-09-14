@@ -2,7 +2,7 @@ package crypto
 
 var (
 	// Human Readable Part (HRP) for address
-	AddressHRP = "zc"
+	AddressHRP = "pc"
 	// Human Readable Part (HRP) for public key
 	PublicKeyHRP = "public"
 	// Human Readable Part (HRP) for private key

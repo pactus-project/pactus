@@ -100,7 +100,7 @@ func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
 
 func newWallet(path string, store *store, offline bool) (*Wallet, error) {
 	if store.data.Network == NetworkTestNet {
-		crypto.AddressHRP = "tzc"
+		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
 		crypto.PrivateKeyHRP = "tsecret"
 		crypto.XPublicKeyHRP = "txpublic"

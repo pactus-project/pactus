@@ -1,5 +1,5 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests')
-BUILD_LDFLAGS= -ldflags "-X github.com/zarbchain/zarb-go/version.build=`git rev-parse --short=8 HEAD`"
+BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git rev-parse --short=8 HEAD`"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe

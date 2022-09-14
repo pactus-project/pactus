@@ -14,7 +14,7 @@ func TestSigning(t *testing.T) {
 	prv, _ := PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
 	pub, _ := PublicKeyFromString("public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjrvqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a")
 	sig, _ := SignatureFromString("ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
-	addr, _ := crypto.AddressFromString("zc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3ku6ptk")
+	addr, _ := crypto.AddressFromString("pc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3xk73tq")
 
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig1.Bytes(), sig.Bytes())
