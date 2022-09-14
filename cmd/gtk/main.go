@@ -81,7 +81,7 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 		return nil, nil, err
 	}
 	if gen.Params().IsTestnet() {
-		crypto.AddressHRP = "tzc"
+		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
 		crypto.PrivateKeyHRP = "tsecret"
 		crypto.XPublicKeyHRP = "txpublic"
