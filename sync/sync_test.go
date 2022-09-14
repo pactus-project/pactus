@@ -53,7 +53,7 @@ func testConfig() *Config {
 	return &Config{
 		Moniker:          "test",
 		StartingTimeout:  0,
-		HeartBeatTimeout: time.Second * 1,
+		HeartBeatTimeout: 0, // Disabling heartbeat
 		SessionTimeout:   time.Second * 1,
 		NodeNetwork:      true,
 		BlockPerMessage:  10,
