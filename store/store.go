@@ -19,7 +19,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb/opt"
 )
 
-const lasteStoreVersion = int32(1)
+const lastStoreVersion = int32(1)
 
 // TODO: add cache for me
 
@@ -118,7 +118,7 @@ func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certifi
 
 	// Save last certificate
 	w := bytes.NewBuffer(make([]byte, 0, 8+cert.SerializeSize()))
-	err := encoding.WriteElements(w, lasteStoreVersion, height)
+	err := encoding.WriteElements(w, lastStoreVersion, height)
 	if err != nil {
 		panic(err)
 	}

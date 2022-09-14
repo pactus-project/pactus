@@ -19,13 +19,13 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	msg := message.NewQueryVotesMessage(consensusHeight, 1)
 
 	t.Run("Not in the committee, should not respond to the query vote message", func(t *testing.T) {
-		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 	})
 
 	testAddPeerToCommittee(t, pid, nil)
 
 	t.Run("In the committee, should respond to the query vote message", func(t *testing.T) {
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
 		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
@@ -33,7 +33,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 
 	t.Run("In the committee, but doesn't have the vote", func(t *testing.T) {
 		msg := message.NewQueryVotesMessage(consensusHeight+1, 1)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
 	})

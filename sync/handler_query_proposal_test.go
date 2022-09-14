@@ -20,20 +20,20 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	t.Run("Not in the committee, should not respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 0)
 
-		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 	})
 
 	testAddPeerToCommittee(t, pid, nil)
 
 	t.Run("In the committee, but not the same height", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight+1, 0)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
 	})
 	t.Run("In the committee, should respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 0)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
 		assert.Equal(t, bdl.Message.(*message.ProposalMessage).Proposal.Hash(), prop.Hash())
@@ -41,7 +41,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 
 	t.Run("In the committee, but doesn't have the proposal", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 1)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
 	})

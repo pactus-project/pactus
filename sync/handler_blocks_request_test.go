@@ -22,7 +22,7 @@ func TestSessionTimeout(t *testing.T) {
 		msg := message.NewHelloMessage(pid, "Oscar", 6666, message.FlagNodeNetwork, tState.GenesisHash())
 		signer.SignMsg(msg)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
 
@@ -41,7 +41,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 	t.Run("Reject request from unknown peers", func(t *testing.T) {
 		msg := message.NewBlocksRequestMessage(sid, 100, 105)
-		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -53,7 +53,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 	t.Run("Reject request with invalid range", func(t *testing.T) {
 		msg := message.NewBlocksRequestMessage(sid, 0, 20)
-		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -65,7 +65,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Reject requests with more than `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 0, heightBob)
-			assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+			assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 
 			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -74,7 +74,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, heightBob-5, heightBob)
-			assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 			msg1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
@@ -89,7 +89,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Peer requests to send the blocks again, It should be rejected", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, heightBob-1, heightBob)
-			assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+			assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 
 			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -97,7 +97,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Peer doesn't have requested blocks", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 100, 105)
-			assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
@@ -114,7 +114,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		s := tSync.peerSet.OpenSession(tNetwork.SelfID())
 		msg := message.NewBlocksRequestMessage(s.SessionID(), 100, 105)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 		assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeBusy)
 	})

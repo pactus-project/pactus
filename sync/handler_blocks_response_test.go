@@ -18,7 +18,7 @@ func TestOneBlockShorter(t *testing.T) {
 	setup(t)
 
 	lastBlockHash := tState.LastBlockHash()
-	lastBlockheight := tState.LastBlockHeight()
+	lastBlockHeight := tState.LastBlockHeight()
 	b1 := block.GenerateTestBlock(nil, &lastBlockHash)
 	c1 := block.GenerateTestCertificate(b1.Hash())
 	pid := network.TestRandomPeerID()
@@ -30,7 +30,7 @@ func TestOneBlockShorter(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid,
 			0, nil, nil)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
 	})
@@ -39,7 +39,7 @@ func TestOneBlockShorter(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid,
 			0, nil, nil)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
 	})
@@ -47,11 +47,11 @@ func TestOneBlockShorter(t *testing.T) {
 	t.Run("Commit one block", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid,
-			lastBlockheight+1, []*block.Block{b1}, c1)
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+			lastBlockHeight+1, []*block.Block{b1}, c1)
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))
-		assert.Equal(t, tState.LastBlockHeight(), lastBlockheight+1)
+		assert.Equal(t, tState.LastBlockHeight(), lastBlockHeight+1)
 	})
 }
 

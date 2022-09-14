@@ -25,7 +25,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer.SignMsg(msg)
 		assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
-		assert.Error(t, testReceiveingNewMessage(tSync, msg, initiator))
+		assert.Error(t, testReceivingNewMessage(tSync, msg, initiator))
 		assert.Equal(t, tSync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
 	})
 
@@ -37,7 +37,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		signer.SignMsg(msg)
 		assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
-		assert.Error(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 		checkPeerStatus(t, pid, peerset.StatusCodeBanned)
 	})
@@ -49,7 +49,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.GenesisHash())
 		signer.SignMsg(msg)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 
@@ -70,7 +70,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagHelloAck, tState.GenesisHash())
 		signer.SignMsg(msg)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 	})
@@ -83,7 +83,7 @@ func TestParsingHelloMessages(t *testing.T) {
 		msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, tState.GenesisHash())
 		signer.SignMsg(msg)
 
-		assert.NoError(t, testReceiveingNewMessage(tSync, msg, pid))
+		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 		assert.Equal(t, tSync.peerSet.MaxClaimedHeight(), claimedHeight)

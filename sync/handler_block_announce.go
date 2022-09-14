@@ -26,7 +26,7 @@ func (handler *blockAnnounceHandler) ParsMessage(m message.Message, initiator pe
 	handler.synced()
 
 	handler.peerSet.UpdateHeight(initiator, msg.Height)
-	handler.updateBlokchain()
+	handler.updateBlockhain()
 
 	return nil
 }

@@ -28,7 +28,7 @@ import (
 // a node itself should update itself (pull).
 //
 // Synchronizer should not have any locks to prevent dead lock situations.
-// All submodules like state or consesnus should be thread safe.
+// All submodules like state or consensus should be thread safe.
 
 type synchronizer struct {
 	ctx             context.Context
@@ -217,7 +217,7 @@ func (sync *synchronizer) receiveLoop() {
 				se := e.(*network.StreamMessage)
 				bdl = sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 				if err := se.Reader.Close(); err != nil {
-					sync.logger.Warn("error on closign stream", "err", err)
+					sync.logger.Warn("error on closing stream", "err", err)
 				}
 			}
 
@@ -252,11 +252,11 @@ func (sync *synchronizer) Fingerprint() string {
 		sync.state.LastBlockHeight())
 }
 
-// updateBlokchain checks if the node height is shorter than the network or not.
+// updateBlockhain checks if the node height is shorter than the network or not.
 // If the node height is shorter than network more than two hours (720 blocks),
 // it should start downloading the blocks from node networks,
 // otherwise the node can request the latest blocks from the network.
-func (sync *synchronizer) updateBlokchain() {
+func (sync *synchronizer) updateBlockhain() {
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
 		sync.logger.Debug("we have open session")
@@ -482,12 +482,12 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	case message.ResponseCodeRejected:
 		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlokchain()
+		sync.updateBlockhain()
 
 	case message.ResponseCodeBusy:
 		sync.logger.Debug("peer is busy. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlokchain()
+		sync.updateBlockhain()
 
 	case message.ResponseCodeMoreBlocks:
 		sync.logger.Debug("peer responding us. keep session open", "session-id", sessionID)
@@ -495,10 +495,10 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	case message.ResponseCodeNoMoreBlocks:
 		sync.logger.Debug("peer has no more block. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlokchain()
+		sync.updateBlockhain()
 
 	case message.ResponseCodeSynced:
-		sync.logger.Debug("peer infomed us we are synced. close session", "session-id", sessionID)
+		sync.logger.Debug("peer informed us we are synced. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
 		sync.synced()
 	}
