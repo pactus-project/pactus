@@ -46,8 +46,11 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 	if err != nil {
 		return nil, err
 	}
-	messageCh := make(chan message.Message, 100)
-	eventCh := make(chan event.Event, 100)
+	messageCh := make(chan message.Message, 500)
+	eventCh := make(chan event.Event, 500)
+	if !conf.Nanomsg.Enable {
+		eventCh = nil
+	}
 
 	txPool := txpool.NewTxPool(conf.TxPool, messageCh)
 
