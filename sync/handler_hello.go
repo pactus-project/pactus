@@ -52,7 +52,7 @@ func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) e
 		handler.sayHello(true)
 	}
 
-	handler.updateBlockhain()
+	handler.updateBlockchain()
 
 	return nil
 }

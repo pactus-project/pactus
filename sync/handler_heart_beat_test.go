@@ -19,7 +19,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	pid := network.TestRandomPeerID()
 	msg := message.NewHeartBeatMessage(h, 2, hash.GenerateTestHash())
 
-	t.Run("Not in the committee, but processes hearbeat messages", func(t *testing.T) {
+	t.Run("Not in the committee, but processes heartbeat messages", func(t *testing.T) {
 		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)

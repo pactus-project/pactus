@@ -127,7 +127,7 @@ func NewNetwork(conf *Config) (Network, error) {
 
 	n.gossip = newGossipService(ctx, host, n.eventChannel, n.logger)
 
-	n.logger.Debug("network setup", "id", n.host.ID(), "address", conf.Listens)
+	n.logger.Info("network setup", "id", n.host.ID(), "address", conf.Listens)
 
 	return n, nil
 }

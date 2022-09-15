@@ -53,7 +53,6 @@ func TestChangeVal(t *testing.T) {
 	tState1.store.UpdateValidator(val4)
 	root1 := tState1.validatorsMerkleRoot()
 
-	// Change a validtor
 	val3.IncSequence()
 
 	tState2.store.UpdateValidator(val2)

@@ -134,7 +134,7 @@ func (sync *synchronizer) onStartingTimeout() {
 
 	// Consensus should start if our height is the same as the network height.
 	// Note that State height is always one height less than the Consensus height
-	// and it should be plus one to get the consensu height.
+	// and it should be plus one to get the consensus height.
 	if ourHeight+1 >= networkHeight {
 		sync.synced()
 	}
@@ -257,11 +257,11 @@ func (sync *synchronizer) Fingerprint() string {
 		sync.state.LastBlockHeight())
 }
 
-// updateBlockhain checks if the node height is shorter than the network or not.
+// updateBlockchain checks if the node height is shorter than the network or not.
 // If the node height is shorter than network more than two hours (720 blocks),
 // it should start downloading the blocks from node networks,
 // otherwise the node can request the latest blocks from the network.
-func (sync *synchronizer) updateBlockhain() {
+func (sync *synchronizer) updateBlockchain() {
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
 		sync.logger.Debug("we have open session")
@@ -488,12 +488,12 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	case message.ResponseCodeRejected:
 		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlockhain()
+		sync.updateBlockchain()
 
 	case message.ResponseCodeBusy:
 		sync.logger.Debug("peer is busy. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlockhain()
+		sync.updateBlockchain()
 
 	case message.ResponseCodeMoreBlocks:
 		sync.logger.Debug("peer responding us. keep session open", "session-id", sessionID)
@@ -501,7 +501,7 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	case message.ResponseCodeNoMoreBlocks:
 		sync.logger.Debug("peer has no more block. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlockhain()
+		sync.updateBlockchain()
 
 	case message.ResponseCodeSynced:
 		sync.logger.Debug("peer informed us we are synced. close session", "session-id", sessionID)

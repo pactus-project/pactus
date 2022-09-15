@@ -46,7 +46,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 				"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 		}
 		if sb.Committee().Size() >= sb.Params().CommitteeSize {
-			if err := e.joincommittee(sb, val); err != nil {
+			if err := e.joinCommittee(sb, val); err != nil {
 				return err
 			}
 		} else {
@@ -71,7 +71,7 @@ func (e *SortitionExecutor) Fee() int64 {
 	return 0
 }
 
-func (e *SortitionExecutor) joincommittee(sb sandbox.Sandbox,
+func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 	val *validator.Validator) error {
 	joiningNum := 0
 	joiningPower := int64(0)

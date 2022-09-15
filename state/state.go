@@ -29,17 +29,17 @@ import (
 type state struct {
 	lk sync.RWMutex
 
-	config       *Config
-	signer       crypto.Signer
-	rewardAddres crypto.Address
-	genDoc       *genesis.Genesis
-	store        store.Store
-	params       param.Params
-	txPool       txpool.TxPool
-	committee    committee.Committee
-	lastInfo     *lastinfo.LastInfo
-	logger       *logger.Logger
-	eventCh      chan event.Event
+	config        *Config
+	signer        crypto.Signer
+	rewardAddress crypto.Address
+	genDoc        *genesis.Genesis
+	store         store.Store
+	params        param.Params
+	txPool        txpool.TxPool
+	committee     committee.Committee
+	lastInfo      *lastinfo.LastInfo
+	logger        *logger.Logger
+	eventCh       chan event.Event
 }
 
 func LoadOrNewState(
@@ -60,15 +60,15 @@ func LoadOrNewState(
 	}
 
 	st := &state{
-		config:       conf,
-		genDoc:       genDoc,
-		txPool:       txPool,
-		params:       genDoc.Params(),
-		signer:       signer,
-		store:        store,
-		rewardAddres: rewardAddr,
-		lastInfo:     lastinfo.NewLastInfo(store),
-		eventCh:      eventCh,
+		config:        conf,
+		genDoc:        genDoc,
+		txPool:        txPool,
+		params:        genDoc.Params(),
+		signer:        signer,
+		store:         store,
+		rewardAddress: rewardAddr,
+		lastInfo:      lastinfo.NewLastInfo(store),
+		eventCh:       eventCh,
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -113,7 +113,7 @@ func (st *state) tryLoadLastInfo() error {
 		return fmt.Errorf("invalid genesis doc")
 	}
 
-	logger.Info("try to load the last state info")
+	logger.Info("try to load the last state")
 	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize)
 	if err != nil {
 		return err
@@ -227,7 +227,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	}
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
-	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddres, st.params.BlockReward+fee, "")
+	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddress, st.params.BlockReward+fee, "")
 	return tx
 }
 
@@ -243,7 +243,7 @@ func (st *state) ProposeBlock(round int16) (*block.Block, error) {
 	sb := st.concreteSandbox()
 	exe := execution.NewExecutor()
 
-	// Re-chaeck all transactions strictly and remove invalid ones
+	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per block
@@ -385,13 +385,11 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 		st.logger.Panic("unable to update state", "err", err)
 	}
 
-	st.logger.Info("new block is committed", "block", block, "round", cert.Round())
+	st.logger.Info("new block committed", "block", block, "round", cert.Round())
 
 	// -----------------------------------
 	// Evaluate sortition before updating the committee
-	if st.evaluateSortition() {
-		st.logger.Info("👏 this validator is chosen to be in the committee", "address", st.signer.Address())
-	}
+	st.evaluateSortition()
 
 	// -----------------------------------
 	// At this point we can assign new sandbox to tx pool
@@ -428,7 +426,7 @@ func (st *state) evaluateSortition() bool {
 
 		err := st.txPool.AppendTxAndBroadcast(trx)
 		if err == nil {
-			st.logger.Debug("sortition transaction broadcasted",
+			st.logger.Info("sortition transaction broadcasted",
 				"address", st.signer.Address(), "power", val.Power(), "tx", trx)
 			return true
 		}
@@ -607,13 +605,13 @@ func (st *state) Params() param.Params {
 	return st.params
 }
 func (st *state) RewardAddress() crypto.Address {
-	return st.rewardAddres
+	return st.rewardAddress
 }
 func (st *state) ValidatorAddress() crypto.Address {
 	return st.signer.Address()
 }
 
-// publish new block and height events to nanomsg service
+// publishEvents publishes block related events
 func (st *state) publishEvents(height uint32, block *block.Block) {
 	if st.eventCh == nil {
 		return
