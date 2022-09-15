@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"context"
+	"encoding/hex"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -10,7 +11,8 @@ import (
 )
 
 type grpcClient struct {
-	client pactus.BlockchainClient
+	blockchainClient  pactus.BlockchainClient
+	transactionClient pactus.TransactionClient
 }
 
 func gewGRPCClient(rpcEndpoint string) (*grpcClient, error) {
@@ -20,12 +22,13 @@ func gewGRPCClient(rpcEndpoint string) (*grpcClient, error) {
 	}
 
 	return &grpcClient{
-		client: pactus.NewBlockchainClient(conn),
+		blockchainClient:  pactus.NewBlockchainClient(conn),
+		transactionClient: pactus.NewTransactionClient(conn),
 	}, nil
 }
 
 func (c *grpcClient) getStamp() (hash.Stamp, error) {
-	info, err := c.client.GetBlockchainInfo(context.Background(), &pactus.BlockchainInfoRequest{})
+	info, err := c.blockchainClient.GetBlockchainInfo(context.Background(), &pactus.BlockchainInfoRequest{})
 	if err != nil {
 		return hash.Stamp{}, err
 	}
@@ -34,7 +37,7 @@ func (c *grpcClient) getStamp() (hash.Stamp, error) {
 }
 
 func (c *grpcClient) getAccountBalance(addr crypto.Address) (int64, error) {
-	acc, err := c.client.GetAccount(context.Background(), &pactus.AccountRequest{Address: addr.String()})
+	acc, err := c.blockchainClient.GetAccount(context.Background(), &pactus.AccountRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
 	}
@@ -43,7 +46,7 @@ func (c *grpcClient) getAccountBalance(addr crypto.Address) (int64, error) {
 }
 
 func (c *grpcClient) getAccountSequence(addr crypto.Address) (int32, error) {
-	acc, err := c.client.GetAccount(context.Background(), &pactus.AccountRequest{Address: addr.String()})
+	acc, err := c.blockchainClient.GetAccount(context.Background(), &pactus.AccountRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
 	}
@@ -52,7 +55,7 @@ func (c *grpcClient) getAccountSequence(addr crypto.Address) (int32, error) {
 }
 
 func (c *grpcClient) GetValidatorSequence(addr crypto.Address) (int32, error) {
-	val, err := c.client.GetValidator(context.Background(), &pactus.ValidatorRequest{Address: addr.String()})
+	val, err := c.blockchainClient.GetValidator(context.Background(), &pactus.ValidatorRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
 	}
@@ -61,7 +64,7 @@ func (c *grpcClient) GetValidatorSequence(addr crypto.Address) (int32, error) {
 }
 
 func (c *grpcClient) getValidatorStake(addr crypto.Address) (int64, error) {
-	val, err := c.client.GetValidator(context.Background(), &pactus.ValidatorRequest{Address: addr.String()})
+	val, err := c.blockchainClient.GetValidator(context.Background(), &pactus.ValidatorRequest{Address: addr.String()})
 	if err != nil {
 		return 0, err
 	}
@@ -70,14 +73,13 @@ func (c *grpcClient) getValidatorStake(addr crypto.Address) (int64, error) {
 }
 
 func (c *grpcClient) sendTx(payload []byte) (string, error) {
-	// res, err := c.client.SendRawTransaction(context.Background(), &pactus.SendRawTransactionRequest{
-	// 	Data: hex.EncodeToString(payload),
-	// })
+	res, err := c.transactionClient.SendRawTransaction(context.Background(), &pactus.SendRawTransactionRequest{
+		Data: hex.EncodeToString(payload),
+	})
 
-	// if err != nil {
-	// 	return "", err
-	// }
+	if err != nil {
+		return "", err
+	}
 
-	// return res.Id, nil
-	return "", nil
+	return res.Id, nil
 }

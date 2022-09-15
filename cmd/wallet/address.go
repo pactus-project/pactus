@@ -140,7 +140,7 @@ func PrivateKey() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintWarnMsg("Private Key: \"%v\"", prv)
+			cmd.PrintWarnMsg("Private Key: %v", prv)
 		}
 	}
 }
@@ -165,9 +165,9 @@ func PublicKey() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Public Key: \"%v\"", info.Pub.String())
+			cmd.PrintInfoMsg("Public Key: %v", info.Pub.String())
 			if !info.Imported {
-				cmd.PrintInfoMsg("Path: \"%v\"", info.Path.String())
+				cmd.PrintInfoMsg("Path: %v", info.Path.String())
 			}
 		}
 	}

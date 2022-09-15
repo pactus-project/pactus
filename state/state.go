@@ -113,7 +113,7 @@ func (st *state) tryLoadLastInfo() error {
 		return fmt.Errorf("invalid genesis doc")
 	}
 
-	logger.Info("try to load the last state info")
+	logger.Info("try to load the last state")
 	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize)
 	if err != nil {
 		return err
@@ -385,13 +385,11 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 		st.logger.Panic("unable to update state", "err", err)
 	}
 
-	st.logger.Info("new block is committed", "block", block, "round", cert.Round())
+	st.logger.Info("new block committed", "block", block, "round", cert.Round())
 
 	// -----------------------------------
 	// Evaluate sortition before updating the committee
-	if st.evaluateSortition() {
-		st.logger.Info("👏 this validator is chosen to be in the committee", "address", st.signer.Address())
-	}
+	st.evaluateSortition()
 
 	// -----------------------------------
 	// At this point we can assign new sandbox to tx pool
@@ -428,7 +426,7 @@ func (st *state) evaluateSortition() bool {
 
 		err := st.txPool.AppendTxAndBroadcast(trx)
 		if err == nil {
-			st.logger.Debug("sortition transaction broadcasted",
+			st.logger.Info("sortition transaction broadcasted",
 				"address", st.signer.Address(), "power", val.Power(), "tx", trx)
 			return true
 		}
