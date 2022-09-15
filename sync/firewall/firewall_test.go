@@ -24,7 +24,7 @@ var tNetwork *network.MockNetwork
 var tState *state.MockState
 
 func setup(t *testing.T) {
-	logger := logger.NewLogger("firewal", nil)
+	logger := logger.NewLogger("firewall", nil)
 	peerSet := peerset.NewPeerSet(3 * time.Second)
 	tState = state.MockingState()
 	tNetwork = network.MockingNetwork(network.TestRandomPeerID())
@@ -64,7 +64,7 @@ func TestInvalidBundlesCounter(t *testing.T) {
 	assert.Equal(t, peer.InvalidBundles, 4)
 }
 
-func TestGossipMesage(t *testing.T) {
+func TestGossipMessage(t *testing.T) {
 	t.Run("Message source: unknown, from: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 
@@ -113,7 +113,7 @@ func TestGossipMesage(t *testing.T) {
 	})
 }
 
-func TestStreamMesage(t *testing.T) {
+func TestStreamMessage(t *testing.T) {
 	t.Run("Message source: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 
@@ -139,7 +139,7 @@ func TestStreamMesage(t *testing.T) {
 	})
 }
 
-func TestDisabledFirewal(t *testing.T) {
+func TestDisabledFirewall(t *testing.T) {
 	setup(t)
 
 	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(0, -1))

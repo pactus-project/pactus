@@ -29,17 +29,17 @@ import (
 type state struct {
 	lk sync.RWMutex
 
-	config       *Config
-	signer       crypto.Signer
-	rewardAddres crypto.Address
-	genDoc       *genesis.Genesis
-	store        store.Store
-	params       param.Params
-	txPool       txpool.TxPool
-	committee    committee.Committee
-	lastInfo     *lastinfo.LastInfo
-	logger       *logger.Logger
-	eventCh      chan event.Event
+	config        *Config
+	signer        crypto.Signer
+	rewardAddress crypto.Address
+	genDoc        *genesis.Genesis
+	store         store.Store
+	params        param.Params
+	txPool        txpool.TxPool
+	committee     committee.Committee
+	lastInfo      *lastinfo.LastInfo
+	logger        *logger.Logger
+	eventCh       chan event.Event
 }
 
 func LoadOrNewState(
@@ -60,15 +60,15 @@ func LoadOrNewState(
 	}
 
 	st := &state{
-		config:       conf,
-		genDoc:       genDoc,
-		txPool:       txPool,
-		params:       genDoc.Params(),
-		signer:       signer,
-		store:        store,
-		rewardAddres: rewardAddr,
-		lastInfo:     lastinfo.NewLastInfo(store),
-		eventCh:      eventCh,
+		config:        conf,
+		genDoc:        genDoc,
+		txPool:        txPool,
+		params:        genDoc.Params(),
+		signer:        signer,
+		store:         store,
+		rewardAddress: rewardAddr,
+		lastInfo:      lastinfo.NewLastInfo(store),
+		eventCh:       eventCh,
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -227,7 +227,7 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	}
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
-	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddres, st.params.BlockReward+fee, "")
+	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddress, st.params.BlockReward+fee, "")
 	return tx
 }
 
@@ -243,7 +243,7 @@ func (st *state) ProposeBlock(round int16) (*block.Block, error) {
 	sb := st.concreteSandbox()
 	exe := execution.NewExecutor()
 
-	// Re-chaeck all transactions strictly and remove invalid ones
+	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per block
@@ -605,13 +605,13 @@ func (st *state) Params() param.Params {
 	return st.params
 }
 func (st *state) RewardAddress() crypto.Address {
-	return st.rewardAddres
+	return st.rewardAddress
 }
 func (st *state) ValidatorAddress() crypto.Address {
 	return st.signer.Address()
 }
 
-// publish new block and height events to nanomsg service
+// publishEvents publishes block related events
 func (st *state) publishEvents(height uint32, block *block.Block) {
 	if st.eventCh == nil {
 		return
