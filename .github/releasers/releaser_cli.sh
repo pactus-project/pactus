@@ -27,8 +27,12 @@ for OS_ARCH in \
     PACKAGE_NAME_OS=${PACKAGE_NAME}_${OS}_${ARCH}
     BUILD_DIR=${ROOT_DIR}/build/${PACKAGE_NAME_OS}
 
-    GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-daemon ./cmd/daemon
-    GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-wallet ./cmd/wallet
+    if [ $OS = "windows" ]; then
+        EXE=".exe"
+    fi
+
+    GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-daemon${EXE} ./cmd/daemon
+    GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-wallet${EXE} ./cmd/wallet
 
     cd ${BUILD_DIR}
     if [ $OS = "windows" ]; then
