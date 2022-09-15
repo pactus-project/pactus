@@ -132,7 +132,10 @@ func (sync *synchronizer) onStartingTimeout() {
 	ourHeight := sync.state.LastBlockHeight()
 	networkHeight := sync.peerSet.MaxClaimedHeight()
 
-	if ourHeight >= networkHeight {
+	// Consensus should start if our height is the same as the network height.
+	// Note that State height is always one height less than the Consensus height
+	// and it should be plus one to get the consensu height.
+	if ourHeight+1 >= networkHeight {
 		sync.synced()
 	}
 }
@@ -237,7 +240,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 		return nil
 	}
 
-	sync.logger.Debug("received a bundle", "initiator", bdl.Initiator, "bundle", bdl)
+	sync.logger.Info("received a bundle", "initiator", bdl.Initiator, "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
@@ -320,7 +323,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 		if err != nil {
 			sync.logger.Error("error on sending bundle", "bundle", bdl, "err", err, "to", to)
 		} else {
-			sync.logger.Debug("sending bundle to a peer", "bundle", bdl, "to", to)
+			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
 		}
 	}
 }
@@ -334,7 +337,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		if err != nil {
 			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "err", err)
 		} else {
-			sync.logger.Debug("broadcasting new bundle", "bundle", bdl)
+			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
 	}
 }

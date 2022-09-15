@@ -15,15 +15,16 @@ type MockConsensus struct {
 	Lock     sync.RWMutex
 	Votes    []*vote.Vote
 	Proposal *proposal.Proposal
-	//Scheduled bool
-	State *state.MockState
-	Round int16
+	State    *state.MockState
+	Height   uint32
+	Round    int16
 }
 
 func MockingConsensus(state *state.MockState) *MockConsensus {
 	return &MockConsensus{State: state}
 }
 func (m *MockConsensus) MoveToNewHeight() {
+	m.Height = m.State.LastBlockHeight() + 1
 }
 func (m *MockConsensus) Start() error {
 	return nil
