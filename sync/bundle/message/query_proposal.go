@@ -31,5 +31,5 @@ func (m *QueryProposalMessage) Type() Type {
 }
 
 func (m *QueryProposalMessage) Fingerprint() string {
-	return fmt.Sprintf("%v/%v", m.Height, m.Round)
+	return fmt.Sprintf("{%v/%v}", m.Height, m.Round)
 }

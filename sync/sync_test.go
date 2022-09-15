@@ -201,3 +201,15 @@ func TestTestNetFlags(t *testing.T) {
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
+
+func TestStartingConsensus(t *testing.T) {
+	tConfig.StartingTimeout = 1 * time.Minute
+	setup(t)
+
+	pid := network.TestRandomPeerID()
+	msg := message.NewHeartBeatMessage(tState.LastBlockHeight()+1, 0, hash.GenerateTestHash())
+	assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+
+	tSync.onStartingTimeout()
+	assert.Equal(t, tConsensus.Height, tState.LastBlockHeight()+1)
+}
