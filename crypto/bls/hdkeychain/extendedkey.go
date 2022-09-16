@@ -439,7 +439,7 @@ func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 	var masterKey = []byte("BLS12381-HD-KEYCHAIN")
 
 	// First take the HMAC-SHA512 of the master key and the seed data:
-	//   I = HMAC-SHA512(Key = "Zarb seed", Data = S)
+	//   I = HMAC-SHA512(Key = "BLS12381-HD-KEYCHAIN", Data = S)
 	hmac512 := hmac.New(sha512.New, masterKey)
 	_, _ = hmac512.Write(seed)
 	lr := hmac512.Sum(nil)
