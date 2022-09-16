@@ -116,8 +116,6 @@ func (sync *synchronizer) Start() error {
 		sync.onStartingTimeout()
 	}()
 
-	sync.sayHello(false)
-
 	return nil
 }
 
@@ -129,6 +127,8 @@ func (sync *synchronizer) Stop() {
 }
 
 func (sync *synchronizer) onStartingTimeout() {
+	sync.sayHello(false)
+
 	ourHeight := sync.state.LastBlockHeight()
 	networkHeight := sync.peerSet.MaxClaimedHeight()
 

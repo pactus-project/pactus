@@ -37,6 +37,11 @@ func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) e
 			handler.state.GenesisHash(), msg.GenesisHash)
 	}
 
+	handler.logger.Debug("updating peer info",
+		"pid", initiator,
+		"moniker", msg.Moniker,
+		"flags", msg.Flags)
+
 	handler.peerSet.UpdatePeerInfo(initiator,
 		peerset.StatusCodeKnown,
 		msg.Moniker,
