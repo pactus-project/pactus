@@ -4,3 +4,5 @@
 states
 *.tex
 *.dvi
+*.aux
+*.log

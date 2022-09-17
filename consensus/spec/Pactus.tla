@@ -1,9 +1,9 @@
 -------------------------------- MODULE Pactus --------------------------------
 (***************************************************************************)
-(* The specification of the Pactus consensus algorithm based on              *)
+(* The specification of the Pactus consensus algorithm based on            *)
 (* Practical Byzantine Fault Tolerant.                                     *)
 (* For more information check here:                                        *)
-(* `^\url{https://pactus.org/learn/consensus/consensus-mechanism.html}^' *)
+(* `^\url{https://pactus.org/learn/consensus/protocol/}^'                  *)
 (***************************************************************************)
 EXTENDS Integers, Sequences, FiniteSets, TLC
 
@@ -90,7 +90,7 @@ SendMsg(msg) ==
     IF ~IsCommitted(msg.height)
     THEN log' = log \cup {msg}
     ELSE log' = log
-    
+
 
 \* SendProposal is used to broadcast the PROPOSAL into the network.
 SendProposal(index) ==
@@ -197,7 +197,7 @@ ChangeProposer(index) ==
        ELSE states' = states
     /\ UNCHANGED <<log>>
 
-\* Sync checks the log for the committed blocks at the current height. 
+\* Sync checks the log for the committed blocks at the current height.
 \* If such a block exists, it commits and moves to the next height.
 Sync(index) ==
     LET
