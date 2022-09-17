@@ -209,7 +209,6 @@ func TestStartingConsensus(t *testing.T) {
 	msg := message.NewHeartBeatMessage(tState.LastBlockHeight()+1, 0, hash.GenerateTestHash())
 	assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
-	tConsensus.Height = 0
 	tSync.onStartingTimeout()
 	assert.Equal(t, tConsensus.Height, tState.LastBlockHeight()+1)
 }

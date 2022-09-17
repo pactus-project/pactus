@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/version"
 )
@@ -69,5 +70,9 @@ func (m *HelloMessage) Type() Type {
 }
 
 func (m *HelloMessage) Fingerprint() string {
-	return fmt.Sprintf("{%s %v}", m.Moniker, m.Height)
+	ack := ""
+	if util.IsFlagSet(m.Flags, FlagHelloAck) {
+		ack = " ack"
+	}
+	return fmt.Sprintf("{%s %v%s}", m.Moniker, m.Height, ack)
 }

@@ -11,7 +11,7 @@
         "FeeFraction": 0.0001,
         "MinimumFee": 10000,
         "MaximumFee": 100000000,
-        "MaximumStake": 1238100000000
+        "MaximumStake": 12381000000000
     },
     "Accounts": [
         {

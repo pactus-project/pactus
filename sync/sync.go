@@ -134,8 +134,8 @@ func (sync *synchronizer) onStartingTimeout() {
 
 	// Consensus should start if our height is the same as the network height.
 	// Note that State height is always one height less than the Consensus height
-	// and it should be plus one to get the consensus height.
-	if ourHeight+1 >= networkHeight {
+	// and it should be plus one to get the consensu height.
+	if networkHeight > 0 && ourHeight > 0 && ourHeight+1 >= networkHeight {
 		sync.synced()
 	}
 }
