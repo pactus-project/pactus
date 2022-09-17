@@ -76,6 +76,8 @@ type Network interface {
 	SendTo([]byte, lp2pcore.PeerID) error
 	JoinGeneralTopic() error
 	JoinConsensusTopic() error
+	NumOfPeersInGeneralTopic() int
+	NumOfPeersInConsensusTopic() int
 	CloseConnection(pid lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID
 	NumConnectedPeers() int

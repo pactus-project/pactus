@@ -46,6 +46,12 @@ func (mock *MockNetwork) JoinGeneralTopic() error {
 func (mock *MockNetwork) JoinConsensusTopic() error {
 	return nil
 }
+func (mock *MockNetwork) NumOfPeersInGeneralTopic() int {
+	return len(mock.OtherNets)
+}
+func (mock *MockNetwork) NumOfPeersInConsensusTopic() int {
+	return len(mock.OtherNets)
+}
 func (mock *MockNetwork) SelfID() peer.ID {
 	return mock.ID
 }

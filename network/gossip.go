@@ -101,3 +101,7 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 
 	g.eventCh <- event
 }
+
+func (g *gossipService) numOfPeers(topicname string) int {
+	return len(g.pubsub.ListPeers(topicname))
+}

@@ -205,7 +205,7 @@ func (n *network) JoinGeneralTopic() error {
 		n.logger.Debug("already subscribed to general topic")
 		return nil
 	}
-	topic, err := n.gossip.JoinTopic(n.TopicName("general"))
+	topic, err := n.gossip.JoinTopic(n.generalTopicName())
 	if err != nil {
 		return err
 	}
@@ -218,12 +218,28 @@ func (n *network) JoinConsensusTopic() error {
 		n.logger.Debug("already subscribed to consensus topic")
 		return nil
 	}
-	topic, err := n.gossip.JoinTopic(n.TopicName("consensus"))
+	topic, err := n.gossip.JoinTopic(n.consensusTopicName())
 	if err != nil {
 		return err
 	}
 	n.consensusTopic = topic
 	return nil
+}
+
+func (n *network) NumOfPeersInGeneralTopic() int {
+	return n.gossip.numOfPeers(n.generalTopicName())
+}
+
+func (n *network) NumOfPeersInConsensusTopic() int {
+	return n.gossip.numOfPeers(n.consensusTopicName())
+}
+
+func (n *network) generalTopicName() string {
+	return n.TopicName("general")
+}
+
+func (n *network) consensusTopicName() string {
+	return n.TopicName("consensus")
 }
 
 func (n *network) TopicName(topic string) string {
