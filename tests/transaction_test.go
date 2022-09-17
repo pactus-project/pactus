@@ -71,19 +71,19 @@ func TestSendingTransactions(t *testing.T) {
 	signerBob := crypto.NewSigner(prvBob)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2], pubAlice.Address(), 80000000, 80000))
+		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2], pubAlice.Address(), 80000000, 8000))
 		incSequence(tSigners[tNodeIdx1].Address())
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		require.Error(t, broadcastSendTransaction(t, signerAlice, pubBob.Address(), 500000, 1))
+		require.Error(t, broadcastSendTransaction(t, signerAlice, pubBob.Address(), 500000, 0))
 	})
 
 	t.Run("Alice tries double spending", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, signerAlice, pubBob.Address(), 50000000, 50000))
+		require.NoError(t, broadcastSendTransaction(t, signerAlice, pubBob.Address(), 50000000, 5000))
 		incSequence(signerAlice.Address())
 
-		require.Error(t, broadcastSendTransaction(t, signerAlice, pubCarol.Address(), 50000000, 50000))
+		require.Error(t, broadcastSendTransaction(t, signerAlice, pubCarol.Address(), 50000000, 5000))
 	})
 
 	t.Run("Bob sends two transaction at once", func(t *testing.T) {
@@ -118,7 +118,7 @@ func TestSendingTransactions(t *testing.T) {
 	require.NotNil(t, accCarol)
 	require.NotNil(t, accDave)
 
-	assert.Equal(t, accAlice.Balance(), int64(80000000-50050000))
+	assert.Equal(t, accAlice.Balance(), int64(80000000-50005000))
 	assert.Equal(t, accBob.Balance(), int64(50000000-2011))
 	assert.Equal(t, accCarol.Balance(), int64(10))
 	assert.Equal(t, accDave.Balance(), int64(1))

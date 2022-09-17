@@ -33,11 +33,11 @@ func MockingSandbox() *MockSandbox {
 		TestCommitteeSigners: signers,
 	}
 
-	treasuryAmt := int64(21000000 * 1e8)
+	treasuryAmt := int64(21000000 * 1e9)
 
 	for i, val := range committee.Validators() {
 		acc := account.NewAccount(val.Address(), int32(i+1))
-		acc.AddToBalance(100 * 1e8)
+		acc.AddToBalance(100 * 1e9)
 		sb.UpdateAccount(acc)
 		sb.UpdateValidator(val)
 

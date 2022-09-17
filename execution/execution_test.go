@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ func TestExecution(t *testing.T) {
 	signer1 := bls.GenerateTestSigner()
 	addr1 := signer1.Address()
 	acc1 := sb.MakeNewAccount(addr1)
-	acc1.AddToBalance(10000000000)
+	acc1.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(acc1)
 
 	rcvAddr := crypto.GenerateTestAddress()
@@ -205,4 +206,43 @@ func TestLockTime(t *testing.T) {
 		err = checker.Execute(trx1, sb)
 		assert.NoError(t, err)
 	})
+}
+
+func TestFee(t *testing.T) {
+	exe := NewChecker()
+	sb := sandbox.MockingSandbox()
+
+	tests := []struct {
+		amount          int64
+		fee             int64
+		expectedFee     int64
+		expectedErrCode int
+	}{
+		{1, 1, sb.TestParams.MinimumFee, errors.ErrInvalidFee},
+		{1, 1001, sb.TestParams.MinimumFee, errors.ErrInvalidFee},
+		{1, 1000, sb.TestParams.MinimumFee, errors.ErrNone},
+
+		{1 * 1e9, 1, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, 100001, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, 100000, 100000, errors.ErrNone},
+
+		{1 * 1e12, 1, 100000000, errors.ErrInvalidFee},
+		{1 * 1e12, 100000001, 100000000, errors.ErrInvalidFee},
+		{1 * 1e12, 100000000, 100000000, errors.ErrNone},
+	}
+
+	sender := crypto.GenerateTestAddress()
+	receiver := crypto.GenerateTestAddress()
+	stamp := hash.GenerateTestStamp()
+	for i, test := range tests {
+		trx := tx.NewSendTx(stamp, 1, sender, receiver, test.amount, test.fee,
+			"testing fee")
+		err := exe.checkFee(trx, sb)
+
+		assert.Equal(t, errors.Code(err), test.expectedErrCode,
+			"test %v failed. unexpected error", i)
+
+		assert.Equal(t, calculateFee(test.amount, sb), test.expectedFee,
+			"test %v failed. invalid fee", i)
+	}
 }
