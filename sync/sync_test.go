@@ -41,6 +41,7 @@ type OverrideFingerprint struct {
 
 func init() {
 	LatestBlockInterval = 20
+	StartingTimeout = 0
 	tConfig = testConfig()
 	tConfig.Moniker = "Alice"
 }
@@ -51,15 +52,14 @@ func (o *OverrideFingerprint) Fingerprint() string {
 
 func testConfig() *Config {
 	return &Config{
-		Moniker:          "test",
-		StartingTimeout:  0,
-		HeartBeatTimeout: 0, // Disabling heartbeat
-		SessionTimeout:   time.Second * 1,
-		NodeNetwork:      true,
-		BlockPerMessage:  10,
-		MaxOpenSessions:  4,
-		CacheSize:        1000,
-		Firewall:         firewall.DefaultConfig(),
+		Moniker:         "test",
+		HeartBeatTimer:  0, // Disabling heartbeat
+		SessionTimeout:  time.Second * 1,
+		NodeNetwork:     true,
+		BlockPerMessage: 10,
+		MaxOpenSessions: 4,
+		CacheSize:       1000,
+		Firewall:        firewall.DefaultConfig(),
 	}
 }
 
@@ -89,7 +89,7 @@ func setup(t *testing.T) {
 }
 
 func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) *bundle.Bundle {
-	timeout := time.NewTimer(2 * time.Second)
+	timeout := time.NewTimer(3 * time.Second)
 
 	for {
 		select {
@@ -203,13 +203,13 @@ func TestTestNetFlags(t *testing.T) {
 }
 
 func TestStartingConsensus(t *testing.T) {
-	tConfig.StartingTimeout = 1 * time.Minute
 	setup(t)
 
 	pid := network.TestRandomPeerID()
 	msg := message.NewHeartBeatMessage(tState.LastBlockHeight()+1, 0, hash.GenerateTestHash())
 	assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
+	tConsensus.Height = 0
 	tSync.onStartingTimeout()
 	assert.Equal(t, tConsensus.Height, tState.LastBlockHeight()+1)
 }

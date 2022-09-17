@@ -105,12 +105,12 @@ func (sync *synchronizer) Start() error {
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
-	if sync.config.HeartBeatTimeout > 0 {
-		sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimeout)
+	if sync.config.HeartBeatTimer > 0 {
+		sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimer)
 		go sync.heartBeatTickerLoop()
 	}
 
-	timer := time.NewTimer(sync.config.StartingTimeout)
+	timer := time.NewTimer(StartingTimeout)
 	go func() {
 		<-timer.C
 		sync.onStartingTimeout()

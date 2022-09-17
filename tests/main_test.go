@@ -67,7 +67,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_network"] = "error"
 		tConfigs[i].Logger.Levels["_pool"] = "error"
 		tConfigs[i].Sync.CacheSize = 1000
-		tConfigs[i].Sync.StartingTimeout = 0
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.EnableMdns = true
@@ -80,6 +79,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Capnp.Enable = false
 
 		sync.LatestBlockInterval = 10
+		sync.StartingTimeout = 0
 
 		if i == 0 {
 			tConfigs[i].Sync.NodeNetwork = true
