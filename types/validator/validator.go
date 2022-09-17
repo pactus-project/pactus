@@ -159,7 +159,7 @@ func (val *Validator) Bytes() ([]byte, error) {
 func GenerateTestValidator(number int32) (*Validator, crypto.Signer) {
 	pub, pv := bls.GenerateTestKeyPair()
 	val := NewValidator(pub, number)
-	val.data.Stake = util.RandInt64(100 * 1e8)
+	val.data.Stake = util.RandInt64(100 * 1e9)
 	val.data.Sequence = util.RandInt32(100)
 	return val, crypto.NewSigner(pv)
 }

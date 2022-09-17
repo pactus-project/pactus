@@ -157,7 +157,7 @@ func ExitOnErr(e error) {
 	}
 }
 
-const changeFactor = float64(100000000)
+const changeFactor = float64(1000000000)
 
 func CoinToChange(coin float64) int64 {
 	return int64(coin * changeFactor)
@@ -177,5 +177,5 @@ func StringToChange(amount string) (int64, error) {
 
 func ChangeToString(change int64) string {
 	coin := ChangeToCoin(change)
-	return strconv.FormatFloat(coin, 'f', 8, 64)
+	return strconv.FormatFloat(coin, 'f', 9, 64)
 }

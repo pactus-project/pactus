@@ -122,12 +122,18 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong, expected: 0, got: %v", trx.Fee())
 		}
 	} else {
-		params := sb.Params()
-		fee := int64(float64(trx.Payload().Value()) * params.FeeFraction)
-		fee = util.Max64(fee, params.MinimumFee)
+		fee := calculateFee(trx.Payload().Value(), sb)
 		if trx.Fee() != fee {
-			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong, expected: %v, got: %v", fee, trx.Fee())
+			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: %v, got: %v", fee, trx.Fee())
 		}
 	}
 	return nil
+}
+
+func calculateFee(amt int64, sb sandbox.Sandbox) int64 {
+	params := sb.Params()
+	fee := int64(float64(amt) * params.FeeFraction)
+	fee = util.Max64(fee, params.MinimumFee)
+	fee = util.Min64(fee, params.MaximumFee)
+	return fee
 }

@@ -215,7 +215,7 @@ func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
 		val.UpdateLastJoinedHeight(h1 + 1000 + uint32(i))
 		//
 		val.SubtractFromStake(val.Stake())
-		val.AddToStake(1 * 10e8)
+		val.AddToStake(10 * 1e9)
 	}
 
 	committee, _ := NewCommittee(vals, num, vals[0].Address())

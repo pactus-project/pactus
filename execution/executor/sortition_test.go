@@ -181,7 +181,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 	for i := 0; i < 9; i++ {
 		pub, _ := bls.GenerateTestKeyPair()
 		val := tSandbox.MakeNewValidator(pub)
-		val.AddToStake(1 * 10e8)
+		val.AddToStake(10 * 1e9)
 		val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
 		tSandbox.UpdateValidator(val)
 		vals[i] = val
