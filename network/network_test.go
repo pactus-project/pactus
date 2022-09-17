@@ -55,7 +55,7 @@ func init() {
 		tNetworks[i] = net.(*network)
 		time.Sleep(100 * time.Millisecond)
 
-		fmt.Printf("peer %v id:%v\n", i, net.SelfID().String())
+		fmt.Printf("peer %v id: %v\n", i, net.SelfID().String())
 	}
 
 	time.Sleep(1000 * time.Millisecond)

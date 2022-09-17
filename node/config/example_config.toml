@@ -75,14 +75,10 @@
   # moniker A custom human readable name for this node.
  ## moniker = ""
 
-  # starting_timeout is time taken for starting the sync module.
-  # Default is 3 seconds
- ## starting_timeout = "3s"
-
-  # heartbeat_timeout is a timeout for broadcasting a heartbeat message to network.
+  # heartbeat_timer is a timer for broadcasting a heartbeat message to network.
   # Default is 5 seconds
-  # Set the value to zero e.g heartbeat_timeout = "0s"  to disable hearbeat broadcasing
- ## heartbeat_timeout = "5s"
+  # Set the value to zero e.g heartbeat_timer = "0s" to disable hearbeat broadcasing.
+ ## heartbeat_timer = "5s"
 
   # session_timeout is a timeout for a session to be opened.
   # Default is 30 seconds

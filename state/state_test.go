@@ -653,3 +653,19 @@ func TestSetBlockTime(t *testing.T) {
 		assert.Zero(t, b.Header().Time().Second()%10)
 	})
 }
+
+func TestIsValidator(t *testing.T) {
+	setup(t)
+
+	assert.True(t, tState1.IsInCommittee(tValSigner1.Address()))
+	assert.True(t, tState1.IsProposer(tValSigner1.Address(), 0))
+	assert.True(t, tState1.IsProposer(tValSigner2.Address(), 1))
+	assert.True(t, tState1.IsInCommittee(tValSigner2.Address()))
+	assert.True(t, tState1.IsValidator(tValSigner2.Address()))
+
+	addr := crypto.GenerateTestAddress()
+	assert.False(t, tState1.IsInCommittee(addr))
+	assert.False(t, tState1.IsProposer(addr, 0))
+	assert.False(t, tState1.IsInCommittee(addr))
+	assert.False(t, tState1.IsValidator(addr))
+}

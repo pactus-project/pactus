@@ -2,7 +2,7 @@ package network
 
 import (
 	"context"
-	sync "sync"
+	"sync"
 	"time"
 
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
@@ -110,21 +110,8 @@ func (b *bootstrap) checkConnectivity() {
 
 		ctx, cancel := context.WithTimeout(b.ctx, time.Second*10)
 		var wg sync.WaitGroup
-		defer func() {
-			wg.Wait()
-
-			b.logger.Trace("bootstrap Ipfs Routing")
-
-			err := b.expand()
-			if err != nil {
-				b.logger.Warn("peer discovery may suffer", "err", err)
-			}
-
-			cancel()
-		}()
-
 		for _, pinfo := range b.bootstrapPeers {
-			b.logger.Trace("try connecting to a bootstrap peer", "peer", pinfo.String())
+			b.logger.Debug("try connecting to a bootstrap peer", "peer", pinfo.String())
 
 			// Don't try to connect to an already connected peer.
 			if hasPID(connectedPeers, pinfo.ID) {
@@ -141,8 +128,11 @@ func (b *bootstrap) checkConnectivity() {
 			}(pinfo)
 		}
 
-		peers := b.host.Peerstore().Peers()
-		b.logger.Debug("peer store info", "peers", peers)
+		wg.Wait()
+		cancel()
+
+		b.logger.Debug("expanding the connections")
+		b.expand()
 	}
 }
 
@@ -155,12 +145,15 @@ func hasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
 	return false
 }
 
-func (b *bootstrap) expand() error {
+func (b *bootstrap) expand() {
 	dht, ok := b.routing.(*lp2pdht.IpfsDHT)
 	if !ok {
 		b.logger.Warn("no bootstrapping to do exit quietly.")
-		return nil
+		return
 	}
 
-	return dht.Bootstrap(b.ctx)
+	err := dht.Bootstrap(b.ctx)
+	if err != nil {
+		b.logger.Warn("peer discovery may suffer", "err", err)
+	}
 }

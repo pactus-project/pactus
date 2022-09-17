@@ -41,6 +41,7 @@ type OverrideFingerprint struct {
 
 func init() {
 	LatestBlockInterval = 20
+	StartingTimeout = 10 * time.Millisecond
 	tConfig = testConfig()
 	tConfig.Moniker = "Alice"
 }
@@ -51,15 +52,14 @@ func (o *OverrideFingerprint) Fingerprint() string {
 
 func testConfig() *Config {
 	return &Config{
-		Moniker:          "test",
-		StartingTimeout:  0,
-		HeartBeatTimeout: 0, // Disabling heartbeat
-		SessionTimeout:   time.Second * 1,
-		NodeNetwork:      true,
-		BlockPerMessage:  10,
-		MaxOpenSessions:  4,
-		CacheSize:        1000,
-		Firewall:         firewall.DefaultConfig(),
+		Moniker:         "test",
+		HeartBeatTimer:  0, // Disabling heartbeat
+		SessionTimeout:  time.Second * 1,
+		NodeNetwork:     true,
+		BlockPerMessage: 10,
+		MaxOpenSessions: 4,
+		CacheSize:       1000,
+		Firewall:        firewall.DefaultConfig(),
 	}
 }
 
@@ -89,7 +89,7 @@ func setup(t *testing.T) {
 }
 
 func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) *bundle.Bundle {
-	timeout := time.NewTimer(2 * time.Second)
+	timeout := time.NewTimer(3 * time.Second)
 
 	for {
 		select {
@@ -171,6 +171,7 @@ func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt32(0))
 	// This is not very accurate, there is no harm to do it for testing
 	val.UpdateLastJoinedHeight(tState.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
+	tState.TestStore.UpdateValidator(val)
 	tState.TestCommittee.Update(0, []*validator.Validator{val})
 	require.True(t, tState.TestCommittee.Contains(pub.Address()))
 }
@@ -202,14 +203,17 @@ func TestTestNetFlags(t *testing.T) {
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
 
-func TestStartingConsensus(t *testing.T) {
-	tConfig.StartingTimeout = 1 * time.Minute
+func TestMoveConsensusToNewHeight(t *testing.T) {
 	setup(t)
 
 	pid := network.TestRandomPeerID()
 	msg := message.NewHeartBeatMessage(tState.LastBlockHeight()+1, 0, hash.GenerateTestHash())
 	assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
-	tSync.onStartingTimeout()
+	tSync.moveConsensusToNewHeight()
+	assert.Zero(t, tConsensus.Height)
+
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+	tSync.moveConsensusToNewHeight()
 	assert.Equal(t, tConsensus.Height, tState.LastBlockHeight()+1)
 }

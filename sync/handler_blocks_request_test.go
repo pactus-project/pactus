@@ -94,13 +94,13 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			assert.Equal(t, peer.Height, curHeight)
 		})
 
-		t.Run("Peer requests to send the blocks again, It should be rejected", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, curHeight-1, curHeight)
-			assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
+		// t.Run("Peer requests to send the blocks again, It should be rejected", func(t *testing.T) {
+		// 	msg := message.NewBlocksRequestMessage(sid, curHeight-1, curHeight)
+		// 	assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 
-			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		})
+		// 	bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+		// 	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
+		// })
 
 		t.Run("Peer requests blocks that we don't have", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+100, curHeight+150)

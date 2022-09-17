@@ -39,13 +39,17 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		return errors.Errorf(errors.ErrInvalidMessage, "peer status is %v", peer.Status)
 	}
 
-	if peer.Height > msg.From {
-		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			msg.SessionID, 0, nil, nil)
-		handler.sendTo(response, initiator)
+	// TODO
+	// This condition causes some troubles on testnet. Commenting it for further discussion.
+	// Connections between the nodes can be interrupted or even manually restarted during sync.
+	// When the number of "node networks" are less than of MaxOpenSessions, it can cause the node to never sync.
+	// if peer.Height > msg.From {
+	// 	response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
+	// 		msg.SessionID, 0, nil, nil)
+	// 	handler.sendTo(response, initiator)
 
-		return errors.Errorf(errors.ErrInvalidMessage, "peer request for blocks that already has: %v", msg.From)
-	}
+	// 	return errors.Errorf(errors.ErrInvalidMessage, "peer request for blocks that already has: %v", msg.From)
+	// }
 
 	if !handler.config.NodeNetwork {
 		ourHeight := handler.state.LastBlockHeight()

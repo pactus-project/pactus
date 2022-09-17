@@ -105,18 +105,19 @@ func (sync *synchronizer) Start() error {
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
-	if sync.config.HeartBeatTimeout > 0 {
-		sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimeout)
+	if sync.config.HeartBeatTimer > 0 {
+		sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimer)
 		go sync.heartBeatTickerLoop()
 	}
 
-	timer := time.NewTimer(sync.config.StartingTimeout)
+	// TODO: We can remove this timer if we know we have enough connections (min_threshould?)
+	timer := time.NewTimer(StartingTimeout)
 	go func() {
 		<-timer.C
-		sync.onStartingTimeout()
+		sync.sayHello(false)
 	}()
 
-	sync.sayHello(false)
+	sync.moveConsensusToNewHeight()
 
 	return nil
 }
@@ -128,24 +129,13 @@ func (sync *synchronizer) Stop() {
 	}
 }
 
-func (sync *synchronizer) onStartingTimeout() {
-	ourHeight := sync.state.LastBlockHeight()
-	networkHeight := sync.peerSet.MaxClaimedHeight()
-
-	// Consensus should start if our height is the same as the network height.
-	// Note that State height is always one height less than the Consensus height
-	// and it should be plus one to get the consensus height.
-	if ourHeight+1 >= networkHeight {
-		sync.synced()
+func (sync *synchronizer) moveConsensusToNewHeight() {
+	if sync.state.IsValidator(sync.signer.Address()) {
+		if err := sync.network.JoinConsensusTopic(); err != nil {
+			sync.logger.Error("error on joining consensus topic", "err", err)
+		}
+		sync.consensus.MoveToNewHeight()
 	}
-}
-
-func (sync *synchronizer) synced() {
-	sync.logger.Debug("we are synced", "height", sync.state.LastBlockHeight())
-	if err := sync.network.JoinConsensusTopic(); err != nil {
-		sync.logger.Error("error on joining consensus topic", "err", err)
-	}
-	sync.consensus.MoveToNewHeight()
 }
 
 func (sync *synchronizer) heartBeatTickerLoop() {
@@ -352,6 +342,7 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 
 // downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from uint32) {
+	sync.logger.Debug("downloading blocks", "from", from)
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
 		// TODO: write test for me
@@ -407,7 +398,8 @@ func (sync *synchronizer) queryLatestBlocks(from uint32) {
 	sync.sendTo(msg, randPeer.PeerID)
 }
 
-// peerIsInTheCommittee checks if the peer is a member of committee.
+// peerIsInTheCommittee checks if the peer is a member of the committee
+// at the current height.
 func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 	p := sync.peerSet.GetPeer(id)
 	if !p.IsKnownOrTrusty() {
@@ -417,7 +409,8 @@ func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 	return sync.state.IsInCommittee(p.Address())
 }
 
-// weAreInTheCommittee checks if we are a member of committee.
+// weAreInTheCommittee checks if we are a member of the committee
+// at the current height.
 func (sync *synchronizer) weAreInTheCommittee() bool {
 	return sync.state.IsInCommittee(sync.signer.PublicKey().Address())
 }
@@ -506,6 +499,6 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	case message.ResponseCodeSynced:
 		sync.logger.Debug("peer informed us we are synced. close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
-		sync.synced()
+		sync.moveConsensusToNewHeight()
 	}
 }
