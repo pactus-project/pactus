@@ -113,9 +113,10 @@ func TestSyncing(t *testing.T) {
 	assert.NoError(t, syncBob.Start())
 
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
-
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
+
+	// Hello-ack
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
 	assert.Len(t, syncAlice.Peers(), 1)
