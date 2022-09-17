@@ -342,6 +342,7 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 
 // downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from uint32) {
+	sync.logger.Debug("downloading blocks", "from", from)
 	l := sync.peerSet.GetPeerList()
 	for _, peer := range l {
 		// TODO: write test for me
