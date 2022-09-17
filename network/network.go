@@ -226,14 +226,6 @@ func (n *network) JoinConsensusTopic() error {
 	return nil
 }
 
-func (n *network) NumOfPeersInGeneralTopic() int {
-	return n.gossip.numOfPeers(n.generalTopicName())
-}
-
-func (n *network) NumOfPeersInConsensusTopic() int {
-	return n.gossip.numOfPeers(n.consensusTopicName())
-}
-
 func (n *network) generalTopicName() string {
 	return n.TopicName("general")
 }

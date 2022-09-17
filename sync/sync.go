@@ -110,19 +110,12 @@ func (sync *synchronizer) Start() error {
 		go sync.heartBeatTickerLoop()
 	}
 
-	timer := time.NewTimer(StartingTimeout)
-	go func() {
-		<-timer.C
-		for {
-			if sync.network.NumOfPeersInGeneralTopic() > 0 {
-				break
-			}
-			sync.logger.Debug("no peer on general topic")
-			time.Sleep(1 * time.Second)
-		}
-
-		sync.sayHello(false)
-	}()
+	sync.sayHello(false)
+	// timer := time.NewTimer(StartingTimeout)
+	// go func() {
+	// 	<-timer.C
+	// 	sync.sayHello(false)
+	// }()
 
 	sync.moveConsensusToNewHeight()
 
