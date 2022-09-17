@@ -7,7 +7,7 @@ import (
 )
 
 var LatestBlockInterval = uint32(720) // 720 blocks is about two hours
-var StartingTimeout = 3 * time.Second // TODO: We can remove this timer if we know we have connected to the network (min_threshould?)
+var StartingTimeout = 3 * time.Second
 
 type Config struct {
 	Moniker         string           `toml:"moniker"`

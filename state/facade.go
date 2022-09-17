@@ -27,6 +27,7 @@ type Facade interface {
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int16) *validator.Validator
 	IsProposer(addr crypto.Address, round int16) bool
+	IsValidator(addr crypto.Address) bool
 	TotalPower() int64
 	CommitteePower() int64
 	Transaction(id tx.ID) *tx.Tx

@@ -545,7 +545,9 @@ func (st *state) Proposer(round int16) *validator.Validator {
 func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 	return st.committee.IsProposer(addr, round)
 }
-
+func (st *state) IsValidator(addr crypto.Address) bool {
+	return st.store.HasValidator(addr)
+}
 func (st *state) Transaction(id tx.ID) *tx.Tx {
 	tx, err := st.store.Transaction(id)
 	if err != nil {
