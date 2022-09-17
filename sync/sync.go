@@ -111,12 +111,6 @@ func (sync *synchronizer) Start() error {
 	}
 
 	sync.sayHello(false)
-	// timer := time.NewTimer(StartingTimeout)
-	// go func() {
-	// 	<-timer.C
-	// 	sync.sayHello(false)
-	// }()
-
 	sync.moveConsensusToNewHeight()
 
 	return nil
