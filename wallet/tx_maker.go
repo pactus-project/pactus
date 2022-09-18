@@ -4,8 +4,10 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
 )
 
 type TxOption func(maker *txMaker) error
@@ -162,6 +164,7 @@ func (m *txMaker) checkSequence() error {
 }
 
 func (m *txMaker) checkFee() {
+	params := param.DefaultParams()
 	if m.fee == 0 {
 		switch m.typ {
 		case payload.PayloadTypeSend,
@@ -169,10 +172,9 @@ func (m *txMaker) checkFee() {
 			payload.PayloadTypeWithdraw:
 			{
 				// TODO: query fee from grpc client
-				fee := m.amount / 10000
-				if fee < 10000 {
-					fee = 10000
-				}
+				fee := int64(float64(m.amount) * params.FeeFraction)
+				fee = util.Max64(fee, params.MinimumFee)
+				fee = util.Min64(fee, params.MaximumFee)
 				m.fee = fee
 			}
 

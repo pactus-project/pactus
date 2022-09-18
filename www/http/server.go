@@ -163,7 +163,7 @@ func (t *tableMaker) addRowString(key, val string) {
 }
 func (t *tableMaker) addRowAmount(key string, val int64) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d.%08d</td></tr>",
-		key, val/100000000, val%10000000))
+		key, val/1000000000, val%1000000000))
 }
 func (t *tableMaker) addRowInt(key string, val int) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d</td></tr>", key, val))

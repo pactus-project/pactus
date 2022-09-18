@@ -79,7 +79,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Capnp.Enable = false
 
 		sync.LatestBlockInterval = 10
-		sync.StartingTimeout = 0
 
 		if i == 0 {
 			tConfigs[i].Sync.NodeNetwork = true

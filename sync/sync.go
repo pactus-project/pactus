@@ -110,13 +110,7 @@ func (sync *synchronizer) Start() error {
 		go sync.heartBeatTickerLoop()
 	}
 
-	// TODO: We can remove this timer if we know we have enough connections (min_threshould?)
-	timer := time.NewTimer(StartingTimeout)
-	go func() {
-		<-timer.C
-		sync.sayHello(false)
-	}()
-
+	sync.sayHello(false)
 	sync.moveConsensusToNewHeight()
 
 	return nil

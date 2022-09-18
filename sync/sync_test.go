@@ -41,7 +41,6 @@ type OverrideFingerprint struct {
 
 func init() {
 	LatestBlockInterval = 20
-	StartingTimeout = 10 * time.Millisecond
 	tConfig = testConfig()
 	tConfig.Moniker = "Alice"
 }

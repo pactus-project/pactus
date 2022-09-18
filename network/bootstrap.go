@@ -2,7 +2,6 @@ package network
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
@@ -49,15 +48,20 @@ func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2p
 	if err != nil {
 		b.logger.Panic("couldn't parse bootstrap addresses", "err", err, "addresses", conf.Addresses)
 	}
-
 	b.bootstrapPeers = addresses
-	b.checkConnectivity()
 
 	return b
 }
 
 // Start starts the Bootstrap bootstrapping. Cancel `ctx` or call Stop() to stop it.
 func (b *bootstrap) Start() {
+	// Protecting boostrap peers
+	for _, a := range b.bootstrapPeers {
+		b.host.ConnManager().Protect(a.ID, "bootstrap")
+	}
+
+	b.checkConnectivity()
+
 	go func() {
 		ticker := time.NewTicker(b.config.Period)
 		defer ticker.Stop()
@@ -108,28 +112,19 @@ func (b *bootstrap) checkConnectivity() {
 			"count", len(connectedPeers),
 			"threshold", b.config.MinThreshold)
 
-		ctx, cancel := context.WithTimeout(b.ctx, time.Second*10)
-		var wg sync.WaitGroup
-		for _, pinfo := range b.bootstrapPeers {
-			b.logger.Debug("try connecting to a bootstrap peer", "peer", pinfo.String())
+		for _, pi := range b.bootstrapPeers {
+			b.logger.Debug("try connecting to a bootstrap peer", "peer", pi.String())
 
 			// Don't try to connect to an already connected peer.
-			if hasPID(connectedPeers, pinfo.ID) {
-				b.logger.Trace("already connected", "peer", pinfo.String())
+			if hasPID(connectedPeers, pi.ID) {
+				b.logger.Trace("already connected", "peer", pi.String())
 				continue
 			}
 
-			wg.Add(1)
-			go func(pi lp2ppeer.AddrInfo) {
-				if err := b.host.Connect(ctx, pi); err != nil {
-					b.logger.Error("error trying to connect to bootstrap node", "info", pi, "err", err.Error())
-				}
-				wg.Done()
-			}(pinfo)
+			if err := b.host.Connect(b.ctx, pi); err != nil {
+				b.logger.Error("error trying to connect to bootstrap node", "info", pi, "err", err.Error())
+			}
 		}
-
-		wg.Wait()
-		cancel()
 
 		b.logger.Debug("expanding the connections")
 		b.expand()
