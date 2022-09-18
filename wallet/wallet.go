@@ -161,7 +161,7 @@ func (w *Wallet) connectToRandomServer() error {
 	for i := 0; i < 3; i++ {
 		n := util.RandInt32(int32(len(netServers)))
 		serverInfo := netServers[n]
-		client, err := gewGRPCClient(serverInfo.IP)
+		client, err := newGRPCClient(serverInfo.IP)
 		if err == nil {
 			w.client = client
 			return nil

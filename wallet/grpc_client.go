@@ -15,7 +15,7 @@ type grpcClient struct {
 	transactionClient pactus.TransactionClient
 }
 
-func gewGRPCClient(rpcEndpoint string) (*grpcClient, error) {
+func newGRPCClient(rpcEndpoint string) (*grpcClient, error) {
 	conn, err := grpc.Dial(rpcEndpoint, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
