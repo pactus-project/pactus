@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/gotk3/gotk3/glib"
@@ -111,15 +110,10 @@ func startingNode(workingDir string,
 	}
 	//TODO: log to file
 
-	go func() {
-		// Simple trick to make sure that the node starts in a new OS thread.
-		runtime.LockOSThread()
-		defer runtime.UnlockOSThread()
-		err := node.Start()
-		if err != nil {
-			fatalErrorCheck(err)
-		}
-	}()
+	err = node.Start()
+	if err != nil {
+		return nil, nil, err
+	}
 
 	genTime := gen.GenesisTime()
 	return node, &genTime, nil
