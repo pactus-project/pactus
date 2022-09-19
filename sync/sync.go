@@ -101,6 +101,10 @@ func (sync *synchronizer) Start() error {
 	if err := sync.network.JoinGeneralTopic(); err != nil {
 		return err
 	}
+	// TODO: Not joining consensus topic when we are syncing
+	if err := sync.network.JoinConsensusTopic(); err != nil {
+		return err
+	}
 
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
@@ -125,9 +129,6 @@ func (sync *synchronizer) Stop() {
 
 func (sync *synchronizer) moveConsensusToNewHeight() {
 	if sync.state.IsValidator(sync.signer.Address()) {
-		if err := sync.network.JoinConsensusTopic(); err != nil {
-			sync.logger.Error("error on joining consensus topic", "err", err)
-		}
 		sync.consensus.MoveToNewHeight()
 	}
 }
