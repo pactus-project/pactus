@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gotk3/gotk3/glib"
@@ -63,7 +64,7 @@ func main() {
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
-		start(nil, workingDir, app)
+		start(workingDir, app)
 	})
 
 	// Connect function to application shutdown event, this is not required.
@@ -75,7 +76,8 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*node.Node, *time.Time, error) {
+func startingNode(workingDir string,
+	wallet *wallet.Wallet, password string) (*node.Node, *time.Time, error) {
 	gen, err := genesis.LoadFromFile(cmd.PactusGenesisPath(workingDir))
 	if err != nil {
 		return nil, nil, err
@@ -109,26 +111,26 @@ func startingNode(workingDir string, wallet *wallet.Wallet, password string) (*n
 	}
 	//TODO: log to file
 
-	err = node.Start()
-	if err != nil {
-		return nil, nil, err
-	}
+	go func() {
+		// Simple trick to make sure that the node starts in a new OS thread.
+		runtime.LockOSThread()
+		defer runtime.UnlockOSThread()
+		err := node.Start()
+		if err != nil {
+			fatalErrorCheck(err)
+		}
+	}()
 
 	genTime := gen.GenesisTime()
 	return node, &genTime, nil
 }
 
-func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
-	//theme, _ := gtk.IconThemeGetDefault()
-	//theme.AddResourcePath("icons")
-
+func start(workingDir string, app *gtk.Application) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
 		return
 	}
-
-	time.Sleep(1 * time.Second)
 
 	path := cmd.PactusDefaultWalletPath(workingDir)
 	wallet, err := wallet.OpenWallet(path, false)
@@ -136,7 +138,7 @@ func start(parent gtk.IWindow, workingDir string, app *gtk.Application) {
 
 	password, ok := getWalletPassword(wallet)
 	if !ok {
-		showInfoDialog(parent, "Canceled!")
+		showInfoDialog(nil, "Canceled!")
 		return
 	}
 	// TODO: Get genTime from the node or state
