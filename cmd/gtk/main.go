@@ -112,6 +112,7 @@ func startingNode(workingDir string,
 	//TODO: log to file
 
 	go func() {
+		// Simple trick to make sure that the node starts in a new OS thread.
 		runtime.LockOSThread()
 		defer runtime.UnlockOSThread()
 		err := node.Start()
