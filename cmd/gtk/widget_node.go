@@ -67,23 +67,25 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 }
 
 func (wn *widgetNode) timeout() bool {
-	lastBlockTime := wn.model.node.State().LastBlockTime()
-	lastBlockHeight := wn.model.node.State().LastBlockHeight()
-	wn.labelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
-	wn.labelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
+	go func() {
+		lastBlockTime := wn.model.node.State().LastBlockTime()
+		lastBlockHeight := wn.model.node.State().LastBlockHeight()
+		wn.labelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
+		wn.labelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
-	// TODO move this logic to state
-	nowUnix := time.Now().Unix()
-	lastBlockTimeUnix := lastBlockTime.Unix()
-	genTimeUnix := wn.genesisTime.Unix()
+		// TODO move this logic to state
+		nowUnix := time.Now().Unix()
+		lastBlockTimeUnix := lastBlockTime.Unix()
+		genTimeUnix := wn.genesisTime.Unix()
 
-	percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
-	wn.progressBarSynced.SetFraction(percentage)
-	wn.progressBarSynced.SetText(fmt.Sprintf("%s %%",
-		strconv.FormatFloat(percentage*100, 'f', 2, 64)))
+		percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
+		wn.progressBarSynced.SetFraction(percentage)
+		wn.progressBarSynced.SetText(fmt.Sprintf("%s %%",
+			strconv.FormatFloat(percentage*100, 'f', 2, 64)))
 
-	blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
-	wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
+		blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
+		wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
+	}()
 
 	return true
 }

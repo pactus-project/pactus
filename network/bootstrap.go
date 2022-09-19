@@ -55,7 +55,7 @@ func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2p
 
 // Start starts the Bootstrap bootstrapping. Cancel `ctx` or call Stop() to stop it.
 func (b *bootstrap) Start() {
-	// Protecting boostrap peers
+	// Protecting bootstrap peers
 	for _, a := range b.bootstrapPeers {
 		b.host.ConnManager().Protect(a.ID, "bootstrap")
 	}

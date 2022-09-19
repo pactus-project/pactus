@@ -169,8 +169,10 @@ func (ww *widgetWallet) onShowSeed() {
 }
 
 func (ww *widgetWallet) timeout() bool {
-	err := ww.model.rebuildModel()
-	fatalErrorCheck(err)
+	go func() {
+		err := ww.model.rebuildModel()
+		fatalErrorCheck(err)
+	}()
 
 	return true
 }
