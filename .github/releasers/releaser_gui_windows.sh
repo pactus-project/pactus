@@ -71,7 +71,10 @@ cp \
   "libpangocairo-1.0-0.dll" \
   "libpangoft2-1.0-0.dll" \
   "libpangowin32-1.0-0.dll" \
-  "libpcre-1.dll" \
+  "libpcre2-16-0.dll" \
+  "libpcre2-32-0.dll" \
+  "libpcre2-8-0.dll" \
+  "libpcre2-posix-3.dll" \
   "libpixman-1-0.dll" \
   "libpng16-16.dll" \
   "librsvg-2-2.dll" \
