@@ -3,6 +3,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/util"
@@ -16,7 +18,7 @@ type walletModel struct {
 
 func newWalletModel(wallet *wallet.Wallet) *walletModel {
 	listStore, _ := gtk.ListStoreNew(
-		glib.TYPE_INT,    // Column no
+		glib.TYPE_STRING, // Column no
 		glib.TYPE_STRING, // Address
 		glib.TYPE_STRING, // Label
 		glib.TYPE_STRING, // balance
@@ -33,37 +35,58 @@ func (model *walletModel) ToTreeModel() *gtk.TreeModel {
 }
 
 func (model *walletModel) rebuildModel() error {
-	model.listStore.Clear()
-	for no, info := range model.wallet.AddressLabels() {
-		label := info.Label
-		if info.Imported {
-			label += "(Imported)"
-		}
-		balance, _ := model.wallet.Balance(info.Address)
-		stake, _ := model.wallet.Stake(info.Address)
-		balanceStr := util.ChangeToString(balance)
-		stakeStr := util.ChangeToString(stake)
+	go func() {
+		data := [][]string{}
+		for no, info := range model.wallet.AddressLabels() {
+			label := info.Label
+			if info.Imported {
+				label += "(Imported)"
+			}
 
-		iter := model.listStore.Append()
-		err := model.listStore.Set(iter,
-			[]int{
-				IDAddressesColumnNo,
-				IDAddressesColumnAddress,
-				IDAddressesColumnLabel,
-				IDAddressesColumnBalance,
-				IDAddressesColumnStake},
-			[]interface{}{
-				no + 1,
+			balanceStr := "-"
+			stakeStr := "-"
+			if no < 5 {
+				balance, _ := model.wallet.Balance(info.Address)
+				stake, _ := model.wallet.Stake(info.Address)
+				balanceStr = util.ChangeToString(balance)
+				stakeStr = util.ChangeToString(stake)
+			}
+
+			data = append(data, []string{
+				fmt.Sprintf("%v", no+1),
 				info.Address,
 				label,
 				balanceStr,
 				stakeStr,
 			})
-
-		if err != nil {
-			return err
 		}
-	}
+
+		glib.IdleAdd(func() bool {
+			model.listStore.Clear()
+			for _, d := range data {
+				iter := model.listStore.Append()
+				err := model.listStore.Set(iter,
+					[]int{
+						IDAddressesColumnNo,
+						IDAddressesColumnAddress,
+						IDAddressesColumnLabel,
+						IDAddressesColumnBalance,
+						IDAddressesColumnStake},
+					[]interface{}{
+						d[0],
+						d[1],
+						d[2],
+						d[3],
+						d[4],
+					})
+
+				errorCheck(err)
+			}
+
+			return false
+		})
+
+	}()
 
 	return nil
 }
@@ -83,7 +106,7 @@ func (model *walletModel) createAddress() error {
 			IDAddressesColumnBalance,
 			IDAddressesColumnStake},
 		[]interface{}{
-			model.wallet.AddressCount() + 1,
+			fmt.Sprintf("%v", model.wallet.AddressCount()+1),
 			address,
 			"",
 			"0",
