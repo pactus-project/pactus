@@ -31,6 +31,8 @@ var (
 func init() {
 	workingDirOpt = flag.String("working-dir", cmd.PactusHomeDir(), "working directory")
 	testnetOpt = flag.Bool("testnet", true, "working directory") // TODO: make it false after mainnet launch
+
+	gtk.Init(nil)
 }
 
 func main() {

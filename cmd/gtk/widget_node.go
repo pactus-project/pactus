@@ -67,24 +67,32 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 }
 
 func (wn *widgetNode) timeout() bool {
+	// updating gui in another thread, this will fix "Not Responding" issue on Windows
 	go func() {
 		lastBlockTime := wn.model.node.State().LastBlockTime()
 		lastBlockHeight := wn.model.node.State().LastBlockHeight()
-		wn.labelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
-		wn.labelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
-		// TODO move this logic to state
-		nowUnix := time.Now().Unix()
-		lastBlockTimeUnix := lastBlockTime.Unix()
-		genTimeUnix := wn.genesisTime.Unix()
+		// Fixing sudden panic
+		// https://github.com/gotk3/gotk3/issues/686
+		glib.IdleAdd(func() bool {
+			wn.labelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
+			wn.labelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
-		percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
-		wn.progressBarSynced.SetFraction(percentage)
-		wn.progressBarSynced.SetText(fmt.Sprintf("%s %%",
-			strconv.FormatFloat(percentage*100, 'f', 2, 64)))
+			// TODO move this logic to state
+			nowUnix := time.Now().Unix()
+			lastBlockTimeUnix := lastBlockTime.Unix()
+			genTimeUnix := wn.genesisTime.Unix()
 
-		blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
-		wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
+			percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
+			wn.progressBarSynced.SetFraction(percentage)
+			wn.progressBarSynced.SetText(fmt.Sprintf("%s %%",
+				strconv.FormatFloat(percentage*100, 'f', 2, 64)))
+
+			blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
+			wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
+
+			return false
+		})
 	}()
 
 	return true
