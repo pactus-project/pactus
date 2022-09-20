@@ -169,8 +169,7 @@ func (ww *widgetWallet) onShowSeed() {
 }
 
 func (ww *widgetWallet) timeout() bool {
-	err := ww.model.rebuildModel()
-	errorCheck(err)
+	ww.model.rebuildModel()
 
 	return true
 }
@@ -187,8 +186,7 @@ func (ww *widgetWallet) onUpdateLabel() {
 			err = ww.model.wallet.Save()
 			fatalErrorCheck(err)
 
-			err = ww.model.rebuildModel()
-			fatalErrorCheck(err)
+			ww.model.rebuildModel()
 		}
 	}
 }

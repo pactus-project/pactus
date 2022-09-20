@@ -34,7 +34,7 @@ func (model *walletModel) ToTreeModel() *gtk.TreeModel {
 	return model.listStore.ToTreeModel()
 }
 
-func (model *walletModel) rebuildModel() error {
+func (model *walletModel) rebuildModel() {
 	go func() {
 		data := [][]string{}
 		for no, info := range model.wallet.AddressLabels() {
@@ -85,10 +85,7 @@ func (model *walletModel) rebuildModel() error {
 
 			return false
 		})
-
 	}()
-
-	return nil
 }
 
 func (model *walletModel) createAddress() error {
