@@ -11,6 +11,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/util"
 )
 
 //go:embed assets/ui/widget_node.ui
@@ -24,6 +25,10 @@ type widgetNode struct {
 	labelLastBlockTime   *gtk.Label
 	labelLastBlockHeight *gtk.Label
 	labelBlocksLeft      *gtk.Label
+	labelCommitteeSize   *gtk.Label
+	labelInCommittee     *gtk.Label
+	labelCommitteeStake  *gtk.Label
+	labelTotalStake      *gtk.Label
 	progressBarSynced    *gtk.ProgressBar
 }
 
@@ -54,19 +59,25 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 		labelLastBlockHeight: getLabelObj(builder, "id_label_last_block_height"),
 		labelBlocksLeft:      getLabelObj(builder, "id_label_blocks_left"),
 		progressBarSynced:    getProgressBarObj(builder, "id_progress_synced"),
+		labelCommitteeSize:   getLabelObj(builder, "id_label_committee_size"),
+		labelInCommittee:     getLabelObj(builder, "id_label_in_committee"),
+		labelCommitteeStake:  getLabelObj(builder, "id_label_committee_stake"),
+		labelTotalStake:      getLabelObj(builder, "id_label_total_stake"),
 	}
 
 	signals := map[string]interface{}{}
 	builder.ConnectSignals(signals)
 
-	glib.TimeoutAdd(1000, w.timeout)
+	glib.TimeoutAdd(1000, w.timeout1)
+	glib.TimeoutAdd(10000, w.timeout10)
 
 	// Update widget for the first time
-	w.timeout()
+	w.timeout1()
+	w.timeout10()
 	return w, nil
 }
 
-func (wn *widgetNode) timeout() bool {
+func (wn *widgetNode) timeout1() bool {
 	// updating gui in another thread, this will fix "Not Responding" issue on Windows
 	go func() {
 		lastBlockTime := wn.model.node.State().LastBlockTime()
@@ -90,6 +101,30 @@ func (wn *widgetNode) timeout() bool {
 
 			blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
 			wn.labelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
+
+			return false
+		})
+	}()
+
+	return true
+}
+
+func (wn *widgetNode) timeout10() bool {
+	go func() {
+		committeeSize := wn.model.node.State().Params().CommitteeSize
+		committeeStake := wn.model.node.State().CommitteePower()
+		totalStake := wn.model.node.State().TotalPower()
+		isInCommittee := "No"
+		if wn.model.node.State().IsInCommittee(
+			wn.model.node.State().ValidatorAddress()) {
+			isInCommittee = "Yes"
+		}
+
+		glib.IdleAdd(func() bool {
+			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
+			wn.labelCommitteeStake.SetText(fmt.Sprintf(util.ChangeToString(committeeStake)))
+			wn.labelTotalStake.SetText(fmt.Sprintf(util.ChangeToString(totalStake)))
+			wn.labelInCommittee.SetText(fmt.Sprintf("%v", isInCommittee))
 
 			return false
 		})
