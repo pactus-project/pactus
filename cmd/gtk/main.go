@@ -156,8 +156,7 @@ func start(workingDir string, app *gtk.Application) {
 	// Show the Window and all of its components.
 	win.Show()
 
-	err = walletModel.rebuildModel()
-	fatalErrorCheck(err)
+	walletModel.rebuildModel()
 
 	app.AddWindow(win)
 }

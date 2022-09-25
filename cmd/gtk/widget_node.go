@@ -122,8 +122,8 @@ func (wn *widgetNode) timeout10() bool {
 
 		glib.IdleAdd(func() bool {
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
-			wn.labelCommitteeStake.SetText(fmt.Sprintf(util.ChangeToString(committeeStake)))
-			wn.labelTotalStake.SetText(fmt.Sprintf(util.ChangeToString(totalStake)))
+			wn.labelCommitteeStake.SetText(util.ChangeToString(committeeStake))
+			wn.labelTotalStake.SetText(util.ChangeToString(totalStake))
 			wn.labelInCommittee.SetText(fmt.Sprintf("%v", isInCommittee))
 
 			return false
