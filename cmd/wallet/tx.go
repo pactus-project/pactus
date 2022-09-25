@@ -29,7 +29,7 @@ func SendTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			w, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -88,7 +88,7 @@ func BondTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			w, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -131,7 +131,7 @@ func UnbondTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			w, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -180,7 +180,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			w, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			w, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

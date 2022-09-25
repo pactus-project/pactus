@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/www/capnp"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
@@ -41,6 +42,16 @@ type Node struct {
 func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer) (*Node, error) {
 	// Initialize the logger
 	logger.InitLogger(conf.Logger)
+
+	validatorAddr := signer.Address().String()
+	rewardAddr := conf.State.RewardAddress
+	if rewardAddr == "" {
+		rewardAddr = validatorAddr
+	}
+	logger.Info("You are running a pactus block chain",
+		"version", version.Version(),
+		"Validator address", validatorAddr,
+		"Reward address", rewardAddr)
 
 	network, err := network.NewNetwork(conf.Network)
 	if err != nil {

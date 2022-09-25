@@ -1,14 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 var pathOpt *string
 var offlineOpt *bool
+var serverAddrOpt *string
 
 func addPasswordOption(c *cli.Cmd) *string {
 	return c.String(cli.StringOpt{
@@ -16,6 +19,27 @@ func addPasswordOption(c *cli.Cmd) *string {
 		Desc:  "provide wallet password as a parameter instead of interactively",
 		Value: "",
 	})
+}
+
+func openWallet() (*wallet.Wallet, error) {
+	if !*offlineOpt && *serverAddrOpt != "" {
+		wallet, err := wallet.OpenWallet(*pathOpt, true)
+		if err != nil {
+			return nil, err
+		}
+
+		err = wallet.Connect(*serverAddrOpt)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil, err
+		}
+		return wallet, err
+	}
+	wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+	if err != nil {
+		return nil, err
+	}
+	return wallet, nil
 }
 
 func main() {
@@ -31,6 +55,11 @@ func main() {
 		Name:  "offline",
 		Desc:  "offline mode",
 		Value: false,
+	})
+
+	serverAddrOpt = app.String(cli.StringOpt{
+		Name: "server",
+		Desc: "server gRPC address",
 	})
 
 	app.Command("create", "Create a new wallet", Generate())

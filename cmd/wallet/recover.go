@@ -39,7 +39,7 @@ func GetSeed() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

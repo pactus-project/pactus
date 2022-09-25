@@ -44,7 +44,11 @@ func GenerateMnemonic(entropy int) string {
 	return vault.GenerateMnemonic(entropy)
 }
 
-// OpenWallet tries to open a wallet at given path.
+// OpenWallet tries to open a wallet at the given path.
+// If the wallet doesn’t exist on this path, it returns an error.
+// A wallet can be opened in offline or online modes.
+// Offline wallet doesn’t have any connection to any node.
+// Online wallet has a connection to one of the pre-defined servers.
 func OpenWallet(path string, offline bool) (*Wallet, error) {
 	data, err := util.ReadFile(path)
 	if err != nil {
@@ -113,13 +117,24 @@ func newWallet(path string, store *store, offline bool) (*Wallet, error) {
 	}
 
 	if !offline {
-		err := w.connectToRandomServer()
+		client, err := w.connectToRandomServer()
 		if err != nil {
 			return nil, err
 		}
+		w.client = client
 	}
 
 	return w, nil
+}
+
+func (w *Wallet) Connect(addr string) error {
+	client, err := newGRPCClient(addr)
+	if err != nil {
+		return err
+	}
+
+	w.client = client
+	return nil
 }
 
 func (w *Wallet) Name() string {
@@ -134,11 +149,11 @@ func (w *Wallet) UpdatePassword(old, new string) error {
 	return w.store.UpdatePassword(old, new)
 }
 
-func (w *Wallet) connectToRandomServer() error {
+func (w *Wallet) connectToRandomServer() (*grpcClient, error) {
 	serversInfo := servers{}
 	err := json.Unmarshal(serversJSON, &serversInfo)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var netServers []serverInfo
@@ -154,7 +169,7 @@ func (w *Wallet) connectToRandomServer() error {
 
 	default:
 		{
-			return ErrInvalidNetwork
+			return nil, ErrInvalidNetwork
 		}
 	}
 
@@ -163,12 +178,11 @@ func (w *Wallet) connectToRandomServer() error {
 		serverInfo := netServers[n]
 		client, err := newGRPCClient(serverInfo.IP)
 		if err == nil {
-			w.client = client
-			return nil
+			return client, nil
 		}
 	}
 
-	return errors.New("unable to connect to the servers")
+	return nil, errors.New("unable to connect to the servers")
 }
 
 func (w *Wallet) Path() string {
