@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/wallet"
 )
 
 // AllAddresses lists all the wallet addresses.
@@ -27,7 +26,7 @@ func AllAddresses() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -64,7 +63,7 @@ func NewAddress() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			label := cmd.PromptInput("Label")
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -95,7 +94,7 @@ func Balance() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -126,7 +125,7 @@ func PrivateKey() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -152,7 +151,7 @@ func PublicKey() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -182,7 +181,7 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 		c.Action = func() {
 			prvStr := cmd.PromptInput("Private Key")
 
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return
@@ -221,7 +220,7 @@ func SetLabel() func(c *cli.Cmd) {
 
 		c.Before = func() {}
 		c.Action = func() {
-			wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+			wallet, err := openWallet()
 			if err != nil {
 				cmd.PrintDangerMsg(err.Error())
 				return

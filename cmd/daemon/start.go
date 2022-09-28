@@ -17,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/node/config"
 	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -102,14 +101,6 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			validatorAddr := signer.Address()
-			rewardAddr := conf.State.RewardAddress
-			if rewardAddr == "" {
-				rewardAddr = validatorAddr.String()
-			}
-			cmd.PrintInfoMsg("You are running a pactus block chain version: %s. Welcome! ", version.Version())
-			cmd.PrintInfoMsg("Validator address: %v", validatorAddr)
-			cmd.PrintInfoMsg("Reward address : %v", rewardAddr)
 			cmd.PrintLine()
 
 			node, err := node.NewNode(gen, conf, signer)
