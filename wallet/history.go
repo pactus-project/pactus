@@ -4,7 +4,6 @@ import "sort"
 
 type Transaction struct {
 	BlockHash string `json:"block"`
-	BlockTime uint32 `json:"time"`
 	Data      string `json:"data"`
 }
 
@@ -26,7 +25,7 @@ func (h *history) hasTransaction(id string) bool {
 	return ok
 }
 
-func (h *history) addTransaction(addr string, id string,
+func (h *history) addTransaction(addr string,
 	activity Activity, transaction Transaction) {
 	if h.Activities == nil {
 		h.Activities = map[string][]Activity{}
@@ -40,5 +39,5 @@ func (h *history) addTransaction(addr string, id string,
 		return h.Activities[addr][i].BlockTime < h.Activities[addr][j].BlockTime
 	})
 
-	h.Transactions[id] = transaction
+	h.Transactions[activity.TxID] = transaction
 }

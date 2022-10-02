@@ -76,18 +76,18 @@ func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
 	if net == NetworkTestNet {
 		coinType = uint32(21777)
 	}
-	vault, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
-	if err != nil {
-		return nil, err
-	}
 	store := &store{
 		Version:   1,
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
 		Network:   net,
-		Vault:     *vault,
+		Vault:     nil,
 	}
 	wallet, err := newWallet(path, store, true)
+	if err != nil {
+		return nil, err
+	}
+	vault, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +95,7 @@ func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
 	if err != nil {
 		return nil, err
 	}
+	wallet.store.Vault = vault
 
 	return wallet, nil
 }
@@ -440,7 +441,6 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 
 	transaction := Transaction{
 		BlockHash: blockHash.String(),
-		BlockTime: trxInfo.BlockTime,
 		Data:      hex.EncodeToString(trxInfo.Data),
 	}
 	activity := Activity{
@@ -453,14 +453,14 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 	if w.store.Vault.Contains(sender.String()) {
 		activity.Amount = -(trx.Fee() + trx.Payload().Value())
 		w.store.History.addTransaction(sender.String(),
-			trx.ID().String(), activity, transaction)
+			activity, transaction)
 	}
 
 	if receiver != nil {
 		if w.store.Vault.Contains(receiver.String()) {
 			activity.Amount = trx.Payload().Value()
 			w.store.History.addTransaction(receiver.String(),
-				trx.ID().String(), activity, transaction)
+				activity, transaction)
 		}
 	}
 
