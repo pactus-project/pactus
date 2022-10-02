@@ -61,8 +61,6 @@ func (c *Cache) GetBlock(height uint32) *block.Block {
 		sb := c.state.StoredBlock(h)
 		// TODO: This decoding is not necessary.
 		// To improve the performance, we can send blocks without decoding it.
-		// Maybe we can define another type like: RawBlock,
-		// RawBlock is a lazy object and only decoded when it's needed.
 		b := sb.ToBlock()
 		if b != nil {
 			c.AddBlock(height, b)
