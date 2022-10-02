@@ -198,7 +198,7 @@ func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
 		return nil, err
 	}
 	start := pos.Offset
-	end := pos.Offset + uint32(pos.Length)
+	end := pos.Offset + pos.Length
 	if end > uint32(len(data)) {
 		return nil, fmt.Errorf("offset is out of range") // TODO: Shall we panic here?
 	}

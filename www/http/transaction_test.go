@@ -17,7 +17,6 @@ func TestTransaction(t *testing.T) {
 	testTx := testBlock.Transactions()[0]
 
 	t.Run("Shall return a transaction", func(t *testing.T) {
-
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"id": testTx.ID().String()})

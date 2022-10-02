@@ -105,7 +105,6 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 		response.Header = header
 		response.Txs = trxs
 		response.PrevCert = prevCert
-
 	}
 
 	return response, nil

@@ -202,12 +202,12 @@ func (w *Wallet) Balance(addrStr string) (int64, error) {
 		return 0, ErrOffline
 	}
 
-	acc, err := w.client.getAccount(addr)
-	if err != nil {
-		return 0, nil
+	acc, _ := w.client.getAccount(addr)
+	if acc != nil {
+		return acc.Balance, nil
 	}
 
-	return acc.Balance, nil
+	return 0, nil
 }
 
 // Stake returns the validator stake amount.
@@ -221,12 +221,12 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 		return 0, ErrOffline
 	}
 
-	val, err := w.client.getValidator(addr)
-	if err != nil {
-		return 0, nil
+	val, _ := w.client.getValidator(addr)
+	if val != nil {
+		return val.Stake, nil
 	}
 
-	return val.Stake, nil
+	return 0, nil
 }
 
 // MakeSendTx creates a new send transaction based on the given parameters.
