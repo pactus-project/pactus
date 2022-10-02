@@ -106,12 +106,12 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, err
 	logger.Debug("try to restore last state info", "height", height)
 
 	h := li.store.BlockHash(height)
-	bi, err := li.store.Block(h)
+	sb, err := li.store.Block(h)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve block %v: %v", height, err)
 	}
 
-	b, _ := bi.ToFullBlock()
+	b := sb.ToBlock()
 
 	li.lastBlockHeight = height
 	li.lastCertificate = cert

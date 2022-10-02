@@ -10,7 +10,7 @@ package pactus;
 
 service Blockchain {
   rpc GetBlock(BlockRequest) returns (BlockResponse) {
-    option (google.api.http).get = "/v1/blockchain/block/hash/{hash}/verbosity/verbosity";
+    option (google.api.http).get = "/v1/blockchain/block/hash/{hash}/verbosity/{verbosity}";
   }
   rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse) {
     option (google.api.http).get = "/v1/blockchain/block_hash/{height}";
@@ -54,7 +54,7 @@ message BlockRequest {
 
 message BlockResponse {
   uint32 height = 1;
-  bytes hash = 2;
+  bytes data = 2;
   google.protobuf.Timestamp block_time = 3;
   BlockHeaderInfo header = 4;
   CertificateInfo prev_cert = 5;
@@ -106,7 +106,7 @@ message CertificateInfo {
 }
 
 enum BlockVerbosity {
-  BLOCK_HASH = 0;
+  BLOCK_DATA = 0;
   BLOCK_INFO = 1;
   BLOCK_TRANSACTIONS = 2;
 }

@@ -20,17 +20,17 @@ func (zs *pactusServer) GetBlock(args PactusServer_getBlock) error {
 		return err
 	}
 	v := args.Params.Verbosity()
-	b := zs.state.Block(h)
-	if b == nil {
+	sb := zs.state.StoredBlock(h)
+	if sb == nil {
 		return fmt.Errorf("block not found")
 	}
 
 	res, _ := args.Results.NewResult()
 	// TODO: Get it from store
-	d, _ := b.Bytes()
-	if err := res.SetData(d); err != nil {
+	if err := res.SetData(sb.Data); err != nil {
 		return err
 	}
+	b := sb.ToBlock()
 	// TODO: Set height?? Get it from store
 	if err := res.SetHash(b.Hash().Bytes()); err != nil {
 		return err

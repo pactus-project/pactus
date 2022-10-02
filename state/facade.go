@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
@@ -30,11 +31,11 @@ type Facade interface {
 	IsValidator(addr crypto.Address) bool
 	TotalPower() int64
 	CommitteePower() int64
-	Transaction(id tx.ID) *tx.Tx
 	PendingTx(id tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
-	Block(hash hash.Hash) *block.Block // TODO: return store block (including block header data)
+	StoredBlock(hash hash.Hash) *store.StoredBlock
+	StoredTx(id tx.ID) *store.StoredTx
 	BlockHash(height uint32) hash.Hash
 	AccountByAddress(addr crypto.Address) *account.Account
 	ValidatorByAddress(addr crypto.Address) *validator.Validator

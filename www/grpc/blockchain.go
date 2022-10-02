@@ -48,61 +48,66 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "provided hash is not Valid")
 	}
-	block := s.state.Block(hash)
-	if block == nil {
+	storedBlock := s.state.StoredBlock(hash)
+	if storedBlock == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "block not found")
 	}
-	timestamp := timestamppb.New(block.Header().Time())
-	header := &pactus.BlockHeaderInfo{}
-	var prevCert *pactus.CertificateInfo
-
-	if request.Verbosity.Number() > 0 {
-		seed := block.Header().SortitionSeed()
-
-		cert := block.PrevCertificate()
-		if cert != nil {
-			committers := make([]int32, len(block.PrevCertificate().Committers()))
-			for i, n := range block.PrevCertificate().Committers() {
-				committers[i] = n
-			}
-			absentees := make([]int32, len(block.PrevCertificate().Absentees()))
-			for i, n := range block.PrevCertificate().Absentees() {
-				absentees[i] = n
-			}
-			prevCert = &pactus.CertificateInfo{
-				Round:      int32(block.PrevCertificate().Round()),
-				Committers: committers,
-				Absentees:  absentees,
-				Signature:  block.PrevCertificate().Signature().Bytes(),
-			}
-		}
-		header = &pactus.BlockHeaderInfo{
-			Version:         int32(block.Header().Version()),
-			PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
-			StateRoot:       block.Header().StateRoot().Bytes(),
-			SortitionSeed:   seed[:],
-			ProposerAddress: block.Header().ProposerAddress().String(),
-		}
+	response := &pactus.BlockResponse{
+		Height: storedBlock.Height,
 	}
+	if request.Verbosity == pactus.BlockVerbosity_BLOCK_DATA {
+		response.Data = storedBlock.Data
+	} else {
+		block := storedBlock.ToBlock()
+		timestamp := timestamppb.New(block.Header().Time())
+		header := &pactus.BlockHeaderInfo{}
+		var prevCert *pactus.CertificateInfo
 
-	// TODO: Cache for better performance
-	trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
-	if request.Verbosity.Number() > 1 {
+		if request.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
+			seed := block.Header().SortitionSeed()
+
+			cert := block.PrevCertificate()
+			if cert != nil {
+				committers := make([]int32, len(block.PrevCertificate().Committers()))
+				for i, n := range block.PrevCertificate().Committers() {
+					committers[i] = n
+				}
+				absentees := make([]int32, len(block.PrevCertificate().Absentees()))
+				for i, n := range block.PrevCertificate().Absentees() {
+					absentees[i] = n
+				}
+				prevCert = &pactus.CertificateInfo{
+					Round:      int32(block.PrevCertificate().Round()),
+					Committers: committers,
+					Absentees:  absentees,
+					Signature:  block.PrevCertificate().Signature().Bytes(),
+				}
+			}
+			header = &pactus.BlockHeaderInfo{
+				Version:         int32(block.Header().Version()),
+				PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
+				StateRoot:       block.Header().StateRoot().Bytes(),
+				SortitionSeed:   seed[:],
+				ProposerAddress: block.Header().ProposerAddress().String(),
+			}
+		}
+
+		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 		for _, trx := range block.Transactions() {
-			trxs = append(trxs, transactionToProto(trx))
+			if request.Verbosity == pactus.BlockVerbosity_BLOCK_INFO {
+				trxs = append(trxs, &pactus.TransactionInfo{Id: trx.ID().Bytes()})
+			} else {
+				trxs = append(trxs, transactionToProto(trx))
+			}
 		}
+
+		response.BlockTime = timestamp
+		response.Header = header
+		response.Txs = trxs
+		response.PrevCert = prevCert
 	}
 
-	res := &pactus.BlockResponse{
-		// Height: , // TODO: fix me
-		Hash:      hash.Bytes(),
-		BlockTime: timestamp,
-		Header:    header,
-		Txs:       trxs,
-		PrevCert:  prevCert,
-	}
-
-	return res, nil
+	return response, nil
 }
 
 func (s *blockchainServer) GetAccount(ctx context.Context,

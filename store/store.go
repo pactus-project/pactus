@@ -110,10 +110,9 @@ func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certifi
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	txsPos := s.blockStore.saveBlock(s.batch, height, block)
-
+	reg := s.blockStore.saveBlock(s.batch, height, block)
 	for i, trx := range block.Transactions() {
-		s.txStore.saveTx(s.batch, trx.ID(), &txsPos[i])
+		s.txStore.saveTx(s.batch, trx.ID(), &reg[i])
 	}
 
 	// Save last certificate
@@ -143,8 +142,9 @@ func (s *store) Block(hash hash.Hash) (*StoredBlock, error) {
 	}
 
 	return &StoredBlock{
-		height: util.SliceToUint32(data[:4]),
-		data:   data[4:],
+		BlockHash: hash,
+		Height:    util.SliceToUint32(data[:4]),
+		Data:      data[4:],
 	}, nil
 }
 
@@ -185,7 +185,7 @@ func (s *store) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
 	return 0, false
 }
 
-func (s *store) Transaction(id tx.ID) (*tx.Tx, error) {
+func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -193,23 +193,23 @@ func (s *store) Transaction(id tx.ID) (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
-	data, err := s.blockStore.block(pos.Hash)
+	data, err := s.blockStore.block(pos.BlockHash)
 	if err != nil {
 		return nil, err
 	}
-	if pos.Offset >= int32(len(data)) {
+	start := pos.Offset
+	end := pos.Offset + pos.Length
+	if end > uint32(len(data)) {
 		return nil, fmt.Errorf("offset is out of range") // TODO: Shall we panic here?
 	}
-	r := bytes.NewReader(data[pos.Offset:])
-	trx := new(tx.Tx)
-	err = trx.Decode(r)
-	if err != nil {
-		return nil, err
-	}
-	if trx.ID() != id {
-		return nil, fmt.Errorf("transaction id is not matched") // TODO: Shall we panic here?
-	}
-	return trx, nil
+	blockTime := util.SliceToUint32(data[5:9])
+
+	return &StoredTx{
+		TxID:      id,
+		BlockHash: pos.BlockHash,
+		BlockTime: blockTime,
+		Data:      data[start:end],
+	}, nil
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {

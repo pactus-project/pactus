@@ -14,6 +14,10 @@ var (
 
 	// ErrOffline describes an error in which the wallet is offline.
 	ErrOffline = errors.New("wallet is in offline mode")
+
+	// ErrHistoryExists describes an error in which the transaction already exists
+	// in history.
+	ErrHistoryExists = errors.New("transaction already exists")
 )
 
 // ErrWalletExits describes an error in which a wallet exists in the

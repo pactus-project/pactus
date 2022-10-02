@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"encoding/hex"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
@@ -21,27 +20,34 @@ type transactionServer struct {
 
 func (zs *transactionServer) GetTransaction(ctx context.Context,
 	request *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
-	id, err := hash.FromString(request.Id)
+	id, err := hash.FromBytes(request.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
 	}
-	trx := zs.state.Transaction(id)
-	if trx == nil {
+	// TODO: Use RawTransaction here
+	storedTx := zs.state.StoredTx(id)
+	if storedTx == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 
-	return &pactus.TransactionResponse{
-		Transaction: transactionToProto(trx),
-	}, nil
+	response := &pactus.TransactionResponse{}
+
+	if request.Verbosity == pactus.TransactionVerbosity_TRANSACTION_DATA {
+		response.Transaction = &pactus.TransactionInfo{
+			Data: storedTx.Data}
+	} else {
+		response.Transaction = transactionToProto(storedTx.ToTx())
+	}
+
+	response.Transaction.BlockHash = storedTx.BlockHash.Bytes()
+	response.Transaction.BlockTime = storedTx.BlockTime
+
+	return response, nil
 }
 
 func (zs *transactionServer) SendRawTransaction(ctx context.Context,
 	request *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
-	data, err := hex.DecodeString(request.Data)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
-	}
-	trx, err := tx.FromBytes(data)
+	trx, err := tx.FromBytes(request.Data)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
@@ -55,7 +61,7 @@ func (zs *transactionServer) SendRawTransaction(ctx context.Context,
 	}
 
 	return &pactus.SendRawTransactionResponse{
-		Id: trx.ID().String(),
+		Id: trx.ID().Bytes(),
 	}, nil
 }
 

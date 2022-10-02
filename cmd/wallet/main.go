@@ -81,6 +81,10 @@ func main() {
 		k.Command("unbond", "Create, sign and publish an unbond transaction", UnbondTx())
 		k.Command("withdraw", "Create, sign and publish a withdraw transaction", WithdrawTx())
 	})
+	app.Command("history", "Check the wallet history", func(k *cli.Cmd) {
+		k.Command("add", "Add a transaction to the wallet history", AddToHistory())
+		k.Command("get", "Show the transaction history of any address", ShowHistory())
+	})
 
 	if err := app.Run(os.Args); err != nil {
 		panic(err)

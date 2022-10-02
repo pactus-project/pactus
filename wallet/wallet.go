@@ -2,6 +2,7 @@ package wallet
 
 import (
 	_ "embed"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"path"
@@ -10,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -23,15 +25,14 @@ const (
 	NetworkTestNet = Network(1)
 )
 
-//go:embed servers.json
-var serversJSON []byte
-
 type Wallet struct {
-	*store
-
+	store  *store
 	path   string
 	client *grpcClient
 }
+
+//go:embed servers.json
+var serversJSON []byte
 
 type serverInfo struct {
 	Name string `json:"name"`
@@ -56,7 +57,7 @@ func OpenWallet(path string, offline bool) (*Wallet, error) {
 	}
 
 	store := new(store)
-	err = store.UnmarshalJSON(data)
+	err = store.Save(data)
 	if err != nil {
 		return nil, err
 	}
@@ -71,23 +72,20 @@ func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
-
+	coinType := uint32(21888)
+	if net == NetworkTestNet {
+		coinType = uint32(21777)
+	}
 	store := &store{
-		data: storeData{
-			Version:   1,
-			UUID:      uuid.New(),
-			CreatedAt: time.Now().Round(time.Second).UTC(),
-			Network:   net,
-			Vault:     nil,
-		},
+		Version:   1,
+		UUID:      uuid.New(),
+		CreatedAt: time.Now().Round(time.Second).UTC(),
+		Network:   net,
+		Vault:     nil,
 	}
 	wallet, err := newWallet(path, store, true)
 	if err != nil {
 		return nil, err
-	}
-	coinType := uint32(21888)
-	if net == NetworkTestNet {
-		coinType = uint32(21777)
 	}
 	vault, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
 	if err != nil {
@@ -97,13 +95,13 @@ func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
 	if err != nil {
 		return nil, err
 	}
-	wallet.store.data.Vault = vault
+	wallet.store.Vault = vault
 
 	return wallet, nil
 }
 
 func newWallet(path string, store *store, offline bool) (*Wallet, error) {
-	if store.data.Network == NetworkTestNet {
+	if store.Network == NetworkTestNet {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
 		crypto.PrivateKeyHRP = "tsecret"
@@ -145,10 +143,6 @@ func (w *Wallet) IsOffline() bool {
 	return w.client == nil
 }
 
-func (w *Wallet) UpdatePassword(old, new string) error {
-	return w.store.UpdatePassword(old, new)
-}
-
 func (w *Wallet) connectToRandomServer() (*grpcClient, error) {
 	serversInfo := servers{}
 	err := json.Unmarshal(serversJSON, &serversInfo)
@@ -157,7 +151,7 @@ func (w *Wallet) connectToRandomServer() (*grpcClient, error) {
 	}
 
 	var netServers []serverInfo
-	switch w.store.data.Network {
+	switch w.store.Network {
 	case NetworkMainNet:
 		{ // mainnet
 			netServers = serversInfo["mainnet"]
@@ -190,7 +184,7 @@ func (w *Wallet) Path() string {
 }
 
 func (w *Wallet) Save() error {
-	bs, err := w.store.MarshalJSON()
+	bs, err := w.store.Load()
 	if err != nil {
 		return err
 	}
@@ -209,9 +203,12 @@ func (w *Wallet) Balance(addrStr string) (int64, error) {
 		return 0, ErrOffline
 	}
 
-	balance, _ := w.client.getAccountBalance(addr)
+	acc, _ := w.client.getAccount(addr)
+	if acc != nil {
+		return acc.Balance, nil
+	}
 
-	return balance, nil
+	return 0, nil
 }
 
 // Stake returns the validator stake amount.
@@ -225,9 +222,12 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 		return 0, ErrOffline
 	}
 
-	stake, _ := w.client.getValidatorStake(addr)
+	val, _ := w.client.getValidator(addr)
+	if val != nil {
+		return val.Stake, nil
+	}
 
-	return stake, nil
+	return 0, nil
 }
 
 // MakeSendTx creates a new send transaction based on the given parameters.
@@ -317,7 +317,7 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 }
 
 func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
-	prv, err := w.PrivateKey(password, trx.Payload().Signer().String())
+	prv, err := w.store.Vault.PrivateKey(password, trx.Payload().Signer().String())
 	if err != nil {
 		return err
 	}
@@ -335,11 +335,138 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 		return "", ErrOffline
 	}
 
-	b, _ := trx.Bytes()
-	return w.client.sendTx(b)
+	id, err := w.client.sendTx(trx)
+	if err != nil {
+		return "", err
+	}
+	return id.String(), nil
 }
 
 // TODO: query fee from grpc client
 func (w *Wallet) CalculateFee(amount int64) int64 {
 	return util.Max64(amount/10000, 10000)
+}
+
+func (w *Wallet) UpdatePassword(oldPassword, newPassword string) error {
+	return w.store.Vault.UpdatePassword(oldPassword, newPassword)
+}
+
+func (w *Wallet) IsEncrypted() bool {
+	return w.store.Vault.IsEncrypted()
+}
+
+func (w *Wallet) AddressInfo(addr string) *vault.AddressInfo {
+	return w.store.Vault.AddressInfo(addr)
+}
+
+func (w *Wallet) AddressLabels() []vault.AddressInfo {
+	return w.store.Vault.AddressLabels()
+}
+
+// AddressCount returns the number of addresses inside the wallet.
+func (w *Wallet) AddressCount() int {
+	return w.store.Vault.AddressCount()
+}
+
+func (w *Wallet) ImportPrivateKey(password string, prv crypto.PrivateKey) error {
+	return w.store.Vault.ImportPrivateKey(password, prv)
+}
+
+func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
+	return w.store.Vault.PrivateKey(password, addr)
+}
+
+func (w *Wallet) DeriveNewAddress(label string) (string, error) {
+	return w.store.Vault.DeriveNewAddress(label, vault.PurposeBLS12381)
+}
+
+func (w *Wallet) Contains(addr string) bool {
+	return w.store.Vault.Contains(addr)
+}
+
+func (w *Wallet) Mnemonic(password string) (string, error) {
+	return w.store.Vault.Mnemonic(password)
+}
+
+// Label returns label of addr.
+func (w *Wallet) Label(addr string) string {
+	return w.store.Vault.Label(addr)
+}
+
+// SetLabel sets label for addr.
+func (w *Wallet) SetLabel(addr, label string) error {
+	return w.store.Vault.SetLabel(addr, label)
+}
+
+func (w *Wallet) AddTransaction(id tx.ID) error {
+	idStr := id.String()
+	if w.store.History.hasTransaction(idStr) {
+		return ErrHistoryExists
+	}
+
+	trxInfo, err := w.client.getTransaction(id)
+	if err != nil {
+		return err
+	}
+
+	trx, err := tx.FromBytes(trxInfo.Data)
+	if err != nil {
+		return err
+	}
+
+	blockHash, err := hash.FromBytes(trxInfo.BlockHash)
+	if err != nil {
+		return err
+	}
+
+	var sender crypto.Address
+	var receiver *crypto.Address
+	switch pld := trx.Payload().(type) {
+	case *payload.SendPayload:
+		sender = pld.Sender
+		receiver = &pld.Receiver
+	case *payload.BondPayload:
+		sender = pld.Sender
+		receiver = &pld.Receiver
+	case *payload.UnbondPayload:
+		sender = pld.Validator
+		receiver = nil
+	case *payload.WithdrawPayload:
+		sender = pld.From
+		receiver = &pld.To
+	case *payload.SortitionPayload:
+		sender = pld.Address
+		receiver = nil
+	}
+
+	transaction := Transaction{
+		BlockHash: blockHash.String(),
+		Data:      hex.EncodeToString(trxInfo.Data),
+	}
+	activity := Activity{
+		TxID:        trx.ID().String(),
+		Status:      "confirmed",
+		PayloadType: trx.Payload().Type().String(),
+		BlockTime:   trxInfo.BlockTime,
+	}
+
+	if w.store.Vault.Contains(sender.String()) {
+		activity.Amount = -(trx.Fee() + trx.Payload().Value())
+		w.store.History.addTransaction(sender.String(),
+			activity, transaction)
+	}
+
+	if receiver != nil {
+		if w.store.Vault.Contains(receiver.String()) {
+			activity.Amount = trx.Payload().Value()
+			w.store.History.addTransaction(receiver.String(),
+				activity, transaction)
+		}
+	}
+
+	return nil
+}
+
+func (w *Wallet) GetHistory(addr string) []Activity {
+	return w.store.History.Activities[addr]
 }

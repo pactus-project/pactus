@@ -237,13 +237,11 @@ func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *val
 	if !ok {
 		return false
 	}
-	bi, err := sb.store.Block(hash)
+	storedBlock, err := sb.store.Block(hash)
 	if err != nil {
 		return false
 	}
-	b, _ := bi.ToFullBlock()
-	seed := b.Header().SortitionSeed()
-
+	seed := storedBlock.ToBlock().Header().SortitionSeed()
 	total := int64(0) // TODO: we can get it from state
 	sb.store.IterateValidators(func(val *validator.Validator) bool {
 		total += val.Power()

@@ -142,21 +142,21 @@ func (m *txMaker) checkSequence() error {
 		case payload.PayloadTypeSend,
 			payload.PayloadTypeBond:
 			{
-				seq, err := m.client.getAccountSequence(*m.from)
+				acc, err := m.client.getAccount(*m.from)
 				if err != nil {
 					return err
 				}
-				m.seq = seq
+				m.seq = acc.Sequence
 			}
 
 		case payload.PayloadTypeUnbond,
 			payload.PayloadTypeWithdraw:
 			{
-				seq, err := m.client.GetValidatorSequence(*m.from)
+				val, err := m.client.getValidator(*m.from)
 				if err != nil {
 					return err
 				}
-				m.seq = seq
+				m.seq = val.Sequence
 			}
 		}
 	}

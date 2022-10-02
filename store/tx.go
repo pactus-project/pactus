@@ -9,9 +9,10 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-type txPos struct {
-	Hash   hash.Hash
-	Offset int32
+type blockRegion struct {
+	BlockHash hash.Hash
+	Offset    uint32
+	Length    uint32
 }
 
 func txKey(id tx.ID) []byte { return append(txPrefix, id.Bytes()...) }
@@ -26,9 +27,9 @@ func newTxStore(db *leveldb.DB) *txStore {
 	}
 }
 
-func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, pos *txPos) {
+func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, reg *blockRegion) {
 	w := bytes.NewBuffer(make([]byte, 0, 32+4))
-	err := encoding.WriteElements(w, &pos.Hash, &pos.Offset)
+	err := encoding.WriteElements(w, &reg.BlockHash, &reg.Offset, &reg.Length)
 	if err != nil {
 		panic(err)
 	}
@@ -37,16 +38,16 @@ func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, pos *txPos) {
 	batch.Put(txKey, w.Bytes())
 }
 
-func (ts *txStore) tx(id tx.ID) (*txPos, error) {
+func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	data, err := tryGet(ts.db, txKey(id))
 	if err != nil {
 		return nil, err
 	}
 	r := bytes.NewReader(data)
-	pos := new(txPos)
-	err = encoding.ReadElements(r, &pos.Hash, &pos.Offset)
+	reg := new(blockRegion)
+	err = encoding.ReadElements(r, &reg.BlockHash, &reg.Offset, &reg.Length)
 	if err != nil {
 		return nil, err
 	}
-	return pos, nil
+	return reg, nil
 }
