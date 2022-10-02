@@ -13,17 +13,16 @@ func (zs *pactusServer) GetTransaction(args PactusServer_getTransaction) error {
 	if err != nil {
 		return fmt.Errorf("invalid transaction id: %v", err)
 	}
-	trx := zs.state.Transaction(h)
-	if trx == nil {
+	st := zs.state.StoredTx(h)
+	if st == nil {
 		return fmt.Errorf("transaction not found")
 	}
 
 	res, _ := args.Results.NewResult()
-	trxData, _ := trx.Bytes()
-	if err := res.SetData(trxData); err != nil {
+	if err := res.SetData(st.Data); err != nil {
 		return err
 	}
-	return res.SetId(trx.ID().Bytes())
+	return res.SetId(st.TxID.Bytes())
 }
 
 // Send broadcasts a raw transaction.

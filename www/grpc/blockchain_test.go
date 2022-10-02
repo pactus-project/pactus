@@ -12,19 +12,22 @@ import (
 func TestGetBlock(t *testing.T) {
 	conn, client := callBlockchainServer(t)
 
-	b := tMockState.TestStore.AddTestBlock(100)
+	height := uint32(100)
+	b := tMockState.TestStore.AddTestBlock(height)
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: hash.GenerateTestHash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_HASH})
+		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: hash.GenerateTestHash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return an existing block hash", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_HASH})
+	t.Run("Should return an existing block data", func(t *testing.T) {
+		data, _ := b.Bytes()
+		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		//assert.Equal(t, res.Height, 100)
+		assert.Equal(t, res.Height, height)
+		assert.Equal(t, res.Data, data)
 		assert.Empty(t, res.Header)
 		assert.Empty(t, res.Txs)
 	})
@@ -33,9 +36,10 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		//assert.Equal(t, res.Height, 100)
+		assert.Equal(t, res.Height, height)
+		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
-		assert.Empty(t, res.Txs)
+		assert.NotEmpty(t, res.Txs)
 		assert.Equal(t, res.PrevCert.Committers, b.PrevCertificate().Committers())
 		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
 	})
@@ -44,7 +48,8 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		//assert.Equal(t, res.Height, 100)
+		assert.Empty(t, res.Data)
+		assert.Equal(t, res.Height, height)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
 	})

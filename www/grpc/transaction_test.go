@@ -1,7 +1,6 @@
 package grpc
 
 import (
-	"encoding/hex"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -14,34 +13,36 @@ import (
 func TestGetTransaction(t *testing.T) {
 	conn, client := callTransactionServer(t)
 
-	tx1 := tMockState.TestStore.AddTestTransaction()
+	testBlock := tMockState.TestStore.AddTestBlock(1)
+	trx1 := testBlock.Transactions()[1]
 
 	t.Run("Should return transaction", func(t *testing.T) {
-		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: tx1.ID().String()})
+		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: trx1.ID().Bytes(),
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
-		assert.Equal(t, tx1.ID().Bytes(), res.Transaction.Id)
-		assert.Equal(t, tx1.Stamp().Bytes(), res.Transaction.Stamp)
-		assert.Equal(t, tx1.Fee(), res.Transaction.Fee)
-		assert.Equal(t, tx1.Memo(), res.Transaction.Memo)
-		assert.Equal(t, tx1.Sequence(), res.Transaction.Sequence)
-		assert.Equal(t, tx1.Signature().Bytes(), res.Transaction.Signature)
-		assert.Equal(t, tx1.PublicKey().String(), res.Transaction.PublicKey)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Amount, res.Transaction.Payload.(*pactus.TransactionInfo_Send).Send.Amount)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Sender.String(), res.Transaction.Payload.(*pactus.TransactionInfo_Send).Send.Sender)
-		assert.Equal(t, tx1.Payload().(*payload.SendPayload).Receiver.String(), res.Transaction.Payload.(*pactus.TransactionInfo_Send).Send.Receiver)
+		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
+		assert.Equal(t, trx1.Stamp().Bytes(), res.Transaction.Stamp)
+		assert.Equal(t, trx1.Fee(), res.Transaction.Fee)
+		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
+		assert.Equal(t, trx1.Sequence(), res.Transaction.Sequence)
+		assert.Equal(t, trx1.Signature().Bytes(), res.Transaction.Signature)
+		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
+		assert.Equal(t, trx1.Payload().(*payload.SendPayload).Amount, res.Transaction.Payload.(*pactus.TransactionInfo_Send).Send.Amount)
+		assert.Equal(t, trx1.Payload().(*payload.SendPayload).Sender.String(), res.Transaction.Payload.(*pactus.TransactionInfo_Send).Send.Sender)
+		assert.Equal(t, trx1.Payload().(*payload.SendPayload).Receiver.String(), res.Transaction.Payload.(*pactus.TransactionInfo_Send).Send.Receiver)
 	})
 
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {
-		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: "invalid_id"})
+		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: []byte("invalid_id")})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
 		id := hash.GenerateTestHash()
-		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: id.String()})
+		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: id.Bytes()})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -51,13 +52,8 @@ func TestGetTransaction(t *testing.T) {
 func TestSendRawTransaction(t *testing.T) {
 	conn, client := callTransactionServer(t)
 
-	t.Run("Should fail, invalid raw data", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: "invalid raw data"})
-		assert.Error(t, err)
-		assert.Nil(t, res)
-	})
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: hex.EncodeToString([]byte("00000000"))})
+		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: []byte("00000000")})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -66,19 +62,19 @@ func TestSendRawTransaction(t *testing.T) {
 		_, signer := tx.GenerateTestSendTx()
 		trx.SetSignature(signer.SignData(trx.SignBytes()))
 		data, _ := trx.Bytes()
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
+		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 	trx, _ := tx.GenerateTestSendTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
+		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 	})
 	t.Run("Should fail, Not Broadcasted", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: hex.EncodeToString(data)})
+		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})

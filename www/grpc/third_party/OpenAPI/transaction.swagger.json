@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/transaction/id/{id}": {
+    "/v1/transaction/id/{id}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Transaction_GetTransaction",
         "responses": {
@@ -38,7 +38,18 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "verbosity",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "TRANSACTION_DATA",
+              "TRANSACTION_INFO"
+            ]
           }
         ],
         "tags": [
@@ -68,7 +79,8 @@
             "name": "data",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         ],
         "tags": [
@@ -135,7 +147,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -143,6 +156,10 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "string",
+          "format": "byte"
+        },
+        "data": {
           "type": "string",
           "format": "byte"
         },
@@ -183,6 +200,14 @@
         "signature": {
           "type": "string",
           "format": "byte"
+        },
+        "blockHash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -193,6 +218,14 @@
           "$ref": "#/definitions/pactusTransactionInfo"
         }
       }
+    },
+    "pactusTransactionVerbosity": {
+      "type": "string",
+      "enum": [
+        "TRANSACTION_DATA",
+        "TRANSACTION_INFO"
+      ],
+      "default": "TRANSACTION_DATA"
     },
     "protobufAny": {
       "type": "object",

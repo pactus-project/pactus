@@ -17,20 +17,38 @@ import (
 // TODO: How to undo or rollback at least for last 21 blocks
 
 type StoredBlock struct {
-	height uint32
-	data   []byte
+	BlockHash hash.Hash
+	Height    uint32
+	Data      []byte
 }
 
-func (s *StoredBlock) Height() uint32 {
-	return s.height
-}
-
-func (s *StoredBlock) ToFullBlock() (*block.Block, error) {
-	b, err := block.FromBytes(s.data)
+func (s *StoredBlock) ToBlock() *block.Block {
+	b, err := block.FromBytes(s.Data)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return b, nil
+	if !b.Hash().EqualsTo(s.BlockHash) {
+		panic("invalid data. block hash does not match")
+	}
+	return b
+}
+
+type StoredTx struct {
+	TxID      tx.ID
+	BlockHash hash.Hash
+	BlockTime uint32
+	Data      []byte
+}
+
+func (s *StoredTx) ToTx() *tx.Tx {
+	trx, err := tx.FromBytes(s.Data)
+	if err != nil {
+		panic(err)
+	}
+	if !trx.ID().EqualsTo(s.TxID) {
+		panic("invalid data. transaction id does not match")
+	}
+	return trx
 }
 
 type Reader interface {
@@ -40,7 +58,7 @@ type Reader interface {
 	FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool)
 	// It only remembers most recent stamps
 	FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool)
-	Transaction(id tx.ID) (*tx.Tx, error)
+	Transaction(id tx.ID) (*StoredTx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int32

@@ -2,7 +2,6 @@ package http
 
 import (
 	"encoding/hex"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -29,7 +28,6 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, _ := t.Result()
 	data, _ := res.Data()
-	fmt.Printf("%x\n", data)
 	trx, err := tx.FromBytes(data)
 	if err != nil {
 		s.writeError(w, err)

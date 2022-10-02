@@ -74,14 +74,16 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
 
 	height, _ := tStore.LastCertificate()
-	bs, err := tStore.Block(tStore.BlockHash(height))
+	storedBlock, err := tStore.Block(tStore.BlockHash(height))
 	assert.NoError(t, err)
-	assert.Equal(t, height, bs.Height())
-	b, _ := bs.ToFullBlock()
-	for _, trx := range b.Transactions() {
-		trx2, err := tStore.Transaction(trx.ID())
+	assert.Equal(t, height, storedBlock.Height)
+	block := storedBlock.ToBlock()
+	for _, trx := range block.Transactions() {
+		storedTx, err := tStore.Transaction(trx.ID())
 		assert.NoError(t, err)
-		assert.Equal(t, trx2.ID(), trx.ID())
+		assert.Equal(t, storedTx.TxID, trx.ID())
+		assert.Equal(t, storedTx.BlockTime, uint32(block.Header().Time().Unix()))
+		assert.Equal(t, storedTx.ToTx().ID(), trx.ID())
 	}
 }
 

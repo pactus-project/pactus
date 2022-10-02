@@ -108,7 +108,7 @@ func (st *state) tryLoadLastInfo() error {
 	if err != nil {
 		return err
 	}
-	blockOne, _ := blockOneInfo.ToFullBlock()
+	blockOne := blockOneInfo.ToBlock()
 	if !genStateRoot.EqualsTo(blockOne.Header().StateRoot()) {
 		return fmt.Errorf("invalid genesis doc")
 	}
@@ -545,25 +545,26 @@ func (st *state) Proposer(round int16) *validator.Validator {
 func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 	return st.committee.IsProposer(addr, round)
 }
+
 func (st *state) IsValidator(addr crypto.Address) bool {
 	return st.store.HasValidator(addr)
 }
-func (st *state) Transaction(id tx.ID) *tx.Tx {
+
+func (st *state) StoredBlock(hash hash.Hash) *store.StoredBlock {
+	b, err := st.store.Block(hash)
+	if err != nil {
+		st.logger.Trace("error on retrieving block", "err", err)
+		return nil
+	}
+	return b
+}
+
+func (st *state) StoredTx(id tx.ID) *store.StoredTx {
 	tx, err := st.store.Transaction(id)
 	if err != nil {
 		st.logger.Trace("searching transaction in local store failed", "id", id, "err", err)
 	}
 	return tx
-}
-
-func (st *state) Block(hash hash.Hash) *block.Block {
-	bi, err := st.store.Block(hash)
-	if err != nil {
-		st.logger.Trace("error on retrieving block", "err", err)
-		return nil
-	}
-	b, _ := bi.ToFullBlock()
-	return b
 }
 
 func (st *state) BlockHash(height uint32) hash.Hash {
