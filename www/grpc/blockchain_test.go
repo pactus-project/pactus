@@ -14,6 +14,7 @@ func TestGetBlock(t *testing.T) {
 
 	height := uint32(100)
 	b := tMockState.TestStore.AddTestBlock(height)
+	data, _ := b.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: hash.GenerateTestHash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
@@ -22,11 +23,11 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return an existing block data", func(t *testing.T) {
-		data, _ := b.Bytes()
 		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
+		assert.Equal(t, res.Hash, b.Hash().Bytes())
 		assert.Equal(t, res.Data, data)
 		assert.Empty(t, res.Header)
 		assert.Empty(t, res.Txs)
@@ -37,7 +38,8 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
-		assert.Empty(t, res.Data)
+		assert.Equal(t, res.Hash, b.Hash().Bytes())
+		assert.Equal(t, res.Data, data)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
 		assert.Equal(t, res.PrevCert.Committers, b.PrevCertificate().Committers())
@@ -48,8 +50,9 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Empty(t, res.Data)
 		assert.Equal(t, res.Height, height)
+		assert.Equal(t, res.Hash, b.Hash().Bytes())
+		assert.Equal(t, res.Data, data)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
 	})

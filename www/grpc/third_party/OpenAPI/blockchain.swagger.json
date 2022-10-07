@@ -294,6 +294,10 @@
           "type": "integer",
           "format": "int64"
         },
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        },
         "data": {
           "type": "string",
           "format": "byte"
@@ -414,7 +418,8 @@
         "SEND_PAYLOAD",
         "BOND_PAYLOAD",
         "SORTITION_PAYLOAD",
-        "UNBOND_PAYLOAD"
+        "UNBOND_PAYLOAD",
+        "WITHDRAW_PAYLOAD"
       ],
       "default": "UNKNOWN"
     },
@@ -441,6 +446,10 @@
           "type": "integer",
           "format": "int32"
         },
+        "value": {
+          "type": "string",
+          "format": "int64"
+        },
         "fee": {
           "type": "string",
           "format": "int64"
@@ -466,14 +475,6 @@
         "signature": {
           "type": "string",
           "format": "byte"
-        },
-        "blockHash": {
-          "type": "string",
-          "format": "byte"
-        },
-        "blockTime": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },

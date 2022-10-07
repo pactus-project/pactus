@@ -71,14 +71,14 @@ func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
 	return hash.FromBytes(res.Id)
 }
 
-func (c *grpcClient) getTransaction(id tx.ID) (*pactus.TransactionInfo, error) {
+func (c *grpcClient) getTransaction(id tx.ID) (*pactus.TransactionResponse, error) {
 	res, err := c.transactionClient.GetTransaction(context.Background(), &pactus.TransactionRequest{
 		Id:        id.Bytes(),
-		Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
+		Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return res.Transaction, nil
+	return res, nil
 }

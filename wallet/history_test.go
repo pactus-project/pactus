@@ -3,24 +3,36 @@ package wallet
 import (
 	"testing"
 
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddTransaction(t *testing.T) {
+func TestActivitiesSort(t *testing.T) {
 	history := history{
-		Activities:   map[string][]Activity{},
-		Transactions: map[string]Transaction{},
+		Activities:   map[string][]activity{},
+		Transactions: map[string]transaction{},
 	}
 
-	history.addTransaction("addr-1", Activity{TxID: "id-1-2", BlockTime: 2}, Transaction{})
-	history.addTransaction("addr-1", Activity{TxID: "id-1-4", BlockTime: 4}, Transaction{})
-	history.addTransaction("addr-1", Activity{TxID: "id-1-3", BlockTime: 3}, Transaction{})
-	history.addTransaction("addr-1", Activity{TxID: "id-1-1", BlockTime: 1}, Transaction{})
-	history.addTransaction("addr-2", Activity{TxID: "id-2-1", BlockTime: 6}, Transaction{})
+	history.addActivity("addr-1", 20, &pactus.TransactionResponse{
+		BlockTime: 2, Transaction: &pactus.TransactionInfo{
+			Id: []byte{2}}})
+	history.addActivity("addr-1", 40, &pactus.TransactionResponse{
+		BlockTime: 4, Transaction: &pactus.TransactionInfo{
+			Id: []byte{4}}})
+	history.addActivity("addr-1", 30, &pactus.TransactionResponse{
+		BlockTime: 3, Transaction: &pactus.TransactionInfo{
+			Id: []byte{3}}})
+	history.addActivity("addr-1", 10, &pactus.TransactionResponse{
+		BlockTime: 1, Transaction: &pactus.TransactionInfo{
+			Id: []byte{1}}})
+	history.addActivity("addr-2", 50, &pactus.TransactionResponse{
+		BlockTime: 5, Transaction: &pactus.TransactionInfo{
+			Id: []byte{5}}})
 
-	assert.Equal(t, history.Activities["addr-1"], []Activity{
-		{TxID: "id-1-1", Status: "", BlockTime: 1, PayloadType: "", Amount: 0},
-		{TxID: "id-1-2", Status: "", BlockTime: 2, PayloadType: "", Amount: 0},
-		{TxID: "id-1-3", Status: "", BlockTime: 3, PayloadType: "", Amount: 0},
-		{TxID: "id-1-4", Status: "", BlockTime: 4, PayloadType: "", Amount: 0}})
+	h := history.getAddrHistory("addr-1")
+	assert.Len(t, h, 4)
+	assert.Equal(t, h[0].TxID, "01")
+	assert.Equal(t, h[1].TxID, "02")
+	assert.Equal(t, h[2].TxID, "03")
+	assert.Equal(t, h[3].TxID, "04")
 }

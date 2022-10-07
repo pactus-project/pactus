@@ -30,17 +30,14 @@ func (zs *transactionServer) GetTransaction(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 
-	response := &pactus.TransactionResponse{}
-
-	if request.Verbosity == pactus.TransactionVerbosity_TRANSACTION_DATA {
-		response.Transaction = &pactus.TransactionInfo{
-			Data: storedTx.Data}
-	} else {
-		response.Transaction = transactionToProto(storedTx.ToTx())
+	response := &pactus.TransactionResponse{
+		BlockHash: storedTx.BlockHash.Bytes(),
+		BlockTime: storedTx.BlockTime,
 	}
 
-	response.Transaction.BlockHash = storedTx.BlockHash.Bytes()
-	response.Transaction.BlockTime = storedTx.BlockTime
+	if request.Verbosity > pactus.TransactionVerbosity_TRANSACTION_DATA {
+		response.Transaction = transactionToProto(storedTx.ToTx())
+	}
 
 	return response, nil
 }
@@ -66,12 +63,15 @@ func (zs *transactionServer) SendRawTransaction(ctx context.Context,
 }
 
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
+	data, _ := trx.Bytes()
 	transaction := &pactus.TransactionInfo{
 		Id:       trx.ID().Bytes(),
+		Data:     data,
 		Version:  int32(trx.Version()),
 		Stamp:    trx.Stamp().Bytes(),
 		Sequence: trx.Sequence(),
 		Fee:      trx.Fee(),
+		Value:    trx.Payload().Value(),
 		Type:     pactus.PayloadType(trx.Payload().Type()),
 		Memo:     trx.Memo(),
 	}

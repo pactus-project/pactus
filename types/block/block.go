@@ -239,14 +239,16 @@ func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) *Bloc
 	}
 	txs := NewTxs()
 	tx1, _ := tx.GenerateTestSendTx()
-	tx2, _ := tx.GenerateTestSendTx()
-	tx3, _ := tx.GenerateTestSendTx()
-	tx4, _ := tx.GenerateTestSendTx()
+	tx2, _ := tx.GenerateTestSortitionTx()
+	tx3, _ := tx.GenerateTestBondTx()
+	tx4, _ := tx.GenerateTestUnbondTx()
+	tx5, _ := tx.GenerateTestWithdrawTx()
 
 	txs.Append(tx1)
 	txs.Append(tx2)
 	txs.Append(tx3)
 	txs.Append(tx4)
+	txs.Append(tx5)
 
 	if prevBlockHash == nil {
 		h := hash.GenerateTestHash()
