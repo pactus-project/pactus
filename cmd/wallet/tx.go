@@ -241,10 +241,10 @@ func addCommonTxOptions(c *cli.Cmd) (*string, *int, *float64, *string, *bool) {
 	return stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt
 }
 
-func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {
+func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {
 	cmd.PrintLine()
-	password := getPassword(wallet, pass)
-	err := wallet.SignTransaction(password, trx)
+	password := getPassword(w, pass)
+	err := w.SignTransaction(password, trx)
 	if err != nil {
 		cmd.PrintDangerMsg(err.Error())
 		return
@@ -254,7 +254,7 @@ func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass st
 	cmd.PrintInfoMsg("Signed transaction data: %x", bs)
 	cmd.PrintLine()
 
-	if !wallet.IsOffline() {
+	if !w.IsOffline() {
 		if !noConfirm {
 			cmd.PrintInfoMsg("You are going to broadcast the signed transition:")
 			cmd.PrintWarnMsg("THIS ACTION IS NOT REVERSIBLE")
@@ -263,11 +263,18 @@ func signAndPublishTx(wallet *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass st
 				return
 			}
 		}
-		res, err := wallet.BroadcastTransaction(trx)
+		res, err := w.BroadcastTransaction(trx)
 		if err != nil {
 			cmd.PrintDangerMsg(err.Error())
 			return
 		}
+
+		err = w.Save()
+		if err != nil {
+			cmd.PrintDangerMsg(err.Error())
+			return
+		}
+
 		cmd.PrintInfoMsg("Transaction hash: %s", res)
 	}
 }

@@ -338,6 +338,10 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	d, _ := trx.Bytes()
+	w.store.History.addPending(trx.Payload().Signer().String(), trx.Payload().Value(), id, d)
+
 	return id.String(), nil
 }
 
