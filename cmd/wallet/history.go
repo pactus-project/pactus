@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -54,8 +56,13 @@ func ShowHistory() func(c *cli.Cmd) {
 
 			history := wallet.GetHistory(*addrArg)
 			for i, h := range history {
-				cmd.PrintInfoMsg("%d %v %v\t%v",
-					i+1, h.TxID, h.PayloadType, h.Amount)
+				if h.Time != nil {
+					cmd.PrintInfoMsg("%d %v %v %v %s\t%v",
+						i+1, h.Time.Format(time.RFC822), h.TxID, h.PayloadType, h.Desc, h.Amount)
+				} else {
+					cmd.PrintInfoMsg("%d              %v  %s\t%v",
+						i+1, h.TxID, h.Desc, h.Amount)
+				}
 			}
 		}
 	}

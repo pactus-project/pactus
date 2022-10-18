@@ -54,11 +54,12 @@ message BlockRequest {
 
 message BlockResponse {
   uint32 height = 1;
-  bytes data = 2;
-  google.protobuf.Timestamp block_time = 3;
-  BlockHeaderInfo header = 4;
-  CertificateInfo prev_cert = 5;
-  repeated TransactionInfo txs = 6;
+  bytes hash = 2;
+  bytes data = 3;
+  google.protobuf.Timestamp block_time = 4;
+  BlockHeaderInfo header = 5;
+  CertificateInfo prev_cert = 6;
+  repeated TransactionInfo txs = 7;
 }
 
 message BlockHashRequest { uint32 height = 1; }

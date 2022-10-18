@@ -54,42 +54,39 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 	}
 	response := &pactus.BlockResponse{
 		Height: storedBlock.Height,
+		Hash:   storedBlock.BlockHash.Bytes(),
+		Data:   storedBlock.Data,
 	}
-	if request.Verbosity == pactus.BlockVerbosity_BLOCK_DATA {
-		response.Data = storedBlock.Data
-	} else {
+
+	if request.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
 		block := storedBlock.ToBlock()
 		timestamp := timestamppb.New(block.Header().Time())
-		header := &pactus.BlockHeaderInfo{}
+		seed := block.Header().SortitionSeed()
+		cert := block.PrevCertificate()
 		var prevCert *pactus.CertificateInfo
 
-		if request.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
-			seed := block.Header().SortitionSeed()
-
-			cert := block.PrevCertificate()
-			if cert != nil {
-				committers := make([]int32, len(block.PrevCertificate().Committers()))
-				for i, n := range block.PrevCertificate().Committers() {
-					committers[i] = n
-				}
-				absentees := make([]int32, len(block.PrevCertificate().Absentees()))
-				for i, n := range block.PrevCertificate().Absentees() {
-					absentees[i] = n
-				}
-				prevCert = &pactus.CertificateInfo{
-					Round:      int32(block.PrevCertificate().Round()),
-					Committers: committers,
-					Absentees:  absentees,
-					Signature:  block.PrevCertificate().Signature().Bytes(),
-				}
+		if cert != nil {
+			committers := make([]int32, len(block.PrevCertificate().Committers()))
+			for i, n := range block.PrevCertificate().Committers() {
+				committers[i] = n
 			}
-			header = &pactus.BlockHeaderInfo{
-				Version:         int32(block.Header().Version()),
-				PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
-				StateRoot:       block.Header().StateRoot().Bytes(),
-				SortitionSeed:   seed[:],
-				ProposerAddress: block.Header().ProposerAddress().String(),
+			absentees := make([]int32, len(block.PrevCertificate().Absentees()))
+			for i, n := range block.PrevCertificate().Absentees() {
+				absentees[i] = n
 			}
+			prevCert = &pactus.CertificateInfo{
+				Round:      int32(block.PrevCertificate().Round()),
+				Committers: committers,
+				Absentees:  absentees,
+				Signature:  block.PrevCertificate().Signature().Bytes(),
+			}
+		}
+		header := &pactus.BlockHeaderInfo{
+			Version:         int32(block.Header().Version()),
+			PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
+			StateRoot:       block.Header().StateRoot().Bytes(),
+			SortitionSeed:   seed[:],
+			ProposerAddress: block.Header().ProposerAddress().String(),
 		}
 
 		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())

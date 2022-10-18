@@ -14,7 +14,7 @@ func TestGetTransaction(t *testing.T) {
 	conn, client := callTransactionServer(t)
 
 	testBlock := tMockState.TestStore.AddTestBlock(1)
-	trx1 := testBlock.Transactions()[1]
+	trx1 := testBlock.Transactions()[0]
 
 	t.Run("Should return transaction", func(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: trx1.ID().Bytes(),

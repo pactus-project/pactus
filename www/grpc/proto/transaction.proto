@@ -9,7 +9,8 @@ package pactus;
 
 service Transaction {
   rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
-    option (google.api.http).get = "/v1/transaction/id/{id}/verbosity/{verbosity}";
+    option (google.api.http).get =
+        "/v1/transaction/id/{id}/verbosity/{verbosity}";
   }
   rpc SendRawTransaction(SendRawTransactionRequest)
       returns (SendRawTransactionResponse) {
@@ -23,7 +24,11 @@ message TransactionRequest {
   TransactionVerbosity verbosity = 2;
 }
 
-message TransactionResponse { TransactionInfo transaction = 1; }
+message TransactionResponse {
+  bytes block_hash = 1;
+  uint32 block_time = 2;
+  TransactionInfo transaction = 3;
+}
 
 message SendRawTransactionRequest { bytes data = 1; }
 
@@ -52,18 +57,17 @@ message TransactionInfo {
   int32 version = 3;
   bytes stamp = 4;
   int32 sequence = 5;
-  int64 fee = 6;
-  PayloadType Type = 7;
+  int64 value = 6;
+  int64 fee = 7;
+  PayloadType Type = 8;
   oneof Payload {
     PayloadSend send = 30;
     PayloadBond bond = 31;
     PayloadSortition sortition = 32;
   };
-  string memo = 8;
-  string public_key = 9;
-  bytes signature = 10;
-  bytes block_hash = 11;
-  uint32 block_time = 12;
+  string memo = 9;
+  string public_key = 10;
+  bytes signature = 11;
 }
 
 enum PayloadType {
@@ -72,6 +76,7 @@ enum PayloadType {
   BOND_PAYLOAD = 2;
   SORTITION_PAYLOAD = 3;
   UNBOND_PAYLOAD = 4;
+  WITHDRAW_PAYLOAD = 5;
 }
 
 enum TransactionVerbosity {

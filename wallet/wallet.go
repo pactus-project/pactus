@@ -2,7 +2,6 @@ package wallet
 
 import (
 	_ "embed"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"path"
@@ -11,11 +10,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/vault"
+	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 )
 
 type Network uint8
@@ -339,6 +338,10 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	d, _ := trx.Bytes()
+	w.store.History.addPending(trx.Payload().Signer().String(), trx.Payload().Value(), id, d)
+
 	return id.String(), nil
 }
 
@@ -404,69 +407,47 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 		return ErrHistoryExists
 	}
 
-	trxInfo, err := w.client.getTransaction(id)
+	trxRes, err := w.client.getTransaction(id)
 	if err != nil {
 		return err
 	}
 
-	trx, err := tx.FromBytes(trxInfo.Data)
-	if err != nil {
-		return err
-	}
-
-	blockHash, err := hash.FromBytes(trxInfo.BlockHash)
-	if err != nil {
-		return err
-	}
-
-	var sender crypto.Address
-	var receiver *crypto.Address
-	switch pld := trx.Payload().(type) {
-	case *payload.SendPayload:
-		sender = pld.Sender
-		receiver = &pld.Receiver
-	case *payload.BondPayload:
-		sender = pld.Sender
-		receiver = &pld.Receiver
-	case *payload.UnbondPayload:
-		sender = pld.Validator
-		receiver = nil
-	case *payload.WithdrawPayload:
-		sender = pld.From
-		receiver = &pld.To
-	case *payload.SortitionPayload:
-		sender = pld.Address
+	var sender string
+	var receiver *string
+	switch pld := trxRes.Transaction.Payload.(type) {
+	case *pactus.TransactionInfo_Send:
+		sender = pld.Send.Sender
+		receiver = &pld.Send.Receiver
+	case *pactus.TransactionInfo_Bond:
+		sender = pld.Bond.Sender
+		receiver = &pld.Bond.Receiver
+		// TODO: complete me!
+	// case *pactus.TransactionInfo_Unbond:
+	// 	sender = pld.Unbond.Validator
+	// 	receiver = nil
+	// case *payload.WithdrawPayload:
+	// 	sender = pld.Withdraw.From
+	// 	receiver = &pld.Withdraw.To
+	case *pactus.TransactionInfo_Sortition:
+		sender = pld.Sortition.Address
 		receiver = nil
 	}
 
-	transaction := Transaction{
-		BlockHash: blockHash.String(),
-		Data:      hex.EncodeToString(trxInfo.Data),
-	}
-	activity := Activity{
-		TxID:        trx.ID().String(),
-		Status:      "confirmed",
-		PayloadType: trx.Payload().Type().String(),
-		BlockTime:   trxInfo.BlockTime,
-	}
-
-	if w.store.Vault.Contains(sender.String()) {
-		activity.Amount = -(trx.Fee() + trx.Payload().Value())
-		w.store.History.addTransaction(sender.String(),
-			activity, transaction)
+	if w.store.Vault.Contains(sender) {
+		amount := -(trxRes.Transaction.Fee + trxRes.Transaction.Value)
+		w.store.History.addActivity(sender, amount, trxRes)
 	}
 
 	if receiver != nil {
-		if w.store.Vault.Contains(receiver.String()) {
-			activity.Amount = trx.Payload().Value()
-			w.store.History.addTransaction(receiver.String(),
-				activity, transaction)
+		if w.store.Vault.Contains(*receiver) {
+			amount := trxRes.Transaction.Value
+			w.store.History.addActivity(*receiver, amount, trxRes)
 		}
 	}
 
 	return nil
 }
 
-func (w *Wallet) GetHistory(addr string) []Activity {
-	return w.store.History.Activities[addr]
+func (w *Wallet) GetHistory(addr string) []HistoryInfo {
+	return w.store.History.getAddrHistory(addr)
 }
