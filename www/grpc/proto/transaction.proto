@@ -68,6 +68,8 @@ message TransactionInfo {
   string memo = 9;
   string public_key = 10;
   bytes signature = 11;
+  uint32 block_height = 12;
+  uint32 block_time = 13;
 }
 
 enum PayloadType {

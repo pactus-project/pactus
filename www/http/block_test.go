@@ -36,6 +36,16 @@ func TestBlock(t *testing.T) {
 		//fmt.Println(w.Body)
 	})
 
+	t.Run("Shall return an error, invalid height", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"height": "x"})
+		tHTTPServer.GetBlockByHeightHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
+		//fmt.Println(w.Body)
+	})
+
 	t.Run("Shall return an error, non exists", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
@@ -43,7 +53,6 @@ func TestBlock(t *testing.T) {
 		tHTTPServer.GetBlockByHashHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
-		//fmt.Println(w.Body)
 	})
 
 	t.Run("Shall return an error, invalid hash", func(t *testing.T) {
@@ -73,22 +82,5 @@ func TestBlock(t *testing.T) {
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
-	})
-}
-
-func TestBlockHash(t *testing.T) {
-	setup(t)
-
-	b := tMockState.TestStore.AddTestBlock(100)
-
-	t.Run("Shall return the block hash", func(t *testing.T) {
-		w := httptest.NewRecorder()
-		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"height": "100"})
-		tHTTPServer.GetBlockHashHandler(w, r)
-
-		assert.Equal(t, w.Code, 200)
-		assert.Contains(t, w.Body.String(), b.Hash().String())
-		//fmt.Println(w.Body)
 	})
 }

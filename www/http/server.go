@@ -53,7 +53,6 @@ func (s *Server) StartServer(capnpServer string) error {
 	s.router.HandleFunc("/network", s.NetworkHandler)
 	s.router.HandleFunc("/block/hash/{hash}", s.GetBlockByHashHandler)
 	s.router.HandleFunc("/block/height/{height}", s.GetBlockByHeightHandler)
-	s.router.HandleFunc("/block_hash/height/{height}", s.GetBlockHashHandler)
 	s.router.HandleFunc("/transaction/id/{id}", s.GetTransactionHandler)
 	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)

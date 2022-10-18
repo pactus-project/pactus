@@ -6,7 +6,7 @@ $Go.import("capnp");
 
 struct Header {
   version             @0 :UInt8;
-  time                @1 :Int32;
+  time                @1 :UInt32;
   prevBlockHash       @2 :Data;
   stateRoot           @3 :Data;
   sortitionSeed       @4 :Data;
@@ -97,14 +97,15 @@ struct SendTransactionResult {
 }
 
 interface PactusServer {
-  getBlock            @0 (hash: Data, verbosity: Int32)     -> (result :BlockResult);
-  getBlockHash        @1 (height: UInt32)                   -> (result :Data);
-  getTransaction      @2 (id: Data, verbosity: Int32)       -> (result :TransactionResult);
-  getAccount          @3 (address: Text, verbosity: Int32)  -> (result :AccountResult);
-  getValidator        @4 (address: Text, verbosity: Int32)  -> (result :ValidatorResult);
-  getBlockchainInfo   @5 ()                                 -> (result :BlockchainInfoResult);
-  getNetworkInfo      @6 ()                                 -> (result :NetworkInfoResult);
-  getConsensusInfo    @7 ()                                 -> (result :ConsensusInfoResult);
-  sendRawTransaction  @8 (rawTx: Data)                      -> (result :SendTransactionResult);
+  getBlock            @0 (height: UInt32, verbosity: Int32) -> (result: BlockResult);
+  getBlockHash        @1 (height: UInt32)                   -> (result: Data);
+  getBlockHeight      @2 (hash: Data)                       -> (result: UInt32);
+  getTransaction      @3 (id: Data, verbosity: Int32)       -> (result: TransactionResult);
+  getAccount          @4 (address: Text)                    -> (result: AccountResult);
+  getValidator        @5 (address: Text)                    -> (result: ValidatorResult);
+  getBlockchainInfo   @6 ()                                 -> (result: BlockchainInfoResult);
+  getNetworkInfo      @7 ()                                 -> (result: NetworkInfoResult);
+  getConsensusInfo    @8 ()                                 -> (result: ConsensusInfoResult);
+  sendRawTransaction  @9 (rawTx: Data)                      -> (result: SendTransactionResult);
 }
 

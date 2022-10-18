@@ -103,8 +103,7 @@ func (st *state) tryLoadLastInfo() error {
 	// This check is not important because genesis state is committed.
 	// But it is good to have it to make sure genesis doc hasn't changed
 	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
-	blockOneHash := st.store.BlockHash(1)
-	blockOneInfo, err := st.store.Block(blockOneHash)
+	blockOneInfo, err := st.store.Block(1)
 	if err != nil {
 		return err
 	}
@@ -313,6 +312,9 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
+	if height == 417000 {
+		panic("#417000")
+	}
 	if height != st.lastInfo.BlockHeight()+1 {
 		// Returning error here will cause so many error logs during syncing blockchain
 		// Syncing is asynchronous job and we might receive blocks not in order
@@ -550,8 +552,8 @@ func (st *state) IsValidator(addr crypto.Address) bool {
 	return st.store.HasValidator(addr)
 }
 
-func (st *state) StoredBlock(hash hash.Hash) *store.StoredBlock {
-	b, err := st.store.Block(hash)
+func (st *state) StoredBlock(height uint32) *store.StoredBlock {
+	b, err := st.store.Block(height)
 	if err != nil {
 		st.logger.Trace("error on retrieving block", "err", err)
 		return nil
@@ -570,7 +572,9 @@ func (st *state) StoredTx(id tx.ID) *store.StoredTx {
 func (st *state) BlockHash(height uint32) hash.Hash {
 	return st.store.BlockHash(height)
 }
-
+func (st *state) BlockHeight(hash hash.Hash) uint32 {
+	return st.store.BlockHeight(hash)
+}
 func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 	acc, err := st.store.Account(addr)
 	if err != nil {

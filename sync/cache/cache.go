@@ -2,7 +2,6 @@ package cache
 
 import (
 	lru "github.com/hashicorp/golang-lru"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
@@ -56,9 +55,8 @@ func (c *Cache) GetBlock(height uint32) *block.Block {
 		return i.(*block.Block)
 	}
 
-	h := c.state.BlockHash(height)
-	if h != hash.UndefHash {
-		sb := c.state.StoredBlock(h)
+	sb := c.state.StoredBlock(height)
+	if sb != nil {
 		// TODO: This decoding is not necessary.
 		// To improve the performance, we can send blocks without decoding it.
 		b := sb.ToBlock()

@@ -35,20 +35,32 @@ func (s *blockchainServer) GetBlockHash(ctx context.Context,
 	height := request.GetHeight()
 	hash := s.state.BlockHash(height)
 	if hash.IsUndef() {
-		return nil, status.Errorf(codes.NotFound, "block hash not found with this height")
+		return nil, status.Errorf(codes.NotFound, "block not found with this height")
 	}
 	return &pactus.BlockHashResponse{
 		Hash: hash.Bytes(),
 	}, nil
 }
 
-func (s *blockchainServer) GetBlock(ctx context.Context,
-	request *pactus.BlockRequest) (*pactus.BlockResponse, error) {
+func (s *blockchainServer) GetBlockHeight(ctx context.Context,
+	request *pactus.BlockHeightRequest) (*pactus.BlockHeightResponse, error) {
 	hash, err := hash.FromBytes(request.GetHash())
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "provided hash is not Valid")
+		return nil, status.Errorf(codes.InvalidArgument, "invalid hash: %v", err)
 	}
-	storedBlock := s.state.StoredBlock(hash)
+	height := s.state.BlockHeight(hash)
+	if height == 0 {
+		return nil, status.Errorf(codes.NotFound, "block not found with this hash")
+	}
+	return &pactus.BlockHeightResponse{
+		Height: height,
+	}, nil
+}
+
+func (s *blockchainServer) GetBlock(ctx context.Context,
+	request *pactus.BlockRequest) (*pactus.BlockResponse, error) {
+	height := request.GetHeight()
+	storedBlock := s.state.StoredBlock(height)
 	if storedBlock == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "block not found")
 	}

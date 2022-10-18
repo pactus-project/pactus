@@ -233,11 +233,11 @@ func (sb *sandbox) Committee() committee.Reader {
 // TODO: write test for me.
 // VerifyProof verifies proof of a sortition transaction.
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
-	hash, ok := sb.store.FindBlockHashByStamp(stamp)
+	height, ok := sb.store.FindBlockHeightByStamp(stamp)
 	if !ok {
 		return false
 	}
-	storedBlock, err := sb.store.Block(hash)
+	storedBlock, err := sb.store.Block(height)
 	if err != nil {
 		return false
 	}

@@ -133,11 +133,11 @@ func (m *MockState) TotalPower() int64 {
 func (m *MockState) CommitteePower() int64 {
 	return m.TestCommittee.TotalPower()
 }
-func (m *MockState) StoredBlock(hash hash.Hash) *store.StoredBlock {
+func (m *MockState) StoredBlock(height uint32) *store.StoredBlock {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
-	b, _ := m.TestStore.Block(hash)
+	b, _ := m.TestStore.Block(height)
 	return b
 }
 func (m *MockState) StoredTx(id tx.ID) *store.StoredTx {
@@ -152,6 +152,12 @@ func (m *MockState) BlockHash(height uint32) hash.Hash {
 	defer m.lk.RUnlock()
 
 	return m.TestStore.BlockHash(height)
+}
+func (m *MockState) BlockHeight(hash hash.Hash) uint32 {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	return m.TestStore.BlockHeight(hash)
 }
 func (m *MockState) AccountByAddress(addr crypto.Address) *account.Account {
 	a, _ := m.TestStore.Account(addr)

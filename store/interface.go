@@ -35,7 +35,7 @@ func (s *StoredBlock) ToBlock() *block.Block {
 
 type StoredTx struct {
 	TxID      tx.ID
-	BlockHash hash.Hash
+	Height    uint32
 	BlockTime uint32
 	Data      []byte
 }
@@ -52,7 +52,8 @@ func (s *StoredTx) ToTx() *tx.Tx {
 }
 
 type Reader interface {
-	Block(hash hash.Hash) (*StoredBlock, error)
+	Block(height uint32) (*StoredBlock, error)
+	BlockHeight(hash hash.Hash) uint32
 	BlockHash(height uint32) hash.Hash
 	// It only remembers most recent stamps
 	FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool)

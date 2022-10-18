@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/hash"
 	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,13 +16,14 @@ func TestGetBlock(t *testing.T) {
 	data, _ := b.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: hash.GenerateTestHash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return an existing block data", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+		data, _ := b.Bytes()
+		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
@@ -34,7 +34,7 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return object with verbosity 1 ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
+		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
@@ -47,7 +47,7 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Hash: b.Hash().Bytes(), Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
+		res, err := client.GetBlock(tCtx, &pactus.BlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)

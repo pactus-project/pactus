@@ -24,12 +24,40 @@ type headerData struct {
 	ProposerAddress crypto.Address
 }
 
-func (h *Header) Version() uint8                          { return h.data.Version }
-func (h *Header) Time() time.Time                         { return time.Unix(int64(h.data.UnixTime), 0) }
-func (h *Header) StateRoot() hash.Hash                    { return h.data.StateRoot }
-func (h *Header) PrevBlockHash() hash.Hash                { return h.data.PrevBlockHash }
-func (h *Header) SortitionSeed() sortition.VerifiableSeed { return h.data.SortitionSeed }
-func (h *Header) ProposerAddress() crypto.Address         { return h.data.ProposerAddress }
+// Version returns the block version
+func (h *Header) Version() uint8 {
+	return h.data.Version
+}
+
+// Time returns the block time
+func (h *Header) Time() time.Time {
+	return time.Unix(int64(h.data.UnixTime), 0)
+}
+
+// UnixTime returns the block time in Unix value
+func (h *Header) UnixTime() uint32 {
+	return h.data.UnixTime
+}
+
+// StateRoot returns the state root hash
+func (h *Header) StateRoot() hash.Hash {
+	return h.data.StateRoot
+}
+
+// PrevBlockHash returns the previous block hash
+func (h *Header) PrevBlockHash() hash.Hash {
+	return h.data.PrevBlockHash
+}
+
+// SortitionSeed returns the sortition seed
+func (h *Header) SortitionSeed() sortition.VerifiableSeed {
+	return h.data.SortitionSeed
+}
+
+// ProposerAddress returns the proposer address
+func (h *Header) ProposerAddress() crypto.Address {
+	return h.data.ProposerAddress
+}
 
 func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash,
 	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address) Header {
