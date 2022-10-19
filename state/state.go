@@ -312,9 +312,6 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if height == 417000 {
-		panic("#417000")
-	}
 	if height != st.lastInfo.BlockHeight()+1 {
 		// Returning error here will cause so many error logs during syncing blockchain
 		// Syncing is asynchronous job and we might receive blocks not in order

@@ -21,7 +21,7 @@ type blockchainServer struct {
 }
 
 func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
-	request *pactus.BlockchainInfoRequest) (*pactus.BlockchainInfoResponse, error) {
+	req *pactus.BlockchainInfoRequest) (*pactus.BlockchainInfoResponse, error) {
 	height := s.state.LastBlockHeight()
 
 	return &pactus.BlockchainInfoResponse{
@@ -31,8 +31,8 @@ func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
 }
 
 func (s *blockchainServer) GetBlockHash(ctx context.Context,
-	request *pactus.BlockHashRequest) (*pactus.BlockHashResponse, error) {
-	height := request.GetHeight()
+	req *pactus.BlockHashRequest) (*pactus.BlockHashResponse, error) {
+	height := req.GetHeight()
 	hash := s.state.BlockHash(height)
 	if hash.IsUndef() {
 		return nil, status.Errorf(codes.NotFound, "block not found with this height")
@@ -43,8 +43,8 @@ func (s *blockchainServer) GetBlockHash(ctx context.Context,
 }
 
 func (s *blockchainServer) GetBlockHeight(ctx context.Context,
-	request *pactus.BlockHeightRequest) (*pactus.BlockHeightResponse, error) {
-	hash, err := hash.FromBytes(request.GetHash())
+	req *pactus.BlockHeightRequest) (*pactus.BlockHeightResponse, error) {
+	hash, err := hash.FromBytes(req.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid hash: %v", err)
 	}
@@ -58,19 +58,19 @@ func (s *blockchainServer) GetBlockHeight(ctx context.Context,
 }
 
 func (s *blockchainServer) GetBlock(ctx context.Context,
-	request *pactus.BlockRequest) (*pactus.BlockResponse, error) {
-	height := request.GetHeight()
+	req *pactus.BlockRequest) (*pactus.BlockResponse, error) {
+	height := req.GetHeight()
 	storedBlock := s.state.StoredBlock(height)
 	if storedBlock == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "block not found")
 	}
-	response := &pactus.BlockResponse{
+	res := &pactus.BlockResponse{
 		Height: storedBlock.Height,
 		Hash:   storedBlock.BlockHash.Bytes(),
 		Data:   storedBlock.Data,
 	}
 
-	if request.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
+	if req.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
 		block := storedBlock.ToBlock()
 		timestamp := timestamppb.New(block.Header().Time())
 		seed := block.Header().SortitionSeed()
@@ -103,25 +103,25 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 
 		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 		for _, trx := range block.Transactions() {
-			if request.Verbosity == pactus.BlockVerbosity_BLOCK_INFO {
+			if req.Verbosity == pactus.BlockVerbosity_BLOCK_INFO {
 				trxs = append(trxs, &pactus.TransactionInfo{Id: trx.ID().Bytes()})
 			} else {
 				trxs = append(trxs, transactionToProto(trx))
 			}
 		}
 
-		response.BlockTime = timestamp
-		response.Header = header
-		response.Txs = trxs
-		response.PrevCert = prevCert
+		res.BlockTime = timestamp
+		res.Header = header
+		res.Txs = trxs
+		res.PrevCert = prevCert
 	}
 
-	return response, nil
+	return res, nil
 }
 
 func (s *blockchainServer) GetAccount(ctx context.Context,
-	request *pactus.AccountRequest) (*pactus.AccountResponse, error) {
-	addr, err := crypto.AddressFromString(request.Address)
+	req *pactus.AccountRequest) (*pactus.AccountResponse, error) {
+	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
 	}
@@ -137,8 +137,8 @@ func (s *blockchainServer) GetAccount(ctx context.Context,
 }
 
 func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
-	request *pactus.ValidatorByNumberRequest) (*pactus.ValidatorResponse, error) {
-	val := s.state.ValidatorByNumber(request.Number)
+	req *pactus.ValidatorByNumberRequest) (*pactus.ValidatorResponse, error) {
+	val := s.state.ValidatorByNumber(req.Number)
 	if val == nil {
 		return nil, status.Errorf(codes.NotFound, "validator not found")
 	}
@@ -151,8 +151,8 @@ func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
 }
 
 func (s *blockchainServer) GetValidator(ctx context.Context,
-	request *pactus.ValidatorRequest) (*pactus.ValidatorResponse, error) {
-	addr, err := crypto.AddressFromString(request.Address)
+	req *pactus.ValidatorRequest) (*pactus.ValidatorResponse, error) {
+	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid validator address: %v", err.Error())
 	}
@@ -169,7 +169,7 @@ func (s *blockchainServer) GetValidator(ctx context.Context,
 }
 
 func (s *blockchainServer) GetValidators(ctx context.Context,
-	request *pactus.ValidatorsRequest) (*pactus.ValidatorsResponse, error) {
+	req *pactus.ValidatorsRequest) (*pactus.ValidatorsResponse, error) {
 	validators := s.state.CommitteeValidators()
 	validatorsResp := make([]*pactus.ValidatorInfo, 0)
 	for _, val := range validators {

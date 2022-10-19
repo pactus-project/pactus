@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
 	pactus "github.com/pactus-project/pactus/www/grpc/proto"
 	"github.com/stretchr/testify/assert"
 )
@@ -65,8 +66,8 @@ func TestGetBlockHash(t *testing.T) {
 
 	b := tMockState.TestStore.AddTestBlock(100)
 
-	t.Run("Should return error for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlockHash(tCtx, &pactus.BlockHashRequest{Height: 101})
+	t.Run("Should return error for non existing block", func(t *testing.T) {
+		res, err := client.GetBlockHash(tCtx, &pactus.BlockHashRequest{Height: 0})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -75,6 +76,32 @@ func TestGetBlockHash(t *testing.T) {
 		res, err := client.GetBlockHash(tCtx, &pactus.BlockHashRequest{Height: 100})
 		assert.NoError(t, err)
 		assert.Equal(t, b.Hash().Bytes(), res.Hash)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
+func TestGetBlockHeight(t *testing.T) {
+	conn, client := callBlockchainServer(t)
+
+	b := tMockState.TestStore.AddTestBlock(100)
+
+	t.Run("Should return error for invalid hash", func(t *testing.T) {
+		res, err := client.GetBlockHeight(tCtx, &pactus.BlockHeightRequest{Hash: nil})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Should return error for non existing block", func(t *testing.T) {
+		res, err := client.GetBlockHeight(tCtx, &pactus.BlockHeightRequest{Hash: hash.GenerateTestHash().Bytes()})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Should return height of existing block", func(t *testing.T) {
+		res, err := client.GetBlockHeight(tCtx, &pactus.BlockHeightRequest{Hash: b.Hash().Bytes()})
+		assert.NoError(t, err)
+		assert.Equal(t, uint32(100), res.Height)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

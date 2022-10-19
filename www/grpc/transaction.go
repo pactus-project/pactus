@@ -19,8 +19,8 @@ type transactionServer struct {
 }
 
 func (zs *transactionServer) GetTransaction(ctx context.Context,
-	request *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
-	id, err := hash.FromBytes(request.Id)
+	req *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
+	id, err := hash.FromBytes(req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
 	}
@@ -30,20 +30,20 @@ func (zs *transactionServer) GetTransaction(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 
-	response := &pactus.TransactionResponse{}
+	res := &pactus.TransactionResponse{}
 
-	if request.Verbosity > pactus.TransactionVerbosity_TRANSACTION_DATA {
-		response.Transaction = transactionToProto(storedTx.ToTx())
+	if req.Verbosity > pactus.TransactionVerbosity_TRANSACTION_DATA {
+		res.Transaction = transactionToProto(storedTx.ToTx())
 	}
 
-	response.Transaction.BlockHeight = storedTx.Height
-	response.Transaction.BlockTime = storedTx.BlockTime
-	return response, nil
+	res.Transaction.BlockHeight = storedTx.Height
+	res.Transaction.BlockTime = storedTx.BlockTime
+	return res, nil
 }
 
 func (zs *transactionServer) SendRawTransaction(ctx context.Context,
-	request *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
-	trx, err := tx.FromBytes(request.Data)
+	req *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
+	trx, err := tx.FromBytes(req.Data)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
