@@ -46,7 +46,7 @@
         ]
       }
     },
-    "/v1/blockchain/block/hash/{hash}/verbosity/{verbosity}": {
+    "/v1/blockchain/block/height/{height}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Blockchain_GetBlock",
         "responses": {
@@ -65,11 +65,11 @@
         },
         "parameters": [
           {
-            "name": "hash",
+            "name": "height",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "byte"
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "verbosity",
@@ -112,6 +112,37 @@
             "required": true,
             "type": "integer",
             "format": "int64"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/block_height/{hash}": {
+      "get": {
+        "operationId": "Blockchain_GetBlockHeight",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBlockHeightResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "byte"
           }
         ],
         "tags": [
@@ -284,6 +315,15 @@
         },
         "proposerAddress": {
           "type": "string"
+        }
+      }
+    },
+    "pactusBlockHeightResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -475,6 +515,14 @@
         "signature": {
           "type": "string",
           "format": "byte"
+        },
+        "blockHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

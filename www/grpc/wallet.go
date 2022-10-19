@@ -22,8 +22,8 @@ func walletPath(name string) string {
 }
 
 func (s *walletServer) GenerateMnemonic(ctx context.Context,
-	request *pactus.GenerateMnemonicRequest) (*pactus.GenerateMnemonicResponse, error) {
-	mnemonic := wallet.GenerateMnemonic(int(request.Entropy))
+	req *pactus.GenerateMnemonicRequest) (*pactus.GenerateMnemonicResponse, error) {
+	mnemonic := wallet.GenerateMnemonic(int(req.Entropy))
 
 	return &pactus.GenerateMnemonicResponse{
 		Mnemonic: mnemonic,
@@ -31,17 +31,17 @@ func (s *walletServer) GenerateMnemonic(ctx context.Context,
 }
 
 func (s *walletServer) CreateWallet(ctx context.Context,
-	request *pactus.CreateWalletRequest) (*pactus.CreateWalletResponse, error) {
-	if request.Name == "" {
+	req *pactus.CreateWalletRequest) (*pactus.CreateWalletResponse, error) {
+	if req.Name == "" {
 		return nil, fmt.Errorf("wallet name is required")
 	}
 
-	path := walletPath(request.Name)
-	w, err := wallet.Create(path, request.Mnemonic, request.Language, s.network)
+	path := walletPath(req.Name)
+	w, err := wallet.Create(path, req.Mnemonic, req.Language, s.network)
 	if err != nil {
 		return nil, err
 	}
-	err = w.UpdatePassword("", request.Password)
+	err = w.UpdatePassword("", req.Password)
 	if err != nil {
 		return nil, err
 	}

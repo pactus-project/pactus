@@ -55,7 +55,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 
 	msg := message.NewBlockAnnounceMessage(
 		tState.LastBlockHeight(),
-		tState.StoredBlock(tState.LastBlockHash()).ToBlock(),
+		tState.StoredBlock(tState.LastBlockHeight()).ToBlock(),
 		tState.LastCertificate())
 
 	t.Run("Not in the committee, should not broadcast block announce message", func(t *testing.T) {

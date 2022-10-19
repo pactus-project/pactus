@@ -13,14 +13,21 @@ func (zs *pactusServer) GetBlockHash(args PactusServer_getBlockHash) error {
 	return args.Results.SetResult(hash.Bytes())
 }
 
-func (zs *pactusServer) GetBlock(args PactusServer_getBlock) error {
-	data, _ := args.Params.Hash()
-	h, err := hash.FromBytes(data)
+func (zs *pactusServer) GetBlockHeight(args PactusServer_getBlockHeight) error {
+	hashData, _ := args.Params.Hash()
+	hash, err := hash.FromBytes(hashData)
 	if err != nil {
 		return err
 	}
+	height := zs.state.BlockHeight(hash)
+	args.Results.SetResult(height)
+	return nil
+}
+
+func (zs *pactusServer) GetBlock(args PactusServer_getBlock) error {
+	height := args.Params.Height()
 	v := args.Params.Verbosity()
-	sb := zs.state.StoredBlock(h)
+	sb := zs.state.StoredBlock(height)
 	if sb == nil {
 		return fmt.Errorf("block not found")
 	}
@@ -68,7 +75,7 @@ func (zs pactusServer) ToVerboseBlock(block *block.Block, res *BlockResult) erro
 	}
 	// header
 	capHeader.SetVersion(block.Header().Version())
-	capHeader.SetTime(int32(block.Header().Time().Unix()))
+	capHeader.SetTime(block.Header().UnixTime())
 	err := capHeader.SetStateRoot(block.Header().StateRoot().Bytes())
 	if err != nil {
 		return err

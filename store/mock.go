@@ -29,16 +29,15 @@ func MockingStore() *MockStore {
 		Validators: make(map[crypto.Address]validator.Validator),
 	}
 }
-func (m *MockStore) Block(hash hash.Hash) (*StoredBlock, error) {
-	for h, b := range m.Blocks {
+func (m *MockStore) Block(height uint32) (*StoredBlock, error) {
+	b, ok := m.Blocks[height]
+	if ok {
 		d, _ := b.Bytes()
-		if b.Hash().EqualsTo(hash) {
-			return &StoredBlock{
-				BlockHash: hash,
-				Height:    h,
-				Data:      d,
-			}, nil
-		}
+		return &StoredBlock{
+			BlockHash: b.Hash(),
+			Height:    height,
+			Data:      d,
+		}, nil
 	}
 	return nil, fmt.Errorf("not found")
 }
@@ -49,15 +48,23 @@ func (m *MockStore) BlockHash(height uint32) hash.Hash {
 	}
 	return hash.UndefHash
 }
+func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
+	for h, b := range m.Blocks {
+		if b.Hash().EqualsTo(hash) {
+			return h
+		}
+	}
+	return 0
+}
 func (m *MockStore) Transaction(id tx.ID) (*StoredTx, error) {
-	for _, b := range m.Blocks {
-		for _, trx := range b.Transactions() {
+	for height, block := range m.Blocks {
+		for _, trx := range block.Transactions() {
 			if trx.ID() == id {
 				d, _ := trx.Bytes()
 				return &StoredTx{
 					TxID:      id,
-					BlockHash: b.Hash(),
-					BlockTime: uint32(b.Header().Time().Unix()),
+					Height:    height,
+					BlockTime: block.Header().UnixTime(),
 					Data:      d,
 				}, nil
 			}

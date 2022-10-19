@@ -26,7 +26,7 @@ func TestBlockStore(t *testing.T) {
 
 	t.Run("Add block, don't batch write", func(t *testing.T) {
 		tStore.SaveBlock(lastHeight+1, b1, c1)
-		b2, err := tStore.Block(b1.Hash())
+		b2, err := tStore.Block(lastHeight + 1)
 		assert.Error(t, err)
 		assert.Nil(t, b2)
 	})
@@ -34,7 +34,7 @@ func TestBlockStore(t *testing.T) {
 	t.Run("Add block, batch write", func(t *testing.T) {
 		tStore.SaveBlock(lastHeight+1, b1, c1)
 		assert.NoError(t, tStore.WriteBatch())
-		sb, err := tStore.Block(b1.Hash())
+		sb, err := tStore.Block(lastHeight + 1)
 		assert.NoError(t, err)
 		d, _ := b1.Bytes()
 		assert.Equal(t, sb.Height, lastHeight+1)

@@ -50,15 +50,10 @@ func lastBlock() *capnp.BlockResult {
 
 func getBlockAt(height uint32) *capnp.BlockResult {
 	for i := 0; i < 120; i++ {
-		hashRes, _ := tCapnpServer.GetBlockHash(tCtx, func(p capnp.PactusServer_getBlockHash_Params) error {
+		blockRes := tCapnpServer.GetBlock(tCtx, func(p capnp.PactusServer_getBlock_Params) error {
+			p.SetVerbosity(0)
 			p.SetHeight(height)
 			return nil
-		}).Struct()
-
-		blockRes := tCapnpServer.GetBlock(tCtx, func(p capnp.PactusServer_getBlock_Params) error {
-			data, _ := hashRes.Result()
-			p.SetVerbosity(0)
-			return p.SetHash(data)
 		}).Result()
 
 		st, err := blockRes.Struct()

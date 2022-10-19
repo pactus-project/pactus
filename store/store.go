@@ -132,27 +132,45 @@ func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certifi
 	s.appendStamp(block.Hash(), height)
 }
 
-func (s *store) Block(hash hash.Hash) (*StoredBlock, error) {
+func (s *store) Block(height uint32) (*StoredBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	data, err := s.blockStore.block(hash)
+	data, err := s.blockStore.block(height)
+	if err != nil {
+		return nil, err
+	}
+
+	blockHash, err := hash.FromBytes(data[0:hash.HashSize])
 	if err != nil {
 		return nil, err
 	}
 
 	return &StoredBlock{
-		BlockHash: hash,
-		Height:    util.SliceToUint32(data[:4]),
-		Data:      data[4:],
+		BlockHash: blockHash,
+		Height:    height,
+		Data:      data[hash.HashSize:],
 	}, nil
+}
+
+func (s *store) BlockHeight(hash hash.Hash) uint32 {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	return s.blockStore.BlockHeight(hash)
 }
 
 func (s *store) BlockHash(height uint32) hash.Hash {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.BlockHash(height)
+	data, err := s.blockStore.block(height)
+	if err == nil {
+		blockHash, _ := hash.FromBytes(data[0:hash.HashSize])
+		return blockHash
+	}
+
+	return hash.UndefHash
 }
 
 func (s *store) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
@@ -193,20 +211,20 @@ func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
 	if err != nil {
 		return nil, err
 	}
-	data, err := s.blockStore.block(pos.BlockHash)
+	data, err := s.blockStore.block(pos.height)
 	if err != nil {
 		return nil, err
 	}
-	start := pos.Offset
-	end := pos.Offset + pos.Length
+	start := pos.offset
+	end := pos.offset + pos.length
 	if end > uint32(len(data)) {
 		return nil, fmt.Errorf("offset is out of range") // TODO: Shall we panic here?
 	}
-	blockTime := util.SliceToUint32(data[5:9])
+	blockTime := util.SliceToUint32(data[hash.HashSize+1 : hash.HashSize+5])
 
 	return &StoredTx{
 		TxID:      id,
-		BlockHash: pos.BlockHash,
+		Height:    pos.height,
 		BlockTime: blockTime,
 		Data:      data[start:end],
 	}, nil

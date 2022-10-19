@@ -3,6 +3,7 @@ package block
 import (
 	"encoding/hex"
 	"testing"
+	"time"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -15,6 +16,9 @@ import (
 func TestSanityCheck(t *testing.T) {
 	b := GenerateTestBlock(nil, nil)
 	assert.NoError(t, b.SanityCheck())
+	assert.LessOrEqual(t, b.Header().Time(), time.Now())
+	assert.NotZero(t, b.Header().UnixTime())
+	assert.Equal(t, b.Header().Version(), uint8(1))
 
 	b = GenerateTestBlock(nil, nil)
 	b.data.Txs = Txs{}
@@ -58,8 +62,6 @@ func TestCBORMarshaling(t *testing.T) {
 	assert.Equal(t, b1.Hash(), b2.Hash())
 
 	assert.Equal(t, b1.Hash(), b2.Hash())
-	assert.Equal(t, b1.Header().Time(), b2.Header().Time())
-	assert.Equal(t, b1.Header().Version(), b2.Header().Version())
 
 	err = cbor.Unmarshal([]byte{1}, &b2)
 	assert.Error(t, err)

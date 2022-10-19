@@ -10,10 +10,13 @@ package pactus;
 
 service Blockchain {
   rpc GetBlock(BlockRequest) returns (BlockResponse) {
-    option (google.api.http).get = "/v1/blockchain/block/hash/{hash}/verbosity/{verbosity}";
+    option (google.api.http).get = "/v1/blockchain/block/height/{height}/verbosity/{verbosity}";
   }
   rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse) {
     option (google.api.http).get = "/v1/blockchain/block_hash/{height}";
+  }
+  rpc GetBlockHeight(BlockHeightRequest) returns (BlockHeightResponse) {
+    option (google.api.http).get = "/v1/blockchain/block_height/{hash}";
   }
   rpc GetAccount(AccountRequest) returns (AccountResponse) {
     option (google.api.http).get = "/v1/blockchain/account/address/{address}";
@@ -48,7 +51,7 @@ message ValidatorsResponse { repeated ValidatorInfo validators = 1; }
 message ValidatorResponse { ValidatorInfo validator = 1; }
 
 message BlockRequest {
-  bytes hash = 1;
+  uint32 height = 1;
   BlockVerbosity verbosity = 2;
 }
 
@@ -65,6 +68,10 @@ message BlockResponse {
 message BlockHashRequest { uint32 height = 1; }
 
 message BlockHashResponse { bytes hash = 1; }
+
+message BlockHeightRequest { bytes hash = 1; }
+
+message BlockHeightResponse { uint32 height = 1; }
 
 message BlockchainInfoRequest {}
 

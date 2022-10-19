@@ -37,6 +37,26 @@ func SaveTestBlocks(t *testing.T, num int) {
 	}
 }
 
+func TestBlockHash(t *testing.T) {
+	setup(t)
+
+	sb, _ := tStore.Block(1)
+
+	assert.Equal(t, tStore.BlockHash(0), hash.UndefHash)
+	assert.Equal(t, tStore.BlockHash(util.MaxUint32), hash.UndefHash)
+	assert.Equal(t, tStore.BlockHash(1), sb.BlockHash)
+}
+
+func TestBlockHeight(t *testing.T) {
+	setup(t)
+
+	sb, _ := tStore.Block(1)
+
+	assert.Equal(t, tStore.BlockHeight(hash.UndefHash), uint32(0))
+	assert.Equal(t, tStore.BlockHeight(hash.GenerateTestHash()), uint32(0))
+	assert.Equal(t, tStore.BlockHeight(sb.BlockHash), uint32(1))
+}
+
 func TestReturnNilForNonExistingItems(t *testing.T) {
 	setup(t)
 
@@ -45,7 +65,7 @@ func TestReturnNilForNonExistingItems(t *testing.T) {
 	assert.Equal(t, tStore.BlockHash(lastHeight+1), hash.UndefHash)
 	assert.Equal(t, tStore.BlockHash(0), hash.UndefHash)
 
-	block, err := tStore.Block(hash.GenerateTestHash())
+	block, err := tStore.Block(lastHeight + 1)
 	assert.Error(t, err)
 	assert.Nil(t, block)
 
@@ -74,7 +94,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	setup(t)
 
 	height, _ := tStore.LastCertificate()
-	storedBlock, err := tStore.Block(tStore.BlockHash(height))
+	storedBlock, err := tStore.Block(height)
 	assert.NoError(t, err)
 	assert.Equal(t, height, storedBlock.Height)
 	block := storedBlock.ToBlock()
@@ -82,7 +102,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 		storedTx, err := tStore.Transaction(trx.ID())
 		assert.NoError(t, err)
 		assert.Equal(t, storedTx.TxID, trx.ID())
-		assert.Equal(t, storedTx.BlockTime, uint32(block.Header().Time().Unix()))
+		assert.Equal(t, storedTx.BlockTime, block.Header().UnixTime())
 		assert.Equal(t, storedTx.ToTx().ID(), trx.ID())
 	}
 }

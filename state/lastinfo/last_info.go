@@ -102,11 +102,8 @@ func (li *LastInfo) SetBlockTime(lastBlockTime time.Time) {
 
 func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, error) {
 	height, cert := li.store.LastCertificate()
-
 	logger.Debug("try to restore last state info", "height", height)
-
-	h := li.store.BlockHash(height)
-	sb, err := li.store.Block(h)
+	sb, err := li.store.Block(height)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve block %v: %v", height, err)
 	}

@@ -11,28 +11,34 @@ import (
 )
 
 func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.PactusServer_getBlockHash_Params) error {
-		vars := mux.Vars(r)
-		height, _ := strconv.ParseInt(vars["height"], 10, 32)
-		p.SetHeight(uint32(height))
-		return nil
-	})
-	st, _ := res.Struct()
-	data, _ := st.Result()
-	h, _ := hash.FromBytes(data)
-	s.blockByHash(w, h)
+	vars := mux.Vars(r)
+	height, err := strconv.ParseInt(vars["height"], 10, 32)
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+	s.blockByHeight(w, uint32(height))
 }
 
 func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	h, _ := hash.FromString(vars["hash"])
-	s.blockByHash(w, h)
+	res := s.capnp.GetBlockHeight(s.ctx, func(p capnp.PactusServer_getBlockHeight_Params) error {
+		vars := mux.Vars(r)
+		blockHash, err := hash.FromString(vars["hash"])
+		if err != nil {
+			return err
+		}
+		return p.SetHash(blockHash.Bytes())
+	})
+	st, _ := res.Struct()
+	blockHeight := st.Result()
+	s.blockByHeight(w, blockHeight)
 }
 
-func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
+func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
 	res := s.capnp.GetBlock(s.ctx, func(p capnp.PactusServer_getBlock_Params) error {
 		p.SetVerbosity(0)
-		return p.SetHash(blockHash.Bytes())
+		p.SetHeight(blockHeight)
+		return nil
 	}).Result()
 
 	st, err := res.Struct()
@@ -51,11 +57,12 @@ func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
 
 	tm := newTableMaker()
 	tm.addRowString("Time", b.Header().Time().String())
+	tm.addRowInt("Height", int(blockHeight))
 	tm.addRowBytes("Hash", b.Hash().Bytes())
 	tm.addRowBytes("Data", d)
 	tm.addRowString("--- Header", "---")
 	tm.addRowInt("Version", int(b.Header().Version()))
-	tm.addRowInt("UnixTime", int(b.Header().Time().Unix()))
+	tm.addRowInt("UnixTime", int(b.Header().UnixTime()))
 	tm.addRowBlockHash("PrevBlockHash", b.Header().PrevBlockHash().Bytes())
 	tm.addRowBytes("StateRoot", b.Header().StateRoot().Bytes())
 	tm.addRowBytes("SortitionSeed", seed[:])
@@ -74,33 +81,5 @@ func (s *Server) blockByHash(w http.ResponseWriter, blockHash hash.Hash) {
 		txToTable(trx, tm)
 	}
 
-	s.writeHTML(w, tm.html())
-}
-
-func (s *Server) GetBlockHashHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlockHash(s.ctx, func(p capnp.PactusServer_getBlockHash_Params) error {
-		vars := mux.Vars(r)
-		height, err := strconv.ParseInt(vars["height"], 10, 32)
-		if err != nil {
-			return err
-		}
-		p.SetHeight(uint32(height))
-		return nil
-	})
-
-	st, err := res.Struct()
-	if err != nil {
-		s.writeError(w, err)
-		return
-	}
-
-	data, _ := st.Result()
-	hash, err := hash.FromBytes(data)
-	if err != nil {
-		s.writeError(w, err)
-		return
-	}
-	tm := newTableMaker()
-	tm.addRowBytes("Hash", hash.Bytes())
 	s.writeHTML(w, tm.html())
 }

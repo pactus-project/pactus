@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type BlockchainClient interface {
 	GetBlock(ctx context.Context, in *BlockRequest, opts ...grpc.CallOption) (*BlockResponse, error)
 	GetBlockHash(ctx context.Context, in *BlockHashRequest, opts ...grpc.CallOption) (*BlockHashResponse, error)
+	GetBlockHeight(ctx context.Context, in *BlockHeightRequest, opts ...grpc.CallOption) (*BlockHeightResponse, error)
 	GetAccount(ctx context.Context, in *AccountRequest, opts ...grpc.CallOption) (*AccountResponse, error)
 	GetValidators(ctx context.Context, in *ValidatorsRequest, opts ...grpc.CallOption) (*ValidatorsResponse, error)
 	GetValidator(ctx context.Context, in *ValidatorRequest, opts ...grpc.CallOption) (*ValidatorResponse, error)
@@ -51,6 +52,15 @@ func (c *blockchainClient) GetBlock(ctx context.Context, in *BlockRequest, opts 
 func (c *blockchainClient) GetBlockHash(ctx context.Context, in *BlockHashRequest, opts ...grpc.CallOption) (*BlockHashResponse, error) {
 	out := new(BlockHashResponse)
 	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetBlockHash", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockchainClient) GetBlockHeight(ctx context.Context, in *BlockHeightRequest, opts ...grpc.CallOption) (*BlockHeightResponse, error) {
+	out := new(BlockHeightResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetBlockHeight", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,6 +118,7 @@ func (c *blockchainClient) GetBlockchainInfo(ctx context.Context, in *Blockchain
 type BlockchainServer interface {
 	GetBlock(context.Context, *BlockRequest) (*BlockResponse, error)
 	GetBlockHash(context.Context, *BlockHashRequest) (*BlockHashResponse, error)
+	GetBlockHeight(context.Context, *BlockHeightRequest) (*BlockHeightResponse, error)
 	GetAccount(context.Context, *AccountRequest) (*AccountResponse, error)
 	GetValidators(context.Context, *ValidatorsRequest) (*ValidatorsResponse, error)
 	GetValidator(context.Context, *ValidatorRequest) (*ValidatorResponse, error)
@@ -124,6 +135,9 @@ func (UnimplementedBlockchainServer) GetBlock(context.Context, *BlockRequest) (*
 }
 func (UnimplementedBlockchainServer) GetBlockHash(context.Context, *BlockHashRequest) (*BlockHashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHash not implemented")
+}
+func (UnimplementedBlockchainServer) GetBlockHeight(context.Context, *BlockHeightRequest) (*BlockHeightResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeight not implemented")
 }
 func (UnimplementedBlockchainServer) GetAccount(context.Context, *AccountRequest) (*AccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
@@ -184,6 +198,24 @@ func _Blockchain_GetBlockHash_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetBlockHash(ctx, req.(*BlockHashRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Blockchain_GetBlockHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockHeightRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockchainServer).GetBlockHeight(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Blockchain/GetBlockHeight",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockchainServer).GetBlockHeight(ctx, req.(*BlockHeightRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -292,6 +324,10 @@ var Blockchain_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBlockHash",
 			Handler:    _Blockchain_GetBlockHash_Handler,
+		},
+		{
+			MethodName: "GetBlockHeight",
+			Handler:    _Blockchain_GetBlockHeight_Handler,
 		},
 		{
 			MethodName: "GetAccount",

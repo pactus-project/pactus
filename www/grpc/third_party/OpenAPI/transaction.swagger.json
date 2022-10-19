@@ -205,6 +205,14 @@
         "signature": {
           "type": "string",
           "format": "byte"
+        },
+        "blockHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
