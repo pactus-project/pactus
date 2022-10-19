@@ -20,7 +20,7 @@ type HistoryInfo struct {
 }
 
 type transaction struct {
-	BlockHash   string `json:"block"`
+	BlockHeight uint32 `json:"height"`
 	BlockTime   uint32 `json:"time"`
 	PayloadType string `json:"type"`
 	Data        string `json:"data"`
@@ -68,7 +68,7 @@ func (h *history) addActivity(addr string, amount int64, trx *pactus.Transaction
 	})
 
 	h.Transactions[act.TxID] = transaction{
-		BlockHash:   hex.EncodeToString(trx.BlockHash),
+		BlockHeight: trx.BlockHeight,
 		BlockTime:   trx.BlockTime,
 		PayloadType: payload.Type(trx.Transaction.Type).String(),
 		Data:        hex.EncodeToString(trx.Transaction.Data),

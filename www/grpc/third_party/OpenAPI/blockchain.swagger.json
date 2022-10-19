@@ -343,8 +343,8 @@
           "format": "byte"
         },
         "blockTime": {
-          "type": "string",
-          "format": "date-time"
+          "type": "integer",
+          "format": "int64"
         },
         "header": {
           "$ref": "#/definitions/pactusBlockHeaderInfo"
@@ -515,14 +515,6 @@
         "signature": {
           "type": "string",
           "format": "byte"
-        },
-        "blockHeight": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "blockTime": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },

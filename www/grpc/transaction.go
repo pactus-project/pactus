@@ -30,14 +30,15 @@ func (zs *transactionServer) GetTransaction(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 
-	res := &pactus.TransactionResponse{}
+	res := &pactus.TransactionResponse{
+		BlockHeight: storedTx.Height,
+		BlockTime:   storedTx.BlockTime,
+	}
 
 	if req.Verbosity > pactus.TransactionVerbosity_TRANSACTION_DATA {
 		res.Transaction = transactionToProto(storedTx.ToTx())
 	}
 
-	res.Transaction.BlockHeight = storedTx.Height
-	res.Transaction.BlockTime = storedTx.BlockTime
 	return res, nil
 }
 

@@ -1,7 +1,6 @@
 syntax = 'proto3';
 
 import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
 import "transaction.proto";
 
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
@@ -59,7 +58,7 @@ message BlockResponse {
   uint32 height = 1;
   bytes hash = 2;
   bytes data = 3;
-  google.protobuf.Timestamp block_time = 4;
+  uint32 block_time = 4;
   BlockHeaderInfo header = 5;
   CertificateInfo prev_cert = 6;
   repeated TransactionInfo txs = 7;

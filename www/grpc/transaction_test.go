@@ -22,6 +22,8 @@ func TestGetTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
+		assert.Equal(t, uint32(0x1), res.BlockHeight)
+		assert.Equal(t, testBlock.Header().UnixTime(), res.BlockTime)
 		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
 		assert.Equal(t, trx1.Stamp().Bytes(), res.Transaction.Stamp)
 		assert.Equal(t, trx1.Fee(), res.Transaction.Fee)

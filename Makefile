@@ -17,7 +17,7 @@ devtools:
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.10
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/bufbuild/buf/cmd/buf@v1.3
+	go install github.com/bufbuild/buf/cmd/buf@v1.8
 	go install github.com/rakyll/statik@v0.1
 
 ########################################

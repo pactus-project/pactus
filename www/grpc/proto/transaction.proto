@@ -1,7 +1,7 @@
 syntax = 'proto3';
 
 import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
+
 
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 
@@ -25,8 +25,8 @@ message TransactionRequest {
 }
 
 message TransactionResponse {
-  bytes block_hash = 1;
-  uint32 block_time = 2;
+  uint32 block_height = 12;
+  uint32 block_time = 13;
   TransactionInfo transaction = 3;
 }
 
@@ -68,8 +68,6 @@ message TransactionInfo {
   string memo = 9;
   string public_key = 10;
   bytes signature = 11;
-  uint32 block_height = 12;
-  uint32 block_time = 13;
 }
 
 enum PayloadType {

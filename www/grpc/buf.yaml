@@ -1,6 +1,5 @@
-version: v1beta1
-build:
-  roots:
-    - proto
-    - third_party/grpc-gateway
-    - third_party/googleapis
+version: v1
+name: pactus_apis
+lint:  
+  use:    
+    - DEFAULT
