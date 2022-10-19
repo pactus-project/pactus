@@ -2,7 +2,6 @@ syntax = 'proto3';
 
 import "google/api/annotations.proto";
 
-
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 
 package pactus;
