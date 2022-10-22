@@ -24,5 +24,9 @@ plugins:
     out: gen/dart
   - remote: buf.build/protocolbuffers/plugins/java:v21.8.0-1
     out: gen/java
+  - remote: buf.build/grpc/plugins/java:v1.50.2-1
+    out: gen/java
   - remote: buf.build/protocolbuffers/plugins/python:v21.8.0-1
+    out: gen/python
+  - remote: buf.build/grpc/plugins/python:v1.50.0-1
     out: gen/python
