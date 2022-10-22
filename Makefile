@@ -58,8 +58,8 @@ proto:
 		--path ./proto/transaction.proto \
 		--path ./proto/wallet.proto
 
-	# Generate static assets for OpenAPI UI
-	cd www/grpc/ && statik -m -f -src third_party/OpenAPI/
+	# Generate static assets for Swagger-UI
+	cd www/grpc/ && statik -m -f -src third_party/swagger-ui/
 
 ########################################
 ### Formatting, linting, and vetting

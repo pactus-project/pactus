@@ -1,13 +1,28 @@
 version: v1
 plugins:
   - name: go
-    out: proto
+    out: gen/go
     opt: paths=source_relative
   - name: go-grpc
-    out: proto
+    out: gen/go
     opt: paths=source_relative,require_unimplemented_servers=false
   - name: grpc-gateway
-    out: proto
+    out: gen/go
     opt: paths=source_relative
   - name: openapiv2
-    out: third_party/OpenAPI
+    out: third_party/swagger-ui
+  - remote: buf.build/protocolbuffers/plugins/js:v3.20.1-1
+    out: gen/js
+    opt:
+      - import_style=commonjs
+      - binary
+  - remote: buf.build/grpc/plugins/node:v1.11.2-1
+    out: gen/js
+    opt:
+      - import_style=commonjs
+  - remote: buf.build/protocolbuffers/plugins/dart:v20.0.1-1
+    out: gen/dart
+  - remote: buf.build/protocolbuffers/plugins/java:v21.8.0-1
+    out: gen/java
+  - remote: buf.build/protocolbuffers/plugins/python:v21.8.0-1
+    out: gen/python

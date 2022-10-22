@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
-	pactus "github.com/pactus-project/pactus/www/grpc/proto"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type walletServer struct {

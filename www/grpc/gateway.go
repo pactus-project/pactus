@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	pactus "github.com/pactus-project/pactus/www/grpc/proto"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

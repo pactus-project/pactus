@@ -6,7 +6,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/logger"
-	pactus "github.com/pactus-project/pactus/www/grpc/proto"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type networkServer struct {
