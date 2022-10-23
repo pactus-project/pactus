@@ -141,8 +141,8 @@ final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode('C
 const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = const {
   '1': 'Transaction',
   '2': const [
-    const {'1': 'GetTransaction', '2': '.pactus.TransactionRequest', '3': '.pactus.TransactionResponse', '4': const {}},
-    const {'1': 'SendRawTransaction', '2': '.pactus.SendRawTransactionRequest', '3': '.pactus.SendRawTransactionResponse', '4': const {}},
+    const {'1': 'GetTransaction', '2': '.pactus.TransactionRequest', '3': '.pactus.TransactionResponse'},
+    const {'1': 'SendRawTransaction', '2': '.pactus.SendRawTransactionRequest', '3': '.pactus.SendRawTransactionResponse'},
   ],
 };
 
@@ -159,4 +159,4 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
 };
 
 /// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhKAAQoOR2V0VHJhbnNhY3Rpb24SGi5wYWN0dXMuVHJhbnNhY3Rpb25SZXF1ZXN0GhsucGFjdHVzLlRyYW5zYWN0aW9uUmVzcG9uc2UiNYLT5JMCLxItL3YxL3RyYW5zYWN0aW9uL2lkL3tpZH0vdmVyYm9zaXR5L3t2ZXJib3NpdHl9EpABChJTZW5kUmF3VHJhbnNhY3Rpb24SIS5wYWN0dXMuU2VuZFJhd1RyYW5zYWN0aW9uUmVxdWVzdBoiLnBhY3R1cy5TZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZSIzgtPkkwItGisvdjEvdHJhbnNhY3Rpb24vc2VuZF9yYXdfdHJhbnNhY3Rpb24ve2RhdGF9');
+final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJJCg5HZXRUcmFuc2FjdGlvbhIaLnBhY3R1cy5UcmFuc2FjdGlvblJlcXVlc3QaGy5wYWN0dXMuVHJhbnNhY3Rpb25SZXNwb25zZRJbChJTZW5kUmF3VHJhbnNhY3Rpb24SIS5wYWN0dXMuU2VuZFJhd1RyYW5zYWN0aW9uUmVxdWVzdBoiLnBhY3R1cy5TZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZQ==');

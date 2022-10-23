@@ -3,7 +3,6 @@
 'use strict';
 var grpc = require('grpc');
 var transaction_pb = require('./transaction_pb.js');
-var google_api_annotations_pb = require('./google/api/annotations_pb.js');
 
 function serialize_pactus_SendRawTransactionRequest(arg) {
   if (!(arg instanceof transaction_pb.SendRawTransactionRequest)) {

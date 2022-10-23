@@ -1,0 +1,124 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "network.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Network"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/network/info": {
+      "get": {
+        "operationId": "Network_GetNetworkInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusNetworkInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Network"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pactusNetworkInfoResponse": {
+      "type": "object",
+      "properties": {
+        "selfId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "peers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pactusPeerInfo"
+          }
+        }
+      }
+    },
+    "pactusPeerInfo": {
+      "type": "object",
+      "properties": {
+        "moniker": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "peerId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "flags": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "receivedMessages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "invalidMessages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "receivedBytes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

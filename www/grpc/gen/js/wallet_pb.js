@@ -15,8 +15,6 @@ var jspb = require('google-protobuf');
 var goog = jspb;
 var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
 
-var google_api_annotations_pb = require('./google/api/annotations_pb.js');
-goog.object.extend(proto, google_api_annotations_pb);
 goog.exportSymbol('proto.pactus.CreateWalletRequest', null, global);
 goog.exportSymbol('proto.pactus.CreateWalletResponse', null, global);
 goog.exportSymbol('proto.pactus.GenerateMnemonicRequest', null, global);

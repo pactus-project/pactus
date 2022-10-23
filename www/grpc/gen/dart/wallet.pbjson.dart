@@ -52,8 +52,8 @@ final $typed_data.Uint8List createWalletResponseDescriptor = $convert.base64Deco
 const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = const {
   '1': 'Wallet',
   '2': const [
-    const {'1': 'GenerateMnemonic', '2': '.pactus.GenerateMnemonicRequest', '3': '.pactus.GenerateMnemonicResponse', '4': const {}},
-    const {'1': 'CreateWallet', '2': '.pactus.CreateWalletRequest', '3': '.pactus.CreateWalletResponse', '4': const {}},
+    const {'1': 'GenerateMnemonic', '2': '.pactus.GenerateMnemonicRequest', '3': '.pactus.GenerateMnemonicResponse'},
+    const {'1': 'CreateWallet', '2': '.pactus.CreateWalletRequest', '3': '.pactus.CreateWalletResponse'},
   ],
 };
 
@@ -66,4 +66,4 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> WalletServ
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSmAEKEEdlbmVyYXRlTW5lbW9uaWMSHy5wYWN0dXMuR2VuZXJhdGVNbmVtb25pY1JlcXVlc3QaIC5wYWN0dXMuR2VuZXJhdGVNbmVtb25pY1Jlc3BvbnNlIkGC0+STAjsSOS92MS93YWxsZXQvbW5lbW9uaWMvZW50cm9weS97ZW50cm9weX0vbGFuZ3VhZ2Uve2xhbmd1YWdlfRKsAQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2UiYYLT5JMCWxJZL3YxL3dhbGxldC9jcmVhdGUvbmFtZS97bmFtZX0vbW5lbW9uaWMve21uZW1vbmljfS9sYW5ndWFnZS97bGFuZ3VhZ2V9L3Bhc3N3b3JkL3twYXNzd29yZH0=');
+final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSVQoQR2VuZXJhdGVNbmVtb25pYxIfLnBhY3R1cy5HZW5lcmF0ZU1uZW1vbmljUmVxdWVzdBogLnBhY3R1cy5HZW5lcmF0ZU1uZW1vbmljUmVzcG9uc2USSQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2U=');

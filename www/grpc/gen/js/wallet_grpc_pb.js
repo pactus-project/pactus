@@ -3,7 +3,6 @@
 'use strict';
 var grpc = require('grpc');
 var wallet_pb = require('./wallet_pb.js');
-var google_api_annotations_pb = require('./google/api/annotations_pb.js');
 
 function serialize_pactus_CreateWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.CreateWalletRequest)) {

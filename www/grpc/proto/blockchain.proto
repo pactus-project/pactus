@@ -1,39 +1,20 @@
 syntax = 'proto3';
-
-import "google/api/annotations.proto";
-import "transaction.proto";
-
-option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-
 package pactus;
 
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
+option java_package = "pactus.blockchain";
+
+import "transaction.proto";
+
 service Blockchain {
-  rpc GetBlock(BlockRequest) returns (BlockResponse) {
-    option (google.api.http).get = "/v1/blockchain/block/height/{height}/verbosity/{verbosity}";
-  }
-  rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse) {
-    option (google.api.http).get = "/v1/blockchain/block_hash/{height}";
-  }
-  rpc GetBlockHeight(BlockHeightRequest) returns (BlockHeightResponse) {
-    option (google.api.http).get = "/v1/blockchain/block_height/{hash}";
-  }
-  rpc GetAccount(AccountRequest) returns (AccountResponse) {
-    option (google.api.http).get = "/v1/blockchain/account/address/{address}";
-  }
-  rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse) {
-    option (google.api.http).get = "/v1/blockchain/validators";
-  }
-  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse) {
-    option (google.api.http).get = "/v1/blockchain/validator/address/{address}";
-  }
-  rpc GetValidatorByNumber(ValidatorByNumberRequest)
-      returns (ValidatorResponse) {
-    option (google.api.http).get = "/v1/blockchain/validator/{number}";
-  }
-  rpc GetBlockchainInfo(BlockchainInfoRequest)
-      returns (BlockchainInfoResponse) {
-    option (google.api.http).get = "/v1/blockchain/info";
-  }
+  rpc GetBlock(BlockRequest) returns (BlockResponse);
+  rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse);
+  rpc GetBlockHeight(BlockHeightRequest) returns (BlockHeightResponse);
+  rpc GetAccount(AccountRequest) returns (AccountResponse);
+  rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse);
+  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse);
+  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse);
+  rpc GetBlockchainInfo(BlockchainInfoRequest) returns (BlockchainInfoResponse);
 }
 
 message AccountRequest { string address = 1; }

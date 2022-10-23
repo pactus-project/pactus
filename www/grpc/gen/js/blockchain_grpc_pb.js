@@ -3,7 +3,6 @@
 'use strict';
 var grpc = require('grpc');
 var blockchain_pb = require('./blockchain_pb.js');
-var google_api_annotations_pb = require('./google/api/annotations_pb.js');
 var transaction_pb = require('./transaction_pb.js');
 
 function serialize_pactus_AccountRequest(arg) {

@@ -47,7 +47,7 @@ final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVy
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [
-    const {'1': 'GetNetworkInfo', '2': '.pactus.NetworkInfoRequest', '3': '.pactus.NetworkInfoResponse', '4': const {}},
+    const {'1': 'GetNetworkInfo', '2': '.pactus.NetworkInfoRequest', '3': '.pactus.NetworkInfoResponse'},
   ],
 };
 
@@ -59,4 +59,4 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
 };
 
 /// Descriptor for `Network`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List networkServiceDescriptor = $convert.base64Decode('CgdOZXR3b3JrEmMKDkdldE5ldHdvcmtJbmZvEhoucGFjdHVzLk5ldHdvcmtJbmZvUmVxdWVzdBobLnBhY3R1cy5OZXR3b3JrSW5mb1Jlc3BvbnNlIhiC0+STAhISEC92MS9uZXR3b3JrL2luZm8=');
+final $typed_data.Uint8List networkServiceDescriptor = $convert.base64Decode('CgdOZXR3b3JrEkkKDkdldE5ldHdvcmtJbmZvEhoucGFjdHVzLk5ldHdvcmtJbmZvUmVxdWVzdBobLnBhY3R1cy5OZXR3b3JrSW5mb1Jlc3BvbnNl');

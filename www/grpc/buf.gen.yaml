@@ -8,9 +8,13 @@ plugins:
     opt: paths=source_relative,require_unimplemented_servers=false
   - name: grpc-gateway
     out: gen/go
-    opt: paths=source_relative
+    opt:
+      - paths=source_relative
+      - grpc_api_configuration=grpc-gateway.config.yaml
   - name: openapiv2
-    out: third_party/swagger-ui
+    out: swagger-ui
+    opt:
+      - grpc_api_configuration=grpc-gateway.config.yaml
   - remote: buf.build/protocolbuffers/plugins/js:v3.20.1-1
     out: gen/js
     opt:

@@ -1,21 +1,11 @@
 syntax = 'proto3';
-
-import "google/api/annotations.proto";
-
-option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-
 package pactus;
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
+option java_package = "pactus.transaction";
 
 service Transaction {
-  rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
-    option (google.api.http).get =
-        "/v1/transaction/id/{id}/verbosity/{verbosity}";
-  }
-  rpc SendRawTransaction(SendRawTransactionRequest)
-      returns (SendRawTransactionResponse) {
-    option (google.api.http).put =
-        "/v1/transaction/send_raw_transaction/{data}";
-  };
+  rpc GetTransaction(TransactionRequest) returns (TransactionResponse);
+  rpc SendRawTransaction(SendRawTransactionRequest) returns (SendRawTransactionResponse);
 }
 
 message TransactionRequest {
