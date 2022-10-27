@@ -52,7 +52,7 @@ capnp:
 		-ogo ./www/capnp/pactus.capnp
 
 proto:
-	cd www/grpc/ && buf generate \
+	cd www/grpc/ && rm -rf gen && buf generate \
 		--path ./proto/blockchain.proto \
 		--path ./proto/network.proto \
 		--path ./proto/transaction.proto \

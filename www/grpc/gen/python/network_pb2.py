@@ -13,20 +13,24 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rnetwork.proto\x12\x06pactus\"\x14\n\x12NetworkInfoRequest\"V\n\x13NetworkInfoResponse\x12\x17\n\x07self_id\x18\x01 \x01(\x0cR\x06selfId\x12&\n\x05peers\x18\x02 \x03(\x0b\x32\x10.pactus.PeerInfoR\x05peers\"\x9f\x02\n\x08PeerInfo\x12\x18\n\x07moniker\x18\x01 \x01(\tR\x07moniker\x12\x14\n\x05\x61gent\x18\x02 \x01(\tR\x05\x61gent\x12\x17\n\x07peer_id\x18\x03 \x01(\x0cR\x06peerId\x12\x1d\n\npublic_key\x18\x04 \x01(\tR\tpublicKey\x12\x14\n\x05\x66lags\x18\x05 \x01(\x05R\x05\x66lags\x12\x16\n\x06height\x18\x06 \x01(\rR\x06height\x12+\n\x11received_messages\x18\x07 \x01(\x05R\x10receivedMessages\x12)\n\x10invalid_messages\x18\x08 \x01(\x05R\x0finvalidMessages\x12%\n\x0ereceived_bytes\x18\t \x01(\x05R\rreceivedBytes2T\n\x07Network\x12I\n\x0eGetNetworkInfo\x12\x1a.pactus.NetworkInfoRequest\x1a\x1b.pactus.NetworkInfoResponseB!\n\x0epactus.netwokrZ\x0fwww/grpc/pactusb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rnetwork.proto\x12\x06pactus\"\x14\n\x12NetworkInfoRequest\"V\n\x13NetworkInfoResponse\x12\x17\n\x07self_id\x18\x01 \x01(\x0cR\x06selfId\x12&\n\x05peers\x18\x02 \x03(\x0b\x32\x10.pactus.PeerInfoR\x05peers\"\x9f\x02\n\x08PeerInfo\x12\x18\n\x07moniker\x18\x01 \x01(\tR\x07moniker\x12\x14\n\x05\x61gent\x18\x02 \x01(\tR\x05\x61gent\x12\x17\n\x07peer_id\x18\x03 \x01(\x0cR\x06peerId\x12\x1d\n\npublic_key\x18\x04 \x01(\tR\tpublicKey\x12\x14\n\x05\x66lags\x18\x05 \x01(\x05R\x05\x66lags\x12\x16\n\x06height\x18\x06 \x01(\rR\x06height\x12+\n\x11received_messages\x18\x07 \x01(\x05R\x10receivedMessages\x12)\n\x10invalid_messages\x18\x08 \x01(\x05R\x0finvalidMessages\x12%\n\x0ereceived_bytes\x18\t \x01(\x05R\rreceivedBytes\"\x11\n\x0fPeerInfoRequest\"\xa7\x02\n\x10PeerInfoResponse\x12\x18\n\x07moniker\x18\x01 \x01(\tR\x07moniker\x12\x14\n\x05\x61gent\x18\x02 \x01(\tR\x05\x61gent\x12\x17\n\x07peer_id\x18\x03 \x01(\x0cR\x06peerId\x12\x1d\n\npublic_key\x18\x04 \x01(\tR\tpublicKey\x12\x14\n\x05\x66lags\x18\x05 \x01(\x05R\x05\x66lags\x12\x16\n\x06height\x18\x06 \x01(\rR\x06height\x12+\n\x11received_messages\x18\x07 \x01(\x05R\x10receivedMessages\x12)\n\x10invalid_messages\x18\x08 \x01(\x05R\x0finvalidMessages\x12%\n\x0ereceived_bytes\x18\t \x01(\x05R\rreceivedBytes2\x96\x01\n\x07Network\x12I\n\x0eGetNetworkInfo\x12\x1a.pactus.NetworkInfoRequest\x1a\x1b.pactus.NetworkInfoResponse\x12@\n\x0bGetPeerInfo\x12\x17.pactus.PeerInfoRequest\x1a\x18.pactus.PeerInfoResponseBB\n\x0epactus.networkZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'network_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  DESCRIPTOR._serialized_options = b'\n\016pactus.netwokrZ\017www/grpc/pactus'
+  DESCRIPTOR._serialized_options = b'\n\016pactus.networkZ0github.com/pactus-project/pactus/www/grpc/pactus'
   _NETWORKINFOREQUEST._serialized_start=25
   _NETWORKINFOREQUEST._serialized_end=45
   _NETWORKINFORESPONSE._serialized_start=47
   _NETWORKINFORESPONSE._serialized_end=133
   _PEERINFO._serialized_start=136
   _PEERINFO._serialized_end=423
-  _NETWORK._serialized_start=425
-  _NETWORK._serialized_end=509
+  _PEERINFOREQUEST._serialized_start=425
+  _PEERINFOREQUEST._serialized_end=442
+  _PEERINFORESPONSE._serialized_start=445
+  _PEERINFORESPONSE._serialized_end=740
+  _NETWORK._serialized_start=743
+  _NETWORK._serialized_end=893
 # @@protoc_insertion_point(module_scope)

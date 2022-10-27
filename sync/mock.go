@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/peerset"
@@ -15,6 +16,7 @@ var _ Synchronizer = &MockSync{}
 
 type MockSync struct {
 	ID      peer.ID
+	Signer  crypto.Signer
 	PeerSet *peerset.PeerSet
 }
 
@@ -44,6 +46,7 @@ func MockingSync() *MockSync {
 
 	return &MockSync{
 		ID:      network.TestRandomPeerID(),
+		Signer:  bls.GenerateTestSigner(),
 		PeerSet: ps,
 	}
 }
@@ -59,6 +62,14 @@ func (m *MockSync) Fingerprint() string {
 
 func (m *MockSync) SelfID() peer.ID {
 	return m.ID
+}
+
+func (m *MockSync) Moniker() string {
+	return "test-moniker"
+}
+
+func (m *MockSync) PublicKey() crypto.PublicKey {
+	return m.Signer.PublicKey()
 }
 
 func (m *MockSync) Peers() []peerset.Peer {

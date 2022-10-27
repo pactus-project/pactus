@@ -35,13 +35,16 @@ http:
     - selector: pactus.Transaction.SendRawTransaction
       put: "/v1/transaction/send_raw_transaction/{data}"
 
+    # Network APIs
+    - selector: pactus.Network.GetNetworkInfo
+      get: "/v1/network/info"
+
+    - selector: pactus.Network.GetPeerInfo
+      get: "/v1/network/peer_info"
+
     # Wallet APIs
     - selector: pactus.Wallet.GenerateMnemonic
       get: "/v1/wallet/mnemonic/entropy/{entropy}/language/{language}"
 
     - selector: pactus.Wallet.CreateWallet
       get: "/v1/wallet/create/name/{name}/mnemonic/{mnemonic}/language/{language}"
-
-    # Network APIs
-    - selector: pactus.Network.GetNetworkInfo
-      get: "/v1/network/info"

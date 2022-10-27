@@ -253,6 +253,194 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearReceivedBytes() => clearField(9);
 }
 
+class PeerInfoRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PeerInfoRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  PeerInfoRequest._() : super();
+  factory PeerInfoRequest() => create();
+  factory PeerInfoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PeerInfoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PeerInfoRequest clone() => PeerInfoRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PeerInfoRequest copyWith(void Function(PeerInfoRequest) updates) => super.copyWith((message) => updates(message as PeerInfoRequest)) as PeerInfoRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static PeerInfoRequest create() => PeerInfoRequest._();
+  PeerInfoRequest createEmptyInstance() => create();
+  static $pb.PbList<PeerInfoRequest> createRepeated() => $pb.PbList<PeerInfoRequest>();
+  @$core.pragma('dart2js:noInline')
+  static PeerInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PeerInfoRequest>(create);
+  static PeerInfoRequest? _defaultInstance;
+}
+
+class PeerInfoResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PeerInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
+    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flags', $pb.PbFieldType.O3)
+    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
+    ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
+    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidMessages', $pb.PbFieldType.O3)
+    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  PeerInfoResponse._() : super();
+  factory PeerInfoResponse({
+    $core.String? moniker,
+    $core.String? agent,
+    $core.List<$core.int>? peerId,
+    $core.String? publicKey,
+    $core.int? flags,
+    $core.int? height,
+    $core.int? receivedMessages,
+    $core.int? invalidMessages,
+    $core.int? receivedBytes,
+  }) {
+    final _result = create();
+    if (moniker != null) {
+      _result.moniker = moniker;
+    }
+    if (agent != null) {
+      _result.agent = agent;
+    }
+    if (peerId != null) {
+      _result.peerId = peerId;
+    }
+    if (publicKey != null) {
+      _result.publicKey = publicKey;
+    }
+    if (flags != null) {
+      _result.flags = flags;
+    }
+    if (height != null) {
+      _result.height = height;
+    }
+    if (receivedMessages != null) {
+      _result.receivedMessages = receivedMessages;
+    }
+    if (invalidMessages != null) {
+      _result.invalidMessages = invalidMessages;
+    }
+    if (receivedBytes != null) {
+      _result.receivedBytes = receivedBytes;
+    }
+    return _result;
+  }
+  factory PeerInfoResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PeerInfoResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PeerInfoResponse clone() => PeerInfoResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PeerInfoResponse copyWith(void Function(PeerInfoResponse) updates) => super.copyWith((message) => updates(message as PeerInfoResponse)) as PeerInfoResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static PeerInfoResponse create() => PeerInfoResponse._();
+  PeerInfoResponse createEmptyInstance() => create();
+  static $pb.PbList<PeerInfoResponse> createRepeated() => $pb.PbList<PeerInfoResponse>();
+  @$core.pragma('dart2js:noInline')
+  static PeerInfoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PeerInfoResponse>(create);
+  static PeerInfoResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get moniker => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set moniker($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMoniker() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMoniker() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get agent => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set agent($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAgent() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAgent() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get peerId => $_getN(2);
+  @$pb.TagNumber(3)
+  set peerId($core.List<$core.int> v) { $_setBytes(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPeerId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPeerId() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get publicKey => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set publicKey($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPublicKey() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPublicKey() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.int get flags => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set flags($core.int v) { $_setSignedInt32(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasFlags() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearFlags() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.int get height => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set height($core.int v) { $_setUnsignedInt32(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasHeight() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearHeight() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.int get receivedMessages => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set receivedMessages($core.int v) { $_setSignedInt32(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasReceivedMessages() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearReceivedMessages() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.int get invalidMessages => $_getIZ(7);
+  @$pb.TagNumber(8)
+  set invalidMessages($core.int v) { $_setSignedInt32(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasInvalidMessages() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearInvalidMessages() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.int get receivedBytes => $_getIZ(8);
+  @$pb.TagNumber(9)
+  set receivedBytes($core.int v) { $_setSignedInt32(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasReceivedBytes() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearReceivedBytes() => clearField(9);
+}
+
 class NetworkApi {
   $pb.RpcClient _client;
   NetworkApi(this._client);
@@ -260,6 +448,10 @@ class NetworkApi {
   $async.Future<NetworkInfoResponse> getNetworkInfo($pb.ClientContext? ctx, NetworkInfoRequest request) {
     var emptyResponse = NetworkInfoResponse();
     return _client.invoke<NetworkInfoResponse>(ctx, 'Network', 'GetNetworkInfo', request, emptyResponse);
+  }
+  $async.Future<PeerInfoResponse> getPeerInfo($pb.ClientContext? ctx, PeerInfoRequest request) {
+    var emptyResponse = PeerInfoResponse();
+    return _client.invoke<PeerInfoResponse>(ctx, 'Network', 'GetPeerInfo', request, emptyResponse);
   }
 }
 

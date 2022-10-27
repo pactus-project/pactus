@@ -331,6 +331,14 @@ func (sync *synchronizer) SelfID() peer.ID {
 	return sync.network.SelfID()
 }
 
+func (sync *synchronizer) Moniker() string {
+	return sync.config.Moniker
+}
+
+func (sync *synchronizer) PublicKey() crypto.PublicKey {
+	return sync.signer.PublicKey()
+}
+
 func (sync *synchronizer) Peers() []peerset.Peer {
 	return sync.peerSet.GetPeerList()
 }
