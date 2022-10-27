@@ -9,10 +9,9 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
-	pactus "github.com/pactus-project/pactus/www/grpc/proto"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type blockchainServer struct {
@@ -72,7 +71,7 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 
 	if req.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
 		block := storedBlock.ToBlock()
-		timestamp := timestamppb.New(block.Header().Time())
+		blockTime := block.Header().UnixTime()
 		seed := block.Header().SortitionSeed()
 		cert := block.PrevCertificate()
 		var prevCert *pactus.CertificateInfo
@@ -110,7 +109,7 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 			}
 		}
 
-		res.BlockTime = timestamp
+		res.BlockTime = blockTime
 		res.Header = header
 		res.Txs = trxs
 		res.PrevCert = prevCert

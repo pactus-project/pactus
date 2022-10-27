@@ -1,23 +1,12 @@
 syntax = 'proto3';
-
-import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
-
-option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-
 package pactus;
 
-service Wallet {
-  rpc GenerateMnemonic(GenerateMnemonicRequest)
-      returns (GenerateMnemonicResponse) {
-    option (google.api.http).get =
-        "/v1/wallet/mnemonic/entropy/{entropy}/language/{language}";
-  }
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
+option java_package = "pactus.wallet";
 
-  rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse) {
-    option (google.api.http).get =
-        "/v1/wallet/create/name/{name}/mnemonic/{mnemonic}/language/{language}/password/{password}";
-  }
+service Wallet {
+  rpc GenerateMnemonic(GenerateMnemonicRequest) returns (GenerateMnemonicResponse);
+  rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse);
 }
 message GenerateMnemonicRequest {
   int32 entropy = 1;

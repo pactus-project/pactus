@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/wallet"
-	pactus "github.com/pactus-project/pactus/www/grpc/proto"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
 

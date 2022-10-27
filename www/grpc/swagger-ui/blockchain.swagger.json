@@ -1,0 +1,603 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "blockchain.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Blockchain"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/blockchain/account/address/{address}": {
+      "get": {
+        "operationId": "Blockchain_GetAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusAccountResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/block/height/{height}/verbosity/{verbosity}": {
+      "get": {
+        "operationId": "Blockchain_GetBlock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBlockResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "verbosity",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "BLOCK_DATA",
+              "BLOCK_INFO",
+              "BLOCK_TRANSACTIONS"
+            ]
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/block_hash/{height}": {
+      "get": {
+        "operationId": "Blockchain_GetBlockHash",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBlockHashResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/block_height/{hash}": {
+      "get": {
+        "operationId": "Blockchain_GetBlockHeight",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBlockHeightResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "byte"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/info": {
+      "get": {
+        "operationId": "Blockchain_GetBlockchainInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBlockchainInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/validator/address/{address}": {
+      "get": {
+        "operationId": "Blockchain_GetValidator",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusValidatorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/validator/{number}": {
+      "get": {
+        "operationId": "Blockchain_GetValidatorByNumber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusValidatorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/validators": {
+      "get": {
+        "operationId": "Blockchain_GetValidators",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusValidatorsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pactusAccountInfo": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Balance": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pactusAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/pactusAccountInfo"
+        }
+      }
+    },
+    "pactusBlockHashResponse": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusBlockHeaderInfo": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "prevBlockHash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "stateRoot": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sortitionSeed": {
+          "type": "string",
+          "format": "byte"
+        },
+        "proposerAddress": {
+          "type": "string"
+        }
+      }
+    },
+    "pactusBlockHeightResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "pactusBlockResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "header": {
+          "$ref": "#/definitions/pactusBlockHeaderInfo"
+        },
+        "prevCert": {
+          "$ref": "#/definitions/pactusCertificateInfo"
+        },
+        "txs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pactusTransactionInfo"
+          }
+        }
+      }
+    },
+    "pactusBlockVerbosity": {
+      "type": "string",
+      "enum": [
+        "BLOCK_DATA",
+        "BLOCK_INFO",
+        "BLOCK_TRANSACTIONS"
+      ],
+      "default": "BLOCK_DATA"
+    },
+    "pactusBlockchainInfoResponse": {
+      "type": "object",
+      "properties": {
+        "lastBlockHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lastBlockHash": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusCertificateInfo": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "committers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "absentees": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "signature": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusPayloadBond": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pactusPayloadSend": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pactusPayloadSortition": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusPayloadType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "SEND_PAYLOAD",
+        "BOND_PAYLOAD",
+        "SORTITION_PAYLOAD",
+        "UNBOND_PAYLOAD",
+        "WITHDRAW_PAYLOAD"
+      ],
+      "default": "UNKNOWN"
+    },
+    "pactusTransactionInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "byte"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stamp": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "value": {
+          "type": "string",
+          "format": "int64"
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Type": {
+          "$ref": "#/definitions/pactusPayloadType"
+        },
+        "send": {
+          "$ref": "#/definitions/pactusPayloadSend"
+        },
+        "bond": {
+          "$ref": "#/definitions/pactusPayloadBond"
+        },
+        "sortition": {
+          "$ref": "#/definitions/pactusPayloadSortition"
+        },
+        "memo": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusValidatorInfo": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64"
+        },
+        "lastBondingHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "lastJoinedHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "unbondingHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "pactusValidatorResponse": {
+      "type": "object",
+      "properties": {
+        "validator": {
+          "$ref": "#/definitions/pactusValidatorInfo"
+        }
+      }
+    },
+    "pactusValidatorsResponse": {
+      "type": "object",
+      "properties": {
+        "validators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pactusValidatorInfo"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

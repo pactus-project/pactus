@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	pactus "github.com/pactus-project/pactus/www/grpc/proto"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
 

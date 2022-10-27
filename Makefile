@@ -13,11 +13,11 @@ devtools:
 	@echo "Installing devtools"
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install zombiezen.com/go/capnproto2/capnpc-go@v2.18
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.10
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.10
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.12
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.12
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-	go install github.com/bufbuild/buf/cmd/buf@v1.3
+	go install github.com/bufbuild/buf/cmd/buf@v1.8
 	go install github.com/rakyll/statik@v0.1
 
 ########################################
@@ -58,8 +58,8 @@ proto:
 		--path ./proto/transaction.proto \
 		--path ./proto/wallet.proto
 
-	# Generate static assets for OpenAPI UI
-	cd www/grpc/ && statik -m -f -src third_party/OpenAPI/
+	# Generate static assets for Swagger-UI
+	cd www/grpc/ && statik -m -f -src swagger-ui/
 
 ########################################
 ### Formatting, linting, and vetting

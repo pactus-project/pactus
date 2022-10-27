@@ -1,22 +1,11 @@
 syntax = 'proto3';
-
-import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
-
-option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-
 package pactus;
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
+option java_package = "pactus.transaction";
 
 service Transaction {
-  rpc GetTransaction(TransactionRequest) returns (TransactionResponse) {
-    option (google.api.http).get =
-        "/v1/transaction/id/{id}/verbosity/{verbosity}";
-  }
-  rpc SendRawTransaction(SendRawTransactionRequest)
-      returns (SendRawTransactionResponse) {
-    option (google.api.http).put =
-        "/v1/transaction/send_raw_transaction/{data}";
-  };
+  rpc GetTransaction(TransactionRequest) returns (TransactionResponse);
+  rpc SendRawTransaction(SendRawTransactionRequest) returns (SendRawTransactionResponse);
 }
 
 message TransactionRequest {
@@ -25,8 +14,8 @@ message TransactionRequest {
 }
 
 message TransactionResponse {
-  bytes block_hash = 1;
-  uint32 block_time = 2;
+  uint32 block_height = 12;
+  uint32 block_time = 13;
   TransactionInfo transaction = 3;
 }
 
@@ -68,8 +57,6 @@ message TransactionInfo {
   string memo = 9;
   string public_key = 10;
   bytes signature = 11;
-  uint32 block_height = 12;
-  uint32 block_time = 13;
 }
 
 enum PayloadType {

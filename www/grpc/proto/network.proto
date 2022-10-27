@@ -1,16 +1,11 @@
 syntax = 'proto3';
-
-import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
-
-option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-
 package pactus;
 
+option go_package = "www/grpc/pactus";
+option java_package = "pactus.netwokr";
+
 service Network {
-  rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse) {
-    option (google.api.http).get = "/v1/network/info";
-  }
+  rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse);
 }
 
 message NetworkInfoRequest {}
