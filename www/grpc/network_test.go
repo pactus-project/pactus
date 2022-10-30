@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
@@ -37,6 +38,20 @@ func TestGetNetworkInfo(t *testing.T) {
 			}
 		}
 	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
+func TestGetPeerInfo(t *testing.T) {
+	conn, client := callNetworkServer(t)
+
+	res, err := client.GetPeerInfo(tCtx, &pactus.PeerInfoRequest{})
+	assert.NoError(t, err)
+	assert.Nil(t, err)
+	assert.Equal(t, version.Agent(), res.Agent)
+	assert.Equal(t, []byte(tMockSync.SelfID()), res.PeerId)
+	assert.Equal(t, tMockSync.PublicKey().String(), res.PublicKey)
+	assert.Equal(t, "test-moniker", res.Moniker)
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

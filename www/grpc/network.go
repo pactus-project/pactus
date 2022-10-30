@@ -51,7 +51,6 @@ func (s *networkServer) GetNetworkInfo(ctx context.Context,
 
 func (s *networkServer) GetPeerInfo(ctx context.Context,
 	req *pactus.PeerInfoRequest) (*pactus.PeerInfoResponse, error) {
-
 	return &pactus.PeerInfoResponse{
 		Moniker:   s.sync.Moniker(),
 		Agent:     version.Agent(),
