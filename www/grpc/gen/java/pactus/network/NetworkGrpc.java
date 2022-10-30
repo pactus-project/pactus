@@ -1,4 +1,4 @@
-package pactus.netwokr;
+package pactus.network;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
@@ -15,35 +15,66 @@ public final class NetworkGrpc {
   public static final String SERVICE_NAME = "pactus.Network";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<pactus.netwokr.NetworkOuterClass.NetworkInfoRequest,
-      pactus.netwokr.NetworkOuterClass.NetworkInfoResponse> getGetNetworkInfoMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.network.NetworkOuterClass.NetworkInfoRequest,
+      pactus.network.NetworkOuterClass.NetworkInfoResponse> getGetNetworkInfoMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetNetworkInfo",
-      requestType = pactus.netwokr.NetworkOuterClass.NetworkInfoRequest.class,
-      responseType = pactus.netwokr.NetworkOuterClass.NetworkInfoResponse.class,
+      requestType = pactus.network.NetworkOuterClass.NetworkInfoRequest.class,
+      responseType = pactus.network.NetworkOuterClass.NetworkInfoResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.netwokr.NetworkOuterClass.NetworkInfoRequest,
-      pactus.netwokr.NetworkOuterClass.NetworkInfoResponse> getGetNetworkInfoMethod() {
-    io.grpc.MethodDescriptor<pactus.netwokr.NetworkOuterClass.NetworkInfoRequest, pactus.netwokr.NetworkOuterClass.NetworkInfoResponse> getGetNetworkInfoMethod;
+  public static io.grpc.MethodDescriptor<pactus.network.NetworkOuterClass.NetworkInfoRequest,
+      pactus.network.NetworkOuterClass.NetworkInfoResponse> getGetNetworkInfoMethod() {
+    io.grpc.MethodDescriptor<pactus.network.NetworkOuterClass.NetworkInfoRequest, pactus.network.NetworkOuterClass.NetworkInfoResponse> getGetNetworkInfoMethod;
     if ((getGetNetworkInfoMethod = NetworkGrpc.getGetNetworkInfoMethod) == null) {
       synchronized (NetworkGrpc.class) {
         if ((getGetNetworkInfoMethod = NetworkGrpc.getGetNetworkInfoMethod) == null) {
           NetworkGrpc.getGetNetworkInfoMethod = getGetNetworkInfoMethod =
-              io.grpc.MethodDescriptor.<pactus.netwokr.NetworkOuterClass.NetworkInfoRequest, pactus.netwokr.NetworkOuterClass.NetworkInfoResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.network.NetworkOuterClass.NetworkInfoRequest, pactus.network.NetworkOuterClass.NetworkInfoResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetNetworkInfo"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.netwokr.NetworkOuterClass.NetworkInfoRequest.getDefaultInstance()))
+                  pactus.network.NetworkOuterClass.NetworkInfoRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.netwokr.NetworkOuterClass.NetworkInfoResponse.getDefaultInstance()))
+                  pactus.network.NetworkOuterClass.NetworkInfoResponse.getDefaultInstance()))
               .setSchemaDescriptor(new NetworkMethodDescriptorSupplier("GetNetworkInfo"))
               .build();
         }
       }
     }
     return getGetNetworkInfoMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.network.NetworkOuterClass.PeerInfoRequest,
+      pactus.network.NetworkOuterClass.PeerInfoResponse> getGetPeerInfoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetPeerInfo",
+      requestType = pactus.network.NetworkOuterClass.PeerInfoRequest.class,
+      responseType = pactus.network.NetworkOuterClass.PeerInfoResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.network.NetworkOuterClass.PeerInfoRequest,
+      pactus.network.NetworkOuterClass.PeerInfoResponse> getGetPeerInfoMethod() {
+    io.grpc.MethodDescriptor<pactus.network.NetworkOuterClass.PeerInfoRequest, pactus.network.NetworkOuterClass.PeerInfoResponse> getGetPeerInfoMethod;
+    if ((getGetPeerInfoMethod = NetworkGrpc.getGetPeerInfoMethod) == null) {
+      synchronized (NetworkGrpc.class) {
+        if ((getGetPeerInfoMethod = NetworkGrpc.getGetPeerInfoMethod) == null) {
+          NetworkGrpc.getGetPeerInfoMethod = getGetPeerInfoMethod =
+              io.grpc.MethodDescriptor.<pactus.network.NetworkOuterClass.PeerInfoRequest, pactus.network.NetworkOuterClass.PeerInfoResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetPeerInfo"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.network.NetworkOuterClass.PeerInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.network.NetworkOuterClass.PeerInfoResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new NetworkMethodDescriptorSupplier("GetPeerInfo"))
+              .build();
+        }
+      }
+    }
+    return getGetPeerInfoMethod;
   }
 
   /**
@@ -96,9 +127,16 @@ public final class NetworkGrpc {
 
     /**
      */
-    public void getNetworkInfo(pactus.netwokr.NetworkOuterClass.NetworkInfoRequest request,
-        io.grpc.stub.StreamObserver<pactus.netwokr.NetworkOuterClass.NetworkInfoResponse> responseObserver) {
+    public void getNetworkInfo(pactus.network.NetworkOuterClass.NetworkInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.NetworkInfoResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetNetworkInfoMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void getPeerInfo(pactus.network.NetworkOuterClass.PeerInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.PeerInfoResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetPeerInfoMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -107,9 +145,16 @@ public final class NetworkGrpc {
             getGetNetworkInfoMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.netwokr.NetworkOuterClass.NetworkInfoRequest,
-                pactus.netwokr.NetworkOuterClass.NetworkInfoResponse>(
+                pactus.network.NetworkOuterClass.NetworkInfoRequest,
+                pactus.network.NetworkOuterClass.NetworkInfoResponse>(
                   this, METHODID_GET_NETWORK_INFO)))
+          .addMethod(
+            getGetPeerInfoMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.network.NetworkOuterClass.PeerInfoRequest,
+                pactus.network.NetworkOuterClass.PeerInfoResponse>(
+                  this, METHODID_GET_PEER_INFO)))
           .build();
     }
   }
@@ -130,10 +175,18 @@ public final class NetworkGrpc {
 
     /**
      */
-    public void getNetworkInfo(pactus.netwokr.NetworkOuterClass.NetworkInfoRequest request,
-        io.grpc.stub.StreamObserver<pactus.netwokr.NetworkOuterClass.NetworkInfoResponse> responseObserver) {
+    public void getNetworkInfo(pactus.network.NetworkOuterClass.NetworkInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.NetworkInfoResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetNetworkInfoMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void getPeerInfo(pactus.network.NetworkOuterClass.PeerInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.PeerInfoResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetPeerInfoMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -153,9 +206,16 @@ public final class NetworkGrpc {
 
     /**
      */
-    public pactus.netwokr.NetworkOuterClass.NetworkInfoResponse getNetworkInfo(pactus.netwokr.NetworkOuterClass.NetworkInfoRequest request) {
+    public pactus.network.NetworkOuterClass.NetworkInfoResponse getNetworkInfo(pactus.network.NetworkOuterClass.NetworkInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetNetworkInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pactus.network.NetworkOuterClass.PeerInfoResponse getPeerInfo(pactus.network.NetworkOuterClass.PeerInfoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetPeerInfoMethod(), getCallOptions(), request);
     }
   }
 
@@ -175,14 +235,23 @@ public final class NetworkGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.netwokr.NetworkOuterClass.NetworkInfoResponse> getNetworkInfo(
-        pactus.netwokr.NetworkOuterClass.NetworkInfoRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.network.NetworkOuterClass.NetworkInfoResponse> getNetworkInfo(
+        pactus.network.NetworkOuterClass.NetworkInfoRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetNetworkInfoMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.network.NetworkOuterClass.PeerInfoResponse> getPeerInfo(
+        pactus.network.NetworkOuterClass.PeerInfoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetPeerInfoMethod(), getCallOptions()), request);
     }
   }
 
   private static final int METHODID_GET_NETWORK_INFO = 0;
+  private static final int METHODID_GET_PEER_INFO = 1;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -202,8 +271,12 @@ public final class NetworkGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GET_NETWORK_INFO:
-          serviceImpl.getNetworkInfo((pactus.netwokr.NetworkOuterClass.NetworkInfoRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.netwokr.NetworkOuterClass.NetworkInfoResponse>) responseObserver);
+          serviceImpl.getNetworkInfo((pactus.network.NetworkOuterClass.NetworkInfoRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.NetworkInfoResponse>) responseObserver);
+          break;
+        case METHODID_GET_PEER_INFO:
+          serviceImpl.getPeerInfo((pactus.network.NetworkOuterClass.PeerInfoRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.PeerInfoResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -227,7 +300,7 @@ public final class NetworkGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return pactus.netwokr.NetworkOuterClass.getDescriptor();
+      return pactus.network.NetworkOuterClass.getDescriptor();
     }
 
     @java.lang.Override
@@ -267,6 +340,7 @@ public final class NetworkGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new NetworkFileDescriptorSupplier())
               .addMethod(getGetNetworkInfoMethod())
+              .addMethod(getGetPeerInfoMethod())
               .build();
         }
       }

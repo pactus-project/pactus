@@ -37,6 +37,28 @@
           "Network"
         ]
       }
+    },
+    "/v1/network/peer_info": {
+      "get": {
+        "operationId": "Network_GetPeerInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusPeerInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Network"
+        ]
+      }
     }
   },
   "definitions": {
@@ -56,6 +78,44 @@
       }
     },
     "pactusPeerInfo": {
+      "type": "object",
+      "properties": {
+        "moniker": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "peerId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "flags": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "receivedMessages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "invalidMessages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "receivedBytes": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pactusPeerInfoResponse": {
       "type": "object",
       "properties": {
         "moniker": {

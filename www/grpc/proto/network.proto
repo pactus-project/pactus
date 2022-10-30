@@ -1,11 +1,12 @@
 syntax = 'proto3';
 package pactus;
 
-option go_package = "www/grpc/pactus";
-option java_package = "pactus.netwokr";
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
+option java_package = "pactus.network";
 
 service Network {
   rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse);
+  rpc GetPeerInfo(PeerInfoRequest) returns (PeerInfoResponse);
 }
 
 message NetworkInfoRequest {}
@@ -16,6 +17,20 @@ message NetworkInfoResponse {
 }
 
 message PeerInfo {
+  string moniker = 1;
+  string agent = 2;
+  bytes peer_id = 3;
+  string public_key = 4;
+  int32 flags = 5;
+  uint32 height = 6;
+  int32 received_messages = 7;
+  int32 invalid_messages = 8;
+  int32 received_bytes = 9;
+}
+
+message PeerInfoRequest {}
+
+message PeerInfoResponse {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;

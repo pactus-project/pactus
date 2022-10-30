@@ -6,6 +6,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -45,5 +46,16 @@ func (s *networkServer) GetNetworkInfo(ctx context.Context,
 	return &pactus.NetworkInfoResponse{
 		SelfId: []byte(s.sync.SelfID()),
 		Peers:  rps,
+	}, nil
+}
+
+func (s *networkServer) GetPeerInfo(ctx context.Context,
+	req *pactus.PeerInfoRequest) (*pactus.PeerInfoResponse, error) {
+	return &pactus.PeerInfoResponse{
+		Moniker:   s.sync.Moniker(),
+		Agent:     version.Agent(),
+		PeerId:    []byte(s.sync.SelfID()),
+		PublicKey: s.sync.PublicKey().String(),
+		// TODO: Update me
 	}, nil
 }
