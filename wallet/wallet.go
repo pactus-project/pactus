@@ -114,18 +114,27 @@ func newWallet(path string, store *store, offline bool) (*Wallet, error) {
 	}
 
 	if !offline {
-		client, err := w.connectToRandomServer()
+		err := w.connectToRandomServer()
 		if err != nil {
 			return nil, err
 		}
-		w.client = client
 	}
 
 	return w, nil
 }
 
 func (w *Wallet) Connect(addr string) error {
+	return w.tryToConnect(addr)
+}
+
+func (w *Wallet) tryToConnect(addr string) error {
 	client, err := newGRPCClient(addr)
+	if err != nil {
+		return err
+	}
+
+	// Check if client is responding
+	_, err = client.getStamp()
 	if err != nil {
 		return err
 	}
@@ -142,11 +151,11 @@ func (w *Wallet) IsOffline() bool {
 	return w.client == nil
 }
 
-func (w *Wallet) connectToRandomServer() (*grpcClient, error) {
+func (w *Wallet) connectToRandomServer() error {
 	serversInfo := servers{}
 	err := json.Unmarshal(serversJSON, &serversInfo)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	var netServers []serverInfo
@@ -162,20 +171,20 @@ func (w *Wallet) connectToRandomServer() (*grpcClient, error) {
 
 	default:
 		{
-			return nil, ErrInvalidNetwork
+			return ErrInvalidNetwork
 		}
 	}
 
 	for i := 0; i < 3; i++ {
 		n := util.RandInt32(int32(len(netServers)))
 		serverInfo := netServers[n]
-		client, err := newGRPCClient(serverInfo.IP)
+		err := w.tryToConnect(serverInfo.IP)
 		if err == nil {
-			return client, nil
+			return nil
 		}
 	}
 
-	return nil, errors.New("unable to connect to the servers")
+	return errors.New("unable to connect to the servers")
 }
 
 func (w *Wallet) Path() string {

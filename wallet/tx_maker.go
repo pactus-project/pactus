@@ -146,7 +146,7 @@ func (m *txMaker) checkSequence() error {
 				if err != nil {
 					return err
 				}
-				m.seq = acc.Sequence
+				m.seq = acc.Sequence + 1
 			}
 
 		case payload.PayloadTypeUnbond,
@@ -156,7 +156,7 @@ func (m *txMaker) checkSequence() error {
 				if err != nil {
 					return err
 				}
-				m.seq = val.Sequence
+				m.seq = val.Sequence + 1
 			}
 		}
 	}

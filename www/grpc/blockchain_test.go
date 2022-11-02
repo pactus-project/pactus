@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetBlock(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 
 	height := uint32(100)
 	b := tMockState.TestStore.AddTestBlock(height)
@@ -62,7 +62,7 @@ func TestGetBlock(t *testing.T) {
 }
 
 func TestGetBlockHash(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 
 	b := tMockState.TestStore.AddTestBlock(100)
 
@@ -82,7 +82,7 @@ func TestGetBlockHash(t *testing.T) {
 }
 
 func TestGetBlockHeight(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 
 	b := tMockState.TestStore.AddTestBlock(100)
 
@@ -108,7 +108,7 @@ func TestGetBlockHeight(t *testing.T) {
 }
 
 func TestGetBlockchainInfo(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 
 	t.Run("Should return the last block height", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx, &pactus.BlockchainInfoRequest{})
@@ -121,7 +121,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 }
 
 func TestGetAccount(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 	acc := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
@@ -154,7 +154,7 @@ func TestGetAccount(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 func TestGetValidator(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 
 	val1 := tMockState.TestStore.AddTestValidator()
 
@@ -188,7 +188,7 @@ func TestGetValidator(t *testing.T) {
 }
 
 func TestGetValidatorByNumber(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 
 	val1 := tMockState.TestStore.AddTestValidator()
 
@@ -222,7 +222,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 }
 
 func TestGetValidators(t *testing.T) {
-	conn, client := callBlockchainServer(t)
+	conn, client := testBlockchainClient(t)
 
 	t.Run("should return list of validators", func(t *testing.T) {
 		res, err := client.GetValidators(tCtx, &pactus.ValidatorsRequest{})

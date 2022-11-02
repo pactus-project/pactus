@@ -1,18 +1,51 @@
 package wallet
 
 import (
+	"context"
 	"encoding/json"
+	"log"
+	"net"
 	"path"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/util"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/test/bufconn"
 )
 
 var tWallet *Wallet
 var tPassword string
+var tListener *bufconn.Listener
+
+func init() {
+	const bufSize = 1024 * 1024
+
+	tListener = bufconn.Listen(bufSize)
+
+	s := grpc.NewServer()
+	blockchainServer := &blockchainServer{}
+	networkServer := &networkServer{}
+
+	pactus.RegisterBlockchainServer(s, blockchainServer)
+	pactus.RegisterNetworkServer(s, networkServer)
+
+	go func() {
+		if err := s.Serve(tListener); err != nil {
+			log.Fatalf("Server exited with error: %v", err)
+		}
+	}()
+}
+
+func bufDialer(context.Context, string) (net.Conn, error) {
+	return tListener.Dial()
+}
 
 func setup(t *testing.T) {
 	tPassword := ""
@@ -24,8 +57,23 @@ func setup(t *testing.T) {
 	assert.Equal(t, w.Path(), walletPath)
 	assert.Equal(t, w.Name(), path.Base(walletPath))
 
-	assert.False(t, w.IsEncrypted())
 	tWallet = w
+
+	conn, err := grpc.DialContext(context.Background(), "bufnet", grpc.WithContextDialer(bufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("Failed to dial blockchain server: %v", err)
+	}
+
+	client := &grpcClient{
+		blockchainClient:  pactus.NewBlockchainClient(conn),
+		transactionClient: pactus.NewTransactionClient(conn),
+	}
+
+	tWallet.client = client
+
+	assert.False(t, w.IsEncrypted())
+	assert.False(t, tWallet.IsOffline())
 }
 
 func TestOpenWallet(t *testing.T) {
@@ -139,8 +187,56 @@ func TestTestKeyInfo(t *testing.T) {
 		"Should generate different private key for the testnet")
 }
 
+func TestGetBalance(t *testing.T) {
+	setup(t)
+
+	addr := crypto.GenerateTestAddress()
+	tAccountRequest = &pactus.AccountRequest{Address: addr.String()}
+	tAccountResponse = &pactus.AccountResponse{Account: &pactus.AccountInfo{Balance: 1}}
+	bal, err := tWallet.Balance(addr.String())
+	assert.NoError(t, err)
+	assert.Equal(t, bal, int64(1))
+}
+
+func TestGetStake(t *testing.T) {
+	setup(t)
+
+	addr := crypto.GenerateTestAddress()
+	tValidatorRequest = &pactus.ValidatorRequest{Address: addr.String()}
+	tValidatorResponse = &pactus.ValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1}}
+	bal, err := tWallet.Stake(addr.String())
+	assert.NoError(t, err)
+	assert.Equal(t, bal, int64(1))
+}
+
 func TestMakeSendTx(t *testing.T) {
 	setup(t)
 
-	//TODO
+	senderAcc, _ := account.GenerateTestAccount(util.RandInt32(0))
+	receiver := crypto.GenerateTestAddress()
+	amount := int64(1)
+	lastBlockHsh := hash.GenerateTestHash().Bytes()
+
+	tAccountRequest = &pactus.AccountRequest{Address: senderAcc.Address().String()}
+	tAccountResponse = &pactus.AccountResponse{Account: &pactus.AccountInfo{Sequence: senderAcc.Sequence()}}
+	tBlockchainInfoResponse = &pactus.BlockchainInfoResponse{LastBlockHash: lastBlockHsh}
+	tx1, err := tWallet.MakeSendTx(senderAcc.Address().String(), receiver.String(), amount)
+	assert.NoError(t, err)
+	assert.Equal(t, tx1.Sequence(), senderAcc.Sequence()+1)
+	assert.Equal(t, tx1.Payload().Value(), amount)
+
+	stamp := hash.GenerateTestStamp()
+	opts := []TxOption{
+		OptionStamp(stamp.String()),
+		OptionFee(util.CoinToChange(10)),
+		OptionSequence(int32(20)),
+		OptionMemo("test"),
+	}
+
+	tx2, err := tWallet.MakeSendTx(senderAcc.Address().String(), receiver.String(), amount, opts...)
+	assert.NoError(t, err)
+	assert.Equal(t, tx2.Stamp(), stamp)
+	assert.Equal(t, tx2.Fee(), util.CoinToChange(10))
+	assert.Equal(t, tx2.Sequence(), int32(20))
+	assert.Equal(t, tx2.Memo(), "test")
 }
