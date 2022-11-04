@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pactus-project/pactus/types/tx"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type blockchainServer struct{}
-type networkServer struct{}
+type transactionServer struct{}
 
 var tBlockchainInfoResponse *pactus.BlockchainInfoResponse
 var tAccountRequest *pactus.AccountRequest
@@ -62,12 +63,15 @@ func (s *blockchainServer) GetValidators(_ context.Context,
 	return nil, nil
 }
 
-func (s *networkServer) GetNetworkInfo(_ context.Context,
-	req *pactus.NetworkInfoRequest) (*pactus.NetworkInfoResponse, error) {
+func (s *transactionServer) GetTransaction(ctx context.Context,
+	req *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
 	return nil, nil
 }
 
-func (s *networkServer) GetPeerInfo(_ context.Context,
-	req *pactus.PeerInfoRequest) (*pactus.PeerInfoResponse, error) {
-	return nil, nil
+func (s *transactionServer) SendRawTransaction(ctx context.Context,
+	req *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
+	trx, _ := tx.FromBytes(req.Data)
+	return &pactus.SendRawTransactionResponse{
+		Id: trx.ID().Bytes(),
+	}, nil
 }
