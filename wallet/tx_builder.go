@@ -4,48 +4,46 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util"
 )
 
-type TxOption func(maker *txMaker) error
+type TxOption func(builder *txBuilder) error
 
-func OptionStamp(stamp string) func(maker *txMaker) error {
-	return func(maker *txMaker) error {
+func OptionStamp(stamp string) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
 		if stamp != "" {
 			stamp, err := hash.StampFromString(stamp)
 			if err != nil {
 				return err
 			}
-			maker.stamp = &stamp
+			builder.stamp = &stamp
 		}
 		return nil
 	}
 }
-func OptionSequence(seq int32) func(maker *txMaker) error {
-	return func(maker *txMaker) error {
-		maker.seq = seq
+func OptionSequence(seq int32) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
+		builder.seq = seq
 		return nil
 	}
 }
 
-func OptionFee(fee int64) func(maker *txMaker) error {
-	return func(maker *txMaker) error {
-		maker.fee = fee
+func OptionFee(fee int64) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
+		builder.fee = fee
 		return nil
 	}
 }
 
-func OptionMemo(memo string) func(maker *txMaker) error {
-	return func(maker *txMaker) error {
-		maker.memo = memo
+func OptionMemo(memo string) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
+		builder.memo = memo
 		return nil
 	}
 }
 
-type txMaker struct {
+type txBuilder struct {
 	client *grpcClient
 	stamp  *hash.Stamp
 	from   *crypto.Address
@@ -58,20 +56,20 @@ type txMaker struct {
 	memo   string
 }
 
-func newTxMaker(client *grpcClient, options ...TxOption) (*txMaker, error) {
-	maker := &txMaker{
+func newTxBuilder(client *grpcClient, options ...TxOption) (*txBuilder, error) {
+	builder := &txBuilder{
 		client: client,
 	}
 	for _, op := range options {
-		err := op(maker)
+		err := op(builder)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return maker, nil
+	return builder, nil
 }
 
-func (m *txMaker) setFromAddr(addr string) error {
+func (m *txBuilder) setFromAddr(addr string) error {
 	from, err := crypto.AddressFromString(addr)
 	if err != nil {
 		return err
@@ -79,7 +77,7 @@ func (m *txMaker) setFromAddr(addr string) error {
 	m.from = &from
 	return nil
 }
-func (m *txMaker) setToAddress(addr string) error {
+func (m *txBuilder) setToAddress(addr string) error {
 	to, err := crypto.AddressFromString(addr)
 	if err != nil {
 		return err
@@ -88,18 +86,18 @@ func (m *txMaker) setToAddress(addr string) error {
 	return nil
 }
 
-func (m *txMaker) build() (*tx.Tx, error) {
-	err := m.checkStamp()
+func (m *txBuilder) build() (*tx.Tx, error) {
+	err := m.setStamp()
 	if err != nil {
 		return nil, err
 	}
 
-	err = m.checkSequence()
+	err = m.setSequence()
 	if err != nil {
 		return nil, err
 	}
 
-	m.checkFee()
+	m.setFee()
 
 	var trx *tx.Tx
 	switch m.typ {
@@ -116,7 +114,7 @@ func (m *txMaker) build() (*tx.Tx, error) {
 	return trx, nil
 }
 
-func (m *txMaker) checkStamp() error {
+func (m *txBuilder) setStamp() error {
 	if m.stamp == nil {
 		if m.client == nil {
 			return ErrOffline
@@ -132,7 +130,7 @@ func (m *txMaker) checkStamp() error {
 	return nil
 }
 
-func (m *txMaker) checkSequence() error {
+func (m *txBuilder) setSequence() error {
 	if m.seq == 0 {
 		if m.client == nil {
 			return ErrOffline
@@ -146,7 +144,7 @@ func (m *txMaker) checkSequence() error {
 				if err != nil {
 					return err
 				}
-				m.seq = acc.Sequence
+				m.seq = acc.Sequence + 1
 			}
 
 		case payload.PayloadTypeUnbond,
@@ -156,26 +154,21 @@ func (m *txMaker) checkSequence() error {
 				if err != nil {
 					return err
 				}
-				m.seq = val.Sequence
+				m.seq = val.Sequence + 1
 			}
 		}
 	}
 	return nil
 }
 
-func (m *txMaker) checkFee() {
-	params := param.DefaultParams()
+func (m *txBuilder) setFee() {
 	if m.fee == 0 {
 		switch m.typ {
 		case payload.PayloadTypeSend,
 			payload.PayloadTypeBond,
 			payload.PayloadTypeWithdraw:
 			{
-				// TODO: query fee from grpc client
-				fee := int64(float64(m.amount) * params.FeeFraction)
-				fee = util.Max64(fee, params.MinimumFee)
-				fee = util.Min64(fee, params.MaximumFee)
-				m.fee = fee
+				m.fee = calcFee(m.amount)
 			}
 
 		case payload.PayloadTypeUnbond:

@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetNetworkInfo(t *testing.T) {
-	conn, client := callNetworkServer(t)
+	conn, client := testNetworkClient(t)
 
 	t.Run("Should return node PeerID", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &pactus.NetworkInfoRequest{})
@@ -43,7 +43,7 @@ func TestGetNetworkInfo(t *testing.T) {
 }
 
 func TestGetPeerInfo(t *testing.T) {
-	conn, client := callNetworkServer(t)
+	conn, client := testNetworkClient(t)
 
 	res, err := client.GetPeerInfo(tCtx, &pactus.PeerInfoRequest{})
 	assert.NoError(t, err)

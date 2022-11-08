@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -114,18 +115,27 @@ func newWallet(path string, store *store, offline bool) (*Wallet, error) {
 	}
 
 	if !offline {
-		client, err := w.connectToRandomServer()
+		err := w.connectToRandomServer()
 		if err != nil {
 			return nil, err
 		}
-		w.client = client
 	}
 
 	return w, nil
 }
 
 func (w *Wallet) Connect(addr string) error {
+	return w.tryToConnect(addr)
+}
+
+func (w *Wallet) tryToConnect(addr string) error {
 	client, err := newGRPCClient(addr)
+	if err != nil {
+		return err
+	}
+
+	// Check if client is responding
+	_, err = client.getStamp()
 	if err != nil {
 		return err
 	}
@@ -142,11 +152,11 @@ func (w *Wallet) IsOffline() bool {
 	return w.client == nil
 }
 
-func (w *Wallet) connectToRandomServer() (*grpcClient, error) {
+func (w *Wallet) connectToRandomServer() error {
 	serversInfo := servers{}
 	err := json.Unmarshal(serversJSON, &serversInfo)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	var netServers []serverInfo
@@ -162,20 +172,20 @@ func (w *Wallet) connectToRandomServer() (*grpcClient, error) {
 
 	default:
 		{
-			return nil, ErrInvalidNetwork
+			return ErrInvalidNetwork
 		}
 	}
 
 	for i := 0; i < 3; i++ {
 		n := util.RandInt32(int32(len(netServers)))
 		serverInfo := netServers[n]
-		client, err := newGRPCClient(serverInfo.IP)
+		err := w.tryToConnect(serverInfo.IP)
 		if err == nil {
-			return client, nil
+			return nil
 		}
 	}
 
-	return nil, errors.New("unable to connect to the servers")
+	return errors.New("unable to connect to the servers")
 }
 
 func (w *Wallet) Path() string {
@@ -232,7 +242,7 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 // MakeSendTx creates a new send transaction based on the given parameters.
 func (w *Wallet) MakeSendTx(sender, receiver string, amount int64,
 	options ...TxOption) (*tx.Tx, error) {
-	maker, err := newTxMaker(w.client, options...)
+	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +263,7 @@ func (w *Wallet) MakeSendTx(sender, receiver string, amount int64,
 // MakeBondTx creates a new bond transaction based on the given parameters.
 func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 	options ...TxOption) (*tx.Tx, error) {
-	maker, err := newTxMaker(w.client, options...)
+	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -278,8 +288,8 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 }
 
 // MakeUnbondTx creates a new unbond transaction based on the given parameters.
-func (w *Wallet) MakeUnbondTx(addr string, options ...TxOption) (*tx.Tx, error) {
-	maker, err := newTxMaker(w.client, options...)
+func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
+	maker, err := newTxBuilder(w.client, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -292,12 +302,11 @@ func (w *Wallet) MakeUnbondTx(addr string, options ...TxOption) (*tx.Tx, error) 
 	return maker.build()
 }
 
-// TODO: write tests for me by mocking grpc server
 // MakeWithdrawTx creates a new withdraw transaction based on the given
 // parameters.
 func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 	options ...TxOption) (*tx.Tx, error) {
-	maker, err := newTxMaker(w.client, options...)
+	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -345,9 +354,17 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	return id.String(), nil
 }
 
+func calcFee(amount int64) int64 {
+	params := param.DefaultParams()
+	fee := int64(float64(amount) * params.FeeFraction)
+	fee = util.Max64(fee, params.MinimumFee)
+	fee = util.Min64(fee, params.MaximumFee)
+	return fee
+}
+
 // TODO: query fee from grpc client
 func (w *Wallet) CalculateFee(amount int64) int64 {
-	return util.Max64(amount/10000, 10000)
+	return calcFee(amount)
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string) error {

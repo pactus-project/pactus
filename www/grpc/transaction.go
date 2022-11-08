@@ -18,14 +18,14 @@ type transactionServer struct {
 	logger *logger.Logger
 }
 
-func (zs *transactionServer) GetTransaction(ctx context.Context,
+func (s *transactionServer) GetTransaction(ctx context.Context,
 	req *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
 	id, err := hash.FromBytes(req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
 	}
 	// TODO: Use RawTransaction here
-	storedTx := zs.state.StoredTx(id)
+	storedTx := s.state.StoredTx(id)
 	if storedTx == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
@@ -42,7 +42,7 @@ func (zs *transactionServer) GetTransaction(ctx context.Context,
 	return res, nil
 }
 
-func (zs *transactionServer) SendRawTransaction(ctx context.Context,
+func (s *transactionServer) SendRawTransaction(ctx context.Context,
 	req *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
 	trx, err := tx.FromBytes(req.Data)
 	if err != nil {
@@ -53,7 +53,7 @@ func (zs *transactionServer) SendRawTransaction(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't verify transaction: %v", err.Error())
 	}
 
-	if err := zs.state.AddPendingTxAndBroadcast(trx); err != nil {
+	if err := s.state.AddPendingTxAndBroadcast(trx); err != nil {
 		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %v", err.Error())
 	}
 

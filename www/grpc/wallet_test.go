@@ -9,7 +9,7 @@ import (
 )
 
 func TestGenerateMnemonic(t *testing.T) {
-	conn, client := callWalletSerer(t)
+	conn, client := testWalletClient(t)
 
 	t.Run("Should return mnemonic", func(t *testing.T) {
 		res, err := client.GenerateMnemonic(tCtx, &pactus.GenerateMnemonicRequest{Language: "english", Entropy: 128})
@@ -21,7 +21,7 @@ func TestGenerateMnemonic(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 func TestCreateWallet(t *testing.T) {
-	conn, client := callWalletSerer(t)
+	conn, client := testWalletClient(t)
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
 		res, err := client.CreateWallet(tCtx, &pactus.CreateWalletRequest{

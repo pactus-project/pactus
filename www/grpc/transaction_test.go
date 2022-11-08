@@ -11,7 +11,7 @@ import (
 )
 
 func TestGetTransaction(t *testing.T) {
-	conn, client := callTransactionServer(t)
+	conn, client := testTransactionClient(t)
 
 	testBlock := tMockState.TestStore.AddTestBlock(1)
 	trx1 := testBlock.Transactions()[0]
@@ -52,7 +52,7 @@ func TestGetTransaction(t *testing.T) {
 }
 
 func TestSendRawTransaction(t *testing.T) {
-	conn, client := callTransactionServer(t)
+	conn, client := testTransactionClient(t)
 
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
 		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: []byte("00000000")})

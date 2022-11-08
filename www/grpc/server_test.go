@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -71,32 +72,36 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 	return tListener.Dial()
 }
 
-func callBlockchainServer(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
+func testBlockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
+	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial blockchain server: %v", err)
 	}
 	return conn, pactus.NewBlockchainClient(conn)
 }
 
-func callNetworkServer(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
+func testNetworkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
+	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial network server: %v", err)
 	}
 	return conn, pactus.NewNetworkClient(conn)
 }
 
-func callTransactionServer(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
+func testTransactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
+	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial transaction server: %v", err)
 	}
 	return conn, pactus.NewTransactionClient(conn)
 }
 
-func callWalletSerer(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
+func testWalletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
+	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial wallet server: %v", err)
 	}

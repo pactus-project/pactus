@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type grpcClient struct {
@@ -16,7 +17,8 @@ type grpcClient struct {
 }
 
 func newGRPCClient(rpcEndpoint string) (*grpcClient, error) {
-	conn, err := grpc.Dial(rpcEndpoint, grpc.WithInsecure())
+	conn, err := grpc.Dial(rpcEndpoint,
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}

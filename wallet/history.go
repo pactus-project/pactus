@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"encoding/hex"
-	"fmt"
 	"sort"
 	"time"
 
@@ -88,7 +87,6 @@ func (h *history) addPending(addr string, amount int64, txID hash.Hash, data []b
 		Data:   hex.EncodeToString(data),
 	}
 	h.Pendings[addr] = append(h.Pendings[addr], pnd)
-	fmt.Println(h)
 }
 
 func (h *history) getAddrHistory(addr string) []HistoryInfo {
