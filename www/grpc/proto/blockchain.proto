@@ -7,35 +7,36 @@ option java_package = "pactus.blockchain";
 import "transaction.proto";
 
 service Blockchain {
-  rpc GetBlock(BlockRequest) returns (BlockResponse);
-  rpc GetBlockHash(BlockHashRequest) returns (BlockHashResponse);
-  rpc GetBlockHeight(BlockHeightRequest) returns (BlockHeightResponse);
-  rpc GetAccount(AccountRequest) returns (AccountResponse);
-  rpc GetValidators(ValidatorsRequest) returns (ValidatorsResponse);
-  rpc GetValidator(ValidatorRequest) returns (ValidatorResponse);
-  rpc GetValidatorByNumber(ValidatorByNumberRequest) returns (ValidatorResponse);
-  rpc GetBlockchainInfo(BlockchainInfoRequest) returns (BlockchainInfoResponse);
+  rpc GetBlock(GetBlockRequest) returns (GetBlockResponse);
+  rpc GetBlockHash(GetBlockHashRequest) returns (GetBlockHashResponse);
+  rpc GetBlockHeight(GetBlockHeightRequest) returns (GetBlockHeightResponse);
+  rpc GetBlockchainInfo(GetBlockchainInfoRequest) returns (GetBlockchainInfoResponse);
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+  rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
+  rpc GetValidatorByNumber(GetValidatorByNumberRequest) returns (GetValidatorResponse);
+  rpc GetValidators(GetValidatorsRequest) returns (GetValidatorsResponse);
 }
 
-message AccountRequest { string address = 1; }
+message GetAccountRequest { string address = 1; }
 
-message AccountResponse { AccountInfo account = 1; }
+message GetAccountResponse { AccountInfo account = 1; }
 
-message ValidatorsRequest {}
+message GetValidatorsRequest {}
 
-message ValidatorRequest { string address = 1; }
-message ValidatorByNumberRequest { int32 number = 1; }
+message GetValidatorRequest { string address = 1; }
 
-message ValidatorsResponse { repeated ValidatorInfo validators = 1; }
+message GetValidatorByNumberRequest { int32 number = 1; }
 
-message ValidatorResponse { ValidatorInfo validator = 1; }
+message GetValidatorsResponse { repeated ValidatorInfo validators = 1; }
 
-message BlockRequest {
+message GetValidatorResponse { ValidatorInfo validator = 1; }
+
+message GetBlockRequest {
   uint32 height = 1;
   BlockVerbosity verbosity = 2;
 }
 
-message BlockResponse {
+message GetBlockResponse {
   uint32 height = 1;
   bytes hash = 2;
   bytes data = 3;
@@ -45,17 +46,17 @@ message BlockResponse {
   repeated TransactionInfo txs = 7;
 }
 
-message BlockHashRequest { uint32 height = 1; }
+message GetBlockHashRequest { uint32 height = 1; }
 
-message BlockHashResponse { bytes hash = 1; }
+message GetBlockHashResponse { bytes hash = 1; }
 
-message BlockHeightRequest { bytes hash = 1; }
+message GetBlockHeightRequest { bytes hash = 1; }
 
-message BlockHeightResponse { uint32 height = 1; }
+message GetBlockHeightResponse { uint32 height = 1; }
 
-message BlockchainInfoRequest {}
+message GetBlockchainInfoRequest {}
 
-message BlockchainInfoResponse {
+message GetBlockchainInfoResponse {
   uint32 last_block_height = 1;
   bytes last_block_hash = 2;
 }

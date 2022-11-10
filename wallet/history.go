@@ -48,7 +48,7 @@ func (h *history) hasTransaction(id string) bool {
 	return ok
 }
 
-func (h *history) addActivity(addr string, amount int64, trx *pactus.TransactionResponse) {
+func (h *history) addActivity(addr string, amount int64, trx *pactus.GetTransactionResponse) {
 	if h.Activities == nil {
 		h.Activities = map[string][]activity{}
 		h.Transactions = map[string]transaction{}

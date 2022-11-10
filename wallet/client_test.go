@@ -11,34 +11,34 @@ import (
 type blockchainServer struct{}
 type transactionServer struct{}
 
-var tBlockchainInfoResponse *pactus.BlockchainInfoResponse
-var tAccountRequest *pactus.AccountRequest
-var tAccountResponse *pactus.AccountResponse
-var tValidatorRequest *pactus.ValidatorRequest
-var tValidatorResponse *pactus.ValidatorResponse
+var tBlockchainInfoResponse *pactus.GetBlockchainInfoResponse
+var tAccountRequest *pactus.GetAccountRequest
+var tAccountResponse *pactus.GetAccountResponse
+var tValidatorRequest *pactus.GetValidatorRequest
+var tValidatorResponse *pactus.GetValidatorResponse
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
-	req *pactus.BlockchainInfoRequest) (*pactus.BlockchainInfoResponse, error) {
+	req *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
 	return tBlockchainInfoResponse, nil
 }
 
 func (s *blockchainServer) GetBlockHash(_ context.Context,
-	req *pactus.BlockHashRequest) (*pactus.BlockHashResponse, error) {
+	req *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
 	return nil, nil
 }
 
 func (s *blockchainServer) GetBlockHeight(_ context.Context,
-	req *pactus.BlockHeightRequest) (*pactus.BlockHeightResponse, error) {
+	req *pactus.GetBlockHeightRequest) (*pactus.GetBlockHeightResponse, error) {
 	return nil, nil
 }
 
 func (s *blockchainServer) GetBlock(_ context.Context,
-	req *pactus.BlockRequest) (*pactus.BlockResponse, error) {
+	req *pactus.GetBlockRequest) (*pactus.GetBlockResponse, error) {
 	return nil, nil
 }
 
 func (s *blockchainServer) GetAccount(_ context.Context,
-	req *pactus.AccountRequest) (*pactus.AccountResponse, error) {
+	req *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
 	if req.Address == tAccountRequest.Address {
 		return tAccountResponse, nil
 	}
@@ -46,12 +46,12 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
-	req *pactus.ValidatorByNumberRequest) (*pactus.ValidatorResponse, error) {
+	req *pactus.GetValidatorByNumberRequest) (*pactus.GetValidatorResponse, error) {
 	return nil, nil
 }
 
 func (s *blockchainServer) GetValidator(_ context.Context,
-	req *pactus.ValidatorRequest) (*pactus.ValidatorResponse, error) {
+	req *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
 	if req.Address == tValidatorRequest.Address {
 		return tValidatorResponse, nil
 	}
@@ -59,12 +59,12 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidators(_ context.Context,
-	req *pactus.ValidatorsRequest) (*pactus.ValidatorsResponse, error) {
+	req *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
 	return nil, nil
 }
 
 func (s *transactionServer) GetTransaction(ctx context.Context,
-	req *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
+	req *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
 	return nil, nil
 }
 

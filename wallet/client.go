@@ -31,7 +31,7 @@ func newGRPCClient(rpcEndpoint string) (*grpcClient, error) {
 
 func (c *grpcClient) getStamp() (hash.Stamp, error) {
 	info, err := c.blockchainClient.GetBlockchainInfo(context.Background(),
-		&pactus.BlockchainInfoRequest{})
+		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
 		return hash.Stamp{}, err
 	}
@@ -41,7 +41,7 @@ func (c *grpcClient) getStamp() (hash.Stamp, error) {
 
 func (c *grpcClient) getAccount(addr crypto.Address) (*pactus.AccountInfo, error) {
 	res, err := c.blockchainClient.GetAccount(context.Background(),
-		&pactus.AccountRequest{Address: addr.String()})
+		&pactus.GetAccountRequest{Address: addr.String()})
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *grpcClient) getAccount(addr crypto.Address) (*pactus.AccountInfo, error
 
 func (c *grpcClient) getValidator(addr crypto.Address) (*pactus.ValidatorInfo, error) {
 	res, err := c.blockchainClient.GetValidator(context.Background(),
-		&pactus.ValidatorRequest{Address: addr.String()})
+		&pactus.GetValidatorRequest{Address: addr.String()})
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +73,8 @@ func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
 	return hash.FromBytes(res.Id)
 }
 
-func (c *grpcClient) getTransaction(id tx.ID) (*pactus.TransactionResponse, error) {
-	res, err := c.transactionClient.GetTransaction(context.Background(), &pactus.TransactionRequest{
+func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, error) {
+	res, err := c.transactionClient.GetTransaction(context.Background(), &pactus.GetTransactionRequest{
 		Id:        id.Bytes(),
 		Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 	})

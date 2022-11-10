@@ -266,8 +266,8 @@ public final class TransactionOuterClass {
     // @@protoc_insertion_point(enum_scope:pactus.TransactionVerbosity)
   }
 
-  public interface TransactionRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.TransactionRequest)
+  public interface GetTransactionRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetTransactionRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -288,18 +288,18 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.TransactionVerbosity getVerbosity();
   }
   /**
-   * Protobuf type {@code pactus.TransactionRequest}
+   * Protobuf type {@code pactus.GetTransactionRequest}
    */
-  public static final class TransactionRequest extends
+  public static final class GetTransactionRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.TransactionRequest)
-      TransactionRequestOrBuilder {
+      // @@protoc_insertion_point(message_implements:pactus.GetTransactionRequest)
+      GetTransactionRequestOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use TransactionRequest.newBuilder() to construct.
-    private TransactionRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use GetTransactionRequest.newBuilder() to construct.
+    private GetTransactionRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private TransactionRequest() {
+    private GetTransactionRequest() {
       id_ = com.google.protobuf.ByteString.EMPTY;
       verbosity_ = 0;
     }
@@ -308,7 +308,7 @@ public final class TransactionOuterClass {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new TransactionRequest();
+      return new GetTransactionRequest();
     }
 
     @java.lang.Override
@@ -318,15 +318,15 @@ public final class TransactionOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionRequest_descriptor;
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionRequest_fieldAccessorTable
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.transaction.TransactionOuterClass.TransactionRequest.class, pactus.transaction.TransactionOuterClass.TransactionRequest.Builder.class);
+              pactus.transaction.TransactionOuterClass.GetTransactionRequest.class, pactus.transaction.TransactionOuterClass.GetTransactionRequest.Builder.class);
     }
 
     public static final int ID_FIELD_NUMBER = 1;
@@ -406,10 +406,10 @@ public final class TransactionOuterClass {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.transaction.TransactionOuterClass.TransactionRequest)) {
+      if (!(obj instanceof pactus.transaction.TransactionOuterClass.GetTransactionRequest)) {
         return super.equals(obj);
       }
-      pactus.transaction.TransactionOuterClass.TransactionRequest other = (pactus.transaction.TransactionOuterClass.TransactionRequest) obj;
+      pactus.transaction.TransactionOuterClass.GetTransactionRequest other = (pactus.transaction.TransactionOuterClass.GetTransactionRequest) obj;
 
       if (!getId()
           .equals(other.getId())) return false;
@@ -434,69 +434,69 @@ public final class TransactionOuterClass {
       return hash;
     }
 
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(byte[] data)
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseDelimitedFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -509,7 +509,7 @@ public final class TransactionOuterClass {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.TransactionRequest prototype) {
+    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.GetTransactionRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -525,26 +525,26 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
-     * Protobuf type {@code pactus.TransactionRequest}
+     * Protobuf type {@code pactus.GetTransactionRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.TransactionRequest)
-        pactus.transaction.TransactionOuterClass.TransactionRequestOrBuilder {
+        // @@protoc_insertion_point(builder_implements:pactus.GetTransactionRequest)
+        pactus.transaction.TransactionOuterClass.GetTransactionRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionRequest_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionRequest_fieldAccessorTable
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.transaction.TransactionOuterClass.TransactionRequest.class, pactus.transaction.TransactionOuterClass.TransactionRequest.Builder.class);
+                pactus.transaction.TransactionOuterClass.GetTransactionRequest.class, pactus.transaction.TransactionOuterClass.GetTransactionRequest.Builder.class);
       }
 
-      // Construct using pactus.transaction.TransactionOuterClass.TransactionRequest.newBuilder()
+      // Construct using pactus.transaction.TransactionOuterClass.GetTransactionRequest.newBuilder()
       private Builder() {
 
       }
@@ -567,17 +567,17 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionRequest_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.TransactionRequest getDefaultInstanceForType() {
-        return pactus.transaction.TransactionOuterClass.TransactionRequest.getDefaultInstance();
+      public pactus.transaction.TransactionOuterClass.GetTransactionRequest getDefaultInstanceForType() {
+        return pactus.transaction.TransactionOuterClass.GetTransactionRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.TransactionRequest build() {
-        pactus.transaction.TransactionOuterClass.TransactionRequest result = buildPartial();
+      public pactus.transaction.TransactionOuterClass.GetTransactionRequest build() {
+        pactus.transaction.TransactionOuterClass.GetTransactionRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -585,8 +585,8 @@ public final class TransactionOuterClass {
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.TransactionRequest buildPartial() {
-        pactus.transaction.TransactionOuterClass.TransactionRequest result = new pactus.transaction.TransactionOuterClass.TransactionRequest(this);
+      public pactus.transaction.TransactionOuterClass.GetTransactionRequest buildPartial() {
+        pactus.transaction.TransactionOuterClass.GetTransactionRequest result = new pactus.transaction.TransactionOuterClass.GetTransactionRequest(this);
         result.id_ = id_;
         result.verbosity_ = verbosity_;
         onBuilt();
@@ -627,16 +627,16 @@ public final class TransactionOuterClass {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.transaction.TransactionOuterClass.TransactionRequest) {
-          return mergeFrom((pactus.transaction.TransactionOuterClass.TransactionRequest)other);
+        if (other instanceof pactus.transaction.TransactionOuterClass.GetTransactionRequest) {
+          return mergeFrom((pactus.transaction.TransactionOuterClass.GetTransactionRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.TransactionRequest other) {
-        if (other == pactus.transaction.TransactionOuterClass.TransactionRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.GetTransactionRequest other) {
+        if (other == pactus.transaction.TransactionOuterClass.GetTransactionRequest.getDefaultInstance()) return this;
         if (other.getId() != com.google.protobuf.ByteString.EMPTY) {
           setId(other.getId());
         }
@@ -795,23 +795,23 @@ public final class TransactionOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:pactus.TransactionRequest)
+      // @@protoc_insertion_point(builder_scope:pactus.GetTransactionRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:pactus.TransactionRequest)
-    private static final pactus.transaction.TransactionOuterClass.TransactionRequest DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:pactus.GetTransactionRequest)
+    private static final pactus.transaction.TransactionOuterClass.GetTransactionRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.TransactionRequest();
+      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.GetTransactionRequest();
     }
 
-    public static pactus.transaction.TransactionOuterClass.TransactionRequest getDefaultInstance() {
+    public static pactus.transaction.TransactionOuterClass.GetTransactionRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<TransactionRequest>
-        PARSER = new com.google.protobuf.AbstractParser<TransactionRequest>() {
+    private static final com.google.protobuf.Parser<GetTransactionRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetTransactionRequest>() {
       @java.lang.Override
-      public TransactionRequest parsePartialFrom(
+      public GetTransactionRequest parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -830,24 +830,24 @@ public final class TransactionOuterClass {
       }
     };
 
-    public static com.google.protobuf.Parser<TransactionRequest> parser() {
+    public static com.google.protobuf.Parser<GetTransactionRequest> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<TransactionRequest> getParserForType() {
+    public com.google.protobuf.Parser<GetTransactionRequest> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public pactus.transaction.TransactionOuterClass.TransactionRequest getDefaultInstanceForType() {
+    public pactus.transaction.TransactionOuterClass.GetTransactionRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
-  public interface TransactionResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.TransactionResponse)
+  public interface GetTransactionResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetTransactionResponse)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -878,25 +878,25 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTransactionOrBuilder();
   }
   /**
-   * Protobuf type {@code pactus.TransactionResponse}
+   * Protobuf type {@code pactus.GetTransactionResponse}
    */
-  public static final class TransactionResponse extends
+  public static final class GetTransactionResponse extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.TransactionResponse)
-      TransactionResponseOrBuilder {
+      // @@protoc_insertion_point(message_implements:pactus.GetTransactionResponse)
+      GetTransactionResponseOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use TransactionResponse.newBuilder() to construct.
-    private TransactionResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use GetTransactionResponse.newBuilder() to construct.
+    private GetTransactionResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private TransactionResponse() {
+    private GetTransactionResponse() {
     }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new TransactionResponse();
+      return new GetTransactionResponse();
     }
 
     @java.lang.Override
@@ -906,15 +906,15 @@ public final class TransactionOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionResponse_descriptor;
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionResponse_fieldAccessorTable
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.transaction.TransactionOuterClass.TransactionResponse.class, pactus.transaction.TransactionOuterClass.TransactionResponse.Builder.class);
+              pactus.transaction.TransactionOuterClass.GetTransactionResponse.class, pactus.transaction.TransactionOuterClass.GetTransactionResponse.Builder.class);
     }
 
     public static final int BLOCK_HEIGHT_FIELD_NUMBER = 12;
@@ -1019,10 +1019,10 @@ public final class TransactionOuterClass {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.transaction.TransactionOuterClass.TransactionResponse)) {
+      if (!(obj instanceof pactus.transaction.TransactionOuterClass.GetTransactionResponse)) {
         return super.equals(obj);
       }
-      pactus.transaction.TransactionOuterClass.TransactionResponse other = (pactus.transaction.TransactionOuterClass.TransactionResponse) obj;
+      pactus.transaction.TransactionOuterClass.GetTransactionResponse other = (pactus.transaction.TransactionOuterClass.GetTransactionResponse) obj;
 
       if (getBlockHeight()
           != other.getBlockHeight()) return false;
@@ -1057,69 +1057,69 @@ public final class TransactionOuterClass {
       return hash;
     }
 
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(byte[] data)
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseDelimitedFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1132,7 +1132,7 @@ public final class TransactionOuterClass {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.TransactionResponse prototype) {
+    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.GetTransactionResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1148,26 +1148,26 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
-     * Protobuf type {@code pactus.TransactionResponse}
+     * Protobuf type {@code pactus.GetTransactionResponse}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.TransactionResponse)
-        pactus.transaction.TransactionOuterClass.TransactionResponseOrBuilder {
+        // @@protoc_insertion_point(builder_implements:pactus.GetTransactionResponse)
+        pactus.transaction.TransactionOuterClass.GetTransactionResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionResponse_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionResponse_fieldAccessorTable
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.transaction.TransactionOuterClass.TransactionResponse.class, pactus.transaction.TransactionOuterClass.TransactionResponse.Builder.class);
+                pactus.transaction.TransactionOuterClass.GetTransactionResponse.class, pactus.transaction.TransactionOuterClass.GetTransactionResponse.Builder.class);
       }
 
-      // Construct using pactus.transaction.TransactionOuterClass.TransactionResponse.newBuilder()
+      // Construct using pactus.transaction.TransactionOuterClass.GetTransactionResponse.newBuilder()
       private Builder() {
 
       }
@@ -1196,17 +1196,17 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_TransactionResponse_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetTransactionResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.TransactionResponse getDefaultInstanceForType() {
-        return pactus.transaction.TransactionOuterClass.TransactionResponse.getDefaultInstance();
+      public pactus.transaction.TransactionOuterClass.GetTransactionResponse getDefaultInstanceForType() {
+        return pactus.transaction.TransactionOuterClass.GetTransactionResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.TransactionResponse build() {
-        pactus.transaction.TransactionOuterClass.TransactionResponse result = buildPartial();
+      public pactus.transaction.TransactionOuterClass.GetTransactionResponse build() {
+        pactus.transaction.TransactionOuterClass.GetTransactionResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1214,8 +1214,8 @@ public final class TransactionOuterClass {
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.TransactionResponse buildPartial() {
-        pactus.transaction.TransactionOuterClass.TransactionResponse result = new pactus.transaction.TransactionOuterClass.TransactionResponse(this);
+      public pactus.transaction.TransactionOuterClass.GetTransactionResponse buildPartial() {
+        pactus.transaction.TransactionOuterClass.GetTransactionResponse result = new pactus.transaction.TransactionOuterClass.GetTransactionResponse(this);
         result.blockHeight_ = blockHeight_;
         result.blockTime_ = blockTime_;
         if (transactionBuilder_ == null) {
@@ -1261,16 +1261,16 @@ public final class TransactionOuterClass {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.transaction.TransactionOuterClass.TransactionResponse) {
-          return mergeFrom((pactus.transaction.TransactionOuterClass.TransactionResponse)other);
+        if (other instanceof pactus.transaction.TransactionOuterClass.GetTransactionResponse) {
+          return mergeFrom((pactus.transaction.TransactionOuterClass.GetTransactionResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.TransactionResponse other) {
-        if (other == pactus.transaction.TransactionOuterClass.TransactionResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.GetTransactionResponse other) {
+        if (other == pactus.transaction.TransactionOuterClass.GetTransactionResponse.getDefaultInstance()) return this;
         if (other.getBlockHeight() != 0) {
           setBlockHeight(other.getBlockHeight());
         }
@@ -1532,23 +1532,23 @@ public final class TransactionOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:pactus.TransactionResponse)
+      // @@protoc_insertion_point(builder_scope:pactus.GetTransactionResponse)
     }
 
-    // @@protoc_insertion_point(class_scope:pactus.TransactionResponse)
-    private static final pactus.transaction.TransactionOuterClass.TransactionResponse DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:pactus.GetTransactionResponse)
+    private static final pactus.transaction.TransactionOuterClass.GetTransactionResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.TransactionResponse();
+      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.GetTransactionResponse();
     }
 
-    public static pactus.transaction.TransactionOuterClass.TransactionResponse getDefaultInstance() {
+    public static pactus.transaction.TransactionOuterClass.GetTransactionResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<TransactionResponse>
-        PARSER = new com.google.protobuf.AbstractParser<TransactionResponse>() {
+    private static final com.google.protobuf.Parser<GetTransactionResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetTransactionResponse>() {
       @java.lang.Override
-      public TransactionResponse parsePartialFrom(
+      public GetTransactionResponse parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1567,17 +1567,17 @@ public final class TransactionOuterClass {
       }
     };
 
-    public static com.google.protobuf.Parser<TransactionResponse> parser() {
+    public static com.google.protobuf.Parser<GetTransactionResponse> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<TransactionResponse> getParserForType() {
+    public com.google.protobuf.Parser<GetTransactionResponse> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public pactus.transaction.TransactionOuterClass.TransactionResponse getDefaultInstanceForType() {
+    public pactus.transaction.TransactionOuterClass.GetTransactionResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6824,15 +6824,15 @@ public final class TransactionOuterClass {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_TransactionRequest_descriptor;
+    internal_static_pactus_GetTransactionRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_TransactionRequest_fieldAccessorTable;
+      internal_static_pactus_GetTransactionRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_TransactionResponse_descriptor;
+    internal_static_pactus_GetTransactionResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_TransactionResponse_fieldAccessorTable;
+      internal_static_pactus_GetTransactionResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_SendRawTransactionRequest_descriptor;
   private static final 
@@ -6872,61 +6872,61 @@ public final class TransactionOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021transaction.proto\022\006pactus\"`\n\022Transacti" +
-      "onRequest\022\016\n\002id\030\001 \001(\014R\002id\022:\n\tverbosity\030\002" +
-      " \001(\0162\034.pactus.TransactionVerbosityR\tverb" +
-      "osity\"\222\001\n\023TransactionResponse\022!\n\014block_h" +
-      "eight\030\014 \001(\rR\013blockHeight\022\035\n\nblock_time\030\r" +
-      " \001(\rR\tblockTime\0229\n\013transaction\030\003 \001(\0132\027.p" +
-      "actus.TransactionInfoR\013transaction\"/\n\031Se" +
-      "ndRawTransactionRequest\022\022\n\004data\030\001 \001(\014R\004d" +
-      "ata\",\n\032SendRawTransactionResponse\022\016\n\002id\030" +
-      "\002 \001(\014R\002id\"Y\n\013PayloadSend\022\026\n\006sender\030\001 \001(\t" +
-      "R\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiver\022\026\n\006" +
-      "amount\030\003 \001(\003R\006amount\"W\n\013PayloadBond\022\026\n\006s" +
-      "ender\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010r" +
-      "eceiver\022\024\n\005stake\030\003 \001(\003R\005stake\"B\n\020Payload" +
-      "Sortition\022\030\n\007address\030\001 \001(\tR\007address\022\024\n\005p" +
-      "roof\030\002 \001(\014R\005proof\"\276\003\n\017TransactionInfo\022\016\n" +
-      "\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022\030\n\007ver" +
-      "sion\030\003 \001(\005R\007version\022\024\n\005stamp\030\004 \001(\014R\005stam" +
-      "p\022\032\n\010sequence\030\005 \001(\005R\010sequence\022\024\n\005value\030\006" +
-      " \001(\003R\005value\022\020\n\003fee\030\007 \001(\003R\003fee\022\'\n\004Type\030\010 " +
-      "\001(\0162\023.pactus.PayloadTypeR\004Type\022)\n\004send\030\036" +
-      " \001(\0132\023.pactus.PayloadSendH\000R\004send\022)\n\004bon" +
-      "d\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bond\0228\n\t" +
-      "sortition\030  \001(\0132\030.pactus.PayloadSortitio" +
-      "nH\000R\tsortition\022\022\n\004memo\030\t \001(\tR\004memo\022\035\n\npu" +
-      "blic_key\030\n \001(\tR\tpublicKey\022\034\n\tsignature\030\013" +
-      " \001(\014R\tsignatureB\t\n\007Payload*\177\n\013PayloadTyp" +
-      "e\022\013\n\007UNKNOWN\020\000\022\020\n\014SEND_PAYLOAD\020\001\022\020\n\014BOND" +
-      "_PAYLOAD\020\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNB" +
-      "OND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024T" +
-      "ransactionVerbosity\022\024\n\020TRANSACTION_DATA\020" +
-      "\000\022\024\n\020TRANSACTION_INFO\020\0012\265\001\n\013Transaction\022" +
-      "I\n\016GetTransaction\022\032.pactus.TransactionRe" +
-      "quest\032\033.pactus.TransactionResponse\022[\n\022Se" +
-      "ndRawTransaction\022!.pactus.SendRawTransac" +
-      "tionRequest\032\".pactus.SendRawTransactionR" +
-      "esponseBF\n\022pactus.transactionZ0github.co" +
-      "m/pactus-project/pactus/www/grpc/pactusb" +
-      "\006proto3"
+      "\n\021transaction.proto\022\006pactus\"c\n\025GetTransa" +
+      "ctionRequest\022\016\n\002id\030\001 \001(\014R\002id\022:\n\tverbosit" +
+      "y\030\002 \001(\0162\034.pactus.TransactionVerbosityR\tv" +
+      "erbosity\"\225\001\n\026GetTransactionResponse\022!\n\014b" +
+      "lock_height\030\014 \001(\rR\013blockHeight\022\035\n\nblock_" +
+      "time\030\r \001(\rR\tblockTime\0229\n\013transaction\030\003 \001" +
+      "(\0132\027.pactus.TransactionInfoR\013transaction" +
+      "\"/\n\031SendRawTransactionRequest\022\022\n\004data\030\001 " +
+      "\001(\014R\004data\",\n\032SendRawTransactionResponse\022" +
+      "\016\n\002id\030\002 \001(\014R\002id\"Y\n\013PayloadSend\022\026\n\006sender" +
+      "\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiv" +
+      "er\022\026\n\006amount\030\003 \001(\003R\006amount\"W\n\013PayloadBon" +
+      "d\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 " +
+      "\001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\"B\n\020P" +
+      "ayloadSortition\022\030\n\007address\030\001 \001(\tR\007addres" +
+      "s\022\024\n\005proof\030\002 \001(\014R\005proof\"\276\003\n\017TransactionI" +
+      "nfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022" +
+      "\030\n\007version\030\003 \001(\005R\007version\022\024\n\005stamp\030\004 \001(\014" +
+      "R\005stamp\022\032\n\010sequence\030\005 \001(\005R\010sequence\022\024\n\005v" +
+      "alue\030\006 \001(\003R\005value\022\020\n\003fee\030\007 \001(\003R\003fee\022\'\n\004T" +
+      "ype\030\010 \001(\0162\023.pactus.PayloadTypeR\004Type\022)\n\004" +
+      "send\030\036 \001(\0132\023.pactus.PayloadSendH\000R\004send\022" +
+      ")\n\004bond\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bo" +
+      "nd\0228\n\tsortition\030  \001(\0132\030.pactus.PayloadSo" +
+      "rtitionH\000R\tsortition\022\022\n\004memo\030\t \001(\tR\004memo" +
+      "\022\035\n\npublic_key\030\n \001(\tR\tpublicKey\022\034\n\tsigna" +
+      "ture\030\013 \001(\014R\tsignatureB\t\n\007Payload*\177\n\013Payl" +
+      "oadType\022\013\n\007UNKNOWN\020\000\022\020\n\014SEND_PAYLOAD\020\001\022\020" +
+      "\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_PAYLOAD\020\003\022" +
+      "\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020" +
+      "\005*B\n\024TransactionVerbosity\022\024\n\020TRANSACTION" +
+      "_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012\273\001\n\013Transa" +
+      "ction\022O\n\016GetTransaction\022\035.pactus.GetTran" +
+      "sactionRequest\032\036.pactus.GetTransactionRe" +
+      "sponse\022[\n\022SendRawTransaction\022!.pactus.Se" +
+      "ndRawTransactionRequest\032\".pactus.SendRaw" +
+      "TransactionResponseBF\n\022pactus.transactio" +
+      "nZ0github.com/pactus-project/pactus/www/" +
+      "grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_pactus_TransactionRequest_descriptor =
+    internal_static_pactus_GetTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_pactus_TransactionRequest_fieldAccessorTable = new
+    internal_static_pactus_GetTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_TransactionRequest_descriptor,
+        internal_static_pactus_GetTransactionRequest_descriptor,
         new java.lang.String[] { "Id", "Verbosity", });
-    internal_static_pactus_TransactionResponse_descriptor =
+    internal_static_pactus_GetTransactionResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_pactus_TransactionResponse_fieldAccessorTable = new
+    internal_static_pactus_GetTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_TransactionResponse_descriptor,
+        internal_static_pactus_GetTransactionResponse_descriptor,
         new java.lang.String[] { "BlockHeight", "BlockTime", "Transaction", });
     internal_static_pactus_SendRawTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);

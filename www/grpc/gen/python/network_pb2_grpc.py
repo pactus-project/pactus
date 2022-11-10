@@ -16,13 +16,13 @@ class NetworkStub(object):
         """
         self.GetNetworkInfo = channel.unary_unary(
                 '/pactus.Network/GetNetworkInfo',
-                request_serializer=network__pb2.NetworkInfoRequest.SerializeToString,
-                response_deserializer=network__pb2.NetworkInfoResponse.FromString,
+                request_serializer=network__pb2.GetNetworkInfoRequest.SerializeToString,
+                response_deserializer=network__pb2.GetNetworkInfoResponse.FromString,
                 )
         self.GetPeerInfo = channel.unary_unary(
                 '/pactus.Network/GetPeerInfo',
-                request_serializer=network__pb2.PeerInfoRequest.SerializeToString,
-                response_deserializer=network__pb2.PeerInfoResponse.FromString,
+                request_serializer=network__pb2.GetPeerInfoRequest.SerializeToString,
+                response_deserializer=network__pb2.GetPeerInfoResponse.FromString,
                 )
 
 
@@ -46,13 +46,13 @@ def add_NetworkServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetNetworkInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNetworkInfo,
-                    request_deserializer=network__pb2.NetworkInfoRequest.FromString,
-                    response_serializer=network__pb2.NetworkInfoResponse.SerializeToString,
+                    request_deserializer=network__pb2.GetNetworkInfoRequest.FromString,
+                    response_serializer=network__pb2.GetNetworkInfoResponse.SerializeToString,
             ),
             'GetPeerInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetPeerInfo,
-                    request_deserializer=network__pb2.PeerInfoRequest.FromString,
-                    response_serializer=network__pb2.PeerInfoResponse.SerializeToString,
+                    request_deserializer=network__pb2.GetPeerInfoRequest.FromString,
+                    response_serializer=network__pb2.GetPeerInfoResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -76,8 +76,8 @@ class Network(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetNetworkInfo',
-            network__pb2.NetworkInfoRequest.SerializeToString,
-            network__pb2.NetworkInfoResponse.FromString,
+            network__pb2.GetNetworkInfoRequest.SerializeToString,
+            network__pb2.GetNetworkInfoResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -93,7 +93,7 @@ class Network(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetPeerInfo',
-            network__pb2.PeerInfoRequest.SerializeToString,
-            network__pb2.PeerInfoResponse.FromString,
+            network__pb2.GetPeerInfoRequest.SerializeToString,
+            network__pb2.GetPeerInfoResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

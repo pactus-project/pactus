@@ -14,28 +14,61 @@ class WalletStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GenerateMnemonic = channel.unary_unary(
-                '/pactus.Wallet/GenerateMnemonic',
-                request_serializer=wallet__pb2.GenerateMnemonicRequest.SerializeToString,
-                response_deserializer=wallet__pb2.GenerateMnemonicResponse.FromString,
-                )
         self.CreateWallet = channel.unary_unary(
                 '/pactus.Wallet/CreateWallet',
                 request_serializer=wallet__pb2.CreateWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.CreateWalletResponse.FromString,
+                )
+        self.LoadWallet = channel.unary_unary(
+                '/pactus.Wallet/LoadWallet',
+                request_serializer=wallet__pb2.LoadWalletRequest.SerializeToString,
+                response_deserializer=wallet__pb2.LoadWalletResponse.FromString,
+                )
+        self.UnloadWallet = channel.unary_unary(
+                '/pactus.Wallet/UnloadWallet',
+                request_serializer=wallet__pb2.UnloadWalletRequest.SerializeToString,
+                response_deserializer=wallet__pb2.UnloadWalletResponse.FromString,
+                )
+        self.LockWallet = channel.unary_unary(
+                '/pactus.Wallet/LockWallet',
+                request_serializer=wallet__pb2.LockWalletRequest.SerializeToString,
+                response_deserializer=wallet__pb2.LockWalletResponse.FromString,
+                )
+        self.UnlockWallet = channel.unary_unary(
+                '/pactus.Wallet/UnlockWallet',
+                request_serializer=wallet__pb2.UnlockWalletRequest.SerializeToString,
+                response_deserializer=wallet__pb2.UnlockWalletResponse.FromString,
                 )
 
 
 class WalletServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GenerateMnemonic(self, request, context):
+    def CreateWallet(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CreateWallet(self, request, context):
+    def LoadWallet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UnloadWallet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LockWallet(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UnlockWallet(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -44,15 +77,30 @@ class WalletServicer(object):
 
 def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GenerateMnemonic': grpc.unary_unary_rpc_method_handler(
-                    servicer.GenerateMnemonic,
-                    request_deserializer=wallet__pb2.GenerateMnemonicRequest.FromString,
-                    response_serializer=wallet__pb2.GenerateMnemonicResponse.SerializeToString,
-            ),
             'CreateWallet': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateWallet,
                     request_deserializer=wallet__pb2.CreateWalletRequest.FromString,
                     response_serializer=wallet__pb2.CreateWalletResponse.SerializeToString,
+            ),
+            'LoadWallet': grpc.unary_unary_rpc_method_handler(
+                    servicer.LoadWallet,
+                    request_deserializer=wallet__pb2.LoadWalletRequest.FromString,
+                    response_serializer=wallet__pb2.LoadWalletResponse.SerializeToString,
+            ),
+            'UnloadWallet': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnloadWallet,
+                    request_deserializer=wallet__pb2.UnloadWalletRequest.FromString,
+                    response_serializer=wallet__pb2.UnloadWalletResponse.SerializeToString,
+            ),
+            'LockWallet': grpc.unary_unary_rpc_method_handler(
+                    servicer.LockWallet,
+                    request_deserializer=wallet__pb2.LockWalletRequest.FromString,
+                    response_serializer=wallet__pb2.LockWalletResponse.SerializeToString,
+            ),
+            'UnlockWallet': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnlockWallet,
+                    request_deserializer=wallet__pb2.UnlockWalletRequest.FromString,
+                    response_serializer=wallet__pb2.UnlockWalletResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -63,23 +111,6 @@ def add_WalletServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class Wallet(object):
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def GenerateMnemonic(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GenerateMnemonic',
-            wallet__pb2.GenerateMnemonicRequest.SerializeToString,
-            wallet__pb2.GenerateMnemonicResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def CreateWallet(request,
@@ -95,5 +126,73 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/CreateWallet',
             wallet__pb2.CreateWalletRequest.SerializeToString,
             wallet__pb2.CreateWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def LoadWallet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/LoadWallet',
+            wallet__pb2.LoadWalletRequest.SerializeToString,
+            wallet__pb2.LoadWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UnloadWallet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/UnloadWallet',
+            wallet__pb2.UnloadWalletRequest.SerializeToString,
+            wallet__pb2.UnloadWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def LockWallet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/LockWallet',
+            wallet__pb2.LockWalletRequest.SerializeToString,
+            wallet__pb2.LockWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UnlockWallet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/UnlockWallet',
+            wallet__pb2.UnlockWalletRequest.SerializeToString,
+            wallet__pb2.UnlockWalletResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -191,8 +191,8 @@ func TestGetBalance(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
-	tAccountRequest = &pactus.AccountRequest{Address: addr.String()}
-	tAccountResponse = &pactus.AccountResponse{Account: &pactus.AccountInfo{Balance: 1}}
+	tAccountRequest = &pactus.GetAccountRequest{Address: addr.String()}
+	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1}}
 	bal, err := tWallet.Balance(addr.String())
 	assert.NoError(t, err)
 	assert.Equal(t, bal, int64(1))
@@ -202,8 +202,8 @@ func TestGetStake(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
-	tValidatorRequest = &pactus.ValidatorRequest{Address: addr.String()}
-	tValidatorResponse = &pactus.ValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1}}
+	tValidatorRequest = &pactus.GetValidatorRequest{Address: addr.String()}
+	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1}}
 	bal, err := tWallet.Stake(addr.String())
 	assert.NoError(t, err)
 	assert.Equal(t, bal, int64(1))
@@ -245,9 +245,9 @@ func TestMakeSendTx(t *testing.T) {
 	seq := util.RandInt32(10000)
 	lastBlockHsh := hash.GenerateTestHash().Bytes()
 
-	tAccountRequest = &pactus.AccountRequest{Address: sender}
-	tAccountResponse = &pactus.AccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.BlockchainInfoResponse{LastBlockHash: lastBlockHsh}
+	tAccountRequest = &pactus.GetAccountRequest{Address: sender}
+	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
+	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		trx, err := tWallet.MakeSendTx(sender, receiver.String(), amount)
@@ -299,9 +299,9 @@ func TestMakeBondTx(t *testing.T) {
 	seq := util.RandInt32(10000)
 	lastBlockHsh := hash.GenerateTestHash().Bytes()
 
-	tAccountRequest = &pactus.AccountRequest{Address: sender}
-	tAccountResponse = &pactus.AccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.BlockchainInfoResponse{LastBlockHash: lastBlockHsh}
+	tAccountRequest = &pactus.GetAccountRequest{Address: sender}
+	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
+	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
@@ -358,9 +358,9 @@ func TestMakeUnbondTx(t *testing.T) {
 	seq := util.RandInt32(10000)
 	lastBlockHsh := hash.GenerateTestHash().Bytes()
 
-	tValidatorRequest = &pactus.ValidatorRequest{Address: sender}
-	tValidatorResponse = &pactus.ValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.BlockchainInfoResponse{LastBlockHash: lastBlockHsh}
+	tValidatorRequest = &pactus.GetValidatorRequest{Address: sender}
+	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
+	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		trx, err := tWallet.MakeUnbondTx(sender)
@@ -407,9 +407,9 @@ func TestMakeWithdrawTx(t *testing.T) {
 	seq := util.RandInt32(10000)
 	lastBlockHsh := hash.GenerateTestHash().Bytes()
 
-	tValidatorRequest = &pactus.ValidatorRequest{Address: sender}
-	tValidatorResponse = &pactus.ValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.BlockchainInfoResponse{LastBlockHash: lastBlockHsh}
+	tValidatorRequest = &pactus.GetValidatorRequest{Address: sender}
+	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
+	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		trx, err := tWallet.MakeWithdrawTx(sender, receiver, amount)

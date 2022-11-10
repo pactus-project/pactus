@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusNetworkInfoResponse"
+              "$ref": "#/definitions/pactusGetNetworkInfoResponse"
             }
           },
           "default": {
@@ -45,7 +45,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusPeerInfoResponse"
+              "$ref": "#/definitions/pactusGetPeerInfoResponse"
             }
           },
           "default": {
@@ -62,7 +62,7 @@
     }
   },
   "definitions": {
-    "pactusNetworkInfoResponse": {
+    "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
         "selfId": {
@@ -77,7 +77,7 @@
         }
       }
     },
-    "pactusPeerInfo": {
+    "pactusGetPeerInfoResponse": {
       "type": "object",
       "properties": {
         "moniker": {
@@ -115,7 +115,7 @@
         }
       }
     },
-    "pactusPeerInfoResponse": {
+    "pactusPeerInfo": {
       "type": "object",
       "properties": {
         "moniker": {

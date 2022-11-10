@@ -15,15 +15,15 @@ import 'transaction.pbenum.dart';
 
 export 'transaction.pbenum.dart';
 
-class TransactionRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'TransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class GetTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.OY)
     ..e<TransactionVerbosity>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'verbosity', $pb.PbFieldType.OE, defaultOrMaker: TransactionVerbosity.TRANSACTION_DATA, valueOf: TransactionVerbosity.valueOf, enumValues: TransactionVerbosity.values)
     ..hasRequiredFields = false
   ;
 
-  TransactionRequest._() : super();
-  factory TransactionRequest({
+  GetTransactionRequest._() : super();
+  factory GetTransactionRequest({
     $core.List<$core.int>? id,
     TransactionVerbosity? verbosity,
   }) {
@@ -36,26 +36,26 @@ class TransactionRequest extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory TransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory TransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory GetTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  TransactionRequest clone() => TransactionRequest()..mergeFromMessage(this);
+  GetTransactionRequest clone() => GetTransactionRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  TransactionRequest copyWith(void Function(TransactionRequest) updates) => super.copyWith((message) => updates(message as TransactionRequest)) as TransactionRequest; // ignore: deprecated_member_use
+  GetTransactionRequest copyWith(void Function(GetTransactionRequest) updates) => super.copyWith((message) => updates(message as GetTransactionRequest)) as GetTransactionRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static TransactionRequest create() => TransactionRequest._();
-  TransactionRequest createEmptyInstance() => create();
-  static $pb.PbList<TransactionRequest> createRepeated() => $pb.PbList<TransactionRequest>();
+  static GetTransactionRequest create() => GetTransactionRequest._();
+  GetTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<GetTransactionRequest> createRepeated() => $pb.PbList<GetTransactionRequest>();
   @$core.pragma('dart2js:noInline')
-  static TransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionRequest>(create);
-  static TransactionRequest? _defaultInstance;
+  static GetTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTransactionRequest>(create);
+  static GetTransactionRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get id => $_getN(0);
@@ -76,16 +76,16 @@ class TransactionRequest extends $pb.GeneratedMessage {
   void clearVerbosity() => clearField(2);
 }
 
-class TransactionResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'TransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class GetTransactionResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOM<TransactionInfo>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: TransactionInfo.create)
     ..a<$core.int>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockHeight', $pb.PbFieldType.OU3)
     ..a<$core.int>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockTime', $pb.PbFieldType.OU3)
     ..hasRequiredFields = false
   ;
 
-  TransactionResponse._() : super();
-  factory TransactionResponse({
+  GetTransactionResponse._() : super();
+  factory GetTransactionResponse({
     TransactionInfo? transaction,
     $core.int? blockHeight,
     $core.int? blockTime,
@@ -102,26 +102,26 @@ class TransactionResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory TransactionResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory TransactionResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory GetTransactionResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTransactionResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  TransactionResponse clone() => TransactionResponse()..mergeFromMessage(this);
+  GetTransactionResponse clone() => GetTransactionResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  TransactionResponse copyWith(void Function(TransactionResponse) updates) => super.copyWith((message) => updates(message as TransactionResponse)) as TransactionResponse; // ignore: deprecated_member_use
+  GetTransactionResponse copyWith(void Function(GetTransactionResponse) updates) => super.copyWith((message) => updates(message as GetTransactionResponse)) as GetTransactionResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static TransactionResponse create() => TransactionResponse._();
-  TransactionResponse createEmptyInstance() => create();
-  static $pb.PbList<TransactionResponse> createRepeated() => $pb.PbList<TransactionResponse>();
+  static GetTransactionResponse create() => GetTransactionResponse._();
+  GetTransactionResponse createEmptyInstance() => create();
+  static $pb.PbList<GetTransactionResponse> createRepeated() => $pb.PbList<GetTransactionResponse>();
   @$core.pragma('dart2js:noInline')
-  static TransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionResponse>(create);
-  static TransactionResponse? _defaultInstance;
+  static GetTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTransactionResponse>(create);
+  static GetTransactionResponse? _defaultInstance;
 
   @$pb.TagNumber(3)
   TransactionInfo get transaction => $_getN(0);
@@ -714,9 +714,9 @@ class TransactionApi {
   $pb.RpcClient _client;
   TransactionApi(this._client);
 
-  $async.Future<TransactionResponse> getTransaction($pb.ClientContext? ctx, TransactionRequest request) {
-    var emptyResponse = TransactionResponse();
-    return _client.invoke<TransactionResponse>(ctx, 'Transaction', 'GetTransaction', request, emptyResponse);
+  $async.Future<GetTransactionResponse> getTransaction($pb.ClientContext? ctx, GetTransactionRequest request) {
+    var emptyResponse = GetTransactionResponse();
+    return _client.invoke<GetTransactionResponse>(ctx, 'Transaction', 'GetTransaction', request, emptyResponse);
   }
   $async.Future<SendRawTransactionResponse> sendRawTransaction($pb.ClientContext? ctx, SendRawTransactionRequest request) {
     var emptyResponse = SendRawTransactionResponse();

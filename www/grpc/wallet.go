@@ -21,15 +21,6 @@ func walletPath(name string) string {
 	return util.MakeAbs(fmt.Sprintf("wallet%c%s", os.PathSeparator, name))
 }
 
-func (s *walletServer) GenerateMnemonic(ctx context.Context,
-	req *pactus.GenerateMnemonicRequest) (*pactus.GenerateMnemonicResponse, error) {
-	mnemonic := wallet.GenerateMnemonic(int(req.Entropy))
-
-	return &pactus.GenerateMnemonicResponse{
-		Mnemonic: mnemonic,
-	}, nil
-}
-
 func (s *walletServer) CreateWallet(ctx context.Context,
 	req *pactus.CreateWalletRequest) (*pactus.CreateWalletResponse, error) {
 	if req.Name == "" {
@@ -50,4 +41,24 @@ func (s *walletServer) CreateWallet(ctx context.Context,
 		return nil, err
 	}
 	return &pactus.CreateWalletResponse{}, nil
+}
+
+func (s *walletServer) LoadWallet(ctx context.Context,
+	req *pactus.LoadWalletRequest) (*pactus.LoadWalletResponse, error) {
+	return nil, nil
+}
+
+func (s *walletServer) UnloadWallet(ctx context.Context,
+	req *pactus.UnloadWalletRequest) (*pactus.UnloadWalletResponse, error) {
+	return nil, nil
+}
+
+func (s *walletServer) LockWallet(ctx context.Context,
+	req *pactus.LockWalletRequest) (*pactus.LockWalletResponse, error) {
+	return nil, nil
+}
+
+func (s *walletServer) UnlockWallet(ctx context.Context,
+	req *pactus.UnlockWalletRequest) (*pactus.UnlockWalletResponse, error) {
+	return nil, nil
 }

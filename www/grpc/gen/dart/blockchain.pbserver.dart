@@ -16,39 +16,39 @@ import 'blockchain.pbjson.dart';
 export 'blockchain.pb.dart';
 
 abstract class BlockchainServiceBase extends $pb.GeneratedService {
-  $async.Future<$1.BlockResponse> getBlock($pb.ServerContext ctx, $1.BlockRequest request);
-  $async.Future<$1.BlockHashResponse> getBlockHash($pb.ServerContext ctx, $1.BlockHashRequest request);
-  $async.Future<$1.BlockHeightResponse> getBlockHeight($pb.ServerContext ctx, $1.BlockHeightRequest request);
-  $async.Future<$1.AccountResponse> getAccount($pb.ServerContext ctx, $1.AccountRequest request);
-  $async.Future<$1.ValidatorsResponse> getValidators($pb.ServerContext ctx, $1.ValidatorsRequest request);
-  $async.Future<$1.ValidatorResponse> getValidator($pb.ServerContext ctx, $1.ValidatorRequest request);
-  $async.Future<$1.ValidatorResponse> getValidatorByNumber($pb.ServerContext ctx, $1.ValidatorByNumberRequest request);
-  $async.Future<$1.BlockchainInfoResponse> getBlockchainInfo($pb.ServerContext ctx, $1.BlockchainInfoRequest request);
+  $async.Future<$1.GetBlockResponse> getBlock($pb.ServerContext ctx, $1.GetBlockRequest request);
+  $async.Future<$1.GetBlockHashResponse> getBlockHash($pb.ServerContext ctx, $1.GetBlockHashRequest request);
+  $async.Future<$1.GetBlockHeightResponse> getBlockHeight($pb.ServerContext ctx, $1.GetBlockHeightRequest request);
+  $async.Future<$1.GetBlockchainInfoResponse> getBlockchainInfo($pb.ServerContext ctx, $1.GetBlockchainInfoRequest request);
+  $async.Future<$1.GetAccountResponse> getAccount($pb.ServerContext ctx, $1.GetAccountRequest request);
+  $async.Future<$1.GetValidatorResponse> getValidator($pb.ServerContext ctx, $1.GetValidatorRequest request);
+  $async.Future<$1.GetValidatorResponse> getValidatorByNumber($pb.ServerContext ctx, $1.GetValidatorByNumberRequest request);
+  $async.Future<$1.GetValidatorsResponse> getValidators($pb.ServerContext ctx, $1.GetValidatorsRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
-      case 'GetBlock': return $1.BlockRequest();
-      case 'GetBlockHash': return $1.BlockHashRequest();
-      case 'GetBlockHeight': return $1.BlockHeightRequest();
-      case 'GetAccount': return $1.AccountRequest();
-      case 'GetValidators': return $1.ValidatorsRequest();
-      case 'GetValidator': return $1.ValidatorRequest();
-      case 'GetValidatorByNumber': return $1.ValidatorByNumberRequest();
-      case 'GetBlockchainInfo': return $1.BlockchainInfoRequest();
+      case 'GetBlock': return $1.GetBlockRequest();
+      case 'GetBlockHash': return $1.GetBlockHashRequest();
+      case 'GetBlockHeight': return $1.GetBlockHeightRequest();
+      case 'GetBlockchainInfo': return $1.GetBlockchainInfoRequest();
+      case 'GetAccount': return $1.GetAccountRequest();
+      case 'GetValidator': return $1.GetValidatorRequest();
+      case 'GetValidatorByNumber': return $1.GetValidatorByNumberRequest();
+      case 'GetValidators': return $1.GetValidatorsRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
 
   $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String method, $pb.GeneratedMessage request) {
     switch (method) {
-      case 'GetBlock': return this.getBlock(ctx, request as $1.BlockRequest);
-      case 'GetBlockHash': return this.getBlockHash(ctx, request as $1.BlockHashRequest);
-      case 'GetBlockHeight': return this.getBlockHeight(ctx, request as $1.BlockHeightRequest);
-      case 'GetAccount': return this.getAccount(ctx, request as $1.AccountRequest);
-      case 'GetValidators': return this.getValidators(ctx, request as $1.ValidatorsRequest);
-      case 'GetValidator': return this.getValidator(ctx, request as $1.ValidatorRequest);
-      case 'GetValidatorByNumber': return this.getValidatorByNumber(ctx, request as $1.ValidatorByNumberRequest);
-      case 'GetBlockchainInfo': return this.getBlockchainInfo(ctx, request as $1.BlockchainInfoRequest);
+      case 'GetBlock': return this.getBlock(ctx, request as $1.GetBlockRequest);
+      case 'GetBlockHash': return this.getBlockHash(ctx, request as $1.GetBlockHashRequest);
+      case 'GetBlockHeight': return this.getBlockHeight(ctx, request as $1.GetBlockHeightRequest);
+      case 'GetBlockchainInfo': return this.getBlockchainInfo(ctx, request as $1.GetBlockchainInfoRequest);
+      case 'GetAccount': return this.getAccount(ctx, request as $1.GetAccountRequest);
+      case 'GetValidator': return this.getValidator(ctx, request as $1.GetValidatorRequest);
+      case 'GetValidatorByNumber': return this.getValidatorByNumber(ctx, request as $1.GetValidatorByNumberRequest);
+      case 'GetValidators': return this.getValidators(ctx, request as $1.GetValidatorsRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }

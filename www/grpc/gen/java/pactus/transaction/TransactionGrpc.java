@@ -15,29 +15,29 @@ public final class TransactionGrpc {
   public static final String SERVICE_NAME = "pactus.Transaction";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.TransactionRequest,
-      pactus.transaction.TransactionOuterClass.TransactionResponse> getGetTransactionMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetTransactionResponse> getGetTransactionMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetTransaction",
-      requestType = pactus.transaction.TransactionOuterClass.TransactionRequest.class,
-      responseType = pactus.transaction.TransactionOuterClass.TransactionResponse.class,
+      requestType = pactus.transaction.TransactionOuterClass.GetTransactionRequest.class,
+      responseType = pactus.transaction.TransactionOuterClass.GetTransactionResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.TransactionRequest,
-      pactus.transaction.TransactionOuterClass.TransactionResponse> getGetTransactionMethod() {
-    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.TransactionRequest, pactus.transaction.TransactionOuterClass.TransactionResponse> getGetTransactionMethod;
+  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetTransactionResponse> getGetTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetTransactionRequest, pactus.transaction.TransactionOuterClass.GetTransactionResponse> getGetTransactionMethod;
     if ((getGetTransactionMethod = TransactionGrpc.getGetTransactionMethod) == null) {
       synchronized (TransactionGrpc.class) {
         if ((getGetTransactionMethod = TransactionGrpc.getGetTransactionMethod) == null) {
           TransactionGrpc.getGetTransactionMethod = getGetTransactionMethod =
-              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.TransactionRequest, pactus.transaction.TransactionOuterClass.TransactionResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.GetTransactionRequest, pactus.transaction.TransactionOuterClass.GetTransactionResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTransaction"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.transaction.TransactionOuterClass.TransactionRequest.getDefaultInstance()))
+                  pactus.transaction.TransactionOuterClass.GetTransactionRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.transaction.TransactionOuterClass.TransactionResponse.getDefaultInstance()))
+                  pactus.transaction.TransactionOuterClass.GetTransactionResponse.getDefaultInstance()))
               .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetTransaction"))
               .build();
         }
@@ -127,8 +127,8 @@ public final class TransactionGrpc {
 
     /**
      */
-    public void getTransaction(pactus.transaction.TransactionOuterClass.TransactionRequest request,
-        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.TransactionResponse> responseObserver) {
+    public void getTransaction(pactus.transaction.TransactionOuterClass.GetTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetTransactionResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTransactionMethod(), responseObserver);
     }
 
@@ -145,8 +145,8 @@ public final class TransactionGrpc {
             getGetTransactionMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.transaction.TransactionOuterClass.TransactionRequest,
-                pactus.transaction.TransactionOuterClass.TransactionResponse>(
+                pactus.transaction.TransactionOuterClass.GetTransactionRequest,
+                pactus.transaction.TransactionOuterClass.GetTransactionResponse>(
                   this, METHODID_GET_TRANSACTION)))
           .addMethod(
             getSendRawTransactionMethod(),
@@ -175,8 +175,8 @@ public final class TransactionGrpc {
 
     /**
      */
-    public void getTransaction(pactus.transaction.TransactionOuterClass.TransactionRequest request,
-        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.TransactionResponse> responseObserver) {
+    public void getTransaction(pactus.transaction.TransactionOuterClass.GetTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetTransactionResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetTransactionMethod(), getCallOptions()), request, responseObserver);
     }
@@ -206,7 +206,7 @@ public final class TransactionGrpc {
 
     /**
      */
-    public pactus.transaction.TransactionOuterClass.TransactionResponse getTransaction(pactus.transaction.TransactionOuterClass.TransactionRequest request) {
+    public pactus.transaction.TransactionOuterClass.GetTransactionResponse getTransaction(pactus.transaction.TransactionOuterClass.GetTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetTransactionMethod(), getCallOptions(), request);
     }
@@ -235,8 +235,8 @@ public final class TransactionGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.TransactionResponse> getTransaction(
-        pactus.transaction.TransactionOuterClass.TransactionRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetTransactionResponse> getTransaction(
+        pactus.transaction.TransactionOuterClass.GetTransactionRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetTransactionMethod(), getCallOptions()), request);
     }
@@ -271,8 +271,8 @@ public final class TransactionGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GET_TRANSACTION:
-          serviceImpl.getTransaction((pactus.transaction.TransactionOuterClass.TransactionRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.TransactionResponse>) responseObserver);
+          serviceImpl.getTransaction((pactus.transaction.TransactionOuterClass.GetTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetTransactionResponse>) responseObserver);
           break;
         case METHODID_SEND_RAW_TRANSACTION:
           serviceImpl.sendRawTransaction((pactus.transaction.TransactionOuterClass.SendRawTransactionRequest) request,

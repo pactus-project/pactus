@@ -32,7 +32,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_Network_GetNetworkInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NetworkInfoRequest
+	var protoReq GetNetworkInfoRequest
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.GetNetworkInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -41,7 +41,7 @@ func request_Network_GetNetworkInfo_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_Network_GetNetworkInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NetworkInfoRequest
+	var protoReq GetNetworkInfoRequest
 	var metadata runtime.ServerMetadata
 
 	msg, err := server.GetNetworkInfo(ctx, &protoReq)
@@ -50,7 +50,7 @@ func local_request_Network_GetNetworkInfo_0(ctx context.Context, marshaler runti
 }
 
 func request_Network_GetPeerInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PeerInfoRequest
+	var protoReq GetPeerInfoRequest
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.GetPeerInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -59,7 +59,7 @@ func request_Network_GetPeerInfo_0(ctx context.Context, marshaler runtime.Marsha
 }
 
 func local_request_Network_GetPeerInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PeerInfoRequest
+	var protoReq GetPeerInfoRequest
 	var metadata runtime.ServerMetadata
 
 	msg, err := server.GetPeerInfo(ctx, &protoReq)

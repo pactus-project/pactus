@@ -32,7 +32,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_Transaction_GetTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq TransactionRequest
+	var protoReq GetTransactionRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -71,7 +71,7 @@ func request_Transaction_GetTransaction_0(ctx context.Context, marshaler runtime
 }
 
 func local_request_Transaction_GetTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq TransactionRequest
+	var protoReq GetTransactionRequest
 	var metadata runtime.ServerMetadata
 
 	var (
