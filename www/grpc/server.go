@@ -55,9 +55,9 @@ func (s *Server) StartServer() error {
 		network = wallet.NetworkTestNet
 	}
 	walletServer := &walletServer{
-		unlockedWallet: nil,
-		network:        network,
-		logger:         s.logger,
+		wallets: make(map[string]*loadedWallet),
+		network: network,
+		logger:  s.logger,
 	}
 	pactus.RegisterBlockchainServer(grpc, blockchainServer)
 	pactus.RegisterTransactionServer(grpc, transactionServer)
