@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusTransactionResponse"
+              "$ref": "#/definitions/pactusGetTransactionResponse"
             }
           },
           "default": {
@@ -90,6 +90,22 @@
     }
   },
   "definitions": {
+    "pactusGetTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "blockHeight": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "transaction": {
+          "$ref": "#/definitions/pactusTransactionInfo"
+        }
+      }
+    },
     "pactusPayloadBond": {
       "type": "object",
       "properties": {
@@ -205,22 +221,6 @@
         "signature": {
           "type": "string",
           "format": "byte"
-        }
-      }
-    },
-    "pactusTransactionResponse": {
-      "type": "object",
-      "properties": {
-        "blockHeight": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "blockTime": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "transaction": {
-          "$ref": "#/definitions/pactusTransactionInfo"
         }
       }
     },

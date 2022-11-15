@@ -13,19 +13,19 @@ func TestActivitiesSort(t *testing.T) {
 		Transactions: map[string]transaction{},
 	}
 
-	history.addActivity("addr-1", 20, &pactus.TransactionResponse{
+	history.addActivity("addr-1", 20, &pactus.GetTransactionResponse{
 		BlockTime: 2, Transaction: &pactus.TransactionInfo{
 			Id: []byte{2}}})
-	history.addActivity("addr-1", 40, &pactus.TransactionResponse{
+	history.addActivity("addr-1", 40, &pactus.GetTransactionResponse{
 		BlockTime: 4, Transaction: &pactus.TransactionInfo{
 			Id: []byte{4}}})
-	history.addActivity("addr-1", 30, &pactus.TransactionResponse{
+	history.addActivity("addr-1", 30, &pactus.GetTransactionResponse{
 		BlockTime: 3, Transaction: &pactus.TransactionInfo{
 			Id: []byte{3}}})
-	history.addActivity("addr-1", 10, &pactus.TransactionResponse{
+	history.addActivity("addr-1", 10, &pactus.GetTransactionResponse{
 		BlockTime: 1, Transaction: &pactus.TransactionInfo{
 			Id: []byte{1}}})
-	history.addActivity("addr-2", 50, &pactus.TransactionResponse{
+	history.addActivity("addr-2", 50, &pactus.GetTransactionResponse{
 		BlockTime: 5, Transaction: &pactus.TransactionInfo{
 			Id: []byte{5}}})
 

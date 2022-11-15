@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusAccountResponse"
+              "$ref": "#/definitions/pactusGetAccountResponse"
             }
           },
           "default": {
@@ -53,7 +53,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusBlockResponse"
+              "$ref": "#/definitions/pactusGetBlockResponse"
             }
           },
           "default": {
@@ -95,7 +95,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusBlockHashResponse"
+              "$ref": "#/definitions/pactusGetBlockHashResponse"
             }
           },
           "default": {
@@ -126,7 +126,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusBlockHeightResponse"
+              "$ref": "#/definitions/pactusGetBlockHeightResponse"
             }
           },
           "default": {
@@ -157,7 +157,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusBlockchainInfoResponse"
+              "$ref": "#/definitions/pactusGetBlockchainInfoResponse"
             }
           },
           "default": {
@@ -179,7 +179,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusValidatorResponse"
+              "$ref": "#/definitions/pactusGetValidatorResponse"
             }
           },
           "default": {
@@ -209,7 +209,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusValidatorResponse"
+              "$ref": "#/definitions/pactusGetValidatorResponse"
             }
           },
           "default": {
@@ -240,7 +240,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusValidatorsResponse"
+              "$ref": "#/definitions/pactusGetValidatorsResponse"
             }
           },
           "default": {
@@ -277,23 +277,6 @@
         }
       }
     },
-    "pactusAccountResponse": {
-      "type": "object",
-      "properties": {
-        "account": {
-          "$ref": "#/definitions/pactusAccountInfo"
-        }
-      }
-    },
-    "pactusBlockHashResponse": {
-      "type": "object",
-      "properties": {
-        "hash": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
     "pactusBlockHeaderInfo": {
       "type": "object",
       "properties": {
@@ -318,7 +301,60 @@
         }
       }
     },
-    "pactusBlockHeightResponse": {
+    "pactusBlockVerbosity": {
+      "type": "string",
+      "enum": [
+        "BLOCK_DATA",
+        "BLOCK_INFO",
+        "BLOCK_TRANSACTIONS"
+      ],
+      "default": "BLOCK_DATA"
+    },
+    "pactusCertificateInfo": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "committers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "absentees": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "signature": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusGetAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/pactusAccountInfo"
+        }
+      }
+    },
+    "pactusGetBlockHashResponse": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusGetBlockHeightResponse": {
       "type": "object",
       "properties": {
         "height": {
@@ -327,7 +363,7 @@
         }
       }
     },
-    "pactusBlockResponse": {
+    "pactusGetBlockResponse": {
       "type": "object",
       "properties": {
         "height": {
@@ -360,16 +396,7 @@
         }
       }
     },
-    "pactusBlockVerbosity": {
-      "type": "string",
-      "enum": [
-        "BLOCK_DATA",
-        "BLOCK_INFO",
-        "BLOCK_TRANSACTIONS"
-      ],
-      "default": "BLOCK_DATA"
-    },
-    "pactusBlockchainInfoResponse": {
+    "pactusGetBlockchainInfoResponse": {
       "type": "object",
       "properties": {
         "lastBlockHeight": {
@@ -382,30 +409,22 @@
         }
       }
     },
-    "pactusCertificateInfo": {
+    "pactusGetValidatorResponse": {
       "type": "object",
       "properties": {
-        "round": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "committers": {
+        "validator": {
+          "$ref": "#/definitions/pactusValidatorInfo"
+        }
+      }
+    },
+    "pactusGetValidatorsResponse": {
+      "type": "object",
+      "properties": {
+        "validators": {
           "type": "array",
           "items": {
-            "type": "integer",
-            "format": "int32"
+            "$ref": "#/definitions/pactusValidatorInfo"
           }
-        },
-        "absentees": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "signature": {
-          "type": "string",
-          "format": "byte"
         }
       }
     },
@@ -550,25 +569,6 @@
         },
         "address": {
           "type": "string"
-        }
-      }
-    },
-    "pactusValidatorResponse": {
-      "type": "object",
-      "properties": {
-        "validator": {
-          "$ref": "#/definitions/pactusValidatorInfo"
-        }
-      }
-    },
-    "pactusValidatorsResponse": {
-      "type": "object",
-      "properties": {
-        "validators": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/pactusValidatorInfo"
-          }
         }
       }
     },

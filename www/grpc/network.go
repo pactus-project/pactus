@@ -16,7 +16,7 @@ type networkServer struct {
 }
 
 func (s *networkServer) GetNetworkInfo(ctx context.Context,
-	req *pactus.NetworkInfoRequest) (*pactus.NetworkInfoResponse, error) {
+	req *pactus.GetNetworkInfoRequest) (*pactus.GetNetworkInfoResponse, error) {
 	// Create response peers
 	rps := make([]*pactus.PeerInfo, int32(len(s.sync.Peers())))
 
@@ -43,15 +43,15 @@ func (s *networkServer) GetNetworkInfo(ctx context.Context,
 		p.ReceivedBytes = int32(peer.ReceivedBytes)
 	}
 
-	return &pactus.NetworkInfoResponse{
+	return &pactus.GetNetworkInfoResponse{
 		SelfId: []byte(s.sync.SelfID()),
 		Peers:  rps,
 	}, nil
 }
 
 func (s *networkServer) GetPeerInfo(ctx context.Context,
-	req *pactus.PeerInfoRequest) (*pactus.PeerInfoResponse, error) {
-	return &pactus.PeerInfoResponse{
+	req *pactus.GetPeerInfoRequest) (*pactus.GetPeerInfoResponse, error) {
+	return &pactus.GetPeerInfoResponse{
 		Moniker:   s.sync.Moniker(),
 		Agent:     version.Agent(),
 		PeerId:    []byte(s.sync.SelfID()),

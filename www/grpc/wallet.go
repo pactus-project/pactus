@@ -9,25 +9,22 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
+type loadedWallet struct {
+	wallet *wallet.Wallet
+}
+
 type walletServer struct {
-	unlockedWallet *wallet.Wallet
-	network        wallet.Network
-	logger         *logger.Logger
+	wallets map[string]*loadedWallet
+	network wallet.Network
+	logger  *logger.Logger
 }
 
 func walletPath(name string) string {
 	return util.MakeAbs(fmt.Sprintf("wallet%c%s", os.PathSeparator, name))
-}
-
-func (s *walletServer) GenerateMnemonic(ctx context.Context,
-	req *pactus.GenerateMnemonicRequest) (*pactus.GenerateMnemonicResponse, error) {
-	mnemonic := wallet.GenerateMnemonic(int(req.Entropy))
-
-	return &pactus.GenerateMnemonicResponse{
-		Mnemonic: mnemonic,
-	}, nil
 }
 
 func (s *walletServer) CreateWallet(ctx context.Context,
@@ -50,4 +47,48 @@ func (s *walletServer) CreateWallet(ctx context.Context,
 		return nil, err
 	}
 	return &pactus.CreateWalletResponse{}, nil
+}
+
+func (s *walletServer) LoadWallet(ctx context.Context,
+	req *pactus.LoadWalletRequest) (*pactus.LoadWalletResponse, error) {
+	_, ok := s.wallets[req.Name]
+	if !ok {
+		return nil, status.Errorf(codes.AlreadyExists, "wallet already loaded")
+	}
+
+	path := walletPath(req.Name)
+	w, err := wallet.OpenWallet(path, true)
+	if err != nil {
+		return nil, err
+	}
+
+	s.wallets[req.Name] = &loadedWallet{wallet: w}
+
+	return &pactus.LoadWalletResponse{
+		Name: req.Name,
+	}, nil
+}
+
+func (s *walletServer) UnloadWallet(ctx context.Context,
+	req *pactus.UnloadWalletRequest) (*pactus.UnloadWalletResponse, error) {
+	_, ok := s.wallets[req.Name]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	delete(s.wallets, req.Name)
+
+	return &pactus.UnloadWalletResponse{
+		Name: req.Name,
+	}, nil
+}
+
+func (s *walletServer) LockWallet(ctx context.Context,
+	req *pactus.LockWalletRequest) (*pactus.LockWalletResponse, error) {
+	return nil, nil
+}
+
+func (s *walletServer) UnlockWallet(ctx context.Context,
+	req *pactus.UnlockWalletRequest) (*pactus.UnlockWalletResponse, error) {
+	return nil, nil
 }

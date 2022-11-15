@@ -43,8 +43,18 @@ http:
       get: "/v1/network/peer_info"
 
     # Wallet APIs
-    - selector: pactus.Wallet.GenerateMnemonic
-      get: "/v1/wallet/mnemonic/entropy/{entropy}/language/{language}"
-
     - selector: pactus.Wallet.CreateWallet
       get: "/v1/wallet/create/name/{name}/mnemonic/{mnemonic}/language/{language}"
+
+    - selector: pactus.Wallet.LoadWallet
+      get: "/v1/wallet/load/name/{name}"
+
+    - selector: pactus.Wallet.UnloadWallet
+      get: "/v1/wallet/unload/name/{name}"
+
+    - selector: pactus.Wallet.LockWallet
+      get: "/v1/wallet/lock"
+
+    - selector: pactus.Wallet.UnlockWallet
+      get: "/v1/wallet/unlock/password/{password}/timeout/{timeout}"
+

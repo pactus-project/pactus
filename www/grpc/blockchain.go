@@ -20,29 +20,29 @@ type blockchainServer struct {
 }
 
 func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
-	req *pactus.BlockchainInfoRequest) (*pactus.BlockchainInfoResponse, error) {
+	req *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
 	height := s.state.LastBlockHeight()
 
-	return &pactus.BlockchainInfoResponse{
+	return &pactus.GetBlockchainInfoResponse{
 		LastBlockHeight: height,
 		LastBlockHash:   s.state.LastBlockHash().Bytes(),
 	}, nil
 }
 
 func (s *blockchainServer) GetBlockHash(ctx context.Context,
-	req *pactus.BlockHashRequest) (*pactus.BlockHashResponse, error) {
+	req *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
 	height := req.GetHeight()
 	hash := s.state.BlockHash(height)
 	if hash.IsUndef() {
 		return nil, status.Errorf(codes.NotFound, "block not found with this height")
 	}
-	return &pactus.BlockHashResponse{
+	return &pactus.GetBlockHashResponse{
 		Hash: hash.Bytes(),
 	}, nil
 }
 
 func (s *blockchainServer) GetBlockHeight(ctx context.Context,
-	req *pactus.BlockHeightRequest) (*pactus.BlockHeightResponse, error) {
+	req *pactus.GetBlockHeightRequest) (*pactus.GetBlockHeightResponse, error) {
 	hash, err := hash.FromBytes(req.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid hash: %v", err)
@@ -51,19 +51,19 @@ func (s *blockchainServer) GetBlockHeight(ctx context.Context,
 	if height == 0 {
 		return nil, status.Errorf(codes.NotFound, "block not found with this hash")
 	}
-	return &pactus.BlockHeightResponse{
+	return &pactus.GetBlockHeightResponse{
 		Height: height,
 	}, nil
 }
 
 func (s *blockchainServer) GetBlock(ctx context.Context,
-	req *pactus.BlockRequest) (*pactus.BlockResponse, error) {
+	req *pactus.GetBlockRequest) (*pactus.GetBlockResponse, error) {
 	height := req.GetHeight()
 	storedBlock := s.state.StoredBlock(height)
 	if storedBlock == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "block not found")
 	}
-	res := &pactus.BlockResponse{
+	res := &pactus.GetBlockResponse{
 		Height: storedBlock.Height,
 		Hash:   storedBlock.BlockHash.Bytes(),
 		Data:   storedBlock.Data,
@@ -119,7 +119,7 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 }
 
 func (s *blockchainServer) GetAccount(ctx context.Context,
-	req *pactus.AccountRequest) (*pactus.AccountResponse, error) {
+	req *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
 	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
@@ -128,7 +128,7 @@ func (s *blockchainServer) GetAccount(ctx context.Context,
 	if acc == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "account not found")
 	}
-	res := &pactus.AccountResponse{
+	res := &pactus.GetAccountResponse{
 		Account: accountToProto(acc),
 	}
 
@@ -136,7 +136,7 @@ func (s *blockchainServer) GetAccount(ctx context.Context,
 }
 
 func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
-	req *pactus.ValidatorByNumberRequest) (*pactus.ValidatorResponse, error) {
+	req *pactus.GetValidatorByNumberRequest) (*pactus.GetValidatorResponse, error) {
 	val := s.state.ValidatorByNumber(req.Number)
 	if val == nil {
 		return nil, status.Errorf(codes.NotFound, "validator not found")
@@ -144,13 +144,13 @@ func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
 
 	// TODO: make a function
 	// proto validator from native validator
-	return &pactus.ValidatorResponse{
+	return &pactus.GetValidatorResponse{
 		Validator: validatorToProto(val),
 	}, nil
 }
 
 func (s *blockchainServer) GetValidator(ctx context.Context,
-	req *pactus.ValidatorRequest) (*pactus.ValidatorResponse, error) {
+	req *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
 	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid validator address: %v", err.Error())
@@ -162,19 +162,19 @@ func (s *blockchainServer) GetValidator(ctx context.Context,
 
 	// TODO: make a function
 	// proto validator from native validator
-	return &pactus.ValidatorResponse{
+	return &pactus.GetValidatorResponse{
 		Validator: validatorToProto(val),
 	}, nil
 }
 
 func (s *blockchainServer) GetValidators(ctx context.Context,
-	req *pactus.ValidatorsRequest) (*pactus.ValidatorsResponse, error) {
+	req *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
 	validators := s.state.CommitteeValidators()
 	validatorsResp := make([]*pactus.ValidatorInfo, 0)
 	for _, val := range validators {
 		validatorsResp = append(validatorsResp, validatorToProto(val))
 	}
-	return &pactus.ValidatorsResponse{Validators: validatorsResp}, nil
+	return &pactus.GetValidatorsResponse{Validators: validatorsResp}, nil
 }
 
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {

@@ -15,29 +15,29 @@ public final class BlockchainGrpc {
   public static final String SERVICE_NAME = "pactus.Blockchain";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockResponse> getGetBlockMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockResponse> getGetBlockMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetBlock",
-      requestType = pactus.blockchain.BlockchainOuterClass.BlockRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.BlockResponse.class,
+      requestType = pactus.blockchain.BlockchainOuterClass.GetBlockRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetBlockResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockResponse> getGetBlockMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockRequest, pactus.blockchain.BlockchainOuterClass.BlockResponse> getGetBlockMethod;
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockResponse> getGetBlockMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockRequest, pactus.blockchain.BlockchainOuterClass.GetBlockResponse> getGetBlockMethod;
     if ((getGetBlockMethod = BlockchainGrpc.getGetBlockMethod) == null) {
       synchronized (BlockchainGrpc.class) {
         if ((getGetBlockMethod = BlockchainGrpc.getGetBlockMethod) == null) {
           BlockchainGrpc.getGetBlockMethod = getGetBlockMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.BlockRequest, pactus.blockchain.BlockchainOuterClass.BlockResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetBlockRequest, pactus.blockchain.BlockchainOuterClass.GetBlockResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetBlock"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockRequest.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetBlockRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockResponse.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetBlockResponse.getDefaultInstance()))
               .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetBlock"))
               .build();
         }
@@ -46,29 +46,29 @@ public final class BlockchainGrpc {
     return getGetBlockMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockHashRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockHashResponse> getGetBlockHashMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse> getGetBlockHashMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetBlockHash",
-      requestType = pactus.blockchain.BlockchainOuterClass.BlockHashRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.BlockHashResponse.class,
+      requestType = pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockHashRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockHashResponse> getGetBlockHashMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockHashRequest, pactus.blockchain.BlockchainOuterClass.BlockHashResponse> getGetBlockHashMethod;
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse> getGetBlockHashMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest, pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse> getGetBlockHashMethod;
     if ((getGetBlockHashMethod = BlockchainGrpc.getGetBlockHashMethod) == null) {
       synchronized (BlockchainGrpc.class) {
         if ((getGetBlockHashMethod = BlockchainGrpc.getGetBlockHashMethod) == null) {
           BlockchainGrpc.getGetBlockHashMethod = getGetBlockHashMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.BlockHashRequest, pactus.blockchain.BlockchainOuterClass.BlockHashResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest, pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetBlockHash"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockHashRequest.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockHashResponse.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse.getDefaultInstance()))
               .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetBlockHash"))
               .build();
         }
@@ -77,29 +77,29 @@ public final class BlockchainGrpc {
     return getGetBlockHashMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockHeightRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockHeightResponse> getGetBlockHeightMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse> getGetBlockHeightMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetBlockHeight",
-      requestType = pactus.blockchain.BlockchainOuterClass.BlockHeightRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.BlockHeightResponse.class,
+      requestType = pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockHeightRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockHeightResponse> getGetBlockHeightMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockHeightRequest, pactus.blockchain.BlockchainOuterClass.BlockHeightResponse> getGetBlockHeightMethod;
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse> getGetBlockHeightMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest, pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse> getGetBlockHeightMethod;
     if ((getGetBlockHeightMethod = BlockchainGrpc.getGetBlockHeightMethod) == null) {
       synchronized (BlockchainGrpc.class) {
         if ((getGetBlockHeightMethod = BlockchainGrpc.getGetBlockHeightMethod) == null) {
           BlockchainGrpc.getGetBlockHeightMethod = getGetBlockHeightMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.BlockHeightRequest, pactus.blockchain.BlockchainOuterClass.BlockHeightResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest, pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetBlockHeight"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockHeightRequest.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockHeightResponse.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse.getDefaultInstance()))
               .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetBlockHeight"))
               .build();
         }
@@ -108,29 +108,60 @@ public final class BlockchainGrpc {
     return getGetBlockHeightMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.AccountRequest,
-      pactus.blockchain.BlockchainOuterClass.AccountResponse> getGetAccountMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse> getGetBlockchainInfoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetBlockchainInfo",
+      requestType = pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest,
+      pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse> getGetBlockchainInfoMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest, pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse> getGetBlockchainInfoMethod;
+    if ((getGetBlockchainInfoMethod = BlockchainGrpc.getGetBlockchainInfoMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getGetBlockchainInfoMethod = BlockchainGrpc.getGetBlockchainInfoMethod) == null) {
+          BlockchainGrpc.getGetBlockchainInfoMethod = getGetBlockchainInfoMethod =
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest, pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetBlockchainInfo"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetBlockchainInfo"))
+              .build();
+        }
+      }
+    }
+    return getGetBlockchainInfoMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetAccountRequest,
+      pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getGetAccountMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetAccount",
-      requestType = pactus.blockchain.BlockchainOuterClass.AccountRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.AccountResponse.class,
+      requestType = pactus.blockchain.BlockchainOuterClass.GetAccountRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetAccountResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.AccountRequest,
-      pactus.blockchain.BlockchainOuterClass.AccountResponse> getGetAccountMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.AccountRequest, pactus.blockchain.BlockchainOuterClass.AccountResponse> getGetAccountMethod;
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetAccountRequest,
+      pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getGetAccountMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetAccountRequest, pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getGetAccountMethod;
     if ((getGetAccountMethod = BlockchainGrpc.getGetAccountMethod) == null) {
       synchronized (BlockchainGrpc.class) {
         if ((getGetAccountMethod = BlockchainGrpc.getGetAccountMethod) == null) {
           BlockchainGrpc.getGetAccountMethod = getGetAccountMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.AccountRequest, pactus.blockchain.BlockchainOuterClass.AccountResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetAccountRequest, pactus.blockchain.BlockchainOuterClass.GetAccountResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAccount"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.AccountRequest.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetAccountRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.AccountResponse.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetAccountResponse.getDefaultInstance()))
               .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetAccount"))
               .build();
         }
@@ -139,60 +170,29 @@ public final class BlockchainGrpc {
     return getGetAccountMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorsRequest,
-      pactus.blockchain.BlockchainOuterClass.ValidatorsResponse> getGetValidatorsMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetValidators",
-      requestType = pactus.blockchain.BlockchainOuterClass.ValidatorsRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.ValidatorsResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorsRequest,
-      pactus.blockchain.BlockchainOuterClass.ValidatorsResponse> getGetValidatorsMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorsRequest, pactus.blockchain.BlockchainOuterClass.ValidatorsResponse> getGetValidatorsMethod;
-    if ((getGetValidatorsMethod = BlockchainGrpc.getGetValidatorsMethod) == null) {
-      synchronized (BlockchainGrpc.class) {
-        if ((getGetValidatorsMethod = BlockchainGrpc.getGetValidatorsMethod) == null) {
-          BlockchainGrpc.getGetValidatorsMethod = getGetValidatorsMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.ValidatorsRequest, pactus.blockchain.BlockchainOuterClass.ValidatorsResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValidators"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.ValidatorsRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.ValidatorsResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetValidators"))
-              .build();
-        }
-      }
-    }
-    return getGetValidatorsMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorRequest,
-      pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getGetValidatorMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getGetValidatorMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetValidator",
-      requestType = pactus.blockchain.BlockchainOuterClass.ValidatorRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.ValidatorResponse.class,
+      requestType = pactus.blockchain.BlockchainOuterClass.GetValidatorRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetValidatorResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorRequest,
-      pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getGetValidatorMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorRequest, pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getGetValidatorMethod;
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getGetValidatorMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getGetValidatorMethod;
     if ((getGetValidatorMethod = BlockchainGrpc.getGetValidatorMethod) == null) {
       synchronized (BlockchainGrpc.class) {
         if ((getGetValidatorMethod = BlockchainGrpc.getGetValidatorMethod) == null) {
           BlockchainGrpc.getGetValidatorMethod = getGetValidatorMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.ValidatorRequest, pactus.blockchain.BlockchainOuterClass.ValidatorResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetValidatorRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValidator"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.ValidatorRequest.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.ValidatorResponse.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorResponse.getDefaultInstance()))
               .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetValidator"))
               .build();
         }
@@ -201,29 +201,29 @@ public final class BlockchainGrpc {
     return getGetValidatorMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest,
-      pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getGetValidatorByNumberMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getGetValidatorByNumberMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetValidatorByNumber",
-      requestType = pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.ValidatorResponse.class,
+      requestType = pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetValidatorResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest,
-      pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getGetValidatorByNumberMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest, pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getGetValidatorByNumberMethod;
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getGetValidatorByNumberMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getGetValidatorByNumberMethod;
     if ((getGetValidatorByNumberMethod = BlockchainGrpc.getGetValidatorByNumberMethod) == null) {
       synchronized (BlockchainGrpc.class) {
         if ((getGetValidatorByNumberMethod = BlockchainGrpc.getGetValidatorByNumberMethod) == null) {
           BlockchainGrpc.getGetValidatorByNumberMethod = getGetValidatorByNumberMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest, pactus.blockchain.BlockchainOuterClass.ValidatorResponse>newBuilder()
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValidatorByNumber"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.ValidatorResponse.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorResponse.getDefaultInstance()))
               .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetValidatorByNumber"))
               .build();
         }
@@ -232,35 +232,35 @@ public final class BlockchainGrpc {
     return getGetValidatorByNumberMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse> getGetBlockchainInfoMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getGetValidatorsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetBlockchainInfo",
-      requestType = pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "GetValidators",
+      requestType = pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest,
-      pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse> getGetBlockchainInfoMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest, pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse> getGetBlockchainInfoMethod;
-    if ((getGetBlockchainInfoMethod = BlockchainGrpc.getGetBlockchainInfoMethod) == null) {
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getGetValidatorsMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getGetValidatorsMethod;
+    if ((getGetValidatorsMethod = BlockchainGrpc.getGetValidatorsMethod) == null) {
       synchronized (BlockchainGrpc.class) {
-        if ((getGetBlockchainInfoMethod = BlockchainGrpc.getGetBlockchainInfoMethod) == null) {
-          BlockchainGrpc.getGetBlockchainInfoMethod = getGetBlockchainInfoMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest, pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse>newBuilder()
+        if ((getGetValidatorsMethod = BlockchainGrpc.getGetValidatorsMethod) == null) {
+          BlockchainGrpc.getGetValidatorsMethod = getGetValidatorsMethod =
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetBlockchainInfo"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValidators"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest.getDefaultInstance()))
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetBlockchainInfo"))
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetValidators"))
               .build();
         }
       }
     }
-    return getGetBlockchainInfoMethod;
+    return getGetValidatorsMethod;
   }
 
   /**
@@ -313,58 +313,58 @@ public final class BlockchainGrpc {
 
     /**
      */
-    public void getBlock(pactus.blockchain.BlockchainOuterClass.BlockRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockResponse> responseObserver) {
+    public void getBlock(pactus.blockchain.BlockchainOuterClass.GetBlockRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetBlockMethod(), responseObserver);
     }
 
     /**
      */
-    public void getBlockHash(pactus.blockchain.BlockchainOuterClass.BlockHashRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockHashResponse> responseObserver) {
+    public void getBlockHash(pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetBlockHashMethod(), responseObserver);
     }
 
     /**
      */
-    public void getBlockHeight(pactus.blockchain.BlockchainOuterClass.BlockHeightRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockHeightResponse> responseObserver) {
+    public void getBlockHeight(pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetBlockHeightMethod(), responseObserver);
     }
 
     /**
      */
-    public void getAccount(pactus.blockchain.BlockchainOuterClass.AccountRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.AccountResponse> responseObserver) {
+    public void getBlockchainInfo(pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetBlockchainInfoMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAccountMethod(), responseObserver);
     }
 
     /**
      */
-    public void getValidators(pactus.blockchain.BlockchainOuterClass.ValidatorsRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorsResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorsMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void getValidator(pactus.blockchain.BlockchainOuterClass.ValidatorRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorResponse> responseObserver) {
+    public void getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorMethod(), responseObserver);
     }
 
     /**
      */
-    public void getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorResponse> responseObserver) {
+    public void getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorByNumberMethod(), responseObserver);
     }
 
     /**
      */
-    public void getBlockchainInfo(pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetBlockchainInfoMethod(), responseObserver);
+    public void getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorsMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -373,58 +373,58 @@ public final class BlockchainGrpc {
             getGetBlockMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.BlockRequest,
-                pactus.blockchain.BlockchainOuterClass.BlockResponse>(
+                pactus.blockchain.BlockchainOuterClass.GetBlockRequest,
+                pactus.blockchain.BlockchainOuterClass.GetBlockResponse>(
                   this, METHODID_GET_BLOCK)))
           .addMethod(
             getGetBlockHashMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.BlockHashRequest,
-                pactus.blockchain.BlockchainOuterClass.BlockHashResponse>(
+                pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest,
+                pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse>(
                   this, METHODID_GET_BLOCK_HASH)))
           .addMethod(
             getGetBlockHeightMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.BlockHeightRequest,
-                pactus.blockchain.BlockchainOuterClass.BlockHeightResponse>(
+                pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest,
+                pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse>(
                   this, METHODID_GET_BLOCK_HEIGHT)))
+          .addMethod(
+            getGetBlockchainInfoMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest,
+                pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse>(
+                  this, METHODID_GET_BLOCKCHAIN_INFO)))
           .addMethod(
             getGetAccountMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.AccountRequest,
-                pactus.blockchain.BlockchainOuterClass.AccountResponse>(
+                pactus.blockchain.BlockchainOuterClass.GetAccountRequest,
+                pactus.blockchain.BlockchainOuterClass.GetAccountResponse>(
                   this, METHODID_GET_ACCOUNT)))
-          .addMethod(
-            getGetValidatorsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.ValidatorsRequest,
-                pactus.blockchain.BlockchainOuterClass.ValidatorsResponse>(
-                  this, METHODID_GET_VALIDATORS)))
           .addMethod(
             getGetValidatorMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.ValidatorRequest,
-                pactus.blockchain.BlockchainOuterClass.ValidatorResponse>(
+                pactus.blockchain.BlockchainOuterClass.GetValidatorRequest,
+                pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>(
                   this, METHODID_GET_VALIDATOR)))
           .addMethod(
             getGetValidatorByNumberMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest,
-                pactus.blockchain.BlockchainOuterClass.ValidatorResponse>(
+                pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest,
+                pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>(
                   this, METHODID_GET_VALIDATOR_BY_NUMBER)))
           .addMethod(
-            getGetBlockchainInfoMethod(),
+            getGetValidatorsMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest,
-                pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse>(
-                  this, METHODID_GET_BLOCKCHAIN_INFO)))
+                pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest,
+                pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse>(
+                  this, METHODID_GET_VALIDATORS)))
           .build();
     }
   }
@@ -445,66 +445,66 @@ public final class BlockchainGrpc {
 
     /**
      */
-    public void getBlock(pactus.blockchain.BlockchainOuterClass.BlockRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockResponse> responseObserver) {
+    public void getBlock(pactus.blockchain.BlockchainOuterClass.GetBlockRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetBlockMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getBlockHash(pactus.blockchain.BlockchainOuterClass.BlockHashRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockHashResponse> responseObserver) {
+    public void getBlockHash(pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetBlockHashMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getBlockHeight(pactus.blockchain.BlockchainOuterClass.BlockHeightRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockHeightResponse> responseObserver) {
+    public void getBlockHeight(pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetBlockHeightMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getAccount(pactus.blockchain.BlockchainOuterClass.AccountRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.AccountResponse> responseObserver) {
+    public void getBlockchainInfo(pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetBlockchainInfoMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAccountMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getValidators(pactus.blockchain.BlockchainOuterClass.ValidatorsRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorsResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getGetValidatorsMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void getValidator(pactus.blockchain.BlockchainOuterClass.ValidatorRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorResponse> responseObserver) {
+    public void getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetValidatorMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorResponse> responseObserver) {
+    public void getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetValidatorByNumberMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getBlockchainInfo(pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse> responseObserver) {
+    public void getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getGetBlockchainInfoMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetValidatorsMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -524,58 +524,58 @@ public final class BlockchainGrpc {
 
     /**
      */
-    public pactus.blockchain.BlockchainOuterClass.BlockResponse getBlock(pactus.blockchain.BlockchainOuterClass.BlockRequest request) {
+    public pactus.blockchain.BlockchainOuterClass.GetBlockResponse getBlock(pactus.blockchain.BlockchainOuterClass.GetBlockRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetBlockMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public pactus.blockchain.BlockchainOuterClass.BlockHashResponse getBlockHash(pactus.blockchain.BlockchainOuterClass.BlockHashRequest request) {
+    public pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse getBlockHash(pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetBlockHashMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public pactus.blockchain.BlockchainOuterClass.BlockHeightResponse getBlockHeight(pactus.blockchain.BlockchainOuterClass.BlockHeightRequest request) {
+    public pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse getBlockHeight(pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetBlockHeightMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public pactus.blockchain.BlockchainOuterClass.AccountResponse getAccount(pactus.blockchain.BlockchainOuterClass.AccountRequest request) {
+    public pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse getBlockchainInfo(pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetBlockchainInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pactus.blockchain.BlockchainOuterClass.GetAccountResponse getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAccountMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public pactus.blockchain.BlockchainOuterClass.ValidatorsResponse getValidators(pactus.blockchain.BlockchainOuterClass.ValidatorsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getGetValidatorsMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public pactus.blockchain.BlockchainOuterClass.ValidatorResponse getValidator(pactus.blockchain.BlockchainOuterClass.ValidatorRequest request) {
+    public pactus.blockchain.BlockchainOuterClass.GetValidatorResponse getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetValidatorMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public pactus.blockchain.BlockchainOuterClass.ValidatorResponse getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest request) {
+    public pactus.blockchain.BlockchainOuterClass.GetValidatorResponse getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetValidatorByNumberMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse getBlockchainInfo(pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest request) {
+    public pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getGetBlockchainInfoMethod(), getCallOptions(), request);
+          getChannel(), getGetValidatorsMethod(), getCallOptions(), request);
     }
   }
 
@@ -595,77 +595,77 @@ public final class BlockchainGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.BlockResponse> getBlock(
-        pactus.blockchain.BlockchainOuterClass.BlockRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetBlockResponse> getBlock(
+        pactus.blockchain.BlockchainOuterClass.GetBlockRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetBlockMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.BlockHashResponse> getBlockHash(
-        pactus.blockchain.BlockchainOuterClass.BlockHashRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse> getBlockHash(
+        pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetBlockHashMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.BlockHeightResponse> getBlockHeight(
-        pactus.blockchain.BlockchainOuterClass.BlockHeightRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse> getBlockHeight(
+        pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetBlockHeightMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.AccountResponse> getAccount(
-        pactus.blockchain.BlockchainOuterClass.AccountRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse> getBlockchainInfo(
+        pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetBlockchainInfoMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getAccount(
+        pactus.blockchain.BlockchainOuterClass.GetAccountRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAccountMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.ValidatorsResponse> getValidators(
-        pactus.blockchain.BlockchainOuterClass.ValidatorsRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getGetValidatorsMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getValidator(
-        pactus.blockchain.BlockchainOuterClass.ValidatorRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getValidator(
+        pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetValidatorMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.ValidatorResponse> getValidatorByNumber(
-        pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getValidatorByNumber(
+        pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetValidatorByNumberMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse> getBlockchainInfo(
-        pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getValidators(
+        pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getGetBlockchainInfoMethod(), getCallOptions()), request);
+          getChannel().newCall(getGetValidatorsMethod(), getCallOptions()), request);
     }
   }
 
   private static final int METHODID_GET_BLOCK = 0;
   private static final int METHODID_GET_BLOCK_HASH = 1;
   private static final int METHODID_GET_BLOCK_HEIGHT = 2;
-  private static final int METHODID_GET_ACCOUNT = 3;
-  private static final int METHODID_GET_VALIDATORS = 4;
+  private static final int METHODID_GET_BLOCKCHAIN_INFO = 3;
+  private static final int METHODID_GET_ACCOUNT = 4;
   private static final int METHODID_GET_VALIDATOR = 5;
   private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 6;
-  private static final int METHODID_GET_BLOCKCHAIN_INFO = 7;
+  private static final int METHODID_GET_VALIDATORS = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -685,36 +685,36 @@ public final class BlockchainGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GET_BLOCK:
-          serviceImpl.getBlock((pactus.blockchain.BlockchainOuterClass.BlockRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockResponse>) responseObserver);
+          serviceImpl.getBlock((pactus.blockchain.BlockchainOuterClass.GetBlockRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockResponse>) responseObserver);
           break;
         case METHODID_GET_BLOCK_HASH:
-          serviceImpl.getBlockHash((pactus.blockchain.BlockchainOuterClass.BlockHashRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockHashResponse>) responseObserver);
+          serviceImpl.getBlockHash((pactus.blockchain.BlockchainOuterClass.GetBlockHashRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse>) responseObserver);
           break;
         case METHODID_GET_BLOCK_HEIGHT:
-          serviceImpl.getBlockHeight((pactus.blockchain.BlockchainOuterClass.BlockHeightRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockHeightResponse>) responseObserver);
-          break;
-        case METHODID_GET_ACCOUNT:
-          serviceImpl.getAccount((pactus.blockchain.BlockchainOuterClass.AccountRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.AccountResponse>) responseObserver);
-          break;
-        case METHODID_GET_VALIDATORS:
-          serviceImpl.getValidators((pactus.blockchain.BlockchainOuterClass.ValidatorsRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorsResponse>) responseObserver);
-          break;
-        case METHODID_GET_VALIDATOR:
-          serviceImpl.getValidator((pactus.blockchain.BlockchainOuterClass.ValidatorRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorResponse>) responseObserver);
-          break;
-        case METHODID_GET_VALIDATOR_BY_NUMBER:
-          serviceImpl.getValidatorByNumber((pactus.blockchain.BlockchainOuterClass.ValidatorByNumberRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.ValidatorResponse>) responseObserver);
+          serviceImpl.getBlockHeight((pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockHeightResponse>) responseObserver);
           break;
         case METHODID_GET_BLOCKCHAIN_INFO:
-          serviceImpl.getBlockchainInfo((pactus.blockchain.BlockchainOuterClass.BlockchainInfoRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.BlockchainInfoResponse>) responseObserver);
+          serviceImpl.getBlockchainInfo((pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse>) responseObserver);
+          break;
+        case METHODID_GET_ACCOUNT:
+          serviceImpl.getAccount((pactus.blockchain.BlockchainOuterClass.GetAccountRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse>) responseObserver);
+          break;
+        case METHODID_GET_VALIDATOR:
+          serviceImpl.getValidator((pactus.blockchain.BlockchainOuterClass.GetValidatorRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>) responseObserver);
+          break;
+        case METHODID_GET_VALIDATOR_BY_NUMBER:
+          serviceImpl.getValidatorByNumber((pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>) responseObserver);
+          break;
+        case METHODID_GET_VALIDATORS:
+          serviceImpl.getValidators((pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -780,11 +780,11 @@ public final class BlockchainGrpc {
               .addMethod(getGetBlockMethod())
               .addMethod(getGetBlockHashMethod())
               .addMethod(getGetBlockHeightMethod())
+              .addMethod(getGetBlockchainInfoMethod())
               .addMethod(getGetAccountMethod())
-              .addMethod(getGetValidatorsMethod())
               .addMethod(getGetValidatorMethod())
               .addMethod(getGetValidatorByNumberMethod())
-              .addMethod(getGetBlockchainInfoMethod())
+              .addMethod(getGetValidatorsMethod())
               .build();
         }
       }

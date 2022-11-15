@@ -4,16 +4,16 @@ option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.transaction";
 
 service Transaction {
-  rpc GetTransaction(TransactionRequest) returns (TransactionResponse);
+  rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
   rpc SendRawTransaction(SendRawTransactionRequest) returns (SendRawTransactionResponse);
 }
 
-message TransactionRequest {
+message GetTransactionRequest {
   bytes id = 1;
   TransactionVerbosity verbosity = 2;
 }
 
-message TransactionResponse {
+message GetTransactionResponse {
   uint32 block_height = 12;
   uint32 block_time = 13;
   TransactionInfo transaction = 3;

@@ -16,8 +16,8 @@ class TransactionStub(object):
         """
         self.GetTransaction = channel.unary_unary(
                 '/pactus.Transaction/GetTransaction',
-                request_serializer=transaction__pb2.TransactionRequest.SerializeToString,
-                response_deserializer=transaction__pb2.TransactionResponse.FromString,
+                request_serializer=transaction__pb2.GetTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.GetTransactionResponse.FromString,
                 )
         self.SendRawTransaction = channel.unary_unary(
                 '/pactus.Transaction/SendRawTransaction',
@@ -46,8 +46,8 @@ def add_TransactionServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.GetTransaction,
-                    request_deserializer=transaction__pb2.TransactionRequest.FromString,
-                    response_serializer=transaction__pb2.TransactionResponse.SerializeToString,
+                    request_deserializer=transaction__pb2.GetTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.GetTransactionResponse.SerializeToString,
             ),
             'SendRawTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.SendRawTransaction,
@@ -76,8 +76,8 @@ class Transaction(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetTransaction',
-            transaction__pb2.TransactionRequest.SerializeToString,
-            transaction__pb2.TransactionResponse.FromString,
+            transaction__pb2.GetTransactionRequest.SerializeToString,
+            transaction__pb2.GetTransactionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

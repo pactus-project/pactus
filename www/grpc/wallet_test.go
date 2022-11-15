@@ -8,18 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGenerateMnemonic(t *testing.T) {
-	conn, client := testWalletClient(t)
-
-	t.Run("Should return mnemonic", func(t *testing.T) {
-		res, err := client.GenerateMnemonic(tCtx, &pactus.GenerateMnemonicRequest{Language: "english", Entropy: 128})
-		assert.NoError(t, err)
-		assert.NotNil(t, res)
-		assert.NotEmpty(t, res.Mnemonic)
-	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-}
 func TestCreateWallet(t *testing.T) {
 	conn, client := testWalletClient(t)
 

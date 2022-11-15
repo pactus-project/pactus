@@ -26,41 +26,96 @@ function deserialize_pactus_CreateWalletResponse(buffer_arg) {
   return wallet_pb.CreateWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_GenerateMnemonicRequest(arg) {
-  if (!(arg instanceof wallet_pb.GenerateMnemonicRequest)) {
-    throw new Error('Expected argument of type pactus.GenerateMnemonicRequest');
+function serialize_pactus_LoadWalletRequest(arg) {
+  if (!(arg instanceof wallet_pb.LoadWalletRequest)) {
+    throw new Error('Expected argument of type pactus.LoadWalletRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_GenerateMnemonicRequest(buffer_arg) {
-  return wallet_pb.GenerateMnemonicRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_LoadWalletRequest(buffer_arg) {
+  return wallet_pb.LoadWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_GenerateMnemonicResponse(arg) {
-  if (!(arg instanceof wallet_pb.GenerateMnemonicResponse)) {
-    throw new Error('Expected argument of type pactus.GenerateMnemonicResponse');
+function serialize_pactus_LoadWalletResponse(arg) {
+  if (!(arg instanceof wallet_pb.LoadWalletResponse)) {
+    throw new Error('Expected argument of type pactus.LoadWalletResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_GenerateMnemonicResponse(buffer_arg) {
-  return wallet_pb.GenerateMnemonicResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_LoadWalletResponse(buffer_arg) {
+  return wallet_pb.LoadWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_LockWalletRequest(arg) {
+  if (!(arg instanceof wallet_pb.LockWalletRequest)) {
+    throw new Error('Expected argument of type pactus.LockWalletRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_LockWalletRequest(buffer_arg) {
+  return wallet_pb.LockWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_LockWalletResponse(arg) {
+  if (!(arg instanceof wallet_pb.LockWalletResponse)) {
+    throw new Error('Expected argument of type pactus.LockWalletResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_LockWalletResponse(buffer_arg) {
+  return wallet_pb.LockWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_UnloadWalletRequest(arg) {
+  if (!(arg instanceof wallet_pb.UnloadWalletRequest)) {
+    throw new Error('Expected argument of type pactus.UnloadWalletRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_UnloadWalletRequest(buffer_arg) {
+  return wallet_pb.UnloadWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_UnloadWalletResponse(arg) {
+  if (!(arg instanceof wallet_pb.UnloadWalletResponse)) {
+    throw new Error('Expected argument of type pactus.UnloadWalletResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_UnloadWalletResponse(buffer_arg) {
+  return wallet_pb.UnloadWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_UnlockWalletRequest(arg) {
+  if (!(arg instanceof wallet_pb.UnlockWalletRequest)) {
+    throw new Error('Expected argument of type pactus.UnlockWalletRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_UnlockWalletRequest(buffer_arg) {
+  return wallet_pb.UnlockWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_UnlockWalletResponse(arg) {
+  if (!(arg instanceof wallet_pb.UnlockWalletResponse)) {
+    throw new Error('Expected argument of type pactus.UnlockWalletResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_UnlockWalletResponse(buffer_arg) {
+  return wallet_pb.UnlockWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
 var WalletService = exports.WalletService = {
-  generateMnemonic: {
-    path: '/pactus.Wallet/GenerateMnemonic',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.GenerateMnemonicRequest,
-    responseType: wallet_pb.GenerateMnemonicResponse,
-    requestSerialize: serialize_pactus_GenerateMnemonicRequest,
-    requestDeserialize: deserialize_pactus_GenerateMnemonicRequest,
-    responseSerialize: serialize_pactus_GenerateMnemonicResponse,
-    responseDeserialize: deserialize_pactus_GenerateMnemonicResponse,
-  },
   createWallet: {
     path: '/pactus.Wallet/CreateWallet',
     requestStream: false,
@@ -71,6 +126,50 @@ var WalletService = exports.WalletService = {
     requestDeserialize: deserialize_pactus_CreateWalletRequest,
     responseSerialize: serialize_pactus_CreateWalletResponse,
     responseDeserialize: deserialize_pactus_CreateWalletResponse,
+  },
+  loadWallet: {
+    path: '/pactus.Wallet/LoadWallet',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.LoadWalletRequest,
+    responseType: wallet_pb.LoadWalletResponse,
+    requestSerialize: serialize_pactus_LoadWalletRequest,
+    requestDeserialize: deserialize_pactus_LoadWalletRequest,
+    responseSerialize: serialize_pactus_LoadWalletResponse,
+    responseDeserialize: deserialize_pactus_LoadWalletResponse,
+  },
+  unloadWallet: {
+    path: '/pactus.Wallet/UnloadWallet',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.UnloadWalletRequest,
+    responseType: wallet_pb.UnloadWalletResponse,
+    requestSerialize: serialize_pactus_UnloadWalletRequest,
+    requestDeserialize: deserialize_pactus_UnloadWalletRequest,
+    responseSerialize: serialize_pactus_UnloadWalletResponse,
+    responseDeserialize: deserialize_pactus_UnloadWalletResponse,
+  },
+  lockWallet: {
+    path: '/pactus.Wallet/LockWallet',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.LockWalletRequest,
+    responseType: wallet_pb.LockWalletResponse,
+    requestSerialize: serialize_pactus_LockWalletRequest,
+    requestDeserialize: deserialize_pactus_LockWalletRequest,
+    responseSerialize: serialize_pactus_LockWalletResponse,
+    responseDeserialize: deserialize_pactus_LockWalletResponse,
+  },
+  unlockWallet: {
+    path: '/pactus.Wallet/UnlockWallet',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.UnlockWalletRequest,
+    responseType: wallet_pb.UnlockWalletResponse,
+    requestSerialize: serialize_pactus_UnlockWalletRequest,
+    requestDeserialize: deserialize_pactus_UnlockWalletRequest,
+    responseSerialize: serialize_pactus_UnlockWalletResponse,
+    responseDeserialize: deserialize_pactus_UnlockWalletResponse,
   },
 };
 

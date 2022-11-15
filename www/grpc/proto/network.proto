@@ -5,18 +5,20 @@ option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.network";
 
 service Network {
-  rpc GetNetworkInfo(NetworkInfoRequest) returns (NetworkInfoResponse);
-  rpc GetPeerInfo(PeerInfoRequest) returns (PeerInfoResponse);
+  rpc GetNetworkInfo(GetNetworkInfoRequest) returns (GetNetworkInfoResponse);
+  rpc GetPeerInfo(GetPeerInfoRequest) returns (GetPeerInfoResponse);
 }
 
-message NetworkInfoRequest {}
+message GetNetworkInfoRequest {}
 
-message NetworkInfoResponse {
+message GetNetworkInfoResponse {
   bytes self_id = 1;
   repeated PeerInfo peers = 2;
 }
 
-message PeerInfo {
+message GetPeerInfoRequest {}
+
+message GetPeerInfoResponse {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
@@ -28,9 +30,7 @@ message PeerInfo {
   int32 received_bytes = 9;
 }
 
-message PeerInfoRequest {}
-
-message PeerInfoResponse {
+message PeerInfo {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;

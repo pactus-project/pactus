@@ -64,14 +64,14 @@
         ]
       }
     },
-    "/v1/wallet/mnemonic/entropy/{entropy}/language/{language}": {
+    "/v1/wallet/load/name/{name}": {
       "get": {
-        "operationId": "Wallet_GenerateMnemonic",
+        "operationId": "Wallet_LoadWallet",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusGenerateMnemonicResponse"
+              "$ref": "#/definitions/pactusLoadWalletResponse"
             }
           },
           "default": {
@@ -83,17 +83,114 @@
         },
         "parameters": [
           {
-            "name": "entropy",
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/v1/wallet/lock": {
+      "get": {
+        "operationId": "Wallet_LockWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusLockWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "password",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "timeout",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/v1/wallet/unload/name/{name}": {
+      "get": {
+        "operationId": "Wallet_UnloadWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusUnloadWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/v1/wallet/unlock/password/{password}/timeout/{timeout}": {
+      "get": {
+        "operationId": "Wallet_UnlockWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusUnlockWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "password",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "timeout",
             "in": "path",
             "required": true,
             "type": "integer",
             "format": "int32"
-          },
-          {
-            "name": "language",
-            "in": "path",
-            "required": true,
-            "type": "string"
           }
         ],
         "tags": [
@@ -106,13 +203,27 @@
     "pactusCreateWalletResponse": {
       "type": "object"
     },
-    "pactusGenerateMnemonicResponse": {
+    "pactusLoadWalletResponse": {
       "type": "object",
       "properties": {
-        "mnemonic": {
+        "name": {
           "type": "string"
         }
       }
+    },
+    "pactusLockWalletResponse": {
+      "type": "object"
+    },
+    "pactusUnloadWalletResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pactusUnlockWalletResponse": {
+      "type": "object"
     },
     "protobufAny": {
       "type": "object",

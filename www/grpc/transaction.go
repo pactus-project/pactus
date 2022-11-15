@@ -19,7 +19,7 @@ type transactionServer struct {
 }
 
 func (s *transactionServer) GetTransaction(ctx context.Context,
-	req *pactus.TransactionRequest) (*pactus.TransactionResponse, error) {
+	req *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
 	id, err := hash.FromBytes(req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
@@ -30,7 +30,7 @@ func (s *transactionServer) GetTransaction(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 
-	res := &pactus.TransactionResponse{
+	res := &pactus.GetTransactionResponse{
 		BlockHeight: storedTx.Height,
 		BlockTime:   storedTx.BlockTime,
 	}

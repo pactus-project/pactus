@@ -17,7 +17,7 @@ func TestGetTransaction(t *testing.T) {
 	trx1 := testBlock.Transactions()[0]
 
 	t.Run("Should return transaction", func(t *testing.T) {
-		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: trx1.ID().Bytes(),
+		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: trx1.ID().Bytes(),
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
@@ -37,14 +37,14 @@ func TestGetTransaction(t *testing.T) {
 	})
 
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {
-		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: []byte("invalid_id")})
+		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: []byte("invalid_id")})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
 		id := hash.GenerateTestHash()
-		res, err := client.GetTransaction(tCtx, &pactus.TransactionRequest{Id: id.Bytes()})
+		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: id.Bytes()})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})

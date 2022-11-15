@@ -34,20 +34,20 @@ const TransactionVerbosity$json = const {
 
 /// Descriptor for `TransactionVerbosity`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List transactionVerbosityDescriptor = $convert.base64Decode('ChRUcmFuc2FjdGlvblZlcmJvc2l0eRIUChBUUkFOU0FDVElPTl9EQVRBEAASFAoQVFJBTlNBQ1RJT05fSU5GTxAB');
-@$core.Deprecated('Use transactionRequestDescriptor instead')
-const TransactionRequest$json = const {
-  '1': 'TransactionRequest',
+@$core.Deprecated('Use getTransactionRequestDescriptor instead')
+const GetTransactionRequest$json = const {
+  '1': 'GetTransactionRequest',
   '2': const [
     const {'1': 'id', '3': 1, '4': 1, '5': 12, '10': 'id'},
     const {'1': 'verbosity', '3': 2, '4': 1, '5': 14, '6': '.pactus.TransactionVerbosity', '10': 'verbosity'},
   ],
 };
 
-/// Descriptor for `TransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List transactionRequestDescriptor = $convert.base64Decode('ChJUcmFuc2FjdGlvblJlcXVlc3QSDgoCaWQYASABKAxSAmlkEjoKCXZlcmJvc2l0eRgCIAEoDjIcLnBhY3R1cy5UcmFuc2FjdGlvblZlcmJvc2l0eVIJdmVyYm9zaXR5');
-@$core.Deprecated('Use transactionResponseDescriptor instead')
-const TransactionResponse$json = const {
-  '1': 'TransactionResponse',
+/// Descriptor for `GetTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getTransactionRequestDescriptor = $convert.base64Decode('ChVHZXRUcmFuc2FjdGlvblJlcXVlc3QSDgoCaWQYASABKAxSAmlkEjoKCXZlcmJvc2l0eRgCIAEoDjIcLnBhY3R1cy5UcmFuc2FjdGlvblZlcmJvc2l0eVIJdmVyYm9zaXR5');
+@$core.Deprecated('Use getTransactionResponseDescriptor instead')
+const GetTransactionResponse$json = const {
+  '1': 'GetTransactionResponse',
   '2': const [
     const {'1': 'block_height', '3': 12, '4': 1, '5': 13, '10': 'blockHeight'},
     const {'1': 'block_time', '3': 13, '4': 1, '5': 13, '10': 'blockTime'},
@@ -55,8 +55,8 @@ const TransactionResponse$json = const {
   ],
 };
 
-/// Descriptor for `TransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List transactionResponseDescriptor = $convert.base64Decode('ChNUcmFuc2FjdGlvblJlc3BvbnNlEiEKDGJsb2NrX2hlaWdodBgMIAEoDVILYmxvY2tIZWlnaHQSHQoKYmxvY2tfdGltZRgNIAEoDVIJYmxvY2tUaW1lEjkKC3RyYW5zYWN0aW9uGAMgASgLMhcucGFjdHVzLlRyYW5zYWN0aW9uSW5mb1ILdHJhbnNhY3Rpb24=');
+/// Descriptor for `GetTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getTransactionResponseDescriptor = $convert.base64Decode('ChZHZXRUcmFuc2FjdGlvblJlc3BvbnNlEiEKDGJsb2NrX2hlaWdodBgMIAEoDVILYmxvY2tIZWlnaHQSHQoKYmxvY2tfdGltZRgNIAEoDVIJYmxvY2tUaW1lEjkKC3RyYW5zYWN0aW9uGAMgASgLMhcucGFjdHVzLlRyYW5zYWN0aW9uSW5mb1ILdHJhbnNhY3Rpb24=');
 @$core.Deprecated('Use sendRawTransactionRequestDescriptor instead')
 const SendRawTransactionRequest$json = const {
   '1': 'SendRawTransactionRequest',
@@ -141,15 +141,15 @@ final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode('C
 const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = const {
   '1': 'Transaction',
   '2': const [
-    const {'1': 'GetTransaction', '2': '.pactus.TransactionRequest', '3': '.pactus.TransactionResponse'},
+    const {'1': 'GetTransaction', '2': '.pactus.GetTransactionRequest', '3': '.pactus.GetTransactionResponse'},
     const {'1': 'SendRawTransaction', '2': '.pactus.SendRawTransactionRequest', '3': '.pactus.SendRawTransactionResponse'},
   ],
 };
 
 @$core.Deprecated('Use transactionServiceDescriptor instead')
 const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> TransactionServiceBase$messageJson = const {
-  '.pactus.TransactionRequest': TransactionRequest$json,
-  '.pactus.TransactionResponse': TransactionResponse$json,
+  '.pactus.GetTransactionRequest': GetTransactionRequest$json,
+  '.pactus.GetTransactionResponse': GetTransactionResponse$json,
   '.pactus.TransactionInfo': TransactionInfo$json,
   '.pactus.PayloadSend': PayloadSend$json,
   '.pactus.PayloadBond': PayloadBond$json,
@@ -159,4 +159,4 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
 };
 
 /// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJJCg5HZXRUcmFuc2FjdGlvbhIaLnBhY3R1cy5UcmFuc2FjdGlvblJlcXVlc3QaGy5wYWN0dXMuVHJhbnNhY3Rpb25SZXNwb25zZRJbChJTZW5kUmF3VHJhbnNhY3Rpb24SIS5wYWN0dXMuU2VuZFJhd1RyYW5zYWN0aW9uUmVxdWVzdBoiLnBhY3R1cy5TZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZQ==');
+final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJbChJTZW5kUmF3VHJhbnNhY3Rpb24SIS5wYWN0dXMuU2VuZFJhd1RyYW5zYWN0aW9uUmVxdWVzdBoiLnBhY3R1cy5TZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZQ==');

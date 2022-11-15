@@ -22,8 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WalletClient interface {
-	GenerateMnemonic(ctx context.Context, in *GenerateMnemonicRequest, opts ...grpc.CallOption) (*GenerateMnemonicResponse, error)
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error)
+	LoadWallet(ctx context.Context, in *LoadWalletRequest, opts ...grpc.CallOption) (*LoadWalletResponse, error)
+	UnloadWallet(ctx context.Context, in *UnloadWalletRequest, opts ...grpc.CallOption) (*UnloadWalletResponse, error)
+	LockWallet(ctx context.Context, in *LockWalletRequest, opts ...grpc.CallOption) (*LockWalletResponse, error)
+	UnlockWallet(ctx context.Context, in *UnlockWalletRequest, opts ...grpc.CallOption) (*UnlockWalletResponse, error)
 }
 
 type walletClient struct {
@@ -32,15 +35,6 @@ type walletClient struct {
 
 func NewWalletClient(cc grpc.ClientConnInterface) WalletClient {
 	return &walletClient{cc}
-}
-
-func (c *walletClient) GenerateMnemonic(ctx context.Context, in *GenerateMnemonicRequest, opts ...grpc.CallOption) (*GenerateMnemonicResponse, error) {
-	out := new(GenerateMnemonicResponse)
-	err := c.cc.Invoke(ctx, "/pactus.Wallet/GenerateMnemonic", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *walletClient) CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error) {
@@ -52,23 +46,71 @@ func (c *walletClient) CreateWallet(ctx context.Context, in *CreateWalletRequest
 	return out, nil
 }
 
+func (c *walletClient) LoadWallet(ctx context.Context, in *LoadWalletRequest, opts ...grpc.CallOption) (*LoadWalletResponse, error) {
+	out := new(LoadWalletResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/LoadWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) UnloadWallet(ctx context.Context, in *UnloadWalletRequest, opts ...grpc.CallOption) (*UnloadWalletResponse, error) {
+	out := new(UnloadWalletResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/UnloadWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) LockWallet(ctx context.Context, in *LockWalletRequest, opts ...grpc.CallOption) (*LockWalletResponse, error) {
+	out := new(LockWalletResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/LockWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) UnlockWallet(ctx context.Context, in *UnlockWalletRequest, opts ...grpc.CallOption) (*UnlockWalletResponse, error) {
+	out := new(UnlockWalletResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/UnlockWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
 type WalletServer interface {
-	GenerateMnemonic(context.Context, *GenerateMnemonicRequest) (*GenerateMnemonicResponse, error)
 	CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error)
+	LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error)
+	UnloadWallet(context.Context, *UnloadWalletRequest) (*UnloadWalletResponse, error)
+	LockWallet(context.Context, *LockWalletRequest) (*LockWalletResponse, error)
+	UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have forward compatible implementations.
 type UnimplementedWalletServer struct {
 }
 
-func (UnimplementedWalletServer) GenerateMnemonic(context.Context, *GenerateMnemonicRequest) (*GenerateMnemonicResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateMnemonic not implemented")
-}
 func (UnimplementedWalletServer) CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateWallet not implemented")
+}
+func (UnimplementedWalletServer) LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadWallet not implemented")
+}
+func (UnimplementedWalletServer) UnloadWallet(context.Context, *UnloadWalletRequest) (*UnloadWalletResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnloadWallet not implemented")
+}
+func (UnimplementedWalletServer) LockWallet(context.Context, *LockWalletRequest) (*LockWalletResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LockWallet not implemented")
+}
+func (UnimplementedWalletServer) UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlockWallet not implemented")
 }
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
@@ -80,24 +122,6 @@ type UnsafeWalletServer interface {
 
 func RegisterWalletServer(s grpc.ServiceRegistrar, srv WalletServer) {
 	s.RegisterService(&Wallet_ServiceDesc, srv)
-}
-
-func _Wallet_GenerateMnemonic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateMnemonicRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WalletServer).GenerateMnemonic(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pactus.Wallet/GenerateMnemonic",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WalletServer).GenerateMnemonic(ctx, req.(*GenerateMnemonicRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Wallet_CreateWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -118,6 +142,78 @@ func _Wallet_CreateWallet_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_LoadWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).LoadWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/LoadWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).LoadWallet(ctx, req.(*LoadWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_UnloadWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnloadWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).UnloadWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/UnloadWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).UnloadWallet(ctx, req.(*UnloadWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_LockWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).LockWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/LockWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).LockWallet(ctx, req.(*LockWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_UnlockWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).UnlockWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/UnlockWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).UnlockWallet(ctx, req.(*UnlockWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -126,12 +222,24 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*WalletServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GenerateMnemonic",
-			Handler:    _Wallet_GenerateMnemonic_Handler,
-		},
-		{
 			MethodName: "CreateWallet",
 			Handler:    _Wallet_CreateWallet_Handler,
+		},
+		{
+			MethodName: "LoadWallet",
+			Handler:    _Wallet_LoadWallet_Handler,
+		},
+		{
+			MethodName: "UnloadWallet",
+			Handler:    _Wallet_UnloadWallet_Handler,
+		},
+		{
+			MethodName: "LockWallet",
+			Handler:    _Wallet_LockWallet_Handler,
+		},
+		{
+			MethodName: "UnlockWallet",
+			Handler:    _Wallet_UnlockWallet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

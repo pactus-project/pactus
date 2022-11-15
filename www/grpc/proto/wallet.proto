@@ -5,15 +5,12 @@ option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.wallet";
 
 service Wallet {
-  rpc GenerateMnemonic(GenerateMnemonicRequest) returns (GenerateMnemonicResponse);
   rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse);
+  rpc LoadWallet(LoadWalletRequest) returns (LoadWalletResponse);
+  rpc UnloadWallet(UnloadWalletRequest) returns (UnloadWalletResponse);
+  rpc LockWallet(LockWalletRequest) returns (LockWalletResponse);
+  rpc UnlockWallet(UnlockWalletRequest) returns (UnlockWalletResponse);
 }
-message GenerateMnemonicRequest {
-  int32 entropy = 1;
-  string language = 2;
-}
-
-message GenerateMnemonicResponse { string mnemonic = 1; }
 
 message CreateWalletRequest {
   string name = 1;
@@ -23,3 +20,35 @@ message CreateWalletRequest {
 }
 
 message CreateWalletResponse {}
+
+
+message LoadWalletRequest {
+  string name = 1;
+}
+
+message LoadWalletResponse {
+  string name = 1;
+}
+
+
+message UnloadWalletRequest {
+  string name = 1;
+}
+
+message UnloadWalletResponse {
+  string name = 1;
+}
+
+message LockWalletRequest {
+  string password = 1;
+  int32 timeout = 2;
+}
+
+message LockWalletResponse {}
+
+message UnlockWalletRequest {
+  string password = 1;
+  int32 timeout = 2;
+}
+
+message UnlockWalletResponse {}

@@ -13,7 +13,7 @@ func TestGetNetworkInfo(t *testing.T) {
 	conn, client := testNetworkClient(t)
 
 	t.Run("Should return node PeerID", func(t *testing.T) {
-		res, err := client.GetNetworkInfo(tCtx, &pactus.NetworkInfoRequest{})
+		res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
 		assert.Equal(t, []byte(tMockSync.SelfID()), res.SelfId)
@@ -21,7 +21,7 @@ func TestGetNetworkInfo(t *testing.T) {
 	})
 
 	t.Run("Should return peer info", func(t *testing.T) {
-		res, err := client.GetNetworkInfo(tCtx, &pactus.NetworkInfoRequest{})
+		res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res.Peers))
@@ -45,7 +45,7 @@ func TestGetNetworkInfo(t *testing.T) {
 func TestGetPeerInfo(t *testing.T) {
 	conn, client := testNetworkClient(t)
 
-	res, err := client.GetPeerInfo(tCtx, &pactus.PeerInfoRequest{})
+	res, err := client.GetPeerInfo(tCtx, &pactus.GetPeerInfoRequest{})
 	assert.NoError(t, err)
 	assert.Nil(t, err)
 	assert.Equal(t, version.Agent(), res.Agent)

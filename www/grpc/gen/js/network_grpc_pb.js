@@ -4,48 +4,48 @@
 var grpc = require('grpc');
 var network_pb = require('./network_pb.js');
 
-function serialize_pactus_NetworkInfoRequest(arg) {
-  if (!(arg instanceof network_pb.NetworkInfoRequest)) {
-    throw new Error('Expected argument of type pactus.NetworkInfoRequest');
+function serialize_pactus_GetNetworkInfoRequest(arg) {
+  if (!(arg instanceof network_pb.GetNetworkInfoRequest)) {
+    throw new Error('Expected argument of type pactus.GetNetworkInfoRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_NetworkInfoRequest(buffer_arg) {
-  return network_pb.NetworkInfoRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_GetNetworkInfoRequest(buffer_arg) {
+  return network_pb.GetNetworkInfoRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_NetworkInfoResponse(arg) {
-  if (!(arg instanceof network_pb.NetworkInfoResponse)) {
-    throw new Error('Expected argument of type pactus.NetworkInfoResponse');
+function serialize_pactus_GetNetworkInfoResponse(arg) {
+  if (!(arg instanceof network_pb.GetNetworkInfoResponse)) {
+    throw new Error('Expected argument of type pactus.GetNetworkInfoResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_NetworkInfoResponse(buffer_arg) {
-  return network_pb.NetworkInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_GetNetworkInfoResponse(buffer_arg) {
+  return network_pb.GetNetworkInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_PeerInfoRequest(arg) {
-  if (!(arg instanceof network_pb.PeerInfoRequest)) {
-    throw new Error('Expected argument of type pactus.PeerInfoRequest');
+function serialize_pactus_GetPeerInfoRequest(arg) {
+  if (!(arg instanceof network_pb.GetPeerInfoRequest)) {
+    throw new Error('Expected argument of type pactus.GetPeerInfoRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_PeerInfoRequest(buffer_arg) {
-  return network_pb.PeerInfoRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_GetPeerInfoRequest(buffer_arg) {
+  return network_pb.GetPeerInfoRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_PeerInfoResponse(arg) {
-  if (!(arg instanceof network_pb.PeerInfoResponse)) {
-    throw new Error('Expected argument of type pactus.PeerInfoResponse');
+function serialize_pactus_GetPeerInfoResponse(arg) {
+  if (!(arg instanceof network_pb.GetPeerInfoResponse)) {
+    throw new Error('Expected argument of type pactus.GetPeerInfoResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_PeerInfoResponse(buffer_arg) {
-  return network_pb.PeerInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_GetPeerInfoResponse(buffer_arg) {
+  return network_pb.GetPeerInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -54,23 +54,23 @@ var NetworkService = exports.NetworkService = {
     path: '/pactus.Network/GetNetworkInfo',
     requestStream: false,
     responseStream: false,
-    requestType: network_pb.NetworkInfoRequest,
-    responseType: network_pb.NetworkInfoResponse,
-    requestSerialize: serialize_pactus_NetworkInfoRequest,
-    requestDeserialize: deserialize_pactus_NetworkInfoRequest,
-    responseSerialize: serialize_pactus_NetworkInfoResponse,
-    responseDeserialize: deserialize_pactus_NetworkInfoResponse,
+    requestType: network_pb.GetNetworkInfoRequest,
+    responseType: network_pb.GetNetworkInfoResponse,
+    requestSerialize: serialize_pactus_GetNetworkInfoRequest,
+    requestDeserialize: deserialize_pactus_GetNetworkInfoRequest,
+    responseSerialize: serialize_pactus_GetNetworkInfoResponse,
+    responseDeserialize: deserialize_pactus_GetNetworkInfoResponse,
   },
   getPeerInfo: {
     path: '/pactus.Network/GetPeerInfo',
     requestStream: false,
     responseStream: false,
-    requestType: network_pb.PeerInfoRequest,
-    responseType: network_pb.PeerInfoResponse,
-    requestSerialize: serialize_pactus_PeerInfoRequest,
-    requestDeserialize: deserialize_pactus_PeerInfoRequest,
-    responseSerialize: serialize_pactus_PeerInfoResponse,
-    responseDeserialize: deserialize_pactus_PeerInfoResponse,
+    requestType: network_pb.GetPeerInfoRequest,
+    responseType: network_pb.GetPeerInfoResponse,
+    requestSerialize: serialize_pactus_GetPeerInfoRequest,
+    requestDeserialize: deserialize_pactus_GetPeerInfoRequest,
+    responseSerialize: serialize_pactus_GetPeerInfoResponse,
+    responseDeserialize: deserialize_pactus_GetPeerInfoResponse,
   },
 };
 
