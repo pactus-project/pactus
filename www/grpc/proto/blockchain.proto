@@ -74,21 +74,25 @@ message GetConsensusInfoResponse {
 }
 
 message ValidatorInfo {
-  string public_key = 1;
-  int32 number = 2;
-  int32 sequence = 3;
-  int64 stake = 4;
-  uint32 last_bonding_height = 5;
-  uint32 last_joined_height = 6;
-  uint32 unbonding_height = 7;
-  string address = 8;
+  bytes hash = 1;
+  bytes data = 2;
+  string public_key = 3;
+  int32 number = 4;
+  int32 sequence = 5;
+  int64 stake = 6;
+  uint32 last_bonding_height = 7;
+  uint32 last_joined_height = 8;
+  uint32 unbonding_height = 9;
+  string address = 10;
 }
 
 message AccountInfo {
-  string address = 1;
-  int32 number = 2;
-  int32 sequence = 3;
-  int64 Balance = 4;
+  bytes hash = 1;
+  bytes data = 2;
+  string address = 3;
+  int32 number = 4;
+  int32 sequence = 5;
+  int64 balance = 6;
 }
 
 message BlockHeaderInfo {
@@ -100,10 +104,11 @@ message BlockHeaderInfo {
 }
 
 message CertificateInfo {
-  int32 round = 1;
-  repeated int32 committers = 2;
-  repeated int32 absentees = 3;
-  bytes signature = 4;
+  bytes hash = 1;
+  int32 round = 2;
+  repeated int32 committers = 3;
+  repeated int32 absentees = 4;
+  bytes signature = 5;
 }
 
 message VoteInfo {
@@ -120,7 +125,8 @@ enum BlockVerbosity {
 }
 
 enum VoteType {
-  VOTE_PREPARE = 0;
-  VOTE_PRECOMMIT = 1;
-  VOTE_CHANGE_PROPOSER = 2;
+  VOTE_UNKNOWN = 0;
+  VOTE_PREPARE = 1;
+  VOTE_PRECOMMIT = 2;
+  VOTE_CHANGE_PROPOSER = 3;
 }

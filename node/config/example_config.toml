@@ -134,7 +134,6 @@
 
   # levels contains the level of logger per module.
   [logger.levels]
-   ## _capnp = "error"
    ## _consensus = "info"
    ## _grpc = "error"
    ## _http = "error"
@@ -168,17 +167,6 @@
     # protection should be enabled or not.
     # Default is false
    ## enable_cors = false
-
-# capnp contains configuration of Capnp module. Cap’n Proto is an insanely fast
-# data interchange format and capability-based RPC system.
-[capnp]
-
-  # enable indicates whether Cap'n service should be enabled or not.
-  # Default is false
- ## enable = false
-
-  # address to listen for incoming connections for Cap’n server.
- ## listen = ""
 
 # http configuration.
 [http]

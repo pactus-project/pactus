@@ -26,14 +26,15 @@ final $typed_data.Uint8List blockVerbosityDescriptor = $convert.base64Decode('Cg
 const VoteType$json = const {
   '1': 'VoteType',
   '2': const [
-    const {'1': 'VOTE_PREPARE', '2': 0},
-    const {'1': 'VOTE_PRECOMMIT', '2': 1},
-    const {'1': 'VOTE_CHANGE_PROPOSER', '2': 2},
+    const {'1': 'VOTE_UNKNOWN', '2': 0},
+    const {'1': 'VOTE_PREPARE', '2': 1},
+    const {'1': 'VOTE_PRECOMMIT', '2': 2},
+    const {'1': 'VOTE_CHANGE_PROPOSER', '2': 3},
   ],
 };
 
 /// Descriptor for `VoteType`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List voteTypeDescriptor = $convert.base64Decode('CghWb3RlVHlwZRIQCgxWT1RFX1BSRVBBUkUQABISCg5WT1RFX1BSRUNPTU1JVBABEhgKFFZPVEVfQ0hBTkdFX1BST1BPU0VSEAI=');
+final $typed_data.Uint8List voteTypeDescriptor = $convert.base64Decode('CghWb3RlVHlwZRIQCgxWT1RFX1VOS05PV04QABIQCgxWT1RFX1BSRVBBUkUQARISCg5WT1RFX1BSRUNPTU1JVBACEhgKFFZPVEVfQ0hBTkdFX1BST1BPU0VSEAM=');
 @$core.Deprecated('Use getAccountRequestDescriptor instead')
 const GetAccountRequest$json = const {
   '1': 'GetAccountRequest',
@@ -212,32 +213,36 @@ final $typed_data.Uint8List getConsensusInfoResponseDescriptor = $convert.base64
 const ValidatorInfo$json = const {
   '1': 'ValidatorInfo',
   '2': const [
-    const {'1': 'public_key', '3': 1, '4': 1, '5': 9, '10': 'publicKey'},
-    const {'1': 'number', '3': 2, '4': 1, '5': 5, '10': 'number'},
-    const {'1': 'sequence', '3': 3, '4': 1, '5': 5, '10': 'sequence'},
-    const {'1': 'stake', '3': 4, '4': 1, '5': 3, '10': 'stake'},
-    const {'1': 'last_bonding_height', '3': 5, '4': 1, '5': 13, '10': 'lastBondingHeight'},
-    const {'1': 'last_joined_height', '3': 6, '4': 1, '5': 13, '10': 'lastJoinedHeight'},
-    const {'1': 'unbonding_height', '3': 7, '4': 1, '5': 13, '10': 'unbondingHeight'},
-    const {'1': 'address', '3': 8, '4': 1, '5': 9, '10': 'address'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
+    const {'1': 'data', '3': 2, '4': 1, '5': 12, '10': 'data'},
+    const {'1': 'public_key', '3': 3, '4': 1, '5': 9, '10': 'publicKey'},
+    const {'1': 'number', '3': 4, '4': 1, '5': 5, '10': 'number'},
+    const {'1': 'sequence', '3': 5, '4': 1, '5': 5, '10': 'sequence'},
+    const {'1': 'stake', '3': 6, '4': 1, '5': 3, '10': 'stake'},
+    const {'1': 'last_bonding_height', '3': 7, '4': 1, '5': 13, '10': 'lastBondingHeight'},
+    const {'1': 'last_joined_height', '3': 8, '4': 1, '5': 13, '10': 'lastJoinedHeight'},
+    const {'1': 'unbonding_height', '3': 9, '4': 1, '5': 13, '10': 'unbondingHeight'},
+    const {'1': 'address', '3': 10, '4': 1, '5': 9, '10': 'address'},
   ],
 };
 
 /// Descriptor for `ValidatorInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode('Cg1WYWxpZGF0b3JJbmZvEh0KCnB1YmxpY19rZXkYASABKAlSCXB1YmxpY0tleRIWCgZudW1iZXIYAiABKAVSBm51bWJlchIaCghzZXF1ZW5jZRgDIAEoBVIIc2VxdWVuY2USFAoFc3Rha2UYBCABKANSBXN0YWtlEi4KE2xhc3RfYm9uZGluZ19oZWlnaHQYBSABKA1SEWxhc3RCb25kaW5nSGVpZ2h0EiwKEmxhc3Rfam9pbmVkX2hlaWdodBgGIAEoDVIQbGFzdEpvaW5lZEhlaWdodBIpChB1bmJvbmRpbmdfaGVpZ2h0GAcgASgNUg91bmJvbmRpbmdIZWlnaHQSGAoHYWRkcmVzcxgIIAEoCVIHYWRkcmVzcw==');
+final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode('Cg1WYWxpZGF0b3JJbmZvEhIKBGhhc2gYASABKAxSBGhhc2gSEgoEZGF0YRgCIAEoDFIEZGF0YRIdCgpwdWJsaWNfa2V5GAMgASgJUglwdWJsaWNLZXkSFgoGbnVtYmVyGAQgASgFUgZudW1iZXISGgoIc2VxdWVuY2UYBSABKAVSCHNlcXVlbmNlEhQKBXN0YWtlGAYgASgDUgVzdGFrZRIuChNsYXN0X2JvbmRpbmdfaGVpZ2h0GAcgASgNUhFsYXN0Qm9uZGluZ0hlaWdodBIsChJsYXN0X2pvaW5lZF9oZWlnaHQYCCABKA1SEGxhc3RKb2luZWRIZWlnaHQSKQoQdW5ib25kaW5nX2hlaWdodBgJIAEoDVIPdW5ib25kaW5nSGVpZ2h0EhgKB2FkZHJlc3MYCiABKAlSB2FkZHJlc3M=');
 @$core.Deprecated('Use accountInfoDescriptor instead')
 const AccountInfo$json = const {
   '1': 'AccountInfo',
   '2': const [
-    const {'1': 'address', '3': 1, '4': 1, '5': 9, '10': 'address'},
-    const {'1': 'number', '3': 2, '4': 1, '5': 5, '10': 'number'},
-    const {'1': 'sequence', '3': 3, '4': 1, '5': 5, '10': 'sequence'},
-    const {'1': 'Balance', '3': 4, '4': 1, '5': 3, '10': 'Balance'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
+    const {'1': 'data', '3': 2, '4': 1, '5': 12, '10': 'data'},
+    const {'1': 'address', '3': 3, '4': 1, '5': 9, '10': 'address'},
+    const {'1': 'number', '3': 4, '4': 1, '5': 5, '10': 'number'},
+    const {'1': 'sequence', '3': 5, '4': 1, '5': 5, '10': 'sequence'},
+    const {'1': 'balance', '3': 6, '4': 1, '5': 3, '10': 'balance'},
   ],
 };
 
 /// Descriptor for `AccountInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxIYCgdhZGRyZXNzGAEgASgJUgdhZGRyZXNzEhYKBm51bWJlchgCIAEoBVIGbnVtYmVyEhoKCHNlcXVlbmNlGAMgASgFUghzZXF1ZW5jZRIYCgdCYWxhbmNlGAQgASgDUgdCYWxhbmNl');
+final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxISCgRoYXNoGAEgASgMUgRoYXNoEhIKBGRhdGEYAiABKAxSBGRhdGESGAoHYWRkcmVzcxgDIAEoCVIHYWRkcmVzcxIWCgZudW1iZXIYBCABKAVSBm51bWJlchIaCghzZXF1ZW5jZRgFIAEoBVIIc2VxdWVuY2USGAoHYmFsYW5jZRgGIAEoA1IHYmFsYW5jZQ==');
 @$core.Deprecated('Use blockHeaderInfoDescriptor instead')
 const BlockHeaderInfo$json = const {
   '1': 'BlockHeaderInfo',
@@ -256,15 +261,16 @@ final $typed_data.Uint8List blockHeaderInfoDescriptor = $convert.base64Decode('C
 const CertificateInfo$json = const {
   '1': 'CertificateInfo',
   '2': const [
-    const {'1': 'round', '3': 1, '4': 1, '5': 5, '10': 'round'},
-    const {'1': 'committers', '3': 2, '4': 3, '5': 5, '10': 'committers'},
-    const {'1': 'absentees', '3': 3, '4': 3, '5': 5, '10': 'absentees'},
-    const {'1': 'signature', '3': 4, '4': 1, '5': 12, '10': 'signature'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
+    const {'1': 'round', '3': 2, '4': 1, '5': 5, '10': 'round'},
+    const {'1': 'committers', '3': 3, '4': 3, '5': 5, '10': 'committers'},
+    const {'1': 'absentees', '3': 4, '4': 3, '5': 5, '10': 'absentees'},
+    const {'1': 'signature', '3': 5, '4': 1, '5': 12, '10': 'signature'},
   ],
 };
 
 /// Descriptor for `CertificateInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List certificateInfoDescriptor = $convert.base64Decode('Cg9DZXJ0aWZpY2F0ZUluZm8SFAoFcm91bmQYASABKAVSBXJvdW5kEh4KCmNvbW1pdHRlcnMYAiADKAVSCmNvbW1pdHRlcnMSHAoJYWJzZW50ZWVzGAMgAygFUglhYnNlbnRlZXMSHAoJc2lnbmF0dXJlGAQgASgMUglzaWduYXR1cmU=');
+final $typed_data.Uint8List certificateInfoDescriptor = $convert.base64Decode('Cg9DZXJ0aWZpY2F0ZUluZm8SEgoEaGFzaBgBIAEoDFIEaGFzaBIUCgVyb3VuZBgCIAEoBVIFcm91bmQSHgoKY29tbWl0dGVycxgDIAMoBVIKY29tbWl0dGVycxIcCglhYnNlbnRlZXMYBCADKAVSCWFic2VudGVlcxIcCglzaWduYXR1cmUYBSABKAxSCXNpZ25hdHVyZQ==');
 @$core.Deprecated('Use voteInfoDescriptor instead')
 const VoteInfo$json = const {
   '1': 'VoteInfo',
@@ -303,6 +309,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.PayloadSend': $0.PayloadSend$json,
   '.pactus.PayloadBond': $0.PayloadBond$json,
   '.pactus.PayloadSortition': $0.PayloadSortition$json,
+  '.pactus.PayloadUnbond': $0.PayloadUnbond$json,
+  '.pactus.PayloadWithdraw': $0.PayloadWithdraw$json,
   '.pactus.GetBlockHashRequest': GetBlockHashRequest$json,
   '.pactus.GetBlockHashResponse': GetBlockHashResponse$json,
   '.pactus.GetBlockHeightRequest': GetBlockHeightRequest$json,

@@ -27,11 +27,13 @@ class BlockVerbosity extends $pb.ProtobufEnum {
 }
 
 class VoteType extends $pb.ProtobufEnum {
-  static const VoteType VOTE_PREPARE = VoteType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_PREPARE');
-  static const VoteType VOTE_PRECOMMIT = VoteType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_PRECOMMIT');
-  static const VoteType VOTE_CHANGE_PROPOSER = VoteType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_CHANGE_PROPOSER');
+  static const VoteType VOTE_UNKNOWN = VoteType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_UNKNOWN');
+  static const VoteType VOTE_PREPARE = VoteType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_PREPARE');
+  static const VoteType VOTE_PRECOMMIT = VoteType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_PRECOMMIT');
+  static const VoteType VOTE_CHANGE_PROPOSER = VoteType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_CHANGE_PROPOSER');
 
   static const $core.List<VoteType> values = <VoteType> [
+    VOTE_UNKNOWN,
     VOTE_PREPARE,
     VOTE_PRECOMMIT,
     VOTE_CHANGE_PROPOSER,

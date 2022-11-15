@@ -12,7 +12,6 @@ all: build test
 devtools:
 	@echo "Installing devtools"
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	go install zombiezen.com/go/capnproto2/capnpc-go@v2.18
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.12
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.12
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
@@ -46,11 +45,7 @@ docker:
 	docker build --tag pactus .
 
 ########################################
-### capnp and proto
-capnp:
-	capnp compile \
-		-ogo ./www/capnp/pactus.capnp
-
+### proto
 proto:
 	cd www/grpc/ && rm -rf gen && buf generate \
 		--path ./proto/blockchain.proto \
@@ -90,5 +85,5 @@ check:
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 .PHONY: build build_gui
 .PHONY: test unit_test test_race
-.PHONY: devtools capnp proto
+.PHONY: devtools proto
 .PHONY: fmt check docker

@@ -41,7 +41,6 @@ func getLoggersInst() *loggers {
 		conf.Levels["_state"] = "debug"
 		conf.Levels["_sync"] = "debug"
 		conf.Levels["_pool"] = "debug"
-		conf.Levels["_capnp"] = "debug"
 		conf.Levels["_http"] = "debug"
 		conf.Levels["_grpc"] = "debug"
 		loggersInst = &loggers{

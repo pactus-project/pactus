@@ -4,31 +4,22 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/www/capnp"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func getValidator(t *testing.T, addr crypto.Address) *validator.Validator {
-	res := tCapnpServer.GetValidator(tCtx, func(p capnp.PactusServer_getValidator_Params) error {
-		assert.NoError(t, p.SetAddress(addr.String()))
-		return nil
-	}).Result()
-
-	st, err := res.Struct()
+func getValidator(_ *testing.T, addr crypto.Address) *pactus.ValidatorInfo {
+	res, err := tBlockchain.GetValidator(tCtx,
+		&pactus.GetValidatorRequest{Address: addr.String()})
 	if err != nil {
 		return nil
 	}
-
-	d, _ := st.Data()
-	val, err := validator.FromBytes(d)
-	assert.NoError(t, err)
-	return val
+	return res.Validator
 }
 
 func TestGetValidator(t *testing.T) {
 	val := getValidator(t, tSigners[tNodeIdx2].Address())
 	require.NotNil(t, val)
-	assert.Equal(t, val.Number(), int32(1))
+	assert.Equal(t, val.Number, int32(1))
 }

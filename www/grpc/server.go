@@ -17,6 +17,7 @@ type Server struct {
 	ctx       context.Context
 	config    *Config
 	listener  net.Listener
+	address   string
 	grpc      *grpc.Server
 	state     state.Facade
 	sync      sync.Synchronizer
@@ -34,6 +35,10 @@ func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
 		consensus: consensus,
 		logger:    logger.NewLogger("_grpc", nil),
 	}
+}
+
+func (s *Server) Address() string {
+	return s.address
 }
 
 func (s *Server) StartServer() error {
@@ -75,6 +80,7 @@ func (s *Server) StartServer() error {
 	}
 
 	s.listener = listener
+	s.address = listener.Addr().String()
 	s.grpc = grpc
 	go func() {
 		if err := s.grpc.Serve(listener); err != nil {

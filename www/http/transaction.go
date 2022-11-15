@@ -5,81 +5,81 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/www/capnp"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.capnp.GetTransaction(s.ctx, func(p capnp.PactusServer_getTransaction_Params) error {
-		vars := mux.Vars(r)
-		id, err := hex.DecodeString(vars["id"])
-		if err != nil {
-			return err
-		}
-		return p.SetId(id)
-	})
-
-	t, err := b.Struct()
+	vars := mux.Vars(r)
+	id, err := hex.DecodeString(vars["id"])
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
-	res, _ := t.Result()
-	data, _ := res.Data()
-	trx, err := tx.FromBytes(data)
+	res, err := s.transaction.GetTransaction(s.ctx,
+		&pactus.GetTransactionRequest{
+			Id:        id,
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
+		},
+	)
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
+
 	tm := newTableMaker()
-	txToTable(trx, tm)
+	txToTable(res.Transaction, tm)
 	s.writeHTML(w, tm.html())
 }
 
-func txToTable(trx *tx.Tx, tm *tableMaker) {
-	d, _ := trx.Bytes()
-
-	tm.addRowTxID("ID", trx.ID().Bytes())
-	tm.addRowBytes("Data", d)
-	tm.addRowInt("Version", int(trx.Version()))
-	tm.addRowBytes("Stamp", trx.Stamp().Bytes())
-	tm.addRowInt("Sequence", int(trx.Sequence()))
-	tm.addRowInt("Fee", int(trx.Fee()))
-	tm.addRowString("Memo", trx.Memo())
-	switch trx.Payload().Type() {
-	case payload.PayloadTypeSend:
+func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
+	if trx == nil {
+		return
+	}
+	tm.addRowTxID("ID", trx.Id)
+	tm.addRowBytes("Data", trx.Data)
+	tm.addRowInt("Version", int(trx.Version))
+	tm.addRowBytes("Stamp", trx.Stamp)
+	tm.addRowInt("Sequence", int(trx.Sequence))
+	tm.addRowInt("Fee", int(trx.Fee))
+	tm.addRowString("Memo", trx.Memo)
+	switch trx.Type {
+	case pactus.PayloadType_SEND_PAYLOAD:
+		pld := trx.Payload.(*pactus.TransactionInfo_Send).Send
 		tm.addRowString("Payload type", "Send")
-		tm.addRowAccAddress("Sender", trx.Payload().(*payload.SendPayload).Sender.String())
-		tm.addRowAccAddress("Receiver", trx.Payload().(*payload.SendPayload).Receiver.String())
-		tm.addRowAmount("Amount", trx.Payload().(*payload.SendPayload).Amount)
+		tm.addRowAccAddress("Sender", pld.Sender)
+		tm.addRowAccAddress("Receiver", pld.Receiver)
+		tm.addRowAmount("Amount", pld.Amount)
 
-	case payload.PayloadTypeBond:
+	case pactus.PayloadType_BOND_PAYLOAD:
+		pld := trx.Payload.(*pactus.TransactionInfo_Bond).Bond
 		tm.addRowString("Payload type", "Bond")
-		tm.addRowAccAddress("Sender", trx.Payload().(*payload.BondPayload).Sender.String())
-		tm.addRowValAddress("Receiver", trx.Payload().(*payload.BondPayload).Receiver.String())
-		tm.addRowAmount("Stake", trx.Payload().(*payload.BondPayload).Stake)
+		tm.addRowAccAddress("Sender", pld.Sender)
+		tm.addRowValAddress("Receiver", pld.Receiver)
+		tm.addRowAmount("Stake", pld.Stake)
 
-	case payload.PayloadTypeSortition:
+	case pactus.PayloadType_SORTITION_PAYLOAD:
+		pld := trx.Payload.(*pactus.TransactionInfo_Sortition).Sortition
 		tm.addRowString("Payload type", "Sortition")
-		tm.addRowValAddress("Address", trx.Payload().(*payload.SortitionPayload).Address.String())
-		tm.addRowBytes("Proof", trx.Payload().(*payload.SortitionPayload).Proof[:])
+		tm.addRowValAddress("Address", pld.Address)
+		tm.addRowBytes("Proof", pld.Proof)
 
-	case payload.PayloadTypeUnbond:
+	case pactus.PayloadType_UNBOND_PAYLOAD:
+		pld := trx.Payload.(*pactus.TransactionInfo_Unbond).Unbond
 		tm.addRowString("Payload type", "Unbond")
-		tm.addRowValAddress("Validator", trx.Payload().(*payload.UnbondPayload).Validator.String())
+		tm.addRowValAddress("Validator", pld.Validator)
 
-	case payload.PayloadTypeWithdraw:
+	case pactus.PayloadType_WITHDRAW_PAYLOAD:
+		pld := trx.Payload.(*pactus.TransactionInfo_Withdraw).Withdraw
 		tm.addRowString("Payload type", "Withdraw")
-		tm.addRowValAddress("Sender", trx.Payload().(*payload.WithdrawPayload).From.String())
-		tm.addRowAccAddress("Receiver", trx.Payload().(*payload.WithdrawPayload).To.String())
-		tm.addRowAmount("Amount", trx.Payload().(*payload.WithdrawPayload).Amount)
+		tm.addRowValAddress("Sender", pld.From)
+		tm.addRowAccAddress("Receiver", pld.To)
+		tm.addRowAmount("Amount", pld.Amount)
 	}
-	if trx.PublicKey() != nil {
-		tm.addRowBytes("PublicKey", trx.PublicKey().Bytes())
+	if trx.PublicKey != "" {
+		tm.addRowString("PublicKey", trx.PublicKey)
 	}
-	if trx.Signature() != nil {
-		tm.addRowBytes("Signature", trx.Signature().Bytes())
+	if trx.Signature != nil {
+		tm.addRowBytes("Signature", trx.Signature)
 	}
 }

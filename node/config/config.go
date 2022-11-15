@@ -15,7 +15,6 @@ import (
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/www/capnp"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/nanomsg"
@@ -34,7 +33,6 @@ type Config struct {
 	Consensus *consensus.Config `toml:"consensus"`
 	Logger    *logger.Config    `toml:"logger"`
 	GRPC      *grpc.Config      `toml:"grpc"`
-	Capnp     *capnp.Config     `toml:"capnp"`
 	HTTP      *http.Config      `toml:"http"`
 	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
 }
@@ -49,7 +47,6 @@ func DefaultConfig() *Config {
 		Consensus: consensus.DefaultConfig(),
 		Logger:    logger.DefaultConfig(),
 		GRPC:      grpc.DefaultConfig(),
-		Capnp:     capnp.DefaultConfig(),
 		HTTP:      http.DefaultConfig(),
 		Nanomsg:   nanomsg.DefaultConfig(),
 	}
@@ -79,8 +76,6 @@ func SaveTestnetConfig(path, rewardAddr string) error {
 	conf.GRPC.Listen = "[::]:9090"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:80"
-	conf.Capnp.Enable = true
-	conf.Capnp.Listen = "[::]:37621"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:8080"
 	conf.State.RewardAddress = rewardAddr
@@ -101,8 +96,6 @@ func SaveLocalnetConfig(path, rewardAddr string) error {
 	conf.GRPC.Listen = "[::]:9090"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:8080"
-	conf.Capnp.Enable = true
-	conf.Capnp.Listen = "[::]:37621"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:8081"
 	conf.State.RewardAddress = rewardAddr
@@ -160,9 +153,6 @@ func (conf *Config) SanityCheck() error {
 		return err
 	}
 	if err := conf.Sync.SanityCheck(); err != nil {
-		return err
-	}
-	if err := conf.Capnp.SanityCheck(); err != nil {
 		return err
 	}
 	if err := conf.Nanomsg.SanityCheck(); err != nil {

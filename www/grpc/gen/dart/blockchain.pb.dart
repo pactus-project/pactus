@@ -930,19 +930,23 @@ class GetConsensusInfoResponse extends $pb.GeneratedMessage {
 
 class ValidatorInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ValidatorInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
-    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBondingHeight', $pb.PbFieldType.OU3)
-    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastJoinedHeight', $pb.PbFieldType.OU3)
-    ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
-    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
+    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
+    ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBondingHeight', $pb.PbFieldType.OU3)
+    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastJoinedHeight', $pb.PbFieldType.OU3)
+    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
+    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
     ..hasRequiredFields = false
   ;
 
   ValidatorInfo._() : super();
   factory ValidatorInfo({
+    $core.List<$core.int>? hash,
+    $core.List<$core.int>? data,
     $core.String? publicKey,
     $core.int? number,
     $core.int? sequence,
@@ -953,6 +957,12 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     $core.String? address,
   }) {
     final _result = create();
+    if (hash != null) {
+      _result.hash = hash;
+    }
+    if (data != null) {
+      _result.data = data;
+    }
     if (publicKey != null) {
       _result.publicKey = publicKey;
     }
@@ -1001,95 +1011,123 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   static ValidatorInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get publicKey => $_getSZ(0);
+  $core.List<$core.int> get hash => $_getN(0);
   @$pb.TagNumber(1)
-  set publicKey($core.String v) { $_setString(0, v); }
+  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasPublicKey() => $_has(0);
+  $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
-  void clearPublicKey() => clearField(1);
+  void clearHash() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get number => $_getIZ(1);
+  $core.List<$core.int> get data => $_getN(1);
   @$pb.TagNumber(2)
-  set number($core.int v) { $_setSignedInt32(1, v); }
+  set data($core.List<$core.int> v) { $_setBytes(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasNumber() => $_has(1);
+  $core.bool hasData() => $_has(1);
   @$pb.TagNumber(2)
-  void clearNumber() => clearField(2);
+  void clearData() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get sequence => $_getIZ(2);
+  $core.String get publicKey => $_getSZ(2);
   @$pb.TagNumber(3)
-  set sequence($core.int v) { $_setSignedInt32(2, v); }
+  set publicKey($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasSequence() => $_has(2);
+  $core.bool hasPublicKey() => $_has(2);
   @$pb.TagNumber(3)
-  void clearSequence() => clearField(3);
+  void clearPublicKey() => clearField(3);
 
   @$pb.TagNumber(4)
-  $fixnum.Int64 get stake => $_getI64(3);
+  $core.int get number => $_getIZ(3);
   @$pb.TagNumber(4)
-  set stake($fixnum.Int64 v) { $_setInt64(3, v); }
+  set number($core.int v) { $_setSignedInt32(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasStake() => $_has(3);
+  $core.bool hasNumber() => $_has(3);
   @$pb.TagNumber(4)
-  void clearStake() => clearField(4);
+  void clearNumber() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.int get lastBondingHeight => $_getIZ(4);
+  $core.int get sequence => $_getIZ(4);
   @$pb.TagNumber(5)
-  set lastBondingHeight($core.int v) { $_setUnsignedInt32(4, v); }
+  set sequence($core.int v) { $_setSignedInt32(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasLastBondingHeight() => $_has(4);
+  $core.bool hasSequence() => $_has(4);
   @$pb.TagNumber(5)
-  void clearLastBondingHeight() => clearField(5);
+  void clearSequence() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.int get lastJoinedHeight => $_getIZ(5);
+  $fixnum.Int64 get stake => $_getI64(5);
   @$pb.TagNumber(6)
-  set lastJoinedHeight($core.int v) { $_setUnsignedInt32(5, v); }
+  set stake($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasLastJoinedHeight() => $_has(5);
+  $core.bool hasStake() => $_has(5);
   @$pb.TagNumber(6)
-  void clearLastJoinedHeight() => clearField(6);
+  void clearStake() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.int get unbondingHeight => $_getIZ(6);
+  $core.int get lastBondingHeight => $_getIZ(6);
   @$pb.TagNumber(7)
-  set unbondingHeight($core.int v) { $_setUnsignedInt32(6, v); }
+  set lastBondingHeight($core.int v) { $_setUnsignedInt32(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasUnbondingHeight() => $_has(6);
+  $core.bool hasLastBondingHeight() => $_has(6);
   @$pb.TagNumber(7)
-  void clearUnbondingHeight() => clearField(7);
+  void clearLastBondingHeight() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.String get address => $_getSZ(7);
+  $core.int get lastJoinedHeight => $_getIZ(7);
   @$pb.TagNumber(8)
-  set address($core.String v) { $_setString(7, v); }
+  set lastJoinedHeight($core.int v) { $_setUnsignedInt32(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasAddress() => $_has(7);
+  $core.bool hasLastJoinedHeight() => $_has(7);
   @$pb.TagNumber(8)
-  void clearAddress() => clearField(8);
+  void clearLastJoinedHeight() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.int get unbondingHeight => $_getIZ(8);
+  @$pb.TagNumber(9)
+  set unbondingHeight($core.int v) { $_setUnsignedInt32(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasUnbondingHeight() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearUnbondingHeight() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.String get address => $_getSZ(9);
+  @$pb.TagNumber(10)
+  set address($core.String v) { $_setString(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasAddress() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearAddress() => clearField(10);
 }
 
 class AccountInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AccountInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'Balance', protoName: 'Balance')
+    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
+    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
     ..hasRequiredFields = false
   ;
 
   AccountInfo._() : super();
   factory AccountInfo({
+    $core.List<$core.int>? hash,
+    $core.List<$core.int>? data,
     $core.String? address,
     $core.int? number,
     $core.int? sequence,
     $fixnum.Int64? balance,
   }) {
     final _result = create();
+    if (hash != null) {
+      _result.hash = hash;
+    }
+    if (data != null) {
+      _result.data = data;
+    }
     if (address != null) {
       _result.address = address;
     }
@@ -1126,40 +1164,58 @@ class AccountInfo extends $pb.GeneratedMessage {
   static AccountInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get address => $_getSZ(0);
+  $core.List<$core.int> get hash => $_getN(0);
   @$pb.TagNumber(1)
-  set address($core.String v) { $_setString(0, v); }
+  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasAddress() => $_has(0);
+  $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
-  void clearAddress() => clearField(1);
+  void clearHash() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get number => $_getIZ(1);
+  $core.List<$core.int> get data => $_getN(1);
   @$pb.TagNumber(2)
-  set number($core.int v) { $_setSignedInt32(1, v); }
+  set data($core.List<$core.int> v) { $_setBytes(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasNumber() => $_has(1);
+  $core.bool hasData() => $_has(1);
   @$pb.TagNumber(2)
-  void clearNumber() => clearField(2);
+  void clearData() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get sequence => $_getIZ(2);
+  $core.String get address => $_getSZ(2);
   @$pb.TagNumber(3)
-  set sequence($core.int v) { $_setSignedInt32(2, v); }
+  set address($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasSequence() => $_has(2);
+  $core.bool hasAddress() => $_has(2);
   @$pb.TagNumber(3)
-  void clearSequence() => clearField(3);
+  void clearAddress() => clearField(3);
 
   @$pb.TagNumber(4)
-  $fixnum.Int64 get balance => $_getI64(3);
+  $core.int get number => $_getIZ(3);
   @$pb.TagNumber(4)
-  set balance($fixnum.Int64 v) { $_setInt64(3, v); }
+  set number($core.int v) { $_setSignedInt32(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasBalance() => $_has(3);
+  $core.bool hasNumber() => $_has(3);
   @$pb.TagNumber(4)
-  void clearBalance() => clearField(4);
+  void clearNumber() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.int get sequence => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set sequence($core.int v) { $_setSignedInt32(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSequence() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSequence() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get balance => $_getI64(5);
+  @$pb.TagNumber(6)
+  set balance($fixnum.Int64 v) { $_setInt64(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasBalance() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearBalance() => clearField(6);
 }
 
 class BlockHeaderInfo extends $pb.GeneratedMessage {
@@ -1267,21 +1323,26 @@ class BlockHeaderInfo extends $pb.GeneratedMessage {
 
 class CertificateInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CertificateInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'round', $pb.PbFieldType.O3)
-    ..p<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committers', $pb.PbFieldType.K3)
-    ..p<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'absentees', $pb.PbFieldType.K3)
-    ..a<$core.List<$core.int>>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'round', $pb.PbFieldType.O3)
+    ..p<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committers', $pb.PbFieldType.K3)
+    ..p<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'absentees', $pb.PbFieldType.K3)
+    ..a<$core.List<$core.int>>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
   CertificateInfo._() : super();
   factory CertificateInfo({
+    $core.List<$core.int>? hash,
     $core.int? round,
     $core.Iterable<$core.int>? committers,
     $core.Iterable<$core.int>? absentees,
     $core.List<$core.int>? signature,
   }) {
     final _result = create();
+    if (hash != null) {
+      _result.hash = hash;
+    }
     if (round != null) {
       _result.round = round;
     }
@@ -1318,33 +1379,42 @@ class CertificateInfo extends $pb.GeneratedMessage {
   static CertificateInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.int get round => $_getIZ(0);
+  $core.List<$core.int> get hash => $_getN(0);
   @$pb.TagNumber(1)
-  set round($core.int v) { $_setSignedInt32(0, v); }
+  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasRound() => $_has(0);
+  $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
-  void clearRound() => clearField(1);
+  void clearHash() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get committers => $_getList(1);
+  $core.int get round => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set round($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasRound() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRound() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get absentees => $_getList(2);
+  $core.List<$core.int> get committers => $_getList(2);
 
   @$pb.TagNumber(4)
-  $core.List<$core.int> get signature => $_getN(3);
-  @$pb.TagNumber(4)
-  set signature($core.List<$core.int> v) { $_setBytes(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasSignature() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearSignature() => clearField(4);
+  $core.List<$core.int> get absentees => $_getList(3);
+
+  @$pb.TagNumber(5)
+  $core.List<$core.int> get signature => $_getN(4);
+  @$pb.TagNumber(5)
+  set signature($core.List<$core.int> v) { $_setBytes(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSignature() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSignature() => clearField(5);
 }
 
 class VoteInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'VoteInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..e<VoteType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: VoteType.VOTE_PREPARE, valueOf: VoteType.valueOf, enumValues: VoteType.values)
+    ..e<VoteType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: VoteType.VOTE_UNKNOWN, valueOf: VoteType.valueOf, enumValues: VoteType.values)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'voter')
     ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockHash', $pb.PbFieldType.OY)
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'round', $pb.PbFieldType.O3)

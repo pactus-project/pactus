@@ -5,33 +5,26 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/www/capnp"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 func lastHash() hash.Hash {
-	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.PactusServer_getBlockchainInfo_Params) error {
-		return nil
-	}).Result()
-	st, err := res.Struct()
+	res, err := tBlockchain.GetBlockchainInfo(tCtx,
+		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
 		panic(err)
 	}
-
-	data, _ := st.LastBlockHash()
-	h, _ := hash.FromBytes(data)
+	h, _ := hash.FromBytes(res.LastBlockHash)
 	return h
 }
 
 func lastHeight() uint32 {
-	res := tCapnpServer.GetBlockchainInfo(tCtx, func(p capnp.PactusServer_getBlockchainInfo_Params) error {
-		return nil
-	}).Result()
-	st, err := res.Struct()
+	res, err := tBlockchain.GetBlockchainInfo(tCtx,
+		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
 		panic(err)
 	}
-
-	return st.LastBlockHeight()
+	return res.LastBlockHeight
 }
 
 func waitForNewBlocks(num uint32) {
@@ -44,25 +37,23 @@ func waitForNewBlocks(num uint32) {
 	}
 }
 
-func lastBlock() *capnp.BlockResult {
+func lastBlock() *pactus.GetBlockResponse {
 	return getBlockAt(lastHeight())
 }
 
-func getBlockAt(height uint32) *capnp.BlockResult {
+func getBlockAt(height uint32) *pactus.GetBlockResponse {
 	for i := 0; i < 120; i++ {
-		blockRes := tCapnpServer.GetBlock(tCtx, func(p capnp.PactusServer_getBlock_Params) error {
-			p.SetVerbosity(0)
-			p.SetHeight(height)
-			return nil
-		}).Result()
-
-		st, err := blockRes.Struct()
+		res, err := tBlockchain.GetBlock(tCtx,
+			&pactus.GetBlockRequest{
+				Height:    height,
+				Verbosity: pactus.BlockVerbosity_BLOCK_DATA,
+			},
+		)
 		if err != nil {
 			time.Sleep(1 * time.Second)
 			continue
 		}
-
-		return &st
+		return res
 	}
 	logger.Panic("get block timeout", "height", height)
 	return nil

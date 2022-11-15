@@ -103,19 +103,20 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 		var prevCert *pactus.CertificateInfo
 
 		if cert != nil {
-			committers := make([]int32, len(block.PrevCertificate().Committers()))
-			for i, n := range block.PrevCertificate().Committers() {
+			committers := make([]int32, len(cert.Committers()))
+			for i, n := range cert.Committers() {
 				committers[i] = n
 			}
-			absentees := make([]int32, len(block.PrevCertificate().Absentees()))
-			for i, n := range block.PrevCertificate().Absentees() {
+			absentees := make([]int32, len(cert.Absentees()))
+			for i, n := range cert.Absentees() {
 				absentees[i] = n
 			}
 			prevCert = &pactus.CertificateInfo{
-				Round:      int32(block.PrevCertificate().Round()),
+				Hash:       cert.Hash().Bytes(),
+				Round:      int32(cert.Round()),
 				Committers: committers,
 				Absentees:  absentees,
-				Signature:  block.PrevCertificate().Signature().Bytes(),
+				Signature:  cert.Signature().Bytes(),
 			}
 		}
 		header := &pactus.BlockHeaderInfo{
@@ -204,7 +205,10 @@ func (s *blockchainServer) GetValidators(ctx context.Context,
 }
 
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
+	data, _ := val.Bytes()
 	return &pactus.ValidatorInfo{
+		Hash:              val.Hash().Bytes(),
+		Data:              data,
 		PublicKey:         val.PublicKey().String(),
 		Address:           val.Address().String(),
 		Number:            val.Number(),
@@ -217,7 +221,10 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 }
 
 func accountToProto(acc *account.Account) *pactus.AccountInfo {
+	data, _ := acc.Bytes()
 	return &pactus.AccountInfo{
+		Hash:     acc.Hash().Bytes(),
+		Data:     data,
 		Address:  acc.Address().String(),
 		Number:   acc.Number(),
 		Sequence: acc.Sequence(),
@@ -227,7 +234,7 @@ func accountToProto(acc *account.Account) *pactus.AccountInfo {
 
 func voteToProto(v *vote.Vote) *pactus.VoteInfo {
 	return &pactus.VoteInfo{
-		Type:      pactus.VoteType(v.Type()) - 1,
+		Type:      pactus.VoteType(v.Type()),
 		Voter:     v.Signer().String(),
 		BlockHash: v.BlockHash().Bytes(),
 		Round:     int32(v.Round()),
