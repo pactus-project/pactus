@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 
+	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/logger"
@@ -13,22 +14,25 @@ import (
 )
 
 type Server struct {
-	ctx      context.Context
-	config   *Config
-	listener net.Listener
-	grpc     *grpc.Server
-	state    state.Facade
-	sync     sync.Synchronizer
-	logger   *logger.Logger
+	ctx       context.Context
+	config    *Config
+	listener  net.Listener
+	grpc      *grpc.Server
+	state     state.Facade
+	sync      sync.Synchronizer
+	consensus consensus.Reader
+	logger    *logger.Logger
 }
 
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer) *Server {
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
+	consensus consensus.Reader) *Server {
 	return &Server{
-		ctx:    context.Background(),
-		config: conf,
-		state:  state,
-		sync:   sync,
-		logger: logger.NewLogger("_grpc", nil),
+		ctx:       context.Background(),
+		config:    conf,
+		state:     state,
+		sync:      sync,
+		consensus: consensus,
+		logger:    logger.NewLogger("_grpc", nil),
 	}
 }
 
@@ -39,8 +43,9 @@ func (s *Server) StartServer() error {
 
 	grpc := grpc.NewServer()
 	blockchainServer := &blockchainServer{
-		state:  s.state,
-		logger: s.logger,
+		state:     s.state,
+		consensus: s.consensus,
+		logger:    s.logger,
 	}
 	transactionServer := &transactionServer{
 		state:  s.state,

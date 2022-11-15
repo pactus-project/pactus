@@ -26,6 +26,7 @@ type BlockchainClient interface {
 	GetBlockHash(ctx context.Context, in *GetBlockHashRequest, opts ...grpc.CallOption) (*GetBlockHashResponse, error)
 	GetBlockHeight(ctx context.Context, in *GetBlockHeightRequest, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
 	GetBlockchainInfo(ctx context.Context, in *GetBlockchainInfoRequest, opts ...grpc.CallOption) (*GetBlockchainInfoResponse, error)
+	GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error)
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
 	GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
 	GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
@@ -76,6 +77,15 @@ func (c *blockchainClient) GetBlockchainInfo(ctx context.Context, in *GetBlockch
 	return out, nil
 }
 
+func (c *blockchainClient) GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error) {
+	out := new(GetConsensusInfoResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetConsensusInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *blockchainClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error) {
 	out := new(GetAccountResponse)
 	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetAccount", in, out, opts...)
@@ -120,6 +130,7 @@ type BlockchainServer interface {
 	GetBlockHash(context.Context, *GetBlockHashRequest) (*GetBlockHashResponse, error)
 	GetBlockHeight(context.Context, *GetBlockHeightRequest) (*GetBlockHeightResponse, error)
 	GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error)
+	GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error)
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
 	GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error)
 	GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error)
@@ -141,6 +152,9 @@ func (UnimplementedBlockchainServer) GetBlockHeight(context.Context, *GetBlockHe
 }
 func (UnimplementedBlockchainServer) GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockchainInfo not implemented")
+}
+func (UnimplementedBlockchainServer) GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConsensusInfo not implemented")
 }
 func (UnimplementedBlockchainServer) GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
@@ -234,6 +248,24 @@ func _Blockchain_GetBlockchainInfo_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetBlockchainInfo(ctx, req.(*GetBlockchainInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Blockchain_GetConsensusInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConsensusInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockchainServer).GetConsensusInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Blockchain/GetConsensusInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockchainServer).GetConsensusInfo(ctx, req.(*GetConsensusInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -332,6 +364,10 @@ var Blockchain_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBlockchainInfo",
 			Handler:    _Blockchain_GetBlockchainInfo_Handler,
+		},
+		{
+			MethodName: "GetConsensusInfo",
+			Handler:    _Blockchain_GetConsensusInfo_Handler,
 		},
 		{
 			MethodName: "GetAccount",

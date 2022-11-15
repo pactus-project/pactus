@@ -34,6 +34,11 @@ class BlockchainStub(object):
                 request_serializer=blockchain__pb2.GetBlockchainInfoRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetBlockchainInfoResponse.FromString,
                 )
+        self.GetConsensusInfo = channel.unary_unary(
+                '/pactus.Blockchain/GetConsensusInfo',
+                request_serializer=blockchain__pb2.GetConsensusInfoRequest.SerializeToString,
+                response_deserializer=blockchain__pb2.GetConsensusInfoResponse.FromString,
+                )
         self.GetAccount = channel.unary_unary(
                 '/pactus.Blockchain/GetAccount',
                 request_serializer=blockchain__pb2.GetAccountRequest.SerializeToString,
@@ -78,6 +83,12 @@ class BlockchainServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetBlockchainInfo(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetConsensusInfo(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -129,6 +140,11 @@ def add_BlockchainServicer_to_server(servicer, server):
                     servicer.GetBlockchainInfo,
                     request_deserializer=blockchain__pb2.GetBlockchainInfoRequest.FromString,
                     response_serializer=blockchain__pb2.GetBlockchainInfoResponse.SerializeToString,
+            ),
+            'GetConsensusInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetConsensusInfo,
+                    request_deserializer=blockchain__pb2.GetConsensusInfoRequest.FromString,
+                    response_serializer=blockchain__pb2.GetConsensusInfoResponse.SerializeToString,
             ),
             'GetAccount': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAccount,
@@ -225,6 +241,23 @@ class Blockchain(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Blockchain/GetBlockchainInfo',
             blockchain__pb2.GetBlockchainInfoRequest.SerializeToString,
             blockchain__pb2.GetBlockchainInfoResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetConsensusInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Blockchain/GetConsensusInfo',
+            blockchain__pb2.GetConsensusInfoRequest.SerializeToString,
+            blockchain__pb2.GetConsensusInfoResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

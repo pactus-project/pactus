@@ -48,10 +48,11 @@ func TestGetPeerInfo(t *testing.T) {
 	res, err := client.GetPeerInfo(tCtx, &pactus.GetPeerInfoRequest{})
 	assert.NoError(t, err)
 	assert.Nil(t, err)
-	assert.Equal(t, version.Agent(), res.Agent)
-	assert.Equal(t, []byte(tMockSync.SelfID()), res.PeerId)
-	assert.Equal(t, tMockSync.PublicKey().String(), res.PublicKey)
-	assert.Equal(t, "test-moniker", res.Moniker)
+	peer := res.Peer
+	assert.Equal(t, version.Agent(), peer.Agent)
+	assert.Equal(t, []byte(tMockSync.SelfID()), peer.PeerId)
+	assert.Equal(t, tMockSync.PublicKey().String(), peer.PublicKey)
+	assert.Equal(t, "test-moniker", peer.Moniker)
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

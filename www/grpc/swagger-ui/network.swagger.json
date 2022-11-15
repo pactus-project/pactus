@@ -80,38 +80,8 @@
     "pactusGetPeerInfoResponse": {
       "type": "object",
       "properties": {
-        "moniker": {
-          "type": "string"
-        },
-        "agent": {
-          "type": "string"
-        },
-        "peerId": {
-          "type": "string",
-          "format": "byte"
-        },
-        "publicKey": {
-          "type": "string"
-        },
-        "flags": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "height": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "receivedMessages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "invalidMessages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "receivedBytes": {
-          "type": "integer",
-          "format": "int32"
+        "peer": {
+          "$ref": "#/definitions/pactusPeerInfo"
         }
       }
     },
@@ -150,6 +120,14 @@
         "receivedBytes": {
           "type": "integer",
           "format": "int32"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastSeen": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },

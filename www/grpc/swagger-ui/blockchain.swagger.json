@@ -406,6 +406,39 @@
         "lastBlockHash": {
           "type": "string",
           "format": "byte"
+        },
+        "totalPower": {
+          "type": "string",
+          "format": "int64"
+        },
+        "committeePower": {
+          "type": "string",
+          "format": "int64"
+        },
+        "committeeValidators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pactusValidatorInfo"
+          }
+        }
+      }
+    },
+    "pactusGetConsensusInfoResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "votes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pactusVoteInfo"
+          }
         }
       }
     },
@@ -571,6 +604,34 @@
           "type": "string"
         }
       }
+    },
+    "pactusVoteInfo": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/pactusVoteType"
+        },
+        "voter": {
+          "type": "string"
+        },
+        "blockHash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "pactusVoteType": {
+      "type": "string",
+      "enum": [
+        "VOTE_PREPARE",
+        "VOTE_PRECOMMIT",
+        "VOTE_CHANGE_PROPOSER"
+      ],
+      "default": "VOTE_PREPARE"
     },
     "protobufAny": {
       "type": "object",

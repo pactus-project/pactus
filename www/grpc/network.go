@@ -41,6 +41,8 @@ func (s *networkServer) GetNetworkInfo(ctx context.Context,
 		p.ReceivedMessages = int32(peer.ReceivedBundles)
 		p.InvalidMessages = int32(peer.InvalidBundles)
 		p.ReceivedBytes = int32(peer.ReceivedBytes)
+		p.Status = int32(peer.Status)
+		p.LastSeen = peer.LastSeen.Unix()
 	}
 
 	return &pactus.GetNetworkInfoResponse{
@@ -52,10 +54,12 @@ func (s *networkServer) GetNetworkInfo(ctx context.Context,
 func (s *networkServer) GetPeerInfo(ctx context.Context,
 	req *pactus.GetPeerInfoRequest) (*pactus.GetPeerInfoResponse, error) {
 	return &pactus.GetPeerInfoResponse{
-		Moniker:   s.sync.Moniker(),
-		Agent:     version.Agent(),
-		PeerId:    []byte(s.sync.SelfID()),
-		PublicKey: s.sync.PublicKey().String(),
+		Peer: &pactus.PeerInfo{
+			Moniker:   s.sync.Moniker(),
+			Agent:     version.Agent(),
+			PeerId:    []byte(s.sync.SelfID()),
+			PublicKey: s.sync.PublicKey().String(),
+		},
 		// TODO: Update me
 	}, nil
 }

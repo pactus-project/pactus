@@ -573,15 +573,7 @@ proto.pactus.GetPeerInfoResponse.prototype.toObject = function(opt_includeInstan
  */
 proto.pactus.GetPeerInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    peerId: msg.getPeerId_asB64(),
-    publicKey: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    flags: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    height: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    receivedMessages: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    invalidMessages: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    receivedBytes: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    peer: (f = msg.getPeer()) && proto.pactus.PeerInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -619,40 +611,9 @@ proto.pactus.GetPeerInfoResponse.deserializeBinaryFromReader = function(msg, rea
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setMoniker(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setAgent(value);
-      break;
-    case 3:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
-      msg.setPeerId(value);
-      break;
-    case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setPublicKey(value);
-      break;
-    case 5:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setFlags(value);
-      break;
-    case 6:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setHeight(value);
-      break;
-    case 7:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setReceivedMessages(value);
-      break;
-    case 8:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setInvalidMessages(value);
-      break;
-    case 9:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setReceivedBytes(value);
+      var value = new proto.pactus.PeerInfo;
+      reader.readMessage(value,proto.pactus.PeerInfo.deserializeBinaryFromReader);
+      msg.setPeer(value);
       break;
     default:
       reader.skipField();
@@ -683,255 +644,51 @@ proto.pactus.GetPeerInfoResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.GetPeerInfoResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getMoniker();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getPeer();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
-    );
-  }
-  f = message.getAgent();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
-  f = message.getPeerId_asU8();
-  if (f.length > 0) {
-    writer.writeBytes(
-      3,
-      f
-    );
-  }
-  f = message.getPublicKey();
-  if (f.length > 0) {
-    writer.writeString(
-      4,
-      f
-    );
-  }
-  f = message.getFlags();
-  if (f !== 0) {
-    writer.writeInt32(
-      5,
-      f
-    );
-  }
-  f = message.getHeight();
-  if (f !== 0) {
-    writer.writeUint32(
-      6,
-      f
-    );
-  }
-  f = message.getReceivedMessages();
-  if (f !== 0) {
-    writer.writeInt32(
-      7,
-      f
-    );
-  }
-  f = message.getInvalidMessages();
-  if (f !== 0) {
-    writer.writeInt32(
-      8,
-      f
-    );
-  }
-  f = message.getReceivedBytes();
-  if (f !== 0) {
-    writer.writeInt32(
-      9,
-      f
+      f,
+      proto.pactus.PeerInfo.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * optional string moniker = 1;
- * @return {string}
+ * optional PeerInfo peer = 1;
+ * @return {?proto.pactus.PeerInfo}
  */
-proto.pactus.GetPeerInfoResponse.prototype.getMoniker = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+proto.pactus.GetPeerInfoResponse.prototype.getPeer = function() {
+  return /** @type{?proto.pactus.PeerInfo} */ (
+    jspb.Message.getWrapperField(this, proto.pactus.PeerInfo, 1));
 };
 
 
 /**
- * @param {string} value
+ * @param {?proto.pactus.PeerInfo|undefined} value
+ * @return {!proto.pactus.GetPeerInfoResponse} returns this
+*/
+proto.pactus.GetPeerInfoResponse.prototype.setPeer = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.pactus.GetPeerInfoResponse} returns this
  */
-proto.pactus.GetPeerInfoResponse.prototype.setMoniker = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
+proto.pactus.GetPeerInfoResponse.prototype.clearPeer = function() {
+  return this.setPeer(undefined);
 };
 
 
 /**
- * optional string agent = 2;
- * @return {string}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.pactus.GetPeerInfoResponse.prototype.getAgent = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setAgent = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional bytes peer_id = 3;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getPeerId = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * optional bytes peer_id = 3;
- * This is a type-conversion wrapper around `getPeerId()`
- * @return {string}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getPeerId_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getPeerId()));
-};
-
-
-/**
- * optional bytes peer_id = 3;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getPeerId()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getPeerId_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getPeerId()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setPeerId = function(value) {
-  return jspb.Message.setProto3BytesField(this, 3, value);
-};
-
-
-/**
- * optional string public_key = 4;
- * @return {string}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getPublicKey = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setPublicKey = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
-};
-
-
-/**
- * optional int32 flags = 5;
- * @return {number}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getFlags = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setFlags = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
-};
-
-
-/**
- * optional uint32 height = 6;
- * @return {number}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getHeight = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setHeight = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
-};
-
-
-/**
- * optional int32 received_messages = 7;
- * @return {number}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getReceivedMessages = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setReceivedMessages = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
-};
-
-
-/**
- * optional int32 invalid_messages = 8;
- * @return {number}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getInvalidMessages = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setInvalidMessages = function(value) {
-  return jspb.Message.setProto3IntField(this, 8, value);
-};
-
-
-/**
- * optional int32 received_bytes = 9;
- * @return {number}
- */
-proto.pactus.GetPeerInfoResponse.prototype.getReceivedBytes = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetPeerInfoResponse} returns this
- */
-proto.pactus.GetPeerInfoResponse.prototype.setReceivedBytes = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
+proto.pactus.GetPeerInfoResponse.prototype.hasPeer = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 
@@ -975,7 +732,9 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     height: jspb.Message.getFieldWithDefault(msg, 6, 0),
     receivedMessages: jspb.Message.getFieldWithDefault(msg, 7, 0),
     invalidMessages: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    receivedBytes: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    receivedBytes: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    lastSeen: jspb.Message.getFieldWithDefault(msg, 11, 0)
   };
 
   if (includeInstance) {
@@ -1047,6 +806,14 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setReceivedBytes(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setStatus(value);
+      break;
+    case 11:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastSeen(value);
       break;
     default:
       reader.skipField();
@@ -1137,6 +904,20 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt32(
       9,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      10,
+      f
+    );
+  }
+  f = message.getLastSeen();
+  if (f !== 0) {
+    writer.writeInt64(
+      11,
       f
     );
   }
@@ -1326,6 +1107,42 @@ proto.pactus.PeerInfo.prototype.getReceivedBytes = function() {
  */
 proto.pactus.PeerInfo.prototype.setReceivedBytes = function(value) {
   return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional int32 status = 10;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * optional int64 last_seen = 11;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getLastSeen = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setLastSeen = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 

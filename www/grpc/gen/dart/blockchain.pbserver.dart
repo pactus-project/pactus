@@ -20,6 +20,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
   $async.Future<$1.GetBlockHashResponse> getBlockHash($pb.ServerContext ctx, $1.GetBlockHashRequest request);
   $async.Future<$1.GetBlockHeightResponse> getBlockHeight($pb.ServerContext ctx, $1.GetBlockHeightRequest request);
   $async.Future<$1.GetBlockchainInfoResponse> getBlockchainInfo($pb.ServerContext ctx, $1.GetBlockchainInfoRequest request);
+  $async.Future<$1.GetConsensusInfoResponse> getConsensusInfo($pb.ServerContext ctx, $1.GetConsensusInfoRequest request);
   $async.Future<$1.GetAccountResponse> getAccount($pb.ServerContext ctx, $1.GetAccountRequest request);
   $async.Future<$1.GetValidatorResponse> getValidator($pb.ServerContext ctx, $1.GetValidatorRequest request);
   $async.Future<$1.GetValidatorResponse> getValidatorByNumber($pb.ServerContext ctx, $1.GetValidatorByNumberRequest request);
@@ -31,6 +32,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetBlockHash': return $1.GetBlockHashRequest();
       case 'GetBlockHeight': return $1.GetBlockHeightRequest();
       case 'GetBlockchainInfo': return $1.GetBlockchainInfoRequest();
+      case 'GetConsensusInfo': return $1.GetConsensusInfoRequest();
       case 'GetAccount': return $1.GetAccountRequest();
       case 'GetValidator': return $1.GetValidatorRequest();
       case 'GetValidatorByNumber': return $1.GetValidatorByNumberRequest();
@@ -45,6 +47,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetBlockHash': return this.getBlockHash(ctx, request as $1.GetBlockHashRequest);
       case 'GetBlockHeight': return this.getBlockHeight(ctx, request as $1.GetBlockHeightRequest);
       case 'GetBlockchainInfo': return this.getBlockchainInfo(ctx, request as $1.GetBlockchainInfoRequest);
+      case 'GetConsensusInfo': return this.getConsensusInfo(ctx, request as $1.GetConsensusInfoRequest);
       case 'GetAccount': return this.getAccount(ctx, request as $1.GetAccountRequest);
       case 'GetValidator': return this.getValidator(ctx, request as $1.GetValidatorRequest);
       case 'GetValidatorByNumber': return this.getValidatorByNumber(ctx, request as $1.GetValidatorByNumberRequest);
