@@ -26,3 +26,20 @@ class BlockVerbosity extends $pb.ProtobufEnum {
   const BlockVerbosity._($core.int v, $core.String n) : super(v, n);
 }
 
+class VoteType extends $pb.ProtobufEnum {
+  static const VoteType VOTE_PREPARE = VoteType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_PREPARE');
+  static const VoteType VOTE_PRECOMMIT = VoteType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_PRECOMMIT');
+  static const VoteType VOTE_CHANGE_PROPOSER = VoteType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'VOTE_CHANGE_PROPOSER');
+
+  static const $core.List<VoteType> values = <VoteType> [
+    VOTE_PREPARE,
+    VOTE_PRECOMMIT,
+    VOTE_CHANGE_PROPOSER,
+  ];
+
+  static final $core.Map<$core.int, VoteType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static VoteType? valueOf($core.int value) => _byValue[value];
+
+  const VoteType._($core.int v, $core.String n) : super(v, n);
+}
+

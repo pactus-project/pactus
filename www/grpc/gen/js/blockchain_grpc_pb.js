@@ -115,6 +115,28 @@ function deserialize_pactus_GetBlockchainInfoResponse(buffer_arg) {
   return blockchain_pb.GetBlockchainInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetConsensusInfoRequest(arg) {
+  if (!(arg instanceof blockchain_pb.GetConsensusInfoRequest)) {
+    throw new Error('Expected argument of type pactus.GetConsensusInfoRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetConsensusInfoRequest(buffer_arg) {
+  return blockchain_pb.GetConsensusInfoRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetConsensusInfoResponse(arg) {
+  if (!(arg instanceof blockchain_pb.GetConsensusInfoResponse)) {
+    throw new Error('Expected argument of type pactus.GetConsensusInfoResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetConsensusInfoResponse(buffer_arg) {
+  return blockchain_pb.GetConsensusInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetValidatorByNumberRequest(arg) {
   if (!(arg instanceof blockchain_pb.GetValidatorByNumberRequest)) {
     throw new Error('Expected argument of type pactus.GetValidatorByNumberRequest');
@@ -215,6 +237,17 @@ var BlockchainService = exports.BlockchainService = {
     requestDeserialize: deserialize_pactus_GetBlockchainInfoRequest,
     responseSerialize: serialize_pactus_GetBlockchainInfoResponse,
     responseDeserialize: deserialize_pactus_GetBlockchainInfoResponse,
+  },
+  getConsensusInfo: {
+    path: '/pactus.Blockchain/GetConsensusInfo',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.GetConsensusInfoRequest,
+    responseType: blockchain_pb.GetConsensusInfoResponse,
+    requestSerialize: serialize_pactus_GetConsensusInfoRequest,
+    requestDeserialize: deserialize_pactus_GetConsensusInfoRequest,
+    responseSerialize: serialize_pactus_GetConsensusInfoResponse,
+    responseDeserialize: deserialize_pactus_GetConsensusInfoResponse,
   },
   getAccount: {
     path: '/pactus.Blockchain/GetAccount',

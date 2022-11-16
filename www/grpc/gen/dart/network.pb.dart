@@ -8,6 +8,7 @@
 import 'dart:async' as $async;
 import 'dart:core' as $core;
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class GetNetworkInfoRequest extends $pb.GeneratedMessage {
@@ -125,57 +126,17 @@ class GetPeerInfoRequest extends $pb.GeneratedMessage {
 
 class GetPeerInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetPeerInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
-    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
-    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flags', $pb.PbFieldType.O3)
-    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
-    ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
-    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidMessages', $pb.PbFieldType.O3)
-    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', $pb.PbFieldType.O3)
+    ..aOM<PeerInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peer', subBuilder: PeerInfo.create)
     ..hasRequiredFields = false
   ;
 
   GetPeerInfoResponse._() : super();
   factory GetPeerInfoResponse({
-    $core.String? moniker,
-    $core.String? agent,
-    $core.List<$core.int>? peerId,
-    $core.String? publicKey,
-    $core.int? flags,
-    $core.int? height,
-    $core.int? receivedMessages,
-    $core.int? invalidMessages,
-    $core.int? receivedBytes,
+    PeerInfo? peer,
   }) {
     final _result = create();
-    if (moniker != null) {
-      _result.moniker = moniker;
-    }
-    if (agent != null) {
-      _result.agent = agent;
-    }
-    if (peerId != null) {
-      _result.peerId = peerId;
-    }
-    if (publicKey != null) {
-      _result.publicKey = publicKey;
-    }
-    if (flags != null) {
-      _result.flags = flags;
-    }
-    if (height != null) {
-      _result.height = height;
-    }
-    if (receivedMessages != null) {
-      _result.receivedMessages = receivedMessages;
-    }
-    if (invalidMessages != null) {
-      _result.invalidMessages = invalidMessages;
-    }
-    if (receivedBytes != null) {
-      _result.receivedBytes = receivedBytes;
+    if (peer != null) {
+      _result.peer = peer;
     }
     return _result;
   }
@@ -201,85 +162,15 @@ class GetPeerInfoResponse extends $pb.GeneratedMessage {
   static GetPeerInfoResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get moniker => $_getSZ(0);
+  PeerInfo get peer => $_getN(0);
   @$pb.TagNumber(1)
-  set moniker($core.String v) { $_setString(0, v); }
+  set peer(PeerInfo v) { setField(1, v); }
   @$pb.TagNumber(1)
-  $core.bool hasMoniker() => $_has(0);
+  $core.bool hasPeer() => $_has(0);
   @$pb.TagNumber(1)
-  void clearMoniker() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get agent => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set agent($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasAgent() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearAgent() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.List<$core.int> get peerId => $_getN(2);
-  @$pb.TagNumber(3)
-  set peerId($core.List<$core.int> v) { $_setBytes(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasPeerId() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearPeerId() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get publicKey => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set publicKey($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasPublicKey() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearPublicKey() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.int get flags => $_getIZ(4);
-  @$pb.TagNumber(5)
-  set flags($core.int v) { $_setSignedInt32(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasFlags() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearFlags() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.int get height => $_getIZ(5);
-  @$pb.TagNumber(6)
-  set height($core.int v) { $_setUnsignedInt32(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasHeight() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearHeight() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.int get receivedMessages => $_getIZ(6);
-  @$pb.TagNumber(7)
-  set receivedMessages($core.int v) { $_setSignedInt32(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasReceivedMessages() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearReceivedMessages() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $core.int get invalidMessages => $_getIZ(7);
-  @$pb.TagNumber(8)
-  set invalidMessages($core.int v) { $_setSignedInt32(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasInvalidMessages() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearInvalidMessages() => clearField(8);
-
-  @$pb.TagNumber(9)
-  $core.int get receivedBytes => $_getIZ(8);
-  @$pb.TagNumber(9)
-  set receivedBytes($core.int v) { $_setSignedInt32(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasReceivedBytes() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearReceivedBytes() => clearField(9);
+  void clearPeer() => clearField(1);
+  @$pb.TagNumber(1)
+  PeerInfo ensurePeer() => $_ensure(0);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {
@@ -293,6 +184,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
     ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidMessages', $pb.PbFieldType.O3)
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', $pb.PbFieldType.O3)
+    ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.O3)
+    ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSeen')
     ..hasRequiredFields = false
   ;
 
@@ -307,6 +200,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? receivedMessages,
     $core.int? invalidMessages,
     $core.int? receivedBytes,
+    $core.int? status,
+    $fixnum.Int64? lastSeen,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -335,6 +230,12 @@ class PeerInfo extends $pb.GeneratedMessage {
     }
     if (receivedBytes != null) {
       _result.receivedBytes = receivedBytes;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (lastSeen != null) {
+      _result.lastSeen = lastSeen;
     }
     return _result;
   }
@@ -439,6 +340,24 @@ class PeerInfo extends $pb.GeneratedMessage {
   $core.bool hasReceivedBytes() => $_has(8);
   @$pb.TagNumber(9)
   void clearReceivedBytes() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.int get status => $_getIZ(9);
+  @$pb.TagNumber(10)
+  set status($core.int v) { $_setSignedInt32(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasStatus() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearStatus() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $fixnum.Int64 get lastSeen => $_getI64(10);
+  @$pb.TagNumber(11)
+  set lastSeen($fixnum.Int64 v) { $_setInt64(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasLastSeen() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearLastSeen() => clearField(11);
 }
 
 class NetworkApi {

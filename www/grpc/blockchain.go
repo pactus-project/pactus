@@ -3,11 +3,13 @@ package grpc
 import (
 	"context"
 
+	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
@@ -15,17 +17,41 @@ import (
 )
 
 type blockchainServer struct {
-	state  state.Facade
-	logger *logger.Logger
+	state     state.Facade
+	consensus consensus.Reader
+	logger    *logger.Logger
 }
 
 func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
 	req *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
-	height := s.state.LastBlockHeight()
+	vals := s.state.CommitteeValidators()
+	cv := make([]*pactus.ValidatorInfo, 0, len(vals))
+	for _, v := range vals {
+		cv = append(cv, validatorToProto(v))
+	}
 
 	return &pactus.GetBlockchainInfoResponse{
-		LastBlockHeight: height,
-		LastBlockHash:   s.state.LastBlockHash().Bytes(),
+		LastBlockHeight:     s.state.LastBlockHeight(),
+		LastBlockHash:       s.state.LastBlockHash().Bytes(),
+		TotalPower:          s.state.TotalPower(),
+		CommitteePower:      s.state.CommitteePower(),
+		CommitteeValidators: cv,
+	}, nil
+}
+
+func (s *blockchainServer) GetConsensusInfo(ctx context.Context,
+	req *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
+	height, round := s.consensus.HeightRound()
+	votes := s.consensus.AllVotes()
+	vinfo := make([]*pactus.VoteInfo, 0, len(votes))
+	for _, v := range votes {
+		vinfo = append(vinfo, voteToProto(v))
+	}
+
+	return &pactus.GetConsensusInfoResponse{
+		Height: height,
+		Round:  int32(round),
+		Votes:  vinfo,
 	}, nil
 }
 
@@ -196,5 +222,14 @@ func accountToProto(acc *account.Account) *pactus.AccountInfo {
 		Number:   acc.Number(),
 		Sequence: acc.Sequence(),
 		Balance:  acc.Balance(),
+	}
+}
+
+func voteToProto(v *vote.Vote) *pactus.VoteInfo {
+	return &pactus.VoteInfo{
+		Type:      pactus.VoteType(v.Type()) - 1,
+		Voter:     v.Signer().String(),
+		BlockHash: v.BlockHash().Bytes(),
+		Round:     int32(v.Round()),
 	}
 }

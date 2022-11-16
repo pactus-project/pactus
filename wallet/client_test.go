@@ -22,6 +22,11 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	return tBlockchainInfoResponse, nil
 }
 
+func (s *blockchainServer) GetConsensusInfo(_ context.Context,
+	req *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
+	return nil, nil
+}
+
 func (s *blockchainServer) GetBlockHash(_ context.Context,
 	req *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
 	return nil, nil

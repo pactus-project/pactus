@@ -84,7 +84,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 
 	capnp := capnp.NewServer(conf.Capnp, state, sync, consensus)
 	http := http.NewServer(conf.HTTP)
-	grpc := grpc.NewServer(conf.GRPC, state, sync)
+	grpc := grpc.NewServer(conf.GRPC, state, sync, consensus)
 	nanomsg := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{

@@ -1668,76 +1668,19 @@ public final class NetworkOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string moniker = 1 [json_name = "moniker"];</code>
-     * @return The moniker.
+     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+     * @return Whether the peer field is set.
      */
-    java.lang.String getMoniker();
+    boolean hasPeer();
     /**
-     * <code>string moniker = 1 [json_name = "moniker"];</code>
-     * @return The bytes for moniker.
+     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+     * @return The peer.
      */
-    com.google.protobuf.ByteString
-        getMonikerBytes();
-
+    pactus.network.NetworkOuterClass.PeerInfo getPeer();
     /**
-     * <code>string agent = 2 [json_name = "agent"];</code>
-     * @return The agent.
+     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
      */
-    java.lang.String getAgent();
-    /**
-     * <code>string agent = 2 [json_name = "agent"];</code>
-     * @return The bytes for agent.
-     */
-    com.google.protobuf.ByteString
-        getAgentBytes();
-
-    /**
-     * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
-     * @return The peerId.
-     */
-    com.google.protobuf.ByteString getPeerId();
-
-    /**
-     * <code>string public_key = 4 [json_name = "publicKey"];</code>
-     * @return The publicKey.
-     */
-    java.lang.String getPublicKey();
-    /**
-     * <code>string public_key = 4 [json_name = "publicKey"];</code>
-     * @return The bytes for publicKey.
-     */
-    com.google.protobuf.ByteString
-        getPublicKeyBytes();
-
-    /**
-     * <code>int32 flags = 5 [json_name = "flags"];</code>
-     * @return The flags.
-     */
-    int getFlags();
-
-    /**
-     * <code>uint32 height = 6 [json_name = "height"];</code>
-     * @return The height.
-     */
-    int getHeight();
-
-    /**
-     * <code>int32 received_messages = 7 [json_name = "receivedMessages"];</code>
-     * @return The receivedMessages.
-     */
-    int getReceivedMessages();
-
-    /**
-     * <code>int32 invalid_messages = 8 [json_name = "invalidMessages"];</code>
-     * @return The invalidMessages.
-     */
-    int getInvalidMessages();
-
-    /**
-     * <code>int32 received_bytes = 9 [json_name = "receivedBytes"];</code>
-     * @return The receivedBytes.
-     */
-    int getReceivedBytes();
+    pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeerOrBuilder();
   }
   /**
    * Protobuf type {@code pactus.GetPeerInfoResponse}
@@ -1752,10 +1695,6 @@ public final class NetworkOuterClass {
       super(builder);
     }
     private GetPeerInfoResponse() {
-      moniker_ = "";
-      agent_ = "";
-      peerId_ = com.google.protobuf.ByteString.EMPTY;
-      publicKey_ = "";
     }
 
     @java.lang.Override
@@ -1783,184 +1722,30 @@ public final class NetworkOuterClass {
               pactus.network.NetworkOuterClass.GetPeerInfoResponse.class, pactus.network.NetworkOuterClass.GetPeerInfoResponse.Builder.class);
     }
 
-    public static final int MONIKER_FIELD_NUMBER = 1;
-    private volatile java.lang.Object moniker_;
+    public static final int PEER_FIELD_NUMBER = 1;
+    private pactus.network.NetworkOuterClass.PeerInfo peer_;
     /**
-     * <code>string moniker = 1 [json_name = "moniker"];</code>
-     * @return The moniker.
+     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+     * @return Whether the peer field is set.
      */
     @java.lang.Override
-    public java.lang.String getMoniker() {
-      java.lang.Object ref = moniker_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        moniker_ = s;
-        return s;
-      }
+    public boolean hasPeer() {
+      return peer_ != null;
     }
     /**
-     * <code>string moniker = 1 [json_name = "moniker"];</code>
-     * @return The bytes for moniker.
+     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+     * @return The peer.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
-        getMonikerBytes() {
-      java.lang.Object ref = moniker_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        moniker_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int AGENT_FIELD_NUMBER = 2;
-    private volatile java.lang.Object agent_;
-    /**
-     * <code>string agent = 2 [json_name = "agent"];</code>
-     * @return The agent.
-     */
-    @java.lang.Override
-    public java.lang.String getAgent() {
-      java.lang.Object ref = agent_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        agent_ = s;
-        return s;
-      }
+    public pactus.network.NetworkOuterClass.PeerInfo getPeer() {
+      return peer_ == null ? pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance() : peer_;
     }
     /**
-     * <code>string agent = 2 [json_name = "agent"];</code>
-     * @return The bytes for agent.
+     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
-        getAgentBytes() {
-      java.lang.Object ref = agent_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        agent_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int PEER_ID_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString peerId_;
-    /**
-     * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
-     * @return The peerId.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString getPeerId() {
-      return peerId_;
-    }
-
-    public static final int PUBLIC_KEY_FIELD_NUMBER = 4;
-    private volatile java.lang.Object publicKey_;
-    /**
-     * <code>string public_key = 4 [json_name = "publicKey"];</code>
-     * @return The publicKey.
-     */
-    @java.lang.Override
-    public java.lang.String getPublicKey() {
-      java.lang.Object ref = publicKey_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        publicKey_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string public_key = 4 [json_name = "publicKey"];</code>
-     * @return The bytes for publicKey.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getPublicKeyBytes() {
-      java.lang.Object ref = publicKey_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        publicKey_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int FLAGS_FIELD_NUMBER = 5;
-    private int flags_;
-    /**
-     * <code>int32 flags = 5 [json_name = "flags"];</code>
-     * @return The flags.
-     */
-    @java.lang.Override
-    public int getFlags() {
-      return flags_;
-    }
-
-    public static final int HEIGHT_FIELD_NUMBER = 6;
-    private int height_;
-    /**
-     * <code>uint32 height = 6 [json_name = "height"];</code>
-     * @return The height.
-     */
-    @java.lang.Override
-    public int getHeight() {
-      return height_;
-    }
-
-    public static final int RECEIVED_MESSAGES_FIELD_NUMBER = 7;
-    private int receivedMessages_;
-    /**
-     * <code>int32 received_messages = 7 [json_name = "receivedMessages"];</code>
-     * @return The receivedMessages.
-     */
-    @java.lang.Override
-    public int getReceivedMessages() {
-      return receivedMessages_;
-    }
-
-    public static final int INVALID_MESSAGES_FIELD_NUMBER = 8;
-    private int invalidMessages_;
-    /**
-     * <code>int32 invalid_messages = 8 [json_name = "invalidMessages"];</code>
-     * @return The invalidMessages.
-     */
-    @java.lang.Override
-    public int getInvalidMessages() {
-      return invalidMessages_;
-    }
-
-    public static final int RECEIVED_BYTES_FIELD_NUMBER = 9;
-    private int receivedBytes_;
-    /**
-     * <code>int32 received_bytes = 9 [json_name = "receivedBytes"];</code>
-     * @return The receivedBytes.
-     */
-    @java.lang.Override
-    public int getReceivedBytes() {
-      return receivedBytes_;
+    public pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeerOrBuilder() {
+      return getPeer();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1977,32 +1762,8 @@ public final class NetworkOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(moniker_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, moniker_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, agent_);
-      }
-      if (!peerId_.isEmpty()) {
-        output.writeBytes(3, peerId_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, publicKey_);
-      }
-      if (flags_ != 0) {
-        output.writeInt32(5, flags_);
-      }
-      if (height_ != 0) {
-        output.writeUInt32(6, height_);
-      }
-      if (receivedMessages_ != 0) {
-        output.writeInt32(7, receivedMessages_);
-      }
-      if (invalidMessages_ != 0) {
-        output.writeInt32(8, invalidMessages_);
-      }
-      if (receivedBytes_ != 0) {
-        output.writeInt32(9, receivedBytes_);
+      if (peer_ != null) {
+        output.writeMessage(1, getPeer());
       }
       getUnknownFields().writeTo(output);
     }
@@ -2013,38 +1774,9 @@ public final class NetworkOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(moniker_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, moniker_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, agent_);
-      }
-      if (!peerId_.isEmpty()) {
+      if (peer_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, peerId_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, publicKey_);
-      }
-      if (flags_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, flags_);
-      }
-      if (height_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(6, height_);
-      }
-      if (receivedMessages_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(7, receivedMessages_);
-      }
-      if (invalidMessages_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(8, invalidMessages_);
-      }
-      if (receivedBytes_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(9, receivedBytes_);
+          .computeMessageSize(1, getPeer());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2061,24 +1793,11 @@ public final class NetworkOuterClass {
       }
       pactus.network.NetworkOuterClass.GetPeerInfoResponse other = (pactus.network.NetworkOuterClass.GetPeerInfoResponse) obj;
 
-      if (!getMoniker()
-          .equals(other.getMoniker())) return false;
-      if (!getAgent()
-          .equals(other.getAgent())) return false;
-      if (!getPeerId()
-          .equals(other.getPeerId())) return false;
-      if (!getPublicKey()
-          .equals(other.getPublicKey())) return false;
-      if (getFlags()
-          != other.getFlags()) return false;
-      if (getHeight()
-          != other.getHeight()) return false;
-      if (getReceivedMessages()
-          != other.getReceivedMessages()) return false;
-      if (getInvalidMessages()
-          != other.getInvalidMessages()) return false;
-      if (getReceivedBytes()
-          != other.getReceivedBytes()) return false;
+      if (hasPeer() != other.hasPeer()) return false;
+      if (hasPeer()) {
+        if (!getPeer()
+            .equals(other.getPeer())) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2090,24 +1809,10 @@ public final class NetworkOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + MONIKER_FIELD_NUMBER;
-      hash = (53 * hash) + getMoniker().hashCode();
-      hash = (37 * hash) + AGENT_FIELD_NUMBER;
-      hash = (53 * hash) + getAgent().hashCode();
-      hash = (37 * hash) + PEER_ID_FIELD_NUMBER;
-      hash = (53 * hash) + getPeerId().hashCode();
-      hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
-      hash = (53 * hash) + getPublicKey().hashCode();
-      hash = (37 * hash) + FLAGS_FIELD_NUMBER;
-      hash = (53 * hash) + getFlags();
-      hash = (37 * hash) + HEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getHeight();
-      hash = (37 * hash) + RECEIVED_MESSAGES_FIELD_NUMBER;
-      hash = (53 * hash) + getReceivedMessages();
-      hash = (37 * hash) + INVALID_MESSAGES_FIELD_NUMBER;
-      hash = (53 * hash) + getInvalidMessages();
-      hash = (37 * hash) + RECEIVED_BYTES_FIELD_NUMBER;
-      hash = (53 * hash) + getReceivedBytes();
+      if (hasPeer()) {
+        hash = (37 * hash) + PEER_FIELD_NUMBER;
+        hash = (53 * hash) + getPeer().hashCode();
+      }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2236,24 +1941,12 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        moniker_ = "";
-
-        agent_ = "";
-
-        peerId_ = com.google.protobuf.ByteString.EMPTY;
-
-        publicKey_ = "";
-
-        flags_ = 0;
-
-        height_ = 0;
-
-        receivedMessages_ = 0;
-
-        invalidMessages_ = 0;
-
-        receivedBytes_ = 0;
-
+        if (peerBuilder_ == null) {
+          peer_ = null;
+        } else {
+          peer_ = null;
+          peerBuilder_ = null;
+        }
         return this;
       }
 
@@ -2280,15 +1973,11 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public pactus.network.NetworkOuterClass.GetPeerInfoResponse buildPartial() {
         pactus.network.NetworkOuterClass.GetPeerInfoResponse result = new pactus.network.NetworkOuterClass.GetPeerInfoResponse(this);
-        result.moniker_ = moniker_;
-        result.agent_ = agent_;
-        result.peerId_ = peerId_;
-        result.publicKey_ = publicKey_;
-        result.flags_ = flags_;
-        result.height_ = height_;
-        result.receivedMessages_ = receivedMessages_;
-        result.invalidMessages_ = invalidMessages_;
-        result.receivedBytes_ = receivedBytes_;
+        if (peerBuilder_ == null) {
+          result.peer_ = peer_;
+        } else {
+          result.peer_ = peerBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -2337,35 +2026,8 @@ public final class NetworkOuterClass {
 
       public Builder mergeFrom(pactus.network.NetworkOuterClass.GetPeerInfoResponse other) {
         if (other == pactus.network.NetworkOuterClass.GetPeerInfoResponse.getDefaultInstance()) return this;
-        if (!other.getMoniker().isEmpty()) {
-          moniker_ = other.moniker_;
-          onChanged();
-        }
-        if (!other.getAgent().isEmpty()) {
-          agent_ = other.agent_;
-          onChanged();
-        }
-        if (other.getPeerId() != com.google.protobuf.ByteString.EMPTY) {
-          setPeerId(other.getPeerId());
-        }
-        if (!other.getPublicKey().isEmpty()) {
-          publicKey_ = other.publicKey_;
-          onChanged();
-        }
-        if (other.getFlags() != 0) {
-          setFlags(other.getFlags());
-        }
-        if (other.getHeight() != 0) {
-          setHeight(other.getHeight());
-        }
-        if (other.getReceivedMessages() != 0) {
-          setReceivedMessages(other.getReceivedMessages());
-        }
-        if (other.getInvalidMessages() != 0) {
-          setInvalidMessages(other.getInvalidMessages());
-        }
-        if (other.getReceivedBytes() != 0) {
-          setReceivedBytes(other.getReceivedBytes());
+        if (other.hasPeer()) {
+          mergePeer(other.getPeer());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -2394,50 +2056,12 @@ public final class NetworkOuterClass {
                 done = true;
                 break;
               case 10: {
-                moniker_ = input.readStringRequireUtf8();
+                input.readMessage(
+                    getPeerFieldBuilder().getBuilder(),
+                    extensionRegistry);
 
                 break;
               } // case 10
-              case 18: {
-                agent_ = input.readStringRequireUtf8();
-
-                break;
-              } // case 18
-              case 26: {
-                peerId_ = input.readBytes();
-
-                break;
-              } // case 26
-              case 34: {
-                publicKey_ = input.readStringRequireUtf8();
-
-                break;
-              } // case 34
-              case 40: {
-                flags_ = input.readInt32();
-
-                break;
-              } // case 40
-              case 48: {
-                height_ = input.readUInt32();
-
-                break;
-              } // case 48
-              case 56: {
-                receivedMessages_ = input.readInt32();
-
-                break;
-              } // case 56
-              case 64: {
-                invalidMessages_ = input.readInt32();
-
-                break;
-              } // case 64
-              case 72: {
-                receivedBytes_ = input.readInt32();
-
-                break;
-              } // case 72
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2454,421 +2078,123 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private java.lang.Object moniker_ = "";
+      private pactus.network.NetworkOuterClass.PeerInfo peer_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          pactus.network.NetworkOuterClass.PeerInfo, pactus.network.NetworkOuterClass.PeerInfo.Builder, pactus.network.NetworkOuterClass.PeerInfoOrBuilder> peerBuilder_;
       /**
-       * <code>string moniker = 1 [json_name = "moniker"];</code>
-       * @return The moniker.
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       * @return Whether the peer field is set.
        */
-      public java.lang.String getMoniker() {
-        java.lang.Object ref = moniker_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          moniker_ = s;
-          return s;
+      public boolean hasPeer() {
+        return peerBuilder_ != null || peer_ != null;
+      }
+      /**
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       * @return The peer.
+       */
+      public pactus.network.NetworkOuterClass.PeerInfo getPeer() {
+        if (peerBuilder_ == null) {
+          return peer_ == null ? pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance() : peer_;
         } else {
-          return (java.lang.String) ref;
+          return peerBuilder_.getMessage();
         }
       }
       /**
-       * <code>string moniker = 1 [json_name = "moniker"];</code>
-       * @return The bytes for moniker.
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
        */
-      public com.google.protobuf.ByteString
-          getMonikerBytes() {
-        java.lang.Object ref = moniker_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          moniker_ = b;
-          return b;
+      public Builder setPeer(pactus.network.NetworkOuterClass.PeerInfo value) {
+        if (peerBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          peer_ = value;
+          onChanged();
         } else {
-          return (com.google.protobuf.ByteString) ref;
+          peerBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       */
+      public Builder setPeer(
+          pactus.network.NetworkOuterClass.PeerInfo.Builder builderForValue) {
+        if (peerBuilder_ == null) {
+          peer_ = builderForValue.build();
+          onChanged();
+        } else {
+          peerBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       */
+      public Builder mergePeer(pactus.network.NetworkOuterClass.PeerInfo value) {
+        if (peerBuilder_ == null) {
+          if (peer_ != null) {
+            peer_ =
+              pactus.network.NetworkOuterClass.PeerInfo.newBuilder(peer_).mergeFrom(value).buildPartial();
+          } else {
+            peer_ = value;
+          }
+          onChanged();
+        } else {
+          peerBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       */
+      public Builder clearPeer() {
+        if (peerBuilder_ == null) {
+          peer_ = null;
+          onChanged();
+        } else {
+          peer_ = null;
+          peerBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       */
+      public pactus.network.NetworkOuterClass.PeerInfo.Builder getPeerBuilder() {
+        
+        onChanged();
+        return getPeerFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       */
+      public pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeerOrBuilder() {
+        if (peerBuilder_ != null) {
+          return peerBuilder_.getMessageOrBuilder();
+        } else {
+          return peer_ == null ?
+              pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance() : peer_;
         }
       }
       /**
-       * <code>string moniker = 1 [json_name = "moniker"];</code>
-       * @param value The moniker to set.
-       * @return This builder for chaining.
+       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
        */
-      public Builder setMoniker(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        moniker_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string moniker = 1 [json_name = "moniker"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearMoniker() {
-        
-        moniker_ = getDefaultInstance().getMoniker();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string moniker = 1 [json_name = "moniker"];</code>
-       * @param value The bytes for moniker to set.
-       * @return This builder for chaining.
-       */
-      public Builder setMonikerBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        moniker_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object agent_ = "";
-      /**
-       * <code>string agent = 2 [json_name = "agent"];</code>
-       * @return The agent.
-       */
-      public java.lang.String getAgent() {
-        java.lang.Object ref = agent_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          agent_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          pactus.network.NetworkOuterClass.PeerInfo, pactus.network.NetworkOuterClass.PeerInfo.Builder, pactus.network.NetworkOuterClass.PeerInfoOrBuilder> 
+          getPeerFieldBuilder() {
+        if (peerBuilder_ == null) {
+          peerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              pactus.network.NetworkOuterClass.PeerInfo, pactus.network.NetworkOuterClass.PeerInfo.Builder, pactus.network.NetworkOuterClass.PeerInfoOrBuilder>(
+                  getPeer(),
+                  getParentForChildren(),
+                  isClean());
+          peer_ = null;
         }
-      }
-      /**
-       * <code>string agent = 2 [json_name = "agent"];</code>
-       * @return The bytes for agent.
-       */
-      public com.google.protobuf.ByteString
-          getAgentBytes() {
-        java.lang.Object ref = agent_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          agent_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string agent = 2 [json_name = "agent"];</code>
-       * @param value The agent to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAgent(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        agent_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string agent = 2 [json_name = "agent"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearAgent() {
-        
-        agent_ = getDefaultInstance().getAgent();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string agent = 2 [json_name = "agent"];</code>
-       * @param value The bytes for agent to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAgentBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        agent_ = value;
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.ByteString peerId_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
-       * @return The peerId.
-       */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getPeerId() {
-        return peerId_;
-      }
-      /**
-       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
-       * @param value The peerId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPeerId(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        peerId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearPeerId() {
-        
-        peerId_ = getDefaultInstance().getPeerId();
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object publicKey_ = "";
-      /**
-       * <code>string public_key = 4 [json_name = "publicKey"];</code>
-       * @return The publicKey.
-       */
-      public java.lang.String getPublicKey() {
-        java.lang.Object ref = publicKey_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          publicKey_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string public_key = 4 [json_name = "publicKey"];</code>
-       * @return The bytes for publicKey.
-       */
-      public com.google.protobuf.ByteString
-          getPublicKeyBytes() {
-        java.lang.Object ref = publicKey_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          publicKey_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string public_key = 4 [json_name = "publicKey"];</code>
-       * @param value The publicKey to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPublicKey(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        publicKey_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string public_key = 4 [json_name = "publicKey"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearPublicKey() {
-        
-        publicKey_ = getDefaultInstance().getPublicKey();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string public_key = 4 [json_name = "publicKey"];</code>
-       * @param value The bytes for publicKey to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPublicKeyBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        publicKey_ = value;
-        onChanged();
-        return this;
-      }
-
-      private int flags_ ;
-      /**
-       * <code>int32 flags = 5 [json_name = "flags"];</code>
-       * @return The flags.
-       */
-      @java.lang.Override
-      public int getFlags() {
-        return flags_;
-      }
-      /**
-       * <code>int32 flags = 5 [json_name = "flags"];</code>
-       * @param value The flags to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFlags(int value) {
-        
-        flags_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 flags = 5 [json_name = "flags"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFlags() {
-        
-        flags_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int height_ ;
-      /**
-       * <code>uint32 height = 6 [json_name = "height"];</code>
-       * @return The height.
-       */
-      @java.lang.Override
-      public int getHeight() {
-        return height_;
-      }
-      /**
-       * <code>uint32 height = 6 [json_name = "height"];</code>
-       * @param value The height to set.
-       * @return This builder for chaining.
-       */
-      public Builder setHeight(int value) {
-        
-        height_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>uint32 height = 6 [json_name = "height"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearHeight() {
-        
-        height_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int receivedMessages_ ;
-      /**
-       * <code>int32 received_messages = 7 [json_name = "receivedMessages"];</code>
-       * @return The receivedMessages.
-       */
-      @java.lang.Override
-      public int getReceivedMessages() {
-        return receivedMessages_;
-      }
-      /**
-       * <code>int32 received_messages = 7 [json_name = "receivedMessages"];</code>
-       * @param value The receivedMessages to set.
-       * @return This builder for chaining.
-       */
-      public Builder setReceivedMessages(int value) {
-        
-        receivedMessages_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 received_messages = 7 [json_name = "receivedMessages"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearReceivedMessages() {
-        
-        receivedMessages_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int invalidMessages_ ;
-      /**
-       * <code>int32 invalid_messages = 8 [json_name = "invalidMessages"];</code>
-       * @return The invalidMessages.
-       */
-      @java.lang.Override
-      public int getInvalidMessages() {
-        return invalidMessages_;
-      }
-      /**
-       * <code>int32 invalid_messages = 8 [json_name = "invalidMessages"];</code>
-       * @param value The invalidMessages to set.
-       * @return This builder for chaining.
-       */
-      public Builder setInvalidMessages(int value) {
-        
-        invalidMessages_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 invalid_messages = 8 [json_name = "invalidMessages"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearInvalidMessages() {
-        
-        invalidMessages_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int receivedBytes_ ;
-      /**
-       * <code>int32 received_bytes = 9 [json_name = "receivedBytes"];</code>
-       * @return The receivedBytes.
-       */
-      @java.lang.Override
-      public int getReceivedBytes() {
-        return receivedBytes_;
-      }
-      /**
-       * <code>int32 received_bytes = 9 [json_name = "receivedBytes"];</code>
-       * @param value The receivedBytes to set.
-       * @return This builder for chaining.
-       */
-      public Builder setReceivedBytes(int value) {
-        
-        receivedBytes_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 received_bytes = 9 [json_name = "receivedBytes"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearReceivedBytes() {
-        
-        receivedBytes_ = 0;
-        onChanged();
-        return this;
+        return peerBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -3009,6 +2335,18 @@ public final class NetworkOuterClass {
      * @return The receivedBytes.
      */
     int getReceivedBytes();
+
+    /**
+     * <code>int32 status = 10 [json_name = "status"];</code>
+     * @return The status.
+     */
+    int getStatus();
+
+    /**
+     * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
+     * @return The lastSeen.
+     */
+    long getLastSeen();
   }
   /**
    * Protobuf type {@code pactus.PeerInfo}
@@ -3234,6 +2572,28 @@ public final class NetworkOuterClass {
       return receivedBytes_;
     }
 
+    public static final int STATUS_FIELD_NUMBER = 10;
+    private int status_;
+    /**
+     * <code>int32 status = 10 [json_name = "status"];</code>
+     * @return The status.
+     */
+    @java.lang.Override
+    public int getStatus() {
+      return status_;
+    }
+
+    public static final int LAST_SEEN_FIELD_NUMBER = 11;
+    private long lastSeen_;
+    /**
+     * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
+     * @return The lastSeen.
+     */
+    @java.lang.Override
+    public long getLastSeen() {
+      return lastSeen_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3274,6 +2634,12 @@ public final class NetworkOuterClass {
       }
       if (receivedBytes_ != 0) {
         output.writeInt32(9, receivedBytes_);
+      }
+      if (status_ != 0) {
+        output.writeInt32(10, status_);
+      }
+      if (lastSeen_ != 0L) {
+        output.writeInt64(11, lastSeen_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3317,6 +2683,14 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(9, receivedBytes_);
       }
+      if (status_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(10, status_);
+      }
+      if (lastSeen_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(11, lastSeen_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3350,6 +2724,10 @@ public final class NetworkOuterClass {
           != other.getInvalidMessages()) return false;
       if (getReceivedBytes()
           != other.getReceivedBytes()) return false;
+      if (getStatus()
+          != other.getStatus()) return false;
+      if (getLastSeen()
+          != other.getLastSeen()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -3379,6 +2757,11 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getInvalidMessages();
       hash = (37 * hash) + RECEIVED_BYTES_FIELD_NUMBER;
       hash = (53 * hash) + getReceivedBytes();
+      hash = (37 * hash) + STATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getStatus();
+      hash = (37 * hash) + LAST_SEEN_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getLastSeen());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3525,6 +2908,10 @@ public final class NetworkOuterClass {
 
         receivedBytes_ = 0;
 
+        status_ = 0;
+
+        lastSeen_ = 0L;
+
         return this;
       }
 
@@ -3560,6 +2947,8 @@ public final class NetworkOuterClass {
         result.receivedMessages_ = receivedMessages_;
         result.invalidMessages_ = invalidMessages_;
         result.receivedBytes_ = receivedBytes_;
+        result.status_ = status_;
+        result.lastSeen_ = lastSeen_;
         onBuilt();
         return result;
       }
@@ -3638,6 +3027,12 @@ public final class NetworkOuterClass {
         if (other.getReceivedBytes() != 0) {
           setReceivedBytes(other.getReceivedBytes());
         }
+        if (other.getStatus() != 0) {
+          setStatus(other.getStatus());
+        }
+        if (other.getLastSeen() != 0L) {
+          setLastSeen(other.getLastSeen());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3709,6 +3104,16 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 72
+              case 80: {
+                status_ = input.readInt32();
+
+                break;
+              } // case 80
+              case 88: {
+                lastSeen_ = input.readInt64();
+
+                break;
+              } // case 88
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4141,6 +3546,68 @@ public final class NetworkOuterClass {
         onChanged();
         return this;
       }
+
+      private int status_ ;
+      /**
+       * <code>int32 status = 10 [json_name = "status"];</code>
+       * @return The status.
+       */
+      @java.lang.Override
+      public int getStatus() {
+        return status_;
+      }
+      /**
+       * <code>int32 status = 10 [json_name = "status"];</code>
+       * @param value The status to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatus(int value) {
+        
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 status = 10 [json_name = "status"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStatus() {
+        
+        status_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long lastSeen_ ;
+      /**
+       * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
+       * @return The lastSeen.
+       */
+      @java.lang.Override
+      public long getLastSeen() {
+        return lastSeen_;
+      }
+      /**
+       * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
+       * @param value The lastSeen to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastSeen(long value) {
+        
+        lastSeen_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLastSeen() {
+        
+        lastSeen_ = 0L;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4243,27 +3710,23 @@ public final class NetworkOuterClass {
       "oRequest\"Y\n\026GetNetworkInfoResponse\022\027\n\007se" +
       "lf_id\030\001 \001(\014R\006selfId\022&\n\005peers\030\002 \003(\0132\020.pac" +
       "tus.PeerInfoR\005peers\"\024\n\022GetPeerInfoReques" +
-      "t\"\252\002\n\023GetPeerInfoResponse\022\030\n\007moniker\030\001 \001" +
-      "(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007pee" +
-      "r_id\030\003 \001(\014R\006peerId\022\035\n\npublic_key\030\004 \001(\tR\t" +
-      "publicKey\022\024\n\005flags\030\005 \001(\005R\005flags\022\026\n\006heigh" +
-      "t\030\006 \001(\rR\006height\022+\n\021received_messages\030\007 \001" +
-      "(\005R\020receivedMessages\022)\n\020invalid_messages" +
-      "\030\010 \001(\005R\017invalidMessages\022%\n\016received_byte" +
-      "s\030\t \001(\005R\rreceivedBytes\"\237\002\n\010PeerInfo\022\030\n\007m" +
+      "t\";\n\023GetPeerInfoResponse\022$\n\004peer\030\001 \001(\0132\020" +
+      ".pactus.PeerInfoR\004peer\"\324\002\n\010PeerInfo\022\030\n\007m" +
       "oniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005ag" +
       "ent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\022\035\n\npublic_k" +
       "ey\030\004 \001(\tR\tpublicKey\022\024\n\005flags\030\005 \001(\005R\005flag" +
       "s\022\026\n\006height\030\006 \001(\rR\006height\022+\n\021received_me" +
       "ssages\030\007 \001(\005R\020receivedMessages\022)\n\020invali" +
       "d_messages\030\010 \001(\005R\017invalidMessages\022%\n\016rec" +
-      "eived_bytes\030\t \001(\005R\rreceivedBytes2\242\001\n\007Net" +
-      "work\022O\n\016GetNetworkInfo\022\035.pactus.GetNetwo" +
-      "rkInfoRequest\032\036.pactus.GetNetworkInfoRes" +
-      "ponse\022F\n\013GetPeerInfo\022\032.pactus.GetPeerInf" +
-      "oRequest\032\033.pactus.GetPeerInfoResponseBB\n" +
-      "\016pactus.networkZ0github.com/pactus-proje" +
-      "ct/pactus/www/grpc/pactusb\006proto3"
+      "eived_bytes\030\t \001(\005R\rreceivedBytes\022\026\n\006stat" +
+      "us\030\n \001(\005R\006status\022\033\n\tlast_seen\030\013 \001(\003R\010las" +
+      "tSeen2\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035.pa" +
+      "ctus.GetNetworkInfoRequest\032\036.pactus.GetN" +
+      "etworkInfoResponse\022F\n\013GetPeerInfo\022\032.pact" +
+      "us.GetPeerInfoRequest\032\033.pactus.GetPeerIn" +
+      "foResponseBB\n\016pactus.networkZ0github.com" +
+      "/pactus-project/pactus/www/grpc/pactusb\006" +
+      "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4292,13 +3755,13 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetPeerInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetPeerInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "PublicKey", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", });
+        new java.lang.String[] { "Peer", });
     internal_static_pactus_PeerInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "PublicKey", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "PublicKey", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSeen", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

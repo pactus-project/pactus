@@ -11,6 +11,7 @@ service Blockchain {
   rpc GetBlockHash(GetBlockHashRequest) returns (GetBlockHashResponse);
   rpc GetBlockHeight(GetBlockHeightRequest) returns (GetBlockHeightResponse);
   rpc GetBlockchainInfo(GetBlockchainInfoRequest) returns (GetBlockchainInfoResponse);
+  rpc GetConsensusInfo(GetConsensusInfoRequest) returns (GetConsensusInfoResponse);
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
   rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
   rpc GetValidatorByNumber(GetValidatorByNumberRequest) returns (GetValidatorResponse);
@@ -59,6 +60,17 @@ message GetBlockchainInfoRequest {}
 message GetBlockchainInfoResponse {
   uint32 last_block_height = 1;
   bytes last_block_hash = 2;
+  int64 total_power = 3;
+  int64 committee_power = 4;
+  repeated ValidatorInfo committee_validators = 5;
+}
+
+message GetConsensusInfoRequest {}
+
+message GetConsensusInfoResponse {
+  uint32 height = 1;
+  int32 round = 2;
+  repeated VoteInfo votes = 3;
 }
 
 message ValidatorInfo {
@@ -94,8 +106,21 @@ message CertificateInfo {
   bytes signature = 4;
 }
 
+message VoteInfo {
+  VoteType type = 1;
+  string voter = 2;
+  bytes block_hash = 3;
+  int32 round = 4;
+}
+
 enum BlockVerbosity {
   BLOCK_DATA = 0;
   BLOCK_INFO = 1;
   BLOCK_TRANSACTIONS = 2;
+}
+
+enum VoteType {
+  VOTE_PREPARE = 0;
+  VOTE_PRECOMMIT = 1;
+  VOTE_CHANGE_PROPOSER = 2;
 }

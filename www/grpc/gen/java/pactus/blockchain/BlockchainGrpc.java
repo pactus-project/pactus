@@ -139,6 +139,37 @@ public final class BlockchainGrpc {
     return getGetBlockchainInfoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest,
+      pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse> getGetConsensusInfoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetConsensusInfo",
+      requestType = pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest,
+      pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse> getGetConsensusInfoMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest, pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse> getGetConsensusInfoMethod;
+    if ((getGetConsensusInfoMethod = BlockchainGrpc.getGetConsensusInfoMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getGetConsensusInfoMethod = BlockchainGrpc.getGetConsensusInfoMethod) == null) {
+          BlockchainGrpc.getGetConsensusInfoMethod = getGetConsensusInfoMethod =
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest, pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetConsensusInfo"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetConsensusInfo"))
+              .build();
+        }
+      }
+    }
+    return getGetConsensusInfoMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetAccountRequest,
       pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getGetAccountMethod;
 
@@ -341,6 +372,13 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public void getConsensusInfo(pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetConsensusInfoMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request,
         io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAccountMethod(), responseObserver);
@@ -397,6 +435,13 @@ public final class BlockchainGrpc {
                 pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest,
                 pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse>(
                   this, METHODID_GET_BLOCKCHAIN_INFO)))
+          .addMethod(
+            getGetConsensusInfoMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest,
+                pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse>(
+                  this, METHODID_GET_CONSENSUS_INFO)))
           .addMethod(
             getGetAccountMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -477,6 +522,14 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public void getConsensusInfo(pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetConsensusInfoMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request,
         io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
@@ -548,6 +601,13 @@ public final class BlockchainGrpc {
     public pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse getBlockchainInfo(pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetBlockchainInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse getConsensusInfo(pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetConsensusInfoMethod(), getCallOptions(), request);
     }
 
     /**
@@ -627,6 +687,14 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse> getConsensusInfo(
+        pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetConsensusInfoMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getAccount(
         pactus.blockchain.BlockchainOuterClass.GetAccountRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
@@ -662,10 +730,11 @@ public final class BlockchainGrpc {
   private static final int METHODID_GET_BLOCK_HASH = 1;
   private static final int METHODID_GET_BLOCK_HEIGHT = 2;
   private static final int METHODID_GET_BLOCKCHAIN_INFO = 3;
-  private static final int METHODID_GET_ACCOUNT = 4;
-  private static final int METHODID_GET_VALIDATOR = 5;
-  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 6;
-  private static final int METHODID_GET_VALIDATORS = 7;
+  private static final int METHODID_GET_CONSENSUS_INFO = 4;
+  private static final int METHODID_GET_ACCOUNT = 5;
+  private static final int METHODID_GET_VALIDATOR = 6;
+  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 7;
+  private static final int METHODID_GET_VALIDATORS = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -699,6 +768,10 @@ public final class BlockchainGrpc {
         case METHODID_GET_BLOCKCHAIN_INFO:
           serviceImpl.getBlockchainInfo((pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoRequest) request,
               (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetBlockchainInfoResponse>) responseObserver);
+          break;
+        case METHODID_GET_CONSENSUS_INFO:
+          serviceImpl.getConsensusInfo((pactus.blockchain.BlockchainOuterClass.GetConsensusInfoRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse>) responseObserver);
           break;
         case METHODID_GET_ACCOUNT:
           serviceImpl.getAccount((pactus.blockchain.BlockchainOuterClass.GetAccountRequest) request,
@@ -781,6 +854,7 @@ public final class BlockchainGrpc {
               .addMethod(getGetBlockHashMethod())
               .addMethod(getGetBlockHeightMethod())
               .addMethod(getGetBlockchainInfoMethod())
+              .addMethod(getGetConsensusInfoMethod())
               .addMethod(getGetAccountMethod())
               .addMethod(getGetValidatorMethod())
               .addMethod(getGetValidatorByNumberMethod())
