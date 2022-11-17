@@ -4,34 +4,27 @@ import (
 	"net/http"
 
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/www/capnp"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetConsensusInfo(s.ctx, func(p capnp.PactusServer_getConsensusInfo_Params) error {
-		return nil
-	}).Result()
-	st, err := res.Struct()
+	res, err := s.blockchain.GetConsensusInfo(s.ctx,
+		&pactus.GetConsensusInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
+
 	tm := newTableMaker()
-
-	tm.addRowInt("Height", int(st.Height()))
-	tm.addRowInt("Round", int(st.Round()))
+	tm.addRowInt("Height", int(res.Height))
+	tm.addRowInt("Round", int(res.Round))
 	tm.addRowString("Votes", "---")
-	voteList, _ := st.Votes()
-	for i := 0; i < voteList.Len(); i++ {
-		v := voteList.At(i)
+	for i, v := range res.Votes {
 		tm.addRowInt("-- Vote #", i+1)
-		tm.addRowString("Type", vote.Type(v.Type()).String())
-		voter, _ := v.Voter()
-		tm.addRowString("Voter", voter)
-		tm.addRowInt("Round", int(v.Round()))
-		hash, _ := v.BlockHash()
-		tm.addRowBlockHash("BlockHash", hash)
+		tm.addRowString("Type", vote.Type(v.Type).String())
+		tm.addRowString("Voter", v.Voter)
+		tm.addRowInt("Round", int(v.Round))
+		tm.addRowBlockHash("BlockHash", v.BlockHash)
 	}
-
 	s.writeHTML(w, tm.html())
 }

@@ -137,32 +137,40 @@ public final class BlockchainOuterClass {
   public enum VoteType
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
-     * <code>VOTE_PREPARE = 0;</code>
+     * <code>VOTE_UNKNOWN = 0;</code>
      */
-    VOTE_PREPARE(0),
+    VOTE_UNKNOWN(0),
     /**
-     * <code>VOTE_PRECOMMIT = 1;</code>
+     * <code>VOTE_PREPARE = 1;</code>
      */
-    VOTE_PRECOMMIT(1),
+    VOTE_PREPARE(1),
     /**
-     * <code>VOTE_CHANGE_PROPOSER = 2;</code>
+     * <code>VOTE_PRECOMMIT = 2;</code>
      */
-    VOTE_CHANGE_PROPOSER(2),
+    VOTE_PRECOMMIT(2),
+    /**
+     * <code>VOTE_CHANGE_PROPOSER = 3;</code>
+     */
+    VOTE_CHANGE_PROPOSER(3),
     UNRECOGNIZED(-1),
     ;
 
     /**
-     * <code>VOTE_PREPARE = 0;</code>
+     * <code>VOTE_UNKNOWN = 0;</code>
      */
-    public static final int VOTE_PREPARE_VALUE = 0;
+    public static final int VOTE_UNKNOWN_VALUE = 0;
     /**
-     * <code>VOTE_PRECOMMIT = 1;</code>
+     * <code>VOTE_PREPARE = 1;</code>
      */
-    public static final int VOTE_PRECOMMIT_VALUE = 1;
+    public static final int VOTE_PREPARE_VALUE = 1;
     /**
-     * <code>VOTE_CHANGE_PROPOSER = 2;</code>
+     * <code>VOTE_PRECOMMIT = 2;</code>
      */
-    public static final int VOTE_CHANGE_PROPOSER_VALUE = 2;
+    public static final int VOTE_PRECOMMIT_VALUE = 2;
+    /**
+     * <code>VOTE_CHANGE_PROPOSER = 3;</code>
+     */
+    public static final int VOTE_CHANGE_PROPOSER_VALUE = 3;
 
 
     public final int getNumber() {
@@ -189,9 +197,10 @@ public final class BlockchainOuterClass {
      */
     public static VoteType forNumber(int value) {
       switch (value) {
-        case 0: return VOTE_PREPARE;
-        case 1: return VOTE_PRECOMMIT;
-        case 2: return VOTE_CHANGE_PROPOSER;
+        case 0: return VOTE_UNKNOWN;
+        case 1: return VOTE_PREPARE;
+        case 2: return VOTE_PRECOMMIT;
+        case 3: return VOTE_CHANGE_PROPOSER;
         default: return null;
       }
     }
@@ -10887,60 +10896,72 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * @return The hash.
+     */
+    com.google.protobuf.ByteString getHash();
+
+    /**
+     * <code>bytes data = 2 [json_name = "data"];</code>
+     * @return The data.
+     */
+    com.google.protobuf.ByteString getData();
+
+    /**
+     * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     java.lang.String getPublicKey();
     /**
-     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
     com.google.protobuf.ByteString
         getPublicKeyBytes();
 
     /**
-     * <code>int32 number = 2 [json_name = "number"];</code>
+     * <code>int32 number = 4 [json_name = "number"];</code>
      * @return The number.
      */
     int getNumber();
 
     /**
-     * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+     * <code>int32 sequence = 5 [json_name = "sequence"];</code>
      * @return The sequence.
      */
     int getSequence();
 
     /**
-     * <code>int64 stake = 4 [json_name = "stake"];</code>
+     * <code>int64 stake = 6 [json_name = "stake"];</code>
      * @return The stake.
      */
     long getStake();
 
     /**
-     * <code>uint32 last_bonding_height = 5 [json_name = "lastBondingHeight"];</code>
+     * <code>uint32 last_bonding_height = 7 [json_name = "lastBondingHeight"];</code>
      * @return The lastBondingHeight.
      */
     int getLastBondingHeight();
 
     /**
-     * <code>uint32 last_joined_height = 6 [json_name = "lastJoinedHeight"];</code>
+     * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
      * @return The lastJoinedHeight.
      */
     int getLastJoinedHeight();
 
     /**
-     * <code>uint32 unbonding_height = 7 [json_name = "unbondingHeight"];</code>
+     * <code>uint32 unbonding_height = 9 [json_name = "unbondingHeight"];</code>
      * @return The unbondingHeight.
      */
     int getUnbondingHeight();
 
     /**
-     * <code>string address = 8 [json_name = "address"];</code>
+     * <code>string address = 10 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
-     * <code>string address = 8 [json_name = "address"];</code>
+     * <code>string address = 10 [json_name = "address"];</code>
      * @return The bytes for address.
      */
     com.google.protobuf.ByteString
@@ -10959,6 +10980,8 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private ValidatorInfo() {
+      hash_ = com.google.protobuf.ByteString.EMPTY;
+      data_ = com.google.protobuf.ByteString.EMPTY;
       publicKey_ = "";
       address_ = "";
     }
@@ -10988,10 +11011,32 @@ public final class BlockchainOuterClass {
               pactus.blockchain.BlockchainOuterClass.ValidatorInfo.class, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder.class);
     }
 
-    public static final int PUBLIC_KEY_FIELD_NUMBER = 1;
+    public static final int HASH_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString hash_;
+    /**
+     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * @return The hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getHash() {
+      return hash_;
+    }
+
+    public static final int DATA_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString data_;
+    /**
+     * <code>bytes data = 2 [json_name = "data"];</code>
+     * @return The data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getData() {
+      return data_;
+    }
+
+    public static final int PUBLIC_KEY_FIELD_NUMBER = 3;
     private volatile java.lang.Object publicKey_;
     /**
-     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     @java.lang.Override
@@ -11008,7 +11053,7 @@ public final class BlockchainOuterClass {
       }
     }
     /**
-     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
     @java.lang.Override
@@ -11026,10 +11071,10 @@ public final class BlockchainOuterClass {
       }
     }
 
-    public static final int NUMBER_FIELD_NUMBER = 2;
+    public static final int NUMBER_FIELD_NUMBER = 4;
     private int number_;
     /**
-     * <code>int32 number = 2 [json_name = "number"];</code>
+     * <code>int32 number = 4 [json_name = "number"];</code>
      * @return The number.
      */
     @java.lang.Override
@@ -11037,10 +11082,10 @@ public final class BlockchainOuterClass {
       return number_;
     }
 
-    public static final int SEQUENCE_FIELD_NUMBER = 3;
+    public static final int SEQUENCE_FIELD_NUMBER = 5;
     private int sequence_;
     /**
-     * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+     * <code>int32 sequence = 5 [json_name = "sequence"];</code>
      * @return The sequence.
      */
     @java.lang.Override
@@ -11048,10 +11093,10 @@ public final class BlockchainOuterClass {
       return sequence_;
     }
 
-    public static final int STAKE_FIELD_NUMBER = 4;
+    public static final int STAKE_FIELD_NUMBER = 6;
     private long stake_;
     /**
-     * <code>int64 stake = 4 [json_name = "stake"];</code>
+     * <code>int64 stake = 6 [json_name = "stake"];</code>
      * @return The stake.
      */
     @java.lang.Override
@@ -11059,10 +11104,10 @@ public final class BlockchainOuterClass {
       return stake_;
     }
 
-    public static final int LAST_BONDING_HEIGHT_FIELD_NUMBER = 5;
+    public static final int LAST_BONDING_HEIGHT_FIELD_NUMBER = 7;
     private int lastBondingHeight_;
     /**
-     * <code>uint32 last_bonding_height = 5 [json_name = "lastBondingHeight"];</code>
+     * <code>uint32 last_bonding_height = 7 [json_name = "lastBondingHeight"];</code>
      * @return The lastBondingHeight.
      */
     @java.lang.Override
@@ -11070,10 +11115,10 @@ public final class BlockchainOuterClass {
       return lastBondingHeight_;
     }
 
-    public static final int LAST_JOINED_HEIGHT_FIELD_NUMBER = 6;
+    public static final int LAST_JOINED_HEIGHT_FIELD_NUMBER = 8;
     private int lastJoinedHeight_;
     /**
-     * <code>uint32 last_joined_height = 6 [json_name = "lastJoinedHeight"];</code>
+     * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
      * @return The lastJoinedHeight.
      */
     @java.lang.Override
@@ -11081,10 +11126,10 @@ public final class BlockchainOuterClass {
       return lastJoinedHeight_;
     }
 
-    public static final int UNBONDING_HEIGHT_FIELD_NUMBER = 7;
+    public static final int UNBONDING_HEIGHT_FIELD_NUMBER = 9;
     private int unbondingHeight_;
     /**
-     * <code>uint32 unbonding_height = 7 [json_name = "unbondingHeight"];</code>
+     * <code>uint32 unbonding_height = 9 [json_name = "unbondingHeight"];</code>
      * @return The unbondingHeight.
      */
     @java.lang.Override
@@ -11092,10 +11137,10 @@ public final class BlockchainOuterClass {
       return unbondingHeight_;
     }
 
-    public static final int ADDRESS_FIELD_NUMBER = 8;
+    public static final int ADDRESS_FIELD_NUMBER = 10;
     private volatile java.lang.Object address_;
     /**
-     * <code>string address = 8 [json_name = "address"];</code>
+     * <code>string address = 10 [json_name = "address"];</code>
      * @return The address.
      */
     @java.lang.Override
@@ -11112,7 +11157,7 @@ public final class BlockchainOuterClass {
       }
     }
     /**
-     * <code>string address = 8 [json_name = "address"];</code>
+     * <code>string address = 10 [json_name = "address"];</code>
      * @return The bytes for address.
      */
     @java.lang.Override
@@ -11144,29 +11189,35 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (!hash_.isEmpty()) {
+        output.writeBytes(1, hash_);
+      }
+      if (!data_.isEmpty()) {
+        output.writeBytes(2, data_);
+      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, publicKey_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, publicKey_);
       }
       if (number_ != 0) {
-        output.writeInt32(2, number_);
+        output.writeInt32(4, number_);
       }
       if (sequence_ != 0) {
-        output.writeInt32(3, sequence_);
+        output.writeInt32(5, sequence_);
       }
       if (stake_ != 0L) {
-        output.writeInt64(4, stake_);
+        output.writeInt64(6, stake_);
       }
       if (lastBondingHeight_ != 0) {
-        output.writeUInt32(5, lastBondingHeight_);
+        output.writeUInt32(7, lastBondingHeight_);
       }
       if (lastJoinedHeight_ != 0) {
-        output.writeUInt32(6, lastJoinedHeight_);
+        output.writeUInt32(8, lastJoinedHeight_);
       }
       if (unbondingHeight_ != 0) {
-        output.writeUInt32(7, unbondingHeight_);
+        output.writeUInt32(9, unbondingHeight_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, address_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, address_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -11177,35 +11228,43 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
+      if (!hash_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, hash_);
+      }
+      if (!data_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, data_);
+      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, publicKey_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, publicKey_);
       }
       if (number_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, number_);
+          .computeInt32Size(4, number_);
       }
       if (sequence_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, sequence_);
+          .computeInt32Size(5, sequence_);
       }
       if (stake_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, stake_);
+          .computeInt64Size(6, stake_);
       }
       if (lastBondingHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(5, lastBondingHeight_);
+          .computeUInt32Size(7, lastBondingHeight_);
       }
       if (lastJoinedHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(6, lastJoinedHeight_);
+          .computeUInt32Size(8, lastJoinedHeight_);
       }
       if (unbondingHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(7, unbondingHeight_);
+          .computeUInt32Size(9, unbondingHeight_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, address_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, address_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -11222,6 +11281,10 @@ public final class BlockchainOuterClass {
       }
       pactus.blockchain.BlockchainOuterClass.ValidatorInfo other = (pactus.blockchain.BlockchainOuterClass.ValidatorInfo) obj;
 
+      if (!getHash()
+          .equals(other.getHash())) return false;
+      if (!getData()
+          .equals(other.getData())) return false;
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
       if (getNumber()
@@ -11249,6 +11312,10 @@ public final class BlockchainOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + HASH_FIELD_NUMBER;
+      hash = (53 * hash) + getHash().hashCode();
+      hash = (37 * hash) + DATA_FIELD_NUMBER;
+      hash = (53 * hash) + getData().hashCode();
       hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
       hash = (53 * hash) + getPublicKey().hashCode();
       hash = (37 * hash) + NUMBER_FIELD_NUMBER;
@@ -11394,6 +11461,10 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        hash_ = com.google.protobuf.ByteString.EMPTY;
+
+        data_ = com.google.protobuf.ByteString.EMPTY;
+
         publicKey_ = "";
 
         number_ = 0;
@@ -11436,6 +11507,8 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo buildPartial() {
         pactus.blockchain.BlockchainOuterClass.ValidatorInfo result = new pactus.blockchain.BlockchainOuterClass.ValidatorInfo(this);
+        result.hash_ = hash_;
+        result.data_ = data_;
         result.publicKey_ = publicKey_;
         result.number_ = number_;
         result.sequence_ = sequence_;
@@ -11492,6 +11565,12 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.ValidatorInfo other) {
         if (other == pactus.blockchain.BlockchainOuterClass.ValidatorInfo.getDefaultInstance()) return this;
+        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
+          setHash(other.getHash());
+        }
+        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
+          setData(other.getData());
+        }
         if (!other.getPublicKey().isEmpty()) {
           publicKey_ = other.publicKey_;
           onChanged();
@@ -11545,45 +11624,55 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
-                publicKey_ = input.readStringRequireUtf8();
+                hash_ = input.readBytes();
 
                 break;
               } // case 10
-              case 16: {
-                number_ = input.readInt32();
+              case 18: {
+                data_ = input.readBytes();
 
                 break;
-              } // case 16
-              case 24: {
-                sequence_ = input.readInt32();
+              } // case 18
+              case 26: {
+                publicKey_ = input.readStringRequireUtf8();
 
                 break;
-              } // case 24
+              } // case 26
               case 32: {
-                stake_ = input.readInt64();
+                number_ = input.readInt32();
 
                 break;
               } // case 32
               case 40: {
-                lastBondingHeight_ = input.readUInt32();
+                sequence_ = input.readInt32();
 
                 break;
               } // case 40
               case 48: {
-                lastJoinedHeight_ = input.readUInt32();
+                stake_ = input.readInt64();
 
                 break;
               } // case 48
               case 56: {
-                unbondingHeight_ = input.readUInt32();
+                lastBondingHeight_ = input.readUInt32();
 
                 break;
               } // case 56
-              case 66: {
+              case 64: {
+                lastJoinedHeight_ = input.readUInt32();
+
+                break;
+              } // case 64
+              case 72: {
+                unbondingHeight_ = input.readUInt32();
+
+                break;
+              } // case 72
+              case 82: {
                 address_ = input.readStringRequireUtf8();
 
                 break;
-              } // case 66
+              } // case 82
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -11600,9 +11689,77 @@ public final class BlockchainOuterClass {
         return this;
       }
 
+      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @return The hash.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getHash() {
+        return hash_;
+      }
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @param value The hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHash(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        hash_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearHash() {
+        
+        hash_ = getDefaultInstance().getHash();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes data = 2 [json_name = "data"];</code>
+       * @return The data.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getData() {
+        return data_;
+      }
+      /**
+       * <code>bytes data = 2 [json_name = "data"];</code>
+       * @param value The data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setData(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        data_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes data = 2 [json_name = "data"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearData() {
+        
+        data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object publicKey_ = "";
       /**
-       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @return The publicKey.
        */
       public java.lang.String getPublicKey() {
@@ -11618,7 +11775,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @return The bytes for publicKey.
        */
       public com.google.protobuf.ByteString
@@ -11635,7 +11792,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @param value The publicKey to set.
        * @return This builder for chaining.
        */
@@ -11650,7 +11807,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPublicKey() {
@@ -11660,7 +11817,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @param value The bytes for publicKey to set.
        * @return This builder for chaining.
        */
@@ -11678,7 +11835,7 @@ public final class BlockchainOuterClass {
 
       private int number_ ;
       /**
-       * <code>int32 number = 2 [json_name = "number"];</code>
+       * <code>int32 number = 4 [json_name = "number"];</code>
        * @return The number.
        */
       @java.lang.Override
@@ -11686,7 +11843,7 @@ public final class BlockchainOuterClass {
         return number_;
       }
       /**
-       * <code>int32 number = 2 [json_name = "number"];</code>
+       * <code>int32 number = 4 [json_name = "number"];</code>
        * @param value The number to set.
        * @return This builder for chaining.
        */
@@ -11697,7 +11854,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int32 number = 2 [json_name = "number"];</code>
+       * <code>int32 number = 4 [json_name = "number"];</code>
        * @return This builder for chaining.
        */
       public Builder clearNumber() {
@@ -11709,7 +11866,7 @@ public final class BlockchainOuterClass {
 
       private int sequence_ ;
       /**
-       * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
        * @return The sequence.
        */
       @java.lang.Override
@@ -11717,7 +11874,7 @@ public final class BlockchainOuterClass {
         return sequence_;
       }
       /**
-       * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
        * @param value The sequence to set.
        * @return This builder for chaining.
        */
@@ -11728,7 +11885,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSequence() {
@@ -11740,7 +11897,7 @@ public final class BlockchainOuterClass {
 
       private long stake_ ;
       /**
-       * <code>int64 stake = 4 [json_name = "stake"];</code>
+       * <code>int64 stake = 6 [json_name = "stake"];</code>
        * @return The stake.
        */
       @java.lang.Override
@@ -11748,7 +11905,7 @@ public final class BlockchainOuterClass {
         return stake_;
       }
       /**
-       * <code>int64 stake = 4 [json_name = "stake"];</code>
+       * <code>int64 stake = 6 [json_name = "stake"];</code>
        * @param value The stake to set.
        * @return This builder for chaining.
        */
@@ -11759,7 +11916,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int64 stake = 4 [json_name = "stake"];</code>
+       * <code>int64 stake = 6 [json_name = "stake"];</code>
        * @return This builder for chaining.
        */
       public Builder clearStake() {
@@ -11771,7 +11928,7 @@ public final class BlockchainOuterClass {
 
       private int lastBondingHeight_ ;
       /**
-       * <code>uint32 last_bonding_height = 5 [json_name = "lastBondingHeight"];</code>
+       * <code>uint32 last_bonding_height = 7 [json_name = "lastBondingHeight"];</code>
        * @return The lastBondingHeight.
        */
       @java.lang.Override
@@ -11779,7 +11936,7 @@ public final class BlockchainOuterClass {
         return lastBondingHeight_;
       }
       /**
-       * <code>uint32 last_bonding_height = 5 [json_name = "lastBondingHeight"];</code>
+       * <code>uint32 last_bonding_height = 7 [json_name = "lastBondingHeight"];</code>
        * @param value The lastBondingHeight to set.
        * @return This builder for chaining.
        */
@@ -11790,7 +11947,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>uint32 last_bonding_height = 5 [json_name = "lastBondingHeight"];</code>
+       * <code>uint32 last_bonding_height = 7 [json_name = "lastBondingHeight"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastBondingHeight() {
@@ -11802,7 +11959,7 @@ public final class BlockchainOuterClass {
 
       private int lastJoinedHeight_ ;
       /**
-       * <code>uint32 last_joined_height = 6 [json_name = "lastJoinedHeight"];</code>
+       * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
        * @return The lastJoinedHeight.
        */
       @java.lang.Override
@@ -11810,7 +11967,7 @@ public final class BlockchainOuterClass {
         return lastJoinedHeight_;
       }
       /**
-       * <code>uint32 last_joined_height = 6 [json_name = "lastJoinedHeight"];</code>
+       * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
        * @param value The lastJoinedHeight to set.
        * @return This builder for chaining.
        */
@@ -11821,7 +11978,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>uint32 last_joined_height = 6 [json_name = "lastJoinedHeight"];</code>
+       * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastJoinedHeight() {
@@ -11833,7 +11990,7 @@ public final class BlockchainOuterClass {
 
       private int unbondingHeight_ ;
       /**
-       * <code>uint32 unbonding_height = 7 [json_name = "unbondingHeight"];</code>
+       * <code>uint32 unbonding_height = 9 [json_name = "unbondingHeight"];</code>
        * @return The unbondingHeight.
        */
       @java.lang.Override
@@ -11841,7 +11998,7 @@ public final class BlockchainOuterClass {
         return unbondingHeight_;
       }
       /**
-       * <code>uint32 unbonding_height = 7 [json_name = "unbondingHeight"];</code>
+       * <code>uint32 unbonding_height = 9 [json_name = "unbondingHeight"];</code>
        * @param value The unbondingHeight to set.
        * @return This builder for chaining.
        */
@@ -11852,7 +12009,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>uint32 unbonding_height = 7 [json_name = "unbondingHeight"];</code>
+       * <code>uint32 unbonding_height = 9 [json_name = "unbondingHeight"];</code>
        * @return This builder for chaining.
        */
       public Builder clearUnbondingHeight() {
@@ -11864,7 +12021,7 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object address_ = "";
       /**
-       * <code>string address = 8 [json_name = "address"];</code>
+       * <code>string address = 10 [json_name = "address"];</code>
        * @return The address.
        */
       public java.lang.String getAddress() {
@@ -11880,7 +12037,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>string address = 8 [json_name = "address"];</code>
+       * <code>string address = 10 [json_name = "address"];</code>
        * @return The bytes for address.
        */
       public com.google.protobuf.ByteString
@@ -11897,7 +12054,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>string address = 8 [json_name = "address"];</code>
+       * <code>string address = 10 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
        */
@@ -11912,7 +12069,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>string address = 8 [json_name = "address"];</code>
+       * <code>string address = 10 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAddress() {
@@ -11922,7 +12079,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>string address = 8 [json_name = "address"];</code>
+       * <code>string address = 10 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
        */
@@ -12006,31 +12163,43 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string address = 1 [json_name = "address"];</code>
+     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * @return The hash.
+     */
+    com.google.protobuf.ByteString getHash();
+
+    /**
+     * <code>bytes data = 2 [json_name = "data"];</code>
+     * @return The data.
+     */
+    com.google.protobuf.ByteString getData();
+
+    /**
+     * <code>string address = 3 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
-     * <code>string address = 1 [json_name = "address"];</code>
+     * <code>string address = 3 [json_name = "address"];</code>
      * @return The bytes for address.
      */
     com.google.protobuf.ByteString
         getAddressBytes();
 
     /**
-     * <code>int32 number = 2 [json_name = "number"];</code>
+     * <code>int32 number = 4 [json_name = "number"];</code>
      * @return The number.
      */
     int getNumber();
 
     /**
-     * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+     * <code>int32 sequence = 5 [json_name = "sequence"];</code>
      * @return The sequence.
      */
     int getSequence();
 
     /**
-     * <code>int64 Balance = 4 [json_name = "Balance"];</code>
+     * <code>int64 balance = 6 [json_name = "balance"];</code>
      * @return The balance.
      */
     long getBalance();
@@ -12048,6 +12217,8 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private AccountInfo() {
+      hash_ = com.google.protobuf.ByteString.EMPTY;
+      data_ = com.google.protobuf.ByteString.EMPTY;
       address_ = "";
     }
 
@@ -12076,10 +12247,32 @@ public final class BlockchainOuterClass {
               pactus.blockchain.BlockchainOuterClass.AccountInfo.class, pactus.blockchain.BlockchainOuterClass.AccountInfo.Builder.class);
     }
 
-    public static final int ADDRESS_FIELD_NUMBER = 1;
+    public static final int HASH_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString hash_;
+    /**
+     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * @return The hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getHash() {
+      return hash_;
+    }
+
+    public static final int DATA_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString data_;
+    /**
+     * <code>bytes data = 2 [json_name = "data"];</code>
+     * @return The data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getData() {
+      return data_;
+    }
+
+    public static final int ADDRESS_FIELD_NUMBER = 3;
     private volatile java.lang.Object address_;
     /**
-     * <code>string address = 1 [json_name = "address"];</code>
+     * <code>string address = 3 [json_name = "address"];</code>
      * @return The address.
      */
     @java.lang.Override
@@ -12096,7 +12289,7 @@ public final class BlockchainOuterClass {
       }
     }
     /**
-     * <code>string address = 1 [json_name = "address"];</code>
+     * <code>string address = 3 [json_name = "address"];</code>
      * @return The bytes for address.
      */
     @java.lang.Override
@@ -12114,10 +12307,10 @@ public final class BlockchainOuterClass {
       }
     }
 
-    public static final int NUMBER_FIELD_NUMBER = 2;
+    public static final int NUMBER_FIELD_NUMBER = 4;
     private int number_;
     /**
-     * <code>int32 number = 2 [json_name = "number"];</code>
+     * <code>int32 number = 4 [json_name = "number"];</code>
      * @return The number.
      */
     @java.lang.Override
@@ -12125,10 +12318,10 @@ public final class BlockchainOuterClass {
       return number_;
     }
 
-    public static final int SEQUENCE_FIELD_NUMBER = 3;
+    public static final int SEQUENCE_FIELD_NUMBER = 5;
     private int sequence_;
     /**
-     * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+     * <code>int32 sequence = 5 [json_name = "sequence"];</code>
      * @return The sequence.
      */
     @java.lang.Override
@@ -12136,10 +12329,10 @@ public final class BlockchainOuterClass {
       return sequence_;
     }
 
-    public static final int BALANCE_FIELD_NUMBER = 4;
+    public static final int BALANCE_FIELD_NUMBER = 6;
     private long balance_;
     /**
-     * <code>int64 Balance = 4 [json_name = "Balance"];</code>
+     * <code>int64 balance = 6 [json_name = "balance"];</code>
      * @return The balance.
      */
     @java.lang.Override
@@ -12161,17 +12354,23 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (!hash_.isEmpty()) {
+        output.writeBytes(1, hash_);
+      }
+      if (!data_.isEmpty()) {
+        output.writeBytes(2, data_);
+      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, address_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, address_);
       }
       if (number_ != 0) {
-        output.writeInt32(2, number_);
+        output.writeInt32(4, number_);
       }
       if (sequence_ != 0) {
-        output.writeInt32(3, sequence_);
+        output.writeInt32(5, sequence_);
       }
       if (balance_ != 0L) {
-        output.writeInt64(4, balance_);
+        output.writeInt64(6, balance_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -12182,20 +12381,28 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
+      if (!hash_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, hash_);
+      }
+      if (!data_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, data_);
+      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, address_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, address_);
       }
       if (number_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, number_);
+          .computeInt32Size(4, number_);
       }
       if (sequence_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, sequence_);
+          .computeInt32Size(5, sequence_);
       }
       if (balance_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, balance_);
+          .computeInt64Size(6, balance_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -12212,6 +12419,10 @@ public final class BlockchainOuterClass {
       }
       pactus.blockchain.BlockchainOuterClass.AccountInfo other = (pactus.blockchain.BlockchainOuterClass.AccountInfo) obj;
 
+      if (!getHash()
+          .equals(other.getHash())) return false;
+      if (!getData()
+          .equals(other.getData())) return false;
       if (!getAddress()
           .equals(other.getAddress())) return false;
       if (getNumber()
@@ -12231,6 +12442,10 @@ public final class BlockchainOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + HASH_FIELD_NUMBER;
+      hash = (53 * hash) + getHash().hashCode();
+      hash = (37 * hash) + DATA_FIELD_NUMBER;
+      hash = (53 * hash) + getData().hashCode();
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAddress().hashCode();
       hash = (37 * hash) + NUMBER_FIELD_NUMBER;
@@ -12368,6 +12583,10 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        hash_ = com.google.protobuf.ByteString.EMPTY;
+
+        data_ = com.google.protobuf.ByteString.EMPTY;
+
         address_ = "";
 
         number_ = 0;
@@ -12402,6 +12621,8 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public pactus.blockchain.BlockchainOuterClass.AccountInfo buildPartial() {
         pactus.blockchain.BlockchainOuterClass.AccountInfo result = new pactus.blockchain.BlockchainOuterClass.AccountInfo(this);
+        result.hash_ = hash_;
+        result.data_ = data_;
         result.address_ = address_;
         result.number_ = number_;
         result.sequence_ = sequence_;
@@ -12454,6 +12675,12 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.AccountInfo other) {
         if (other == pactus.blockchain.BlockchainOuterClass.AccountInfo.getDefaultInstance()) return this;
+        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
+          setHash(other.getHash());
+        }
+        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
+          setData(other.getData());
+        }
         if (!other.getAddress().isEmpty()) {
           address_ = other.address_;
           onChanged();
@@ -12494,25 +12721,35 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
-                address_ = input.readStringRequireUtf8();
+                hash_ = input.readBytes();
 
                 break;
               } // case 10
-              case 16: {
+              case 18: {
+                data_ = input.readBytes();
+
+                break;
+              } // case 18
+              case 26: {
+                address_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 26
+              case 32: {
                 number_ = input.readInt32();
 
                 break;
-              } // case 16
-              case 24: {
+              } // case 32
+              case 40: {
                 sequence_ = input.readInt32();
 
                 break;
-              } // case 24
-              case 32: {
+              } // case 40
+              case 48: {
                 balance_ = input.readInt64();
 
                 break;
-              } // case 32
+              } // case 48
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -12529,9 +12766,77 @@ public final class BlockchainOuterClass {
         return this;
       }
 
+      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @return The hash.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getHash() {
+        return hash_;
+      }
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @param value The hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHash(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        hash_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearHash() {
+        
+        hash_ = getDefaultInstance().getHash();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes data = 2 [json_name = "data"];</code>
+       * @return The data.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getData() {
+        return data_;
+      }
+      /**
+       * <code>bytes data = 2 [json_name = "data"];</code>
+       * @param value The data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setData(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        data_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes data = 2 [json_name = "data"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearData() {
+        
+        data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object address_ = "";
       /**
-       * <code>string address = 1 [json_name = "address"];</code>
+       * <code>string address = 3 [json_name = "address"];</code>
        * @return The address.
        */
       public java.lang.String getAddress() {
@@ -12547,7 +12852,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>string address = 1 [json_name = "address"];</code>
+       * <code>string address = 3 [json_name = "address"];</code>
        * @return The bytes for address.
        */
       public com.google.protobuf.ByteString
@@ -12564,7 +12869,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>string address = 1 [json_name = "address"];</code>
+       * <code>string address = 3 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
        */
@@ -12579,7 +12884,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>string address = 1 [json_name = "address"];</code>
+       * <code>string address = 3 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAddress() {
@@ -12589,7 +12894,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>string address = 1 [json_name = "address"];</code>
+       * <code>string address = 3 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
        */
@@ -12607,7 +12912,7 @@ public final class BlockchainOuterClass {
 
       private int number_ ;
       /**
-       * <code>int32 number = 2 [json_name = "number"];</code>
+       * <code>int32 number = 4 [json_name = "number"];</code>
        * @return The number.
        */
       @java.lang.Override
@@ -12615,7 +12920,7 @@ public final class BlockchainOuterClass {
         return number_;
       }
       /**
-       * <code>int32 number = 2 [json_name = "number"];</code>
+       * <code>int32 number = 4 [json_name = "number"];</code>
        * @param value The number to set.
        * @return This builder for chaining.
        */
@@ -12626,7 +12931,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int32 number = 2 [json_name = "number"];</code>
+       * <code>int32 number = 4 [json_name = "number"];</code>
        * @return This builder for chaining.
        */
       public Builder clearNumber() {
@@ -12638,7 +12943,7 @@ public final class BlockchainOuterClass {
 
       private int sequence_ ;
       /**
-       * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
        * @return The sequence.
        */
       @java.lang.Override
@@ -12646,7 +12951,7 @@ public final class BlockchainOuterClass {
         return sequence_;
       }
       /**
-       * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
        * @param value The sequence to set.
        * @return This builder for chaining.
        */
@@ -12657,7 +12962,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int32 sequence = 3 [json_name = "sequence"];</code>
+       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSequence() {
@@ -12669,7 +12974,7 @@ public final class BlockchainOuterClass {
 
       private long balance_ ;
       /**
-       * <code>int64 Balance = 4 [json_name = "Balance"];</code>
+       * <code>int64 balance = 6 [json_name = "balance"];</code>
        * @return The balance.
        */
       @java.lang.Override
@@ -12677,7 +12982,7 @@ public final class BlockchainOuterClass {
         return balance_;
       }
       /**
-       * <code>int64 Balance = 4 [json_name = "Balance"];</code>
+       * <code>int64 balance = 6 [json_name = "balance"];</code>
        * @param value The balance to set.
        * @return This builder for chaining.
        */
@@ -12688,7 +12993,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int64 Balance = 4 [json_name = "Balance"];</code>
+       * <code>int64 balance = 6 [json_name = "balance"];</code>
        * @return This builder for chaining.
        */
       public Builder clearBalance() {
@@ -13607,47 +13912,53 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 round = 1 [json_name = "round"];</code>
+     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * @return The hash.
+     */
+    com.google.protobuf.ByteString getHash();
+
+    /**
+     * <code>int32 round = 2 [json_name = "round"];</code>
      * @return The round.
      */
     int getRound();
 
     /**
-     * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+     * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return A list containing the committers.
      */
     java.util.List<java.lang.Integer> getCommittersList();
     /**
-     * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+     * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return The count of committers.
      */
     int getCommittersCount();
     /**
-     * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+     * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @param index The index of the element to return.
      * @return The committers at the given index.
      */
     int getCommitters(int index);
 
     /**
-     * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+     * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return A list containing the absentees.
      */
     java.util.List<java.lang.Integer> getAbsenteesList();
     /**
-     * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+     * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return The count of absentees.
      */
     int getAbsenteesCount();
     /**
-     * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+     * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @param index The index of the element to return.
      * @return The absentees at the given index.
      */
     int getAbsentees(int index);
 
     /**
-     * <code>bytes signature = 4 [json_name = "signature"];</code>
+     * <code>bytes signature = 5 [json_name = "signature"];</code>
      * @return The signature.
      */
     com.google.protobuf.ByteString getSignature();
@@ -13665,6 +13976,7 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private CertificateInfo() {
+      hash_ = com.google.protobuf.ByteString.EMPTY;
       committers_ = emptyIntList();
       absentees_ = emptyIntList();
       signature_ = com.google.protobuf.ByteString.EMPTY;
@@ -13695,10 +14007,21 @@ public final class BlockchainOuterClass {
               pactus.blockchain.BlockchainOuterClass.CertificateInfo.class, pactus.blockchain.BlockchainOuterClass.CertificateInfo.Builder.class);
     }
 
-    public static final int ROUND_FIELD_NUMBER = 1;
+    public static final int HASH_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString hash_;
+    /**
+     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * @return The hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getHash() {
+      return hash_;
+    }
+
+    public static final int ROUND_FIELD_NUMBER = 2;
     private int round_;
     /**
-     * <code>int32 round = 1 [json_name = "round"];</code>
+     * <code>int32 round = 2 [json_name = "round"];</code>
      * @return The round.
      */
     @java.lang.Override
@@ -13706,10 +14029,10 @@ public final class BlockchainOuterClass {
       return round_;
     }
 
-    public static final int COMMITTERS_FIELD_NUMBER = 2;
+    public static final int COMMITTERS_FIELD_NUMBER = 3;
     private com.google.protobuf.Internal.IntList committers_;
     /**
-     * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+     * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return A list containing the committers.
      */
     @java.lang.Override
@@ -13718,14 +14041,14 @@ public final class BlockchainOuterClass {
       return committers_;
     }
     /**
-     * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+     * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return The count of committers.
      */
     public int getCommittersCount() {
       return committers_.size();
     }
     /**
-     * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+     * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @param index The index of the element to return.
      * @return The committers at the given index.
      */
@@ -13734,10 +14057,10 @@ public final class BlockchainOuterClass {
     }
     private int committersMemoizedSerializedSize = -1;
 
-    public static final int ABSENTEES_FIELD_NUMBER = 3;
+    public static final int ABSENTEES_FIELD_NUMBER = 4;
     private com.google.protobuf.Internal.IntList absentees_;
     /**
-     * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+     * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return A list containing the absentees.
      */
     @java.lang.Override
@@ -13746,14 +14069,14 @@ public final class BlockchainOuterClass {
       return absentees_;
     }
     /**
-     * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+     * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return The count of absentees.
      */
     public int getAbsenteesCount() {
       return absentees_.size();
     }
     /**
-     * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+     * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @param index The index of the element to return.
      * @return The absentees at the given index.
      */
@@ -13762,10 +14085,10 @@ public final class BlockchainOuterClass {
     }
     private int absenteesMemoizedSerializedSize = -1;
 
-    public static final int SIGNATURE_FIELD_NUMBER = 4;
+    public static final int SIGNATURE_FIELD_NUMBER = 5;
     private com.google.protobuf.ByteString signature_;
     /**
-     * <code>bytes signature = 4 [json_name = "signature"];</code>
+     * <code>bytes signature = 5 [json_name = "signature"];</code>
      * @return The signature.
      */
     @java.lang.Override
@@ -13788,25 +14111,28 @@ public final class BlockchainOuterClass {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      if (!hash_.isEmpty()) {
+        output.writeBytes(1, hash_);
+      }
       if (round_ != 0) {
-        output.writeInt32(1, round_);
+        output.writeInt32(2, round_);
       }
       if (getCommittersList().size() > 0) {
-        output.writeUInt32NoTag(18);
+        output.writeUInt32NoTag(26);
         output.writeUInt32NoTag(committersMemoizedSerializedSize);
       }
       for (int i = 0; i < committers_.size(); i++) {
         output.writeInt32NoTag(committers_.getInt(i));
       }
       if (getAbsenteesList().size() > 0) {
-        output.writeUInt32NoTag(26);
+        output.writeUInt32NoTag(34);
         output.writeUInt32NoTag(absenteesMemoizedSerializedSize);
       }
       for (int i = 0; i < absentees_.size(); i++) {
         output.writeInt32NoTag(absentees_.getInt(i));
       }
       if (!signature_.isEmpty()) {
-        output.writeBytes(4, signature_);
+        output.writeBytes(5, signature_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -13817,9 +14143,13 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
+      if (!hash_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, hash_);
+      }
       if (round_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, round_);
+          .computeInt32Size(2, round_);
       }
       {
         int dataSize = 0;
@@ -13851,7 +14181,7 @@ public final class BlockchainOuterClass {
       }
       if (!signature_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, signature_);
+          .computeBytesSize(5, signature_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -13868,6 +14198,8 @@ public final class BlockchainOuterClass {
       }
       pactus.blockchain.BlockchainOuterClass.CertificateInfo other = (pactus.blockchain.BlockchainOuterClass.CertificateInfo) obj;
 
+      if (!getHash()
+          .equals(other.getHash())) return false;
       if (getRound()
           != other.getRound()) return false;
       if (!getCommittersList()
@@ -13887,6 +14219,8 @@ public final class BlockchainOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + HASH_FIELD_NUMBER;
+      hash = (53 * hash) + getHash().hashCode();
       hash = (37 * hash) + ROUND_FIELD_NUMBER;
       hash = (53 * hash) + getRound();
       if (getCommittersCount() > 0) {
@@ -14027,6 +14361,8 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        hash_ = com.google.protobuf.ByteString.EMPTY;
+
         round_ = 0;
 
         committers_ = emptyIntList();
@@ -14062,6 +14398,7 @@ public final class BlockchainOuterClass {
       public pactus.blockchain.BlockchainOuterClass.CertificateInfo buildPartial() {
         pactus.blockchain.BlockchainOuterClass.CertificateInfo result = new pactus.blockchain.BlockchainOuterClass.CertificateInfo(this);
         int from_bitField0_ = bitField0_;
+        result.hash_ = hash_;
         result.round_ = round_;
         if (((bitField0_ & 0x00000001) != 0)) {
           committers_.makeImmutable();
@@ -14122,6 +14459,9 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.CertificateInfo other) {
         if (other == pactus.blockchain.BlockchainOuterClass.CertificateInfo.getDefaultInstance()) return this;
+        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
+          setHash(other.getHash());
+        }
         if (other.getRound() != 0) {
           setRound(other.getRound());
         }
@@ -14174,18 +14514,23 @@ public final class BlockchainOuterClass {
               case 0:
                 done = true;
                 break;
-              case 8: {
+              case 10: {
+                hash_ = input.readBytes();
+
+                break;
+              } // case 10
+              case 16: {
                 round_ = input.readInt32();
 
                 break;
-              } // case 8
-              case 16: {
+              } // case 16
+              case 24: {
                 int v = input.readInt32();
                 ensureCommittersIsMutable();
                 committers_.addInt(v);
                 break;
-              } // case 16
-              case 18: {
+              } // case 24
+              case 26: {
                 int length = input.readRawVarint32();
                 int limit = input.pushLimit(length);
                 ensureCommittersIsMutable();
@@ -14194,14 +14539,14 @@ public final class BlockchainOuterClass {
                 }
                 input.popLimit(limit);
                 break;
-              } // case 18
-              case 24: {
+              } // case 26
+              case 32: {
                 int v = input.readInt32();
                 ensureAbsenteesIsMutable();
                 absentees_.addInt(v);
                 break;
-              } // case 24
-              case 26: {
+              } // case 32
+              case 34: {
                 int length = input.readRawVarint32();
                 int limit = input.pushLimit(length);
                 ensureAbsenteesIsMutable();
@@ -14210,12 +14555,12 @@ public final class BlockchainOuterClass {
                 }
                 input.popLimit(limit);
                 break;
-              } // case 26
-              case 34: {
+              } // case 34
+              case 42: {
                 signature_ = input.readBytes();
 
                 break;
-              } // case 34
+              } // case 42
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -14233,9 +14578,43 @@ public final class BlockchainOuterClass {
       }
       private int bitField0_;
 
+      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @return The hash.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getHash() {
+        return hash_;
+      }
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @param value The hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHash(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        hash_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearHash() {
+        
+        hash_ = getDefaultInstance().getHash();
+        onChanged();
+        return this;
+      }
+
       private int round_ ;
       /**
-       * <code>int32 round = 1 [json_name = "round"];</code>
+       * <code>int32 round = 2 [json_name = "round"];</code>
        * @return The round.
        */
       @java.lang.Override
@@ -14243,7 +14622,7 @@ public final class BlockchainOuterClass {
         return round_;
       }
       /**
-       * <code>int32 round = 1 [json_name = "round"];</code>
+       * <code>int32 round = 2 [json_name = "round"];</code>
        * @param value The round to set.
        * @return This builder for chaining.
        */
@@ -14254,7 +14633,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int32 round = 1 [json_name = "round"];</code>
+       * <code>int32 round = 2 [json_name = "round"];</code>
        * @return This builder for chaining.
        */
       public Builder clearRound() {
@@ -14272,7 +14651,7 @@ public final class BlockchainOuterClass {
          }
       }
       /**
-       * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+       * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @return A list containing the committers.
        */
       public java.util.List<java.lang.Integer>
@@ -14281,14 +14660,14 @@ public final class BlockchainOuterClass {
                  java.util.Collections.unmodifiableList(committers_) : committers_;
       }
       /**
-       * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+       * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @return The count of committers.
        */
       public int getCommittersCount() {
         return committers_.size();
       }
       /**
-       * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+       * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param index The index of the element to return.
        * @return The committers at the given index.
        */
@@ -14296,7 +14675,7 @@ public final class BlockchainOuterClass {
         return committers_.getInt(index);
       }
       /**
-       * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+       * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param index The index to set the value at.
        * @param value The committers to set.
        * @return This builder for chaining.
@@ -14309,7 +14688,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+       * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param value The committers to add.
        * @return This builder for chaining.
        */
@@ -14320,7 +14699,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+       * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param values The committers to add.
        * @return This builder for chaining.
        */
@@ -14333,7 +14712,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated int32 committers = 2 [json_name = "committers"];</code>
+       * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @return This builder for chaining.
        */
       public Builder clearCommitters() {
@@ -14351,7 +14730,7 @@ public final class BlockchainOuterClass {
          }
       }
       /**
-       * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+       * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @return A list containing the absentees.
        */
       public java.util.List<java.lang.Integer>
@@ -14360,14 +14739,14 @@ public final class BlockchainOuterClass {
                  java.util.Collections.unmodifiableList(absentees_) : absentees_;
       }
       /**
-       * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+       * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @return The count of absentees.
        */
       public int getAbsenteesCount() {
         return absentees_.size();
       }
       /**
-       * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+       * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param index The index of the element to return.
        * @return The absentees at the given index.
        */
@@ -14375,7 +14754,7 @@ public final class BlockchainOuterClass {
         return absentees_.getInt(index);
       }
       /**
-       * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+       * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param index The index to set the value at.
        * @param value The absentees to set.
        * @return This builder for chaining.
@@ -14388,7 +14767,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+       * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param value The absentees to add.
        * @return This builder for chaining.
        */
@@ -14399,7 +14778,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+       * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param values The absentees to add.
        * @return This builder for chaining.
        */
@@ -14412,7 +14791,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated int32 absentees = 3 [json_name = "absentees"];</code>
+       * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAbsentees() {
@@ -14424,7 +14803,7 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>bytes signature = 4 [json_name = "signature"];</code>
+       * <code>bytes signature = 5 [json_name = "signature"];</code>
        * @return The signature.
        */
       @java.lang.Override
@@ -14432,7 +14811,7 @@ public final class BlockchainOuterClass {
         return signature_;
       }
       /**
-       * <code>bytes signature = 4 [json_name = "signature"];</code>
+       * <code>bytes signature = 5 [json_name = "signature"];</code>
        * @param value The signature to set.
        * @return This builder for chaining.
        */
@@ -14446,7 +14825,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>bytes signature = 4 [json_name = "signature"];</code>
+       * <code>bytes signature = 5 [json_name = "signature"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSignature() {
@@ -14694,7 +15073,7 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (type_ != pactus.blockchain.BlockchainOuterClass.VoteType.VOTE_PREPARE.getNumber()) {
+      if (type_ != pactus.blockchain.BlockchainOuterClass.VoteType.VOTE_UNKNOWN.getNumber()) {
         output.writeEnum(1, type_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(voter_)) {
@@ -14715,7 +15094,7 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (type_ != pactus.blockchain.BlockchainOuterClass.VoteType.VOTE_PREPARE.getNumber()) {
+      if (type_ != pactus.blockchain.BlockchainOuterClass.VoteType.VOTE_UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, type_);
       }
@@ -15472,52 +15851,55 @@ public final class BlockchainOuterClass {
       "s\"\031\n\027GetConsensusInfoRequest\"p\n\030GetConse" +
       "nsusInfoResponse\022\026\n\006height\030\001 \001(\rR\006height" +
       "\022\024\n\005round\030\002 \001(\005R\005round\022&\n\005votes\030\003 \003(\0132\020." +
-      "pactus.VoteInfoR\005votes\"\233\002\n\rValidatorInfo" +
-      "\022\035\n\npublic_key\030\001 \001(\tR\tpublicKey\022\026\n\006numbe" +
-      "r\030\002 \001(\005R\006number\022\032\n\010sequence\030\003 \001(\005R\010seque" +
-      "nce\022\024\n\005stake\030\004 \001(\003R\005stake\022.\n\023last_bondin" +
-      "g_height\030\005 \001(\rR\021lastBondingHeight\022,\n\022las" +
-      "t_joined_height\030\006 \001(\rR\020lastJoinedHeight\022" +
-      ")\n\020unbonding_height\030\007 \001(\rR\017unbondingHeig" +
-      "ht\022\030\n\007address\030\010 \001(\tR\007address\"u\n\013AccountI" +
-      "nfo\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006number\030" +
-      "\002 \001(\005R\006number\022\032\n\010sequence\030\003 \001(\005R\010sequenc" +
-      "e\022\030\n\007Balance\030\004 \001(\003R\007Balance\"\304\001\n\017BlockHea" +
-      "derInfo\022\030\n\007version\030\001 \001(\005R\007version\022&\n\017pre" +
-      "v_block_hash\030\002 \001(\014R\rprevBlockHash\022\035\n\nsta" +
-      "te_root\030\003 \001(\014R\tstateRoot\022%\n\016sortition_se" +
-      "ed\030\004 \001(\014R\rsortitionSeed\022)\n\020proposer_addr" +
-      "ess\030\005 \001(\tR\017proposerAddress\"\203\001\n\017Certifica" +
-      "teInfo\022\024\n\005round\030\001 \001(\005R\005round\022\036\n\ncommitte" +
-      "rs\030\002 \003(\005R\ncommitters\022\034\n\tabsentees\030\003 \003(\005R" +
-      "\tabsentees\022\034\n\tsignature\030\004 \001(\014R\tsignature" +
-      "\"{\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.Vote" +
-      "TypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nbloc" +
-      "k_hash\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(\005R\005" +
-      "round*H\n\016BlockVerbosity\022\016\n\nBLOCK_DATA\020\000\022" +
-      "\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRANSACTIONS\020\002*" +
-      "J\n\010VoteType\022\020\n\014VOTE_PREPARE\020\000\022\022\n\016VOTE_PR" +
-      "ECOMMIT\020\001\022\030\n\024VOTE_CHANGE_PROPOSER\020\0022\321\005\n\n" +
-      "Blockchain\022=\n\010GetBlock\022\027.pactus.GetBlock" +
-      "Request\032\030.pactus.GetBlockResponse\022I\n\014Get" +
-      "BlockHash\022\033.pactus.GetBlockHashRequest\032\034" +
-      ".pactus.GetBlockHashResponse\022O\n\016GetBlock" +
-      "Height\022\035.pactus.GetBlockHeightRequest\032\036." +
-      "pactus.GetBlockHeightResponse\022X\n\021GetBloc" +
-      "kchainInfo\022 .pactus.GetBlockchainInfoReq" +
-      "uest\032!.pactus.GetBlockchainInfoResponse\022" +
-      "U\n\020GetConsensusInfo\022\037.pactus.GetConsensu" +
-      "sInfoRequest\032 .pactus.GetConsensusInfoRe" +
-      "sponse\022C\n\nGetAccount\022\031.pactus.GetAccount" +
-      "Request\032\032.pactus.GetAccountResponse\022I\n\014G" +
-      "etValidator\022\033.pactus.GetValidatorRequest" +
-      "\032\034.pactus.GetValidatorResponse\022Y\n\024GetVal" +
-      "idatorByNumber\022#.pactus.GetValidatorByNu" +
-      "mberRequest\032\034.pactus.GetValidatorRespons" +
-      "e\022L\n\rGetValidators\022\034.pactus.GetValidator" +
-      "sRequest\032\035.pactus.GetValidatorsResponseB" +
-      "E\n\021pactus.blockchainZ0github.com/pactus-" +
-      "project/pactus/www/grpc/pactusb\006proto3"
+      "pactus.VoteInfoR\005votes\"\303\002\n\rValidatorInfo" +
+      "\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(\014R\004data" +
+      "\022\035\n\npublic_key\030\003 \001(\tR\tpublicKey\022\026\n\006numbe" +
+      "r\030\004 \001(\005R\006number\022\032\n\010sequence\030\005 \001(\005R\010seque" +
+      "nce\022\024\n\005stake\030\006 \001(\003R\005stake\022.\n\023last_bondin" +
+      "g_height\030\007 \001(\rR\021lastBondingHeight\022,\n\022las" +
+      "t_joined_height\030\010 \001(\rR\020lastJoinedHeight\022" +
+      ")\n\020unbonding_height\030\t \001(\rR\017unbondingHeig" +
+      "ht\022\030\n\007address\030\n \001(\tR\007address\"\235\001\n\013Account" +
+      "Info\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(\014R\004" +
+      "data\022\030\n\007address\030\003 \001(\tR\007address\022\026\n\006number" +
+      "\030\004 \001(\005R\006number\022\032\n\010sequence\030\005 \001(\005R\010sequen" +
+      "ce\022\030\n\007balance\030\006 \001(\003R\007balance\"\304\001\n\017BlockHe" +
+      "aderInfo\022\030\n\007version\030\001 \001(\005R\007version\022&\n\017pr" +
+      "ev_block_hash\030\002 \001(\014R\rprevBlockHash\022\035\n\nst" +
+      "ate_root\030\003 \001(\014R\tstateRoot\022%\n\016sortition_s" +
+      "eed\030\004 \001(\014R\rsortitionSeed\022)\n\020proposer_add" +
+      "ress\030\005 \001(\tR\017proposerAddress\"\227\001\n\017Certific" +
+      "ateInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\024\n\005round\030\002 \001" +
+      "(\005R\005round\022\036\n\ncommitters\030\003 \003(\005R\ncommitter" +
+      "s\022\034\n\tabsentees\030\004 \003(\005R\tabsentees\022\034\n\tsigna" +
+      "ture\030\005 \001(\014R\tsignature\"{\n\010VoteInfo\022$\n\004typ" +
+      "e\030\001 \001(\0162\020.pactus.VoteTypeR\004type\022\024\n\005voter" +
+      "\030\002 \001(\tR\005voter\022\035\n\nblock_hash\030\003 \001(\014R\tblock" +
+      "Hash\022\024\n\005round\030\004 \001(\005R\005round*H\n\016BlockVerbo" +
+      "sity\022\016\n\nBLOCK_DATA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022" +
+      "BLOCK_TRANSACTIONS\020\002*\\\n\010VoteType\022\020\n\014VOTE" +
+      "_UNKNOWN\020\000\022\020\n\014VOTE_PREPARE\020\001\022\022\n\016VOTE_PRE" +
+      "COMMIT\020\002\022\030\n\024VOTE_CHANGE_PROPOSER\020\0032\321\005\n\nB" +
+      "lockchain\022=\n\010GetBlock\022\027.pactus.GetBlockR" +
+      "equest\032\030.pactus.GetBlockResponse\022I\n\014GetB" +
+      "lockHash\022\033.pactus.GetBlockHashRequest\032\034." +
+      "pactus.GetBlockHashResponse\022O\n\016GetBlockH" +
+      "eight\022\035.pactus.GetBlockHeightRequest\032\036.p" +
+      "actus.GetBlockHeightResponse\022X\n\021GetBlock" +
+      "chainInfo\022 .pactus.GetBlockchainInfoRequ" +
+      "est\032!.pactus.GetBlockchainInfoResponse\022U" +
+      "\n\020GetConsensusInfo\022\037.pactus.GetConsensus" +
+      "InfoRequest\032 .pactus.GetConsensusInfoRes" +
+      "ponse\022C\n\nGetAccount\022\031.pactus.GetAccountR" +
+      "equest\032\032.pactus.GetAccountResponse\022I\n\014Ge" +
+      "tValidator\022\033.pactus.GetValidatorRequest\032" +
+      "\034.pactus.GetValidatorResponse\022Y\n\024GetVali" +
+      "datorByNumber\022#.pactus.GetValidatorByNum" +
+      "berRequest\032\034.pactus.GetValidatorResponse" +
+      "\022L\n\rGetValidators\022\034.pactus.GetValidators" +
+      "Request\032\035.pactus.GetValidatorsResponseBE" +
+      "\n\021pactus.blockchainZ0github.com/pactus-p" +
+      "roject/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -15631,13 +16013,13 @@ public final class BlockchainOuterClass {
     internal_static_pactus_ValidatorInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ValidatorInfo_descriptor,
-        new java.lang.String[] { "PublicKey", "Number", "Sequence", "Stake", "LastBondingHeight", "LastJoinedHeight", "UnbondingHeight", "Address", });
+        new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Sequence", "Stake", "LastBondingHeight", "LastJoinedHeight", "UnbondingHeight", "Address", });
     internal_static_pactus_AccountInfo_descriptor =
       getDescriptor().getMessageTypes().get(18);
     internal_static_pactus_AccountInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_AccountInfo_descriptor,
-        new java.lang.String[] { "Address", "Number", "Sequence", "Balance", });
+        new java.lang.String[] { "Hash", "Data", "Address", "Number", "Sequence", "Balance", });
     internal_static_pactus_BlockHeaderInfo_descriptor =
       getDescriptor().getMessageTypes().get(19);
     internal_static_pactus_BlockHeaderInfo_fieldAccessorTable = new
@@ -15649,7 +16031,7 @@ public final class BlockchainOuterClass {
     internal_static_pactus_CertificateInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CertificateInfo_descriptor,
-        new java.lang.String[] { "Round", "Committers", "Absentees", "Signature", });
+        new java.lang.String[] { "Hash", "Round", "Committers", "Absentees", "Signature", });
     internal_static_pactus_VoteInfo_descriptor =
       getDescriptor().getMessageTypes().get(21);
     internal_static_pactus_VoteInfo_fieldAccessorTable = new

@@ -3372,14 +3372,16 @@ proto.pactus.ValidatorInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.ValidatorInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    publicKey: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    number: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    sequence: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    stake: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    lastJoinedHeight: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    unbondingHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    address: jspb.Message.getFieldWithDefault(msg, 8, "")
+    hash: msg.getHash_asB64(),
+    data: msg.getData_asB64(),
+    publicKey: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    number: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    sequence: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    stake: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    lastJoinedHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    unbondingHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    address: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -3417,34 +3419,42 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setHash(value);
+      break;
+    case 2:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setData(value);
+      break;
+    case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setPublicKey(value);
       break;
-    case 2:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setNumber(value);
       break;
-    case 3:
+    case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSequence(value);
       break;
-    case 4:
+    case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setStake(value);
       break;
-    case 5:
+    case 7:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setLastBondingHeight(value);
       break;
-    case 6:
+    case 8:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setLastJoinedHeight(value);
       break;
-    case 7:
+    case 9:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setUnbondingHeight(value);
       break;
-    case 8:
+    case 10:
       var value = /** @type {string} */ (reader.readString());
       msg.setAddress(value);
       break;
@@ -3477,59 +3487,73 @@ proto.pactus.ValidatorInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getHash_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      1,
+      f
+    );
+  }
+  f = message.getData_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      2,
+      f
+    );
+  }
   f = message.getPublicKey();
   if (f.length > 0) {
     writer.writeString(
-      1,
+      3,
       f
     );
   }
   f = message.getNumber();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      4,
       f
     );
   }
   f = message.getSequence();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      5,
       f
     );
   }
   f = message.getStake();
   if (f !== 0) {
     writer.writeInt64(
-      4,
+      6,
       f
     );
   }
   f = message.getLastBondingHeight();
   if (f !== 0) {
     writer.writeUint32(
-      5,
+      7,
       f
     );
   }
   f = message.getLastJoinedHeight();
   if (f !== 0) {
     writer.writeUint32(
-      6,
+      8,
       f
     );
   }
   f = message.getUnbondingHeight();
   if (f !== 0) {
     writer.writeUint32(
-      7,
+      9,
       f
     );
   }
   f = message.getAddress();
   if (f.length > 0) {
     writer.writeString(
-      8,
+      10,
       f
     );
   }
@@ -3537,11 +3561,95 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string public_key = 1;
+ * optional bytes hash = 1;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.ValidatorInfo.prototype.getHash = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * optional bytes hash = 1;
+ * This is a type-conversion wrapper around `getHash()`
+ * @return {string}
+ */
+proto.pactus.ValidatorInfo.prototype.getHash_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getHash()));
+};
+
+
+/**
+ * optional bytes hash = 1;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getHash()`
+ * @return {!Uint8Array}
+ */
+proto.pactus.ValidatorInfo.prototype.getHash_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getHash()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setHash = function(value) {
+  return jspb.Message.setProto3BytesField(this, 1, value);
+};
+
+
+/**
+ * optional bytes data = 2;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.ValidatorInfo.prototype.getData = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * optional bytes data = 2;
+ * This is a type-conversion wrapper around `getData()`
+ * @return {string}
+ */
+proto.pactus.ValidatorInfo.prototype.getData_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getData()));
+};
+
+
+/**
+ * optional bytes data = 2;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getData()`
+ * @return {!Uint8Array}
+ */
+proto.pactus.ValidatorInfo.prototype.getData_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getData()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setData = function(value) {
+  return jspb.Message.setProto3BytesField(this, 2, value);
+};
+
+
+/**
+ * optional string public_key = 3;
  * @return {string}
  */
 proto.pactus.ValidatorInfo.prototype.getPublicKey = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
@@ -3550,51 +3658,15 @@ proto.pactus.ValidatorInfo.prototype.getPublicKey = function() {
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
 proto.pactus.ValidatorInfo.prototype.setPublicKey = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional int32 number = 2;
+ * optional int32 number = 4;
  * @return {number}
  */
 proto.pactus.ValidatorInfo.prototype.getNumber = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.ValidatorInfo} returns this
- */
-proto.pactus.ValidatorInfo.prototype.setNumber = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int32 sequence = 3;
- * @return {number}
- */
-proto.pactus.ValidatorInfo.prototype.getSequence = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.ValidatorInfo} returns this
- */
-proto.pactus.ValidatorInfo.prototype.setSequence = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * optional int64 stake = 4;
- * @return {number}
- */
-proto.pactus.ValidatorInfo.prototype.getStake = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -3603,16 +3675,16 @@ proto.pactus.ValidatorInfo.prototype.getStake = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setStake = function(value) {
+proto.pactus.ValidatorInfo.prototype.setNumber = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional uint32 last_bonding_height = 5;
+ * optional int32 sequence = 5;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getLastBondingHeight = function() {
+proto.pactus.ValidatorInfo.prototype.getSequence = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -3621,16 +3693,16 @@ proto.pactus.ValidatorInfo.prototype.getLastBondingHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setLastBondingHeight = function(value) {
+proto.pactus.ValidatorInfo.prototype.setSequence = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
- * optional uint32 last_joined_height = 6;
+ * optional int64 stake = 6;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getLastJoinedHeight = function() {
+proto.pactus.ValidatorInfo.prototype.getStake = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -3639,16 +3711,16 @@ proto.pactus.ValidatorInfo.prototype.getLastJoinedHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setLastJoinedHeight = function(value) {
+proto.pactus.ValidatorInfo.prototype.setStake = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional uint32 unbonding_height = 7;
+ * optional uint32 last_bonding_height = 7;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getUnbondingHeight = function() {
+proto.pactus.ValidatorInfo.prototype.getLastBondingHeight = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -3657,17 +3729,53 @@ proto.pactus.ValidatorInfo.prototype.getUnbondingHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setUnbondingHeight = function(value) {
+proto.pactus.ValidatorInfo.prototype.setLastBondingHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional string address = 8;
+ * optional uint32 last_joined_height = 8;
+ * @return {number}
+ */
+proto.pactus.ValidatorInfo.prototype.getLastJoinedHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setLastJoinedHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional uint32 unbonding_height = 9;
+ * @return {number}
+ */
+proto.pactus.ValidatorInfo.prototype.getUnbondingHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setUnbondingHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional string address = 10;
  * @return {string}
  */
 proto.pactus.ValidatorInfo.prototype.getAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
 };
 
 
@@ -3676,7 +3784,7 @@ proto.pactus.ValidatorInfo.prototype.getAddress = function() {
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
 proto.pactus.ValidatorInfo.prototype.setAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 
@@ -3712,10 +3820,12 @@ proto.pactus.AccountInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.AccountInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    address: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    number: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    sequence: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    balance: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    hash: msg.getHash_asB64(),
+    data: msg.getData_asB64(),
+    address: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    number: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    sequence: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    balance: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -3753,18 +3863,26 @@ proto.pactus.AccountInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setHash(value);
+      break;
+    case 2:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setData(value);
+      break;
+    case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setAddress(value);
       break;
-    case 2:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setNumber(value);
       break;
-    case 3:
+    case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSequence(value);
       break;
-    case 4:
+    case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setBalance(value);
       break;
@@ -3797,31 +3915,45 @@ proto.pactus.AccountInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.AccountInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getHash_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      1,
+      f
+    );
+  }
+  f = message.getData_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      2,
+      f
+    );
+  }
   f = message.getAddress();
   if (f.length > 0) {
     writer.writeString(
-      1,
+      3,
       f
     );
   }
   f = message.getNumber();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      4,
       f
     );
   }
   f = message.getSequence();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      5,
       f
     );
   }
   f = message.getBalance();
   if (f !== 0) {
     writer.writeInt64(
-      4,
+      6,
       f
     );
   }
@@ -3829,11 +3961,95 @@ proto.pactus.AccountInfo.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string address = 1;
+ * optional bytes hash = 1;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.AccountInfo.prototype.getHash = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * optional bytes hash = 1;
+ * This is a type-conversion wrapper around `getHash()`
+ * @return {string}
+ */
+proto.pactus.AccountInfo.prototype.getHash_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getHash()));
+};
+
+
+/**
+ * optional bytes hash = 1;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getHash()`
+ * @return {!Uint8Array}
+ */
+proto.pactus.AccountInfo.prototype.getHash_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getHash()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.pactus.AccountInfo} returns this
+ */
+proto.pactus.AccountInfo.prototype.setHash = function(value) {
+  return jspb.Message.setProto3BytesField(this, 1, value);
+};
+
+
+/**
+ * optional bytes data = 2;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.AccountInfo.prototype.getData = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * optional bytes data = 2;
+ * This is a type-conversion wrapper around `getData()`
+ * @return {string}
+ */
+proto.pactus.AccountInfo.prototype.getData_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getData()));
+};
+
+
+/**
+ * optional bytes data = 2;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getData()`
+ * @return {!Uint8Array}
+ */
+proto.pactus.AccountInfo.prototype.getData_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getData()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.pactus.AccountInfo} returns this
+ */
+proto.pactus.AccountInfo.prototype.setData = function(value) {
+  return jspb.Message.setProto3BytesField(this, 2, value);
+};
+
+
+/**
+ * optional string address = 3;
  * @return {string}
  */
 proto.pactus.AccountInfo.prototype.getAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
@@ -3842,51 +4058,15 @@ proto.pactus.AccountInfo.prototype.getAddress = function() {
  * @return {!proto.pactus.AccountInfo} returns this
  */
 proto.pactus.AccountInfo.prototype.setAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional int32 number = 2;
+ * optional int32 number = 4;
  * @return {number}
  */
 proto.pactus.AccountInfo.prototype.getNumber = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.AccountInfo} returns this
- */
-proto.pactus.AccountInfo.prototype.setNumber = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int32 sequence = 3;
- * @return {number}
- */
-proto.pactus.AccountInfo.prototype.getSequence = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.AccountInfo} returns this
- */
-proto.pactus.AccountInfo.prototype.setSequence = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * optional int64 Balance = 4;
- * @return {number}
- */
-proto.pactus.AccountInfo.prototype.getBalance = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -3895,8 +4075,44 @@ proto.pactus.AccountInfo.prototype.getBalance = function() {
  * @param {number} value
  * @return {!proto.pactus.AccountInfo} returns this
  */
-proto.pactus.AccountInfo.prototype.setBalance = function(value) {
+proto.pactus.AccountInfo.prototype.setNumber = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 sequence = 5;
+ * @return {number}
+ */
+proto.pactus.AccountInfo.prototype.getSequence = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.AccountInfo} returns this
+ */
+proto.pactus.AccountInfo.prototype.setSequence = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int64 balance = 6;
+ * @return {number}
+ */
+proto.pactus.AccountInfo.prototype.getBalance = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.AccountInfo} returns this
+ */
+proto.pactus.AccountInfo.prototype.setBalance = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
@@ -4228,7 +4444,7 @@ proto.pactus.BlockHeaderInfo.prototype.setProposerAddress = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.CertificateInfo.repeatedFields_ = [2,3];
+proto.pactus.CertificateInfo.repeatedFields_ = [3,4];
 
 
 
@@ -4261,9 +4477,10 @@ proto.pactus.CertificateInfo.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.CertificateInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    round: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    committersList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
-    absenteesList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
+    hash: msg.getHash_asB64(),
+    round: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    committersList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
+    absenteesList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
     signature: msg.getSignature_asB64()
   };
 
@@ -4302,22 +4519,26 @@ proto.pactus.CertificateInfo.deserializeBinaryFromReader = function(msg, reader)
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setHash(value);
+      break;
+    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setRound(value);
       break;
-    case 2:
+    case 3:
       var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
       for (var i = 0; i < values.length; i++) {
         msg.addCommitters(values[i]);
       }
       break;
-    case 3:
+    case 4:
       var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
       for (var i = 0; i < values.length; i++) {
         msg.addAbsentees(values[i]);
       }
       break;
-    case 4:
+    case 5:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setSignature(value);
       break;
@@ -4350,31 +4571,38 @@ proto.pactus.CertificateInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.CertificateInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getHash_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      1,
+      f
+    );
+  }
   f = message.getRound();
   if (f !== 0) {
     writer.writeInt32(
-      1,
+      2,
       f
     );
   }
   f = message.getCommittersList();
   if (f.length > 0) {
     writer.writePackedInt32(
-      2,
+      3,
       f
     );
   }
   f = message.getAbsenteesList();
   if (f.length > 0) {
     writer.writePackedInt32(
-      3,
+      4,
       f
     );
   }
   f = message.getSignature_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      4,
+      5,
       f
     );
   }
@@ -4382,11 +4610,53 @@ proto.pactus.CertificateInfo.serializeBinaryToWriter = function(message, writer)
 
 
 /**
- * optional int32 round = 1;
+ * optional bytes hash = 1;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.CertificateInfo.prototype.getHash = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * optional bytes hash = 1;
+ * This is a type-conversion wrapper around `getHash()`
+ * @return {string}
+ */
+proto.pactus.CertificateInfo.prototype.getHash_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getHash()));
+};
+
+
+/**
+ * optional bytes hash = 1;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getHash()`
+ * @return {!Uint8Array}
+ */
+proto.pactus.CertificateInfo.prototype.getHash_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getHash()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.pactus.CertificateInfo} returns this
+ */
+proto.pactus.CertificateInfo.prototype.setHash = function(value) {
+  return jspb.Message.setProto3BytesField(this, 1, value);
+};
+
+
+/**
+ * optional int32 round = 2;
  * @return {number}
  */
 proto.pactus.CertificateInfo.prototype.getRound = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -4395,16 +4665,16 @@ proto.pactus.CertificateInfo.prototype.getRound = function() {
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.setRound = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * repeated int32 committers = 2;
+ * repeated int32 committers = 3;
  * @return {!Array<number>}
  */
 proto.pactus.CertificateInfo.prototype.getCommittersList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 2));
+  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 3));
 };
 
 
@@ -4413,7 +4683,7 @@ proto.pactus.CertificateInfo.prototype.getCommittersList = function() {
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.setCommittersList = function(value) {
-  return jspb.Message.setField(this, 2, value || []);
+  return jspb.Message.setField(this, 3, value || []);
 };
 
 
@@ -4423,7 +4693,7 @@ proto.pactus.CertificateInfo.prototype.setCommittersList = function(value) {
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.addCommitters = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
 };
 
 
@@ -4437,11 +4707,11 @@ proto.pactus.CertificateInfo.prototype.clearCommittersList = function() {
 
 
 /**
- * repeated int32 absentees = 3;
+ * repeated int32 absentees = 4;
  * @return {!Array<number>}
  */
 proto.pactus.CertificateInfo.prototype.getAbsenteesList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 3));
+  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 4));
 };
 
 
@@ -4450,7 +4720,7 @@ proto.pactus.CertificateInfo.prototype.getAbsenteesList = function() {
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.setAbsenteesList = function(value) {
-  return jspb.Message.setField(this, 3, value || []);
+  return jspb.Message.setField(this, 4, value || []);
 };
 
 
@@ -4460,7 +4730,7 @@ proto.pactus.CertificateInfo.prototype.setAbsenteesList = function(value) {
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.addAbsentees = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
 };
 
 
@@ -4474,16 +4744,16 @@ proto.pactus.CertificateInfo.prototype.clearAbsenteesList = function() {
 
 
 /**
- * optional bytes signature = 4;
+ * optional bytes signature = 5;
  * @return {!(string|Uint8Array)}
  */
 proto.pactus.CertificateInfo.prototype.getSignature = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
 
 /**
- * optional bytes signature = 4;
+ * optional bytes signature = 5;
  * This is a type-conversion wrapper around `getSignature()`
  * @return {string}
  */
@@ -4494,7 +4764,7 @@ proto.pactus.CertificateInfo.prototype.getSignature_asB64 = function() {
 
 
 /**
- * optional bytes signature = 4;
+ * optional bytes signature = 5;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getSignature()`
@@ -4511,7 +4781,7 @@ proto.pactus.CertificateInfo.prototype.getSignature_asU8 = function() {
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.setSignature = function(value) {
-  return jspb.Message.setProto3BytesField(this, 4, value);
+  return jspb.Message.setProto3BytesField(this, 5, value);
 };
 
 
@@ -4772,9 +5042,10 @@ proto.pactus.BlockVerbosity = {
  * @enum {number}
  */
 proto.pactus.VoteType = {
-  VOTE_PREPARE: 0,
-  VOTE_PRECOMMIT: 1,
-  VOTE_CHANGE_PROPOSER: 2
+  VOTE_UNKNOWN: 0,
+  VOTE_PREPARE: 1,
+  VOTE_PRECOMMIT: 2,
+  VOTE_CHANGE_PROPOSER: 3
 };
 
 goog.object.extend(exports, proto.pactus);

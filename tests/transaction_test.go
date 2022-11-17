@@ -8,23 +8,15 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/www/capnp"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func sendRawTx(t *testing.T, raw []byte) error {
-	res := tCapnpServer.SendRawTransaction(tCtx, func(p capnp.PactusServer_sendRawTransaction_Params) error {
-		assert.NoError(t, p.SetRawTx(raw))
-		return nil
-	}).Result()
-
-	_, err := res.Struct()
-	if err != nil {
-		return err
-	}
-
-	return nil
+func sendRawTx(_ *testing.T, raw []byte) error {
+	_, err := tTransaction.SendRawTransaction(tCtx,
+		&pactus.SendRawTransactionRequest{Data: raw})
+	return err
 }
 
 func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
@@ -118,8 +110,8 @@ func TestSendingTransactions(t *testing.T) {
 	require.NotNil(t, accCarol)
 	require.NotNil(t, accDave)
 
-	assert.Equal(t, accAlice.Balance(), int64(80000000-50005000))
-	assert.Equal(t, accBob.Balance(), int64(50000000-2011))
-	assert.Equal(t, accCarol.Balance(), int64(10))
-	assert.Equal(t, accDave.Balance(), int64(1))
+	assert.Equal(t, accAlice.Balance, int64(80000000-50005000))
+	assert.Equal(t, accBob.Balance, int64(50000000-2011))
+	assert.Equal(t, accCarol.Balance, int64(10))
+	assert.Equal(t, accDave.Balance, int64(1))
 }

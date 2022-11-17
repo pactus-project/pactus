@@ -260,6 +260,14 @@
     "pactusAccountInfo": {
       "type": "object",
       "properties": {
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
         "address": {
           "type": "string"
         },
@@ -271,7 +279,7 @@
           "type": "integer",
           "format": "int32"
         },
-        "Balance": {
+        "balance": {
           "type": "string",
           "format": "int64"
         }
@@ -313,6 +321,10 @@
     "pactusCertificateInfo": {
       "type": "object",
       "properties": {
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        },
         "round": {
           "type": "integer",
           "format": "int32"
@@ -515,6 +527,29 @@
       ],
       "default": "UNKNOWN"
     },
+    "pactusPayloadUnbond": {
+      "type": "object",
+      "properties": {
+        "validator": {
+          "type": "string"
+        }
+      }
+    },
+    "pactusPayloadWithdraw": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "pactusTransactionInfo": {
       "type": "object",
       "properties": {
@@ -558,6 +593,12 @@
         "sortition": {
           "$ref": "#/definitions/pactusPayloadSortition"
         },
+        "unbond": {
+          "$ref": "#/definitions/pactusPayloadUnbond"
+        },
+        "withdraw": {
+          "$ref": "#/definitions/pactusPayloadWithdraw"
+        },
         "memo": {
           "type": "string"
         },
@@ -573,6 +614,14 @@
     "pactusValidatorInfo": {
       "type": "object",
       "properties": {
+        "hash": {
+          "type": "string",
+          "format": "byte"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
         "publicKey": {
           "type": "string"
         },
@@ -627,11 +676,12 @@
     "pactusVoteType": {
       "type": "string",
       "enum": [
+        "VOTE_UNKNOWN",
         "VOTE_PREPARE",
         "VOTE_PRECOMMIT",
         "VOTE_CHANGE_PROPOSER"
       ],
-      "default": "VOTE_PREPARE"
+      "default": "VOTE_UNKNOWN"
     },
     "protobufAny": {
       "type": "object",

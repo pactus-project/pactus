@@ -9,14 +9,14 @@ import (
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
-	"github.com/pactus-project/pactus/www/capnp"
+	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
 )
 
 var tMockState *state.MockState
 var tMockSync *sync.MockSync
 var tMockConsensus *consensus.MockConsensus
-var tCapnpServer *capnp.Server
+var tGRPCServer *grpc.Server
 var tHTTPServer *Server
 
 func setup(t *testing.T) {
@@ -28,7 +28,7 @@ func setup(t *testing.T) {
 	tMockSync = sync.MockingSync()
 	tMockConsensus = consensus.MockingConsensus(tMockState)
 
-	capnpConf := &capnp.Config{
+	grpcConf := &grpc.Config{
 		Enable: true,
 		Listen: "[::]:0",
 	}
@@ -37,11 +37,11 @@ func setup(t *testing.T) {
 		Listen: "[::]:0",
 	}
 
-	tCapnpServer = capnp.NewServer(capnpConf, tMockState, tMockSync, tMockConsensus)
-	assert.NoError(t, tCapnpServer.StartServer())
+	tGRPCServer = grpc.NewServer(grpcConf, tMockState, tMockSync, tMockConsensus)
+	assert.NoError(t, tGRPCServer.StartServer())
 
 	tHTTPServer = NewServer(httpConf)
-	assert.NoError(t, tHTTPServer.StartServer(tCapnpServer.Address()))
+	assert.NoError(t, tHTTPServer.StartServer(tGRPCServer.Address()))
 }
 
 func TestRootHandler(t *testing.T) {

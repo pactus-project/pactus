@@ -13,17 +13,21 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/www/capnp"
-	"zombiezen.com/go/capnproto2/rpc"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Server struct {
-	ctx      context.Context
-	config   *Config
-	router   *mux.Router
-	capnp    capnp.PactusServer
-	listener net.Listener
-	logger   *logger.Logger
+	ctx         context.Context
+	config      *Config
+	router      *mux.Router
+	grpc        *grpc.ClientConn
+	blockchain  pactus.BlockchainClient
+	transaction pactus.TransactionClient
+	network     pactus.NetworkClient
+	listener    net.Listener
+	logger      *logger.Logger
 }
 
 func NewServer(conf *Config) *Server {
@@ -34,18 +38,26 @@ func NewServer(conf *Config) *Server {
 	}
 }
 
-func (s *Server) StartServer(capnpServer string) error {
+func (s *Server) StartServer(grpcServer string) error {
 	if !s.config.Enable {
 		return nil
 	}
 
-	c, err := net.Dial("tcp", capnpServer)
+	conn, err := grpc.DialContext(
+		s.ctx,
+		grpcServer,
+		grpc.WithBlock(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
-	conn := rpc.NewConn(rpc.StreamTransport(c))
-	s.capnp = capnp.PactusServer{Client: conn.Bootstrap(s.ctx)}
+	s.grpc = conn
+	s.blockchain = pactus.NewBlockchainClient(conn)
+	s.transaction = pactus.NewTransactionClient(conn)
+	s.network = pactus.NewNetworkClient(conn)
+
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
 	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)
@@ -86,8 +98,8 @@ func (s *Server) StartServer(capnpServer string) error {
 func (s *Server) StopServer() {
 	s.ctx.Done()
 
-	if s.capnp.Client != nil {
-		s.capnp.Client.Close()
+	if s.grpc != nil {
+		s.grpc.Close()
 	}
 }
 

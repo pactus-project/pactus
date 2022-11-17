@@ -160,6 +160,29 @@
       ],
       "default": "UNKNOWN"
     },
+    "pactusPayloadUnbond": {
+      "type": "object",
+      "properties": {
+        "validator": {
+          "type": "string"
+        }
+      }
+    },
+    "pactusPayloadWithdraw": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "pactusSendRawTransactionResponse": {
       "type": "object",
       "properties": {
@@ -211,6 +234,12 @@
         },
         "sortition": {
           "$ref": "#/definitions/pactusPayloadSortition"
+        },
+        "unbond": {
+          "$ref": "#/definitions/pactusPayloadUnbond"
+        },
+        "withdraw": {
+          "$ref": "#/definitions/pactusPayloadWithdraw"
         },
         "memo": {
           "type": "string"

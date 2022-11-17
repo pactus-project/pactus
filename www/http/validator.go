@@ -4,41 +4,29 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/www/capnp"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
-	b := s.capnp.GetValidator(s.ctx, func(p capnp.PactusServer_getValidator_Params) error {
-		vars := mux.Vars(r)
-		return p.SetAddress(vars["address"])
-	})
-
-	a, err := b.Struct()
+	vars := mux.Vars(r)
+	res, err := s.blockchain.GetValidator(s.ctx,
+		&pactus.GetValidatorRequest{Address: vars["address"]})
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
-	res, _ := a.Result()
-	d, _ := res.Data()
-	val, err := validator.FromBytes(d)
-	if err != nil {
-		s.writeError(w, err)
-		return
-	}
-
+	val := res.Validator
 	tm := newTableMaker()
-	tm.addRowString("Public Key", val.PublicKey().String())
-	tm.addRowValAddress("Address", val.Address().String())
-	tm.addRowInt("Number", int(val.Number()))
-	tm.addRowInt("Sequence", int(val.Sequence()))
-	tm.addRowAmount("Stake", val.Stake())
-	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight()))
-	tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight()))
-	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight()))
-	tm.addRowBytes("Hash", val.Hash().Bytes())
-	tm.addRowBytes("Data", d)
+	tm.addRowString("Public Key", val.PublicKey)
+	tm.addRowValAddress("Address", val.Address)
+	tm.addRowInt("Number", int(val.Number))
+	tm.addRowInt("Sequence", int(val.Sequence))
+	tm.addRowAmount("Stake", val.Stake)
+	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
+	tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight))
+	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
+	tm.addRowBytes("Hash", val.Hash)
 
 	s.writeHTML(w, tm.html())
 }

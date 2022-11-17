@@ -111,6 +111,22 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 				Proof:   pld.Proof[:],
 			},
 		}
+	case payload.PayloadTypeUnbond:
+		pld := trx.Payload().(*payload.UnbondPayload)
+		transaction.Payload = &pactus.TransactionInfo_Unbond{
+			Unbond: &pactus.PayloadUnbond{
+				Validator: pld.Validator.String(),
+			},
+		}
+	case payload.PayloadTypeWithdraw:
+		pld := trx.Payload().(*payload.WithdrawPayload)
+		transaction.Payload = &pactus.TransactionInfo_Withdraw{
+			Withdraw: &pactus.PayloadWithdraw{
+				From:   pld.From.String(),
+				To:     pld.To.String(),
+				Amount: pld.Amount,
+			},
+		}
 	default:
 		logger.Error("payload type not defined", "Type", trx.Payload().Type())
 	}

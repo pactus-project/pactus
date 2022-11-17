@@ -16,7 +16,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
-	"github.com/pactus-project/pactus/www/capnp"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/nanomsg"
@@ -33,7 +32,6 @@ type Node struct {
 	consensus  consensus.Consensus
 	network    network.Network
 	sync       sync.Synchronizer
-	capnp      *capnp.Server
 	http       *http.Server
 	grpc       *grpc.Server
 	nanomsg    *nanomsg.Server
@@ -82,7 +80,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	capnp := capnp.NewServer(conf.Capnp, state, sync, consensus)
 	http := http.NewServer(conf.HTTP)
 	grpc := grpc.NewServer(conf.GRPC, state, sync, consensus)
 	nanomsg := nanomsg.NewServer(conf.Nanomsg, eventCh)
@@ -96,7 +93,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		consensus:  consensus,
 		sync:       sync,
 		store:      store,
-		capnp:      capnp,
 		http:       http,
 		grpc:       grpc,
 		nanomsg:    nanomsg,
@@ -128,19 +124,14 @@ func (n *Node) Start() error {
 		return err
 	}
 
-	err := n.capnp.StartServer()
-	if err != nil {
-		return errors.Wrap(err, "could not start Capnproto server")
-	}
-
-	err = n.http.StartServer(n.capnp.Address())
-	if err != nil {
-		return errors.Wrap(err, "could not start http server")
-	}
-
-	err = n.grpc.StartServer()
+	err := n.grpc.StartServer()
 	if err != nil {
 		return errors.Wrap(err, "could not start grpc server")
+	}
+
+	err = n.http.StartServer(n.grpc.Address())
+	if err != nil {
+		return errors.Wrap(err, "could not start http server")
 	}
 
 	err = n.nanomsg.StartServer()
@@ -160,7 +151,6 @@ func (n *Node) Stop() {
 	n.state.Close()
 	n.store.Close()
 	n.http.StopServer()
-	n.capnp.StopServer()
 	n.grpc.StopServer()
 	n.nanomsg.StopServer()
 }

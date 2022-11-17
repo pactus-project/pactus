@@ -25,7 +25,6 @@ func TestRunningNode(t *testing.T) {
 	conf := config.DefaultConfig()
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/0"}
 	conf.GRPC.Enable = false
-	conf.Capnp.Enable = false
 	conf.HTTP.Enable = false
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.NodeKey = util.TempFilePath()

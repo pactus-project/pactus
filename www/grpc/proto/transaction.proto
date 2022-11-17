@@ -40,6 +40,16 @@ message PayloadSortition {
   bytes proof = 2;
 }
 
+message PayloadUnbond {
+  string validator = 1;
+}
+
+message PayloadWithdraw {
+  string from = 1;
+  string to = 2;
+  int64 amount = 3;
+}
+
 message TransactionInfo {
   bytes id = 1;
   bytes data = 2;
@@ -53,6 +63,8 @@ message TransactionInfo {
     PayloadSend send = 30;
     PayloadBond bond = 31;
     PayloadSortition sortition = 32;
+    PayloadUnbond unbond = 33;
+    PayloadWithdraw withdraw = 34;
   };
   string memo = 9;
   string public_key = 10;

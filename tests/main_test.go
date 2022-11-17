@@ -3,7 +3,6 @@ package tests
 import (
 	"context"
 	"fmt"
-	"net"
 	"os"
 	"testing"
 	"time"
@@ -19,16 +18,20 @@ import (
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/www/capnp"
-	"zombiezen.com/go/capnproto2/rpc"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 var tSigners []crypto.Signer
 var tConfigs []*config.Config
 var tNodes []*node.Node
-var tCapnpAddress = "0.0.0.0:1337"
+var tGRPCAddress = "0.0.0.0:1337"
 var tGenDoc *genesis.Genesis
-var tCapnpServer capnp.PactusServer
+var tGRPC *grpc.ClientConn
+var tBlockchain pactus.BlockchainClient
+var tTransaction pactus.TransactionClient
+var tNetwork pactus.NetworkClient
 var tCtx context.Context
 var tSequences map[crypto.Address]int32
 
@@ -76,14 +79,13 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3
 		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
-		tConfigs[i].Capnp.Enable = false
 
 		sync.LatestBlockInterval = 10
 
 		if i == 0 {
 			tConfigs[i].Sync.NodeNetwork = true
-			tConfigs[i].Capnp.Enable = true
-			tConfigs[i].Capnp.Listen = tCapnpAddress
+			tConfigs[i].GRPC.Enable = true
+			tConfigs[i].GRPC.Listen = tGRPCAddress
 		}
 		fmt.Printf("Node %d address: %s\n", i+1, pub.Address())
 	}
@@ -110,10 +112,21 @@ func TestMain(m *testing.M) {
 		}
 	}
 
-	c, _ := net.Dial("tcp", tCapnpAddress)
 	tCtx = context.Background()
-	conn := rpc.NewConn(rpc.StreamTransport(c))
-	tCapnpServer = capnp.PactusServer{Client: conn.Bootstrap(tCtx)}
+	conn, err := grpc.DialContext(
+		tCtx,
+		tGRPCAddress,
+		grpc.WithBlock(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		panic(fmt.Errorf("failed to dial server: %w", err))
+	}
+
+	tGRPC = conn
+	tBlockchain = pactus.NewBlockchainClient(conn)
+	tTransaction = pactus.NewTransactionClient(conn)
+	tNetwork = pactus.NewNetworkClient(conn)
 
 	// Wait for some blocks
 	waitForNewBlocks(8)
@@ -133,10 +146,10 @@ func TestMain(m *testing.M) {
 	waitForNewBlocks(20)
 
 	// Check if sortition worked or not?
-	b, _ := lastBlock().Block()
-	cert, _ := b.PrevCert()
-	committers, _ := cert.Committers()
-	if committers.Len() == 4 {
+	block := lastBlock()
+	cert := block.PrevCert
+	// TODO: determine why the certificate can be nil?
+	if cert != nil && len(cert.Committers) == 4 {
 		panic("Sortition didn't work")
 	}
 

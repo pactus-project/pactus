@@ -3,11 +3,11 @@ package http
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/www/capnp"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
@@ -21,62 +21,59 @@ func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
-	res := s.capnp.GetBlockHeight(s.ctx, func(p capnp.PactusServer_getBlockHeight_Params) error {
-		vars := mux.Vars(r)
-		blockHash, err := hash.FromString(vars["hash"])
-		if err != nil {
-			return err
-		}
-		return p.SetHash(blockHash.Bytes())
-	})
-	st, _ := res.Struct()
-	blockHeight := st.Result()
-	s.blockByHeight(w, blockHeight)
+	vars := mux.Vars(r)
+	blockHash, err := hash.FromString(vars["hash"])
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	res, err := s.blockchain.GetBlockHeight(s.ctx,
+		&pactus.GetBlockHeightRequest{Hash: blockHash.Bytes()})
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	s.blockByHeight(w, res.Height)
 }
 
 func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
-	res := s.capnp.GetBlock(s.ctx, func(p capnp.PactusServer_getBlock_Params) error {
-		p.SetVerbosity(0)
-		p.SetHeight(blockHeight)
-		return nil
-	}).Result()
-
-	st, err := res.Struct()
+	res, err := s.blockchain.GetBlock(s.ctx,
+		&pactus.GetBlockRequest{
+			Height:    blockHeight,
+			Verbosity: pactus.BlockVerbosity_BLOCK_DATA,
+		},
+	)
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
-	d, _ := st.Data()
-	b, err := block.FromBytes(d)
-	if err != nil {
-		s.writeError(w, err)
-		return
-	}
-
-	seed := b.Header().SortitionSeed()
 
 	tm := newTableMaker()
-	tm.addRowString("Time", b.Header().Time().String())
-	tm.addRowInt("Height", int(blockHeight))
-	tm.addRowBytes("Hash", b.Hash().Bytes())
-	tm.addRowBytes("Data", d)
-	tm.addRowString("--- Header", "---")
-	tm.addRowInt("Version", int(b.Header().Version()))
-	tm.addRowInt("UnixTime", int(b.Header().UnixTime()))
-	tm.addRowBlockHash("PrevBlockHash", b.Header().PrevBlockHash().Bytes())
-	tm.addRowBytes("StateRoot", b.Header().StateRoot().Bytes())
-	tm.addRowBytes("SortitionSeed", seed[:])
-	tm.addRowValAddress("ProposerAddress", b.Header().ProposerAddress().String())
-	if b.PrevCertificate() != nil {
+	tm.addRowString("Time", time.Unix(int64(res.BlockTime), 0).String())
+	tm.addRowInt("Height", int(res.Height))
+	tm.addRowBytes("Hash", res.Hash)
+	tm.addRowBytes("Data", res.Data)
+	if res.Header != nil {
+		tm.addRowString("--- Header", "---")
+		tm.addRowInt("Version", int(res.Header.Version))
+		tm.addRowInt("UnixTime", int(res.BlockTime))
+		tm.addRowBlockHash("PrevBlockHash", res.Header.PrevBlockHash)
+		tm.addRowBytes("StateRoot", res.Header.StateRoot)
+		tm.addRowBytes("SortitionSeed", res.Header.SortitionSeed)
+		tm.addRowValAddress("ProposerAddress", res.Header.ProposerAddress)
+	}
+	if res.PrevCert != nil {
 		tm.addRowString("--- PrevCertificate", "---")
-		tm.addRowBytes("Hash", b.PrevCertificate().Hash().Bytes())
-		tm.addRowInt("Round", int(b.PrevCertificate().Round()))
-		tm.addRowInts("Committers", b.PrevCertificate().Committers())
-		tm.addRowInts("Absentees", b.PrevCertificate().Absentees())
-		tm.addRowBytes("Signature", b.PrevCertificate().Signature().Bytes())
+		tm.addRowBytes("Hash", res.PrevCert.Hash)
+		tm.addRowInt("Round", int(res.PrevCert.Round))
+		tm.addRowInts("Committers", res.PrevCert.Committers)
+		tm.addRowInts("Absentees", res.PrevCert.Absentees)
+		tm.addRowBytes("Signature", res.PrevCert.Signature)
 	}
 	tm.addRowString("--- Transactions", "---")
-	for i, trx := range b.Transactions() {
+	for i, trx := range res.Txs {
 		tm.addRowInt("Transaction #", i+1)
 		txToTable(trx, tm)
 	}
