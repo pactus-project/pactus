@@ -69,7 +69,7 @@ func (h *history) addActivity(addr string, amount int64, trx *pactus.GetTransact
 	h.Transactions[act.TxID] = transaction{
 		BlockHeight: trx.BlockHeight,
 		BlockTime:   trx.BlockTime,
-		PayloadType: payload.Type(trx.Transaction.Type).String(),
+		PayloadType: payload.Type(trx.Transaction.PayloadType).String(),
 		Data:        hex.EncodeToString(trx.Transaction.Data),
 	}
 }

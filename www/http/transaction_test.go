@@ -23,6 +23,8 @@ func TestTransaction(t *testing.T) {
 		tHTTPServer.GetTransactionHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
+		assert.Contains(t, w.Body.String(), testTx.Signature().String())
+		assert.Contains(t, w.Body.String(), testTx.Signature().String())
 		fmt.Println(w.Body)
 	})
 

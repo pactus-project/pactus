@@ -58,7 +58,7 @@ message TransactionInfo {
   int32 sequence = 5;
   int64 value = 6;
   int64 fee = 7;
-  PayloadType Type = 8;
+  PayloadType PayloadType = 8;
   oneof Payload {
     PayloadSend send = 30;
     PayloadBond bond = 31;

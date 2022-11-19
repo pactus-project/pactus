@@ -65,15 +65,15 @@ func (s *transactionServer) SendRawTransaction(ctx context.Context,
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 	data, _ := trx.Bytes()
 	transaction := &pactus.TransactionInfo{
-		Id:       trx.ID().Bytes(),
-		Data:     data,
-		Version:  int32(trx.Version()),
-		Stamp:    trx.Stamp().Bytes(),
-		Sequence: trx.Sequence(),
-		Fee:      trx.Fee(),
-		Value:    trx.Payload().Value(),
-		Type:     pactus.PayloadType(trx.Payload().Type()),
-		Memo:     trx.Memo(),
+		Id:          trx.ID().Bytes(),
+		Data:        data,
+		Version:     int32(trx.Version()),
+		Stamp:       trx.Stamp().Bytes(),
+		Sequence:    trx.Sequence(),
+		Fee:         trx.Fee(),
+		Value:       trx.Payload().Value(),
+		PayloadType: pactus.PayloadType(trx.Payload().Type()),
+		Memo:        trx.Memo(),
 	}
 
 	if trx.PublicKey() != nil {
