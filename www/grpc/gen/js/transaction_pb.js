@@ -1893,7 +1893,7 @@ proto.pactus.TransactionInfo.toObject = function(includeInstance, msg) {
     sequence: jspb.Message.getFieldWithDefault(msg, 5, 0),
     value: jspb.Message.getFieldWithDefault(msg, 6, 0),
     fee: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    type: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    payloadtype: jspb.Message.getFieldWithDefault(msg, 8, 0),
     send: (f = msg.getSend()) && proto.pactus.PayloadSend.toObject(includeInstance, f),
     bond: (f = msg.getBond()) && proto.pactus.PayloadBond.toObject(includeInstance, f),
     sortition: (f = msg.getSortition()) && proto.pactus.PayloadSortition.toObject(includeInstance, f),
@@ -1968,7 +1968,7 @@ proto.pactus.TransactionInfo.deserializeBinaryFromReader = function(msg, reader)
       break;
     case 8:
       var value = /** @type {!proto.pactus.PayloadType} */ (reader.readEnum());
-      msg.setType(value);
+      msg.setPayloadtype(value);
       break;
     case 30:
       var value = new proto.pactus.PayloadSend;
@@ -2085,7 +2085,7 @@ proto.pactus.TransactionInfo.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getType();
+  f = message.getPayloadtype();
   if (f !== 0.0) {
     writer.writeEnum(
       8,
@@ -2355,10 +2355,10 @@ proto.pactus.TransactionInfo.prototype.setFee = function(value) {
 
 
 /**
- * optional PayloadType Type = 8;
+ * optional PayloadType PayloadType = 8;
  * @return {!proto.pactus.PayloadType}
  */
-proto.pactus.TransactionInfo.prototype.getType = function() {
+proto.pactus.TransactionInfo.prototype.getPayloadtype = function() {
   return /** @type {!proto.pactus.PayloadType} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -2367,7 +2367,7 @@ proto.pactus.TransactionInfo.prototype.getType = function() {
  * @param {!proto.pactus.PayloadType} value
  * @return {!proto.pactus.TransactionInfo} returns this
  */
-proto.pactus.TransactionInfo.prototype.setType = function(value) {
+proto.pactus.TransactionInfo.prototype.setPayloadtype = function(value) {
   return jspb.Message.setProto3EnumField(this, 8, value);
 };
 

@@ -6057,15 +6057,15 @@ public final class TransactionOuterClass {
     long getFee();
 
     /**
-     * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-     * @return The enum numeric value on the wire for type.
+     * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+     * @return The enum numeric value on the wire for payloadType.
      */
-    int getTypeValue();
+    int getPayloadTypeValue();
     /**
-     * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-     * @return The type.
+     * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+     * @return The payloadType.
      */
-    pactus.transaction.TransactionOuterClass.PayloadType getType();
+    pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
 
     /**
      * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
@@ -6190,7 +6190,7 @@ public final class TransactionOuterClass {
       id_ = com.google.protobuf.ByteString.EMPTY;
       data_ = com.google.protobuf.ByteString.EMPTY;
       stamp_ = com.google.protobuf.ByteString.EMPTY;
-      type_ = 0;
+      payloadType_ = 0;
       memo_ = "";
       publicKey_ = "";
       signature_ = com.google.protobuf.ByteString.EMPTY;
@@ -6345,22 +6345,22 @@ public final class TransactionOuterClass {
       return fee_;
     }
 
-    public static final int TYPE_FIELD_NUMBER = 8;
-    private int type_;
+    public static final int PAYLOADTYPE_FIELD_NUMBER = 8;
+    private int payloadType_;
     /**
-     * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-     * @return The enum numeric value on the wire for type.
+     * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+     * @return The enum numeric value on the wire for payloadType.
      */
-    @java.lang.Override public int getTypeValue() {
-      return type_;
+    @java.lang.Override public int getPayloadTypeValue() {
+      return payloadType_;
     }
     /**
-     * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-     * @return The type.
+     * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+     * @return The payloadType.
      */
-    @java.lang.Override public pactus.transaction.TransactionOuterClass.PayloadType getType() {
+    @java.lang.Override public pactus.transaction.TransactionOuterClass.PayloadType getPayloadType() {
       @SuppressWarnings("deprecation")
-      pactus.transaction.TransactionOuterClass.PayloadType result = pactus.transaction.TransactionOuterClass.PayloadType.valueOf(type_);
+      pactus.transaction.TransactionOuterClass.PayloadType result = pactus.transaction.TransactionOuterClass.PayloadType.valueOf(payloadType_);
       return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
     }
 
@@ -6641,8 +6641,8 @@ public final class TransactionOuterClass {
       if (fee_ != 0L) {
         output.writeInt64(7, fee_);
       }
-      if (type_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
-        output.writeEnum(8, type_);
+      if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
+        output.writeEnum(8, payloadType_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, memo_);
@@ -6705,9 +6705,9 @@ public final class TransactionOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(7, fee_);
       }
-      if (type_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
+      if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(8, type_);
+          .computeEnumSize(8, payloadType_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, memo_);
@@ -6768,7 +6768,7 @@ public final class TransactionOuterClass {
           != other.getValue()) return false;
       if (getFee()
           != other.getFee()) return false;
-      if (type_ != other.type_) return false;
+      if (payloadType_ != other.payloadType_) return false;
       if (!getMemo()
           .equals(other.getMemo())) return false;
       if (!getPublicKey()
@@ -6827,8 +6827,8 @@ public final class TransactionOuterClass {
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getFee());
-      hash = (37 * hash) + TYPE_FIELD_NUMBER;
-      hash = (53 * hash) + type_;
+      hash = (37 * hash) + PAYLOADTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + payloadType_;
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
       hash = (53 * hash) + getMemo().hashCode();
       hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
@@ -7001,7 +7001,7 @@ public final class TransactionOuterClass {
 
         fee_ = 0L;
 
-        type_ = 0;
+        payloadType_ = 0;
 
         if (sendBuilder_ != null) {
           sendBuilder_.clear();
@@ -7059,7 +7059,7 @@ public final class TransactionOuterClass {
         result.sequence_ = sequence_;
         result.value_ = value_;
         result.fee_ = fee_;
-        result.type_ = type_;
+        result.payloadType_ = payloadType_;
         if (payloadCase_ == 30) {
           if (sendBuilder_ == null) {
             result.payload_ = payload_;
@@ -7168,8 +7168,8 @@ public final class TransactionOuterClass {
         if (other.getFee() != 0L) {
           setFee(other.getFee());
         }
-        if (other.type_ != 0) {
-          setTypeValue(other.getTypeValue());
+        if (other.payloadType_ != 0) {
+          setPayloadTypeValue(other.getPayloadTypeValue());
         }
         if (!other.getMemo().isEmpty()) {
           memo_ = other.memo_;
@@ -7269,7 +7269,7 @@ public final class TransactionOuterClass {
                 break;
               } // case 56
               case 64: {
-                type_ = input.readEnum();
+                payloadType_ = input.readEnum();
 
                 break;
               } // case 64
@@ -7580,56 +7580,56 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private int type_ = 0;
+      private int payloadType_ = 0;
       /**
-       * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-       * @return The enum numeric value on the wire for type.
+       * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+       * @return The enum numeric value on the wire for payloadType.
        */
-      @java.lang.Override public int getTypeValue() {
-        return type_;
+      @java.lang.Override public int getPayloadTypeValue() {
+        return payloadType_;
       }
       /**
-       * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-       * @param value The enum numeric value on the wire for type to set.
+       * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+       * @param value The enum numeric value on the wire for payloadType to set.
        * @return This builder for chaining.
        */
-      public Builder setTypeValue(int value) {
+      public Builder setPayloadTypeValue(int value) {
         
-        type_ = value;
+        payloadType_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-       * @return The type.
+       * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+       * @return The payloadType.
        */
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.PayloadType getType() {
+      public pactus.transaction.TransactionOuterClass.PayloadType getPayloadType() {
         @SuppressWarnings("deprecation")
-        pactus.transaction.TransactionOuterClass.PayloadType result = pactus.transaction.TransactionOuterClass.PayloadType.valueOf(type_);
+        pactus.transaction.TransactionOuterClass.PayloadType result = pactus.transaction.TransactionOuterClass.PayloadType.valueOf(payloadType_);
         return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
-       * @param value The type to set.
+       * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
+       * @param value The payloadType to set.
        * @return This builder for chaining.
        */
-      public Builder setType(pactus.transaction.TransactionOuterClass.PayloadType value) {
+      public Builder setPayloadType(pactus.transaction.TransactionOuterClass.PayloadType value) {
         if (value == null) {
           throw new NullPointerException();
         }
         
-        type_ = value.getNumber();
+        payloadType_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
-       * <code>.pactus.PayloadType Type = 8 [json_name = "Type"];</code>
+       * <code>.pactus.PayloadType PayloadType = 8 [json_name = "PayloadType"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearType() {
+      public Builder clearPayloadType() {
         
-        type_ = 0;
+        payloadType_ = 0;
         onChanged();
         return this;
       }
@@ -8670,33 +8670,33 @@ public final class TransactionOuterClass {
       "s\022\024\n\005proof\030\002 \001(\014R\005proof\"-\n\rPayloadUnbond" +
       "\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"M\n\017Payloa" +
       "dWithdraw\022\022\n\004from\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(" +
-      "\tR\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\246\004\n\017Transa" +
+      "\tR\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\264\004\n\017Transa" +
       "ctionInfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R" +
       "\004data\022\030\n\007version\030\003 \001(\005R\007version\022\024\n\005stamp" +
       "\030\004 \001(\014R\005stamp\022\032\n\010sequence\030\005 \001(\005R\010sequenc" +
       "e\022\024\n\005value\030\006 \001(\003R\005value\022\020\n\003fee\030\007 \001(\003R\003fe" +
-      "e\022\'\n\004Type\030\010 \001(\0162\023.pactus.PayloadTypeR\004Ty" +
-      "pe\022)\n\004send\030\036 \001(\0132\023.pactus.PayloadSendH\000R" +
-      "\004send\022)\n\004bond\030\037 \001(\0132\023.pactus.PayloadBond" +
-      "H\000R\004bond\0228\n\tsortition\030  \001(\0132\030.pactus.Pay" +
-      "loadSortitionH\000R\tsortition\022/\n\006unbond\030! \001" +
-      "(\0132\025.pactus.PayloadUnbondH\000R\006unbond\0225\n\010w" +
-      "ithdraw\030\" \001(\0132\027.pactus.PayloadWithdrawH\000" +
-      "R\010withdraw\022\022\n\004memo\030\t \001(\tR\004memo\022\035\n\npublic" +
-      "_key\030\n \001(\tR\tpublicKey\022\034\n\tsignature\030\013 \001(\014" +
-      "R\tsignatureB\t\n\007Payload*\177\n\013PayloadType\022\013\n" +
-      "\007UNKNOWN\020\000\022\020\n\014SEND_PAYLOAD\020\001\022\020\n\014BOND_PAY" +
-      "LOAD\020\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBOND_" +
-      "PAYLOAD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024Trans" +
-      "actionVerbosity\022\024\n\020TRANSACTION_DATA\020\000\022\024\n" +
-      "\020TRANSACTION_INFO\020\0012\273\001\n\013Transaction\022O\n\016G" +
-      "etTransaction\022\035.pactus.GetTransactionReq" +
-      "uest\032\036.pactus.GetTransactionResponse\022[\n\022" +
-      "SendRawTransaction\022!.pactus.SendRawTrans" +
-      "actionRequest\032\".pactus.SendRawTransactio" +
-      "nResponseBF\n\022pactus.transactionZ0github." +
-      "com/pactus-project/pactus/www/grpc/pactu" +
-      "sb\006proto3"
+      "e\0225\n\013PayloadType\030\010 \001(\0162\023.pactus.PayloadT" +
+      "ypeR\013PayloadType\022)\n\004send\030\036 \001(\0132\023.pactus." +
+      "PayloadSendH\000R\004send\022)\n\004bond\030\037 \001(\0132\023.pact" +
+      "us.PayloadBondH\000R\004bond\0228\n\tsortition\030  \001(" +
+      "\0132\030.pactus.PayloadSortitionH\000R\tsortition" +
+      "\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbondH" +
+      "\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Pay" +
+      "loadWithdrawH\000R\010withdraw\022\022\n\004memo\030\t \001(\tR\004" +
+      "memo\022\035\n\npublic_key\030\n \001(\tR\tpublicKey\022\034\n\ts" +
+      "ignature\030\013 \001(\014R\tsignatureB\t\n\007Payload*\177\n\013" +
+      "PayloadType\022\013\n\007UNKNOWN\020\000\022\020\n\014SEND_PAYLOAD" +
+      "\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_PAYLOA" +
+      "D\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAYL" +
+      "OAD\020\005*B\n\024TransactionVerbosity\022\024\n\020TRANSAC" +
+      "TION_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012\273\001\n\013Tr" +
+      "ansaction\022O\n\016GetTransaction\022\035.pactus.Get" +
+      "TransactionRequest\032\036.pactus.GetTransacti" +
+      "onResponse\022[\n\022SendRawTransaction\022!.pactu" +
+      "s.SendRawTransactionRequest\032\".pactus.Sen" +
+      "dRawTransactionResponseBF\n\022pactus.transa" +
+      "ctionZ0github.com/pactus-project/pactus/" +
+      "www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8761,7 +8761,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_TransactionInfo_descriptor,
-        new java.lang.String[] { "Id", "Data", "Version", "Stamp", "Sequence", "Value", "Fee", "Type", "Send", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
+        new java.lang.String[] { "Id", "Data", "Version", "Stamp", "Sequence", "Value", "Fee", "PayloadType", "Send", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -59,6 +59,12 @@ func TestGetBlock(t *testing.T) {
 		assert.Equal(t, res.Data, data)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
+		for i, trx := range res.Txs {
+			data, _ := b.Transactions()[i].Bytes()
+			assert.Equal(t, b.Transactions()[i].ID().Bytes(), trx.Id)
+			assert.Equal(t, b.Transactions()[i].Signature().Bytes(), trx.Signature)
+			assert.Equal(t, data, trx.Data)
+		}
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

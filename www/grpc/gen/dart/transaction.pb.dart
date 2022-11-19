@@ -607,7 +607,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
     ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
-    ..e<PayloadType>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'Type', $pb.PbFieldType.OE, protoName: 'Type', defaultOrMaker: PayloadType.UNKNOWN, valueOf: PayloadType.valueOf, enumValues: PayloadType.values)
+    ..e<PayloadType>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'PayloadType', $pb.PbFieldType.OE, protoName: 'PayloadType', defaultOrMaker: PayloadType.UNKNOWN, valueOf: PayloadType.valueOf, enumValues: PayloadType.values)
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
     ..a<$core.List<$core.int>>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
@@ -628,7 +628,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     $core.int? sequence,
     $fixnum.Int64? value,
     $fixnum.Int64? fee,
-    PayloadType? type,
+    PayloadType? payloadType,
     $core.String? memo,
     $core.String? publicKey,
     $core.List<$core.int>? signature,
@@ -660,8 +660,8 @@ class TransactionInfo extends $pb.GeneratedMessage {
     if (fee != null) {
       _result.fee = fee;
     }
-    if (type != null) {
-      _result.type = type;
+    if (payloadType != null) {
+      _result.payloadType = payloadType;
     }
     if (memo != null) {
       _result.memo = memo;
@@ -777,13 +777,13 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearFee() => clearField(7);
 
   @$pb.TagNumber(8)
-  PayloadType get type => $_getN(7);
+  PayloadType get payloadType => $_getN(7);
   @$pb.TagNumber(8)
-  set type(PayloadType v) { setField(8, v); }
+  set payloadType(PayloadType v) { setField(8, v); }
   @$pb.TagNumber(8)
-  $core.bool hasType() => $_has(7);
+  $core.bool hasPayloadType() => $_has(7);
   @$pb.TagNumber(8)
-  void clearType() => clearField(8);
+  void clearPayloadType() => clearField(8);
 
   @$pb.TagNumber(9)
   $core.String get memo => $_getSZ(8);
