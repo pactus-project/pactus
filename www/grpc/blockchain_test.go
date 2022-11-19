@@ -65,7 +65,6 @@ func TestGetBlock(t *testing.T) {
 			assert.Equal(t, b.Transactions()[i].Signature().Bytes(), trx.Signature)
 			assert.Equal(t, data, trx.Data)
 		}
-
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
