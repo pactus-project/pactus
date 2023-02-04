@@ -3,7 +3,7 @@ package block
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
-	simplemerkle "github.com/pactus-project/pactus/util/merkle"
+	"github.com/pactus-project/pactus/util/simplemerkle"
 )
 
 type Txs []*tx.Tx

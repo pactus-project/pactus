@@ -669,3 +669,10 @@ func TestIsValidator(t *testing.T) {
 	assert.False(t, tState1.IsInCommittee(addr))
 	assert.False(t, tState1.IsValidator(addr))
 }
+
+func TestCalculatingGenesisState(t *testing.T) {
+	setup(t)
+
+	r := tState1.calculateGenesisStateRootFromGenesisDoc()
+	assert.Equal(t, tState1.stateRoot(), r)
+}
