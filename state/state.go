@@ -23,23 +23,27 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/persistentmerkle"
+	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
 
 type state struct {
 	lk sync.RWMutex
 
-	config        *Config
-	signer        crypto.Signer
-	rewardAddress crypto.Address
-	genDoc        *genesis.Genesis
-	store         store.Store
-	params        param.Params
-	txPool        txpool.TxPool
-	committee     committee.Committee
-	lastInfo      *lastinfo.LastInfo
-	logger        *logger.Logger
-	eventCh       chan event.Event
+	config          *Config
+	signer          crypto.Signer
+	rewardAddress   crypto.Address
+	genDoc          *genesis.Genesis
+	store           store.Store
+	params          param.Params
+	txPool          txpool.TxPool
+	committee       committee.Committee
+	lastInfo        *lastinfo.LastInfo
+	accountMerkle   *persistentmerkle.Tree
+	validatorMerkle *persistentmerkle.Tree
+	logger          *logger.Logger
+	eventCh         chan event.Event
 }
 
 func LoadOrNewState(
@@ -60,15 +64,17 @@ func LoadOrNewState(
 	}
 
 	st := &state{
-		config:        conf,
-		genDoc:        genDoc,
-		txPool:        txPool,
-		params:        genDoc.Params(),
-		signer:        signer,
-		store:         store,
-		rewardAddress: rewardAddr,
-		lastInfo:      lastinfo.NewLastInfo(store),
-		eventCh:       eventCh,
+		config:          conf,
+		genDoc:          genDoc,
+		txPool:          txPool,
+		params:          genDoc.Params(),
+		signer:          signer,
+		store:           store,
+		rewardAddress:   rewardAddr,
+		lastInfo:        lastinfo.NewLastInfo(store),
+		accountMerkle:   persistentmerkle.New(),
+		validatorMerkle: persistentmerkle.New(),
+		eventCh:         eventCh,
 	}
 	st.logger = logger.NewLogger("_state", st)
 	st.store = store
@@ -88,7 +94,11 @@ func LoadOrNewState(
 		}
 	}
 
+	st.loadMerkels()
+
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
+
+	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot().Fingerprint())
 
 	return st, nil
 }
@@ -120,8 +130,6 @@ func (st *state) tryLoadLastInfo() error {
 
 	st.committee = committee
 
-	st.logger.Debug("last info", "committers", committee.Committers(), "state_root", st.stateRoot().Fingerprint())
-
 	return nil
 }
 
@@ -149,6 +157,59 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	st.lastInfo.SetBlockTime(genDoc.GenesisTime())
 
 	return nil
+}
+
+func (st *state) loadMerkels() {
+	totalAccount := st.store.TotalAccounts()
+	st.store.IterateAccounts(func(acc *account.Account) (stop bool) {
+		// Let's keep this check, even we have tested it
+		if acc.Number() >= totalAccount {
+			panic("Account number is out of range")
+		}
+		st.accountMerkle.SetHash(int(acc.Number()), acc.Hash())
+
+		return false
+	})
+
+	totalValidator := st.store.TotalValidators()
+	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
+		// Let's keep this check, even we have tested it
+		if val.Number() >= totalValidator {
+			panic("Validator number is out of range")
+		}
+		st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
+
+		return
+	})
+}
+
+func (st *state) stateRoot() hash.Hash {
+	accRoot := st.accountMerkle.Root()
+	valRoot := st.validatorMerkle.Root()
+
+	stateRoot := simplemerkle.HashMerkleBranches(&accRoot, &valRoot)
+	return *stateRoot
+}
+
+func (st *state) calculateGenesisStateRootFromGenesisDoc() hash.Hash {
+	accs := st.genDoc.Accounts()
+	vals := st.genDoc.Validators()
+
+	accHashes := make([]hash.Hash, len(accs))
+	valHashes := make([]hash.Hash, len(vals))
+	for i, acc := range accs {
+		accHashes[i] = acc.Hash()
+	}
+	for i, val := range vals {
+		valHashes[i] = val.Hash()
+	}
+
+	accTree := simplemerkle.NewTreeFromHashes(accHashes)
+	valTree := simplemerkle.NewTreeFromHashes(valHashes)
+	accRootHash := accTree.Root()
+	valRootHash := valTree.Root()
+
+	return *simplemerkle.HashMerkleBranches(&accRootHash, &valRootHash)
 }
 
 func (st *state) Close() error {
@@ -458,12 +519,14 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 	sb.IterateAccounts(func(as *sandbox.AccountStatus) {
 		if as.Updated {
 			st.store.UpdateAccount(&as.Account)
+			st.accountMerkle.SetHash(int(as.Account.Number()), as.Account.Hash())
 		}
 	})
 
 	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
 		if vs.Updated {
 			st.store.UpdateValidator(&vs.Validator)
+			st.validatorMerkle.SetHash(int(vs.Validator.Number()), vs.Validator.Hash())
 		}
 	})
 }

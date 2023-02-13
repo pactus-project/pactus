@@ -9,7 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util"
-	simplemerkle "github.com/pactus-project/pactus/util/merkle"
+	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/stretchr/testify/assert"
 )
 
