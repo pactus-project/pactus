@@ -52,7 +52,7 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 
 func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	s.logger.Debug("sending stream", "to", pid)
-	_, err := s.host.Peerstore().SupportsProtocols(pid, string(s.protocolID))
+	_, err := s.host.Peerstore().SupportsProtocols(pid, s.protocolID)
 	if err != nil {
 		return errors.Errorf(errors.ErrNetwork, err.Error())
 	}
