@@ -201,7 +201,7 @@ func (w *Wallet) Save() error {
 	return util.WriteFile(w.path, bs)
 }
 
-// Balance returns the account balance amount.
+// Balance returns balance of the account associated with the address..
 func (w *Wallet) Balance(addrStr string) (int64, error) {
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
@@ -220,7 +220,7 @@ func (w *Wallet) Balance(addrStr string) (int64, error) {
 	return 0, nil
 }
 
-// Stake returns the validator stake amount.
+// Stake returns stake of the validator associated with the address..
 func (w *Wallet) Stake(addrStr string) (int64, error) {
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
@@ -237,6 +237,44 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 	}
 
 	return 0, nil
+}
+
+// AccountSequence returns the sequence of the account associated with the address.
+func (w *Wallet) AccountSequence(addrStr string) (int32, error) {
+	addr, err := crypto.AddressFromString(addrStr)
+	if err != nil {
+		return 0, err
+	}
+
+	if w.client == nil {
+		return 0, ErrOffline
+	}
+
+	acc, err := w.client.getAccount(addr)
+	if err != nil {
+		return 0, err
+	}
+
+	return acc.Sequence, nil
+}
+
+// ValidtaorSequence returns the sequence of the validator associated with the address.
+func (w *Wallet) ValidtaorSequence(addrStr string) (int32, error) {
+	addr, err := crypto.AddressFromString(addrStr)
+	if err != nil {
+		return 0, err
+	}
+
+	if w.client == nil {
+		return 0, ErrOffline
+	}
+
+	val, err := w.client.getValidator(addr)
+	if err != nil {
+		return 0, err
+	}
+
+	return val.Sequence, nil
 }
 
 // MakeSendTx creates a new send transaction based on the given parameters.
@@ -355,7 +393,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 }
 
 func calcFee(amount int64) int64 {
-	params := param.DefaultParams()
+	params := param.DefaultParams() // TODO: Get parameter from the node
 	fee := int64(float64(amount) * params.FeeFraction)
 	fee = util.Max64(fee, params.MinimumFee)
 	fee = util.Min64(fee, params.MaximumFee)

@@ -187,26 +187,48 @@ func TestTestKeyInfo(t *testing.T) {
 		"Should generate different private key for the testnet")
 }
 
-func TestGetBalance(t *testing.T) {
+func TestBalance(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
 	tAccountRequest = &pactus.GetAccountRequest{Address: addr.String()}
 	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1}}
-	bal, err := tWallet.Balance(addr.String())
+	amt, err := tWallet.Balance(addr.String())
 	assert.NoError(t, err)
-	assert.Equal(t, bal, int64(1))
+	assert.Equal(t, amt, int64(1))
 }
 
-func TestGetStake(t *testing.T) {
+func TestStake(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
 	tValidatorRequest = &pactus.GetValidatorRequest{Address: addr.String()}
 	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1}}
-	bal, err := tWallet.Stake(addr.String())
+	amt, err := tWallet.Stake(addr.String())
 	assert.NoError(t, err)
-	assert.Equal(t, bal, int64(1))
+	assert.Equal(t, amt, int64(1))
+}
+
+func TestAccountSequence(t *testing.T) {
+	setup(t)
+
+	addr := crypto.GenerateTestAddress()
+	tAccountRequest = &pactus.GetAccountRequest{Address: addr.String()}
+	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: 123}}
+	seq, err := tWallet.AccountSequence(addr.String())
+	assert.NoError(t, err)
+	assert.Equal(t, seq, int32(123))
+}
+
+func TestValidatorSequence(t *testing.T) {
+	setup(t)
+
+	addr := crypto.GenerateTestAddress()
+	tValidatorRequest = &pactus.GetValidatorRequest{Address: addr.String()}
+	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: 123}}
+	seq, err := tWallet.ValidtaorSequence(addr.String())
+	assert.NoError(t, err)
+	assert.Equal(t, seq, int32(123))
 }
 
 func TestSigningTx(t *testing.T) {
