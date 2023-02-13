@@ -111,7 +111,7 @@ func Balance() func(c *cli.Cmd) {
 				cmd.PrintDangerMsg(err.Error())
 				return
 			}
-			cmd.PrintInfoMsg("%s\tbalance: %v\tstake: %v\t%s",
+			cmd.PrintInfoMsg("balance: %v\tstake: %v",
 				util.ChangeToCoin(balance), util.ChangeToCoin(stake))
 		}
 	}

@@ -53,8 +53,8 @@ func SendTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign this \033[1mSend\033[0m transition:")
 			cmd.PrintInfoMsg("From  : %s", *fromArg)
 			cmd.PrintInfoMsg("To    : %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %v (%v)", *amtArg, util.CoinToChange(*amtArg))
-			cmd.PrintInfoMsg("Fee   : %v (%v)", util.ChangeToCoin(trx.Fee()), trx.Fee())
+			cmd.PrintInfoMsg("Amount: %.9f", *amtArg)
+			cmd.PrintInfoMsg("Fee   : %.9f", util.ChangeToCoin(trx.Fee()))
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -112,8 +112,8 @@ func BondTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign this \033[1mBond\033[0m transition:")
 			cmd.PrintInfoMsg("Account  : %s", *fromArg)
 			cmd.PrintInfoMsg("Validator: %s", *toArg)
-			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, util.CoinToChange(*amtArg))
-			cmd.PrintInfoMsg("Fee      : %v (%v)", util.ChangeToCoin(trx.Fee()), trx.Fee())
+			cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
+			cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -153,6 +153,7 @@ func UnbondTx() func(c *cli.Cmd) {
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign this \033[1mUnbond\033[0m transition:")
 			cmd.PrintInfoMsg("Validator: %s", *fromArg)
+			cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
@@ -204,7 +205,8 @@ func WithdrawTx() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You are going to sign this \033[1mWithdraw\033[0m transition:")
 			cmd.PrintInfoMsg("Validator: %s", *fromArg)
 			cmd.PrintInfoMsg("Account  : %s", *toArg)
-			cmd.PrintInfoMsg("Amount   : %v (%v)", *amtArg, util.CoinToChange(*amtArg))
+			cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
+			cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
 
 			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 		}
