@@ -122,6 +122,15 @@ func (m *MockState) IsProposer(addr crypto.Address, round int16) bool {
 func (m *MockState) IsValidator(addr crypto.Address) bool {
 	return m.TestStore.HasValidator(addr)
 }
+
+func (m *MockState) TotalValidators() int32 {
+	return m.TestStore.TotalAccounts()
+}
+
+func (m *MockState) TotalAccounts() int32 {
+	return m.TestStore.TotalAccounts()
+}
+
 func (m *MockState) TotalPower() int64 {
 	p := int64(0)
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {

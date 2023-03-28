@@ -30,6 +30,8 @@ type Facade interface {
 	IsProposer(addr crypto.Address, round int16) bool
 	IsValidator(addr crypto.Address) bool
 	TotalPower() int64
+	TotalAccounts() int32
+	TotalValidators() int32
 	CommitteePower() int64
 	PendingTx(id tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error

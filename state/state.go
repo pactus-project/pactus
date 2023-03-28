@@ -596,6 +596,14 @@ func (st *state) CommitteeValidators() []*validator.Validator {
 	return st.committee.Validators()
 }
 
+func (st *state) TotalAccounts() int32 {
+	return st.store.TotalAccounts()
+}
+
+func (st *state) TotalValidators() int32 {
+	return st.store.TotalValidators()
+}
+
 func (st *state) IsInCommittee(addr crypto.Address) bool {
 	return st.committee.Contains(addr)
 }

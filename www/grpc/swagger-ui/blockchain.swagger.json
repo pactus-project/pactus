@@ -419,6 +419,14 @@
           "type": "string",
           "format": "byte"
         },
+        "totalAccounts": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalValidators": {
+          "type": "integer",
+          "format": "int32"
+        },
         "totalPower": {
           "type": "string",
           "format": "int64"

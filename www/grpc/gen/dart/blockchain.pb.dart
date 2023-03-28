@@ -737,9 +737,11 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetBlockchainInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHeight', $pb.PbFieldType.OU3)
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash', $pb.PbFieldType.OY)
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalPower')
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeePower')
-    ..pc<ValidatorInfo>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeeValidators', $pb.PbFieldType.PM, subBuilder: ValidatorInfo.create)
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalAccounts', $pb.PbFieldType.O3)
+    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalValidators', $pb.PbFieldType.O3)
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalPower')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeePower')
+    ..pc<ValidatorInfo>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeeValidators', $pb.PbFieldType.PM, subBuilder: ValidatorInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -747,6 +749,8 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   factory GetBlockchainInfoResponse({
     $core.int? lastBlockHeight,
     $core.List<$core.int>? lastBlockHash,
+    $core.int? totalAccounts,
+    $core.int? totalValidators,
     $fixnum.Int64? totalPower,
     $fixnum.Int64? committeePower,
     $core.Iterable<ValidatorInfo>? committeeValidators,
@@ -757,6 +761,12 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     }
     if (lastBlockHash != null) {
       _result.lastBlockHash = lastBlockHash;
+    }
+    if (totalAccounts != null) {
+      _result.totalAccounts = totalAccounts;
+    }
+    if (totalValidators != null) {
+      _result.totalValidators = totalValidators;
     }
     if (totalPower != null) {
       _result.totalPower = totalPower;
@@ -809,25 +819,43 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   void clearLastBlockHash() => clearField(2);
 
   @$pb.TagNumber(3)
-  $fixnum.Int64 get totalPower => $_getI64(2);
+  $core.int get totalAccounts => $_getIZ(2);
   @$pb.TagNumber(3)
-  set totalPower($fixnum.Int64 v) { $_setInt64(2, v); }
+  set totalAccounts($core.int v) { $_setSignedInt32(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasTotalPower() => $_has(2);
+  $core.bool hasTotalAccounts() => $_has(2);
   @$pb.TagNumber(3)
-  void clearTotalPower() => clearField(3);
+  void clearTotalAccounts() => clearField(3);
 
   @$pb.TagNumber(4)
-  $fixnum.Int64 get committeePower => $_getI64(3);
+  $core.int get totalValidators => $_getIZ(3);
   @$pb.TagNumber(4)
-  set committeePower($fixnum.Int64 v) { $_setInt64(3, v); }
+  set totalValidators($core.int v) { $_setSignedInt32(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasCommitteePower() => $_has(3);
+  $core.bool hasTotalValidators() => $_has(3);
   @$pb.TagNumber(4)
-  void clearCommitteePower() => clearField(4);
+  void clearTotalValidators() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.List<ValidatorInfo> get committeeValidators => $_getList(4);
+  $fixnum.Int64 get totalPower => $_getI64(4);
+  @$pb.TagNumber(5)
+  set totalPower($fixnum.Int64 v) { $_setInt64(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasTotalPower() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearTotalPower() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get committeePower => $_getI64(5);
+  @$pb.TagNumber(6)
+  set committeePower($fixnum.Int64 v) { $_setInt64(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasCommitteePower() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCommitteePower() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.List<ValidatorInfo> get committeeValidators => $_getList(6);
 }
 
 class GetConsensusInfoRequest extends $pb.GeneratedMessage {

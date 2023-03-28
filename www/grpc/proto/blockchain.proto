@@ -60,9 +60,11 @@ message GetBlockchainInfoRequest {}
 message GetBlockchainInfoResponse {
   uint32 last_block_height = 1;
   bytes last_block_hash = 2;
-  int64 total_power = 3;
-  int64 committee_power = 4;
-  repeated ValidatorInfo committee_validators = 5;
+  int32 total_accounts = 3;
+  int32 total_validators = 4;
+  int64 total_power = 5;
+  int64 committee_power = 6;
+  repeated ValidatorInfo committee_validators = 7;
 }
 
 message GetConsensusInfoRequest {}

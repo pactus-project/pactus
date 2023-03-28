@@ -33,6 +33,8 @@ func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
 	return &pactus.GetBlockchainInfoResponse{
 		LastBlockHeight:     s.state.LastBlockHeight(),
 		LastBlockHash:       s.state.LastBlockHash().Bytes(),
+		TotalAccounts:       s.state.TotalAccounts(),
+		TotalValidators:     s.state.TotalValidators(),
 		TotalPower:          s.state.TotalPower(),
 		CommitteePower:      s.state.CommitteePower(),
 		CommitteeValidators: cv,
