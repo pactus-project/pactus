@@ -22,8 +22,8 @@ type blockchainServer struct {
 	logger    *logger.Logger
 }
 
-func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
-	req *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
+func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
+	_ *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
 	vals := s.state.CommitteeValidators()
 	cv := make([]*pactus.ValidatorInfo, 0, len(vals))
 	for _, v := range vals {
@@ -41,8 +41,8 @@ func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
 	}, nil
 }
 
-func (s *blockchainServer) GetConsensusInfo(ctx context.Context,
-	req *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
+func (s *blockchainServer) GetConsensusInfo(_ context.Context,
+	_ *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
 	height, round := s.consensus.HeightRound()
 	votes := s.consensus.AllVotes()
 	vinfo := make([]*pactus.VoteInfo, 0, len(votes))
@@ -57,7 +57,7 @@ func (s *blockchainServer) GetConsensusInfo(ctx context.Context,
 	}, nil
 }
 
-func (s *blockchainServer) GetBlockHash(ctx context.Context,
+func (s *blockchainServer) GetBlockHash(_ context.Context,
 	req *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
 	height := req.GetHeight()
 	hash := s.state.BlockHash(height)
@@ -69,7 +69,7 @@ func (s *blockchainServer) GetBlockHash(ctx context.Context,
 	}, nil
 }
 
-func (s *blockchainServer) GetBlockHeight(ctx context.Context,
+func (s *blockchainServer) GetBlockHeight(_ context.Context,
 	req *pactus.GetBlockHeightRequest) (*pactus.GetBlockHeightResponse, error) {
 	hash, err := hash.FromBytes(req.GetHash())
 	if err != nil {
@@ -84,7 +84,7 @@ func (s *blockchainServer) GetBlockHeight(ctx context.Context,
 	}, nil
 }
 
-func (s *blockchainServer) GetBlock(ctx context.Context,
+func (s *blockchainServer) GetBlock(_ context.Context,
 	req *pactus.GetBlockRequest) (*pactus.GetBlockResponse, error) {
 	height := req.GetHeight()
 	storedBlock := s.state.StoredBlock(height)
@@ -147,7 +147,7 @@ func (s *blockchainServer) GetBlock(ctx context.Context,
 	return res, nil
 }
 
-func (s *blockchainServer) GetAccount(ctx context.Context,
+func (s *blockchainServer) GetAccount(_ context.Context,
 	req *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
 	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
@@ -164,7 +164,7 @@ func (s *blockchainServer) GetAccount(ctx context.Context,
 	return res, nil
 }
 
-func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
+func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	req *pactus.GetValidatorByNumberRequest) (*pactus.GetValidatorResponse, error) {
 	val := s.state.ValidatorByNumber(req.Number)
 	if val == nil {
@@ -178,7 +178,7 @@ func (s *blockchainServer) GetValidatorByNumber(ctx context.Context,
 	}, nil
 }
 
-func (s *blockchainServer) GetValidator(ctx context.Context,
+func (s *blockchainServer) GetValidator(_ context.Context,
 	req *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
 	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
@@ -196,8 +196,8 @@ func (s *blockchainServer) GetValidator(ctx context.Context,
 	}, nil
 }
 
-func (s *blockchainServer) GetValidators(ctx context.Context,
-	req *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
+func (s *blockchainServer) GetValidators(_ context.Context,
+	_ *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
 	validators := s.state.CommitteeValidators()
 	validatorsResp := make([]*pactus.ValidatorInfo, 0)
 	for _, val := range validators {

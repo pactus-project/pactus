@@ -362,11 +362,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	}
 
 	sb := st.concreteSandbox()
-	if err := st.executeBlock(block, sb); err != nil {
-		return err
-	}
-
-	return nil
+	return st.executeBlock(block, sb)
 }
 
 func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error {

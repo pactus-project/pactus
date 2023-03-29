@@ -36,11 +36,11 @@ func (s *changeProposerState) onAddVote(v *vote.Vote) {
 	}
 }
 
-func (s *changeProposerState) onSetProposal(p *proposal.Proposal) {
+func (s *changeProposerState) onSetProposal(_ *proposal.Proposal) {
 	// Ignore proposals
 }
 
-func (s *changeProposerState) onTimeout(t *ticker) {
+func (s *changeProposerState) onTimeout(_ *ticker) {
 	// Ignore timeouts
 }
 

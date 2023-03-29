@@ -18,27 +18,27 @@ var tValidatorRequest *pactus.GetValidatorRequest
 var tValidatorResponse *pactus.GetValidatorResponse
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
-	req *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
+	_ *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
 	return tBlockchainInfoResponse, nil
 }
 
 func (s *blockchainServer) GetConsensusInfo(_ context.Context,
-	req *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
+	_ *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
 	return nil, nil
 }
 
 func (s *blockchainServer) GetBlockHash(_ context.Context,
-	req *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
+	_ *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
 	return nil, nil
 }
 
 func (s *blockchainServer) GetBlockHeight(_ context.Context,
-	req *pactus.GetBlockHeightRequest) (*pactus.GetBlockHeightResponse, error) {
+	_ *pactus.GetBlockHeightRequest) (*pactus.GetBlockHeightResponse, error) {
 	return nil, nil
 }
 
 func (s *blockchainServer) GetBlock(_ context.Context,
-	req *pactus.GetBlockRequest) (*pactus.GetBlockResponse, error) {
+	_ *pactus.GetBlockRequest) (*pactus.GetBlockResponse, error) {
 	return nil, nil
 }
 
@@ -51,7 +51,7 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
-	req *pactus.GetValidatorByNumberRequest) (*pactus.GetValidatorResponse, error) {
+	_ *pactus.GetValidatorByNumberRequest) (*pactus.GetValidatorResponse, error) {
 	return nil, nil
 }
 
@@ -64,16 +64,16 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidators(_ context.Context,
-	req *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
+	_ *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
 	return nil, nil
 }
 
-func (s *transactionServer) GetTransaction(ctx context.Context,
-	req *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
+func (s *transactionServer) GetTransaction(_ context.Context,
+	_ *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
 	return nil, nil
 }
 
-func (s *transactionServer) SendRawTransaction(ctx context.Context,
+func (s *transactionServer) SendRawTransaction(_ context.Context,
 	req *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
 	trx, _ := tx.FromBytes(req.Data)
 	return &pactus.SendRawTransactionResponse{

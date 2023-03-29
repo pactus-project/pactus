@@ -27,7 +27,7 @@ func walletPath(name string) string {
 	return util.MakeAbs(fmt.Sprintf("wallet%c%s", os.PathSeparator, name))
 }
 
-func (s *walletServer) CreateWallet(ctx context.Context,
+func (s *walletServer) CreateWallet(_ context.Context,
 	req *pactus.CreateWalletRequest) (*pactus.CreateWalletResponse, error) {
 	if req.Name == "" {
 		return nil, fmt.Errorf("wallet name is required")
@@ -49,7 +49,7 @@ func (s *walletServer) CreateWallet(ctx context.Context,
 	return &pactus.CreateWalletResponse{}, nil
 }
 
-func (s *walletServer) LoadWallet(ctx context.Context,
+func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest) (*pactus.LoadWalletResponse, error) {
 	_, ok := s.wallets[req.Name]
 	if !ok {
@@ -69,7 +69,7 @@ func (s *walletServer) LoadWallet(ctx context.Context,
 	}, nil
 }
 
-func (s *walletServer) UnloadWallet(ctx context.Context,
+func (s *walletServer) UnloadWallet(_ context.Context,
 	req *pactus.UnloadWalletRequest) (*pactus.UnloadWalletResponse, error) {
 	_, ok := s.wallets[req.Name]
 	if !ok {
@@ -83,12 +83,12 @@ func (s *walletServer) UnloadWallet(ctx context.Context,
 	}, nil
 }
 
-func (s *walletServer) LockWallet(ctx context.Context,
-	req *pactus.LockWalletRequest) (*pactus.LockWalletResponse, error) {
+func (s *walletServer) LockWallet(_ context.Context,
+	_ *pactus.LockWalletRequest) (*pactus.LockWalletResponse, error) {
 	return nil, nil
 }
 
-func (s *walletServer) UnlockWallet(ctx context.Context,
-	req *pactus.UnlockWalletRequest) (*pactus.UnlockWalletResponse, error) {
+func (s *walletServer) UnlockWallet(_ context.Context,
+	_ *pactus.UnlockWalletRequest) (*pactus.UnlockWalletResponse, error) {
 	return nil, nil
 }

@@ -56,7 +56,7 @@ func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
 	}
 	return nil
 }
-func (mock *MockNetwork) Broadcast(data []byte, tid TopicID) error {
+func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) error {
 	mock.BroadcastCh <- BroadcastData{
 		Data:   data,
 		Target: nil, // Send to all

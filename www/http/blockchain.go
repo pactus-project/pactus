@@ -10,7 +10,7 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 	res, err := s.blockchain.GetBlockchainInfo(s.ctx,
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
@@ -40,7 +40,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	s.writeHTML(w, tm.html())
 }
 
-func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 	res, err := s.network.GetNetworkInfo(s.ctx,
 		&pactus.GetNetworkInfoRequest{})
 	if err != nil {

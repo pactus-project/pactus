@@ -47,10 +47,7 @@ func (m *HelloMessage) SanityCheck() error {
 	if m.PublicKey == nil {
 		return errors.Error(errors.ErrInvalidPublicKey)
 	}
-	if err := m.PublicKey.Verify(m.SignBytes(), m.Signature); err != nil {
-		return err
-	}
-	return nil
+	return m.PublicKey.Verify(m.SignBytes(), m.Signature)
 }
 
 func (m *HelloMessage) SignBytes() []byte {

@@ -62,7 +62,7 @@ func (s *commitState) onSetProposal(p *proposal.Proposal) {
 	s.decide()
 }
 
-func (s *commitState) onTimeout(t *ticker) {
+func (s *commitState) onTimeout(_ *ticker) {
 	// Ignore timeouts
 }
 

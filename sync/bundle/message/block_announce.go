@@ -24,11 +24,7 @@ func (m *BlockAnnounceMessage) SanityCheck() error {
 	if err := m.Block.SanityCheck(); err != nil {
 		return err
 	}
-	if err := m.Certificate.SanityCheck(); err != nil {
-		return err
-	}
-
-	return nil
+	return m.Certificate.SanityCheck()
 }
 
 func (m *BlockAnnounceMessage) Type() Type {

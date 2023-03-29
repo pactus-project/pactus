@@ -7,7 +7,7 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
 	res, err := s.blockchain.GetConsensusInfo(s.ctx,
 		&pactus.GetConsensusInfoRequest{})
 	if err != nil {

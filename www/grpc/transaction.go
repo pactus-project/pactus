@@ -18,7 +18,7 @@ type transactionServer struct {
 	logger *logger.Logger
 }
 
-func (s *transactionServer) GetTransaction(ctx context.Context,
+func (s *transactionServer) GetTransaction(_ context.Context,
 	req *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
 	id, err := hash.FromBytes(req.Id)
 	if err != nil {
@@ -42,7 +42,7 @@ func (s *transactionServer) GetTransaction(ctx context.Context,
 	return res, nil
 }
 
-func (s *transactionServer) SendRawTransaction(ctx context.Context,
+func (s *transactionServer) SendRawTransaction(_ context.Context,
 	req *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
 	trx, err := tx.FromBytes(req.Data)
 	if err != nil {

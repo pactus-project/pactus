@@ -125,11 +125,8 @@ func (cert *Certificate) Encode(w io.Writer) error {
 			return err
 		}
 	}
-	if err := cert.data.Signature.Encode(w); err != nil {
-		return err
-	}
 
-	return nil
+	return cert.data.Signature.Encode(w)
 }
 
 func (cert *Certificate) Decode(r io.Reader) error {

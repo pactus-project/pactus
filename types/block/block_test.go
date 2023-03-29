@@ -69,23 +69,23 @@ func TestCBORMarshaling(t *testing.T) {
 
 func TestEncodingBlock(t *testing.T) {
 	blk := GenerateTestBlock(nil, nil)
-	len := blk.SerializeSize()
+	length := blk.SerializeSize()
 
-	for i := 0; i < len; i++ {
+	for i := 0; i < length; i++ {
 		w := util.NewFixedWriter(i)
 		assert.Error(t, blk.Encode(w), "encode test %v failed", i)
 	}
-	w := util.NewFixedWriter(len)
+	w := util.NewFixedWriter(length)
 	assert.NoError(t, blk.Encode(w))
 
-	for i := 0; i < len; i++ {
+	for i := 0; i < length; i++ {
 		blk2 := new(Block)
 		r := util.NewFixedReader(i, w.Bytes())
 		assert.Error(t, blk2.Decode(r), "decode test %v failed", i)
 	}
 
 	blk2 := new(Block)
-	r := util.NewFixedReader(len, w.Bytes())
+	r := util.NewFixedReader(length, w.Bytes())
 	assert.NoError(t, blk2.Decode(r))
 	assert.Equal(t, blk.Hash(), blk2.Hash())
 	assert.Equal(t, blk.Header(), blk2.Header())

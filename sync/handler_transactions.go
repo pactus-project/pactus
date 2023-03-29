@@ -16,7 +16,7 @@ func newTransactionsHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *transactionsHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+func (handler *transactionsHandler) ParsMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.TransactionsMessage)
 	handler.logger.Trace("parsing Transactions message", "message", msg)
 

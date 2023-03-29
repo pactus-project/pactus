@@ -100,11 +100,11 @@ func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *block.Certificat
 func (m *MockState) Close() error {
 	return nil
 }
-func (m *MockState) ProposeBlock(round int16) (*block.Block, error) {
+func (m *MockState) ProposeBlock(_ int16) (*block.Block, error) {
 	b := block.GenerateTestBlock(nil, nil)
 	return b, nil
 }
-func (m *MockState) ValidateBlock(block *block.Block) error {
+func (m *MockState) ValidateBlock(_ *block.Block) error {
 	return nil
 }
 func (m *MockState) CommitteeValidators() []*validator.Validator {
