@@ -2721,7 +2721,7 @@ proto.pactus.GetBlockchainInfoRequest.serializeBinaryToWriter = function(message
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.GetBlockchainInfoResponse.repeatedFields_ = [5];
+proto.pactus.GetBlockchainInfoResponse.repeatedFields_ = [7];
 
 
 
@@ -2756,8 +2756,10 @@ proto.pactus.GetBlockchainInfoResponse.toObject = function(includeInstance, msg)
   var f, obj = {
     lastBlockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
     lastBlockHash: msg.getLastBlockHash_asB64(),
-    totalPower: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    committeePower: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    totalAccounts: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    totalValidators: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
     committeeValidatorsList: jspb.Message.toObjectList(msg.getCommitteeValidatorsList(),
     proto.pactus.ValidatorInfo.toObject, includeInstance)
   };
@@ -2805,14 +2807,22 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
       msg.setLastBlockHash(value);
       break;
     case 3:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setTotalAccounts(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setTotalValidators(value);
+      break;
+    case 5:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setTotalPower(value);
       break;
-    case 4:
+    case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCommitteePower(value);
       break;
-    case 5:
+    case 7:
       var value = new proto.pactus.ValidatorInfo;
       reader.readMessage(value,proto.pactus.ValidatorInfo.deserializeBinaryFromReader);
       msg.addCommitteeValidators(value);
@@ -2860,24 +2870,38 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
       f
     );
   }
+  f = message.getTotalAccounts();
+  if (f !== 0) {
+    writer.writeInt32(
+      3,
+      f
+    );
+  }
+  f = message.getTotalValidators();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
   f = message.getTotalPower();
   if (f !== 0) {
     writer.writeInt64(
-      3,
+      5,
       f
     );
   }
   f = message.getCommitteePower();
   if (f !== 0) {
     writer.writeInt64(
-      4,
+      6,
       f
     );
   }
   f = message.getCommitteeValidatorsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      5,
+      7,
       f,
       proto.pactus.ValidatorInfo.serializeBinaryToWriter
     );
@@ -2946,10 +2970,10 @@ proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockHash = function(val
 
 
 /**
- * optional int64 total_power = 3;
+ * optional int32 total_accounts = 3;
  * @return {number}
  */
-proto.pactus.GetBlockchainInfoResponse.prototype.getTotalPower = function() {
+proto.pactus.GetBlockchainInfoResponse.prototype.getTotalAccounts = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -2958,16 +2982,16 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getTotalPower = function() {
  * @param {number} value
  * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
  */
-proto.pactus.GetBlockchainInfoResponse.prototype.setTotalPower = function(value) {
+proto.pactus.GetBlockchainInfoResponse.prototype.setTotalAccounts = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional int64 committee_power = 4;
+ * optional int32 total_validators = 4;
  * @return {number}
  */
-proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteePower = function() {
+proto.pactus.GetBlockchainInfoResponse.prototype.getTotalValidators = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -2976,18 +3000,54 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteePower = function() 
  * @param {number} value
  * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
  */
-proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteePower = function(value) {
+proto.pactus.GetBlockchainInfoResponse.prototype.setTotalValidators = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * repeated ValidatorInfo committee_validators = 5;
+ * optional int64 total_power = 5;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getTotalPower = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setTotalPower = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int64 committee_power = 6;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteePower = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteePower = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * repeated ValidatorInfo committee_validators = 7;
  * @return {!Array<!proto.pactus.ValidatorInfo>}
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteeValidatorsList = function() {
   return /** @type{!Array<!proto.pactus.ValidatorInfo>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.pactus.ValidatorInfo, 5));
+    jspb.Message.getRepeatedWrapperField(this, proto.pactus.ValidatorInfo, 7));
 };
 
 
@@ -2996,7 +3056,7 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteeValidatorsList = fu
  * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
 */
 proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteeValidatorsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 5, value);
+  return jspb.Message.setRepeatedWrapperField(this, 7, value);
 };
 
 
@@ -3006,7 +3066,7 @@ proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteeValidatorsList = fu
  * @return {!proto.pactus.ValidatorInfo}
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.addCommitteeValidators = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 5, opt_value, proto.pactus.ValidatorInfo, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 7, opt_value, proto.pactus.ValidatorInfo, opt_index);
 };
 
 

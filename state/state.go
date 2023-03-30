@@ -362,11 +362,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	}
 
 	sb := st.concreteSandbox()
-	if err := st.executeBlock(block, sb); err != nil {
-		return err
-	}
-
-	return nil
+	return st.executeBlock(block, sb)
 }
 
 func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error {
@@ -594,6 +590,14 @@ func (st *state) proposeNextBlockTime() time.Time {
 
 func (st *state) CommitteeValidators() []*validator.Validator {
 	return st.committee.Validators()
+}
+
+func (st *state) TotalAccounts() int32 {
+	return st.store.TotalAccounts()
+}
+
+func (st *state) TotalValidators() int32 {
+	return st.store.TotalValidators()
 }
 
 func (st *state) IsInCommittee(addr crypto.Address) bool {

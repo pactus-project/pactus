@@ -182,12 +182,12 @@ func (b *Block) Decode(r io.Reader) error {
 			return err
 		}
 	}
-	len, err := encoding.ReadVarInt(r)
+	length, err := encoding.ReadVarInt(r)
 	if err != nil {
 		return err
 	}
-	b.data.Txs = make([]*tx.Tx, len)
-	for i := 0; i < int(len); i++ {
+	b.data.Txs = make([]*tx.Tx, length)
+	for i := 0; i < int(length); i++ {
 		tx := new(tx.Tx)
 		if err := tx.Decode(r); err != nil {
 			return err

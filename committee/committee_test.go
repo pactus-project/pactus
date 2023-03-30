@@ -10,14 +10,14 @@ import (
 )
 
 func copyValidator(val *validator.Validator) *validator.Validator {
-	copy := validator.NewValidator(val.PublicKey(), val.Number())
-	copy.UpdateLastBondingHeight(val.LastBondingHeight())
-	copy.UpdateLastJoinedHeight(val.LastJoinedHeight())
-	copy.UpdateUnbondingHeight(val.UnbondingHeight())
+	clone := validator.NewValidator(val.PublicKey(), val.Number())
+	clone.UpdateLastBondingHeight(val.LastBondingHeight())
+	clone.UpdateLastJoinedHeight(val.LastJoinedHeight())
+	clone.UpdateUnbondingHeight(val.UnbondingHeight())
 
 	// Stake can't be changes as long as validator is inside committee
 	// Check Bond executor
-	return copy
+	return clone
 }
 func TestContains(t *testing.T) {
 	committee, signers := GenerateTestCommittee(21)

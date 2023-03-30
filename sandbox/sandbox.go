@@ -79,9 +79,9 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 
 	s, ok := sb.accounts[addr]
 	if ok {
-		copy := new(account.Account)
-		*copy = s.Account
-		return copy
+		clone := new(account.Account)
+		*clone = s.Account
+		return clone
 	}
 
 	acc, err := sb.store.Account(addr)
@@ -130,9 +130,9 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 
 	s, ok := sb.validators[addr]
 	if ok {
-		copy := new(validator.Validator)
-		*copy = s.Validator
-		return copy
+		clone := new(validator.Validator)
+		*clone = s.Validator
+		return clone
 	}
 
 	val, err := sb.store.Validator(addr)

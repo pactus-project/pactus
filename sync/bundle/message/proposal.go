@@ -15,11 +15,7 @@ func NewProposalMessage(p *proposal.Proposal) *ProposalMessage {
 }
 
 func (m *ProposalMessage) SanityCheck() error {
-	if err := m.Proposal.SanityCheck(); err != nil {
-		return err
-	}
-
-	return nil
+	return m.Proposal.SanityCheck()
 }
 
 func (m *ProposalMessage) Type() Type {

@@ -45,15 +45,15 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 	s.broadcastProposal(proposal)
 }
 
-func (s *proposeState) onAddVote(v *vote.Vote) {
+func (s *proposeState) onAddVote(_ *vote.Vote) {
 	panic("Unreachable")
 }
 
-func (s *proposeState) onSetProposal(p *proposal.Proposal) {
+func (s *proposeState) onSetProposal(_ *proposal.Proposal) {
 	panic("Unreachable")
 }
 
-func (s *proposeState) onTimeout(t *ticker) {
+func (s *proposeState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
 func (s *proposeState) name() string {

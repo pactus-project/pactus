@@ -78,7 +78,7 @@ func (s *precommitState) onSetProposal(p *proposal.Proposal) {
 	}
 }
 
-func (s *precommitState) onTimeout(t *ticker) {
+func (s *precommitState) onTimeout(_ *ticker) {
 	// Ignore timeouts
 }
 

@@ -15,10 +15,7 @@ func NewVoteMessage(v *vote.Vote) *VoteMessage {
 }
 
 func (m *VoteMessage) SanityCheck() error {
-	if err := m.Vote.SanityCheck(); err != nil {
-		return err
-	}
-	return nil
+	return m.Vote.SanityCheck()
 }
 
 func (m *VoteMessage) Type() Type {

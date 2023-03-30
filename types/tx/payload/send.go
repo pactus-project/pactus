@@ -30,11 +30,7 @@ func (p *SendPayload) SanityCheck() error {
 	if err := p.Sender.SanityCheck(); err != nil {
 		return err
 	}
-	if err := p.Receiver.SanityCheck(); err != nil {
-		return err
-	}
-
-	return nil
+	return p.Receiver.SanityCheck()
 }
 
 func (p *SendPayload) SerializeSize() int {

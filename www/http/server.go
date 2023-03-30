@@ -103,7 +103,7 @@ func (s *Server) StopServer() {
 	}
 }
 
-func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 	buf := new(bytes.Buffer)
 	buf.WriteString("<html><body><br>")
 
