@@ -300,9 +300,9 @@ Now you are ready to start the node!`
 				}
 				assistant.SetPageComplete(pageSeed, true)
 			}
-		case pageSeedConfirmName:
-			{
-			}
+		// case pageSeedConfirmName:
+		// 	{
+		// 	}
 		case pagePasswordName:
 			{
 				assistant.SetPageComplete(pagePassword, true)
