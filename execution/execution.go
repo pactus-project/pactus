@@ -106,7 +106,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if trx.IsSubsidyTx() {
 		interval = 1
 	} else if trx.IsSortitionTx() {
-		interval = 7
+		interval = sb.Params().SortitionInterval
 	}
 
 	if !ok || curHeight-height > interval {

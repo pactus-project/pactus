@@ -179,6 +179,25 @@ func TestSafeCmp(t *testing.T) {
 	assert.False(t, SafeCmp([]byte{1, 2, 3, 3}, []byte{1, 2, 3}))
 }
 
+func TestMerge(t *testing.T) {
+	tests := []struct {
+		slices [][]byte
+		merged []byte
+	}{
+		{[][]byte{nil}, []byte{}},
+		{[][]byte{{0, 1, 2}}, []byte{0, 1, 2}},
+		{[][]byte{{}}, []byte{}},
+		{[][]byte{{}, {}}, []byte{}},
+		{[][]byte{{0}, {0}}, []byte{0, 0}},
+		{[][]byte{{0}, {1}, {2}}, []byte{0, 1, 2}},
+	}
+
+	for _, test := range tests {
+		merged := Merge(test.slices...)
+		assert.Equal(t, merged, test.merged)
+	}
+}
+
 func TestReverse(t *testing.T) {
 	tests := []struct {
 		slice    []byte
