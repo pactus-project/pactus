@@ -63,9 +63,25 @@ func (cert *Certificate) SanityCheck() error {
 
 func (cert *Certificate) Hash() hash.Hash {
 	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
-	if err := cert.Encode(w); err != nil {
+	if err := encoding.WriteVarInt(w, uint64(cert.Round())); err != nil {
 		return hash.UndefHash
 	}
+	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Absentees))); err != nil {
+		return hash.UndefHash
+	}
+	for _, n := range cert.data.Absentees {
+		if err := encoding.WriteVarInt(w, uint64(n)); err != nil {
+			return hash.UndefHash
+		}
+	}
+	if err := cert.data.Signature.Encode(w); err != nil {
+		return hash.UndefHash
+	}
+
+	// TODO: a comment on certificate hash
+	// Technically we don't need to include the committers list inside the certificate.
+	// In each height the committers are same as the committee members.
+	// We can remove the committers from the certificate as a possible enhancement in future,.
 	return hash.CalcHash(w.Bytes())
 }
 
