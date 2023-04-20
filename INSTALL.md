@@ -3,143 +3,137 @@
 ## Requirements
 
 You need to make sure you have installed [Git](https://git-scm.com/downloads)
-and [Go 1.19 or higher](https://golang.org/) in your machine.
-If you want to install GUI application, make sure you have install
+and [Go 1.19 or higher](https://golang.org/) on your machine.
+If you want to install a GUI application, make sure you have installed
 [GTK+3](https://www.gtk.org/docs/getting-started/) as well.
 
 ## Compiling the code
 
 Follow these steps to compile and build Pactus:
 
-```bash
+```text
 git clone https://github.com/pactus-project/pactus.git
 cd pactus
 make build
 ```
 
-This will be compile `pactus-daemon` and `pactus-wallet` in your machine.
-Make sure Pactus is properly compiled and installed in your machine:
+This will be compile `pactus-daemon` and `pactus-wallet` on your machine.
+Make sure Pactus is properly compiled and installed on your machine:
 
 ```
 cd build
 ./pactus-daemon version
 ```
 
-If you want to compile the GUI application run this command in the root folder:
+If you want to compile the GUI application, run this command in the root folder:
 
-```bash
+```text
 make build_gui
 ```
 
-To run the tests use this command:
+To run the tests, use this command:
 
-```bash
+```text
 make test
 ```
 
-This may takes several minutes to finish.
+This may take several minutes to finish.
 
-
-## What is pactus-daemon
+## What is pactus-daemon?
 
 `pactus-daemon` is a full node implementation of Pactus blockchain.
-You can use `pactus-daemon` to run a full node on Pactus blockchain.
+You can use `pactus-daemon` to run a full node:
 
-```bash
+```text
 ./pactus-daemon init  -w=<working_dir>
 ./pactus-daemon start -w=<working_dir>
 ```
 
 ### Testnet
 
-To join the TestNet, first you need to create a working directory
+To join the TestNet, first you need to initialize your node
 and then start the node:
 
-```bash
+```text
 ./pactus-daemon init  -w=<working_dir> --testnet
 ./pactus-daemon start -w=<working_dir>
 ```
 
 ### Local net
 
-You can create a local node with one validator to test Pactus in your machine:
+You can create a local node with one validator to test Pactus on your machine:
 
- ```bash
- ./pactus-daemon init -w=<working_dir> --localnet
+ ```text
+ ./pactus-daemon init  -w=<working_dir> --localnet
  ./pactus-daemon start -w=<working_dir>
  ```
 
-## What is pactus-wallet
+## What is pactus-wallet?
 
-Pactus wallet is a native wallet in Pactus blockchain and let user to easily manage
-their accounts on Pactus blockchain.
+Pactus wallet is a native wallet in the Pactus blockchain that lets users easily manage
+their accounts on the Pactus blockchain.
 
 ### Getting started
 
-To create a new wallet run this command. The wallet will be encrypted by the
+To create a new wallet, run this command. The wallet will be encrypted by the
 provided password.
 
-```bash
+```text
 ./pactus-wallet -w=<wallet_path> create
 ```
 
-You can create new address like this:
+You can create a new address like this:
 
-```bash
+```text
 ./pactus-wallet -w=<wallet_path> address new
 ```
 
-List of addresses are available by this command:
+A list of addresses is available with this command:
 
-```bash
+```text
 ./pactus-wallet -w=<wallet_path> address balance all
 ```
 
-You can check the balance:
+To obtain the public key of an address, run this command:
 
-```bash
-./pactus-wallet -w=<wallet_path> address balance <ADDRESS>
+```text
+./pactus-wallet -w=<wallet_path> address pub <ADDRESS>
 ```
 
-To publish a transactions use tx subcommand:
-
-```bash
-./pactus-wallet -w=<wallet_path> tx
-```
-
+To publish a transaction, use the tx subcommand.
 For example, to publish a bond transaction:
 
-```bash
-./pactus-wallet -w=<wallet_path> tx bond <FROM> <TO> <STAKE>
+```text
+./pactus-wallet -w=<wallet_path> tx bond <FROM> <TO> <AMOUNT>
 ```
 
 You can recover a wallet if you have the seed phrase.
 
-```bash
+```text
 ./pactus-wallet -w=<wallet_path> recover
 ```
 
 
-## Usage of Docker
+## Docker
 
-You can run the Pactus using docker file. Please make sure you have installed
-[docker](https://docs.docker.com/engine/install/) in your machine.
+You can run Pactus using a Docker file. Please make sure you have installed
+[docker](https://docs.docker.com/engine/install/) on your machine.
 
-Pull the docker from docker hub.
+Pull the Docker from Docker Hub:
 
-```bash
+```text
 docker pull pactus/pactus
 ```
 
 Let's create a working directory at `~/pactus/testnet` for the testnet:
 
-```bash
+```text
 docker run -it --rm -v ~/pactus/testnet:/pactus pactus/pactus init -w /pactus --testnet
 ```
 
-Now we can run the pactus and join the testnet:
+Now we can run Pactus and join the testnet:
 
-```bash
+```text
 docker run -it -v ~/pactus/testnet:/pactus -p 8080:8080 -p 21777:21777 --name pactus-testnet pactus/pactus start -w /pactus
 ```
 
@@ -153,6 +147,7 @@ docker start pactus-testnet
 ```
 
 Or check the logs:
+
 ```
 docker logs pactus-testnet --tail 1000 -f
 ```
