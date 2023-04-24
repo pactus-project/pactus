@@ -6,8 +6,14 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/util"
 )
+
+var denominator *big.Int
+
+func init() {
+	denominator = &big.Int{}
+	denominator.SetString("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16)
+}
 
 // evaluate returns a random number between 0 and max with the proof.
 func evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (index uint64, proof Proof) {
@@ -41,17 +47,13 @@ func verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max ui
 func getIndex(proof Proof, max uint64) uint64 {
 	h := hash.CalcHash(proof[:])
 
-	rnd64 := util.SliceToUint64(h.Bytes())
-
 	// construct the numerator and denominator for normalizing the proof uint
 	bigRnd := &big.Int{}
 	bigMax := &big.Int{}
-	denominator := &big.Int{}
 	numerator := &big.Int{}
 
-	bigRnd.SetUint64(rnd64)
+	bigRnd.SetBytes(h.Bytes())
 	bigMax.SetUint64(max)
-	denominator.SetUint64(util.MaxUint64)
 
 	numerator = numerator.Mul(bigRnd, bigMax)
 

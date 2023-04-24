@@ -1,9 +1,11 @@
 package sortition
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util"
 )
 
 type Proof [48]byte
@@ -29,10 +31,8 @@ func ProofFromBytes(data []byte) (Proof, error) {
 }
 
 func GenerateRandomProof() Proof {
-	p := Proof{}
-	_, err := rand.Read(p[:])
-	if err != nil {
-		panic(err)
-	}
-	return p
+	sig := bls.GenerateTestSigner().SignData(
+		util.Int64ToSlice(util.RandInt64(0)))
+	proof, _ := ProofFromBytes(sig.Bytes())
+	return proof
 }
