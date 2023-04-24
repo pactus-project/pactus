@@ -159,6 +159,26 @@ func SafeCmp(s1, s2 []byte) bool {
 	return subtle.ConstantTimeCompare(s1, s2) == 1
 }
 
+// Merge accepts multiple slices and returns a single merged slice.
+func Merge[T any](slices ...[]T) []T {
+	var totalLength int
+
+	// Calculate the total length of the merged slice.
+	for _, slice := range slices {
+		totalLength += len(slice)
+	}
+
+	// Create a merged slice with the appropriate capacity.
+	merged := make([]T, 0, totalLength)
+
+	// Append each input slice to the merged slice.
+	for _, slice := range slices {
+		merged = append(merged, slice...)
+	}
+
+	return merged
+}
+
 // Reverse replace the contents of a slice with the same elements but in
 // reverse order.
 func Reverse[S ~[]E, E any](s S) {

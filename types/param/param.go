@@ -10,10 +10,11 @@ type Params struct {
 	TransactionToLiveInterval uint32  `cbor:"5,keyasint"`
 	BondInterval              uint32  `cbor:"6,keyasint"`
 	UnbondInterval            uint32  `cbor:"7,keyasint"`
-	FeeFraction               float64 `cbor:"8,keyasint"`
-	MinimumFee                int64   `cbor:"9,keyasint"`
-	MaximumFee                int64   `cbor:"10,keyasint"`
-	MaximumStake              int64   `cbor:"11,keyasint"`
+	SortitionInterval         uint32  `cbor:"8,keyasint"`
+	FeeFraction               float64 `cbor:"9,keyasint"`
+	MinimumFee                int64   `cbor:"10,keyasint"`
+	MaximumFee                int64   `cbor:"11,keyasint"`
+	MaximumStake              int64   `cbor:"12,keyasint"`
 }
 
 func DefaultParams() Params {
@@ -25,6 +26,7 @@ func DefaultParams() Params {
 		TransactionToLiveInterval: 8640,   // one day
 		BondInterval:              360,    // one hour
 		UnbondInterval:            181440, // 21 days
+		SortitionInterval:         7,
 		FeeFraction:               0.0001,
 		MinimumFee:                1000,
 		MaximumFee:                100000000,
