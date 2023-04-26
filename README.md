@@ -14,8 +14,9 @@ Please check the [INSTALL](./INSTALL.md) document to build and run the Pactus bl
 
 ## Contribution
 
-We welcome contributions to Pactus blockchain.
-Please read our [Contribution Guidelines](./CONTRIBUTING.md) before submitting a pull request or opening an issue.
+Contributions to the Pactus blockchain are appreciated.
+Please read the [contribution](./CONTRIBUTING.md) guidelines before submitting a pull request or opening an issue.
+
 ## License
 
-The Pactus blockchain is under [MIT](https://opensource.org/licenses/MIT) license.
+The Pactus blockchain is under MIT [license](./LICENSE).
