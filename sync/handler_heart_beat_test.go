@@ -14,8 +14,8 @@ import (
 func TestParsingHeartbeatMessages(t *testing.T) {
 	setup(t)
 
-	tConsensus.Round = 1
-	h, _ := tConsensus.HeightRound()
+	tConsMocks[0].Round = 1
+	h, _ := tConsMgr.HeightRound()
 	pid := network.TestRandomPeerID()
 	msg := message.NewHeartBeatMessage(h, 2, hash.GenerateTestHash())
 
@@ -25,7 +25,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})
 
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[0].PublicKey())
 
 	t.Run("In the committee, should query for votes", func(t *testing.T) {
 		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
@@ -58,12 +58,12 @@ func TestBroadcastingHeartbeatMessages(t *testing.T) {
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
 	})
 
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[0].PublicKey())
 
 	t.Run("It is in committee", func(t *testing.T) {
-		heightAlice, _ := tConsensus.HeightRound()
+		heightAlice, _ := tConsMgr.HeightRound()
 		v1, _ := vote.GenerateTestPrepareVote(heightAlice, 0)
-		tConsensus.Votes = []*vote.Vote{v1}
+		tConsMgr.AddVote(v1)
 
 		tSync.broadcastHeartBeat()
 		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHeartBeat)

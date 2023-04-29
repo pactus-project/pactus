@@ -115,7 +115,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.pactus.PeerInfo = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.pactus.PeerInfo.repeatedFields_, null);
 };
 goog.inherits(proto.pactus.PeerInfo, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -693,6 +693,13 @@ proto.pactus.GetPeerInfoResponse.prototype.hasPeer = function() {
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.pactus.PeerInfo.repeatedFields_ = [4];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -727,7 +734,7 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
     agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
     peerId: msg.getPeerId_asB64(),
-    publicKey: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    keysList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
     flags: jspb.Message.getFieldWithDefault(msg, 5, 0),
     height: jspb.Message.getFieldWithDefault(msg, 6, 0),
     receivedMessages: jspb.Message.getFieldWithDefault(msg, 7, 0),
@@ -785,7 +792,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPublicKey(value);
+      msg.addKeys(value);
       break;
     case 5:
       var value = /** @type {number} */ (reader.readInt32());
@@ -865,9 +872,9 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getPublicKey();
+  f = message.getKeysList();
   if (f.length > 0) {
-    writer.writeString(
+    writer.writeRepeatedString(
       4,
       f
     );
@@ -1003,20 +1010,39 @@ proto.pactus.PeerInfo.prototype.setPeerId = function(value) {
 
 
 /**
- * optional string public_key = 4;
- * @return {string}
+ * repeated string keys = 4;
+ * @return {!Array<string>}
  */
-proto.pactus.PeerInfo.prototype.getPublicKey = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+proto.pactus.PeerInfo.prototype.getKeysList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setKeysList = function(value) {
+  return jspb.Message.setField(this, 4, value || []);
 };
 
 
 /**
  * @param {string} value
+ * @param {number=} opt_index
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setPublicKey = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
+proto.pactus.PeerInfo.prototype.addKeys = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.clearKeysList = function() {
+  return this.setKeysList([]);
 };
 
 

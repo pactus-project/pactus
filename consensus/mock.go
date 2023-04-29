@@ -1,9 +1,7 @@
 package consensus
 
 import (
-	"sync"
-
-	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
@@ -12,19 +10,36 @@ import (
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
-	Lock     sync.RWMutex
+	Signer   crypto.Signer
 	Votes    []*vote.Vote
 	Proposal *proposal.Proposal
-	State    *state.MockState
+	Active   bool
 	Height   uint32
 	Round    int16
 }
 
-func MockingConsensus(state *state.MockState) *MockConsensus {
-	return &MockConsensus{State: state}
+func MockingManager(signers []crypto.Signer) (Manager, []*MockConsensus) {
+	mocks := make([]*MockConsensus, len(signers))
+	instances := make([]Consensus, len(signers))
+	for i, s := range signers {
+		cons := MockingConsensus(s)
+		mocks[i] = cons
+		instances[i] = cons
+	}
+
+	return &manager{
+		instances: instances,
+	}, mocks
+}
+
+func MockingConsensus(signer crypto.Signer) *MockConsensus {
+	return &MockConsensus{Signer: signer}
+}
+func (m *MockConsensus) SignerKey() crypto.PublicKey {
+	return m.Signer.PublicKey()
 }
 func (m *MockConsensus) MoveToNewHeight() {
-	m.Height = m.State.LastBlockHeight() + 1
+	m.Height++
 }
 func (m *MockConsensus) Start() error {
 	return nil
@@ -37,15 +52,6 @@ func (m *MockConsensus) AddVote(v *vote.Vote) {
 func (m *MockConsensus) AllVotes() []*vote.Vote {
 	return m.Votes
 }
-func (m *MockConsensus) RoundVotes(round int16) []*vote.Vote {
-	votes := make([]*vote.Vote, 0)
-	for _, v := range m.Votes {
-		if v.Round() == round {
-			votes = append(votes, v)
-		}
-	}
-	return votes
-}
 func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 	m.Proposal = p
 }
@@ -56,7 +62,7 @@ func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
 	return m.Proposal
 }
 func (m *MockConsensus) HeightRound() (uint32, int16) {
-	return m.State.LastBlockHeight() + 1, m.Round
+	return m.Height, m.Round
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""
@@ -67,4 +73,7 @@ func (m *MockConsensus) PickRandomVote() *vote.Vote {
 	}
 	r := util.RandInt32(int32(len(m.Votes)))
 	return m.Votes[r]
+}
+func (m *MockConsensus) IsActive() bool {
+	return m.Active
 }

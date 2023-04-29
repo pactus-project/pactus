@@ -10,11 +10,14 @@ service Blockchain {
   rpc GetBlock(GetBlockRequest) returns (GetBlockResponse);
   rpc GetBlockHash(GetBlockHashRequest) returns (GetBlockHashResponse);
   rpc GetBlockHeight(GetBlockHeightRequest) returns (GetBlockHeightResponse);
-  rpc GetBlockchainInfo(GetBlockchainInfoRequest) returns (GetBlockchainInfoResponse);
-  rpc GetConsensusInfo(GetConsensusInfoRequest) returns (GetConsensusInfoResponse);
+  rpc GetBlockchainInfo(GetBlockchainInfoRequest)
+      returns (GetBlockchainInfoResponse);
+  rpc GetConsensusInfo(GetConsensusInfoRequest)
+      returns (GetConsensusInfoResponse);
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
   rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
-  rpc GetValidatorByNumber(GetValidatorByNumberRequest) returns (GetValidatorResponse);
+  rpc GetValidatorByNumber(GetValidatorByNumberRequest)
+      returns (GetValidatorResponse);
   rpc GetValidators(GetValidatorsRequest) returns (GetValidatorsResponse);
 }
 
@@ -70,9 +73,7 @@ message GetBlockchainInfoResponse {
 message GetConsensusInfoRequest {}
 
 message GetConsensusInfoResponse {
-  uint32 height = 1;
-  int32 round = 2;
-  repeated VoteInfo votes = 3;
+  repeated ConsensusInfo instances = 1;
 }
 
 message ValidatorInfo {
@@ -118,6 +119,14 @@ message VoteInfo {
   string voter = 2;
   bytes block_hash = 3;
   int32 round = 4;
+}
+
+message ConsensusInfo {
+  string address = 1;
+  bool Active = 2;
+  uint32 height = 3;
+  int32 round = 4;
+  repeated VoteInfo votes = 5;
 }
 
 enum BlockVerbosity {

@@ -1,16 +1,18 @@
 package consensus
 
 import (
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
 type Reader interface {
-	PickRandomVote() *vote.Vote
+	SignerKey() crypto.PublicKey
 	AllVotes() []*vote.Vote
-	RoundVotes(round int16) []*vote.Vote
+	PickRandomVote() *vote.Vote
 	RoundProposal(round int16) *proposal.Proposal
 	HeightRound() (uint32, int16)
+	IsActive() bool
 	Fingerprint() string
 }
 
@@ -18,8 +20,24 @@ type Consensus interface {
 	Reader
 
 	MoveToNewHeight()
+	AddVote(v *vote.Vote)
+	SetProposal(proposal *proposal.Proposal)
+}
+
+type ManagerReader interface {
+	Instances() []Reader
+	PickRandomVote() *vote.Vote
+	RoundProposal(round int16) *proposal.Proposal
+	HeightRound() (uint32, int16)
+	HasActiveInstance() bool
+}
+
+type Manager interface {
+	ManagerReader
+
 	Start() error
 	Stop()
+	MoveToNewHeight()
 	AddVote(v *vote.Vote)
 	SetProposal(proposal *proposal.Proposal)
 }

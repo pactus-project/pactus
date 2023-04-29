@@ -1,12 +1,4 @@
 
-# state contains configuration of state module.
-[state]
-
-  # reward_address is the address for collecting the rewards. If it is empty the
-  # validator address will be used for collecting the rewards.
-  # Default is your reward address.
- ## reward_address = ""
-
 # store contains configuration of store module.
 [store]
 

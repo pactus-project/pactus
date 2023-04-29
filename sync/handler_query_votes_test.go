@@ -12,9 +12,9 @@ import (
 func TestParsingQueryVotesMessages(t *testing.T) {
 	setup(t)
 
-	consensusHeight := tState.LastBlockHeight() + 1
+	consensusHeight, _ := tConsMgr.HeightRound()
 	v1, _ := vote.GenerateTestPrecommitVote(consensusHeight, 0)
-	tConsensus.AddVote(v1)
+	tConsMgr.AddVote(v1)
 	pid := network.TestRandomPeerID()
 	msg := message.NewQueryVotesMessage(consensusHeight, 1)
 
@@ -51,7 +51,7 @@ func TestBroadcastingQueryVotesMessages(t *testing.T) {
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryVotes)
 	})
 
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[0].PublicKey())
 	t.Run("In the committee, should send query vote message", func(t *testing.T) {
 		tSync.broadcast(msg)
 

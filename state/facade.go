@@ -21,7 +21,7 @@ type Facade interface {
 	LastCertificate() *block.Certificate
 	BlockTime() time.Duration
 	UpdateLastCertificate(lastCertificate *block.Certificate) error
-	ProposeBlock(round int16) (*block.Block, error)
+	ProposeBlock(consSigner crypto.Signer, rewardAddr crypto.Address, round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error
 	CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error
 	CommitteeValidators() []*validator.Validator
@@ -44,14 +44,6 @@ type Facade interface {
 	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator
 	Params() param.Params
-	// RewardAddress returns the rewards address that is associated to this node.
-	// Reward address can be set through the config file,
-	// and if it is not set, it will be the same as validator address
-	RewardAddress() crypto.Address
-
-	// ValidatorAddress return the validator address that is associated to this node
-	// Validator address is different from the reward address.
-	ValidatorAddress() crypto.Address
 	Close() error
 	Fingerprint() string
 }

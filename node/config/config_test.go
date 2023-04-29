@@ -11,14 +11,12 @@ import (
 
 func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	rewardAddr := crypto.GenerateTestAddress()
-	assert.NoError(t, SaveMainnetConfig(path, rewardAddr.String()))
+	assert.NoError(t, SaveMainnetConfig(path))
 
 	conf, err := LoadFromFile(path)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.SanityCheck())
-	assert.Equal(t, conf.State.RewardAddress, rewardAddr.String())
 	assert.Equal(t, conf.Network.Name, "pactus")
 }
 
@@ -31,7 +29,6 @@ func TestSaveTestnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.SanityCheck())
-	assert.Equal(t, conf.State.RewardAddress, rewardAddr.String())
 	assert.Equal(t, conf.Network.Name, "pactus-testnet")
 }
 
@@ -44,7 +41,6 @@ func TestSaveLocalnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.SanityCheck())
-	assert.Equal(t, conf.State.RewardAddress, rewardAddr.String())
 	assert.Equal(t, conf.Network.Name, "pactus-localnet")
 }
 

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
 )
@@ -20,7 +19,7 @@ type Peer struct {
 	Moniker         string
 	Agent           string
 	PeerID          peer.ID
-	PublicKey       bls.PublicKey
+	ConsensusKeys   map[bls.PublicKey]bool
 	Flags           int
 	LastSeen        time.Time
 	Height          uint32
@@ -31,8 +30,9 @@ type Peer struct {
 
 func NewPeer(peerID peer.ID) *Peer {
 	return &Peer{
-		Status: StatusCodeUnknown,
-		PeerID: peerID,
+		ConsensusKeys: make(map[bls.PublicKey]bool),
+		Status:        StatusCodeUnknown,
+		PeerID:        peerID,
 	}
 }
 
@@ -42,10 +42,6 @@ func (p *Peer) IsKnownOrTrusty() bool {
 
 func (p *Peer) IsBanned() bool {
 	return p.Status == StatusCodeBanned
-}
-
-func (p *Peer) Address() crypto.Address {
-	return p.PublicKey.Address()
 }
 
 func (p *Peer) SetNodeNetworkFlag(nodeNetwork bool) {

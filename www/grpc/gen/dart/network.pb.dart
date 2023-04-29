@@ -178,7 +178,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
     ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'keys')
     ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flags', $pb.PbFieldType.O3)
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
@@ -194,7 +194,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.String? moniker,
     $core.String? agent,
     $core.List<$core.int>? peerId,
-    $core.String? publicKey,
+    $core.Iterable<$core.String>? keys,
     $core.int? flags,
     $core.int? height,
     $core.int? receivedMessages,
@@ -213,8 +213,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (peerId != null) {
       _result.peerId = peerId;
     }
-    if (publicKey != null) {
-      _result.publicKey = publicKey;
+    if (keys != null) {
+      _result.keys.addAll(keys);
     }
     if (flags != null) {
       _result.flags = flags;
@@ -288,13 +288,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearPeerId() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get publicKey => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set publicKey($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasPublicKey() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearPublicKey() => clearField(4);
+  $core.List<$core.String> get keys => $_getList(3);
 
   @$pb.TagNumber(5)
   $core.int get flags => $_getIZ(4);

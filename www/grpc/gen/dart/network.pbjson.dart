@@ -50,7 +50,7 @@ const PeerInfo$json = const {
     const {'1': 'moniker', '3': 1, '4': 1, '5': 9, '10': 'moniker'},
     const {'1': 'agent', '3': 2, '4': 1, '5': 9, '10': 'agent'},
     const {'1': 'peer_id', '3': 3, '4': 1, '5': 12, '10': 'peerId'},
-    const {'1': 'public_key', '3': 4, '4': 1, '5': 9, '10': 'publicKey'},
+    const {'1': 'keys', '3': 4, '4': 3, '5': 9, '10': 'keys'},
     const {'1': 'flags', '3': 5, '4': 1, '5': 5, '10': 'flags'},
     const {'1': 'height', '3': 6, '4': 1, '5': 13, '10': 'height'},
     const {'1': 'received_messages', '3': 7, '4': 1, '5': 5, '10': 'receivedMessages'},
@@ -62,7 +62,7 @@ const PeerInfo$json = const {
 };
 
 /// Descriptor for `PeerInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSHQoKcHVibGljX2tleRgEIAEoCVIJcHVibGljS2V5EhQKBWZsYWdzGAUgASgFUgVmbGFncxIWCgZoZWlnaHQYBiABKA1SBmhlaWdodBIrChFyZWNlaXZlZF9tZXNzYWdlcxgHIAEoBVIQcmVjZWl2ZWRNZXNzYWdlcxIpChBpbnZhbGlkX21lc3NhZ2VzGAggASgFUg9pbnZhbGlkTWVzc2FnZXMSJQoOcmVjZWl2ZWRfYnl0ZXMYCSABKAVSDXJlY2VpdmVkQnl0ZXMSFgoGc3RhdHVzGAogASgFUgZzdGF0dXMSGwoJbGFzdF9zZWVuGAsgASgDUghsYXN0U2Vlbg==');
+final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSEgoEa2V5cxgEIAMoCVIEa2V5cxIUCgVmbGFncxgFIAEoBVIFZmxhZ3MSFgoGaGVpZ2h0GAYgASgNUgZoZWlnaHQSKwoRcmVjZWl2ZWRfbWVzc2FnZXMYByABKAVSEHJlY2VpdmVkTWVzc2FnZXMSKQoQaW52YWxpZF9tZXNzYWdlcxgIIAEoBVIPaW52YWxpZE1lc3NhZ2VzEiUKDnJlY2VpdmVkX2J5dGVzGAkgASgFUg1yZWNlaXZlZEJ5dGVzEhYKBnN0YXR1cxgKIAEoBVIGc3RhdHVzEhsKCWxhc3Rfc2VlbhgLIAEoA1IIbGFzdFNlZW4=');
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [

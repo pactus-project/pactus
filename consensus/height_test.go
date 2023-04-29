@@ -3,6 +3,9 @@ package consensus
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
 )
@@ -30,6 +33,20 @@ func TestNewHeightDuplicateEntry(t *testing.T) {
 	tConsX.MoveToNewHeight()
 
 	checkHeightRoundWait(t, tConsX, 1, 0)
+	assert.True(t, tConsX.active)
+	assert.NotEqual(t, tConsX.currentState.name(), "new-height")
+}
+
+func TestNewHeightEntryNonActive(t *testing.T) {
+	signer := bls.GenerateTestSigner()
+	Cons := NewConsensus(testConfig(), state.MockingState(), signer, signer.Address(), make(chan message.Message, 100), newMediator())
+	cons := Cons.(*consensus)
+
+	cons.MoveToNewHeight()
+	checkHeightRoundWait(t, cons, 1, 0)
+
+	assert.False(t, cons.IsActive())
+	assert.Equal(t, cons.currentState.name(), "new-height")
 }
 
 func TestUpdateCertificate(t *testing.T) {

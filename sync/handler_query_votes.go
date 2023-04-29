@@ -21,12 +21,12 @@ func (handler *queryVotesHandler) ParsMessage(m message.Message, initiator peer.
 	msg := m.(*message.QueryVotesMessage)
 	handler.logger.Trace("parsing QueryVotes message", "message", msg)
 
-	height, _ := handler.consensus.HeightRound()
+	height, _ := handler.consMgr.HeightRound()
 	if msg.Height == height {
 		if !handler.peerIsInTheCommittee(initiator) {
 			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the committee")
 		}
-		v := handler.consensus.PickRandomVote()
+		v := handler.consMgr.PickRandomVote()
 		if v != nil {
 			response := message.NewVoteMessage(v)
 			handler.broadcast(response)

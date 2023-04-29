@@ -21,21 +21,20 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
-// IMPORTANT NOTES
+// IMPORTANT NOTES:
 //
-// Sync module is based on pulling, not pushing. It means,
-// network doesn't update a node (push),
-// a node itself should update itself (pull).
+// 1. The Sync module is based on pulling instead of pushing. This means that the network
+// does not update a node (push); instead, a node should update itself (pull).
 //
-// Synchronizer should not have any locks to prevent dead lock situations.
-// All submodules like state or consensus should be thread safe.
+// 2. The Synchronizer should not have any locks to prevent deadlocks. All submodules,
+// such as state or consensus, should be thread-safe.
 
 type synchronizer struct {
 	ctx             context.Context
 	config          *Config
-	signer          crypto.Signer
+	signers         []crypto.Signer
 	state           state.Facade
-	consensus       consensus.Consensus
+	consMgr         consensus.Manager
 	peerSet         *peerset.PeerSet
 	firewall        *firewall.Firewall
 	cache           *cache.Cache
@@ -49,17 +48,17 @@ type synchronizer struct {
 
 func NewSynchronizer(
 	conf *Config,
-	signer crypto.Signer,
+	signers []crypto.Signer,
 	state state.Facade,
-	consensus consensus.Consensus,
+	consMgr consensus.Manager,
 	net network.Network,
 	broadcastCh <-chan message.Message) (Synchronizer, error) {
 	sync := &synchronizer{
 		ctx:         context.Background(), // TODO, set proper context
 		config:      conf,
-		signer:      signer,
+		signers:     signers,
 		state:       state,
-		consensus:   consensus,
+		consMgr:     consMgr,
 		network:     net,
 		broadcastCh: broadcastCh,
 		networkCh:   net.EventChannel(),
@@ -128,9 +127,7 @@ func (sync *synchronizer) Stop() {
 }
 
 func (sync *synchronizer) moveConsensusToNewHeight() {
-	if sync.state.IsValidator(sync.signer.Address()) {
-		sync.consensus.MoveToNewHeight()
-	}
+	sync.consMgr.MoveToNewHeight()
 }
 
 func (sync *synchronizer) heartBeatTickerLoop() {
@@ -145,16 +142,16 @@ func (sync *synchronizer) heartBeatTickerLoop() {
 }
 
 func (sync *synchronizer) broadcastHeartBeat() {
-	// Broadcast a random vote if the validator is an active validator
+	// Broadcast a random vote if we are inside the committee
 	if sync.weAreInTheCommittee() {
-		v := sync.consensus.PickRandomVote()
+		v := sync.consMgr.PickRandomVote()
 		if v != nil {
 			msg := message.NewVoteMessage(v)
 			sync.broadcast(msg)
 		}
 	}
 
-	height, round := sync.consensus.HeightRound()
+	height, round := sync.consMgr.HeightRound()
 	if height > 0 {
 		msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
 		sync.broadcast(msg)
@@ -174,9 +171,11 @@ func (sync *synchronizer) sayHello(helloAck bool) {
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
 		flags, sync.state.GenesisHash())
-	sync.signer.SignMsg(msg)
 
-	sync.broadcast(msg)
+	for _, signer := range sync.signers {
+		signer.SignMsg(msg)
+		sync.broadcast(msg)
+	}
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -279,11 +278,6 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 	}
 	bdl := h.PrepareBundle(msg)
 	if bdl != nil {
-		if err := bdl.SanityCheck(); err != nil {
-			sync.logger.Error("broadcasting an invalid bundle", "bundle", bdl, "err", err)
-			return nil
-		}
-
 		// Bundles will be carried through LibP2P.
 		// In future we might support other libraries.
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
@@ -317,6 +311,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
+
 		data, _ := bdl.Encode()
 		err := sync.network.Broadcast(data, msg.Type().TopicID())
 		if err != nil {
@@ -333,10 +328,6 @@ func (sync *synchronizer) SelfID() peer.ID {
 
 func (sync *synchronizer) Moniker() string {
 	return sync.config.Moniker
-}
-
-func (sync *synchronizer) PublicKey() crypto.PublicKey {
-	return sync.signer.PublicKey()
 }
 
 func (sync *synchronizer) Peers() []peerset.Peer {
@@ -409,13 +400,19 @@ func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
 		return false
 	}
 
-	return sync.state.IsInCommittee(p.Address())
+	for key := range p.ConsensusKeys {
+		if sync.state.IsInCommittee(key.Address()) {
+			return true
+		}
+	}
+
+	return false
 }
 
-// weAreInTheCommittee checks if we are a member of the committee
+// weAreInTheCommittee checks if one of the validators is a member of the committee
 // at the current height.
 func (sync *synchronizer) weAreInTheCommittee() bool {
-	return sync.state.IsInCommittee(sync.signer.PublicKey().Address())
+	return sync.consMgr.HasActiveInstance()
 }
 
 func (sync *synchronizer) tryCommitBlocks() {

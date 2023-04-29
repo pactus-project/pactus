@@ -12,10 +12,10 @@ import (
 func TestParsingQueryProposalMessages(t *testing.T) {
 	setup(t)
 
-	consensusHeight := tState.LastBlockHeight() + 1
+	consensusHeight, _ := tConsMgr.HeightRound()
 	prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
 	pid := network.TestRandomPeerID()
-	tConsensus.SetProposal(prop)
+	tConsMgr.SetProposal(prop)
 
 	t.Run("Not in the committee, should not respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 0)
@@ -59,7 +59,7 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
 	})
 
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[0].PublicKey())
 
 	t.Run("In the committee, should send query proposal message", func(t *testing.T) {
 		tSync.broadcast(msg)

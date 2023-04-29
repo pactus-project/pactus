@@ -29,7 +29,7 @@ type Node struct {
 	state      state.Facade
 	store      store.Store
 	txPool     txpool.TxPool
-	consensus  consensus.Consensus
+	consMgr    consensus.Manager
 	network    network.Network
 	sync       sync.Synchronizer
 	http       *http.Server
@@ -37,19 +37,12 @@ type Node struct {
 	nanomsg    *nanomsg.Server
 }
 
-func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer) (*Node, error) {
+func NewNode(genDoc *genesis.Genesis, conf *config.Config, signers []crypto.Signer, rewardAddrs []crypto.Address) (*Node, error) {
 	// Initialize the logger
 	logger.InitLogger(conf.Logger)
 
-	validatorAddr := signer.Address().String()
-	rewardAddr := conf.State.RewardAddress
-	if rewardAddr == "" {
-		rewardAddr = validatorAddr
-	}
 	logger.Info("You are running a pactus block chain",
-		"version", version.Version(),
-		"Validator address", validatorAddr,
-		"Reward address", rewardAddr)
+		"version", version.Version())
 
 	network, err := network.NewNetwork(conf.Network)
 	if err != nil {
@@ -68,20 +61,20 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(conf.State, genDoc, signer, store, txPool, eventCh)
+	state, err := state.LoadOrNewState(genDoc, signers, store, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}
 
-	consensus := consensus.NewConsensus(conf.Consensus, state, signer, messageCh)
+	consMgr := consensus.NewManager(conf.Consensus, state, signers, rewardAddrs, messageCh)
 
-	sync, err := sync.NewSynchronizer(conf.Sync, signer, state, consensus, network, messageCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, signers, state, consMgr, network, messageCh)
 	if err != nil {
 		return nil, err
 	}
 
 	http := http.NewServer(conf.HTTP)
-	grpc := grpc.NewServer(conf.GRPC, state, sync, consensus)
+	grpc := grpc.NewServer(conf.GRPC, state, sync, consMgr)
 	nanomsg := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
@@ -90,7 +83,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config, signer crypto.Signer)
 		network:    network,
 		state:      state,
 		txPool:     txPool,
-		consensus:  consensus,
+		consMgr:    consMgr,
 		sync:       sync,
 		store:      store,
 		http:       http,
@@ -116,7 +109,7 @@ func (n *Node) Start() error {
 	// Wait for network to started
 	time.Sleep(1 * time.Second)
 
-	if err := n.consensus.Start(); err != nil {
+	if err := n.consMgr.Start(); err != nil {
 		return err
 	}
 
@@ -145,7 +138,7 @@ func (n *Node) Start() error {
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
 
-	n.consensus.Stop()
+	n.consMgr.Stop()
 	n.network.Stop()
 	n.sync.Stop()
 	n.state.Close()
@@ -153,14 +146,4 @@ func (n *Node) Stop() {
 	n.http.StopServer()
 	n.grpc.StopServer()
 	n.nanomsg.StopServer()
-}
-
-func (n *Node) Consensus() consensus.Reader {
-	return n.consensus
-}
-func (n *Node) Sync() sync.Synchronizer {
-	return n.sync
-}
-func (n *Node) State() state.Facade {
-	return n.state
 }

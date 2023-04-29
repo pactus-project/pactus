@@ -24,10 +24,12 @@ type consensus struct {
 	config              *Config
 	log                 *log.Log
 	signer              crypto.Signer
+	rewardAddr          crypto.Address
 	state               state.Facade
 	height              uint32
 	round               int16
-	newHeightState      consState
+	active              bool
+	newHeightState      consState // TODO: rename consState to consPhase to prevent confusion with the blockchain state
 	proposeState        consState
 	prepareState        consState
 	precommitState      consState
@@ -35,6 +37,7 @@ type consensus struct {
 	currentState        consState
 	changeProposerState consState
 	broadcastCh         chan message.Message
+	mediator            mediator
 	logger              *logger.Logger
 }
 
@@ -42,7 +45,9 @@ func NewConsensus(
 	conf *Config,
 	state state.Facade,
 	signer crypto.Signer,
-	broadcastCh chan message.Message) Consensus {
+	rewardAddr crypto.Address,
+	broadcastCh chan message.Message,
+	mediator mediator) Consensus {
 	cs := &consensus{
 		config:      conf,
 		state:       state,
@@ -53,6 +58,7 @@ func NewConsensus(
 	// Update height later, See enterNewHeight.
 	cs.log = log.NewLog()
 	cs.logger = logger.NewLogger("_consensus", cs)
+	cs.rewardAddr = rewardAddr
 
 	cs.newHeightState = &newHeightState{cs}
 	cs.proposeState = &proposeState{cs}
@@ -63,19 +69,25 @@ func NewConsensus(
 
 	cs.height = 0
 	cs.round = 0
+	cs.active = false
+	cs.mediator = mediator
+
+	mediator.Register(cs)
 
 	return cs
 }
 
-func (cs *consensus) Start() error {
-	return nil
-}
-
-func (cs *consensus) Stop() {
-}
-
 func (cs *consensus) Fingerprint() string {
-	return fmt.Sprintf("{%d/%d/%s}", cs.height, cs.round, cs.currentState.name())
+	return fmt.Sprintf("{%s %d/%d/%s}",
+		cs.signer.Address().Fingerprint(),
+		cs.height, cs.round, cs.currentState.name())
+}
+
+func (cs *consensus) SignerKey() crypto.PublicKey {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.signer.PublicKey()
 }
 
 func (cs *consensus) HeightRound() (uint32, int16) {
@@ -103,23 +115,6 @@ func (cs *consensus) AllVotes() []*vote.Vote {
 	}
 	return votes
 }
-func (cs *consensus) RoundVotes(round int16) []*vote.Vote {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	rm := cs.log.RoundMessages(round)
-	if rm != nil {
-		return rm.AllVotes()
-	}
-	return nil
-}
-
-func (cs *consensus) HasVote(hash hash.Hash) bool {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	return cs.log.HasVote(hash)
-}
 
 func (cs *consensus) enterNewState(s consState) {
 	cs.currentState = s
@@ -130,6 +125,7 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
+	// Move the consensus to a new height only if it is behind the state height.
 	if cs.state.LastBlockHeight()+1 > cs.height {
 		if cs.currentState != cs.newHeightState {
 			cs.enterNewState(cs.newHeightState)
@@ -151,6 +147,11 @@ func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, roun
 func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
+
+	if !cs.active {
+		cs.logger.Trace("we are not in the committee")
+		return
+	}
 
 	if p.Height() != cs.height {
 		cs.logger.Trace("invalid height", "proposal", p)
@@ -193,7 +194,7 @@ func (cs *consensus) handleTimeout(t *ticker) {
 
 	cs.logger.Trace("handle ticker", "ticker", t)
 
-	// Old tickers might trigged now. Ignore them
+	// Old tickers might be triggered now. Ignore them.
 	if cs.height != t.Height || cs.round != t.Round {
 		cs.logger.Trace("stale ticker", "ticker", t)
 		return
@@ -205,6 +206,11 @@ func (cs *consensus) handleTimeout(t *ticker) {
 func (cs *consensus) AddVote(v *vote.Vote) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
+
+	if !cs.active {
+		cs.logger.Trace("we are not in the committee")
+		return
+	}
 
 	if v.Height() != cs.height {
 		cs.logger.Trace("vote has invalid height", "vote", v)
@@ -253,25 +259,44 @@ func (cs *consensus) signAddVote(msgType vote.Type, hash hash.Hash) {
 }
 
 func (cs *consensus) queryProposal() {
-	cs.broadcastCh <- message.NewQueryProposalMessage(cs.height, cs.round)
+	cs.broadcast(message.NewQueryProposalMessage(cs.height, cs.round))
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
-	cs.broadcastCh <- message.NewProposalMessage(p)
+	go cs.mediator.OnPublishProposal(cs, p)
+	cs.broadcast(message.NewProposalMessage(p))
 }
 
 func (cs *consensus) broadcastVote(v *vote.Vote) {
-	cs.broadcastCh <- message.NewVoteMessage(v)
+	go cs.mediator.OnPublishVote(cs, v)
+	cs.broadcast(message.NewVoteMessage(v))
 }
 
 func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *block.Certificate) {
-	cs.broadcastCh <- message.NewBlockAnnounceMessage(h, b, c)
+	cs.broadcast(message.NewBlockAnnounceMessage(h, b, c))
+}
+
+func (cs *consensus) broadcast(msg message.Message) {
+	if !cs.active {
+		cs.logger.Warn("non-active validators should not publish messages")
+		panic("should not happens")
+	}
+
+	cs.broadcastCh <- msg
+}
+
+// IsActive checks if the consensus is in an active state and participating in the consensus algorithm.
+func (cs *consensus) IsActive() bool {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.active
 }
 
 // TODO: Improve the performance?
 func (cs *consensus) PickRandomVote() *vote.Vote {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
 
 	rndRound := util.RandInt16(cs.round + 1)
 	votes := []*vote.Vote{}
