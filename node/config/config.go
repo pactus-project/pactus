@@ -3,7 +3,9 @@ package config
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/network"
@@ -22,41 +24,46 @@ import (
 var exampleConfigBytes []byte
 
 type Config struct {
-	Store     *store.Config     `toml:"store"`
-	Network   *network.Config   `toml:"network"`
-	Sync      *sync.Config      `toml:"sync"`
-	TxPool    *txpool.Config    `toml:"tx_pool"`
-	Consensus *consensus.Config `toml:"consensus"`
-	Logger    *logger.Config    `toml:"logger"`
-	GRPC      *grpc.Config      `toml:"grpc"`
-	HTTP      *http.Config      `toml:"http"`
-	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
+	NumValidators int               `toml:"num_validators"`
+	Store         *store.Config     `toml:"store"`
+	Network       *network.Config   `toml:"network"`
+	Sync          *sync.Config      `toml:"sync"`
+	TxPool        *txpool.Config    `toml:"tx_pool"`
+	Consensus     *consensus.Config `toml:"consensus"`
+	Logger        *logger.Config    `toml:"logger"`
+	GRPC          *grpc.Config      `toml:"grpc"`
+	HTTP          *http.Config      `toml:"http"`
+	Nanomsg       *nanomsg.Config   `toml:"nanomsg"`
 }
 
 func DefaultConfig() *Config {
 	conf := &Config{
-		Store:     store.DefaultConfig(),
-		Network:   network.DefaultConfig(),
-		Sync:      sync.DefaultConfig(),
-		TxPool:    txpool.DefaultConfig(),
-		Consensus: consensus.DefaultConfig(),
-		Logger:    logger.DefaultConfig(),
-		GRPC:      grpc.DefaultConfig(),
-		HTTP:      http.DefaultConfig(),
-		Nanomsg:   nanomsg.DefaultConfig(),
+		NumValidators: 7,
+		Store:         store.DefaultConfig(),
+		Network:       network.DefaultConfig(),
+		Sync:          sync.DefaultConfig(),
+		TxPool:        txpool.DefaultConfig(),
+		Consensus:     consensus.DefaultConfig(),
+		Logger:        logger.DefaultConfig(),
+		GRPC:          grpc.DefaultConfig(),
+		HTTP:          http.DefaultConfig(),
+		Nanomsg:       nanomsg.DefaultConfig(),
 	}
 
 	return conf
 }
 
-func SaveMainnetConfig(path string) error {
-	exampleConfig := string(exampleConfigBytes)
+func SaveMainnetConfig(path string, numValidators int) error {
+	conf := string(exampleConfigBytes)
+	conf = strings.Replace(conf, "%num_validators%",
+		fmt.Sprintf("%v", numValidators), 1)
 
-	return util.WriteFile(path, []byte(exampleConfig))
+	return util.WriteFile(path, []byte(conf))
 }
 
-func SaveTestnetConfig(path, rewardAddr string) error {
+func SaveTestnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
+	conf.NumValidators = numValidators
 	conf.Network.Name = "pactus-testnet"
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}
 	conf.Network.Bootstrap.Addresses = []string{
@@ -76,8 +83,9 @@ func SaveTestnetConfig(path, rewardAddr string) error {
 	return util.WriteFile(path, conf.toTOML())
 }
 
-func SaveLocalnetConfig(path, rewardAddr string) error {
+func SaveLocalnetConfig(path string) error {
 	conf := DefaultConfig()
+	conf.NumValidators = 1
 	conf.Network.Name = "pactus-localnet"
 	conf.Network.Listens = []string{}
 	conf.Network.Bootstrap.Addresses = []string{}

@@ -106,7 +106,8 @@ func TestMain(m *testing.M) {
 	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
 
 	for i := 0; i < tCommitteeSize; i++ {
-		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
+		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i],
+			[]crypto.Signer{tSigners[i]}, []crypto.Address{tSigners[i].Address()})
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))
 		}
@@ -136,7 +137,8 @@ func TestMain(m *testing.M) {
 
 	// Running other nodes
 	for i := tCommitteeSize; i < tTotalNodes; i++ {
-		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
+		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i],
+			[]crypto.Signer{tSigners[i]}, []crypto.Address{tSigners[i].Address()})
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))
 		}

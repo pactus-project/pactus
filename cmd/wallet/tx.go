@@ -31,8 +31,7 @@ func SendTx() func(c *cli.Cmd) {
 		c.Action = func() {
 			w, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			opts := []wallet.TxOption{
@@ -45,8 +44,7 @@ func SendTx() func(c *cli.Cmd) {
 			trx, err := w.MakeSendTx(*fromArg, *toArg, util.CoinToChange(*amtArg),
 				opts...)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -90,8 +88,7 @@ func BondTx() func(c *cli.Cmd) {
 		c.Action = func() {
 			w, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			opts := []wallet.TxOption{
@@ -104,8 +101,7 @@ func BondTx() func(c *cli.Cmd) {
 			trx, err := w.MakeBondTx(*fromArg, *toArg, *pubKeyOpt,
 				util.CoinToChange(*amtArg), opts...)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -133,8 +129,7 @@ func UnbondTx() func(c *cli.Cmd) {
 		c.Action = func() {
 			w, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			opts := []wallet.TxOption{
@@ -146,8 +141,7 @@ func UnbondTx() func(c *cli.Cmd) {
 
 			trx, err := w.MakeUnbondTx(*fromArg, opts...)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -183,8 +177,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 		c.Action = func() {
 			w, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			opts := []wallet.TxOption{
@@ -197,8 +190,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 			trx, err := w.MakeWithdrawTx(*fromArg, *toArg,
 				util.CoinToChange(*amtArg), opts...)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -248,8 +240,7 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 	password := getPassword(w, pass)
 	err := w.SignTransaction(password, trx)
 	if err != nil {
-		cmd.PrintDangerMsg(err.Error())
-		return
+		cmd.PrintDangerMsgAndExit(err.Error())
 	}
 
 	bs, _ := trx.Bytes()
@@ -267,14 +258,12 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 		}
 		res, err := w.BroadcastTransaction(trx)
 		if err != nil {
-			cmd.PrintDangerMsg(err.Error())
-			return
+			cmd.PrintDangerMsgAndExit(err.Error())
 		}
 
 		err = w.Save()
 		if err != nil {
-			cmd.PrintDangerMsg(err.Error())
-			return
+			cmd.PrintDangerMsgAndExit(err.Error())
 		}
 
 		cmd.PrintInfoMsg("Transaction hash: %s", res)

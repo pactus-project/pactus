@@ -16,8 +16,10 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	tm := newTableMaker()
-	for _, cons := range res.Instances {
-		tm.addRowInt("Active", int(cons.Height))
+	for i, cons := range res.Instances {
+		tm.addRowInt("== Validator", i+1)
+		tm.addRowValAddress("Address", cons.Address)
+		tm.addRowBool("Active", cons.Active)
 		tm.addRowInt("Height", int(cons.Height))
 		tm.addRowInt("Round", int(cons.Round))
 		tm.addRowString("Votes", "---")

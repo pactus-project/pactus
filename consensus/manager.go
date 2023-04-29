@@ -24,7 +24,6 @@ func NewManager(
 	signers []crypto.Signer,
 	rewardAddrs []crypto.Address,
 	broadcastCh chan message.Message) Manager {
-
 	mediator := newMediator()
 	instances := make([]Consensus, len(signers))
 	for i, signer := range signers {

@@ -32,14 +32,12 @@ func Generate() func(c *cli.Cmd) {
 			}
 			wallet, err := wallet.Create(*pathOpt, mnemonic, password, network)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			err = wallet.Save()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -59,8 +57,7 @@ func ChangePassword() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			oldPassword := getPassword(wallet, *passOpt)
@@ -68,14 +65,12 @@ func ChangePassword() func(c *cli.Cmd) {
 
 			err = wallet.UpdatePassword(oldPassword, newPassword)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			err = wallet.Save()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()

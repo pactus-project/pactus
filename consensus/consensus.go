@@ -127,9 +127,7 @@ func (cs *consensus) MoveToNewHeight() {
 
 	// Move the consensus to a new height only if it is behind the state height.
 	if cs.state.LastBlockHeight()+1 > cs.height {
-		if cs.currentState != cs.newHeightState {
-			cs.enterNewState(cs.newHeightState)
-		}
+		cs.enterNewState(cs.newHeightState)
 	}
 }
 

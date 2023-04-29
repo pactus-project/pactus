@@ -179,6 +179,9 @@ func (t *tableMaker) addRowAmount(key string, val int64) {
 func (t *tableMaker) addRowInt(key string, val int) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d</td></tr>", key, val))
 }
+func (t *tableMaker) addRowBool(key string, val bool) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%v</td></tr>", key, val))
+}
 func (t *tableMaker) addRowInts(key string, vals []int32) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>", key))
 	for _, n := range vals {

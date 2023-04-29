@@ -49,7 +49,6 @@ func LoadOrNewState(
 	signers []crypto.Signer,
 	store store.Store,
 	txPool txpool.TxPool, eventCh chan event.Event) (Facade, error) {
-
 	st := &state{
 		signers:         signers,
 		genDoc:          genDoc,
@@ -446,17 +445,17 @@ func (st *state) evaluateSortition() bool {
 		val, _ := st.store.Validator(signer.Address())
 		if val == nil {
 			// We are not a validator
-			return false
+			continue
 		}
 
 		if st.lastInfo.BlockHeight()-val.LastBondingHeight() < st.params.BondInterval {
 			// Bonding period
-			return false
+			continue
 		}
 
 		if val.UnbondingHeight() > 0 {
 			// we have Unbonded
-			return false
+			continue
 		}
 
 		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, st.totalPower(), val.Power())

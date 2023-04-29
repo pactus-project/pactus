@@ -6,17 +6,14 @@ import (
 	_ "net/http/pprof" // #nosec
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/node/config"
 	"github.com/pactus-project/pactus/types/genesis"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -27,14 +24,6 @@ func Start() func(c *cli.Cmd) {
 			Name:  "w working-dir",
 			Desc:  "Working directory to read node configuration and genesis files",
 			Value: ".",
-		})
-		privateKeyOpt := c.String(cli.StringOpt{
-			Name: "p private-key",
-			Desc: "Validator's private key",
-		})
-		keyFileOpt := c.String(cli.StringOpt{
-			Name: "k key-file",
-			Desc: "Path to the key file contains validator's private key",
 		})
 		pprofOpt := c.String(cli.StringOpt{
 			Name: "pprof",
@@ -95,15 +84,47 @@ func Start() func(c *cli.Cmd) {
 				return
 			}
 
-			signer, err := makeSigner(workingDir, keyFileOpt, privateKeyOpt)
+			walletPath := cmd.PactusDefaultWalletPath(workingDir)
+			wallet, err := wallet.OpenWallet(walletPath, true)
 			if err != nil {
 				cmd.PrintErrorMsg("Aborted! %v", err)
 				return
 			}
+			addrInfos := wallet.AddressLabels()
+			if len(addrInfos) == 0 {
+				cmd.PrintErrorMsg("Aborted! %v", err)
+				return
+			}
+			password := ""
+			if wallet.IsEncrypted() {
+				password = cmd.PromptPassword("Wallet password", false)
+			}
+
+			signers := make([]crypto.Signer, conf.NumValidators)
+			rewardAddrs := make([]crypto.Address, conf.NumValidators)
+			for i := 0; i < conf.NumValidators; i++ {
+				prvKey, err := wallet.PrivateKey(password, addrInfos[i*2].Address)
+				if err != nil {
+					cmd.PrintErrorMsg("Aborted! %v", err)
+					return
+				}
+
+				addr, err := crypto.AddressFromString(addrInfos[(i*2)+1].Address)
+				if err != nil {
+					cmd.PrintErrorMsg("Aborted! %v", err)
+					return
+				}
+
+				signers[i] = crypto.NewSigner(prvKey)
+				rewardAddrs[i] = addr
+
+				cmd.PrintInfoMsg("Validator address %v: %s", i+1, addrInfos[i*2].Address)
+				cmd.PrintInfoMsg("Reward    address %v: %s", i+1, addrInfos[(i*2)+1].Address)
+			}
 
 			cmd.PrintLine()
 
-			node, err := node.NewNode(gen, conf, signer)
+			node, err := node.NewNode(gen, conf, signers, rewardAddrs)
 			if err != nil {
 				cmd.PrintErrorMsg("Could not initialize node. %v", err)
 				return
@@ -123,75 +144,4 @@ func Start() func(c *cli.Cmd) {
 			select {}
 		}
 	}
-}
-
-// makeSigner makes a signer object from the validator private key.
-// Private key obtains in this order:
-// 1- From key file option (--key-file <path>)
-// 2- From private key option (--private-key <secret>)
-// 3- From 'validator_key' file insied the working directory
-// 4- From the first address of the default_wallet
-// If none of them, it asks user to enter the private key.
-func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Signer, error) {
-	prvStr := ""
-	switch {
-	case *keyFileOpt == "" && *privateKeyOpt == "":
-		keyPath := workingDir + "/validator_key"
-		walletPath := cmd.PactusDefaultWalletPath(workingDir)
-		if util.PathExists(keyPath) {
-			data, err := util.ReadFile(keyPath)
-			if err != nil {
-				return nil, err
-			}
-			prvStr = strings.TrimSpace(string(data))
-		} else if util.PathExists(walletPath) {
-			valKeyWallet, err := getValidatorKeyFromWallet(walletPath)
-			if err != nil {
-				return nil, err
-			}
-			prvStr = valKeyWallet
-		} else {
-			// Creating KeyObject from Private Key
-			prvStr = cmd.PromptInput("Please enter the validator private key")
-		}
-
-	case *keyFileOpt != "":
-		// Creating KeyObject from keystore
-		data, err := util.ReadFile(*keyFileOpt)
-		if err != nil {
-			return nil, err
-		}
-		prvStr = strings.TrimSpace(string(data))
-
-	case *privateKeyOpt != "":
-		prvStr = *privateKeyOpt
-	}
-
-	prv, err := bls.PrivateKeyFromString(prvStr)
-	if err != nil {
-		return nil, err
-	}
-
-	return crypto.NewSigner(prv), nil
-}
-
-func getValidatorKeyFromWallet(walletPath string) (string, error) {
-	wallet, err := wallet.OpenWallet(walletPath, true)
-	if err != nil {
-		return "", err
-	}
-	addrInfos := wallet.AddressLabels()
-	if len(addrInfos) == 0 {
-		return "", fmt.Errorf("validator address is not defined")
-	}
-	password := ""
-	if wallet.IsEncrypted() {
-		password = cmd.PromptPassword("Wallet password", false)
-	}
-	prvKey, err := wallet.PrivateKey(password, addrInfos[0].Address)
-	if err != nil {
-		return "", err
-	}
-
-	return prvKey.String(), nil
 }

@@ -81,7 +81,7 @@ func PromptConfirm(label string) bool {
 	return false
 }
 
-// Promptlabel prompts for an input string.
+// PromptInput prompts for an input string.
 func PromptInput(label string) string {
 	prompt := promptui.Prompt{
 		Label: label,
@@ -94,7 +94,7 @@ func PromptInput(label string) string {
 	return result
 }
 
-// Promptlabel prompts for an input string with a suggestion.
+// PromptInputWithSuggestion prompts for an input string with a suggestion.
 func PromptInputWithSuggestion(label, suggestion string) string {
 	prompt := promptui.Prompt{
 		Label:   label,
@@ -102,44 +102,52 @@ func PromptInputWithSuggestion(label, suggestion string) string {
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		PrintErrorMsg("prompt error: %v", err)
-		os.Exit(1)
+		PrintDangerMsgAndExit("prompt error: %v", err)
 	}
 	return result
 }
 
-func PrintDangerMsg(format string, a ...interface{}) {
+func PrintDangerMsgAndExit(format string, a ...interface{}) {
 	if terminalSupported() {
-		format = fmt.Sprintf("\033[31m%s\033[0m\n", format)
+		format = fmt.Sprintf("\033[31m%s\033[0m", format)
 	}
-	fmt.Printf(format, a...)
+	fmt.Printf(format+"\n", a...)
+	os.Exit(1)
 }
 
 func PrintErrorMsg(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print error msg with red color
-		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m\n", format)
+		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m", format)
 	}
-	fmt.Printf(format, a...)
+	fmt.Printf(format+"\n", a...)
 }
 
 func PrintSuccessMsg(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print successful msg with green color
-		format = fmt.Sprintf("\033[32m%s\033[0m\n", format)
+		format = fmt.Sprintf("\033[32m%s\033[0m", format)
 	}
-	fmt.Printf(format, a...)
+	fmt.Printf(format+"\n", a...)
 }
 
 func PrintWarnMsg(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print warning msg with yellow color
-		format = fmt.Sprintf("\033[33m%s\033[0m\n", format)
+		format = fmt.Sprintf("\033[33m%s\033[0m", format)
 	}
-	fmt.Printf(format, a...)
+	fmt.Printf(format+"\n", a...)
 }
 
 func PrintInfoMsg(format string, a ...interface{}) {
+	fmt.Printf(format+"\n", a...)
+}
+
+func PrintInfoMsgBold(format string, a ...interface{}) {
+	if terminalSupported() {
+		// Print warning msg with yellow color
+		format = fmt.Sprintf("\033[1m%s\033[0m", format)
+	}
 	fmt.Printf(format+"\n", a...)
 }
 

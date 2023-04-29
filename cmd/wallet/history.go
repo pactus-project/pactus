@@ -19,23 +19,19 @@ func AddToHistory() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 			id, err := hash.FromString(*txID)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 			err = wallet.AddTransaction(id)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 			err = wallet.Save()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 			cmd.PrintInfoMsg("Transaction added to wallet")
 		}
@@ -50,8 +46,7 @@ func ShowHistory() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			history := wallet.GetHistory(*addrArg)

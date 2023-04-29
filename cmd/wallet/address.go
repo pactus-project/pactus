@@ -28,8 +28,7 @@ func AllAddresses() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -65,20 +64,17 @@ func NewAddress() func(c *cli.Cmd) {
 			label := cmd.PromptInput("Label")
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			addr, err := wallet.DeriveNewAddress(label)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			err = wallet.Save()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -96,20 +92,17 @@ func Balance() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
 			balance, err := wallet.Balance(*addrArg)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 			stake, err := wallet.Stake(*addrArg)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 			cmd.PrintInfoMsg("balance: %v\tstake: %v",
 				util.ChangeToCoin(balance), util.ChangeToCoin(stake))
@@ -127,15 +120,13 @@ func PrivateKey() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			password := getPassword(wallet, *passOpt)
 			prv, err := wallet.PrivateKey(password, *addrArg)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -153,14 +144,12 @@ func PublicKey() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			info := wallet.AddressInfo(*addrArg)
 			if info == nil {
-				cmd.PrintDangerMsg("Address not found")
-				return
+				cmd.PrintDangerMsgAndExit("Address not found")
 			}
 
 			cmd.PrintLine()
@@ -183,27 +172,23 @@ func ImportPrivateKey() func(c *cli.Cmd) {
 
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			prv, err := bls.PrivateKeyFromString(prvStr)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			password := getPassword(wallet, *passOpt)
 			err = wallet.ImportPrivateKey(password, prv)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			err = wallet.Save()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
@@ -222,8 +207,7 @@ func SetLabel() func(c *cli.Cmd) {
 		c.Action = func() {
 			wallet, err := openWallet()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			oldLabel := wallet.Label(*addrArg)
@@ -231,14 +215,12 @@ func SetLabel() func(c *cli.Cmd) {
 
 			err = wallet.SetLabel(*addrArg, newLabel)
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			err = wallet.Save()
 			if err != nil {
-				cmd.PrintDangerMsg(err.Error())
-				return
+				cmd.PrintDangerMsgAndExit(err.Error())
 			}
 
 			cmd.PrintLine()
