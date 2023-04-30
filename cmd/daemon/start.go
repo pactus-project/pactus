@@ -35,10 +35,8 @@ func Start() func(c *cli.Cmd) {
 		c.Action = func() {
 			workingDir, _ := filepath.Abs(*workingDirOpt)
 			// change working directory
-			if err := os.Chdir(workingDir); err != nil {
-				cmd.PrintErrorMsg("Aborted! Unable to changes working directory. %v", err)
-				return
-			}
+			err := os.Chdir(workingDir)
+			cmd.FatalErrorCheck(err)
 
 			// separate pprof handlers from DefaultServeMux.
 			pprofMux := http.DefaultServeMux
@@ -53,17 +51,12 @@ func Start() func(c *cli.Cmd) {
 				}
 				go func() {
 					err := server.ListenAndServe()
-					if err != nil {
-						cmd.PrintErrorMsg("Could not initialize pprof server. %v", err)
-					}
+					cmd.FatalErrorCheck(err)
 				}()
 			}
 
 			gen, err := genesis.LoadFromFile(cmd.PactusGenesisPath(workingDir))
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! Could not obtain genesis. %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
 			if gen.Params().IsTestnet() {
 				crypto.AddressHRP = "tpc"
@@ -74,22 +67,15 @@ func Start() func(c *cli.Cmd) {
 			}
 
 			conf, err := config.LoadFromFile(cmd.PactusConfigPath(workingDir))
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! Could not obtain config. %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
-			if err = conf.SanityCheck(); err != nil {
-				cmd.PrintErrorMsg("Aborted! Config is invalid. %v", err)
-				return
-			}
+			err = conf.SanityCheck()
+			cmd.FatalErrorCheck(err)
 
 			walletPath := cmd.PactusDefaultWalletPath(workingDir)
 			wallet, err := wallet.OpenWallet(walletPath, true)
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
+
 			addrInfos := wallet.AddressLabels()
 			if len(addrInfos) == 0 {
 				cmd.PrintErrorMsg("Aborted! %v", err)
@@ -104,16 +90,10 @@ func Start() func(c *cli.Cmd) {
 			rewardAddrs := make([]crypto.Address, conf.NumValidators)
 			for i := 0; i < conf.NumValidators; i++ {
 				prvKey, err := wallet.PrivateKey(password, addrInfos[i*2].Address)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
+				cmd.FatalErrorCheck(err)
 
 				addr, err := crypto.AddressFromString(addrInfos[(i*2)+1].Address)
-				if err != nil {
-					cmd.PrintErrorMsg("Aborted! %v", err)
-					return
-				}
+				cmd.FatalErrorCheck(err)
 
 				signers[i] = crypto.NewSigner(prvKey)
 				rewardAddrs[i] = addr
@@ -125,15 +105,10 @@ func Start() func(c *cli.Cmd) {
 			cmd.PrintLine()
 
 			node, err := node.NewNode(gen, conf, signers, rewardAddrs)
-			if err != nil {
-				cmd.PrintErrorMsg("Could not initialize node. %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
-			if err := node.Start(); err != nil {
-				cmd.PrintErrorMsg("Could not start node. %v", err)
-				return
-			}
+			err = node.Start()
+			cmd.FatalErrorCheck(err)
 
 			cmd.TrapSignal(func() {
 				node.Stop()

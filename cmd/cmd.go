@@ -101,18 +101,21 @@ func PromptInputWithSuggestion(label, suggestion string) string {
 		Default: suggestion,
 	}
 	result, err := prompt.Run()
-	if err != nil {
-		PrintDangerMsgAndExit("prompt error: %v", err)
-	}
+	FatalErrorCheck(err)
+
 	return result
 }
 
-func PrintDangerMsgAndExit(format string, a ...interface{}) {
-	if terminalSupported() {
-		format = fmt.Sprintf("\033[31m%s\033[0m", format)
+func FatalErrorCheck(err error) {
+	if err != nil {
+		if terminalSupported() {
+			fmt.Printf("\033[31m%s\033[0m\n", err.Error())
+		} else {
+			fmt.Printf("%s\n", err.Error())
+		}
+
+		os.Exit(1)
 	}
-	fmt.Printf(format+"\n", a...)
-	os.Exit(1)
 }
 
 func PrintErrorMsg(format string, a ...interface{}) {

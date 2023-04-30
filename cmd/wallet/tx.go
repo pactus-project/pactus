@@ -30,9 +30,7 @@ func SendTx() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
@@ -43,9 +41,7 @@ func SendTx() func(c *cli.Cmd) {
 
 			trx, err := w.MakeSendTx(*fromArg, *toArg, util.CoinToChange(*amtArg),
 				opts...)
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign this \033[1mSend\033[0m transition:")
@@ -87,9 +83,7 @@ func BondTx() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
@@ -100,9 +94,7 @@ func BondTx() func(c *cli.Cmd) {
 
 			trx, err := w.MakeBondTx(*fromArg, *toArg, *pubKeyOpt,
 				util.CoinToChange(*amtArg), opts...)
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign this \033[1mBond\033[0m transition:")
@@ -128,9 +120,7 @@ func UnbondTx() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
@@ -140,9 +130,7 @@ func UnbondTx() func(c *cli.Cmd) {
 			}
 
 			trx, err := w.MakeUnbondTx(*fromArg, opts...)
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign this \033[1mUnbond\033[0m transition:")
@@ -176,9 +164,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			opts := []wallet.TxOption{
 				wallet.OptionStamp(*stampOpt),
@@ -189,9 +175,7 @@ func WithdrawTx() func(c *cli.Cmd) {
 
 			trx, err := w.MakeWithdrawTx(*fromArg, *toArg,
 				util.CoinToChange(*amtArg), opts...)
-			if err != nil {
-				cmd.PrintDangerMsgAndExit(err.Error())
-			}
+			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You are going to sign this \033[1mWithdraw\033[0m transition:")
@@ -239,9 +223,7 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 	cmd.PrintLine()
 	password := getPassword(w, pass)
 	err := w.SignTransaction(password, trx)
-	if err != nil {
-		cmd.PrintDangerMsgAndExit(err.Error())
-	}
+	cmd.FatalErrorCheck(err)
 
 	bs, _ := trx.Bytes()
 	cmd.PrintInfoMsg("Signed transaction data: %x", bs)
@@ -257,14 +239,10 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 			}
 		}
 		res, err := w.BroadcastTransaction(trx)
-		if err != nil {
-			cmd.PrintDangerMsgAndExit(err.Error())
-		}
+		cmd.FatalErrorCheck(err)
 
 		err = w.Save()
-		if err != nil {
-			cmd.PrintDangerMsgAndExit(err.Error())
-		}
+		cmd.FatalErrorCheck(err)
 
 		cmd.PrintInfoMsg("Transaction hash: %s", res)
 	}

@@ -271,6 +271,7 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 }
 
 func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *block.Certificate) {
+	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcast(message.NewBlockAnnounceMessage(h, b, c))
 }
 

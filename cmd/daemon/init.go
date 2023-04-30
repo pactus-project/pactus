@@ -69,10 +69,7 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("Enter a number between 1 to 32, default is 7.")
 			numValidatorsStr := cmd.PromptInputWithSuggestion("Number of Validators", "7")
 			numValidators, err := strconv.Atoi(numValidatorsStr)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to create the node: %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
 			if numValidators < 1 || numValidators > 32 {
 				cmd.PrintErrorMsg("Invalid validator number.")
@@ -86,24 +83,17 @@ func Init() func(c *cli.Cmd) {
 				network = wallet.NetworkTestNet
 			}
 			wallet, err := wallet.Create(walletPath, mnemonic, "", network)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to create wallet: %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
+
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Wallet created successfully.")
 			cmd.PrintLine()
 			for i := 0; i < numValidators; i++ {
 				valAddrStr, err := wallet.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
-				if err != nil {
-					cmd.PrintErrorMsg("Failed to create validator address: %v", err)
-					return
-				}
+				cmd.FatalErrorCheck(err)
+
 				rewardAddrStr, err := wallet.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
-				if err != nil {
-					cmd.PrintErrorMsg("Failed to create reward address: %v", err)
-					return
-				}
+				cmd.FatalErrorCheck(err)
 
 				cmd.PrintInfoMsg("Validator address %v: %s", i+1, valAddrStr)
 				cmd.PrintInfoMsg("Reward    address %v: %s", i+1, rewardAddrStr)
@@ -118,10 +108,8 @@ func Init() func(c *cli.Cmd) {
 				gen = genesis.Testnet()
 
 				// Save config for testnet
-				if err := config.SaveTestnetConfig(confFile, numValidators); err != nil {
-					cmd.PrintErrorMsg("Failed to write config file: %v", err)
-					return
-				}
+				err := config.SaveTestnetConfig(confFile, numValidators)
+				cmd.FatalErrorCheck(err)
 			} else if *localnetOpt {
 				networkName = "Localnet"
 
@@ -134,10 +122,8 @@ func Init() func(c *cli.Cmd) {
 				gen = makeLocalGenesis(valPub)
 
 				// Save config for localnet
-				if err := config.SaveLocalnetConfig(confFile); err != nil {
-					cmd.PrintErrorMsg("Failed to write config file: %v", err)
-					return
-				}
+				err := config.SaveLocalnetConfig(confFile)
+				cmd.FatalErrorCheck(err)
 			} else {
 				networkName = "Mainnet"
 				panic("not yet!")
@@ -152,23 +138,16 @@ func Init() func(c *cli.Cmd) {
 
 			// Save genesis file
 			genFile := cmd.PactusGenesisPath(workingDir)
-			if err := gen.SaveToFile(genFile); err != nil {
-				cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
-				return
-			}
+			err = gen.SaveToFile(genFile)
+			cmd.FatalErrorCheck(err)
 
 			err = wallet.UpdatePassword("", password)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to update wallet password: %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
 			// Save wallet
 			err = wallet.Save()
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to save wallet: %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
+
 			cmd.PrintLine()
 
 			cmd.PrintInfoMsg("Network: %v", networkName)
