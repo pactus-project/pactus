@@ -6,17 +6,14 @@ import (
 	_ "net/http/pprof" // #nosec
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/node/config"
 	"github.com/pactus-project/pactus/types/genesis"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -28,14 +25,6 @@ func Start() func(c *cli.Cmd) {
 			Desc:  "Working directory to read node configuration and genesis files",
 			Value: ".",
 		})
-		privateKeyOpt := c.String(cli.StringOpt{
-			Name: "p private-key",
-			Desc: "Validator's private key",
-		})
-		keyFileOpt := c.String(cli.StringOpt{
-			Name: "k key-file",
-			Desc: "Path to the key file contains validator's private key",
-		})
 		pprofOpt := c.String(cli.StringOpt{
 			Name: "pprof",
 			Desc: "debug pprof server address(not recommended to expose to internet)",
@@ -46,10 +35,8 @@ func Start() func(c *cli.Cmd) {
 		c.Action = func() {
 			workingDir, _ := filepath.Abs(*workingDirOpt)
 			// change working directory
-			if err := os.Chdir(workingDir); err != nil {
-				cmd.PrintErrorMsg("Aborted! Unable to changes working directory. %v", err)
-				return
-			}
+			err := os.Chdir(workingDir)
+			cmd.FatalErrorCheck(err)
 
 			// separate pprof handlers from DefaultServeMux.
 			pprofMux := http.DefaultServeMux
@@ -64,17 +51,12 @@ func Start() func(c *cli.Cmd) {
 				}
 				go func() {
 					err := server.ListenAndServe()
-					if err != nil {
-						cmd.PrintErrorMsg("Could not initialize pprof server. %v", err)
-					}
+					cmd.FatalErrorCheck(err)
 				}()
 			}
 
 			gen, err := genesis.LoadFromFile(cmd.PactusGenesisPath(workingDir))
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! Could not obtain genesis. %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
 			if gen.Params().IsTestnet() {
 				crypto.AddressHRP = "tpc"
@@ -85,34 +67,48 @@ func Start() func(c *cli.Cmd) {
 			}
 
 			conf, err := config.LoadFromFile(cmd.PactusConfigPath(workingDir))
-			if err != nil {
-				cmd.PrintErrorMsg("Aborted! Could not obtain config. %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
-			if err = conf.SanityCheck(); err != nil {
-				cmd.PrintErrorMsg("Aborted! Config is invalid. %v", err)
-				return
-			}
+			err = conf.SanityCheck()
+			cmd.FatalErrorCheck(err)
 
-			signer, err := makeSigner(workingDir, keyFileOpt, privateKeyOpt)
-			if err != nil {
+			walletPath := cmd.PactusDefaultWalletPath(workingDir)
+			wallet, err := wallet.OpenWallet(walletPath, true)
+			cmd.FatalErrorCheck(err)
+
+			addrInfos := wallet.AddressLabels()
+			if len(addrInfos) == 0 {
 				cmd.PrintErrorMsg("Aborted! %v", err)
 				return
+			}
+			password := ""
+			if wallet.IsEncrypted() {
+				password = cmd.PromptPassword("Wallet password", false)
+			}
+
+			signers := make([]crypto.Signer, conf.NumValidators)
+			rewardAddrs := make([]crypto.Address, conf.NumValidators)
+			for i := 0; i < conf.NumValidators; i++ {
+				prvKey, err := wallet.PrivateKey(password, addrInfos[i*2].Address)
+				cmd.FatalErrorCheck(err)
+
+				addr, err := crypto.AddressFromString(addrInfos[(i*2)+1].Address)
+				cmd.FatalErrorCheck(err)
+
+				signers[i] = crypto.NewSigner(prvKey)
+				rewardAddrs[i] = addr
+
+				cmd.PrintInfoMsg("Validator address %v: %s", i+1, addrInfos[i*2].Address)
+				cmd.PrintInfoMsg("Reward    address %v: %s", i+1, addrInfos[(i*2)+1].Address)
 			}
 
 			cmd.PrintLine()
 
-			node, err := node.NewNode(gen, conf, signer)
-			if err != nil {
-				cmd.PrintErrorMsg("Could not initialize node. %v", err)
-				return
-			}
+			node, err := node.NewNode(gen, conf, signers, rewardAddrs)
+			cmd.FatalErrorCheck(err)
 
-			if err := node.Start(); err != nil {
-				cmd.PrintErrorMsg("Could not start node. %v", err)
-				return
-			}
+			err = node.Start()
+			cmd.FatalErrorCheck(err)
 
 			cmd.TrapSignal(func() {
 				node.Stop()
@@ -123,75 +119,4 @@ func Start() func(c *cli.Cmd) {
 			select {}
 		}
 	}
-}
-
-// makeSigner makes a signer object from the validator private key.
-// Private key obtains in this order:
-// 1- From key file option (--key-file <path>)
-// 2- From private key option (--private-key <secret>)
-// 3- From 'validator_key' file insied the working directory
-// 4- From the first address of the default_wallet
-// If none of them, it asks user to enter the private key.
-func makeSigner(workingDir string, keyFileOpt, privateKeyOpt *string) (crypto.Signer, error) {
-	prvStr := ""
-	switch {
-	case *keyFileOpt == "" && *privateKeyOpt == "":
-		keyPath := workingDir + "/validator_key"
-		walletPath := cmd.PactusDefaultWalletPath(workingDir)
-		if util.PathExists(keyPath) {
-			data, err := util.ReadFile(keyPath)
-			if err != nil {
-				return nil, err
-			}
-			prvStr = strings.TrimSpace(string(data))
-		} else if util.PathExists(walletPath) {
-			valKeyWallet, err := getValidatorKeyFromWallet(walletPath)
-			if err != nil {
-				return nil, err
-			}
-			prvStr = valKeyWallet
-		} else {
-			// Creating KeyObject from Private Key
-			prvStr = cmd.PromptInput("Please enter the validator private key")
-		}
-
-	case *keyFileOpt != "":
-		// Creating KeyObject from keystore
-		data, err := util.ReadFile(*keyFileOpt)
-		if err != nil {
-			return nil, err
-		}
-		prvStr = strings.TrimSpace(string(data))
-
-	case *privateKeyOpt != "":
-		prvStr = *privateKeyOpt
-	}
-
-	prv, err := bls.PrivateKeyFromString(prvStr)
-	if err != nil {
-		return nil, err
-	}
-
-	return crypto.NewSigner(prv), nil
-}
-
-func getValidatorKeyFromWallet(walletPath string) (string, error) {
-	wallet, err := wallet.OpenWallet(walletPath, true)
-	if err != nil {
-		return "", err
-	}
-	addrInfos := wallet.AddressLabels()
-	if len(addrInfos) == 0 {
-		return "", fmt.Errorf("validator address is not defined")
-	}
-	password := ""
-	if wallet.IsEncrypted() {
-		password = cmd.PromptPassword("Wallet password", false)
-	}
-	prvKey, err := wallet.PrivateKey(password, addrInfos[0].Address)
-	if err != nil {
-		return "", err
-	}
-
-	return prvKey.String(), nil
 }

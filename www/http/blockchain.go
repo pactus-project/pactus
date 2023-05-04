@@ -58,12 +58,10 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("-- Peer #", i+1)
 		tm.addRowString("PeerID", pid.String())
 		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
-		if p.PublicKey != "" {
-			pub, _ := bls.PublicKeyFromString(p.PublicKey)
+		for _, key := range p.Keys {
+			pub, _ := bls.PublicKeyFromString(key)
 			tm.addRowString("PublicKey", pub.String())
 			tm.addRowValAddress("Address", pub.Address().String())
-		} else {
-			tm.addRowString("PublicKey", "")
 		}
 		tm.addRowString("Agent", p.Agent)
 		tm.addRowString("Moniker", p.Moniker)

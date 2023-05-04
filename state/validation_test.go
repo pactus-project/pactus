@@ -29,7 +29,7 @@ func TestCertificateValidation(t *testing.T) {
 	tState1.store.UpdateValidator(val5)
 	tState2.store.UpdateValidator(val5)
 
-	nextBlock, _ := tState2.ProposeBlock(0)
+	nextBlock, _ := tState2.ProposeBlock(tState2.signers[0], crypto.GenerateTestAddress(), 0)
 	nextBlockHash := nextBlock.Hash()
 
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
@@ -53,10 +53,10 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
 
-	t.Run("Invalid committer, should return error", func(t *testing.T) {
+	t.Run("Invalid block hash, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		committers = append(committers, 666)
-		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
+		invBlockHash := hash.GenerateTestHash()
+		signBytes := block.CertificateSignBytes(invBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
@@ -66,10 +66,10 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, tState1.CommitBlock(2, nextBlock, cert))
 	})
 
-	t.Run("Invalid block hash, should return error", func(t *testing.T) {
+	t.Run("Invalid committer, should return error", func(t *testing.T) {
 		committers := tState2.committee.Committers()
-		invBlockHash := hash.GenerateTestHash()
-		signBytes := block.CertificateSignBytes(invBlockHash, 0)
+		committers = append(committers, 666)
+		signBytes := block.CertificateSignBytes(nextBlockHash, 0)
 		sig1 := tValSigner1.SignData(signBytes)
 		sig2 := tValSigner2.SignData(signBytes)
 		sig4 := tValSigner4.SignData(signBytes)
@@ -184,41 +184,41 @@ func TestBlockValidation(t *testing.T) {
 	// PrevBlockHash		(OK)
 	// StateRoot			(OK)
 	// TxsRoot			    (SanityCheck)
-	// PrevCertificateHash	(OK)
+	// PrevCertificate   	(OK)
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)
 	//
+	proposerAddr := tState2.signers[0].Address()
 	invAddr := crypto.GenerateTestAddress()
 	invHash := hash.GenerateTestHash()
 	invCert := block.GenerateTestCertificate(tState1.lastInfo.BlockHash())
 	invSeed := sortition.GenerateRandomSeed()
-	trx := tState2.createSubsidyTx(0)
-	assert.NoError(t, tState2.AddPendingTx(trx))
+	trx := tState2.createSubsidyTx(crypto.GenerateTestAddress(), 0)
 	txs := block.NewTxs()
 	txs.Append(trx)
 
-	b := block.MakeBlock(2, util.Now(), txs, invHash, tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
-	assert.Error(t, tState1.validateBlock(b))
+	b := block.MakeBlock(2, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+	assert.Error(t, tState1.validateBlock(b), "Invalid Version")
 
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), invHash, tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
-	assert.Error(t, tState1.validateBlock(b))
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), invHash, tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+	assert.Error(t, tState1.validateBlock(b), "Invalid StateRoot")
 
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), invCert, tState1.lastInfo.SortitionSeed(), tState2.signer.Address())
-	assert.Error(t, tState1.validateBlock(b))
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), invCert, tState1.lastInfo.SortitionSeed(), proposerAddr)
+	assert.Error(t, tState1.validateBlock(b), "Invalid PrevCertificate")
 
 	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), invAddr)
 	assert.NoError(t, tState1.validateBlock(b))
 	c := makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	assert.Error(t, tState1.CommitBlock(2, b, c))
+	assert.Error(t, tState1.CommitBlock(2, b, c), "Invalid ProposerAddress")
 
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), invSeed, tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), invSeed, proposerAddr)
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	assert.Error(t, tState1.CommitBlock(2, b, c))
+	assert.Error(t, tState1.CommitBlock(2, b, c), "Invalid SortitionSeed")
 
 	seed := tState1.lastInfo.SortitionSeed()
-	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), seed.Generate(tState2.signer), tState2.signer.Address())
+	b = block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), seed.GenerateNext(tState2.signers[0]), proposerAddr)
 	assert.NoError(t, tState1.validateBlock(b))
 	c = makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
-	assert.NoError(t, tState1.CommitBlock(2, b, c))
+	assert.NoError(t, tState1.CommitBlock(2, b, c), "Looks Good")
 }

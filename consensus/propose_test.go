@@ -81,14 +81,13 @@ func TestNetworkLagging(t *testing.T) {
 	h := uint32(1)
 	r := int16(0)
 	p := makeProposal(t, h, r)
-	// We don't receive proposal on time
-	// tConsP.SetProposal(p)
 
+	// tConsP doesn't have the proposal, but it has received prepared votes from other peers
 	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
 	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
 	shouldPublishQueryProposal(t, tConsP, h, r)
 
-	// Proposal receives now
+	// Proposal is received now
 	tConsP.SetProposal(p)
 
 	shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
@@ -102,14 +101,16 @@ func TestProposalNextRound(t *testing.T) {
 
 	testEnterNewHeight(tConsX)
 
-	// Byzantine node sends proposal for second round (his turn)
-	b, err := tConsB.state.ProposeBlock(1)
+	// Byzantine node sends proposal for the second round (his turn) even before the first round is started
+	b, err := tConsB.state.ProposeBlock(tConsB.signer, tConsB.rewardAddr, 1)
 	assert.NoError(t, err)
 	p := proposal.NewProposal(2, 1, b)
 	tSigners[tIndexB].SignMsg(p)
 
 	tConsX.SetProposal(p)
 
-	// tConsX doesn't accept the proposal for next rounds
+	// tConsX accepts his proposal, but doesn't move to the next round
 	assert.NotNil(t, tConsX.RoundProposal(1))
+	assert.Equal(t, tConsX.height, uint32(2))
+	assert.Equal(t, tConsX.round, int16(0))
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/vote"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
@@ -235,6 +236,31 @@ func TestGetValidators(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, 21, len(res.GetValidators()))
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
+func TestConsensusInfo(t *testing.T) {
+	conn, client := testBlockchainClient(t)
+
+	v1, _ := vote.GenerateTestPrepareVote(100, 2)
+	v2, _ := vote.GenerateTestChangeProposerVote(100, 2)
+	tConsMocks[1].Active = true
+	tConsMocks[1].Height = 100
+	tConsMocks[0].AddVote(v1)
+	tConsMocks[1].AddVote(v2)
+
+	t.Run("Should return the consensus info", func(t *testing.T) {
+		res, err := client.GetConsensusInfo(tCtx, &pactus.GetConsensusInfoRequest{})
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+
+		assert.False(t, res.Instances[0].Active, true)
+		assert.True(t, res.Instances[1].Active, true)
+		assert.Equal(t, res.Instances[1].Height, uint32(100))
+		assert.Equal(t, res.Instances[0].Votes[0].Type, pactus.VoteType_VOTE_PREPARE)
+		assert.Equal(t, res.Instances[1].Votes[0].Type, pactus.VoteType_VOTE_CHANGE_PROPOSER)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

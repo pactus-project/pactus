@@ -34,10 +34,10 @@ var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
 func setup(t *testing.T) {
-	_, prv1 := bls.GenerateTestKeyPair()
-	_, prv2 := bls.GenerateTestKeyPair()
-	_, prv3 := bls.GenerateTestKeyPair()
-	_, prv4 := bls.GenerateTestKeyPair()
+	pub1, prv1 := bls.GenerateTestKeyPair()
+	pub2, prv2 := bls.GenerateTestKeyPair()
+	pub3, prv3 := bls.GenerateTestKeyPair()
+	pub4, prv4 := bls.GenerateTestKeyPair()
 
 	tValSigner1 = crypto.NewSigner(prv1)
 	tValSigner2 = crypto.NewSigner(prv2)
@@ -54,22 +54,22 @@ func setup(t *testing.T) {
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
-	val1 := validator.NewValidator(tValSigner1.PublicKey().(*bls.PublicKey), 0)
-	val2 := validator.NewValidator(tValSigner2.PublicKey().(*bls.PublicKey), 1)
-	val3 := validator.NewValidator(tValSigner3.PublicKey().(*bls.PublicKey), 2)
-	val4 := validator.NewValidator(tValSigner4.PublicKey().(*bls.PublicKey), 3)
+	val1 := validator.NewValidator(pub1, 0)
+	val2 := validator.NewValidator(pub2, 1)
+	val3 := validator.NewValidator(pub3, 2)
+	val4 := validator.NewValidator(pub4, 3)
 	params := param.DefaultParams()
 	params.CommitteeSize = 5
 	params.BondInterval = 10
 	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
 
-	st1, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner1, store1, tCommonTxPool, nil)
+	st1, err := LoadOrNewState(gnDoc, []crypto.Signer{tValSigner1}, store1, tCommonTxPool, nil)
 	require.NoError(t, err)
-	st2, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner2, store2, tCommonTxPool, nil)
+	st2, err := LoadOrNewState(gnDoc, []crypto.Signer{tValSigner2}, store2, tCommonTxPool, nil)
 	require.NoError(t, err)
-	st3, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner3, store3, tCommonTxPool, nil)
+	st3, err := LoadOrNewState(gnDoc, []crypto.Signer{tValSigner3}, store3, tCommonTxPool, nil)
 	require.NoError(t, err)
-	st4, err := LoadOrNewState(DefaultConfig(), gnDoc, tValSigner4, store4, tCommonTxPool, nil)
+	st4, err := LoadOrNewState(gnDoc, []crypto.Signer{tValSigner4}, store4, tCommonTxPool, nil)
 	require.NoError(t, err)
 
 	tState1, _ = st1.(*state)
@@ -80,17 +80,18 @@ func setup(t *testing.T) {
 
 func makeBlockAndCertificate(t *testing.T, round int16, signers ...crypto.Signer) (*block.Block, *block.Certificate) {
 	var st *state
-	if tState1.committee.IsProposer(tState1.signer.Address(), round) {
+	if tState1.committee.IsProposer(tState1.signers[0].Address(), round) {
 		st = tState1
-	} else if tState1.committee.IsProposer(tState2.signer.Address(), round) {
+	} else if tState1.committee.IsProposer(tState2.signers[0].Address(), round) {
 		st = tState2
-	} else if tState1.committee.IsProposer(tState3.signer.Address(), round) {
+	} else if tState1.committee.IsProposer(tState3.signers[0].Address(), round) {
 		st = tState3
 	} else {
 		st = tState4
 	}
 
-	b, err := st.ProposeBlock(round)
+	rewardAddr := st.signers[0].Address()
+	b, err := st.ProposeBlock(st.signers[0], rewardAddr, round)
 	require.NoError(t, err)
 	c := makeCertificateAndSign(t, b.Hash(), round, signers...)
 
@@ -144,50 +145,38 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	setup(t)
 	moveToNextHeightForAllStates(t)
 
-	b1, err := tState1.ProposeBlock(0)
-	assert.Error(t, err)
+	b1, err := tState1.ProposeBlock(tState1.signers[0], crypto.GenerateTestAddress(), 0)
+	assert.Error(t, err, "Should not propose")
 	assert.Nil(t, b1)
 
 	trx := tx.NewSendTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "")
 	tValSigner1.SignMsg(trx)
 	assert.NoError(t, tCommonTxPool.AppendTx(trx))
 
-	b2, err := tState2.ProposeBlock(0)
+	b2, err := tState2.ProposeBlock(tState2.signers[0], crypto.GenerateTestAddress(), 0)
 	assert.NoError(t, err)
 	assert.NotNil(t, b2)
 	assert.Equal(t, b2.Transactions().Len(), 2)
 	require.NoError(t, tState1.ValidateBlock(b2))
 
 	// Propose and validate again
-	b22, err := tState2.ProposeBlock(0)
+	b3, err := tState2.ProposeBlock(tState2.signers[0], crypto.GenerateTestAddress(), 0)
 	assert.NoError(t, err)
-	assert.NotNil(t, b22)
-	assert.Equal(t, b22.Transactions().Len(), 2)
-	require.NoError(t, tState1.ValidateBlock(b22))
+	assert.NotNil(t, b3)
+	assert.Equal(t, b3.Transactions().Len(), 2)
+	require.NoError(t, tState1.ValidateBlock(b3))
 }
 
 func TestBlockSubsidyTx(t *testing.T) {
 	setup(t)
 
 	// Without reward address in config
-	trx := tState1.createSubsidyTx(7)
+	rewardAddr := crypto.GenerateTestAddress()
+	trx := tState1.createSubsidyTx(rewardAddr, 7)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), tState1.params.BlockReward+7)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, tValSigner1.Address())
-	assert.Equal(t, tState1.RewardAddress(), tState1.ValidatorAddress())
-
-	store := store.MockingStore()
-
-	// With reward address in config
-	addr := crypto.GenerateTestAddress()
-	tState1.config.RewardAddress = addr.String()
-	tState1.Close()
-	st, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool, nil)
-	assert.NoError(t, err)
-	trx = st.(*state).createSubsidyTx(0)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, addr)
-	assert.Equal(t, st.RewardAddress(), addr, "Validator address should be changed")
-	assert.Equal(t, st.ValidatorAddress(), tState1.ValidatorAddress(), "Validator address should not be changed")
+	assert.Equal(t, trx.Payload().(*payload.SendPayload).Sender, crypto.TreasuryAddress)
+	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, rewardAddr)
 }
 
 func TestCommitBlocks(t *testing.T) {
@@ -302,10 +291,10 @@ func TestUpdateLastCertificate(t *testing.T) {
 func TestInvalidProposerProposeBlock(t *testing.T) {
 	setup(t)
 
-	_, err := tState2.ProposeBlock(0)
-	assert.Error(t, err)
-	_, err = tState2.ProposeBlock(1)
-	assert.NoError(t, err)
+	_, err := tState2.ProposeBlock(tState2.signers[0], crypto.GenerateTestAddress(), 0)
+	assert.Error(t, err, "Should not propose")
+	_, err = tState2.ProposeBlock(tState2.signers[0], crypto.GenerateTestAddress(), 1)
+	assert.NoError(t, err, "Should propose")
 }
 
 func TestBlockProposal(t *testing.T) {
@@ -313,17 +302,17 @@ func TestBlockProposal(t *testing.T) {
 	moveToNextHeightForAllStates(t)
 
 	t.Run("validity of proposed block", func(t *testing.T) {
-		b, err := tState2.ProposeBlock(0)
+		b, err := tState2.ProposeBlock(tState2.signers[0], crypto.GenerateTestAddress(), 0)
 		assert.NoError(t, err)
 		assert.NoError(t, tState1.ValidateBlock(b)) // State1 check state2's proposed block
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
-		trx := tState2.createSubsidyTx(0)
-		assert.NoError(t, tState2.txPool.AppendTx(trx))
+		trx := tState3.createSubsidyTx(crypto.GenerateTestAddress(), 0)
+		assert.NoError(t, tState3.txPool.AppendTx(trx))
 
 		// Moving to the next round
-		b, err := tState3.ProposeBlock(1)
+		b, err := tState3.ProposeBlock(tState3.signers[0], crypto.GenerateTestAddress(), 1)
 		assert.NoError(t, err)
 		assert.NoError(t, tState1.ValidateBlock(b))
 		assert.Equal(t, b.Transactions().Len(), 1)
@@ -370,11 +359,11 @@ func TestSortition(t *testing.T) {
 	pub, prv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
-	st, err := LoadOrNewState(DefaultConfig(), tState1.genDoc, signer, store, tCommonTxPool, nil)
-	assert.NoError(t, err)
-	st1 := st.(*state)
+	St1, _ := LoadOrNewState(tState1.genDoc, []crypto.Signer{signer}, store, tCommonTxPool, nil)
+	stNew := St1.(*state)
 
-	assert.False(t, st1.evaluateSortition()) //  not a validator
+	assert.False(t, stNew.evaluateSortition()) //  not a validator
+	assert.Equal(t, tState1.CommitteePower(), int64(4))
 
 	height := uint32(1)
 	for ; height <= 11; height++ {
@@ -386,39 +375,39 @@ func TestSortition(t *testing.T) {
 
 		b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 		CommitBlockForAllStates(t, b, c)
-		require.NoError(t, st1.CommitBlock(height, b, c))
+		require.NoError(t, stNew.CommitBlock(height, b, c))
 	}
 
-	assert.False(t, st1.evaluateSortition()) //  bonding period
+	assert.False(t, stNew.evaluateSortition()) //  bonding period
 
 	// Certificate next block
 	b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
-	require.NoError(t, st1.CommitBlock(height, b, c))
+	require.NoError(t, stNew.CommitBlock(height, b, c))
 	height++
 
-	assert.True(t, st1.evaluateSortition())                    //  ok
+	assert.True(t, stNew.evaluateSortition())                  //  ok
 	assert.False(t, tState1.committee.Contains(pub.Address())) // still not in the committee
 
 	// ---------------------------------------------
 	// Certificate next block, new validator should be in the committee now
 	b, c = makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
-	require.NoError(t, st1.CommitBlock(height, b, c))
+	require.NoError(t, stNew.CommitBlock(height, b, c))
 
-	assert.True(t, st1.evaluateSortition()) // in the committee
+	assert.True(t, stNew.evaluateSortition()) // in the committee
 	assert.True(t, tState1.committee.Contains(tValSigner1.Address()))
 	assert.True(t, tState1.committee.Contains(pub.Address()))
 
 	// ---------------------------------------------
 	// Let's save and load tState1
 	tState1.Close()
-	state1, _ := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, store, tCommonTxPool, nil)
-	st2 := state1.(*state)
+	St1, _ = LoadOrNewState(tState1.genDoc, []crypto.Signer{tValSigner1}, store, tCommonTxPool, nil)
+	st1 := St1.(*state)
 
 	// ---------------------------------------------
 	// Let's commit another block with the new committee
-	b14, err := st1.ProposeBlock(3)
+	b14, err := stNew.ProposeBlock(stNew.signers[0], crypto.GenerateTestAddress(), 3)
 	require.NoError(t, err)
 	require.NotNil(t, b14)
 
@@ -432,11 +421,14 @@ func TestSortition(t *testing.T) {
 	c14 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.Aggregate(sigs))
 
 	height++
-	assert.NoError(t, st2.CommitBlock(height, b14, c14))
+	assert.NoError(t, st1.CommitBlock(height, b14, c14))
 	assert.NoError(t, tState1.CommitBlock(height, b14, c14))
 	assert.NoError(t, tState2.CommitBlock(height, b14, c14))
 	assert.NoError(t, tState3.CommitBlock(height, b14, c14))
 	assert.NoError(t, tState4.CommitBlock(height, b14, c14))
+
+	assert.Equal(t, tState1.CommitteePower(), int64(10000004))
+	assert.Equal(t, tState1.TotalValidators(), int32(5))
 }
 
 func TestValidateBlockTime(t *testing.T) {
@@ -505,7 +497,7 @@ func TestInvalidBlockVersion(t *testing.T) {
 	setup(t)
 
 	tState1.params.BlockVersion = 2
-	b, _ := tState1.ProposeBlock(0)
+	b, _ := tState1.ProposeBlock(tState1.signers[0], crypto.GenerateTestAddress(), 0)
 	assert.Error(t, tState2.ValidateBlock(b))
 }
 
@@ -531,16 +523,16 @@ func TestInvalidBlockTime(t *testing.T) {
 func TestValidatorHelpers(t *testing.T) {
 	setup(t)
 
-	t.Run("Should return nil for NonExisting Validator Address", func(t *testing.T) {
+	t.Run("Should return nil for non-existing Validator Address", func(t *testing.T) {
 		_, prv5 := bls.GenerateTestKeyPair()
 		nonExistenceValidator := tState1.ValidatorByAddress(prv5.PublicKey().Address())
-		assert.Nil(t, nonExistenceValidator, "State 1 returned Non nil For nonExisting validator")
+		assert.Nil(t, nonExistenceValidator, "State 1 returned non-nil For non-existing validator")
 		nonExistenceValidator = tState2.ValidatorByAddress(prv5.PublicKey().Address())
-		assert.Nil(t, nonExistenceValidator, "State 2 returned Non nil For nonExisting validator")
+		assert.Nil(t, nonExistenceValidator, "State 2 returned non-nil For non-existing validator")
 		nonExistenceValidator = tState3.ValidatorByAddress(prv5.PublicKey().Address())
-		assert.Nil(t, nonExistenceValidator, "State 3 returned Non nil For nonExisting validator")
+		assert.Nil(t, nonExistenceValidator, "State 3 returned non-nil For non-existing validator")
 		nonExistenceValidator = tState4.ValidatorByAddress(prv5.PublicKey().Address())
-		assert.Nil(t, nonExistenceValidator, "State 4 returned Non nil For nonExisting validator")
+		assert.Nil(t, nonExistenceValidator, "State 4 returned non-nil For non-existing validator")
 	})
 
 	t.Run("Should return validator for valid committee Validator Address", func(t *testing.T) {
@@ -560,6 +552,7 @@ func TestValidatorHelpers(t *testing.T) {
 		assert.Nil(t, nonExistenceValidator)
 	})
 }
+
 func TestLoadState(t *testing.T) {
 	setup(t)
 
@@ -579,17 +572,17 @@ func TestLoadState(t *testing.T) {
 	b6, c6 := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
 	// Load last state info
-	st2, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, tCommonTxPool, nil)
+	st1Load, err := LoadOrNewState(tState1.genDoc, []crypto.Signer{tValSigner1}, tState1.store, tCommonTxPool, nil)
 	require.NoError(t, err)
 
-	assert.Equal(t, tState1.store.TotalAccounts(), st2.(*state).store.TotalAccounts())
-	assert.Equal(t, tState1.store.TotalValidators(), st2.(*state).store.TotalValidators())
-	assert.Equal(t, tState1.committee.Committers(), st2.(*state).committee.Committers())
-	assert.Equal(t, tState1.committee.TotalPower(), st2.(*state).committee.TotalPower())
-	assert.Equal(t, tState1.totalPower(), st2.(*state).totalPower())
+	assert.Equal(t, tState1.store.TotalAccounts(), st1Load.(*state).store.TotalAccounts())
+	assert.Equal(t, tState1.store.TotalValidators(), st1Load.(*state).store.TotalValidators())
+	assert.Equal(t, tState1.committee.Committers(), st1Load.(*state).committee.Committers())
+	assert.Equal(t, tState1.committee.TotalPower(), st1Load.(*state).committee.TotalPower())
+	assert.Equal(t, tState1.TotalPower(), st1Load.(*state).totalPower())
 	assert.Equal(t, tState1.store.TotalAccounts(), int32(5))
 
-	require.NoError(t, st2.CommitBlock(6, b6, c6))
+	require.NoError(t, st1Load.CommitBlock(6, b6, c6))
 	require.NoError(t, tState2.CommitBlock(6, b6, c6))
 }
 
@@ -602,7 +595,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 		moveToNextHeightForAllStates(t)
 	}
 
-	_, err := LoadOrNewState(tState1.config, tState1.genDoc, tValSigner1, tState1.store, txpool.MockingTxPool(), nil)
+	_, err := LoadOrNewState(tState1.genDoc, []crypto.Signer{tValSigner1}, tState1.store, txpool.MockingTxPool(), nil)
 	require.NoError(t, err)
 
 	// Load last state info after modifying genesis
@@ -611,16 +604,18 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	val := validator.NewValidator(tValSigner1.PublicKey().(*bls.PublicKey), 0)
 	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
 
-	_, err = LoadOrNewState(tState1.config, genDoc, tValSigner1, tState1.store, txpool.MockingTxPool(), nil)
+	_, err = LoadOrNewState(genDoc, []crypto.Signer{tValSigner1}, tState1.store, txpool.MockingTxPool(), nil)
 	require.Error(t, err)
 }
 
 func TestSetBlockTime(t *testing.T) {
 	setup(t)
 
+	assert.Equal(t, tState1.BlockTime(), 10*time.Second)
+
 	t.Run("Last block time is a bit far in past", func(t *testing.T) {
 		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(-20 * time.Second))
-		b, _ := tState1.ProposeBlock(0)
+		b, _ := tState1.ProposeBlock(tState1.signers[0], crypto.GenerateTestAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
 		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
@@ -629,7 +624,7 @@ func TestSetBlockTime(t *testing.T) {
 
 	t.Run("Last block time is almost good", func(t *testing.T) {
 		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(-10 * time.Second))
-		b, _ := tState1.ProposeBlock(0)
+		b, _ := tState1.ProposeBlock(tState1.signers[0], crypto.GenerateTestAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
 		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
@@ -639,7 +634,7 @@ func TestSetBlockTime(t *testing.T) {
 	// After our time
 	t.Run("Last block time is in near future", func(t *testing.T) {
 		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(+10 * time.Second))
-		b, _ := tState1.ProposeBlock(0)
+		b, _ := tState1.ProposeBlock(tState1.signers[0], crypto.GenerateTestAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
 		assert.Zero(t, b.Header().Time().Second()%10)
@@ -647,7 +642,7 @@ func TestSetBlockTime(t *testing.T) {
 
 	t.Run("Last block time is more than a block in future", func(t *testing.T) {
 		tState1.lastInfo.SetBlockTime(util.RoundNow(10).Add(+20 * time.Second))
-		b, _ := tState1.ProposeBlock(0)
+		b, _ := tState1.ProposeBlock(tState1.signers[0], crypto.GenerateTestAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", tState1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(tState1.lastInfo.BlockTime()))
 		assert.Zero(t, b.Header().Time().Second()%10)
@@ -675,4 +670,20 @@ func TestCalculatingGenesisState(t *testing.T) {
 
 	r := tState1.calculateGenesisStateRootFromGenesisDoc()
 	assert.Equal(t, tState1.stateRoot(), r)
+}
+
+func TestCommittingInvalidBlock(t *testing.T) {
+	setup(t)
+
+	moveToNextHeightForAllStates(t)
+
+	txs := block.NewTxs()
+	trx := tState2.createSubsidyTx(crypto.GenerateTestAddress(), 0)
+	txs.Append(trx)
+	b := block.MakeBlock(2, util.Now(), txs, tState2.lastInfo.BlockHash(), tState2.stateRoot(), tState2.lastInfo.Certificate(), tState2.lastInfo.SortitionSeed(), tState2.signers[0].Address())
+	c := makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
+
+	// tState1 receives a block with version 2 and rejects it.
+	// It is possible that the same block would be considered valid by tState2.
+	assert.Error(t, tState1.CommitBlock(2, b, c))
 }

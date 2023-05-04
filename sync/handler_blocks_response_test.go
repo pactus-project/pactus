@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -61,12 +62,12 @@ func TestOneBlockShorter(t *testing.T) {
 func TestSyncing(t *testing.T) {
 	configAlice := testConfig()
 	configBob := testConfig()
-	signerAlice := bls.GenerateTestSigner()
-	signerBob := bls.GenerateTestSigner()
+	signersAlice := []crypto.Signer{bls.GenerateTestSigner()}
+	signersBob := []crypto.Signer{bls.GenerateTestSigner()}
 	stateAlice := state.MockingState()
 	stateBob := state.MockingState()
-	consensusAlice := consensus.MockingConsensus(stateAlice)
-	consensusBob := consensus.MockingConsensus(stateBob)
+	consMgrAlice, _ := consensus.MockingManager(signersAlice)
+	consMgrBob, _ := consensus.MockingManager(signersBob)
 	broadcastChAlice := make(chan message.Message, 1000)
 	broadcastChBob := make(chan message.Message, 1000)
 	networkAlice := network.MockingNetwork(network.TestRandomPeerID())
@@ -80,9 +81,9 @@ func TestSyncing(t *testing.T) {
 	testAddBlocks(t, stateBob, 100)
 
 	sync1, err := NewSynchronizer(configAlice,
-		signerAlice,
+		signersAlice,
 		stateAlice,
-		consensusAlice,
+		consMgrAlice,
 		networkAlice,
 		broadcastChAlice,
 	)
@@ -90,9 +91,9 @@ func TestSyncing(t *testing.T) {
 	syncAlice := sync1.(*synchronizer)
 
 	sync2, err := NewSynchronizer(configBob,
-		signerBob,
+		signersBob,
 		stateBob,
-		consensusBob,
+		consMgrBob,
 		networkBob,
 		broadcastChBob,
 	)

@@ -18,7 +18,7 @@ func (s *newHeightState) enter() {
 func (s *newHeightState) decide() {
 	sateHeight := s.state.LastBlockHeight()
 	if s.height == sateHeight+1 {
-		s.logger.Warn("duplicated entry")
+		s.logger.Debug("duplicated entry")
 		return
 	}
 
@@ -43,9 +43,12 @@ func (s *newHeightState) decide() {
 
 	s.height = sateHeight + 1
 	s.round = 0
-	s.logger.Info("entering new height", "height", s.height)
+	s.active = s.state.IsInCommittee(s.signer.Address())
+	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 
-	s.enterNewState(s.proposeState)
+	if s.active {
+		s.enterNewState(s.proposeState)
+	}
 }
 
 func (s *newHeightState) onAddVote(v *vote.Vote) {

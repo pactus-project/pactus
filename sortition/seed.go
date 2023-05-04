@@ -33,7 +33,7 @@ func VerifiableSeedFromBytes(data []byte) (VerifiableSeed, error) {
 	return s, nil
 }
 
-func (s *VerifiableSeed) Generate(signer crypto.Signer) VerifiableSeed {
+func (s *VerifiableSeed) GenerateNext(signer crypto.Signer) VerifiableSeed {
 	hash := hash.CalcHash(s[:])
 	sig := signer.SignData(hash.Bytes())
 	newSeed, _ := VerifiableSeedFromBytes(sig.Bytes())

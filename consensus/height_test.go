@@ -23,15 +23,18 @@ func TestNewHeightTimedout(t *testing.T) {
 	checkHeightRound(t, tConsX, 2, 0)
 }
 
-func TestNewHeightDuplicateEntry(t *testing.T) {
+func TestNewHeightEntry(t *testing.T) {
 	setup(t)
 
+	commitBlockForAllStates(t)
+
 	tConsX.MoveToNewHeight()
 	tConsX.MoveToNewHeight()
 
-	checkHeightRoundWait(t, tConsX, 1, 0)
+	checkHeightRoundWait(t, tConsX, 2, 0)
+	assert.True(t, tConsX.active)
+	assert.NotEqual(t, tConsX.currentState.name(), "new-height")
 }
-
 func TestUpdateCertificate(t *testing.T) {
 	setup(t)
 

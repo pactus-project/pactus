@@ -17,7 +17,7 @@ import (
 )
 
 func TestRunningNode(t *testing.T) {
-	pub, pv := bls.GenerateTestKeyPair()
+	pub, _ := bls.GenerateTestKeyPair()
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(pub, 0)
@@ -29,8 +29,9 @@ func TestRunningNode(t *testing.T) {
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.NodeKey = util.TempFilePath()
 
-	signer := crypto.NewSigner(pv)
-	n, err := NewNode(gen, conf, signer)
+	signers := []crypto.Signer{bls.GenerateTestSigner(), bls.GenerateTestSigner()}
+	rewardAddrs := []crypto.Address{crypto.GenerateTestAddress(), crypto.GenerateTestAddress()}
+	n, err := NewNode(gen, conf, signers, rewardAddrs)
 
 	require.NoError(t, err)
 	assert.Equal(t, n.state.LastBlockHash(), hash.UndefHash)

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/peerset"
@@ -16,7 +15,6 @@ var _ Synchronizer = &MockSync{}
 
 type MockSync struct {
 	ID      peer.ID
-	Signer  crypto.Signer
 	PeerSet *peerset.PeerSet
 }
 
@@ -29,7 +27,7 @@ func MockingSync() *MockSync {
 	ps.UpdatePeerInfo(
 		pid1,
 		peerset.StatusCodeKnown,
-		"test-1",
+		"test-peer-1",
 		version.Agent(),
 		pub1,
 		true)
@@ -38,7 +36,7 @@ func MockingSync() *MockSync {
 	ps.UpdatePeerInfo(
 		pid2,
 		peerset.StatusCodeBanned,
-		"test-1",
+		"test-peer-2",
 		version.Agent(),
 		pub2,
 		false)
@@ -46,7 +44,6 @@ func MockingSync() *MockSync {
 
 	return &MockSync{
 		ID:      network.TestRandomPeerID(),
-		Signer:  bls.GenerateTestSigner(),
 		PeerSet: ps,
 	}
 }
@@ -67,11 +64,6 @@ func (m *MockSync) SelfID() peer.ID {
 func (m *MockSync) Moniker() string {
 	return "test-moniker"
 }
-
-func (m *MockSync) PublicKey() crypto.PublicKey {
-	return m.Signer.PublicKey()
-}
-
 func (m *MockSync) Peers() []peerset.Peer {
 	return m.PeerSet.GetPeerList()
 }

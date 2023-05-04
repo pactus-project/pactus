@@ -17,7 +17,7 @@ func TestSeedFromString(t *testing.T) {
 func TestValidate(t *testing.T) {
 	signer := bls.GenerateTestSigner()
 	seed1 := GenerateRandomSeed()
-	seed2 := seed1.Generate(signer)
+	seed2 := seed1.GenerateNext(signer)
 	seed3 := VerifiableSeed{}
 	seed4, _ := VerifiableSeedFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 

@@ -100,13 +100,21 @@ func startingNode(workingDir string,
 	if len(addrInfos) == 0 {
 		return nil, nil, fmt.Errorf("validator address is not defined")
 	}
-	prv, err := wallet.PrivateKey(password, addrInfos[0].Address)
-	if err != nil {
-		return nil, nil, err
-	}
-	signer := crypto.NewSigner(prv)
 
-	node, err := node.NewNode(gen, conf, signer)
+	signers := make([]crypto.Signer, conf.NumValidators)
+	rewardAddrs := make([]crypto.Address, conf.NumValidators)
+	for i := 0; i < conf.NumValidators; i++ {
+		prvKey, err := wallet.PrivateKey(password, addrInfos[i*2].Address)
+		fatalErrorCheck(err)
+
+		addr, err := crypto.AddressFromString(addrInfos[(i*2)+1].Address)
+		fatalErrorCheck(err)
+
+		signers[i] = crypto.NewSigner(prvKey)
+		rewardAddrs[i] = addr
+	}
+
+	node, err := node.NewNode(gen, conf, signers, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}

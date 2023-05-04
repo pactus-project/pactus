@@ -76,11 +76,6 @@ func (st *state) validateCertificateForPreviousHeight(blockHash hash.Hash, cert 
 			return err
 		}
 
-		if !blockHash.EqualsTo(st.lastInfo.BlockHash()) {
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"certificate has invalid block hash, expected %v, got %v", st.lastInfo.BlockHash(), blockHash)
-		}
-
 		if cert.Round() != st.lastInfo.Certificate().Round() {
 			return errors.Errorf(errors.ErrInvalidBlock,
 				"certificate has invalid round, expected %v, got %v", st.lastInfo.Certificate().Round(), cert.Round())

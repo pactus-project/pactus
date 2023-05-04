@@ -21,12 +21,12 @@ func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator pe
 	msg := m.(*message.QueryProposalMessage)
 	handler.logger.Trace("parsing QueryProposal message", "message", msg)
 
-	height, _ := handler.consensus.HeightRound()
+	height, _ := handler.consMgr.HeightRound()
 	if msg.Height == height {
 		if !handler.peerIsInTheCommittee(initiator) {
 			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the committee")
 		}
-		p := handler.consensus.RoundProposal(msg.Round)
+		p := handler.consMgr.RoundProposal(msg.Round)
 		if p != nil {
 			response := message.NewProposalMessage(p)
 			handler.broadcast(response)

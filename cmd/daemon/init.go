@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"path/filepath"
+	"strconv"
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
@@ -17,7 +18,7 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-// Init initializes a node for pactus blockchain.
+// Init initializes a node for the Pactus blockchain.
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
@@ -44,13 +45,12 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("The working directory is not empty: %s", workingDir)
 				return
 			}
-
-			cmd.PrintInfoMsg("Creating wallet...")
 			mnemonic := wallet.GenerateMnemonic(128)
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Your wallet seed:")
-			cmd.PrintInfoMsg("\"" + mnemonic + "\"")
-			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
+			cmd.PrintInfoMsg("Your wallet seed is:")
+			cmd.PrintInfoMsgBold("   " + mnemonic)
+			cmd.PrintLine()
+			cmd.PrintWarnMsg("Write down this seed on a piece of paper to recover your validator key in future.")
 			cmd.PrintLine()
 			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
@@ -58,9 +58,24 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Please enter a password for wallet")
+			cmd.PrintInfoMsg("Enter a password for wallet")
 			password := cmd.PromptPassword("Password", true)
 			walletPath := cmd.PactusDefaultWalletPath(workingDir)
+
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("How many validators do you want to create?")
+			cmd.PrintInfoMsg("Enter a number between 1 to 32, default is 7.")
+			numValidatorsStr := cmd.PromptInputWithSuggestion("Number of Validators", "7")
+			numValidators, err := strconv.Atoi(numValidatorsStr)
+			cmd.FatalErrorCheck(err)
+
+			if numValidators < 1 || numValidators > 32 {
+				cmd.PrintErrorMsg("Invalid validator number")
+				return
+			}
+
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Creating wallet...")
 
 			// To make process faster, we update the password
 			// after creating the addresses
@@ -69,47 +84,54 @@ func Init() func(c *cli.Cmd) {
 				network = wallet.NetworkTestNet
 			}
 			wallet, err := wallet.Create(walletPath, mnemonic, "", network)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to create wallet: %v", err)
-				return
+			cmd.FatalErrorCheck(err)
+
+			cmd.PrintLine()
+			cmd.PrintSuccessMsg("Wallet created successfully at %s.", walletPath)
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Generating keys...")
+			cmd.PrintLine()
+			cmd.PrintInfoMsgBold("Validator addresses:")
+			for i := 0; i < numValidators; i++ {
+				valAddrStr, err := wallet.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
+				cmd.FatalErrorCheck(err)
+
+				cmd.PrintInfoMsg("%v- %s", i+1, valAddrStr)
 			}
-			cmd.PrintInfoMsg("Wallet created successfully")
-			valAddrStr, err := wallet.DeriveNewAddress("Validator address")
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to create validator address: %v", err)
-				return
+			cmd.PrintLine()
+
+			cmd.PrintInfoMsgBold("Reward addresses:")
+			for i := 0; i < numValidators; i++ {
+				rewardAddrStr, err := wallet.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
+				cmd.FatalErrorCheck(err)
+
+				cmd.PrintInfoMsg("%v- %s", i+1, rewardAddrStr)
 			}
-			rewardAddrStr, err := wallet.DeriveNewAddress("Reward address")
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to create reward address: %v", err)
-				return
-			}
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Initializing node...")
+			cmd.PrintLine()
 
 			var gen *genesis.Genesis
 			confFile := cmd.PactusConfigPath(workingDir)
 
 			if *testnetOpt {
+				cmd.PrintInfoMsg("Network: Testnet")
+
 				gen = genesis.Testnet()
 
 				// Save config for testnet
-				if err := config.SaveTestnetConfig(confFile, rewardAddrStr); err != nil {
-					cmd.PrintErrorMsg("Failed to write config file: %v", err)
-					return
-				}
+				err := config.SaveTestnetConfig(confFile, numValidators)
+				cmd.FatalErrorCheck(err)
 			} else if *localnetOpt {
-				info := wallet.AddressInfo(valAddrStr)
-				if info == nil {
-					cmd.PrintErrorMsg("Failed to get validator public key")
-					return
-				}
+				cmd.PrintInfoMsg("Network: Localnet")
+
+				info := wallet.AddressInfo(wallet.AddressLabels()[0].Address)
 				valPub := info.Pub.(*bls.PublicKey)
 				gen = makeLocalGenesis(valPub)
 
 				// Save config for localnet
-				if err := config.SaveLocalnetConfig(confFile, rewardAddrStr); err != nil {
-					cmd.PrintErrorMsg("Failed to write config file: %v", err)
-					return
-				}
+				err := config.SaveLocalnetConfig(confFile)
+				cmd.FatalErrorCheck(err)
 			} else {
 				panic("not yet!")
 				// gen = genesis.Mainnet()
@@ -121,30 +143,18 @@ func Init() func(c *cli.Cmd) {
 				// }
 			}
 
-			// Save genesis file
 			genFile := cmd.PactusGenesisPath(workingDir)
-			if err := gen.SaveToFile(genFile); err != nil {
-				cmd.PrintErrorMsg("Failed to write genesis file: %v", err)
-				return
-			}
+			err = gen.SaveToFile(genFile)
+			cmd.FatalErrorCheck(err)
 
 			err = wallet.UpdatePassword("", password)
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to update wallet password: %v", err)
-				return
-			}
+			cmd.FatalErrorCheck(err)
 
-			// Save wallet
 			err = wallet.Save()
-			if err != nil {
-				cmd.PrintErrorMsg("Failed to save wallet: %v", err)
-				return
-			}
-			cmd.PrintLine()
+			cmd.FatalErrorCheck(err)
 
+			cmd.PrintLine()
 			cmd.PrintSuccessMsg("A pactus node is successfully initialized at %v", workingDir)
-			cmd.PrintInfoMsg("You validator address is: %v", valAddrStr)
-			cmd.PrintInfoMsg("You reward address is: %v", rewardAddrStr)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You can start the node by running this command:")
 			cmd.PrintInfoMsg("./pactus-daemon start -w %v", workingDir)
@@ -152,7 +162,7 @@ func Init() func(c *cli.Cmd) {
 	}
 }
 
-// makeLocalGenesis makes genisis file for the local network.
+// makeLocalGenesis makes genesis file for the local network.
 func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
@@ -163,6 +173,8 @@ func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	vals := []*validator.Validator{val}
 
 	// create genesis
-	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, param.DefaultParams())
+	params := param.DefaultParams()
+	params.BlockVersion = 63
+	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, params)
 	return gen
 }

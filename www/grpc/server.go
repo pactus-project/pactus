@@ -14,26 +14,26 @@ import (
 )
 
 type Server struct {
-	ctx       context.Context
-	config    *Config
-	listener  net.Listener
-	address   string
-	grpc      *grpc.Server
-	state     state.Facade
-	sync      sync.Synchronizer
-	consensus consensus.Reader
-	logger    *logger.Logger
+	ctx      context.Context
+	config   *Config
+	listener net.Listener
+	address  string
+	grpc     *grpc.Server
+	state    state.Facade
+	sync     sync.Synchronizer
+	consMgr  consensus.ManagerReader
+	logger   *logger.Logger
 }
 
 func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
-	consensus consensus.Reader) *Server {
+	consMgr consensus.ManagerReader) *Server {
 	return &Server{
-		ctx:       context.Background(),
-		config:    conf,
-		state:     state,
-		sync:      sync,
-		consensus: consensus,
-		logger:    logger.NewLogger("_grpc", nil),
+		ctx:     context.Background(),
+		config:  conf,
+		state:   state,
+		sync:    sync,
+		consMgr: consMgr,
+		logger:  logger.NewLogger("_grpc", nil),
 	}
 }
 
@@ -48,9 +48,9 @@ func (s *Server) StartServer() error {
 
 	grpc := grpc.NewServer()
 	blockchainServer := &blockchainServer{
-		state:     s.state,
-		consensus: s.consensus,
-		logger:    s.logger,
+		state:   s.state,
+		consMgr: s.consMgr,
+		logger:  s.logger,
 	}
 	transactionServer := &transactionServer{
 		state:  s.state,

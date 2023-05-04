@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/www/grpc"
@@ -15,7 +17,7 @@ import (
 
 var tMockState *state.MockState
 var tMockSync *sync.MockSync
-var tMockConsensus *consensus.MockConsensus
+var tMockConsMgr consensus.Manager
 var tGRPCServer *grpc.Server
 var tHTTPServer *Server
 
@@ -26,7 +28,9 @@ func setup(t *testing.T) {
 
 	tMockState = state.MockingState()
 	tMockSync = sync.MockingSync()
-	tMockConsensus = consensus.MockingConsensus(tMockState)
+	tMockConsMgr, _ = consensus.MockingManager([]crypto.Signer{
+		bls.GenerateTestSigner(), bls.GenerateTestSigner(),
+	})
 
 	grpcConf := &grpc.Config{
 		Enable: true,
@@ -37,7 +41,7 @@ func setup(t *testing.T) {
 		Listen: "[::]:0",
 	}
 
-	tGRPCServer = grpc.NewServer(grpcConf, tMockState, tMockSync, tMockConsensus)
+	tGRPCServer = grpc.NewServer(grpcConf, tMockState, tMockSync, tMockConsMgr)
 	assert.NoError(t, tGRPCServer.StartServer())
 
 	tHTTPServer = NewServer(httpConf)

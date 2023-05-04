@@ -64,7 +64,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlockAnnounce)
 	})
 
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[0].PublicKey())
 
 	t.Run("In the committee, should broadcast block announce message", func(t *testing.T) {
 		tSync.broadcast(msg)

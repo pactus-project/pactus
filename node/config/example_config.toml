@@ -1,138 +1,132 @@
+### This configuration file specifies configurations for running a Pactus node.
 
-# state contains configuration of state module.
-[state]
+# `num_validators` specifies the number of consensus instances (validators) to run on this node.
+num_validators = %num_validators%
 
-  # reward_address is the address for collecting the rewards. If it is empty the
-  # validator address will be used for collecting the rewards.
-  # Default is your reward address.
- ## reward_address = ""
-
-# store contains configuration of store module.
+# `store` contains configuration options for the store module, which manages storage and retrieval of blockchain data.
 [store]
 
-  # Path specifies the data directory.
+  # `path` specifies the directory where blockchain data will be stored.
   # Default is data
  ## path = "data"
 
-# network contains configuration of network module.
+# `network` contains configuration options for the network module, which manages communication between nodes.
 [network]
 
-  # name is the name of the network. For the mainnet it should be set to “pactus”.
+  # `name` specifies the name of the network. For the mainnet, this should be set to "pactus".
  ## name = "pactus"
 
-  # listens is the binding address for network APIs and supports multi addresses.
+  # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
  ## listens = ["/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"]
 
-  # node_key is the private key filename to use for node authentication
-  # and encryption in the p2p protocol.
+  # `node_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
  ## node_key = "node_key"
 
-  # enable_dht indicates whether Kademlia DHT should be enabled or not.
+  # `enable_dht` indicates whether Kademlia DHT should be enabled or not.
   # Default is true.
  ## enable_dht = true
 
-  # enable_nat indicates whether NAT service should be enabled or not.
+  # `enable_nat` indicates whether NAT service should be enabled or not.
   # NAT service allows many machines to share a single public address.
   # Default is true.
  ## enable_nat = true
 
-  # EnableRelay indicates whether relay service  should be enabled or not.
-  # Relay service is a transport protocol that routes traffic between two peers
-  # over a third-party “relay” peer.
+  # `enable_relay` indicates whether relay service  should be enabled or not.
+  # Relay service is a transport protocol that routes traffic between two peers over a third-party “relay” peer.
   # Default is true.
  ## enable_relay = true
 
-  # enable_ping indicates whether Ping service should be enabled or not.
+  # `enable_ping` indicates whether Ping service should be enabled or not.
   # Default is true.
  ## enable_ping = true
 
-  # enable_mdns indicates whether MDNS should be enabled or not.
+  # `enable_mdns` indicates whether MDNS should be enabled or not.
   # MDNS is a protocol to discover local peers quickly and efficiently.
   # Default is false.
  ## enable_mdns = false
 
-  # bootstrap is a configuration for bootstrapping the node.
+    # `network.bootstrap` contains configuration for bootstrapping the node.
   [network.bootstrap]
 
-    # addresses is the list of peers addresses needed for peer discovery.
+    # `addresses` is a list of peer addresses needed for peer discovery.
+    # These addresses are used by the Pactus node to discover and connect to other peers on the network.
    ## addresses = ["/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
 
-    # min_threshold is the number of connections it attempts to maintain.
+    # `min_threshold` is the minimum number of connections that the Pactus node should maintain.
     # Default is 8
    ## min_threshold = 8
 
-    # max_threshold is the threshold of maximum number of connections.
+    # `max_threshold` is the maximum number of connections that the Pactus node should maintain.
     # Default is 16
    ## max_threshold = 16
 
-    # period periodically checks to see if the threshold is maintained.
+    # `period` periodically checks to see if the threshold is maintained.
     # Default is 1 minute
    ## period = "1m0s"
 
-# sync contains configuration of sync module.
+# `sync` contains configuration of sync module.
 [sync]
 
-  # moniker A custom human readable name for this node.
+  # `moniker` is a custom human-readable name for this node.
  ## moniker = ""
 
-  # heartbeat_timer is a timer for broadcasting a heartbeat message to network.
+  # `heartbeat_timer` is a timer for broadcasting a heartbeat message to the network.
   # Default is 5 seconds
-  # Set the value to zero e.g heartbeat_timer = "0s" to disable hearbeat broadcasing.
+  # Set the value to zero e.g heartbeat_timer = "0s" to disable heartbeat broadcasing.
  ## heartbeat_timer = "5s"
 
-  # session_timeout is a timeout for a session to be opened.
+  # `session_timeout` is a timeout for a session to be opened.
   # Default is 30 seconds
  ## session_timeout = "30s"
 
-  # max_open_sessions is the maximum number of open sessions.
+  # `max_open_sessions` is the maximum number of open sessions.
   # Default is 8
  ## max_open_sessions = 8
 
-  # block_per_message the number of blocks per message.
+  # `block_per_message` is the number of blocks per message.
   # Default is 60.
  ## block_per_message = 60
 
-  # cache_size is the total capacity of the cache pool.
+  # `cache_size` is the total capacity of the cache pool.
   # Default is 50000
  ## cache_size = 50000
 
-  # node_network means that the node is capable of serving the complete
-  # blockchain.
+  # `node_network` indicates whether the node is capable of serving the complete blockchain.
   # Default is true
  ## node_network = true
 
-  # sync contains configuration of sync firewall.
+  # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
-    # enable indicates that firewall should be enable or not.
+    # `enable` indicates whether the firewall should be enabled or not.
     # Default is false
    ## enable = false
 
-# Sync contains configuration of the transaction pool module.
+# `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
 
-  # max_size indicates the maximum number of unconfirmed transactions inside pool.
+  # `max_size` indicates the maximum number of unconfirmed transactions inside the pool.
   # Default is 2000
  ## max_size = 2000
 
-# consensus contains configuration for consensus module.
+# `consensus` contains configuration options for the consensus module.
 [consensus]
 
-  # change_proposer_timeout which describes how long should wait for a proposal in
-  # each round before requesting for changing the proposer.
+  # `change_proposer_timeout` describes how long to wait for a proposal in
+  # each round before requesting a change of proposer.
   # Default is 6 seconds.
  ## change_proposer_timeout = "6s"
 
-  # change_proposer_delta which increases change_proposer_timeout with each round.
+  # `change_proposer_delta` increases `change_proposer_timeout` with each round.
   # Default is 2 seconds.
  ## change_proposer_delta = "2s"
 
-# logger contains configuration for logger
+# `logger` contains configuration options for the logger.
 [logger]
-  # colorful indicates whether log can be colorful or not.
+  # `colorful` indicates whether log can be colorful or not.
   # Default is true.
  ## colorful = true
 
-  # levels contains the level of logger per module.
+  # `logger.levels` contains the level of logger per module.
   [logger.levels]
    ## _consensus = "info"
    ## _grpc = "error"
@@ -143,46 +137,48 @@
    ## _sync = "warning"
    ## default = "info"
 
-# grpc contains configuration of the gRRC module.
+# `grpc` contains configuration of the gRRC module.
 [grpc]
 
-  # Enable indicates whether gRPC service should be enabled or not.
+  # `enable` indicates whether gRPC service should be enabled or not.
   # Default is false
  ## enable = false
 
-  # address to listen for incoming connections for gRPC server.
+  # `listen` is the address to listen for incoming connections for gRPC server.
  ## listen = ""
 
-  # gateway server which translates a RESTful HTTP API into gRPC.
+  # `grpc.gateway` contains configuration for the gRPC Gateway server
+  # which translates a RESTful HTTP API into gRPC.
   [grpc.gateway]
 
-    # enable indicates whether gRPCGateway service should be enabled or not.
+    # `enable` indicates whether gRPCGateway service should be enabled or not.
     # Default is false
    ## enable = false
 
-    # address to listen for incoming connections for gRPCGateway server.
+    # `listen` is the address to listen for incoming connections for gRPCGateway server.
    ## listen = ""
 
-    # enable_cors indicates whether Cross-Origin Request Sharing (CORS)
+    # `enable_cors` indicates whether Cross-Origin Request Sharing (CORS)
     # protection should be enabled or not.
     # Default is false
    ## enable_cors = false
 
-# http configuration.
+# `http` configuration.
 [http]
 
-  # enable indicates whether HTTP service should be enabled or not.
+  # `enable` indicates whether HTTP service should be enabled or not.
   # Default is false
  ## enable = false
 
-  # address to listen for incoming connections for HTTP server.
+  # `listen` is the address address to listen for incoming connections for HTTP server.
  ## listen = ""
+
 # Nanomsg configuration.
 [nanomsg]
 
-  # enable indicates whether nanomsg service should be enabled or not.
+  # `enable` indicates whether nanomsg service should be enabled or not.
   # Default is false
  ## enable = false
 
-  # address to listen for incoming connections for nanomsg server.
+  # `listen` is the address to listen for incoming connections for nanomsg server.
  ## listen = ""

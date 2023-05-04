@@ -98,8 +98,11 @@
           "type": "string",
           "format": "byte"
         },
-        "publicKey": {
-          "type": "string"
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "flags": {
           "type": "integer",

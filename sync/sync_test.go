@@ -28,7 +28,8 @@ import (
 var (
 	tConfig      *Config
 	tState       *state.MockState
-	tConsensus   *consensus.MockConsensus
+	tConsMgr     consensus.Manager
+	tConsMocks   []*consensus.MockConsensus
 	tNetwork     *network.MockNetwork
 	tSync        *synchronizer
 	tBroadcastCh chan message.Message
@@ -63,18 +64,18 @@ func testConfig() *Config {
 }
 
 func setup(t *testing.T) {
-	signer := bls.GenerateTestSigner()
+	signers := []crypto.Signer{bls.GenerateTestSigner(), bls.GenerateTestSigner()}
 	tState = state.MockingState()
-	tConsensus = consensus.MockingConsensus(tState)
+	tConsMgr, tConsMocks = consensus.MockingManager(signers)
 	tBroadcastCh = make(chan message.Message, 1000)
 	tNetwork = network.MockingNetwork(network.TestRandomPeerID())
 
 	testAddBlocks(t, tState, 21)
 
 	sync1, err := NewSynchronizer(tConfig,
-		signer,
+		signers,
 		tState,
-		tConsensus,
+		tConsMgr,
 		tNetwork,
 		tBroadcastCh,
 	)
@@ -82,7 +83,8 @@ func setup(t *testing.T) {
 	tSync = sync1.(*synchronizer)
 
 	assert.NoError(t, tSync.Start())
-	shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
+	shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 1
+	shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 2
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
 }
@@ -168,11 +170,19 @@ func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	}
 	testAddPeer(t, pub, pid)
 	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt32(0))
-	// This is not very accurate, there is no harm to do it for testing
+	// Note: This may not be completely accurate, but it poses no harm for testing purposes.
 	val.UpdateLastJoinedHeight(tState.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
 	tState.TestStore.UpdateValidator(val)
 	tState.TestCommittee.Update(0, []*validator.Validator{val})
 	require.True(t, tState.TestCommittee.Contains(pub.Address()))
+
+	for _, cons := range tConsMocks {
+		if cons.Signer.PublicKey().EqualsTo(pub) {
+			cons.Active = true
+		} else {
+			cons.Active = false
+		}
+	}
 }
 
 func checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
@@ -181,16 +191,8 @@ func checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
 
 func TestStop(t *testing.T) {
 	setup(t)
-	// Should stop normally
+	// Should stop gracefully.
 	tSync.Stop()
-}
-
-func TestBroadcastInvalidMessage(t *testing.T) {
-	setup(t)
-	t.Run("Should not publish invalid messages", func(t *testing.T) {
-		tBroadcastCh <- message.NewHeartBeatMessage(0, -1, hash.GenerateTestHash())
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHeartBeat)
-	})
 }
 
 func TestTestNetFlags(t *testing.T) {
@@ -200,19 +202,4 @@ func TestTestNetFlags(t *testing.T) {
 	bdl := tSync.prepareBundle(message.NewHeartBeatMessage(1, 0, hash.GenerateTestHash()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
-}
-
-func TestMoveConsensusToNewHeight(t *testing.T) {
-	setup(t)
-
-	pid := network.TestRandomPeerID()
-	msg := message.NewHeartBeatMessage(tState.LastBlockHeight()+1, 0, hash.GenerateTestHash())
-	assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
-
-	tSync.moveConsensusToNewHeight()
-	assert.Zero(t, tConsensus.Height)
-
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signer.PublicKey())
-	tSync.moveConsensusToNewHeight()
-	assert.Equal(t, tConsensus.Height, tState.LastBlockHeight()+1)
 }

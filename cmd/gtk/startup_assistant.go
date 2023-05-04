@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/node/config"
@@ -24,15 +25,13 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 
 func startupAssistant(workingDir string, testnet bool) bool {
 	successful := false
-	createPage := func(assistant *gtk.Assistant, content gtk.IWidget, name, title, subject, desc string) *gtk.Widget {
+	createPage := func(assistant *gtk.Assistant, content gtk.IWidget, name,
+		title, subject, desc string) *gtk.Widget {
 		page, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 20)
 		fatalErrorCheck(err)
 
 		page.SetHExpand(true)
-		labelTitle, err := gtk.LabelNew(title)
-		fatalErrorCheck(err)
 
-		setMargin(labelTitle, 0, 20, 0, 0)
 		frame, err := gtk.FrameNew(subject)
 		fatalErrorCheck(err)
 
@@ -42,7 +41,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 		fatalErrorCheck(err)
 
 		labelDesc.SetUseMarkup(true)
-		labelDesc.SetMarkup(desc)
+		labelDesc.SetMarkup("<span allow_breaks='true'>" + desc + "</span>")
 		labelDesc.SetVExpand(true)
 		labelDesc.SetVAlign(gtk.ALIGN_END)
 		labelDesc.SetHAlign(gtk.ALIGN_START)
@@ -54,8 +53,6 @@ func startupAssistant(workingDir string, testnet bool) bool {
 
 		box.Add(frame)
 		box.Add(labelDesc)
-
-		page.Add(labelTitle)
 		page.Add(box)
 
 		page.SetName(name)
@@ -75,6 +72,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	var pagePassword *gtk.Widget
 	var pageSeed *gtk.Widget
 	var pageSeedConfirm *gtk.Widget
+	var pageNumValidators *gtk.Widget
 	var pageFinal *gtk.Widget
 
 	// --- PageMode
@@ -120,12 +118,12 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	pageSeedName := "page_seed"
 	pageSeedTitle := "Wallet seed"
 	pageSeedSubject := "Your wallet generation seed is:"
-	pageSeedDesc := `<span allow_breaks="true">Please write these 12 words on paper.
+	pageSeedDesc := `Please write these 12 words on paper.
 This seed will allow you to recover your wallet in case of computer failure.
 <b>WARNING:</b>
   - Never disclose your seed.
   - Never type it on a website.
-  - Do not store it electronically.</span>`
+  - Do not store it electronically.`
 
 	pageSeed = createPage(
 		assistant,
@@ -245,6 +243,55 @@ To make sure that you have properly saved your seed, please retype it here.`
 		pagePasswordSubject,
 		pagePsswrdDesc)
 
+	// --- pageNumValidators
+	lsNumValidators, err := gtk.ListStoreNew(glib.TYPE_INT)
+	fatalErrorCheck(err)
+
+	for i := 0; i < 32; i++ {
+		iter := lsNumValidators.Append()
+		err = lsNumValidators.SetValue(iter, 0, i+1)
+		fatalErrorCheck(err)
+	}
+
+	comboNumValidators, err := gtk.ComboBoxNewWithModel(lsNumValidators)
+	fatalErrorCheck(err)
+
+	cellRenderer, err := gtk.CellRendererTextNew()
+	fatalErrorCheck(err)
+
+	// Set the default selected value to 7 (index 6)
+	comboNumValidators.SetActive(6)
+
+	comboNumValidators.PackStart(cellRenderer, true)
+	comboNumValidators.AddAttribute(cellRenderer, "text", 0)
+
+	labelNumValidators, err := gtk.LabelNew("Number of validators: ")
+	fatalErrorCheck(err)
+
+	setMargin(labelNumValidators, 6, 6, 6, 6)
+	setMargin(comboNumValidators, 6, 6, 6, 6)
+
+	grid, err = gtk.GridNew()
+	fatalErrorCheck(err)
+
+	grid.Add(labelNumValidators)
+	grid.Attach(comboNumValidators, 1, 0, 1, 1)
+
+	pageNumValidatorsName := "page_num_validators"
+	pageNumValidatorsTitle := "Number of validators"
+	pageNumValidatorsSubject := "How many validators do you want to create?"
+	pageNumValidatorsDesc := `Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.
+You can define validators based on the amount of coins you want to stake.
+For more information, look <a href="https://pactus.org/user-guides/run-pactus-gui/">here</a>`
+
+	pageNumValidators = createPage(
+		assistant,
+		grid,
+		pageNumValidatorsName,
+		pageNumValidatorsTitle,
+		pageNumValidatorsSubject,
+		pageNumValidatorsDesc)
+
 	// --- pageFinal
 	textViewNodeInfo, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
@@ -300,12 +347,18 @@ Now you are ready to start the node!`
 				}
 				assistant.SetPageComplete(pageSeed, true)
 			}
-		// case pageSeedConfirmName:
-		// 	{
-		// 	}
+		case pageSeedConfirmName:
+			{
+				assistant.SetPageComplete(pageSeedConfirm, false)
+			}
 		case pagePasswordName:
 			{
 				assistant.SetPageComplete(pagePassword, true)
+			}
+
+		case pageNumValidatorsName:
+			{
+				assistant.SetPageComplete(pageNumValidators, true)
 			}
 
 		case pageFinalName:
@@ -321,12 +374,6 @@ Now you are ready to start the node!`
 					network)
 				fatalErrorCheck(err)
 
-				valAddr, err := defaultWallet.DeriveNewAddress("Validator address")
-				fatalErrorCheck(err)
-
-				rewardAddr, err := defaultWallet.DeriveNewAddress("Reward address")
-				fatalErrorCheck(err)
-
 				var gen *genesis.Genesis
 				confFile := cmd.PactusConfigPath(workingDir)
 
@@ -334,7 +381,7 @@ Now you are ready to start the node!`
 					gen = genesis.Testnet()
 
 					// Save config for testnet
-					if err := config.SaveTestnetConfig(confFile, rewardAddr); err != nil {
+					if err := config.SaveTestnetConfig(confFile, 7); err != nil {
 						cmd.PrintErrorMsg("Failed to write config file: %v", err)
 						return
 					}
@@ -368,8 +415,6 @@ Now you are ready to start the node!`
 				// Done! showing the node information
 				successful = true
 				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workingDir)
-				nodeInfo += fmt.Sprintf("Validator address:\n  %s\n\n", valAddr)
-				nodeInfo += fmt.Sprintf("Reward address:\n  %s\n", rewardAddr)
 
 				setTextViewContent(textViewNodeInfo, nodeInfo)
 			}
@@ -380,6 +425,7 @@ Now you are ready to start the node!`
 	assistant.SetPageType(pageSeed, gtk.ASSISTANT_PAGE_CONTENT)
 	assistant.SetPageType(pageSeedConfirm, gtk.ASSISTANT_PAGE_CONTENT)
 	assistant.SetPageType(pagePassword, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(pageNumValidators, gtk.ASSISTANT_PAGE_CONTENT)
 	assistant.SetPageType(pageFinal, gtk.ASSISTANT_PAGE_SUMMARY)
 
 	assistant.SetModal(true)

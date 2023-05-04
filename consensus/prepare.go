@@ -18,8 +18,6 @@ func (s *prepareState) enter() {
 	queryProposalTimeout := changeProperTimeout / 2
 	s.scheduleTimeout(queryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
 	s.scheduleTimeout(changeProperTimeout, s.height, s.round, tickerTargetChangeProposer)
-
-	s.decide()
 }
 
 func (s *prepareState) decide() {

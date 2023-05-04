@@ -641,6 +641,7 @@ type TransactionInfo struct {
 	Fee         int64       `protobuf:"varint,7,opt,name=fee,proto3" json:"fee,omitempty"`
 	PayloadType PayloadType `protobuf:"varint,8,opt,name=PayloadType,proto3,enum=pactus.PayloadType" json:"PayloadType,omitempty"`
 	// Types that are assignable to Payload:
+	//
 	//	*TransactionInfo_Send
 	//	*TransactionInfo_Bond
 	//	*TransactionInfo_Sortition

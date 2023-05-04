@@ -16,15 +16,20 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	tm := newTableMaker()
-	tm.addRowInt("Height", int(res.Height))
-	tm.addRowInt("Round", int(res.Round))
-	tm.addRowString("Votes", "---")
-	for i, v := range res.Votes {
-		tm.addRowInt("-- Vote #", i+1)
-		tm.addRowString("Type", vote.Type(v.Type).String())
-		tm.addRowString("Voter", v.Voter)
-		tm.addRowInt("Round", int(v.Round))
-		tm.addRowBlockHash("BlockHash", v.BlockHash)
+	for i, cons := range res.Instances {
+		tm.addRowInt("== Validator", i+1)
+		tm.addRowValAddress("Address", cons.Address)
+		tm.addRowBool("Active", cons.Active)
+		tm.addRowInt("Height", int(cons.Height))
+		tm.addRowInt("Round", int(cons.Round))
+		tm.addRowString("Votes", "---")
+		for i, v := range cons.Votes {
+			tm.addRowInt("-- Vote #", i+1)
+			tm.addRowString("Type", vote.Type(v.Type).String())
+			tm.addRowString("Voter", v.Voter)
+			tm.addRowInt("Round", int(v.Round))
+			tm.addRowBlockHash("BlockHash", v.BlockHash)
+		}
 	}
 	s.writeHTML(w, tm.html())
 }

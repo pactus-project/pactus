@@ -17,9 +17,9 @@ import (
 )
 
 type blockchainServer struct {
-	state     state.Facade
-	consensus consensus.Reader
-	logger    *logger.Logger
+	state   state.Facade
+	consMgr consensus.ManagerReader
+	logger  *logger.Logger
 }
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
@@ -43,18 +43,26 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 
 func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 	_ *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
-	height, round := s.consensus.HeightRound()
-	votes := s.consensus.AllVotes()
-	vinfo := make([]*pactus.VoteInfo, 0, len(votes))
-	for _, v := range votes {
-		vinfo = append(vinfo, voteToProto(v))
+	instances := make([]*pactus.ConsensusInfo, 0)
+	for _, cons := range s.consMgr.Instances() {
+		height, round := cons.HeightRound()
+		votes := cons.AllVotes()
+		voteInfos := make([]*pactus.VoteInfo, 0, len(votes))
+		for _, v := range votes {
+			voteInfos = append(voteInfos, voteToProto(v))
+		}
+
+		instances = append(instances,
+			&pactus.ConsensusInfo{
+				Address: cons.SignerKey().Address().String(),
+				Active:  cons.IsActive(),
+				Height:  height,
+				Round:   int32(round),
+				Votes:   voteInfos,
+			})
 	}
 
-	return &pactus.GetConsensusInfoResponse{
-		Height: height,
-		Round:  int32(round),
-		Votes:  vinfo,
-	}, nil
+	return &pactus.GetConsensusInfoResponse{Instances: instances}, nil
 }
 
 func (s *blockchainServer) GetBlockHash(_ context.Context,
@@ -199,11 +207,11 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 func (s *blockchainServer) GetValidators(_ context.Context,
 	_ *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
 	validators := s.state.CommitteeValidators()
-	validatorsResp := make([]*pactus.ValidatorInfo, 0)
+	validatorsInfo := make([]*pactus.ValidatorInfo, 0)
 	for _, val := range validators {
-		validatorsResp = append(validatorsResp, validatorToProto(val))
+		validatorsInfo = append(validatorsInfo, validatorToProto(val))
 	}
-	return &pactus.GetValidatorsResponse{Validators: validatorsResp}, nil
+	return &pactus.GetValidatorsResponse{Validators: validatorsInfo}, nil
 }
 
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {

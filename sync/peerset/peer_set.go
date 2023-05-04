@@ -184,7 +184,7 @@ func (ps *PeerSet) UpdatePeerInfo(
 	status StatusCode,
 	moniker string,
 	agent string,
-	publicKey *bls.PublicKey,
+	consKey *bls.PublicKey,
 	nodeNetwork bool) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -193,7 +193,8 @@ func (ps *PeerSet) UpdatePeerInfo(
 	p.Status = status
 	p.Moniker = moniker
 	p.Agent = agent
-	p.PublicKey = *publicKey
+	p.ConsensusKeys[*consKey] = true
+
 	p.SetNodeNetworkFlag(nodeNetwork)
 }
 

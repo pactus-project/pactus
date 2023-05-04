@@ -100,7 +100,7 @@ func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *block.Certificat
 func (m *MockState) Close() error {
 	return nil
 }
-func (m *MockState) ProposeBlock(_ int16) (*block.Block, error) {
+func (m *MockState) ProposeBlock(_ crypto.Signer, _ crypto.Address, _ int16) (*block.Block, error) {
 	b := block.GenerateTestBlock(nil, nil)
 	return b, nil
 }
@@ -197,10 +197,4 @@ func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 }
 func (m *MockState) Params() param.Params {
 	return m.TestParams
-}
-func (m *MockState) RewardAddress() crypto.Address {
-	return crypto.GenerateTestAddress()
-}
-func (m *MockState) ValidatorAddress() crypto.Address {
-	return crypto.GenerateTestAddress()
 }

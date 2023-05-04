@@ -20,7 +20,7 @@ func (handler *heartBeatHandler) ParsMessage(m message.Message, initiator peer.I
 	msg := m.(*message.HeartBeatMessage)
 	handler.logger.Trace("parsing HeartBeat message", "message", msg)
 
-	height, round := handler.consensus.HeightRound()
+	height, round := handler.consMgr.HeightRound()
 
 	if msg.Height == height {
 		if msg.Round > round {

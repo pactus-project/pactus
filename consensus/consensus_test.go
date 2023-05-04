@@ -38,10 +38,10 @@ var (
 	tSigners []crypto.Signer
 	tTxPool  *txpool.MockTxPool
 	tGenDoc  *genesis.Genesis
-	tConsX   *consensus // Good connection
-	tConsY   *consensus // Good connection
-	tConsB   *consensus // Byzantine or offline
-	tConsP   *consensus // Partitioned
+	tConsX   *consensus // Good peer
+	tConsY   *consensus // Good peer
+	tConsB   *consensus // Byzantine or offline peer
+	tConsP   *consensus // Partitioned peer
 )
 
 type OverrideFingerprint struct {
@@ -74,29 +74,29 @@ func setup(t *testing.T) {
 	acc.AddToBalance(21 * 1e14)
 	params := param.DefaultParams()
 	params.CommitteeSize = 4
-	params.BlockTimeInSecond = 2
+	params.BlockTimeInSecond = 1
 
-	store1 := store.MockingStore()
-	store2 := store.MockingStore()
-	store3 := store.MockingStore()
-	store4 := store.MockingStore()
-
-	// To prevent trigging timers before starting the tests, otherwise some tests will have double entry for new height.
+	// to prevent triggering timers before starting the tests to avoid double entries for new heights in some tests.
 	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
 	tGenDoc = genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
-	stX, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexX], store1, tTxPool, nil)
+	stX, err := state.LoadOrNewState(tGenDoc, []crypto.Signer{tSigners[tIndexX]}, store.MockingStore(), tTxPool, nil)
 	require.NoError(t, err)
-	stY, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexY], store2, tTxPool, nil)
+	stY, err := state.LoadOrNewState(tGenDoc, []crypto.Signer{tSigners[tIndexY]}, store.MockingStore(), tTxPool, nil)
 	require.NoError(t, err)
-	stB, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexB], store3, tTxPool, nil)
+	stB, err := state.LoadOrNewState(tGenDoc, []crypto.Signer{tSigners[tIndexB]}, store.MockingStore(), tTxPool, nil)
 	require.NoError(t, err)
-	stP, err := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, tSigners[tIndexP], store4, tTxPool, nil)
+	stP, err := state.LoadOrNewState(tGenDoc, []crypto.Signer{tSigners[tIndexP]}, store.MockingStore(), tTxPool, nil)
 	require.NoError(t, err)
 
-	consX := NewConsensus(testConfig(), stX, tSigners[tIndexX], make(chan message.Message, 100))
-	consY := NewConsensus(testConfig(), stY, tSigners[tIndexY], make(chan message.Message, 100))
-	consB := NewConsensus(testConfig(), stB, tSigners[tIndexB], make(chan message.Message, 100))
-	consP := NewConsensus(testConfig(), stP, tSigners[tIndexP], make(chan message.Message, 100))
+	consX := NewConsensus(testConfig(), stX, tSigners[tIndexX], tSigners[tIndexX].Address(),
+		make(chan message.Message, 100), newMediator())
+	consY := NewConsensus(testConfig(), stY, tSigners[tIndexY], tSigners[tIndexY].Address(),
+		make(chan message.Message, 100), newMediator())
+	consB := NewConsensus(testConfig(), stB, tSigners[tIndexB], tSigners[tIndexB].Address(),
+		make(chan message.Message, 100), newMediator())
+	consP := NewConsensus(testConfig(), stP, tSigners[tIndexP], tSigners[tIndexP].Address(),
+		make(chan message.Message, 100), newMediator())
+
 	tConsX = consX.(*consensus)
 	tConsY = consY.(*consensus)
 	tConsB = consB.(*consensus)
@@ -246,7 +246,7 @@ func testEnterNextRound(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-func commitBlockForAllStates(t *testing.T) {
+func commitBlockForAllStates(t *testing.T) (*block.Block, *block.Certificate) {
 	height := tConsX.state.LastBlockHeight()
 	var err error
 	p := makeProposal(t, height+1, 0)
@@ -258,40 +258,42 @@ func commitBlockForAllStates(t *testing.T) {
 
 	sig := bls.Aggregate([]*bls.Signature{sig1, sig2, sig4})
 	cert := block.NewCertificate(0, []int32{0, 1, 2, 3}, []int32{2}, sig)
+	block := p.Block()
 
-	require.NotNil(t, cert)
-	err = tConsX.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsX.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
-	err = tConsY.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsY.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
-	err = tConsB.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsB.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
-	err = tConsP.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsP.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
+
+	return block, cert
 }
 
 func makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {
 	var p *proposal.Proposal
 	switch (height % 4) + uint32(round) {
 	case 1:
-		pub, err := tConsX.state.ProposeBlock(round)
+		blk, err := tConsX.state.ProposeBlock(tConsX.signer, tConsX.rewardAddr, round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pub)
+		p = proposal.NewProposal(height, round, blk)
 		tConsX.signer.SignMsg(p)
 	case 2:
-		pub, err := tConsY.state.ProposeBlock(round)
+		blk, err := tConsY.state.ProposeBlock(tConsY.signer, tConsY.rewardAddr, round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pub)
+		p = proposal.NewProposal(height, round, blk)
 		tConsY.signer.SignMsg(p)
 	case 3:
-		pub, err := tConsB.state.ProposeBlock(round)
+		blk, err := tConsB.state.ProposeBlock(tConsB.signer, tConsB.rewardAddr, round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pub)
+		p = proposal.NewProposal(height, round, blk)
 		tConsB.signer.SignMsg(p)
 	case 0, 4:
-		pub, err := tConsP.state.ProposeBlock(round)
+		blk, err := tConsP.state.ProposeBlock(tConsP.signer, tConsP.rewardAddr, round)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, pub)
+		p = proposal.NewProposal(height, round, blk)
 		tConsP.signer.SignMsg(p)
 	}
 
@@ -305,14 +307,13 @@ func TestNotInCommittee(t *testing.T) {
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
 
-	st, _ := state.LoadOrNewState(state.DefaultConfig(), tGenDoc, signer, store, tTxPool, nil)
-	cons := NewConsensus(testConfig(), st, signer, make(chan message.Message, 100))
+	st, _ := state.LoadOrNewState(tGenDoc, []crypto.Signer{signer}, store, tTxPool, nil)
+	Cons := NewConsensus(testConfig(), st, signer, signer.Address(), make(chan message.Message, 100), newMediator())
+	cons := Cons.(*consensus)
 
-	testEnterNewHeight(cons.(*consensus))
+	testEnterNewHeight(cons)
 
-	cons.(*consensus).signAddVote(vote.VoteTypePrepare, hash.GenerateTestHash())
-	assert.Empty(t, cons.RoundVotes(0))
-	assert.Nil(t, cons.RoundVotes(1))
+	cons.signAddVote(vote.VoteTypePrepare, hash.GenerateTestHash())
 }
 
 func TestRoundVotes(t *testing.T) {
@@ -322,22 +323,15 @@ func TestRoundVotes(t *testing.T) {
 	testEnterNewHeight(tConsP)
 
 	t.Run("Ignore votes from invalid height", func(t *testing.T) {
-		v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
-		tSigners[tIndexX].SignMsg(v1)
+		v1 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, hash.GenerateTestHash(), tIndexX)
+		v2 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.GenerateTestHash(), tIndexX)
+		v3 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.GenerateTestHash(), tIndexY)
+		v4 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 3, 0, hash.GenerateTestHash(), tIndexX)
 
-		v2 := vote.NewVote(vote.VoteTypeChangeProposer, 2, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
-		tSigners[tIndexX].SignMsg(v2)
-
-		v3 := vote.NewVote(vote.VoteTypeChangeProposer, 3, 0, hash.GenerateTestHash(), tSigners[tIndexX].Address())
-		tSigners[tIndexX].SignMsg(v3)
-
-		tConsP.AddVote(v1)
-		tConsP.AddVote(v2)
-		tConsP.AddVote(v3)
-
-		require.False(t, tConsP.HasVote(v1.Hash()))
-		require.True(t, tConsP.HasVote(v2.Hash()))
-		require.False(t, tConsP.HasVote(v3.Hash()))
+		require.False(t, tConsP.log.HasVote(v1.Hash()))
+		require.True(t, tConsP.log.HasVote(v2.Hash()))
+		require.True(t, tConsP.log.HasVote(v3.Hash()))
+		require.False(t, tConsP.log.HasVote(v4.Hash()))
 	})
 }
 
@@ -373,11 +367,11 @@ func TestConsensusAddVote(t *testing.T) {
 	v4 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, hash.GenerateTestHash(), tIndexX)
 	v5 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 2, hash.GenerateTestHash(), tIndexX)
 
-	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
-	assert.True(t, tConsP.HasVote(v2.Hash()))
-	assert.True(t, tConsP.HasVote(v3.Hash()))
-	assert.True(t, tConsP.HasVote(v4.Hash()))
-	assert.True(t, tConsP.HasVote(v5.Hash())) // next round
+	assert.False(t, tConsP.log.HasVote(v1.Hash())) // invalid height
+	assert.True(t, tConsP.log.HasVote(v2.Hash()))
+	assert.True(t, tConsP.log.HasVote(v3.Hash()))
+	assert.True(t, tConsP.log.HasVote(v4.Hash()))
+	assert.True(t, tConsP.log.HasVote(v5.Hash())) // next round
 }
 
 func TestConsensusLateProposal1(t *testing.T) {
@@ -418,8 +412,8 @@ func TestConsensusInvalidVote(t *testing.T) {
 
 	tConsX.AddVote(v1)
 	tConsX.AddVote(v2)
-	assert.False(t, tConsX.HasVote(v1.Hash()))
-	assert.False(t, tConsX.HasVote(v2.Hash()))
+	assert.False(t, tConsX.log.HasVote(v1.Hash()))
+	assert.False(t, tConsX.log.HasVote(v2.Hash()))
 }
 
 func TestPickRandomVote(t *testing.T) {
@@ -515,4 +509,47 @@ func TestDuplicateProposal(t *testing.T) {
 	tConsX.SetProposal(p2)
 
 	assert.Equal(t, tConsX.RoundProposal(0).Hash(), p1.Hash())
+}
+
+func TestNonActiveValidator(t *testing.T) {
+	setup(t)
+
+	signer := bls.GenerateTestSigner()
+	Cons := NewConsensus(testConfig(), state.MockingState(), signer, signer.Address(), make(chan message.Message, 100), newMediator())
+	nonActiveCons := Cons.(*consensus)
+
+	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
+		nonActiveCons.MoveToNewHeight()
+		checkHeightRoundWait(t, nonActiveCons, 1, 0)
+
+		assert.False(t, nonActiveCons.IsActive())
+		assert.Equal(t, nonActiveCons.currentState.name(), "new-height")
+	})
+
+	t.Run("non-active instances should ignore proposals", func(t *testing.T) {
+		p := makeProposal(t, 1, 0)
+		nonActiveCons.SetProposal(p)
+
+		assert.False(t, nonActiveCons.log.HasRoundProposal(0))
+	})
+
+	t.Run("non-active instances should ignore votes", func(t *testing.T) {
+		v := testAddVote(nonActiveCons, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexX)
+
+		assert.False(t, nonActiveCons.log.HasVote(v.Hash()))
+	})
+
+	t.Run("non-active instances should move to new height", func(t *testing.T) {
+		b1, cert1 := commitBlockForAllStates(t)
+		b2, cert2 := commitBlockForAllStates(t)
+
+		nonActiveCons.MoveToNewHeight()
+		checkHeightRoundWait(t, nonActiveCons, 1, 0)
+
+		assert.NoError(t, nonActiveCons.state.CommitBlock(1, b1, cert1))
+		assert.NoError(t, nonActiveCons.state.CommitBlock(2, b2, cert2))
+
+		nonActiveCons.MoveToNewHeight()
+		checkHeightRoundWait(t, nonActiveCons, 3, 0)
+	})
 }

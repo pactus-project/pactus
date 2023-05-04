@@ -349,6 +349,31 @@
         }
       }
     },
+    "pactusConsensusInfo": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "Active": {
+          "type": "boolean"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "votes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pactusVoteInfo"
+          }
+        }
+      }
+    },
     "pactusGetAccountResponse": {
       "type": "object",
       "properties": {
@@ -446,18 +471,10 @@
     "pactusGetConsensusInfoResponse": {
       "type": "object",
       "properties": {
-        "height": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "round": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "votes": {
+        "instances": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/pactusVoteInfo"
+            "$ref": "#/definitions/pactusConsensusInfo"
           }
         }
       }

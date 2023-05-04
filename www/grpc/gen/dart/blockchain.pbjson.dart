@@ -203,14 +203,12 @@ final $typed_data.Uint8List getConsensusInfoRequestDescriptor = $convert.base64D
 const GetConsensusInfoResponse$json = const {
   '1': 'GetConsensusInfoResponse',
   '2': const [
-    const {'1': 'height', '3': 1, '4': 1, '5': 13, '10': 'height'},
-    const {'1': 'round', '3': 2, '4': 1, '5': 5, '10': 'round'},
-    const {'1': 'votes', '3': 3, '4': 3, '5': 11, '6': '.pactus.VoteInfo', '10': 'votes'},
+    const {'1': 'instances', '3': 1, '4': 3, '5': 11, '6': '.pactus.ConsensusInfo', '10': 'instances'},
   ],
 };
 
 /// Descriptor for `GetConsensusInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getConsensusInfoResponseDescriptor = $convert.base64Decode('ChhHZXRDb25zZW5zdXNJbmZvUmVzcG9uc2USFgoGaGVpZ2h0GAEgASgNUgZoZWlnaHQSFAoFcm91bmQYAiABKAVSBXJvdW5kEiYKBXZvdGVzGAMgAygLMhAucGFjdHVzLlZvdGVJbmZvUgV2b3Rlcw==');
+final $typed_data.Uint8List getConsensusInfoResponseDescriptor = $convert.base64Decode('ChhHZXRDb25zZW5zdXNJbmZvUmVzcG9uc2USMwoJaW5zdGFuY2VzGAEgAygLMhUucGFjdHVzLkNvbnNlbnN1c0luZm9SCWluc3RhbmNlcw==');
 @$core.Deprecated('Use validatorInfoDescriptor instead')
 const ValidatorInfo$json = const {
   '1': 'ValidatorInfo',
@@ -286,6 +284,20 @@ const VoteInfo$json = const {
 
 /// Descriptor for `VoteInfo`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List voteInfoDescriptor = $convert.base64Decode('CghWb3RlSW5mbxIkCgR0eXBlGAEgASgOMhAucGFjdHVzLlZvdGVUeXBlUgR0eXBlEhQKBXZvdGVyGAIgASgJUgV2b3RlchIdCgpibG9ja19oYXNoGAMgASgMUglibG9ja0hhc2gSFAoFcm91bmQYBCABKAVSBXJvdW5k');
+@$core.Deprecated('Use consensusInfoDescriptor instead')
+const ConsensusInfo$json = const {
+  '1': 'ConsensusInfo',
+  '2': const [
+    const {'1': 'address', '3': 1, '4': 1, '5': 9, '10': 'address'},
+    const {'1': 'Active', '3': 2, '4': 1, '5': 8, '10': 'Active'},
+    const {'1': 'height', '3': 3, '4': 1, '5': 13, '10': 'height'},
+    const {'1': 'round', '3': 4, '4': 1, '5': 5, '10': 'round'},
+    const {'1': 'votes', '3': 5, '4': 3, '5': 11, '6': '.pactus.VoteInfo', '10': 'votes'},
+  ],
+};
+
+/// Descriptor for `ConsensusInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List consensusInfoDescriptor = $convert.base64Decode('Cg1Db25zZW5zdXNJbmZvEhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3MSFgoGQWN0aXZlGAIgASgIUgZBY3RpdmUSFgoGaGVpZ2h0GAMgASgNUgZoZWlnaHQSFAoFcm91bmQYBCABKAVSBXJvdW5kEiYKBXZvdGVzGAUgAygLMhAucGFjdHVzLlZvdGVJbmZvUgV2b3Rlcw==');
 const $core.Map<$core.String, $core.dynamic> BlockchainServiceBase$json = const {
   '1': 'Blockchain',
   '2': const [
@@ -322,6 +334,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.ValidatorInfo': ValidatorInfo$json,
   '.pactus.GetConsensusInfoRequest': GetConsensusInfoRequest$json,
   '.pactus.GetConsensusInfoResponse': GetConsensusInfoResponse$json,
+  '.pactus.ConsensusInfo': ConsensusInfo$json,
   '.pactus.VoteInfo': VoteInfo$json,
   '.pactus.GetAccountRequest': GetAccountRequest$json,
   '.pactus.GetAccountResponse': GetAccountResponse$json,

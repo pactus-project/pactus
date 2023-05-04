@@ -31,9 +31,7 @@ import (
 type state struct {
 	lk sync.RWMutex
 
-	config          *Config
-	signer          crypto.Signer
-	rewardAddress   crypto.Address
+	signers         []crypto.Signer
 	genDoc          *genesis.Genesis
 	store           store.Store
 	params          param.Params
@@ -47,30 +45,16 @@ type state struct {
 }
 
 func LoadOrNewState(
-	conf *Config,
 	genDoc *genesis.Genesis,
-	signer crypto.Signer,
+	signers []crypto.Signer,
 	store store.Store,
 	txPool txpool.TxPool, eventCh chan event.Event) (Facade, error) {
-	// Block rewards goes to the reward address
-	// If it is set inside config, we use that address
-	// otherwise, it will be the signer address
-	var rewardAddr crypto.Address
-	if conf.RewardAddress != "" {
-		addr, _ := crypto.AddressFromString(conf.RewardAddress)
-		rewardAddr = addr
-	} else {
-		rewardAddr = signer.Address()
-	}
-
 	st := &state{
-		config:          conf,
+		signers:         signers,
 		genDoc:          genDoc,
 		txPool:          txPool,
 		params:          genDoc.Params(),
-		signer:          signer,
 		store:           store,
-		rewardAddress:   rewardAddr,
 		lastInfo:        lastinfo.NewLastInfo(store),
 		accountMerkle:   persistentmerkle.New(),
 		validatorMerkle: persistentmerkle.New(),
@@ -108,10 +92,10 @@ func (st *state) concreteSandbox() sandbox.Sandbox {
 }
 
 func (st *state) tryLoadLastInfo() error {
-	// Make sure genesis hash is same
+	// Make sure the genesis doc is the same as before.
 	//
-	// This check is not important because genesis state is committed.
-	// But it is good to have it to make sure genesis doc hasn't changed
+	// This check is not strictly necessary, since the genesis state is already committed.
+	// However, it is good to perform this check to ensure that the genesis document has not been modified.
 	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
 	blockOneInfo, err := st.store.Block(1)
 	if err != nil {
@@ -277,7 +261,7 @@ func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(fee int64) *tx.Tx {
+func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
 	acc, err := st.store.Account(crypto.TreasuryAddress)
 	if err != nil {
 		// TODO: This can happen when a node is shutting down
@@ -287,15 +271,15 @@ func (st *state) createSubsidyTx(fee int64) *tx.Tx {
 	}
 	stamp := st.lastInfo.BlockHash().Stamp()
 	seq := acc.Sequence() + 1
-	tx := tx.NewSubsidyTx(stamp, seq, st.rewardAddress, st.params.BlockReward+fee, "")
+	tx := tx.NewSubsidyTx(stamp, seq, rewardAddr, st.params.BlockReward+fee, "")
 	return tx
 }
 
-func (st *state) ProposeBlock(round int16) (*block.Block, error) {
+func (st *state) ProposeBlock(signer crypto.Signer, rewardAddr crypto.Address, round int16) (*block.Block, error) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if !st.committee.IsProposer(st.signer.Address(), round) {
+	if !st.committee.IsProposer(signer.Address(), round) {
 		return nil, errors.Errorf(errors.ErrGeneric, "we are not proposer for this round")
 	}
 
@@ -326,14 +310,14 @@ func (st *state) ProposeBlock(round int16) (*block.Block, error) {
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(exe.AccumulatedFee())
+	subsidyTx := st.createSubsidyTx(rewardAddr, exe.AccumulatedFee())
 	if subsidyTx == nil {
 		// probably the node is shutting down.
 		st.logger.Error("no subsidy transaction")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
 	txs.Prepend(subsidyTx)
-	seed := st.lastInfo.SortitionSeed()
+	preSeed := st.lastInfo.SortitionSeed()
 
 	block := block.MakeBlock(
 		st.params.BlockVersion,
@@ -342,8 +326,8 @@ func (st *state) ProposeBlock(round int16) (*block.Block, error) {
 		st.lastInfo.BlockHash(),
 		st.stateRoot(),
 		st.lastInfo.Certificate(),
-		seed.Generate(st.signer),
-		st.signer.Address())
+		preSeed.GenerateNext(signer),
+		signer.Address())
 
 	return block, nil
 }
@@ -443,8 +427,6 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 
 	st.logger.Info("new block committed", "block", block, "round", cert.Round())
 
-	// -----------------------------------
-	// Evaluate sortition before updating the committee
 	st.evaluateSortition()
 
 	// -----------------------------------
@@ -459,38 +441,43 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 }
 
 func (st *state) evaluateSortition() bool {
-	val, _ := st.store.Validator(st.signer.Address())
-	if val == nil {
-		// We are not a validator
-		return false
-	}
-
-	if st.lastInfo.BlockHeight()-val.LastBondingHeight() < st.params.BondInterval {
-		// Bonding period
-		return false
-	}
-
-	if val.UnbondingHeight() > 0 {
-		// we have Unbonded
-		return false
-	}
-
-	ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), st.signer, st.totalPower(), val.Power())
-	if ok {
-		trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
-		st.signer.SignMsg(trx)
-
-		err := st.txPool.AppendTxAndBroadcast(trx)
-		if err == nil {
-			st.logger.Info("sortition transaction broadcasted",
-				"address", st.signer.Address(), "power", val.Power(), "tx", trx)
-			return true
+	evaluated := false
+	for _, signer := range st.signers {
+		val, _ := st.store.Validator(signer.Address())
+		if val == nil {
+			// We are not a validator
+			continue
 		}
-		st.logger.Error("our sortition transaction is invalid. Why?",
-			"address", st.signer.Address(), "power", val.Power(), "tx", trx, "err", err)
+
+		if st.lastInfo.BlockHeight()-val.LastBondingHeight() < st.params.BondInterval {
+			// Bonding period
+			continue
+		}
+
+		if val.UnbondingHeight() > 0 {
+			// we have Unbonded
+			continue
+		}
+
+		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, st.totalPower(), val.Power())
+		if ok {
+			trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
+			signer.SignMsg(trx)
+
+			err := st.txPool.AppendTxAndBroadcast(trx)
+			if err == nil {
+				st.logger.Info("sortition transaction broadcasted",
+					"address", signer.Address(), "power", val.Power(), "tx", trx)
+
+				evaluated = true
+			} else {
+				st.logger.Error("our sortition transaction is invalid. Why?",
+					"address", signer.Address(), "power", val.Power(), "tx", trx, "err", err)
+			}
+		}
 	}
 
-	return false
+	return evaluated
 }
 
 func (st *state) Fingerprint() string {
@@ -674,12 +661,6 @@ func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 }
 func (st *state) Params() param.Params {
 	return st.params
-}
-func (st *state) RewardAddress() crypto.Address {
-	return st.rewardAddress
-}
-func (st *state) ValidatorAddress() crypto.Address {
-	return st.signer.Address()
 }
 
 // publishEvents publishes block related events

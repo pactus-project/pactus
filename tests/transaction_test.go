@@ -39,21 +39,7 @@ func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.Pub
 	return sendRawTx(t, d)
 }
 
-func TestBondingTransactions(t *testing.T) {
-	t.Run("Bonding transactions", func(t *testing.T) {
-		// These validators are not in the committee now.
-		// Bond transactions are valid and they can enter the committee soon
-		for i := 4; i < tTotalNodes; i++ {
-			amt := util.RandInt64(1000000 - 1) // fee is always 1000
-			require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx1], tSigners[i].PublicKey(), amt, 1000))
-
-			fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
-			incSequence(tSigners[tNodeIdx1].Address())
-		}
-	})
-}
-
-func TestSendingTransactions(t *testing.T) {
+func TestTransactions(t *testing.T) {
 	pubAlice, prvAlice := bls.GenerateTestKeyPair()
 	pubBob, prvBob := bls.GenerateTestKeyPair()
 	pubCarol, _ := bls.GenerateTestKeyPair()
@@ -63,8 +49,8 @@ func TestSendingTransactions(t *testing.T) {
 	signerBob := crypto.NewSigner(prvBob)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2], pubAlice.Address(), 80000000, 8000))
-		incSequence(tSigners[tNodeIdx1].Address())
+		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2][0], pubAlice.Address(), 80000000, 8000))
+		incSequence(tSigners[tNodeIdx2][0].Address())
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
@@ -89,12 +75,17 @@ func TestSendingTransactions(t *testing.T) {
 	t.Run("Bonding transactions", func(t *testing.T) {
 		// These validators are not in the committee now.
 		// Bond transactions are valid and they can enter the committee soon
-		for i := tTotalNodes; i < tTotalNodes; i++ {
+		for i := 0; i < tTotalNodes; i++ {
 			amt := util.RandInt64(1000000 - 1) // fee is always 1000
-			require.NoError(t, broadcastBondTransaction(t, tSigners[tNodeIdx2], tSigners[i].PublicKey(), amt, 1000))
+			signer := tSigners[tNodeIdx1][0]
 
-			fmt.Printf("Staking %v to %v\n", amt, tSigners[i].Address())
-			incSequence(tSigners[tNodeIdx2].Address())
+			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][1].PublicKey(), amt, 1000))
+			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][1].Address())
+			incSequence(signer.Address())
+
+			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][2].PublicKey(), amt, 1000))
+			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][2].Address())
+			incSequence(signer.Address())
 		}
 	})
 

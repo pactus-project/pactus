@@ -9,7 +9,6 @@ import (
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/network"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
@@ -25,46 +24,46 @@ import (
 var exampleConfigBytes []byte
 
 type Config struct {
-	State     *state.Config     `toml:"state"`
-	Store     *store.Config     `toml:"store"`
-	Network   *network.Config   `toml:"network"`
-	Sync      *sync.Config      `toml:"sync"`
-	TxPool    *txpool.Config    `toml:"tx_pool"`
-	Consensus *consensus.Config `toml:"consensus"`
-	Logger    *logger.Config    `toml:"logger"`
-	GRPC      *grpc.Config      `toml:"grpc"`
-	HTTP      *http.Config      `toml:"http"`
-	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
+	NumValidators int               `toml:"num_validators"`
+	Store         *store.Config     `toml:"store"`
+	Network       *network.Config   `toml:"network"`
+	Sync          *sync.Config      `toml:"sync"`
+	TxPool        *txpool.Config    `toml:"tx_pool"`
+	Consensus     *consensus.Config `toml:"consensus"`
+	Logger        *logger.Config    `toml:"logger"`
+	GRPC          *grpc.Config      `toml:"grpc"`
+	HTTP          *http.Config      `toml:"http"`
+	Nanomsg       *nanomsg.Config   `toml:"nanomsg"`
 }
 
 func DefaultConfig() *Config {
 	conf := &Config{
-		State:     state.DefaultConfig(),
-		Store:     store.DefaultConfig(),
-		Network:   network.DefaultConfig(),
-		Sync:      sync.DefaultConfig(),
-		TxPool:    txpool.DefaultConfig(),
-		Consensus: consensus.DefaultConfig(),
-		Logger:    logger.DefaultConfig(),
-		GRPC:      grpc.DefaultConfig(),
-		HTTP:      http.DefaultConfig(),
-		Nanomsg:   nanomsg.DefaultConfig(),
+		NumValidators: 7,
+		Store:         store.DefaultConfig(),
+		Network:       network.DefaultConfig(),
+		Sync:          sync.DefaultConfig(),
+		TxPool:        txpool.DefaultConfig(),
+		Consensus:     consensus.DefaultConfig(),
+		Logger:        logger.DefaultConfig(),
+		GRPC:          grpc.DefaultConfig(),
+		HTTP:          http.DefaultConfig(),
+		Nanomsg:       nanomsg.DefaultConfig(),
 	}
 
 	return conf
 }
 
-func SaveMainnetConfig(path, rewardAddr string) error {
-	exampleConfig := string(exampleConfigBytes)
+func SaveMainnetConfig(path string, numValidators int) error {
+	conf := string(exampleConfigBytes)
+	conf = strings.Replace(conf, "%num_validators%",
+		fmt.Sprintf("%v", numValidators), 1)
 
-	exampleConfig = strings.Replace(exampleConfig, "## reward_address = \"\"",
-		fmt.Sprintf("  reward_address = \"%s\"", rewardAddr), 1)
-
-	return util.WriteFile(path, []byte(exampleConfig))
+	return util.WriteFile(path, []byte(conf))
 }
 
-func SaveTestnetConfig(path, rewardAddr string) error {
+func SaveTestnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
+	conf.NumValidators = numValidators
 	conf.Network.Name = "pactus-testnet"
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}
 	conf.Network.Bootstrap.Addresses = []string{
@@ -78,15 +77,15 @@ func SaveTestnetConfig(path, rewardAddr string) error {
 	conf.GRPC.Gateway.Listen = "[::]:80"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:8080"
-	conf.State.RewardAddress = rewardAddr
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
 
 	return util.WriteFile(path, conf.toTOML())
 }
 
-func SaveLocalnetConfig(path, rewardAddr string) error {
+func SaveLocalnetConfig(path string) error {
 	conf := DefaultConfig()
+	conf.NumValidators = 1
 	conf.Network.Name = "pactus-localnet"
 	conf.Network.Listens = []string{}
 	conf.Network.Bootstrap.Addresses = []string{}
@@ -98,7 +97,6 @@ func SaveLocalnetConfig(path, rewardAddr string) error {
 	conf.GRPC.Gateway.Listen = "[::]:8080"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:8081"
-	conf.State.RewardAddress = rewardAddr
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
 
@@ -134,9 +132,6 @@ func LoadFromFile(file string) (*Config, error) {
 }
 
 func (conf *Config) SanityCheck() error {
-	if err := conf.State.SanityCheck(); err != nil {
-		return err
-	}
 	if err := conf.Store.SanityCheck(); err != nil {
 		return err
 	}

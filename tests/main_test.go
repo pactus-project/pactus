@@ -23,7 +23,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var tSigners []crypto.Signer
+var tSigners [][]crypto.Signer
 var tConfigs []*config.Config
 var tNodes []*node.Node
 var tGRPCAddress = "0.0.0.0:1337"
@@ -39,7 +39,7 @@ const tNodeIdx1 = 0
 const tNodeIdx2 = 1
 const tNodeIdx3 = 2
 const tNodeIdx4 = 3
-const tTotalNodes = 8
+const tTotalNodes = 4 // each node has 3 validators
 const tCommitteeSize = 7
 
 func incSequence(addr crypto.Address) {
@@ -51,14 +51,16 @@ func getSequence(addr crypto.Address) int32 {
 }
 
 func TestMain(m *testing.M) {
-	tSigners = make([]crypto.Signer, tTotalNodes)
+	tSigners = make([][]crypto.Signer, tTotalNodes)
 	tConfigs = make([]*config.Config, tTotalNodes)
 	tNodes = make([]*node.Node, tTotalNodes)
 	tSequences = make(map[crypto.Address]int32)
 
 	for i := 0; i < tTotalNodes; i++ {
-		pub, prv := bls.GenerateTestKeyPair()
-		tSigners[i] = crypto.NewSigner(prv)
+		tSigners[i] = make([]crypto.Signer, 3)
+		tSigners[i][0] = bls.GenerateTestSigner()
+		tSigners[i][1] = bls.GenerateTestSigner()
+		tSigners[i][2] = bls.GenerateTestSigner()
 		tConfigs[i] = config.DefaultConfig()
 
 		tConfigs[i].Store.Path = util.TempDirPath()
@@ -83,21 +85,28 @@ func TestMain(m *testing.M) {
 		sync.LatestBlockInterval = 10
 
 		if i == 0 {
+			// tConfigs[i].Logger.Levels["default"] = "warning"
+			// tConfigs[i].Logger.Levels["_state"] = "info"
+			// tConfigs[i].Logger.Levels["_sync"] = "debug"
+			// tConfigs[i].Logger.Levels["_consensus"] = "debug"
+			// tConfigs[i].Logger.Levels["_network"] = "error"
+			// tConfigs[i].Logger.Levels["_pool"] = "debug"
+
 			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].GRPC.Enable = true
 			tConfigs[i].GRPC.Listen = tGRPCAddress
 		}
-		fmt.Printf("Node %d address: %s\n", i+1, pub.Address())
+		fmt.Printf("Node %d created.\n", i+1)
 	}
 
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)
 	acc.AddToBalance(21 * 1e14)
 
 	vals := make([]*validator.Validator, 4)
-	vals[0] = validator.NewValidator(tSigners[tNodeIdx1].PublicKey().(*bls.PublicKey), 0)
-	vals[1] = validator.NewValidator(tSigners[tNodeIdx2].PublicKey().(*bls.PublicKey), 1)
-	vals[2] = validator.NewValidator(tSigners[tNodeIdx3].PublicKey().(*bls.PublicKey), 2)
-	vals[3] = validator.NewValidator(tSigners[tNodeIdx4].PublicKey().(*bls.PublicKey), 3)
+	vals[0] = validator.NewValidator(tSigners[tNodeIdx1][0].PublicKey().(*bls.PublicKey), 0)
+	vals[1] = validator.NewValidator(tSigners[tNodeIdx2][0].PublicKey().(*bls.PublicKey), 1)
+	vals[2] = validator.NewValidator(tSigners[tNodeIdx3][0].PublicKey().(*bls.PublicKey), 2)
+	vals[3] = validator.NewValidator(tSigners[tNodeIdx4][0].PublicKey().(*bls.PublicKey), 3)
 	params := param.DefaultParams()
 	params.BlockTimeInSecond = 2
 	params.BondInterval = 8
@@ -105,8 +114,14 @@ func TestMain(m *testing.M) {
 	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
 
-	for i := 0; i < tCommitteeSize; i++ {
-		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
+	for i := 0; i < tTotalNodes; i++ {
+		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i],
+			tSigners[i],
+			[]crypto.Address{
+				tSigners[i][0].Address(),
+				tSigners[i][1].Address(),
+				tSigners[i][2].Address()})
+
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))
 		}
@@ -132,24 +147,18 @@ func TestMain(m *testing.M) {
 	waitForNewBlocks(8)
 
 	fmt.Println("Running tests")
+
 	exitCode := m.Run()
-
-	// Running other nodes
-	for i := tCommitteeSize; i < tTotalNodes; i++ {
-		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i], tSigners[i])
-		if err := tNodes[i].Start(); err != nil {
-			panic(fmt.Sprintf("Error on starting the node: %v", err))
-		}
-	}
-
 	// Commit more blocks, then new nodes can catch up and send sortition transactions
 	waitForNewBlocks(20)
 
 	// Check if sortition worked or not?
 	block := lastBlock()
 	cert := block.PrevCert
-	// TODO: determine why the certificate can be nil?
-	if cert != nil && len(cert.Committers) == 4 {
+	if block.Height == 1 {
+		panic("block height should be greater than 1")
+	}
+	if len(cert.Committers) == 4 {
 		panic("Sortition didn't work")
 	}
 

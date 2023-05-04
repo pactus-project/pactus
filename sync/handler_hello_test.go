@@ -44,21 +44,24 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
-		height := util.RandUint32(0)
+		height := util.RandUint32(tState.LastBlockHeight())
 		pid := network.TestRandomPeerID()
 		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.GenesisHash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
-		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
+		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 1
+		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 2
 
 		// Check if the peer info is updated
 		p := tSync.peerSet.GetPeer(pid)
+
+		pub := signer.PublicKey().(*bls.PublicKey)
 		assert.Equal(t, p.Status, peerset.StatusCodeKnown)
 		assert.Equal(t, p.Agent, version.Agent())
 		assert.Equal(t, p.Moniker, "kitty")
-		assert.True(t, p.PublicKey.EqualsTo(signer.PublicKey()))
+		assert.Contains(t, p.ConsensusKeys, *pub)
 		assert.Equal(t, p.PeerID, pid)
 		assert.Equal(t, p.Height, height)
 		assert.True(t, util.IsFlagSet(p.Flags, peerset.PeerFlagNodeNetwork))
@@ -66,13 +69,18 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info", func(t *testing.T) {
 		signer := bls.GenerateTestSigner()
+		height := util.RandUint32(tState.LastBlockHeight())
 		pid := network.TestRandomPeerID()
-		msg := message.NewHelloMessage(pid, "kitty", 0, message.FlagHelloAck, tState.GenesisHash())
+		msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, tState.GenesisHash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
 		checkPeerStatus(t, pid, peerset.StatusCodeKnown)
+
+		// Check if the peer info is updated
+		p := tSync.peerSet.GetPeer(pid)
+		assert.Equal(t, p.Height, height)
 	})
 
 	t.Run("Receiving Hello-ack message from a peer. Peer is ahead. It should request for blocks", func(t *testing.T) {

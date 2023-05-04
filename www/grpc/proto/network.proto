@@ -26,7 +26,7 @@ message PeerInfo {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
-  string public_key = 4;
+  repeated string keys = 4;
   int32 flags = 5;
   uint32 height = 6;
   int32 received_messages = 7;

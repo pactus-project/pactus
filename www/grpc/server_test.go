@@ -7,6 +7,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
@@ -18,6 +21,7 @@ import (
 )
 
 var tMockState *state.MockState
+var tConsMocks []*consensus.MockConsensus
 var tMockSync *sync.MockSync
 var tListener *bufconn.Listener
 var tCtx context.Context
@@ -31,7 +35,12 @@ func init() {
 
 	const bufSize = 1024 * 1024
 
+	consMgr, consMocks := consensus.MockingManager([]crypto.Signer{
+		bls.GenerateTestSigner(), bls.GenerateTestSigner(),
+	})
+
 	tListener = bufconn.Listen(bufSize)
+	tConsMocks = consMocks
 	tMockState = state.MockingState()
 	tMockSync = sync.MockingSync()
 	tCtx = context.Background()
@@ -41,8 +50,9 @@ func init() {
 
 	s := grpc.NewServer()
 	blockchainServer := &blockchainServer{
-		state:  tMockState,
-		logger: logger,
+		state:   tMockState,
+		consMgr: consMgr,
+		logger:  logger,
 	}
 	networkServer := &networkServer{
 		sync:   tMockSync,
