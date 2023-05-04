@@ -126,7 +126,7 @@ func (cs *consensus) MoveToNewHeight() {
 	defer cs.lk.Unlock()
 
 	// Move the consensus to a new height only if it is behind the state height.
-	if cs.state.LastBlockHeight()+1 > cs.height {
+	if cs.currentState != cs.newHeightState {
 		cs.enterNewState(cs.newHeightState)
 	}
 }
@@ -156,6 +156,11 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
+	if p.Height() == cs.state.LastBlockHeight() {
+		cs.logger.Trace("block is committed", "proposal", p, "block hash", cs.state.LastBlockHash())
+		return
+	}
+
 	if p.Round() < cs.round {
 		cs.logger.Trace("expired round", "proposal", p)
 		return
@@ -169,7 +174,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 	proposer := cs.proposer(p.Round())
 	if err := p.Verify(proposer.PublicKey()); err != nil {
-		cs.logger.Error("proposal has invalid signature", "proposal", p, "err", err)
+		cs.logger.Warn("proposal has invalid signature", "proposal", p, "err", err)
 		return
 	}
 

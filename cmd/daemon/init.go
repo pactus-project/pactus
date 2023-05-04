@@ -18,7 +18,7 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-// Init initializes a node for pactus blockchain.
+// `Init` initializes a node for the Pactus blockchain.
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
@@ -45,14 +45,12 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("The working directory is not empty: %s", workingDir)
 				return
 			}
-
-			cmd.PrintInfoMsg("Creating wallet...")
 			mnemonic := wallet.GenerateMnemonic(128)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Your wallet seed is:")
 			cmd.PrintInfoMsgBold("   " + mnemonic)
 			cmd.PrintLine()
-			cmd.PrintWarnMsg("Write down your 12 word mnemonic on a piece of paper to recover your validator key in future.")
+			cmd.PrintWarnMsg("Write down this seed on a piece of paper to recover your validator key in future.")
 			cmd.PrintLine()
 			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
@@ -65,16 +63,19 @@ func Init() func(c *cli.Cmd) {
 			walletPath := cmd.PactusDefaultWalletPath(workingDir)
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("How many validators you want to create?")
+			cmd.PrintInfoMsg("How many validators do you want to create?")
 			cmd.PrintInfoMsg("Enter a number between 1 to 32, default is 7.")
 			numValidatorsStr := cmd.PromptInputWithSuggestion("Number of Validators", "7")
 			numValidators, err := strconv.Atoi(numValidatorsStr)
 			cmd.FatalErrorCheck(err)
 
 			if numValidators < 1 || numValidators > 32 {
-				cmd.PrintErrorMsg("Invalid validator number.")
+				cmd.PrintErrorMsg("Invalid validator number")
 				return
 			}
+
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Creating wallet...")
 
 			// To make process faster, we update the password
 			// after creating the addresses
@@ -86,38 +87,45 @@ func Init() func(c *cli.Cmd) {
 			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Wallet created successfully.")
+			cmd.PrintSuccessMsg("Wallet created successfully at %s.", walletPath)
 			cmd.PrintLine()
+			cmd.PrintInfoMsg("Generating keys...")
+			cmd.PrintLine()
+			cmd.PrintInfoMsgBold("Validator addresses:")
 			for i := 0; i < numValidators; i++ {
 				valAddrStr, err := wallet.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
 				cmd.FatalErrorCheck(err)
 
+				cmd.PrintInfoMsg("%v- %s", i+1, valAddrStr)
+			}
+			cmd.PrintLine()
+
+			cmd.PrintInfoMsgBold("Reward addresses:")
+			for i := 0; i < numValidators; i++ {
 				rewardAddrStr, err := wallet.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
 				cmd.FatalErrorCheck(err)
 
-				cmd.PrintInfoMsg("Validator address %v: %s", i+1, valAddrStr)
-				cmd.PrintInfoMsg("Reward    address %v: %s", i+1, rewardAddrStr)
+				cmd.PrintInfoMsg("%v- %s", i+1, rewardAddrStr)
 			}
+			cmd.PrintLine()
+			cmd.PrintInfoMsg("Initializing node...")
+			cmd.PrintLine()
 
 			var gen *genesis.Genesis
-			var networkName string
 			confFile := cmd.PactusConfigPath(workingDir)
 
 			if *testnetOpt {
-				networkName = "Testnet"
+				cmd.PrintInfoMsg("Network: Testnet")
+
 				gen = genesis.Testnet()
 
 				// Save config for testnet
 				err := config.SaveTestnetConfig(confFile, numValidators)
 				cmd.FatalErrorCheck(err)
 			} else if *localnetOpt {
-				networkName = "Localnet"
+				cmd.PrintInfoMsg("Network: Localnet")
 
 				info := wallet.AddressInfo(wallet.AddressLabels()[0].Address)
-				if info == nil {
-					cmd.PrintErrorMsg("Failed to get validator public key")
-					return
-				}
 				valPub := info.Pub.(*bls.PublicKey)
 				gen = makeLocalGenesis(valPub)
 
@@ -125,7 +133,6 @@ func Init() func(c *cli.Cmd) {
 				err := config.SaveLocalnetConfig(confFile)
 				cmd.FatalErrorCheck(err)
 			} else {
-				networkName = "Mainnet"
 				panic("not yet!")
 				// gen = genesis.Mainnet()
 
@@ -136,7 +143,6 @@ func Init() func(c *cli.Cmd) {
 				// }
 			}
 
-			// Save genesis file
 			genFile := cmd.PactusGenesisPath(workingDir)
 			err = gen.SaveToFile(genFile)
 			cmd.FatalErrorCheck(err)
@@ -144,15 +150,10 @@ func Init() func(c *cli.Cmd) {
 			err = wallet.UpdatePassword("", password)
 			cmd.FatalErrorCheck(err)
 
-			// Save wallet
 			err = wallet.Save()
 			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
-
-			cmd.PrintInfoMsg("Network: %v", networkName)
-			cmd.PrintLine()
-
 			cmd.PrintSuccessMsg("A pactus node is successfully initialized at %v", workingDir)
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("You can start the node by running this command:")
@@ -161,7 +162,7 @@ func Init() func(c *cli.Cmd) {
 	}
 }
 
-// makeLocalGenesis makes genisis file for the local network.
+// makeLocalGenesis makes genesis file for the local network.
 func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(crypto.TreasuryAddress, 0)

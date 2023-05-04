@@ -147,3 +147,14 @@ func (n *Node) Stop() {
 	n.grpc.StopServer()
 	n.nanomsg.StopServer()
 }
+
+// these methods are using by GUI
+func (n *Node) ConsManager() consensus.ManagerReader {
+	return n.consMgr
+}
+func (n *Node) Sync() sync.Synchronizer {
+	return n.sync
+}
+func (n *Node) State() state.Facade {
+	return n.state
+}
