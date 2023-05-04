@@ -246,7 +246,7 @@ func testEnterNextRound(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-func commitBlockForAllStates(t *testing.T) {
+func commitBlockForAllStates(t *testing.T) (*block.Block, *block.Certificate) {
 	height := tConsX.state.LastBlockHeight()
 	var err error
 	p := makeProposal(t, height+1, 0)
@@ -258,16 +258,18 @@ func commitBlockForAllStates(t *testing.T) {
 
 	sig := bls.Aggregate([]*bls.Signature{sig1, sig2, sig4})
 	cert := block.NewCertificate(0, []int32{0, 1, 2, 3}, []int32{2}, sig)
+	block := p.Block()
 
-	require.NotNil(t, cert)
-	err = tConsX.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsX.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
-	err = tConsY.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsY.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
-	err = tConsB.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsB.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
-	err = tConsP.state.CommitBlock(height+1, p.Block(), cert)
+	err = tConsP.state.CommitBlock(height+1, block, cert)
 	assert.NoError(t, err)
+
+	return block, cert
 }
 
 func makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {
@@ -514,13 +516,40 @@ func TestNonActiveValidator(t *testing.T) {
 
 	signer := bls.GenerateTestSigner()
 	Cons := NewConsensus(testConfig(), state.MockingState(), signer, signer.Address(), make(chan message.Message, 100), newMediator())
-	cons := Cons.(*consensus)
+	nonActiveCons := Cons.(*consensus)
 
-	p := makeProposal(t, 1, 0)
-	cons.SetProposal(p)
-	v := testAddVote(cons, vote.VoteTypePrepare, 1, 0, p.Block().Hash(), tIndexX)
+	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
+		nonActiveCons.MoveToNewHeight()
+		checkHeightRoundWait(t, nonActiveCons, 1, 0)
 
-	assert.False(t, cons.IsActive())
-	assert.False(t, cons.log.HasVote(v.Hash()))
-	assert.False(t, cons.log.HasRoundProposal(0))
+		assert.False(t, nonActiveCons.IsActive())
+		assert.Equal(t, nonActiveCons.currentState.name(), "new-height")
+	})
+
+	t.Run("non-active instances should ignore proposals", func(t *testing.T) {
+		p := makeProposal(t, 1, 0)
+		nonActiveCons.SetProposal(p)
+
+		assert.False(t, nonActiveCons.log.HasRoundProposal(0))
+	})
+
+	t.Run("non-active instances should ignore votes", func(t *testing.T) {
+		v := testAddVote(nonActiveCons, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexX)
+
+		assert.False(t, nonActiveCons.log.HasVote(v.Hash()))
+	})
+
+	t.Run("non-active instances should move to new height", func(t *testing.T) {
+		b1, cert1 := commitBlockForAllStates(t)
+		b2, cert2 := commitBlockForAllStates(t)
+
+		nonActiveCons.MoveToNewHeight()
+		checkHeightRoundWait(t, nonActiveCons, 1, 0)
+
+		nonActiveCons.state.CommitBlock(1, b1, cert1)
+		nonActiveCons.state.CommitBlock(2, b2, cert2)
+
+		nonActiveCons.MoveToNewHeight()
+		checkHeightRoundWait(t, nonActiveCons, 3, 0)
+	})
 }

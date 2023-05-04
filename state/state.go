@@ -470,9 +470,10 @@ func (st *state) evaluateSortition() bool {
 					"address", signer.Address(), "power", val.Power(), "tx", trx)
 
 				evaluated = true
+			} else {
+				st.logger.Error("our sortition transaction is invalid. Why?",
+					"address", signer.Address(), "power", val.Power(), "tx", trx, "err", err)
 			}
-			st.logger.Error("our sortition transaction is invalid. Why?",
-				"address", signer.Address(), "power", val.Power(), "tx", trx, "err", err)
 		}
 	}
 

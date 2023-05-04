@@ -19,7 +19,7 @@ func getValidator(_ *testing.T, addr crypto.Address) *pactus.ValidatorInfo {
 }
 
 func TestGetValidator(t *testing.T) {
-	val := getValidator(t, tSigners[tNodeIdx2].Address())
+	val := getValidator(t, tSigners[tNodeIdx2][0].Address())
 	require.NotNil(t, val)
 	assert.Equal(t, val.Number, int32(1))
 }

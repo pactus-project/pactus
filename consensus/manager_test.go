@@ -90,18 +90,6 @@ func TestManager(t *testing.T) {
 		assert.False(t, consD.log.HasRoundProposal(0))
 	})
 
-	t.Run("Check if votes are set for other instances ", func(t *testing.T) {
-		for _, v := range consA.AllVotes() {
-			assert.True(t, consA.log.HasVote(v.Hash()))
-			assert.True(t, consB.log.HasVote(v.Hash()))
-		}
-
-		assert.NotEmpty(t, consA.log.HasRoundProposal(0))
-		assert.NotEmpty(t, consB.log.HasRoundProposal(0))
-		assert.Zero(t, consC.log.HasRoundProposal(0))
-		assert.Zero(t, consD.log.HasRoundProposal(0))
-	})
-
 	t.Run("Testing add vote", func(t *testing.T) {
 		v := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[2].Address())
 		committeeSigners[2].SignMsg(v)

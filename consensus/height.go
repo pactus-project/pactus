@@ -18,7 +18,7 @@ func (s *newHeightState) enter() {
 func (s *newHeightState) decide() {
 	sateHeight := s.state.LastBlockHeight()
 	if s.height == sateHeight+1 {
-		s.logger.Warn("duplicated entry")
+		s.logger.Debug("duplicated entry")
 		return
 	}
 
