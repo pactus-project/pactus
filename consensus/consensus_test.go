@@ -546,8 +546,8 @@ func TestNonActiveValidator(t *testing.T) {
 		nonActiveCons.MoveToNewHeight()
 		checkHeightRoundWait(t, nonActiveCons, 1, 0)
 
-		nonActiveCons.state.CommitBlock(1, b1, cert1)
-		nonActiveCons.state.CommitBlock(2, b2, cert2)
+		assert.NoError(t, nonActiveCons.state.CommitBlock(1, b1, cert1))
+		assert.NoError(t, nonActiveCons.state.CommitBlock(2, b2, cert2))
 
 		nonActiveCons.MoveToNewHeight()
 		checkHeightRoundWait(t, nonActiveCons, 3, 0)
