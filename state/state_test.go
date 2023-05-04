@@ -359,10 +359,10 @@ func TestSortition(t *testing.T) {
 	pub, prv := bls.GenerateTestKeyPair()
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore()
-	st, _ := LoadOrNewState(tState1.genDoc, []crypto.Signer{signer}, store, tCommonTxPool, nil)
-	stNewVal := st.(*state)
+	St1, _ := LoadOrNewState(tState1.genDoc, []crypto.Signer{signer}, store, tCommonTxPool, nil)
+	stNew := St1.(*state)
 
-	assert.False(t, stNewVal.evaluateSortition()) //  not a validator
+	assert.False(t, stNew.evaluateSortition()) //  not a validator
 	assert.Equal(t, tState1.CommitteePower(), int64(4))
 
 	height := uint32(1)
@@ -375,39 +375,39 @@ func TestSortition(t *testing.T) {
 
 		b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 		CommitBlockForAllStates(t, b, c)
-		require.NoError(t, stNewVal.CommitBlock(height, b, c))
+		require.NoError(t, stNew.CommitBlock(height, b, c))
 	}
 
-	assert.False(t, stNewVal.evaluateSortition()) //  bonding period
+	assert.False(t, stNew.evaluateSortition()) //  bonding period
 
 	// Certificate next block
 	b, c := makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
-	require.NoError(t, stNewVal.CommitBlock(height, b, c))
+	require.NoError(t, stNew.CommitBlock(height, b, c))
 	height++
 
-	assert.True(t, stNewVal.evaluateSortition())               //  ok
+	assert.True(t, stNew.evaluateSortition())                  //  ok
 	assert.False(t, tState1.committee.Contains(pub.Address())) // still not in the committee
 
 	// ---------------------------------------------
 	// Certificate next block, new validator should be in the committee now
 	b, c = makeBlockAndCertificate(t, 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 	CommitBlockForAllStates(t, b, c)
-	require.NoError(t, stNewVal.CommitBlock(height, b, c))
+	require.NoError(t, stNew.CommitBlock(height, b, c))
 
-	assert.True(t, stNewVal.evaluateSortition()) // in the committee
+	assert.True(t, stNew.evaluateSortition()) // in the committee
 	assert.True(t, tState1.committee.Contains(tValSigner1.Address()))
 	assert.True(t, tState1.committee.Contains(pub.Address()))
 
 	// ---------------------------------------------
 	// Let's save and load tState1
 	tState1.Close()
-	st, _ = LoadOrNewState(tState1.genDoc, []crypto.Signer{tValSigner1}, store, tCommonTxPool, nil)
-	stVal1 := st.(*state)
+	St1, _ = LoadOrNewState(tState1.genDoc, []crypto.Signer{tValSigner1}, store, tCommonTxPool, nil)
+	st1 := St1.(*state)
 
 	// ---------------------------------------------
 	// Let's commit another block with the new committee
-	b14, err := stNewVal.ProposeBlock(stNewVal.signers[0], crypto.GenerateTestAddress(), 3)
+	b14, err := stNew.ProposeBlock(stNew.signers[0], crypto.GenerateTestAddress(), 3)
 	require.NoError(t, err)
 	require.NotNil(t, b14)
 
@@ -421,7 +421,7 @@ func TestSortition(t *testing.T) {
 	c14 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.Aggregate(sigs))
 
 	height++
-	assert.NoError(t, stVal1.CommitBlock(height, b14, c14))
+	assert.NoError(t, st1.CommitBlock(height, b14, c14))
 	assert.NoError(t, tState1.CommitBlock(height, b14, c14))
 	assert.NoError(t, tState2.CommitBlock(height, b14, c14))
 	assert.NoError(t, tState3.CommitBlock(height, b14, c14))
@@ -683,7 +683,7 @@ func TestCommittingInvalidBlock(t *testing.T) {
 	b := block.MakeBlock(2, util.Now(), txs, tState2.lastInfo.BlockHash(), tState2.stateRoot(), tState2.lastInfo.Certificate(), tState2.lastInfo.SortitionSeed(), tState2.signers[0].Address())
 	c := makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
-	// If tState1 receives a block with version 2 and rejects it,
-	// it is possible that the same block would be considered valid by tState2.
+	// tState1 receives a block with version 2 and rejects it.
+	// It is possible that the same block would be considered valid by tState2.
 	assert.Error(t, tState1.CommitBlock(2, b, c))
 }

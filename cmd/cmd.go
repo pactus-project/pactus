@@ -148,7 +148,6 @@ func PrintInfoMsg(format string, a ...interface{}) {
 
 func PrintInfoMsgBold(format string, a ...interface{}) {
 	if terminalSupported() {
-		// Print warning msg with yellow color
 		format = fmt.Sprintf("\033[1m%s\033[0m", format)
 	}
 	fmt.Printf(format+"\n", a...)

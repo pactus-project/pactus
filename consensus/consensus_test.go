@@ -45,7 +45,7 @@ var (
 )
 
 type OverrideFingerprint struct {
-	cons *consensus
+	cons Consensus
 	name string
 }
 

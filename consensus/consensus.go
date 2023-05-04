@@ -25,11 +25,11 @@ type consensus struct {
 	log                 *log.Log
 	signer              crypto.Signer
 	rewardAddr          crypto.Address
-	state               state.Facade
+	state               state.Facade // TODO: rename `state` to `bcState` (blockchain state)
 	height              uint32
 	round               int16
 	active              bool
-	newHeightState      consState // TODO: rename consState to consPhase to prevent confusion with the blockchain state
+	newHeightState      consState
 	proposeState        consState
 	prepareState        consState
 	precommitState      consState
@@ -125,7 +125,6 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	// Move the consensus to a new height only if it is behind the state height.
 	if cs.currentState != cs.newHeightState {
 		cs.enterNewState(cs.newHeightState)
 	}
@@ -157,7 +156,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	}
 
 	if p.Height() == cs.state.LastBlockHeight() {
-		cs.logger.Trace("block is committed", "proposal", p, "block hash", cs.state.LastBlockHash())
+		cs.logger.Trace("block is committed for this height", "proposal", p, "block hash", cs.state.LastBlockHash())
 		return
 	}
 
@@ -283,7 +282,6 @@ func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *block.Certifi
 func (cs *consensus) broadcast(msg message.Message) {
 	if !cs.active {
 		cs.logger.Warn("non-active validators should not publish messages")
-		panic("should not happens")
 	}
 
 	cs.broadcastCh <- msg

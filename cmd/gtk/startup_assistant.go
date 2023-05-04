@@ -31,10 +31,7 @@ func startupAssistant(workingDir string, testnet bool) bool {
 		fatalErrorCheck(err)
 
 		page.SetHExpand(true)
-		// labelTitle, err := gtk.LabelNew(title)
-		// fatalErrorCheck(err)
 
-		// setMargin(labelTitle, 0, 20, 0, 0)
 		frame, err := gtk.FrameNew(subject)
 		fatalErrorCheck(err)
 
@@ -56,8 +53,6 @@ func startupAssistant(workingDir string, testnet bool) bool {
 
 		box.Add(frame)
 		box.Add(labelDesc)
-
-		// page.Add(labelTitle)
 		page.Add(box)
 
 		page.SetName(name)
@@ -123,12 +118,12 @@ func startupAssistant(workingDir string, testnet bool) bool {
 	pageSeedName := "page_seed"
 	pageSeedTitle := "Wallet seed"
 	pageSeedSubject := "Your wallet generation seed is:"
-	pageSeedDesc := `<span allow_breaks="true">Please write these 12 words on paper.
+	pageSeedDesc := `Please write these 12 words on paper.
 This seed will allow you to recover your wallet in case of computer failure.
 <b>WARNING:</b>
   - Never disclose your seed.
   - Never type it on a website.
-  - Do not store it electronically.</span>`
+  - Do not store it electronically.`
 
 	pageSeed = createPage(
 		assistant,
@@ -255,6 +250,7 @@ To make sure that you have properly saved your seed, please retype it here.`
 	for i := 0; i < 32; i++ {
 		iter := lsNumValidators.Append()
 		err = lsNumValidators.SetValue(iter, 0, i+1)
+		fatalErrorCheck(err)
 	}
 
 	comboNumValidators, err := gtk.ComboBoxNewWithModel(lsNumValidators)

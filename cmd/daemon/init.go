@@ -18,7 +18,7 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-// `Init` initializes a node for the Pactus blockchain.
+// Init initializes a node for the Pactus blockchain.
 func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{

@@ -40,16 +40,12 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 
 	box := getBoxObj(builder, "id_box_node")
 	labelLocation := getLabelObj(builder, "id_label_working_directory")
-	// labelValidatorAddress := getLabelObj(builder, "id_label_validator_address")
-	// labelRewardAddress := getLabelObj(builder, "id_label_reward_address")
 
 	cwd, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
 	labelLocation.SetText(cwd)
-	// labelValidatorAddress.SetText(model.node.State().ValidatorAddress().String())
-	// labelRewardAddress.SetText(model.node.State().RewardAddress().String())
 
 	w := &widgetNode{
 		Box:                  box,

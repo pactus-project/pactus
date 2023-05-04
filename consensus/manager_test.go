@@ -58,8 +58,8 @@ func TestManager(t *testing.T) {
 
 	consA := mgr.instances[0].(*consensus) // active
 	consB := mgr.instances[1].(*consensus) // active
-	consY := mgr.instances[2].(*consensus) // inactive
-	consZ := mgr.instances[3].(*consensus) // inactive
+	consC := mgr.instances[2].(*consensus) // inactive
+	consD := mgr.instances[3].(*consensus) // inactive
 
 	assert.False(t, mgr.HasActiveInstance())
 
@@ -67,28 +67,39 @@ func TestManager(t *testing.T) {
 
 	checkHeightRoundWait(t, consA, 1, 0)
 	checkHeightRoundWait(t, consB, 1, 0)
-	checkHeightRoundWait(t, consY, 1, 0)
-	checkHeightRoundWait(t, consZ, 1, 0)
+	checkHeightRoundWait(t, consC, 1, 0)
+	checkHeightRoundWait(t, consD, 1, 0)
 
 	assert.True(t, mgr.HasActiveInstance())
+
+	t.Run("Check if keys are assigned properly", func(t *testing.T) {
+		instances := mgr.Instances()
+
+		assert.Equal(t, signers[0].PublicKey(), instances[0].SignerKey())
+		assert.Equal(t, signers[1].PublicKey(), instances[1].SignerKey())
+		assert.Equal(t, signers[2].PublicKey(), instances[2].SignerKey())
+		assert.Equal(t, signers[3].PublicKey(), instances[3].SignerKey())
+	})
 
 	t.Run("Check if one instance publishes a proposal, the other instances receive it", func(t *testing.T) {
 		shouldPublishProposal(t, consA, 1, 0)
 
 		assert.True(t, consA.log.HasRoundProposal(0))
 		assert.True(t, consB.log.HasRoundProposal(0))
-		assert.False(t, consY.log.HasRoundProposal(0))
-		assert.False(t, consZ.log.HasRoundProposal(0))
+		assert.False(t, consC.log.HasRoundProposal(0))
+		assert.False(t, consD.log.HasRoundProposal(0))
 	})
 
 	t.Run("Check if votes are set for other instances ", func(t *testing.T) {
 		for _, v := range consA.AllVotes() {
 			assert.True(t, consA.log.HasVote(v.Hash()))
+			assert.True(t, consB.log.HasVote(v.Hash()))
 		}
 
 		assert.NotEmpty(t, consA.log.HasRoundProposal(0))
-		assert.Zero(t, consY.log.HasRoundProposal(0))
-		assert.Zero(t, consZ.log.HasRoundProposal(0))
+		assert.NotEmpty(t, consB.log.HasRoundProposal(0))
+		assert.Zero(t, consC.log.HasRoundProposal(0))
+		assert.Zero(t, consD.log.HasRoundProposal(0))
 	})
 
 	t.Run("Testing add vote", func(t *testing.T) {
@@ -99,8 +110,8 @@ func TestManager(t *testing.T) {
 
 		assert.True(t, consA.log.HasVote(v.Hash()))
 		assert.True(t, consB.log.HasVote(v.Hash()))
-		assert.False(t, consY.log.HasVote(v.Hash()))
-		assert.False(t, consZ.log.HasVote(v.Hash()))
+		assert.False(t, consC.log.HasVote(v.Hash()))
+		assert.False(t, consD.log.HasVote(v.Hash()))
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
@@ -112,7 +123,28 @@ func TestManager(t *testing.T) {
 
 		assert.True(t, consA.log.HasRoundProposal(2))
 		assert.True(t, consB.log.HasRoundProposal(2))
-		assert.False(t, consY.log.HasRoundProposal(2))
-		assert.False(t, consZ.log.HasRoundProposal(2))
+		assert.False(t, consC.log.HasRoundProposal(2))
+		assert.False(t, consD.log.HasRoundProposal(2))
+	})
+
+	t.Run("Testing moving to the next round proposal", func(t *testing.T) {
+		v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[0].Address())
+		committeeSigners[0].SignMsg(v1)
+
+		v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[1].Address())
+		committeeSigners[1].SignMsg(v2)
+
+		v3 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[2].Address())
+		committeeSigners[2].SignMsg(v3)
+
+		mgr.AddVote(v1)
+		mgr.AddVote(v2)
+		mgr.AddVote(v3)
+
+		h, r := mgr.HeightRound()
+
+		assert.Equal(t, h, uint32(1))
+		assert.Equal(t, r, int16(1))
+		assert.Nil(t, mgr.RoundProposal(0))
 	})
 }

@@ -441,6 +441,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 }
 
 func (st *state) evaluateSortition() bool {
+	evaluated := false
 	for _, signer := range st.signers {
 		val, _ := st.store.Validator(signer.Address())
 		if val == nil {
@@ -467,14 +468,15 @@ func (st *state) evaluateSortition() bool {
 			if err == nil {
 				st.logger.Info("sortition transaction broadcasted",
 					"address", signer.Address(), "power", val.Power(), "tx", trx)
-				return true
+
+				evaluated = true
 			}
 			st.logger.Error("our sortition transaction is invalid. Why?",
 				"address", signer.Address(), "power", val.Power(), "tx", trx, "err", err)
 		}
 	}
 
-	return false
+	return evaluated
 }
 
 func (st *state) Fingerprint() string {
