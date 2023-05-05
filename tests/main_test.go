@@ -99,8 +99,9 @@ func TestMain(m *testing.M) {
 		fmt.Printf("Node %d created.\n", i+1)
 	}
 
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
+	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
 
 	vals := make([]*validator.Validator, 4)
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1][0].PublicKey().(*bls.PublicKey), 0)
@@ -112,7 +113,7 @@ func TestMain(m *testing.M) {
 	params.BondInterval = 8
 	params.CommitteeSize = tCommitteeSize
 	params.TransactionToLiveInterval = 8
-	tGenDoc = genesis.MakeGenesis(util.Now(), []*account.Account{acc}, vals, params)
+	tGenDoc = genesis.MakeGenesis(util.Now(), accs, vals, params)
 
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i],
@@ -170,8 +171,8 @@ func TestMain(m *testing.M) {
 
 	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store, 0)
 	total := int64(0)
-	s.IterateAccounts(func(a *account.Account) bool {
-		total += a.Balance()
+	s.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
+		total += acc.Balance()
 		return false
 	})
 

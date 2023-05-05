@@ -14,7 +14,6 @@ func TestExecuteUnbondTx(t *testing.T) {
 	setup(t)
 	exe := NewUnbondExecutor(true)
 
-	// Let's create a validator first
 	pub, _ := bls.GenerateTestKeyPair()
 	val := tSandbox.MakeNewValidator(pub)
 	tSandbox.UpdateValidator(val)

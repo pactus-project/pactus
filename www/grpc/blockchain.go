@@ -235,7 +235,6 @@ func accountToProto(acc *account.Account) *pactus.AccountInfo {
 	return &pactus.AccountInfo{
 		Hash:     acc.Hash().Bytes(),
 		Data:     data,
-		Address:  acc.Address().String(),
 		Number:   acc.Number(),
 		Sequence: acc.Sequence(),
 		Balance:  acc.Balance(),

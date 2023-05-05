@@ -234,15 +234,14 @@ const AccountInfo$json = const {
   '2': const [
     const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
     const {'1': 'data', '3': 2, '4': 1, '5': 12, '10': 'data'},
-    const {'1': 'address', '3': 3, '4': 1, '5': 9, '10': 'address'},
-    const {'1': 'number', '3': 4, '4': 1, '5': 5, '10': 'number'},
-    const {'1': 'sequence', '3': 5, '4': 1, '5': 5, '10': 'sequence'},
-    const {'1': 'balance', '3': 6, '4': 1, '5': 3, '10': 'balance'},
+    const {'1': 'number', '3': 3, '4': 1, '5': 5, '10': 'number'},
+    const {'1': 'sequence', '3': 4, '4': 1, '5': 5, '10': 'sequence'},
+    const {'1': 'balance', '3': 5, '4': 1, '5': 3, '10': 'balance'},
   ],
 };
 
 /// Descriptor for `AccountInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxISCgRoYXNoGAEgASgMUgRoYXNoEhIKBGRhdGEYAiABKAxSBGRhdGESGAoHYWRkcmVzcxgDIAEoCVIHYWRkcmVzcxIWCgZudW1iZXIYBCABKAVSBm51bWJlchIaCghzZXF1ZW5jZRgFIAEoBVIIc2VxdWVuY2USGAoHYmFsYW5jZRgGIAEoA1IHYmFsYW5jZQ==');
+final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxISCgRoYXNoGAEgASgMUgRoYXNoEhIKBGRhdGEYAiABKAxSBGRhdGESFgoGbnVtYmVyGAMgASgFUgZudW1iZXISGgoIc2VxdWVuY2UYBCABKAVSCHNlcXVlbmNlEhgKB2JhbGFuY2UYBSABKANSB2JhbGFuY2U=');
 @$core.Deprecated('Use blockHeaderInfoDescriptor instead')
 const BlockHeaderInfo$json = const {
   '1': 'BlockHeaderInfo',

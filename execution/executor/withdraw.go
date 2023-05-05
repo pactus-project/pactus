@@ -52,7 +52,7 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	acc.AddToBalance(pld.Amount)
 
 	sb.UpdateValidator(val)
-	sb.UpdateAccount(acc)
+	sb.UpdateAccount(pld.To, acc)
 
 	e.fee = trx.Fee()
 

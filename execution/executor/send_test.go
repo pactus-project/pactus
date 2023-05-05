@@ -46,36 +46,36 @@ func TestExecuteSendTx(t *testing.T) {
 	setup(t)
 	exe := NewSendExecutor(true)
 
-	sender := tSandbox.TestStore.RandomTestAcc()
-	senderBalance := sender.Balance()
-	receiver := crypto.GenerateTestAddress()
+	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
+	senderBalance := senderAcc.Balance()
+	receiverAddr := crypto.GenerateTestAddress()
 	amt, fee := randomAmountAndFee(senderBalance)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewSendTx(tStamp500000, 1, crypto.GenerateTestAddress(), receiver, amt, fee, "non-existing account")
+		trx := tx.NewSendTx(tStamp500000, 1, crypto.GenerateTestAddress(), receiverAddr, amt, fee, "non-existing account")
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewSendTx(tStamp500000, sender.Sequence()+1, sender.Address(), receiver, senderBalance+1, 0, "insufficient balance")
+		trx := tx.NewSendTx(tStamp500000, senderAcc.Sequence()+1, senderAddr, receiverAddr, senderBalance+1, 0, "insufficient balance")
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInsufficientFunds)
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSendTx(tStamp500000, sender.Sequence()+2, sender.Address(), receiver, amt, fee, "invalid sequence")
+		trx := tx.NewSendTx(tStamp500000, senderAcc.Sequence()+2, senderAddr, receiverAddr, amt, fee, "invalid sequence")
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewSendTx(tStamp500000, sender.Sequence()+1, sender.Address(), receiver, amt, fee, "ok")
+		trx := tx.NewSendTx(tStamp500000, senderAcc.Sequence()+1, senderAddr, receiverAddr, amt, fee, "ok")
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
 		// Execute again, should fail
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Equal(t, tSandbox.Account(sender.Address()).Balance(), senderBalance-(amt+fee))
-	assert.Equal(t, tSandbox.Account(receiver).Balance(), amt)
+	assert.Equal(t, tSandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
+	assert.Equal(t, tSandbox.Account(receiverAddr).Balance(), amt)
 
 	checkTotalCoin(t, fee)
 }
@@ -84,15 +84,14 @@ func TestSendToSelf(t *testing.T) {
 	setup(t)
 	exe := NewSendExecutor(true)
 
-	sender := tSandbox.TestStore.RandomTestAcc()
-	senderBalance := sender.Balance()
+	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
+	senderBalance := senderAcc.Balance()
 	amt, fee := randomAmountAndFee(senderBalance)
 
-	self := sender.Address()
-	trx := tx.NewSendTx(tStamp500000, sender.Sequence()+1, sender.Address(), sender.Address(), amt, fee, "ok")
+	trx := tx.NewSendTx(tStamp500000, senderAcc.Sequence()+1, senderAddr, senderAddr, amt, fee, "ok")
 	assert.NoError(t, exe.Execute(trx, tSandbox))
 
-	assert.Equal(t, tSandbox.Account(self).Balance(), senderBalance-fee) // Fee should be deducted
+	assert.Equal(t, tSandbox.Account(senderAddr).Balance(), senderBalance-fee) // Fee should be deducted
 	assert.Equal(t, exe.Fee(), fee)
 }
 

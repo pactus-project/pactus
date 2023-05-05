@@ -59,8 +59,8 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
 	receiverAcc.AddToBalance(pld.Amount)
 
-	sb.UpdateAccount(senderAcc)
-	sb.UpdateAccount(receiverAcc)
+	sb.UpdateAccount(pld.Sender, senderAcc)
+	sb.UpdateAccount(pld.Receiver, receiverAcc)
 
 	e.fee = trx.Fee()
 

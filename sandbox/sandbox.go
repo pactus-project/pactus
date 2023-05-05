@@ -102,7 +102,7 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 		sb.shouldPanicForDuplicatedAddress()
 	}
 
-	acc := account.NewAccount(addr, sb.totalAccounts)
+	acc := account.NewAccount(sb.totalAccounts)
 	sb.accounts[addr] = &AccountStatus{
 		Account: *acc,
 		Updated: true,
@@ -111,11 +111,10 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	return acc
 }
 
-func (sb *sandbox) UpdateAccount(acc *account.Account) {
+func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	addr := acc.Address()
 	s, ok := sb.accounts[addr]
 	if !ok {
 		sb.shouldPanicForUnknownAddress()
@@ -194,12 +193,12 @@ func (sb *sandbox) currentHeight() uint32 {
 	return h + 1
 }
 
-func (sb *sandbox) IterateAccounts(consumer func(*AccountStatus)) {
+func (sb *sandbox) IterateAccounts(consumer func(crypto.Address, *AccountStatus)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	for _, as := range sb.accounts {
-		consumer(as)
+	for addr, as := range sb.accounts {
+		consumer(addr, as)
 	}
 }
 

@@ -12,6 +12,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
@@ -172,9 +173,9 @@ func (t *tableMaker) addRowTxID(key string, val []byte) {
 func (t *tableMaker) addRowString(key, val string) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, val))
 }
-func (t *tableMaker) addRowAmount(key string, val int64) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d.%08d</td></tr>",
-		key, val/1000000000, val%1000000000))
+func (t *tableMaker) addRowAmount(key string, change int64) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>",
+		key, util.ChangeToString(change)))
 }
 func (t *tableMaker) addRowInt(key string, val int) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d</td></tr>", key, val))

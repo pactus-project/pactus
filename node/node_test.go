@@ -18,10 +18,12 @@ import (
 
 func TestRunningNode(t *testing.T) {
 	pub, _ := bls.GenerateTestKeyPair()
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(pub, 0)
-	gen := genesis.MakeGenesis(util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
+	gen := genesis.MakeGenesis(util.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfig()
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/0"}
 	conf.GRPC.Enable = false

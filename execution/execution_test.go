@@ -22,7 +22,7 @@ func TestExecution(t *testing.T) {
 	addr1 := signer1.Address()
 	acc1 := sb.MakeNewAccount(addr1)
 	acc1.AddToBalance(100 * 1e9)
-	sb.UpdateAccount(acc1)
+	sb.UpdateAccount(addr1, acc1)
 
 	rcvAddr := crypto.GenerateTestAddress()
 	block1 := sb.TestStore.AddTestBlock(1)
@@ -114,14 +114,13 @@ func TestChecker(t *testing.T) {
 	block1000 := sb.TestStore.AddTestBlock(1000)
 
 	t.Run("In strict mode transaction should be rejected.", func(t *testing.T) {
-		pub, prv := bls.GenerateTestKeyPair()
-		signer := crypto.NewSigner(prv)
-		acc := sb.MakeNewAccount(pub.Address())
+		signer := bls.GenerateTestSigner()
+		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
-		sb.UpdateAccount(acc)
+		sb.UpdateAccount(signer.Address(), acc)
 		valPub := sb.TestCommitteeSigners[0].PublicKey()
 
-		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, acc.Address(),
+		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, signer.Address(),
 			valPub.Address(), nil, 1000, 1000, "")
 		signer.SignMsg(trx)
 		assert.Error(t, executor.Execute(trx, sb))
@@ -166,13 +165,12 @@ func TestLockTime(t *testing.T) {
 	})
 
 	t.Run("Should reject expired transactions", func(t *testing.T) {
-		pub, prv := bls.GenerateTestKeyPair()
-		signer := crypto.NewSigner(prv)
-		acc := sb.MakeNewAccount(pub.Address())
+		signer := bls.GenerateTestSigner()
+		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
-		sb.UpdateAccount(acc)
+		sb.UpdateAccount(signer.Address(), acc)
 		pld := &payload.SendPayload{
-			Sender:   acc.Address(),
+			Sender:   signer.Address(),
 			Receiver: crypto.GenerateTestAddress(),
 			Amount:   1234,
 		}
@@ -185,13 +183,12 @@ func TestLockTime(t *testing.T) {
 	})
 
 	t.Run("Not finalized transaction", func(t *testing.T) {
-		pub, prv := bls.GenerateTestKeyPair()
-		signer := crypto.NewSigner(prv)
-		acc := sb.MakeNewAccount(pub.Address())
+		signer := bls.GenerateTestSigner()
+		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
-		sb.UpdateAccount(acc)
+		sb.UpdateAccount(signer.Address(), acc)
 		pld := &payload.SendPayload{
-			Sender:   acc.Address(),
+			Sender:   signer.Address(),
 			Receiver: crypto.GenerateTestAddress(),
 			Amount:   1234,
 		}

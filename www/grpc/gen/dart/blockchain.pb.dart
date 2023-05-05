@@ -1105,10 +1105,9 @@ class AccountInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AccountInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
-    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
-    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
+    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
     ..hasRequiredFields = false
   ;
 
@@ -1116,7 +1115,6 @@ class AccountInfo extends $pb.GeneratedMessage {
   factory AccountInfo({
     $core.List<$core.int>? hash,
     $core.List<$core.int>? data,
-    $core.String? address,
     $core.int? number,
     $core.int? sequence,
     $fixnum.Int64? balance,
@@ -1127,9 +1125,6 @@ class AccountInfo extends $pb.GeneratedMessage {
     }
     if (data != null) {
       _result.data = data;
-    }
-    if (address != null) {
-      _result.address = address;
     }
     if (number != null) {
       _result.number = number;
@@ -1182,40 +1177,31 @@ class AccountInfo extends $pb.GeneratedMessage {
   void clearData() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get address => $_getSZ(2);
+  $core.int get number => $_getIZ(2);
   @$pb.TagNumber(3)
-  set address($core.String v) { $_setString(2, v); }
+  set number($core.int v) { $_setSignedInt32(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasAddress() => $_has(2);
+  $core.bool hasNumber() => $_has(2);
   @$pb.TagNumber(3)
-  void clearAddress() => clearField(3);
+  void clearNumber() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.int get number => $_getIZ(3);
+  $core.int get sequence => $_getIZ(3);
   @$pb.TagNumber(4)
-  set number($core.int v) { $_setSignedInt32(3, v); }
+  set sequence($core.int v) { $_setSignedInt32(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasNumber() => $_has(3);
+  $core.bool hasSequence() => $_has(3);
   @$pb.TagNumber(4)
-  void clearNumber() => clearField(4);
+  void clearSequence() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.int get sequence => $_getIZ(4);
+  $fixnum.Int64 get balance => $_getI64(4);
   @$pb.TagNumber(5)
-  set sequence($core.int v) { $_setSignedInt32(4, v); }
+  set balance($fixnum.Int64 v) { $_setInt64(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasSequence() => $_has(4);
+  $core.bool hasBalance() => $_has(4);
   @$pb.TagNumber(5)
-  void clearSequence() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $fixnum.Int64 get balance => $_getI64(5);
-  @$pb.TagNumber(6)
-  set balance($fixnum.Int64 v) { $_setInt64(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasBalance() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearBalance() => clearField(6);
+  void clearBalance() => clearField(5);
 }
 
 class BlockHeaderInfo extends $pb.GeneratedMessage {

@@ -8,21 +8,23 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAccount(t *testing.T) {
 	setup(t)
 
-	acc := tMockState.TestStore.AddTestAccount()
+	acc, signer := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": acc.Address().String()})
+		r = mux.SetURLVars(r, map[string]string{"address": signer.Address().String()})
 		tHTTPServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
+		assert.Contains(t, w.Body.String(), util.ChangeToString(acc.Balance()))
 		fmt.Println(w.Body)
 	})
 

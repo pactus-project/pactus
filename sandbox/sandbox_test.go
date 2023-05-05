@@ -26,17 +26,17 @@ func setup(t *testing.T) {
 	params.TransactionToLiveInterval = 64
 
 	committee, signers := committee.GenerateTestCommittee(21)
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
+	tStore.UpdateAccount(crypto.TreasuryAddress, acc)
 
-	tStore.UpdateAccount(acc)
 	for _, val := range committee.Validators() {
-		// For testing purpose we create some test accounts here
-		// Account number is validator number plus one.
-		// Since account #0 is Treasury account, so it makes scene.
-		acc := account.NewAccount(val.Address(), val.Number()+1)
+		// For testing purpose we create some test accounts first.
+		// Account number is the validator number plus one,
+		// since account #0 is the Treasury account.
+		acc := account.NewAccount(val.Number() + 1)
 		tStore.UpdateValidator(val)
-		tStore.UpdateAccount(acc)
+		tStore.UpdateAccount(val.Address(), acc)
 	}
 
 	tSigners = signers
@@ -62,29 +62,29 @@ func TestAccountChange(t *testing.T) {
 	})
 
 	t.Run("Retrieve an account from store, modify it and commit it", func(t *testing.T) {
-		acc1, _ := account.GenerateTestAccount(888)
-		tStore.UpdateAccount(acc1)
+		acc1, signer1 := account.GenerateTestAccount(888)
+		tStore.UpdateAccount(signer1.Address(), acc1)
 
-		acc1a := tSandbox.Account(acc1.Address())
+		acc1a := tSandbox.Account(signer1.Address())
 		assert.Equal(t, acc1, acc1a)
 
 		acc1a.IncSequence()
 		acc1a.AddToBalance(acc1a.Balance() + 1)
 
-		assert.False(t, tSandbox.accounts[acc1a.Address()].Updated)
-		tSandbox.UpdateAccount(acc1a)
-		assert.True(t, tSandbox.accounts[acc1a.Address()].Updated)
+		assert.False(t, tSandbox.accounts[signer1.Address()].Updated)
+		tSandbox.UpdateAccount(signer1.Address(), acc1a)
+		assert.True(t, tSandbox.accounts[signer1.Address()].Updated)
 	})
 
 	t.Run("Make new account", func(t *testing.T) {
-		addr := crypto.GenerateTestAddress()
-		acc2 := tSandbox.MakeNewAccount(addr)
+		addr2 := crypto.GenerateTestAddress()
+		acc2 := tSandbox.MakeNewAccount(addr2)
 
 		acc2.IncSequence()
 		acc2.AddToBalance(acc2.Balance() + 1)
 
-		tSandbox.UpdateAccount(acc2)
-		acc22 := tSandbox.Account(acc2.Address())
+		tSandbox.UpdateAccount(addr2, acc2)
+		acc22 := tSandbox.Account(addr2)
 		assert.Equal(t, acc2, acc22)
 	})
 }
@@ -195,8 +195,8 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		acc, _ := account.GenerateTestAccount(999)
-		tSandbox.UpdateAccount(acc)
+		acc, signer := account.GenerateTestAccount(999)
+		tSandbox.UpdateAccount(signer.Address(), acc)
 	})
 
 	t.Run("Try update a validator from outside the sandbox, Should panic", func(t *testing.T) {

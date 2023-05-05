@@ -14,7 +14,7 @@ import (
 type Sandbox interface {
 	Account(crypto.Address) *account.Account
 	MakeNewAccount(crypto.Address) *account.Account
-	UpdateAccount(*account.Account)
+	UpdateAccount(crypto.Address, *account.Account)
 
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator
@@ -28,6 +28,6 @@ type Sandbox interface {
 	Params() param.Params
 	CurrentHeight() uint32
 
-	IterateAccounts(consumer func(*AccountStatus))
+	IterateAccounts(consumer func(crypto.Address, *AccountStatus))
 	IterateValidators(consumer func(*ValidatorStatus))
 }

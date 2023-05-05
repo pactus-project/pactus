@@ -138,7 +138,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 
 func TestGetAccount(t *testing.T) {
 	conn, client := testBlockchainClient(t)
-	acc := tMockState.TestStore.AddTestAccount()
+	acc, signer := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
@@ -156,10 +156,9 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return account details", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: acc.Address().String()})
+			&pactus.GetAccountRequest{Address: signer.Address().String()})
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.Account.Address, acc.Address().String())
 		assert.Equal(t, res.Account.Balance, acc.Balance())
 		assert.Equal(t, res.Account.Number, acc.Number())
 		assert.Equal(t, res.Account.Sequence, acc.Sequence())

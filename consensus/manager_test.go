@@ -25,7 +25,7 @@ import (
 
 func TestManager(t *testing.T) {
 	_, committeeSigners := committee.GenerateTestCommittee(4)
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	params := param.DefaultParams()
 	params.BlockTimeInSecond = 1
@@ -34,9 +34,10 @@ func TestManager(t *testing.T) {
 		val := validator.NewValidator(s.PublicKey().(*bls.PublicKey), int32(i))
 		vals[i] = val
 	}
+	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
 	// to prevent triggering timers before starting the tests to avoid double entries for new heights in some tests.
 	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
-	genDoc := genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
+	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 
 	rewardAddrs := []crypto.Address{
 		crypto.GenerateTestAddress(), crypto.GenerateTestAddress(),

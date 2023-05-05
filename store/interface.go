@@ -67,7 +67,7 @@ type Reader interface {
 	Validator(addr crypto.Address) (*validator.Validator, error)
 	ValidatorByNumber(num int32) (*validator.Validator, error)
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
-	IterateAccounts(consumer func(*account.Account) (stop bool))
+	IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool))
 	TotalValidators() int32
 	LastCertificate() (uint32, *block.Certificate)
 }
@@ -75,7 +75,7 @@ type Reader interface {
 type Store interface {
 	Reader
 
-	UpdateAccount(acc *account.Account)
+	UpdateAccount(addr crypto.Address, acc *account.Account)
 	UpdateValidator(val *validator.Validator)
 	SaveBlock(height uint32, block *block.Block, cert *block.Certificate)
 	WriteBatch() error

@@ -21,7 +21,7 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 	}
 	// TODO: better way to get total accout number?
 	total := int32(0)
-	as.iterateAccounts(func(acc *account.Account) bool {
+	as.iterateAccounts(func(_ crypto.Address, _ *account.Account) bool {
 		total++
 		return false
 	})
@@ -52,19 +52,22 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 	return acc, nil
 }
 
-func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bool)) {
+func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
 	r := util.BytesPrefix(accountPrefix)
 	iter := as.db.NewIterator(r, nil)
 	for iter.Next() {
-		//key := iter.Key()
+		key := iter.Key()
 		value := iter.Value()
+
+		var addr crypto.Address
+		copy(addr[:], key[1:])
 
 		acc, err := account.FromBytes(value)
 		if err != nil {
 			logger.Panic("unable to decode account: %v", err)
 		}
 
-		stopped := consumer(acc)
+		stopped := consumer(addr, acc)
 		if stopped {
 			return
 		}
@@ -72,13 +75,13 @@ func (as *accountStore) iterateAccounts(consumer func(*account.Account) (stop bo
 	iter.Release()
 }
 
-func (as *accountStore) updateAccount(batch *leveldb.Batch, acc *account.Account) {
+func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address, acc *account.Account) {
 	data, err := acc.Bytes()
 	if err != nil {
 		logger.Panic("unable to encode account: %v", err)
 	}
-	if !as.hasAccount(acc.Address()) {
+	if !as.hasAccount(addr) {
 		as.total++
 	}
-	batch.Put(accountKey(acc.Address()), data)
+	batch.Put(accountKey(addr), data)
 }

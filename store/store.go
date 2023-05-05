@@ -251,18 +251,18 @@ func (s *store) TotalAccounts() int32 {
 	return s.accountStore.total
 }
 
-func (s *store) IterateAccounts(consumer func(*account.Account) (stop bool)) {
+func (s *store) IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	s.accountStore.iterateAccounts(consumer)
 }
 
-func (s *store) UpdateAccount(acc *account.Account) {
+func (s *store) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	s.accountStore.updateAccount(s.batch, acc)
+	s.accountStore.updateAccount(s.batch, addr, acc)
 }
 
 func (s *store) HasValidator(addr crypto.Address) bool {
