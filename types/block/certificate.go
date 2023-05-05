@@ -61,28 +61,35 @@ func (cert *Certificate) SanityCheck() error {
 	return nil
 }
 
-func (cert *Certificate) Hash() hash.Hash {
+// Remove this function later
+// read below comment
+func (cert *Certificate) hashBytes() []byte {
 	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
 	if err := encoding.WriteVarInt(w, uint64(cert.Round())); err != nil {
-		return hash.UndefHash
+		return nil
 	}
 	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Absentees))); err != nil {
-		return hash.UndefHash
+		return nil
 	}
 	for _, n := range cert.data.Absentees {
 		if err := encoding.WriteVarInt(w, uint64(n)); err != nil {
-			return hash.UndefHash
+			return nil
 		}
 	}
 	if err := cert.data.Signature.Encode(w); err != nil {
-		return hash.UndefHash
+		return nil
 	}
+	return w.Bytes()
+}
 
-	// TODO: a comment on certificate hash
-	// Technically we don't need to include the committers list inside the certificate.
-	// In each height the committers are same as the committee members.
-	// We can remove the committers from the certificate as a possible enhancement in future,.
-	return hash.CalcHash(w.Bytes())
+func (cert *Certificate) Hash() hash.Hash {
+	// TODO: Add a comment on certificate hash
+	// Technically, we don't need to include the committers list inside the certificate.
+	// At each height, the committers are the same as the committee members.
+	// As a possible enhancement in the future, we can remove the committers from the certificate.
+	// In this case, increasing the committee size won't increase the size of the certificate.
+
+	return hash.CalcHash(cert.hashBytes())
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block.

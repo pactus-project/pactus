@@ -113,9 +113,11 @@ func TestBlockHash(t *testing.T) {
 	assert.Equal(t, d, d2)
 
 	headerSize := b.Header().SerializeSize()
-	certSize := b.PrevCertificate().SerializeSize()
 	headerData := d[:headerSize]
-	certData := d[headerSize : headerSize+certSize]
+	// uncomment this comment later
+	// certSize := b.PrevCertificate().SerializeSize()
+	// certData := d[headerSize : headerSize+certSize]
+	certData := b.PrevCertificate().hashBytes()
 	certHash := hash.CalcHash(certData)
 
 	txHashes := make([]hash.Hash, 0)
@@ -130,10 +132,10 @@ func TestBlockHash(t *testing.T) {
 	hashData = append(hashData, util.Int32ToSlice(int32(b.Transactions().Len()))...)
 
 	expected1 := hash.CalcHash(hashData)
-	expected2, _ := hash.FromString("c856bd7d0ce99842ec450ffad6416c45320d667b8b7c4927727860a43290595c")
+	expected2, _ := hash.FromString("665e48e4dcbe3d4ad4871ed01606ced559501ad969093f9c63f8f0c41b25819b")
 	assert.Equal(t, b.Hash(), expected1)
 	assert.Equal(t, b.Hash(), expected2)
-	assert.Equal(t, b.Stamp(), hash.Stamp{0xc8, 0x56, 0xbd, 0x7d})
+	assert.Equal(t, b.Stamp(), hash.Stamp{0x66, 0x5e, 0x48, 0xe4})
 }
 
 func TestMakeBlock(t *testing.T) {
