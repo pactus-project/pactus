@@ -9,16 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func copyValidator(val *validator.Validator) *validator.Validator {
-	clone := validator.NewValidator(val.PublicKey(), val.Number())
-	clone.UpdateLastBondingHeight(val.LastBondingHeight())
-	clone.UpdateLastJoinedHeight(val.LastJoinedHeight())
-	clone.UpdateUnbondingHeight(val.UnbondingHeight())
-
-	// Stake can't be changes as long as validator is inside committee
-	// Check Bond executor
-	return clone
-}
 func TestContains(t *testing.T) {
 	committee, signers := GenerateTestCommittee(21)
 	nonExist := crypto.GenerateTestAddress()
@@ -28,14 +18,14 @@ func TestContains(t *testing.T) {
 }
 
 func TestProposer(t *testing.T) {
-	committee, signers := GenerateTestCommittee(4)
+	committee, _ := GenerateTestCommittee(4)
 
-	assert.Equal(t, committee.Proposer(0).Address(), signers[0].Address())
-	assert.Equal(t, committee.Proposer(3).Address(), signers[3].Address())
-	assert.Equal(t, committee.Proposer(4).Address(), signers[0].Address())
+	assert.Equal(t, committee.Proposer(0).Number(), int32(0))
+	assert.Equal(t, committee.Proposer(3).Number(), int32(3))
+	assert.Equal(t, committee.Proposer(4).Number(), int32(0))
 
 	committee.Update(0, nil)
-	assert.Equal(t, committee.Proposer(0).Address(), signers[1].Address())
+	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
 }
 
 func TestInvalidProposerJoinAndLeave(t *testing.T) {
@@ -121,7 +111,7 @@ func TestProposerJoin(t *testing.T) {
 
 	// Height 1000
 	// Val1 is in the committee
-	val2Copy := copyValidator(val2)
+	val2Copy := cloneValidator(val2)
 	val2Copy.UpdateLastJoinedHeight(1000)
 	committee.Update(0, []*validator.Validator{val2Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
@@ -129,7 +119,7 @@ func TestProposerJoin(t *testing.T) {
 	assert.Equal(t, committee.Size(), 4)
 
 	// Height 1001
-	val5Copy := copyValidator(val5)
+	val5Copy := cloneValidator(val5)
 	val5Copy.UpdateLastJoinedHeight(1001)
 	committee.Update(0, []*validator.Validator{val5Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
@@ -143,9 +133,9 @@ func TestProposerJoin(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(5))
 
 	// Height 1003
-	val3Copy := copyValidator(val3)
-	val6Copy := copyValidator(val6)
-	val7Copy := copyValidator(val7)
+	val3Copy := cloneValidator(val3)
+	val6Copy := cloneValidator(val6)
+	val7Copy := cloneValidator(val7)
 	val3Copy.UpdateLastJoinedHeight(1003)
 	val6Copy.UpdateLastJoinedHeight(1003)
 	val7Copy.UpdateLastJoinedHeight(1003)
@@ -226,7 +216,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 
 	// Height 1001
-	val8Copy := copyValidator(val8)
+	val8Copy := cloneValidator(val8)
 	val8Copy.UpdateLastJoinedHeight(1001)
 	committee.Update(0, []*validator.Validator{val8Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
@@ -235,14 +225,14 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 4, 5, 6, 7})
 
 	// Height 1002
-	val3Copy := copyValidator(val3)
+	val3Copy := cloneValidator(val3)
 	val3Copy.UpdateLastJoinedHeight(1002)
 	committee.Update(3, []*validator.Validator{val3Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
 
 	// Height 1003
-	val2Copy := copyValidator(val2)
-	val9Copy := copyValidator(val9)
+	val2Copy := cloneValidator(val2)
+	val9Copy := cloneValidator(val9)
 	val2Copy.UpdateLastJoinedHeight(1003)
 	val9Copy.UpdateLastJoinedHeight(1003)
 	committee.Update(0, []*validator.Validator{val9Copy, val2Copy})
@@ -251,15 +241,15 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 5, 9, 6, 7})
 
 	// Height 1004
-	valACopy := copyValidator(valA)
+	valACopy := cloneValidator(valA)
 	valACopy.UpdateLastJoinedHeight(1004)
 	committee.Update(1, []*validator.Validator{valACopy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 9, 6, 10, 7})
 
 	// Height 1005
-	valBCopy := copyValidator(valB)
-	valCCopy := copyValidator(valC)
+	valBCopy := cloneValidator(valB)
+	valCCopy := cloneValidator(valC)
 	valBCopy.UpdateLastJoinedHeight(1005)
 	valCCopy.UpdateLastJoinedHeight(1005)
 	committee.Update(0, []*validator.Validator{valCCopy, valBCopy})
@@ -269,17 +259,17 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, committee.Committers(), []int32{8, 11, 12, 2, 3, 9, 10})
 
 	// Height 1006
-	val1Copy := copyValidator(val1)
+	val1Copy := cloneValidator(val1)
 	val1Copy.UpdateLastJoinedHeight(1006)
 	committee.Update(2, []*validator.Validator{val1Copy})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(11))
 	assert.Equal(t, committee.Committers(), []int32{11, 12, 2, 1, 3, 9, 10})
 
 	// Height 1007
-	val2Copy = copyValidator(val2)
-	val3Copy = copyValidator(val3)
-	val5Copy := copyValidator(val5)
-	val6Copy := copyValidator(val6)
+	val2Copy = cloneValidator(val2)
+	val3Copy = cloneValidator(val3)
+	val5Copy := cloneValidator(val5)
+	val6Copy := cloneValidator(val6)
 	val2Copy.UpdateLastJoinedHeight(1007)
 	val3Copy.UpdateLastJoinedHeight(1007)
 	val5Copy.UpdateLastJoinedHeight(1007)
@@ -298,8 +288,8 @@ func TestIsProposer(t *testing.T) {
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
-	assert.Equal(t, committee.Proposer(0).Address(), val1.Address())
-	assert.Equal(t, committee.Proposer(1).Address(), val2.Address())
+	assert.Equal(t, committee.Proposer(0).Number(), int32(0))
+	assert.Equal(t, committee.Proposer(1).Number(), int32(1))
 	assert.True(t, committee.IsProposer(val3.Address(), 2))
 	assert.False(t, committee.IsProposer(val4.Address(), 2))
 	assert.False(t, committee.IsProposer(crypto.GenerateTestAddress(), 2))

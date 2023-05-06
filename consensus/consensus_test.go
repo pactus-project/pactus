@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 
@@ -89,13 +90,13 @@ func setup(t *testing.T) {
 	require.NoError(t, err)
 
 	consX := NewConsensus(testConfig(), stX, tSigners[tIndexX], tSigners[tIndexX].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newMediator(&sync.RWMutex{}))
 	consY := NewConsensus(testConfig(), stY, tSigners[tIndexY], tSigners[tIndexY].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newMediator(&sync.RWMutex{}))
 	consB := NewConsensus(testConfig(), stB, tSigners[tIndexB], tSigners[tIndexB].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newMediator(&sync.RWMutex{}))
 	consP := NewConsensus(testConfig(), stP, tSigners[tIndexP], tSigners[tIndexP].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newMediator(&sync.RWMutex{}))
 
 	tConsX = consX.(*consensus)
 	tConsY = consY.(*consensus)
@@ -308,7 +309,8 @@ func TestNotInCommittee(t *testing.T) {
 	store := store.MockingStore()
 
 	st, _ := state.LoadOrNewState(tGenDoc, []crypto.Signer{signer}, store, tTxPool, nil)
-	Cons := NewConsensus(testConfig(), st, signer, signer.Address(), make(chan message.Message, 100), newMediator())
+	Cons := NewConsensus(testConfig(), st, signer, signer.Address(), make(chan message.Message, 100),
+		newMediator(&sync.RWMutex{}))
 	cons := Cons.(*consensus)
 
 	testEnterNewHeight(cons)
@@ -515,7 +517,8 @@ func TestNonActiveValidator(t *testing.T) {
 	setup(t)
 
 	signer := bls.GenerateTestSigner()
-	Cons := NewConsensus(testConfig(), state.MockingState(), signer, signer.Address(), make(chan message.Message, 100), newMediator())
+	Cons := NewConsensus(testConfig(), state.MockingState(), signer, signer.Address(), make(chan message.Message, 100),
+		newMediator(&sync.RWMutex{}))
 	nonActiveCons := Cons.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {

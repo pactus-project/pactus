@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"sync"
+
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -16,14 +18,19 @@ type mediator interface {
 
 // ConcreteMediator struct
 type ConcreteMediator struct {
+	lk *sync.RWMutex
+
 	instances []Consensus
 }
 
-func newMediator() mediator {
-	return &ConcreteMediator{}
+func newMediator(lk *sync.RWMutex) mediator {
+	return &ConcreteMediator{lk: lk}
 }
 
 func (m *ConcreteMediator) OnPublishProposal(from Consensus, proposal *proposal.Proposal) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	for _, cons := range m.instances {
 		if cons != from {
 			cons.SetProposal(proposal)
@@ -32,6 +39,9 @@ func (m *ConcreteMediator) OnPublishProposal(from Consensus, proposal *proposal.
 }
 
 func (m *ConcreteMediator) OnPublishVote(from Consensus, vote *vote.Vote) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	for _, cons := range m.instances {
 		if cons != from {
 			cons.AddVote(vote)
@@ -40,6 +50,9 @@ func (m *ConcreteMediator) OnPublishVote(from Consensus, vote *vote.Vote) {
 }
 
 func (m *ConcreteMediator) OnBlockAnnounce(from Consensus) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	for _, cons := range m.instances {
 		if cons != from {
 			cons.MoveToNewHeight()

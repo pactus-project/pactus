@@ -4,7 +4,6 @@ import (
 	"container/list"
 	"fmt"
 	"sort"
-	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
@@ -14,11 +13,15 @@ import (
 var _ Committee = &committee{}
 
 type committee struct {
-	lk sync.RWMutex
-
 	committeeSize int
 	validatorList *list.List
 	proposerPos   *list.Element
+}
+
+func cloneValidator(val *validator.Validator) *validator.Validator {
+	cloned := new(validator.Validator)
+	*cloned = *val
+	return cloned
 }
 
 func NewCommittee(validators []*validator.Validator, committeeSize int,
@@ -45,9 +48,6 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 }
 
 func (c *committee) TotalPower() int64 {
-	c.lk.RLock()
-	defer c.lk.RUnlock()
-
 	p := int64(0)
 	c.iterate(func(v *validator.Validator) (stop bool) {
 		p += v.Power()
@@ -57,24 +57,30 @@ func (c *committee) TotalPower() int64 {
 }
 
 func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-
 	sort.SliceStable(joined, func(i, j int) bool {
 		return joined[i].Number() < joined[j].Number()
 	})
 
-	// First update validator list
+	// First update the validator list
 	for _, val := range joined {
 		committeeVal := c.find(val.Address())
 		if committeeVal == nil {
 			c.validatorList.InsertBefore(val, c.proposerPos)
 		} else {
-			*committeeVal = *val
+			committeeVal.UpdateLastJoinedHeight(val.LastJoinedHeight())
+
+			// Ensure that a validator's stake and bonding properties
+			// remain unchanged while they are part of the committee.
+			// Refer to the Bond executor for additional details.
+			if committeeVal.Stake() != val.Stake() ||
+				committeeVal.LastBondingHeight() != val.LastBondingHeight() ||
+				committeeVal.UnbondingHeight() != val.UnbondingHeight() {
+				panic("validators within the committee must be consistent")
+			}
 		}
 	}
 
-	// Now adjust the list
+	// Now, adjust the list
 	oldestFirst := make([]*list.Element, c.validatorList.Len())
 	i := 0
 	for e := c.validatorList.Front(); e != nil; e = e.Next() {
@@ -106,14 +112,13 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 }
 
+// Validators retrieves a list of all validators in the committee.
+// A cloned instance of each validator is returned to avoid modification of the original objects.
 func (c *committee) Validators() []*validator.Validator {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-
 	vals := make([]*validator.Validator, c.validatorList.Len())
 	i := 0
 	c.iterate(func(v *validator.Validator) (stop bool) {
-		vals[i] = v
+		vals[i] = cloneValidator(v)
 		i++
 		return false
 	})
@@ -122,9 +127,6 @@ func (c *committee) Validators() []*validator.Validator {
 }
 
 func (c *committee) Contains(addr crypto.Address) bool {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-
 	return c.find(addr) != nil
 }
 
@@ -140,21 +142,16 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 	return found
 }
 
-// IsProposer checks if the address is proposer for this height at this round.
+// IsProposer checks if the given address is the proposer for the specified round.
 func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-
 	p := c.proposer(round)
 	return p.Address().EqualsTo(addr)
 }
 
-// Proposer returns proposer info for this height at this round.
+// Proposer returns an instance of the proposer validator for the specified round.
+// A cloned instance of the proposer is returned to avoid modification of the original object.
 func (c *committee) Proposer(round int16) *validator.Validator {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-
-	return c.proposer(round)
+	return cloneValidator(c.proposer(round))
 }
 
 func (c *committee) proposer(round int16) *validator.Validator {
@@ -170,9 +167,6 @@ func (c *committee) proposer(round int16) *validator.Validator {
 }
 
 func (c *committee) Committers() []int32 {
-	c.lk.RLock()
-	defer c.lk.RUnlock()
-
 	committers := make([]int32, c.validatorList.Len())
 	i := 0
 	c.iterate(func(v *validator.Validator) (stop bool) {
@@ -185,9 +179,6 @@ func (c *committee) Committers() []int32 {
 }
 
 func (c *committee) Size() int {
-	c.lk.RLock()
-	defer c.lk.RUnlock()
-
 	return c.validatorList.Len()
 }
 
