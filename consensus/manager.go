@@ -143,36 +143,3 @@ func (mgr *manager) getBestInstance() Consensus {
 
 	return mgr.instances[0]
 }
-
-func (mgr *manager) OnPublishProposal(from Consensus, proposal *proposal.Proposal) {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
-	for _, cons := range mgr.instances {
-		if cons != from {
-			cons.SetProposal(proposal)
-		}
-	}
-}
-
-func (mgr *manager) OnPublishVote(from Consensus, vote *vote.Vote) {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
-	for _, cons := range mgr.instances {
-		if cons != from {
-			cons.AddVote(vote)
-		}
-	}
-}
-
-func (mgr *manager) OnBlockAnnounce(from Consensus) {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
-	for _, cons := range mgr.instances {
-		if cons != from {
-			cons.MoveToNewHeight()
-		}
-	}
-}
