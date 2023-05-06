@@ -12,7 +12,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// SanityCheck is a basic checks for config.
+// SanityCheck performs basic checks on the configuration.
 func (conf *Config) SanityCheck() error {
 	return nil
 }

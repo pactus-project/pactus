@@ -71,13 +71,13 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 }
 
 func NewNetwork(conf *Config) (Network, error) {
-	nodeKey, err := loadOrCreateKey(conf.NodeKey)
+	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
 	opts := []lp2p.Option{
-		lp2p.Identity(nodeKey),
+		lp2p.Identity(networkKey),
 		lp2p.ListenAddrStrings(conf.Listens...),
 		lp2p.Ping(conf.EnablePing),
 		lp2p.UserAgent(version.Agent()),

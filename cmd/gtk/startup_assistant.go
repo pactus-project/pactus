@@ -11,8 +11,8 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node/config"
-	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/wallet"
 )
 

@@ -7,11 +7,11 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/node/config"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -64,10 +64,14 @@ func Init() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("How many validators do you want to create?")
-			cmd.PrintInfoMsg("Enter a number between 1 to 32, default is 7.")
+			cmd.PrintInfoMsg("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
+			cmd.PrintInfoMsg("You can define validators based on the amount of coins you want to stake.")
 			numValidatorsStr := cmd.PromptInputWithSuggestion("Number of Validators", "7")
 			numValidators, err := strconv.Atoi(numValidatorsStr)
 			cmd.FatalErrorCheck(err)
+
+
+			
 
 			if numValidators < 1 || numValidators > 32 {
 				cmd.PrintErrorMsg("Invalid validator number")

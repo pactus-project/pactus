@@ -8,7 +8,7 @@ import (
 type Config struct {
 	Name        string           `toml:"name"`
 	Listens     []string         `toml:"listens"`
-	NodeKey     string           `toml:"node_key"`
+	NetworkKey  string           `toml:"network_key"`
 	EnableDHT   bool             `toml:"enable_dht"`
 	EnableNAT   bool             `toml:"enable_nat"`
 	EnableRelay bool             `toml:"enable_relay"`
@@ -47,7 +47,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		Name:        "pactus",
 		Listens:     []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
-		NodeKey:     "node_key",
+		NetworkKey:  "network_key",
 		EnableNAT:   true,
 		EnableRelay: true,
 		EnableMdns:  false,
@@ -62,7 +62,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// SanityCheck is a basic checks for config.
+// SanityCheck performs basic checks on the configuration.
 func (conf *Config) SanityCheck() error {
 	return nil
 }

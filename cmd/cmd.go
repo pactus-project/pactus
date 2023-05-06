@@ -13,6 +13,7 @@ import (
 	"syscall"
 
 	"github.com/manifoldco/promptui"
+	"github.com/pactus-project/pactus/crypto"
 )
 
 var Pactus = ``
@@ -32,10 +33,7 @@ func PromptPassword(label string, confirmation bool) string {
 		Mask:  '*',
 	}
 	password, err := prompt.Run()
-	if err != nil {
-		PrintErrorMsg("Failed to read password: %v", err)
-		os.Exit(1)
-	}
+	FatalErrorCheck(err)
 
 	if confirmation {
 		validate := func(input string) error {
@@ -52,10 +50,7 @@ func PromptPassword(label string, confirmation bool) string {
 		}
 
 		_, err := confirmPrompt.Run()
-		if err != nil {
-			PrintErrorMsg("prompt error: %v", err)
-			os.Exit(1)
-		}
+		FatalErrorCheck(err)
 	}
 
 	return password
@@ -87,10 +82,8 @@ func PromptInput(label string) string {
 		Label: label,
 	}
 	result, err := prompt.Run()
-	if err != nil {
-		PrintErrorMsg("prompt error: %v", err)
-		os.Exit(1)
-	}
+	FatalErrorCheck(err)
+
 	return result
 }
 
@@ -160,19 +153,15 @@ func PrintLine() {
 func PrintJSONData(data []byte) {
 	var out bytes.Buffer
 	err := json.Indent(&out, data, "", "   ")
-	if err != nil {
-		PrintErrorMsg("json.Indent error: %v", err)
-		return
-	}
+	FatalErrorCheck(err)
+
 	PrintInfoMsg(out.String())
 }
 
 func PrintJSONObject(obj interface{}) {
 	data, err := json.Marshal(obj)
-	if err != nil {
-		PrintErrorMsg("json.Marshal error: %v", err)
-		return
-	}
+	FatalErrorCheck(err)
+
 	PrintJSONData(data)
 }
 
@@ -220,4 +209,10 @@ func TrapSignal(cleanupFunc func()) {
 		}
 		os.Exit(exitCode)
 	}()
+}
+
+func CreateNode(numValidators int, 
+	walletSeed string, walletPath string, walletPassword string) (
+	validatorAddrs []crypto.Address, rewardAddrs []crypto.Address, err error) {
+
 }

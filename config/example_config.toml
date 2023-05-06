@@ -1,7 +1,15 @@
 ### This configuration file specifies configurations for running a Pactus node.
 
-# `num_validators` specifies the number of consensus instances (validators) to run on this node.
-num_validators = %num_validators%
+# `node` contains configuration options for the Pactus node.
+[node]
+
+  # `num_validators` specifies the number of validators (consensus instances) to run on this node.
+  num_validators = %num_validators%
+
+  # `reward_addresses` specifies the addresses for collecting rewards.
+  # If it is empty, reward addresses will be obtained from the wallet.
+  # The number of reward addresses should be the same as the number of validators.
+ ## reward_addresses = []
 
 # `store` contains configuration options for the store module, which manages storage and retrieval of blockchain data.
 [store]
@@ -19,8 +27,8 @@ num_validators = %num_validators%
   # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
  ## listens = ["/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"]
 
-  # `node_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
- ## node_key = "node_key"
+  # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
+ ## network_key = "network_key"
 
   # `enable_dht` indicates whether Kademlia DHT should be enabled or not.
   # Default is true.

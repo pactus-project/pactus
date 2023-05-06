@@ -10,10 +10,10 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
-	"github.com/pactus-project/pactus/node/config"
-	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/wallet"
 )
 

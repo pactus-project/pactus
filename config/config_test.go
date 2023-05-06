@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,10 +72,47 @@ func TestExampleConfig(t *testing.T) {
 	exampleToml = strings.ReplaceAll(exampleToml, "##", "")
 	exampleToml = strings.ReplaceAll(exampleToml, "\r\n", "\n") // For Windows
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
-	exampleToml = strings.Replace(exampleToml, "\n", "", 1) // Remove the first \n
 	defaultToml = strings.ReplaceAll(defaultToml, "\n\n", "\n")
 
 	// fmt.Println(defaultToml)
 	// fmt.Println(exampleToml)
 	assert.Equal(t, defaultToml, exampleToml)
+}
+
+func TestNodeConfigSanityCheck(t *testing.T) {
+	t.Run("invalid number of validators", func(t *testing.T) {
+		conf := DefaultNodeConfig()
+		conf.NumValidators = 0
+
+		assert.Error(t, conf.SanityCheck())
+	})
+
+	t.Run("invalid number of reward addresses", func(t *testing.T) {
+		conf := DefaultNodeConfig()
+		conf.RewardAddresses = []string{
+			crypto.GenerateTestAddress().String()}
+
+		assert.Error(t, conf.SanityCheck())
+	})
+
+	t.Run("invalid reward addresses", func(t *testing.T) {
+		conf := DefaultNodeConfig()
+		conf.NumValidators = 2
+		conf.RewardAddresses = []string{
+			crypto.GenerateTestAddress().String(),
+			"abcd"}
+
+		assert.Error(t, conf.SanityCheck())
+	})
+
+	t.Run("ok", func(t *testing.T) {
+		conf := DefaultNodeConfig()
+		conf.NumValidators = 2
+		conf.RewardAddresses = []string{
+			crypto.GenerateTestAddress().String(),
+			crypto.GenerateTestAddress().String()}
+
+		assert.NoError(t, conf.SanityCheck())
+	})
+
 }

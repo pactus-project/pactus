@@ -18,6 +18,7 @@ func DefaultConfig() *Config {
 	}
 }
 
+// SanityCheck performs basic checks on the configuration.
 func (conf *Config) SanityCheck() error {
 	if conf.ChangeProposerTimeout <= 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout for change proposer can't be negative")
