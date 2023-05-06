@@ -29,9 +29,9 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 	validatorList := list.New()
 	var proposerPos *list.Element
 
-	for _, v := range validators {
-		el := validatorList.PushBack(v)
-		if v.Address().EqualsTo(proposerAddress) {
+	for _, val := range validators {
+		el := validatorList.PushBack(cloneValidator(val))
+		if val.Address().EqualsTo(proposerAddress) {
 			proposerPos = el
 		}
 	}
@@ -65,7 +65,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	for _, val := range joined {
 		committeeVal := c.find(val.Address())
 		if committeeVal == nil {
-			c.validatorList.InsertBefore(val, c.proposerPos)
+			c.validatorList.InsertBefore(cloneValidator(val), c.proposerPos)
 		} else {
 			committeeVal.UpdateLastJoinedHeight(val.LastJoinedHeight())
 
