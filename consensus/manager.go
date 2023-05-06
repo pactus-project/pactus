@@ -1,8 +1,6 @@
 package consensus
 
 import (
-	"sync"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -11,8 +9,6 @@ import (
 )
 
 type manager struct {
-	lk sync.RWMutex
-
 	instances []Consensus
 }
 
@@ -27,7 +23,7 @@ func NewManager(
 	mgr := &manager{
 		instances: make([]Consensus, len(signers)),
 	}
-	mediator := newMediator(&mgr.lk)
+	mediator := newMediator()
 
 	for i, signer := range signers {
 		cons := NewConsensus(conf, state, signer, rewardAddrs[i], broadcastCh, mediator)
@@ -59,36 +55,24 @@ func (mgr *manager) Instances() []Reader {
 
 // PickRandomVote retrieves a random vote from a random consensus instance.
 func (mgr *manager) PickRandomVote() *vote.Vote {
-	mgr.lk.RLock()
-	defer mgr.lk.RUnlock()
-
 	cons := mgr.getBestInstance()
 	return cons.PickRandomVote()
 }
 
 // RoundProposal retrieves the proposal for a specific round from a random consensus instance.
 func (mgr *manager) RoundProposal(round int16) *proposal.Proposal {
-	mgr.lk.RLock()
-	defer mgr.lk.RUnlock()
-
 	cons := mgr.getBestInstance()
 	return cons.RoundProposal(round)
 }
 
 // HeightRound retrieves the current height and round from a random consensus instance.
 func (mgr *manager) HeightRound() (uint32, int16) {
-	mgr.lk.RLock()
-	defer mgr.lk.RUnlock()
-
 	cons := mgr.getBestInstance()
 	return cons.HeightRound()
 }
 
 // HasActiveInstance checks if any of the consensus instances are currently active.
 func (mgr *manager) HasActiveInstance() bool {
-	mgr.lk.RLock()
-	defer mgr.lk.RUnlock()
-
 	for _, cons := range mgr.instances {
 		if cons.IsActive() {
 			return true
@@ -100,9 +84,6 @@ func (mgr *manager) HasActiveInstance() bool {
 
 // MoveToNewHeight moves all consensus instances to a new height.
 func (mgr *manager) MoveToNewHeight() {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
 	for _, cons := range mgr.instances {
 		cons.MoveToNewHeight()
 	}
@@ -110,9 +91,6 @@ func (mgr *manager) MoveToNewHeight() {
 
 // AddVote adds a vote to all consensus instances.
 func (mgr *manager) AddVote(v *vote.Vote) {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
 	for _, cons := range mgr.instances {
 		cons.AddVote(v)
 	}
@@ -120,9 +98,6 @@ func (mgr *manager) AddVote(v *vote.Vote) {
 
 // SetProposal sets the proposal for all consensus instances.
 func (mgr *manager) SetProposal(proposal *proposal.Proposal) {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
 	for _, cons := range mgr.instances {
 		cons.SetProposal(proposal)
 	}
