@@ -110,23 +110,23 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 func TestRetrieveAccount(t *testing.T) {
 	setup(t)
 
-	acc, _ := account.GenerateTestAccount(util.RandInt32(10000))
+	acc, signer := account.GenerateTestAccount(util.RandInt32(10000))
 
 	t.Run("Add account, should able to retrieve", func(t *testing.T) {
-		assert.False(t, tStore.HasAccount(acc.Address()))
-		tStore.UpdateAccount(acc)
+		assert.False(t, tStore.HasAccount(signer.Address()))
+		tStore.UpdateAccount(signer.Address(), acc)
 		assert.NoError(t, tStore.WriteBatch())
-		assert.True(t, tStore.HasAccount(acc.Address()))
-		acc2, err := tStore.Account(acc.Address())
+		assert.True(t, tStore.HasAccount(signer.Address()))
+		acc2, err := tStore.Account(signer.Address())
 		assert.NoError(t, err)
 		assert.Equal(t, acc, acc2)
 	})
 
 	t.Run("Update account, should update database", func(t *testing.T) {
 		acc.AddToBalance(1)
-		tStore.UpdateAccount(acc)
+		tStore.UpdateAccount(signer.Address(), acc)
 		assert.NoError(t, tStore.WriteBatch())
-		acc2, err := tStore.Account(acc.Address())
+		acc2, err := tStore.Account(signer.Address())
 		assert.NoError(t, err)
 		assert.Equal(t, acc, acc2)
 	})
@@ -134,7 +134,7 @@ func TestRetrieveAccount(t *testing.T) {
 
 	// Should not crash
 	assert.NoError(t, tStore.Close())
-	_, err := tStore.Account(acc.Address())
+	_, err := tStore.Account(signer.Address())
 	assert.Error(t, err)
 }
 
@@ -176,14 +176,14 @@ func TestIterateAccounts(t *testing.T) {
 
 	accs1 := []hash.Hash{}
 	for i := 0; i < 10; i++ {
-		acc, _ := account.GenerateTestAccount(int32(i))
-		tStore.UpdateAccount(acc)
+		acc, signer := account.GenerateTestAccount(int32(i))
+		tStore.UpdateAccount(signer.Address(), acc)
 		assert.NoError(t, tStore.WriteBatch())
 		accs1 = append(accs1, acc.Hash())
 	}
 
 	stopped := false
-	tStore.IterateAccounts(func(acc *account.Account) bool {
+	tStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		if acc.Hash().EqualsTo(accs1[0]) {
 			stopped = true
 		}
@@ -192,7 +192,7 @@ func TestIterateAccounts(t *testing.T) {
 	assert.True(t, stopped)
 
 	accs2 := []hash.Hash{}
-	tStore.IterateAccounts(func(acc *account.Account) bool {
+	tStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		accs2 = append(accs2, acc.Hash())
 		return false
 	})

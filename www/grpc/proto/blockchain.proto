@@ -92,10 +92,9 @@ message ValidatorInfo {
 message AccountInfo {
   bytes hash = 1;
   bytes data = 2;
-  string address = 3;
-  int32 number = 4;
-  int32 sequence = 5;
-  int64 balance = 6;
+  int32 number = 3;
+  int32 sequence = 4;
+  int64 balance = 5;
 }
 
 message BlockHeaderInfo {

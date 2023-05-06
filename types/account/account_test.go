@@ -24,8 +24,6 @@ func TestFromBytes(t *testing.T) {
 
 func TestDecoding(t *testing.T) {
 	bs := []byte{
-		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
-		0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, // address
 		0x1, 0x0, 0x0, 0x0, // number
 		0x2, 0x0, 0x0, 0x0, // sequence
 		0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, // balance
@@ -36,9 +34,8 @@ func TestDecoding(t *testing.T) {
 	bs2, _ := acc.Bytes()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
-	expected, _ := hash.FromString("33a4208262903cd1f274e760f495eca8e56b7fcc61feec0a8e6dcd0d2e57cafc")
+	expected, _ := hash.FromString("74280903e6b73b79e56b1f15cee24c444776cfeee3bea9476b549b660176f773")
 	assert.Equal(t, acc.Hash(), expected)
-	assert.Equal(t, acc.Address().Bytes(), bs[:21])
 }
 
 func TestIncSequence(t *testing.T) {

@@ -83,8 +83,8 @@ func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
-func (m *MockStore) UpdateAccount(acc *account.Account) {
-	m.Accounts[acc.Address()] = *acc
+func (m *MockStore) UpdateAccount(addr crypto.Address, acc *account.Account) {
+	m.Accounts[addr] = *acc
 }
 func (m *MockStore) TotalAccounts() int32 {
 	return int32(len(m.Accounts))
@@ -120,19 +120,19 @@ func (m *MockStore) Close() error {
 func (m *MockStore) HasAnyBlock() bool {
 	return len(m.Blocks) > 0
 }
-func (m *MockStore) IterateAccounts(consumer func(*account.Account) (stop bool)) {
-	for _, a := range m.Accounts {
-		acc := a
-		stopped := consumer(&acc)
+func (m *MockStore) IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
+	for addr, acc := range m.Accounts {
+		cloned := acc
+		stopped := consumer(addr, &cloned)
 		if stopped {
 			return
 		}
 	}
 }
 func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
-	for _, v := range m.Validators {
-		val := v
-		stopped := consumer(&val)
+	for _, val := range m.Validators {
+		cloned := val
+		stopped := consumer(&cloned)
 		if stopped {
 			return
 		}
@@ -180,16 +180,14 @@ func (m *MockStore) WriteBatch() error {
 
 func (m *MockStore) AddTestValidator() *validator.Validator {
 	val, _ := validator.GenerateTestValidator(util.RandInt32(10000))
-	val.SubtractFromStake(val.Stake())
 	m.UpdateValidator(val)
 	return val
 }
 
-func (m *MockStore) AddTestAccount() *account.Account {
-	acc, _ := account.GenerateTestAccount(util.RandInt32(10000))
-	acc.SubtractFromBalance(acc.Balance())
-	m.UpdateAccount(acc)
-	return acc
+func (m *MockStore) AddTestAccount() (*account.Account, crypto.Signer) {
+	acc, signer := account.GenerateTestAccount(util.RandInt32(10000))
+	m.UpdateAccount(signer.Address(), acc)
+	return acc, signer
 }
 
 func (m *MockStore) AddTestBlock(height uint32) *block.Block {
@@ -198,9 +196,9 @@ func (m *MockStore) AddTestBlock(height uint32) *block.Block {
 	m.SaveBlock(height, b, cert)
 	return b
 }
-func (m *MockStore) RandomTestAcc() *account.Account {
-	for _, acc := range m.Accounts {
-		return &acc
+func (m *MockStore) RandomTestAcc() (crypto.Address, *account.Account) {
+	for addr, acc := range m.Accounts {
+		return addr, &acc
 	}
 	panic("no account in sandbox")
 }

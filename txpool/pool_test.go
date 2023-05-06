@@ -80,15 +80,16 @@ func TestFullPool(t *testing.T) {
 	trxs := make([]*tx.Tx, tPool.config.sendPoolSize()+1)
 
 	signer := bls.GenerateTestSigner()
-	acc := account.NewAccount(signer.Address(), 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(10000000000)
-	tSandbox.UpdateAccount(acc)
+	tSandbox.UpdateAccount(signer.Address(), acc)
 
 	// Make sure the pool is empty
 	assert.Equal(t, tPool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewSendTx(block10000.Stamp(), acc.Sequence()+int32(i+1), acc.Address(), crypto.GenerateTestAddress(), 1000, 1000, "ok")
+		trx := tx.NewSendTx(block10000.Stamp(), acc.Sequence()+int32(i+1), signer.Address(),
+			crypto.GenerateTestAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, tPool.AppendTx(trx))
 		trxs[i] = trx
@@ -111,9 +112,9 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	block1000000 := tSandbox.TestStore.AddTestBlock(1000000)
 
 	acc1Signer := bls.GenerateTestSigner()
-	acc1 := account.NewAccount(acc1Signer.Address(), 0)
+	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(10000000000)
-	tSandbox.UpdateAccount(acc1)
+	tSandbox.UpdateAccount(acc1Signer.Address(), acc1)
 
 	val1Signer := bls.GenerateTestSigner()
 	val1Pub := val1Signer.PublicKey().(*bls.PublicKey)
@@ -134,21 +135,25 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	tSandbox.UpdateValidator(val3)
 
-	sendTx := tx.NewSendTx(block1000000.Stamp(), acc1.Sequence()+1, acc1.Address(), crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
+	sendTx := tx.NewSendTx(block1000000.Stamp(), acc1.Sequence()+1, acc1Signer.Address(),
+		crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(sendTx)
 
 	pub, _ := bls.GenerateTestKeyPair()
-	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1.Address(), pub.Address(), pub, 1000, 1000, "bond-tx")
+	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1Signer.Address(),
+		pub.Address(), pub, 1000, 1000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
 	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(), crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
+	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(),
+		crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	tSandbox.AcceptTestSortition = true
-	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(), sortition.GenerateRandomProof())
+	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(),
+		sortition.GenerateRandomProof())
 	val3Signer.SignMsg(sortitionTx)
 
 	assert.NoError(t, tPool.AppendTx(sendTx))

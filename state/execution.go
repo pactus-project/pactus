@@ -45,7 +45,7 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 	// Claim accumulated fees
 	acc := sb.Account(crypto.TreasuryAddress)
 	acc.AddToBalance(accumulatedFee)
-	sb.UpdateAccount(acc)
+	sb.UpdateAccount(crypto.TreasuryAddress, acc)
 
 	return nil
 }

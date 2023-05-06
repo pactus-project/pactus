@@ -70,15 +70,16 @@ func setup(t *testing.T) {
 		vals[i] = val
 	}
 
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
+	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
 	params := param.DefaultParams()
 	params.CommitteeSize = 4
 	params.BlockTimeInSecond = 1
 
 	// to prevent triggering timers before starting the tests to avoid double entries for new heights in some tests.
 	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
-	tGenDoc = genesis.MakeGenesis(getTime, []*account.Account{acc}, vals, params)
+	tGenDoc = genesis.MakeGenesis(getTime, accs, vals, params)
 	stX, err := state.LoadOrNewState(tGenDoc, []crypto.Signer{tSigners[tIndexX]}, store.MockingStore(), tTxPool, nil)
 	require.NoError(t, err)
 	stY, err := state.LoadOrNewState(tGenDoc, []crypto.Signer{tSigners[tIndexY]}, store.MockingStore(), tTxPool, nil)

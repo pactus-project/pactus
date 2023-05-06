@@ -30,7 +30,6 @@ var tValSigner1 crypto.Signer
 var tValSigner2 crypto.Signer
 var tValSigner3 crypto.Signer
 var tValSigner4 crypto.Signer
-var tGenTime time.Time
 var tCommonTxPool *txpool.MockTxPool
 
 func setup(t *testing.T) {
@@ -44,7 +43,7 @@ func setup(t *testing.T) {
 	tValSigner3 = crypto.NewSigner(prv3)
 	tValSigner4 = crypto.NewSigner(prv4)
 
-	tGenTime = util.RoundNow(10)
+	genTime := util.RoundNow(10)
 	tCommonTxPool = txpool.MockingTxPool()
 
 	store1 := store.MockingStore()
@@ -52,7 +51,7 @@ func setup(t *testing.T) {
 	store3 := store.MockingStore()
 	store4 := store.MockingStore()
 
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
 	val1 := validator.NewValidator(pub1, 0)
 	val2 := validator.NewValidator(pub2, 1)
@@ -61,7 +60,10 @@ func setup(t *testing.T) {
 	params := param.DefaultParams()
 	params.CommitteeSize = 5
 	params.BondInterval = 10
-	gnDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val1, val2, val3, val4}, params)
+
+	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
+	vals := []*validator.Validator{val1, val2, val3, val4}
+	gnDoc := genesis.MakeGenesis(genTime, accs, vals, params)
 
 	st1, err := LoadOrNewState(gnDoc, []crypto.Signer{tValSigner1}, store1, tCommonTxPool, nil)
 	require.NoError(t, err)
@@ -228,7 +230,7 @@ func TestCommitSandbox(t *testing.T) {
 		sb := tState1.concreteSandbox()
 		acc := sb.Account(crypto.TreasuryAddress)
 		acc.SubtractFromBalance(1)
-		sb.UpdateAccount(acc)
+		sb.UpdateAccount(crypto.TreasuryAddress, acc)
 		tState1.commitSandbox(sb, 0)
 
 		acc1 := tState1.AccountByAddress(crypto.TreasuryAddress)
@@ -598,12 +600,17 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	_, err := LoadOrNewState(tState1.genDoc, []crypto.Signer{tValSigner1}, tState1.store, txpool.MockingTxPool(), nil)
 	require.NoError(t, err)
 
-	// Load last state info after modifying genesis
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
-	acc.AddToBalance(21*1e14 + 1) // manipulating genesis
-	val := validator.NewValidator(tValSigner1.PublicKey().(*bls.PublicKey), 0)
-	genDoc := genesis.MakeGenesis(tGenTime, []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
+	pub, _ := bls.GenerateTestKeyPair()
+	val := validator.NewValidator(pub, 4)
+	vals := append(tState1.genDoc.Validators(), val)
 
+	genDoc := genesis.MakeGenesis(
+		tState1.genDoc.GenesisTime(),
+		tState1.genDoc.Accounts(),
+		vals,
+		tState1.genDoc.Params())
+
+	// Load last state info after modifying genesis
 	_, err = LoadOrNewState(genDoc, []crypto.Signer{tValSigner1}, tState1.store, txpool.MockingTxPool(), nil)
 	require.Error(t, err)
 }

@@ -119,8 +119,8 @@ func (st *state) tryLoadLastInfo() error {
 
 func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	accs := genDoc.Accounts()
-	for _, acc := range accs {
-		st.store.UpdateAccount(acc)
+	for addr, acc := range accs {
+		st.store.UpdateAccount(addr, acc)
 	}
 
 	vals := genDoc.Validators()
@@ -145,7 +145,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 
 func (st *state) loadMerkels() {
 	totalAccount := st.store.TotalAccounts()
-	st.store.IterateAccounts(func(acc *account.Account) (stop bool) {
+	st.store.IterateAccounts(func(addr crypto.Address, acc *account.Account) (stop bool) {
 		// Let's keep this check, even we have tested it
 		if acc.Number() >= totalAccount {
 			panic("Account number is out of range")
@@ -181,11 +181,11 @@ func (st *state) calculateGenesisStateRootFromGenesisDoc() hash.Hash {
 
 	accHashes := make([]hash.Hash, len(accs))
 	valHashes := make([]hash.Hash, len(vals))
-	for i, acc := range accs {
-		accHashes[i] = acc.Hash()
+	for _, acc := range accs {
+		accHashes[acc.Number()] = acc.Hash()
 	}
-	for i, val := range vals {
-		valHashes[i] = val.Hash()
+	for _, val := range vals {
+		valHashes[val.Number()] = val.Hash()
 	}
 
 	accTree := simplemerkle.NewTreeFromHashes(accHashes)
@@ -500,9 +500,9 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 	})
 	st.committee.Update(round, joined)
 
-	sb.IterateAccounts(func(as *sandbox.AccountStatus) {
+	sb.IterateAccounts(func(addr crypto.Address, as *sandbox.AccountStatus) {
 		if as.Updated {
-			st.store.UpdateAccount(&as.Account)
+			st.store.UpdateAccount(addr, &as.Account)
 			st.accountMerkle.SetHash(int(as.Account.Number()), as.Account.Hash())
 		}
 	})

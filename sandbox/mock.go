@@ -36,17 +36,17 @@ func MockingSandbox() *MockSandbox {
 	treasuryAmt := int64(21000000 * 1e9)
 
 	for i, val := range committee.Validators() {
-		acc := account.NewAccount(val.Address(), int32(i+1))
+		acc := account.NewAccount(int32(i + 1))
 		acc.AddToBalance(100 * 1e9)
-		sb.UpdateAccount(acc)
+		sb.UpdateAccount(val.Address(), acc)
 		sb.UpdateValidator(val)
 
 		treasuryAmt -= val.Stake()
 		treasuryAmt -= acc.Balance()
 	}
-	acc0 := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc0 := account.NewAccount(0)
 	acc0.AddToBalance(treasuryAmt)
-	sb.UpdateAccount(acc0)
+	sb.UpdateAccount(crypto.TreasuryAddress, acc0)
 
 	return sb
 }
@@ -55,11 +55,11 @@ func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	acc, _ := m.TestStore.Account(addr)
 	return acc
 }
-func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
-	return account.NewAccount(addr, m.TestStore.TotalAccounts())
+func (m *MockSandbox) MakeNewAccount(_ crypto.Address) *account.Account {
+	return account.NewAccount(m.TestStore.TotalAccounts())
 }
-func (m *MockSandbox) UpdateAccount(acc *account.Account) {
-	m.TestStore.UpdateAccount(acc)
+func (m *MockSandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
+	m.TestStore.UpdateAccount(addr, acc)
 }
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	val, _ := m.TestStore.Validator(addr)
@@ -83,9 +83,9 @@ func (m *MockSandbox) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
 func (m *MockSandbox) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
 	return m.TestStore.FindBlockHeightByStamp(stamp)
 }
-func (m *MockSandbox) IterateAccounts(consumer func(*AccountStatus)) {
-	m.TestStore.IterateAccounts(func(acc *account.Account) bool {
-		consumer(&AccountStatus{
+func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *AccountStatus)) {
+	m.TestStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
+		consumer(addr, &AccountStatus{
 			Account: *acc,
 			Updated: true,
 		})

@@ -17,10 +17,12 @@ import (
 )
 
 func TestMarshaling(t *testing.T) {
-	acc, _ := account.GenerateTestAccount(0)
+	acc, signer := account.GenerateTestAccount(0)
 	acc.AddToBalance(100000)
 	val, _ := validator.GenerateTestValidator(0)
-	gen1 := MakeGenesis(util.Now(), []*account.Account{acc}, []*validator.Validator{val}, param.DefaultParams())
+	gen1 := MakeGenesis(util.Now(),
+		map[crypto.Address]*account.Account{signer.Address(): acc},
+		[]*validator.Validator{val}, param.DefaultParams())
 	gen2 := new(Genesis)
 
 	assert.Equal(t, gen1.Params().BlockTimeInSecond, 10)
@@ -37,6 +39,9 @@ func TestMarshaling(t *testing.T) {
 	gen3, err := LoadFromFile(f)
 	assert.NoError(t, err)
 	require.Equal(t, gen1.Hash(), gen3.Hash())
+
+	_, err = LoadFromFile(util.TempFilePath())
+	assert.Error(t, err, "file not found")
 }
 
 func TestGenesisTestNet(t *testing.T) {
@@ -44,8 +49,7 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, len(g.Validators()), 4)
 	assert.Equal(t, len(g.Accounts()), 1)
 
-	assert.Equal(t, g.Accounts()[0].Address(), crypto.TreasuryAddress)
-	assert.Equal(t, g.Accounts()[0].Balance(), int64(21000000000000000))
+	assert.Equal(t, g.Accounts()[crypto.TreasuryAddress].Balance(), int64(21e15))
 
 	genTime, _ := time.Parse("2006-01-02", "2022-08-21")
 	assert.Equal(t, g.GenesisTime(), genTime)
@@ -56,22 +60,23 @@ func TestGenesisTestNet(t *testing.T) {
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
-	accs := []*account.Account{}
+	accs := map[crypto.Address]*account.Account{}
 	vals := []*validator.Validator{}
 	for i := int32(0); i < 10; i++ {
 		pub, _ := bls.GenerateTestKeyPair()
-		acc := account.NewAccount(pub.Address(), i)
+		acc := account.NewAccount(i)
 		val := validator.NewValidator(pub, i)
 
-		accs = append(accs, acc)
+		accs[pub.Address()] = acc
 		vals = append(vals, val)
 	}
 	gen := MakeGenesis(util.Now(), accs, vals, param.DefaultParams())
 
-	genAccs := gen.Accounts()
-	genVals := gen.Validators()
-	for i := 0; i < 10; i++ {
-		assert.Equal(t, genAccs[i], accs[i])
-		assert.Equal(t, genVals[i].Hash(), vals[i].Hash())
+	for addr, acc := range gen.Accounts() {
+		assert.Equal(t, acc, accs[addr])
+	}
+
+	for i, val := range gen.Validators() {
+		assert.Equal(t, val.Hash(), vals[i].Hash())
 	}
 }

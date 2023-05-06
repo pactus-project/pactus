@@ -165,9 +165,9 @@ func Init() func(c *cli.Cmd) {
 // makeLocalGenesis makes genesis file for the local network.
 func makeLocalGenesis(pub *bls.PublicKey) *genesis.Genesis {
 	// Treasury account
-	acc := account.NewAccount(crypto.TreasuryAddress, 0)
+	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
-	accs := []*account.Account{acc}
+	accs := map[crypto.Address]*account.Account{}
 
 	val := validator.NewValidator(pub, 0)
 	vals := []*validator.Validator{val}

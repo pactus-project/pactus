@@ -53,13 +53,13 @@ func (gen *Genesis) Params() param.Params {
 	return gen.data.Params
 }
 
-func (gen *Genesis) Accounts() []*account.Account {
-	accs := make([]*account.Account, 0)
+func (gen *Genesis) Accounts() map[crypto.Address]*account.Account {
+	accs := make(map[crypto.Address]*account.Account, 0)
 	for i, genAcc := range gen.data.Accounts {
 		addr, _ := crypto.AddressFromString(genAcc.Address)
-		acc := account.NewAccount(addr, int32(i))
+		acc := account.NewAccount(int32(i))
 		acc.AddToBalance(genAcc.Balance)
-		accs = append(accs, acc)
+		accs[addr] = acc
 	}
 
 	return accs
@@ -84,9 +84,9 @@ func (gen *Genesis) UnmarshalJSON(bs []byte) error {
 	return json.Unmarshal(bs, &gen.data)
 }
 
-func makeGenesisAccount(acc *account.Account) genAccount {
+func makeGenesisAccount(addr crypto.Address, acc *account.Account) genAccount {
 	return genAccount{
-		Address: acc.Address().String(),
+		Address: addr.String(),
 		Balance: acc.Balance(),
 	}
 }
@@ -97,18 +97,18 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 	}
 }
 
-func MakeGenesis(genesisTime time.Time, accounts []*account.Account,
+func MakeGenesis(genesisTime time.Time, accounts map[crypto.Address]*account.Account,
 	validators []*validator.Validator, params param.Params) *Genesis {
-	genAccs := make([]genAccount, 0, len(accounts))
-	for _, acc := range accounts {
-		genAcc := makeGenesisAccount(acc)
-		genAccs = append(genAccs, genAcc)
+	genAccs := make([]genAccount, len(accounts))
+	for addr, acc := range accounts {
+		genAcc := makeGenesisAccount(addr, acc)
+		genAccs[acc.Number()] = genAcc
 	}
 
-	genVals := make([]genValidator, 0, len(validators))
+	genVals := make([]genValidator, len(validators))
 	for _, val := range validators {
 		genVal := makeGenesisValidator(val)
-		genVals = append(genVals, genVal)
+		genVals[val.Number()] = genVal
 	}
 
 	return &Genesis{

@@ -3844,10 +3844,9 @@ proto.pactus.AccountInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
     hash: msg.getHash_asB64(),
     data: msg.getData_asB64(),
-    address: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    number: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    sequence: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    balance: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    number: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    sequence: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    balance: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -3893,18 +3892,14 @@ proto.pactus.AccountInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setData(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setAddress(value);
-      break;
-    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setNumber(value);
       break;
-    case 5:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSequence(value);
       break;
-    case 6:
+    case 5:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setBalance(value);
       break;
@@ -3951,31 +3946,24 @@ proto.pactus.AccountInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getAddress();
-  if (f.length > 0) {
-    writer.writeString(
-      3,
-      f
-    );
-  }
   f = message.getNumber();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      3,
       f
     );
   }
   f = message.getSequence();
   if (f !== 0) {
     writer.writeInt32(
-      5,
+      4,
       f
     );
   }
   f = message.getBalance();
   if (f !== 0) {
     writer.writeInt64(
-      6,
+      5,
       f
     );
   }
@@ -4067,29 +4055,11 @@ proto.pactus.AccountInfo.prototype.setData = function(value) {
 
 
 /**
- * optional string address = 3;
- * @return {string}
- */
-proto.pactus.AccountInfo.prototype.getAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pactus.AccountInfo} returns this
- */
-proto.pactus.AccountInfo.prototype.setAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional int32 number = 4;
+ * optional int32 number = 3;
  * @return {number}
  */
 proto.pactus.AccountInfo.prototype.getNumber = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
@@ -4098,16 +4068,16 @@ proto.pactus.AccountInfo.prototype.getNumber = function() {
  * @return {!proto.pactus.AccountInfo} returns this
  */
 proto.pactus.AccountInfo.prototype.setNumber = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional int32 sequence = 5;
+ * optional int32 sequence = 4;
  * @return {number}
  */
 proto.pactus.AccountInfo.prototype.getSequence = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -4116,16 +4086,16 @@ proto.pactus.AccountInfo.prototype.getSequence = function() {
  * @return {!proto.pactus.AccountInfo} returns this
  */
 proto.pactus.AccountInfo.prototype.setSequence = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional int64 balance = 6;
+ * optional int64 balance = 5;
  * @return {number}
  */
 proto.pactus.AccountInfo.prototype.getBalance = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
 
@@ -4134,7 +4104,7 @@ proto.pactus.AccountInfo.prototype.getBalance = function() {
  * @return {!proto.pactus.AccountInfo} returns this
  */
 proto.pactus.AccountInfo.prototype.setBalance = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 

@@ -14,15 +14,14 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	setup(t)
 	exe := NewWithdrawExecutor(true)
 
-	// Let's create a validator first
 	addr := crypto.GenerateTestAddress()
 	pub, _ := bls.GenerateTestKeyPair()
 	val := tSandbox.MakeNewValidator(pub)
-	acc := tSandbox.TestStore.RandomTestAcc()
+	accAddr, acc := tSandbox.TestStore.RandomTestAcc()
 	amt, fee := randomAmountAndFee(acc.Balance())
 	val.AddToStake(amt + fee)
 	acc.SubtractFromBalance(amt + fee)
-	tSandbox.UpdateAccount(acc)
+	tSandbox.UpdateAccount(accAddr, acc)
 	tSandbox.UpdateValidator(val)
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {

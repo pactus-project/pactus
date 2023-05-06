@@ -77,7 +77,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	val.AddToStake(pld.Stake)
 	val.UpdateLastBondingHeight(sb.CurrentHeight())
 
-	sb.UpdateAccount(senderAcc)
+	sb.UpdateAccount(pld.Sender, senderAcc)
 	sb.UpdateValidator(val)
 
 	e.fee = trx.Fee()

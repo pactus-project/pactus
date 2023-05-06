@@ -18,21 +18,30 @@ func TestExecuteSortitionTx(t *testing.T) {
 	exe := NewSortitionExecutor(true)
 
 	existingVal := tSandbox.TestStore.RandomTestVal()
-	val := tSandbox.TestStore.AddTestValidator()
+	pub, _ := bls.GenerateTestKeyPair()
+	newVal := tSandbox.MakeNewValidator(pub)
+	accAddr, acc := tSandbox.TestStore.RandomTestAcc()
+	amt, fee := randomAmountAndFee(acc.Balance())
+	newVal.AddToStake(amt + fee)
+	acc.SubtractFromBalance(amt + fee)
+	tSandbox.UpdateAccount(accAddr, acc)
+	tSandbox.UpdateValidator(newVal)
+
 	proof := sortition.GenerateRandomProof()
 
-	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
-	tSandbox.UpdateValidator(val)
+	newVal.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval)
+	tSandbox.UpdateValidator(newVal)
+
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, 1, crypto.GenerateTestAddress(), proof)
 		tSandbox.AcceptTestSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
-	val.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval + 1)
-	tSandbox.UpdateValidator(val)
+	newVal.UpdateLastBondingHeight(tSandbox.CurrentHeight() - tSandbox.Params().BondInterval + 1)
+	tSandbox.UpdateValidator(newVal)
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
-		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
+		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+1, newVal.Address(), proof)
 		tSandbox.AcceptTestSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
@@ -40,13 +49,13 @@ func TestExecuteSortitionTx(t *testing.T) {
 	tSandbox.TestStore.AddTestBlock(500001)
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+2, val.Address(), proof)
+		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+2, newVal.Address(), proof)
 		tSandbox.AcceptTestSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
-		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
+		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+1, newVal.Address(), proof)
 		tSandbox.AcceptTestSortition = false
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidProof)
 	})
@@ -58,7 +67,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
-		trx := tx.NewSortitionTx(tStamp500000, val.Sequence()+1, val.Address(), proof)
+		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+1, newVal.Address(), proof)
 		tSandbox.AcceptTestSortition = true
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
@@ -66,7 +75,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Equal(t, tSandbox.Validator(val.Address()).LastJoinedHeight(), tSandbox.CurrentHeight())
+	assert.Equal(t, tSandbox.Validator(newVal.Address()).LastJoinedHeight(), tSandbox.CurrentHeight())
 	assert.Zero(t, exe.Fee())
 
 	checkTotalCoin(t, 0)
