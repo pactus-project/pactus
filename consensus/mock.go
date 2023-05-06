@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"sync"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
@@ -10,6 +12,9 @@ import (
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
+	// This locks prevents the Data Race in tests
+	lk sync.RWMutex
+
 	Signer   crypto.Signer
 	Votes    []*vote.Vote
 	Proposal *proposal.Proposal
@@ -39,6 +44,9 @@ func (m *MockConsensus) SignerKey() crypto.PublicKey {
 	return m.Signer.PublicKey()
 }
 func (m *MockConsensus) MoveToNewHeight() {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	m.Height++
 }
 func (m *MockConsensus) Start() error {
@@ -47,27 +55,45 @@ func (m *MockConsensus) Start() error {
 func (m *MockConsensus) Stop() {}
 
 func (m *MockConsensus) AddVote(v *vote.Vote) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	m.Votes = append(m.Votes, v)
 }
 func (m *MockConsensus) AllVotes() []*vote.Vote {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	return m.Votes
 }
 func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	m.Proposal = p
 }
 func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	if m.Proposal == nil || m.Proposal.Round() != round {
 		return nil
 	}
 	return m.Proposal
 }
 func (m *MockConsensus) HeightRound() (uint32, int16) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	return m.Height, m.Round
 }
 func (m *MockConsensus) Fingerprint() string {
 	return ""
 }
 func (m *MockConsensus) PickRandomVote() *vote.Vote {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	if len(m.Votes) == 0 {
 		return nil
 	}
@@ -75,5 +101,15 @@ func (m *MockConsensus) PickRandomVote() *vote.Vote {
 	return m.Votes[r]
 }
 func (m *MockConsensus) IsActive() bool {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
 	return m.Active
+}
+
+func (m *MockConsensus) SetActive(active bool) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
+	m.Active = active
 }

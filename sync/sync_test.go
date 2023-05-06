@@ -177,11 +177,7 @@ func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	require.True(t, tState.TestCommittee.Contains(pub.Address()))
 
 	for _, cons := range tConsMocks {
-		if cons.Signer.PublicKey().EqualsTo(pub) {
-			cons.Active = true
-		} else {
-			cons.Active = false
-		}
+		cons.SetActive(cons.Signer.PublicKey().EqualsTo(pub))
 	}
 }
 
