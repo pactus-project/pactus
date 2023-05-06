@@ -114,5 +114,4 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 
 		assert.NoError(t, conf.SanityCheck())
 	})
-
 }

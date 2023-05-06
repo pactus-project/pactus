@@ -37,7 +37,8 @@ type Node struct {
 	nanomsg    *nanomsg.Server
 }
 
-func NewNode(genDoc *genesis.Genesis, conf *config.Config, signers []crypto.Signer, rewardAddrs []crypto.Address) (*Node, error) {
+func NewNode(genDoc *genesis.Genesis, conf *config.Config,
+	signers []crypto.Signer, rewardAddrs []crypto.Address) (*Node, error) {
 	// Initialize the logger
 	logger.InitLogger(conf.Logger)
 

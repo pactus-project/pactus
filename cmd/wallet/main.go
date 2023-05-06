@@ -23,7 +23,7 @@ func addPasswordOption(c *cli.Cmd) *string {
 
 func openWallet() (*wallet.Wallet, error) {
 	if !*offlineOpt && *serverAddrOpt != "" {
-		wallet, err := wallet.OpenWallet(*pathOpt, true)
+		wallet, err := wallet.Open(*pathOpt, true)
 		if err != nil {
 			return nil, err
 		}
@@ -35,7 +35,7 @@ func openWallet() (*wallet.Wallet, error) {
 		}
 		return wallet, err
 	}
-	wallet, err := wallet.OpenWallet(*pathOpt, *offlineOpt)
+	wallet, err := wallet.Open(*pathOpt, *offlineOpt)
 	if err != nil {
 		return nil, err
 	}

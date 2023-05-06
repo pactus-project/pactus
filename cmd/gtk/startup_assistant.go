@@ -11,8 +11,6 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
-	"github.com/pactus-project/pactus/genesis"
-	"github.com/pactus-project/pactus/node/config"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -143,10 +141,10 @@ This seed will allow you to recover your wallet in case of computer failure.
 	textViewConfirmSeed.SetMonospace(true)
 	textViewConfirmSeed.SetSizeRequest(0, 80)
 
-	textViewConfirmSeed.Connect("paste_clipboard", func(textView *gtk.TextView) {
-		showInfoDialog(assistant, "Opps, no copy paste!")
-		textViewConfirmSeed.StopEmission("paste_clipboard")
-	})
+	// textViewConfirmSeed.Connect("paste_clipboard", func(textView *gtk.TextView) {
+	// 	showInfoDialog(assistant, "Opps, no copy paste!")
+	// 	textViewConfirmSeed.StopEmission("paste_clipboard")
+	// })
 
 	seedConfirmTextBuffer, err := textViewConfirmSeed.GetBuffer()
 	fatalErrorCheck(err)
@@ -300,17 +298,22 @@ For more information, look <a href="https://pactus.org/user-guides/run-pactus-gu
 	textViewNodeInfo.SetWrapMode(gtk.WRAP_WORD)
 	textViewNodeInfo.SetEditable(false)
 	textViewNodeInfo.SetMonospace(true)
-	textViewNodeInfo.SetSizeRequest(0, 160)
+
+	scrolledWindow, err := gtk.ScrolledWindowNew(nil, nil)
+	fatalErrorCheck(err)
+
+	scrolledWindow.SetSizeRequest(0, 300)
+	scrolledWindow.Add(textViewNodeInfo)
 
 	pageFinalName := "page_final"
-	pageFinalTitle := "Run the node"
+	pageFinalTitle := "Node info"
 	pageFinalSubject := "Your node information:"
 	pageFinalDesc := `Congratulation. Your node is initialized successfully.
 Now you are ready to start the node!`
 
 	pageFinal = createPage(
 		assistant,
-		textViewNodeInfo,
+		scrolledWindow,
 		pageFinalName,
 		pageFinalTitle,
 		pageFinalSubject,
@@ -363,58 +366,42 @@ Now you are ready to start the node!`
 
 		case pageFinalName:
 			{
-				network := wallet.NetworkMainNet
-				if testnet {
-					network = wallet.NetworkTestNet
-				}
-				defaultWallet, err := wallet.Create(
-					cmd.PactusDefaultWalletPath(workingDir),
-					mnemonic,
-					"",
-					network)
+				iter, err := comboNumValidators.GetActiveIter()
 				fatalErrorCheck(err)
 
-				var gen *genesis.Genesis
-				confFile := cmd.PactusConfigPath(workingDir)
-
-				if testnet {
-					gen = genesis.Testnet()
-
-					// Save config for testnet
-					if err := config.SaveTestnetConfig(confFile, 7); err != nil {
-						cmd.PrintErrorMsg("Failed to write config file: %v", err)
-						return
-					}
-				} else {
-					panic("not yet!")
-					// gen = genesis.Mainnet()
-
-					// // Save config for mainnet
-					// if err := config.SaveMainnetConfig(confFile, rewardAddr); err != nil {
-					// 	cmd.PrintErrorMsg("Failed to write config file: %v", err)
-					// 	return
-					// }
-				}
-
-				// Save genesis file
-				genFile := cmd.PactusGenesisPath(workingDir)
-				err = gen.SaveToFile(genFile)
+				val, err := lsNumValidators.GetValue(iter, 0)
 				fatalErrorCheck(err)
 
-				// To make process faster we set password after generating addresses
+				valueInterface, err := val.GoValue()
+				fatalErrorCheck(err)
+
+				numValidators := valueInterface.(int)
+
+				fmt.Println("number of validators:", numValidators)
+
 				walletPassword, err := entryPassword.GetText()
 				fatalErrorCheck(err)
 
-				err = defaultWallet.UpdatePassword("", walletPassword)
-				fatalErrorCheck(err)
-
-				// Save wallet
-				err = defaultWallet.Save()
+				validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, testnet, workingDir, mnemonic, walletPassword)
 				fatalErrorCheck(err)
 
 				// Done! showing the node information
 				successful = true
-				nodeInfo := fmt.Sprintf("Working directory:\n  %s\n\n", workingDir)
+				nodeInfo := fmt.Sprintf("Working directory: %s\n", workingDir)
+				if testnet {
+					nodeInfo += "Network: Testnet\n"
+				} else {
+					nodeInfo += "Network: Mainnet\n"
+				}
+				nodeInfo += "\nValidator addresses:\n"
+				for i, addr := range validatorAddrs {
+					nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
+				}
+
+				nodeInfo += "\nReward addresses:\n"
+				for i, addr := range rewardAddrs {
+					nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
+				}
 
 				setTextViewContent(textViewNodeInfo, nodeInfo)
 			}

@@ -81,12 +81,12 @@ func TestOpenWallet(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		assert.NoError(t, tWallet.Save())
-		_, err := OpenWallet(tWallet.path, true)
+		_, err := Open(tWallet.path, true)
 		assert.NoError(t, err)
 	})
 
 	t.Run("Invalid wallet path", func(t *testing.T) {
-		_, err := OpenWallet(util.TempFilePath(), true)
+		_, err := Open(util.TempFilePath(), true)
 		assert.Error(t, err)
 	})
 
@@ -95,14 +95,14 @@ func TestOpenWallet(t *testing.T) {
 		bs, _ := json.Marshal(tWallet.store)
 		assert.NoError(t, util.WriteFile(tWallet.path, bs))
 
-		_, err := OpenWallet(tWallet.path, true)
+		_, err := Open(tWallet.path, true)
 		assert.ErrorIs(t, err, ErrInvalidCRC)
 	})
 
 	t.Run("Invalid json", func(t *testing.T) {
 		assert.NoError(t, util.WriteFile(tWallet.path, []byte("invalid_json")))
 
-		_, err := OpenWallet(tWallet.path, true)
+		_, err := Open(tWallet.path, true)
 		assert.Error(t, err)
 	})
 }
@@ -226,7 +226,7 @@ func TestValidatorSequence(t *testing.T) {
 	addr := crypto.GenerateTestAddress()
 	tValidatorRequest = &pactus.GetValidatorRequest{Address: addr.String()}
 	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: 123}}
-	seq, err := tWallet.ValidtaorSequence(addr.String())
+	seq, err := tWallet.ValidatorSequence(addr.String())
 	assert.NoError(t, err)
 	assert.Equal(t, seq, int32(123))
 }

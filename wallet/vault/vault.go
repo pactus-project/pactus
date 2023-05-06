@@ -246,49 +246,63 @@ func (v *Vault) ImportPrivateKey(password string, prv crypto.PrivateKey) error {
 	return nil
 }
 
-func (v *Vault) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
+func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKey, error) {
 	if v.IsNeutered() {
 		return nil, ErrNeutered
-	}
-
-	info := v.AddressInfo(addr)
-	if info == nil {
-		return nil, NewErrAddressNotFound(addr)
-	}
-
-	if info.Imported {
-		ct := v.ImportedKeys[info.ImportedIndex].Prv
-		prvStr, err := v.Encrypter.Decrypt(ct, password)
-		if err != nil {
-			return nil, err
-		}
-		prv, err := bls.PrivateKeyFromString(prvStr)
-		if err != nil {
-			return nil, err
-		}
-		return prv, nil
 	}
 
 	mnemonic, err := v.Mnemonic(password)
 	if err != nil {
 		return nil, err
 	}
-	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
-	if err != nil {
-		return nil, err
-	}
-	masterKey, err := hdkeychain.NewMaster(seed, false)
-	if err != nil {
-		return nil, err
-	}
-	ext, err := masterKey.DerivePath(info.Path)
-	if err != nil {
-		return nil, err
-	}
-	prvBytes, err := ext.RawPrivateKey()
-	util.ExitOnErr(err)
 
-	return bls.PrivateKeyFromBytes(prvBytes)
+	keys := make([]crypto.PrivateKey, len(addrs))
+	for i, addr := range addrs {
+		info := v.AddressInfo(addr)
+		if info == nil {
+			return nil, NewErrAddressNotFound(addr)
+		}
+
+		if info.Imported {
+			ct := v.ImportedKeys[info.ImportedIndex].Prv
+			prvStr, err := v.Encrypter.Decrypt(ct, password)
+			if err != nil {
+				return nil, err
+			}
+			prvKey, err := bls.PrivateKeyFromString(prvStr)
+			if err != nil {
+				return nil, err
+			}
+			keys[i] = prvKey
+			continue
+		}
+
+		seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
+		if err != nil {
+			return nil, err
+		}
+		masterKey, err := hdkeychain.NewMaster(seed, false)
+		if err != nil {
+			return nil, err
+		}
+		ext, err := masterKey.DerivePath(info.Path)
+		if err != nil {
+			return nil, err
+		}
+		prvBytes, err := ext.RawPrivateKey()
+		if err != nil {
+			return nil, err
+		}
+
+		prvKey, err := bls.PrivateKeyFromBytes(prvBytes)
+		if err != nil {
+			return nil, err
+		}
+
+		keys[i] = prvKey
+	}
+
+	return keys, nil
 }
 
 func (v *Vault) DeriveNewAddress(label string, purpose uint32) (string, error) {

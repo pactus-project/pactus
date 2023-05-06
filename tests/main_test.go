@@ -75,7 +75,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.EnableMdns = true
-		tConfigs[i].Network.NodeKey = util.TempFilePath()
+		tConfigs[i].Network.NetworkKey = util.TempFilePath()
 		tConfigs[i].Network.Listens = []string{"/ip4/127.0.0.1/tcp/0"}
 		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3
