@@ -441,6 +441,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 }
 
 func (st *state) evaluateSortition() bool {
+	totalPower := st.totalPower()
 	evaluated := false
 	for _, signer := range st.signers {
 		val, _ := st.store.Validator(signer.Address())
@@ -459,7 +460,7 @@ func (st *state) evaluateSortition() bool {
 			continue
 		}
 
-		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, st.totalPower(), val.Power())
+		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, totalPower, val.Power())
 		if ok {
 			trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
 			signer.SignMsg(trx)
@@ -535,15 +536,15 @@ func (st *state) validateBlockTime(t time.Time) error {
 }
 
 func (st *state) TotalPower() int64 {
-	st.lk.Lock()
-	defer st.lk.Unlock()
+	st.lk.RLock()
+	defer st.lk.RUnlock()
 
 	return st.totalPower()
 }
 
 func (st *state) CommitteePower() int64 {
-	st.lk.Lock()
-	defer st.lk.Unlock()
+	st.lk.RLock()
+	defer st.lk.RUnlock()
 
 	return st.committeePower()
 }
@@ -576,6 +577,9 @@ func (st *state) proposeNextBlockTime() time.Time {
 }
 
 func (st *state) CommitteeValidators() []*validator.Validator {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.committee.Validators()
 }
 
@@ -588,14 +592,23 @@ func (st *state) TotalValidators() int32 {
 }
 
 func (st *state) IsInCommittee(addr crypto.Address) bool {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.committee.Contains(addr)
 }
 
 func (st *state) Proposer(round int16) *validator.Validator {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.committee.Proposer(round)
 }
 
 func (st *state) IsProposer(addr crypto.Address, round int16) bool {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.committee.IsProposer(addr, round)
 }
 

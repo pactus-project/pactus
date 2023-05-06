@@ -48,7 +48,7 @@ func (s *prepareState) vote() {
 
 	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
-		s.logger.Warn("no proposal yet.")
+		s.logger.Debug("no proposal yet.")
 		return
 	}
 

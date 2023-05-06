@@ -308,7 +308,8 @@ func TestNotInCommittee(t *testing.T) {
 	store := store.MockingStore()
 
 	st, _ := state.LoadOrNewState(tGenDoc, []crypto.Signer{signer}, store, tTxPool, nil)
-	Cons := NewConsensus(testConfig(), st, signer, signer.Address(), make(chan message.Message, 100), newMediator())
+	Cons := NewConsensus(testConfig(), st, signer, signer.Address(), make(chan message.Message, 100),
+		newMediator())
 	cons := Cons.(*consensus)
 
 	testEnterNewHeight(cons)
@@ -515,7 +516,8 @@ func TestNonActiveValidator(t *testing.T) {
 	setup(t)
 
 	signer := bls.GenerateTestSigner()
-	Cons := NewConsensus(testConfig(), state.MockingState(), signer, signer.Address(), make(chan message.Message, 100), newMediator())
+	Cons := NewConsensus(testConfig(), state.MockingState(), signer, signer.Address(), make(chan message.Message, 100),
+		newMediator())
 	nonActiveCons := Cons.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {

@@ -22,13 +22,12 @@ func (s *newHeightState) decide() {
 		return
 	}
 
-	// Apply last certificate. We may have more votes now
+	// Try to update the last certificate. We may have more votes now.
 	if s.height == sateHeight && s.round >= 0 {
 		vs := s.log.PrecommitVoteSet(s.round)
-		if vs == nil {
-			s.logger.Warn("entering new height without certificate")
-		} else {
-			// Update last certificate here, consensus had enough time to populate more votes
+		if vs != nil {
+			// The last certificate is updated at this point since consensus has
+			// had sufficient time to populate additional votes.
 			lastCert := vs.ToCertificate()
 			if lastCert != nil {
 				if err := s.state.UpdateLastCertificate(lastCert); err != nil {

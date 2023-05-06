@@ -46,7 +46,8 @@ func (s *commitState) decide() {
 	}
 
 	s.logger.Info("block committed, schedule new height", "precommitQH", precommitQH)
-	// Now we can broadcast the committed block
+
+	// Now we can announce the committed block and certificate
 	s.announceNewBlock(s.height, certBlock, cert)
 
 	s.enterNewState(s.newHeightState)
