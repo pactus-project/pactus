@@ -45,7 +45,7 @@ func (model *walletModel) rebuildModel() {
 
 			balanceStr := "-"
 			stakeStr := "-"
-			if no < 5 {
+			if no < 64 {
 				balance, _ := model.wallet.Balance(info.Address)
 				stake, _ := model.wallet.Stake(info.Address)
 				balanceStr = util.ChangeToString(balance)

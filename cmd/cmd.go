@@ -9,10 +9,15 @@ import (
 	"os/signal"
 	"os/user"
 	"path"
+	"strconv"
 	"strings"
 	"syscall"
 
 	"github.com/manifoldco/promptui"
+	"github.com/pactus-project/pactus/config"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 var Pactus = ``
@@ -28,14 +33,12 @@ func terminalSupported() bool {
 // to require the user to confirm the password.
 func PromptPassword(label string, confirmation bool) string {
 	prompt := promptui.Prompt{
-		Label: label,
-		Mask:  '*',
+		Label:   label,
+		Mask:    '*',
+		Pointer: promptui.PipeCursor,
 	}
 	password, err := prompt.Run()
-	if err != nil {
-		PrintErrorMsg("Failed to read password: %v", err)
-		os.Exit(1)
-	}
+	FatalErrorCheck(err)
 
 	if confirmation {
 		validate := func(input string) error {
@@ -49,13 +52,11 @@ func PromptPassword(label string, confirmation bool) string {
 			Label:    "Confirm password",
 			Validate: validate,
 			Mask:     '*',
+			Pointer:  promptui.PipeCursor,
 		}
 
 		_, err := confirmPrompt.Run()
-		if err != nil {
-			PrintErrorMsg("prompt error: %v", err)
-			os.Exit(1)
-		}
+		FatalErrorCheck(err)
 	}
 
 	return password
@@ -66,11 +67,14 @@ func PromptConfirm(label string) bool {
 	prompt := promptui.Prompt{
 		Label:     label,
 		IsConfirm: true,
+		Pointer:   promptui.PipeCursor,
 	}
 	result, err := prompt.Run()
 	if err != nil {
 		if err != promptui.ErrAbort {
 			PrintErrorMsg("prompt error: %v", err)
+		} else {
+			PrintWarnMsg("Aborted.")
 		}
 		os.Exit(1)
 	}
@@ -84,26 +88,54 @@ func PromptConfirm(label string) bool {
 // PromptInput prompts for an input string.
 func PromptInput(label string) string {
 	prompt := promptui.Prompt{
-		Label: label,
-	}
-	result, err := prompt.Run()
-	if err != nil {
-		PrintErrorMsg("prompt error: %v", err)
-		os.Exit(1)
-	}
-	return result
-}
-
-// PromptInputWithSuggestion prompts for an input string with a suggestion.
-func PromptInputWithSuggestion(label, suggestion string) string {
-	prompt := promptui.Prompt{
 		Label:   label,
-		Default: suggestion,
+		Pointer: promptui.PipeCursor,
 	}
 	result, err := prompt.Run()
 	FatalErrorCheck(err)
 
 	return result
+}
+
+// PromptInputWithSuggestion prompts the user for an input string with a suggestion.
+func PromptInputWithSuggestion(label, suggestion string) string {
+	prompt := promptui.Prompt{
+		Label:   label,
+		Default: suggestion,
+		Pointer: promptui.PipeCursor,
+	}
+	result, err := prompt.Run()
+	FatalErrorCheck(err)
+
+	return result
+}
+
+// PromptInputWithRange prompts the user for an input integer within a specified range.
+func PromptInputWithRange(label string, def, min, max int) int {
+	prompt := promptui.Prompt{
+		Label:     label,
+		Default:   fmt.Sprintf("%v", def),
+		IsVimMode: true,
+		Pointer:   promptui.PipeCursor,
+		Validate: func(input string) error {
+			num, err := strconv.Atoi(input)
+			if err != nil {
+				return err
+			}
+			if num < min || num > max {
+				return fmt.Errorf("enter a number between %v and %v", min, max)
+			}
+
+			return nil
+		},
+	}
+	result, err := prompt.Run()
+	FatalErrorCheck(err)
+
+	num, err := strconv.Atoi(result)
+	FatalErrorCheck(err)
+
+	return num
 }
 
 func FatalErrorCheck(err error) {
@@ -160,19 +192,15 @@ func PrintLine() {
 func PrintJSONData(data []byte) {
 	var out bytes.Buffer
 	err := json.Indent(&out, data, "", "   ")
-	if err != nil {
-		PrintErrorMsg("json.Indent error: %v", err)
-		return
-	}
+	FatalErrorCheck(err)
+
 	PrintInfoMsg(out.String())
 }
 
 func PrintJSONObject(obj interface{}) {
 	data, err := json.Marshal(obj)
-	if err != nil {
-		PrintErrorMsg("json.Marshal error: %v", err)
-		return
-	}
+	FatalErrorCheck(err)
+
 	PrintJSONData(data)
 }
 
@@ -220,4 +248,136 @@ func TrapSignal(cleanupFunc func()) {
 		}
 		os.Exit(exitCode)
 	}()
+}
+
+func CreateNode(numValidators int, testnet bool, workingDir string,
+	mnemonic string, walletPassword string) (
+	validatorAddrs []string, rewardAddrs []string, err error) {
+	// To make process faster, we update the password after creating the addresses
+	network := wallet.NetworkMainNet
+	if testnet {
+		network = wallet.NetworkTestNet
+	}
+	walletPath := PactusDefaultWalletPath(workingDir)
+	wallet, err := wallet.Create(walletPath, mnemonic, "", network)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for i := 0; i < numValidators; i++ {
+		addr, err := wallet.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
+		if err != nil {
+			return nil, nil, err
+		}
+		validatorAddrs = append(validatorAddrs, addr)
+	}
+
+	for i := 0; i < numValidators; i++ {
+		addr, err := wallet.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
+		if err != nil {
+			return nil, nil, err
+		}
+		rewardAddrs = append(rewardAddrs, addr)
+	}
+
+	confPath := PactusConfigPath(workingDir)
+	genPath := PactusGenesisPath(workingDir)
+
+	if testnet {
+		err = genesis.Testnet().SaveToFile(genPath)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		err = config.SaveTestnetConfig(confPath, numValidators)
+		if err != nil {
+			return nil, nil, err
+		}
+	} else {
+		panic("not yet!")
+	}
+
+	err = wallet.UpdatePassword("", walletPassword)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = wallet.Save()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return validatorAddrs, rewardAddrs, nil
+}
+
+func GetKeys(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
+	*genesis.Genesis, *config.Config, []crypto.Signer, []crypto.Address, *wallet.Wallet, error) {
+	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+
+	if gen.Params().IsTestnet() {
+		crypto.AddressHRP = "tpc"
+		crypto.PublicKeyHRP = "tpublic"
+		crypto.PrivateKeyHRP = "tsecret"
+		crypto.XPublicKeyHRP = "txpublic"
+		crypto.XPrivateKeyHRP = "txsecret"
+	}
+
+	conf, err := config.LoadFromFile(PactusConfigPath(workingDir))
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+
+	err = conf.SanityCheck()
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+
+	walletPath := PactusDefaultWalletPath(workingDir)
+	wallet, err := wallet.Open(walletPath, true)
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+	addrLabels := wallet.AddressLabels()
+
+	// Create signers
+	if len(addrLabels) < conf.Node.NumValidators {
+		return nil, nil, nil, nil, nil, fmt.Errorf("not enough addresses in wallet")
+	}
+	validatorAddrs := make([]string, conf.Node.NumValidators)
+	for i := 0; i < conf.Node.NumValidators; i++ {
+		validatorAddrs[i] = addrLabels[i].Address
+	}
+	signers := make([]crypto.Signer, conf.Node.NumValidators)
+	password, ok := passwordFetcher(wallet)
+	if !ok {
+		return nil, nil, nil, nil, nil, fmt.Errorf("aborted")
+	}
+	prvKeys, err := wallet.PrivateKeys(password, validatorAddrs)
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+	for i, key := range prvKeys {
+		signers[i] = crypto.NewSigner(key)
+	}
+
+	// Create reward addresses
+	rewardAddrs := make([]crypto.Address, conf.Node.NumValidators)
+	if len(conf.Node.RewardAddresses) != 0 {
+		for i, addrStr := range conf.Node.RewardAddresses {
+			rewardAddrs[i], _ = crypto.AddressFromString(addrStr)
+		}
+	} else {
+		if len(addrLabels) < 2*conf.Node.NumValidators {
+			return nil, nil, nil, nil, nil, fmt.Errorf("not enough addresses in wallet")
+		}
+		for i := 0; i < conf.Node.NumValidators; i++ {
+			rewardAddrs[i], _ =
+				crypto.AddressFromString(addrLabels[conf.Node.NumValidators+i].Address)
+		}
+	}
+
+	return gen, conf, signers, rewardAddrs, wallet, nil
 }

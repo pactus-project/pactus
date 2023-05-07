@@ -57,7 +57,7 @@ func (s *walletServer) LoadWallet(_ context.Context,
 	}
 
 	path := walletPath(req.Name)
-	w, err := wallet.OpenWallet(path, true)
+	w, err := wallet.Open(path, true)
 	if err != nil {
 		return nil, err
 	}

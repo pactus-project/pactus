@@ -129,34 +129,34 @@ func TestRecover(t *testing.T) {
 	})
 }
 
-func TestGetPrivateKey(t *testing.T) {
+func TestGetPrivateKeys(t *testing.T) {
 	vault := testVault(t)
 
 	t.Run("Unknown address", func(t *testing.T) {
 		addr := crypto.GenerateTestAddress()
-		_, err := vault.PrivateKey(tPassword, addr.String())
+		_, err := vault.PrivateKeys(tPassword, []string{addr.String()})
 		assert.ErrorIs(t, err, NewErrAddressNotFound(addr.String()))
 	})
 
 	t.Run("No password", func(t *testing.T) {
 		addr := vault.AddressLabels()[0].Address
-		_, err := vault.PrivateKey("", addr)
+		_, err := vault.PrivateKeys("", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
 		addr := vault.AddressLabels()[0].Address
-		_, err := vault.PrivateKey("wrong_password", addr)
+		_, err := vault.PrivateKeys("wrong_password", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Check all the private keys", func(t *testing.T) {
 		for _, info := range vault.AddressLabels() {
-			prv, err := vault.PrivateKey(tPassword, info.Address)
+			prv, err := vault.PrivateKeys(tPassword, []string{info.Address})
 			assert.NoError(t, err)
 			i := vault.AddressInfo(info.Address)
-			require.True(t, prv.PublicKey().EqualsTo(i.Pub))
-			require.Equal(t, prv.PublicKey().Address().String(), info.Address)
+			require.True(t, prv[0].PublicKey().EqualsTo(i.Pub))
+			require.Equal(t, prv[0].PublicKey().Address().String(), info.Address)
 		}
 	})
 }
@@ -280,7 +280,8 @@ func TestNeuter(t *testing.T) {
 	_, err := neutered.Mnemonic(tPassword)
 	assert.ErrorIs(t, err, ErrNeutered)
 
-	_, err = neutered.PrivateKey(tPassword, "any address")
+	_, err = neutered.PrivateKeys(tPassword, []string{
+		crypto.GenerateTestAddress().String()})
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	err = neutered.ImportPrivateKey("any", importedPrv)

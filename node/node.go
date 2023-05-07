@@ -3,16 +3,16 @@ package node
 import (
 	"time"
 
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
-	"github.com/pactus-project/pactus/node/config"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/txpool"
-	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
@@ -37,7 +37,8 @@ type Node struct {
 	nanomsg    *nanomsg.Server
 }
 
-func NewNode(genDoc *genesis.Genesis, conf *config.Config, signers []crypto.Signer, rewardAddrs []crypto.Address) (*Node, error) {
+func NewNode(genDoc *genesis.Genesis, conf *config.Config,
+	signers []crypto.Signer, rewardAddrs []crypto.Address) (*Node, error) {
 	// Initialize the logger
 	logger.InitLogger(conf.Logger)
 

@@ -45,12 +45,12 @@ func GenerateMnemonic(entropy int) string {
 	return vault.GenerateMnemonic(entropy)
 }
 
-// OpenWallet tries to open a wallet at the given path.
+// Open tries to open a wallet at the given path.
 // If the wallet doesn’t exist on this path, it returns an error.
 // A wallet can be opened in offline or online modes.
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
-func OpenWallet(path string, offline bool) (*Wallet, error) {
+func Open(path string, offline bool) (*Wallet, error) {
 	data, err := util.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -258,8 +258,8 @@ func (w *Wallet) AccountSequence(addrStr string) (int32, error) {
 	return acc.Sequence, nil
 }
 
-// ValidtaorSequence returns the sequence of the validator associated with the address.
-func (w *Wallet) ValidtaorSequence(addrStr string) (int32, error) {
+// ValidatorSequence returns the sequence of the validator associated with the address.
+func (w *Wallet) ValidatorSequence(addrStr string) (int32, error) {
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
 		return 0, err
@@ -363,7 +363,7 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 }
 
 func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
-	prv, err := w.store.Vault.PrivateKey(password, trx.Payload().Signer().String())
+	prv, err := w.PrivateKey(password, trx.Payload().Signer().String())
 	if err != nil {
 		return err
 	}
@@ -431,7 +431,15 @@ func (w *Wallet) ImportPrivateKey(password string, prv crypto.PrivateKey) error 
 }
 
 func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
-	return w.store.Vault.PrivateKey(password, addr)
+	keys, err := w.store.Vault.PrivateKeys(password, []string{addr})
+	if err != nil {
+		return nil, err
+	}
+	return keys[0], nil
+}
+
+func (w *Wallet) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKey, error) {
+	return w.store.Vault.PrivateKeys(password, addrs)
 }
 
 func (w *Wallet) DeriveNewAddress(label string) (string, error) {

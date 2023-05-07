@@ -142,7 +142,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	}
 	builder.ConnectSignals(signals)
 
-	glib.TimeoutAdd(10000, w.timeout)
+	glib.TimeoutAdd(15000, w.timeout) // each 15 seconds
 
 	return w, nil
 }

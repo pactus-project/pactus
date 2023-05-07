@@ -66,6 +66,7 @@ func NewConsensus(
 	cs.precommitState = &precommitState{cs, false}
 	cs.commitState = &commitState{cs}
 	cs.changeProposerState = &changeProposerState{cs}
+	cs.mediator = mediator
 
 	cs.height = 0
 	cs.round = 0
@@ -73,6 +74,10 @@ func NewConsensus(
 	cs.mediator = mediator
 
 	mediator.Register(cs)
+
+	logger.Info("consensus instance created",
+		"validator address", signer.Address().String(),
+		"reward address", rewardAddr.String())
 
 	return cs
 }

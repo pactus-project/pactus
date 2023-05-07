@@ -30,8 +30,8 @@ func AllAddresses() func(c *cli.Cmd) {
 			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
-			for _, info := range wallet.AddressLabels() {
-				line := info.Address + "\t"
+			for i, info := range wallet.AddressLabels() {
+				line := fmt.Sprintf("%v- %s\t", i+1, info.Address)
 
 				if *balanceOpt {
 					balance, _ := wallet.Balance(info.Address)

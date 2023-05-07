@@ -10,10 +10,7 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/node"
-	"github.com/pactus-project/pactus/node/config"
-	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -55,52 +52,16 @@ func Start() func(c *cli.Cmd) {
 				}()
 			}
 
-			gen, err := genesis.LoadFromFile(cmd.PactusGenesisPath(workingDir))
-			cmd.FatalErrorCheck(err)
-
-			if gen.Params().IsTestnet() {
-				crypto.AddressHRP = "tpc"
-				crypto.PublicKeyHRP = "tpublic"
-				crypto.PrivateKeyHRP = "tsecret"
-				crypto.XPublicKeyHRP = "txpublic"
-				crypto.XPrivateKeyHRP = "txsecret"
+			passwordFetcher := func(wallet *wallet.Wallet) (string, bool) {
+				if !wallet.IsEncrypted() {
+					return "", true
+				}
+				password := cmd.PromptPassword("Wallet password", false)
+				return password, true
 			}
-
-			conf, err := config.LoadFromFile(cmd.PactusConfigPath(workingDir))
+			gen, conf, signers, rewardAddrs, _, err := cmd.GetKeys(
+				workingDir, passwordFetcher)
 			cmd.FatalErrorCheck(err)
-
-			err = conf.SanityCheck()
-			cmd.FatalErrorCheck(err)
-
-			walletPath := cmd.PactusDefaultWalletPath(workingDir)
-			wallet, err := wallet.OpenWallet(walletPath, true)
-			cmd.FatalErrorCheck(err)
-
-			addrInfos := wallet.AddressLabels()
-			if len(addrInfos) == 0 {
-				cmd.PrintErrorMsg("Aborted! %v", err)
-				return
-			}
-			password := ""
-			if wallet.IsEncrypted() {
-				password = cmd.PromptPassword("Wallet password", false)
-			}
-
-			signers := make([]crypto.Signer, conf.NumValidators)
-			rewardAddrs := make([]crypto.Address, conf.NumValidators)
-			for i := 0; i < conf.NumValidators; i++ {
-				prvKey, err := wallet.PrivateKey(password, addrInfos[i*2].Address)
-				cmd.FatalErrorCheck(err)
-
-				addr, err := crypto.AddressFromString(addrInfos[(i*2)+1].Address)
-				cmd.FatalErrorCheck(err)
-
-				signers[i] = crypto.NewSigner(prvKey)
-				rewardAddrs[i] = addr
-
-				cmd.PrintInfoMsg("Validator address %v: %s", i+1, addrInfos[i*2].Address)
-				cmd.PrintInfoMsg("Reward    address %v: %s", i+1, addrInfos[(i*2)+1].Address)
-			}
 
 			cmd.PrintLine()
 

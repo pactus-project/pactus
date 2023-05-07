@@ -67,7 +67,7 @@ func testConfig() *Config {
 	return &Config{
 		Name:        "test-network",
 		Listens:     []string{"/ip4/0.0.0.0/tcp/0", "/ip6/::/tcp/0"},
-		NodeKey:     util.TempFilePath(),
+		NetworkKey:  util.TempFilePath(),
 		EnableNAT:   false,
 		EnableRelay: false,
 		EnableMdns:  true,

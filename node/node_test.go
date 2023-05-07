@@ -3,12 +3,12 @@ package node
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/node/config"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -29,7 +29,7 @@ func TestRunningNode(t *testing.T) {
 	conf.GRPC.Enable = false
 	conf.HTTP.Enable = false
 	conf.Store.Path = util.TempDirPath()
-	conf.Network.NodeKey = util.TempFilePath()
+	conf.Network.NetworkKey = util.TempFilePath()
 
 	signers := []crypto.Signer{bls.GenerateTestSigner(), bls.GenerateTestSigner()}
 	rewardAddrs := []crypto.Address{crypto.GenerateTestAddress(), crypto.GenerateTestAddress()}

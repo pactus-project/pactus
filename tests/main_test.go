@@ -7,14 +7,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
-	"github.com/pactus-project/pactus/node/config"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/genesis"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -75,7 +75,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.EnableMdns = true
-		tConfigs[i].Network.NodeKey = util.TempFilePath()
+		tConfigs[i].Network.NetworkKey = util.TempFilePath()
 		tConfigs[i].Network.Listens = []string{"/ip4/127.0.0.1/tcp/0"}
 		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3

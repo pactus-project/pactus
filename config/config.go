@@ -8,11 +8,13 @@ import (
 	"strings"
 
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
@@ -24,30 +26,60 @@ import (
 var exampleConfigBytes []byte
 
 type Config struct {
-	NumValidators int               `toml:"num_validators"`
-	Store         *store.Config     `toml:"store"`
-	Network       *network.Config   `toml:"network"`
-	Sync          *sync.Config      `toml:"sync"`
-	TxPool        *txpool.Config    `toml:"tx_pool"`
-	Consensus     *consensus.Config `toml:"consensus"`
-	Logger        *logger.Config    `toml:"logger"`
-	GRPC          *grpc.Config      `toml:"grpc"`
-	HTTP          *http.Config      `toml:"http"`
-	Nanomsg       *nanomsg.Config   `toml:"nanomsg"`
+	Node      *NodeConfig       `toml:"node"`
+	Store     *store.Config     `toml:"store"`
+	Network   *network.Config   `toml:"network"`
+	Sync      *sync.Config      `toml:"sync"`
+	TxPool    *txpool.Config    `toml:"tx_pool"`
+	Consensus *consensus.Config `toml:"consensus"`
+	Logger    *logger.Config    `toml:"logger"`
+	GRPC      *grpc.Config      `toml:"grpc"`
+	HTTP      *http.Config      `toml:"http"`
+	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
+}
+
+type NodeConfig struct {
+	NumValidators   int      `toml:"num_validators"`
+	RewardAddresses []string `toml:"reward_addresses"`
+}
+
+func DefaultNodeConfig() *NodeConfig {
+	return &NodeConfig{
+		NumValidators: 7,
+	}
+}
+
+// SanityCheck performs basic checks on the configuration.
+func (conf *NodeConfig) SanityCheck() error {
+	if conf.NumValidators < 1 || conf.NumValidators > 32 {
+		return errors.Errorf(errors.ErrInvalidConfig, "number of validators must be between 1 and 32")
+	}
+
+	if len(conf.RewardAddresses) != conf.NumValidators {
+		return errors.Errorf(errors.ErrInvalidConfig, "reward addresses should be %v", conf.NumValidators)
+	}
+
+	for _, addr := range conf.RewardAddresses {
+		_, err := crypto.AddressFromString(addr)
+		if err != nil {
+			return errors.Errorf(errors.ErrInvalidConfig, "invalid reward address: %v", err.Error())
+		}
+	}
+	return nil
 }
 
 func DefaultConfig() *Config {
 	conf := &Config{
-		NumValidators: 7,
-		Store:         store.DefaultConfig(),
-		Network:       network.DefaultConfig(),
-		Sync:          sync.DefaultConfig(),
-		TxPool:        txpool.DefaultConfig(),
-		Consensus:     consensus.DefaultConfig(),
-		Logger:        logger.DefaultConfig(),
-		GRPC:          grpc.DefaultConfig(),
-		HTTP:          http.DefaultConfig(),
-		Nanomsg:       nanomsg.DefaultConfig(),
+		Node:      DefaultNodeConfig(),
+		Store:     store.DefaultConfig(),
+		Network:   network.DefaultConfig(),
+		Sync:      sync.DefaultConfig(),
+		TxPool:    txpool.DefaultConfig(),
+		Consensus: consensus.DefaultConfig(),
+		Logger:    logger.DefaultConfig(),
+		GRPC:      grpc.DefaultConfig(),
+		HTTP:      http.DefaultConfig(),
+		Nanomsg:   nanomsg.DefaultConfig(),
 	}
 
 	return conf
@@ -63,7 +95,7 @@ func SaveMainnetConfig(path string, numValidators int) error {
 
 func SaveTestnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
-	conf.NumValidators = numValidators
+	conf.Node.NumValidators = numValidators
 	conf.Network.Name = "pactus-testnet"
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}
 	conf.Network.Bootstrap.Addresses = []string{
@@ -85,7 +117,7 @@ func SaveTestnetConfig(path string, numValidators int) error {
 
 func SaveLocalnetConfig(path string) error {
 	conf := DefaultConfig()
-	conf.NumValidators = 1
+	conf.Node.NumValidators = 1
 	conf.Network.Name = "pactus-localnet"
 	conf.Network.Listens = []string{}
 	conf.Network.Bootstrap.Addresses = []string{}
@@ -131,6 +163,7 @@ func LoadFromFile(file string) (*Config, error) {
 	return conf, nil
 }
 
+// SanityCheck performs basic checks on the configuration.
 func (conf *Config) SanityCheck() error {
 	if err := conf.Store.SanityCheck(); err != nil {
 		return err
