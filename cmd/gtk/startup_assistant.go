@@ -141,10 +141,10 @@ This seed will allow you to recover your wallet in case of computer failure.
 	textViewConfirmSeed.SetMonospace(true)
 	textViewConfirmSeed.SetSizeRequest(0, 80)
 
-	// textViewConfirmSeed.Connect("paste_clipboard", func(textView *gtk.TextView) {
-	// 	showInfoDialog(assistant, "Opps, no copy paste!")
-	// 	textViewConfirmSeed.StopEmission("paste_clipboard")
-	// })
+	textViewConfirmSeed.Connect("paste_clipboard", func(textView *gtk.TextView) {
+		showInfoDialog(assistant, "Opps, no copy paste!")
+		textViewConfirmSeed.StopEmission("paste_clipboard")
+	})
 
 	seedConfirmTextBuffer, err := textViewConfirmSeed.GetBuffer()
 	fatalErrorCheck(err)
