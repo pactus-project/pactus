@@ -198,6 +198,11 @@ func (m *MockStore) AddTestBlock(height uint32) *block.Block {
 }
 func (m *MockStore) RandomTestAcc() (crypto.Address, *account.Account) {
 	for addr, acc := range m.Accounts {
+		// Do not return the Treasury address for tests,
+		// as it may cause some tests to randomly fail.
+		if addr == crypto.TreasuryAddress {
+			continue
+		}
 		return addr, &acc
 	}
 	panic("no account in sandbox")
