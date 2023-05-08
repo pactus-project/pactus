@@ -12,6 +12,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
@@ -73,29 +74,29 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-func startingNode(workingDir string) (*node.Node, *time.Time, *wallet.Wallet, error) {
+func startingNode(workingDir string) (*node.Node, *config.Config, *time.Time, *wallet.Wallet, error) {
 	passwordFetcher := func(wallet *wallet.Wallet) (string, bool) {
 		return getWalletPassword(wallet)
 	}
 
 	gen, conf, signers, rewardAddrs, wallet, err := cmd.GetKeys(workingDir, passwordFetcher)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
 	node, err := node.NewNode(gen, conf, signers, rewardAddrs)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 	//TODO: log to file
 
 	err = node.Start()
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
 	genTime := gen.GenesisTime()
-	return node, &genTime, wallet, nil
+	return node, conf, &genTime, wallet, nil
 }
 
 func start(workingDir string, app *gtk.Application) {
@@ -106,7 +107,7 @@ func start(workingDir string, app *gtk.Application) {
 	}
 
 	// TODO: Get genTime from the node or state
-	node, genTime, wallet, err := startingNode(workingDir)
+	node, conf, genTime, wallet, err := startingNode(workingDir)
 	fatalErrorCheck(err)
 
 	// TODO
@@ -114,6 +115,9 @@ func start(workingDir string, app *gtk.Application) {
 	if err != nil {
 		return
 	}
+
+	err = wallet.Connect(conf.GRPC.Listen)
+	fatalErrorCheck(err)
 
 	nodeModel := newNodeModel(node)
 	walletModel := newWalletModel(wallet)

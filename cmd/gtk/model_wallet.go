@@ -43,14 +43,10 @@ func (model *walletModel) rebuildModel() {
 				label += "(Imported)"
 			}
 
-			balanceStr := "-"
-			stakeStr := "-"
-			if no < 64 {
-				balance, _ := model.wallet.Balance(info.Address)
-				stake, _ := model.wallet.Stake(info.Address)
-				balanceStr = util.ChangeToString(balance)
-				stakeStr = util.ChangeToString(stake)
-			}
+			balance, _ := model.wallet.Balance(info.Address)
+			stake, _ := model.wallet.Stake(info.Address)
+			balanceStr := util.ChangeToString(balance)
+			stakeStr := util.ChangeToString(stake)
 
 			data = append(data, []string{
 				fmt.Sprintf("%v", no+1),
