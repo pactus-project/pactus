@@ -111,10 +111,9 @@ func (wn *widgetNode) timeout10() bool {
 		committeeStake := wn.model.node.State().CommitteePower()
 		totalStake := wn.model.node.State().TotalPower()
 		isInCommittee := "No"
-		// if wn.model.node.State().IsInCommittee(
-		// 	wn.model.node.State().ValidatorAddress()) {
-		// 	isInCommittee = "Yes"
-		// }
+		if wn.model.node.ConsManager().HasActiveInstance() {
+			isInCommittee = "Yes"
+		}
 
 		glib.IdleAdd(func() bool {
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
