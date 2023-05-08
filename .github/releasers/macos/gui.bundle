@@ -10,7 +10,6 @@
   <main-binary>${prefix:bundle}/pactus-gui</main-binary>
 
   <binary>
-    <!-- https://gitlab.gnome.org/GNOME/gtk-mac-bundler/-/blob/master/examples/gtk3-demo.bundle#L69 -->
     ${prefix}/lib/gdk-pixbuf-2.0/${pkg:gdk-pixbuf-2.0:gdk_pixbuf_binary_version}/loaders/*.so
   </binary>
 
