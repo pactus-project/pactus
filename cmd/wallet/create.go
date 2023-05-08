@@ -30,7 +30,7 @@ func Generate() func(c *cli.Cmd) {
 			if *testnetOpt {
 				network = wallet.NetworkTestNet
 			}
-			wallet, err := wallet.Create(*pathOpt, mnemonic, password, network)
+			wallet, err := wallet.Create(*pathArg, mnemonic, password, network)
 			cmd.FatalErrorCheck(err)
 
 			err = wallet.Save()

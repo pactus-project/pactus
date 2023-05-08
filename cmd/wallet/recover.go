@@ -9,10 +9,21 @@ import (
 // Recover recovers a wallet from mnemonic (seed phrase).
 func Recover() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
+		passwordOpt := addPasswordOption(c)
+
+		seedOpt := c.String(cli.StringOpt{
+			Name: "s seed",
+			Desc: "wallet seed phrase (mnemonic)",
+		})
 		c.Before = func() {}
 		c.Action = func() {
-			mnemonic := cmd.PromptInput("Seed")
-			wallet, err := wallet.Create(*pathOpt, mnemonic, "", 0)
+			mnemonic := *seedOpt
+			if mnemonic == "" {
+				mnemonic = cmd.PromptInput("Seed")
+			}
+			password := *passwordOpt
+
+			wallet, err := wallet.Create(*pathArg, mnemonic, password, 0)
 			cmd.FatalErrorCheck(err)
 
 			err = wallet.Save()
@@ -20,8 +31,6 @@ func Recover() func(c *cli.Cmd) {
 
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Wallet recovered successfully at: %s", wallet.Path())
-			cmd.PrintWarnMsg("Never share your private key.")
-			cmd.PrintWarnMsg("Don't forget to set a password for your wallet.")
 		}
 	}
 }

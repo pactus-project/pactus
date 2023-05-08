@@ -79,38 +79,38 @@ To create a new wallet, run this command. The wallet will be encrypted by the
 provided password.
 
 ```text
-./pactus-wallet -w=<wallet_path> create
+./pactus-wallet ~/pactus/wallets/wallet_1 create
 ```
 
 You can create a new address like this:
 
 ```text
-./pactus-wallet -w=<wallet_path> address new
+./pactus-wallet ~/pactus/wallets/wallet_1 address new
 ```
 
 A list of addresses is available with this command:
 
 ```text
-./pactus-wallet -w=<wallet_path> address balance all
+./pactus-wallet ~/pactus/wallets/wallet_1 address all
 ```
 
 To obtain the public key of an address, run this command:
 
 ```text
-./pactus-wallet -w=<wallet_path> address pub <ADDRESS>
+./pactus-wallet ~/pactus/wallets/wallet_1 address pub <ADDRESS>
 ```
 
 To publish a transaction, use the tx subcommand.
 For example, to publish a bond transaction:
 
 ```text
-./pactus-wallet -w=<wallet_path> tx bond <FROM> <TO> <AMOUNT>
+./pactus-wallet ~/pactus/wallets/wallet_1 tx bond <FROM> <TO> <AMOUNT>
 ```
 
 You can recover a wallet if you have the seed phrase.
 
 ```text
-./pactus-wallet -w=<wallet_path> recover
+./pactus-wallet ~/pactus/wallets/wallet_2 recover
 ```
 
 

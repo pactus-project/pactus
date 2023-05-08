@@ -5,25 +5,23 @@ import (
 	"os"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/wallet"
 )
 
-var pathOpt *string
+var pathArg *string
 var offlineOpt *bool
 var serverAddrOpt *string
 
 func addPasswordOption(c *cli.Cmd) *string {
 	return c.String(cli.StringOpt{
-		Name:  "password",
-		Desc:  "provide wallet password as a parameter instead of interactively",
-		Value: "",
+		Name: "p password",
+		Desc: "the wallet password",
 	})
 }
 
 func openWallet() (*wallet.Wallet, error) {
 	if !*offlineOpt && *serverAddrOpt != "" {
-		wallet, err := wallet.Open(*pathOpt, true)
+		wallet, err := wallet.Open(*pathArg, true)
 		if err != nil {
 			return nil, err
 		}
@@ -35,7 +33,7 @@ func openWallet() (*wallet.Wallet, error) {
 		}
 		return wallet, err
 	}
-	wallet, err := wallet.Open(*pathOpt, *offlineOpt)
+	wallet, err := wallet.Open(*pathArg, *offlineOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -45,10 +43,9 @@ func openWallet() (*wallet.Wallet, error) {
 func main() {
 	app := cli.App("pactus-wallet", "Pactus wallet")
 
-	pathOpt = app.String(cli.StringOpt{
-		Name:  "w wallet file",
-		Desc:  "a path to the wallet file",
-		Value: cmd.PactusDefaultWalletPath(cmd.PactusHomeDir()),
+	pathArg = app.String(cli.StringArg{
+		Name: "PATH",
+		Desc: "the path to the wallet file",
 	})
 
 	offlineOpt = app.Bool(cli.BoolOpt{
