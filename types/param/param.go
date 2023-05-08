@@ -29,8 +29,8 @@ func DefaultParams() Params {
 		SortitionInterval:         7,
 		FeeFraction:               0.0001,
 		MinimumFee:                1000,
-		MaximumFee:                100000000,
-		MaximumStake:              12381000000000,
+		MaximumFee:                1000000,
+		MaximumStake:              1000000000000,
 	}
 }
 
