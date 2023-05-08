@@ -223,9 +223,9 @@ func TestFee(t *testing.T) {
 		{1 * 1e9, 100001, 100000, errors.ErrInvalidFee},
 		{1 * 1e9, 100000, 100000, errors.ErrNone},
 
-		{1 * 1e12, 1, 100000000, errors.ErrInvalidFee},
-		{1 * 1e12, 100000001, 100000000, errors.ErrInvalidFee},
-		{1 * 1e12, 100000000, 100000000, errors.ErrNone},
+		{1 * 1e12, 1, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, 1000001, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, 1000000, 1000000, errors.ErrNone},
 	}
 
 	sender := crypto.GenerateTestAddress()

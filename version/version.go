@@ -7,7 +7,7 @@ import (
 // These constants follow the semantic versioning 2.0.0 spec (http://semver.org/)
 const (
 	major uint   = 0
-	minor uint   = 9
+	minor uint   = 10
 	patch uint   = 0
 	meta  string = "beta"
 )
