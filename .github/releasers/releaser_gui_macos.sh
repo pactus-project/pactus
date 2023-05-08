@@ -24,7 +24,12 @@ echo "Installing gtk-mac-bundler"
 git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
 cd gtk-mac-bundler
 make install
-BUNDLER=${HOME}/.local/bin/gtk-mac-bundler
+
+export PATH=${PATH}:${HOME}/.bin:${HOME}/local/bin
+BUNDLER=$(which gtk-mac-bundler)
+
+echo "gtk-mac-bundler found at ${BUNDLER}"
+
 cd -
 
 echo "Bundling the GUI package"
@@ -33,6 +38,9 @@ mkdir ${GUI_BUNDLE}
 
 cp ${BUILD_DIR}/pactus-gui                ${GUI_BUNDLE}
 cp ${ROOT_DIR}/.github/releasers/macos/*  ${GUI_BUNDLE}
+
+# Icon
+cp ${ROOT_DIR}/.github/releasers/pactus.icns  ${GUI_BUNDLE}
 
 # https://stackoverflow.com/questions/21242932/sed-i-may-not-be-used-with-stdin-on-mac-os-x
 sed -i '' "s/%SHORTVERSION%/${VERSION}/"     ${GUI_BUNDLE}/Info.plist

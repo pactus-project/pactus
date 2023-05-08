@@ -14,10 +14,8 @@
     <string>%SHORTVERSION%</string>
     <key>CFBundleVersion</key>
     <string>%VERSION%</string>
-<!--
     <key>CFBundleIconFile</key>
     <string>pactus.icns</string>
--->
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>NSHumanReadableCopyright</key>

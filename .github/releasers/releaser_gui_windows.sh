@@ -23,16 +23,13 @@ go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/pactus-gui.exe
 
 # Copying the neccesary libraries
 echo "Creating GUI directory"
-GUI_DIR="${PACKAGE_DIR}/pactus-gui/"
+GUI_DIR="${PACKAGE_DIR}/pactus-gui"
 mkdir ${GUI_DIR}
 
-echo "Changing working directory to MSYS2 MINGW64."
-cd "${MINGW_PREFIX}" # https://github.com/msys2/setup-msys2/issues/150
-echo "Copying dlls from ${MINGW_PREFIX}"
+echo "Copying required DLLs and EXEs from ${MINGW_PREFIX}/bin"
 
-echo "Copying DLLs and EXEs."
-cd ./bin
-cp \
+cd "${MINGW_PREFIX}/bin"
+cp -p \
   "gdbus.exe" \
   "gspawn-win64-helper.exe" \
   "gspawn-win64-helper-console.exe" \
@@ -81,7 +78,7 @@ cp \
   "libstdc++-6.dll" \
   "libsystre-0.dll" \
   "libthai-0.dll" \
-  "libtiff-5.dll" \
+  "libtiff-6.dll" \
   "libtre-5.dll" \
   "libwebp-7.dll" \
   "libwinpthread-1.dll" \
@@ -89,42 +86,36 @@ cp \
   "libzstd.dll" \
   "zlib1.dll" \
   "${GUI_DIR}"
-cd -
 
-echo "Copying Adwaita theme."
+
+echo "Copying GDK pixbuf from ${MINGW_PREFIX}/lib/gdk-pixbuf-2.0"
+mkdir -p "${GUI_DIR}/lib/gdk-pixbuf-2.0"
+cp -rp "${MINGW_PREFIX}/lib/gdk-pixbuf-2.0" "${GUI_DIR}/lib"
+
+#########
+### Based on this toturial: https://www.gtk.org/docs/installations/windows#building-and-distributing-your-application
+
+echo "Step 1: gtk-3.0/"
+mkdir -p "${GUI_DIR}/share/themes/Windows10/gtk-3.0/"
+cp -rp "${MINGW_PREFIX}/share/gtk-3.0" "${GUI_DIR}/share/themes/Windows10/"
+
+echo "Step 2: Adwaita icons"
 mkdir -p "${GUI_DIR}/share/icons/Adwaita"
-cd 'share/icons/Adwaita/'
-mkdir -p "${GUI_DIR}/share/icons/Adwaita/scalable"
-cp -r \
-  "scalable/actions" \
-  "scalable/devices" \
-  "scalable/mimetypes" \
-  "scalable/places" \
-  "scalable/status" \
-  "scalable/ui" \
-  "${GUI_DIR}/share/icons/Adwaita/scalable"
-cp 'index.theme' "${GUI_DIR}/share/icons/Adwaita"
-mkdir -p "${GUI_DIR}/share/icons/Adwaita/cursors"
-cp -r \
-  "cursors/plus.cur" \
-  "cursors/sb_h_double_arrow.cur" \
-  "cursors/sb_left_arrow.cur" \
-  "cursors/sb_right_arrow.cur" \
-  "cursors/sb_v_double_arrow.cur" \
-  "${GUI_DIR}/share/icons/Adwaita/cursors"
-cd -
+cp -rp "${MINGW_PREFIX}/share/icons/Adwaita" "${GUI_DIR}/share/icons"
 
-echo "Copying GDK pixbuf."
-mkdir -p "${GUI_DIR}/lib"
-cp -r 'lib/gdk-pixbuf-2.0' "${GUI_DIR}/lib/gdk-pixbuf-2.0"
+echo "Step 3: hicolor icons"
+mkdir -p "${GUI_DIR}/share/icons/hicolor"
+cp -rp "${MINGW_PREFIX}/share/icons/hicolor" "${GUI_DIR}/share/icons"
 
-echo "Copying GLib schemas."
+echo "Step 4: settings.ini"
+mkdir "${GUI_DIR}/share/gtk-3.0/"
+echo "[Settings]
+gtk-theme-name=Windows10" > "${GUI_DIR}/share/gtk-3.0/settings.ini"
+
+echo "Step 5: glib-compile-schemas"
 mkdir -p "${GUI_DIR}/share/glib-2.0/schemas"
-cp 'share/glib-2.0/schemas/gschemas.compiled' "${GUI_DIR}/share/glib-2.0/schemas"
+cp -rp "${MINGW_PREFIX}/share/glib-2.0/schemas/gschemas.compiled" "${GUI_DIR}/share/glib-2.0/schemas"
 
-echo "Creating GTK settings.ini."
-mkdir -p "${GUI_DIR}/share/gtk-3.0/"
-echo '[Settings] gtk-button-images=1' > "${GUI_DIR}/share/gtk-3.0/settings.ini"
 
 # Moving binaries to package directory
 cd ${ROOT_DIR}
