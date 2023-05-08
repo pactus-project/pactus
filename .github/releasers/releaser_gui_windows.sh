@@ -29,7 +29,7 @@ mkdir ${GUI_DIR}
 echo "Copying required DLLs and EXEs from ${MINGW_PREFIX}/bin"
 
 cd "${MINGW_PREFIX}/bin"
-cp -vp \
+cp -p \
   "gdbus.exe" \
   "gspawn-win64-helper.exe" \
   "gspawn-win64-helper-console.exe" \
@@ -90,34 +90,31 @@ cp -vp \
 
 echo "Copying GDK pixbuf from ${MINGW_PREFIX}/lib/gdk-pixbuf-2.0"
 mkdir -p "${GUI_DIR}/lib/gdk-pixbuf-2.0"
-cp -vrp "${MINGW_PREFIX}/lib/gdk-pixbuf-2.0" "${GUI_DIR}/lib"
+cp -rp "${MINGW_PREFIX}/lib/gdk-pixbuf-2.0" "${GUI_DIR}/lib"
 
 #########
 ### Based on this toturial: https://www.gtk.org/docs/installations/windows#building-and-distributing-your-application
 
 echo "Step 1: gtk-3.0/"
 mkdir -p "${GUI_DIR}/share/themes/Windows10/gtk-3.0/"
-cp -vrp "${MINGW_PREFIX}/share/gtk-3.20/*" "${GUI_DIR}/share/themes/Windows10/gtk-3.0/"
+cp -rp "${MINGW_PREFIX}/share/gtk-3.0" "${GUI_DIR}/share/themes/Windows10/"
 
 echo "Step 2: Adwaita icons"
 mkdir -p "${GUI_DIR}/share/icons/Adwaita"
-cp -vrp "${MINGW_PREFIX}/share/icons/Adwaita" "${GUI_DIR}/share/icons"
+cp -rp "${MINGW_PREFIX}/share/icons/Adwaita" "${GUI_DIR}/share/icons"
 
 echo "Step 3: hicolor icons"
 mkdir -p "${GUI_DIR}/share/icons/hicolor"
-cp -vrp "${MINGW_PREFIX}/share/icons/hicolor" "${GUI_DIR}/share/icons"
+cp -rp "${MINGW_PREFIX}/share/icons/hicolor" "${GUI_DIR}/share/icons"
 
 echo "Step 4: settings.ini"
 mkdir "${GUI_DIR}/share/gtk-3.0/"
-echo "[Settings]\ngtk-theme-name=Windows10\ngtk-font-name=Segoe UI 9\n" > "${GUI_DIR}/etc/gtk-3.0/settings.ini"
+echo "[Settings]
+gtk-theme-name=Windows10" > "${GUI_DIR}/share/gtk-3.0/settings.ini"
 
 echo "Step 5: glib-compile-schemas"
-mkdir -p "${GUI_DIR}/share/glib-2.0"
-glib-compile-schemas "${GUI_DIR}/share/glib-2.0"
-
-# echo "Copying GLib schemas."
-# mkdir -p "${GUI_DIR}/share/glib-2.0"
-# cp -vp "${MINGW_PREFIX}/share/glib-2.0/schemas/gschemas.compiled" "${GUI_DIR}/share/glib-2.0"
+mkdir -p "${GUI_DIR}/share/glib-2.0/schemas"
+cp -rp "${MINGW_PREFIX}/share/glib-2.0/schemas/gschemas.compiled" "${GUI_DIR}/share/glib-2.0/schemas"
 
 
 # Moving binaries to package directory
