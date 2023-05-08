@@ -293,7 +293,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">Committee stake:</property>
+                        <property name="label" translatable="yes">Committee power:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -308,7 +308,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">Total stake:</property>
+                        <property name="label" translatable="yes">Total power:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
