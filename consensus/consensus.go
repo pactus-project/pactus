@@ -224,6 +224,11 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
+	if v.Round() > cs.round+2 {
+		cs.logger.Trace("vote round number exceeding the round limit", "vote", v)
+		return
+	}
+
 	if cs.log.HasVote(v.Hash()) {
 		cs.logger.Trace("vote exists", "vote", v)
 		return

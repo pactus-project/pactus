@@ -556,3 +556,16 @@ func TestNonActiveValidator(t *testing.T) {
 		checkHeightRoundWait(t, nonActiveCons, 3, 0)
 	})
 }
+
+func TestValidVoteWithBigRound(t *testing.T) {
+	setup(t)
+
+	testEnterNewHeight(tConsX)
+
+	v := vote.NewVote(vote.VoteTypeChangeProposer, 1, util.MaxInt16, hash.UndefHash,
+		tSigners[tIndexB].Address())
+	tSigners[tIndexB].SignMsg(v)
+
+	tConsX.AddVote(v)
+	assert.False(t, tConsX.log.HasVote(v.Hash()))
+}
