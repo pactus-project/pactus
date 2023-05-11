@@ -22,13 +22,23 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, 1, crypto.GenerateTestAddress(),
 			pub.Address(), pub, amt, fee, "invalid sender")
+
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+	})
+
+	t.Run("Should fail, treasury address as receiver", func(t *testing.T) {
+		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
+			crypto.TreasuryAddress, nil, amt, fee, "invalid ")
+
+		err := exe.Execute(trx, tSandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
 	t.Run("Should fail, invalid sequence", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+2, senderAddr,
 			pub.Address(), pub, amt, fee, "invalid sequence")
+
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
 	})
@@ -36,6 +46,7 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
 			pub.Address(), pub, senderBalance+1, 0, "insufficient balance")
+
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInsufficientFunds)
 	})
@@ -44,6 +55,7 @@ func TestExecuteBondTx(t *testing.T) {
 		pub := tSandbox.Committee().Proposer(0).PublicKey()
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
 			pub.Address(), nil, amt, fee, "inside committee")
+
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
@@ -53,9 +65,9 @@ func TestExecuteBondTx(t *testing.T) {
 		val := tSandbox.MakeNewValidator(pub)
 		val.UpdateUnbondingHeight(tSandbox.CurrentHeight())
 		tSandbox.UpdateValidator(val)
-
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
 			pub.Address(), nil, amt, fee, "unbonded before")
+
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
@@ -72,10 +84,8 @@ func TestExecuteBondTx(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
 			pub.Address(), pub, amt, fee, "ok")
 
-		assert.NoError(t, exe.Execute(trx, tSandbox))
-
-		// Execute again, should fail
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.NoError(t, exe.Execute(trx, tSandbox), "Ok")
+		assert.Error(t, exe.Execute(trx, tSandbox), "Execute again, should fail")
 	})
 
 	t.Run("Should fail, public key set for second bond", func(t *testing.T) {
