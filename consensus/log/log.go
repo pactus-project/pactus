@@ -44,7 +44,7 @@ func (log *Log) MustGetRoundMessages(round int16) *Messages {
 			changeProposerVotes: voteset.NewVoteSet(i, vote.VoteTypeChangeProposer, log.validators),
 		}
 
-		// extendind votes slice
+		// expending votes slice
 		log.roundMessages = append(log.roundMessages, rv)
 	}
 
