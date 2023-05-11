@@ -2,9 +2,9 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkDialog" id="id_dialog_transaction_send">
+  <object class="GtkDialog" id="id_dialog_transaction_transfer">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Broadcasting Send transaction</property>
+    <property name="title" translatable="yes">Broadcasting Transfer transaction</property>
     <property name="modal">True</property>
     <property name="default-width">480</property>
     <property name="type-hint">dialog</property>

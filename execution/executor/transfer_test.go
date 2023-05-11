@@ -42,9 +42,9 @@ func randomAmountAndFee(max int64) (int64, int64) {
 	return amt, fee
 }
 
-func TestExecuteSendTx(t *testing.T) {
+func TestExecuteTransferTx(t *testing.T) {
 	setup(t)
-	exe := NewSendExecutor(true)
+	exe := NewTransferExecutor(true)
 
 	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
@@ -88,9 +88,9 @@ func TestExecuteSendTx(t *testing.T) {
 	checkTotalCoin(t, fee)
 }
 
-func TestSendToSelf(t *testing.T) {
+func TestTransferToSelf(t *testing.T) {
 	setup(t)
-	exe := NewSendExecutor(true)
+	exe := NewTransferExecutor(true)
 
 	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
@@ -103,10 +103,10 @@ func TestSendToSelf(t *testing.T) {
 	assert.Equal(t, exe.Fee(), fee)
 }
 
-func TestSendNonStrictMode(t *testing.T) {
+func TestTransferNonStrictMode(t *testing.T) {
 	setup(t)
-	exe1 := NewSendExecutor(true)
-	exe2 := NewSendExecutor(false)
+	exe1 := NewTransferExecutor(true)
+	exe2 := NewTransferExecutor(false)
 
 	receiver1 := crypto.GenerateTestAddress()
 

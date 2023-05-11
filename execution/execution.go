@@ -21,7 +21,7 @@ type Execution struct {
 
 func newExecution(strict bool) *Execution {
 	execs := make(map[payload.Type]Executor)
-	execs[payload.PayloadTypeSend] = executor.NewSendExecutor(strict)
+	execs[payload.PayloadTypeTransfer] = executor.NewTransferExecutor(strict)
 	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(strict)
 	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(strict)
 	execs[payload.PayloadTypeUnbond] = executor.NewUnbondExecutor(strict)

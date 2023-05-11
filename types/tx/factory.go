@@ -23,7 +23,7 @@ func NewSubsidyTx(stamp hash.Stamp, seq int32,
 func NewSendTx(stamp hash.Stamp, seq int32,
 	sender, receiver crypto.Address,
 	amount, fee int64, memo string) *Tx {
-	pld := &payload.SendPayload{
+	pld := &payload.TransferPayload{
 		Sender:   sender,
 		Receiver: receiver,
 		Amount:   amount,

@@ -179,8 +179,8 @@ func TestBlockSubsidyTx(t *testing.T) {
 	trx := tState1.createSubsidyTx(rewardAddr, 7)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), tState1.params.BlockReward+7)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Sender, crypto.TreasuryAddress)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, rewardAddr)
+	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Sender, crypto.TreasuryAddress)
+	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Receiver, rewardAddr)
 }
 
 func TestCommitBlocks(t *testing.T) {

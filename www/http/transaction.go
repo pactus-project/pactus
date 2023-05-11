@@ -45,8 +45,8 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	tm.addRowString("Memo", trx.Memo)
 	tm.addRowString("Payload type", trx.PayloadType.String())
 	switch trx.PayloadType {
-	case pactus.PayloadType_SEND_PAYLOAD:
-		pld := trx.Payload.(*pactus.TransactionInfo_Send).Send
+	case pactus.PayloadType_TRANSFER_PAYLOAD:
+		pld := trx.Payload.(*pactus.TransactionInfo_Transfer).Transfer
 		tm.addRowAccAddress("Sender", pld.Sender)
 		tm.addRowAccAddress("Receiver", pld.Receiver)
 		tm.addRowAmount("Amount", pld.Amount)

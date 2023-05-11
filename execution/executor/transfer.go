@@ -8,17 +8,17 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-type SendExecutor struct {
+type TransferExecutor struct {
 	fee    int64
 	strict bool
 }
 
-func NewSendExecutor(strict bool) *SendExecutor {
-	return &SendExecutor{strict: strict}
+func NewTransferExecutor(strict bool) *TransferExecutor {
+	return &TransferExecutor{strict: strict}
 }
 
-func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	pld := trx.Payload().(*payload.SendPayload)
+func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+	pld := trx.Payload().(*payload.TransferPayload)
 
 	if !e.strict && trx.IsSubsidyTx() {
 		// In not-strict mode all subsidy transactions for the current height are valid.
@@ -67,6 +67,6 @@ func (e *SendExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func (e *SendExecutor) Fee() int64 {
+func (e *TransferExecutor) Fee() int64 {
 	return e.fee
 }

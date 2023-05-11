@@ -154,7 +154,7 @@ func TestLockTime(t *testing.T) {
 	})
 
 	t.Run("Should reject subsidy transactions with lock time", func(t *testing.T) {
-		pld := &payload.SendPayload{
+		pld := &payload.TransferPayload{
 			Sender:   crypto.TreasuryAddress,
 			Receiver: crypto.GenerateTestAddress(),
 			Amount:   1234,
@@ -169,7 +169,7 @@ func TestLockTime(t *testing.T) {
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
 		sb.UpdateAccount(signer.Address(), acc)
-		pld := &payload.SendPayload{
+		pld := &payload.TransferPayload{
 			Sender:   signer.Address(),
 			Receiver: crypto.GenerateTestAddress(),
 			Amount:   1234,
@@ -187,7 +187,7 @@ func TestLockTime(t *testing.T) {
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
 		sb.UpdateAccount(signer.Address(), acc)
-		pld := &payload.SendPayload{
+		pld := &payload.TransferPayload{
 			Sender:   signer.Address(),
 			Receiver: crypto.GenerateTestAddress(),
 			Amount:   1234,

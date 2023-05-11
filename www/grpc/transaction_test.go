@@ -19,7 +19,7 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return transaction", func(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: trx1.ID().Bytes(),
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO})
-		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Send)
+		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Transfer)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
@@ -34,9 +34,9 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, trx1.Sequence(), res.Transaction.Sequence)
 		assert.Equal(t, trx1.Signature().Bytes(), res.Transaction.Signature)
 		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
-		assert.Equal(t, trx1.Payload().(*payload.SendPayload).Amount, pld.Send.Amount)
-		assert.Equal(t, trx1.Payload().(*payload.SendPayload).Sender.String(), pld.Send.Sender)
-		assert.Equal(t, trx1.Payload().(*payload.SendPayload).Receiver.String(), pld.Send.Receiver)
+		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount, pld.Transfer.Amount)
+		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Sender.String(), pld.Transfer.Sender)
+		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Receiver.String(), pld.Transfer.Receiver)
 	})
 
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {

@@ -247,16 +247,16 @@ class SendRawTransactionResponse extends $pb.GeneratedMessage {
   void clearId() => clearField(2);
 }
 
-class PayloadSend extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PayloadSend', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class PayloadTransfer extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PayloadTransfer', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
     ..hasRequiredFields = false
   ;
 
-  PayloadSend._() : super();
-  factory PayloadSend({
+  PayloadTransfer._() : super();
+  factory PayloadTransfer({
     $core.String? sender,
     $core.String? receiver,
     $fixnum.Int64? amount,
@@ -273,26 +273,26 @@ class PayloadSend extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory PayloadSend.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory PayloadSend.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory PayloadTransfer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PayloadTransfer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  PayloadSend clone() => PayloadSend()..mergeFromMessage(this);
+  PayloadTransfer clone() => PayloadTransfer()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  PayloadSend copyWith(void Function(PayloadSend) updates) => super.copyWith((message) => updates(message as PayloadSend)) as PayloadSend; // ignore: deprecated_member_use
+  PayloadTransfer copyWith(void Function(PayloadTransfer) updates) => super.copyWith((message) => updates(message as PayloadTransfer)) as PayloadTransfer; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static PayloadSend create() => PayloadSend._();
-  PayloadSend createEmptyInstance() => create();
-  static $pb.PbList<PayloadSend> createRepeated() => $pb.PbList<PayloadSend>();
+  static PayloadTransfer create() => PayloadTransfer._();
+  PayloadTransfer createEmptyInstance() => create();
+  static $pb.PbList<PayloadTransfer> createRepeated() => $pb.PbList<PayloadTransfer>();
   @$core.pragma('dart2js:noInline')
-  static PayloadSend getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadSend>(create);
-  static PayloadSend? _defaultInstance;
+  static PayloadTransfer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadTransfer>(create);
+  static PayloadTransfer? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get sender => $_getSZ(0);
@@ -581,7 +581,7 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
 }
 
 enum TransactionInfo_Payload {
-  send, 
+  transfer, 
   bond, 
   sortition, 
   unbond, 
@@ -591,7 +591,7 @@ enum TransactionInfo_Payload {
 
 class TransactionInfo extends $pb.GeneratedMessage {
   static const $core.Map<$core.int, TransactionInfo_Payload> _TransactionInfo_PayloadByTag = {
-    30 : TransactionInfo_Payload.send,
+    30 : TransactionInfo_Payload.transfer,
     31 : TransactionInfo_Payload.bond,
     32 : TransactionInfo_Payload.sortition,
     33 : TransactionInfo_Payload.unbond,
@@ -611,7 +611,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
     ..a<$core.List<$core.int>>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
-    ..aOM<PayloadSend>(30, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'send', subBuilder: PayloadSend.create)
+    ..aOM<PayloadTransfer>(30, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transfer', subBuilder: PayloadTransfer.create)
     ..aOM<PayloadBond>(31, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bond', subBuilder: PayloadBond.create)
     ..aOM<PayloadSortition>(32, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sortition', subBuilder: PayloadSortition.create)
     ..aOM<PayloadUnbond>(33, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbond', subBuilder: PayloadUnbond.create)
@@ -632,7 +632,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     $core.String? memo,
     $core.String? publicKey,
     $core.List<$core.int>? signature,
-    PayloadSend? send,
+    PayloadTransfer? transfer,
     PayloadBond? bond,
     PayloadSortition? sortition,
     PayloadUnbond? unbond,
@@ -672,8 +672,8 @@ class TransactionInfo extends $pb.GeneratedMessage {
     if (signature != null) {
       _result.signature = signature;
     }
-    if (send != null) {
-      _result.send = send;
+    if (transfer != null) {
+      _result.transfer = transfer;
     }
     if (bond != null) {
       _result.bond = bond;
@@ -813,15 +813,15 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearSignature() => clearField(11);
 
   @$pb.TagNumber(30)
-  PayloadSend get send => $_getN(11);
+  PayloadTransfer get transfer => $_getN(11);
   @$pb.TagNumber(30)
-  set send(PayloadSend v) { setField(30, v); }
+  set transfer(PayloadTransfer v) { setField(30, v); }
   @$pb.TagNumber(30)
-  $core.bool hasSend() => $_has(11);
+  $core.bool hasTransfer() => $_has(11);
   @$pb.TagNumber(30)
-  void clearSend() => clearField(30);
+  void clearTransfer() => clearField(30);
   @$pb.TagNumber(30)
-  PayloadSend ensureSend() => $_ensure(11);
+  PayloadTransfer ensureTransfer() => $_ensure(11);
 
   @$pb.TagNumber(31)
   PayloadBond get bond => $_getN(12);

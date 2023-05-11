@@ -293,7 +293,7 @@ func (w *Wallet) MakeSendTx(sender, receiver string, amount int64,
 		return nil, err
 	}
 	maker.amount = amount
-	maker.typ = payload.PayloadTypeSend
+	maker.typ = payload.PayloadTypeTransfer
 
 	return maker.build()
 }
@@ -478,9 +478,9 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 	var sender string
 	var receiver *string
 	switch pld := trxRes.Transaction.Payload.(type) {
-	case *pactus.TransactionInfo_Send:
-		sender = pld.Send.Sender
-		receiver = &pld.Send.Receiver
+	case *pactus.TransactionInfo_Transfer:
+		sender = pld.Transfer.Sender
+		receiver = &pld.Transfer.Receiver
 	case *pactus.TransactionInfo_Bond:
 		sender = pld.Bond.Sender
 		receiver = &pld.Bond.Receiver

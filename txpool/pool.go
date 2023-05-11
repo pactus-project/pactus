@@ -29,7 +29,7 @@ type txPool struct {
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pendings := make(map[payload.Type]*linkedmap.LinkedMap)
 
-	pendings[payload.PayloadTypeSend] = linkedmap.NewLinkedMap(conf.sendPoolSize())
+	pendings[payload.PayloadTypeTransfer] = linkedmap.NewLinkedMap(conf.sendPoolSize())
 	pendings[payload.PayloadTypeBond] = linkedmap.NewLinkedMap(conf.bondPoolSize())
 	pendings[payload.PayloadTypeUnbond] = linkedmap.NewLinkedMap(conf.unbondPoolSize())
 	pendings[payload.PayloadTypeWithdraw] = linkedmap.NewLinkedMap(conf.withdrawPoolSize())
@@ -181,7 +181,7 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 	}
 
 	// Appending send transactions
-	poolSend := p.pools[payload.PayloadTypeSend]
+	poolSend := p.pools[payload.PayloadTypeTransfer]
 	for e := poolSend.FirstElement(); e != nil; e = e.Next() {
 		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
 		trxs = append(trxs, trx)
@@ -216,7 +216,7 @@ func (p *txPool) Size() int {
 
 func (p *txPool) Fingerprint() string {
 	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
-		p.pools[payload.PayloadTypeSend].Size(),
+		p.pools[payload.PayloadTypeTransfer].Size(),
 		p.pools[payload.PayloadTypeBond].Size(),
 		p.pools[payload.PayloadTypeUnbond].Size(),
 		p.pools[payload.PayloadTypeSortition].Size(),

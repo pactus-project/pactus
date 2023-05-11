@@ -11,7 +11,7 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 class PayloadType extends $pb.ProtobufEnum {
   static const PayloadType UNKNOWN = PayloadType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNKNOWN');
-  static const PayloadType SEND_PAYLOAD = PayloadType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SEND_PAYLOAD');
+  static const PayloadType TRANSFER_PAYLOAD = PayloadType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'TRANSFER_PAYLOAD');
   static const PayloadType BOND_PAYLOAD = PayloadType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'BOND_PAYLOAD');
   static const PayloadType SORTITION_PAYLOAD = PayloadType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SORTITION_PAYLOAD');
   static const PayloadType UNBOND_PAYLOAD = PayloadType._(4, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNBOND_PAYLOAD');
@@ -19,7 +19,7 @@ class PayloadType extends $pb.ProtobufEnum {
 
   static const $core.List<PayloadType> values = <PayloadType> [
     UNKNOWN,
-    SEND_PAYLOAD,
+    TRANSFER_PAYLOAD,
     BOND_PAYLOAD,
     SORTITION_PAYLOAD,
     UNBOND_PAYLOAD,
