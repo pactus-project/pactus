@@ -127,7 +127,8 @@ func TestKeyGen(t *testing.T) {
 		// The test vectors from EIP-2333
 		// https://github.com/ethereum/EIPs/blob/784107449bd83a9327b54f82aba96de28d72b89a/EIPS/eip-2333.md#test-cases
 		{
-			"c55257c360c07c72029aebc1b53c05ed0362ada38ead3e3e9efa3708e53495531f09a6987599d18264c1e1c92f2cf141630c7a3c4ab7c81b2f001698e7463b04",
+			"c55257c360c07c72029aebc1b53c05ed0362ada38ead3e3e9efa3708e5349553" +
+				"1f09a6987599d18264c1e1c92f2cf141630c7a3c4ab7c81b2f001698e7463b04",
 			"0d7359d57963ab8fbbde1852dcf553fedbc31f464d80ee7d40ae683122b45070",
 		},
 		{

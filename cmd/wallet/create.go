@@ -39,7 +39,8 @@ func Generate() func(c *cli.Cmd) {
 			cmd.PrintLine()
 			cmd.PrintSuccessMsg("Wallet created successfully at: %s", wallet.Path())
 			cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)
-			cmd.PrintWarnMsg("Please keep your seed in a safe place; if you lose it, you will not be able to restore your wallet.")
+			cmd.PrintWarnMsg("Please keep your seed in a safe place; " +
+				"if you lose it, you will not be able to restore your wallet.")
 		}
 	}
 }

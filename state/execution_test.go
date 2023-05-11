@@ -71,8 +71,11 @@ func TestExecuteBlock(t *testing.T) {
 	t.Run("Subsidy tx is invalid", func(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(invSubsidyTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(),
+			tState1.stateRoot(), tState1.lastInfo.Certificate(),
+			tState1.lastInfo.SortitionSeed(), proposerAddr)
 		sb := tState1.concreteSandbox()
+
 		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
@@ -80,8 +83,11 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validSubsidyTx)
 		txs.Append(invSendTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(),
+			tState1.stateRoot(), tState1.lastInfo.Certificate(),
+			tState1.lastInfo.SortitionSeed(), proposerAddr)
 		sb := tState1.concreteSandbox()
+
 		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
@@ -89,16 +95,22 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validTx1)
 		txs.Append(validSubsidyTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(),
+			tState1.stateRoot(), tState1.lastInfo.Certificate(),
+			tState1.lastInfo.SortitionSeed(), proposerAddr)
 		sb := tState1.concreteSandbox()
+
 		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
 	t.Run("Has no subsidy", func(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validTx1)
-		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(),
+			tState1.stateRoot(), tState1.lastInfo.Certificate(),
+			tState1.lastInfo.SortitionSeed(), proposerAddr)
 		sb := tState1.concreteSandbox()
+
 		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
@@ -106,8 +118,11 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validSubsidyTx)
 		txs.Append(validSubsidyTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(),
+			tState1.stateRoot(), tState1.lastInfo.Certificate(),
+			tState1.lastInfo.SortitionSeed(), proposerAddr)
 		sb := tState1.concreteSandbox()
+
 		assert.Error(t, tState1.executeBlock(invBlock, sb))
 	})
 
@@ -115,7 +130,9 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validSubsidyTx)
 		txs.Append(validTx1)
-		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(), tState1.stateRoot(), tState1.lastInfo.Certificate(), tState1.lastInfo.SortitionSeed(), proposerAddr)
+		invBlock := block.MakeBlock(1, util.Now(), txs, tState1.lastInfo.BlockHash(),
+			tState1.stateRoot(), tState1.lastInfo.Certificate(),
+			tState1.lastInfo.SortitionSeed(), proposerAddr)
 		sb := tState1.concreteSandbox()
 		assert.NoError(t, tState1.executeBlock(invBlock, sb))
 

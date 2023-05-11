@@ -78,7 +78,9 @@ check:
 		--enable=gosec \
 		--enable=exportloopref \
 		--enable=whitespace \
-		--enable=goimports
+		--enable=goimports \
+		--enable=gocyclo \
+		--enable=lll
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.

@@ -19,7 +19,8 @@ func TestValidate(t *testing.T) {
 	seed1 := GenerateRandomSeed()
 	seed2 := seed1.GenerateNext(signer)
 	seed3 := VerifiableSeed{}
-	seed4, _ := VerifiableSeedFromString("C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+	seed4, _ := VerifiableSeedFromString(
+		"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 
 	assert.True(t, seed2.Verify(signer.PublicKey(), seed1))
 	assert.False(t, seed1.Verify(signer.PublicKey(), seed2))

@@ -28,7 +28,8 @@ func TestNonHardenedDerivation(t *testing.T) {
 			wantPrivG1: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPrivG2: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPubG1:  "b99b512321d9dbae271f4d418b10a2345fa84c1c883d0f9a82163b84c405948ea123f01141258cdbed2d033eae4a551a",
-			wantPubG2:  "97167b36223b32c3b0b8c8234eefeeee12a37b3aafa9ed4e156facd2d5a4206d72f814bd69270ae0a95d6de13f1a1e6618330e1d02506ed8ec2c184660912213bf2cd54f66b38fe3e5dd241320cf2684f6c86affd93a07689870dedeb6cf133b",
+			wantPubG2: "97167b36223b32c3b0b8c8234eefeeee12a37b3aafa9ed4e156facd2d5a4206d72f814bd69270ae0a95d6de13f1a1e66" +
+				"18330e1d02506ed8ec2c184660912213bf2cd54f66b38fe3e5dd241320cf2684f6c86affd93a07689870dedeb6cf133b",
 		},
 		{
 			name:       "derivation path: m/0",
@@ -36,7 +37,8 @@ func TestNonHardenedDerivation(t *testing.T) {
 			wantPrivG1: "32833bcae69d2296e71356dc444d08c9d78671a6dbc1234fd22ee78ddd21359a",
 			wantPrivG2: "3914227ccdfedae713b1289c14a4125de77dc8ae3dcb9c4ede1912819d03f807",
 			wantPubG1:  "a33ee09eee91c2d7b345f8ca28daf9fcbc92d2fd9b0be0f582ff3e5e71b9b13999fc4918d6894ba6b5ab6acdc556f665",
-			wantPubG2:  "adc3abc6d60ab9cf5dcea68fce523959f0564013536c7328f420fe83c94de483a99230a620d9620bb822c74ee112d4f40dd3ec63b20f731b459d875efb0c9f79f55567ec3aa4a361b8b68134ce11f99fa9b9a15dea38edd610d74d0b4ac9b31a",
+			wantPubG2: "adc3abc6d60ab9cf5dcea68fce523959f0564013536c7328f420fe83c94de483a99230a620d9620bb822c74ee112d4f4" +
+				"0dd3ec63b20f731b459d875efb0c9f79f55567ec3aa4a361b8b68134ce11f99fa9b9a15dea38edd610d74d0b4ac9b31a",
 		},
 		{
 			name:       "derivation path: m/0/1",
@@ -44,7 +46,8 @@ func TestNonHardenedDerivation(t *testing.T) {
 			wantPrivG1: "67a6f33ab789e703bc33364591230662b4a067fd217c0bf94781a0438447f7e6",
 			wantPrivG2: "1571b4b6c4233eb6132b98682e430919b32ab4e0b18b27edf4e7505a78814c9c",
 			wantPubG1:  "82de21510f071ff70f6eba967e6876487a7e63d8fa43e9d37d0e89af8ccad9d177d3fbdaac566fe7a9a19e8288b9df7c",
-			wantPubG2:  "95ac09809e30db3a6cab7fee871e3fbc0b670a25ceebc2a1146d72c67c03f03a8766692773609c0898887095b03db71b08470fc21905ee737511bbb976a1d77a9fc523c98aea3439fbf22dc0e8bff9878054116a95d1607bf9a2225a8f96c331",
+			wantPubG2: "95ac09809e30db3a6cab7fee871e3fbc0b670a25ceebc2a1146d72c67c03f03a8766692773609c0898887095b03db71b" +
+				"08470fc21905ee737511bbb976a1d77a9fc523c98aea3439fbf22dc0e8bff9878054116a95d1607bf9a2225a8f96c331",
 		},
 		{
 			name:       "derivation path: m/0/1/2",
@@ -52,7 +55,8 @@ func TestNonHardenedDerivation(t *testing.T) {
 			wantPrivG1: "083e105a2722e56a473c8ce703d264789e9f4642e0163d6d7f2e91133a4f6c14",
 			wantPrivG2: "0ab855d785a73ac1d434993238eac9465398848c940c569304a6cf8104432323",
 			wantPubG1:  "a931438adb1639201f1d5ea7445a5cfeb319c0143f83964bd2650ea7b835ec9360e55eb5f48345f8cff6297bde663773",
-			wantPubG2:  "a04d61ace6bb9f147feaa4f655bf61d3915de1274ae3c455d1cd61260b4c4fb154b53b86cbf06d7f035e8f3046f46c8a0ee825aeb0d871b34993964f43e587dde51f26609b8bc3c58db93ec975d7b21f947d5ef13fe611a6c624584604bd9745",
+			wantPubG2: "a04d61ace6bb9f147feaa4f655bf61d3915de1274ae3c455d1cd61260b4c4fb154b53b86cbf06d7f035e8f3046f46c8a" +
+				"0ee825aeb0d871b34993964f43e587dde51f26609b8bc3c58db93ec975d7b21f947d5ef13fe611a6c624584604bd9745",
 		},
 		{
 			name:       "derivation path: m/0/1/2/2",
@@ -60,7 +64,8 @@ func TestNonHardenedDerivation(t *testing.T) {
 			wantPrivG1: "45dc329488337cce410446a6735abb1f2885ef3edcc717e4a1541ff5e0a302e5",
 			wantPrivG2: "1af4a741d566a744bad2ea4d632138af1084b1a85c9deb486920421ceacee200",
 			wantPubG1:  "8dca90a2ef835d22b6a1a31a0f35a42afa9f995d7ff5050391d63246e9d870f9da7d30201006d60b2b2520edd49123a5",
-			wantPubG2:  "95994434c768d7273ba943453b60912b9094e267e4611816d2f83905931c433ba9db841bd1aef53ac469cc759718f4641985be8d5b1e99d3b216daf61660e37f90ef77c61fa27c3b462199ab04a8a5091a15f85f5f166ee281ea8415b357f07d",
+			wantPubG2: "95994434c768d7273ba943453b60912b9094e267e4611816d2f83905931c433ba9db841bd1aef53ac469cc759718f464" +
+				"1985be8d5b1e99d3b216daf61660e37f90ef77c61fa27c3b462199ab04a8a5091a15f85f5f166ee281ea8415b357f07d",
 		},
 		{
 			name:       "derivation path: m/0/1/2/2/1000000000",
@@ -68,7 +73,8 @@ func TestNonHardenedDerivation(t *testing.T) {
 			wantPrivG1: "3255d4c3b4839073d8bd8e58a49cb35579b23c3ab393844efb6f382901642ffe",
 			wantPrivG2: "59fef95b26def9f7c068d821025f87b7b7d05b5a4a983ccdff3c375faa1cdaf5",
 			wantPubG1:  "9660f7ef3d08328dd166063a47ab6a9858b56833ac5d1f991195e8a75698b07a45b8cb3e620835062862693f80e1b012",
-			wantPubG2:  "a96976500c782dd268fd7703813b7710f5896ade7a7823518fec005b8bc5c39c3c00df82073658fabb47339ce83435500b5f64b3159e0c0acfe48852bc42bb09e83795783f69b1f25a41f02a431aad50b7d0eac09f33f672db95a092af186754",
+			wantPubG2: "a96976500c782dd268fd7703813b7710f5896ade7a7823518fec005b8bc5c39c3c00df82073658fabb47339ce8343550" +
+				"0b5f64b3159e0c0acfe48852bc42bb09e83795783f69b1f25a41f02a431aad50b7d0eac09f33f672db95a092af186754",
 		},
 	}
 
@@ -146,35 +152,40 @@ func TestHardenedDerivationG2(t *testing.T) {
 			path:      Path{0 + h},
 			wantPriv:  "0da9a671ff3cc10514fa9cf8368af0756ad01e242bb3ae4d06a4061e6c3ec6be",
 			wantPubG1: "ad880d92cb1276c8d5768d26dcc3ebf23de4f0a1d12c9b99fdb6b745ff931d2c01925b4fec4147d7452faddc18564b98",
-			wantPubG2: "b5bfa5aa0ee3c8c4f9222f4f244c3fd6fddcdd0accf484e56d09c70a4e2eada059073c890bbfc30d2693a8a68262c3ac06da94222f5d9de2b8ea4fb7cf29664196becd7a36f49a55f9364afe2536de909b87a8c2900cd38590f8dd4b51c8642a",
+			wantPubG2: "b5bfa5aa0ee3c8c4f9222f4f244c3fd6fddcdd0accf484e56d09c70a4e2eada059073c890bbfc30d2693a8a68262c3ac" +
+				"06da94222f5d9de2b8ea4fb7cf29664196becd7a36f49a55f9364afe2536de909b87a8c2900cd38590f8dd4b51c8642a",
 		},
 		{
 			name:      "derivation path: m/0H/1H",
 			path:      Path{0 + h, 1 + h},
 			wantPriv:  "319ebd81870da6bc3608b80fa22418c3dbb854f8719c19be687533266cb0f291",
 			wantPubG1: "95dae848c45f54076c720be4d1c9f543993ccdb8850d47b9d21450b0e861de12473f5a68193d2f60e1d44ef37d57dd32",
-			wantPubG2: "94c2ef2238d79c7148719a9faade73c7c27f33ce6526b3d374950f76f074d1ef3a4798f8d4dbd97b6c800640421bbb4d0c39943d28c1bcf62acd85f957f29fd293d375c10bc3642e66f282d129fbddf81c9ddc0aba453f3b6e0f404b0b4a12a5",
+			wantPubG2: "94c2ef2238d79c7148719a9faade73c7c27f33ce6526b3d374950f76f074d1ef3a4798f8d4dbd97b6c800640421bbb4d" +
+				"0c39943d28c1bcf62acd85f957f29fd293d375c10bc3642e66f282d129fbddf81c9ddc0aba453f3b6e0f404b0b4a12a5",
 		},
 		{
 			name:      "derivation path: m/0H/1H/2H",
 			path:      Path{0 + h, 1 + h, 2 + h},
 			wantPriv:  "028a08fe12f776e2538749510644c9ad78e020c36b9cee216518ba6d52fd7549",
 			wantPubG1: "829d3fa8890ddad5289c9429af9a3a6fa284ecdc3ca6a91dc7af466b1edd3e03952869def6baec191bdbfd76de79d754",
-			wantPubG2: "923c884ce3f91e9cc4595114c5fbe3aee03b8698c7d35ae358f76816d132c6972c6612ad18c2178cf1c9e47d8e0e5822164c8bee956ddccf7103d4a41c3fcf092f746493c333cd33e95efa60b62bb5ef6beaecd3b3c338bc4ed56d6000e59748",
+			wantPubG2: "923c884ce3f91e9cc4595114c5fbe3aee03b8698c7d35ae358f76816d132c6972c6612ad18c2178cf1c9e47d8e0e5822" +
+				"164c8bee956ddccf7103d4a41c3fcf092f746493c333cd33e95efa60b62bb5ef6beaecd3b3c338bc4ed56d6000e59748",
 		},
 		{
 			name:      "derivation path: m/0H/1H/2H/2H",
 			path:      Path{0 + h, 1 + h, 2 + h, 2 + h},
 			wantPriv:  "67a7b55c4cf0620cd99e55c77b8075f3ec5ce2ac9f840678dada4047849d4e91",
 			wantPubG1: "91a562e2f28d775560426db45dda4b9b12cd9c55bff4501c8a1253ffee26e2299f18c13c81d586b40955c120a7bd0ea4",
-			wantPubG2: "a800a88b89dcbf614e498e4dacfcaccb9735fad06b5ca722e75debf4b22a0ffdfb761898f880de07220d584e3ea4e28e13b7ab01b56e0883587ee73ce0bdcfbbc2f2948ce3ed14aa88d69cbaefab38bf3f374ba1be72001a44bd183184053ee6",
+			wantPubG2: "a800a88b89dcbf614e498e4dacfcaccb9735fad06b5ca722e75debf4b22a0ffdfb761898f880de07220d584e3ea4e28e" +
+				"13b7ab01b56e0883587ee73ce0bdcfbbc2f2948ce3ed14aa88d69cbaefab38bf3f374ba1be72001a44bd183184053ee6",
 		},
 		{
 			name:      "derivation path: m/0H/1H/2H/2H/1000000000H",
 			path:      Path{0 + h, 1 + h, 2 + h, 2 + h, 1000000000 + h},
 			wantPriv:  "5fa9eb585d673c081b07d56639a980b69d7a1f31f4725d23884aaeb2bf0e6fdc",
 			wantPubG1: "949a2b9d20bd8c260f1c9f0b4631dc3abff6bcf3b723652e65c06447b1f0b7ca1f2f9b5fecd3692222d1e7280e8c0a2d",
-			wantPubG2: "952ca984734510e531507cdb653a3bce2ed4b9689d917718663ab04c84bb78596d7f46252a1ea0e3dd7a380a5a5bf8f208d9571004508dbc01464e95712a2f5df3be43c1f09cd06f0c0944a4eaa5d5a1fcde5cd2ec2661c6ac3307b78b694cea",
+			wantPubG2: "952ca984734510e531507cdb653a3bce2ed4b9689d917718663ab04c84bb78596d7f46252a1ea0e3dd7a380a5a5bf8f2" +
+				"08d9571004508dbc01464e95712a2f5df3be43c1f09cd06f0c0944a4eaa5d5a1fcde5cd2ec2661c6ac3307b78b694cea",
 		},
 	}
 
@@ -237,7 +248,8 @@ func TestDerivation(t *testing.T) {
 			wantPrivG1: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPrivG2: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPubG1:  "b99b512321d9dbae271f4d418b10a2345fa84c1c883d0f9a82163b84c405948ea123f01141258cdbed2d033eae4a551a",
-			wantPubG2:  "97167b36223b32c3b0b8c8234eefeeee12a37b3aafa9ed4e156facd2d5a4206d72f814bd69270ae0a95d6de13f1a1e6618330e1d02506ed8ec2c184660912213bf2cd54f66b38fe3e5dd241320cf2684f6c86affd93a07689870dedeb6cf133b",
+			wantPubG2: "97167b36223b32c3b0b8c8234eefeeee12a37b3aafa9ed4e156facd2d5a4206d72f814bd69270ae0a95d6de13f1a1e66" +
+				"18330e1d02506ed8ec2c184660912213bf2cd54f66b38fe3e5dd241320cf2684f6c86affd93a07689870dedeb6cf133b",
 		},
 		{
 			name:       "derivation path: m/0H",
@@ -245,7 +257,8 @@ func TestDerivation(t *testing.T) {
 			wantPrivG1: "0da9a671ff3cc10514fa9cf8368af0756ad01e242bb3ae4d06a4061e6c3ec6be",
 			wantPrivG2: "0da9a671ff3cc10514fa9cf8368af0756ad01e242bb3ae4d06a4061e6c3ec6be",
 			wantPubG1:  "ad880d92cb1276c8d5768d26dcc3ebf23de4f0a1d12c9b99fdb6b745ff931d2c01925b4fec4147d7452faddc18564b98",
-			wantPubG2:  "b5bfa5aa0ee3c8c4f9222f4f244c3fd6fddcdd0accf484e56d09c70a4e2eada059073c890bbfc30d2693a8a68262c3ac06da94222f5d9de2b8ea4fb7cf29664196becd7a36f49a55f9364afe2536de909b87a8c2900cd38590f8dd4b51c8642a",
+			wantPubG2: "b5bfa5aa0ee3c8c4f9222f4f244c3fd6fddcdd0accf484e56d09c70a4e2eada059073c890bbfc30d2693a8a68262c3a" +
+				"c06da94222f5d9de2b8ea4fb7cf29664196becd7a36f49a55f9364afe2536de909b87a8c2900cd38590f8dd4b51c8642a",
 		},
 		{
 			name:       "derivation path: m/0H/1",
@@ -253,7 +266,8 @@ func TestDerivation(t *testing.T) {
 			wantPrivG1: "0f356ce1bc5fd0d8c6ac274c7b206c2cb868b502af7a7065e836ca28f0d865a5",
 			wantPrivG2: "647e9be74b8648a198267e18c40d988b74f1ff8a33132fb012187ffd22c96fc4",
 			wantPubG1:  "92c9d3908b636a383c174bd3d27a8ae5b116240b90aa4d4b2425405b11eded72419284f04c66438578adffbc62e3698d",
-			wantPubG2:  "ae08105f86d96658083e0799bb2fa282f6431a7d23044ef6aaf3083b027aaed32798005e27668a7327e36a7db07fcab40253921fe842ba2b7411a44bfd292c7cf124970b70da554fceff6eef4ba2edddeb713d40bebbd79c24b9888541da63a3",
+			wantPubG2: "ae08105f86d96658083e0799bb2fa282f6431a7d23044ef6aaf3083b027aaed32798005e27668a7327e36a7db07fcab" +
+				"40253921fe842ba2b7411a44bfd292c7cf124970b70da554fceff6eef4ba2edddeb713d40bebbd79c24b9888541da63a3",
 		},
 		{
 			name:       "derivation path: m/0H/1/2H",
@@ -261,7 +275,8 @@ func TestDerivation(t *testing.T) {
 			wantPrivG1: "1f8dd29cf00257ffd4bc4001580d2011ce23a0727ce20ee4156c7a6fb61964ce",
 			wantPrivG2: "578d64b2246b6b8c8906073b2de5cad50313997206ba872d38886d3d2d5eb508",
 			wantPubG1:  "93981a7ebf6ec8ffe6a5be1a4dfda93c8e9b192f79417ba5d4c4590c034306666ae3408146c33325ed8bab3fc0b01926",
-			wantPubG2:  "a89393efab309f3be02e501ebb6f472ef6392d48f832289247992497f4da816dfefc89fccf8b423b6e3005f7f29cdbf305c4aa0bd6163ece7d816dd34d83193512f17a752fb1a64b7e6455b7e301dcddf4eab0170304a1398d53abaabc63bdce",
+			wantPubG2: "a89393efab309f3be02e501ebb6f472ef6392d48f832289247992497f4da816dfefc89fccf8b423b6e3005f7f29cdbf" +
+				"305c4aa0bd6163ece7d816dd34d83193512f17a752fb1a64b7e6455b7e301dcddf4eab0170304a1398d53abaabc63bdce",
 		},
 		{
 			name:       "derivation path: m/0H/1/2H/2",
@@ -269,7 +284,8 @@ func TestDerivation(t *testing.T) {
 			wantPrivG1: "1ff1c89c8ac0387cb6b66d79c3da6b4bdc400d991d71ae78aa569e8d005d84ae",
 			wantPrivG2: "22d2d08809f4fe0103b1b4750565da52147d8694c6c382320a988368ea0fe14c",
 			wantPubG1:  "8eec88f3d3dd95b6d234ca83a9862989c3b960196a482d7c81eafd207faf60acac5624101184394a9dd4a7848115320e",
-			wantPubG2:  "aabdc2a56f89fce40ee071dc3193aa63784391930af044258d3e104bdc9b2bef9aacb310466bada59df534c46cb6cfa2073e2c7c1e92905cba9d55bc32316ccfc2b71ac00fa75ed26098f301475a3dcf8fa5793b49aa6f538dd74873a5ca8baa",
+			wantPubG2: "aabdc2a56f89fce40ee071dc3193aa63784391930af044258d3e104bdc9b2bef9aacb310466bada59df534c46cb6cfa" +
+				"2073e2c7c1e92905cba9d55bc32316ccfc2b71ac00fa75ed26098f301475a3dcf8fa5793b49aa6f538dd74873a5ca8baa",
 		},
 		{
 			name:       "derivation path: m/0H/1/2H/2/1000000000",
@@ -277,7 +293,8 @@ func TestDerivation(t *testing.T) {
 			wantPrivG1: "3475af3ba6a3dbb5c181d9be4eaf0bea3ba6d1493a7a028978b563acd0799a67",
 			wantPrivG2: "4a19cfe432a510604ca9e6cdfda424e021f477ebbdd7e4130c01d32d567a92ee",
 			wantPubG1:  "860c0f97c1e8ed8d8c0265898e872428a4d6f33a10700e26a2536a333a6a5579029e9dd870c3801867667dba6b750fff",
-			wantPubG2:  "b12f350aaa1d66451a8a6fedc1bbcd3d3895808b7788d09e9c5d14d91a05e4c983e0fdbffa3a2afa393528b9cbbb49090880ef251db20a6d671f00a82afa8cba5ba5964a1cf96c8592751dc65c38c268d2bf1bcdfd88aab585c21a96dfa4ba6f",
+			wantPubG2: "b12f350aaa1d66451a8a6fedc1bbcd3d3895808b7788d09e9c5d14d91a05e4c983e0fdbffa3a2afa393528b9cbbb490" +
+				"90880ef251db20a6d671f00a82afa8cba5ba5964a1cf96c8592751dc65c38c268d2bf1bcdfd88aab585c21a96dfa4ba6f",
 		},
 	}
 
@@ -409,6 +426,8 @@ func TestGenerateSeed(t *testing.T) {
 }
 
 // TestKeyToString ensures the String function works as intended.
+//
+//nolint:lll
 func TestKeyToString(t *testing.T) {
 	testSeed, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f")
 	h := HardenedKeyStart
@@ -504,6 +523,8 @@ func TestKeyToString(t *testing.T) {
 }
 
 // TestInvalidString checks errors corresponding to the invalid strings
+//
+//nolint:lll
 func TestInvalidString(t *testing.T) {
 	tests := []struct {
 		desc          string
@@ -558,6 +579,8 @@ func TestInvalidString(t *testing.T) {
 }
 
 // TestNeuter ensures the Neuter function works as intended.
+//
+//nolint:lll
 func TestNeuter(t *testing.T) {
 	extKey, _ := NewKeyFromString("XSECRET1PQP0R4SGK8Y84J2G9LQD2E4W5RYXQRPWKYSG8TT4KUMZD0QF7TT8PSVPNCFWFXK8JKWKNMH8HQC8PV0ZMYL36LRFJJ76K3C94YL38FA7PNGF4LRNQ")
 	neuterKey := extKey.Neuter()

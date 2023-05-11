@@ -70,13 +70,15 @@ func TestGetIndex(t *testing.T) {
 	// proofH: 0xa7b8166584387f4ea76f9caa0969bd6b0bb8df4c3bb8e87f8b6e4dad62bf3359
 	//
 	// proofH * 1000000 / denominator = 655152.7021258341
-	proof1, _ := ProofFromString("1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03")
+	proof1, _ := ProofFromString(
+		"1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03")
 	assert.Equal(t, getIndex(proof1, 1*1e6), uint64(655152))
 
 	// proof: 45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396
 	// proofH: 80212979d1de1ca4ce1258fc0be66a4453b3804e64a5ca8d95f7def2c291c7fe
 	//
 	// proofH * 1000000 / denominator = 500506.0121928797
-	proof2, _ := ProofFromString("45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396")
+	proof2, _ := ProofFromString(
+		"45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396")
 	assert.Equal(t, getIndex(proof2, 1*1e6), uint64(500506))
 }

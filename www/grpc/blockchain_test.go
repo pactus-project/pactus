@@ -18,7 +18,9 @@ func TestGetBlock(t *testing.T) {
 	data, _ := b.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.GetBlockRequest{Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+		res, err := client.GetBlock(tCtx, &pactus.GetBlockRequest{
+			Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -27,6 +29,7 @@ func TestGetBlock(t *testing.T) {
 		data, _ := b.Bytes()
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
@@ -39,6 +42,7 @@ func TestGetBlock(t *testing.T) {
 	t.Run("Should return object with verbosity 1 ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
+
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
@@ -53,6 +57,7 @@ func TestGetBlock(t *testing.T) {
 	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
+
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
@@ -79,6 +84,7 @@ func TestGetBlockHash(t *testing.T) {
 	t.Run("Should return error for non existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(tCtx,
 			&pactus.GetBlockHashRequest{Height: 0})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -86,6 +92,7 @@ func TestGetBlockHash(t *testing.T) {
 	t.Run("Should return height of existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(tCtx,
 			&pactus.GetBlockHashRequest{Height: 100})
+
 		assert.NoError(t, err)
 		assert.Equal(t, b.Hash().Bytes(), res.Hash)
 	})
@@ -101,6 +108,7 @@ func TestGetBlockHeight(t *testing.T) {
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
 		res, err := client.GetBlockHeight(tCtx,
 			&pactus.GetBlockHeightRequest{Hash: nil})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -108,6 +116,7 @@ func TestGetBlockHeight(t *testing.T) {
 	t.Run("Should return error for non existing block", func(t *testing.T) {
 		res, err := client.GetBlockHeight(tCtx,
 			&pactus.GetBlockHeightRequest{Hash: hash.GenerateTestHash().Bytes()})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -115,6 +124,7 @@ func TestGetBlockHeight(t *testing.T) {
 	t.Run("Should return height of existing block", func(t *testing.T) {
 		res, err := client.GetBlockHeight(tCtx,
 			&pactus.GetBlockHeightRequest{Hash: b.Hash().Bytes()})
+
 		assert.NoError(t, err)
 		assert.Equal(t, uint32(100), res.Height)
 	})
@@ -128,6 +138,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 	t.Run("Should return the last block height", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(tCtx,
 			&pactus.GetBlockchainInfoRequest{})
+
 		assert.NoError(t, err)
 		assert.Equal(t, tMockState.TestStore.LastHeight, res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
@@ -143,6 +154,7 @@ func TestGetAccount(t *testing.T) {
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
 			&pactus.GetAccountRequest{Address: ""})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -150,6 +162,7 @@ func TestGetAccount(t *testing.T) {
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
 			&pactus.GetAccountRequest{Address: crypto.GenerateTestAddress().String()})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -157,6 +170,7 @@ func TestGetAccount(t *testing.T) {
 	t.Run("Should return account details", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
 			&pactus.GetAccountRequest{Address: signer.Address().String()})
+
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Account.Balance, acc.Balance())
@@ -167,12 +181,12 @@ func TestGetAccount(t *testing.T) {
 }
 func TestGetValidator(t *testing.T) {
 	conn, client := testBlockchainClient(t)
-
 	val1 := tMockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx,
 			&pactus.GetValidatorRequest{Address: ""})
+
 		assert.Error(t, err, "Error should be returned")
 		assert.Nil(t, res, "Response should be empty")
 	})
@@ -180,6 +194,7 @@ func TestGetValidator(t *testing.T) {
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx,
 			&pactus.GetValidatorRequest{Address: crypto.GenerateTestAddress().String()})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -187,6 +202,7 @@ func TestGetValidator(t *testing.T) {
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx,
 			&pactus.GetValidatorRequest{Address: val1.Address().String()})
+
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
@@ -203,6 +219,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx,
 			&pactus.GetValidatorByNumberRequest{Number: -1})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -210,6 +227,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx,
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number() + 1})
+
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -217,6 +235,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(tCtx,
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number()})
+
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
@@ -232,6 +251,7 @@ func TestGetValidators(t *testing.T) {
 	t.Run("should return list of validators", func(t *testing.T) {
 		res, err := client.GetValidators(tCtx,
 			&pactus.GetValidatorsRequest{})
+
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, 21, len(res.GetValidators()))
@@ -252,9 +272,9 @@ func TestConsensusInfo(t *testing.T) {
 
 	t.Run("Should return the consensus info", func(t *testing.T) {
 		res, err := client.GetConsensusInfo(tCtx, &pactus.GetConsensusInfoRequest{})
+
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-
 		assert.False(t, res.Instances[0].Active, true)
 		assert.True(t, res.Instances[1].Active, true)
 		assert.Equal(t, res.Instances[1].Height, uint32(100))
