@@ -11,9 +11,13 @@ import (
 
 func TestSigning(t *testing.T) {
 	msg := []byte("zarb")
-	prv, _ := PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
-	pub, _ := PublicKeyFromString("public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjrvqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a")
-	sig, _ := SignatureFromString("ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
+	prv, _ := PrivateKeyFromString(
+		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
+	pub, _ := PublicKeyFromString(
+		"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
+			"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a")
+	sig, _ := SignatureFromString(
+		"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
 	addr, _ := crypto.AddressFromString("pc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3xk73tq")
 
 	sig1 := prv.Sign(msg)
@@ -24,9 +28,12 @@ func TestSigning(t *testing.T) {
 
 func TestSignatureAggregation(t *testing.T) {
 	msg := []byte("zarb")
-	prv1, _ := PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
-	prv2, _ := PrivateKeyFromString("SECRET1PDUV97560CWDGW2DR453YPUT84REN04G0DZFAPJQL5DV0CKDAN75QCJEV6F")
-	agg, _ := SignatureFromString("a390ffec7061827b7e89193a26841dd9e3537b5db0af55661b624e8b93b855e9f65278850002ea72fb3098e674220eca")
+	prv1, _ := PrivateKeyFromString(
+		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
+	prv2, _ := PrivateKeyFromString(
+		"SECRET1PDUV97560CWDGW2DR453YPUT84REN04G0DZFAPJQL5DV0CKDAN75QCJEV6F")
+	agg, _ := SignatureFromString(
+		"a390ffec7061827b7e89193a26841dd9e3537b5db0af55661b624e8b93b855e9f65278850002ea72fb3098e674220eca")
 	sig1 := prv1.Sign(msg).(*Signature)
 	sig2 := prv2.Sign(msg).(*Signature)
 	assert.True(t, Aggregate([]*Signature{sig1, sig2}).EqualsTo(agg))
@@ -136,7 +143,8 @@ func TestHashToCurve(t *testing.T) {
 				"03a87ae2caf14e8ee52e51fa2ed8eefe80f02457004ba4d486d6aa1f517c0889501dc7413753f9599b099ebcbbd2d709",
 		},
 		{
-			"q128_qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+			"q128_qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
+				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
 			"15f68eaa693b95ccb85215dc65fa81038d69629f70aeee0d0f677cf22285e7bf58d7cb86eefe8f2e9bc3f8cb84fac488" +
 				"1807a1d50c29f430b8cafc4f8638dfeeadf51211e1602a5f184443076715f91bb90a48ba1e370edce6ae1062f5e6dd38",
 		},

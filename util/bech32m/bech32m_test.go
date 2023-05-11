@@ -197,7 +197,9 @@ func TestCanDecodeUnlimtedBech32(t *testing.T) {
 		t.Fatalf("Unexpected hrp: %v", hrp)
 	}
 	decodedHex := fmt.Sprintf("%x", data)
-	expected := "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000"
+	expected :=
+		"00000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+			"00000000010000000000000000000000000000000000000000000000000000000000000000000000000"
 	if decodedHex != expected {
 		t.Fatalf("Unexpected decoded data: %s", decodedHex)
 	}
@@ -375,7 +377,8 @@ func TestBech32Base256(t *testing.T) {
 // expect to be 2 for a fully optimized cycle.
 func BenchmarkEncodeDecodeCycle(b *testing.B) {
 	// Use a fixed, 49-byte raw data for testing.
-	inputData, err := hex.DecodeString("cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1")
+	inputData, err := hex.DecodeString(
+		"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1")
 	if err != nil {
 		b.Fatalf("failed to initialize input data: %v", err)
 	}
@@ -455,11 +458,13 @@ func TestConvertBits(t *testing.T) {
 		// Large conversions.
 		{
 			"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1",
-			"190f13030c170e1b1916141a13040a14040b011f01040e01071e0607160b1906070e06130801131b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408",
+			"190f13030c170e1b1916141a13040a14040b011f01040e01071e0607160b1906070e06130801131" +
+				"b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408",
 			8, 5, true,
 		},
 		{
-			"190f13030c170e1b1916141a13040a14040b011f01040e01071e0607160b1906070e06130801131b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408",
+			"190f13030c170e1b1916141a13040a14040b011f01040e01071e0607160b1906070e06130801131" +
+				"b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408",
 			"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed100",
 			5, 8, true,
 		},
@@ -530,7 +535,8 @@ func TestConvertBitsFailures(t *testing.T) {
 // Only a single allocation is expected, which is used for the output array.
 func BenchmarkConvertBitsDown(b *testing.B) {
 	// Use a fixed, 49-byte raw data for testing.
-	inputData, err := hex.DecodeString("cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1")
+	inputData, err := hex.DecodeString(
+		"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1")
 	if err != nil {
 		b.Fatalf("failed to initialize input data: %v", err)
 	}
@@ -552,7 +558,9 @@ func BenchmarkConvertBitsDown(b *testing.B) {
 // Only a single allocation is expected, which is used for the output array.
 func BenchmarkConvertBitsUp(b *testing.B) {
 	// Use a fixed, 79-byte raw data for testing.
-	inputData, err := hex.DecodeString("190f13030c170e1b1916141a13040a14040b011f01040e01071e0607160b1906070e06130801131b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408")
+	inputData, err := hex.DecodeString(
+		"190f13030c170e1b1916141a13040a14040b011f01040e01071e0607160b1906070e06130801131" +
+			"b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408")
 	if err != nil {
 		b.Fatalf("failed to initialize input data: %v", err)
 	}

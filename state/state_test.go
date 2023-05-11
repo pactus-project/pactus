@@ -80,7 +80,8 @@ func setup(t *testing.T) {
 	tState4, _ = st4.(*state)
 }
 
-func makeBlockAndCertificate(t *testing.T, round int16, signers ...crypto.Signer) (*block.Block, *block.Certificate) {
+func makeBlockAndCertificate(t *testing.T, round int16,
+	signers ...crypto.Signer) (*block.Block, *block.Certificate) {
 	var st *state
 	if tState1.committee.IsProposer(tState1.signers[0].Address(), round) {
 		st = tState1
@@ -100,9 +101,9 @@ func makeBlockAndCertificate(t *testing.T, round int16, signers ...crypto.Signer
 	return b, c
 }
 
-func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16, signers ...crypto.Signer) *block.Certificate {
+func makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16,
+	signers ...crypto.Signer) *block.Certificate {
 	assert.NotZero(t, len(signers))
-
 	sigs := make([]*bls.Signature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)
 	committers := []int32{0, 1, 2, 3}
@@ -151,7 +152,8 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.Error(t, err, "Should not propose")
 	assert.Nil(t, b1)
 
-	trx := tx.NewSendTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), tValSigner2.Address(), 1000, 1000, "")
+	trx := tx.NewSendTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(),
+		tValSigner2.Address(), 1000, 1000, "")
 	tValSigner1.SignMsg(trx)
 	assert.NoError(t, tCommonTxPool.AppendTx(trx))
 
@@ -306,7 +308,7 @@ func TestBlockProposal(t *testing.T) {
 	t.Run("validity of proposed block", func(t *testing.T) {
 		b, err := tState2.ProposeBlock(tState2.signers[0], crypto.GenerateTestAddress(), 0)
 		assert.NoError(t, err)
-		assert.NoError(t, tState1.ValidateBlock(b)) // State1 check state2's proposed block
+		assert.NoError(t, tState1.ValidateBlock(b))
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
@@ -370,8 +372,10 @@ func TestSortition(t *testing.T) {
 	height := uint32(1)
 	for ; height <= 11; height++ {
 		if height == 2 {
-			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(), pub.Address(), pub, 10000000, 1000, "")
+			trx := tx.NewBondTx(tState1.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(),
+				pub.Address(), pub, 10000000, 1000, "")
 			tValSigner1.SignMsg(trx)
+
 			assert.NoError(t, tCommonTxPool.AppendTx(trx))
 		}
 
@@ -687,7 +691,8 @@ func TestCommittingInvalidBlock(t *testing.T) {
 	txs := block.NewTxs()
 	trx := tState2.createSubsidyTx(crypto.GenerateTestAddress(), 0)
 	txs.Append(trx)
-	b := block.MakeBlock(2, util.Now(), txs, tState2.lastInfo.BlockHash(), tState2.stateRoot(), tState2.lastInfo.Certificate(), tState2.lastInfo.SortitionSeed(), tState2.signers[0].Address())
+	b := block.MakeBlock(2, util.Now(), txs, tState2.lastInfo.BlockHash(), tState2.stateRoot(),
+		tState2.lastInfo.Certificate(), tState2.lastInfo.SortitionSeed(), tState2.signers[0].Address())
 	c := makeCertificateAndSign(t, b.Hash(), 0, tValSigner1, tValSigner2, tValSigner3, tValSigner4)
 
 	// tState1 receives a block with version 2 and rejects it.

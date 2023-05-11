@@ -25,24 +25,31 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	tSandbox.UpdateValidator(val)
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, 1, crypto.GenerateTestAddress(), addr, amt, fee, "invalid validator")
+		trx := tx.NewWithdrawTx(tStamp500000, 1, crypto.GenerateTestAddress(), addr,
+			amt, fee, "invalid validator")
+
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+2, val.Address(), addr, amt, fee, "invalid sequence")
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+2, val.Address(), addr,
+			amt, fee, "invalid sequence")
+
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt+1, fee, "insufficient balance")
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr,
+			amt+1, fee, "insufficient balance")
+
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInsufficientFunds)
 	})
 
 	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
 		assert.Zero(t, val.UnbondingHeight())
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr,
+			amt, fee, "need to unbond first")
 
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, fee, "need to unbond first")
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
@@ -50,24 +57,26 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	tSandbox.UpdateValidator(val)
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.NotZero(t, val.UnbondingHeight())
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr,
+			amt, fee, "not passed unbonding interval")
 
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, fee, "not passed unbonding interval")
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
 	tSandbox.TestStore.AddTestBlock(500001)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, amt, fee, "should be able to empty stake")
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr,
+			amt, fee, "should be able to empty stake")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
-
-		// Execute again, should fail
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Error(t, exe.Execute(trx, tSandbox), "Execute again, should fail")
 	})
 
 	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr, 1, fee, "can't withdraw empty stake")
+		trx := tx.NewWithdrawTx(tStamp500000, val.Sequence()+1, val.Address(), addr,
+			1, fee, "can't withdraw empty stake")
+
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 

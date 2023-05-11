@@ -20,8 +20,10 @@ func setup(t *testing.T) {
 }
 
 func TestKeys(t *testing.T) {
-	assert.Equal(t, blockKey(1234), key{0x1, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-	assert.Equal(t, certificateKey(1234), key{0x2, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+	assert.Equal(t, blockKey(1234),
+		key{0x1, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+	assert.Equal(t, certificateKey(1234),
+		key{0x2, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
 }
 
 func TestCacheBlocks(t *testing.T) {
