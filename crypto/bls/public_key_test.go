@@ -2,7 +2,6 @@ package bls
 
 import (
 	"encoding/hex"
-	"fmt"
 	"strings"
 	"testing"
 
@@ -30,10 +29,6 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 }
 
 func TestPublicKeyEncoding(t *testing.T) {
-	_, err := PublicKeyFromString(
-		"tpublic1pjt7vh4m9fh4wcfttdczgcvc3nzku0tvj2enh75qet5c4p5v36c9wjdkt2pjjqdctxu6dueqk99m" +
-			"0yraq5nnw2sxqk9fj7rcdde4sqgfh9ef0k9qgx7d86ykyw36ymp52dvcyezjxdmp997nmkwutwlr3svvu7aq9")
-	fmt.Println(err.Error())
 	pub, _ := GenerateTestKeyPair()
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, pub.Encode(w1))
@@ -71,55 +66,63 @@ func TestNilSignature(t *testing.T) {
 
 func TestPublicKeyBytes(t *testing.T) {
 	tests := []struct {
-		name    string
+		errMsg  string
 		encoded string
 		valid   bool
 		result  []byte
 	}{
 		{
-			"empty private key",
-			"",
-			false, nil},
-		{
-			"invalid character",
-			"INV",
+			"invalid separator index -1",
+			"not_proper_encoded",
 			false, nil,
 		},
 		{
-			"no type",
+			"invalid bech32 string length 0",
+			"",
+			false, nil,
+		},
+		{
+			"invalid character not part of charset: 105",
+			"public1ioiooi",
+			false, nil,
+		},
+		{
+			"invalid bech32 string length 0",
 			"public134jkgz",
 			false, nil,
 		},
-		{"zero public key",
+		{"compression flag must be set",
 			"public1pqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
 				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqjzu9w8",
-			false, nil},
-		{"invalid public key",
+			false, nil,
+		},
+		{"input string must be zero when infinity flag is set",
 			"public1pllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll" +
 				"llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllluhpuzyf",
-			false, nil},
-		{"infinite public key",
+			false, nil,
+		},
+		{"public key is zero",
 			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
 				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9",
 			false, nil,
 		},
-		{"invalid hrp",
+		{"invalid hrp: xxx",
 			"xxx1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjrvqc" +
-				"vf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a",
+				"vf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5evslaq",
 			false, nil,
 		},
-		{"invalid checksum",
+		{"invalid checksum (expected jhx47a got jhx470)",
 			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
-				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47b",
+				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx470",
 			false, nil,
 		},
-		{"invalid length",
+		{"public key should be 96 bytes, but it is 95 bytes",
 			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
 				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg73y98kl",
 			false,
 			nil,
 		},
-		{"valid public key",
+		{"",
 			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
 				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a",
 			true,
@@ -132,19 +135,15 @@ func TestPublicKeyBytes(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for no, test := range tests {
 		pub, err := PublicKeyFromString(test.encoded)
 		if test.valid {
-			assert.NoError(t, err,
-				"test '%v'. unexpected error", test.name)
-			assert.Equal(t, pub.Bytes(), test.result,
-				"test '%v'. invalid bytes", test.name)
-			assert.Equal(t, pub.String(), test.encoded,
-				"test '%v'. invalid encoded", test.name)
+			assert.NoError(t, err, "test %v: unexpected error", no)
+			assert.Equal(t, pub.Bytes(), test.result, "test %v: invalid bytes", no)
+			assert.Equal(t, pub.String(), test.encoded, "test %v: invalid encoded", no)
 		} else {
-			assert.Error(t, err,
-				"test '%v'. should return error", test.name)
 			assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}
 }

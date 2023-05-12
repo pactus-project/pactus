@@ -15,137 +15,132 @@ func TestFingerprint(t *testing.T) {
 }
 
 func TestToString(t *testing.T) {
-	randomAddr := GenerateTestAddress()
 	tests := []struct {
-		name      string
+		errMsg    string
 		encoded   string
 		decodable bool
 		result    *Address
 	}{
 		{
-			"treasury address",
+			"",
 			"000000000000000000000000000000000000000000",
 			true,
 			&Address{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		},
 		{
-			"empty address",
+			"invalid bech32 string length 0",
 			"",
 			false,
 			nil,
 		},
 		{
-			"invalid character",
-			"inv",
+			"invalid separator index -1",
+			"not_proper_encoded",
 			false,
 			nil,
 		},
 		{
-			"no type",
+			"invalid character not part of charset: 105",
+			"pc1ioiooi",
+			false,
+			nil,
+		},
+		{
+			"invalid bech32 string length 0",
 			"pc19p72rf",
 			false,
 			nil,
 		},
 		{
-			"invalid hrp",
+			"invalid hrp: qc",
 			"qc1z0hrct7eflrpw4ccrttxzs4qud2axex4dh8zz75",
 			false,
 			nil,
 		},
 		{
-			"invalid checksum",
+			"invalid checksum (expected cdzdfr got g8xaf5)",
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dg8xaf5",
 			false,
 			nil,
 		},
 		{
-			"invalid length",
+			"address should be 21 bytes, but it is 20 bytes",
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axexs2dhdk8",
 			false,
 			nil,
 		},
 		{
-			"invalid type",
+			"invalid address key type: 2",
 			"pc1z0hrct7eflrpw4ccrttxzs4qud2axex4d9xjs77",
 			false,
 			nil,
 		},
 		{
-			"valid address in uppercase format",
-			"PC1P0HRCT7EFLRPW4CCRTTXZS4QUD2AXEX4DCDZDFR",
+			"",
+			"PC1P0HRCT7EFLRPW4CCRTTXZS4QUD2AXEX4DCDZDFR", // UPPERCASE
 			true,
 			&Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
 				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
 		},
 		{
-			"valid address",
+			"",
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr",
 			true,
 			&Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
 				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
 		},
-		{
-			"random address",
-			randomAddr.String(),
-			true,
-			&randomAddr,
-		},
 	}
-	for _, test := range tests {
+	for no, test := range tests {
 		addr, err := AddressFromString(test.encoded)
 		if test.decodable {
-			assert.NoError(t, err,
-				"test '%v' failed. unexpected error", test.name)
-			assert.Equal(t, addr, *test.result,
-				"test '%v' failed.. unexpected result", test.name)
-			assert.Equal(t, addr.String(), strings.ToLower(test.encoded),
-				"test '%v' failed.. encoded failed", test.name)
+			assert.NoError(t, err, "test %v: unexpected error", no)
+			assert.Equal(t, addr, *test.result, "test %v: invalid result", no)
+			assert.Equal(t, addr.String(), strings.ToLower(test.encoded), "test %v: invalid encode", no)
 		} else {
-			assert.Error(t, err,
-				"test '%v failed.. should return error", test.name)
-			assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+			assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress, "test %v: invalid error code", no)
+			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}
 }
 
 func TestAddressSanityCheck(t *testing.T) {
 	tests := []struct {
-		name    string
+		errMsg  string
 		hex     string
 		invalid bool
 	}{
 		{
-			"type zero with non zero data",
+			"invalid address data",
 			"00ffffffffffffffffffffffffffffffffffffffff",
 			true,
 		},
 		{
-			"invalid type",
+			"invalid address type",
 			"020000000000000000000000000000000000000000",
 			true,
 		},
 		{
-			"treasury address",
+			"",
 			"000000000000000000000000000000000000000000",
 			false,
 		},
 		{
-			"valid address",
+			"",
 			"010000000000000000000000000000000000000000",
 			false,
 		},
 	}
-	for _, test := range tests {
+	for no, test := range tests {
 		data, _ := hex.DecodeString(test.hex)
 		addr := Address{}
 		copy(addr[:], data)
 
-		if test.invalid {
-			assert.Error(t, addr.SanityCheck(),
-				"test '%v'. expected error", test.name)
+		err := addr.SanityCheck()
+		if !test.invalid {
+			assert.NoError(t, err, "test %v unexpected error", no)
 		} else {
-			assert.NoError(t, addr.SanityCheck(),
-				"test '%v'. unexpected error", test.name)
+			assert.Error(t, err, "test %v expected error", no)
+			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}
 }

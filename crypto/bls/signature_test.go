@@ -52,7 +52,7 @@ func TestVerifyingSignature(t *testing.T) {
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 
-	assert.NotEqual(t, sig1, sig2)
+	assert.False(t, sig1.EqualsTo(sig2))
 	assert.NoError(t, pb1.Verify(msg, sig1))
 	assert.NoError(t, pb2.Verify(msg, sig2))
 	assert.Equal(t, errors.Code(pb1.Verify(msg, sig2)), errors.ErrInvalidSignature)
@@ -62,57 +62,65 @@ func TestVerifyingSignature(t *testing.T) {
 
 func TestSignatureBytes(t *testing.T) {
 	tests := []struct {
-		name    string
+		errMsg  string
 		encoded string
-		bytes   []byte
 		valid   bool
+		bytes   []byte
 	}{
-		{"invalid input",
-			"inv",
-			nil, false,
+		{
+			"encoding/hex: invalid byte: U+006E 'n'",
+			"not_proper_encoded",
+			false, nil,
 		},
-		{"nil signature",
+		{
+			"signature should be 48 bytes, but it is 0 bytes",
 			"",
-			nil, false,
+			false, nil,
 		},
-		{"invalid length",
+		{
+			"encoding/hex: odd length hex string",
+			"0",
+			false, nil,
+		},
+		{
+			"signature should be 48 bytes, but it is 1 bytes",
 			"00",
-			nil, false,
+			false, nil,
 		},
-		{"zero signature",
+		{
+			"compression flag must be set",
 			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-			nil, false,
+			false, nil,
 		},
-		{"invalid signature",
-			"fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-			nil, false,
+		{
+			"input string must be zero when infinity flag is set",
+			"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+			false, nil,
 		},
-		{"infinite signature",
+		{
+			"signature is zero",
 			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-			nil, false,
+			false, nil,
 		},
-		{"valid signature",
+		{
+			"",
 			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
+			true,
 			[]byte{0xad, 0x0f, 0x88, 0xce, 0xc8, 0x15, 0xe9, 0xb8, 0xaf, 0x3f, 0x01, 0x36, 0x29, 0x7c, 0xb2, 0x42,
 				0xed, 0x8b, 0x63, 0x69, 0xaf, 0x72, 0x3f, 0xbd, 0xac, 0x07, 0x7f, 0xa9, 0x27, 0xf5, 0x78, 0x0d,
 				0xb7, 0xdf, 0x47, 0xc7, 0x7f, 0xb5, 0x3f, 0x3a, 0x22, 0x32, 0x46, 0x73, 0xf0, 0x00, 0xc7, 0x92},
-			true,
 		},
 	}
 
-	for _, test := range tests {
+	for no, test := range tests {
 		sig, err := SignatureFromString(test.encoded)
 		if test.valid {
-			assert.NoError(t, err,
-				"test '%v'. unexpected error", test.name)
-			assert.Equal(t, sig.Bytes(), test.bytes,
-				"test '%v'. invalid bytes", test.name)
-			assert.Equal(t, sig.String(), test.encoded,
-				"test '%v'. invalid encoded", test.name)
+			assert.NoError(t, err, "test %v: unexpected error", no)
+			assert.Equal(t, sig.Bytes(), test.bytes, "test %v: invalid bytes", no)
+			assert.Equal(t, sig.String(), test.encoded, "test %v: invalid encode", no)
 		} else {
-			assert.Error(t, err,
-				"test '%v'. should return error", test.name)
-			assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
+			assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature, "test %v: invalid error code", no)
+			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}
 }

@@ -26,7 +26,7 @@ func TestSigning(t *testing.T) {
 	assert.Equal(t, pub.Address(), addr)
 }
 
-func TestSignatureAggregation(t *testing.T) {
+func TestSignatureAggregate(t *testing.T) {
 	msg := []byte("zarb")
 	prv1, _ := PrivateKeyFromString(
 		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
@@ -36,10 +36,12 @@ func TestSignatureAggregation(t *testing.T) {
 		"a390ffec7061827b7e89193a26841dd9e3537b5db0af55661b624e8b93b855e9f65278850002ea72fb3098e674220eca")
 	sig1 := prv1.Sign(msg).(*Signature)
 	sig2 := prv2.Sign(msg).(*Signature)
+
 	assert.True(t, Aggregate([]*Signature{sig1, sig2}).EqualsTo(agg))
+	assert.False(t, prv1.EqualsTo(prv2))
 }
 
-func TestAggregationFailed(t *testing.T) {
+func TestAggregateFailed(t *testing.T) {
 	pub1, prv1 := GenerateTestKeyPair()
 	pub2, prv2 := GenerateTestKeyPair()
 	pub3, prv3 := GenerateTestKeyPair()
@@ -87,7 +89,11 @@ func TestAggregationFailed(t *testing.T) {
 	assert.True(t, VerifyAggregated(agg1, pubs4, msg1))
 }
 
-func TestAggregationOnlyOneSignature(t *testing.T) {
+func TestAggregateNil(t *testing.T) {
+	assert.Nil(t, Aggregate(nil))
+}
+
+func TestAggregateOnlyOneSignature(t *testing.T) {
 	_, prv1 := GenerateTestKeyPair()
 	msg1 := []byte("zarb")
 	sig1 := prv1.Sign(msg1).(*Signature)
@@ -97,7 +103,7 @@ func TestAggregationOnlyOneSignature(t *testing.T) {
 }
 
 // TODO: should we check for duplication here?
-func TestDuplicatedAggregation(t *testing.T) {
+func TestDuplicatedAggregate(t *testing.T) {
 	pub1, prv1 := GenerateTestKeyPair()
 	pub2, prv2 := GenerateTestKeyPair()
 
@@ -151,11 +157,11 @@ func TestHashToCurve(t *testing.T) {
 	}
 
 	g1 := bls12381.NewG1()
-	for i, test := range tests {
+	for no, test := range tests {
 		mappedPoint, _ := g1.HashToCurve([]byte(test.msg), domain)
 		d, _ := hex.DecodeString(test.expected)
 		expectedPoint, _ := g1.FromBytes(d)
 		assert.Equal(t, mappedPoint, expectedPoint,
-			"test '%v' failed. not equal", i)
+			"test %v: not match", no)
 	}
 }

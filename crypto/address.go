@@ -44,7 +44,7 @@ func AddressFromString(text string) (Address, error) {
 	}
 
 	if typ != SignatureTypeBLS {
-		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "invalid private key type: %v", typ)
+		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "invalid address key type: %v", typ)
 	}
 
 	// The regrouped data must be 20 bytes.
@@ -90,10 +90,10 @@ func (addr Address) String() string {
 func (addr *Address) SanityCheck() error {
 	if addr[0] == 0 {
 		if !addr.EqualsTo(TreasuryAddress) {
-			return errors.Errorf(errors.ErrInvalidAddress, "invalid data")
+			return errors.Errorf(errors.ErrInvalidAddress, "invalid address data")
 		}
 	} else if addr[0] != SignatureTypeBLS {
-		return errors.Errorf(errors.ErrInvalidAddress, "invalid type")
+		return errors.Errorf(errors.ErrInvalidAddress, "invalid address type")
 	}
 	return nil
 }
