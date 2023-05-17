@@ -74,7 +74,7 @@ func main() {
 	})
 	app.Command("tx", "Create, sign and publish a transaction", func(k *cli.Cmd) {
 		k.Command("bond", "Create, sign and publish a bond transaction", BondTx())
-		k.Command("send", "Create, sign and publish a send transaction", TransferTx())
+		k.Command("transfer", "Create, sign and publish a transfer transaction", TransferTx())
 		k.Command("unbond", "Create, sign and publish an unbond transaction", UnbondTx())
 		k.Command("withdraw", "Create, sign and publish a withdraw transaction", WithdrawTx())
 	})
