@@ -20,7 +20,7 @@ const (
 func (t Type) String() string {
 	switch t {
 	case PayloadTypeTransfer:
-		return "send"
+		return "transfer"
 	case PayloadTypeBond:
 		return "bond"
 	case PayloadTypeUnbond:
