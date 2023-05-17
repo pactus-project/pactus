@@ -19,7 +19,7 @@ func TestCommitExecute(t *testing.T) {
 	h := uint32(4)
 	r := int16(0)
 	p1 := makeProposal(t, h, r)
-	trx := tx.NewSendTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(),
+	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(),
 		tSigners[1].Address(), 1000, 1000, "proposal changer")
 	tSigners[0].SignMsg(trx)
 	assert.NoError(t, tTxPool.AppendTx(trx))

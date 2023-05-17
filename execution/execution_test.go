@@ -38,20 +38,20 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Genesis stamp (expired), Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(hash.UndefHash.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
 		signer1.SignMsg(trx)
 		assert.Error(t, exe.Execute(trx, sb))
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(block1.Stamp(), 1, addr1, rcvAddr, 1000, 1000,
+		trx := tx.NewTransferTx(block1.Stamp(), 1, addr1, rcvAddr, 1000, 1000,
 			"expired-stamp")
 		signer1.SignMsg(trx)
 		assert.Error(t, exe.Execute(trx, sb))
 	})
 
 	t.Run("stamp is valid", func(t *testing.T) {
-		trx := tx.NewSendTx(block3.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "ok")
+		trx := tx.NewTransferTx(block3.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "ok")
 		signer1.SignMsg(trx)
 		assert.NoError(t, exe.Execute(trx, sb))
 	})
@@ -68,25 +68,25 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 1, "invalid fee")
+		trx := tx.NewTransferTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 1, "invalid fee")
 		signer1.SignMsg(trx)
 		assert.Error(t, exe.Execute(trx, sb))
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 1001, "invalid fee")
+		trx := tx.NewTransferTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 1001, "invalid fee")
 		signer1.SignMsg(trx)
 		assert.Error(t, exe.Execute(trx, sb))
 	})
 
 	t.Run("Invalid fee (subsidy tx), Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(block3.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1, "invalid fee")
+		trx := tx.NewTransferTx(block3.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1, "invalid fee")
 		assert.Error(t, exe.Execute(trx, sb))
 		assert.Error(t, exe.checkFee(trx, sb))
 	})
 
 	t.Run("Invalid fee (send tx), Should returns error", func(t *testing.T) {
-		trx := tx.NewSendTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 0, "invalid fee")
+		trx := tx.NewTransferTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 0, "invalid fee")
 		assert.Error(t, exe.Execute(trx, sb))
 		assert.Error(t, exe.checkFee(trx, sb))
 	})
@@ -232,7 +232,7 @@ func TestFee(t *testing.T) {
 	receiver := crypto.GenerateTestAddress()
 	stamp := hash.GenerateTestStamp()
 	for i, test := range tests {
-		trx := tx.NewSendTx(stamp, 1, sender, receiver, test.amount, test.fee,
+		trx := tx.NewTransferTx(stamp, 1, sender, receiver, test.amount, test.fee,
 			"testing fee")
 		err := exe.checkFee(trx, sb)
 

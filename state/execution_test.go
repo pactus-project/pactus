@@ -25,7 +25,7 @@ func TestProposeBlock(t *testing.T) {
 	invSortitionTx, _ := tx.GenerateTestSortitionTx()
 
 	pub, _ := bls.GenerateTestKeyPair()
-	trx1 := tx.NewSendTx(b1.Stamp(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
+	trx1 := tx.NewTransferTx(b1.Stamp(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
 	tValSigner1.SignMsg(trx1)
 
 	trx2 := tx.NewBondTx(b1.Stamp(), 2, tValSigner1.Address(), pub.Address(), pub, 1000, 1000, "")
@@ -60,7 +60,7 @@ func TestExecuteBlock(t *testing.T) {
 	validSubsidyTx := tState1.createSubsidyTx(rewardAddr, 1000)
 	invSendTx, _ := tx.GenerateTestSendTx()
 
-	validTx1 := tx.NewSendTx(b1.Stamp(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
+	validTx1 := tx.NewTransferTx(b1.Stamp(), 1, tValSigner1.Address(), tValSigner1.Address(), 1, 1000, "")
 	tValSigner1.SignMsg(validTx1)
 
 	assert.NoError(t, tState1.txPool.AppendTx(invSendTx))

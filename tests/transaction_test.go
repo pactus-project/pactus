@@ -22,7 +22,7 @@ func sendRawTx(_ *testing.T, raw []byte) error {
 func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
 	stamp := lastHash().Stamp()
 	seq := getSequence(sender.Address())
-	trx := tx.NewSendTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
+	trx := tx.NewTransferTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Bytes()

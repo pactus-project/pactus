@@ -102,7 +102,7 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	var trx *tx.Tx
 	switch m.typ {
 	case payload.PayloadTypeTransfer:
-		trx = tx.NewSendTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
+		trx = tx.NewTransferTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
 	case payload.PayloadTypeBond:
 		trx = tx.NewBondTx(*m.stamp, m.seq, *m.from, *m.to, m.pub, m.amount, m.fee, m.memo)
 	case payload.PayloadTypeUnbond:

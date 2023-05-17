@@ -152,7 +152,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.Error(t, err, "Should not propose")
 	assert.Nil(t, b1)
 
-	trx := tx.NewSendTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(),
+	trx := tx.NewTransferTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(),
 		tValSigner2.Address(), 1000, 1000, "")
 	tValSigner1.SignMsg(trx)
 	assert.NoError(t, tCommonTxPool.AppendTx(trx))
