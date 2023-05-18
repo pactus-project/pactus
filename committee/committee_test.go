@@ -41,21 +41,13 @@ func TestInvalidProposerJoinAndLeave(t *testing.T) {
 }
 
 func TestProposerMove(t *testing.T) {
-	pub1, _ := bls.GenerateTestKeyPair()
-	pub2, _ := bls.GenerateTestKeyPair()
-	pub3, _ := bls.GenerateTestKeyPair()
-	pub4, _ := bls.GenerateTestKeyPair()
-	pub5, _ := bls.GenerateTestKeyPair()
-	pub6, _ := bls.GenerateTestKeyPair()
-	pub7, _ := bls.GenerateTestKeyPair()
-
-	val1 := validator.NewValidator(pub1, 1)
-	val2 := validator.NewValidator(pub2, 2)
-	val3 := validator.NewValidator(pub3, 3)
-	val4 := validator.NewValidator(pub4, 4)
-	val5 := validator.NewValidator(pub5, 5)
-	val6 := validator.NewValidator(pub6, 6)
-	val7 := validator.NewValidator(pub7, 7)
+	val1, _ := validator.GenerateTestValidator(1)
+	val2, _ := validator.GenerateTestValidator(2)
+	val3, _ := validator.GenerateTestValidator(3)
+	val4, _ := validator.GenerateTestValidator(4)
+	val5, _ := validator.GenerateTestValidator(5)
+	val6, _ := validator.GenerateTestValidator(6)
+	val7, _ := validator.GenerateTestValidator(7)
 
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
@@ -66,26 +58,33 @@ func TestProposerMove(t *testing.T) {
 	// +v+-+-+-+-+-+-+    +-+v+-+-+-+-+-+    +-+-+-+-+-+v+-+    +v+-+-+-+-+-+-+
 	//
 
+	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
+	assert.Equal(t, committee.Proposer(7).Number(), int32(1))
+	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+
 	// Height 1001
 	committee.Update(0, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(3))
+	assert.Equal(t, committee.Proposer(7).Number(), int32(2))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
 
 	// Height 1002
 	committee.Update(3, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
+	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
 
 	// Height 1003
 	committee.Update(1, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
+	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
 }
 
 func TestValidatorConsistency(t *testing.T) {
-	val1, _ := validator.GenerateTestValidator(0)
-	val2, _ := validator.GenerateTestValidator(1)
-	val3, _ := validator.GenerateTestValidator(2)
-	val4, _ := validator.GenerateTestValidator(3)
+	val1, _ := validator.GenerateTestValidator(1)
+	val2, _ := validator.GenerateTestValidator(2)
+	val3, _ := validator.GenerateTestValidator(3)
+	val4, _ := validator.GenerateTestValidator(4)
 
 	committee, _ := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 
@@ -102,21 +101,13 @@ func TestValidatorConsistency(t *testing.T) {
 }
 
 func TestProposerJoin(t *testing.T) {
-	pub1, _ := bls.GenerateTestKeyPair()
-	pub2, _ := bls.GenerateTestKeyPair()
-	pub3, _ := bls.GenerateTestKeyPair()
-	pub4, _ := bls.GenerateTestKeyPair()
-	pub5, _ := bls.GenerateTestKeyPair()
-	pub6, _ := bls.GenerateTestKeyPair()
-	pub7, _ := bls.GenerateTestKeyPair()
-
-	val1 := validator.NewValidator(pub1, 1)
-	val2 := validator.NewValidator(pub2, 2)
-	val3 := validator.NewValidator(pub3, 3)
-	val4 := validator.NewValidator(pub4, 4)
-	val5 := validator.NewValidator(pub5, 5)
-	val6 := validator.NewValidator(pub6, 6)
-	val7 := validator.NewValidator(pub7, 7)
+	val1, _ := validator.GenerateTestValidator(1)
+	val2, _ := validator.GenerateTestValidator(2)
+	val3, _ := validator.GenerateTestValidator(3)
+	val4, _ := validator.GenerateTestValidator(4)
+	val5, _ := validator.GenerateTestValidator(5)
+	val6, _ := validator.GenerateTestValidator(6)
+	val7, _ := validator.GenerateTestValidator(7)
 
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
 	assert.NoError(t, err)
@@ -194,34 +185,38 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
 
-	// How committee changes when new validators join?
+	// How does the committee change when new validators join?
 	//
-	// Validators `1` to `7` are in the committee, and `1` is the oldest and also proposer.
+	// v: current proposer
+	// !: failed proposer
+	// *: joined validator
+	//
+	// Validators `1` to `7` are in the committee, with `1` being the oldest and the current proposer.
 	// +v+-+-+-+-+-+-+
 	// |1|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
-	// New validators seat before proposer.
-	// In this example `8` seats before `1` (current proposer):
+	// New validators sit before the proposer.
+	// In this example, `8` sits before `1` (the current proposer):
 	// +*+v+-+-+-+-+-+-+
 	// |8|1|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+-+
 	//
-	// Now committee should be adjusted and the oldest validator should leave.
+	// Now the committee needs to be adjusted, and the oldest validator should leave.
 	// +*+-+-+-+-+-+-+
 	// |8|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
-	// Now we move to the next proposer.
+	// Next, we move to the next proposer.
 	// +-+v+-+-+-+-+-+
 	// |8|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
 	//-------------------------------------
-	// In this test we cover these movement:
+	// In this test, we cover the following movements:
 	//
 	// h=1000, r=0         h=1001, r=0         h=1002, r=3         h=1003, r=0
-	// +v+-+-+-+-+-+-+    +*+-+-+-+-+-+-+    +-+!+!+!+v+-+-+    +-+-+-+-+*+v+-+
+	// +v+-+-+-+-+-+-+    +*+v+-+-+-+-+-+    +-+!+!+!+v+-+-+    +-+-+-+-+*+v+-+
 	// |1|2|3|4|5|6|7| => |8|2|3|4|5|6|7| => |8|2|3|4|5|6|7| => |8|2|3|5|9|6|7| =>
 	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
