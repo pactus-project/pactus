@@ -78,7 +78,6 @@ func TestProposerMove(t *testing.T) {
 	committee.Update(1, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
-
 }
 
 func TestValidatorConsistency(t *testing.T) {
