@@ -2,6 +2,7 @@ package bls
 
 import (
 	"encoding/hex"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/util/errors"
@@ -9,95 +10,81 @@ import (
 )
 
 func TestPrivateKeyToString(t *testing.T) {
-	_, randomPrv := GenerateTestKeyPair()
 	tests := []struct {
-		name      string
-		encoded   string
-		decodable bool
-		valid     bool
-		result    []byte
+		errMsg  string
+		encoded string
+		valid   bool
+		result  []byte
 	}{
 		{
-			"empty private key",
+			"invalid separator index -1",
+			"not_proper_encoded",
+			false, nil,
+		},
+		{
+			"invalid bech32 string length 0",
 			"",
-			false, false,
-			nil,
+			false, nil,
 		},
 		{
-			"invalid character",
-			"INV",
-			false, false,
-			nil,
+			"invalid character not part of charset: 105",
+			"SECRET1IOIOOI",
+			false, nil,
 		},
 		{
-			"no type",
+			"invalid bech32 string length 0",
 			"SECRET1HPZZU9",
-			false, false,
-			nil,
+			false, nil,
 		},
 		{
-			"zero private key",
+			"private key is zero",
 			"SECRET1PQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQSK004X",
-			false, false,
-			nil,
+			false, nil,
 		},
 		{
-			"invalid hrp",
+			"invalid hrp: xxx",
 			"XXX1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQMUUMJT",
-			false, false,
-			nil,
+			false, nil,
 		},
 		{
-			"invalid checksum",
+			"invalid checksum (expected qjvk67 got qjvk68)",
 			"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK68",
-			false, false,
-			nil,
+			false, nil,
 		},
 		{
-			"invalid length",
+			"private key should be 32 bytes, but it is 31 bytes",
 			"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CCZ0EU7Z",
-			false, false,
-			nil,
+			false, nil,
 		},
 		{
-			"invalid type",
+			"invalid private key type: 2",
 			"SECRET1ZDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQG04E54",
-			false, false,
-			nil,
+			false, nil,
 		},
 		{
-			"valid private key in lowercase format",
-			"secret1pdrwtlp5px0fahdx39gxzjp7fkzfalml0d5u9tt9kvqhduc99cmgqqjvk67",
-			true, true,
+			"",
+			"secret1pdrwtlp5px0fahdx39gxzjp7fkzfalml0d5u9tt9kvqhduc99cmgqqjvk67", // lowercase
+			true,
 			[]byte{0x68, 0xdc, 0xbf, 0x86, 0x81, 0x33, 0xd3, 0xdb, 0xb4, 0xd1, 0x2a, 0xc, 0x29, 0x7, 0xc9, 0xb0,
 				0x93, 0xdf, 0xef, 0xef, 0x6d, 0x38, 0x55, 0xac, 0xb6, 0x60, 0x2e, 0xde, 0x60, 0xa5, 0xc6, 0xd0},
 		},
 		{
-			"valid private key",
+			"",
 			"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67",
-			true, true,
+			true,
 			[]byte{0x68, 0xdc, 0xbf, 0x86, 0x81, 0x33, 0xd3, 0xdb, 0xb4, 0xd1, 0x2a, 0xc, 0x29, 0x7, 0xc9, 0xb0,
 				0x93, 0xdf, 0xef, 0xef, 0x6d, 0x38, 0x55, 0xac, 0xb6, 0x60, 0x2e, 0xde, 0x60, 0xa5, 0xc6, 0xd0},
-		},
-		{
-			"random private key",
-			randomPrv.String(),
-			true, true,
-			randomPrv.Bytes(),
 		},
 	}
-	for _, test := range tests {
+	for no, test := range tests {
 		prv, err := PrivateKeyFromString(test.encoded)
-		if test.decodable {
-			assert.NoError(t, err,
-				"test '%v' failed. unexpected error", test.name)
-			prv2, _ := PrivateKeyFromBytes(test.result)
-			assert.True(t, prv.EqualsTo(prv2),
-				"test '%v' failed. not equal", test.name)
+		if test.valid {
+			assert.NoError(t, err, "test %v: unexpected error", no)
+			assert.Equal(t, prv.Bytes(), test.result, "test %v: invalid bytes", no)
+			assert.Equal(t, prv.String(), strings.ToUpper(test.encoded), "test %v: invalid encoded", no)
 		} else {
-			assert.Error(t, err, "test '%v' failed. should return error", test.name)
-			assert.Equal(t, errors.Code(err), errors.ErrInvalidPrivateKey,
-				"test '%v' failed. should return error", test.name)
+			assert.Equal(t, errors.Code(err), errors.ErrInvalidPrivateKey, "test %v: invalid error code", no)
+			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}
 }
@@ -159,14 +146,3 @@ func TestKeyGen(t *testing.T) {
 		}
 	}
 }
-
-// func TestPrivateKeySanityCheck(t *testing.T) {
-// 	sc := new(bls.SecretKey)
-// 	err := sc.DeserializeHexStr("0000000000000000000000000000000000000000000000000000000000000000")
-// 	assert.NoError(t, err)
-// 	prv := PrivateKey{
-// 		secretKey: *sc,
-// 	}
-// 	assert.NoError(t, err)
-// 	assert.Error(t, prv.SanityCheck())
-// }
