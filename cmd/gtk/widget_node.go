@@ -26,6 +26,7 @@ type widgetNode struct {
 	labelLastBlockHeight *gtk.Label
 	labelBlocksLeft      *gtk.Label
 	labelCommitteeSize   *gtk.Label
+	labelValidatorNum    *gtk.Label
 	labelInCommittee     *gtk.Label
 	labelCommitteeStake  *gtk.Label
 	labelTotalStake      *gtk.Label
@@ -56,9 +57,10 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 		labelBlocksLeft:      getLabelObj(builder, "id_label_blocks_left"),
 		progressBarSynced:    getProgressBarObj(builder, "id_progress_synced"),
 		labelCommitteeSize:   getLabelObj(builder, "id_label_committee_size"),
+		labelValidatorNum:    getLabelObj(builder, "id_label_num_validators"),
 		labelInCommittee:     getLabelObj(builder, "id_label_in_committee"),
-		labelCommitteeStake:  getLabelObj(builder, "id_label_committee_stake"),
-		labelTotalStake:      getLabelObj(builder, "id_label_total_stake"),
+		labelCommitteeStake:  getLabelObj(builder, "id_label_committee_power"),
+		labelTotalStake:      getLabelObj(builder, "id_label_total_power"),
 	}
 
 	signals := map[string]interface{}{}
@@ -110,6 +112,7 @@ func (wn *widgetNode) timeout10() bool {
 		committeeSize := wn.model.node.State().Params().CommitteeSize
 		committeeStake := wn.model.node.State().CommitteePower()
 		totalStake := wn.model.node.State().TotalPower()
+		validatorNum := wn.model.node.State().TotalValidators()
 		isInCommittee := "No"
 		if wn.model.node.ConsManager().HasActiveInstance() {
 			isInCommittee = "Yes"
@@ -117,6 +120,7 @@ func (wn *widgetNode) timeout10() bool {
 
 		glib.IdleAdd(func() bool {
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
+			wn.labelValidatorNum.SetText(fmt.Sprintf("%v", validatorNum))
 			wn.labelCommitteeStake.SetText(util.ChangeToString(committeeStake))
 			wn.labelTotalStake.SetText(util.ChangeToString(totalStake))
 			wn.labelInCommittee.SetText(fmt.Sprintf("%v", isInCommittee))
