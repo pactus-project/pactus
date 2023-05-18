@@ -29,11 +29,11 @@ func newBlockStore(db *leveldb.DB) *blockStore {
 func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, block *block.Block) []blockRegion {
 	if height > 1 {
 		if !bs.hasBlock(height - 1) {
-			logger.Panic("previous block not found: %v", height)
+			logger.Panic("previous block not found", "height", height)
 		}
 	}
 	if bs.hasBlock(height) {
-		logger.Panic("duplicated block: %v", height)
+		logger.Panic("duplicated block", "height", height)
 	}
 
 	blockHash := block.Hash()

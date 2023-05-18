@@ -77,7 +77,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 
 		val, err := validator.FromBytes(value)
 		if err != nil {
-			logger.Panic("unable to decode validator: %v", err)
+			logger.Panic("unable to decode validator", "err", err)
 		}
 
 		stopped := consumer(val)
@@ -91,7 +91,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) {
 	data, err := val.Bytes()
 	if err != nil {
-		logger.Panic("unable to encode validator: %v", err)
+		logger.Panic("unable to encode validator", "err", err)
 	}
 	if !vs.hasValidator(val.Address()) {
 		vs.total++

@@ -15,7 +15,7 @@ func Init() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
-			Desc:  "Working directory to save node configuration and genesis files.",
+			Desc:  "A path to the working directory to save the wallet and node files",
 			Value: cmd.PactusHomeDir(),
 		})
 		testnetOpt := c.Bool(cli.BoolOpt{
@@ -24,7 +24,7 @@ func Init() func(c *cli.Cmd) {
 			Value: true, // TODO: make it false after mainnet launch
 		})
 
-		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file."
+		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file"
 		c.Before = func() { fmt.Println(cmd.Pactus) }
 		c.Action = func() {
 			workingDir, _ := filepath.Abs(*workingDirOpt)

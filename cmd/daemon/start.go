@@ -19,9 +19,14 @@ func Start() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		workingDirOpt := c.String(cli.StringOpt{
 			Name:  "w working-dir",
-			Desc:  "Working directory to read node configuration and genesis files",
-			Value: ".",
+			Desc:  "A path to the working directory to read the wallet and node files",
+			Value: cmd.PactusHomeDir(),
 		})
+		passwordOpt := c.String(cli.StringOpt{
+			Name: "p password",
+			Desc: "The wallet password",
+		})
+		// TODO: do we need this?
 		pprofOpt := c.String(cli.StringOpt{
 			Name: "pprof",
 			Desc: "debug pprof server address(not recommended to expose to internet)",
@@ -56,7 +61,13 @@ func Start() func(c *cli.Cmd) {
 				if !wallet.IsEncrypted() {
 					return "", true
 				}
-				password := cmd.PromptPassword("Wallet password", false)
+
+				var password string
+				if *passwordOpt != "" {
+					password = *passwordOpt
+				} else {
+					password = cmd.PromptPassword("Wallet password", false)
+				}
 				return password, true
 			}
 			gen, conf, signers, rewardAddrs, _, err := cmd.GetKeys(

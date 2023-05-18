@@ -26,7 +26,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.
 
 	kademlia, err := lp2pdht.New(ctx, host, opts...)
 	if err != nil {
-		logger.Panic("unable to start DHT service: %v", err)
+		logger.Panic("unable to start DHT service", "err", err)
 		return nil
 	}
 
