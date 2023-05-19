@@ -3,15 +3,17 @@ package network
 import (
 	"fmt"
 	"time"
+
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Config struct {
 	Name        string           `toml:"name"`
 	Listens     []string         `toml:"listens"`
-	RelayAddrs  []string         `toml:"relays"`
 	NetworkKey  string           `toml:"network_key"`
 	EnableNAT   bool             `toml:"enable_nat"`
 	EnableRelay bool             `toml:"enable_relay"`
+	RelayAddrs  []string         `toml:"relays"`
 	EnableMdns  bool             `toml:"enable_mdns"`
 	Bootstrap   *BootstrapConfig `toml:"bootstrap"`
 }
@@ -48,7 +50,7 @@ func DefaultConfig() *Config {
 		Listens:     []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
 		NetworkKey:  "network_key",
 		EnableNAT:   true,
-		EnableRelay: true,
+		EnableRelay: false,
 		EnableMdns:  false,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    addresses,
@@ -61,5 +63,10 @@ func DefaultConfig() *Config {
 
 // SanityCheck performs basic checks on the configuration.
 func (conf *Config) SanityCheck() error {
+	if conf.EnableRelay {
+		if len(conf.RelayAddrs) == 0 {
+			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
+		}
+	}
 	return nil
 }

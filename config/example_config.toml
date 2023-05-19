@@ -30,10 +30,6 @@
   # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
  ## network_key = "network_key"
 
-  # `enable_dht` indicates whether Kademlia DHT should be enabled or not.
-  # Default is true.
- ## enable_dht = true
-
   # `enable_nat` indicates whether NAT service should be enabled or not.
   # NAT service allows many machines to share a single public address.
   # Default is true.
@@ -42,11 +38,11 @@
   # `enable_relay` indicates whether relay service  should be enabled or not.
   # Relay service is a transport protocol that routes traffic between two peers over a third-party “relay” peer.
   # Default is true.
- ## enable_relay = true
+ ## enable_relay = false
 
-  # `enable_ping` indicates whether Ping service should be enabled or not.
-  # Default is true.
- ## enable_ping = true
+  # `relays` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
+  # Note: this parameter will be ignored if 'enable_relay' is 'false'.
+ ## relays = []
 
   # `enable_mdns` indicates whether MDNS should be enabled or not.
   # MDNS is a protocol to discover local peers quickly and efficiently.

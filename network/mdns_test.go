@@ -27,5 +27,4 @@ func TestMDNS(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	assert.NoError(t, net1.SendTo([]byte("test"), net2.SelfID()))
-
 }

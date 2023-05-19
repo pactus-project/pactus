@@ -14,7 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// https://github.com/libp2p/go-libp2p/blob/5a0411b8eba4276b907c21fefc3adebde19096f1/p2p/host/autorelay/autorelay_test.go
+// Original code from:
+// https://github.com/libp2p/go-libp2p/blob/master/p2p/host/autorelay/autorelay_test.go
 func makeTestRelay(t *testing.T) host.Host {
 	t.Helper()
 	h, err := lp2p.New(
@@ -113,15 +114,18 @@ func TestStoppingNetwork(t *testing.T) {
 	net.Stop()
 }
 
-// We create 6 nodes:
-//   - R is relay node
-//   - B is bootstrap node,
-//   - P is a public node
-//   - M is a private Node behind NAT that is connected to the relay R
-//   - N is a private Node behind NAT that is connected to the relay R
-//   - X is a private Node behind NAT
+// In this test, we are setting up a simulated network environment that consists of six nodes:
+//   - R is a Relay node
+//   - B is a Bootstrap node
+//   - P is a Public node
+//   - M, N, and X are Private Nodes behind a Network Address Translation (NAT)
+//   - Both M and N are connected to the relay node R
+//   - X is not connected to the relay node and does not join the consensus topic
 //
-// Let's test different scenarios here
+// The test will evaluate the following scenarios:
+//   - Connection establishment to the bootstrap node
+//   - General and consensus topics and gossip message
+//   - Direct and relayed stream communication between nodes
 func TestNetwork(t *testing.T) {
 	// Relay
 	nodeR := makeTestRelay(t)
@@ -201,7 +205,7 @@ func TestNetwork(t *testing.T) {
 	})
 	time.Sleep(1 * time.Second)
 
-	t.Run("All nodes should have at least one connection to bootstrap node", func(t *testing.T) {
+	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
 		assert.GreaterOrEqual(t, networkP.NumConnectedPeers(), 1)
 		assert.GreaterOrEqual(t, networkB.NumConnectedPeers(), 1)
 		assert.GreaterOrEqual(t, networkM.NumConnectedPeers(), 1)
@@ -209,7 +213,7 @@ func TestNetwork(t *testing.T) {
 		assert.GreaterOrEqual(t, networkX.NumConnectedPeers(), 1)
 	})
 
-	t.Run("Gossip: All nodes should recede general gossip messages", func(t *testing.T) {
+	t.Run("Gossip: all nodes receive general gossip messages", func(t *testing.T) {
 		msg := []byte("test-general-topic")
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDGeneral))
@@ -230,7 +234,7 @@ func TestNetwork(t *testing.T) {
 		assert.Equal(t, eX.Data, msg)
 	})
 
-	t.Run("Gossip: Only nodes that subscribed to consensus topic should receive consensus gossip messages", func(t *testing.T) {
+	t.Run("only nodes subscribed to the consensus topic receive consensus gossip messages", func(t *testing.T) {
 		msg := []byte("test-consensus-topic")
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDConsensus))
@@ -249,13 +253,13 @@ func TestNetwork(t *testing.T) {
 		assert.Equal(t, eN.Data, msg)
 	})
 
-	t.Run("Stream: Node P should NOT be accessible by node M or N", func(t *testing.T) {
+	t.Run("node P (public) is not directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
 		msgM := []byte("test-stream-from-m")
 
 		require.Error(t, networkM.SendTo(msgM, networkP.SelfID()))
 	})
 
-	t.Run("Stream: Node P should be accessible by node B", func(t *testing.T) {
+	t.Run("node P (public) is directly accessible by node B (bootstrap)", func(t *testing.T) {
 		msgB := []byte("test-stream-from-b")
 
 		require.NoError(t, networkB.SendTo(msgB, networkP.SelfID()))
@@ -264,7 +268,7 @@ func TestNetwork(t *testing.T) {
 		assert.Equal(t, readData(t, eB.Reader, len(msgB)), msgB)
 	})
 
-	t.Run("Stream: Node M should be accessible by node N using relay node", func(t *testing.T) {
+	t.Run("nodes M and N (private, connected via relay) can communicate using the relay node R", func(t *testing.T) {
 		msgM := []byte("test-stream-from-m")
 
 		require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
@@ -273,20 +277,20 @@ func TestNetwork(t *testing.T) {
 		assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
 	})
 
-	t.Run("Stream: Node X should be NOT accessible by node M", func(t *testing.T) {
+	t.Run("node X (private, not connected via relay) is not accessible by node M", func(t *testing.T) {
 		msgM := []byte("test-stream-from-m")
 
 		require.Error(t, networkM.SendTo(msgM, networkX.SelfID()))
 	})
 
-	// WHY?
-	// t.Run("Stream: Node P closes connection", func(t *testing.T) {
-	// 	msgB := []byte("test-stream-from-b")
+	t.Run("closing connection", func(t *testing.T) {
+		msgB := []byte("test-stream-from-b")
 
-	// 	networkB.CloseConnection(networkP.SelfID())
+		networkP.Stop()
+		networkB.CloseConnection(networkP.SelfID())
 
-	// 	require.Error(t, networkB.SendTo(msgB, networkP.SelfID()))
-	// })
+		require.Error(t, networkB.SendTo(msgB, networkP.SelfID()))
+	})
 }
 
 func TestInvalidTopic(t *testing.T) {
