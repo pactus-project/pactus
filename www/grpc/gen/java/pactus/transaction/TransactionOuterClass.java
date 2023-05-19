@@ -24,9 +24,9 @@ public final class TransactionOuterClass {
      */
     UNKNOWN(0),
     /**
-     * <code>SEND_PAYLOAD = 1;</code>
+     * <code>TRANSFER_PAYLOAD = 1;</code>
      */
-    SEND_PAYLOAD(1),
+    TRANSFER_PAYLOAD(1),
     /**
      * <code>BOND_PAYLOAD = 2;</code>
      */
@@ -51,9 +51,9 @@ public final class TransactionOuterClass {
      */
     public static final int UNKNOWN_VALUE = 0;
     /**
-     * <code>SEND_PAYLOAD = 1;</code>
+     * <code>TRANSFER_PAYLOAD = 1;</code>
      */
-    public static final int SEND_PAYLOAD_VALUE = 1;
+    public static final int TRANSFER_PAYLOAD_VALUE = 1;
     /**
      * <code>BOND_PAYLOAD = 2;</code>
      */
@@ -97,7 +97,7 @@ public final class TransactionOuterClass {
     public static PayloadType forNumber(int value) {
       switch (value) {
         case 0: return UNKNOWN;
-        case 1: return SEND_PAYLOAD;
+        case 1: return TRANSFER_PAYLOAD;
         case 2: return BOND_PAYLOAD;
         case 3: return SORTITION_PAYLOAD;
         case 4: return UNBOND_PAYLOAD;
@@ -2531,8 +2531,8 @@ public final class TransactionOuterClass {
 
   }
 
-  public interface PayloadSendOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.PayloadSend)
+  public interface PayloadTransferOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.PayloadTransfer)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -2566,18 +2566,18 @@ public final class TransactionOuterClass {
     long getAmount();
   }
   /**
-   * Protobuf type {@code pactus.PayloadSend}
+   * Protobuf type {@code pactus.PayloadTransfer}
    */
-  public static final class PayloadSend extends
+  public static final class PayloadTransfer extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.PayloadSend)
-      PayloadSendOrBuilder {
+      // @@protoc_insertion_point(message_implements:pactus.PayloadTransfer)
+      PayloadTransferOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use PayloadSend.newBuilder() to construct.
-    private PayloadSend(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use PayloadTransfer.newBuilder() to construct.
+    private PayloadTransfer(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private PayloadSend() {
+    private PayloadTransfer() {
       sender_ = "";
       receiver_ = "";
     }
@@ -2586,7 +2586,7 @@ public final class TransactionOuterClass {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new PayloadSend();
+      return new PayloadTransfer();
     }
 
     @java.lang.Override
@@ -2596,15 +2596,15 @@ public final class TransactionOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadSend_descriptor;
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadTransfer_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadSend_fieldAccessorTable
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadTransfer_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.transaction.TransactionOuterClass.PayloadSend.class, pactus.transaction.TransactionOuterClass.PayloadSend.Builder.class);
+              pactus.transaction.TransactionOuterClass.PayloadTransfer.class, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder.class);
     }
 
     public static final int SENDER_FIELD_NUMBER = 1;
@@ -2746,10 +2746,10 @@ public final class TransactionOuterClass {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.transaction.TransactionOuterClass.PayloadSend)) {
+      if (!(obj instanceof pactus.transaction.TransactionOuterClass.PayloadTransfer)) {
         return super.equals(obj);
       }
-      pactus.transaction.TransactionOuterClass.PayloadSend other = (pactus.transaction.TransactionOuterClass.PayloadSend) obj;
+      pactus.transaction.TransactionOuterClass.PayloadTransfer other = (pactus.transaction.TransactionOuterClass.PayloadTransfer) obj;
 
       if (!getSender()
           .equals(other.getSender())) return false;
@@ -2780,69 +2780,69 @@ public final class TransactionOuterClass {
       return hash;
     }
 
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(byte[] data)
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseDelimitedFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.PayloadSend parseFrom(
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2855,7 +2855,7 @@ public final class TransactionOuterClass {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.PayloadSend prototype) {
+    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.PayloadTransfer prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2871,26 +2871,26 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
-     * Protobuf type {@code pactus.PayloadSend}
+     * Protobuf type {@code pactus.PayloadTransfer}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.PayloadSend)
-        pactus.transaction.TransactionOuterClass.PayloadSendOrBuilder {
+        // @@protoc_insertion_point(builder_implements:pactus.PayloadTransfer)
+        pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadSend_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadTransfer_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadSend_fieldAccessorTable
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadTransfer_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.transaction.TransactionOuterClass.PayloadSend.class, pactus.transaction.TransactionOuterClass.PayloadSend.Builder.class);
+                pactus.transaction.TransactionOuterClass.PayloadTransfer.class, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder.class);
       }
 
-      // Construct using pactus.transaction.TransactionOuterClass.PayloadSend.newBuilder()
+      // Construct using pactus.transaction.TransactionOuterClass.PayloadTransfer.newBuilder()
       private Builder() {
 
       }
@@ -2915,17 +2915,17 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadSend_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_PayloadTransfer_descriptor;
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.PayloadSend getDefaultInstanceForType() {
-        return pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance();
+      public pactus.transaction.TransactionOuterClass.PayloadTransfer getDefaultInstanceForType() {
+        return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.PayloadSend build() {
-        pactus.transaction.TransactionOuterClass.PayloadSend result = buildPartial();
+      public pactus.transaction.TransactionOuterClass.PayloadTransfer build() {
+        pactus.transaction.TransactionOuterClass.PayloadTransfer result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2933,8 +2933,8 @@ public final class TransactionOuterClass {
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.PayloadSend buildPartial() {
-        pactus.transaction.TransactionOuterClass.PayloadSend result = new pactus.transaction.TransactionOuterClass.PayloadSend(this);
+      public pactus.transaction.TransactionOuterClass.PayloadTransfer buildPartial() {
+        pactus.transaction.TransactionOuterClass.PayloadTransfer result = new pactus.transaction.TransactionOuterClass.PayloadTransfer(this);
         result.sender_ = sender_;
         result.receiver_ = receiver_;
         result.amount_ = amount_;
@@ -2976,16 +2976,16 @@ public final class TransactionOuterClass {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.transaction.TransactionOuterClass.PayloadSend) {
-          return mergeFrom((pactus.transaction.TransactionOuterClass.PayloadSend)other);
+        if (other instanceof pactus.transaction.TransactionOuterClass.PayloadTransfer) {
+          return mergeFrom((pactus.transaction.TransactionOuterClass.PayloadTransfer)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.PayloadSend other) {
-        if (other == pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.PayloadTransfer other) {
+        if (other == pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance()) return this;
         if (!other.getSender().isEmpty()) {
           sender_ = other.sender_;
           onChanged();
@@ -3249,23 +3249,23 @@ public final class TransactionOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:pactus.PayloadSend)
+      // @@protoc_insertion_point(builder_scope:pactus.PayloadTransfer)
     }
 
-    // @@protoc_insertion_point(class_scope:pactus.PayloadSend)
-    private static final pactus.transaction.TransactionOuterClass.PayloadSend DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:pactus.PayloadTransfer)
+    private static final pactus.transaction.TransactionOuterClass.PayloadTransfer DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.PayloadSend();
+      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.PayloadTransfer();
     }
 
-    public static pactus.transaction.TransactionOuterClass.PayloadSend getDefaultInstance() {
+    public static pactus.transaction.TransactionOuterClass.PayloadTransfer getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<PayloadSend>
-        PARSER = new com.google.protobuf.AbstractParser<PayloadSend>() {
+    private static final com.google.protobuf.Parser<PayloadTransfer>
+        PARSER = new com.google.protobuf.AbstractParser<PayloadTransfer>() {
       @java.lang.Override
-      public PayloadSend parsePartialFrom(
+      public PayloadTransfer parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3284,17 +3284,17 @@ public final class TransactionOuterClass {
       }
     };
 
-    public static com.google.protobuf.Parser<PayloadSend> parser() {
+    public static com.google.protobuf.Parser<PayloadTransfer> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<PayloadSend> getParserForType() {
+    public com.google.protobuf.Parser<PayloadTransfer> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public pactus.transaction.TransactionOuterClass.PayloadSend getDefaultInstanceForType() {
+    public pactus.transaction.TransactionOuterClass.PayloadTransfer getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6068,19 +6068,19 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
 
     /**
-     * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
-     * @return Whether the send field is set.
+     * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
+     * @return Whether the transfer field is set.
      */
-    boolean hasSend();
+    boolean hasTransfer();
     /**
-     * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
-     * @return The send.
+     * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
+     * @return The transfer.
      */
-    pactus.transaction.TransactionOuterClass.PayloadSend getSend();
+    pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer();
     /**
-     * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+     * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      */
-    pactus.transaction.TransactionOuterClass.PayloadSendOrBuilder getSendOrBuilder();
+    pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder getTransferOrBuilder();
 
     /**
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -6226,7 +6226,7 @@ public final class TransactionOuterClass {
     public enum PayloadCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      SEND(30),
+      TRANSFER(30),
       BOND(31),
       SORTITION(32),
       UNBOND(33),
@@ -6248,7 +6248,7 @@ public final class TransactionOuterClass {
 
       public static PayloadCase forNumber(int value) {
         switch (value) {
-          case 30: return SEND;
+          case 30: return TRANSFER;
           case 31: return BOND;
           case 32: return SORTITION;
           case 33: return UNBOND;
@@ -6364,35 +6364,35 @@ public final class TransactionOuterClass {
       return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
     }
 
-    public static final int SEND_FIELD_NUMBER = 30;
+    public static final int TRANSFER_FIELD_NUMBER = 30;
     /**
-     * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
-     * @return Whether the send field is set.
+     * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
+     * @return Whether the transfer field is set.
      */
     @java.lang.Override
-    public boolean hasSend() {
+    public boolean hasTransfer() {
       return payloadCase_ == 30;
     }
     /**
-     * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
-     * @return The send.
+     * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
+     * @return The transfer.
      */
     @java.lang.Override
-    public pactus.transaction.TransactionOuterClass.PayloadSend getSend() {
+    public pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer() {
       if (payloadCase_ == 30) {
-         return (pactus.transaction.TransactionOuterClass.PayloadSend) payload_;
+         return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
       }
-      return pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance();
+      return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
     }
     /**
-     * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+     * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      */
     @java.lang.Override
-    public pactus.transaction.TransactionOuterClass.PayloadSendOrBuilder getSendOrBuilder() {
+    public pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder getTransferOrBuilder() {
       if (payloadCase_ == 30) {
-         return (pactus.transaction.TransactionOuterClass.PayloadSend) payload_;
+         return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
       }
-      return pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance();
+      return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
     }
 
     public static final int BOND_FIELD_NUMBER = 31;
@@ -6654,7 +6654,7 @@ public final class TransactionOuterClass {
         output.writeBytes(11, signature_);
       }
       if (payloadCase_ == 30) {
-        output.writeMessage(30, (pactus.transaction.TransactionOuterClass.PayloadSend) payload_);
+        output.writeMessage(30, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
       }
       if (payloadCase_ == 31) {
         output.writeMessage(31, (pactus.transaction.TransactionOuterClass.PayloadBond) payload_);
@@ -6721,7 +6721,7 @@ public final class TransactionOuterClass {
       }
       if (payloadCase_ == 30) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(30, (pactus.transaction.TransactionOuterClass.PayloadSend) payload_);
+          .computeMessageSize(30, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
       }
       if (payloadCase_ == 31) {
         size += com.google.protobuf.CodedOutputStream
@@ -6778,8 +6778,8 @@ public final class TransactionOuterClass {
       if (!getPayloadCase().equals(other.getPayloadCase())) return false;
       switch (payloadCase_) {
         case 30:
-          if (!getSend()
-              .equals(other.getSend())) return false;
+          if (!getTransfer()
+              .equals(other.getTransfer())) return false;
           break;
         case 31:
           if (!getBond()
@@ -6837,8 +6837,8 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getSignature().hashCode();
       switch (payloadCase_) {
         case 30:
-          hash = (37 * hash) + SEND_FIELD_NUMBER;
-          hash = (53 * hash) + getSend().hashCode();
+          hash = (37 * hash) + TRANSFER_FIELD_NUMBER;
+          hash = (53 * hash) + getTransfer().hashCode();
           break;
         case 31:
           hash = (37 * hash) + BOND_FIELD_NUMBER;
@@ -7003,8 +7003,8 @@ public final class TransactionOuterClass {
 
         payloadType_ = 0;
 
-        if (sendBuilder_ != null) {
-          sendBuilder_.clear();
+        if (transferBuilder_ != null) {
+          transferBuilder_.clear();
         }
         if (bondBuilder_ != null) {
           bondBuilder_.clear();
@@ -7061,10 +7061,10 @@ public final class TransactionOuterClass {
         result.fee_ = fee_;
         result.payloadType_ = payloadType_;
         if (payloadCase_ == 30) {
-          if (sendBuilder_ == null) {
+          if (transferBuilder_ == null) {
             result.payload_ = payload_;
           } else {
-            result.payload_ = sendBuilder_.build();
+            result.payload_ = transferBuilder_.build();
           }
         }
         if (payloadCase_ == 31) {
@@ -7183,8 +7183,8 @@ public final class TransactionOuterClass {
           setSignature(other.getSignature());
         }
         switch (other.getPayloadCase()) {
-          case SEND: {
-            mergeSend(other.getSend());
+          case TRANSFER: {
+            mergeTransfer(other.getTransfer());
             break;
           }
           case BOND: {
@@ -7290,7 +7290,7 @@ public final class TransactionOuterClass {
               } // case 90
               case 242: {
                 input.readMessage(
-                    getSendFieldBuilder().getBuilder(),
+                    getTransferFieldBuilder().getBuilder(),
                     extensionRegistry);
                 payloadCase_ = 30;
                 break;
@@ -7635,71 +7635,71 @@ public final class TransactionOuterClass {
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
-          pactus.transaction.TransactionOuterClass.PayloadSend, pactus.transaction.TransactionOuterClass.PayloadSend.Builder, pactus.transaction.TransactionOuterClass.PayloadSendOrBuilder> sendBuilder_;
+          pactus.transaction.TransactionOuterClass.PayloadTransfer, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder, pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder> transferBuilder_;
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
-       * @return Whether the send field is set.
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
+       * @return Whether the transfer field is set.
        */
       @java.lang.Override
-      public boolean hasSend() {
+      public boolean hasTransfer() {
         return payloadCase_ == 30;
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
-       * @return The send.
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
+       * @return The transfer.
        */
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.PayloadSend getSend() {
-        if (sendBuilder_ == null) {
+      public pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer() {
+        if (transferBuilder_ == null) {
           if (payloadCase_ == 30) {
-            return (pactus.transaction.TransactionOuterClass.PayloadSend) payload_;
+            return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
           }
-          return pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance();
+          return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
         } else {
           if (payloadCase_ == 30) {
-            return sendBuilder_.getMessage();
+            return transferBuilder_.getMessage();
           }
-          return pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance();
+          return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
-      public Builder setSend(pactus.transaction.TransactionOuterClass.PayloadSend value) {
-        if (sendBuilder_ == null) {
+      public Builder setTransfer(pactus.transaction.TransactionOuterClass.PayloadTransfer value) {
+        if (transferBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
           payload_ = value;
           onChanged();
         } else {
-          sendBuilder_.setMessage(value);
+          transferBuilder_.setMessage(value);
         }
         payloadCase_ = 30;
         return this;
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
-      public Builder setSend(
-          pactus.transaction.TransactionOuterClass.PayloadSend.Builder builderForValue) {
-        if (sendBuilder_ == null) {
+      public Builder setTransfer(
+          pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder builderForValue) {
+        if (transferBuilder_ == null) {
           payload_ = builderForValue.build();
           onChanged();
         } else {
-          sendBuilder_.setMessage(builderForValue.build());
+          transferBuilder_.setMessage(builderForValue.build());
         }
         payloadCase_ = 30;
         return this;
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
-      public Builder mergeSend(pactus.transaction.TransactionOuterClass.PayloadSend value) {
-        if (sendBuilder_ == null) {
+      public Builder mergeTransfer(pactus.transaction.TransactionOuterClass.PayloadTransfer value) {
+        if (transferBuilder_ == null) {
           if (payloadCase_ == 30 &&
-              payload_ != pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance()) {
-            payload_ = pactus.transaction.TransactionOuterClass.PayloadSend.newBuilder((pactus.transaction.TransactionOuterClass.PayloadSend) payload_)
+              payload_ != pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance()) {
+            payload_ = pactus.transaction.TransactionOuterClass.PayloadTransfer.newBuilder((pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_)
                 .mergeFrom(value).buildPartial();
           } else {
             payload_ = value;
@@ -7707,19 +7707,19 @@ public final class TransactionOuterClass {
           onChanged();
         } else {
           if (payloadCase_ == 30) {
-            sendBuilder_.mergeFrom(value);
+            transferBuilder_.mergeFrom(value);
           } else {
-            sendBuilder_.setMessage(value);
+            transferBuilder_.setMessage(value);
           }
         }
         payloadCase_ = 30;
         return this;
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
-      public Builder clearSend() {
-        if (sendBuilder_ == null) {
+      public Builder clearTransfer() {
+        if (transferBuilder_ == null) {
           if (payloadCase_ == 30) {
             payloadCase_ = 0;
             payload_ = null;
@@ -7730,50 +7730,50 @@ public final class TransactionOuterClass {
             payloadCase_ = 0;
             payload_ = null;
           }
-          sendBuilder_.clear();
+          transferBuilder_.clear();
         }
         return this;
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
-      public pactus.transaction.TransactionOuterClass.PayloadSend.Builder getSendBuilder() {
-        return getSendFieldBuilder().getBuilder();
+      public pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder getTransferBuilder() {
+        return getTransferFieldBuilder().getBuilder();
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.PayloadSendOrBuilder getSendOrBuilder() {
-        if ((payloadCase_ == 30) && (sendBuilder_ != null)) {
-          return sendBuilder_.getMessageOrBuilder();
+      public pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder getTransferOrBuilder() {
+        if ((payloadCase_ == 30) && (transferBuilder_ != null)) {
+          return transferBuilder_.getMessageOrBuilder();
         } else {
           if (payloadCase_ == 30) {
-            return (pactus.transaction.TransactionOuterClass.PayloadSend) payload_;
+            return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
           }
-          return pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance();
+          return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadSend send = 30 [json_name = "send"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          pactus.transaction.TransactionOuterClass.PayloadSend, pactus.transaction.TransactionOuterClass.PayloadSend.Builder, pactus.transaction.TransactionOuterClass.PayloadSendOrBuilder> 
-          getSendFieldBuilder() {
-        if (sendBuilder_ == null) {
+          pactus.transaction.TransactionOuterClass.PayloadTransfer, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder, pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder> 
+          getTransferFieldBuilder() {
+        if (transferBuilder_ == null) {
           if (!(payloadCase_ == 30)) {
-            payload_ = pactus.transaction.TransactionOuterClass.PayloadSend.getDefaultInstance();
+            payload_ = pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
           }
-          sendBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              pactus.transaction.TransactionOuterClass.PayloadSend, pactus.transaction.TransactionOuterClass.PayloadSend.Builder, pactus.transaction.TransactionOuterClass.PayloadSendOrBuilder>(
-                  (pactus.transaction.TransactionOuterClass.PayloadSend) payload_,
+          transferBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              pactus.transaction.TransactionOuterClass.PayloadTransfer, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder, pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder>(
+                  (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_,
                   getParentForChildren(),
                   isClean());
           payload_ = null;
         }
         payloadCase_ = 30;
         onChanged();;
-        return sendBuilder_;
+        return transferBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -8614,10 +8614,10 @@ public final class TransactionOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_SendRawTransactionResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_PayloadSend_descriptor;
+    internal_static_pactus_PayloadTransfer_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_PayloadSend_fieldAccessorTable;
+      internal_static_pactus_PayloadTransfer_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_PayloadBond_descriptor;
   private static final 
@@ -8661,42 +8661,43 @@ public final class TransactionOuterClass {
       "(\0132\027.pactus.TransactionInfoR\013transaction" +
       "\"/\n\031SendRawTransactionRequest\022\022\n\004data\030\001 " +
       "\001(\014R\004data\",\n\032SendRawTransactionResponse\022" +
-      "\016\n\002id\030\002 \001(\014R\002id\"Y\n\013PayloadSend\022\026\n\006sender" +
-      "\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiv" +
-      "er\022\026\n\006amount\030\003 \001(\003R\006amount\"W\n\013PayloadBon" +
-      "d\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 " +
-      "\001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\"B\n\020P" +
-      "ayloadSortition\022\030\n\007address\030\001 \001(\tR\007addres" +
-      "s\022\024\n\005proof\030\002 \001(\014R\005proof\"-\n\rPayloadUnbond" +
-      "\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"M\n\017Payloa" +
-      "dWithdraw\022\022\n\004from\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(" +
-      "\tR\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\264\004\n\017Transa" +
-      "ctionInfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R" +
-      "\004data\022\030\n\007version\030\003 \001(\005R\007version\022\024\n\005stamp" +
-      "\030\004 \001(\014R\005stamp\022\032\n\010sequence\030\005 \001(\005R\010sequenc" +
-      "e\022\024\n\005value\030\006 \001(\003R\005value\022\020\n\003fee\030\007 \001(\003R\003fe" +
-      "e\0225\n\013PayloadType\030\010 \001(\0162\023.pactus.PayloadT" +
-      "ypeR\013PayloadType\022)\n\004send\030\036 \001(\0132\023.pactus." +
-      "PayloadSendH\000R\004send\022)\n\004bond\030\037 \001(\0132\023.pact" +
-      "us.PayloadBondH\000R\004bond\0228\n\tsortition\030  \001(" +
-      "\0132\030.pactus.PayloadSortitionH\000R\tsortition" +
-      "\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbondH" +
-      "\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Pay" +
-      "loadWithdrawH\000R\010withdraw\022\022\n\004memo\030\t \001(\tR\004" +
-      "memo\022\035\n\npublic_key\030\n \001(\tR\tpublicKey\022\034\n\ts" +
-      "ignature\030\013 \001(\014R\tsignatureB\t\n\007Payload*\177\n\013" +
-      "PayloadType\022\013\n\007UNKNOWN\020\000\022\020\n\014SEND_PAYLOAD" +
-      "\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_PAYLOA" +
-      "D\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAYL" +
-      "OAD\020\005*B\n\024TransactionVerbosity\022\024\n\020TRANSAC" +
-      "TION_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012\273\001\n\013Tr" +
-      "ansaction\022O\n\016GetTransaction\022\035.pactus.Get" +
-      "TransactionRequest\032\036.pactus.GetTransacti" +
-      "onResponse\022[\n\022SendRawTransaction\022!.pactu" +
-      "s.SendRawTransactionRequest\032\".pactus.Sen" +
-      "dRawTransactionResponseBF\n\022pactus.transa" +
-      "ctionZ0github.com/pactus-project/pactus/" +
-      "www/grpc/pactusb\006proto3"
+      "\016\n\002id\030\002 \001(\014R\002id\"]\n\017PayloadTransfer\022\026\n\006se" +
+      "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
+      "ceiver\022\026\n\006amount\030\003 \001(\003R\006amount\"W\n\013Payloa" +
+      "dBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receive" +
+      "r\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\"" +
+      "B\n\020PayloadSortition\022\030\n\007address\030\001 \001(\tR\007ad" +
+      "dress\022\024\n\005proof\030\002 \001(\014R\005proof\"-\n\rPayloadUn" +
+      "bond\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"M\n\017Pa" +
+      "yloadWithdraw\022\022\n\004from\030\001 \001(\tR\004from\022\016\n\002to\030" +
+      "\002 \001(\tR\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\300\004\n\017Tr" +
+      "ansactionInfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 " +
+      "\001(\014R\004data\022\030\n\007version\030\003 \001(\005R\007version\022\024\n\005s" +
+      "tamp\030\004 \001(\014R\005stamp\022\032\n\010sequence\030\005 \001(\005R\010seq" +
+      "uence\022\024\n\005value\030\006 \001(\003R\005value\022\020\n\003fee\030\007 \001(\003" +
+      "R\003fee\0225\n\013PayloadType\030\010 \001(\0162\023.pactus.Payl" +
+      "oadTypeR\013PayloadType\0225\n\010transfer\030\036 \001(\0132\027" +
+      ".pactus.PayloadTransferH\000R\010transfer\022)\n\004b" +
+      "ond\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bond\0228" +
+      "\n\tsortition\030  \001(\0132\030.pactus.PayloadSortit" +
+      "ionH\000R\tsortition\022/\n\006unbond\030! \001(\0132\025.pactu" +
+      "s.PayloadUnbondH\000R\006unbond\0225\n\010withdraw\030\" " +
+      "\001(\0132\027.pactus.PayloadWithdrawH\000R\010withdraw" +
+      "\022\022\n\004memo\030\t \001(\tR\004memo\022\035\n\npublic_key\030\n \001(\t" +
+      "R\tpublicKey\022\034\n\tsignature\030\013 \001(\014R\tsignatur" +
+      "eB\t\n\007Payload*\203\001\n\013PayloadType\022\013\n\007UNKNOWN\020" +
+      "\000\022\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020" +
+      "\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBOND_PAYLO" +
+      "AD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024Transactio" +
+      "nVerbosity\022\024\n\020TRANSACTION_DATA\020\000\022\024\n\020TRAN" +
+      "SACTION_INFO\020\0012\273\001\n\013Transaction\022O\n\016GetTra" +
+      "nsaction\022\035.pactus.GetTransactionRequest\032" +
+      "\036.pactus.GetTransactionResponse\022[\n\022SendR" +
+      "awTransaction\022!.pactus.SendRawTransactio" +
+      "nRequest\032\".pactus.SendRawTransactionResp" +
+      "onseBF\n\022pactus.transactionZ0github.com/p" +
+      "actus-project/pactus/www/grpc/pactusb\006pr" +
+      "oto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8726,11 +8727,11 @@ public final class TransactionOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_SendRawTransactionResponse_descriptor,
         new java.lang.String[] { "Id", });
-    internal_static_pactus_PayloadSend_descriptor =
+    internal_static_pactus_PayloadTransfer_descriptor =
       getDescriptor().getMessageTypes().get(4);
-    internal_static_pactus_PayloadSend_fieldAccessorTable = new
+    internal_static_pactus_PayloadTransfer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_PayloadSend_descriptor,
+        internal_static_pactus_PayloadTransfer_descriptor,
         new java.lang.String[] { "Sender", "Receiver", "Amount", });
     internal_static_pactus_PayloadBond_descriptor =
       getDescriptor().getMessageTypes().get(5);
@@ -8761,7 +8762,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_TransactionInfo_descriptor,
-        new java.lang.String[] { "Id", "Data", "Version", "Stamp", "Sequence", "Value", "Fee", "PayloadType", "Send", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
+        new java.lang.String[] { "Id", "Data", "Version", "Stamp", "Sequence", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

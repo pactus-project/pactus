@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-func SendTx() func(c *cli.Cmd) {
+func TransferTx() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		fromArg := c.String(cli.StringArg{
 			Name: "FROM",

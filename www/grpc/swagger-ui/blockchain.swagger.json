@@ -510,7 +510,19 @@
         }
       }
     },
-    "pactusPayloadSend": {
+    "pactusPayloadSortition": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pactusPayloadTransfer": {
       "type": "object",
       "properties": {
         "sender": {
@@ -525,23 +537,11 @@
         }
       }
     },
-    "pactusPayloadSortition": {
-      "type": "object",
-      "properties": {
-        "address": {
-          "type": "string"
-        },
-        "proof": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
     "pactusPayloadType": {
       "type": "string",
       "enum": [
         "UNKNOWN",
-        "SEND_PAYLOAD",
+        "TRANSFER_PAYLOAD",
         "BOND_PAYLOAD",
         "SORTITION_PAYLOAD",
         "UNBOND_PAYLOAD",
@@ -606,8 +606,8 @@
         "PayloadType": {
           "$ref": "#/definitions/pactusPayloadType"
         },
-        "send": {
-          "$ref": "#/definitions/pactusPayloadSend"
+        "transfer": {
+          "$ref": "#/definitions/pactusPayloadTransfer"
         },
         "bond": {
           "$ref": "#/definitions/pactusPayloadBond"

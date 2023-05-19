@@ -10,7 +10,7 @@ import (
 type Type uint8
 
 const (
-	PayloadTypeSend      = Type(1)
+	PayloadTypeTransfer  = Type(1)
 	PayloadTypeBond      = Type(2)
 	PayloadTypeSortition = Type(3)
 	PayloadTypeUnbond    = Type(4)
@@ -19,8 +19,8 @@ const (
 
 func (t Type) String() string {
 	switch t {
-	case PayloadTypeSend:
-		return "send"
+	case PayloadTypeTransfer:
+		return "transfer"
 	case PayloadTypeBond:
 		return "bond"
 	case PayloadTypeUnbond:

@@ -46,11 +46,11 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel, genesisTime
 	// Map the handlers to callback functions, and connect the signals
 	// to the Builder.
 	signals := map[string]interface{}{
-		"on_about_gtk":        mw.onAboutGtk,
-		"on_about":            mw.onAbout,
-		"on_quit":             mw.onQuit,
-		"on_transaction_send": mw.OnTransactionSend,
-		"on_transaction_bond": mw.OnTransactionBond,
+		"on_about_gtk":            mw.onAboutGtk,
+		"on_about":                mw.onAbout,
+		"on_quit":                 mw.onQuit,
+		"on_transaction_transfer": mw.OnTransactionTransfer,
+		"on_transaction_bond":     mw.OnTransactionBond,
 	}
 	builder.ConnectSignals(signals)
 
@@ -69,7 +69,7 @@ func (mw *mainWindow) onAbout() {
 	showAboutDialog()
 }
 
-func (mw *mainWindow) OnTransactionSend() {
+func (mw *mainWindow) OnTransactionTransfer() {
 	broadcastTransactionSend(mw.widgetWallet.model.wallet)
 }
 

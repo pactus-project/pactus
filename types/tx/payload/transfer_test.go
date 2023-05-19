@@ -10,12 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSendType(t *testing.T) {
-	pld := SendPayload{}
-	assert.Equal(t, pld.Type(), PayloadTypeSend)
+func TestTransferType(t *testing.T) {
+	pld := TransferPayload{}
+	assert.Equal(t, pld.Type(), PayloadTypeTransfer)
 }
 
-func TestSendDecoding(t *testing.T) {
+func TestTransferDecoding(t *testing.T) {
 	tests := []struct {
 		raw       []byte
 		value     int64
@@ -132,7 +132,7 @@ func TestSendDecoding(t *testing.T) {
 	}
 
 	for n, test := range tests {
-		pld := SendPayload{}
+		pld := TransferPayload{}
 		r := util.NewFixedReader(len(test.raw), test.raw)
 		err := pld.Decode(r)
 		if test.readErr != nil {

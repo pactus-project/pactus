@@ -152,7 +152,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.Error(t, err, "Should not propose")
 	assert.Nil(t, b1)
 
-	trx := tx.NewSendTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(),
+	trx := tx.NewTransferTx(tState2.lastInfo.BlockHash().Stamp(), 1, tValSigner1.Address(),
 		tValSigner2.Address(), 1000, 1000, "")
 	tValSigner1.SignMsg(trx)
 	assert.NoError(t, tCommonTxPool.AppendTx(trx))
@@ -179,8 +179,8 @@ func TestBlockSubsidyTx(t *testing.T) {
 	trx := tState1.createSubsidyTx(rewardAddr, 7)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), tState1.params.BlockReward+7)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Sender, crypto.TreasuryAddress)
-	assert.Equal(t, trx.Payload().(*payload.SendPayload).Receiver, rewardAddr)
+	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Sender, crypto.TreasuryAddress)
+	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Receiver, rewardAddr)
 }
 
 func TestCommitBlocks(t *testing.T) {

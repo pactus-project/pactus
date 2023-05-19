@@ -11,11 +11,11 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-//go:embed assets/ui/dialog_transaction_send.ui
-var uiTransactionSendDialog []byte
+//go:embed assets/ui/dialog_transaction_transfer.ui
+var uiTransactionTransferDialog []byte
 
 func broadcastTransactionSend(wallet *wallet.Wallet) {
-	builder, err := gtk.BuilderNewFromString(string(uiTransactionSendDialog))
+	builder, err := gtk.BuilderNewFromString(string(uiTransactionTransferDialog))
 	fatalErrorCheck(err)
 
 	dlg := getDialogObj(builder, "id_dialog_transaction_send")

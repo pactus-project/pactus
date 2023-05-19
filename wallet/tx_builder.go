@@ -101,8 +101,8 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 
 	var trx *tx.Tx
 	switch m.typ {
-	case payload.PayloadTypeSend:
-		trx = tx.NewSendTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
+	case payload.PayloadTypeTransfer:
+		trx = tx.NewTransferTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
 	case payload.PayloadTypeBond:
 		trx = tx.NewBondTx(*m.stamp, m.seq, *m.from, *m.to, m.pub, m.amount, m.fee, m.memo)
 	case payload.PayloadTypeUnbond:
@@ -137,7 +137,7 @@ func (m *txBuilder) setSequence() error {
 		}
 
 		switch m.typ {
-		case payload.PayloadTypeSend,
+		case payload.PayloadTypeTransfer,
 			payload.PayloadTypeBond:
 			{
 				acc, err := m.client.getAccount(*m.from)
@@ -164,7 +164,7 @@ func (m *txBuilder) setSequence() error {
 func (m *txBuilder) setFee() {
 	if m.fee == 0 {
 		switch m.typ {
-		case payload.PayloadTypeSend,
+		case payload.PayloadTypeTransfer,
 			payload.PayloadTypeBond,
 			payload.PayloadTypeWithdraw:
 			{

@@ -10,7 +10,7 @@ import (
 
 func NewSubsidyTx(stamp hash.Stamp, seq int32,
 	receiver crypto.Address, amount int64, memo string) *Tx {
-	return NewSendTx(
+	return NewTransferTx(
 		stamp,
 		seq,
 		crypto.TreasuryAddress,
@@ -20,10 +20,10 @@ func NewSubsidyTx(stamp hash.Stamp, seq int32,
 		memo)
 }
 
-func NewSendTx(stamp hash.Stamp, seq int32,
+func NewTransferTx(stamp hash.Stamp, seq int32,
 	sender, receiver crypto.Address,
 	amount, fee int64, memo string) *Tx {
-	pld := &payload.SendPayload{
+	pld := &payload.TransferPayload{
 		Sender:   sender,
 		Receiver: receiver,
 		Amount:   amount,

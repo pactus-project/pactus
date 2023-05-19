@@ -85,10 +85,10 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 	}
 
 	switch trx.Payload().Type() {
-	case payload.PayloadTypeSend:
-		pld := trx.Payload().(*payload.SendPayload)
-		transaction.Payload = &pactus.TransactionInfo_Send{
-			Send: &pactus.PayloadSend{
+	case payload.PayloadTypeTransfer:
+		pld := trx.Payload().(*payload.TransferPayload)
+		transaction.Payload = &pactus.TransactionInfo_Transfer{
+			Transfer: &pactus.PayloadTransfer{
 				Sender:   pld.Sender.String(),
 				Receiver: pld.Receiver.String(),
 				Amount:   pld.Amount,

@@ -59,9 +59,9 @@
                       <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Send</property>
+                        <property name="label" translatable="yes">_Transfer</property>
                         <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_transaction_send" swapped="no"/>
+                        <signal name="activate" handler="on_transaction_transfer" swapped="no"/>
                       </object>
                     </child>
                     <child>

@@ -333,8 +333,8 @@ func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
 	}
 
 	switch payload.Type(payloadType) {
-	case payload.PayloadTypeSend:
-		tx.data.Payload = &payload.SendPayload{}
+	case payload.PayloadTypeTransfer:
+		tx.data.Payload = &payload.TransferPayload{}
 	case payload.PayloadTypeBond:
 		tx.data.Payload = &payload.BondPayload{}
 	case payload.PayloadTypeUnbond:
@@ -409,7 +409,7 @@ func (tx *Tx) ID() ID {
 }
 
 func (tx *Tx) IsSendTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeSend &&
+	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
 		!tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
@@ -418,7 +418,7 @@ func (tx *Tx) IsBondTx() bool {
 }
 
 func (tx *Tx) IsSubsidyTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeSend &&
+	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
 		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
@@ -444,7 +444,7 @@ func GenerateTestSendTx() (*Tx, crypto.Signer) {
 	stamp := hash.GenerateTestStamp()
 	s := bls.GenerateTestSigner()
 	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewSendTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(),
+	tx := NewTransferTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(),
 		util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test send-tx")
 	s.SignMsg(tx)
 	return tx, s

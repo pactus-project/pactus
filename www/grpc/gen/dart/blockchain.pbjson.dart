@@ -319,7 +319,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.BlockHeaderInfo': BlockHeaderInfo$json,
   '.pactus.CertificateInfo': CertificateInfo$json,
   '.pactus.TransactionInfo': $0.TransactionInfo$json,
-  '.pactus.PayloadSend': $0.PayloadSend$json,
+  '.pactus.PayloadTransfer': $0.PayloadTransfer$json,
   '.pactus.PayloadBond': $0.PayloadBond$json,
   '.pactus.PayloadSortition': $0.PayloadSortition$json,
   '.pactus.PayloadUnbond': $0.PayloadUnbond$json,

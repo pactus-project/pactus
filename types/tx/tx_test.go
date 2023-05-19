@@ -116,7 +116,7 @@ func TestTxSanityCheck(t *testing.T) {
 
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		trx, _ := GenerateTestSendTx()
-		trx.data.Payload.(*payload.SendPayload).Sender[0] = 0x2
+		trx.data.Payload.(*payload.TransferPayload).Sender[0] = 0x2
 		err := trx.SanityCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
@@ -234,14 +234,14 @@ func TestSendSanityCheck(t *testing.T) {
 
 	t.Run("Invalid amount", func(t *testing.T) {
 		trx, signer := GenerateTestSendTx()
-		pld := trx.data.Payload.(*payload.SendPayload)
+		pld := trx.data.Payload.(*payload.TransferPayload)
 		pld.Amount = -1
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
 	})
 	t.Run("Invalid amount", func(t *testing.T) {
 		trx, signer := GenerateTestSendTx()
-		pld := trx.data.Payload.(*payload.SendPayload)
+		pld := trx.data.Payload.(*payload.TransferPayload)
 		pld.Amount = 21*1e14 + 1
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())
@@ -249,7 +249,7 @@ func TestSendSanityCheck(t *testing.T) {
 
 	t.Run("Invalid sender", func(t *testing.T) {
 		trx, signer := GenerateTestSendTx()
-		pld := trx.data.Payload.(*payload.SendPayload)
+		pld := trx.data.Payload.(*payload.TransferPayload)
 		pld.Sender = invAddr
 		signer.SignMsg(trx)
 		assert.Error(t, trx.SanityCheck())

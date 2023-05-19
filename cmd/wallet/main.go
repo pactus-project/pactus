@@ -73,10 +73,10 @@ func main() {
 		k.Command("import", "Import a private key into wallet", ImportPrivateKey())
 	})
 	app.Command("tx", "Create, sign and publish a transaction", func(k *cli.Cmd) {
-		k.Command("bond", "Create, sign and publish a bond transaction", BondTx())
-		k.Command("send", "Create, sign and publish a send transaction", SendTx())
-		k.Command("unbond", "Create, sign and publish an unbond transaction", UnbondTx())
-		k.Command("withdraw", "Create, sign and publish a withdraw transaction", WithdrawTx())
+		k.Command("bond", "Create, sign and publish a Bond transaction", BondTx())
+		k.Command("transfer", "Create, sign and publish a Transfer transaction", TransferTx())
+		k.Command("unbond", "Create, sign and publish an Unbond transaction", UnbondTx())
+		k.Command("withdraw", "Create, sign and publish a Withdraw transaction", WithdrawTx())
 	})
 	app.Command("history", "Check the wallet history", func(k *cli.Cmd) {
 		k.Command("add", "Add a transaction to the wallet history", AddToHistory())

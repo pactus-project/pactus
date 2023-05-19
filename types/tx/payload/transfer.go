@@ -8,39 +8,39 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
-type SendPayload struct {
+type TransferPayload struct {
 	Sender   crypto.Address
 	Receiver crypto.Address
 	Amount   int64
 }
 
-func (p *SendPayload) Type() Type {
-	return PayloadTypeSend
+func (p *TransferPayload) Type() Type {
+	return PayloadTypeTransfer
 }
 
-func (p *SendPayload) Signer() crypto.Address {
+func (p *TransferPayload) Signer() crypto.Address {
 	return p.Sender
 }
 
-func (p *SendPayload) Value() int64 {
+func (p *TransferPayload) Value() int64 {
 	return p.Amount
 }
 
-func (p *SendPayload) SanityCheck() error {
+func (p *TransferPayload) SanityCheck() error {
 	if err := p.Sender.SanityCheck(); err != nil {
 		return err
 	}
 	return p.Receiver.SanityCheck()
 }
 
-func (p *SendPayload) SerializeSize() int {
+func (p *TransferPayload) SerializeSize() int {
 	if p.Sender.EqualsTo(crypto.TreasuryAddress) {
 		return 22 + encoding.VarIntSerializeSize(uint64(p.Amount))
 	}
 	return 42 + encoding.VarIntSerializeSize(uint64(p.Amount))
 }
 
-func (p *SendPayload) Encode(w io.Writer) error {
+func (p *TransferPayload) Encode(w io.Writer) error {
 	// If the transaction is a subsidy transaction (sender is treasury address)
 	// compress the address to one byte.
 	// This helps to reduce the size of each block by 20 bytes.
@@ -63,7 +63,7 @@ func (p *SendPayload) Encode(w io.Writer) error {
 	return encoding.WriteVarInt(w, uint64(p.Amount))
 }
 
-func (p *SendPayload) Decode(r io.Reader) error {
+func (p *TransferPayload) Decode(r io.Reader) error {
 	var sigType uint8
 	err := encoding.ReadElement(r, &sigType)
 	if err != nil {
@@ -92,7 +92,7 @@ func (p *SendPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *SendPayload) Fingerprint() string {
+func (p *TransferPayload) Fingerprint() string {
 	return fmt.Sprintf("{Send 💸 %v->%v %v",
 		p.Sender.Fingerprint(),
 		p.Receiver.Fingerprint(),

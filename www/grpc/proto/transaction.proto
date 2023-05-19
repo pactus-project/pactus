@@ -23,7 +23,7 @@ message SendRawTransactionRequest { bytes data = 1; }
 
 message SendRawTransactionResponse { bytes id = 2; }
 
-message PayloadSend {
+message PayloadTransfer {
   string sender = 1;
   string receiver = 2;
   int64 amount = 3;
@@ -60,7 +60,7 @@ message TransactionInfo {
   int64 fee = 7;
   PayloadType PayloadType = 8;
   oneof Payload {
-    PayloadSend send = 30;
+    PayloadTransfer transfer = 30;
     PayloadBond bond = 31;
     PayloadSortition sortition = 32;
     PayloadUnbond unbond = 33;
@@ -73,7 +73,7 @@ message TransactionInfo {
 
 enum PayloadType {
   UNKNOWN = 0;
-  SEND_PAYLOAD = 1;
+  TRANSFER_PAYLOAD = 1;
   BOND_PAYLOAD = 2;
   SORTITION_PAYLOAD = 3;
   UNBOND_PAYLOAD = 4;
