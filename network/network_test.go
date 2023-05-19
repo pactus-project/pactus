@@ -75,7 +75,6 @@ func shouldReceiveEvent(t *testing.T, net *network) Event {
 			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v id:%s", t.Name(), net.SelfID().String()))
 			return nil
 		case e := <-net.EventChannel():
-			net.logger.Debug("received an event", "event", e, "id", net.SelfID().String())
 			return e
 		}
 	}
