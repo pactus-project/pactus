@@ -8,11 +8,10 @@ import (
 type Config struct {
 	Name        string           `toml:"name"`
 	Listens     []string         `toml:"listens"`
+	RelayAddrs  []string         `toml:"relays"`
 	NetworkKey  string           `toml:"network_key"`
-	EnableDHT   bool             `toml:"enable_dht"`
 	EnableNAT   bool             `toml:"enable_nat"`
 	EnableRelay bool             `toml:"enable_relay"`
-	EnablePing  bool             `toml:"enable_ping"`
 	EnableMdns  bool             `toml:"enable_mdns"`
 	Bootstrap   *BootstrapConfig `toml:"bootstrap"`
 }
@@ -51,8 +50,6 @@ func DefaultConfig() *Config {
 		EnableNAT:   true,
 		EnableRelay: true,
 		EnableMdns:  false,
-		EnableDHT:   true,
-		EnablePing:  true,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    addresses,
 			MinThreshold: 8,
