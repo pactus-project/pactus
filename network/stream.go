@@ -59,7 +59,7 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 // If a direct connection can't be established, it attempts to connect via a relay node.
 // Returns an error if the sending process fails.
 func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
-	s.logger.Debug("sending stream", "to", pid)
+	s.logger.Trace("sending stream", "to", pid)
 	_, err := s.host.Peerstore().SupportsProtocols(pid, s.protocolID)
 	if err != nil {
 		return errors.Errorf(errors.ErrNetwork, err.Error())
@@ -69,7 +69,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	stream, err := s.host.NewStream(
 		lp2pnetwork.WithNoDial(s.ctx, "should already have connection"), pid, s.protocolID)
 	if err != nil {
-		s.logger.Warn("unable to open direct stream", "pid", pid, "err", err)
+		s.logger.Debug("unable to open direct stream", "pid", pid, "err", err)
 
 		// We don't have a direct connection to the destination node,
 		// so we try to connect via a relay node.
@@ -99,6 +99,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 			s.logger.Warn("unable to connect to peer using relay", "pid", pid, "err", err)
 			return errors.Errorf(errors.ErrNetwork, err.Error())
 		}
+		s.logger.Debug("connected to peer using relay", "pid", pid)
 
 		// Try to open a new stream to the target peer using the relay connection.
 		// The connection is marked as transient.

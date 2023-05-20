@@ -131,11 +131,13 @@
  ## colorful = true
 
   # `logger.levels` contains the level of logger per module.
+  # Available log levels are:
+  #   "trace", "debug", "info", "warning", and "error".
   [logger.levels]
    ## _consensus = "info"
    ## _grpc = "error"
    ## _http = "error"
-   ## _network = "error"
+   ## _network = "info"
    ## _pool = "error"
    ## _state = "info"
    ## _sync = "warning"
