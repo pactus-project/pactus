@@ -83,12 +83,12 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check if one instance publishes a proposal, the other instances receive it", func(t *testing.T) {
-		shouldPublishProposal(t, consA, 1, 0)
+		p := shouldPublishProposal(t, consA, 1, 0)
 
-		assert.True(t, consA.log.HasRoundProposal(0))
-		assert.True(t, consB.log.HasRoundProposal(0))
-		assert.False(t, consC.log.HasRoundProposal(0))
-		assert.False(t, consD.log.HasRoundProposal(0))
+		assert.Equal(t, consA.RoundProposal(0), p)
+		assert.Equal(t, consB.RoundProposal(0), p)
+		assert.Nil(t, consC.RoundProposal(0))
+		assert.Nil(t, consD.RoundProposal(0))
 	})
 
 	t.Run("Testing add vote", func(t *testing.T) {
@@ -97,10 +97,10 @@ func TestManager(t *testing.T) {
 
 		mgr.AddVote(v)
 
-		assert.True(t, consA.log.HasVote(v.Hash()))
-		assert.True(t, consB.log.HasVote(v.Hash()))
-		assert.False(t, consC.log.HasVote(v.Hash()))
-		assert.False(t, consD.log.HasVote(v.Hash()))
+		assert.True(t, consA.HasVote(v.Hash()))
+		assert.True(t, consB.HasVote(v.Hash()))
+		assert.False(t, consC.HasVote(v.Hash()))
+		assert.False(t, consD.HasVote(v.Hash()))
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
@@ -110,10 +110,10 @@ func TestManager(t *testing.T) {
 
 		mgr.SetProposal(p)
 
-		assert.True(t, consA.log.HasRoundProposal(2))
-		assert.True(t, consB.log.HasRoundProposal(2))
-		assert.False(t, consC.log.HasRoundProposal(2))
-		assert.False(t, consD.log.HasRoundProposal(2))
+		assert.Equal(t, consA.RoundProposal(2), p)
+		assert.Equal(t, consB.RoundProposal(2), p)
+		assert.Nil(t, consC.RoundProposal(2))
+		assert.Nil(t, consD.RoundProposal(2))
 	})
 
 	t.Run("Testing moving to the next round proposal", func(t *testing.T) {
