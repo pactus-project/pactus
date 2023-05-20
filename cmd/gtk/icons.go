@@ -29,7 +29,7 @@ var (
 	iconClose []byte
 
 	//go:embed assets/icons/send.svg
-	sendSeed []byte
+	iconSend []byte
 )
 
 func pixbufToIcon16(pixbuf *gdk.Pixbuf) *gtk.Image {
@@ -73,6 +73,6 @@ func SeedIcon() *gtk.Image {
 }
 
 func SendIcon() *gtk.Image {
-	pixbuf, _ := gdk.PixbufNewFromDataOnly(sendSeed)
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconSend)
 	return pixbufToIcon16(pixbuf)
 }
