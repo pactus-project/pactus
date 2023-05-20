@@ -39,10 +39,13 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 	}
 }
 
+// BroadcastMessage broadcasts a message to the specified topic.
 func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error {
 	return topic.Publish(g.ctx, msg)
 }
 
+// JoinTopic joins a topic with the given name.
+// It creates a subscription to the topic and returns the joined topic.
 func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
 	topic, err := g.pubsub.Join(name)
 	if err != nil {
@@ -73,8 +76,13 @@ func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
 
 	return topic, nil
 }
+
+// Start starts the gossip service.
 func (g *gossipService) Start() {
 }
+
+// Stop stops the gossip service.
+// It closes all the joined topics and cancels all the subscriptions.
 func (g *gossipService) Stop() {
 	for _, t := range g.topics {
 		t.Close()

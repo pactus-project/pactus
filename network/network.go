@@ -96,10 +96,6 @@ func newNetwork(conf *Config, opts []lp2p.Option) (Network, error) {
 
 	relayAddrs := []ma.Multiaddr{}
 	if conf.EnableRelay {
-		if len(conf.RelayAddrs) == 0 {
-			return nil, errors.Errorf(errors.ErrNetwork, "at least one relay address should be defined")
-		}
-
 		for _, s := range conf.RelayAddrs {
 			addr, err := ma.NewMultiaddr(s)
 			if err != nil {
@@ -160,12 +156,9 @@ func (n *network) EventChannel() <-chan Event {
 }
 
 func (n *network) Start() error {
-	if n.dht != nil {
-		if err := n.dht.Start(); err != nil {
-			return errors.Errorf(errors.ErrNetwork, err.Error())
-		}
+	if err := n.dht.Start(); err != nil {
+		return errors.Errorf(errors.ErrNetwork, err.Error())
 	}
-
 	if n.mdns != nil {
 		if err := n.mdns.Start(); err != nil {
 			return errors.Errorf(errors.ErrNetwork, err.Error())
@@ -176,7 +169,7 @@ func (n *network) Start() error {
 
 	for _, addr := range n.config.RelayAddrs {
 		if err := dialRelayNode(n.ctx, n.host, addr); err != nil {
-			n.logger.Error("Could not dial relay node", "RelayAddr", addr)
+			n.logger.Error("could not dial relay node", "relay", addr)
 		}
 	}
 

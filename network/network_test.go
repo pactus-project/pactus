@@ -300,3 +300,16 @@ func TestInvalidTopic(t *testing.T) {
 
 	require.Error(t, net.Broadcast(msg, -1))
 }
+
+func TestInvalidRelayAddress(t *testing.T) {
+	conf := testConfig()
+	conf.EnableRelay = true
+
+	conf.RelayAddrs = []string{"127.0.0.1:4001"}
+	_, err := NewNetwork(conf)
+	assert.Error(t, err)
+
+	conf.RelayAddrs = []string{"/ip4/127.0.0.1/tcp/4001"}
+	_, err = NewNetwork(conf)
+	assert.Error(t, err)
+}

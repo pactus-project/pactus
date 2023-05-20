@@ -13,7 +13,7 @@ type Config struct {
 	NetworkKey  string           `toml:"network_key"`
 	EnableNAT   bool             `toml:"enable_nat"`
 	EnableRelay bool             `toml:"enable_relay"`
-	RelayAddrs  []string         `toml:"relays"`
+	RelayAddrs  []string         `toml:"relay_addresses"`
 	EnableMdns  bool             `toml:"enable_mdns"`
 	Bootstrap   *BootstrapConfig `toml:"bootstrap"`
 }

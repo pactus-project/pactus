@@ -40,9 +40,9 @@
   # Default is true.
  ## enable_relay = false
 
-  # `relays` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
+  # `relay_addresses` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
   # Note: this parameter will be ignored if 'enable_relay' is 'false'.
- ## relays = []
+ ## relay_addresses = []
 
   # `enable_mdns` indicates whether MDNS should be enabled or not.
   # MDNS is a protocol to discover local peers quickly and efficiently.

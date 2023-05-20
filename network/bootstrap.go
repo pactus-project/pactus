@@ -122,7 +122,7 @@ func (b *bootstrap) checkConnectivity() {
 			}
 
 			if err := b.host.Connect(b.ctx, pi); err != nil {
-				b.logger.Error("error trying to connect to bootstrap node", "info", pi, "err", err.Error())
+				b.logger.Error("error trying to connect to bootstrap node", "info", pi, "err", err)
 			}
 		}
 
