@@ -64,7 +64,7 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 
 		acc, err := account.FromBytes(value)
 		if err != nil {
-			logger.Panic("unable to decode account: %v", err)
+			logger.Panic("unable to decode account", "err", err)
 		}
 
 		stopped := consumer(addr, acc)
@@ -78,7 +78,7 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address, acc *account.Account) {
 	data, err := acc.Bytes()
 	if err != nil {
-		logger.Panic("unable to encode account: %v", err)
+		logger.Panic("unable to encode account", "err", err)
 	}
 	if !as.hasAccount(addr) {
 		as.total++

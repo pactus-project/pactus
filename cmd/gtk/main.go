@@ -22,12 +22,14 @@ const appID = "com.github.pactus-project.pactus.pactus-gui"
 
 var (
 	workingDirOpt *string
+	passwordOpt   *string
 	testnetOpt    *bool
 )
 
 func init() {
-	workingDirOpt = flag.String("working-dir", cmd.PactusHomeDir(), "working directory")
-	testnetOpt = flag.Bool("testnet", true, "working directory") // TODO: make it false after mainnet launch
+	workingDirOpt = flag.String("working-dir", cmd.PactusHomeDir(), "working directory path")
+	passwordOpt = flag.String("password", "", "wallet password")
+	testnetOpt = flag.Bool("testnet", true, "initializing for the testnet") // TODO: make it false after mainnet launch
 
 	gtk.Init(nil)
 }
@@ -76,6 +78,9 @@ func main() {
 
 func startingNode(workingDir string) (*node.Node, *config.Config, *time.Time, *wallet.Wallet, error) {
 	passwordFetcher := func(wallet *wallet.Wallet) (string, bool) {
+		if *passwordOpt != "" {
+			return *passwordOpt, true
+		}
 		return getWalletPassword(wallet)
 	}
 

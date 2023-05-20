@@ -214,6 +214,9 @@ func PactusHomeDir() string {
 		} else {
 			home = path.Join(usr.HomeDir, "pactus")
 		}
+
+		// TODO: remove it before the mainnet launch
+		home = path.Join(home, "testnet")
 	}
 	return home
 }
