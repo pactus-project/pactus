@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -11,6 +12,7 @@ type Reader interface {
 	AllVotes() []*vote.Vote
 	PickRandomVote() *vote.Vote
 	RoundProposal(round int16) *proposal.Proposal
+	HasVote(hash hash.Hash) bool
 	HeightRound() (uint32, int16)
 	IsActive() bool
 	Fingerprint() string

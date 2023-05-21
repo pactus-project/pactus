@@ -109,6 +109,13 @@ func (cs *consensus) RoundProposal(round int16) *proposal.Proposal {
 	return cs.log.RoundProposal(round)
 }
 
+func (cs *consensus) HasVote(hash hash.Hash) bool {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.log.HasVote(hash)
+}
+
 func (cs *consensus) AllVotes() []*vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()

@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
@@ -71,6 +72,17 @@ func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 	defer m.lk.Unlock()
 
 	m.Proposal = p
+}
+func (m *MockConsensus) HasVote(hash hash.Hash) bool {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
+	for _, v := range m.Votes {
+		if v.Hash() == hash {
+			return true
+		}
+	}
+	return false
 }
 func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
 	m.lk.Lock()

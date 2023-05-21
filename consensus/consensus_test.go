@@ -139,22 +139,22 @@ func shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
 	}
 }
 
-func shouldPublishProposal(t *testing.T, cons *consensus, height uint32, round int16) {
+func shouldPublishProposal(t *testing.T, cons *consensus, height uint32, round int16) *proposal.Proposal {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
 		select {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
-			return
+			return nil
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishProposal", "message", msg)
 
 			if msg.Type() == message.MessageTypeProposal {
 				m := msg.(*message.ProposalMessage)
-				assert.Equal(t, m.Proposal.Height(), height)
-				assert.Equal(t, m.Proposal.Round(), round)
-				return
+				require.Equal(t, m.Proposal.Height(), height)
+				require.Equal(t, m.Proposal.Round(), round)
+				return m.Proposal
 			}
 		}
 	}
@@ -330,10 +330,10 @@ func TestRoundVotes(t *testing.T) {
 		v3 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.GenerateTestHash(), tIndexY)
 		v4 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 3, 0, hash.GenerateTestHash(), tIndexX)
 
-		require.False(t, tConsP.log.HasVote(v1.Hash()))
-		require.True(t, tConsP.log.HasVote(v2.Hash()))
-		require.True(t, tConsP.log.HasVote(v3.Hash()))
-		require.False(t, tConsP.log.HasVote(v4.Hash()))
+		require.False(t, tConsP.HasVote(v1.Hash()))
+		require.True(t, tConsP.HasVote(v2.Hash()))
+		require.True(t, tConsP.HasVote(v3.Hash()))
+		require.False(t, tConsP.HasVote(v4.Hash()))
 	})
 }
 
@@ -369,11 +369,11 @@ func TestConsensusAddVote(t *testing.T) {
 	v4 := testAddVote(tConsP, vote.VoteTypeChangeProposer, 1, 0, hash.GenerateTestHash(), tIndexX)
 	v5 := testAddVote(tConsP, vote.VoteTypePrepare, 1, 2, hash.GenerateTestHash(), tIndexX)
 
-	assert.False(t, tConsP.log.HasVote(v1.Hash())) // invalid height
-	assert.True(t, tConsP.log.HasVote(v2.Hash()))
-	assert.True(t, tConsP.log.HasVote(v3.Hash()))
-	assert.True(t, tConsP.log.HasVote(v4.Hash()))
-	assert.True(t, tConsP.log.HasVote(v5.Hash())) // next round
+	assert.False(t, tConsP.HasVote(v1.Hash())) // invalid height
+	assert.True(t, tConsP.HasVote(v2.Hash()))
+	assert.True(t, tConsP.HasVote(v3.Hash()))
+	assert.True(t, tConsP.HasVote(v4.Hash()))
+	assert.True(t, tConsP.HasVote(v5.Hash())) // next round
 }
 
 func TestConsensusLateProposal1(t *testing.T) {
@@ -414,8 +414,8 @@ func TestConsensusInvalidVote(t *testing.T) {
 
 	tConsX.AddVote(v1)
 	tConsX.AddVote(v2)
-	assert.False(t, tConsX.log.HasVote(v1.Hash()))
-	assert.False(t, tConsX.log.HasVote(v2.Hash()))
+	assert.False(t, tConsX.HasVote(v1.Hash()))
+	assert.False(t, tConsX.HasVote(v2.Hash()))
 }
 
 func TestPickRandomVote(t *testing.T) {
@@ -533,13 +533,13 @@ func TestNonActiveValidator(t *testing.T) {
 		p := makeProposal(t, 1, 0)
 		nonActiveCons.SetProposal(p)
 
-		assert.False(t, nonActiveCons.log.HasRoundProposal(0))
+		assert.Nil(t, nonActiveCons.RoundProposal(0))
 	})
 
 	t.Run("non-active instances should ignore votes", func(t *testing.T) {
 		v := testAddVote(nonActiveCons, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexX)
 
-		assert.False(t, nonActiveCons.log.HasVote(v.Hash()))
+		assert.False(t, nonActiveCons.HasVote(v.Hash()))
 	})
 
 	t.Run("non-active instances should move to new height", func(t *testing.T) {
@@ -567,5 +567,5 @@ func TestValidVoteWithBigRound(t *testing.T) {
 	tSigners[tIndexB].SignMsg(v)
 
 	tConsX.AddVote(v)
-	assert.False(t, tConsX.log.HasVote(v.Hash()))
+	assert.False(t, tConsX.HasVote(v.Hash()))
 }
