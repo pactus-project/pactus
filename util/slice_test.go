@@ -174,8 +174,10 @@ func TestEqual(t *testing.T) {
 
 func TestContains(t *testing.T) {
 	assert.True(t, Contains([]int32{1, 2, 3, 4}, 2))
-	assert.False(t, Contains([]int32{1, 2, 3, 4}, 5))
-	assert.False(t, Contains([]int32{}, 0))
+	assert.False(t, Contains([]int{1, 2, 3, 4}, 5))
+	assert.False(t, Contains([]int64{}, 0))
+	assert.True(t, Contains([]string{"foo", "bar"}, "foo"))
+	assert.False(t, Contains([]string{"foo", "bar"}, "zoo"))
 }
 
 func TestSafeCmp(t *testing.T) {

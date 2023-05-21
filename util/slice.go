@@ -129,7 +129,7 @@ func Subtracts(slice1 []int32, slice2 []int32) []int32 {
 }
 
 // Contains checks whether the given slice has a specific item.
-func Contains(slice []int32, item int32) bool {
+func Contains[T comparable](slice []T, item T) bool {
 	for _, i := range slice {
 		if i == item {
 			return true
