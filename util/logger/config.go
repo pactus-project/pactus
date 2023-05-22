@@ -12,7 +12,7 @@ func DefaultConfig() *Config {
 	}
 
 	conf.Levels["default"] = "info"
-	conf.Levels["_network"] = "error"
+	conf.Levels["_network"] = "info"
 	conf.Levels["_consensus"] = "info"
 	conf.Levels["_state"] = "info"
 	conf.Levels["_sync"] = "warning"

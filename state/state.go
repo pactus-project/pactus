@@ -106,13 +106,17 @@ func (st *state) tryLoadLastInfo() error {
 		return fmt.Errorf("invalid genesis doc")
 	}
 
-	logger.Info("try to load the last state")
+	logger.Debug("try to restore the last state")
 	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize)
 	if err != nil {
 		return err
 	}
 
 	st.committee = committee
+
+	logger.Info("last state restored",
+		"last height", st.lastInfo.BlockHeight(),
+		"last block time", st.lastInfo.BlockTime())
 
 	return nil
 }
@@ -472,7 +476,7 @@ func (st *state) evaluateSortition() bool {
 
 				evaluated = true
 			} else {
-				st.logger.Error("our sortition transaction is invalid. Why?",
+				st.logger.Error("our sortition transaction is invalid!",
 					"address", signer.Address(), "power", val.Power(), "tx", trx, "err", err)
 			}
 		}

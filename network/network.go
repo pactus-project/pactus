@@ -10,7 +10,8 @@ import (
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
-	lp2peer "github.com/libp2p/go-libp2p/core/peer"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -71,31 +72,52 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 }
 
 func NewNetwork(conf *Config) (Network, error) {
+	return newNetwork(conf, []lp2p.Option{})
+}
+
+func newNetwork(conf *Config, opts []lp2p.Option) (Network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	opts := []lp2p.Option{
+	opts = append(opts,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrStrings(conf.Listens...),
-		lp2p.Ping(conf.EnablePing),
 		lp2p.UserAgent(version.Agent()),
-	}
+	)
 
 	if conf.EnableNAT {
 		opts = append(opts,
 			lp2p.EnableNATService(),
-			lp2p.NATPortMap())
+			lp2p.NATPortMap(),
+		)
 	}
 
+	relayAddrs := []ma.Multiaddr{}
 	if conf.EnableRelay {
+		for _, s := range conf.RelayAddrs {
+			addr, err := ma.NewMultiaddr(s)
+			if err != nil {
+				return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+			}
+			relayAddrs = append(relayAddrs, addr)
+		}
+
+		static, err := lp2ppeer.AddrInfosFromP2pAddrs(relayAddrs...)
+		if err != nil {
+			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		}
 		opts = append(opts,
-			lp2p.EnableRelay())
+			lp2p.EnableRelay(),
+			lp2p.EnableAutoRelayWithStaticRelays(static),
+		)
 	} else {
 		opts = append(opts,
-			lp2p.DisableRelay())
+			lp2p.DisableRelay(),
+		)
 	}
+
 	host, err := lp2p.New(opts...)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
@@ -117,15 +139,12 @@ func NewNetwork(conf *Config) (Network, error) {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 
-	if conf.EnableDHT {
-		kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.config.Name))
-		n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, n.logger)
-	}
-
+	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.config.Name))
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.config.Name))
-	n.stream = newStreamService(ctx, host, streamProtocolID, n.eventChannel, n.logger)
 
-	n.gossip = newGossipService(ctx, host, n.eventChannel, n.logger)
+	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, n.logger)
+	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
+	n.gossip = newGossipService(ctx, n.host, n.eventChannel, n.logger)
 
 	n.logger.Info("network setup", "id", n.host.ID(), "address", conf.Listens)
 
@@ -137,19 +156,22 @@ func (n *network) EventChannel() <-chan Event {
 }
 
 func (n *network) Start() error {
-	if n.dht != nil {
-		if err := n.dht.Start(); err != nil {
-			return err
-		}
+	if err := n.dht.Start(); err != nil {
+		return errors.Errorf(errors.ErrNetwork, err.Error())
 	}
-
 	if n.mdns != nil {
 		if err := n.mdns.Start(); err != nil {
-			return err
+			return errors.Errorf(errors.ErrNetwork, err.Error())
 		}
 	}
 	n.gossip.Start()
 	n.stream.Start()
+
+	for _, addr := range n.config.RelayAddrs {
+		if err := dialRelayNode(n.ctx, n.host, addr); err != nil {
+			n.logger.Error("could not dial relay node", "relay", addr)
+		}
+	}
 
 	n.logger.Info("network started", "addr", n.host.Addrs())
 	return nil
@@ -172,7 +194,7 @@ func (n *network) Stop() {
 	}
 }
 
-func (n *network) SelfID() lp2peer.ID {
+func (n *network) SelfID() lp2ppeer.ID {
 	return n.host.ID()
 }
 
@@ -238,7 +260,7 @@ func (n *network) TopicName(topic string) string {
 	return fmt.Sprintf("/%s/topic/%s/v1", n.config.Name, topic)
 }
 
-func (n *network) CloseConnection(pid lp2peer.ID) {
+func (n *network) CloseConnection(pid lp2ppeer.ID) {
 	if err := n.host.Network().ClosePeer(pid); err != nil {
 		n.logger.Warn("unable to close connection", "peer", pid)
 	}

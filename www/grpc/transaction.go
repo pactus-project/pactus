@@ -128,7 +128,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 			},
 		}
 	default:
-		logger.Error("payload type not defined", "Type", trx.Payload().Type())
+		logger.Error("payload type not defined", "type", trx.Payload().Type())
 	}
 
 	return transaction

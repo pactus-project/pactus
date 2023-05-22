@@ -29,6 +29,7 @@ func TestRunningNode(t *testing.T) {
 	conf.GRPC.Enable = false
 	conf.HTTP.Enable = false
 	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
 
 	signers := []crypto.Signer{bls.GenerateTestSigner(), bls.GenerateTestSigner()}
