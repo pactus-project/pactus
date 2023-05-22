@@ -81,9 +81,11 @@ func NopeEncrypter() Encrypter {
 // The default encrypter uses Argon2ID as password hasher and AES_256_CTR as
 // encryption algorithm.
 func DefaultEncrypter(opts ...Option) Encrypter {
+	// Parameter Choice
+	// https://www.rfc-editor.org/rfc/rfc9106.html#section-4
 	argon2dParameters := &argon2dParameters{
-		iterations:  uint32(1),
-		memory:      uint32(2 * 1024 * 1024),
+		iterations:  uint32(3),
+		memory:      uint32(65536), // 2 ^ 16
 		parallelism: uint8(4),
 	}
 	for _, opt := range opts {
