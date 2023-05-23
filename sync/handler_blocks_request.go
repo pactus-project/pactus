@@ -25,7 +25,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		handler.logger.Warn("we are busy", "message", msg, "pid", initiator)
 		response := message.NewBlocksResponseMessage(message.ResponseCodeBusy,
 			msg.SessionID, 0, nil, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 
 		return nil
 	}
@@ -34,7 +34,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 	if !peer.IsKnownOrTrusty() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			msg.SessionID, 0, nil, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 
 		return errors.Errorf(errors.ErrInvalidMessage, "peer status is %v", peer.Status)
 	}
@@ -56,7 +56,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		if msg.From < ourHeight-LatestBlockInterval {
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				msg.SessionID, 0, nil, nil)
-			handler.sendTo(response, initiator)
+			handler.sendTo(response, initiator, msg.SessionID)
 
 			return errors.Errorf(errors.ErrInvalidMessage, "the request height is not acceptable: %v", msg.From)
 		}
@@ -73,7 +73,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 
 		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
 			msg.SessionID, height, blocks, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 
 		height += uint32(len(blocks))
 		if height >= msg.To {
@@ -88,11 +88,11 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		lastCertificate := handler.state.LastCertificate()
 		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced,
 			msg.SessionID, handler.state.LastBlockHeight(), nil, lastCertificate)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 	} else {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,
 			msg.SessionID, 0, nil, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 	}
 
 	return nil

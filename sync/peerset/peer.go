@@ -26,6 +26,8 @@ type Peer struct {
 	ReceivedBundles int
 	InvalidBundles  int
 	ReceivedBytes   int
+	SendSuccess     int
+	SendFailed      int
 }
 
 func NewPeer(peerID peer.ID) *Peer {
@@ -44,6 +46,7 @@ func (p *Peer) IsBanned() bool {
 	return p.Status == StatusCodeBanned
 }
 
+// TODO: why setter here???
 func (p *Peer) SetNodeNetworkFlag(nodeNetwork bool) {
 	if nodeNetwork {
 		p.Flags = util.SetFlag(p.Flags, PeerFlagNodeNetwork)

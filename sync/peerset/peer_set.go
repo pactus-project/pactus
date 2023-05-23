@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"sort"
 	"sync"
 	"time"
 
@@ -31,23 +32,11 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-// GetPeer finds a peer by id and returns a copy of the peer object.
-func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	p := ps.getPeer(pid)
-	if p != nil {
-		return *p
-	}
-
-	return Peer{}
-}
-
 func (ps *PeerSet) OpenSession(pid peer.ID) *Session {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
+	//TODO: check if pid exists
 	s := newSession(ps.nextSessionID, pid)
 	ps.sessions[s.SessionID()] = s
 	ps.nextSessionID++
@@ -74,6 +63,19 @@ func (ps *PeerSet) NumberOfOpenSessions() int {
 	ps.removeExpiredSessions()
 
 	return len(ps.sessions)
+}
+
+func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	for _, s := range ps.sessions {
+		if s.PeerID() == pid {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (ps *PeerSet) HasAnyOpenSession() bool {
@@ -148,19 +150,76 @@ func (ps *PeerSet) GetPeerList() []Peer {
 	return l
 }
 
+// GetPeer finds a peer by id and returns a copy of the peer object.
+func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	p := ps.getPeer(pid)
+	if p != nil {
+		return *p
+	}
+
+	return Peer{}
+}
+
+// GetRandomPeer selects a random peer from the peer set based on their weights.
+// The weight of each peer is determined by the difference between the number of successful
+// and failed send attempts. Peers with higher weights are more likely to be selected.
+// TODO: can this code be better?
 func (ps *PeerSet) GetRandomPeer() Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	i := util.RandInt32(int32(len(ps.peers)))
-	for _, p := range ps.peers {
-		i--
-		if i <= 0 {
-			return *p
-		}
+	type weightedPeer struct {
+		peer   *Peer
+		weight int
 	}
 
-	return Peer{}
+	//
+	totalWeight := 0
+	peers := make([]weightedPeer, 0, len(ps.peers))
+	for _, p := range ps.peers {
+		if !p.IsKnownOrTrusty() {
+			continue
+		}
+
+		weight := p.SendSuccess - p.SendFailed
+		if weight < 0 {
+			weight = 0
+		}
+
+		totalWeight += weight
+		peers = append(peers, weightedPeer{
+			peer:   p,
+			weight: weight,
+		})
+	}
+
+	if len(peers) == 0 {
+		return Peer{}
+	}
+
+	if len(peers) == 1 {
+		return *peers[0].peer
+	}
+
+	// Sort keys based on weights in descending order
+	sort.Slice(peers, func(i, j int) bool {
+		return peers[i].weight > peers[j].weight
+	})
+
+	rnd := int(util.RandUint32(uint32(totalWeight)))
+
+	// Find the index where the random number falls
+	for _, p := range peers {
+		totalWeight -= p.weight
+
+		if rnd > totalWeight || p.weight == 0 {
+			return *p.peer
+		}
+	}
+	panic("unreachable code")
 }
 
 func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
@@ -245,4 +304,20 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, c int) {
 
 	p := ps.mustGetPeer(pid)
 	p.ReceivedBytes += c
+}
+
+func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.SendSuccess++
+}
+
+func (ps *PeerSet) IncreaseSendFailedCounter(pid peer.ID) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.SendFailed++
 }

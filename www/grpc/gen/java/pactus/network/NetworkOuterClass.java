@@ -2360,6 +2360,18 @@ public final class NetworkOuterClass {
      * @return The lastSeen.
      */
     long getLastSeen();
+
+    /**
+     * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+     * @return The sendSuccess.
+     */
+    int getSendSuccess();
+
+    /**
+     * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+     * @return The sendFailed.
+     */
+    int getSendFailed();
   }
   /**
    * Protobuf type {@code pactus.PeerInfo}
@@ -2604,6 +2616,28 @@ public final class NetworkOuterClass {
       return lastSeen_;
     }
 
+    public static final int SEND_SUCCESS_FIELD_NUMBER = 12;
+    private int sendSuccess_;
+    /**
+     * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+     * @return The sendSuccess.
+     */
+    @java.lang.Override
+    public int getSendSuccess() {
+      return sendSuccess_;
+    }
+
+    public static final int SEND_FAILED_FIELD_NUMBER = 13;
+    private int sendFailed_;
+    /**
+     * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+     * @return The sendFailed.
+     */
+    @java.lang.Override
+    public int getSendFailed() {
+      return sendFailed_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2650,6 +2684,12 @@ public final class NetworkOuterClass {
       }
       if (lastSeen_ != 0L) {
         output.writeInt64(11, lastSeen_);
+      }
+      if (sendSuccess_ != 0) {
+        output.writeInt32(12, sendSuccess_);
+      }
+      if (sendFailed_ != 0) {
+        output.writeInt32(13, sendFailed_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2706,6 +2746,14 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(11, lastSeen_);
       }
+      if (sendSuccess_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(12, sendSuccess_);
+      }
+      if (sendFailed_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(13, sendFailed_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2743,6 +2791,10 @@ public final class NetworkOuterClass {
           != other.getStatus()) return false;
       if (getLastSeen()
           != other.getLastSeen()) return false;
+      if (getSendSuccess()
+          != other.getSendSuccess()) return false;
+      if (getSendFailed()
+          != other.getSendFailed()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2779,6 +2831,10 @@ public final class NetworkOuterClass {
       hash = (37 * hash) + LAST_SEEN_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getLastSeen());
+      hash = (37 * hash) + SEND_SUCCESS_FIELD_NUMBER;
+      hash = (53 * hash) + getSendSuccess();
+      hash = (37 * hash) + SEND_FAILED_FIELD_NUMBER;
+      hash = (53 * hash) + getSendFailed();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2929,6 +2985,10 @@ public final class NetworkOuterClass {
 
         lastSeen_ = 0L;
 
+        sendSuccess_ = 0;
+
+        sendFailed_ = 0;
+
         return this;
       }
 
@@ -2971,6 +3031,8 @@ public final class NetworkOuterClass {
         result.receivedBytes_ = receivedBytes_;
         result.status_ = status_;
         result.lastSeen_ = lastSeen_;
+        result.sendSuccess_ = sendSuccess_;
+        result.sendFailed_ = sendFailed_;
         onBuilt();
         return result;
       }
@@ -3061,6 +3123,12 @@ public final class NetworkOuterClass {
         if (other.getLastSeen() != 0L) {
           setLastSeen(other.getLastSeen());
         }
+        if (other.getSendSuccess() != 0) {
+          setSendSuccess(other.getSendSuccess());
+        }
+        if (other.getSendFailed() != 0) {
+          setSendFailed(other.getSendFailed());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3143,6 +3211,16 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 88
+              case 96: {
+                sendSuccess_ = input.readInt32();
+
+                break;
+              } // case 96
+              case 104: {
+                sendFailed_ = input.readInt32();
+
+                break;
+              } // case 104
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -3672,6 +3750,68 @@ public final class NetworkOuterClass {
         onChanged();
         return this;
       }
+
+      private int sendSuccess_ ;
+      /**
+       * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+       * @return The sendSuccess.
+       */
+      @java.lang.Override
+      public int getSendSuccess() {
+        return sendSuccess_;
+      }
+      /**
+       * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+       * @param value The sendSuccess to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSendSuccess(int value) {
+        
+        sendSuccess_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSendSuccess() {
+        
+        sendSuccess_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int sendFailed_ ;
+      /**
+       * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+       * @return The sendFailed.
+       */
+      @java.lang.Override
+      public int getSendFailed() {
+        return sendFailed_;
+      }
+      /**
+       * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+       * @param value The sendFailed to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSendFailed(int value) {
+        
+        sendFailed_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSendFailed() {
+        
+        sendFailed_ = 0;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -3775,7 +3915,7 @@ public final class NetworkOuterClass {
       "lf_id\030\001 \001(\014R\006selfId\022&\n\005peers\030\002 \003(\0132\020.pac" +
       "tus.PeerInfoR\005peers\"\024\n\022GetPeerInfoReques" +
       "t\";\n\023GetPeerInfoResponse\022$\n\004peer\030\001 \001(\0132\020" +
-      ".pactus.PeerInfoR\004peer\"\311\002\n\010PeerInfo\022\030\n\007m" +
+      ".pactus.PeerInfoR\004peer\"\215\003\n\010PeerInfo\022\030\n\007m" +
       "oniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005ag" +
       "ent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\022\022\n\004keys\030\004 \003" +
       "(\tR\004keys\022\024\n\005flags\030\005 \001(\005R\005flags\022\026\n\006height" +
@@ -3783,13 +3923,15 @@ public final class NetworkOuterClass {
       "\005R\020receivedMessages\022)\n\020invalid_messages\030" +
       "\010 \001(\005R\017invalidMessages\022%\n\016received_bytes" +
       "\030\t \001(\005R\rreceivedBytes\022\026\n\006status\030\n \001(\005R\006s" +
-      "tatus\022\033\n\tlast_seen\030\013 \001(\003R\010lastSeen2\242\001\n\007N" +
-      "etwork\022O\n\016GetNetworkInfo\022\035.pactus.GetNet" +
-      "workInfoRequest\032\036.pactus.GetNetworkInfoR" +
-      "esponse\022F\n\013GetPeerInfo\022\032.pactus.GetPeerI" +
-      "nfoRequest\032\033.pactus.GetPeerInfoResponseB" +
-      "B\n\016pactus.networkZ0github.com/pactus-pro" +
-      "ject/pactus/www/grpc/pactusb\006proto3"
+      "tatus\022\033\n\tlast_seen\030\013 \001(\003R\010lastSeen\022!\n\014se" +
+      "nd_success\030\014 \001(\005R\013sendSuccess\022\037\n\013send_fa" +
+      "iled\030\r \001(\005R\nsendFailed2\242\001\n\007Network\022O\n\016Ge" +
+      "tNetworkInfo\022\035.pactus.GetNetworkInfoRequ" +
+      "est\032\036.pactus.GetNetworkInfoResponse\022F\n\013G" +
+      "etPeerInfo\022\032.pactus.GetPeerInfoRequest\032\033" +
+      ".pactus.GetPeerInfoResponseBB\n\016pactus.ne" +
+      "tworkZ0github.com/pactus-project/pactus/" +
+      "www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3824,7 +3966,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "Keys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSeen", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "Keys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSeen", "SendSuccess", "SendFailed", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

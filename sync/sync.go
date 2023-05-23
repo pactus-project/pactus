@@ -242,11 +242,14 @@ func (sync *synchronizer) Fingerprint() string {
 		sync.state.LastBlockHeight())
 }
 
-// updateBlockchain checks if the node height is shorter than the network or not.
-// If the node height is shorter than network more than two hours (720 blocks),
-// it should start downloading the blocks from node networks,
-// otherwise the node can request the latest blocks from the network.
+// updateBlockchain checks whether the node's height is shorter than the network's height or not.
+// If the node's height is shorter than the network's height by more than two hours (720 blocks),
+// it should start downloading blocks from the network's nodes.
+// Otherwise, the node can request the latest blocks from the network.
 func (sync *synchronizer) updateBlockchain() {
+	// First, let's check if we have any open sessions.
+	// If there are any open sessions, we should wait for them to be closed.
+	// Otherwise, we can request the same blocks from different peers.
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
 		sync.logger.Debug("we have open session")
@@ -297,15 +300,22 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 	return nil
 }
 
-func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
+func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int) {
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		data, _ := bdl.Encode()
 		err := sync.network.SendTo(data, to)
 		if err != nil {
 			sync.logger.Error("error on sending bundle", "bundle", bdl, "err", err, "to", to)
+			sync.peerSet.IncreaseSendFailedCounter(to)
+
+			// Let's close the session with this peer because we couldn't establish a connection.
+			// This helps to free sessions and ask blocks from other peers.
+			// TODO: write test for me
+			sync.peerSet.CloseSession(sessionID)
 		} else {
 			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
+			sync.peerSet.IncreaseSendSuccessCounter(to)
 		}
 	}
 }
@@ -340,37 +350,34 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 // downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from uint32) {
 	sync.logger.Debug("downloading blocks", "from", from)
-	l := sync.peerSet.GetPeerList()
-	for _, peer := range l {
-		// TODO: write test for me
-		if sync.peerSet.NumberOfOpenSessions() > sync.config.MaxOpenSessions {
-			sync.logger.Debug("we reached maximum number of open sessions")
-			break
-		}
+	for i := sync.peerSet.NumberOfOpenSessions(); i < sync.config.MaxOpenSessions; i++ {
+		p := sync.peerSet.GetRandomPeer()
 
+		// Don't open a new session if we already have an open session with the same peer.
+		// This helps us to get blocks from different peers.
 		// TODO: write test for me
-		if !peer.IsNodeNetwork() {
+		if sync.peerSet.HasOpenSession(p.PeerID) {
 			continue
 		}
 
 		// TODO: write test for me
-		if peer.Status != peerset.StatusCodeKnown {
+		if !p.IsNodeNetwork() {
 			continue
 		}
 
 		// TODO: write test for me
-		if peer.Height < from+1 {
+		if p.Height < from+1 {
 			continue
 		}
 		to := from + LatestBlockInterval
-		if to > peer.Height {
-			to = peer.Height
+		if to > p.Height {
+			to = p.Height
 		}
 
-		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", peer.PeerID)
-		session := sync.peerSet.OpenSession(peer.PeerID)
+		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", p.PeerID)
+		session := sync.peerSet.OpenSession(p.PeerID)
 		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
-		sync.sendTo(msg, peer.PeerID)
+		sync.sendTo(msg, p.PeerID, session.SessionID())
 		from = to
 	}
 }
@@ -392,13 +399,13 @@ func (sync *synchronizer) queryLatestBlocks(from uint32) {
 	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", randPeer.PeerID)
 	session := sync.peerSet.OpenSession(randPeer.PeerID)
 	msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
-	sync.sendTo(msg, randPeer.PeerID)
+	sync.sendTo(msg, randPeer.PeerID, session.SessionID())
 }
 
 // peerIsInTheCommittee checks if the peer is a member of the committee
 // at the current height.
-func (sync *synchronizer) peerIsInTheCommittee(id peer.ID) bool {
-	p := sync.peerSet.GetPeer(id)
+func (sync *synchronizer) peerIsInTheCommittee(pid peer.ID) bool {
+	p := sync.peerSet.GetPeer(pid)
 	if !p.IsKnownOrTrusty() {
 		return false
 	}

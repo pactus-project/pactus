@@ -131,6 +131,14 @@
         "lastSeen": {
           "type": "string",
           "format": "int64"
+        },
+        "sendSuccess": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sendFailed": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

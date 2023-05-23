@@ -58,11 +58,13 @@ const PeerInfo$json = const {
     const {'1': 'received_bytes', '3': 9, '4': 1, '5': 5, '10': 'receivedBytes'},
     const {'1': 'status', '3': 10, '4': 1, '5': 5, '10': 'status'},
     const {'1': 'last_seen', '3': 11, '4': 1, '5': 3, '10': 'lastSeen'},
+    const {'1': 'send_success', '3': 12, '4': 1, '5': 5, '10': 'sendSuccess'},
+    const {'1': 'send_failed', '3': 13, '4': 1, '5': 5, '10': 'sendFailed'},
   ],
 };
 
 /// Descriptor for `PeerInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSEgoEa2V5cxgEIAMoCVIEa2V5cxIUCgVmbGFncxgFIAEoBVIFZmxhZ3MSFgoGaGVpZ2h0GAYgASgNUgZoZWlnaHQSKwoRcmVjZWl2ZWRfbWVzc2FnZXMYByABKAVSEHJlY2VpdmVkTWVzc2FnZXMSKQoQaW52YWxpZF9tZXNzYWdlcxgIIAEoBVIPaW52YWxpZE1lc3NhZ2VzEiUKDnJlY2VpdmVkX2J5dGVzGAkgASgFUg1yZWNlaXZlZEJ5dGVzEhYKBnN0YXR1cxgKIAEoBVIGc3RhdHVzEhsKCWxhc3Rfc2VlbhgLIAEoA1IIbGFzdFNlZW4=');
+final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSEgoEa2V5cxgEIAMoCVIEa2V5cxIUCgVmbGFncxgFIAEoBVIFZmxhZ3MSFgoGaGVpZ2h0GAYgASgNUgZoZWlnaHQSKwoRcmVjZWl2ZWRfbWVzc2FnZXMYByABKAVSEHJlY2VpdmVkTWVzc2FnZXMSKQoQaW52YWxpZF9tZXNzYWdlcxgIIAEoBVIPaW52YWxpZE1lc3NhZ2VzEiUKDnJlY2VpdmVkX2J5dGVzGAkgASgFUg1yZWNlaXZlZEJ5dGVzEhYKBnN0YXR1cxgKIAEoBVIGc3RhdHVzEhsKCWxhc3Rfc2VlbhgLIAEoA1IIbGFzdFNlZW4SIQoMc2VuZF9zdWNjZXNzGAwgASgFUgtzZW5kU3VjY2VzcxIfCgtzZW5kX2ZhaWxlZBgNIAEoBVIKc2VuZEZhaWxlZA==');
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [
