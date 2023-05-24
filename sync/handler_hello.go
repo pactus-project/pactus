@@ -30,11 +30,11 @@ func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) e
 			msg.PeerID, initiator)
 	}
 
-	if !msg.GenesisHash.EqualsTo(handler.state.GenesisHash()) {
+	if !msg.GenesisHash.EqualsTo(handler.state.Genesis().Hash()) {
 		handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeBanned)
 		return errors.Errorf(errors.ErrInvalidMessage,
 			"received a message from different chain, expected: %v, got: %v",
-			handler.state.GenesisHash(), msg.GenesisHash)
+			handler.state.Genesis().Hash(), msg.GenesisHash)
 	}
 
 	handler.logger.Debug("updating peer info",

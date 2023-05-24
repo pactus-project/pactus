@@ -8,7 +8,7 @@ import (
 //go:embed testnet.json
 var testnetJSON []byte
 
-func Testnet() *Genesis {
+func TestnetGenesis() *Genesis {
 	var gen Genesis
 	if err := json.Unmarshal(testnetJSON, &gen); err != nil {
 		panic(err)

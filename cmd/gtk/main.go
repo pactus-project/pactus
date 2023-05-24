@@ -4,16 +4,15 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
-	"github.com/pactus-project/pactus/config"
-	"github.com/pactus-project/pactus/node"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -45,8 +44,12 @@ func main() {
 	}
 
 	// If node is not initialized yet
-	if !util.PathExists(cmd.PactusDefaultWalletPath(workingDir)) {
-		if !startupAssistant(workingDir, *testnetOpt) {
+	if !util.PathExists(workingDir) {
+		network := genesis.Mainnet
+		if *testnetOpt {
+			network = genesis.Testnet
+		}
+		if !startupAssistant(workingDir, network) {
 			return
 		}
 	}
@@ -76,34 +79,6 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-func startingNode(workingDir string) (*node.Node, *config.Config, *time.Time, *wallet.Wallet, error) {
-	passwordFetcher := func(wallet *wallet.Wallet) (string, bool) {
-		if *passwordOpt != "" {
-			return *passwordOpt, true
-		}
-		return getWalletPassword(wallet)
-	}
-
-	gen, conf, signers, rewardAddrs, wallet, err := cmd.GetKeys(workingDir, passwordFetcher)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	node, err := node.NewNode(gen, conf, signers, rewardAddrs)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-	//TODO: log to file
-
-	err = node.Start()
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	genTime := gen.GenesisTime()
-	return node, conf, &genTime, wallet, nil
-}
-
 func start(workingDir string, app *gtk.Application) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
@@ -111,24 +86,27 @@ func start(workingDir string, app *gtk.Application) {
 		return
 	}
 
-	// TODO: Get genTime from the node or state
-	node, conf, genTime, wallet, err := startingNode(workingDir)
-	fatalErrorCheck(err)
-
-	// TODO
-	// No showing the main window
-	if err != nil {
-		return
+	passwordFetcher := func(wallet *wallet.Wallet) (string, bool) {
+		if *passwordOpt != "" {
+			return *passwordOpt, true
+		}
+		return getWalletPassword(wallet)
 	}
 
-	err = wallet.Connect(conf.GRPC.Listen)
+	node, wallet, err := cmd.StartNode(workingDir, passwordFetcher)
+	fatalErrorCheck(err)
+
+	grpcAddr := node.GRPC().Address()
+	fmt.Printf("connect wallet to grpc server: %s\n", grpcAddr)
+
+	err = wallet.Connect(grpcAddr)
 	fatalErrorCheck(err)
 
 	nodeModel := newNodeModel(node)
 	walletModel := newWalletModel(wallet)
 
 	// building main window
-	win := buildMainWindow(nodeModel, walletModel, *genTime)
+	win := buildMainWindow(nodeModel, walletModel)
 
 	// Show the Window and all of its components.
 	win.Show()

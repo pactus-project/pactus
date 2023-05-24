@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
@@ -19,7 +20,7 @@ type loadedWallet struct {
 
 type walletServer struct {
 	wallets map[string]*loadedWallet
-	network wallet.Network
+	chain   genesis.ChainType
 	logger  *logger.Logger
 }
 
@@ -34,7 +35,7 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	}
 
 	path := walletPath(req.Name)
-	w, err := wallet.Create(path, req.Mnemonic, req.Language, s.network)
+	w, err := wallet.Create(path, req.Mnemonic, req.Language, s.chain)
 	if err != nil {
 		return nil, err
 	}

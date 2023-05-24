@@ -43,7 +43,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	logger.InitLogger(conf.Logger)
 
 	logger.Info("You are running a pactus block chain",
-		"version", version.Version())
+		"version", version.Version(),
+		"network", genDoc.ChainType())
 
 	network, err := network.NewNetwork(conf.Network)
 	if err != nil {
@@ -158,4 +159,7 @@ func (n *Node) Sync() sync.Synchronizer {
 }
 func (n *Node) State() state.Facade {
 	return n.state
+}
+func (n *Node) GRPC() *grpc.Server {
+	return n.grpc
 }

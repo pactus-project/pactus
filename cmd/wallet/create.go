@@ -3,6 +3,7 @@ package main
 import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -26,9 +27,9 @@ func Generate() func(c *cli.Cmd) {
 			password := cmd.PromptPassword("Password", true)
 			mnemonic := wallet.GenerateMnemonic(*entropyOpt)
 
-			network := wallet.NetworkMainNet
+			network := genesis.Mainnet
 			if *testnetOpt {
-				network = wallet.NetworkTestNet
+				network = genesis.Testnet
 			}
 			wallet, err := wallet.Create(*pathArg, mnemonic, password, network)
 			cmd.FatalErrorCheck(err)

@@ -5,11 +5,11 @@ import (
 	"io"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -116,17 +116,23 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
 			"source is not same as initiator. source: %v, initiator: %v", pid, bdl.Initiator)
 	}
 
-	if f.state.Params().IsMainnet() {
-		if !util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet) {
+	switch f.state.Genesis().ChainType() {
+	case genesis.Mainnet:
+		if bdl.Flags&0x3 != bundle.BundleFlagNetworkMainnet {
 			return errors.Errorf(errors.ErrInvalidMessage,
 				"bundle is not for the mainnet")
 		}
-	}
 
-	if f.state.Params().IsTestnet() {
-		if !util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet) {
+	case genesis.Testnet:
+		if bdl.Flags&0x3 != bundle.BundleFlagNetworkTestnet {
 			return errors.Errorf(errors.ErrInvalidMessage,
 				"bundle is not for the testnet")
+		}
+
+	default:
+		if bdl.Flags&0x3 != 0 {
+			return errors.Errorf(errors.ErrInvalidMessage,
+				"bundle is not for the localnet")
 		}
 	}
 

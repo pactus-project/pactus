@@ -37,11 +37,3 @@ func DefaultParams() Params {
 func (p Params) BlockTime() time.Duration {
 	return time.Duration(p.BlockTimeInSecond) * time.Second
 }
-
-func (p Params) IsMainnet() bool {
-	return p.BlockVersion == 0x01
-}
-
-func (p Params) IsTestnet() bool {
-	return p.BlockVersion == 0x3f // 63
-}

@@ -6,6 +6,7 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -54,7 +55,11 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You can define validators based on the amount of coins you want to stake.")
 			numValidators := cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
 
-			validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, *testnetOpt, workingDir, mnemonic, password)
+			network := genesis.Mainnet
+			if *testnetOpt {
+				network = genesis.Testnet
+			}
+			validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, network, workingDir, mnemonic, password)
 			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
@@ -69,6 +74,8 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintInfoMsg("%v- %s", i+1, addr)
 			}
 
+			cmd.PrintLine()
+			cmd.PrintInfoMsgBold("Network: %v", network.String())
 			cmd.PrintLine()
 			cmd.PrintSuccessMsg("A pactus node is successfully initialized at %v", workingDir)
 			cmd.PrintLine()

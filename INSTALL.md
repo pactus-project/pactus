@@ -59,15 +59,6 @@ and then start the node:
 ./pactus-daemon start -w=<working_dir>
 ```
 
-### Local net
-
-You can create a local node with one validator to test Pactus on your machine:
-
- ```text
- ./pactus-daemon init  -w=<working_dir> --localnet
- ./pactus-daemon start -w=<working_dir>
- ```
-
 ## What is pactus-wallet?
 
 Pactus wallet is a native wallet in the Pactus blockchain that lets users easily manage
