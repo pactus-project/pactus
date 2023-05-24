@@ -127,7 +127,7 @@ func (conf *Config) toTOML() []byte {
 	return buf.Bytes()
 }
 
-func LoadFromFile(file string) (*Config, error) {
+func LoadFromFile(file string, strict bool) (*Config, error) {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, err
@@ -136,7 +136,7 @@ func LoadFromFile(file string) (*Config, error) {
 	conf := DefaultConfig()
 	buf := bytes.NewBuffer(data)
 	decoder := toml.NewDecoder(buf)
-	decoder.Strict(true)
+	decoder.Strict(strict)
 	if err := decoder.Decode(conf); err != nil {
 		return nil, err
 	}

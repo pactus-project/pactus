@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/pactus-project/pactus/config"
@@ -326,9 +327,36 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
-	conf, err := config.LoadFromFile(PactusConfigPath(workingDir))
+	confPath := PactusConfigPath(workingDir)
+	conf, err := config.LoadFromFile(confPath, true)
 	if err != nil {
-		return nil, nil, err
+		PrintWarnMsg("Unable to load the config: %s", err)
+		PrintInfoMsg("Attempting to restore the config to the default values...")
+
+		// Let's backup the config first
+		confBack, err := config.LoadFromFile(confPath, false)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006_01_02"))
+		err = os.Rename(confPath, confBackupPath)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		switch gen.ChainType() {
+		case genesis.Testnet:
+			err = config.SaveTestnetConfig(confPath, confBack.Node.NumValidators)
+			if err != nil {
+				return nil, nil, err
+			}
+		case genesis.Mainnet:
+			panic("not yet!")
+		}
+
+		PrintSuccessMsg("Config restored to the default values")
+		conf, _ = config.LoadFromFile(confPath, true) // This time it should be OK
 	}
 
 	err = conf.SanityCheck()
