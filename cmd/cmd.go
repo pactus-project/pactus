@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -253,16 +254,12 @@ func TrapSignal(cleanupFunc func()) {
 	}()
 }
 
-func CreateNode(numValidators int, testnet bool, workingDir string,
+func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string) (
 	validatorAddrs []string, rewardAddrs []string, err error) {
 	// To make process faster, we update the password after creating the addresses
-	network := wallet.NetworkMainNet
-	if testnet {
-		network = wallet.NetworkTestNet
-	}
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wallet, err := wallet.Create(walletPath, mnemonic, "", network)
+	wallet, err := wallet.Create(walletPath, mnemonic, "", chain)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -286,8 +283,9 @@ func CreateNode(numValidators int, testnet bool, workingDir string,
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
 
-	if testnet {
-		err = genesis.Testnet().SaveToFile(genPath)
+	switch chain {
+	case genesis.Testnet:
+		err = genesis.TestnetGenesis().SaveToFile(genPath)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -296,7 +294,7 @@ func CreateNode(numValidators int, testnet bool, workingDir string,
 		if err != nil {
 			return nil, nil, err
 		}
-	} else {
+	case genesis.Mainnet:
 		panic("not yet!")
 	}
 
@@ -313,14 +311,14 @@ func CreateNode(numValidators int, testnet bool, workingDir string,
 	return validatorAddrs, rewardAddrs, nil
 }
 
-func GetKeys(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
-	*genesis.Genesis, *config.Config, []crypto.Signer, []crypto.Address, *wallet.Wallet, error) {
+func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
+	*node.Node, *wallet.Wallet, error) {
 	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, err
 	}
 
-	if gen.Params().IsTestnet() {
+	if gen.ChainType().IsTestnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
 		crypto.PrivateKeyHRP = "tsecret"
@@ -330,24 +328,24 @@ func GetKeys(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bo
 
 	conf, err := config.LoadFromFile(PactusConfigPath(workingDir))
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, err
 	}
 
 	err = conf.SanityCheck()
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, err
 	}
 
 	walletPath := PactusDefaultWalletPath(workingDir)
 	wallet, err := wallet.Open(walletPath, true)
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, err
 	}
 	addrLabels := wallet.AddressLabels()
 
 	// Create signers
 	if len(addrLabels) < conf.Node.NumValidators {
-		return nil, nil, nil, nil, nil, fmt.Errorf("not enough addresses in wallet")
+		return nil, nil, fmt.Errorf("not enough addresses in wallet")
 	}
 	validatorAddrs := make([]string, conf.Node.NumValidators)
 	for i := 0; i < conf.Node.NumValidators; i++ {
@@ -356,11 +354,11 @@ func GetKeys(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bo
 	signers := make([]crypto.Signer, conf.Node.NumValidators)
 	password, ok := passwordFetcher(wallet)
 	if !ok {
-		return nil, nil, nil, nil, nil, fmt.Errorf("aborted")
+		return nil, nil, fmt.Errorf("aborted")
 	}
 	prvKeys, err := wallet.PrivateKeys(password, validatorAddrs)
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, err
 	}
 	for i, key := range prvKeys {
 		signers[i] = crypto.NewSigner(key)
@@ -374,7 +372,7 @@ func GetKeys(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bo
 		}
 	} else {
 		if len(addrLabels) < 2*conf.Node.NumValidators {
-			return nil, nil, nil, nil, nil, fmt.Errorf("not enough addresses in wallet")
+			return nil, nil, fmt.Errorf("not enough addresses in wallet")
 		}
 		for i := 0; i < conf.Node.NumValidators; i++ {
 			rewardAddrs[i], _ =
@@ -382,5 +380,15 @@ func GetKeys(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bo
 		}
 	}
 
-	return gen, conf, signers, rewardAddrs, wallet, nil
+	node, err := node.NewNode(gen, conf, signers, rewardAddrs)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = node.Start()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return node, wallet, nil
 }

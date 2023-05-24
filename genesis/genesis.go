@@ -16,6 +16,29 @@ import (
 	"github.com/pactus-project/pactus/util"
 )
 
+type ChainType uint8
+
+const (
+	Unknown ChainType = 0xff
+	Mainnet ChainType = 0
+	Testnet ChainType = 1
+)
+
+func (n ChainType) IsTestnet() bool {
+	return n == Testnet
+}
+
+func (n ChainType) String() string {
+	switch n {
+	case Mainnet:
+		return "Mainnet"
+	case Testnet:
+		return "Testnet"
+	default:
+		return "Unknown"
+	}
+}
+
 type genAccount struct {
 	Address string `cbor:"1,keyasint"`
 	Balance int64  `cbor:"2,keyasint"`
@@ -134,7 +157,7 @@ func LoadFromFile(file string) (*Genesis, error) {
 	return &gen, nil
 }
 
-// SaveToFile saves the genesis info a JSON file.
+// SaveToFile saves the genesis into a JSON file.
 func (gen *Genesis) SaveToFile(file string) error {
 	json, err := gen.MarshalJSON()
 	if err != nil {
@@ -143,4 +166,12 @@ func (gen *Genesis) SaveToFile(file string) error {
 
 	// write  dataContent to file
 	return util.WriteFile(file, json)
+}
+
+func (gen *Genesis) ChainType() ChainType {
+	if gen.Hash() == TestnetGenesis().Hash() {
+		return Testnet
+	}
+
+	return Unknown
 }

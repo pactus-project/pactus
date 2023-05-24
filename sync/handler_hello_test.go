@@ -22,7 +22,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := bls.GenerateTestSigner()
 			pid := network.TestRandomPeerID()
 			initiator := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, tState.GenesisHash())
+			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, tState.Genesis().Hash())
 			signer.SignMsg(msg)
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
@@ -49,7 +49,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := bls.GenerateTestSigner()
 			height := util.RandUint32(tState.LastBlockHeight())
 			pid := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.GenesisHash())
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
@@ -75,7 +75,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := bls.GenerateTestSigner()
 			height := util.RandUint32(tState.LastBlockHeight())
 			pid := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, tState.GenesisHash())
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, tState.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
@@ -93,7 +93,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := bls.GenerateTestSigner()
 			claimedHeight := tState.LastBlockHeight() + 5
 			pid := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, tState.GenesisHash())
+			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, tState.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))

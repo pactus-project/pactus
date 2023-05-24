@@ -207,11 +207,11 @@ func (st *state) Close() error {
 	return st.store.Close()
 }
 
-func (st *state) GenesisHash() hash.Hash {
+func (st *state) Genesis() *genesis.Genesis {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.genDoc.Hash()
+	return st.genDoc
 }
 
 func (st *state) LastBlockHeight() uint32 {

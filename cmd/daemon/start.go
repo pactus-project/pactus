@@ -10,7 +10,6 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
-	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -70,16 +69,8 @@ func Start() func(c *cli.Cmd) {
 				}
 				return password, true
 			}
-			gen, conf, signers, rewardAddrs, _, err := cmd.GetKeys(
+			node, _, err := cmd.StartNode(
 				workingDir, passwordFetcher)
-			cmd.FatalErrorCheck(err)
-
-			cmd.PrintLine()
-
-			node, err := node.NewNode(gen, conf, signers, rewardAddrs)
-			cmd.FatalErrorCheck(err)
-
-			err = node.Start()
 			cmd.FatalErrorCheck(err)
 
 			cmd.TrapSignal(func() {

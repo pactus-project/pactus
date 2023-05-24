@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
@@ -25,7 +26,7 @@ type MockState struct {
 	// This locks prevents the Data Race in tests
 	lk sync.RWMutex
 
-	TestGenHash   hash.Hash
+	TestGenesis   *genesis.Genesis
 	TestStore     *store.MockStore
 	TestPool      *txpool.MockTxPool
 	TestCommittee committee.Committee
@@ -35,7 +36,7 @@ type MockState struct {
 func MockingState() *MockState {
 	committee, _ := committee.GenerateTestCommittee(21)
 	return &MockState{
-		TestGenHash:   hash.GenerateTestHash(),
+		TestGenesis:   genesis.TestnetGenesis(), // TODO: replace me with the Mainnet genesis
 		TestStore:     store.MockingStore(),
 		TestPool:      txpool.MockingTxPool(),
 		TestCommittee: committee,
@@ -58,8 +59,8 @@ func (m *MockState) LastBlockHeight() uint32 {
 
 	return m.TestStore.LastHeight
 }
-func (m *MockState) GenesisHash() hash.Hash {
-	return m.TestGenHash
+func (m *MockState) Genesis() *genesis.Genesis {
+	return m.TestGenesis
 }
 func (m *MockState) LastBlockHash() hash.Hash {
 	m.lk.RLock()

@@ -11,6 +11,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -21,7 +22,7 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-func startupAssistant(workingDir string, testnet bool) bool {
+func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	successful := false
 	createPage := func(assistant *gtk.Assistant, content gtk.IWidget, name,
 		title, subject, desc string) *gtk.Widget {
@@ -382,17 +383,13 @@ Now you are ready to start the node!`
 				walletPassword, err := entryPassword.GetText()
 				fatalErrorCheck(err)
 
-				validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, testnet, workingDir, mnemonic, walletPassword)
+				validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chain, workingDir, mnemonic, walletPassword)
 				fatalErrorCheck(err)
 
 				// Done! showing the node information
 				successful = true
 				nodeInfo := fmt.Sprintf("Working directory: %s\n", workingDir)
-				if testnet {
-					nodeInfo += "Network: Testnet\n"
-				} else {
-					nodeInfo += "Network: Mainnet\n"
-				}
+				nodeInfo += fmt.Sprintf("Network: %s\n", chain.String())
 				nodeInfo += "\nValidator addresses:\n"
 				for i, addr := range validatorAddrs {
 					nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)

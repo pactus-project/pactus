@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 )
@@ -60,13 +59,10 @@ func (s *Server) StartServer() error {
 		sync:   s.sync,
 		logger: s.logger,
 	}
-	network := wallet.NetworkMainNet
-	if s.state.Params().IsTestnet() {
-		network = wallet.NetworkTestNet
-	}
+	network := s.state.Genesis().ChainType()
 	walletServer := &walletServer{
 		wallets: make(map[string]*loadedWallet),
-		network: network,
+		chain:   network,
 		logger:  s.logger,
 	}
 	pactus.RegisterBlockchainServer(grpc, blockchainServer)

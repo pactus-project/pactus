@@ -10,19 +10,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
-)
-
-type Network uint8
-
-const (
-	NetworkMainNet = Network(0)
-	NetworkTestNet = Network(1)
 )
 
 type Wallet struct {
@@ -67,20 +61,27 @@ func Open(path string, offline bool) (*Wallet, error) {
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the
 // given path.
-func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
+func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
 		return nil, NewErrWalletExits(path)
 	}
-	coinType := uint32(21888)
-	if net == NetworkTestNet {
-		coinType = uint32(21777)
+
+	coinType := uint32(0)
+	switch chain {
+	case genesis.Mainnet:
+		coinType = 21888
+	case genesis.Testnet:
+		coinType = 21777
+	default:
+		return nil, ErrInvalidNetwork
 	}
+
 	store := &store{
 		Version:   1,
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
-		Network:   net,
+		Network:   chain,
 		Vault:     nil,
 	}
 	wallet, err := newWallet(path, store, true)
@@ -101,7 +102,7 @@ func Create(path, mnemonic, password string, net Network) (*Wallet, error) {
 }
 
 func newWallet(path string, store *store, offline bool) (*Wallet, error) {
-	if store.Network == NetworkTestNet {
+	if store.Network.IsTestnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
 		crypto.PrivateKeyHRP = "tsecret"
@@ -161,11 +162,11 @@ func (w *Wallet) connectToRandomServer() error {
 
 	var netServers []serverInfo
 	switch w.store.Network {
-	case NetworkMainNet:
+	case genesis.Mainnet:
 		{ // mainnet
 			netServers = serversInfo["mainnet"]
 		}
-	case NetworkTestNet:
+	case genesis.Testnet:
 		{ // testnet
 			netServers = serversInfo["testnet"]
 		}

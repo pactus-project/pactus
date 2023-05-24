@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
@@ -14,7 +15,7 @@ import (
 )
 
 type Facade interface {
-	GenesisHash() hash.Hash
+	Genesis() *genesis.Genesis
 	LastBlockHeight() uint32
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time

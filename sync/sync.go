@@ -8,6 +8,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
@@ -170,7 +171,7 @@ func (sync *synchronizer) sayHello(helloAck bool) {
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
-		flags, sync.state.GenesisHash())
+		flags, sync.state.Genesis().Hash())
 
 	for _, signer := range sync.signers {
 		signer.SignMsg(msg)
@@ -282,13 +283,15 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 		// In future we might support other libraries.
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
 
-		if sync.state.Params().IsMainnet() {
+		switch sync.state.Genesis().ChainType() {
+		case genesis.Mainnet:
 			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+		case genesis.Testnet:
+			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
+		default:
+			// It's localnet and for testing purpose only
 		}
 
-		if sync.state.Params().IsTestnet() {
-			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		}
 		return bdl
 	}
 	return nil

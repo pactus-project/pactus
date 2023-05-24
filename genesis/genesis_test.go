@@ -45,7 +45,7 @@ func TestMarshaling(t *testing.T) {
 }
 
 func TestGenesisTestNet(t *testing.T) {
-	g := Testnet()
+	g := TestnetGenesis()
 	assert.Equal(t, len(g.Validators()), 4)
 	assert.Equal(t, len(g.Accounts()), 1)
 

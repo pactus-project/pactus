@@ -33,7 +33,7 @@ type widgetNode struct {
 	progressBarSynced    *gtk.ProgressBar
 }
 
-func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, error) {
+func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	builder, err := gtk.BuilderNewFromString(string(uiWidgetNode))
 	if err != nil {
 		return nil, err
@@ -41,17 +41,19 @@ func buildWidgetNode(model *nodeModel, genesisTime time.Time) (*widgetNode, erro
 
 	box := getBoxObj(builder, "id_box_node")
 	labelLocation := getLabelObj(builder, "id_label_working_directory")
+	labelNetwork := getLabelObj(builder, "id_label_network")
 
 	cwd, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
 	labelLocation.SetText(cwd)
+	labelNetwork.SetText(model.node.State().Genesis().ChainType().String())
 
 	w := &widgetNode{
 		Box:                  box,
 		model:                model,
-		genesisTime:          genesisTime,
+		genesisTime:          model.node.State().Genesis().GenesisTime(),
 		labelLastBlockTime:   getLabelObj(builder, "id_label_last_block_time"),
 		labelLastBlockHeight: getLabelObj(builder, "id_label_last_block_height"),
 		labelBlocksLeft:      getLabelObj(builder, "id_label_blocks_left"),

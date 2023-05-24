@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -51,7 +52,7 @@ func setup(t *testing.T) {
 	tPassword := ""
 	walletPath := util.TempFilePath()
 	mnemonic := GenerateMnemonic(128)
-	w, err := Create(walletPath, mnemonic, tPassword, NetworkMainNet)
+	w, err := Create(walletPath, mnemonic, tPassword, genesis.Mainnet)
 	assert.NoError(t, err)
 	assert.False(t, w.IsEncrypted())
 	assert.Equal(t, w.Path(), walletPath)
@@ -129,7 +130,7 @@ func TestRecoverWallet(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		path := util.TempFilePath()
-		recovered, err := Create(path, mnemonic, password, NetworkMainNet)
+		recovered, err := Create(path, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 
 		addr1, err := recovered.DeriveNewAddress("addr-1")
@@ -172,13 +173,13 @@ func TestImportPrivateKey(t *testing.T) {
 func TestTestKeyInfo(t *testing.T) {
 	mnemonic := GenerateMnemonic(128)
 	w1, err := Create(util.TempFilePath(), mnemonic, tPassword,
-		NetworkMainNet)
+		genesis.Mainnet)
 	assert.NoError(t, err)
 	addrStr1, _ := w1.DeriveNewAddress("")
 	prv1, _ := w1.PrivateKey("", addrStr1)
 
 	w2, err := Create(util.TempFilePath(), mnemonic, tPassword,
-		NetworkTestNet)
+		genesis.Testnet)
 	assert.NoError(t, err)
 	addrStr2, _ := w2.DeriveNewAddress("")
 	prv2, _ := w2.PrivateKey("", addrStr2)

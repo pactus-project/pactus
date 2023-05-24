@@ -197,7 +197,7 @@ func TestCommitBlocks(t *testing.T) {
 	assert.Equal(t, tState1.LastBlockTime(), b1.Header().Time())
 	assert.Equal(t, tState1.LastCertificate().Hash(), c1.Hash())
 	assert.Equal(t, tState1.LastBlockHeight(), uint32(1))
-	assert.Equal(t, tState1.GenesisHash(), tState2.GenesisHash())
+	assert.Equal(t, tState1.Genesis().Hash(), tState2.Genesis().Hash())
 }
 
 func TestCommitSandbox(t *testing.T) {

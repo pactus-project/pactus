@@ -20,7 +20,7 @@ func TestSessionTimeout(t *testing.T) {
 		signer := bls.GenerateTestSigner()
 		pid := network.TestRandomPeerID()
 		claimedHeight := uint32(6666)
-		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork, tState.GenesisHash())
+		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork, tState.Genesis().Hash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))

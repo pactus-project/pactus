@@ -31,17 +31,6 @@ func TestSaveTestnetConfig(t *testing.T) {
 	assert.Equal(t, conf.Network.Name, "pactus-testnet")
 }
 
-func TestSaveLocalnetConfig(t *testing.T) {
-	path := util.TempFilePath()
-	assert.NoError(t, SaveLocalnetConfig(path))
-
-	conf, err := LoadFromFile(path)
-	assert.NoError(t, err)
-
-	assert.NoError(t, conf.SanityCheck())
-	assert.Equal(t, conf.Network.Name, "pactus-localnet")
-}
-
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
 	_, err := LoadFromFile(path)
