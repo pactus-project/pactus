@@ -254,7 +254,11 @@ func (ps *PeerSet) UpdatePeerInfo(
 	p.Agent = agent
 	p.ConsensusKeys[*consKey] = true
 
-	p.SetNodeNetworkFlag(nodeNetwork)
+	if nodeNetwork {
+		p.Flags = util.SetFlag(p.Flags, PeerFlagNodeNetwork)
+	} else {
+		p.Flags = util.UnsetFlag(p.Flags, PeerFlagNodeNetwork)
+	}
 }
 
 func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32) {

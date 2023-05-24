@@ -46,15 +46,6 @@ func (p *Peer) IsBanned() bool {
 	return p.Status == StatusCodeBanned
 }
 
-// TODO: why setter here???
-func (p *Peer) SetNodeNetworkFlag(nodeNetwork bool) {
-	if nodeNetwork {
-		p.Flags = util.SetFlag(p.Flags, PeerFlagNodeNetwork)
-	} else {
-		p.Flags = util.UnsetFlag(p.Flags, PeerFlagNodeNetwork)
-	}
-}
-
 func (p *Peer) IsNodeNetwork() bool {
 	return util.IsFlagSet(p.Flags, PeerFlagNodeNetwork)
 }
