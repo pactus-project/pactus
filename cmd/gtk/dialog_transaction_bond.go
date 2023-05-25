@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -14,46 +15,51 @@ import (
 //go:embed assets/ui/dialog_transaction_bond.ui
 var uiTransactionBondDialog []byte
 
-func broadcastTransactionBond(wallet *wallet.Wallet) {
+func broadcastTransactionBond(wallet *wallet.Wallet, valAddrs []crypto.Address) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionBondDialog))
 	fatalErrorCheck(err)
 
 	dlg := getDialogObj(builder, "id_dialog_transaction_bond")
 
 	senderEntry := getComboBoxTextObj(builder, "id_combo_sender")
-	balanceLabel := getLabelObj(builder, "id_label_balance")
-	receiverEntry := getEntryObj(builder, "id_entry_receiver")
+	senderHint := getLabelObj(builder, "id_hint_sender")
+	receiverCombo := getComboBoxTextObj(builder, "id_combo_receiver")
+	receiverHint := getLabelObj(builder, "id_hint_receiver")
 	publicKeyEntry := getEntryObj(builder, "id_entry_public_key")
 	amountEntry := getEntryObj(builder, "id_entry_amount")
-	payableLabel := getLabelObj(builder, "id_label_payable")
+	amountHint := getLabelObj(builder, "id_hint_amount")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
 	for _, i := range wallet.AddressLabels() {
 		senderEntry.Append(i.Address, i.Address)
 	}
+
+	for _, addr := range valAddrs {
+		receiverCombo.Append(addr.String(), addr.String())
+	}
+
 	senderEntry.SetActive(0)
 
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
-		info := wallet.AddressInfo(senderStr)
-		balance, _ := wallet.Balance(senderStr)
-		balanceLabel.SetMarkup(
-			fmt.Sprintf("<span foreground='gray' size='small'>balance: %v, label: %v</span>",
-				util.ChangeToString(balance), info.Label))
+		updateAccountHint(senderHint, senderStr, wallet)
+	}
+
+	onReceiverChanged := func() {
+		receiverEntry, _ := receiverCombo.GetEntry()
+		receiverStr, _ := receiverEntry.GetText()
+		updateValidatorHint(receiverHint, receiverStr, wallet)
 	}
 
 	onAmountChanged := func() {
-		amountStr, _ := amountEntry.GetText()
-		amount, _ := util.StringToChange(amountStr)
-		fee := wallet.CalculateFee(amount)
-
-		payableLabel.SetMarkup(
-			fmt.Sprintf("<span foreground='gray' size='small'>payable: %v, fee: %v</span>",
-				util.ChangeToString(fee+amount), util.ChangeToString(fee)))
+		amtStr, _ := amountEntry.GetText()
+		updateFeeHint(amountHint, amtStr, wallet)
 	}
+
 	onSend := func() {
 		sender := senderEntry.GetActiveID()
+		receiverEntry, _ := receiverCombo.GetEntry()
 		receiver, _ := receiverEntry.GetText()
 		publicKey, _ := publicKeyEntry.GetText()
 		amountStr, _ := amountEntry.GetText()
@@ -105,10 +111,11 @@ Fee: <b>%v</b>
 	}
 
 	signals := map[string]interface{}{
-		"on_sender_changed": onSenderChanged,
-		"on_amount_changed": onAmountChanged,
-		"on_send":           onSend,
-		"on_cancel":         onClose,
+		"on_sender_changed":   onSenderChanged,
+		"on_receiver_changed": onReceiverChanged,
+		"on_amount_changed":   onAmountChanged,
+		"on_send":             onSend,
+		"on_cancel":           onClose,
 	}
 	builder.ConnectSignals(signals)
 

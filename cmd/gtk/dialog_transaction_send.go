@@ -18,13 +18,14 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionTransferDialog))
 	fatalErrorCheck(err)
 
-	dlg := getDialogObj(builder, "id_dialog_transaction_send")
+	dlg := getDialogObj(builder, "id_dialog_transaction_transfer")
 
 	senderEntry := getComboBoxTextObj(builder, "id_combo_sender")
-	balanceLabel := getLabelObj(builder, "id_label_balance")
+	senderHint := getLabelObj(builder, "id_hint_sender")
 	receiverEntry := getEntryObj(builder, "id_entry_receiver")
+	receiverHint := getLabelObj(builder, "id_hint_receiver")
 	amountEntry := getEntryObj(builder, "id_entry_amount")
-	payableLabel := getLabelObj(builder, "id_label_payable")
+	amountHint := getLabelObj(builder, "id_hint_amount")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
@@ -35,22 +36,19 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
-		info := wallet.AddressInfo(senderStr)
-		balance, _ := wallet.Balance(senderStr)
-		balanceLabel.SetMarkup(
-			fmt.Sprintf("<span foreground='gray' size='small'>balance: %v, label: %v</span>",
-				util.ChangeToString(balance), info.Label))
+		updateAccountHint(senderHint, senderStr, wallet)
+	}
+
+	onReceiverChanged := func() {
+		receiverStr, _ := receiverEntry.GetText()
+		updateAccountHint(receiverHint, receiverStr, wallet)
 	}
 
 	onAmountChanged := func() {
-		amountStr, _ := amountEntry.GetText()
-		amount, _ := util.StringToChange(amountStr)
-		fee := wallet.CalculateFee(amount)
-
-		payableLabel.SetMarkup(
-			fmt.Sprintf("<span foreground='gray' size='small'>payable: %v, fee: %v</span>",
-				util.ChangeToString(fee+amount), util.ChangeToString(fee)))
+		amtStr, _ := amountEntry.GetText()
+		updateFeeHint(amountHint, amtStr, wallet)
 	}
+
 	onSend := func() {
 		sender := senderEntry.GetActiveID()
 		receiver, _ := receiverEntry.GetText()
@@ -103,10 +101,11 @@ Fee: <b>%v</b>
 	}
 
 	signals := map[string]interface{}{
-		"on_sender_changed": onSenderChanged,
-		"on_amount_changed": onAmountChanged,
-		"on_send":           onSend,
-		"on_cancel":         onClose,
+		"on_sender_changed":   onSenderChanged,
+		"on_receiver_changed": onReceiverChanged,
+		"on_amount_changed":   onAmountChanged,
+		"on_send":             onSend,
+		"on_cancel":           onClose,
 	}
 	builder.ConnectSignals(signals)
 

@@ -314,6 +314,13 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 	if err != nil {
 		return nil, err
 	}
+	if pubKey == "" {
+		// Let's check if we can get public key from the wallet
+		info := w.store.Vault.AddressInfo(receiver)
+		if info != nil {
+			pubKey = info.Pub.String()
+		}
+	}
 	if pubKey != "" {
 		maker.pub, err = bls.PublicKeyFromString(pubKey)
 		if err != nil {
