@@ -333,18 +333,20 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		PrintWarnMsg("Unable to load the config: %s", err)
 		PrintInfoMsg("Attempting to restore the config to the default values...")
 
-		// Let's backup the config first
+		// First, try to open the old config file in non-strict mode
 		confBack, err := config.LoadFromFile(confPath, false)
 		if err != nil {
 			return nil, nil, err
 		}
 
+		// Let's create a backup of the config
 		confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006_01_02"))
 		err = os.Rename(confPath, confBackupPath)
 		if err != nil {
 			return nil, nil, err
 		}
 
+		// Now, attempt to restore the config file with the number of validators from the old config.
 		switch gen.ChainType() {
 		case genesis.Testnet:
 			err = config.SaveTestnetConfig(confPath, confBack.Node.NumValidators)
@@ -352,7 +354,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 				return nil, nil, err
 			}
 		case genesis.Mainnet:
-			panic("not yet!")
+			panic("not yet implemented!")
 		}
 
 		PrintSuccessMsg("Config restored to the default values")
