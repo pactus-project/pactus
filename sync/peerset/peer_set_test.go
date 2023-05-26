@@ -17,9 +17,12 @@ func TestPeerSet(t *testing.T) {
 	pk1, _ := bls.GenerateTestKeyPair()
 	pk2, _ := bls.GenerateTestKeyPair()
 	pk3, _ := bls.GenerateTestKeyPair()
-	peerSet.UpdatePeerInfo(peer.ID("peer1"), StatusCodeBanned, "Moniker1", "Agent1", pk1, true)
-	peerSet.UpdatePeerInfo(peer.ID("peer2"), StatusCodeKnown, "Moniker2", "Agent2", pk2, false)
-	peerSet.UpdatePeerInfo(peer.ID("peer3"), StatusCodeTrusty, "Moniker3", "Agent3", pk3, true)
+	pid1 := peer.ID("peer1")
+	pid2 := peer.ID("peer2")
+	pid3 := peer.ID("peer3")
+	peerSet.UpdatePeerInfo(pid1, StatusCodeBanned, "Moniker1", "Agent1", pk1, true)
+	peerSet.UpdatePeerInfo(pid2, StatusCodeKnown, "Moniker2", "Agent2", pk2, false)
+	peerSet.UpdatePeerInfo(pid3, StatusCodeTrusty, "Moniker3", "Agent3", pk3, true)
 
 	t.Run("Testing Len", func(t *testing.T) {
 		assert.Equal(t, 3, peerSet.Len())
@@ -28,9 +31,9 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing MaxClaimedHeight", func(t *testing.T) {
 		assert.Equal(t, uint32(0), peerSet.MaxClaimedHeight())
 
-		peerSet.UpdateHeight(peer.ID("peer1"), 100)
-		peerSet.UpdateHeight(peer.ID("peer2"), 200)
-		peerSet.UpdateHeight(peer.ID("peer3"), 150)
+		peerSet.UpdateHeight(pid1, 100)
+		peerSet.UpdateHeight(pid2, 200)
+		peerSet.UpdateHeight(pid3, 150)
 
 		assert.Equal(t, uint32(200), peerSet.MaxClaimedHeight())
 	})
@@ -39,7 +42,7 @@ func TestPeerSet(t *testing.T) {
 		peerList := peerSet.GetPeerList()
 
 		// Verify that the peer list contains the expected peers
-		expectedPeerIDs := []peer.ID{"peer1", "peer2", "peer3"}
+		expectedPeerIDs := []peer.ID{pid1, pid2, pid3}
 		for _, expectedID := range expectedPeerIDs {
 			found := false
 			for _, peer := range peerList {
@@ -53,14 +56,36 @@ func TestPeerSet(t *testing.T) {
 	})
 
 	t.Run("Testing GetPeer", func(t *testing.T) {
-		p := peerSet.GetPeer(peer.ID("peer2"))
+		p := peerSet.GetPeer(pid2)
 
-		assert.Equal(t, peer.ID("peer2"), p.PeerID)
+		assert.Equal(t, pid2, p.PeerID)
 		assert.Equal(t, StatusCodeKnown, p.Status)
 
 		p = peerSet.GetPeer(peer.ID("unknown"))
 		assert.Equal(t, peer.ID(""), p.PeerID)
 		assert.Equal(t, StatusCodeUnknown, p.Status)
+	})
+
+	t.Run("Testing counters", func(t *testing.T) {
+		peerSet.IncreaseInvalidBundlesCounter(pid1)
+		peerSet.IncreaseReceivedBundlesCounter(pid1)
+		peerSet.IncreaseReceivedBytesCounter(pid1, 100)
+		peerSet.IncreaseSendFailedCounter(pid1)
+		peerSet.IncreaseSendSuccessCounter(pid1)
+
+		peer1 := peerSet.getPeer(pid1)
+		assert.Equal(t, peer1.InvalidBundles, 1)
+		assert.Equal(t, peer1.ReceivedBundles, 1)
+		assert.Equal(t, peer1.ReceivedBytes, 100)
+		assert.Equal(t, peer1.SendFailed, 1)
+		assert.Equal(t, peer1.SendSuccess, 1)
+	})
+
+	t.Run("Testing UpdateStatus", func(t *testing.T) {
+		peerSet.UpdateStatus(pid1, StatusCodeBanned)
+
+		peer1 := peerSet.getPeer(pid1)
+		assert.Equal(t, peer1.Status, StatusCodeBanned)
 	})
 
 	t.Run("Testing RemovePeer", func(t *testing.T) {
@@ -71,7 +96,7 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, peerSet.Len(), 2)
 	})
 
-	t.Run("Clear", func(t *testing.T) {
+	t.Run("Testing Clear", func(t *testing.T) {
 		peerSet.Clear()
 
 		assert.Equal(t, 0, peerSet.Len())
@@ -82,10 +107,12 @@ func TestPeerSet(t *testing.T) {
 func TestOpenSession(t *testing.T) {
 	ps := NewPeerSet(time.Minute)
 
-	session := ps.OpenSession("peer1")
+	pid := peer.ID("peer1")
+	session := ps.OpenSession(pid)
 
 	assert.NotNil(t, session)
-
+	assert.True(t, ps.HasOpenSession(pid))
+	assert.False(t, ps.HasOpenSession("peer2"))
 	assert.Equal(t, 1, ps.NumberOfOpenSessions())
 }
 
