@@ -23,7 +23,9 @@ func (s *precommitState) decide() {
 	precommitQH := precommits.QuorumHash()
 	if precommitQH != nil {
 		s.logger.Debug("precommit has quorum", "precommitQH", precommitQH)
-		s.enterNewState(s.commitState)
+		if s.hasVoted {
+			s.enterNewState(s.commitState)
+		}
 	} else {
 		// Liveness on PBFT
 		// ...

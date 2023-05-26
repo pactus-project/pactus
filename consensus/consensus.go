@@ -167,11 +167,6 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
-	if p.Height() == cs.state.LastBlockHeight() {
-		cs.logger.Trace("block is committed for this height", "proposal", p, "block hash", cs.state.LastBlockHash())
-		return
-	}
-
 	if p.Round() < cs.round {
 		cs.logger.Trace("expired round", "proposal", p)
 		return
@@ -183,15 +178,26 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
-	proposer := cs.proposer(p.Round())
-	if err := p.Verify(proposer.PublicKey()); err != nil {
-		cs.logger.Warn("proposal has invalid signature", "proposal", p, "err", err)
-		return
-	}
+	if p.Height() == cs.state.LastBlockHeight() {
+		// A slow node might receive a proposal after committing the proposed block.
+		// In this case, we accept the proposal and allow nodes to continue.
+		// By doing so, we enable the validator to broadcast its votes and
+		//prevent it from being marked as absent in the block certificate.
+		cs.logger.Trace("block is committed for this height", "proposal", p, "block hash", cs.state.LastBlockHash())
+		if p.Block().Hash() != cs.state.LastBlockHash() {
+			return
+		}
+	} else {
+		proposer := cs.proposer(p.Round())
+		if err := p.Verify(proposer.PublicKey()); err != nil {
+			cs.logger.Warn("proposal has invalid signature", "proposal", p, "err", err)
+			return
+		}
 
-	if err := cs.state.ValidateBlock(p.Block()); err != nil {
-		cs.logger.Warn("invalid block", "proposal", p, "err", err)
-		return
+		if err := cs.state.ValidateBlock(p.Block()); err != nil {
+			cs.logger.Warn("invalid block", "proposal", p, "err", err)
+			return
+		}
 	}
 
 	cs.currentState.onSetProposal(p)

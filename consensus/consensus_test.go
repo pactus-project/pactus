@@ -376,30 +376,66 @@ func TestConsensusAddVote(t *testing.T) {
 	assert.True(t, tConsP.HasVote(v5.Hash())) // next round
 }
 
-func TestConsensusLateProposal1(t *testing.T) {
+// TestConsensusLateProposal1 tests the scenario where a slow node receives a proposal
+// after votes have been cast.
+func TestConsensusLateProposal(t *testing.T) {
 	setup(t)
 
 	commitBlockForAllStates(t) // height 1
 
-	testEnterNewHeight(tConsB)
+	testEnterNewHeight(tConsP)
 
 	h := uint32(2)
 	r := int16(0)
 	p := makeProposal(t, h, r)
 	require.NotNil(t, p)
 
-	// Partitioned node doesn't receive all the votes
-	testAddVote(tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(tConsB, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexP)
+	// The partitioned node receives all the votes first
+	testAddVote(tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
 
-	testAddVote(tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-	testAddVote(tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-	testAddVote(tConsB, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexP)
+	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
 	// Partitioned node receives proposal now
-	tConsB.SetProposal(p)
-	shouldPublishBlockAnnounce(t, tConsB, p.Block().Hash())
+	tConsP.SetProposal(p)
+
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
+}
+
+// stConsensusVeryLateProposal1 tests the scenario where a slow node receives a proposal
+// after a block is committed.
+func TestConsensusVeryLateProposal(t *testing.T) {
+	setup(t)
+
+	commitBlockForAllStates(t) // height 1
+
+	testEnterNewHeight(tConsP)
+
+	h := uint32(2)
+	r := int16(0)
+	p := makeProposal(t, h, r)
+	require.NotNil(t, p)
+
+	commitBlockForAllStates(t) // height 2
+
+	// Partitioned node doesn't receive all the votes
+	testAddVote(tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
+
+	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+	testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+
+	// Partitioned node receives proposal now
+	tConsP.SetProposal(p)
+
+	shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
+	shouldPublishBlockAnnounce(t, tConsP, p.Block().Hash())
 }
 
 func TestConsensusInvalidVote(t *testing.T) {

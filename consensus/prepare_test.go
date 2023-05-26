@@ -37,13 +37,14 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
 }
 
-// We have four nodes: Nx, Ny, Nb, Np, which:
-// Nb is a byzantine node and Nx, Ny, Np are honest nodes,
-// however Np is partitioned and see the network through Nb (Byzantine node).
+// We have four nodes: Nx, Ny, Nb, and Np, which:
+// - Nb is a Byzantine node
+// - Nx, Ny, and Np are honest nodes
+// - However, Np is partitioned and sees the network through Nb (Byzantine node).
 //
-// In Height H, B sends prepare votes to Nx, Ny and change-proposer vote to Np.
-// Np should not move to change-proposer state.
-// After partition heals, they move to next round.
+// In Height H, Nb sends prepare votes to Nx, Ny, and a change-proposer vote to Np.
+// Np should not move to the change-proposer state.
+// After the partition heals, honest nodes move to the next round.
 func TestByzantineVote1(t *testing.T) {
 	setup(t)
 
@@ -110,13 +111,14 @@ func TestByzantineVote1(t *testing.T) {
 	checkHeightRoundWait(t, tConsP, h, r+1)
 }
 
-// We have four nodes: Nx, Ny, Nb, Np, which:
-// Nb is a byzantine node and Nx, Ny, Np are honest nodes,
-// however Np is partitioned and see the network through Nb (Byzantine node).
+// We have four nodes: Nx, Ny, Nb, and Np, which:
+// - Nb is a Byzantine node
+// - Nx, Ny, and Np are honest nodes
+// - However, Np is partitioned and sees the network through Nb (Byzantine node).
 //
-// In Height H, B sends change-proposer votes to Nx, Ny and prepare vote to Np.
-// Np moves to precommit state.
-// After partition heals, they move to next round.
+// In Height H, Nb sends change-proposer votes to Nx, Ny, and a prepare vote to Np.
+// Np moves to the precommit state.
+// After the partition heals, honest nodes move to the next round.
 func TestByzantineVote2(t *testing.T) {
 	setup(t)
 

@@ -65,12 +65,17 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 func TestConsensusSetProposalAfterCommit(t *testing.T) {
 	setup(t)
 
-	p := makeProposal(t, 1, 0)
+	p0 := makeProposal(t, 1, 0)
+	p1 := makeProposal(t, 1, 1)
 
 	testEnterNewHeight(tConsP)
 	commitBlockForAllStates(t)
-	tConsP.SetProposal(p)
-	assert.Nil(t, tConsP.RoundProposal(0))
+
+	tConsP.SetProposal(p0)
+	assert.NotNil(t, tConsP.RoundProposal(0))
+
+	tConsP.SetProposal(p1)
+	assert.Nil(t, tConsP.RoundProposal(1))
 }
 
 func TestNetworkLagging(t *testing.T) {

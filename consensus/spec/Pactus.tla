@@ -80,6 +80,13 @@ HasProposal(height, round) ==
 IsCommitted(height) ==
     Cardinality(SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> height])) > 0
 
+HasVoted(index, type) ==
+    Cardinality(SubsetOfMsgs([
+        type |-> type,
+        height |-> states[index].height,
+        round |-> states[index].round,
+        index |-> index])) > 0
+
 -----------------------------------------------------------------------------
 (***************************************************************************)
 (* Network functions                                                       *)
@@ -130,7 +137,7 @@ AnnounceBlock(index)  ==
         type    |-> "BLOCK-ANNOUNCE",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> -1]}
+        index   |-> states[index].proposerIndex]}
 
 -----------------------------------------------------------------------------
 (***************************************************************************)
@@ -174,7 +181,9 @@ Prepare(index) ==
 Precommit(index) ==
     /\ states[index].name = "precommit"
     /\ SendPrecommitVote(index)
-    /\ IF HasPrecommitQuorum(index) /\ ~HasOneThirdOfChangeProposer(index)
+    /\ IF  /\ HasPrecommitQuorum(index)
+           /\ ~HasOneThirdOfChangeProposer(index)
+           /\ HasVoted(index, "PRECOMMIT")
        THEN states' = [states EXCEPT ![index].name = "commit"]
        ELSE states' = states
 
@@ -253,6 +262,11 @@ TypeOK ==
             /\ \A round \in 0..states[index].round:
                 /\ Cardinality(GetProposal(states[index].height, round)) <= 1 \* not more than two proposals per round
                 /\ round > 0 => Cardinality(SubsetOfMsgs([type |-> "CHANGE-PROPOSER", round |-> round - 1])) >= QuorumCnt
-
+        /\ IsCommitted(states[index].height) =>
+            \*   Check all blocks are same
+            /\
+                \E x \in SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height]):
+                    \A y \in SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height]):
+                        x = y
 
 =============================================================================
