@@ -141,14 +141,14 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		// })
 
 		t.Run("Peer requests blocks that we don't have", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, curHeight+1, 1)
+			msg := message.NewBlocksRequestMessage(sid, curHeight+100, 1)
 			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 
 			peer := tSync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, curHeight+1)
+			assert.Equal(t, peer.Height, curHeight+99)
 		})
 	})
 
