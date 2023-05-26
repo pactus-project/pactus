@@ -24,7 +24,7 @@ func TestAccount(t *testing.T) {
 		tHTTPServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
-		assert.Contains(t, w.Body.String(), util.ChangeToStringWithTrailingZeros(acc.Balance()))
+		assert.Contains(t, w.Body.String(), util.ChangeToString(acc.Balance()))
 		fmt.Println(w.Body)
 	})
 
