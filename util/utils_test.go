@@ -131,7 +131,7 @@ func TestCoinToChangeConversion(t *testing.T) {
 			assert.Equal(t, change, test.change)
 			assert.Equal(t, ChangeToCoin(change), test.coin)
 			assert.Equal(t, ChangeToStringWithTrailingZeros(change), test.str1)
-			assert.Equal(t, ChangeToString2(change), test.str2)
+			assert.Equal(t, ChangeToString(change), test.str2)
 		} else {
 			assert.ErrorIs(t, err, test.parsErr)
 		}
