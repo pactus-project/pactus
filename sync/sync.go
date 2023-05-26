@@ -348,7 +348,6 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 
 // downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
-
 	sync.logger.Debug("downloading blocks", "from", from)
 	for i := sync.peerSet.NumberOfOpenSessions(); i < sync.config.MaxOpenSessions; i++ {
 		p := sync.peerSet.GetRandomPeer()

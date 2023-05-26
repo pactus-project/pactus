@@ -65,9 +65,8 @@ func (m *BlocksResponseMessage) To() uint32 {
 func (m *BlocksResponseMessage) LastCertificateHeight() uint32 {
 	if m.LastCertificate != nil {
 		return m.From
-	} else {
-		return 0
 	}
+	return 0
 }
 
 func (m *BlocksResponseMessage) Fingerprint() string {

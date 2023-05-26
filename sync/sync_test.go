@@ -163,7 +163,8 @@ func testAddBlocks(t *testing.T, state *state.MockState, count int) {
 }
 
 func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, nodeNetwork bool) {
-	tSync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(), version.Agent(), pub.(*bls.PublicKey), nodeNetwork)
+	tSync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(),
+		version.Agent(), pub.(*bls.PublicKey), nodeNetwork)
 }
 
 func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
@@ -273,5 +274,4 @@ func TestDownload(t *testing.T) {
 		// So we have two sends, and therefore two failures.
 		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendFailed, 3)
 	})
-
 }
