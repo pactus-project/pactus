@@ -13,7 +13,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	assert.NoError(t, SaveMainnetConfig(path, 7))
 
-	conf, err := LoadFromFile(path)
+	conf, err := LoadFromFile(path, true)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.SanityCheck())
@@ -24,7 +24,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	assert.NoError(t, SaveTestnetConfig(path, 7))
 
-	conf, err := LoadFromFile(path)
+	conf, err := LoadFromFile(path, true)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.SanityCheck())
@@ -33,12 +33,15 @@ func TestSaveTestnetConfig(t *testing.T) {
 
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
-	_, err := LoadFromFile(path)
+	_, err := LoadFromFile(path, true)
 	assert.Error(t, err, "not exists")
 
 	assert.NoError(t, util.WriteFile(path, []byte(`foo = "bar"`)))
-	_, err = LoadFromFile(path)
+	_, err = LoadFromFile(path, true)
 	assert.Error(t, err, "unknown field")
+
+	_, err = LoadFromFile(path, false)
+	assert.NoError(t, err)
 }
 
 func TestExampleConfig(t *testing.T) {
