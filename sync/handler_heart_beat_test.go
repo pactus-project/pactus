@@ -58,7 +58,7 @@ func TestBroadcastingHeartbeatMessages(t *testing.T) {
 		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeVote)
 	})
 
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[0].PublicKey())
+	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[1].PublicKey())
 
 	t.Run("It is in committee", func(t *testing.T) {
 		heightAlice, _ := tConsMgr.HeightRound()

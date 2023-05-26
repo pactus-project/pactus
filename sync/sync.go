@@ -267,9 +267,9 @@ func (sync *synchronizer) updateBlockchain() {
 
 		sync.logger.Info("start syncing with the network")
 		if claimedHeight > ourHeight+LatestBlockInterval {
-			sync.downloadBlocks(from)
+			sync.downloadBlocks(from, true)
 		} else {
-			sync.queryLatestBlocks(from)
+			sync.downloadBlocks(from, false)
 		}
 	}
 }
@@ -311,7 +311,6 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 
 			// Let's close the session with this peer because we couldn't establish a connection.
 			// This helps to free sessions and ask blocks from other peers.
-			// TODO: write test for me
 			sync.peerSet.CloseSession(sessionID)
 		} else {
 			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
@@ -348,7 +347,8 @@ func (sync *synchronizer) Peers() []peerset.Peer {
 }
 
 // downloadBlocks starts downloading blocks from the network.
-func (sync *synchronizer) downloadBlocks(from uint32) {
+func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
+
 	sync.logger.Debug("downloading blocks", "from", from)
 	for i := sync.peerSet.NumberOfOpenSessions(); i < sync.config.MaxOpenSessions; i++ {
 		p := sync.peerSet.GetRandomPeer()
@@ -360,8 +360,7 @@ func (sync *synchronizer) downloadBlocks(from uint32) {
 			continue
 		}
 
-		// TODO: write test for me
-		if !p.IsNodeNetwork() {
+		if onlyNodeNetwork && !p.IsNodeNetwork() {
 			continue
 		}
 
@@ -369,37 +368,14 @@ func (sync *synchronizer) downloadBlocks(from uint32) {
 		if p.Height < from+1 {
 			continue
 		}
-		to := from + LatestBlockInterval
-		if to > p.Height {
-			to = p.Height
-		}
 
-		sync.logger.Debug("sending download request", "from", from+1, "to", to, "pid", p.PeerID)
+		count := LatestBlockInterval
+		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
 		session := sync.peerSet.OpenSession(p.PeerID)
-		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
+		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, count)
 		sync.sendTo(msg, p.PeerID, session.SessionID())
-		from = to
+		from += count
 	}
-}
-
-func (sync *synchronizer) queryLatestBlocks(from uint32) {
-	randPeer := sync.peerSet.GetRandomPeer()
-
-	// TODO: write test for me
-	if !randPeer.IsKnownOrTrusty() {
-		return
-	}
-
-	// TODO: write test for me
-	to := randPeer.Height
-	if randPeer.Height < from+1 {
-		return
-	}
-
-	sync.logger.Debug("querying the latest blocks", "from", from+1, "to", to, "pid", randPeer.PeerID)
-	session := sync.peerSet.OpenSession(randPeer.PeerID)
-	msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, to)
-	sync.sendTo(msg, randPeer.PeerID, session.SessionID())
 }
 
 // peerIsInTheCommittee checks if the peer is a member of the committee
@@ -491,6 +467,7 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 	case message.ResponseCodeRejected:
 		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
+		sync.peerSet.IncreaseSendFailedCounter(pid)
 		sync.updateBlockchain()
 
 	case message.ResponseCodeBusy:

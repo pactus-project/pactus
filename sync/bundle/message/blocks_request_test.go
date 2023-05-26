@@ -18,16 +18,17 @@ func TestBlocksRequestMessage(t *testing.T) {
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
 	})
-	t.Run("Invalid range", func(t *testing.T) {
-		m := NewBlocksRequestMessage(1, 200, 100)
+	t.Run("Invalid count", func(t *testing.T) {
+		m := NewBlocksRequestMessage(1, 200, 0)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidMessage)
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		m := NewBlocksRequestMessage(1, 100, 200)
+		m := NewBlocksRequestMessage(1, 100, 7)
 
 		assert.NoError(t, m.SanityCheck())
+		assert.Equal(t, m.To(), uint32(106))
 		assert.Contains(t, m.Fingerprint(), "100")
 	})
 }

@@ -1,7 +1,6 @@
 package peerset
 
 import (
-	"sort"
 	"sync"
 	"time"
 
@@ -36,7 +35,6 @@ func (ps *PeerSet) OpenSession(pid peer.ID) *Session {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	//TODO: check if pid exists
 	s := newSession(ps.nextSessionID, pid)
 	ps.sessions[s.SessionID()] = s
 	ps.nextSessionID++
@@ -185,9 +183,10 @@ func (ps *PeerSet) GetRandomPeer() Peer {
 		}
 
 		weight := p.SendSuccess - p.SendFailed
-		if weight < 0 {
+		if weight <= 0 {
 			weight = 0
 		}
+		weight++
 
 		totalWeight += weight
 		peers = append(peers, weightedPeer{
@@ -200,22 +199,13 @@ func (ps *PeerSet) GetRandomPeer() Peer {
 		return Peer{}
 	}
 
-	if len(peers) == 1 {
-		return *peers[0].peer
-	}
-
-	// Sort keys based on weights in descending order
-	sort.Slice(peers, func(i, j int) bool {
-		return peers[i].weight > peers[j].weight
-	})
-
 	rnd := int(util.RandUint32(uint32(totalWeight)))
 
 	// Find the index where the random number falls
 	for _, p := range peers {
 		totalWeight -= p.weight
 
-		if rnd > totalWeight || p.weight == 0 {
+		if rnd >= totalWeight {
 			return *p.peer
 		}
 	}

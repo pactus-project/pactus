@@ -69,7 +69,7 @@ func TestGossipMessage(t *testing.T) {
 		setup(t)
 
 		bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(100, 1))
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
 		assert.False(t, tFirewall.isPeerBanned(tUnknownPeerID))

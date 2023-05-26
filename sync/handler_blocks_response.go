@@ -23,7 +23,7 @@ func (handler *blocksResponseHandler) ParsMessage(m message.Message, initiator p
 	if msg.IsRequestRejected() {
 		handler.logger.Warn("blocks request is rejected", "pid", initiator, "response", msg.ResponseCode)
 	} else {
-		handler.cache.AddCertificate(msg.To(), msg.LastCertificate)
+		handler.cache.AddCertificate(msg.From, msg.LastCertificate)
 		handler.cache.AddBlocks(msg.From, msg.Blocks)
 		handler.tryCommitBlocks()
 	}

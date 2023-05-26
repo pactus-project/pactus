@@ -56,7 +56,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		pid := network.TestRandomPeerID()
 
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, 100, 105)
+			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
 			assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 
 			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
@@ -65,7 +65,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 
 		pub, _ := bls.GenerateTestKeyPair()
-		testAddPeer(t, pub, pid)
+		testAddPeer(t, pub, pid, false)
 
 		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
@@ -76,41 +76,79 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
 
+		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
+			msg := message.NewBlocksRequestMessage(sid, 0, LatestBlockInterval+1)
+			assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
+
+			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
+		})
+
 		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, curHeight-5, curHeight)
-			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+			t.Run("Peer needs more block", func(t *testing.T) {
+				msg := message.NewBlocksRequestMessage(sid, curHeight-tConfig.BlockPerMessage, tConfig.BlockPerMessage)
+				assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
-			msg1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
-			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).From, curHeight-5)
-			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).To(), curHeight)
+				bdl1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-tConfig.BlockPerMessage)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight-1)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), tConfig.BlockPerMessage)
+				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
 
-			msg2 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
-			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
-			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).From, curHeight)
-			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).To(), curHeight)
+				bdl2 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
+				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).From)
+				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
+				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
+				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
 
-			peer := tSync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, curHeight)
+				peer := tSync.peerSet.GetPeer(pid)
+				assert.Equal(t, peer.Height, curHeight-1) // Peer needs one more block
+			})
+
+			t.Run("Peer synced", func(t *testing.T) {
+				msg := message.NewBlocksRequestMessage(sid, curHeight-tConfig.BlockPerMessage+1, tConfig.BlockPerMessage)
+				assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+
+				bdl1 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-tConfig.BlockPerMessage+1)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight)
+				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), tConfig.BlockPerMessage)
+				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
+
+				bdl2 := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
+				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
+				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).From, curHeight)
+				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
+				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
+				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).LastCertificateHeight(), curHeight)
+
+				peer := tSync.peerSet.GetPeer(pid)
+				assert.Equal(t, peer.Height, curHeight) // Peer is synced
+			})
 		})
 
 		// t.Run("Peer requests to send the blocks again, It should be rejected", func(t *testing.T) {
-		// 	msg := message.NewBlocksRequestMessage(sid, curHeight-1, curHeight)
+		// 	msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
 		// 	assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
 
 		// 	bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 		// 	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
+		// 	assert.Zero(t, bdl.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
+
 		// })
 
 		t.Run("Peer requests blocks that we don't have", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, curHeight+100, curHeight+150)
+			msg := message.NewBlocksRequestMessage(sid, curHeight+1, 1)
 			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 			bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 
 			peer := tSync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, curHeight+99)
+			assert.Equal(t, peer.Height, curHeight+1)
 		})
 	})
 
@@ -120,9 +158,9 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		sid := int(util.RandInt32(100))
 		pid := network.TestRandomPeerID()
 		pub, _ := bls.GenerateTestKeyPair()
-		testAddPeer(t, pub, pid)
+		testAddPeer(t, pub, pid, false)
 
-		t.Run("Reject request block one", func(t *testing.T) {
+		t.Run("Requesting one block", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
 			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
@@ -133,7 +171,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
 
 			peer := tSync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, uint32(10)) // because 10 blocks are sent
+			assert.Equal(t, peer.Height, uint32(2))
 		})
 
 		t.Run("Peer is busy", func(t *testing.T) {

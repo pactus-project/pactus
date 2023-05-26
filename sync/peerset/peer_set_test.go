@@ -203,11 +203,11 @@ func TestGetRandomPeerOnePeer(t *testing.T) {
 	peerSet := NewPeerSet(time.Second)
 
 	pk, _ := bls.GenerateTestKeyPair()
-	pidKnown := peer.ID("peer_known")
-	peerSet.UpdatePeerInfo(pidKnown, StatusCodeKnown, "Moniker_known", "Agent1", pk, true)
-	peerSet.IncreaseSendSuccessCounter(pidKnown)
+	pid := peer.ID("peer_known")
+	peerSet.UpdatePeerInfo(pid, StatusCodeKnown, "Moniker_known", "Agent1", pk, true)
+	peerSet.IncreaseSendSuccessCounter(pid)
 
 	p := peerSet.GetRandomPeer()
 
-	assert.Equal(t, p.PeerID, pidKnown)
+	assert.Equal(t, p.PeerID, pid)
 }

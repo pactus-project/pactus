@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util/errors"
 )
 
 const LatestBlocksResponseCodeOK = 0
@@ -33,6 +34,9 @@ func (m *BlocksResponseMessage) SanityCheck() error {
 			return err
 		}
 	}
+	if m.From == 0 && len(m.Blocks) != 0 {
+		return errors.Errorf(errors.ErrInvalidHeight, "unexpected blocks for height zero")
+	}
 	if m.LastCertificate != nil {
 		if err := m.LastCertificate.SanityCheck(); err != nil {
 			return err
@@ -46,11 +50,24 @@ func (m *BlocksResponseMessage) Type() Type {
 	return MessageTypeBlocksResponse
 }
 
+func (m *BlocksResponseMessage) Count() uint32 {
+	return uint32(len(m.Blocks))
+}
+
 func (m *BlocksResponseMessage) To() uint32 {
+	// response message without any block
 	if len(m.Blocks) == 0 {
-		return m.From
+		return 0
 	}
-	return m.From + uint32(len(m.Blocks)-1)
+	return m.From + m.Count() - 1
+}
+
+func (m *BlocksResponseMessage) LastCertificateHeight() uint32 {
+	if m.LastCertificate != nil {
+		return m.From
+	} else {
+		return 0
+	}
 }
 
 func (m *BlocksResponseMessage) Fingerprint() string {
