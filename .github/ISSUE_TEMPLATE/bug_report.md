@@ -34,6 +34,6 @@ Your additional work here is greatly appreciated and will help us respond as qui
 
 ### Environment
 
-- **Operation System: **
-- **Pactus Version: **
-- **Go Version**
+- **Operation System:**
+- **Pactus Version:**
+- **Go Version:**
