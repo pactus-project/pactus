@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -97,6 +98,7 @@ func TestByzantineVote1(t *testing.T) {
 	// =================================
 	// Now, Partition heals
 	time.Sleep(1 * time.Second)
+	fmt.Println("=== Partition healed")
 
 	for _, v := range tConsP.AllVotes() {
 		tConsX.AddVote(v)
@@ -176,6 +178,7 @@ func TestByzantineVote2(t *testing.T) {
 	// Now, Partition heals
 
 	time.Sleep(1 * time.Second)
+	fmt.Println("=== Partition healed")
 
 	for _, v := range tConsP.AllVotes() {
 		tConsX.AddVote(v)

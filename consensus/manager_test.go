@@ -24,12 +24,12 @@ import (
 )
 
 func TestManager(t *testing.T) {
-	_, committeeSigners := committee.GenerateTestCommittee(4)
+	_, committeeSigners := committee.GenerateTestCommittee(5)
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	params := param.DefaultParams()
 	params.BlockTimeInSecond = 1
-	vals := make([]*validator.Validator, 4)
+	vals := make([]*validator.Validator, 5)
 	for i, s := range committeeSigners {
 		val := validator.NewValidator(s.PublicKey().(*bls.PublicKey), int32(i))
 		vals[i] = val
@@ -42,12 +42,14 @@ func TestManager(t *testing.T) {
 	rewardAddrs := []crypto.Address{
 		crypto.GenerateTestAddress(), crypto.GenerateTestAddress(),
 		crypto.GenerateTestAddress(), crypto.GenerateTestAddress(),
+		crypto.GenerateTestAddress(),
 	}
-	signers := make([]crypto.Signer, 4)
+	signers := make([]crypto.Signer, 5)
 	signers[0] = committeeSigners[0]
 	signers[1] = committeeSigners[1]
 	signers[2] = bls.GenerateTestSigner()
 	signers[3] = bls.GenerateTestSigner()
+	signers[4] = bls.GenerateTestSigner()
 	broadcastCh := make(chan message.Message, 500)
 	txPool := txpool.MockingTxPool()
 
@@ -61,6 +63,7 @@ func TestManager(t *testing.T) {
 	consB := mgr.instances[1].(*consensus) // active
 	consC := mgr.instances[2].(*consensus) // inactive
 	consD := mgr.instances[3].(*consensus) // inactive
+	consE := mgr.instances[4].(*consensus) // inactive
 
 	assert.False(t, mgr.HasActiveInstance())
 
@@ -70,6 +73,7 @@ func TestManager(t *testing.T) {
 	checkHeightRoundWait(t, consB, 1, 0)
 	checkHeightRoundWait(t, consC, 1, 0)
 	checkHeightRoundWait(t, consD, 1, 0)
+	checkHeightRoundWait(t, consE, 1, 0)
 
 	assert.True(t, mgr.HasActiveInstance())
 
@@ -80,6 +84,7 @@ func TestManager(t *testing.T) {
 		assert.Equal(t, signers[1].PublicKey(), instances[1].SignerKey())
 		assert.Equal(t, signers[2].PublicKey(), instances[2].SignerKey())
 		assert.Equal(t, signers[3].PublicKey(), instances[3].SignerKey())
+		assert.Equal(t, signers[4].PublicKey(), instances[4].SignerKey())
 	})
 
 	t.Run("Check if one instance publishes a proposal, the other instances receive it", func(t *testing.T) {
@@ -117,21 +122,18 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Testing moving to the next round proposal", func(t *testing.T) {
-		v1 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[0].Address())
-		committeeSigners[0].SignMsg(v1)
-
-		v2 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[1].Address())
-		committeeSigners[1].SignMsg(v2)
-
 		v3 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[2].Address())
 		committeeSigners[2].SignMsg(v3)
 
-		mgr.AddVote(v1)
-		mgr.AddVote(v2)
+		v4 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[3].Address())
+		committeeSigners[3].SignMsg(v4)
+
 		mgr.AddVote(v3)
+		mgr.AddVote(v4)
+
+		checkHeightRoundWait(t, consA, 1, 1)
 
 		h, r := mgr.HeightRound()
-
 		assert.Equal(t, h, uint32(1))
 		assert.Equal(t, r, int16(1))
 		assert.Nil(t, mgr.RoundProposal(0))

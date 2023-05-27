@@ -41,8 +41,10 @@ SubsetOfMsgs(params) ==
 
 
 \* IsProposer checks if the replica is the proposer for this round
+\* To simplify, we assume the proposer always starts with the first replica
+\* and moves to the next by the change-proposer phase.
 IsProposer(index) ==
-    (states[index].round + states[index].proposerIndex) % Replicas = index
+    states[index].round % Replicas = index
 
 \* HasPrepareQuorum checks if there is a quorum of the PREPARE votes in each round.
 HasPrepareQuorum(index) ==
@@ -137,8 +139,9 @@ AnnounceBlock(index)  ==
         type    |-> "BLOCK-ANNOUNCE",
         height  |-> states[index].height,
         round   |-> states[index].round,
-        index   |-> states[index].proposerIndex]}
+        index   |-> -1]}
 
+IsFaulty(index) == index >= 3 * NumFaulty
 -----------------------------------------------------------------------------
 (***************************************************************************)
 (* States functions                                                        *)
@@ -147,6 +150,7 @@ AnnounceBlock(index)  ==
 \* NewHeight state
 NewHeight(index) ==
     /\ states[index].name = "new-height"
+    /\ ~IsFaulty(index)
     /\ states' = [states EXCEPT
         ![index].name = "propose",
         ![index].height = states[index].height + 1,
@@ -157,48 +161,61 @@ NewHeight(index) ==
 \* Propose state
 Propose(index) ==
     /\ states[index].name = "propose"
+    /\ ~IsFaulty(index)
     /\ IF IsProposer(index)
        THEN SendProposal(index)
        ELSE log' = log
-    /\ states' = [states EXCEPT ![index].name = "prepare"]
+    /\ states' = [states EXCEPT
+        ![index].name = "prepare"]
 
 
 \* Prepare state
 Prepare(index) ==
     /\ states[index].name = "prepare"
-    /\ IF /\ HasProposal(states[index].height, states[index].round)
-          /\ ~HasOneThirdOfChangeProposer(index)
-          \/ states[index].round >= MaxRound
-       THEN /\ SendPrepareVote(index)
-            /\ IF HasPrepareQuorum(index)
-               THEN states' = [states EXCEPT ![index].name = "precommit"]
-               ELSE states' = states
-       ELSE /\ SendChangeProposerRequest(index)
-            /\ states' = [states EXCEPT ![index].name = "change-proposer"]
+    /\ ~IsFaulty(index)
+    /\ ~HasOneThirdOfChangeProposer(index) \* This check is optional
+    /\ HasProposal(states[index].height, states[index].round)
+    /\ SendPrepareVote(index)
+    /\ IF  /\ HasPrepareQuorum(index)
+       THEN states' = [states EXCEPT ![index].name = "precommit"]
+       ELSE states' = states
 
 
 \* Precommit state
 Precommit(index) ==
     /\ states[index].name = "precommit"
+    /\ ~IsFaulty(index)
+    /\ ~HasOneThirdOfChangeProposer(index) \* This check is optional
     /\ SendPrecommitVote(index)
     /\ IF  /\ HasPrecommitQuorum(index)
-           /\ ~HasOneThirdOfChangeProposer(index)
            /\ HasVoted(index, "PRECOMMIT")
        THEN states' = [states EXCEPT ![index].name = "commit"]
        ELSE states' = states
 
 
+Timeout(index) ==
+    /\
+        \/ states[index].name = "prepare"
+        \/ states[index].name = "precommit"
+    /\ ~IsFaulty(index)
+    /\ (states[index].round < MaxRound)
+    /\ SendChangeProposerRequest(index)
+    /\ states' = [states EXCEPT
+        ![index].name = "change-proposer"]
+
 \* Commit state
 Commit(index) ==
     /\ states[index].name = "commit"
-    /\ AnnounceBlock(index)
+    /\ ~IsFaulty(index)
+    /\ AnnounceBlock(index) \* this clear the logs
     /\ states' = [states EXCEPT
-        ![index].name = "new-height",
-        ![index].proposerIndex = (states[index].round + 1) % Replicas]
+        ![index].name = "new-height"]
+
 
 \* ChangeProposer state
 ChangeProposer(index) ==
     /\ states[index].name = "change-proposer"
+    /\ ~IsFaulty(index)
     /\ IF HasChangeProposerQuorum(index)
        THEN states' = [states EXCEPT
             ![index].name = "propose",
@@ -216,8 +233,7 @@ Sync(index) ==
         /\ states' = [states EXCEPT
             ![index].name = "propose",
             ![index].height = states[index].height + 1,
-            ![index].round = 0,
-            ![index].proposerIndex = ((CHOOSE b \in blocks: TRUE).round + 1) % Replicas]
+            ![index].round = 0]
         /\ log' = log
 
 -----------------------------------------------------------------------------
@@ -227,18 +243,18 @@ Init ==
     /\ states = [index \in 0..Replicas-1 |-> [
         name            |-> "new-height",
         height          |-> 0,
-        round           |-> 0,
-        proposerIndex   |-> 0]]
+        round           |-> 0]]
 
 Next ==
     \E index \in 0..Replicas-1:
-        \/ Sync(index)
-        \/ NewHeight(index)
-        \/ Propose(index)
-        \/ Prepare(index)
-        \/ Precommit(index)
-        \/ Commit(index)
-        \/ ChangeProposer(index)
+       \/ Sync(index)
+       \/ NewHeight(index)
+       \/ Propose(index)
+       \/ Prepare(index)
+       \/ Precommit(index)
+       \/ Timeout(index)
+       \/ Commit(index)
+       \/ ChangeProposer(index)
 
 Spec ==
     Init /\ [][Next]_vars
@@ -253,20 +269,20 @@ TypeOK ==
         /\ ~IsCommitted(states[index].height) =>
             /\ states[index].name = "new-height" /\ states[index].height > 1 =>
                 IsCommitted(states[index].height - 1)
-            /\ states[index].name = "propose" =>
-                Cardinality(SubsetOfMsgs([index |-> index, height |-> states[index].height, round |-> states[index].round])) = 0
+            /\ states[index].name = "propose" /\ states[index].round > 0 =>
+                /\ Cardinality(SubsetOfMsgs([
+                        type   |-> "CHANGE-PROPOSER",
+                        height |-> states[index].height,
+                        round  |-> states[index].round - 1])) >= QuorumCnt
             /\ states[index].name = "precommit" =>
-                HasPrepareQuorum(index)
+                /\ HasPrepareQuorum(index)
+                /\ HasProposal(states[index].height, states[index].round)
             /\ states[index].name = "commit" =>
-                HasPrecommitQuorum(index)
+                /\ HasPrepareQuorum(index)
+                /\ HasPrecommitQuorum(index)
+                /\ HasProposal(states[index].height, states[index].round)
             /\ \A round \in 0..states[index].round:
-                /\ Cardinality(GetProposal(states[index].height, round)) <= 1 \* not more than two proposals per round
-                /\ round > 0 => Cardinality(SubsetOfMsgs([type |-> "CHANGE-PROPOSER", round |-> round - 1])) >= QuorumCnt
-        /\ IsCommitted(states[index].height) =>
-            \*   Check all blocks are same
-            /\
-                \E x \in SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height]):
-                    \A y \in SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height]):
-                        x = y
+                \* Not more than one proposal per round
+                /\ Cardinality(GetProposal(states[index].height, round)) <= 1
 
 =============================================================================

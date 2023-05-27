@@ -63,6 +63,7 @@ func TestRemoveProposalAfterChangeProposer(t *testing.T) {
 	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
 	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
-	assert.Nil(t, tConsP.RoundProposal(0))
 	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	checkHeightRound(t, tConsP, 2, 1)
+	assert.Nil(t, tConsP.RoundProposal(0))
 }
