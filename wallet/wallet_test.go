@@ -314,7 +314,6 @@ func TestMakeSendTx(t *testing.T) {
 		_, err := tWallet.MakeSendTx(crypto.GenerateTestAddress().String(), receiver.String(), amount)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
-
 }
 
 func TestMakeBondTx(t *testing.T) {
@@ -357,58 +356,64 @@ func TestMakeBondTx(t *testing.T) {
 		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
 	})
 
-	t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
-		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
-		assert.NoError(t, err)
-		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+	t.Run("validator address is not stored in wallet", func(t *testing.T) {
+		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
+			trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
+			assert.NoError(t, err)
+			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+		})
+
+		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
+			trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
+			assert.NoError(t, err)
+			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiver.PublicKey().String())
+		})
+
+		t.Run("validator exists and public key not set", func(t *testing.T) {
+			tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
+			trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
+			assert.NoError(t, err)
+			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+		})
+
+		t.Run("validator exists and public key set", func(t *testing.T) {
+			trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
+			assert.NoError(t, err)
+			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+		})
 	})
 
-	t.Run("validator exists and public key not set", func(t *testing.T) {
-		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
-		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
-		assert.NoError(t, err)
-		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
-	})
-
-	t.Run("validator exists and public key set", func(t *testing.T) {
-		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
-		assert.NoError(t, err)
-		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
-	})
-
-	t.Run("validator doesn't exist and public key not set, validator address stored in wallet", func(t *testing.T) {
-		tValidatorResponse = nil
+	t.Run("validator address stored in wallet", func(t *testing.T) {
 		receiver, _ := tWallet.DeriveNewAddress("validator-address")
 		receiverInfo := tWallet.AddressInfo(receiver)
-		trx, err := tWallet.MakeBondTx(sender, receiver, "", amount)
-		assert.NoError(t, err)
-		assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey, receiverInfo.Pub)
-	})
 
-	t.Run("validator exist and public key not set, validator address stored in wallet", func(t *testing.T) {
-		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
-		receiver, _ := tWallet.DeriveNewAddress("validator-address")
-		trx, err := tWallet.MakeBondTx(sender, receiver, "", amount)
-		assert.NoError(t, err)
-		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
-	})
+		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
+			tValidatorResponse = nil
+			trx, err := tWallet.MakeBondTx(sender, receiver, "", amount)
+			assert.NoError(t, err)
+			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.Pub.String())
+		})
 
-	t.Run("validator doesn't exist and public key set, validator address stored in wallet", func(t *testing.T) {
-		tValidatorResponse = nil
-		receiver, _ := tWallet.DeriveNewAddress("validator-address")
-		receiverInfo := tWallet.AddressInfo(receiver)
-		trx, err := tWallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
-		assert.NoError(t, err)
-		assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey, receiverInfo.Pub)
-	})
+		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
+			receiverInfo := tWallet.AddressInfo(receiver)
+			trx, err := tWallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
+			assert.NoError(t, err)
+			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.Pub.String())
+		})
 
-	t.Run("validator exist and public key set, validator address stored in wallet", func(t *testing.T) {
-		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
-		receiver, _ := tWallet.DeriveNewAddress("validator-address")
-		receiverInfo := tWallet.AddressInfo(receiver)
-		trx, err := tWallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
-		assert.NoError(t, err)
-		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+		t.Run("validator exists and public key not set", func(t *testing.T) {
+			tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
+			trx, err := tWallet.MakeBondTx(sender, receiver, "", amount)
+			assert.NoError(t, err)
+			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+		})
+
+		t.Run("validator exists and public key set", func(t *testing.T) {
+			receiverInfo := tWallet.AddressInfo(receiver)
+			trx, err := tWallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
+			assert.NoError(t, err)
+			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+		})
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
@@ -526,11 +531,10 @@ func TestMakeWithdrawTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
-	t.Run("sender address doesn't exist", func(t *testing.T) {
+	t.Run("sender account doesn't exist", func(t *testing.T) {
 		tValidatorResponse = nil
 
 		_, err := tWallet.MakeWithdrawTx(crypto.GenerateTestAddress().String(), receiver, amount)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
-
 }

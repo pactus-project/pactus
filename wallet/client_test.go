@@ -41,7 +41,7 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 }
 
 func (s *blockchainServer) GetAccount(_ context.Context,
-	req *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
+	_ *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
 	if tAccountResponse != nil {
 		return tAccountResponse, nil
 	}
@@ -54,7 +54,7 @@ func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidator(_ context.Context,
-	req *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
+	_ *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
 	if tValidatorResponse != nil {
 		return tValidatorResponse, nil
 	}
