@@ -203,6 +203,13 @@ Timeout(index) ==
     /\ states' = [states EXCEPT
         ![index].name = "change-proposer"]
 
+
+Byzantine(index) ==
+    /\ IsFaulty(index)
+    /\ SendChangeProposerRequest(index)
+    /\ states' = [states EXCEPT
+        ![index].name = "change-proposer"]
+
 \* Commit state
 Commit(index) ==
     /\ states[index].name = "commit"
@@ -255,6 +262,7 @@ Next ==
        \/ Timeout(index)
        \/ Commit(index)
        \/ ChangeProposer(index)
+       \/ Byzantine(index)
 
 Spec ==
     Init /\ [][Next]_vars
