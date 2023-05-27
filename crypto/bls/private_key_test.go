@@ -9,6 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPrivateKeyEqualsTo(t *testing.T) {
+	_, prv1 := GenerateTestKeyPair()
+	_, prv2 := GenerateTestKeyPair()
+
+	assert.True(t, prv1.EqualsTo(prv1))
+	assert.False(t, prv1.EqualsTo(prv2))
+	assert.Equal(t, prv1, prv1)
+	assert.NotEqual(t, prv1, prv2)
+}
+
 func TestPrivateKeyToString(t *testing.T) {
 	tests := []struct {
 		errMsg  string

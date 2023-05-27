@@ -28,6 +28,16 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 	assert.Error(t, pub2.UnmarshalCBOR(data))
 }
 
+func TestPublicKeyEqualsTo(t *testing.T) {
+	pub1, _ := GenerateTestKeyPair()
+	pub2, _ := GenerateTestKeyPair()
+
+	assert.True(t, pub1.EqualsTo(pub1))
+	assert.False(t, pub1.EqualsTo(pub2))
+	assert.Equal(t, pub1, pub1)
+	assert.NotEqual(t, pub1, pub2)
+}
+
 func TestPublicKeyEncoding(t *testing.T) {
 	pub, _ := GenerateTestKeyPair()
 	w1 := util.NewFixedWriter(20)

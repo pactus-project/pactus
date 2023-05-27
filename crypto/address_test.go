@@ -9,6 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAddressKeyEqualsTo(t *testing.T) {
+	addr1 := GenerateTestAddress()
+	addr2 := GenerateTestAddress()
+
+	assert.True(t, addr1.EqualsTo(addr1))
+	assert.False(t, addr1.EqualsTo(addr2))
+	assert.Equal(t, addr1, addr1)
+	assert.NotEqual(t, addr1, addr2)
+}
+
 func TestFingerprint(t *testing.T) {
 	addr1 := GenerateTestAddress()
 	assert.Contains(t, addr1.String(), addr1.Fingerprint())

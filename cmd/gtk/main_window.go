@@ -6,6 +6,7 @@ import (
 	_ "embed"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/crypto"
 )
 
 //go:embed assets/ui/main_window.ui
@@ -73,5 +74,10 @@ func (mw *mainWindow) OnTransactionTransfer() {
 }
 
 func (mw *mainWindow) OnTransactionBond() {
-	broadcastTransactionBond(mw.widgetWallet.model.wallet)
+	valAddrs := []crypto.Address{}
+	consMgr := mw.widgetNode.model.node.ConsManager()
+	for _, inst := range consMgr.Instances() {
+		valAddrs = append(valAddrs, inst.SignerKey().Address())
+	}
+	broadcastTransactionBond(mw.widgetWallet.model.wallet, valAddrs)
 }

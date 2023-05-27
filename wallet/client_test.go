@@ -12,9 +12,7 @@ type blockchainServer struct{}
 type transactionServer struct{}
 
 var tBlockchainInfoResponse *pactus.GetBlockchainInfoResponse
-var tAccountRequest *pactus.GetAccountRequest
 var tAccountResponse *pactus.GetAccountResponse
-var tValidatorRequest *pactus.GetValidatorRequest
 var tValidatorResponse *pactus.GetValidatorResponse
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
@@ -43,8 +41,8 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 }
 
 func (s *blockchainServer) GetAccount(_ context.Context,
-	req *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
-	if req.Address == tAccountRequest.Address {
+	_ *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
+	if tAccountResponse != nil {
 		return tAccountResponse, nil
 	}
 	return nil, fmt.Errorf("unknown request")
@@ -56,8 +54,8 @@ func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidator(_ context.Context,
-	req *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
-	if req.Address == tValidatorRequest.Address {
+	_ *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
+	if tValidatorResponse != nil {
 		return tValidatorResponse, nil
 	}
 	return nil, fmt.Errorf("unknown request")

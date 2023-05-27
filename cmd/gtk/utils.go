@@ -3,10 +3,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 func showQuestionDialog(parent gtk.IWindow, msg string) bool {
@@ -128,4 +132,75 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 		return
 	}
 	buf.SetText(content)
+}
+
+func updateValidatorHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
+	stake, err := w.Stake(addr)
+	if err != nil {
+		updateHintLabel(lbl, "")
+	} else {
+		hint := fmt.Sprintf("stake: %v", util.ChangeToString(stake))
+
+		info := w.AddressInfo(addr)
+		if info != nil && info.Label != "" {
+			hint += ", label: " + info.Label
+		}
+		updateHintLabel(lbl, hint)
+	}
+}
+func updateAccountHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
+	balance, err := w.Balance(addr)
+	if err != nil {
+		updateHintLabel(lbl, "")
+	} else {
+		hint := fmt.Sprintf("balance: %v", util.ChangeToString(balance))
+
+		info := w.AddressInfo(addr)
+		if info != nil && info.Label != "" {
+			hint += ", label: " + info.Label
+		}
+		updateHintLabel(lbl, hint)
+	}
+}
+
+func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet) {
+	amount, err := util.StringToChange(amtStr)
+	if err != nil {
+		updateHintLabel(lbl, "")
+	} else {
+		fee := w.CalculateFee(amount)
+		hint := fmt.Sprintf("payable: %v, fee: %v",
+			util.ChangeToString(fee+amount), util.ChangeToString(fee))
+		updateHintLabel(lbl, hint)
+	}
+}
+
+func updateHintLabel(lbl *gtk.Label, hint string) {
+	lbl.SetMarkup(
+		fmt.Sprintf("<span foreground='gray' size='small'>%s</span>", hint))
+}
+
+func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Wallet, trx *tx.Tx) {
+	if showQuestionDialog(parent, msg) {
+		password, ok := getWalletPassword(w)
+		if !ok {
+			return
+		}
+		err := w.SignTransaction(password, trx)
+		if err != nil {
+			errorCheck(err)
+			return
+		}
+		_, err = w.BroadcastTransaction(trx)
+		if err != nil {
+			errorCheck(err)
+			return
+		}
+
+		err = w.Save()
+		if err != nil {
+			errorCheck(err)
+			return
+		}
+	}
 }
