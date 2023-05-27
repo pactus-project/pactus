@@ -8,6 +8,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -177,4 +178,29 @@ func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet) {
 func updateHintLabel(lbl *gtk.Label, hint string) {
 	lbl.SetMarkup(
 		fmt.Sprintf("<span foreground='gray' size='small'>%s</span>", hint))
+}
+
+func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Wallet, trx *tx.Tx) {
+	if showQuestionDialog(parent, msg) {
+		password, ok := getWalletPassword(w)
+		if !ok {
+			return
+		}
+		err := w.SignTransaction(password, trx)
+		if err != nil {
+			errorCheck(err)
+			return
+		}
+		_, err = w.BroadcastTransaction(trx)
+		if err != nil {
+			errorCheck(err)
+			return
+		}
+
+		err = w.Save()
+		if err != nil {
+			errorCheck(err)
+			return
+		}
+	}
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -75,6 +76,10 @@ func setup(t *testing.T) {
 
 	assert.False(t, w.IsEncrypted())
 	assert.False(t, tWallet.IsOffline())
+
+	tBlockchainInfoResponse = nil
+	tAccountResponse = nil
+	tValidatorResponse = nil
 }
 
 func TestOpenWallet(t *testing.T) {
@@ -192,7 +197,6 @@ func TestBalance(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
-	tAccountRequest = &pactus.GetAccountRequest{Address: addr.String()}
 	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1}}
 	amt, err := tWallet.Balance(addr.String())
 	assert.NoError(t, err)
@@ -203,7 +207,6 @@ func TestStake(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
-	tValidatorRequest = &pactus.GetValidatorRequest{Address: addr.String()}
 	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1}}
 	amt, err := tWallet.Stake(addr.String())
 	assert.NoError(t, err)
@@ -214,7 +217,6 @@ func TestAccountSequence(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
-	tAccountRequest = &pactus.GetAccountRequest{Address: addr.String()}
 	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: 123}}
 	seq, err := tWallet.AccountSequence(addr.String())
 	assert.NoError(t, err)
@@ -225,7 +227,6 @@ func TestValidatorSequence(t *testing.T) {
 	setup(t)
 
 	addr := crypto.GenerateTestAddress()
-	tValidatorRequest = &pactus.GetValidatorRequest{Address: addr.String()}
 	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: 123}}
 	seq, err := tWallet.ValidatorSequence(addr.String())
 	assert.NoError(t, err)
@@ -266,19 +267,6 @@ func TestMakeSendTx(t *testing.T) {
 	receiver := crypto.GenerateTestAddress()
 	amount := util.RandInt64(10000)
 	seq := util.RandInt32(10000)
-	lastBlockHsh := hash.GenerateTestHash().Bytes()
-
-	tAccountRequest = &pactus.GetAccountRequest{Address: sender}
-	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
-
-	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := tWallet.MakeSendTx(sender, receiver.String(), amount)
-		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
-		assert.Equal(t, trx.Payload().Value(), amount)
-		assert.Equal(t, trx.Fee(), tWallet.CalculateFee(amount))
-	})
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
@@ -297,20 +285,36 @@ func TestMakeSendTx(t *testing.T) {
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
-	t.Run("sender address doesn't exist", func(t *testing.T) {
-		_, err := tWallet.MakeSendTx(crypto.GenerateTestAddress().String(), receiver.String(), amount)
-		assert.Error(t, err)
+	t.Run("query parameters from the node", func(t *testing.T) {
+		lastBlockHash := hash.GenerateTestHash()
+		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
+		tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
+
+		trx, err := tWallet.MakeSendTx(sender, receiver.String(), amount)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.Equal(t, trx.Payload().Value(), amount)
+		assert.Equal(t, trx.Fee(), tWallet.CalculateFee(amount))
+		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := tWallet.MakeSendTx("invalid_addr_string", receiver.String(), amount)
-		assert.Error(t, err)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
 		_, err := tWallet.MakeSendTx(sender, "invalid_addr_string", amount)
-		assert.Error(t, err)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
+
+	t.Run("sender account doesn't exist", func(t *testing.T) {
+		tAccountResponse = nil
+
+		_, err := tWallet.MakeSendTx(crypto.GenerateTestAddress().String(), receiver.String(), amount)
+		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
+	})
+
 }
 
 func TestMakeBondTx(t *testing.T) {
@@ -320,20 +324,6 @@ func TestMakeBondTx(t *testing.T) {
 	receiver := bls.GenerateTestSigner()
 	amount := util.RandInt64(10000)
 	seq := util.RandInt32(10000)
-	lastBlockHsh := hash.GenerateTestHash().Bytes()
-
-	tAccountRequest = &pactus.GetAccountRequest{Address: sender}
-	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
-
-	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
-		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
-		assert.True(t, trx.Payload().(*payload.BondPayload).PublicKey.EqualsTo(receiver.PublicKey()))
-		assert.Equal(t, trx.Payload().Value(), amount)
-		assert.Equal(t, trx.Fee(), tWallet.CalculateFee(amount))
-	})
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
@@ -353,24 +343,94 @@ func TestMakeBondTx(t *testing.T) {
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
-	t.Run("sender address doesn't exist", func(t *testing.T) {
-		_, err := tWallet.MakeBondTx(crypto.GenerateTestAddress().String(), receiver.Address().String(), "", amount)
-		assert.Error(t, err)
+	t.Run("query parameters from the node", func(t *testing.T) {
+		lastBlockHash := hash.GenerateTestHash()
+		tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
+		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
+
+		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.True(t, trx.Payload().(*payload.BondPayload).PublicKey.EqualsTo(receiver.PublicKey()))
+		assert.Equal(t, trx.Payload().Value(), amount)
+		assert.Equal(t, trx.Fee(), tWallet.CalculateFee(amount))
+		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
+	})
+
+	t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
+		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
+		assert.NoError(t, err)
+		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+	})
+
+	t.Run("validator exists and public key not set", func(t *testing.T) {
+		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
+		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
+		assert.NoError(t, err)
+		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+	})
+
+	t.Run("validator exists and public key set", func(t *testing.T) {
+		trx, err := tWallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
+		assert.NoError(t, err)
+		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+	})
+
+	t.Run("validator doesn't exist and public key not set, validator address stored in wallet", func(t *testing.T) {
+		tValidatorResponse = nil
+		receiver, _ := tWallet.DeriveNewAddress("validator-address")
+		receiverInfo := tWallet.AddressInfo(receiver)
+		trx, err := tWallet.MakeBondTx(sender, receiver, "", amount)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey, receiverInfo.Pub)
+	})
+
+	t.Run("validator exist and public key not set, validator address stored in wallet", func(t *testing.T) {
+		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
+		receiver, _ := tWallet.DeriveNewAddress("validator-address")
+		trx, err := tWallet.MakeBondTx(sender, receiver, "", amount)
+		assert.NoError(t, err)
+		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
+	})
+
+	t.Run("validator doesn't exist and public key set, validator address stored in wallet", func(t *testing.T) {
+		tValidatorResponse = nil
+		receiver, _ := tWallet.DeriveNewAddress("validator-address")
+		receiverInfo := tWallet.AddressInfo(receiver)
+		trx, err := tWallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey, receiverInfo.Pub)
+	})
+
+	t.Run("validator exist and public key set, validator address stored in wallet", func(t *testing.T) {
+		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
+		receiver, _ := tWallet.DeriveNewAddress("validator-address")
+		receiverInfo := tWallet.AddressInfo(receiver)
+		trx, err := tWallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
+		assert.NoError(t, err)
+		assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := tWallet.MakeBondTx("invalid_addr_string", receiver.Address().String(), "", amount)
-		assert.Error(t, err)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
 		_, err := tWallet.MakeBondTx(sender, "invalid_addr_string", "", amount)
-		assert.Error(t, err)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid public key", func(t *testing.T) {
 		_, err := tWallet.MakeBondTx(sender, receiver.Address().String(), "invalid-pub-key", amount)
-		assert.Error(t, err)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+	})
+
+	t.Run("sender account doesn't exist", func(t *testing.T) {
+		tAccountResponse = nil
+
+		_, err := tWallet.MakeBondTx(crypto.GenerateTestAddress().String(), receiver.Address().String(), "", amount)
+		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
 
@@ -379,19 +439,6 @@ func TestMakeUnbondTx(t *testing.T) {
 
 	sender, _ := tWallet.DeriveNewAddress("testing addr")
 	seq := util.RandInt32(10000)
-	lastBlockHsh := hash.GenerateTestHash().Bytes()
-
-	tValidatorRequest = &pactus.GetValidatorRequest{Address: sender}
-	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
-
-	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := tWallet.MakeUnbondTx(sender)
-		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
-		assert.Zero(t, trx.Payload().Value())
-		assert.Zero(t, trx.Fee())
-	})
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
@@ -410,14 +457,29 @@ func TestMakeUnbondTx(t *testing.T) {
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
-	t.Run("sender address doesn't exist", func(t *testing.T) {
-		_, err := tWallet.MakeUnbondTx(crypto.GenerateTestAddress().String())
-		assert.Error(t, err)
+	t.Run("query parameters from the node", func(t *testing.T) {
+		lastBlockHash := hash.GenerateTestHash()
+		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
+		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
+
+		trx, err := tWallet.MakeUnbondTx(sender)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.Zero(t, trx.Payload().Value())
+		assert.Zero(t, trx.Fee())
+		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := tWallet.MakeUnbondTx("invalid_addr_string")
-		assert.Error(t, err)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+	})
+
+	t.Run("sender account doesn't exist", func(t *testing.T) {
+		tValidatorResponse = nil
+
+		_, err := tWallet.MakeUnbondTx(crypto.GenerateTestAddress().String())
+		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
 
@@ -428,19 +490,6 @@ func TestMakeWithdrawTx(t *testing.T) {
 	receiver, _ := tWallet.DeriveNewAddress("testing addr")
 	amount := util.RandInt64(10000)
 	seq := util.RandInt32(10000)
-	lastBlockHsh := hash.GenerateTestHash().Bytes()
-
-	tValidatorRequest = &pactus.GetValidatorRequest{Address: sender}
-	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
-	tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHsh}
-
-	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := tWallet.MakeWithdrawTx(sender, receiver, amount)
-		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
-		assert.Equal(t, trx.Payload().Value(), amount)
-		assert.Equal(t, trx.Fee(), tWallet.CalculateFee(amount))
-	})
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := hash.GenerateTestStamp()
@@ -459,13 +508,29 @@ func TestMakeWithdrawTx(t *testing.T) {
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
-	t.Run("sender address doesn't exist", func(t *testing.T) {
-		_, err := tWallet.MakeWithdrawTx(crypto.GenerateTestAddress().String(), receiver, amount)
-		assert.Error(t, err)
+	t.Run("query parameters from the node", func(t *testing.T) {
+		lastBlockHash := hash.GenerateTestHash()
+		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
+		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
+
+		trx, err := tWallet.MakeWithdrawTx(sender, receiver, amount)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.Equal(t, trx.Payload().Value(), amount)
+		assert.Equal(t, trx.Fee(), tWallet.CalculateFee(amount))
+		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := tWallet.MakeWithdrawTx("invalid_addr_string", receiver, amount)
-		assert.Error(t, err)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
+
+	t.Run("sender address doesn't exist", func(t *testing.T) {
+		tValidatorResponse = nil
+
+		_, err := tWallet.MakeWithdrawTx(crypto.GenerateTestAddress().String(), receiver, amount)
+		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
+	})
+
 }

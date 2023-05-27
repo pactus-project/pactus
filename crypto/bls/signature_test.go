@@ -28,6 +28,17 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 	assert.Error(t, sig2.UnmarshalCBOR(data))
 }
 
+func TestSignatureEqualsTo(t *testing.T) {
+	signer := GenerateTestSigner()
+	sig1 := signer.SignData([]byte("foo"))
+	sig2 := signer.SignData([]byte("bar"))
+
+	assert.True(t, sig1.EqualsTo(sig1))
+	assert.False(t, sig1.EqualsTo(sig2))
+	assert.Equal(t, sig1, sig1)
+	assert.NotEqual(t, sig1, sig2)
+}
+
 func TestSignatureEncoding(t *testing.T) {
 	_, prv := GenerateTestKeyPair()
 	sig := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))

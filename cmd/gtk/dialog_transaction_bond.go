@@ -83,25 +83,10 @@ To: <b>%v</b>
 Amount: <b>%v</b>
 Fee: <b>%v</b>
 
-	THIS ACTION IS NOT REVERSIBLE Do you want to continue?`, sender, receiver,
+THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
 			util.ChangeToString(amount), util.ChangeToString(trx.Fee()))
 
-		if showQuestionDialog(dlg, msg) {
-			password, ok := getWalletPassword(wallet)
-			if !ok {
-				return
-			}
-			err := wallet.SignTransaction(password, trx)
-			if err != nil {
-				errorCheck(err)
-				return
-			}
-			_, err = wallet.BroadcastTransaction(trx)
-			if err != nil {
-				errorCheck(err)
-				return
-			}
-		}
+		signAndBroadcastTransaction(dlg, msg, wallet, trx)
 
 		dlg.Close()
 	}
