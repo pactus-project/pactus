@@ -58,11 +58,9 @@ func (s *newHeightState) onSetProposal(_ *proposal.Proposal) {
 }
 
 func (s *newHeightState) onTimeout(t *ticker) {
-	if t.Target != tickerTargetNewHeight {
-		s.logger.Debug("invalid ticker", "ticker", t)
-		return
+	if t.Target == tickerTargetNewHeight {
+		s.decide()
 	}
-	s.decide()
 }
 
 func (s *newHeightState) name() string {

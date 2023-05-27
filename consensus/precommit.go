@@ -23,19 +23,22 @@ func (s *precommitState) decide() {
 	precommitQH := precommits.QuorumHash()
 	if precommitQH != nil {
 		s.logger.Debug("precommit has quorum", "precommitQH", precommitQH)
-		s.enterNewState(s.commitState)
-	} else {
-		// Liveness on PBFT
-		// ...
-		voteset := s.log.ChangeProposerVoteSet(s.round)
-		if voteset.BlockHashHasOneThirdOfTotalPower(hash.UndefHash) {
-			s.enterNewState(s.changeProposerState)
+		if s.hasVoted {
+			s.enterNewState(s.commitState)
 		}
 	}
 }
 
 func (s *precommitState) vote() {
 	if s.hasVoted {
+		return
+	}
+
+	// Liveness on PBFT
+	// ...
+	voteset := s.log.ChangeProposerVoteSet(s.round)
+	if voteset.BlockHashHasOneThirdOfTotalPower(hash.UndefHash) {
+		s.enterNewState(s.changeProposerState)
 		return
 	}
 
@@ -73,13 +76,16 @@ func (s *precommitState) onAddVote(v *vote.Vote) {
 
 func (s *precommitState) onSetProposal(p *proposal.Proposal) {
 	s.doSetProposal(p)
+
 	if p.Round() == s.round {
 		s.decide()
 	}
 }
 
-func (s *precommitState) onTimeout(_ *ticker) {
-	// Ignore timeouts
+func (s *precommitState) onTimeout(t *ticker) {
+	if t.Target == tickerTargetChangeProposer {
+		s.enterNewState(s.changeProposerState)
+	}
 }
 
 func (s *precommitState) name() string {

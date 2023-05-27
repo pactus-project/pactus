@@ -28,21 +28,25 @@ func (s *prepareState) decide() {
 	if prepareQH != nil {
 		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
 		s.enterNewState(s.precommitState)
-	} else {
-		// Liveness on PBFT
-		//
-		// If a replica receives a set of f+1 valid change-proposer votes for this round,
-		// it sends a change-proposer vote, even if its timer has not expired;
-		// this prevents it from starting the change-proposer state too late.
-		voteset := s.log.ChangeProposerVoteSet(s.round)
-		if voteset.BlockHashHasOneThirdOfTotalPower(hash.UndefHash) {
-			s.enterNewState(s.changeProposerState)
-		}
 	}
 }
 
 func (s *prepareState) vote() {
 	if s.hasVoted {
+		return
+	}
+
+	// Liveness on PBFT
+	//
+	// If a replica receives a set of f+1 valid change-proposer votes for this round,
+	// it sends a change-proposer vote, even if its timer has not expired;
+	// this prevents it from starting the change-proposer state too late.
+	//
+	// Adding this check here doesn't reduce the distinct states in TLA+,
+	// but it avoids sending unnecessary votes.
+	voteset := s.log.ChangeProposerVoteSet(s.round)
+	if voteset.BlockHashHasOneThirdOfTotalPower(hash.UndefHash) {
+		s.enterNewState(s.changeProposerState)
 		return
 	}
 
@@ -78,8 +82,6 @@ func (s *prepareState) onTimeout(t *ticker) {
 		s.decide()
 	} else if t.Target == tickerTargetChangeProposer {
 		s.enterNewState(s.changeProposerState)
-	} else {
-		s.logger.Debug("invalid ticker", "ticker", t)
 	}
 }
 
