@@ -182,7 +182,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		// A slow node might receive a proposal after committing the proposed block.
 		// In this case, we accept the proposal and allow nodes to continue.
 		// By doing so, we enable the validator to broadcast its votes and
-		//prevent it from being marked as absent in the block certificate.
+		// prevent it from being marked as absent in the block certificate.
 		cs.logger.Trace("block is committed for this height", "proposal", p)
 		if p.Block().Hash() != cs.state.LastBlockHash() {
 			cs.logger.Warn("proposal is not for the committed block", "proposal", p)
