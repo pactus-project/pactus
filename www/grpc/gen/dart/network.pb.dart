@@ -186,6 +186,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', $pb.PbFieldType.O3)
     ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.O3)
     ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSeen')
+    ..a<$core.int>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendSuccess', $pb.PbFieldType.O3)
+    ..a<$core.int>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendFailed', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -202,6 +204,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? receivedBytes,
     $core.int? status,
     $fixnum.Int64? lastSeen,
+    $core.int? sendSuccess,
+    $core.int? sendFailed,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -236,6 +240,12 @@ class PeerInfo extends $pb.GeneratedMessage {
     }
     if (lastSeen != null) {
       _result.lastSeen = lastSeen;
+    }
+    if (sendSuccess != null) {
+      _result.sendSuccess = sendSuccess;
+    }
+    if (sendFailed != null) {
+      _result.sendFailed = sendFailed;
     }
     return _result;
   }
@@ -352,6 +362,24 @@ class PeerInfo extends $pb.GeneratedMessage {
   $core.bool hasLastSeen() => $_has(10);
   @$pb.TagNumber(11)
   void clearLastSeen() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.int get sendSuccess => $_getIZ(11);
+  @$pb.TagNumber(12)
+  set sendSuccess($core.int v) { $_setSignedInt32(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasSendSuccess() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearSendSuccess() => clearField(12);
+
+  @$pb.TagNumber(13)
+  $core.int get sendFailed => $_getIZ(12);
+  @$pb.TagNumber(13)
+  set sendFailed($core.int v) { $_setSignedInt32(12, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasSendFailed() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearSendFailed() => clearField(13);
 }
 
 class NetworkApi {

@@ -3,6 +3,7 @@ package sync
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/vote"
@@ -17,6 +18,13 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	tConsMgr.AddVote(v1)
 	pid := network.TestRandomPeerID()
 	msg := message.NewQueryVotesMessage(consensusHeight, 1)
+
+	t.Run("Not known peer, should not respond to the query vote message", func(t *testing.T) {
+		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
+	})
+
+	pub, _ := bls.GenerateTestKeyPair()
+	testAddPeer(t, pub, pid, false)
 
 	t.Run("Not in the committee, should not respond to the query vote message", func(t *testing.T) {
 		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))

@@ -70,6 +70,9 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		lp2pnetwork.WithNoDial(s.ctx, "should already have connection"), pid, s.protocolID)
 	if err != nil {
 		s.logger.Debug("unable to open direct stream", "pid", pid, "err", err)
+		if len(s.relayAddrs) == 0 {
+			return err
+		}
 
 		// We don't have a direct connection to the destination node,
 		// so we try to connect via a relay node.

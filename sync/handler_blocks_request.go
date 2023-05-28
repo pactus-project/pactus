@@ -4,6 +4,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
@@ -25,7 +26,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		handler.logger.Warn("we are busy", "message", msg, "pid", initiator)
 		response := message.NewBlocksResponseMessage(message.ResponseCodeBusy,
 			msg.SessionID, 0, nil, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 
 		return nil
 	}
@@ -34,7 +35,7 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 	if !peer.IsKnownOrTrusty() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			msg.SessionID, 0, nil, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 
 		return errors.Errorf(errors.ErrInvalidMessage, "peer status is %v", peer.Status)
 	}
@@ -56,43 +57,54 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 		if msg.From < ourHeight-LatestBlockInterval {
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				msg.SessionID, 0, nil, nil)
-			handler.sendTo(response, initiator)
+			handler.sendTo(response, initiator, msg.SessionID)
 
 			return errors.Errorf(errors.ErrInvalidMessage, "the request height is not acceptable: %v", msg.From)
 		}
 	}
 	height := msg.From
-	count := handler.config.BlockPerMessage
+	count := msg.Count
 
-	// Help peer to catch up
+	if count > LatestBlockInterval {
+		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
+			msg.SessionID, 0, nil, nil)
+		handler.sendTo(response, initiator, msg.SessionID)
+
+		return errors.Errorf(errors.ErrInvalidMessage, "too many blocks requested: %v-%v", msg.From, msg.Count)
+	}
+
+	// Help this peer to sync up
 	for {
-		blocks := handler.prepareBlocks(height, count)
+		blockToRead := util.MinU32(handler.config.BlockPerMessage, count)
+		blocks := handler.prepareBlocks(height, blockToRead)
 		if len(blocks) == 0 {
 			break
 		}
 
 		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
 			msg.SessionID, height, blocks, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 
 		height += uint32(len(blocks))
-		if height >= msg.To {
+		count -= uint32(len(blocks))
+		if count <= 0 {
 			break
 		}
 	}
 	// To avoid sending blocks again, we update height for this peer
 	// Height is always greater than zeo.
-	handler.peerSet.UpdateHeight(initiator, height-1)
+	peerHeight := height - 1
+	handler.peerSet.UpdateHeight(initiator, peerHeight)
 
-	if msg.To >= handler.state.LastBlockHeight() {
+	if msg.To() >= handler.state.LastBlockHeight() {
 		lastCertificate := handler.state.LastCertificate()
 		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced,
-			msg.SessionID, handler.state.LastBlockHeight(), nil, lastCertificate)
-		handler.sendTo(response, initiator)
+			msg.SessionID, peerHeight, nil, lastCertificate)
+		handler.sendTo(response, initiator, msg.SessionID)
 	} else {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,
 			msg.SessionID, 0, nil, nil)
-		handler.sendTo(response, initiator)
+		handler.sendTo(response, initiator, msg.SessionID)
 	}
 
 	return nil

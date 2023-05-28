@@ -22,7 +22,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		HeartBeatTimer:  time.Second * 5,
-		SessionTimeout:  time.Second * 30,
+		SessionTimeout:  time.Second * 10,
 		NodeNetwork:     true,
 		BlockPerMessage: 60,
 		MaxOpenSessions: 8,

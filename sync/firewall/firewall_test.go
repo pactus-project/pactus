@@ -65,6 +65,20 @@ func TestInvalidBundlesCounter(t *testing.T) {
 }
 
 func TestGossipMessage(t *testing.T) {
+	t.Run("Message source: unknown, from: unknown => should NOT close the connection", func(t *testing.T) {
+		setup(t)
+
+		bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
+		d, _ := bdl.Encode()
+
+		assert.False(t, tFirewall.isPeerBanned(tUnknownPeerID))
+		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
+		// TODO: should only accepts hello from unknown peers?
+		assert.NotNil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
+		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
+	})
+
 	t.Run("Message source: unknown, from: bad => should close the connection", func(t *testing.T) {
 		setup(t)
 
@@ -160,8 +174,10 @@ func TestUpdateLastSeen(t *testing.T) {
 	now := time.Now().UnixNano()
 	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tGoodPeerID))
 
-	assert.GreaterOrEqual(t, tFirewall.peerSet.GetPeer(tUnknownPeerID).LastSeen.UnixNano(), now)
-	assert.GreaterOrEqual(t, tFirewall.peerSet.GetPeer(tGoodPeerID).LastSeen.UnixNano(), now)
+	peerUnknown := tFirewall.peerSet.GetPeer(tUnknownPeerID)
+	peerGood := tFirewall.peerSet.GetPeer(tGoodPeerID)
+	assert.GreaterOrEqual(t, peerUnknown.LastSeen.UnixNano(), now)
+	assert.GreaterOrEqual(t, peerGood.LastSeen.UnixNano(), now)
 }
 
 func TestNetworkFlags(t *testing.T) {

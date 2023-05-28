@@ -25,7 +25,7 @@ func TestOneBlockShorter(t *testing.T) {
 	pid := network.TestRandomPeerID()
 
 	pub, _ := bls.GenerateTestKeyPair()
-	testAddPeer(t, pub, pid)
+	testAddPeer(t, pub, pid, false)
 
 	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
@@ -56,9 +56,9 @@ func TestOneBlockShorter(t *testing.T) {
 	})
 }
 
-// TestSyncing is an important test and try to test syncing process between two
-// test nodes (Alice and Bob). In the real situation, more nodes are involved,
-// but the procedure is almost the same.
+// TestSyncing is an important test to verify the syncing process between two
+// test nodes, Alice and Bob. In real-world scenarios, multiple nodes are typically
+// involved, but the procedure remains similar.
 func TestSyncing(t *testing.T) {
 	configAlice := testConfig()
 	configBob := testConfig()
@@ -73,7 +73,6 @@ func TestSyncing(t *testing.T) {
 	networkAlice := network.MockingNetwork(network.TestRandomPeerID())
 	networkBob := network.MockingNetwork(network.TestRandomPeerID())
 
-	LatestBlockInterval = 30
 	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
@@ -113,36 +112,53 @@ func TestSyncing(t *testing.T) {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
+	// Verify that Hello messages are exchanged between Alice and Bob
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
-	// Hello-ack
+	// Verify that Hello-ack messages are exchanged between Alice and Bob
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
+	// Ensure peers are connected and block heights are correct
 	assert.Len(t, syncAlice.Peers(), 1)
 	assert.Len(t, syncBob.Peers(), 1)
+	assert.Equal(t, syncAlice.state.LastBlockHeight(), uint32(0))
+	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
 
+	// Perform block syncing
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 1-10
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 11-20
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 21-30
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 1-11
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 12-22
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 23-23
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
 
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 31-40
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 41-50
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 51-60
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 24-34
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 35-45
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 46-46
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
 
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 61-70
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 71-80
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 81-90
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 47-57
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 58-68
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 69-69
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
 
-	// Latest block requests
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 91-100
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // Synced
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 70-80
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 81-91
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 92-92
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
+
+	// Last block requests
+	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse)        // 93-100
+	bdl := shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // Synced
+
+	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
+	// Alice needs more time to process all the bundles,
+	// but the block height should be greater than zero
+	assert.Greater(t, syncAlice.state.LastBlockHeight(), uint32(0))
+	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
 }

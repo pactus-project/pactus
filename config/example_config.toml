@@ -80,8 +80,8 @@
  ## heartbeat_timer = "5s"
 
   # `session_timeout` is a timeout for a session to be opened.
-  # Default is 30 seconds
- ## session_timeout = "30s"
+  # Default is 10 seconds
+ ## session_timeout = "10s"
 
   # `max_open_sessions` is the maximum number of open sessions.
   # Default is 8

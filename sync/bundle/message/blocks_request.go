@@ -9,23 +9,27 @@ import (
 type BlocksRequestMessage struct {
 	SessionID int    `cbor:"1,keyasint"`
 	From      uint32 `cbor:"2,keyasint"`
-	To        uint32 `cbor:"3,keyasint"`
+	Count     uint32 `cbor:"3,keyasint"`
 }
 
-func NewBlocksRequestMessage(sid int, from, to uint32) *BlocksRequestMessage {
+func NewBlocksRequestMessage(sid int, from, count uint32) *BlocksRequestMessage {
 	return &BlocksRequestMessage{
 		SessionID: sid,
 		From:      from,
-		To:        to,
+		Count:     count,
 	}
+}
+
+func (m *BlocksRequestMessage) To() uint32 {
+	return m.From + m.Count - 1
 }
 
 func (m *BlocksRequestMessage) SanityCheck() error {
 	if m.From == 0 {
-		return errors.Errorf(errors.ErrInvalidHeight, "invalid height")
+		return errors.Errorf(errors.ErrInvalidHeight, "height is zero")
 	}
-	if m.From > m.To {
-		return errors.Errorf(errors.ErrInvalidHeight, "invalid range")
+	if m.Count == 0 {
+		return errors.Errorf(errors.ErrInvalidMessage, "count is zero")
 	}
 	return nil
 }
@@ -35,5 +39,5 @@ func (m *BlocksRequestMessage) Type() Type {
 }
 
 func (m *BlocksRequestMessage) Fingerprint() string {
-	return fmt.Sprintf("{⚓ %d %v:%v}", m.SessionID, m.From, m.To)
+	return fmt.Sprintf("{⚓ %d %v:%v}", m.SessionID, m.From, m.To())
 }

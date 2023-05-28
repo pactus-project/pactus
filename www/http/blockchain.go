@@ -60,8 +60,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
 		for _, key := range p.Keys {
 			pub, _ := bls.PublicKeyFromString(key)
-			tm.addRowString("PublicKey", pub.String())
-			tm.addRowValAddress("Address", pub.Address().String())
+			tm.addRowString("  PublicKey", pub.String())
+			tm.addRowValAddress("  Address", pub.Address().String())
 		}
 		tm.addRowString("Agent", p.Agent)
 		tm.addRowString("Moniker", p.Moniker)
@@ -70,6 +70,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("InvalidBundles", int(p.InvalidMessages))
 		tm.addRowInt("ReceivedBundles", int(p.ReceivedMessages))
 		tm.addRowInt("ReceivedBytes", int(p.ReceivedBytes))
+		tm.addRowInt("SendSuccess", int(p.SendSuccess))
+		tm.addRowInt("SendFailed", int(p.SendFailed))
 		tm.addRowInt("Flags", int(p.Flags))
 	}
 	s.writeHTML(w, tm.html())
