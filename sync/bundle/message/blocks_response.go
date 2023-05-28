@@ -35,7 +35,7 @@ func (m *BlocksResponseMessage) SanityCheck() error {
 		}
 	}
 	if m.From == 0 && len(m.Blocks) != 0 {
-		return errors.Errorf(errors.ErrInvalidHeight, "unexpected blocks for height zero")
+		return errors.Errorf(errors.ErrInvalidHeight, "unexpected block for height zero")
 	}
 	if m.LastCertificate != nil {
 		if err := m.LastCertificate.SanityCheck(); err != nil {

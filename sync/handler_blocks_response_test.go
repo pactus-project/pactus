@@ -112,18 +112,21 @@ func TestSyncing(t *testing.T) {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
+	// Verify that Hello messages are exchanged between Alice and Bob
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
-	// Hello-ack
+	// Verify that Hello-ack messages are exchanged between Alice and Bob
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
+	// Ensure peers are connected and block heights are correct
 	assert.Len(t, syncAlice.Peers(), 1)
 	assert.Len(t, syncBob.Peers(), 1)
 	assert.Equal(t, syncAlice.state.LastBlockHeight(), uint32(0))
 	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
 
+	// Perform block syncing
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 1-11
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 12-22
@@ -148,11 +151,14 @@ func TestSyncing(t *testing.T) {
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 92-92
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
 
-	// Latest block requests
+	// Last block requests
 	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 93-100
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // Synced
+	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse)        // 93-100
+	bdl := shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // Synced
 
-	assert.Greater(t, syncAlice.state.LastBlockHeight(), uint32(0)) // Alice needs more time to process all bundles
+	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
+	// Alice needs more time to process all the bundles,
+	// but the block height should be greater than zero
+	assert.Greater(t, syncAlice.state.LastBlockHeight(), uint32(0))
 	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
 }

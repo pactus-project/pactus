@@ -15,18 +15,26 @@ func TestLatestBlocksResponseType(t *testing.T) {
 }
 
 func TestBlocksResponseMessage(t *testing.T) {
+	sid := 123
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.NewCertificate(-1, nil, nil, nil)
-		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b}, c)
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, []*block.Block{b}, c)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
+	})
+
+	t.Run("Unexpected block for height zero", func(t *testing.T) {
+		b := block.GenerateTestBlock(nil, nil)
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 0, []*block.Block{b}, nil)
+
+		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		b1 := block.GenerateTestBlock(nil, nil)
 		b2 := block.GenerateTestBlock(nil, nil)
-		m := NewBlocksResponseMessage(ResponseCodeSynced, 1, 100, []*block.Block{b1, b2}, nil)
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, []*block.Block{b1, b2}, nil)
 
 		assert.NoError(t, m.SanityCheck())
 		assert.Zero(t, m.LastCertificateHeight())
