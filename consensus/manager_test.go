@@ -67,16 +67,6 @@ func TestManager(t *testing.T) {
 
 	assert.False(t, mgr.HasActiveInstance())
 
-	mgr.MoveToNewHeight()
-
-	checkHeightRoundWait(t, consA, 1, 0)
-	checkHeightRoundWait(t, consB, 1, 0)
-	checkHeightRoundWait(t, consC, 1, 0)
-	checkHeightRoundWait(t, consD, 1, 0)
-	checkHeightRoundWait(t, consE, 1, 0)
-
-	assert.True(t, mgr.HasActiveInstance())
-
 	t.Run("Check if keys are assigned properly", func(t *testing.T) {
 		instances := mgr.Instances()
 
@@ -87,13 +77,16 @@ func TestManager(t *testing.T) {
 		assert.Equal(t, signers[4].PublicKey(), instances[4].SignerKey())
 	})
 
-	t.Run("Check if one instance publishes a proposal, the other instances receive it", func(t *testing.T) {
-		p := shouldPublishProposal(t, consA, 1, 0)
+	t.Run("Check if all instances move to new height", func(t *testing.T) {
+		mgr.MoveToNewHeight()
 
-		assert.Equal(t, consA.RoundProposal(0), p)
-		assert.Equal(t, consB.RoundProposal(0), p)
-		assert.Nil(t, consC.RoundProposal(0))
-		assert.Nil(t, consD.RoundProposal(0))
+		checkHeightRoundWait(t, consA, 1, 0)
+		checkHeightRoundWait(t, consB, 1, 0)
+		checkHeightRoundWait(t, consC, 1, 0)
+		checkHeightRoundWait(t, consD, 1, 0)
+		checkHeightRoundWait(t, consE, 1, 0)
+
+		assert.True(t, mgr.HasActiveInstance())
 	})
 
 	t.Run("Testing add vote", func(t *testing.T) {
@@ -109,8 +102,8 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
-		blk, _ := state.ProposeBlock(committeeSigners[2], committeeSigners[2].Address(), 2)
-		p := proposal.NewProposal(1, 2, blk)
+		b, _ := state.ProposeBlock(committeeSigners[2], committeeSigners[2].Address(), 2)
+		p := proposal.NewProposal(1, 2, b)
 		committeeSigners[2].SignMsg(p)
 
 		mgr.SetProposal(p)
@@ -119,6 +112,15 @@ func TestManager(t *testing.T) {
 		assert.Equal(t, consB.RoundProposal(2), p)
 		assert.Nil(t, consC.RoundProposal(2))
 		assert.Nil(t, consD.RoundProposal(2))
+	})
+
+	t.Run("Check if one instance publishes a proposal, the other instances receive it", func(t *testing.T) {
+		p := shouldPublishProposal(t, consA, 1, 0)
+
+		assert.Equal(t, consA.RoundProposal(0), p)
+		assert.Equal(t, consB.RoundProposal(0), p)
+		assert.Nil(t, consC.RoundProposal(0))
+		assert.Nil(t, consD.RoundProposal(0))
 	})
 
 	t.Run("Testing moving to the next round proposal", func(t *testing.T) {

@@ -207,6 +207,8 @@ func (sync *synchronizer) receiveLoop() {
 				se := e.(*network.StreamMessage)
 				bdl = sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 				if err := se.Reader.Close(); err != nil {
+					// TODO: write test for me
+					sync.peerSet.IncreaseSendFailedCounter(se.Source)
 					sync.logger.Warn("error on closing stream", "err", err)
 				}
 			}
@@ -306,7 +308,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 		data, _ := bdl.Encode()
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Error("error on sending bundle", "bundle", bdl, "err", err, "to", to)
+			sync.logger.Warn("error on sending bundle", "bundle", bdl, "err", err, "to", to)
 			sync.peerSet.IncreaseSendFailedCounter(to)
 
 			// Let's close the session with this peer because we couldn't establish a connection.

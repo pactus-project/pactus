@@ -86,8 +86,10 @@ func TestGossipMessage(t *testing.T) {
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
+		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
 		assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tBadPeerID))
+		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
 	})
 
@@ -99,8 +101,10 @@ func TestGossipMessage(t *testing.T) {
 		d, _ := bdl.Encode()
 
 		assert.False(t, tNetwork.IsClosed(tBadPeerID))
+		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
 		assert.Nil(t, tFirewall.OpenGossipBundle(d, tBadPeerID, tUnknownPeerID))
 		assert.True(t, tNetwork.IsClosed(tBadPeerID))
+		assert.True(t, tNetwork.IsClosed(tUnknownPeerID))
 	})
 
 	t.Run("Message initiator is not the same as source => should close the connection", func(t *testing.T) {
