@@ -10,7 +10,7 @@ A full-node implementation of the Pactus blockchain in Go.
 
 ## Install
 
-Please check the [INSTALL](./INSTALL.md) document to build and run the Pactus blockchain.
+Please check the [INSTALL](./docs/install.md) document to build and run the Pactus blockchain.
 
 ## Contribution
 
