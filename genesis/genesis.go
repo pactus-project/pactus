@@ -19,13 +19,13 @@ import (
 type ChainType uint8
 
 const (
-	Unknown ChainType = 0xff
-	Mainnet ChainType = 0
-	Testnet ChainType = 1
+	Mainnet  ChainType = 0
+	Testnet  ChainType = 1
+	Localnet ChainType = 2
 )
 
-func (n ChainType) IsTestnet() bool {
-	return n == Testnet
+func (n ChainType) IsMainnet() bool {
+	return n == Mainnet
 }
 
 func (n ChainType) String() string {
@@ -34,6 +34,8 @@ func (n ChainType) String() string {
 		return "Mainnet"
 	case Testnet:
 		return "Testnet"
+	case Localnet:
+		return "Localnet"
 	default:
 		return "Unknown"
 	}
@@ -172,6 +174,7 @@ func (gen *Genesis) ChainType() ChainType {
 	if gen.Hash() == TestnetGenesis().Hash() {
 		return Testnet
 	}
+	// TODO: add mainnet here
 
-	return Unknown
+	return Localnet
 }

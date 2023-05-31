@@ -56,7 +56,7 @@ func main() {
 
 	// Create a new app.
 	// When using GtkApplication, it is not necessary to call gtk_init() manually.
-	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_FLAGS_NONE)
+	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
 	fatalErrorCheck(err)
 
 	// Connect function to application startup event, this is not required.

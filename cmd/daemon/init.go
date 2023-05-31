@@ -24,6 +24,11 @@ func Init() func(c *cli.Cmd) {
 			Desc:  "Initialize working directory for joining the testnet",
 			Value: true, // TODO: make it false after mainnet launch
 		})
+		localnetOpt := c.Bool(cli.BoolOpt{
+			Name:  "localnet",
+			Desc:  "Initialize working directory for localnet (for developers)",
+			Value: false,
+		})
 
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file"
 		c.Before = func() { fmt.Println(cmd.Pactus) }
@@ -55,11 +60,15 @@ func Init() func(c *cli.Cmd) {
 			cmd.PrintInfoMsg("You can define validators based on the amount of coins you want to stake.")
 			numValidators := cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
 
-			network := genesis.Mainnet
+			chain := genesis.Mainnet
+			// The order of checking the network (chain type) matters here.
 			if *testnetOpt {
-				network = genesis.Testnet
+				chain = genesis.Testnet
 			}
-			validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, network, workingDir, mnemonic, password)
+			if *localnetOpt {
+				chain = genesis.Localnet
+			}
+			validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chain, workingDir, mnemonic, password)
 			cmd.FatalErrorCheck(err)
 
 			cmd.PrintLine()
@@ -75,7 +84,7 @@ func Init() func(c *cli.Cmd) {
 			}
 
 			cmd.PrintLine()
-			cmd.PrintInfoMsgBold("Network: %v", network.String())
+			cmd.PrintInfoMsgBold("Network: %v", chain.String())
 			cmd.PrintLine()
 			cmd.PrintSuccessMsg("A pactus node is successfully initialized at %v", workingDir)
 			cmd.PrintLine()
