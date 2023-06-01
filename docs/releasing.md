@@ -42,7 +42,7 @@ TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 ```
 
-For the rest of this document, we will use these environment variables in commands.
+For the rest of this document, we will use these environment variables in commands. Keep your terminal open.
 
 5. Update Changelog
 
@@ -117,7 +117,8 @@ Wait for the PR to be approved and merged into the `main` branch.
 10. Update  the website
 
 Create a new announcement post in the [blog](https://pactus.org/blog/) and
-update the [Road Map](https://pactus.org/about/roadmap/).
+update the [Road Map](https://pactus.org/about/roadmap/) and
+[Download](https://pactus.org/download/) pages.
 Additionally, draft a new release on the
 [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
 
