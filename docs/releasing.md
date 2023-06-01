@@ -42,7 +42,8 @@ TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 ```
 
-For the rest of this document, we will use these environment variables in commands. Keep your terminal open.
+For the rest of this document, we will use these environment variables in commands.
+Keep your terminal open.
 
 5. Update Changelog
 
@@ -57,8 +58,8 @@ Sometimes you may need to amend the changelog manually.
 Then, add links to the CHANGELOG:
 
 ```bash
-sed -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER}) /" CHANGELOG.md
-sed -i 's/\(#\([0-9]\+\)\)/[#\2](https:\/\/github.com\/pactus-project\/pactus\/pull\/\2)/g' CHANGELOG.md
+sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER})/" CHANGELOG.md
+sed -E -i 's/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g' CHANGELOG.md
 ```
 
 6. Create release PR
