@@ -35,12 +35,15 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-VERSION="0.11.0"
-TAG_NAME="v${VERSION}"
-TAG_MESSAGE="Version ${VERSION}"
+PRV_VER="0.11.0"
+CUR_VER="0.12.0"
+NEXT_VER="0.13.0"
+TAG_NAME="v${CUR_VER}"
+TAG_MSG="Version ${CUR_VER}"
 ```
 
 For the rest of this document, we will use these environment variables in commands.
+Keep your terminal open.
 
 5. Update Changelog
 
@@ -48,14 +51,15 @@ Use [Commitizen](https://github.com/commitizen-tools/commitizen) to update the C
 Run the following command:
 
 ```bash
-cz changelog --incremental --unreleased-version $VERSION
+cz changelog --incremental --unreleased-version ${TAG_NAME}
 ```
 
 Sometimes you may need to amend the changelog manually.
-Create a comparison link for the changelog header, like:
+Then, add links to the CHANGELOG:
 
-```text
-## [0.11.0](https://github.com/pactus-project/pactus/compare/v0.10.0...v0.11.0)
+```bash
+sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER})/" CHANGELOG.md
+sed -E -i 's/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g' CHANGELOG.md
 ```
 
 6. Create release PR
@@ -63,8 +67,8 @@ Create a comparison link for the changelog header, like:
 Create a new PR against the `main` branch:
 
 ```bash
-git checkout -b releasing_$VERSION
-git commit -a -m "chore: Releasing version $VERSION"
+git checkout -b releasing_${CUR_VER}
+git commit -a -m "chore: Releasing version ${CUR_VER}
 git push origin HEAD
 ```
 
@@ -77,7 +81,7 @@ Create a git tag:
 ```bash
 git checkout main
 git pull
-git tag -s -a $TAG_NAME -m $TAG_MESSAGE
+git tag -s -a $TAG_NAME -m $TAG_MSG
 ```
 
 check the tag info:
@@ -98,14 +102,14 @@ Pushing the tag will automatically create a release tag and build the binaries.
 
 9. Bumping version
 
-Update the version inside the `version/version.go` to `0.12.0`
-Also update the version inside this document in step 3 and 4 to `0.12.0`
+Update the version inside the `version/version.go`
+Also, update the version inside this document in step 3.
 
 Create a new PR against `main` branch:
 
 ```bash
-git checkout -b bumping_0.12.0
-git commit -a -m "chore: bumping version to 0.12.0"
+git checkout -b bumping_${NEXT_VER}
+git commit -a -m "chore: bumping version to ${NEXT_VER}"
 git push origin HEAD
 ```
 
@@ -114,7 +118,8 @@ Wait for the PR to be approved and merged into the `main` branch.
 10. Update  the website
 
 Create a new announcement post in the [blog](https://pactus.org/blog/) and
-update the [Road Map](https://pactus.org/about/roadmap/).
+update the [Road Map](https://pactus.org/about/roadmap/) and
+[Download](https://pactus.org/download/) pages.
 Additionally, draft a new release on the
 [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
 
