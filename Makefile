@@ -73,7 +73,6 @@ check:
 		--enable=misspell \
 		--enable=revive \
 		--enable=decorder \
-		--enable=depguard \
 		--enable=nilerr \
 		--enable=gosec \
 		--enable=exportloopref \
