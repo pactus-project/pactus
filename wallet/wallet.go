@@ -71,7 +71,8 @@ func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, 
 	switch chain {
 	case genesis.Mainnet:
 		coinType = 21888
-	case genesis.Testnet:
+	case genesis.Testnet,
+		genesis.Localnet:
 		coinType = 21777
 	default:
 		return nil, ErrInvalidNetwork
@@ -102,7 +103,7 @@ func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, 
 }
 
 func newWallet(path string, store *store, offline bool) (*Wallet, error) {
-	if store.Network.IsTestnet() {
+	if !store.Network.IsMainnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
 		crypto.PrivateKeyHRP = "tsecret"

@@ -17,8 +17,13 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/param"
+	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -282,6 +287,8 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	genPath := PactusGenesisPath(workingDir)
 
 	switch chain {
+	case genesis.Mainnet:
+		panic("not yet!")
 	case genesis.Testnet:
 		err = genesis.TestnetGenesis().SaveToFile(genPath)
 		if err != nil {
@@ -292,8 +299,16 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if err != nil {
 			return nil, nil, err
 		}
-	case genesis.Mainnet:
-		panic("not yet!")
+	case genesis.Localnet:
+		err = makeLocalGenesis(*wallet).SaveToFile(genPath)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		err := config.SaveLocalnetConfig(confPath, numValidators)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	err = wallet.UpdatePassword("", walletPassword)
@@ -316,7 +331,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	if gen.ChainType().IsTestnet() {
+	if !gen.ChainType().IsMainnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
 		crypto.PrivateKeyHRP = "tsecret"
@@ -418,4 +433,26 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	return node, wallet, nil
+}
+
+// makeLocalGenesis makes genesis file for the local network.
+func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
+	// Treasury account
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	accs := map[crypto.Address]*account.Account{
+		crypto.TreasuryAddress: acc}
+
+	vals := make([]*validator.Validator, 4)
+	for i := 0; i < 4; i++ {
+		ai := w.AddressInfo(w.AddressLabels()[i].Address)
+		vals[i] = validator.NewValidator(
+			ai.Pub.(*bls.PublicKey), int32(i))
+	}
+
+	// create genesis
+	params := param.DefaultParams()
+	params.BlockVersion = 0
+	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, params)
+	return gen
 }

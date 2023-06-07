@@ -124,6 +124,27 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	return util.WriteFile(path, conf.toTOML())
 }
 
+func SaveLocalnetConfig(path string, numValidators int) error {
+	conf := DefaultConfig()
+	conf.Node.NumValidators = numValidators
+	conf.Network.Name = "pactus-localnet"
+	conf.Network.Listens = []string{}
+	conf.Network.EnableNAT = false
+	conf.Network.Bootstrap.Addresses = []string{}
+	conf.Network.Bootstrap.MinThreshold = 4
+	conf.Network.Bootstrap.MaxThreshold = 8
+	conf.GRPC.Enable = true
+	conf.GRPC.Listen = "[::]:0"
+	conf.GRPC.Gateway.Enable = true
+	conf.GRPC.Gateway.Listen = "[::]:0"
+	conf.HTTP.Enable = true
+	conf.HTTP.Listen = "[::]:0"
+	conf.Nanomsg.Enable = true
+	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
+
+	return util.WriteFile(path, conf.toTOML())
+}
+
 func (conf *Config) toTOML() []byte {
 	buf := new(bytes.Buffer)
 	encoder := toml.NewEncoder(buf)
