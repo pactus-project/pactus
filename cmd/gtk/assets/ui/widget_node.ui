@@ -215,7 +215,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">Netwotk:</property>
+                        <property name="label" translatable="yes">Network:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
