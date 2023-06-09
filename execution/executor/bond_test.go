@@ -88,7 +88,7 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox), "Execute again, should fail")
 	})
 
-	t.Run("Should fail, public key set for second bond", func(t *testing.T) {
+	t.Run("Should fail, public key should not set for existing validators", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+2, senderAddr,
 			pub.Address(), pub, amt, fee, "with public key")
 
@@ -159,7 +159,7 @@ func TestStakeExceeded(t *testing.T) {
 	amt := tSandbox.TestParams.MaximumStake + 1
 	fee := int64(float64(amt) * tSandbox.Params().FeeFraction)
 	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
-	senderAcc.AddToBalance(tSandbox.TestParams.MaximumStake)
+	senderAcc.AddToBalance(tSandbox.TestParams.MaximumStake + 1)
 	tSandbox.UpdateAccount(senderAddr, senderAcc)
 	pub, _ := bls.GenerateTestKeyPair()
 

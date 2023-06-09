@@ -182,6 +182,20 @@ func (c *committee) Size() int {
 	return c.validatorList.Len()
 }
 
+func (c *committee) String() string {
+	str := "[ "
+	for _, v := range c.Validators() {
+		str += fmt.Sprintf("%v(%v)", v.Number(), v.LastJoinedHeight())
+		if c.IsProposer(v.Address(), 0) {
+			str += "*"
+		}
+		str += " "
+	}
+	str += "]"
+
+	return str
+}
+
 // iterate uses for easy iteration over validators in list.
 func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 	for e := c.validatorList.Front(); e != nil; e = e.Next() {
@@ -203,7 +217,7 @@ func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
 		vals[i] = val
 
 		val.UpdateLastBondingHeight(h1 + uint32(i))
-		val.UpdateLastJoinedHeight(h1 + 1000 + uint32(i))
+		val.UpdateLastJoinedHeight(h1 + 100 + uint32(i))
 		//
 		val.SubtractFromStake(val.Stake())
 		val.AddToStake(10 * 1e9)

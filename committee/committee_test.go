@@ -1,6 +1,7 @@
 package committee
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -53,14 +54,15 @@ func TestProposerMove(t *testing.T) {
 	assert.NoError(t, err)
 
 	//
-	// +v+-+-+-+-+-+-+    +-+v+-+-+-+-+-+    +-+-+-+-+-+v+-+    +v+-+-+-+-+-+-+
+	// +*+-+-+-+-+-+-+    +-+*+-+-+-+-+-+    +-+-+-+-+-+*+-+    +*+-+-+-+-+-+-+
 	// |1|2|3|4|5|6|7| => |1|2|3|4|5|6|7| => |1|2|3|4|5|6|7| => |1|2|3|4|5|6|7|
-	// +v+-+-+-+-+-+-+    +-+v+-+-+-+-+-+    +-+-+-+-+-+v+-+    +v+-+-+-+-+-+-+
+	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
 
 	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
 	assert.Equal(t, committee.Proposer(7).Number(), int32(1))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(committee.String())
 
 	// Height 1001
 	committee.Update(0, nil)
@@ -68,16 +70,19 @@ func TestProposerMove(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(3))
 	assert.Equal(t, committee.Proposer(7).Number(), int32(2))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(committee.String())
 
 	// Height 1002
 	committee.Update(3, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(committee.String())
 
 	// Height 1003
 	committee.Update(1, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(committee.String())
 }
 
 func TestValidatorConsistency(t *testing.T) {
@@ -114,19 +119,20 @@ func TestProposerJoin(t *testing.T) {
 	assert.Equal(t, committee.Size(), 4)
 
 	//
-	// r=0           r=0             r=1             r=1                 r=0
-	// +v+-+-+-+    +-+*+v+-+-+    +-+-+-+!+v+    +*+*+!+v+-+-+-+    +-+-+-+-+v+-+-+
+	// h=1000, r=0  h=1001, r=0    h=1002, r=1    h=1003, r=1        h=1004, r=0
+	// +-+*+-+-+    +-+$+-+*+-+    +*+-+-+!+-+    +$+$+-+!+*+-+-+    +-+-+-+-+-+*+-+
 	// |1|2|3|4| => |1|5|2|3|4| => |1|5|2|3|4| => |6|7|1|5|2|3|4| => |6|7|1|5|2|3|4|
 	// +-+-+-+-+    +-+-+-+-+-+    +-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
 
 	// Height 1000
-	// Val1 is in the committee
+	// Val2 is in the committee
 	val2.UpdateLastJoinedHeight(1000)
 	committee.Update(0, []*validator.Validator{val2})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{1, 2, 3, 4})
 	assert.Equal(t, committee.Size(), 4)
+	fmt.Println(committee.String())
 
 	// Height 1001
 	val5.UpdateLastJoinedHeight(1001)
@@ -135,11 +141,13 @@ func TestProposerJoin(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(4))
 	assert.Equal(t, committee.Committers(), []int32{1, 5, 2, 3, 4})
 	assert.Equal(t, committee.Size(), 5)
+	fmt.Println(committee.String())
 
 	// Height 1002
 	committee.Update(1, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(5))
+	fmt.Println(committee.String())
 
 	// Height 1003
 	val3.UpdateLastJoinedHeight(1003)
@@ -149,10 +157,12 @@ func TestProposerJoin(t *testing.T) {
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{6, 7, 1, 5, 2, 3, 4})
 	assert.Equal(t, committee.Size(), 7)
+	fmt.Println(committee.String())
 
 	// Height 1004
 	committee.Update(0, nil)
 	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
+	fmt.Println(committee.String())
 }
 
 func TestProposerJoinAndLeave(t *testing.T) {
@@ -184,46 +194,52 @@ func TestProposerJoinAndLeave(t *testing.T) {
 
 	committee, err := NewCommittee([]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
+	fmt.Println(committee.String())
 
-	// How does the committee change when new validators join?
+	// This code comment explains how the committee changes when new validators join.
 	//
-	// v: current proposer
-	// !: failed proposer
-	// *: joined validator
+	// The symbols used in the explanation are as follows:
+	// * represents the current proposer
+	// ! represents a failed proposer
+	// $ represents a joined validator
+	// h is height and r is round number
 	//
-	// Validators `1` to `7` are in the committee, with `1` being the oldest and the current proposer.
-	// +v+-+-+-+-+-+-+
+	// Initially, the committee consists of validators numbered from 1 to 7.
+	// Validator 1 is the oldest and the current proposer.
+	// The committee configuration is represented as:
+	// +*+-+-+-+-+-+-+
 	// |1|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
-	// New validators sit before the proposer.
-	// In this example, `8` sits before `1` (the current proposer):
-	// +*+v+-+-+-+-+-+-+
+	// When new validators join, they are inserted before the current proposer.
+	// For example, validator 8 joins the committee:
+	// +$+*+-+-+-+-+-+-+
 	// |8|1|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+-+
 	//
-	// Now the committee needs to be adjusted, and the oldest validator should leave.
-	// +*+-+-+-+-+-+-+
+	// After the addition of a new validator, the committee needs to be adjusted,
+	// and the oldest validator should leave:
+	// +$+-+-+-+-+-+-+
 	// |8|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
 	// Next, we move to the next proposer.
-	// +-+v+-+-+-+-+-+
+	// +-+*+-+-+-+-+-+
 	// |8|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
 	//-------------------------------------
 	// In this test, we cover the following movements:
 	//
-	// h=1000, r=0         h=1001, r=0         h=1002, r=3         h=1003, r=0
-	// +v+-+-+-+-+-+-+    +*+v+-+-+-+-+-+    +-+!+!+!+v+-+-+    +-+-+-+-+*+v+-+
+	// h=1000, r=0        h=1001, r=0        h=1002, r=3        h=1003, r=0
+	// +*+-+-+-+-+-+-+    +$+*+-+-+-+-+-+    +-+-+!+!+!+*+-+    +-+$+-+-+$+-+*+
 	// |1|2|3|4|5|6|7| => |8|2|3|4|5|6|7| => |8|2|3|4|5|6|7| => |8|2|3|5|9|6|7| =>
-	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
+	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+$+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
-	// h=1004, r=1         h=1005, r=0         h=1006, r=2         h=1007, r=4
-	// +v+-+-+-+-+*+!+    +-+*+*+v+-+-+-+    +-+-+-+-+!+!+v+    +v+*+!+!+!+!+!+
+	// h=1004, r=1        h=1005, r=0        h=1006, r=2        h=1007, r=4
+	// +!+*+-+-+-+$+-+    +-+$+$+-+*+-+-+    +*+-+-+$+-+!+!+    +*+$+-+!+!+!+!+
 	// |8|2|3|9|6|A|7| => |8|B|C|2|3|9|A| => |B|C|2|1|3|9|A| => |5|6|B|C|2|1|3|
-	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
+	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +$+-+-+-+$+-+$+
 
 	// Height 1001
 	val8.UpdateLastJoinedHeight(1001)
@@ -232,11 +248,13 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(3))
 	assert.Equal(t, committee.Proposer(2).Number(), int32(4))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 4, 5, 6, 7})
+	fmt.Println(committee.String())
 
 	// Height 1002
 	val3.UpdateLastJoinedHeight(1002)
 	committee.Update(3, []*validator.Validator{val3})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
+	fmt.Println(committee.String())
 
 	// Height 1003
 	val2.UpdateLastJoinedHeight(1003)
@@ -245,12 +263,14 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, committee.Proposer(0).Number(), int32(7))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(8))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 5, 9, 6, 7})
+	fmt.Println(committee.String())
 
 	// Height 1004
 	valA.UpdateLastJoinedHeight(1004)
 	committee.Update(1, []*validator.Validator{valA})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 9, 6, 10, 7})
+	fmt.Println(committee.String())
 
 	// Height 1005
 	valB.UpdateLastJoinedHeight(1005)
@@ -260,12 +280,14 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(9))
 	assert.Equal(t, committee.Proposer(2).Number(), int32(10))
 	assert.Equal(t, committee.Committers(), []int32{8, 11, 12, 2, 3, 9, 10})
+	fmt.Println(committee.String())
 
 	// Height 1006
 	val1.UpdateLastJoinedHeight(1006)
 	committee.Update(2, []*validator.Validator{val1})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(11))
 	assert.Equal(t, committee.Committers(), []int32{11, 12, 2, 1, 3, 9, 10})
+	fmt.Println(committee.String())
 
 	// Height 1007
 	val2.UpdateLastJoinedHeight(1007)
@@ -275,6 +297,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	committee.Update(4, []*validator.Validator{val2, val3, val5, val6})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(5))
 	assert.Equal(t, committee.Committers(), []int32{5, 6, 11, 12, 2, 1, 3})
+	fmt.Println(committee.String())
 }
 
 func TestIsProposer(t *testing.T) {
