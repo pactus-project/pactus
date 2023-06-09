@@ -21,9 +21,9 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.TransferPayload)
 
 	if !e.strict && trx.IsSubsidyTx() {
-		// In not-strict mode all subsidy transactions for the current height are valid.
-		// There might be more than one valid subsidy transaction per height,
-		// because there might be more than one proposal per height.
+		// In non-strict mode, all subsidy transactions for the current height are considered valid.
+		// There may be more than one valid subsidy transaction per height
+		// as there might be multiple proposals at the same height.
 		if uint32(trx.Sequence()) != sb.CurrentHeight() {
 			return errors.Errorf(errors.ErrInvalidSequence,
 				"subsidy transaction is not for current height, expected :%d, got: %d",

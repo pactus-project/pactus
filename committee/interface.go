@@ -13,6 +13,7 @@ type Reader interface {
 	IsProposer(addr crypto.Address, round int16) bool
 	Size() int
 	TotalPower() int64
+	String() string
 }
 
 type Committee interface {

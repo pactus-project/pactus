@@ -83,10 +83,11 @@ func (val *Validator) LastJoinedHeight() uint32 {
 }
 
 func (val Validator) Power() int64 {
-	//if the validator requested to unbond ignore stake
 	if val.data.UnbondingHeight > 0 {
+		// Power for unbonded validators set to zero.
 		return 0
-	} else if val.data.Stake == 0 { // Only bootstrap validators at genesis block has no stake
+	} else if val.data.Stake == 0 {
+		// Only bootstrap validators at the genesis block have no stake
 		return 1
 	}
 	return val.data.Stake
