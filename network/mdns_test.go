@@ -24,7 +24,7 @@ func TestMDNS(t *testing.T) {
 	assert.NoError(t, net1.JoinGeneralTopic())
 	assert.NoError(t, net2.JoinGeneralTopic())
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 
 	assert.NoError(t, net1.SendTo([]byte("test"), net2.SelfID()))
 }
