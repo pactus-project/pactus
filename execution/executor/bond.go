@@ -47,18 +47,18 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 	if e.strict {
 		// In strict mode, bond transactions will be rejected if a validator is
-		// in committee.
-		// In non-strict mode, we accept it and keep it inside the tx pool to
-		// process it when validator leaves the committee.
+		// in the committee.
+		// In non-strict mode, we accept them and keep them inside the transaction pool
+		// to process them when the validator leaves the committee.
 		if sb.Committee().Contains(pld.Receiver) {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v is in committee", pld.Receiver)
 		}
 
 		// In strict mode, bond transactions will be rejected if a validator is
-		// going to be in committee for the next height.
-		// In non-strict mode, we accept it and keep it inside the tx pool to
-		// process it when validator leaves the committee.
+		// going to be in the committee for the next height.
+		// In non-strict mode, we accept it and keep it inside the transaction pool to
+		// process it when the validator leaves the committee.
 		if receiverVal.LastJoinedHeight() == sb.CurrentHeight() {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v joins committee in the next height", pld.Receiver)
