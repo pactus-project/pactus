@@ -32,7 +32,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("Sequence", int(val.Sequence))
 		tm.addRowAmount("Stake", val.Stake)
 		tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
-		tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight))
+		tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
 		tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
 		tm.addRowBytes("Hash", val.Hash)
 	}

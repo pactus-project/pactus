@@ -3401,7 +3401,7 @@ proto.pactus.ValidatorInfo.toObject = function(includeInstance, msg) {
     sequence: jspb.Message.getFieldWithDefault(msg, 5, 0),
     stake: jspb.Message.getFieldWithDefault(msg, 6, 0),
     lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    lastJoinedHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
     unbondingHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
     address: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
@@ -3470,7 +3470,7 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 8:
       var value = /** @type {number} */ (reader.readUint32());
-      msg.setLastJoinedHeight(value);
+      msg.setLastSortitionHeight(value);
       break;
     case 9:
       var value = /** @type {number} */ (reader.readUint32());
@@ -3558,7 +3558,7 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getLastJoinedHeight();
+  f = message.getLastSortitionHeight();
   if (f !== 0) {
     writer.writeUint32(
       8,
@@ -3757,10 +3757,10 @@ proto.pactus.ValidatorInfo.prototype.setLastBondingHeight = function(value) {
 
 
 /**
- * optional uint32 last_joined_height = 8;
+ * optional uint32 last_sortition_height = 8;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getLastJoinedHeight = function() {
+proto.pactus.ValidatorInfo.prototype.getLastSortitionHeight = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -3769,7 +3769,7 @@ proto.pactus.ValidatorInfo.prototype.getLastJoinedHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setLastJoinedHeight = function(value) {
+proto.pactus.ValidatorInfo.prototype.setLastSortitionHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 8, value);
 };
 

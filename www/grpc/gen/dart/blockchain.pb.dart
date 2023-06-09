@@ -937,7 +937,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBondingHeight', $pb.PbFieldType.OU3)
-    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastJoinedHeight', $pb.PbFieldType.OU3)
+    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSortitionHeight', $pb.PbFieldType.OU3)
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
     ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
     ..hasRequiredFields = false
@@ -952,7 +952,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     $core.int? sequence,
     $fixnum.Int64? stake,
     $core.int? lastBondingHeight,
-    $core.int? lastJoinedHeight,
+    $core.int? lastSortitionHeight,
     $core.int? unbondingHeight,
     $core.String? address,
   }) {
@@ -978,8 +978,8 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     if (lastBondingHeight != null) {
       _result.lastBondingHeight = lastBondingHeight;
     }
-    if (lastJoinedHeight != null) {
-      _result.lastJoinedHeight = lastJoinedHeight;
+    if (lastSortitionHeight != null) {
+      _result.lastSortitionHeight = lastSortitionHeight;
     }
     if (unbondingHeight != null) {
       _result.unbondingHeight = unbondingHeight;
@@ -1074,13 +1074,13 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   void clearLastBondingHeight() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.int get lastJoinedHeight => $_getIZ(7);
+  $core.int get lastSortitionHeight => $_getIZ(7);
   @$pb.TagNumber(8)
-  set lastJoinedHeight($core.int v) { $_setUnsignedInt32(7, v); }
+  set lastSortitionHeight($core.int v) { $_setUnsignedInt32(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasLastJoinedHeight() => $_has(7);
+  $core.bool hasLastSortitionHeight() => $_has(7);
   @$pb.TagNumber(8)
-  void clearLastJoinedHeight() => clearField(8);
+  void clearLastSortitionHeight() => clearField(8);
 
   @$pb.TagNumber(9)
   $core.int get unbondingHeight => $_getIZ(8);

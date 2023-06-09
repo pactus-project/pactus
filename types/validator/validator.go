@@ -15,13 +15,13 @@ type Validator struct {
 }
 
 type validatorData struct {
-	PublicKey         *bls.PublicKey
-	Number            int32
-	Sequence          int32
-	Stake             int64
-	LastBondingHeight uint32
-	UnbondingHeight   uint32
-	LastJoinedHeight  uint32
+	PublicKey           *bls.PublicKey
+	Number              int32
+	Sequence            int32
+	Stake               int64
+	LastBondingHeight   uint32
+	UnbondingHeight     uint32
+	LastSortitionHeight uint32
 }
 
 // NewValidator constructs a new validator object.
@@ -51,7 +51,7 @@ func FromBytes(data []byte) (*Validator, error) {
 		&acc.data.Stake,
 		&acc.data.LastBondingHeight,
 		&acc.data.UnbondingHeight,
-		&acc.data.LastJoinedHeight,
+		&acc.data.LastSortitionHeight,
 	)
 
 	if err != nil {
@@ -67,19 +67,19 @@ func (val *Validator) Number() int32             { return val.data.Number }
 func (val *Validator) Sequence() int32           { return val.data.Sequence }
 func (val *Validator) Stake() int64              { return val.data.Stake }
 
-// LastBondingHeight returns the last height in which validator bonded stake
+// LastBondingHeight returns the height at which the validator last bonded their stake.
 func (val *Validator) LastBondingHeight() uint32 {
 	return val.data.LastBondingHeight
 }
 
-// UnbondingHeight returns the last height in which validator unbonded stake
+// UnbondingHeight returns the last height in which validator unbonded their stake.
 func (val *Validator) UnbondingHeight() uint32 {
 	return val.data.UnbondingHeight
 }
 
-// LastJoinedHeight returns the last height in which validator joined into the committee
-func (val *Validator) LastJoinedHeight() uint32 {
-	return val.data.LastJoinedHeight
+// LastSortitionHeight returns the last height at which the validator evaluated sortition.
+func (val *Validator) LastSortitionHeight() uint32 {
+	return val.data.LastSortitionHeight
 }
 
 func (val Validator) Power() int64 {
@@ -93,26 +93,27 @@ func (val Validator) Power() int64 {
 	return val.data.Stake
 }
 
+// SubtractFromStake decreases the validator's stake by the specified amount.
 func (val *Validator) SubtractFromStake(amt int64) {
 	val.data.Stake -= amt
 }
 
-// AddToStake increases the stake by bonding transaction.
+// AddToStake increases the validator's stake by the specified amount.
 func (val *Validator) AddToStake(amt int64) {
 	val.data.Stake += amt
 }
 
-// IncSequence increases the sequence anytime this validator signs a transaction.
+// IncSequence increments the validator's sequence every time it signs a transaction.
 func (val *Validator) IncSequence() {
 	val.data.Sequence++
 }
 
-// UpdateLastJoinedHeight updates the last height that this validator joined the committee.
-func (val *Validator) UpdateLastJoinedHeight(height uint32) {
-	val.data.LastJoinedHeight = height
+// UpdateLastSortitionHeight updates the last height at which the validator evaluated sortition.
+func (val *Validator) UpdateLastSortitionHeight(height uint32) {
+	val.data.LastSortitionHeight = height
 }
 
-// UpdateLastBondingHeight updates the last height that this validator bonded some stakes.
+// UpdateLastBondingHeight updates the last height at which the validator bonded stakes.
 func (val *Validator) UpdateLastBondingHeight(height uint32) {
 	val.data.LastBondingHeight = height
 }
@@ -122,7 +123,7 @@ func (val *Validator) UpdateUnbondingHeight(height uint32) {
 	val.data.UnbondingHeight = height
 }
 
-// Hash return the hash of this validator.
+// Hash returns the hash of this validator.
 func (val *Validator) Hash() hash.Hash {
 	bs, err := val.Bytes()
 	if err != nil {
@@ -148,7 +149,7 @@ func (val *Validator) Bytes() ([]byte, error) {
 		val.data.Stake,
 		val.data.LastBondingHeight,
 		val.data.UnbondingHeight,
-		val.data.LastJoinedHeight)
+		val.data.LastSortitionHeight)
 	if err != nil {
 		return nil, err
 	}

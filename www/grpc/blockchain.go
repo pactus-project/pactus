@@ -217,16 +217,16 @@ func (s *blockchainServer) GetValidators(_ context.Context,
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 	return &pactus.ValidatorInfo{
-		Hash:              val.Hash().Bytes(),
-		Data:              data,
-		PublicKey:         val.PublicKey().String(),
-		Address:           val.Address().String(),
-		Number:            val.Number(),
-		Sequence:          val.Sequence(),
-		Stake:             val.Stake(),
-		LastBondingHeight: val.LastBondingHeight(),
-		LastJoinedHeight:  val.LastJoinedHeight(),
-		UnbondingHeight:   val.UnbondingHeight(),
+		Hash:                val.Hash().Bytes(),
+		Data:                data,
+		PublicKey:           val.PublicKey().String(),
+		Address:             val.Address().String(),
+		Number:              val.Number(),
+		Sequence:            val.Sequence(),
+		Stake:               val.Stake(),
+		LastBondingHeight:   val.LastBondingHeight(),
+		LastSortitionHeight: val.LastSortitionHeight(),
+		UnbondingHeight:     val.UnbondingHeight(),
 	}
 }
 

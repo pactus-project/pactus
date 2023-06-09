@@ -20,7 +20,8 @@ type MockSandbox struct {
 	TestStore            *store.MockStore
 	TestCommittee        committee.Committee
 	TestCommitteeSigners []crypto.Signer
-	AcceptTestSortition  bool
+	TestAcceptSortition  bool
+	TestJoinedValidators map[crypto.Address]bool
 }
 
 func MockingSandbox() *MockSandbox {
@@ -31,6 +32,7 @@ func MockingSandbox() *MockSandbox {
 		TestStore:            store.MockingStore(),
 		TestCommittee:        committee,
 		TestCommitteeSigners: signers,
+		TestJoinedValidators: make(map[crypto.Address]bool),
 	}
 
 	treasuryAmt := int64(21000000 * 1e9)
@@ -65,6 +67,12 @@ func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	val, _ := m.TestStore.Validator(addr)
 	return val
 }
+func (m *MockSandbox) JoinedToCommittee(addr crypto.Address) {
+	m.TestJoinedValidators[addr] = true
+}
+func (m *MockSandbox) IsJoinedCommittee(addr crypto.Address) bool {
+	return m.TestJoinedValidators[addr]
+}
 func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	return validator.NewValidator(pub, m.TestStore.TotalValidators())
 }
@@ -83,21 +91,15 @@ func (m *MockSandbox) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
 func (m *MockSandbox) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
 	return m.TestStore.FindBlockHeightByStamp(stamp)
 }
-func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *AccountStatus)) {
+func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *account.Account, bool)) {
 	m.TestStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
-		consumer(addr, &AccountStatus{
-			Account: *acc,
-			Updated: true,
-		})
+		consumer(addr, acc, true)
 		return false
 	})
 }
-func (m *MockSandbox) IterateValidators(consumer func(*ValidatorStatus)) {
+func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool, bool)) {
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
-		consumer(&ValidatorStatus{
-			Validator: *val,
-			Updated:   true,
-		})
+		consumer(val, true, m.TestJoinedValidators[val.Address()])
 		return false
 	})
 }
@@ -107,5 +109,5 @@ func (m *MockSandbox) Committee() committee.Reader {
 }
 
 func (m *MockSandbox) VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool {
-	return m.AcceptTestSortition
+	return m.TestAcceptSortition
 }

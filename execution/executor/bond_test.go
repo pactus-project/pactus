@@ -106,8 +106,8 @@ func TestExecuteBondTx(t *testing.T) {
 	checkTotalCoin(t, fee)
 }
 
-// TestBondInsideCommittee checks if a validator inside the committee tries to
-// increase the stake.
+// TestBondInsideCommittee checks if a validator inside the committee attempts to
+// increase their stake.
 // In non-strict mode it should be accepted.
 func TestBondInsideCommittee(t *testing.T) {
 	setup(t)
@@ -126,9 +126,9 @@ func TestBondInsideCommittee(t *testing.T) {
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
 }
 
-// TestBondJoiningCommittee checks if a validator tries to increase stake after
-// evaluating sortition.
-// In non-strict mode it should be accepted.
+// TestBondJoiningCommittee checks if a validator attempts to increase their
+// stake after evaluating sortition.
+// In non-strict mode, it should be accepted.
 func TestBondJoiningCommittee(t *testing.T) {
 	setup(t)
 
@@ -140,8 +140,9 @@ func TestBondJoiningCommittee(t *testing.T) {
 	fee, amt := randomAmountAndFee(senderBalance)
 
 	val := tSandbox.MakeNewValidator(pub)
-	val.UpdateLastJoinedHeight(tSandbox.CurrentHeight())
+	val.UpdateLastSortitionHeight(tHeight500000)
 	tSandbox.UpdateValidator(val)
+	tSandbox.JoinedToCommittee(val.Address())
 
 	trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
 		pub.Address(), nil, amt, fee, "joining committee")
@@ -150,8 +151,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
 }
 
-// TestStakeExceeded checks if the validator's stake exceeded the MaximumStake
-// parameter.
+// TestStakeExceeded checks if the validator's stake exceeded the MaximumStake parameter.
 func TestStakeExceeded(t *testing.T) {
 	setup(t)
 

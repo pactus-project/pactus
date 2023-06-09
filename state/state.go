@@ -493,28 +493,27 @@ func (st *state) Fingerprint() string {
 }
 
 func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
-	joined := make([]*validator.Validator, 0)
-	currentHeight := sb.CurrentHeight()
-	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.Validator.LastJoinedHeight() == currentHeight {
-			st.logger.Info("new validator joined", "address", vs.Validator.Address(), "power", vs.Validator.Power())
+	joiningCommittee := make([]*validator.Validator, 0)
+	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
+		if joined {
+			st.logger.Info("new validator joined", "address", val.Address(), "power", val.Power())
 
-			joined = append(joined, &vs.Validator)
+			joiningCommittee = append(joiningCommittee, val)
 		}
 	})
-	st.committee.Update(round, joined)
+	st.committee.Update(round, joiningCommittee)
 
-	sb.IterateAccounts(func(addr crypto.Address, as *sandbox.AccountStatus) {
-		if as.Updated {
-			st.store.UpdateAccount(addr, &as.Account)
-			st.accountMerkle.SetHash(int(as.Account.Number()), as.Account.Hash())
+	sb.IterateAccounts(func(addr crypto.Address, acc *account.Account, updated bool) {
+		if updated {
+			st.store.UpdateAccount(addr, acc)
+			st.accountMerkle.SetHash(int(acc.Number()), acc.Hash())
 		}
 	})
 
-	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.Updated {
-			st.store.UpdateValidator(&vs.Validator)
-			st.validatorMerkle.SetHash(int(vs.Validator.Number()), vs.Validator.Hash())
+	sb.IterateValidators(func(val *validator.Validator, updated bool, _ bool) {
+		if updated {
+			st.store.UpdateValidator(val)
+			st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
 		}
 	})
 }

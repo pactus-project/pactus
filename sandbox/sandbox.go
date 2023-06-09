@@ -18,23 +18,24 @@ import (
 var _ Sandbox = &sandbox{}
 
 type sandbox struct {
-	lk sync.RWMutex
+	lk sync.RWMutex // TODO: can we get rid of this lock?
 
 	store           store.Reader
 	committee       committee.Reader
-	accounts        map[crypto.Address]*AccountStatus
-	validators      map[crypto.Address]*ValidatorStatus
+	accounts        map[crypto.Address]*accountStatus
+	validators      map[crypto.Address]*validatorStatus
 	params          param.Params
 	totalAccounts   int32
 	totalValidators int32
 }
 
-type ValidatorStatus struct {
+type validatorStatus struct {
 	Validator validator.Validator
 	Updated   bool
+	Joined    bool // Is joined committee
 }
 
-type AccountStatus struct {
+type accountStatus struct {
 	Account account.Account
 	Updated bool
 }
@@ -46,8 +47,8 @@ func NewSandbox(store store.Reader, params param.Params, committee committee.Rea
 		params:    params,
 	}
 
-	sb.accounts = make(map[crypto.Address]*AccountStatus)
-	sb.validators = make(map[crypto.Address]*ValidatorStatus)
+	sb.accounts = make(map[crypto.Address]*accountStatus)
+	sb.validators = make(map[crypto.Address]*validatorStatus)
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
 
@@ -56,26 +57,28 @@ func NewSandbox(store store.Reader, params param.Params, committee committee.Rea
 
 func (sb *sandbox) shouldPanicForDuplicatedAddress() {
 	//
-	// Why we should panic here?
+	// Why is it necessary to panic here?
 	//
-	// Try to make a new item which already exists in store.
+	// An attempt is made to create a new item that already exists in the store.
 	//
 	logger.Panic("duplicated address")
 }
 
 func (sb *sandbox) shouldPanicForUnknownAddress() {
 	//
-	// Why we should panic here?
+	// Why is it necessary to panic here?
 	//
-	// We only update accounts or validators which we have them inside the sandbox.
-	// We must either make a new one (i.e. `MakeNewAccount`) or get it from store (i.e. `Account`) in advance.
+	// We only update accounts or validators that are already present within the sandbox.
+	// In order to proceed, the account must have been created and present beforehand.
+	// This can be achieved either by creating a new account using MakeNewAccount or
+	// retrieving it from the store using Account.
 	//
 	logger.Panic("unknown address")
 }
 
 func (sb *sandbox) Account(addr crypto.Address) *account.Account {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	s, ok := sb.accounts[addr]
 	if ok {
@@ -88,22 +91,22 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 	if err != nil {
 		return nil
 	}
-	sb.accounts[addr] = &AccountStatus{
+	sb.accounts[addr] = &accountStatus{
 		Account: *acc,
 	}
 
 	return acc
 }
 func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	if sb.store.HasAccount(addr) {
 		sb.shouldPanicForDuplicatedAddress()
 	}
 
 	acc := account.NewAccount(sb.totalAccounts)
-	sb.accounts[addr] = &AccountStatus{
+	sb.accounts[addr] = &accountStatus{
 		Account: *acc,
 		Updated: true,
 	}
@@ -112,8 +115,8 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 }
 
 func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	s, ok := sb.accounts[addr]
 	if !ok {
@@ -124,8 +127,8 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	s, ok := sb.validators[addr]
 	if ok {
@@ -138,15 +141,38 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 	if err != nil {
 		return nil
 	}
-	sb.validators[addr] = &ValidatorStatus{
+	sb.validators[addr] = &validatorStatus{
 		Validator: *val,
 	}
 	return val
 }
 
-func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
+func (sb *sandbox) JoinedToCommittee(addr crypto.Address) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	s, ok := sb.validators[addr]
+	if !ok {
+		sb.shouldPanicForUnknownAddress()
+	}
+
+	s.Joined = true
+}
+
+func (sb *sandbox) IsJoinedCommittee(addr crypto.Address) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
+
+	s, ok := sb.validators[addr]
+	if ok {
+		return s.Joined
+	}
+	return false
+}
+
+func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	addr := pub.Address()
 	if sb.store.HasValidator(addr) {
@@ -154,7 +180,7 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	}
 
 	val := validator.NewValidator(pub, sb.totalValidators)
-	sb.validators[addr] = &ValidatorStatus{
+	sb.validators[addr] = &validatorStatus{
 		Validator: *val,
 		Updated:   true,
 	}
@@ -163,8 +189,8 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 }
 
 func (sb *sandbox) UpdateValidator(val *validator.Validator) {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	addr := val.Address()
 	s, ok := sb.validators[addr]
@@ -193,21 +219,23 @@ func (sb *sandbox) currentHeight() uint32 {
 	return h + 1
 }
 
-func (sb *sandbox) IterateAccounts(consumer func(crypto.Address, *AccountStatus)) {
+func (sb *sandbox) IterateAccounts(
+	consumer func(crypto.Address, *account.Account, bool)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	for addr, as := range sb.accounts {
-		consumer(addr, as)
+		consumer(addr, &as.Account, as.Updated)
 	}
 }
 
-func (sb *sandbox) IterateValidators(consumer func(*ValidatorStatus)) {
+func (sb *sandbox) IterateValidators(
+	consumer func(*validator.Validator, bool, bool)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	for _, vs := range sb.validators {
-		consumer(vs)
+		consumer(&vs.Validator, vs.Updated, vs.Joined)
 	}
 }
 
@@ -232,6 +260,9 @@ func (sb *sandbox) Committee() committee.Reader {
 // TODO: write test for me.
 // VerifyProof verifies proof of a sortition transaction.
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
 	height, ok := sb.store.FindBlockHeightByStamp(stamp)
 	if !ok {
 		return false

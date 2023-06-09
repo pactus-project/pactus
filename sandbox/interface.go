@@ -19,6 +19,8 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
+	JoinedToCommittee(crypto.Address)
+	IsJoinedCommittee(crypto.Address) bool
 
 	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
@@ -28,6 +30,6 @@ type Sandbox interface {
 	Params() param.Params
 	CurrentHeight() uint32
 
-	IterateAccounts(consumer func(crypto.Address, *AccountStatus))
-	IterateValidators(consumer func(*ValidatorStatus))
+	IterateAccounts(consumer func(crypto.Address, *account.Account, bool))
+	IterateValidators(consumer func(*validator.Validator, bool, bool))
 }

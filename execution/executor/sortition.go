@@ -31,27 +31,33 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has bonded at height %v", val.LastBondingHeight())
 	}
-	// Power for parked validators (unbonded) set to zero.
-	// So the proof is not valid, even if they have enough stake.
+
 	ok := sb.VerifyProof(trx.Stamp(), pld.Proof, val)
 	if !ok {
 		return errors.Error(errors.ErrInvalidProof)
 	}
+	sortitionHeight, _ := sb.FindBlockHeightByStamp(trx.Stamp())
 	if e.strict {
-		// A validator might produce more than one sortition transaction
-		// before entering into the committee
-		// In non-strict mode we don't check the sequence number
+		// It is possible for a validator to generate multiple sortition transactions
+		// before entering the committee.
+		// In non-strict mode, we do not check the sequence number.
 		if val.Sequence()+1 != trx.Sequence() {
 			return errors.Errorf(errors.ErrInvalidSequence,
 				"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
+		}
+		// Check for the duplicated sortition transactions
+		if sortitionHeight <= val.LastSortitionHeight() {
+			return errors.Errorf(errors.ErrInvalidTx,
+				"duplicated sortition transaction")
 		}
 		if sb.Committee().Size() >= sb.Params().CommitteeSize {
 			if err := e.joinCommittee(sb, val); err != nil {
 				return err
 			}
 		} else {
-			// Committee has free seats.
-			// Rejecting sortition transactions from existing committee members.
+			// There are available seats in the committee.
+			// We will add new members while ignoring any sortition transactions
+			// for existing committee members.
 			if sb.Committee().Contains(val.Address()) {
 				return errors.Errorf(errors.ErrInvalidTx,
 					"validator is in committee")
@@ -60,8 +66,9 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	val.IncSequence()
-	val.UpdateLastJoinedHeight(sb.CurrentHeight())
+	val.UpdateLastSortitionHeight(sortitionHeight)
 
+	sb.JoinedToCommittee(pld.Address)
 	sb.UpdateValidator(val)
 
 	return nil
@@ -76,11 +83,10 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 	joiningNum := 0
 	joiningPower := int64(0)
 	committee := sb.Committee()
-	currentHeight := sb.CurrentHeight()
-	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.Validator.LastJoinedHeight() == currentHeight {
-			if !committee.Contains(vs.Validator.Address()) {
-				joiningPower += vs.Validator.Power()
+	sb.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
+		if joined {
+			if !committee.Contains(val.Address()) {
+				joiningPower += val.Power()
 				joiningNum++
 			}
 		}
@@ -96,7 +102,7 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 
 	vals := committee.Validators()
 	sort.SliceStable(vals, func(i, j int) bool {
-		return vals[i].LastJoinedHeight() < vals[j].LastJoinedHeight()
+		return vals[i].LastSortitionHeight() < vals[j].LastSortitionHeight()
 	})
 	leavingPower := int64(0)
 	for i := 0; i < joiningNum; i++ {
@@ -107,18 +113,17 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 			"in each height only 1/3 of stake can leave")
 	}
 
-	oldestJoinedHeight := currentHeight
+	oldestSortitionHeight := sb.CurrentHeight()
 	for _, v := range committee.Validators() {
-		if v.LastJoinedHeight() < oldestJoinedHeight {
-			oldestJoinedHeight = v.LastJoinedHeight()
+		if v.LastSortitionHeight() < oldestSortitionHeight {
+			oldestSortitionHeight = v.LastSortitionHeight()
 		}
 	}
 
 	// If the oldest validator in the committee still hasn't propose a block yet,
 	// she stays in the committee.
-	// We assumes all blocks has committed in round 0, in future we can consider
-	// round parameter. It is backward compatible
-	if currentHeight-oldestJoinedHeight < uint32(sb.Params().CommitteeSize) {
+	proposerHeight := sb.Committee().Proposer(0).LastSortitionHeight()
+	if oldestSortitionHeight >= proposerHeight {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"oldest validator still didn't propose any block")
 	}

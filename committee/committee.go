@@ -67,8 +67,10 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 		if committeeVal == nil {
 			c.validatorList.InsertBefore(cloneValidator(val), c.proposerPos)
 		} else {
-			committeeVal.UpdateLastJoinedHeight(val.LastJoinedHeight())
+			committeeVal.UpdateLastSortitionHeight(val.LastSortitionHeight())
 
+			// TODO: PRoofread the comments here
+			//
 			// Ensure that a validator's stake and bonding properties
 			// remain unchanged while they are part of the committee.
 			// Refer to the Bond executor for additional details.
@@ -89,8 +91,8 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 
 	sort.SliceStable(oldestFirst, func(i, j int) bool {
-		return oldestFirst[i].Value.(*validator.Validator).LastJoinedHeight() <
-			oldestFirst[j].Value.(*validator.Validator).LastJoinedHeight()
+		return oldestFirst[i].Value.(*validator.Validator).LastSortitionHeight() <
+			oldestFirst[j].Value.(*validator.Validator).LastSortitionHeight()
 	})
 
 	for i := 0; i <= int(lastRound); i++ {
@@ -185,7 +187,7 @@ func (c *committee) Size() int {
 func (c *committee) String() string {
 	str := "[ "
 	for _, v := range c.Validators() {
-		str += fmt.Sprintf("%v(%v)", v.Number(), v.LastJoinedHeight())
+		str += fmt.Sprintf("%v(%v)", v.Number(), v.LastSortitionHeight())
 		if c.IsProposer(v.Address(), 0) {
 			str += "*"
 		}
@@ -217,7 +219,7 @@ func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
 		vals[i] = val
 
 		val.UpdateLastBondingHeight(h1 + uint32(i))
-		val.UpdateLastJoinedHeight(h1 + 100 + uint32(i))
+		val.UpdateLastSortitionHeight(h1 + 100 + uint32(i))
 		//
 		val.SubtractFromStake(val.Stake())
 		val.AddToStake(10 * 1e9)

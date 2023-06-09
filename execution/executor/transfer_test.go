@@ -13,14 +13,16 @@ import (
 )
 
 var (
-	tSandbox     *sandbox.MockSandbox
-	tStamp500000 hash.Stamp
+	tSandbox      *sandbox.MockSandbox
+	tStamp500000  hash.Stamp
+	tHeight500000 uint32
 )
 
 func setup(t *testing.T) {
 	tSandbox = sandbox.MockingSandbox()
 
-	block500000 := tSandbox.TestStore.AddTestBlock(500000)
+	tHeight500000 = 500000
+	block500000 := tSandbox.TestStore.AddTestBlock(tHeight500000)
 	tStamp500000 = block500000.Stamp()
 	checkTotalCoin(t, 0)
 }

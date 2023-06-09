@@ -14,7 +14,7 @@ import (
 func TestFromBytes(t *testing.T) {
 	val, _ := GenerateTestValidator(util.RandInt32(1000000))
 	val.UpdateLastBondingHeight(util.RandUint32(1000000))
-	val.UpdateLastJoinedHeight(util.RandUint32(1000000))
+	val.UpdateLastSortitionHeight(util.RandUint32(1000000))
 	val.UpdateUnbondingHeight(util.RandUint32(1000000))
 	bs, err := val.Bytes()
 	require.NoError(t, err)
@@ -26,7 +26,7 @@ func TestFromBytes(t *testing.T) {
 	assert.Equal(t, val.Number(), val2.Number())
 	assert.Equal(t, val.Stake(), val2.Stake())
 	assert.Equal(t, val.LastBondingHeight(), val2.LastBondingHeight())
-	assert.Equal(t, val.LastJoinedHeight(), val2.LastJoinedHeight())
+	assert.Equal(t, val.LastSortitionHeight(), val2.LastSortitionHeight())
 	assert.Equal(t, val.UnbondingHeight(), val2.UnbondingHeight())
 
 	_, err = FromBytes([]byte("asdfghjkl"))

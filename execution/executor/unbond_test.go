@@ -86,8 +86,9 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	pub, _ := bls.GenerateTestKeyPair()
 
 	val := tSandbox.MakeNewValidator(pub)
-	val.UpdateLastJoinedHeight(tSandbox.CurrentHeight())
+	val.UpdateLastSortitionHeight(tHeight500000)
 	tSandbox.UpdateValidator(val)
+	tSandbox.JoinedToCommittee(val.Address())
 
 	trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
 	assert.Error(t, exe1.Execute(trx, tSandbox))

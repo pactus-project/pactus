@@ -60,7 +60,7 @@ func TestAccountChange(t *testing.T) {
 		invAddr := crypto.GenerateTestAddress()
 		assert.Nil(t, tSandbox.Account(invAddr))
 
-		tSandbox.IterateAccounts(func(_ crypto.Address, _ *AccountStatus) {
+		tSandbox.IterateAccounts(func(_ crypto.Address, _ *account.Account, _ bool) {
 			panic("should be empty")
 		})
 	})
@@ -101,10 +101,10 @@ func TestAccountChange(t *testing.T) {
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateAccounts(func(a crypto.Address, as *AccountStatus) {
+			tSandbox.IterateAccounts(func(a crypto.Address, acc *account.Account, updated bool) {
 				assert.Equal(t, addr, a)
-				assert.True(t, as.Updated)
-				assert.Equal(t, as.Account.Balance(), bal+2)
+				assert.True(t, updated)
+				assert.Equal(t, acc.Balance(), bal+2)
 			})
 		})
 	})
@@ -121,10 +121,10 @@ func TestAccountChange(t *testing.T) {
 		assert.Equal(t, acc, sbAcc)
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateAccounts(func(a crypto.Address, as *AccountStatus) {
+			tSandbox.IterateAccounts(func(a crypto.Address, acc *account.Account, updated bool) {
 				if a == addr {
-					assert.True(t, as.Updated)
-					assert.Equal(t, as.Account.Balance(), int64(1))
+					assert.True(t, updated)
+					assert.Equal(t, acc.Balance(), int64(1))
 				}
 			})
 		})
@@ -138,7 +138,7 @@ func TestValidatorChange(t *testing.T) {
 		invAddr := crypto.GenerateTestAddress()
 		assert.Nil(t, tSandbox.Validator(invAddr))
 
-		tSandbox.IterateValidators(func(_ *ValidatorStatus) {
+		tSandbox.IterateValidators(func(_ *validator.Validator, _ bool, _ bool) {
 			panic("should be empty")
 		})
 	})
@@ -179,9 +179,10 @@ func TestValidatorChange(t *testing.T) {
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateValidators(func(vs *ValidatorStatus) {
-				assert.True(t, vs.Updated)
-				assert.Equal(t, vs.Validator.Stake(), stk+2)
+			tSandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
+				assert.True(t, updated)
+				assert.False(t, joined)
+				assert.Equal(t, val.Stake(), stk+2)
 			})
 		})
 	})
@@ -198,10 +199,11 @@ func TestValidatorChange(t *testing.T) {
 		assert.Equal(t, val, sbVal)
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateValidators(func(vs *ValidatorStatus) {
-				if vs.Validator.PublicKey() == pub {
-					assert.True(t, vs.Updated)
-					assert.Equal(t, vs.Validator.Stake(), int64(1))
+			tSandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
+				if val.PublicKey() == pub {
+					assert.True(t, updated)
+					assert.False(t, joined)
+					assert.Equal(t, val.Stake(), int64(1))
 				}
 			})
 		})
