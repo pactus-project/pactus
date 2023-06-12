@@ -2,7 +2,6 @@ package cache
 
 import (
 	lru "github.com/hashicorp/golang-lru"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 )
@@ -14,13 +13,13 @@ const (
 
 type key [32]byte
 
-// TODO, create keys without copy?
 func blockKey(height uint32) key {
 	var k key
 	k[0] = blockPrefix
 	copy(k[1:], util.Uint32ToSlice(height))
 	return k
 }
+
 func certificateKey(height uint32) key {
 	var k key
 	k[0] = certificatePrefix
@@ -30,17 +29,15 @@ func certificateKey(height uint32) key {
 
 type Cache struct {
 	cache *lru.Cache // it's thread safe
-	state state.Facade
 }
 
-func NewCache(size int, state state.Facade) (*Cache, error) {
+func NewCache(size int) (*Cache, error) {
 	c, err := lru.New(size)
 	if err != nil {
 		return nil, err
 	}
 	return &Cache{
 		cache: c,
-		state: state,
 	}, nil
 }
 
@@ -55,30 +52,12 @@ func (c *Cache) GetBlock(height uint32) *block.Block {
 		return i.(*block.Block)
 	}
 
-	sb := c.state.StoredBlock(height)
-	if sb != nil {
-		// TODO: This decoding is not necessary.
-		// To improve the performance, we can send blocks without decoding it.
-		b := sb.ToBlock()
-		if b != nil {
-			c.AddBlock(height, b)
-			return b
-		}
-	}
-
 	return nil
 }
 
 func (c *Cache) AddBlock(height uint32, block *block.Block) {
 	c.cache.Add(blockKey(height), block)
 	c.AddCertificate(height-1, block.PrevCertificate())
-}
-
-func (c *Cache) AddBlocks(height uint32, blocks []*block.Block) {
-	for _, block := range blocks {
-		c.AddBlock(height, block)
-		height++
-	}
 }
 
 func (c *Cache) GetCertificate(height uint32) *block.Certificate {

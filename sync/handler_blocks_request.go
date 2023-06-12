@@ -76,17 +76,17 @@ func (handler *blocksRequestHandler) ParsMessage(m message.Message, initiator pe
 	// Help this peer to sync up
 	for {
 		blockToRead := util.MinU32(handler.config.BlockPerMessage, count)
-		blocks := handler.prepareBlocks(height, blockToRead)
-		if len(blocks) == 0 {
+		blocksData := handler.prepareBlocks(height, blockToRead)
+		if len(blocksData) == 0 {
 			break
 		}
 
 		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
-			msg.SessionID, height, blocks, nil)
+			msg.SessionID, height, blocksData, nil)
 		handler.sendTo(response, initiator, msg.SessionID)
 
-		height += uint32(len(blocks))
-		count -= uint32(len(blocks))
+		height += uint32(len(blocksData))
+		count -= uint32(len(blocksData))
 		if count <= 0 {
 			break
 		}
