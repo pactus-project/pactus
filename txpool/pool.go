@@ -54,7 +54,7 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 
 	var next *linkedmap.LinkNode[linkedmap.Pair[tx.ID, *tx.Tx]]
 	for _, pool := range p.pools {
-		for e := pool.FirstNode(); e != nil; e = next {
+		for e := pool.HeadNode(); e != nil; e = next {
 			next = e.Next
 			trx := e.Data.Value
 
@@ -152,31 +152,31 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 
 	// Appending one sortition transaction
 	poolSortition := p.pools[payload.PayloadTypeSortition]
-	for n := poolSortition.FirstNode(); n != nil; n = n.Next {
+	for n := poolSortition.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending bond transactions
 	poolBond := p.pools[payload.PayloadTypeBond]
-	for n := poolBond.FirstNode(); n != nil; n = n.Next {
+	for n := poolBond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending unbond transactions
 	poolUnbond := p.pools[payload.PayloadTypeUnbond]
-	for n := poolUnbond.FirstNode(); n != nil; n = n.Next {
+	for n := poolUnbond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending withdraw transactions
 	poolWithdraw := p.pools[payload.PayloadTypeWithdraw]
-	for n := poolWithdraw.FirstNode(); n != nil; n = n.Next {
+	for n := poolWithdraw.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending send transactions
 	poolSend := p.pools[payload.PayloadTypeTransfer]
-	for n := poolSend.FirstNode(); n != nil; n = n.Next {
+	for n := poolSend.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 

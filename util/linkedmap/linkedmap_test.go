@@ -10,26 +10,26 @@ import (
 func TestLinkedMap(t *testing.T) {
 	t.Run("Test FirstNode", func(t *testing.T) {
 		lm := NewLinkedMap[int, string](4)
-		assert.Nil(t, lm.FirstNode())
+		assert.Nil(t, lm.HeadNode())
 
 		lm.PushFront(3, "c")
 		lm.PushFront(2, "b")
 		lm.PushFront(1, "a")
 
-		assert.Equal(t, lm.FirstNode().Data.Key, 1)
-		assert.Equal(t, lm.FirstNode().Data.Value, "a")
+		assert.Equal(t, lm.HeadNode().Data.Key, 1)
+		assert.Equal(t, lm.HeadNode().Data.Value, "a")
 	})
 
 	t.Run("Test LastNode", func(t *testing.T) {
 		lm := NewLinkedMap[int, string](4)
-		assert.Nil(t, lm.LastNode())
+		assert.Nil(t, lm.TailNode())
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
 		lm.PushBack(3, "c")
 
-		assert.Equal(t, lm.LastNode().Data.Key, 3)
-		assert.Equal(t, lm.LastNode().Data.Value, "c")
+		assert.Equal(t, lm.TailNode().Data.Key, 3)
+		assert.Equal(t, lm.TailNode().Data.Value, "c")
 	})
 
 	t.Run("Test Get", func(t *testing.T) {
@@ -118,7 +118,7 @@ func TestLinkedMap(t *testing.T) {
 		lm.PushBack(3, "c")
 		lm.PushBack(4, "d")
 
-		n := lm.FirstNode()
+		n := lm.HeadNode()
 		assert.Equal(t, n.Data.Key, 2)
 		assert.Equal(t, n.Data.Value, "b")
 	})
@@ -131,7 +131,7 @@ func TestLinkedMap(t *testing.T) {
 		lm.PushFront(3, "c")
 		lm.PushFront(4, "d") // This item should be pruned
 
-		n := lm.LastNode()
+		n := lm.TailNode()
 		assert.Equal(t, n.Data.Key, 1)
 		assert.Equal(t, n.Data.Value, "a")
 	})
@@ -145,8 +145,8 @@ func TestLinkedMap(t *testing.T) {
 
 		lm.Remove(1)
 
-		assert.Equal(t, lm.FirstNode().Data.Key, 2)
-		assert.Equal(t, lm.FirstNode().Data.Value, "b")
+		assert.Equal(t, lm.HeadNode().Data.Key, 2)
+		assert.Equal(t, lm.HeadNode().Data.Value, "b")
 	})
 
 	t.Run("Delete last", func(t *testing.T) {
@@ -158,8 +158,8 @@ func TestLinkedMap(t *testing.T) {
 
 		lm.Remove(3)
 
-		assert.Equal(t, lm.LastNode().Data.Key, 2)
-		assert.Equal(t, lm.LastNode().Data.Value, "b")
+		assert.Equal(t, lm.TailNode().Data.Key, 2)
+		assert.Equal(t, lm.TailNode().Data.Value, "b")
 	})
 
 	t.Run("Test Has function", func(t *testing.T) {
