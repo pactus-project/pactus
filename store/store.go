@@ -57,7 +57,7 @@ type store struct {
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
-	stampLookup    *linkedmap.LinkedMap
+	stampLookup    *linkedmap.LinkedMap[hash.Stamp, hashPair]
 }
 
 func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
@@ -78,7 +78,7 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 		txStore:        newTxStore(db),
 		accountStore:   newAccountStore(db),
 		validatorStore: newValidatorStore(db),
-		stampLookup:    linkedmap.NewLinkedMap(stampLookupCapacity),
+		stampLookup:    linkedmap.NewLinkedMap[hash.Stamp, hashPair](stampLookupCapacity),
 	}
 
 	lastHeight, _ := s.LastCertificate()
@@ -99,7 +99,7 @@ func (s *store) Close() error {
 }
 
 func (s *store) appendStamp(hash hash.Hash, height uint32) {
-	pair := &hashPair{
+	pair := hashPair{
 		Height: height,
 		Hash:   hash,
 	}
@@ -174,31 +174,31 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 }
 
 func (s *store) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
 		return hash.UndefHash, true
 	}
 
-	v, ok := s.stampLookup.Get(stamp)
-	if ok {
-		return v.(*hashPair).Hash, true
+	n := s.stampLookup.GetNode(stamp)
+	if n != nil {
+		return n.Data.Value.Hash, true
 	}
 	return hash.UndefHash, false
 }
 
 func (s *store) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
 		return 0, true
 	}
 
-	v, ok := s.stampLookup.Get(stamp)
-	if ok {
-		return v.(*hashPair).Height, true
+	n := s.stampLookup.GetNode(stamp)
+	if n != nil {
+		return n.Data.Value.Height, true
 	}
 	return 0, false
 }
