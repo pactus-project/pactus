@@ -39,7 +39,7 @@ func Start() func(c *cli.Cmd) {
 			cmd.FatalErrorCheck(err)
 
 			if *pprofOpt != "" {
-				cmd.PrintWarnMsg("Starting Debug pprof server on: http://%s/debug/pprof/\n", *pprofOpt)
+				cmd.PrintWarnMsg("Starting Debug pprof server on: http://%s/debug/pprof/", *pprofOpt)
 				server := &http.Server{
 					Addr:              *pprofOpt,
 					ReadHeaderTimeout: 3 * time.Second,
