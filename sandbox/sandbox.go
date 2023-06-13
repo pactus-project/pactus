@@ -74,8 +74,8 @@ func (sb *sandbox) shouldPanicForUnknownAddress() {
 }
 
 func (sb *sandbox) Account(addr crypto.Address) *account.Account {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	s, ok := sb.accounts[addr]
 	if ok {
@@ -95,8 +95,8 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 	return acc
 }
 func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	if sb.store.HasAccount(addr) {
 		sb.shouldPanicForDuplicatedAddress()
@@ -112,8 +112,8 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 }
 
 func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	s, ok := sb.accounts[addr]
 	if !ok {
@@ -124,8 +124,8 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	s, ok := sb.validators[addr]
 	if ok {
@@ -145,8 +145,8 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 }
 
 func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	addr := pub.Address()
 	if sb.store.HasValidator(addr) {
@@ -163,8 +163,8 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 }
 
 func (sb *sandbox) UpdateValidator(val *validator.Validator) {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
 
 	addr := val.Address()
 	s, ok := sb.validators[addr]

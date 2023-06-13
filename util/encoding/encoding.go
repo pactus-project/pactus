@@ -20,8 +20,8 @@ const (
 )
 
 var (
-	ErrOverflow     = errors.New("Overflow")
-	ErrNonCanonical = errors.New("NonCanonical")
+	ErrOverflow     = errors.New("overflow")
+	ErrNonCanonical = errors.New("non canonical")
 )
 
 // binaryFreeList defines a concurrent safe free list of byte slices (up to the

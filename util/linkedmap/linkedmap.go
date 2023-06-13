@@ -1,158 +1,126 @@
 package linkedmap
 
-import (
-	"container/list"
-)
-
 // TODO: should be thread safe or not?
 
-type Pair struct {
-	First, Second interface{}
+type Pair[K comparable, V any] struct {
+	Key   K
+	Value V
 }
 
-type LinkedMap struct {
-	list     *list.List
-	hashmap  map[interface{}]*list.Element
+type LinkedMap[K comparable, V any] struct {
+	list     *DoublyLinkedList[Pair[K, V]]
+	hashmap  map[K]*LinkNode[Pair[K, V]]
 	capacity int
 }
 
-func NewLinkedMap(capacity int) *LinkedMap {
-	return &LinkedMap{
-		list:     list.New(),
-		hashmap:  make(map[interface{}]*list.Element),
+func NewLinkedMap[K comparable, V any](capacity int) *LinkedMap[K, V] {
+	return &LinkedMap[K, V]{
+		list:     NewDoublyLinkedList[Pair[K, V]](),
+		hashmap:  make(map[K]*LinkNode[Pair[K, V]]),
 		capacity: capacity,
 	}
 }
 
-func (lm *LinkedMap) SetCapacity(capacity int) {
+func (lm *LinkedMap[K, V]) SetCapacity(capacity int) {
 	lm.capacity = capacity
 
 	lm.prune()
 }
 
-func (lm *LinkedMap) Has(key interface{}) bool {
+func (lm *LinkedMap[K, V]) Has(key K) bool {
 	_, found := lm.hashmap[key]
 	return found
 }
 
-func (lm *LinkedMap) PushBack(first interface{}, second interface{}) {
-	el, found := lm.hashmap[first]
+func (lm *LinkedMap[K, V]) PushBack(key K, value V) {
+	ln, found := lm.hashmap[key]
 	if found {
 		// update the second
-		el.Value.(*Pair).Second = second
+		ln.Data.Value = value
 		return
 	}
 
-	el = lm.list.PushBack(&Pair{first, second})
-	lm.hashmap[first] = el
+	p := Pair[K, V]{Key: key, Value: value}
+	ln = lm.list.InsertAtTail(p)
+	lm.hashmap[key] = ln
 
 	lm.prune()
 }
 
-func (lm *LinkedMap) PushFront(first interface{}, second interface{}) {
-	el, found := lm.hashmap[first]
+func (lm *LinkedMap[K, V]) PushFront(key K, value V) {
+	ln, found := lm.hashmap[key]
 	if found {
 		// update the second
-		el.Value.(*Pair).Second = second
+		ln.Data.Value = value
 		return
 	}
 
-	el = lm.list.PushFront(&Pair{first, second})
-	lm.hashmap[first] = el
+	p := Pair[K, V]{Key: key, Value: value}
+	ln = lm.list.InsertAtHead(p)
+	lm.hashmap[key] = ln
 
 	lm.prune()
 }
 
-func (lm *LinkedMap) Get(first interface{}) (interface{}, bool) {
-	el, found := lm.hashmap[first]
+func (lm *LinkedMap[K, V]) GetNode(key K) *LinkNode[Pair[K, V]] {
+	ln, found := lm.hashmap[key]
 	if found {
-		return el.Value.(*Pair).Second, true
+		return ln
 	}
-	return nil, false
+	return nil
 }
 
-func (lm *LinkedMap) Last() (interface{}, interface{}) {
-	el := lm.list.Back()
-	if el == nil {
-		return nil, nil
+func (lm *LinkedMap[K, V]) LastNode() *LinkNode[Pair[K, V]] {
+	ln := lm.list.Tail
+	if ln == nil {
+		return nil
 	}
-	p := el.Value.(*Pair)
-	return p.First, p.Second
+	return ln
 }
 
-func (lm *LinkedMap) First() (interface{}, interface{}) {
-	el := lm.list.Front()
-	if el == nil {
-		return nil, nil
+func (lm *LinkedMap[K, V]) FirstNode() *LinkNode[Pair[K, V]] {
+	ln := lm.list.Head
+	if ln == nil {
+		return nil
 	}
-	p := el.Value.(*Pair)
-	return p.First, p.Second
+	return ln
 }
 
-func (lm *LinkedMap) LastElement() *list.Element {
-	return lm.list.Back()
-}
-
-func (lm *LinkedMap) FirstElement() *list.Element {
-	return lm.list.Front()
-}
-
-func (lm *LinkedMap) Remove(first interface{}) bool {
-	el, found := lm.hashmap[first]
+func (lm *LinkedMap[K, V]) Remove(key K) bool {
+	nl, found := lm.hashmap[key]
 	if found {
-		lm.list.Remove(el)
-		delete(lm.hashmap, el.Value.(*Pair).First)
+		lm.list.Delete(nl)
+		delete(lm.hashmap, nl.Data.Key)
 	}
 	return found
 }
 
-func (lm *LinkedMap) Empty() bool {
+func (lm *LinkedMap[K, V]) Empty() bool {
 	return lm.Size() == 0
 }
 
-func (lm *LinkedMap) Capacity() int {
+func (lm *LinkedMap[K, V]) Capacity() int {
 	return lm.capacity
 }
 
-func (lm *LinkedMap) Size() int {
-	return lm.list.Len()
+func (lm *LinkedMap[K, V]) Size() int {
+	return lm.list.Length()
 }
 
-func (lm *LinkedMap) Full() bool {
-	return lm.list.Len() == lm.capacity
+func (lm *LinkedMap[K, V]) Full() bool {
+	return lm.list.Length() == lm.capacity
 }
 
-func (lm *LinkedMap) Clear() {
-	lm.list = list.New()
-	lm.hashmap = make(map[interface{}]*list.Element)
+func (lm *LinkedMap[K, V]) Clear() {
+	lm.list.Clear()
+	lm.hashmap = make(map[K]*LinkNode[Pair[K, V]])
 }
 
-func (lm *LinkedMap) prune() {
-	for lm.list.Len() > lm.capacity {
-		front := lm.list.Front()
-		key := front.Value.(*Pair).First
-		lm.list.Remove(front)
+func (lm *LinkedMap[K, V]) prune() {
+	for lm.list.Length() > lm.capacity {
+		front := lm.list.Head
+		key := front.Data.Key
+		lm.list.Delete(front)
 		delete(lm.hashmap, key)
-	}
-}
-
-func (lm *LinkedMap) SortList(cmp func(left interface{}, right interface{}) bool) {
-	index := lm.list.Front()
-	if index == nil {
-		return
-	}
-
-	for index != nil {
-		current := index.Next()
-		for current != nil {
-			if cmp(current.Value.(*Pair).Second, index.Value.(*Pair).Second) {
-				lm.list.MoveBefore(current, index)
-				index = current
-				current = index
-			}
-			current = current.Next()
-		}
-
-		index = index.Next()
 	}
 }

@@ -1,7 +1,6 @@
 package txpool
 
 import (
-	"container/list"
 	"fmt"
 	"sync"
 
@@ -21,24 +20,24 @@ type txPool struct {
 	config      *Config
 	checker     *execution.Execution
 	sandbox     sandbox.Sandbox
-	pools       map[payload.Type]*linkedmap.LinkedMap
+	pools       map[payload.Type]*linkedmap.LinkedMap[tx.ID, *tx.Tx]
 	broadcastCh chan message.Message
 	logger      *logger.Logger
 }
 
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
-	pendings := make(map[payload.Type]*linkedmap.LinkedMap)
+	pending := make(map[payload.Type]*linkedmap.LinkedMap[tx.ID, *tx.Tx])
 
-	pendings[payload.PayloadTypeTransfer] = linkedmap.NewLinkedMap(conf.sendPoolSize())
-	pendings[payload.PayloadTypeBond] = linkedmap.NewLinkedMap(conf.bondPoolSize())
-	pendings[payload.PayloadTypeUnbond] = linkedmap.NewLinkedMap(conf.unbondPoolSize())
-	pendings[payload.PayloadTypeWithdraw] = linkedmap.NewLinkedMap(conf.withdrawPoolSize())
-	pendings[payload.PayloadTypeSortition] = linkedmap.NewLinkedMap(conf.sortitionPoolSize())
+	pending[payload.PayloadTypeTransfer] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sendPoolSize())
+	pending[payload.PayloadTypeBond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.bondPoolSize())
+	pending[payload.PayloadTypeUnbond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
+	pending[payload.PayloadTypeWithdraw] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.withdrawPoolSize())
+	pending[payload.PayloadTypeSortition] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sortitionPoolSize())
 
 	pool := &txPool{
 		config:      conf,
 		checker:     execution.NewChecker(),
-		pools:       pendings,
+		pools:       pending,
 		broadcastCh: broadcastCh,
 	}
 
@@ -53,11 +52,11 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	p.sandbox = sb
 	p.logger.Debug("set new sandbox")
 
-	var next *list.Element
+	var next *linkedmap.LinkNode[linkedmap.Pair[tx.ID, *tx.Tx]]
 	for _, pool := range p.pools {
-		for e := pool.FirstElement(); e != nil; e = next {
-			next = e.Next()
-			trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
+		for e := pool.FirstNode(); e != nil; e = next {
+			next = e.Next
+			trx := e.Data.Value
 
 			if err := p.checkTx(trx); err != nil {
 				p.logger.Debug("invalid transaction after rechecking", "id", trx.ID())
@@ -136,10 +135,9 @@ func (p *txPool) PendingTx(id tx.ID) *tx.Tx {
 	defer p.lk.Unlock()
 
 	for _, pool := range p.pools {
-		val, found := pool.Get(id)
-		if found {
-			trx := val.(*tx.Tx)
-			return trx
+		n := pool.GetNode(id)
+		if n != nil {
+			return n.Data.Value
 		}
 	}
 
@@ -154,37 +152,32 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 
 	// Appending one sortition transaction
 	poolSortition := p.pools[payload.PayloadTypeSortition]
-	for e := poolSortition.FirstElement(); e != nil; e = e.Next() {
-		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
-		trxs = append(trxs, trx)
+	for n := poolSortition.FirstNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending bond transactions
 	poolBond := p.pools[payload.PayloadTypeBond]
-	for e := poolBond.FirstElement(); e != nil; e = e.Next() {
-		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
-		trxs = append(trxs, trx)
+	for n := poolBond.FirstNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending unbond transactions
 	poolUnbond := p.pools[payload.PayloadTypeUnbond]
-	for e := poolUnbond.FirstElement(); e != nil; e = e.Next() {
-		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
-		trxs = append(trxs, trx)
+	for n := poolUnbond.FirstNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending withdraw transactions
 	poolWithdraw := p.pools[payload.PayloadTypeWithdraw]
-	for e := poolWithdraw.FirstElement(); e != nil; e = e.Next() {
-		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
-		trxs = append(trxs, trx)
+	for n := poolWithdraw.FirstNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending send transactions
 	poolSend := p.pools[payload.PayloadTypeTransfer]
-	for e := poolSend.FirstElement(); e != nil; e = e.Next() {
-		trx := e.Value.(*linkedmap.Pair).Second.(*tx.Tx)
-		trxs = append(trxs, trx)
+	for n := poolSend.FirstNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
 	}
 
 	return trxs

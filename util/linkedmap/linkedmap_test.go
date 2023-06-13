@@ -8,57 +8,46 @@ import (
 )
 
 func TestLinkedMap(t *testing.T) {
-	t.Run("Test FirstElement", func(t *testing.T) {
-		lm := NewLinkedMap(4)
-		k, v := lm.First()
-		assert.Nil(t, lm.FirstElement())
-		assert.Nil(t, k)
-		assert.Nil(t, v)
+	t.Run("Test FirstNode", func(t *testing.T) {
+		lm := NewLinkedMap[int, string](4)
+		assert.Nil(t, lm.FirstNode())
 
 		lm.PushFront(3, "c")
 		lm.PushFront(2, "b")
 		lm.PushFront(1, "a")
 
-		k, v = lm.First()
-		assert.Equal(t, lm.FirstElement().Value, &Pair{1, "a"})
-		assert.Equal(t, k, 1)
-		assert.Equal(t, v, "a")
+		assert.Equal(t, lm.FirstNode().Data.Key, 1)
+		assert.Equal(t, lm.FirstNode().Data.Value, "a")
 	})
 
-	t.Run("Test LastElement", func(t *testing.T) {
-		lm := NewLinkedMap(4)
-		k, v := lm.Last()
-		assert.Nil(t, lm.LastElement())
-		assert.Nil(t, k)
-		assert.Nil(t, v)
+	t.Run("Test LastNode", func(t *testing.T) {
+		lm := NewLinkedMap[int, string](4)
+		assert.Nil(t, lm.LastNode())
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
 		lm.PushBack(3, "c")
 
-		k, v = lm.Last()
-		assert.Equal(t, lm.LastElement().Value, &Pair{3, "c"})
-		assert.Equal(t, k, 3)
-		assert.Equal(t, v, "c")
+		assert.Equal(t, lm.LastNode().Data.Key, 3)
+		assert.Equal(t, lm.LastNode().Data.Value, "c")
 	})
 
 	t.Run("Test Get", func(t *testing.T) {
-		lm := NewLinkedMap(4)
+		lm := NewLinkedMap[int, string](4)
 
 		lm.PushBack(2, "b")
 		lm.PushBack(1, "a")
 
-		v, ok := lm.Get(2)
-		assert.Equal(t, ok, true)
-		assert.Equal(t, v, "b")
+		n := lm.GetNode(2)
+		assert.Equal(t, n.Data.Key, 2)
+		assert.Equal(t, n.Data.Value, "b")
 
-		v, ok = lm.Get(5)
-		assert.Equal(t, ok, false)
-		assert.Equal(t, v, nil)
+		n = lm.GetNode(5)
+		assert.Nil(t, n)
 	})
 
 	t.Run("Test Remove", func(t *testing.T) {
-		lm := NewLinkedMap(4)
+		lm := NewLinkedMap[int, string](4)
 
 		lm.PushBack(0, "-")
 		lm.PushBack(2, "b")
@@ -68,41 +57,40 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Should updates v", func(t *testing.T) {
-		lm := NewLinkedMap(4)
+		lm := NewLinkedMap[int, string](4)
 		lm.PushBack(1, "a")
 
 		lm.PushBack(1, "b")
-		v, ok := lm.Get(1)
-		assert.Equal(t, ok, true)
-		assert.Equal(t, v, "b")
+		n := lm.GetNode(1)
+		assert.Equal(t, n.Data.Key, 1)
+		assert.Equal(t, n.Data.Value, "b")
 
 		lm.PushFront(1, "c")
-		v, ok = lm.Get(1)
-		assert.Equal(t, ok, true)
-		assert.Equal(t, v, "c")
+		n = lm.GetNode(1)
+		assert.Equal(t, n.Data.Key, 1)
+		assert.Equal(t, n.Data.Value, "c")
 	})
 
 	t.Run("Should prunes oldest item", func(t *testing.T) {
-		lm := NewLinkedMap(4)
+		lm := NewLinkedMap[int, string](4)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
 		lm.PushBack(3, "c")
 		lm.PushBack(4, "d")
 
-		v, ok := lm.Get(1)
-		assert.Equal(t, ok, true)
-		assert.Equal(t, v, "a")
+		n := lm.GetNode(1)
+		assert.Equal(t, n.Data.Key, 1)
+		assert.Equal(t, n.Data.Value, "a")
 
 		lm.PushBack(5, "e")
 
-		v, ok = lm.Get(1)
-		assert.Equal(t, ok, false)
-		assert.Equal(t, v, nil)
+		n = lm.GetNode(1)
+		assert.Nil(t, n)
 	})
 
 	t.Run("Should prunes by changing capacity", func(t *testing.T) {
-		lm := NewLinkedMap(4)
+		lm := NewLinkedMap[int, string](4)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -111,48 +99,45 @@ func TestLinkedMap(t *testing.T) {
 
 		lm.SetCapacity(6)
 
-		v, ok := lm.Get(2)
-		assert.Equal(t, ok, true)
-		assert.Equal(t, v, "b")
+		n := lm.GetNode(2)
+		assert.Equal(t, n.Data.Key, 2)
+		assert.Equal(t, n.Data.Value, "b")
 
 		lm.SetCapacity(2)
 		assert.True(t, lm.Full())
 
-		v, ok = lm.Get(2)
-		assert.Equal(t, ok, false)
-		assert.Equal(t, v, nil)
+		n = lm.GetNode(2)
+		assert.Nil(t, n)
 	})
 
 	t.Run("Test PushBack and prune", func(t *testing.T) {
-		lm := NewLinkedMap(3)
+		lm := NewLinkedMap[int, string](3)
 
 		lm.PushBack(1, "a") // This item should be pruned
 		lm.PushBack(2, "b")
 		lm.PushBack(3, "c")
 		lm.PushBack(4, "d")
 
-		k, v := lm.First()
-		assert.Equal(t, lm.FirstElement().Value, &Pair{2, "b"})
-		assert.Equal(t, k, 2)
-		assert.Equal(t, v, "b")
+		n := lm.FirstNode()
+		assert.Equal(t, n.Data.Key, 2)
+		assert.Equal(t, n.Data.Value, "b")
 	})
 
 	t.Run("Test PushFront and prune", func(t *testing.T) {
-		lm := NewLinkedMap(3)
+		lm := NewLinkedMap[int, string](3)
 
 		lm.PushFront(1, "a")
 		lm.PushFront(2, "b")
 		lm.PushFront(3, "c")
 		lm.PushFront(4, "d") // This item should be pruned
 
-		k, v := lm.Last()
-		assert.Equal(t, lm.LastElement().Value, &Pair{1, "a"})
-		assert.Equal(t, k, 1)
-		assert.Equal(t, v, "a")
+		n := lm.LastNode()
+		assert.Equal(t, n.Data.Key, 1)
+		assert.Equal(t, n.Data.Value, "a")
 	})
 
-	t.Run("Deletd first ", func(t *testing.T) {
-		lm := NewLinkedMap(3)
+	t.Run("Delete first ", func(t *testing.T) {
+		lm := NewLinkedMap[int, string](3)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -160,22 +145,25 @@ func TestLinkedMap(t *testing.T) {
 
 		lm.Remove(1)
 
-		assert.Equal(t, lm.FirstElement().Value, &Pair{2, "b"})
+		assert.Equal(t, lm.FirstNode().Data.Key, 2)
+		assert.Equal(t, lm.FirstNode().Data.Value, "b")
 	})
 
 	t.Run("Delete last", func(t *testing.T) {
-		lm := NewLinkedMap(3)
+		lm := NewLinkedMap[int, string](3)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
 		lm.PushBack(3, "c")
 
 		lm.Remove(3)
-		assert.Equal(t, lm.LastElement().Value, &Pair{2, "b"})
+
+		assert.Equal(t, lm.LastNode().Data.Key, 2)
+		assert.Equal(t, lm.LastNode().Data.Value, "b")
 	})
 
 	t.Run("Test Has function", func(t *testing.T) {
-		lm := NewLinkedMap(2)
+		lm := NewLinkedMap[int, string](2)
 
 		lm.PushBack(1, "a")
 
@@ -184,7 +172,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test Clear", func(t *testing.T) {
-		lm := NewLinkedMap(2)
+		lm := NewLinkedMap[int, string](2)
 
 		lm.PushBack(1, "a")
 		lm.Clear()
@@ -192,29 +180,8 @@ func TestLinkedMap(t *testing.T) {
 	})
 }
 
-func TestSortingLinkedMap(t *testing.T) {
-	lm := NewLinkedMap(6)
-
-	cmp := func(left interface{}, right interface{}) bool {
-		return left.(string) < right.(string)
-	}
-	lm.SortList(cmp)
-	assert.Nil(t, lm.FirstElement())
-
-	lm.PushBack(3, "c")
-	lm.PushBack(5, "e")
-	lm.PushBack(1, "a")
-	lm.PushBack(2, "b")
-	lm.PushBack(4, "d")
-
-	lm.SortList(cmp)
-	assert.Equal(t, lm.FirstElement().Value, &Pair{1, "a"})
-	assert.Equal(t, lm.LastElement().Value, &Pair{5, "e"})
-	assert.Equal(t, lm.Size(), 5)
-}
-
 func TestCapacity(t *testing.T) {
 	capacity := int(util.RandInt32(1000))
-	lm := NewLinkedMap(capacity)
+	lm := NewLinkedMap[int, string](capacity)
 	assert.Equal(t, lm.Capacity(), capacity)
 }
