@@ -25,7 +25,6 @@ func Start() func(c *cli.Cmd) {
 			Name: "p password",
 			Desc: "The wallet password",
 		})
-		// TODO: do we need this?
 		pprofOpt := c.String(cli.StringOpt{
 			Name: "pprof",
 			Desc: "debug pprof server address(not recommended to expose to internet)",
@@ -39,16 +38,11 @@ func Start() func(c *cli.Cmd) {
 			err := os.Chdir(workingDir)
 			cmd.FatalErrorCheck(err)
 
-			// separate pprof handlers from DefaultServeMux.
-			pprofMux := http.DefaultServeMux
-			http.DefaultServeMux = http.NewServeMux()
-
 			if *pprofOpt != "" {
-				cmd.PrintWarnMsg("Starting Debug pprof server on: %v", *pprofOpt)
+				cmd.PrintWarnMsg("Starting Debug pprof server on: http://%s/debug/pprof/", *pprofOpt)
 				server := &http.Server{
 					Addr:              *pprofOpt,
 					ReadHeaderTimeout: 3 * time.Second,
-					Handler:           pprofMux,
 				}
 				go func() {
 					err := server.ListenAndServe()

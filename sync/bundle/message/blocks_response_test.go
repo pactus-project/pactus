@@ -19,14 +19,16 @@ func TestBlocksResponseMessage(t *testing.T) {
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := block.GenerateTestBlock(nil, nil)
 		c := block.NewCertificate(-1, nil, nil, nil)
-		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, []*block.Block{b}, c)
+		d, _ := b.Bytes()
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, [][]byte{d}, c)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
 	})
 
 	t.Run("Unexpected block for height zero", func(t *testing.T) {
 		b := block.GenerateTestBlock(nil, nil)
-		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 0, []*block.Block{b}, nil)
+		d, _ := b.Bytes()
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 0, [][]byte{d}, nil)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
 	})
@@ -34,7 +36,9 @@ func TestBlocksResponseMessage(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		b1 := block.GenerateTestBlock(nil, nil)
 		b2 := block.GenerateTestBlock(nil, nil)
-		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, []*block.Block{b1, b2}, nil)
+		d1, _ := b1.Bytes()
+		d2, _ := b2.Bytes()
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, [][]byte{d1, d2}, nil)
 
 		assert.NoError(t, m.SanityCheck())
 		assert.Zero(t, m.LastCertificateHeight())
@@ -66,8 +70,10 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 	t.Run("OK - MoreBlocks", func(t *testing.T) {
 		b1 := block.GenerateTestBlock(nil, nil)
 		b2 := block.GenerateTestBlock(nil, nil)
+		d1, _ := b1.Bytes()
+		d2, _ := b2.Bytes()
+		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, [][]byte{d1, d2}, nil)
 
-		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, []*block.Block{b1, b2}, nil)
 		assert.NoError(t, m.SanityCheck())
 		assert.Equal(t, m.From, uint32(100))
 		assert.Equal(t, m.To(), uint32(101))

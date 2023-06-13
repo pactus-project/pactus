@@ -14,27 +14,22 @@ type BlocksResponseMessage struct {
 	ResponseCode    ResponseCode       `cbor:"1,keyasint"`
 	SessionID       int                `cbor:"2,keyasint"`
 	From            uint32             `cbor:"3,keyasint"`
-	Blocks          []*block.Block     `cbor:"4,keyasint"`
+	BlocksData      [][]byte           `cbor:"4,keyasint"`
 	LastCertificate *block.Certificate `cbor:"6,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, sid int, from uint32,
-	blocks []*block.Block, cert *block.Certificate) *BlocksResponseMessage {
+	blocksData [][]byte, lastCert *block.Certificate) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
 		ResponseCode:    code,
 		SessionID:       sid,
 		From:            from,
-		Blocks:          blocks,
-		LastCertificate: cert,
+		BlocksData:      blocksData,
+		LastCertificate: lastCert,
 	}
 }
 func (m *BlocksResponseMessage) SanityCheck() error {
-	for _, b := range m.Blocks {
-		if err := b.SanityCheck(); err != nil {
-			return err
-		}
-	}
-	if m.From == 0 && len(m.Blocks) != 0 {
+	if m.From == 0 && len(m.BlocksData) != 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "unexpected block for height zero")
 	}
 	if m.LastCertificate != nil {
@@ -51,12 +46,12 @@ func (m *BlocksResponseMessage) Type() Type {
 }
 
 func (m *BlocksResponseMessage) Count() uint32 {
-	return uint32(len(m.Blocks))
+	return uint32(len(m.BlocksData))
 }
 
 func (m *BlocksResponseMessage) To() uint32 {
 	// response message without any block
-	if len(m.Blocks) == 0 {
+	if len(m.BlocksData) == 0 {
 		return 0
 	}
 	return m.From + m.Count() - 1

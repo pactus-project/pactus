@@ -73,6 +73,8 @@ check:
 		--enable=misspell \
 		--enable=revive \
 		--enable=decorder \
+		--enable=reassign \
+		--enable=usestdlibvars \
 		--enable=nilerr \
 		--enable=gosec \
 		--enable=exportloopref \

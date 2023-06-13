@@ -31,12 +31,13 @@ func TestInvalidCBOR(t *testing.T) {
 	assert.Error(t, err)
 }
 func TestMessageCompress(t *testing.T) {
-	var blocks = []*block.Block{}
+	var blocksData = [][]byte{}
 	for i := 0; i < 10; i++ {
 		b := block.GenerateTestBlock(nil, nil)
-		blocks = append(blocks, b)
+		d, _ := b.Bytes()
+		blocksData = append(blocksData, d)
 	}
-	msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, 1234, 888, blocks, nil)
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, 1234, 888, blocksData, nil)
 	bdl := NewBundle(network.TestRandomPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)

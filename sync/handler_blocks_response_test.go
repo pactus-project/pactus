@@ -15,6 +15,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestInvalidBlockData(t *testing.T) {
+	setup(t)
+
+	pid := network.TestRandomPeerID()
+	sid := tSync.peerSet.OpenSession(pid).SessionID()
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, sid,
+		0, [][]byte{{1, 2, 3}}, nil)
+
+	assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
+}
+
 func TestOneBlockShorter(t *testing.T) {
 	setup(t)
 
@@ -22,6 +33,7 @@ func TestOneBlockShorter(t *testing.T) {
 	lastBlockHeight := tState.LastBlockHeight()
 	b1 := block.GenerateTestBlock(nil, &lastBlockHash)
 	c1 := block.GenerateTestCertificate(b1.Hash())
+	d1, _ := b1.Bytes()
 	pid := network.TestRandomPeerID()
 
 	pub, _ := bls.GenerateTestKeyPair()
@@ -48,7 +60,7 @@ func TestOneBlockShorter(t *testing.T) {
 	t.Run("Commit one block", func(t *testing.T) {
 		sid := tSync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid,
-			lastBlockHeight+1, []*block.Block{b1}, c1)
+			lastBlockHeight+1, [][]byte{d1}, c1)
 		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
 
 		assert.Nil(t, tSync.peerSet.FindSession(sid))

@@ -16,7 +16,6 @@ import (
 	"github.com/pactus-project/pactus/sync/cache"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -68,7 +67,7 @@ func NewSynchronizer(
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
 	logger := logger.NewLogger("_sync", sync)
 	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
-	cache, err := cache.NewCache(conf.CacheSize, state)
+	cache, err := cache.NewCache(conf.CacheSize)
 	if err != nil {
 		return nil, err
 	}
@@ -423,7 +422,7 @@ func (sync *synchronizer) tryCommitBlocks() {
 	}
 }
 
-func (sync *synchronizer) prepareBlocks(from uint32, count uint32) []*block.Block {
+func (sync *synchronizer) prepareBlocks(from uint32, count uint32) [][]byte {
 	ourHeight := sync.state.LastBlockHeight()
 
 	if from > ourHeight {
@@ -435,16 +434,16 @@ func (sync *synchronizer) prepareBlocks(from uint32, count uint32) []*block.Bloc
 		count = ourHeight - from + 1
 	}
 
-	blocks := make([]*block.Block, 0, count)
+	blocks := make([][]byte, 0, count)
 
 	for h := from; h < from+count; h++ {
-		b := sync.cache.GetBlock(h)
+		b := sync.state.StoredBlock(h)
 		if b == nil {
 			sync.logger.Warn("unable to find a block", "height", h)
 			return nil
 		}
 
-		blocks = append(blocks, b)
+		blocks = append(blocks, b.Data)
 	}
 
 	return blocks

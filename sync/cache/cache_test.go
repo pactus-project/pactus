@@ -3,19 +3,16 @@ package cache
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
 var tCache *Cache
-var tState *state.MockState
 
 func setup(t *testing.T) {
 	var err error
-	tState = state.MockingState()
-	tCache, err = NewCache(10, tState)
+	tCache, err = NewCache(10)
 	assert.NoError(t, err)
 }
 
@@ -29,30 +26,26 @@ func TestKeys(t *testing.T) {
 func TestCacheBlocks(t *testing.T) {
 	setup(t)
 
-	b1 := block.GenerateTestBlock(nil, &hash.UndefHash)
+	b1 := block.GenerateTestBlock(nil, nil)
 	h1 := b1.Hash()
 	b2 := block.GenerateTestBlock(nil, &h1)
-	h2 := b2.Hash()
-	b3 := block.GenerateTestBlock(nil, &h2)
+	testHeight := util.RandUint32(0)
 
-	tState.TestStore.SaveBlock(1, b1, block.GenerateTestCertificate(b1.Hash()))
-	tCache.AddBlocks(2, []*block.Block{b2, b3})
+	tCache.AddBlock(testHeight, b1)
+	tCache.AddBlock(testHeight+1, b2)
 
-	assert.False(t, tCache.HasBlockInCache(1), "Block 1 is not cached")
-	assert.True(t, tCache.HasBlockInCache(2))
-	assert.True(t, tCache.HasBlockInCache(3))
-	assert.False(t, tCache.HasBlockInCache(4))
+	assert.True(t, tCache.HasBlockInCache(testHeight))
+	assert.True(t, tCache.HasBlockInCache(testHeight+1))
+	assert.False(t, tCache.HasBlockInCache(testHeight+3))
 
-	assert.NotNil(t, tCache.GetBlock(1))
-	assert.NotNil(t, tCache.GetBlock(2))
-	assert.NotNil(t, tCache.GetBlock(3))
-	assert.Nil(t, tCache.GetBlock(4))
+	assert.NotNil(t, tCache.GetBlock(testHeight))
+	assert.NotNil(t, tCache.GetBlock(testHeight+1))
+	assert.Nil(t, tCache.GetBlock(testHeight+2))
 
-	assert.Equal(t, tCache.GetBlock(1).Hash(), b1.Hash())
-	assert.Equal(t, tCache.GetBlock(2).Hash(), b2.Hash())
+	assert.Equal(t, tCache.GetBlock(testHeight).Hash(), b1.Hash())
+	assert.Equal(t, tCache.GetBlock(testHeight+1).Hash(), b2.Hash())
 	assert.Nil(t, tCache.GetCertificate(0))
-	assert.Equal(t, tCache.GetCertificate(1).Hash(), b2.PrevCertificate().Hash())
-	assert.Equal(t, tCache.GetCertificate(2).Hash(), b3.PrevCertificate().Hash())
+	assert.Equal(t, tCache.GetCertificate(testHeight).Hash(), b2.PrevCertificate().Hash())
 	assert.Nil(t, tCache.GetCertificate(4))
 }
 
