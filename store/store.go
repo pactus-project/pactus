@@ -42,9 +42,9 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	return data, nil
 }
 
-type hashPair struct {
+type blockHeightPair struct {
 	Height uint32
-	Hash   hash.Hash
+	Block  *block.Block
 }
 
 type store struct {
@@ -57,7 +57,7 @@ type store struct {
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
-	stampLookup    *linkedmap.LinkedMap[hash.Stamp, hashPair]
+	stampLookup    *linkedmap.LinkedMap[hash.Stamp, blockHeightPair]
 }
 
 func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
@@ -69,7 +69,7 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	stampLookup := linkedmap.NewLinkedMap[hash.Stamp, blockHeightPair](stampLookupCapacity)
 	s := &store{
 		config:         conf,
 		db:             db,
@@ -78,32 +78,35 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 		txStore:        newTxStore(db),
 		accountStore:   newAccountStore(db),
 		validatorStore: newValidatorStore(db),
-		stampLookup:    linkedmap.NewLinkedMap[hash.Stamp, hashPair](stampLookupCapacity),
+		stampLookup:    stampLookup,
 	}
 
 	lastHeight, _ := s.LastCertificate()
-	height := uint32(0)
+	height := uint32(1)
 	if lastHeight > uint32(stampLookupCapacity) {
 		height = lastHeight - uint32(stampLookupCapacity)
 	}
 	for ; height <= lastHeight; height++ {
-		hash := s.BlockHash(height)
-		s.appendStamp(hash, height)
+		storedBlock, _ := s.Block(height)
+		s.updateStampLookup(height, storedBlock.ToBlock())
 	}
 
 	return s, nil
 }
 
 func (s *store) Close() error {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
 	return s.db.Close()
 }
 
-func (s *store) appendStamp(hash hash.Hash, height uint32) {
-	pair := hashPair{
+func (s *store) updateStampLookup(height uint32, block *block.Block) {
+	pair := blockHeightPair{
 		Height: height,
-		Hash:   hash,
+		Block:  block,
 	}
-	s.stampLookup.PushBack(hash.Stamp(), pair)
+	s.stampLookup.PushBack(block.Stamp(), pair)
 }
 
 func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certificate) {
@@ -128,8 +131,8 @@ func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certifi
 
 	s.batch.Put(lastInfoKey, w.Bytes())
 
-	// Update stamp to height lookup
-	s.appendStamp(block.Hash(), height)
+	// Update stamp lookup
+	s.updateStampLookup(height, block)
 }
 
 func (s *store) Block(height uint32) (*StoredBlock, error) {
@@ -157,7 +160,7 @@ func (s *store) BlockHeight(hash hash.Hash) uint32 {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.BlockHeight(hash)
+	return s.blockStore.blockHeight(hash)
 }
 
 func (s *store) BlockHash(height uint32) hash.Hash {
@@ -173,34 +176,15 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
-func (s *store) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
+func (s *store) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return hash.UndefHash, true
-	}
-
 	n := s.stampLookup.GetNode(stamp)
 	if n != nil {
-		return n.Data.Value.Hash, true
+		return n.Data.Value.Height, n.Data.Value.Block
 	}
-	return hash.UndefHash, false
-}
-
-func (s *store) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
-
-	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return 0, true
-	}
-
-	n := s.stampLookup.GetNode(stamp)
-	if n != nil {
-		return n.Data.Value.Height, true
-	}
-	return 0, false
+	return 0, nil
 }
 
 func (s *store) Transaction(id tx.ID) (*StoredTx, error) {

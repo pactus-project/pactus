@@ -55,10 +55,7 @@ type Reader interface {
 	Block(height uint32) (*StoredBlock, error)
 	BlockHeight(hash hash.Hash) uint32
 	BlockHash(height uint32) hash.Hash
-	// It only remembers most recent stamps
-	FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool)
-	// It only remembers most recent stamps
-	FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool)
+	RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block)
 	Transaction(id tx.ID) (*StoredTx, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
