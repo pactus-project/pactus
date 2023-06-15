@@ -83,9 +83,20 @@ func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
+
+func (m *MockStore) AccountByNumber(number int32) (*account.Account, error) {
+	for _, v := range m.Accounts {
+		if v.Number() == number {
+			return &v, nil
+		}
+	}
+	return nil, fmt.Errorf("not found")
+}
+
 func (m *MockStore) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	m.Accounts[addr] = *acc
 }
+
 func (m *MockStore) TotalAccounts() int32 {
 	return int32(len(m.Accounts))
 }

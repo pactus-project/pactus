@@ -201,6 +201,37 @@ public final class BlockchainGrpc {
     return getGetAccountMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest,
+      pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getGetAccountByNumberMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAccountByNumber",
+      requestType = pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetAccountResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest,
+      pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getGetAccountByNumberMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest, pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getGetAccountByNumberMethod;
+    if ((getGetAccountByNumberMethod = BlockchainGrpc.getGetAccountByNumberMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getGetAccountByNumberMethod = BlockchainGrpc.getGetAccountByNumberMethod) == null) {
+          BlockchainGrpc.getGetAccountByNumberMethod = getGetAccountByNumberMethod =
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest, pactus.blockchain.BlockchainOuterClass.GetAccountResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAccountByNumber"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetAccountResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetAccountByNumber"))
+              .build();
+        }
+      }
+    }
+    return getGetAccountByNumberMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorRequest,
       pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getGetValidatorMethod;
 
@@ -386,6 +417,13 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public void getAccountByNumber(pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAccountByNumberMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request,
         io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorMethod(), responseObserver);
@@ -449,6 +487,13 @@ public final class BlockchainGrpc {
                 pactus.blockchain.BlockchainOuterClass.GetAccountRequest,
                 pactus.blockchain.BlockchainOuterClass.GetAccountResponse>(
                   this, METHODID_GET_ACCOUNT)))
+          .addMethod(
+            getGetAccountByNumberMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest,
+                pactus.blockchain.BlockchainOuterClass.GetAccountResponse>(
+                  this, METHODID_GET_ACCOUNT_BY_NUMBER)))
           .addMethod(
             getGetValidatorMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -538,6 +583,14 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public void getAccountByNumber(pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAccountByNumberMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request,
         io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
@@ -615,6 +668,13 @@ public final class BlockchainGrpc {
     public pactus.blockchain.BlockchainOuterClass.GetAccountResponse getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAccountMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pactus.blockchain.BlockchainOuterClass.GetAccountResponse getAccountByNumber(pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAccountByNumberMethod(), getCallOptions(), request);
     }
 
     /**
@@ -703,6 +763,14 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getAccountByNumber(
+        pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAccountByNumberMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getValidator(
         pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
@@ -732,9 +800,10 @@ public final class BlockchainGrpc {
   private static final int METHODID_GET_BLOCKCHAIN_INFO = 3;
   private static final int METHODID_GET_CONSENSUS_INFO = 4;
   private static final int METHODID_GET_ACCOUNT = 5;
-  private static final int METHODID_GET_VALIDATOR = 6;
-  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 7;
-  private static final int METHODID_GET_VALIDATORS = 8;
+  private static final int METHODID_GET_ACCOUNT_BY_NUMBER = 6;
+  private static final int METHODID_GET_VALIDATOR = 7;
+  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 8;
+  private static final int METHODID_GET_VALIDATORS = 9;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -775,6 +844,10 @@ public final class BlockchainGrpc {
           break;
         case METHODID_GET_ACCOUNT:
           serviceImpl.getAccount((pactus.blockchain.BlockchainOuterClass.GetAccountRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse>) responseObserver);
+          break;
+        case METHODID_GET_ACCOUNT_BY_NUMBER:
+          serviceImpl.getAccountByNumber((pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest) request,
               (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetAccountResponse>) responseObserver);
           break;
         case METHODID_GET_VALIDATOR:
@@ -856,6 +929,7 @@ public final class BlockchainGrpc {
               .addMethod(getGetBlockchainInfoMethod())
               .addMethod(getGetConsensusInfoMethod())
               .addMethod(getGetAccountMethod())
+              .addMethod(getGetAccountByNumberMethod())
               .addMethod(getGetValidatorMethod())
               .addMethod(getGetValidatorByNumberMethod())
               .addMethod(getGetValidatorsMethod())
