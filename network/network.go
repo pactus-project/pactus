@@ -75,7 +75,7 @@ func NewNetwork(conf *Config) (Network, error) {
 	return newNetwork(conf, []lp2p.Option{})
 }
 
-func newNetwork(conf *Config, opts []lp2p.Option) (Network, error) {
+func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
@@ -183,9 +183,8 @@ func (n *network) Stop() {
 	if n.mdns != nil {
 		n.mdns.Stop()
 	}
-	if n.dht != nil {
-		n.dht.Stop()
-	}
+
+	n.dht.Stop()
 	n.gossip.Stop()
 	n.stream.Stop()
 
