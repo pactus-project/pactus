@@ -27,7 +27,7 @@ func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.Logg
 		logger: logger,
 	}
 	// setup mDNS discovery to find local peers
-	mdns.service = lp2pmdns.NewMdnsService(host, "", mdns)
+	mdns.service = lp2pmdns.NewMdnsService(host, "pactus-mdns", mdns)
 
 	return mdns
 }
@@ -57,5 +57,8 @@ func (mdns *mdnsService) Start() error {
 }
 
 func (mdns *mdnsService) Stop() {
-
+	err := mdns.service.Close()
+	if err != nil {
+		mdns.logger.Error("unable to close the network", "err", err)
+	}
 }

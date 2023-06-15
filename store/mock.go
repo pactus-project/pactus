@@ -83,9 +83,20 @@ func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
+
+func (m *MockStore) AccountByNumber(number int32) (*account.Account, error) {
+	for _, v := range m.Accounts {
+		if v.Number() == number {
+			return &v, nil
+		}
+	}
+	return nil, fmt.Errorf("not found")
+}
+
 func (m *MockStore) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	m.Accounts[addr] = *acc
 }
+
 func (m *MockStore) TotalAccounts() int32 {
 	return int32(len(m.Accounts))
 }
@@ -158,29 +169,14 @@ func (m *MockStore) LastCertificate() (uint32, *block.Certificate) {
 	}
 	return m.LastHeight, m.LastCert
 }
-func (m *MockStore) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
-	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return hash.UndefHash, true
-	}
-	for _, b := range m.Blocks {
+func (m *MockStore) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
+	for h, b := range m.Blocks {
 		if b.Stamp().EqualsTo(stamp) {
-			return b.Hash(), true
+			return h, &b
 		}
 	}
 
-	return hash.UndefHash, false
-}
-func (m *MockStore) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
-	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return 0, true
-	}
-	for i, b := range m.Blocks {
-		if b.Stamp().EqualsTo(stamp) {
-			return i, true
-		}
-	}
-
-	return 0, false
+	return 0, nil
 }
 func (m *MockStore) WriteBatch() error {
 	return nil

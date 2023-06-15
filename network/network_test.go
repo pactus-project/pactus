@@ -40,13 +40,13 @@ func makeTestRelay(t *testing.T) host.Host {
 }
 
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
-	Net, err := newNetwork(conf, opts)
+	net, err := newNetwork(conf, opts)
 	assert.NoError(t, err)
 
-	assert.NoError(t, Net.Start())
-	assert.NoError(t, Net.JoinGeneralTopic())
+	assert.NoError(t, net.Start())
+	assert.NoError(t, net.JoinGeneralTopic())
 
-	return Net.(*network)
+	return net
 }
 
 func testConfig() *Config {
@@ -98,6 +98,7 @@ func readData(t *testing.T, r io.ReadCloser, len int) []byte {
 	buf := make([]byte, len)
 	_, err := r.Read(buf)
 	assert.NoError(t, err)
+	assert.NoError(t, r.Close())
 
 	return buf
 }
@@ -143,6 +144,7 @@ func TestNetwork(t *testing.T) {
 		fmt.Sprintf("/ip4/0.0.0.0/tcp/%v", bootstrapPort),
 		fmt.Sprintf("/ip6/::/tcp/%v", bootstrapPort),
 	}
+	fmt.Println("Starting Bootstrap node")
 	networkB := makeTestNetwork(t, confB, []lp2p.Option{})
 	bootstrapAddresses := []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", bootstrapPort, networkB.SelfID().String()),
@@ -158,6 +160,7 @@ func TestNetwork(t *testing.T) {
 		"/ip4/0.0.0.0/tcp/0",
 		"/ip6/::/tcp/0",
 	}
+	fmt.Println("Starting Public node")
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
@@ -172,6 +175,7 @@ func TestNetwork(t *testing.T) {
 		"/ip4/0.0.0.0/tcp/0",
 		"/ip6/::/tcp/0",
 	}
+	fmt.Println("Starting Private node M")
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
 	})
@@ -186,6 +190,7 @@ func TestNetwork(t *testing.T) {
 		"/ip4/0.0.0.0/tcp/0",
 		"/ip6/::/tcp/0",
 	}
+	fmt.Println("Starting Private node N")
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
 	})
@@ -199,10 +204,11 @@ func TestNetwork(t *testing.T) {
 		"/ip4/0.0.0.0/tcp/0",
 		"/ip6/::/tcp/0",
 	}
+	fmt.Println("Starting Private node X")
 	networkX := makeTestNetwork(t, confX, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
 	})
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
 		assert.GreaterOrEqual(t, networkP.NumConnectedPeers(), 1)

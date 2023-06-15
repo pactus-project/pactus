@@ -9,6 +9,7 @@ import (
 )
 
 type blockchainServer struct{}
+
 type transactionServer struct{}
 
 var tBlockchainInfoResponse *pactus.GetBlockchainInfoResponse
@@ -46,6 +47,11 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 		return tAccountResponse, nil
 	}
 	return nil, fmt.Errorf("unknown request")
+}
+
+func (s *blockchainServer) GetAccountByNumber(_ context.Context,
+	_ *pactus.GetAccountByNumberRequest) (*pactus.GetAccountResponse, error) {
+	return nil, nil
 }
 
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,

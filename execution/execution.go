@@ -100,7 +100,7 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 	curHeight := sb.CurrentHeight()
-	height, ok := sb.FindBlockHeightByStamp(trx.Stamp())
+	height, _ := sb.RecentBlockByStamp(trx.Stamp())
 	interval := sb.Params().TransactionToLiveInterval
 
 	if trx.IsSubsidyTx() {
@@ -109,7 +109,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 		interval = sb.Params().SortitionInterval
 	}
 
-	if !ok || curHeight-height > interval {
+	if curHeight-height > interval {
 		return errors.Errorf(errors.ErrInvalidTx, "invalid stamp")
 	}
 

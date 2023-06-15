@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
@@ -211,18 +212,8 @@ func (sb *sandbox) IterateValidators(consumer func(*ValidatorStatus)) {
 	}
 }
 
-func (sb *sandbox) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.store.FindBlockHashByStamp(stamp)
-}
-
-func (sb *sandbox) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
-	sb.lk.RLock()
-	defer sb.lk.RUnlock()
-
-	return sb.store.FindBlockHeightByStamp(stamp)
+func (sb *sandbox) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
+	return sb.store.RecentBlockByStamp(stamp)
 }
 
 func (sb *sandbox) Committee() committee.Reader {
@@ -232,15 +223,11 @@ func (sb *sandbox) Committee() committee.Reader {
 // TODO: write test for me.
 // VerifyProof verifies proof of a sortition transaction.
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
-	height, ok := sb.store.FindBlockHeightByStamp(stamp)
-	if !ok {
+	_, b := sb.store.RecentBlockByStamp(stamp)
+	if b == nil {
 		return false
 	}
-	storedBlock, err := sb.store.Block(height)
-	if err != nil {
-		return false
-	}
-	seed := storedBlock.ToBlock().Header().SortitionSeed()
+	seed := b.Header().SortitionSeed()
 	total := int64(0) // TODO: we can get it from state
 	sb.store.IterateValidators(func(val *validator.Validator) bool {
 		total += val.Power()
