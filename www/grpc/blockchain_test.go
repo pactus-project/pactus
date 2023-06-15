@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	"math/rand"
+	"github.com/pactus-project/pactus/util"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -195,7 +195,7 @@ func TestGetAccountByNumber(t *testing.T) {
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccountByNumber(tCtx,
-			&pactus.GetAccountByNumberRequest{Number: rand.Int31()})
+			&pactus.GetAccountByNumberRequest{Number: util.RandInt32(0)})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
