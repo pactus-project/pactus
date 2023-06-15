@@ -86,7 +86,7 @@ func (bs *blockStore) block(height uint32) ([]byte, error) {
 	return data, nil
 }
 
-func (bs *blockStore) BlockHeight(hash hash.Hash) uint32 {
+func (bs *blockStore) blockHeight(hash hash.Hash) uint32 {
 	data, err := tryGet(bs.db, blockHashKey(hash))
 	if err != nil {
 		return 0

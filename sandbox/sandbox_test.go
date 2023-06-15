@@ -326,30 +326,16 @@ func TestDeepCopy(t *testing.T) {
 	assert.NotEqual(t, val2.Hash(), val3.Validator.Hash())
 }
 
-func TestBlockHeightByStamp(t *testing.T) {
+func TestRecentBlockByStamp(t *testing.T) {
 	setup(t)
 
-	height, ok := tSandbox.FindBlockHeightByStamp(hash.GenerateTestStamp())
-	assert.Zero(t, height)
-	assert.False(t, ok)
+	h, b := tSandbox.RecentBlockByStamp(hash.GenerateTestStamp())
+	assert.Zero(t, h)
+	assert.Nil(t, b)
 
 	lastHeight, _ := tStore.LastCertificate()
 	lastHash := tSandbox.store.BlockHash(lastHeight)
-	height, ok = tSandbox.FindBlockHeightByStamp(lastHash.Stamp())
-	assert.Equal(t, height, lastHeight)
-	assert.True(t, ok)
-}
-
-func TestBlockHashByStamp(t *testing.T) {
-	setup(t)
-
-	h, ok := tSandbox.FindBlockHashByStamp(hash.GenerateTestStamp())
-	assert.True(t, h.IsUndef())
-	assert.False(t, ok)
-
-	lastHeight, _ := tStore.LastCertificate()
-	lastHash := tSandbox.store.BlockHash(lastHeight)
-	h, ok = tSandbox.FindBlockHashByStamp(lastHash.Stamp())
-	assert.True(t, h.EqualsTo(lastHash))
-	assert.True(t, ok)
+	h, b = tSandbox.RecentBlockByStamp(lastHash.Stamp())
+	assert.Equal(t, h, lastHeight)
+	assert.Equal(t, b.Hash(), lastHash)
 }

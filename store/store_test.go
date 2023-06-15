@@ -229,93 +229,61 @@ func TestIterateValidators(t *testing.T) {
 	assert.ElementsMatch(t, vals1, vals2)
 }
 
-func TestFindBlockHashByStamp(t *testing.T) {
+func TestRecentBlockByStamp(t *testing.T) {
 	setup(t)
 
 	hash1 := tStore.BlockHash(1)
 
-	h, ok := tStore.FindBlockHashByStamp(hash1.Stamp())
-	assert.Equal(t, h, hash1)
-	assert.True(t, ok)
+	h, b := tStore.RecentBlockByStamp(hash.UndefHash.Stamp())
+	assert.Zero(t, h)
+	assert.Nil(t, b)
 
-	height, ok := tStore.FindBlockHeightByStamp(hash1.Stamp())
-	assert.Equal(t, height, uint32(1))
-	assert.True(t, ok)
+	h, b = tStore.RecentBlockByStamp(hash1.Stamp())
+	assert.Equal(t, h, uint32(1))
+	assert.Equal(t, b.Hash(), hash1)
+
+	// Saving more blocks, blocks 11 to 22
+	SaveTestBlocks(t, 12)
+	hash2 := tStore.BlockHash(2)
+	hash14 := tStore.BlockHash(14)
+	hash22 := tStore.BlockHash(22)
+
+	// First block should remove from the list
+	h, b = tStore.RecentBlockByStamp(hash1.Stamp())
+	assert.Zero(t, h)
+	assert.Nil(t, b)
+
+	h, b = tStore.RecentBlockByStamp(hash2.Stamp())
+	assert.Equal(t, h, uint32(2))
+	assert.Equal(t, b.Hash(), hash2)
+
+	h, b = tStore.RecentBlockByStamp(hash14.Stamp())
+	assert.Equal(t, h, uint32(14))
+	assert.Equal(t, b.Hash(), hash14)
+
+	h, b = tStore.RecentBlockByStamp(hash22.Stamp())
+	assert.Equal(t, h, uint32(22))
+	assert.Equal(t, b.Hash(), hash22)
 
 	// Reopen the store
 	tStore.Close()
 	s, _ := NewStore(tStore.config, 21)
 	tStore = s.(*store)
 
-	h, ok = tStore.FindBlockHashByStamp(hash1.Stamp())
-	assert.Equal(t, h, hash1)
-	assert.True(t, ok)
+	h, b = tStore.RecentBlockByStamp(hash2.Stamp())
+	assert.Equal(t, h, uint32(2))
+	assert.Equal(t, b.Hash(), hash2)
 
-	height, ok = tStore.FindBlockHeightByStamp(hash1.Stamp())
-	assert.Equal(t, height, uint32(1))
-	assert.True(t, ok)
-
-	// Saving more blocks
-	SaveTestBlocks(t, 12)
-	hash2 := tStore.BlockHash(2)
-	hash14 := tStore.BlockHash(14)
-	hash22 := tStore.BlockHash(22)
-
-	// First block should be removed from the list
-	h, ok = tStore.FindBlockHashByStamp(hash1.Stamp())
-	assert.Equal(t, h, hash.UndefHash)
-	assert.False(t, ok)
-
-	height, ok = tStore.FindBlockHeightByStamp(hash1.Stamp())
-	assert.Zero(t, height)
-	assert.False(t, ok)
-
-	h, ok = tStore.FindBlockHashByStamp(hash2.Stamp())
-	assert.Equal(t, h, hash2)
-	assert.True(t, ok)
-
-	h, ok = tStore.FindBlockHashByStamp(hash14.Stamp())
-	assert.Equal(t, h, hash14)
-	assert.True(t, ok)
-
-	h, ok = tStore.FindBlockHashByStamp(hash22.Stamp())
-	assert.Equal(t, h, hash22)
-	assert.True(t, ok)
-
-	height, ok = tStore.FindBlockHeightByStamp(hash2.Stamp())
-	assert.Equal(t, height, uint32(2))
-	assert.True(t, ok)
-
-	height, ok = tStore.FindBlockHeightByStamp(hash14.Stamp())
-	assert.Equal(t, height, uint32(14))
-	assert.True(t, ok)
-
-	height, ok = tStore.FindBlockHeightByStamp(hash22.Stamp())
-	assert.Equal(t, height, uint32(22))
-	assert.True(t, ok)
-
-	// Reopen the store
-	tStore.Close()
-	s, _ = NewStore(tStore.config, 21)
-	tStore = s.(*store)
-
-	height, ok = tStore.FindBlockHeightByStamp(hash2.Stamp())
-	assert.Equal(t, height, uint32(2))
-	assert.True(t, ok)
-
+	// Saving one more blocks, block 23
 	SaveTestBlocks(t, 1)
 
-	// Second block should bre removed from th list
-	height, ok = tStore.FindBlockHeightByStamp(hash2.Stamp())
-	assert.Zero(t, height)
-	assert.False(t, ok)
+	// Second block should remove from the list
+	h, b = tStore.RecentBlockByStamp(hash2.Stamp())
+	assert.Zero(t, h)
+	assert.Nil(t, b)
 
 	// Genesis block
-	h, ok = tStore.FindBlockHashByStamp(hash.UndefHash.Stamp())
-	assert.Equal(t, h, hash.UndefHash)
-	assert.True(t, ok)
-
-	height, ok = tStore.FindBlockHeightByStamp(hash.UndefHash.Stamp())
-	assert.Zero(t, h, height)
-	assert.True(t, ok)
+	h, b = tStore.RecentBlockByStamp(hash.UndefHash.Stamp())
+	assert.Zero(t, h)
+	assert.Nil(t, b)
 }

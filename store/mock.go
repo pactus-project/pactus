@@ -150,29 +150,14 @@ func (m *MockStore) LastCertificate() (uint32, *block.Certificate) {
 	}
 	return m.LastHeight, m.LastCert
 }
-func (m *MockStore) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
-	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return hash.UndefHash, true
-	}
-	for _, b := range m.Blocks {
+func (m *MockStore) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
+	for h, b := range m.Blocks {
 		if b.Stamp().EqualsTo(stamp) {
-			return b.Hash(), true
+			return h, &b
 		}
 	}
 
-	return hash.UndefHash, false
-}
-func (m *MockStore) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
-	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return 0, true
-	}
-	for i, b := range m.Blocks {
-		if b.Stamp().EqualsTo(stamp) {
-			return i, true
-		}
-	}
-
-	return 0, false
+	return 0, nil
 }
 func (m *MockStore) WriteBatch() error {
 	return nil

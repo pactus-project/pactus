@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -77,11 +78,8 @@ func (m *MockSandbox) CurrentHeight() uint32 {
 func (m *MockSandbox) Params() param.Params {
 	return m.TestParams
 }
-func (m *MockSandbox) FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool) {
-	return m.TestStore.FindBlockHashByStamp(stamp)
-}
-func (m *MockSandbox) FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool) {
-	return m.TestStore.FindBlockHeightByStamp(stamp)
+func (m *MockSandbox) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
+	return m.TestStore.RecentBlockByStamp(stamp)
 }
 func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *AccountStatus)) {
 	m.TestStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {

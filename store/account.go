@@ -19,7 +19,6 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 	as := &accountStore{
 		db: db,
 	}
-	// TODO: better way to get total accout number?
 	total := int32(0)
 	as.iterateAccounts(func(_ crypto.Address, _ *account.Account) bool {
 		total++

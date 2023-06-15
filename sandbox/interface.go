@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -22,8 +23,7 @@ type Sandbox interface {
 
 	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
-	FindBlockHashByStamp(stamp hash.Stamp) (hash.Hash, bool)
-	FindBlockHeightByStamp(stamp hash.Stamp) (uint32, bool)
+	RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block)
 
 	Params() param.Params
 	CurrentHeight() uint32
