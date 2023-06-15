@@ -15,20 +15,18 @@ import (
 var _ Store = &MockStore{}
 
 type MockStore struct {
-	Blocks           map[uint32]block.Block
-	Accounts         map[crypto.Address]account.Account
-	AccountsByNumber map[int32]account.Account
-	Validators       map[crypto.Address]validator.Validator
-	LastCert         *block.Certificate
-	LastHeight       uint32
+	Blocks     map[uint32]block.Block
+	Accounts   map[crypto.Address]account.Account
+	Validators map[crypto.Address]validator.Validator
+	LastCert   *block.Certificate
+	LastHeight uint32
 }
 
 func MockingStore() *MockStore {
 	return &MockStore{
-		Blocks:           make(map[uint32]block.Block),
-		Accounts:         make(map[crypto.Address]account.Account),
-		AccountsByNumber: make(map[int32]account.Account),
-		Validators:       make(map[crypto.Address]validator.Validator),
+		Blocks:     make(map[uint32]block.Block),
+		Accounts:   make(map[crypto.Address]account.Account),
+		Validators: make(map[crypto.Address]validator.Validator),
 	}
 }
 func (m *MockStore) Block(height uint32) (*StoredBlock, error) {
@@ -87,19 +85,16 @@ func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 }
 
 func (m *MockStore) AccountByNumber(number int32) (*account.Account, error) {
-	a, ok := m.AccountsByNumber[number]
-	if ok {
-		return &a, nil
+	for _, v := range m.Accounts {
+		if v.Number() == number {
+			return &v, nil
+		}
 	}
 	return nil, fmt.Errorf("not found")
 }
 
 func (m *MockStore) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	m.Accounts[addr] = *acc
-}
-
-func (m *MockStore) UpdateAccountByNumber(number int32, acc *account.Account) {
-	m.AccountsByNumber[number] = *acc
 }
 
 func (m *MockStore) TotalAccounts() int32 {
@@ -203,7 +198,6 @@ func (m *MockStore) AddTestValidator() *validator.Validator {
 func (m *MockStore) AddTestAccount() (*account.Account, crypto.Signer) {
 	acc, signer := account.GenerateTestAccount(util.RandInt32(10000))
 	m.UpdateAccount(signer.Address(), acc)
-	m.UpdateAccountByNumber(acc.Number(), acc)
 	return acc, signer
 }
 
