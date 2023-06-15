@@ -49,7 +49,8 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	return nil, fmt.Errorf("unknown request")
 }
 
-func (s *blockchainServer) GetAccountByNumber(ctx context.Context, request *pactus.GetAccountByNumberRequest) (*pactus.GetAccountResponse, error) {
+func (s *blockchainServer) GetAccountByNumber(_ context.Context,
+	_ *pactus.GetAccountByNumberRequest) (*pactus.GetAccountResponse, error) {
 	return nil, nil
 }
 
