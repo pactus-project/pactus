@@ -151,9 +151,6 @@ func (m *MockStore) LastCertificate() (uint32, *block.Certificate) {
 	return m.LastHeight, m.LastCert
 }
 func (m *MockStore) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
-	if stamp.EqualsTo(hash.UndefHash.Stamp()) {
-		return 0, nil
-	}
 	for h, b := range m.Blocks {
 		if b.Stamp().EqualsTo(stamp) {
 			return h, &b
