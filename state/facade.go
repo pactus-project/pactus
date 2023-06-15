@@ -44,6 +44,7 @@ type Facade interface {
 	AccountByAddress(addr crypto.Address) *account.Account
 	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator
+	Validators() []*validator.Validator
 	Params() param.Params
 	Close() error
 	Fingerprint() string

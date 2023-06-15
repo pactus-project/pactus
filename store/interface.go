@@ -64,6 +64,7 @@ type Reader interface {
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int32
 	HasValidator(crypto.Address) bool
+	Validators() []*validator.Validator
 	Validator(addr crypto.Address) (*validator.Validator, error)
 	ValidatorByNumber(num int32) (*validator.Validator, error)
 	IterateValidators(consumer func(*validator.Validator) (stop bool))

@@ -15,18 +15,18 @@ import (
 var _ Store = &MockStore{}
 
 type MockStore struct {
-	Blocks     map[uint32]block.Block
-	Accounts   map[crypto.Address]account.Account
-	Validators map[crypto.Address]validator.Validator
-	LastCert   *block.Certificate
-	LastHeight uint32
+	Blocks       map[uint32]block.Block
+	Accounts     map[crypto.Address]account.Account
+	ValidatorMap map[crypto.Address]validator.Validator
+	LastCert     *block.Certificate
+	LastHeight   uint32
 }
 
 func MockingStore() *MockStore {
 	return &MockStore{
-		Blocks:     make(map[uint32]block.Block),
-		Accounts:   make(map[crypto.Address]account.Account),
-		Validators: make(map[crypto.Address]validator.Validator),
+		Blocks:       make(map[uint32]block.Block),
+		Accounts:     make(map[crypto.Address]account.Account),
+		ValidatorMap: make(map[crypto.Address]validator.Validator),
 	}
 }
 func (m *MockStore) Block(height uint32) (*StoredBlock, error) {
@@ -90,18 +90,26 @@ func (m *MockStore) TotalAccounts() int32 {
 	return int32(len(m.Accounts))
 }
 func (m *MockStore) HasValidator(addr crypto.Address) bool {
-	_, ok := m.Validators[addr]
+	_, ok := m.ValidatorMap[addr]
 	return ok
 }
+func (m *MockStore) Validators() []*validator.Validator {
+	validators := make([]*validator.Validator, 0, len(m.ValidatorMap))
+	for _, val := range m.ValidatorMap {
+		newVal := val
+		validators = append(validators, &newVal)
+	}
+	return validators
+}
 func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error) {
-	v, ok := m.Validators[addr]
+	v, ok := m.ValidatorMap[addr]
 	if ok {
 		return &v, nil
 	}
 	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) ValidatorByNumber(num int32) (*validator.Validator, error) {
-	for _, v := range m.Validators {
+	for _, v := range m.ValidatorMap {
 		if v.Number() == num {
 			return &v, nil
 		}
@@ -109,10 +117,10 @@ func (m *MockStore) ValidatorByNumber(num int32) (*validator.Validator, error) {
 	return nil, fmt.Errorf("not found")
 }
 func (m *MockStore) UpdateValidator(val *validator.Validator) {
-	m.Validators[val.Address()] = *val
+	m.ValidatorMap[val.Address()] = *val
 }
 func (m *MockStore) TotalValidators() int32 {
-	return int32(len(m.Validators))
+	return int32(len(m.ValidatorMap))
 }
 func (m *MockStore) Close() error {
 	return nil
@@ -130,7 +138,7 @@ func (m *MockStore) IterateAccounts(consumer func(crypto.Address, *account.Accou
 	}
 }
 func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
-	for _, val := range m.Validators {
+	for _, val := range m.ValidatorMap {
 		cloned := val
 		stopped := consumer(&cloned)
 		if stopped {
@@ -208,7 +216,7 @@ func (m *MockStore) RandomTestAcc() (crypto.Address, *account.Account) {
 	panic("no account in sandbox")
 }
 func (m *MockStore) RandomTestVal() *validator.Validator {
-	for _, val := range m.Validators {
+	for _, val := range m.ValidatorMap {
 		return &val
 	}
 	panic("no validator in sandbox")

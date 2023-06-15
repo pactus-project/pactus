@@ -254,7 +254,7 @@ func TestGetValidators(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, 21, len(res.GetValidators()))
+		assert.Equal(t, 2, len(res.GetValidators()))
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

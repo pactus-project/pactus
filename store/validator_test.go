@@ -55,6 +55,35 @@ func TestValidatorBatchSaving(t *testing.T) {
 	})
 }
 
+func TestValidators(t *testing.T) {
+	setup(t)
+
+	t.Run("Add some validators", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			val, _ := validator.GenerateTestValidator(int32(i))
+			tStore.UpdateValidator(val)
+		}
+		assert.NoError(t, tStore.WriteBatch())
+
+		v, err := tStore.ValidatorByNumber(5)
+		assert.NoError(t, err)
+		require.NotNil(t, v)
+		assert.Equal(t, v.Number(), int32(5))
+
+		v, err = tStore.ValidatorByNumber(11)
+		assert.Error(t, err)
+		assert.Nil(t, v)
+	})
+
+	t.Run("Get list of validators", func(t *testing.T) {
+		tStore.Close()
+		store, _ := NewStore(tStore.config, 21)
+
+		vals := store.Validators()
+		assert.NotNil(t, vals)
+	})
+}
+
 func TestValidatorByNumber(t *testing.T) {
 	setup(t)
 

@@ -45,6 +45,14 @@ func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
 	return has
 }
 
+func (vs *validatorStore) Validators() []*validator.Validator {
+	validators := make([]*validator.Validator, 0, len(vs.valMap))
+	for _, val := range vs.valMap {
+		validators = append(validators, val)
+	}
+	return validators
+}
+
 func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, error) {
 	data, err := tryGet(vs.db, validatorKey(addr))
 	if err != nil {

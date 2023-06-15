@@ -206,8 +206,8 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 
 func (s *blockchainServer) GetValidators(_ context.Context,
 	_ *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
-	validators := s.state.CommitteeValidators()
-	validatorsInfo := make([]*pactus.ValidatorInfo, 0)
+	validators := s.state.Validators()
+	validatorsInfo := make([]*pactus.ValidatorInfo, 0, len(validators))
 	for _, val := range validators {
 		validatorsInfo = append(validatorsInfo, validatorToProto(val))
 	}

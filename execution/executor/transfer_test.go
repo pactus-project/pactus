@@ -30,7 +30,8 @@ func checkTotalCoin(t *testing.T, fee int64) {
 	for _, acc := range tSandbox.TestStore.Accounts {
 		total += acc.Balance()
 	}
-	for _, val := range tSandbox.TestStore.Validators {
+
+	for _, val := range tSandbox.TestStore.ValidatorMap {
 		total += val.Stake()
 	}
 	assert.Equal(t, total+fee, int64(21000000*1e9))
