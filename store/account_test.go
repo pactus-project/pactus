@@ -1,12 +1,12 @@
 package store
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccountCounter(t *testing.T) {
