@@ -185,9 +185,9 @@ func TestGetAccountByNumber(t *testing.T) {
 	conn, client := testBlockchainClient(t)
 	acc, _ := tMockState.TestStore.AddTestAccount()
 
-	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
+	t.Run("Should return nil value due to invalid number ", func(t *testing.T) {
 		res, err := client.GetAccountByNumber(tCtx,
-			&pactus.GetAccountByNumberRequest{Number: 0})
+			&pactus.GetAccountByNumberRequest{Number: -1})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
