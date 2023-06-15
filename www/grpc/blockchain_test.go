@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -179,6 +180,40 @@ func TestGetAccount(t *testing.T) {
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
+
+func TestGetAccountByNumber(t *testing.T) {
+	conn, client := testBlockchainClient(t)
+	acc, _ := tMockState.TestStore.AddTestAccount()
+
+	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
+		res, err := client.GetAccountByNumber(tCtx,
+			&pactus.GetAccountByNumberRequest{Number: 0})
+
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Should return nil for non existing account ", func(t *testing.T) {
+		res, err := client.GetAccountByNumber(tCtx,
+			&pactus.GetAccountByNumberRequest{Number: rand.Int31()})
+
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Should return account details", func(t *testing.T) {
+		res, err := client.GetAccountByNumber(tCtx,
+			&pactus.GetAccountByNumberRequest{Number: acc.Number()})
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, res.Account.Balance, acc.Balance())
+		assert.Equal(t, res.Account.Number, acc.Number())
+		assert.Equal(t, res.Account.Sequence, acc.Sequence())
+	})
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
 func TestGetValidator(t *testing.T) {
 	conn, client := testBlockchainClient(t)
 	val1 := tMockState.TestStore.AddTestValidator()

@@ -1,6 +1,7 @@
 package store
 
 import (
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/account"
@@ -51,5 +52,40 @@ func TestAccountBatchSaving(t *testing.T) {
 		tStore.Close()
 		store, _ := NewStore(tStore.config, 21)
 		assert.Equal(t, store.TotalAccounts(), int32(100))
+	})
+}
+
+func TestAccountByNumber(t *testing.T) {
+	setup(t)
+
+	t.Run("Add some accounts", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			val, signer := account.GenerateTestAccount(int32(i))
+			tStore.UpdateAccount(signer.Address(), val)
+		}
+		assert.NoError(t, tStore.WriteBatch())
+
+		v, err := tStore.AccountByNumber(5)
+		assert.NoError(t, err)
+		require.NotNil(t, v)
+		assert.Equal(t, v.Number(), int32(5))
+
+		v, err = tStore.AccountByNumber(11)
+		assert.Error(t, err)
+		assert.Nil(t, v)
+	})
+
+	t.Run("Reopen the store", func(t *testing.T) {
+		tStore.Close()
+		store, _ := NewStore(tStore.config, 21)
+
+		v, err := store.AccountByNumber(5)
+		assert.NoError(t, err)
+		require.NotNil(t, v)
+		assert.Equal(t, v.Number(), int32(5))
+
+		v, err = tStore.AccountByNumber(11)
+		assert.Error(t, err)
+		assert.Nil(t, v)
 	})
 }

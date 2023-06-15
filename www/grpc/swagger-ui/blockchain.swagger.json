@@ -366,6 +366,7 @@
         "votes": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusVoteInfo"
           }
         }
@@ -425,6 +426,7 @@
         "txs": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusTransactionInfo"
           }
         }
@@ -460,6 +462,7 @@
         "committeeValidators": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusValidatorInfo"
           }
         }
@@ -471,6 +474,7 @@
         "instances": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusConsensusInfo"
           }
         }
@@ -490,6 +494,7 @@
         "validators": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusValidatorInfo"
           }
         }
@@ -727,6 +732,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

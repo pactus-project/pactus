@@ -1,6 +1,7 @@
 package store
 
 import (
+	"fmt"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/util/logger"
@@ -9,19 +10,22 @@ import (
 )
 
 type accountStore struct {
-	db    *leveldb.DB
-	total int32
+	db        *leveldb.DB
+	numberMap map[int32]*account.Account
+	total     int32
 }
 
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
 
 func newAccountStore(db *leveldb.DB) *accountStore {
 	as := &accountStore{
-		db: db,
+		db:        db,
+		numberMap: make(map[int32]*account.Account),
 	}
 	// TODO: better way to get total accout number?
 	total := int32(0)
-	as.iterateAccounts(func(_ crypto.Address, _ *account.Account) bool {
+	as.iterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
+		as.numberMap[acc.Number()] = acc
 		total++
 		return false
 	})
@@ -50,6 +54,15 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 	}
 
 	return acc, nil
+}
+
+func (as *accountStore) accountByNumber(number int32) (*account.Account, error) {
+	val, ok := as.numberMap[number]
+	if ok {
+		return val, nil
+	}
+
+	return nil, fmt.Errorf("account not found")
 }
 
 func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
@@ -83,5 +96,7 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if !as.hasAccount(addr) {
 		as.total++
 	}
+	as.numberMap[acc.Number()] = acc
+
 	batch.Put(accountKey(addr), data)
 }

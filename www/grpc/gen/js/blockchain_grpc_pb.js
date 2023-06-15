@@ -5,6 +5,17 @@ var grpc = require('grpc');
 var blockchain_pb = require('./blockchain_pb.js');
 var transaction_pb = require('./transaction_pb.js');
 
+function serialize_pactus_GetAccountByNumberRequest(arg) {
+  if (!(arg instanceof blockchain_pb.GetAccountByNumberRequest)) {
+    throw new Error('Expected argument of type pactus.GetAccountByNumberRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetAccountByNumberRequest(buffer_arg) {
+  return blockchain_pb.GetAccountByNumberRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetAccountRequest(arg) {
   if (!(arg instanceof blockchain_pb.GetAccountRequest)) {
     throw new Error('Expected argument of type pactus.GetAccountRequest');
@@ -257,6 +268,17 @@ var BlockchainService = exports.BlockchainService = {
     responseType: blockchain_pb.GetAccountResponse,
     requestSerialize: serialize_pactus_GetAccountRequest,
     requestDeserialize: deserialize_pactus_GetAccountRequest,
+    responseSerialize: serialize_pactus_GetAccountResponse,
+    responseDeserialize: deserialize_pactus_GetAccountResponse,
+  },
+  getAccountByNumber: {
+    path: '/pactus.Blockchain/GetAccountByNumber',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.GetAccountByNumberRequest,
+    responseType: blockchain_pb.GetAccountResponse,
+    requestSerialize: serialize_pactus_GetAccountByNumberRequest,
+    requestDeserialize: deserialize_pactus_GetAccountByNumberRequest,
     responseSerialize: serialize_pactus_GetAccountResponse,
     responseDeserialize: deserialize_pactus_GetAccountResponse,
   },
