@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"google.golang.org/grpc/reflection"
 	"net"
 
 	"github.com/pactus-project/pactus/consensus"
@@ -70,8 +69,6 @@ func (s *Server) StartServer() error {
 	pactus.RegisterTransactionServer(grpc, transactionServer)
 	pactus.RegisterNetworkServer(grpc, networkServer)
 	pactus.RegisterWalletServer(grpc, walletServer)
-
-	reflection.Register(grpc)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
