@@ -174,7 +174,6 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 
 func (s *blockchainServer) GetAccountByNumber(_ context.Context,
 	req *pactus.GetAccountByNumberRequest) (*pactus.GetAccountResponse, error) {
-
 	acc := s.state.AccountByNumber(req.Number)
 	if acc == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "account not found")
