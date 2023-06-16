@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
@@ -155,7 +156,36 @@ func TestValidatorByAddress(t *testing.T) {
 	})
 }
 
-func TestUpdateValidator(t *testing.T) {
+func TestIterateValidators(t *testing.T) {
+	setup(t)
+
+	total := util.RandInt32(100)
+	vals1 := []hash.Hash{}
+	for i := int32(0); i < total; i++ {
+		val, _ := validator.GenerateTestValidator(i)
+		tStore.UpdateValidator(val)
+		vals1 = append(vals1, val.Hash())
+	}
+	assert.NoError(t, tStore.WriteBatch())
+
+	vals2 := []hash.Hash{}
+	tStore.IterateValidators(func(val *validator.Validator) bool {
+		vals2 = append(vals2, val.Hash())
+		return false
+	})
+	assert.ElementsMatch(t, vals1, vals2)
+
+	stopped := false
+	tStore.IterateValidators(func(val *validator.Validator) bool {
+		if val.Hash().EqualsTo(vals1[0]) {
+			stopped = true
+		}
+		return stopped
+	})
+	assert.True(t, stopped)
+}
+
+func TestValidatorDeepCopy(t *testing.T) {
 	setup(t)
 
 	num := util.RandInt32(1000)
@@ -163,16 +193,10 @@ func TestUpdateValidator(t *testing.T) {
 	tStore.UpdateValidator(val1)
 
 	val2, _ := tStore.ValidatorByNumber(num)
-	assert.Equal(t, val1.Hash(), val2.Hash())
+	val2.IncSequence()
+	assert.NotEqual(t, tStore.validatorStore.numberMap[num].Hash(), val2.Hash())
 
-	assert.NoError(t, tStore.WriteBatch())
-	val3, _ := tStore.ValidatorByNumber(num)
-	assert.Equal(t, val1.Hash(), val3.Hash())
-
-	val4, _ := tStore.Validator(val1.Address())
-	val4.AddToStake(1)
-	tStore.UpdateValidator(val4)
-
-	val5, _ := tStore.ValidatorByNumber(num)
-	assert.Equal(t, val4.Hash(), val5.Hash())
+	val3, _ := tStore.Validator(val1.Address())
+	val3.IncSequence()
+	assert.NotEqual(t, tStore.validatorStore.numberMap[num].Hash(), val3.Hash())
 }

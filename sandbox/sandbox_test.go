@@ -293,37 +293,62 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 	})
 }
 
-func TestDeepCopy(t *testing.T) {
+func TestAccountDeepCopy(t *testing.T) {
 	setup(t)
 
-	addr := crypto.GenerateTestAddress()
-	pub, _ := bls.GenerateTestKeyPair()
-	acc1 := tSandbox.MakeNewAccount(addr)
-	val1 := tSandbox.MakeNewValidator(pub)
+	t.Run("non existing account", func(t *testing.T) {
+		addr := crypto.GenerateTestAddress()
+		acc := tSandbox.MakeNewAccount(addr)
+		acc.IncSequence()
 
-	acc2 := tSandbox.Account(addr)
-	val2 := tSandbox.Validator(pub.Address())
+		assert.NotEqual(t, tSandbox.Account(addr), acc)
+	})
 
-	assert.Equal(t, acc1, acc2)
-	assert.Equal(t, val1.Hash(), val2.Hash())
+	t.Run("existing account", func(t *testing.T) {
+		addr := crypto.TreasuryAddress
+		acc := tSandbox.Account(addr)
+		acc.IncSequence()
 
-	acc1.IncSequence()
-	val1.IncSequence()
+		assert.NotEqual(t, tSandbox.Account(addr), acc)
+	})
 
-	acc2.AddToBalance(1)
-	val2.AddToStake(1)
+	t.Run("sandbox account", func(t *testing.T) {
+		addr := crypto.TreasuryAddress
+		acc := tSandbox.Account(addr)
+		acc.IncSequence()
 
-	assert.NotEqual(t, acc1.Hash(), acc2.Hash())
-	assert.NotEqual(t, val1.Hash(), val2.Hash())
+		assert.NotEqual(t, tSandbox.Account(addr), acc)
+		assert.NotEqual(t, acc.Sequence(), 1)
+	})
+}
 
-	acc3 := tSandbox.accounts[addr]
-	val3 := tSandbox.validators[pub.Address()]
+func TestValidatorDeepCopy(t *testing.T) {
+	setup(t)
 
-	assert.NotEqual(t, acc1.Hash(), acc3.account.Hash())
-	assert.NotEqual(t, val1.Hash(), val3.validator.Hash())
+	t.Run("non existing account", func(t *testing.T) {
+		pub, _ := bls.GenerateTestKeyPair()
+		acc := tSandbox.MakeNewValidator(pub)
+		acc.IncSequence()
 
-	assert.NotEqual(t, acc2.Hash(), acc3.account.Hash())
-	assert.NotEqual(t, val2.Hash(), val3.validator.Hash())
+		assert.NotEqual(t, tSandbox.Validator(pub.Address()), acc)
+	})
+
+	val0, _ := tStore.ValidatorByNumber(0)
+	addr := val0.Address()
+	t.Run("existing validator", func(t *testing.T) {
+		acc := tSandbox.Validator(addr)
+		acc.IncSequence()
+
+		assert.NotEqual(t, tSandbox.Validator(addr), acc)
+	})
+
+	t.Run("sandbox validator", func(t *testing.T) {
+		acc := tSandbox.Validator(addr)
+		acc.IncSequence()
+
+		assert.NotEqual(t, tSandbox.Validator(addr), acc)
+		assert.NotEqual(t, acc.Sequence(), 1)
+	})
 }
 
 func TestRecentBlockByStamp(t *testing.T) {

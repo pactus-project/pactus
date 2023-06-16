@@ -81,6 +81,9 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 	}
 }
 
+// This function takes ownership of the account pointer.
+// It is important that the caller should not modify the account data and
+// keep it immutable.
 func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address, acc *account.Account) {
 	data, err := acc.Bytes()
 	if err != nil {

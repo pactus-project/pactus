@@ -111,6 +111,9 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	return acc.Clone()
 }
 
+// This function takes ownership of the account pointer.
+// It is important that the caller should not modify the account data and
+// keep it immutable.
 func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
@@ -160,6 +163,9 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	return val.Clone()
 }
 
+// This function takes ownership of the validator pointer.
+// It is important that the caller should not modify the validator data and
+// keep it immutable.
 func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()

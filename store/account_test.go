@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
@@ -153,4 +154,49 @@ func TestAccountByAddress(t *testing.T) {
 		// require.NotNil(t, acc)
 		// assert.Equal(t, acc.Number(), num)
 	})
+}
+
+func TestIterateAccounts(t *testing.T) {
+	setup(t)
+
+	total := util.RandInt32(100)
+	accs1 := []hash.Hash{}
+	for i := int32(0); i < total; i++ {
+		acc, signer := account.GenerateTestAccount(i)
+		tStore.UpdateAccount(signer.Address(), acc)
+		accs1 = append(accs1, acc.Hash())
+	}
+	assert.NoError(t, tStore.WriteBatch())
+
+	accs2 := []hash.Hash{}
+	tStore.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
+		accs2 = append(accs2, acc.Hash())
+		return false
+	})
+	assert.ElementsMatch(t, accs1, accs2)
+
+	stopped := false
+	tStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
+		if acc.Hash().EqualsTo(accs1[0]) {
+			stopped = true
+		}
+		return stopped
+	})
+	assert.True(t, stopped)
+}
+
+func TestAccountDeepCopy(t *testing.T) {
+	setup(t)
+
+	num := util.RandInt32(1000)
+	acc1, signer := account.GenerateTestAccount(num)
+	tStore.UpdateAccount(signer.Address(), acc1)
+
+	acc2, _ := tStore.AccountByNumber(num)
+	acc2.IncSequence()
+	assert.NotEqual(t, tStore.accountStore.numberMap[num].Hash(), acc2.Hash())
+
+	acc3, _ := tStore.Account(signer.Address())
+	acc3.IncSequence()
+	assert.NotEqual(t, tStore.accountStore.numberMap[num].Hash(), acc3.Hash())
 }

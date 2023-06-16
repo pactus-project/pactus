@@ -162,64 +162,6 @@ func TestRetrieveValidator(t *testing.T) {
 	assert.Equal(t, val.Hash(), val2.Hash())
 }
 
-func TestIterateAccounts(t *testing.T) {
-	setup(t)
-
-	accs1 := []hash.Hash{}
-	for i := 0; i < 10; i++ {
-		acc, signer := account.GenerateTestAccount(int32(i))
-		tStore.UpdateAccount(signer.Address(), acc)
-		assert.NoError(t, tStore.WriteBatch())
-		accs1 = append(accs1, acc.Hash())
-	}
-
-	stopped := false
-	tStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
-		if acc.Hash().EqualsTo(accs1[0]) {
-			stopped = true
-		}
-		return stopped
-	})
-	assert.True(t, stopped)
-
-	accs2 := []hash.Hash{}
-	tStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
-		accs2 = append(accs2, acc.Hash())
-		return false
-	})
-
-	assert.ElementsMatch(t, accs1, accs2)
-}
-
-func TestIterateValidators(t *testing.T) {
-	setup(t)
-
-	vals1 := []hash.Hash{}
-	for i := 0; i < 10; i++ {
-		val, _ := validator.GenerateTestValidator(int32(i))
-		tStore.UpdateValidator(val)
-		assert.NoError(t, tStore.WriteBatch())
-		vals1 = append(vals1, val.Hash())
-	}
-
-	stopped := false
-	tStore.IterateValidators(func(val *validator.Validator) bool {
-		if val.Hash().EqualsTo(vals1[0]) {
-			stopped = true
-		}
-		return stopped
-	})
-	assert.True(t, stopped)
-
-	vals2 := []hash.Hash{}
-	tStore.IterateValidators(func(val *validator.Validator) bool {
-		vals2 = append(vals2, val.Hash())
-		return false
-	})
-
-	assert.ElementsMatch(t, vals1, vals2)
-}
-
 func TestRecentBlockByStamp(t *testing.T) {
 	setup(t)
 

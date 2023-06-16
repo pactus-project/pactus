@@ -78,6 +78,9 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 	}
 }
 
+// This function takes ownership of the validator pointer.
+// It is important that the caller should not modify the validator data and
+// keep it immutable.
 func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) {
 	data, err := val.Bytes()
 	if err != nil {
