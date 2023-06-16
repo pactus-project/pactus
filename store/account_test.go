@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -12,7 +13,7 @@ import (
 func TestAccountCounter(t *testing.T) {
 	setup(t)
 
-	acc, signer := account.GenerateTestAccount(util.RandInt32(1000))
+	acc, signer := account.GenerateTestAccount(util.RandInt32(0))
 
 	t.Run("Update count after adding new account", func(t *testing.T) {
 		assert.Zero(t, tStore.TotalAccounts())
@@ -25,6 +26,7 @@ func TestAccountCounter(t *testing.T) {
 	t.Run("Update account, should not increase counter", func(t *testing.T) {
 		acc.AddToBalance(1)
 		tStore.UpdateAccount(signer.Address(), acc)
+
 		assert.NoError(t, tStore.WriteBatch())
 		assert.Equal(t, tStore.TotalAccounts(), int32(1))
 	})

@@ -1,3 +1,4 @@
+// Package validator provides functionality for managing validator information.
 package validator
 
 import (
@@ -10,10 +11,12 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
+// The Validator struct represents a validator object.
 type Validator struct {
 	data validatorData
 }
 
+// validatorData contains the data associated with a validator.
 type validatorData struct {
 	PublicKey         *bls.PublicKey
 	Number            int32
@@ -24,7 +27,7 @@ type validatorData struct {
 	LastJoinedHeight  uint32
 }
 
-// NewValidator constructs a new validator object.
+// NewValidator constructs a new validator from the given public key and number.
 func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	val := &Validator{
 		data: validatorData{
@@ -35,7 +38,7 @@ func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 	return val
 }
 
-// FromBytes constructs a new validator from byte array.
+// FromBytes constructs a new validator from a byte array.
 func FromBytes(data []byte) (*Validator, error) {
 	acc := new(Validator)
 	r := bytes.NewReader(data)
@@ -61,43 +64,64 @@ func FromBytes(data []byte) (*Validator, error) {
 	return acc, nil
 }
 
-func (val *Validator) PublicKey() *bls.PublicKey { return val.data.PublicKey }
-func (val *Validator) Address() crypto.Address   { return val.data.PublicKey.Address() }
-func (val *Validator) Number() int32             { return val.data.Number }
-func (val *Validator) Sequence() int32           { return val.data.Sequence }
-func (val *Validator) Stake() int64              { return val.data.Stake }
+// PublicKey returns the public key of the validator.
+func (val *Validator) PublicKey() *bls.PublicKey {
+	return val.data.PublicKey
+}
 
-// LastBondingHeight returns the last height in which validator bonded stake
+// Address returns the address of the validator.
+func (val *Validator) Address() crypto.Address {
+	return val.data.PublicKey.Address()
+}
+
+// Number returns the number of the validator.
+func (val *Validator) Number() int32 {
+	return val.data.Number
+}
+
+// Sequence returns the sequence number of the validator.
+func (val *Validator) Sequence() int32 {
+	return val.data.Sequence
+}
+
+// Stake returns the stake of the validator.
+func (val *Validator) Stake() int64 {
+	return val.data.Stake
+}
+
+// LastBondingHeight returns the last height in which the validator bonded stake.
 func (val *Validator) LastBondingHeight() uint32 {
 	return val.data.LastBondingHeight
 }
 
-// UnbondingHeight returns the last height in which validator unbonded stake
+// UnbondingHeight returns the last height in which the validator unbonded stake.
 func (val *Validator) UnbondingHeight() uint32 {
 	return val.data.UnbondingHeight
 }
 
-// LastJoinedHeight returns the last height in which validator joined into the committee
+// LastJoinedHeight returns the last height in which the validator joined the committee.
 func (val *Validator) LastJoinedHeight() uint32 {
 	return val.data.LastJoinedHeight
 }
 
+// Power returns the power of the validator.
 func (val Validator) Power() int64 {
 	if val.data.UnbondingHeight > 0 {
-		// Power for unbonded validators set to zero.
+		// Power for unbonded validators is set to zero.
 		return 0
 	} else if val.data.Stake == 0 {
-		// Only bootstrap validators at the genesis block have no stake
+		// Only bootstrap validators at the genesis block have no stake.
 		return 1
 	}
 	return val.data.Stake
 }
 
+// SubtractFromStake subtracts the given amount from the validator's stake.
 func (val *Validator) SubtractFromStake(amt int64) {
 	val.data.Stake -= amt
 }
 
-// AddToStake increases the stake by bonding transaction.
+// AddToStake adds the given amount to the validator's stake.
 func (val *Validator) AddToStake(amt int64) {
 	val.data.Stake += amt
 }
@@ -107,12 +131,12 @@ func (val *Validator) IncSequence() {
 	val.data.Sequence++
 }
 
-// UpdateLastJoinedHeight updates the last height that this validator joined the committee.
+// UpdateLastJoinedHeight updates the last height at which the validator joined the committee.
 func (val *Validator) UpdateLastJoinedHeight(height uint32) {
 	val.data.LastJoinedHeight = height
 }
 
-// UpdateLastBondingHeight updates the last height that this validator bonded some stakes.
+// UpdateLastBondingHeight updates the last height at which the validator bonded some stakes.
 func (val *Validator) UpdateLastBondingHeight(height uint32) {
 	val.data.LastBondingHeight = height
 }
@@ -122,7 +146,7 @@ func (val *Validator) UpdateUnbondingHeight(height uint32) {
 	val.data.UnbondingHeight = height
 }
 
-// Hash return the hash of this validator.
+// Hash calculates and returns the hash of the account.
 func (val *Validator) Hash() hash.Hash {
 	bs, err := val.Bytes()
 	if err != nil {
@@ -131,10 +155,12 @@ func (val *Validator) Hash() hash.Hash {
 	return hash.CalcHash(bs)
 }
 
+// SerializeSize returns the size in bytes required to serialize the validator.
 func (val *Validator) SerializeSize() int {
 	return 124 // 96+4+4+8+4+4+4
 }
 
+// Bytes returns returns the serialized byte representation of the validator.
 func (val *Validator) Bytes() ([]byte, error) {
 	w := bytes.NewBuffer(make([]byte, 0, val.SerializeSize()))
 
@@ -156,7 +182,14 @@ func (val *Validator) Bytes() ([]byte, error) {
 	return w.Bytes(), nil
 }
 
-// GenerateTestValidator generates a validator for testing purpose.
+// Clone creates a deep copy of the validator.
+func (val *Validator) Clone() *Validator {
+	cloned := new(Validator)
+	*cloned = *val
+	return cloned
+}
+
+// GenerateTestValidator generates a validator for testing purposes.
 func GenerateTestValidator(number int32) (*Validator, crypto.Signer) {
 	pub, pv := bls.GenerateTestKeyPair()
 	val := NewValidator(pub, number)

@@ -77,10 +77,10 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 	joiningPower := int64(0)
 	committee := sb.Committee()
 	currentHeight := sb.CurrentHeight()
-	sb.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-		if vs.Validator.LastJoinedHeight() == currentHeight {
-			if !committee.Contains(vs.Validator.Address()) {
-				joiningPower += vs.Validator.Power()
+	sb.IterateValidators(func(val *validator.Validator, updated bool) {
+		if val.LastJoinedHeight() == currentHeight {
+			if !committee.Contains(val.Address()) {
+				joiningPower += val.Power()
 				joiningNum++
 			}
 		}

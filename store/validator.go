@@ -1,8 +1,6 @@
 package store
 
 import (
-	"fmt"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
@@ -11,66 +9,20 @@ import (
 )
 
 type validatorStore struct {
-	db     *leveldb.DB
-	valMap map[int32]*validator.Validator
-	total  int32
+	db         *leveldb.DB
+	numberMap  map[int32]*validator.Validator
+	addressMap map[crypto.Address]*validator.Validator
+	total      int32
 }
 
 func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.Bytes()...) }
 
 func newValidatorStore(db *leveldb.DB) *validatorStore {
-	vs := &validatorStore{
-		db: db,
-	}
-
 	total := int32(0)
-	valMap := make(map[int32]*validator.Validator)
-	vs.iterateValidators(func(val *validator.Validator) bool {
-		valMap[val.Number()] = val
-		total++
-		return false
-	})
-
-	vs.total = total
-	vs.valMap = valMap
-
-	return vs
-}
-
-func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
-	has, err := vs.db.Has(validatorKey(addr), nil)
-	if err != nil {
-		return false
-	}
-	return has
-}
-
-func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, error) {
-	data, err := tryGet(vs.db, validatorKey(addr))
-	if err != nil {
-		return nil, err
-	}
-
-	val, err := validator.FromBytes(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return val, nil
-}
-
-func (vs *validatorStore) validatorByNumber(num int32) (*validator.Validator, error) {
-	val, ok := vs.valMap[num]
-	if ok {
-		return val, nil
-	}
-
-	return nil, fmt.Errorf("not found")
-}
-
-func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) (stop bool)) {
+	valByNumber := make(map[int32]*validator.Validator)
+	valByAddress := make(map[crypto.Address]*validator.Validator)
 	r := util.BytesPrefix(validatorPrefix)
-	iter := vs.db.NewIterator(r, nil)
+	iter := db.NewIterator(r, nil)
 	for iter.Next() {
 		// key := iter.Key()
 		value := iter.Value()
@@ -80,12 +32,50 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 			logger.Panic("unable to decode validator", "err", err)
 		}
 
+		valByNumber[val.Number()] = val
+		valByAddress[val.Address()] = val
+		total++
+	}
+	iter.Release()
+
+	return &validatorStore{
+		db:         db,
+		total:      total,
+		numberMap:  valByNumber,
+		addressMap: valByAddress,
+	}
+}
+
+func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
+	_, ok := vs.addressMap[addr]
+	return ok
+}
+
+func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, error) {
+	val, ok := vs.addressMap[addr]
+	if ok {
+		return val.Clone(), nil
+	}
+
+	return nil, ErrNotFound
+}
+
+func (vs *validatorStore) validatorByNumber(num int32) (*validator.Validator, error) {
+	val, ok := vs.numberMap[num]
+	if ok {
+		return val.Clone(), nil
+	}
+
+	return nil, ErrNotFound
+}
+
+func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) (stop bool)) {
+	for _, val := range vs.addressMap {
 		stopped := consumer(val)
 		if stopped {
 			return
 		}
 	}
-	iter.Release()
 }
 
 func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) {
@@ -96,7 +86,8 @@ func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.V
 	if !vs.hasValidator(val.Address()) {
 		vs.total++
 	}
-	vs.valMap[val.Number()] = val
+	vs.numberMap[val.Number()] = val
+	vs.addressMap[val.Address()] = val
 
 	batch.Put(validatorKey(val.Address()), data)
 }

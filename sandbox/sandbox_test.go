@@ -60,13 +60,13 @@ func TestAccountChange(t *testing.T) {
 		invAddr := crypto.GenerateTestAddress()
 		assert.Nil(t, tSandbox.Account(invAddr))
 
-		tSandbox.IterateAccounts(func(_ crypto.Address, _ *AccountStatus) {
+		tSandbox.IterateAccounts(func(_ crypto.Address, _ *account.Account, _ bool) {
 			panic("should be empty")
 		})
 	})
 
 	t.Run("Retrieve an account from store and update it", func(t *testing.T) {
-		acc, signer := account.GenerateTestAccount(888)
+		acc, signer := account.GenerateTestAccount(util.RandInt32(0))
 		addr := signer.Address()
 		bal := acc.Balance()
 		seq := acc.Sequence()
@@ -78,11 +78,11 @@ func TestAccountChange(t *testing.T) {
 		sbAcc1.IncSequence()
 		sbAcc1.AddToBalance(1)
 
-		assert.False(t, tSandbox.accounts[addr].Updated)
+		assert.False(t, tSandbox.accounts[addr].updated)
 		assert.Equal(t, tSandbox.Account(addr).Balance(), bal)
 		assert.Equal(t, tSandbox.Account(addr).Sequence(), seq)
 		tSandbox.UpdateAccount(addr, sbAcc1)
-		assert.True(t, tSandbox.accounts[addr].Updated)
+		assert.True(t, tSandbox.accounts[addr].updated)
 		assert.Equal(t, tSandbox.Account(addr).Balance(), bal+1)
 		assert.Equal(t, tSandbox.Account(addr).Sequence(), seq+1)
 
@@ -91,20 +91,20 @@ func TestAccountChange(t *testing.T) {
 			sbAcc2.IncSequence()
 			sbAcc2.AddToBalance(1)
 
-			assert.True(t, tSandbox.accounts[addr].Updated, "it is updated before")
+			assert.True(t, tSandbox.accounts[addr].updated, "it is updated before")
 			assert.Equal(t, tSandbox.Account(addr).Balance(), bal+1)
 			assert.Equal(t, tSandbox.Account(addr).Sequence(), seq+1)
 			tSandbox.UpdateAccount(addr, sbAcc2)
-			assert.True(t, tSandbox.accounts[addr].Updated)
+			assert.True(t, tSandbox.accounts[addr].updated)
 			assert.Equal(t, tSandbox.Account(addr).Balance(), bal+2)
 			assert.Equal(t, tSandbox.Account(addr).Sequence(), seq+2)
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateAccounts(func(a crypto.Address, as *AccountStatus) {
+			tSandbox.IterateAccounts(func(a crypto.Address, acc *account.Account, updated bool) {
 				assert.Equal(t, addr, a)
-				assert.True(t, as.Updated)
-				assert.Equal(t, as.Account.Balance(), bal+2)
+				assert.True(t, updated)
+				assert.Equal(t, acc.Balance(), bal+2)
 			})
 		})
 	})
@@ -121,10 +121,10 @@ func TestAccountChange(t *testing.T) {
 		assert.Equal(t, acc, sbAcc)
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateAccounts(func(a crypto.Address, as *AccountStatus) {
+			tSandbox.IterateAccounts(func(a crypto.Address, acc *account.Account, updated bool) {
 				if a == addr {
-					assert.True(t, as.Updated)
-					assert.Equal(t, as.Account.Balance(), int64(1))
+					assert.True(t, updated)
+					assert.Equal(t, acc.Balance(), int64(1))
 				}
 			})
 		})
@@ -138,13 +138,13 @@ func TestValidatorChange(t *testing.T) {
 		invAddr := crypto.GenerateTestAddress()
 		assert.Nil(t, tSandbox.Validator(invAddr))
 
-		tSandbox.IterateValidators(func(_ *ValidatorStatus) {
+		tSandbox.IterateValidators(func(_ *validator.Validator, _ bool) {
 			panic("should be empty")
 		})
 	})
 
 	t.Run("Retrieve an validator from store and update it", func(t *testing.T) {
-		val, _ := validator.GenerateTestValidator(888)
+		val, _ := validator.GenerateTestValidator(util.RandInt32(0))
 		addr := val.Address()
 		stk := val.Stake()
 		seq := val.Sequence()
@@ -156,11 +156,11 @@ func TestValidatorChange(t *testing.T) {
 		sbVal1.IncSequence()
 		sbVal1.AddToStake(1)
 
-		assert.False(t, tSandbox.validators[addr].Updated)
+		assert.False(t, tSandbox.validators[addr].updated)
 		assert.Equal(t, tSandbox.Validator(addr).Stake(), stk)
 		assert.Equal(t, tSandbox.Validator(addr).Sequence(), seq)
 		tSandbox.UpdateValidator(sbVal1)
-		assert.True(t, tSandbox.validators[sbVal1.Address()].Updated)
+		assert.True(t, tSandbox.validators[sbVal1.Address()].updated)
 		assert.Equal(t, tSandbox.Validator(addr).Stake(), stk+1)
 		assert.Equal(t, tSandbox.Validator(addr).Sequence(), seq+1)
 
@@ -169,19 +169,19 @@ func TestValidatorChange(t *testing.T) {
 			sbVal2.IncSequence()
 			sbVal2.AddToStake(1)
 
-			assert.True(t, tSandbox.validators[addr].Updated, "it is updated before")
+			assert.True(t, tSandbox.validators[addr].updated, "it is updated before")
 			assert.Equal(t, tSandbox.Validator(addr).Stake(), stk+1)
 			assert.Equal(t, tSandbox.Validator(addr).Sequence(), seq+1)
 			tSandbox.UpdateValidator(sbVal2)
-			assert.True(t, tSandbox.validators[sbVal1.Address()].Updated)
+			assert.True(t, tSandbox.validators[sbVal1.Address()].updated)
 			assert.Equal(t, tSandbox.Validator(addr).Stake(), stk+2)
 			assert.Equal(t, tSandbox.Validator(addr).Sequence(), seq+2)
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateValidators(func(vs *ValidatorStatus) {
-				assert.True(t, vs.Updated)
-				assert.Equal(t, vs.Validator.Stake(), stk+2)
+			tSandbox.IterateValidators(func(val *validator.Validator, updated bool) {
+				assert.True(t, updated)
+				assert.Equal(t, val.Stake(), stk+2)
 			})
 		})
 	})
@@ -198,10 +198,10 @@ func TestValidatorChange(t *testing.T) {
 		assert.Equal(t, val, sbVal)
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			tSandbox.IterateValidators(func(vs *ValidatorStatus) {
-				if vs.Validator.PublicKey() == pub {
-					assert.True(t, vs.Updated)
-					assert.Equal(t, vs.Validator.Stake(), int64(1))
+			tSandbox.IterateValidators(func(val *validator.Validator, updated bool) {
+				if val.PublicKey() == pub {
+					assert.True(t, updated)
+					assert.Equal(t, val.Stake(), int64(1))
 				}
 			})
 		})
@@ -278,7 +278,7 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		acc, signer := account.GenerateTestAccount(999)
+		acc, signer := account.GenerateTestAccount(util.RandInt32(0))
 		tSandbox.UpdateAccount(signer.Address(), acc)
 	})
 
@@ -288,7 +288,7 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		val, _ := validator.GenerateTestValidator(999)
+		val, _ := validator.GenerateTestValidator(util.RandInt32(0))
 		tSandbox.UpdateValidator(val)
 	})
 }
@@ -319,11 +319,11 @@ func TestDeepCopy(t *testing.T) {
 	acc3 := tSandbox.accounts[addr]
 	val3 := tSandbox.validators[pub.Address()]
 
-	assert.NotEqual(t, acc1.Hash(), acc3.Account.Hash())
-	assert.NotEqual(t, val1.Hash(), val3.Validator.Hash())
+	assert.NotEqual(t, acc1.Hash(), acc3.account.Hash())
+	assert.NotEqual(t, val1.Hash(), val3.validator.Hash())
 
-	assert.NotEqual(t, acc2.Hash(), acc3.Account.Hash())
-	assert.NotEqual(t, val2.Hash(), val3.Validator.Hash())
+	assert.NotEqual(t, acc2.Hash(), acc3.account.Hash())
+	assert.NotEqual(t, val2.Hash(), val3.validator.Hash())
 }
 
 func TestRecentBlockByStamp(t *testing.T) {

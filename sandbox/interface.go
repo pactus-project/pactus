@@ -28,6 +28,6 @@ type Sandbox interface {
 	Params() param.Params
 	CurrentHeight() uint32
 
-	IterateAccounts(consumer func(crypto.Address, *AccountStatus))
-	IterateValidators(consumer func(*ValidatorStatus))
+	IterateAccounts(consumer func(addr crypto.Address, acc *account.Account, updated bool))
+	IterateValidators(consumer func(val *validator.Validator, updated bool))
 }

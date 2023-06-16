@@ -2,7 +2,7 @@ package store
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -17,6 +17,11 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+)
+
+var (
+	ErrNotFound  = errors.New("not found")
+	ErrBadOffset = errors.New("offset is out of range")
 )
 
 const lastStoreVersion = int32(1)
@@ -202,7 +207,7 @@ func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
 	start := pos.offset
 	end := pos.offset + pos.length
 	if end > uint32(len(data)) {
-		return nil, fmt.Errorf("offset is out of range") // TODO: Shall we panic here?
+		return nil, ErrBadOffset
 	}
 	blockTime := util.SliceToUint32(data[hash.HashSize+1 : hash.HashSize+5])
 

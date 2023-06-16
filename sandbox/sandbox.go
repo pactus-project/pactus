@@ -23,21 +23,21 @@ type sandbox struct {
 
 	store           store.Reader
 	committee       committee.Reader
-	accounts        map[crypto.Address]*AccountStatus
-	validators      map[crypto.Address]*ValidatorStatus
+	accounts        map[crypto.Address]*sandboxAccount
+	validators      map[crypto.Address]*sandboxValidator
 	params          param.Params
 	totalAccounts   int32
 	totalValidators int32
 }
 
-type ValidatorStatus struct {
-	Validator validator.Validator
-	Updated   bool
+type sandboxValidator struct {
+	validator *validator.Validator
+	updated   bool
 }
 
-type AccountStatus struct {
-	Account account.Account
-	Updated bool
+type sandboxAccount struct {
+	account *account.Account
+	updated bool
 }
 
 func NewSandbox(store store.Reader, params param.Params, committee committee.Reader) Sandbox {
@@ -47,8 +47,8 @@ func NewSandbox(store store.Reader, params param.Params, committee committee.Rea
 		params:    params,
 	}
 
-	sb.accounts = make(map[crypto.Address]*AccountStatus)
-	sb.validators = make(map[crypto.Address]*ValidatorStatus)
+	sb.accounts = make(map[crypto.Address]*sandboxAccount)
+	sb.validators = make(map[crypto.Address]*sandboxValidator)
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
 
@@ -80,21 +80,20 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 
 	s, ok := sb.accounts[addr]
 	if ok {
-		clone := new(account.Account)
-		*clone = s.Account
-		return clone
+		return s.account.Clone()
 	}
 
 	acc, err := sb.store.Account(addr)
 	if err != nil {
 		return nil
 	}
-	sb.accounts[addr] = &AccountStatus{
-		Account: *acc,
+	sb.accounts[addr] = &sandboxAccount{
+		account: acc,
 	}
 
-	return acc
+	return acc.Clone()
 }
+
 func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
@@ -104,12 +103,12 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	}
 
 	acc := account.NewAccount(sb.totalAccounts)
-	sb.accounts[addr] = &AccountStatus{
-		Account: *acc,
-		Updated: true,
+	sb.accounts[addr] = &sandboxAccount{
+		account: acc,
+		updated: true,
 	}
 	sb.totalAccounts++
-	return acc
+	return acc.Clone()
 }
 
 func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
@@ -120,8 +119,8 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	if !ok {
 		sb.shouldPanicForUnknownAddress()
 	}
-	s.Account = *acc
-	s.Updated = true
+	s.account = acc
+	s.updated = true
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
@@ -130,19 +129,17 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 
 	s, ok := sb.validators[addr]
 	if ok {
-		clone := new(validator.Validator)
-		*clone = s.Validator
-		return clone
+		return s.validator.Clone()
 	}
 
 	val, err := sb.store.Validator(addr)
 	if err != nil {
 		return nil
 	}
-	sb.validators[addr] = &ValidatorStatus{
-		Validator: *val,
+	sb.validators[addr] = &sandboxValidator{
+		validator: val,
 	}
-	return val
+	return val.Clone()
 }
 
 func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
@@ -155,12 +152,12 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	}
 
 	val := validator.NewValidator(pub, sb.totalValidators)
-	sb.validators[addr] = &ValidatorStatus{
-		Validator: *val,
-		Updated:   true,
+	sb.validators[addr] = &sandboxValidator{
+		validator: val,
+		updated:   true,
 	}
 	sb.totalValidators++
-	return val
+	return val.Clone()
 }
 
 func (sb *sandbox) UpdateValidator(val *validator.Validator) {
@@ -173,8 +170,8 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 		sb.shouldPanicForUnknownAddress()
 	}
 
-	s.Validator = *val
-	s.Updated = true
+	s.validator = val
+	s.updated = true
 }
 
 func (sb *sandbox) Params() param.Params {
@@ -194,21 +191,21 @@ func (sb *sandbox) currentHeight() uint32 {
 	return h + 1
 }
 
-func (sb *sandbox) IterateAccounts(consumer func(crypto.Address, *AccountStatus)) {
+func (sb *sandbox) IterateAccounts(consumer func(crypto.Address, *account.Account, bool)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	for addr, as := range sb.accounts {
-		consumer(addr, as)
+	for addr, sa := range sb.accounts {
+		consumer(addr, sa.account, sa.updated)
 	}
 }
 
-func (sb *sandbox) IterateValidators(consumer func(*ValidatorStatus)) {
+func (sb *sandbox) IterateValidators(consumer func(*validator.Validator, bool)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	for _, vs := range sb.validators {
-		consumer(vs)
+	for _, sv := range sb.validators {
+		consumer(sv.validator, sv.updated)
 	}
 }
 

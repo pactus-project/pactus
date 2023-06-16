@@ -165,10 +165,6 @@ func TestRetrieveValidator(t *testing.T) {
 	assert.Equal(t, tStore.TotalValidators(), int32(1))
 	val2, _ := tStore.ValidatorByNumber(val.Number())
 	assert.Equal(t, val.Hash(), val2.Hash())
-
-	assert.NoError(t, tStore.Close())
-	_, err := tStore.Validator(val.Address())
-	assert.Error(t, err)
 }
 
 func TestIterateAccounts(t *testing.T) {

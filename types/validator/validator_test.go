@@ -85,3 +85,11 @@ func TestSubtractFromStake(t *testing.T) {
 	val.SubtractFromStake(1)
 	assert.Equal(t, val.Stake(), stake-1)
 }
+
+func TestClone(t *testing.T) {
+	val, _ := GenerateTestValidator(100)
+	cloned := val.Clone()
+	cloned.IncSequence()
+
+	assert.NotEqual(t, val.Sequence(), cloned.Sequence())
+}
