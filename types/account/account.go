@@ -58,17 +58,17 @@ func (acc Account) Sequence() int32 {
 	return acc.data.Sequence
 }
 
-// Stake returns the balance of the validator.
+// Balance returns the balance of the account.
 func (acc Account) Balance() int64 {
 	return acc.data.Balance
 }
 
-// SubtractFromBalance subtracts the given amount from the account balance.
+// SubtractFromBalance subtracts the given amount from the account's balance.
 func (acc *Account) SubtractFromBalance(amt int64) {
 	acc.data.Balance -= amt
 }
 
-// AddToBalance adds the given amount to the account balance.
+// AddToBalance adds the given amount to the account's balance.
 func (acc *Account) AddToBalance(amt int64) {
 	acc.data.Balance += amt
 }

@@ -49,7 +49,7 @@ func TestValidatorCounter(t *testing.T) {
 func TestValidatorBatchSaving(t *testing.T) {
 	setup(t)
 
-	total := util.RandInt32(100) + 1
+	total := util.RandInt32(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := validator.GenerateTestValidator(i)

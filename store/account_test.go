@@ -49,7 +49,7 @@ func TestAccountCounter(t *testing.T) {
 func TestAccountBatchSaving(t *testing.T) {
 	setup(t)
 
-	total := util.RandInt32(100) + 1
+	total := util.RandInt32(100)
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			acc, signer := account.GenerateTestAccount(i)
@@ -119,22 +119,23 @@ func TestAccountByAddress(t *testing.T) {
 	setup(t)
 
 	total := util.RandInt32(100) + 1
+	var lastAddr crypto.Address
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			acc, signer := account.GenerateTestAccount(i)
 			tStore.UpdateAccount(signer.Address(), acc)
+
+			lastAddr = signer.Address()
 		}
 		assert.NoError(t, tStore.WriteBatch())
 		assert.Equal(t, tStore.TotalAccounts(), total)
 	})
 
 	t.Run("Get random account", func(t *testing.T) {
-		// num := util.RandInt32(total)
-		// acc0, _ := tStore.AccountByNumber(num)
-		// acc, err := tStore.Account(acc0.Address())
-		// assert.NoError(t, err)
-		// require.NotNil(t, acc)
-		// assert.Equal(t, acc.Number(), num)
+		acc, err := tStore.Account(lastAddr)
+		assert.NoError(t, err)
+		require.NotNil(t, acc)
+		assert.Equal(t, acc.Number(), total-1)
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
@@ -144,15 +145,13 @@ func TestAccountByAddress(t *testing.T) {
 	})
 
 	t.Run("Reopen the store", func(t *testing.T) {
-		// tStore.Close()
-		// store, _ := NewStore(tStore.config, 21)
+		tStore.Close()
+		store, _ := NewStore(tStore.config, 21)
 
-		// num := util.RandInt32(total)
-		// acc0, _ := store.AccountByNumber(num)
-		// acc, err := store.Account(acc0.Address())
-		// assert.NoError(t, err)
-		// require.NotNil(t, acc)
-		// assert.Equal(t, acc.Number(), num)
+		acc, err := store.Account(lastAddr)
+		assert.NoError(t, err)
+		require.NotNil(t, acc)
+		assert.Equal(t, acc.Number(), total-1)
 	})
 }
 

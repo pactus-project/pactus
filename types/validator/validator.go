@@ -146,7 +146,7 @@ func (val *Validator) UpdateUnbondingHeight(height uint32) {
 	val.data.UnbondingHeight = height
 }
 
-// Hash calculates and returns the hash of the account.
+// Hash calculates and returns the hash of the validator.
 func (val *Validator) Hash() hash.Hash {
 	bs, err := val.Bytes()
 	if err != nil {
