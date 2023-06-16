@@ -332,6 +332,8 @@ func (s *store) WriteBatch() error {
 	defer s.lk.Unlock()
 
 	if err := s.db.Write(s.batch, nil); err != nil {
+		// TODO: Should we panic here?
+		// The store is unreliable if the stored data does not match the cached data.
 		return err
 	}
 	s.batch.Reset()

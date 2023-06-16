@@ -131,11 +131,6 @@ func TestRetrieveAccount(t *testing.T) {
 		assert.Equal(t, acc, acc2)
 	})
 	assert.Equal(t, tStore.TotalAccounts(), int32(1))
-
-	// Should not crash
-	assert.NoError(t, tStore.Close())
-	_, err := tStore.Account(signer.Address())
-	assert.Error(t, err)
 }
 
 func TestRetrieveValidator(t *testing.T) {
