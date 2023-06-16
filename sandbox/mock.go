@@ -81,21 +81,15 @@ func (m *MockSandbox) Params() param.Params {
 func (m *MockSandbox) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
 	return m.TestStore.RecentBlockByStamp(stamp)
 }
-func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *AccountStatus)) {
+func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *account.Account, bool)) {
 	m.TestStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
-		consumer(addr, &AccountStatus{
-			Account: *acc,
-			Updated: true,
-		})
+		consumer(addr, acc, true)
 		return false
 	})
 }
-func (m *MockSandbox) IterateValidators(consumer func(*ValidatorStatus)) {
+func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool)) {
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
-		consumer(&ValidatorStatus{
-			Validator: *val,
-			Updated:   true,
-		})
+		consumer(val, true)
 		return false
 	})
 }

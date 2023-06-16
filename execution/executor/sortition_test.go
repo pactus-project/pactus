@@ -5,7 +5,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -211,9 +210,9 @@ func TestOldestDidNotPropose(t *testing.T) {
 		assert.NoError(t, exe.Execute(trx2, tSandbox))
 
 		joined := make([]*validator.Validator, 0)
-		tSandbox.IterateValidators(func(vs *sandbox.ValidatorStatus) {
-			if vs.Validator.LastJoinedHeight() == tSandbox.CurrentHeight() {
-				joined = append(joined, &vs.Validator)
+		tSandbox.IterateValidators(func(val *validator.Validator, updated bool) {
+			if val.LastJoinedHeight() == tSandbox.CurrentHeight() {
+				joined = append(joined, val)
 			}
 		})
 		tSandbox.TestCommittee.Update(0, joined)
