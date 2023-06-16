@@ -69,7 +69,7 @@ func TestAccountBatchSaving(t *testing.T) {
 func TestAccountByNumber(t *testing.T) {
 	setup(t)
 
-	total := util.RandInt32(100) + 1
+	total := util.RandInt32(100) + 1 // +1 when random number is zero
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			acc, signer := account.GenerateTestAccount(i)
@@ -118,7 +118,7 @@ func TestAccountByNumber(t *testing.T) {
 func TestAccountByAddress(t *testing.T) {
 	setup(t)
 
-	total := util.RandInt32(100) + 1
+	total := util.RandInt32(100)
 	var lastAddr crypto.Address
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {

@@ -325,7 +325,7 @@ func TestAccountDeepCopy(t *testing.T) {
 func TestValidatorDeepCopy(t *testing.T) {
 	setup(t)
 
-	t.Run("non existing account", func(t *testing.T) {
+	t.Run("non existing validator", func(t *testing.T) {
 		pub, _ := bls.GenerateTestKeyPair()
 		acc := tSandbox.MakeNewValidator(pub)
 		acc.IncSequence()

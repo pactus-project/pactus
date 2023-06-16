@@ -69,7 +69,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 func TestValidatorByNumber(t *testing.T) {
 	setup(t)
 
-	total := util.RandInt32(100) + 1
+	total := util.RandInt32(100) + 1 // +1 when random number is zero
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := validator.GenerateTestValidator(i)
@@ -87,7 +87,7 @@ func TestValidatorByNumber(t *testing.T) {
 		assert.Equal(t, val.Number(), num)
 	})
 
-	t.Run("negative number", func(t *testing.T) {
+	t.Run("Negative number", func(t *testing.T) {
 		val, err := tStore.ValidatorByNumber(-1)
 		assert.Error(t, err)
 		assert.Nil(t, val)
