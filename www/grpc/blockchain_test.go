@@ -295,10 +295,8 @@ func TestGetValidators(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
-func TestBlockchainServer_GetValidatorAddresses(t *testing.T) {
+func TestGetValidatorAddresses(t *testing.T) {
 	conn, client := testBlockchainClient(t)
-
-	_ = tMockState.TestStore.AddTestValidator()
 
 	t.Run("should return list of validator addresses", func(t *testing.T) {
 		res, err := client.GetValidatorAddresses(tCtx,
@@ -306,7 +304,7 @@ func TestBlockchainServer_GetValidatorAddresses(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, 1, len(res.GetAddresses()))
+		assert.Equal(t, 2, len(res.GetAddresses()))
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
