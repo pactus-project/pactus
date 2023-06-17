@@ -52,11 +52,11 @@ func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
 }
 
 func (vs *validatorStore) ValidatorAddresses() []crypto.Address {
-	validatorAddresses := make([]crypto.Address, 0, len(vs.numberMap))
-	for _, val := range vs.numberMap {
-		validatorAddresses = append(validatorAddresses, val.Address())
+	addrs := make([]crypto.Address, 0, len(vs.addressMap))
+	for k, _ := range vs.addressMap {
+		addrs = append(addrs, k)
 	}
-	return validatorAddresses
+	return addrs
 }
 
 func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, error) {

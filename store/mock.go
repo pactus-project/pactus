@@ -106,8 +106,8 @@ func (m *MockStore) HasValidator(addr crypto.Address) bool {
 }
 func (m *MockStore) ValidatorAddresses() []crypto.Address {
 	validatorAddresses := make([]crypto.Address, 0, len(m.Validators))
-	for _, val := range m.Validators {
-		validatorAddresses = append(validatorAddresses, val.Address())
+	for k, _ := range m.Validators {
+		validatorAddresses = append(validatorAddresses, k)
 	}
 	return validatorAddresses
 }
