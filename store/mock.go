@@ -105,11 +105,11 @@ func (m *MockStore) HasValidator(addr crypto.Address) bool {
 	return ok
 }
 func (m *MockStore) ValidatorAddresses() []crypto.Address {
-	validatorAddresses := make([]crypto.Address, 0, len(m.Validators))
-	for k, _ := range m.Validators {
-		validatorAddresses = append(validatorAddresses, k)
+	addrs := make([]crypto.Address, 0, len(m.Validators))
+	for addr := range m.Validators {
+		addrs = append(addrs, addr)
 	}
-	return validatorAddresses
+	return addrs
 }
 func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error) {
 	v, ok := m.Validators[addr]
