@@ -188,7 +188,7 @@ func TestValidatorByAddress(t *testing.T) {
 func TestIterateValidators(t *testing.T) {
 	setup(t)
 
-	total := util.RandInt32(100)
+	total := util.RandInt32(100) + 1
 	vals1 := []hash.Hash{}
 	for i := int32(0); i < total; i++ {
 		val, _ := validator.GenerateTestValidator(i)

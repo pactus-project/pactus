@@ -118,7 +118,7 @@ func TestAccountByNumber(t *testing.T) {
 func TestAccountByAddress(t *testing.T) {
 	setup(t)
 
-	total := util.RandInt32(100)
+	total := util.RandInt32(100) + 1
 	var lastAddr crypto.Address
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
