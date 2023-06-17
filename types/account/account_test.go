@@ -59,3 +59,11 @@ func TestSubtractFromBalance(t *testing.T) {
 	acc.SubtractFromBalance(1)
 	assert.Equal(t, acc.Balance(), bal-1)
 }
+
+func TestClone(t *testing.T) {
+	acc, _ := GenerateTestAccount(100)
+	cloned := acc.Clone()
+	cloned.IncSequence()
+
+	assert.NotEqual(t, acc.Sequence(), cloned.Sequence())
+}
