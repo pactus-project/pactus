@@ -45,12 +45,12 @@ func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
 	return has
 }
 
-func (vs *validatorStore) Validators() []*validator.Validator {
-	validators := make([]*validator.Validator, 0, len(vs.valMap))
+func (vs *validatorStore) ValidatorAddresses() []crypto.Address {
+	validatorAddresses := make([]crypto.Address, 0, len(vs.valMap))
 	for _, val := range vs.valMap {
-		validators = append(validators, val)
+		validatorAddresses = append(validatorAddresses, val.Address())
 	}
-	return validators
+	return validatorAddresses
 }
 
 func (vs *validatorStore) validator(addr crypto.Address) (*validator.Validator, error) {

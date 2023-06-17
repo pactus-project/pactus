@@ -55,7 +55,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 	})
 }
 
-func TestValidators(t *testing.T) {
+func TestValidatorAddresses(t *testing.T) {
 	setup(t)
 
 	t.Run("Add some validators", func(t *testing.T) {
@@ -75,11 +75,11 @@ func TestValidators(t *testing.T) {
 		assert.Nil(t, v)
 	})
 
-	t.Run("Get list of validators", func(t *testing.T) {
+	t.Run("Get list of validator addresses", func(t *testing.T) {
 		tStore.Close()
 		store, _ := NewStore(tStore.config, 21)
 
-		vals := store.Validators()
+		vals := store.ValidatorAddresses()
 		assert.NotNil(t, vals)
 	})
 }

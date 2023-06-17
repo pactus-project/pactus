@@ -177,8 +177,8 @@ func (m *MockState) AccountByNumber(number int32) *account.Account {
 	a, _ := m.TestStore.AccountByNumber(number)
 	return a
 }
-func (m *MockState) Validators() []*validator.Validator {
-	return m.TestStore.Validators()
+func (m *MockState) ValidatorAddresses() []crypto.Address {
+	return m.TestStore.ValidatorAddresses()
 }
 func (m *MockState) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	v, _ := m.TestStore.Validator(addr)

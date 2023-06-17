@@ -659,8 +659,8 @@ func (st *state) AccountByNumber(number int32) *account.Account {
 	return acc
 }
 
-func (st *state) Validators() []*validator.Validator {
-	return st.store.Validators()
+func (st *state) ValidatorAddresses() []crypto.Address {
+	return st.store.ValidatorAddresses()
 }
 
 func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {

@@ -263,11 +263,11 @@ func (s *store) HasValidator(addr crypto.Address) bool {
 	return s.validatorStore.hasValidator(addr)
 }
 
-func (s *store) Validators() []*validator.Validator {
+func (s *store) ValidatorAddresses() []crypto.Address {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	return s.validatorStore.Validators()
+	return s.validatorStore.ValidatorAddresses()
 }
 
 func (s *store) Validator(addr crypto.Address) (*validator.Validator, error) {

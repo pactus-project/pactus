@@ -59,6 +59,11 @@ class BlockchainStub(object):
                 request_serializer=blockchain__pb2.GetValidatorByNumberRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetValidatorResponse.FromString,
                 )
+        self.GetValidatorAddresses = channel.unary_unary(
+                '/pactus.Blockchain/GetValidatorAddresses',
+                request_serializer=blockchain__pb2.GetValidatorAddressesRequest.SerializeToString,
+                response_deserializer=blockchain__pb2.GetValidatorAddressesResponse.FromString,
+                )
         self.GetValidators = channel.unary_unary(
                 '/pactus.Blockchain/GetValidators',
                 request_serializer=blockchain__pb2.GetValidatorsRequest.SerializeToString,
@@ -123,6 +128,12 @@ class BlockchainServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetValidatorAddresses(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetValidators(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -176,6 +187,11 @@ def add_BlockchainServicer_to_server(servicer, server):
                     servicer.GetValidatorByNumber,
                     request_deserializer=blockchain__pb2.GetValidatorByNumberRequest.FromString,
                     response_serializer=blockchain__pb2.GetValidatorResponse.SerializeToString,
+            ),
+            'GetValidatorAddresses': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetValidatorAddresses,
+                    request_deserializer=blockchain__pb2.GetValidatorAddressesRequest.FromString,
+                    response_serializer=blockchain__pb2.GetValidatorAddressesResponse.SerializeToString,
             ),
             'GetValidators': grpc.unary_unary_rpc_method_handler(
                     servicer.GetValidators,
@@ -342,6 +358,23 @@ class Blockchain(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Blockchain/GetValidatorByNumber',
             blockchain__pb2.GetValidatorByNumberRequest.SerializeToString,
             blockchain__pb2.GetValidatorResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetValidatorAddresses(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Blockchain/GetValidatorAddresses',
+            blockchain__pb2.GetValidatorAddressesRequest.SerializeToString,
+            blockchain__pb2.GetValidatorAddressesResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

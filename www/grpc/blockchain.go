@@ -218,12 +218,22 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 
 func (s *blockchainServer) GetValidators(_ context.Context,
 	_ *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
-	validators := s.state.Validators()
+	validators := s.state.CommitteeValidators()
 	validatorsInfo := make([]*pactus.ValidatorInfo, 0, len(validators))
 	for _, val := range validators {
 		validatorsInfo = append(validatorsInfo, validatorToProto(val))
 	}
 	return &pactus.GetValidatorsResponse{Validators: validatorsInfo}, nil
+}
+
+func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
+	_ *pactus.GetValidatorAddressesRequest) (*pactus.GetValidatorAddressesResponse, error) {
+	addresses := s.state.ValidatorAddresses()
+	addressesPB := make([]string, 0, len(addresses))
+	for _, address := range addresses {
+		addressesPB = append(addressesPB, address.String())
+	}
+	return &pactus.GetValidatorAddressesResponse{Addresses: addressesPB}, nil
 }
 
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {

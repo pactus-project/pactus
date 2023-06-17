@@ -31,6 +31,7 @@ type BlockchainClient interface {
 	GetAccountByNumber(ctx context.Context, in *GetAccountByNumberRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
 	GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
 	GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
+	GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error)
 	GetValidators(ctx context.Context, in *GetValidatorsRequest, opts ...grpc.CallOption) (*GetValidatorsResponse, error)
 }
 
@@ -123,6 +124,15 @@ func (c *blockchainClient) GetValidatorByNumber(ctx context.Context, in *GetVali
 	return out, nil
 }
 
+func (c *blockchainClient) GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error) {
+	out := new(GetValidatorAddressesResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetValidatorAddresses", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *blockchainClient) GetValidators(ctx context.Context, in *GetValidatorsRequest, opts ...grpc.CallOption) (*GetValidatorsResponse, error) {
 	out := new(GetValidatorsResponse)
 	err := c.cc.Invoke(ctx, "/pactus.Blockchain/GetValidators", in, out, opts...)
@@ -145,6 +155,7 @@ type BlockchainServer interface {
 	GetAccountByNumber(context.Context, *GetAccountByNumberRequest) (*GetAccountResponse, error)
 	GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error)
 	GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error)
+	GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error)
 	GetValidators(context.Context, *GetValidatorsRequest) (*GetValidatorsResponse, error)
 }
 
@@ -178,6 +189,9 @@ func (UnimplementedBlockchainServer) GetValidator(context.Context, *GetValidator
 }
 func (UnimplementedBlockchainServer) GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidatorByNumber not implemented")
+}
+func (UnimplementedBlockchainServer) GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetValidatorAddresses not implemented")
 }
 func (UnimplementedBlockchainServer) GetValidators(context.Context, *GetValidatorsRequest) (*GetValidatorsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidators not implemented")
@@ -356,6 +370,24 @@ func _Blockchain_GetValidatorByNumber_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Blockchain_GetValidatorAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetValidatorAddressesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockchainServer).GetValidatorAddresses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Blockchain/GetValidatorAddresses",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockchainServer).GetValidatorAddresses(ctx, req.(*GetValidatorAddressesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Blockchain_GetValidators_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetValidatorsRequest)
 	if err := dec(in); err != nil {
@@ -416,6 +448,10 @@ var Blockchain_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetValidatorByNumber",
 			Handler:    _Blockchain_GetValidatorByNumber_Handler,
+		},
+		{
+			MethodName: "GetValidatorAddresses",
+			Handler:    _Blockchain_GetValidatorAddresses_Handler,
 		},
 		{
 			MethodName: "GetValidators",
