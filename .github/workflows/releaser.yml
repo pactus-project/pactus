@@ -10,6 +10,7 @@ jobs:
   build-cli:
     runs-on: ubuntu-latest
 
+    # Defining outputs for jobs
     # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
     outputs:
       checksums: ${{ steps.calc_checksums.outputs.checksums }}
@@ -30,6 +31,7 @@ jobs:
     - name: Create release files
       run: bash ./.github/releasers/releaser_cli.sh
 
+    # Multiline strings in GitHub actions
     # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
     - name: Calculate sha256sum
       id: calc_checksums

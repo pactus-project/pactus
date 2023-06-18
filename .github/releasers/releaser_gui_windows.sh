@@ -17,9 +17,9 @@ echo "Building the binaries"
 # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
 sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
 
-go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-daemon.exe ./cmd/daemon
-go build -ldflags "-s -w" -o ${BUILD_DIR}/pactus-wallet.exe ./cmd/wallet
-go build -ldflags "-s -w -H windowsgui" -tags gtk -o ${BUILD_DIR}/pactus-gui.exe ./cmd/gtk
+go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon.exe ./cmd/daemon
+go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet.exe ./cmd/wallet
+go build -ldflags "-s -w -H windowsgui" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui.exe ./cmd/gtk
 
 # Copying the neccesary libraries
 echo "Creating GUI directory"
