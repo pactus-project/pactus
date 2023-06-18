@@ -9,6 +9,12 @@ jobs:
   ########################################
   build-cli:
     runs-on: ubuntu-latest
+
+    # Defining outputs for jobs
+    # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    outputs:
+      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+
     steps:
     - uses: actions/checkout@v3
 
@@ -25,6 +31,17 @@ jobs:
     - name: Create release files
       run: bash ./.github/releasers/releaser_cli.sh
 
+    # Multiline strings in GitHub actions
+    # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+    - name: Calculate sha256sum
+      id: calc_checksums
+      run: |
+        set -e
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "checksums<<$EOF"                          >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-*.zip pactus-*tar.gz)" >> "$GITHUB_OUTPUT"
+        echo "$EOF"                                     >> "$GITHUB_OUTPUT"
+
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
@@ -37,6 +54,10 @@ jobs:
   ########################################
   build-gui-linux:
     runs-on: ubuntu-latest
+
+    outputs:
+      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+
     steps:
     - uses: actions/checkout@v3
 
@@ -53,6 +74,15 @@ jobs:
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_linux.sh
 
+    - name: Calculate sha256sum
+      id: calc_checksums
+      run: |
+        set -e
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "checksums<<$EOF"             >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-*tar.gz)" >> "$GITHUB_OUTPUT"
+        echo "$EOF"                        >> "$GITHUB_OUTPUT"
+
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
@@ -63,11 +93,15 @@ jobs:
   ########################################
   build-gui-macos:
     runs-on: macos-latest
+
+    outputs:
+      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+
     steps:
     - uses: actions/checkout@v3
 
     - name: Install Dependencies
-      run: brew install gtk+3 librsvg create-dmg
+      run: brew install gtk+3 librsvg create-dmg coreutils
 
     - name: Install Go
       uses: actions/setup-go@v3
@@ -76,6 +110,15 @@ jobs:
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_macos.sh
+
+    - name: Calculate sha256sum
+      id: calc_checksums
+      run: |
+        set -e
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "checksums<<$EOF"                          >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-*.dmg pactus-*tar.gz)" >> "$GITHUB_OUTPUT"
+        echo "$EOF"                                     >> "$GITHUB_OUTPUT"
 
     - name: Publish
       uses: softprops/action-gh-release@v1
@@ -89,9 +132,14 @@ jobs:
   ########################################
   build-gui-windows:
     runs-on: windows-latest
+
+    outputs:
+      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+
     defaults:
       run:
         shell: msys2 {0}
+
     steps:
     - uses: actions/checkout@v3
 
@@ -113,11 +161,59 @@ jobs:
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_windows.sh
 
+    - name: Calculate sha256sum
+      id: calc_checksums
+      run: |
+        set -e
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "checksums<<$EOF"                                 >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-*.zip pactus-*installer.exe)" >> "$GITHUB_OUTPUT"
+        echo "$EOF"                                            >> "$GITHUB_OUTPUT"
+
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
         files: |
           pactus-*.zip
           pactus-*installer.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
+  checksums:
+    needs: [build-cli, build-gui-linux, build-gui-macos, build-gui-windows]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Create SHA256SUMS file
+      run: |
+        echo "${{ needs.build-cli.outputs.checksums }}" >> SHA256SUMS
+        echo "${{ needs.build-gui-linux.outputs.checksums }}" >> SHA256SUMS
+        echo "${{ needs.build-gui-macos.outputs.checksums }}" >> SHA256SUMS
+        echo "${{ needs.build-gui-windows.outputs.checksums }}" >> SHA256SUMS
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: SHA256SUMS
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
+  downloader:
+    needs: [checksums]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Create Downloader file
+      run: |
+        VERSION="$(echo `git -C . describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
+        echo ${VERSION}
+        sed -i "s/__VERSION__/${VERSION}/g" .github/releasers/pactus_downloader.sh
+
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: .github/releasers/pactus_downloader.sh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
