@@ -77,6 +77,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	receiverVal.AddToStake(pld.Stake)
 	receiverVal.UpdateLastBondingHeight(sb.CurrentHeight())
 
+	sb.UpdatePowerDelta(pld.Stake)
 	sb.UpdateAccount(pld.Sender, senderAcc)
 	sb.UpdateValidator(receiverVal)
 

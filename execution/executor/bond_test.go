@@ -17,11 +17,12 @@ func TestExecuteBondTx(t *testing.T) {
 	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	pub, _ := bls.GenerateTestKeyPair()
+	receiverAddr := pub.Address()
 	fee, amt := randomAmountAndFee(senderBalance / 2)
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, 1, crypto.GenerateTestAddress(),
-			pub.Address(), pub, amt, fee, "invalid sender")
+			receiverAddr, pub, amt, fee, "invalid sender")
 
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
@@ -37,7 +38,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, invalid sequence", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+2, senderAddr,
-			pub.Address(), pub, amt, fee, "invalid sequence")
+			receiverAddr, pub, amt, fee, "invalid sequence")
 
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
@@ -45,7 +46,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
-			pub.Address(), pub, senderBalance+1, 0, "insufficient balance")
+			receiverAddr, pub, senderBalance+1, 0, "insufficient balance")
 
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInsufficientFunds)
@@ -74,7 +75,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, public key is not set", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
-			pub.Address(), nil, amt, fee, "no public key")
+			receiverAddr, nil, amt, fee, "no public key")
 
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
@@ -82,7 +83,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
-			pub.Address(), pub, amt, fee, "ok")
+			receiverAddr, pub, amt, fee, "ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox), "Ok")
 		assert.Error(t, exe.Execute(trx, tSandbox), "Execute again, should fail")
@@ -90,19 +91,17 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, public key should not set for existing validators", func(t *testing.T) {
 		trx := tx.NewBondTx(tStamp500000, senderAcc.Sequence()+2, senderAddr,
-			pub.Address(), pub, amt, fee, "with public key")
+			receiverAddr, pub, amt, fee, "with public key")
 
 		err := exe.Execute(trx, tSandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
-	assert.Equal(t, tSandbox.Account(senderAddr).Balance(),
-		senderBalance-(amt+fee))
-	assert.Equal(t, tSandbox.Validator(pub.Address()).Stake(), amt)
-	assert.Equal(t, tSandbox.Validator(pub.Address()).LastBondingHeight(),
-		tSandbox.CurrentHeight())
+	assert.Equal(t, tSandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
+	assert.Equal(t, tSandbox.Validator(receiverAddr).Stake(), amt)
+	assert.Equal(t, tSandbox.Validator(receiverAddr).LastBondingHeight(), tSandbox.CurrentHeight())
+	assert.Equal(t, tSandbox.PowerDelta(), amt)
 	assert.Equal(t, exe.Fee(), fee)
-
 	checkTotalCoin(t, fee)
 }
 
