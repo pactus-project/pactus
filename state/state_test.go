@@ -585,7 +585,7 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, tState1.store.TotalValidators(), st1Load.(*state).store.TotalValidators())
 	assert.Equal(t, tState1.committee.Committers(), st1Load.(*state).committee.Committers())
 	assert.Equal(t, tState1.committee.TotalPower(), st1Load.(*state).committee.TotalPower())
-	assert.Equal(t, tState1.TotalPower(), st1Load.(*state).totalPower())
+	assert.Equal(t, tState1.TotalPower(), st1Load.(*state).TotalPower())
 	assert.Equal(t, tState1.store.TotalAccounts(), int32(5))
 
 	require.NoError(t, st1Load.CommitBlock(6, b6, c6))

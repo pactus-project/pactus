@@ -15,6 +15,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	exe := NewUnbondExecutor(true)
 
 	pub, _ := bls.GenerateTestKeyPair()
+	valAddr := pub.Address()
 	val := tSandbox.MakeNewValidator(pub)
 	tSandbox.UpdateValidator(val)
 
@@ -24,7 +25,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+2, pub.Address(), "invalid sequence")
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+2, valAddr, "invalid sequence")
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
@@ -45,7 +46,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, pub.Address(), "Ok")
+		trx := tx.NewUnbondTx(tStamp500000, val.Sequence()+1, valAddr, "Ok")
 
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
@@ -53,9 +54,10 @@ func TestExecuteUnbondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, tSandbox))
 	})
 
-	assert.Zero(t, tSandbox.Validator(pub.Address()).Stake())
-	assert.Zero(t, tSandbox.Validator(pub.Address()).Power())
-	assert.Equal(t, tSandbox.Validator(pub.Address()).UnbondingHeight(), tSandbox.CurrentHeight())
+	assert.Zero(t, tSandbox.Validator(valAddr).Stake())
+	assert.Zero(t, tSandbox.Validator(valAddr).Power())
+	assert.Equal(t, tSandbox.Validator(valAddr).UnbondingHeight(), tSandbox.CurrentHeight())
+	assert.Equal(t, tSandbox.PowerDelta(), -1*val.Stake())
 	assert.Zero(t, exe.Fee())
 
 	checkTotalCoin(t, 0)

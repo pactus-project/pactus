@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
@@ -30,6 +31,7 @@ func setup(t *testing.T) {
 	acc.AddToBalance(21 * 1e14)
 	tStore.UpdateAccount(crypto.TreasuryAddress, acc)
 
+	totalPower := int64(0)
 	for _, val := range committee.Validators() {
 		// For testing purpose we create some test accounts first.
 		// Account number is the validator number plus one,
@@ -37,10 +39,12 @@ func setup(t *testing.T) {
 		acc := account.NewAccount(val.Number() + 1)
 		tStore.UpdateValidator(val)
 		tStore.UpdateAccount(val.Address(), acc)
+
+		totalPower += val.Power()
 	}
 
 	tSigners = signers
-	tSandbox = NewSandbox(tStore, params, committee).(*sandbox)
+	tSandbox = NewSandbox(tStore, params, committee, totalPower).(*sandbox)
 
 	assert.Equal(t, tSandbox.CurrentHeight(), uint32(1))
 	lastHeight := util.RandUint32(144) + 21
@@ -363,4 +367,58 @@ func TestRecentBlockByStamp(t *testing.T) {
 	h, b = tSandbox.RecentBlockByStamp(lastHash.Stamp())
 	assert.Equal(t, h, lastHeight)
 	assert.Equal(t, b.Hash(), lastHash)
+}
+
+func TestPowerDelta(t *testing.T) {
+	setup(t)
+
+	assert.Zero(t, tSandbox.PowerDelta())
+	tSandbox.UpdatePowerDelta(1)
+	assert.Equal(t, tSandbox.PowerDelta(), int64(1))
+	tSandbox.UpdatePowerDelta(-1)
+	assert.Zero(t, tSandbox.PowerDelta())
+}
+
+func TestVerifyProof(t *testing.T) {
+	setup(t)
+
+	lastHeight, _ := tStore.LastCertificate()
+	vals := tSandbox.committee.Validators()
+
+	// Try to evaluate a valid sortition
+	var validProof sortition.Proof
+	var validStamp hash.Stamp
+	var validVal *validator.Validator
+	for i := lastHeight; i > 0; i-- {
+		block := tStore.Blocks[i]
+		for i, signer := range tSigners {
+			ok, proof := sortition.EvaluateSortition(
+				block.Header().SortitionSeed(), signer,
+				tSandbox.totalPower, vals[i].Power())
+
+			if ok {
+				validProof = proof
+				validStamp = block.Stamp()
+				validVal = vals[i]
+			}
+		}
+	}
+
+	t.Run("invalid proof", func(t *testing.T) {
+		invalidProof := sortition.GenerateRandomProof()
+		assert.False(t, tSandbox.VerifyProof(validStamp, invalidProof, validVal))
+	})
+	t.Run("invalid stamp", func(t *testing.T) {
+		invalidStamp := hash.GenerateTestStamp()
+		assert.False(t, tSandbox.VerifyProof(invalidStamp, validProof, validVal))
+	})
+
+	t.Run("genesis stamp", func(t *testing.T) {
+		invalidStamp := hash.UndefHash.Stamp()
+		assert.False(t, tSandbox.VerifyProof(invalidStamp, validProof, validVal))
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		assert.True(t, tSandbox.VerifyProof(validStamp, validProof, validVal))
+	})
 }

@@ -37,6 +37,7 @@ type state struct {
 	params          param.Params
 	txPool          txpool.TxPool
 	committee       committee.Committee
+	totalPower      int64
 	lastInfo        *lastinfo.LastInfo
 	accountMerkle   *persistentmerkle.Tree
 	validatorMerkle *persistentmerkle.Tree
@@ -78,6 +79,8 @@ func LoadOrNewState(
 		}
 	}
 
+	st.totalPower = st.retrieveTotalPower()
+
 	st.loadMerkels()
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
@@ -88,7 +91,7 @@ func LoadOrNewState(
 }
 
 func (st *state) concreteSandbox() sandbox.Sandbox {
-	return sandbox.NewSandbox(st.store, st.params, st.committee)
+	return sandbox.NewSandbox(st.store, st.params, st.committee, st.totalPower)
 }
 
 func (st *state) tryLoadLastInfo() error {
@@ -169,6 +172,15 @@ func (st *state) loadMerkels() {
 
 		return
 	})
+}
+
+func (st *state) retrieveTotalPower() int64 {
+	totalPower := int64(0)
+	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
+		totalPower += val.Power()
+		return false
+	})
+	return totalPower
 }
 
 func (st *state) stateRoot() hash.Hash {
@@ -445,7 +457,6 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 }
 
 func (st *state) evaluateSortition() bool {
-	totalPower := st.totalPower()
 	evaluated := false
 	for _, signer := range st.signers {
 		val, _ := st.store.Validator(signer.Address())
@@ -464,7 +475,7 @@ func (st *state) evaluateSortition() bool {
 			continue
 		}
 
-		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, totalPower, val.Power())
+		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, st.totalPower, val.Power())
 		if ok {
 			trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
 			signer.SignMsg(trx)
@@ -517,6 +528,8 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 			st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
 		}
 	})
+
+	st.totalPower += sb.PowerDelta()
 }
 
 func (st *state) validateBlockTime(t time.Time) error {
@@ -543,29 +556,13 @@ func (st *state) TotalPower() int64 {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.totalPower()
+	return st.totalPower
 }
 
 func (st *state) CommitteePower() int64 {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.committeePower()
-}
-
-// TODO: add test for me when a validator is parked (unbonded)
-// TODO: Improve performance of remember total power
-// TODO: sandbox has the same logic.
-func (st *state) totalPower() int64 {
-	p := int64(0)
-	st.store.IterateValidators(func(val *validator.Validator) bool {
-		p += val.Power()
-		return false
-	})
-	return p
-}
-
-func (st *state) committeePower() int64 {
 	return st.committee.TotalPower()
 }
 

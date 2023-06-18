@@ -28,6 +28,8 @@ type sandbox struct {
 	params          param.Params
 	totalAccounts   int32
 	totalValidators int32
+	totalPower      int64
+	powerDelta      int64
 }
 
 type sandboxValidator struct {
@@ -40,11 +42,13 @@ type sandboxAccount struct {
 	updated bool
 }
 
-func NewSandbox(store store.Reader, params param.Params, committee committee.Reader) Sandbox {
+func NewSandbox(store store.Reader, params param.Params,
+	committee committee.Reader, totalPower int64) Sandbox {
 	sb := &sandbox{
-		store:     store,
-		committee: committee,
-		params:    params,
+		store:      store,
+		committee:  committee,
+		totalPower: totalPower,
+		params:     params,
 	}
 
 	sb.accounts = make(map[crypto.Address]*sandboxAccount)
@@ -223,7 +227,22 @@ func (sb *sandbox) Committee() committee.Reader {
 	return sb.committee
 }
 
-// TODO: write test for me.
+// UpdatePowerDelta updates the change in the total power of the blockchain.
+// The delta is the amount of change in the total power and can be either positive or negative.
+func (sb *sandbox) UpdatePowerDelta(delta int64) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	sb.powerDelta += delta
+}
+
+func (sb *sandbox) PowerDelta() int64 {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.powerDelta
+}
+
 // VerifyProof verifies proof of a sortition transaction.
 func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
 	_, b := sb.store.RecentBlockByStamp(stamp)
@@ -231,10 +250,5 @@ func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *val
 		return false
 	}
 	seed := b.Header().SortitionSeed()
-	total := int64(0) // TODO: we can get it from state
-	sb.store.IterateValidators(func(val *validator.Validator) bool {
-		total += val.Power()
-		return false
-	})
-	return sortition.VerifyProof(seed, proof, val.PublicKey(), total, val.Power())
+	return sortition.VerifyProof(seed, proof, val.PublicKey(), sb.totalPower, val.Power())
 }

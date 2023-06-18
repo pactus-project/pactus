@@ -142,7 +142,7 @@ func TestLockTime(t *testing.T) {
 		val := sb.MakeNewValidator(pub)
 		sb.UpdateValidator(val)
 
-		sb.AcceptTestSortition = true
+		sb.TestAcceptSortition = true
 		pld := &payload.SortitionPayload{
 			Address: pub.Address(),
 			Proof:   sortition.GenerateRandomProof(),

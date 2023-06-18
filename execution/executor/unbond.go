@@ -53,6 +53,11 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	val.IncSequence()
 	val.UpdateUnbondingHeight(sb.CurrentHeight())
+
+	// At this point, the validator's power is zero.
+	// However, we know the validator's stake.
+	// So, we can update the power delta with the negative of the validator's stake.
+	sb.UpdatePowerDelta(-1 * val.Power())
 	sb.UpdateValidator(val)
 
 	return nil
