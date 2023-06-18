@@ -189,6 +189,76 @@ class GetValidatorsRequest extends $pb.GeneratedMessage {
   static GetValidatorsRequest? _defaultInstance;
 }
 
+class GetValidatorAddressesRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetValidatorAddressesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  GetValidatorAddressesRequest._() : super();
+  factory GetValidatorAddressesRequest() => create();
+  factory GetValidatorAddressesRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetValidatorAddressesRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetValidatorAddressesRequest clone() => GetValidatorAddressesRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetValidatorAddressesRequest copyWith(void Function(GetValidatorAddressesRequest) updates) => super.copyWith((message) => updates(message as GetValidatorAddressesRequest)) as GetValidatorAddressesRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetValidatorAddressesRequest create() => GetValidatorAddressesRequest._();
+  GetValidatorAddressesRequest createEmptyInstance() => create();
+  static $pb.PbList<GetValidatorAddressesRequest> createRepeated() => $pb.PbList<GetValidatorAddressesRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetValidatorAddressesRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetValidatorAddressesRequest>(create);
+  static GetValidatorAddressesRequest? _defaultInstance;
+}
+
+class GetValidatorAddressesResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetValidatorAddressesResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..pPS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'addresses')
+    ..hasRequiredFields = false
+  ;
+
+  GetValidatorAddressesResponse._() : super();
+  factory GetValidatorAddressesResponse({
+    $core.Iterable<$core.String>? addresses,
+  }) {
+    final _result = create();
+    if (addresses != null) {
+      _result.addresses.addAll(addresses);
+    }
+    return _result;
+  }
+  factory GetValidatorAddressesResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetValidatorAddressesResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetValidatorAddressesResponse clone() => GetValidatorAddressesResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetValidatorAddressesResponse copyWith(void Function(GetValidatorAddressesResponse) updates) => super.copyWith((message) => updates(message as GetValidatorAddressesResponse)) as GetValidatorAddressesResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetValidatorAddressesResponse create() => GetValidatorAddressesResponse._();
+  GetValidatorAddressesResponse createEmptyInstance() => create();
+  static $pb.PbList<GetValidatorAddressesResponse> createRepeated() => $pb.PbList<GetValidatorAddressesResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetValidatorAddressesResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetValidatorAddressesResponse>(create);
+  static GetValidatorAddressesResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.String> get addresses => $_getList(0);
+}
+
 class GetValidatorRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetValidatorRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
@@ -1670,6 +1740,10 @@ class BlockchainApi {
   $async.Future<GetValidatorResponse> getValidatorByNumber($pb.ClientContext? ctx, GetValidatorByNumberRequest request) {
     var emptyResponse = GetValidatorResponse();
     return _client.invoke<GetValidatorResponse>(ctx, 'Blockchain', 'GetValidatorByNumber', request, emptyResponse);
+  }
+  $async.Future<GetValidatorAddressesResponse> getValidatorAddresses($pb.ClientContext? ctx, GetValidatorAddressesRequest request) {
+    var emptyResponse = GetValidatorAddressesResponse();
+    return _client.invoke<GetValidatorAddressesResponse>(ctx, 'Blockchain', 'GetValidatorAddresses', request, emptyResponse);
   }
   $async.Future<GetValidatorsResponse> getValidators($pb.ClientContext? ctx, GetValidatorsRequest request) {
     var emptyResponse = GetValidatorsResponse();

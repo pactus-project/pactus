@@ -104,6 +104,13 @@ func (m *MockStore) HasValidator(addr crypto.Address) bool {
 	_, ok := m.Validators[addr]
 	return ok
 }
+func (m *MockStore) ValidatorAddresses() []crypto.Address {
+	addrs := make([]crypto.Address, 0, len(m.Validators))
+	for addr := range m.Validators {
+		addrs = append(addrs, addr)
+	}
+	return addrs
+}
 func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error) {
 	v, ok := m.Validators[addr]
 	if ok {
