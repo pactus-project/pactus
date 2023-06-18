@@ -69,30 +69,17 @@ func TestValidatorBatchSaving(t *testing.T) {
 func TestValidatorAddresses(t *testing.T) {
 	setup(t)
 
-	t.Run("Add some validators", func(t *testing.T) {
-		for i := 0; i < 10; i++ {
-			val, _ := validator.GenerateTestValidator(int32(i))
-			tStore.UpdateValidator(val)
-		}
-		assert.NoError(t, tStore.WriteBatch())
+	total := util.RandInt32(100) + 1
+	addrs1 := make([]crypto.Address, 0, total)
 
-		v, err := tStore.ValidatorByNumber(5)
-		assert.NoError(t, err)
-		require.NotNil(t, v)
-		assert.Equal(t, v.Number(), int32(5))
+	for i := int32(0); i < total; i++ {
+		val, _ := validator.GenerateTestValidator(i)
+		tStore.UpdateValidator(val)
+		addrs1 = append(addrs1, val.Address())
+	}
 
-		v, err = tStore.ValidatorByNumber(11)
-		assert.Error(t, err)
-		assert.Nil(t, v)
-	})
-
-	t.Run("Get list of validator addresses", func(t *testing.T) {
-		tStore.Close()
-		store, _ := NewStore(tStore.config, 21)
-
-		vals := store.ValidatorAddresses()
-		assert.NotNil(t, vals)
-	})
+	addrs2 := tStore.ValidatorAddresses()
+	assert.ElementsMatch(t, addrs1, addrs2)
 }
 
 func TestValidatorByNumber(t *testing.T) {
