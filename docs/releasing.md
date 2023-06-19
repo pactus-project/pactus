@@ -35,9 +35,9 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.11.0"
-CUR_VER="0.12.0"
-NEXT_VER="0.13.0"
+PRV_VER="0.12.0"
+CUR_VER="0.13.0"
+NEXT_VER="0.14.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 ```
@@ -68,7 +68,7 @@ Create a new PR against the `main` branch:
 
 ```bash
 git checkout -b releasing_${CUR_VER}
-git commit -a -m "chore: Releasing version ${CUR_VER}"
+git commit -a -m "chore: releasing version ${CUR_VER}"
 git push origin HEAD
 ```
 
