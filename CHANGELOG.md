@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.12.0](https://github.com/pactus-project/pactus/compare/v0.11.0...v0.12.0)(2023-06-19)
+
+### Feat
+
+- add GetAccountByNumber API to get account by number ([#511](https://github.com/pactus-project/pactus/pull/511))
+
+### Fix
+
+- caching account and validator in store ([#513](https://github.com/pactus-project/pactus/pull/513))
+- get recent blocks by stamp ([#509](https://github.com/pactus-project/pactus/pull/509))
+- closing the mDNS connection upon stopping the network ([#508](https://github.com/pactus-project/pactus/pull/508))
+- updating linkedmap to use generic ([#507](https://github.com/pactus-project/pactus/pull/507))
+- removing state from cache ([#506](https://github.com/pactus-project/pactus/pull/506))
+- Typo in GUI ([#499](https://github.com/pactus-project/pactus/pull/499))
+- supporting localnet ([#492](https://github.com/pactus-project/pactus/pull/492))
+
+### Refactor
+
+- update total power calculation based on power change(deltas) ([#518](https://github.com/pactus-project/pactus/pull/518))
+- GetValidators return all validators in state validators map ([#512](https://github.com/pactus-project/pactus/pull/512))
+
 ## [0.11.0](https://github.com/pactus-project/pactus/compare/v0.10.0...v0.11.0) (2023-05-29)
 
 ### Fix
