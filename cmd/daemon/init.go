@@ -29,6 +29,11 @@ func Init() func(c *cli.Cmd) {
 			Desc:  "Initialize working directory for localnet (for developers)",
 			Value: false,
 		})
+		seedOpt := c.String(cli.StringOpt{
+			Name:  "seed",
+			Desc:  "Restore a mnemonic (seed phrase) based on BIP-39",
+			Value: "",
+		})
 
 		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file"
 		c.Before = func() { fmt.Println(cmd.Pactus) }
@@ -38,18 +43,26 @@ func Init() func(c *cli.Cmd) {
 				cmd.PrintErrorMsg("The working directory is not empty: %s", workingDir)
 				return
 			}
-			mnemonic := wallet.GenerateMnemonic(128)
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("Your wallet seed is:")
-			cmd.PrintInfoMsgBold("   " + mnemonic)
-			cmd.PrintLine()
-			cmd.PrintWarnMsg("Write down this seed on a piece of paper to recover your validator key in future.")
-			cmd.PrintLine()
-			confirmed := cmd.PromptConfirm("Do you want to continue")
-			if !confirmed {
-				return
+			mnemonic := ""
+			if len(*seedOpt) == 0 {
+				mnemonic = wallet.GenerateMnemonic(128)
+				cmd.PrintLine()
+				cmd.PrintInfoMsg("Your wallet seed is:")
+				cmd.PrintInfoMsgBold("   " + mnemonic)
+				cmd.PrintLine()
+				cmd.PrintWarnMsg("Write down this seed on a piece of paper to recover your validator key in future.")
+				cmd.PrintLine()
+				confirmed := cmd.PromptConfirm("Do you want to continue")
+				if !confirmed {
+					return
+				}
+			} else {
+				mnemonic = *seedOpt
+				if ok := wallet.IsMnemonicValid(*seedOpt); !ok {
+					cmd.PrintErrorMsg("Input seed is invalid")
+					return
+				}
 			}
-
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Enter a password for wallet")
 			password := cmd.PromptPassword("Password", true)

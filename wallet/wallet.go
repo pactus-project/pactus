@@ -39,6 +39,11 @@ func GenerateMnemonic(entropy int) string {
 	return vault.GenerateMnemonic(entropy)
 }
 
+// IsMnemonicValid is a wrapper for vault.IsMnemonicValid
+func IsMnemonicValid(mnemonic string) bool {
+	return vault.IsMnemonicValid(mnemonic)
+}
+
 // Open tries to open a wallet at the given path.
 // If the wallet doesn’t exist on this path, it returns an error.
 // A wallet can be opened in offline or online modes.

@@ -56,3 +56,8 @@ func GenerateMnemonic(bitSize int) string {
 
 	return mnemonic
 }
+
+// IsMnemonicValid validate a mnemonic (seed phrase) based on BIP-39
+func IsMnemonicValid(mnemonic string) bool {
+	return bip39.IsMnemonicValid(mnemonic)
+}

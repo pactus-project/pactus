@@ -290,3 +290,9 @@ func TestNeuter(t *testing.T) {
 	err = vault.Neuter().UpdatePassword("any", "any")
 	assert.ErrorIs(t, err, ErrNeutered)
 }
+
+func TestValidateMnemonic(t *testing.T) {
+	if ok := IsMnemonicValid(mnemonic); !ok {
+		t.Error("mnemonic is invalid")
+	}
+}
