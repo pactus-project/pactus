@@ -2,8 +2,10 @@ package util
 
 import (
 	crand "crypto/rand"
+	"errors"
 	"fmt"
 	"math/big"
+	"net/url"
 	"os"
 	"os/exec"
 	"runtime"
@@ -200,9 +202,20 @@ func ChangeToString(change int64) string {
 }
 
 // OpenURLInBrowser open specific url in browser base on os
-func OpenURLInBrowser(url string) error {
-	var cmd string
-	var args []string
+func OpenURLInBrowser(address string) error {
+	cmd := ""
+	args := make([]string, 0)
+
+	addr, err := url.Parse(address)
+	if err != nil {
+		return err
+	}
+
+	switch addr.Scheme {
+	case "http", "https":
+	default:
+		return errors.New("address scheme is invalid")
+	}
 
 	switch runtime.GOOS {
 	case "windows":
@@ -213,6 +226,6 @@ func OpenURLInBrowser(url string) error {
 	default: // "linux", "freebsd", "openbsd", "netbsd"
 		cmd = "xdg-open"
 	}
-	args = append(args, url)
+	args = append(args, address)
 	return exec.Command(cmd, args...).Start()
 }
