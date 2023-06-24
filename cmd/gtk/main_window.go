@@ -83,19 +83,19 @@ func (mw *mainWindow) OnTransactionTransfer() {
 }
 
 func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
-	if err := util.OpenUrlInBrowser("https://pactus.org/"); err != nil {
+	if err := util.OpenURLInBrowser("https://pactus.org/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
 
 func (mw *mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
-	if err := util.OpenUrlInBrowser("https://pactusscan.com/"); err != nil {
+	if err := util.OpenURLInBrowser("https://pactusscan.com/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
 
 func (mw *mainWindow) onMenuItemActivateLearn(_ *gtk.MenuItem) {
-	if err := util.OpenUrlInBrowser("https://pactus.org/learn/"); err != nil {
+	if err := util.OpenURLInBrowser("https://pactus.org/learn/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
