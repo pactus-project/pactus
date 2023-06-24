@@ -137,3 +137,23 @@ func TestCoinToChangeConversion(t *testing.T) {
 		}
 	}
 }
+
+func TestOpenURLInBrowser(t *testing.T) {
+	tests := []string{
+		"https://pactus.org",
+		"pactus.org",
+		"pactus",
+		"test",
+		"http://example.com",
+		"http://example.com",
+	}
+
+	for _, tt := range tests {
+		t.Run(tt, func(t *testing.T) {
+			err := OpenURLInBrowser(tt)
+			if err != nil {
+				t.Skipf("skip url %s and got error %s", tt, err.Error())
+			}
+		})
+	}
+}
