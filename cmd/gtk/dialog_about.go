@@ -4,12 +4,18 @@ package main
 
 import (
 	_ "embed"
-
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/version"
 )
 
-//go:embed assets/ui/dialog_about.ui
-var uiAboutDialog []byte
+var (
+	//go:embed assets/ui/dialog_about.ui
+	uiAboutDialog []byte
+
+	//go:embed assets/images/logo.png
+	pactusLogo []byte
+)
 
 func showAboutDialog() {
 	builder, err := gtk.BuilderNewFromString(string(uiAboutDialog))
@@ -17,7 +23,11 @@ func showAboutDialog() {
 
 	dlg := getAboutDialogObj(builder, "id_dialog_about")
 
-	dlg.SetModal(true)
+	pxLogo, err := gdk.PixbufNewFromBytesOnly(pactusLogo)
+	fatalErrorCheck(err)
+
+	dlg.SetLogo(pxLogo)
+	dlg.SetVersion(version.Version())
 
 	dlg.Show()
 }

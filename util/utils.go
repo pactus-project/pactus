@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"math/big"
 	"os"
+	"os/exec"
+	"runtime"
 	"strconv"
 )
 
@@ -195,4 +197,22 @@ func ChangeToStringWithTrailingZeros(change int64) string {
 func ChangeToString(change int64) string {
 	coin := ChangeToCoin(change)
 	return strconv.FormatFloat(coin, 'f', -1, 64)
+}
+
+// OpenUrlInBrowser open specific url in browser base on os
+func OpenUrlInBrowser(url string) error {
+	var cmd string
+	var args []string
+
+	switch runtime.GOOS {
+	case "windows":
+		cmd = "cmd"
+		args = []string{"/c", "start"}
+	case "darwin":
+		cmd = "open"
+	default: // "linux", "freebsd", "openbsd", "netbsd"
+		cmd = "xdg-open"
+	}
+	args = append(args, url)
+	return exec.Command(cmd, args...).Start()
 }
