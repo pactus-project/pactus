@@ -199,8 +199,8 @@ func ChangeToString(change int64) string {
 	return strconv.FormatFloat(coin, 'f', -1, 64)
 }
 
-// OpenUrlInBrowser open specific url in browser base on os
-func OpenUrlInBrowser(url string) error {
+// OpenURLInBrowser open specific url in browser base on os
+func OpenURLInBrowser(url string) error {
 	var cmd string
 	var args []string
 
