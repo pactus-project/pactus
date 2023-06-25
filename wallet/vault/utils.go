@@ -18,7 +18,7 @@ func derivePathToString(path []uint32) string {
 		if i >= hdkeychain.HardenedKeyStart {
 			builder.WriteString(fmt.Sprintf("/%d'", i-hdkeychain.HardenedKeyStart))
 		} else {
-			builder.WriteString(fmt.Sprintf("/%d", i)) 
+			builder.WriteString(fmt.Sprintf("/%d", i))
 		}
 	}
 	return builder.String()

@@ -184,7 +184,6 @@ func (c *committee) Size() int {
 }
 
 func (c *committee) String() string {
-	
 	var builder strings.Builder
 
 	builder.WriteString("[")

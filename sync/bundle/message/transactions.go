@@ -39,7 +39,7 @@ func (m *TransactionsMessage) Fingerprint() string {
 	var builder strings.Builder
 
 	for _, tx := range m.Transactions {
-		builder.WriteString(fmt.Sprintf("%v ", tx.ID().Fingerprint())) 
+		builder.WriteString(fmt.Sprintf("%v ", tx.ID().Fingerprint()))
 	}
 	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
 	return builder.String()
