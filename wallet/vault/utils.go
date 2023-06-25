@@ -11,15 +11,17 @@ import (
 )
 
 func derivePathToString(path []uint32) string {
-	str := "m"
+	var builder strings.Builder
+	builder.WriteString("m")
+
 	for _, i := range path {
 		if i >= hdkeychain.HardenedKeyStart {
-			str += fmt.Sprintf("/%d'", i-hdkeychain.HardenedKeyStart)
+			builder.WriteString(fmt.Sprintf("/%d'", i-hdkeychain.HardenedKeyStart))
 		} else {
-			str += fmt.Sprintf("/%d", i)
+			builder.WriteString(fmt.Sprintf("/%d", i)) 
 		}
 	}
-	return str
+	return builder.String()
 }
 
 func stringToDerivePath(str string) ([]uint32, error) {
