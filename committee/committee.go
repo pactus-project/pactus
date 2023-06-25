@@ -4,6 +4,7 @@ import (
 	"container/list"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
@@ -183,15 +184,20 @@ func (c *committee) Size() int {
 }
 
 func (c *committee) String() string {
-	str := "[ "
+	
+	var builder strings.Builder
+
+	builder.WriteString("[")
 	for _, v := range c.Validators() {
-		str += fmt.Sprintf("%v(%v)", v.Number(), v.LastJoinedHeight())
+		builder.WriteString(fmt.Sprintf("%v(%v)", v.Number(), v.LastJoinedHeight()))
 		if c.IsProposer(v.Address(), 0) {
-			str += "*"
+			builder.WriteString("*")
 		}
-		str += " "
+		builder.WriteString(" ")
 	}
-	str += "]"
+	builder.WriteString("]")
+
+	str := builder.String()
 
 	return str
 }
