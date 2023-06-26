@@ -40,7 +40,7 @@ func (s *Server) GetAccountByNumberHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if num > math.MaxInt32 {
+	if num > math.MaxInt32 || num < math.MinInt32 {
 		s.writeError(w, fmt.Errorf("integer overflow detected"))
 		return
 	}
