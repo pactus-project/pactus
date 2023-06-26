@@ -38,6 +38,11 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 	vars := mux.Vars(r)
 
 	num, err := strconv.Atoi(vars["number"])
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
 	res, err := s.blockchain.GetValidatorByNumber(s.ctx, &pactus.GetValidatorByNumberRequest{
 		Number: int32(num),
 	})

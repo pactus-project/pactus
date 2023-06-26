@@ -33,6 +33,11 @@ func (s *Server) GetAccountByNumberHandler(w http.ResponseWriter, r *http.Reques
 	vars := mux.Vars(r)
 
 	num, err := strconv.Atoi(vars["number"])
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
 	res, err := s.blockchain.GetAccountByNumber(s.ctx, &pactus.GetAccountByNumberRequest{
 		Number: int32(num),
 	})
