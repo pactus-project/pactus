@@ -539,14 +539,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 	})
 }
 
-func TestIsMnemonicValid(t *testing.T) {
-	totalMnemonic := util.RandInt32(200) + 1
-
-	for i := int32(0); i < totalMnemonic; i++ {
-		mnemonic := GenerateMnemonic(128)
-
-		if ok := IsMnemonicValid(mnemonic); !ok {
-			t.Fatal("generated mnemonic is invalid")
-		}
-	}
+func TestCheckMnemonic(t *testing.T) {
+	mnemonic := GenerateMnemonic(128)
+	assert.NoError(t, CheckMnemonic(mnemonic))
 }

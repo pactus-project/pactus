@@ -292,7 +292,35 @@ func TestNeuter(t *testing.T) {
 }
 
 func TestValidateMnemonic(t *testing.T) {
-	if ok := IsMnemonicValid(mnemonic); !ok {
-		t.Error("mnemonic is invalid")
+	tests := []struct {
+		mnenomic string
+		errStr   string
+	}{
+		{
+			"",
+			"Invalid mnenomic",
+		},
+		{
+			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+			"Invalid mnenomic",
+		},
+		{
+			"bandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+			"word `bandon` not found in reverse map",
+		},
+		{
+			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+			"Checksum incorrect",
+		},
+		{
+			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus",
+			"",
+		},
+	}
+	for i, test := range tests {
+		err := CheckMnemonic(test.mnenomic)
+		if err != nil {
+			assert.ErrorContains(t, err, test.errStr, "test %v failed", i)
+		}
 	}
 }

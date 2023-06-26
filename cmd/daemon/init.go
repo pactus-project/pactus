@@ -35,7 +35,7 @@ func Init() func(c *cli.Cmd) {
 			Value: "",
 		})
 
-		c.LongDesc = "Initializing the working directory by new validator's private key and genesis file"
+		c.LongDesc = "Initializing the working directory"
 		c.Before = func() { fmt.Println(cmd.Pactus) }
 		c.Action = func() {
 			workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -58,10 +58,8 @@ func Init() func(c *cli.Cmd) {
 				}
 			} else {
 				mnemonic = *seedOpt
-				if ok := wallet.IsMnemonicValid(*seedOpt); !ok {
-					cmd.PrintErrorMsg("Input seed is invalid")
-					return
-				}
+				err := wallet.CheckMnemonic(*seedOpt)
+				cmd.FatalErrorCheck(err)
 			}
 			cmd.PrintLine()
 			cmd.PrintInfoMsg("Enter a password for wallet")

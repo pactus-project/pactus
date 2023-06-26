@@ -34,14 +34,14 @@ type serverInfo struct {
 }
 type servers = map[string][]serverInfo
 
-// GenerateMnemonic is a wrapper for `vault.GenerateMnemonic.
+// GenerateMnemonic is a wrapper for `vault.GenerateMnemonic`.
 func GenerateMnemonic(entropy int) string {
 	return vault.GenerateMnemonic(entropy)
 }
 
-// IsMnemonicValid is a wrapper for vault.IsMnemonicValid
-func IsMnemonicValid(mnemonic string) bool {
-	return vault.IsMnemonicValid(mnemonic)
+// CheckMnemonic is a wrapper for `vault.CheckMnemonic`
+func CheckMnemonic(mnemonic string) error {
+	return vault.CheckMnemonic(mnemonic)
 }
 
 // Open tries to open a wallet at the given path.
