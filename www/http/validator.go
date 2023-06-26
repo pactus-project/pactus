@@ -45,7 +45,7 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if num > math.MaxInt32 || num < math.MinInt32 {
+	if num > math.MaxInt32 {
 		s.writeError(w, fmt.Errorf("integer overflow detected"))
 		return
 	}
