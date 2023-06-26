@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -69,7 +70,7 @@ func TestAccount(t *testing.T) {
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"number": string(acc.Number())})
+		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(acc.Number()))})
 		tHTTPServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
