@@ -39,7 +39,7 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	num, err := strconv.Atoi(vars["number"])
+	num, err := strconv.ParseInt(vars["number"], 10, 32)
 	if err != nil {
 		s.writeError(w, err)
 		return
