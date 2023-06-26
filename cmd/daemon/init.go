@@ -29,9 +29,9 @@ func Init() func(c *cli.Cmd) {
 			Desc:  "Initialize working directory for localnet (for developers)",
 			Value: false,
 		})
-		seedOpt := c.String(cli.StringOpt{
-			Name:  "seed",
-			Desc:  "Restore a mnemonic (seed phrase) based on BIP-39",
+		restoreOpt := c.String(cli.StringOpt{
+			Name:  "restore",
+			Desc:  "Restore and validate a mnemonic (seed phrase) based on BIP-39",
 			Value: "",
 		})
 
@@ -44,7 +44,7 @@ func Init() func(c *cli.Cmd) {
 				return
 			}
 			mnemonic := ""
-			if len(*seedOpt) == 0 {
+			if len(*restoreOpt) == 0 {
 				mnemonic = wallet.GenerateMnemonic(128)
 				cmd.PrintLine()
 				cmd.PrintInfoMsg("Your wallet seed is:")
@@ -57,8 +57,8 @@ func Init() func(c *cli.Cmd) {
 					return
 				}
 			} else {
-				mnemonic = *seedOpt
-				err := wallet.CheckMnemonic(*seedOpt)
+				mnemonic = *restoreOpt
+				err := wallet.CheckMnemonic(*restoreOpt)
 				cmd.FatalErrorCheck(err)
 			}
 			cmd.PrintLine()
