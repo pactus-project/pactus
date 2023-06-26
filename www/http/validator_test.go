@@ -63,4 +63,43 @@ func TestValidator(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
+
+	t.Run("Shall return a validator", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"number": string(val.Number())})
+		tHTTPServer.GetAccountByNumberHandler(w, r)
+
+		assert.Equal(t, w.Code, 200)
+		fmt.Println(w.Body)
+	})
+
+	t.Run("Shall return an error, non exist", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"number": "10000000000000"})
+		tHTTPServer.GetAccountByNumberHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
+		fmt.Println(w.Body)
+	})
+
+	t.Run("Shall return an error, invalid number", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"number": "not a number"})
+		tHTTPServer.GetAccountByNumberHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
+		fmt.Println(w.Body)
+	})
+
+	t.Run("Shall return an error, no number", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		tHTTPServer.GetAccountByNumberHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
+		fmt.Println(w.Body)
+	})
 }
