@@ -1,6 +1,8 @@
 package http
 
 import (
+	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 
@@ -35,6 +37,11 @@ func (s *Server) GetAccountByNumberHandler(w http.ResponseWriter, r *http.Reques
 	num, err := strconv.Atoi(vars["number"])
 	if err != nil {
 		s.writeError(w, err)
+		return
+	}
+
+	if num > math.MaxInt32 || num < math.MinInt32 {
+		s.writeError(w, fmt.Errorf("integer overflow detected"))
 		return
 	}
 
