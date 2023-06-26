@@ -95,4 +95,13 @@ func TestAccount(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
+
+	t.Run("Shall return error, no number", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		tHTTPServer.GetAccountByNumberHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
+		fmt.Println(w.Body)
+	})
 }
