@@ -7,6 +7,7 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
+// GetValidatorHandler returns a handler to get validator by address.
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	res, err := s.blockchain.GetValidator(s.ctx,
