@@ -114,6 +114,10 @@ func getProgressBarObj(builder *gtk.Builder, name string) *gtk.ProgressBar {
 	return getObj(builder, name).(*gtk.ProgressBar)
 }
 
+func getMenuItem(builder *gtk.Builder, name string) *gtk.MenuItem {
+	return getObj(builder, name).(*gtk.MenuItem)
+}
+
 func getTextViewContent(tv *gtk.TextView) string {
 	buf, _ := tv.GetBuffer()
 	startIter, endIter := buf.GetBounds()
