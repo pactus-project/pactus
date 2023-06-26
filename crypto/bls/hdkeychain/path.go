@@ -38,13 +38,14 @@ func NewPathFromString(str string) (Path, error) {
 }
 
 func (p Path) String() string {
-	str := "m"
+	var builder strings.Builder
+	builder.WriteString("m")
 	for _, i := range p {
 		if i >= HardenedKeyStart {
-			str += fmt.Sprintf("/%d'", i-HardenedKeyStart)
+			builder.WriteString(fmt.Sprintf("/%d'", i-HardenedKeyStart))
 		} else {
-			str += fmt.Sprintf("/%d", i)
+			builder.WriteString(fmt.Sprintf("/%d", i))
 		}
 	}
-	return str
+	return builder.String()
 }
