@@ -186,7 +186,7 @@ func (c *committee) Size() int {
 func (c *committee) String() string {
 	var builder strings.Builder
 
-	builder.WriteString("[")
+	builder.WriteString("[ ")
 	for _, v := range c.Validators() {
 		builder.WriteString(fmt.Sprintf("%v(%v)", v.Number(), v.LastJoinedHeight()))
 		if c.IsProposer(v.Address(), 0) {
