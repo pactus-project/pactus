@@ -42,29 +42,29 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
 
 class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNetworkInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'selfId', $pb.PbFieldType.OY)
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSentBytes', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalReceivedBytes', $pb.PbFieldType.O3)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSentBytes', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalReceivedBytes', $pb.PbFieldType.O3)
+    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'startedAt')
     ..pc<PeerInfo>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
     ..hasRequiredFields = false
   ;
 
   GetNetworkInfoResponse._() : super();
   factory GetNetworkInfoResponse({
-    $core.List<$core.int>? selfId,
     $core.int? totalSentBytes,
     $core.int? totalReceivedBytes,
+    $fixnum.Int64? startedAt,
     $core.Iterable<PeerInfo>? peers,
   }) {
     final _result = create();
-    if (selfId != null) {
-      _result.selfId = selfId;
-    }
     if (totalSentBytes != null) {
       _result.totalSentBytes = totalSentBytes;
     }
     if (totalReceivedBytes != null) {
       _result.totalReceivedBytes = totalReceivedBytes;
+    }
+    if (startedAt != null) {
+      _result.startedAt = startedAt;
     }
     if (peers != null) {
       _result.peers.addAll(peers);
@@ -93,31 +93,31 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   static GetNetworkInfoResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get selfId => $_getN(0);
+  $core.int get totalSentBytes => $_getIZ(0);
   @$pb.TagNumber(1)
-  set selfId($core.List<$core.int> v) { $_setBytes(0, v); }
+  set totalSentBytes($core.int v) { $_setSignedInt32(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasSelfId() => $_has(0);
+  $core.bool hasTotalSentBytes() => $_has(0);
   @$pb.TagNumber(1)
-  void clearSelfId() => clearField(1);
+  void clearTotalSentBytes() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get totalSentBytes => $_getIZ(1);
+  $core.int get totalReceivedBytes => $_getIZ(1);
   @$pb.TagNumber(2)
-  set totalSentBytes($core.int v) { $_setSignedInt32(1, v); }
+  set totalReceivedBytes($core.int v) { $_setSignedInt32(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasTotalSentBytes() => $_has(1);
+  $core.bool hasTotalReceivedBytes() => $_has(1);
   @$pb.TagNumber(2)
-  void clearTotalSentBytes() => clearField(2);
+  void clearTotalReceivedBytes() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get totalReceivedBytes => $_getIZ(2);
+  $fixnum.Int64 get startedAt => $_getI64(2);
   @$pb.TagNumber(3)
-  set totalReceivedBytes($core.int v) { $_setSignedInt32(2, v); }
+  set startedAt($fixnum.Int64 v) { $_setInt64(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasTotalReceivedBytes() => $_has(2);
+  $core.bool hasStartedAt() => $_has(2);
   @$pb.TagNumber(3)
-  void clearTotalReceivedBytes() => clearField(3);
+  void clearStartedAt() => clearField(3);
 
   @$pb.TagNumber(4)
   $core.List<PeerInfo> get peers => $_getList(3);
@@ -157,10 +157,6 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
     ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
-    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'consensusKeys')
-    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flags', $pb.PbFieldType.O3)
-    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
-    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'startedAt')
     ..hasRequiredFields = false
   ;
 
@@ -169,10 +165,6 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.String? moniker,
     $core.String? agent,
     $core.List<$core.int>? peerId,
-    $core.Iterable<$core.String>? consensusKeys,
-    $core.int? flags,
-    $core.int? height,
-    $fixnum.Int64? startedAt,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -183,18 +175,6 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     }
     if (peerId != null) {
       _result.peerId = peerId;
-    }
-    if (consensusKeys != null) {
-      _result.consensusKeys.addAll(consensusKeys);
-    }
-    if (flags != null) {
-      _result.flags = flags;
-    }
-    if (height != null) {
-      _result.height = height;
-    }
-    if (startedAt != null) {
-      _result.startedAt = startedAt;
     }
     return _result;
   }
@@ -245,36 +225,6 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasPeerId() => $_has(2);
   @$pb.TagNumber(3)
   void clearPeerId() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.List<$core.String> get consensusKeys => $_getList(3);
-
-  @$pb.TagNumber(5)
-  $core.int get flags => $_getIZ(4);
-  @$pb.TagNumber(5)
-  set flags($core.int v) { $_setSignedInt32(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasFlags() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearFlags() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.int get height => $_getIZ(5);
-  @$pb.TagNumber(6)
-  set height($core.int v) { $_setUnsignedInt32(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasHeight() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearHeight() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $fixnum.Int64 get startedAt => $_getI64(6);
-  @$pb.TagNumber(7)
-  set startedAt($fixnum.Int64 v) { $_setInt64(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasStartedAt() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearStartedAt() => clearField(7);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {

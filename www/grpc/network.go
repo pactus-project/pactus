@@ -18,11 +18,11 @@ type networkServer struct {
 func (s *networkServer) GetNetworkInfo(_ context.Context,
 	_ *pactus.GetNetworkInfoRequest) (*pactus.GetNetworkInfoResponse, error) {
 	peerset := s.sync.PeerSet()
-	rps := make([]*pactus.PeerInfo, peerset.Len())
+	peers := make([]*pactus.PeerInfo, peerset.Len())
 
 	for i, peer := range peerset.GetPeerList() {
-		rps[i] = new(pactus.PeerInfo)
-		p := rps[i]
+		peers[i] = new(pactus.PeerInfo)
+		p := peers[i]
 
 		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
@@ -50,9 +50,10 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	}
 
 	return &pactus.GetNetworkInfoResponse{
-		SelfId: []byte(s.sync.SelfID()),
-		// TotalSentBytes: s.sync.,
-		Peers: rps,
+		TotalSentBytes:     int32(peerset.TotalSentBytes()),
+		TotalReceivedBytes: int32(peerset.TotalReceivedBytes()),
+		StartedAt:          peerset.StartedAt().Unix(),
+		Peers:              peers,
 	}, nil
 }
 
@@ -62,6 +63,5 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		Moniker: s.sync.Moniker(),
 		Agent:   version.Agent(),
 		PeerId:  []byte(s.sync.SelfID()),
-		// TODO: Update me
 	}, nil
 }

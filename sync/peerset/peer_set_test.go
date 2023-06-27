@@ -70,6 +70,7 @@ func TestPeerSet(t *testing.T) {
 		peerSet.IncreaseInvalidBundlesCounter(pid1)
 		peerSet.IncreaseReceivedBundlesCounter(pid1)
 		peerSet.IncreaseReceivedBytesCounter(pid1, 100)
+		peerSet.IncreaseTotalSentBytesCounter(200)
 		peerSet.IncreaseSendFailedCounter(pid1)
 		peerSet.IncreaseSendSuccessCounter(pid1)
 
@@ -79,6 +80,8 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, peer1.ReceivedBytes, 100)
 		assert.Equal(t, peer1.SendFailed, 1)
 		assert.Equal(t, peer1.SendSuccess, 1)
+		assert.Equal(t, peerSet.TotalReceivedBytes(), 100)
+		assert.Equal(t, peerSet.TotalSentBytes(), 200)
 	})
 
 	t.Run("Testing UpdateStatus", func(t *testing.T) {

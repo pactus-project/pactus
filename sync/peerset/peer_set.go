@@ -23,6 +23,7 @@ type PeerSet struct {
 	sessionTimeout     time.Duration
 	totalSentBytes     int
 	totalReceivedBytes int
+	startedAt          time.Time
 }
 
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
@@ -30,6 +31,7 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 		peers:          make(map[peer.ID]*Peer),
 		sessions:       make(map[int]*Session),
 		sessionTimeout: sessionTimeout,
+		startedAt:      time.Now(),
 	}
 }
 
@@ -324,4 +326,25 @@ func (ps *PeerSet) IncreaseSendFailedCounter(pid peer.ID) {
 
 	p := ps.mustGetPeer(pid)
 	p.SendFailed++
+}
+
+func (ps *PeerSet) TotalSentBytes() int {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.totalSentBytes
+}
+
+func (ps *PeerSet) TotalReceivedBytes() int {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.totalReceivedBytes
+}
+
+func (ps *PeerSet) StartedAt() time.Time {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.startedAt
 }

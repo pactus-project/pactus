@@ -65,10 +65,6 @@
     "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
-        "selfId": {
-          "type": "string",
-          "format": "byte"
-        },
         "totalSentBytes": {
           "type": "integer",
           "format": "int32"
@@ -76,6 +72,10 @@
         "totalReceivedBytes": {
           "type": "integer",
           "format": "int32"
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "int64"
         },
         "peers": {
           "type": "array",
@@ -97,24 +97,6 @@
         "peerId": {
           "type": "string",
           "format": "byte"
-        },
-        "consensusKeys": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "flags": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "height": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "startedAt": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },

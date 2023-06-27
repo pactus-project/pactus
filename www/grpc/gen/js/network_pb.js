@@ -94,7 +94,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.pactus.GetNodeInfoResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.pactus.GetNodeInfoResponse.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.pactus.GetNodeInfoResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -265,9 +265,9 @@ proto.pactus.GetNetworkInfoResponse.prototype.toObject = function(opt_includeIns
  */
 proto.pactus.GetNetworkInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    selfId: msg.getSelfId_asB64(),
-    totalSentBytes: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    totalReceivedBytes: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    totalSentBytes: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    totalReceivedBytes: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    startedAt: jspb.Message.getFieldWithDefault(msg, 3, 0),
     peersList: jspb.Message.toObjectList(msg.getPeersList(),
     proto.pactus.PeerInfo.toObject, includeInstance)
   };
@@ -307,16 +307,16 @@ proto.pactus.GetNetworkInfoResponse.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
-      msg.setSelfId(value);
-      break;
-    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTotalSentBytes(value);
       break;
-    case 3:
+    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTotalReceivedBytes(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setStartedAt(value);
       break;
     case 4:
       var value = new proto.pactus.PeerInfo;
@@ -352,23 +352,23 @@ proto.pactus.GetNetworkInfoResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.GetNetworkInfoResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSelfId_asU8();
-  if (f.length > 0) {
-    writer.writeBytes(
-      1,
-      f
-    );
-  }
   f = message.getTotalSentBytes();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      1,
       f
     );
   }
   f = message.getTotalReceivedBytes();
   if (f !== 0) {
     writer.writeInt32(
+      2,
+      f
+    );
+  }
+  f = message.getStartedAt();
+  if (f !== 0) {
+    writer.writeInt64(
       3,
       f
     );
@@ -385,53 +385,11 @@ proto.pactus.GetNetworkInfoResponse.serializeBinaryToWriter = function(message, 
 
 
 /**
- * optional bytes self_id = 1;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetNetworkInfoResponse.prototype.getSelfId = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * optional bytes self_id = 1;
- * This is a type-conversion wrapper around `getSelfId()`
- * @return {string}
- */
-proto.pactus.GetNetworkInfoResponse.prototype.getSelfId_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getSelfId()));
-};
-
-
-/**
- * optional bytes self_id = 1;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getSelfId()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetNetworkInfoResponse.prototype.getSelfId_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getSelfId()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
- * @return {!proto.pactus.GetNetworkInfoResponse} returns this
- */
-proto.pactus.GetNetworkInfoResponse.prototype.setSelfId = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
-};
-
-
-/**
- * optional int32 total_sent_bytes = 2;
+ * optional int32 total_sent_bytes = 1;
  * @return {number}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getTotalSentBytes = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -440,16 +398,16 @@ proto.pactus.GetNetworkInfoResponse.prototype.getTotalSentBytes = function() {
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
 proto.pactus.GetNetworkInfoResponse.prototype.setTotalSentBytes = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional int32 total_received_bytes = 3;
+ * optional int32 total_received_bytes = 2;
  * @return {number}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getTotalReceivedBytes = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -458,6 +416,24 @@ proto.pactus.GetNetworkInfoResponse.prototype.getTotalReceivedBytes = function()
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
 proto.pactus.GetNetworkInfoResponse.prototype.setTotalReceivedBytes = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 started_at = 3;
+ * @return {number}
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.getStartedAt = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetNetworkInfoResponse} returns this
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.setStartedAt = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
 };
 
@@ -602,13 +578,6 @@ proto.pactus.GetNodeInfoRequest.serializeBinaryToWriter = function(message, writ
 
 
 
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.pactus.GetNodeInfoResponse.repeatedFields_ = [4];
-
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -642,11 +611,7 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
     agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    peerId: msg.getPeerId_asB64(),
-    consensusKeysList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
-    flags: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    height: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    startedAt: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    peerId: msg.getPeerId_asB64()
   };
 
   if (includeInstance) {
@@ -695,22 +660,6 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setPeerId(value);
       break;
-    case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.addConsensusKeys(value);
-      break;
-    case 5:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setFlags(value);
-      break;
-    case 6:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setHeight(value);
-      break;
-    case 7:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setStartedAt(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -758,34 +707,6 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
   if (f.length > 0) {
     writer.writeBytes(
       3,
-      f
-    );
-  }
-  f = message.getConsensusKeysList();
-  if (f.length > 0) {
-    writer.writeRepeatedString(
-      4,
-      f
-    );
-  }
-  f = message.getFlags();
-  if (f !== 0) {
-    writer.writeInt32(
-      5,
-      f
-    );
-  }
-  f = message.getHeight();
-  if (f !== 0) {
-    writer.writeUint32(
-      6,
-      f
-    );
-  }
-  f = message.getStartedAt();
-  if (f !== 0) {
-    writer.writeInt64(
-      7,
       f
     );
   }
@@ -867,97 +788,6 @@ proto.pactus.GetNodeInfoResponse.prototype.getPeerId_asU8 = function() {
  */
 proto.pactus.GetNodeInfoResponse.prototype.setPeerId = function(value) {
   return jspb.Message.setProto3BytesField(this, 3, value);
-};
-
-
-/**
- * repeated string consensus_keys = 4;
- * @return {!Array<string>}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getConsensusKeysList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
-};
-
-
-/**
- * @param {!Array<string>} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setConsensusKeysList = function(value) {
-  return jspb.Message.setField(this, 4, value || []);
-};
-
-
-/**
- * @param {string} value
- * @param {number=} opt_index
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.addConsensusKeys = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.clearConsensusKeysList = function() {
-  return this.setConsensusKeysList([]);
-};
-
-
-/**
- * optional int32 flags = 5;
- * @return {number}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getFlags = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setFlags = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
-};
-
-
-/**
- * optional uint32 height = 6;
- * @return {number}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getHeight = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setHeight = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
-};
-
-
-/**
- * optional int64 started_at = 7;
- * @return {number}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getStartedAt = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setStartedAt = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 

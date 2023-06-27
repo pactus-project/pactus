@@ -16,7 +16,6 @@ func TestGetNetworkInfo(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, []byte(tMockSync.SelfID()), res.SelfId)
 		assert.Equal(t, 2, len(res.Peers))
 	})
 

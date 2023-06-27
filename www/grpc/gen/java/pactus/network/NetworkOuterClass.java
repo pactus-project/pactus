@@ -419,22 +419,22 @@ public final class NetworkOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>bytes self_id = 1 [json_name = "selfId"];</code>
-     * @return The selfId.
-     */
-    com.google.protobuf.ByteString getSelfId();
-
-    /**
-     * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+     * <code>int32 total_sent_bytes = 1 [json_name = "totalSentBytes"];</code>
      * @return The totalSentBytes.
      */
     int getTotalSentBytes();
 
     /**
-     * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+     * <code>int32 total_received_bytes = 2 [json_name = "totalReceivedBytes"];</code>
      * @return The totalReceivedBytes.
      */
     int getTotalReceivedBytes();
+
+    /**
+     * <code>int64 started_at = 3 [json_name = "startedAt"];</code>
+     * @return The startedAt.
+     */
+    long getStartedAt();
 
     /**
      * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
@@ -473,7 +473,6 @@ public final class NetworkOuterClass {
       super(builder);
     }
     private GetNetworkInfoResponse() {
-      selfId_ = com.google.protobuf.ByteString.EMPTY;
       peers_ = java.util.Collections.emptyList();
     }
 
@@ -502,21 +501,10 @@ public final class NetworkOuterClass {
               pactus.network.NetworkOuterClass.GetNetworkInfoResponse.class, pactus.network.NetworkOuterClass.GetNetworkInfoResponse.Builder.class);
     }
 
-    public static final int SELF_ID_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString selfId_;
-    /**
-     * <code>bytes self_id = 1 [json_name = "selfId"];</code>
-     * @return The selfId.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString getSelfId() {
-      return selfId_;
-    }
-
-    public static final int TOTAL_SENT_BYTES_FIELD_NUMBER = 2;
+    public static final int TOTAL_SENT_BYTES_FIELD_NUMBER = 1;
     private int totalSentBytes_;
     /**
-     * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+     * <code>int32 total_sent_bytes = 1 [json_name = "totalSentBytes"];</code>
      * @return The totalSentBytes.
      */
     @java.lang.Override
@@ -524,15 +512,26 @@ public final class NetworkOuterClass {
       return totalSentBytes_;
     }
 
-    public static final int TOTAL_RECEIVED_BYTES_FIELD_NUMBER = 3;
+    public static final int TOTAL_RECEIVED_BYTES_FIELD_NUMBER = 2;
     private int totalReceivedBytes_;
     /**
-     * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+     * <code>int32 total_received_bytes = 2 [json_name = "totalReceivedBytes"];</code>
      * @return The totalReceivedBytes.
      */
     @java.lang.Override
     public int getTotalReceivedBytes() {
       return totalReceivedBytes_;
+    }
+
+    public static final int STARTED_AT_FIELD_NUMBER = 3;
+    private long startedAt_;
+    /**
+     * <code>int64 started_at = 3 [json_name = "startedAt"];</code>
+     * @return The startedAt.
+     */
+    @java.lang.Override
+    public long getStartedAt() {
+      return startedAt_;
     }
 
     public static final int PEERS_FIELD_NUMBER = 4;
@@ -589,14 +588,14 @@ public final class NetworkOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!selfId_.isEmpty()) {
-        output.writeBytes(1, selfId_);
-      }
       if (totalSentBytes_ != 0) {
-        output.writeInt32(2, totalSentBytes_);
+        output.writeInt32(1, totalSentBytes_);
       }
       if (totalReceivedBytes_ != 0) {
-        output.writeInt32(3, totalReceivedBytes_);
+        output.writeInt32(2, totalReceivedBytes_);
+      }
+      if (startedAt_ != 0L) {
+        output.writeInt64(3, startedAt_);
       }
       for (int i = 0; i < peers_.size(); i++) {
         output.writeMessage(4, peers_.get(i));
@@ -610,17 +609,17 @@ public final class NetworkOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!selfId_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, selfId_);
-      }
       if (totalSentBytes_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, totalSentBytes_);
+          .computeInt32Size(1, totalSentBytes_);
       }
       if (totalReceivedBytes_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, totalReceivedBytes_);
+          .computeInt32Size(2, totalReceivedBytes_);
+      }
+      if (startedAt_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(3, startedAt_);
       }
       for (int i = 0; i < peers_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -641,12 +640,12 @@ public final class NetworkOuterClass {
       }
       pactus.network.NetworkOuterClass.GetNetworkInfoResponse other = (pactus.network.NetworkOuterClass.GetNetworkInfoResponse) obj;
 
-      if (!getSelfId()
-          .equals(other.getSelfId())) return false;
       if (getTotalSentBytes()
           != other.getTotalSentBytes()) return false;
       if (getTotalReceivedBytes()
           != other.getTotalReceivedBytes()) return false;
+      if (getStartedAt()
+          != other.getStartedAt()) return false;
       if (!getPeersList()
           .equals(other.getPeersList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -660,12 +659,13 @@ public final class NetworkOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SELF_ID_FIELD_NUMBER;
-      hash = (53 * hash) + getSelfId().hashCode();
       hash = (37 * hash) + TOTAL_SENT_BYTES_FIELD_NUMBER;
       hash = (53 * hash) + getTotalSentBytes();
       hash = (37 * hash) + TOTAL_RECEIVED_BYTES_FIELD_NUMBER;
       hash = (53 * hash) + getTotalReceivedBytes();
+      hash = (37 * hash) + STARTED_AT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getStartedAt());
       if (getPeersCount() > 0) {
         hash = (37 * hash) + PEERS_FIELD_NUMBER;
         hash = (53 * hash) + getPeersList().hashCode();
@@ -798,11 +798,11 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        selfId_ = com.google.protobuf.ByteString.EMPTY;
-
         totalSentBytes_ = 0;
 
         totalReceivedBytes_ = 0;
+
+        startedAt_ = 0L;
 
         if (peersBuilder_ == null) {
           peers_ = java.util.Collections.emptyList();
@@ -838,9 +838,9 @@ public final class NetworkOuterClass {
       public pactus.network.NetworkOuterClass.GetNetworkInfoResponse buildPartial() {
         pactus.network.NetworkOuterClass.GetNetworkInfoResponse result = new pactus.network.NetworkOuterClass.GetNetworkInfoResponse(this);
         int from_bitField0_ = bitField0_;
-        result.selfId_ = selfId_;
         result.totalSentBytes_ = totalSentBytes_;
         result.totalReceivedBytes_ = totalReceivedBytes_;
+        result.startedAt_ = startedAt_;
         if (peersBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             peers_ = java.util.Collections.unmodifiableList(peers_);
@@ -898,14 +898,14 @@ public final class NetworkOuterClass {
 
       public Builder mergeFrom(pactus.network.NetworkOuterClass.GetNetworkInfoResponse other) {
         if (other == pactus.network.NetworkOuterClass.GetNetworkInfoResponse.getDefaultInstance()) return this;
-        if (other.getSelfId() != com.google.protobuf.ByteString.EMPTY) {
-          setSelfId(other.getSelfId());
-        }
         if (other.getTotalSentBytes() != 0) {
           setTotalSentBytes(other.getTotalSentBytes());
         }
         if (other.getTotalReceivedBytes() != 0) {
           setTotalReceivedBytes(other.getTotalReceivedBytes());
+        }
+        if (other.getStartedAt() != 0L) {
+          setStartedAt(other.getStartedAt());
         }
         if (peersBuilder_ == null) {
           if (!other.peers_.isEmpty()) {
@@ -959,18 +959,18 @@ public final class NetworkOuterClass {
               case 0:
                 done = true;
                 break;
-              case 10: {
-                selfId_ = input.readBytes();
+              case 8: {
+                totalSentBytes_ = input.readInt32();
 
                 break;
-              } // case 10
+              } // case 8
               case 16: {
-                totalSentBytes_ = input.readInt32();
+                totalReceivedBytes_ = input.readInt32();
 
                 break;
               } // case 16
               case 24: {
-                totalReceivedBytes_ = input.readInt32();
+                startedAt_ = input.readInt64();
 
                 break;
               } // case 24
@@ -1004,43 +1004,9 @@ public final class NetworkOuterClass {
       }
       private int bitField0_;
 
-      private com.google.protobuf.ByteString selfId_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes self_id = 1 [json_name = "selfId"];</code>
-       * @return The selfId.
-       */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getSelfId() {
-        return selfId_;
-      }
-      /**
-       * <code>bytes self_id = 1 [json_name = "selfId"];</code>
-       * @param value The selfId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSelfId(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        selfId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes self_id = 1 [json_name = "selfId"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearSelfId() {
-        
-        selfId_ = getDefaultInstance().getSelfId();
-        onChanged();
-        return this;
-      }
-
       private int totalSentBytes_ ;
       /**
-       * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * <code>int32 total_sent_bytes = 1 [json_name = "totalSentBytes"];</code>
        * @return The totalSentBytes.
        */
       @java.lang.Override
@@ -1048,7 +1014,7 @@ public final class NetworkOuterClass {
         return totalSentBytes_;
       }
       /**
-       * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * <code>int32 total_sent_bytes = 1 [json_name = "totalSentBytes"];</code>
        * @param value The totalSentBytes to set.
        * @return This builder for chaining.
        */
@@ -1059,7 +1025,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * <code>int32 total_sent_bytes = 1 [json_name = "totalSentBytes"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalSentBytes() {
@@ -1071,7 +1037,7 @@ public final class NetworkOuterClass {
 
       private int totalReceivedBytes_ ;
       /**
-       * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * <code>int32 total_received_bytes = 2 [json_name = "totalReceivedBytes"];</code>
        * @return The totalReceivedBytes.
        */
       @java.lang.Override
@@ -1079,7 +1045,7 @@ public final class NetworkOuterClass {
         return totalReceivedBytes_;
       }
       /**
-       * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * <code>int32 total_received_bytes = 2 [json_name = "totalReceivedBytes"];</code>
        * @param value The totalReceivedBytes to set.
        * @return This builder for chaining.
        */
@@ -1090,12 +1056,43 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * <code>int32 total_received_bytes = 2 [json_name = "totalReceivedBytes"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalReceivedBytes() {
         
         totalReceivedBytes_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long startedAt_ ;
+      /**
+       * <code>int64 started_at = 3 [json_name = "startedAt"];</code>
+       * @return The startedAt.
+       */
+      @java.lang.Override
+      public long getStartedAt() {
+        return startedAt_;
+      }
+      /**
+       * <code>int64 started_at = 3 [json_name = "startedAt"];</code>
+       * @param value The startedAt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStartedAt(long value) {
+        
+        startedAt_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 started_at = 3 [json_name = "startedAt"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStartedAt() {
+        
+        startedAt_ = 0L;
         onChanged();
         return this;
       }
@@ -1836,49 +1833,6 @@ public final class NetworkOuterClass {
      * @return The peerId.
      */
     com.google.protobuf.ByteString getPeerId();
-
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @return A list containing the consensusKeys.
-     */
-    java.util.List<java.lang.String>
-        getConsensusKeysList();
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @return The count of consensusKeys.
-     */
-    int getConsensusKeysCount();
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @param index The index of the element to return.
-     * @return The consensusKeys at the given index.
-     */
-    java.lang.String getConsensusKeys(int index);
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the consensusKeys at the given index.
-     */
-    com.google.protobuf.ByteString
-        getConsensusKeysBytes(int index);
-
-    /**
-     * <code>int32 flags = 5 [json_name = "flags"];</code>
-     * @return The flags.
-     */
-    int getFlags();
-
-    /**
-     * <code>uint32 height = 6 [json_name = "height"];</code>
-     * @return The height.
-     */
-    int getHeight();
-
-    /**
-     * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
-     * @return The startedAt.
-     */
-    long getStartedAt();
   }
   /**
    * Protobuf type {@code pactus.GetNodeInfoResponse}
@@ -1896,7 +1850,6 @@ public final class NetworkOuterClass {
       moniker_ = "";
       agent_ = "";
       peerId_ = com.google.protobuf.ByteString.EMPTY;
-      consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -2011,74 +1964,6 @@ public final class NetworkOuterClass {
       return peerId_;
     }
 
-    public static final int CONSENSUS_KEYS_FIELD_NUMBER = 4;
-    private com.google.protobuf.LazyStringList consensusKeys_;
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @return A list containing the consensusKeys.
-     */
-    public com.google.protobuf.ProtocolStringList
-        getConsensusKeysList() {
-      return consensusKeys_;
-    }
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @return The count of consensusKeys.
-     */
-    public int getConsensusKeysCount() {
-      return consensusKeys_.size();
-    }
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @param index The index of the element to return.
-     * @return The consensusKeys at the given index.
-     */
-    public java.lang.String getConsensusKeys(int index) {
-      return consensusKeys_.get(index);
-    }
-    /**
-     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the consensusKeys at the given index.
-     */
-    public com.google.protobuf.ByteString
-        getConsensusKeysBytes(int index) {
-      return consensusKeys_.getByteString(index);
-    }
-
-    public static final int FLAGS_FIELD_NUMBER = 5;
-    private int flags_;
-    /**
-     * <code>int32 flags = 5 [json_name = "flags"];</code>
-     * @return The flags.
-     */
-    @java.lang.Override
-    public int getFlags() {
-      return flags_;
-    }
-
-    public static final int HEIGHT_FIELD_NUMBER = 6;
-    private int height_;
-    /**
-     * <code>uint32 height = 6 [json_name = "height"];</code>
-     * @return The height.
-     */
-    @java.lang.Override
-    public int getHeight() {
-      return height_;
-    }
-
-    public static final int STARTED_AT_FIELD_NUMBER = 7;
-    private long startedAt_;
-    /**
-     * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
-     * @return The startedAt.
-     */
-    @java.lang.Override
-    public long getStartedAt() {
-      return startedAt_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2102,18 +1987,6 @@ public final class NetworkOuterClass {
       if (!peerId_.isEmpty()) {
         output.writeBytes(3, peerId_);
       }
-      for (int i = 0; i < consensusKeys_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, consensusKeys_.getRaw(i));
-      }
-      if (flags_ != 0) {
-        output.writeInt32(5, flags_);
-      }
-      if (height_ != 0) {
-        output.writeUInt32(6, height_);
-      }
-      if (startedAt_ != 0L) {
-        output.writeInt64(7, startedAt_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2132,26 +2005,6 @@ public final class NetworkOuterClass {
       if (!peerId_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, peerId_);
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < consensusKeys_.size(); i++) {
-          dataSize += computeStringSizeNoTag(consensusKeys_.getRaw(i));
-        }
-        size += dataSize;
-        size += 1 * getConsensusKeysList().size();
-      }
-      if (flags_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, flags_);
-      }
-      if (height_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(6, height_);
-      }
-      if (startedAt_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(7, startedAt_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2174,14 +2027,6 @@ public final class NetworkOuterClass {
           .equals(other.getAgent())) return false;
       if (!getPeerId()
           .equals(other.getPeerId())) return false;
-      if (!getConsensusKeysList()
-          .equals(other.getConsensusKeysList())) return false;
-      if (getFlags()
-          != other.getFlags()) return false;
-      if (getHeight()
-          != other.getHeight()) return false;
-      if (getStartedAt()
-          != other.getStartedAt()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2199,17 +2044,6 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getAgent().hashCode();
       hash = (37 * hash) + PEER_ID_FIELD_NUMBER;
       hash = (53 * hash) + getPeerId().hashCode();
-      if (getConsensusKeysCount() > 0) {
-        hash = (37 * hash) + CONSENSUS_KEYS_FIELD_NUMBER;
-        hash = (53 * hash) + getConsensusKeysList().hashCode();
-      }
-      hash = (37 * hash) + FLAGS_FIELD_NUMBER;
-      hash = (53 * hash) + getFlags();
-      hash = (37 * hash) + HEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getHeight();
-      hash = (37 * hash) + STARTED_AT_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getStartedAt());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2344,14 +2178,6 @@ public final class NetworkOuterClass {
 
         peerId_ = com.google.protobuf.ByteString.EMPTY;
 
-        consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
-
-        height_ = 0;
-
-        startedAt_ = 0L;
-
         return this;
       }
 
@@ -2378,18 +2204,9 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public pactus.network.NetworkOuterClass.GetNodeInfoResponse buildPartial() {
         pactus.network.NetworkOuterClass.GetNodeInfoResponse result = new pactus.network.NetworkOuterClass.GetNodeInfoResponse(this);
-        int from_bitField0_ = bitField0_;
         result.moniker_ = moniker_;
         result.agent_ = agent_;
         result.peerId_ = peerId_;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          consensusKeys_ = consensusKeys_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
-        }
-        result.consensusKeys_ = consensusKeys_;
-        result.flags_ = flags_;
-        result.height_ = height_;
-        result.startedAt_ = startedAt_;
         onBuilt();
         return result;
       }
@@ -2449,25 +2266,6 @@ public final class NetworkOuterClass {
         if (other.getPeerId() != com.google.protobuf.ByteString.EMPTY) {
           setPeerId(other.getPeerId());
         }
-        if (!other.consensusKeys_.isEmpty()) {
-          if (consensusKeys_.isEmpty()) {
-            consensusKeys_ = other.consensusKeys_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureConsensusKeysIsMutable();
-            consensusKeys_.addAll(other.consensusKeys_);
-          }
-          onChanged();
-        }
-        if (other.getFlags() != 0) {
-          setFlags(other.getFlags());
-        }
-        if (other.getHeight() != 0) {
-          setHeight(other.getHeight());
-        }
-        if (other.getStartedAt() != 0L) {
-          setStartedAt(other.getStartedAt());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2509,27 +2307,6 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 26
-              case 34: {
-                java.lang.String s = input.readStringRequireUtf8();
-                ensureConsensusKeysIsMutable();
-                consensusKeys_.add(s);
-                break;
-              } // case 34
-              case 40: {
-                flags_ = input.readInt32();
-
-                break;
-              } // case 40
-              case 48: {
-                height_ = input.readUInt32();
-
-                break;
-              } // case 48
-              case 56: {
-                startedAt_ = input.readInt64();
-
-                break;
-              } // case 56
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2545,7 +2322,6 @@ public final class NetworkOuterClass {
         } // finally
         return this;
       }
-      private int bitField0_;
 
       private java.lang.Object moniker_ = "";
       /**
@@ -2729,209 +2505,6 @@ public final class NetworkOuterClass {
       public Builder clearPeerId() {
         
         peerId_ = getDefaultInstance().getPeerId();
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.LazyStringList consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureConsensusKeysIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          consensusKeys_ = new com.google.protobuf.LazyStringArrayList(consensusKeys_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @return A list containing the consensusKeys.
-       */
-      public com.google.protobuf.ProtocolStringList
-          getConsensusKeysList() {
-        return consensusKeys_.getUnmodifiableView();
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @return The count of consensusKeys.
-       */
-      public int getConsensusKeysCount() {
-        return consensusKeys_.size();
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @param index The index of the element to return.
-       * @return The consensusKeys at the given index.
-       */
-      public java.lang.String getConsensusKeys(int index) {
-        return consensusKeys_.get(index);
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @param index The index of the value to return.
-       * @return The bytes of the consensusKeys at the given index.
-       */
-      public com.google.protobuf.ByteString
-          getConsensusKeysBytes(int index) {
-        return consensusKeys_.getByteString(index);
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @param index The index to set the value at.
-       * @param value The consensusKeys to set.
-       * @return This builder for chaining.
-       */
-      public Builder setConsensusKeys(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureConsensusKeysIsMutable();
-        consensusKeys_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @param value The consensusKeys to add.
-       * @return This builder for chaining.
-       */
-      public Builder addConsensusKeys(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureConsensusKeysIsMutable();
-        consensusKeys_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @param values The consensusKeys to add.
-       * @return This builder for chaining.
-       */
-      public Builder addAllConsensusKeys(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureConsensusKeysIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, consensusKeys_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearConsensusKeys() {
-        consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
-       * @param value The bytes of the consensusKeys to add.
-       * @return This builder for chaining.
-       */
-      public Builder addConsensusKeysBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        ensureConsensusKeysIsMutable();
-        consensusKeys_.add(value);
-        onChanged();
-        return this;
-      }
-
-      private int flags_ ;
-      /**
-       * <code>int32 flags = 5 [json_name = "flags"];</code>
-       * @return The flags.
-       */
-      @java.lang.Override
-      public int getFlags() {
-        return flags_;
-      }
-      /**
-       * <code>int32 flags = 5 [json_name = "flags"];</code>
-       * @param value The flags to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFlags(int value) {
-        
-        flags_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 flags = 5 [json_name = "flags"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFlags() {
-        
-        flags_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int height_ ;
-      /**
-       * <code>uint32 height = 6 [json_name = "height"];</code>
-       * @return The height.
-       */
-      @java.lang.Override
-      public int getHeight() {
-        return height_;
-      }
-      /**
-       * <code>uint32 height = 6 [json_name = "height"];</code>
-       * @param value The height to set.
-       * @return This builder for chaining.
-       */
-      public Builder setHeight(int value) {
-        
-        height_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>uint32 height = 6 [json_name = "height"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearHeight() {
-        
-        height_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private long startedAt_ ;
-      /**
-       * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
-       * @return The startedAt.
-       */
-      @java.lang.Override
-      public long getStartedAt() {
-        return startedAt_;
-      }
-      /**
-       * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
-       * @param value The startedAt to set.
-       * @return This builder for chaining.
-       */
-      public Builder setStartedAt(long value) {
-        
-        startedAt_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearStartedAt() {
-        
-        startedAt_ = 0L;
         onChanged();
         return this;
       }
@@ -4650,34 +4223,31 @@ public final class NetworkOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\rnetwork.proto\022\006pactus\"\027\n\025GetNetworkInf" +
-      "oRequest\"\265\001\n\026GetNetworkInfoResponse\022\027\n\007s" +
-      "elf_id\030\001 \001(\014R\006selfId\022(\n\020total_sent_bytes" +
-      "\030\002 \001(\005R\016totalSentBytes\0220\n\024total_received" +
-      "_bytes\030\003 \001(\005R\022totalReceivedBytes\022&\n\005peer" +
-      "s\030\004 \003(\0132\020.pactus.PeerInfoR\005peers\"\024\n\022GetN" +
-      "odeInfoRequest\"\322\001\n\023GetNodeInfoResponse\022\030" +
-      "\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR" +
-      "\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\022%\n\016conse" +
-      "nsus_keys\030\004 \003(\tR\rconsensusKeys\022\024\n\005flags\030" +
-      "\005 \001(\005R\005flags\022\026\n\006height\030\006 \001(\rR\006height\022\035\n\n" +
-      "started_at\030\007 \001(\003R\tstartedAt\"\240\003\n\010PeerInfo" +
-      "\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(" +
-      "\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\022%\n\016con" +
-      "sensus_keys\030\004 \003(\tR\rconsensusKeys\022\024\n\005flag" +
-      "s\030\005 \001(\005R\005flags\022\026\n\006height\030\006 \001(\rR\006height\022+" +
-      "\n\021received_messages\030\007 \001(\005R\020receivedMessa" +
-      "ges\022)\n\020invalid_messages\030\010 \001(\005R\017invalidMe" +
-      "ssages\022%\n\016received_bytes\030\t \001(\005R\rreceived" +
-      "Bytes\022\026\n\006status\030\n \001(\005R\006status\022\033\n\tlast_se" +
-      "en\030\013 \001(\003R\010lastSeen\022!\n\014send_success\030\014 \001(\005" +
-      "R\013sendSuccess\022\037\n\013send_failed\030\r \001(\005R\nsend" +
-      "Failed2\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035.p" +
-      "actus.GetNetworkInfoRequest\032\036.pactus.Get" +
-      "NetworkInfoResponse\022F\n\013GetNodeInfo\022\032.pac" +
-      "tus.GetNodeInfoRequest\032\033.pactus.GetNodeI" +
-      "nfoResponseBB\n\016pactus.networkZ0github.co" +
-      "m/pactus-project/pactus/www/grpc/pactusb" +
-      "\006proto3"
+      "oRequest\"\273\001\n\026GetNetworkInfoResponse\022(\n\020t" +
+      "otal_sent_bytes\030\001 \001(\005R\016totalSentBytes\0220\n" +
+      "\024total_received_bytes\030\002 \001(\005R\022totalReceiv" +
+      "edBytes\022\035\n\nstarted_at\030\003 \001(\003R\tstartedAt\022&" +
+      "\n\005peers\030\004 \003(\0132\020.pactus.PeerInfoR\005peers\"\024" +
+      "\n\022GetNodeInfoRequest\"^\n\023GetNodeInfoRespo" +
+      "nse\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002" +
+      " \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\"\240\003\n" +
+      "\010PeerInfo\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005a" +
+      "gent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peer" +
+      "Id\022%\n\016consensus_keys\030\004 \003(\tR\rconsensusKey" +
+      "s\022\024\n\005flags\030\005 \001(\005R\005flags\022\026\n\006height\030\006 \001(\rR" +
+      "\006height\022+\n\021received_messages\030\007 \001(\005R\020rece" +
+      "ivedMessages\022)\n\020invalid_messages\030\010 \001(\005R\017" +
+      "invalidMessages\022%\n\016received_bytes\030\t \001(\005R" +
+      "\rreceivedBytes\022\026\n\006status\030\n \001(\005R\006status\022\033" +
+      "\n\tlast_seen\030\013 \001(\003R\010lastSeen\022!\n\014send_succ" +
+      "ess\030\014 \001(\005R\013sendSuccess\022\037\n\013send_failed\030\r " +
+      "\001(\005R\nsendFailed2\242\001\n\007Network\022O\n\016GetNetwor" +
+      "kInfo\022\035.pactus.GetNetworkInfoRequest\032\036.p" +
+      "actus.GetNetworkInfoResponse\022F\n\013GetNodeI" +
+      "nfo\022\032.pactus.GetNodeInfoRequest\032\033.pactus" +
+      ".GetNodeInfoResponseBB\n\016pactus.networkZ0" +
+      "github.com/pactus-project/pactus/www/grp" +
+      "c/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4694,7 +4264,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNetworkInfoResponse_descriptor,
-        new java.lang.String[] { "SelfId", "TotalSentBytes", "TotalReceivedBytes", "Peers", });
+        new java.lang.String[] { "TotalSentBytes", "TotalReceivedBytes", "StartedAt", "Peers", });
     internal_static_pactus_GetNodeInfoRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable = new
@@ -4706,7 +4276,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "StartedAt", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", });
     internal_static_pactus_PeerInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new

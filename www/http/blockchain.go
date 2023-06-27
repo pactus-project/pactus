@@ -48,9 +48,10 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	sid, _ := peer.IDFromBytes(res.SelfId)
 	tm := newTableMaker()
-	tm.addRowString("Peer ID", sid.String())
+	tm.addRowTime("Started at", res.StartedAt)
+	tm.addRowInt("Total Sent Bytes", int(res.TotalSentBytes))
+	tm.addRowInt("Total Received Bytes", int(res.TotalReceivedBytes))
 	tm.addRowString("Peers", "---")
 
 	for i, p := range res.Peers {
@@ -74,5 +75,22 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("SendFailed", int(p.SendFailed))
 		tm.addRowInt("Flags", int(p.Flags))
 	}
+	s.writeHTML(w, tm.html())
+}
+
+func (s *Server) NodeHandler(w http.ResponseWriter, _ *http.Request) {
+	res, err := s.network.GetNodeInfo(s.ctx,
+		&pactus.GetNodeInfoRequest{})
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	sid, _ := peer.IDFromBytes(res.PeerId)
+	tm := newTableMaker()
+	tm.addRowString("Peer ID", sid.String())
+	tm.addRowString("Agent", res.Agent)
+	tm.addRowString("Moniker", res.Moniker)
+
 	s.writeHTML(w, tm.html())
 }
