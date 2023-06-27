@@ -64,6 +64,12 @@ func TestValidator(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
+}
+
+func TestValidatorByNumber(t *testing.T) {
+	setup(t)
+
+	val := tMockState.TestStore.AddTestValidator()
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -74,6 +80,18 @@ func TestValidator(t *testing.T) {
 		tHTTPServer.GetValidatorByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
+		fmt.Println(w.Body)
+	})
+
+	t.Run("Shall return a error, non exist", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		fmt.Println(val.Number())
+		fmt.Println(strconv.Itoa(int(val.Number())))
+		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(val.Number() + 1))})
+		tHTTPServer.GetValidatorByNumberHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
 

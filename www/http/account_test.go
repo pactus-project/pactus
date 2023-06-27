@@ -66,6 +66,12 @@ func TestAccount(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
+}
+
+func TestAccountByNumber(t *testing.T) {
+	setup(t)
+
+	acc, _ := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -74,6 +80,16 @@ func TestAccount(t *testing.T) {
 		tHTTPServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
+		fmt.Println(w.Body)
+	})
+
+	t.Run("Shall return an error, non exist", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		r := new(http.Request)
+		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(acc.Number() + 1))})
+		tHTTPServer.GetAccountByNumberHandler(w, r)
+
+		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
 
