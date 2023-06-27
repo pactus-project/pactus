@@ -80,17 +80,17 @@ func TestAccount(t *testing.T) {
 	t.Run("Shall return an error, invalid number", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"number": "not a number"})
+		r = mux.SetURLVars(r, map[string]string{"number": "not-a-number"})
 		tHTTPServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return nil, invalid number", func(t *testing.T) {
+	t.Run("Shall return nil, empty number", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"number": "10000000000000"})
+		r = mux.SetURLVars(r, map[string]string{"number": ""})
 		tHTTPServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
